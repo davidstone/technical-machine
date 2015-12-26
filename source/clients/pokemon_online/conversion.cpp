@@ -1,5 +1,5 @@
 // Convert to / from PO's format
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,12 +18,6 @@
 
 #include "conversion.hpp"
 
-#include <cassert>
-#include <cstdint>
-#include <stdexcept>
-#include <string>
-#include <utility>
-
 #include "../../ability.hpp"
 #include "../../gender.hpp"
 #include "../../item.hpp"
@@ -34,57 +28,1098 @@
 
 #include "../../stat/stat.hpp"
 
+#include "../../string_conversions/pokemon.hpp"
+
+#include <cassert>
+#include <cstdint>
+#include <stdexcept>
+#include <string>
+#include <utility>
+
 namespace technicalmachine {
 namespace po {
 
 namespace {
 
-struct InvalidFormeId : std::runtime_error {
-	explicit InvalidFormeId (std::string const & species):
-		std::runtime_error ("Invalid forme ID for " + species + ".\n")
-		{
+struct InvalidSpeciesID : std::runtime_error {
+	explicit InvalidSpeciesID(unsigned const id):
+		std::runtime_error("Invalid species ID " + std::to_string(id))
+	{
 	}
 };
 
-Species rotom_forme_to_species(unsigned const forme) {
-	switch (forme) {
-		case 0: return Species::Rotom;
-		case 1: return Species::Rotom_Mow;
-		case 2: return Species::Rotom_Heat;
-		case 3: return Species::Rotom_Frost;
-		case 4: return Species::Rotom_Wash;
-		case 5: return Species::Rotom_Fan;
-		default: throw InvalidFormeId("Rotom");
+struct InvalidFormeId : std::runtime_error {
+	InvalidFormeId(std::string const & species, unsigned const forme):
+		std::runtime_error("Invalid forme ID " + std::to_string(forme) + " for " + species)
+	{
 	}
-}
+};
 
-auto rotom_species_distance(Species const form) {
-	return static_cast<unsigned>(form) - static_cast<unsigned>(Species::Rotom);
-}
+struct UnsupportedSpecies : std::runtime_error {
+	explicit UnsupportedSpecies(Species const species):
+		std::runtime_error(to_string(species) + " not supported in Pokemon online.")
+	{
+	}
+};
 
-unsigned get_forme_offset (unsigned const id, unsigned const forme) {
-	constexpr unsigned deoxys = 386;
-	constexpr unsigned giratina = 487;
-	constexpr unsigned rotom = 479;
-	constexpr unsigned shaymin = 492;
-	constexpr unsigned wormadam = 413;
-	auto const convert = [forme](unsigned const range, std::string const & species){
-		if (forme <= range)
-			return forme;
-		else
-			throw (InvalidFormeId(species));
-	};
+}	// namespace
+
+Species id_to_species (unsigned const id, unsigned const forme) {
 	switch (id) {
-		case deoxys: return convert(3, "Deoxys");
-		case giratina: return convert(1, "Giratina");
-		case rotom: return rotom_species_distance(rotom_forme_to_species(forme));
-		case shaymin: return convert(1, "Shaymin");
-		case wormadam: return convert(2, "Wormadam");
-		default: return 0;
+		case 0: return Species::END;	// "Missingno."
+
+		// Generation 1
+		case 1: return Species::Bulbasaur;
+		case 2: return Species::Ivysaur;
+		case 3: return Species::Venusaur;
+		case 4: return Species::Charmander;
+		case 5: return Species::Charmeleon;
+		case 6: return Species::Charizard;
+		case 7: return Species::Squirtle;
+		case 8: return Species::Wartortle;
+		case 9: return Species::Blastoise;
+		case 10: return Species::Caterpie;
+		case 11: return Species::Metapod;
+		case 12: return Species::Butterfree;
+		case 13: return Species::Weedle;
+		case 14: return Species::Kakuna;
+		case 15: return Species::Beedrill;
+		case 16: return Species::Pidgey;
+		case 17: return Species::Pidgeotto;
+		case 18: return Species::Pidgeot;
+		case 19: return Species::Rattata;
+		case 20: return Species::Raticate;
+		case 21: return Species::Spearow;
+		case 22: return Species::Fearow;
+		case 23: return Species::Ekans;
+		case 24: return Species::Arbok;
+		case 25: return Species::Pikachu;
+		case 26: return Species::Raichu;
+		case 27: return Species::Sandshrew;
+		case 28: return Species::Sandslash;
+		case 29: return Species::Nidoran_F;
+		case 30: return Species::Nidorina;
+		case 31: return Species::Nidoqueen;
+		case 32: return Species::Nidoran_M;
+		case 33: return Species::Nidorino;
+		case 34: return Species::Nidoking;
+		case 35: return Species::Clefairy;
+		case 36: return Species::Clefable;
+		case 37: return Species::Vulpix;
+		case 38: return Species::Ninetales;
+		case 39: return Species::Jigglypuff;
+		case 40: return Species::Wigglytuff;
+		case 41: return Species::Zubat;
+		case 42: return Species::Golbat;
+		case 43: return Species::Oddish;
+		case 44: return Species::Gloom;
+		case 45: return Species::Vileplume;
+		case 46: return Species::Paras;
+		case 47: return Species::Parasect;
+		case 48: return Species::Venonat;
+		case 49: return Species::Venomoth;
+		case 50: return Species::Diglett;
+		case 51: return Species::Dugtrio;
+		case 52: return Species::Meowth;
+		case 53: return Species::Persian;
+		case 54: return Species::Psyduck;
+		case 55: return Species::Golduck;
+		case 56: return Species::Mankey;
+		case 57: return Species::Primeape;
+		case 58: return Species::Growlithe;
+		case 59: return Species::Arcanine;
+		case 60: return Species::Poliwag;
+		case 61: return Species::Poliwhirl;
+		case 62: return Species::Poliwrath;
+		case 63: return Species::Abra;
+		case 64: return Species::Kadabra;
+		case 65: return Species::Alakazam;
+		case 66: return Species::Machop;
+		case 67: return Species::Machoke;
+		case 68: return Species::Machamp;
+		case 69: return Species::Bellsprout;
+		case 70: return Species::Weepinbell;
+		case 71: return Species::Victreebel;
+		case 72: return Species::Tentacool;
+		case 73: return Species::Tentacruel;
+		case 74: return Species::Geodude;
+		case 75: return Species::Graveler;
+		case 76: return Species::Golem;
+		case 77: return Species::Ponyta;
+		case 78: return Species::Rapidash;
+		case 79: return Species::Slowpoke;
+		case 80: return Species::Slowbro;
+		case 81: return Species::Magnemite;
+		case 82: return Species::Magneton;
+		case 83: return Species::Farfetchd;
+		case 84: return Species::Doduo;
+		case 85: return Species::Dodrio;
+		case 86: return Species::Seel;
+		case 87: return Species::Dewgong;
+		case 88: return Species::Grimer;
+		case 89: return Species::Muk;
+		case 90: return Species::Shellder;
+		case 91: return Species::Cloyster;
+		case 92: return Species::Gastly;
+		case 93: return Species::Haunter;
+		case 94: return Species::Gengar;
+		case 95: return Species::Onix;
+		case 96: return Species::Drowzee;
+		case 97: return Species::Hypno;
+		case 98: return Species::Krabby;
+		case 99: return Species::Kingler;
+		case 100: return Species::Voltorb;
+		case 101: return Species::Electrode;
+		case 102: return Species::Exeggcute;
+		case 103: return Species::Exeggutor;
+		case 104: return Species::Cubone;
+		case 105: return Species::Marowak;
+		case 106: return Species::Hitmonlee;
+		case 107: return Species::Hitmonchan;
+		case 108: return Species::Lickitung;
+		case 109: return Species::Koffing;
+		case 110: return Species::Weezing;
+		case 111: return Species::Rhyhorn;
+		case 112: return Species::Rhydon;
+		case 113: return Species::Chansey;
+		case 114: return Species::Tangela;
+		case 115: return Species::Kangaskhan;
+		case 116: return Species::Horsea;
+		case 117: return Species::Seadra;
+		case 118: return Species::Goldeen;
+		case 119: return Species::Seaking;
+		case 120: return Species::Staryu;
+		case 121: return Species::Starmie;
+		case 122: return Species::Mr_Mime;
+		case 123: return Species::Scyther;
+		case 124: return Species::Jynx;
+		case 125: return Species::Electabuzz;
+		case 126: return Species::Magmar;
+		case 127: return Species::Pinsir;
+		case 128: return Species::Tauros;
+		case 129: return Species::Magikarp;
+		case 130: return Species::Gyarados;
+		case 131: return Species::Lapras;
+		case 132: return Species::Ditto;
+		case 133: return Species::Eevee;
+		case 134: return Species::Vaporeon;
+		case 135: return Species::Jolteon;
+		case 136: return Species::Flareon;
+		case 137: return Species::Porygon;
+		case 138: return Species::Omanyte;
+		case 139: return Species::Omastar;
+		case 140: return Species::Kabuto;
+		case 141: return Species::Kabutops;
+		case 142: return Species::Aerodactyl;
+		case 143: return Species::Snorlax;
+		case 144: return Species::Articuno;
+		case 145: return Species::Zapdos;
+		case 146: return Species::Moltres;
+		case 147: return Species::Dratini;
+		case 148: return Species::Dragonair;
+		case 149: return Species::Dragonite;
+		case 150: return Species::Mewtwo;
+		case 151: return Species::Mew;
+
+		// Generation 2
+		case 152: return Species::Chikorita;
+		case 153: return Species::Bayleef;
+		case 154: return Species::Meganium;
+		case 155: return Species::Cyndaquil;
+		case 156: return Species::Quilava;
+		case 157: return Species::Typhlosion;
+		case 158: return Species::Totodile;
+		case 159: return Species::Croconaw;
+		case 160: return Species::Feraligatr;
+		case 161: return Species::Sentret;
+		case 162: return Species::Furret;
+		case 163: return Species::Hoothoot;
+		case 164: return Species::Noctowl;
+		case 165: return Species::Ledyba;
+		case 166: return Species::Ledian;
+		case 167: return Species::Spinarak;
+		case 168: return Species::Ariados;
+		case 169: return Species::Crobat;
+		case 170: return Species::Chinchou;
+		case 171: return Species::Lanturn;
+		case 172: return Species::Pichu;
+		case 173: return Species::Cleffa;
+		case 174: return Species::Igglybuff;
+		case 175: return Species::Togepi;
+		case 176: return Species::Togetic;
+		case 177: return Species::Natu;
+		case 178: return Species::Xatu;
+		case 179: return Species::Mareep;
+		case 180: return Species::Flaaffy;
+		case 181: return Species::Ampharos;
+		case 182: return Species::Bellossom;
+		case 183: return Species::Marill;
+		case 184: return Species::Azumarill;
+		case 185: return Species::Sudowoodo;
+		case 186: return Species::Politoed;
+		case 187: return Species::Hoppip;
+		case 188: return Species::Skiploom;
+		case 189: return Species::Jumpluff;
+		case 190: return Species::Aipom;
+		case 191: return Species::Sunkern;
+		case 192: return Species::Sunflora;
+		case 193: return Species::Yanma;
+		case 194: return Species::Wooper;
+		case 195: return Species::Quagsire;
+		case 196: return Species::Espeon;
+		case 197: return Species::Umbreon;
+		case 198: return Species::Murkrow;
+		case 199: return Species::Slowking;
+		case 200: return Species::Misdreavus;
+		case 201: return Species::Unown;
+		case 202: return Species::Wobbuffet;
+		case 203: return Species::Girafarig;
+		case 204: return Species::Pineco;
+		case 205: return Species::Forretress;
+		case 206: return Species::Dunsparce;
+		case 207: return Species::Gligar;
+		case 208: return Species::Steelix;
+		case 209: return Species::Snubbull;
+		case 210: return Species::Granbull;
+		case 211: return Species::Qwilfish;
+		case 212: return Species::Scizor;
+		case 213: return Species::Shuckle;
+		case 214: return Species::Heracross;
+		case 215: return Species::Sneasel;
+		case 216: return Species::Teddiursa;
+		case 217: return Species::Ursaring;
+		case 218: return Species::Slugma;
+		case 219: return Species::Magcargo;
+		case 220: return Species::Swinub;
+		case 221: return Species::Piloswine;
+		case 222: return Species::Corsola;
+		case 223: return Species::Remoraid;
+		case 224: return Species::Octillery;
+		case 225: return Species::Delibird;
+		case 226: return Species::Mantine;
+		case 227: return Species::Skarmory;
+		case 228: return Species::Houndour;
+		case 229: return Species::Houndoom;
+		case 230: return Species::Kingdra;
+		case 231: return Species::Phanpy;
+		case 232: return Species::Donphan;
+		case 233: return Species::Porygon2;
+		case 234: return Species::Stantler;
+		case 235: return Species::Smeargle;
+		case 236: return Species::Tyrogue;
+		case 237: return Species::Hitmontop;
+		case 238: return Species::Smoochum;
+		case 239: return Species::Elekid;
+		case 240: return Species::Magby;
+		case 241: return Species::Miltank;
+		case 242: return Species::Blissey;
+		case 243: return Species::Raikou;
+		case 244: return Species::Entei;
+		case 245: return Species::Suicune;
+		case 246: return Species::Larvitar;
+		case 247: return Species::Pupitar;
+		case 248: return Species::Tyranitar;
+		case 249: return Species::Lugia;
+		case 250: return Species::Ho_Oh;
+		case 251: return Species::Celebi;
+
+		// Generation 3
+		case 252: return Species::Treecko;
+		case 253: return Species::Grovyle;
+		case 254: return Species::Sceptile;
+		case 255: return Species::Torchic;
+		case 256: return Species::Combusken;
+		case 257: return Species::Blaziken;
+		case 258: return Species::Mudkip;
+		case 259: return Species::Marshtomp;
+		case 260: return Species::Swampert;
+		case 261: return Species::Poochyena;
+		case 262: return Species::Mightyena;
+		case 263: return Species::Zigzagoon;
+		case 264: return Species::Linoone;
+		case 265: return Species::Wurmple;
+		case 266: return Species::Silcoon;
+		case 267: return Species::Beautifly;
+		case 268: return Species::Cascoon;
+		case 269: return Species::Dustox;
+		case 270: return Species::Lotad;
+		case 271: return Species::Lombre;
+		case 272: return Species::Ludicolo;
+		case 273: return Species::Seedot;
+		case 274: return Species::Nuzleaf;
+		case 275: return Species::Shiftry;
+		case 276: return Species::Taillow;
+		case 277: return Species::Swellow;
+		case 278: return Species::Wingull;
+		case 279: return Species::Pelipper;
+		case 280: return Species::Ralts;
+		case 281: return Species::Kirlia;
+		case 282: return Species::Gardevoir;
+		case 283: return Species::Surskit;
+		case 284: return Species::Masquerain;
+		case 285: return Species::Shroomish;
+		case 286: return Species::Breloom;
+		case 287: return Species::Slakoth;
+		case 288: return Species::Vigoroth;
+		case 289: return Species::Slaking;
+		case 290: return Species::Nincada;
+		case 291: return Species::Ninjask;
+		case 292: return Species::Shedinja;
+		case 293: return Species::Whismur;
+		case 294: return Species::Loudred;
+		case 295: return Species::Exploud;
+		case 296: return Species::Makuhita;
+		case 297: return Species::Hariyama;
+		case 298: return Species::Azurill;
+		case 299: return Species::Nosepass;
+		case 300: return Species::Skitty;
+		case 301: return Species::Delcatty;
+		case 302: return Species::Sableye;
+		case 303: return Species::Mawile;
+		case 304: return Species::Aron;
+		case 305: return Species::Lairon;
+		case 306: return Species::Aggron;
+		case 307: return Species::Meditite;
+		case 308: return Species::Medicham;
+		case 309: return Species::Electrike;
+		case 310: return Species::Manectric;
+		case 311: return Species::Plusle;
+		case 312: return Species::Minun;
+		case 313: return Species::Volbeat;
+		case 314: return Species::Illumise;
+		case 315: return Species::Roselia;
+		case 316: return Species::Gulpin;
+		case 317: return Species::Swalot;
+		case 318: return Species::Carvanha;
+		case 319: return Species::Sharpedo;
+		case 320: return Species::Wailmer;
+		case 321: return Species::Wailord;
+		case 322: return Species::Numel;
+		case 323: return Species::Camerupt;
+		case 324: return Species::Torkoal;
+		case 325: return Species::Spoink;
+		case 326: return Species::Grumpig;
+		case 327: return Species::Spinda;
+		case 328: return Species::Trapinch;
+		case 329: return Species::Vibrava;
+		case 330: return Species::Flygon;
+		case 331: return Species::Cacnea;
+		case 332: return Species::Cacturne;
+		case 333: return Species::Swablu;
+		case 334: return Species::Altaria;
+		case 335: return Species::Zangoose;
+		case 336: return Species::Seviper;
+		case 337: return Species::Lunatone;
+		case 338: return Species::Solrock;
+		case 339: return Species::Barboach;
+		case 340: return Species::Whiscash;
+		case 341: return Species::Corphish;
+		case 342: return Species::Crawdaunt;
+		case 343: return Species::Baltoy;
+		case 344: return Species::Claydol;
+		case 345: return Species::Lileep;
+		case 346: return Species::Cradily;
+		case 347: return Species::Anorith;
+		case 348: return Species::Armaldo;
+		case 349: return Species::Feebas;
+		case 350: return Species::Milotic;
+		case 351: return Species::Castform;
+		case 352: return Species::Kecleon;
+		case 353: return Species::Shuppet;
+		case 354: return Species::Banette;
+		case 355: return Species::Duskull;
+		case 356: return Species::Dusclops;
+		case 357: return Species::Tropius;
+		case 358: return Species::Chimecho;
+		case 359: return Species::Absol;
+		case 360: return Species::Wynaut;
+		case 361: return Species::Snorunt;
+		case 362: return Species::Glalie;
+		case 363: return Species::Spheal;
+		case 364: return Species::Sealeo;
+		case 365: return Species::Walrein;
+		case 366: return Species::Clamperl;
+		case 367: return Species::Huntail;
+		case 368: return Species::Gorebyss;
+		case 369: return Species::Relicanth;
+		case 370: return Species::Luvdisc;
+		case 371: return Species::Bagon;
+		case 372: return Species::Shelgon;
+		case 373: return Species::Salamence;
+		case 374: return Species::Beldum;
+		case 375: return Species::Metang;
+		case 376: return Species::Metagross;
+		case 377: return Species::Regirock;
+		case 378: return Species::Regice;
+		case 379: return Species::Registeel;
+		case 380: return Species::Latias;
+		case 381: return Species::Latios;
+		case 382: return Species::Kyogre;
+		case 383: return Species::Groudon;
+		case 384: return Species::Rayquaza;
+		case 385: return Species::Jirachi;
+		case 386:
+			switch (forme) {
+				case 0: return Species::Deoxys_Mediocre;
+				case 1: return Species::Deoxys_Attack;
+				case 2: return Species::Deoxys_Defense;
+				case 3: return Species::Deoxys_Speed;
+				default: throw InvalidFormeId("Deoxys", forme);
+			}
+
+		// Generation 4
+		case 387: return Species::Turtwig;
+		case 388: return Species::Grotle;
+		case 389: return Species::Torterra;
+		case 390: return Species::Chimchar;
+		case 391: return Species::Monferno;
+		case 392: return Species::Infernape;
+		case 393: return Species::Piplup;
+		case 394: return Species::Prinplup;
+		case 395: return Species::Empoleon;
+		case 396: return Species::Starly;
+		case 397: return Species::Staravia;
+		case 398: return Species::Staraptor;
+		case 399: return Species::Bidoof;
+		case 400: return Species::Bibarel;
+		case 401: return Species::Kricketot;
+		case 402: return Species::Kricketune;
+		case 403: return Species::Shinx;
+		case 404: return Species::Luxio;
+		case 405: return Species::Luxray;
+		case 406: return Species::Budew;
+		case 407: return Species::Roserade;
+		case 408: return Species::Cranidos;
+		case 409: return Species::Rampardos;
+		case 410: return Species::Shieldon;
+		case 411: return Species::Bastiodon;
+		case 412: return Species::Burmy;
+		case 413:
+			switch (forme) {
+				case 0: return Species::Wormadam_Plant;
+				case 1: return Species::Wormadam_Sandy;
+				case 2: return Species::Wormadam_Trash;
+				default: throw InvalidFormeId("Wormadam", forme);
+			}
+		case 414: return Species::Mothim;
+		case 415: return Species::Combee;
+		case 416: return Species::Vespiquen;
+		case 417: return Species::Pachirisu;
+		case 418: return Species::Buizel;
+		case 419: return Species::Floatzel;
+		case 420: return Species::Cherubi;
+		case 421: return Species::Cherrim;
+		case 422: return Species::Shellos;
+		case 423: return Species::Gastrodon;
+		case 424: return Species::Ambipom;
+		case 425: return Species::Drifloon;
+		case 426: return Species::Drifblim;
+		case 427: return Species::Buneary;
+		case 428: return Species::Lopunny;
+		case 429: return Species::Mismagius;
+		case 430: return Species::Honchkrow;
+		case 431: return Species::Glameow;
+		case 432: return Species::Purugly;
+		case 433: return Species::Chingling;
+		case 434: return Species::Stunky;
+		case 435: return Species::Skuntank;
+		case 436: return Species::Bronzor;
+		case 437: return Species::Bronzong;
+		case 438: return Species::Bonsly;
+		case 439: return Species::Mime_Jr;
+		case 440: return Species::Happiny;
+		case 441: return Species::Chatot;
+		case 442: return Species::Spiritomb;
+		case 443: return Species::Gible;
+		case 444: return Species::Gabite;
+		case 445: return Species::Garchomp;
+		case 446: return Species::Munchlax;
+		case 447: return Species::Riolu;
+		case 448: return Species::Lucario;
+		case 449: return Species::Hippopotas;
+		case 450: return Species::Hippowdon;
+		case 451: return Species::Skorupi;
+		case 452: return Species::Drapion;
+		case 453: return Species::Croagunk;
+		case 454: return Species::Toxicroak;
+		case 455: return Species::Carnivine;
+		case 456: return Species::Finneon;
+		case 457: return Species::Lumineon;
+		case 458: return Species::Mantyke;
+		case 459: return Species::Snover;
+		case 460: return Species::Abomasnow;
+		case 461: return Species::Weavile;
+		case 462: return Species::Magnezone;
+		case 463: return Species::Lickilicky;
+		case 464: return Species::Rhyperior;
+		case 465: return Species::Tangrowth;
+		case 466: return Species::Electivire;
+		case 467: return Species::Magmortar;
+		case 468: return Species::Togekiss;
+		case 469: return Species::Yanmega;
+		case 470: return Species::Leafeon;
+		case 471: return Species::Glaceon;
+		case 472: return Species::Gliscor;
+		case 473: return Species::Mamoswine;
+		case 474: return Species::Porygon_Z;
+		case 475: return Species::Gallade;
+		case 476: return Species::Probopass;
+		case 477: return Species::Dusknoir;
+		case 478: return Species::Froslass;
+		case 479:
+			switch (forme) {
+				case 0: return Species::Rotom;
+				case 1: return Species::Rotom_Mow;
+				case 2: return Species::Rotom_Heat;
+				case 3: return Species::Rotom_Frost;
+				case 4: return Species::Rotom_Wash;
+				case 5: return Species::Rotom_Fan;
+				default: throw InvalidFormeId("Rotom", forme);
+			}
+		case 480: return Species::Uxie;
+		case 481: return Species::Mesprit;
+		case 482: return Species::Azelf;
+		case 483: return Species::Dialga;
+		case 484: return Species::Palkia;
+		case 485: return Species::Heatran;
+		case 486: return Species::Regigigas;
+		case 487:
+			switch (forme) {
+				case 0: return Species::Giratina_Altered;
+				case 1: return Species::Giratina_Origin;
+				default: throw InvalidFormeId("Giratina", forme);
+			}
+		case 488: return Species::Cresselia;
+		case 489: return Species::Phione;
+		case 490: return Species::Manaphy;
+		case 491: return Species::Darkrai;
+		case 492:
+			switch (forme) {
+				case 0: return Species::Shaymin_Land;
+				case 1: return Species::Shaymin_Sky;
+				default: throw InvalidFormeId("Shaymin", forme);
+			}
+		case 493: return Species::Arceus;
+		
+		default: throw InvalidSpeciesID(id);
 	}
 }
-	
-unsigned get_forme (Species const species) {
+
+namespace {
+
+constexpr auto to_id_only(Species const species) {
+	switch (species) {
+		case Species::Bulbasaur: return 1;
+		case Species::Ivysaur: return 2;
+		case Species::Venusaur: return 3;
+		case Species::Charmander: return 4;
+		case Species::Charmeleon: return 5;
+		case Species::Charizard: return 6;
+		case Species::Squirtle: return 7;
+		case Species::Wartortle: return 8;
+		case Species::Blastoise: return 9;
+		case Species::Caterpie: return 10;
+		case Species::Metapod: return 11;
+		case Species::Butterfree: return 12;
+		case Species::Weedle: return 13;
+		case Species::Kakuna: return 14;
+		case Species::Beedrill: return 15;
+		case Species::Pidgey: return 16;
+		case Species::Pidgeotto: return 17;
+		case Species::Pidgeot: return 18;
+		case Species::Rattata: return 19;
+		case Species::Raticate: return 20;
+		case Species::Spearow: return 21;
+		case Species::Fearow: return 22;
+		case Species::Ekans: return 23;
+		case Species::Arbok: return 24;
+		case Species::Pikachu: return 25;
+		case Species::Raichu: return 26;
+		case Species::Sandshrew: return 27;
+		case Species::Sandslash: return 28;
+		case Species::Nidoran_F: return 29;
+		case Species::Nidorina: return 30;
+		case Species::Nidoqueen: return 31;
+		case Species::Nidoran_M: return 32;
+		case Species::Nidorino: return 33;
+		case Species::Nidoking: return 34;
+		case Species::Clefairy: return 35;
+		case Species::Clefable: return 36;
+		case Species::Vulpix: return 37;
+		case Species::Ninetales: return 38;
+		case Species::Jigglypuff: return 39;
+		case Species::Wigglytuff: return 40;
+		case Species::Zubat: return 41;
+		case Species::Golbat: return 42;
+		case Species::Oddish: return 43;
+		case Species::Gloom: return 44;
+		case Species::Vileplume: return 45;
+		case Species::Paras: return 46;
+		case Species::Parasect: return 47;
+		case Species::Venonat: return 48;
+		case Species::Venomoth: return 49;
+		case Species::Diglett: return 50;
+		case Species::Dugtrio: return 51;
+		case Species::Meowth: return 52;
+		case Species::Persian: return 53;
+		case Species::Psyduck: return 54;
+		case Species::Golduck: return 55;
+		case Species::Mankey: return 56;
+		case Species::Primeape: return 57;
+		case Species::Growlithe: return 58;
+		case Species::Arcanine: return 59;
+		case Species::Poliwag: return 60;
+		case Species::Poliwhirl: return 61;
+		case Species::Poliwrath: return 62;
+		case Species::Abra: return 63;
+		case Species::Kadabra: return 64;
+		case Species::Alakazam: return 65;
+		case Species::Machop: return 66;
+		case Species::Machoke: return 67;
+		case Species::Machamp: return 68;
+		case Species::Bellsprout: return 69;
+		case Species::Weepinbell: return 70;
+		case Species::Victreebel: return 71;
+		case Species::Tentacool: return 72;
+		case Species::Tentacruel: return 73;
+		case Species::Geodude: return 74;
+		case Species::Graveler: return 75;
+		case Species::Golem: return 76;
+		case Species::Ponyta: return 77;
+		case Species::Rapidash: return 78;
+		case Species::Slowpoke: return 79;
+		case Species::Slowbro: return 80;
+		case Species::Magnemite: return 81;
+		case Species::Magneton: return 82;
+		case Species::Farfetchd: return 83;
+		case Species::Doduo: return 84;
+		case Species::Dodrio: return 85;
+		case Species::Seel: return 86;
+		case Species::Dewgong: return 87;
+		case Species::Grimer: return 88;
+		case Species::Muk: return 89;
+		case Species::Shellder: return 90;
+		case Species::Cloyster: return 91;
+		case Species::Gastly: return 92;
+		case Species::Haunter: return 93;
+		case Species::Gengar: return 94;
+		case Species::Onix: return 95;
+		case Species::Drowzee: return 96;
+		case Species::Hypno: return 97;
+		case Species::Krabby: return 98;
+		case Species::Kingler: return 99;
+		case Species::Voltorb: return 100;
+		case Species::Electrode: return 101;
+		case Species::Exeggcute: return 102;
+		case Species::Exeggutor: return 103;
+		case Species::Cubone: return 104;
+		case Species::Marowak: return 105;
+		case Species::Hitmonlee: return 106;
+		case Species::Hitmonchan: return 107;
+		case Species::Lickitung: return 108;
+		case Species::Koffing: return 109;
+		case Species::Weezing: return 110;
+		case Species::Rhyhorn: return 111;
+		case Species::Rhydon: return 112;
+		case Species::Chansey: return 113;
+		case Species::Tangela: return 114;
+		case Species::Kangaskhan: return 115;
+		case Species::Horsea: return 116;
+		case Species::Seadra: return 117;
+		case Species::Goldeen: return 118;
+		case Species::Seaking: return 119;
+		case Species::Staryu: return 120;
+		case Species::Starmie: return 121;
+		case Species::Mr_Mime: return 122;
+		case Species::Scyther: return 123;
+		case Species::Jynx: return 124;
+		case Species::Electabuzz: return 125;
+		case Species::Magmar: return 126;
+		case Species::Pinsir: return 127;
+		case Species::Tauros: return 128;
+		case Species::Magikarp: return 129;
+		case Species::Gyarados: return 130;
+		case Species::Lapras: return 131;
+		case Species::Ditto: return 132;
+		case Species::Eevee: return 133;
+		case Species::Vaporeon: return 134;
+		case Species::Jolteon: return 135;
+		case Species::Flareon: return 136;
+		case Species::Porygon: return 137;
+		case Species::Omanyte: return 138;
+		case Species::Omastar: return 139;
+		case Species::Kabuto: return 140;
+		case Species::Kabutops: return 141;
+		case Species::Aerodactyl: return 142;
+		case Species::Snorlax: return 143;
+		case Species::Articuno: return 144;
+		case Species::Zapdos: return 145;
+		case Species::Moltres: return 146;
+		case Species::Dratini: return 147;
+		case Species::Dragonair: return 148;
+		case Species::Dragonite: return 149;
+		case Species::Mewtwo: return 150;
+		case Species::Mew: return 151;
+		case Species::Chikorita: return 152;
+		case Species::Bayleef: return 153;
+		case Species::Meganium: return 154;
+		case Species::Cyndaquil: return 155;
+		case Species::Quilava: return 156;
+		case Species::Typhlosion: return 157;
+		case Species::Totodile: return 158;
+		case Species::Croconaw: return 159;
+		case Species::Feraligatr: return 160;
+		case Species::Sentret: return 161;
+		case Species::Furret: return 162;
+		case Species::Hoothoot: return 163;
+		case Species::Noctowl: return 164;
+		case Species::Ledyba: return 165;
+		case Species::Ledian: return 166;
+		case Species::Spinarak: return 167;
+		case Species::Ariados: return 168;
+		case Species::Crobat: return 169;
+		case Species::Chinchou: return 170;
+		case Species::Lanturn: return 171;
+		case Species::Pichu: return 172;
+		case Species::Cleffa: return 173;
+		case Species::Igglybuff: return 174;
+		case Species::Togepi: return 175;
+		case Species::Togetic: return 176;
+		case Species::Natu: return 177;
+		case Species::Xatu: return 178;
+		case Species::Mareep: return 179;
+		case Species::Flaaffy: return 180;
+		case Species::Ampharos: return 181;
+		case Species::Bellossom: return 182;
+		case Species::Marill: return 183;
+		case Species::Azumarill: return 184;
+		case Species::Sudowoodo: return 185;
+		case Species::Politoed: return 186;
+		case Species::Hoppip: return 187;
+		case Species::Skiploom: return 188;
+		case Species::Jumpluff: return 189;
+		case Species::Aipom: return 190;
+		case Species::Sunkern: return 191;
+		case Species::Sunflora: return 192;
+		case Species::Yanma: return 193;
+		case Species::Wooper: return 194;
+		case Species::Quagsire: return 195;
+		case Species::Espeon: return 196;
+		case Species::Umbreon: return 197;
+		case Species::Murkrow: return 198;
+		case Species::Slowking: return 199;
+		case Species::Misdreavus: return 200;
+		case Species::Unown: return 201;
+		case Species::Wobbuffet: return 202;
+		case Species::Girafarig: return 203;
+		case Species::Pineco: return 204;
+		case Species::Forretress: return 205;
+		case Species::Dunsparce: return 206;
+		case Species::Gligar: return 207;
+		case Species::Steelix: return 208;
+		case Species::Snubbull: return 209;
+		case Species::Granbull: return 210;
+		case Species::Qwilfish: return 211;
+		case Species::Scizor: return 212;
+		case Species::Shuckle: return 213;
+		case Species::Heracross: return 214;
+		case Species::Sneasel: return 215;
+		case Species::Teddiursa: return 216;
+		case Species::Ursaring: return 217;
+		case Species::Slugma: return 218;
+		case Species::Magcargo: return 219;
+		case Species::Swinub: return 220;
+		case Species::Piloswine: return 221;
+		case Species::Corsola: return 222;
+		case Species::Remoraid: return 223;
+		case Species::Octillery: return 224;
+		case Species::Delibird: return 225;
+		case Species::Mantine: return 226;
+		case Species::Skarmory: return 227;
+		case Species::Houndour: return 228;
+		case Species::Houndoom: return 229;
+		case Species::Kingdra: return 230;
+		case Species::Phanpy: return 231;
+		case Species::Donphan: return 232;
+		case Species::Porygon2: return 233;
+		case Species::Stantler: return 234;
+		case Species::Smeargle: return 235;
+		case Species::Tyrogue: return 236;
+		case Species::Hitmontop: return 237;
+		case Species::Smoochum: return 238;
+		case Species::Elekid: return 239;
+		case Species::Magby: return 240;
+		case Species::Miltank: return 241;
+		case Species::Blissey: return 242;
+		case Species::Raikou: return 243;
+		case Species::Entei: return 244;
+		case Species::Suicune: return 245;
+		case Species::Larvitar: return 246;
+		case Species::Pupitar: return 247;
+		case Species::Tyranitar: return 248;
+		case Species::Lugia: return 249;
+		case Species::Ho_Oh: return 250;
+		case Species::Celebi: return 251;
+		case Species::Treecko: return 252;
+		case Species::Grovyle: return 253;
+		case Species::Sceptile: return 254;
+		case Species::Torchic: return 255;
+		case Species::Combusken: return 256;
+		case Species::Blaziken: return 257;
+		case Species::Mudkip: return 258;
+		case Species::Marshtomp: return 259;
+		case Species::Swampert: return 260;
+		case Species::Poochyena: return 261;
+		case Species::Mightyena: return 262;
+		case Species::Zigzagoon: return 263;
+		case Species::Linoone: return 264;
+		case Species::Wurmple: return 265;
+		case Species::Silcoon: return 266;
+		case Species::Beautifly: return 267;
+		case Species::Cascoon: return 268;
+		case Species::Dustox: return 269;
+		case Species::Lotad: return 270;
+		case Species::Lombre: return 271;
+		case Species::Ludicolo: return 272;
+		case Species::Seedot: return 273;
+		case Species::Nuzleaf: return 274;
+		case Species::Shiftry: return 275;
+		case Species::Taillow: return 276;
+		case Species::Swellow: return 277;
+		case Species::Wingull: return 278;
+		case Species::Pelipper: return 279;
+		case Species::Ralts: return 280;
+		case Species::Kirlia: return 281;
+		case Species::Gardevoir: return 282;
+		case Species::Surskit: return 283;
+		case Species::Masquerain: return 284;
+		case Species::Shroomish: return 285;
+		case Species::Breloom: return 286;
+		case Species::Slakoth: return 287;
+		case Species::Vigoroth: return 288;
+		case Species::Slaking: return 289;
+		case Species::Nincada: return 290;
+		case Species::Ninjask: return 291;
+		case Species::Shedinja: return 292;
+		case Species::Whismur: return 293;
+		case Species::Loudred: return 294;
+		case Species::Exploud: return 295;
+		case Species::Makuhita: return 296;
+		case Species::Hariyama: return 297;
+		case Species::Azurill: return 298;
+		case Species::Nosepass: return 299;
+		case Species::Skitty: return 300;
+		case Species::Delcatty: return 301;
+		case Species::Sableye: return 302;
+		case Species::Mawile: return 303;
+		case Species::Aron: return 304;
+		case Species::Lairon: return 305;
+		case Species::Aggron: return 306;
+		case Species::Meditite: return 307;
+		case Species::Medicham: return 308;
+		case Species::Electrike: return 309;
+		case Species::Manectric: return 310;
+		case Species::Plusle: return 311;
+		case Species::Minun: return 312;
+		case Species::Volbeat: return 313;
+		case Species::Illumise: return 314;
+		case Species::Roselia: return 315;
+		case Species::Gulpin: return 316;
+		case Species::Swalot: return 317;
+		case Species::Carvanha: return 318;
+		case Species::Sharpedo: return 319;
+		case Species::Wailmer: return 320;
+		case Species::Wailord: return 321;
+		case Species::Numel: return 322;
+		case Species::Camerupt: return 323;
+		case Species::Torkoal: return 324;
+		case Species::Spoink: return 325;
+		case Species::Grumpig: return 326;
+		case Species::Spinda: return 327;
+		case Species::Trapinch: return 328;
+		case Species::Vibrava: return 329;
+		case Species::Flygon: return 330;
+		case Species::Cacnea: return 331;
+		case Species::Cacturne: return 332;
+		case Species::Swablu: return 333;
+		case Species::Altaria: return 334;
+		case Species::Zangoose: return 335;
+		case Species::Seviper: return 336;
+		case Species::Lunatone: return 337;
+		case Species::Solrock: return 338;
+		case Species::Barboach: return 339;
+		case Species::Whiscash: return 340;
+		case Species::Corphish: return 341;
+		case Species::Crawdaunt: return 342;
+		case Species::Baltoy: return 343;
+		case Species::Claydol: return 344;
+		case Species::Lileep: return 345;
+		case Species::Cradily: return 346;
+		case Species::Anorith: return 347;
+		case Species::Armaldo: return 348;
+		case Species::Feebas: return 349;
+		case Species::Milotic: return 350;
+		case Species::Castform: return 351;
+		case Species::Kecleon: return 352;
+		case Species::Shuppet: return 353;
+		case Species::Banette: return 354;
+		case Species::Duskull: return 355;
+		case Species::Dusclops: return 356;
+		case Species::Tropius: return 357;
+		case Species::Chimecho: return 358;
+		case Species::Absol: return 359;
+		case Species::Wynaut: return 360;
+		case Species::Snorunt: return 361;
+		case Species::Glalie: return 362;
+		case Species::Spheal: return 363;
+		case Species::Sealeo: return 364;
+		case Species::Walrein: return 365;
+		case Species::Clamperl: return 366;
+		case Species::Huntail: return 367;
+		case Species::Gorebyss: return 368;
+		case Species::Relicanth: return 369;
+		case Species::Luvdisc: return 370;
+		case Species::Bagon: return 371;
+		case Species::Shelgon: return 372;
+		case Species::Salamence: return 373;
+		case Species::Beldum: return 374;
+		case Species::Metang: return 375;
+		case Species::Metagross: return 376;
+		case Species::Regirock: return 377;
+		case Species::Regice: return 378;
+		case Species::Registeel: return 379;
+		case Species::Latias: return 380;
+		case Species::Latios: return 381;
+		case Species::Kyogre: return 382;
+		case Species::Groudon: return 383;
+		case Species::Rayquaza: return 384;
+		case Species::Jirachi: return 385;
+		case Species::Deoxys_Mediocre: return 386;
+		case Species::Deoxys_Attack: return 386;
+		case Species::Deoxys_Defense: return 386;
+		case Species::Deoxys_Speed: return 386;
+		case Species::Turtwig: return 387;
+		case Species::Grotle: return 388;
+		case Species::Torterra: return 389;
+		case Species::Chimchar: return 390;
+		case Species::Monferno: return 391;
+		case Species::Infernape: return 392;
+		case Species::Piplup: return 393;
+		case Species::Prinplup: return 394;
+		case Species::Empoleon: return 395;
+		case Species::Starly: return 396;
+		case Species::Staravia: return 397;
+		case Species::Staraptor: return 398;
+		case Species::Bidoof: return 399;
+		case Species::Bibarel: return 400;
+		case Species::Kricketot: return 401;
+		case Species::Kricketune: return 402;
+		case Species::Shinx: return 403;
+		case Species::Luxio: return 404;
+		case Species::Luxray: return 405;
+		case Species::Budew: return 406;
+		case Species::Roserade: return 407;
+		case Species::Cranidos: return 408;
+		case Species::Rampardos: return 409;
+		case Species::Shieldon: return 410;
+		case Species::Bastiodon: return 411;
+		case Species::Burmy: return 412;
+		case Species::Wormadam_Plant: return 413;
+		case Species::Wormadam_Sandy: return 413;
+		case Species::Wormadam_Trash: return 413;
+		case Species::Mothim: return 414;
+		case Species::Combee: return 415;
+		case Species::Vespiquen: return 416;
+		case Species::Pachirisu: return 417;
+		case Species::Buizel: return 418;
+		case Species::Floatzel: return 419;
+		case Species::Cherubi: return 420;
+		case Species::Cherrim: return 421;
+		case Species::Shellos: return 422;
+		case Species::Gastrodon: return 423;
+		case Species::Ambipom: return 424;
+		case Species::Drifloon: return 425;
+		case Species::Drifblim: return 426;
+		case Species::Buneary: return 427;
+		case Species::Lopunny: return 428;
+		case Species::Mismagius: return 429;
+		case Species::Honchkrow: return 430;
+		case Species::Glameow: return 431;
+		case Species::Purugly: return 432;
+		case Species::Chingling: return 433;
+		case Species::Stunky: return 434;
+		case Species::Skuntank: return 435;
+		case Species::Bronzor: return 436;
+		case Species::Bronzong: return 437;
+		case Species::Bonsly: return 438;
+		case Species::Mime_Jr: return 439;
+		case Species::Happiny: return 440;
+		case Species::Chatot: return 441;
+		case Species::Spiritomb: return 442;
+		case Species::Gible: return 443;
+		case Species::Gabite: return 444;
+		case Species::Garchomp: return 445;
+		case Species::Munchlax: return 446;
+		case Species::Riolu: return 447;
+		case Species::Lucario: return 448;
+		case Species::Hippopotas: return 449;
+		case Species::Hippowdon: return 450;
+		case Species::Skorupi: return 451;
+		case Species::Drapion: return 452;
+		case Species::Croagunk: return 453;
+		case Species::Toxicroak: return 454;
+		case Species::Carnivine: return 455;
+		case Species::Finneon: return 456;
+		case Species::Lumineon: return 457;
+		case Species::Mantyke: return 458;
+		case Species::Snover: return 459;
+		case Species::Abomasnow: return 460;
+		case Species::Weavile: return 461;
+		case Species::Magnezone: return 462;
+		case Species::Lickilicky: return 463;
+		case Species::Rhyperior: return 464;
+		case Species::Tangrowth: return 465;
+		case Species::Electivire: return 466;
+		case Species::Magmortar: return 467;
+		case Species::Togekiss: return 468;
+		case Species::Yanmega: return 469;
+		case Species::Leafeon: return 470;
+		case Species::Glaceon: return 471;
+		case Species::Gliscor: return 472;
+		case Species::Mamoswine: return 473;
+		case Species::Porygon_Z: return 474;
+		case Species::Gallade: return 475;
+		case Species::Probopass: return 476;
+		case Species::Dusknoir: return 477;
+		case Species::Froslass: return 478;
+		case Species::Rotom: return 479;
+		case Species::Rotom_Heat: return 479;
+		case Species::Rotom_Wash: return 479;
+		case Species::Rotom_Frost: return 479;
+		case Species::Rotom_Fan: return 479;
+		case Species::Rotom_Mow: return 479;
+		case Species::Uxie: return 480;
+		case Species::Mesprit: return 481;
+		case Species::Azelf: return 482;
+		case Species::Dialga: return 483;
+		case Species::Palkia: return 484;
+		case Species::Heatran: return 485;
+		case Species::Regigigas: return 486;
+		case Species::Giratina_Altered: return 487;
+		case Species::Giratina_Origin: return 487;
+		case Species::Cresselia: return 488;
+		case Species::Phione: return 489;
+		case Species::Manaphy: return 490;
+		case Species::Darkrai: return 491;
+		case Species::Shaymin_Land: return 492;
+		case Species::Shaymin_Sky: return 492;
+		case Species::Arceus: return 493;
+		case Species::END: assert(false);
+		default: throw UnsupportedSpecies(species);
+	}
+}
+
+constexpr auto to_forme(Species const species) {
 	switch (species) {
 		case Species::Deoxys_Attack:
 		case Species::Giratina_Origin:
@@ -110,1206 +1145,267 @@ unsigned get_forme (Species const species) {
 
 }	// namespace
 
-Species id_to_species (unsigned const id, unsigned const forme) {
-	constexpr static Species species_converter [] = {
-		Species::END,	// "Missingno."
-		
-		// Generation 1
-		Species::Bulbasaur,
-		Species::Ivysaur,
-		Species::Venusaur,
-		Species::Charmander,
-		Species::Charmeleon,
-		Species::Charizard,
-		Species::Squirtle,
-		Species::Wartortle,
-		Species::Blastoise,
-		Species::Caterpie,
-		Species::Metapod,
-		Species::Butterfree,
-		Species::Weedle,
-		Species::Kakuna,
-		Species::Beedrill,
-		Species::Pidgey,
-		Species::Pidgeotto,
-		Species::Pidgeot,
-		Species::Rattata,
-		Species::Raticate,
-		Species::Spearow,
-		Species::Fearow,
-		Species::Ekans,
-		Species::Arbok,
-		Species::Pikachu,
-		Species::Raichu,
-		Species::Sandshrew,
-		Species::Sandslash,
-		Species::Nidoran_F,
-		Species::Nidorina,
-		Species::Nidoqueen,
-		Species::Nidoran_M,
-		Species::Nidorino,
-		Species::Nidoking,
-		Species::Clefairy,
-		Species::Clefable,
-		Species::Vulpix,
-		Species::Ninetales,
-		Species::Jigglypuff,
-		Species::Wigglytuff,
-		Species::Zubat,
-		Species::Golbat,
-		Species::Oddish,
-		Species::Gloom,
-		Species::Vileplume,
-		Species::Paras,
-		Species::Parasect,
-		Species::Venonat,
-		Species::Venomoth,
-		Species::Diglett,
-		Species::Dugtrio,
-		Species::Meowth,
-		Species::Persian,
-		Species::Psyduck,
-		Species::Golduck,
-		Species::Mankey,
-		Species::Primeape,
-		Species::Growlithe,
-		Species::Arcanine,
-		Species::Poliwag,
-		Species::Poliwhirl,
-		Species::Poliwrath,
-		Species::Abra,
-		Species::Kadabra,
-		Species::Alakazam,
-		Species::Machop,
-		Species::Machoke,
-		Species::Machamp,
-		Species::Bellsprout,
-		Species::Weepinbell,
-		Species::Victreebel,
-		Species::Tentacool,
-		Species::Tentacruel,
-		Species::Geodude,
-		Species::Graveler,
-		Species::Golem,
-		Species::Ponyta,
-		Species::Rapidash,
-		Species::Slowpoke,
-		Species::Slowbro,
-		Species::Magnemite,
-		Species::Magneton,
-		Species::Farfetchd,
-		Species::Doduo,
-		Species::Dodrio,
-		Species::Seel,
-		Species::Dewgong,
-		Species::Grimer,
-		Species::Muk,
-		Species::Shellder,
-		Species::Cloyster,
-		Species::Gastly,
-		Species::Haunter,
-		Species::Gengar,
-		Species::Onix,
-		Species::Drowzee,
-		Species::Hypno,
-		Species::Krabby,
-		Species::Kingler,
-		Species::Voltorb,
-		Species::Electrode,
-		Species::Exeggcute,
-		Species::Exeggutor,
-		Species::Cubone,
-		Species::Marowak,
-		Species::Hitmonlee,
-		Species::Hitmonchan,
-		Species::Lickitung,
-		Species::Koffing,
-		Species::Weezing,
-		Species::Rhyhorn,
-		Species::Rhydon,
-		Species::Chansey,
-		Species::Tangela,
-		Species::Kangaskhan,
-		Species::Horsea,
-		Species::Seadra,
-		Species::Goldeen,
-		Species::Seaking,
-		Species::Staryu,
-		Species::Starmie,
-		Species::Mr_Mime,
-		Species::Scyther,
-		Species::Jynx,
-		Species::Electabuzz,
-		Species::Magmar,
-		Species::Pinsir,
-		Species::Tauros,
-		Species::Magikarp,
-		Species::Gyarados,
-		Species::Lapras,
-		Species::Ditto,
-		Species::Eevee,
-		Species::Vaporeon,
-		Species::Jolteon,
-		Species::Flareon,
-		Species::Porygon,
-		Species::Omanyte,
-		Species::Omastar,
-		Species::Kabuto,
-		Species::Kabutops,
-		Species::Aerodactyl,
-		Species::Snorlax,
-		Species::Articuno,
-		Species::Zapdos,
-		Species::Moltres,
-		Species::Dratini,
-		Species::Dragonair,
-		Species::Dragonite,
-		Species::Mewtwo,
-		Species::Mew,
-		
-		// Generation 2
-		Species::Chikorita,
-		Species::Bayleef,
-		Species::Meganium,
-		Species::Cyndaquil,
-		Species::Quilava,
-		Species::Typhlosion,
-		Species::Totodile,
-		Species::Croconaw,
-		Species::Feraligatr,
-		Species::Sentret,
-		Species::Furret,
-		Species::Hoothoot,
-		Species::Noctowl,
-		Species::Ledyba,
-		Species::Ledian,
-		Species::Spinarak,
-		Species::Ariados,
-		Species::Crobat,
-		Species::Chinchou,
-		Species::Lanturn,
-		Species::Pichu,
-		Species::Cleffa,
-		Species::Igglybuff,
-		Species::Togepi,
-		Species::Togetic,
-		Species::Natu,
-		Species::Xatu,
-		Species::Mareep,
-		Species::Flaaffy,
-		Species::Ampharos,
-		Species::Bellossom,
-		Species::Marill,
-		Species::Azumarill,
-		Species::Sudowoodo,
-		Species::Politoed,
-		Species::Hoppip,
-		Species::Skiploom,
-		Species::Jumpluff,
-		Species::Aipom,
-		Species::Sunkern,
-		Species::Sunflora,
-		Species::Yanma,
-		Species::Wooper,
-		Species::Quagsire,
-		Species::Espeon,
-		Species::Umbreon,
-		Species::Murkrow,
-		Species::Slowking,
-		Species::Misdreavus,
-		Species::Unown,
-		Species::Wobbuffet,
-		Species::Girafarig,
-		Species::Pineco,
-		Species::Forretress,
-		Species::Dunsparce,
-		Species::Gligar,
-		Species::Steelix,
-		Species::Snubbull,
-		Species::Granbull,
-		Species::Qwilfish,
-		Species::Scizor,
-		Species::Shuckle,
-		Species::Heracross,
-		Species::Sneasel,
-		Species::Teddiursa,
-		Species::Ursaring,
-		Species::Slugma,
-		Species::Magcargo,
-		Species::Swinub,
-		Species::Piloswine,
-		Species::Corsola,
-		Species::Remoraid,
-		Species::Octillery,
-		Species::Delibird,
-		Species::Mantine,
-		Species::Skarmory,
-		Species::Houndour,
-		Species::Houndoom,
-		Species::Kingdra,
-		Species::Phanpy,
-		Species::Donphan,
-		Species::Porygon2,
-		Species::Stantler,
-		Species::Smeargle,
-		Species::Tyrogue,
-		Species::Hitmontop,
-		Species::Smoochum,
-		Species::Elekid,
-		Species::Magby,
-		Species::Miltank,
-		Species::Blissey,
-		Species::Raikou,
-		Species::Entei,
-		Species::Suicune,
-		Species::Larvitar,
-		Species::Pupitar,
-		Species::Tyranitar,
-		Species::Lugia,
-		Species::Ho_Oh,
-		Species::Celebi,
-		
-		// Generation 3
-		Species::Treecko,
-		Species::Grovyle,
-		Species::Sceptile,
-		Species::Torchic,
-		Species::Combusken,
-		Species::Blaziken,
-		Species::Mudkip,
-		Species::Marshtomp,
-		Species::Swampert,
-		Species::Poochyena,
-		Species::Mightyena,
-		Species::Zigzagoon,
-		Species::Linoone,
-		Species::Wurmple,
-		Species::Silcoon,
-		Species::Beautifly,
-		Species::Cascoon,
-		Species::Dustox,
-		Species::Lotad,
-		Species::Lombre,
-		Species::Ludicolo,
-		Species::Seedot,
-		Species::Nuzleaf,
-		Species::Shiftry,
-		Species::Taillow,
-		Species::Swellow,
-		Species::Wingull,
-		Species::Pelipper,
-		Species::Ralts,
-		Species::Kirlia,
-		Species::Gardevoir,
-		Species::Surskit,
-		Species::Masquerain,
-		Species::Shroomish,
-		Species::Breloom,
-		Species::Slakoth,
-		Species::Vigoroth,
-		Species::Slaking,
-		Species::Nincada,
-		Species::Ninjask,
-		Species::Shedinja,
-		Species::Whismur,
-		Species::Loudred,
-		Species::Exploud,
-		Species::Makuhita,
-		Species::Hariyama,
-		Species::Azurill,
-		Species::Nosepass,
-		Species::Skitty,
-		Species::Delcatty,
-		Species::Sableye,
-		Species::Mawile,
-		Species::Aron,
-		Species::Lairon,
-		Species::Aggron,
-		Species::Meditite,
-		Species::Medicham,
-		Species::Electrike,
-		Species::Manectric,
-		Species::Plusle,
-		Species::Minun,
-		Species::Volbeat,
-		Species::Illumise,
-		Species::Roselia,
-		Species::Gulpin,
-		Species::Swalot,
-		Species::Carvanha,
-		Species::Sharpedo,
-		Species::Wailmer,
-		Species::Wailord,
-		Species::Numel,
-		Species::Camerupt,
-		Species::Torkoal,
-		Species::Spoink,
-		Species::Grumpig,
-		Species::Spinda,
-		Species::Trapinch,
-		Species::Vibrava,
-		Species::Flygon,
-		Species::Cacnea,
-		Species::Cacturne,
-		Species::Swablu,
-		Species::Altaria,
-		Species::Zangoose,
-		Species::Seviper,
-		Species::Lunatone,
-		Species::Solrock,
-		Species::Barboach,
-		Species::Whiscash,
-		Species::Corphish,
-		Species::Crawdaunt,
-		Species::Baltoy,
-		Species::Claydol,
-		Species::Lileep,
-		Species::Cradily,
-		Species::Anorith,
-		Species::Armaldo,
-		Species::Feebas,
-		Species::Milotic,
-		Species::Castform,
-		Species::Kecleon,
-		Species::Shuppet,
-		Species::Banette,
-		Species::Duskull,
-		Species::Dusclops,
-		Species::Tropius,
-		Species::Chimecho,
-		Species::Absol,
-		Species::Wynaut,
-		Species::Snorunt,
-		Species::Glalie,
-		Species::Spheal,
-		Species::Sealeo,
-		Species::Walrein,
-		Species::Clamperl,
-		Species::Huntail,
-		Species::Gorebyss,
-		Species::Relicanth,
-		Species::Luvdisc,
-		Species::Bagon,
-		Species::Shelgon,
-		Species::Salamence,
-		Species::Beldum,
-		Species::Metang,
-		Species::Metagross,
-		Species::Regirock,
-		Species::Regice,
-		Species::Registeel,
-		Species::Latias,
-		Species::Latios,
-		Species::Kyogre,
-		Species::Groudon,
-		Species::Rayquaza,
-		Species::Jirachi,
-		Species::Deoxys_Mediocre,
-		
-		// Generation 4
-		Species::Turtwig,
-		Species::Grotle,
-		Species::Torterra,
-		Species::Chimchar,
-		Species::Monferno,
-		Species::Infernape,
-		Species::Piplup,
-		Species::Prinplup,
-		Species::Empoleon,
-		Species::Starly,
-		Species::Staravia,
-		Species::Staraptor,
-		Species::Bidoof,
-		Species::Bibarel,
-		Species::Kricketot,
-		Species::Kricketune,
-		Species::Shinx,
-		Species::Luxio,
-		Species::Luxray,
-		Species::Budew,
-		Species::Roserade,
-		Species::Cranidos,
-		Species::Rampardos,
-		Species::Shieldon,
-		Species::Bastiodon,
-		Species::Burmy,
-		Species::Wormadam_Plant,
-		Species::Mothim,
-		Species::Combee,
-		Species::Vespiquen,
-		Species::Pachirisu,
-		Species::Buizel,
-		Species::Floatzel,
-		Species::Cherubi,
-		Species::Cherrim,
-		Species::Shellos,
-		Species::Gastrodon,
-		Species::Ambipom,
-		Species::Drifloon,
-		Species::Drifblim,
-		Species::Buneary,
-		Species::Lopunny,
-		Species::Mismagius,
-		Species::Honchkrow,
-		Species::Glameow,
-		Species::Purugly,
-		Species::Chingling,
-		Species::Stunky,
-		Species::Skuntank,
-		Species::Bronzor,
-		Species::Bronzong,
-		Species::Bonsly,
-		Species::Mime_Jr,
-		Species::Happiny,
-		Species::Chatot,
-		Species::Spiritomb,
-		Species::Gible,
-		Species::Gabite,
-		Species::Garchomp,
-		Species::Munchlax,
-		Species::Riolu,
-		Species::Lucario,
-		Species::Hippopotas,
-		Species::Hippowdon,
-		Species::Skorupi,
-		Species::Drapion,
-		Species::Croagunk,
-		Species::Toxicroak,
-		Species::Carnivine,
-		Species::Finneon,
-		Species::Lumineon,
-		Species::Mantyke,
-		Species::Snover,
-		Species::Abomasnow,
-		Species::Weavile,
-		Species::Magnezone,
-		Species::Lickilicky,
-		Species::Rhyperior,
-		Species::Tangrowth,
-		Species::Electivire,
-		Species::Magmortar,
-		Species::Togekiss,
-		Species::Yanmega,
-		Species::Leafeon,
-		Species::Glaceon,
-		Species::Gliscor,
-		Species::Mamoswine,
-		Species::Porygon_Z,
-		Species::Gallade,
-		Species::Probopass,
-		Species::Dusknoir,
-		Species::Froslass,
-		Species::Rotom,
-		Species::Uxie,
-		Species::Mesprit,
-		Species::Azelf,
-		Species::Dialga,
-		Species::Palkia,
-		Species::Heatran,
-		Species::Regigigas,
-		Species::Giratina_Altered,
-		Species::Cresselia,
-		Species::Phione,
-		Species::Manaphy,
-		Species::Darkrai,
-		Species::Shaymin_Land,
-		Species::Arceus
-	};
-	Species const base_species = (id < sizeof(species_converter)) ? species_converter [id] : Species::END;
-	unsigned const forme_offset = get_forme_offset (id, forme);
-	return static_cast<Species>(static_cast<unsigned>(base_species) + forme_offset);
+std::pair<uint16_t, uint8_t> species_to_id(Species const species) {
+	return std::make_pair(to_id_only(species), to_forme(species));
 }
 
-std::pair <uint16_t, uint8_t> species_to_id (Species species) {
-	constexpr static unsigned species_converter [] = {
-		1,		//	Bulbasaur
-		2,		//	Ivysaur
-		3,		//	Venusaur
-		4,		//	Charmander
-		5,		//	Charmeleon
-		6,		//	Charizard
-		7,		//	Squirtle
-		8,		//	Wartortle
-		9,		//	Blastoise
-		10,		//	Caterpie
-		11,		//	Metapod
-		12,		//	Butterfree
-		13,		//	Weedle
-		14,		//	Kakuna
-		15,		//	Beedrill
-		16,		//	Pidgey
-		17,		//	Pidgeotto
-		18,		//	Pidgeot
-		19,		//	Rattata
-		20,		//	Raticate
-		21,		//	Spearow
-		22,		//	Fearow
-		23,		//	Ekans
-		24,		//	Arbok
-		25,		//	Pikachu
-		26,		//	Raichu
-		27,		//	Sandshrew
-		28,		//	Sandslash
-		29,		//	Nidoran-F
-		30,		//	Nidorina
-		31,		//	Nidoqueen
-		32,		//	Nidoran-M
-		33,		//	Nidorino
-		34,		//	Nidoking
-		35,		//	Clefairy
-		36,		//	Clefable
-		37,		//	Vulpix
-		38,		//	Ninetales
-		39,		//	Jigglypuff
-		40,		//	Wigglytuff
-		41,		//	Zubat
-		42,		//	Golbat
-		43,		//	Oddish
-		44,		//	Gloom
-		45,		//	Vileplume
-		46,		//	Paras
-		47,		//	Parasect
-		48,		//	Venonat
-		49,		//	Venomoth
-		50,		//	Diglett
-		51,		//	Dugtrio
-		52,		//	Meowth
-		53,		//	Persian
-		54,		//	Psyduck
-		55,		//	Golduck
-		56,		//	Mankey
-		57,		//	Primeape
-		58,		//	Growlithe
-		59,		//	Arcanine
-		60,		//	Poliwag
-		61,		//	Poliwhirl
-		62,		//	Poliwrath
-		63,		//	Abra
-		64,		//	Kadabra
-		65,		//	Alakazam
-		66,		//	Machop
-		67,		//	Machoke
-		68,		//	Machamp
-		69,		//	Bellsprout
-		70,		//	Weepinbell
-		71,		//	Victreebel
-		72,		//	Tentacool
-		73,		//	Tentacruel
-		74,		//	Geodude
-		75,		//	Graveler
-		76,		//	Golem
-		77,		//	Ponyta
-		78,		//	Rapidash
-		79,		//	Slowpoke
-		80,		//	Slowbro
-		81,		//	Magnemite
-		82,		//	Magneton
-		83,		//	Farfetch'd
-		84,		//	Doduo
-		85,		//	Dodrio
-		86,		//	Seel
-		87,		//	Dewgong
-		88,		//	Grimer
-		89,		//	Muk
-		90,		//	Shellder
-		91,		//	Cloyster
-		92,		//	Gastly
-		93,		//	Haunter
-		94,		//	Gengar
-		95,		//	Onix
-		96,		//	Drowzee
-		97,		//	Hypno
-		98,		//	Krabby
-		99,		//	Kingler
-		100,		//	Voltorb
-		101,		//	Electrode
-		102,		//	Exeggcute
-		103,		//	Exeggutor
-		104,		//	Cubone
-		105,		//	Marowak
-		106,		//	Hitmonlee
-		107,		//	Hitmonchan
-		108,		//	Lickitung
-		109,		//	Koffing
-		110,		//	Weezing
-		111,		//	Rhyhorn
-		112,		//	Rhydon
-		113,		//	Chansey
-		114,		//	Tangela
-		115,		//	Kangaskhan
-		116,		//	Horsea
-		117,		//	Seadra
-		118,		//	Goldeen
-		119,		//	Seaking
-		120,		//	Staryu
-		121,		//	Starmie
-		122,		//	Mr. Mime
-		123,		//	Scyther
-		124,		//	Jynx
-		125,		//	Electabuzz
-		126,		//	Magmar
-		127,		//	Pinsir
-		128,		//	Tauros
-		129,		//	Magikarp
-		130,		//	Gyarados
-		131,		//	Lapras
-		132,		//	Ditto
-		133,		//	Eevee
-		134,		//	Vaporeon
-		135,		//	Jolteon
-		136,		//	Flareon
-		137,		//	Porygon
-		138,		//	Omanyte
-		139,		//	Omastar
-		140,		//	Kabuto
-		141,		//	Kabutops
-		142,		//	Aerodactyl
-		143,		//	Snorlax
-		144,		//	Articuno
-		145,		//	Zapdos
-		146,		//	Moltres
-		147,		//	Dratini
-		148,		//	Dragonair
-		149,		//	Dragonite
-		150,		//	Mewtwo
-		151,		//	Mew
-		152,		//	Chikorita
-		153,		//	Bayleef
-		154,		//	Meganium
-		155,		//	Cyndaquil
-		156,		//	Quilava
-		157,		//	Typhlosion
-		158,		//	Totodile
-		159,		//	Croconaw
-		160,		//	Feraligatr
-		161,		//	Sentret
-		162,		//	Furret
-		163,		//	Hoothoot
-		164,		//	Noctowl
-		165,		//	Ledyba
-		166,		//	Ledian
-		167,		//	Spinarak
-		168,		//	Ariados
-		169,		//	Crobat
-		170,		//	Chinchou
-		171,		//	Lanturn
-		172,		//	Pichu
-		173,		//	Cleffa
-		174,		//	Igglybuff
-		175,		//	Togepi
-		176,		//	Togetic
-		177,		//	Natu
-		178,		//	Xatu
-		179,		//	Mareep
-		180,		//	Flaaffy
-		181,		//	Ampharos
-		182,		//	Bellossom
-		183,		//	Marill
-		184,		//	Azumarill
-		185,		//	Sudowoodo
-		186,		//	Politoed
-		187,		//	Hoppip
-		188,		//	Skiploom
-		189,		//	Jumpluff
-		190,		//	Aipom
-		191,		//	Sunkern
-		192,		//	Sunflora
-		193,		//	Yanma
-		194,		//	Wooper
-		195,		//	Quagsire
-		196,		//	Espeon
-		197,		//	Umbreon
-		198,		//	Murkrow
-		199,		//	Slowking
-		200,		//	Misdreavus
-		201,		//	Unown
-		202,		//	Wobbuffet
-		203,		//	Girafarig
-		204,		//	Pineco
-		205,		//	Forretress
-		206,		//	Dunsparce
-		207,		//	Gligar
-		208,		//	Steelix
-		209,		//	Snubbull
-		210,		//	Granbull
-		211,		//	Qwilfish
-		212,		//	Scizor
-		213,		//	Shuckle
-		214,		//	Heracross
-		215,		//	Sneasel
-		216,		//	Teddiursa
-		217,		//	Ursaring
-		218,		//	Slugma
-		219,		//	Magcargo
-		220,		//	Swinub
-		221,		//	Piloswine
-		222,		//	Corsola
-		223,		//	Remoraid
-		224,		//	Octillery
-		225,		//	Delibird
-		226,		//	Mantine
-		227,		//	Skarmory
-		228,		//	Houndour
-		229,		//	Houndoom
-		230,		//	Kingdra
-		231,		//	Phanpy
-		232,		//	Donphan
-		233,		//	Porygon2
-		234,		//	Stantler
-		235,		//	Smeargle
-		236,		//	Tyrogue
-		237,		//	Hitmontop
-		238,		//	Smoochum
-		239,		//	Elekid
-		240,		//	Magby
-		241,		//	Miltank
-		242,		//	Blissey
-		243,		//	Raikou
-		244,		//	Entei
-		245,		//	Suicune
-		246,		//	Larvitar
-		247,		//	Pupitar
-		248,		//	Tyranitar
-		249,		//	Lugia
-		250,		//	Ho-Oh
-		251,		//	Celebi
-		252,		//	Treecko
-		253,		//	Grovyle
-		254,		//	Sceptile
-		255,		//	Torchic
-		256,		//	Combusken
-		257,		//	Blaziken
-		258,		//	Mudkip
-		259,		//	Marshtomp
-		260,		//	Swampert
-		261,		//	Poochyena
-		262,		//	Mightyena
-		263,		//	Zigzagoon
-		264,		//	Linoone
-		265,		//	Wurmple
-		266,		//	Silcoon
-		267,		//	Beautifly
-		268,		//	Cascoon
-		269,		//	Dustox
-		270,		//	Lotad
-		271,		//	Lombre
-		272,		//	Ludicolo
-		273,		//	Seedot
-		274,		//	Nuzleaf
-		275,		//	Shiftry
-		276,		//	Taillow
-		277,		//	Swellow
-		278,		//	Wingull
-		279,		//	Pelipper
-		280,		//	Ralts
-		281,		//	Kirlia
-		282,		//	Gardevoir
-		283,		//	Surskit
-		284,		//	Masquerain
-		285,		//	Shroomish
-		286,		//	Breloom
-		287,		//	Slakoth
-		288,		//	Vigoroth
-		289,		//	Slaking
-		290,		//	Nincada
-		291,		//	Ninjask
-		292,		//	Shedinja
-		293,		//	Whismur
-		294,		//	Loudred
-		295,		//	Exploud
-		296,		//	Makuhita
-		297,		//	Hariyama
-		298,		//	Azurill
-		299,		//	Nosepass
-		300,		//	Skitty
-		301,		//	Delcatty
-		302,		//	Sableye
-		303,		//	Mawile
-		304,		//	Aron
-		305,		//	Lairon
-		306,		//	Aggron
-		307,		//	Meditite
-		308,		//	Medicham
-		309,		//	Electrike
-		310,		//	Manectric
-		311,		//	Plusle
-		312,		//	Minun
-		313,		//	Volbeat
-		314,		//	Illumise
-		315,		//	Roselia
-		316,		//	Gulpin
-		317,		//	Swalot
-		318,		//	Carvanha
-		319,		//	Sharpedo
-		320,		//	Wailmer
-		321,		//	Wailord
-		322,		//	Numel
-		323,		//	Camerupt
-		324,		//	Torkoal
-		325,		//	Spoink
-		326,		//	Grumpig
-		327,		//	Spinda
-		328,		//	Trapinch
-		329,		//	Vibrava
-		330,		//	Flygon
-		331,		//	Cacnea
-		332,		//	Cacturne
-		333,		//	Swablu
-		334,		//	Altaria
-		335,		//	Zangoose
-		336,		//	Seviper
-		337,		//	Lunatone
-		338,		//	Solrock
-		339,		//	Barboach
-		340,		//	Whiscash
-		341,		//	Corphish
-		342,		//	Crawdaunt
-		343,		//	Baltoy
-		344,		//	Claydol
-		345,		//	Lileep
-		346,		//	Cradily
-		347,		//	Anorith
-		348,		//	Armaldo
-		349,		//	Feebas
-		350,		//	Milotic
-		351,		//	Castform
-		352,		//	Kecleon
-		353,		//	Shuppet
-		354,		//	Banette
-		355,		//	Duskull
-		356,		//	Dusclops
-		357,		//	Tropius
-		358,		//	Chimecho
-		359,		//	Absol
-		360,		//	Wynaut
-		361,		//	Snorunt
-		362,		//	Glalie
-		363,		//	Spheal
-		364,		//	Sealeo
-		365,		//	Walrein
-		366,		//	Clamperl
-		367,		//	Huntail
-		368,		//	Gorebyss
-		369,		//	Relicanth
-		370,		//	Luvdisc
-		371,		//	Bagon
-		372,		//	Shelgon
-		373,		//	Salamence
-		374,		//	Beldum
-		375,		//	Metang
-		376,		//	Metagross
-		377,		//	Regirock
-		378,		//	Regice
-		379,		//	Registeel
-		380,		//	Latias
-		381,		//	Latios
-		382,		//	Kyogre
-		383,		//	Groudon
-		384,		//	Rayquaza
-		385,		//	Jirachi
-		386,		//	Deoxys-Mediocre
-		386,		//	Deoxys-Attack
-		386,		//	Deoxys-Defense
-		386,		//	Deoxys-Speed
-		387,		//	Turtwig
-		388,		//	Grotle
-		389,		//	Torterra
-		390,		//	Chimchar
-		391,		//	Monferno
-		392,		//	Infernape
-		393,		//	Piplup
-		394,		//	Prinplup
-		395,		//	Empoleon
-		396,		//	Starly
-		397,		//	Staravia
-		398,		//	Staraptor
-		399,		//	Bidoof
-		400,		//	Bibarel
-		401,		//	Kricketot
-		402,		//	Kricketune
-		403,		//	Shinx
-		404,		//	Luxio
-		405,		//	Luxray
-		406,		//	Budew
-		407,		//	Roserade
-		408,		//	Cranidos
-		409,		//	Rampardos
-		410,		//	Shieldon
-		411,		//	Bastiodon
-		412,		//	Burmy
-		413,		//	Wormadam-Plant
-		413,		//	Wormadam-Sandy
-		413,		//	Wormadam-Trash
-		414,		//	Mothim
-		415,		//	Combee
-		416,		//	Vespiquen
-		417,		//	Pachirisu
-		418,		//	Buizel
-		419,		//	Floatzel
-		420,		//	Cherubi
-		421,		//	Cherrim
-		422,		//	Shellos
-		423,		//	Gastrodon
-		424,		//	Ambipom
-		425,		//	Drifloon
-		426,		//	Drifblim
-		427,		//	Buneary
-		428,		//	Lopunny
-		429,		//	Mismagius
-		430,		//	Honchkrow
-		431,		//	Glameow
-		432,		//	Purugly
-		433,		//	Chingling
-		434,		//	Stunky
-		435,		//	Skuntank
-		436,		//	Bronzor
-		437,		//	Bronzong
-		438,		//	Bonsly
-		439,		//	Mime Jr.
-		440,		//	Happiny
-		441,		//	Chatot
-		442,		//	Spiritomb
-		443,		//	Gible
-		444,		//	Gabite
-		445,		//	Garchomp
-		446,		//	Munchlax
-		447,		//	Riolu
-		448,		//	Lucario
-		449,		//	Hippopotas
-		450,		//	Hippowdon
-		451,		//	Skorupi
-		452,		//	Drapion
-		453,		//	Croagunk
-		454,		//	Toxicroak
-		455,		//	Carnivine
-		456,		//	Finneon
-		457,		//	Lumineon
-		458,		//	Mantyke
-		459,		//	Snover
-		460,		//	Abomasnow
-		461,		//	Weavile
-		462,		//	Magnezone
-		463,		//	Lickilicky
-		464,		//	Rhyperior
-		465,		//	Tangrowth
-		466,		//	Electivire
-		467,		//	Magmortar
-		468,		//	Togekiss
-		469,		//	Yanmega
-		470,		//	Leafeon
-		471,		//	Glaceon
-		472,		//	Gliscor
-		473,		//	Mamoswine
-		474,		//	Porygon-Z
-		475,		//	Gallade
-		476,		//	Probopass
-		477,		//	Dusknoir
-		478,		//	Froslass
-		479,		//	Rotom
-		479,		//	Rotom-Heat
-		479,		//	Rotom-Wash
-		479,		//	Rotom-Frost
-		479,		//	Rotom-Fan
-		479,		//	Rotom-Mow
-		480,		//	Uxie
-		481,		//	Mesprit
-		482,		//	Azelf
-		483,		//	Dialga
-		484,		//	Palkia
-		485,		//	Heatran
-		486,		//	Regigigas
-		487,		//	Giratina-Altered
-		487,		//	Giratina-Origin
-		488,		//	Cresselia
-		489,		//	Phione
-		490,		//	Manaphy
-		491,		//	Darkrai
-		492,		//	Shaymin-Land
-		492,		//	Shaymin-Sky
-		493,		//	Arceus
-		0			//	End
-	};
-	unsigned const species_id = species_converter[static_cast<unsigned>(species)];
-	unsigned const forme_id = get_forme (species);
-	return std::pair <unsigned, unsigned> (species_id, forme_id);
+Ability::Abilities id_to_ability(unsigned const id) {
+	switch (id) {
+		case 0: return Ability::END;
+		case 1: return Ability::Stench;
+		case 2: return Ability::Drizzle;
+		case 3: return Ability::Speed_Boost;
+		case 4: return Ability::Battle_Armor;
+		case 5: return Ability::Sturdy;
+		case 6: return Ability::Damp;
+		case 7: return Ability::Limber;
+		case 8: return Ability::Sand_Veil;
+		case 9: return Ability::Static;
+		case 10: return Ability::Volt_Absorb;
+		case 11: return Ability::Water_Absorb;
+		case 12: return Ability::Oblivious;
+		case 13: return Ability::Cloud_Nine;
+		case 14: return Ability::Compoundeyes;
+		case 15: return Ability::Insomnia;
+		case 16: return Ability::Color_Change;
+		case 17: return Ability::Immunity;
+		case 18: return Ability::Flash_Fire;
+		case 19: return Ability::Shield_Dust;
+		case 20: return Ability::Own_Tempo;
+		case 21: return Ability::Suction_Cups;
+		case 22: return Ability::Intimidate;
+		case 23: return Ability::Shadow_Tag;
+		case 24: return Ability::Rough_Skin;
+		case 25: return Ability::Wonder_Guard;
+		case 26: return Ability::Levitate;
+		case 27: return Ability::Effect_Spore;
+		case 28: return Ability::Synchronize;
+		case 29: return Ability::Clear_Body;
+		case 30: return Ability::Natural_Cure;
+		case 31: return Ability::Lightningrod;
+		case 32: return Ability::Serene_Grace;
+		case 33: return Ability::Swift_Swim;
+		case 34: return Ability::Chlorophyll;
+		case 35: return Ability::Illuminate;
+		case 36: return Ability::Trace;
+		case 37: return Ability::Huge_Power;
+		case 38: return Ability::Poison_Point;
+		case 39: return Ability::Inner_Focus;
+		case 40: return Ability::Magma_Armor;
+		case 41: return Ability::Water_Veil;
+		case 42: return Ability::Magnet_Pull;
+		case 43: return Ability::Soundproof;
+		case 44: return Ability::Rain_Dish;
+		case 45: return Ability::Sand_Stream;
+		case 46: return Ability::Pressure;
+		case 47: return Ability::Thick_Fat;
+		case 48: return Ability::Early_Bird;
+		case 49: return Ability::Flame_Body;
+		case 50: return Ability::Run_Away;
+		case 51: return Ability::Keen_Eye;
+		case 52: return Ability::Hyper_Cutter;
+		case 53: return Ability::Pickup;
+		case 54: return Ability::Truant;
+		case 55: return Ability::Hustle;
+		case 56: return Ability::Cute_Charm;
+		case 57: return Ability::Plus;
+		case 58: return Ability::Minus;
+		case 59: return Ability::Forecast;
+		case 60: return Ability::Sticky_Hold;
+		case 61: return Ability::Shed_Skin;
+		case 62: return Ability::Guts;
+		case 63: return Ability::Marvel_Scale;
+		case 64: return Ability::Liquid_Ooze;
+		case 65: return Ability::Overgrow;
+		case 66: return Ability::Blaze;
+		case 67: return Ability::Torrent;
+		case 68: return Ability::Swarm;
+		case 69: return Ability::Rock_Head;
+		case 70: return Ability::Drought;
+		case 71: return Ability::Arena_Trap;
+		case 72: return Ability::Vital_Spirit;
+		case 73: return Ability::White_Smoke;
+		case 74: return Ability::Pure_Power;
+		case 75: return Ability::Shell_Armor;
+		case 76: return Ability::Air_Lock;
+		case 77: return Ability::Tangled_Feet;
+		case 78: return Ability::Motor_Drive;
+		case 79: return Ability::Rivalry;
+		case 80: return Ability::Steadfast;
+		case 81: return Ability::Snow_Cloak;
+		case 82: return Ability::Gluttony;
+		case 83: return Ability::Anger_Point;
+		case 84: return Ability::Unburden;
+		case 85: return Ability::Heatproof;
+		case 86: return Ability::Simple;
+		case 87: return Ability::Dry_Skin;
+		case 88: return Ability::Download;
+		case 89: return Ability::Iron_Fist;
+		case 90: return Ability::Poison_Heal;
+		case 91: return Ability::Adaptability;
+		case 92: return Ability::Skill_Link;
+		case 93: return Ability::Hydration;
+		case 94: return Ability::Solar_Power;
+		case 95: return Ability::Quick_Feet;
+		case 96: return Ability::Normalize;
+		case 97: return Ability::Sniper;
+		case 98: return Ability::Magic_Guard;
+		case 99: return Ability::No_Guard;
+		case 100: return Ability::Stall;
+		case 101: return Ability::Technician;
+		case 102: return Ability::Leaf_Guard;
+		case 103: return Ability::Klutz;
+		case 104: return Ability::Mold_Breaker;
+		case 105: return Ability::Super_Luck;
+		case 106: return Ability::Aftermath;
+		case 107: return Ability::Anticipation;
+		case 108: return Ability::Forewarn;
+		case 109: return Ability::Unaware;
+		case 110: return Ability::Tinted_Lens;
+		case 111: return Ability::Filter;
+		case 112: return Ability::Slow_Start;
+		case 113: return Ability::Scrappy;
+		case 114: return Ability::Storm_Drain;
+		case 115: return Ability::Ice_Body;
+		case 116: return Ability::Solid_Rock;
+		case 117: return Ability::Snow_Warning;
+		case 118: return Ability::Honey_Gather;
+		case 119: return Ability::Frisk;
+		case 120: return Ability::Reckless;
+		case 121: return Ability::Multitype;
+		case 122: return Ability::Flower_Gift;
+		case 123: return Ability::Bad_Dreams;
+		default: throw std::runtime_error("Invalid ability ID in PO conversion");
+	}
 }
 
-Ability::Abilities id_to_ability (unsigned id) {
-	constexpr static Ability::Abilities ability_converter [] = {
-		Ability::END, Ability::Stench, Ability::Drizzle,
-		Ability::Speed_Boost, Ability::Battle_Armor, Ability::Sturdy,
-		Ability::Damp, Ability::Limber, Ability::Sand_Veil,
-		Ability::Static, Ability::Volt_Absorb, Ability::Water_Absorb,
-		Ability::Oblivious, Ability::Cloud_Nine, Ability::Compoundeyes,
-		Ability::Insomnia, Ability::Color_Change, Ability::Immunity,
-		Ability::Flash_Fire, Ability::Shield_Dust, Ability::Own_Tempo,
-		Ability::Suction_Cups, Ability::Intimidate, Ability::Shadow_Tag,
-		Ability::Rough_Skin, Ability::Wonder_Guard, Ability::Levitate,
-		Ability::Effect_Spore, Ability::Synchronize, Ability::Clear_Body,
-		Ability::Natural_Cure, Ability::Lightningrod, Ability::Serene_Grace,
-		Ability::Swift_Swim, Ability::Chlorophyll, Ability::Illuminate,
-		Ability::Trace, Ability::Huge_Power, Ability::Poison_Point,
-		Ability::Inner_Focus, Ability::Magma_Armor, Ability::Water_Veil,
-		Ability::Magnet_Pull, Ability::Soundproof, Ability::Rain_Dish,
-		Ability::Sand_Stream, Ability::Pressure, Ability::Thick_Fat,
-		Ability::Early_Bird, Ability::Flame_Body, Ability::Run_Away,
-		Ability::Keen_Eye, Ability::Hyper_Cutter, Ability::Pickup,
-		Ability::Truant, Ability::Hustle, Ability::Cute_Charm,
-		Ability::Plus, Ability::Minus, Ability::Forecast,
-		Ability::Sticky_Hold, Ability::Shed_Skin, Ability::Guts,
-		Ability::Marvel_Scale, Ability::Liquid_Ooze, Ability::Overgrow,
-		Ability::Blaze, Ability::Torrent, Ability::Swarm,
-		Ability::Rock_Head, Ability::Drought, Ability::Arena_Trap,
-		Ability::Vital_Spirit, Ability::White_Smoke, Ability::Pure_Power,
-		Ability::Shell_Armor, Ability::Air_Lock, Ability::Tangled_Feet,
-		Ability::Motor_Drive, Ability::Rivalry, Ability::Steadfast,
-		Ability::Snow_Cloak, Ability::Gluttony, Ability::Anger_Point,
-		Ability::Unburden, Ability::Heatproof, Ability::Simple,
-		Ability::Dry_Skin, Ability::Download, Ability::Iron_Fist,
-		Ability::Poison_Heal, Ability::Adaptability, Ability::Skill_Link,
-		Ability::Hydration, Ability::Solar_Power, Ability::Quick_Feet,
-		Ability::Normalize, Ability::Sniper, Ability::Magic_Guard,
-		Ability::No_Guard, Ability::Stall, Ability::Technician,
-		Ability::Leaf_Guard, Ability::Klutz, Ability::Mold_Breaker,
-		Ability::Super_Luck, Ability::Aftermath, Ability::Anticipation,
-		Ability::Forewarn, Ability::Unaware, Ability::Tinted_Lens,
-		Ability::Filter, Ability::Slow_Start, Ability::Scrappy,
-		Ability::Storm_Drain, Ability::Ice_Body, Ability::Solid_Rock,
-		Ability::Snow_Warning, Ability::Honey_Gather, Ability::Frisk,
-		Ability::Reckless, Ability::Multitype, Ability::Flower_Gift,
-		Ability::Bad_Dreams
+unsigned ability_to_id(Ability::Abilities const ability) {
+	switch (ability) {
+		case Ability::Adaptability: return 91;
+		case Ability::Aftermath: return 106;
+		case Ability::Air_Lock: return 76;
+		case Ability::Anger_Point: return 83;
+		case Ability::Anticipation: return 107;
+		case Ability::Arena_Trap: return 71;
+		case Ability::Bad_Dreams: return 123;
+		case Ability::Battle_Armor: return 4;
+		case Ability::Blaze: return 66;
+		case Ability::Chlorophyll: return 34;
+		case Ability::Clear_Body: return 29;
+		case Ability::Cloud_Nine: return 13;
+		case Ability::Color_Change: return 16;
+		case Ability::Compoundeyes: return 14;
+		case Ability::Cute_Charm: return 56;
+		case Ability::Damp: return 6;
+		case Ability::Download: return 88;
+		case Ability::Drizzle: return 2;
+		case Ability::Drought: return 70;
+		case Ability::Dry_Skin: return 87;
+		case Ability::Early_Bird: return 48;
+		case Ability::Effect_Spore: return 27;
+		case Ability::Filter: return 111;
+		case Ability::Flame_Body: return 49;
+		case Ability::Flash_Fire: return 18;
+		case Ability::Flower_Gift: return 122;
+		case Ability::Forecast: return 59;
+		case Ability::Forewarn: return 108;
+		case Ability::Frisk: return 119;
+		case Ability::Gluttony: return 82;
+		case Ability::Guts: return 62;
+		case Ability::Heatproof: return 85;
+		case Ability::Honey_Gather: return 118;
+		case Ability::Huge_Power: return 37;
+		case Ability::Hustle: return 55;
+		case Ability::Hydration: return 93;
+		case Ability::Hyper_Cutter: return 52;
+		case Ability::Ice_Body: return 115;
+		case Ability::Illuminate: return 35;
+		case Ability::Immunity: return 17;
+		case Ability::Inner_Focus: return 39;
+		case Ability::Insomnia: return 15;
+		case Ability::Intimidate: return 22;
+		case Ability::Iron_Fist: return 89;
+		case Ability::Keen_Eye: return 51;
+		case Ability::Klutz: return 103;
+		case Ability::Leaf_Guard: return 102;
+		case Ability::Levitate: return 26;
+		case Ability::Lightningrod: return 31;
+		case Ability::Limber: return 7;
+		case Ability::Liquid_Ooze: return 64;
+		case Ability::Magic_Guard: return 98;
+		case Ability::Magma_Armor: return 40;
+		case Ability::Magnet_Pull: return 42;
+		case Ability::Marvel_Scale: return 63;
+		case Ability::Minus: return 58;
+		case Ability::Mold_Breaker: return 104;
+		case Ability::Motor_Drive: return 78;
+		case Ability::Multitype: return 121;
+		case Ability::Natural_Cure: return 30;
+		case Ability::No_Guard: return 99;
+		case Ability::Normalize: return 96;
+		case Ability::Oblivious: return 12;
+		case Ability::Overgrow: return 65;
+		case Ability::Own_Tempo: return 20;
+		case Ability::Pickup: return 53;
+		case Ability::Plus: return 57;
+		case Ability::Poison_Heal: return 90;
+		case Ability::Poison_Point: return 38;
+		case Ability::Pressure: return 46;
+		case Ability::Pure_Power: return 74;
+		case Ability::Quick_Feet: return 95;
+		case Ability::Rain_Dish: return 44;
+		case Ability::Reckless: return 120;
+		case Ability::Rivalry: return 79;
+		case Ability::Rock_Head: return 69;
+		case Ability::Rough_Skin: return 24;
+		case Ability::Run_Away: return 50;
+		case Ability::Sand_Stream: return 45;
+		case Ability::Sand_Veil: return 8;
+		case Ability::Scrappy: return 113;
+		case Ability::Serene_Grace: return 32;
+		case Ability::Shadow_Tag: return 23;
+		case Ability::Shed_Skin: return 61;
+		case Ability::Shell_Armor: return 75;
+		case Ability::Shield_Dust: return 19;
+		case Ability::Simple: return 86;
+		case Ability::Skill_Link: return 92;
+		case Ability::Slow_Start: return 112;
+		case Ability::Sniper: return 97;
+		case Ability::Snow_Cloak: return 81;
+		case Ability::Snow_Warning: return 117;
+		case Ability::Solar_Power: return 94;
+		case Ability::Solid_Rock: return 116;
+		case Ability::Soundproof: return 43;
+		case Ability::Speed_Boost: return 3;
+		case Ability::Stall: return 100;
+		case Ability::Static: return 9;
+		case Ability::Steadfast: return 80;
+		case Ability::Stench: return 1;
+		case Ability::Sticky_Hold: return 60;
+		case Ability::Storm_Drain: return 114;
+		case Ability::Sturdy: return 5;
+		case Ability::Suction_Cups: return 21;
+		case Ability::Super_Luck: return 105;
+		case Ability::Swarm: return 68;
+		case Ability::Swift_Swim: return 33;
+		case Ability::Synchronize: return 28;
+		case Ability::Tangled_Feet: return 77;
+		case Ability::Technician: return 101;
+		case Ability::Thick_Fat: return 47;
+		case Ability::Tinted_Lens: return 110;
+		case Ability::Torrent: return 67;
+		case Ability::Trace: return 36;
+		case Ability::Truant: return 54;
+		case Ability::Unaware: return 109;
+		case Ability::Unburden: return 84;
+		case Ability::Vital_Spirit: return 72;
+		case Ability::Volt_Absorb: return 10;
+		case Ability::Water_Absorb: return 11;
+		case Ability::Water_Veil: return 41;
+		case Ability::White_Smoke: return 73;
+		case Ability::Wonder_Guard: return 25;
+		case Ability::END: assert(false);
 	};
-	return ability_converter [id];
-}
-
-unsigned ability_to_id (Ability::Abilities ability) {
-	constexpr static unsigned ability_converter [] = {
-		91,		// Adaptability
-		106,		// Aftermath
-		76,		// Air_Lock
-		83,		// Anger_Point
-		107,		// Anticipation
-		71,		// Arena_Trap
-		123,		// Bad_Dreams
-		4,		// Battle_Armor
-		66,		// Blaze
-		34,		// Chlorophyll
-		29,		// Clear_Body
-		13,		// Cloud_Nine
-		16,		// Color_Change
-		14,		// Compoundeyes
-		56,		// Cute_Charm
-		6,		// Damp
-		88,		// Download
-		2,		// Drizzle
-		70,		// Drought
-		87,		// Dry_Skin
-		48,		// Early_Bird
-		27,		// Effect_Spore
-		111,		// Filter
-		49,		// Flame_Body
-		18,		// Flash_Fire
-		122,		// Flower_Gift
-		59,		// Forecast
-		108,		// Forewarn
-		119,		// Frisk
-		82,		// Gluttony
-		62,		// Guts
-		85,		// Heatproof
-		118,		// Honey_Gather
-		37,		// Huge_Power
-		55,		// Hustle
-		93,		// Hydration
-		52,		// Hyper_Cutter
-		115,		// Ice_Body
-		35,		// Illuminate
-		17,		// Immunity
-		39,		// Inner_Focus
-		15,		// Insomnia
-		22,		// Intimidate
-		89,		// Iron_Fist
-		51,		// Keen_Eye
-		103,		// Klutz
-		102,		// Leaf_Guard
-		26,		// Levitate
-		31,		// Lightningrod
-		7,		// Limber
-		64,		// Liquid_Ooze
-		98,		// Magic_Guard
-		40,		// Magma_Armor
-		42,		// Magnet_Pull
-		63,		// Marvel_Scale
-		58,		// Minus
-		104,		// Mold_Breaker
-		78,		// Motor_Drive
-		121,		// Multitype
-		30,		// Natural_Cure
-		99,		// No_Guard
-		96,		// Normalize
-		12,		// Oblivious
-		65,		// Overgrow
-		20,		// Own_Tempo
-		53,		// Pickup
-		57,		// Plus
-		90,		// Poison_Heal
-		38,		// Poison_Point
-		46,		// Pressure
-		74,		// Pure_Power
-		95,		// Quick_Feet
-		44,		// Rain_Dish
-		120,		// Reckless
-		79,		// Rivalry
-		69,		// Rock_Head
-		24,		// Rough_Skin
-		50,		// Run_Away
-		45,		// Sand_Stream
-		8,		// Sand_Veil
-		113,		// Scrappy
-		32,		// Serene_Grace
-		23,		// Shadow_Tag
-		61,		// Shed_Skin
-		75,		// Shell_Armor
-		19,		// Shield_Dust
-		86,		// Simple
-		92,		// Skill_Link
-		112,		// Slow_Start
-		97,		// Sniper
-		81,		// Snow_Cloak
-		117,		// Snow_Warning
-		94,		// Solar_Power
-		116,		// Solid_Rock
-		43,		// Soundproof
-		3,		// Speed_Boost
-		100,		// Stall
-		9,		// Static
-		80,		// Steadfast
-		1,		// Stench
-		60,		// Sticky_Hold
-		114,		// Storm_Drain
-		5,		// Sturdy
-		21,		// Suction_Cups
-		105,		// Super_Luck
-		68,		// Swarm
-		33,		// Swift_Swim
-		28,		// Synchronize
-		77,		// Tangled_Feet
-		101,		// Technician
-		47,		// Thick_Fat
-		110,		// Tinted_Lens
-		67,		// Torrent
-		36,		// Trace
-		54,		// Truant
-		109,		// Unaware
-		84,		// Unburden
-		72,		// Vital_Spirit
-		10,		// Volt_Absorb
-		11,		// Water_Absorb
-		41,		// Water_Veil
-		73,		// White_Smoke
-		25,		// Wonder_Guard
-		0		// END
-	};
-	return ability_converter [ability];
 }
 
 struct InvalidPart : std::runtime_error {
@@ -1374,19 +1470,21 @@ Ability::Abilities battle_id_to_ability (uint16_t id, uint8_t part) {
 	}
 }
 
-Gender::Genders id_to_gender (unsigned id) {
+Gender::Genders id_to_gender(unsigned id) {
 	switch (id) {
 		case 0: return Gender::GENDERLESS;
 		case 1: return Gender::MALE;
-		default: return Gender::FEMALE;
+		case 2: return Gender::FEMALE;
+		default: throw std::runtime_error("Invalid Gender ID in PO conversion");
 	}
 }
 
 unsigned gender_to_id (Gender::Genders gender) {
 	switch (gender) {
+		case Gender::GENDERLESS: return 0;
 		case Gender::MALE: return 1;
 		case Gender::FEMALE: return 2;
-		default: return 0;
+		case Gender::END: assert(false);
 	}
 }
 
@@ -1619,7 +1717,7 @@ Item id_to_item(unsigned id) {
 		case 224: return Item::Space_Mail;
 		case 225: return Item::Steel_Mail;
 		case 226: return Item::Tunnel_Mail;
-		default: return Item::END;
+		default: throw std::runtime_error("Invalid item ID in PO conversion");
 	}
 }
 
@@ -1852,220 +1950,220 @@ unsigned item_to_id(Item item) {
 		case Item::Space_Mail: return 224;
 		case Item::Steel_Mail: return 225;
 		case Item::Tunnel_Mail: return 226;
-		default: return 0;
-			/*
-			Aguav_Berry
-			Apicot_Berry
-			Aspear_Berry
-			Babiri_Berry
-			Belue_Berry
-			Bicycle
-			Bluk_Berry
-			Charti_Berry
-			Cheri_Berry
-			Cherish_Ball
-			Chesto_Berry
-			Chilan_Berry
-			Chople_Berry
-			Coba_Berry
-			Coin_case
-			Colbur_Berry
-			Cornn_Berry
-			Coupon_1
-			Coupon_2
-			Coupon_3
-			Custap_Berry
-			Dive_Ball
-			Durin_Berry
-			Dusk_Ball
-			Enigma_Berry
-			Explorer_Kit
-			Fashion_case
-			Figy_Berry
-			Galactic_Key
-			Ganlon_Berry
-			Good_Rod
-			Great_Ball
-			Grepa_Berry
-			Haban_Berry
-			Heal_Ball
-			HM01
-			HM02
-			HM03
-			HM04
-			HM05
-			HM06
-			HM07
-			HM08
-			Hondew_Berry
-			Iapapa_Berry
-			Jaboca_Berry
-			Journal
-			Kasib_Berry
-			Kebia_Berry
-			Kelpsy_Berry
-			Lansat_Berry
-			Leppa_Berry
-			Liechi_Berry
-			Loot_Sack
-			Lum_Berry
-			Lunar_Wing
-			Luxury_Ball
-			Mago_Berry
-			Magost_Berry
-			Master_Ball
-			Member_Card
-			Micle_Berry
-			Nanab_Berry
-			Nest_Ball
-			Net_Ball
-			Nomel_Berry
-			Oaks_Letter
-			Occa_Berry
-			Old_Charm
-			Old_Rod
-			Oran_Berry
-			Pal_Pad
-			Pamtre_Berry
-			Parcel
-			Passho_Berry
-			Payapa_Berry
-			Pecha_Berry
-			Persim_Berry
-			Petaya_Berry
-			Pinap_Berry
-			Poffin_case
-			Point_Card
-			Poke_Ball
-			Poke_Radar
-			Pomeg_Berry
-			Premier_Ball
-			Qualot_Berry
-			Quick_Ball
-			Rabuta_Berry
-			Rawst_Berry
-			Razz_Berry
-			Repeat_Ball
-			Rindo_Berry
-			Rowap_Berry
-			Safari_Ball
-			Salac_Berry
-			Seal_Bag
-			Seal_case
-			Secretpotion
-			Shuca_Berry
-			Sitrus_Berry
-			Spelon_Berry
-			Sprayduck
-			Starf_Berry
-			Storage_Key
-			Suite_Key
-			Super_Rod
-			Tamato_Berry
-			Tanga_Berry
-			Timer_Ball
-			TM01
-			TM02
-			TM03
-			TM04
-			TM05
-			TM06
-			TM07
-			TM08
-			TM09
-			TM10
-			TM11
-			TM12
-			TM13
-			TM14
-			TM15
-			TM16
-			TM17
-			TM18
-			TM19
-			TM20
-			TM21
-			TM22
-			TM23
-			TM24
-			TM25
-			TM26
-			TM27
-			TM28
-			TM29
-			TM30
-			TM31
-			TM32
-			TM33
-			TM34
-			TM35
-			TM36
-			TM37
-			TM38
-			TM39
-			TM40
-			TM41
-			TM42
-			TM43
-			TM44
-			TM45
-			TM46
-			TM47
-			TM48
-			TM49
-			TM50
-			TM51
-			TM52
-			TM53
-			TM54
-			TM55
-			TM56
-			TM57
-			TM58
-			TM59
-			TM60
-			TM61
-			TM62
-			TM63
-			TM64
-			TM65
-			TM66
-			TM67
-			TM68
-			TM69
-			TM70
-			TM71
-			TM72
-			TM73
-			TM74
-			TM75
-			TM76
-			TM77
-			TM78
-			TM79
-			TM80
-			TM81
-			TM82
-			TM83
-			TM84
-			TM85
-			TM86
-			TM87
-			TM88
-			TM89
-			TM90
-			TM91
-			TM92
-			Town_Map
-			Ultra_Ball
-			Vs_Seeker
-			Wacan_Berry
-			Watmel_Berry
-			Wepear_Berry
-			Wiki_Berry
-			Works_Key
-			Yache_Berry
-			*/
+		case Item::Aguav_Berry:
+		case Item::Apicot_Berry:
+		case Item::Aspear_Berry:
+		case Item::Babiri_Berry:
+		case Item::Belue_Berry:
+		case Item::Bicycle:
+		case Item::Bluk_Berry:
+		case Item::Charti_Berry:
+		case Item::Cheri_Berry:
+		case Item::Cherish_Ball:
+		case Item::Chesto_Berry:
+		case Item::Chilan_Berry:
+		case Item::Chople_Berry:
+		case Item::Coba_Berry:
+		case Item::Coin_Case:
+		case Item::Colbur_Berry:
+		case Item::Cornn_Berry:
+		case Item::Coupon_1:
+		case Item::Coupon_2:
+		case Item::Coupon_3:
+		case Item::Custap_Berry:
+		case Item::Dive_Ball:
+		case Item::Durin_Berry:
+		case Item::Dusk_Ball:
+		case Item::Enigma_Berry:
+		case Item::Explorer_Kit:
+		case Item::Fashion_Case:
+		case Item::Figy_Berry:
+		case Item::Galactic_Key:
+		case Item::Ganlon_Berry:
+		case Item::Good_Rod:
+		case Item::Great_Ball:
+		case Item::Grepa_Berry:
+		case Item::Haban_Berry:
+		case Item::Heal_Ball:
+		case Item::HM01:
+		case Item::HM02:
+		case Item::HM03:
+		case Item::HM04:
+		case Item::HM05:
+		case Item::HM06:
+		case Item::HM07:
+		case Item::HM08:
+		case Item::Hondew_Berry:
+		case Item::Iapapa_Berry:
+		case Item::Jaboca_Berry:
+		case Item::Journal:
+		case Item::Kasib_Berry:
+		case Item::Kebia_Berry:
+		case Item::Kelpsy_Berry:
+		case Item::Lansat_Berry:
+		case Item::Leppa_Berry:
+		case Item::Liechi_Berry:
+		case Item::Loot_Sack:
+		case Item::Lum_Berry:
+		case Item::Lunar_Wing:
+		case Item::Luxury_Ball:
+		case Item::Mago_Berry:
+		case Item::Magost_Berry:
+		case Item::Master_Ball:
+		case Item::Member_Card:
+		case Item::Micle_Berry:
+		case Item::Nanab_Berry:
+		case Item::Nest_Ball:
+		case Item::Net_Ball:
+		case Item::Nomel_Berry:
+		case Item::Oaks_Letter:
+		case Item::Occa_Berry:
+		case Item::Old_Charm:
+		case Item::Old_Rod:
+		case Item::Oran_Berry:
+		case Item::Pal_Pad:
+		case Item::Pamtre_Berry:
+		case Item::Parcel:
+		case Item::Passho_Berry:
+		case Item::Payapa_Berry:
+		case Item::Pecha_Berry:
+		case Item::Persim_Berry:
+		case Item::Petaya_Berry:
+		case Item::Pinap_Berry:
+		case Item::Poffin_Case:
+		case Item::Point_Card:
+		case Item::Poke_Ball:
+		case Item::Poke_Radar:
+		case Item::Pomeg_Berry:
+		case Item::Premier_Ball:
+		case Item::Qualot_Berry:
+		case Item::Quick_Ball:
+		case Item::Rabuta_Berry:
+		case Item::Rawst_Berry:
+		case Item::Razz_Berry:
+		case Item::Repeat_Ball:
+		case Item::Rindo_Berry:
+		case Item::Rowap_Berry:
+		case Item::Safari_Ball:
+		case Item::Salac_Berry:
+		case Item::Seal_Bag:
+		case Item::Seal_Case:
+		case Item::SecretPotion:
+		case Item::Shuca_Berry:
+		case Item::Sitrus_Berry:
+		case Item::Spelon_Berry:
+		case Item::Sprayduck:
+		case Item::Starf_Berry:
+		case Item::Storage_Key:
+		case Item::Suite_Key:
+		case Item::Super_Rod:
+		case Item::Tamato_Berry:
+		case Item::Tanga_Berry:
+		case Item::Timer_Ball:
+		case Item::TM01:
+		case Item::TM02:
+		case Item::TM03:
+		case Item::TM04:
+		case Item::TM05:
+		case Item::TM06:
+		case Item::TM07:
+		case Item::TM08:
+		case Item::TM09:
+		case Item::TM10:
+		case Item::TM11:
+		case Item::TM12:
+		case Item::TM13:
+		case Item::TM14:
+		case Item::TM15:
+		case Item::TM16:
+		case Item::TM17:
+		case Item::TM18:
+		case Item::TM19:
+		case Item::TM20:
+		case Item::TM21:
+		case Item::TM22:
+		case Item::TM23:
+		case Item::TM24:
+		case Item::TM25:
+		case Item::TM26:
+		case Item::TM27:
+		case Item::TM28:
+		case Item::TM29:
+		case Item::TM30:
+		case Item::TM31:
+		case Item::TM32:
+		case Item::TM33:
+		case Item::TM34:
+		case Item::TM35:
+		case Item::TM36:
+		case Item::TM37:
+		case Item::TM38:
+		case Item::TM39:
+		case Item::TM40:
+		case Item::TM41:
+		case Item::TM42:
+		case Item::TM43:
+		case Item::TM44:
+		case Item::TM45:
+		case Item::TM46:
+		case Item::TM47:
+		case Item::TM48:
+		case Item::TM49:
+		case Item::TM50:
+		case Item::TM51:
+		case Item::TM52:
+		case Item::TM53:
+		case Item::TM54:
+		case Item::TM55:
+		case Item::TM56:
+		case Item::TM57:
+		case Item::TM58:
+		case Item::TM59:
+		case Item::TM60:
+		case Item::TM61:
+		case Item::TM62:
+		case Item::TM63:
+		case Item::TM64:
+		case Item::TM65:
+		case Item::TM66:
+		case Item::TM67:
+		case Item::TM68:
+		case Item::TM69:
+		case Item::TM70:
+		case Item::TM71:
+		case Item::TM72:
+		case Item::TM73:
+		case Item::TM74:
+		case Item::TM75:
+		case Item::TM76:
+		case Item::TM77:
+		case Item::TM78:
+		case Item::TM79:
+		case Item::TM80:
+		case Item::TM81:
+		case Item::TM82:
+		case Item::TM83:
+		case Item::TM84:
+		case Item::TM85:
+		case Item::TM86:
+		case Item::TM87:
+		case Item::TM88:
+		case Item::TM89:
+		case Item::TM90:
+		case Item::TM91:
+		case Item::TM92:
+		case Item::Town_Map:
+		case Item::Ultra_Ball:
+		case Item::VS_Seeker:
+		case Item::Wacan_Berry:
+		case Item::Watmel_Berry:
+		case Item::Wepear_Berry:
+		case Item::Wiki_Berry:
+		case Item::Works_Key:
+		case Item::Yache_Berry:
+			return 0;
+		case Item::END:
+			assert(false);
 	}
 }
 
@@ -2098,66 +2196,66 @@ unsigned move_to_id (Moves move) {
 	return (move == Moves::END) ? 0 : move_id;
 }
 
-Nature id_to_nature (unsigned id) {
-	constexpr static Nature nature_converter [] = {
-		Nature::Hardy,
-		Nature::Lonely,
-		Nature::Brave,
-		Nature::Adamant,
-		Nature::Naughty,
-		Nature::Bold,
-		Nature::Docile,
-		Nature::Relaxed,
-		Nature::Impish,
-		Nature::Lax,
-		Nature::Timid,
-		Nature::Hasty,
-		Nature::Serious,
-		Nature::Jolly,
-		Nature::Naive,
-		Nature::Modest,
-		Nature::Mild,
-		Nature::Quiet,
-		Nature::Bashful,
-		Nature::Rash,
-		Nature::Calm,
-		Nature::Gentle,
-		Nature::Sassy,
-		Nature::Careful,
-		Nature::Quirky
-	};
-	return nature_converter [id];
+Nature id_to_nature(unsigned id) {
+	switch (id) {
+		case 0: return Nature::Hardy;
+		case 1: return Nature::Lonely;
+		case 2: return Nature::Brave;
+		case 3: return Nature::Adamant;
+		case 4: return Nature::Naughty;
+		case 5: return Nature::Bold;
+		case 6: return Nature::Docile;
+		case 7: return Nature::Relaxed;
+		case 8: return Nature::Impish;
+		case 9: return Nature::Lax;
+		case 10: return Nature::Timid;
+		case 11: return Nature::Hasty;
+		case 12: return Nature::Serious;
+		case 13: return Nature::Jolly;
+		case 14: return Nature::Naive;
+		case 15: return Nature::Modest;
+		case 16: return Nature::Mild;
+		case 17: return Nature::Quiet;
+		case 18: return Nature::Bashful;
+		case 19: return Nature::Rash;
+		case 20: return Nature::Calm;
+		case 21: return Nature::Gentle;
+		case 22: return Nature::Sassy;
+		case 23: return Nature::Careful;
+		case 24: return Nature::Quirky;
+		default: throw std::runtime_error("Invalid nature ID in PO conversion");
+	}
 }
 
-unsigned nature_to_id (Nature nature) {
-	constexpr static unsigned nature_converter [] = {
-		3,		// Adamant
-		18,		// Bashful
-		5,		// Bold
-		2,		// Brave
-		20,		// Calm
-		23,		// Careful
-		6,		// Docile
-		21,		// Gentle
-		0,		// Hardy
-		11,		// Hasty
-		8,		// Impish
-		13,		// Jolly
-		9,		// Lax
-		1,		// Lonely
-		16,		// Mild
-		15,		// Modest
-		14,		// Naive
-		4,		// Naughty
-		17,		// Quiet
-		24,		// Quirky
-		19,		// Rash
-		7,		// Relaxed
-		22,		// Sassy
-		12,		// Serious
-		10		// Timid
-	};
-	return nature_converter[static_cast<std::size_t>(nature)];
+unsigned nature_to_id(Nature const nature) {
+	switch (nature) {
+		case Nature::Adamant: return 3;
+		case Nature::Bashful: return 18;
+		case Nature::Bold: return 5;
+		case Nature::Brave: return 2;
+		case Nature::Calm: return 20;
+		case Nature::Careful: return 23;
+		case Nature::Docile: return 6;
+		case Nature::Gentle: return 21;
+		case Nature::Hardy: return 0;
+		case Nature::Hasty: return 11;
+		case Nature::Impish: return 8;
+		case Nature::Jolly: return 13;
+		case Nature::Lax: return 9;
+		case Nature::Lonely: return 1;
+		case Nature::Mild: return 16;
+		case Nature::Modest: return 15;
+		case Nature::Naive: return 14;
+		case Nature::Naughty: return 4;
+		case Nature::Quiet: return 17;
+		case Nature::Quirky: return 24;
+		case Nature::Rash: return 19;
+		case Nature::Relaxed: return 7;
+		case Nature::Sassy: return 22;
+		case Nature::Serious: return 12;
+		case Nature::Timid: return 10;
+		case Nature::END: assert(false);
+	}
 }
 } // namespace po
 } // namespace technicalmachine
