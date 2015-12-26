@@ -17,12 +17,6 @@
 
 #include "pokemon.hpp"
 
-#include <cassert>
-#include <cstdint>
-#include <string>
-
-#include <boost/format.hpp>
-
 #include "species.hpp"
 
 #include "../ability.hpp"
@@ -41,6 +35,14 @@
 #include "../string_conversions/nature.hpp"
 #include "../string_conversions/pokemon.hpp"
 #include "../string_conversions/status.hpp"
+
+#include <containers/array/make_array.hpp>
+
+#include <boost/format.hpp>
+
+#include <cassert>
+#include <cstdint>
+#include <string>
 
 namespace technicalmachine {
 
@@ -142,16 +144,20 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 	auto const add_stat = [&](Stat const & stat, std::string const & stat_name) {
 		output += " / " + bounded::to_string(stat.ev().value()) + " " + stat_name;
 	};
-	static std::pair<StatNames, std::string> const stats [] = {
-		{ StatNames::ATK, "Atk" },
-		{ StatNames::DEF, "Def" },
-		{ StatNames::SPA, "SpA" },
-		{ StatNames::SPD, "SpD" },
-		{ StatNames::SPE, "Spe" }
+	struct Pair {
+		StatNames name;
+		std::string str;
 	};
+	static auto const stats = containers::make_array(
+		Pair{StatNames::ATK, "Atk"},
+		Pair{StatNames::DEF, "Def"},
+		Pair{StatNames::SPA, "SpA"},
+		Pair{StatNames::SPD, "SpD"},
+		Pair{StatNames::SPE, "Spe"}
+	);
 	output += bounded::to_string(get_hp(pokemon).ev().value()) + " HP";
 	for (auto const & stat : stats) {
-		add_stat(get_stat(pokemon, stat.first), stat.second);
+		add_stat(get_stat(pokemon, stat.name), stat.str);
 	}
 	for (auto const & move : regular_moves(pokemon)) {
 		output += "\n\t- " + to_string(move);
