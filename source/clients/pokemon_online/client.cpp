@@ -847,8 +847,8 @@ void Client::part_channel(std::string const & channel) {
 }
 
 void Client::handle_add_channel(std::string const & channel_name, uint32_t channel_id) {
-	channel_to_id.insert(std::pair <std::string, uint32_t>(channel_name, channel_id));
-	id_to_channel.insert(std::pair <uint32_t, std::string>(channel_id, channel_name));
+	channel_to_id.emplace(channel_name, channel_id);
+	id_to_channel.emplace(channel_id, channel_name);
 }
 
 void Client::handle_remove_channel(uint32_t channel_id) {
@@ -865,10 +865,8 @@ void Client::add_battle(InMessage & msg) {
 	uint32_t const battle_id = msg.read_int();
 	uint32_t const player1 = msg.read_int();
 	uint32_t const player2 = msg.read_int();
-	std::pair <uint32_t, uint32_t> const match1(player1, battle_id);
-	all_battles.insert(match1);
-	std::pair <uint32_t, uint32_t> const match2(player2, battle_id);
-	all_battles.insert(match2);
+	all_battles.emplace(player1, battle_id);
+	all_battles.emplace(player2, battle_id);
 }
 
 void Client::remove_battle(InMessage & msg) {

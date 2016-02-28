@@ -45,7 +45,7 @@ Battle & Battles::handle_begin(uint32_t const battle_id, std::string const & opp
 		throw NoPendingChallenges(opponent);
 	}
 	Battle & battle = *it->second;
-	active.insert(std::make_pair(battle_id, std::move(it->second)));
+	active.emplace(battle_id, std::move(it->second));
 	challenges.erase(opponent);
 	return battle;
 }

@@ -32,7 +32,7 @@ struct Battles {
 	SpecificBattle const & add_pending_challenge(std::string const & opponent, Args && ... args) {
 		auto battle_ptr = std::make_unique<SpecificBattle>(opponent, std::forward<Args>(args)...);
 		auto const & battle = *battle_ptr;
-		challenges.insert(std::make_pair(opponent, std::move(battle_ptr)));
+		challenges.emplace(opponent, std::move(battle_ptr));
 		return battle;
 	}
 	void handle_challenge_withdrawn();
