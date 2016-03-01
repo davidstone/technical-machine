@@ -39,7 +39,7 @@ constexpr auto se = make_rational(2_bi, 1_bi);
 
 auto lookup_effectiveness(Type const attacking, Type const defending) {
 	using lookup_type = std::common_type<decltype(ne), decltype(nve), decltype(reg), decltype(se)>::type;
-	static constexpr containers::array<containers::array<lookup_type, 18>, 18> effectiveness {{
+	static constexpr containers::array<lookup_type, 18, 18> effectiveness {{
 		{ reg, se, reg, reg, nve, nve, nve, nve, se, reg, reg, reg, nve, se, reg, nve, reg, reg },	// Bug
 		{ reg, nve, reg, reg, nve, reg, reg, se, reg, reg, reg, reg, reg, se, reg, nve, reg, reg },	// Dark
 		{ reg, reg, se, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, reg, nve, reg, reg },	// Dragon
