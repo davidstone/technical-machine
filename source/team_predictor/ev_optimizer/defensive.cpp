@@ -73,18 +73,18 @@ DefensiveEVs::DefensiveEVs(Pokemon const & pokemon) {
 
 void DefensiveEVs::remove_inefficient_natures(DefensiveEVs::Natures const & divided_natures) {
 	auto const capacity = static_cast<std::intmax_t>(DefensiveEVs::Natures::capacity());
-	containers::static_vector<BestPerNature::const_iterator, capacity> boosters;
-	for (auto it = container.begin(); it != container.end(); ++it) {
-		if (containers::find(std::begin(divided_natures), std::end(divided_natures), it->first) != std::end(divided_natures)) {
-			boosters.emplace_back(it);
+	containers::static_vector<std::reference_wrapper<BestPerNature::value_type const>, capacity> boosters;
+	for (auto const & value : container) {
+		if (containers::find(std::begin(divided_natures), std::end(divided_natures), value.first) != std::end(divided_natures)) {
+			boosters.emplace_back(value);
 		}
 	}
 	auto const iter_sum = [](auto const & lhs, auto const & rhs) {
-		return lhs->second.sum() < rhs->second.sum();
+		return lhs.get().second.sum() < rhs.get().second.sum();
 	};
 	auto const best = std::min_element(boosters.begin(), boosters.end(), iter_sum);
 	for (auto const & value : divided_natures) {
-		if (value != (*best)->first) {
+		if (value != best->get().first) {
 			container.erase(value);
 		}
 	}
