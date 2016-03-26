@@ -72,7 +72,7 @@ auto top_sub_elements(boost::property_tree::ptree const & pt) {
 	auto data = all_sub_elements(pt);
 	auto const middle = (size(data) >= max_moves_per_pokemon) ? data.begin() + max_moves_per_pokemon : data.end();
 	std::partial_sort(data.begin(), middle, data.end(), std::greater<>());
-	auto adapt = [](auto const & value) { return from_string<Moves>(value.second); };
+	auto adapt = [](auto const it) { return from_string<Moves>(it->second); };
 	return DetailedStats::UsedMoves(containers::iterator_adapter(data.begin(), adapt), middle);
 }
 
