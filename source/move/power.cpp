@@ -38,6 +38,7 @@
 #include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
+#include <containers/algorithms/accumulate.hpp>
 #include <containers/array/array.hpp>
 
 #include <algorithm>
@@ -122,7 +123,9 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 			assert(!present_heals(variable));
 			return variable.value;
 		case Moves::Punishment: {
-			auto const uncapped_power = 60_bi + 20_bi * positive_boosts(stage(defender));
+			auto const & boosts = stage(defender);
+			auto const filtered = containers::filter_iterator(boosts.begin(), boosts.end(), [](auto const value) { return value > 0_bi; });
+			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::accumulate(filtered, boosts.end()));
 			return bounded::min(uncapped_power, 200_bi);
 		}
 		case Moves::Return:

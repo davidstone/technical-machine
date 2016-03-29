@@ -25,9 +25,6 @@
 #include <bounded/integer.hpp>
 #include <containers/array/array.hpp>
 
-#include <algorithm>
-#include <cstdint>
-
 namespace technicalmachine {
 
 using namespace bounded::literal;
@@ -107,21 +104,6 @@ auto boost_physical(Stage & stage, Stage::boost_type number_of_stages) -> void;
 auto boost_special(Stage & stage, Stage::boost_type number_of_stages) -> void;
 auto boost_defensive(Stage & stage, Stage::boost_type number_of_stages) -> void;
 auto boost_offensive(Stage & stage, Stage::boost_type number_of_stages) -> void;
-
-template<typename Function>
-auto accumulate(Stage const & stages, Function && f) {
-	using sum_type = decltype(f(std::declval<Stage::value_type>()) * Stage::number_of_stats);
-	return std::accumulate(stages.begin(), stages.end(), sum_type(0_bi), [& f](sum_type const initial, Stage::value_type const stage) {
-		return initial + f(stage);
-	});
-}
-
-inline auto positive_boosts(Stage const & stage) {
-	auto const positive_values = [](Stage::value_type const check_stage) {
-		return bounded::max(check_stage, 0_bi);
-	};
-	return accumulate(stage, positive_values);
-}
 
 auto swap_defensive(Stage & lhs, Stage & rhs) -> void;
 auto swap_offensive(Stage & lhs, Stage & rhs) -> void;
