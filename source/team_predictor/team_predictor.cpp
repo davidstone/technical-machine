@@ -1,5 +1,5 @@
 // Predict foe's team
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -33,7 +33,7 @@
 
 #include "../move/moves.hpp"
 
-#include <containers/algorithms/find.hpp>
+#include <containers/algorithms/all_any_none.hpp>
 #include <containers/array/array.hpp>
 
 namespace technicalmachine {
@@ -98,8 +98,7 @@ void predict_move(MoveCollection & moves, DetailedStats::UsedMoves const & detai
 		if (size(regular) == max_moves_per_pokemon) {
 			break;
 		}
-		bool const already_has_move = containers::find(regular.begin(), regular.end(), move) != regular.end();
-		if (already_has_move) {
+		if (containers::any_equal(regular.begin(), regular.end(), move)) {
 			continue;
 		}
 		moves.add(move);

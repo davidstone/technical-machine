@@ -1,5 +1,5 @@
 // Effectiveness of a type
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,7 +24,7 @@
 #include "../rational.hpp"
 
 #include <containers/array/array.hpp>
-#include <containers/algorithms/find.hpp>
+#include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/iterator.hpp>
 
 #include <algorithm>
@@ -66,7 +66,7 @@ auto lookup_effectiveness(Type const attacking, Type const defending) {
 template<typename Container, typename Product>
 auto check_effectiveness(Container const & effectiveness, std::initializer_list<Product> const & results) {
 	auto const value = effectiveness[0_bi] * effectiveness[1_bi];
-	return containers::find(std::begin(results), std::end(results), value) != std::end(results);
+	return containers::any_equal(results.begin(), results.end(), value);
 }
 
 

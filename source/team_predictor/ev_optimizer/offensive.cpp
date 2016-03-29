@@ -26,7 +26,7 @@
 
 #include <bounded/optional.hpp>
 
-#include <containers/algorithms/find.hpp>
+#include <containers/algorithms/all_any_none.hpp>
 
 #include <cassert>
 
@@ -156,7 +156,7 @@ namespace {
 template<typename Predicate>
 bool has_move(Pokemon const & pokemon, Predicate predicate) {
 	auto const & moves = regular_moves(pokemon);
-	return containers::find_if(moves.begin(), moves.end(), predicate) != moves.end();
+	return containers::any_of(moves.begin(), moves.end(), predicate);
 }
 
 bool has_physical_move(Pokemon const & pokemon) {

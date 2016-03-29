@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,6 +26,7 @@
 #include "../../stat/nature.hpp"
 #include "../../stat/stat_names.hpp"
 
+#include <containers/algorithms/all_any_none.hpp>
 #include <containers/array/array.hpp>
 #include <containers/vector/vector.hpp>
 
@@ -75,7 +76,7 @@ void DefensiveEVs::remove_inefficient_natures(DefensiveEVs::Natures const & divi
 	auto const capacity = static_cast<std::intmax_t>(DefensiveEVs::Natures::capacity());
 	containers::static_vector<std::reference_wrapper<BestPerNature::value_type const>, capacity> boosters;
 	for (auto const & value : container) {
-		if (containers::find(std::begin(divided_natures), std::end(divided_natures), value.first) != std::end(divided_natures)) {
+		if (containers::any_equal(divided_natures.begin(), divided_natures.end(), value.first)) {
 			boosters.emplace_back(value);
 		}
 	}

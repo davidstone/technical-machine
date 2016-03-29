@@ -33,8 +33,8 @@
 
 #include <bounded/integer_range.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/count.hpp>
-#include <containers/algorithms/find.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -114,7 +114,7 @@ auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens con
 
 auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon) {
 	auto const & moves = regular_moves(pokemon);
-	auto const has_baton_pass = containers::find(moves.begin(), moves.end(), Moves::Baton_Pass) != moves.end();
+	auto const has_baton_pass = containers::any_equal(moves.begin(), moves.end(), Moves::Baton_Pass);
 	return
 		BOUNDED_CONDITIONAL(is_cursed(pokemon), evaluate.curse(), 0_bi) +
 		BOUNDED_CONDITIONAL(used_imprison(pokemon), evaluate.imprison(), 0_bi) +

@@ -29,7 +29,7 @@
 #include "pokemon/pokemon.hpp"
 #include "pokemon/active_pokemon.hpp"
 
-#include <containers/algorithms/find.hpp>
+#include <containers/algorithms/all_any_none.hpp>
 
 #include <cassert>
 
@@ -163,7 +163,7 @@ bool block1 (ActivePokemon const user, Move const move, ActivePokemon const othe
 
 bool imprison(Moves const move, ActivePokemon const other) {
 	auto const & moves = regular_moves(other);
-	return used_imprison(other) and containers::find(moves.begin(), moves.end(), move) != moves.end();
+	return used_imprison(other) and containers::any_equal(moves.begin(), moves.end(), move);
 }
 
 bool is_blocked_by_taunt(Moves const move) {
