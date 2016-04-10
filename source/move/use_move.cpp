@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cassert>
 
+#include "is_switch.hpp"
 #include "move.hpp"
 #include "moves.hpp"
 
@@ -929,7 +930,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 		case Moves::Switch3:
 		case Moves::Switch4:
 		case Moves::Switch5:
-			user_team.all_pokemon().replacement_from_switch();
+			user_team.all_pokemon().set_replacement(to_replacement(move));
 			switch_pokemon(user_team, target, weather);
 			break;
 		case Moves::Switcheroo:

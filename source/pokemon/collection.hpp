@@ -1,5 +1,5 @@
 // Collection of Pokemon with index indicating current Pokemon
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -58,7 +58,6 @@ public:
 	}
 
 	void set_replacement(containers::index_type<PokemonCollection> const new_index);
-	void replacement_from_switch ();
 	bool is_switching_to_self () const;
 	bool is_switching_to_self(Moves move) const;
 	TeamSize real_size() const;

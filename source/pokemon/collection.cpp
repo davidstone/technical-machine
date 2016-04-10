@@ -1,5 +1,5 @@
 // Collection of Pokemon with index indicating current Pokemon
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -48,10 +48,6 @@ void PokemonCollection::initialize_replacement () {
 
 void PokemonCollection::set_replacement(containers::index_type<PokemonCollection> const new_index) {
 	current_replacement = check_range (new_index);
-}
-
-void PokemonCollection::replacement_from_switch () {
-	set_replacement(to_replacement(current_move(operator()())));
 }
 
 bool PokemonCollection::is_switching_to_self () const {
