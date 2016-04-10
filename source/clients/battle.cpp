@@ -1,5 +1,5 @@
 // Generic battle
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -363,7 +363,7 @@ void Battle::do_turn() {
 	first->move(false);
 	last->move(false);
 	auto const replacement = [&](Team & switcher, Team & other) {
-		switchpokemon(switcher, other, weather);
+		switch_pokemon(switcher, other, weather);
 		switcher.move(false);
 		normalize_hp();
 	};

@@ -1,5 +1,5 @@
 // Use moves
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -930,7 +930,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 		case Moves::Switch4:
 		case Moves::Switch5:
 			user_team.all_pokemon().replacement_from_switch();
-			switchpokemon (user_team, target, weather);
+			switch_pokemon(user_team, target, weather);
 			break;
 		case Moves::Switcheroo:
 		case Moves::Trick:
@@ -1064,7 +1064,7 @@ auto active_pokemon_can_be_phazed(Team const & team) {
 auto phaze(Team & user, Team & target, Weather & weather, Variable const & variable) -> void {
 	if (active_pokemon_can_be_phazed(target)) {
 		target.all_pokemon().set_replacement(phaze_index(variable, target.all_pokemon().index()));
-		switchpokemon(target, user, weather);
+		switch_pokemon(target, user, weather);
 		target.move();
 	}
 }

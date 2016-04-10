@@ -1,5 +1,5 @@
 // Switching-related functions header
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,6 +23,6 @@ namespace technicalmachine {
 struct Team;
 struct Weather;
 
-void switchpokemon (Team & switcher, Team & other, Weather & weather);
+void switch_pokemon(Team & switcher, Team & other, Weather & weather);
 
 }	// namespace technicalmachine

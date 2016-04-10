@@ -1,5 +1,5 @@
 // Switching-related functions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,22 +28,15 @@
 #include "stat/stat.hpp"
 
 namespace technicalmachine {
-namespace {
 
-auto switch_pokemon(Team & team) {
-	if (get_ability(team.pokemon()).clears_status_on_switch()) {
-		get_status(team.pokemon()) = Status{};
-	}
-	team.all_pokemon().set_index(team.all_pokemon().replacement());
-}
-
-}	// namespace
-
-void switchpokemon (Team & switcher, Team & other, Weather & weather) {
+void switch_pokemon(Team & switcher, Team & other, Weather & weather) {
 	switcher.reset_switch();
 
 	if (get_hp(switcher.pokemon()) != 0_bi) {
-		switch_pokemon(switcher);
+		if (get_ability(switcher.pokemon()).clears_status_on_switch()) {
+			get_status(switcher.pokemon()) = Status{};
+		}
+		switcher.all_pokemon().set_index(switcher.all_pokemon().replacement());
 	}
 	else {
 		switcher.all_pokemon().remove_active();
