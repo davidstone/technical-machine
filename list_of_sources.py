@@ -229,8 +229,9 @@ ai_sources += prepend_dir('type', [
 ai_sources += string_conversion_sources
 ai_libraries = [
 	'pthread',
-	'boost_system',
 	'boost_filesystem',
+	'boost_system',
+	'boost_thread',
 ]
 
 

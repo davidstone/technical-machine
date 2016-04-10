@@ -24,6 +24,7 @@
 #include "pokemon/max_pokemon_per_team.hpp"
 
 #include <boost/lexical_cast.hpp>
+#include <boost/thread/thread.hpp>
 
 #include <iostream>
 
@@ -48,11 +49,11 @@ int main (int argc, char * argv []) {
 				stopping = true;
 			}
 			catch (network::InvalidPacket const & error) {
-				constexpr unsigned time_in_seconds = 10;
-				std::cerr << error.what () << " Disconnected. Waiting " << time_in_seconds << " seconds and trying again.\n";
+				constexpr auto timeout = boost::chrono::seconds(10);
+				std::cerr << error.what () << " Disconnected. Waiting " << timeout.count() << " seconds and trying again.\n";
 				// I disconnect from the server at this point and try again, because
 				// this means an unrecoverable error.
-				sleep (time_in_seconds);
+				boost::this_thread::sleep_for(timeout);
 				std::cerr << "Reconnecting.\n";
 			}
 		}
