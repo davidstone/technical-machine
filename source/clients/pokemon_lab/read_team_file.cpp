@@ -102,7 +102,7 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
 	Item const item(from_string<Item>(pt.get<std::string>("item")));
 	Ability const ability(from_string<Ability::Abilities>(pt.get<std::string>("ability")));
 	team.add_pokemon(from_simulator_string(species_str), level, gender, item, ability, nature, nickname, happiness);
-	Pokemon & pokemon = team.all_pokemon().at_replacement();
+	Pokemon & pokemon = team.replacement();
 	
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset"))
 		all_moves(pokemon).add(load_move(value.second));
