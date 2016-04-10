@@ -56,7 +56,6 @@ struct PokemonCollection : detail::Collection<PokemonContainer> {
 
 	void set_replacement(containers::index_type<PokemonCollection> const new_index);
 	TeamSize real_size() const;
-	containers::index_type<PokemonCollection> find_index(Species name) const;
 
 	template<typename... Args>
 	void add(Args&&... args) {

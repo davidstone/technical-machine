@@ -1,5 +1,5 @@
 // Random effects of moves
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,6 +21,7 @@
 #include "team.hpp"
 #include "move/moves.hpp"
 #include "pokemon/level.hpp"
+#include "pokemon/pokemon_not_found.hpp"
 
 #include <bounded/integer_range.hpp>
 
@@ -34,12 +35,21 @@ using namespace bounded::literal;
 
 namespace {
 
+auto find_index(PokemonCollection const & collection, Species const species) {
+	for (auto const found_index : bounded::integer_range(size(collection))) {
+		if (collection(found_index) == species) {
+			return found_index;
+		}
+	}
+	throw PokemonNotFound(species);
+}
+
 auto get_phaze_index(Team const & team, Species const species) {
 	assert(team.size() > 1_bi);
 	// This is required to work with my current battle implementation
 	auto const & all = team.all_pokemon();
 	auto const pokemon_index = has_switched(team.pokemon()) ? all.replacement() : all.index();
-	auto const new_index = all.find_index(species);
+	auto const new_index = find_index(all, species);
 	if (new_index == pokemon_index) {
 		throw PhazingInSamePokemon(new_index);
 	}

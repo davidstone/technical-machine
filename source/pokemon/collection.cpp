@@ -20,7 +20,6 @@
 
 #include "max_pokemon_per_team.hpp"
 #include "pokemon.hpp"
-#include "pokemon_not_found.hpp"
 #include "species.hpp"
 
 #include "../move/is_switch.hpp"
@@ -52,14 +51,6 @@ void PokemonCollection::set_replacement(containers::index_type<PokemonCollection
 
 TeamSize PokemonCollection::real_size() const {
 	return true_size;
-}
-
-containers::index_type<PokemonCollection> PokemonCollection::find_index(Species const name) const {
-	for (auto const found_index : bounded::integer_range(size(*this))) {
-		if (operator()(found_index) == name)
-			return found_index;
-	}
-	throw PokemonNotFound(name);
 }
 
 bool PokemonCollection::seen(Species const name) {
