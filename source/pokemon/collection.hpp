@@ -38,15 +38,12 @@ using namespace bounded::literal;
 struct Move;
 
 struct PokemonCollection : detail::Collection<PokemonContainer> {
-private:
-	using Base = detail::Collection<PokemonContainer>;
-public:
 	explicit PokemonCollection(TeamSize initial_size);
 	// TODO: Need to rework my constructors or something so that this is not
 	// needed. This should only be called once, in team intialization
 	void initialize_size(TeamSize const new_size);
 	void initialize_replacement ();
-	using Base::operator();
+	using detail::Collection<PokemonContainer>::operator();
 	template<typename... Args>
 	Pokemon & operator()(Args && ... args) {
 		auto const self = const_cast<PokemonCollection const *>(this);
