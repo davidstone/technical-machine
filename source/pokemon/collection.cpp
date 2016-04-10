@@ -50,13 +50,6 @@ void PokemonCollection::set_replacement(containers::index_type<PokemonCollection
 	current_replacement = check_range (new_index);
 }
 
-bool PokemonCollection::is_switching_to_self () const {
-	return replacement() == index();
-}
-bool PokemonCollection::is_switching_to_self (Moves const move) const {
-	return to_replacement(move) == index();
-}
-
 TeamSize PokemonCollection::real_size() const {
 	return true_size;
 }

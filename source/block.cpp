@@ -1,5 +1,5 @@
 // Block selection and execution of moves
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -39,7 +39,6 @@ namespace {
 bool is_legal_selection(Team const & user, Move move, ActivePokemon other, Weather weather, bool found_selectable_move);
 bool is_blocked_by_bide (ActivePokemon user, Moves move);
 bool is_not_illegal_switch(Team const & user, Moves move, ActivePokemon other, Weather weather);
-bool is_blocked_from_switching(ActivePokemon user, Pokemon const & other, Weather weather);
 bool imprison(Moves move, ActivePokemon other);
 bool blocked_by_torment(ActivePokemon user, Moves move);
 bool block1 (ActivePokemon user, Move move, ActivePokemon other);
@@ -118,16 +117,20 @@ bool is_blocked_by_bide(ActivePokemon const user, Moves const move) {
 	return is_locked_in_to_bide(user) and move == Moves::Bide;
 }
 
-bool is_not_illegal_switch(Team const & user, Moves const move, ActivePokemon const other, Weather const weather) {
-	return is_switch(move) ?
-		!user.all_pokemon().is_switching_to_self(move) and !is_blocked_from_switching(user.pokemon(), other, weather) :
-		true;
+auto would_switch_to_different_pokemon(PokemonCollection const & collection, Moves const move) {
+	return to_replacement(move) != collection.index();
 }
 
-bool is_blocked_from_switching(ActivePokemon const user, Pokemon const & other, Weather const weather) {
-	bool const block_attempted = get_ability(other).blocks_switching(user, weather) or trapped(user);
-	bool const result = block_attempted and !allows_switching(get_item(user));
+auto is_blocked_from_switching(ActivePokemon const user, Pokemon const & other, Weather const weather) {
+	auto const block_attempted = get_ability(other).blocks_switching(user, weather) or trapped(user);
+	auto const result = block_attempted and !allows_switching(get_item(user));
 	return result;
+}
+
+bool is_not_illegal_switch(Team const & user, Moves const move, ActivePokemon const other, Weather const weather) {
+	return is_switch(move) ?
+		would_switch_to_different_pokemon(user.all_pokemon(), move) and !is_blocked_from_switching(user.pokemon(), other, weather) :
+		true;
 }
 
 bool is_healing(Moves const name) {

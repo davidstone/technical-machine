@@ -55,8 +55,6 @@ struct PokemonCollection : detail::Collection<PokemonContainer> {
 	}
 
 	void set_replacement(containers::index_type<PokemonCollection> const new_index);
-	bool is_switching_to_self () const;
-	bool is_switching_to_self(Moves move) const;
 	TeamSize real_size() const;
 	containers::index_type<PokemonCollection> find_index(Species name) const;
 
@@ -78,12 +76,15 @@ struct PokemonCollection : detail::Collection<PokemonContainer> {
 	void for_each_replacement (Function1 const & break_out, Function2 const & f) {
 		ResetIndex reset(*this);
 		for (auto const test_replacement : bounded::integer_range(size(*this))) {
-			current_replacement = test_replacement;
-			if (is_switching_to_self() and size(*this) > 1_bi)
+			auto const would_switch_to_self = replacement() == index();
+			if (would_switch_to_self and size(*this) > 1_bi) {
 				continue;
+			}
+			current_replacement = test_replacement;
 			f();
-			if (break_out())
+			if (break_out()) {
 				break;
+			}
 		}
 	}
 	template<typename Function>
