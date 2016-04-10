@@ -407,7 +407,7 @@ void Battle::do_turn() {
 		std::cerr << "Foe HP: " << get_hp(foe.pokemon()).current() << '\n';
 
 		register_damage();
-		endofturn(*first, *last, weather);
+		end_of_turn(*first, *last, weather);
 		std::cerr << "Sixth\n";
 		std::cerr << "AI HP: " << get_hp(ai.pokemon()).current() << '\n';
 		std::cerr << "Foe HP: " << get_hp(foe.pokemon()).current() << '\n';

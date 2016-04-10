@@ -423,7 +423,7 @@ double end_of_turn_order_branch(Team & team, Team & other, Team * first, Team * 
 }
 
 double end_of_turn_branch (Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate) {
-	endofturn (first, last, weather);
+	end_of_turn(first, last, weather);
 
 	auto const last_violated = Evaluate::sleep_clause(first);
 	auto const first_violated = Evaluate::sleep_clause(last);

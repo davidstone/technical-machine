@@ -1,5 +1,5 @@
 // End of turn effects
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -32,52 +32,52 @@
 namespace technicalmachine {
 namespace {
 
-void endofturn1 (Team & team);
-void endofturn2 (Team & team);
-void endofturn3 (MutableActivePokemon pokemon, Weather const weather);
-void endofturn5 (MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather);
-void endofturn6 (Team & target, Weather const weather);
-void endofturn7 (MutableActivePokemon pokemon);
+void end_of_turn1(Team & team);
+void end_of_turn2(Team & team);
+void end_of_turn3(MutableActivePokemon pokemon, Weather const weather);
+void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather);
+void end_of_turn6(Team & target, Weather const weather);
+void end_of_turn7(MutableActivePokemon pokemon);
 
 template<typename Integer>
-void decrement (Integer & n) {
+void decrement(Integer & n) {
 	if (n > 0)
 		--n;
 }
 
 }	// namespace
 
-void endofturn (Team & first, Team & last, Weather & weather) {
+void end_of_turn(Team & first, Team & last, Weather & weather) {
 	first.reset_end_of_turn();
 	last.reset_end_of_turn();
-	endofturn1 (first);
-	endofturn1 (last);
-	endofturn2 (first);
-	endofturn2 (last);
+	end_of_turn1(first);
+	end_of_turn1(last);
+	end_of_turn2(first);
+	end_of_turn2(last);
 	weather.advance_one_turn();
 	if (!get_ability(first.pokemon()).blocks_weather() and !get_ability(last.pokemon()).blocks_weather()) {
-		endofturn3 (first.pokemon(), weather);
-		endofturn3 (last.pokemon(), weather);
+		end_of_turn3(first.pokemon(), weather);
+		end_of_turn3(last.pokemon(), weather);
 	}
-	endofturn5(first.pokemon(), last.pokemon(), weather);
-	endofturn5(last.pokemon(), first.pokemon(), weather);
-	endofturn6 (first, weather);
-	endofturn6 (last, weather);
-	endofturn7 (first.pokemon());
-	endofturn7 (last.pokemon());
+	end_of_turn5(first.pokemon(), last.pokemon(), weather);
+	end_of_turn5(last.pokemon(), first.pokemon(), weather);
+	end_of_turn6(first, weather);
+	end_of_turn6(last, weather);
+	end_of_turn7(first.pokemon());
+	end_of_turn7(last.pokemon());
 }
 
 namespace {
 
-void endofturn1 (Team & team) {
+void end_of_turn1(Team & team) {
 	team.screens.decrement();
 }
 
-void endofturn2 (Team & team) {
+void end_of_turn2(Team & team) {
 	team.wish.decrement(team.pokemon());
 }
 
-void endofturn3 (MutableActivePokemon pokemon, Weather const weather) {
+void end_of_turn3(MutableActivePokemon pokemon, Weather const weather) {
 	if (weather.hail() and !is_immune_to_hail(get_type(pokemon)))
 		heal(pokemon, make_rational(-1_bi, 16_bi));
 	if (weather.sand() and !is_immune_to_sandstorm(get_type(pokemon))) {
@@ -86,7 +86,7 @@ void endofturn3 (MutableActivePokemon pokemon, Weather const weather) {
 	Ability::weather_healing(pokemon, weather);
 }
 
-void endofturn5 (MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather) {
+void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather) {
 	if (get_hp(pokemon) == 0_bi) {
 		return;
 	}
@@ -98,8 +98,7 @@ void endofturn5 (MutableActivePokemon pokemon, MutableActivePokemon foe, Weather
 	}
 	if (get_ability(pokemon).boosts_speed()) {
 		boost(stage(pokemon), StatNames::SPE, 1_bi);
-	}
-	else if (shed_skin_activated(pokemon)) {
+	} else if (shed_skin_activated(pokemon)) {
 		get_status(pokemon) = Status{};
 	}
 	switch (get_item(pokemon)) {
@@ -185,11 +184,11 @@ void endofturn5 (MutableActivePokemon pokemon, MutableActivePokemon foe, Weather
 	}
 }
 
-void endofturn6 (Team &, Weather const) {
+void end_of_turn6(Team &, Weather const) {
 	// TODO: Doom Desire / Future Sight
 }
 
-void endofturn7 (MutableActivePokemon pokemon) {
+void end_of_turn7(MutableActivePokemon pokemon) {
 	pokemon.perish_song_turn();
 }
 
