@@ -451,7 +451,7 @@ double replace (Team & ai, Team & foe, Weather const weather, unsigned depth, Ev
 	auto const ai_break_out = [& ai]() { return get_hp(ai.pokemon()) != 0_bi; };
 	ai.all_pokemon().for_each_replacement(ai_break_out, [&]() {
 		if (verbose or first_turn)
-			std::cout << std::string(tabs, '\t') + "Evaluating switching to " + to_string(static_cast<Species>(ai.all_pokemon().at_replacement())) + "\n";
+			std::cout << std::string(tabs, '\t') + "Evaluating switching to " + to_string(static_cast<Species>(ai.replacement())) + "\n";
 		auto beta = static_cast<double>(victory + 1_bi);
 		auto const foe_break_out = [& foe, & alpha, & beta]() {
 			return beta <= alpha or get_hp(foe.pokemon()) != 0_bi;
@@ -467,7 +467,7 @@ double replace (Team & ai, Team & foe, Weather const weather, unsigned depth, Ev
 }
 
 double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate) {
-	// Use pokemon() instead of at_replacement() because it checks whether the
+	// Use pokemon() instead of replacement() because it checks whether the
 	// current Pokemon needs to be replaced because it fainted.
 	if (get_hp(first.pokemon()) == 0_bi) {
 		switch_pokemon(first, last, weather);
@@ -503,7 +503,7 @@ double move_then_switch_branch(Team & switcher, Team const & other, Variable con
 	}
 	switcher.all_pokemon().for_each_replacement([&]() {
 		if (first_turn)
-			std::cout << std::string (tabs, '\t') + "Evaluating bringing in " + to_string(static_cast<Species>(switcher.all_pokemon().at_replacement())) + "\n";
+			std::cout << std::string (tabs, '\t') + "Evaluating bringing in " + to_string(static_cast<Species>(switcher.replacement())) + "\n";
 		auto const value = switch_after_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate);
 		if (switcher.is_me()) {
 			update_best_move(alpha, value, first_turn, to_switch(switcher.all_pokemon().replacement()), best_switch);

@@ -80,13 +80,6 @@ Pokemon & Team::pokemon(containers::index_type<PokemonCollection> const index) {
 	return all_pokemon()(index);
 }
 
-Pokemon const & Team::replacement() const {
-	return all_pokemon().at_replacement();
-}
-Pokemon & Team::replacement() {
-	return all_pokemon().at_replacement();
-}
-
 PokemonCollection const & Team::all_pokemon() const {
 	return m_all_pokemon;
 }

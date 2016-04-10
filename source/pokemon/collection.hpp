@@ -58,8 +58,6 @@ public:
 	}
 
 	void set_replacement(containers::index_type<PokemonCollection> const new_index);
-	Pokemon const & at_replacement () const;
-	Pokemon & at_replacement ();
 	void replacement_from_switch ();
 	bool is_switching_to_self () const;
 	bool is_switching_to_self(Moves move) const;

@@ -50,13 +50,6 @@ void PokemonCollection::set_replacement(containers::index_type<PokemonCollection
 	current_replacement = check_range (new_index);
 }
 
-Pokemon const & PokemonCollection::at_replacement () const {
-	return operator() (replacement());
-}
-Pokemon & PokemonCollection::at_replacement () {
-	return operator() (replacement());
-}
-
 void PokemonCollection::replacement_from_switch () {
 	set_replacement(to_replacement(current_move(operator()())));
 }
@@ -84,7 +77,7 @@ bool PokemonCollection::seen(Species const name) {
 	// In the event of current_replacement == size(), a new Pokemon is added
 	// immediately, increasing size() by 1, making this safe.
 	for (current_replacement = 0_bi; current_replacement != size(*this); ++current_replacement) {
-		if (name == at_replacement())
+		if (name == operator()(replacement()))
 			return true;
 	}
 	return false;
