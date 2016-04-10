@@ -420,7 +420,7 @@ void Battle::do_turn() {
 		// to make a decision to replace that Pokemon. I update between each
 		// decision point so that is already taken into account.
 		while (is_fainted(foe.pokemon())) {
-			set_index(all_moves(foe.pokemon()), foe.all_pokemon().replacement_to_switch());
+			set_index(all_moves(foe.pokemon()), to_switch(foe.all_pokemon().replacement()));
 			call_move(foe, ai, weather, foe_variable, damage_is_known);
 		}
 	}

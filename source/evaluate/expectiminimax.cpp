@@ -461,7 +461,7 @@ double replace (Team & ai, Team & foe, Weather const weather, unsigned depth, Ev
 				std::min(beta, (fainted(ai, foe, weather, depth, evaluate) + fainted(foe, ai, weather, depth, evaluate)) / 2.0) :
 				std::min(beta, fainted(*teams.first, *teams.second, weather, depth, evaluate));
 		});
-		update_best_move (alpha, beta, first_turn, ai.all_pokemon().replacement_to_switch(), best_move);
+		update_best_move(alpha, beta, first_turn, to_switch(ai.all_pokemon().replacement()), best_move);
 	});
 	return alpha;
 }
@@ -506,7 +506,7 @@ double move_then_switch_branch(Team & switcher, Team const & other, Variable con
 			std::cout << std::string (tabs, '\t') + "Evaluating bringing in " + to_string(static_cast<Species>(switcher.all_pokemon().at_replacement())) + "\n";
 		auto const value = switch_after_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate);
 		if (switcher.is_me()) {
-			update_best_move (alpha, value, first_turn, switcher.all_pokemon().replacement_to_switch(), best_switch);
+			update_best_move(alpha, value, first_turn, to_switch(switcher.all_pokemon().replacement()), best_switch);
 		}
 		else {
 			MoveScores foe_scores(switcher.pokemon());
