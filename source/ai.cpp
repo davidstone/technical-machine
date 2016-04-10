@@ -68,9 +68,8 @@ namespace {
 using namespace bounded::literal;
 
 void print_debug_statements() {
-	std::cout << "sizeof (Team): " << sizeof(Team) << '\n';
-	std::cout << "sizeof (Pokemon): " << sizeof(Pokemon) << '\n';
-	std::cout << "sizeof (Move): " << sizeof(Move) << '\n';
-	std::cout << "heap allocated_size: 0\n";
+	std::cout << "sizeof(Team): " << sizeof(Team) << '\n';
+	std::cout << "sizeof(Pokemon): " << sizeof(Pokemon) << '\n';
+	std::cout << "sizeof(Move): " << sizeof(Move) << '\n';
 }
 }	// namespace
