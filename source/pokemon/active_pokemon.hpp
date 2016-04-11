@@ -1,5 +1,5 @@
 // ActivePokemon and MutableActivePokemon provide a view; they do not own data
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -91,13 +91,11 @@ struct MutableActivePokemon {
 	auto update_before_move() -> void;
 	auto use_substitute() -> void;
 	auto attract() -> void;
-	auto awaken(bool value) -> void;
 	auto activate_aqua_ring() -> void;
 	auto baton_pass() -> void;
 	auto charge() -> void;
 	auto confuse() -> void;
 	auto handle_confusion() -> void;
-	auto set_critical_hit(bool value) -> void;
 	auto curse() -> void;
 	auto defense_curl() -> void;
 	auto use_destiny_bond() -> void;
@@ -123,7 +121,6 @@ struct MutableActivePokemon {
 	auto ingrain() -> void;
 	auto activate_magnet_rise() -> void;
 	auto advance_magnet_rise() -> void;
-	auto set_miss(bool value) -> void;
 	auto set_moved(bool value = true) -> void;
 	auto activate_mud_sport() -> void;
 	auto give_nightmares() -> void;
@@ -138,8 +135,7 @@ struct MutableActivePokemon {
 	auto recharge() -> bool;
 	auto use_recharge_move() -> void;
 	auto roost() -> void;
-	auto shed_skin(bool value) -> void;
-	auto increase_sleep_counter() -> void;
+	auto increase_sleep_counter(bool awakens) -> void;
 
 	auto increment_stockpile() -> void;
 	auto release_stockpile() -> bounded::integer<0, Stockpile::max>;
@@ -222,10 +218,6 @@ inline auto is_confused(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.confusion.is_active();
 }
 
-inline auto critical_hit(ActivePokemon const pokemon) -> bool {
-	return pokemon.m_flags.critical_hit;
-}
-
 inline auto is_cursed(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.is_cursed;
 }
@@ -298,10 +290,6 @@ inline auto minimized(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.minimized;
 }
 
-inline auto missed(ActivePokemon const pokemon) -> bool {
-	return pokemon.m_flags.missed;
-}
-
 inline auto moved(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.moved;
 }
@@ -320,10 +308,6 @@ inline auto is_recharging(ActivePokemon const pokemon) -> bool {
 
 inline auto is_roosting(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.is_roosting;
-}
-
-inline auto shed_skin_activated(ActivePokemon const pokemon) -> bool {
-	return pokemon.m_flags.shed_skin_activated;
 }
 
 inline auto slow_start_is_active(ActivePokemon const pokemon) -> bool {

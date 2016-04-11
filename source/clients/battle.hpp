@@ -101,6 +101,16 @@ private:
 	Variable & variable(Team const & team);
 	void register_damage();
 
+	struct Flags {
+		bool awakens = false;
+		bool critical_hit = false;
+		bool miss = false;
+		bool shed_skin = false;
+	};
+	auto & get_flags(Team const & team) {
+		return bounded::addressof(team) == bounded::addressof(ai) ? ai_flags : foe_flags;
+	}
+
 	std::string opponent_name;
 	mutable std::mt19937 random_engine;
 	Team ai;
@@ -112,6 +122,8 @@ private:
 	Team * last;
 	Variable ai_variable;
 	Variable foe_variable;
+	Flags ai_flags;
+	Flags foe_flags;
 	unsigned depth;
 	bool move_damage;
 	Party my_party;

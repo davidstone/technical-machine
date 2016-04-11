@@ -1,4 +1,3 @@
-// End of turn function forward declaration
 // Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
@@ -23,6 +22,6 @@ namespace technicalmachine {
 struct Team;
 struct Weather;
 
-void end_of_turn(Team & first, Team & last, Weather & weather);
+void end_of_turn(Team & first, Team & last, Weather & weather, bool first_shed_skin, bool last_shed_skin);
 
 }	// namespace technicalmachine

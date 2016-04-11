@@ -47,9 +47,9 @@ bool is_blocked_due_to_lock_in(ActivePokemon user, Moves move);
 bool standard_move_lock_in(ActivePokemon user, Moves move);
 bool is_locked_in (ActivePokemon user);
 bool is_locked_in_to_different_move(ActivePokemon user, Moves move);
-bool is_blocked_due_to_status(MutableActivePokemon user, Moves move);
+bool is_blocked_due_to_status(MutableActivePokemon user, Moves move, bool awakens);
 bool is_blocked_by_freeze(Pokemon const & user, Moves move);
-bool handle_sleep_counter(MutableActivePokemon user, Moves move);
+bool handle_sleep_counter(MutableActivePokemon user, Moves move, bool awakens);
 
 }	// namespace
 
@@ -76,7 +76,7 @@ bool is_legal_selection(Team const & user, Move const move, ActivePokemon const 
 }
 }	// namespace
 
-bool can_execute_move (MutableActivePokemon user, ActivePokemon const other, Weather const weather) {
+bool can_execute_move (MutableActivePokemon user, ActivePokemon const other, Weather const weather, bool const awakens) {
 	auto const move = current_move(user);
 	assert(!is_switch(move) or !is_recharging(user));
 	
@@ -88,7 +88,7 @@ bool can_execute_move (MutableActivePokemon user, ActivePokemon const other, Wea
 		return false;
 	}
 
-	bool execute = !(is_blocked_due_to_status (user, move) or
+	bool execute = !(is_blocked_due_to_status(user, move, awakens) or
 			block1 (user, move, other) or
 			is_loafing(user));
 
@@ -226,8 +226,8 @@ bool blocked_by_torment(ActivePokemon const user, Moves const move) {
 	return is_tormented(user) and was_used_last(user, move);
 }
 
-bool is_blocked_due_to_status(MutableActivePokemon user, Moves const move) {
-	return is_blocked_by_freeze(user, move) or handle_sleep_counter(user, move);
+bool is_blocked_due_to_status(MutableActivePokemon user, Moves const move, bool const awakens) {
+	return is_blocked_by_freeze(user, move) or handle_sleep_counter(user, move, awakens);
 }
 
 bool is_blocked_by_freeze(Pokemon const & user, Moves const move) {
@@ -244,11 +244,11 @@ bool is_blocked_by_sleep(Moves const move) {
 	}
 }
 
-bool handle_sleep_counter(MutableActivePokemon user, Moves const move) {
+bool handle_sleep_counter(MutableActivePokemon user, Moves const move, bool const awakens) {
 	if (!is_sleeping(get_status(user))) {
 		return false;
 	}
-	user.increase_sleep_counter();
+	user.increase_sleep_counter(awakens);
 	return is_blocked_by_sleep(move);
 }
 

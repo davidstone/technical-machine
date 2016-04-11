@@ -1,5 +1,5 @@
 // Test stat calculations
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -36,6 +36,8 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
+constexpr auto critical_hit = false;
+
 void attack_tests () {
 	std::cout << "\tRunning Attack tests.\n";
 	constexpr auto max_attack = 7368_bi;
@@ -54,7 +56,7 @@ void attack_tests () {
 
 	get_item(pokemon) = Item::Choice_Band;
 	
-	check_equal(calculate_attack(attacker.pokemon(), Weather{}), max_attack);
+	check_equal(calculate_attack(attacker.pokemon(), Weather{}, critical_hit), max_attack);
 }
 
 void special_attack_tests () {
@@ -77,7 +79,7 @@ void special_attack_tests () {
 
 	get_item(pokemon) = Item::Choice_Specs;
 	
-	check_equal(calculate_special_attack(attacker.pokemon(), weather), max_special_attack);
+	check_equal(calculate_special_attack(attacker.pokemon(), weather, critical_hit), max_special_attack);
 }
 
 void max_defense_test() {

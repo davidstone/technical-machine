@@ -35,7 +35,7 @@ namespace {
 void end_of_turn1(Team & team);
 void end_of_turn2(Team & team);
 void end_of_turn3(MutableActivePokemon pokemon, Weather const weather);
-void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather);
+void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, bool shed_skin_activated);
 void end_of_turn6(Team & target, Weather const weather);
 void end_of_turn7(MutableActivePokemon pokemon);
 
@@ -47,7 +47,7 @@ void decrement(Integer & n) {
 
 }	// namespace
 
-void end_of_turn(Team & first, Team & last, Weather & weather) {
+void end_of_turn(Team & first, Team & last, Weather & weather, bool const first_shed_skin, bool const last_shed_skin) {
 	first.reset_end_of_turn();
 	last.reset_end_of_turn();
 	end_of_turn1(first);
@@ -59,8 +59,8 @@ void end_of_turn(Team & first, Team & last, Weather & weather) {
 		end_of_turn3(first.pokemon(), weather);
 		end_of_turn3(last.pokemon(), weather);
 	}
-	end_of_turn5(first.pokemon(), last.pokemon(), weather);
-	end_of_turn5(last.pokemon(), first.pokemon(), weather);
+	end_of_turn5(first.pokemon(), last.pokemon(), weather, first_shed_skin);
+	end_of_turn5(last.pokemon(), first.pokemon(), weather, last_shed_skin);
 	end_of_turn6(first, weather);
 	end_of_turn6(last, weather);
 	end_of_turn7(first.pokemon());
@@ -86,7 +86,7 @@ void end_of_turn3(MutableActivePokemon pokemon, Weather const weather) {
 	Ability::weather_healing(pokemon, weather);
 }
 
-void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather) {
+void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, bool const shed_skin_activated) {
 	if (get_hp(pokemon) == 0_bi) {
 		return;
 	}
@@ -98,7 +98,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	}
 	if (get_ability(pokemon).boosts_speed()) {
 		boost(stage(pokemon), StatNames::SPE, 1_bi);
-	} else if (shed_skin_activated(pokemon)) {
+	} else if (shed_skin_activated) {
 		get_status(pokemon) = Status{};
 	}
 	switch (get_item(pokemon)) {

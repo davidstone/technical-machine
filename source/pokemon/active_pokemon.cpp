@@ -1,5 +1,5 @@
 // Flags for the active Pokemon
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -50,10 +50,6 @@ auto MutableActivePokemon::attract() -> void {
 	m_flags.attracted = true;
 }
 
-auto MutableActivePokemon::awaken(bool const value) -> void {
-	m_flags.awakening = value;
-}
-
 auto MutableActivePokemon::baton_pass() -> void {
 	m_flags.is_baton_passing = true;
 }
@@ -70,10 +66,6 @@ auto MutableActivePokemon::confuse() -> void {
 
 auto MutableActivePokemon::handle_confusion() -> void {
 	m_flags.confusion.do_turn(*this);
-}
-
-auto MutableActivePokemon::set_critical_hit(bool const value) -> void {
-	m_flags.critical_hit = value;
 }
 
 auto MutableActivePokemon::curse() -> void {
@@ -193,10 +185,6 @@ auto MutableActivePokemon::advance_magnet_rise() -> void {
 	m_flags.magnet_rise.advance_one_turn();
 }
 
-auto MutableActivePokemon::set_miss(bool const value) -> void {
-	m_flags.missed = value;
-}
-
 auto MutableActivePokemon::set_moved(bool const value) -> void {
 	m_flags.moved = value;
 }
@@ -258,14 +246,10 @@ auto MutableActivePokemon::roost() -> void {
 	m_flags.is_roosting = true;
 }
 
-auto MutableActivePokemon::shed_skin(bool const value) -> void {
-	m_flags.shed_skin_activated = value;
-}
-
-auto MutableActivePokemon::increase_sleep_counter() -> void {
+auto MutableActivePokemon::increase_sleep_counter(bool const awakens) -> void {
 	auto & status = get_status(*this);
 	auto const & ability = get_ability(*this);
-	status.increase_sleep_counter(ability, m_flags.awakening);
+	status.increase_sleep_counter(ability, awakens);
 }
 
 auto MutableActivePokemon::increment_stockpile() -> void {

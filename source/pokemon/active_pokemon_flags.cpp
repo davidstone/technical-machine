@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -89,10 +89,8 @@ auto ActivePokemonFlags::reset_switch() -> void {
 }
 
 auto ActivePokemonFlags::reset_between_turns() -> void {
-	critical_hit = false;
 	is_fully_paralyzed = false;
 	confusion.end_of_turn_reset();
-	missed = false;
 }
 
 auto operator== (ActivePokemonFlags const & lhs, ActivePokemonFlags const & rhs) -> bool {

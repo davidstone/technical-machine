@@ -379,6 +379,8 @@ void Battle::initialize_turn() {
 	
 	first = nullptr;
 	last = nullptr;
+	ai_flags = {};
+	foe_flags = {};
 }
 
 
@@ -410,7 +412,10 @@ void Battle::do_turn() {
 		std::cerr << "Foe HP: " << get_hp(foe.pokemon()).current() << '\n';
 
 		register_damage();
-		call_move(*first, *last, weather, variable(*first), damage_is_known);
+		
+		auto const first_flags = get_flags(*first);
+		auto const last_flags = get_flags(*last);
+		call_move(*first, *last, weather, variable(*first), first_flags.miss, first_flags.awakens, first_flags.critical_hit, damage_is_known);
 		std::cerr << "Second\n";
 		std::cerr << "AI HP: " << get_hp(ai.pokemon()).current() << '\n';
 		std::cerr << "Foe HP: " << get_hp(foe.pokemon()).current() << '\n';
@@ -420,7 +425,7 @@ void Battle::do_turn() {
 		std::cerr << "Foe HP: " << get_hp(foe.pokemon()).current() << '\n';
 
 		register_damage();
-		call_move(*last, *first, weather, variable(*last), damage_is_known);
+		call_move(*last, *first, weather, variable(*last), last_flags.miss, last_flags.awakens, last_flags.critical_hit, damage_is_known);
 		std::cerr << "Fourth\n";
 		std::cerr << "AI HP: " << get_hp(ai.pokemon()).current() << '\n';
 		std::cerr << "Foe HP: " << get_hp(foe.pokemon()).current() << '\n';
@@ -430,7 +435,7 @@ void Battle::do_turn() {
 		std::cerr << "Foe HP: " << get_hp(foe.pokemon()).current() << '\n';
 
 		register_damage();
-		end_of_turn(*first, *last, weather);
+		end_of_turn(*first, *last, weather, first_flags.shed_skin, last_flags.shed_skin);
 		std::cerr << "Sixth\n";
 		std::cerr << "AI HP: " << get_hp(ai.pokemon()).current() << '\n';
 		std::cerr << "Foe HP: " << get_hp(foe.pokemon()).current() << '\n';
@@ -444,7 +449,7 @@ void Battle::do_turn() {
 		// decision point so that is already taken into account.
 		while (is_fainted(foe.pokemon())) {
 			set_index(all_moves(foe.pokemon()), to_switch(foe.all_pokemon().replacement()));
-			call_move(foe, ai, weather, foe_variable, damage_is_known);
+			call_move(foe, ai, weather, foe_variable, false, false, false, damage_is_known);
 		}
 	}
 	std::cout << to_string(*first) << '\n';
@@ -510,11 +515,11 @@ void Battle::handle_flinch(Party const party) {
 }
 
 void Battle::handle_miss(Party const party) {
-	get_team(party).pokemon().set_miss(true);
+	get_flags(get_team(party)).miss = true;
 }
 
 void Battle::handle_critical_hit(Party const party) {
-	get_team(party).pokemon().set_critical_hit(true);
+	get_flags(get_team(party)).critical_hit = true;
 }
 
 void Battle::handle_ability_message(Party party, Ability::Abilities ability) {

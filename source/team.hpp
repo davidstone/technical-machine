@@ -56,6 +56,7 @@ struct Team {
 	auto & replacement() {
 		return all_pokemon()(all_pokemon().replacement());
 	}
+
 	template<typename... Args>
 	void add_pokemon(Args&&... args) {
 		all_pokemon().add(std::forward<Args>(args)...);

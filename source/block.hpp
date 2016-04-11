@@ -1,5 +1,5 @@
 // Declaration of functions that block selection / execution
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -48,6 +48,6 @@ private:
 	Species m_species;
 };
 
-bool can_execute_move(MutableActivePokemon user, ActivePokemon other, Weather weather);
+bool can_execute_move(MutableActivePokemon user, ActivePokemon other, Weather weather, bool awakens);
 
 }	// namespace technicalmachine

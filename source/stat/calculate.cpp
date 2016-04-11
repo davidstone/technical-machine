@@ -280,9 +280,9 @@ auto calculate_initial_stat(ActivePokemon const pokemon) {
 }
 
 template<StatNames stat>
-auto calculate_common_offensive_stat(ActivePokemon const pokemon, Weather const weather) {
+auto calculate_common_offensive_stat(ActivePokemon const pokemon, Weather const weather, bool const critical_hit) {
 	auto const attack = calculate_initial_stat<stat>(pokemon) *
-		modifier<stat>(stage(pokemon), critical_hit(pokemon)) *
+		modifier<stat>(stage(pokemon), critical_hit) *
 		ability_modifier<stat>(pokemon, weather) *
 		item_modifier<stat>(pokemon);
 	
@@ -291,23 +291,23 @@ auto calculate_common_offensive_stat(ActivePokemon const pokemon, Weather const 
 
 }	// namespace
 
-auto calculate_attacking_stat(ActivePokemon const attacker, Weather const weather) -> std::common_type_t<attack_type, special_attack_type> {
+auto calculate_attacking_stat(ActivePokemon const attacker, Weather const weather, bool const critical_hit) -> std::common_type_t<attack_type, special_attack_type> {
 	return is_physical(current_move(attacker)) ?
-		calculate_attack(attacker, weather) :
-		calculate_special_attack(attacker, weather);
+		calculate_attack(attacker, weather, critical_hit) :
+		calculate_special_attack(attacker, weather, critical_hit);
 }
 
-auto calculate_attack(ActivePokemon const attacker, Weather const weather) -> attack_type {
+auto calculate_attack(ActivePokemon const attacker, Weather const weather, bool const critical_hit) -> attack_type {
 	// static_cast here because it looks as though the strongest attacker would
 	// hold a Light Ball, but because of the restriction on the attacker being
 	// Pikachu, it is better to use a Power Trick Shuckle with a Choice Band.
-	return static_cast<attack_type>(calculate_common_offensive_stat<StatNames::ATK>(attacker, weather));
+	return static_cast<attack_type>(calculate_common_offensive_stat<StatNames::ATK>(attacker, weather, critical_hit));
 }
 
-auto calculate_special_attack(ActivePokemon const attacker, Weather const weather) -> special_attack_type {
+auto calculate_special_attack(ActivePokemon const attacker, Weather const weather, bool const critical_hit) -> special_attack_type {
 	// see above comment about Light Ball, except the strongest Special Attack
 	// Pokemon is actually a Choice Specs Deoxys-Attack.
-	return static_cast<special_attack_type>(calculate_common_offensive_stat<StatNames::SPA>(attacker, weather));
+	return static_cast<special_attack_type>(calculate_common_offensive_stat<StatNames::SPA>(attacker, weather, critical_hit));
 }
 
 namespace {
@@ -324,16 +324,16 @@ auto is_self_KO(Moves const move) {
 
 }	// namespace
 
-auto calculate_defending_stat(ActivePokemon const attacker, ActivePokemon const defender, Weather const weather) -> std::common_type_t<defense_type, special_defense_type> {
+auto calculate_defending_stat(ActivePokemon const attacker, ActivePokemon const defender, Weather const weather, bool const critical_hit) -> std::common_type_t<defense_type, special_defense_type> {
 	return is_physical(current_move(attacker)) ?
-		calculate_defense(defender, weather, critical_hit(attacker), is_self_KO(current_move(attacker))) :
-		calculate_special_defense(defender, weather, critical_hit(attacker));
+		calculate_defense(defender, weather, critical_hit, is_self_KO(current_move(attacker))) :
+		calculate_special_defense(defender, weather, critical_hit);
 }
 
-auto calculate_defense(ActivePokemon const defender, Weather const weather, bool ch, bool is_self_KO) -> defense_type {
+auto calculate_defense(ActivePokemon const defender, Weather const weather, bool const critical_hit, bool is_self_KO) -> defense_type {
 	constexpr auto stat = StatNames::DEF;
 	auto const defense = calculate_initial_stat<stat>(defender) *
-		modifier<stat>(stage(defender), ch) *
+		modifier<stat>(stage(defender), critical_hit) *
 		ability_modifier<stat>(defender, weather) *
 		item_modifier<stat>(defender);
 	
@@ -351,10 +351,10 @@ auto special_defense_sandstorm_boost(ActivePokemon const defender, Weather const
 
 }	// namespace
 
-auto calculate_special_defense(ActivePokemon const defender, Weather const weather, bool ch) -> special_defense_type {
+auto calculate_special_defense(ActivePokemon const defender, Weather const weather, bool const critical_hit) -> special_defense_type {
 	constexpr auto stat = StatNames::SPD;
 	auto const defense = calculate_initial_stat<stat>(defender) *	
-		modifier<stat>(stage(defender), ch) *
+		modifier<stat>(stage(defender), critical_hit) *
 		ability_modifier<stat>(defender, weather) *
 		item_modifier<stat>(defender) *
 		special_defense_sandstorm_boost(defender, weather);
@@ -396,29 +396,29 @@ auto calculate_speed(Team const & team, Weather const weather) -> speed_type {
 	return static_cast<speed_type>(bounded::max(speed, 1_bi));
 }
 
-auto order(Team & team1, Team & team2, Weather const weather) -> std::pair<Team *, Team *> {
+auto order(Team const & team1, Team const & team2, Weather const weather) -> std::pair<Team const *, Team const *> {
 	Priority const priority1(current_move(team1.pokemon()));
 	Priority const priority2(current_move(team2.pokemon()));
 
 	if (priority1 == priority2) {
 		return faster_pokemon(team1, team2, weather);
 	} else if (priority1 > priority2) {
-		return { &team1, &team2 };
+		return { bounded::addressof(team1), bounded::addressof(team2) };
 	} else {	// if (priority1 < priority2)
-		return { &team2, &team1 };
+		return { bounded::addressof(team2), bounded::addressof(team1) };
 	}
 }
 
 namespace {
 
-auto faster_pokemon_before_trick_room(Team & team1, Team & team2, Weather const weather) -> std::pair<Team *, Team *> {
+auto faster_pokemon_before_trick_room(Team const & team1, Team const & team2, Weather const weather) -> std::pair<Team const *, Team const *> {
 	auto const speed1 = calculate_speed(team1, weather);
 	auto const speed2 = calculate_speed(team2, weather);
 
 	if (speed1 > speed2) {
-		return { &team1, &team2};
+		return { bounded::addressof(team1), bounded::addressof(team2) };
 	} else if (speed1 < speed2) {
-		return { &team2, &team1 };
+		return { bounded::addressof(team2), bounded::addressof(team1) };
 	} else {
 		return { nullptr, nullptr };
 	}
@@ -426,7 +426,7 @@ auto faster_pokemon_before_trick_room(Team & team1, Team & team2, Weather const 
 
 }	// namespace
 
-auto faster_pokemon(Team & team1, Team & team2, Weather const weather) -> std::pair<Team *, Team *> {
+auto faster_pokemon(Team const & team1, Team const & team2, Weather const weather) -> std::pair<Team const *, Team const *> {
 	auto result = faster_pokemon_before_trick_room(team1, team2, weather);
 	if (weather.trick_room()) {
 		std::swap(result.first, result.second);

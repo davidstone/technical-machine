@@ -48,8 +48,8 @@
 namespace technicalmachine {
 namespace {
 
-auto use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known) -> void;
-auto calculate_real_damage(Team const & user, Team const & target, Weather weather, Variable const & variable, bool damage_is_known) -> damage_type;
+auto use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const critical_hit, bool damage_is_known) -> void;
+auto calculate_real_damage(Team const & user, Team const & target, Weather weather, Variable const & variable, bool const critical_hit, bool damage_is_known) -> damage_type;
 auto call_other_move (MutableActivePokemon user) -> void;
 template<typename Predicate>
 auto cure_all_status(Team & user, Predicate const & predicate) -> void {
@@ -122,17 +122,17 @@ auto calls_other_move(Moves const move) {
 
 }	// namespace
 
-auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) -> void {
+auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const missed, bool const awakens, bool const critical_hit, bool const damage_is_known) -> void {
 	user.pokemon().update_before_move();
-	if (!can_execute_move(user.pokemon(), target.pokemon(), weather)) {
+	if (!can_execute_move(user.pokemon(), target.pokemon(), weather, awakens)) {
 		return;
 	}
 	lower_pp(user.pokemon(), get_ability(target.pokemon()));
 	if (calls_other_move(current_move(user.pokemon()))) {
 		call_other_move(user.pokemon());
 	}
-	if (!missed(user.pokemon())) {
-		use_move(user, target, weather, variable, damage_is_known);
+	if (!missed) {
+		use_move(user, target, weather, variable, critical_hit, damage_is_known);
 	}
 }
 
@@ -160,7 +160,7 @@ auto is_sound_based(Moves const move) {
 	}
 }
 
-auto use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const damage_is_known) -> void {
+auto use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) -> void {
 	Moves const move = current_move(user.pokemon());
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
@@ -170,7 +170,7 @@ auto use_move(Team & user, Team & target, Weather & weather, Variable const & va
 
 	do_effects_before_moving (user.pokemon(), target);
 
-	auto const damage = calculate_real_damage(user, target, weather, variable, damage_is_known);
+	auto const damage = calculate_real_damage(user, target, weather, variable, critical_hit, damage_is_known);
 	do_damage(user.pokemon(), target.pokemon(), damage);
 	user.pokemon().increment_move_use_counter();
 
@@ -192,7 +192,7 @@ auto do_effects_before_moving (Pokemon & user, Team & target) -> void {
 	}
 }
 
-auto calculate_real_damage(Team const & user, Team const & target, Weather const weather, Variable const & variable, bool const damage_is_known) -> damage_type {
+auto calculate_real_damage(Team const & user, Team const & target, Weather const weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) -> damage_type {
 	if (!is_damaging(current_move(user.pokemon()))) {
 		return 0_bi;
 	}
@@ -200,7 +200,7 @@ auto calculate_real_damage(Team const & user, Team const & target, Weather const
 		return damaged(target.pokemon());
 	}
 
-	return damage_calculator(user, target, weather, variable);
+	return damage_calculator(user, target, weather, variable, critical_hit);
 }
 
 auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_type const damage) -> void {

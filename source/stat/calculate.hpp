@@ -41,19 +41,19 @@ auto initial_stat(Stat const stat, Level const level, Nature const nature) {
 
 using attack_type = bounded::integer<1, 7368>;
 using special_attack_type = bounded::integer<1, 4536>;
-auto calculate_attacking_stat(ActivePokemon attacker, Weather weather) -> std::common_type_t<attack_type, special_attack_type>;
-auto calculate_attack(ActivePokemon attacker, Weather weather) -> attack_type;
-auto calculate_special_attack(ActivePokemon attacker, Weather weather) -> special_attack_type;
+auto calculate_attacking_stat(ActivePokemon attacker, Weather weather, bool critical_hit) -> std::common_type_t<attack_type, special_attack_type>;
+auto calculate_attack(ActivePokemon attacker, Weather weather, bool critical_hit) -> attack_type;
+auto calculate_special_attack(ActivePokemon attacker, Weather weather, bool critical_hit) -> special_attack_type;
 
 using defense_type = bounded::integer<1, 3684>;
 using special_defense_type = bounded::integer<1, 3684>;
-auto calculate_defending_stat(ActivePokemon attacker, ActivePokemon defender, Weather weather) -> std::common_type_t<defense_type, special_defense_type>;
-auto calculate_defense(ActivePokemon defender, Weather weather, bool ch = false, bool is_self_KO = false) -> defense_type;
-auto calculate_special_defense(ActivePokemon defender, Weather weather, bool ch = false) -> special_defense_type;
+auto calculate_defending_stat(ActivePokemon attacker, ActivePokemon defender, Weather weather, bool critical_hit) -> std::common_type_t<defense_type, special_defense_type>;
+auto calculate_defense(ActivePokemon defender, Weather weather, bool critical_hit = false, bool is_self_KO = false) -> defense_type;
+auto calculate_special_defense(ActivePokemon defender, Weather weather, bool critical_hit = false) -> special_defense_type;
 
 using speed_type = bounded::integer<1, 12096>;
 auto calculate_speed(Team const & team, Weather weather) -> speed_type;
-auto order(Team & team1, Team & team2, Weather weather) -> std::pair<Team *, Team *>;
-auto faster_pokemon(Team & team1, Team & team2, Weather weather) -> std::pair<Team *, Team *>;
+auto order(Team const & team1, Team const & team2, Weather weather) -> std::pair<Team const *, Team const *>;
+auto faster_pokemon(Team const & team1, Team const & team2, Weather weather) -> std::pair<Team const *, Team const *>;
 
 }	// namespace technicalmachine

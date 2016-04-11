@@ -1,5 +1,5 @@
 // Flags for the active Pokemon
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -65,7 +65,6 @@ struct MutableActivePokemon;
 	friend auto cannot_be_koed(ActivePokemon pokemon) -> bool; \
 	friend auto charge_boosted(ActivePokemon pokemon) -> bool; \
 	friend auto is_confused(ActivePokemon pokemon) -> bool; \
-	friend auto critical_hit(ActivePokemon pokemon) -> bool; \
 	friend auto is_cursed(ActivePokemon pokemon) -> bool; \
 	friend auto defense_curled(ActivePokemon pokemon) -> bool; \
 	/* Requires that move is actually one of this Pokemon's moves */ \
@@ -89,13 +88,11 @@ struct MutableActivePokemon;
 	friend auto magnet_rise(ActivePokemon pokemon) -> MagnetRise const &; \
 	friend auto me_first_is_active(ActivePokemon pokemon) -> bool; \
 	friend auto minimized(ActivePokemon pokemon) -> bool; \
-	friend auto missed(ActivePokemon pokemon) -> bool; \
 	friend auto moved(ActivePokemon pokemon) -> bool; \
 	friend auto is_having_a_nightmare(ActivePokemon pokemon) -> bool; \
 	friend auto power_trick_is_active(ActivePokemon pokemon) -> bool; \
 	friend auto is_recharging(ActivePokemon pokemon) -> bool; \
 	friend auto is_roosting(ActivePokemon pokemon) -> bool; \
-	friend auto shed_skin_activated(ActivePokemon pokemon) -> bool; \
 	friend auto slow_start_is_active(ActivePokemon pokemon) -> bool; \
 	friend auto sport_is_active(ActivePokemon pokemon, Moves foe_move) -> bool; \
 	friend auto stage(ActivePokemon pokemon) -> Stage const &; \
@@ -196,10 +193,7 @@ private:
 	YawnCounter yawn;
 	bool aqua_ring = false;
 	bool attracted = false;
-	// Will it wake up
-	bool awakening = false;
 	bool charged = false;
-	bool critical_hit = false;
 	bool is_cursed = false;
 	bool defense_curled = false;
 	bool destiny_bond = false;
@@ -220,7 +214,6 @@ private:
 	bool locked_on = false;
 	bool me_first_is_active = false;
 	bool minimized = false;
-	bool missed = false;
 	bool moved = false;
 	bool mud_sport = false;
 	bool is_having_a_nightmare = false;
@@ -229,7 +222,6 @@ private:
 	bool is_protecting = false;
 	bool is_recharging = false;
 	bool is_roosting = false;
-	bool shed_skin_activated = false;
 	bool is_tormented = false;
 	bool u_turning = false;
 	bool water_sport = false;

@@ -1,5 +1,5 @@
 // Use moves
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,6 +24,6 @@ struct Team;
 struct Variable;
 struct Weather;
 
-auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool damage_is_known = false) -> void;
+auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool missed, bool awakens, bool critical_hit, bool damage_is_known) -> void;
 
 }	// namespace technicalmachine

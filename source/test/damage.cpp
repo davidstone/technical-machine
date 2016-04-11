@@ -1,5 +1,5 @@
 // Test damage-related functions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -134,6 +134,8 @@ void power_test() {
 	special_power_test();
 }
 
+constexpr auto critical_hit = true;
+
 void physical_damage_test() {
 	std::cout << "\t\tRunning max physical damage tests.\n";
 	constexpr auto max_damage = 95064912_bi;
@@ -150,11 +152,10 @@ void physical_damage_test() {
 	boost(stage(attacker.pokemon()), StatNames::ATK, 6_bi);
 
 	get_item(a) = Item::Metronome;
-	attacker.pokemon().set_critical_hit(true);
 
 	Team defender = max_damage_physical_defender();
 	
-	check_equal(damage_calculator(attacker, defender, weather, Variable{}), max_damage);
+	check_equal(damage_calculator(attacker, defender, weather, Variable{}, critical_hit), max_damage);
 }
 
 void special_damage_test() {
@@ -179,12 +180,11 @@ void special_damage_test() {
 	}
 
 	get_ability(a) = Ability::Blaze;
-	attacker.pokemon().set_critical_hit(true);
 	attacker.pokemon().activate_flash_fire();
 
 	Team defender = max_damage_special_defender();
 
-	check_equal(damage_calculator(attacker, defender, weather, Variable{}), max_damage);
+	check_equal(damage_calculator(attacker, defender, weather, Variable{}, critical_hit), max_damage);
 }
 
 void damage_test() {

@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -49,7 +49,7 @@ void awakening_probability_tests() {
 		if (expected != calculated) {
 			throw InvalidSleepProbability(expected, calculated);
 		}
-		pokemon.increase_sleep_counter();
+		pokemon.increase_sleep_counter(false);
 	}
 }
 
