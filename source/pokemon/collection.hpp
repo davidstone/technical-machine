@@ -21,7 +21,6 @@
 #include "container.hpp"
 #include "max_pokemon_per_team.hpp"
 #include "pokemon.hpp"
-#include "species_forward.hpp"
 
 #include "../collection.hpp"
 #include "../hash.hpp"
