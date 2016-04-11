@@ -1,4 +1,3 @@
-// Switching-related functions header
 // Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
