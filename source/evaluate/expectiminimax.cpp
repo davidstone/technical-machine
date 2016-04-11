@@ -70,7 +70,6 @@ double select_move_branch(Team & ai, Team & foe, Weather weather, unsigned depth
 double order_branch(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate);
 double accuracy_branch(Team & first, Team & last, Weather weather, unsigned depth, Evaluate const & evaluate);
 double random_move_effects_branch(Team & first, Team & last, Weather weather, unsigned depth, Evaluate const & evaluate);
-double awaken_branch(Team & first, Team & last, Weather weather, unsigned depth, Evaluate const & evaluate);
 double use_move_branch(Team & first, Team & last, Variable const & first_variable, Variable const & last_variable, Weather & weather, unsigned depth, Evaluate const & evaluate);
 double use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate);
 double end_of_turn_branch(Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate);
@@ -248,39 +247,6 @@ double order_branch(Team & ai, Team & foe, Weather const weather, unsigned depth
 		accuracy_branch(*teams.first, *teams.second, weather, depth, evaluate);
 }
 
-double accuracy_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
-	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
-		pokemon.set_miss(!flag);
-	};
-	auto const probability = [=](auto const & user, auto const & target, bool const target_moved, bool const hit) {
-		auto const base = chance_to_hit(user, target, weather, target_moved);
-		assert(base >= 0.0);
-		assert(base <= 1.0);
-		return hit ? base : (1.0 - base);
-	};
-
-
-	double average_score = 0.0;
-	for (auto const first_flag : { true, false }) {
-		constexpr bool last_moved = false;
-		auto const p1 = probability(first.pokemon(), last.pokemon(), last_moved, first_flag);
-		if (p1 == 0.0) {
-			continue;
-		}
-		set_flag(first.pokemon(), first_flag);
-		for (auto const last_flag : { true, false }) {
-			constexpr bool first_moved = true;
-			auto const p2 = probability(last.pokemon(), first.pokemon(), first_moved, last_flag);
-			if (p2 == 0.0) {
-				continue;
-			}
-			set_flag(last.pokemon(), last_flag);
-			average_score += awaken_branch(first, last, weather, depth, evaluate) * p1 * p2;
-		}
-	}
-	return average_score;
-}
-
 
 template<typename SetFlag, typename Probability, typename NextBranch>
 double generic_flag_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate, SetFlag const & set_flag, Probability const & basic_probability, NextBranch const & next_branch) {
@@ -311,11 +277,40 @@ double generic_flag_branch(Team & first, Team & last, Weather const weather, uns
 }
 
 
-double awaken_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
+double accuracy_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
 	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
-		pokemon.awaken(flag);
+		pokemon.set_miss(!flag);
 	};
-	return generic_flag_branch(first, last, weather, depth, evaluate, set_flag, awaken_probability, random_move_effects_branch);
+	auto const probability = [=](auto const & user, auto const & target, bool const target_moved, bool const hit) {
+		auto const base = chance_to_hit(user, target, weather, target_moved);
+		assert(base >= 0.0);
+		assert(base <= 1.0);
+		return hit ? base : (1.0 - base);
+	};
+
+
+	double average_score = 0.0;
+	for (auto const first_flag : { true, false }) {
+		constexpr bool last_moved = false;
+		auto const p1 = probability(first.pokemon(), last.pokemon(), last_moved, first_flag);
+		if (p1 == 0.0) {
+			continue;
+		}
+		set_flag(first.pokemon(), first_flag);
+		for (auto const last_flag : { true, false }) {
+			constexpr bool first_moved = true;
+			auto const p2 = probability(last.pokemon(), first.pokemon(), first_moved, last_flag);
+			if (p2 == 0.0) {
+				continue;
+			}
+			set_flag(last.pokemon(), last_flag);
+			auto const set_awaken_flag = [](MutableActivePokemon pokemon, bool const flag) {
+				pokemon.awaken(flag);
+			};
+			average_score += p1 * p2 * generic_flag_branch(first, last, weather, depth, evaluate, set_awaken_flag, awaken_probability, random_move_effects_branch);
+		}
+	}
+	return average_score;
 }
 
 
