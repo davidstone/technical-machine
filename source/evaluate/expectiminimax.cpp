@@ -72,7 +72,7 @@ std::vector<Moves> all_switches(TeamSize team_size, PokemonCollection::index_typ
 Moves random_move_or_switch(Team const & ai, Team const & foe, Weather weather, std::mt19937 & random_engine);
 #endif
 
-void print_best_move(Team const & team, Moves const best_move, double score) {
+void print_best_move(Team const & team, Moves const best_move, double const score) {
 	if (is_switch(best_move)) {
 		std::cout << "Switch to " + to_string(static_cast<Species>(team.pokemon(to_replacement(best_move))));
 	} else {
@@ -81,7 +81,7 @@ void print_best_move(Team const & team, Moves const best_move, double score) {
 	std::cout << " for a minimum expected score of " << static_cast<std::int64_t>(score) << '\n';
 }
 
-void print_action(Team const & team, bool first_turn) {
+void print_action(Team const & team, bool const first_turn) {
 	if (verbose or first_turn) {
 		unsigned tabs = first_turn ? 0 : 2;
 		if (!team.is_me()) {
@@ -109,7 +109,7 @@ void print_estimated_score(bool const first_turn, bool const is_me, double const
 
 
 
-void update_best_move(double & alpha, double beta, bool first_turn, Moves new_move, Moves & best_move) {
+void update_best_move(double & alpha, double const beta, bool const first_turn, Moves const new_move, Moves & best_move) {
 	// If their best response isn't as good as their previous best
 	// response, then this new move must be better than the
 	// previous AI's best move
@@ -121,7 +121,7 @@ void update_best_move(double & alpha, double beta, bool first_turn, Moves new_mo
 	}
 }
 
-void update_foe_best_move(Team & foe, MoveScores & foe_scores, double & beta, double const max_score, bool const first_turn) {
+void update_foe_best_move(Team const & foe, MoveScores & foe_scores, double & beta, double const max_score, bool const first_turn) {
 	if (beta > max_score) {
 		beta = max_score;
 		foe_scores.set(current_move(foe.pokemon()), beta);
