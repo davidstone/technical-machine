@@ -62,14 +62,7 @@ struct PokemonCollection : detail::Collection<PokemonContainer> {
 		emplace_back(true_size, std::forward<Args>(args)...);
 		current_replacement = size(*this) - 1_bi;
 	}
-	template<typename...Args>
-	bool add_if_not_present(Species name, Args&&... args) {
-		bool const add_new_pokemon = !seen(name);
-		if (add_new_pokemon) {
-			add(name, std::forward<Args>(args)...);
-		}
-		return add_new_pokemon;
-	}
+
 	void remove_active();
 	template<typename Function1, typename Function2>
 	void for_each_replacement (Function1 const & break_out, Function2 const & f) {
@@ -107,7 +100,6 @@ private:
 		containers::index_type<PokemonCollection> const index;
 	};
 
-	bool seen(Species name);
 	void decrement_real_size();
 	// If a Pokemon switches / faints, what Pokemon should replace it?
 	containers::index_type<PokemonCollection> current_replacement;

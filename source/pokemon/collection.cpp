@@ -53,16 +53,6 @@ TeamSize PokemonCollection::real_size() const {
 	return true_size;
 }
 
-bool PokemonCollection::seen(Species const name) {
-	// In the event of current_replacement == size(), a new Pokemon is added
-	// immediately, increasing size() by 1, making this safe.
-	for (current_replacement = 0_bi; current_replacement != size(*this); ++current_replacement) {
-		if (name == operator()(replacement()))
-			return true;
-	}
-	return false;
-}
-
 void PokemonCollection::remove_active () {
 	assert(index() != replacement());
 	containers::erase(static_cast<PokemonContainer &>(*this), begin() + index());

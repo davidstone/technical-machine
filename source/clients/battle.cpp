@@ -177,6 +177,29 @@ void Battle::handle_use_move(Party const user, uint8_t /*slot*/, Moves move_name
 	}
 }
 
+namespace {
+
+auto set_index_of_seen(PokemonCollection & collection, Species const species) {
+	for (auto const replacement : integer_range(size(collection))) {
+		if (species == collection(replacement)) {
+			collection.set_replacement(replacement);
+			return true;
+		}
+	}
+	return false;
+}
+
+template<typename...Args>
+auto switch_or_add(PokemonCollection & collection, Species const species, Args&&... args) {
+	auto const add_new_pokemon = !set_index_of_seen(collection, species);
+	if (add_new_pokemon) {
+		collection.add(species, std::forward<Args>(args)...);
+	}
+	return add_new_pokemon;
+}
+
+}	// namespace
+
 void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8_t /*index*/, std::string const & nickname, Species species, Gender gender, Level const level) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
@@ -198,7 +221,7 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8
 	}
 	
 	// This assumes Species Clause is in effect
-	bool const added = switcher.all_pokemon().add_if_not_present(species, level, gender, nickname);
+	auto const added = switch_or_add(switcher.all_pokemon(), species, level, gender, nickname);
 	if (added) {
 		updated_hp.add(switcher.is_me(), switcher.replacement(), max_damage_precision());
 	}
