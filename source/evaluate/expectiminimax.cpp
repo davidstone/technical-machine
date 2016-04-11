@@ -270,7 +270,13 @@ double generic_flag_branch(Team & first, Team & last, Weather const weather, uns
 			if (p2 == 0.0) {
 				continue;
 			}
-			average_score += next_branch(first, last, weather, depth, evaluate) * p1 * p2;
+			average_score += p1 * p2 * next_branch(
+				first,
+				last,
+				weather,
+				depth,
+				evaluate
+			);
 		}
 	}
 	return average_score;
@@ -307,7 +313,16 @@ double accuracy_branch(Team & first, Team & last, Weather const weather, unsigne
 			auto const set_awaken_flag = [](MutableActivePokemon pokemon, bool const flag) {
 				pokemon.awaken(flag);
 			};
-			average_score += p1 * p2 * generic_flag_branch(first, last, weather, depth, evaluate, set_awaken_flag, awaken_probability, random_move_effects_branch);
+			average_score += p1 * p2 * generic_flag_branch(
+				first,
+				last,
+				weather,
+				depth,
+				evaluate,
+				set_awaken_flag,
+				awaken_probability,
+				random_move_effects_branch
+			);
 		}
 	}
 	return average_score;
@@ -333,7 +348,16 @@ double random_move_effects_branch(Team & first, Team & last, Weather const weath
 			auto const use_move_copy_branch = [&](Team first_, Team last_, Weather weather_, unsigned depth_, Evaluate const & evaluate_) {
 				return use_move_branch(first_, last_, first_variable, last_variable, weather_, depth_, evaluate_);
 			};
-			score += generic_flag_branch(first, last, weather, depth, evaluate, set_flag, probability, use_move_copy_branch) * last_variable.probability * first_variable.probability;
+			score += last_variable.probability * first_variable.probability * generic_flag_branch(
+				first,
+				last,
+				weather,
+				depth,
+				evaluate,
+				set_flag,
+				probability,
+				use_move_copy_branch
+			);
 		}
 	}
 	return score;
