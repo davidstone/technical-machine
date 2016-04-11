@@ -470,7 +470,7 @@ double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate 
 	// Use pokemon() instead of replacement() because it checks whether the
 	// current Pokemon needs to be replaced because it fainted.
 	if (get_hp(first.pokemon()) == 0_bi) {
-		switch_pokemon(first, last, weather);
+		switch_pokemon(first, last, weather, first.all_pokemon().replacement());
 		auto const first_won = Evaluate::win(first);
 		auto const last_won = Evaluate::win(last);
 		if (first_won != 0_bi or last_won != 0_bi) {
@@ -478,7 +478,7 @@ double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate 
 		}
 	}
 	if (get_hp(last.pokemon()) == 0_bi) {
-		switch_pokemon(last, first, weather);
+		switch_pokemon(last, first, weather, last.all_pokemon().replacement());
 		auto const first_won = Evaluate::win(first);
 		auto const last_won = Evaluate::win(last);
 		if (first_won != 0_bi or last_won != 0_bi) {
@@ -517,7 +517,7 @@ double move_then_switch_branch(Team & switcher, Team const & other, Variable con
 }
 
 double switch_after_move_branch(Team switcher, Team other, Variable const & switcher_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate) {
-	switch_pokemon(switcher, other, weather);
+	switch_pokemon(switcher, other, weather, switcher.all_pokemon().replacement());
 	assert(!empty(switcher.all_pokemon()));
 	assert(!empty(other.all_pokemon()));
 	// I don't have to correct for which of the Pokemon moved first because

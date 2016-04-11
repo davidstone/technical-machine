@@ -386,7 +386,7 @@ void Battle::do_turn() {
 	first->move(false);
 	last->move(false);
 	auto const replacement = [&](Team & switcher, Team & other) {
-		switch_pokemon(switcher, other, weather);
+		switch_pokemon(switcher, other, weather, switcher.all_pokemon().replacement());
 		switcher.move(false);
 		normalize_hp();
 	};

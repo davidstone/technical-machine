@@ -29,17 +29,17 @@
 
 namespace technicalmachine {
 
-void switch_pokemon(Team & switcher, Team & other, Weather & weather) {
+void switch_pokemon(Team & switcher, Team & other, Weather & weather, TeamIndex const replacement) {
 	switcher.reset_switch();
 
 	if (get_hp(switcher.pokemon()) != 0_bi) {
 		if (get_ability(switcher.pokemon()).clears_status_on_switch()) {
 			get_status(switcher.pokemon()) = Status{};
 		}
-		switcher.all_pokemon().set_index(switcher.all_pokemon().replacement());
+		switcher.all_pokemon().set_index(replacement);
 	}
 	else {
-		switcher.all_pokemon().remove_active(switcher.all_pokemon().replacement());
+		switcher.all_pokemon().remove_active(replacement);
 		// If the last Pokemon is fainted; there is nothing left to do.
 		if (empty(switcher.all_pokemon())) {
 			return;

@@ -18,11 +18,13 @@
 
 #pragma once
 
+#include "pokemon/max_pokemon_per_team.hpp"
+
 namespace technicalmachine {
 
 struct Team;
 struct Weather;
 
-void switch_pokemon(Team & switcher, Team & other, Weather & weather);
+void switch_pokemon(Team & switcher, Team & other, Weather & weather, TeamIndex replacement);
 
 }	// namespace technicalmachine

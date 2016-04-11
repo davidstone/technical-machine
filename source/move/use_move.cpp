@@ -930,8 +930,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 		case Moves::Switch3:
 		case Moves::Switch4:
 		case Moves::Switch5:
-			user_team.all_pokemon().set_replacement(to_replacement(move));
-			switch_pokemon(user_team, target, weather);
+			switch_pokemon(user_team, target, weather, to_replacement(move));
 			break;
 		case Moves::Switcheroo:
 		case Moves::Trick:
@@ -1064,8 +1063,7 @@ auto active_pokemon_can_be_phazed(Team const & team) {
 
 auto phaze(Team & user, Team & target, Weather & weather, Variable const & variable) -> void {
 	if (active_pokemon_can_be_phazed(target)) {
-		target.all_pokemon().set_replacement(phaze_index(variable, target.all_pokemon().index()));
-		switch_pokemon(target, user, weather);
+		switch_pokemon(target, user, weather, phaze_index(variable, target.all_pokemon().index()));
 		target.move();
 	}
 }
