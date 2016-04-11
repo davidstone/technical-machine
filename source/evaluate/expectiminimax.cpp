@@ -65,22 +65,6 @@ namespace {
 // depth greater than 2.
 constexpr bool verbose = false;
 
-double select_move_branch(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn);
-double select_move_branch(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn, MoveScores & ai_scores, MoveScores & foe_scores);
-double order_branch(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate);
-double accuracy_branch(Team & first, Team & last, Weather weather, unsigned depth, Evaluate const & evaluate);
-double random_move_effects_branch(Team & first, Team & last, Weather weather, unsigned depth, Evaluate const & evaluate);
-double use_move_branch(Team & first, Team & last, Variable const & first_variable, Variable const & last_variable, Weather & weather, unsigned depth, Evaluate const & evaluate);
-double use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate);
-double end_of_turn_branch(Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate);
-double end_of_turn_order_branch(Team & team, Team & other, Team * first, Team * last, Weather weather, unsigned depth, Evaluate const & evaluate);
-double replace(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn);
-double fainted(Team ai, Team foe, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex first_replacement, TeamIndex last_replacement);
-
-double initial_move_then_switch_branch(Team & switcher, Team const & other, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn = false);
-double move_then_switch_branch(Team & switcher, Team const & other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn = false);
-double switch_after_move_branch(Team switcher, Team other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const replacement);
-
 #if 0
 Moves random_action (Team const & ai, Team const & foe, Weather weather, std::mt19937 & random_engine);
 Moves random_switch(Team const & ai, std::mt19937 & random_engine);
@@ -88,59 +72,450 @@ std::vector<Moves> all_switches(TeamSize team_size, PokemonCollection::index_typ
 Moves random_move_or_switch (Team const & ai, Team const & foe, Weather weather, std::mt19937 & random_engine);
 #endif
 
-void print_best_move (Team const & team, Moves best_move, double score);
-void print_action (Team const & team, bool first_turn);
-void print_estimated_score (bool first_turn, bool is_me, double estimate);
-void update_best_move (double & alpha, double beta, bool first_turn, Moves new_move, Moves & best_move);
-void update_foe_best_move (Team & foe, MoveScores & foe_scores, double & beta, double max_score, bool first_turn);
+void print_best_move (Team const & team, Moves const best_move, double score) {
+	if (is_switch(best_move)) {
+		std::cout << "Switch to " + to_string(static_cast<Species>(team.pokemon(to_replacement(best_move))));
+	} else {
+		std::cout << "Use " + to_string(best_move);
+	}
+	std::cout << " for a minimum expected score of " << static_cast<std::int64_t>(score) << '\n';
+}
 
-}	// namespace
-
-Moves expectiminimax (Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, std::mt19937 &) {
-	std::cout << std::string (20, '=') + "\nEvaluating to a depth of " << depth << "...\n";
-	double min_score = 0.0;
-	boost::timer timer;
-//	Moves best_move = random_action (ai, foe, weather, random_engine);
-	Moves best_move = Moves::Switch0;
-	try {
-		for (unsigned deeper = 1; deeper <= depth; ++deeper) {
-			bool const full_evaluation = (deeper == depth);
-			min_score = select_type_of_move(ai, foe, weather, deeper, evaluate, best_move, full_evaluation);
+void print_action (Team const & team, bool first_turn) {
+	if (verbose or first_turn) {
+		unsigned tabs = first_turn ? 0 : 2;
+		if (!team.is_me()) {
+			++tabs;
+		}
+		std::cout << std::string (tabs, '\t') << "Evaluating ";
+		if (is_switch(current_move(team.pokemon()))) {
+			auto const replacement_index = to_replacement(current_move(team.pokemon()));
+			std::cout << "switching to " << to_string(static_cast<Species>(team.pokemon(replacement_index))) << '\n';
+		} else {
+			std::cout << to_string(current_move(team.pokemon())) << '\n';
 		}
 	}
-	catch (InvalidCollectionIndex const & ex) {
-		// If there was an error, I just use the data from the deepest search I
-		// could do that did not encounter that error.
-		std::cerr << std::string (20, '=') + '\n';
-		std::cerr << ex.what ();
-		std::cerr << std::string (20, '=') + '\n';
-	}
-	std::cout << "Determined best move in " << timer.elapsed() << " seconds.\n";
-	print_best_move (ai, best_move, min_score);
-	return best_move;
 }
 
-double select_type_of_move(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn) {
-	assert(depth > 0);
-	--depth;
+void print_estimated_score (bool const first_turn, bool const is_me, double const estimate) {
+	if (verbose or first_turn) {
+		unsigned tabs = first_turn ? 0 : 2;
+		if (!is_me) {
+			++tabs;
+		}
+		std::cout << std::string (tabs, '\t') + "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
+	}
+}
+
+
+
+void update_best_move (double & alpha, double beta, bool first_turn, Moves new_move, Moves & best_move) {
+	// If their best response isn't as good as their previous best
+	// response, then this new move must be better than the
+	// previous AI's best move
+	if (beta > alpha) {
+		alpha = beta;
+		best_move = new_move;
+		constexpr bool is_me = true;
+		print_estimated_score (first_turn, is_me, alpha);
+	}
+}
+
+void update_foe_best_move (Team & foe, MoveScores & foe_scores, double & beta, double const max_score, bool const first_turn) {
+	if (beta > max_score) {
+		beta = max_score;
+		foe_scores.set(current_move(foe.pokemon()), beta);
+	}
+	constexpr bool is_me = false;
+	print_estimated_score (first_turn, is_me, max_score);
+}
+
+
+
+bool has_follow_up_decision(Moves const move) {
+	switch (move) {
+		case Moves::Baton_Pass:
+		case Moves::U_turn:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool can_critical_hit(Moves const move) {
+	auto const power = base_power(move);
+	return power and *power != 0_bi;
+}
+
+
+// TODO: Use a filter iterator
+auto skip_this_replacement(PokemonCollection const & collection, TeamIndex const replacement) {
+	auto const would_switch_to_self = replacement == collection.index();
+	return would_switch_to_self and size(collection) > 1_bi;
+}
+
+auto deorder(Team & first, Team & last) {
+	assert(first.is_me() or last.is_me());
+	struct Deorder {
+		Team & ai;
+		Team & foe;
+	};
+	return Deorder{
+		(first.is_me()) ? first : last,
+		(!first.is_me()) ? first : last
+	};
+}
+
+
+
+template<typename SetFlag, typename Probability, typename NextBranch>
+double generic_flag_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate, SetFlag const & set_flag, Probability const & basic_probability, NextBranch const & next_branch) {
+	auto const probability = [&](auto const & pokemon, bool const flag) {
+		auto const base = basic_probability(pokemon);
+		assert(base >= 0.0);
+		assert(base <= 1.0);
+		return flag ? base : (1.0 - base);
+	};
+
+	double average_score = 0.0;
+	for (auto const first_flag : { true, false }) {
+		set_flag(first.pokemon(), first_flag);
+		auto const p1 = probability(first.pokemon(), first_flag);
+		if (p1 == 0.0) {
+			continue;
+		}
+		for (auto const last_flag : { true, false }) {
+			set_flag(last.pokemon(), last_flag);
+			auto const p2 = probability(last.pokemon(), last_flag);
+			if (p2 == 0.0) {
+				continue;
+			}
+			average_score += p1 * p2 * next_branch(
+				first,
+				last,
+				weather,
+				depth,
+				evaluate
+			);
+		}
+	}
+	return average_score;
+}
+
+
+double move_then_switch_branch(Team & switcher, Team const & other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn = false);
+
+
+
+double use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate) {
+	auto const original = static_cast<Species>(user.pokemon());
+	if (!moved(user.pokemon())) {
+		call_move(user, other, weather, user_variable);
+		auto const user_win = Evaluate::win(user);
+		auto const other_win = Evaluate::win(other);
+		if (user_win != 0_bi or other_win != 0_bi) {
+			return static_cast<double>(user_win + other_win);
+		}
+		auto const current = static_cast<Species>(user.pokemon());
+		if (original == current and has_follow_up_decision(current_move(user.pokemon())) and size(user.all_pokemon()) > 1_bi) {
+			Moves phony = Moves::END;
+			return move_then_switch_branch(user, other, user_variable, other_variable, weather, depth, evaluate, phony);
+		}
+	}
+	return static_cast<double>(victory + 1_bi);		// return an illegal value
+}
+
+
+
+double end_of_turn_branch (Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate) {
+	end_of_turn(first, last, weather);
+
+	auto const last_violated = Evaluate::sleep_clause(first);
+	auto const first_violated = Evaluate::sleep_clause(last);
+	if (last_violated != 0_bi or first_violated != 0_bi) {
+		return static_cast<double>(last_violated + first_violated);
+	}
+
+	auto const first_win = Evaluate::win(first);
+	auto const last_win = Evaluate::win(last);
+	if (first_win != 0_bi or last_win != 0_bi) {
+		return static_cast<double>(first_win + last_win);
+	}
+
+	auto const teams = deorder(first, last);
+	return transposition(teams.ai, teams.foe, weather, depth, evaluate);
+}
+
+
+double end_of_turn_order_branch(Team & team, Team & other, Team * first, Team * last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
+	bool const speed_tie = (first == nullptr);
+	return speed_tie ?
+		(end_of_turn_branch(team, other, weather, depth, evaluate) + end_of_turn_branch(other, team, weather, depth, evaluate)) / 2.0 :
+		end_of_turn_branch(*first, *last, weather, depth, evaluate);
+}
+
+
+double use_move_branch(Team & first, Team & last, Variable const & first_variable, Variable const & last_variable, Weather & weather, unsigned depth, Evaluate const & evaluate) {
+	auto value = use_move_and_follow_up(first, last, first_variable, last_variable, weather, depth, evaluate);
+	if (value != static_cast<double>(victory + 1_bi))	// illegal value
+		return value;
+	// If first uses a phazing move before last gets a chance to move, the
+	// newly brought out Pokemon would try to move without checking to see if
+	// it has already moved. This check is also necessary for my Baton Pass and
+	// U-turn implementation to function.
+	value = use_move_and_follow_up (last, first, last_variable, first_variable, weather, depth, evaluate);
+	if (value != static_cast<double>(victory + 1_bi))
+		return value;
+
+	// Find the expected return on all possible outcomes at the end of the turn
 	
-	if (get_hp(ai.pokemon()) == 0_bi or get_hp(foe.pokemon()) == 0_bi) {
-		return replace(ai, foe, weather, depth, evaluate, best_move, first_turn);
-	} else if (switch_decision_required(ai.pokemon())) {
-		return initial_move_then_switch_branch(ai, foe, weather, depth, evaluate, best_move, first_turn);
-	} else {
-		assert(!switch_decision_required(foe.pokemon()));
-		return select_move_branch(ai, foe, weather, depth, evaluate, best_move, first_turn);
+	auto const teams = faster_pokemon(first, last, weather);
+	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
+		pokemon.shed_skin(flag);
+	};
+	// Partially apply some arguments to the function so it has the expected
+	// signature
+	auto const end_of_turn_order = [teams](Team & team, Team & other, Weather const weather_, unsigned depth_, Evaluate const & evaluate_) {
+		return end_of_turn_order_branch(team, other, teams.first, teams.second, weather_, depth_, evaluate_);
+	};
+	return generic_flag_branch(first, last, weather, depth, evaluate, set_flag, shed_skin_probability, end_of_turn_order);
+}
+
+
+
+double switch_after_move_branch(Team switcher, Team other, Variable const & switcher_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const replacement) {
+	switch_pokemon(switcher, other, weather, replacement);
+	assert(!empty(switcher.all_pokemon()));
+	assert(!empty(other.all_pokemon()));
+	// I don't have to correct for which of the Pokemon moved first because
+	// there are only two options:
+	
+	// Option 1: only the switcher has moved. Then it obviously went first and
+	// I'm passing them in the proper order.
+	
+	// Option 2: Both Pokemon have moved. use_move_branch then
+	// recalculates which Pokemon is faster to properly account for end-of-turn
+	// effects. In this case, it doesn't matter what order I pass them.
+	
+	// I also do not need to worry about the game ending due to entry hazards,
+	// because at the very least the Pokemon that used Baton Pass / U-turn is
+	// still alive.
+
+	return use_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate);
+}
+
+double move_then_switch_branch(Team & switcher, Team const & other, Variable const & switcher_variable, Variable const & other_variable, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn) {
+	unsigned tabs = first_turn ? 0 : 2;
+	auto alpha = static_cast<double>(-victory - 1_bi);
+	if (!switcher.is_me()) {
+		alpha = -alpha;
+		++tabs;
 	}
+	for (auto const replacement : integer_range(size(switcher.all_pokemon()))) {
+		if (skip_this_replacement(switcher.all_pokemon(), replacement)) {
+			continue;
+		}
+		if (first_turn) {
+			std::cout << std::string(tabs, '\t') << "Evaluating bringing in " << to_string(static_cast<Species>(replacement)) << '\n';
+		}
+		auto const value = switch_after_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate, replacement);
+		if (switcher.is_me()) {
+			update_best_move(alpha, value, first_turn, to_switch(replacement), best_switch);
+		} else {
+			MoveScores foe_scores(switcher.pokemon());
+			update_foe_best_move(switcher, foe_scores, alpha, value, first_turn);
+		}
+	}
+	return alpha;
 }
 
-namespace {
 
-double select_move_branch(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn) {
-	MoveScores ai_scores(ai.pokemon());
-	MoveScores foe_scores(foe.pokemon());
-	return select_move_branch(ai, foe, weather, depth, evaluate, best_move, first_turn, ai_scores, foe_scores);
+#if 0
+Moves random_action (Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
+	return switch_decision_required(ai.pokemon()) ?
+		random_switch(ai, random_engine) :
+		random_move_or_switch(ai, foe, weather, random_engine);
 }
+
+Moves random_switch(Team const & ai, std::mt19937 & random_engine) {
+	std::vector<Moves> const switches = all_switches (ai.all_pokemon().size(), ai.all_pokemon().index());
+	assert(!switches.empty());
+	std::uniform_int_distribution<size_t> distribution { 0, switches.size() - 1 };
+	size_t const index = distribution(random_engine);
+	return switches[index];
+}
+
+std::vector<Moves> all_switches(TeamSize const team_size, PokemonCollection::index_type const index) {
+	std::vector<Moves> switches;
+	for (auto const n : bounded::integer_range(team_size)) {
+		if (n != index) {
+			switches.emplace_back(to_switch(n));
+		}
+	}
+	return switches;
+}
+
+Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
+	LegalSelections const moves(ai, foe.pokemon(), weather);
+	assert(moves.size() != 0_bi);
+	std::uniform_int_distribution<size_t> distribution { 0, moves.size() - 1 };
+	auto const index = distribution(random_engine);
+	return moves[index];
+}
+#endif
+
+
+double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const first_replacement, TeamIndex const last_replacement) {
+	// Use pokemon() instead of replacement() because it checks whether the
+	// current Pokemon needs to be replaced because it fainted.
+	if (get_hp(first.pokemon()) == 0_bi) {
+		switch_pokemon(first, last, weather, first_replacement);
+		auto const first_won = Evaluate::win(first);
+		auto const last_won = Evaluate::win(last);
+		if (first_won != 0_bi or last_won != 0_bi) {
+			return static_cast<double>(first_won + last_won);
+		}
+	}
+	if (get_hp(last.pokemon()) == 0_bi) {
+		switch_pokemon(last, first, weather, last_replacement);
+		auto const first_won = Evaluate::win(first);
+		auto const last_won = Evaluate::win(last);
+		if (first_won != 0_bi or last_won != 0_bi) {
+			return static_cast<double>(first_won + last_won);
+		}
+	}
+
+	auto const teams = deorder(first, last);
+	return transposition(teams.ai, teams.foe, weather, depth, evaluate);
+}
+
+
+double replace(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn) {
+	auto const teams = faster_pokemon(ai, foe, weather);
+	bool const speed_tie = (teams.first == nullptr);
+	unsigned const tabs = first_turn ? 0 : 2;
+	auto alpha = static_cast<double>(-victory - 1_bi);
+	for (auto const ai_replacement : integer_range(size(ai.all_pokemon()))) {
+		if (skip_this_replacement(ai.all_pokemon(), ai_replacement)) {
+			continue;
+		}
+		if (verbose or first_turn) {
+			std::cout << std::string(tabs, '\t') + "Evaluating switching to " + to_string(static_cast<Species>(ai.replacement())) + "\n";
+		}
+		auto beta = static_cast<double>(victory + 1_bi);
+		for (auto const foe_replacement : integer_range(size(foe.all_pokemon()))) {
+			if (skip_this_replacement(foe.all_pokemon(), foe_replacement)) {
+				continue;
+			}
+			auto get_replacement = [&](Team const & team) {
+				return bounded::addressof(team) == bounded::addressof(ai) ? ai_replacement : foe_replacement;
+			};
+			beta = std::min(beta, speed_tie ?
+				(fainted(ai, foe, weather, depth, evaluate, ai_replacement, foe_replacement) + fainted(foe, ai, weather, depth, evaluate, foe_replacement, ai_replacement)) / 2.0 :
+				fainted(*teams.first, *teams.second, weather, depth, evaluate, get_replacement(*teams.first), get_replacement(*teams.second))
+			);
+			if (beta <= alpha) {
+				break;
+			}
+		}
+		update_best_move(alpha, beta, first_turn, to_switch(ai_replacement), best_move);
+	}
+	return alpha;
+}
+
+
+
+double initial_move_then_switch_branch(Team & switcher, Team const & other, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn) {
+	return move_then_switch_branch(switcher, other, Variable(), Variable(), weather, depth, evaluate, best_switch, first_turn);
+}
+
+
+
+double random_move_effects_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
+	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
+		pokemon.set_critical_hit(flag);
+	};
+	auto const probability = [](ActivePokemon const pokemon) {
+		return can_critical_hit(current_move(pokemon)) ? (1.0 / 16.0) : 0.0;
+	};
+	double score = 0.0;
+
+	for (auto const & first_variable : all_probabilities(first.pokemon(), last.size())) {
+		for (auto const & last_variable : all_probabilities(last.pokemon(), first.size())) {
+			auto const use_move_copy_branch = [&](Team first_, Team last_, Weather weather_, unsigned depth_, Evaluate const & evaluate_) {
+				return use_move_branch(first_, last_, first_variable, last_variable, weather_, depth_, evaluate_);
+			};
+			score += last_variable.probability * first_variable.probability * generic_flag_branch(
+				first,
+				last,
+				weather,
+				depth,
+				evaluate,
+				set_flag,
+				probability,
+				use_move_copy_branch
+			);
+		}
+	}
+	return score;
+}
+
+
+double accuracy_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
+	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
+		pokemon.set_miss(!flag);
+	};
+	auto const probability = [=](auto const & user, auto const & target, bool const target_moved, bool const hit) {
+		auto const base = chance_to_hit(user, target, weather, target_moved);
+		assert(base >= 0.0);
+		assert(base <= 1.0);
+		return hit ? base : (1.0 - base);
+	};
+
+
+	double average_score = 0.0;
+	for (auto const first_flag : { true, false }) {
+		constexpr bool last_moved = false;
+		auto const p1 = probability(first.pokemon(), last.pokemon(), last_moved, first_flag);
+		if (p1 == 0.0) {
+			continue;
+		}
+		set_flag(first.pokemon(), first_flag);
+		for (auto const last_flag : { true, false }) {
+			constexpr bool first_moved = true;
+			auto const p2 = probability(last.pokemon(), first.pokemon(), first_moved, last_flag);
+			if (p2 == 0.0) {
+				continue;
+			}
+			set_flag(last.pokemon(), last_flag);
+			auto const set_awaken_flag = [](MutableActivePokemon pokemon, bool const flag) {
+				pokemon.awaken(flag);
+			};
+			average_score += p1 * p2 * generic_flag_branch(
+				first,
+				last,
+				weather,
+				depth,
+				evaluate,
+				set_awaken_flag,
+				awaken_probability,
+				random_move_effects_branch
+			);
+		}
+	}
+	return average_score;
+}
+
+
+double order_branch(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate) {
+	// Determine turn order
+	auto teams = order(ai, foe, weather); 
+	bool const speed_tie = (teams.first == nullptr);
+	return speed_tie ?
+		(accuracy_branch(ai, foe, weather, depth, evaluate) + accuracy_branch(foe, ai, weather, depth, evaluate)) / 2.0 :
+		accuracy_branch(*teams.first, *teams.second, weather, depth, evaluate);
+}
+
 
 double select_move_branch(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn, MoveScores & ai_scores, MoveScores & foe_scores) {
 	// This calls itself at one lower depth in order to get an initial estimate
@@ -216,434 +591,49 @@ double select_move_branch(Team & ai, Team & foe, Weather const weather, unsigned
 	return alpha;
 }
 
-
-void update_best_move (double & alpha, double beta, bool first_turn, Moves new_move, Moves & best_move) {
-	// If their best response isn't as good as their previous best
-	// response, then this new move must be better than the
-	// previous AI's best move
-	if (beta > alpha) {
-		alpha = beta;
-		best_move = new_move;
-		constexpr bool is_me = true;
-		print_estimated_score (first_turn, is_me, alpha);
-	}
-}
-
-void update_foe_best_move (Team & foe, MoveScores & foe_scores, double & beta, double const max_score, bool const first_turn) {
-	if (beta > max_score) {
-		beta = max_score;
-		foe_scores.set(current_move(foe.pokemon()), beta);
-	}
-	constexpr bool is_me = false;
-	print_estimated_score (first_turn, is_me, max_score);
-}
-
-double order_branch(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate) {
-	// Determine turn order
-	auto teams = order(ai, foe, weather); 
-	bool const speed_tie = (teams.first == nullptr);
-	return speed_tie ?
-		(accuracy_branch(ai, foe, weather, depth, evaluate) + accuracy_branch(foe, ai, weather, depth, evaluate)) / 2.0 :
-		accuracy_branch(*teams.first, *teams.second, weather, depth, evaluate);
-}
-
-
-template<typename SetFlag, typename Probability, typename NextBranch>
-double generic_flag_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate, SetFlag const & set_flag, Probability const & basic_probability, NextBranch const & next_branch) {
-	auto const probability = [&](auto const & pokemon, bool const flag) {
-		auto const base = basic_probability(pokemon);
-		assert(base >= 0.0);
-		assert(base <= 1.0);
-		return flag ? base : (1.0 - base);
-	};
-
-	double average_score = 0.0;
-	for (auto const first_flag : { true, false }) {
-		set_flag(first.pokemon(), first_flag);
-		auto const p1 = probability(first.pokemon(), first_flag);
-		if (p1 == 0.0) {
-			continue;
-		}
-		for (auto const last_flag : { true, false }) {
-			set_flag(last.pokemon(), last_flag);
-			auto const p2 = probability(last.pokemon(), last_flag);
-			if (p2 == 0.0) {
-				continue;
-			}
-			average_score += p1 * p2 * next_branch(
-				first,
-				last,
-				weather,
-				depth,
-				evaluate
-			);
-		}
-	}
-	return average_score;
-}
-
-
-double accuracy_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
-	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
-		pokemon.set_miss(!flag);
-	};
-	auto const probability = [=](auto const & user, auto const & target, bool const target_moved, bool const hit) {
-		auto const base = chance_to_hit(user, target, weather, target_moved);
-		assert(base >= 0.0);
-		assert(base <= 1.0);
-		return hit ? base : (1.0 - base);
-	};
-
-
-	double average_score = 0.0;
-	for (auto const first_flag : { true, false }) {
-		constexpr bool last_moved = false;
-		auto const p1 = probability(first.pokemon(), last.pokemon(), last_moved, first_flag);
-		if (p1 == 0.0) {
-			continue;
-		}
-		set_flag(first.pokemon(), first_flag);
-		for (auto const last_flag : { true, false }) {
-			constexpr bool first_moved = true;
-			auto const p2 = probability(last.pokemon(), first.pokemon(), first_moved, last_flag);
-			if (p2 == 0.0) {
-				continue;
-			}
-			set_flag(last.pokemon(), last_flag);
-			auto const set_awaken_flag = [](MutableActivePokemon pokemon, bool const flag) {
-				pokemon.awaken(flag);
-			};
-			average_score += p1 * p2 * generic_flag_branch(
-				first,
-				last,
-				weather,
-				depth,
-				evaluate,
-				set_awaken_flag,
-				awaken_probability,
-				random_move_effects_branch
-			);
-		}
-	}
-	return average_score;
-}
-
-
-bool can_critical_hit(Moves const move) {
-	auto const power = base_power(move);
-	return power and *power != 0_bi;
-}
-
-double random_move_effects_branch(Team & first, Team & last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
-	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
-		pokemon.set_critical_hit(flag);
-	};
-	auto const probability = [](ActivePokemon const pokemon) {
-		return can_critical_hit(current_move(pokemon)) ? (1.0 / 16.0) : 0.0;
-	};
-	double score = 0.0;
-
-	for (auto const & first_variable : all_probabilities(first.pokemon(), last.size())) {
-		for (auto const & last_variable : all_probabilities(last.pokemon(), first.size())) {
-			auto const use_move_copy_branch = [&](Team first_, Team last_, Weather weather_, unsigned depth_, Evaluate const & evaluate_) {
-				return use_move_branch(first_, last_, first_variable, last_variable, weather_, depth_, evaluate_);
-			};
-			score += last_variable.probability * first_variable.probability * generic_flag_branch(
-				first,
-				last,
-				weather,
-				depth,
-				evaluate,
-				set_flag,
-				probability,
-				use_move_copy_branch
-			);
-		}
-	}
-	return score;
-}
-
-
-double use_move_branch(Team & first, Team & last, Variable const & first_variable, Variable const & last_variable, Weather & weather, unsigned depth, Evaluate const & evaluate) {
-	auto value = use_move_and_follow_up(first, last, first_variable, last_variable, weather, depth, evaluate);
-	if (value != static_cast<double>(victory + 1_bi))	// illegal value
-		return value;
-	// If first uses a phazing move before last gets a chance to move, the
-	// newly brought out Pokemon would try to move without checking to see if
-	// it has already moved. This check is also necessary for my Baton Pass and
-	// U-turn implementation to function.
-	value = use_move_and_follow_up (last, first, last_variable, first_variable, weather, depth, evaluate);
-	if (value != static_cast<double>(victory + 1_bi))
-		return value;
-
-	// Find the expected return on all possible outcomes at the end of the turn
-	
-	auto const teams = faster_pokemon(first, last, weather);
-	auto const set_flag = [](MutableActivePokemon pokemon, bool const flag) {
-		pokemon.shed_skin(flag);
-	};
-	// Partially apply some arguments to the function so it has the expected
-	// signature
-	auto const end_of_turn_order = [teams](Team & team, Team & other, Weather const weather_, unsigned depth_, Evaluate const & evaluate_) {
-		return end_of_turn_order_branch(team, other, teams.first, teams.second, weather_, depth_, evaluate_);
-	};
-	return generic_flag_branch(first, last, weather, depth, evaluate, set_flag, shed_skin_probability, end_of_turn_order);
-}
-
-bool has_follow_up_decision(Moves const move) {
-	switch (move) {
-		case Moves::Baton_Pass:
-		case Moves::U_turn:
-			return true;
-		default:
-			return false;
-	}
-}
-
-double use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate) {
-	auto const original = static_cast<Species>(user.pokemon());
-	if (!moved(user.pokemon())) {
-		call_move(user, other, weather, user_variable);
-		auto const user_win = Evaluate::win(user);
-		auto const other_win = Evaluate::win(other);
-		if (user_win != 0_bi or other_win != 0_bi) {
-			return static_cast<double>(user_win + other_win);
-		}
-		auto const current = static_cast<Species>(user.pokemon());
-		if (original == current and has_follow_up_decision(current_move(user.pokemon())) and size(user.all_pokemon()) > 1_bi) {
-			Moves phony = Moves::END;
-			return move_then_switch_branch(user, other, user_variable, other_variable, weather, depth, evaluate, phony);
-		}
-	}
-	return static_cast<double>(victory + 1_bi);		// return an illegal value
-}
-
-
-auto deorder(Team & first, Team & last) {
-	assert(first.is_me() or last.is_me());
-	struct Deorder {
-		Team & ai;
-		Team & foe;
-	};
-	return Deorder{
-		(first.is_me()) ? first : last,
-		(!first.is_me()) ? first : last
-	};
-}
-
-
-
-
-double end_of_turn_order_branch(Team & team, Team & other, Team * first, Team * last, Weather const weather, unsigned depth, Evaluate const & evaluate) {
-	bool const speed_tie = (first == nullptr);
-	return speed_tie ?
-		(end_of_turn_branch(team, other, weather, depth, evaluate) + end_of_turn_branch(other, team, weather, depth, evaluate)) / 2.0 :
-		end_of_turn_branch(*first, *last, weather, depth, evaluate);
-}
-
-double end_of_turn_branch (Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate) {
-	end_of_turn(first, last, weather);
-
-	auto const last_violated = Evaluate::sleep_clause(first);
-	auto const first_violated = Evaluate::sleep_clause(last);
-	if (last_violated != 0_bi or first_violated != 0_bi) {
-		return static_cast<double>(last_violated + first_violated);
-	}
-
-	auto const first_win = Evaluate::win(first);
-	auto const last_win = Evaluate::win(last);
-	if (first_win != 0_bi or last_win != 0_bi) {
-		return static_cast<double>(first_win + last_win);
-	}
-
-	auto const teams = deorder(first, last);
-	return transposition(teams.ai, teams.foe, weather, depth, evaluate);
-}
-
-
-// TODO: Use a filter iterator
-auto skip_this_replacement(PokemonCollection const & collection, TeamIndex const replacement) {
-	auto const would_switch_to_self = replacement == collection.index();
-	return would_switch_to_self and size(collection) > 1_bi;
-}
-
-
-
-double replace(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn) {
-	auto const teams = faster_pokemon(ai, foe, weather);
-	bool const speed_tie = (teams.first == nullptr);
-	unsigned const tabs = first_turn ? 0 : 2;
-	auto alpha = static_cast<double>(-victory - 1_bi);
-	for (auto const ai_replacement : integer_range(size(ai.all_pokemon()))) {
-		if (skip_this_replacement(ai.all_pokemon(), ai_replacement)) {
-			continue;
-		}
-		if (verbose or first_turn) {
-			std::cout << std::string(tabs, '\t') + "Evaluating switching to " + to_string(static_cast<Species>(ai.replacement())) + "\n";
-		}
-		auto beta = static_cast<double>(victory + 1_bi);
-		for (auto const foe_replacement : integer_range(size(foe.all_pokemon()))) {
-			if (skip_this_replacement(foe.all_pokemon(), foe_replacement)) {
-				continue;
-			}
-			auto get_replacement = [&](Team const & team) {
-				return bounded::addressof(team) == bounded::addressof(ai) ? ai_replacement : foe_replacement;
-			};
-			beta = std::min(beta, speed_tie ?
-				(fainted(ai, foe, weather, depth, evaluate, ai_replacement, foe_replacement) + fainted(foe, ai, weather, depth, evaluate, foe_replacement, ai_replacement)) / 2.0 :
-				fainted(*teams.first, *teams.second, weather, depth, evaluate, get_replacement(*teams.first), get_replacement(*teams.second))
-			);
-			if (beta <= alpha) {
-				break;
-			}
-		}
-		update_best_move(alpha, beta, first_turn, to_switch(ai_replacement), best_move);
-	}
-	return alpha;
-}
-
-double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const first_replacement, TeamIndex const last_replacement) {
-	// Use pokemon() instead of replacement() because it checks whether the
-	// current Pokemon needs to be replaced because it fainted.
-	if (get_hp(first.pokemon()) == 0_bi) {
-		switch_pokemon(first, last, weather, first_replacement);
-		auto const first_won = Evaluate::win(first);
-		auto const last_won = Evaluate::win(last);
-		if (first_won != 0_bi or last_won != 0_bi) {
-			return static_cast<double>(first_won + last_won);
-		}
-	}
-	if (get_hp(last.pokemon()) == 0_bi) {
-		switch_pokemon(last, first, weather, last_replacement);
-		auto const first_won = Evaluate::win(first);
-		auto const last_won = Evaluate::win(last);
-		if (first_won != 0_bi or last_won != 0_bi) {
-			return static_cast<double>(first_won + last_won);
-		}
-	}
-
-	auto const teams = deorder(first, last);
-	return transposition(teams.ai, teams.foe, weather, depth, evaluate);
-}
-
-
-double initial_move_then_switch_branch(Team & switcher, Team const & other, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn) {
-	return move_then_switch_branch(switcher, other, Variable(), Variable(), weather, depth, evaluate, best_switch, first_turn);
-}
-
-double move_then_switch_branch(Team & switcher, Team const & other, Variable const & switcher_variable, Variable const & other_variable, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn) {
-	unsigned tabs = first_turn ? 0 : 2;
-	auto alpha = static_cast<double>(-victory - 1_bi);
-	if (!switcher.is_me()) {
-		alpha = -alpha;
-		++tabs;
-	}
-	for (auto const replacement : integer_range(size(switcher.all_pokemon()))) {
-		if (skip_this_replacement(switcher.all_pokemon(), replacement)) {
-			continue;
-		}
-		if (first_turn) {
-			std::cout << std::string(tabs, '\t') << "Evaluating bringing in " << to_string(static_cast<Species>(replacement)) << '\n';
-		}
-		auto const value = switch_after_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate, replacement);
-		if (switcher.is_me()) {
-			update_best_move(alpha, value, first_turn, to_switch(replacement), best_switch);
-		} else {
-			MoveScores foe_scores(switcher.pokemon());
-			update_foe_best_move(switcher, foe_scores, alpha, value, first_turn);
-		}
-	}
-	return alpha;
-}
-
-double switch_after_move_branch(Team switcher, Team other, Variable const & switcher_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const replacement) {
-	switch_pokemon(switcher, other, weather, replacement);
-	assert(!empty(switcher.all_pokemon()));
-	assert(!empty(other.all_pokemon()));
-	// I don't have to correct for which of the Pokemon moved first because
-	// there are only two options:
-	
-	// Option 1: only the switcher has moved. Then it obviously went first and
-	// I'm passing them in the proper order.
-	
-	// Option 2: Both Pokemon have moved. use_move_branch then
-	// recalculates which Pokemon is faster to properly account for end-of-turn
-	// effects. In this case, it doesn't matter what order I pass them.
-	
-	// I also do not need to worry about the game ending due to entry hazards,
-	// because at the very least the Pokemon that used Baton Pass / U-turn is
-	// still alive.
-
-	return use_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate);
-}
-
-
-#if 0
-Moves random_action (Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
-	return switch_decision_required(ai.pokemon()) ?
-		random_switch(ai, random_engine) :
-		random_move_or_switch(ai, foe, weather, random_engine);
-}
-
-Moves random_switch(Team const & ai, std::mt19937 & random_engine) {
-	std::vector<Moves> const switches = all_switches (ai.all_pokemon().size(), ai.all_pokemon().index());
-	assert(!switches.empty());
-	std::uniform_int_distribution<size_t> distribution { 0, switches.size() - 1 };
-	size_t const index = distribution(random_engine);
-	return switches[index];
-}
-
-std::vector<Moves> all_switches(TeamSize const team_size, PokemonCollection::index_type const index) {
-	std::vector<Moves> switches;
-	for (auto const n : bounded::integer_range(team_size)) {
-		if (n != index) {
-			switches.emplace_back(to_switch(n));
-		}
-	}
-	return switches;
-}
-
-Moves random_move_or_switch (Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
-	LegalSelections const moves(ai, foe.pokemon(), weather);
-	assert(moves.size() != 0_bi);
-	std::uniform_int_distribution<size_t> distribution { 0, moves.size() - 1 };
-	auto const index = distribution(random_engine);
-	return moves[index];
-}
-#endif
-
-void print_best_move (Team const & team, Moves const best_move, double score) {
-	if (is_switch(best_move))
-		std::cout << "Switch to " + to_string(static_cast<Species>(team.pokemon(to_replacement(best_move))));
-	else
-		std::cout << "Use " + to_string(best_move);
-	std::cout << " for a minimum expected score of " << static_cast<std::int64_t>(score) << "\n";
-}
-
-void print_action (Team const & team, bool first_turn) {
-	if (verbose or first_turn) {
-		unsigned tabs = first_turn ? 0 : 2;
-		if (!team.is_me())
-			++tabs;
-		std::cout << std::string (tabs, '\t') << "Evaluating ";
-		if (is_switch(current_move(team.pokemon()))) {
-			auto const replacement_index = to_replacement(current_move(team.pokemon()));
-			std::cout << "switching to " << to_string(static_cast<Species>(team.pokemon(replacement_index))) << '\n';
-		}
-		else {
-			std::cout << to_string(current_move(team.pokemon())) << '\n';
-		}
-	}
-}
-
-void print_estimated_score (bool const first_turn, bool const is_me, double const estimate) {
-	if (verbose or first_turn) {
-		unsigned tabs = first_turn ? 0 : 2;
-		if (!is_me)
-			++tabs;
-		std::cout << std::string (tabs, '\t') + "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
-	}
+double select_move_branch(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn) {
+	MoveScores ai_scores(ai.pokemon());
+	MoveScores foe_scores(foe.pokemon());
+	return select_move_branch(ai, foe, weather, depth, evaluate, best_move, first_turn, ai_scores, foe_scores);
 }
 
 }	// namespace
+
+Moves expectiminimax(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, std::mt19937 &) {
+	std::cout << std::string (20, '=') + "\nEvaluating to a depth of " << depth << "...\n";
+	double min_score = 0.0;
+	boost::timer timer;
+//	Moves best_move = random_action (ai, foe, weather, random_engine);
+	Moves best_move = Moves::Switch0;
+	try {
+		for (unsigned deeper = 1; deeper <= depth; ++deeper) {
+			bool const full_evaluation = (deeper == depth);
+			min_score = select_type_of_move(ai, foe, weather, deeper, evaluate, best_move, full_evaluation);
+		}
+	} catch (InvalidCollectionIndex const & ex) {
+		// If there was an error, I just use the data from the deepest search I
+		// could do that did not encounter that error.
+		std::cerr << std::string (20, '=') + '\n';
+		std::cerr << ex.what ();
+		std::cerr << std::string (20, '=') + '\n';
+	}
+	std::cout << "Determined best move in " << timer.elapsed() << " seconds.\n";
+	print_best_move (ai, best_move, min_score);
+	return best_move;
+}
+
+double select_type_of_move(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn) {
+	assert(depth > 0);
+	--depth;
+	
+	if (get_hp(ai.pokemon()) == 0_bi or get_hp(foe.pokemon()) == 0_bi) {
+		return replace(ai, foe, weather, depth, evaluate, best_move, first_turn);
+	} else if (switch_decision_required(ai.pokemon())) {
+		return initial_move_then_switch_branch(ai, foe, weather, depth, evaluate, best_move, first_turn);
+	} else {
+		assert(!switch_decision_required(foe.pokemon()));
+		return select_move_branch(ai, foe, weather, depth, evaluate, best_move, first_turn);
+	}
+}
+
 }	// namespace technicalmachine
