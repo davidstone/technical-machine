@@ -76,11 +76,11 @@ double use_move_and_follow_up(Team & user, Team & other, Variable const & user_v
 double end_of_turn_branch(Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate);
 double end_of_turn_order_branch(Team & team, Team & other, Team * first, Team * last, Weather weather, unsigned depth, Evaluate const & evaluate);
 double replace(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn);
-double fainted(Team ai, Team foe, Weather weather, unsigned depth, Evaluate const & evaluate);
+double fainted(Team ai, Team foe, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex first_replacement, TeamIndex last_replacement);
 
 double initial_move_then_switch_branch(Team & switcher, Team const & other, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn = false);
 double move_then_switch_branch(Team & switcher, Team const & other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn = false);
-double switch_after_move_branch(Team switcher, Team other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate);
+double switch_after_move_branch(Team switcher, Team other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const replacement);
 
 #if 0
 Moves random_action (Team const & ai, Team const & foe, Weather weather, std::mt19937 & random_engine);
@@ -442,35 +442,52 @@ double end_of_turn_branch (Team first, Team last, Weather weather, unsigned dept
 }
 
 
+// TODO: Use a filter iterator
+auto skip_this_replacement(PokemonCollection const & collection, TeamIndex const replacement) {
+	auto const would_switch_to_self = replacement == collection.index();
+	return would_switch_to_self and size(collection) > 1_bi;
+}
 
-double replace (Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn) {
+
+
+double replace(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn) {
 	auto const teams = faster_pokemon(ai, foe, weather);
 	bool const speed_tie = (teams.first == nullptr);
 	unsigned const tabs = first_turn ? 0 : 2;
 	auto alpha = static_cast<double>(-victory - 1_bi);
-	auto const ai_break_out = [& ai]() { return get_hp(ai.pokemon()) != 0_bi; };
-	ai.all_pokemon().for_each_replacement(ai_break_out, [&]() {
-		if (verbose or first_turn)
+	for (auto const ai_replacement : integer_range(size(ai.all_pokemon()))) {
+		if (skip_this_replacement(ai.all_pokemon(), ai_replacement)) {
+			continue;
+		}
+		if (verbose or first_turn) {
 			std::cout << std::string(tabs, '\t') + "Evaluating switching to " + to_string(static_cast<Species>(ai.replacement())) + "\n";
+		}
 		auto beta = static_cast<double>(victory + 1_bi);
-		auto const foe_break_out = [& foe, & alpha, & beta]() {
-			return beta <= alpha or get_hp(foe.pokemon()) != 0_bi;
-		};
-		foe.all_pokemon().for_each_replacement(foe_break_out, [&]() {
-			beta = (speed_tie) ?
-				std::min(beta, (fainted(ai, foe, weather, depth, evaluate) + fainted(foe, ai, weather, depth, evaluate)) / 2.0) :
-				std::min(beta, fainted(*teams.first, *teams.second, weather, depth, evaluate));
-		});
-		update_best_move(alpha, beta, first_turn, to_switch(ai.all_pokemon().replacement()), best_move);
-	});
+		for (auto const foe_replacement : integer_range(size(foe.all_pokemon()))) {
+			if (skip_this_replacement(foe.all_pokemon(), foe_replacement)) {
+				continue;
+			}
+			auto get_replacement = [&](Team const & team) {
+				return bounded::addressof(team) == bounded::addressof(ai) ? ai_replacement : foe_replacement;
+			};
+			beta = std::min(beta, speed_tie ?
+				(fainted(ai, foe, weather, depth, evaluate, ai_replacement, foe_replacement) + fainted(foe, ai, weather, depth, evaluate, foe_replacement, ai_replacement)) / 2.0 :
+				fainted(*teams.first, *teams.second, weather, depth, evaluate, get_replacement(*teams.first), get_replacement(*teams.second))
+			);
+			if (beta <= alpha) {
+				break;
+			}
+		}
+		update_best_move(alpha, beta, first_turn, to_switch(ai_replacement), best_move);
+	}
 	return alpha;
 }
 
-double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate) {
+double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const first_replacement, TeamIndex const last_replacement) {
 	// Use pokemon() instead of replacement() because it checks whether the
 	// current Pokemon needs to be replaced because it fainted.
 	if (get_hp(first.pokemon()) == 0_bi) {
-		switch_pokemon(first, last, weather, first.all_pokemon().replacement());
+		switch_pokemon(first, last, weather, first_replacement);
 		auto const first_won = Evaluate::win(first);
 		auto const last_won = Evaluate::win(last);
 		if (first_won != 0_bi or last_won != 0_bi) {
@@ -478,7 +495,7 @@ double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate 
 		}
 	}
 	if (get_hp(last.pokemon()) == 0_bi) {
-		switch_pokemon(last, first, weather, last.all_pokemon().replacement());
+		switch_pokemon(last, first, weather, last_replacement);
 		auto const first_won = Evaluate::win(first);
 		auto const last_won = Evaluate::win(last);
 		if (first_won != 0_bi or last_won != 0_bi) {
@@ -489,6 +506,7 @@ double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate 
 	auto const teams = deorder(first, last);
 	return transposition(teams.ai, teams.foe, weather, depth, evaluate);
 }
+
 
 double initial_move_then_switch_branch(Team & switcher, Team const & other, Weather const weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn) {
 	return move_then_switch_branch(switcher, other, Variable(), Variable(), weather, depth, evaluate, best_switch, first_turn);
@@ -501,23 +519,26 @@ double move_then_switch_branch(Team & switcher, Team const & other, Variable con
 		alpha = -alpha;
 		++tabs;
 	}
-	switcher.all_pokemon().for_each_replacement([&]() {
-		if (first_turn)
-			std::cout << std::string (tabs, '\t') + "Evaluating bringing in " + to_string(static_cast<Species>(switcher.replacement())) + "\n";
-		auto const value = switch_after_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate);
-		if (switcher.is_me()) {
-			update_best_move(alpha, value, first_turn, to_switch(switcher.all_pokemon().replacement()), best_switch);
+	for (auto const replacement : integer_range(size(switcher.all_pokemon()))) {
+		if (skip_this_replacement(switcher.all_pokemon(), replacement)) {
+			continue;
 		}
-		else {
+		if (first_turn) {
+			std::cout << std::string(tabs, '\t') << "Evaluating bringing in " << to_string(static_cast<Species>(replacement)) << '\n';
+		}
+		auto const value = switch_after_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate, replacement);
+		if (switcher.is_me()) {
+			update_best_move(alpha, value, first_turn, to_switch(replacement), best_switch);
+		} else {
 			MoveScores foe_scores(switcher.pokemon());
 			update_foe_best_move(switcher, foe_scores, alpha, value, first_turn);
 		}
-	});
+	}
 	return alpha;
 }
 
-double switch_after_move_branch(Team switcher, Team other, Variable const & switcher_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate) {
-	switch_pokemon(switcher, other, weather, switcher.all_pokemon().replacement());
+double switch_after_move_branch(Team switcher, Team other, Variable const & switcher_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const replacement) {
+	switch_pokemon(switcher, other, weather, replacement);
 	assert(!empty(switcher.all_pokemon()));
 	assert(!empty(other.all_pokemon()));
 	// I don't have to correct for which of the Pokemon moved first because

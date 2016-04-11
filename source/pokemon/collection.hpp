@@ -64,42 +64,8 @@ struct PokemonCollection : detail::Collection<PokemonContainer> {
 	}
 
 	void remove_active(containers::index_type<PokemonCollection> index_of_replacement);
-	template<typename Function1, typename Function2>
-	void for_each_replacement (Function1 const & break_out, Function2 const & f) {
-		ResetIndex reset(*this);
-		for (auto const test_replacement : bounded::integer_range(size(*this))) {
-			auto const would_switch_to_self = replacement() == index();
-			if (would_switch_to_self and size(*this) > 1_bi) {
-				continue;
-			}
-			current_replacement = test_replacement;
-			f();
-			if (break_out()) {
-				break;
-			}
-		}
-	}
-	template<typename Function>
-	void for_each_replacement (Function const & f) {
-		// Most versions of the loop do not require the ability to break out early.
-		// This passes in a function that always returns false for when to break out
-		for_each_replacement(std::false_type{}, f);
-	}
-private:
-	struct ResetIndex {
-		explicit ResetIndex(PokemonCollection & collection):
-			copy(collection),
-			index(collection.current_replacement)
-			{
-		}
-		~ResetIndex() {
-			copy.current_replacement = index;
-		}
-	private:
-		PokemonCollection & copy;
-		containers::index_type<PokemonCollection> const index;
-	};
 
+private:
 	void decrement_real_size();
 	// If a Pokemon switches / faints, what Pokemon should replace it?
 	containers::index_type<PokemonCollection> current_replacement;
