@@ -203,7 +203,7 @@ double generic_flag_branch(Team & first, Team & last, Weather const weather, uns
 }
 
 
-double move_then_switch_branch(Team & switcher, Team const & other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn = false);
+double move_then_switch_branch(Team & switcher, Team const & other, Variable const & user_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_switch, bool first_turn);
 
 
 
@@ -219,7 +219,17 @@ double use_move_and_follow_up(Team & user, Team & other, Variable const & user_v
 		auto const current = static_cast<Species>(user.pokemon());
 		if (original == current and has_follow_up_decision(current_move(user.pokemon())) and size(user.all_pokemon()) > 1_bi) {
 			Moves phony = Moves::END;
-			return move_then_switch_branch(user, other, user_variable, other_variable, weather, depth, evaluate, phony);
+			return move_then_switch_branch(
+				user,
+				other,
+				user_variable,
+				other_variable,
+				weather,
+				depth,
+				evaluate,
+				phony,
+				false
+			);
 		}
 	}
 	return static_cast<double>(victory + 1_bi);		// return an illegal value
