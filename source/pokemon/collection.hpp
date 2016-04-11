@@ -26,23 +26,29 @@
 #include "../collection.hpp"
 #include "../hash.hpp"
 
-#include "../move/moves.hpp"
-
 #include <bounded/integer.hpp>
-#include <bounded/integer_range.hpp>
 
-#include <cstddef>
+#include <utility>
 
 namespace technicalmachine {
 using namespace bounded::literal;
-struct Move;
 
 struct PokemonCollection : detail::Collection<PokemonContainer> {
-	explicit PokemonCollection(TeamSize initial_size);
+	explicit PokemonCollection(TeamSize const initial_size):
+		current_replacement(0_bi),
+		true_size(initial_size)
+	{
+	}
+
 	// TODO: Need to rework my constructors or something so that this is not
 	// needed. This should only be called once, in team intialization
-	void initialize_size(TeamSize const new_size);
-	void initialize_replacement ();
+	auto initialize_size(TeamSize const new_size) {
+		true_size = new_size;
+	}
+	auto initialize_replacement() {
+		current_replacement = index();
+	}
+
 	using detail::Collection<PokemonContainer>::operator();
 	template<typename... Args>
 	Pokemon & operator()(Args && ... args) {
@@ -54,8 +60,13 @@ struct PokemonCollection : detail::Collection<PokemonContainer> {
 		return current_replacement;
 	}
 
-	void set_replacement(containers::index_type<PokemonCollection> const new_index);
-	TeamSize real_size() const;
+	auto set_replacement(containers::index_type<PokemonCollection> const new_index) {
+		current_replacement = check_range(new_index);
+	}
+
+	auto real_size() const {
+		return true_size;
+	}
 
 	template<typename... Args>
 	void add(Args&&... args) {
@@ -66,7 +77,6 @@ struct PokemonCollection : detail::Collection<PokemonContainer> {
 	void remove_active(containers::index_type<PokemonCollection> index_of_replacement);
 
 private:
-	void decrement_real_size();
 	// If a Pokemon switches / faints, what Pokemon should replace it?
 	containers::index_type<PokemonCollection> current_replacement;
 	// The actual size of the foe's team, not just the Pokemon I've seen

@@ -18,45 +18,14 @@
 
 #include "collection.hpp"
 
-#include "max_pokemon_per_team.hpp"
-#include "pokemon.hpp"
-#include "species.hpp"
-
-#include "../move/is_switch.hpp"
-#include "../move/move.hpp"
-
-#include <bounded/integer_range.hpp>
-
 #include <cassert>
 
 namespace technicalmachine {
 
-PokemonCollection::PokemonCollection(TeamSize const initial_size):
-	current_replacement(0_bi),
-	true_size(initial_size) {
-}
-
-void PokemonCollection::initialize_size(TeamSize const new_size) {
-	true_size = new_size;
-}
-
-void PokemonCollection::initialize_replacement () {
-	// No need to bounds check because index() already is
-	current_replacement = index();
-}
-
-void PokemonCollection::set_replacement(containers::index_type<PokemonCollection> const new_index) {
-	current_replacement = check_range (new_index);
-}
-
-TeamSize PokemonCollection::real_size() const {
-	return true_size;
-}
-
 void PokemonCollection::remove_active(containers::index_type<PokemonCollection> const index_of_replacement) {
 	assert(index() != index_of_replacement);
 	containers::erase(static_cast<PokemonContainer &>(*this), begin() + index());
-	decrement_real_size();
+	--true_size;
 	// We don't need any bounds checking here because we've already established
 	// that index_of_replacement is greater than index(), so it cannot be 0,
 	// which is the only value that could get this out of bounds.
@@ -67,10 +36,6 @@ void PokemonCollection::remove_active(containers::index_type<PokemonCollection> 
 	for (auto & pokemon : *this) {
 		all_moves(pokemon).remove_switch();
 	}
-}
-
-void PokemonCollection::decrement_real_size () {
-	--true_size;
 }
 
 }	// namespace technicalmachine
