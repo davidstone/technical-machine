@@ -53,14 +53,17 @@ TeamSize PokemonCollection::real_size() const {
 	return true_size;
 }
 
-void PokemonCollection::remove_active () {
-	assert(index() != replacement());
+void PokemonCollection::remove_active(containers::index_type<PokemonCollection> const index_of_replacement) {
+	assert(index() != index_of_replacement);
 	containers::erase(static_cast<PokemonContainer &>(*this), begin() + index());
 	decrement_real_size();
 	// We don't need any bounds checking here because we've already established
-	// that replacement() is greater than index(), so it cannot be 0, which is
-	// the only value that could get this out of bounds.
-	set_index((index() > replacement()) ? replacement() : containers::index_type<PokemonCollection>(replacement() - 1_bi, bounded::non_check));
+	// that index_of_replacement is greater than index(), so it cannot be 0,
+	// which is the only value that could get this out of bounds.
+	set_index((index() > index_of_replacement) ?
+		index_of_replacement :
+		containers::index_type<PokemonCollection>(index_of_replacement - 1_bi, bounded::non_check)
+	);
 	for (auto & pokemon : *this) {
 		all_moves(pokemon).remove_switch();
 	}

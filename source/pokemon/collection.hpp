@@ -63,7 +63,7 @@ struct PokemonCollection : detail::Collection<PokemonContainer> {
 		current_replacement = size(*this) - 1_bi;
 	}
 
-	void remove_active();
+	void remove_active(containers::index_type<PokemonCollection> index_of_replacement);
 	template<typename Function1, typename Function2>
 	void for_each_replacement (Function1 const & break_out, Function2 const & f) {
 		ResetIndex reset(*this);
