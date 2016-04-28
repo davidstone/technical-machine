@@ -244,34 +244,35 @@ double move_then_switch_branch(Team const & switcher, Team const & other, Variab
 
 
 
-double use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const user_flags, CriticalHitFlag const other_flags) {
+bounded::optional<double> use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const user_flags, CriticalHitFlag const other_flags) {
 	auto const original = static_cast<Species>(user.pokemon());
-	if (!moved(user.pokemon())) {
-		call_move(user, other, weather, user_variable, user_flags.miss, user_flags.awaken, user_flags.critical_hit, false);
-		auto const user_win = Evaluate::win(user);
-		auto const other_win = Evaluate::win(other);
-		if (user_win != 0_bi or other_win != 0_bi) {
-			return static_cast<double>(user_win + other_win);
-		}
-		auto const current = static_cast<Species>(user.pokemon());
-		if (original == current and has_follow_up_decision(current_move(user.pokemon())) and size(user.all_pokemon()) > 1_bi) {
-			Moves phony = Moves::END;
-			return move_then_switch_branch(
-				user,
-				other,
-				user_variable,
-				other_variable,
-				weather,
-				depth,
-				evaluate,
-				user_flags,
-				other_flags,
-				phony,
-				false
-			);
-		}
+	if (moved(user.pokemon())) {
+		return bounded::none;
 	}
-	return static_cast<double>(victory + 1_bi);		// return an illegal value
+	call_move(user, other, weather, user_variable, user_flags.miss, user_flags.awaken, user_flags.critical_hit, false);
+	auto const user_win = Evaluate::win(user);
+	auto const other_win = Evaluate::win(other);
+	if (user_win != 0_bi or other_win != 0_bi) {
+		return static_cast<double>(user_win + other_win);
+	}
+	auto const current = static_cast<Species>(user.pokemon());
+	if (original == current and has_follow_up_decision(current_move(user.pokemon())) and size(user.all_pokemon()) > 1_bi) {
+		Moves phony = Moves::END;
+		return move_then_switch_branch(
+			user,
+			other,
+			user_variable,
+			other_variable,
+			weather,
+			depth,
+			evaluate,
+			user_flags,
+			other_flags,
+			phony,
+			false
+		);
+	}
+	return bounded::none;
 }
 
 
@@ -309,15 +310,17 @@ double end_of_turn_order_branch(Team const & team, Team const & other, Team cons
 
 double use_move_branch(Team & first, Team & last, Variable const & first_variable, Variable const & last_variable, Weather & weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
 	auto value = use_move_and_follow_up(first, last, first_variable, last_variable, weather, depth, evaluate, first_flags, last_flags);
-	if (value != static_cast<double>(victory + 1_bi))	// illegal value
-		return value;
+	if (value) {
+		return *value;
+	}
 	// If first uses a phazing move before last gets a chance to move, the
 	// newly brought out Pokemon would try to move without checking to see if
 	// it has already moved. This check is also necessary for my Baton Pass and
 	// U-turn implementation to function.
 	value = use_move_and_follow_up(last, first, last_variable, first_variable, weather, depth, evaluate, last_flags, first_flags);
-	if (value != static_cast<double>(victory + 1_bi))
-		return value;
+	if (value) {
+		return *value;
+	}
 
 	// Find the expected return on all possible outcomes at the end of the turn
 	
