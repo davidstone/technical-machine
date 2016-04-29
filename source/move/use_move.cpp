@@ -461,7 +461,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 			break;
 		case Moves::Counter:
 			if (is_physical(current_move(target.pokemon()))) {
-				target.pokemon().indirect_damage(damaged(user) * 2_bi);
+				target.pokemon().direct_damage(damaged(user) * 2_bi);
 			}
 			break;
 		case Moves::Covet:
@@ -722,7 +722,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 			break;
 		case Moves::Mirror_Coat:
 			if (is_special(current_move(target.pokemon()))) {
-				target.pokemon().indirect_damage(damaged(user) * 2_bi);
+				target.pokemon().direct_damage(damaged(user) * 2_bi);
 			}
 			break;
 		case Moves::Mirror_Shot:
