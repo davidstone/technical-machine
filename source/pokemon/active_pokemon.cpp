@@ -351,11 +351,15 @@ auto MutableActivePokemon::use_substitute() -> void {
 }
 
 auto MutableActivePokemon::direct_damage(damage_type const damage) -> void {
-	auto & hp = get_hp(*this);
-	auto const initial_hp = hp.current();
-	hp -= damage;
-	m_flags.damaged = initial_hp - hp.current();
-	m_flags.bide.add_damage(damage);
+	if (m_flags.substitute) {
+		m_flags.substitute.damage(damage);
+	} else {
+		auto & hp = get_hp(*this);
+		auto const initial_hp = hp.current();
+		hp -= damage;
+		m_flags.damaged = initial_hp - hp.current();
+		m_flags.bide.add_damage(damage);
+	}
 }
 
 auto MutableActivePokemon::indirect_damage(damage_type const damage) -> void {
