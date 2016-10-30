@@ -40,11 +40,11 @@ namespace {
 template<typename Container>
 Container split(std::string const & str, char delimiter) {
 	Container container;
-	auto previous = str.begin();
+	auto previous = begin(str);
 	while (true) {
-		auto const found = std::find(previous, str.end(), delimiter);
+		auto const found = std::find(previous, end(str), delimiter);
 		container.emplace_back(previous, found);
-		if (found == str.end()) {
+		if (found == end(str)) {
 			break;
 		}
 		previous = std::next(found);
@@ -58,9 +58,9 @@ InMessage parse_message(message_ptr const & ptr) {
 	static constexpr char delimiter = '|';
 	auto tokens = split<containers::vector<std::string>>(ptr->get_payload(), delimiter);
 	assert(size(tokens) >= 2_bi);
-	std::string & room = *tokens.begin();
-	std::string & type = *(tokens.begin() + 1_bi);
-	InMessage::Data data(std::make_move_iterator(tokens.begin() + 2_bi), std::make_move_iterator(tokens.end()));
+	std::string & room = *begin(tokens);
+	std::string & type = *(begin(tokens) + 1_bi);
+	InMessage::Data data(std::make_move_iterator(begin(tokens) + 2_bi), std::make_move_iterator(end(tokens)));
 	return InMessage(std::move(room), std::move(type), std::move(data));
 }
 }	// namespace

@@ -23,7 +23,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 Stage::Stage() {
-	std::fill(m_stages.begin(), m_stages.end(), 0_bi);
+	std::fill(begin(m_stages), end(m_stages), 0_bi);
 }
 
 auto Stage::operator[](StatNames const index) const -> value_type const & {
@@ -34,16 +34,16 @@ auto Stage::operator[](StatNames const index) -> value_type & {
 }
 
 auto Stage::begin() const -> container_type::const_iterator {
-	return m_stages.begin();
+	return begin(m_stages);
 }
 auto Stage::begin() -> container_type::iterator {
-	return m_stages.begin();
+	return begin(m_stages);
 }
 auto Stage::end() const -> container_type::const_iterator {
-	return m_stages.end();
+	return end(m_stages);
 }
 auto Stage::end() -> container_type::iterator {
-	return m_stages.end();
+	return end(m_stages);
 }
 
 
@@ -98,7 +98,7 @@ auto swap_offensive(Stage & lhs, Stage & rhs) -> void {
 
 
 auto operator==(Stage const & lhs, Stage const & rhs) -> bool {
-	return std::equal(lhs.begin(), lhs.end(), rhs.begin());
+	return std::equal(begin(lhs), end(lhs), begin(rhs));
 }
 
 } // namespace technicalmachine

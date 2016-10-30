@@ -44,7 +44,7 @@ auto make_shuffled_array(RandomEngine & random_engine, Ts ... ts) {
 	// the correct move each time
 	auto array = containers::make_array(ts...);
 	// gcc's stdlib does not support std::shuffle user defined intergers
-	std::shuffle(array.data(), array.data() + size(array), random_engine);
+	std::shuffle(data(array), data(array) + size(array), random_engine);
 	return array;
 }
 

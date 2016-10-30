@@ -166,7 +166,7 @@ bool block1 (ActivePokemon const user, Move const move, ActivePokemon const othe
 
 bool imprison(Moves const move, ActivePokemon const other) {
 	auto const & moves = regular_moves(other);
-	return used_imprison(other) and containers::any_equal(moves.begin(), moves.end(), move);
+	return used_imprison(other) and containers::any_equal(begin(moves), end(moves), move);
 }
 
 bool is_blocked_by_taunt(Moves const move) {

@@ -88,7 +88,7 @@ Species from_simulator_string(std::string const & str) {
 		{ "Wormadam-s", Species::Wormadam_Trash }
 	};
 	auto const it = converter.find(str);
-	return (it != converter.end()) ? it->second : from_string<Species>(str);
+	return (it != end(converter)) ? it->second : from_string<Species>(str);
 }
 
 void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
@@ -118,7 +118,7 @@ void load_team(Team & team, boost::filesystem::path const & team_file) {
 	read_xml(team_file.string(), pt);
 	
 	auto const all_pokemon = pt.get_child ("shoddybattle");
-	team.all_pokemon().initialize_size(static_cast<TeamSize>(all_pokemon.size()));
+	team.all_pokemon().initialize_size(static_cast<TeamSize>(size(all_pokemon)));
 	for (auto const & value : all_pokemon) {
 		load_pokemon (value.second, team);
 	}

@@ -38,7 +38,7 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 		constexpr auto initial = static_cast<double>(victory + 1_bi);
 		m_scores.emplace_back(move, initial);
 	}
-	std::sort(m_scores.begin(), m_scores.end());
+	std::sort(begin(m_scores), end(m_scores));
 }
 
 namespace {
@@ -46,8 +46,8 @@ namespace {
 template<typename Container>
 auto & search(Container & container, Moves const move) {
 	auto compare = [](auto const & element, auto const & requested) { return element.first < requested; };
-	auto const it = std::lower_bound(container.begin(), container.end(), move, compare);
-	assert(it != container.end());
+	auto const it = std::lower_bound(begin(container), end(container), move, compare);
+	assert(it != end(container));
 	assert(it->first == move);
 	return it->second;
 }

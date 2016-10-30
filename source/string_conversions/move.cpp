@@ -753,7 +753,7 @@ Moves from_string(boost::string_ref const str) {
 		{ "end_move", Moves::END }
 	};
 	auto const it = converter.find(boost::algorithm::to_lower_copy(str.to_string()));
-	if (it != converter.end()) {
+	if (it != end(converter)) {
 		return it->second;
 	} else {
 		throw InvalidFromStringConversion("Move", str);

@@ -591,7 +591,7 @@ Item from_string(boost::string_ref const str) {
 		{ "Works Key", Item::Works_Key }
 	};
 	auto const it = converter.find(str);
-	if (it != converter.end()) {
+	if (it != end(converter)) {
 		return it->second;
 	} else {
 		throw InvalidFromStringConversion("Item", str);

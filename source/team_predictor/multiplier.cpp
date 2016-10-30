@@ -56,7 +56,7 @@ Multiplier::Multiplier(Overall const & overall):
 	// Pokemon not on the team mate stats is equal to the relative overall
 	// distribution and divide up all remaining usages proportionally.
 	Overall unaccounted;
-	std::transform(overall.begin(), overall.end(), unaccounted.begin(), [](unsigned const element) {
+	std::transform(begin(overall), end(overall), begin(unaccounted), [](unsigned const element) {
 		return element * static_cast<unsigned>(other_pokemon_per_team);
 	});
 
@@ -71,7 +71,7 @@ Multiplier::value_type Multiplier::operator() (Species const species1, Species c
 Multiplier::Container Multiplier::species_clause() {
 	Container multiplier;
 	for (auto & array : multiplier) {
-		std::fill(array.begin(), array.end(), not_set);
+		std::fill(begin(array), end(array), not_set);
 	}
 	for (auto const a : bounded::integer_range(bounded::constant<number_of_species>)) {
 		for (auto const b : bounded::integer_range(bounded::constant<number_of_species>)) {
@@ -86,7 +86,7 @@ Multiplier::Container Multiplier::species_clause() {
 
 void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unaccounted) {
 	// I may not need to calculate this...
-	auto const total = static_cast<value_type>(std::accumulate(overall.begin(), overall.end(), 0U));
+	auto const total = static_cast<value_type>(std::accumulate(begin(overall), end(overall), 0U));
 
 	std::ifstream file("settings/Generation 4/OU/teammate.txt");
 	std::string line;
@@ -135,7 +135,7 @@ void Multiplier::estimate_remaining(Overall const & overall, Overall const & una
 			// 1 is superior to 0 because if they use an unused Pokemon, this
 			// will have no effect instead of making everything equally 0
 			auto & m = multiplier[a];
-			std::fill(m.begin(), m.end(), 1.0F);
+			std::fill(begin(m), end(m), 1.0F);
 		}
 	}
 }

@@ -392,9 +392,9 @@ Moves random_action(Team const & ai, Team const & foe, Weather const weather, st
 }
 
 Moves random_switch(Team const & ai, std::mt19937 & random_engine) {
-	std::vector<Moves> const switches = all_switches(ai.all_pokemon().size(), ai.all_pokemon().index());
+	std::vector<Moves> const switches = all_switches(size(ai.all_pokemon()), ai.all_pokemon().index());
 	assert(!switches.empty());
-	std::uniform_int_distribution<size_t> distribution { 0, switches.size() - 1 };
+	std::uniform_int_distribution<size_t> distribution { 0, size(switches) - 1 };
 	size_t const index = distribution(random_engine);
 	return switches[index];
 }
@@ -411,8 +411,8 @@ std::vector<Moves> all_switches(TeamSize const team_size, PokemonCollection::ind
 
 Moves random_move_or_switch(Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
 	LegalSelections const moves(ai, foe.pokemon(), weather);
-	assert(moves.size() != 0_bi);
-	std::uniform_int_distribution<size_t> distribution { 0, moves.size() - 1 };
+	assert(size(moves) != 0_bi);
+	std::uniform_int_distribution<size_t> distribution { 0, size(moves) - 1 };
 	auto const index = distribution(random_engine);
 	return moves[index];
 }
@@ -488,8 +488,8 @@ double random_move_effects_branch(Team const & first, Team const & last, Weather
 	};
 	double score = 0.0;
 
-	for (auto const & first_variable : all_probabilities(first.pokemon(), last.size())) {
-		for (auto const & last_variable : all_probabilities(last.pokemon(), first.size())) {
+	for (auto const & first_variable : all_probabilities(first.pokemon(), size(last))) {
+		for (auto const & last_variable : all_probabilities(last.pokemon(), size(first))) {
 			auto const use_move_copy_branch = [&](Team first_, Team last_, Weather weather_, unsigned depth_, Evaluate const & evaluate_, CriticalHitFlag first_flags_, CriticalHitFlag last_flags_) {
 				return use_move_branch(first_, last_, first_variable, last_variable, weather_, depth_, evaluate_, first_flags_, last_flags_);
 			};

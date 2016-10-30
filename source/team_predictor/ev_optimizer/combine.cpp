@@ -57,11 +57,11 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 	containers::static_vector<Combined, SpeedEVs::max_size> container;
 	for (auto const & speed : speed_container) {
 		auto const offensive = o.container.find(speed.nature);
-		if (offensive == o.container.end()) {
+		if (offensive == end(o.container)) {
 			continue;
 		}
 		auto const defensive = d.container.find(speed.nature);
-		if (defensive == d.container.end()) {
+		if (defensive == end(d.container)) {
 			continue;
 		}
 		auto combined = Combined{
@@ -82,9 +82,9 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 	auto const lesser_mapped_type = [](auto const & lhs, auto const & rhs) {
 		return sum(lhs) < sum(rhs);
 	};
-	auto const it = std::min_element(container.begin(), container.end(), lesser_mapped_type);
+	auto const it = std::min_element(begin(container), end(container), lesser_mapped_type);
 
-	if (it == container.end()) {
+	if (it == end(container)) {
 		std::cerr << to_string(pokemon) << '\n';
 		std::cerr << "Speed:\n";
 		for (auto const & value : speed_container) {
@@ -99,7 +99,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 			std::cerr << '\t' << to_string(value.first) << " : " << value.second.hp.value() << ", " << value.second.defense.value() << ", " << value.second.special_defense.value() << '\n';
 		}
 	}
-	assert(it != container.end());
+	assert(it != end(container));
 	assert(sum(*it) <= EV::max_total);
 
 	set_hp_ev(pokemon, it->hp);

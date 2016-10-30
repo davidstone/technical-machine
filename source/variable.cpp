@@ -45,7 +45,7 @@ auto find_index(PokemonCollection const & collection, Species const species) {
 }
 
 auto get_phaze_index(Team const & team, Species const species) {
-	assert(team.size() > 1_bi);
+	assert(size(team) > 1_bi);
 	// This is required to work with my current battle implementation
 	auto const & all = team.all_pokemon();
 	auto const pokemon_index = has_switched(team.pokemon()) ? all.replacement() : all.index();

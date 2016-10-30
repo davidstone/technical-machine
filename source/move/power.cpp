@@ -124,8 +124,8 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 			return variable.value;
 		case Moves::Punishment: {
 			auto const & boosts = stage(defender);
-			auto const filtered = containers::filter_iterator(boosts.begin(), boosts.end(), [](auto const value) { return value > 0_bi; });
-			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::accumulate(filtered, boosts.end()));
+			auto const filtered = containers::filter_iterator(begin(boosts), end(boosts), [](auto const value) { return value > 0_bi; });
+			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::accumulate(filtered, end(boosts)));
 			return bounded::min(uncapped_power, 200_bi);
 		}
 		case Moves::Return:

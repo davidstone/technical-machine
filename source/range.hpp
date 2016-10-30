@@ -43,7 +43,7 @@ private:
 
 template<typename Iterator>
 constexpr auto size(Range<Iterator> const & range) {
-	return range.end() - range.begin();
+	return end(range) - begin(range);
 }
 
 template<typename Iterator>

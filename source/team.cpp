@@ -46,7 +46,7 @@ auto open_directory_and_add_files (boost::filesystem::path const & team_file) ->
 	if (boost::filesystem::is_directory(team_file)) {
 		for (boost::filesystem::directory_iterator it(team_file); it != boost::filesystem::directory_iterator(); ++it) {
 			auto const temp = open_directory_and_add_files(it->path());
-			append(files, temp.begin(), temp.end());
+			append(files, begin(temp), end(temp));
 		}
 	} else if (boost::filesystem::is_regular_file(team_file)) {
 		push_back(files, team_file);

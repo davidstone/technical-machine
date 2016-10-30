@@ -47,7 +47,7 @@ struct MoveCollection : detail::Collection<MoveContainer> {
 };
 
 inline auto hash(MoveCollection const & collection) noexcept {
-	return hash_range<RegularMoveSize>(collection.regular().begin(), collection.regular().end());
+	return hash_range<RegularMoveSize>(begin(collection.regular()), end(collection.regular()));
 }
 
 auto index(MoveCollection const & moves, Moves name) -> bounded::optional<RegularMoveIndex>;

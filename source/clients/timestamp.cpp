@@ -30,7 +30,7 @@ std::string make_timestamp() {
 	result.resize(sizeof(SAMPLE_OUTPUT));
 	std::time_t const current_time = std::time(nullptr);
 	tm const * const timeptr = localtime(&current_time);
-	std::strftime(&result.front(), result.size(), "%Y-%m-%d %H:%M:%S", timeptr);
+	std::strftime(&result.front(), size(result), "%Y-%m-%d %H:%M:%S", timeptr);
 	return result;
 }
 

@@ -56,13 +56,13 @@ struct TestContainer {
 	
 	template<typename Container>
 	constexpr TestContainer(Container const & container):
-		m_container(container.begin(), container.end()) {
+		m_container(begin(container), end(container)) {
 	}
 	constexpr auto begin() const {
-		return m_container.begin();
+		return begin(m_container);
 	}
 	constexpr auto end() const {
-		return m_container.end();
+		return end(m_container);
 	}
 	constexpr auto const & operator[](containers::index_type<TestContainer> const index) const {
 		return m_container[index];

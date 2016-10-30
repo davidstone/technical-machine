@@ -41,10 +41,10 @@ struct InMessage {
 	}
 
 	auto begin() const {
-		return m_data.begin();
+		return begin(m_data);
 	}
 	auto end() const {
-		return m_data.end();
+		return end(m_data);
 	}
 private:
 	Room m_room;

@@ -70,10 +70,10 @@ T most_likely_sub_elements(boost::property_tree::ptree const & pt) {
 
 auto top_sub_elements(boost::property_tree::ptree const & pt) {
 	auto data = all_sub_elements(pt);
-	auto const middle = (size(data) >= max_moves_per_pokemon) ? data.begin() + max_moves_per_pokemon : data.end();
-	std::partial_sort(data.begin(), middle, data.end(), std::greater<>());
+	auto const middle = (size(data) >= max_moves_per_pokemon) ? begin(data) + max_moves_per_pokemon : end(data);
+	std::partial_sort(begin(data), middle, end(data), std::greater<>());
 	auto adapt = [](auto const it) { return from_string<Moves>(it->second); };
-	return DetailedStats::UsedMoves(containers::iterator_adapter(data.begin(), adapt), middle);
+	return DetailedStats::UsedMoves(containers::iterator_adapter(begin(data), adapt), middle);
 }
 
 }	// namespace

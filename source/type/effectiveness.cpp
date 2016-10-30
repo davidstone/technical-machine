@@ -66,7 +66,7 @@ auto lookup_effectiveness(Type const attacking, Type const defending) {
 template<typename Container, typename Product>
 auto check_effectiveness(Container const & effectiveness, std::initializer_list<Product> const & results) {
 	auto const value = effectiveness[0_bi] * effectiveness[1_bi];
-	return containers::any_equal(results.begin(), results.end(), value);
+	return containers::any_equal(begin(results), end(results), value);
 }
 
 
@@ -85,7 +85,7 @@ Effectiveness::Effectiveness(Type const attacking, Type const defending1, Type c
 }
 
 Effectiveness::Effectiveness(Type const type, Pokemon const & defender):
-	Effectiveness(type, *get_type(defender).types.begin(), *containers::next(get_type(defender).types.begin())) {
+	Effectiveness(type, *begin(get_type(defender).types), *containers::next(begin(get_type(defender).types))) {
 }
 
 Effectiveness::Effectiveness(Type const attacking, Type const defending):

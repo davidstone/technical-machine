@@ -50,7 +50,7 @@ private:
 };
 
 inline auto hash(Stage const stage) noexcept {
-	return hash_range<Stage::container_type::size_type>(stage.begin(), stage.end());
+	return hash_range<Stage::container_type::size_type>(begin(stage), end(stage));
 }
 
 namespace detail {

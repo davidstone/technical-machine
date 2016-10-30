@@ -41,7 +41,7 @@ namespace {
 
 auto all_ones_array() {
 	containers::array<float, number_of_species> all_ones;
-	std::fill(all_ones.begin(), all_ones.end(), 1.0F);
+	std::fill(begin(all_ones), end(all_ones), 1.0F);
 	return all_ones;
 }
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier);
@@ -80,12 +80,12 @@ namespace {
 
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier) {
 	auto const index = team.all_pokemon().index();
-	while (team.number_of_seen_pokemon() < team.size()) {
+	while (team.number_of_seen_pokemon() < size(team)) {
 		Species const name = estimate.most_likely();
 		Level const level(100_bi);
 		Gender const gender(Gender::GENDERLESS);
 		team.add_pokemon(name, level, gender);
-		if (team.number_of_seen_pokemon() == team.size())
+		if (team.number_of_seen_pokemon() == size(team))
 			break;
 		estimate.update(multiplier, name);
 	}
@@ -98,7 +98,7 @@ void predict_move(MoveCollection & moves, DetailedStats::UsedMoves const & detai
 		if (size(regular) == max_moves_per_pokemon) {
 			break;
 		}
-		if (containers::any_equal(regular.begin(), regular.end(), move)) {
+		if (containers::any_equal(begin(regular), end(regular), move)) {
 			continue;
 		}
 		moves.add(move);

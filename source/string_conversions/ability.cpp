@@ -193,7 +193,7 @@ Ability::Abilities from_string<Ability::Abilities>(boost::string_ref const str) 
 		{ "Wonder Guard", Ability::Wonder_Guard }
 	};
 	auto const it = converter.find(str);
-	if (it != converter.end()) {
+	if (it != end(converter)) {
 		return it->second;
 	} else {
 		throw InvalidFromStringConversion("Ability", str);

@@ -83,24 +83,24 @@ struct MoveContainer {
 	explicit MoveContainer(TeamSize my_team_size);
 	
 	const_iterator begin() const {
-		return const_iterator(m_regular.begin(), m_regular.end(), m_shared.begin());
+		return const_iterator(begin(m_regular), end(m_regular), begin(m_shared));
 	}
 	const_iterator end() const {
-		return const_iterator(m_regular.end(), m_regular.end(), m_shared.end());
+		return const_iterator(end(m_regular), end(m_regular), end(m_shared));
 	}
 
 	// Skips Struggle and switches
 	auto regular_begin() const {
-		return m_regular.begin();
+		return begin(m_regular);
 	}
 	auto regular_begin() {
-		return m_regular.begin();
+		return begin(m_regular);
 	}
 	auto regular_end() const {
-		return m_regular.end();
+		return end(m_regular);
 	}
 	auto regular_end() {
-		return m_regular.end();
+		return end(m_regular);
 	}
 	
 	auto operator[](containers::index_type<MoveContainer> index) const -> Move;

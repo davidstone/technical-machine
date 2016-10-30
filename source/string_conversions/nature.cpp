@@ -69,7 +69,7 @@ Nature from_string<Nature>(boost::string_ref const str) {
 		{ "Timid", Nature::Timid }
 	};
 	auto const it = converter.find(str);
-	if (it != converter.end()) {
+	if (it != end(converter)) {
 		return it->second;
 	} else {
 		throw InvalidFromStringConversion("Nature", str);

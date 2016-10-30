@@ -83,7 +83,7 @@ auto create_sorted_vector(boost::filesystem::path const & file_name) {
 	// sorting would add nothing.
 
 	auto sorted = create_unsorted_vector(file_name);
-	std::sort(sorted.begin(), sorted.end());
+	std::sort(begin(sorted), end(sorted));
 	return sorted;
 }
 
@@ -113,7 +113,7 @@ Client::Client(unsigned const depth):
 }
 
 bool Client::is_trusted (std::string const & user) const {
-	return std::binary_search(m_trusted_users.begin(), m_trusted_users.end(), user);
+	return std::binary_search(begin(m_trusted_users), end(m_trusted_users), user);
 }
 
 void Client::load_settings (bool const reloading) {
@@ -184,7 +184,7 @@ bool Client::is_highlighted (std::string const & message) const {
 	// saying "atm". Fixing this problem probably requires some sort of regex
 	// or a fancy word boundary definition.
 	auto finder = [&](auto const & highlight) { return message.find(highlight) != std::string::npos; };
-	return containers::any_of(m_highlights.begin(), m_highlights.end(), finder);
+	return containers::any_of(begin(m_highlights), end(m_highlights), finder);
 }
 
 namespace {

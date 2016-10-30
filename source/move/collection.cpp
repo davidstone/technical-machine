@@ -35,31 +35,31 @@ MoveCollection::MoveCollection(TeamSize const my_team_size):
 }
 
 auto regular_move(MoveCollection const & moves) -> Move {
-	return *(moves.regular().begin() + RegularMoveIndex(moves.index()));
+	return *(begin(moves.regular()) + RegularMoveIndex(moves.index()));
 }
 auto regular_move(MoveCollection & moves) -> Move & {
-	return *(moves.regular().begin() + RegularMoveIndex(moves.index()));
+	return *(begin(moves.regular()) + RegularMoveIndex(moves.index()));
 }
 
 auto MoveCollection::add(Moves move, Pp::pp_ups_type pp_ups) -> void {
-	auto it = containers::find(regular().begin(), regular().end(), move);
-	if (it == regular().end()) {
+	auto it = containers::find(begin(regular()), end(regular()), move);
+	if (it == end(regular())) {
 		emplace_back(move, pp_ups);
-		it = containers::prev(regular().end());
+		it = containers::prev(end(regular()));
 	}
-	set_index(static_cast<containers::index_type<MoveCollection>>(it - regular().begin()));
+	set_index(static_cast<containers::index_type<MoveCollection>>(it - begin(regular())));
 }
 
 auto set_index(MoveCollection & moves, Moves const move) -> void {
-	auto const it = containers::find(moves.begin(), moves.end(), move);
-	assert(it != moves.end());
-	moves.set_index(static_cast<containers::index_type<MoveCollection>>(it - moves.begin()));
+	auto const it = containers::find(begin(moves), end(moves), move);
+	assert(it != end(moves));
+	moves.set_index(static_cast<containers::index_type<MoveCollection>>(it - begin(moves)));
 }
 
 using IndexResult = bounded::optional<RegularMoveIndex>;
 auto index(MoveCollection const & moves, Moves const name) -> IndexResult {
-	auto const it = containers::find(moves.regular().begin(), moves.regular().end(), name);
-	return (it != moves.regular().end()) ? IndexResult(it - moves.regular().begin()) : bounded::none;
+	auto const it = containers::find(begin(moves.regular()), end(moves.regular()), name);
+	return (it != end(moves.regular())) ? IndexResult(it - begin(moves.regular())) : bounded::none;
 }
 
 }	// namespace technicalmachine

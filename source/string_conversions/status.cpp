@@ -56,7 +56,7 @@ Statuses from_string(boost::string_ref const str) {
 		{ "END_STATUS", Statuses::END }
 	};
 	auto const it = converter.find(str);
-	if (it != converter.end()) {
+	if (it != end(converter)) {
 		return it->second;
 	} else {
 		throw InvalidFromStringConversion("Status", str);

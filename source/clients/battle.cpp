@@ -90,7 +90,7 @@ Battle::Battle(std::string opponent_, TeamSize const foe_size, unsigned const ba
 	random_engine(std::move(std::get<std::mt19937>(tuple))),
 	ai(std::move(std::get<Team>(tuple))),
 	foe(foe_size),
-	slot_memory(ai.all_pokemon().begin(), ai.all_pokemon().end()),
+	slot_memory(begin(ai.all_pokemon()), end(ai.all_pokemon())),
 	updated_hp(ai),
 	depth(battle_depth)
 	{
@@ -359,11 +359,11 @@ void Battle::handle_end(Client const & client, Result const result) const {
 
 uint8_t Battle::switch_slot(Moves move) const {
 	Species const name = ai.pokemon(to_replacement(move));
-	auto const it = containers::find(slot_memory.begin(), slot_memory.end(), name);
-	if (it == slot_memory.end()) {
+	auto const it = containers::find(begin(slot_memory), end(slot_memory), name);
+	if (it == end(slot_memory)) {
 		throw PokemonNotFound(name);
 	}
-	return static_cast<std::uint8_t>(it - slot_memory.begin());
+	return static_cast<std::uint8_t>(it - begin(slot_memory));
 }
 
 VisibleFoeHP Battle::max_damage_precision() const {
@@ -531,8 +531,8 @@ void Battle::handle_item_message(Party party, Item item) {
 }
 
 void Battle::slot_memory_bring_to_front() {
-	auto const it = containers::find(slot_memory.begin(), slot_memory.end(), ai.replacement());
-	if (it != slot_memory.end()) {
+	auto const it = containers::find(begin(slot_memory), end(slot_memory), ai.replacement());
+	if (it != end(slot_memory)) {
 		std::swap(*it, front(slot_memory));
 	}
 }

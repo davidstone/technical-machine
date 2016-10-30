@@ -35,13 +35,13 @@ StaticVectorMoves reorder(LegalSelections const & input, MoveScores const & move
 	// then only has to prove that further moves aren't as good as the move
 	// already searched; it is not important to know how much worse they are.
 	// Moves that cannot be selected are excluded.
-	StaticVectorMoves output(input.begin(), input.end());
+	StaticVectorMoves output(begin(input), end(input));
 	auto compare = [&](auto const & lhs, auto const & rhs) {
 		auto const lhs_score = move_scores.get(lhs);
 		auto const rhs_score = move_scores.get(rhs);
 		return ai ? (lhs_score > rhs_score) : (lhs_score < rhs_score);
 	};
-	std::sort(output.begin(), output.end(), compare);
+	std::sort(begin(output), end(output), compare);
 	return output;
 }
 

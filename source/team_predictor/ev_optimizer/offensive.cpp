@@ -81,7 +81,7 @@ auto ideal_special_attack_stat(Pokemon const & pokemon, bool const is_special, b
 
 template<typename Container, typename Condition>
 void remove_individual_unused(Container & container, Condition const & condition) {
-	for (auto it = container.begin(); it != container.end();) {
+	for (auto it = begin(container); it != end(container);) {
 		if (condition(it)) {
 			it = container.erase(it);
 		}
@@ -134,7 +134,7 @@ void OffensiveEVs::optimize(Pokemon const & pokemon) {
 }
 
 void OffensiveEVs::equal_stats(OffensiveData const initial, Species const species, Level const level) {
-	for (auto it = container.begin(); it != container.end();) {
+	for (auto it = begin(container); it != end(container);) {
 		auto const nature = it->first;
 		auto const atk_ev = find_least_stat<StatNames::ATK>(species, level, nature, initial.atk);
 		auto const spa_ev = find_least_stat<StatNames::SPA>(species, level, nature, initial.spa);
@@ -156,7 +156,7 @@ namespace {
 template<typename Predicate>
 bool has_move(Pokemon const & pokemon, Predicate predicate) {
 	auto const & moves = regular_moves(pokemon);
-	return containers::any_of(moves.begin(), moves.end(), predicate);
+	return containers::any_of(begin(moves), end(moves), predicate);
 }
 
 bool has_physical_move(Pokemon const & pokemon) {

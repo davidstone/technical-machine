@@ -30,8 +30,8 @@ namespace technicalmachine {
 
 void Battles::handle_challenge_withdrawn() {
 	if (challenges_are_queued()) {
-		assert(challenges.size() == 1);
-		challenges.erase(challenges.begin());
+		assert(size(challenges) == 1);
+		challenges.erase(begin(challenges));
 	}
 }
 
@@ -41,7 +41,7 @@ void Battles::handle_challenge_withdrawn (std::string const & opponent) {
 
 Battle & Battles::handle_begin(uint32_t const battle_id, std::string const & opponent) {
 	auto const it = challenges.find(opponent);
-	if (it == challenges.end()) {
+	if (it == end(challenges)) {
 		throw NoPendingChallenges(opponent);
 	}
 	Battle & battle = *it->second;
@@ -56,14 +56,14 @@ void Battles::handle_end(uint32_t const battle_id) {
 
 Battle const & Battles::find(uint32_t const battle_id) const {
 	auto const it = active.find(battle_id);
-	if (it == active.end())
+	if (it == end(active))
 		throw NoPendingChallenges(battle_id);
 	return *it->second;
 }
 
 Battle & Battles::find(uint32_t const battle_id) {
 	auto const it = active.find(battle_id);
-	if (it == active.end())
+	if (it == end(active))
 		throw NoPendingChallenges(battle_id);
 	return *it->second;
 }
@@ -75,7 +75,7 @@ bool Battles::challenges_are_queued() const {
 std::string const & Battles::first_challenger() const {
 	if (!challenges_are_queued())
 		throw NoPendingChallenges();
-	return challenges.begin()->first;
+	return begin(challenges)->first;
 }
 
 }	// namespace technicalmachine

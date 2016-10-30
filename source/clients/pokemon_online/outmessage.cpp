@@ -164,7 +164,7 @@ void OutMessage::finalize() {
 	typedef uint16_t length_type;
 	auto const length = boost::endian::h_to_n(static_cast<length_type>(size(buffer)));
 	auto const byte = reinterpret_cast<uint8_t const *> (&length);
-	buffer.insert(buffer.begin(), byte, byte + sizeof(length_type));
+	buffer.insert(begin(buffer), byte, byte + sizeof(length_type));
 }
 
 void OutMessage::reset_action_code () {

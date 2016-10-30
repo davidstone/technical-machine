@@ -63,7 +63,7 @@ auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const pokemon
 		(ingrained(pokemon) ? evaluate.ingrain() : 0_bi) +
 		(magnet_rise.is_active() ? evaluate.magnet_rise() * (bounded::constant<MaxTurns<MagnetRise>::value> - *magnet_rise.turns_active()) : 0_bi) +
 		(substitute ? (evaluate.substitute() + evaluate.substitute_hp() * substitute.hp() / get_hp(pokemon).max()) : 0_bi) +
-		std::inner_product(stage.begin(), stage.end(), evaluate.stage().begin(), static_cast<stage_type>(0_bi))
+		std::inner_product(begin(stage), end(stage), begin(evaluate.stage()), static_cast<stage_type>(0_bi))
 	;
 }
 using BatonPassableScore = decltype(baton_passable_score(std::declval<Evaluate>(), std::declval<ActivePokemon>()));
@@ -106,7 +106,7 @@ auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens con
 	// TODO: alter the score of a move based on the weather
 	ScoreMoves score = 0_bi;
 	auto const & moves = all_moves(pokemon);
-	return std::accumulate(moves.begin(), moves.end(), score, [&](auto init, auto const & move) {
+	return std::accumulate(begin(moves), end(moves), score, [&](auto init, auto const & move) {
 		return init + score_move(evaluate, move, other);
 	});
 }
@@ -114,7 +114,7 @@ auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens con
 
 auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon) {
 	auto const & moves = regular_moves(pokemon);
-	auto const has_baton_pass = containers::any_equal(moves.begin(), moves.end(), Moves::Baton_Pass);
+	auto const has_baton_pass = containers::any_equal(begin(moves), end(moves), Moves::Baton_Pass);
 	return
 		BOUNDED_CONDITIONAL(is_cursed(pokemon), evaluate.curse(), 0_bi) +
 		BOUNDED_CONDITIONAL(used_imprison(pokemon), evaluate.imprison(), 0_bi) +
@@ -209,7 +209,7 @@ auto Evaluate::sleep_clause (Team const & team) -> type {
 	auto const sleepers = [](Pokemon const & pokemon) {
 		return is_sleeping_due_to_other(get_status(pokemon));
 	};
-	auto const sleeper_count = containers::count_if(team.all_pokemon().begin(), team.all_pokemon().end(), sleepers);
+	auto const sleeper_count = containers::count_if(begin(team.all_pokemon()), end(team.all_pokemon()), sleepers);
 	if (sleeper_count > 1_bi) {
 		return BOUNDED_CONDITIONAL(team.is_me(), victory, -victory);
 	}

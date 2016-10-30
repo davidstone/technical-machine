@@ -169,7 +169,7 @@ int main () {
 		}};
 		Fl_Multiline_Output output(output_x_position, padding, output_width, output_height);
 		Fl_Return_Button calculate(output_x_position, padding + output_height + padding, output_width, button_height, "Calculate");
-	win.end();
+	end(win);
 
 	Data data(all_pokemon_inputs, output);
 

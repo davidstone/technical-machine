@@ -46,7 +46,7 @@ EV::total_type ev_sum(Pokemon const & pokemon) {
 		return sum + get_stat(pokemon, stat).ev().value();
 	};
 	static constexpr auto regular = regular_stats();
-	return std::accumulate(regular.begin(), regular.end(), EV::total_type(get_hp(pokemon).ev().value()), ev_sum);
+	return std::accumulate(begin(regular), end(regular), EV::total_type(get_hp(pokemon).ev().value()), ev_sum);
 }
 
 }	// namespace
@@ -76,7 +76,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 		auto const regular = regular_stats();
 		auto checker = [&](auto const stat_name) { return get_stat(pokemon, stat_name).ev().value() == EV::max; };
 		auto const full_stats = bounded::checked_integer<0, 2>(
-			containers::count_if(regular.begin(), regular.end(), checker) +
+			containers::count_if(begin(regular), end(regular), checker) +
 			BOUNDED_CONDITIONAL(hp_is_full, 1_bi, 0_bi)
 		);
 
@@ -86,10 +86,10 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 
 		auto const dividers = number_of_stats - full_stats - 1_bi;
 		auto shuffled = containers::make_static_vector<bounded::integer<0, 1>>(extra_evs + dividers, 1_bi);
-		std::fill(shuffled.begin(), shuffled.begin() + dividers, 0_bi);
-		std::shuffle(shuffled.data(), shuffled.data() + size(shuffled), random_engine);
+		std::fill(begin(shuffled), begin(shuffled) + dividers, 0_bi);
+		std::shuffle(data(shuffled), data(shuffled) + size(shuffled), random_engine);
 
-		auto find = [&](auto const it) { return containers::find(it, shuffled.end(), 0_bi); };
+		auto find = [&](auto const it) { return containers::find(it, end(shuffled), 0_bi); };
 		auto new_ev = [&](auto const stat, auto const distance) {
 			return EV(bounded::clamped_integer<0, EV::max.value()>(distance + stat.ev().value().value()));
 		};
@@ -97,14 +97,14 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 		auto add_hp = [&]() {
 			auto & hp = get_hp(pokemon);
 			if (hp.ev().value() == EV::max) {
-				return shuffled.begin();
+				return begin(shuffled);
 			}
-			auto const it = find(shuffled.begin());
-			set_hp_ev(pokemon, new_ev(hp, it - shuffled.begin()));
+			auto const it = find(begin(shuffled));
+			set_hp_ev(pokemon, new_ev(hp, it - begin(shuffled)));
 			return it;
 		};
 		auto it = add_hp();
-		if (it == shuffled.end()) {
+		if (it == end(shuffled)) {
 			continue;
 		}
 		++it;
@@ -115,12 +115,12 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 			// assigned to some stats, which is why I put this in a loop.
 			set_stat_ev(pokemon, stat_name, new_ev(get_stat(pokemon, stat_name), it - previous));
 
-			if (it == shuffled.end()) {
+			if (it == end(shuffled)) {
 				break;
 			}
 			++it;
 		}
-		assert(it == shuffled.end());
+		assert(it == end(shuffled));
 	}
 }
 

@@ -662,7 +662,7 @@ void get_speaker_and_message(InMessage & msg, std::string & speaker, std::string
 	size_t delimiter_position = speaker_and_message.find(delimiter);
 	if (delimiter_position != std::string::npos) {
 		speaker = speaker_and_message.substr(0, delimiter_position);
-		message = speaker_and_message.substr(delimiter_position + delimiter.size());
+		message = speaker_and_message.substr(delimiter_position + size(delimiter));
 	}
 }
 }	// namespace
@@ -739,7 +739,7 @@ void Client::remove_player(uint32_t user_id) {
 	// I can get to this code when I leave a channel thanks to my quick fix below.
 	if (user_id != my_id) {
 		auto const it = user_id_to_name.find(user_id);
-		if (it != user_id_to_name.end()) {
+		if (it != end(user_id_to_name)) {
 			std::string const user_name = it->second;
 			user_id_to_name.erase(it);
 			user_name_to_id.erase(user_name);
@@ -839,7 +839,7 @@ void Client::join_channel(std::string const & channel) {
 
 void Client::part_channel(std::string const & channel) {
 	auto const it = channel_to_id.find(channel);
-	if (it != channel_to_id.end()) {
+	if (it != end(channel_to_id)) {
 		OutMessage msg(OutMessage::LEAVE_CHANNEL);
 		msg.write_int(it->second);
 		send_message(msg);
@@ -853,7 +853,7 @@ void Client::handle_add_channel(std::string const & channel_name, uint32_t chann
 
 void Client::handle_remove_channel(uint32_t channel_id) {
 	auto const it = id_to_channel.find(channel_id);
-	if (it != id_to_channel.end()) {
+	if (it != end(id_to_channel)) {
 		channel_to_id.erase(it->second);
 		id_to_channel.erase(it);
 	}
@@ -875,7 +875,7 @@ void Client::remove_battle(InMessage & msg) {
 
 void Client::send_channel_message(std::string const & channel, std::string const & message) {
 	auto const it = channel_to_id.find(channel);
-	if (it == channel_to_id.end()) {
+	if (it == end(channel_to_id)) {
 		throw network::InvalidChannel(channel);
 	}
 	uint32_t const channel_id = it->second;
@@ -932,7 +932,7 @@ void Client::handle_private_message(uint32_t user_id, std::string const & messag
 
 uint32_t Client::get_user_id(std::string const & name) const {
 	auto const it = user_name_to_id.find(name);
-	if (it != user_name_to_id.end()) {
+	if (it != end(user_name_to_id)) {
 		return it->second;
 	} else {
 		throw InvalidUser(name);
@@ -941,7 +941,7 @@ uint32_t Client::get_user_id(std::string const & name) const {
 
 std::string Client::get_user_name(uint32_t id) const {
 	auto const it = user_id_to_name.find(id);
-	if (it != user_id_to_name.end()) {
+	if (it != end(user_id_to_name)) {
 		return it->second;
 	} else {
 		throw InvalidUser(id);

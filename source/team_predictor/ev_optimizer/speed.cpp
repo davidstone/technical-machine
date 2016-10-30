@@ -51,8 +51,8 @@ SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
 }
 
 auto find(SpeedEVs const & container, Nature const nature) -> EV {
-	auto const it = containers::find_if(container.begin(), container.end(), [=](auto const & value) { return value.nature == nature; });
-	if (it == container.end()) {
+	auto const it = containers::find_if(begin(container), end(container), [=](auto const & value) { return value.nature == nature; });
+	if (it == end(container)) {
 		throw InvalidNature(to_string(nature));
 	}
 	return it->ev;

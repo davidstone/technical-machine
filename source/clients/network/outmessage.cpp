@@ -62,7 +62,7 @@ void OutMessage::write_int (uint32_t bytes) {
 
 void OutMessage::send(boost::asio::ip::tcp::socket & socket) {
 	finalize();
-	boost::asio::write(socket, boost::asio::buffer(buffer.data(), static_cast<std::size_t>(size(buffer))));
+	boost::asio::write(socket, boost::asio::buffer(data(buffer), static_cast<std::size_t>(size(buffer))));
 }
 
 }	// namespace network

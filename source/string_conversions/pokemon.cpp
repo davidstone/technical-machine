@@ -886,9 +886,9 @@ Species from_string(boost::string_ref const str) {
 	};
 	std::string normalized = str.to_string();
 	boost::algorithm::to_lower(normalized);
-	std::replace(normalized.begin(), normalized.end(), '_', '-');
+	std::replace(begin(normalized), end(normalized), '_', '-');
 	auto const it = converter.find(normalized);
-	if (it != converter.end()) {
+	if (it != end(converter)) {
 		return it->second;
 	} else {
 		throw InvalidFromStringConversion("Species", str);

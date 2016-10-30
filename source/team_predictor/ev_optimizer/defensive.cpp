@@ -76,14 +76,14 @@ void DefensiveEVs::remove_inefficient_natures(DefensiveEVs::Natures const & divi
 	auto const capacity = static_cast<std::intmax_t>(DefensiveEVs::Natures::capacity());
 	containers::static_vector<std::reference_wrapper<BestPerNature::value_type const>, capacity> boosters;
 	for (auto const & value : container) {
-		if (containers::any_equal(divided_natures.begin(), divided_natures.end(), value.first)) {
+		if (containers::any_equal(begin(divided_natures), end(divided_natures), value.first)) {
 			boosters.emplace_back(value);
 		}
 	}
 	auto const iter_sum = [](auto const & lhs, auto const & rhs) {
 		return lhs.get().second.sum() < rhs.get().second.sum();
 	};
-	auto const best = std::min_element(boosters.begin(), boosters.end(), iter_sum);
+	auto const best = std::min_element(begin(boosters), end(boosters), iter_sum);
 	for (auto const & value : divided_natures) {
 		if (value != best->get().first) {
 			container.erase(value);
