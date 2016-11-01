@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -56,23 +56,19 @@ inline auto hash(Stage const stage) noexcept {
 namespace detail {
 
 template<StatNames stat>
-struct Base {
-	static constexpr auto value = 2_bi;
-};
-template<>
-struct Base<StatNames::ACC> {
-	static constexpr auto value = 3_bi;
-};
-template<>
-struct Base<StatNames::EVA> {
-	static constexpr auto value = 3_bi;
-};
+constexpr auto base_stat_boost() {
+	if constexpr (stat == StatNames::ACC or stat == StatNames::EVA) {
+		return 3_bi;
+	} else {
+		return 2_bi;
+	}
+}
 
 }	// namespace detail
 
 template<StatNames stat, BOUNDED_REQUIRES(stat == StatNames::ATK or stat == StatNames::SPA)>
 auto modifier(Stage const & stage, bool const ch) {
-	constexpr auto base = detail::Base<stat>::value;
+	constexpr auto base = detail::base_stat_boost<stat>();
 	return BOUNDED_CONDITIONAL((stage[stat] >= 0_bi),
 		make_rational(base + bounded::abs(stage[stat]), base),
 		make_rational(base, BOUNDED_CONDITIONAL(!ch, base + bounded::abs(stage[stat]), base))
@@ -81,7 +77,7 @@ auto modifier(Stage const & stage, bool const ch) {
 
 template<StatNames stat, BOUNDED_REQUIRES(stat == StatNames::DEF or stat == StatNames::SPD)>
 auto modifier(Stage const & stage, bool const ch) {
-	constexpr auto base = detail::Base<stat>::value;
+	constexpr auto base = detail::base_stat_boost<stat>();
 	return BOUNDED_CONDITIONAL((stage[stat] <= 0_bi),
 		make_rational(base, base + bounded::abs(stage[stat])),
 		make_rational(BOUNDED_CONDITIONAL(!ch, base + bounded::abs(stage[stat]), base), base)
@@ -90,7 +86,7 @@ auto modifier(Stage const & stage, bool const ch) {
 
 template<StatNames stat, BOUNDED_REQUIRES(stat == StatNames::SPE or stat == StatNames::ACC or stat == StatNames::EVA)>
 auto modifier(Stage const & stage) {
-	constexpr auto base = detail::Base<stat>::value;
+	constexpr auto base = detail::base_stat_boost<stat>();
 	return BOUNDED_CONDITIONAL((stage[stat] >= 0_bi),
 		make_rational(base + bounded::abs(stage[stat]), base),
 		make_rational(base, base + bounded::abs(stage[stat]))
