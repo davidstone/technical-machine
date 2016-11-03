@@ -1,5 +1,4 @@
-// Nature functions
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -40,16 +39,13 @@ enum class Nature : uint8_t {
 auto make_nature(StatNames boost, StatNames drop) -> Nature;
 auto is_set(Nature nature) -> bool;
 
-template<StatNames>
-auto boosts_stat(Nature nature) -> bool;
-template<StatNames>
-auto lowers_stat(Nature nature) -> bool;
+auto boosts_stat(Nature nature, StatNames stat) -> bool;
+auto lowers_stat(Nature nature, StatNames stat) -> bool;
 
-template<StatNames stat>
-auto boost(Nature const nature) {
+auto boost(Nature const nature, StatNames const stat) {
 	auto const numerator = BOUNDED_CONDITIONAL(
-		boosts_stat<stat>(nature), 11_bi,
-		BOUNDED_CONDITIONAL(lowers_stat<stat>(nature), 9_bi, 10_bi)
+		boosts_stat(nature, stat), 11_bi,
+		BOUNDED_CONDITIONAL(lowers_stat(nature, stat), 9_bi, 10_bi)
 	);
 	static constexpr auto denominator = 10_bi;
 	return make_rational(numerator, denominator);

@@ -47,7 +47,7 @@ void defensive_tests() {
 	for (auto const candidate : equal_defensiveness<physical>(pokemon)) {
 		assert(candidate.hp().value() == get_hp(pokemon).ev().value());
 		assert(candidate.defensive().value() == get_stat(pokemon, StatNames::DEF).ev().value());
-		assert(boosts_stat<StatNames::DEF>(candidate.nature()));
+		assert(boosts_stat(candidate.nature(, StatNames::DEF)));
 	}
 }
 
@@ -77,7 +77,7 @@ void speed_tests() {
 	auto const original_value = initial_stat<StatNames::SPE>(original_stat, level, get_nature(pokemon));
 	for (auto const nature : enum_range<Nature>) {
 		auto const new_value = initial_stat<StatNames::SPE>(Stat(species, StatNames::SPE, find(speedEVs, nature)), level, nature);
-		if (boosts_stat<StatNames::SPE>(nature) and !boosts_stat<StatNames::SPE>(get_nature(pokemon))) {
+		if (boosts_stat(nature, StatNames::SPE) and !boosts_stat(get_nature(pokemon), StatNames::SPE)) {
 			assert(new_value == original_value or new_value == original_value + 1_bi);
 		} else {
 			assert(new_value == original_value);

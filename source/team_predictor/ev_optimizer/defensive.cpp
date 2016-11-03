@@ -127,14 +127,14 @@ bool has_same_effect_on_defenses(Nature const nature, Nature const reference_nat
 }
 
 bool boosts_same(Nature const nature, Nature const reference_nature) {
-	return (boosts_stat<StatNames::DEF>(nature) and boosts_stat<StatNames::DEF>(reference_nature))
-			or (boosts_stat<StatNames::SPD>(nature) and boosts_stat<StatNames::SPD>(reference_nature))
+	return (boosts_stat(nature, StatNames::DEF) and boosts_stat(reference_nature, StatNames::DEF))
+			or (boosts_stat(nature, StatNames::SPD) and boosts_stat(reference_nature, StatNames::SPD))
 			or (!boosts_defending_stat(nature) and !boosts_defending_stat(reference_nature));
 }
 
 bool penalizes_same(Nature const nature, Nature const reference_nature) {
-	return (lowers_stat<StatNames::DEF>(nature) and lowers_stat<StatNames::DEF>(reference_nature))
-			or (lowers_stat<StatNames::SPD>(nature) and lowers_stat<StatNames::SPD>(reference_nature))
+	return (lowers_stat(nature, StatNames::DEF) and lowers_stat(reference_nature, StatNames::DEF))
+			or (lowers_stat(nature, StatNames::SPD) and lowers_stat(reference_nature, StatNames::SPD))
 			or (!lowers_defending_stat(nature) and !lowers_defending_stat(reference_nature));
 }
 

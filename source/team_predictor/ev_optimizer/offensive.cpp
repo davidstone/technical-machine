@@ -95,13 +95,13 @@ void remove_individual_unused(Container & container, Condition const & condition
 template<typename Container>
 auto remove_inferior_natures(Container & container, bool const is_physical, bool const is_special) {
 	auto const does_not_lower_attack = [](auto const iter) {
-		return !lowers_stat<StatNames::ATK>(iter->first);
+		return !lowers_stat(iter->first, StatNames::ATK);
 	};
 	auto const does_not_lower_special_attack = [](auto const iter) {
-		return !lowers_stat<StatNames::SPA>(iter->first);
+		return !lowers_stat(iter->first, StatNames::SPA);
 	};
 	auto const boosts_special_attack = [](auto const iter) {
-		return boosts_stat<StatNames::SPA>(iter->first);
+		return boosts_stat(iter->first, StatNames::SPA);
 	};
 	if (!is_physical) {
 		remove_individual_unused(container, does_not_lower_attack);

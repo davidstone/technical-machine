@@ -1,5 +1,5 @@
 // Nature functions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -96,9 +96,10 @@ auto is_set(Nature const nature) -> bool {
 	return nature != Nature::END;
 }
 
-template<>
-auto boosts_stat<StatNames::ATK>(Nature const nature) -> bool {
-	switch (nature) {
+auto boosts_stat(Nature const nature, StatNames const stat) -> bool {
+	switch (stat) {
+	case StatNames::ATK:
+		switch (nature) {
 		case Nature::Adamant:
 		case Nature::Brave:
 		case Nature::Lonely:
@@ -106,11 +107,9 @@ auto boosts_stat<StatNames::ATK>(Nature const nature) -> bool {
 			return true;
 		default:
 			return false;
-	}
-}
-template<>
-auto boosts_stat<StatNames::SPA>(Nature const nature) -> bool {
-	switch (nature) {
+		}
+	case StatNames::SPA:
+		switch (nature) {
 		case Nature::Mild:
 		case Nature::Modest:
 		case Nature::Quiet:
@@ -118,12 +117,9 @@ auto boosts_stat<StatNames::SPA>(Nature const nature) -> bool {
 			return true;
 		default:
 			return false;
-	}
-}
-
-template<>
-auto boosts_stat<StatNames::DEF>(Nature const nature) -> bool {
-	switch (nature) {
+		}
+	case StatNames::DEF:
+		switch (nature) {
 		case Nature::Bold:
 		case Nature::Impish:
 		case Nature::Lax:
@@ -131,11 +127,9 @@ auto boosts_stat<StatNames::DEF>(Nature const nature) -> bool {
 			return true;
 		default:
 			return false;
-	}
-}
-template<>
-auto boosts_stat<StatNames::SPD>(Nature const nature) -> bool {
-	switch (nature) {
+		}
+	case StatNames::SPD:
+		switch (nature) {
 		case Nature::Calm:
 		case Nature::Careful:
 		case Nature::Gentle:
@@ -143,15 +137,9 @@ auto boosts_stat<StatNames::SPD>(Nature const nature) -> bool {
 			return true;
 		default:
 			return false;
-	}
-}
-auto boosts_defending_stat(Nature const nature) -> bool {
-	return boosts_stat<StatNames::DEF>(nature) or boosts_stat<StatNames::SPD>(nature);
-}
-
-template<>
-auto boosts_stat<StatNames::SPE>(Nature const nature) -> bool {
-	switch (nature) {
+		}
+	case StatNames::SPE:
+		switch (nature) {
 		case Nature::Hasty:
 		case Nature::Jolly:
 		case Nature::Naive:
@@ -159,12 +147,19 @@ auto boosts_stat<StatNames::SPE>(Nature const nature) -> bool {
 			return true;
 		default:
 			return false;
+		}
+	case StatNames::ACC:
+	case StatNames::EVA:
+		return false;
+	case StatNames::END:
+		assert(false);
 	}
 }
 
-template<>
-auto lowers_stat<StatNames::ATK>(Nature const nature) -> bool {
-	switch (nature) {
+auto lowers_stat(Nature const nature, StatNames const stat) -> bool {
+	switch (stat) {
+	case StatNames::ATK:
+		switch (nature) {
 		case Nature::Bold:
 		case Nature::Calm:
 		case Nature::Modest:
@@ -172,11 +167,9 @@ auto lowers_stat<StatNames::ATK>(Nature const nature) -> bool {
 			return true;
 		default:
 			return false;
-	}
-}
-template<>
-auto lowers_stat<StatNames::SPA>(Nature const nature) -> bool {
-	switch (nature) {
+		}
+	case StatNames::SPA:
+		switch (nature) {
 		case Nature::Adamant:
 		case Nature::Careful:
 		case Nature::Impish:
@@ -184,51 +177,51 @@ auto lowers_stat<StatNames::SPA>(Nature const nature) -> bool {
 			return true;
 		default:
 			return false;
+		}
+	case StatNames::DEF:
+		switch (nature) {
+		case Nature::Gentle:
+		case Nature::Hasty:
+		case Nature::Lonely:
+		case Nature::Mild:
+			return true;
+		default:
+			return false;
+		}
+	case StatNames::SPD:
+		switch (nature) {
+		case Nature::Lax:
+		case Nature::Naive:
+		case Nature::Naughty:
+		case Nature::Rash:
+			return true;
+		default:
+			return false;
+		}
+	case StatNames::SPE:
+		switch (nature) {
+		case Nature::Brave:
+		case Nature::Quiet:
+		case Nature::Relaxed:
+		case Nature::Sassy:
+			return true;
+		default:
+			return false;
+		}
+	case StatNames::ACC:
+	case StatNames::EVA:
+		return false;
+	case StatNames::END:
+		assert(false);
 	}
 }
+
 auto lowers_attacking_stat(Nature const nature) -> bool {
-	return lowers_stat<StatNames::ATK>(nature) or lowers_stat<StatNames::SPA>(nature);
+	return lowers_stat(nature, StatNames::ATK) or lowers_stat(nature, StatNames::SPA);
 }
 
-template<>
-auto lowers_stat<StatNames::DEF>(Nature const nature) -> bool {
-	switch (nature) {
-		case Nature::Gentle:
-		case Nature::Hasty:
-		case Nature::Lonely:
-		case Nature::Mild:
-			return true;
-		default:
-			return false;
-	}
-}
-template<>
-auto lowers_stat<StatNames::SPD>(Nature const nature) -> bool {
-	switch (nature) {
-		case Nature::Lax:
-		case Nature::Naive:
-		case Nature::Naughty:
-		case Nature::Rash:
-			return true;
-		default:
-			return false;
-	}
-}
 auto lowers_defending_stat(Nature const nature) -> bool {
-	return lowers_stat<StatNames::DEF>(nature) or lowers_stat<StatNames::SPD>(nature);
-}
-
-template<>
-auto lowers_stat<StatNames::SPE>(Nature const nature) -> bool {
-	switch (nature) {
-		case Nature::Brave:
-		case Nature::Quiet:
-		case Nature::Relaxed:
-		case Nature::Sassy:
-			return true;
-		default:
-			return false;
-	}
+	return lowers_stat(nature, StatNames::DEF) or lowers_stat(nature, StatNames::SPD);
 }
 
 }	// namespace technicalmachine
