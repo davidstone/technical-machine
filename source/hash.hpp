@@ -1,5 +1,5 @@
 // Calculate hashes. Specializations should return a pair of integers
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,7 +21,8 @@
 #include <bounded/integer.hpp>
 #include <bounded/optional.hpp>
 
-#include <algorithm>
+#include <containers/algorithms/accumulate.hpp>
+
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -136,7 +137,7 @@ constexpr auto hash(std::tuple<Ts...> const & values) noexcept(noexcept_hashable
 template<typename Size, typename Iterator>
 auto hash_range(Iterator first, Iterator last) {
 	constexpr auto initial = std::make_pair(static_cast<uint64_t>(0), static_cast<uint64_t>(0));
-	return std::accumulate(first, last, initial, [](auto const current, auto const & element) {
+	return containers::accumulate(first, last, initial, [](auto const current, auto const & element) {
 		return hash_combine(current, hash(element));
 	});
 }
