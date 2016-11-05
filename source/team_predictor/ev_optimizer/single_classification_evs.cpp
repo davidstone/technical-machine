@@ -50,7 +50,7 @@ namespace {
 template<StatNames stat_name, typename Integer>
 auto calculate_ev(Stat stat, Level const level, Nature const nature, HP const hp, Integer const initial_product) {
 	stat = Stat(stat, EV(0_bi));
-	while (initial_stat<stat_name>(stat, level, nature) * hp.max() < initial_product) {
+	while (initial_stat(stat_name, stat, level, nature) * hp.max() < initial_product) {
 		stat = Stat(stat, EV(EV::value_type(stat.ev().value() + 4_bi)));
 		if (stat.ev().value() == EV::max) {
 			break;
@@ -67,13 +67,13 @@ containers::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & 
 	static constexpr auto stat_name = from_physical(physical);
 	auto stat = get_stat(pokemon, stat_name);
 	auto const level = get_level(pokemon);
-	auto const initial_product = get_hp(pokemon).max() * initial_stat<stat_name>(stat, level, get_nature(pokemon));
+	auto const initial_product = get_hp(pokemon).max() * initial_stat(stat_name, stat, level, get_nature(pokemon));
 	auto result = containers::vector<SingleClassificationEVs>{};
 	for (auto const nature : enum_range<Nature>) {
 		for (auto hp_ev = EV::value_type(0_bi); ; hp_ev += 4_bi) {
 			auto const hp = HP(pokemon, level, EV(hp_ev));
 			stat = Stat(stat, calculate_ev<stat_name>(stat, level, nature, hp, initial_product));
-			if (initial_stat<stat_name>(stat, level, nature) * hp.max() >= initial_product) {
+			if (initial_stat(stat_name, stat, level, nature) * hp.max() >= initial_product) {
 				result.emplace_back(hp.ev(), stat.ev(), nature);
 			}
 			if (hp_ev == EV::max) {

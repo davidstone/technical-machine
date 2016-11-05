@@ -44,7 +44,7 @@ private:
 	struct OffensiveData {
 	private:
 		template<StatNames stat>
-		using StatType = decltype(initial_stat<stat>(std::declval<Stat>(), std::declval<Level>(), std::declval<Nature>()));
+		using StatType = decltype(initial_stat(stat, std::declval<Stat>(), std::declval<Level>(), std::declval<Nature>()));
 	public:
 		StatType<StatNames::ATK> atk;
 		StatType<StatNames::SPA> spa;

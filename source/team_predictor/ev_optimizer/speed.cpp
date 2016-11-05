@@ -34,11 +34,11 @@ using namespace bounded::literal;
 SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
 	Stat stat = get_stat(pokemon, StatNames::SPE);
 	Level const level = get_level(pokemon);
-	auto const speed = initial_stat<StatNames::SPE>(stat, level, get_nature(pokemon));
+	auto const speed = initial_stat(StatNames::SPE, stat, level, get_nature(pokemon));
 	for (auto const nature : enum_range<Nature>) {
 		for (EV::value_type ev = 0_bi; ; ev += 4_bi) {
 			stat = Stat(stat, EV(ev));
-			if (initial_stat<StatNames::SPE>(stat, level, nature) >= speed) {
+			if (initial_stat(StatNames::SPE, stat, level, nature) >= speed) {
 				push_back(m_container, { nature, EV(ev) });
 				break;
 			}

@@ -49,7 +49,7 @@ private:
 
 	template<StatNames stat>
 	auto product(Species const species, Level const level) const {
-		auto const initial = initial_stat<stat>(Stat(species, stat, defense), level, nature);
+		auto const initial = initial_stat(stat, Stat(species, stat, defense), level, nature);
 		return initial * HP(species, level, hp).max();
 	}
 	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);

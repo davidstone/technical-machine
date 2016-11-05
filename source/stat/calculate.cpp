@@ -1,5 +1,5 @@
 // Calculate a Pokemon's current stat
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -41,27 +41,27 @@
 namespace technicalmachine {
 namespace {
 
-auto is_boosted_by_deepseascale(Species const species) {
+constexpr auto is_boosted_by_deepseascale(Species const species) {
 	return species == Species::Clamperl;
 }
 
-auto is_boosted_by_deepseatooth(Species const species) {
+constexpr auto is_boosted_by_deepseatooth(Species const species) {
 	return species == Species::Clamperl;
 }
 
-auto is_boosted_by_light_ball(Species const species) {
+constexpr auto is_boosted_by_light_ball(Species const species) {
 	return species == Species::Pikachu;
 }
 
-auto is_boosted_by_metal_powder(Species const species) {
+constexpr auto is_boosted_by_metal_powder(Species const species) {
 	return species == Species::Ditto;
 }
 
-auto is_boosted_by_quick_powder(Species const species) {
+constexpr auto is_boosted_by_quick_powder(Species const species) {
 	return species == Species::Ditto;
 }
 
-auto is_boosted_by_soul_dew(Species const species) {
+constexpr auto is_boosted_by_soul_dew(Species const species) {
 	switch (species) {
 		case Species::Latias:
 		case Species::Latios:
@@ -71,7 +71,7 @@ auto is_boosted_by_soul_dew(Species const species) {
 	}
 }
 
-auto is_boosted_by_thick_club(Species const species) {
+constexpr auto is_boosted_by_thick_club(Species const species) {
 	switch (species) {
 		case Species::Cubone:
 		case Species::Marowak:
@@ -239,49 +239,39 @@ auto item_modifier(Pokemon const & pokemon) {
 	return make_rational(ItemNumerator<stat>{}(pokemon), item_denominator);
 }
 
-template<StatNames stat>
-struct StatTraits;
 
-template<>
-struct StatTraits<StatNames::ATK> {
-	static constexpr bool is_physical = true;
-	static constexpr StatNames other = StatNames::DEF;
-};
-template<>
-struct StatTraits<StatNames::DEF> {
-	static constexpr bool is_physical = true;
-	static constexpr StatNames other = StatNames::ATK;
-};
-template<>
-struct StatTraits<StatNames::SPA> {
-	static constexpr bool is_physical = false;
-};
-template<>
-struct StatTraits<StatNames::SPD> {
-	static constexpr bool is_physical = false;
-};
-template<>
-struct StatTraits<StatNames::SPE> {
-	static constexpr bool is_physical = false;
-};
+constexpr auto is_physical(StatNames const stat) {
+	switch (stat) {
+	case StatNames::ATK:
+	case StatNames::DEF:
+		return true;
+	default:
+		return false;
+	}
+}
 
-template<StatNames stat, BOUNDED_REQUIRES(StatTraits<stat>::is_physical)>
-auto calculate_initial_stat(ActivePokemon const pokemon) {
-	constexpr auto other = StatTraits<stat>::other;
+constexpr auto other_physical_stat(StatNames const stat) {
+	switch (stat) {
+	case StatNames::ATK:
+		return StatNames::DEF;
+	case StatNames::DEF:
+		return StatNames::ATK;
+	default:
+		assert(false);
+	}
+}
+
+auto calculate_initial_stat(StatNames const stat, ActivePokemon const pokemon) {
 	auto const level = get_level(pokemon);
 	auto const nature = get_nature(pokemon);
-	return !power_trick_is_active(pokemon) ?
-		initial_stat<stat>(get_stat(pokemon, stat), level, nature) :
-		initial_stat<other>(get_stat(pokemon, other), level, nature);
-}
-template<StatNames stat, BOUNDED_REQUIRES(!StatTraits<stat>::is_physical)>
-auto calculate_initial_stat(ActivePokemon const pokemon) {
-	return initial_stat<stat>(get_stat(pokemon, stat), get_level(pokemon), get_nature(pokemon));
+	return !is_physical(stat) or !power_trick_is_active(pokemon) ?
+		initial_stat(stat, get_stat(pokemon, stat), level, nature) :
+		initial_stat(other_physical_stat(stat), get_stat(pokemon, other_physical_stat(stat)), level, nature);
 }
 
 template<StatNames stat>
 auto calculate_common_offensive_stat(ActivePokemon const pokemon, Weather const weather, bool const critical_hit) {
-	auto const attack = calculate_initial_stat<stat>(pokemon) *
+	auto const attack = calculate_initial_stat(stat, pokemon) *
 		modifier<stat>(stage(pokemon), critical_hit) *
 		ability_modifier<stat>(pokemon, weather) *
 		item_modifier<stat>(pokemon);
@@ -332,7 +322,7 @@ auto calculate_defending_stat(ActivePokemon const attacker, ActivePokemon const 
 
 auto calculate_defense(ActivePokemon const defender, Weather const weather, bool const critical_hit, bool is_self_KO) -> defense_type {
 	constexpr auto stat = StatNames::DEF;
-	auto const defense = calculate_initial_stat<stat>(defender) *
+	auto const defense = calculate_initial_stat(stat, defender) *
 		modifier<stat>(stage(defender), critical_hit) *
 		ability_modifier<stat>(defender, weather) *
 		item_modifier<stat>(defender);
@@ -353,7 +343,7 @@ auto special_defense_sandstorm_boost(ActivePokemon const defender, Weather const
 
 auto calculate_special_defense(ActivePokemon const defender, Weather const weather, bool const critical_hit) -> special_defense_type {
 	constexpr auto stat = StatNames::SPD;
-	auto const defense = calculate_initial_stat<stat>(defender) *	
+	auto const defense = calculate_initial_stat(stat, defender) *	
 		modifier<stat>(stage(defender), critical_hit) *
 		ability_modifier<stat>(defender, weather) *
 		item_modifier<stat>(defender) *
@@ -383,7 +373,7 @@ auto tailwind_speed_multiplier(Team const & team) {
 auto calculate_speed(Team const & team, Weather const weather) -> speed_type {
 	constexpr auto stat = StatNames::SPE;
 	auto const & pokemon = team.pokemon();
-	auto const speed = calculate_initial_stat<stat>(pokemon) *
+	auto const speed = calculate_initial_stat(stat, pokemon) *
 		modifier<stat>(stage(pokemon)) *
 		ability_modifier<stat>(pokemon, weather) *
 		item_modifier<stat>(pokemon) /

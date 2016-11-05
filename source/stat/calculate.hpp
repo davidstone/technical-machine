@@ -1,5 +1,5 @@
 // Calculate a Pokemon's current stat
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -33,8 +33,7 @@ struct ActivePokemon;
 struct Team;
 struct Weather;
 
-template<StatNames stat_name>
-auto initial_stat(Stat const stat, Level const level, Nature const nature) {
+auto initial_stat(StatNames const stat_name, Stat const stat, Level const level, Nature const nature) {
 	auto const pre_nature = (2_bi * stat.base() + stat.iv().value() + stat.ev().value() / 4_bi) * level() / 100_bi + 5_bi;
 	return pre_nature * boost(nature, stat_name);
 }

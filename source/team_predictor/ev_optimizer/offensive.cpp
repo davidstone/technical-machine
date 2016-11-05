@@ -41,7 +41,7 @@ template<StatNames stat_name, typename Initial>
 auto find_least_stat(Species const species, Level const level, Nature const nature, Initial const initial) -> bounded::optional<EV::value_type> {
 	EV::value_type ev = 0_bi;
 	Stat stat(species, stat_name, EV(ev));
-	auto const test_stat = [&]() { return initial_stat<stat_name>(stat, level, nature); };
+	auto const test_stat = [&]() { return initial_stat(stat_name, stat, level, nature); };
 	while (test_stat() < initial) {
 		ev += 4_bi;
 		stat = Stat(stat, EV(ev));
@@ -67,7 +67,7 @@ auto ideal_attack_stat(Pokemon const & pokemon, bool const is_physical) {
 	// All we care about on this nature is the boost to Attack
 	auto const nature = is_physical ? get_nature(pokemon) : Nature::Modest;
 	Stat const stat(pokemon, StatNames::ATK, is_physical ? get_stat(pokemon, StatNames::ATK).ev() : EV(0_bi));
-	return initial_stat<StatNames::ATK>(stat, get_level(pokemon), nature);
+	return initial_stat(StatNames::ATK, stat, get_level(pokemon), nature);
 }
 auto ideal_special_attack_stat(Pokemon const & pokemon, bool const is_special, bool const is_physical) {
 	// All we care about on this nature is the boost to Special Attack
@@ -76,7 +76,7 @@ auto ideal_special_attack_stat(Pokemon const & pokemon, bool const is_special, b
 		is_physical ? Nature::Adamant :
 		Nature::Hardy;
 	Stat const stat(pokemon, StatNames::SPA, is_special ? get_stat(pokemon, StatNames::SPA).ev() : EV(0_bi));
-	return initial_stat<StatNames::SPA>(stat, get_level(pokemon), nature);
+	return initial_stat(StatNames::SPA, stat, get_level(pokemon), nature);
 }
 
 template<typename Container, typename Condition>
