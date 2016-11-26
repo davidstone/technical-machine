@@ -65,13 +65,6 @@ namespace {
 // depth greater than 2.
 constexpr bool verbose = false;
 
-#if 0
-Moves random_action(Team const & ai, Team const & foe, Weather weather, std::mt19937 & random_engine);
-Moves random_switch(Team const & ai, std::mt19937 & random_engine);
-std::vector<Moves> all_switches(TeamSize team_size, PokemonCollection::index_type index);
-Moves random_move_or_switch(Team const & ai, Team const & foe, Weather weather, std::mt19937 & random_engine);
-#endif
-
 void print_best_move(Team const & team, Moves const best_move, double const score) {
 	if (is_switch(best_move)) {
 		std::cout << "Switch to " + to_string(static_cast<Species>(team.pokemon(to_replacement(best_move))));
@@ -384,39 +377,28 @@ double move_then_switch_branch(Team const & switcher, Team const & other, Variab
 
 
 
-#if 0
-Moves random_action(Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
-	return switch_decision_required(ai.pokemon()) ?
-		random_switch(ai, random_engine) :
-		random_move_or_switch(ai, foe, weather, random_engine);
-}
-
-Moves random_switch(Team const & ai, std::mt19937 & random_engine) {
-	std::vector<Moves> const switches = all_switches(size(ai.all_pokemon()), ai.all_pokemon().index());
-	assert(!switches.empty());
-	std::uniform_int_distribution<size_t> distribution { 0, size(switches) - 1 };
-	size_t const index = distribution(random_engine);
-	return switches[index];
-}
-
-std::vector<Moves> all_switches(TeamSize const team_size, PokemonCollection::index_type const index) {
-	std::vector<Moves> switches;
+constexpr auto all_switches(TeamSize const team_size, containers::index_type<PokemonCollection> const index) {
+	containers::static_vector<Moves, static_cast<std::size_t>(TeamSize::max() - 1_bi)> switches;
 	for (auto const n : bounded::integer_range(team_size)) {
 		if (n != index) {
-			switches.emplace_back(to_switch(n));
+			push_back(switches, to_switch(n));
 		}
 	}
 	return switches;
 }
 
-Moves random_move_or_switch(Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
-	LegalSelections const moves(ai, foe.pokemon(), weather);
-	assert(size(moves) != 0_bi);
-	std::uniform_int_distribution<size_t> distribution { 0, size(moves) - 1 };
-	auto const index = distribution(random_engine);
-	return moves[index];
+template<typename Container>
+auto random_move_or_switch(std::mt19937 & random_engine, Container const & moves) {
+	assert(!empty(moves));
+	std::uniform_int_distribution<int> distribution(0, static_cast<int>(size(moves)) - 1);
+	return moves[static_cast<containers::index_type<decltype(moves)>>(distribution(random_engine))];
 }
-#endif
+
+auto random_action(Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
+	return switch_decision_required(ai.pokemon()) ?
+		random_move_or_switch(random_engine, all_switches(size(ai.all_pokemon()), ai.all_pokemon().index())) :
+		random_move_or_switch(random_engine, LegalSelections(ai, foe.pokemon(), weather));
+}
 
 double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const first_replacement, TeamIndex const last_replacement) {
 	if (get_hp(first.pokemon()) == 0_bi) {
@@ -641,12 +623,11 @@ double select_move_branch(Team & ai, Team & foe, Weather const weather, unsigned
 
 }	// namespace
 
-Moves expectiminimax(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, std::mt19937 &) {
+Moves expectiminimax(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine) {
 	std::cout << std::string(20, '=') + "\nEvaluating to a depth of " << depth << "...\n";
 	double min_score = 0.0;
 	boost::timer timer;
-//	Moves best_move = random_action(ai, foe, weather, random_engine);
-	Moves best_move = Moves::Switch0;
+	Moves best_move = random_action(ai, foe, weather, random_engine);
 	try {
 		for (unsigned deeper = 1; deeper <= depth; ++deeper) {
 			bool const full_evaluation = (deeper == depth);
