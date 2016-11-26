@@ -1,5 +1,5 @@
 // Detailed Pokemon stats
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -39,8 +39,22 @@ struct DetailedStats {
 	using UsedMoves = containers::static_vector<Moves, max_moves_per_pokemon.value()>;
 	
 	DetailedStats();
-	template<typename T>
-	auto get(Species species) const -> T const &;
+	template<typename T, BOUNDED_REQUIRES(std::is_same<T, Ability::Abilities>::value)>
+	auto get(Species const species) const {
+		return ability[species];
+	}
+	template<typename T, BOUNDED_REQUIRES(std::is_same<T, Item>::value)>
+	auto get(Species const species) const {
+		return item[species];
+	}
+	template<typename T, BOUNDED_REQUIRES(std::is_same<T, Nature>::value)>
+	auto get(Species const species) const {
+		return nature[species];
+	}
+	template<typename T, BOUNDED_REQUIRES(std::is_same<T, UsedMoves>::value)>
+	auto get(Species const species) const {
+		return move[species];
+	}
 private:
 	containers::array<UsedMoves, number_of_species> move;
 	containers::array<Item, number_of_species> item;

@@ -1,5 +1,5 @@
 // Type information for Pokemon
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,6 +22,7 @@
 #include "../pokemon/species_forward.hpp"
 #include "../status.hpp"
 
+#include <containers/algorithms/all_any_none.hpp>
 #include <containers/array/array.hpp>
 
 #include <type_traits>
@@ -47,8 +48,13 @@ public:
 		m_types({{type1, type2}})
 		{
 	}
-	auto begin() const -> const_iterator;
-	auto end() const -> const_iterator;
+	friend constexpr auto begin(TypeArray const & array) {
+		return begin(array.m_types);
+	}
+	friend constexpr auto end(TypeArray const & array) {
+		auto const size = BOUNDED_CONDITIONAL(array.m_types[1_bi] == Type::Typeless, 1_bi, 2_bi);
+		return begin(array) + size;
+	}
 private:
 	container_type m_types;
 };
@@ -56,17 +62,13 @@ private:
 }	// namespace detail_type_collection
 
 struct TypeCollection {
-	TypeCollection (Species name);
+	explicit TypeCollection(Species name);
 	friend auto is_immune_to_hail(TypeCollection const collection) -> bool;
 	friend auto is_immune_to_sandstorm(TypeCollection const collection) -> bool;
-	template<Statuses status>
-	friend auto blocks_status(TypeCollection const collection) -> bool {
-		for (auto const type : collection.types) {
-			if (blocks_status<status>(type)) {
-				return true;
-			}
-		}
-		return false;
+	friend auto blocks_status(TypeCollection const collection, Statuses const status) -> bool {
+		return containers::any_of(begin(collection.types), end(collection.types), [=](auto const type) {
+			return blocks_status(type, status);
+		});
 	}
 	auto change_type(Type const type) -> void;
 private:

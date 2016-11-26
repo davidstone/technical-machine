@@ -1,5 +1,5 @@
 // Test EV optimizer
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -44,10 +44,10 @@ void defensive_tests() {
 	all_moves(pokemon).add(Moves::Psychic);
 	
 	constexpr auto physical = true;
-	for (auto const candidate : equal_defensiveness<physical>(pokemon)) {
+	for (auto const candidate : equal_defensiveness(pokemon, physical)) {
 		assert(candidate.hp().value() == get_hp(pokemon).ev().value());
 		assert(candidate.defensive().value() == get_stat(pokemon, StatNames::DEF).ev().value());
-		assert(boosts_stat(candidate.nature(, StatNames::DEF)));
+		assert(boosts_stat(candidate.nature(), StatNames::DEF));
 	}
 }
 

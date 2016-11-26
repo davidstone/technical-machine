@@ -1,5 +1,5 @@
 // Handle common moves that all Pokemon select
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,13 +24,11 @@
 #include <containers/common_container_functions.hpp>
 
 namespace technicalmachine {
-namespace {
-}
 
 auto SharedMovesIterator::operator*() const -> value_type {
 	using switch_index_type = bounded::integer<
 		static_cast<intmax_t>(number_of_weird_moves),
-		static_cast<intmax_t>(std::numeric_limits<index_type>::max())
+		static_cast<intmax_t>(std::numeric_limits<containers::index_type<SharedMoves>>::max())
 	>;
 	static_assert(number_of_weird_moves == 1_bi, "Struggle is not the only weird move.");
 	return Move((m_index == 0_bi) ?
@@ -40,35 +38,11 @@ auto SharedMovesIterator::operator*() const -> value_type {
 }
 
 
-// Once a Pokemon is the last on the team, we remove switching entirely. This
-// takes place if we construct SharedMoves from a one-Pokemon team or if we call
-// remove_switch() and it brings a Pokemon down to only the ability to switch to
-// itself
-
-SharedMoves::SharedMoves(TeamSize const team_size):
-	m_number_of_switches(BOUNDED_CONDITIONAL(team_size > 1_bi, team_size, 0_bi)) {
-}
-
-auto SharedMoves::begin() const -> const_iterator {
-	return const_iterator(0_bi);
-}
-auto SharedMoves::end() const -> const_iterator {
-	return const_iterator(m_number_of_switches + number_of_weird_moves);
-}
-
-auto SharedMoves::operator[](index_type const index) const -> Move {
-	return *const_iterator(index);
-}
-
 auto SharedMoves::remove_switch() -> void {
 	--m_number_of_switches;
 	if (m_number_of_switches == 1_bi) {
 		m_number_of_switches = 0_bi;
 	}
-}
-
-auto operator==(SharedMoves const & lhs, SharedMoves const & rhs) -> bool {
-	return containers::size(lhs) == containers::size(rhs);
 }
 
 }	// namespace technicalmachine

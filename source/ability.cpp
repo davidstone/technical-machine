@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -83,68 +83,53 @@ bool Ability::blocks_weather() const {
 	}
 }
 
-template<>
-bool Ability::blocks_status<Statuses::burn>(Weather const weather) const {
-	switch (name()) {
+bool Ability::blocks_status(Statuses const status, Weather const weather) const {
+	switch (status) {
+	case Statuses::burn:
+		switch (name()) {
 		case Leaf_Guard:
 			return weather.sun();
 		case Water_Veil:
 			return true;
 		default:
 			return false;
-	}
-}
-
-template<>
-bool Ability::blocks_status<Statuses::freeze>(Weather) const {
-	return name() == Magma_Armor;
-}
-
-template<>
-bool Ability::blocks_status<Statuses::paralysis>(Weather const weather) const {
-	switch (name()) {
+		}
+	case Statuses::freeze:
+		return name() == Magma_Armor;
+	case Statuses::paralysis:
+		switch (name()) {
 		case Leaf_Guard:
 			return weather.sun();
 		case Limber:
 			return true;
 		default:
 			return false;
-	}
-}
-
-template<>
-bool Ability::blocks_status<Statuses::poison>(Weather const weather) const {
-	switch (name()) {
+		}
+	case Statuses::poison:
+	case Statuses::poison_toxic:
+		switch (name()) {
 		case Immunity:
 			return true;
 		case Leaf_Guard:
 			return weather.sun();
 		default:
 			return false;
+		}
+	case Statuses::sleep:
+	case Statuses::sleep_rest:
+		switch (name()) {
+			case Insomnia:
+			case Vital_Spirit:
+				return true;
+			case Leaf_Guard:
+				return weather.sun();
+			default:
+				return false;
+		}
+	case Statuses::clear:
+	case Statuses::END:
+		return false;
 	}
-}
-
-template<>
-bool Ability::blocks_status<Statuses::poison_toxic>(Weather const weather) const {
-	return blocks_status<Statuses::poison>(weather);
-}
-
-template<>
-bool Ability::blocks_status<Statuses::sleep>(Weather const weather) const {
-	switch (name()) {
-		case Insomnia:
-		case Vital_Spirit:
-			return true;
-		case Leaf_Guard:
-			return weather.sun();
-		default:
-			return false;
-	}
-}
-
-template<>
-bool Ability::blocks_status<Statuses::sleep_rest>(Weather const weather) const {
-	return blocks_status<Statuses::sleep>(weather);
 }
 
 bool Ability::blocks_confusion() const {

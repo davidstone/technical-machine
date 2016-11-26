@@ -1,5 +1,5 @@
 // Type information
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -70,25 +70,19 @@ inline auto is_immune_to_sandstorm(Type const type) {
 auto is_strengthened_by_weather(Type type, Weather weather) -> bool;
 auto is_weakened_by_weather(Type type, Weather weather) -> bool;
 
-template<Statuses status>
-constexpr auto blocks_status(Type) {
-	return false;
-}
-template<>
-constexpr auto blocks_status<Statuses::burn>(Type const type) {
-	return type == Type::Fire;
-}
-template<>
-constexpr auto blocks_status<Statuses::freeze>(Type const type) {
-	return type == Type::Ice;
-}
-template<>
-constexpr auto blocks_status<Statuses::poison>(Type const type) {
-	return type == Type::Poison or type == Type::Steel;
-}
-template<>
-constexpr auto blocks_status<Statuses::poison_toxic>(Type const type) {
-	return blocks_status<Statuses::poison>(type);
+constexpr auto blocks_status(Type const type, Statuses const status) {
+	switch (status)
+	{
+	case Statuses::burn:
+		return type == Type::Fire;
+	case Statuses::freeze:
+		return type == Type::Ice;
+	case Statuses::poison:
+	case Statuses::poison_toxic:
+		return type == Type::Poison or type == Type::Steel;
+	default:
+		return false;
+	}
 }
 
 }	// namespace technicalmachine

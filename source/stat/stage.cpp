@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,31 +21,6 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
-
-Stage::Stage() {
-	std::fill(begin(m_stages), end(m_stages), 0_bi);
-}
-
-auto Stage::operator[](StatNames const index) const -> value_type const & {
-	return m_stages[index];
-}
-auto Stage::operator[](StatNames const index) -> value_type & {
-	return m_stages[index];
-}
-
-auto Stage::begin() const -> container_type::const_iterator {
-	return begin(m_stages);
-}
-auto Stage::begin() -> container_type::iterator {
-	return begin(m_stages);
-}
-auto Stage::end() const -> container_type::const_iterator {
-	return end(m_stages);
-}
-auto Stage::end() -> container_type::iterator {
-	return end(m_stages);
-}
-
 
 auto boost(Stage & stage, StatNames const stat, Stage::boost_type const number_of_stages) -> void {
 	stage[stat] += number_of_stages;
@@ -96,9 +71,5 @@ auto swap_offensive(Stage & lhs, Stage & rhs) -> void {
 	swap_specified(lhs, rhs, { StatNames::ATK, StatNames::SPA });
 }
 
-
-auto operator==(Stage const & lhs, Stage const & rhs) -> bool {
-	return std::equal(begin(lhs), end(lhs), begin(rhs));
-}
 
 } // namespace technicalmachine

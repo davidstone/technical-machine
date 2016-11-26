@@ -1,5 +1,5 @@
 // Construct a timestamp string
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,14 +30,15 @@ std::string make_timestamp() {
 	result.resize(sizeof(SAMPLE_OUTPUT));
 	std::time_t const current_time = std::time(nullptr);
 	tm const * const timeptr = localtime(&current_time);
-	std::strftime(&result.front(), size(result), "%Y-%m-%d %H:%M:%S", timeptr);
+	std::strftime(&result.front(), result.size(), "%Y-%m-%d %H:%M:%S", timeptr);
 	return result;
 }
 
 }	// namespace
 
 std::string const & timestamp() {
-	static std::string const value = make_timestamp();
+	// TODO: Is this correct?
+	static auto const value = make_timestamp();
 	return value;
 }
 

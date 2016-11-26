@@ -1,5 +1,5 @@
 // Collection of moves with index indicating current move
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -49,20 +49,6 @@ auto operator<(MoveIterator const lhs, MoveIterator const rhs) noexcept -> bool 
 
 MoveContainer::MoveContainer(TeamSize const my_team_size):
 	m_shared(my_team_size) {
-}
-
-auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) const -> Move {
-	return m_regular[index];
-}
-auto MoveContainer::unchecked_regular_move(RegularMoveIndex const index) -> Move & {
-	return m_regular[index];
-}
-
-auto MoveContainer::operator[](containers::index_type<MoveContainer> const index) const -> Move {
-	assert(index < containers::size(*this));
-	return (index < number_of_regular_moves()) ?
-		unchecked_regular_move(RegularMoveIndex(index, bounded::non_check)) :
-		m_shared[static_cast<SharedMoves::index_type>(index - number_of_regular_moves())];
 }
 
 auto MoveContainer::number_of_regular_moves() const -> RegularMoveSize {

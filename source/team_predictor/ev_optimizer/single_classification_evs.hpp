@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -49,7 +49,6 @@ private:
 
 auto are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) -> bool;
 
-template<bool physical>
-containers::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon);
+containers::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon, bool physical);
 
 }	// namespace technicalmachine

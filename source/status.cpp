@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -31,16 +31,29 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-template<Statuses status>
-auto status_can_apply(Ability const ability, Pokemon const & target, Weather const weather) -> bool {
-	return is_clear(get_status(target)) and
-		(ability.ignores_blockers() or !get_ability(target).blocks_status<status>(weather)) and
-		!blocks_status<status>(get_type(target)) and
+auto status_can_apply(Statuses const status, Ability const ability, Pokemon const & target, Weather const weather) {
+	return
+		is_clear(get_status(target)) and
+		(ability.ignores_blockers() or !get_ability(target).blocks_status(status, weather)) and
+		!blocks_status(get_type(target), status) and
 		!weather.blocks_status(status);
 }
 
-constexpr auto status_is_reflectable (Statuses const status) -> bool {
-	return status == Statuses::burn or status == Statuses::paralysis or status == Statuses::poison or status == Statuses::poison_toxic;
+constexpr auto reflected_status(Statuses const status) -> bounded::optional<Statuses> {
+	switch (status) {
+	case Statuses::burn:
+	case Statuses::paralysis:
+	case Statuses::poison:
+		return status;
+	case Statuses::poison_toxic:
+		return Statuses::poison;
+	case Statuses::clear:
+	case Statuses::freeze:
+	case Statuses::sleep:
+	case Statuses::sleep_rest:
+	case Statuses::END:
+		return bounded::none;
+	}
 }
 
 }	// namespace
@@ -71,13 +84,17 @@ auto weakens_physical_attacks(Status const status) -> bool {
 }
 auto boosts_facade(Status const status) -> bool {
 	switch (status.name()) {
-		case Statuses::burn:
-		case Statuses::paralysis:
-		case Statuses::poison:
-		case Statuses::poison_toxic:
-			return true;
-		default:
-			return false;
+	case Statuses::burn:
+	case Statuses::paralysis:
+	case Statuses::poison:
+	case Statuses::poison_toxic:
+		return true;
+	case Statuses::clear:
+	case Statuses::freeze:
+	case Statuses::sleep:
+	case Statuses::sleep_rest:
+	case Statuses::END:
+		return false;
 	}
 }
 auto boosts_smellingsalt(Status const status) -> bool {
@@ -89,81 +106,50 @@ auto Status::rest() -> void {
 	m_turns_already_slept = 0_bi;
 }
 
-template<Statuses base_status, Statuses real_status>
-auto Status::apply(Pokemon & user, Pokemon & target, Weather const weather) -> void {
-	if (status_can_apply<real_status>(get_ability(user), target, weather)) {
-		get_status(target).m_status = real_status;
-		if (status_is_reflectable(base_status) and get_ability(target).reflects_status()) {
-			apply<base_status>(target, user, weather);
+auto apply(Statuses const status, Pokemon & user, Pokemon & target, Weather const weather) -> void {
+	assert(status != Statuses::clear);
+	assert(status != Statuses::sleep_rest);
+	if (status_can_apply(status, get_ability(user), target, weather)) {
+		get_status(target).m_status = status;
+		if (status == Statuses::sleep) {
+			get_status(target).m_turns_already_slept = 0_bi;
+		}
+		auto const reflected = reflected_status(status);
+		if (reflected and get_ability(target).reflects_status()) {
+			apply(*reflected, target, user, weather);
 		}
 	}
 }
 
-template<Statuses base_status>
-auto Status::apply(Pokemon & target, Weather const weather) -> void {
-	apply<base_status>(target, target, weather);
+auto apply(Statuses const status, Pokemon & target, Weather const weather) -> void {
+	apply(status, target, target, weather);
 }
 
-template auto Status::apply<Statuses::burn>(Pokemon & user, Pokemon & target, Weather const weather) -> void;
-template auto Status::apply<Statuses::freeze>(Pokemon & user, Pokemon & target, Weather const weather) -> void;
-template auto Status::apply<Statuses::paralysis>(Pokemon & user, Pokemon & target, Weather const weather) -> void;
-template auto Status::apply<Statuses::poison>(Pokemon & user, Pokemon & target, Weather const weather) -> void;
-
-template<>
-auto Status::apply<Statuses::poison_toxic>(Pokemon & user, Pokemon & target, Weather const weather) -> void {
-	apply<Statuses::poison, Statuses::poison_toxic>(user, target, weather);
-}
-
-template<>
-auto Status::apply<Statuses::sleep>(Pokemon & user, Pokemon & target, Weather const weather) -> void {
-	constexpr auto status_to_apply = Statuses::sleep;
-	if (status_can_apply<status_to_apply>(get_ability(user), target, weather)) {
-		auto & status = get_status(target);
-		status.m_status = status_to_apply;
-		status.m_turns_already_slept = 0_bi;
-	}
-}
-
-template auto Status::apply<Statuses::burn>(Pokemon & target, Weather const weather) -> void;
-template auto Status::apply<Statuses::freeze>(Pokemon & target, Weather const weather) -> void;
-template auto Status::apply<Statuses::paralysis>(Pokemon & target, Weather const weather) -> void;
-template auto Status::apply<Statuses::poison>(Pokemon & target, Weather const weather) -> void;
-template auto Status::apply<Statuses::poison_toxic>(Pokemon & target, Weather const weather) -> void;
-template auto Status::apply<Statuses::sleep>(Pokemon & target, Weather const weather) -> void;
-
-
-auto Status::shift (Pokemon & user, Pokemon & target, Weather const weather) -> void {
-	switch (get_status(user).name()) {
+auto shift_status(Pokemon & user, Pokemon & target, Weather const weather) -> void {
+	auto & status = get_status(user);
+	switch (status.name()) {
 		case Statuses::burn:
-			apply<Statuses::burn>(user, target, weather);
-			break;
 		case Statuses::paralysis:
-			apply<Statuses::paralysis>(user, target, weather);
-			break;
 		case Statuses::poison:
-			apply<Statuses::poison>(user, target, weather);
-			break;
 		case Statuses::poison_toxic:
-			apply<Statuses::poison_toxic>(user, target, weather);
+			apply(status.name(), user, target, weather);
 			break;
-		case Statuses::sleep_rest:		// Fix
 		case Statuses::sleep:
-			apply<Statuses::sleep>(user, target, weather);
+		case Statuses::sleep_rest:		// Fix
+			apply(Statuses::sleep, user, target, weather);
+			get_status(target).m_turns_already_slept = status.m_turns_already_slept;
 			break;
 		default:
 			break;
 	}
-	using std::swap;
-	swap(get_status(user).m_turns_already_slept, get_status(user).m_turns_already_slept);
-	get_status(user) = Status{};
+	status = Status{};
 }
 
 auto Status::increase_sleep_counter(Ability const & ability, bool awaken) -> void {
 	if (awaken) {
 		m_turns_already_slept = bounded::none;
 		m_status = Statuses::clear;
-	}
-	else {
+	} else {
 		*m_turns_already_slept += BOUNDED_CONDITIONAL(ability.wakes_up_early(), 2_bi, 1_bi);
 	}
 }

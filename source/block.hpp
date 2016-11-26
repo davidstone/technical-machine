@@ -41,8 +41,12 @@ struct LegalSelections : private StaticVectorMoves {
 		return m_species;
 	}
 
-	using StaticVectorMoves::begin;
-	using StaticVectorMoves::end;
+	friend constexpr auto begin(LegalSelections const & container) {
+		return begin(static_cast<StaticVectorMoves const &>(container));
+	}
+	friend constexpr auto end(LegalSelections const & container) {
+		return end(static_cast<StaticVectorMoves const &>(container));
+	}
 	using StaticVectorMoves::operator[];
 private:
 	Species m_species;

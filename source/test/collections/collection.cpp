@@ -58,15 +58,14 @@ struct TestContainer {
 	constexpr TestContainer(Container const & container):
 		m_container(begin(container), end(container)) {
 	}
-	constexpr auto begin() const {
-		return begin(m_container);
+	friend constexpr auto begin(TestContainer const & container) {
+		return begin(container.m_container);
 	}
-	constexpr auto end() const {
-		return end(m_container);
+	friend constexpr auto end(TestContainer const & container) {
+		return end(container.m_container);
 	}
-	constexpr auto const & operator[](containers::index_type<TestContainer> const index) const {
-		return m_container[index];
-	}
+	
+	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
 private:
 	Container m_container;
 };

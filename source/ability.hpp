@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -69,8 +69,7 @@ struct Ability {
 	bool blocks_switching (ActivePokemon switcher, Weather weather) const;
 	bool blocks_weather () const;
 
-	template<Statuses status>
-	bool blocks_status (Weather weather) const;
+	bool blocks_status(Statuses status, Weather weather) const;
 	bool blocks_confusion () const;
 	bool reflects_status () const;
 	bool absorbs_poison_damage () const;

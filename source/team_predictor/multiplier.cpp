@@ -1,5 +1,5 @@
 // Load stats such as Pokemon usage stats
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,9 +24,12 @@
 #include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
-#include "../string_conversions/conversion.hpp"
+#include "../string_conversions/move.hpp"
+#include "../string_conversions/pokemon.hpp"
 
 #include <bounded/integer_range.hpp>
+
+#include <containers/algorithms/accumulate.hpp>
 
 #include <boost/lexical_cast.hpp>
 
@@ -86,7 +89,7 @@ Multiplier::Container Multiplier::species_clause() {
 
 void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unaccounted) {
 	// I may not need to calculate this...
-	auto const total = static_cast<value_type>(std::accumulate(begin(overall), end(overall), 0U));
+	auto const total = static_cast<value_type>(containers::accumulate(begin(overall), end(overall), 0U));
 
 	std::ifstream file("settings/Generation 4/OU/teammate.txt");
 	std::string line;

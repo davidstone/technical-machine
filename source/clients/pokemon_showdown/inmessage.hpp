@@ -36,16 +36,14 @@ struct InMessage {
 		return m_type;
 	}
 
-	decltype(auto) operator[](containers::index_type<Data> const position) const {
-		return m_data[position];
+	friend auto begin(InMessage const & message) {
+		return begin(message.m_data);
+	}
+	friend auto end(InMessage const & message) {
+		return end(message.m_data);
 	}
 
-	auto begin() const {
-		return begin(m_data);
-	}
-	auto end() const {
-		return end(m_data);
-	}
+	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
 private:
 	Room m_room;
 	Type m_type;

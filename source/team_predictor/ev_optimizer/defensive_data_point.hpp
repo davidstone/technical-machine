@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -47,8 +47,7 @@ struct DataPoint {
 private:
 	void update_pokemon(Pokemon & pokemon) const;
 
-	template<StatNames stat>
-	auto product(Species const species, Level const level) const {
+	auto product(StatNames const stat, Species const species, Level const level) const {
 		auto const initial = initial_stat(stat, Stat(species, stat, defense), level, nature);
 		return initial * HP(species, level, hp).max();
 	}

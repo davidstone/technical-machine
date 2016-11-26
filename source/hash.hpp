@@ -135,7 +135,7 @@ constexpr auto hash(std::tuple<Ts...> const & values) noexcept(noexcept_hashable
 
 
 template<typename Size, typename Iterator>
-auto hash_range(Iterator first, Iterator last) {
+constexpr auto hash_range(Iterator first, Iterator last) {
 	constexpr auto initial = std::make_pair(static_cast<uint64_t>(0), static_cast<uint64_t>(0));
 	return containers::accumulate(first, last, initial, [](auto const current, auto const & element) {
 		return hash_combine(current, hash(element));

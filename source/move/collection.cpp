@@ -1,5 +1,5 @@
 // Collection of moves with index indicating current move
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,7 +24,6 @@
 #include <bounded/integer_range.hpp>
 
 #include <containers/algorithms/find.hpp>
-#include <containers/algorithms/iterator.hpp>
 
 #include <cassert>
 

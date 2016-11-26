@@ -76,19 +76,18 @@ auto swap_items(Pokemon & user, Pokemon & target) -> void;
 auto tri_attack_status(Pokemon & user, Pokemon & target, Weather weather, Variable const & variable) -> void;
 auto use_swallow(MutableActivePokemon user) -> void;
 
-template<Statuses status>
-auto fang_side_effects(Pokemon & user, MutableActivePokemon target, Weather const weather, Variable const & variable) {
+auto fang_side_effects(Pokemon & user, MutableActivePokemon target, Weather const weather, Variable const & variable, Statuses const status) {
 	switch (variable.value.value()) {
 		case 0:
 			break;
 		case 1:
-			Status::apply<status>(user, target, weather);
+			apply(status, user, target, weather);
 			break;
 		case 2:
 			target.flinch();
 			break;
 		case 3:	
-			Status::apply<status>(user, target, weather);
+			apply(status, user, target, weather);
 			target.flinch();
 			break;
 		default:
@@ -97,11 +96,10 @@ auto fang_side_effects(Pokemon & user, MutableActivePokemon target, Weather cons
 	}
 }
 
-template<Statuses status>
-auto recoil_status(Pokemon & user, Pokemon & target, Weather const weather, damage_type const damage, Variable const & variable) {
+auto recoil_status(Pokemon & user, Pokemon & target, Weather const weather, damage_type const damage, Variable const & variable, Statuses const status) {
 	recoil(user, damage, 3_bi);
 	if (effect_activates(variable)) {
-		Status::apply<status>(user, target, weather);
+		apply(status, user, target, weather);
 	}
 }
 
@@ -335,7 +333,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 		case Moves::Lava_Plume:
 		case Moves::Sacred_Fire:
 			if (effect_activates(variable)) {
-				Status::apply<Statuses::burn>(user, target.pokemon(), weather);
+				apply(Statuses::burn, user, target.pokemon(), weather);
 			}
 			break;
 		case Moves::Blizzard:
@@ -343,7 +341,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 		case Moves::Ice_Punch:
 		case Moves::Powder_Snow:
 			if (effect_activates(variable)) {
-				Status::apply<Statuses::freeze>(user, target.pokemon(), weather);
+				apply(Statuses::freeze, user, target.pokemon(), weather);
 			}
 			break;
 		case Moves::Block:
@@ -363,13 +361,13 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 		case Moves::ThunderPunch:
 		case Moves::ThunderShock:
 			if (effect_activates(variable)) {
-				Status::apply<Statuses::paralysis>(user, target.pokemon(), weather);
+				apply(Statuses::paralysis, user, target.pokemon(), weather);
 			}
 			break;
 		case Moves::Bounce: {
 			bool const vanished = user.bounce();
 			if (vanished and effect_activates(variable)) {
-				Status::apply<Statuses::paralysis>(user, target.pokemon(), weather);
+				apply(Statuses::paralysis, user, target.pokemon(), weather);
 			}
 			break;
 		}
@@ -477,7 +475,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 		case Moves::Sludge_Bomb:
 		case Moves::Smog:
 			if (effect_activates(variable)) {
-				Status::apply<Statuses::poison>(user, target.pokemon(), weather);
+				apply(Statuses::poison, user, target.pokemon(), weather);
 			}
 			break;
 		case Moves::Curse:
@@ -490,7 +488,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 		case Moves::Sing:
 		case Moves::Sleep_Powder:
 		case Moves::Spore:
-			Status::apply<Statuses::sleep>(user, target.pokemon(), weather);
+			apply(Statuses::sleep, user, target.pokemon(), weather);
 			break;
 		case Moves::Defense_Curl:
 			boost(stage(user), StatNames::DEF, 1_bi);
@@ -559,10 +557,10 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 			target.pokemon().break_protect();
 			break;
 		case Moves::Fire_Fang:
-			fang_side_effects<Statuses::burn>(user, target.pokemon(), weather, variable);
+			fang_side_effects(user, target.pokemon(), weather, variable, Statuses::burn);
 			break;
 		case Moves::Flare_Blitz:
-			recoil_status<Statuses::burn>(user, target.pokemon(), weather, damage, variable);
+			recoil_status(user, target.pokemon(), weather, damage, variable, Statuses::burn);
 			break;
 		case Moves::Flash:
 		case Moves::Kinesis:
@@ -597,7 +595,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 		case Moves::Stun_Spore:
 		case Moves::Thunder_Wave:
 		case Moves::Zap_Cannon:
-			Status::apply<Statuses::paralysis>(user, target.pokemon(), weather);
+			apply(Statuses::paralysis, user, target.pokemon(), weather);
 			break;
 		case Moves::Gravity:
 			weather.activate_gravity();
@@ -667,7 +665,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 		case Moves::Rollout:
 			break;
 		case Moves::Ice_Fang:
-			fang_side_effects<Statuses::freeze>(user, target.pokemon(), weather, variable);
+			fang_side_effects(user, target.pokemon(), weather, variable, Statuses::freeze);
 			break;
 		case Moves::Icy_Wind:
 		case Moves::Mud_Shot:
@@ -783,12 +781,12 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 			break;
 		case Moves::Poison_Fang:
 			if (effect_activates(variable)) {
-				Status::apply<Statuses::poison_toxic>(user, target.pokemon(), weather);
+				apply(Statuses::poison_toxic, user, target.pokemon(), weather);
 			}
 			break;
 		case Moves::Poison_Gas:
 		case Moves::PoisonPowder:
-			Status::apply<Statuses::poison>(user, target.pokemon(), weather);
+			apply(Statuses::poison, user, target.pokemon(), weather);
 			break;
 		case Moves::Power_Swap:
 			swap_offensive(stage(user), stage(target.pokemon()));
@@ -806,7 +804,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 			break;
 		case Moves::Psycho_Shift:
 			if (is_clear(get_status(target.pokemon()))) {
-				Status::shift(user, target.pokemon(), weather);
+				shift_status(user, target.pokemon(), weather);
 			}
 			break;
 		case Moves::Rage:		// Fix
@@ -946,7 +944,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 			target.pokemon().taunt();
 			break;
 		case Moves::Thunder_Fang:
-			fang_side_effects<Statuses::paralysis>(user, target.pokemon(), weather, variable);
+			fang_side_effects(user, target.pokemon(), weather, variable, Statuses::paralysis);
 			break;
 		case Moves::Tickle:
 			boost_physical(stage(target.pokemon()), -1_bi);
@@ -955,7 +953,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 			target.pokemon().torment();
 			break;
 		case Moves::Toxic:
-			Status::apply<Statuses::poison_toxic>(user, target.pokemon(), weather);
+			apply(Statuses::poison_toxic, user, target.pokemon(), weather);
 			break;
 		case Moves::Toxic_Spikes:
 			target.entry_hazards.add_toxic_spikes();
@@ -977,7 +975,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 			user.use_uproar();
 			break;
 		case Moves::Volt_Tackle:
-			recoil_status<Statuses::paralysis>(user, target.pokemon(), weather, damage, variable);
+			recoil_status(user, target.pokemon(), weather, damage, variable, Statuses::paralysis);
 			break;
 		case Moves::Wake_Up_Slap:
 			if (is_sleeping(get_status(target.pokemon()))) {
@@ -988,7 +986,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 			user.activate_water_sport();
 			break;
 		case Moves::Will_O_Wisp:
-			Status::apply<Statuses::burn>(user, target.pokemon(), weather);
+			apply(Statuses::burn, user, target.pokemon(), weather);
 			break;
 		case Moves::Wish:
 			user_team.wish.activate();
@@ -1091,13 +1089,13 @@ auto swap_items(Pokemon & user, Pokemon & target) -> void {
 auto tri_attack_status(Pokemon & user, Pokemon & target, Weather const weather, Variable const & variable) -> void {
 	switch (variable.value.value()) {
 		case 1:
-			Status::apply<Statuses::burn>(user, target, weather);
+			apply(Statuses::burn, user, target, weather);
 			break;
 		case 2:
-			Status::apply<Statuses::freeze>(user, target, weather);
+			apply(Statuses::freeze, user, target, weather);
 			break;
 		case 3:
-			Status::apply<Statuses::paralysis>(user, target, weather);
+			apply(Statuses::paralysis, user, target, weather);
 			break;
 		default:
 			assert(false);

@@ -1,5 +1,5 @@
 // Type function definitions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,19 +29,6 @@
 #include <stdexcept>
 
 namespace technicalmachine {
-
-namespace detail_type_collection {
-
-auto TypeArray::begin() const -> const_iterator {
-	return std::begin(m_types);
-}
-auto TypeArray::end() const -> const_iterator {
-	auto const size = BOUNDED_CONDITIONAL(m_types[1_bi] == Type::Typeless, 1_bi, 2_bi);
-	return begin() + size;
-}
-
-}	// namespace detail_type_collection
-
 using namespace detail_type_collection;
 
 namespace {

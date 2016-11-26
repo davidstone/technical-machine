@@ -99,7 +99,7 @@ void max_defense_test() {
 	boost(stage(defender.pokemon()), StatNames::DEF, 6_bi);
 
 	get_ability(pokemon) = Ability::Marvel_Scale;
-	Status::apply<Statuses::burn>(pokemon, weather);
+	apply(Statuses::burn, pokemon, weather);
 
 	check_equal(calculate_defense(defender.pokemon(), weather), max_defense);
 }

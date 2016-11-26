@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -48,11 +48,11 @@ DataPoint::DataPoint(DataPoint const original, Nature const new_nature):
 
 bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon) {
 	Level const level = get_level(pokemon);
-	auto const left_physical = lhs.product<StatNames::DEF>(pokemon, level);
-	auto const left_special = lhs.product<StatNames::SPD>(pokemon, level);
+	auto const left_physical = lhs.product(StatNames::DEF, pokemon, level);
+	auto const left_special = lhs.product(StatNames::SPD, pokemon, level);
 
-	auto const right_physical = rhs.product<StatNames::DEF>(pokemon, level);
-	auto const right_special = rhs.product<StatNames::SPD>(pokemon, level);
+	auto const right_physical = rhs.product(StatNames::DEF, pokemon, level);
+	auto const right_special = rhs.product(StatNames::SPD, pokemon, level);
 
 	if (left_physical < right_physical and left_special < right_special) {
 		return true;

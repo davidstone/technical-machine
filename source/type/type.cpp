@@ -1,5 +1,5 @@
 // Type function definitions
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -54,7 +54,7 @@ auto hidden_power_type(Pokemon const & pokemon) {
 		return value + ((get_stat(pokemon, pair.first).iv().value() % 2_bi) << pair.second);
 	};
 	intermediate_type const initial = get_hp(pokemon).iv().value() % 2_bi;
-	auto const index = std::accumulate(std::begin(modifiers), std::end(modifiers), initial, sum) * 15_bi / 63_bi;
+	auto const index = containers::accumulate(begin(modifiers), end(modifiers), initial, sum) * 15_bi / 63_bi;
 	constexpr static auto lookup = containers::make_array(
 		Type::Fighting,
 		Type::Flying,

@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -36,11 +36,7 @@ auto removes_toxic_spikes(ActivePokemon const switcher) {
 }
 
 auto apply_toxic_spikes(EntryHazards const & hazards, MutableActivePokemon switcher, Weather const weather) {
-	if (hazards.toxic_spikes() == 1_bi) {
-		Status::apply<Statuses::poison>(switcher, weather);
-	} else {
-		Status::apply<Statuses::poison_toxic>(switcher, weather);
-	}
+	apply(hazards.toxic_spikes() == 1_bi ? Statuses::poison : Statuses::poison_toxic, switcher, weather);
 }
 
 }	// namespace

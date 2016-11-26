@@ -1,5 +1,5 @@
 // Pokemon Online outgoing messages
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //

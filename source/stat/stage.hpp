@@ -24,6 +24,7 @@
 
 #include <bounded/integer.hpp>
 #include <containers/array/array.hpp>
+#include <containers/array/make_array.hpp>
 
 namespace technicalmachine {
 
@@ -35,21 +36,35 @@ struct Stage {
 	static constexpr auto number_of_stats = bounded::constant<static_cast<intmax_t>(StatNames::END)>;
 	using container_type = containers::array<value_type, number_of_stats.value()>;
 
-	Stage();
+	constexpr Stage() noexcept:
+		m_stages(containers::make_array_n<value_type>(number_of_stats, 0_bi))
+	{
+	}
 
-	auto operator[](StatNames index) const -> value_type const &;
-	auto operator[](StatNames index) -> value_type &;
-	
-	auto begin() const -> container_type::const_iterator;
-	auto begin() -> container_type::iterator;
-	auto end() const -> container_type::const_iterator;
-	auto end() -> container_type::iterator;
+	friend constexpr auto begin(Stage const & stage) noexcept {
+		return begin(stage.m_stages);
+	}
+	friend constexpr auto begin(Stage & stage) noexcept {
+		return begin(stage.m_stages);
+	}
+	friend constexpr auto end(Stage const & stage) noexcept {
+		return end(stage.m_stages);
+	}
+	friend constexpr auto end(Stage & stage) noexcept {
+		return end(stage.m_stages);
+	}
 
+	auto operator[](StatNames index) const -> value_type const & {
+		return m_stages[index];
+	}
+	auto operator[](StatNames index) -> value_type & {
+		return m_stages[index];
+	}
 private:
 	container_type m_stages;
 };
 
-inline auto hash(Stage const stage) noexcept {
+constexpr auto hash(Stage const stage) noexcept {
 	return hash_range<Stage::container_type::size_type>(begin(stage), end(stage));
 }
 
@@ -103,8 +118,5 @@ auto boost_offensive(Stage & stage, Stage::boost_type number_of_stages) -> void;
 
 auto swap_defensive(Stage & lhs, Stage & rhs) -> void;
 auto swap_offensive(Stage & lhs, Stage & rhs) -> void;
-
-
-auto operator==(Stage const & lhs, Stage const & rhs) -> bool;
 
 }	// namespace technicalmachine

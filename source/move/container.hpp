@@ -49,9 +49,7 @@ public:
 	auto operator*() const -> value_type {
 		return (m_regular != m_regular_end) ? *m_regular : *m_shared;
 	}
-	auto operator[](containers::index_type<MoveIterator> const index) const {
-		return *(*this + index);
-	}
+	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
 
 	friend auto operator+(MoveIterator const lhs, difference_type const rhs) -> MoveIterator;
 	friend auto operator-(MoveIterator const lhs, MoveIterator const rhs) -> difference_type;
@@ -82,13 +80,6 @@ struct MoveContainer {
 	
 	explicit MoveContainer(TeamSize my_team_size);
 	
-	const_iterator begin() const {
-		return const_iterator(begin(m_regular), end(m_regular), begin(m_shared));
-	}
-	const_iterator end() const {
-		return const_iterator(end(m_regular), end(m_regular), end(m_shared));
-	}
-
 	// Skips Struggle and switches
 	auto regular_begin() const {
 		return begin(m_regular);
@@ -103,7 +94,15 @@ struct MoveContainer {
 		return end(m_regular);
 	}
 	
-	auto operator[](containers::index_type<MoveContainer> index) const -> Move;
+	friend const_iterator begin(MoveContainer const & container) {
+		return const_iterator(container.regular_begin(), container.regular_end(), begin(container.m_shared));
+	}
+	friend const_iterator end(MoveContainer const & container) {
+		return const_iterator(container.regular_end(), container.regular_end(), end(container.m_shared));
+	}
+
+	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
+
 	template<typename... Args>
 	auto emplace_back(Args&&... args) -> void {
 		assert(containers::size(m_regular) < max_moves_per_pokemon);
@@ -116,8 +115,6 @@ struct MoveContainer {
 	auto remove_switch() -> void;
 	
 private:
-	auto unchecked_regular_move(RegularMoveIndex index) const -> Move;
-	auto unchecked_regular_move(RegularMoveIndex index) -> Move &;
 	RegularMoveContainer m_regular;
 	SharedMoves m_shared;
 };

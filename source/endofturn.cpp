@@ -157,10 +157,10 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	}
 	switch (get_item(pokemon)) {
 		case Item::Flame_Orb:
-			Status::apply<Statuses::burn>(pokemon, weather);
+			apply(Statuses::burn, pokemon, weather);
 			break;
 		case Item::Toxic_Orb:
-			Status::apply<Statuses::poison_toxic>(pokemon, weather);
+			apply(Statuses::poison_toxic, pokemon, weather);
 			break;
 		default:
 			break;

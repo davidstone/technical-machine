@@ -28,7 +28,12 @@
 
 #include "../../stat/stat.hpp"
 
-#include "../../string_conversions/conversion.hpp"
+#include "../../string_conversions/ability.hpp"
+#include "../../string_conversions/gender.hpp"
+#include "../../string_conversions/item.hpp"
+#include "../../string_conversions/move.hpp"
+#include "../../string_conversions/nature.hpp"
+#include "../../string_conversions/pokemon.hpp"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -41,7 +46,7 @@ namespace pl {
 namespace {
 
 Move load_move(boost::property_tree::ptree const & pt) {
-	Moves const name = from_string<Moves>(pt.get_value<std::string>());
+	auto const name = from_string<Moves>(pt.get_value<std::string>());
 	auto const pp_ups = pt.get<Pp::pp_ups_type>("<xmlattr>.pp-up");
 	return Move(name, pp_ups);
 }
@@ -118,7 +123,7 @@ void load_team(Team & team, boost::filesystem::path const & team_file) {
 	read_xml(team_file.string(), pt);
 	
 	auto const all_pokemon = pt.get_child ("shoddybattle");
-	team.all_pokemon().initialize_size(static_cast<TeamSize>(size(all_pokemon)));
+	team.all_pokemon().initialize_size(static_cast<TeamSize>(all_pokemon.size()));
 	for (auto const & value : all_pokemon) {
 		load_pokemon (value.second, team);
 	}

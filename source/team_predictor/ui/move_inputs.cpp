@@ -18,7 +18,7 @@
 
 #include "move_inputs.hpp"
 #include "input_constants.hpp"
-#include "../../string_conversions/conversion.hpp"
+#include "../../string_conversions/move.hpp"
 
 namespace technicalmachine {
 

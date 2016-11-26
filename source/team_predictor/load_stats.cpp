@@ -1,5 +1,5 @@
 // Load stats such as Pokemon usage stats
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,7 +22,7 @@
 
 #include "../pokemon/species.hpp"
 
-#include "../string_conversions/conversion.hpp"
+#include "../string_conversions/pokemon.hpp"
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>

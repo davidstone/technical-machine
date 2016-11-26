@@ -19,7 +19,7 @@
 #include "species_input.hpp"
 #include "input_constants.hpp"
 #include "../../pokemon/species_forward.hpp"
-#include "../../string_conversions/conversion.hpp"
+#include "../../string_conversions/pokemon.hpp"
 
 namespace technicalmachine {
 

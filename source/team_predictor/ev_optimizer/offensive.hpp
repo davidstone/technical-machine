@@ -43,11 +43,10 @@ private:
 	auto optimize(Pokemon const & pokemon) -> void;
 	struct OffensiveData {
 	private:
-		template<StatNames stat>
-		using StatType = decltype(initial_stat(stat, std::declval<Stat>(), std::declval<Level>(), std::declval<Nature>()));
+		using StatType = decltype(initial_stat(std::declval<StatNames>(), std::declval<Stat>(), std::declval<Level>(), std::declval<Nature>()));
 	public:
-		StatType<StatNames::ATK> atk;
-		StatType<StatNames::SPA> spa;
+		StatType atk;
+		StatType spa;
 	};
 	auto equal_stats(OffensiveData initial, Species species, Level level) -> void;
 	friend auto combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon) -> void;

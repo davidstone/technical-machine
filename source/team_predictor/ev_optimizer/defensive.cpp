@@ -62,8 +62,8 @@ bool has_same_effect_on_defenses(Nature nature, Nature reference_nature);
 }	// namespace
 
 DefensiveEVs::DefensiveEVs(Pokemon const & pokemon) {
-	auto const physical = equal_defensiveness<true>(pokemon);
-	auto const special = equal_defensiveness<false>(pokemon);
+	auto const physical = equal_defensiveness(pokemon, true);
+	auto const special = equal_defensiveness(pokemon, false);
 	container = best_possible_per_nature(combine_results(physical, special), pokemon);
 	for (auto const & value : divide_natures(container)) {
 		remove_inefficient_natures(value);
@@ -161,7 +161,7 @@ void filter_to_minimum_evs(AllPossible & all) {
 			return lhs.sum() < rhs.sum();
 		};
 		auto & container = per_nature.second;
-		auto const it = std::min_element(std::begin(container), std::end(container), least_sum);
+		auto const it = std::min_element(begin(container), end(container), least_sum);
 		auto const not_minimum = [it](DataPoint const & value) {
 			return value.sum() != it->sum();
 		};
@@ -182,7 +182,7 @@ DefensiveEVs::BestPerNature::mapped_type most_effective_equal_evs_per_nature(Est
 	auto const greatest_product = [& pokemon](DataPoint const & largest, DataPoint const & value) {
 		return lesser_product(largest, value, pokemon);
 	};
-	return *std::max_element(std::begin(original), std::end(original), greatest_product);
+	return *std::max_element(begin(original), end(original), greatest_product);
 }
 
 Divided divide_natures(DefensiveEVs::BestPerNature const & container) {

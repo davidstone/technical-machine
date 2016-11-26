@@ -1,5 +1,5 @@
 // Class to help get the next most likely Pokemon
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -59,24 +59,25 @@ void Estimate::update(Multiplier const & multiplier, Species const seen) {
 }
 
 Species Estimate::most_likely() const {
-	auto const it = std::max_element(std::begin(estimate), std::end(estimate));
+	auto const it = std::max_element(begin(estimate), end(estimate));
 	// Estimate is indexed by Species ID. The Species ID is therefore the
 	// distance between the found element and the beginning.
-	return static_cast<Species>(it - std::begin(estimate));
+	return static_cast<Species>(it - begin(estimate));
 }
 
 Species Estimate::random(std::mt19937 & random_engine) const {
-	auto const total = std::accumulate(std::begin(estimate), std::end(estimate), 0.0F);
+	auto const total = containers::accumulate(begin(estimate), end(estimate), 0.0F);
 	std::uniform_real_distribution<float> distribution(0.0F, total);
 	auto usage_threshold = distribution(random_engine);
-
-	for (Container::const_iterator it = std::begin(estimate); it != std::end(estimate); ++it) {
-		if (usage_threshold >= *it)
-			usage_threshold -= *it;
-		else
-			return static_cast<Species>(it - std::begin(estimate));
+	
+	auto const it = containers::find_if(begin(estimate), end(estimate), [=](auto const value) mutable {
+		usage_threshold -= value;
+		return usage_threshold <= 0.0F;
+	});
+	if (it == end(estimate)) {
+		throw InvalidRandomSpecies();
 	}
-	throw InvalidRandomSpecies();
+	return static_cast<Species>(it - begin(estimate));
 }
 
 }	// namespace technicalmachine

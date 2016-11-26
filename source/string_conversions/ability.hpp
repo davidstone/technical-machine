@@ -1,5 +1,5 @@
 // Ability string conversions
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -25,5 +25,8 @@
 namespace technicalmachine {
 
 std::string const & to_string(Ability::Abilities const name);
+
+template<>
+Ability::Abilities from_string<Ability::Abilities>(boost::string_ref const str);
 
 }	// namespace technicalmachine

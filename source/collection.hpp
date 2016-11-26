@@ -53,8 +53,18 @@ struct Collection : protected Container {
 
 	using Container::Container;
 
-	using Container::begin;
-	using Container::end;
+	friend decltype(auto) begin(Collection const & collection) BOUNDED_NOEXCEPT(
+		begin(static_cast<Container const &>(collection))
+	)
+	friend decltype(auto) begin(Collection & collection) BOUNDED_NOEXCEPT(
+		begin(static_cast<Container &>(collection))
+	)
+	friend decltype(auto) end(Collection const & collection) BOUNDED_NOEXCEPT(
+		end(static_cast<Container const &>(collection))
+	)
+	friend decltype(auto) end(Collection & collection) BOUNDED_NOEXCEPT(
+		end(static_cast<Container &>(collection))
+	)
 	
 	constexpr decltype(auto) operator()(containers::index_type<Collection> const specified_index) const {
 		return operator[](check_range(specified_index));
@@ -82,6 +92,12 @@ protected:
 private:
 	containers::index_type<Collection> m_current_index = 0_bi;
 };
+
+
+CONTAINERS_COMMON_USING_DECLARATIONS
+
 }	// namespace detail
+
+CONTAINERS_COMMON_USING_DECLARATIONS
 
 }	// namespace technicalmachine

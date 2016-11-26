@@ -80,12 +80,12 @@ namespace {
 
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier) {
 	auto const index = team.all_pokemon().index();
-	while (team.number_of_seen_pokemon() < size(team)) {
+	while (team.number_of_seen_pokemon() < team.size()) {
 		Species const name = estimate.most_likely();
 		Level const level(100_bi);
 		Gender const gender(Gender::GENDERLESS);
 		team.add_pokemon(name, level, gender);
-		if (team.number_of_seen_pokemon() == size(team))
+		if (team.number_of_seen_pokemon() == team.size())
 			break;
 		estimate.update(multiplier, name);
 	}

@@ -1,5 +1,5 @@
 // Optimize Speed EVs and nature to remove waste
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -35,11 +35,11 @@ private:
 public:
 	static constexpr auto max_size = static_cast<std::intmax_t>(std::numeric_limits<Nature>::max());
 	explicit SpeedEVs(Pokemon const & pokemon);
-	auto begin() const {
-		return begin(m_container);
+	friend auto begin(SpeedEVs const & evs) {
+		return begin(evs.m_container);
 	}
-	auto end() const {
-		return end(m_container);
+	friend auto end(SpeedEVs const & evs) {
+		return end(evs.m_container);
 	}
 private:
 	struct Mapped {

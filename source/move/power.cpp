@@ -39,6 +39,7 @@
 #include "../pokemon/species.hpp"
 
 #include <containers/algorithms/accumulate.hpp>
+#include <containers/algorithms/filter_iterator.hpp>
 #include <containers/array/array.hpp>
 
 #include <algorithm>
@@ -110,7 +111,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 				return value + (((get_stat(attacker, stat.first).iv().value() / 2_bi) % 2_bi) << stat.second);
 			};
 			intermediate_type const initial = (get_hp(attacker).iv().value() / 2_bi) % 2_bi;
-			auto const result = std::accumulate(std::begin(stat_and_position), std::end(stat_and_position), initial, sum) * 40_bi / 63_bi + 30_bi;
+			auto const result = std::accumulate(begin(stat_and_position), end(stat_and_position), initial, sum) * 40_bi / 63_bi + 30_bi;
 			static_assert(std::numeric_limits<decltype(result)>::min() == 30_bi, "Incorrect Hidden Power minimum.");
 			static_assert(std::numeric_limits<decltype(result)>::max() == 70_bi, "Incorrect Hidden Power maximum.");
 			return result;

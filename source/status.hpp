@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -62,11 +62,8 @@ struct Status {
 	}
 
 	auto rest() -> void;
-	template<Statuses real_status, Statuses base_status = real_status>
-	static auto apply(Pokemon & user, Pokemon & target, Weather weather) -> void;
-	template<Statuses real_status>
-	static auto apply(Pokemon & target, Weather weather) -> void;
-	static auto shift (Pokemon & user, Pokemon & target, Weather weather) -> void;
+	friend auto apply(Statuses status, Pokemon & user, Pokemon & target, Weather weather) -> void;
+	friend auto shift_status(Pokemon & user, Pokemon & target, Weather weather) -> void;
 
 	friend auto operator==(Status lhs, Status rhs) -> bool;
 
@@ -82,12 +79,15 @@ struct Status {
 		return technicalmachine::hash(name(), m_turns_already_slept);
 	}
 private:
+	// TODO: Implement this with std::variant
 	using SleepCounter = bounded::optional<bounded::integer<0, 4>>;
-
 	Statuses m_status = Statuses::clear;
 	SleepCounter m_turns_already_slept = bounded::none;
 };
 
+auto apply(Statuses status, Pokemon & user, Pokemon & target, Weather weather) -> void;
+auto shift_status(Pokemon & user, Pokemon & target, Weather weather) -> void;
+auto apply(Statuses status, Pokemon & target, Weather weather) -> void;
 auto is_clear(Status status) -> bool;
 auto is_frozen(Status status) -> bool;
 auto is_sleeping(Status status) -> bool;

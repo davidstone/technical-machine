@@ -1,5 +1,5 @@
 // Detailed Pokemon stats
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,7 +27,11 @@
 
 #include "../stat/nature.hpp"
 
-#include "../string_conversions/conversion.hpp"
+#include "../string_conversions/ability.hpp"
+#include "../string_conversions/item.hpp"
+#include "../string_conversions/nature.hpp"
+#include "../string_conversions/move.hpp"
+#include "../string_conversions/pokemon.hpp"
 
 #include <bounded/integer.hpp>
 
@@ -64,7 +68,7 @@ Probabilities all_sub_elements(boost::property_tree::ptree const & pt) {
 template<typename T>
 T most_likely_sub_elements(boost::property_tree::ptree const & pt) {
 	auto const data = all_sub_elements(pt);
-	auto const most_likely = std::max_element(std::begin(data), std::end(data));
+	auto const most_likely = std::max_element(begin(data), end(data));
 	return from_string<T>(most_likely->second);
 }
 
@@ -96,26 +100,5 @@ DetailedStats::DetailedStats():
 		move[species] = top_sub_elements(pokemon.get_child("moves"));
 	}
 }
-
-template<>
-auto DetailedStats::get<Ability::Abilities>(Species const species) const -> Ability::Abilities const & {
-	return ability[species];
-}
-
-template<>
-auto DetailedStats::get<Item>(Species const species) const -> Item const & {
-	return item[species];
-}
-
-template<>
-auto DetailedStats::get<Nature>(Species const species) const -> Nature const & {
-	return nature[species];
-}
-
-template<>
-auto DetailedStats::get<DetailedStats::UsedMoves>(Species const species) const -> UsedMoves const & {
-	return move[species];
-}
-
 
 }	// namespace technicalmachine

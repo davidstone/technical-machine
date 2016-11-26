@@ -43,7 +43,7 @@ namespace {
 void random_team(Team & team, std::mt19937 & random_engine) {
 	auto const overall = overall_stats();
 	constexpr auto lead = containers::make_array_n(bounded::constant<number_of_species>, 1.0F);
-	Estimate estimate(overall, lead, std::accumulate(std::begin(overall), std::end(overall), 0U));
+	Estimate estimate(overall, lead, containers::accumulate(begin(overall), end(overall), 0U));
 	Multiplier const multiplier(overall);
 	estimate.update(multiplier, team);
 	for (auto const n : bounded::integer_range(max_pokemon_per_team - size(team.all_pokemon()))) {

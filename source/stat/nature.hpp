@@ -42,11 +42,12 @@ auto is_set(Nature nature) -> bool;
 auto boosts_stat(Nature nature, StatNames stat) -> bool;
 auto lowers_stat(Nature nature, StatNames stat) -> bool;
 
-auto boost(Nature const nature, StatNames const stat) {
-	auto const numerator = BOUNDED_CONDITIONAL(
-		boosts_stat(nature, stat), 11_bi,
-		BOUNDED_CONDITIONAL(lowers_stat(nature, stat), 9_bi, 10_bi)
-	);
+inline auto boost(Nature const nature, StatNames const stat) {
+	auto const numerator =
+		BOUNDED_CONDITIONAL(boosts_stat(nature, stat), 11_bi,
+		BOUNDED_CONDITIONAL(lowers_stat(nature, stat), 9_bi,
+		10_bi
+	));
 	static constexpr auto denominator = 10_bi;
 	return make_rational(numerator, denominator);
 }

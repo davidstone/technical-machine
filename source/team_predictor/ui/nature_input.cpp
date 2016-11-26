@@ -18,7 +18,7 @@
 
 #include "nature_input.hpp"
 #include "input_constants.hpp"
-#include "../../string_conversions/conversion.hpp"
+#include "../../string_conversions/nature.hpp"
 #include "../../string_conversions/invalid_string_conversion.hpp"
 
 namespace technicalmachine {

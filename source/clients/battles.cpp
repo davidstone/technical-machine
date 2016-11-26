@@ -30,7 +30,7 @@ namespace technicalmachine {
 
 void Battles::handle_challenge_withdrawn() {
 	if (challenges_are_queued()) {
-		assert(size(challenges) == 1);
+		assert(challenges.size() == 1);
 		challenges.erase(begin(challenges));
 	}
 }
