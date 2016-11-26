@@ -216,6 +216,14 @@ auto lowers_stat(Nature const nature, StatNames const stat) -> bool {
 	}
 }
 
+auto boosts_attacking_stat(Nature const nature) -> bool {
+	return boosts_stat(nature, StatNames::ATK) or boosts_stat(nature, StatNames::SPA);
+}
+
+auto boosts_defending_stat(Nature const nature) -> bool {
+	return boosts_stat(nature, StatNames::DEF) or boosts_stat(nature, StatNames::SPD);
+}
+
 auto lowers_attacking_stat(Nature const nature) -> bool {
 	return lowers_stat(nature, StatNames::ATK) or lowers_stat(nature, StatNames::SPA);
 }
