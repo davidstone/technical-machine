@@ -138,7 +138,7 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
-	constexpr auto depth = 15;
+	constexpr auto depth = 10;
 	Team attacker(1_bi, true);
 	attacker.add_pokemon(Species::Hippopotas, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Sand_Stream, Nature::Adamant);
 	for (auto const move : shuffled(Moves::Curse, Moves::Crunch)) {
