@@ -1,5 +1,5 @@
 // Expectiminimax header
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,6 +30,10 @@ struct Weather;
 Moves expectiminimax(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine);
 
 // Called from the function that identifies transpositions
-double select_type_of_move(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, Moves & best_move, bool first_turn = false);
+struct BestMove {
+	Moves move;
+	double score;
+};
+BestMove select_type_of_move(Team & ai, Team & foe, Weather weather, unsigned depth, Evaluate const & evaluate, bool first_turn = false);
 
 }	// namespace technicalmachine

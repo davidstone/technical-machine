@@ -79,9 +79,8 @@ double transposition(Team & ai, Team & foe, Weather const weather, unsigned dept
 		return saved.value;
 	}
 #endif
-	Moves phony = Moves::END;
 	// If I can't find it, continue evaluation as normal.
-	auto const value = select_type_of_move(ai, foe, weather, depth, evaluate, phony);
+	auto const score = select_type_of_move(ai, foe, weather, depth, evaluate).score;
 #if 0
 	current.value = value;
 	
@@ -90,7 +89,7 @@ double transposition(Team & ai, Team & foe, Weather const weather, unsigned dept
 	// add the new value to my table.
 	saved = current;
 #endif
-	return value;
+	return score;
 }
 
 }	// namespace technicalmachine
