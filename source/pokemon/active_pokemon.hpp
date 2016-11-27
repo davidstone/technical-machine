@@ -55,9 +55,6 @@ struct ActivePokemon {
 	TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS;
 
 	friend auto operator==(ActivePokemon const lhs, ActivePokemon rhs) -> bool;
-	auto hash() const noexcept {
-		return technicalmachine::hash(m_flags);
-	}
 
 private:
 	Pokemon const & m_pokemon;
@@ -171,10 +168,6 @@ private:
 	Pokemon & m_pokemon;
 	ActivePokemonFlags & m_flags;
 };
-
-inline auto hash(ActivePokemon const pokemon) noexcept {
-	return pokemon.hash();
-}
 
 
 inline auto last_used_move(ActivePokemon const pokemon) -> LastUsedMove {
