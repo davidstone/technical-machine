@@ -134,6 +134,32 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 	assert(expectiminimax(attacker, defender, weather, depth, evaluate, random_engine) == Moves::Belly_Drum);
 }
 
+void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
+	auto const shuffled = [&](auto... args) {
+		return make_shuffled_array(random_engine, args...);
+	};
+	constexpr auto depth = 15;
+	Team attacker(1_bi, true);
+	attacker.add_pokemon(Species::Hippopotas, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Sand_Stream, Nature::Adamant);
+	for (auto const move : shuffled(Moves::Curse, Moves::Crunch)) {
+		all_moves(attacker.pokemon()).add(move);
+	}
+	set_hp_ev(attacker.pokemon(), EV(252_bi));
+	set_stat_ev(attacker.pokemon(), StatNames::ATK, EV(252_bi));
+	set_stat_ev(attacker.pokemon(), StatNames::SPE, EV(4_bi));
+
+	Team defender(1_bi);
+	defender.add_pokemon(Species::Wobbuffet, Level(100_bi), Gender::GENDERLESS, Item::Leftovers, Ability::Shadow_Tag, Nature::Bold);
+	for (auto const move : shuffled(Moves::Counter, Moves::Safeguard)) {
+		all_moves(defender.pokemon()).add(move);
+	}
+	set_hp_ev(defender.pokemon(), EV(252_bi));
+	set_stat_ev(defender.pokemon(), StatNames::DEF, EV(252_bi));
+	set_stat_ev(defender.pokemon(), StatNames::SPE, EV(4_bi));
+
+	assert(expectiminimax(attacker, defender, weather, depth, evaluate, random_engine) == Moves::Curse);
+}
+
 }	// namespace
 
 void expectiminimax_tests() {
@@ -147,6 +173,7 @@ void expectiminimax_tests() {
 	ohko_tests(evaluate, weather, random_engine);
 	one_turn_damage_tests(evaluate, weather, random_engine);
 	bellyzard_vs_defensive(evaluate, weather, random_engine);
+	hippopotas_vs_wobbuffet(evaluate, weather, random_engine);
 	
 	std::cout << "Evaluate tests passed.\n\n";
 }
