@@ -74,19 +74,19 @@ struct Weather {
 
 	auto blocks_status(Statuses status) const -> bool;
 
-	constexpr auto hash() const noexcept {
+	constexpr friend auto hash(Weather const weather) noexcept {
 		// There are a lot of illegal values (such as sun having 4 turns left
 		// and rain having 3 turns left), and so it should be possible to write
 		// a collision-free hash for weather that needs a much smaller range.
-		return technicalmachine::hash(
-			m_trick_room,
-			m_fog,
-			m_gravity,
-			m_uproar,
-			m_hail,
-			m_sun,
-			m_sand,
-			m_rain
+		return hash(
+			weather.m_trick_room,
+			weather.m_fog,
+			weather.m_gravity,
+			weather.m_uproar,
+			weather.m_hail,
+			weather.m_sun,
+			weather.m_sand,
+			weather.m_rain
 		);
 	}
 
@@ -122,9 +122,5 @@ private:
 	Standard m_sand = 0_bi;
 	Standard m_rain = 0_bi;
 };
-
-constexpr auto hash(Weather const weather) noexcept {
-	return weather.hash();
-}
 
 }	// namespace technicalmachine

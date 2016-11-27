@@ -79,14 +79,14 @@ struct Team {
 	void clear_field();
 	void move(bool value = true);
 
-	auto hash() const noexcept {
-		return technicalmachine::hash(
-			m_all_pokemon,
-			m_flags,
-			entry_hazards,
-			screens,
-			wish
-		).first;
+	friend auto hash(Team const & team) noexcept {
+		return hash(
+			team.m_all_pokemon,
+			team.m_flags,
+			team.entry_hazards,
+			team.screens,
+			team.wish
+		);
 	}
 	friend bool operator== (Team const & lhs, Team const & rhs);
 
