@@ -28,31 +28,31 @@ namespace technicalmachine {
 
 auto operator+(MoveIterator const lhs, MoveIterator::difference_type const rhs) -> MoveIterator {
 	using RegularDistance = RegularMoveContainer::const_iterator::difference_type;
-	static constexpr auto regular_max = static_cast<intmax_t>(std::numeric_limits<RegularMoveSize>::max());
-	auto const distance = static_cast<bounded::integer<-regular_max, regular_max>>(std::distance(lhs.m_regular, lhs.m_regular_end));
-	return (distance > rhs) ?
-		MoveIterator(lhs.m_regular + static_cast<RegularDistance>(rhs), lhs.m_regular_end, lhs.m_shared) :
-		MoveIterator(lhs.m_regular_end, lhs.m_regular_end, lhs.m_shared + static_cast<SharedMovesIterator::difference_type>(rhs - distance));
+	using range_t = MoveIterator::range_t;
+	return (size(lhs.m_regular) > rhs) ?
+		MoveIterator(range_t(lhs.m_regular.begin() + static_cast<RegularDistance>(rhs), lhs.m_regular.end()), lhs.m_shared) :
+		MoveIterator(range_t(lhs.m_regular.end(), lhs.m_regular.end()), lhs.m_shared + static_cast<SharedMovesIterator::difference_type>(rhs - size(lhs.m_regular)));
 }
 auto operator-(MoveIterator const lhs, MoveIterator const rhs) -> MoveIterator::difference_type {
 	// The +-1 accounts for the one-past-the-end index.
 	using RegularMoveDifference = decltype(std::declval<RegularMoveIndex>() - std::declval<RegularMoveIndex>() + std::declval<bounded::integer<-1, 1>>());
-	return (lhs.m_shared - rhs.m_shared) + static_cast<RegularMoveDifference>(lhs.m_regular - rhs.m_regular);
+	return (lhs.m_shared - rhs.m_shared) + static_cast<RegularMoveDifference>(lhs.m_regular.begin() - rhs.m_regular.begin());
 }
 
 auto operator==(MoveIterator const lhs, MoveIterator const rhs) noexcept -> bool {
-	return lhs.m_regular == rhs.m_regular and lhs.m_shared == rhs.m_shared;
+	return lhs.m_regular.begin() == rhs.m_regular.begin() and lhs.m_shared == rhs.m_shared;
 }
 auto operator<(MoveIterator const lhs, MoveIterator const rhs) noexcept -> bool {
-	return lhs.m_regular < rhs.m_regular or lhs.m_shared < rhs.m_shared;
+	return lhs.m_regular.begin() < rhs.m_regular.begin() or lhs.m_shared < rhs.m_shared;
 }
 
 MoveContainer::MoveContainer(TeamSize const my_team_size):
-	m_shared(my_team_size) {
+	m_shared(my_team_size)
+{
 }
 
 auto MoveContainer::number_of_regular_moves() const -> RegularMoveSize {
-	return static_cast<RegularMoveSize>(containers::size(m_regular));
+	return static_cast<RegularMoveSize>(size(m_regular));
 }
 
 auto MoveContainer::remove_switch() -> void {

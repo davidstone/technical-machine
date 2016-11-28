@@ -23,6 +23,7 @@
 #include "shared.hpp"
 
 #include "../operators.hpp"
+#include "../range.hpp"
 
 #include <bounded/integer.hpp>
 #include <bounded/integer_range.hpp>
@@ -47,7 +48,7 @@ public:
 	using iterator_category = std::random_access_iterator_tag;
 
 	auto operator*() const -> value_type {
-		return (m_regular != m_regular_end) ? *m_regular : *m_shared;
+		return (m_regular.begin() != m_regular.end()) ? *m_regular.begin() : *m_shared;
 	}
 	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
 
@@ -58,15 +59,14 @@ public:
 	friend auto operator<(MoveIterator const lhs, MoveIterator const rhs) noexcept -> bool;
 
 private:
+	using range_t = Range<RegularMoveContainer::const_iterator>;
 	friend struct MoveContainer;
-	MoveIterator(RegularMoveContainer::const_iterator regular, RegularMoveContainer::const_iterator regular_end, SharedMovesIterator shared) noexcept:
+	MoveIterator(range_t regular, SharedMovesIterator shared) noexcept:
 		m_regular(std::move(regular)),
-		m_regular_end(std::move(regular_end)),
 		m_shared(std::move(shared)) {
 	}
 	
-	RegularMoveContainer::const_iterator m_regular;
-	RegularMoveContainer::const_iterator m_regular_end;
+	range_t m_regular;
 	SharedMovesIterator m_shared;
 };
 
@@ -81,24 +81,18 @@ struct MoveContainer {
 	explicit MoveContainer(TeamSize my_team_size);
 	
 	// Skips Struggle and switches
-	auto regular_begin() const {
-		return begin(m_regular);
+	auto regular() const {
+		return make_range(begin(m_regular), end(m_regular));
 	}
-	auto regular_begin() {
-		return begin(m_regular);
-	}
-	auto regular_end() const {
-		return end(m_regular);
-	}
-	auto regular_end() {
-		return end(m_regular);
+	auto regular() {
+		return make_range(begin(m_regular), end(m_regular));
 	}
 	
 	friend const_iterator begin(MoveContainer const & container) {
-		return const_iterator(container.regular_begin(), container.regular_end(), begin(container.m_shared));
+		return const_iterator(container.regular(), begin(container.m_shared));
 	}
 	friend const_iterator end(MoveContainer const & container) {
-		return const_iterator(container.regular_end(), container.regular_end(), end(container.m_shared));
+		return const_iterator(MoveIterator::range_t(container.regular().end(), container.regular().end()), end(container.m_shared));
 	}
 
 	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS

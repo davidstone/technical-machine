@@ -1,5 +1,5 @@
 // Range struct
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TECHNICALMACHINE_RANGE_HPP_
-#define TECHNICALMACHINE_RANGE_HPP_
+#pragma once
 
 #include <utility>
 
@@ -28,7 +27,8 @@ struct Range {
 	using iterator = Iterator;
 	constexpr Range(iterator first, iterator last):
 		m_first(std::move(first)),
-		m_last(std::move(last)) {
+		m_last(std::move(last))
+	{
 	}
 	constexpr auto begin() const {
 		return m_first;
@@ -52,4 +52,3 @@ constexpr auto make_range(Iterator first, Iterator last) {
 }
 
 }	// namespace technicalmachine
-#endif	// TECHNICALMACHINE_RANGE_HPP_

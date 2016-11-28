@@ -35,13 +35,8 @@ using namespace bounded::literal;
 struct MoveCollection : detail::Collection<MoveContainer> {
 	explicit MoveCollection(TeamSize my_team_size);
 	
-	auto regular() const {
-		return make_range(regular_begin(), regular_end());
-	}
-	auto regular() {
-		return make_range(regular_begin(), regular_end());
-	}
-
+	using detail::Collection<MoveContainer>::regular;
+	
 	auto add(Moves move, Pp::pp_ups_type pp_ups = 3_bi) -> void;
 	using MoveContainer::remove_switch;
 };
