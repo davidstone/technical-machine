@@ -182,8 +182,6 @@ inline auto shed_skin_probability(ActivePokemon const pokemon) {
 	return get_ability(pokemon).can_clear_status(get_status(pokemon)) ? 0.3 : 0.0;
 }
 
-auto lower_pp(MutableActivePokemon user, Ability target) -> void;
-
 auto has_switched(ActivePokemon const pokemon) -> bool;
 
 inline auto awaken_probability(ActivePokemon const pokemon) {

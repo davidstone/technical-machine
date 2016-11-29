@@ -171,12 +171,6 @@ auto MutableActivePokemon::use_lock_on() -> void {
 	m_flags.locked_on = true;
 }
 
-auto lower_pp(MutableActivePokemon user, Ability const target) -> void {
-	if (is_regular(current_move(user)) and !is_locked_in_to_bide(user)) {
-		regular_move(all_moves(user)).decrement_pp(target);
-	}
-}
-
 auto MutableActivePokemon::activate_magnet_rise() -> void {
 	m_flags.magnet_rise.activate();
 }

@@ -118,6 +118,16 @@ auto calls_other_move(Moves const move) {
 	}
 }
 
+auto & regular_move(MoveCollection & moves) {
+	return *(begin(moves.regular()) + RegularMoveIndex(moves.index()));
+}
+
+auto lower_pp(MutableActivePokemon user, Ability const target) {
+	if (is_regular(current_move(user)) and !is_locked_in_to_bide(user)) {
+		regular_move(all_moves(user)).decrement_pp(target);
+	}
+}
+
 }	// namespace
 
 auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const missed, bool const awakens, bool const critical_hit, bool const damage_is_known) -> void {
