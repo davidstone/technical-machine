@@ -131,13 +131,15 @@ auto lower_pp(MutableActivePokemon user, Ability const target) {
 }	// namespace
 
 auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const missed, bool const awakens, bool const critical_hit, bool const damage_is_known) -> void {
-	user.pokemon().update_before_move();
-	if (!can_execute_move(user.pokemon(), target.pokemon(), weather, awakens)) {
+	auto user_pokemon = user.pokemon();
+	auto target_pokemon = target.pokemon();
+	user_pokemon.update_before_move();
+	if (!can_execute_move(user_pokemon, target_pokemon, weather, awakens)) {
 		return;
 	}
-	lower_pp(user.pokemon(), get_ability(target.pokemon()));
-	if (calls_other_move(current_move(user.pokemon()))) {
-		call_other_move(user.pokemon());
+	lower_pp(user_pokemon, get_ability(target_pokemon));
+	if (calls_other_move(current_move(user_pokemon))) {
+		call_other_move(user_pokemon);
 	}
 	if (!missed) {
 		use_move(user, target, weather, variable, critical_hit, damage_is_known);
