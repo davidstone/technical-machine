@@ -1,5 +1,5 @@
 // Common functionality for flags that are advanced at the end of the turn
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include "../hash.hpp"
 #include "../operators.hpp"
 
 #include <bounded/optional.hpp>
@@ -65,9 +64,6 @@ struct EndOfTurnCounter {
 		return lhs.m_turns_active == rhs.m_turns_active;
 	}
 	
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_turns_active);
-	}
 private:
 	constexpr auto advance_one_turn_impl() {
 		if (m_turns_active and *m_turns_active != bounded::constant<max_turns>) {
@@ -80,10 +76,5 @@ private:
 	using Counter = bounded::optional<bounded::integer<0, max_turns>>;
 	Counter m_turns_active = bounded::none;
 };
-
-template<intmax_t max_turns, CounterOperations... operations>
-constexpr auto hash(EndOfTurnCounter<max_turns, operations...> const flag) noexcept {
-	return flag.hash();
-}
 
 }	// namespace technicalmachine

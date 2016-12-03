@@ -1,5 +1,5 @@
 // Handles bide damage and when it activates
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,7 +21,6 @@
 #include "damage.hpp"
 #include "duration.hpp"
 
-#include "../hash.hpp"
 #include "../operators.hpp"
 #include "../stat/hp.hpp"
 
@@ -32,17 +31,10 @@ struct Bide {
 	auto activate() -> void;
 	auto add_damage(damage_type damage) -> void;
 	auto decrement() -> damage_type;
-	constexpr auto hash() const noexcept {
-		return ::technicalmachine::hash(m_damage, m_duration);
-	}
 	friend auto operator== (Bide lhs, Bide rhs) -> bool ;
 private:
 	BideDamage m_damage;
 	BideDuration m_duration;
 };
-
-constexpr auto hash(Bide const bide) noexcept {
-	return bide.hash();
-}
 
 }	// namespace technicalmachine

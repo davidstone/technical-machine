@@ -1,5 +1,5 @@
 // Collection of moves with index indicating current move
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -40,10 +40,6 @@ struct MoveCollection : detail::Collection<MoveContainer> {
 	auto add(Moves move, Pp::pp_ups_type pp_ups = 3_bi) -> void;
 	using MoveContainer::remove_switch;
 };
-
-inline auto hash(MoveCollection const & collection) noexcept {
-	return hash_range<RegularMoveSize>(begin(collection.regular()), end(collection.regular()));
-}
 
 auto index(MoveCollection const & moves, Moves name) -> bounded::optional<RegularMoveIndex>;
 auto set_index(MoveCollection & moves, Moves name) -> void;

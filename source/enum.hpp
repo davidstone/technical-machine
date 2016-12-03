@@ -1,5 +1,5 @@
 // Utility to make enum -> bounded::integer conversion easier
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,8 +17,6 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-
-#include "hash.hpp"
 
 #include <bounded/integer.hpp>
 
@@ -73,12 +71,6 @@ public:
 	using base::signaling_NaN;
 	using base::denorm_min;
 };
-
-template<typename Enum>
-constexpr auto hash(Enum const e) noexcept {
-	static_assert(std::is_enum<Enum>::value, "Only usable with enum types.");
-	return hash(bounded::make(e));
-}
 
 template<typename Enum>
 struct std_hash {

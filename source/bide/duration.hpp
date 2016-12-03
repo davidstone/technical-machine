@@ -1,5 +1,5 @@
 // Handles when Bide activates
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include "../hash.hpp"
 #include "../operators.hpp"
 
 #include <bounded/integer.hpp>
@@ -33,17 +32,9 @@ struct BideDuration {
 	auto decrement() -> bool;
 	friend auto operator== (BideDuration const & lhs, BideDuration const & rhs) -> bool;
 
-	// Declare as member functions to work around gcc 4.9.0 bug
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_turns_active);
-	}
 private:
 	static constexpr auto max = 1;
 	bounded::optional<bounded::integer<0, max>> m_turns_active = bounded::none;
 };
-
-constexpr auto hash(BideDuration const duration) noexcept {
-	return duration.hash();
-}
 
 }	// namespace technicalmachine

@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include "../hash.hpp"
 #include "../operators.hpp"
 #include "../rational.hpp"
 
@@ -32,18 +31,11 @@ struct Toxic {
 		return make_rational(-m_counter, 16_bi);
 	}
 	friend auto operator==(Toxic lhs, Toxic rhs) -> bool;
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_counter);
-	}
 private:
 	friend struct Evaluate;
 	// Number of turns this Pokemon has already taken Toxic damage (or
 	// would have if Magic Guard / Poison Heal weren't in play)
 	bounded::clamped_integer<0, 15> m_counter = 0_bi;
 };
-
-constexpr auto hash(Toxic const toxic) noexcept {
-	return toxic.hash();
-}
 
 }	// namespace technicalmachine

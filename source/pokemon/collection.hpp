@@ -23,7 +23,6 @@
 #include "pokemon.hpp"
 
 #include "../collection.hpp"
-#include "../hash.hpp"
 
 #include <bounded/integer.hpp>
 
@@ -81,11 +80,6 @@ private:
 	// The actual size of the foe's team, not just the Pokemon I've seen
 	TeamSize true_size;
 };
-
-inline auto hash(PokemonCollection const & collection) noexcept {
-	return hash_combine(hash(collection.real_size()), hash_range<TeamSize>(begin(collection), end(collection)));
-}
-
 
 
 }	// namespace technicalmachine

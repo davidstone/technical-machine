@@ -18,7 +18,6 @@
 #pragma once
 
 #include "enum.hpp"
-#include "hash.hpp"
 #include "operators.hpp"
 #include "rational.hpp"
 
@@ -75,9 +74,6 @@ struct Status {
 	using AwakenProbability = double;
 	auto awaken_probability(Ability const & ability) const -> AwakenProbability;
 
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(name(), m_turns_already_slept);
-	}
 private:
 	// TODO: Implement this with std::variant
 	using SleepCounter = bounded::optional<bounded::integer<0, 4>>;
@@ -96,9 +92,5 @@ auto lowers_speed(Status status, Ability const & ability) -> bool;
 auto weakens_physical_attacks(Status status) -> bool;
 auto boosts_facade(Status status) -> bool;
 auto boosts_smellingsalt(Status status) -> bool;
-
-constexpr auto hash(Status const status) noexcept {
-	return status.hash();
-}
 
 }	// namespace technicalmachine

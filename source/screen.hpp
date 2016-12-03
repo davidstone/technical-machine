@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include "hash.hpp"
 #include "operators.hpp"
 
 #include <bounded/integer.hpp>
@@ -63,11 +62,6 @@ private:
 	// Explicit call to constructor needed for workaround to gcc 4.9.0 bug.
 	duration_type m_turns_remaining = duration_type(0_bi);
 };
-
-template<intmax_t normal_duration, intmax_t max_duration>
-constexpr auto hash(Screen<normal_duration, max_duration> const screen) noexcept {
-	return hash(bounded::integer<0, max_duration - 1>(screen.turns_remaining()));
-}
 
 template<intmax_t normal_duration, intmax_t max_duration>
 auto operator==(Screen<normal_duration, max_duration> const & lhs, Screen<normal_duration, max_duration> const & rhs) -> bool {

@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include "../hash.hpp"
 #include "../operators.hpp"
 
 #include <bounded/integer.hpp>
@@ -40,16 +39,9 @@ struct LastUsedMove {
 	auto metronome_boost() const -> bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
 	friend auto operator==(LastUsedMove lhs, LastUsedMove rhs) -> bool;
 
-	constexpr auto hash() const noexcept {
-		return ::technicalmachine::hash(m_index_of_move, m_consecutive_turns_used);
-	}
 private:
 	bounded::optional<index_type> m_index_of_move = bounded::none;
 	bounded::clamped_integer<0, 10> m_consecutive_turns_used = 0_bi;
 };
-
-constexpr auto hash(LastUsedMove const last_used_move) noexcept {
-	return last_used_move.hash();
-}
 
 }	// namespace technicalmachine

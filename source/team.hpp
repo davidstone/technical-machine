@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -79,15 +79,6 @@ struct Team {
 	void clear_field();
 	void move(bool value = true);
 
-	friend auto hash(Team const & team) noexcept {
-		return hash(
-			team.m_all_pokemon,
-			team.m_flags,
-			team.entry_hazards,
-			team.screens,
-			team.wish
-		);
-	}
 	friend bool operator== (Team const & lhs, Team const & rhs);
 
 private:

@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include "hash.hpp"
 #include "operators.hpp"
 
 #include <bounded/optional.hpp>
@@ -38,11 +37,5 @@ private:
 	using counter_type = bounded::checked_integer<0, 1>;
 	bounded::optional<counter_type> m_turns_until_activation = bounded::none;
 };
-
-// This is sufficient because hashing only has to distinguish end-of-turn
-// conditions.
-constexpr auto hash(Wish const wish) noexcept {
-	return hash(wish.is_active());
-}
 
 }	// namespace technicalmachine

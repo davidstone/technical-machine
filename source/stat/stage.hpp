@@ -18,7 +18,6 @@
 #pragma once
 
 #include "stat_names.hpp"
-#include "../hash.hpp"
 #include "../operators.hpp"
 #include "../rational.hpp"
 
@@ -63,10 +62,6 @@ struct Stage {
 private:
 	container_type m_stages;
 };
-
-constexpr auto hash(Stage const stage) noexcept {
-	return hash_range<Stage::container_type::size_type>(begin(stage), end(stage));
-}
 
 namespace detail {
 

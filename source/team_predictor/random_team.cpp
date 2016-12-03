@@ -30,6 +30,7 @@
 #include <bounded/integer_range.hpp>
 
 #include <containers/array/make_array.hpp>
+#include <containers/algorithms/accumulate.hpp>
 
 #include <algorithm>
 #include <numeric>

@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include "../hash.hpp"
 #include "../operators.hpp"
 
 #include <bounded/integer.hpp>
@@ -34,9 +33,6 @@ struct Confusion {
 	auto hit_self() -> void;
 	auto end_of_turn_reset() -> void;
 	friend bool operator== (Confusion const & lhs, Confusion const & rhs);
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_turns_spent_confused);
-	}
 private:
 	auto increment() -> void;
 	friend struct Evaluate;
@@ -44,9 +40,5 @@ private:
 	bounded::optional<bounded::integer<0, max_duration>> m_turns_spent_confused = bounded::none;
 	bool m_is_hitting_self = false;
 };
-
-constexpr auto hash(Confusion const confusion) noexcept {
-	return confusion.hash();
-}
 
 }	// namespace technicalmachine

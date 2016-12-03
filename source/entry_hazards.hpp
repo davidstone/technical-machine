@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include "hash.hpp"
 #include "operators.hpp"
 
 #include <bounded/integer.hpp>
@@ -49,10 +48,6 @@ private:
 	bounded::clamped_integer<0, 2> m_toxic_spikes = 0_bi;
 	bool m_stealth_rock = false;
 };
-
-constexpr auto hash(EntryHazards const hazards) noexcept {
-	return hash(hazards.spikes(), hazards.stealth_rock(), hazards.toxic_spikes());
-}
 
 auto operator==(EntryHazards lhs, EntryHazards rhs) -> bool;
 

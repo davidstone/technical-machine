@@ -117,53 +117,6 @@ struct ActivePokemonFlags {
 	auto reset_switch() -> void;
 
 	friend auto operator==(ActivePokemonFlags const & lhs, ActivePokemonFlags const & rhs) -> bool;
-	auto hash() const noexcept {
-		return technicalmachine::hash(
-			substitute,
-			bide,
-			confusion,
-			disable,
-			embargo,
-			last_used_move,
-			stage,
-			aqua_ring,
-			attracted,
-			charged,
-			is_cursed,
-			defense_curled,
-			destiny_bond,
-			encore,
-			flash_fire,
-			has_focused_energy,
-			fully_trapped,
-			gastro_acid,
-			heal_block,
-			identified,
-			used_imprison,
-			ingrained,
-			leech_seeded,
-			is_loafing_turn,
-			locked_on,
-			magnet_rise,
-			minimized,
-			mud_sport,
-			is_having_a_nightmare,
-			partial_trap,
-			perish_song,
-			power_trick_is_active,
-			rampage,
-			is_recharging,
-			slow_start,
-			stockpile,
-			taunt,
-			is_tormented,
-			toxic,
-			uproar,
-			vanish,
-			water_sport,
-			yawn
-		);
-	}
 
 private:
 	friend struct ActivePokemon;
@@ -226,9 +179,5 @@ private:
 	bool u_turning = false;
 	bool water_sport = false;
 };
-
-inline auto hash(ActivePokemonFlags const & flags) noexcept {
-	return flags.hash();
-}
 
 }	// namespace technicalmachine

@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include "hash.hpp"
 #include "operators.hpp"
 #include "screen.hpp"
 
@@ -61,17 +60,6 @@ private:
 	SafeguardEffect m_safeguard;
 	TailwindEffect m_tailwind;
 };
-
-constexpr auto hash(Screens const screens) noexcept {
-	return hash(
-		screens.light_screen(),
-		screens.reflect(),
-		screens.lucky_chant(),
-		screens.mist(),
-		screens.safeguard(),
-		screens.tailwind()
-	);
-}
 
 auto operator==(Screens const & lhs, Screens const & rhs) -> bool;
 

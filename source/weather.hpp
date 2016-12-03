@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include "hash.hpp"
 #include "operators.hpp"
 #include "status.hpp"
 
@@ -73,23 +72,6 @@ struct Weather {
 	auto activate_rain(bool is_extended) -> void;
 
 	auto blocks_status(Statuses status) const -> bool;
-
-	constexpr friend auto hash(Weather const weather) noexcept {
-		// There are a lot of illegal values (such as sun having 4 turns left
-		// and rain having 3 turns left), and so it should be possible to write
-		// a collision-free hash for weather that needs a much smaller range.
-		return hash(
-			weather.m_trick_room,
-			weather.m_fog,
-			weather.m_gravity,
-			weather.m_uproar,
-			weather.m_hail,
-			weather.m_sun,
-			weather.m_sand,
-			weather.m_rain
-		);
-	}
-
 
 	friend auto operator==(Weather lhs, Weather rhs) -> bool;
 private:

@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include "../hash.hpp"
 #include "../operators.hpp"
 
 #include "../move/moves.hpp"
@@ -44,9 +43,6 @@ public:
 	auto shadow_force() -> bool;
 
 	auto doubles_move_power(Moves move) const -> bool;
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(bounded::integer<0, static_cast<std::intmax_t>(VanishTypes::end) - 1>(m_state, bounded::non_check));
-	}
 	friend auto operator== (Vanish lhs, Vanish rhs) -> bool;
 private:
 	auto doubles_ground_power() const -> bool;
@@ -57,9 +53,5 @@ private:
 	
 	VanishTypes m_state = VanishTypes::none;
 };
-
-constexpr auto hash(Vanish const vanish) noexcept {
-	return vanish.hash();
-}
 
 }	// namespace technicalmachine

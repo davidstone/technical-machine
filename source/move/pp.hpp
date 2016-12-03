@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,7 +19,6 @@
 
 #include "moves.hpp"
 
-#include "../hash.hpp"
 #include "../operators.hpp"
 
 #include <bounded/optional.hpp>
@@ -44,13 +43,6 @@ struct Pp {
 	// Pokemon
 	friend auto operator== (Pp const & lhs, Pp const & rhs) -> bool;
 
-	// I have to declare these as member functions to work around gcc 4.9.0 bug
-	auto hash() const noexcept {
-		return std::make_pair(
-			::technicalmachine::hash(m_current).first,
-			BOUNDED_CONDITIONAL(m_max, *m_max + 1_bi, 1_bi)
-		);
-	}
 private:
 	using base_type = bounded::integer<1, 40>;
 	using max_type = decltype(std::declval<base_type>() * (std::declval<pp_ups_type>() + 5_bi) / 5_bi);
@@ -59,9 +51,5 @@ private:
 	bounded::optional<max_type> m_max;
 	bounded::optional<current_type> m_current;
 };
-
-inline auto hash(Pp const pp) noexcept {
-	return pp.hash();
-}
 
 }	// namespace technicalmachine

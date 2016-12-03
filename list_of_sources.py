@@ -189,7 +189,6 @@ misc_sources = [
 	'enum.cpp',
 	'enum_range.cpp',
 	'gender.cpp',
-	'hash.cpp',
 	'heal.cpp',
 	'item.cpp',
 	'invalid_settings_file.cpp',

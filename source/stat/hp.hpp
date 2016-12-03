@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -74,10 +74,6 @@ auto operator==(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
 template<intmax_t min, intmax_t max, typename overflow>
 auto operator==(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
 	return rhs == lhs.current();
-}
-
-inline auto hash(HP const hp) noexcept {
-	return std::make_pair(hp.current(), hp.max());
 }
 
 }	// namespace technicalmachine

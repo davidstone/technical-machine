@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,7 +18,6 @@
 #pragma once
 
 #include "../damage.hpp"
-#include "../hash.hpp"
 #include "../operators.hpp"
 #include "../stat/hp.hpp"
 
@@ -32,17 +31,9 @@ struct BideDamage {
 	auto release() -> damage_type;
 	friend auto operator== (BideDamage lhs, BideDamage rhs) -> bool;
 	
-	// Work around gcc 4.9.0 bug
-	constexpr auto hash() const noexcept {
-		return ::technicalmachine::hash(m_damage);
-	}
 private:
 	// This is the greatest range that matters since anything more is overkill
 	bounded::clamped_integer<0, (HP::max_value + 1) / 2> m_damage = 0_bi;
 };
-
-constexpr auto hash(BideDamage const damage) noexcept {
-	return damage.hash();
-}
 
 }	// namespace technicalmachine

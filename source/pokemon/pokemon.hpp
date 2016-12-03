@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -186,15 +186,6 @@ inline Happiness get_happiness(Pokemon const & pokemon) {
 
 inline void switch_in(Pokemon & pokemon) {
 	pokemon.m_has_been_seen = true;
-}
-
-
-inline auto hash(Pokemon const & pokemon) noexcept {
-	auto const species = static_cast<Species>(pokemon);
-	auto const status = get_status(pokemon);
-	auto const item = get_item(pokemon);
-	auto const hp = get_hp(pokemon);
-	return hash(species, status, item, hp, pokemon.has_been_seen(), all_moves(pokemon));
 }
 
 

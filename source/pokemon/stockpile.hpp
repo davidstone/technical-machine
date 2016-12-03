@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include "../hash.hpp"
 #include "../operators.hpp"
 #include "../rational.hpp"
 
@@ -35,9 +34,6 @@ struct Stockpile {
 	// for stat boosts.
 	auto release() -> bounded::integer<0, max>;
 	auto spit_up_power() const -> bounded::integer<0, max * 100>;
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_level);
-	}
 	friend auto operator==(Stockpile lhs, Stockpile rhs) -> bool;
 private:
 	friend struct Evaluate;
@@ -46,10 +42,5 @@ private:
 
 using SwallowHealing = bounded_rational<bounded::integer<1, 1>, bounded::integer<1, 4>>;
 auto swallow_healing(bounded::checked_integer<1, Stockpile::max> stockpiles) -> SwallowHealing;
-
-constexpr auto hash(Stockpile const stockpile) noexcept {
-	return stockpile.hash();
-}
-
 
 }	// namespace technicalmachine

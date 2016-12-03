@@ -1,5 +1,5 @@
 // Which Move is disabled and for how long
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include "../hash.hpp"
 #include "../operators.hpp"
 #include "../move/max_moves_per_pokemon.hpp"
 
@@ -31,18 +30,11 @@ struct Disable {
 	auto activate(RegularMoveIndex index_of_disabled_move) -> void;
 	auto advance_one_turn() -> void;
 	auto move_is_disabled(RegularMoveIndex index_of_move_to_check) const -> bool;
-	constexpr auto hash() const noexcept {
-		return technicalmachine::hash(m_index_of_disabled_move, m_turns_disabled);
-	}
 	friend auto operator==(Disable lhs, Disable rhs) -> bool;
 private:
 	bounded::optional<RegularMoveIndex> m_index_of_disabled_move = bounded::none;
 	using TurnCount = bounded::integer<0, 7>;
 	TurnCount m_turns_disabled = 0_bi;
 };
-
-constexpr auto hash(Disable const disable) noexcept {
-	return disable.hash();
-}
 
 }	// namespace technicalmachine

@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -54,9 +54,5 @@ auto is_damaging(Moves move) -> bool;
 auto is_phaze(Moves name) -> bool;
 
 auto is_usable_while_frozen(Moves move) -> bool;
-
-inline auto hash(Move const move) noexcept {
-	return hash(static_cast<Moves>(move), move.pp());
-}
 
 }	// namespace technicalmachine

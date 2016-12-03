@@ -20,7 +20,6 @@
 #include <algorithm>
 
 #include "ability.hpp"
-#include "hash.hpp"
 #include "weather.hpp"
 
 #include "pokemon/pokemon.hpp"

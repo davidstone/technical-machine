@@ -1,5 +1,5 @@
 // Iterate over all values of an enum
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include "hash.hpp"
 #include "operators.hpp"
 
 #include <bounded/integer_range.hpp>
