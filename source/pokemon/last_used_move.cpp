@@ -34,8 +34,12 @@ auto LastUsedMove::was_used_last(index_type const index_of_move) const -> bool {
 }
 
 auto LastUsedMove::increment(index_type const index_of_move) -> void {
-	m_index_of_move = index_of_move;
-	++m_consecutive_turns_used;
+	if (m_index_of_move == index_of_move) {
+		++m_consecutive_turns_used;
+	} else {
+		m_index_of_move = index_of_move;
+		m_consecutive_turns_used = 1_bi;
+	}
 }
 
 auto LastUsedMove::fury_cutter_power() const -> bounded::integer<10, 160> {
