@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,15 +19,10 @@
 
 #include "moves.hpp"
 
-#include <stdexcept>
+#include <cassert>
 
 namespace technicalmachine {
 using namespace bounded::literal;
-namespace {
-
-struct InvalidMove: std::exception {};
-
-}	// namespace
 
 auto base_power(Moves const move) -> bounded::optional<bounded::integer<0, 250>> {
 	// It doesn't matter if variable_power happens to have the same value as
@@ -600,7 +595,7 @@ auto base_power(Moves const move) -> bounded::optional<bounded::integer<0, 250>>
 		case Moves::V_create: return 180_bi;
 		case Moves::Fusion_Flare: return 100_bi;
 		case Moves::Fusion_Bolt: return 100_bi;
-		default: throw InvalidMove{};
+		default: assert(false);
 	}
 }
 

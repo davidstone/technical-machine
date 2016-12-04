@@ -1,5 +1,5 @@
 // Accuracy functions
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,15 +20,10 @@
 
 #include "moves.hpp"
 
-#include <stdexcept>
+#include <cassert>
 
 namespace technicalmachine {
 using namespace bounded::literal;
-namespace {
-
-struct InvalidMove : std::exception {};
-
-}	// namespace
 
 auto accuracy(Moves const move) -> BaseAccuracy {
 	using bounded::none;
@@ -599,7 +594,7 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::V_create: return 95_bi;
 		case Moves::Fusion_Flare: return 100_bi;
 		case Moves::Fusion_Bolt: return 100_bi;
-		default: throw InvalidMove{};
+		default: assert(false);
 	}
 }
 

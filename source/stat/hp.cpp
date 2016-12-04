@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,8 +20,6 @@
 #include "../pokemon/level.hpp"
 #include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
-
-#include <stdexcept>
 
 namespace technicalmachine {
 namespace {
@@ -73,8 +71,6 @@ auto set_hp_ev(Pokemon & pokemon, EV const ev, IV const iv) -> void {
 }
 
 namespace {
-
-struct InvalidSpecies: std::exception {};
 
 auto get_base(Species const species) -> base_type {
 	switch (species) {
@@ -756,7 +752,7 @@ auto get_base(Species const species) -> base_type {
 		case Species::Meloetta: return 100_bi;
 		// case Species::Meloetta_Pirouette: return 100_bi;
 		case Species::Genesect: return 71_bi;
-		default: throw InvalidSpecies{};
+		default: assert(false);
 	}
 }
 

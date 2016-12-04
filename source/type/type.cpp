@@ -27,7 +27,6 @@
 #include <containers/algorithms/accumulate.hpp>
 
 #include <algorithm>
-#include <stdexcept>
 
 namespace technicalmachine {
 
@@ -78,8 +77,6 @@ auto hidden_power_type(Pokemon const & pokemon) {
 	static_assert(std::numeric_limits<decltype(index)>::max() == size(lookup) - 1_bi, "Incorrect maximum index.");
 	return lookup[index];
 }
-
-struct InvalidMove : std::exception {};
 
 }	// namespace
 
@@ -651,7 +648,7 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::V_create: return Type::Fire;
 		case Moves::Fusion_Flare: return Type::Fire;
 		case Moves::Fusion_Bolt: return Type::Electric;
-		default : throw InvalidMove{};
+		default : assert(false);
 	}
 }
 

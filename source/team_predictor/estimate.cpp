@@ -30,17 +30,8 @@
 #include <algorithm>
 #include <cstddef>
 #include <random>
-#include <stdexcept>
 
 namespace technicalmachine {
-namespace {
-struct InvalidRandomSpecies : std::logic_error {
-	InvalidRandomSpecies():
-		std::logic_error("Random species selection is invalid.")
-		{
-	}
-};
-}	// namespace
 
 Estimate::Estimate(Overall const & overall, Lead const & lead, unsigned const total) {
 	for (auto const species : enum_range<Species>) {
@@ -68,7 +59,7 @@ Species Estimate::most_likely() const {
 }
 
 Species Estimate::random(std::mt19937 & random_engine) const {
-	auto const total = containers::accumulate(begin(estimate), end(estimate), 0.0F);
+	auto const total = containers::accumulate(begin(estimate), end(estimate));
 	std::uniform_real_distribution<float> distribution(0.0F, total);
 	auto usage_threshold = distribution(random_engine);
 	
@@ -76,9 +67,7 @@ Species Estimate::random(std::mt19937 & random_engine) const {
 		usage_threshold -= value;
 		return usage_threshold <= 0.0F;
 	});
-	if (it == end(estimate)) {
-		throw InvalidRandomSpecies();
-	}
+	assert(it != end(estimate));
 	return static_cast<Species>(it - begin(estimate));
 }
 

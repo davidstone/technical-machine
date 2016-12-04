@@ -1,5 +1,5 @@
 // Move power calculator
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -45,7 +45,6 @@
 #include <algorithm>
 #include <cassert>
 #include <numeric>
-#include <stdexcept>
 
 namespace technicalmachine {
 namespace {
@@ -315,10 +314,6 @@ auto is_boosted_by_griseous_orb(Species const species) -> bool {
 auto is_boosted_by_lustrous_orb(Species const species) -> bool {
 	return species == Species::Giratina_Origin;
 }
-
-namespace {
-struct InvalidSpecies : std::exception {};
-}	// namespace
 
 auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 120> {
 	switch (species) {
@@ -998,7 +993,7 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Keldeo: return 60_bi;
 		case Species::Meloetta: return 20_bi;
 		case Species::Genesect: return 80_bi;
-		default: throw InvalidSpecies{};
+		default: assert(false);
 	}
 }
 

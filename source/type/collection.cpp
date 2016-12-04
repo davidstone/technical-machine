@@ -26,8 +26,6 @@
 #include "../pokemon/pokemon.hpp"
 #include "../pokemon/species.hpp"
 
-#include <stdexcept>
-
 namespace technicalmachine {
 using namespace detail_type_collection;
 
@@ -120,8 +118,6 @@ auto grounded(Pokemon const & pokemon, Weather const weather) -> bool {
 
 
 namespace {
-
-struct InvalidSpecies : std::exception {};
 
 auto get_type(Species const name) -> TypeArray {
 	switch (name) {
@@ -811,7 +807,7 @@ auto get_type(Species const name) -> TypeArray {
 		case Species::Meloetta: return {Type::Normal, Type::Psychic};
 		// case Species::Meloetta_Pirouette: return {Type::Normal, Type::Fighting};
 		case Species::Genesect: return {Type::Bug, Type::Steel};
-		default: throw InvalidSpecies{};
+		default: assert(false);
 	}
 }
 

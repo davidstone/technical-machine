@@ -1,5 +1,5 @@
 // Stat data structure (Attack, Defense, Special Attack, Special Defense, Speed)
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -720,7 +720,7 @@ constexpr auto get_base(Species const species, stat_tag<StatNames::ATK>) -> Stat
 		// case Species::Meloetta (Pirouette form): return 128_bi;
 		case Species::Genesect: return 120_bi;
 
-		default: throw InvalidEnum<Species>(species);
+		default: assert(false);
 	}
 }
 
@@ -1405,7 +1405,7 @@ constexpr auto get_base(Species const species, stat_tag<StatNames::DEF>) -> Stat
 		// case Species::Meloetta (Pirouette form): return 90_bi;
 		case Species::Genesect: return 95_bi;
 
-		default: throw InvalidEnum<Species>(species);
+		default: assert(false);
 	}
 }
 
@@ -2090,7 +2090,7 @@ constexpr auto get_base(Species const species, stat_tag<StatNames::SPA>) -> Stat
 		// case Species::Meloetta (Pirouette form): return 77_bi;
 		case Species::Genesect: return 120_bi;
 
-		default: throw InvalidEnum<Species>(species);
+		default: assert(false);
 	}
 }
 
@@ -2775,7 +2775,7 @@ constexpr auto get_base(Species const species, stat_tag<StatNames::SPD>) -> Stat
 		// case Species::Meloetta (Pirouette form): return 77_bi;
 		case Species::Genesect: return 95_bi;
 
-		default: throw InvalidEnum<Species>(species);
+		default: assert(false);
 	}
 }
 
@@ -3460,7 +3460,7 @@ constexpr auto get_base(Species const species, stat_tag<StatNames::SPE>) -> Stat
 		// case Species::Meloetta (Pirouette form): return 128_bi;
 		case Species::Genesect: return 99_bi;
 
-		default: throw InvalidEnum<Species>(species);
+		default: assert(false);
 	}
 }
 
@@ -3471,7 +3471,7 @@ constexpr auto get_base(Species const species, StatNames const stat) -> Stat::ba
 		case StatNames::SPA: return get_base(species, stat_tag<StatNames::SPA>{});
 		case StatNames::SPD: return get_base(species, stat_tag<StatNames::SPD>{});
 		case StatNames::SPE: return get_base(species, stat_tag<StatNames::SPE>{});
-		default: throw InvalidEnum<StatNames>(stat);
+		default: assert(false);
 	}
 }
 
