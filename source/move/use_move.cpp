@@ -1060,7 +1060,7 @@ auto do_effects_before_moving(Pokemon & user, Team & target) {
 
 
 auto calculate_real_damage(Team const & user, Team const & target, Weather const weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) {
-	return damage_is_known ? damaged(target.pokemon()) : damage_calculator(user, target, weather, variable, critical_hit);
+	return damage_is_known ? static_cast<damage_type>(damaged(target.pokemon())) : damage_calculator(user, target, weather, variable, critical_hit);
 }
 
 
