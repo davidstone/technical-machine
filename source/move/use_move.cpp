@@ -1071,22 +1071,12 @@ auto do_effects_before_moving(Pokemon & user, Team & target) {
 }
 
 
-auto calculate_real_damage(Team const & user, Team const & target, Weather const weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) -> damage_type {
-	if (!is_damaging(current_move(user.pokemon()))) {
-		return 0_bi;
-	}
-	if (damage_is_known) {
-		return damaged(target.pokemon());
-	}
-
-	return damage_calculator(user, target, weather, variable, critical_hit);
+auto calculate_real_damage(Team const & user, Team const & target, Weather const weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) {
+	return damage_is_known ? damaged(target.pokemon()) : damage_calculator(user, target, weather, variable, critical_hit);
 }
 
 
 auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_type const damage) {
-	if (damage == 0_bi) {
-		return;
-	}
 	target.direct_damage(damage);
 	if (causes_recoil(get_item(user))) {
 		heal(user, make_rational(-1_bi, 10_bi));
@@ -1104,11 +1094,15 @@ auto use_move(Team & user, Team & target, Weather & weather, Variable const & va
 
 	do_effects_before_moving(user.pokemon(), target);
 
-	auto const damage = calculate_real_damage(user, target, weather, variable, critical_hit, damage_is_known);
-	do_damage(user.pokemon(), target.pokemon(), damage);
-	user.pokemon().increment_move_use_counter();
-
-	do_side_effects(user, target, weather, variable, damage);
+	if (is_damaging(move)) {
+		auto const damage = calculate_real_damage(user, target, weather, variable, critical_hit, damage_is_known);
+		do_damage(user.pokemon(), target.pokemon(), damage);
+		user.pokemon().increment_move_use_counter();
+		do_side_effects(user, target, weather, variable, damage);
+	} else {
+		user.pokemon().increment_move_use_counter();
+		do_side_effects(user, target, weather, variable, 0_bi);
+	}
 }
 
 
