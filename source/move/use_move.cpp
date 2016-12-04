@@ -193,20 +193,12 @@ auto swap_items(Pokemon & user, Pokemon & target) {
 }
 
 
-auto tri_attack_status(Pokemon & user, Pokemon & target, Weather const weather, Variable const & variable) {
+auto tri_attack_status(Variable const & variable) {
 	switch (variable.value.value()) {
-		case 1:
-			apply(Statuses::burn, user, target, weather);
-			break;
-		case 2:
-			apply(Statuses::freeze, user, target, weather);
-			break;
-		case 3:
-			apply(Statuses::paralysis, user, target, weather);
-			break;
-		default:
-			assert(false);
-			break;
+		case 1: return Statuses::burn;
+		case 2: return Statuses::freeze;
+		case 3: return Statuses::paralysis;
+		default: assert(false);
 	}
 }
 
@@ -957,7 +949,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 		case Moves::Transform:		// Fix
 			break;
 		case Moves::Tri_Attack:
-			tri_attack_status(user, target.pokemon(), weather, variable);
+			apply(tri_attack_status(variable), user, target.pokemon(), weather);
 			break;
 		case Moves::Trick_Room:
 			weather.activate_trick_room();
