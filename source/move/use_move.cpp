@@ -364,13 +364,11 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 				apply(Statuses::paralysis, user, target.pokemon(), weather);
 			}
 			break;
-		case Moves::Bounce: {
-			bool const vanished = user.bounce();
-			if (vanished and effect_activates(variable)) {
+		case Moves::Bounce:
+			if (user.bounce() and effect_activates(variable)) {
 				apply(Statuses::paralysis, user, target.pokemon(), weather);
 			}
 			break;
-		}
 		case Moves::Brave_Bird:
 		case Moves::Double_Edge:
 		case Moves::Wood_Hammer:
@@ -645,11 +643,9 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 			break;
 		case Moves::Healing_Wish:		// Fix
 			break;
-		case Moves::Heart_Swap: {
-			using std::swap;
-			swap(stage(user), stage(target.pokemon()));
+		case Moves::Heart_Swap:
+			std::swap(stage(user), stage(target.pokemon()));
 			break;
-		}
 		case Moves::Hi_Jump_Kick:		// Fix
 		case Moves::Jump_Kick:
 			break;
