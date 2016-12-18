@@ -75,7 +75,7 @@ struct MutableActivePokemon {
 	operator ActivePokemon() const {
 		return ActivePokemon(m_pokemon, m_flags);
 	}
-	operator Pokemon & () {
+	operator Pokemon & () const {
 		return m_pokemon;
 	}
 	operator Species() const {
