@@ -33,9 +33,6 @@ void switch_pokemon(Team & switcher_team, Team & other, Weather & weather, TeamI
 	switcher_team.reset_switch();
 
 	if (get_hp(switcher_team.pokemon()) != 0_bi) {
-		if (get_ability(switcher_team.pokemon()).clears_status_on_switch()) {
-			get_status(switcher_team.pokemon()) = Status{};
-		}
 		switcher_team.all_pokemon().set_index(replacement);
 	} else {
 		switcher_team.all_pokemon().remove_active(replacement);
