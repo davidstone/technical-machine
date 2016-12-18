@@ -29,26 +29,28 @@
 
 namespace technicalmachine {
 
-void switch_pokemon(Team & switcher, Team & other, Weather & weather, TeamIndex const replacement) {
-	switcher.reset_switch();
+void switch_pokemon(Team & switcher_team, Team & other, Weather & weather, TeamIndex const replacement) {
+	switcher_team.reset_switch();
 
-	if (get_hp(switcher.pokemon()) != 0_bi) {
-		if (get_ability(switcher.pokemon()).clears_status_on_switch()) {
-			get_status(switcher.pokemon()) = Status{};
+	if (get_hp(switcher_team.pokemon()) != 0_bi) {
+		if (get_ability(switcher_team.pokemon()).clears_status_on_switch()) {
+			get_status(switcher_team.pokemon()) = Status{};
 		}
-		switcher.all_pokemon().set_index(replacement);
+		switcher_team.all_pokemon().set_index(replacement);
 	} else {
-		switcher.all_pokemon().remove_active(replacement);
+		switcher_team.all_pokemon().remove_active(replacement);
 		// If the last Pokemon is fainted; there is nothing left to do.
-		if (empty(switcher.all_pokemon())) {
+		if (empty(switcher_team.all_pokemon())) {
 			return;
 		}
 	}
-	apply(switcher.entry_hazards, switcher.pokemon(), weather);
-	if (get_hp(switcher.pokemon()) != 0_bi) {
-		Ability::activate_on_switch(switcher.pokemon(), other.pokemon(), weather);
+
+	auto const switcher = switcher_team.pokemon();
+	apply(switcher_team.entry_hazards, switcher, weather);
+	if (get_hp(switcher) != 0_bi) {
+		Ability::activate_on_switch(switcher, other.pokemon(), weather);
 	}
-	switch_in(switcher.pokemon());
+	switch_in(switcher);
 }
 
 }	// namespace technicalmachine
