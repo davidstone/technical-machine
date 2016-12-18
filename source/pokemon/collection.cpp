@@ -23,13 +23,11 @@
 namespace technicalmachine {
 
 void PokemonCollection::remove_active(containers::index_type<PokemonCollection> const index_of_replacement) {
-	assert(index() != index_of_replacement);
-	containers::erase(static_cast<PokemonContainer &>(*this), begin(*this) + index());
+	auto const original_index = index();
+	assert(original_index != index_of_replacement);
+	containers::erase(static_cast<PokemonContainer &>(*this), begin(*this) + original_index);
 	--true_size;
-	// We don't need any bounds checking here because we've already established
-	// that index_of_replacement is greater than index(), so it cannot be 0,
-	// which is the only value that could get this out of bounds.
-	set_index((index() > index_of_replacement) ?
+	set_index((index_of_replacement < original_index) ?
 		index_of_replacement :
 		containers::index_type<PokemonCollection>(index_of_replacement - 1_bi, bounded::non_check)
 	);
