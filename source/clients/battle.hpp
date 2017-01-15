@@ -1,5 +1,5 @@
 // Generic battle
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2017 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -85,6 +85,25 @@ protected:
 	void handle_item_message(Party party, Item item);
 	void slot_memory_bring_to_front();
 private:
+	struct BattleTeam {
+		struct Flags {
+			bool awakens = false;
+			bool critical_hit = false;
+			bool miss = false;
+			bool shed_skin = false;
+		};
+		
+		template<typename... Args>
+		BattleTeam(Args && ... args):
+			team(std::forward<Args>(args)...)
+		{
+		}
+
+		Team team;
+		Variable variable;
+		Flags flags;
+	};
+
 	Battle(std::string opponent, TeamSize foe_size, unsigned battle_depth, std::tuple<std::mt19937, Team> tuple);
 
 	Moves determine_action(DetailedStats const & detailed, Evaluate const & evaluate);
@@ -95,35 +114,25 @@ private:
 	MaxVisibleHPChange max_visible_hp_change(bool my_pokemon, Pokemon const & changer) const;
 	void do_turn();
 	void update_from_previous_turn();
-	Team const & get_team(Party party) const;
-	Team & get_team(Party party);
-	Variable const & variable(Team const & team) const;
-	Variable & variable(Team const & team);
-	void register_damage();
 
-	struct Flags {
-		bool awakens = false;
-		bool critical_hit = false;
-		bool miss = false;
-		bool shed_skin = false;
-	};
-	auto & get_flags(Team const & team) {
-		return bounded::addressof(team) == bounded::addressof(ai) ? ai_flags : foe_flags;
+	auto const & get_team(Party const party) const {
+		return is_me(party) ? ai : foe;
 	}
+	auto & get_team(Party const party) {
+		return is_me(party) ? ai : foe;
+	}
+
+	void register_damage();
 
 	std::string opponent_name;
 	mutable std::mt19937 random_engine;
-	Team ai;
-	Team foe;
+	BattleTeam ai;
+	BattleTeam foe;
 	containers::static_vector<Species, static_cast<intmax_t>(max_pokemon_per_team)> slot_memory;
 	UpdatedHP updated_hp;
 	Weather weather;
-	Team * first;
-	Team * last;
-	Variable ai_variable;
-	Variable foe_variable;
-	Flags ai_flags;
-	Flags foe_flags;
+	BattleTeam * first;
+	BattleTeam * last;
 	unsigned depth;
 	bool move_damage;
 	Party my_party;
