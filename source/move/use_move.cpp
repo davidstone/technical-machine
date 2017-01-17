@@ -1097,6 +1097,8 @@ auto use_move(Team & user, Team & target, Weather & weather, Variable const & va
 }	// namespace
 
 auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const missed, bool const awakens, bool const critical_hit, bool const damage_is_known) -> void {
+	assert(!moved(user.pokemon()));
+	user.move();
 	auto user_pokemon = user.pokemon();
 	auto target_pokemon = target.pokemon();
 	user_pokemon.update_before_move();
