@@ -44,8 +44,34 @@ auto all_ones_array() {
 	std::fill(begin(all_ones), end(all_ones), 1.0F);
 	return all_ones;
 }
-void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier);
-void predict_move(MoveCollection & moves, DetailedStats::UsedMoves const & detailed);
+
+void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier) {
+	auto const index = team.all_pokemon().index();
+	while (team.number_of_seen_pokemon() < team.size()) {
+		Species const name = estimate.most_likely();
+		Level const level(100_bi);
+		Gender const gender(Gender::GENDERLESS);
+		team.add_pokemon(name, level, gender);
+		if (team.number_of_seen_pokemon() == team.size())
+			break;
+		estimate.update(multiplier, name);
+	}
+	team.all_pokemon().set_index(index);
+}
+
+void predict_move(MoveCollection & moves, DetailedStats::UsedMoves const & detailed) {
+	for (Moves const move : detailed) {
+		auto const regular = moves.regular();
+		if (size(regular) == max_moves_per_pokemon) {
+			break;
+		}
+		if (containers::any_equal(begin(regular), end(regular), move)) {
+			continue;
+		}
+		moves.add(move);
+	}
+}
+
 
 }	// namespace
 
@@ -76,34 +102,4 @@ Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & ran
 	return team;
 }
 
-namespace {
-
-void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier) {
-	auto const index = team.all_pokemon().index();
-	while (team.number_of_seen_pokemon() < team.size()) {
-		Species const name = estimate.most_likely();
-		Level const level(100_bi);
-		Gender const gender(Gender::GENDERLESS);
-		team.add_pokemon(name, level, gender);
-		if (team.number_of_seen_pokemon() == team.size())
-			break;
-		estimate.update(multiplier, name);
-	}
-	team.all_pokemon().set_index(index);
-}
-
-void predict_move(MoveCollection & moves, DetailedStats::UsedMoves const & detailed) {
-	for (Moves const move : detailed) {
-		auto const regular = moves.regular();
-		if (size(regular) == max_moves_per_pokemon) {
-			break;
-		}
-		if (containers::any_equal(begin(regular), end(regular), move)) {
-			continue;
-		}
-		moves.add(move);
-	}
-}
-
-}	// namespace
 }	// namespace technicalmachine
