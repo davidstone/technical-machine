@@ -136,7 +136,7 @@ constexpr auto generic_probability(std::index_sequence<indexes...>, Args... prob
 
 template<typename... Args>
 constexpr auto generic_probability(Args... probabilities) noexcept {
-	return generic_probability(containers::detail::make_index_sequence<sizeof...(probabilities)>{}, probabilities...);
+	return generic_probability(containers::detail::make_index_sequence(bounded::constant<sizeof...(probabilities)>), probabilities...);
 }
 
 template<typename Count>
