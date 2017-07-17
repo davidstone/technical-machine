@@ -288,14 +288,13 @@ double end_of_turn_branch(Team first, Team last, Weather weather, unsigned depth
 }
 
 
-double end_of_turn_order_branch(Team const & team, Team const & other, Team const * first, Team const * last, Weather const weather, unsigned depth, Evaluate const & evaluate, ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
-	bool const speed_tie = (first == nullptr);
+double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, unsigned depth, Evaluate const & evaluate, ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
 	auto get_flag = [&](auto const & match) {
 		return bounded::addressof(match) == bounded::addressof(team) ? team_flag : other_flag;
 	};
-	return speed_tie ?
+	return !faster ?
 		(end_of_turn_branch(team, other, weather, depth, evaluate, team_flag, other_flag) + end_of_turn_branch(other, team, weather, depth, evaluate, other_flag, team_flag)) / 2.0 :
-		end_of_turn_branch(*first, *last, weather, depth, evaluate, get_flag(*first), get_flag(*last));
+		end_of_turn_branch(faster->first, faster->second, weather, depth, evaluate, get_flag(faster->first), get_flag(faster->second));
 }
 
 
@@ -319,7 +318,7 @@ double use_move_branch(Team & first, Team & last, Variable const & first_variabl
 	// Partially apply some arguments to the function so it has the expected
 	// signature
 	auto const end_of_turn_order = [teams](Team const & team, Team const & other, Weather const weather_, unsigned depth_, Evaluate const & evaluate_, ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
-		return end_of_turn_order_branch(team, other, teams.first, teams.second, weather_, depth_, evaluate_, team_flag, other_flag);
+		return end_of_turn_order_branch(team, other, teams, weather_, depth_, evaluate_, team_flag, other_flag);
 	};
 	return generic_flag_branch<ShedSkinFlag>(first, last, weather, depth, evaluate, first_flags, last_flags, shed_skin_probability, end_of_turn_order);
 }
@@ -423,8 +422,7 @@ double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate 
 
 
 BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, bool first_turn) {
-	auto const teams = faster_pokemon(ai, foe, weather);
-	bool const speed_tie = (teams.first == nullptr);
+	auto const faster = faster_pokemon(ai, foe, weather);
 	unsigned const tabs = first_turn ? 0 : 2;
 	auto best_move = Moves{};
 	auto alpha = static_cast<double>(-victory - 1_bi);
@@ -445,9 +443,9 @@ BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsig
 			auto get_replacement = [&](Team const & team) {
 				return bounded::addressof(team) == bounded::addressof(ai) ? ai_replacement : foe_replacement;
 			};
-			beta = std::min(beta, speed_tie ?
+			beta = std::min(beta, !faster ?
 				(fainted(ai, foe, weather, depth, evaluate, ai_replacement, foe_replacement) + fainted(foe, ai, weather, depth, evaluate, ai_replacement, foe_replacement)) / 2.0 :
-				fainted(*teams.first, *teams.second, weather, depth, evaluate, get_replacement(*teams.first), get_replacement(*teams.second))
+				fainted(faster->first, faster->second, weather, depth, evaluate, get_replacement(faster->first), get_replacement(faster->second))
 			);
 			if (beta <= alpha) {
 				break;
@@ -534,12 +532,10 @@ double accuracy_branch(Team const & first, Team const & last, Weather const weat
 
 
 double order_branch(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const & evaluate) {
-	// Determine turn order
-	auto teams = order(ai, foe, weather); 
-	bool const speed_tie = (teams.first == nullptr);
-	return speed_tie ?
+	auto ordered = order(ai, foe, weather);
+	return !ordered ?
 		(accuracy_branch(ai, foe, weather, depth, evaluate) + accuracy_branch(foe, ai, weather, depth, evaluate)) / 2.0 :
-		accuracy_branch(*teams.first, *teams.second, weather, depth, evaluate);
+		accuracy_branch(ordered->first.team, ordered->second.team, weather, depth, evaluate);
 }
 
 

@@ -52,7 +52,14 @@ auto calculate_special_defense(ActivePokemon defender, Weather weather, bool cri
 
 using speed_type = bounded::integer<1, 12096>;
 auto calculate_speed(Team const & team, Weather weather) -> speed_type;
-auto order(Team const & team1, Team const & team2, Weather weather) -> std::pair<Team const *, Team const *>;
-auto faster_pokemon(Team const & team1, Team const & team2, Weather weather) -> std::pair<Team const *, Team const *>;
+
+struct OrderElement {
+	Team const & team;
+};
+using Order = bounded::optional<std::pair<OrderElement, OrderElement>>;
+auto order(Team const & team1, Team const & team2, Weather weather) -> Order;
+
+using Faster = bounded::optional<std::pair<Team const &, Team const &>>;
+auto faster_pokemon(Team const & team1, Team const & team2, Weather weather) -> Faster;
 
 }	// namespace technicalmachine

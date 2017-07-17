@@ -386,40 +386,45 @@ auto calculate_speed(Team const & team, Weather const weather) -> speed_type {
 	return static_cast<speed_type>(bounded::max(speed, 1_bi));
 }
 
-auto order(Team const & team1, Team const & team2, Weather const weather) -> std::pair<Team const *, Team const *> {
+auto order(Team const & team1, Team const & team2, Weather const weather) -> Order {
 	Priority const priority1(current_move(team1.pokemon()));
 	Priority const priority2(current_move(team2.pokemon()));
 
-	if (priority1 == priority2) {
-		return faster_pokemon(team1, team2, weather);
-	} else if (priority1 > priority2) {
-		return { bounded::addressof(team1), bounded::addressof(team2) };
-	} else {	// if (priority1 < priority2)
-		return { bounded::addressof(team2), bounded::addressof(team1) };
+	if (priority1 > priority2) {
+		return Order(bounded::in_place, OrderElement{team1}, OrderElement{team2});
+	} else if (priority1 < priority2) {
+		return Order(bounded::in_place, OrderElement{team2}, OrderElement{team1});
+	} else if (auto const ordered = faster_pokemon(team1, team2, weather)) {
+		return Order(bounded::in_place, OrderElement{ordered->first}, OrderElement{ordered->second});
+	} else {
+		return bounded::none;
 	}
 }
 
 namespace {
 
-auto faster_pokemon_before_trick_room(Team const & team1, Team const & team2, Weather const weather) -> std::pair<Team const *, Team const *> {
+auto faster_pokemon_before_trick_room(Team const & team1, Team const & team2, Weather const weather) -> Faster {
 	auto const speed1 = calculate_speed(team1, weather);
 	auto const speed2 = calculate_speed(team2, weather);
 
 	if (speed1 > speed2) {
-		return { bounded::addressof(team1), bounded::addressof(team2) };
+		return Faster(bounded::in_place, team1, team2);
 	} else if (speed1 < speed2) {
-		return { bounded::addressof(team2), bounded::addressof(team1) };
+		return Faster(bounded::in_place, team2, team1);
 	} else {
-		return { nullptr, nullptr };
+		return bounded::none;
 	}
 }
 
 }	// namespace
 
-auto faster_pokemon(Team const & team1, Team const & team2, Weather const weather) -> std::pair<Team const *, Team const *> {
+auto faster_pokemon(Team const & team1, Team const & team2, Weather const weather) -> Faster {
 	auto result = faster_pokemon_before_trick_room(team1, team2, weather);
+	if (!result) {
+		return bounded::none;
+	}
 	if (weather.trick_room()) {
-		std::swap(result.first, result.second);
+		return Faster(bounded::in_place, result->second, result->first);
 	}
 	return result;
 }
