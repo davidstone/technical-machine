@@ -80,8 +80,8 @@ auto MutableActivePokemon::use_destiny_bond() -> void {
 	m_flags.destiny_bond = true;
 }
 
-auto MutableActivePokemon::disable() -> void {
-	if (is_regular(current_move(*this))) {
+auto MutableActivePokemon::disable(Moves const move) -> void {
+	if (is_regular(move)) {
 		m_flags.disable.activate(RegularMoveIndex(all_moves(*this).index(), bounded::non_check));
 	}
 }

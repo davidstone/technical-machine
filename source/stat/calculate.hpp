@@ -30,6 +30,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct ActivePokemon;
+enum class Moves : std::uint16_t;
 struct Team;
 struct Weather;
 
@@ -40,13 +41,13 @@ inline auto initial_stat(StatNames const stat_name, Stat const stat, Level const
 
 using attack_type = bounded::integer<1, 7368>;
 using special_attack_type = bounded::integer<1, 4536>;
-auto calculate_attacking_stat(ActivePokemon attacker, Weather weather, bool critical_hit) -> std::common_type_t<attack_type, special_attack_type>;
+auto calculate_attacking_stat(ActivePokemon attacker, Moves move, Weather weather, bool critical_hit) -> std::common_type_t<attack_type, special_attack_type>;
 auto calculate_attack(ActivePokemon attacker, Weather weather, bool critical_hit) -> attack_type;
 auto calculate_special_attack(ActivePokemon attacker, Weather weather, bool critical_hit) -> special_attack_type;
 
 using defense_type = bounded::integer<1, 3684>;
 using special_defense_type = bounded::integer<1, 3684>;
-auto calculate_defending_stat(ActivePokemon attacker, ActivePokemon defender, Weather weather, bool critical_hit) -> std::common_type_t<defense_type, special_defense_type>;
+auto calculate_defending_stat(Moves move, ActivePokemon defender, Weather weather, bool critical_hit) -> std::common_type_t<defense_type, special_defense_type>;
 auto calculate_defense(ActivePokemon defender, Weather weather, bool critical_hit = false, bool is_self_KO = false) -> defense_type;
 auto calculate_special_defense(ActivePokemon defender, Weather weather, bool critical_hit = false) -> special_defense_type;
 
@@ -57,7 +58,7 @@ struct OrderElement {
 	Team const & team;
 };
 using Order = bounded::optional<std::pair<OrderElement, OrderElement>>;
-auto order(Team const & team1, Team const & team2, Weather weather) -> Order;
+auto order(Team const & team1, Moves move1, Team const & team2, Moves move2, Weather weather) -> Order;
 
 using Faster = bounded::optional<std::pair<Team const &, Team const &>>;
 auto faster_pokemon(Team const & team1, Team const & team2, Weather weather) -> Faster;

@@ -230,7 +230,7 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8
 	
 	// TODO: I'm skeptical of this logic
 	if (other.team.number_of_seen_pokemon() != 0_bi and is_phaze(current_move(other.team.replacement()))) {
-		set_phaze_index(other.variable, switcher.team, species);
+		set_phaze_index(other.variable, switcher.team, species, current_move(switcher.team.pokemon()));
 	} else if (!moved(switcher.team.pokemon())) {
 		Pokemon & pokemon = switcher.team.pokemon(replacement);
 		all_moves(pokemon).set_index(static_cast<containers::index_type<MoveCollection>>(pokemon.index_of_first_switch() + switcher.team.all_pokemon().replacement()));
@@ -417,7 +417,7 @@ void Battle::do_turn() {
 
 		register_damage();
 		
-		call_move(first->team, last->team, weather, first->variable, first->flags.miss, first->flags.awakens, first->flags.critical_hit, damage_is_known);
+		call_move(first->team, current_move(first->team.pokemon()), last->team, weather, first->variable, first->flags.miss, first->flags.awakens, first->flags.critical_hit, damage_is_known);
 		std::cerr << "Second\n";
 		std::cerr << "AI HP: " << get_hp(ai.team.pokemon()).current() << '\n';
 		std::cerr << "Foe HP: " << get_hp(foe.team.pokemon()).current() << '\n';
@@ -427,7 +427,7 @@ void Battle::do_turn() {
 		std::cerr << "Foe HP: " << get_hp(foe.team.pokemon()).current() << '\n';
 
 		register_damage();
-		call_move(last->team, first->team, weather, last->variable, last->flags.miss, last->flags.awakens, last->flags.critical_hit, damage_is_known);
+		call_move(last->team, current_move(last->team.pokemon()), first->team, weather, last->variable, last->flags.miss, last->flags.awakens, last->flags.critical_hit, damage_is_known);
 		std::cerr << "Fourth\n";
 		std::cerr << "AI HP: " << get_hp(ai.team.pokemon()).current() << '\n';
 		std::cerr << "Foe HP: " << get_hp(foe.team.pokemon()).current() << '\n';
@@ -451,7 +451,7 @@ void Battle::do_turn() {
 		// decision point so that is already taken into account.
 		while (is_fainted(foe.team.pokemon())) {
 			set_index(all_moves(foe.team.pokemon()), to_switch(foe.team.all_pokemon().replacement()));
-			call_move(foe.team, ai.team, weather, foe.variable, false, false, false, damage_is_known);
+			call_move(foe.team, current_move(foe.team.pokemon()), ai.team, weather, foe.variable, false, false, false, damage_is_known);
 		}
 	}
 	std::cout << to_string(first->team) << '\n';

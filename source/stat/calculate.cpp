@@ -281,8 +281,8 @@ auto calculate_common_offensive_stat(ActivePokemon const pokemon, Weather const 
 
 }	// namespace
 
-auto calculate_attacking_stat(ActivePokemon const attacker, Weather const weather, bool const critical_hit) -> std::common_type_t<attack_type, special_attack_type> {
-	return is_physical(current_move(attacker)) ?
+auto calculate_attacking_stat(ActivePokemon const attacker, Moves const move, Weather const weather, bool const critical_hit) -> std::common_type_t<attack_type, special_attack_type> {
+	return is_physical(move) ?
 		calculate_attack(attacker, weather, critical_hit) :
 		calculate_special_attack(attacker, weather, critical_hit);
 }
@@ -314,9 +314,9 @@ auto is_self_KO(Moves const move) {
 
 }	// namespace
 
-auto calculate_defending_stat(ActivePokemon const attacker, ActivePokemon const defender, Weather const weather, bool const critical_hit) -> std::common_type_t<defense_type, special_defense_type> {
-	return is_physical(current_move(attacker)) ?
-		calculate_defense(defender, weather, critical_hit, is_self_KO(current_move(attacker))) :
+auto calculate_defending_stat(Moves const move, ActivePokemon const defender, Weather const weather, bool const critical_hit) -> std::common_type_t<defense_type, special_defense_type> {
+	return is_physical(move) ?
+		calculate_defense(defender, weather, critical_hit, is_self_KO(move)) :
 		calculate_special_defense(defender, weather, critical_hit);
 }
 
@@ -386,9 +386,9 @@ auto calculate_speed(Team const & team, Weather const weather) -> speed_type {
 	return static_cast<speed_type>(bounded::max(speed, 1_bi));
 }
 
-auto order(Team const & team1, Team const & team2, Weather const weather) -> Order {
-	Priority const priority1(current_move(team1.pokemon()));
-	Priority const priority2(current_move(team2.pokemon()));
+auto order(Team const & team1, Moves const move1, Team const & team2, Moves const move2, Weather const weather) -> Order {
+	auto const priority1 = Priority(move1);
+	auto const priority2 = Priority(move2);
 
 	if (priority1 > priority2) {
 		return Order(bounded::in_place, OrderElement{team1}, OrderElement{team2});

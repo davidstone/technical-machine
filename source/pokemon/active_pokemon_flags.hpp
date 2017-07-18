@@ -63,7 +63,7 @@ struct MutableActivePokemon;
 	friend auto aqua_ring_is_active(ActivePokemon pokemon) -> bool; \
 	friend auto is_baton_passing(ActivePokemon pokemon) -> bool; \
 	friend auto cannot_be_koed(ActivePokemon pokemon) -> bool; \
-	friend auto charge_boosted(ActivePokemon pokemon) -> bool; \
+	friend auto charge_boosted(ActivePokemon pokemon, Moves move) -> bool; \
 	friend auto is_confused(ActivePokemon pokemon) -> bool; \
 	friend auto is_cursed(ActivePokemon pokemon) -> bool; \
 	friend auto defense_curled(ActivePokemon pokemon) -> bool; \

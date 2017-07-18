@@ -17,12 +17,15 @@
 
 #pragma once
 
+#include "max_moves_per_pokemon.hpp"
 #include "moves.hpp"
 #include "pp.hpp"
 
 #include "../operators.hpp"
 
 #include <bounded/integer.hpp>
+
+#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -54,5 +57,8 @@ auto is_damaging(Moves move) -> bool;
 auto is_phaze(Moves name) -> bool;
 
 auto is_usable_while_frozen(Moves move) -> bool;
+
+
+using StaticVectorMove = containers::static_vector<Move, static_cast<std::intmax_t>(std::numeric_limits<MoveSize>::max())>;
 
 }	// namespace technicalmachine

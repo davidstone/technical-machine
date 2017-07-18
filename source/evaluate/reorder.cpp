@@ -20,14 +20,11 @@
 
 #include "move_scores.hpp"
 
-#include "../block.hpp"
-#include "../move/moves.hpp"
-
 #include <algorithm>
 
 namespace technicalmachine {
 
-StaticVectorMoves reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai) {
+StaticVectorMove reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai) {
 	// This takes all of a Pokemon's moves and sorts them based on previously
 	// evaluated scores. Moves that haven't been evaluated are sorted to the
 	// end. I do this because alpha-beta pruning is most efficient when the
@@ -35,7 +32,7 @@ StaticVectorMoves reorder(LegalSelections const & input, MoveScores const & move
 	// then only has to prove that further moves aren't as good as the move
 	// already searched; it is not important to know how much worse they are.
 	// Moves that cannot be selected are excluded.
-	StaticVectorMoves output(begin(input), end(input));
+	StaticVectorMove output(begin(input), end(input));
 	auto compare = [&](auto const & lhs, auto const & rhs) {
 		auto const lhs_score = move_scores.get(lhs);
 		auto const rhs_score = move_scores.get(rhs);

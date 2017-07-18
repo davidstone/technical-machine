@@ -140,8 +140,8 @@ auto equalize(HP & hp1, HP & hp2) {
 }
 
 
-auto clear_field(Team & user, Pokemon const & target) {
-	auto const type = get_type(current_move(user.pokemon()), user.pokemon());
+auto clear_field(Team & user, Moves const move, Pokemon const & target) {
+	auto const type = get_type(move, user.pokemon());
 	if (!Effectiveness(type, target).has_no_effect()) {
 		user.clear_field();
 	}
@@ -203,9 +203,8 @@ auto tri_attack_status(Variable const & variable) {
 }
 
 
-auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variable const & variable, damage_type const damage) -> void {
+auto do_side_effects(Team & user_team, Moves const move, Team & target, Weather & weather, Variable const & variable, damage_type const damage) -> void {
 	auto user = user_team.pokemon();
-	Moves const move = current_move(user);
 	switch (move) {
 		case Moves::Absorb:
 		case Moves::Drain_Punch:
@@ -499,7 +498,9 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 			user.dig();
 			break;
 		case Moves::Disable:
-			target.pokemon().disable();
+			if (moved(target.pokemon())) {
+				target.pokemon().disable(current_move(target.pokemon()));
+			}
 			break;
 		case Moves::Dive:
 			user.dive();
@@ -801,7 +802,7 @@ auto do_side_effects(Team & user_team, Team & target, Weather & weather, Variabl
 			weather.activate_rain(extends_rain(get_item(user)));
 			break;
 		case Moves::Rapid_Spin:
-			clear_field(user_team, target.pokemon());
+			clear_field(user_team, move, target.pokemon());
 			break;
 		case Moves::Razor_Wind:	// Fix
 			break;
@@ -994,8 +995,8 @@ auto & regular_move(MoveCollection & moves) {
 	return *(begin(moves.regular()) + RegularMoveIndex(moves.index()));
 }
 
-auto lower_pp(MutableActivePokemon user, Ability const target) {
-	if (is_regular(current_move(user)) and !is_locked_in_to_bide(user)) {
+auto lower_pp(MutableActivePokemon user, Move const move, Ability const target) {
+	if (is_regular(move) and !is_locked_in_to_bide(user)) {
 		regular_move(all_moves(user)).decrement_pp(target);
 	}
 }
@@ -1048,19 +1049,20 @@ constexpr auto breaks_screens(Moves const move) {
 	return move == Moves::Brick_Break;
 }
 
-auto do_effects_before_moving(Pokemon & user, Team & target) {
-	if (breaks_screens(current_move(user))) {
+auto do_effects_before_moving(Pokemon & user, Moves const move, Team & target) {
+	auto & status = get_status(user);
+	if (breaks_screens(move)) {
 		target.screens.shatter();
-	} else if (is_usable_while_frozen(current_move(user))) {
-		if (is_frozen(get_status(user))) {
-			get_status(user) = Status{};
+	} else if (is_usable_while_frozen(move)) {
+		if (is_frozen(status)) {
+			status = Status{};
 		}
 	}
 }
 
 
-auto calculate_real_damage(Team const & user, Team const & target, Weather const weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) {
-	return damage_is_known ? static_cast<damage_type>(damaged(target.pokemon())) : damage_calculator(user, target, weather, variable, critical_hit);
+auto calculate_real_damage(Team const & user, Move const move, Team const & target, Weather const weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) {
+	return damage_is_known ? static_cast<damage_type>(damaged(target.pokemon())) : damage_calculator(user, move, target, weather, variable, critical_hit);
 }
 
 
@@ -1072,45 +1074,44 @@ auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_ty
 }
 
 
-auto use_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) -> void {
-	Moves const move = current_move(user.pokemon());
+auto use_move(Team & user, Move const move, Team & target, Weather & weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) -> void {
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
 	if (get_ability(target.pokemon()).blocks_sound_moves() and is_sound_based(move) and !(move == Moves::Heal_Bell or move == Moves::Perish_Song)) {
 		return;
 	}
 
-	do_effects_before_moving(user.pokemon(), target);
+	do_effects_before_moving(user.pokemon(), move, target);
 
 	if (is_damaging(move)) {
-		auto const damage = calculate_real_damage(user, target, weather, variable, critical_hit, damage_is_known);
+		auto const damage = calculate_real_damage(user, move, target, weather, variable, critical_hit, damage_is_known);
 		do_damage(user.pokemon(), target.pokemon(), damage);
 		user.pokemon().increment_move_use_counter();
-		do_side_effects(user, target, weather, variable, damage);
+		do_side_effects(user, current_move(user.pokemon()), target, weather, variable, damage);
 	} else {
 		user.pokemon().increment_move_use_counter();
-		do_side_effects(user, target, weather, variable, 0_bi);
+		do_side_effects(user, current_move(user.pokemon()), target, weather, variable, 0_bi);
 	}
 }
 
 
 }	// namespace
 
-auto call_move(Team & user, Team & target, Weather & weather, Variable const & variable, bool const missed, bool const awakens, bool const critical_hit, bool const damage_is_known) -> void {
+auto call_move(Team & user, Move const move, Team & target, Weather & weather, Variable const & variable, bool const missed, bool const awakens, bool const critical_hit, bool const damage_is_known) -> void {
 	assert(!moved(user.pokemon()));
 	user.move();
 	auto user_pokemon = user.pokemon();
 	auto target_pokemon = target.pokemon();
 	user_pokemon.update_before_move();
-	if (!can_execute_move(user_pokemon, target_pokemon, weather, awakens)) {
+	if (!can_execute_move(user_pokemon, move, target_pokemon, weather, awakens)) {
 		return;
 	}
-	lower_pp(user_pokemon, get_ability(target_pokemon));
-	if (calls_other_move(current_move(user_pokemon))) {
+	lower_pp(user_pokemon, move, get_ability(target_pokemon));
+	if (calls_other_move(move)) {
 		call_other_move(user_pokemon);
 	}
 	if (!missed) {
-		use_move(user, target, weather, variable, critical_hit, damage_is_known);
+		use_move(user, move, target, weather, variable, critical_hit, damage_is_known);
 	}
 }
 

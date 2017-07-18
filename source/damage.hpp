@@ -22,6 +22,7 @@
 
 namespace technicalmachine {
 
+struct Move;
 struct Pokemon;
 struct Team;
 struct Variable;
@@ -29,8 +30,8 @@ struct Weather;
 
 using damage_type = bounded::equivalent_type<unsigned, bounded::throw_policy<>>;
 
-damage_type damage_calculator(Team const & attacker, Team const & defender, Weather weather, Variable const & variable, bool critical_hit);
+damage_type damage_calculator(Team const & attacker, Move move, Team const & defender, Weather weather, Variable const & variable, bool critical_hit);
 
-void recoil (Pokemon & user, damage_type damage, bounded::checked_integer<1, 4> denominator);
+void recoil(Pokemon & user, damage_type damage, bounded::checked_integer<1, 4> denominator);
 
 }	// namespace technicalmachine

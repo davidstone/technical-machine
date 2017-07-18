@@ -19,7 +19,7 @@
 #pragma once
 
 #include "move/max_moves_per_pokemon.hpp"
-#include "move/moves.hpp"
+#include "move/move.hpp"
 #include "pokemon/species_forward.hpp"
 
 #include <cstddef>
@@ -31,10 +31,10 @@ struct MutableActivePokemon;
 struct Team;
 struct Weather;
 
-struct LegalSelections : private StaticVectorMoves {
-	using StaticVectorMoves::value_type;
-	using StaticVectorMoves::size_type;
-	using StaticVectorMoves::const_iterator;
+struct LegalSelections : private StaticVectorMove {
+	using StaticVectorMove::value_type;
+	using StaticVectorMove::size_type;
+	using StaticVectorMove::const_iterator;
 
 	LegalSelections(Team const & user, ActivePokemon other, Weather weather);
 	auto species() const {
@@ -42,16 +42,16 @@ struct LegalSelections : private StaticVectorMoves {
 	}
 
 	friend constexpr auto begin(LegalSelections const & container) {
-		return begin(static_cast<StaticVectorMoves const &>(container));
+		return begin(static_cast<StaticVectorMove const &>(container));
 	}
 	friend constexpr auto end(LegalSelections const & container) {
-		return end(static_cast<StaticVectorMoves const &>(container));
+		return end(static_cast<StaticVectorMove const &>(container));
 	}
-	using StaticVectorMoves::operator[];
+	using StaticVectorMove::operator[];
 private:
 	Species m_species;
 };
 
-bool can_execute_move(MutableActivePokemon user, ActivePokemon other, Weather weather, bool awakens);
+bool can_execute_move(MutableActivePokemon user, Move move, ActivePokemon other, Weather weather, bool awakens);
 
 }	// namespace technicalmachine

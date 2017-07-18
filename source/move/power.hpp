@@ -1,5 +1,4 @@
-// Move power calculator forward declarations
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2017 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,11 +21,12 @@
 
 namespace technicalmachine {
 
+struct Move;
 struct Team;
 struct Variable;
 struct Weather;
 
 using MovePower = bounded::integer<1, 1440>;
-auto move_power(Team const & attacker, Team const & defender, Weather weather, Variable const & variable) -> MovePower;
+auto move_power(Team const & attacker, Move move, Team const & defender, Weather weather, Variable const & variable) -> MovePower;
 
 }	// namespace technicalmachine

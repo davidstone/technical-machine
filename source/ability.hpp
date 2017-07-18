@@ -115,7 +115,7 @@ using AbilityAccuracyModifier = bounded_rational<
 	bounded::integer<1, 13>,
 	bounded::integer<1, 10>
 >;
-auto ability_accuracy_modifier(ActivePokemon user) -> AbilityAccuracyModifier;
+auto ability_accuracy_modifier(ActivePokemon user, Moves move) -> AbilityAccuracyModifier;
 
 using AbilityEvasionModifier = bounded_rational<
 	bounded::integer<1, 4>,
@@ -123,7 +123,7 @@ using AbilityEvasionModifier = bounded_rational<
 >;
 auto ability_evasion_modifier(ActivePokemon target, Weather weather) -> AbilityEvasionModifier;
 
-auto attacker_ability_power_modifier(Pokemon const & attacker, Pokemon const & defender, VariableAdjustedBasePower base_power) -> bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>>;
+auto attacker_ability_power_modifier(Pokemon const & attacker, Moves move, Pokemon const & defender, VariableAdjustedBasePower base_power) -> bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>>;
 
 }	// namespace technicalmachine
 

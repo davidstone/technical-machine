@@ -46,8 +46,8 @@ auto evasion_item_modifier(Item const item) -> EvasionItemModifier;
 
 }	// namespace
 
-auto chance_to_hit(ActivePokemon const user, ActivePokemon const target, Weather const weather, bool target_moved) -> ChanceToHit {
-	auto const base_accuracy = accuracy(current_move(user));
+auto chance_to_hit(ActivePokemon const user, Moves const move, ActivePokemon const target, Weather const weather, bool target_moved) -> ChanceToHit {
+	auto const base_accuracy = accuracy(move);
 	if (!move_can_miss(user, base_accuracy, get_ability(target))) {
 		return 1.0;
 	}
@@ -58,7 +58,7 @@ auto chance_to_hit(ActivePokemon const user, ActivePokemon const target, Weather
 		modifier<StatNames::ACC>(stage(user)) *
 		modifier<StatNames::EVA>(stage(target)) *
 		accuracy_item_modifier(get_item(user), target_moved) *
-		ability_accuracy_modifier(user) *
+		ability_accuracy_modifier(user, move) *
 		evasion_item_modifier(get_item(target)) *
 		ability_evasion_modifier(target, weather) *
 		gravity_multiplier

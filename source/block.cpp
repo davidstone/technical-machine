@@ -204,8 +204,7 @@ auto is_blocked_due_to_status(MutableActivePokemon user, Moves const move, bool 
 
 }	// namespace
 
-bool can_execute_move (MutableActivePokemon user, ActivePokemon const other, Weather const weather, bool const awakens) {
-	auto const move = current_move(user);
+bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon const other, Weather const weather, bool const awakens) {
 	assert(!is_switch(move) or !is_recharging(user));
 	
 	if (is_switch(move)) {

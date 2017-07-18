@@ -1,5 +1,5 @@
 // Chance to hit calculations
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2017 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,13 +18,16 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace technicalmachine {
 
+enum class Moves : std::uint16_t;
 struct ActivePokemon;
 struct Weather;
 
 using ChanceToHit = double;
 
-auto chance_to_hit(ActivePokemon user, ActivePokemon target, Weather weather, bool target_moved) -> ChanceToHit;
+auto chance_to_hit(ActivePokemon user, Moves move, ActivePokemon target, Weather weather, bool target_moved) -> ChanceToHit;
 
 }	// namespace technicalmachine

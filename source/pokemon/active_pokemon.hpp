@@ -96,7 +96,7 @@ struct MutableActivePokemon {
 	auto curse() -> void;
 	auto defense_curl() -> void;
 	auto use_destiny_bond() -> void;
-	auto disable() -> void;
+	auto disable(Moves move) -> void;
 	auto advance_disable() -> void;
 	auto activate_embargo() -> void;
 	auto advance_embargo() -> void;
@@ -201,8 +201,8 @@ inline auto cannot_be_koed(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.enduring;
 }
 
-inline auto charge_boosted(ActivePokemon const pokemon) -> bool {
-	return pokemon.m_flags.charged and get_type(current_move(pokemon), pokemon) == Type::Electric;
+inline auto charge_boosted(ActivePokemon const pokemon, Moves const move) -> bool {
+	return pokemon.m_flags.charged and get_type(move, pokemon) == Type::Electric;
 }
 
 inline auto is_confused(ActivePokemon const pokemon) -> bool {

@@ -23,8 +23,6 @@
 
 #include <bounded/integer.hpp>
 
-#include <containers/static_vector/static_vector.hpp>
-
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -43,7 +41,5 @@ using SharedMoveIndex = bounded::checked_integer<
 >;
 
 using MoveSize = decltype(std::declval<RegularMoveSize>() + std::declval<SharedMoveSize>());
-
-using StaticVectorMoves = containers::static_vector<Moves, static_cast<std::intmax_t>(std::numeric_limits<MoveSize>::max())>;
 
 }	// namespace technicalmachine

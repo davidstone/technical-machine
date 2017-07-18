@@ -19,15 +19,12 @@
 #pragma once
 
 #include "../block.hpp"
-#include "../move/max_moves_per_pokemon.hpp"
-#include "../move/moves.hpp"
-
-#include <containers/static_vector/static_vector.hpp>
+#include "../move/move.hpp"
 
 namespace technicalmachine {
 
 struct MoveScores;
 
-StaticVectorMoves reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai);
+StaticVectorMove reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai);
 
 }	// namespace technicalmachine

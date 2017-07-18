@@ -1,5 +1,5 @@
 // Random effects of moves
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2017 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,7 @@
 #include "phazing_in_same_pokemon.hpp"
 #include "team.hpp"
 #include "move/moves.hpp"
+#include "move/is_switch.hpp"
 #include "pokemon/level.hpp"
 #include "pokemon/pokemon_not_found.hpp"
 
@@ -44,11 +45,12 @@ auto find_index(PokemonCollection const & collection, Species const species) {
 	throw PokemonNotFound(species);
 }
 
-auto get_phaze_index(Team const & team, Species const species) {
+auto get_phaze_index(Team const & team, Species const species, Moves const foe_move) {
 	assert(team.size() > 1_bi);
 	// This is required to work with my current battle implementation
 	auto const & all = team.all_pokemon();
-	auto const pokemon_index = has_switched(team.pokemon()) ? all.replacement() : all.index();
+	auto const has_switched = moved(team.pokemon()) and is_switch(foe_move);
+	auto const pokemon_index = has_switched ? all.replacement() : all.index();
 	auto const new_index = find_index(all, species);
 	if (new_index == pokemon_index) {
 		throw PhazingInSamePokemon(new_index);
@@ -58,8 +60,8 @@ auto get_phaze_index(Team const & team, Species const species) {
 
 }	// namespace
 
-auto set_phaze_index(Variable & variable, Team const & team, Species const species) -> void {
-	variable.value = get_phaze_index(team, species);
+auto set_phaze_index(Variable & variable, Team const & team, Species const species, Moves const move) -> void {
+	variable.value = get_phaze_index(team, species, move);
 }
 
 auto set_flinch(Variable & variable, bool const set) -> void {
@@ -167,8 +169,8 @@ constexpr auto const & phaze_probability(TeamSize const foe_size) {
 
 }	// namespace
 
-auto all_probabilities(ActivePokemon const pokemon, TeamSize const foe_size) -> Probabilities const & {
-	switch (current_move(pokemon)) {
+auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabilities const & {
+	switch (move) {
 		case Moves::Absorb:
 		case Moves::Acid_Armor:
 		case Moves::Acid_Spray:
