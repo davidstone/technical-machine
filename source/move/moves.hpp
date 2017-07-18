@@ -618,4 +618,4 @@ namespace std {
 template<>
 struct numeric_limits<technicalmachine::Moves> : technicalmachine::enum_numeric_limits<technicalmachine::Moves> {};
 
-}	// namespace bounded
+}	// namespace std
