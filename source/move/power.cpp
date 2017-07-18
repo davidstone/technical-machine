@@ -65,18 +65,12 @@ auto variable_adjusted_base_power(Team const & attacker_team, Team const & defen
 		case Moves::Flail:
 		case Moves::Reversal: {
 			auto const k = 64_bi * hp_ratio(attacker);
-			if (k <= 1_bi)
-				return 200_bi;
-			else if (k <= 5_bi)
-				return 150_bi;
-			else if (k <= 12_bi)
-				return 100_bi;
-			else if (k <= 21_bi)
-				return 80_bi;
-			else if (k <= 42_bi)
-				return 40_bi;
-			else
-				return 20_bi;
+			if (k <= 1_bi) return 200_bi;
+			else if (k <= 5_bi) return 150_bi;
+			else if (k <= 12_bi) return 100_bi;
+			else if (k <= 21_bi) return 80_bi;
+			else if (k <= 42_bi) return 40_bi;
+			else return 20_bi;
 		}
 		case Moves::Fling:
 			return fling_power(get_item(attacker));
