@@ -1,5 +1,5 @@
 // Test checked collections of random move effects
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -42,7 +42,7 @@ namespace technicalmachine {
 namespace {
 
 void add_pokemon(Team & team, Species species);
-void test_combinations(Team & team);
+void test_combinations(Team team);
 void phaze_in_same_pokemon(Variable & variable, Team const & team);
 void phaze_in_different_pokemon(Variable & variable, Team const & team, containers::index_type<PokemonCollection> new_index, containers::index_type<PokemonCollection> current_index, TeamSize foe_size);
 
@@ -52,24 +52,26 @@ void variable_collection_tests() {
 	std::cout << "\tRunning variable collection tests.\n";
 	Team team(max_pokemon_per_team);
 	add_pokemon(team, static_cast<Species>(1));
-	test_combinations(team);
+	test_combinations(std::move(team));
 }
 
 namespace {
 
 using bounded::to_string;
 
+constexpr auto move = Moves::Whirlwind;
+
 void add_pokemon(Team & team, Species const species) {
-	Level const level(100_bi);
-	Gender const gender(Gender::MALE);
+	auto const level = Level(100_bi);
+	auto const gender = Gender(Gender::MALE);
 	team.add_pokemon(species, level, gender);
-	all_moves(team.pokemon()).add(Moves::Whirlwind);
+	all_moves(team.pokemon()).add(move);
 }
 
-void test_combinations(Team & team) {
+void test_combinations(Team team) {
 	for (auto const foe_size : bounded::integer_range(2_bi, max_pokemon_per_team)) {
 		add_pokemon(team, static_cast<Species>(foe_size));
-		auto collection = all_probabilities(current_move(team.pokemon()), foe_size);
+		auto collection = all_probabilities(move, foe_size);
 		auto const expected = foe_size - 1_bi;
 		if (size(collection) != expected) {
 			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected) + " but got " + to_string(size(collection)));
@@ -89,7 +91,7 @@ void test_combinations(Team & team) {
 
 void phaze_in_same_pokemon(Variable & variable, Team const & team) {
 	try {
-		set_phaze_index(variable, team, team.pokemon(), current_move(team.pokemon()));
+		set_phaze_index(variable, team, team.pokemon(), move);
 		throw InvalidCollection("Can phaze in the same Pokemon.");
 	} catch (PhazingInSamePokemon const &) {
 		// Do nothing; the above operation should throw.
@@ -106,7 +108,7 @@ void phaze_in_different_pokemon(Variable & variable, Team const & team, containe
 		0_bi, 1_bi, 2_bi, 3_bi, 4_bi, bounded::none
 	);
 	try {
-		set_phaze_index(variable, team, team.pokemon(new_index), current_move(team.pokemon(new_index)));
+		set_phaze_index(variable, team, team.pokemon(new_index), move);
 		auto const expected = expected_index[current_index][new_index];
 		if (variable.value != expected)
 			throw InvalidCollection("Offsets for phazing are incorrect. Expected " + to_string(value(expected)) + " but got a result of " + to_string(variable.value) + ".");
