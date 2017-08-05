@@ -1,5 +1,5 @@
 // Collection of moves with index indicating current move
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2017 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -37,11 +37,29 @@ struct MoveCollection : detail::Collection<MoveContainer> {
 	
 	using detail::Collection<MoveContainer>::regular;
 	
-	auto add(Moves move, Pp::pp_ups_type pp_ups = 3_bi) -> void;
 	using MoveContainer::remove_switch;
+
+	template<typename... MaybePP>
+	auto & emplace_back(Moves const move, MaybePP... maybe_pp) {
+		auto const new_index = size(regular());
+		auto & result = detail::Collection<MoveContainer>::emplace_back(move, maybe_pp...);
+		set_index(static_cast<containers::index_type<MoveCollection>>(new_index));
+		return result;
+	}
 };
 
 auto index(MoveCollection const & moves, Moves name) -> bounded::optional<RegularMoveIndex>;
 auto set_index(MoveCollection & moves, Moves name) -> void;
+
+inline auto & add_seen_move(MoveCollection & moves, Moves const move) {
+	auto const regular = moves.regular();
+	auto const it = containers::find(begin(regular), end(regular), move);
+	if (it != end(regular)) {
+		moves.set_index(static_cast<containers::index_type<MoveCollection>>(it - begin(regular)));
+		return *it;
+	}
+	return moves.emplace_back(move);
+}
+
 
 }	// namespace technicalmachine

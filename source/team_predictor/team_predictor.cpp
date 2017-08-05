@@ -68,7 +68,7 @@ void predict_move(MoveCollection & moves, DetailedStats::UsedMoves const & detai
 		if (containers::any_equal(begin(regular), end(regular), move)) {
 			continue;
 		}
-		moves.add(move);
+		moves.emplace_back(move);
 	}
 }
 

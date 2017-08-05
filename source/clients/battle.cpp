@@ -173,7 +173,7 @@ void Battle::handle_use_move(Party const user, uint8_t /*slot*/, Moves move_name
 	}
 
 	active.team.move();
-	all_moves(active.team.replacement()).add(move_name);
+	add_seen_move(all_moves(active.team.replacement()), move_name);
 	if (is_damaging(move_name)) {
 		move_damage = true;
 	}

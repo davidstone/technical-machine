@@ -46,7 +46,7 @@ void move_collection_tests() {
 			throw InvalidCollection("MoveCollection has the wrong number of shared moves. Team size == " + to_string(test_size));
 		auto expected = create_regular_moves();
 		for (auto const n : bounded::integer_range(static_cast<MoveSize>(size(expected)))) {
-			collection.add(expected[n]);
+			collection.emplace_back(expected[n]);
 			if (size(collection) != shared_moves_size + n + 1_bi or size(collection) != static_cast<RegularMoveSize>(size(collection.regular())) + shared_moves_size) {
 				throw InvalidCollection("MoveCollection has the wrong number of moves. Team size == " + to_string(test_size));
 			}

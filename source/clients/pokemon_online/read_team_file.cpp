@@ -69,7 +69,8 @@ ptree::const_iterator load_moves(Pokemon & pokemon, ptree::const_iterator it) {
 		}
 		Moves const move(id_to_move(it->second.get_value<MoveID>()));
 		if (move != Moves::END) {
-			all_moves(pokemon).add(move);
+			// TODO: Throw an exception if we attempt to add the same move twice
+			add_seen_move(all_moves(pokemon), move);
 		}
 		++it;
 	}

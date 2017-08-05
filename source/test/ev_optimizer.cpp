@@ -41,7 +41,7 @@ void defensive_tests() {
 	set_stat_ev(pokemon, StatNames::SPD, EV(4_bi));
 	auto & nature = get_nature(pokemon);
 	nature = Nature::Bold;
-	all_moves(pokemon).add(Moves::Psychic);
+	all_moves(pokemon).emplace_back(Moves::Psychic);
 	
 	constexpr auto physical = true;
 	for (auto const candidate : equal_defensiveness(pokemon, physical)) {
@@ -61,8 +61,8 @@ Pokemon make_test_pokemon() {
 		set_stat_ev(pokemon, stat, EV(76_bi));
 	}
 	get_nature(pokemon) = Nature::Hardy;
-	all_moves(pokemon).add(Moves::Psychic);
-	all_moves(pokemon).add(Moves::Earthquake);
+	all_moves(pokemon).emplace_back(Moves::Psychic);
+	all_moves(pokemon).emplace_back(Moves::Earthquake);
 	return pokemon;
 }
 

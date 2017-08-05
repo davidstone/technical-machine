@@ -109,11 +109,13 @@ void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
 	team.add_pokemon(from_simulator_string(species_str), level, gender, item, ability, nature, nickname, happiness);
 	Pokemon & pokemon = team.replacement();
 	
-	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset"))
-		all_moves(pokemon).add(load_move(value.second));
-	
-	for (auto const & value : pt.get_child ("stats"))
+	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset")) {
+		// TODO: Throw an exception if we attempt to add the same move twice
+		add_seen_move(all_moves(pokemon), load_move(value.second));
+	}
+	for (auto const & value : pt.get_child ("stats")) {
 		load_stats (pokemon, value.second);
+	}
 }
 
 }	// namespace

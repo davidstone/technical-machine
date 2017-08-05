@@ -28,6 +28,7 @@
 #include <bounded/integer.hpp>
 #include <bounded/integer_range.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 #include <cassert>
@@ -97,12 +98,10 @@ struct MoveContainer {
 
 	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
 
-	template<typename... Args>
-	auto emplace_back(Args&&... args) -> void {
-		assert(containers::size(m_regular) < max_moves_per_pokemon);
-		// The only moves that are ever added are regular moves. Shared
-		// moves are just a reference to a collection at the Team level.
-		m_regular.emplace_back(std::forward<Args>(args)...);
+	template<typename... MaybePP>
+	auto & emplace_back(Moves const move, MaybePP... maybe_pp) {
+		assert(containers::none_equal(begin(m_regular), end(m_regular), move));
+		return m_regular.emplace_back(move, maybe_pp...);
 	}
 
 	auto number_of_regular_moves() const -> RegularMoveSize;

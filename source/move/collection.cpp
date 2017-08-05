@@ -33,15 +33,6 @@ MoveCollection::MoveCollection(TeamSize const my_team_size):
 	detail::Collection<MoveContainer>(my_team_size) {
 }
 
-auto MoveCollection::add(Moves move, Pp::pp_ups_type pp_ups) -> void {
-	auto it = containers::find(begin(regular()), end(regular()), move);
-	if (it == end(regular())) {
-		emplace_back(move, pp_ups);
-		it = containers::prev(end(regular()));
-	}
-	set_index(static_cast<containers::index_type<MoveCollection>>(it - begin(regular())));
-}
-
 auto set_index(MoveCollection & moves, Moves const move) -> void {
 	auto const it = containers::find(begin(moves), end(moves), move);
 	assert(it != end(moves));

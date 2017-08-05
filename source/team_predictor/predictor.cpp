@@ -116,7 +116,7 @@ struct PokemonInputValues {
 			set_stat_ev(pokemon, stat, containers::at(evs, bounded::make(stat) + 1_bi));
 		}
 		for (auto const move : moves) {
-			all_moves(pokemon).add(move);
+			all_moves(pokemon).emplace_back(move);
 		}
 	}
 private:
