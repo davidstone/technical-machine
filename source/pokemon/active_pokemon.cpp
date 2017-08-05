@@ -365,12 +365,8 @@ auto MutableActivePokemon::register_damage(damage_type const damage) -> void {
 }
 
 auto MutableActivePokemon::increment_move_use_counter() -> void {
-	if (is_regular(current_move(*this))) {
-		auto const move_index = static_cast<LastUsedMove::index_type>(all_moves(*this).index());
-		m_flags.last_used_move.increment(move_index);
-	} else {
-		m_flags.last_used_move = {};
-	}
+	auto const move = current_move(*this);
+	m_flags.last_used_move.increment(move);
 }
 
 auto operator==(ActivePokemon const lhs, ActivePokemon const rhs) -> bool {

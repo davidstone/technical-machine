@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2017 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,28 +19,66 @@
 
 #include "../operators.hpp"
 
+#include "../move/is_switch.hpp"
+#include "../move/moves.hpp"
+#include "../rational.hpp"
+
 #include <bounded/integer.hpp>
-#include <bounded/optional.hpp>
 
 namespace technicalmachine {
-template<typename Numerator, typename Denominator>
-struct bounded_rational;
 
 using namespace bounded::literal;
 
 struct LastUsedMove {
-	using index_type = bounded::checked_integer<0, 3>;
-	auto has_moved() const -> bool;
-	auto was_used_last(index_type index_of_move) const -> bool;
-	auto increment(index_type index_of_move) -> void;
-	auto fury_cutter_power() const -> bounded::integer<10, 160>;
-	auto momentum_move_power() const -> bounded::integer<30, 480>;
-	auto triple_kick_power() const -> bounded::integer<0, 30>;
-	auto metronome_boost() const -> bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
-	friend auto operator==(LastUsedMove lhs, LastUsedMove rhs) -> bool;
+	auto moved_since_switch() const {
+		return not is_switch(m_move);
+	}
+	constexpr auto was_used_last(Moves const move) const {
+		return m_move == move;
+	}
+
+	constexpr auto increment(Moves const move) {
+		if (m_move == move) {
+			++m_consecutive_turns_used;
+		} else {
+			m_move = move;
+			m_consecutive_turns_used = 1_bi;
+		}
+	}
+
+
+	constexpr auto fury_cutter_power() const {
+		// 10 * 2 ^ n
+		auto const result = 10_bi << bounded::min(m_consecutive_turns_used, 4_bi);
+		static_assert(std::is_same<decltype(result), bounded::integer<10, 160> const>{});
+		return result;
+	}
+
+	constexpr auto momentum_move_power() const {
+		auto const result = 30_bi << bounded::min(m_consecutive_turns_used, 4_bi);
+		static_assert(std::is_same<decltype(result), bounded::integer<30, 480> const>{});
+		return result;
+	}
+
+	constexpr auto triple_kick_power() const {
+		auto const result = 10_bi * bounded::min(m_consecutive_turns_used + 1_bi, 3_bi);
+		static_assert(std::is_same<decltype(result), bounded::integer<10, 30> const>{});
+		return result;
+	}
+
+	// TODO: Does Metronome boost Struggle?
+	constexpr auto metronome_boost() const {
+		return make_rational(10_bi + m_consecutive_turns_used, 10_bi);
+	}
+
+	friend auto operator==(LastUsedMove const lhs, LastUsedMove const rhs) {
+		auto tie = [](auto const value) { return std::tie(value.m_move, value.m_consecutive_turns_used); };
+		return tie(lhs) == tie(rhs);
+	}
+
 
 private:
-	bounded::optional<index_type> m_index_of_move = bounded::none;
+	Moves m_move = Moves::Switch0;
 	bounded::clamped_integer<0, 10> m_consecutive_turns_used = 0_bi;
 };
 

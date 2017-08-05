@@ -118,26 +118,16 @@ auto block2(ActivePokemon const user, Moves const move, Weather const weather) {
 			(weather.gravity() and is_blocked_by_gravity(move)));
 }
 
-auto was_used_last(ActivePokemon const pokemon, Moves const move) -> bool {
-	return last_used_move(pokemon).was_used_last(
-		static_cast<LastUsedMove::index_type>(*index(all_moves(pokemon), move))
-	);
-}
-
 auto blocked_by_torment(ActivePokemon const user, Moves const move) {
-	return is_tormented(user) and was_used_last(user, move);
+	return is_tormented(user) and last_used_move(user).was_used_last(move) and not is_switch(move) and move != Moves::Struggle;
 }
 
 auto is_locked_in(ActivePokemon const user) {
 	return is_encored(user) or is_recharging(user) or is_choice_item(get_item(user));
 }
 
-auto moved_since_switch(ActivePokemon const pokemon) -> bool {
-	return last_used_move(pokemon).has_moved();
-}
-
 auto is_locked_in_to_different_move(ActivePokemon const user, Moves const move) {
-	return moved_since_switch(user) and !was_used_last(user, move);
+	return last_used_move(user).moved_since_switch() and not last_used_move(user).was_used_last(move);
 }
 
 auto standard_move_lock_in(ActivePokemon const user, Moves const move) {
