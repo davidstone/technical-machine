@@ -1,5 +1,5 @@
 // Load Pokemon Lab teams
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -45,12 +45,6 @@ namespace technicalmachine {
 namespace pl {
 namespace {
 
-Move load_move(boost::property_tree::ptree const & pt) {
-	auto const name = from_string<Moves>(pt.get_value<std::string>());
-	auto const pp_ups = pt.get<Pp::pp_ups_type>("<xmlattr>.pp-up");
-	return Move(name, pp_ups);
-}
-
 auto lookup_stat(std::string const & name) {
 	static std::unordered_map<std::string, StatNames> const stats = {
 		{ "Atk", StatNames::ATK },
@@ -62,7 +56,7 @@ auto lookup_stat(std::string const & name) {
 	return stats.at(name);
 }
 
-static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & pt) {
+auto load_stats(Pokemon & pokemon, boost::property_tree::ptree const & pt) {
 	auto const name = pt.get<std::string>("<xmlattr>.name");
 	IV const iv(pt.get<IV::value_type>("<xmlattr>.iv"));
 	EV const ev(pt.get<EV::value_type>("<xmlattr>.ev"));
@@ -73,7 +67,7 @@ static void load_stats (Pokemon & pokemon, boost::property_tree::ptree const & p
 	}
 }
 
-Species from_simulator_string(std::string const & str) {
+auto from_simulator_string(std::string const & str) {
 	static std::unordered_map<std::string, Species> const converter = {
 		{ "Deoxys", Species::Deoxys_Mediocre },
 		{ "Deoxys-f", Species::Deoxys_Attack },
@@ -96,25 +90,27 @@ Species from_simulator_string(std::string const & str) {
 	return (it != end(converter)) ? it->second : from_string<Species>(str);
 }
 
-void load_pokemon (boost::property_tree::ptree const & pt, Team & team) {
-	auto const species_str = pt.get <std::string> ("<xmlattr>.species");
-	auto const nickname_temp = pt.get <std::string> ("nickname");
+auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
+	auto const species_str = pt.get <std::string>("<xmlattr>.species");
+	auto const nickname_temp = pt.get <std::string>("nickname");
 	auto const nickname = !nickname_temp.empty() ? nickname_temp : species_str;
-	Level const level(pt.get<bounded::checked_integer<Level::min, Level::max>>("level"));
-	Gender const gender(from_string<Gender::Genders>(pt.get<std::string>("gender")));
-	Happiness const happiness(pt.get<Happiness::value_type>("happiness"));
-	Nature const nature(from_string<Nature>(pt.get<std::string>("nature")));
-	Item const item(from_string<Item>(pt.get<std::string>("item")));
-	Ability const ability(from_string<Ability::Abilities>(pt.get<std::string>("ability")));
+	auto const level = Level(pt.get<bounded::checked_integer<Level::min, Level::max>>("level"));
+	auto const gender = Gender(from_string<Gender::Genders>(pt.get<std::string>("gender")));
+	auto const happiness = Happiness(pt.get<Happiness::value_type>("happiness"));
+	auto const nature = from_string<Nature>(pt.get<std::string>("nature"));
+	auto const item = from_string<Item>(pt.get<std::string>("item"));
+	auto const ability = Ability(from_string<Ability::Abilities>(pt.get<std::string>("ability")));
 	team.add_pokemon(from_simulator_string(species_str), level, gender, item, ability, nature, nickname, happiness);
 	Pokemon & pokemon = team.replacement();
 	
-	for (boost::property_tree::ptree::value_type const & value : pt.get_child ("moveset")) {
-		// TODO: Throw an exception if we attempt to add the same move twice
-		add_seen_move(all_moves(pokemon), load_move(value.second));
+	for (boost::property_tree::ptree::value_type const & value : pt.get_child("moveset")) {
+		auto const name = from_string<Moves>(value.second.get_value<std::string>());
+		auto const pp_ups = value.second.get<Pp::pp_ups_type>("<xmlattr>.pp-up");
+		add_seen_move(all_moves(pokemon), name, pp_ups);
 	}
-	for (auto const & value : pt.get_child ("stats")) {
-		load_stats (pokemon, value.second);
+	for (auto const & value : pt.get_child("stats")) {
+		load_stats(pokemon, value.second);
+	}
 	}
 }
 
@@ -124,10 +120,10 @@ void load_team(Team & team, boost::filesystem::path const & team_file) {
 	boost::property_tree::ptree pt;
 	read_xml(team_file.string(), pt);
 	
-	auto const all_pokemon = pt.get_child ("shoddybattle");
+	auto const all_pokemon = pt.get_child("shoddybattle");
 	team.all_pokemon().initialize_size(static_cast<TeamSize>(all_pokemon.size()));
 	for (auto const & value : all_pokemon) {
-		load_pokemon (value.second, team);
+		load_pokemon(value.second, team);
 	}
 	team.all_pokemon().reset_index();
 }
