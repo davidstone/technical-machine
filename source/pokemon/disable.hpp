@@ -1,5 +1,4 @@
-// Which Move is disabled and for how long
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2017 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +19,7 @@
 
 #include "../operators.hpp"
 #include "../move/max_moves_per_pokemon.hpp"
+#include "../move/moves.hpp"
 
 #include <bounded/optional.hpp>
 
@@ -27,12 +27,32 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct Disable {
-	auto activate(RegularMoveIndex index_of_disabled_move) -> void;
-	auto advance_one_turn() -> void;
-	auto move_is_disabled(RegularMoveIndex index_of_move_to_check) const -> bool;
-	friend auto operator==(Disable lhs, Disable rhs) -> bool;
+	constexpr auto activate(Moves const move) {
+		m_disabled_move.emplace(move);
+	}
+	constexpr auto move_is_disabled(Moves const move) const {
+		return m_disabled_move == move;
+	}
+
+	constexpr auto advance_one_turn() {
+		if (!m_disabled_move) {
+			return;
+		}
+		// TODO: update with proper probability actions
+		if (m_turns_disabled < std::numeric_limits<TurnCount>::max()) {
+			++m_turns_disabled;
+		} else {
+			*this = Disable{};
+		}
+	}
+
+	friend auto operator==(Disable const lhs, Disable const rhs) noexcept {
+		auto tie = [](auto const value) { return std::tie(value.m_turns_disabled, value.m_disabled_move); };
+		return tie(lhs) == tie(rhs);
+	}
+
 private:
-	bounded::optional<RegularMoveIndex> m_index_of_disabled_move = bounded::none;
+	bounded::optional<Moves> m_disabled_move = bounded::none;
 	using TurnCount = bounded::integer<0, 7>;
 	TurnCount m_turns_disabled = 0_bi;
 };

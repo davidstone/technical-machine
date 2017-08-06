@@ -82,7 +82,7 @@ auto MutableActivePokemon::use_destiny_bond() -> void {
 
 auto MutableActivePokemon::disable(Moves const move) -> void {
 	if (is_regular(move)) {
-		m_flags.disable.activate(RegularMoveIndex(all_moves(*this).index(), bounded::non_check));
+		m_flags.disable.activate(move);
 	}
 }
 

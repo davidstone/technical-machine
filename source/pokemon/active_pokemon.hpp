@@ -218,7 +218,7 @@ inline auto defense_curled(ActivePokemon const pokemon) -> bool {
 }
 
 inline auto is_disabled(ActivePokemon const pokemon, Moves const move_name) -> bool {
-	return pokemon.m_flags.disable.move_is_disabled(*index(all_moves(pokemon), move_name));
+	return pokemon.m_flags.disable.move_is_disabled(move_name);
 }
 
 inline auto is_encored(ActivePokemon const pokemon) -> bool {
