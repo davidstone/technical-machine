@@ -25,23 +25,6 @@
 
 namespace technicalmachine {
 
-Move::Move(Moves const move, Pp::pp_ups_type const pp_ups) :
-	m_name(move),
-	m_pp(move, pp_ups) {
-}
-
-Move::operator Moves() const {
-	return m_name;
-}
-
-auto Move::pp() const -> Pp const & {
-	return m_pp;
-}
-
-auto Move::decrement_pp(Ability const & target) -> void {
-	m_pp.decrement(target);
-}
-
 auto is_damaging(Moves const move) -> bool {
 	auto const power = base_power(move);
 	return !static_cast<bool>(power) or *power != 0_bi;

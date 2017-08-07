@@ -39,8 +39,8 @@ struct MoveCollection : detail::Collection<MoveContainer> {
 	
 	using MoveContainer::remove_switch;
 
-	template<typename... MaybePP>
-	auto & emplace_back(Moves const move, MaybePP... maybe_pp) {
+	template<typename M, typename... MaybePP>
+	auto & emplace_back(M const move, MaybePP... maybe_pp) {
 		auto const new_index = size(regular());
 		auto & result = detail::Collection<MoveContainer>::emplace_back(move, maybe_pp...);
 		set_index(static_cast<containers::index_type<MoveCollection>>(new_index));
@@ -51,14 +51,15 @@ struct MoveCollection : detail::Collection<MoveContainer> {
 auto index(MoveCollection const & moves, Moves name) -> bounded::optional<RegularMoveIndex>;
 auto set_index(MoveCollection & moves, Moves name) -> void;
 
-inline auto & add_seen_move(MoveCollection & moves, Moves const move) {
+template<typename M, typename... MaybePP>
+inline auto & add_seen_move(MoveCollection & moves, M const move, MaybePP... maybe_pp) {
 	auto const regular = moves.regular();
 	auto const it = containers::find(begin(regular), end(regular), move);
 	if (it != end(regular)) {
 		moves.set_index(static_cast<containers::index_type<MoveCollection>>(it - begin(regular)));
 		return *it;
 	}
-	return moves.emplace_back(move);
+	return moves.emplace_back(move, maybe_pp...);
 }
 
 

@@ -111,7 +111,6 @@ auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	for (auto const & value : pt.get_child("stats")) {
 		load_stats(pokemon, value.second);
 	}
-	}
 }
 
 }	// namespace

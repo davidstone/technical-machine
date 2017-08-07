@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2017 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -35,11 +35,23 @@ struct Ability;
 struct Move {
 	static constexpr auto class_name = "Move";
 	// move must not be Moves::END
-	explicit Move(Moves move, Pp::pp_ups_type pp_ups = 3_bi);
-	operator Moves() const;
+	constexpr explicit Move(Moves const move, Pp::pp_ups_type const pp_ups = 3_bi) :
+		m_name(move),
+		m_pp(move, pp_ups)
+	{
+	}
 
-	auto pp() const -> Pp const &;
-	auto decrement_pp(Ability const & target) -> void;
+	constexpr operator Moves() const {
+		return m_name;
+	}
+
+	constexpr auto pp() const {
+		return m_pp;
+	}
+
+	constexpr auto decrement_pp(Ability const & target) {
+		m_pp.decrement(target);
+	}
 
 private:
 	Moves m_name;

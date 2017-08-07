@@ -38,6 +38,8 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
+constexpr auto max_damage_physical_move = Move(Moves::Rollout);
+
 Team max_damage_physical_attacker() {
 	Team attacker(max_pokemon_per_team);
 	
@@ -45,7 +47,7 @@ Team max_damage_physical_attacker() {
 	Gender const gender(Gender::MALE);
 	attacker.add_pokemon(Species::Shuckle, level, gender);
 	Pokemon & pokemon = attacker.pokemon();
-	all_moves(pokemon).emplace_back(Moves::Rollout);
+	all_moves(pokemon).emplace_back(max_damage_physical_move);
 
 	attacker.pokemon().defense_curl();
 	for (unsigned n = 0; n != 10; ++n) {
@@ -107,7 +109,7 @@ void physical_power_test() {
 	get_item(pokemon) = Item::Rock_Incense;
 	get_ability(pokemon) = Ability::Rivalry;
 
-	auto const power = move_power(attacker, Move(Moves::Rollout), max_damage_physical_defender(), Weather{}, Variable{});
+	auto const power = move_power(attacker, max_damage_physical_move, max_damage_physical_defender(), Weather{}, Variable{});
 	check_equal(power, max_power);
 }
 
@@ -117,14 +119,14 @@ void special_power_test() {
 
 	Team attacker = max_damage_special_attacker();
 	Pokemon & pokemon = attacker.pokemon();
-	all_moves(pokemon).emplace_back(Moves::Surf);
+	auto const move = all_moves(pokemon).emplace_back(Moves::Surf);
 	get_item(pokemon) = Item::Wave_Incense;
 	get_ability(pokemon) = Ability::Torrent;
 
 	Team defender = max_damage_special_defender();
 	defender.pokemon().dive();
 
-	auto const power = move_power(attacker, Move(Moves::Surf), defender, Weather{}, Variable{});
+	auto const power = move_power(attacker, move, defender, Weather{}, Variable{});
 	check_equal(power, max_power);
 }
 
@@ -155,7 +157,7 @@ void physical_damage_test() {
 
 	Team defender = max_damage_physical_defender();
 	
-	check_equal(damage_calculator(attacker, Move(Moves::Rollout), defender, weather, Variable{}, critical_hit), max_damage);
+	check_equal(damage_calculator(attacker, max_damage_physical_move, defender, weather, Variable{}, critical_hit), max_damage);
 }
 
 void special_damage_test() {
@@ -166,7 +168,7 @@ void special_damage_test() {
 
 	Team attacker = max_damage_special_attacker();
 	Pokemon & a = attacker.pokemon();
-	all_moves(a).emplace_back(Moves::Blast_Burn);
+	auto const move = all_moves(a).emplace_back(Moves::Blast_Burn);
 	a.change_type(Type::Fire);
 
 	set_stat_ev(a, StatNames::SPA, EV(EV::max));
@@ -184,7 +186,7 @@ void special_damage_test() {
 
 	Team defender = max_damage_special_defender();
 
-	check_equal(damage_calculator(attacker, Move(Moves::Blast_Burn), defender, weather, Variable{}, critical_hit), max_damage);
+	check_equal(damage_calculator(attacker, move, defender, weather, Variable{}, critical_hit), max_damage);
 }
 
 void damage_test() {

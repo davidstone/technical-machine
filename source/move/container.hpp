@@ -98,8 +98,8 @@ struct MoveContainer {
 
 	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
 
-	template<typename... MaybePP>
-	auto & emplace_back(Moves const move, MaybePP... maybe_pp) {
+	template<typename M, typename... MaybePP>
+	auto & emplace_back(M const move, MaybePP... maybe_pp) {
 		assert(containers::none_equal(begin(m_regular), end(m_regular), move));
 		return m_regular.emplace_back(move, maybe_pp...);
 	}
