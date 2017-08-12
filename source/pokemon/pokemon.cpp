@@ -77,14 +77,6 @@ Pokemon::operator Species() const {
 }
 
 
-containers::index_type<MoveCollection> Pokemon::index_of_first_switch() const {
-	containers::index_type<MoveContainer> index = 0_bi;
-	while (!is_switch(m_moves(index))) {
-		++index;
-	}
-	return index;
-}
-
 std::string const & Pokemon::get_nickname() const {
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		return nickname;

@@ -200,6 +200,15 @@ auto switch_or_add(PokemonCollection & collection, Species const species, Args&&
 	return add_new_pokemon;
 }
 
+auto index_of_first_switch(Pokemon const & pokemon) {
+	containers::index_type<MoveContainer> index = 0_bi;
+	auto const & moves = all_moves(pokemon);
+	while (!is_switch(moves(index))) {
+		++index;
+	}
+	return index;
+}
+
 }	// namespace
 
 void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8_t /*index*/, std::string const & nickname, Species species, Gender gender, Level const level) {
@@ -233,7 +242,7 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8
 		set_phaze_index(other.variable, switcher.team, species, current_move(switcher.team.pokemon()));
 	} else if (!moved(switcher.team.pokemon())) {
 		Pokemon & pokemon = switcher.team.pokemon(replacement);
-		all_moves(pokemon).set_index(static_cast<containers::index_type<MoveCollection>>(pokemon.index_of_first_switch() + switcher.team.all_pokemon().replacement()));
+		all_moves(pokemon).set_index(static_cast<containers::index_type<MoveCollection>>(index_of_first_switch(pokemon) + switcher.team.all_pokemon().replacement()));
 	}
 }
 
