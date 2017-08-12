@@ -415,45 +415,31 @@ void Battle::do_turn() {
 		normalize_hp();
 		replacement(last->team, first->team);
 	} else {
-		std::cout << "First move: " << to_string(static_cast<Species>(first->team.pokemon())) << " uses " << to_string(current_move(first->team.pokemon())) << '\n';
-		std::cout << "Last move: " << to_string(static_cast<Species>(last->team.pokemon())) << " uses " << to_string(current_move(last->team.pokemon())) << '\n';
+		auto print_move_usage = [](auto const & name, Species const pokemon, auto const move) {
+			std::cout << name << " move: " << to_string(pokemon) << " uses " << to_string(move) << '\n';
+		};
+
+		auto const first_move = current_move(first->team.pokemon());
+		print_move_usage("First", first->team.pokemon(), first_move);
+
+		auto const last_move = current_move(last->team.pokemon());
+		print_move_usage("Last", last->team.pokemon(), last_move);
 		// Anything with recoil will mess this up
 		
 		constexpr bool damage_is_known = true;
-		std::cerr << "First\n";
-		std::cerr << "AI HP: " << get_hp(ai.team.pokemon()).current() << '\n';
-		std::cerr << "Foe HP: " << get_hp(foe.team.pokemon()).current() << '\n';
 
 		register_damage();
 		
-		call_move(first->team, current_move(first->team.pokemon()), last->team, weather, first->variable, first->flags.miss, first->flags.awakens, first->flags.critical_hit, damage_is_known);
-		std::cerr << "Second\n";
-		std::cerr << "AI HP: " << get_hp(ai.team.pokemon()).current() << '\n';
-		std::cerr << "Foe HP: " << get_hp(foe.team.pokemon()).current() << '\n';
+		call_move(first->team, first_move, last->team, weather, first->variable, first->flags.miss, first->flags.awakens, first->flags.critical_hit, damage_is_known);
 		normalize_hp(last->team);
-		std::cerr << "Third\n";
-		std::cerr << "AI HP: " << get_hp(ai.team.pokemon()).current() << '\n';
-		std::cerr << "Foe HP: " << get_hp(foe.team.pokemon()).current() << '\n';
 
 		register_damage();
-		call_move(last->team, current_move(last->team.pokemon()), first->team, weather, last->variable, last->flags.miss, last->flags.awakens, last->flags.critical_hit, damage_is_known);
-		std::cerr << "Fourth\n";
-		std::cerr << "AI HP: " << get_hp(ai.team.pokemon()).current() << '\n';
-		std::cerr << "Foe HP: " << get_hp(foe.team.pokemon()).current() << '\n';
+		call_move(last->team, last_move, first->team, weather, last->variable, last->flags.miss, last->flags.awakens, last->flags.critical_hit, damage_is_known);
 		normalize_hp(first->team);
-		std::cerr << "Fifth\n";
-		std::cerr << "AI HP: " << get_hp(ai.team.pokemon()).current() << '\n';
-		std::cerr << "Foe HP: " << get_hp(foe.team.pokemon()).current() << '\n';
 
 		register_damage();
 		end_of_turn(first->team, last->team, weather, first->flags.shed_skin, last->flags.shed_skin);
-		std::cerr << "Sixth\n";
-		std::cerr << "AI HP: " << get_hp(ai.team.pokemon()).current() << '\n';
-		std::cerr << "Foe HP: " << get_hp(foe.team.pokemon()).current() << '\n';
 		normalize_hp();
-		std::cerr << "Seventh\n";
-		std::cerr << "AI HP: " << get_hp(ai.team.pokemon()).current() << '\n';
-		std::cerr << "Foe HP: " << get_hp(foe.team.pokemon()).current() << '\n';
 		
 		// I only have to check if the foe fainted because if I fainted, I have
 		// to make a decision to replace that Pokemon. I update between each
