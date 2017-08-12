@@ -238,16 +238,21 @@ BestMove move_then_switch_branch(Team const & switcher, Team const & other, Vari
 
 
 bounded::optional<double> use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const user_flags, CriticalHitFlag const other_flags) {
-	auto const original = static_cast<Species>(user.pokemon());
-	if (moved(user.pokemon())) {
+	auto const & original_user_pokemon = user.pokemon();
+	if (moved(original_user_pokemon)) {
 		return bounded::none;
 	}
-	call_move(user, current_move(user.pokemon()), other, weather, user_variable, user_flags.miss, user_flags.awaken, user_flags.critical_hit, false);
+	auto const & original_other_pokemon = other.pokemon();
+	auto const other_move = moved(original_other_pokemon) ?
+		bounded::make_optional(current_move(original_other_pokemon)) :
+		bounded::none;
+	call_move(user, current_move(original_user_pokemon), other, other_move, weather, user_variable, user_flags.miss, user_flags.awaken, user_flags.critical_hit, false);
 	auto const user_win = Evaluate::win(user);
 	auto const other_win = Evaluate::win(other);
 	if (user_win != 0_bi or other_win != 0_bi) {
 		return static_cast<double>(user_win + other_win);
 	}
+	auto const original = static_cast<Species>(original_user_pokemon);
 	auto const current = static_cast<Species>(user.pokemon());
 	if (original == current and has_follow_up_decision(current_move(user.pokemon())) and size(user.all_pokemon()) > 1_bi) {
 		return move_then_switch_branch(

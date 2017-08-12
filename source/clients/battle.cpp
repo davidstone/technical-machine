@@ -430,11 +430,11 @@ void Battle::do_turn() {
 
 		register_damage();
 		
-		call_move(first->team, first_move, last->team, weather, first->variable, first->flags.miss, first->flags.awakens, first->flags.critical_hit, damage_is_known);
+		call_move(first->team, first_move, last->team, bounded::none, weather, first->variable, first->flags.miss, first->flags.awakens, first->flags.critical_hit, damage_is_known);
 		normalize_hp(last->team);
 
 		register_damage();
-		call_move(last->team, last_move, first->team, weather, last->variable, last->flags.miss, last->flags.awakens, last->flags.critical_hit, damage_is_known);
+		call_move(last->team, last_move, first->team, first_move, weather, last->variable, last->flags.miss, last->flags.awakens, last->flags.critical_hit, damage_is_known);
 		normalize_hp(first->team);
 
 		register_damage();
@@ -446,7 +446,7 @@ void Battle::do_turn() {
 		// decision point so that is already taken into account.
 		while (is_fainted(foe.team.pokemon())) {
 			set_index(all_moves(foe.team.pokemon()), to_switch(foe.team.all_pokemon().replacement()));
-			call_move(foe.team, current_move(foe.team.pokemon()), ai.team, weather, foe.variable, false, false, false, damage_is_known);
+			call_move(foe.team, current_move(foe.team.pokemon()), ai.team, bounded::none, weather, foe.variable, false, false, false, damage_is_known);
 		}
 	}
 	std::cout << to_string(first->team) << '\n';

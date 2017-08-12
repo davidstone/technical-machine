@@ -203,7 +203,7 @@ auto tri_attack_status(Variable const & variable) {
 }
 
 
-auto do_side_effects(Team & user_team, Moves const move, Team & target, Weather & weather, Variable const & variable, damage_type const damage) -> void {
+auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded::optional<Moves> const target_move, Weather & weather, Variable const & variable, damage_type const damage) -> void {
 	auto user = user_team.pokemon();
 	switch (move) {
 		case Moves::Absorb:
@@ -447,7 +447,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, Weather 
 			boost(stage(target.pokemon()), StatNames::SPE, -2_bi);
 			break;
 		case Moves::Counter:
-			if (is_physical(current_move(target.pokemon()))) {
+			if (target_move and is_physical(*target_move)) {
 				target.pokemon().direct_damage(damaged(user) * 2_bi);
 			}
 			break;
@@ -498,8 +498,8 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, Weather 
 			user.dig();
 			break;
 		case Moves::Disable:
-			if (moved(target.pokemon())) {
-				target.pokemon().disable(current_move(target.pokemon()));
+			if (target_move) {
+				target.pokemon().disable(*target_move);
 			}
 			break;
 		case Moves::Dive:
@@ -708,7 +708,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, Weather 
 		case Moves::Miracle_Eye:		// Fix
 			break;
 		case Moves::Mirror_Coat:
-			if (is_special(current_move(target.pokemon()))) {
+			if (target_move and is_special(*target_move)) {
 				target.pokemon().direct_damage(damaged(user) * 2_bi);
 			}
 			break;
@@ -1074,7 +1074,7 @@ auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_ty
 }
 
 
-auto use_move(Team & user, Move const move, Team & target, Weather & weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) -> void {
+auto use_move(Team & user, Move const move, Team & target, bounded::optional<Moves> const target_move, Weather & weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) -> void {
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
 	if (get_ability(target.pokemon()).blocks_sound_moves() and is_sound_based(move) and !(move == Moves::Heal_Bell or move == Moves::Perish_Song)) {
@@ -1083,21 +1083,21 @@ auto use_move(Team & user, Move const move, Team & target, Weather & weather, Va
 
 	do_effects_before_moving(user.pokemon(), move, target);
 
-	if (is_damaging(move)) {
-		auto const damage = calculate_real_damage(user, move, target, weather, variable, critical_hit, damage_is_known);
+	auto const damage = BOUNDED_CONDITIONAL(is_damaging(move),
+		calculate_real_damage(user, move, target, weather, variable, critical_hit, damage_is_known),
+		0_bi
+	);
+	if (damage != 0_bi) {
 		do_damage(user.pokemon(), target.pokemon(), damage);
-		user.pokemon().increment_move_use_counter();
-		do_side_effects(user, current_move(user.pokemon()), target, weather, variable, damage);
-	} else {
-		user.pokemon().increment_move_use_counter();
-		do_side_effects(user, current_move(user.pokemon()), target, weather, variable, 0_bi);
 	}
+	user.pokemon().increment_move_use_counter();
+	do_side_effects(user, move, target, target_move, weather, variable, damage);
 }
 
 
 }	// namespace
 
-auto call_move(Team & user, Move const move, Team & target, Weather & weather, Variable const & variable, bool const missed, bool const awakens, bool const critical_hit, bool const damage_is_known) -> void {
+auto call_move(Team & user, Move const move, Team & target, bounded::optional<Moves> const target_move, Weather & weather, Variable const & variable, bool const missed, bool const awakens, bool const critical_hit, bool const damage_is_known) -> void {
 	assert(!moved(user.pokemon()));
 	user.move();
 	auto user_pokemon = user.pokemon();
@@ -1111,7 +1111,7 @@ auto call_move(Team & user, Move const move, Team & target, Weather & weather, V
 		call_other_move(user_pokemon);
 	}
 	if (!missed) {
-		use_move(user, move, target, weather, variable, critical_hit, damage_is_known);
+		use_move(user, move, target, target_move, weather, variable, critical_hit, damage_is_known);
 	}
 }
 

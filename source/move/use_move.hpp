@@ -18,13 +18,17 @@
 
 #pragma once
 
+#include <bounded/optional.hpp>
+
 namespace technicalmachine {
+
+enum class Moves : std::uint16_t;
 
 struct Move;
 struct Team;
 struct Variable;
 struct Weather;
 
-auto call_move(Team & user, Move move, Team & target, Weather & weather, Variable const & variable, bool missed, bool awakens, bool critical_hit, bool damage_is_known) -> void;
+auto call_move(Team & user, Move move, Team & target, bounded::optional<Moves> target_move, Weather & weather, Variable const & variable, bool missed, bool awakens, bool critical_hit, bool damage_is_known) -> void;
 
 }	// namespace technicalmachine
