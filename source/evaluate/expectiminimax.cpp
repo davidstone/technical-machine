@@ -428,7 +428,6 @@ double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate 
 
 BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, bool first_turn) {
 	auto const faster = faster_pokemon(ai, foe, weather);
-	unsigned const tabs = first_turn ? 0 : 2;
 	auto best_move = Moves{};
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	// TODO: use accumulate instead of a for loop
@@ -437,9 +436,7 @@ BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsig
 		if (skip_this_replacement(ai.all_pokemon(), ai_replacement)) {
 			continue;
 		}
-		if (verbose or first_turn) {
-			std::cout << std::string(tabs, '\t') + "Evaluating switching to " + to_string(static_cast<Species>(ai_replacement)) + "\n";
-		}
+		print_action(ai, to_switch(ai_replacement), first_turn);
 		auto beta = static_cast<double>(victory + 1_bi);
 		for (auto const foe_replacement : integer_range(size(foe.all_pokemon()))) {
 			if (skip_this_replacement(foe.all_pokemon(), foe_replacement)) {
