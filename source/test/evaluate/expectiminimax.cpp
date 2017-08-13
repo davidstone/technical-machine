@@ -21,9 +21,11 @@
 #include "../../evaluate/evaluate.hpp"
 #include "../../evaluate/expectiminimax.hpp"
 #include "../../team.hpp"
+#include "../../variable.hpp"
 #include "../../weather.hpp"
 
 #include "../../move/moves.hpp"
+#include "../../move/use_move.hpp"
 
 #include "../../pokemon/species.hpp"
 
@@ -196,6 +198,45 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	assert(expectiminimax(attacker, defender, weather, depth, evaluate, random_engine) == Moves::Belly_Drum);
 }
 
+
+void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
+	auto weather = Weather{};
+	auto const shuffled = [&](auto... args) {
+		return make_shuffled_array(random_engine, args...);
+	};
+	constexpr auto depth = 2;
+	Team attacker(3_bi, true);
+
+	attacker.add_pokemon(Species::Magikarp, Level(5_bi), Gender::MALE, Item::Leftovers, Ability::Swift_Swim, Nature::Jolly);
+
+	attacker.add_pokemon(Species::Slugma, Level(100_bi), Gender::MALE, Item::Choice_Specs, Ability::Magma_Armor, Nature::Jolly);
+	for (auto const move : shuffled(Moves::Flamethrower, Moves::Earth_Power)) {
+		all_moves(back(attacker.all_pokemon())).emplace_back(move);
+	}
+
+	attacker.add_pokemon(Species::Zapdos, Level(100_bi), Gender::GENDERLESS, Item::Choice_Specs, Ability::Pressure, Nature::Modest);
+	all_moves(back(attacker.all_pokemon())).emplace_back(Moves::Thunderbolt);
+	set_hp_ev(back(attacker.all_pokemon()), EV(4_bi));
+	set_stat_ev(back(attacker.all_pokemon()), StatNames::SPA, EV(252_bi));
+	set_stat_ev(back(attacker.all_pokemon()), StatNames::SPE, EV(252_bi));
+
+
+	Team defender(1_bi);
+	defender.add_pokemon(Species::Suicune, Level(100_bi), Gender::GENDERLESS, Item::Leftovers, Ability::Pressure, Nature::Bold);
+	for (auto const move : shuffled(Moves::Calm_Mind, Moves::Surf, Moves::Ice_Beam)) {
+		all_moves(defender.pokemon()).emplace_back(move);
+	}
+	set_hp_ev(defender.pokemon(), EV(252_bi));
+	set_stat_ev(defender.pokemon(), StatNames::DEF, EV(252_bi));
+	set_stat_ev(defender.pokemon(), StatNames::SPD, EV(4_bi));
+
+	auto const variable = Variable{};
+	call_move(defender, Move(Moves::Surf), attacker, bounded::none, weather, variable, false, false, false, false);
+	
+
+	assert(expectiminimax(attacker, defender, weather, depth, evaluate, random_engine) == Moves::Switch2);
+}
+
 }	// namespace
 
 void expectiminimax_tests() {
@@ -211,6 +252,7 @@ void expectiminimax_tests() {
 	bellyzard_vs_defensive(evaluate, weather, random_engine);
 	hippopotas_vs_wobbuffet(evaluate, weather, random_engine);
 	baton_pass(evaluate, weather, random_engine);
+	replace_fainted(evaluate, random_engine);
 	
 	std::cout << "Evaluate tests passed.\n\n";
 }
