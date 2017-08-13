@@ -364,9 +364,8 @@ BestMove move_then_switch_branch(Team const & switcher, Team const & other, Vari
 		if (skip_this_replacement(switcher.all_pokemon(), replacement)) {
 			continue;
 		}
-		if (first_turn) {
-			std::cout << std::string(tabs, '\t') << "Evaluating bringing in " << to_string(static_cast<Species>(replacement)) << '\n';
-		}
+		
+		print_action(switcher, to_switch(replacement), first_turn);
 		auto const value = switch_after_move_branch(switcher, other, switcher_variable, other_variable, weather, depth, evaluate, replacement, switcher_flags, other_flags);
 		if (switcher.is_me()) {
 			update_best_move(best_switch, alpha, value, first_turn, to_switch(replacement));
