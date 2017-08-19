@@ -238,23 +238,22 @@ BestMove move_then_switch_branch(Team const & switcher, Team const & other, Vari
 
 
 bounded::optional<double> use_move_and_follow_up(Team & user, Team & other, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const user_flags, CriticalHitFlag const other_flags) {
-	auto const & original_user_pokemon = user.pokemon();
-	if (moved(original_user_pokemon)) {
+	auto const & user_pokemon = user.pokemon();
+	if (moved(user_pokemon)) {
 		return bounded::none;
 	}
-	auto const & original_other_pokemon = other.pokemon();
-	auto const other_move = moved(original_other_pokemon) ?
-		bounded::make_optional(current_move(original_other_pokemon)) :
+	auto const user_move = current_move(user_pokemon);
+	auto const & other_pokemon = other.pokemon();
+	auto const other_move = moved(other_pokemon) ?
+		bounded::make_optional(current_move(other_pokemon)) :
 		bounded::none;
-	call_move(user, current_move(original_user_pokemon), other, other_move, weather, user_variable, user_flags.miss, user_flags.awaken, user_flags.critical_hit, false);
+	call_move(user, user_move, other, other_move, weather, user_variable, user_flags.miss, user_flags.awaken, user_flags.critical_hit, false);
 	auto const user_win = Evaluate::win(user);
 	auto const other_win = Evaluate::win(other);
 	if (user_win != 0_bi or other_win != 0_bi) {
 		return static_cast<double>(user_win + other_win);
 	}
-	auto const original = static_cast<Species>(original_user_pokemon);
-	auto const current = static_cast<Species>(user.pokemon());
-	if (original == current and has_follow_up_decision(current_move(user.pokemon())) and size(user.all_pokemon()) > 1_bi) {
+	if (has_follow_up_decision(user_move) and size(user.all_pokemon()) > 1_bi) {
 		return move_then_switch_branch(
 			user,
 			other,
@@ -360,6 +359,7 @@ BestMove move_then_switch_branch(Team const & switcher, Team const & other, Vari
 		++tabs;
 	}
 	auto best_switch = Moves{};
+	auto const switcher_move = current_move(switcher.pokemon());
 	for (auto const replacement : integer_range(size(switcher.all_pokemon()))) {
 		if (skip_this_replacement(switcher.all_pokemon(), replacement)) {
 			continue;
@@ -371,7 +371,7 @@ BestMove move_then_switch_branch(Team const & switcher, Team const & other, Vari
 			update_best_move(best_switch, alpha, value, first_turn, to_switch(replacement));
 		} else {
 			MoveScores foe_scores(switcher.pokemon());
-			update_foe_best_move(current_move(switcher.pokemon()), foe_scores, alpha, value, first_turn);
+			update_foe_best_move(switcher_move, foe_scores, alpha, value, first_turn);
 		}
 	}
 	return BestMove{best_switch, alpha};
@@ -466,13 +466,18 @@ BestMove initial_move_then_switch_branch(Team const & switcher, Team const & oth
 
 
 double random_move_effects_branch(Team const & first, Team const & last, Weather const weather, unsigned depth, Evaluate const & evaluate, AwakenFlag const first_flags, AwakenFlag const last_flags) {
+	auto const first_move = current_move(first.pokemon());
+	auto const last_move = current_move(last.pokemon());
+
 	auto const probability = [](ActivePokemon const pokemon) {
 		return can_critical_hit(current_move(pokemon)) ? (1.0 / 16.0) : 0.0;
 	};
 	double score = 0.0;
 
-	for (auto const & first_variable : all_probabilities(current_move(first.pokemon()), last.size())) {
-		for (auto const & last_variable : all_probabilities(current_move(last.pokemon()), first.size())) {
+	auto const first_variables = all_probabilities(first_move, last.size());
+	auto const last_variables = all_probabilities(last_move, first.size());
+	for (auto const & first_variable : first_variables) {
+		for (auto const & last_variable : last_variables) {
 			auto const use_move_copy_branch = [&](Team first_, Team last_, Weather weather_, unsigned depth_, Evaluate const & evaluate_, CriticalHitFlag first_flags_, CriticalHitFlag last_flags_) {
 				return use_move_branch(first_, last_, first_variable, last_variable, weather_, depth_, evaluate_, first_flags_, last_flags_);
 			};
@@ -533,7 +538,9 @@ double accuracy_branch(Team const & first, Team const & last, Weather const weat
 
 
 double order_branch(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const & evaluate) {
-	auto ordered = order(ai, current_move(ai.pokemon()), foe, current_move(foe.pokemon()), weather);
+	auto const ai_move = current_move(ai.pokemon());
+	auto const foe_move = current_move(foe.pokemon());
+	auto ordered = order(ai, ai_move, foe, foe_move, weather);
 	return !ordered ?
 		(accuracy_branch(ai, foe, weather, depth, evaluate) + accuracy_branch(foe, ai, weather, depth, evaluate)) / 2.0 :
 		accuracy_branch(ordered->first.team, ordered->second.team, weather, depth, evaluate);
@@ -605,19 +612,21 @@ SelectMoveResult select_move_branch(Team & ai, Team & foe, Weather const weather
 	auto best_move = Moves{};
 	for (auto const & ai_index : ai_indexes) {
 		set_index(all_moves(ai.pokemon()), ai_index);
-		print_action(ai, current_move(ai.pokemon()), first_turn);
+		auto const ai_move = current_move(ai.pokemon());
+		print_action(ai, ai_move, first_turn);
 		auto beta = static_cast<double>(victory + 1_bi);
 		for (auto const & foe_index : foe_indexes) {
 			set_index(all_moves(foe.pokemon()), foe_index);
-			print_action(foe, current_move(foe.pokemon()), first_turn);
+			auto const foe_move = current_move(foe.pokemon());
+			print_action(foe, foe_move, first_turn);
 			auto const max_score = order_branch(ai, foe, weather, depth, evaluate);
-			update_foe_best_move(current_move(foe.pokemon()), move_scores.foe, beta, max_score, first_turn);
+			update_foe_best_move(foe_move, move_scores.foe, beta, max_score, first_turn);
 			// Alpha-Beta pruning
 			if (beta <= alpha)
 				break;
 		}
-		move_scores.ai.set(current_move(ai.pokemon()), beta);
-		update_best_move(best_move, alpha, beta, first_turn, current_move(ai.pokemon()));
+		move_scores.ai.set(ai_move, beta);
+		update_best_move(best_move, alpha, beta, first_turn, ai_move);
 		// The AI cannot have a better move than a guaranteed win
 		if (alpha == static_cast<double>(victory))
 			break;
