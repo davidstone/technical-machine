@@ -558,8 +558,8 @@ SelectMoveResult select_move_branch(Team & ai, Team & foe, Weather const weather
 	auto move_scores = (depth >= 1) ?
 		select_move_branch(ai, foe, weather, depth - 1, evaluate, false).move_scores :
 		BothMoveScores{MoveScores(ai.pokemon()), MoveScores(foe.pokemon())};
-	auto const ai_index = reorder(LegalSelections(ai, foe.pokemon(), weather), move_scores.ai, true);
-	auto const foe_index = reorder(LegalSelections(foe, ai.pokemon(), weather), move_scores.foe, false);
+	auto const ai_indexes = reorder(LegalSelections(ai, foe.pokemon(), weather), move_scores.ai, true);
+	auto const foe_indexes = reorder(LegalSelections(foe, ai.pokemon(), weather), move_scores.foe, false);
 
 	// Working from the inside loop out:
 
@@ -603,12 +603,12 @@ SelectMoveResult select_move_branch(Team & ai, Team & foe, Weather const weather
 	
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	auto best_move = Moves{};
-	for (auto const & ai_move : ai_index) {
-		set_index(all_moves(ai.pokemon()), ai_move);
+	for (auto const & ai_index : ai_indexes) {
+		set_index(all_moves(ai.pokemon()), ai_index);
 		print_action(ai, current_move(ai.pokemon()), first_turn);
 		auto beta = static_cast<double>(victory + 1_bi);
-		for (auto const & foe_move : foe_index) {
-			set_index(all_moves(foe.pokemon()), foe_move);
+		for (auto const & foe_index : foe_indexes) {
+			set_index(all_moves(foe.pokemon()), foe_index);
 			print_action(foe, current_move(foe.pokemon()), first_turn);
 			auto const max_score = order_branch(ai, foe, weather, depth, evaluate);
 			update_foe_best_move(current_move(foe.pokemon()), move_scores.foe, beta, max_score, first_turn);
