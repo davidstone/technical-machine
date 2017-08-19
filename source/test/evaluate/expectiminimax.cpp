@@ -167,7 +167,7 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
-	constexpr auto depth = 6;
+	constexpr auto depth = 5;
 	Team attacker(1_bi, true);
 
 	attacker.add_pokemon(Species::Smeargle, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly);
@@ -237,6 +237,37 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	assert(expectiminimax(attacker, defender, weather, depth, evaluate, random_engine) == Moves::Switch2);
 }
 
+
+void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) {
+	auto const weather = Weather{};
+	auto const shuffled = [&](auto... args) {
+		return make_shuffled_array(random_engine, args...);
+	};
+	constexpr auto depth = 3;
+	Team attacker(1_bi, true);
+
+	attacker.add_pokemon(Species::Latias, Level(100_bi), Gender::FEMALE, Item::Leftovers, Ability::Levitate, Nature::Calm);
+	for (auto const move : shuffled(Moves::Calm_Mind, Moves::Dragon_Pulse, Moves::Recover)) {
+		all_moves(back(attacker.all_pokemon())).emplace_back(move);
+	}
+
+	set_hp_ev(back(attacker.all_pokemon()), EV(252_bi));
+	set_stat_ev(back(attacker.all_pokemon()), StatNames::SPA, EV(120_bi));
+	set_stat_ev(back(attacker.all_pokemon()), StatNames::SPD, EV(136_bi));
+
+
+	Team defender(1_bi);
+	defender.add_pokemon(Species::Suicune, Level(100_bi), Gender::GENDERLESS, Item::Leftovers, Ability::Pressure, Nature::Calm);
+	for (auto const move : shuffled(Moves::Ice_Beam, Moves::Rest)) {
+		all_moves(defender.pokemon()).emplace_back(move);
+	}
+	set_hp_ev(defender.pokemon(), EV(252_bi));
+	set_stat_ev(defender.pokemon(), StatNames::SPA, EV(120_bi));
+	set_stat_ev(defender.pokemon(), StatNames::SPD, EV(136_bi));
+
+	assert(expectiminimax(attacker, defender, weather, depth, evaluate, random_engine) == Moves::Calm_Mind);
+}
+
 }	// namespace
 
 void expectiminimax_tests() {
@@ -253,6 +284,7 @@ void expectiminimax_tests() {
 	hippopotas_vs_wobbuffet(evaluate, weather, random_engine);
 	baton_pass(evaluate, weather, random_engine);
 	replace_fainted(evaluate, random_engine);
+	latias_vs_suicune(evaluate, random_engine);
 	
 	std::cout << "Evaluate tests passed.\n\n";
 }
