@@ -386,16 +386,22 @@ auto calculate_speed(Team const & team, Weather const weather) -> speed_type {
 	return static_cast<speed_type>(bounded::max(speed, 1_bi));
 }
 
-auto order(Team const & team1, Moves const move1, Team const & team2, Moves const move2, Weather const weather) -> Order {
+auto order(Team const & team1, Move const move1, Team const & team2, Move const move2, Weather const weather) -> Order {
 	auto const priority1 = Priority(move1);
 	auto const priority2 = Priority(move2);
+	
+	auto const lhs = OrderElement{team1, move1};
+	auto const rhs = OrderElement{team2, move2};
+	
+	auto const lhs_first = Order(bounded::in_place, lhs, rhs);
+	auto const rhs_first = Order(bounded::in_place, rhs, lhs);
 
 	if (priority1 > priority2) {
-		return Order(bounded::in_place, OrderElement{team1}, OrderElement{team2});
+		return lhs_first;
 	} else if (priority1 < priority2) {
-		return Order(bounded::in_place, OrderElement{team2}, OrderElement{team1});
+		return rhs_first;
 	} else if (auto const ordered = faster_pokemon(team1, team2, weather)) {
-		return Order(bounded::in_place, OrderElement{ordered->first}, OrderElement{ordered->second});
+		return (std::addressof(ordered->first) == std::addressof(team1)) ? lhs_first : rhs_first;
 	} else {
 		return bounded::none;
 	}
