@@ -1,5 +1,5 @@
 // ActivePokemon and MutableActivePokemon provide a view; they do not own data
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2017 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,10 +26,9 @@
 #include "../rational.hpp"
 
 #include "../move/moves.hpp"
+#include "../move/is_switch.hpp"
 
 #include <bounded/integer.hpp>
-
-#include <utility>
 
 namespace technicalmachine {
 struct Ability;
@@ -50,11 +49,15 @@ struct ActivePokemon {
 	operator Pokemon const & () const {
 		return m_pokemon;
 	}
-	operator Species() const;
+	operator Species() const {
+		return static_cast<Pokemon const &>(*this);
+	}
 
 	TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS;
 
-	friend auto operator==(ActivePokemon const lhs, ActivePokemon rhs) -> bool;
+	friend auto operator==(ActivePokemon const lhs, ActivePokemon const rhs) {
+		return lhs.m_flags == rhs.m_flags;
+	}
 
 private:
 	Pokemon const & m_pokemon;
@@ -84,85 +87,215 @@ struct MutableActivePokemon {
 
 	friend auto stage(MutableActivePokemon pokemon) -> Stage &;
 
-	auto clear_field() -> void;
-	auto update_before_move() -> void;
-	auto use_substitute() -> void;
-	auto attract() -> void;
-	auto activate_aqua_ring() -> void;
-	auto baton_pass() -> void;
-	auto charge() -> void;
+	auto clear_field() {
+		m_flags.leech_seeded = false;
+		m_flags.partial_trap = {};
+	}
+	auto update_before_move() {
+		m_flags.destiny_bond = false;
+		m_flags.locked_on = false;
+		m_flags.moved = true;
+	}
+
+	auto activate_aqua_ring() {
+		m_flags.aqua_ring = true;
+	}
+	auto attract() {
+		m_flags.attracted = true;
+	}
+	auto baton_pass() {
+		m_flags.is_baton_passing = true;
+	}
+	auto charge() {
+		m_flags.charged = true;
+	}
 	auto confuse() -> void;
-	auto handle_confusion() -> void;
-	auto curse() -> void;
-	auto defense_curl() -> void;
-	auto use_destiny_bond() -> void;
-	auto disable(Moves move) -> void;
-	auto advance_disable() -> void;
-	auto activate_embargo() -> void;
-	auto advance_embargo() -> void;
-	auto activate_encore() -> void;
-	auto advance_encore() -> void;
-	auto endure() -> void;
-	auto faint() -> void;
-	auto activate_flash_fire() -> void;
-	auto flinch() -> void;
-	auto focus_energy() -> void;
-	auto fully_trap() -> void;
-	auto activate_heal_block() -> void;
-	auto advance_heal_block() -> void;
-	auto hit_with_leech_seed() -> void;
+	auto handle_confusion() {
+		m_flags.confusion.do_turn(*this);
+	}
+	auto curse() {
+		m_flags.is_cursed = true;
+	}
+	auto defense_curl() {
+		m_flags.defense_curled = true;
+	}
+	auto use_destiny_bond() {
+		m_flags.destiny_bond = true;
+	}
+	auto disable(Moves const move) {
+		if (is_regular(move)) {
+			m_flags.disable.activate(move);
+		}
+	}
+	auto advance_disable() {
+		m_flags.disable.advance_one_turn();
+	}
+	auto activate_embargo() {
+		m_flags.embargo.activate();
+	}
+	auto advance_embargo() {
+		m_flags.embargo.advance_one_turn();
+	}
+	auto activate_encore() {
+		m_flags.encore.activate();
+	}
+	auto advance_encore() {
+		m_flags.encore.advance_one_turn();
+	}
+	auto endure() {
+		m_flags.enduring = true;
+	}
+	auto faint() {
+		get_hp(*this) = 0_bi;
+		m_flags.is_fainted = true;
+	}
+	auto activate_flash_fire() {
+		m_flags.flash_fire = true;
+	}
+	auto flinch() {
+		m_flags.flinched = true;
+	}
+	auto focus_energy() {
+		m_flags.has_focused_energy = true;
+	}
+	auto fully_trap() {
+		m_flags.fully_trapped = true;
+	}
+	auto activate_heal_block() {
+		m_flags.heal_block.activate();
+	}
+	auto advance_heal_block() {
+		m_flags.heal_block.advance_one_turn();
+	}
+	auto identify() {
+		m_flags.identified = true;
+	}
+	auto use_imprison() {
+		m_flags.used_imprison = true;
+	}
+	auto ingrain() {
+		m_flags.ingrained = true;
+	}
+	auto hit_with_leech_seed() {
+		m_flags.leech_seeded = true;
+	}
+	
 	auto advance_lock_in() -> void;
-	auto use_lock_on() -> void;
-	auto identify() -> void;
-	auto use_imprison() -> void;
-	auto ingrain() -> void;
-	auto activate_magnet_rise() -> void;
-	auto advance_magnet_rise() -> void;
-	auto set_moved(bool value = true) -> void;
-	auto activate_mud_sport() -> void;
-	auto give_nightmares() -> void;
-	auto partially_trap() -> void;
-	auto partial_trap_damage() -> void;
-	auto activate_perish_song() -> void;
+	auto use_lock_on() {
+		m_flags.locked_on = true;
+	}
+	auto activate_magnet_rise() {
+		m_flags.magnet_rise.activate();
+	}
+	auto advance_magnet_rise() {
+		m_flags.magnet_rise.advance_one_turn();
+	}
+	auto set_moved(bool const value) {
+		m_flags.moved = value;
+	}
+	auto activate_mud_sport() {
+		m_flags.mud_sport = true;
+	}
+	auto give_nightmares() {
+		m_flags.is_having_a_nightmare = true;
+	}
+	auto partially_trap() {
+		m_flags.partial_trap.activate();
+	}
+	auto partial_trap_damage() {
+		m_flags.partial_trap.damage(*this);
+	}
+	auto activate_perish_song() {
+		m_flags.perish_song.activate();
+	}
 	auto perish_song_turn() -> void;
-	auto activate_power_trick() -> void;
-	auto protect() -> void;
-	auto break_protect() -> void;
-	auto activate_rampage() -> void;
+	auto activate_power_trick() {
+		m_flags.power_trick_is_active = !m_flags.power_trick_is_active;
+	}
+	auto protect() {
+		m_flags.is_protecting = true;
+	}
+	auto break_protect() {
+		m_flags.is_protecting = false;
+	}
+	auto activate_rampage() {
+		m_flags.rampage.activate();
+	}
 	auto recharge() -> bool;
-	auto use_recharge_move() -> void;
-	auto roost() -> void;
+	auto use_recharge_move() {
+		m_flags.is_recharging = true;
+	}
+	auto roost() {
+		m_flags.is_roosting = true;
+	}
 	auto increase_sleep_counter(bool awakens) -> void;
 
 	auto increment_stockpile() -> void;
 	auto release_stockpile() -> bounded::integer<0, Stockpile::max>;
 
-	
-	auto taunt() -> void;
-	auto torment() -> void;
-	auto advance_taunt() -> void;
-	auto advance_toxic() -> void;
-	auto u_turn() -> void;
-	auto use_uproar() -> void;
-	auto activate_water_sport() -> void;
-	auto hit_with_yawn() -> void;
+	auto use_substitute() -> void;
+
+	auto has_switched(ActivePokemon const pokemon) {
+		return moved(pokemon) and is_switch(current_move(pokemon));
+	}
+
+	auto taunt() {
+		m_flags.taunt.activate();
+	}
+	auto advance_taunt() {
+		m_flags.taunt.advance_one_turn();
+	}
+	auto torment() {
+		m_flags.is_tormented = true;
+	}
+	auto advance_toxic() {
+		m_flags.toxic.increment();
+	}
+	auto u_turn() {
+		m_flags.u_turning = true;
+	}
+	auto use_uproar() {
+		m_flags.uproar.advance_one_turn();
+	}
+	auto activate_water_sport() {
+		m_flags.water_sport = true;
+	}
+	auto hit_with_yawn() {
+		m_flags.yawn.activate();
+	}
 	// Advance the yawn counter and possibly put the Pokemon to sleep
 	auto try_to_activate_yawn(Weather weather) -> void;
 
 	// Returns whether the Pokemon ends up in a Vanished state
-	auto bounce() -> bool;
-	auto dig() -> bool;
-	auto dive() -> bool;
-	auto fly() -> bool;
-	auto shadow_force() -> bool;
+	auto bounce() {
+		return m_flags.vanish.bounce();
+	}
+	auto dig() {
+		return m_flags.vanish.dig();
+	}
+	auto dive() {
+		return m_flags.vanish.dive();
+	}
+	auto fly() {
+		return m_flags.vanish.fly();
+	}
+	auto shadow_force() {
+		return m_flags.vanish.shadow_force();
+	}
+
 
 	auto use_bide(Pokemon & target) -> void;
 
 	auto direct_damage(damage_type damage) -> void;
-	auto indirect_damage(damage_type damage) -> void;
-	auto register_damage(damage_type damage) -> void;
-	auto increment_move_use_counter(Moves move) -> void;
-
+	auto indirect_damage(damage_type const damage) {
+		get_hp(*this) -= damage;
+	}
+	auto register_damage(damage_type const damage) {
+		m_flags.damaged = damage;
+	}
+	auto increment_move_use_counter(Moves const move) {
+		m_flags.last_used_move.increment(move);
+	}
 	
 private:
 	Pokemon & m_pokemon;
