@@ -1090,7 +1090,7 @@ auto use_move(Team & user, Move const move, Team & target, bounded::optional<Mov
 	if (damage != 0_bi) {
 		do_damage(user.pokemon(), target.pokemon(), damage);
 	}
-	user.pokemon().increment_move_use_counter();
+	user.pokemon().increment_move_use_counter(move);
 	do_side_effects(user, move, target, target_move, weather, variable, damage);
 }
 

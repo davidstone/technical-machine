@@ -161,7 +161,7 @@ struct MutableActivePokemon {
 	auto direct_damage(damage_type damage) -> void;
 	auto indirect_damage(damage_type damage) -> void;
 	auto register_damage(damage_type damage) -> void;
-	auto increment_move_use_counter() -> void;
+	auto increment_move_use_counter(Moves move) -> void;
 
 	
 private:

@@ -37,7 +37,7 @@ struct LastUsedMove {
 		return m_move == move;
 	}
 
-	constexpr auto increment(Moves const move) {
+	constexpr auto increment(Moves const move) & {
 		if (m_move == move) {
 			++m_consecutive_turns_used;
 		} else {

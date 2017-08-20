@@ -364,8 +364,7 @@ auto MutableActivePokemon::register_damage(damage_type const damage) -> void {
 	m_flags.damaged = damage;
 }
 
-auto MutableActivePokemon::increment_move_use_counter() -> void {
-	auto const move = current_move(*this);
+auto MutableActivePokemon::increment_move_use_counter(Moves const move) -> void {
 	m_flags.last_used_move.increment(move);
 }
 
