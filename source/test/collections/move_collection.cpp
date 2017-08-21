@@ -55,8 +55,9 @@ void move_collection_tests() {
 		auto const expected_shared = create_shared_moves(test_size);
 		expected.insert(end(expected), begin(expected_shared), end(expected_shared));
 		for (auto const n : bounded::integer_range(static_cast<MoveSize>(size(expected)))) {
-			if (expected[n] != collection(n)) {
-				throw InvalidCollection("Iterating by index does not give correct results. Team size == " + to_string(test_size) + ". Stored: " + to_string(collection(n)) + " -- Expected: " + to_string(expected[static_cast<unsigned>(n)]));
+			auto const tested = *(begin(collection) + n);
+			if (expected[n] != tested) {
+				throw InvalidCollection("Iterating by index does not give correct results. Team size == " + to_string(test_size) + ". Stored: " + to_string(tested) + " -- Expected: " + to_string(expected[n]));
 			}
 		}
 	}

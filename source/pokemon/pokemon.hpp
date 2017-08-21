@@ -116,10 +116,12 @@ inline decltype(auto) regular_moves(Pokemon & pokemon) {
 }
 
 inline decltype(auto) current_move(Pokemon const & pokemon) {
-	return all_moves(pokemon)();
+	auto const & moves = all_moves(pokemon);
+	return *(begin(moves) + moves.index());
 }
 inline decltype(auto) current_move(Pokemon & pokemon) {
-	return all_moves(pokemon)();
+	auto & moves = all_moves(pokemon);
+	return *(begin(moves) + moves.index());
 }
 
 

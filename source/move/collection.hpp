@@ -29,27 +29,62 @@
 #include <bounded/integer_range.hpp>
 #include <bounded/optional.hpp>
 
+#include <containers/algorithms/find.hpp>
+
+#include <cassert>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
-struct MoveCollection : detail::Collection<MoveContainer> {
-	explicit MoveCollection(TeamSize my_team_size);
-	
-	using detail::Collection<MoveContainer>::regular;
-	
+struct MoveCollection : private MoveContainer {
+	using MoveContainer::MoveContainer;
+
+	using typename MoveContainer::value_type;
+	using typename MoveContainer::size_type;
+	using typename MoveContainer::const_iterator;
+
+	using MoveContainer::emplace_back;
+	using MoveContainer::regular;
 	using MoveContainer::remove_switch;
 
-	template<typename M, typename... MaybePP>
-	auto & emplace_back(M const move, MaybePP... maybe_pp) {
-		auto const new_index = size(regular());
-		auto & result = detail::Collection<MoveContainer>::emplace_back(move, maybe_pp...);
-		set_index(static_cast<containers::index_type<MoveCollection>>(new_index));
-		return result;
+	friend decltype(auto) begin(MoveCollection const & collection) {
+		return begin(static_cast<MoveContainer const &>(collection));
 	}
+	friend decltype(auto) begin(MoveCollection & collection) {
+		return begin(static_cast<MoveContainer &>(collection));
+	}
+	friend decltype(auto) end(MoveCollection const & collection) {
+		return end(static_cast<MoveContainer const &>(collection));
+	}
+	friend decltype(auto) end(MoveCollection & collection) {
+		return end(static_cast<MoveContainer &>(collection));
+	}
+
+	constexpr auto index() const {
+		return m_current_index;
+	}
+	void set_index(containers::index_type<MoveCollection> const new_index) {
+		m_current_index = (new_index < containers::size(*this)) ?
+			new_index :
+			throw InvalidCollectionIndex(new_index, containers::size(*this), value_type::class_name);
+	}
+
+private:
+	containers::index_type<MoveCollection> m_current_index = 0_bi;
 };
 
-auto index(MoveCollection const & moves, Moves name) -> bounded::optional<RegularMoveIndex>;
-auto set_index(MoveCollection & moves, Moves name) -> void;
+inline auto set_index(MoveCollection & moves, Moves const move) -> void {
+	auto const it = containers::find(begin(moves), end(moves), move);
+	assert(it != end(moves));
+	moves.set_index(static_cast<containers::index_type<MoveCollection>>(it - begin(moves)));
+}
+
+inline auto index(MoveCollection const & moves, Moves const name) -> bounded::optional<RegularMoveIndex> {
+	auto const it = containers::find(begin(moves.regular()), end(moves.regular()), name);
+	return (it != end(moves.regular())) ?
+		bounded::optional<RegularMoveIndex>(it - begin(moves.regular())) :
+		bounded::none;
+}
 
 template<typename M, typename... MaybePP>
 inline auto & add_seen_move(MoveCollection & moves, M const move, MaybePP... maybe_pp) {
@@ -58,8 +93,12 @@ inline auto & add_seen_move(MoveCollection & moves, M const move, MaybePP... may
 	if (it != end(regular)) {
 		moves.set_index(static_cast<containers::index_type<MoveCollection>>(it - begin(regular)));
 		return *it;
+	} else {
+		auto const new_index = size(moves.regular());
+		auto & result = moves.emplace_back(move, maybe_pp...);
+		moves.set_index(static_cast<containers::index_type<MoveCollection>>(new_index));
+		return result;
 	}
-	return moves.emplace_back(move, maybe_pp...);
 }
 
 

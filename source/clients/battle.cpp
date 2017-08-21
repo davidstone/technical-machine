@@ -201,12 +201,9 @@ auto switch_or_add(PokemonCollection & collection, Species const species, Args&&
 }
 
 auto index_of_first_switch(Pokemon const & pokemon) {
-	containers::index_type<MoveContainer> index = 0_bi;
 	auto const & moves = all_moves(pokemon);
-	while (!is_switch(moves(index))) {
-		++index;
-	}
-	return index;
+	auto const it = containers::find_if(begin(moves), end(moves), [](auto const move) { return is_switch(move); });
+	return  static_cast<containers::index_type<MoveContainer>>(it - begin(moves));
 }
 
 }	// namespace

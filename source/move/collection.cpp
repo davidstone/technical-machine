@@ -18,31 +18,3 @@
 
 #include "collection.hpp"
 
-#include "move.hpp"
-#include "moves.hpp"
-
-#include <bounded/integer_range.hpp>
-
-#include <containers/algorithms/find.hpp>
-
-#include <cassert>
-
-namespace technicalmachine {
-
-MoveCollection::MoveCollection(TeamSize const my_team_size):
-	detail::Collection<MoveContainer>(my_team_size) {
-}
-
-auto set_index(MoveCollection & moves, Moves const move) -> void {
-	auto const it = containers::find(begin(moves), end(moves), move);
-	assert(it != end(moves));
-	moves.set_index(static_cast<containers::index_type<MoveCollection>>(it - begin(moves)));
-}
-
-using IndexResult = bounded::optional<RegularMoveIndex>;
-auto index(MoveCollection const & moves, Moves const name) -> IndexResult {
-	auto const it = containers::find(begin(moves.regular()), end(moves.regular()), name);
-	return (it != end(moves.regular())) ? IndexResult(it - begin(moves.regular())) : bounded::none;
-}
-
-}	// namespace technicalmachine
