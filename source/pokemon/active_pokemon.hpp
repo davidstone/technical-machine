@@ -235,10 +235,6 @@ struct MutableActivePokemon {
 
 	auto use_substitute() -> void;
 
-	auto has_switched(ActivePokemon const pokemon) {
-		return moved(pokemon) and is_switch(current_move(pokemon));
-	}
-
 	auto taunt() {
 		m_flags.taunt.activate();
 	}
