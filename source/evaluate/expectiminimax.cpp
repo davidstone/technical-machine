@@ -233,7 +233,7 @@ struct ShedSkinFlag : CriticalHitFlag {
 };
 
 
-BestMove move_then_switch_branch(Team const & switcher, Team const & other, Variable const & switcher_variable, Variable const & other_variable, Weather const weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags, bool first_turn);
+BestMove move_then_switch_branch(Team const & switcher, Move switcher_move, Team const & other, Move other_move, Variable const & switcher_variable, Variable const & other_variable, Weather const weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags, bool first_turn);
 
 
 
@@ -250,7 +250,9 @@ bounded::optional<double> use_move_and_follow_up(Team & user, Move const user_mo
 	if (has_follow_up_decision(user_move) and size(user.all_pokemon()) > 1_bi) {
 		return move_then_switch_branch(
 			user,
+			user_move,
 			other,
+			current_move(other.pokemon()),
 			user_variable,
 			other_variable,
 			weather,
@@ -357,9 +359,7 @@ double switch_after_move_branch(Team switcher, Move const switcher_move, Team ot
 }
 
 
-BestMove move_then_switch_branch(Team const & switcher, Team const & other, Variable const & switcher_variable, Variable const & other_variable, Weather const weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags, bool first_turn) {
-	auto const switcher_move = current_move(switcher.pokemon());
-	auto const other_move = current_move(other.pokemon());
+BestMove move_then_switch_branch(Team const & switcher, Move const switcher_move, Team const & other, Move const other_move, Variable const & switcher_variable, Variable const & other_variable, Weather const weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags, bool first_turn) {
 	unsigned tabs = first_turn ? 0 : 2;
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	if (!switcher.is_me()) {
@@ -467,7 +467,22 @@ BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsig
 
 
 BestMove initial_move_then_switch_branch(Team const & switcher, Team const & other, Weather const weather, unsigned depth, Evaluate const & evaluate, bool first_turn) {
-	return move_then_switch_branch(switcher, other, Variable{}, Variable{}, weather, depth, evaluate, CriticalHitFlag{}, CriticalHitFlag{}, first_turn);
+	auto const switcher_move = current_move(switcher.pokemon());
+	auto const other_move = current_move(other.pokemon());
+	return move_then_switch_branch(
+		switcher,
+		switcher_move,
+		other,
+		other_move,
+		Variable{},
+		Variable{},
+		weather,
+		depth,
+		evaluate,
+		CriticalHitFlag{},
+		CriticalHitFlag{},
+		first_turn
+	);
 }
 
 
