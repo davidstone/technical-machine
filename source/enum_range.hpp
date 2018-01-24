@@ -1,5 +1,5 @@
 // Iterate over all values of an enum
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -31,10 +31,13 @@ namespace technicalmachine {
 
 using namespace bounded::literal;
 
+// TODO: implement in terms of bounded::integer_range and
+// containers::iterator_adapter
 template<typename Enum>
 struct enum_iterator {
 private:
-	using base = typename bounded::integer_range_type<bounded::equivalent_type<Enum>>::const_iterator;
+	using limits = std::numeric_limits<Enum>;
+	using base = typename bounded::integer_range_type<bounded::integer<limits::min().value(), limits::max().value()>>::const_iterator;
 public:
 	using index_type = typename base::index_type;
 	using value_type = Enum;
@@ -63,11 +66,8 @@ public:
 		return enum_iterator(lhs.m_it + rhs);
 	}
 	
-	friend constexpr auto operator==(enum_iterator const lhs, enum_iterator const rhs) noexcept {
-		return lhs.m_it == rhs.m_it;
-	}
-	friend constexpr auto operator<(enum_iterator const lhs, enum_iterator const rhs) noexcept {
-		return lhs.m_it < rhs.m_it;
+	friend constexpr auto compare(enum_iterator const lhs, enum_iterator const rhs) noexcept {
+		return compare(lhs.m_it, rhs.m_it);
 	}
 
 private:

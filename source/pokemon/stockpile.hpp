@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,18 +29,43 @@ struct Stockpile {
 	static constexpr auto max = 3;
 	// Returns whether Stockpile was able to increment (true) or if it is
 	// already maxed out (false)
-	auto increment() -> bool;
+	constexpr auto increment() {
+		auto const initial = m_level;
+		++m_level;
+		return m_level == initial;
+	}
+
 	// Returns the amount of Stockpile lost. This allows correct subtraction
 	// for stat boosts.
-	auto release() -> bounded::integer<0, max>;
-	auto spit_up_power() const -> bounded::integer<0, max * 100>;
-	friend auto operator==(Stockpile lhs, Stockpile rhs) -> bool;
+	constexpr auto release() -> bounded::integer<0, max> {
+		auto const temp = m_level;
+		*this = {};
+		return temp;
+	}
+
+	constexpr auto spit_up_power() const {
+		return m_level * 100_bi;
+	}
+
+	friend constexpr auto compare(Stockpile const lhs, Stockpile const rhs) {
+		return bounded::compare(lhs.m_level, rhs.m_level);
+	}
+
 private:
 	friend struct Evaluate;
 	bounded::clamped_integer<0, max> m_level = 0_bi;
 };
 
-using SwallowHealing = bounded_rational<bounded::integer<1, 1>, bounded::integer<1, 4>>;
-auto swallow_healing(bounded::checked_integer<1, Stockpile::max> stockpiles) -> SwallowHealing;
+constexpr auto swallow_healing(bounded::checked_integer<1, Stockpile::max> const stockpiles) {
+	using result = bounded_rational<bounded::integer<1, 1>, bounded::integer<1, 4>>;
+	switch (stockpiles.value()) {
+		case 1:
+			return result{1_bi, 4_bi};
+		case 2:
+			return result{1_bi, 2_bi};
+		default:	// case 3:
+			return result{1_bi, 1_bi};
+	}
+}
 
 }	// namespace technicalmachine

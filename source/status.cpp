@@ -153,12 +153,6 @@ auto Status::increase_sleep_counter(Ability const & ability, bool awaken) -> voi
 	}
 }
 
-auto operator== (Status const lhs, Status const rhs) -> bool {
-	return
-		lhs.name() == rhs.name() and
-		lhs.m_turns_already_slept == rhs.m_turns_already_slept;
-}
-
 namespace {
 
 constexpr auto max_sleep_turns = 4_bi;
@@ -185,7 +179,8 @@ auto non_early_bird_probability(DefiniteSleepCounter const turns_slept) {
 }	// namespace
 
 auto Status::awaken_probability(Ability const & ability) const -> AwakenProbability {
-	static_assert(std::is_same<DefiniteSleepCounter, SleepCounter::value_type>::value, "Incorrect sleep counter type.");
+	static_assert(DefiniteSleepCounter::min() == SleepCounter::value_type::min());
+	static_assert(DefiniteSleepCounter::max() == SleepCounter::value_type::max());
 	if (!m_turns_already_slept) {
 		return 0.0;
 	}

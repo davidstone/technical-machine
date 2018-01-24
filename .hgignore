@@ -1,27 +1,3 @@
-syntax: regexp
-
-^ai
-^aio
-^predict
-^test
-^testo
-
 syntax: glob
 
-*.o
-*.pyc
-
-.sconsign.dblite
-
-settings/account.txt
-settings/highlights.txt
-settings/responses.txt
-settings/settings.xml
-settings/settings.xml.backup
-settings/trusted_users.txt
-
-source/test/test2.sbt
-source/test/test2.tp
-
-battles/*
-teams/*
+build*

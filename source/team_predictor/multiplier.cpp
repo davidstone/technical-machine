@@ -91,7 +91,7 @@ void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unac
 	// I may not need to calculate this...
 	auto const total = static_cast<value_type>(containers::accumulate(begin(overall), end(overall), 0U));
 
-	std::ifstream file("settings/Generation 4/OU/teammate.txt");
+	std::ifstream file("settings/4/OU/teammate.txt");
 	std::string line;
 	while (getline(file, line)) {
 		constexpr char delimiter = '\t';

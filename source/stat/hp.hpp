@@ -59,7 +59,7 @@ auto set_hp_ev(Pokemon & pokemon, EV ev, IV iv) -> void;
 
 template<typename T>
 auto operator+=(HP & lhs, T const & rhs) -> HP & {
-	return lhs = lhs.current() + bounded::make<bounded::null_policy>(rhs);
+	return lhs = lhs.current() + rhs;
 }
 
 template<typename T>
@@ -67,13 +67,13 @@ auto operator-=(HP & lhs, T const & rhs) -> HP & {
 	return lhs += -rhs;
 }
 
-template<intmax_t min, intmax_t max, typename overflow>
-auto operator==(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
-	return lhs.current() == rhs;
+template<auto min, auto max, typename overflow>
+auto compare(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
+	return bounded::compare(lhs.current(), rhs);
 }
-template<intmax_t min, intmax_t max, typename overflow>
-auto operator==(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
-	return rhs == lhs.current();
+template<auto min, auto max, typename overflow>
+auto compare(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
+	return bounded::compare(rhs, lhs.current());
 }
 
 }	// namespace technicalmachine

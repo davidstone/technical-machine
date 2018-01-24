@@ -170,7 +170,7 @@ auto score_team(Evaluate const & evaluate, Team const & ai, Team const & foe, We
 	auto const foe_field_effects = score_field_effects(evaluate, foe.screens, foe.wish);
 	auto const ai_pokemon = score_all_pokemon(evaluate, ai, foe, weather);
 	auto const foe_pokemon = score_all_pokemon(evaluate, foe, ai, weather);
-	return bounded::make<bounded::null_policy>(ai_field_effects - foe_field_effects + ai_pokemon - foe_pokemon);
+	return ai_field_effects - foe_field_effects + ai_pokemon - foe_pokemon;
 }
 // Extra is here to allow for one-past-the-end on both sides
 constexpr bounded::integer<-1, 1> extra = 0_bi;
@@ -221,7 +221,7 @@ Evaluate::Evaluate() {
 	read_xml("settings/evaluate.xml", file);
 	boost::property_tree::ptree const pt = file.get_child("score");
 
-	using underlying_type = bounded::equivalent_type<value_type, bounded::throw_policy<>>;
+	using underlying_type = bounded::checked_integer<value_type::min().value(), value_type::max().value()>;
 
 	m_light_screen = pt.get<underlying_type>("light_screen", 0_bi);
 	m_lucky_chant = pt.get<underlying_type>("lucky_chant", 0_bi);

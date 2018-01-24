@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,12 +26,19 @@ namespace technicalmachine {
 struct Level {
 	static constexpr int min = 1;
 	static constexpr int max = 100;
-	explicit Level(bounded::checked_integer<min, max> level);
-	bounded::integer<min, max> operator() () const;
+	constexpr explicit Level(bounded::integer<min, max> const level) :
+		m_value(level)
+	{
+	}
+	constexpr auto operator()() const -> bounded::integer<min, max> {
+		return m_value;
+	}
 private:
 	bounded::checked_integer<min, max> m_value;
 };
 
-bool operator== (Level lhs, Level rhs);
+constexpr auto compare(Level const lhs, Level const rhs) {
+	return bounded::compare(lhs(), rhs());
+}
 
 }	// namespace technicalmachine

@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,9 +27,19 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct BideDamage {
-	auto add(damage_type damage) -> void;
-	auto release() -> damage_type;
-	friend auto operator== (BideDamage lhs, BideDamage rhs) -> bool;
+	constexpr auto add(damage_type const damage) -> void {
+		m_damage += damage;
+	}
+
+	constexpr auto release() {
+		bounded::clamped_integer<0, HP::max_value> const output_damage = m_damage * 2_bi;
+		m_damage = 0_bi;
+		return output_damage;
+	}
+
+	friend constexpr auto compare(BideDamage const lhs, BideDamage const rhs) {
+		return bounded::compare(lhs.m_damage, rhs.m_damage);
+	}
 	
 private:
 	// This is the greatest range that matters since anything more is overkill

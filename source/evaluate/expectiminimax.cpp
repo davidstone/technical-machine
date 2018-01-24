@@ -288,7 +288,7 @@ double end_of_turn_branch(Team first, Team last, Weather weather, unsigned depth
 
 double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, unsigned depth, Evaluate const & evaluate, ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
 	auto get_flag = [&](auto const & match) {
-		return bounded::addressof(match) == bounded::addressof(team) ? team_flag : other_flag;
+		return std::addressof(match) == std::addressof(team) ? team_flag : other_flag;
 	};
 	return !faster ?
 		(end_of_turn_branch(team, other, weather, depth, evaluate, team_flag, other_flag) + end_of_turn_branch(other, team, weather, depth, evaluate, other_flag, team_flag)) / 2.0 :
@@ -449,7 +449,7 @@ BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsig
 				continue;
 			}
 			auto get_replacement = [&](Team const & team) {
-				return bounded::addressof(team) == bounded::addressof(ai) ? ai_replacement : foe_replacement;
+				return std::addressof(team) == std::addressof(ai) ? ai_replacement : foe_replacement;
 			};
 			beta = std::min(beta, !faster ?
 				(fainted(ai, foe, weather, depth, evaluate, ai_replacement, foe_replacement) + fainted(foe, ai, weather, depth, evaluate, ai_replacement, foe_replacement)) / 2.0 :

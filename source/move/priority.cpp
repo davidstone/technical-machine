@@ -83,11 +83,4 @@ Priority::Priority(Moves const move) :
 	priority(get_priority(move)) {
 }
 
-auto operator== (Priority const lhs, Priority const rhs) -> bool {
-	return lhs.priority == rhs.priority;
-}
-auto operator< (Priority const lhs, Priority const rhs) -> bool {
-	return lhs.priority < rhs.priority;
-}
-
 }	// namespace technicalmachine

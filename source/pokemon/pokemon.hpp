@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -75,7 +75,25 @@ struct Pokemon {
 
 	void change_type(Type new_type);
 	auto has_been_seen() const -> bool;
-	friend bool operator== (Pokemon const & lhs, Pokemon const & rhs);
+
+	// Species clause is assumed, and Pokemon will only be compared for equality
+	// on the same team, so the same species implies many other things are the
+	// same
+	friend auto compare(Pokemon const & lhs, Pokemon const & rhs) {
+		assert(illegal_inequality_check(lhs, rhs));
+		auto as_tuple = [](auto const & value) {
+			return containers::make_tuple(
+				value.m_moves,
+				value.m_species,
+				value.m_status,
+				get_hp(value).current(),
+				value.m_item,
+				value.has_been_seen()
+			);
+		};
+		return compare(as_tuple(lhs), as_tuple(rhs));
+	}
+
 
 private:
 	friend bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs);
@@ -101,6 +119,13 @@ private:
 
 	bool m_has_been_seen = false;
 };
+
+inline auto compare(Pokemon const & lhs, Species const rhs) {
+	return bounded::compare(static_cast<Species>(lhs), rhs);
+}
+inline auto compare(Species const & lhs, Pokemon const & rhs) {
+	return bounded::compare(lhs, static_cast<Species>(rhs));
+}
 
 inline auto all_moves(Pokemon const & pokemon) -> MoveCollection const & {
 	return pokemon.m_moves;

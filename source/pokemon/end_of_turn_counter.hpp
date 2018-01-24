@@ -27,6 +27,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
+// TODO: fold expression
 template<typename T, T value_to_find, T... ts>
 struct Any;
 template<typename T, T value_to_find, T first, T... ts>
@@ -48,20 +49,20 @@ struct EndOfTurnCounter {
 		static_assert(Any<CounterOperations, CounterOperations::turns_active, operations...>::value, "This type does not support querying the turn count.");
 		return m_turns_active;
 	}
-	auto activate() {
+	constexpr auto activate() {
 		static_assert(Any<CounterOperations, CounterOperations::activate, operations...>::value, "This type does not support activation.");
 		m_turns_active = 0_bi;
 	}
-	auto advance_one_turn() {
+	constexpr auto advance_one_turn() {
 		static_assert(Any<CounterOperations, CounterOperations::advance_one_turn, operations...>::value, "This type does not support advancing the counter by one.");
 		advance_one_turn_impl();
 	}
-	auto advance_one_turn_deactivated() {
+	constexpr auto advance_one_turn_deactivated() {
 		static_assert(Any<CounterOperations, CounterOperations::advance_one_turn_deactivated, operations...>::value, "This type does not support advancing the counter by one and returning whether it just deactivated.");
 		return advance_one_turn_impl();
 	}
-	friend constexpr auto operator==(EndOfTurnCounter const lhs, EndOfTurnCounter const rhs) -> bool {
-		return lhs.m_turns_active == rhs.m_turns_active;
+	friend constexpr auto compare(EndOfTurnCounter const lhs, EndOfTurnCounter const rhs) {
+		return bounded::compare(lhs.m_turns_active, rhs.m_turns_active);
 	}
 	
 private:

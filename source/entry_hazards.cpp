@@ -41,22 +41,6 @@ auto apply_toxic_spikes(EntryHazards const & hazards, MutableActivePokemon switc
 
 }	// namespace
 
-auto EntryHazards::add_spikes() -> void {
-	++m_spikes;
-}
-
-auto EntryHazards::add_toxic_spikes() -> void {
-	++m_toxic_spikes;
-}
-
-auto EntryHazards::clear_toxic_spikes() -> void {
-	m_toxic_spikes = 0_bi;
-}
-
-auto EntryHazards::add_stealth_rock() -> void {
-	m_stealth_rock = true;
-}
-
 auto apply(EntryHazards & hazards, MutableActivePokemon switcher, Weather const weather) -> void {
 	if (get_ability(switcher).blocks_secondary_damage())
 		return;
@@ -65,8 +49,7 @@ auto apply(EntryHazards & hazards, MutableActivePokemon switcher, Weather const 
 		if (hazards.toxic_spikes() != 0_bi) {
 			if (removes_toxic_spikes(switcher)) {
 				hazards.clear_toxic_spikes();
-			}
-			else {
+			} else {
 				apply_toxic_spikes(hazards, switcher, weather);
 			}
 		}
@@ -77,13 +60,6 @@ auto apply(EntryHazards & hazards, MutableActivePokemon switcher, Weather const 
 	if (hazards.stealth_rock()) {
 		heal(switcher, make_rational(-1_bi, 8_bi) * Effectiveness(Type::Rock, switcher));
 	}
-}
-
-auto operator== (EntryHazards const lhs, EntryHazards const rhs) -> bool {
-	return
-		lhs.spikes() == rhs.spikes() and
-		lhs.toxic_spikes() == rhs.toxic_spikes() and
-		lhs.stealth_rock() == rhs.stealth_rock();
 }
 
 }	// namespace technicalmachine

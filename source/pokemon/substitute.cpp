@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,23 +16,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "substitute.hpp"
-
-namespace technicalmachine {
-
-auto Substitute::create(HP::current_type const total_hp) -> hp_type {
-	if (static_cast<bool>(*this)) {
-		return 0_bi;
-	}
-	m_hp = total_hp / 4_bi;
-	return m_hp;
-}
-
-Substitute::operator bool() const {
-	return hp() != 0_bi;
-}
-
-bool operator== (Substitute const & lhs, Substitute const & rhs) {
-	return lhs.hp() == rhs.hp();
-}
-
-}	// namespace technicalmachine

@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,40 +16,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stockpile.hpp"
-#include "../rational.hpp"
-
-namespace technicalmachine {
-
-auto Stockpile::increment() -> bool {
-	auto const initial = m_level;
-	++m_level;
-	return m_level == initial;
-}
-
-auto Stockpile::release() -> bounded::integer<0, max> {
-	auto const temp = m_level;
-	*this = {};
-	return temp;
-}
-
-auto Stockpile::spit_up_power() const -> bounded::integer<0, max * 100> {
-	return m_level * 100_bi;
-}
-
-
-auto swallow_healing(bounded::checked_integer<1, Stockpile::max> const stockpiles) -> SwallowHealing{
-	switch (stockpiles.value()) {
-		case 1:
-			return {1_bi, 4_bi};
-		case 2:
-			return {1_bi, 2_bi};
-		default:	// case 3:
-			return {1_bi, 1_bi};
-	}
-}
-
-auto operator==(Stockpile lhs, Stockpile rhs) -> bool {
-	return lhs.m_level == rhs.m_level;
-}
-
-}	// namespace technicalmachine

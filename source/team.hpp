@@ -79,7 +79,20 @@ struct Team {
 	void clear_field();
 	void move(bool value = true);
 
-	friend bool operator== (Team const & lhs, Team const & rhs);
+	friend auto compare(Team const & lhs, Team const & rhs) {
+		constexpr auto tie = [](auto const & value) {
+			return containers::tie(
+				value.all_pokemon(),
+				value.m_flags,
+				value.screens,
+				value.wish,
+				value.entry_hazards,
+				value.me
+			);
+		};
+		return compare(tie(lhs), tie(rhs));
+	}
+
 
 private:
 	friend struct Evaluate;

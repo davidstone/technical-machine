@@ -65,7 +65,7 @@ struct TestContainer {
 		return end(container.m_container);
 	}
 	
-	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
+	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(TestContainer)
 private:
 	Container m_container;
 };

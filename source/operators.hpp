@@ -24,7 +24,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 CONTAINERS_COMMON_USING_DECLARATIONS
-	
+
 namespace detail {
 
 using namespace bounded::literal;

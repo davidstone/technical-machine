@@ -1,5 +1,5 @@
 // Collection of moves with index indicating current move
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -37,26 +37,6 @@ auto operator-(MoveIterator const lhs, MoveIterator const rhs) -> MoveIterator::
 	// The +-1 accounts for the one-past-the-end index.
 	using RegularMoveDifference = decltype(std::declval<RegularMoveIndex>() - std::declval<RegularMoveIndex>() + std::declval<bounded::integer<-1, 1>>());
 	return (lhs.m_shared - rhs.m_shared) + static_cast<RegularMoveDifference>(lhs.m_regular.begin() - rhs.m_regular.begin());
-}
-
-auto operator==(MoveIterator const lhs, MoveIterator const rhs) noexcept -> bool {
-	return lhs.m_regular.begin() == rhs.m_regular.begin() and lhs.m_shared == rhs.m_shared;
-}
-auto operator<(MoveIterator const lhs, MoveIterator const rhs) noexcept -> bool {
-	return lhs.m_regular.begin() < rhs.m_regular.begin() or lhs.m_shared < rhs.m_shared;
-}
-
-MoveContainer::MoveContainer(TeamSize const my_team_size):
-	m_shared(my_team_size)
-{
-}
-
-auto MoveContainer::number_of_regular_moves() const -> RegularMoveSize {
-	return static_cast<RegularMoveSize>(size(m_regular));
-}
-
-auto MoveContainer::remove_switch() -> void {
-	m_shared.remove_switch();
 }
 
 }	// namespace technicalmachine

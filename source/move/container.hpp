@@ -1,5 +1,5 @@
 // Moves specific to one Pokemon and shared moves (Struggle and switches)
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -48,21 +48,25 @@ public:
 	using reference = value_type &;
 	using iterator_category = std::random_access_iterator_tag;
 
-	auto operator*() const -> value_type {
+	constexpr auto operator*() const -> value_type {
 		return (m_regular.begin() != m_regular.end()) ? *m_regular.begin() : *m_shared;
 	}
-	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
+	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(MoveIterator)
 
 	friend auto operator+(MoveIterator const lhs, difference_type const rhs) -> MoveIterator;
 	friend auto operator-(MoveIterator const lhs, MoveIterator const rhs) -> difference_type;
 
-	friend auto operator==(MoveIterator const lhs, MoveIterator const rhs) noexcept -> bool;
-	friend auto operator<(MoveIterator const lhs, MoveIterator const rhs) noexcept -> bool;
+	friend constexpr auto compare(MoveIterator const lhs, MoveIterator const rhs) noexcept {
+		auto as_tuple = [](auto const value) {
+			return containers::make_tuple(value.m_regular.begin(), value.m_shared);
+		};
+		return compare(as_tuple(lhs), as_tuple(rhs));
+	}
 
 private:
 	using range_t = Range<RegularMoveContainer::const_iterator>;
 	friend struct MoveContainer;
-	MoveIterator(range_t regular, SharedMovesIterator shared) noexcept:
+	constexpr MoveIterator(range_t regular, SharedMovesIterator shared) noexcept:
 		m_regular(std::move(regular)),
 		m_shared(std::move(shared)) {
 	}
@@ -79,33 +83,41 @@ struct MoveContainer {
 	using const_regular_iterator = RegularMoveContainer::const_iterator;
 	using regular_iterator = RegularMoveContainer::iterator;
 	
-	explicit MoveContainer(TeamSize my_team_size);
-	
+	explicit constexpr MoveContainer(TeamSize const my_team_size):
+		m_shared(my_team_size)
+	{
+	}
+
+	constexpr auto number_of_regular_moves() const {
+		return static_cast<RegularMoveSize>(size(m_regular));
+	}
+
 	// Skips Struggle and switches
-	auto regular() const {
+	constexpr auto regular() const {
 		return make_range(begin(m_regular), end(m_regular));
 	}
-	auto regular() {
+	constexpr auto regular() {
 		return make_range(begin(m_regular), end(m_regular));
 	}
 	
-	friend const_iterator begin(MoveContainer const & container) {
+	friend constexpr const_iterator begin(MoveContainer const & container) {
 		return const_iterator(container.regular(), begin(container.m_shared));
 	}
-	friend const_iterator end(MoveContainer const & container) {
+	friend constexpr const_iterator end(MoveContainer const & container) {
 		return const_iterator(MoveIterator::range_t(container.regular().end(), container.regular().end()), end(container.m_shared));
 	}
 
-	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
+	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(MoveContainer)
 
 	template<typename M, typename... MaybePP>
-	auto & emplace_back(M const move, MaybePP... maybe_pp) {
+	constexpr auto & emplace_back(M const move, MaybePP... maybe_pp) {
 		assert(containers::none_equal(begin(m_regular), end(m_regular), move));
 		return m_regular.emplace_back(move, maybe_pp...);
 	}
 
-	auto number_of_regular_moves() const -> RegularMoveSize;
-	auto remove_switch() -> void;
+	constexpr auto remove_switch() {
+		m_shared.remove_switch();
+	}
 	
 private:
 	RegularMoveContainer m_regular;

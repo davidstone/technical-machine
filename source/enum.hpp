@@ -26,6 +26,9 @@
 
 namespace technicalmachine {
 
+BOUNDED_COMPARISON
+BOUNDED_COMMON_ARITHMETIC
+
 using namespace bounded::literal;
 
 template<typename Enum, Enum maximum = Enum::END>

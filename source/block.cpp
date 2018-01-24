@@ -154,7 +154,7 @@ auto is_legal_selection(Team const & user, Move const move, ActivePokemon const 
 LegalSelections::LegalSelections(Team const & user, ActivePokemon const other, Weather const weather):
 	m_species(user.pokemon())
 {
-	for (auto const & move : all_moves(user.pokemon())) {
+	for (auto const move : all_moves(user.pokemon())) {
 		bool const found_selectable_move = !empty(*this);
 		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
 			emplace_back(move);

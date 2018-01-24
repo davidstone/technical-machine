@@ -1,5 +1,5 @@
 // Partial trap timer (things like Wrap and Clamp)
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,13 +30,13 @@ struct PartialTrap {
 	constexpr auto is_active() const {
 		return m_base.is_active();
 	}
-	auto activate() {
+	constexpr auto activate() {
 		m_base.activate();
 	}
 	auto damage(MutableActivePokemon pokemon) -> void;
 
-	friend constexpr auto operator==(PartialTrap const lhs, PartialTrap const rhs) -> bool {
-		return lhs.m_base == rhs.m_base;
+	friend constexpr auto compare(PartialTrap const lhs, PartialTrap const rhs) {
+		return compare(lhs.m_base, rhs.m_base);
 	}
 private:
 	EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::activate, CounterOperations::advance_one_turn> m_base;

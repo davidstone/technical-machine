@@ -157,7 +157,7 @@ constexpr auto const & phaze_probability(TeamSize const foe_size) {
 	if (foe_size <= phaze_cutoff) {
 		return guaranteed;
 	}
-	static_assert(foe_size <= 6_bi);
+	static_assert(TeamSize::max() <= 6_bi);
 	constexpr auto container = containers::make_array(
 		constant_probability(2_bi),
 		constant_probability(3_bi),

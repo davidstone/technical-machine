@@ -1,5 +1,4 @@
-// Level data structure
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,20 +16,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "level.hpp"
-
-namespace technicalmachine {
-
-Level::Level(bounded::checked_integer<min, max> const level) : 
-	m_value(level)
-	{
-}
-
-auto Level::operator()() const -> bounded::integer<min, max> {
-	return m_value;
-}
-
-bool operator== (Level const lhs, Level const rhs) {
-	return lhs() == rhs();
-}
-
-}	// namespace technicalmachine

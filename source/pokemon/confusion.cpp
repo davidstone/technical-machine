@@ -1,5 +1,5 @@
 // Class that represents the duration left on Confusion
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,17 +23,6 @@ namespace technicalmachine {
 // min_duration = 2;
 // max_duration = 5;
 
-auto Confusion::is_active() const -> bool {
-	return static_cast<bool>(m_turns_spent_confused);
-}
-
-auto Confusion::activate() -> void {
-	if (is_active()) {
-		return;
-	}
-	m_turns_spent_confused = 0_bi;
-}
-
 namespace {
 auto register_self_hit(Pokemon &) -> void {
 	// TODO: write this
@@ -56,18 +45,6 @@ auto Confusion::increment() -> void {
 	} else {
 		++*m_turns_spent_confused;
 	}
-}
-
-auto Confusion::end_of_turn_reset() -> void {
-	m_is_hitting_self = false;
-}
-
-auto Confusion::hit_self() -> void {
-	m_is_hitting_self = true;
-}
-
-auto operator== (Confusion const & lhs, Confusion const & rhs) -> bool {
-	return lhs.m_turns_spent_confused == rhs.m_turns_spent_confused;
 }
 
 }	// namespace technicalmachine

@@ -143,16 +143,6 @@ void Team::load(boost::filesystem::path const & team_file) {
 	}
 }
 
-bool operator== (Team const & lhs, Team const & rhs) {
-	return
-		lhs.all_pokemon() == rhs.all_pokemon() and
-		lhs.m_flags == rhs.m_flags and
-		lhs.screens == rhs.screens and
-		lhs.wish == rhs.wish and
-		lhs.entry_hazards == rhs.entry_hazards and
-		lhs.me == rhs.me;
-}
-
 std::string to_string(Team const & team, bool const include_owner) {
 	std::string output;
 	if (include_owner) {

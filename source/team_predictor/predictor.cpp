@@ -113,7 +113,7 @@ struct PokemonInputValues {
 		Pokemon & pokemon = team.replacement();
 		set_hp_ev(pokemon, evs[0_bi]);
 		for (auto const stat : regular_stats()) {
-			set_stat_ev(pokemon, stat, containers::at(evs, bounded::make(stat) + 1_bi));
+			set_stat_ev(pokemon, stat, containers::at(evs, bounded::integer(stat) + 1_bi));
 		}
 		for (auto const move : moves) {
 			all_moves(pokemon).emplace_back(move);

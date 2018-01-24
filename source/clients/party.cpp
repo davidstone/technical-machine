@@ -33,10 +33,6 @@ Party::Party(value_type const initial):
 	m_party(initial) {
 }
 
-auto operator==(Party const lhs, Party const rhs) -> bool {
-	return lhs.value() == rhs.value();
-}
-
 auto set_if_unknown(Party & party, Party const new_party) -> void {
  	if (party.value() == unknown_party) {
 		party = new_party;

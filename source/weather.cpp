@@ -28,28 +28,6 @@ auto conditional_decrement(T & n) -> void {
 }
 }	// namespace
 
-auto Weather::trick_room() const -> bool {
-	return m_trick_room != 0_bi;
-}
-auto Weather::gravity() const -> bool {
-	return m_gravity != 0_bi;
-}
-auto Weather::uproar() const -> bool {
-	return m_uproar != 0_bi;
-}
-auto Weather::hail() const -> bool {
-	return m_hail != 0_bi;
-}
-auto Weather::sun() const -> bool {
-	return m_sun != 0_bi;
-}
-auto Weather::sand() const -> bool {
-	return m_sand != 0_bi;
-}
-auto Weather::rain() const -> bool {
-	return m_rain != 0_bi;
-}
-
 auto Weather::advance_one_turn() -> void {
 	conditional_decrement(m_trick_room);
 	conditional_decrement(m_gravity);
@@ -112,18 +90,6 @@ auto Weather::blocks_status(Statuses const status) const -> bool {
 	default:
 		return false;
 	}
-}
-
-auto operator==(Weather const lhs, Weather const rhs) -> bool {
-	return
-		lhs.m_trick_room == rhs.m_trick_room and
-		lhs.m_fog == rhs.m_fog and
-		lhs.m_gravity == rhs.m_gravity and
-		lhs.m_uproar == rhs.m_uproar and
-		lhs.m_hail == rhs.m_hail and
-		lhs.m_sun == rhs.m_sun and
-		lhs.m_sand == rhs.m_sand and
-		lhs.m_rain == rhs.m_rain;
 }
 
 }	// namespace technicalmachine

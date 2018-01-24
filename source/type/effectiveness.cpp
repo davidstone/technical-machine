@@ -78,10 +78,13 @@ Effectiveness::Effectiveness(Type const attacking, Type const defending1, Type c
 		lookup_effectiveness(attacking, defending1),
 		lookup_effectiveness(attacking, defending2)
 	}) {
+	// TODO: Write better trait that looks only at the values
+	#if 0
 	static_assert(
 		std::is_same<decltype(lookup_effectiveness(attacking, defending1)), SingleType>::value,
 		"Incorrect effectiveness type."
 	);
+	#endif
 }
 
 Effectiveness::Effectiveness(Type const type, Pokemon const & defender):

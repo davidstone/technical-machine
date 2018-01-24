@@ -73,6 +73,8 @@ private:
 	containers::index_type<MoveCollection> m_current_index = 0_bi;
 };
 
+using ::containers::detail::common::compare;
+
 inline auto set_index(MoveCollection & moves, Moves const move) -> void {
 	auto const it = containers::find(begin(moves), end(moves), move);
 	assert(it != end(moves));
@@ -100,6 +102,5 @@ inline auto & add_seen_move(MoveCollection & moves, M const move, MaybePP... may
 		return result;
 	}
 }
-
 
 }	// namespace technicalmachine

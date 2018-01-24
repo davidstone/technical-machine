@@ -34,7 +34,9 @@ private:
 	value_type m_party;
 };
 
-auto operator==(Party lhs, Party rhs) -> bool;
+inline auto compare(Party const lhs, Party const rhs) {
+	return bounded::compare(lhs.value(), rhs.value());
+}
 
 auto set_if_unknown(Party & party, Party new_party) -> void;
 auto other(Party const party) -> Party;

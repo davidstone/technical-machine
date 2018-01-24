@@ -64,7 +64,12 @@ struct Status {
 	friend auto apply(Statuses status, Pokemon & user, Pokemon & target, Weather weather) -> void;
 	friend auto shift_status(Pokemon & user, Pokemon & target, Weather weather) -> void;
 
-	friend auto operator==(Status lhs, Status rhs) -> bool;
+	friend constexpr auto compare(Status const lhs, Status const rhs) {
+		auto as_tuple = [](auto const value) {
+			return containers::make_tuple(value.m_status, value.m_turns_already_slept);
+		};
+		return compare(as_tuple(lhs), as_tuple(rhs));
+	}
 
 	auto increase_sleep_counter (Ability const & ability, bool awaken) -> void;
 

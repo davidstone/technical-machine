@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,20 +16,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "gender.hpp"
-
-namespace technicalmachine {
-using namespace bounded::literal;
-
-Gender::Gender (Genders gender_):
-	gender (gender_) {
-}
-
-bounded::integer<-1, 1> multiplier(Gender const my, Gender const foe) {
-	return (static_cast<bounded::integer<0, 2>>(my.gender) - 1_bi) * (static_cast<bounded::integer<0, 2>>(foe.gender) - 1_bi);
-}
-
-bool operator== (Gender const lhs, Gender const rhs) {
-	return lhs.gender == rhs.gender;
-}
-
-}	// namespace technicalmachine

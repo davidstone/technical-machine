@@ -1,5 +1,5 @@
 // Gender header
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -31,15 +31,26 @@ namespace technicalmachine {
 struct Gender {
 	enum Genders : uint8_t { FEMALE, GENDERLESS, MALE, END };
 	
-	Gender(Genders gender_);
-
-	friend bool operator== (Gender lhs, Gender rhs);
+	constexpr Gender(Genders gender_):
+		gender (gender_) {
+	}
 
 	Genders gender;
 };
 
-// Return 1 if the same, -1 if opposite, and 0 if either is genderless
-bounded::integer<-1, 1> multiplier(Gender me, Gender foe);
+constexpr auto compare(Gender const lhs, Gender const rhs) {
+	return bounded::compare(lhs.gender, rhs.gender);
+}
+
+constexpr bounded::integer<-1, 1> multiplier(Gender const my, Gender const foe) {
+	if (my == Gender::GENDERLESS or foe == Gender::GENDERLESS) {
+		return 0_bi;
+	} else if (my == foe) {
+		return 1_bi;
+	} else {
+		return -1_bi;
+	}
+}
 
 }	// namespace technicalmachine
 

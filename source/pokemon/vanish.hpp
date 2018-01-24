@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -31,26 +31,68 @@ namespace technicalmachine {
 
 struct Vanish {
 private:
-	enum class VanishTypes : uint8_t {
+	enum class VanishTypes : std::uint8_t {
 		none, bounce, dig, dive, fly, shadow_force, end
 	};
+
+	constexpr auto flip(VanishTypes const flipped) {
+		m_state = (m_state == VanishTypes::none) ? flipped : VanishTypes::none;
+		return m_state != VanishTypes::none;
+	}
+
+	constexpr auto doubles_ground_power() const {
+		return m_state == VanishTypes::dig;
+	}
+	constexpr auto doubles_surf_power() const {
+		return m_state == VanishTypes::dive;
+	}
+	constexpr auto doubles_wind_power() const {
+		switch (m_state) {
+			case VanishTypes::bounce:
+			case VanishTypes::fly:
+				return true;
+			default:
+				return false;
+		}
+	}
 public:
 	// Returns whether the Pokemon ends up in a Vanished state
-	auto bounce() -> bool;
-	auto dig() -> bool;
-	auto dive() -> bool;
-	auto fly() -> bool;
-	auto shadow_force() -> bool;
+	constexpr auto bounce() {
+		return flip(VanishTypes::bounce);
+	}
+	constexpr auto dig() {
+		return flip(VanishTypes::dig);
+	}
+	constexpr auto dive() {
+		return flip(VanishTypes::dive);
+	}
+	constexpr auto fly() {
+		return flip(VanishTypes::fly);
+	}
+	constexpr auto shadow_force() {
+		return flip(VanishTypes::shadow_force);
+	}
 
-	auto doubles_move_power(Moves move) const -> bool;
-	friend auto operator== (Vanish lhs, Vanish rhs) -> bool;
-private:
-	auto doubles_ground_power() const -> bool;
-	auto doubles_surf_power() const -> bool;
-	auto doubles_wind_power() const -> bool;
-
-	auto flip(VanishTypes const flipped) -> bool;
+	constexpr auto doubles_move_power(Moves const move) const {
+		switch (move) {
+			case Moves::Earthquake:
+			case Moves::Magnitude:
+				return doubles_ground_power();
+			case Moves::Gust:
+			case Moves::Twister:
+				return doubles_wind_power();
+			case Moves::Surf:
+				return doubles_surf_power();
+			default:
+				return false;
+		}
+	}
 	
+	friend constexpr auto compare(Vanish const lhs, Vanish const rhs) {
+		return bounded::compare(lhs.m_state, rhs.m_state);
+	}
+
+private:
 	VanishTypes m_state = VanishTypes::none;
 };
 

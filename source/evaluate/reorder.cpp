@@ -20,6 +20,8 @@
 
 #include "move_scores.hpp"
 
+#include <containers/legacy_iterator.hpp>
+
 #include <algorithm>
 
 namespace technicalmachine {
@@ -38,7 +40,7 @@ StaticVectorMove reorder(LegalSelections const & input, MoveScores const & move_
 		auto const rhs_score = move_scores.get(rhs);
 		return ai ? (lhs_score > rhs_score) : (lhs_score < rhs_score);
 	};
-	std::sort(begin(output), end(output), compare);
+	std::sort(containers::legacy_iterator(begin(output)), containers::legacy_iterator(end(output)), compare);
 	return output;
 }
 

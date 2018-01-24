@@ -1,5 +1,5 @@
 // Handles bide damage and when it activates
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,11 +27,28 @@
 namespace technicalmachine {
 
 struct Bide {
-	auto is_active() const -> bool ;
-	auto activate() -> void;
-	auto add_damage(damage_type damage) -> void;
-	auto decrement() -> damage_type;
-	friend auto operator== (Bide lhs, Bide rhs) -> bool ;
+	constexpr auto is_active() const {
+		return static_cast<bool>(m_duration);
+	}
+	constexpr auto activate() {
+		m_duration.activate();
+	}
+	constexpr auto add_damage(damage_type const damage) {
+		if (is_active()) {
+			m_damage.add(damage);
+		}
+	}
+	constexpr auto decrement() {
+		return BOUNDED_CONDITIONAL(m_duration.decrement(), m_damage.release(), 0_bi);
+	}
+
+	friend constexpr auto compare(Bide const lhs, Bide const rhs) {
+		auto as_tuple = [](auto const value) {
+			return containers::make_tuple(value.m_damage, value.m_duration);
+		};
+		return compare(as_tuple(lhs), as_tuple(rhs));
+	}
+
 private:
 	BideDamage m_damage;
 	BideDuration m_duration;

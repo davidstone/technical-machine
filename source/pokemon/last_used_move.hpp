@@ -50,19 +50,22 @@ struct LastUsedMove {
 	constexpr auto fury_cutter_power() const {
 		// 10 * 2 ^ n
 		auto const result = 10_bi << bounded::min(m_consecutive_turns_used, 4_bi);
-		static_assert(std::is_same<decltype(result), bounded::integer<10, 160> const>{});
+		static_assert(result.min() == 10_bi);
+		static_assert(result.max() == 160_bi);
 		return result;
 	}
 
 	constexpr auto momentum_move_power() const {
 		auto const result = 30_bi << bounded::min(m_consecutive_turns_used, 4_bi);
-		static_assert(std::is_same<decltype(result), bounded::integer<30, 480> const>{});
+		static_assert(result.min() == 30_bi);
+		static_assert(result.max() == 480_bi);
 		return result;
 	}
 
 	constexpr auto triple_kick_power() const {
 		auto const result = 10_bi * bounded::min(m_consecutive_turns_used + 1_bi, 3_bi);
-		static_assert(std::is_same<decltype(result), bounded::integer<10, 30> const>{});
+		static_assert(result.min() == 10_bi);
+		static_assert(result.max() == 30_bi);
 		return result;
 	}
 
@@ -71,11 +74,12 @@ struct LastUsedMove {
 		return make_rational(10_bi + m_consecutive_turns_used, 10_bi);
 	}
 
-	friend auto operator==(LastUsedMove const lhs, LastUsedMove const rhs) {
-		auto tie = [](auto const value) { return std::tie(value.m_move, value.m_consecutive_turns_used); };
-		return tie(lhs) == tie(rhs);
+	friend constexpr auto compare(LastUsedMove const lhs, LastUsedMove const rhs) {
+		auto as_tuple = [](auto const value) {
+			return containers::make_tuple(value.m_move, value.m_consecutive_turns_used);
+		};
+		return compare(as_tuple(lhs), as_tuple(rhs));
 	}
-
 
 private:
 	Moves m_move = Moves::Switch0;

@@ -33,6 +33,7 @@ struct MutableActivePokemon;
 struct Move;
 struct Weather;
 
+// TODO: Make this just an enum
 struct Ability {
 	enum Abilities : uint8_t {
 		Adaptability, Aftermath, Air_Lock, Anger_Point, Anticipation,
@@ -61,9 +62,19 @@ struct Ability {
 		Unaware, Unburden, Vital_Spirit, Volt_Absorb, Water_Absorb,
 		Water_Veil, White_Smoke, Wonder_Guard, END
 	};
-	Ability ();
-	Ability(Abilities ability);
-	Abilities name() const;
+
+	constexpr Ability():
+		m_name(END) {
+	}
+
+	constexpr Ability(Abilities ability):
+		m_name(ability) {
+	}
+
+	constexpr Abilities name() const {
+		return m_name;
+	}
+
 	bool is_set () const;
 	void set_if_unknown (Abilities ability);
 	bool blocks_switching (ActivePokemon switcher, Weather weather) const;
@@ -106,7 +117,9 @@ struct Ability {
 	
 	static void activate_on_switch (MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather);
 	static void weather_healing(MutableActivePokemon pokemon, Weather weather);
-	friend bool operator== (Ability lhs, Ability rhs);
+	friend constexpr auto compare(Ability const lhs, Ability const rhs) {
+		return bounded::compare(lhs.m_name, rhs.m_name);
+	}
 private:
 	Abilities m_name;
 };

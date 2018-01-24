@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,7 @@
 #include "operators.hpp"
 
 #include <bounded/integer.hpp>
+#include <containers/tuple.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -31,25 +32,38 @@ struct Weather;
 
 struct EntryHazards {
 	constexpr auto spikes() const {
-		return bounded::make<bounded::null_policy>(m_spikes);
+		return m_spikes;
 	}
 	constexpr auto stealth_rock() const {
 		return m_stealth_rock;
 	}
 	constexpr auto toxic_spikes() const {
-		return bounded::make<bounded::null_policy>(m_toxic_spikes);
+		return m_toxic_spikes;
 	}
-	auto add_spikes() -> void;
-	auto add_toxic_spikes() -> void;
-	auto clear_toxic_spikes() -> void;
-	auto add_stealth_rock() -> void;
+	constexpr auto add_spikes() {
+		++m_spikes;
+	}
+	constexpr auto add_toxic_spikes() {
+		++m_toxic_spikes;
+	}
+	constexpr auto clear_toxic_spikes() {
+		m_toxic_spikes = 0_bi;
+	}
+	constexpr auto add_stealth_rock() {
+		m_stealth_rock = true;
+	}
 private:
 	bounded::clamped_integer<0, 3> m_spikes = 0_bi;
 	bounded::clamped_integer<0, 2> m_toxic_spikes = 0_bi;
 	bool m_stealth_rock = false;
 };
 
-auto operator==(EntryHazards lhs, EntryHazards rhs) -> bool;
+constexpr auto compare(EntryHazards const lhs, EntryHazards const rhs) {
+	constexpr auto as_tuple = [](auto const value) {
+		return containers::make_tuple(value.spikes(), value.toxic_spikes(), value.stealth_rock());
+	};
+	return compare(as_tuple(lhs), as_tuple(rhs));
+}
 
 auto apply(EntryHazards & hazards, MutableActivePokemon switcher, Weather weather) -> void;
 

@@ -282,7 +282,7 @@ auto move_power(Team const & attacker_team, Move const move, Team const & defend
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	auto const base_power = variable_adjusted_base_power(attacker_team, move, defender_team, weather, variable);
-	return static_cast<bounded::equivalent_type<MovePower, bounded::throw_policy<>>>(bounded::max(1_bi,
+	return static_cast<MovePower>(bounded::max(1_bi,
 		base_power *
 		BOUNDED_CONDITIONAL(doubling(attacker, move, defender, weather), 2_bi, 1_bi) *
 		item_modifier(attacker, move) *

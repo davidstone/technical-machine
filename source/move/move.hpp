@@ -58,7 +58,18 @@ private:
 	Pp m_pp;
 };
 
-auto operator==(Move lhs, Move rhs) -> bool;
+constexpr auto compare(Move const lhs, Move const rhs) {
+	auto as_tuple = [](auto const value) {
+		return containers::make_tuple(static_cast<Moves>(value), value.pp());
+	};
+	return compare(as_tuple(lhs), as_tuple(rhs));
+}
+constexpr auto compare(Move const lhs, Moves const rhs) {
+	return bounded::compare(static_cast<Moves>(lhs), rhs);
+}
+constexpr auto compare(Moves const lhs, Move const rhs) {
+	return bounded::compare(lhs, static_cast<Moves>(rhs));
+}
 
 auto is_regular(Moves move) -> bool;
 
@@ -69,7 +80,6 @@ auto is_damaging(Moves move) -> bool;
 auto is_phaze(Moves name) -> bool;
 
 auto is_usable_while_frozen(Moves move) -> bool;
-
 
 using StaticVectorMove = containers::static_vector<Move, static_cast<std::intmax_t>(std::numeric_limits<MoveSize>::max())>;
 

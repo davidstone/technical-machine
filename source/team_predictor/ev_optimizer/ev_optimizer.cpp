@@ -85,7 +85,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 		auto const extra_evs = EV::max_total - ev_sum(pokemon);
 
 		auto const dividers = number_of_stats - full_stats - 1_bi;
-		auto shuffled = containers::make_static_vector<bounded::integer<0, 1>>(extra_evs + dividers, 1_bi);
+		auto shuffled = containers::static_vector(extra_evs + dividers, static_cast<bounded::integer<0, 1>>(1_bi));
 		std::fill(begin(shuffled), begin(shuffled) + dividers, 0_bi);
 		std::shuffle(data(shuffled), data(shuffled) + size(shuffled), random_engine);
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,12 +27,29 @@ struct Pokemon;
 using namespace bounded::literal;
 
 struct Confusion {
-	auto is_active() const -> bool;
-	auto activate() -> void;
+	constexpr auto is_active() const {
+		return static_cast<bool>(m_turns_spent_confused);
+	}
+
+	constexpr auto activate() {
+		if (is_active()) {
+			return;
+		}
+		m_turns_spent_confused = 0_bi;
+	}
+
 	auto do_turn(Pokemon & pokemon) -> void;
-	auto hit_self() -> void;
-	auto end_of_turn_reset() -> void;
-	friend bool operator== (Confusion const & lhs, Confusion const & rhs);
+	constexpr auto end_of_turn_reset() {
+		m_is_hitting_self = false;
+	}
+	constexpr auto hit_self() {
+		m_is_hitting_self = true;
+	}
+
+	friend constexpr auto compare(Confusion const lhs, Confusion const rhs) {
+		return bounded::compare(lhs.m_turns_spent_confused, rhs.m_turns_spent_confused);
+	}
+
 private:
 	auto increment() -> void;
 	friend struct Evaluate;

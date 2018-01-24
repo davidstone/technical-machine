@@ -46,9 +46,11 @@ struct Disable {
 		}
 	}
 
-	friend auto operator==(Disable const lhs, Disable const rhs) noexcept {
-		auto tie = [](auto const value) { return std::tie(value.m_turns_disabled, value.m_disabled_move); };
-		return tie(lhs) == tie(rhs);
+	friend constexpr auto compare(Disable const lhs, Disable const rhs) noexcept {
+		auto as_tuple = [](auto const value) {
+			return containers::make_tuple(value.m_turns_disabled, value.m_disabled_move);
+		};
+		return compare(as_tuple(lhs), as_tuple(rhs));
 	}
 
 private:

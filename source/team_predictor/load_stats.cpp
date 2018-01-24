@@ -54,11 +54,11 @@ auto load_stats_from_file(boost::filesystem::path const & file_name) {
 }	// namespace
 
 auto overall_stats () -> containers::array<unsigned, number_of_species> {
-	return load_stats_from_file<unsigned>("settings/Generation 4/OU/usage.txt");
+	return load_stats_from_file<unsigned>("settings/4/OU/usage.txt");
 }
 
 auto lead_stats () -> containers::array<float, number_of_species> {
-	return load_stats_from_file<float>("settings/Generation 4/OU/lead.txt");
+	return load_stats_from_file<float>("settings/4/OU/lead.txt");
 }
 
 }	// namespace technicalmachine

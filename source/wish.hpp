@@ -32,7 +32,10 @@ struct Wish {
 	constexpr auto is_active() const {
 		return static_cast<bool>(m_turns_until_activation);
 	}
-	friend auto operator==(Wish lhs, Wish rhs) -> bool;
+	friend constexpr auto compare(Wish const lhs, Wish const rhs) {
+		return bounded::compare(lhs.m_turns_until_activation, rhs.m_turns_until_activation);
+	}
+
 private:
 	using counter_type = bounded::checked_integer<0, 1>;
 	bounded::optional<counter_type> m_turns_until_activation = bounded::none;

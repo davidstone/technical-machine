@@ -93,19 +93,6 @@ auto Pokemon::has_been_seen() const -> bool {
 	return m_has_been_seen;
 }
 
-bool operator== (Pokemon const & lhs, Pokemon const & rhs) {
-	// Species clause is assumed, and Pokemon will only be compared for equality
-	// on the same team, so the same species implies many other things are the
-	// same
-	assert(illegal_inequality_check(lhs, rhs));
-	return lhs.m_moves == rhs.m_moves and
-			lhs.m_species == rhs.m_species and
-			lhs.m_status == rhs.m_status and
-			get_hp(lhs).current() == get_hp(rhs).current() and
-			lhs.m_item == rhs.m_item and
-			lhs.has_been_seen() == rhs.has_been_seen();
-}
-
 bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {
 	if (lhs.m_species != rhs.m_species)
 		return true;

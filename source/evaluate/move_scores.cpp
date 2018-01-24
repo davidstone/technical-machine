@@ -20,6 +20,8 @@
 #include "evaluate.hpp"
 #include "../pokemon/pokemon.hpp"
 
+#include <containers/legacy_iterator.hpp>
+
 #include <algorithm>
 #include <cassert>
 
@@ -34,11 +36,11 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 	// If this is for my team, then it doesn't matter what I set the scores to,
 	// because I evaluate every move of mine and give it a score. Therefore,
 	// this works in all situations.
-	for (auto const & move : all_moves(pokemon)) {
+	for (auto const move : all_moves(pokemon)) {
 		constexpr auto initial = static_cast<double>(victory + 1_bi);
 		m_scores.emplace_back(move, initial);
 	}
-	std::sort(begin(m_scores), end(m_scores));
+	std::sort(containers::legacy_iterator(begin(m_scores)), containers::legacy_iterator(end(m_scores)));
 }
 
 namespace {
@@ -46,8 +48,13 @@ namespace {
 template<typename Container>
 auto & search(Container & container, Moves const move) {
 	auto compare = [](auto const & element, auto const & requested) { return element.first < requested; };
-	auto const it = std::lower_bound(begin(container), end(container), move, compare);
-	assert(it != end(container));
+	auto const it = std::lower_bound(
+		containers::legacy_iterator(begin(container)),
+		containers::legacy_iterator(end(container)),
+		move,
+		compare
+	);
+	assert(it.base() != end(container));
 	assert(it->first == move);
 	return it->second;
 }

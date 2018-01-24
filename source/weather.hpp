@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,6 +21,7 @@
 #include "status.hpp"
 
 #include <bounded/integer.hpp>
+#include <containers/tuple.hpp>
 
 #include <cstdint>
 
@@ -41,14 +42,31 @@ struct Weather {
 	
 	constexpr Weather() {}
 
-	auto trick_room() const -> bool;
-	auto fog() const -> bool;
-	auto gravity() const -> bool;
-	auto uproar() const -> bool;
-	auto hail() const -> bool;
-	auto sun() const -> bool;
-	auto sand() const -> bool;
-	auto rain() const -> bool;
+	constexpr auto trick_room() const {
+		return m_trick_room != 0_bi;
+	}
+	constexpr auto fog() const {
+		return m_fog;
+	}
+	constexpr auto gravity() const {
+		return m_gravity != 0_bi;
+	}
+	constexpr auto uproar() const {
+		return m_uproar != 0_bi;
+	}
+	constexpr auto hail() const {
+		return m_hail != 0_bi;
+	}
+	constexpr auto sun() const {
+		return m_sun != 0_bi;
+	}
+	constexpr auto sand() const {
+		return m_sand != 0_bi;
+	}
+	constexpr auto rain() const {
+		return m_rain != 0_bi;
+	}
+
 
 	auto advance_one_turn() -> void;
 
@@ -73,7 +91,22 @@ struct Weather {
 
 	auto blocks_status(Statuses status) const -> bool;
 
-	friend auto operator==(Weather lhs, Weather rhs) -> bool;
+	friend constexpr auto compare(Weather const lhs, Weather const rhs) {
+		constexpr auto as_tuple = [](auto const value) {
+			return containers::make_tuple(
+				value.m_trick_room,
+				value.m_fog,
+				value.m_gravity,
+				value.m_uproar,
+				value.m_hail,
+				value.m_sun,
+				value.m_sand,
+				value.m_rain
+			);
+		};
+		return compare(as_tuple(lhs), as_tuple(rhs));
+	}
+
 private:
 	template<typename T>
 	auto activate_weather(T & primary, bool const is_extended) {

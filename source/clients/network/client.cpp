@@ -33,6 +33,7 @@
 #include "../../evaluate/evaluate.hpp"
 
 #include <containers/algorithms/all_any_none.hpp>
+#include <containers/legacy_iterator.hpp>
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/asio/connect.hpp>
@@ -68,6 +69,7 @@ auto create_unsorted_vector(boost::filesystem::path const & file_name) {
 	return unsorted;
 }
 
+// TODO: Use flat_map
 auto create_sorted_vector(boost::filesystem::path const & file_name) {
 	// The sorted vector is used to allow std::binary_search to be used on the
 	// vector for fast searching. I use a sorted vector instead of a
@@ -83,7 +85,7 @@ auto create_sorted_vector(boost::filesystem::path const & file_name) {
 	// sorting would add nothing.
 
 	auto sorted = create_unsorted_vector(file_name);
-	std::sort(begin(sorted), end(sorted));
+	std::sort(containers::legacy_iterator(begin(sorted)), containers::legacy_iterator(end(sorted)));
 	return sorted;
 }
 
@@ -113,7 +115,7 @@ Client::Client(unsigned const depth):
 }
 
 bool Client::is_trusted (std::string const & user) const {
-	return std::binary_search(begin(m_trusted_users), end(m_trusted_users), user);
+	return std::binary_search(containers::legacy_iterator(begin(m_trusted_users)), containers::legacy_iterator(end(m_trusted_users)), user);
 }
 
 void Client::load_settings (bool const reloading) {

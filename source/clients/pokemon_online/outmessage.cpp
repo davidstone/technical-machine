@@ -65,7 +65,7 @@ void OutMessage::write_team (Team const & team, std::string const & username) {
 	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon (pokemon);
 	}
-	for (auto const & unused : bounded::integer_range(size(team.all_pokemon()), max_pokemon_per_team)) {
+	for (auto const unused : bounded::integer_range(size(team.all_pokemon()), max_pokemon_per_team)) {
 		static_cast<void>(unused);
 		write_short(0);
 	}

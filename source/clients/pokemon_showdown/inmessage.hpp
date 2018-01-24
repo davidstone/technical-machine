@@ -43,7 +43,7 @@ struct InMessage {
 		return end(message.m_data);
 	}
 
-	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
+	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(InMessage)
 private:
 	Room m_room;
 	Type m_type;

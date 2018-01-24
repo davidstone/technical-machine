@@ -1,5 +1,5 @@
 // Handles bide damage
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,24 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "damage.hpp"
-
-#include <algorithm>
-
-namespace technicalmachine {
-using namespace bounded::literal;
-
-auto BideDamage::add(damage_type const damage) -> void {
-	m_damage += damage;
-}
-
-auto BideDamage::release() -> damage_type {
-	bounded::clamped_integer<0, HP::max_value> const output_damage = m_damage * 2_bi;
-	m_damage = 0_bi;
-	return output_damage;
-}
-
-auto operator== (BideDamage const lhs, BideDamage const rhs) -> bool {
-	return lhs.m_damage == rhs.m_damage;
-}
-
-}	// namespace technicalmachine

@@ -1,5 +1,5 @@
 // Flags for the active Pokemon
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -116,7 +116,72 @@ struct ActivePokemonFlags {
 	auto reset_end_of_turn() -> void;
 	auto reset_switch() -> void;
 
-	friend auto operator==(ActivePokemonFlags const & lhs, ActivePokemonFlags const & rhs) -> bool;
+	friend constexpr auto compare(ActivePokemonFlags const & lhs, ActivePokemonFlags const & rhs) {
+				compare(lhs.bide, rhs.bide);
+				compare(lhs.confusion, rhs.confusion);
+				compare(lhs.disable, rhs.disable);
+				compare(lhs.embargo, rhs.embargo);
+				compare(lhs.encore, rhs.encore);
+				compare(lhs.heal_block, rhs.heal_block);
+				compare(lhs.last_used_move, rhs.last_used_move);
+				compare(lhs.magnet_rise, rhs.magnet_rise);
+				compare(lhs.partial_trap, rhs.partial_trap);
+				compare(lhs.perish_song, rhs.perish_song);
+				compare(lhs.rampage, rhs.rampage);
+				compare(lhs.slow_start, rhs.slow_start);
+				compare(lhs.stage, rhs.stage);
+				compare(lhs.stockpile, rhs.stockpile);
+				compare(lhs.taunt, rhs.taunt);
+				compare(lhs.toxic, rhs.toxic);
+				compare(lhs.uproar, rhs.uproar);
+				compare(lhs.vanish, rhs.vanish);
+				compare(lhs.yawn, rhs.yawn);
+		auto as_tuple = [](auto const & value) {
+			return containers::make_tuple(
+				value.aqua_ring,
+				value.attracted,
+				value.bide,
+				value.charged,
+				value.confusion,
+				value.is_cursed,
+				value.defense_curled,
+				value.destiny_bond,
+				value.disable,
+				value.embargo,
+				value.encore,
+				value.flash_fire,
+				value.has_focused_energy,
+				value.fully_trapped,
+				value.heal_block,
+				value.identified,
+				value.used_imprison,
+				value.ingrained,
+				value.last_used_move,
+				value.leech_seeded,
+				value.is_loafing_turn,
+				value.locked_on,
+				value.magnet_rise,
+				value.minimized,
+				value.mud_sport,
+				value.is_having_a_nightmare,
+				value.partial_trap,
+				value.perish_song,
+				value.rampage,
+				value.slow_start,
+				value.stage,
+				value.stockpile,
+				value.taunt,
+				value.is_tormented,
+				value.toxic,
+				value.uproar,
+				value.vanish,
+				value.water_sport,
+				value.yawn
+			);
+		};
+		return compare(as_tuple(lhs), as_tuple(rhs));
+	}
+
 
 private:
 	friend struct ActivePokemon;

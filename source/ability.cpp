@@ -35,18 +35,6 @@
 
 namespace technicalmachine {
 
-Ability::Ability():
-	m_name(END) {
-}
-
-Ability::Ability(Abilities ability):
-	m_name(ability) {
-}
-
-Ability::Abilities Ability::name() const {
-	return m_name;
-}
-
 bool Ability::is_set() const {
 	return name() != END;
 }
@@ -410,10 +398,6 @@ void Ability::weather_healing(MutableActivePokemon pokemon, Weather const weathe
 		default:
 			break;
 	}
-}
-
-bool operator==(Ability const lhs, Ability const rhs) {
-	return lhs.m_name == rhs.m_name;
 }
 
 }	// namespace technicalmachine

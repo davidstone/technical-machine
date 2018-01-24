@@ -52,7 +52,7 @@ namespace {
 struct InvalidToStringConversion : std::logic_error {
 	template<typename Test>
 	InvalidToStringConversion(Test original, Test result, boost::string_ref const intermediate):
-		std::logic_error(to_string(bounded::make(original)) + " is seen as " + to_string(bounded::make(result)) + " with an intermediate string of " + intermediate.to_string() + ".\n") {
+		std::logic_error(to_string(bounded::integer(original)) + " is seen as " + to_string(bounded::integer(result)) + " with an intermediate string of " + intermediate.to_string() + ".\n") {
 	}
 };
 

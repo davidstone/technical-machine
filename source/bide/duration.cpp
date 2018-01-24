@@ -1,5 +1,5 @@
 // Handles when Bide activates
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,34 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "duration.hpp"
-
-#include <cassert>
-
-namespace technicalmachine {
-using namespace bounded::literal;
-
-auto BideDuration::activate() -> void {
-	m_turns_active = 0_bi;
-}
-
-BideDuration::operator bool() const {
-	return static_cast<bool>(m_turns_active);
-}
-
-auto BideDuration::decrement() -> bool {
-	assert(this->operator bool());
-	if (*m_turns_active == max) {
-		m_turns_active = bounded::none;
-		return true;
-	}
-	else {
-		++*m_turns_active;
-		return false;
-	}
-}
-
-auto operator== (BideDuration const & lhs, BideDuration const & rhs) -> bool {
-	return lhs.m_turns_active == rhs.m_turns_active;
-}
-
-}	// namespace technicalmachine

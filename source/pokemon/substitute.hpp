@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -30,20 +30,35 @@ using namespace bounded::literal;
 
 struct Substitute {
 private:
-	using hp_type = bounded::equivalent_type<decltype(std::declval<HP::current_type>() / 4_bi), bounded::null_policy>;
+	using hp_type = decltype(std::declval<HP::current_type>() / 4_bi);
 public:
-	auto create(HP::current_type total_hp) -> hp_type;
+	constexpr auto create(HP::current_type const total_hp) -> hp_type {
+		if (static_cast<bool>(*this)) {
+			return 0_bi;
+		}
+		m_hp = total_hp / 4_bi;
+		return m_hp;
+	}
+
 	template<typename Damage>
-	auto damage(Damage const damage_done) -> void {
+	constexpr auto damage(Damage const damage_done) {
 		m_hp -= damage_done;
 	}
+
 	constexpr auto hp() const noexcept -> hp_type {
 		return m_hp;
 	}
-	explicit operator bool() const;
+
+	explicit constexpr operator bool() const {
+		return hp() != 0_bi;
+	}
+
 private:
-	bounded::equivalent_type<hp_type, bounded::clamp_policy> m_hp = 0_bi;
+	bounded::clamped_integer<hp_type::min().value(), hp_type::max().value()> m_hp = 0_bi;
 };
-bool operator== (Substitute const & lhs, Substitute const & rhs);
+
+constexpr auto compare(Substitute const lhs, Substitute const rhs) {
+	return bounded::compare(lhs.hp(), rhs.hp());
+}
 
 }	// namespace technicalmachine

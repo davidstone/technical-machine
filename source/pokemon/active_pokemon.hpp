@@ -55,8 +55,8 @@ struct ActivePokemon {
 
 	TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS;
 
-	friend auto operator==(ActivePokemon const lhs, ActivePokemon const rhs) {
-		return lhs.m_flags == rhs.m_flags;
+	friend auto compare(ActivePokemon const lhs, ActivePokemon const rhs) {
+		return compare(lhs.m_flags, rhs.m_flags);
 	}
 
 private:

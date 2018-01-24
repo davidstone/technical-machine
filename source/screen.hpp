@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -36,36 +36,35 @@ struct Screen {
 		return m_turns_remaining;
 	}
 	template<typename ... Args>
-	auto activate(Args && ... args) -> void {
+	constexpr auto activate(Args && ... args) -> void {
 		activate(std::integral_constant<bool, normal_duration == max_duration>{}, std::forward<Args>(args)...);
 	}
-	auto decrement() -> void {
+	constexpr auto decrement() -> void {
 		--m_turns_remaining;
 	}
 	
 private:
-	auto activate(std::true_type) -> void {
+	constexpr auto activate(std::true_type) -> void {
 		set(bounded::constant<normal_duration>);
 	}
-	auto activate(std::false_type, bool const is_extended) -> void {
+	constexpr auto activate(std::false_type, bool const is_extended) -> void {
 		set(BOUNDED_CONDITIONAL(is_extended,
 			bounded::constant<max_duration>,
 			bounded::constant<normal_duration>
 		));
 	}
 	using duration_type = bounded::clamped_integer<0, max_duration>;
-	auto set(duration_type const duration) -> void {
+	constexpr auto set(duration_type const duration) -> void {
 		if (m_turns_remaining == 0_bi) {
 			m_turns_remaining = duration;
 		}
 	}
-	// Explicit call to constructor needed for workaround to gcc 4.9.0 bug.
 	duration_type m_turns_remaining = duration_type(0_bi);
 };
 
 template<intmax_t normal_duration, intmax_t max_duration>
-auto operator==(Screen<normal_duration, max_duration> const & lhs, Screen<normal_duration, max_duration> const & rhs) -> bool {
-	return lhs.turns_remaining() == rhs.turns_remaining();
+constexpr auto compare(Screen<normal_duration, max_duration> const lhs, Screen<normal_duration, max_duration> const rhs) {
+	return bounded::compare(lhs.turns_remaining(), rhs.turns_remaining());
 }
 
 using LuckyChantEffect = Screen<5>;

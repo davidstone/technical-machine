@@ -1,5 +1,4 @@
-// Class to represent Toxic's counter
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,15 +16,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "toxic.hpp"
-
-namespace technicalmachine {
-
-auto Toxic::increment() -> void {
-	++m_counter;
-}
-
-auto operator==(Toxic const lhs, Toxic const rhs) -> bool {
-	return lhs.m_counter == rhs.m_counter;
-}
-
-}	// namespace technicalmachine

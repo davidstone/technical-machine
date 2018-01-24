@@ -1,5 +1,5 @@
 // Handles when Bide activates
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,14 +23,32 @@
 #include <bounded/integer.hpp>
 #include <bounded/optional.hpp>
 
+#include <cassert>
+
 namespace technicalmachine {
 
 struct BideDuration {
-	auto activate() -> void;
-	explicit operator bool() const;
+	constexpr auto activate() {
+		m_turns_active = 0_bi;
+	}
+	constexpr explicit operator bool() const {
+		return static_cast<bool>(m_turns_active);
+	}
 	// returns whether Bide releases damage
-	auto decrement() -> bool;
-	friend auto operator== (BideDuration const & lhs, BideDuration const & rhs) -> bool;
+	constexpr auto decrement() {
+		assert(this->operator bool());
+		if (*m_turns_active == max) {
+			m_turns_active = bounded::none;
+			return true;
+		} else {
+			++*m_turns_active;
+			return false;
+		}
+	}
+
+	friend constexpr auto compare(BideDuration const lhs, BideDuration const rhs) {
+		return bounded::compare(lhs.m_turns_active, rhs.m_turns_active);
+	}
 
 private:
 	static constexpr auto max = 1;

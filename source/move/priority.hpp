@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,8 +27,9 @@ namespace technicalmachine {
 
 struct Priority {
 	explicit Priority(Moves move);
-	friend auto operator== (Priority lhs, Priority rhs) -> bool;
-	friend auto operator< (Priority lhs, Priority rhs) -> bool;
+	inline friend auto compare(Priority const lhs, Priority const rhs) {
+		return bounded::compare(lhs.priority, rhs.priority);
+	}
 private:
 	bounded::checked_integer<-6, 6> priority;
 };

@@ -28,7 +28,7 @@ struct Team;
 struct Variable;
 struct Weather;
 
-using damage_type = bounded::equivalent_type<unsigned, bounded::throw_policy<>>;
+using damage_type = bounded::checked_integer<0, std::numeric_limits<std::uint32_t>::max()>;
 
 damage_type damage_calculator(Team const & attacker, Move move, Team const & defender, Weather weather, Variable const & variable, bool critical_hit);
 

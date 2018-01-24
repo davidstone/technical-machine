@@ -30,6 +30,9 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
+BOUNDED_COMPARISON
+BOUNDED_COMMON_ARITHMETIC
+
 struct SharedMovesIterator {
 	using value_type = Move const;
 	using difference_type = containers::basic_difference_type<SharedMoveSize>;
@@ -46,14 +49,11 @@ struct SharedMovesIterator {
 		return lhs.m_index - rhs.m_index;
 	}
 
-	friend constexpr auto operator==(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
-		return lhs.m_index == rhs.m_index;
-	}
-	friend constexpr auto operator<(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
-		return lhs.m_index < rhs.m_index;
+	friend constexpr auto compare(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
+		return bounded::compare(lhs.m_index, rhs.m_index);
 	}
 
-	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
+	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(SharedMovesIterator)
 private:
 	using underlying_index_type = bounded::integer<0, static_cast<intmax_t>(std::numeric_limits<SharedMoveSize>::max())>;
 	friend struct SharedMoves;
@@ -82,13 +82,13 @@ struct SharedMoves {
 
 	auto remove_switch() -> void;
 
-	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS
+	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(SharedMoves)
 private:
 	TeamSize m_number_of_switches;
 };
 
-constexpr auto operator==(SharedMoves const lhs, SharedMoves const rhs) {
-	return containers::size(lhs) == containers::size(rhs);
+constexpr auto compare(SharedMoves const lhs, SharedMoves const rhs) {
+	return bounded::compare(containers::size(lhs), containers::size(rhs));
 }
 
 

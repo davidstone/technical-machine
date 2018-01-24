@@ -40,8 +40,4 @@ auto Wish::decrement(MutableActivePokemon pokemon) -> void {
 	}
 }
 
-auto operator== (Wish const lhs, Wish const rhs) -> bool {
-	return lhs.m_turns_until_activation == rhs.m_turns_until_activation;
-}
-
 }	// namespace technicalmachine

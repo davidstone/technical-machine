@@ -560,7 +560,7 @@ Species id_to_species(SpeciesIDs const species) {
 		case 477: return Species::Dusknoir;
 		case 478: return Species::Froslass;
 		case 479:
-			static_assert(species.forme <= 5_bi);
+			static_assert(species.forme.max() <= 5_bi);
 			switch (species.forme.value()) {
 				case 0: return Species::Rotom;
 				case 1: return Species::Rotom_Mow;
@@ -2181,11 +2181,11 @@ Item battle_id_to_item(uint16_t id, uint8_t part) {
 }
 
 Moves id_to_move(MoveID const id) {
-	return (id == 0_bi) ? Moves::END : static_cast<Moves>(id + bounded::make(Moves::Regular_Begin) - 1_bi);
+	return (id == 0_bi) ? Moves::END : static_cast<Moves>(id + bounded::integer(Moves::Regular_Begin) - 1_bi);
 }
 
 MoveID move_to_id(Moves const move) {
-	auto const move_id = bounded::make(move) - bounded::make(Moves::Regular_Begin) + 1_bi;
+	auto const move_id = bounded::integer(move) - bounded::integer(Moves::Regular_Begin) + 1_bi;
 	assert(move_id > 0_bi);
 	return (move == Moves::END) ? MoveID(0_bi) : MoveID(move_id);
 }

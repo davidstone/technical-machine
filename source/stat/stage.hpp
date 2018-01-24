@@ -36,7 +36,7 @@ struct Stage {
 	using container_type = containers::array<value_type, number_of_stats.value()>;
 
 	constexpr Stage() noexcept:
-		m_stages(containers::make_array_n<value_type>(number_of_stats, 0_bi))
+		m_stages(containers::make_array_n(number_of_stats, static_cast<value_type>(0_bi)))
 	{
 	}
 
@@ -62,6 +62,8 @@ struct Stage {
 private:
 	container_type m_stages;
 };
+
+using ::containers::detail::common::compare;
 
 namespace detail {
 

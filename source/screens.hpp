@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,7 +23,14 @@
 namespace technicalmachine {
 
 struct Screens {
-	auto decrement() -> void;
+	constexpr auto decrement() {
+		m_light_screen.decrement();
+		m_reflect.decrement();
+		m_lucky_chant.decrement();
+		m_mist.decrement();
+		m_safeguard.decrement();
+		m_tailwind.decrement();
+	}
 
 	constexpr auto light_screen() const noexcept {
 		return m_light_screen;
@@ -44,14 +51,35 @@ struct Screens {
 		return m_tailwind;
 	}
 
-	auto activate_light_screen(bool is_extended = false) -> void;
-	auto activate_reflect(bool is_extended = false) -> void;
-	auto activate_lucky_chant() -> void;
-	auto activate_mist() -> void;
-	auto activate_safeguard() -> void;
-	auto activate_tailwind() -> void;
+	constexpr auto activate_light_screen(bool is_extended = false) {
+		m_light_screen.activate(is_extended);
+	}
 
-	auto shatter() -> void;
+	constexpr auto activate_reflect(bool is_extended = false) {
+		m_reflect.activate(is_extended);
+	}
+
+	constexpr auto activate_lucky_chant() {
+		m_lucky_chant.activate();
+	}
+
+	constexpr auto activate_mist() {
+		m_mist.activate();
+	}
+
+	constexpr auto activate_safeguard() {
+		m_safeguard.activate();
+	}
+
+	constexpr auto activate_tailwind() {
+		m_tailwind.activate();
+	}
+
+	constexpr auto shatter() {
+		m_light_screen = LightScreenEffect{};
+		m_reflect = ReflectEffect{};
+	}
+
 private:
 	LightScreenEffect m_light_screen;
 	ReflectEffect m_reflect;
@@ -61,6 +89,19 @@ private:
 	TailwindEffect m_tailwind;
 };
 
-auto operator==(Screens const & lhs, Screens const & rhs) -> bool;
+constexpr auto compare(Screens const lhs, Screens const rhs) {
+	auto as_tuple = [](auto const value) {
+		return containers::make_tuple(
+			value.light_screen(),
+			value.reflect(),
+			value.lucky_chant(),
+			value.mist(),
+			value.safeguard(),
+			value.tailwind()
+		);
+	};
+	return compare(as_tuple(lhs), as_tuple(rhs));
+}
+
 
 }	// namespace technicalmachine
