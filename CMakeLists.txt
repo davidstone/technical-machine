@@ -137,7 +137,10 @@ target_link_libraries(tm_common
 
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/settings DESTINATION ${CMAKE_BINARY_DIR}/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/teams DESTINATION ${CMAKE_BINARY_DIR}/)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/teams/foe)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/test/test1.sbt DESTINATION ${CMAKE_BINARY_DIR}/test)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/test/test1.tp DESTINATION ${CMAKE_BINARY_DIR}/test)
 
 add_executable(ai
 	source/clients/pokemon_lab/read_team_file.cpp
