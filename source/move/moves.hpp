@@ -201,10 +201,9 @@ enum class Moves : uint16_t {
 	Slash,
 	Substitute,
 	Struggle,
-	Generation_1_End,
 	
 	// Generation 2
-	Sketch = Generation_1_End,
+	Sketch,
 	Triple_Kick,
 	Thief,
 	Spider_Web,
@@ -290,10 +289,9 @@ enum class Moves : uint16_t {
 	Rock_Smash,
 	Whirlpool,
 	Beat_Up,
-	Generation_2_End,
 	
 	// Generation 3
-	Fake_Out = Generation_2_End,
+	Fake_Out,
 	Uproar,
 	Stockpile,
 	Spit_Up,
@@ -396,10 +394,9 @@ enum class Moves : uint16_t {
 	Water_Pulse,
 	Doom_Desire,
 	Psycho_Boost,
-	Generation_3_End,
 	
 	// Generation 4
-	Roost = Generation_3_End,
+	Roost,
 	Gravity,
 	Miracle_Eye,
 	Wake_Up_Slap,
@@ -512,10 +509,9 @@ enum class Moves : uint16_t {
 	Seed_Flare,
 	Ominous_Wind,
 	Shadow_Force,
-	Generation_4_End,
 	
 	// Generation 5
-	Hone_Claws = Generation_4_End,
+	Hone_Claws,
 	Wide_Guard,
 	Guard_Split,
 	Power_Split,
@@ -607,8 +603,8 @@ enum class Moves : uint16_t {
 	V_create,
 	Fusion_Flare,
 	Fusion_Bolt,
-	Generation_5_End,
-	END = Generation_5_End
+
+	END
 };
 
 }	// namespace technicalmachine

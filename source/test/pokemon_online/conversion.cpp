@@ -78,7 +78,7 @@ void test_move() {
 void test_species() {
 	std::cout << "\t\tVerifying correct species.\n";
 	for (auto const original : enum_range<Species>) {
-		if (original == Species::Generation_4_End) {
+		if (original == Species::Victini) {
 			break;
 		}
 		auto const ids = species_to_id(original);

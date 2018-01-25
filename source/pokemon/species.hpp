@@ -198,10 +198,9 @@ enum class Species : uint16_t {
 	Dragonite,
 	Mewtwo,
 	Mew,
-	Generation_1_End,
 
 	// Generation 2
-	Chikorita = Generation_1_End,
+	Chikorita,
 	Bayleef,
 	Meganium,
 	Cyndaquil,
@@ -301,10 +300,9 @@ enum class Species : uint16_t {
 	Lugia,
 	Ho_Oh,
 	Celebi,
-	Generation_2_End,
 
 	// Generation 3
-	Treecko = Generation_2_End,
+	Treecko,
 	Grovyle,
 	Sceptile,
 	Torchic,
@@ -442,10 +440,9 @@ enum class Species : uint16_t {
 	Deoxys_Attack,
 	Deoxys_Defense,
 	Deoxys_Speed,
-	Generation_3_End,
 	
 	// Generation 4
-	Turtwig = Generation_3_End,
+	Turtwig,
 	Grotle,
 	Torterra,
 	Chimchar,
@@ -561,10 +558,9 @@ enum class Species : uint16_t {
 	Shaymin_Land,
 	Shaymin_Sky,
 	Arceus,
-	Generation_4_End,
 	
 	// Generation 5
-	Victini = Generation_4_End,
+	Victini,
 	Snivy,
 	Servine,
 	Serperior,
@@ -726,8 +722,7 @@ enum class Species : uint16_t {
 	Keldeo,
 	Meloetta,
 	Genesect,
-	Generation_5_End,
-	END = Generation_5_End
+	END
 };
 
 constexpr auto number_of_species = static_cast<unsigned>(Species::END);
