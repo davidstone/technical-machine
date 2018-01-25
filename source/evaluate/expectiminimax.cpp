@@ -162,9 +162,9 @@ auto deorder(Team & first, Team & last) {
 
 
 template<typename Flag, typename BaseFlag, typename Probability, typename NextBranch>
-double generic_flag_branch(Team const & first, Move const first_move, Team const & last, Move const last_move, Weather const weather, unsigned depth, Evaluate const & evaluate, BaseFlag const first_flags, BaseFlag const last_flags, Probability const & basic_probability, NextBranch const & next_branch) {
-	auto const probability = [&](auto const & pokemon, auto const move, bool const flag) {
-		auto const base = basic_probability(pokemon, move);
+double generic_flag_branch(BaseFlag const first_flags, BaseFlag const last_flags, Probability const & basic_probability, NextBranch const & next_branch) {
+	auto const probability = [=](auto const is_first, bool const flag) {
+		auto const base = basic_probability(is_first);
 		assert(base >= 0.0);
 		assert(base <= 1.0);
 		return flag ? base : (1.0 - base);
@@ -172,21 +172,16 @@ double generic_flag_branch(Team const & first, Move const first_move, Team const
 
 	double average_score = 0.0;
 	for (auto const first_flag : { true, false }) {
-		auto const p1 = probability(first.pokemon(), first_move, first_flag);
+		auto const p1 = probability(true, first_flag);
 		if (p1 == 0.0) {
 			continue;
 		}
 		for (auto const last_flag : { true, false }) {
-			auto const p2 = probability(last.pokemon(), last_move, last_flag);
+			auto const p2 = probability(false, last_flag);
 			if (p2 == 0.0) {
 				continue;
 			}
 			average_score += p1 * p2 * next_branch(
-				first,
-				last,
-				weather,
-				depth,
-				evaluate,
 				Flag(first_flags, first_flag),
 				Flag(last_flags, last_flag)
 			);
@@ -233,7 +228,7 @@ struct ShedSkinFlag : CriticalHitFlag {
 };
 
 
-BestMove move_then_switch_branch(Team const & switcher, Move switcher_move, Team const & other, Move other_move, Variable const & switcher_variable, Variable const & other_variable, Weather const weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags, bool first_turn);
+BestMove move_then_switch_branch(Team const & switcher, Move switcher_move, Team const & other, bounded::optional<Move> other_move, Variable const & switcher_variable, Variable const & other_variable, Weather const weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags, bool first_turn);
 
 
 
@@ -252,7 +247,7 @@ bounded::optional<double> use_move_and_follow_up(Team & user, Move const user_mo
 			user,
 			user_move,
 			other,
-			current_move(other.pokemon()),
+			other_move,
 			user_variable,
 			other_variable,
 			weather,
@@ -298,7 +293,7 @@ double end_of_turn_order_branch(Team const & team, Team const & other, Faster co
 }
 
 
-double use_move_branch(Team & first, Move const first_move, Team & last, Move const last_move, Variable const & first_variable, Variable const & last_variable, Weather weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+double use_move_branch(Team & first, Move const first_move, Team & last, bounded::optional<Move> const last_move, Variable const & first_variable, Variable const & last_variable, Weather weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
 	auto value = use_move_and_follow_up(first, first_move, last, bounded::none, first_variable, last_variable, weather, depth, evaluate, first_flags, last_flags);
 	if (value) {
 		return *value;
@@ -307,37 +302,30 @@ double use_move_branch(Team & first, Move const first_move, Team & last, Move co
 	// newly brought out Pokemon would try to move without checking to see if
 	// it has already moved. This check is also necessary for my Baton Pass and
 	// U-turn implementation to function.
-	value = use_move_and_follow_up(last, last_move, first, first_move, last_variable, first_variable, weather, depth, evaluate, last_flags, first_flags);
-	if (value) {
-		return *value;
+	if (last_move) {
+		value = use_move_and_follow_up(last, *last_move, first, first_move, last_variable, first_variable, weather, depth, evaluate, last_flags, first_flags);
+		if (value) {
+			return *value;
+		}
 	}
 
 	// Find the expected return on all possible outcomes at the end of the turn
 	
 	auto const teams = faster_pokemon(first, last, weather);
-	// Partially apply some arguments to the function so it has the expected
-	// signature
-	auto const end_of_turn_order = [teams](Team const & team, Team const & other, Weather const weather_, unsigned depth_, Evaluate const & evaluate_, ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
-		return end_of_turn_order_branch(team, other, teams, weather_, depth_, evaluate_, team_flag, other_flag);
+	auto const end_of_turn_order = [&](ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
+		return end_of_turn_order_branch(first, last, teams, weather, depth, evaluate, team_flag, other_flag);
 	};
 	return generic_flag_branch<ShedSkinFlag>(
-		first,
-		first_move,
-		last,
-		last_move,
-		weather,
-		depth,
-		evaluate,
 		first_flags,
 		last_flags,
-		[](auto const & pokemon, auto const &) { return shed_skin_probability(pokemon); },
+		[&](auto const is_first) { return shed_skin_probability(is_first ? first.pokemon() : last.pokemon()); },
 		end_of_turn_order
 	);
 }
 
 
 
-double switch_after_move_branch(Team switcher, Move const switcher_move, Team other, Move const other_move, Variable const & switcher_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const replacement, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags) {
+double switch_after_move_branch(Team switcher, Move const switcher_move, Team other, bounded::optional<Move> const other_move, Variable const & switcher_variable, Variable const & other_variable, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const replacement, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags) {
 	switch_pokemon(switcher, other, weather, replacement);
 	assert(!empty(switcher.all_pokemon()));
 	assert(!empty(other.all_pokemon()));
@@ -359,7 +347,7 @@ double switch_after_move_branch(Team switcher, Move const switcher_move, Team ot
 }
 
 
-BestMove move_then_switch_branch(Team const & switcher, Move const switcher_move, Team const & other, Move const other_move, Variable const & switcher_variable, Variable const & other_variable, Weather const weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags, bool first_turn) {
+BestMove move_then_switch_branch(Team const & switcher, Move const switcher_move, Team const & other, bounded::optional<Move> const other_move, Variable const & switcher_variable, Variable const & other_variable, Weather const weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags, bool first_turn) {
 	unsigned tabs = first_turn ? 0 : 2;
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	if (!switcher.is_me()) {
@@ -496,20 +484,15 @@ double random_move_effects_branch(Team const & first, Move const first_move, Tea
 	auto const last_variables = all_probabilities(last_move, first.size());
 	for (auto const & first_variable : first_variables) {
 		for (auto const & last_variable : last_variables) {
-			auto const use_move_copy_branch = [&](Team first_, Team last_, Weather weather_, unsigned depth_, Evaluate const & evaluate_, CriticalHitFlag first_flags_, CriticalHitFlag last_flags_) {
-				return use_move_branch(first_, first_move, last_, last_move, first_variable, last_variable, weather_, depth_, evaluate_, first_flags_, last_flags_);
+			auto const use_move_copy_branch = [&](CriticalHitFlag first_flags_, CriticalHitFlag last_flags_) {
+				auto first_ = first;
+				auto last_ = last;
+				return use_move_branch(first_, first_move, last_, last_move, first_variable, last_variable, weather, depth, evaluate, first_flags_, last_flags_);
 			};
 			score += last_variable.probability * first_variable.probability * generic_flag_branch<CriticalHitFlag>(
-				first,
-				first_move,
-				last,
-				last_move,
-				weather,
-				depth,
-				evaluate,
 				first_flags,
 				last_flags,
-				[](ActivePokemon, Move const move) { return can_critical_hit(move) ? (1.0 / 16.0) : 0.0; },
+				[&](auto const is_first) { return can_critical_hit(is_first ? first_move : last_move) ? (1.0 / 16.0) : 0.0; },
 				use_move_copy_branch
 			);
 		}
@@ -540,17 +523,10 @@ double accuracy_branch(Team const & first, Move const first_move, Team const & l
 				continue;
 			}
 			average_score += p1 * p2 * generic_flag_branch<AwakenFlag>(
-				first,
-				first_move,
-				last,
-				last_move,
-				weather,
-				depth,
-				evaluate,
 				MissFlag(first_flag),
 				MissFlag(last_flag),
-				[](auto const & pokemon, auto const &) { return awaken_probability(pokemon); },
-				[=](auto const & first_, auto const & last_, auto && ... args) { return random_move_effects_branch(first_, first_move, last_, last_move, std::forward<decltype(args)>(args)...); }
+				[&](auto const is_first) { return awaken_probability(is_first ? first.pokemon() : last.pokemon()); },
+				[&](AwakenFlag const first_awaken, AwakenFlag const last_awaken) { return random_move_effects_branch(first, first_move, last, last_move, weather, depth, evaluate, first_awaken, last_awaken); }
 			);
 		}
 	}
