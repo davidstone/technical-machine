@@ -372,10 +372,11 @@ BestMove move_then_switch_branch(Team const & switcher, Move const switcher_move
 			continue;
 		}
 		
-		print_action(switcher, to_switch(replacement), first_turn);
+		auto const replacement_move = to_switch(replacement);
+		print_action(switcher, replacement_move, first_turn);
 		auto const value = switch_after_move_branch(switcher, switcher_move, other, other_move, switcher_variable, other_variable, weather, depth, evaluate, replacement, switcher_flags, other_flags);
 		if (switcher.is_me()) {
-			update_best_move(best_switch, alpha, value, first_turn, to_switch(replacement));
+			update_best_move(best_switch, alpha, value, first_turn, replacement_move);
 		} else {
 			MoveScores foe_scores(switcher.pokemon());
 			update_foe_best_move(switcher_move, foe_scores, alpha, value, first_turn);
@@ -442,7 +443,8 @@ BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsig
 		if (skip_this_replacement(ai.all_pokemon(), ai_replacement)) {
 			continue;
 		}
-		print_action(ai, to_switch(ai_replacement), first_turn);
+		auto const ai_move = to_switch(ai_replacement);
+		print_action(ai, ai_move, first_turn);
 		auto beta = static_cast<double>(victory + 1_bi);
 		for (auto const foe_replacement : integer_range(size(foe.all_pokemon()))) {
 			if (skip_this_replacement(foe.all_pokemon(), foe_replacement)) {
@@ -459,7 +461,7 @@ BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsig
 				break;
 			}
 		}
-		update_best_move(best_move, alpha, beta, first_turn, to_switch(ai_replacement));
+		update_best_move(best_move, alpha, beta, first_turn, ai_move);
 	}
 	return BestMove{best_move, alpha};
 }
