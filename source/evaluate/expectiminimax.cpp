@@ -263,7 +263,7 @@ double end_of_turn_order_branch(Team const & team, Team const & other, Faster co
 
 
 double use_move_branch(Team & first, Move const first_move, Team & last, bounded::optional<Move> const last_move, Variable const & first_variable, Variable const & last_variable, Weather weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
-	auto use_move_and_follow_up = [&](Team & user, Move const user_move, Team & other, bounded::optional<UsedMove> const other_move, Variable const & user_variable, Variable const & other_variable, CriticalHitFlag const user_flags, CriticalHitFlag const other_flags) -> bounded::optional<double>{
+	auto use_move_and_follow_up = [&](Team & user, Move const user_move, Variable const & user_variable, CriticalHitFlag const user_flags, Team & other, bounded::optional<UsedMove> const other_move, Variable const & other_variable, CriticalHitFlag const other_flags) -> bounded::optional<double>{
 		// If first uses a phazing move before last gets a chance to move, the
 		// newly brought out Pokemon would try to move without checking to see
 		// if it has already moved. This check is also necessary for my Baton
@@ -300,14 +300,14 @@ double use_move_branch(Team & first, Move const first_move, Team & last, bounded
 	};
 
 	auto const last_hp = get_hp(last.pokemon());
-	auto value = use_move_and_follow_up(first, first_move, last, bounded::none, first_variable, last_variable, first_flags, last_flags);
+	auto value = use_move_and_follow_up(first, first_move, first_variable, first_flags, last, bounded::none, last_variable, last_flags);
 	if (value) {
 		return *value;
 	}
 	if (last_move) {
 		auto const last_damaged = is_damaging(first_move) ? bounded::max(get_hp(last.pokemon()).current() - last_hp.current(), 0_bi) : 0_bi;
 		auto const used_move = bounded::optional<UsedMove>(UsedMove{first_move, last_damaged});
-		value = use_move_and_follow_up(last, *last_move, first, used_move, last_variable, first_variable, last_flags, first_flags);
+		value = use_move_and_follow_up(last, *last_move, last_variable, last_flags, first, used_move, first_variable, first_flags);
 		if (value) {
 			return *value;
 		}
