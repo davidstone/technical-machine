@@ -1051,13 +1051,12 @@ constexpr auto breaks_screens(Moves const move) {
 	return move == Moves::Brick_Break;
 }
 
-auto do_effects_before_moving(Pokemon & user, Moves const move, Team & target) {
-	auto & status = get_status(user);
+auto do_effects_before_moving(Moves const move, Status & user_status, Team & target) {
 	if (breaks_screens(move)) {
 		target.screens.shatter();
 	} else if (is_usable_while_frozen(move)) {
-		if (is_frozen(status)) {
-			status = Status{};
+		if (is_frozen(user_status)) {
+			user_status = Status{};
 		}
 	}
 }
@@ -1078,7 +1077,7 @@ auto use_move(Team & user, Move const move, bool const user_damaged, Team & targ
 		return;
 	}
 
-	do_effects_before_moving(user.pokemon(), move, target);
+	do_effects_before_moving(move, get_status(user.pokemon()), target);
 
 	auto const damage = known_damage ?
 		*known_damage :
