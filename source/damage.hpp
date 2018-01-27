@@ -30,7 +30,7 @@ struct Weather;
 
 using damage_type = bounded::checked_integer<0, std::numeric_limits<std::uint32_t>::max()>;
 
-damage_type damage_calculator(Team const & attacker, Move move, Team const & defender, Weather weather, Variable const & variable, bool critical_hit);
+damage_type damage_calculator(Team const & attacker, Move move, bool attacker_damaged, Team const & defender, bool defender_damaged, Weather weather, Variable const & variable, bool critical_hit);
 
 void recoil(Pokemon & user, damage_type damage, bounded::checked_integer<1, 4> denominator);
 

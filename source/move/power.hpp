@@ -27,6 +27,6 @@ struct Variable;
 struct Weather;
 
 using MovePower = bounded::integer<1, 1440>;
-auto move_power(Team const & attacker, Move move, Team const & defender, Weather weather, Variable const & variable) -> MovePower;
+auto move_power(Team const & attacker, Move move, bool attacker_damaged, Team const & defender, bool defender_damaged, Weather weather, Variable const & variable) -> MovePower;
 
 }	// namespace technicalmachine

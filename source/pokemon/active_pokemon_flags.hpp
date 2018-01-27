@@ -105,7 +105,6 @@ struct MutableActivePokemon;
 	friend auto toxic_ratio(ActivePokemon pokemon) -> decltype(std::declval<Toxic>().ratio_drained()); \
 	friend auto vanish_doubles_power(ActivePokemon pokemon, Moves move_name) -> bool; \
 	friend auto is_locked_in_to_bide(ActivePokemon pokemon) -> bool; \
-	friend auto damaged(ActivePokemon pokemon) -> bounded::integer<0, HP::max_value>; \
 	friend auto random_damage_multiplier(ActivePokemon pokemon) -> decltype(std::declval<RandomDamage>()())
 
 struct ActivePokemonFlags {
@@ -187,7 +186,6 @@ private:
 	friend struct ActivePokemon;
 	friend struct MutableActivePokemon;
 	
-	HP::current_type damaged = 0_bi;
 	Bide bide;
 	Confusion confusion;
 	Disable disable;

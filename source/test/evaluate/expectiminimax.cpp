@@ -231,7 +231,7 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	set_stat_ev(defender.pokemon(), StatNames::SPD, EV(4_bi));
 
 	auto const variable = Variable{};
-	call_move(defender, Move(Moves::Surf), attacker, bounded::none, weather, variable, false, false, false, false);
+	call_move(defender, Move(Moves::Surf), false, attacker, bounded::none, false, weather, variable, false, false, false, bounded::none);
 	
 
 	assert(expectiminimax(attacker, defender, weather, depth, evaluate, random_engine) == Moves::Switch2);

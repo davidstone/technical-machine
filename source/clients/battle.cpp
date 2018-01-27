@@ -251,7 +251,8 @@ void Battle::handle_hp_change(Party const changing, uint8_t /*slot*/, UpdatedHP:
 }
 
 void Battle::handle_direct_damage(Party const damaged, uint8_t const /*slot*/, UpdatedHP::VisibleHP const visible_damage) {
-	auto const & team = get_team(damaged).team;
+	auto & battle_team = get_team(damaged);
+	auto const & team = battle_team.team;
 	auto const & pokemon = team.replacement();
 	std::cerr << "is me: " << team.is_me() << '\n';
 	std::cerr << to_string(static_cast<Species>(pokemon)) << '\n';
@@ -259,6 +260,7 @@ void Battle::handle_direct_damage(Party const damaged, uint8_t const /*slot*/, U
 	auto const change = make_rational(visible_damage, max_visible_hp_change(team));
 	auto const damage = get_hp(pokemon).max() * change;
 	updated_hp.direct_damage(team.is_me(), pokemon, damage);
+	battle_team.flags.damaged = damage;
 	move_damage = false;
 }
 
@@ -422,19 +424,18 @@ void Battle::do_turn() {
 		auto const last_move = current_move(last->team.pokemon());
 		print_move_usage("Last", last->team.pokemon(), last_move);
 		// Anything with recoil will mess this up
-		
-		constexpr bool damage_is_known = true;
 
-		register_damage();
+		auto call_battle_move = [&](auto & user, auto & other, bounded::optional<damage_type> const other_damage) {
+			auto const other_move = BOUNDED_CONDITIONAL(other_damage, (UsedMove{current_move(user.team.pokemon()), *other_damage}), bounded::none);
+			call_move(user.team, current_move(user.team.pokemon()), static_cast<bool>(user.flags.damaged), other.team, other_move, static_cast<bool>(other.flags.damaged), weather, user.variable, user.flags.miss, user.flags.awakens, user.flags.critical_hit, other.flags.damaged);
+		};
 		
-		call_move(first->team, first_move, last->team, bounded::none, weather, first->variable, first->flags.miss, first->flags.awakens, first->flags.critical_hit, damage_is_known);
+		call_battle_move(*first, *last, bounded::none);
 		normalize_hp(last->team);
 
-		register_damage();
-		call_move(last->team, last_move, first->team, first_move, weather, last->variable, last->flags.miss, last->flags.awakens, last->flags.critical_hit, damage_is_known);
+		call_battle_move(*last, *first, first->flags.damage);
 		normalize_hp(first->team);
 
-		register_damage();
 		end_of_turn(first->team, last->team, weather, first->flags.shed_skin, last->flags.shed_skin);
 		normalize_hp();
 		
@@ -443,23 +444,11 @@ void Battle::do_turn() {
 		// decision point so that is already taken into account.
 		while (is_fainted(foe.team.pokemon())) {
 			set_index(all_moves(foe.team.pokemon()), to_switch(foe.team.all_pokemon().replacement()));
-			call_move(foe.team, current_move(foe.team.pokemon()), ai.team, bounded::none, weather, foe.variable, false, false, false, damage_is_known);
+			call_battle_move(foe, ai, ai.flags.damage);
 		}
 	}
 	std::cout << to_string(first->team) << '\n';
 	std::cout << to_string(last->team) << '\n';
-}
-
-namespace {
-void register_individual_damage(Team & team, UpdatedHP const & updated_hp) {
-	auto const damage = updated_hp.damage(team.is_me(), team.pokemon());
-	team.pokemon().register_damage(damage);
-}
-}
-
-void Battle::register_damage() {
-	register_individual_damage(ai.team, updated_hp);
-	register_individual_damage(foe.team, updated_hp);
 }
 
 void Battle::normalize_hp() {

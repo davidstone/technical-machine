@@ -1,5 +1,5 @@
 // Use moves
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,17 +18,23 @@
 
 #pragma once
 
+#include "move.hpp"
+#include "../damage.hpp"
+
 #include <bounded/optional.hpp>
 
 namespace technicalmachine {
-
-enum class Moves : std::uint16_t;
 
 struct Move;
 struct Team;
 struct Variable;
 struct Weather;
 
-auto call_move(Team & user, Move move, Team & target, bounded::optional<Moves> target_move, Weather & weather, Variable const & variable, bool missed, bool awakens, bool critical_hit, bool damage_is_known) -> void;
+struct UsedMove {
+	Move move;
+	damage_type damage;
+};
+
+auto call_move(Team & user, Move move, bool user_damaged, Team & target, bounded::optional<UsedMove> target_move, bool target_damaged, Weather & weather, Variable const & variable, bool missed, bool awakens, bool critical_hit, bounded::optional<damage_type> known_damage) -> void;
 
 }	// namespace technicalmachine

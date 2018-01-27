@@ -87,6 +87,8 @@ protected:
 private:
 	struct BattleTeam {
 		struct Flags {
+			bounded::optional<damage_type> damaged;
+			bounded::optional<damage_type> damage;
 			bool awakens = false;
 			bool critical_hit = false;
 			bool miss = false;
@@ -121,8 +123,6 @@ private:
 	auto & get_team(Party const party) {
 		return is_me(party) ? ai : foe;
 	}
-
-	void register_damage();
 
 	std::string opponent_name;
 	mutable std::mt19937 random_engine;

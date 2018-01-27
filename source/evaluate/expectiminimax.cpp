@@ -232,37 +232,6 @@ BestMove move_then_switch_branch(Team const & switcher, Move switcher_move, Team
 
 
 
-bounded::optional<double> use_move_and_follow_up(Team & user, Move const user_move, Team & other, bounded::optional<Move> const other_move, Variable const & user_variable, Variable const & other_variable, Weather & weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const user_flags, CriticalHitFlag const other_flags) {
-	if (moved(user.pokemon())) {
-		return bounded::none;
-	}
-	call_move(user, user_move, other, other_move, weather, user_variable, user_flags.miss, user_flags.awaken, user_flags.critical_hit, false);
-	auto const user_win = Evaluate::win(user);
-	auto const other_win = Evaluate::win(other);
-	if (user_win != 0_bi or other_win != 0_bi) {
-		return static_cast<double>(user_win + other_win);
-	}
-	if (has_follow_up_decision(user_move) and size(user.all_pokemon()) > 1_bi) {
-		return move_then_switch_branch(
-			user,
-			user_move,
-			other,
-			other_move,
-			user_variable,
-			other_variable,
-			weather,
-			depth,
-			evaluate,
-			user_flags,
-			other_flags,
-			false
-		).score;
-	}
-	return bounded::none;
-}
-
-
-
 double end_of_turn_branch(Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate, ShedSkinFlag const first_flag, ShedSkinFlag const last_flag) {
 	end_of_turn(first, last, weather, first_flag.shed_skin, last_flag.shed_skin);
 
@@ -294,16 +263,51 @@ double end_of_turn_order_branch(Team const & team, Team const & other, Faster co
 
 
 double use_move_branch(Team & first, Move const first_move, Team & last, bounded::optional<Move> const last_move, Variable const & first_variable, Variable const & last_variable, Weather weather, unsigned depth, Evaluate const & evaluate, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
-	auto value = use_move_and_follow_up(first, first_move, last, bounded::none, first_variable, last_variable, weather, depth, evaluate, first_flags, last_flags);
+	auto use_move_and_follow_up = [&](Team & user, Move const user_move, Team & other, bounded::optional<UsedMove> const other_move, Variable const & user_variable, Variable const & other_variable, CriticalHitFlag const user_flags, CriticalHitFlag const other_flags) -> bounded::optional<double>{
+		// If first uses a phazing move before last gets a chance to move, the
+		// newly brought out Pokemon would try to move without checking to see
+		// if it has already moved. This check is also necessary for my Baton
+		// Pass and U-turn implementation to function.
+		if (moved(user.pokemon())) {
+			return bounded::none;
+		}
+		// TODO: implement properly
+		constexpr auto user_damaged = false;
+		constexpr auto other_damaged = false;
+		call_move(user, user_move, user_damaged, other, other_move, other_damaged, weather, user_variable, user_flags.miss, user_flags.awaken, user_flags.critical_hit, bounded::none);
+		auto const user_win = Evaluate::win(user);
+		auto const other_win = Evaluate::win(other);
+		if (user_win != 0_bi or other_win != 0_bi) {
+			return static_cast<double>(user_win + other_win);
+		}
+		if (has_follow_up_decision(user_move) and size(user.all_pokemon()) > 1_bi) {
+			return move_then_switch_branch(
+				user,
+				user_move,
+				other,
+				BOUNDED_CONDITIONAL(other_move, other_move->move, bounded::none),
+				user_variable,
+				other_variable,
+				weather,
+				depth,
+				evaluate,
+				user_flags,
+				other_flags,
+				false
+			).score;
+		}
+		return bounded::none;
+	};
+
+	auto const last_hp = get_hp(last.pokemon());
+	auto value = use_move_and_follow_up(first, first_move, last, bounded::none, first_variable, last_variable, first_flags, last_flags);
 	if (value) {
 		return *value;
 	}
-	// If first uses a phazing move before last gets a chance to move, the
-	// newly brought out Pokemon would try to move without checking to see if
-	// it has already moved. This check is also necessary for my Baton Pass and
-	// U-turn implementation to function.
 	if (last_move) {
-		value = use_move_and_follow_up(last, *last_move, first, first_move, last_variable, first_variable, weather, depth, evaluate, last_flags, first_flags);
+		auto const last_damaged = is_damaging(first_move) ? bounded::max(get_hp(last.pokemon()).current() - last_hp.current(), 0_bi) : 0_bi;
+		auto const used_move = bounded::optional<UsedMove>(UsedMove{first_move, last_damaged});
+		value = use_move_and_follow_up(last, *last_move, first, used_move, last_variable, first_variable, last_flags, first_flags);
 		if (value) {
 			return *value;
 		}

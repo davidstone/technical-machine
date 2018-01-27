@@ -109,7 +109,7 @@ void physical_power_test() {
 	get_item(pokemon) = Item::Rock_Incense;
 	get_ability(pokemon) = Ability::Rivalry;
 
-	auto const power = move_power(attacker, max_damage_physical_move, max_damage_physical_defender(), Weather{}, Variable{});
+	auto const power = move_power(attacker, max_damage_physical_move, false, max_damage_physical_defender(), false, Weather{}, Variable{});
 	check_equal(power, max_power);
 }
 
@@ -126,7 +126,7 @@ void special_power_test() {
 	Team defender = max_damage_special_defender();
 	defender.pokemon().dive();
 
-	auto const power = move_power(attacker, move, defender, Weather{}, Variable{});
+	auto const power = move_power(attacker, move, false, defender, false, Weather{}, Variable{});
 	check_equal(power, max_power);
 }
 
@@ -157,7 +157,7 @@ void physical_damage_test() {
 
 	Team defender = max_damage_physical_defender();
 	
-	check_equal(damage_calculator(attacker, max_damage_physical_move, defender, weather, Variable{}, critical_hit), max_damage);
+	check_equal(damage_calculator(attacker, max_damage_physical_move, false, defender, false, weather, Variable{}, critical_hit), max_damage);
 }
 
 void special_damage_test() {
@@ -186,7 +186,7 @@ void special_damage_test() {
 
 	Team defender = max_damage_special_defender();
 
-	check_equal(damage_calculator(attacker, move, defender, weather, Variable{}, critical_hit), max_damage);
+	check_equal(damage_calculator(attacker, move, false, defender, false, weather, Variable{}, critical_hit), max_damage);
 }
 
 void damage_test() {

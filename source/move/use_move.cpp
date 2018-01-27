@@ -203,7 +203,7 @@ auto tri_attack_status(Variable const & variable) {
 }
 
 
-auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded::optional<Moves> const target_move, Weather & weather, Variable const & variable, damage_type const damage) -> void {
+auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded::optional<UsedMove> const target_move, Weather & weather, Variable const & variable, damage_type const damage) -> void {
 	auto user = user_team.pokemon();
 	switch (move) {
 		case Moves::Absorb:
@@ -447,8 +447,8 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			boost(stage(target.pokemon()), StatNames::SPE, -2_bi);
 			break;
 		case Moves::Counter:
-			if (target_move and is_physical(*target_move)) {
-				target.pokemon().direct_damage(damaged(user) * 2_bi);
+			if (target_move and is_physical(target_move->move)) {
+				target.pokemon().direct_damage(static_cast<damage_type>(target_move->damage * 2_bi));
 			}
 			break;
 		case Moves::Covet:
@@ -499,7 +499,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			break;
 		case Moves::Disable:
 			if (target_move) {
-				target.pokemon().disable(*target_move);
+				target.pokemon().disable(target_move->move);
 			}
 			break;
 		case Moves::Dive:
@@ -701,15 +701,17 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			user.faint();
 			break;
 		case Moves::Metal_Burst:
-			target.pokemon().indirect_damage(damaged(user) * 3_bi / 2_bi);
+			if (target_move) {
+				target.pokemon().direct_damage(static_cast<damage_type>(target_move->damage * 3_bi / 2_bi));
+			}
 			break;
 		case Moves::Mimic:		// Fix
 			break;
 		case Moves::Miracle_Eye:		// Fix
 			break;
 		case Moves::Mirror_Coat:
-			if (target_move and is_special(*target_move)) {
-				target.pokemon().direct_damage(damaged(user) * 2_bi);
+			if (target_move and is_special(target_move->move)) {
+				target.pokemon().direct_damage(static_cast<damage_type>(target_move->damage * 2_bi));
 			}
 			break;
 		case Moves::Mirror_Shot:
@@ -1061,11 +1063,6 @@ auto do_effects_before_moving(Pokemon & user, Moves const move, Team & target) {
 }
 
 
-auto calculate_real_damage(Team const & user, Move const move, Team const & target, Weather const weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) {
-	return damage_is_known ? static_cast<damage_type>(damaged(target.pokemon())) : damage_calculator(user, move, target, weather, variable, critical_hit);
-}
-
-
 auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_type const damage) {
 	target.direct_damage(damage);
 	if (causes_recoil(get_item(user))) {
@@ -1074,7 +1071,7 @@ auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_ty
 }
 
 
-auto use_move(Team & user, Move const move, Team & target, bounded::optional<Moves> const target_move, Weather & weather, Variable const & variable, bool const critical_hit, bool const damage_is_known) -> void {
+auto use_move(Team & user, Move const move, bool const user_damaged, Team & target, bounded::optional<UsedMove> const target_move, bool const target_damaged, Weather & weather, Variable const & variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
 	if (get_ability(target.pokemon()).blocks_sound_moves() and is_sound_based(move) and !(move == Moves::Heal_Bell or move == Moves::Perish_Song)) {
@@ -1083,10 +1080,9 @@ auto use_move(Team & user, Move const move, Team & target, bounded::optional<Mov
 
 	do_effects_before_moving(user.pokemon(), move, target);
 
-	auto const damage = BOUNDED_CONDITIONAL(is_damaging(move),
-		calculate_real_damage(user, move, target, weather, variable, critical_hit, damage_is_known),
-		0_bi
-	);
+	auto const damage = known_damage ?
+		*known_damage :
+		is_damaging(move) ? damage_calculator(user, move, user_damaged, target, target_damaged, weather, variable, critical_hit) : 0_bi;
 	if (damage != 0_bi) {
 		do_damage(user.pokemon(), target.pokemon(), damage);
 	}
@@ -1097,7 +1093,7 @@ auto use_move(Team & user, Move const move, Team & target, bounded::optional<Mov
 
 }	// namespace
 
-auto call_move(Team & user, Move const move, Team & target, bounded::optional<Moves> const target_move, Weather & weather, Variable const & variable, bool const missed, bool const awakens, bool const critical_hit, bool const damage_is_known) -> void {
+auto call_move(Team & user, Move const move, bool const user_damaged, Team & target, bounded::optional<UsedMove> const target_move, bool const target_damaged, Weather & weather, Variable const & variable, bool const missed, bool const awakens, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	assert(!moved(user.pokemon()));
 	user.move();
 	auto user_pokemon = user.pokemon();
@@ -1111,7 +1107,7 @@ auto call_move(Team & user, Move const move, Team & target, bounded::optional<Mo
 		call_other_move(user_pokemon);
 	}
 	if (!missed) {
-		use_move(user, move, target, target_move, weather, variable, critical_hit, damage_is_known);
+		use_move(user, move, user_damaged, target, target_move, target_damaged, weather, variable, critical_hit, known_damage);
 	}
 }
 

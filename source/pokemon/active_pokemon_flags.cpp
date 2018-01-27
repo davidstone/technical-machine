@@ -20,7 +20,6 @@
 namespace technicalmachine {
 
 auto ActivePokemonFlags::reset_end_of_turn() -> void {
-	damaged = 0_bi;
 	enduring = false;
 	flinched = false;
 	moved = false;
@@ -78,7 +77,6 @@ auto ActivePokemonFlags::reset_switch() -> void {
 	u_turning = false;
 	water_sport = false;
 	bide = {};
-	damaged = 0_bi;
 	taunt = {};
 	toxic = {};
 	uproar = {};

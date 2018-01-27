@@ -286,9 +286,6 @@ struct MutableActivePokemon {
 	auto indirect_damage(damage_type const damage) {
 		get_hp(*this) -= damage;
 	}
-	auto register_damage(damage_type const damage) {
-		m_flags.damaged = damage;
-	}
 	auto increment_move_use_counter(Moves const move) {
 		m_flags.last_used_move.increment(move);
 	}
@@ -486,10 +483,6 @@ inline auto vanish_doubles_power(ActivePokemon const pokemon, Moves const move_n
 
 inline auto is_locked_in_to_bide(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.bide.is_active();
-}
-
-inline auto damaged(ActivePokemon const pokemon) -> bounded::integer<0, HP::max_value> {
-	return pokemon.m_flags.damaged;
 }
 
 inline auto random_damage_multiplier(ActivePokemon const pokemon) -> decltype(pokemon.m_flags.random_damage()) {
