@@ -57,7 +57,7 @@ struct Hash {
 
 }	// namespace
 
-double transposition(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate) {
+double transposition(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const & evaluate) {
 	if (depth == 0) {
 		return static_cast<double>(evaluate(ai, foe, weather));
 	}

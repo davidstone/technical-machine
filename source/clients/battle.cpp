@@ -151,7 +151,7 @@ void Battle::update_from_previous_turn() {
 	correct_hp_and_report_errors(last->team);
 }
 
-Moves Battle::determine_action(DetailedStats const & detailed, Evaluate const & evaluate) {
+Moves Battle::determine_action(DetailedStats const & detailed, Evaluate const & evaluate) const {
 	std::cout << std::string(20, '=') + '\n';
 	std::cout << "Predicting...\n";
 	auto predicted = predict_foe_team(detailed);

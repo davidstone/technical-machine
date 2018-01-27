@@ -556,7 +556,7 @@ struct SelectMoveResult {
 	BothMoveScores move_scores;
 };
 
-SelectMoveResult select_move_branch(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, bool first_turn) {
+SelectMoveResult select_move_branch(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, bool first_turn) {
 	// This calls itself at one lower depth in order to get an initial estimate
 	// for move_scores because the algorithm works faster if you start with the
 	// correct result. The results from one less depth are used to estimate the
@@ -564,8 +564,8 @@ SelectMoveResult select_move_branch(Team & ai, Team & foe, Weather const weather
 	auto move_scores = (depth >= 1) ?
 		select_move_branch(ai, foe, weather, depth - 1, evaluate, false).move_scores :
 		BothMoveScores{MoveScores(ai.pokemon()), MoveScores(foe.pokemon())};
-	auto const ai_indexes = reorder(LegalSelections(ai, foe.pokemon(), weather), move_scores.ai, true);
-	auto const foe_indexes = reorder(LegalSelections(foe, ai.pokemon(), weather), move_scores.foe, false);
+	auto const ai_moves = reorder(LegalSelections(ai, foe.pokemon(), weather), move_scores.ai, true);
+	auto const foe_moves = reorder(LegalSelections(foe, ai.pokemon(), weather), move_scores.foe, false);
 
 	// Working from the inside loop out:
 
@@ -609,14 +609,10 @@ SelectMoveResult select_move_branch(Team & ai, Team & foe, Weather const weather
 	
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	auto best_move = Moves{};
-	for (auto const & ai_index : ai_indexes) {
-		set_index(all_moves(ai.pokemon()), ai_index);
-		auto const ai_move = current_move(ai.pokemon());
+	for (auto const & ai_move : ai_moves) {
 		print_action(ai, ai_move, first_turn);
 		auto beta = static_cast<double>(victory + 1_bi);
-		for (auto const & foe_index : foe_indexes) {
-			set_index(all_moves(foe.pokemon()), foe_index);
-			auto const foe_move = current_move(foe.pokemon());
+		for (auto const & foe_move : foe_moves) {
 			print_action(foe, foe_move, first_turn);
 			auto const max_score = order_branch(ai, ai_move, foe, foe_move, weather, depth, evaluate);
 			update_foe_best_move(foe_move, move_scores.foe, beta, max_score, first_turn);
@@ -638,7 +634,7 @@ SelectMoveResult select_move_branch(Team & ai, Team & foe, Weather const weather
 
 }	// namespace
 
-Moves expectiminimax(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine) {
+Moves expectiminimax(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine) {
 	std::cout << std::string(20, '=') + "\nEvaluating to a depth of " << depth << "...\n";
 	boost::timer timer;
 	try {
@@ -656,7 +652,7 @@ Moves expectiminimax(Team & ai, Team & foe, Weather const weather, unsigned dept
 	}
 }
 
-BestMove select_type_of_move(Team & ai, Team & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, bool first_turn) {
+BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, bool first_turn) {
 	assert(depth > 0);
 	--depth;
 	

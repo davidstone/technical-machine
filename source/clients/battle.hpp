@@ -108,7 +108,7 @@ private:
 
 	Battle(std::string opponent, TeamSize foe_size, unsigned battle_depth, std::tuple<std::mt19937, Team> tuple);
 
-	Moves determine_action(DetailedStats const & detailed, Evaluate const & evaluate);
+	Moves determine_action(DetailedStats const & detailed, Evaluate const & evaluate) const;
 	void correct_hp_and_report_errors(Team & team);
 	void normalize_hp();
 	void normalize_hp(Team & team);
