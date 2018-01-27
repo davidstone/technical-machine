@@ -460,27 +460,6 @@ BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsig
 
 
 
-BestMove initial_move_then_switch_branch(Team const & switcher, Team const & other, Weather const weather, unsigned depth, Evaluate const & evaluate, bool first_turn) {
-	auto const switcher_move = current_move(switcher.pokemon());
-	auto const other_move = current_move(other.pokemon());
-	return move_then_switch_branch(
-		switcher,
-		switcher_move,
-		other,
-		other_move,
-		Variable{},
-		Variable{},
-		weather,
-		depth,
-		evaluate,
-		CriticalHitFlag{},
-		CriticalHitFlag{},
-		first_turn
-	);
-}
-
-
-
 double random_move_effects_branch(Team const & first, Move const first_move, Team const & last, Move const last_move, Weather const weather, unsigned depth, Evaluate const & evaluate, AwakenFlag const first_flags, AwakenFlag const last_flags) {
 	double score = 0.0;
 
@@ -659,7 +638,24 @@ BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const we
 	if (get_hp(ai.pokemon()) == 0_bi or get_hp(foe.pokemon()) == 0_bi) {
 		return replace(ai, foe, weather, depth, evaluate, first_turn);
 	} else if (switch_decision_required(ai.pokemon())) {
-		return initial_move_then_switch_branch(ai, foe, weather, depth, evaluate, first_turn);
+		auto const switcher_move_name = is_baton_passing(ai.pokemon()) ? Moves::Baton_Pass : Moves::U_turn;
+		auto const & ai_moves = all_moves(ai.pokemon());
+		auto const move_it = containers::find(begin(ai_moves), end(ai_moves), switcher_move_name);
+		assert(move_it != end(ai_moves));
+		return move_then_switch_branch(
+			ai,
+			*move_it,
+			foe,
+			bounded::none,
+			Variable{},
+			Variable{},
+			weather,
+			depth,
+			evaluate,
+			CriticalHitFlag{},
+			CriticalHitFlag{},
+			first_turn
+		);
 	} else {
 		assert(!switch_decision_required(foe.pokemon()));
 		return select_move_branch(ai, foe, weather, depth, evaluate, first_turn).move;
