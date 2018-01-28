@@ -24,6 +24,16 @@ add_library(tm_common STATIC
 	source/bide/damage.cpp
 	source/bide/duration.cpp
 
+	source/clients/pokemon_lab/read_team_file.cpp
+	source/clients/pokemon_lab/write_team_file.cpp
+
+	source/clients/pokemon_online/conversion.cpp
+	source/clients/pokemon_online/invalid_team_file.cpp
+	source/clients/pokemon_online/read_team_file.cpp
+	source/clients/pokemon_online/write_team_file.cpp
+
+	source/clients/invalid_team_file_format.cpp
+
 	source/evaluate/evaluate.cpp
 	source/evaluate/expectiminimax.cpp
 	source/evaluate/move_scores.cpp
@@ -100,6 +110,16 @@ add_library(tm_common STATIC
 	source/team_predictor/ev_optimizer/single_classification_evs.cpp
 	source/team_predictor/ev_optimizer/speed.cpp
 
+	source/team_predictor/detailed_stats.cpp
+	source/team_predictor/estimate.cpp
+	source/team_predictor/load_stats.cpp
+	source/team_predictor/multiplier.cpp
+	source/team_predictor/team_predictor.cpp
+
+	source/type/collection.cpp
+	source/type/effectiveness.cpp
+	source/type/type.cpp
+
 	source/ability.cpp
 	source/block.cpp
 	source/collection.cpp
@@ -142,20 +162,13 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/test/test1.sbt DESTINATION ${CMAKE_
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/test/test1.tp DESTINATION ${CMAKE_BINARY_DIR}/test)
 
 add_executable(ai
-	source/clients/pokemon_lab/read_team_file.cpp
-	source/clients/pokemon_lab/write_team_file.cpp
-
 	source/clients/pokemon_online/battle.cpp
 	source/clients/pokemon_online/battle_settings.cpp
 	source/clients/pokemon_online/client.cpp
-	source/clients/pokemon_online/conversion.cpp
 	source/clients/pokemon_online/inmessage.cpp
-	source/clients/pokemon_online/invalid_team_file.cpp
 	source/clients/pokemon_online/invalid_user.cpp
 	source/clients/pokemon_online/outmessage.cpp
-	source/clients/pokemon_online/read_team_file.cpp
 	source/clients/pokemon_online/read_user_info.cpp
-	source/clients/pokemon_online/write_team_file.cpp
 
 	source/clients/pokemon_showdown/battle.cpp
 	source/clients/pokemon_showdown/battle_settings.cpp
@@ -167,7 +180,6 @@ add_executable(ai
 	source/clients/battle_result.cpp
 	source/clients/battles.cpp
 	source/clients/client.cpp
-	source/clients/invalid_team_file_format.cpp
 	source/clients/network/buffer_overrun.cpp
 	source/clients/network/client.cpp
 	source/clients/network/inmessage.cpp
@@ -181,16 +193,6 @@ add_executable(ai
 
 	source/cryptography/md5.cpp
 
-	source/team_predictor/detailed_stats.cpp
-	source/team_predictor/estimate.cpp
-	source/team_predictor/load_stats.cpp
-	source/team_predictor/multiplier.cpp
-	source/team_predictor/team_predictor.cpp
-
-	source/type/collection.cpp
-	source/type/effectiveness.cpp
-	source/type/type.cpp
-
 	source/ai.cpp
 )
 target_link_libraries(ai
@@ -202,31 +204,14 @@ target_link_libraries(ai
 
 
 add_executable(predict
-	source/clients/pokemon_lab/read_team_file.cpp
-
-	source/clients/pokemon_online/conversion.cpp
-	source/clients/pokemon_online/invalid_team_file.cpp
-	source/clients/pokemon_online/read_team_file.cpp
-
-	source/clients/invalid_team_file_format.cpp
-
 	source/team_predictor/ui/ev_inputs.cpp
 	source/team_predictor/ui/move_inputs.cpp
 	source/team_predictor/ui/nature_input.cpp
 	source/team_predictor/ui/pokemon_inputs.cpp
 	source/team_predictor/ui/species_input.cpp
 
-	source/team_predictor/detailed_stats.cpp
-	source/team_predictor/estimate.cpp
-	source/team_predictor/load_stats.cpp
-	source/team_predictor/multiplier.cpp
 	source/team_predictor/predictor.cpp
 	source/team_predictor/random_team.cpp
-	source/team_predictor/team_predictor.cpp
-
-	source/type/collection.cpp
-	source/type/effectiveness.cpp
-	source/type/type.cpp
 )
 target_link_libraries(predict
 	fltk
@@ -235,16 +220,6 @@ target_link_libraries(predict
 
 
 add_executable(tm_test
-	source/clients/pokemon_lab/read_team_file.cpp
-	source/clients/pokemon_lab/write_team_file.cpp
-
-	source/clients/pokemon_online/conversion.cpp
-	source/clients/pokemon_online/invalid_team_file.cpp
-	source/clients/pokemon_online/read_team_file.cpp
-	source/clients/pokemon_online/write_team_file.cpp
-
-	source/clients/invalid_team_file_format.cpp
-
 	source/test/collections/collection.cpp
 	source/test/collections/invalid_collection.cpp
 	source/test/collections/move_container.cpp
@@ -267,9 +242,6 @@ add_executable(tm_test
 	source/test/status.cpp
 	source/test/string_conversion.cpp
 	source/test/test.cpp
-	source/type/collection.cpp
-	source/type/effectiveness.cpp
-	source/type/type.cpp
 )
 target_link_libraries(tm_test
 	tm_common
