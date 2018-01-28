@@ -73,7 +73,7 @@ void test_generic (std::string const & thing) {
 void string_conversion_tests () {
 	std::cout << "Running string conversion tests.\n";
 	test_generic<Ability::Abilities> ("ability");
-	test_generic<Gender::Genders> ("gender");
+	test_generic<Gender> ("gender");
 	test_generic<Item> ("item");
 	test_generic<Moves> ("move");
 	test_generic<Nature> ("nature");

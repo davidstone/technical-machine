@@ -83,7 +83,7 @@ void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	member.put("<xmlattr>.Forme", species.forme);
 	member.put("<xmlattr>.Happiness", get_happiness(pokemon));
 	member.put("<xmlattr>.Lvl", get_level(pokemon)());
-	member.put("<xmlattr>.Gender", gender_to_id (get_gender(pokemon).gender));
+	member.put("<xmlattr>.Gender", gender_to_id (get_gender(pokemon)));
 
 	auto const & moves = regular_moves(pokemon);
 	for (auto const & move : moves) {

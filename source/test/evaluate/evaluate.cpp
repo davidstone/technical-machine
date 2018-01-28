@@ -44,7 +44,7 @@ void evaluate_tests() {
 
 	auto const species = Species::Blissey;
 	Level const level(100_bi);
-	auto const gender = Gender::FEMALE;
+	auto const gender = Gender::female;
 	auto const item = Item::Leftovers;
 	auto const ability = Ability::Natural_Cure;
 	auto const nature = Nature::Bold;

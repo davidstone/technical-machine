@@ -53,8 +53,8 @@ AbilityID ability_to_id(Ability::Abilities ability);
 Ability::Abilities battle_id_to_ability(uint16_t id, uint8_t part);
 
 using GenderID = bounded::checked_integer<0, 2>;
-Gender::Genders id_to_gender(GenderID id);
-GenderID gender_to_id(Gender::Genders gender);
+Gender id_to_gender(GenderID id);
+GenderID gender_to_id(Gender gender);
 
 using ItemID = bounded::checked_integer<0, 226>;
 Item id_to_item(ItemID id);

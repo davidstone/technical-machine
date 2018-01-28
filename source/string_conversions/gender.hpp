@@ -1,5 +1,5 @@
 // Gender string conversions
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,9 +22,9 @@
 
 namespace technicalmachine {
 
-std::string const & to_string(Gender::Genders const gender);
+std::string const & to_string(Gender const gender);
 
 template<>
-Gender::Genders from_string<Gender::Genders>(boost::string_ref const str);
+Gender from_string<Gender>(boost::string_ref const str);
 
 }	// namespace technicalmachine

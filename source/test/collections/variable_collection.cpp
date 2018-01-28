@@ -63,8 +63,7 @@ constexpr auto move = Moves::Whirlwind;
 
 void add_pokemon(Team & team, Species const species) {
 	auto const level = Level(100_bi);
-	auto const gender = Gender(Gender::MALE);
-	team.add_pokemon(species, level, gender);
+	team.add_pokemon(species, level, Gender::male);
 }
 
 void test_combinations(Team team) {

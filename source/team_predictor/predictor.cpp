@@ -109,7 +109,7 @@ struct PokemonInputValues {
 		{
 	}
 	void add_to_team(Team & team) const {
-		team.add_pokemon(species, Level(100_bi), Gender::GENDERLESS, item, ability, nature);
+		team.add_pokemon(species, Level(100_bi), Gender::genderless, item, ability, nature);
 		Pokemon & pokemon = team.replacement();
 		set_hp_ev(pokemon, evs[0_bi]);
 		for (auto const stat : regular_stats()) {

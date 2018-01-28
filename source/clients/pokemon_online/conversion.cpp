@@ -1464,20 +1464,20 @@ Ability::Abilities battle_id_to_ability (uint16_t id, uint8_t part) {
 	}
 }
 
-Gender::Genders id_to_gender(GenderID const id) {
+Gender id_to_gender(GenderID const id) {
 	switch (id.value()) {
-		case 0: return Gender::GENDERLESS;
-		case 1: return Gender::MALE;
-		case 2: return Gender::FEMALE;
+		case 0: return Gender::genderless;
+		case 1: return Gender::male;
+		case 2: return Gender::female;
 		default: assert(false);
 	}
 }
 
-GenderID gender_to_id(Gender::Genders const gender) {
+GenderID gender_to_id(Gender const gender) {
 	switch (gender) {
-		case Gender::GENDERLESS: return 0_bi;
-		case Gender::MALE: return 1_bi;
-		case Gender::FEMALE: return 2_bi;
+		case Gender::genderless: return 0_bi;
+		case Gender::male: return 1_bi;
+		case Gender::female: return 2_bi;
 		case Gender::END: assert(false);
 	}
 }

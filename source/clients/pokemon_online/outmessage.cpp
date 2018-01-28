@@ -82,7 +82,7 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_short (ability);
 	auto const nature = static_cast<uint8_t>(nature_to_id(get_nature(pokemon)));
 	write_byte (nature);
-	auto const gender = static_cast<uint8_t>(gender_to_id(get_gender(pokemon).gender));
+	auto const gender = static_cast<uint8_t>(gender_to_id(get_gender(pokemon)));
 	write_byte (gender);
 	bool shiny = false;
 	write_byte (shiny);

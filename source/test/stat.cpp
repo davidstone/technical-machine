@@ -44,8 +44,7 @@ void attack_tests () {
 	Team attacker(max_pokemon_per_team);
 
 	Level const level(100_bi);
-	Gender const gender(Gender::MALE);
-	attacker.add_pokemon(Species::Shuckle, level, gender);
+	attacker.add_pokemon(Species::Shuckle, level, Gender::male);
 	Pokemon & pokemon = attacker.pokemon();
 
 	set_stat_ev(pokemon, StatNames::DEF, EV(EV::max));
@@ -67,8 +66,7 @@ void special_attack_tests () {
 	Team attacker(max_pokemon_per_team);
 
 	Level const level(100_bi);
-	Gender const gender(Gender::GENDERLESS);
-	attacker.add_pokemon(Species::Deoxys_Attack, level, gender);
+	attacker.add_pokemon(Species::Deoxys_Attack, level, Gender::genderless);
 	Pokemon & pokemon = attacker.pokemon();
 
 	set_stat_ev(pokemon, StatNames::SPA, EV(EV::max));
@@ -90,8 +88,7 @@ void max_defense_test() {
 	Weather weather;
 
 	Level const level(100_bi);
-	Gender const gender(Gender::MALE);
-	defender.add_pokemon(Species::Shuckle, level, gender);
+	defender.add_pokemon(Species::Shuckle, level, Gender::male);
 	Pokemon & pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(EV::max));
 	get_nature(pokemon) = Nature::Bold;
@@ -111,8 +108,7 @@ void min_defense_test() {
 	Team defender(max_pokemon_per_team);
 
 	Level const level(1_bi);
-	Gender const gender(Gender::MALE);
-	defender.add_pokemon(Species::Combee, level, gender);
+	defender.add_pokemon(Species::Combee, level, Gender::male);
 	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi));
 	get_nature(pokemon) = Nature::Hasty;
@@ -140,8 +136,7 @@ void special_defense_tests () {
 	weather.activate_sand(Weather::Duration::permanent);
 
 	Level const level(100_bi);
-	Gender const gender(Gender::MALE);
-	defender.add_pokemon(Species::Shuckle, level, gender);
+	defender.add_pokemon(Species::Shuckle, level, Gender::male);
 	Pokemon & pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::SPD, EV(EV::max));
 	get_nature(pokemon) = Nature::Calm;
@@ -160,8 +155,7 @@ void speed_tests () {
 	Team team(max_pokemon_per_team);
 
 	Level const level(100_bi);
-	Gender const gender(Gender::GENDERLESS);
-	team.add_pokemon(Species::Deoxys_Speed, level, gender);
+	team.add_pokemon(Species::Deoxys_Speed, level, Gender::genderless);
 	Pokemon & pokemon = team.pokemon();
 	set_stat_ev(pokemon, StatNames::SPE, EV(EV::max));
 	get_nature(pokemon) = Nature::Timid;

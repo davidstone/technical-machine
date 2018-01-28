@@ -44,7 +44,6 @@ namespace technicalmachine {
 struct Client;
 struct DetailedStats;
 struct Evaluate;
-struct Gender;
 struct Level;
 namespace network {
 struct OutMessage;

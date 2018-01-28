@@ -44,8 +44,7 @@ Team max_damage_physical_attacker() {
 	Team attacker(max_pokemon_per_team);
 	
 	Level const level(100_bi);
-	Gender const gender(Gender::MALE);
-	attacker.add_pokemon(Species::Shuckle, level, gender);
+	attacker.add_pokemon(Species::Shuckle, level, Gender::male);
 	Pokemon & pokemon = attacker.pokemon();
 	all_moves(pokemon).emplace_back(max_damage_physical_move);
 
@@ -61,8 +60,7 @@ Team max_damage_special_attacker() {
 	Team attacker(max_pokemon_per_team);
 
 	Level const level(100_bi);
-	Gender const gender(Gender::GENDERLESS);
-	attacker.add_pokemon(Species::Deoxys_Attack, level, gender);
+	attacker.add_pokemon(Species::Deoxys_Attack, level, Gender::genderless);
 	get_hp(attacker.pokemon()) = 1_bi;
 	
 	return attacker;
@@ -71,8 +69,7 @@ Team max_damage_special_attacker() {
 Team max_damage_physical_defender() {
 	Team defender(max_pokemon_per_team);
 	Level const level(1_bi);
-	Gender const gender(Gender::MALE);
-	defender.add_pokemon(Species::Combee, level, gender);
+	defender.add_pokemon(Species::Combee, level, Gender::male);
 	auto && pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi), IV(0_bi));
 	get_nature(pokemon) = Nature::Hasty;
@@ -86,8 +83,7 @@ Team max_damage_physical_defender() {
 Team max_damage_special_defender() {
 	Team defender(max_pokemon_per_team);
 	Level const level(1_bi);
-	Gender const gender(Gender::MALE);
-	defender.add_pokemon(Species::Paras, level, gender);
+	defender.add_pokemon(Species::Paras, level, Gender::male);
 	auto && d = defender.pokemon();
 	get_ability(d) = Ability::Dry_Skin;
 

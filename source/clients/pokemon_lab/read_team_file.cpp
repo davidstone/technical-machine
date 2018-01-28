@@ -95,7 +95,7 @@ auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	auto const nickname_temp = pt.get <std::string>("nickname");
 	auto const nickname = !nickname_temp.empty() ? nickname_temp : species_str;
 	auto const level = Level(pt.get<bounded::checked_integer<Level::min, Level::max>>("level"));
-	auto const gender = Gender(from_string<Gender::Genders>(pt.get<std::string>("gender")));
+	auto const gender = Gender(from_string<Gender>(pt.get<std::string>("gender")));
 	auto const happiness = Happiness(pt.get<Happiness::value_type>("happiness"));
 	auto const nature = from_string<Nature>(pt.get<std::string>("nature"));
 	auto const item = from_string<Item>(pt.get<std::string>("item"));

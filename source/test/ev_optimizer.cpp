@@ -35,7 +35,7 @@ namespace {
 void defensive_tests() {
 	std::cout << "\tRunning defensive tests.\n";
 	constexpr auto team_size = max_pokemon_per_team;
-	Pokemon pokemon(team_size, Species::Celebi, Level(100_bi), Gender::GENDERLESS);
+	Pokemon pokemon(team_size, Species::Celebi, Level(100_bi), Gender::genderless);
 	set_hp_ev(pokemon, EV(252_bi));
 	set_stat_ev(pokemon, StatNames::DEF, EV(252_bi));
 	set_stat_ev(pokemon, StatNames::SPD, EV(4_bi));
@@ -54,8 +54,7 @@ void defensive_tests() {
 Pokemon make_test_pokemon() {
 	constexpr auto team_size = max_pokemon_per_team;
 	Level const level(100_bi);
-	Gender const gender(Gender::MALE);
-	Pokemon pokemon(team_size, Species::Snorlax, level, gender);
+	Pokemon pokemon(team_size, Species::Snorlax, level, Gender::male);
 	set_hp_ev(pokemon, EV(128_bi));
 	for (auto const stat : enum_range<StatNames, StatNames::NORMAL_END>) {
 		set_stat_ev(pokemon, stat, EV(76_bi));

@@ -94,7 +94,7 @@ void test_species() {
 void test_conversions () {
 	std::cout << "\tRunning Pokemon Online conversion tests.\n";
 	test_enum<Ability::Abilities>("Ability", ability_to_id, id_to_ability);
-	test_enum<Gender::Genders>("Gender", gender_to_id, id_to_gender);
+	test_enum<Gender>("Gender", gender_to_id, id_to_gender);
 	test_item();
 	test_move();
 	test_enum<Nature>("Nature", nature_to_id, id_to_nature);

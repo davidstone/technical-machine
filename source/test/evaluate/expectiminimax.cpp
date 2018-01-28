@@ -57,7 +57,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	constexpr auto depth = 1;
 
 	Team attacker(1_bi, true);
-	attacker.add_pokemon(Species::Jolteon, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+	attacker.add_pokemon(Species::Jolteon, Level(100_bi), Gender::male, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
 	for (auto const move : shuffled(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)) {
 		all_moves(attacker.pokemon()).emplace_back(move);
 	}
@@ -65,7 +65,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	set_stat_ev(attacker.pokemon(), StatNames::SPE, EV(252_bi));
 
 	Team defender(1_bi);
-	defender.add_pokemon(Species::Gyarados, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Intimidate, Nature::Adamant);
+	defender.add_pokemon(Species::Gyarados, Level(100_bi), Gender::male, Item::Leftovers, Ability::Intimidate, Nature::Adamant);
 	for (auto const move : shuffled(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)) {
 		all_moves(defender.pokemon()).emplace_back(move);
 	}
@@ -75,7 +75,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	assert(expectiminimax(attacker, defender, weather, depth, evaluate, random_engine) == Moves::Thunderbolt);
 	
 	Team team3(1_bi);
-	team3.add_pokemon(Species::Shedinja, Level(100_bi), Gender::MALE, Item::Lum_Berry, Ability::Wonder_Guard, Nature::Adamant);
+	team3.add_pokemon(Species::Shedinja, Level(100_bi), Gender::male, Item::Lum_Berry, Ability::Wonder_Guard, Nature::Adamant);
 	for (auto const move : shuffled(Moves::Swords_Dance, Moves::X_Scissor, Moves::Shadow_Sneak, Moves::Will_O_Wisp)) {
 		all_moves(team3.pokemon()).emplace_back(move);
 	}
@@ -93,7 +93,7 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 	constexpr auto depth = 1;
 	
 	Team attacker(1_bi, true);
-	attacker.add_pokemon(Species::Jolteon, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+	attacker.add_pokemon(Species::Jolteon, Level(100_bi), Gender::male, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
 	for (auto const move : shuffled(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)) {
 		all_moves(attacker.pokemon()).emplace_back(move);
 	}
@@ -101,7 +101,7 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 	set_stat_ev(attacker.pokemon(), StatNames::SPE, EV(252_bi));
 
 	Team defender(1_bi);
-	defender.add_pokemon(Species::Swampert, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Torrent, Nature::Bold);
+	defender.add_pokemon(Species::Swampert, Level(100_bi), Gender::male, Item::Leftovers, Ability::Torrent, Nature::Bold);
 	for (auto const move : shuffled(Moves::Surf, Moves::Ice_Beam)) {
 		all_moves(defender.pokemon()).emplace_back(move);
 	}
@@ -117,7 +117,7 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 	};
 	constexpr auto depth = 2;
 	Team attacker(1_bi, true);
-	attacker.add_pokemon(Species::Charizard, Level(100_bi), Gender::MALE, Item::Salac_Berry, Ability::Blaze, Nature::Adamant);
+	attacker.add_pokemon(Species::Charizard, Level(100_bi), Gender::male, Item::Salac_Berry, Ability::Blaze, Nature::Adamant);
 	for (auto const move : shuffled(Moves::Fire_Punch, Moves::Belly_Drum, Moves::Earthquake, Moves::Double_Edge)) {
 		all_moves(attacker.pokemon()).emplace_back(move);
 	}
@@ -125,7 +125,7 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 	set_stat_ev(attacker.pokemon(), StatNames::SPE, EV(252_bi));
 
 	Team defender(1_bi);
-	defender.add_pokemon(Species::Mew, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Synchronize, Nature::Impish);
+	defender.add_pokemon(Species::Mew, Level(100_bi), Gender::male, Item::Leftovers, Ability::Synchronize, Nature::Impish);
 	for (auto const move : shuffled(Moves::Softboiled)) {
 		all_moves(defender.pokemon()).emplace_back(move);
 	}
@@ -142,7 +142,7 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 	};
 	constexpr auto depth = 7;
 	Team attacker(1_bi, true);
-	attacker.add_pokemon(Species::Hippopotas, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Sand_Stream, Nature::Adamant);
+	attacker.add_pokemon(Species::Hippopotas, Level(100_bi), Gender::male, Item::Leftovers, Ability::Sand_Stream, Nature::Adamant);
 	for (auto const move : shuffled(Moves::Curse, Moves::Crunch)) {
 		all_moves(attacker.pokemon()).emplace_back(move);
 	}
@@ -151,7 +151,7 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 	set_stat_ev(attacker.pokemon(), StatNames::SPE, EV(4_bi));
 
 	Team defender(1_bi);
-	defender.add_pokemon(Species::Wobbuffet, Level(100_bi), Gender::GENDERLESS, Item::Leftovers, Ability::Shadow_Tag, Nature::Bold);
+	defender.add_pokemon(Species::Wobbuffet, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Shadow_Tag, Nature::Bold);
 	for (auto const move : shuffled(Moves::Counter, Moves::Safeguard)) {
 		all_moves(defender.pokemon()).emplace_back(move);
 	}
@@ -170,13 +170,13 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	constexpr auto depth = 5;
 	Team attacker(1_bi, true);
 
-	attacker.add_pokemon(Species::Smeargle, Level(100_bi), Gender::MALE, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly);
+	attacker.add_pokemon(Species::Smeargle, Level(100_bi), Gender::male, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly);
 	auto & smeargle = back(attacker.all_pokemon());
 	for (auto const move : shuffled(Moves::Baton_Pass, Moves::Belly_Drum)) {
 		all_moves(smeargle).emplace_back(move);
 	}
 
-	attacker.add_pokemon(Species::Alakazam, Level(100_bi), Gender::MALE, Item::Choice_Band, Ability::Synchronize, Nature::Jolly);
+	attacker.add_pokemon(Species::Alakazam, Level(100_bi), Gender::male, Item::Choice_Band, Ability::Synchronize, Nature::Jolly);
 	auto & alakazam = back(attacker.all_pokemon());
 	for (auto const move : shuffled(Moves::Bite, Moves::Recover)) {
 		all_moves(alakazam).emplace_back(move);
@@ -184,13 +184,13 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 
 
 	Team defender(2_bi);
-	defender.add_pokemon(Species::Gengar, Level(100_bi), Gender::MALE, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
+	defender.add_pokemon(Species::Gengar, Level(100_bi), Gender::male, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
 	for (auto const move : shuffled(Moves::Shadow_Ball)) {
 		all_moves(defender.pokemon()).emplace_back(move);
 	}
 	set_stat_ev(defender.pokemon(), StatNames::SPA, EV(252_bi));
 
-	defender.add_pokemon(Species::Misdreavus, Level(100_bi), Gender::FEMALE, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
+	defender.add_pokemon(Species::Misdreavus, Level(100_bi), Gender::female, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
 	for (auto const move : shuffled(Moves::Shadow_Ball)) {
 		all_moves(defender.pokemon(1_bi)).emplace_back(move);
 	}
@@ -207,14 +207,14 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	constexpr auto depth = 2;
 	Team attacker(3_bi, true);
 
-	attacker.add_pokemon(Species::Magikarp, Level(5_bi), Gender::MALE, Item::Leftovers, Ability::Swift_Swim, Nature::Jolly);
+	attacker.add_pokemon(Species::Magikarp, Level(5_bi), Gender::male, Item::Leftovers, Ability::Swift_Swim, Nature::Jolly);
 
-	attacker.add_pokemon(Species::Slugma, Level(100_bi), Gender::MALE, Item::Choice_Specs, Ability::Magma_Armor, Nature::Jolly);
+	attacker.add_pokemon(Species::Slugma, Level(100_bi), Gender::male, Item::Choice_Specs, Ability::Magma_Armor, Nature::Jolly);
 	for (auto const move : shuffled(Moves::Flamethrower, Moves::Earth_Power)) {
 		all_moves(back(attacker.all_pokemon())).emplace_back(move);
 	}
 
-	attacker.add_pokemon(Species::Zapdos, Level(100_bi), Gender::GENDERLESS, Item::Choice_Specs, Ability::Pressure, Nature::Modest);
+	attacker.add_pokemon(Species::Zapdos, Level(100_bi), Gender::genderless, Item::Choice_Specs, Ability::Pressure, Nature::Modest);
 	all_moves(back(attacker.all_pokemon())).emplace_back(Moves::Thunderbolt);
 	set_hp_ev(back(attacker.all_pokemon()), EV(4_bi));
 	set_stat_ev(back(attacker.all_pokemon()), StatNames::SPA, EV(252_bi));
@@ -222,7 +222,7 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 
 
 	Team defender(1_bi);
-	defender.add_pokemon(Species::Suicune, Level(100_bi), Gender::GENDERLESS, Item::Leftovers, Ability::Pressure, Nature::Bold);
+	defender.add_pokemon(Species::Suicune, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Pressure, Nature::Bold);
 	for (auto const move : shuffled(Moves::Calm_Mind, Moves::Surf, Moves::Ice_Beam)) {
 		all_moves(defender.pokemon()).emplace_back(move);
 	}
@@ -246,7 +246,7 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 	constexpr auto depth = 3;
 	Team attacker(1_bi, true);
 
-	attacker.add_pokemon(Species::Latias, Level(100_bi), Gender::FEMALE, Item::Leftovers, Ability::Levitate, Nature::Calm);
+	attacker.add_pokemon(Species::Latias, Level(100_bi), Gender::female, Item::Leftovers, Ability::Levitate, Nature::Calm);
 	for (auto const move : shuffled(Moves::Calm_Mind, Moves::Dragon_Pulse, Moves::Recover)) {
 		all_moves(back(attacker.all_pokemon())).emplace_back(move);
 	}
@@ -257,7 +257,7 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 
 
 	Team defender(1_bi);
-	defender.add_pokemon(Species::Suicune, Level(100_bi), Gender::GENDERLESS, Item::Leftovers, Ability::Pressure, Nature::Calm);
+	defender.add_pokemon(Species::Suicune, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Pressure, Nature::Calm);
 	for (auto const move : shuffled(Moves::Ice_Beam, Moves::Rest)) {
 		all_moves(defender.pokemon()).emplace_back(move);
 	}

@@ -51,7 +51,7 @@ void random_team(Team & team, std::mt19937 & random_engine) {
 		static_cast<void>(n);
 		auto const species = estimate.random(random_engine);
 		estimate.update(multiplier, species);
-		team.add_pokemon(species, Level(100_bi), Gender::GENDERLESS);
+		team.add_pokemon(species, Level(100_bi), Gender::genderless);
 	}
 }
 
