@@ -66,7 +66,7 @@ template<>
 struct hash<technicalmachine::Nature> : public technicalmachine::std_hash<technicalmachine::Nature> {};
 
 template<>
-struct numeric_limits<technicalmachine::Nature> : technicalmachine::enum_numeric_limits<technicalmachine::Nature> {};
+struct numeric_limits<technicalmachine::Nature> : technicalmachine::enum_numeric_limits<technicalmachine::Nature::END> {};
 
 }	// namespace std
 

@@ -1,5 +1,5 @@
 // Utility to make enum -> bounded::integer conversion easier
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -31,7 +31,7 @@ BOUNDED_COMMON_ARITHMETIC
 
 using namespace bounded::literal;
 
-template<typename Enum, Enum maximum = Enum::END>
+template<auto maximum>
 struct enum_numeric_limits : private std::numeric_limits<bounded::integer<0, static_cast<std::intmax_t>(maximum)>> {
 private:
 	using base = std::numeric_limits<bounded::integer<0, static_cast<std::intmax_t>(maximum)>>;

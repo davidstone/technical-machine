@@ -612,6 +612,6 @@ enum class Moves : uint16_t {
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Moves> : technicalmachine::enum_numeric_limits<technicalmachine::Moves> {};
+struct numeric_limits<technicalmachine::Moves> : technicalmachine::enum_numeric_limits<technicalmachine::Moves::END> {};
 
 }	// namespace std

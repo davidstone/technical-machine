@@ -39,6 +39,6 @@ enum class StatNames {
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::StatNames> : technicalmachine::enum_numeric_limits<technicalmachine::StatNames> {};
+struct numeric_limits<technicalmachine::StatNames> : technicalmachine::enum_numeric_limits<technicalmachine::StatNames::END> {};
 
 }	// namespace bounded

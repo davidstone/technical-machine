@@ -732,6 +732,6 @@ constexpr auto number_of_species = static_cast<unsigned>(Species::END);
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Species> : technicalmachine::enum_numeric_limits<technicalmachine::Species> {};
+struct numeric_limits<technicalmachine::Species> : technicalmachine::enum_numeric_limits<technicalmachine::Species::END> {};
 
 }	// namespace std

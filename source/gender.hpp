@@ -45,6 +45,6 @@ constexpr bounded::integer<-1, 1> multiplier(Gender const my, Gender const foe) 
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Gender> : technicalmachine::enum_numeric_limits<technicalmachine::Gender> {};
+struct numeric_limits<technicalmachine::Gender> : technicalmachine::enum_numeric_limits<technicalmachine::Gender::END> {};
 
 }	// namespace std

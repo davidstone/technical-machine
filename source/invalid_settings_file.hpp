@@ -41,10 +41,7 @@ namespace std {
 
 template<>
 struct numeric_limits<technicalmachine::InvalidSettingsFile::Problem> :
-	technicalmachine::enum_numeric_limits<
-		technicalmachine::InvalidSettingsFile::Problem,
-		technicalmachine::InvalidSettingsFile::Problem::invalid_data
-	> {
+	technicalmachine::enum_numeric_limits<technicalmachine::InvalidSettingsFile::Problem::invalid_data> {
 };
 
 }	// namespace std

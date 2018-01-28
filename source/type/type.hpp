@@ -90,6 +90,6 @@ constexpr auto blocks_status(Type const type, Statuses const status) {
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Type> : technicalmachine::enum_numeric_limits<technicalmachine::Type, technicalmachine::Type::Typeless> {};
+struct numeric_limits<technicalmachine::Type> : technicalmachine::enum_numeric_limits<technicalmachine::Type::Typeless> {};
 
 }	// namespace std

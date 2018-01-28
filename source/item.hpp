@@ -139,7 +139,7 @@ void steal(Item & mine, Item & other);
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Item> : technicalmachine::enum_numeric_limits<technicalmachine::Item> {};
+struct numeric_limits<technicalmachine::Item> : technicalmachine::enum_numeric_limits<technicalmachine::Item::END> {};
 
 }	// namespace bounded
 

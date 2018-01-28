@@ -143,6 +143,6 @@ auto attacker_ability_power_modifier(Pokemon const & attacker, Moves move, Pokem
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Ability::Abilities> : technicalmachine::enum_numeric_limits<technicalmachine::Ability::Abilities> {};
+struct numeric_limits<technicalmachine::Ability::Abilities> : technicalmachine::enum_numeric_limits<technicalmachine::Ability::Abilities::END> {};
 
 }	// namespace std
