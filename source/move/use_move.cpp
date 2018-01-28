@@ -203,7 +203,7 @@ auto tri_attack_status(Variable const & variable) {
 }
 
 
-auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded::optional<UsedMove> const target_move, Weather & weather, Variable const & variable, damage_type const damage) -> void {
+auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded::optional<UsedMove> const target_move, Weather & weather, Variable const & variable, damage_type const damage) {
 	auto user = user_team.pokemon();
 	switch (move) {
 		case Moves::Absorb:
@@ -498,6 +498,8 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			user.dig();
 			break;
 		case Moves::Disable:
+			// TODO: This should work on a move the Pokemon used the previous
+			// turn
 			if (target_move) {
 				target.pokemon().disable(target_move->move);
 			}
@@ -1100,7 +1102,9 @@ auto call_move(Team & user, Move const move, bool const user_damaged, Team & tar
 	if (!can_execute_move(user_pokemon, move, target_pokemon, weather, awakens)) {
 		return;
 	}
+
 	lower_pp(user_pokemon, move, get_ability(target_pokemon));
+
 	if (calls_other_move(move)) {
 		call_other_move(user_pokemon);
 	}
