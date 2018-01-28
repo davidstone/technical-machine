@@ -1478,7 +1478,6 @@ GenderID gender_to_id(Gender const gender) {
 		case Gender::genderless: return 0_bi;
 		case Gender::male: return 1_bi;
 		case Gender::female: return 2_bi;
-		case Gender::END: assert(false);
 	}
 }
 

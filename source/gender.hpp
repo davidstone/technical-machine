@@ -28,7 +28,7 @@ namespace technicalmachine {
 
 // TODO: Get rid of the intermediate struct
 
-enum class Gender : uint8_t { female, genderless, male, END };
+enum class Gender : uint8_t { female, genderless, male };
 	
 constexpr bounded::integer<-1, 1> multiplier(Gender const my, Gender const foe) {
 	if (my == Gender::genderless or foe == Gender::genderless) {
@@ -45,6 +45,6 @@ constexpr bounded::integer<-1, 1> multiplier(Gender const my, Gender const foe) 
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Gender> : technicalmachine::enum_numeric_limits<technicalmachine::Gender::END> {};
+struct numeric_limits<technicalmachine::Gender> : technicalmachine::enum_numeric_limits<technicalmachine::Gender::male> {};
 
 }	// namespace std
