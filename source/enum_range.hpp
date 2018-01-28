@@ -77,7 +77,7 @@ private:
 	base m_it;
 };
 
-template<typename Enum, Enum end = Enum::END>
+template<typename Enum, Enum end = static_cast<Enum>(std::numeric_limits<Enum>::max())>
 constexpr auto enum_range = bounded::range_type<enum_iterator<Enum>>(static_cast<Enum>(0), end);
 
 }	// namespace technicalmachine
