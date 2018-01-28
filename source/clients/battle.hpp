@@ -28,6 +28,7 @@
 
 #include "../move/max_moves_per_pokemon.hpp"
 #include "../move/moves.hpp"
+#include "../move/use_move.hpp"
 
 #include "../pokemon/species_forward.hpp"
 
@@ -88,7 +89,7 @@ private:
 	struct BattleTeam {
 		struct Flags {
 			bounded::optional<damage_type> damaged;
-			bounded::optional<damage_type> damage;
+			bounded::optional<UsedMove> used_move;
 			bool awakens = false;
 			bool critical_hit = false;
 			bool miss = false;

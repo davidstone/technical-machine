@@ -30,7 +30,7 @@
 #include "../operators.hpp"
 #include "../status.hpp"
 
-#include "../move/collection.hpp"
+#include "../move/container.hpp"
 
 #include "../stat/nature.hpp"
 #include "../stat/stats.hpp"
@@ -52,8 +52,8 @@ struct Pokemon {
 	// conversion operator. Friend functions only declared in a class body are
 	// not found by lookup rules in that case.
 
-	friend auto all_moves(Pokemon const & pokemon) -> MoveCollection const &;
-	friend auto all_moves(Pokemon & pokemon) -> MoveCollection &;
+	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
+	friend auto all_moves(Pokemon & pokemon) -> MoveContainer &;
 	friend Ability const & get_ability(Pokemon const & pokemon);
 	friend Ability & get_ability(Pokemon & pokemon);
 	friend Gender const & get_gender(Pokemon const & pokemon);
@@ -98,7 +98,7 @@ struct Pokemon {
 private:
 	friend bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs);
 
-	MoveCollection m_moves;
+	MoveContainer m_moves;
 	
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 	std::string nickname;
@@ -127,10 +127,10 @@ inline auto compare(Species const & lhs, Pokemon const & rhs) {
 	return bounded::compare(lhs, static_cast<Species>(rhs));
 }
 
-inline auto all_moves(Pokemon const & pokemon) -> MoveCollection const & {
+inline auto all_moves(Pokemon const & pokemon) -> MoveContainer const & {
 	return pokemon.m_moves;
 }
-inline auto all_moves(Pokemon & pokemon) -> MoveCollection & {
+inline auto all_moves(Pokemon & pokemon) -> MoveContainer & {
 	return pokemon.m_moves;
 }
 inline decltype(auto) regular_moves(Pokemon const & pokemon) {
@@ -139,16 +139,6 @@ inline decltype(auto) regular_moves(Pokemon const & pokemon) {
 inline decltype(auto) regular_moves(Pokemon & pokemon) {
 	return all_moves(pokemon).regular();
 }
-
-inline decltype(auto) current_move(Pokemon const & pokemon) {
-	auto const & moves = all_moves(pokemon);
-	return *(begin(moves) + moves.index());
-}
-inline decltype(auto) current_move(Pokemon & pokemon) {
-	auto & moves = all_moves(pokemon);
-	return *(begin(moves) + moves.index());
-}
-
 
 inline Ability const & get_ability(Pokemon const & pokemon) {
 	return pokemon.m_ability;

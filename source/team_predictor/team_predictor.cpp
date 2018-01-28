@@ -59,7 +59,7 @@ void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multipli
 	team.all_pokemon().set_index(index);
 }
 
-void predict_move(MoveCollection & moves, DetailedStats::UsedMoves const & detailed) {
+void predict_move(MoveContainer & moves, DetailedStats::UsedMoves const & detailed) {
 	for (Moves const move : detailed) {
 		auto const regular = moves.regular();
 		if (size(regular) == max_moves_per_pokemon) {

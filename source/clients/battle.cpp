@@ -129,11 +129,13 @@ void Battle::handle_request_action(DetailedStats const & detailed, Evaluate cons
 			msg.write_switch(battle_id, switch_slot(move));
 		} else {
 			// TODO: fix for 2v2
-			auto const move_index = *index(all_moves(ai.team.pokemon()), move);
+			auto const & moves = all_moves(ai.team.pokemon());
+			auto const it = containers::find(begin(moves), end(moves), move);
+			assert(it != end(moves));
 			auto const target = other(my_party);
 			// TODO: verify everything lines up
 			static_cast<void>(attacks_allowed);
-			msg.write_move(battle_id, static_cast<uint8_t>(move_index), static_cast<uint8_t>(target.value()));
+			msg.write_move(battle_id, static_cast<uint8_t>(it - begin(moves)), static_cast<uint8_t>(target.value()));
 		}
 	} else {
 		msg.write_move(battle_id, 1);
@@ -200,12 +202,6 @@ auto switch_or_add(PokemonCollection & collection, Species const species, Args&&
 	return add_new_pokemon;
 }
 
-auto index_of_first_switch(Pokemon const & pokemon) {
-	auto const & moves = all_moves(pokemon);
-	auto const it = containers::find_if(begin(moves), end(moves), [](auto const move) { return is_switch(move); });
-	return  static_cast<containers::index_type<MoveContainer>>(it - begin(moves));
-}
-
 }	// namespace
 
 void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8_t /*index*/, std::string const & nickname, Species species, Gender gender, Level const level) {
@@ -234,12 +230,12 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8
 		updated_hp.add(switcher.team.is_me(), switcher.team.replacement(), max_damage_precision());
 	}
 	
-	// TODO: I'm skeptical of this logic
-	if (other.team.number_of_seen_pokemon() != 0_bi and is_phaze(current_move(other.team.replacement()))) {
-		set_phaze_index(other.variable, switcher.team, species, current_move(switcher.team.pokemon()));
+	if (other.team.number_of_seen_pokemon() != 0_bi and other.flags.used_move and is_phaze(other.flags.used_move->move)) {
+		// Does not matter what move we put here if the Pokemon has not moved
+		auto const switcher_move = switcher.flags.used_move ? switcher.flags.used_move->move : Moves::Struggle;
+		set_phaze_index(other.variable, switcher.team, species, switcher_move);
 	} else if (!moved(switcher.team.pokemon())) {
-		Pokemon & pokemon = switcher.team.pokemon(replacement);
-		all_moves(pokemon).set_index(static_cast<containers::index_type<MoveCollection>>(index_of_first_switch(pokemon) + switcher.team.all_pokemon().replacement()));
+		switcher.flags.used_move.emplace(Move(to_switch(switcher.team.all_pokemon().replacement())), 0_bi);
 	}
 }
 
@@ -414,27 +410,26 @@ void Battle::do_turn() {
 		normalize_hp();
 		replacement(last->team, first->team);
 	} else {
-		auto print_move_usage = [](auto const & name, Species const pokemon, auto const move) {
-			std::cout << name << " move: " << to_string(pokemon) << " uses " << to_string(move) << '\n';
-		};
-
-		auto const first_move = current_move(first->team.pokemon());
-		print_move_usage("First", first->team.pokemon(), first_move);
-
-		auto const last_move = current_move(last->team.pokemon());
-		print_move_usage("Last", last->team.pokemon(), last_move);
 		// Anything with recoil will mess this up
 
-		auto call_battle_move = [&](auto & user, auto & other, bounded::optional<damage_type> const other_damage) {
-			auto const other_move = BOUNDED_CONDITIONAL(other_damage, (UsedMove{current_move(user.team.pokemon()), *other_damage}), bounded::none);
-			call_move(user.team, current_move(user.team.pokemon()), static_cast<bool>(user.flags.damaged), other.team, other_move, static_cast<bool>(other.flags.damaged), weather, user.variable, user.flags.miss, user.flags.awakens, user.flags.critical_hit, other.flags.damaged);
-		};
-		
-		call_battle_move(*first, *last, bounded::none);
-		normalize_hp(last->team);
+		auto call_battle_move = [&](auto const & name, auto & user, auto & other, bounded::optional<UsedMove> const other_move) {
+			Species const species = user.team.pokemon();
+			auto const used_move = user.flags.used_move->move;
+			std::cout << name << " move: " << to_string(species) << " uses " << to_string(used_move) << '\n';
 
-		call_battle_move(*last, *first, first->flags.damage);
-		normalize_hp(first->team);
+			call_move(user.team, used_move, static_cast<bool>(user.flags.damaged), other.team, other_move, static_cast<bool>(other.flags.damaged), weather, user.variable, user.flags.miss, user.flags.awakens, user.flags.critical_hit, other.flags.damaged);
+
+			normalize_hp(other.team);
+		};
+
+		assert(first->flags.used_move);
+		call_battle_move("First", *first, *last, bounded::none);
+
+		if (last->flags.used_move) {
+			call_battle_move("Last", *last, *first, first->flags.used_move);
+		} else {
+			std::cout << "Last has not moved?\n";
+		}
 
 		end_of_turn(first->team, last->team, weather, first->flags.shed_skin, last->flags.shed_skin);
 		normalize_hp();
@@ -443,8 +438,11 @@ void Battle::do_turn() {
 		// to make a decision to replace that Pokemon. I update between each
 		// decision point so that is already taken into account.
 		while (is_fainted(foe.team.pokemon())) {
-			set_index(all_moves(foe.team.pokemon()), to_switch(foe.team.all_pokemon().replacement()));
-			call_battle_move(foe, ai, ai.flags.damage);
+			auto const move = to_switch(foe.team.all_pokemon().replacement());
+			// TODO: It is not quite correct to construct a new move, but it
+			// should not matter for this.
+			foe.flags.used_move = UsedMove{Move(move), 0_bi};
+			call_battle_move("Foe", foe, ai, ai.flags.used_move);
 		}
 	}
 	std::cout << to_string(first->team) << '\n';

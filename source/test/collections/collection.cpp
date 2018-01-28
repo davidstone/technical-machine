@@ -19,7 +19,6 @@
 #include "collection.hpp"
 
 #include "invalid_collection.hpp"
-#include "move_collection.hpp"
 #include "move_container.hpp"
 #include "variable_collection.hpp"
 #include "../../collection.hpp"
@@ -94,7 +93,6 @@ void collection_tests () {
 	std::cout << "Running collection tests.\n";
 	collection_range_tests();
 	move_container_tests();
-	move_collection_tests();
 	variable_collection_tests();
 	std::cout << "Collection tests passed.\n\n";
 }

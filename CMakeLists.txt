@@ -32,7 +32,6 @@ add_library(tm_common STATIC
 
 	source/move/accuracy.cpp
 	source/move/base_power.cpp
-	source/move/collection.cpp
 	source/move/container.cpp
 	source/move/is_switch.cpp
 	source/move/max_moves_per_pokemon.cpp
@@ -248,7 +247,6 @@ add_executable(tm_test
 
 	source/test/collections/collection.cpp
 	source/test/collections/invalid_collection.cpp
-	source/test/collections/move_collection.cpp
 	source/test/collections/move_container.cpp
 	source/test/collections/variable_collection.cpp
 

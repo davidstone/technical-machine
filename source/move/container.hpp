@@ -124,4 +124,16 @@ private:
 	SharedMoves m_shared;
 };
 
+using ::containers::detail::common::compare;
+
+template<typename... MaybePP>
+auto & add_seen_move(MoveContainer & container, Moves const move, MaybePP... pp) {
+	auto const regular = container.regular();
+	auto const it = containers::find(begin(regular), end(regular), move);
+	if (it != end(regular)) {
+		return *it;
+	}
+	return container.emplace_back(move, pp...);
+}
+
 }	// namespace technicalmachine
