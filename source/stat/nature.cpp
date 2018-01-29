@@ -147,8 +147,6 @@ auto boosts_stat(Nature const nature, StatNames const stat) -> bool {
 	case StatNames::ACC:
 	case StatNames::EVA:
 		return false;
-	case StatNames::END:
-		assert(false);
 	}
 }
 
@@ -207,8 +205,6 @@ auto lowers_stat(Nature const nature, StatNames const stat) -> bool {
 	case StatNames::ACC:
 	case StatNames::EVA:
 		return false;
-	case StatNames::END:
-		assert(false);
 	}
 }
 

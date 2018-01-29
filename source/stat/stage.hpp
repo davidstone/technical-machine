@@ -32,7 +32,7 @@ using namespace bounded::literal;
 struct Stage {
 	using value_type = bounded::clamped_integer<-6, 6>;
 	using boost_type = bounded::checked_integer<-3, 12>;
-	static constexpr auto number_of_stats = bounded::constant<static_cast<intmax_t>(StatNames::END)>;
+	static constexpr auto number_of_stats = std::numeric_limits<StatNames>::max() + 1_bi;
 	using container_type = containers::array<value_type, number_of_stats.value()>;
 
 	constexpr Stage() noexcept:

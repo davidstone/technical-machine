@@ -30,8 +30,7 @@ enum class StatNames {
 	SPE,
 	NORMAL_END,
 	ACC = NORMAL_END,
-	EVA,
-	END
+	EVA
 };
 
 }	// namespace technicalmachine
@@ -39,6 +38,6 @@ enum class StatNames {
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::StatNames> : technicalmachine::enum_numeric_limits<technicalmachine::StatNames::END> {};
+struct numeric_limits<technicalmachine::StatNames> : technicalmachine::enum_numeric_limits<technicalmachine::StatNames::EVA> {};
 
 }	// namespace bounded
