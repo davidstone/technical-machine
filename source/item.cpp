@@ -22,10 +22,6 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-bool is_set(Item const item) {
-	return item != Item::END;
-}
-
 bool allows_switching(Item const item) {
 	return item == Item::Shed_Shell;
 }

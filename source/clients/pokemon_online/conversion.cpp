@@ -1403,8 +1403,8 @@ AbilityID ability_to_id(Ability::Abilities const ability) {
 }
 
 struct InvalidPart : std::runtime_error {
-	InvalidPart (uint16_t id, uint8_t part):
-		std::runtime_error ("Invalid conversion to ability ID: " + std::to_string (static_cast<unsigned> (id)) + " with part ID: " + std::to_string (static_cast <unsigned> (part)) + ".\n") {
+	InvalidPart(std::string const & type, uint16_t id, uint8_t part):
+		std::runtime_error("Invalid conversion to " + type + " ID: " + std::to_string(static_cast<unsigned>(id)) + " with part ID: " + std::to_string(static_cast <unsigned>(part)) + ".\n") {
 	}
 };
 
@@ -1435,7 +1435,7 @@ Ability::Abilities battle_id_to_ability (uint16_t id, uint8_t part) {
 			case 1: return Ability::Drizzle;
 			case 2: return Ability::Sand_Stream;
 			case 3: return Ability::Drought;
-			default: throw InvalidPart(id, part);
+			default: throw InvalidPart("ability", id, part);
 		}
 		case 15: return Ability::Dry_Skin;
 		case 16: return Ability::Effect_Spore;
@@ -2155,8 +2155,6 @@ ItemID item_to_id(Item const item) {
 		case Item::Works_Key:
 		case Item::Yache_Berry:
 			return 0_bi;
-		case Item::END:
-			assert(false);
 	}
 }
 
@@ -2175,7 +2173,7 @@ Item battle_id_to_item(uint16_t id, uint8_t part) {
 		case 21: return Item::Life_Orb;
 		case 24: return Item::Shell_Bell;
 		case 29: return Item::Sticky_Barb;
-		default: return Item::END;
+		default: throw InvalidPart("item", id, part);
 	}
 }
 

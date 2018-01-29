@@ -112,10 +112,9 @@ enum class Item : uint16_t {
 	Wide_Lens, Wiki_Berry, Wise_Glasses, Works_Key, X_Accuracy,
 	X_Attack, X_Defend, X_Sp_Def, X_Special, X_Speed,
 	Yache_Berry, Yellow_Flute, Yellow_Scarf, Yellow_Shard, Zap_Plate,
-	Zinc, Zoom_Lens, END
+	Zinc, Zoom_Lens
 };
 
-bool is_set(Item item);
 bool allows_switching(Item item);
 bool boosts_super_effective_moves(Item item);
 bool causes_recoil(Item item);
@@ -139,7 +138,7 @@ void steal(Item & mine, Item & other);
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Item> : technicalmachine::enum_numeric_limits<technicalmachine::Item::END> {};
+struct numeric_limits<technicalmachine::Item> : technicalmachine::enum_numeric_limits<technicalmachine::Item::Zoom_Lens> {};
 
 }	// namespace bounded
 

@@ -88,7 +88,7 @@ Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & ran
 	for (auto & pokemon : team.all_pokemon()) {
 		get_ability(pokemon).set_if_unknown(detailed.get<Ability::Abilities>(pokemon));
 		auto & item = get_item(pokemon);
-		if (!is_set(item)) {
+		if (!item_is_known(pokemon)) {
 			item = detailed.get<Item>(pokemon);
 		}
 		auto & nature = get_nature(pokemon);

@@ -96,6 +96,8 @@ constexpr int window_height = padding + bounded::max(total_input_height, total_o
 struct PokemonInputValues {
 	PokemonInputValues(PokemonInputs const & inputs):
 		species(inputs.species()),
+		// TODO: load actual item?
+		item(Item::No_Item),
 		nature(inputs.nature()),
 		evs{
 			inputs.hp(),
@@ -121,7 +123,7 @@ struct PokemonInputValues {
 	}
 private:
 	Species species;
-	Item item = Item::END;
+	Item item;
 	Ability ability;
 	Nature nature;
 	containers::array<EV, number_of_stats> evs;
