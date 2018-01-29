@@ -112,7 +112,6 @@ bool Ability::blocks_status(Statuses const status, Weather const weather) const 
 				return false;
 		}
 	case Statuses::clear:
-	case Statuses::END:
 		return false;
 	}
 }

@@ -50,7 +50,6 @@ constexpr auto reflected_status(Statuses const status) -> bounded::optional<Stat
 	case Statuses::freeze:
 	case Statuses::sleep:
 	case Statuses::sleep_rest:
-	case Statuses::END:
 		return bounded::none;
 	}
 }
@@ -92,7 +91,6 @@ auto boosts_facade(Status const status) -> bool {
 	case Statuses::freeze:
 	case Statuses::sleep:
 	case Statuses::sleep_rest:
-	case Statuses::END:
 		return false;
 	}
 }

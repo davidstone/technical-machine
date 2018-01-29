@@ -36,8 +36,7 @@ std::string const & to_string(Statuses const name) {
 		"Poison",
 		"Toxic",
 		"Sleep",
-		"Rest",
-		"END_STATUS"
+		"Rest"
 	);
 	return status_name[name];
 }
@@ -52,8 +51,7 @@ Statuses from_string(boost::string_ref const str) {
 		{ "Poison", Statuses::poison },
 		{ "Toxic", Statuses::poison_toxic },
 		{ "Sleep", Statuses::sleep },
-		{ "Rest", Statuses::sleep_rest },
-		{ "END_STATUS", Statuses::END }
+		{ "Rest", Statuses::sleep_rest }
 	};
 	auto const it = converter.find(str);
 	if (it != end(converter)) {

@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -40,8 +40,7 @@ enum class Statuses : uint8_t {
 	poison,
 	poison_toxic,
 	sleep,
-	sleep_rest,
-	END
+	sleep_rest
 };
 
 }	// namespace technicalmachine
@@ -49,7 +48,7 @@ enum class Statuses : uint8_t {
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Statuses> : technicalmachine::enum_numeric_limits<technicalmachine::Statuses::END> {};
+struct numeric_limits<technicalmachine::Statuses> : technicalmachine::enum_numeric_limits<technicalmachine::Statuses::sleep_rest> {};
 
 }	// namespace bounded
 
