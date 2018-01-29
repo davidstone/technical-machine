@@ -33,11 +33,10 @@ enum class Nature : uint8_t {
 	Careful, Docile, Gentle, Hardy, Hasty,
 	Impish, Jolly, Lax, Lonely, Mild, Modest,
 	Naive, Naughty, Quiet, Quirky, Rash,
-	Relaxed, Sassy, Serious, Timid, END
+	Relaxed, Sassy, Serious, Timid
 };
 
 auto make_nature(StatNames boost, StatNames drop) -> Nature;
-auto is_set(Nature nature) -> bool;
 
 auto boosts_stat(Nature nature, StatNames stat) -> bool;
 auto lowers_stat(Nature nature, StatNames stat) -> bool;
@@ -66,7 +65,7 @@ template<>
 struct hash<technicalmachine::Nature> : public technicalmachine::std_hash<technicalmachine::Nature> {};
 
 template<>
-struct numeric_limits<technicalmachine::Nature> : technicalmachine::enum_numeric_limits<technicalmachine::Nature::END> {};
+struct numeric_limits<technicalmachine::Nature> : technicalmachine::enum_numeric_limits<technicalmachine::Nature::Timid> {};
 
 }	// namespace std
 

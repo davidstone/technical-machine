@@ -65,6 +65,7 @@ struct Pokemon {
 	friend Level get_level(Pokemon const & pokemon);
 	friend Nature const & get_nature(Pokemon const & pokemon);
 	friend Nature & get_nature(Pokemon & pokemon);
+	friend bool nature_is_known(Pokemon const & pokemon);
 	friend HP const & get_hp(Pokemon const & pokemon);
 	friend HP & get_hp(Pokemon & pokemon);
 	friend Stat const & get_stat(Pokemon const & pokemon, StatNames index_stat);
@@ -113,7 +114,7 @@ private:
 	Ability m_ability;
 	Gender m_gender;
 	Status m_status;
-	Nature m_nature = Nature::END;
+	Nature m_nature;
 
 	Level m_level;
 	Happiness m_happiness;
@@ -121,6 +122,7 @@ private:
 	bool m_has_been_seen = false;
 	
 	bool m_item_is_known;
+	bool m_nature_is_known;
 };
 
 inline auto compare(Pokemon const & lhs, Species const rhs) {
@@ -172,6 +174,9 @@ inline Nature const & get_nature(Pokemon const & pokemon) {
 }
 inline Nature & get_nature(Pokemon & pokemon) {
 	return pokemon.m_nature;
+}
+inline bool nature_is_known(Pokemon const & pokemon) {
+	return pokemon.m_nature_is_known;
 }
 
 inline HP const & get_hp(Pokemon const & pokemon) {

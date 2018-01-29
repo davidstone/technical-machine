@@ -2245,7 +2245,6 @@ NatureID nature_to_id(Nature const nature) {
 		case Nature::Sassy: return 22_bi;
 		case Nature::Serious: return 12_bi;
 		case Nature::Timid: return 10_bi;
-		case Nature::END: assert(false);
 	}
 }
 

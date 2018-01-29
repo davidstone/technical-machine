@@ -36,7 +36,7 @@ Nature NatureInput::value() const {
 		return from_string<Nature>(input.value());
 	}
 	catch (InvalidFromStringConversion const &) {
-		return Nature::END;
+		return Nature::Hardy;
 	}
 }
 

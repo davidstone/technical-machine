@@ -46,7 +46,7 @@
 
 namespace technicalmachine {
 
-Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, std::string const & set_nickname, Happiness const happiness) : 
+Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & set_nickname, Happiness const happiness):
 	m_moves(my_team_size),
 	current_type(species),
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
@@ -55,7 +55,10 @@ Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const
 	stats(species, level),
 
 	m_species(species),
+	m_item(item),
+	m_ability(ability),
 	m_gender(gender),
+	m_nature(nature),
 
 	m_level(level),
 
@@ -64,12 +67,9 @@ Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const
 	static_cast<void>(set_nickname);
 }
 
-Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & set_nickname, Happiness const happiness):
-	Pokemon::Pokemon(my_team_size, species, level, gender, set_nickname, happiness)
+Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, std::string const & set_nickname, Happiness const happiness) : 
+	Pokemon::Pokemon(my_team_size, species, level, gender, Item::No_Item, Ability::END, Nature::Hardy, set_nickname, happiness)
 	{
-	m_item = item;
-	m_ability = ability;
-	m_nature = nature;
 }
 
 Pokemon::operator Species() const {

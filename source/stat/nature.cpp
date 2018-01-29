@@ -92,10 +92,6 @@ auto make_nature(StatNames const boost, StatNames const drop) -> Nature {
 	}
 }
 
-auto is_set(Nature const nature) -> bool {
-	return nature != Nature::END;
-}
-
 auto boosts_stat(Nature const nature, StatNames const stat) -> bool {
 	switch (stat) {
 	case StatNames::ATK:
