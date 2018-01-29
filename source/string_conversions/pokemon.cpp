@@ -1,5 +1,5 @@
 // Pokemon string functions
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,7 +22,7 @@
 
 #include "../pokemon/species.hpp"
 
-#include <containers/array/make_array.hpp>
+#include <containers/array/array.hpp>
 
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -32,7 +32,7 @@
 namespace technicalmachine {
 
 std::string const & to_string(Species const name) {
-	static auto const name_to_string = containers::make_array<std::string>(
+	static auto const name_to_string = containers::array<std::string, std::numeric_limits<Species>::max().value() + 1>{
 		// Generation 1
 		"Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon",
 		"Charizard", "Squirtle", "Wartortle", "Blastoise", "Caterpie",
@@ -180,7 +180,7 @@ std::string const & to_string(Species const name) {
 		"Meloetta", "Genesect",
 		
 		"END"
-	);
+	};
 	return name_to_string[name];
 }
 

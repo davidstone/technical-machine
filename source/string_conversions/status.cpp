@@ -1,5 +1,5 @@
 // Status string functions
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,14 +21,14 @@
 
 #include "../status.hpp"
 
-#include <containers/array/make_array.hpp>
+#include <containers/array/array.hpp>
 
 #include <map>
 
 namespace technicalmachine {
 
 std::string const & to_string(Statuses const name) {
-	static auto const status_name = containers::make_array<std::string>(
+	static auto const status_name = containers::array<std::string, std::numeric_limits<Statuses>::max().value() + 1>{
 		"No status",
 		"Burn",
 		"Freeze",
@@ -37,7 +37,7 @@ std::string const & to_string(Statuses const name) {
 		"Toxic",
 		"Sleep",
 		"Rest"
-	);
+	};
 	return status_name[name];
 }
 

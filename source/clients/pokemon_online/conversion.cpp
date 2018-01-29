@@ -2178,13 +2178,13 @@ Item battle_id_to_item(uint16_t id, uint8_t part) {
 }
 
 Moves id_to_move(MoveID const id) {
-	return (id == 0_bi) ? Moves::END : static_cast<Moves>(id + bounded::integer(Moves::Regular_Begin) - 1_bi);
+	return (id == 0_bi) ? Moves::Struggle : static_cast<Moves>(id + bounded::integer(Moves::Regular_Begin) - 1_bi);
 }
 
 MoveID move_to_id(Moves const move) {
 	auto const move_id = bounded::integer(move) - bounded::integer(Moves::Regular_Begin) + 1_bi;
 	assert(move_id > 0_bi);
-	return (move == Moves::END) ? MoveID(0_bi) : MoveID(move_id);
+	return MoveID(move_id);
 }
 
 Nature id_to_nature(NatureID const id) {

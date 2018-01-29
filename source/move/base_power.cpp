@@ -595,7 +595,6 @@ auto base_power(Moves const move) -> bounded::optional<bounded::integer<0, 250>>
 		case Moves::V_create: return 180_bi;
 		case Moves::Fusion_Flare: return 100_bi;
 		case Moves::Fusion_Bolt: return 100_bi;
-		default: assert(false);
 	}
 }
 

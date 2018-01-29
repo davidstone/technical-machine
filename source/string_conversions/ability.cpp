@@ -1,5 +1,5 @@
 // Ability string conversions
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,14 +22,14 @@
 
 #include "../ability.hpp"
 
-#include <containers/array/make_array.hpp>
+#include <containers/array/array.hpp>
 
 #include <map>
 
 namespace technicalmachine {
 
 std::string const & to_string(Ability::Abilities const name) {
-	static auto const ability_name = containers::make_array<std::string>(
+	static auto const ability_name = containers::array<std::string, std::numeric_limits<Ability::Abilities>::max().value() + 1>{
 		"Adaptability", "Aftermath", "Air Lock", "Anger Point",
 		"Anticipation", "Arena Trap", "Bad Dreams", "Battle Armor",
 		"Blaze", "Chlorophyll", "Clear Body", "Cloud Nine",
@@ -61,7 +61,7 @@ std::string const & to_string(Ability::Abilities const name) {
 		"Torrent", "Trace", "Truant", "Unaware",
 		"Unburden", "Vital Spirit", "Volt Absorb", "Water Absorb",
 		"Water Veil", "White Smoke", "Wonder Guard", "END_ABILITY"
-	);
+	};
 	return ability_name[name];
 }
 

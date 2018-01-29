@@ -783,8 +783,6 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Roar:
 		case Moves::Whirlwind:
 			return phaze_probability(foe_size);
-		case Moves::END:
-			assert(false);
 	}
 }
 }	// namespace technicalmachine

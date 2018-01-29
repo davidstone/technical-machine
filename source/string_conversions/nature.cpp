@@ -1,5 +1,5 @@
 // Nature string conversions
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,20 +22,20 @@
 
 #include "../stat/nature.hpp"
 
-#include <containers/array/make_array.hpp>
+#include <containers/array/array.hpp>
 
 #include <map>
 
 namespace technicalmachine {
 
 std::string const & to_string(Nature const nature) {
-	static auto const nature_converter = containers::make_array<std::string>(
+	static auto const nature_converter = containers::array<std::string, std::numeric_limits<Nature>::max().value() + 1>{
 		"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful",
 		"Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly",
 		"Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty",
 		"Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious",
-		"Timid", "End_Nature"
-	);
+		"Timid"
+	};
 	return nature_converter[nature];
 }
 

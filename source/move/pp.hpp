@@ -662,7 +662,6 @@ private:
 			case Moves::V_create: return 5_bi;
 			case Moves::Fusion_Flare: return 5_bi;
 			case Moves::Fusion_Bolt: return 5_bi;
-			default: assert(false);
 		}
 	}
 };

@@ -1,5 +1,5 @@
 // Move string conversions
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,7 +22,7 @@
 
 #include "../move/moves.hpp"
 
-#include <containers/array/make_array.hpp>
+#include <containers/array/array.hpp>
 
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -32,7 +32,7 @@
 namespace technicalmachine {
 
 std::string const & to_string(Moves const name) {
-	static auto const name_to_string = containers::make_array<std::string>(
+	static auto const name_to_string = containers::array<std::string, std::numeric_limits<Moves>::max().value() + 1>{
 		// Generation 1
 		"Switch0", "Switch1", "Switch2", "Switch3", "Switch4",
 		"Switch5", "Hit self in confusion", "Pound", "Karate Chop", "DoubleSlap",
@@ -157,10 +157,8 @@ std::string const & to_string(Moves const name) {
 		"Head Charge", "Gear Grind", "Searing Shot", "Techno Blast", "Relic Song",
 		"Secret Sword", "Glaciate", "Bolt Strike", "Blue Flare", "Fiery Dance",
 		"Freeze Shock", "Ice Burn", "Snarl", "Icicle Crash", "V-create",
-		"Fusion Flare", "Fusion Bolt",
-
-		"END_MOVE"
-	);
+		"Fusion Flare", "Fusion Bolt"
+	};
 	return name_to_string[name];
 }
 
@@ -749,8 +747,7 @@ Moves from_string(boost::string_ref const str) {
 		{ "v-create", Moves::V_create },
 		{ "v-create", Moves::V_create },
 		{ "fusion flare", Moves::Fusion_Flare },
-		{ "fusion bolt", Moves::Fusion_Bolt },
-		{ "end_move", Moves::END }
+		{ "fusion bolt", Moves::Fusion_Bolt }
 	};
 	auto const it = converter.find(boost::algorithm::to_lower_copy(str.to_string()));
 	if (it != end(converter)) {

@@ -594,7 +594,6 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::V_create: return 95_bi;
 		case Moves::Fusion_Flare: return 100_bi;
 		case Moves::Fusion_Bolt: return 100_bi;
-		default: assert(false);
 	}
 }
 

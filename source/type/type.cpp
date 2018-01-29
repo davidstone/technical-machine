@@ -648,7 +648,6 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::V_create: return Type::Fire;
 		case Moves::Fusion_Flare: return Type::Fire;
 		case Moves::Fusion_Bolt: return Type::Electric;
-		default : assert(false);
 	}
 }
 

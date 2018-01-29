@@ -23,16 +23,16 @@
 
 #include "../gender.hpp"
 
-#include <containers/array/make_array.hpp>
+#include <containers/array/array.hpp>
 
 #include <map>
 
 namespace technicalmachine {
 
 std::string const & to_string(Gender const gender) {
-	static auto const gender_name = containers::make_array<std::string>(
+	static auto const gender_name = containers::array<std::string, std::numeric_limits<Gender>::max().value() + 1>{
 		"Female", "Genderless", "Male"
-	);
+	};
 	return gender_name[gender];
 }
 

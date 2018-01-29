@@ -61,7 +61,7 @@ Item id_to_item(ItemID id);
 ItemID item_to_id(Item item);
 Item battle_id_to_item(uint16_t id, uint8_t part);
 
-using MoveID = bounded::checked_integer<0, (bounded::integer(Moves::END) - bounded::integer(Moves::Regular_Begin)).value()>;
+using MoveID = bounded::checked_integer<0, (std::numeric_limits<Moves>::max() - bounded::integer(Moves::Regular_Begin)).value()>;
 Moves id_to_move(MoveID id);
 MoveID move_to_id(Moves move);
 

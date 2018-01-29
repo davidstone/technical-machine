@@ -602,9 +602,7 @@ enum class Moves : uint16_t {
 	Icicle_Crash,
 	V_create,
 	Fusion_Flare,
-	Fusion_Bolt,
-
-	END
+	Fusion_Bolt
 };
 
 }	// namespace technicalmachine
@@ -612,6 +610,6 @@ enum class Moves : uint16_t {
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Moves> : technicalmachine::enum_numeric_limits<technicalmachine::Moves::END> {};
+struct numeric_limits<technicalmachine::Moves> : technicalmachine::enum_numeric_limits<technicalmachine::Moves::Fusion_Bolt> {};
 
 }	// namespace std

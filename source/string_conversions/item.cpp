@@ -1,5 +1,5 @@
 // Item string conversions
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,14 +22,14 @@
 
 #include "../item.hpp"
 
-#include <containers/array/make_array.hpp>
+#include <containers/array/array.hpp>
 
 #include <map>
 
 namespace technicalmachine {
 
 std::string const & to_string(Item const name) {
-	static auto const item_name = containers::make_array<std::string>(
+	static auto const item_name = containers::array<std::string, std::numeric_limits<Item>::max().value() + 1>{
 		"No Item", "Adamant Orb", "Aguav Berry", "Air Mail",
 		"Amulet Coin", "Antidote", "Apicot Berry", "Armor Fossil",
 		"Aspear Berry", "Awakening", "Babiri Berry", "Belue Berry",
@@ -139,8 +139,8 @@ std::string const & to_string(Item const name) {
 		"X Accuracy", "X Attack", "X Defend", "X Sp. Def",
 		"X Special", "X Speed", "Yache Berry", "Yellow Flute",
 		"Yellow Scarf", "Yellow Shard", "Zap Plate", "Zinc",
-		"Zoom Lens", "END ITEM"
-	);
+		"Zoom Lens"
+	};
 	return item_name[name];
 }
 
