@@ -177,9 +177,7 @@ std::string const & to_string(Species const name) {
 		"Cobalion", "Terrakion", "Virizion", "Tornadus-Incarnate", "Tornadus-Therian",
 		"Thundurus-Incarnate", "Thundurus-Therian", "Reshiram", "Zekrom", "Landorus-Incarnate",
 		"Landorus-Therian", "Kyurem", "Kyurem-Black", "Kyurem-White", "Keldeo",
-		"Meloetta", "Genesect",
-		
-		"END"
+		"Meloetta", "Genesect"
 	};
 	return name_to_string[name];
 }

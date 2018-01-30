@@ -57,9 +57,10 @@ struct UnsupportedSpecies : std::runtime_error {
 
 }	// namespace
 
+// TODO: return optional?
 Species id_to_species(SpeciesIDs const species) {
 	switch (species.id.value()) {
-		case 0: return Species::END;	// "Missingno."
+		case 0: throw std::runtime_error("Invalid SpeciesID: " + bounded::to_string(species.id));
 
 		// Generation 1
 		case 1: return Species::Bulbasaur;
@@ -1108,7 +1109,6 @@ constexpr SpeciesIDs::ID to_id_only(Species const species) {
 		case Species::Shaymin_Land: return 492_bi;
 		case Species::Shaymin_Sky: return 492_bi;
 		case Species::Arceus: return 493_bi;
-		case Species::END: assert(false);
 		default: throw UnsupportedSpecies(species);
 	}
 }

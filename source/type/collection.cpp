@@ -807,7 +807,6 @@ auto get_type(Species const name) -> TypeArray {
 		case Species::Meloetta: return {Type::Normal, Type::Psychic};
 		// case Species::Meloetta_Pirouette: return {Type::Normal, Type::Fighting};
 		case Species::Genesect: return {Type::Bug, Type::Steel};
-		default: assert(false);
 	}
 }
 

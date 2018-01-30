@@ -721,17 +721,16 @@ enum class Species : uint16_t {
 	Kyurem_White,
 	Keldeo,
 	Meloetta,
-	Genesect,
-	END
+	Genesect
 };
 
-constexpr auto number_of_species = static_cast<unsigned>(Species::END);
+constexpr auto number_of_species = static_cast<unsigned>(Species::Genesect) + 1;
 
 }	// namespace technicalmachine
 
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Species> : technicalmachine::enum_numeric_limits<technicalmachine::Species::END> {};
+struct numeric_limits<technicalmachine::Species> : technicalmachine::enum_numeric_limits<technicalmachine::Species::Genesect> {};
 
 }	// namespace std

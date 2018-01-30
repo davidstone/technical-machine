@@ -719,8 +719,6 @@ constexpr auto get_base(Species const species, stat_tag<StatNames::ATK>) -> Stat
 		case Species::Meloetta: return 77_bi;
 		// case Species::Meloetta (Pirouette form): return 128_bi;
 		case Species::Genesect: return 120_bi;
-
-		default: assert(false);
 	}
 }
 
@@ -1404,8 +1402,6 @@ constexpr auto get_base(Species const species, stat_tag<StatNames::DEF>) -> Stat
 		case Species::Meloetta: return 77_bi;
 		// case Species::Meloetta (Pirouette form): return 90_bi;
 		case Species::Genesect: return 95_bi;
-
-		default: assert(false);
 	}
 }
 
@@ -2089,8 +2085,6 @@ constexpr auto get_base(Species const species, stat_tag<StatNames::SPA>) -> Stat
 		case Species::Meloetta: return 128_bi;
 		// case Species::Meloetta (Pirouette form): return 77_bi;
 		case Species::Genesect: return 120_bi;
-
-		default: assert(false);
 	}
 }
 
@@ -2774,8 +2768,6 @@ constexpr auto get_base(Species const species, stat_tag<StatNames::SPD>) -> Stat
 		case Species::Meloetta: return 128_bi;
 		// case Species::Meloetta (Pirouette form): return 77_bi;
 		case Species::Genesect: return 95_bi;
-
-		default: assert(false);
 	}
 }
 
@@ -3459,8 +3451,6 @@ constexpr auto get_base(Species const species, stat_tag<StatNames::SPE>) -> Stat
 		case Species::Meloetta: return 90_bi;
 		// case Species::Meloetta (Pirouette form): return 128_bi;
 		case Species::Genesect: return 99_bi;
-
-		default: assert(false);
 	}
 }
 

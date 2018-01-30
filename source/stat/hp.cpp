@@ -752,7 +752,6 @@ auto get_base(Species const species) -> base_type {
 		case Species::Meloetta: return 100_bi;
 		// case Species::Meloetta_Pirouette: return 100_bi;
 		case Species::Genesect: return 71_bi;
-		default: assert(false);
 	}
 }
 

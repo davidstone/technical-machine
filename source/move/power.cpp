@@ -985,7 +985,6 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Keldeo: return 60_bi;
 		case Species::Meloetta: return 20_bi;
 		case Species::Genesect: return 80_bi;
-		default: assert(false);
 	}
 }
 
