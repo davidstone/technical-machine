@@ -89,7 +89,7 @@ struct AbilityNumerator;
 template<>
 struct AbilityNumerator<StatNames::ATK> {
 	auto operator()(ActivePokemon const attacker, Weather const weather) -> bounded::integer<1, 4> {
-		switch (get_ability(attacker).name()) {
+		switch (get_ability(attacker)) {
 			case Ability::Flower_Gift:
 				return BOUNDED_CONDITIONAL(weather.sun(), 3_bi, ability_denominator);
 			case Ability::Guts:
@@ -109,25 +109,25 @@ struct AbilityNumerator<StatNames::ATK> {
 template<>
 struct AbilityNumerator<StatNames::SPA> {
 	auto operator()(ActivePokemon const pokemon, Weather const weather) {
-		return BOUNDED_CONDITIONAL(get_ability(pokemon).boosts_special_attack(weather), 3_bi, ability_denominator);
+		return BOUNDED_CONDITIONAL(boosts_special_attack(get_ability(pokemon), weather), 3_bi, ability_denominator);
 	}
 };
 template<>
 struct AbilityNumerator<StatNames::DEF> {
 	auto operator()(ActivePokemon const defender, Weather const) {
-		return BOUNDED_CONDITIONAL(get_ability(defender).boosts_defense(get_status(defender)), 3_bi, ability_denominator);
+		return BOUNDED_CONDITIONAL(boosts_defense(get_ability(defender), get_status(defender)), 3_bi, ability_denominator);
 	}
 };
 template<>
 struct AbilityNumerator<StatNames::SPD> {
 	auto operator()(ActivePokemon const pokemon, Weather const weather) {
-		return BOUNDED_CONDITIONAL(get_ability(pokemon).boosts_special_defense(weather), 3_bi, ability_denominator);
+		return BOUNDED_CONDITIONAL(boosts_special_defense(get_ability(pokemon), weather), 3_bi, ability_denominator);
 	}
 };
 template<>
 struct AbilityNumerator<StatNames::SPE> {
 	auto operator()(ActivePokemon const pokemon, Weather const weather) -> bounded::integer<1, 4> {
-		switch (get_ability(pokemon).name()) {
+		switch (get_ability(pokemon)) {
 			case Ability::Chlorophyll:
 				return BOUNDED_CONDITIONAL(weather.sun(), ability_denominator * 2_bi, ability_denominator);
 			case Ability::Swift_Swim:

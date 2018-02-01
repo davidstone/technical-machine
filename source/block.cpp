@@ -45,7 +45,7 @@ auto would_switch_to_different_pokemon(PokemonCollection const & collection, Mov
 }
 
 auto is_blocked_from_switching(ActivePokemon const user, Pokemon const & other, Weather const weather) {
-	auto const block_attempted = get_ability(other).blocks_switching(user, weather) or trapped(user);
+	auto const block_attempted = blocks_switching(get_ability(other), user, weather) or trapped(user);
 	auto const result = block_attempted and !allows_switching(get_item(user));
 	return result;
 }
@@ -214,7 +214,7 @@ bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon 
 		// execute
 		user.handle_confusion();
 		if (flinched(user)) {
-			if (get_ability(user).boosts_speed_when_flinched ())
+			if (boosts_speed_when_flinched(get_ability(user)))
 				boost(stage(user), StatNames::SPE, 1_bi);
 			execute = false;
 		} else if (block2(user, move, weather) or is_fully_paralyzed(user)) {

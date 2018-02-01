@@ -34,8 +34,6 @@
 #include <string>
 
 namespace technicalmachine {
-struct Ability;
-struct Pokemon;
 struct Weather;
 
 struct Team {

@@ -98,6 +98,7 @@ struct PokemonInputValues {
 		species(inputs.species()),
 		// TODO: load actual item?
 		item(Item::No_Item),
+		ability(Ability::Honey_Gather),
 		nature(inputs.nature()),
 		evs{
 			inputs.hp(),

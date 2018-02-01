@@ -262,7 +262,7 @@ auto item_modifier(Pokemon const & attacker, Moves const move) {
 }
 
 auto defender_ability_modifier(Pokemon const & attacker, Moves const move, Ability const ability) -> bounded_rational<bounded::integer<1, 5>, bounded::integer<1, 4>> {
-	switch (ability.name()) {
+	switch (ability) {
 		case Ability::Dry_Skin:
 			return make_rational(BOUNDED_CONDITIONAL(get_type(move, attacker) == Type::Fire, 5_bi, 4_bi), 4_bi);
 		case Ability::Heatproof:

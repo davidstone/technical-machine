@@ -30,8 +30,6 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-struct Ability;
-
 struct Move {
 	static constexpr auto class_name = "Move";
 	constexpr explicit Move(Moves const move, Pp::pp_ups_type const pp_ups = 3_bi) :

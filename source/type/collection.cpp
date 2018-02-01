@@ -99,7 +99,7 @@ template<typename PossiblyActivePokemon>
 auto is_immune_to_ground(PossiblyActivePokemon const & pokemon) -> bool {
 	return
 		is_type(pokemon, Type::Flying, is_roosting(pokemon)) or
-		get_ability(pokemon).is_immune_to_ground() or
+		is_immune_to_ground(get_ability(pokemon)) or
 		is_magnet_rising(pokemon)
 	;
 }

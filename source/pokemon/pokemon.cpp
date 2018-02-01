@@ -112,8 +112,8 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 		output += " ** " + pokemon.get_nickname();
 	}
 	output += '\n';
-	if (get_ability(pokemon).is_set()) {
-		output += "\tAbility: " + to_string(get_ability(pokemon).name()) + '\n';
+	if (is_set(get_ability(pokemon))) {
+		output += "\tAbility: " + to_string(get_ability(pokemon)) + '\n';
 	}
 	if (!is_clear(get_status(pokemon))) {
 		output += "\tStatus: " + to_string(get_status(pokemon).name()) + '\n';

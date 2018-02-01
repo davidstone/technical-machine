@@ -39,7 +39,7 @@ struct DetailedStats {
 	using UsedMoves = containers::static_vector<Moves, max_moves_per_pokemon.value()>;
 	
 	DetailedStats();
-	template<typename T, BOUNDED_REQUIRES(std::is_same<T, Ability::Abilities>::value)>
+	template<typename T, BOUNDED_REQUIRES(std::is_same<T, Ability>::value)>
 	auto get(Species const species) const {
 		return ability[species];
 	}
@@ -58,7 +58,7 @@ struct DetailedStats {
 private:
 	containers::array<UsedMoves, number_of_species> move;
 	containers::array<Item, number_of_species> item;
-	containers::array<Ability::Abilities, number_of_species> ability;
+	containers::array<Ability, number_of_species> ability;
 	containers::array<Nature, number_of_species> nature;
 };
 

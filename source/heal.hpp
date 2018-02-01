@@ -36,7 +36,7 @@ void heal(MutableActivePokemon pokemon, bounded_rational<Numerator, Denominator>
 	bool const is_positive = rational > make_rational(0_bi, 1_bi);
 	if (is_positive) {
 		get_hp(pokemon) += bounded::max(hp_healed, 1_bi);
-	} else if (!get_ability(pokemon).blocks_secondary_damage()) {
+	} else if (!blocks_secondary_damage(get_ability(pokemon))) {
 		get_hp(pokemon) += bounded::min(hp_healed, -1_bi);
 	}
 }

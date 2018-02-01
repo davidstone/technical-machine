@@ -28,8 +28,8 @@
 
 namespace technicalmachine {
 
-std::string const & to_string(Ability::Abilities const name) {
-	static auto const ability_name = containers::array<std::string, std::numeric_limits<Ability::Abilities>::max().value() + 1>{
+std::string const & to_string(Ability const name) {
+	static auto const ability_name = containers::array<std::string, std::numeric_limits<Ability>::max().value() + 1>{
 		"Adaptability", "Aftermath", "Air Lock", "Anger Point",
 		"Anticipation", "Arena Trap", "Bad Dreams", "Battle Armor",
 		"Blaze", "Chlorophyll", "Clear Body", "Cloud Nine",
@@ -66,8 +66,8 @@ std::string const & to_string(Ability::Abilities const name) {
 }
 
 template<>
-Ability::Abilities from_string<Ability::Abilities>(boost::string_ref const str) {
-	static std::map<boost::string_ref, Ability::Abilities> const converter {
+Ability from_string<Ability>(boost::string_ref const str) {
+	static std::map<boost::string_ref, Ability> const converter {
 		{ "Adaptability", Ability::Adaptability },
 		{ "Aftermath", Ability::Aftermath },
 		{ "Air Lock", Ability::Air_Lock },

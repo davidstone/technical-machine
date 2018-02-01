@@ -111,7 +111,7 @@ auto Team::reset_end_of_turn() -> void {
 auto Team::reset_switch() -> void {
 	m_flags.reset_switch();
 	auto p = pokemon();
-	if (get_ability(p).clears_status_on_switch()) {
+	if (clears_status_on_switch(get_ability(p))) {
 		get_status(p) = Status{};
 	}
 }

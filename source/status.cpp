@@ -33,7 +33,7 @@ using namespace bounded::literal;
 auto status_can_apply(Statuses const status, Ability const ability, Pokemon const & target, Weather const weather) {
 	return
 		is_clear(get_status(target)) and
-		(ability.ignores_blockers() or !get_ability(target).blocks_status(status, weather)) and
+		(ignores_blockers(ability) or !blocks_status(get_ability(target), status, weather)) and
 		!blocks_status(get_type(target), status) and
 		!weather.blocks_status(status);
 }
@@ -75,7 +75,7 @@ auto is_sleeping_due_to_other(Status const status) -> bool {
 	return status.name() == Statuses::sleep;
 }
 auto lowers_speed(Status const status, Ability const & ability) -> bool {
-	return status.name() == Statuses::paralysis and !ability.blocks_paralysis_speed_penalty();
+	return status.name() == Statuses::paralysis and !blocks_paralysis_speed_penalty(ability);
 }
 auto weakens_physical_attacks(Status const status) -> bool {
 	return status.name() == Statuses::burn;
@@ -112,7 +112,7 @@ auto apply(Statuses const status, Pokemon & user, Pokemon & target, Weather cons
 			get_status(target).m_turns_already_slept = 0_bi;
 		}
 		auto const reflected = reflected_status(status);
-		if (reflected and get_ability(target).reflects_status()) {
+		if (reflected and reflects_status(get_ability(target))) {
 			apply(*reflected, target, user, weather);
 		}
 	}
@@ -147,7 +147,7 @@ auto Status::increase_sleep_counter(Ability const & ability, bool awaken) -> voi
 		m_turns_already_slept = bounded::none;
 		m_status = Statuses::clear;
 	} else {
-		*m_turns_already_slept += BOUNDED_CONDITIONAL(ability.wakes_up_early(), 2_bi, 1_bi);
+		*m_turns_already_slept += BOUNDED_CONDITIONAL(wakes_up_early(ability), 2_bi, 1_bi);
 	}
 }
 
@@ -182,7 +182,7 @@ auto Status::awaken_probability(Ability const & ability) const -> AwakenProbabil
 	if (!m_turns_already_slept) {
 		return 0.0;
 	}
-	return ability.wakes_up_early() ?
+	return wakes_up_early(ability) ?
 		early_bird_probability(*m_turns_already_slept) :
 		non_early_bird_probability(*m_turns_already_slept)
 	;

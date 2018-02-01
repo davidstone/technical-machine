@@ -55,7 +55,7 @@ void end_of_turn(Team & first, Team & last, Weather & weather, bool const first_
 	end_of_turn2(first);
 	end_of_turn2(last);
 	weather.advance_one_turn();
-	if (!get_ability(first.pokemon()).blocks_weather() and !get_ability(last.pokemon()).blocks_weather()) {
+	if (!blocks_weather(get_ability(first.pokemon())) and !blocks_weather(get_ability(last.pokemon()))) {
 		end_of_turn3(first.pokemon(), weather);
 		end_of_turn3(last.pokemon(), weather);
 	}
@@ -83,7 +83,7 @@ void end_of_turn3(MutableActivePokemon pokemon, Weather const weather) {
 	if (weather.sand() and !is_immune_to_sandstorm(get_type(pokemon))) {
 		heal(pokemon, make_rational(-1_bi, 16_bi));
 	}
-	Ability::weather_healing(pokemon, weather);
+	weather_healing_ability(pokemon, weather);
 }
 
 void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, bool const shed_skin_activated) {
@@ -96,7 +96,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	if (aqua_ring_is_active(pokemon)) {
 		heal(pokemon, make_rational(1_bi, 16_bi));
 	}
-	if (get_ability(pokemon).boosts_speed()) {
+	if (boosts_speed(get_ability(pokemon))) {
 		boost(stage(pokemon), StatNames::SPE, 1_bi);
 	} else if (shed_skin_activated) {
 		get_status(pokemon) = Status{};
@@ -117,7 +117,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 		auto const initial = get_hp(pokemon).current();
 		heal(pokemon, make_rational(-1_bi, 8_bi));
 		if (!is_fainted(foe)) {
-			if (get_ability(pokemon).damages_leechers()) {
+			if (damages_leechers(get_ability(pokemon))) {
 				get_hp(foe) -= initial - get_hp(pokemon).current();
 			}
 			else {
@@ -127,18 +127,18 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	}
 	switch (get_status(pokemon).name()) {
 		case Statuses::burn: {
-			auto const denominator = BOUNDED_CONDITIONAL(get_ability(pokemon).weakens_burn(), 16_bi, 8_bi);
+			auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(get_ability(pokemon)), 16_bi, 8_bi);
 			heal(pokemon, make_rational(-1_bi, denominator));
 			break;
 		}
 		case Statuses::poison: {
-			auto const numerator = BOUNDED_CONDITIONAL(get_ability(pokemon).absorbs_poison_damage(), 1_bi, -1_bi);
+			auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(get_ability(pokemon)), 1_bi, -1_bi);
 			heal(pokemon, make_rational(numerator, 8_bi));
 			break;
 		}
 		case Statuses::poison_toxic:
 			pokemon.advance_toxic();
-			if (get_ability(pokemon).absorbs_poison_damage()) {
+			if (absorbs_poison_damage(get_ability(pokemon))) {
 				heal(pokemon, make_rational(1_bi, 8_bi));
 			} else {
 				heal(pokemon, toxic_ratio(pokemon));
@@ -148,7 +148,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 			if (is_having_a_nightmare(pokemon)) {
 				heal(pokemon, make_rational(-1_bi, 4_bi));
 			}
-			if (get_ability(foe).harms_sleepers()) {
+			if (harms_sleepers(get_ability(foe))) {
 				heal(pokemon, make_rational(-1_bi, 8_bi));
 			}
 			break;

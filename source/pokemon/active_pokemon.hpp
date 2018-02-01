@@ -31,8 +31,6 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
-struct Ability;
-struct Move;
 struct Weather;
 
 struct ActivePokemon {
@@ -305,7 +303,7 @@ inline auto substitute(ActivePokemon const pokemon) -> Substitute const & {
 
 
 inline auto shed_skin_probability(ActivePokemon const pokemon) {
-	return get_ability(pokemon).can_clear_status(get_status(pokemon)) ? 0.3 : 0.0;
+	return can_clear_status(get_ability(pokemon), get_status(pokemon)) ? 0.3 : 0.0;
 }
 
 auto has_switched(ActivePokemon const pokemon) -> bool;
@@ -388,7 +386,7 @@ inline auto leech_seeded(ActivePokemon const pokemon) -> bool {
 }
 
 inline auto is_loafing(ActivePokemon const pokemon) -> bool {
-	return get_ability(pokemon).is_loafing(pokemon.m_flags.is_loafing_turn);
+	return is_loafing(get_ability(pokemon), pokemon.m_flags.is_loafing_turn);
 }
 
 inline auto locked_on(ActivePokemon const pokemon) -> bool {

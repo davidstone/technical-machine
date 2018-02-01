@@ -52,7 +52,7 @@ namespace {
 auto absorb_hp(Pokemon & user, Pokemon const & target, damage_type const damage) -> void {
 	auto & hp = get_hp(user);
 	auto const absorbed = damage / 2_bi;
-	if (get_ability(target).damages_leechers()) {
+	if (damages_leechers(get_ability(target))) {
 		hp -= absorbed;
 	} else {
 		hp += absorbed;
@@ -85,7 +85,7 @@ auto can_confuse_with_chatter(Species const pokemon) {
 
 
 auto curse(MutableActivePokemon user, MutableActivePokemon target) {
-	if (is_type(user, Type::Ghost, is_roosting(user)) and !get_ability(user).blocks_secondary_damage()) {
+	if (is_type(user, Type::Ghost, is_roosting(user)) and !blocks_secondary_damage(get_ability(user))) {
 		if (!is_cursed(target)) {
 			user.indirect_damage(get_hp(user).max() / 2_bi);
 			target.curse();
@@ -149,7 +149,7 @@ auto clear_field(Team & user, Moves const move, Pokemon const & target) {
 
 
 auto active_pokemon_can_be_phazed(Team const & team) {
-	return !ingrained(team.pokemon()) and !get_ability(team.pokemon()).blocks_phazing() and size(team.all_pokemon()) > 1_bi;
+	return !ingrained(team.pokemon()) and !blocks_phazing(get_ability(team.pokemon())) and size(team.all_pokemon()) > 1_bi;
 }
 
 auto phaze(Team & user, Team & target, Weather & weather, Variable const & variable) {
@@ -623,7 +623,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			break;
 		case Moves::Heal_Bell:
 			cure_all_status(user_team, [](Pokemon const & pokemon) {
-				return !get_ability(pokemon).blocks_sound_moves();
+				return !blocks_sound_moves(get_ability(pokemon));
 			});
 			break;
 		case Moves::Heal_Block:
@@ -1074,7 +1074,7 @@ auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_ty
 auto use_move(Team & user, Move const move, bool const user_damaged, Team & target, bounded::optional<UsedMove> const target_move, bool const target_damaged, Weather & weather, Variable const & variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
-	if (get_ability(target.pokemon()).blocks_sound_moves() and is_sound_based(move) and !(move == Moves::Heal_Bell or move == Moves::Perish_Song)) {
+	if (blocks_sound_moves(get_ability(target.pokemon())) and is_sound_based(move) and !(move == Moves::Heal_Bell or move == Moves::Perish_Song)) {
 		return;
 	}
 

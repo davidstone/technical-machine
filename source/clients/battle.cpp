@@ -489,7 +489,7 @@ void Battle::handle_critical_hit(Party const party) {
 	get_team(party).flags.critical_hit = true;
 }
 
-void Battle::handle_ability_message(Party party, Ability::Abilities ability) {
+void Battle::handle_ability_message(Party party, Ability ability) {
 	get_ability(get_team(party).team.replacement()) = ability;
 }
 

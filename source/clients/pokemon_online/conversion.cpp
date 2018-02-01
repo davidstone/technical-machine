@@ -1143,7 +1143,7 @@ SpeciesIDs species_to_id(Species const species) {
 	return { to_id_only(species), to_forme(species) };
 }
 
-Ability::Abilities id_to_ability(AbilityID const id) {
+Ability id_to_ability(AbilityID const id) {
 	switch (id.value()) {
 		case 0: return Ability::END;
 		case 1: return Ability::Stench;
@@ -1273,7 +1273,7 @@ Ability::Abilities id_to_ability(AbilityID const id) {
 	}
 }
 
-AbilityID ability_to_id(Ability::Abilities const ability) {
+AbilityID ability_to_id(Ability const ability) {
 	switch (ability) {
 		case Ability::Adaptability: return 91_bi;
 		case Ability::Aftermath: return 106_bi;
@@ -1408,7 +1408,7 @@ struct InvalidPart : std::runtime_error {
 	}
 };
 
-Ability::Abilities battle_id_to_ability (uint16_t id, uint8_t part) {
+Ability battle_id_to_ability (uint16_t id, uint8_t part) {
 	// 6: BAD_DREAMS
 	// 18: %s's %a activates!
 	// 21: %s changed its type to %t!

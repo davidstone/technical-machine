@@ -26,7 +26,7 @@ namespace technicalmachine {
 
 
 auto MutableActivePokemon::confuse() -> void {
-	if (!get_ability(*this).blocks_confusion()) {
+	if (!blocks_confusion(get_ability(*this))) {
 		m_flags.confusion.activate();
 	}
 }

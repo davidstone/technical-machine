@@ -28,7 +28,7 @@
 
 namespace technicalmachine {
 
-struct Ability;
+enum class Ability : std::uint8_t;
 struct Pokemon;
 struct Weather;
 

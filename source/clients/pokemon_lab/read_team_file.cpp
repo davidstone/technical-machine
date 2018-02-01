@@ -99,7 +99,7 @@ auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	auto const happiness = Happiness(pt.get<Happiness::value_type>("happiness"));
 	auto const nature = from_string<Nature>(pt.get<std::string>("nature"));
 	auto const item = from_string<Item>(pt.get<std::string>("item"));
-	auto const ability = Ability(from_string<Ability::Abilities>(pt.get<std::string>("ability")));
+	auto const ability = Ability(from_string<Ability>(pt.get<std::string>("ability")));
 	team.add_pokemon(from_simulator_string(species_str), level, gender, item, ability, nature, nickname, happiness);
 	Pokemon & pokemon = team.replacement();
 	

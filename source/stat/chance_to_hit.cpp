@@ -71,7 +71,7 @@ auto chance_to_hit(ActivePokemon const user, Moves const move, ActivePokemon con
 namespace {
 
 auto move_can_miss(ActivePokemon const user, BaseAccuracy const base_accuracy, Ability const & target_ability) -> bool {
-	return static_cast<bool>(base_accuracy) and !get_ability(user).cannot_miss() and !target_ability.cannot_miss() and !locked_on(user);
+	return static_cast<bool>(base_accuracy) and !cannot_miss(get_ability(user)) and !cannot_miss(target_ability) and !locked_on(user);
 }
 
 auto accuracy_item_modifier(Item const item, bool target_moved) -> AccuracyItemModifier {

@@ -42,7 +42,7 @@ auto apply_toxic_spikes(EntryHazards const & hazards, MutableActivePokemon switc
 }	// namespace
 
 auto apply(EntryHazards & hazards, MutableActivePokemon switcher, Weather const weather) -> void {
-	if (get_ability(switcher).blocks_secondary_damage())
+	if (blocks_secondary_damage(get_ability(switcher)))
 		return;
 
 	if (grounded(switcher, weather)) {

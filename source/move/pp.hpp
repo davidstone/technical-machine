@@ -29,7 +29,6 @@
 #include <utility>
 
 namespace technicalmachine {
-struct Ability;
 
 using namespace bounded::literal;
 
@@ -56,7 +55,7 @@ struct Pp {
 		}
 		// I think it is always an error to try to decrement a move without PP.
 		assert(m_current != 0_bi);
-		*m_current -= BOUNDED_CONDITIONAL(foe_ability.uses_extra_pp(), 2_bi, 1_bi);
+		*m_current -= BOUNDED_CONDITIONAL(uses_extra_pp(foe_ability), 2_bi, 1_bi);
 	}
 
 	constexpr auto trump_card_power() const -> bounded::integer<40, 200> {

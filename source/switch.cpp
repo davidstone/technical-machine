@@ -46,7 +46,7 @@ void switch_pokemon(Team & switcher_team, Team & other, Weather & weather, TeamI
 	switch_in(switcher);
 	apply(switcher_team.entry_hazards, switcher, weather);
 	if (get_hp(switcher) != 0_bi) {
-		Ability::activate_on_switch(switcher, other.pokemon(), weather);
+		activate_ability_on_switch(switcher, other.pokemon(), weather);
 	}
 }
 

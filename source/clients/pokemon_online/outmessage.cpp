@@ -78,7 +78,7 @@ void OutMessage::write_pokemon (Pokemon const & pokemon) {
 	write_string (pokemon.get_nickname());
 	auto const item = static_cast<uint16_t>(item_to_id(get_item(pokemon)));
 	write_short (item);
-	auto const ability = static_cast<uint16_t>(ability_to_id(get_ability(pokemon).name()));
+	auto const ability = static_cast<uint16_t>(ability_to_id(get_ability(pokemon)));
 	write_short (ability);
 	auto const nature = static_cast<uint8_t>(nature_to_id(get_nature(pokemon)));
 	write_byte (nature);

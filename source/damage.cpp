@@ -92,7 +92,7 @@ auto calculate_me_first_modifier(ActivePokemon const attacker) {
 
 
 auto calculate_stab_boost(Ability const ability) {
-	return BOUNDED_CONDITIONAL(ability.boosts_stab(),
+	return BOUNDED_CONDITIONAL(boosts_stab(ability),
 		make_rational(2_bi, 1_bi),
 		make_rational(3_bi, 2_bi)
 	);
@@ -107,7 +107,7 @@ auto calculate_stab_modifier(ActivePokemon const attacker, Moves const move) {
 }
 
 auto calculate_ability_effectiveness_modifier(Ability const ability, Effectiveness const & effectiveness) {
-	return BOUNDED_CONDITIONAL(ability.weakens_se_attacks() and effectiveness.is_super_effective(),
+	return BOUNDED_CONDITIONAL(weakens_se_attacks(ability) and effectiveness.is_super_effective(),
 		make_rational(3_bi, 4_bi),
 		make_rational(1_bi, 1_bi)
 	);
@@ -138,7 +138,7 @@ auto level_multiplier(Pokemon const & attacker) -> decltype(get_level(attacker)(
 
 auto weakening_from_status(Pokemon const & attacker) {
 	return BOUNDED_CONDITIONAL(
-		weakens_physical_attacks(get_status(attacker)) and get_ability(attacker).blocks_burn_damage_penalty(),
+		weakens_physical_attacks(get_status(attacker)) and blocks_burn_damage_penalty(get_ability(attacker)),
 		2_bi,
 		1_bi
 	);
@@ -167,13 +167,13 @@ auto screen_divisor(Moves const move, Team const & defender, bool const critical
 auto critical_hit_multiplier(ActivePokemon const attacker, bool const critical_hit) {
 	return BOUNDED_CONDITIONAL(
 		!critical_hit, 1_bi,
-		BOUNDED_CONDITIONAL(get_ability(attacker).boosts_critical_hits(), 3_bi, 2_bi)
+		BOUNDED_CONDITIONAL(boosts_critical_hits(get_ability(attacker)), 3_bi, 2_bi)
 	);
 }
 
 auto tinted_lens_multiplier(Ability const ability, Effectiveness const & effectiveness) {
 	return BOUNDED_CONDITIONAL(
-		ability.strengthens_nve_attacks() and effectiveness.is_not_very_effective(),
+		strengthens_nve_attacks(ability) and effectiveness.is_not_very_effective(),
 		2_bi,
 		1_bi
 	);
@@ -255,7 +255,7 @@ damage_type damage_calculator(Team const & attacker, Move const move, bool const
 
 
 void recoil(Pokemon & user, damage_type const damage, bounded::checked_integer<1, 4> const denominator) {
-	if (!get_ability(user).blocks_recoil()) {
+	if (!blocks_recoil(get_ability(user))) {
 		get_hp(user) -= bounded::max(damage / denominator, 1_bi);
 	}
 }

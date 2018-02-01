@@ -48,9 +48,9 @@ Species id_to_species(SpeciesIDs species);
 SpeciesIDs species_to_id(Species species);
 
 using AbilityID = bounded::checked_integer<0, 123>;
-Ability::Abilities id_to_ability(AbilityID id);
-AbilityID ability_to_id(Ability::Abilities ability);
-Ability::Abilities battle_id_to_ability(uint16_t id, uint8_t part);
+Ability id_to_ability(AbilityID id);
+AbilityID ability_to_id(Ability ability);
+Ability battle_id_to_ability(uint16_t id, uint8_t part);
 
 using GenderID = bounded::checked_integer<0, 2>;
 Gender id_to_gender(GenderID id);
