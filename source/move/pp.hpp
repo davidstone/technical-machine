@@ -49,7 +49,7 @@ struct Pp {
 		return static_cast<bool>(m_max);
 	}
 
-	auto decrement(Ability const foe_ability) {
+	constexpr auto decrement(Ability const foe_ability) {
 		if (has_unlimited_pp()) {
 			return;
 		}
