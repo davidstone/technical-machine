@@ -41,7 +41,7 @@ constexpr auto victory = 41402368_bi;
 
 struct Evaluate {
 	// +1 gives me room to create a value that will always be overwritten
-	using type = bounded::integer<-static_cast<intmax_t>(victory + 1_bi), static_cast<intmax_t>(victory + 1_bi)>;
+	using type = bounded::integer<-static_cast<int>(victory + 1_bi), static_cast<int>(victory + 1_bi)>;
 	Evaluate();
 	auto operator()(Team const & ai, Team const & foe, Weather weather) const -> type;
 	// Both of these return victory if the battle is won. Returns -victory
