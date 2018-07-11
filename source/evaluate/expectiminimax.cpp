@@ -202,8 +202,8 @@ struct MissFlag {
 };
 struct AwakenFlag : MissFlag {
 	constexpr AwakenFlag() = default;
-	constexpr explicit AwakenFlag(MissFlag const miss, bool const awaken_):
-		MissFlag(miss),
+	constexpr explicit AwakenFlag(MissFlag const miss_, bool const awaken_):
+		MissFlag(miss_),
 		awaken(awaken_)
 	{
 	}
@@ -211,16 +211,16 @@ struct AwakenFlag : MissFlag {
 };
 struct CriticalHitFlag : AwakenFlag {
 	constexpr CriticalHitFlag() = default;
-	constexpr explicit CriticalHitFlag(AwakenFlag const awaken, bool const critical_hit_):
-		AwakenFlag(awaken),
+	constexpr explicit CriticalHitFlag(AwakenFlag const awaken_, bool const critical_hit_):
+		AwakenFlag(awaken_),
 		critical_hit(critical_hit_)
 	{
 	}
 	bool const critical_hit = false;
 };
 struct ShedSkinFlag : CriticalHitFlag {
-	constexpr explicit ShedSkinFlag(CriticalHitFlag const critical_hit, bool const shed_skin_):
-		CriticalHitFlag(critical_hit),
+	constexpr explicit ShedSkinFlag(CriticalHitFlag const critical_hit_, bool const shed_skin_):
+		CriticalHitFlag(critical_hit_),
 		shed_skin(shed_skin_)
 	{
 	}
