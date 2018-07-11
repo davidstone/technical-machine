@@ -8,15 +8,24 @@ project(technical_machine LANGUAGES CXX)
 
 find_package(Boost COMPONENTS filesystem system thread REQUIRED)
 add_library(boost INTERFACE IMPORTED)
+target_compile_definitions(boost INTERFACE
+	BOOST_ALL_NO_LIB
+	BOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
+	BOOST_CHRONO_DONT_PROVIDES_DEPRECATED_IO_SINCE_V2_0_0
+	BOOST_CHRONO_HEADER_ONLY
+	BOOST_ERROR_CODE_HEADER_ONLY
+)
 set_property(TARGET boost PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR})
 enable_testing()
 
 add_library(bounded INTERFACE)
 add_library(containers INTERFACE)
 add_library(endian INTERFACE)
+add_library(websocketpp INTERFACE)
 set_property(TARGET bounded PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/bounded_integer/include)
 set_property(TARGET containers PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/bounded_integer/include)
 set_property(TARGET endian PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/endian)
+set_property(TARGET websocketpp PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${websocketpp_INCLUDE_DIR})
 
 # TODO: This should be an object library, but they do not really work yet.
 add_library(tm_common STATIC
@@ -152,6 +161,7 @@ target_link_libraries(tm_common
 	bounded
 	containers
 	endian
+	websocketpp
 )
 
 
@@ -248,7 +258,7 @@ target_link_libraries(tm_test
 )
 
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+if(MSVC)
 	target_compile_options(tm_common
 		PUBLIC "/std:c++17"
 	)
@@ -334,6 +344,9 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		"-Woverloaded-virtual"
 		"-Wno-padded"
 		"-Wredundant-decls"
+		# -Wreturn-type warns even for a switch over an enum for which all cases
+		# are handled explicitly and each case is a return statement.
+		"-Wno-return-type"
 		"-Wshadow"
 		"-Wsign-conversion"
 		# -Wsign-promo triggers on code that is guaranteed safe due to the use
@@ -348,8 +361,11 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		"-Wstrict-null-sentinel"
 		# -Wstrict-overflow=2 warns about comparing two pointers
 		"-Wstrict-overflow=1"
-		"-Wswitch-default"
-		"-Wswitch-enum"
+		# -Wswitch-default warns even for a switch over an enum for which all
+		# cases are handled explicitly
+		# "-Wswitch-default"
+		# -Wswitch-enum warns even if there is a default case
+		# "-Wswitch-enum"
 		"-Wtrampolines"
 		"-Wundef"
 		# -Wunsafe-loop-optimizations causes too many spurious warnings. It may
