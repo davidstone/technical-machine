@@ -159,7 +159,6 @@ target_link_libraries(tm_common
 	boost_system
 	bounded
 	containers
-	endian
 	websocketpp
 )
 
