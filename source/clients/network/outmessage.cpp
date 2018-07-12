@@ -1,5 +1,5 @@
 // Generic outgoing messages
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,11 +20,10 @@
 
 #include <bounded/integer_range.hpp>
 
-#include <endian/endian.hpp>
-
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/write.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/endian/conversion.hpp>
 
 #include <cstdint>
 
@@ -39,11 +38,9 @@ namespace {
 
 template<typename Integer>
 void write_bytes(containers::vector<uint8_t> & buffer, Integer const bytes) {
-	Integer const network_byte = boost::endian::h_to_n(bytes);
-	auto const byte = reinterpret_cast<uint8_t const *>(&network_byte);
-	for (auto const n : bounded::integer_range(bounded::constant<sizeof(Integer)>)) {
-		push_back(buffer, *(byte + n));
-	}
+	auto const network_byte = boost::endian::native_to_big(bytes);
+	auto const byte = reinterpret_cast<unsigned char const *>(std::addressof(network_byte));
+	append(buffer, byte, byte + sizeof(network_byte));
 }
 
 }	// namespace

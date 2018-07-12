@@ -23,9 +23,7 @@
 #include <cstring>
 #include <string>
 
-#include <boost/detail/endian.hpp>
-
-#include <endian/endian.hpp>
+#include <boost/endian/conversion.hpp>
 
 using namespace boost::endian;
 
@@ -88,24 +86,10 @@ static void process (std::string const & message, uint32_t digest_buffer [4]) {
 		0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391
 	};
 	for (size_t p = 0; p != message.length (); p += block_size) {
-		uint32_t const * X;
-		
-		// When I get access to a big-endian system, I may change this code to
-		// not rely on macros. However, this should work and I don't want to
-		// change things without being able to test them.
-		#if defined BOOST_LITTLE_ENDIAN
-			// Verify 32-bit alignment.
-			assert (reinterpret_cast <uintptr_t> (&message [p]) % sizeof (uint32_t) == 0);
-			X = reinterpret_cast <uint32_t const *> (&message [p]);
-		#elif defined BOOST_BIG_ENDIAN
-			uintmax_t xbuf [block_size / sizeof (uintmax_t)];
-			for (unsigned n = 0; n != block_size / sizeof (uintmax_t); ++n)
-				xbuf [n] = le_to_h (*reinterpret_cast <uintmax_t const *> (&message [p + n * sizeof (uintmax_t)]));
-			X = reinterpret_cast <uint32_t *> (xbuf);
-		#else
-			// When I add PDP-Endian to byte_order.hpp I can remove the else.
-			#error Unknown byte order
-		#endif
+		static_assert(boost::endian::order::native == boost::endian::order::little);
+		// Verify 32-bit alignment.
+		assert (reinterpret_cast <uintptr_t> (&message [p]) % sizeof (uint32_t) == 0);
+		uint32_t const * X = reinterpret_cast <uint32_t const *> (&message [p]);
 
 		uint32_t temp [4];
 		memcpy (temp, digest_buffer, 4 * sizeof (uint32_t));
@@ -163,7 +147,8 @@ static void add_length (std::string & message, size_t const original_size) {
 	size_t const position_of_length = message.size () - sizeof (uint64_t);
 	uint64_t * const length_ptr = reinterpret_cast <uint64_t *> (&message [position_of_length]);
 	uint64_t const length_in_bits = original_size * 8;
-	*length_ptr = h_to_le (length_in_bits);
+	static_assert(boost::endian::order::native == boost::endian::order::little);
+	*length_ptr = length_in_bits;
 }
 
 }	// anonymous namespace

@@ -28,7 +28,7 @@
 
 #include <bounded/integer_range.hpp>
 
-#include <endian/endian.hpp>
+#include <boost/endian/conversion.hpp>
 
 #include <cstdint>
 #include <string>
@@ -162,8 +162,8 @@ void OutMessage::write_color () {
 
 void OutMessage::finalize() {
 	typedef uint16_t length_type;
-	auto const length = boost::endian::h_to_n(static_cast<length_type>(size(buffer)));
-	auto const byte = reinterpret_cast<uint8_t const *> (&length);
+	auto const length = boost::endian::native_to_big(static_cast<length_type>(size(buffer)));
+	auto const byte = reinterpret_cast<unsigned char const *>(std::addressof(length));
 	buffer.insert(begin(buffer), byte, byte + sizeof(length_type));
 }
 

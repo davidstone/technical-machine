@@ -24,8 +24,6 @@
 
 #include "../../team.hpp"
 
-#include <endian/endian.hpp>
-
 namespace technicalmachine {
 namespace ps {
 

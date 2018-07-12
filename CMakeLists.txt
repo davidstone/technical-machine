@@ -21,11 +21,9 @@ enable_testing()
 
 add_library(bounded INTERFACE)
 add_library(containers INTERFACE)
-add_library(endian INTERFACE)
 add_library(websocketpp INTERFACE)
 set_property(TARGET bounded PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/bounded_integer/include)
 set_property(TARGET containers PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/bounded_integer/include)
-set_property(TARGET endian PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/endian)
 set_property(TARGET websocketpp PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${websocketpp_INCLUDE_DIR})
 
 # TODO: This should be an object library, but they do not really work yet.
