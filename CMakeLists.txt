@@ -130,7 +130,6 @@ add_library(tm_common STATIC
 
 	source/ability.cpp
 	source/block.cpp
-	source/collection.cpp
 	source/damage.cpp
 	source/endofturn.cpp
 	source/entry_hazards.cpp

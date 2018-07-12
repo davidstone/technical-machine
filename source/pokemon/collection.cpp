@@ -25,13 +25,13 @@ namespace technicalmachine {
 void PokemonCollection::remove_active(containers::index_type<PokemonCollection> const index_of_replacement) {
 	auto const original_index = index();
 	assert(original_index != index_of_replacement);
-	containers::erase(static_cast<PokemonContainer &>(*this), begin(*this) + original_index);
-	--true_size;
+	containers::erase(m_container, begin(m_container) + original_index);
+	--m_real_size;
 	set_index((index_of_replacement < original_index) ?
 		index_of_replacement :
 		containers::index_type<PokemonCollection>(index_of_replacement - 1_bi, bounded::non_check)
 	);
-	for (auto & pokemon : *this) {
+	for (auto & pokemon : m_container) {
 		all_moves(pokemon).remove_switch();
 	}
 }
