@@ -56,6 +56,7 @@ struct Pokemon {
 	friend auto all_moves(Pokemon & pokemon) -> MoveContainer &;
 	friend Ability const & get_ability(Pokemon const & pokemon);
 	friend Ability & get_ability(Pokemon & pokemon);
+	friend bool ability_is_known(Pokemon const & pokemon);
 	friend Gender const & get_gender(Pokemon const & pokemon);
 	friend Gender & get_gender(Pokemon & pokemon);
 	friend Happiness get_happiness(Pokemon const & pokemon);
@@ -121,8 +122,9 @@ private:
 
 	bool m_has_been_seen = false;
 	
-	bool m_item_is_known;
-	bool m_nature_is_known;
+	bool m_ability_is_known = true;
+	bool m_item_is_known = true;
+	bool m_nature_is_known = true;
 };
 
 inline auto compare(Pokemon const & lhs, Species const rhs) {
@@ -150,6 +152,9 @@ inline Ability const & get_ability(Pokemon const & pokemon) {
 }
 inline Ability & get_ability(Pokemon & pokemon) {
 	return pokemon.m_ability;
+}
+inline bool ability_is_known(Pokemon const & pokemon) {
+	return pokemon.m_ability_is_known;
 }
 
 inline Gender const & get_gender(Pokemon const & pokemon) {

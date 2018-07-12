@@ -68,8 +68,11 @@ Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const
 }
 
 Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, std::string const & set_nickname, Happiness const happiness) : 
-	Pokemon::Pokemon(my_team_size, species, level, gender, Item::No_Item, Ability::END, Nature::Hardy, set_nickname, happiness)
+	Pokemon::Pokemon(my_team_size, species, level, gender, Item::No_Item, Ability::Honey_Gather, Nature::Hardy, set_nickname, happiness)
 	{
+	m_ability_is_known = false;
+	m_item_is_known = false;
+	m_nature_is_known = false;
 }
 
 Pokemon::operator Species() const {
@@ -112,9 +115,7 @@ std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
 		output += " ** " + pokemon.get_nickname();
 	}
 	output += '\n';
-	if (is_set(get_ability(pokemon))) {
-		output += "\tAbility: " + to_string(get_ability(pokemon)) + '\n';
-	}
+	output += "\tAbility: " + to_string(get_ability(pokemon)) + '\n';
 	if (!is_clear(get_status(pokemon))) {
 		output += "\tStatus: " + to_string(get_status(pokemon).name()) + '\n';
 	}

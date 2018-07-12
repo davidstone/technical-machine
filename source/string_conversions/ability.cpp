@@ -60,7 +60,7 @@ std::string const & to_string(Ability const name) {
 		"Tangled Feet", "Technician", "Thick Fat", "Tinted Lens",
 		"Torrent", "Trace", "Truant", "Unaware",
 		"Unburden", "Vital Spirit", "Volt Absorb", "Water Absorb",
-		"Water Veil", "White Smoke", "Wonder Guard", "END_ABILITY"
+		"Water Veil", "White Smoke", "Wonder Guard"
 	};
 	return ability_name[name];
 }

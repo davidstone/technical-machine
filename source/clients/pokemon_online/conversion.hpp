@@ -39,7 +39,7 @@ namespace technicalmachine {
 namespace po {
 
 struct SpeciesIDs {
-	using ID = bounded::checked_integer<0, 493>;
+	using ID = bounded::checked_integer<1, 493>;
 	using Forme = bounded::checked_integer<0, 5>;
 	ID id;
 	Forme forme;	
@@ -47,7 +47,7 @@ struct SpeciesIDs {
 Species id_to_species(SpeciesIDs species);
 SpeciesIDs species_to_id(Species species);
 
-using AbilityID = bounded::checked_integer<0, 123>;
+using AbilityID = bounded::checked_integer<1, 123>;
 Ability id_to_ability(AbilityID id);
 AbilityID ability_to_id(Ability ability);
 Ability battle_id_to_ability(uint16_t id, uint8_t part);
@@ -61,7 +61,7 @@ Item id_to_item(ItemID id);
 ItemID item_to_id(Item item);
 Item battle_id_to_item(uint16_t id, uint8_t part);
 
-using MoveID = bounded::checked_integer<0, (std::numeric_limits<Moves>::max() - bounded::integer(Moves::Regular_Begin)).value()>;
+using MoveID = bounded::checked_integer<1, (std::numeric_limits<Moves>::max() - bounded::integer(Moves::Regular_Begin)).value()>;
 Moves id_to_move(MoveID id);
 MoveID move_to_id(Moves move);
 

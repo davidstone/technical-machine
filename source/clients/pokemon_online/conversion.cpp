@@ -57,11 +57,8 @@ struct UnsupportedSpecies : std::runtime_error {
 
 }	// namespace
 
-// TODO: return optional?
 Species id_to_species(SpeciesIDs const species) {
 	switch (species.id.value()) {
-		case 0: throw std::runtime_error("Invalid SpeciesID: " + bounded::to_string(species.id));
-
 		// Generation 1
 		case 1: return Species::Bulbasaur;
 		case 2: return Species::Ivysaur;
@@ -1145,7 +1142,6 @@ SpeciesIDs species_to_id(Species const species) {
 
 Ability id_to_ability(AbilityID const id) {
 	switch (id.value()) {
-		case 0: return Ability::END;
 		case 1: return Ability::Stench;
 		case 2: return Ability::Drizzle;
 		case 3: return Ability::Speed_Boost;
@@ -1398,7 +1394,6 @@ AbilityID ability_to_id(Ability const ability) {
 		case Ability::Water_Veil: return 41_bi;
 		case Ability::White_Smoke: return 73_bi;
 		case Ability::Wonder_Guard: return 25_bi;
-		case Ability::END: assert(false);
 	};
 }
 
@@ -1460,7 +1455,7 @@ Ability battle_id_to_ability (uint16_t id, uint8_t part) {
 		case 66: return Ability::Trace;
 		case 67: return Ability::Truant;
 		case 71: return Ability::Wonder_Guard;
-		default: return Ability::END;
+		default: throw std::runtime_error("Invalid ability ID: " + std::to_string(id));
 	}
 }
 
@@ -1703,7 +1698,7 @@ Item id_to_item(ItemID const id) {
 		case 217: return Item::Bubble_Mail;
 		case 218: return Item::Flame_Mail;
 		case 219: return Item::Grass_Mail;
-		// case 220 intentionally missing
+		case 220: throw std::runtime_error("case 220 intentionally missing");
 		case 221: return Item::Heart_Mail;
 		case 222: return Item::Mosaic_Mail;
 		case 223: return Item::Snow_Mail;
@@ -2178,7 +2173,7 @@ Item battle_id_to_item(uint16_t id, uint8_t part) {
 }
 
 Moves id_to_move(MoveID const id) {
-	return (id == 0_bi) ? Moves::Struggle : static_cast<Moves>(id + bounded::integer(Moves::Regular_Begin) - 1_bi);
+	return static_cast<Moves>(id + bounded::integer(Moves::Regular_Begin) - 1_bi);
 }
 
 MoveID move_to_id(Moves const move) {

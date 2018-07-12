@@ -58,19 +58,8 @@ enum class Ability : std::uint8_t {
 	Swarm, Swift_Swim, Synchronize, Tangled_Feet, Technician,
 	Thick_Fat, Tinted_Lens, Torrent, Trace, Truant,
 	Unaware, Unburden, Vital_Spirit, Volt_Absorb, Water_Absorb,
-	Water_Veil, White_Smoke, Wonder_Guard, END
+	Water_Veil, White_Smoke, Wonder_Guard
 };
-
-constexpr bool is_set(Ability const ability) {
-	return ability != Ability::END;
-}
-
-constexpr void set_if_unknown(Ability & ability, Ability const target_ability) {
-	assert(target_ability != Ability::END);
-	if (!is_set(ability)) {
-		ability = target_ability;
-	}
-}
 
 bool blocks_switching(Ability ability, ActivePokemon switcher, Weather weather);
 
@@ -233,6 +222,6 @@ auto attacker_ability_power_modifier(Pokemon const & attacker, Moves move, Pokem
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Ability> : technicalmachine::enum_numeric_limits<technicalmachine::Ability::END> {};
+struct numeric_limits<technicalmachine::Ability> : technicalmachine::enum_numeric_limits<technicalmachine::Ability::Wonder_Guard> {};
 
 }	// namespace std

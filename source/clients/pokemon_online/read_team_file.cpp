@@ -46,16 +46,20 @@ namespace po {
 namespace {
 using boost::property_tree::ptree;
 
-bool is_real_pokemon(ptree const & pt) {
+auto load_species(ptree const & pt) -> bounded::optional<SpeciesIDs::ID> {
 	// Pokemon Online gives Missingno. the ID 0, and uses that to represent the
 	// empty slots in teams smaller than 6 Pokemon.
-	return pt.get<SpeciesIDs::ID>("<xmlattr>.Num") != 0_bi;
+	try {
+		return pt.get<SpeciesIDs::ID>("<xmlattr>.Num");
+	} catch (std::range_error const &) {
+		return bounded::none;
+	}
 }
 
 TeamSize number_of_pokemon(ptree const & pt) {
 	TeamSize pokemon_count = 0_bi;
 	for (auto const & value : pt) {
-		if (value.first == "Pokemon" and is_real_pokemon(value.second))
+		if (value.first == "Pokemon" and load_species(value.second))
 			++pokemon_count;
 	}
 	return pokemon_count;
@@ -124,7 +128,7 @@ ptree::const_iterator load_stats(Pokemon & pokemon, ptree::const_iterator it) {
 	return it;
 }
 
-void load_pokemon(ptree const & pt, Team & team) {
+void load_pokemon(ptree const & pt, Team & team, SpeciesIDs::ID) {
 	auto const species = id_to_species({ pt.get<SpeciesIDs::ID>("<xmlattr>.Num"), pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")} );
 	auto const nickname = pt.get<std::string>("<xmlattr>.Nickname");
 	Gender const gender(id_to_gender(pt.get<GenderID>("<xmlattr>.Gender")));
@@ -153,8 +157,11 @@ void load_team(Team & team, boost::filesystem::path const & team_file) {
 	auto const all_pokemon = pt.get_child("Team");
 	team.all_pokemon().initialize_size(number_of_pokemon(all_pokemon));
 	for (auto const & value : all_pokemon) {
-		if (value.first == "Pokemon" and is_real_pokemon(value.second))
-			load_pokemon(value.second, team);
+		if (value.first == "Pokemon") {
+			if (auto const species = load_species(value.second)) {
+				load_pokemon(value.second, team, *species);
+			}
+		}
 	}
 	team.all_pokemon().reset_index();
 }
