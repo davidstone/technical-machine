@@ -72,10 +72,11 @@ ptree::const_iterator load_moves(Pokemon & pokemon, ptree::const_iterator it) {
 			throw InvalidTeamFile("Move", it->first);
 		}
 		// TODO: return optional
-		auto const move = id_to_move(it->second.get_value<MoveID>());
-		if (move != Moves::Struggle) {
+		using ReadMoveID = bounded::checked_integer<0, std::numeric_limits<MoveID>::max().value()>;
+		auto const move_id = it->second.get_value<ReadMoveID>();
+		if (move_id != 0_bi) {
 			// TODO: Throw an exception if we attempt to add the same move twice
-			add_seen_move(all_moves(pokemon), move);
+			add_seen_move(all_moves(pokemon), id_to_move(MoveID(move_id)));
 		}
 		++it;
 	}
