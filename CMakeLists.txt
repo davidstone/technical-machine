@@ -261,6 +261,7 @@ if(MSVC)
 	)
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	target_compile_options(tm_common PUBLIC
+		"-g"
 		"-std=c++17"
 		$<$<CONFIG:Debug>:-O1;-march=native>
 		$<$<CONFIG:Release>:-march=native>
@@ -303,6 +304,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	target_compile_options(tm_common PUBLIC
+		"-g"
 		"-std=c++17"
 		$<$<CONFIG:Debug>:-Og;-march=native>
 		$<$<CONFIG:Release>:-O3;-march=native>
