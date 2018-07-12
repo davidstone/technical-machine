@@ -71,7 +71,7 @@ struct LastUsedMove {
 
 	// TODO: Does Metronome boost Struggle?
 	constexpr auto metronome_boost() const {
-		return make_rational(10_bi + m_consecutive_turns_used, 10_bi);
+		return rational(10_bi + m_consecutive_turns_used, 10_bi);
 	}
 
 	friend constexpr auto compare(LastUsedMove const lhs, LastUsedMove const rhs) {

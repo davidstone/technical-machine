@@ -170,31 +170,31 @@ bool is_boosted_by_reckless(Moves const move) {
 }
 
 auto pinch_ability_activates(Pokemon const & attacker, Type const type, Moves const move) {
-	return get_type(move, attacker) == type and hp_ratio(attacker) <= make_rational(1_bi, 3_bi);
+	return get_type(move, attacker) == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
 }
 
 }	// namespace
 
-auto attacker_ability_power_modifier(Pokemon const & attacker, Moves const move, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
+auto attacker_ability_power_modifier(Pokemon const & attacker, Moves const move, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
 	switch (get_ability(attacker)) {
 		case Ability::Technician:
-			return make_rational(BOUNDED_CONDITIONAL(base_power <= 60_bi, 3_bi, 2_bi), 2_bi);
+			return rational(BOUNDED_CONDITIONAL(base_power <= 60_bi, 3_bi, 2_bi), 2_bi);
 		case Ability::Blaze:
-			return make_rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Fire, move), 3_bi, 2_bi), 2_bi);
+			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Fire, move), 3_bi, 2_bi), 2_bi);
 		case Ability::Overgrow:
-			return make_rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Grass, move), 3_bi, 2_bi), 2_bi);
+			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Grass, move), 3_bi, 2_bi), 2_bi);
 		case Ability::Swarm:
-			return make_rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Bug, move), 3_bi, 2_bi), 2_bi);
+			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Bug, move), 3_bi, 2_bi), 2_bi);
 		case Ability::Torrent:
-			return make_rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Water, move), 3_bi, 2_bi), 2_bi);
+			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Water, move), 3_bi, 2_bi), 2_bi);
 		case Ability::Iron_Fist:
-			return make_rational(BOUNDED_CONDITIONAL(is_boosted_by_iron_fist(move), 6_bi, 5_bi), 5_bi);
+			return rational(BOUNDED_CONDITIONAL(is_boosted_by_iron_fist(move), 6_bi, 5_bi), 5_bi);
 		case Ability::Reckless:
-			return make_rational(BOUNDED_CONDITIONAL(is_boosted_by_reckless(move), 6_bi, 5_bi), 5_bi);
+			return rational(BOUNDED_CONDITIONAL(is_boosted_by_reckless(move), 6_bi, 5_bi), 5_bi);
 		case Ability::Rivalry:
-			return make_rational(4_bi + multiplier(get_gender(attacker), get_gender(defender)), 4_bi);
+			return rational(4_bi + multiplier(get_gender(attacker), get_gender(defender)), 4_bi);
 		default:
-			return make_rational(1_bi, 1_bi);
+			return rational(1_bi, 1_bi);
 	}
 }
 
@@ -234,9 +234,9 @@ void weather_healing_ability(MutableActivePokemon pokemon, Weather const weather
 	switch (get_ability(pokemon)) {
 		case Ability::Dry_Skin:
 			if (weather.rain()) {
-				heal(pokemon, make_rational(1_bi, 8_bi));
+				heal(pokemon, rational(1_bi, 8_bi));
 			} else if (weather.sun()) {
-				heal(pokemon, make_rational(-1_bi, 8_bi));
+				heal(pokemon, rational(-1_bi, 8_bi));
 			}
 			break;
 		case Ability::Hydration:
@@ -246,12 +246,12 @@ void weather_healing_ability(MutableActivePokemon pokemon, Weather const weather
 			break;
 		case Ability::Ice_Body:
 			if (weather.hail()) {
-				heal(pokemon, make_rational(1_bi, 16_bi));
+				heal(pokemon, rational(1_bi, 16_bi));
 			}
 			break;
 		case Ability::Rain_Dish:
 			if (weather.rain()) {
-				heal(pokemon, make_rational(1_bi, 16_bi));
+				heal(pokemon, rational(1_bi, 16_bi));
 			}
 			break;
 		default:

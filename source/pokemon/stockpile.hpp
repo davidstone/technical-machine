@@ -57,7 +57,7 @@ private:
 };
 
 constexpr auto swallow_healing(bounded::checked_integer<1, Stockpile::max> const stockpiles) {
-	using result = bounded_rational<bounded::integer<1, 1>, bounded::integer<1, 4>>;
+	using result = rational<bounded::integer<1, 1>, bounded::integer<1, 4>>;
 	switch (stockpiles.value()) {
 		case 1:
 			return result{1_bi, 4_bi};

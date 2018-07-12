@@ -27,7 +27,7 @@ using namespace bounded::literal;
 
 struct RandomDamage {
 	constexpr auto operator()() const {
-		return make_rational(m_r, 100_bi);
+		return rational(m_r, 100_bi);
 	}
 private:
 	bounded::integer<85, 100> m_r = 100_bi;

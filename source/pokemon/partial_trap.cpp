@@ -29,7 +29,7 @@ using namespace bounded::literal;
 
 auto PartialTrap::damage(MutableActivePokemon pokemon) -> void {
 	if (is_active()) {
-		heal(pokemon, make_rational(-1_bi, 16_bi));
+		heal(pokemon, rational(-1_bi, 16_bi));
 		m_base.advance_one_turn();
 	}
 }

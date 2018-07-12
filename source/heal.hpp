@@ -28,12 +28,12 @@
 namespace technicalmachine {
 
 template<typename Numerator, typename Denominator>
-void heal(MutableActivePokemon pokemon, bounded_rational<Numerator, Denominator> const rational) {
+void heal(MutableActivePokemon pokemon, rational<Numerator, Denominator> const scale) {
 	if (is_fainted(pokemon)) {
 		return;
 	}
-	auto const hp_healed = get_hp(pokemon).max() * rational;
-	if (rational > 0_bi) {
+	auto const hp_healed = get_hp(pokemon).max() * scale;
+	if (scale > 0_bi) {
 		get_hp(pokemon) += bounded::max(hp_healed, 1_bi);
 	} else if (!blocks_secondary_damage(get_ability(pokemon))) {
 		get_hp(pokemon) += bounded::min(hp_healed, -1_bi);

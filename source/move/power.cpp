@@ -258,21 +258,21 @@ auto item_modifier_numerator(Pokemon const & attacker, Moves const move) -> boun
 }
 
 auto item_modifier(Pokemon const & attacker, Moves const move) {
-	return make_rational(item_modifier_numerator(attacker, move), 10_bi);
+	return rational(item_modifier_numerator(attacker, move), 10_bi);
 }
 
-auto defender_ability_modifier(Pokemon const & attacker, Moves const move, Ability const ability) -> bounded_rational<bounded::integer<1, 5>, bounded::integer<1, 4>> {
+auto defender_ability_modifier(Pokemon const & attacker, Moves const move, Ability const ability) -> rational<bounded::integer<1, 5>, bounded::integer<1, 4>> {
 	switch (ability) {
 		case Ability::Dry_Skin:
-			return make_rational(BOUNDED_CONDITIONAL(get_type(move, attacker) == Type::Fire, 5_bi, 4_bi), 4_bi);
+			return rational(BOUNDED_CONDITIONAL(get_type(move, attacker) == Type::Fire, 5_bi, 4_bi), 4_bi);
 		case Ability::Heatproof:
-			return make_rational(1_bi, BOUNDED_CONDITIONAL(get_type(move, attacker) == Type::Fire, 2_bi, 1_bi));
+			return rational(1_bi, BOUNDED_CONDITIONAL(get_type(move, attacker) == Type::Fire, 2_bi, 1_bi));
 		case Ability::Thick_Fat: {
 			auto const type = get_type(move, attacker);
-			return make_rational(1_bi, BOUNDED_CONDITIONAL(type == Type::Fire or type == Type::Ice, 2_bi, 1_bi));
+			return rational(1_bi, BOUNDED_CONDITIONAL(type == Type::Fire or type == Type::Ice, 2_bi, 1_bi));
 		}
 		default:
-			return make_rational(1_bi, 1_bi);
+			return rational(1_bi, 1_bi);
 	}
 }
 

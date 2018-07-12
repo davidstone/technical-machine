@@ -57,44 +57,44 @@ auto screen_is_active(Moves const move, Team const & defender, bool const critic
 
 auto calculate_weather_modifier(Type const type, Weather const weather) {
 	return
-		BOUNDED_CONDITIONAL(is_strengthened_by_weather(type, weather), make_rational(3_bi, 2_bi),
-		BOUNDED_CONDITIONAL(is_weakened_by_weather(type, weather), make_rational(1_bi, 2_bi),
-		make_rational(1_bi, 1_bi)
+		BOUNDED_CONDITIONAL(is_strengthened_by_weather(type, weather), rational(3_bi, 2_bi),
+		BOUNDED_CONDITIONAL(is_weakened_by_weather(type, weather), rational(1_bi, 2_bi),
+		rational(1_bi, 1_bi)
 	));
 }
 
 auto calculate_flash_fire_modifier(ActivePokemon const attacker, Moves const move) {
 	auto const type = get_type(move, attacker);
 	return BOUNDED_CONDITIONAL(flash_fire_is_active(attacker) and is_boosted_by_flash_fire(type),
-		make_rational(3_bi, 2_bi),
-		make_rational(1_bi, 1_bi)
+		rational(3_bi, 2_bi),
+		rational(1_bi, 1_bi)
 	);
 }
 
-using ItemModifier = bounded_rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
+using ItemModifier = rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
 auto calculate_item_modifier(ActivePokemon const attacker) -> ItemModifier {
 	switch (get_item(attacker)) {
 		case Item::Life_Orb:
-			return make_rational(13_bi, 10_bi);
+			return rational(13_bi, 10_bi);
 		case Item::Metronome:
 			return last_used_move(attacker).metronome_boost();
 		default:
-			return make_rational(10_bi, 10_bi);
+			return rational(10_bi, 10_bi);
 	}
 }
 
 auto calculate_me_first_modifier(ActivePokemon const attacker) {
 	return BOUNDED_CONDITIONAL(me_first_is_active(attacker),
-		make_rational(3_bi, 2_bi),
-		make_rational(1_bi, 1_bi)
+		rational(3_bi, 2_bi),
+		rational(1_bi, 1_bi)
 	);
 }
 
 
 auto calculate_stab_boost(Ability const ability) {
 	return BOUNDED_CONDITIONAL(boosts_stab(ability),
-		make_rational(2_bi, 1_bi),
-		make_rational(3_bi, 2_bi)
+		rational(2_bi, 1_bi),
+		rational(3_bi, 2_bi)
 	);
 }
 
@@ -102,21 +102,21 @@ auto calculate_stab_modifier(ActivePokemon const attacker, Moves const move) {
 	auto const type = get_type(move, attacker);
 	return BOUNDED_CONDITIONAL(is_type(attacker, type, is_roosting(attacker)),
 		calculate_stab_boost(get_ability(attacker)),
-		make_rational(1_bi, 1_bi)
+		rational(1_bi, 1_bi)
 	);
 }
 
 auto calculate_ability_effectiveness_modifier(Ability const ability, Effectiveness const & effectiveness) {
 	return BOUNDED_CONDITIONAL(weakens_se_attacks(ability) and effectiveness.is_super_effective(),
-		make_rational(3_bi, 4_bi),
-		make_rational(1_bi, 1_bi)
+		rational(3_bi, 4_bi),
+		rational(1_bi, 1_bi)
 	);
 }
 
 auto calculate_expert_belt_modifier(Item const item, Effectiveness const & effectiveness) {
 	return BOUNDED_CONDITIONAL(boosts_super_effective_moves(item) and effectiveness.is_super_effective(),
-		make_rational(6_bi, 5_bi),
-		make_rational(1_bi, 1_bi)
+		rational(6_bi, 5_bi),
+		rational(1_bi, 1_bi)
 	);
 }
 
@@ -149,11 +149,11 @@ auto physical_vs_special_modifier(ActivePokemon const attacker, Moves const move
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
 	return BOUNDED_CONDITIONAL(is_physical(move),
-		make_rational(
+		rational(
 			calculate_attack(attacker, weather, critical_hit),
 			50_bi * calculate_defense(defender, weather, critical_hit) * weakening_from_status(attacker)
 		),
-		make_rational(
+		rational(
 			calculate_special_attack(attacker, weather, critical_hit),
 			50_bi * calculate_special_defense(defender, weather, critical_hit)
 		)

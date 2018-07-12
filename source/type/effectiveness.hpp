@@ -41,7 +41,7 @@ struct Effectiveness {
 	}
 private:
 	Effectiveness(Type attacking, Type defending1, Type defending2);
-	using SingleType = bounded_rational<bounded::integer<0, 2>, bounded::integer<1, 2>>;
+	using SingleType = rational<bounded::integer<0, 2>, bounded::integer<1, 2>>;
 	using Product = decltype(std::declval<SingleType>() * std::declval<SingleType>());
 	using container_type = containers::array<SingleType, 2>;
 

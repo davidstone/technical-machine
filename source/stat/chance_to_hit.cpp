@@ -38,10 +38,10 @@ using namespace bounded::literal;
 
 auto move_can_miss(ActivePokemon user, BaseAccuracy const base_accuracy, Ability const & target_ability) -> bool;
 
-using AccuracyItemModifier = bounded_rational<bounded::integer<1, 11>, bounded::integer<1, 10>>;
+using AccuracyItemModifier = rational<bounded::integer<1, 11>, bounded::integer<1, 10>>;
 auto accuracy_item_modifier(Item const item, bool target_moved) -> AccuracyItemModifier;
 
-using EvasionItemModifier = bounded_rational<bounded::integer<1, 19>, bounded::integer<1, 20>>;
+using EvasionItemModifier = rational<bounded::integer<1, 19>, bounded::integer<1, 20>>;
 auto evasion_item_modifier(Item const item) -> EvasionItemModifier;
 
 }	// namespace
@@ -53,7 +53,7 @@ auto chance_to_hit(ActivePokemon const user, Moves const move, ActivePokemon con
 	}
 	constexpr auto gravity_denominator = 3_bi;
 	auto const gravity_numerator = BOUNDED_CONDITIONAL(weather.gravity(), 5_bi, gravity_denominator);
-	auto const gravity_multiplier = make_rational(gravity_numerator, gravity_denominator);
+	auto const gravity_multiplier = rational(gravity_numerator, gravity_denominator);
 	auto const calculated_accuracy = *base_accuracy *
 		modifier<StatNames::ACC>(stage(user)) *
 		modifier<StatNames::EVA>(stage(target)) *

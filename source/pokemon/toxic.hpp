@@ -30,7 +30,7 @@ struct Toxic {
 		++m_counter;
 	}
 	constexpr auto ratio_drained() const {
-		return make_rational(-m_counter, 16_bi);
+		return rational(-m_counter, 16_bi);
 	}
 	friend constexpr auto compare(Toxic const lhs, Toxic const rhs) {
 		return bounded::compare(lhs.m_counter, rhs.m_counter);

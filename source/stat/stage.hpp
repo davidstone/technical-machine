@@ -82,8 +82,8 @@ template<StatNames stat, BOUNDED_REQUIRES(stat == StatNames::ATK or stat == Stat
 auto modifier(Stage const & stage, bool const ch) {
 	constexpr auto base = detail::base_stat_boost<stat>();
 	return BOUNDED_CONDITIONAL((stage[stat] >= 0_bi),
-		make_rational(base + bounded::abs(stage[stat]), base),
-		make_rational(base, BOUNDED_CONDITIONAL(!ch, base + bounded::abs(stage[stat]), base))
+		rational(base + bounded::abs(stage[stat]), base),
+		rational(base, BOUNDED_CONDITIONAL(!ch, base + bounded::abs(stage[stat]), base))
 	);
 }
 
@@ -91,8 +91,8 @@ template<StatNames stat, BOUNDED_REQUIRES(stat == StatNames::DEF or stat == Stat
 auto modifier(Stage const & stage, bool const ch) {
 	constexpr auto base = detail::base_stat_boost<stat>();
 	return BOUNDED_CONDITIONAL((stage[stat] <= 0_bi),
-		make_rational(base, base + bounded::abs(stage[stat])),
-		make_rational(BOUNDED_CONDITIONAL(!ch, base + bounded::abs(stage[stat]), base), base)
+		rational(base, base + bounded::abs(stage[stat])),
+		rational(BOUNDED_CONDITIONAL(!ch, base + bounded::abs(stage[stat]), base), base)
 	);
 }
 
@@ -100,8 +100,8 @@ template<StatNames stat, BOUNDED_REQUIRES(stat == StatNames::SPE or stat == Stat
 auto modifier(Stage const & stage) {
 	constexpr auto base = detail::base_stat_boost<stat>();
 	return BOUNDED_CONDITIONAL((stage[stat] >= 0_bi),
-		make_rational(base + bounded::abs(stage[stat]), base),
-		make_rational(base, base + bounded::abs(stage[stat]))
+		rational(base + bounded::abs(stage[stat]), base),
+		rational(base, base + bounded::abs(stage[stat]))
 	);
 }
 

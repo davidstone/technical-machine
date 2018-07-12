@@ -48,7 +48,7 @@ inline auto boost(Nature const nature, StatNames const stat) {
 		10_bi
 	));
 	static constexpr auto denominator = 10_bi;
-	return make_rational(numerator, denominator);
+	return rational(numerator, denominator);
 }
 
 auto boosts_attacking_stat(Nature nature) -> bool;

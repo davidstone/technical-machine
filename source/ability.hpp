@@ -203,19 +203,19 @@ constexpr bool is_loafing(Ability const ability, bool const loaf) {
 void activate_ability_on_switch(MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather);
 void weather_healing_ability(MutableActivePokemon pokemon, Weather weather);
 
-using AbilityAccuracyModifier = bounded_rational<
+using AbilityAccuracyModifier = rational<
 	bounded::integer<1, 13>,
 	bounded::integer<1, 10>
 >;
 auto ability_accuracy_modifier(ActivePokemon user, Moves move) -> AbilityAccuracyModifier;
 
-using AbilityEvasionModifier = bounded_rational<
+using AbilityEvasionModifier = rational<
 	bounded::integer<1, 4>,
 	bounded::integer<1, 5>
 >;
 auto ability_evasion_modifier(ActivePokemon target, Weather weather) -> AbilityEvasionModifier;
 
-auto attacker_ability_power_modifier(Pokemon const & attacker, Moves move, Pokemon const & defender, VariableAdjustedBasePower base_power) -> bounded_rational<bounded::integer<1, 6>, bounded::integer<1, 5>>;
+auto attacker_ability_power_modifier(Pokemon const & attacker, Moves move, Pokemon const & defender, VariableAdjustedBasePower base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>>;
 
 }	// namespace technicalmachine
 
