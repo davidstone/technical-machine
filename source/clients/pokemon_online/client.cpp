@@ -605,7 +605,7 @@ void Client::handle_channels_list(InMessage & msg) {
 void Client::handle_channel_players(InMessage & msg) {
 	uint32_t const channel_id = msg.read_int();
 	static_cast<void>(channel_id);
-	uint32_t const number_of_players = msg.read_int();
+	auto const number_of_players = bounded::integer(msg.read_int());
 	containers::vector<uint32_t> players;
 	players.reserve(number_of_players);
 	for (auto const n : bounded::integer_range(number_of_players)) {
