@@ -120,11 +120,11 @@ private:
 	Level m_level;
 	Happiness m_happiness;
 
-	bool m_has_been_seen = false;
+	bool m_has_been_seen : 1;
 	
-	bool m_ability_is_known = true;
-	bool m_item_is_known = true;
-	bool m_nature_is_known = true;
+	bool m_ability_is_known : 1;
+	bool m_item_is_known : 1;
+	bool m_nature_is_known : 1;
 };
 
 inline auto compare(Pokemon const & lhs, Species const rhs) {

@@ -62,7 +62,13 @@ Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const
 
 	m_level(level),
 
-	m_happiness(happiness)
+	m_happiness(happiness),
+	
+	m_has_been_seen(false),
+
+	m_ability_is_known(true),
+	m_item_is_known(true),
+	m_nature_is_known(true)
 	{
 	static_cast<void>(set_nickname);
 }
