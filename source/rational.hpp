@@ -51,12 +51,6 @@ constexpr auto make_rational(Numerator const & numerator, Denominator const & de
 	return bounded_rational<N, D>(numerator, denominator);
 }
 
-template<typename LN, typename LD, typename RN, typename RD>
-constexpr auto compare(bounded_rational<LN, LD> const lhs, bounded_rational<RN, RD> const rhs) {
-	return bounded::compare(lhs.m_numerator * rhs.m_denominator, rhs.m_numerator * lhs.m_denominator);
-}
-
-
 template<typename Numerator, typename Denominator>
 struct bounded_rational {
 private:
@@ -90,8 +84,22 @@ public:
 		return make_rational(m_numerator * other.m_denominator - other.m_numerator * m_denominator, m_denominator * other.m_denominator);
 	}
 
+
 	template<typename LN, typename LD, typename RN, typename RD>
-	friend constexpr auto compare(bounded_rational<LN, LD> const lhs, bounded_rational<RN, RD> const rhs);
+	friend constexpr auto compare(bounded_rational<LN, LD> const lhs, bounded_rational<RN, RD> const rhs) {
+		return bounded::compare(lhs.m_numerator * rhs.m_denominator, rhs.m_numerator * lhs.m_denominator);
+	}
+	
+	template<typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+	friend constexpr auto compare(bounded_rational const lhs, Integer const rhs) {
+		return bounded::compare(lhs.m_numerator, rhs * lhs.m_denominator);
+	}
+
+	template<typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+	friend constexpr auto compare(Integer const lhs, bounded_rational const rhs) {
+		return bounded::compare(lhs * rhs.m_denominator, rhs.m_numerator);
+	}
+
 
 	friend std::string to_string(bounded_rational<numerator_type, denominator_type> const rational) {
 		using bounded::to_string;
