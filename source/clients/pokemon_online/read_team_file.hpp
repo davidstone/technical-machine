@@ -18,13 +18,13 @@
 
 #pragma once
 
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 
 namespace technicalmachine {
 struct Team;
 namespace po {
 
-void load_team(Team & team, boost::filesystem::path const & team_file);
+void load_team(Team & team, std::filesystem::path const & team_file);
 
 } // namespace po
 } // namespace technicalmachine

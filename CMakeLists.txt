@@ -153,9 +153,8 @@ add_library(tm_common STATIC
 	source/wish.cpp
 )
 target_link_libraries(tm_common
+	stdc++fs
 	boost
-	boost_filesystem
-	boost_system
 	bounded
 	containers
 	websocketpp

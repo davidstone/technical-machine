@@ -20,9 +20,9 @@
 
 #include <containers/vector/vector.hpp>
 
-#include <boost/filesystem/path.hpp>
 #include <boost/property_tree/ptree.hpp>
 
+#include <filesystem>
 #include <string>
 
 namespace technicalmachine {
@@ -42,9 +42,9 @@ private:
 struct Settings {
 	Settings();
 	void write() const;
-	static boost::filesystem::path const & file_name();
+	static std::filesystem::path const & file_name();
 
-	boost::filesystem::path team_file;
+	std::filesystem::path team_file;
 	containers::vector<Server> servers;
 	unsigned chattiness;
 };

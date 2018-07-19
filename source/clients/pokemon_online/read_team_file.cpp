@@ -18,8 +18,6 @@
 
 #include "read_team_file.hpp"
 
-#include <string>
-
 #include "conversion.hpp"
 #include "invalid_team_file.hpp"
 #include "stat_order.hpp"
@@ -40,6 +38,8 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+
+#include <string>
 
 namespace technicalmachine {
 namespace po {
@@ -151,7 +151,7 @@ void load_pokemon(ptree const & pt, Team & team, SpeciesIDs::ID) {
 
 }	// anonymous namespace
 
-void load_team(Team & team, boost::filesystem::path const & team_file) {
+void load_team(Team & team, std::filesystem::path const & team_file) {
 	ptree pt;
 	read_xml(team_file.string(), pt);
 	

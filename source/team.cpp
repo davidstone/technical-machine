@@ -32,23 +32,23 @@
 #include <containers/vector/vector.hpp>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
 
 namespace technicalmachine {
 namespace {
 
-using Files = containers::vector<boost::filesystem::path>;
-auto open_directory_and_add_files (boost::filesystem::path const & team_file) -> Files {
+using Files = containers::vector<std::filesystem::path>;
+auto open_directory_and_add_files (std::filesystem::path const & team_file) -> Files {
 	Files files;
-	if (boost::filesystem::is_directory(team_file)) {
-		for (boost::filesystem::directory_iterator it(team_file); it != boost::filesystem::directory_iterator(); ++it) {
+	if (std::filesystem::is_directory(team_file)) {
+		for (std::filesystem::directory_iterator it(team_file); it != std::filesystem::directory_iterator(); ++it) {
 			auto const temp = open_directory_and_add_files(it->path());
 			append(files, begin(temp), end(temp));
 		}
-	} else if (boost::filesystem::is_regular_file(team_file)) {
+	} else if (std::filesystem::is_regular_file(team_file)) {
 		push_back(files, team_file);
 	}
 	return files;
@@ -63,7 +63,7 @@ Team::Team(TeamSize const initial_size, bool team_is_me) :
 	{
 }
 
-Team::Team(std::mt19937 & random_engine, boost::filesystem::path const & team_file) :
+Team::Team(std::mt19937 & random_engine, std::filesystem::path const & team_file) :
 	m_all_pokemon(6_bi), // This size gets corrected later
 	me(true)
 	{
@@ -125,12 +125,12 @@ void Team::move(bool const value) {
 	pokemon().set_moved(value);
 }
 
-void Team::load(boost::filesystem::path const & team_file) {
+void Team::load(std::filesystem::path const & team_file) {
 	// I do no error checking because I assume my team files will always be in
 	// the proper format. This must be changed if I ever allow arbitary teams
 	// to be used.
 
-	auto const extension = boost::filesystem::extension(team_file);
+	auto const extension = team_file.extension();
 	if (extension == ".tp") {
 		po::load_team(*this, team_file);
 	} else if (extension == ".sbt") {

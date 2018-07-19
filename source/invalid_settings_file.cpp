@@ -34,7 +34,7 @@ std::string const & to_string(InvalidSettingsFile::Problem const problem) {
 }
 }	// namespace
 
-InvalidSettingsFile::InvalidSettingsFile(boost::filesystem::path const & file_name, Problem const problem):
+InvalidSettingsFile::InvalidSettingsFile(std::filesystem::path const & file_name, Problem const problem):
 	std::runtime_error(file_name.string() + " " + to_string(problem) + ".") {
 }
 

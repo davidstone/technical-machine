@@ -34,9 +34,8 @@
 
 #include <containers/static_vector/static_vector.hpp>
 
-#include <boost/filesystem/path.hpp>
-
 #include <cstdint>
+#include <filesystem>
 #include <random>
 #include <string>
 
@@ -70,7 +69,7 @@ struct Battle {
 	void handle_direct_damage(Party const damaged, uint8_t slot, UpdatedHP::VisibleHP damage);
 	virtual ~Battle() {}
 protected:
-	Battle(std::string opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, boost::filesystem::path const & team_file);
+	Battle(std::string opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, std::filesystem::path const & team_file);
 	Battle(std::string opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, Team team);
 	uint8_t switch_slot(Moves move) const;
 	virtual VisibleFoeHP max_damage_precision() const;

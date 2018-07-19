@@ -18,12 +18,12 @@
 
 #pragma once
 
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 #include <stdexcept>
 
 namespace technicalmachine {
 
 struct InvalidTeamFileFormat : std::logic_error {
-	explicit InvalidTeamFileFormat(boost::filesystem::path const & file);
+	explicit InvalidTeamFileFormat(std::filesystem::path const & file);
 };
 }	// namespace technicalmachine

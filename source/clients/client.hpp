@@ -24,9 +24,8 @@
 
 #include "../team_predictor/detailed_stats.hpp"
 
-#include <boost/filesystem/path.hpp>
-
 #include <cstdint>
+#include <filesystem>
 #include <random>
 #include <string>
 
@@ -80,7 +79,7 @@ private:
 	Battles battles;
 	DetailedStats detailed_stats;
 	Evaluate m_evaluation_constants;
-	boost::filesystem::path team_file;
+	std::filesystem::path team_file;
 	unsigned m_depth;
 };
 

@@ -19,8 +19,7 @@
 
 #include "enum.hpp"
 
-#include <boost/filesystem/path.hpp>
-
+#include <filesystem>
 #include <stdexcept>
 
 namespace technicalmachine {
@@ -32,7 +31,7 @@ struct InvalidSettingsFile : std::runtime_error {
 		too_short,
 		invalid_data
 	};
-	InvalidSettingsFile(boost::filesystem::path const & file_name, Problem const problem);
+	InvalidSettingsFile(std::filesystem::path const & file_name, Problem const problem);
 };
 
 }	// namespace technicalmachine

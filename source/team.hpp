@@ -27,9 +27,8 @@
 #include "pokemon/collection.hpp"
 #include "pokemon/species_forward.hpp"
 
-#include <boost/filesystem/path.hpp>
-
 #include <cstdint>
+#include <filesystem>
 #include <random>
 #include <string>
 
@@ -38,7 +37,7 @@ struct Weather;
 
 struct Team {
 	explicit Team(TeamSize initial_size, bool is_me = false);
-	Team(std::mt19937 & random_engine, boost::filesystem::path const & team_file);
+	Team(std::mt19937 & random_engine, std::filesystem::path const & team_file);
 	
 	auto pokemon() const {
 		return ActivePokemon(all_pokemon()(), m_flags);
@@ -91,10 +90,9 @@ struct Team {
 		return compare(tie(lhs), tie(rhs));
 	}
 
-
 private:
 	friend struct Evaluate;
-	void load(boost::filesystem::path const & team_file);
+	void load(std::filesystem::path const & team_file);
 	
 	PokemonCollection m_all_pokemon;
 	ActivePokemonFlags m_flags;

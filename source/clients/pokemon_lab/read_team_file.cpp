@@ -115,7 +115,7 @@ auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 
 }	// namespace
 
-void load_team(Team & team, boost::filesystem::path const & team_file) {
+void load_team(Team & team, std::filesystem::path const & team_file) {
 	boost::property_tree::ptree pt;
 	read_xml(team_file.string(), pt);
 	

@@ -18,14 +18,13 @@
 
 #pragma once
 
-#include <boost/filesystem/path.hpp>
-
+#include <filesystem>
 #include <stdexcept>
 
 namespace technicalmachine {
 
 struct EmptyTeam : std::logic_error {
-	EmptyTeam(boost::filesystem::path const & file, unsigned const line):
+	EmptyTeam(std::filesystem::path const & file, unsigned const line):
 		std::logic_error("Attempted operation on a team of size 0 at: " + file.string() + ": " + std::to_string(line) + ".") {
 	}
 };

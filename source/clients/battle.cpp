@@ -51,11 +51,10 @@
 
 #include <containers/algorithms/find.hpp>
 
-#include <boost/filesystem.hpp>
-
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
+#include <filesystem>
 #include <iostream>
 #include <random>
 #include <string>
@@ -65,7 +64,7 @@ struct DetailedStats;
 
 namespace {
 
-auto make_team(std::random_device::result_type seed, boost::filesystem::path const & team_file) {
+auto make_team(std::random_device::result_type seed, std::filesystem::path const & team_file) {
 	std::mt19937 random_engine(seed);
 	auto team = Team(random_engine, team_file);
 	return std::make_tuple(std::move(random_engine), std::move(team));
@@ -73,7 +72,7 @@ auto make_team(std::random_device::result_type seed, boost::filesystem::path con
 
 }	// namespace
 
-Battle::Battle(std::string opponent_, TeamSize const foe_size, std::random_device::result_type seed, unsigned battle_depth, boost::filesystem::path const & team_file):
+Battle::Battle(std::string opponent_, TeamSize const foe_size, std::random_device::result_type seed, unsigned battle_depth, std::filesystem::path const & team_file):
 	Battle(std::move(opponent_), foe_size, battle_depth, make_team(seed, team_file))
 {
 	initialize_turn();
@@ -336,7 +335,7 @@ std::string get_extension() {
 }
 
 template<typename RandomEngine>
-boost::filesystem::path generate_team_file_name(RandomEngine & random_engine) {
+std::filesystem::path generate_team_file_name(RandomEngine & random_engine) {
 	// Randomly generates a file name in 8.3 format. It then checks to see if
 	// that file name already exists. If it does, it randomly generates a new
 	// file name, and continues until it generates a name that does not exist.
@@ -346,11 +345,11 @@ boost::filesystem::path generate_team_file_name(RandomEngine & random_engine) {
 	// the same time. The result of this is that a team file would not be saved
 	// when it should have been, which is not a major issue.
 	constexpr unsigned file_name_length = 8;
-	boost::filesystem::path foe_team_file;
+	std::filesystem::path foe_team_file;
 	do {
 		foe_team_file = "teams/foe";
 		foe_team_file /= random_string(random_engine, file_name_length) + get_extension();
-	} while (boost::filesystem::exists(foe_team_file));
+	} while (std::filesystem::exists(foe_team_file));
 	return foe_team_file;
 }
 

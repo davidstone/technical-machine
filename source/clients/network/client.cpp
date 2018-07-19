@@ -39,13 +39,12 @@
 #include <boost/asio/connect.hpp>
 #include <boost/asio/error.hpp>
 #include <boost/asio/ip/tcp.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/path.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <chrono>
 #include <cstdint>
 #include <ctime>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -57,9 +56,9 @@ namespace network {
 
 namespace {
 
-auto create_unsorted_vector(boost::filesystem::path const & file_name) {
+auto create_unsorted_vector(std::filesystem::path const & file_name) {
 	containers::vector<std::string> unsorted;
-	boost::filesystem::ifstream file(file_name);
+	auto file = std::ifstream(file_name);
 	std::string line;
 	std::string const comment = "//";
 	while (getline(file, line)) {
@@ -70,7 +69,7 @@ auto create_unsorted_vector(boost::filesystem::path const & file_name) {
 }
 
 // TODO: Use flat_map
-auto create_sorted_vector(boost::filesystem::path const & file_name) {
+auto create_sorted_vector(std::filesystem::path const & file_name) {
 	// The sorted vector is used to allow std::binary_search to be used on the
 	// vector for fast searching. I use a sorted vector instead of a
 	// std::set because it has faster performance uses less memory. My use

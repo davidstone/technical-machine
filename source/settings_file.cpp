@@ -31,7 +31,7 @@ Settings::Settings () {
 
 	boost::property_tree::ptree & root = pt.get_child ("settings");
 
-	team_file = root.get<boost::filesystem::path>("team");
+	team_file = root.get<std::filesystem::path>("team");
 	for (boost::property_tree::ptree::value_type const & server_tree : root.get_child ("servers"))
 		servers.emplace_back(server_tree.second);
 	chattiness = root.get <unsigned> ("chattiness");
@@ -71,8 +71,8 @@ void Server::add (boost::property_tree::ptree & root) const {
 	server_tree.add ("password", password);
 }
 
-boost::filesystem::path const & Settings::file_name() {
-	static boost::filesystem::path const name = "settings/settings.xml";
+std::filesystem::path const & Settings::file_name() {
+	static auto const name = std::filesystem::path("settings/settings.xml");
 	return name;
 }
 

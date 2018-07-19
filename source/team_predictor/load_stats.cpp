@@ -24,9 +24,9 @@
 
 #include "../string_conversions/pokemon.hpp"
 
-#include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <fstream>
 #include <string>
 
 namespace technicalmachine {
@@ -34,9 +34,9 @@ namespace technicalmachine {
 namespace {
 
 template<typename T>
-auto load_stats_from_file(boost::filesystem::path const & file_name) {
+auto load_stats_from_file(std::filesystem::path const & file_name) {
 	containers::array<T, number_of_species> overall = {{}};
-	boost::filesystem::ifstream file(file_name);
+	auto file = std::ifstream(file_name);
 	if (!file.is_open()) {
 		throw InvalidSettingsFile(file_name, InvalidSettingsFile::does_not_exist);
 	}

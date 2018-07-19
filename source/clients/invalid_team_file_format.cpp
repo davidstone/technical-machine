@@ -20,7 +20,7 @@
 
 namespace technicalmachine {
 
-InvalidTeamFileFormat::InvalidTeamFileFormat(boost::filesystem::path const & file):
+InvalidTeamFileFormat::InvalidTeamFileFormat(std::filesystem::path const & file):
 	std::logic_error("Attempted to load " + file.string() + ".") {
 }
 
