@@ -202,7 +202,6 @@ add_executable(ai
 	source/ai.cpp
 )
 target_link_libraries(ai
-	boost_thread
 	pthread
 	tm_common
 )
