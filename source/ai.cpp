@@ -44,7 +44,7 @@ int main (int argc, char * argv []) {
 		bool stopping = false;
 		while (!stopping) {
 			try {
-				po::Client client(depth);
+				ps::Client client(depth);
 				client.run();
 				stopping = true;
 			}

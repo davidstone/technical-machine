@@ -1,5 +1,5 @@
 // Pokemon Showdown battle logic
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,21 +18,53 @@
 
 #pragma once
 
-#include <cstdint>
-#include <random>
-#include <string>
+#include "inmessage.hpp"
+
 #include "../battle.hpp"
+
+#include <bounded/optional.hpp>
+#include <containers/vector/vector.hpp>
 
 namespace technicalmachine {
 namespace ps {
 
 struct Battle : ::technicalmachine::Battle {
+	using technicalmachine::Battle::Battle;
+	#if 0
 	template<typename ... Args>
 	Battle(Args &&... args):
 		::technicalmachine::Battle::Battle(std::forward<Args>(args)...) {
 	}
+	#endif
+	
+	void handle_message(InMessage message);
 private:
 	VisibleFoeHP max_damage_precision() const override;
+};
+
+struct BattleFactory {
+	explicit BattleFactory(std::string_view username):
+		m_username(username)
+	{
+	}
+	
+	void handle_message(InMessage message);
+	
+	bool completed() const {
+		return m_completed;
+	}
+	
+	bounded::optional<Battle> make() const;
+
+private:
+	enum class Clause { };
+	std::string_view m_username;
+	bounded::optional<std::string> m_player_id;
+	bounded::optional<std::string> m_type;	// singles, doubles, triples
+	bounded::optional<std::string> m_tier;
+	containers::vector<Clause> m_rules;
+	bounded::optional<std::uint8_t> m_generation;
+	bool m_completed = false;
 };
 
 }	// namespace ps

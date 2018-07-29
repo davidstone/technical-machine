@@ -6,7 +6,7 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 project(technical_machine LANGUAGES CXX)
 
-find_package(Boost COMPONENTS filesystem system thread REQUIRED)
+find_package(Boost REQUIRED)
 add_library(boost INTERFACE IMPORTED)
 target_compile_definitions(boost INTERFACE
 	BOOST_ALL_NO_LIB
@@ -21,10 +21,8 @@ enable_testing()
 
 add_library(bounded INTERFACE)
 add_library(containers INTERFACE)
-add_library(websocketpp INTERFACE)
 set_property(TARGET bounded PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/bounded_integer/include)
 set_property(TARGET containers PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/bounded_integer/include)
-set_property(TARGET websocketpp PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${websocketpp_INCLUDE_DIR})
 
 # TODO: This should be an object library, but they do not really work yet.
 add_library(tm_common STATIC
@@ -157,7 +155,6 @@ target_link_libraries(tm_common
 	boost
 	bounded
 	containers
-	websocketpp
 )
 
 
@@ -205,7 +202,6 @@ target_link_libraries(ai
 	pthread
 	tm_common
 )
-
 
 
 add_executable(predict

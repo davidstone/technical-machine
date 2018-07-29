@@ -1,5 +1,5 @@
 // Connect to Pokemon Showdown
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,8 +23,10 @@
 
 #include <containers/vector/vector.hpp>
 
-#include <websocketpp/client.hpp>
-#include <websocketpp/config/asio_no_tls_client.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/beast/core.hpp>
+#include <boost/beast/websocket.hpp>
 
 #include <cstdint>
 #include <string>
@@ -35,11 +37,12 @@ namespace ps {
 struct Client : ::technicalmachine::Client {
 	explicit Client(unsigned depth);
 	void run();
-	void handle_message(InMessage const & message);
+private:
+	void handle_message(InMessage message);
 	void send_channel_message(std::string const & channel, std::string const & message);
 	void send_channel_message(uint32_t channel_id, std::string const & message);
 	void send_private_message(std::string const & user, std::string const & message);
-private:
+
 	using Base = ::technicalmachine::Client;
 	void log_in();
 	void load_settings(bool reloading);
@@ -48,11 +51,18 @@ private:
 	void join_channel(std::string const & channel);
 	void part_channel(std::string const & channel);
 	
-	using Socket = websocketpp::client<websocketpp::config::asio_client>;
-	Socket socket;
-	websocketpp::connection_hdl m_handle;
+	void authenticate(std::string_view challstr);
+	
+	BufferView read_message();
+	
+	boost::asio::io_service m_io;
+	boost::asio::ip::tcp::socket m_socket;
+	boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> m_websocket;
+	boost::beast::flat_buffer m_buffer;
 	
 	std::string m_host;
+	std::string m_port;
+	std::string m_resource;
 	std::string m_username;
 	std::string m_password;
 	containers::vector<std::string> m_highlights;

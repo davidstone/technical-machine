@@ -1,5 +1,5 @@
 // Pokemon Showdown incoming messages
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,21 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "inmessage.hpp"
-
-#include <cstdint>
-#include <string>
-
-#include "client.hpp"
-#include "../network/invalid_packet.hpp"
-
-namespace technicalmachine {
-namespace ps {
-
-InMessage::InMessage(Room room_, Type type_, Data data_):
-	m_room(std::move(room_)),
-	m_type(std::move(type_)),
-	m_data(std::move(data_)) {
-}
-
-}	// namespace ps
-}	// namespace technicalmachine

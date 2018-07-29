@@ -42,6 +42,7 @@ Server::Server (boost::property_tree::ptree const & server):
 	port (server.get <std::string> ("port")),
 	username (server.get <std::string> ("username")),
 	password (server.get <std::string> ("password")),
+	resource(server.get_optional<std::string>("resource")),
 	server_name(server.get<std::string>("<xmlattr>.name", std::string()))
 	{
 }
@@ -69,6 +70,9 @@ void Server::add (boost::property_tree::ptree & root) const {
 	server_tree.add ("port", port);
 	server_tree.add ("username", username);
 	server_tree.add ("password", password);
+	if (resource) {
+		server_tree.add("resource", *resource);
+	}
 }
 
 std::filesystem::path const & Settings::file_name() {

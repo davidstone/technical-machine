@@ -1,5 +1,5 @@
 // Pokemon Showdown incoming messages
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,36 +18,71 @@
 
 #pragma once
 
-#include <containers/vector/vector.hpp>
-
+#include <stdexcept>
 #include <string>
+#include <string_view>
 
 namespace technicalmachine {
 namespace ps {
+namespace detail {
+
+static constexpr auto split(std::string_view str, char const token) {
+	auto const index = str.find(token);
+	if (index == std::string_view::npos) {
+		return std::pair(str, std::string_view{});
+	}
+	return std::pair(str.substr(0, index), str.substr(index + 1));
+}
+
+}	// namespace detail
+
+// TODO: Maybe something with iterators?
+struct BufferView {
+	constexpr BufferView(std::string_view buffer, char const token):
+		m_buffer(buffer),
+		m_token(token)
+	{
+	}
+	
+	constexpr auto next() -> std::string_view {
+		auto const [first, second] = detail::split(m_buffer, m_token);
+		m_buffer = second;
+		return first;
+	}
+	constexpr auto remainder() const {
+		return m_buffer;
+	}
+	
+private:
+	std::string_view m_buffer;
+	char m_token;
+};
 
 struct InMessage {
-	using Room = std::string;
-	using Type = std::string;
-	using Data = containers::vector<std::string>;
+	explicit constexpr InMessage(BufferView view):
+		m_room(view.next()),
+		m_type(view.next()),
+		m_view(view)
+	{
+	}
 
-	InMessage(Room room, Type type, Data data);
-
-	auto const & type() const noexcept {
+	constexpr auto room() const noexcept {
+		return m_room;
+	}
+	constexpr auto type() const noexcept {
 		return m_type;
 	}
-
-	friend auto begin(InMessage const & message) {
-		return begin(message.m_data);
+	constexpr auto next() {
+		return m_view.next();
 	}
-	friend auto end(InMessage const & message) {
-		return end(message.m_data);
+	constexpr auto remainder() const noexcept {
+		return m_view.remainder();
 	}
 
-	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(InMessage)
 private:
-	Room m_room;
-	Type m_type;
-	Data m_data;
+	std::string_view m_room;
+	std::string_view m_type;
+	BufferView m_view;
 };
 
 }	// namespace ps

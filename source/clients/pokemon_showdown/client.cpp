@@ -1,5 +1,5 @@
 // Connect to Pokemon Showdown
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,66 +28,41 @@
 #include "../../settings_file.hpp"
 #include "../../team.hpp"
 
-#include <algorithm>
-#include <cstdint>
-#include <iterator>
+#include <boost/asio/connect.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/beast/http.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+
+#include <iostream>
+#include <stdexcept>
 #include <string>
+#include <sstream>
 
 namespace technicalmachine {
 namespace ps {
 
-namespace {
-template<typename Container>
-Container split(std::string const & str, char delimiter) {
-	Container container;
-	auto previous = begin(str);
-	while (true) {
-		auto const found = std::find(previous, end(str), delimiter);
-		container.emplace_back(previous, found);
-		if (found == end(str)) {
-			break;
-		}
-		previous = std::next(found);
-	}
-	return container;
-}
-
-using message_ptr = websocketpp::config::asio_client::message_type::ptr;
-
-InMessage parse_message(message_ptr const & ptr) {
-	static constexpr char delimiter = '|';
-	auto tokens = split<containers::vector<std::string>>(ptr->get_payload(), delimiter);
-	assert(size(tokens) >= 2_bi);
-	std::string & room = *begin(tokens);
-	std::string & type = *(begin(tokens) + 1_bi);
-	InMessage::Data data(std::make_move_iterator(begin(tokens) + 2_bi), std::make_move_iterator(end(tokens)));
-	return InMessage(std::move(room), std::move(type), std::move(data));
-}
-}	// namespace
-
 Client::Client(unsigned depth):
-	::technicalmachine::Client(depth) {
-	load_settings (false);
+	::technicalmachine::Client(depth),
+	m_socket(m_io),
+	m_websocket(m_socket)
+{
+	load_settings(false);
 	while (m_username.empty()) {
 		std::cerr << "Add a username and password entry to " << Settings::file_name() << " and hit enter.";
 		std::cin.get();
 		load_settings(false);
 	}
-	socket.init_asio();
-	socket.set_message_handler([&](websocketpp::connection_hdl, message_ptr message) {
-		handle_message(parse_message(message));
-		std::cout << "Waiting for next message.\n";
-	});
 	log_in();
 }
 
 void Client::log_in() {
-#if 0
-	websocketpp::lib::error_code ec;
-	auto connection_pointer = socket.get_connection(m_host, ec);
-	m_handle = connection_pointer->get_handle();
-	socket.connect(std::move(connection_pointer));
-#endif
+	using tcp = boost::asio::ip::tcp;
+	auto resolver = tcp::resolver(m_io);
+	boost::asio::connect(m_socket, resolver.resolve(tcp::resolver::query(m_host, m_port)));
+	m_websocket.handshake(m_host, m_resource);
+
+	std::cout << "Connected\n";
 }
 
 // Temporary copy and paste here until I implement my better structure for
@@ -99,6 +74,8 @@ void Client::load_settings(bool const reloading) {
 	if (!reloading) {
 		Server & server = front(settings.servers);
 		m_host = server.host;
+		m_port = server.port;
+		m_resource = server.resource.value();
 		m_username = server.username;
 		if (server.password.empty()) {
 			server.password = random_string(31);
@@ -109,71 +86,163 @@ void Client::load_settings(bool const reloading) {
 }
 
 void Client::run() {
-	socket.run();
+	std::cout << "Running\n";
+	try {
+		while (true) {
+			auto messages = read_message();
+			while (!messages.remainder().empty()) {
+				handle_message(InMessage(BufferView(messages.next(), '|')));
+			}
+		}
+	} catch (std::exception const & ex) {
+		std::cerr << ex.what() << '\n';
+	}
 }
 
-void Client::handle_message(InMessage const & message) {
-	if (message.type() == "challstr") {
-		// auto const & key_id = message.at(0);
-		// auto const & challenge = message.at(1);
-		websocketpp::lib::error_code ec;
-		std::string const request = "|/join lobby";
-		socket.send(m_handle, request, websocketpp::frame::opcode::text, ec);
-		if (ec) {
-			std::cerr << ec.message() << '\n';
-		}
+BufferView Client::read_message() {
+	m_buffer.consume(static_cast<std::size_t>(-1));
+	m_websocket.read(m_buffer);
+
+	auto const asio_buffer = m_buffer.data();
+	auto const sv = std::string_view(static_cast<char const *>(asio_buffer.data()), asio_buffer.size());
+
+	return BufferView(sv, '\n');
+}
+
+void Client::handle_message(InMessage message) {
+	if (message.type() == ":") {
+		// message.remainder() == seconds since 1970
+	} else if (message.type() == "b" or message.type() == "B" or message.type() == "battle") {
+		// message.remainder() == ROOMID|username|username
+	} else if (message.type() == "c" or message.type() == "chat") {
+		// message.remainder() == username|message
+	} else if (message.type() == "c:") {
+		// message.remainder() == seconds since 1970|username|message
+	} else if (message.type() == "challstr") {
+		authenticate(message.remainder());
+	} else if (message.type() == "formats") {
+		// message.remainder() == | separated list of formats with special rules
+	} else if (message.type() == "html") {
+		// message.remainder() == HTML
+	} else if (message.type() == "init") {
+		// message.remainder() == type of room\n|bunch of other stuff
+	} else if (message.type() == "j" or message.type() == "J" or message.type() == "join") {
+		// message.remainder() == username
+	} else if (message.type() == "l" or message.type() == "L" or message.type() == "leave") {
+		// message.remainder() == username
+	} else if (message.type() == "n" or message.type() == "N" or message.type() == "name") {
+		// message.remainder() == new username|old username
+	} else if (message.type() == "nametaken") {
+		auto const username = message.next();
+		std::cerr << "Could not change username to " << username << " because: " << message.remainder() << '\n';
+	} else if (message.type() == "popup") {
+		std::cout << "popup message: " << message.remainder() << '\n';
+	} else if (message.type() == "pm") {
+		auto const from = message.next();
+		auto const to = message.next();
+		std::cout << "PM from " << from << " to " << to << ": " << message.remainder() << '\n';
+	} else if (message.type() == "queryresponse") {
+		// message.remainder() == QUERYTYPE|JSON
+	} else if (message.type() == "uhtml" or message.type() == "uhtmlchange") {
+		// message.remainder() == NAME|HTML
+	} else if (message.type() == "updatechallenges") {
+		// message.remainder() == JSON: pending challenges
+	} else if (message.type() == "updateuser") {
+		// message.remainder() == username|guest ? 0 : 1|AVATAR
+	} else if (message.type() == "updatesearch") {
+		// message.remainder() == JSON: battles you are searching for
+	} else if (message.type() == "usercount") {
+		// message.remainder() == number of users on server
+	} else if (message.type() == "users") {
+		// message.remainder() == comma separated list of users
+	} else {
+		std::cout << "Received message of unknown type: " << message.type() << "\n\t" << message.remainder() << '\n';
 	}
-	else if (message.type() == "popup") {
-		for (auto const & text : message) {
-			std::cout << text << '\n';
-		}
-	}
-	else {
-		for (auto const & text : message) {
-			std::cout << text << '|';
-		}
-		std::cout << "\nPlease type in a command.\n";
-		std::string request;
-		std::getline(std::cin, request);
-		if (request.empty()) {
-			return;
-		}
-		websocketpp::lib::error_code ec;
-		socket.send(m_handle, request, websocketpp::frame::opcode::text, ec);
-		if (ec) {
-			std::cerr << ec.message() << '\n';
-		}
-	}
+}
+
+void Client::authenticate(std::string_view const challstr) {
+	// In theory, if we ever support session cookies, make HTTP GET:
+	// http://play.pokemonshowdown.com/action.php?act=upkeep&challstr=CHALLSTR
+	// Otherwise, make HTTP POST: http://play.pokemonshowdown.com/action.php
+	// with data act=login&name=USERNAME&pass=PASSWORD&challstr=CHALLSTR
+	namespace http = boost::beast::http;
+	using tcp = boost::asio::ip::tcp;
+	auto socket = tcp::socket(m_io);
+	auto resolver = tcp::resolver(m_io);
+	constexpr auto host = "play.pokemonshowdown.com";
+	boost::asio::connect(socket, resolver.resolve(host, "80"));
+	
+	constexpr auto version = 11U;
+	auto request = http::request<http::string_body>{
+		http::verb::post,
+		"/action.php",
+		version,
+		("act=login&name=" + m_username + "&pass=" + m_password + "&challstr=").append(challstr)
+	};
+	request.set(http::field::host, host);
+	request.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+	request.set(http::field::content_type, "application/x-www-form-urlencoded");
+	request.prepare_payload();
+
+	http::write(socket, request);
+	
+	auto buffer = boost::beast::flat_buffer{};
+	auto response = http::response<http::string_body>{};
+	http::read(socket, buffer, response);
+	
+	// Sadly, it does not look like it is possible to use
+	// boost::property_tree to directly parse JSON from some arbitrary
+	// range. I could create my own custom stream class that lets me do this
+	// without all of the copying and memory allocation, but it doesn't seem
+	// worth it considering how rare this will be.
+	//
+	// Response begins with ']' followed by JSON object.
+	response.body().erase(0U, 1U);
+	
+	auto stream = std::stringstream(response.body());
+	
+	// Hopefully, boost::property_tree's JSON parser is secure...
+	boost::property_tree::ptree pt;
+	read_json(stream, pt);
+	
+	m_websocket.write(boost::asio::buffer("|/trn " + m_username + ",0," + pt.get<std::string>("assertion")));
 }
 
 void Client::send_battle_challenge(std::string const & opponent) {
+	std::cout << "send_battle_challenge\n";
 	static_cast<void>(opponent);
 }
 
 void Client::handle_finalize_challenge(std::string const & opponent, bool accepted, bool) {
+	std::cout << "handle_finalize_challenge\n";
 	static_cast<void>(opponent);
 	static_cast<void>(accepted);
 }
 
 void Client::join_channel(std::string const & channel) {
+	std::cout << "join_channel\n";
 	static_cast<void>(channel);
 }
 
 void Client::part_channel(std::string const & channel) {
+	std::cout << "part_channel\n";
 	static_cast<void>(channel);
 }
 
 void Client::send_channel_message(std::string const & channel, std::string const & message) {
+	std::cout << "send_channel_message\n";
 	static_cast<void>(channel);
 	static_cast<void>(message);
 }
 
 void Client::send_channel_message(uint32_t channel_id, std::string const & message) {
+	std::cout << "send_channel_message\n";
 	static_cast<void>(channel_id);
 	static_cast<void>(message);
 }
 
 void Client::send_private_message(std::string const & user, std::string const & message) {
+	std::cout << "send_private_message\n";
 	static_cast<void>(user);
 	static_cast<void>(message);
 }

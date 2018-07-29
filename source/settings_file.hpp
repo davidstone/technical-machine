@@ -1,5 +1,5 @@
 // Read and write settings files
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -35,6 +35,7 @@ struct Server {
 	std::string port;
 	std::string username;
 	std::string password;
+	boost::optional<std::string> resource;
 private:
 	std::string server_name;
 };
