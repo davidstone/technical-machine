@@ -119,7 +119,7 @@ void write_blank_pokemon (ptree & pt) {
 
 }	// anonymous namespace
 
-void write_team(Team & team, std::filesystem::path const & file_name) {
+void write_team(Team const & team, std::filesystem::path const & file_name) {
 	ptree pt;
 	boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type> settings('\t', 1);
 	ptree & t = pt.add ("Team", "");

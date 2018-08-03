@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -41,10 +41,10 @@ namespace technicalmachine {
 namespace {
 
 using Files = containers::vector<std::filesystem::path>;
-auto open_directory_and_add_files (std::filesystem::path const & team_file) -> Files {
+auto open_directory_and_add_files(std::filesystem::path const & team_file) -> Files {
 	Files files;
 	if (std::filesystem::is_directory(team_file)) {
-		for (std::filesystem::directory_iterator it(team_file); it != std::filesystem::directory_iterator(); ++it) {
+		for (auto it = std::filesystem::directory_iterator(team_file); it != std::filesystem::directory_iterator(); ++it) {
 			auto const temp = open_directory_and_add_files(it->path());
 			append(files, begin(temp), end(temp));
 		}
@@ -61,17 +61,6 @@ Team::Team(TeamSize const initial_size, bool team_is_me) :
 	m_all_pokemon(initial_size),
 	me(team_is_me)
 {
-}
-
-Team::Team(std::mt19937 & random_engine, std::filesystem::path const & team_file) :
-	m_all_pokemon(6_bi), // This size gets corrected later
-	me(true)
-{
-	auto const files = open_directory_and_add_files(team_file);
-	// TODO: Throw exception, not assert
-	assert(!empty(files));
-	std::uniform_int_distribution<intmax_t> distribution(0, static_cast<intmax_t>(containers::size(files) - 1_bi));
-	load(files[containers::index_type<Files>(distribution(random_engine))]);
 }
 
 Pokemon const & Team::pokemon(containers::index_type<PokemonCollection> const index) const {
@@ -126,18 +115,21 @@ void Team::move(bool const value) {
 	pokemon().set_moved(value);
 }
 
-void Team::load(std::filesystem::path const & team_file) {
-	// I do no error checking because I assume my team files will always be in
-	// the proper format. This must be changed if I ever allow arbitary teams
-	// to be used.
+Team load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) {
+	auto const files = open_directory_and_add_files(path);
+	if (empty(files)) {
+		throw std::runtime_error(path.string() + " does not contain any team files.");
+	}
+	auto distribution = std::uniform_int_distribution<std::intmax_t>(0, static_cast<std::intmax_t>(size(files) - 1_bi));
+	auto const file = files[containers::index_type<Files>(distribution(random_engine))];
 
-	auto const extension = team_file.extension();
+	auto const extension = file.extension();
 	if (extension == ".tp") {
-		po::load_team(*this, team_file);
+		return po::load_team(file);
 	} else if (extension == ".sbt") {
-		pl::load_team(*this, team_file);
+		return pl::load_team(file);
 	} else {
-		throw InvalidTeamFileFormat(team_file);
+		throw InvalidTeamFileFormat(file);
 	}
 }
 

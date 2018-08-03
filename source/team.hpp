@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -37,7 +37,6 @@ struct Weather;
 
 struct Team {
 	explicit Team(TeamSize initial_size, bool is_me = false);
-	Team(std::mt19937 & random_engine, std::filesystem::path const & team_file);
 	
 	auto pokemon() const {
 		return ActivePokemon(all_pokemon()(), m_flags);
@@ -92,7 +91,6 @@ struct Team {
 
 private:
 	friend struct Evaluate;
-	void load(std::filesystem::path const & team_file);
 	
 	PokemonCollection m_all_pokemon;
 	ActivePokemonFlags m_flags;
@@ -103,6 +101,8 @@ public:
 private:
 	bool me;
 };
+
+Team load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path);
 
 std::string to_string(Team const & team, bool include_owner = true);
 

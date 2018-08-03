@@ -1,5 +1,5 @@
 // Test PL team files
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,7 +18,6 @@
 
 #include "team_file.hpp"
 
-#include "../../team.hpp"
 #include "../../clients/pokemon_lab/read_team_file.hpp"
 #include "../../clients/pokemon_lab/write_team_file.hpp"
 
@@ -30,10 +29,8 @@ namespace pl {
 
 void test_team_file () {
 	std::cout << "\tRunning Pokemon Lab team file tests.\n";
-	Team team(max_pokemon_per_team);
 	auto const directory = std::filesystem::path("test");
-	load_team (team, directory / "test1.sbt");
-	write_team (team, directory / "test2.sbt");
+	write_team(load_team(directory / "test1.sbt"), directory / "test2.sbt");
 }
 
 }	// namespace pl

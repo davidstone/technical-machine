@@ -1,5 +1,5 @@
 // Load Pokemon Online teams
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -151,12 +151,13 @@ void load_pokemon(ptree const & pt, Team & team, SpeciesIDs::ID) {
 
 }	// anonymous namespace
 
-void load_team(Team & team, std::filesystem::path const & team_file) {
+Team load_team(std::filesystem::path const & team_file) {
 	ptree pt;
 	read_xml(team_file.string(), pt);
 	
 	auto const all_pokemon = pt.get_child("Team");
-	team.all_pokemon().initialize_size(number_of_pokemon(all_pokemon));
+	constexpr bool is_me = true;
+	auto team = Team(number_of_pokemon(all_pokemon), is_me);
 	for (auto const & value : all_pokemon) {
 		if (value.first == "Pokemon") {
 			if (auto const species = load_species(value.second)) {
@@ -165,6 +166,7 @@ void load_team(Team & team, std::filesystem::path const & team_file) {
 		}
 	}
 	team.all_pokemon().reset_index();
+	return team;
 }
 
 }	// namespace po

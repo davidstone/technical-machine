@@ -1,5 +1,5 @@
 // Load Pokemon Lab teams
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,8 +17,6 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "read_team_file.hpp"
-
-#include "../../team.hpp"
 
 #include "../../move/move.hpp"
 #include "../../move/moves.hpp"
@@ -115,16 +113,18 @@ auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 
 }	// namespace
 
-void load_team(Team & team, std::filesystem::path const & team_file) {
+Team load_team(std::filesystem::path const & team_file) {
 	boost::property_tree::ptree pt;
 	read_xml(team_file.string(), pt);
 	
 	auto const all_pokemon = pt.get_child("shoddybattle");
-	team.all_pokemon().initialize_size(static_cast<TeamSize>(all_pokemon.size()));
+	constexpr bool is_me = true;
+	auto team = Team(static_cast<TeamSize>(all_pokemon.size()), is_me);
 	for (auto const & value : all_pokemon) {
 		load_pokemon(value.second, team);
 	}
 	team.all_pokemon().reset_index();
+	return team;
 }
 
 }	// namespace pl

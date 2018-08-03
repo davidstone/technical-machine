@@ -1,5 +1,5 @@
 // Load Pokemon Lab teams
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,13 +18,15 @@
 
 #pragma once
 
+#include "../../team.hpp"
+
 #include <filesystem>
 
 namespace technicalmachine {
 struct Team;
 namespace pl {
 
-void load_team (Team & team, std::filesystem::path const & team_file);
+Team load_team(std::filesystem::path const & team_file);
 
 }	// namespace pl
 }	// namespace technicalmachine

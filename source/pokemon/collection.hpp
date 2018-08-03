@@ -78,11 +78,6 @@ struct PokemonCollection {
 		return m_index;
 	}
 
-	// TODO: Need to rework my constructors or something so that this is not
-	// needed. This should only be called once, in team intialization
-	auto initialize_size(TeamSize const new_size) {
-		m_real_size = new_size;
-	}
 	auto initialize_replacement() {
 		m_replacement = index();
 	}

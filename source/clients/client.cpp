@@ -63,7 +63,7 @@ Evaluate const & Client::evaluation_constants() const {
 
 Team Client::generate_team() {
 	std::cerr << team_file << '\n';
-	return Team(random_engine, team_file);
+	return load_team_from_file(random_engine, team_file);
 }
 
 void Client::handle_battle_begin(uint32_t battle_id, std::string const & opponent, Party const party) {

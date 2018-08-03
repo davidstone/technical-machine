@@ -1,5 +1,5 @@
 // Test PO team files
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,7 +18,6 @@
 
 #include "team_file.hpp"
 
-#include "../../team.hpp"
 #include "../../clients/pokemon_online/read_team_file.hpp"
 #include "../../clients/pokemon_online/write_team_file.hpp"
 
@@ -30,10 +29,8 @@ namespace po {
 
 void test_team_file () {
 	std::cout << "\tRunning Pokemon Online team file tests.\n";
-	Team team(max_pokemon_per_team);
 	auto const directory = std::filesystem::path("test");
-	load_team(team, directory / "test1.tp");
-	write_team(team, directory / "test2.tp");
+	write_team(load_team(directory / "test1.tp"), directory / "test2.tp");
 }
 
 }	// namespace po

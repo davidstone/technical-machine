@@ -63,7 +63,7 @@ namespace {
 
 auto make_team(std::random_device::result_type seed, std::filesystem::path const & team_file) {
 	std::mt19937 random_engine(seed);
-	auto team = Team(random_engine, team_file);
+	auto team = load_team_from_file(random_engine, team_file);
 	return std::make_tuple(std::move(random_engine), std::move(team));
 }
 

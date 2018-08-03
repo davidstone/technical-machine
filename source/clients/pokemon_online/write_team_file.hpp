@@ -1,5 +1,5 @@
 // Write Pokemon Online teams
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,7 +24,7 @@ namespace technicalmachine {
 struct Team;
 namespace po {
 
-void write_team(Team & team, std::filesystem::path const & file_name);
+void write_team(Team const & team, std::filesystem::path const & file_name);
 
 }	// namespace po
 }	// namespace technicalmachine
