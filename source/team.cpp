@@ -60,14 +60,15 @@ auto open_directory_and_add_files (std::filesystem::path const & team_file) -> F
 Team::Team(TeamSize const initial_size, bool team_is_me) :
 	m_all_pokemon(initial_size),
 	me(team_is_me)
-	{
+{
 }
 
 Team::Team(std::mt19937 & random_engine, std::filesystem::path const & team_file) :
 	m_all_pokemon(6_bi), // This size gets corrected later
 	me(true)
-	{
+{
 	auto const files = open_directory_and_add_files(team_file);
+	// TODO: Throw exception, not assert
 	assert(!empty(files));
 	std::uniform_int_distribution<intmax_t> distribution(0, static_cast<intmax_t>(containers::size(files) - 1_bi));
 	load(files[containers::index_type<Files>(distribution(random_engine))]);

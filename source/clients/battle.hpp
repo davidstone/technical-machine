@@ -44,17 +44,12 @@ struct Client;
 struct DetailedStats;
 struct Evaluate;
 struct Level;
-namespace network {
-struct OutMessage;
-} // namespace network
 
 struct Battle {
 	bool is_me(Party other_party) const;
 	void set_party_if_unknown(Party new_party);
-	void write_team(network::OutMessage & msg, std::string const & username = std::string()) const;
 	Team predict_foe_team(DetailedStats const & detailed) const;
 	void handle_begin_turn(uint16_t turn_count) const;
-	void handle_request_action(DetailedStats const & detailed, Evaluate const & evaluate, network::OutMessage & msg, uint32_t battle_id, bool can_switch, containers::static_vector<uint8_t, static_cast<intmax_t>(max_moves_per_pokemon)> const & attacks_allowed, bool forced = false);
 	void handle_use_move(Party user, uint8_t slot, Moves move_name);
 	void handle_send_out(Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, Level level);
 	void handle_set_pp(Party changer, uint8_t slot, uint8_t pp);
@@ -69,8 +64,8 @@ struct Battle {
 	void handle_direct_damage(Party const damaged, uint8_t slot, UpdatedHP::VisibleHP damage);
 	virtual ~Battle() {}
 protected:
-	Battle(std::string opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, std::filesystem::path const & team_file);
-	Battle(std::string opponent, TeamSize foe_size, std::random_device::result_type seed, unsigned battle_depth, Team team);
+	Battle(std::string opponent, TeamSize foe_size, unsigned battle_depth, std::random_device::result_type seed, std::filesystem::path const & team_file);
+	Battle(std::string opponent, TeamSize foe_size, unsigned battle_depth, std::random_device::result_type seed, Team team);
 	uint8_t switch_slot(Moves move) const;
 	virtual VisibleFoeHP max_damage_precision() const;
 	void initialize_turn();

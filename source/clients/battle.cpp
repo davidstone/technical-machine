@@ -23,9 +23,6 @@
 #include "random_string.hpp"
 #include "timestamp.hpp"
 
-#include "network/invalid_simulator_data.hpp"
-#include "network/outmessage.hpp"
-
 #include "pokemon_lab/write_team_file.hpp"
 
 #include "../endofturn.hpp"
@@ -72,16 +69,14 @@ auto make_team(std::random_device::result_type seed, std::filesystem::path const
 
 }	// namespace
 
-Battle::Battle(std::string opponent_, TeamSize const foe_size, std::random_device::result_type seed, unsigned battle_depth, std::filesystem::path const & team_file):
+Battle::Battle(std::string opponent_, TeamSize const foe_size, unsigned battle_depth, std::random_device::result_type seed, std::filesystem::path const & team_file):
 	Battle(std::move(opponent_), foe_size, battle_depth, make_team(seed, team_file))
 {
-	initialize_turn();
 }
 
-Battle::Battle(std::string opponent_, TeamSize const foe_size, std::random_device::result_type seed, unsigned battle_depth, Team team):
+Battle::Battle(std::string opponent_, TeamSize const foe_size, unsigned battle_depth, std::random_device::result_type seed, Team team):
 	Battle(std::move(opponent_), foe_size, battle_depth, std::make_tuple(std::mt19937(seed), std::move(team)))
 {
-	initialize_turn();
 }
 
 Battle::Battle(std::string opponent_, TeamSize const foe_size, unsigned const battle_depth, std::tuple<std::mt19937, Team> tuple):
@@ -92,7 +87,7 @@ Battle::Battle(std::string opponent_, TeamSize const foe_size, unsigned const ba
 	slot_memory(begin(ai.team.all_pokemon()), end(ai.team.all_pokemon())),
 	updated_hp(ai.team),
 	depth(battle_depth)
-	{
+{
 	initialize_turn();
 }
 
@@ -104,44 +99,12 @@ void Battle::set_party_if_unknown(Party const new_party) {
 	set_if_unknown(my_party, new_party);
 }
 
-void Battle::write_team(network::OutMessage & msg, std::string const & username) const {
-	msg.write_team(ai.team, username);
-}
-
 Team Battle::predict_foe_team(DetailedStats const & detailed) const {
 	return predict_team(detailed, foe.team, random_engine);
 }
 
 void Battle::handle_begin_turn(uint16_t turn_count) const {
 	std::cout << "Begin turn " << turn_count << '\n';
-}
-
-void Battle::handle_request_action(DetailedStats const & detailed, Evaluate const & evaluate, network::OutMessage & msg, uint32_t battle_id, bool can_switch, containers::static_vector<uint8_t, static_cast<intmax_t>(max_moves_per_pokemon)> const & attacks_allowed, bool forced) {
-	// At some point, I will create a fail-safe that actually checks that the
-	// move TM tries to use is considered a valid move by the server.
-	update_from_previous_turn();
-	if (!forced) {
-		Moves const move = determine_action(detailed, evaluate);
-		if (is_switch(move)) {
-			// TODO: throw an exception
-			assert(can_switch);
-			msg.write_switch(battle_id, switch_slot(move));
-		} else {
-			// TODO: fix for 2v2
-			auto const & moves = all_moves(ai.team.pokemon());
-			auto const it = containers::find(begin(moves), end(moves), move);
-			assert(it != end(moves));
-			auto const target = other(my_party);
-			// TODO: verify everything lines up
-			static_cast<void>(attacks_allowed);
-			msg.write_move(battle_id, static_cast<uint8_t>(it - begin(moves)), static_cast<uint8_t>(target.value()));
-		}
-	} else {
-		msg.write_move(battle_id, 1);
-	}
-	if (!switch_decision_required(ai.team.pokemon())) {
-		initialize_turn();
-	}
 }
 
 void Battle::update_from_previous_turn() {
@@ -263,7 +226,7 @@ int Battle::hp_change(Party const changing, UpdatedHP::VisibleHP const remaining
 	auto const & team = get_team(changing).team;
 	auto const max_visible = max_visible_hp_change(team);
 	if (max_visible < remaining_hp) {
-		throw network::InvalidSimulatorData(remaining_hp, 0_bi, max_visible, team.who() + "'s remaining_hp");
+		throw std::runtime_error("Maximum expected HP change is " + to_string(max_visible) + " but received " + to_string(remaining_hp));
 	}
 	auto const measurable_hp = max_visible * hp_ratio(team.replacement());
 	return static_cast<int>(measurable_hp - remaining_hp);

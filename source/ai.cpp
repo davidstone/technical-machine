@@ -1,5 +1,5 @@
 // AI to win a 1v1 battle
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,8 +16,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "clients/network/invalid_packet.hpp"
-#include "clients/pokemon_online/client.hpp"
 #include "clients/pokemon_showdown/client.hpp"
 
 #include "move/max_moves_per_pokemon.hpp"
@@ -31,46 +29,31 @@
 using namespace technicalmachine;
 
 namespace {
-void print_debug_statements();
-}	// namespace
-
-int main (int argc, char * argv []) {
-	try {
-		print_debug_statements();
-		unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast <unsigned> (argv [1]);
-
-		// TODO: This is not the correct solution, but it works "good enough".
-		// I'll get back to this later.
-		bool stopping = false;
-		while (!stopping) {
-			try {
-				ps::Client client(depth);
-				client.run();
-				stopping = true;
-			}
-			catch (network::InvalidPacket const & error) {
-				constexpr auto timeout = std::chrono::seconds(10);
-				std::cerr << error.what () << " Disconnected. Waiting " << timeout.count() << " seconds and trying again.\n";
-				// I disconnect from the server at this point and try again, because
-				// this means an unrecoverable error.
-				std::this_thread::sleep_for(timeout);
-				std::cerr << "Reconnecting.\n";
-			}
-		}
-	}
-	catch (...) {
-		// This calls destructors to ensure orderly shut down but ruins core
-		// dumps
-		throw;
-	}
-}
-
-namespace {
-using namespace bounded::literal;
 
 void print_debug_statements() {
 	std::cout << "sizeof(Team): " << sizeof(Team) << '\n';
 	std::cout << "sizeof(Pokemon): " << sizeof(Pokemon) << '\n';
 	std::cout << "sizeof(Move): " << sizeof(Move) << '\n';
 }
+
 }	// namespace
+
+int main(int argc, char * * argv) {
+	print_debug_statements();
+	unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast<unsigned>(argv[1]);
+
+	bool stopping = false;
+	while (!stopping) {
+		try {
+			ps::Client client(depth);
+			client.run();
+			stopping = true;
+		} catch (std::exception const & ex) {
+			constexpr auto timeout = std::chrono::seconds(10);
+			std::cerr << ex.what() << " Disconnected. Waiting " << timeout.count() << " seconds and trying again.\n";
+			std::this_thread::sleep_for(timeout);
+			std::cerr << "Reconnecting.\n";
+		}
+	}
+}
+

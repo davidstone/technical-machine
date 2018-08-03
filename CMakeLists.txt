@@ -165,36 +165,19 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/test/test1.sbt DESTINATION ${CMAKE_
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/test/test1.tp DESTINATION ${CMAKE_BINARY_DIR}/test)
 
 add_executable(ai
-	source/clients/pokemon_online/battle.cpp
-	source/clients/pokemon_online/battle_settings.cpp
-	source/clients/pokemon_online/client.cpp
-	source/clients/pokemon_online/inmessage.cpp
-	source/clients/pokemon_online/invalid_user.cpp
-	source/clients/pokemon_online/outmessage.cpp
-	source/clients/pokemon_online/read_user_info.cpp
-
 	source/clients/pokemon_showdown/battle.cpp
 	source/clients/pokemon_showdown/battle_settings.cpp
 	source/clients/pokemon_showdown/client.cpp
 	source/clients/pokemon_showdown/inmessage.cpp
-	source/clients/pokemon_showdown/outmessage.cpp
 
 	source/clients/battle.cpp
 	source/clients/battle_result.cpp
 	source/clients/battles.cpp
 	source/clients/client.cpp
-	source/clients/network/buffer_overrun.cpp
-	source/clients/network/client.cpp
-	source/clients/network/inmessage.cpp
-	source/clients/network/invalid_channel.cpp
-	source/clients/network/invalid_packet.cpp
-	source/clients/network/outmessage.cpp
 	source/clients/no_pending_challenges.cpp
 	source/clients/party.cpp
 	source/clients/timestamp.cpp
 	source/clients/updated_hp.cpp
-
-	source/cryptography/md5.cpp
 
 	source/ai.cpp
 )

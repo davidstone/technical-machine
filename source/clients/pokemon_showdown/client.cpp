@@ -23,7 +23,6 @@
 
 #include "battle.hpp"
 #include "inmessage.hpp"
-#include "outmessage.hpp"
 
 #include "../../settings_file.hpp"
 #include "../../team.hpp"
