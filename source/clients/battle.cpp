@@ -74,7 +74,7 @@ Battle::Battle(Party const party, std::string opponent_, TeamSize const foe_size
 	initialize_turn();
 }
 
-Team Battle::predict_foe_team(DetailedStats const & detailed) const {
+Team Battle::predict_foe_team(DetailedStats const & detailed) {
 	return predict_team(detailed, foe.team, random_engine);
 }
 
@@ -90,7 +90,7 @@ void Battle::update_from_previous_turn() {
 	correct_hp_and_report_errors(last->team);
 }
 
-Moves Battle::determine_action(DetailedStats const & detailed, Evaluate const & evaluate) const {
+Moves Battle::determine_action(DetailedStats const & detailed, Evaluate const & evaluate) {
 	std::cout << std::string(20, '=') + '\n';
 	std::cout << "Predicting...\n";
 	auto predicted = predict_foe_team(detailed);
@@ -270,7 +270,7 @@ std::filesystem::path generate_team_file_name(RandomEngine & random_engine) {
 
 }	// namespace
 
-void Battle::handle_end(Client const & client, Result const result) const {
+void Battle::handle_end(Client const & client, Result const result) {
 	std::cout << timestamp() << ": " << to_string(result) << " a battle vs. " << opponent() << '\n';
 	if (result == Result::lost) {
 		pl::write_team(predict_foe_team(client.detailed()), generate_team_file_name(random_engine));

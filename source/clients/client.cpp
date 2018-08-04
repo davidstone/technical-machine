@@ -72,7 +72,7 @@ void Client::handle_battle_begin(uint32_t battle_id, std::string const & opponen
 }
 
 void Client::handle_battle_end(uint32_t const battle_id, Result const result) {
-	auto const & battle = battles.find(battle_id);
+	auto & battle = battles.find(battle_id);
 	battle.handle_end(*this, result);
 	battles.handle_end(battle_id);
 }

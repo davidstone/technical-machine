@@ -52,12 +52,12 @@ struct Battle {
 		return my_party == other_party;
 	}
 
-	Team predict_foe_team(DetailedStats const & detailed) const;
+	Team predict_foe_team(DetailedStats const & detailed);
 	void handle_begin_turn(uint16_t turn_count) const;
 	void handle_use_move(Party user, uint8_t slot, Moves move_name);
 	void handle_send_out(Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, Level level);
 	void handle_fainted(Party fainter, uint8_t slot);
-	void handle_end(Client const & client, Result const result) const;
+	void handle_end(Client const & client, Result const result);
 
 	std::string const & opponent() const {
 		return opponent_name;
@@ -128,7 +128,7 @@ private:
 	};
 
 
-	Moves determine_action(DetailedStats const & detailed, Evaluate const & evaluate) const;
+	Moves determine_action(DetailedStats const & detailed, Evaluate const & evaluate);
 	void correct_hp_and_report_errors(Team & team);
 	void normalize_hp();
 	void normalize_hp(Team & team);
@@ -150,7 +150,7 @@ private:
 	}
 
 	std::string opponent_name;
-	mutable std::mt19937 random_engine;
+	std::mt19937 random_engine;
 	BattleTeam ai;
 	BattleTeam foe;
 	containers::static_vector<Species, static_cast<intmax_t>(max_pokemon_per_team)> slot_memory;
