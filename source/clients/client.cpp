@@ -66,9 +66,9 @@ Team Client::generate_team() {
 	return load_team_from_file(random_engine, team_file);
 }
 
-void Client::handle_battle_begin(uint32_t battle_id, std::string const & opponent, Party const party) {
-	auto & battle = battles.handle_begin(battle_id, opponent);
-	battle.set_party_if_unknown(party);
+void Client::handle_battle_begin(uint32_t battle_id, std::string const & opponent, Party) {
+	// TODO: Party?
+	battles.handle_begin(battle_id, opponent);
 }
 
 void Client::handle_battle_end(uint32_t const battle_id, Result const result) {

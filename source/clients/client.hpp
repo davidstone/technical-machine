@@ -50,7 +50,7 @@ protected:
 		return battles.handle_challenge_withdrawn(std::forward<Args>(args)...);
 	}
 	virtual void handle_finalize_challenge(std::string const & opponent, bool accepted, bool challenger) = 0;
-	void handle_battle_begin(uint32_t battle_id, std::string const & opponent, Party party = Party());
+	void handle_battle_begin(uint32_t battle_id, std::string const & opponent, Party party);
 	void handle_battle_end(uint32_t battle_id, Result result);
 	template<typename ... Args>
 	Battle const & find_battle(Args && ... args) const {

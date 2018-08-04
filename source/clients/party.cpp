@@ -1,5 +1,5 @@
 // Class that handles which party I am
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,34 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "party.hpp"
-
-namespace technicalmachine {
-namespace {
-using namespace bounded::literal;
-
-constexpr auto unknown_party = 2_bi;
-}	// namespace
-
-Party::Party():
-	m_party(unknown_party) {
-}
-
-Party::Party(value_type const initial):
-	m_party(initial) {
-}
-
-auto set_if_unknown(Party & party, Party const new_party) -> void {
- 	if (party.value() == unknown_party) {
-		party = new_party;
-	}
-}
-
-auto Party::value() const -> value_type{
-	return m_party;
-}
-
-auto other(Party const party) -> Party {
-	return Party(Party::value_type(1_bi - party.value()));
-}
-
-} // namespace technicalmachine

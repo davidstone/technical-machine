@@ -1,5 +1,5 @@
 // Class that handles which party I am
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -25,20 +25,27 @@
 namespace technicalmachine {
 
 struct Party {
-	// -1 indicates the message does not apply to a party
-	using value_type = bounded::checked_integer<-1, 2>;
-	Party();
-	explicit Party(value_type initial);
-	auto value() const -> value_type;
+	using value_type = bounded::checked_integer<0, 1>;
+	constexpr explicit Party(value_type const initial):
+		m_party(initial)
+	{
+	}
+
+	constexpr auto value() const {
+		return m_party;
+	}
+
 private:
 	value_type m_party;
 };
 
-inline auto compare(Party const lhs, Party const rhs) {
+constexpr auto compare(Party const lhs, Party const rhs) {
 	return bounded::compare(lhs.value(), rhs.value());
 }
 
-auto set_if_unknown(Party & party, Party new_party) -> void;
-auto other(Party const party) -> Party;
+constexpr auto other(Party const party) -> Party {
+	using namespace bounded::literal;
+	return Party(1_bi - party.value());
+}
 
 }	// namespace technicalmachine

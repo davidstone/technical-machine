@@ -50,10 +50,6 @@ struct Battle {
 		return my_party == other_party;
 	}
 
-	void set_party_if_unknown(Party const new_party) {
-		set_if_unknown(my_party, new_party);
-	}
-
 	Team predict_foe_team(DetailedStats const & detailed) const;
 	void handle_begin_turn(uint16_t turn_count) const;
 	void handle_use_move(Party user, uint8_t slot, Moves move_name);
@@ -80,7 +76,7 @@ struct Battle {
 	void handle_direct_damage(Party const damaged, uint8_t slot, UpdatedHP::VisibleHP damage);
 	virtual ~Battle() {}
 protected:
-	Battle(std::string opponent, TeamSize foe_size, unsigned battle_depth, std::mt19937 random_engine, Team team);
+	Battle(Party party, std::string opponent, TeamSize foe_size, unsigned battle_depth, std::mt19937 random_engine, Team team);
 
 	uint8_t switch_slot(Moves move) const;
 

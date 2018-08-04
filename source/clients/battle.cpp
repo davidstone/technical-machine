@@ -59,14 +59,15 @@
 namespace technicalmachine {
 struct DetailedStats;
 
-Battle::Battle(std::string opponent_, TeamSize const foe_size, unsigned const battle_depth, std::mt19937 random_engine_, Team team):
+Battle::Battle(Party const party, std::string opponent_, TeamSize const foe_size, unsigned const battle_depth, std::mt19937 random_engine_, Team team):
 	opponent_name(std::move(opponent_)),
 	random_engine(random_engine_),
 	ai(std::move(team)),
 	foe(foe_size),
 	slot_memory(begin(ai.team.all_pokemon()), end(ai.team.all_pokemon())),
 	updated_hp(ai.team),
-	depth(battle_depth)
+	depth(battle_depth),
+	my_party(party)
 {
 	initialize_turn();
 }
