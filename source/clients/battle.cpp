@@ -1,5 +1,5 @@
 // Generic battle
-// Copyright (C) 2017 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -59,44 +59,16 @@
 namespace technicalmachine {
 struct DetailedStats;
 
-namespace {
-
-auto make_team(std::random_device::result_type seed, std::filesystem::path const & team_file) {
-	std::mt19937 random_engine(seed);
-	auto team = load_team_from_file(random_engine, team_file);
-	return std::make_tuple(std::move(random_engine), std::move(team));
-}
-
-}	// namespace
-
-Battle::Battle(std::string opponent_, TeamSize const foe_size, unsigned battle_depth, std::random_device::result_type seed, std::filesystem::path const & team_file):
-	Battle(std::move(opponent_), foe_size, battle_depth, make_team(seed, team_file))
-{
-}
-
-Battle::Battle(std::string opponent_, TeamSize const foe_size, unsigned battle_depth, std::random_device::result_type seed, Team team):
-	Battle(std::move(opponent_), foe_size, battle_depth, std::make_tuple(std::mt19937(seed), std::move(team)))
-{
-}
-
-Battle::Battle(std::string opponent_, TeamSize const foe_size, unsigned const battle_depth, std::tuple<std::mt19937, Team> tuple):
+Battle::Battle(std::string opponent_, TeamSize const foe_size, unsigned const battle_depth, std::mt19937 random_engine_, Team team):
 	opponent_name(std::move(opponent_)),
-	random_engine(std::move(std::get<std::mt19937>(tuple))),
-	ai(std::move(std::get<Team>(tuple))),
+	random_engine(random_engine_),
+	ai(std::move(team)),
 	foe(foe_size),
 	slot_memory(begin(ai.team.all_pokemon()), end(ai.team.all_pokemon())),
 	updated_hp(ai.team),
 	depth(battle_depth)
 {
 	initialize_turn();
-}
-
-bool Battle::is_me(Party const other_party) const {
-	return my_party == other_party;
-}
-
-void Battle::set_party_if_unknown(Party const new_party) {
-	set_if_unknown(my_party, new_party);
 }
 
 Team Battle::predict_foe_team(DetailedStats const & detailed) const {
@@ -232,24 +204,6 @@ int Battle::hp_change(Party const changing, UpdatedHP::VisibleHP const remaining
 	return static_cast<int>(measurable_hp - remaining_hp);
 }
 
-auto Battle::max_visible_hp_change(Party const changer) const -> MaxVisibleHPChange {
-	return max_visible_hp_change(get_team(changer).team);
-}
-auto Battle::max_visible_hp_change(Team const & changer) const -> MaxVisibleHPChange {
-	return max_visible_hp_change(changer.is_me(), changer.replacement());
-}
-auto Battle::max_visible_hp_change(bool const my_pokemon, Pokemon const & changer) const -> MaxVisibleHPChange {
-	return my_pokemon ? get_hp(changer).max() : max_damage_precision();
-}
-
-bool Battle::is_valid_hp_change(Party changer, UpdatedHP::VisibleHP remaining_hp, int received_change) const {
-	return hp_change(changer, remaining_hp) == received_change;
-}
-
-bool Battle::is_valid_precision(Party changer, unsigned precision) const {
-	return max_visible_hp_change(changer) == precision;
-}
-
 void Battle::correct_hp_and_report_errors(Team & team) {
 	for (auto & pokemon : team.all_pokemon()) {
 		auto const tm_estimate = max_visible_hp_change(team.is_me(), pokemon) * hp_ratio(pokemon);
@@ -275,11 +229,6 @@ void Battle::correct_hp_and_report_errors(Team & team) {
 		}
 		get_hp(pokemon) = reported_hp;
 	}
-}
-
-void Battle::handle_set_pp(Party const, uint8_t /*slot*/, uint8_t /*pp*/) {
-	// This function may actually be useless. I believe that any PP change is
-	// already handled by other mechanisms.
 }
 
 void Battle::handle_fainted(Party const fainter, uint8_t /*slot*/) {
@@ -332,10 +281,6 @@ uint8_t Battle::switch_slot(Moves move) const {
 		throw PokemonNotFound(name);
 	}
 	return static_cast<std::uint8_t>(it - begin(slot_memory));
-}
-
-VisibleFoeHP Battle::max_damage_precision() const {
-	return 48_bi;
 }
 
 void Battle::initialize_turn() {
@@ -433,30 +378,6 @@ auto normalize_hp(MutableActivePokemon pokemon, bool const fainted) {
 void Battle::normalize_hp(Team & team) {
 	bool const fainted = updated_hp.is_fainted(team.is_me(), team.pokemon());
 	technicalmachine::normalize_hp(team.pokemon(), fainted);
-}
-
-std::string const & Battle::opponent() const {
-	return opponent_name;
-}
-
-void Battle::handle_flinch(Party const party) {
-	set_flinch(get_team(party).variable, true);
-}
-
-void Battle::handle_miss(Party const party) {
-	get_team(party).flags.miss = true;
-}
-
-void Battle::handle_critical_hit(Party const party) {
-	get_team(party).flags.critical_hit = true;
-}
-
-void Battle::handle_ability_message(Party party, Ability ability) {
-	get_ability(get_team(party).team.replacement()) = ability;
-}
-
-void Battle::handle_item_message(Party party, Item item) {
-	get_item(get_team(party).team.replacement()) = item;
 }
 
 void Battle::slot_memory_bring_to_front() {

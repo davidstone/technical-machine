@@ -1,5 +1,5 @@
 // Generic battle
-// Copyright (C) 2017 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -46,37 +46,75 @@ struct Evaluate;
 struct Level;
 
 struct Battle {
-	bool is_me(Party other_party) const;
-	void set_party_if_unknown(Party new_party);
+	bool is_me(Party const other_party) const {
+		return my_party == other_party;
+	}
+
+	void set_party_if_unknown(Party const new_party) {
+		set_if_unknown(my_party, new_party);
+	}
+
 	Team predict_foe_team(DetailedStats const & detailed) const;
 	void handle_begin_turn(uint16_t turn_count) const;
 	void handle_use_move(Party user, uint8_t slot, Moves move_name);
 	void handle_send_out(Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, Level level);
-	void handle_set_pp(Party changer, uint8_t slot, uint8_t pp);
 	void handle_fainted(Party fainter, uint8_t slot);
 	void handle_end(Client const & client, Result const result) const;
-	std::string const & opponent() const;
+
+	std::string const & opponent() const {
+		return opponent_name;
+	}
+
 	Battle(Battle const &) = delete;
 	Battle & operator=(Battle const &) = delete;
 	void handle_hp_change(Party changer, uint8_t slot, UpdatedHP::VisibleHP remaining_hp);
-	bool is_valid_hp_change(Party changer, UpdatedHP::VisibleHP remaining_hp, int received_change) const;
-	bool is_valid_precision(Party changer, unsigned precision) const;
+
+	bool is_valid_hp_change(Party changer, UpdatedHP::VisibleHP remaining_hp, int received_change) const {
+		return hp_change(changer, remaining_hp) == received_change;
+	}
+
+	bool is_valid_precision(Party changer, unsigned precision) const {
+		return max_visible_hp_change(changer) == precision;
+	}
+
 	void handle_direct_damage(Party const damaged, uint8_t slot, UpdatedHP::VisibleHP damage);
 	virtual ~Battle() {}
 protected:
-	Battle(std::string opponent, TeamSize foe_size, unsigned battle_depth, std::random_device::result_type seed, std::filesystem::path const & team_file);
-	Battle(std::string opponent, TeamSize foe_size, unsigned battle_depth, std::random_device::result_type seed, Team team);
+	Battle(std::string opponent, TeamSize foe_size, unsigned battle_depth, std::mt19937 random_engine, Team team);
+
 	uint8_t switch_slot(Moves move) const;
-	virtual VisibleFoeHP max_damage_precision() const;
+
+	virtual VisibleFoeHP max_damage_precision() const {
+		return 48_bi;
+	}
+
 	void initialize_turn();
 	int hp_change(Party changing, UpdatedHP::VisibleHP remaining_hp) const;
+
 	using MaxVisibleHPChange = std::common_type<VisibleFoeHP, HP::max_type>::type;
-	MaxVisibleHPChange max_visible_hp_change(Party changer) const;
-	void handle_flinch(Party party);
-	void handle_miss(Party party);
-	void handle_critical_hit(Party party);
-	void handle_ability_message(Party party, Ability ability);
-	void handle_item_message(Party party, Item item);
+	auto max_visible_hp_change(Party const changer) const -> MaxVisibleHPChange {
+		return max_visible_hp_change(get_team(changer).team);
+	}
+
+	void handle_flinch(Party const party) {
+		set_flinch(get_team(party).variable, true);
+	}
+	void handle_miss(Party const party) {
+		get_team(party).flags.miss = true;
+	}
+
+	void handle_critical_hit(Party const party) {
+		get_team(party).flags.critical_hit = true;
+	}
+
+	void handle_ability_message(Party party, Ability ability) {
+		get_ability(get_team(party).team.replacement()) = ability;
+	}
+
+	void handle_item_message(Party party, Item item) {
+		get_item(get_team(party).team.replacement()) = item;
+	}
+
 	void slot_memory_bring_to_front();
 private:
 	struct BattleTeam {
@@ -100,21 +138,25 @@ private:
 		Flags flags;
 	};
 
-	Battle(std::string opponent, TeamSize foe_size, unsigned battle_depth, std::tuple<std::mt19937, Team> tuple);
 
 	Moves determine_action(DetailedStats const & detailed, Evaluate const & evaluate) const;
 	void correct_hp_and_report_errors(Team & team);
 	void normalize_hp();
 	void normalize_hp(Team & team);
-	MaxVisibleHPChange max_visible_hp_change(Team const & changer) const;
-	MaxVisibleHPChange max_visible_hp_change(bool my_pokemon, Pokemon const & changer) const;
+
+	auto max_visible_hp_change(Team const & changer) const -> MaxVisibleHPChange {
+		return max_visible_hp_change(changer.is_me(), changer.replacement());
+	}
+	auto max_visible_hp_change(bool const my_pokemon, Pokemon const & changer) const -> MaxVisibleHPChange {
+		return my_pokemon ? get_hp(changer).max() : max_damage_precision();
+	}
 	void do_turn();
 	void update_from_previous_turn();
 
-	auto const & get_team(Party const party) const {
+	auto get_team(Party const party) const -> BattleTeam const & {
 		return is_me(party) ? ai : foe;
 	}
-	auto & get_team(Party const party) {
+	auto get_team(Party const party) -> BattleTeam & {
 		return is_me(party) ? ai : foe;
 	}
 
