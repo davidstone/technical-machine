@@ -59,7 +59,7 @@
 namespace technicalmachine {
 struct DetailedStats;
 
-Battle::Battle(Party const party, std::string opponent_, TeamSize const foe_size, unsigned const battle_depth, std::mt19937 random_engine_, Team team):
+Battle::Battle(Party const party, std::string opponent_, TeamSize const foe_size, unsigned const battle_depth, std::mt19937 random_engine_, Team team, VisibleFoeHP max_damage_precision_):
 	opponent_name(std::move(opponent_)),
 	random_engine(random_engine_),
 	ai(std::move(team)),
@@ -67,6 +67,8 @@ Battle::Battle(Party const party, std::string opponent_, TeamSize const foe_size
 	slot_memory(begin(ai.team.all_pokemon()), end(ai.team.all_pokemon())),
 	updated_hp(ai.team),
 	depth(battle_depth),
+	max_damage_precision(max_damage_precision_),
+	
 	my_party(party)
 {
 	initialize_turn();
@@ -162,7 +164,7 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8
 	// This assumes Species Clause is in effect
 	auto const added = switch_or_add(switcher.team.all_pokemon(), species, level, gender, nickname);
 	if (added) {
-		updated_hp.add(switcher.team.is_me(), switcher.team.replacement(), max_damage_precision());
+		updated_hp.add(switcher.team.is_me(), switcher.team.replacement(), max_damage_precision);
 	}
 	
 	if (other.team.number_of_seen_pokemon() != 0_bi and other.flags.used_move and is_phaze(other.flags.used_move->move)) {

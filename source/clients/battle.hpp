@@ -46,6 +46,8 @@ struct Evaluate;
 struct Level;
 
 struct Battle {
+	Battle(Party party, std::string opponent, TeamSize foe_size, unsigned battle_depth, std::mt19937 random_engine, Team team, VisibleFoeHP max_damage_precision = 48_bi);
+
 	bool is_me(Party const other_party) const {
 		return my_party == other_party;
 	}
@@ -61,8 +63,6 @@ struct Battle {
 		return opponent_name;
 	}
 
-	Battle(Battle const &) = delete;
-	Battle & operator=(Battle const &) = delete;
 	void handle_hp_change(Party changer, uint8_t slot, UpdatedHP::VisibleHP remaining_hp);
 
 	bool is_valid_hp_change(Party changer, UpdatedHP::VisibleHP remaining_hp, int received_change) const {
@@ -74,15 +74,8 @@ struct Battle {
 	}
 
 	void handle_direct_damage(Party const damaged, uint8_t slot, UpdatedHP::VisibleHP damage);
-	virtual ~Battle() {}
-protected:
-	Battle(Party party, std::string opponent, TeamSize foe_size, unsigned battle_depth, std::mt19937 random_engine, Team team);
 
 	uint8_t switch_slot(Moves move) const;
-
-	virtual VisibleFoeHP max_damage_precision() const {
-		return 48_bi;
-	}
 
 	void initialize_turn();
 	int hp_change(Party changing, UpdatedHP::VisibleHP remaining_hp) const;
@@ -144,7 +137,7 @@ private:
 		return max_visible_hp_change(changer.is_me(), changer.replacement());
 	}
 	auto max_visible_hp_change(bool const my_pokemon, Pokemon const & changer) const -> MaxVisibleHPChange {
-		return my_pokemon ? get_hp(changer).max() : max_damage_precision();
+		return my_pokemon ? get_hp(changer).max() : max_damage_precision;
 	}
 	void do_turn();
 	void update_from_previous_turn();
@@ -166,6 +159,7 @@ private:
 	BattleTeam * first;
 	BattleTeam * last;
 	unsigned depth;
+	VisibleFoeHP max_damage_precision;
 	bool move_damage;
 	Party my_party;
 };

@@ -81,10 +81,5 @@ bounded::optional<Battle> BattleFactory::make() const {
 }
 
 
-
-VisibleFoeHP Battle::max_damage_precision() const {
-	return 100_bi;
-}
-
 }	// namespace ps
 }	// namespace technicalmachine

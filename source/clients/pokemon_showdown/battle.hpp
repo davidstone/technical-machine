@@ -28,18 +28,16 @@
 namespace technicalmachine {
 namespace ps {
 
-struct Battle : ::technicalmachine::Battle {
-	using technicalmachine::Battle::Battle;
-	#if 0
+struct BattleParser {
 	template<typename ... Args>
-	Battle(Args &&... args):
-		::technicalmachine::Battle::Battle(std::forward<Args>(args)...) {
+	BattleParser(Args &&... args):
+		m_battle(std::forward<Args>(args)..., 100_bi)
+	{
 	}
-	#endif
 	
 	void handle_message(InMessage message);
 private:
-	VisibleFoeHP max_damage_precision() const override;
+	Battle m_battle;
 };
 
 struct BattleFactory {
