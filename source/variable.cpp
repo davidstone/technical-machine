@@ -26,7 +26,7 @@
 
 #include <bounded/integer_range.hpp>
 
-#include <containers/array/make_array.hpp>
+#include <containers/array/array.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -108,19 +108,14 @@ constexpr auto magnitude_variables = Probabilities{
 	{ 150_bi, 0.05 }
 };
 
-constexpr auto make_present_variables() {
-	constexpr auto present = containers::make_array(
-		0_bi, 40_bi, 80_bi, 120_bi
-	);
-	Probabilities probabilities;
-	for (auto const n : present) {
-		probabilities.emplace_back(n, 1.0 / static_cast<double>(size(present)));
-	}
-	return probabilities;
-}
-constexpr auto present_variables = make_present_variables();
+constexpr auto present_variables = Probabilities{
+	{0_bi, 0.25 },
+	{40_bi, 0.25 },
+	{80_bi, 0.25 },
+	{120_bi, 0.25 }
+};
 
-constexpr auto make_psywave_variables() {
+constexpr auto psywave_variables = []{
 	Probabilities probabilities;
 	constexpr auto min = 50_bi;
 	constexpr auto max = 150_bi + 1_bi;
@@ -128,8 +123,7 @@ constexpr auto make_psywave_variables() {
 		probabilities.emplace_back(n, 1.0 / static_cast<double>(max - min));
 	}
 	return probabilities;
-}
-constexpr auto psywave_variables = make_psywave_variables();
+}();
 
 template<std::size_t... indexes, typename... Args>
 constexpr auto generic_probability(std::index_sequence<indexes...>, Args... probabilities) noexcept {
@@ -152,19 +146,30 @@ constexpr auto constant_probability(Count const count) noexcept {
 
 constexpr auto guaranteed = generic_probability(1.0);
 
-constexpr auto const & phaze_probability(TeamSize const foe_size) {
-	constexpr auto phaze_cutoff = 2_bi;
-	if (foe_size <= phaze_cutoff) {
-		return guaranteed;
+auto const & phaze_probability(TeamSize const foe_size) {
+	switch(foe_size.value()) {
+		case 1:
+		case 2:
+			return guaranteed;
+		case 3: {
+			static constexpr auto value = constant_probability(2_bi);
+			return value;
+		}
+		case 4: {
+			static constexpr auto value = constant_probability(3_bi);
+			return value;
+		}
+		case 5: {
+			static constexpr auto value = constant_probability(4_bi);
+			return value;
+		}
+		case 6: {
+			static constexpr auto value = constant_probability(5_bi);
+			return value;
+		}
+		default:
+			assert(false);
 	}
-	static_assert(TeamSize::max() <= 6_bi);
-	constexpr auto container = containers::make_array(
-		constant_probability(2_bi),
-		constant_probability(3_bi),
-		constant_probability(4_bi),
-		constant_probability(5_bi)
-	);
-	return at(container, foe_size - phaze_cutoff - 1_bi);
 }
 
 }	// namespace
