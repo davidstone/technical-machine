@@ -1,5 +1,5 @@
 // Expectiminimax header
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //

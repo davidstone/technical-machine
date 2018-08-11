@@ -1,5 +1,5 @@
 // Declaration of functions that block selection / execution
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,8 +22,6 @@
 #include "move/move.hpp"
 #include "pokemon/species_forward.hpp"
 
-#include <cstddef>
-
 namespace technicalmachine {
 
 struct ActivePokemon;
@@ -31,27 +29,7 @@ struct MutableActivePokemon;
 struct Team;
 struct Weather;
 
-struct LegalSelections : private StaticVectorMove {
-	using StaticVectorMove::value_type;
-	using StaticVectorMove::size_type;
-	using StaticVectorMove::const_iterator;
-
-	LegalSelections(Team const & user, ActivePokemon other, Weather weather);
-	auto species() const {
-		return m_species;
-	}
-
-	friend constexpr auto begin(LegalSelections const & container) {
-		return begin(static_cast<StaticVectorMove const &>(container));
-	}
-	friend constexpr auto end(LegalSelections const & container) {
-		return end(static_cast<StaticVectorMove const &>(container));
-	}
-	using StaticVectorMove::operator[];
-private:
-	Species m_species;
-};
-
-bool can_execute_move(MutableActivePokemon user, Move move, ActivePokemon other, Weather weather, bool awakens);
+auto legal_selections(Team const & user, ActivePokemon other, Weather weather) -> StaticVectorMove;
+auto can_execute_move(MutableActivePokemon user, Move move, ActivePokemon other, Weather weather, bool awakens) -> bool;
 
 }	// namespace technicalmachine

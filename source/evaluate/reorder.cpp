@@ -19,6 +19,7 @@
 #include "reorder.hpp"
 
 #include "move_scores.hpp"
+#include "../block.hpp"
 
 #include <containers/legacy_iterator.hpp>
 
@@ -26,7 +27,7 @@
 
 namespace technicalmachine {
 
-StaticVectorMove reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai) {
+StaticVectorMove reorder(StaticVectorMove container, MoveScores const & move_scores, bool ai) {
 	// This takes all of a Pokemon's moves and sorts them based on previously
 	// evaluated scores. Moves that haven't been evaluated are sorted to the
 	// end. I do this because alpha-beta pruning is most efficient when the
@@ -34,14 +35,13 @@ StaticVectorMove reorder(LegalSelections const & input, MoveScores const & move_
 	// then only has to prove that further moves aren't as good as the move
 	// already searched; it is not important to know how much worse they are.
 	// Moves that cannot be selected are excluded.
-	StaticVectorMove output(begin(input), end(input));
 	auto compare = [&](auto const & lhs, auto const & rhs) {
 		auto const lhs_score = move_scores.get(lhs);
 		auto const rhs_score = move_scores.get(rhs);
 		return ai ? (lhs_score > rhs_score) : (lhs_score < rhs_score);
 	};
-	std::sort(containers::legacy_iterator(begin(output)), containers::legacy_iterator(end(output)), compare);
-	return output;
+	std::sort(containers::legacy_iterator(begin(container)), containers::legacy_iterator(end(container)), compare);
+	return container;
 }
 
 }	// namespace technicalmachine

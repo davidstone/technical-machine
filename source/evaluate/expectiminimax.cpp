@@ -386,21 +386,21 @@ constexpr auto all_switches(TeamSize const team_size, containers::index_type<Pok
 			push_back(switches, to_switch(n));
 		}
 	}
+	assert(!empty(switches));
 	return switches;
 }
 
-template<typename Container>
-auto random_move_or_switch(std::mt19937 & random_engine, Container const & moves) {
-	assert(!empty(moves));
-	std::uniform_int_distribution<int> distribution(0, static_cast<int>(size(moves)) - 1);
-	return moves[static_cast<containers::index_type<decltype(moves)>>(distribution(random_engine))];
+auto random_action(Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) -> Moves {
+	auto implementation = [&](auto const & actions) {
+		auto distribution = std::uniform_int_distribution<int>(0, static_cast<int>(size(actions)) - 1);
+		return at(actions, distribution(random_engine), bounded::non_check);
+	};
+	return switch_decision_required(ai.pokemon()) ?
+		implementation(all_switches(size(ai.all_pokemon()), ai.all_pokemon().index())) :
+		implementation(legal_selections(ai, foe.pokemon(), weather));
 }
 
-auto random_action(Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) {
-	return switch_decision_required(ai.pokemon()) ?
-		random_move_or_switch(random_engine, all_switches(size(ai.all_pokemon()), ai.all_pokemon().index())) :
-		random_move_or_switch(random_engine, LegalSelections(ai, foe.pokemon(), weather));
-}
+
 
 double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const first_replacement, TeamIndex const last_replacement) {
 	if (get_hp(first.pokemon()) == 0_bi) {
@@ -543,8 +543,8 @@ SelectMoveResult select_move_branch(Team const & ai, Team const & foe, Weather c
 	auto move_scores = (depth >= 1) ?
 		select_move_branch(ai, foe, weather, depth - 1, evaluate, false).move_scores :
 		BothMoveScores{MoveScores(ai.pokemon()), MoveScores(foe.pokemon())};
-	auto const ai_moves = reorder(LegalSelections(ai, foe.pokemon(), weather), move_scores.ai, true);
-	auto const foe_moves = reorder(LegalSelections(foe, ai.pokemon(), weather), move_scores.foe, false);
+	auto const ai_moves = reorder(legal_selections(ai, foe.pokemon(), weather), move_scores.ai, true);
+	auto const foe_moves = reorder(legal_selections(foe, ai.pokemon(), weather), move_scores.foe, false);
 
 	// Working from the inside loop out:
 

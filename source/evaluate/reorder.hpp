@@ -18,13 +18,12 @@
 
 #pragma once
 
-#include "../block.hpp"
 #include "../move/move.hpp"
 
 namespace technicalmachine {
 
 struct MoveScores;
 
-StaticVectorMove reorder(LegalSelections const & input, MoveScores const & move_scores, bool ai);
+StaticVectorMove reorder(StaticVectorMove input, MoveScores const & move_scores, bool ai);
 
 }	// namespace technicalmachine

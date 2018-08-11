@@ -151,16 +151,20 @@ auto is_legal_selection(Team const & user, Move const move, ActivePokemon const 
 
 }	// namespace
 
-LegalSelections::LegalSelections(Team const & user, ActivePokemon const other, Weather const weather):
-	m_species(user.pokemon())
-{
+auto legal_selections(Team const & user, ActivePokemon const other, Weather const weather) -> StaticVectorMove {
+	// TODO: implement as
+	// auto result = filter(all_moves(user.pokemon()), [] { legal selection; });
+	// assert(!empty);
+	// return result;
+	auto result = StaticVectorMove{};
 	for (auto const move : all_moves(user.pokemon())) {
-		bool const found_selectable_move = !empty(*this);
+		bool const found_selectable_move = !empty(result);
 		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
-			emplace_back(move);
+			result.emplace_back(move);
 		}
 	}
-	assert(!empty(*this));
+	assert(!empty(result));
+	return result;
 }
 
 
