@@ -62,12 +62,12 @@ auto calculate_ev(StatNames const stat_name, Stat stat, Level const level, Natur
 }	// namespace
 
 
-containers::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon, bool const physical) {
+EqualDefensiveness equal_defensiveness(Pokemon const & pokemon, bool const physical) {
 	auto const stat_name = from_physical(physical);
 	auto stat = get_stat(pokemon, stat_name);
 	auto const level = get_level(pokemon);
 	auto const initial_product = get_hp(pokemon).max() * initial_stat(stat_name, stat, level, get_nature(pokemon));
-	auto result = containers::vector<SingleClassificationEVs>{};
+	auto result = EqualDefensiveness{};
 	for (auto const nature : enum_range<Nature>) {
 		for (auto hp_ev = EV::value_type(0_bi); ; hp_ev += 4_bi) {
 			auto const hp = HP(pokemon, level, EV(hp_ev));

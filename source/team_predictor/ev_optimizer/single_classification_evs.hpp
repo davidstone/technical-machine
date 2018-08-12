@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,13 +19,13 @@
 #pragma once
 
 #include "../../stat/ev.hpp"
+#include "../../stat/nature.hpp"
 
-#include <containers/vector/vector.hpp>
+#include <containers/static_vector/static_vector.hpp>
 
 #include <string>
 
 namespace technicalmachine {
-enum class Nature : uint8_t;
 struct Pokemon;
 
 struct SingleClassificationEVs {
@@ -49,6 +49,19 @@ private:
 
 auto are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) -> bool;
 
-containers::vector<SingleClassificationEVs> equal_defensiveness(Pokemon const & pokemon, bool physical);
+namespace detail {
+
+constexpr auto possible_defensive_ev_combinations() {
+	constexpr auto possible_hp_evs = 252U / 4U + 1U;
+	constexpr auto possible_natures = static_cast<unsigned>(std::numeric_limits<Nature>::max());
+	// Given a stat, a nature, and an HP EV, the defensive EV can be calculated
+	return possible_hp_evs * possible_natures;
+}
+
+}	// namespace detail
+
+using EqualDefensiveness = containers::static_vector<SingleClassificationEVs, detail::possible_defensive_ev_combinations()>;
+
+EqualDefensiveness equal_defensiveness(Pokemon const & pokemon, bool physical);
 
 }	// namespace technicalmachine

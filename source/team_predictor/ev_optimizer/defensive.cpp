@@ -41,10 +41,9 @@ namespace {
 
 using namespace bounded::literal;
 
-using Single = containers::vector<SingleClassificationEVs>;
 using Estimates = containers::vector<DataPoint>;
 using AllPossible = std::unordered_map<Nature, Estimates>;
-AllPossible combine_results(Single const & physical, Single const & special);
+AllPossible combine_results(EqualDefensiveness const & physical, EqualDefensiveness const & special);
 
 DefensiveEVs::BestPerNature best_possible_per_nature(AllPossible all, Pokemon const & pokemon);
 std::set<Nature> used_natures(DefensiveEVs::BestPerNature const & container);
@@ -138,7 +137,7 @@ bool penalizes_same(Nature const nature, Nature const reference_nature) {
 			or (!lowers_defending_stat(nature) and !lowers_defending_stat(reference_nature));
 }
 
-AllPossible combine_results(Single const & physical, Single const & special) {
+AllPossible combine_results(EqualDefensiveness const & physical, EqualDefensiveness const & special) {
 	AllPossible all;
 	for (auto const & p : physical) {
 		for (auto const & s : special) {
