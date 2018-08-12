@@ -25,6 +25,6 @@ namespace technicalmachine {
 std::string const & to_string(Nature nature);
 
 template<>
-Nature from_string<Nature>(boost::string_ref const str);
+Nature from_string<Nature>(std::string_view const str);
 
 }	// namespace technicalmachine

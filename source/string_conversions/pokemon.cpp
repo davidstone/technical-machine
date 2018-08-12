@@ -183,8 +183,8 @@ std::string const & to_string(Species const name) {
 }
 
 template<>
-Species from_string(boost::string_ref const str) {
-	static std::map<boost::string_ref, Species> const converter {
+Species from_string(std::string_view const str) {
+	static std::map<std::string_view, Species> const converter {
 		// Generation 1
 		{ "bulbasaur", Species::Bulbasaur },
 		{ "ivysaur", Species::Ivysaur },
@@ -882,7 +882,7 @@ Species from_string(boost::string_ref const str) {
 		{ "meloetta", Species::Meloetta },
 		{ "genesect", Species::Genesect }
 	};
-	std::string normalized = str.to_string();
+	std::string normalized = std::string(str);
 	boost::algorithm::to_lower(normalized);
 	std::replace(begin(normalized), end(normalized), '_', '-');
 	auto const it = converter.find(normalized);

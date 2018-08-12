@@ -37,8 +37,8 @@ std::string const & to_string(Gender const gender) {
 }
 
 template<>
-Gender from_string(boost::string_ref const str) {
-	static std::map<boost::string_ref, Gender> const converter {
+Gender from_string(std::string_view const str) {
+	static std::map<std::string_view, Gender> const converter {
 		{ "Genderless", Gender::genderless },
 		{ "None", Gender::genderless },
 		{ "No Gender", Gender::genderless },

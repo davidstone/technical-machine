@@ -18,11 +18,11 @@
 
 #pragma once
 
-#include <boost/utility/string_ref.hpp>
+#include <string_view>
 
 namespace technicalmachine {
 
 template<typename T>
-T from_string(boost::string_ref str);
+T from_string(std::string_view str);
 
 }	// namespace technicalmachine

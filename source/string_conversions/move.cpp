@@ -163,8 +163,8 @@ std::string const & to_string(Moves const name) {
 }
 
 template<>
-Moves from_string(boost::string_ref const str) {
-	static std::map<boost::string_ref, Moves> const converter {
+Moves from_string(std::string_view const str) {
+	static std::map<std::string_view, Moves> const converter {
 		{ "switch0", Moves::Switch0 },
 		{ "switch1", Moves::Switch1 },
 		{ "switch2", Moves::Switch2 },
@@ -749,7 +749,7 @@ Moves from_string(boost::string_ref const str) {
 		{ "fusion flare", Moves::Fusion_Flare },
 		{ "fusion bolt", Moves::Fusion_Bolt }
 	};
-	auto const it = converter.find(boost::algorithm::to_lower_copy(str.to_string()));
+	auto const it = converter.find(boost::algorithm::to_lower_copy(std::string(str)));
 	if (it != end(converter)) {
 		return it->second;
 	} else {

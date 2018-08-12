@@ -145,8 +145,8 @@ std::string const & to_string(Item const name) {
 }
 
 template<>
-Item from_string(boost::string_ref const str) {
-	static std::map<boost::string_ref, Item> const converter {
+Item from_string(std::string_view const str) {
+	static std::map<std::string_view, Item> const converter {
 		{ "No Item", Item::No_Item },
 		{ "Adamant Orb", Item::Adamant_Orb },
 		{ "Aguav Berry", Item::Aguav_Berry },

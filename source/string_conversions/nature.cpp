@@ -40,8 +40,8 @@ std::string const & to_string(Nature const nature) {
 }
 
 template<>
-Nature from_string<Nature>(boost::string_ref const str) {
-	static std::map<boost::string_ref, Nature> const converter {
+Nature from_string<Nature>(std::string_view const str) {
+	static std::map<std::string_view, Nature> const converter {
 		{ "Adamant", Nature::Adamant },
 		{ "Bashful", Nature::Bashful },
 		{ "Bold", Nature::Bold },

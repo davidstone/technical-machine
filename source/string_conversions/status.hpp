@@ -25,6 +25,6 @@ namespace technicalmachine {
 std::string const & to_string(Statuses name);
 
 template<>
-Statuses from_string(boost::string_ref str);
+Statuses from_string(std::string_view str);
 
 }	// namespace technicalmachine

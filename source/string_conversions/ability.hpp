@@ -20,13 +20,11 @@
 
 #include "../ability.hpp"
 
-#include <boost/utility/string_ref.hpp>
-
 namespace technicalmachine {
 
 std::string const & to_string(Ability const name);
 
 template<>
-Ability from_string<Ability>(boost::string_ref const str);
+Ability from_string<Ability>(std::string_view const str);
 
 }	// namespace technicalmachine

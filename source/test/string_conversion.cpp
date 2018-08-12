@@ -51,8 +51,8 @@ namespace {
 
 struct InvalidToStringConversion : std::logic_error {
 	template<typename Test>
-	InvalidToStringConversion(Test original, Test result, boost::string_ref const intermediate):
-		std::logic_error(to_string(bounded::integer(original)) + " is seen as " + to_string(bounded::integer(result)) + " with an intermediate string of " + intermediate.to_string() + ".\n") {
+	InvalidToStringConversion(Test original, Test result, std::string_view const intermediate):
+		std::logic_error(to_string(bounded::integer(original)) + " is seen as " + to_string(bounded::integer(result)) + " with an intermediate string of " + std::string(intermediate) + ".\n") {
 	}
 };
 

@@ -17,9 +17,8 @@
 
 #pragma once
 
-#include <boost/utility/string_ref.hpp>
-
 #include <stdexcept>
+#include <string_view>
 
 namespace technicalmachine {
 
@@ -28,7 +27,7 @@ namespace technicalmachine {
 // but it is definitely a runtime error.
 
 struct InvalidFromStringConversion : std::runtime_error {
-	InvalidFromStringConversion(boost::string_ref const target, boost::string_ref const requested);
+	InvalidFromStringConversion(std::string_view const target, std::string_view const requested);
 };
 
 }	// namespace technicalmachine

@@ -66,8 +66,8 @@ std::string const & to_string(Ability const name) {
 }
 
 template<>
-Ability from_string<Ability>(boost::string_ref const str) {
-	static std::map<boost::string_ref, Ability> const converter {
+Ability from_string<Ability>(std::string_view const str) {
+	static std::map<std::string_view, Ability> const converter {
 		{ "Adaptability", Ability::Adaptability },
 		{ "Aftermath", Ability::Aftermath },
 		{ "Air Lock", Ability::Air_Lock },

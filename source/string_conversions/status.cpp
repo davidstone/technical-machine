@@ -42,8 +42,8 @@ std::string const & to_string(Statuses const name) {
 }
 
 template<>
-Statuses from_string(boost::string_ref const str) {
-	static std::map<boost::string_ref, Statuses> const converter {
+Statuses from_string(std::string_view const str) {
+	static std::map<std::string_view, Statuses> const converter {
 		{ "No status", Statuses::clear },
 		{ "Burn", Statuses::burn },
 		{ "Freeze", Statuses::freeze },

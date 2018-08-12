@@ -25,6 +25,6 @@ namespace technicalmachine {
 std::string const & to_string(Moves name);
 
 template<>
-Moves from_string<Moves>(boost::string_ref const str);
+Moves from_string<Moves>(std::string_view const str);
 
 }	// namespace technicalmachine
