@@ -24,8 +24,6 @@
 
 #include <containers/array/array.hpp>
 
-#include <boost/algorithm/string/case_conv.hpp>
-
 #include <cassert>
 #include <map>
 
@@ -164,7 +162,7 @@ std::string const & to_string(Moves const name) {
 
 template<>
 Moves from_string(std::string_view const str) {
-	static std::map<std::string_view, Moves> const converter {
+	static std::map<std::string_view, Moves, lowercase_ordering> const converter {
 		{ "switch0", Moves::Switch0 },
 		{ "switch1", Moves::Switch1 },
 		{ "switch2", Moves::Switch2 },
@@ -749,7 +747,7 @@ Moves from_string(std::string_view const str) {
 		{ "fusion flare", Moves::Fusion_Flare },
 		{ "fusion bolt", Moves::Fusion_Bolt }
 	};
-	auto const it = converter.find(boost::algorithm::to_lower_copy(std::string(str)));
+	auto const it = converter.find(str);
 	if (it != end(converter)) {
 		return it->second;
 	} else {

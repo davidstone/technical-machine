@@ -24,8 +24,6 @@
 
 #include <containers/array/array.hpp>
 
-#include <boost/algorithm/string/case_conv.hpp>
-
 #include <algorithm>
 #include <map>
 
@@ -184,7 +182,7 @@ std::string const & to_string(Species const name) {
 
 template<>
 Species from_string(std::string_view const str) {
-	static std::map<std::string_view, Species> const converter {
+	static std::map<std::string_view, Species, lowercase_ordering> const converter {
 		// Generation 1
 		{ "bulbasaur", Species::Bulbasaur },
 		{ "ivysaur", Species::Ivysaur },
@@ -883,7 +881,7 @@ Species from_string(std::string_view const str) {
 		{ "genesect", Species::Genesect }
 	};
 	std::string normalized = std::string(str);
-	boost::algorithm::to_lower(normalized);
+	// TODO: Do I still need this?
 	std::replace(begin(normalized), end(normalized), '_', '-');
 	auto const it = converter.find(normalized);
 	if (it != end(converter)) {

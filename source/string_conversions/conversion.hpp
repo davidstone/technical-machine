@@ -1,5 +1,5 @@
 // String conversions template
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,9 +18,19 @@
 
 #pragma once
 
+#include <cctype>
 #include <string_view>
 
 namespace technicalmachine {
+
+struct lowercase_ordering {
+	auto operator()(std::string_view const lhs, std::string_view const rhs) const noexcept {
+		auto const lowercase_comparison = [](auto const lhs_c, auto const rhs_c) {
+			return std::tolower(lhs_c) < std::tolower(rhs_c);
+		};
+		return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), lowercase_comparison);
+	}
+};
 
 template<typename T>
 T from_string(std::string_view str);
