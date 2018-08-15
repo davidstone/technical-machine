@@ -133,6 +133,9 @@ auto & add_seen_move(MoveContainer & container, Moves const move, MaybePP... pp)
 	if (it != end(regular)) {
 		return *it;
 	}
+	if (size(container.regular()) == max_moves_per_pokemon) {
+		throw std::runtime_error("Tried to add too many moves");
+	}
 	return container.emplace_back(move, pp...);
 }
 
