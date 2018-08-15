@@ -64,7 +64,7 @@ public:
 	}
 
 private:
-	using range_t = Range<RegularMoveContainer::const_iterator>;
+	using range_t = range_view<RegularMoveContainer::const_iterator>;
 	friend struct MoveContainer;
 	constexpr MoveIterator(range_t regular, SharedMovesIterator shared) noexcept:
 		m_regular(std::move(regular)),
@@ -94,10 +94,10 @@ struct MoveContainer {
 
 	// Skips Struggle and switches
 	constexpr auto regular() const {
-		return make_range(begin(m_regular), end(m_regular));
+		return range_view(begin(m_regular), end(m_regular));
 	}
 	constexpr auto regular() {
-		return make_range(begin(m_regular), end(m_regular));
+		return range_view(begin(m_regular), end(m_regular));
 	}
 	
 	friend constexpr const_iterator begin(MoveContainer const & container) {

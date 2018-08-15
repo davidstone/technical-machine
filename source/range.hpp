@@ -18,37 +18,45 @@
 
 #pragma once
 
+#include <bounded/integer.hpp>
+
+#include <iterator>
 #include <utility>
 
 namespace technicalmachine {
 
-template<typename Iterator>
-struct Range {
+template<typename Iterator, typename Sentinel = Iterator>
+struct range_view {
+	using value_type = typename std::iterator_traits<Iterator>::value_type;
+
+	using size_type = bounded::integer<
+		0,
+		static_cast<std::uintmax_t>(std::numeric_limits<typename std::iterator_traits<Iterator>::difference_type>::max())
+	>;
+	
+	using const_iterator = Iterator;
 	using iterator = Iterator;
-	constexpr Range(iterator first, iterator last):
-		m_first(std::move(first)),
-		m_last(std::move(last))
+
+	constexpr range_view(Iterator first, Sentinel last):
+		m_begin(first),
+		m_end(last)
 	{
 	}
-	constexpr auto begin() const {
-		return m_first;
+	constexpr explicit range_view(std::pair<Iterator, Sentinel> pair):
+		range_view(pair.first, pair.second)
+	{
 	}
-	constexpr auto end() const {
-		return m_last;
+	
+	constexpr Iterator begin() const {
+		return m_begin;
 	}
+	constexpr Sentinel end() const {
+		return m_end;
+	}
+	
 private:
-	iterator m_first;
-	iterator m_last;
+	Iterator m_begin;
+	Sentinel m_end;
 };
-
-template<typename Iterator>
-constexpr auto size(Range<Iterator> const & range) {
-	return end(range) - begin(range);
-}
-
-template<typename Iterator>
-constexpr auto make_range(Iterator first, Iterator last) {
-	return Range<Iterator>(first, last);
-}
 
 }	// namespace technicalmachine
