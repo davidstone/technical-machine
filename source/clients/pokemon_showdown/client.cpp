@@ -24,33 +24,31 @@
 #include "battle.hpp"
 #include "inmessage.hpp"
 
+#include "../random_string.hpp"
 #include "../../settings_file.hpp"
 #include "../../team.hpp"
 
 #include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/http.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
 
+#include <fstream>
 #include <iostream>
 #include <stdexcept>
-#include <string>
-#include <sstream>
 
 namespace technicalmachine {
 namespace ps {
 
 Client::Client(unsigned depth):
-	::technicalmachine::Client(depth),
+	m_random_engine(m_rd()),
 	m_socket(m_io),
-	m_websocket(m_socket)
+	m_websocket(m_socket),
+	m_depth(depth)
 {
-	load_settings(false);
+	load_settings();
 	while (m_username.empty()) {
 		std::cerr << "Add a username and password entry to " << Settings::file_name() << " and hit enter.";
 		std::cin.get();
-		load_settings(false);
+		load_settings();
 	}
 	log_in();
 }
@@ -64,24 +62,38 @@ void Client::log_in() {
 	std::cout << "Connected\n";
 }
 
-// Temporary copy and paste here until I implement my better structure for
-// managing clients.
-void Client::load_settings(bool const reloading) {
-	auto settings = reloading ? Base::load_settings(true) : Settings();
+namespace {
+
+auto load_lines_from_file(std::filesystem::path const & file_name) {
+	auto container = std::unordered_set<std::string>{};
+	auto file = std::ifstream(file_name);
+	auto line = std::string{};
+	while (getline(file, line)) {
+		if (!line.empty())
+			container.insert(std::move(line));
+	}
+	return container;
+}
+
+}	// namespace
+
+void Client::load_settings() {
+	auto settings = Settings();
+	m_evaluate = Evaluate{};
+	m_team_file = settings.team_file;
 	m_chattiness = settings.chattiness;
 	
-	if (!reloading) {
-		Server & server = front(settings.servers);
-		m_host = server.host;
-		m_port = server.port;
-		m_resource = server.resource.value();
-		m_username = server.username;
-		if (server.password.empty()) {
-			server.password = random_string(31);
-			settings.write();
-		}
-		m_password = server.password;
+	Server & server = front(settings.servers);
+	m_host = server.host;
+	m_port = server.port;
+	m_resource = server.resource.value();
+	m_username = server.username;
+	if (server.password.empty()) {
+		server.password = random_string(m_random_engine, 31);
+		settings.write();
 	}
+	m_password = server.password;
+	m_trusted_users = load_lines_from_file("settings/trusted_users.txt");
 }
 
 void Client::run() {
@@ -89,8 +101,13 @@ void Client::run() {
 	try {
 		while (true) {
 			auto messages = read_message();
+			auto const has_room = !messages.remainder().empty() and messages.remainder().front() == '>';
+			auto const room = has_room ? messages.next().substr(1) : std::string_view{};
 			while (!messages.remainder().empty()) {
-				handle_message(InMessage(BufferView(messages.next(), '|')));
+				auto const next = messages.next();
+				if (next != "" and next != "|") {
+					handle_message(InMessage(room, BufferView(next, '|')));
+				}
 			}
 		}
 	} catch (std::exception const & ex) {
@@ -98,7 +115,11 @@ void Client::run() {
 	}
 }
 
-BufferView Client::read_message() {
+void Client::write_message(std::string_view const message) {
+	m_websocket.write(boost::asio::buffer(message));
+}
+
+BufferView<char> Client::read_message() {
 	m_buffer.consume(static_cast<std::size_t>(-1));
 	m_websocket.read(m_buffer);
 
@@ -119,12 +140,23 @@ void Client::handle_message(InMessage message) {
 		// message.remainder() == seconds since 1970|username|message
 	} else if (message.type() == "challstr") {
 		authenticate(message.remainder());
+		// After logging in, send "|/search FORMAT_NAME" to begin laddering
 	} else if (message.type() == "formats") {
 		// message.remainder() == | separated list of formats with special rules
 	} else if (message.type() == "html") {
 		// message.remainder() == HTML
 	} else if (message.type() == "init") {
-		// message.remainder() == type of room\n|bunch of other stuff
+		if (message.next() == "battle") {
+			m_battles.add_pending(
+				std::string(message.room()),
+				m_username,
+				m_detailed_stats,
+				m_evaluate,
+				m_depth,
+				std::mt19937(m_rd()),
+				generate_team()
+			);
+		}
 	} else if (message.type() == "j" or message.type() == "J" or message.type() == "join") {
 		// message.remainder() == username
 	} else if (message.type() == "l" or message.type() == "L" or message.type() == "leave") {
@@ -145,7 +177,13 @@ void Client::handle_message(InMessage message) {
 	} else if (message.type() == "uhtml" or message.type() == "uhtmlchange") {
 		// message.remainder() == NAME|HTML
 	} else if (message.type() == "updatechallenges") {
-		// message.remainder() == JSON: pending challenges
+		auto const json = m_parse_json(message.remainder());
+		for (auto const & challenge : json.get_child("challengesFrom")) {
+			auto const is_trusted = m_trusted_users.find(challenge.first) != m_trusted_users.end();
+			auto const command = is_trusted ? "|/accept " : "|/reject ";
+			write_message(command + challenge.first);
+		}
+		// "cancelchallenge" is the command to stop challenging someone
 	} else if (message.type() == "updateuser") {
 		// message.remainder() == username|guest ? 0 : 1|AVATAR
 	} else if (message.type() == "updatesearch") {
@@ -154,8 +192,9 @@ void Client::handle_message(InMessage message) {
 		// message.remainder() == number of users on server
 	} else if (message.type() == "users") {
 		// message.remainder() == comma separated list of users
+	} else if (m_battles.handle_message(message, m_websocket)) {
 	} else {
-		std::cout << "Received message of unknown type: " << message.type() << "\n\t" << message.remainder() << '\n';
+		std::cout << "Received unknown message in room: " << message.room() << " type: " << message.type() << "\n\t" << message.remainder() << '\n';
 	}
 }
 
@@ -197,30 +236,12 @@ void Client::authenticate(std::string_view const challstr) {
 	//
 	// Response begins with ']' followed by JSON object.
 	response.body().erase(0U, 1U);
-	
-	auto stream = std::stringstream(response.body());
-	
-	// Hopefully, boost::property_tree's JSON parser is secure...
-	boost::property_tree::ptree pt;
-	read_json(stream, pt);
-	
-	m_websocket.write(boost::asio::buffer("|/trn " + m_username + ",0," + pt.get<std::string>("assertion")));
-}
-
-void Client::send_battle_challenge(std::string const & opponent) {
-	std::cout << "send_battle_challenge\n";
-	static_cast<void>(opponent);
-}
-
-void Client::handle_finalize_challenge(std::string const & opponent, bool accepted, bool) {
-	std::cout << "handle_finalize_challenge\n";
-	static_cast<void>(opponent);
-	static_cast<void>(accepted);
+	auto const json = m_parse_json(response.body());
+	write_message("|/trn " + m_username + ",0," + json.get<std::string>("assertion"));
 }
 
 void Client::join_channel(std::string const & channel) {
-	std::cout << "join_channel\n";
-	static_cast<void>(channel);
+	write_message("|/join " + channel);
 }
 
 void Client::part_channel(std::string const & channel) {
@@ -229,21 +250,7 @@ void Client::part_channel(std::string const & channel) {
 }
 
 void Client::send_channel_message(std::string const & channel, std::string const & message) {
-	std::cout << "send_channel_message\n";
-	static_cast<void>(channel);
-	static_cast<void>(message);
-}
-
-void Client::send_channel_message(uint32_t channel_id, std::string const & message) {
-	std::cout << "send_channel_message\n";
-	static_cast<void>(channel_id);
-	static_cast<void>(message);
-}
-
-void Client::send_private_message(std::string const & user, std::string const & message) {
-	std::cout << "send_private_message\n";
-	static_cast<void>(user);
-	static_cast<void>(message);
+	write_message(channel + "|/msg " + message);
 }
 
 }	// namespace ps

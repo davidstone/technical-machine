@@ -166,14 +166,14 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/test/test1.tp DESTINATION ${CMAKE_B
 
 add_executable(ai
 	source/clients/pokemon_showdown/battle.cpp
+	source/clients/pokemon_showdown/battles.cpp
 	source/clients/pokemon_showdown/battle_settings.cpp
 	source/clients/pokemon_showdown/client.cpp
 	source/clients/pokemon_showdown/inmessage.cpp
+	source/clients/pokemon_showdown/json_parser.cpp
 
 	source/clients/battle.cpp
 	source/clients/battle_result.cpp
-	source/clients/battles.cpp
-	source/clients/client.cpp
 	source/clients/no_pending_challenges.cpp
 	source/clients/party.cpp
 	source/clients/timestamp.cpp
@@ -232,6 +232,15 @@ target_link_libraries(tm_test
 )
 
 
+function(set_sanitizers target)
+	if(USE_SANITIZERS)
+		foreach(SANITIZER -fsanitize=undefined -fsanitize=address)
+			target_compile_options(${target} PUBLIC ${SANITIZER})
+			target_link_libraries(${target} ${SANITIZER})
+		endforeach()
+	endif()
+endfunction()
+
 if(MSVC)
 	target_compile_options(tm_common
 		PUBLIC "/std:c++17"
@@ -240,8 +249,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	target_compile_options(tm_common PUBLIC
 		"-g"
 		"-std=c++17"
-		$<$<CONFIG:Debug>:-O1;-march=native>
-		$<$<CONFIG:Release>:-march=native>
+		"-march=native"
 		"-Weverything"
 		"-Werror"
 		"-Wno-c++98-compat"
@@ -270,21 +278,16 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		"-Wno-exit-time-destructors"
 	)
 
-	foreach(SANITIZER -fsanitize=undefined -fsanitize=address)
-		target_compile_options(tm_common PUBLIC
-			$<$<CONFIG:Debug>:${SANITIZER}>
-		)
-		target_link_libraries(tm_common
-			$<$<CONFIG:Debug>:${SANITIZER}>
-		)
-	endforeach()
+	set_sanitizers(tm_common)
+	set_sanitizers(ai)
+	set_sanitizers(predict)
+	set_sanitizers(tm_test)
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	target_compile_options(tm_common PUBLIC
 		"-g"
 		"-std=c++17"
-		$<$<CONFIG:Debug>:-Og;-march=native>
-		$<$<CONFIG:Release>:-O3;-march=native>
+		"-march=native"
 		"-Wall"
 		"-Wextra"
 		"-Wpedantic"
@@ -360,14 +363,10 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		"-Werror"
 	)
 
-	foreach(SANITIZER -fsanitize=undefined -fsanitize=address)
-		target_compile_options(tm_common PUBLIC
-			$<$<CONFIG:Debug>:${SANITIZER}>
-		)
-		target_link_libraries(tm_common
-			$<$<CONFIG:Debug>:${SANITIZER}>
-		)
-	endforeach()
+	set_sanitizers(tm_common)
+	set_sanitizers(ai)
+	set_sanitizers(predict)
+	set_sanitizers(tm_test)
 endif()
 
 add_test(tm_test tm_test)

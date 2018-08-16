@@ -18,36 +18,50 @@
 
 #pragma once
 
-#include <stdexcept>
-#include <string>
+#include <iostream>
 #include <string_view>
 
 namespace technicalmachine {
 namespace ps {
 namespace detail {
 
-static constexpr auto split(std::string_view str, char const token) {
-	auto const index = str.find(token);
+constexpr auto separator_size(char) {
+	return 1U;
+}
+constexpr auto separator_size(std::string_view const separator) {
+	return separator.size();
+}
+
+template<typename Separator>
+constexpr auto split(std::string_view str, Separator const separator) {
+	auto const index = str.find(separator);
 	if (index == std::string_view::npos) {
 		return std::pair(str, std::string_view{});
 	}
-	return std::pair(str.substr(0, index), str.substr(index + 1));
+	return std::pair(str.substr(0, index), str.substr(index + separator_size(separator)));
 }
 
 }	// namespace detail
 
 // TODO: Maybe something with iterators?
+template<typename Separator>
 struct BufferView {
-	constexpr BufferView(std::string_view buffer, char const token):
+	static_assert(std::is_same_v<Separator, char> or std::is_same_v<Separator, std::string_view>);
+
+	constexpr BufferView(std::string_view buffer, Separator const separator):
 		m_buffer(buffer),
-		m_token(token)
+		m_separator(separator)
 	{
 	}
 	
-	constexpr auto next() -> std::string_view {
-		auto const [first, second] = detail::split(m_buffer, m_token);
+	template<typename S>
+	constexpr auto next(S const separator) -> std::string_view {
+		auto const [first, second] = detail::split(m_buffer, separator);
 		m_buffer = second;
 		return first;
+	}
+	constexpr auto next() -> std::string_view {
+		return next(m_separator);
 	}
 	constexpr auto remainder() const {
 		return m_buffer;
@@ -55,13 +69,22 @@ struct BufferView {
 	
 private:
 	std::string_view m_buffer;
-	char m_token;
+	Separator m_separator;
 };
 
+BufferView(std::string_view, char const *) -> BufferView<std::string_view>;
+
 struct InMessage {
-	explicit constexpr InMessage(BufferView view):
-		m_room(view.next()),
-		m_type(view.next()),
+	explicit constexpr InMessage(std::string_view const room, BufferView<char> view):
+		m_room(room),
+		// Because messages start with a '|', discard first empty string
+		m_type([&]{
+			auto const discarded = view.next();
+			if (!discarded.empty()) {
+				std::cerr << "Expected empty string, got " << discarded << '\n';
+			}
+			return view.next();
+		}()),
 		m_view(view)
 	{
 	}
@@ -71,6 +94,10 @@ struct InMessage {
 	}
 	constexpr auto type() const noexcept {
 		return m_type;
+	}
+	template<typename Separator>
+	constexpr auto next(Separator const separator) {
+		return m_view.next(separator);
 	}
 	constexpr auto next() {
 		return m_view.next();
@@ -82,7 +109,7 @@ struct InMessage {
 private:
 	std::string_view m_room;
 	std::string_view m_type;
-	BufferView m_view;
+	BufferView<char> m_view;
 };
 
 }	// namespace ps

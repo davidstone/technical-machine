@@ -19,7 +19,6 @@
 #include "battle.hpp"
 
 #include "battle_result.hpp"
-#include "client.hpp"
 #include "random_string.hpp"
 #include "timestamp.hpp"
 
@@ -59,9 +58,11 @@
 namespace technicalmachine {
 struct DetailedStats;
 
-Battle::Battle(Party const party, std::string opponent_, TeamSize const foe_size, unsigned const battle_depth, std::mt19937 random_engine_, Team team, VisibleFoeHP max_damage_precision_):
+Battle::Battle(DetailedStats const & detailed, Evaluate const & evaluate, Party const party, std::string opponent_, unsigned const battle_depth, std::mt19937 random_engine_, Team team, TeamSize const foe_size, VisibleFoeHP max_damage_precision_):
+	m_detailed(detailed),
+	m_evaluate(evaluate),
 	opponent_name(std::move(opponent_)),
-	random_engine(random_engine_),
+	m_random_engine(random_engine_),
 	ai(std::move(team)),
 	foe(foe_size),
 	slot_memory(begin(ai.team.all_pokemon()), end(ai.team.all_pokemon())),
@@ -71,15 +72,10 @@ Battle::Battle(Party const party, std::string opponent_, TeamSize const foe_size
 	
 	my_party(party)
 {
-	initialize_turn();
 }
 
 Team Battle::predict_foe_team(DetailedStats const & detailed) {
-	return predict_team(detailed, foe.team, random_engine);
-}
-
-void Battle::handle_begin_turn(uint16_t turn_count) const {
-	std::cout << "Begin turn " << turn_count << '\n';
+	return predict_team(detailed, foe.team, m_random_engine);
 }
 
 void Battle::update_from_previous_turn() {
@@ -90,13 +86,18 @@ void Battle::update_from_previous_turn() {
 	correct_hp_and_report_errors(last->team);
 }
 
-Moves Battle::determine_action(DetailedStats const & detailed, Evaluate const & evaluate) {
+Moves Battle::determine_action() {
+	if (ai.team.size() == 0_bi or foe.team.size() == 0_bi) {
+		std::cerr << "Tried to determine an action with an empty team.\n";
+		return Moves::Struggle;
+	}
+
 	std::cout << std::string(20, '=') + '\n';
 	std::cout << "Predicting...\n";
-	auto predicted = predict_foe_team(detailed);
+	auto predicted = predict_foe_team(m_detailed);
 	std::cout << to_string(predicted) << '\n';
 
-	return expectiminimax(ai.team, predicted, weather, depth, evaluate, random_engine);
+	return expectiminimax(ai.team, predicted, weather, depth, m_evaluate, m_random_engine);
 }
 
 void Battle::handle_use_move(Party const user, uint8_t /*slot*/, Moves move_name) {
@@ -176,13 +177,6 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8
 	}
 }
 
-void Battle::handle_hp_change(Party const changing, uint8_t /*slot*/, UpdatedHP::VisibleHP remaining_hp) {
-	// "slot" is only useful in NvN, which TM does not yet
-	// support.
-	auto const & team = get_team(changing).team;
-	updated_hp.update(team.is_me(), team.replacement(), remaining_hp);
-}
-
 void Battle::handle_direct_damage(Party const damaged, uint8_t const /*slot*/, UpdatedHP::VisibleHP const visible_damage) {
 	auto & battle_team = get_team(damaged);
 	auto const & team = battle_team.team;
@@ -234,14 +228,6 @@ void Battle::correct_hp_and_report_errors(Team & team) {
 	}
 }
 
-void Battle::handle_fainted(Party const fainter, uint8_t /*slot*/) {
-	// "slot" is only useful in situations other than 1v1, which TM does not yet
-	// support.
-	auto const & team = get_team(fainter).team;
-	std::cerr << to_string(static_cast<Species>(team.pokemon())) << " fainted\n";
-	updated_hp.faint(team.is_me(), team.pokemon());
-}
-
 namespace {
 
 std::string get_extension() {
@@ -249,8 +235,7 @@ std::string get_extension() {
 	return ".sbt";
 }
 
-template<typename RandomEngine>
-std::filesystem::path generate_team_file_name(RandomEngine & random_engine) {
+std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 	// Randomly generates a file name in 8.3 format. It then checks to see if
 	// that file name already exists. If it does, it randomly generates a new
 	// file name, and continues until it generates a name that does not exist.
@@ -270,10 +255,10 @@ std::filesystem::path generate_team_file_name(RandomEngine & random_engine) {
 
 }	// namespace
 
-void Battle::handle_end(Client const & client, Result const result) {
+void Battle::handle_end(Result const result) {
 	std::cout << timestamp() << ": " << to_string(result) << " a battle vs. " << opponent() << '\n';
 	if (result == Result::lost) {
-		pl::write_team(predict_foe_team(client.detailed()), generate_team_file_name(random_engine));
+		pl::write_team(predict_foe_team(m_detailed), generate_team_file_name(m_random_engine));
 	}
 }
 
@@ -285,20 +270,6 @@ uint8_t Battle::switch_slot(Moves move) const {
 	}
 	return static_cast<std::uint8_t>(it - begin(slot_memory));
 }
-
-void Battle::initialize_turn() {
-	ai.team.reset_between_turns();
-	foe.team.reset_between_turns();
-	updated_hp.reset_between_turns();
-	// Simulators might not send an HP change message if a move does 0 damage.
-	move_damage = false;
-	
-	first = nullptr;
-	last = nullptr;
-	ai.flags = {};
-	foe.flags = {};
-}
-
 
 void Battle::do_turn() {
 	assert(first);

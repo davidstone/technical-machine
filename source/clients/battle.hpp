@@ -26,44 +26,88 @@
 #include "../variable.hpp"
 #include "../weather.hpp"
 
+#include "../evaluate/evaluate.hpp"
+#include "../evaluate/expectiminimax.hpp"
+
 #include "../move/max_moves_per_pokemon.hpp"
 #include "../move/moves.hpp"
 #include "../move/use_move.hpp"
 
 #include "../pokemon/species_forward.hpp"
 
+#include "../string_conversions/pokemon.hpp"
+
 #include <containers/static_vector/static_vector.hpp>
+
+#include <boost/beast/websocket.hpp>
 
 #include <cstdint>
 #include <filesystem>
+#include <iostream>
 #include <random>
 #include <string>
 
 namespace technicalmachine {
-struct Client;
 struct DetailedStats;
-struct Evaluate;
-struct Level;
 
 struct Battle {
-	Battle(Party party, std::string opponent, TeamSize foe_size, unsigned battle_depth, std::mt19937 random_engine, Team team, VisibleFoeHP max_damage_precision = 48_bi);
+	Battle(DetailedStats const & detailed, Evaluate const & evaluate, Party party, std::string opponent, unsigned battle_depth, std::mt19937 random_engine_, Team team, TeamSize foe_size, VisibleFoeHP max_damage_precision = 48_bi);
 
+	Moves determine_action();
+	
 	bool is_me(Party const other_party) const {
 		return my_party == other_party;
 	}
 
 	Team predict_foe_team(DetailedStats const & detailed);
-	void handle_begin_turn(uint16_t turn_count) const;
+	
+	auto move_index(Moves const move) const {
+		auto const moves = all_moves(ai.team.pokemon()).regular();
+		auto const it = containers::find(begin(moves), end(moves), move);
+		return it - begin(moves);
+	}
+	
+	std::mt19937 & random_engine() {
+		return m_random_engine;
+	}
+	
+	template<typename Integer>
+	void handle_begin_turn(Integer const turn_count) {
+		std::cout << "Begin turn " << turn_count << '\n';
+		ai.team.reset_between_turns();
+		foe.team.reset_between_turns();
+		updated_hp.reset_between_turns();
+		// Simulators might not send an HP change message if a move does 0 damage.
+		move_damage = false;
+		
+		first = nullptr;
+		last = nullptr;
+		ai.flags = {};
+		foe.flags = {};
+	}
+
 	void handle_use_move(Party user, uint8_t slot, Moves move_name);
 	void handle_send_out(Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, Level level);
-	void handle_fainted(Party fainter, uint8_t slot);
-	void handle_end(Client const & client, Result const result);
+	void handle_fainted(Party const fainter, uint8_t /*slot*/) {
+		// "slot" is only useful in situations other than 1v1, which TM does not yet
+		// support.
+		auto const & team = get_team(fainter).team;
+		std::cerr << to_string(static_cast<Species>(team.pokemon())) << " fainted\n";
+		updated_hp.faint(team.is_me(), team.pokemon());
+	}
+
+	void handle_end(Result const result);
 
 	std::string const & opponent() const {
 		return opponent_name;
 	}
 
-	void handle_hp_change(Party changer, uint8_t slot, UpdatedHP::VisibleHP remaining_hp);
+	void handle_hp_change(Party const changing, uint8_t /*slot*/, UpdatedHP::VisibleHP remaining_hp) {
+		// "slot" is only useful in NvN, which TM does not yet
+		// support.
+		auto const & team = get_team(changing).team;
+		updated_hp.update(team.is_me(), team.replacement(), remaining_hp);
+	}
 
 	bool is_valid_hp_change(Party changer, UpdatedHP::VisibleHP remaining_hp, int received_change) const {
 		return hp_change(changer, remaining_hp) == received_change;
@@ -77,7 +121,6 @@ struct Battle {
 
 	uint8_t switch_slot(Moves move) const;
 
-	void initialize_turn();
 	int hp_change(Party changing, UpdatedHP::VisibleHP remaining_hp) const;
 
 	using MaxVisibleHPChange = std::common_type<VisibleFoeHP, HP::max_type>::type;
@@ -128,7 +171,6 @@ private:
 	};
 
 
-	Moves determine_action(DetailedStats const & detailed, Evaluate const & evaluate);
 	void correct_hp_and_report_errors(Team & team);
 	void normalize_hp();
 	void normalize_hp(Team & team);
@@ -149,18 +191,20 @@ private:
 		return is_me(party) ? ai : foe;
 	}
 
+	DetailedStats const & m_detailed;
+	Evaluate m_evaluate;
 	std::string opponent_name;
-	std::mt19937 random_engine;
+	std::mt19937 m_random_engine;
 	BattleTeam ai;
 	BattleTeam foe;
 	containers::static_vector<Species, static_cast<intmax_t>(max_pokemon_per_team)> slot_memory;
 	UpdatedHP updated_hp;
 	Weather weather;
-	BattleTeam * first;
-	BattleTeam * last;
+	BattleTeam * first = nullptr;
+	BattleTeam * last = nullptr;
 	unsigned depth;
 	VisibleFoeHP max_damage_precision;
-	bool move_damage;
+	bool move_damage = false;
 	Party my_party;
 };
 
