@@ -279,6 +279,7 @@ Moves from_string(std::string_view const str) {
 		{ "growth", Moves::Growth },
 		{ "razor leaf", Moves::Razor_Leaf },
 		{ "razorleaf", Moves::Razor_Leaf },
+		{ "solar beam", Moves::SolarBeam },
 		{ "solarbeam", Moves::SolarBeam },
 		{ "poisonpowder", Moves::PoisonPowder },
 		{ "stun spore", Moves::Stun_Spore },
