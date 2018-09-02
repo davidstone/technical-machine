@@ -76,9 +76,12 @@ auto top_sub_elements(boost::property_tree::ptree const & pt) {
 	auto data = all_sub_elements(pt);
 	auto const middle = (size(data) >= max_moves_per_pokemon) ? begin(data) + max_moves_per_pokemon : end(data);
 	std::partial_sort(begin(data), middle, end(data), std::greater<>());
-	auto adapt = [](auto const it) { return from_string<Moves>(it->second); };
-	// Use std::ref because lambdas are not assignable
-	return DetailedStats::UsedMoves(containers::iterator_adapter(begin(data), std::ref(adapt)), middle);
+	auto adapt = [](auto const unadapted) {
+		auto dereference = [](auto const it) { return from_string<Moves>(it->second); };
+		// Use std::ref because lambdas are not assignable
+		return containers::iterator_adapter(unadapted, std::ref(dereference));
+	};
+	return DetailedStats::UsedMoves(adapt(begin(data)), adapt(middle));
 }
 
 }	// namespace
