@@ -459,7 +459,7 @@ void BattleParser::send_random_move() {
 	auto distribution = std::uniform_int_distribution(1, static_cast<int>(max_moves_per_pokemon + max_pokemon_per_team));
 	auto const result = distribution(m_battle.random_engine());
 
-	auto switch_move = [=]{ return to_string(result - max_moves_per_pokemon); };
+	auto switch_move = [=]{ return std::to_string(result - max_moves_per_pokemon); };
 	auto move_index = [=]{ return std::to_string(result); };
 	auto const is_switch = result > max_moves_per_pokemon;
 	send_message(m_id + (is_switch ? "|/switch " + switch_move() : "|/move " + move_index()));

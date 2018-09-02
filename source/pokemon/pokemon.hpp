@@ -17,9 +17,6 @@
 
 #pragma once
 
-#include <cstdint>
-#include <string>
-
 #include "happiness.hpp"
 #include "level.hpp"
 #include "species.hpp"
@@ -37,6 +34,11 @@
 
 #include "../type/collection.hpp"
 
+#include <containers/string.hpp>
+
+#include <cstdint>
+#include <string>
+
 namespace technicalmachine {
 // #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
@@ -46,7 +48,7 @@ struct Pokemon {
 	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
 	operator Species() const;
 	
-	std::string const & get_nickname() const;
+	std::string_view get_nickname() const;
 
 	// These cannot be defined in the class because because I rely on a
 	// conversion operator. Friend functions only declared in a class body are
@@ -222,7 +224,7 @@ inline void switch_in(Pokemon & pokemon) {
 }
 
 
-std::string to_string(Pokemon const & pokemon, bool include_nickname = false);
+containers::string to_string(Pokemon const & pokemon, bool include_nickname = false);
 
 inline auto hp_ratio(Pokemon const & pokemon) {
 	auto const & hp = get_hp(pokemon);

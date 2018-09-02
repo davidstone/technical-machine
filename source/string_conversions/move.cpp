@@ -22,142 +22,588 @@
 
 #include "../move/moves.hpp"
 
-#include <containers/array/array.hpp>
-
-#include <cassert>
 #include <map>
 
 namespace technicalmachine {
 
-std::string const & to_string(Moves const name) {
-	static auto const name_to_string = containers::array<std::string, std::numeric_limits<Moves>::max().value() + 1>{
+std::string_view to_string(Moves const move) {
+	switch (move) {
 		// Generation 1
-		"Switch0", "Switch1", "Switch2", "Switch3", "Switch4",
-		"Switch5", "Hit self in confusion", "Pound", "Karate Chop", "DoubleSlap",
-		"Comet Punch", "Mega Punch", "Pay Day", "Fire Punch", "Ice Punch",
-		"ThunderPunch", "Scratch", "ViceGrip", "Guillotine", "Razor Wind",
-		"Swords Dance", "Cut", "Gust", "Wing Attack", "Whirlwind",
-		"Fly", "Bind", "Slam", "Vine Whip", "Stomp",
-		"Double Kick", "Mega Kick", "Jump Kick", "Rolling Kick", "Sand-Attack",
-		"Headbutt", "Horn Attack", "Fury Attack", "Horn Drill", "Tackle",
-		"Body Slam", "Wrap", "Take Down", "Thrash", "Double-Edge",
-		"Tail Whip", "Poison Sting", "Twineedle", "Pin Missile", "Leer",
-		"Bite", "Growl", "Roar", "Sing", "Supersonic",
-		"SonicBoom", "Disable", "Acid", "Ember", "Flamethrower",
-		"Mist", "Water Gun", "Hydro Pump", "Surf", "Ice Beam",
-		"Blizzard", "Psybeam", "BubbleBeam", "Aurora Beam", "Hyper Beam",
-		"Peck", "Drill Peck", "Submission", "Low Kick", "Counter",
-		"Seismic Toss", "Strength", "Absorb", "Mega Drain", "Leech Seed",
-		"Growth", "Razor Leaf", "SolarBeam", "PoisonPowder", "Stun Spore",
-		"Sleep Powder", "Petal Dance", "String Shot", "Dragon Rage", "Fire Spin",
-		"ThunderShock", "Thunderbolt", "Thunder Wave", "Thunder", "Rock Throw",
-		"Earthquake", "Fissure", "Dig", "Toxic", "Confusion",
-		"Psychic", "Hypnosis", "Meditate", "Agility", "Quick Attack",
-		"Rage", "Teleport", "Night Shade", "Mimic", "Screech",
-		"Double Team", "Recover", "Harden", "Minimize", "SmokeScreen",
-		"Confuse Ray", "Withdraw", "Defense Curl", "Barrier", "Light Screen",
-		"Haze", "Reflect", "Focus Energy", "Bide", "Metronome",
-		"Mirror Move", "Selfdestruct", "Egg Bomb", "Lick", "Smog",
-		"Sludge", "Bone Club", "Fire Blast", "Waterfall", "Clamp",
-		"Swift", "Skull Bash", "Spike Cannon", "Constrict", "Amnesia",
-		"Kinesis", "Softboiled", "Hi Jump Kick", "Glare", "Dream Eater",
-		"Poison Gas", "Barrage", "Leech Life", "Lovely Kiss", "Sky Attack",
-		"Transform", "Bubble", "Dizzy Punch", "Spore", "Flash",
-		"Psywave", "Splash", "Acid Armor", "Crabhammer", "Explosion",
-		"Fury Swipes", "Bonemerang", "Rest", "Rock Slide", "Hyper Fang",
-		"Sharpen", "Conversion", "Tri Attack", "Super Fang", "Slash",
-		"Substitute", "Struggle",
-
+		case Moves::Switch0: return "Switch0";
+		case Moves::Switch1: return "Switch1";
+		case Moves::Switch2: return "Switch2";
+		case Moves::Switch3: return "Switch3";
+		case Moves::Switch4: return "Switch4";
+		case Moves::Switch5: return "Switch5";
+		case Moves::Hit_Self: return "Hit self in confusion";
+		case Moves::Pound: return "Pound";
+		case Moves::Karate_Chop: return "Karate Chop";
+		case Moves::DoubleSlap: return "DoubleSlap";
+		case Moves::Comet_Punch: return "Comet Punch";
+		case Moves::Mega_Punch: return "Mega Punch";
+		case Moves::Pay_Day: return "Pay Day";
+		case Moves::Fire_Punch: return "Fire Punch";
+		case Moves::Ice_Punch: return "Ice Punch";
+		case Moves::ThunderPunch: return "ThunderPunch";
+		case Moves::Scratch: return "Scratch";
+		case Moves::ViceGrip: return "ViceGrip";
+		case Moves::Guillotine: return "Guillotine";
+		case Moves::Razor_Wind: return "Razor Wind";
+		case Moves::Swords_Dance: return "Swords Dance";
+		case Moves::Cut: return "Cut";
+		case Moves::Gust: return "Gust";
+		case Moves::Wing_Attack: return "Wing Attack";
+		case Moves::Whirlwind: return "Whirlwind";
+		case Moves::Fly: return "Fly";
+		case Moves::Bind: return "Bind";
+		case Moves::Slam: return "Slam";
+		case Moves::Vine_Whip: return "Vine Whip";
+		case Moves::Stomp: return "Stomp";
+		case Moves::Double_Kick: return "Double Kick";
+		case Moves::Mega_Kick: return "Mega Kick";
+		case Moves::Jump_Kick: return "Jump Kick";
+		case Moves::Rolling_Kick: return "Rolling Kick";
+		case Moves::Sand_Attack: return "Sand-Attack";
+		case Moves::Headbutt: return "Headbutt";
+		case Moves::Horn_Attack: return "Horn Attack";
+		case Moves::Fury_Attack: return "Fury Attack";
+		case Moves::Horn_Drill: return "Horn Drill";
+		case Moves::Tackle: return "Tackle";
+		case Moves::Body_Slam: return "Body Slam";
+		case Moves::Wrap: return "Wrap";
+		case Moves::Take_Down: return "Take Down";
+		case Moves::Thrash: return "Thrash";
+		case Moves::Double_Edge: return "Double-Edge";
+		case Moves::Tail_Whip: return "Tail Whip";
+		case Moves::Poison_Sting: return "Poison Sting";
+		case Moves::Twineedle: return "Twineedle";
+		case Moves::Pin_Missile: return "Pin Missile";
+		case Moves::Leer: return "Leer";
+		case Moves::Bite: return "Bite";
+		case Moves::Growl: return "Growl";
+		case Moves::Roar: return "Roar";
+		case Moves::Sing: return "Sing";
+		case Moves::Supersonic: return "Supersonic";
+		case Moves::SonicBoom: return "SonicBoom";
+		case Moves::Disable: return "Disable";
+		case Moves::Acid: return "Acid";
+		case Moves::Ember: return "Ember";
+		case Moves::Flamethrower: return "Flamethrower";
+		case Moves::Mist: return "Mist";
+		case Moves::Water_Gun: return "Water Gun";
+		case Moves::Hydro_Pump: return "Hydro Pump";
+		case Moves::Surf: return "Surf";
+		case Moves::Ice_Beam: return "Ice Beam";
+		case Moves::Blizzard: return "Blizzard";
+		case Moves::Psybeam: return "Psybeam";
+		case Moves::BubbleBeam: return "BubbleBeam";
+		case Moves::Aurora_Beam: return "Aurora Beam";
+		case Moves::Hyper_Beam: return "Hyper Beam";
+		case Moves::Peck: return "Peck";
+		case Moves::Drill_Peck: return "Drill Peck";
+		case Moves::Submission: return "Submission";
+		case Moves::Low_Kick: return "Low Kick";
+		case Moves::Counter: return "Counter";
+		case Moves::Seismic_Toss: return "Seismic Toss";
+		case Moves::Strength: return "Strength";
+		case Moves::Absorb: return "Absorb";
+		case Moves::Mega_Drain: return "Mega Drain";
+		case Moves::Leech_Seed: return "Leech Seed";
+		case Moves::Growth: return "Growth";
+		case Moves::Razor_Leaf: return "Razor Leaf";
+		case Moves::SolarBeam: return "SolarBeam";
+		case Moves::PoisonPowder: return "PoisonPowder";
+		case Moves::Stun_Spore: return "Stun Spore";
+		case Moves::Sleep_Powder: return "Sleep Powder";
+		case Moves::Petal_Dance: return "Petal Dance";
+		case Moves::String_Shot: return "String Shot";
+		case Moves::Dragon_Rage: return "Dragon Rage";
+		case Moves::Fire_Spin: return "Fire Spin";
+		case Moves::ThunderShock: return "ThunderShock";
+		case Moves::Thunderbolt: return "Thunderbolt";
+		case Moves::Thunder_Wave: return "Thunder Wave";
+		case Moves::Thunder: return "Thunder";
+		case Moves::Rock_Throw: return "Rock Throw";
+		case Moves::Earthquake: return "Earthquake";
+		case Moves::Fissure: return "Fissure";
+		case Moves::Dig: return "Dig";
+		case Moves::Toxic: return "Toxic";
+		case Moves::Confusion: return "Confusion";
+		case Moves::Psychic: return "Psychic";
+		case Moves::Hypnosis: return "Hypnosis";
+		case Moves::Meditate: return "Meditate";
+		case Moves::Agility: return "Agility";
+		case Moves::Quick_Attack: return "Quick Attack";
+		case Moves::Rage: return "Rage";
+		case Moves::Teleport: return "Teleport";
+		case Moves::Night_Shade: return "Night Shade";
+		case Moves::Mimic: return "Mimic";
+		case Moves::Screech: return "Screech";
+		case Moves::Double_Team: return "Double Team";
+		case Moves::Recover: return "Recover";
+		case Moves::Harden: return "Harden";
+		case Moves::Minimize: return "Minimize";
+		case Moves::SmokeScreen: return "SmokeScreen";
+		case Moves::Confuse_Ray: return "Confuse Ray";
+		case Moves::Withdraw: return "Withdraw";
+		case Moves::Defense_Curl: return "Defense Curl";
+		case Moves::Barrier: return "Barrier";
+		case Moves::Light_Screen: return "Light Screen";
+		case Moves::Haze: return "Haze";
+		case Moves::Reflect: return "Reflect";
+		case Moves::Focus_Energy: return "Focus Energy";
+		case Moves::Bide: return "Bide";
+		case Moves::Metronome: return "Metronome";
+		case Moves::Mirror_Move: return "Mirror Move";
+		case Moves::Selfdestruct: return "Selfdestruct";
+		case Moves::Egg_Bomb: return "Egg Bomb";
+		case Moves::Lick: return "Lick";
+		case Moves::Smog: return "Smog";
+		case Moves::Sludge: return "Sludge";
+		case Moves::Bone_Club: return "Bone Club";
+		case Moves::Fire_Blast: return "Fire Blast";
+		case Moves::Waterfall: return "Waterfall";
+		case Moves::Clamp: return "Clamp";
+		case Moves::Swift: return "Swift";
+		case Moves::Skull_Bash: return "Skull Bash";
+		case Moves::Spike_Cannon: return "Spike Cannon";
+		case Moves::Constrict: return "Constrict";
+		case Moves::Amnesia: return "Amnesia";
+		case Moves::Kinesis: return "Kinesis";
+		case Moves::Softboiled: return "Softboiled";
+		case Moves::Hi_Jump_Kick: return "Hi Jump Kick";
+		case Moves::Glare: return "Glare";
+		case Moves::Dream_Eater: return "Dream Eater";
+		case Moves::Poison_Gas: return "Poison Gas";
+		case Moves::Barrage: return "Barrage";
+		case Moves::Leech_Life: return "Leech Life";
+		case Moves::Lovely_Kiss: return "Lovely Kiss";
+		case Moves::Sky_Attack: return "Sky Attack";
+		case Moves::Transform: return "Transform";
+		case Moves::Bubble: return "Bubble";
+		case Moves::Dizzy_Punch: return "Dizzy Punch";
+		case Moves::Spore: return "Spore";
+		case Moves::Flash: return "Flash";
+		case Moves::Psywave: return "Psywave";
+		case Moves::Splash: return "Splash";
+		case Moves::Acid_Armor: return "Acid Armor";
+		case Moves::Crabhammer: return "Crabhammer";
+		case Moves::Explosion: return "Explosion";
+		case Moves::Fury_Swipes: return "Fury Swipes";
+		case Moves::Bonemerang: return "Bonemerang";
+		case Moves::Rest: return "Rest";
+		case Moves::Rock_Slide: return "Rock Slide";
+		case Moves::Hyper_Fang: return "Hyper Fang";
+		case Moves::Sharpen: return "Sharpen";
+		case Moves::Conversion: return "Conversion";
+		case Moves::Tri_Attack: return "Tri Attack";
+		case Moves::Super_Fang: return "Super Fang";
+		case Moves::Slash: return "Slash";
+		case Moves::Substitute: return "Substitute";
+		case Moves::Struggle: return "Struggle";
+		
 		// Generation 2
-		"Sketch", "Triple Kick", "Thief", "Spider Web", "Mind Reader",
-		"Nightmare", "Flame Wheel", "Snore", "Curse", "Flail",
-		"Conversion 2", "Aeroblast", "Cotton Spore", "Reversal", "Spite",
-		"Powder Snow", "Protect", "Mach Punch", "Scary Face", "Faint Attack",
-		"Sweet Kiss", "Belly Drum", "Sludge Bomb", "Mud-Slap", "Octazooka",
-		"Spikes", "Zap Cannon", "Foresight", "Destiny Bond", "Perish Song",
-		"Icy Wind", "Detect", "Bone Rush", "Lock-On", "Outrage",
-		"Sandstorm", "Giga Drain", "Endure", "Charm", "Rollout",
-		"False Swipe", "Swagger", "Milk Drink", "Spark", "Fury Cutter",
-		"Steel Wing", "Mean Look", "Attract", "Sleep Talk", "Heal Bell",
-		"Return", "Present", "Frustration", "Safeguard", "Pain Split",
-		"Sacred Fire", "Magnitude", "DynamicPunch", "Megahorn", "DragonBreath",
-		"Baton Pass", "Encore", "Pursuit", "Rapid Spin", "Sweet Scent",
-		"Iron Tail", "Metal Claw", "Vital Throw", "Morning Sun", "Synthesis",
-		"Moonlight", "Hidden Power", "Cross Chop", "Twister", "Rain Dance",
-		"Sunny Day", "Crunch", "Mirror Coat", "Psych Up", "ExtremeSpeed",
-		"AncientPower", "Shadow Ball", "Future Sight", "Rock Smash", "Whirlpool",
-		"Beat Up",
-
+		case Moves::Sketch: return "Sketch";
+		case Moves::Triple_Kick: return "Triple Kick";
+		case Moves::Thief: return "Thief";
+		case Moves::Spider_Web: return "Spider Web";
+		case Moves::Mind_Reader: return "Mind Reader";
+		case Moves::Nightmare: return "Nightmare";
+		case Moves::Flame_Wheel: return "Flame Wheel";
+		case Moves::Snore: return "Snore";
+		case Moves::Curse: return "Curse";
+		case Moves::Flail: return "Flail";
+		case Moves::Conversion_2: return "Conversion 2";
+		case Moves::Aeroblast: return "Aeroblast";
+		case Moves::Cotton_Spore: return "Cotton Spore";
+		case Moves::Reversal: return "Reversal";
+		case Moves::Spite: return "Spite";
+		case Moves::Powder_Snow: return "Powder Snow";
+		case Moves::Protect: return "Protect";
+		case Moves::Mach_Punch: return "Mach Punch";
+		case Moves::Scary_Face: return "Scary Face";
+		case Moves::Faint_Attack: return "Faint Attack";
+		case Moves::Sweet_Kiss: return "Sweet Kiss";
+		case Moves::Belly_Drum: return "Belly Drum";
+		case Moves::Sludge_Bomb: return "Sludge Bomb";
+		case Moves::Mud_Slap: return "Mud-Slap";
+		case Moves::Octazooka: return "Octazooka";
+		case Moves::Spikes: return "Spikes";
+		case Moves::Zap_Cannon: return "Zap Cannon";
+		case Moves::Foresight: return "Foresight";
+		case Moves::Destiny_Bond: return "Destiny Bond";
+		case Moves::Perish_Song: return "Perish Song";
+		case Moves::Icy_Wind: return "Icy Wind";
+		case Moves::Detect: return "Detect";
+		case Moves::Bone_Rush: return "Bone Rush";
+		case Moves::Lock_On: return "Lock-On";
+		case Moves::Outrage: return "Outrage";
+		case Moves::Sandstorm: return "Sandstorm";
+		case Moves::Giga_Drain: return "Giga Drain";
+		case Moves::Endure: return "Endure";
+		case Moves::Charm: return "Charm";
+		case Moves::Rollout: return "Rollout";
+		case Moves::False_Swipe: return "False Swipe";
+		case Moves::Swagger: return "Swagger";
+		case Moves::Milk_Drink: return "Milk Drink";
+		case Moves::Spark: return "Spark";
+		case Moves::Fury_Cutter: return "Fury Cutter";
+		case Moves::Steel_Wing: return "Steel Wing";
+		case Moves::Mean_Look: return "Mean Look";
+		case Moves::Attract: return "Attract";
+		case Moves::Sleep_Talk: return "Sleep Talk";
+		case Moves::Heal_Bell: return "Heal Bell";
+		case Moves::Return: return "Return";
+		case Moves::Present: return "Present";
+		case Moves::Frustration: return "Frustration";
+		case Moves::Safeguard: return "Safeguard";
+		case Moves::Pain_Split: return "Pain Split";
+		case Moves::Sacred_Fire: return "Sacred Fire";
+		case Moves::Magnitude: return "Magnitude";
+		case Moves::DynamicPunch: return "DynamicPunch";
+		case Moves::Megahorn: return "Megahorn";
+		case Moves::DragonBreath: return "DragonBreath";
+		case Moves::Baton_Pass: return "Baton Pass";
+		case Moves::Encore: return "Encore";
+		case Moves::Pursuit: return "Pursuit";
+		case Moves::Rapid_Spin: return "Rapid Spin";
+		case Moves::Sweet_Scent: return "Sweet Scent";
+		case Moves::Iron_Tail: return "Iron Tail";
+		case Moves::Metal_Claw: return "Metal Claw";
+		case Moves::Vital_Throw: return "Vital Throw";
+		case Moves::Morning_Sun: return "Morning Sun";
+		case Moves::Synthesis: return "Synthesis";
+		case Moves::Moonlight: return "Moonlight";
+		case Moves::Hidden_Power: return "Hidden Power";
+		case Moves::Cross_Chop: return "Cross Chop";
+		case Moves::Twister: return "Twister";
+		case Moves::Rain_Dance: return "Rain Dance";
+		case Moves::Sunny_Day: return "Sunny Day";
+		case Moves::Crunch: return "Crunch";
+		case Moves::Mirror_Coat: return "Mirror Coat";
+		case Moves::Psych_Up: return "Psych Up";
+		case Moves::ExtremeSpeed: return "ExtremeSpeed";
+		case Moves::AncientPower: return "AncientPower";
+		case Moves::Shadow_Ball: return "Shadow Ball";
+		case Moves::Future_Sight: return "Future Sight";
+		case Moves::Rock_Smash: return "Rock Smash";
+		case Moves::Whirlpool: return "Whirlpool";
+		case Moves::Beat_Up: return "Beat Up";
+		
 		// Generation 3
-		"Fake Out", "Uproar", "Stockpile", "Spit Up", "Swallow",
-		"Heat Wave", "Hail", "Torment", "Flatter", "Will-O-Wisp",
-		"Memento", "Facade", "Focus Punch", "SmellingSalt", "Follow Me",
-		"Nature Power", "Charge", "Taunt", "Helping Hand", "Trick",
-		"Role Play", "Wish", "Assist", "Ingrain", "Superpower",
-		"Magic Coat", "Recycle", "Revenge", "Brick Break", "Yawn",
-		"Knock Off", "Endeavor", "Eruption", "Skill Swap", "Imprison",
-		"Refresh", "Grudge", "Snatch", "Secret Power", "Dive",
-		"Arm Thrust", "Camouflage", "Tail Glow", "Luster Purge", "Mist Ball",
-		"FeatherDance", "Teeter Dance", "Blaze Kick", "Mud Sport", "Ice Ball",
-		"Needle Arm", "Slack Off", "Hyper Voice", "Poison Fang", "Crush Claw",
-		"Blast Burn", "Hydro Cannon", "Meteor Mash", "Astonish", "Weather Ball",
-		"Aromatherapy", "Fake Tears", "Air Cutter", "Overheat", "Odor Sleuth",
-		"Rock Tomb", "Silver Wind", "Metal Sound", "GrassWhistle", "Tickle",
-		"Cosmic Power", "Water Spout", "Signal Beam", "Shadow Punch", "Extrasensory",
-		"Sky Uppercut", "Sand Tomb", "Sheer Cold", "Muddy Water", "Bullet Seed",
-		"Aerial Ace", "Icicle Spear", "Iron Defense", "Block", "Howl",
-		"Dragon Claw", "Frenzy Plant", "Bulk Up", "Bounce", "Mud Shot",
-		"Poison Tail", "Covet", "Volt Tackle", "Magical Leaf", "Water Sport",
-		"Calm Mind", "Leaf Blade", "Dragon Dance", "Rock Blast", "Shock Wave",
-		"Water Pulse", "Doom Desire", "Psycho Boost",
+		case Moves::Fake_Out: return "Fake Out";
+		case Moves::Uproar: return "Uproar";
+		case Moves::Stockpile: return "Stockpile";
+		case Moves::Spit_Up: return "Spit Up";
+		case Moves::Swallow: return "Swallow";
+		case Moves::Heat_Wave: return "Heat Wave";
+		case Moves::Hail: return "Hail";
+		case Moves::Torment: return "Torment";
+		case Moves::Flatter: return "Flatter";
+		case Moves::Will_O_Wisp: return "Will-O-Wisp";
+		case Moves::Memento: return "Memento";
+		case Moves::Facade: return "Facade";
+		case Moves::Focus_Punch: return "Focus Punch";
+		case Moves::SmellingSalt: return "SmellingSalt";
+		case Moves::Follow_Me: return "Follow Me";
+		case Moves::Nature_Power: return "Nature Power";
+		case Moves::Charge: return "Charge";
+		case Moves::Taunt: return "Taunt";
+		case Moves::Helping_Hand: return "Helping Hand";
+		case Moves::Trick: return "Trick";
+		case Moves::Role_Play: return "Role Play";
+		case Moves::Wish: return "Wish";
+		case Moves::Assist: return "Assist";
+		case Moves::Ingrain: return "Ingrain";
+		case Moves::Superpower: return "Superpower";
+		case Moves::Magic_Coat: return "Magic Coat";
+		case Moves::Recycle: return "Recycle";
+		case Moves::Revenge: return "Revenge";
+		case Moves::Brick_Break: return "Brick Break";
+		case Moves::Yawn: return "Yawn";
+		case Moves::Knock_Off: return "Knock Off";
+		case Moves::Endeavor: return "Endeavor";
+		case Moves::Eruption: return "Eruption";
+		case Moves::Skill_Swap: return "Skill Swap";
+		case Moves::Imprison: return "Imprison";
+		case Moves::Refresh: return "Refresh";
+		case Moves::Grudge: return "Grudge";
+		case Moves::Snatch: return "Snatch";
+		case Moves::Secret_Power: return "Secret Power";
+		case Moves::Dive: return "Dive";
+		case Moves::Arm_Thrust: return "Arm Thrust";
+		case Moves::Camouflage: return "Camouflage";
+		case Moves::Tail_Glow: return "Tail Glow";
+		case Moves::Luster_Purge: return "Luster Purge";
+		case Moves::Mist_Ball: return "Mist Ball";
+		case Moves::FeatherDance: return "FeatherDance";
+		case Moves::Teeter_Dance: return "Teeter Dance";
+		case Moves::Blaze_Kick: return "Blaze Kick";
+		case Moves::Mud_Sport: return "Mud Sport";
+		case Moves::Ice_Ball: return "Ice Ball";
+		case Moves::Needle_Arm: return "Needle Arm";
+		case Moves::Slack_Off: return "Slack Off";
+		case Moves::Hyper_Voice: return "Hyper Voice";
+		case Moves::Poison_Fang: return "Poison Fang";
+		case Moves::Crush_Claw: return "Crush Claw";
+		case Moves::Blast_Burn: return "Blast Burn";
+		case Moves::Hydro_Cannon: return "Hydro Cannon";
+		case Moves::Meteor_Mash: return "Meteor Mash";
+		case Moves::Astonish: return "Astonish";
+		case Moves::Weather_Ball: return "Weather Ball";
+		case Moves::Aromatherapy: return "Aromatherapy";
+		case Moves::Fake_Tears: return "Fake Tears";
+		case Moves::Air_Cutter: return "Air Cutter";
+		case Moves::Overheat: return "Overheat";
+		case Moves::Odor_Sleuth: return "Odor Sleuth";
+		case Moves::Rock_Tomb: return "Rock Tomb";
+		case Moves::Silver_Wind: return "Silver Wind";
+		case Moves::Metal_Sound: return "Metal Sound";
+		case Moves::GrassWhistle: return "GrassWhistle";
+		case Moves::Tickle: return "Tickle";
+		case Moves::Cosmic_Power: return "Cosmic Power";
+		case Moves::Water_Spout: return "Water Spout";
+		case Moves::Signal_Beam: return "Signal Beam";
+		case Moves::Shadow_Punch: return "Shadow Punch";
+		case Moves::Extrasensory: return "Extrasensory";
+		case Moves::Sky_Uppercut: return "Sky Uppercut";
+		case Moves::Sand_Tomb: return "Sand Tomb";
+		case Moves::Sheer_Cold: return "Sheer Cold";
+		case Moves::Muddy_Water: return "Muddy Water";
+		case Moves::Bullet_Seed: return "Bullet Seed";
+		case Moves::Aerial_Ace: return "Aerial Ace";
+		case Moves::Icicle_Spear: return "Icicle Spear";
+		case Moves::Iron_Defense: return "Iron Defense";
+		case Moves::Block: return "Block";
+		case Moves::Howl: return "Howl";
+		case Moves::Dragon_Claw: return "Dragon Claw";
+		case Moves::Frenzy_Plant: return "Frenzy Plant";
+		case Moves::Bulk_Up: return "Bulk Up";
+		case Moves::Bounce: return "Bounce";
+		case Moves::Mud_Shot: return "Mud Shot";
+		case Moves::Poison_Tail: return "Poison Tail";
+		case Moves::Covet: return "Covet";
+		case Moves::Volt_Tackle: return "Volt Tackle";
+		case Moves::Magical_Leaf: return "Magical Leaf";
+		case Moves::Water_Sport: return "Water Sport";
+		case Moves::Calm_Mind: return "Calm Mind";
+		case Moves::Leaf_Blade: return "Leaf Blade";
+		case Moves::Dragon_Dance: return "Dragon Dance";
+		case Moves::Rock_Blast: return "Rock Blast";
+		case Moves::Shock_Wave: return "Shock Wave";
+		case Moves::Water_Pulse: return "Water Pulse";
+		case Moves::Doom_Desire: return "Doom Desire";
+		case Moves::Psycho_Boost: return "Psycho Boost";
 
 		// Generation 4
-		"Roost", "Gravity", "Miracle Eye", "Wake-Up Slap", "Hammer Arm",
-		"Gyro Ball", "Healing Wish", "Brine", "Natural Gift", "Feint",
-		"Pluck", "Tailwind", "Acupressure", "Metal Burst", "U-turn",
-		"Close Combat", "Payback", "Assurance", "Embargo", "Fling",
-		"Psycho Shift", "Trump Card", "Heal Block", "Wring Out", "Power Trick",
-		"Gastro Acid", "Lucky Chant", "Me First", "Copycat", "Power Swap",
-		"Guard Swap", "Punishment", "Last Resort", "Worry Seed", "Sucker Punch",
-		"Toxic Spikes", "Heart Swap", "Aqua Ring", "Magnet Rise", "Flare Blitz",
-		"Force Palm", "Aura Sphere", "Rock Polish", "Poison Jab", "Dark Pulse",
-		"Night Slash", "Aqua Tail", "Seed Bomb", "Air Slash", "X-Scissor",
-		"Bug Buzz", "Dragon Pulse", "Dragon Rush", "Power Gem", "Drain Punch",
-		"Vacuum Wave", "Focus Blast", "Energy Ball", "Brave Bird", "Earth Power",
-		"Switcheroo", "Giga Impact", "Nasty Plot", "Bullet Punch", "Avalanche",
-		"Ice Shard", "Shadow Claw", "Thunder Fang", "Ice Fang", "Fire Fang",
-		"Shadow Sneak", "Mud Bomb", "Psycho Cut", "Zen Headbutt", "Mirror Shot",
-		"Flash Cannon", "Rock Climb", "Defog", "Trick Room", "Draco Meteor",
-		"Discharge", "Lava Plume", "Leaf Storm", "Power Whip", "Rock Wrecker",
-		"Cross Poison", "Gunk Shot", "Iron Head", "Magnet Bomb", "Stone Edge",
-		"Captivate", "Stealth Rock", "Grass Knot", "Chatter", "Judgment",
-		"Bug Bite", "Charge Beam", "Wood Hammer", "Aqua Jet", "Attack Order",
-		"Defend Order", "Heal Order", "Head Smash", "Double Hit",
-		"Roar of Time", "Spacial Rend", "Lunar Dance", "Crush Grip", "Magma Storm",
-		"Dark Void", "Seed Flare", "Ominous Wind", "Shadow Force",
-
+		case Moves::Roost: return "Roost";
+		case Moves::Gravity: return "Gravity";
+		case Moves::Miracle_Eye: return "Miracle Eye";
+		case Moves::Wake_Up_Slap: return "Wake-Up Slap";
+		case Moves::Hammer_Arm: return "Hammer Arm";
+		case Moves::Gyro_Ball: return "Gyro Ball";
+		case Moves::Healing_Wish: return "Healing Wish";
+		case Moves::Brine: return "Brine";
+		case Moves::Natural_Gift: return "Natural Gift";
+		case Moves::Feint: return "Feint";
+		case Moves::Pluck: return "Pluck";
+		case Moves::Tailwind: return "Tailwind";
+		case Moves::Acupressure: return "Acupressure";
+		case Moves::Metal_Burst: return "Metal Burst";
+		case Moves::U_turn: return "U-turn";
+		case Moves::Close_Combat: return "Close Combat";
+		case Moves::Payback: return "Payback";
+		case Moves::Assurance: return "Assurance";
+		case Moves::Embargo: return "Embargo";
+		case Moves::Fling: return "Fling";
+		case Moves::Psycho_Shift: return "Psycho Shift";
+		case Moves::Trump_Card: return "Trump Card";
+		case Moves::Heal_Block: return "Heal Block";
+		case Moves::Wring_Out: return "Wring Out";
+		case Moves::Power_Trick: return "Power Trick";
+		case Moves::Gastro_Acid: return "Gastro Acid";
+		case Moves::Lucky_Chant: return "Lucky Chant";
+		case Moves::Me_First: return "Me First";
+		case Moves::Copycat: return "Copycat";
+		case Moves::Power_Swap: return "Power Swap";
+		case Moves::Guard_Swap: return "Guard Swap";
+		case Moves::Punishment: return "Punishment";
+		case Moves::Last_Resort: return "Last Resort";
+		case Moves::Worry_Seed: return "Worry Seed";
+		case Moves::Sucker_Punch: return "Sucker Punch";
+		case Moves::Toxic_Spikes: return "Toxic Spikes";
+		case Moves::Heart_Swap: return "Heart Swap";
+		case Moves::Aqua_Ring: return "Aqua Ring";
+		case Moves::Magnet_Rise: return "Magnet Rise";
+		case Moves::Flare_Blitz: return "Flare Blitz";
+		case Moves::Force_Palm: return "Force Palm";
+		case Moves::Aura_Sphere: return "Aura Sphere";
+		case Moves::Rock_Polish: return "Rock Polish";
+		case Moves::Poison_Jab: return "Poison Jab";
+		case Moves::Dark_Pulse: return "Dark Pulse";
+		case Moves::Night_Slash: return "Night Slash";
+		case Moves::Aqua_Tail: return "Aqua Tail";
+		case Moves::Seed_Bomb: return "Seed Bomb";
+		case Moves::Air_Slash: return "Air Slash";
+		case Moves::X_Scissor: return "X-Scissor";
+		case Moves::Bug_Buzz: return "Bug Buzz";
+		case Moves::Dragon_Pulse: return "Dragon Pulse";
+		case Moves::Dragon_Rush: return "Dragon Rush";
+		case Moves::Power_Gem: return "Power Gem";
+		case Moves::Drain_Punch: return "Drain Punch";
+		case Moves::Vacuum_Wave: return "Vacuum Wave";
+		case Moves::Focus_Blast: return "Focus Blast";
+		case Moves::Energy_Ball: return "Energy Ball";
+		case Moves::Brave_Bird: return "Brave Bird";
+		case Moves::Earth_Power: return "Earth Power";
+		case Moves::Switcheroo: return "Switcheroo";
+		case Moves::Giga_Impact: return "Giga Impact";
+		case Moves::Nasty_Plot: return "Nasty Plot";
+		case Moves::Bullet_Punch: return "Bullet Punch";
+		case Moves::Avalanche: return "Avalanche";
+		case Moves::Ice_Shard: return "Ice Shard";
+		case Moves::Shadow_Claw: return "Shadow Claw";
+		case Moves::Thunder_Fang: return "Thunder Fang";
+		case Moves::Ice_Fang: return "Ice Fang";
+		case Moves::Fire_Fang: return "Fire Fang";
+		case Moves::Shadow_Sneak: return "Shadow Sneak";
+		case Moves::Mud_Bomb: return "Mud Bomb";
+		case Moves::Psycho_Cut: return "Psycho Cut";
+		case Moves::Zen_Headbutt: return "Zen Headbutt";
+		case Moves::Mirror_Shot: return "Mirror Shot";
+		case Moves::Flash_Cannon: return "Flash Cannon";
+		case Moves::Rock_Climb: return "Rock Climb";
+		case Moves::Defog: return "Defog";
+		case Moves::Trick_Room: return "Trick Room";
+		case Moves::Draco_Meteor: return "Draco Meteor";
+		case Moves::Discharge: return "Discharge";
+		case Moves::Lava_Plume: return "Lava Plume";
+		case Moves::Leaf_Storm: return "Leaf Storm";
+		case Moves::Power_Whip: return "Power Whip";
+		case Moves::Rock_Wrecker: return "Rock Wrecker";
+		case Moves::Cross_Poison: return "Cross Poison";
+		case Moves::Gunk_Shot: return "Gunk Shot";
+		case Moves::Iron_Head: return "Iron Head";
+		case Moves::Magnet_Bomb: return "Magnet Bomb";
+		case Moves::Stone_Edge: return "Stone Edge";
+		case Moves::Captivate: return "Captivate";
+		case Moves::Stealth_Rock: return "Stealth Rock";
+		case Moves::Grass_Knot: return "Grass Knot";
+		case Moves::Chatter: return "Chatter";
+		case Moves::Judgment: return "Judgment";
+		case Moves::Bug_Bite: return "Bug Bite";
+		case Moves::Charge_Beam: return "Charge Beam";
+		case Moves::Wood_Hammer: return "Wood Hammer";
+		case Moves::Aqua_Jet: return "Aqua Jet";
+		case Moves::Attack_Order: return "Attack Order";
+		case Moves::Defend_Order: return "Defend Order";
+		case Moves::Heal_Order: return "Heal Order";
+		case Moves::Head_Smash: return "Head Smash";
+		case Moves::Double_Hit: return "Double Hit";
+		case Moves::Roar_of_Time: return "Roar of Time";
+		case Moves::Spacial_Rend: return "Spacial Rend";
+		case Moves::Lunar_Dance: return "Lunar Dance";
+		case Moves::Crush_Grip: return "Crush Grip";
+		case Moves::Magma_Storm: return "Magma Storm";
+		case Moves::Dark_Void: return "Dark Void";
+		case Moves::Seed_Flare: return "Seed Flare";
+		case Moves::Ominous_Wind: return "Ominous Wind";
+		case Moves::Shadow_Force: return "Shadow Force";
+		
 		// Generation 5
-		"Hone Claws", "Wide Guard", "Guard Split", "Power Split", "Wonder Room",
-		"Psyshock", "Venoshock", "Autotomize", "Rage Powder", "Telekinesis",
-		"Magic Room", "Smack Down", "Storm Throw", "Flame Burst", "Sludge Wave",
-		"Quiver Dance", "Heavy Slam", "Synchronoise", "Electro Ball", "Soak",
-		"Flame Charge", "Coil", "Low Sweep", "Acid Spray", "Foul Play",
-		"Simple Beam", "Entrainment", "After You", "Round", "Echoed Voice",
-		"Chip Away", "Clear Smog", "Stored Power", "Quick Guard", "Ally Switch",
-		"Scald", "Shell Smash", "Heal Pulse", "Hex", "Sky Drop",
-		"Shift Gear", "Circle Throw", "Incinerate", "Quash", "Acrobatics",
-		"Reflect Type", "Retaliate", "Final Gambit", "Bestow", "Inferno",
-		"Water Pledge", "Fire Pledge", "Grass Pledge", "Volt Switch", "Struggle Bug",
-		"Bulldoze", "Frost Breath", "Dragon Tail", "Work Up", "Electroweb",
-		"Wild Charge", "Drill Run", "Dual Chop", "Heart Stamp", "Horn Leech",
-		"Sacred Sword", "Razor Shell", "Heat Crash", "Leaf Tornado", "Steamroller",
-		"Cotton Guard", "Night Daze", "Psystrike", "Tail Slap", "Hurricane",
-		"Head Charge", "Gear Grind", "Searing Shot", "Techno Blast", "Relic Song",
-		"Secret Sword", "Glaciate", "Bolt Strike", "Blue Flare", "Fiery Dance",
-		"Freeze Shock", "Ice Burn", "Snarl", "Icicle Crash", "V-create",
-		"Fusion Flare", "Fusion Bolt"
-	};
-	return name_to_string[name];
+		case Moves::Hone_Claws: return "Hone Claws";
+		case Moves::Wide_Guard: return "Wide Guard";
+		case Moves::Guard_Split: return "Guard Split";
+		case Moves::Power_Split: return "Power Split";
+		case Moves::Wonder_Room: return "Wonder Room";
+		case Moves::Psyshock: return "Psyshock";
+		case Moves::Venoshock: return "Venoshock";
+		case Moves::Autotomize: return "Autotomize";
+		case Moves::Rage_Powder: return "Rage Powder";
+		case Moves::Telekinesis: return "Telekinesis";
+		case Moves::Magic_Room: return "Magic Room";
+		case Moves::Smack_Down: return "Smack Down";
+		case Moves::Storm_Throw: return "Storm Throw";
+		case Moves::Flame_Burst: return "Flame Burst";
+		case Moves::Sludge_Wave: return "Sludge Wave";
+		case Moves::Quiver_Dance: return "Quiver Dance";
+		case Moves::Heavy_Slam: return "Heavy Slam";
+		case Moves::Synchronoise: return "Synchronoise";
+		case Moves::Electro_Ball: return "Electro Ball";
+		case Moves::Soak: return "Soak";
+		case Moves::Flame_Charge: return "Flame Charge";
+		case Moves::Coil: return "Coil";
+		case Moves::Low_Sweep: return "Low Sweep";
+		case Moves::Acid_Spray: return "Acid Spray";
+		case Moves::Foul_Play: return "Foul Play";
+		case Moves::Simple_Beam: return "Simple Beam";
+		case Moves::Entrainment: return "Entrainment";
+		case Moves::After_You: return "After You";
+		case Moves::Round: return "Round";
+		case Moves::Echoed_Voice: return "Echoed Voice";
+		case Moves::Chip_Away: return "Chip Away";
+		case Moves::Clear_Smog: return "Clear Smog";
+		case Moves::Stored_Power: return "Stored Power";
+		case Moves::Quick_Guard: return "Quick Guard";
+		case Moves::Ally_Switch: return "Ally Switch";
+		case Moves::Scald: return "Scald";
+		case Moves::Shell_Smash: return "Shell Smash";
+		case Moves::Heal_Pulse: return "Heal Pulse";
+		case Moves::Hex: return "Hex";
+		case Moves::Sky_Drop: return "Sky Drop";
+		case Moves::Shift_Gear: return "Shift Gear";
+		case Moves::Circle_Throw: return "Circle Throw";
+		case Moves::Incinerate: return "Incinerate";
+		case Moves::Quash: return "Quash";
+		case Moves::Acrobatics: return "Acrobatics";
+		case Moves::Reflect_Type: return "Reflect Type";
+		case Moves::Retaliate: return "Retaliate";
+		case Moves::Final_Gambit: return "Final Gambit";
+		case Moves::Bestow: return "Bestow";
+		case Moves::Inferno: return "Inferno";
+		case Moves::Water_Pledge: return "Water Pledge";
+		case Moves::Fire_Pledge: return "Fire Pledge";
+		case Moves::Grass_Pledge: return "Grass Pledge";
+		case Moves::Volt_Switch: return "Volt Switch";
+		case Moves::Struggle_Bug: return "Struggle Bug";
+		case Moves::Bulldoze: return "Bulldoze";
+		case Moves::Frost_Breath: return "Frost Breath";
+		case Moves::Dragon_Tail: return "Dragon Tail";
+		case Moves::Work_Up: return "Work Up";
+		case Moves::Electroweb: return "Electroweb";
+		case Moves::Wild_Charge: return "Wild Charge";
+		case Moves::Drill_Run: return "Drill Run";
+		case Moves::Dual_Chop: return "Dual Chop";
+		case Moves::Heart_Stamp: return "Heart Stamp";
+		case Moves::Horn_Leech: return "Horn Leech";
+		case Moves::Sacred_Sword: return "Sacred Sword";
+		case Moves::Razor_Shell: return "Razor Shell";
+		case Moves::Heat_Crash: return "Heat Crash";
+		case Moves::Leaf_Tornado: return "Leaf Tornado";
+		case Moves::Steamroller: return "Steamroller";
+		case Moves::Cotton_Guard: return "Cotton Guard";
+		case Moves::Night_Daze: return "Night Daze";
+		case Moves::Psystrike: return "Psystrike";
+		case Moves::Tail_Slap: return "Tail Slap";
+		case Moves::Hurricane: return "Hurricane";
+		case Moves::Head_Charge: return "Head Charge";
+		case Moves::Gear_Grind: return "Gear Grind";
+		case Moves::Searing_Shot: return "Searing Shot";
+		case Moves::Techno_Blast: return "Techno Blast";
+		case Moves::Relic_Song: return "Relic Song";
+		case Moves::Secret_Sword: return "Secret Sword";
+		case Moves::Glaciate: return "Glaciate";
+		case Moves::Bolt_Strike: return "Bolt Strike";
+		case Moves::Blue_Flare: return "Blue Flare";
+		case Moves::Fiery_Dance: return "Fiery Dance";
+		case Moves::Freeze_Shock: return "Freeze Shock";
+		case Moves::Ice_Burn: return "Ice Burn";
+		case Moves::Snarl: return "Snarl";
+		case Moves::Icicle_Crash: return "Icicle Crash";
+		case Moves::V_create: return "V-create";
+		case Moves::Fusion_Flare: return "Fusion Flare";
+		case Moves::Fusion_Bolt: return "Fusion Bolt";
+	}
 }
 
 template<>

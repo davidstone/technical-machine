@@ -1,5 +1,5 @@
 // Status string functions
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,7 +22,7 @@
 
 namespace technicalmachine {
 
-std::string const & to_string(Statuses name);
+std::string_view to_string(Statuses status);
 
 template<>
 Statuses from_string(std::string_view str);

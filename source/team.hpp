@@ -27,6 +27,8 @@
 #include "pokemon/collection.hpp"
 #include "pokemon/species_forward.hpp"
 
+#include <containers/string.hpp>
+
 #include <cstdint>
 #include <filesystem>
 #include <random>
@@ -64,7 +66,7 @@ struct Team {
 	TeamSize size() const;
 	
 	bool is_me() const;
-	std::string who() const;
+	std::string_view who() const;
 
 	// Not for variables that give a message at the end of the turn, this is
 	// just for some book-keeping variables.
@@ -104,6 +106,6 @@ private:
 
 Team load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path);
 
-std::string to_string(Team const & team, bool include_owner = true);
+containers::string to_string(Team const & team, bool include_owner = true);
 
 }	// namespace technicalmachine

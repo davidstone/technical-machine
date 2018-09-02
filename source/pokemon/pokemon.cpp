@@ -37,12 +37,14 @@
 #include "../string_conversions/status.hpp"
 
 #include <containers/array/make_array.hpp>
+#include <containers/algorithms/concatenate.hpp>
 
 #include <boost/format.hpp>
 
 #include <cassert>
 #include <cstdint>
 #include <string>
+#include <string_view>
 
 namespace technicalmachine {
 
@@ -86,7 +88,7 @@ Pokemon::operator Species() const {
 }
 
 
-std::string const & Pokemon::get_nickname() const {
+std::string_view Pokemon::get_nickname() const {
 	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 		return nickname;
 	#else
@@ -111,44 +113,41 @@ bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {
 			lhs.m_level == rhs.m_level;
 }
 
-std::string to_string(Pokemon const & pokemon, bool const include_nickname) {
-	std::string output = to_string(static_cast<Species>(pokemon));
-	double const d_per_cent_hp = 100.0 * static_cast<double>(hp_ratio(pokemon));
-	std::string const per_cent_hp = (boost::format("%.1f") % d_per_cent_hp).str();
-	output += " (" + per_cent_hp + "% HP)";
-	output += " @ " + to_string(get_item(pokemon));
-	if (include_nickname and pokemon.get_nickname() != to_string(static_cast<Species>(pokemon))) {
-		output += " ** " + pokemon.get_nickname();
-	}
-	output += '\n';
-	output += "\tAbility: " + to_string(get_ability(pokemon)) + '\n';
-	if (!is_clear(get_status(pokemon))) {
-		output += "\tStatus: " + to_string(get_status(pokemon).name()) + '\n';
-	}
-	output += "\tNature: " + to_string(get_nature(pokemon)) + '\n';
-	output += "\t";
-	auto const add_stat = [&](Stat const & stat, std::string const & stat_name) {
-		output += " / " + bounded::to_string(stat.ev().value()) + " " + stat_name;
+containers::string to_string(Pokemon const & pokemon, bool const include_nickname) {
+	double const per_cent_hp = 100.0 * static_cast<double>(hp_ratio(pokemon));
+
+	auto const output_nickname = include_nickname and pokemon.get_nickname() != to_string(static_cast<Species>(pokemon));
+	auto const output_status = !is_clear(get_status(pokemon));
+	
+	#define TECHNICALMACHINE_STAT(stat, str) \
+		std::string_view(" / "), std::string_view(bounded::to_string(get_stat(pokemon, stat).ev().value())), std::string_view(" " str)
+	
+	auto moves_to_string = [&]{
+		containers::string output;
+		for (auto const & move : regular_moves(pokemon)) {
+			output = containers::concatenate<containers::string>(std::move(output), std::string_view("\n\t- "), to_string(move));
+		}
+		return output;
 	};
-	struct Pair {
-		StatNames name;
-		std::string str;
-	};
-	static auto const stats = containers::make_array(
-		Pair{StatNames::ATK, "Atk"},
-		Pair{StatNames::DEF, "Def"},
-		Pair{StatNames::SPA, "SpA"},
-		Pair{StatNames::SPD, "SpD"},
-		Pair{StatNames::SPE, "Spe"}
+
+	return containers::concatenate<containers::string>(
+		to_string(static_cast<Species>(pokemon)),
+		std::string_view(" ("), std::string_view((boost::format("%.1f") % per_cent_hp).str()), std::string_view("% HP) @ "),
+		to_string(get_item(pokemon)),
+		(output_nickname ? containers::concatenate<containers::string>(std::string_view(" ** "), pokemon.get_nickname()) : containers::string("")),
+		std::string_view("\n\tAbility: "), to_string(get_ability(pokemon)), std::string_view("\n"),
+		(output_status ? containers::concatenate<containers::string>(std::string_view("\tStatus: "), to_string(get_status(pokemon).name()), std::string_view("\n")) : containers::string("")),
+		std::string_view("\tNature: "), to_string(get_nature(pokemon)),
+		std::string_view("\n\t"),
+		std::string_view(bounded::to_string(get_hp(pokemon).ev().value())), std::string_view(" HP"),
+		TECHNICALMACHINE_STAT(StatNames::ATK, "Atk"),
+		TECHNICALMACHINE_STAT(StatNames::DEF, "Def"),
+		TECHNICALMACHINE_STAT(StatNames::SPA, "SpA"),
+		TECHNICALMACHINE_STAT(StatNames::SPD, "SpD"),
+		TECHNICALMACHINE_STAT(StatNames::SPE, "Spe"),
+		moves_to_string()
 	);
-	output += bounded::to_string(get_hp(pokemon).ev().value()) + " HP";
-	for (auto const & stat : stats) {
-		add_stat(get_stat(pokemon, stat.name), stat.str);
-	}
-	for (auto const & move : regular_moves(pokemon)) {
-		output += "\n\t- " + to_string(move);
-	}
-	return output;
+	#undef TECHNICALMACHINE_STAT
 }
 
 }	// namespace technicalmachine

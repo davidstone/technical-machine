@@ -45,7 +45,12 @@ struct Verify {
 	void operator()(Moves const move) {
 		auto const mine = (m_index < size(m_moves)) ? at(m_moves, m_index) : at(m_shared_moves, m_index - size(m_moves));
 		if (mine != move) {
-			throw InvalidCollection("MoveContainer has the wrong moves. Expected: " + to_string(mine) + " but got " + to_string(move));
+			throw InvalidCollection(
+				"MoveContainer has the wrong moves. Expected: " +
+				std::string(to_string(mine)) +
+				" but got " +
+				std::string(to_string(move))
+			);
 		}
 		++m_index;
 	}

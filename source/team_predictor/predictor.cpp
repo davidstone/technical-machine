@@ -152,8 +152,8 @@ void function (Fl_Widget *, void * d) {
 		}
 	}
 	generate_random_team(data);
-	Team team = predict_team(data.detailed, data.team(), data.random_engine, using_lead);
-	data.output.value(to_string(team, false).c_str());
+	auto const team_str = to_string(predict_team(data.detailed, data.team(), data.random_engine, using_lead), false);
+	data.output.value(std::string(begin(team_str), end(team_str)).c_str());
 	data.team() = Team(max_pokemon_per_team);
 }
 

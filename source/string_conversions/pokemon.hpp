@@ -1,5 +1,5 @@
 // Pokemon string functions
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,9 +22,9 @@
 
 namespace technicalmachine {
 
-std::string const & to_string(Species const name);
+std::string_view to_string(Species species);
 
 template<>
-Species from_string<Species>(std::string_view const str);
+Species from_string<Species>(std::string_view str);
 
 }	// namespace technicalmachine

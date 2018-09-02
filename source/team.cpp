@@ -133,18 +133,22 @@ Team load_team_from_file(std::mt19937 & random_engine, std::filesystem::path con
 	}
 }
 
-std::string to_string(Team const & team, bool const include_owner) {
-	std::string output;
+containers::string to_string(Team const & team, bool const include_owner) {
+	containers::string output;
 	if (include_owner) {
-		output += team.who() + "'s team:\n";
+		output = containers::concatenate<containers::string>(std::move(output), team.who(), std::string_view("'s team:\n"));
 	}
 	for (auto const & member : team.all_pokemon()) {
-		output += to_string(member, include_owner) + '\n';
+		output = containers::concatenate<containers::string>(
+			std::move(output),
+			to_string(member, include_owner),
+			containers::single_element_range('\n')
+		);
 	}
 	return output;
 }
 
-std::string Team::who() const {
+std::string_view Team::who() const {
 	return is_me() ? "AI" : "Foe";
 }
 

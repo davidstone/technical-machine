@@ -37,14 +37,15 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include <string>
+#include <string_view>
 #include <unordered_map>
 
 namespace technicalmachine {
 namespace pl {
 namespace {
 
-auto lookup_stat(std::string const & name) {
-	static std::unordered_map<std::string, StatNames> const stats = {
+auto lookup_stat(std::string_view const name) {
+	static std::unordered_map<std::string_view, StatNames> const stats = {
 		{ "Atk", StatNames::ATK },
 		{ "Def", StatNames::DEF },
 		{ "SpAtk", StatNames::SPA },
@@ -65,8 +66,8 @@ auto load_stats(Pokemon & pokemon, boost::property_tree::ptree const & pt) {
 	}
 }
 
-auto from_simulator_string(std::string const & str) {
-	static std::unordered_map<std::string, Species> const converter = {
+auto from_simulator_string(std::string_view const str) {
+	static std::unordered_map<std::string_view, Species> const converter = {
 		{ "Deoxys", Species::Deoxys_Mediocre },
 		{ "Deoxys-f", Species::Deoxys_Attack },
 		{ "Deoxys-l", Species::Deoxys_Defense },

@@ -20,9 +20,11 @@
 
 #include "../ability.hpp"
 
+#include <string_view>
+
 namespace technicalmachine {
 
-std::string const & to_string(Ability const name);
+std::string_view to_string(Ability const name);
 
 template<>
 Ability from_string<Ability>(std::string_view const str);

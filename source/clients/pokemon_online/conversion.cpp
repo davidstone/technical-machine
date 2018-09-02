@@ -30,6 +30,9 @@
 
 #include "../../string_conversions/pokemon.hpp"
 
+#include <containers/algorithms/concatenate.hpp>
+#include <containers/string.hpp>
+
 #include <cassert>
 #include <cstdint>
 #include <stdexcept>
@@ -50,7 +53,7 @@ struct InvalidFormeID : std::runtime_error {
 
 struct UnsupportedSpecies : std::runtime_error {
 	explicit UnsupportedSpecies(Species const species):
-		std::runtime_error(to_string(species) + " not supported in Pokemon online.")
+		std::runtime_error(std::string(to_string(species)) + " not supported in Pokemon online.")
 	{
 	}
 };
@@ -1553,7 +1556,7 @@ Item id_to_item(ItemID const id) {
 		case 72: return Item::Fluffy_Tail;
 		case 73: return Item::Fresh_Water;
 		case 74: return Item::Full_Heal;
-		case 75: return Item::Full_Sleep_Restore;
+		case 75: return Item::Full_Restore;
 		case 76: return Item::Gooey_Mulch;
 		case 77: return Item::Green_Shard;
 		case 78: return Item::Growth_Mulch;
@@ -1786,7 +1789,7 @@ ItemID item_to_id(Item const item) {
 		case Item::Fluffy_Tail: return 72_bi;
 		case Item::Fresh_Water: return 73_bi;
 		case Item::Full_Heal: return 74_bi;
-		case Item::Full_Sleep_Restore: return 75_bi;
+		case Item::Full_Restore: return 75_bi;
 		case Item::Gooey_Mulch: return 76_bi;
 		case Item::Green_Shard: return 77_bi;
 		case Item::Growth_Mulch: return 78_bi;

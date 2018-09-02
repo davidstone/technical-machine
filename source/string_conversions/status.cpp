@@ -21,24 +21,21 @@
 
 #include "../status.hpp"
 
-#include <containers/array/array.hpp>
-
 #include <map>
 
 namespace technicalmachine {
 
-std::string const & to_string(Statuses const name) {
-	static auto const status_name = containers::array<std::string, std::numeric_limits<Statuses>::max().value() + 1>{
-		"No status",
-		"Burn",
-		"Freeze",
-		"Paralysis",
-		"Poison",
-		"Toxic",
-		"Sleep",
-		"Rest"
-	};
-	return status_name[name];
+std::string_view to_string(Statuses const status) {
+	switch (status) {
+		case Statuses::clear: return "No status";
+		case Statuses::burn: return "Burn";
+		case Statuses::freeze: return "Freeze";
+		case Statuses::paralysis: return "Paralysis";
+		case Statuses::poison: return "Poison";
+		case Statuses::poison_toxic: return "Toxic";
+		case Statuses::sleep: return "Sleep";
+		case Statuses::sleep_rest: return "Rest";
+	}
 }
 
 template<>

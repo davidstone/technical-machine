@@ -22,21 +22,38 @@
 
 #include "../stat/nature.hpp"
 
-#include <containers/array/array.hpp>
-
 #include <map>
 
 namespace technicalmachine {
 
-std::string const & to_string(Nature const nature) {
-	static auto const nature_converter = containers::array<std::string, std::numeric_limits<Nature>::max().value() + 1>{
-		"Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful",
-		"Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly",
-		"Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty",
-		"Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious",
-		"Timid"
-	};
-	return nature_converter[nature];
+std::string_view to_string(Nature const nature) {
+	switch (nature) {
+		case Nature::Adamant: return "Adamant";
+		case Nature::Bashful: return "Bashful";
+		case Nature::Bold: return "Bold";
+		case Nature::Brave: return "Brave";
+		case Nature::Calm: return "Calm";
+		case Nature::Careful: return "Careful";
+		case Nature::Docile: return "Docile";
+		case Nature::Gentle: return "Gentle";
+		case Nature::Hardy: return "Hardy";
+		case Nature::Hasty: return "Hasty";
+		case Nature::Impish: return "Impish";
+		case Nature::Jolly: return "Jolly";
+		case Nature::Lax: return "Lax";
+		case Nature::Lonely: return "Lonely";
+		case Nature::Mild: return "Mild";
+		case Nature::Modest: return "Modest";
+		case Nature::Naive: return "Naive";
+		case Nature::Naughty: return "Naughty";
+		case Nature::Quiet: return "Quiet";
+		case Nature::Quirky: return "Quirky";
+		case Nature::Rash: return "Rash";
+		case Nature::Relaxed: return "Relaxed";
+		case Nature::Sassy: return "Sassy";
+		case Nature::Serious: return "Serious";
+		case Nature::Timid: return "Timid";
+	}
 }
 
 template<>

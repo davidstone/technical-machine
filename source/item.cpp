@@ -281,7 +281,7 @@ bounded::integer<0, 130> fling_power(Item const item) {
 		case Item::Fluffy_Tail:
 		case Item::Fresh_Water:
 		case Item::Full_Heal:
-		case Item::Full_Sleep_Restore:
+		case Item::Full_Restore:
 		case Item::Gooey_Mulch:
 		case Item::Green_Shard:
 		case Item::Growth_Mulch:

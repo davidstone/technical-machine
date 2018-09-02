@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,7 +20,7 @@
 namespace technicalmachine {
 
 InvalidFromStringConversion::InvalidFromStringConversion(std::string_view const target, std::string_view const requested):
-	std::runtime_error("Invalid conversion from " + std::string(requested) + " to type " + std::string(target) + " requested.\n")
+	std::runtime_error("Invalid conversion from " + std::string(requested) + " to type " + std::string(target))
 	{
 }
 

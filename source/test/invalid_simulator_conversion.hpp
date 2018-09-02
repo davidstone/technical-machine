@@ -1,4 +1,4 @@
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include <stdexcept>
 #include "../string_conversions/ability.hpp"
 #include "../string_conversions/gender.hpp"
 #include "../string_conversions/item.hpp"
@@ -26,13 +25,15 @@
 #include "../string_conversions/pokemon.hpp"
 #include "../string_conversions/status.hpp"
 
+#include <stdexcept>
+
 namespace technicalmachine {
 struct Pokemon;
 
 struct InvalidSimulatorConversion : std::logic_error {
 	template<typename Test>
 	InvalidSimulatorConversion(Test original, Test result):
-		std::logic_error(to_string(original) + " is seen as " + to_string(result) + ".\n") {
+		std::logic_error(std::string(to_string(original)) + " is seen as " + std::string(to_string(result))) {
 	}
 };
 

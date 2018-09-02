@@ -43,7 +43,7 @@ enum class Item : uint16_t {
 	Escape_Rope, Ether, Everstone, Exp_Share, Expert_Belt,
 	Explorer_Kit, Fashion_Case, Figy_Berry, Fire_Stone, Fist_Plate,
 	Flame_Mail, Flame_Orb, Flame_Plate, Fluffy_Tail, Focus_Band,
-	Focus_Sash, Fresh_Water, Full_Heal, Full_Incense, Full_Sleep_Restore,
+	Focus_Sash, Fresh_Water, Full_Heal, Full_Incense, Full_Restore,
 	Galactic_Key, Ganlon_Berry, Good_Rod, Gooey_Mulch, Grass_Mail,
 	Great_Ball, Green_Scarf, Green_Shard, Grepa_Berry, Grip_Claw,
 	Griseous_Orb, Growth_Mulch, Guard_Spec, Haban_Berry, Hard_Stone,

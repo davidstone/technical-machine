@@ -23,17 +23,16 @@
 
 #include "../gender.hpp"
 
-#include <containers/array/array.hpp>
-
 #include <map>
 
 namespace technicalmachine {
 
-std::string const & to_string(Gender const gender) {
-	static auto const gender_name = containers::array<std::string, std::numeric_limits<Gender>::max().value() + 1>{
-		"Female", "Genderless", "Male"
-	};
-	return gender_name[gender];
+std::string_view to_string(Gender const gender) {
+	switch (gender) {
+		case Gender::female: return "Female";
+		case Gender::male: return "Male";
+		case Gender::genderless: return "Genderless";
+	}
 }
 
 template<>

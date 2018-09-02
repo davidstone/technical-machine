@@ -1,5 +1,5 @@
 // Exception if unable to find a Pokemon that should exist
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,7 +22,7 @@
 namespace technicalmachine {
 
 PokemonNotFound::PokemonNotFound(Species const species):
-	std::logic_error("Unable to find " + to_string(species) + ".") {
+	std::logic_error("Unable to find " + std::string(to_string(species))) {
 }
 
 }	// namespace technicalmachine

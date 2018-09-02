@@ -1,5 +1,5 @@
 // Nature string conversions
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,7 +22,7 @@
 
 namespace technicalmachine {
 
-std::string const & to_string(Nature nature);
+std::string_view to_string(Nature nature);
 
 template<>
 Nature from_string<Nature>(std::string_view const str);

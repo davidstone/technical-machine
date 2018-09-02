@@ -213,7 +213,7 @@ void Battle::correct_hp_and_report_errors(Team & team) {
 		auto const max_value = tm_estimate + 1_bi;
 		assert(max_value > tm_estimate);
 		if (!(min_value <= new_hp and new_hp <= max_value)) {
-			std::cerr << "Uh oh! " + to_string(static_cast<Species>(pokemon)) + " has the wrong HP! The server reports ";
+			std::cerr << "Uh oh! " << to_string(static_cast<Species>(pokemon)) << " has the wrong HP! The server reports ";
 			if (!team.is_me()) {
 				std::cerr << "approximately ";
 			}

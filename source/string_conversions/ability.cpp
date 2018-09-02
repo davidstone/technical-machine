@@ -22,47 +22,137 @@
 
 #include "../ability.hpp"
 
-#include <containers/array/array.hpp>
-
 #include <map>
 
 namespace technicalmachine {
 
-std::string const & to_string(Ability const name) {
-	static auto const ability_name = containers::array<std::string, std::numeric_limits<Ability>::max().value() + 1>{
-		"Adaptability", "Aftermath", "Air Lock", "Anger Point",
-		"Anticipation", "Arena Trap", "Bad Dreams", "Battle Armor",
-		"Blaze", "Chlorophyll", "Clear Body", "Cloud Nine",
-		"Color Change", "Compoundeyes", "Cute Charm", "Damp",
-		"Download", "Drizzle", "Drought", "Dry Skin",
-		"Early Bird", "Effect Spore", "Filter", "Flame Body",
-		"Flash Fire", "Flower Gift", "Forecast", "Forewarn",
-		"Frisk", "Gluttony", "Guts", "Heatproof",
-		"Honey Gather", "Huge Power", "Hustle", "Hydration",
-		"Hyper Cutter", "Ice Body", "Illuminate", "Immunity",
-		"Inner Focus", "Insomnia", "Intimidate", "Iron Fist",
-		"Keen Eye", "Klutz", "Leaf Guard", "Levitate",
-		"Lightningrod", "Limber", "Liquid Ooze", "Magic Guard",
-		"Magma Armor", "Magnet Pull", "Marvel Scale", "Minus",
-		"Mold Breaker", "Motor Drive", "Multitype", "Natural Cure",
-		"No Guard", "Normalize", "Oblivious", "Overgrow",
-		"Own Tempo", "Pickup", "Plus", "Poison Heal",
-		"Poison Point", "Pressure", "Pure Power", "Quick Feet",
-		"Rain Dish", "Reckless", "Rivalry", "Rock Head",
-		"Rough Skin", "Run Away", "Sand Stream", "Sand Veil",
-		"Scrappy", "Serene Grace", "Shadow Tag", "Shed Skin",
-		"Shell Armor", "Shield Dust", "Simple", "Skill Link",
-		"Slow Start", "Sniper", "Snow Cloak", "Snow Warning",
-		"Solar Power", "Solid Rock", "Soundproof", "Speed Boost",
-		"Stall", "Static", "Steadfast", "Stench",
-		"Sticky Hold", "Storm Drain", "Sturdy", "Suction Cups",
-		"Super Luck", "Swarm", "Swift Swim", "Synchronize",
-		"Tangled Feet", "Technician", "Thick Fat", "Tinted Lens",
-		"Torrent", "Trace", "Truant", "Unaware",
-		"Unburden", "Vital Spirit", "Volt Absorb", "Water Absorb",
-		"Water Veil", "White Smoke", "Wonder Guard"
-	};
-	return ability_name[name];
+std::string_view to_string(Ability const ability) {
+	// The longest string here is 15 characters, which fits in the SSO buffer
+	switch (ability) {
+		case Ability::Adaptability: return "Adaptability";
+		case Ability::Aftermath: return "Aftermath";
+		case Ability::Air_Lock: return "Air Lock";
+		case Ability::Anger_Point: return "Anger Point";
+		case Ability::Anticipation: return "Anticipation";
+		case Ability::Arena_Trap: return "Arena Trap";
+		case Ability::Bad_Dreams: return "Bad Dreams";
+		case Ability::Battle_Armor: return "Battle Armor";
+		case Ability::Blaze: return "Blaze";
+		case Ability::Chlorophyll: return "Chlorophyll";
+		case Ability::Clear_Body: return "Clear Body";
+		case Ability::Cloud_Nine: return "Cloud Nine";
+		case Ability::Color_Change: return "Color Change";
+		case Ability::Compoundeyes: return "Compoundeyes";
+		case Ability::Cute_Charm: return "Cute Charm";
+		case Ability::Damp: return "Damp";
+		case Ability::Download: return "Download";
+		case Ability::Drizzle: return "Drizzle";
+		case Ability::Drought: return "Drought";
+		case Ability::Dry_Skin: return "Dry Skin";
+		case Ability::Early_Bird: return "Early Bird";
+		case Ability::Effect_Spore: return "Effect Spore";
+		case Ability::Filter: return "Filter";
+		case Ability::Flame_Body: return "Flame Body";
+		case Ability::Flash_Fire: return "Flash Fire";
+		case Ability::Flower_Gift: return "Flower Gift";
+		case Ability::Forecast: return "Forecast";
+		case Ability::Forewarn: return "Forewarn";
+		case Ability::Frisk: return "Frisk";
+		case Ability::Gluttony: return "Gluttony";
+		case Ability::Guts: return "Guts";
+		case Ability::Heatproof: return "Heatproof";
+		case Ability::Honey_Gather: return "Honey Gather";
+		case Ability::Huge_Power: return "Huge Power";
+		case Ability::Hustle: return "Hustle";
+		case Ability::Hydration: return "Hydration";
+		case Ability::Hyper_Cutter: return "Hyper Cutter";
+		case Ability::Ice_Body: return "Ice Body";
+		case Ability::Illuminate: return "Illuminate";
+		case Ability::Immunity: return "Immunity";
+		case Ability::Inner_Focus: return "Inner Focus";
+		case Ability::Insomnia: return "Insomnia";
+		case Ability::Intimidate: return "Intimidate";
+		case Ability::Iron_Fist: return "Iron Fist";
+		case Ability::Keen_Eye: return "Keen Eye";
+		case Ability::Klutz: return "Klutz";
+		case Ability::Leaf_Guard: return "Leaf Guard";
+		case Ability::Levitate: return "Levitate";
+		case Ability::Lightningrod: return "Lightningrod";
+		case Ability::Limber: return "Limber";
+		case Ability::Liquid_Ooze: return "Liquid Ooze";
+		case Ability::Magic_Guard: return "Magic Guard";
+		case Ability::Magma_Armor: return "Magma Armor";
+		case Ability::Magnet_Pull: return "Magnet Pull";
+		case Ability::Marvel_Scale: return "Marvel Scale";
+		case Ability::Minus: return "Minus";
+		case Ability::Mold_Breaker: return "Mold Breaker";
+		case Ability::Motor_Drive: return "Motor Drive";
+		case Ability::Multitype: return "Multitype";
+		case Ability::Natural_Cure: return "Natural Cure";
+		case Ability::No_Guard: return "No Guard";
+		case Ability::Normalize: return "Normalize";
+		case Ability::Oblivious: return "Oblivious";
+		case Ability::Overgrow: return "Overgrow";
+		case Ability::Own_Tempo: return "Own Tempo";
+		case Ability::Pickup: return "Pickup";
+		case Ability::Plus: return "Plus";
+		case Ability::Poison_Heal: return "Poison Heal";
+		case Ability::Poison_Point: return "Poison Point";
+		case Ability::Pressure: return "Pressure";
+		case Ability::Pure_Power: return "Pure Power";
+		case Ability::Quick_Feet: return "Quick Feet";
+		case Ability::Rain_Dish: return "Rain Dish";
+		case Ability::Reckless: return "Reckless";
+		case Ability::Rivalry: return "Rivalry";
+		case Ability::Rock_Head: return "Rock Head";
+		case Ability::Rough_Skin: return "Rough Skin";
+		case Ability::Run_Away: return "Run Away";
+		case Ability::Sand_Stream: return "Sand Stream";
+		case Ability::Sand_Veil: return "Sand Veil";
+		case Ability::Scrappy: return "Scrappy";
+		case Ability::Serene_Grace: return "Serene Grace";
+		case Ability::Shadow_Tag: return "Shadow Tag";
+		case Ability::Shed_Skin: return "Shed Skin";
+		case Ability::Shell_Armor: return "Shell Armor";
+		case Ability::Shield_Dust: return "Shield Dust";
+		case Ability::Simple: return "Simple";
+		case Ability::Skill_Link: return "Skill Link";
+		case Ability::Slow_Start: return "Slow Start";
+		case Ability::Sniper: return "Sniper";
+		case Ability::Snow_Cloak: return "Snow Cloak";
+		case Ability::Snow_Warning: return "Snow Warning";
+		case Ability::Solar_Power: return "Solar Power";
+		case Ability::Solid_Rock: return "Solid Rock";
+		case Ability::Soundproof: return "Soundproof";
+		case Ability::Speed_Boost: return "Speed Boost";
+		case Ability::Stall: return "Stall";
+		case Ability::Static: return "Static";
+		case Ability::Steadfast: return "Steadfast";
+		case Ability::Stench: return "Stench";
+		case Ability::Sticky_Hold: return "Sticky Hold";
+		case Ability::Storm_Drain: return "Storm Drain";
+		case Ability::Sturdy: return "Sturdy";
+		case Ability::Suction_Cups: return "Suction Cups";
+		case Ability::Super_Luck: return "Super Luck";
+		case Ability::Swarm: return "Swarm";
+		case Ability::Swift_Swim: return "Swift Swim";
+		case Ability::Synchronize: return "Synchronize";
+		case Ability::Tangled_Feet: return "Tangled Feet";
+		case Ability::Technician: return "Technician";
+		case Ability::Thick_Fat: return "Thick Fat";
+		case Ability::Tinted_Lens: return "Tinted Lens";
+		case Ability::Torrent: return "Torrent";
+		case Ability::Trace: return "Trace";
+		case Ability::Truant: return "Truant";
+		case Ability::Unaware: return "Unaware";
+		case Ability::Unburden: return "Unburden";
+		case Ability::Vital_Spirit: return "Vital Spirit";
+		case Ability::Volt_Absorb: return "Volt Absorb";
+		case Ability::Water_Absorb: return "Water Absorb";
+		case Ability::Water_Veil: return "Water Veil";
+		case Ability::White_Smoke: return "White Smoke";
+		case Ability::Wonder_Guard: return "Wonder Guard";
+	}
 }
 
 template<>
