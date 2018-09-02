@@ -36,7 +36,6 @@
 #include "../string_conversions/pokemon.hpp"
 #include "../string_conversions/status.hpp"
 
-#include <containers/array/make_array.hpp>
 #include <containers/algorithms/concatenate.hpp>
 
 #include <boost/format.hpp>

@@ -26,8 +26,6 @@
 
 #include <bounded/integer_range.hpp>
 
-#include <containers/array/array.hpp>
-
 #include <algorithm>
 #include <cassert>
 

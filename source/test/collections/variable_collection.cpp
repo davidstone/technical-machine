@@ -33,8 +33,6 @@
 
 #include <bounded/integer_range.hpp>
 
-#include <containers/array/make_array.hpp>
-
 #include <iostream>
 #include <string>
 

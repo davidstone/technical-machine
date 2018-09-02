@@ -1,5 +1,5 @@
 // Type function definitions
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,7 +23,7 @@
 #include "../move/moves.hpp"
 #include "../pokemon/pokemon.hpp"
 
-#include <containers/array/make_array.hpp>
+#include <containers/array/array.hpp>
 #include <containers/algorithms/accumulate.hpp>
 
 #include <algorithm>
@@ -42,20 +42,20 @@ namespace {
 
 auto hidden_power_type(Pokemon const & pokemon) {
 	using modifier_type = std::pair<StatNames, bounded::integer<1, 5>>;
-	static constexpr auto modifiers = containers::make_array(
+	static constexpr auto modifiers = containers::array{
 		modifier_type(StatNames::ATK, 1_bi),
 		modifier_type(StatNames::DEF, 2_bi),
 		modifier_type(StatNames::SPE, 3_bi),
 		modifier_type(StatNames::SPA, 4_bi),
 		modifier_type(StatNames::SPD, 5_bi)
-	);
+	};
 	using intermediate_type = bounded::checked_integer<0, 63>;
 	auto const sum = [&](intermediate_type const value, modifier_type const & pair) {
 		return value + ((get_stat(pokemon, pair.first).iv().value() % 2_bi) << pair.second);
 	};
 	intermediate_type const initial = get_hp(pokemon).iv().value() % 2_bi;
 	auto const index = containers::accumulate(begin(modifiers), end(modifiers), initial, sum) * 15_bi / 63_bi;
-	constexpr static auto lookup = containers::make_array(
+	static constexpr auto lookup = containers::array{
 		Type::Fighting,
 		Type::Flying,
 		Type::Poison,
@@ -72,7 +72,7 @@ auto hidden_power_type(Pokemon const & pokemon) {
 		Type::Ice,
 		Type::Dragon,
 		Type::Dark
-	);
+	};
 	static_assert(std::numeric_limits<decltype(index)>::min() == 0_bi, "Incorrect minimum index.");
 	static_assert(std::numeric_limits<decltype(index)>::max() == size(lookup) - 1_bi, "Incorrect maximum index.");
 	return lookup[index];

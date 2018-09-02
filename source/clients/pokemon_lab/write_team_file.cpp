@@ -34,8 +34,6 @@
 #include "../../string_conversions/nature.hpp"
 #include "../../string_conversions/pokemon.hpp"
 
-#include <containers/array/make_array.hpp>
-
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -60,21 +58,15 @@ void write_stat(StatType const & stat, std::string_view const str, boost::proper
 }
 
 void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
-	struct Pair {
-		StatNames name;
-		std::string_view string;
-	};
-	static auto const stats = containers::make_array(
-		Pair{ StatNames::ATK, "Atk" },
-		Pair{ StatNames::DEF, "Def" },
-		Pair{ StatNames::SPE, "Spd" },
-		Pair{ StatNames::SPA, "SpAtk" },
-		Pair{ StatNames::SPD, "SpDef" }
-	);
 	write_stat(get_hp(pokemon), "HP", pt);
-	for (auto const & stat : stats) {
-		write_stat(get_stat(pokemon, stat.name), stat.string, pt);
-	}
+	auto write_regular_stat = [&](auto const stat, auto const str) {
+		write_stat(get_stat(pokemon, stat), str, pt);
+	};
+	write_regular_stat(StatNames::ATK, "Atk");
+	write_regular_stat(StatNames::DEF, "Def");
+	write_regular_stat(StatNames::SPE, "Spd");
+	write_regular_stat(StatNames::SPA, "SpAtk");
+	write_regular_stat(StatNames::SPD, "SpDef");
 }
 
 std::string_view to_simulator_string(Species const species) {

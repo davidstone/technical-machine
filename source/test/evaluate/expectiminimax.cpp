@@ -31,7 +31,7 @@
 
 #include <bounded/integer.hpp>
 
-#include <containers/array/make_array.hpp>
+#include <containers/array/array.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -44,7 +44,7 @@ template<typename RandomEngine, typename... Ts>
 auto make_shuffled_array(RandomEngine & random_engine, Ts ... ts) {
 	// Random order to prevent ordering effects from accidentally arriving at
 	// the correct move each time
-	auto array = containers::make_array(ts...);
+	auto array = containers::array{ts...};
 	// gcc's stdlib does not support std::shuffle user defined intergers
 	std::shuffle(data(array), data(array) + size(array), random_engine);
 	return array;

@@ -1,5 +1,5 @@
 // Test checked collections
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,16 +18,9 @@
 
 #include "collection.hpp"
 
-#include "invalid_collection.hpp"
 #include "move_container.hpp"
 #include "variable_collection.hpp"
 
-#include <bounded/integer_range.hpp>
-
-#include <containers/array/make_array.hpp>
-#include <containers/static_vector/static_vector.hpp>
-
-#include <cassert>
 #include <iostream>
 
 namespace technicalmachine {

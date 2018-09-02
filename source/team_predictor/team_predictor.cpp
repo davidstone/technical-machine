@@ -1,5 +1,5 @@
 // Predict foe's team
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,16 +34,10 @@
 #include "../move/moves.hpp"
 
 #include <containers/algorithms/all_any_none.hpp>
-#include <containers/array/array.hpp>
+#include <containers/array/make_array.hpp>
 
 namespace technicalmachine {
 namespace {
-
-auto all_ones_array() {
-	containers::array<float, number_of_species> all_ones;
-	std::fill(begin(all_ones), end(all_ones), 1.0F);
-	return all_ones;
-}
 
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier) {
 	auto const index = team.all_pokemon().index();
@@ -79,7 +73,7 @@ Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & ran
 	constexpr unsigned total = 961058;	// Total number of teams
 	Multiplier const multiplier(overall);
 	
-	auto const lead = using_lead ? lead_stats() : all_ones_array();
+	auto const lead = using_lead ? lead_stats() : containers::make_array_n(bounded::constant<number_of_species>, 1.0F);
 	
 	Estimate estimate(overall, lead, total);
 	estimate.update(multiplier, team);

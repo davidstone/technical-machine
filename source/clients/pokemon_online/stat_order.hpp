@@ -1,5 +1,5 @@
 // Pokemon Online stat order
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -25,7 +25,7 @@
 namespace technicalmachine {
 namespace po {
 
-constexpr containers::array<StatNames, 5> stat_order = {
+constexpr auto stat_order = containers::array{
 	StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE
 };
 
