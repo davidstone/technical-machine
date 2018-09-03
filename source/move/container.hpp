@@ -111,7 +111,7 @@ struct MoveContainer {
 
 	template<typename M, typename... MaybePP>
 	constexpr auto & emplace_back(M const move, MaybePP... maybe_pp) {
-		assert(containers::none_equal(begin(m_regular), end(m_regular), move));
+		assert(containers::none_equal(m_regular, move));
 		return m_regular.emplace_back(move, maybe_pp...);
 	}
 

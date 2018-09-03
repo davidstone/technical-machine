@@ -58,7 +58,7 @@ void predict_move(MoveContainer & moves, DetailedStats::UsedMoves const & detail
 		if (size(regular) == max_moves_per_pokemon) {
 			break;
 		}
-		if (containers::any_equal(begin(regular), end(regular), move)) {
+		if (containers::any_equal(regular, move)) {
 			continue;
 		}
 		moves.emplace_back(move);

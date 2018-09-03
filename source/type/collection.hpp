@@ -66,7 +66,7 @@ struct TypeCollection {
 	friend auto is_immune_to_hail(TypeCollection const collection) -> bool;
 	friend auto is_immune_to_sandstorm(TypeCollection const collection) -> bool;
 	friend auto blocks_status(TypeCollection const collection, Statuses const status) -> bool {
-		return containers::any_of(begin(collection.types), end(collection.types), [=](auto const type) {
+		return containers::any(collection.types, [=](auto const type) {
 			return blocks_status(type, status);
 		});
 	}

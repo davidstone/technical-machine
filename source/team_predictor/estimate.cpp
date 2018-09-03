@@ -59,8 +59,8 @@ Species Estimate::most_likely() const {
 }
 
 Species Estimate::random(std::mt19937 & random_engine) const {
-	auto const total = containers::accumulate(begin(estimate), end(estimate));
-	std::uniform_real_distribution<float> distribution(0.0F, total);
+	auto const total = containers::accumulate(estimate);
+	auto distribution = std::uniform_real_distribution<float>(0.0F, total);
 	auto usage_threshold = distribution(random_engine);
 	
 	auto const it = containers::find_if(begin(estimate), end(estimate), [=](auto const value) mutable {

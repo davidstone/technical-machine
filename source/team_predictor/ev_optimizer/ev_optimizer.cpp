@@ -27,6 +27,7 @@
 
 #include "../../pokemon/pokemon.hpp"
 
+#include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/count.hpp>
 #include <containers/static_vector/make_static_vector.hpp>
 
@@ -42,11 +43,11 @@ namespace {
 using namespace bounded::literal;
 
 EV::total_type ev_sum(Pokemon const & pokemon) {
+	// TODO: transform the range instead of passing in a predicate to accumulate
 	auto const ev_sum = [&](EV::total_type const sum, StatNames const stat) {
 		return sum + get_stat(pokemon, stat).ev().value();
 	};
-	static constexpr auto regular = regular_stats();
-	return std::accumulate(begin(regular), end(regular), EV::total_type(get_hp(pokemon).ev().value()), ev_sum);
+	return containers::accumulate(regular_stats(), EV::total_type(get_hp(pokemon).ev().value()), ev_sum);
 }
 
 }	// namespace
@@ -73,10 +74,9 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	// the process in case a stat is overfilled.
 	while (ev_sum(pokemon) < EV::max_total) {
 		auto const hp_is_full = get_hp(pokemon).ev().value() == EV::max;
-		auto const regular = regular_stats();
 		auto checker = [&](auto const stat_name) { return get_stat(pokemon, stat_name).ev().value() == EV::max; };
 		auto const full_stats = bounded::checked_integer<0, 2>(
-			containers::count_if(begin(regular), end(regular), checker) +
+			containers::count_if(regular_stats(), checker) +
 			BOUNDED_CONDITIONAL(hp_is_full, 1_bi, 0_bi)
 		);
 

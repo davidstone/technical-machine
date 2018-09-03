@@ -89,7 +89,7 @@ Multiplier::Container Multiplier::species_clause() {
 
 void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unaccounted) {
 	// I may not need to calculate this...
-	auto const total = static_cast<value_type>(containers::accumulate(begin(overall), end(overall), 0U));
+	auto const total = static_cast<value_type>(containers::accumulate(overall));
 
 	std::ifstream file("settings/4/OU/teammate.txt");
 	std::string line;

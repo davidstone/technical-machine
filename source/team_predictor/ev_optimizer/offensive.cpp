@@ -1,5 +1,5 @@
 // Optimize offensive EVs and nature to remove waste
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,8 +34,14 @@ namespace technicalmachine {
 namespace {
 
 using namespace bounded::literal;
-bool has_physical_move(Pokemon const & pokemon);
-bool has_special_move(Pokemon const & pokemon);
+
+bool has_physical_move(Pokemon const & pokemon) {
+	return containers::any(regular_moves(pokemon), is_physical);
+}
+
+bool has_special_move(Pokemon const & pokemon) {
+	return containers::any(regular_moves(pokemon), is_special);
+}
 
 template<StatNames stat_name, typename Initial>
 auto find_least_stat(Species const species, Level const level, Nature const nature, Initial const initial) -> bounded::optional<EV::value_type> {
@@ -151,21 +157,4 @@ void OffensiveEVs::equal_stats(OffensiveData const initial, Species const specie
 	assert(!container.empty());
 }
 
-namespace {
-
-template<typename Predicate>
-bool has_move(Pokemon const & pokemon, Predicate predicate) {
-	auto const & moves = regular_moves(pokemon);
-	return containers::any_of(begin(moves), end(moves), predicate);
-}
-
-bool has_physical_move(Pokemon const & pokemon) {
-	return has_move(pokemon, is_physical);
-}
-
-bool has_special_move(Pokemon const & pokemon) {
-	return has_move(pokemon, is_special);
-}
-
-}	// namespace
 }	// namespace technicalmachine

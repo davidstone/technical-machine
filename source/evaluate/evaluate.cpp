@@ -114,7 +114,7 @@ auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens con
 
 auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon) {
 	auto const & moves = regular_moves(pokemon);
-	auto const has_baton_pass = containers::any_equal(begin(moves), end(moves), Moves::Baton_Pass);
+	auto const has_baton_pass = containers::any_equal(moves, Moves::Baton_Pass);
 	return
 		BOUNDED_CONDITIONAL(is_cursed(pokemon), evaluate.curse(), 0_bi) +
 		BOUNDED_CONDITIONAL(used_imprison(pokemon), evaluate.imprison(), 0_bi) +
@@ -209,7 +209,7 @@ auto Evaluate::sleep_clause (Team const & team) -> type {
 	auto const sleepers = [](Pokemon const & pokemon) {
 		return is_sleeping_due_to_other(get_status(pokemon));
 	};
-	auto const sleeper_count = containers::count_if(begin(team.all_pokemon()), end(team.all_pokemon()), sleepers);
+	auto const sleeper_count = containers::count_if(team.all_pokemon(), sleepers);
 	if (sleeper_count > 1_bi) {
 		return BOUNDED_CONDITIONAL(team.is_me(), victory, -victory);
 	}

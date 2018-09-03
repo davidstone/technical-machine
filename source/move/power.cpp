@@ -120,9 +120,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Move const move, T
 			auto const & boosts = stage(defender);
 			auto filter = [](auto const value) { return value > 0_bi; };
 			// Use std::ref because lambdas are not assignable
-			auto const filtered_first = containers::filter_iterator(begin(boosts), end(boosts), std::ref(filter));
-			auto const filtered_last = containers::filter_iterator(end(boosts), end(boosts), std::ref(filter));
-			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::accumulate(filtered_first, filtered_last));
+			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::accumulate(containers::filter(boosts, std::ref(filter))));
 			return bounded::min(uncapped_power, 200_bi);
 		}
 		case Moves::Return:

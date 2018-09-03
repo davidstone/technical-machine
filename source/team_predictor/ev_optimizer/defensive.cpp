@@ -75,7 +75,7 @@ void DefensiveEVs::remove_inefficient_natures(DefensiveEVs::Natures const & divi
 	auto const capacity = static_cast<std::intmax_t>(DefensiveEVs::Natures::capacity());
 	containers::static_vector<std::reference_wrapper<BestPerNature::value_type const>, capacity> boosters;
 	for (auto const & value : container) {
-		if (containers::any_equal(begin(divided_natures), end(divided_natures), value.first)) {
+		if (containers::any_equal(divided_natures, value.first)) {
 			boosters.emplace_back(value);
 		}
 	}

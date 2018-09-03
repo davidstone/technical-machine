@@ -77,8 +77,7 @@ auto is_healing(Moves const name) {
 }
 
 auto imprison(Moves const move, ActivePokemon const other) {
-	auto const & moves = regular_moves(other);
-	return used_imprison(other) and containers::any_equal(begin(moves), end(moves), move);
+	return used_imprison(other) and containers::any_equal(regular_moves(other), move);
 }
 
 // Things that both block selection and block execution in between sleep and confusion
