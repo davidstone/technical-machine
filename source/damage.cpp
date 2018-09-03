@@ -100,7 +100,7 @@ auto calculate_stab_boost(Ability const ability) {
 
 auto calculate_stab_modifier(ActivePokemon const attacker, Moves const move) {
 	auto const type = get_type(move, attacker);
-	return BOUNDED_CONDITIONAL(is_type(attacker, type, is_roosting(attacker)),
+	return BOUNDED_CONDITIONAL(is_type(attacker, type, is_roosting(attacker)) and type != Type::Typeless,
 		calculate_stab_boost(get_ability(attacker)),
 		rational(1_bi, 1_bi)
 	);

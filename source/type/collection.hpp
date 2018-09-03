@@ -33,34 +33,6 @@ struct MutableActivePokemon;
 struct Pokemon;
 struct Weather;
 
-namespace detail_type_collection {
-
-struct TypeArray {
-private:
-	using container_type = containers::array<Type, 2>;
-public:
-	using const_iterator = container_type::const_iterator;
-	constexpr TypeArray(Type const type1):
-		m_types({{type1, Type::Typeless}})
-		{
-	}
-	constexpr TypeArray(Type const type1, Type const type2):
-		m_types({{type1, type2}})
-		{
-	}
-	friend constexpr auto begin(TypeArray const & array) {
-		return begin(array.m_types);
-	}
-	friend constexpr auto end(TypeArray const & array) {
-		auto const size = BOUNDED_CONDITIONAL(array.m_types[1_bi] == Type::Typeless, 1_bi, 2_bi);
-		return begin(array) + size;
-	}
-private:
-	container_type m_types;
-};
-
-}	// namespace detail_type_collection
-
 struct TypeCollection {
 	explicit TypeCollection(Species name);
 	friend auto is_immune_to_hail(TypeCollection const collection) -> bool;
@@ -74,7 +46,7 @@ struct TypeCollection {
 private:
 	friend auto is_type(Pokemon const & pokemon, Type type, bool roosting) -> bool;
 	friend struct Effectiveness;
-	detail_type_collection::TypeArray types;
+	containers::array<Type, 2> types;
 };
 
 auto is_type(Pokemon const & pokemon, Type type, bool roosting) -> bool;
