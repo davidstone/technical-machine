@@ -18,8 +18,6 @@
 
 #include "single_classification_evs.hpp"
 
-#include "../../enum_range.hpp"
-
 #include "../../pokemon/pokemon.hpp"
 
 #include "../../stat/calculate.hpp"
@@ -68,7 +66,7 @@ EqualDefensiveness equal_defensiveness(Pokemon const & pokemon, bool const physi
 	auto const level = get_level(pokemon);
 	auto const initial_product = get_hp(pokemon).max() * initial_stat(stat_name, stat, level, get_nature(pokemon));
 	auto result = EqualDefensiveness{};
-	for (auto const nature : enum_range<Nature>) {
+	for (auto const nature : containers::enum_range<Nature>()) {
 		for (auto hp_ev = EV::value_type(0_bi); ; hp_ev += 4_bi) {
 			auto const hp = HP(pokemon, level, EV(hp_ev));
 			stat = Stat(stat, calculate_ev(stat_name, stat, level, nature, hp, initial_product));

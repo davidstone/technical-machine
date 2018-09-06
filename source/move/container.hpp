@@ -26,7 +26,6 @@
 #include "../range.hpp"
 
 #include <bounded/integer.hpp>
-#include <bounded/integer_range.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/static_vector/static_vector.hpp>

@@ -30,7 +30,7 @@
 
 #include "../pokemon/species.hpp"
 
-#include <bounded/integer_range.hpp>
+#include <containers/integer_range.hpp>
 
 #include <iostream>
 
@@ -73,7 +73,7 @@ Team max_damage_physical_defender() {
 	auto && pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi), IV(0_bi));
 	get_nature(pokemon) = Nature::Hasty;
-	for (auto const n : bounded::integer_range(3_bi)) {
+	for (auto const n : containers::integer_range(3_bi)) {
 		static_cast<void>(n);
 		boost(stage(pokemon), StatNames::DEF, -2_bi);
 	}
@@ -88,7 +88,7 @@ Team max_damage_special_defender() {
 	get_ability(d) = Ability::Dry_Skin;
 
 	set_stat_ev(d, StatNames::SPD, EV(0_bi), IV(0_bi));
-	for (auto const n : bounded::integer_range(3_bi)) {
+	for (auto const n : containers::integer_range(3_bi)) {
 		static_cast<void>(n);
 		boost(stage(d), StatNames::SPD, -2_bi);
 	}
@@ -172,7 +172,7 @@ void special_damage_test() {
 	boost(stage(attacker.pokemon()), StatNames::SPA, 6_bi);
 	
 	get_item(a) = Item::Metronome;
-	for (auto const n : bounded::integer_range(10_bi)) {
+	for (auto const n : containers::integer_range(10_bi)) {
 		static_cast<void>(n);
 		attacker.pokemon().increment_move_use_counter(move);
 	}

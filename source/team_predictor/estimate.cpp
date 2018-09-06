@@ -20,10 +20,7 @@
 
 #include "multiplier.hpp"
 
-#include "../enum_range.hpp"
 #include "../team.hpp"
-
-#include <bounded/integer_range.hpp>
 
 #include <containers/algorithms/accumulate.hpp>
 
@@ -34,7 +31,7 @@
 namespace technicalmachine {
 
 Estimate::Estimate(Overall const & overall, Lead const & lead, unsigned const total) {
-	for (auto const species : enum_range<Species>) {
+	for (auto const species : containers::enum_range<Species>()) {
 		estimate[species] = lead[species] * static_cast<Lead::value_type>(overall[species] / static_cast<Lead::value_type>(total));
 	}
 }
@@ -46,7 +43,7 @@ void Estimate::update(Multiplier const & multiplier, Team const & team) {
 }
 
 void Estimate::update(Multiplier const & multiplier, Species const seen) {
-	for (auto const predicted : enum_range<Species>) {
+	for (auto const predicted : containers::enum_range<Species>()) {
 		estimate[predicted] *= multiplier(seen, predicted);
 	}
 }

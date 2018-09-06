@@ -132,7 +132,6 @@ add_library(tm_common STATIC
 	source/endofturn.cpp
 	source/entry_hazards.cpp
 	source/enum.cpp
-	source/enum_range.cpp
 	source/gender.cpp
 	source/heal.cpp
 	source/invalid_settings_file.cpp

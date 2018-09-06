@@ -24,7 +24,7 @@
 #include "pokemon/level.hpp"
 #include "pokemon/pokemon_not_found.hpp"
 
-#include <bounded/integer_range.hpp>
+#include <containers/integer_range.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -35,7 +35,7 @@ using namespace bounded::literal;
 namespace {
 
 auto find_index(PokemonCollection const & collection, Species const species) {
-	for (auto const found_index : bounded::integer_range(size(collection))) {
+	for (auto const found_index : containers::integer_range(size(collection))) {
 		if (collection(found_index) == species) {
 			return found_index;
 		}
@@ -117,7 +117,7 @@ constexpr auto psywave_variables = []{
 	Probabilities probabilities;
 	constexpr auto min = 50_bi;
 	constexpr auto max = 150_bi + 1_bi;
-	for (auto const n : bounded::integer_range(min, max)) {
+	for (auto const n : containers::integer_range(min, max)) {
 		probabilities.emplace_back(n, 1.0 / static_cast<double>(max - min));
 	}
 	return probabilities;
@@ -136,7 +136,7 @@ constexpr auto generic_probability(Args... probabilities) noexcept {
 template<typename Count>
 constexpr auto constant_probability(Count const count) noexcept {
 	Probabilities probabilities;
-	for (auto const n : bounded::integer_range(count)) {
+	for (auto const n : containers::integer_range(count)) {
 		probabilities.emplace_back(n, 1.0 / static_cast<double>(count));
 	}
 	return probabilities;

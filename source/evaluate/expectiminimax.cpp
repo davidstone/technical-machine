@@ -46,7 +46,7 @@
 #include "../string_conversions/move.hpp"
 #include "../string_conversions/pokemon.hpp"
 
-#include <bounded/integer_range.hpp>
+#include <containers/integer_range.hpp>
 
 #include <boost/timer.hpp>
 
@@ -359,7 +359,7 @@ BestMove move_then_switch_branch(Team const & switcher, Move const switcher_move
 		++tabs;
 	}
 	auto best_switch = Moves{};
-	for (auto const replacement : integer_range(size(switcher.all_pokemon()))) {
+	for (auto const replacement : containers::integer_range(size(switcher.all_pokemon()))) {
 		if (skip_this_replacement(switcher.all_pokemon(), replacement)) {
 			continue;
 		}
@@ -381,7 +381,7 @@ BestMove move_then_switch_branch(Team const & switcher, Move const switcher_move
 
 constexpr auto all_switches(TeamSize const team_size, containers::index_type<PokemonCollection> const index) {
 	containers::static_vector<Moves, static_cast<std::size_t>(TeamSize::max() - 1_bi)> switches;
-	for (auto const n : bounded::integer_range(team_size)) {
+	for (auto const n : containers::integer_range(team_size)) {
 		if (n != index) {
 			push_back(switches, to_switch(n));
 		}
@@ -430,7 +430,7 @@ BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsig
 	auto best_move = Moves{};
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	// TODO: use accumulate instead of a for loop
-	for (auto const ai_replacement : integer_range(size(ai.all_pokemon()))) {
+	for (auto const ai_replacement : containers::integer_range(size(ai.all_pokemon()))) {
 		// TODO: Use a filter iterator
 		if (skip_this_replacement(ai.all_pokemon(), ai_replacement)) {
 			continue;
@@ -438,7 +438,7 @@ BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsig
 		auto const ai_move = to_switch(ai_replacement);
 		print_action(ai, ai_move, first_turn);
 		auto beta = static_cast<double>(victory + 1_bi);
-		for (auto const foe_replacement : integer_range(size(foe.all_pokemon()))) {
+		for (auto const foe_replacement : containers::integer_range(size(foe.all_pokemon()))) {
 			if (skip_this_replacement(foe.all_pokemon(), foe_replacement)) {
 				continue;
 			}

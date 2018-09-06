@@ -31,7 +31,7 @@
 #include "../../pokemon/max_pokemon_per_team.hpp"
 #include "../../pokemon/species.hpp"
 
-#include <bounded/integer_range.hpp>
+#include <containers/integer_range.hpp>
 
 #include <iostream>
 #include <string>
@@ -65,15 +65,15 @@ void add_pokemon(Team & team, Species const species) {
 }
 
 void test_combinations(Team team) {
-	for (auto const foe_size : bounded::integer_range(2_bi, max_pokemon_per_team)) {
+	for (auto const foe_size : containers::integer_range(2_bi, max_pokemon_per_team)) {
 		add_pokemon(team, static_cast<Species>(foe_size));
 		auto collection = all_probabilities(move, foe_size);
 		auto const expected = foe_size - 1_bi;
 		if (size(collection) != expected) {
 			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected) + " but got " + to_string(size(collection)));
 		}
-		for (auto const new_index : bounded::integer_range(foe_size)) {
-			for (auto const current_index : bounded::integer_range(foe_size)) {
+		for (auto const new_index : containers::integer_range(foe_size)) {
+			for (auto const current_index : containers::integer_range(foe_size)) {
 				team.all_pokemon().set_index(current_index);
 				if (current_index == new_index) {
 					phaze_in_same_pokemon(front(collection), team);

@@ -27,10 +27,9 @@
 #include "../pokemon/species.hpp"
 #include "../string_conversions/conversion.hpp"
 
-#include <bounded/integer_range.hpp>
-
 #include <containers/array/make_array.hpp>
 #include <containers/algorithms/accumulate.hpp>
+#include <containers/integer_range.hpp>
 
 #include <algorithm>
 #include <numeric>
@@ -47,7 +46,7 @@ void random_team(Team & team, std::mt19937 & random_engine) {
 	auto estimate = Estimate(overall, lead, containers::accumulate(overall));
 	auto const multiplier = Multiplier(overall);
 	estimate.update(multiplier, team);
-	for (auto const n : bounded::integer_range(max_pokemon_per_team - size(team.all_pokemon()))) {
+	for (auto const n : containers::integer_range(max_pokemon_per_team - size(team.all_pokemon()))) {
 		static_cast<void>(n);
 		auto const species = estimate.random(random_engine);
 		estimate.update(multiplier, species);

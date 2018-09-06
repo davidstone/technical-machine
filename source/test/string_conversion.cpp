@@ -18,11 +18,7 @@
 
 #include "string_conversion.hpp"
 
-#include <iostream>
-#include <string>
-
 #include "../ability.hpp"
-#include "../enum_range.hpp"
 #include "../gender.hpp"
 #include "../item.hpp"
 #include "../status.hpp"
@@ -42,6 +38,11 @@
 #include "../string_conversions/status.hpp"
 #include "../string_conversions/invalid_string_conversion.hpp"
 
+#include <containers/integer_range.hpp>
+
+#include <iostream>
+#include <string>
+
 namespace technicalmachine {
 namespace {
 
@@ -59,7 +60,7 @@ struct InvalidToStringConversion : std::logic_error {
 template <typename Enum>
 void test_generic (std::string const & thing) {
 	std::cout << "\tVerifying correct " + thing + ".\n";
-	for (auto const original : enum_range<Enum>) {
+	for (auto const original : containers::enum_range<Enum>()) {
 		auto const str = to_string(original);
 		auto const result = from_string<Enum>(str);
 		if (original != result) {

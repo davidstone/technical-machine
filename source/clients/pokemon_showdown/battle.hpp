@@ -62,7 +62,7 @@ struct BattleParser {
 			100_bi
 		)
 	{
-		for (auto const index : bounded::integer_range(opponent_team_size)) {
+		for (auto const index : containers::integer_range(opponent_team_size)) {
 			push_back(m_slot_memory, index + 1_bi);
 		}
 	}

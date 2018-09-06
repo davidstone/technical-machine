@@ -18,7 +18,6 @@
 
 #include "offensive.hpp"
 
-#include "../../enum_range.hpp"
 #include "../../pokemon/pokemon.hpp"
 #include "../../stat/calculate.hpp"
 #include "../../stat/nature.hpp"
@@ -61,7 +60,7 @@ auto find_least_stat(Species const species, Level const level, Nature const natu
 }	// namespace
 
 OffensiveEVs::OffensiveEVs(Pokemon const & pokemon) {
-	for (auto const nature : enum_range<Nature>) {
+	for (auto const nature : containers::enum_range<Nature>()) {
 		container.emplace(nature, OffensiveStats{});
 	}
 	optimize(pokemon);

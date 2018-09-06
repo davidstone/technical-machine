@@ -34,7 +34,7 @@
 
 #include "../../stat/stat.hpp"
 
-#include <bounded/integer_range.hpp>
+#include <containers/integer_range.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -66,7 +66,7 @@ TeamSize number_of_pokemon(ptree const & pt) {
 }
 
 ptree::const_iterator load_moves(Pokemon & pokemon, ptree::const_iterator it) {
-	for (auto const n : bounded::integer_range(4_bi)) {
+	for (auto const n : containers::integer_range(4_bi)) {
 		static_cast<void>(n);
 		if (it->first != "Move") {
 			throw InvalidTeamFile("Move", it->first);

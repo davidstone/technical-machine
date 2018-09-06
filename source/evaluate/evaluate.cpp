@@ -31,10 +31,9 @@
 
 #include "../type/effectiveness.hpp"
 
-#include <bounded/integer_range.hpp>
-
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/count.hpp>
+#include <containers/integer_range.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -145,7 +144,7 @@ using ScorePokemon = decltype(score_pokemon(std::declval<Evaluate>(), std::declv
 using ScoreAllPokemon = decltype(std::declval<ScorePokemon>() * std::declval<TeamSize>() + std::declval<ScoreActivePokemon>());
 auto score_all_pokemon(Evaluate const & evaluate, Team const & team, Team const & other, Weather const weather) {
 	ScoreAllPokemon score = 0_bi;
-	for (auto const index : bounded::integer_range(size(team.all_pokemon()))) {
+	for (auto const index : containers::integer_range(size(team.all_pokemon()))) {
 		if (get_hp(team.pokemon(index)) == 0_bi) {
 			continue;
 		}

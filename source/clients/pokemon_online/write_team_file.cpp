@@ -30,7 +30,7 @@
 
 #include "../../stat/stat.hpp"
 
-#include <bounded/integer_range.hpp>
+#include <containers/integer_range.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -89,7 +89,7 @@ void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	for (auto const & move : moves) {
 		write_move(move, member);
 	}
-	for (auto const n : bounded::integer_range(RegularMoveSize(size(moves)), max_moves_per_pokemon)) {
+	for (auto const n : containers::integer_range(RegularMoveSize(size(moves)), max_moves_per_pokemon)) {
 		static_cast<void>(n);
 		write_blank_move(member);
 	}
@@ -134,7 +134,7 @@ void write_team(Team const & team, std::filesystem::path const & file_name) {
 	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon (pokemon, t);
 	}
-	for (auto const unused : bounded::integer_range(size(team.all_pokemon()), max_pokemon_per_team)) {
+	for (auto const unused : containers::integer_range(size(team.all_pokemon()), max_pokemon_per_team)) {
 		static_cast<void>(unused);
 		write_blank_pokemon(t);
 	}

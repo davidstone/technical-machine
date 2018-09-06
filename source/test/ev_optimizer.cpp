@@ -19,7 +19,6 @@
 #include "ev_optimizer.hpp"
 #include <iostream>
 #include <random>
-#include "../enum_range.hpp"
 #include "../team.hpp"
 #include "../pokemon/species.hpp"
 #include "../stat/calculate.hpp"
@@ -56,7 +55,7 @@ Pokemon make_test_pokemon() {
 	Level const level(100_bi);
 	Pokemon pokemon(team_size, Species::Snorlax, level, Gender::male);
 	set_hp_ev(pokemon, EV(128_bi));
-	for (auto const stat : enum_range<StatNames, StatNames::NORMAL_END>) {
+	for (auto const stat : containers::enum_range(StatNames::NORMAL_END)) {
 		set_stat_ev(pokemon, stat, EV(76_bi));
 	}
 	get_nature(pokemon) = Nature::Hardy;
@@ -74,7 +73,7 @@ void speed_tests() {
 	SpeedEVs speedEVs(pokemon);
 	auto const original_stat = get_stat(pokemon, StatNames::SPE);
 	auto const original_value = initial_stat(StatNames::SPE, original_stat, level, get_nature(pokemon));
-	for (auto const nature : enum_range<Nature>) {
+	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const new_value = initial_stat(StatNames::SPE, Stat(species, StatNames::SPE, find(speedEVs, nature)), level, nature);
 		if (boosts_stat(nature, StatNames::SPE) and !boosts_stat(get_nature(pokemon), StatNames::SPE)) {
 			assert(new_value == original_value or new_value == original_value + 1_bi);

@@ -43,9 +43,8 @@
 
 #include "../team_predictor/team_predictor.hpp"
 
-#include <bounded/integer_range.hpp>
-
 #include <containers/algorithms/find.hpp>
+#include <containers/integer_range.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -122,7 +121,7 @@ void Battle::handle_use_move(Party const user, uint8_t /*slot*/, Moves move_name
 namespace {
 
 auto set_index_of_seen(PokemonCollection & collection, Species const species) {
-	for (auto const replacement : integer_range(size(collection))) {
+	for (auto const replacement : containers::integer_range(size(collection))) {
 		if (species == collection(replacement)) {
 			collection.set_replacement(replacement);
 			return true;

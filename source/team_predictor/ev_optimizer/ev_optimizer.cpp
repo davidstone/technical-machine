@@ -23,8 +23,6 @@
 #include "offensive.hpp"
 #include "speed.hpp"
 
-#include "../../enum_range.hpp"
-
 #include "../../pokemon/pokemon.hpp"
 
 #include <containers/algorithms/accumulate.hpp>
@@ -108,7 +106,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 			continue;
 		}
 		++it;
-		for (auto const stat_name : enum_range<StatNames, StatNames::NORMAL_END>) {
+		for (auto const stat_name : containers::enum_range(StatNames::NORMAL_END)) {
 			auto const previous = it;
 			it = find(previous);
 			// I use clamped here because I expect there to be some extra EVs

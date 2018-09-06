@@ -23,7 +23,6 @@
 #include "../invalid_simulator_conversion.hpp"
 
 #include "../../ability.hpp"
-#include "../../enum_range.hpp"
 
 #include "../../move/is_switch.hpp"
 #include "../../move/moves.hpp"
@@ -42,7 +41,7 @@ namespace {
 template<typename Enum, typename ToID, typename FromID>
 void test_enum(std::string const & name, ToID && to_id, FromID && from_id) {
 	std::cout << "\t\tVerifying correct " << name << ".\n";
-	for (auto const original : enum_range<Enum>) {
+	for (auto const original : containers::enum_range<Enum>()) {
 		auto const id = to_id(original);
 		auto const result = from_id(id);
 		if (original != result) {
@@ -53,7 +52,7 @@ void test_enum(std::string const & name, ToID && to_id, FromID && from_id) {
 
 void test_item() {
 	std::cout << "\t\tVerifying correct item.\n";
-	for (auto const original : enum_range<Item>) {
+	for (auto const original : containers::enum_range<Item>()) {
 		auto const id = item_to_id(original);
 		auto const result = id_to_item(id);
 		if (original != result and id != 0) {
@@ -64,7 +63,7 @@ void test_item() {
 
 void test_move() {
 	std::cout << "\t\tVerifying correct move.\n";
-	for(auto const original : enum_range<Moves>) {
+	for(auto const original : containers::enum_range<Moves>()) {
 		if (!is_switch(original) and original != Moves::Hit_Self) {
 			auto const id = move_to_id(original);
 			auto const result = id_to_move(id);
@@ -77,7 +76,7 @@ void test_move() {
 
 void test_species() {
 	std::cout << "\t\tVerifying correct species.\n";
-	for (auto const original : enum_range<Species>) {
+	for (auto const original : containers::enum_range<Species>()) {
 		if (original == Species::Victini) {
 			break;
 		}

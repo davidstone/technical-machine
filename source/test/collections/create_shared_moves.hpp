@@ -25,8 +25,8 @@
 #include "../../pokemon/max_pokemon_per_team.hpp"
 
 #include <bounded/integer.hpp>
-#include <bounded/integer_range.hpp>
 
+#include <containers/integer_range.hpp>
 #include <containers/vector/vector.hpp>
 
 namespace technicalmachine {
@@ -35,7 +35,7 @@ using namespace bounded::literal;
 inline auto create_shared_moves(TeamSize const team_size) {
 	containers::vector<Moves> shared ({ Moves::Struggle });
 	if (team_size != 1_bi) {
-		for (auto const n : bounded::integer_range(team_size)) {
+		for (auto const n : containers::integer_range(team_size)) {
 			shared.emplace_back(to_switch(n));
 		}
 	}
