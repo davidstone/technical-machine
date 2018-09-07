@@ -1,5 +1,5 @@
 // Expectiminimax
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -46,6 +46,7 @@
 #include "../string_conversions/move.hpp"
 #include "../string_conversions/pokemon.hpp"
 
+#include <containers/algorithms/filter_iterator.hpp>
 #include <containers/integer_range.hpp>
 
 #include <boost/timer.hpp>
@@ -141,10 +142,11 @@ bool can_critical_hit(Moves const move) {
 }
 
 
-// TODO: Use a filter iterator
-auto skip_this_replacement(PokemonCollection const & collection, TeamIndex const replacement) {
-	auto const would_switch_to_self = replacement == collection.index();
-	return would_switch_to_self and size(collection) > 1_bi;
+auto valid_replacements(PokemonCollection const & collection) {
+	return containers::filter(containers::integer_range(size(collection)), [&](auto const replacement_index) {
+		auto const would_switch_to_self = (replacement_index == collection.index());
+		return would_switch_to_self and size(collection) > 1_bi;
+	});
 }
 
 auto deorder(Team & first, Team & last) {
@@ -359,11 +361,7 @@ BestMove move_then_switch_branch(Team const & switcher, Move const switcher_move
 		++tabs;
 	}
 	auto best_switch = Moves{};
-	for (auto const replacement : containers::integer_range(size(switcher.all_pokemon()))) {
-		if (skip_this_replacement(switcher.all_pokemon(), replacement)) {
-			continue;
-		}
-		
+	for (auto const replacement : valid_replacements(switcher.all_pokemon())) {
 		auto const replacement_move = to_switch(replacement);
 		print_action(switcher, replacement_move, first_turn);
 		auto const value = switch_after_move_branch(switcher, switcher_move, other, other_move, switcher_variable, other_variable, weather, depth, evaluate, replacement, switcher_flags, other_flags);
@@ -429,19 +427,12 @@ BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsig
 	auto const faster = faster_pokemon(ai, foe, weather);
 	auto best_move = Moves{};
 	auto alpha = static_cast<double>(-victory - 1_bi);
-	// TODO: use accumulate instead of a for loop
-	for (auto const ai_replacement : containers::integer_range(size(ai.all_pokemon()))) {
-		// TODO: Use a filter iterator
-		if (skip_this_replacement(ai.all_pokemon(), ai_replacement)) {
-			continue;
-		}
+	// TODO: use accumulate instead of a for loop?
+	for (auto const ai_replacement : valid_replacements(ai.all_pokemon())) {
 		auto const ai_move = to_switch(ai_replacement);
 		print_action(ai, ai_move, first_turn);
 		auto beta = static_cast<double>(victory + 1_bi);
-		for (auto const foe_replacement : containers::integer_range(size(foe.all_pokemon()))) {
-			if (skip_this_replacement(foe.all_pokemon(), foe_replacement)) {
-				continue;
-			}
+		for (auto const foe_replacement : valid_replacements(foe.all_pokemon())) {
 			auto get_replacement = [&](Team const & team) {
 				return std::addressof(team) == std::addressof(ai) ? ai_replacement : foe_replacement;
 			};
