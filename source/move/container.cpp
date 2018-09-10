@@ -17,26 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "container.hpp"
-
-#include "shared.hpp"
-
-#include <algorithm>
-#include <cassert>
-#include <utility>
-
-namespace technicalmachine {
-
-auto operator+(MoveIterator const lhs, MoveIterator::difference_type const rhs) -> MoveIterator {
-	using RegularDistance = RegularMoveContainer::const_iterator::difference_type;
-	using range_t = MoveIterator::range_t;
-	return (size(lhs.m_regular) > rhs) ?
-		MoveIterator(range_t(lhs.m_regular.begin() + static_cast<RegularDistance>(rhs), lhs.m_regular.end()), lhs.m_shared) :
-		MoveIterator(range_t(lhs.m_regular.end(), lhs.m_regular.end()), lhs.m_shared + static_cast<SharedMovesIterator::difference_type>(rhs - size(lhs.m_regular)));
-}
-auto operator-(MoveIterator const lhs, MoveIterator const rhs) -> MoveIterator::difference_type {
-	// The +-1 accounts for the one-past-the-end index.
-	using RegularMoveDifference = decltype(std::declval<RegularMoveIndex>() - std::declval<RegularMoveIndex>() + std::declval<bounded::integer<-1, 1>>());
-	return (lhs.m_shared - rhs.m_shared) + static_cast<RegularMoveDifference>(lhs.m_regular.begin() - rhs.m_regular.begin());
-}
-
-}	// namespace technicalmachine

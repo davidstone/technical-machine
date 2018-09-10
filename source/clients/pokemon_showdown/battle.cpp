@@ -1,5 +1,5 @@
 // Pokemon Showdown battle logic
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,6 +19,8 @@
 #include "battle.hpp"
 
 #include "../../string_conversions/pokemon.hpp"
+
+#include <bounded/integer.hpp>
 
 #include <charconv>
 #include <iostream>
@@ -448,6 +450,7 @@ void BattleParser::handle_message(InMessage message) {
 void BattleParser::send_move(Moves const move) {
 	// In doubles / triples we need to specify " TARGET" at the end for regular
 	// moves
+	using std::to_string;
 	auto switch_move = [=]{ return to_string(to_replacement(move) + 1_bi); };
 	auto move_index = [=]{ return to_string(m_battle.move_index(move) + 1_bi); };
 	send_message(m_id + (is_switch(move) ? "|/switch " + switch_move() : "|/move " + move_index()));

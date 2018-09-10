@@ -28,6 +28,7 @@
 #include <bounded/integer.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
+#include <containers/algorithms/concatenate_view.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 #include <cassert>
@@ -37,48 +38,14 @@ using namespace bounded::literal;
 
 using RegularMoveContainer = containers::static_vector<Move, max_moves_per_pokemon.value()>;
 
-struct MoveIterator {
-private:
-	static constexpr auto max_difference = static_cast<intmax_t>(std::numeric_limits<MoveSize>::max() + 1_bi);
-public:
-	using value_type = Move const;
-	using difference_type = bounded::integer<-max_difference, max_difference>;
-	using pointer = value_type *;
-	using reference = value_type &;
-	using iterator_category = std::random_access_iterator_tag;
-
-	constexpr auto operator*() const -> value_type {
-		return (m_regular.begin() != m_regular.end()) ? *m_regular.begin() : *m_shared;
-	}
-	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(MoveIterator)
-
-	friend auto operator+(MoveIterator const lhs, difference_type const rhs) -> MoveIterator;
-	friend auto operator-(MoveIterator const lhs, MoveIterator const rhs) -> difference_type;
-
-	friend constexpr auto compare(MoveIterator const lhs, MoveIterator const rhs) noexcept {
-		auto as_tuple = [](auto const value) {
-			return containers::make_tuple(value.m_regular.begin(), value.m_shared);
-		};
-		return compare(as_tuple(lhs), as_tuple(rhs));
-	}
-
-private:
-	using range_t = range_view<RegularMoveContainer::const_iterator>;
-	friend struct MoveContainer;
-	constexpr MoveIterator(range_t regular, SharedMovesIterator shared) noexcept:
-		m_regular(std::move(regular)),
-		m_shared(std::move(shared)) {
-	}
-	
-	range_t m_regular;
-	SharedMovesIterator m_shared;
-};
-
-
 struct MoveContainer {
 	using value_type = Move;
 	using size_type = MoveSize;
-	using const_iterator = MoveIterator;
+	using const_iterator = containers::concatenate_view_iterator<
+		RegularMoveContainer::const_iterator,
+		RegularMoveContainer::const_iterator,
+		SharedMoves::const_iterator
+	>;
 	using const_regular_iterator = RegularMoveContainer::const_iterator;
 	using regular_iterator = RegularMoveContainer::iterator;
 	
@@ -99,14 +66,12 @@ struct MoveContainer {
 		return range_view(begin(m_regular), end(m_regular));
 	}
 	
-	friend constexpr const_iterator begin(MoveContainer const & container) {
-		return const_iterator(container.regular(), begin(container.m_shared));
+	friend constexpr auto begin(MoveContainer const & container) {
+		return const_iterator(begin(container.m_regular), end(container.m_regular), begin(container.m_shared));
 	}
-	friend constexpr const_iterator end(MoveContainer const & container) {
-		return const_iterator(MoveIterator::range_t(container.regular().end(), container.regular().end()), end(container.m_shared));
+	friend constexpr auto end(MoveContainer const & container) {
+		return containers::concatenate_view_sentinel(end(container.m_shared));
 	}
-
-	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(MoveContainer)
 
 	template<typename M, typename... MaybePP>
 	constexpr auto & emplace_back(M const move, MaybePP... maybe_pp) {

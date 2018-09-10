@@ -68,9 +68,9 @@ private:
 
 void move_container_tests() {
 	std::cout << "\tRunning MoveContainer tests.\n";
-	constexpr TeamSize team_size(4_bi);
+	constexpr auto team_size = TeamSize(4_bi);
 	constexpr auto shared_moves_size = team_size + 1_bi;
-	MoveContainer c(team_size);
+	auto c = MoveContainer(team_size);
 	if (size(c) != shared_moves_size) {
 		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + bounded::to_string(shared_moves_size) + " but got " + bounded::to_string(size(c)));
 	}
@@ -82,8 +82,8 @@ void move_container_tests() {
 		}
 	}
 	Verify verify(moves, team_size);
-	for (auto const index : containers::integer_range(size(c))) {
-		verify(c[index]);
+	for (auto const move : c) {
+		verify(move);
 	}
 }
 

@@ -31,6 +31,7 @@
 
 #include "../type/effectiveness.hpp"
 
+#include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/count.hpp>
 #include <containers/integer_range.hpp>
@@ -105,7 +106,7 @@ auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens con
 	// TODO: alter the score of a move based on the weather
 	ScoreMoves score = 0_bi;
 	auto const & moves = all_moves(pokemon);
-	return std::accumulate(begin(moves), end(moves), score, [&](auto init, auto const & move) {
+	return containers::accumulate(moves, score, [&](auto init, auto const move) {
 		return init + score_move(evaluate, move, other);
 	});
 }
