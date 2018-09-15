@@ -91,22 +91,24 @@ auto variable_adjusted_base_power(Team const & attacker_team, Move const move, T
 		case Moves::Rollout:
 			return last_used_move(attacker).momentum_move_power();
 		case Moves::Hidden_Power: {
-			using stat_and_position_type = std::pair<StatNames, bounded::integer<0, 5>>;
-			static constexpr containers::array<stat_and_position_type, 5> stat_and_position {{
-				{ StatNames::ATK, 1_bi },
-				{ StatNames::DEF, 2_bi },
-				{ StatNames::SPE, 3_bi },
-				{ StatNames::SPA, 4_bi },
-				{ StatNames::SPD, 5_bi }
-			}};
-			using intermediate_type = bounded::checked_integer<0, (1 << 6) - 1>;
-			auto const sum = [&](intermediate_type value, stat_and_position_type const & stat) {
-				return value + (((get_stat(attacker, stat.first).iv().value() / 2_bi) % 2_bi) << stat.second);
+			// TODO: This is probably best expressed with bit operations
+			auto compute_generic = [](auto const stat, auto const shift) {
+				return ((stat.iv().value() / 2_bi) % 2_bi) << shift;
 			};
-			intermediate_type const initial = (get_hp(attacker).iv().value() / 2_bi) % 2_bi;
-			auto const result = std::accumulate(begin(stat_and_position), end(stat_and_position), initial, sum) * 40_bi / 63_bi + 30_bi;
-			static_assert(std::numeric_limits<decltype(result)>::min() == 30_bi, "Incorrect Hidden Power minimum.");
-			static_assert(std::numeric_limits<decltype(result)>::max() == 70_bi, "Incorrect Hidden Power maximum.");
+			auto compute = [&](auto const stat_name, auto const shift) {
+				return compute_generic(get_stat(attacker, stat_name), shift);
+			};
+			auto const initial =
+				compute_generic(get_hp(attacker), 0_bi) +
+				compute(StatNames::ATK, 1_bi) +
+				compute(StatNames::DEF, 2_bi) +
+				compute(StatNames::SPE, 3_bi) +
+				compute(StatNames::SPA, 4_bi) +
+				compute(StatNames::SPD, 5_bi);
+
+			auto const result = initial * 40_bi / 63_bi + 30_bi;
+			static_assert(result.min() == 30_bi, "Incorrect Hidden Power minimum.");
+			static_assert(result.max() == 70_bi, "Incorrect Hidden Power maximum.");
 			return result;
 		}
 		case Moves::Magnitude:
@@ -117,10 +119,8 @@ auto variable_adjusted_base_power(Team const & attacker_team, Move const move, T
 			assert(!present_heals(variable));
 			return variable.value;
 		case Moves::Punishment: {
-			auto const & boosts = stage(defender);
-			auto filter = [](auto const value) { return value > 0_bi; };
-			// Use std::ref because lambdas are not assignable
-			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::accumulate(containers::filter(boosts, std::ref(filter))));
+			auto is_positive = [](auto const value) { return value > 0_bi; };
+			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::accumulate(containers::filter(stage(defender), is_positive)));
 			return bounded::min(uncapped_power, 200_bi);
 		}
 		case Moves::Return:

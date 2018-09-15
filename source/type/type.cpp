@@ -24,7 +24,6 @@
 #include "../pokemon/pokemon.hpp"
 
 #include <containers/array/array.hpp>
-#include <containers/algorithms/accumulate.hpp>
 
 #include <algorithm>
 
@@ -41,20 +40,22 @@ auto is_weakened_by_weather(Type const type, Weather const weather) -> bool {
 namespace {
 
 auto hidden_power_type(Pokemon const & pokemon) {
-	using modifier_type = std::pair<StatNames, bounded::integer<1, 5>>;
-	static constexpr auto modifiers = containers::array{
-		modifier_type(StatNames::ATK, 1_bi),
-		modifier_type(StatNames::DEF, 2_bi),
-		modifier_type(StatNames::SPE, 3_bi),
-		modifier_type(StatNames::SPA, 4_bi),
-		modifier_type(StatNames::SPD, 5_bi)
+	// TODO: This is probably best expressed with bit operations
+	auto compute_generic = [](auto const stat, auto const shift) {
+		return (stat.iv().value() % 2_bi) << shift;
 	};
-	using intermediate_type = bounded::checked_integer<0, 63>;
-	auto const sum = [&](intermediate_type const value, modifier_type const & pair) {
-		return value + ((get_stat(pokemon, pair.first).iv().value() % 2_bi) << pair.second);
+	auto compute = [&](auto const stat_name, auto const shift) {
+		return compute_generic(get_stat(pokemon, stat_name), shift);
 	};
-	intermediate_type const initial = get_hp(pokemon).iv().value() % 2_bi;
-	auto const index = containers::accumulate(modifiers, initial, sum) * 15_bi / 63_bi;
+	auto const initial =
+		compute_generic(get_hp(pokemon), 0_bi) +
+		compute(StatNames::ATK, 1_bi) +
+		compute(StatNames::DEF, 2_bi) +
+		compute(StatNames::SPE, 3_bi) +
+		compute(StatNames::SPA, 4_bi) +
+		compute(StatNames::SPD, 5_bi);
+	auto const index = initial * 15_bi / 63_bi;
+	// TODO: switch statement when it can do unreachable properly
 	static constexpr auto lookup = containers::array{
 		Type::Fighting,
 		Type::Flying,
