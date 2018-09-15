@@ -46,6 +46,7 @@ struct MoveContainer {
 		RegularMoveContainer::const_iterator,
 		SharedMoves::const_iterator
 	>;
+	using iterator = const_iterator;
 	using const_regular_iterator = RegularMoveContainer::const_iterator;
 	using regular_iterator = RegularMoveContainer::iterator;
 	
