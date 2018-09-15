@@ -79,7 +79,7 @@ auto top_sub_elements(boost::property_tree::ptree const & pt) {
 	std::partial_sort(begin(data), middle, end(data), std::greater<>());
 	auto const range = containers::transform(
 		containers::range_view(begin(data), middle),
-		[](auto const it) { return from_string<Moves>(it->second); }
+		[](auto const & probability) { return from_string<Moves>(probability.second); }
 	);
 	return DetailedStats::UsedMoves(begin(range), end(range));
 }
