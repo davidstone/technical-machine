@@ -27,6 +27,7 @@
 
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/count.hpp>
+#include <containers/algorithms/transform.hpp>
 #include <containers/static_vector/make_static_vector.hpp>
 
 #include <algorithm>
@@ -40,12 +41,14 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-EV::total_type ev_sum(Pokemon const & pokemon) {
-	// TODO: transform the range instead of passing in a predicate to accumulate
-	auto const ev_sum = [&](EV::total_type const sum, StatNames const stat) {
-		return sum + get_stat(pokemon, stat).ev().value();
+auto ev_sum(Pokemon const & pokemon) {
+	auto const ev_value = [&](StatNames const stat) {
+		return get_stat(pokemon, stat).ev().value();
 	};
-	return containers::accumulate(regular_stats(), EV::total_type(get_hp(pokemon).ev().value()), ev_sum);
+	return EV::total_type(containers::accumulate(
+		containers::transform(regular_stats(), ev_value),
+		get_hp(pokemon).ev().value()
+	));
 }
 
 }	// namespace
