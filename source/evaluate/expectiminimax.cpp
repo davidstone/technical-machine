@@ -145,7 +145,8 @@ bool can_critical_hit(Moves const move) {
 auto valid_replacements(PokemonCollection const & collection) {
 	return containers::filter(containers::integer_range(size(collection)), [&](auto const replacement_index) {
 		auto const would_switch_to_self = (replacement_index == collection.index());
-		return would_switch_to_self and size(collection) > 1_bi;
+		// TODO: Why is it OK to switch to yourself at the end of a game?
+		return !would_switch_to_self or size(collection) == 1_bi;
 	});
 }
 
