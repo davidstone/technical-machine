@@ -37,7 +37,7 @@ struct Team;
 struct Weather;
 
 // 100% chance to win
-constexpr auto victory = 41402368_bi;
+constexpr auto victory = 44498944_bi;
 
 struct Evaluate {
 	// +1 gives me room to create a value that will always be overwritten

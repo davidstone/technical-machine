@@ -1,5 +1,5 @@
 // Evaluate the state of the game
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,7 +34,7 @@
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/count.hpp>
-#include <containers/integer_range.hpp>
+#include <containers/algorithms/filter_iterator.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -66,10 +66,8 @@ auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const pokemon
 		std::inner_product(begin(stage), end(stage), begin(evaluate.stage()), static_cast<stage_type>(0_bi))
 	;
 }
-using BatonPassableScore = decltype(baton_passable_score(std::declval<Evaluate>(), std::declval<ActivePokemon>()));
 
-using ScoreStatus = Evaluate::value_type;
-auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> ScoreStatus {
+auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> Evaluate::value_type {
 	switch (get_status(pokemon).name()) {
 		case Statuses::burn:
 			return evaluate.burn();
@@ -99,22 +97,16 @@ auto score_move(Evaluate const & evaluate, Move const move, Screens const & othe
 		BOUNDED_CONDITIONAL(move.pp().is_empty(), evaluate.no_pp(), 0_bi)
 	;
 }
-using ScoreMove = decltype(score_move(std::declval<Evaluate>(), std::declval<Move>(), std::declval<Screens>()));
 
-using ScoreMoves = decltype(std::declval<ScoreMove>() * std::declval<RegularMoveSize>());
 auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens const & other, Weather const) {
 	// TODO: alter the score of a move based on the weather
-	ScoreMoves score = 0_bi;
-	auto const & moves = all_moves(pokemon);
-	return containers::accumulate(moves, score, [&](auto init, auto const move) {
-		return init + score_move(evaluate, move, other);
-	});
+	auto get_score = [&](auto const move) { return score_move(evaluate, move, other); };
+	return containers::accumulate(containers::transform(all_moves(pokemon), get_score));
 }
 
 
 auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon) {
-	auto const & moves = regular_moves(pokemon);
-	auto const has_baton_pass = containers::any_equal(moves, Moves::Baton_Pass);
+	auto const has_baton_pass = containers::any_equal(regular_moves(pokemon), Moves::Baton_Pass);
 	return
 		BOUNDED_CONDITIONAL(is_cursed(pokemon), evaluate.curse(), 0_bi) +
 		BOUNDED_CONDITIONAL(used_imprison(pokemon), evaluate.imprison(), 0_bi) +
@@ -126,7 +118,6 @@ auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon
 		baton_passable_score(evaluate, pokemon) * BOUNDED_CONDITIONAL(has_baton_pass, 2_bi, 1_bi)
 	;
 }
-using ScoreActivePokemon = decltype(score_active_pokemon(std::declval<Evaluate>(), std::declval<ActivePokemon>()));
 
 
 auto score_pokemon(Evaluate const & evaluate, Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const weather) {
@@ -140,19 +131,15 @@ auto score_pokemon(Evaluate const & evaluate, Pokemon const & pokemon, EntryHaza
 		score_moves(evaluate, pokemon, other.screens, weather)
 	;
 }
-using ScorePokemon = decltype(score_pokemon(std::declval<Evaluate>(), std::declval<Pokemon>(), std::declval<EntryHazards>(), std::declval<Team>(), std::declval<Weather>()));
 
-using ScoreAllPokemon = decltype(std::declval<ScorePokemon>() * std::declval<TeamSize>() + std::declval<ScoreActivePokemon>());
 auto score_all_pokemon(Evaluate const & evaluate, Team const & team, Team const & other, Weather const weather) {
-	ScoreAllPokemon score = 0_bi;
-	for (auto const index : containers::integer_range(size(team.all_pokemon()))) {
-		if (get_hp(team.pokemon(index)) == 0_bi) {
-			continue;
-		}
-		score += score_pokemon(evaluate, team.pokemon(index), team.entry_hazards, other, weather);
-	}
-	score += score_active_pokemon(evaluate, team.pokemon());
-	return score;
+	auto has_hp = [](auto const & pokemon) { return get_hp(pokemon) != 0_bi; };
+	auto get_score = [&](auto const & pokemon) {
+		return score_pokemon(evaluate, pokemon, team.entry_hazards, other, weather);
+	};
+	return
+		containers::accumulate(containers::transform(containers::filter(team.all_pokemon(), has_hp), get_score)) +
+		score_active_pokemon(evaluate, team.pokemon());
 }
 
 auto score_field_effects(Evaluate const & evaluate, Screens const & screens, Wish const & wish) {
@@ -176,16 +163,16 @@ auto score_team(Evaluate const & evaluate, Team const & ai, Team const & foe, We
 constexpr bounded::integer<-1, 1> extra = 0_bi;
 using ScoreTeam = decltype(score_team(std::declval<Evaluate>(), std::declval<Team>(), std::declval<Team>(), std::declval<Weather>()));
 
-template<typename T>
+template<typename LHS, typename RHS>
 struct TypeMismatchInEvaluateMessage;
 
-template<typename T, bool lazy>
+template<typename LHS, typename RHS, bool = std::is_same_v<LHS, RHS>>
 struct TypeMismatchInEvaluate {
 	static constexpr auto value = true;
 };
-template<typename T>
-struct TypeMismatchInEvaluate<T, false> {
-	static constexpr auto value = TypeMismatchInEvaluateMessage<T>{};
+template<typename LHS, typename RHS>
+struct TypeMismatchInEvaluate<LHS, RHS, false> {
+	static constexpr auto value = TypeMismatchInEvaluateMessage<LHS, RHS>{};
 };
 
 using ResultType = decltype(std::declval<ScoreTeam>() + extra);
@@ -193,9 +180,8 @@ using ResultType = decltype(std::declval<ScoreTeam>() + extra);
 }	// namespace
 
 auto Evaluate::operator()(Team const & ai, Team const & foe, Weather const weather) const -> type {
-	static_cast<void>(TypeMismatchInEvaluate<ResultType, std::is_same<Evaluate::type, ResultType>::value>::value);
-	auto const score = score_team(*this, ai, foe, weather);
-	return score;
+	static_cast<void>(TypeMismatchInEvaluate<ResultType, Evaluate::type>::value);
+	return score_team(*this, ai, foe, weather);
 }
 
 auto Evaluate::win(Team const & team) -> type {
