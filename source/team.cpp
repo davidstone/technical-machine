@@ -45,8 +45,7 @@ auto open_directory_and_add_files(std::filesystem::path const & team_file) -> Fi
 	Files files;
 	if (std::filesystem::is_directory(team_file)) {
 		for (auto it = std::filesystem::directory_iterator(team_file); it != std::filesystem::directory_iterator(); ++it) {
-			auto const temp = open_directory_and_add_files(it->path());
-			append(files, begin(temp), end(temp));
+			append(files, open_directory_and_add_files(it->path()));
 		}
 	} else if (std::filesystem::is_regular_file(team_file)) {
 		push_back(files, team_file);
