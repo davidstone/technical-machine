@@ -83,7 +83,7 @@ private:
 	using max_type = decltype(std::declval<base_type>() * (std::declval<pp_ups_type>() + 5_bi) / 5_bi);
 
 	static constexpr auto calculate_max(bounded::optional<base_type> const base, pp_ups_type const pp_ups) -> bounded::optional<max_type> {
-		return base ? make_optional(*base * (pp_ups + 5_bi) / 5_bi) : bounded::none;
+		return base ? bounded::optional(*base * (pp_ups + 5_bi) / 5_bi) : bounded::none;
 	}
 
 	// clamped_integer simplifies situations like Pressure and Leppa
