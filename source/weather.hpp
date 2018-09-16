@@ -21,7 +21,6 @@
 #include "status.hpp"
 
 #include <bounded/integer.hpp>
-#include <containers/tuple.hpp>
 
 #include <cstdint>
 
@@ -92,19 +91,14 @@ struct Weather {
 	auto blocks_status(Statuses status) const -> bool;
 
 	friend constexpr auto compare(Weather const lhs, Weather const rhs) {
-		constexpr auto as_tuple = [](auto const value) {
-			return containers::make_tuple(
-				value.m_trick_room,
-				value.m_fog,
-				value.m_gravity,
-				value.m_uproar,
-				value.m_hail,
-				value.m_sun,
-				value.m_sand,
-				value.m_rain
-			);
-		};
-		return compare(as_tuple(lhs), as_tuple(rhs));
+		BOUNDED_COMPARE_ONE_MEMBER(m_trick_room);
+		BOUNDED_COMPARE_ONE_MEMBER(m_fog);
+		BOUNDED_COMPARE_ONE_MEMBER(m_gravity);
+		BOUNDED_COMPARE_ONE_MEMBER(m_uproar);
+		BOUNDED_COMPARE_ONE_MEMBER(m_hail);
+		BOUNDED_COMPARE_ONE_MEMBER(m_sun);
+		BOUNDED_COMPARE_ONE_MEMBER(m_sand);
+		return bounded::compare(lhs.m_rain, rhs.m_rain);
 	}
 
 private:

@@ -20,7 +20,6 @@
 #include "operators.hpp"
 
 #include <bounded/integer.hpp>
-#include <containers/tuple.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -59,10 +58,9 @@ private:
 };
 
 constexpr auto compare(EntryHazards const lhs, EntryHazards const rhs) {
-	constexpr auto as_tuple = [](auto const value) {
-		return containers::make_tuple(value.spikes(), value.toxic_spikes(), value.stealth_rock());
-	};
-	return compare(as_tuple(lhs), as_tuple(rhs));
+	BOUNDED_COMPARE_ONE_MEMBER(spikes());
+	BOUNDED_COMPARE_ONE_MEMBER(toxic_spikes());
+	return bounded::compare(lhs.stealth_rock(), rhs.stealth_rock());
 }
 
 auto apply(EntryHazards & hazards, MutableActivePokemon switcher, Weather weather) -> void;

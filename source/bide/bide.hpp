@@ -43,10 +43,8 @@ struct Bide {
 	}
 
 	friend constexpr auto compare(Bide const lhs, Bide const rhs) {
-		auto as_tuple = [](auto const value) {
-			return containers::make_tuple(value.m_damage, value.m_duration);
-		};
-		return compare(as_tuple(lhs), as_tuple(rhs));
+		BOUNDED_COMPARE_ONE_MEMBER(m_damage);
+		return compare(lhs.m_duration, rhs.m_duration);
 	}
 
 private:

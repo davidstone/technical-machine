@@ -56,10 +56,8 @@ private:
 };
 
 constexpr auto compare(Move const lhs, Move const rhs) {
-	auto as_tuple = [](auto const value) {
-		return containers::make_tuple(static_cast<Moves>(value), value.pp());
-	};
-	return compare(as_tuple(lhs), as_tuple(rhs));
+	BOUNDED_COMPARE_ONE_MEMBER(pp());
+	return bounded::compare(static_cast<Moves>(lhs), static_cast<Moves>(rhs));
 }
 constexpr auto compare(Move const lhs, Moves const rhs) {
 	return bounded::compare(static_cast<Moves>(lhs), rhs);

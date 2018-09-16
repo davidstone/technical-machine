@@ -75,10 +75,8 @@ struct LastUsedMove {
 	}
 
 	friend constexpr auto compare(LastUsedMove const lhs, LastUsedMove const rhs) {
-		auto as_tuple = [](auto const value) {
-			return containers::make_tuple(value.m_move, value.m_consecutive_turns_used);
-		};
-		return compare(as_tuple(lhs), as_tuple(rhs));
+		BOUNDED_COMPARE_ONE_MEMBER(m_move);
+		return compare(lhs.m_consecutive_turns_used, rhs.m_consecutive_turns_used);
 	}
 
 private:

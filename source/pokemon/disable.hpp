@@ -1,4 +1,4 @@
-// Copyright (C) 2017 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -47,13 +47,12 @@ struct Disable {
 	}
 
 	friend constexpr auto compare(Disable const lhs, Disable const rhs) noexcept {
-		auto as_tuple = [](auto const value) {
-			return containers::make_tuple(value.m_turns_disabled, value.m_disabled_move);
-		};
-		return compare(as_tuple(lhs), as_tuple(rhs));
+		BOUNDED_COMPARE_ONE_MEMBER(m_turns_disabled);
+		return compare(lhs.m_disabled_move, rhs.m_disabled_move);
 	}
 
 private:
+	// TODO: Use an optional struct?
 	bounded::optional<Moves> m_disabled_move = bounded::none;
 	using TurnCount = bounded::integer<0, 7>;
 	TurnCount m_turns_disabled = 0_bi;

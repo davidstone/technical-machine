@@ -64,10 +64,8 @@ struct Status {
 	friend auto shift_status(Pokemon & user, Pokemon & target, Weather weather) -> void;
 
 	friend constexpr auto compare(Status const lhs, Status const rhs) {
-		auto as_tuple = [](auto const value) {
-			return containers::make_tuple(value.m_status, value.m_turns_already_slept);
-		};
-		return compare(as_tuple(lhs), as_tuple(rhs));
+		BOUNDED_COMPARE_ONE_MEMBER(m_status);
+		return compare(lhs.m_turns_already_slept, rhs.m_turns_already_slept);
 	}
 
 	auto increase_sleep_counter (Ability const & ability, bool awaken) -> void;

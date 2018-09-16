@@ -90,17 +90,12 @@ private:
 };
 
 constexpr auto compare(Screens const lhs, Screens const rhs) {
-	auto as_tuple = [](auto const value) {
-		return containers::make_tuple(
-			value.light_screen(),
-			value.reflect(),
-			value.lucky_chant(),
-			value.mist(),
-			value.safeguard(),
-			value.tailwind()
-		);
-	};
-	return compare(as_tuple(lhs), as_tuple(rhs));
+	BOUNDED_COMPARE_ONE_MEMBER(light_screen());
+	BOUNDED_COMPARE_ONE_MEMBER(reflect());
+	BOUNDED_COMPARE_ONE_MEMBER(lucky_chant());
+	BOUNDED_COMPARE_ONE_MEMBER(mist());
+	BOUNDED_COMPARE_ONE_MEMBER(safeguard());
+	return compare(lhs.tailwind(), rhs.tailwind());
 }
 
 

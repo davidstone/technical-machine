@@ -86,17 +86,12 @@ struct Pokemon {
 	// same
 	friend auto compare(Pokemon const & lhs, Pokemon const & rhs) {
 		assert(illegal_inequality_check(lhs, rhs));
-		auto as_tuple = [](auto const & value) {
-			return containers::make_tuple(
-				value.m_moves,
-				value.m_species,
-				value.m_status,
-				get_hp(value).current(),
-				value.m_item,
-				value.has_been_seen()
-			);
-		};
-		return compare(as_tuple(lhs), as_tuple(rhs));
+		BOUNDED_COMPARE_ONE_MEMBER(m_moves);
+		BOUNDED_COMPARE_ONE_MEMBER(m_species);
+		BOUNDED_COMPARE_ONE_MEMBER(m_status);
+		BOUNDED_COMPARE_ONE_MEMBER(has_been_seen());
+		BOUNDED_COMPARE_ONE_MEMBER(m_item);
+		return bounded::compare(get_hp(lhs).current(), get_hp(rhs).current());
 	}
 
 

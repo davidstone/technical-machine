@@ -116,69 +116,45 @@ struct ActivePokemonFlags {
 	auto reset_switch() -> void;
 
 	friend constexpr auto compare(ActivePokemonFlags const & lhs, ActivePokemonFlags const & rhs) {
-				compare(lhs.bide, rhs.bide);
-				compare(lhs.confusion, rhs.confusion);
-				compare(lhs.disable, rhs.disable);
-				compare(lhs.embargo, rhs.embargo);
-				compare(lhs.encore, rhs.encore);
-				compare(lhs.heal_block, rhs.heal_block);
-				compare(lhs.last_used_move, rhs.last_used_move);
-				compare(lhs.magnet_rise, rhs.magnet_rise);
-				compare(lhs.partial_trap, rhs.partial_trap);
-				compare(lhs.perish_song, rhs.perish_song);
-				compare(lhs.rampage, rhs.rampage);
-				compare(lhs.slow_start, rhs.slow_start);
-				compare(lhs.stage, rhs.stage);
-				compare(lhs.stockpile, rhs.stockpile);
-				compare(lhs.taunt, rhs.taunt);
-				compare(lhs.toxic, rhs.toxic);
-				compare(lhs.uproar, rhs.uproar);
-				compare(lhs.vanish, rhs.vanish);
-				compare(lhs.yawn, rhs.yawn);
-		auto as_tuple = [](auto const & value) {
-			return containers::make_tuple(
-				value.aqua_ring,
-				value.attracted,
-				value.bide,
-				value.charged,
-				value.confusion,
-				value.is_cursed,
-				value.defense_curled,
-				value.destiny_bond,
-				value.disable,
-				value.embargo,
-				value.encore,
-				value.flash_fire,
-				value.has_focused_energy,
-				value.fully_trapped,
-				value.heal_block,
-				value.identified,
-				value.used_imprison,
-				value.ingrained,
-				value.last_used_move,
-				value.leech_seeded,
-				value.is_loafing_turn,
-				value.locked_on,
-				value.magnet_rise,
-				value.minimized,
-				value.mud_sport,
-				value.is_having_a_nightmare,
-				value.partial_trap,
-				value.perish_song,
-				value.rampage,
-				value.slow_start,
-				value.stage,
-				value.stockpile,
-				value.taunt,
-				value.is_tormented,
-				value.toxic,
-				value.uproar,
-				value.vanish,
-				value.water_sport,
-				value.yawn
-			);
-		};
-		return compare(as_tuple(lhs), as_tuple(rhs));
+		BOUNDED_COMPARE_ONE_MEMBER(aqua_ring);
+		BOUNDED_COMPARE_ONE_MEMBER(attracted);
+		BOUNDED_COMPARE_ONE_MEMBER(bide);
+		BOUNDED_COMPARE_ONE_MEMBER(charged);
+		BOUNDED_COMPARE_ONE_MEMBER(confusion);
+		BOUNDED_COMPARE_ONE_MEMBER(is_cursed);
+		BOUNDED_COMPARE_ONE_MEMBER(defense_curled);
+		BOUNDED_COMPARE_ONE_MEMBER(destiny_bond);
+		BOUNDED_COMPARE_ONE_MEMBER(disable);
+		BOUNDED_COMPARE_ONE_MEMBER(embargo);
+		BOUNDED_COMPARE_ONE_MEMBER(encore);
+		BOUNDED_COMPARE_ONE_MEMBER(flash_fire);
+		BOUNDED_COMPARE_ONE_MEMBER(has_focused_energy);
+		BOUNDED_COMPARE_ONE_MEMBER(fully_trapped);
+		BOUNDED_COMPARE_ONE_MEMBER(heal_block);
+		BOUNDED_COMPARE_ONE_MEMBER(identified);
+		BOUNDED_COMPARE_ONE_MEMBER(used_imprison);
+		BOUNDED_COMPARE_ONE_MEMBER(ingrained);
+		BOUNDED_COMPARE_ONE_MEMBER(last_used_move);
+		BOUNDED_COMPARE_ONE_MEMBER(leech_seeded);
+		BOUNDED_COMPARE_ONE_MEMBER(is_loafing_turn);
+		BOUNDED_COMPARE_ONE_MEMBER(locked_on);
+		BOUNDED_COMPARE_ONE_MEMBER(magnet_rise);
+		BOUNDED_COMPARE_ONE_MEMBER(minimized);
+		BOUNDED_COMPARE_ONE_MEMBER(mud_sport);
+		BOUNDED_COMPARE_ONE_MEMBER(is_having_a_nightmare);
+		BOUNDED_COMPARE_ONE_MEMBER(partial_trap);
+		BOUNDED_COMPARE_ONE_MEMBER(perish_song);
+		BOUNDED_COMPARE_ONE_MEMBER(rampage);
+		BOUNDED_COMPARE_ONE_MEMBER(slow_start);
+		BOUNDED_COMPARE_ONE_MEMBER(stage);
+		BOUNDED_COMPARE_ONE_MEMBER(stockpile);
+		BOUNDED_COMPARE_ONE_MEMBER(taunt);
+		BOUNDED_COMPARE_ONE_MEMBER(is_tormented);
+		BOUNDED_COMPARE_ONE_MEMBER(toxic);
+		BOUNDED_COMPARE_ONE_MEMBER(uproar);
+		BOUNDED_COMPARE_ONE_MEMBER(vanish);
+		BOUNDED_COMPARE_ONE_MEMBER(water_sport);
+		return compare(lhs.yawn, rhs.yawn);
 	}
 
 
