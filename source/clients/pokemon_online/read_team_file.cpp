@@ -132,11 +132,10 @@ ptree::const_iterator load_stats(Pokemon & pokemon, ptree::const_iterator it) {
 void load_pokemon(ptree const & pt, Team & team, SpeciesIDs::ID) {
 	auto const species = id_to_species({ pt.get<SpeciesIDs::ID>("<xmlattr>.Num"), pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")} );
 	auto const nickname = pt.get<std::string>("<xmlattr>.Nickname");
-	Gender const gender(id_to_gender(pt.get<GenderID>("<xmlattr>.Gender")));
-	Level const level(pt.get<bounded::checked_integer<Level::min, Level::max>>("<xmlattr>.Lvl"));
-	Happiness const happiness(pt.get<Happiness::value_type>("<xmlattr>.Happiness"));
-	team.add_pokemon(species, level, gender, nickname, happiness);
-	Pokemon & pokemon = team.replacement();
+	auto const gender = Gender(id_to_gender(pt.get<GenderID>("<xmlattr>.Gender")));
+	auto const level = Level(pt.get<bounded::checked_integer<Level::min, Level::max>>("<xmlattr>.Lvl"));
+	auto const happiness = Happiness(pt.get<Happiness::value_type>("<xmlattr>.Happiness"));
+	auto & pokemon = team.add_pokemon(species, level, gender, nickname, happiness);
 
 	get_item(pokemon) = id_to_item(pt.get<ItemID>("<xmlattr>.Item"));
 	get_ability(pokemon) = id_to_ability(pt.get<AbilityID>("<xmlattr>.Ability"));

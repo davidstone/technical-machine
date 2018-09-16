@@ -91,6 +91,7 @@ auto from_simulator_string(std::string_view const str) {
 
 auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	auto const species_str = pt.get <std::string>("<xmlattr>.species");
+	auto const species = from_simulator_string(species_str);
 	auto const nickname_temp = pt.get <std::string>("nickname");
 	auto const nickname = !nickname_temp.empty() ? nickname_temp : species_str;
 	auto const level = Level(pt.get<bounded::checked_integer<Level::min, Level::max>>("level"));
@@ -99,8 +100,7 @@ auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	auto const nature = from_string<Nature>(pt.get<std::string>("nature"));
 	auto const item = from_string<Item>(pt.get<std::string>("item"));
 	auto const ability = Ability(from_string<Ability>(pt.get<std::string>("ability")));
-	team.add_pokemon(from_simulator_string(species_str), level, gender, item, ability, nature, nickname, happiness);
-	Pokemon & pokemon = team.replacement();
+	auto & pokemon = team.add_pokemon(species, level, gender, item, ability, nature, nickname, happiness);
 	
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child("moveset")) {
 		auto const name = from_string<Moves>(value.second.get_value<std::string>());

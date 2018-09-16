@@ -56,8 +56,8 @@ struct Team {
 	}
 
 	template<typename... Args>
-	void add_pokemon(Args&&... args) {
-		all_pokemon().add(std::forward<Args>(args)...);
+	Pokemon & add_pokemon(Args&&... args) {
+		return all_pokemon().add(std::forward<Args>(args)...);
 	}
 	PokemonCollection const & all_pokemon() const;
 	PokemonCollection & all_pokemon();
