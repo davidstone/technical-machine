@@ -185,7 +185,8 @@ auto Evaluate::operator()(Team const & ai, Team const & foe, Weather const weath
 }
 
 auto Evaluate::win(Team const & team) -> type {
-	if (size(team.all_pokemon()) == 1_bi and get_hp(team.pokemon()) == 0_bi) {
+	assert(team.size() != 0_bi);
+	if (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi) {
 		return BOUNDED_CONDITIONAL(team.is_me(), -victory, victory);
 	}
 	return 0_bi;
