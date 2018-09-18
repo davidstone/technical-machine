@@ -69,7 +69,7 @@ auto deorder(Team const & first, Team const & last) {
 
 }	// namespace
 
-double transposition(Team const & team1, Team const & team2, Weather const weather, unsigned depth, Evaluate const & evaluate) {
+double transposition(Team const & team1, Team const & team2, Weather const weather, unsigned depth, Evaluate const evaluate) {
 	auto const game_over1 = Evaluate::win(team1);
 	auto const game_over2 = Evaluate::win(team2);
 	if (game_over1 != 0_bi or game_over2 != 0_bi) {

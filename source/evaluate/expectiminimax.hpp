@@ -27,13 +27,13 @@ struct Evaluate;
 struct Team;
 struct Weather;
 
-Moves expectiminimax(Team const & ai, Team const & foe, Weather weather, unsigned depth, Evaluate const & evaluate, std::mt19937 & random_engine);
+Moves expectiminimax(Team const & ai, Team const & foe, Weather weather, unsigned depth, Evaluate evaluate, std::mt19937 & random_engine);
 
 // Called from the function that identifies transpositions
 struct BestMove {
 	Moves move;
 	double score;
 };
-BestMove select_type_of_move(Team const & ai, Team const & foe, Weather weather, unsigned depth, Evaluate const & evaluate, bool first_turn = false);
+BestMove select_type_of_move(Team const & ai, Team const & foe, Weather weather, unsigned depth, Evaluate evaluate, bool first_turn = false);
 
 }	// namespace technicalmachine
