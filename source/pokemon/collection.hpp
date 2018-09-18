@@ -38,8 +38,8 @@ using namespace bounded::literal;
 
 struct InvalidCollectionIndex final : std::out_of_range {
 	template<typename Index, typename Size>
-	InvalidCollectionIndex(Index const index, Size const size, std::string const & name):
-		out_of_range("Attempted to access element " + bounded::to_string(index) + " in a container of size " + bounded::to_string(size) + " with elements of type " + name + "\n")
+	InvalidCollectionIndex(Index const index, Size const size):
+		out_of_range("Attempted to access element " + bounded::to_string(index) + " in a container of size " + bounded::to_string(size))
 		{
 	}
 };
@@ -122,7 +122,7 @@ private:
 	constexpr auto check_range(containers::index_type<PokemonCollection> const new_index) const -> decltype(new_index) {
 		return (new_index < containers::size(m_container)) ?
 			new_index :
-			throw InvalidCollectionIndex(new_index, containers::size(m_container), value_type::class_name);
+			throw InvalidCollectionIndex(new_index, containers::size(m_container));
 	}
 
 	PokemonContainer m_container;

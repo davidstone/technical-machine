@@ -43,7 +43,6 @@ namespace technicalmachine {
 // #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
 struct Pokemon {
-	static constexpr auto class_name = "Pokemon";
 	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
 	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
 	operator Species() const;
