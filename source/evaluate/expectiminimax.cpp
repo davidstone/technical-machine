@@ -143,25 +143,11 @@ bool can_critical_hit(Moves const move) {
 
 
 auto valid_replacements(PokemonCollection const & collection) {
+	assert(size(collection) > 1_bi);
 	return containers::filter(containers::integer_range(size(collection)), [&](auto const replacement_index) {
-		auto const would_switch_to_self = (replacement_index == collection.index());
-		// TODO: Why is it OK to switch to yourself at the end of a game?
-		return !would_switch_to_self or size(collection) == 1_bi;
+		return replacement_index != collection.index();
 	});
 }
-
-auto deorder(Team & first, Team & last) {
-	assert(first.is_me() or last.is_me());
-	struct Deorder {
-		Team & ai;
-		Team & foe;
-	};
-	return Deorder{
-		(first.is_me()) ? first : last,
-		(!first.is_me()) ? first : last
-	};
-}
-
 
 
 template<typename Flag, typename BaseFlag, typename Probability, typename NextBranch>
@@ -244,14 +230,7 @@ double end_of_turn_branch(Team first, Team last, Weather weather, unsigned depth
 		return static_cast<double>(last_violated + first_violated);
 	}
 
-	auto const first_win = Evaluate::win(first);
-	auto const last_win = Evaluate::win(last);
-	if (first_win != 0_bi or last_win != 0_bi) {
-		return static_cast<double>(first_win + last_win);
-	}
-
-	auto const teams = deorder(first, last);
-	return transposition(teams.ai, teams.foe, weather, depth, evaluate);
+	return transposition(first, last, weather, depth, evaluate);
 }
 
 
@@ -400,32 +379,14 @@ auto random_action(Team const & ai, Team const & foe, Weather const weather, std
 }
 
 
-
-double fainted(Team first, Team last, Weather weather, unsigned depth, Evaluate const & evaluate, TeamIndex const first_replacement, TeamIndex const last_replacement) {
-	if (get_hp(first.pokemon()) == 0_bi) {
-		switch_pokemon(first, last, weather, first_replacement);
-		auto const first_won = Evaluate::win(first);
-		auto const last_won = Evaluate::win(last);
-		if (first_won != 0_bi or last_won != 0_bi) {
-			return static_cast<double>(first_won + last_won);
-		}
-	}
-	if (get_hp(last.pokemon()) == 0_bi) {
-		switch_pokemon(last, first, weather, last_replacement);
-		auto const first_won = Evaluate::win(first);
-		auto const last_won = Evaluate::win(last);
-		if (first_won != 0_bi or last_won != 0_bi) {
-			return static_cast<double>(first_won + last_won);
-		}
-	}
-
-	auto const teams = deorder(first, last);
-	return transposition(teams.ai, teams.foe, weather, depth, evaluate);
-}
-
-
-BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, bool first_turn) {
-	auto const faster = faster_pokemon(ai, foe, weather);
+// TODO: replace duplication in replace_one and replace_both
+BestMove replace_both(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, bool first_turn) {
+	auto fainted = [=, &evaluate](auto first, auto first_replacement, auto last, auto last_replacement, Weather weather_) {
+		switch_pokemon(first, last, weather_, first_replacement);
+		switch_pokemon(last, first, weather_, last_replacement);
+		return transposition(first, last, weather_, depth, evaluate);
+	};
+	auto const ordered = faster_pokemon(ai, foe, weather);
 	auto best_move = Moves{};
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	// TODO: use accumulate instead of a for loop?
@@ -437,15 +398,32 @@ BestMove replace(Team const & ai, Team const & foe, Weather const weather, unsig
 			auto get_replacement = [&](Team const & team) {
 				return std::addressof(team) == std::addressof(ai) ? ai_replacement : foe_replacement;
 			};
-			beta = std::min(beta, !faster ?
-				(fainted(ai, foe, weather, depth, evaluate, ai_replacement, foe_replacement) + fainted(foe, ai, weather, depth, evaluate, ai_replacement, foe_replacement)) / 2.0 :
-				fainted(faster->first, faster->second, weather, depth, evaluate, get_replacement(faster->first), get_replacement(faster->second))
+			beta = std::min(beta, !ordered ?
+				(fainted(ai, ai_replacement, foe, foe_replacement, weather) + fainted(foe, foe_replacement, ai, ai_replacement, weather)) / 2.0 :
+				fainted(ordered->first, get_replacement(ordered->first), ordered->second, get_replacement(ordered->second), weather)
 			);
 			if (beta <= alpha) {
 				break;
 			}
 		}
 		update_best_move(best_move, alpha, beta, first_turn, ai_move);
+	}
+	return BestMove{best_move, alpha};
+}
+
+BestMove replace_one(Team const & team, Team const & other, Weather const weather, unsigned depth, Evaluate const & evaluate, bool first_turn) {
+	auto fainted = [=, &evaluate](auto team_, auto replacement, auto other_, auto weather_) {
+		switch_pokemon(team_, other_, weather_, replacement);
+		return transposition(team_, other_, weather_, depth, evaluate);
+	};
+	auto best_move = Moves{};
+	auto alpha = static_cast<double>(-victory - 1_bi);
+	// TODO: use accumulate instead of a for loop?
+	for (auto const replacement : valid_replacements(team.all_pokemon())) {
+		auto const move = to_switch(replacement);
+		print_action(team, move, first_turn);
+		auto const beta = fainted(team, replacement, other, weather);
+		update_best_move(best_move, alpha, beta, first_turn, move);
 	}
 	return BestMove{best_move, alpha};
 }
@@ -624,11 +602,22 @@ Moves expectiminimax(Team const & ai, Team const & foe, Weather const weather, u
 }
 
 BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const & evaluate, bool first_turn) {
+	auto team_is_empty = [](Team const & team) {
+		return team.size() == 0_bi or (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi);
+	};
+	assert(!team_is_empty(ai));
+	assert(!team_is_empty(foe));
 	assert(depth > 0);
 	--depth;
 	
-	if (get_hp(ai.pokemon()) == 0_bi or get_hp(foe.pokemon()) == 0_bi) {
-		return replace(ai, foe, weather, depth, evaluate, first_turn);
+	auto const replace_ai = get_hp(ai.pokemon()) == 0_bi;
+	auto const replace_foe = get_hp(foe.pokemon()) == 0_bi;
+	if (replace_ai and replace_foe) {
+		return replace_both(ai, foe, weather, depth, evaluate, first_turn);
+	} else if (replace_ai) {
+		return replace_one(ai, foe, weather, depth, evaluate, first_turn);
+	} else if (replace_foe) {
+		return replace_one(foe, ai, weather, depth, evaluate, first_turn);
 	} else if (switch_decision_required(ai.pokemon())) {
 		auto const switcher_move_name = is_baton_passing(ai.pokemon()) ? Moves::Baton_Pass : Moves::U_turn;
 		auto const & ai_moves = all_moves(ai.pokemon());

@@ -55,9 +55,28 @@ struct Hash {
 
 #endif
 
+auto deorder(Team const & first, Team const & last) {
+	assert(first.is_me() or last.is_me());
+	struct Deorder {
+		Team const & ai;
+		Team const & foe;
+	};
+	return Deorder{
+		(first.is_me()) ? first : last,
+		(!first.is_me()) ? first : last
+	};
+}
+
 }	// namespace
 
-double transposition(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const & evaluate) {
+double transposition(Team const & team1, Team const & team2, Weather const weather, unsigned depth, Evaluate const & evaluate) {
+	auto const game_over1 = Evaluate::win(team1);
+	auto const game_over2 = Evaluate::win(team2);
+	if (game_over1 != 0_bi or game_over2 != 0_bi) {
+		return static_cast<double>(game_over1 + game_over2);
+	}
+
+	auto [ai, foe] = deorder(team1, team2);
 	if (depth == 0) {
 		return static_cast<double>(evaluate(ai, foe, weather));
 	}

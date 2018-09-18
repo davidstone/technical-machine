@@ -24,6 +24,6 @@ struct Evaluate;
 struct Team;
 struct Weather;
 
-double transposition(Team const & ai, Team const & foe, Weather weather, unsigned depth, Evaluate const & evaluate);
+double transposition(Team const & team1, Team const & team2, Weather weather, unsigned depth, Evaluate const & evaluate);
 
 }	// namespace technicalmachine
