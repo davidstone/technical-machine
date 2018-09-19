@@ -30,19 +30,11 @@
 #include <containers/common_container_functions.hpp>
 #include <containers/index_type.hpp>
 
-#include <stdexcept>
+#include <cassert>
 #include <utility>
 
 namespace technicalmachine {
 using namespace bounded::literal;
-
-struct InvalidCollectionIndex final : std::out_of_range {
-	template<typename Index, typename Size>
-	InvalidCollectionIndex(Index const index, Size const size):
-		out_of_range("Attempted to access element " + bounded::to_string(index) + " in a container of size " + bounded::to_string(size))
-		{
-	}
-};
 
 struct PokemonCollection {
 	using value_type = PokemonContainer::value_type;
@@ -69,7 +61,8 @@ struct PokemonCollection {
 	}
 	
 	void set_index(containers::index_type<PokemonCollection> const new_index) {
-		m_index = check_range(new_index);
+		check_range(new_index);
+		m_index = new_index;
 	}
 	void reset_index() {
 		m_index = 0_bi;
@@ -83,10 +76,12 @@ struct PokemonCollection {
 	}
 
 	constexpr decltype(auto) operator()(containers::index_type<PokemonCollection> const specified_index) const {
-		return m_container[check_range(specified_index)];
+		check_range(specified_index);
+		return m_container[specified_index];
 	}
 	constexpr decltype(auto) operator()(containers::index_type<PokemonCollection> const specified_index) {
-		return m_container[check_range(specified_index)];
+		check_range(specified_index);
+		return m_container[specified_index];
 	}
 	constexpr decltype(auto) operator()() const {
 		return m_container[index()];
@@ -100,7 +95,8 @@ struct PokemonCollection {
 	}
 
 	auto set_replacement(containers::index_type<PokemonCollection> const new_index) {
-		m_replacement = check_range(new_index);
+		check_range(new_index);
+		m_replacement = new_index;
 	}
 
 	auto real_size() const {
@@ -119,10 +115,8 @@ struct PokemonCollection {
 	void remove_active(containers::index_type<PokemonCollection> index_of_replacement);
 
 private:
-	constexpr auto check_range(containers::index_type<PokemonCollection> const new_index) const -> decltype(new_index) {
-		return (new_index < containers::size(m_container)) ?
-			new_index :
-			throw InvalidCollectionIndex(new_index, containers::size(m_container));
+	void check_range(containers::index_type<PokemonCollection> const new_index) const {
+		assert(new_index < containers::size(m_container));
 	}
 
 	PokemonContainer m_container;

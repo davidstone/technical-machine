@@ -96,7 +96,7 @@ Moves Battle::determine_action() {
 	auto predicted = predict_foe_team(m_detailed);
 	std::cout << to_string(predicted) << '\n';
 
-	return expectiminimax(ai.team, predicted, weather, depth, m_evaluate, m_random_engine);
+	return expectiminimax(ai.team, predicted, weather, depth, m_evaluate);
 }
 
 void Battle::handle_use_move(Party const user, uint8_t /*slot*/, Moves move_name) {

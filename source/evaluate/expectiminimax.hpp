@@ -27,7 +27,7 @@ struct Evaluate;
 struct Team;
 struct Weather;
 
-Moves expectiminimax(Team const & ai, Team const & foe, Weather weather, unsigned depth, Evaluate evaluate, std::mt19937 & random_engine);
+Moves expectiminimax(Team const & ai, Team const & foe, Weather weather, unsigned depth, Evaluate evaluate);
 
 // Called from the function that identifies transpositions
 struct BestMove {

@@ -356,29 +356,6 @@ BestMove move_then_switch_branch(Team const & switcher, Move const switcher_move
 }
 
 
-
-constexpr auto all_switches(TeamSize const team_size, containers::index_type<PokemonCollection> const index) {
-	containers::static_vector<Moves, static_cast<std::size_t>(TeamSize::max() - 1_bi)> switches;
-	for (auto const n : containers::integer_range(team_size)) {
-		if (n != index) {
-			push_back(switches, to_switch(n));
-		}
-	}
-	assert(!empty(switches));
-	return switches;
-}
-
-auto random_action(Team const & ai, Team const & foe, Weather const weather, std::mt19937 & random_engine) -> Moves {
-	auto implementation = [&](auto const & actions) {
-		auto distribution = std::uniform_int_distribution<int>(0, static_cast<int>(size(actions)) - 1);
-		return at(actions, distribution(random_engine), bounded::non_check);
-	};
-	return switch_decision_required(ai.pokemon()) ?
-		implementation(all_switches(size(ai.all_pokemon()), ai.all_pokemon().index())) :
-		implementation(legal_selections(ai, foe.pokemon(), weather));
-}
-
-
 // TODO: replace duplication in replace_one and replace_both
 BestMove replace_both(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const evaluate, bool first_turn) {
 	auto fainted = [=](auto first, auto first_replacement, auto last, auto last_replacement, Weather weather_) {
@@ -583,22 +560,14 @@ SelectMoveResult select_move_branch(Team const & ai, Team const & foe, Weather c
 
 }	// namespace
 
-Moves expectiminimax(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const evaluate, std::mt19937 & random_engine) {
+Moves expectiminimax(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const evaluate) {
 	std::cout << std::string(20, '=') + "\nEvaluating to a depth of " << depth << "...\n";
 	boost::timer timer;
-	try {
-		constexpr auto full_evaluation = true;
-		auto const best_move = select_type_of_move(ai, foe, weather, depth, evaluate, full_evaluation);
-		std::cout << "Determined best move in " << timer.elapsed() << " seconds.\n";
-		print_best_move(ai, best_move);
-		return best_move.move;
-	} catch (InvalidCollectionIndex const & ex) {
-		// If there was an error, I just use a random move.
-		std::cerr << std::string(20, '=') + '\n';
-		std::cerr << ex.what();
-		std::cerr << std::string(20, '=') + '\n';
-		return random_action(ai, foe, weather, random_engine);
-	}
+	constexpr auto full_evaluation = true;
+	auto const best_move = select_type_of_move(ai, foe, weather, depth, evaluate, full_evaluation);
+	std::cout << "Determined best move in " << timer.elapsed() << " seconds.\n";
+	print_best_move(ai, best_move);
+	return best_move.move;
 }
 
 BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const evaluate, bool first_turn) {
