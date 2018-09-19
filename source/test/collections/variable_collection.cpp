@@ -1,5 +1,5 @@
 // Test checked collections of random move effects
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -34,25 +34,8 @@
 #include <containers/integer_range.hpp>
 
 #include <iostream>
-#include <string>
 
 namespace technicalmachine {
-namespace {
-
-void add_pokemon(Team & team, Species species);
-void test_combinations(Team team);
-void phaze_in_same_pokemon(Variable & variable, Team const & team);
-void phaze_in_different_pokemon(Variable & variable, Team const & team, containers::index_type<PokemonCollection> new_index, containers::index_type<PokemonCollection> current_index, TeamSize foe_size);
-
-}	// namespace
-
-void variable_collection_tests() {
-	std::cout << "\tRunning variable collection tests.\n";
-	Team team(max_pokemon_per_team);
-	add_pokemon(team, static_cast<Species>(1));
-	test_combinations(std::move(team));
-}
-
 namespace {
 
 using bounded::to_string;
@@ -62,27 +45,6 @@ constexpr auto move = Moves::Whirlwind;
 void add_pokemon(Team & team, Species const species) {
 	auto const level = Level(100_bi);
 	team.add_pokemon(species, level, Gender::male);
-}
-
-void test_combinations(Team team) {
-	for (auto const foe_size : containers::integer_range(2_bi, max_pokemon_per_team)) {
-		add_pokemon(team, static_cast<Species>(foe_size));
-		auto collection = all_probabilities(move, foe_size);
-		auto const expected = foe_size - 1_bi;
-		if (size(collection) != expected) {
-			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected) + " but got " + to_string(size(collection)));
-		}
-		for (auto const new_index : containers::integer_range(foe_size)) {
-			for (auto const current_index : containers::integer_range(foe_size)) {
-				team.all_pokemon().set_index(current_index);
-				if (current_index == new_index) {
-					phaze_in_same_pokemon(front(collection), team);
-				} else {
-					phaze_in_different_pokemon(front(collection), team, new_index, current_index, foe_size);
-				}
-			}
-		}
-	}
 }
 
 void phaze_in_same_pokemon(Variable & variable, Team const & team) {
@@ -119,5 +81,34 @@ void phaze_in_different_pokemon(Variable & variable, Team const & team, containe
 	}
 }
 
+void test_combinations(Team team) {
+	for (auto const foe_size : containers::integer_range(2_bi, max_pokemon_per_team)) {
+		add_pokemon(team, static_cast<Species>(foe_size));
+		auto collection = all_probabilities(move, foe_size);
+		auto const expected = foe_size - 1_bi;
+		if (size(collection) != expected) {
+			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected) + " but got " + to_string(size(collection)));
+		}
+		for (auto const new_index : containers::integer_range(foe_size)) {
+			for (auto const current_index : containers::integer_range(foe_size)) {
+				team.all_pokemon().set_index(current_index);
+				if (current_index == new_index) {
+					phaze_in_same_pokemon(front(collection), team);
+				} else {
+					phaze_in_different_pokemon(front(collection), team, new_index, current_index, foe_size);
+				}
+			}
+		}
+	}
+}
+
 }	// namespace
+
+void variable_collection_tests() {
+	std::cout << "\tRunning variable collection tests.\n";
+	Team team(max_pokemon_per_team);
+	add_pokemon(team, static_cast<Species>(1));
+	test_combinations(std::move(team));
+}
+
 }	// namespace technicalmachine
