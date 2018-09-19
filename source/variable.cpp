@@ -35,12 +35,11 @@ using namespace bounded::literal;
 namespace {
 
 auto find_index(PokemonCollection const & collection, Species const species) {
-	for (auto const found_index : containers::integer_range(size(collection))) {
-		if (collection(found_index) == species) {
-			return found_index;
-		}
+	auto const it = containers::find(collection, species);
+	if (it == end(collection)) {
+		throw PokemonNotFound(species);
 	}
-	throw PokemonNotFound(species);
+	return TeamIndex(it - begin(collection));
 }
 
 auto get_phaze_index(Team const & team, Species const species, Moves const foe_move) {
