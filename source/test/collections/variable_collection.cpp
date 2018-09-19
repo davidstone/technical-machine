@@ -65,19 +65,13 @@ void phaze_in_different_pokemon(Variable & variable, Team const & team, containe
 		0_bi, 1_bi, 2_bi, 3_bi, bounded::none, 4_bi,
 		0_bi, 1_bi, 2_bi, 3_bi, 4_bi, bounded::none
 	);
-	try {
-		set_phaze_index(variable, team, team.pokemon(new_index), move);
-		auto const expected = expected_index[current_index][new_index];
-		if (variable.value != expected)
-			throw InvalidCollection("Offsets for phazing are incorrect. Expected " + to_string(value(expected)) + " but got a result of " + to_string(variable.value) + ".");
-		if (new_index == foe_size) {
-			throw InvalidCollection("Phazing supports too many elements when the foe's size is " + to_string(foe_size) + ".");
-		}
-	} catch(InvalidCollectionIndex const &) {
-		if (new_index != foe_size) {
-			throw InvalidCollection("Phazing does not support " + to_string(new_index) + " elements when the foe's size is " + to_string(foe_size) + ".");
-			// otherwise, everything is good
-		}
+	set_phaze_index(variable, team, team.pokemon(new_index), move);
+	auto const expected = expected_index[current_index][new_index];
+	if (variable.value != expected) {
+		throw InvalidCollection("Offsets for phazing are incorrect. Expected " + to_string(value(expected)) + " but got a result of " + to_string(variable.value) + ".");
+	}
+	if (new_index == foe_size) {
+		throw InvalidCollection("Phazing supports too many elements when the foe's size is " + to_string(foe_size) + ".");
 	}
 }
 
