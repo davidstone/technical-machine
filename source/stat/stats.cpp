@@ -1,5 +1,5 @@
 // All 'normal' stats that a Pokemon has
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -38,11 +38,18 @@ auto Stats::hp() -> HP & {
 	return m_hp;
 }
 
+namespace {
+
+// TODO: Maybe have a NormalStatNames type?
+using stat_index = bounded::integer<0, 4>;
+
+} // namespace
+
 auto Stats::operator[](StatNames const stat) const -> Stat const & {
-	return m_stats[stat];
+	return m_stats[stat_index(stat)];
 }
 auto Stats::operator[](StatNames const stat) -> Stat & {
-	return m_stats[stat];
+	return m_stats[stat_index(stat)];
 }
 
 

@@ -423,7 +423,7 @@ Effectiveness::Effectiveness(Type const attacking, Type const defending1, Type c
 }
 
 Effectiveness::Effectiveness(Type const type, Pokemon const & defender):
-	Effectiveness(type, *begin(get_type(defender).types), *std::next(begin(get_type(defender).types))) {
+	Effectiveness(type, *begin(get_type(defender).types), *containers::next(begin(get_type(defender).types))) {
 }
 
 Effectiveness::Effectiveness(Type const attacking, Type const defending):

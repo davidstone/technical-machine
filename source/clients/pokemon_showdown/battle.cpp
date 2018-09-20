@@ -73,7 +73,7 @@ bounded::optional<Team> parse_team(boost::property_tree::ptree const & pt) {
 	try {
 		auto const team_data = range_view(pt.get_child("side").get_child("pokemon").equal_range(""));
 		constexpr bool is_me = true;
-		Team team(containers::distance(team_data.begin(), team_data.end()), is_me);
+		Team team(TeamSize(containers::distance(team_data.begin(), team_data.end())), is_me);
 		for (auto const & pokemon_data : team_data) {
 			auto get = [&](auto const & key) { return pokemon_data.second.get<std::string>(key); };
 

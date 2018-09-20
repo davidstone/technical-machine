@@ -75,10 +75,10 @@ T most_likely_sub_elements(boost::property_tree::ptree const & pt) {
 
 auto top_sub_elements(boost::property_tree::ptree const & pt) {
 	auto data = all_sub_elements(pt);
-	auto const middle = (size(data) >= max_moves_per_pokemon) ? begin(data) + max_moves_per_pokemon : end(data);
-	std::partial_sort(begin(data), middle, end(data), std::greater<>());
+	auto const middle = pointer_from((size(data) >= max_moves_per_pokemon) ? begin(data) + max_moves_per_pokemon : end(data));
+	std::partial_sort(pointer_from(begin(data)), middle, pointer_from(end(data)), std::greater<>());
 	auto const range = containers::transform(
-		containers::range_view(begin(data), middle),
+		containers::range_view(pointer_from(begin(data)), middle),
 		[](auto const & probability) { return from_string<Moves>(probability.second); }
 	);
 	return DetailedStats::UsedMoves(begin(range), end(range));
