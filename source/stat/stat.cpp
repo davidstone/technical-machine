@@ -3461,7 +3461,7 @@ constexpr auto get_base(Species const species, StatNames const stat) -> Stat::ba
 		case StatNames::SPA: return get_base(species, stat_tag<StatNames::SPA>{});
 		case StatNames::SPD: return get_base(species, stat_tag<StatNames::SPD>{});
 		case StatNames::SPE: return get_base(species, stat_tag<StatNames::SPE>{});
-		default: assert(false);
+		default: assert(false); __builtin_unreachable();
 	}
 }
 

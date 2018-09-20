@@ -257,7 +257,7 @@ constexpr auto other_physical_stat(StatNames const stat) {
 	case StatNames::DEF:
 		return StatNames::ATK;
 	default:
-		assert(false);
+		assert(false); __builtin_unreachable();
 	}
 }
 

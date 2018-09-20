@@ -571,7 +571,7 @@ Moves expectiminimax(Team const & ai, Team const & foe, Weather const weather, u
 }
 
 BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const weather, unsigned depth, Evaluate const evaluate, bool first_turn) {
-	auto team_is_empty = [](Team const & team) {
+	auto team_is_empty [[maybe_unused]] = [](Team const & team) {
 		return team.size() == 0_bi or (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi);
 	};
 	assert(!team_is_empty(ai));

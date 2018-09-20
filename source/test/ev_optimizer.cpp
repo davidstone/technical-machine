@@ -28,6 +28,10 @@
 #include "../move/moves.hpp"
 #include "../string_conversions/nature.hpp"
 
+#undef NDEBUG
+
+#include <cassert>
+
 namespace technicalmachine {
 namespace {
 

@@ -166,6 +166,7 @@ auto const & phaze_probability(TeamSize const foe_size) {
 		}
 		default:
 			assert(false);
+			__builtin_unreachable();
 	}
 }
 

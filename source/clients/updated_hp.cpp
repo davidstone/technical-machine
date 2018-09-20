@@ -65,11 +65,9 @@ void UpdatedHP::reset_between_turns() {
 void UpdatedHP::add(bool const is_me, Species const species, VisibleHP const max_precision) {
 	key_type const key(is_me, species);
 	mapped_type const mapped(max_precision);
-	auto const result = container.emplace(key, mapped);
+	auto const result [[maybe_unused]] = container.emplace(key, mapped);
 	// This implementation only works if Species Clause is in effect
 	assert(result.second);
-	// Do not warn if asserts are disabled
-	static_cast<void>(result);
 }
 
 void UpdatedHP::update(bool const is_me, Species const species, VisibleHP const value) {

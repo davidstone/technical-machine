@@ -26,8 +26,11 @@
 
 #include <bounded/integer.hpp>
 
-#include <cassert>
 #include <iostream>
+
+#undef NDEBUG
+
+#include <cassert>
 
 namespace technicalmachine {
 namespace {

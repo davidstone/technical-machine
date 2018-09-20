@@ -113,8 +113,7 @@ void min_defense_test() {
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi));
 	get_nature(pokemon) = Nature::Hasty;
 
-	for (auto const n : containers::integer_range(3_bi)) {
-		static_cast<void>(n);
+	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		boost(stage(pokemon), StatNames::DEF, -2_bi);
 	}
 

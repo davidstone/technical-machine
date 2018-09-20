@@ -198,7 +198,7 @@ auto tri_attack_status(Variable const & variable) {
 		case 1: return Statuses::burn;
 		case 2: return Statuses::freeze;
 		case 3: return Statuses::paralysis;
-		default: assert(false);
+		default: assert(false); __builtin_unreachable();
 	}
 }
 

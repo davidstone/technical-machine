@@ -66,8 +66,7 @@ TeamSize number_of_pokemon(ptree const & pt) {
 }
 
 ptree::const_iterator load_moves(Pokemon & pokemon, ptree::const_iterator it) {
-	for (auto const n : containers::integer_range(4_bi)) {
-		static_cast<void>(n);
+	for (auto const n [[maybe_unused]] : containers::integer_range(4_bi)) {
 		if (it->first != "Move") {
 			throw InvalidTeamFile("Move", it->first);
 		}

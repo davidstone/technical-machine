@@ -89,12 +89,11 @@ void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	for (auto const & move : moves) {
 		write_move(move, member);
 	}
-	for (auto const n : containers::integer_range(RegularMoveSize(size(moves)), max_moves_per_pokemon)) {
-		static_cast<void>(n);
+	for (auto const n [[maybe_unused]] : containers::integer_range(size(moves), max_moves_per_pokemon)) {
 		write_blank_move(member);
 	}
 
-	write_stats (pokemon, member);
+	write_stats(pokemon, member);
 }
 
 void write_blank_pokemon (ptree & pt) {
@@ -134,8 +133,7 @@ void write_team(Team const & team, std::filesystem::path const & file_name) {
 	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon (pokemon, t);
 	}
-	for (auto const unused : containers::integer_range(size(team.all_pokemon()), max_pokemon_per_team)) {
-		static_cast<void>(unused);
+	for (auto const unused [[maybe_unused]] : containers::integer_range(size(team.all_pokemon()), max_pokemon_per_team)) {
 		write_blank_pokemon(t);
 	}
 	write_xml(file_name.string(), pt, std::locale{}, settings);

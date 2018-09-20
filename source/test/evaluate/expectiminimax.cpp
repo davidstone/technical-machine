@@ -33,8 +33,11 @@
 
 #include <containers/array/array.hpp>
 
-#include <cassert>
 #include <iostream>
+
+#undef NDEBUG
+
+#include <cassert>
 
 namespace technicalmachine {
 namespace {
@@ -293,7 +296,7 @@ void expectiminimax_tests() {
 	Weather const weather;
 	std::random_device rd;
 	std::mt19937 random_engine(rd());
-	
+
 	ohko_tests(evaluate, weather, random_engine);
 	one_turn_damage_tests(evaluate, weather, random_engine);
 	bellyzard_vs_defensive(evaluate, weather, random_engine);
