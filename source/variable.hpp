@@ -46,7 +46,7 @@ struct Variable {
 };
 
 using Probabilities = containers::static_vector<Variable, 101>;
-auto all_probabilities(Moves move, TeamSize foe_size) -> Probabilities const &;
+auto all_probabilities(Moves move, TeamSize foe_size) -> Probabilities;
 
 // Team is the Team that was phazed, not the team that used the phazing move
 auto set_phaze_index(Variable & variable, Team const & team, Species species, Moves move) -> void;

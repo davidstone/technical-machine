@@ -143,36 +143,19 @@ constexpr auto constant_probability(Count const count) noexcept {
 
 constexpr auto guaranteed = generic_probability(1.0);
 
-auto const & phaze_probability(TeamSize const foe_size) {
+constexpr auto phaze_probability(TeamSize const foe_size) {
 	switch(foe_size.value()) {
 		case 1:
 		case 2:
 			return guaranteed;
-		case 3: {
-			static constexpr auto value = constant_probability(2_bi);
-			return value;
-		}
-		case 4: {
-			static constexpr auto value = constant_probability(3_bi);
-			return value;
-		}
-		case 5: {
-			static constexpr auto value = constant_probability(4_bi);
-			return value;
-		}
-		case 6: {
-			static constexpr auto value = constant_probability(5_bi);
-			return value;
-		}
 		default:
-			assert(false);
-			__builtin_unreachable();
+			return constant_probability(bounded::integer<3, TeamSize::max().value()>(foe_size) - 1_bi);
 	}
 }
 
 }	// namespace
 
-auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabilities const & {
+auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabilities {
 	switch (move) {
 		case Moves::Absorb:
 		case Moves::Acid_Armor:
@@ -671,10 +654,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::ThunderPunch:
 		case Moves::ThunderShock:
 		case Moves::Volt_Tackle:
-		{
-			static constexpr auto result = generic_probability(0.9, 0.1);
-			return result;
-		}
+			return generic_probability(0.9, 0.1);
 		case Moves::Blue_Flare:
 		case Moves::Bolt_Strike:
 		case Moves::Crunch:
@@ -689,10 +669,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Waterfall:
 		case Moves::Water_Pulse:
 		case Moves::Zen_Headbutt:
-		{
-			static constexpr auto result = generic_probability(0.8, 0.2);
-			return result;
-		}
+			return generic_probability(0.8, 0.2);
 		case Moves::Air_Slash:
 		case Moves::Astonish:
 		case Moves::Bounce:
@@ -726,51 +703,30 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Spark:
 		case Moves::Steamroller:
 		case Moves::Thunder:
-		{
-			static constexpr auto result = generic_probability(0.7, 0.3);
-			return result;
-		}
+			return generic_probability(0.7, 0.3);
 		case Moves::Night_Daze:
 		case Moves::Seed_Flare:
 		case Moves::Smog:
-		{
-			static constexpr auto result = generic_probability(0.6, 0.4);
-			return result;
-		}
+			return generic_probability(0.6, 0.4);
 		case Moves::Crush_Claw:
 		case Moves::Mist_Ball:
 		case Moves::Octazooka:
 		case Moves::Razor_Shell:
 		case Moves::Rock_Smash:
 		case Moves::Sacred_Fire:
-		{
-			static constexpr auto result = generic_probability(0.5, 0.5);
-			return result;
-		}
+			return generic_probability(0.5, 0.5);
 		case Moves::Charge_Beam:
-		{
-			static constexpr auto result = generic_probability(0.3, 0.7);
-			return result;
-		}
+			return generic_probability(0.3, 0.7);
 		case Moves::DynamicPunch:
 		case Moves::Inferno:
 		case Moves::Zap_Cannon:
-		{
-			static constexpr auto result = generic_probability(0.0, 1.0);
-			return result;
-		}
+			return generic_probability(0.0, 1.0);
 		case Moves::Fire_Fang:
 		case Moves::Ice_Fang:
 		case Moves::Thunder_Fang:
-		{
-			static constexpr auto result = generic_probability(0.79, 0.10, 0.10, 0.01);
-			return result;
-		}
+			return generic_probability(0.79, 0.10, 0.10, 0.01);
 		case Moves::Tri_Attack:
-		{
-			static constexpr auto result = generic_probability(12.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0);
-			return result;
-		}
+			return generic_probability(12.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0);
 		case Moves::Magnitude:
 			return magnitude_variables;
 		case Moves::Present:
@@ -778,11 +734,8 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Psywave:
 			return psywave_variables;
 		case Moves::Acupressure:
-		{
 			// Possibly not correct due to the maxing out behavior
-			static constexpr auto result = constant_probability(7_bi);
-			return result;
-		}
+			return constant_probability(7_bi);
 		case Moves::Roar:
 		case Moves::Whirlwind:
 			return phaze_probability(foe_size);
