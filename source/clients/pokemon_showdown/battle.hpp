@@ -86,7 +86,7 @@ private:
 	Battle m_battle;
 	using ShowdownIndex = decltype(std::declval<containers::index_type<PokemonContainer>>() + 1_bi);
 	containers::static_vector<ShowdownIndex, max_pokemon_per_team.value()> m_slot_memory;
-	bool m_completed;
+	bool m_completed = false;
 };
 
 
