@@ -260,6 +260,8 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		"-Wno-missing-braces"
 		"-Wno-newline-eof"
 		"-Wno-padded"
+		# Still don't need compatibility with older standards
+		"-Wno-return-std-move-in-c++11"
 		# -Wswitch-enum warns even if you have default
 		"-Wno-switch-enum"
 		# -Wundefined-func-template has a bug that triggers on deduction guides
