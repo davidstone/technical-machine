@@ -63,9 +63,10 @@ struct Status {
 	friend auto apply(Statuses status, Pokemon & user, Pokemon & target, Weather weather) -> void;
 	friend auto shift_status(Pokemon & user, Pokemon & target, Weather weather) -> void;
 
-	friend constexpr auto compare(Status const lhs, Status const rhs) {
-		BOUNDED_COMPARE_ONE_MEMBER(m_status);
-		return compare(lhs.m_turns_already_slept, rhs.m_turns_already_slept);
+	friend constexpr auto operator==(Status const lhs, Status const rhs) {
+		return
+			lhs.m_status == rhs.m_status and
+			lhs.m_turns_already_slept == rhs.m_turns_already_slept;
 	}
 
 	auto increase_sleep_counter (Ability const & ability, bool awaken) -> void;

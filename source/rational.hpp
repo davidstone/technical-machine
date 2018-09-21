@@ -106,6 +106,21 @@ public:
 		return bounded::compare(lhs * rhs.m_denominator, rhs.m_numerator);
 	}
 
+	template<typename LN, typename LD, typename RN, typename RD>
+	friend constexpr auto operator==(rational<LN, LD> const lhs, rational<RN, RD> const rhs) {
+		return lhs.m_numerator * rhs.m_denominator == rhs.m_numerator * lhs.m_denominator;
+	}
+	
+	template<typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+	friend constexpr auto operator==(rational const lhs, Integer const rhs) {
+		return lhs.m_numerator == rhs * lhs.m_denominator;
+	}
+
+	template<typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+	friend constexpr auto operator==(Integer const lhs, rational const rhs) {
+		return lhs * rhs.m_denominator == rhs.m_numerator;
+	}
+
 
 	friend std::string to_string(rational<Numerator, Denominator> const r) {
 		using bounded::to_string;

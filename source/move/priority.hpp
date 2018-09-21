@@ -30,6 +30,9 @@ struct Priority {
 	inline friend auto compare(Priority const lhs, Priority const rhs) {
 		return bounded::compare(lhs.priority, rhs.priority);
 	}
+	inline friend auto operator==(Priority const lhs, Priority const rhs) {
+		return lhs.priority == rhs.priority;
+	}
 private:
 	bounded::checked_integer<-6, 6> priority;
 };

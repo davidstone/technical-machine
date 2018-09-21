@@ -32,8 +32,8 @@ struct Wish {
 	constexpr auto is_active() const {
 		return static_cast<bool>(m_turns_until_activation);
 	}
-	friend constexpr auto compare(Wish const lhs, Wish const rhs) {
-		return bounded::compare(lhs.m_turns_until_activation, rhs.m_turns_until_activation);
+	friend constexpr auto operator==(Wish const lhs, Wish const rhs) {
+		return lhs.m_turns_until_activation == rhs.m_turns_until_activation;
 	}
 
 private:

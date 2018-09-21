@@ -89,13 +89,14 @@ private:
 	TailwindEffect m_tailwind;
 };
 
-constexpr auto compare(Screens const lhs, Screens const rhs) {
-	BOUNDED_COMPARE_ONE_MEMBER(light_screen());
-	BOUNDED_COMPARE_ONE_MEMBER(reflect());
-	BOUNDED_COMPARE_ONE_MEMBER(lucky_chant());
-	BOUNDED_COMPARE_ONE_MEMBER(mist());
-	BOUNDED_COMPARE_ONE_MEMBER(safeguard());
-	return compare(lhs.tailwind(), rhs.tailwind());
+constexpr auto operator==(Screens const lhs, Screens const rhs) {
+	return
+		lhs.light_screen() == rhs.light_screen() and
+		lhs.reflect() == rhs.reflect() and
+		lhs.lucky_chant() == rhs.lucky_chant() and
+		lhs.mist() == rhs.mist() and
+		lhs.safeguard() == rhs.safeguard() and
+		lhs.tailwind() == rhs.tailwind();
 }
 
 

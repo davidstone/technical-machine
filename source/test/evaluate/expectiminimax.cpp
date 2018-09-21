@@ -287,6 +287,28 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 	assert(expectiminimax(attacker, defender, weather, depth, evaluate) == Moves::Calm_Mind);
 }
 
+void performance(Evaluate const & evaluate) {
+	auto const weather = Weather{};
+	constexpr auto depth = 4;
+	auto add_pokemon = [&](Team & team, Species const species, auto... moves) {
+		team.add_pokemon(species, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Pickup, Nature::Hardy);
+		Pokemon & pokemon = back(team.all_pokemon());
+		containers::append(all_moves(pokemon), containers::array{Move(moves)...});
+		set_hp_ev(pokemon, EV(252_bi));
+		set_stat_ev(pokemon, StatNames::DEF, EV(120_bi));
+		set_stat_ev(pokemon, StatNames::SPD, EV(136_bi));
+	};
+	Team ai(6_bi, true);
+	Team foe(6_bi, false);
+	for (auto const species : containers::array{Species::Latias, Species::Latios, Species::Tyranitar, Species::Hippowdon, Species::Salamence, Species::Slugma}) {
+		for (auto * team : {&ai, &foe}) {
+			add_pokemon(*team, species, Moves::Recover, Moves::Dragon_Claw, Moves::Earthquake, Moves::Dragon_Dance);
+		}
+	}
+
+	expectiminimax(ai, foe, weather, depth, evaluate);
+}
+
 }	// namespace
 
 void expectiminimax_tests() {
@@ -304,6 +326,7 @@ void expectiminimax_tests() {
 	baton_pass(evaluate, weather, random_engine);
 	replace_fainted(evaluate, random_engine);
 	latias_vs_suicune(evaluate, random_engine);
+	performance(evaluate);
 	
 	std::cout << "Evaluate tests passed.\n\n";
 }

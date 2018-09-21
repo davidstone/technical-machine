@@ -46,8 +46,8 @@ struct BideDuration {
 		}
 	}
 
-	friend constexpr auto compare(BideDuration const lhs, BideDuration const rhs) {
-		return bounded::compare(lhs.m_turns_active, rhs.m_turns_active);
+	friend constexpr auto operator==(BideDuration const lhs, BideDuration const rhs) {
+		return lhs.m_turns_active == rhs.m_turns_active;
 	}
 
 private:

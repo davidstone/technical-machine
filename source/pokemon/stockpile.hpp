@@ -47,8 +47,8 @@ struct Stockpile {
 		return m_level * 100_bi;
 	}
 
-	friend constexpr auto compare(Stockpile const lhs, Stockpile const rhs) {
-		return bounded::compare(lhs.m_level, rhs.m_level);
+	friend constexpr auto operator==(Stockpile const lhs, Stockpile const rhs) {
+		return lhs.m_level == rhs.m_level;
 	}
 
 private:

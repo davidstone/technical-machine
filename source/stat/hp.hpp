@@ -76,4 +76,13 @@ auto compare(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
 	return bounded::compare(rhs, lhs.current());
 }
 
+template<auto min, auto max, typename overflow>
+auto operator==(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
+	return lhs.current() == rhs;
+}
+template<auto min, auto max, typename overflow>
+auto operator==(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
+	return rhs == lhs.current();
+}
+
 }	// namespace technicalmachine

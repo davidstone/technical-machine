@@ -46,8 +46,8 @@ struct Confusion {
 		m_is_hitting_self = true;
 	}
 
-	friend constexpr auto compare(Confusion const lhs, Confusion const rhs) {
-		return bounded::compare(lhs.m_turns_spent_confused, rhs.m_turns_spent_confused);
+	friend constexpr auto operator==(Confusion const lhs, Confusion const rhs) {
+		return lhs.m_turns_spent_confused == rhs.m_turns_spent_confused;
 	}
 
 private:

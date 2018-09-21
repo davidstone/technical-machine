@@ -39,8 +39,8 @@ private:
 	value_type m_party;
 };
 
-constexpr auto compare(Party const lhs, Party const rhs) {
-	return bounded::compare(lhs.value(), rhs.value());
+constexpr auto operator==(Party const lhs, Party const rhs) {
+	return lhs.value() == rhs.value();
 }
 
 constexpr auto other(Party const party) -> Party {

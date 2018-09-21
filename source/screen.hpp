@@ -63,8 +63,8 @@ private:
 };
 
 template<intmax_t normal_duration, intmax_t max_duration>
-constexpr auto compare(Screen<normal_duration, max_duration> const lhs, Screen<normal_duration, max_duration> const rhs) {
-	return bounded::compare(lhs.turns_remaining(), rhs.turns_remaining());
+constexpr auto operator==(Screen<normal_duration, max_duration> const lhs, Screen<normal_duration, max_duration> const rhs) {
+	return lhs.turns_remaining() == rhs.turns_remaining();
 }
 
 using LuckyChantEffect = Screen<5>;

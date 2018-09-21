@@ -74,9 +74,10 @@ struct LastUsedMove {
 		return rational(10_bi + m_consecutive_turns_used, 10_bi);
 	}
 
-	friend constexpr auto compare(LastUsedMove const lhs, LastUsedMove const rhs) {
-		BOUNDED_COMPARE_ONE_MEMBER(m_move);
-		return compare(lhs.m_consecutive_turns_used, rhs.m_consecutive_turns_used);
+	friend constexpr auto operator==(LastUsedMove const lhs, LastUsedMove const rhs) {
+		return
+			lhs.m_move == rhs.m_move and
+			lhs.m_consecutive_turns_used == rhs.m_consecutive_turns_used;
 	}
 
 private:

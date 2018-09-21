@@ -83,14 +83,15 @@ struct Pokemon {
 	// Species clause is assumed, and Pokemon will only be compared for equality
 	// on the same team, so the same species implies many other things are the
 	// same
-	friend auto compare(Pokemon const & lhs, Pokemon const & rhs) {
+	friend auto operator==(Pokemon const & lhs, Pokemon const & rhs) {
 		assert(illegal_inequality_check(lhs, rhs));
-		BOUNDED_COMPARE_ONE_MEMBER(m_moves);
-		BOUNDED_COMPARE_ONE_MEMBER(m_species);
-		BOUNDED_COMPARE_ONE_MEMBER(m_status);
-		BOUNDED_COMPARE_ONE_MEMBER(has_been_seen());
-		BOUNDED_COMPARE_ONE_MEMBER(m_item);
-		return bounded::compare(get_hp(lhs).current(), get_hp(rhs).current());
+		return
+			lhs.m_moves == rhs.m_moves and
+			lhs.m_species == rhs.m_species and
+			lhs.m_status == rhs.m_status and
+			lhs.has_been_seen() == rhs.has_been_seen() and
+			lhs.m_item == rhs.m_item and
+			get_hp(lhs).current() == get_hp(rhs).current();
 	}
 
 
@@ -123,11 +124,8 @@ private:
 	bool m_nature_is_known : 1;
 };
 
-inline auto compare(Pokemon const & lhs, Species const rhs) {
-	return bounded::compare(static_cast<Species>(lhs), rhs);
-}
-inline auto compare(Species const & lhs, Pokemon const & rhs) {
-	return bounded::compare(lhs, static_cast<Species>(rhs));
+inline auto operator==(Species const & lhs, Pokemon const & rhs) {
+	return lhs == static_cast<Species>(rhs);
 }
 
 inline auto all_moves(Pokemon const & pokemon) -> MoveContainer const & {

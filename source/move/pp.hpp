@@ -42,7 +42,7 @@ struct Pp {
 	}
 
 	constexpr auto is_empty() const {
-		return m_current == 0_bi;
+		return m_current and *m_current == 0_bi;
 	}
 
 	constexpr auto has_unlimited_pp() const {
@@ -71,8 +71,8 @@ struct Pp {
 
 	// Assumes max PP is the same because it assumes the same Move on the same
 	// Pokemon
-	friend constexpr auto compare(Pp const lhs, Pp const rhs) {
-		return bounded::compare(lhs.m_current, rhs.m_current);
+	friend constexpr auto operator==(Pp const lhs, Pp const rhs) {
+		return lhs.m_current == rhs.m_current;
 	}
 
 private:

@@ -46,9 +46,10 @@ struct Disable {
 		}
 	}
 
-	friend constexpr auto compare(Disable const lhs, Disable const rhs) noexcept {
-		BOUNDED_COMPARE_ONE_MEMBER(m_turns_disabled);
-		return compare(lhs.m_disabled_move, rhs.m_disabled_move);
+	friend constexpr auto operator==(Disable const lhs, Disable const rhs) noexcept {
+		return
+			lhs.m_turns_disabled == rhs.m_turns_disabled and
+			lhs.m_disabled_move == rhs.m_disabled_move;
 	}
 
 private:

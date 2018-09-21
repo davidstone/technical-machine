@@ -37,8 +37,8 @@ struct BideDamage {
 		return output_damage;
 	}
 
-	friend constexpr auto compare(BideDamage const lhs, BideDamage const rhs) {
-		return bounded::compare(lhs.m_damage, rhs.m_damage);
+	friend constexpr auto operator==(BideDamage const lhs, BideDamage const rhs) {
+		return lhs.m_damage == rhs.m_damage;
 	}
 	
 private:

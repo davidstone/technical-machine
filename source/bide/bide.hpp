@@ -42,9 +42,10 @@ struct Bide {
 		return BOUNDED_CONDITIONAL(m_duration.decrement(), m_damage.release(), 0_bi);
 	}
 
-	friend constexpr auto compare(Bide const lhs, Bide const rhs) {
-		BOUNDED_COMPARE_ONE_MEMBER(m_damage);
-		return compare(lhs.m_duration, rhs.m_duration);
+	friend constexpr auto operator==(Bide const lhs, Bide const rhs) {
+		return
+			lhs.m_damage == rhs.m_damage and
+			lhs.m_duration == rhs.m_duration;
 	}
 
 private:

@@ -65,6 +65,9 @@ struct SharedMovesIterator {
 	friend constexpr auto compare(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
 		return bounded::compare(lhs.m_index, rhs.m_index);
 	}
+	friend constexpr auto operator==(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
+		return lhs.m_index == rhs.m_index;
+	}
 
 	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(SharedMovesIterator)
 private:
@@ -105,8 +108,8 @@ private:
 	TeamSize m_number_of_switches;
 };
 
-constexpr auto compare(SharedMoves const lhs, SharedMoves const rhs) {
-	return bounded::compare(containers::size(lhs), containers::size(rhs));
+constexpr auto operator==(SharedMoves const lhs, SharedMoves const rhs) {
+	return containers::size(lhs) == containers::size(rhs);
 }
 
 

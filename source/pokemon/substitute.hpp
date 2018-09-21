@@ -57,8 +57,8 @@ private:
 	bounded::clamped_integer<hp_type::min().value(), hp_type::max().value()> m_hp = 0_bi;
 };
 
-constexpr auto compare(Substitute const lhs, Substitute const rhs) {
-	return bounded::compare(lhs.hp(), rhs.hp());
+constexpr auto operator==(Substitute const lhs, Substitute const rhs) {
+	return lhs.hp() == rhs.hp();
 }
 
 }	// namespace technicalmachine

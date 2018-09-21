@@ -90,6 +90,7 @@ private:
 };
 
 using ::containers::detail::common::compare;
+using ::containers::detail::common::operator==;
 
 template<typename... MaybePP>
 auto & add_seen_move(MoveContainer & container, Moves const move, MaybePP... pp) {

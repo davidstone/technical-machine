@@ -57,10 +57,11 @@ private:
 	bool m_stealth_rock = false;
 };
 
-constexpr auto compare(EntryHazards const lhs, EntryHazards const rhs) {
-	BOUNDED_COMPARE_ONE_MEMBER(spikes());
-	BOUNDED_COMPARE_ONE_MEMBER(toxic_spikes());
-	return bounded::compare(lhs.stealth_rock(), rhs.stealth_rock());
+constexpr auto operator==(EntryHazards const lhs, EntryHazards const rhs) {
+	return
+		lhs.spikes() == rhs.spikes() and
+		lhs.toxic_spikes() == rhs.toxic_spikes() and
+		lhs.stealth_rock() == rhs.stealth_rock();
 }
 
 auto apply(EntryHazards & hazards, MutableActivePokemon switcher, Weather weather) -> void;

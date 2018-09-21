@@ -54,15 +54,16 @@ private:
 	Pp m_pp;
 };
 
-constexpr auto compare(Move const lhs, Move const rhs) {
-	BOUNDED_COMPARE_ONE_MEMBER(pp());
-	return bounded::compare(static_cast<Moves>(lhs), static_cast<Moves>(rhs));
+constexpr auto operator==(Move const lhs, Move const rhs) {
+	return
+		lhs.pp() == rhs.pp() and
+		static_cast<Moves>(lhs) == static_cast<Moves>(rhs);
 }
-constexpr auto compare(Move const lhs, Moves const rhs) {
-	return bounded::compare(static_cast<Moves>(lhs), rhs);
+constexpr auto operator==(Move const lhs, Moves const rhs) {
+	return static_cast<Moves>(lhs) == rhs;
 }
-constexpr auto compare(Moves const lhs, Move const rhs) {
-	return bounded::compare(lhs, static_cast<Moves>(rhs));
+constexpr auto operator==(Moves const lhs, Move const rhs) {
+	return lhs == static_cast<Moves>(rhs);
 }
 
 auto is_regular(Moves move) -> bool;

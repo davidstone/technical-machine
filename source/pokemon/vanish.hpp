@@ -88,8 +88,8 @@ public:
 		}
 	}
 	
-	friend constexpr auto compare(Vanish const lhs, Vanish const rhs) {
-		return bounded::compare(lhs.m_state, rhs.m_state);
+	friend constexpr auto operator==(Vanish const lhs, Vanish const rhs) {
+		return lhs.m_state == rhs.m_state;
 	}
 
 private:

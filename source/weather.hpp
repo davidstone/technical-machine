@@ -90,15 +90,16 @@ struct Weather {
 
 	auto blocks_status(Statuses status) const -> bool;
 
-	friend constexpr auto compare(Weather const lhs, Weather const rhs) {
-		BOUNDED_COMPARE_ONE_MEMBER(m_trick_room);
-		BOUNDED_COMPARE_ONE_MEMBER(m_fog);
-		BOUNDED_COMPARE_ONE_MEMBER(m_gravity);
-		BOUNDED_COMPARE_ONE_MEMBER(m_uproar);
-		BOUNDED_COMPARE_ONE_MEMBER(m_hail);
-		BOUNDED_COMPARE_ONE_MEMBER(m_sun);
-		BOUNDED_COMPARE_ONE_MEMBER(m_sand);
-		return bounded::compare(lhs.m_rain, rhs.m_rain);
+	friend constexpr auto operator==(Weather const lhs, Weather const rhs) {
+		return
+			lhs.m_trick_room == rhs.m_trick_room and
+			lhs.m_fog == rhs.m_fog and
+			lhs.m_gravity == rhs.m_gravity and
+			lhs.m_uproar == rhs.m_uproar and
+			lhs.m_hail == rhs.m_hail and
+			lhs.m_sun == rhs.m_sun and
+			lhs.m_sand == rhs.m_sand and
+			lhs.m_rain == rhs.m_rain;
 	}
 
 private:

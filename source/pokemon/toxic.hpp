@@ -32,8 +32,8 @@ struct Toxic {
 	constexpr auto ratio_drained() const {
 		return rational(-m_counter, 16_bi);
 	}
-	friend constexpr auto compare(Toxic const lhs, Toxic const rhs) {
-		return bounded::compare(lhs.m_counter, rhs.m_counter);
+	friend constexpr auto operator==(Toxic const lhs, Toxic const rhs) {
+		return lhs.m_counter == rhs.m_counter;
 	}
 private:
 	friend struct Evaluate;

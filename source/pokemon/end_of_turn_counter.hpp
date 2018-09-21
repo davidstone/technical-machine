@@ -61,8 +61,8 @@ struct EndOfTurnCounter {
 		static_assert(Any<CounterOperations, CounterOperations::advance_one_turn_deactivated, operations...>::value, "This type does not support advancing the counter by one and returning whether it just deactivated.");
 		return advance_one_turn_impl();
 	}
-	friend constexpr auto compare(EndOfTurnCounter const lhs, EndOfTurnCounter const rhs) {
-		return bounded::compare(lhs.m_turns_active, rhs.m_turns_active);
+	friend constexpr auto operator==(EndOfTurnCounter const lhs, EndOfTurnCounter const rhs) {
+		return lhs.m_turns_active == rhs.m_turns_active;
 	}
 	
 private:

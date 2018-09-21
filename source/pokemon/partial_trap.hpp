@@ -35,8 +35,8 @@ struct PartialTrap {
 	}
 	auto damage(MutableActivePokemon pokemon) -> void;
 
-	friend constexpr auto compare(PartialTrap const lhs, PartialTrap const rhs) {
-		return compare(lhs.m_base, rhs.m_base);
+	friend constexpr auto operator==(PartialTrap const lhs, PartialTrap const rhs) {
+		return lhs.m_base == rhs.m_base;
 	}
 private:
 	EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::activate, CounterOperations::advance_one_turn> m_base;

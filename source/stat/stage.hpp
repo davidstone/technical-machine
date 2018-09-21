@@ -65,6 +65,7 @@ private:
 };
 
 using ::containers::detail::common::compare;
+using ::containers::detail::common::operator==;
 
 namespace detail {
 

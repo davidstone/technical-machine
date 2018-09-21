@@ -37,8 +37,8 @@ private:
 	bounded::checked_integer<min, max> m_value;
 };
 
-constexpr auto compare(Level const lhs, Level const rhs) {
-	return bounded::compare(lhs(), rhs());
+constexpr auto operator==(Level const lhs, Level const rhs) {
+	return lhs() == rhs();
 }
 
 }	// namespace technicalmachine
