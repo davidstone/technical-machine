@@ -54,7 +54,7 @@ struct Pp {
 			return;
 		}
 		// I think it is always an error to try to decrement a move without PP.
-		assert(m_current != 0_bi);
+		assert(m_current and *m_current != 0_bi);
 		*m_current -= BOUNDED_CONDITIONAL(uses_extra_pp(foe_ability), 2_bi, 1_bi);
 	}
 
