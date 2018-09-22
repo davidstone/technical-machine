@@ -88,10 +88,14 @@ auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> Evaluat
 }
 
 auto score_move(Evaluate const & evaluate, Move const move, Screens const & other) {
+	auto const reflect_turns_remaining = other.reflect().turns_remaining();
+	auto const score_reflect = reflect_turns_remaining != 0_bi and is_physical(move);
+	auto const light_screen_turns = other.light_screen().turns_remaining();
+	auto const score_light_screen = !score_reflect and light_screen_turns != 0_bi and is_special(move);
 	return
 		(
-			BOUNDED_CONDITIONAL(is_physical(move), evaluate.reflect() * other.reflect().turns_remaining(),
-			BOUNDED_CONDITIONAL(is_special(move), evaluate.light_screen() * other.light_screen().turns_remaining(),
+			BOUNDED_CONDITIONAL(score_reflect, evaluate.reflect() * reflect_turns_remaining,
+			BOUNDED_CONDITIONAL(score_light_screen, evaluate.light_screen() * light_screen_turns_remaining,
 			0_bi))
 		) +
 		BOUNDED_CONDITIONAL(move.pp().is_empty(), evaluate.no_pp(), 0_bi)
