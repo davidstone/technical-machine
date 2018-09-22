@@ -101,7 +101,7 @@ auto score_move(Evaluate const & evaluate, Move const move, Screens const & othe
 auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens const & other, Weather const) {
 	// TODO: alter the score of a move based on the weather
 	auto get_score = [&](auto const move) { return score_move(evaluate, move, other); };
-	return containers::accumulate(containers::transform(all_moves(pokemon), get_score));
+	return containers::accumulate(containers::transform(regular_moves(pokemon), get_score));
 }
 
 
