@@ -100,6 +100,7 @@ add_library(tm_common STATIC
 	source/stat/stats.cpp
 
 	source/string_conversions/ability.cpp
+	source/string_conversions/conversion.cpp
 	source/string_conversions/gender.cpp
 	source/string_conversions/invalid_string_conversion.cpp
 	source/string_conversions/item.cpp
