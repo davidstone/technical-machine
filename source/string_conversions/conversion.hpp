@@ -18,17 +18,29 @@
 
 #pragma once
 
-#include <cctype>
+#include <containers/algorithms/compare.hpp>
+#include <containers/algorithms/filter_iterator.hpp>
+#include <containers/algorithms/transform.hpp>
+
 #include <string_view>
 
 namespace technicalmachine {
 
-struct lowercase_ordering {
-	auto operator()(std::string_view const lhs, std::string_view const rhs) const noexcept {
-		auto const lowercase_comparison = [](auto const lhs_c, auto const rhs_c) {
-			return std::tolower(lhs_c) < std::tolower(rhs_c);
+struct lowercase_alphanumeric {
+	constexpr auto operator()(std::string_view const lhs, std::string_view const rhs) const noexcept {
+		auto transform_filter = [](std::string_view const & input) {
+			// Not portable because it does not respect character encodings.
+			// We do not want to use cctype functions because we do not want to
+			// use locales.
+			auto to_lower = [](char c) {
+				return static_cast<char>(('A' <= c and c <= 'Z') ? c + 'a' - 'A' : c);
+			};
+			auto is_valid = [](char c) {
+				return ('0' <= c and c <= '9') or ('a' <= c and c <= 'z');
+			};
+			return containers::filter(containers::transform(input, to_lower), is_valid);
 		};
-		return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), lowercase_comparison);
+		return containers::compare(transform_filter(lhs), transform_filter(rhs)) < 0;
 	}
 };
 
