@@ -52,10 +52,10 @@ auto are_compatible(SingleClassificationEVs const & physical, SingleClassificati
 namespace detail {
 
 constexpr auto possible_defensive_ev_combinations() {
-	constexpr auto possible_hp_evs = 252U / 4U + 1U;
-	constexpr auto possible_natures = static_cast<unsigned>(std::numeric_limits<Nature>::max());
+	constexpr auto possible_hp_evs = 252_bi / 4_bi + 1_bi;
+	constexpr auto possible_natures = std::numeric_limits<Nature>::max() + 1_bi;
 	// Given a stat, a nature, and an HP EV, the defensive EV can be calculated
-	return possible_hp_evs * possible_natures;
+	return static_cast<std::intmax_t>(possible_hp_evs * possible_natures);
 }
 
 }	// namespace detail
