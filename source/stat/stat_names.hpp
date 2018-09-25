@@ -1,5 +1,5 @@
 // Stats data structures
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,14 +22,15 @@
 
 namespace technicalmachine {
 
+// TODO: Just make a few different enums
 enum class StatNames {
 	ATK,
 	DEF,
 	SPA,
 	SPD,
 	SPE,
-	NORMAL_END,
-	ACC = NORMAL_END,
+	NORMAL_END = SPE,
+	ACC,
 	EVA
 };
 

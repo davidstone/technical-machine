@@ -92,8 +92,8 @@ void DefensiveEVs::remove_inefficient_natures(DefensiveEVs::Natures const & divi
 
 void DefensiveEVs::add_other_potential_natures() {
 	for (auto const reference_nature : used_natures(container)) {
-		for (StatNames boosted = static_cast<StatNames>(0); boosted != StatNames::NORMAL_END; boosted = static_cast<StatNames>(static_cast<int>(boosted) + 1)) {
-			for (StatNames penalized = static_cast<StatNames>(0); penalized != StatNames::NORMAL_END; penalized = static_cast<StatNames>(static_cast<int>(penalized) + 1)) {
+		for (auto const boosted : containers::enum_range(StatNames::NORMAL_END)) {
+			for (auto const penalized : containers::enum_range(StatNames::NORMAL_END)) {
 				auto const nature = make_nature(boosted, penalized);
 				if (!has_same_effect_on_defenses(nature, reference_nature)) {
 					continue;
