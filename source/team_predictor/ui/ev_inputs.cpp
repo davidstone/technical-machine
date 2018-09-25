@@ -30,7 +30,7 @@ EVInput::EVInput(int const button_number, int const ev, char const * label):
 
 EV EVInput::value() const {
 	std::string const str = input.value();
-	return EV(!str.empty() ? EV::value_type(boost::lexical_cast<EV::value_type::underlying_type>(str)) : 0_bi);
+	return EV(!str.empty() ? EV::value_type(boost::lexical_cast<EV::value_type>(str)) : 0_bi);
 }
 
 EVInputs::EVInputs(int const button_number):
