@@ -300,7 +300,7 @@ void performance(Evaluate const & evaluate) {
 	};
 	Team ai(6_bi, true);
 	Team foe(6_bi, false);
-	for (auto const species : containers::array{Species::Latias, Species::Latios, Species::Tyranitar, Species::Hippowdon, Species::Salamence, Species::Slugma}) {
+	for (auto const species : {Species::Latias, Species::Latios, Species::Tyranitar, Species::Hippowdon, Species::Salamence, Species::Slugma}) {
 		for (auto * team : {&ai, &foe}) {
 			add_pokemon(*team, species, Moves::Recover, Moves::Dragon_Claw, Moves::Earthquake, Moves::Dragon_Dance);
 		}
