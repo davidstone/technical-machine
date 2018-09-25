@@ -75,13 +75,12 @@ Multiplier::Container Multiplier::species_clause() {
 	for (auto & array : multiplier) {
 		std::fill(begin(array), end(array), not_set);
 	}
-	for (auto const a : containers::integer_range(bounded::constant<number_of_species>)) {
-		for (auto const b : containers::integer_range(bounded::constant<number_of_species>)) {
-			if (is_alternate_form(static_cast<Species>(a), static_cast<Species>(b))) {
-				multiplier[a][b] = 0;
+	for (auto const a : containers::enum_range<Species>()) {
+		for (auto const b : containers::enum_range<Species>()) {
+			if (is_alternate_form(a, b)) {
+				multiplier[a][b] = 0.0F;
 			}
 		}
-		multiplier[a][a] = 0;
 	}
 	return multiplier;
 }
@@ -124,7 +123,7 @@ void Multiplier::estimate_remaining(Overall const & overall, Overall const & una
 	// this Pokemon. If a Pokemon that is used a lot does not show up on this
 	// list, then we can be sure that it is used less than the current method
 	// suggests.
-	for (auto const a : containers::integer_range(bounded::constant<number_of_species>)) {
+	for (auto const a : containers::enum_range<Species>()) {
 		if (overall[a] != 0_bi) {
 			for (value_type & value : multiplier[a]) {
 				if (value == not_set) {
@@ -144,18 +143,20 @@ void Multiplier::estimate_remaining(Overall const & overall, Overall const & una
 
 namespace {
 
-bool is_deoxys (Species species);
-bool is_giratina (Species species);
-bool is_rotom (Species species);
-bool is_shaymin (Species species);
-bool is_wormadam (Species species);
+bool is_deoxys(Species species);
+bool is_giratina(Species species);
+bool is_rotom(Species species);
+bool is_shaymin(Species species);
+bool is_wormadam(Species species);
 
 bool is_alternate_form(Species const first, Species const second) {
-	return (is_deoxys (first) and is_deoxys (second)) or
-			(is_giratina (first) and is_giratina (second)) or
-			(is_rotom (first) and is_rotom (second)) or
-			(is_shaymin (first) and is_shaymin (second)) or
-			(is_wormadam (first) and is_wormadam (second));
+	return
+		first == second or
+		(is_deoxys(first) and is_deoxys(second)) or
+		(is_giratina(first) and is_giratina(second)) or
+		(is_rotom(first) and is_rotom(second)) or
+		(is_shaymin(first) and is_shaymin(second)) or
+		(is_wormadam(first) and is_wormadam(second));
 }
 
 bool is_deoxys(Species const species) {
