@@ -289,7 +289,7 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 
 void performance(Evaluate const & evaluate) {
 	auto const weather = Weather{};
-	constexpr auto depth = 4;
+	constexpr auto depth = 2;
 	auto add_pokemon = [&](Team & team, Species const species, auto... moves) {
 		team.add_pokemon(species, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Pickup, Nature::Hardy);
 		Pokemon & pokemon = back(team.all_pokemon());
