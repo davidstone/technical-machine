@@ -67,14 +67,11 @@ EqualDefensiveness equal_defensiveness(Pokemon const & pokemon, bool const physi
 	auto const initial_product = get_hp(pokemon).max() * initial_stat(stat_name, stat, level, get_nature(pokemon));
 	auto result = EqualDefensiveness{};
 	for (auto const nature : containers::enum_range<Nature>()) {
-		for (auto hp_ev = EV::value_type(0_bi); ; hp_ev += 4_bi) {
+		for (auto hp_ev = EV::value_type(0_bi); hp_ev != EV::max; hp_ev += 4_bi) {
 			auto const hp = HP(pokemon, level, EV(hp_ev));
 			stat = Stat(stat, calculate_ev(stat_name, stat, level, nature, hp, initial_product));
 			if (initial_stat(stat_name, stat, level, nature) * hp.max() >= initial_product) {
 				result.emplace_back(hp.ev(), stat.ev(), nature);
-			}
-			if (hp_ev == EV::max) {
-				break;
 			}
 		}
 	}
