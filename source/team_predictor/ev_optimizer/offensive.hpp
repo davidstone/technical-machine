@@ -1,5 +1,5 @@
 // Optimize offensive EVs and nature to remove waste
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,24 +18,19 @@
 
 #pragma once
 
-#include <unordered_map>
-
-#include <bounded/integer.hpp>
-
 #include "../../stat/calculate.hpp"
 #include "../../stat/ev.hpp"
 #include "../../stat/nature.hpp"
+
+#include <bounded/integer.hpp>
+
+#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 struct Pokemon;
 struct DefensiveEVs;
 struct SpeedEVs;
 using namespace bounded::literal;
-
-struct OffensiveStats {
-	EV attack = EV(0_bi);
-	EV special_attack = EV(0_bi);
-};
 
 struct OffensiveEVs {
 	explicit OffensiveEVs(Pokemon const & pokemon);
@@ -50,8 +45,17 @@ private:
 	};
 	auto equal_stats(OffensiveData initial, Species species, Level level) -> void;
 	friend auto combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon) -> void;
-	typedef std::unordered_map<Nature, OffensiveStats> Container;
-	Container container;
+	struct OffensiveStats {
+		constexpr explicit OffensiveStats(Nature const nature_):
+			nature(nature_)
+		{
+		}
+
+		Nature nature;
+		EV attack = EV(0_bi);
+		EV special_attack = EV(0_bi);
+	};
+	containers::static_vector<OffensiveStats, size(containers::enum_range<Nature>()).value()> container;
 };
 
 }	// namespace technicalmachine

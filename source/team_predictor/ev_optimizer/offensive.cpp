@@ -61,7 +61,7 @@ auto find_least_stat(Species const species, Level const level, Nature const natu
 
 OffensiveEVs::OffensiveEVs(Pokemon const & pokemon) {
 	for (auto const nature : containers::enum_range<Nature>()) {
-		container.emplace(nature, OffensiveStats{});
+		container.emplace_back(nature);
 	}
 	optimize(pokemon);
 }
@@ -84,40 +84,19 @@ auto ideal_special_attack_stat(Pokemon const & pokemon, bool const is_special, b
 	return initial_stat(StatNames::SPA, stat, get_level(pokemon), nature);
 }
 
-template<typename Container, typename Condition>
-void remove_individual_unused(Container & container, Condition const & condition) {
-	for (auto it = begin(container); it != end(container);) {
-		if (condition(it)) {
-			it = container.erase(it);
-		}
-		else {
-			++it;
-		}
-	}
-	assert(!container.empty());
-}
-
 template<typename Container>
 auto remove_inferior_natures(Container & container, bool const is_physical, bool const is_special) {
-	auto const does_not_lower_attack = [](auto const iter) {
-		return !lowers_stat(iter->first, StatNames::ATK);
-	};
-	auto const does_not_lower_special_attack = [](auto const iter) {
-		return !lowers_stat(iter->first, StatNames::SPA);
-	};
-	auto const boosts_special_attack = [](auto const iter) {
-		return boosts_stat(iter->first, StatNames::SPA);
-	};
 	if (!is_physical) {
-		remove_individual_unused(container, does_not_lower_attack);
+		containers::erase_if(container, [](auto candidate) { return !lowers_stat(candidate.nature, StatNames::ATK); });
 	}
 	if (!is_special) {
 		if (is_physical) {
-			remove_individual_unused(container, does_not_lower_special_attack);
+			containers::erase_if(container, [](auto candidate) { return !lowers_stat(candidate.nature, StatNames::SPA); });
 		} else {
-			remove_individual_unused(container, boosts_special_attack);
+			containers::erase_if(container, [](auto candidate) { return boosts_stat(candidate.nature, StatNames::SPA); });
 		}
 	}
+	assert(!empty(container));
 }
 
 }	// namespace
@@ -140,20 +119,19 @@ void OffensiveEVs::optimize(Pokemon const & pokemon) {
 
 void OffensiveEVs::equal_stats(OffensiveData const initial, Species const species, Level const level) {
 	for (auto it = begin(container); it != end(container);) {
-		auto const nature = it->first;
+		auto const nature = it->nature;
 		auto const atk_ev = find_least_stat<StatNames::ATK>(species, level, nature, initial.atk);
 		auto const spa_ev = find_least_stat<StatNames::SPA>(species, level, nature, initial.spa);
 		if (atk_ev and spa_ev) {
-			OffensiveStats & stats = it->second;
-			stats.attack = EV(*atk_ev);
-			stats.special_attack = EV(*spa_ev);
+			it->attack = EV(*atk_ev);
+			it->special_attack = EV(*spa_ev);
 			++it;
 		}
 		else {
-			it = container.erase(it);
+			it = erase(container, it);
 		}
 	}
-	assert(!container.empty());
+	assert(!empty(container));
 }
 
 }	// namespace technicalmachine

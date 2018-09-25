@@ -56,7 +56,8 @@ constexpr auto sum(Combined const combined) {
 void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container, Pokemon & pokemon) {
 	containers::static_vector<Combined, SpeedEVs::max_size> container;
 	for (auto const & speed : speed_container) {
-		auto const offensive = o.container.find(speed.nature);
+		// Small enough container that a linear search is fine
+		auto const offensive = containers::find_if(o.container, [=](auto value) { return value.nature == speed.nature; });
 		if (offensive == end(o.container)) {
 			continue;
 		}
@@ -67,9 +68,9 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 		auto combined = Combined{
 			speed.nature,
 			defensive->second.hp,
-			offensive->second.attack,
+			offensive->attack,
 			defensive->second.defense,
-			offensive->second.special_attack,
+			offensive->special_attack,
 			defensive->second.special_defense,
 			speed.ev
 		};
@@ -92,7 +93,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 		}
 		std::cerr << "Offensive:\n";
 		for (auto const & value : o.container) {
-			std::cerr << '\t' << to_string(value.first) << " : " << value.second.attack.value() << ", " << value.second.special_attack.value() << '\n';
+			std::cerr << '\t' << to_string(value.nature) << " : " << value.attack.value() << ", " << value.special_attack.value() << '\n';
 		}
 		std::cerr << "Defensive:\n";
 		for (auto const & value : d.container) {
