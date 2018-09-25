@@ -280,6 +280,7 @@ Ability from_string<Ability>(std::string_view const str) {
 		{ "WaterAbsorb", Ability::Water_Absorb },
 		{ "WaterVeil", Ability::Water_Veil },
 		{ "WhiteSmoke", Ability::White_Smoke },
+		{ "WonderGuard", Ability::Wonder_Guard },
 	};
 	auto const it = converter.find(str);
 	if (it != end(converter)) {

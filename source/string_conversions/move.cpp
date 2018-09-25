@@ -1192,7 +1192,8 @@ Moves from_string(std::string_view const str) {
 		{ "snarl", Moves::Snarl },
 		{ "iciclecrash", Moves::Icicle_Crash },
 		{ "vcreate", Moves::V_create },
-		{ "fusionflare", Moves::Fusion_Flare }
+		{ "fusionflare", Moves::Fusion_Flare },
+		{ "fusionbolt", Moves::Fusion_Bolt },
 	};
 	auto const it = converter.find(str);
 	if (it != end(converter)) {
