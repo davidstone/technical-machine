@@ -60,43 +60,34 @@ auto combine_results(EqualDefensiveness const & physical, EqualDefensiveness con
 	return all;
 }
 
-void filter_to_minimum_evs(AllPossible & all) {
-	for (auto & per_nature : all) {
-		if (containers::empty(per_nature)) {
-			continue;
-		}
-		auto const least_sum = [](DataPoint const & lhs, DataPoint const & rhs) {
-			return ev_sum(lhs) < ev_sum(rhs);
-		};
-		auto const it = std::min_element(begin(per_nature), end(per_nature), least_sum);
-		auto const not_minimum = [it](DataPoint const & value) {
-			return ev_sum(value) != ev_sum(*it);
-		};
-		erase_if(per_nature, not_minimum);
-	}
+void filter_to_minimum_evs(Estimates & per_nature) {
+	auto const least_sum = [](DataPoint const & lhs, DataPoint const & rhs) {
+		return ev_sum(lhs) < ev_sum(rhs);
+	};
+	auto const it = std::min_element(begin(per_nature), end(per_nature), least_sum);
+	auto const not_minimum = [it](DataPoint const & value) {
+		return ev_sum(value) != ev_sum(*it);
+	};
+	erase_if(per_nature, not_minimum);
 }
 
-DataPoint most_effective_equal_evs_per_nature(Estimates const & original, Pokemon const & pokemon) {
+DataPoint most_effective_equal_evs(Estimates const & original, Pokemon const & pokemon) {
 	auto const greatest_product = [& pokemon](DataPoint const & largest, DataPoint const & value) {
 		return lesser_product(largest, value, pokemon);
 	};
 	return *std::max_element(begin(original), end(original), greatest_product);
 }
 
-auto most_effective_equal_evs(AllPossible const & all, Pokemon const & pokemon) {
+auto best_possible_per_nature(AllPossible all, Pokemon const & pokemon) {
 	DefensiveEVs::BestPerNature result;
 	for (auto & per_nature : all) {
 		if (containers::empty(per_nature)) {
 			continue;
 		}
-		result.emplace_back(most_effective_equal_evs_per_nature(per_nature, pokemon));
+		filter_to_minimum_evs(per_nature);
+		push_back(result, most_effective_equal_evs(per_nature, pokemon));
 	}
 	return result;
-}
-
-auto best_possible_per_nature(AllPossible all, Pokemon const & pokemon) {
-	filter_to_minimum_evs(all);
-	return most_effective_equal_evs(all, pokemon);
 }
 
 auto divide_natures(DefensiveEVs::BestPerNature const & container) {
