@@ -76,8 +76,8 @@ void defensive_tests() {
 	
 	constexpr auto physical = true;
 	for (auto const & candidate : equal_defensiveness(pokemon, physical)) {
-		assert(candidate.hp().value() == get_hp(pokemon).ev().value());
-		assert(candidate.defensive().value() == get_stat(pokemon, StatNames::DEF).ev().value());
+		assert(candidate.hp() == get_hp(pokemon).ev());
+		assert(candidate.defensive() == get_stat(pokemon, StatNames::DEF).ev());
 		assert(boosts_stat(candidate.nature(), StatNames::DEF));
 	}
 }

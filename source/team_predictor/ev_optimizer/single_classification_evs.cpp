@@ -40,7 +40,7 @@ SingleClassificationEVs::SingleClassificationEVs(EV hp_, EV defensive_, Nature n
 }
 
 bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) {
-	return physical.hp().value() == special.hp().value() and physical.nature() == special.nature();
+	return physical.hp() == special.hp() and physical.nature() == special.nature();
 }
 
 namespace {
