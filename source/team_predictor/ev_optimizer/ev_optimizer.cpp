@@ -92,7 +92,7 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 
 		auto find = [&](auto const it) { return containers::find(it, end(shuffled), 0_bi); };
 		auto new_ev = [&](auto const stat, auto const distance) {
-			return EV(bounded::clamped_integer<0, EV::max.value()>(distance + stat.ev().value().value()));
+			return EV(bounded::clamped_integer<0, EV::max.value()>(distance + stat.ev().value()));
 		};
 
 		auto add_hp = [&]() {
