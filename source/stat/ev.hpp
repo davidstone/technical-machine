@@ -1,5 +1,5 @@
 // EVs
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -38,5 +38,12 @@ struct EV {
 private:
 	bounded::clamped_integer<0, max.value()> m_value;
 };
+
+constexpr auto compare(EV const lhs, EV const rhs) {
+	return compare(lhs.value(), rhs.value());
+}
+constexpr auto operator==(EV const lhs, EV const rhs) {
+	return lhs.value() == rhs.value();
+}
 
 }	// namespace technicalmachine
