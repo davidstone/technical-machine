@@ -35,6 +35,34 @@
 namespace technicalmachine {
 namespace {
 
+void optimize_already_optimized(std::mt19937 & random_engine) {
+	constexpr auto team_size = 1_bi;
+	auto pokemon = Pokemon(team_size, Species::Metagross, Level(100_bi), Gender::genderless);
+	set_hp_ev(pokemon, EV(252_bi));
+	set_stat_ev(pokemon, StatNames::ATK, EV(96_bi));
+	set_stat_ev(pokemon, StatNames::DEF, EV(96_bi));
+	set_stat_ev(pokemon, StatNames::SPA, EV(0_bi));
+	set_stat_ev(pokemon, StatNames::SPD, EV(4_bi));
+	set_stat_ev(pokemon, StatNames::SPE, EV(60_bi));
+	auto & nature = get_nature(pokemon);
+	nature = Nature::Adamant;
+	all_moves(pokemon).emplace_back(Moves::Meteor_Mash);
+
+	auto assert_evs_unchanged = [original = pokemon](Pokemon const & test) {
+		assert(get_hp(original).ev() == get_hp(test).ev());
+		for (auto const stat : regular_stats()) {
+			assert(get_stat(original, stat).ev() == get_stat(test, stat).ev());
+		}
+	};
+	
+	minimize_evs(pokemon);
+	assert_evs_unchanged(pokemon);
+	optimize_evs(pokemon, random_engine);
+	assert_evs_unchanged(pokemon);
+	pad_random_evs(pokemon, random_engine);
+	assert_evs_unchanged(pokemon);
+}
+
 void defensive_tests() {
 	std::cout << "\tRunning defensive tests.\n";
 	constexpr auto team_size = max_pokemon_per_team;
@@ -100,6 +128,8 @@ void ev_optimizer_tests() {
 	std::random_device rd;
 	std::mt19937 random_engine(rd());
 	pad_random_evs(pokemon, random_engine);
+	optimize_already_optimized(random_engine);
+
 	std::cout << "EV optimizer tests passed.\n\n";
 }
 
