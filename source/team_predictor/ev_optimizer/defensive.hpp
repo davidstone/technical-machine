@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,17 +28,23 @@
 
 namespace technicalmachine {
 struct Pokemon;
-struct OffensiveEVs;
-struct SpeedEVs;
 
 struct DefensiveEVs {
 	explicit DefensiveEVs(Pokemon const & pokemon);
+	friend auto begin(DefensiveEVs const & defensive) {
+		return begin(defensive.container);
+	}
+	friend auto end(DefensiveEVs const & defensive) {
+		return end(defensive.container);
+	}
+	auto find(Nature const nature) const {
+		return container.find(nature);
+	}
 	using BestPerNature = std::unordered_map<Nature, DataPoint>;
 	using Natures = containers::static_vector<Nature, static_cast<std::intmax_t>(std::numeric_limits<Nature>::max())>;
 private:
 	void remove_inefficient_natures(Natures const & divided_natures);
 	void add_other_potential_natures();
-	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
 	BestPerNature container;
 };
 

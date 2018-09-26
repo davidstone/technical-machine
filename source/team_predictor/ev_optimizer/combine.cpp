@@ -1,5 +1,5 @@
 // Combine all optimized EVs and correct the Pokemon
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -61,8 +61,8 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 		if (offensive == end(o.container)) {
 			continue;
 		}
-		auto const defensive = d.container.find(speed.nature);
-		if (defensive == end(d.container)) {
+		auto const defensive = d.find(speed.nature);
+		if (defensive == end(d)) {
 			continue;
 		}
 		auto combined = Combined{
@@ -96,7 +96,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 			std::cerr << '\t' << to_string(value.nature) << " : " << value.attack.value() << ", " << value.special_attack.value() << '\n';
 		}
 		std::cerr << "Defensive:\n";
-		for (auto const & value : d.container) {
+		for (auto const & value : d) {
 			std::cerr << '\t' << to_string(value.first) << " : " << value.second.hp.value() << ", " << value.second.defense.value() << ", " << value.second.special_defense.value() << '\n';
 		}
 	}
