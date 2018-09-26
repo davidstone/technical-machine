@@ -22,9 +22,8 @@
 
 #include "../../stat/nature.hpp"
 
+#include <containers/algorithms/find.hpp>
 #include <containers/static_vector/static_vector.hpp>
-
-#include <unordered_map>
 
 namespace technicalmachine {
 struct Pokemon;
@@ -38,10 +37,11 @@ struct DefensiveEVs {
 		return end(defensive.container);
 	}
 	auto find(Nature const nature) const {
-		return container.find(nature);
+		return containers::find_if(container, [=](auto const value) { return value.nature == nature; });
 	}
-	using BestPerNature = std::unordered_map<Nature, DataPoint>;
-	using Natures = containers::static_vector<Nature, static_cast<std::intmax_t>(std::numeric_limits<Nature>::max())>;
+	static constexpr auto number_of_natures = size(containers::enum_range<Nature>());
+	using BestPerNature = containers::static_vector<DataPoint, number_of_natures.value()>;
+	using Natures = containers::static_vector<Nature, number_of_natures.value()>;
 private:
 	void remove_inefficient_natures(Natures const & divided_natures);
 	void add_other_potential_natures();

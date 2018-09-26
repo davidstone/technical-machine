@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -29,33 +29,24 @@
 #include "../../stat/stat.hpp"
 
 namespace technicalmachine {
-struct Level;
 struct Pokemon;
 struct SingleClassificationEVs;
-struct OffensiveEVs;
-struct DefensiveEVs;
-struct SpeedEVs;
 using namespace bounded::literal;
 
 struct DataPoint {
 	DataPoint(SingleClassificationEVs physical, SingleClassificationEVs special);
 	DataPoint(DataPoint original, Nature new_nature);
-	auto sum() const {
-		return hp.value() + defense.value() + special_defense.value();
-	}
-	friend bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon);
-private:
-	void update_pokemon(Pokemon & pokemon) const;
 
-	auto product(StatNames const stat, Species const species, Level const level) const {
-		auto const initial = initial_stat(stat, Stat(species, stat, defense), level, nature);
-		return initial * HP(species, level, hp).max();
-	}
-	friend void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
 	EV hp;
 	EV defense;
 	EV special_defense;
 	Nature nature;
 };
+
+inline auto ev_sum(DataPoint const value) {
+	return value.hp.value() + value.defense.value() + value.special_defense.value();
+}
+
+bool lesser_product(DataPoint lhs, DataPoint rhs, Pokemon const & pokemon);
 
 }	// namespace technicalmachine

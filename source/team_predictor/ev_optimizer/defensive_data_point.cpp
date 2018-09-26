@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -33,9 +33,10 @@ DataPoint::DataPoint(SingleClassificationEVs const physical, SingleClassificatio
 	hp(physical.hp()),
 	defense(physical.defensive()),
 	special_defense(special.defensive()),
-	nature(physical.nature()) {
+	nature(physical.nature())
+{
 	assert(physical.nature() == special.nature());
-	assert(physical.hp().value() == special.hp().value());
+	assert(physical.hp() == special.hp());
 }
 
 DataPoint::DataPoint(DataPoint const original, Nature const new_nature):
@@ -43,16 +44,24 @@ DataPoint::DataPoint(DataPoint const original, Nature const new_nature):
 	defense(original.defense),
 	special_defense(original.special_defense),
 	nature(new_nature)
-	{
+{
 }
 
-bool lesser_product(DataPoint const & lhs, DataPoint const & rhs, Pokemon const & pokemon) {
-	Level const level = get_level(pokemon);
-	auto const left_physical = lhs.product(StatNames::DEF, pokemon, level);
-	auto const left_special = lhs.product(StatNames::SPD, pokemon, level);
+bool lesser_product(DataPoint const lhs, DataPoint const rhs, Pokemon const & pokemon) {
+	auto const level = get_level(pokemon);
+	auto const species = static_cast<Species>(pokemon);
 
-	auto const right_physical = rhs.product(StatNames::DEF, pokemon, level);
-	auto const right_special = rhs.product(StatNames::SPD, pokemon, level);
+	auto product = [=](DataPoint const value, StatNames const stat) {
+		auto const defensive = stat == StatNames::DEF ? value.defense : value.special_defense;
+		auto const initial = initial_stat(stat, Stat(species, stat, defensive), level, value.nature);
+		return initial * HP(species, level, value.hp).max();
+	};
+
+	auto const left_physical = product(lhs, StatNames::DEF);
+	auto const left_special = product(lhs, StatNames::SPD);
+
+	auto const right_physical = product(rhs, StatNames::DEF);
+	auto const right_special = product(rhs, StatNames::SPD);
 
 	if (left_physical < right_physical and left_special < right_special) {
 		return true;
