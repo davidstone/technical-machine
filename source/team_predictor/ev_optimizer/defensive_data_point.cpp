@@ -18,8 +18,6 @@
 
 #include "defensive_data_point.hpp"
 
-#include <stdexcept>
-
 #include "single_classification_evs.hpp"
 
 #include "../../pokemon/pokemon.hpp"
@@ -57,27 +55,9 @@ bool lesser_product(DataPoint const lhs, DataPoint const rhs, Pokemon const & po
 		return initial * HP(species, level, value.hp).max();
 	};
 
-	auto const left_physical = product(lhs, StatNames::DEF);
-	auto const left_special = product(lhs, StatNames::SPD);
-
-	auto const right_physical = product(rhs, StatNames::DEF);
-	auto const right_special = product(rhs, StatNames::SPD);
-
-	if (left_physical < right_physical and left_special < right_special) {
-		return true;
-	}
-	if (right_physical < left_physical and right_special < left_special) {
-		return false;
-	}
-	auto const left = left_physical * left_special;
-	auto const right = right_physical * right_special;
+	auto const left = product(lhs, StatNames::DEF) * product(lhs, StatNames::SPD);
+	auto const right = product(rhs, StatNames::DEF) * product(rhs, StatNames::SPD);
 	return left < right;
 }
-
-struct InvalidNatureCombination : std::logic_error {
-	InvalidNatureCombination():
-		std::logic_error("Attempt to create a nature that cannot exist.") {
-	}
-};
 
 }	// namespace technicalmachine
