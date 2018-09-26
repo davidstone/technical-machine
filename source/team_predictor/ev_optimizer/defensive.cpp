@@ -33,7 +33,6 @@
 #include <algorithm>
 #include <cassert>
 #include <string>
-#include <unordered_map>
 
 namespace technicalmachine {
 namespace {
@@ -41,14 +40,20 @@ namespace {
 using namespace bounded::literal;
 
 using Estimates = containers::vector<DataPoint>;
-using AllPossible = std::unordered_map<Nature, Estimates>;
+using AllPossible = containers::array<Estimates, DefensiveEVs::number_of_natures.value()>;
 
 auto combine_results(EqualDefensiveness const & physical, EqualDefensiveness const & special) {
 	AllPossible all;
+	auto it = containers::begin(all);
+	auto nature = containers::front(containers::enum_range<Nature>());
 	for (auto const & p : physical) {
+		if (nature != p.nature) {
+			++it;
+			nature = p.nature;
+		}
 		for (auto const & s : special) {
 			if (are_compatible(p, s)) {
-				all[p.nature].emplace_back(p, s);
+				it->emplace_back(p, s);
 			}
 		}
 	}
@@ -57,15 +62,17 @@ auto combine_results(EqualDefensiveness const & physical, EqualDefensiveness con
 
 void filter_to_minimum_evs(AllPossible & all) {
 	for (auto & per_nature : all) {
+		if (containers::empty(per_nature)) {
+			continue;
+		}
 		auto const least_sum = [](DataPoint const & lhs, DataPoint const & rhs) {
 			return ev_sum(lhs) < ev_sum(rhs);
 		};
-		auto & container = per_nature.second;
-		auto const it = std::min_element(begin(container), end(container), least_sum);
+		auto const it = std::min_element(begin(per_nature), end(per_nature), least_sum);
 		auto const not_minimum = [it](DataPoint const & value) {
 			return ev_sum(value) != ev_sum(*it);
 		};
-		erase_if(container, not_minimum);
+		erase_if(per_nature, not_minimum);
 	}
 }
 
@@ -79,7 +86,10 @@ DataPoint most_effective_equal_evs_per_nature(Estimates const & original, Pokemo
 auto most_effective_equal_evs(AllPossible const & all, Pokemon const & pokemon) {
 	DefensiveEVs::BestPerNature result;
 	for (auto & per_nature : all) {
-		result.emplace_back(most_effective_equal_evs_per_nature(per_nature.second, pokemon));
+		if (containers::empty(per_nature)) {
+			continue;
+		}
+		result.emplace_back(most_effective_equal_evs_per_nature(per_nature, pokemon));
 	}
 	return result;
 }
