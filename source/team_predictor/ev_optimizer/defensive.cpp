@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -42,19 +42,86 @@ using namespace bounded::literal;
 
 using Estimates = containers::vector<DataPoint>;
 using AllPossible = std::unordered_map<Nature, Estimates>;
-AllPossible combine_results(EqualDefensiveness const & physical, EqualDefensiveness const & special);
 
-DefensiveEVs::BestPerNature best_possible_per_nature(AllPossible all, Pokemon const & pokemon);
+auto combine_results(EqualDefensiveness const & physical, EqualDefensiveness const & special) {
+	AllPossible all;
+	for (auto const & p : physical) {
+		for (auto const & s : special) {
+			if (are_compatible(p, s)) {
+				all[p.nature()].emplace_back(p, s);
+			}
+		}
+	}
+	return all;
+}
 
-void filter_to_minimum_evs(AllPossible & all);
+void filter_to_minimum_evs(AllPossible & all) {
+	for (auto & per_nature : all) {
+		auto const least_sum = [](DataPoint const & lhs, DataPoint const & rhs) {
+			return ev_sum(lhs) < ev_sum(rhs);
+		};
+		auto & container = per_nature.second;
+		auto const it = std::min_element(begin(container), end(container), least_sum);
+		auto const not_minimum = [it](DataPoint const & value) {
+			return ev_sum(value) != ev_sum(*it);
+		};
+		erase_if(container, not_minimum);
+	}
+}
 
-DefensiveEVs::BestPerNature most_effective_equal_evs(AllPossible const & all, Pokemon const & pokemon);
-DefensiveEVs::BestPerNature::value_type most_effective_equal_evs_per_nature(Estimates const & original, Pokemon const & pokemon);
+DataPoint most_effective_equal_evs_per_nature(Estimates const & original, Pokemon const & pokemon) {
+	auto const greatest_product = [& pokemon](DataPoint const & largest, DataPoint const & value) {
+		return lesser_product(largest, value, pokemon);
+	};
+	return *std::max_element(begin(original), end(original), greatest_product);
+}
 
-using Divided = containers::array<DefensiveEVs::Natures, 4>;
-Divided divide_natures(DefensiveEVs::BestPerNature const & container);
+auto most_effective_equal_evs(AllPossible const & all, Pokemon const & pokemon) {
+	DefensiveEVs::BestPerNature result;
+	for (auto & per_nature : all) {
+		result.emplace_back(most_effective_equal_evs_per_nature(per_nature.second, pokemon));
+	}
+	return result;
+}
 
-bool has_same_effect_on_defenses(Nature nature, Nature reference_nature);
+auto best_possible_per_nature(AllPossible all, Pokemon const & pokemon) {
+	filter_to_minimum_evs(all);
+	return most_effective_equal_evs(all, pokemon);
+}
+
+auto divide_natures(DefensiveEVs::BestPerNature const & container) {
+	constexpr auto boost = 0_bi;
+	constexpr auto penalty = 1_bi;
+	constexpr auto both = 2_bi;
+	constexpr auto neutral = 3_bi;
+	auto divided = containers::array<DefensiveEVs::Natures, 4>{};
+	for (auto const & value : container) {
+		auto const nature = value.nature;
+		auto & stat =
+			(boosts_defending_stat(nature) and !lowers_defending_stat(nature)) ? divided[boost] :
+			(lowers_defending_stat(nature) and !boosts_defending_stat(nature)) ? divided[penalty] :
+			(lowers_defending_stat(nature) and boosts_defending_stat(nature)) ? divided[both] :
+			divided[neutral];
+		stat.emplace_back(nature);
+	}
+	return divided;
+}
+
+bool boosts_same(Nature const nature, Nature const reference_nature) {
+	return (boosts_stat(nature, StatNames::DEF) and boosts_stat(reference_nature, StatNames::DEF))
+			or (boosts_stat(nature, StatNames::SPD) and boosts_stat(reference_nature, StatNames::SPD))
+			or (!boosts_defending_stat(nature) and !boosts_defending_stat(reference_nature));
+}
+
+bool penalizes_same(Nature const nature, Nature const reference_nature) {
+	return (lowers_stat(nature, StatNames::DEF) and lowers_stat(reference_nature, StatNames::DEF))
+			or (lowers_stat(nature, StatNames::SPD) and lowers_stat(reference_nature, StatNames::SPD))
+			or (!lowers_defending_stat(nature) and !lowers_defending_stat(reference_nature));
+}
+
+bool has_same_effect_on_defenses(Nature const nature, Nature const reference_nature) {
+	return boosts_same(nature, reference_nature) and penalizes_same(nature, reference_nature);
+}
 
 constexpr auto matches_nature(Nature const nature) {
 	return [=](auto const value) { return value.nature == nature; };
@@ -120,91 +187,4 @@ void DefensiveEVs::add_other_potential_natures() {
 	}
 }
 
-namespace {
-
-bool boosts_same(Nature nature, Nature reference_nature);
-bool penalizes_same(Nature nature, Nature reference_nature);
-
-bool has_same_effect_on_defenses(Nature const nature, Nature const reference_nature) {
-	return boosts_same(nature, reference_nature) and penalizes_same(nature, reference_nature);
-}
-
-bool boosts_same(Nature const nature, Nature const reference_nature) {
-	return (boosts_stat(nature, StatNames::DEF) and boosts_stat(reference_nature, StatNames::DEF))
-			or (boosts_stat(nature, StatNames::SPD) and boosts_stat(reference_nature, StatNames::SPD))
-			or (!boosts_defending_stat(nature) and !boosts_defending_stat(reference_nature));
-}
-
-bool penalizes_same(Nature const nature, Nature const reference_nature) {
-	return (lowers_stat(nature, StatNames::DEF) and lowers_stat(reference_nature, StatNames::DEF))
-			or (lowers_stat(nature, StatNames::SPD) and lowers_stat(reference_nature, StatNames::SPD))
-			or (!lowers_defending_stat(nature) and !lowers_defending_stat(reference_nature));
-}
-
-AllPossible combine_results(EqualDefensiveness const & physical, EqualDefensiveness const & special) {
-	AllPossible all;
-	for (auto const & p : physical) {
-		for (auto const & s : special) {
-			if (are_compatible(p, s)) {
-				all[p.nature()].emplace_back(p, s);
-			}
-		}
-	}
-	return all;
-}
-
-DefensiveEVs::BestPerNature best_possible_per_nature(AllPossible all, Pokemon const & pokemon) {
-	filter_to_minimum_evs(all);
-	return most_effective_equal_evs(all, pokemon);
-}
-
-void filter_to_minimum_evs(AllPossible & all) {
-	for (auto & per_nature : all) {
-		auto const least_sum = [](DataPoint const & lhs, DataPoint const & rhs) {
-			return ev_sum(lhs) < ev_sum(rhs);
-		};
-		auto & container = per_nature.second;
-		auto const it = std::min_element(begin(container), end(container), least_sum);
-		auto const not_minimum = [it](DataPoint const & value) {
-			return ev_sum(value) != ev_sum(*it);
-		};
-		erase_if(container, not_minimum);
-	}
-}
-
-
-DefensiveEVs::BestPerNature most_effective_equal_evs(AllPossible const & all, Pokemon const & pokemon) {
-	DefensiveEVs::BestPerNature result;
-	for (auto & per_nature : all) {
-		result.emplace_back(most_effective_equal_evs_per_nature(per_nature.second, pokemon));
-	}
-	return result;
-}
-
-DefensiveEVs::BestPerNature::value_type most_effective_equal_evs_per_nature(Estimates const & original, Pokemon const & pokemon) {
-	auto const greatest_product = [& pokemon](DataPoint const & largest, DataPoint const & value) {
-		return lesser_product(largest, value, pokemon);
-	};
-	return *std::max_element(begin(original), end(original), greatest_product);
-}
-
-Divided divide_natures(DefensiveEVs::BestPerNature const & container) {
-	constexpr auto boost = 0_bi;
-	constexpr auto penalty = 1_bi;
-	constexpr auto both = 2_bi;
-	constexpr auto neutral = 3_bi;
-	Divided divided;
-	for (auto const & value : container) {
-		auto const nature = value.nature;
-		auto & stat =
-			(boosts_defending_stat(nature) and !lowers_defending_stat(nature)) ? divided[boost] :
-			(lowers_defending_stat(nature) and !boosts_defending_stat(nature)) ? divided[penalty] :
-			(lowers_defending_stat(nature) and boosts_defending_stat(nature)) ? divided[both] :
-			divided[neutral];
-		stat.emplace_back(nature);
-	}
-	return divided;
-}
-
-}	// namespace
 }	// namespace technicalmachine
