@@ -30,13 +30,13 @@
 namespace technicalmachine {
 
 DataPoint::DataPoint(SingleClassificationEVs const physical, SingleClassificationEVs const special):
-	hp(physical.hp()),
-	defense(physical.defensive()),
-	special_defense(special.defensive()),
-	nature(physical.nature())
+	hp(physical.hp),
+	defense(physical.defensive),
+	special_defense(special.defensive),
+	nature(physical.nature)
 {
-	assert(physical.nature() == special.nature());
-	assert(physical.hp() == special.hp());
+	assert(physical.nature == special.nature);
+	assert(physical.hp == special.hp);
 }
 
 DataPoint::DataPoint(DataPoint const original, Nature const new_nature):

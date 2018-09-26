@@ -48,7 +48,7 @@ auto combine_results(EqualDefensiveness const & physical, EqualDefensiveness con
 	for (auto const & p : physical) {
 		for (auto const & s : special) {
 			if (are_compatible(p, s)) {
-				all[p.nature()].emplace_back(p, s);
+				all[p.nature].emplace_back(p, s);
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 // Optimize defensive EVs and nature to remove waste
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,24 +27,6 @@
 namespace technicalmachine {
 namespace {
 
-constexpr auto from_physical(bool physical) {
-	return physical ? StatNames::DEF : StatNames::SPD;
-}
-
-}	// namespace
-
-SingleClassificationEVs::SingleClassificationEVs(EV hp_, EV defensive_, Nature nature_):
-	m_hp(hp_),
-	m_defensive(defensive_),
-	m_nature(nature_) {
-}
-
-bool are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) {
-	return physical.hp() == special.hp() and physical.nature() == special.nature();
-}
-
-namespace {
-
 template<typename Integer>
 auto calculate_ev(StatNames const stat_name, Stat stat, Level const level, Nature const nature, HP const hp, Integer const initial_product) {
 	stat = Stat(stat, EV(0_bi));
@@ -61,7 +43,7 @@ auto calculate_ev(StatNames const stat_name, Stat stat, Level const level, Natur
 
 
 EqualDefensiveness equal_defensiveness(Pokemon const & pokemon, bool const physical) {
-	auto const stat_name = from_physical(physical);
+	auto const stat_name = physical ? StatNames::DEF : StatNames::SPD;
 	auto stat = get_stat(pokemon, stat_name);
 	auto const level = get_level(pokemon);
 	auto const initial_product = get_hp(pokemon).max() * initial_stat(stat_name, stat, level, get_nature(pokemon));

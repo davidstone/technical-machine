@@ -29,25 +29,15 @@ namespace technicalmachine {
 struct Pokemon;
 
 struct SingleClassificationEVs {
-	SingleClassificationEVs(EV hp, EV defensive, Nature nature);
-	
-	auto hp() const {
-		return m_hp;
-	}
-	auto defensive() const {
-		return m_defensive;
-	}
-	auto nature() const {
-		return m_nature;
-	}
-	
-private:
-	EV m_hp;
-	EV m_defensive;
-	Nature m_nature;
+	EV hp;
+	EV defensive;
+	Nature nature;
 };
 
-auto are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) -> bool;
+constexpr auto are_compatible(SingleClassificationEVs const & physical, SingleClassificationEVs const & special) -> bool {
+	return physical.hp == special.hp and physical.nature == special.nature;
+}
+
 
 namespace detail {
 
