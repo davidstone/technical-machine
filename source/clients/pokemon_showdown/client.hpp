@@ -27,7 +27,7 @@
 #include "../../team_predictor/detailed_stats.hpp"
 #include "../../settings_file.hpp"
 
-#include <containers/vector/vector.hpp>
+#include <containers/vector.hpp>
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>

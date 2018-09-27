@@ -38,7 +38,7 @@
 #include <containers/adapt.hpp>
 #include <containers/range_view.hpp>
 #include <containers/static_vector/static_vector.hpp>
-#include <containers/vector/vector.hpp>
+#include <containers/vector.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>

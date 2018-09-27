@@ -24,7 +24,7 @@
 #include "../battle.hpp"
 
 #include <bounded/optional.hpp>
-#include <containers/vector/vector.hpp>
+#include <containers/vector.hpp>
 
 #include <iostream>
 #include <random>

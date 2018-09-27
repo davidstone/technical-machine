@@ -27,7 +27,7 @@
 #include <bounded/integer.hpp>
 
 #include <containers/integer_range.hpp>
-#include <containers/vector/vector.hpp>
+#include <containers/vector.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;

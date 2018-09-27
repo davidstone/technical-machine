@@ -31,7 +31,7 @@
 #include "../pokemon/pokemon.hpp"
 
 #include <containers/array/array.hpp>
-#include <containers/vector/vector.hpp>
+#include <containers/vector.hpp>
 
 #include <fltk/FL/Fl.H>
 #include <fltk/FL/Fl_Window.H>

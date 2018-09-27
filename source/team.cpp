@@ -29,7 +29,7 @@
 #include "clients/pokemon_lab/read_team_file.hpp"
 #include "clients/pokemon_online/read_team_file.hpp"
 
-#include <containers/vector/vector.hpp>
+#include <containers/vector.hpp>
 
 #include <boost/algorithm/string.hpp>
 

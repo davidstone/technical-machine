@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <containers/vector/vector.hpp>
+#include <containers/vector.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 

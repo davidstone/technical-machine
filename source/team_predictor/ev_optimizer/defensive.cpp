@@ -30,10 +30,9 @@
 #include <containers/algorithms/filter_iterator.hpp>
 #include <containers/algorithms/minmax_element.hpp>
 #include <containers/array/array.hpp>
-#include <containers/vector/vector.hpp>
+#include <containers/vector.hpp>
 
 #include <cassert>
-#include <string>
 
 namespace technicalmachine {
 namespace {
@@ -153,11 +152,10 @@ DefensiveEVs::DefensiveEVs(Pokemon const & pokemon) {
 
 void DefensiveEVs::remove_inefficient_natures(DefensiveEVs::Natures const & divided_natures) {
 	auto const capacity = static_cast<std::intmax_t>(DefensiveEVs::Natures::capacity());
+	auto filter = [&](DataPoint const value) { return containers::any_equal(divided_natures, value.nature); };
 	containers::static_vector<DataPoint, capacity> boosters;
-	for (auto const & value : container) {
-		if (containers::any_equal(divided_natures, value.nature)) {
-			boosters.emplace_back(value);
-		}
+	for (auto const & value : containers::filter(container, filter)) {
+		boosters.emplace_back(value);
 	}
 	auto const best = containers::min_element(containers::transform(boosters, ev_sum)).base();
 	for (auto const & nature : divided_natures) {
