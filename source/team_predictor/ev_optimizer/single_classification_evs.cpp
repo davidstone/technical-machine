@@ -29,14 +29,12 @@ namespace {
 
 template<typename Integer>
 auto calculate_ev(StatNames const stat_name, Stat stat, Level const level, Nature const nature, HP const hp, Integer const initial_product) {
-	stat = Stat(stat, EV(0_bi));
-	while (initial_stat(stat_name, stat, level, nature) * hp.max() < initial_product) {
-		stat = Stat(stat, EV(EV::value_type(stat.ev().value() + 4_bi)));
-		if (stat.ev().value() == EV::max) {
-			break;
+	for (auto const ev : containers::integer_range(0_bi, EV::max + 4_bi, 4_bi)) {
+		if (initial_stat(stat_name, Stat(stat, EV(ev)), level, nature) * hp.max() >= initial_product) {
+			return EV(ev);
 		}
 	}
-	return stat.ev();
+	return EV(EV::max);
 }
 
 }	// namespace
