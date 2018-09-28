@@ -26,17 +26,17 @@ using namespace bounded::literal;
 struct EV {
 	static constexpr auto max = 252_bi;
 	static constexpr auto max_total = 508_bi;
-	using value_type = bounded::checked_integer<0, max.value()>;
-	using total_type = bounded::checked_integer<0, max_total.value()>;
+	using value_type = bounded::checked_integer<0, static_cast<int>(max)>;
+	using total_type = bounded::checked_integer<0, static_cast<int>(max_total)>;
 
 	constexpr explicit EV(value_type evs):
 		m_value(evs) {
 	}
-	constexpr auto value() const -> bounded::integer<0, max.value()> {
+	constexpr auto value() const -> bounded::integer<0, static_cast<int>(max)> {
 		return m_value;
 	}
 private:
-	bounded::clamped_integer<0, max.value()> m_value;
+	bounded::clamped_integer<0, static_cast<int>(max)> m_value;
 };
 
 constexpr auto compare(EV const lhs, EV const rhs) {
