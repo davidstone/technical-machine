@@ -142,31 +142,31 @@ auto used_natures(DefensiveEVs::BestPerNature const & container) {
 DefensiveEVs::DefensiveEVs(Pokemon const & pokemon) {
 	auto const physical = equal_defensiveness(pokemon, true);
 	auto const special = equal_defensiveness(pokemon, false);
-	container = best_possible_per_nature(combine_results(physical, special), pokemon);
-	for (auto const & value : divide_natures(container)) {
+	m_container = best_possible_per_nature(combine_results(physical, special), pokemon);
+	for (auto const & value : divide_natures(m_container)) {
 		remove_inefficient_natures(value);
 	}
 	add_other_potential_natures();
-	assert(!empty(container));
+	assert(!empty(m_container));
 }
 
 void DefensiveEVs::remove_inefficient_natures(DefensiveEVs::Natures const & divided_natures) {
 	auto const capacity = static_cast<std::intmax_t>(DefensiveEVs::Natures::capacity());
 	auto filter = [&](DataPoint const value) { return containers::any_equal(divided_natures, value.nature); };
 	containers::static_vector<DataPoint, capacity> boosters;
-	for (auto const & value : containers::filter(container, filter)) {
+	for (auto const & value : containers::filter(m_container, filter)) {
 		boosters.emplace_back(value);
 	}
 	auto const best = containers::min_element(containers::transform(boosters, ev_sum)).base();
 	for (auto const & nature : divided_natures) {
 		if (nature != best->nature) {
-			containers::erase(container, containers::find_if(container, matches_nature(nature)));
+			containers::erase(m_container, containers::find_if(m_container, matches_nature(nature)));
 		}
 	}
 }
 
 void DefensiveEVs::add_other_potential_natures() {
-	for (auto const reference_nature : used_natures(container)) {
+	for (auto const reference_nature : used_natures(m_container)) {
 		for (auto const boosted : containers::enum_range(StatNames::NORMAL_END)) {
 			for (auto const penalized : containers::enum_range(StatNames::NORMAL_END)) {
 				auto const nature = make_nature(boosted, penalized);
@@ -176,9 +176,9 @@ void DefensiveEVs::add_other_potential_natures() {
 				if (nature == reference_nature) {
 					continue;
 				}
-				auto const old_data_point = containers::find_if(container, matches_nature(reference_nature));
-				assert(old_data_point != end(container));
-				container.emplace_back(*old_data_point, nature);
+				auto const old_data_point = containers::find_if(m_container, matches_nature(reference_nature));
+				assert(old_data_point != end(m_container));
+				m_container.emplace_back(*old_data_point, nature);
 			}
 		}
 	}
