@@ -39,7 +39,7 @@ namespace {
 
 using namespace bounded::literal;
 
-using Estimates = containers::vector<DataPoint>;
+using Estimates = containers::static_vector<DataPoint, detail::possible_defensive_ev_combinations()>;
 using AllPossible = containers::array<Estimates, DefensiveEVs::number_of_natures.value()>;
 
 auto combine_results(EqualDefensiveness const & physical, EqualDefensiveness const & special) {
