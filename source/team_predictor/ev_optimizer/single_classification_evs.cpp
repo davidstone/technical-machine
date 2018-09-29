@@ -24,34 +24,24 @@
 #include "../../stat/nature.hpp"
 #include "../../stat/stat.hpp"
 
+#include <containers/algorithms/find.hpp>
+
 namespace technicalmachine {
-namespace {
-
-template<typename Integer>
-auto calculate_ev(StatNames const stat_name, Stat stat, Level const level, Nature const nature, HP const hp, Integer const initial_product) {
-	for (auto const ev : containers::integer_range(0_bi, EV::max + 4_bi, 4_bi)) {
-		if (initial_stat(stat_name, Stat(stat, EV(ev)), level, nature) * hp.max() >= initial_product) {
-			return EV(ev);
-		}
-	}
-	return EV(EV::max);
-}
-
-}	// namespace
-
 
 EqualDefensiveness equal_defensiveness(Pokemon const & pokemon, bool const physical) {
 	auto const stat_name = physical ? StatNames::DEF : StatNames::SPD;
-	auto const original_stat = get_stat(pokemon, stat_name);
+	auto const stat = get_stat(pokemon, stat_name);
 	auto const level = get_level(pokemon);
-	auto const initial_product = get_hp(pokemon).max() * initial_stat(stat_name, original_stat, level, get_nature(pokemon));
+	auto const initial_product = get_hp(pokemon).max() * initial_stat(stat_name, stat, level, get_nature(pokemon));
 	auto result = EqualDefensiveness{};
 	for (auto const nature : containers::enum_range<Nature>()) {
 		for (auto const hp_ev : containers::integer_range(0_bi, EV::max + 4_bi, 4_bi)) {
 			auto const hp = HP(pokemon, level, EV(hp_ev));
-			auto const stat = Stat(original_stat, calculate_ev(stat_name, original_stat, level, nature, hp, initial_product));
-			if (initial_stat(stat_name, stat, level, nature) * hp.max() >= initial_product) {
-				result.emplace_back(hp.ev(), stat.ev(), nature);
+			auto minimum_ev = [=](auto const stat_ev) {
+				return initial_stat(stat_name, Stat(stat, EV(stat_ev)), level, nature) * hp.max() >= initial_product;
+			};
+			if (auto const ptr = containers::maybe_find_if(containers::integer_range(0_bi, EV::max + 4_bi, 4_bi), minimum_ev)) {
+				result.emplace_back(hp.ev(), EV(*ptr), nature);
 			}
 		}
 	}
