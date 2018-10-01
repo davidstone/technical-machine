@@ -139,6 +139,10 @@ public:
 	explicit constexpr operator double() const {
 		return static_cast<double>(m_numerator) / static_cast<double>(m_denominator);
 	}
+	
+	constexpr auto invert() const {
+		return make_rational(m_denominator, m_numerator);
+	}
 };
 
 template<typename Numerator, typename Denominator>
@@ -149,6 +153,19 @@ constexpr auto complement(rational<Numerator, Denominator> const r) {
 template<typename T, typename Numerator, typename Denominator, BOUNDED_REQUIRES(bounded::is_bounded_integer<T>)>
 constexpr auto operator*(T const lhs, rational<Numerator, Denominator> const rhs) {
 	return rhs * lhs;
+}
+
+
+template<typename T, typename Numerator, typename Denominator, BOUNDED_REQUIRES(bounded::is_bounded_integer<T>)>
+constexpr auto operator/(T const lhs, rational<Numerator, Denominator> const rhs) {
+	return lhs * rhs.invert();
+}
+
+
+template<typename T, typename Numerator, typename Denominator, BOUNDED_REQUIRES(bounded::is_bounded_integer<T>)>
+constexpr auto operator%(T const lhs, rational<Numerator, Denominator> const rhs) {
+	auto const quotient = lhs / rhs;
+	return lhs - quotient * rhs;
 }
 
 
