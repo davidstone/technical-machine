@@ -1,5 +1,5 @@
-// Predict foe's team header
-// Copyright (C) 2012 David Stone
+// Predict foe's team
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,12 +18,16 @@
 
 #pragma once
 
+#include "load_stats.hpp"
+
 #include <random>
 
 namespace technicalmachine {
+
 struct DetailedStats;
+struct Multiplier;
 struct Team;
 
-Team predict_team(DetailedStats const & detailed, Team team, std::mt19937 & random_engine, bool using_lead = true);
+Team predict_team(OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead_stats, Multiplier const & multiplier, Team team, std::mt19937 & random_engine);
 
 }	// namespace technicalmachine

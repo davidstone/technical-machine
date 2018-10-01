@@ -30,9 +30,9 @@
 
 namespace technicalmachine {
 
-Estimate::Estimate(Overall const & overall, Lead const & lead, unsigned const total) {
+Estimate::Estimate(OverallStats const & overall, LeadStats const & lead, unsigned const total) {
 	for (auto const species : containers::enum_range<Species>()) {
-		estimate[species] = lead[species] * static_cast<Lead::value_type>(overall[species] / static_cast<Lead::value_type>(total));
+		estimate[species] = lead[species] * static_cast<LeadStats::value_type>(overall[species] / static_cast<LeadStats::value_type>(total));
 	}
 }
 

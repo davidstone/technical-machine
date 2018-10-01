@@ -1,5 +1,5 @@
 // Header for loading stats like Pokemon usages
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,11 +22,15 @@
 
 #include <containers/array/array.hpp>
 
+#include <filesystem>
+
 namespace technicalmachine {
 
-auto overall_stats() -> containers::array<unsigned, number_of_species>;
+using OverallStats = containers::array<unsigned, number_of_species>;
+auto overall_stats(std::filesystem::path const & path) -> OverallStats;
 
 // Multiplier for Pokemon after you've seen the lead
-auto lead_stats() -> containers::array<float, number_of_species>;
+using LeadStats = containers::array<float, number_of_species>;
+auto lead_stats(std::filesystem::path const & path) -> LeadStats;
 
 }	// namespace technicalmachine

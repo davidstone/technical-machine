@@ -49,7 +49,7 @@ bool is_alternate_form(Species first, Species second);
 
 }	// namespace
 
-Multiplier::Multiplier(Overall const & overall):
+Multiplier::Multiplier(OverallStats const & overall, std::filesystem::path const & teammate_stats):
 	multiplier(species_clause()) {
 	// There are 5 other Pokemon on a team for each individual Pokemon.
 	// Therefore, if I've seen a Pokemon with n usages, there are 5 * n other
@@ -57,12 +57,12 @@ Multiplier::Multiplier(Overall const & overall):
 	// number until all known usages are gone. Then, assume the distribution of
 	// Pokemon not on the team mate stats is equal to the relative overall
 	// distribution and divide up all remaining usages proportionally.
-	Overall unaccounted;
+	OverallStats unaccounted;
 	std::transform(begin(overall), end(overall), begin(unaccounted), [](unsigned const element) {
 		return element * static_cast<unsigned>(other_pokemon_per_team);
 	});
 
-	load_listed_multipliers(overall, unaccounted);
+	load_listed_multipliers(overall, teammate_stats, unaccounted);
 	estimate_remaining(overall, unaccounted);
 }
 
@@ -85,11 +85,11 @@ Multiplier::Container Multiplier::species_clause() {
 	return multiplier;
 }
 
-void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unaccounted) {
+void Multiplier::load_listed_multipliers(OverallStats const & overall, std::filesystem::path const & teammate_stats, OverallStats & unaccounted) {
 	// I may not need to calculate this...
 	auto const total = static_cast<value_type>(containers::accumulate(overall));
 
-	std::ifstream file("settings/4/OU/teammate.txt");
+	std::ifstream file(teammate_stats);
 	std::string line;
 	while (getline(file, line)) {
 		constexpr char delimiter = '\t';
@@ -107,7 +107,7 @@ void Multiplier::load_listed_multipliers(Overall const & overall, Overall & unac
 	}
 }
 
-void Multiplier::estimate_remaining(Overall const & overall, Overall const & unaccounted) {
+void Multiplier::estimate_remaining(OverallStats const & overall, OverallStats const & unaccounted) {
 	// Take the total number of remaining Pokemon not accounted for and assume
 	// they are distributed the same as their overall distribution among all
 	// Pokemon not on the list of team mate stats. This is the same as giving

@@ -1,5 +1,5 @@
 // Generate a random team, weighted by usage
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,13 +18,16 @@
 
 #pragma once
 
+#include "load_stats.hpp"
+
 #include <random>
 
 namespace technicalmachine {
 
+struct Multiplier;
 struct Team;
 
 // Fill an existing team with random Pokemon, weighted by usage
-void random_team(Team & team, std::mt19937 & random_engine);
+void random_team(OverallStats const & overall, Multiplier const & multiplier, Team & team, std::mt19937 & random_engine);
 
 }	// namespace technicalmachine

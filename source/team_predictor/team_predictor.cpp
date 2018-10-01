@@ -65,20 +65,15 @@ void predict_move(MoveContainer & moves, DetailedStats::UsedMoves const & detail
 	}
 }
 
-
 }	// namespace
 
-Team predict_team (DetailedStats const & detailed, Team team, std::mt19937 & random_engine, bool using_lead) {
-	auto const overall = overall_stats();
-	constexpr unsigned total = 961058;	// Total number of teams
-	Multiplier const multiplier(overall);
+Team predict_team(OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead, Multiplier const & multiplier, Team team, std::mt19937 & random_engine) {
+	constexpr auto total = 961058U; // Total number of teams
 	
-	auto const lead = using_lead ? lead_stats() : containers::make_array_n(bounded::constant<number_of_species>, 1.0F);
-	
-	Estimate estimate(overall, lead, total);
+	auto estimate = Estimate(overall, lead, total);
 	estimate.update(multiplier, team);
 
-	predict_pokemon (team, estimate, multiplier);
+	predict_pokemon(team, estimate, multiplier);
 	for (auto & pokemon : team.all_pokemon()) {
 		if (!ability_is_known(pokemon)) {
 			get_ability(pokemon) = detailed.get<Ability>(pokemon);

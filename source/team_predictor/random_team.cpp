@@ -36,15 +36,10 @@
 #include <random>
 
 namespace technicalmachine {
-namespace {
 
-}	// namespace
-
-void random_team(Team & team, std::mt19937 & random_engine) {
-	auto const overall = overall_stats();
+void random_team(OverallStats const & overall, Multiplier const & multiplier, Team & team, std::mt19937 & random_engine) {
 	constexpr auto lead = containers::make_array_n(bounded::constant<number_of_species>, 1.0F);
 	auto estimate = Estimate(overall, lead, containers::accumulate(overall));
-	auto const multiplier = Multiplier(overall);
 	estimate.update(multiplier, team);
 	for (auto const n [[maybe_unused]] : containers::integer_range(max_pokemon_per_team - size(team.all_pokemon()))) {
 		auto const species = estimate.random(random_engine);

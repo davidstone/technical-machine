@@ -57,8 +57,24 @@
 namespace technicalmachine {
 struct DetailedStats;
 
-Battle::Battle(DetailedStats const & detailed, Evaluate const & evaluate, Party const party, std::string opponent_, unsigned const battle_depth, std::mt19937 random_engine_, Team team, TeamSize const foe_size, VisibleFoeHP max_damage_precision_):
+Battle::Battle(
+	OverallStats const & overall,
+	DetailedStats const & detailed,
+	LeadStats const & lead,
+	Multiplier const & multiplier,
+	Evaluate const & evaluate,
+	Party const party,
+	std::string opponent_,
+	unsigned const battle_depth,
+	std::mt19937 random_engine_,
+	Team team,
+	TeamSize const foe_size,
+	VisibleFoeHP max_damage_precision_
+):
+	m_overall(overall),
 	m_detailed(detailed),
+	m_lead(lead),
+	m_multiplier(multiplier),
 	m_evaluate(evaluate),
 	opponent_name(std::move(opponent_)),
 	m_random_engine(random_engine_),
@@ -73,8 +89,8 @@ Battle::Battle(DetailedStats const & detailed, Evaluate const & evaluate, Party 
 {
 }
 
-Team Battle::predict_foe_team(DetailedStats const & detailed) {
-	return predict_team(detailed, foe.team, m_random_engine);
+Team Battle::predict_foe_team() {
+	return predict_team(m_overall, m_detailed, m_lead, m_multiplier, foe.team, m_random_engine);
 }
 
 void Battle::update_from_previous_turn() {
@@ -93,7 +109,7 @@ Moves Battle::determine_action() {
 
 	std::cout << std::string(20, '=') + '\n';
 	std::cout << "Predicting...\n";
-	auto predicted = predict_foe_team(m_detailed);
+	auto predicted = predict_foe_team();
 	std::cout << to_string(predicted) << '\n';
 
 	return expectiminimax(ai.team, predicted, weather, depth, m_evaluate);
@@ -112,7 +128,8 @@ void Battle::handle_use_move(Party const user, uint8_t /*slot*/, Moves move_name
 	}
 
 	active.team.move();
-	add_seen_move(all_moves(active.team.replacement()), move_name);
+	auto const move = add_seen_move(all_moves(active.team.replacement()), move_name);
+	active.flags.used_move.emplace(move, 0_bi);
 	if (is_damaging(move_name)) {
 		move_damage = true;
 	}
@@ -257,7 +274,7 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 void Battle::handle_end(Result const result) {
 	std::cout << timestamp() << ": " << to_string(result) << " a battle vs. " << opponent() << '\n';
 	if (result == Result::lost) {
-		pl::write_team(predict_foe_team(m_detailed), generate_team_file_name(m_random_engine));
+		pl::write_team(predict_foe_team(), generate_team_file_name(m_random_engine));
 	}
 }
 

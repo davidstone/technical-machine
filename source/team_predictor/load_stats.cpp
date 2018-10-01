@@ -1,5 +1,5 @@
 // Load stats such as Pokemon usage stats
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -53,12 +53,12 @@ auto load_stats_from_file(std::filesystem::path const & file_name) {
 
 }	// namespace
 
-auto overall_stats () -> containers::array<unsigned, number_of_species> {
-	return load_stats_from_file<unsigned>("settings/4/OU/usage.txt");
+auto overall_stats(std::filesystem::path const & path) -> OverallStats {
+	return load_stats_from_file<unsigned>(path);
 }
 
-auto lead_stats () -> containers::array<float, number_of_species> {
-	return load_stats_from_file<float>("settings/4/OU/lead.txt");
+auto lead_stats(std::filesystem::path const & path) -> LeadStats {
+	return load_stats_from_file<float>(path);
 }
 
 }	// namespace technicalmachine

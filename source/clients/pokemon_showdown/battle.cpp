@@ -131,7 +131,7 @@ void BattleFactory::handle_message(InMessage message) {
 		}
 		// message.remainder() == AVATAR
 	} else if (message.type() == "poke") {
-		std::cout << message.remainder() << '\n';
+		std::cout << "poke: " << message.remainder() << '\n';
 		// message.remainder() == PLAYER_ID|DETAILS|ITEM
 	} else if (message.type() == "rated") {
 		// Received if and only if the game is rated. We don't care about this
@@ -214,7 +214,10 @@ bounded::optional<BattleParser> BattleFactory::make(boost::beast::websocket::str
 		websocket,
 		std::move(m_id),
 		std::move(m_username),
+		m_overall,
 		m_detailed,
+		m_lead,
+		m_multiplier,
 		m_evaluate,
 		make_party(*m_player_id),
 		*std::move(m_opponent),
@@ -227,6 +230,7 @@ bounded::optional<BattleParser> BattleFactory::make(boost::beast::websocket::str
 
 
 void BattleParser::handle_message(InMessage message) {
+	std::cout << "Message: " << message.type() << '\n';
 	struct PokemonDetails {
 		Species species;
 		bool shiny; // "shiny" or nothing
@@ -279,7 +283,8 @@ void BattleParser::handle_message(InMessage message) {
 		auto const hp = message.next(' ');
 		auto const status = message.next();
 		static_cast<void>(party);
-		std::cout << "-damage: hp: " << hp << " status: " << status << '\n';
+		std::cout << "-damage: hp: " << hp << " status: " << status << " remainder: " << message.remainder() << '\n';
+//		m_battle.handle_direct_damage(party, 0, 
 	} else if (message.type() == "deinit") {
 		// When you stay in a room too long
 	} else if (message.type() == "detailschange" or message.type() == "-formechange") {
@@ -365,8 +370,7 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (message.type() == "player") {
 		// At the end of a battle, I received this with a body of "p1|"
 	} else if (message.type() == "request") {
-		// auto const json_data = message.remainder();
-		send_move(m_battle.determine_action());
+		std::cout << "request: " << message.remainder() << '\n';
 	} else if (message.type() == "-resisted") {
 		// message.remainder() == POKEMON
 	} else if (message.type() == "-sideend") {
@@ -423,9 +427,7 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (message.type() == "turn") {
 		auto const turn = to_integer<0, std::numeric_limits<std::uint32_t>::max()>(message.next());
 		m_battle.handle_begin_turn(turn);
-		if (turn == 1_bi) {
-			send_move(m_battle.determine_action());
-		}
+		send_move(m_battle.determine_action());
 	} else if (message.type() == "-unboost") {
 #if 0
 		auto const pokemon = message.next();
@@ -433,7 +435,6 @@ void BattleParser::handle_message(InMessage message) {
 		auto const amount = message.next();
 #endif
 	} else if (message.type() == "upkeep") {
-		// No data?
 	} else if (message.type() == "-weather") {
 #if 0
 		auto const weather = message.next();

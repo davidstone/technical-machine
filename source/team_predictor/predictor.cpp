@@ -1,5 +1,5 @@
 // Predict foe's team
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,6 +17,8 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "detailed_stats.hpp"
+#include "load_stats.hpp"
+#include "multiplier.hpp"
 #include "random_team.hpp"
 #include "team_predictor.hpp"
 
@@ -54,16 +56,23 @@ struct Data {
 	explicit Data(AllPokemonInputs const & inputs_, Fl_Multiline_Output & output_):
 		inputs(inputs_),
 		output(output_),
+		overall(overall_stats("settings/4/OU/usage.txt")),
+		lead(lead_stats("settings/4/OU/lead.txt")),
+		multiplier(overall, "settings/4/OU/teammate.txt"),
 		random_engine(rd()),
 		m_team(max_pokemon_per_team)
-		{
+	{
 	}
 	Team & team() {
 		return m_team;
 	}
+
 	AllPokemonInputs const & inputs;
 	Fl_Multiline_Output & output;
+	OverallStats overall;
 	DetailedStats detailed;
+	LeadStats lead;
+	Multiplier multiplier;
 	std::random_device rd;
 	std::mt19937 random_engine;
 private:
@@ -132,7 +141,7 @@ private:
 
 
 void generate_random_team(Data & data) {
-	random_team(data.team(), data.random_engine);
+	random_team(data.overall, data.multiplier, data.team(), data.random_engine);
 }
 
 void function (Fl_Widget *, void * d) {
@@ -151,7 +160,14 @@ void function (Fl_Widget *, void * d) {
 		}
 	}
 	generate_random_team(data);
-	auto const team_str = to_string(predict_team(data.detailed, data.team(), data.random_engine, using_lead), false);
+	auto const team_str = to_string(predict_team(
+		data.overall,
+		data.detailed,
+		using_lead ? data.lead : containers::make_array_n(bounded::constant<number_of_species>, 1.0F),
+		data.multiplier,
+		data.team(),
+		data.random_engine
+	), false);
 	data.output.value(std::string(begin(team_str), end(team_str)).c_str());
 	data.team() = Team(max_pokemon_per_team);
 }

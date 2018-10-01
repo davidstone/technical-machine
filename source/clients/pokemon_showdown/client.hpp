@@ -25,6 +25,8 @@
 #include "../battle_settings.hpp"
 #include "../../evaluate/evaluate.hpp"
 #include "../../team_predictor/detailed_stats.hpp"
+#include "../../team_predictor/load_stats.hpp"
+#include "../../team_predictor/multiplier.hpp"
 #include "../../settings_file.hpp"
 
 #include <containers/vector.hpp>
@@ -69,7 +71,10 @@ private:
 	std::random_device m_rd;
 	std::mt19937 m_random_engine;
 
+	OverallStats m_overall;
 	DetailedStats m_detailed_stats;
+	LeadStats m_lead;
+	Multiplier m_multiplier;
 	Evaluate m_evaluate;
 	std::filesystem::path m_team_file;
 

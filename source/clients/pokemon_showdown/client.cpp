@@ -40,6 +40,9 @@ namespace ps {
 
 Client::Client(unsigned depth):
 	m_random_engine(m_rd()),
+	m_overall(overall_stats("settings/4/OU/usage.txt")),
+	m_lead(lead_stats("settings/4/OU/lead.txt")),
+	m_multiplier(m_overall, "settings/4/OU/teammate.txt"),
 	m_socket(m_io),
 	m_websocket(m_socket),
 	m_depth(depth)
@@ -150,7 +153,10 @@ void Client::handle_message(InMessage message) {
 			m_battles.add_pending(
 				std::string(message.room()),
 				m_username,
+				m_overall,
 				m_detailed_stats,
+				m_lead,
+				m_multiplier,
 				m_evaluate,
 				m_depth,
 				std::mt19937(m_rd()),

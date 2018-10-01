@@ -27,7 +27,6 @@
 #include "../weather.hpp"
 
 #include "../evaluate/evaluate.hpp"
-#include "../evaluate/expectiminimax.hpp"
 
 #include "../move/max_moves_per_pokemon.hpp"
 #include "../move/moves.hpp"
@@ -36,6 +35,8 @@
 #include "../pokemon/species_forward.hpp"
 
 #include "../string_conversions/pokemon.hpp"
+
+#include "../team_predictor/load_stats.hpp"
 
 #include <containers/static_vector/static_vector.hpp>
 
@@ -49,9 +50,10 @@
 
 namespace technicalmachine {
 struct DetailedStats;
+struct Multiplier;
 
 struct Battle {
-	Battle(DetailedStats const & detailed, Evaluate const & evaluate, Party party, std::string opponent, unsigned battle_depth, std::mt19937 random_engine_, Team team, TeamSize foe_size, VisibleFoeHP max_damage_precision = 48_bi);
+	Battle(OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead, Multiplier const & multiplier, Evaluate const & evaluate, Party party, std::string opponent, unsigned battle_depth, std::mt19937 random_engine_, Team team, TeamSize foe_size, VisibleFoeHP max_damage_precision = 48_bi);
 
 	Moves determine_action();
 	
@@ -59,7 +61,7 @@ struct Battle {
 		return my_party == other_party;
 	}
 
-	Team predict_foe_team(DetailedStats const & detailed);
+	Team predict_foe_team();
 	
 	auto move_index(Moves const move) const {
 		auto const moves = all_moves(ai.team.pokemon()).regular();
@@ -74,6 +76,9 @@ struct Battle {
 	template<typename Integer>
 	void handle_begin_turn(Integer const turn_count) {
 		std::cout << "Begin turn " << turn_count << '\n';
+		if (turn_count != 1_bi) {
+			update_from_previous_turn();
+		}
 		ai.team.reset_between_turns();
 		foe.team.reset_between_turns();
 		updated_hp.reset_between_turns();
@@ -191,7 +196,10 @@ private:
 		return is_me(party) ? ai : foe;
 	}
 
+	OverallStats const & m_overall;
 	DetailedStats const & m_detailed;
+	LeadStats const & m_lead;
+	Multiplier const & m_multiplier;
 	Evaluate m_evaluate;
 	std::string opponent_name;
 	std::mt19937 m_random_engine;

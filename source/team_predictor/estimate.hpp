@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "load_stats.hpp"
 #include "../pokemon/species.hpp"
 
 #include <containers/array/array.hpp>
@@ -29,9 +30,7 @@ struct Multiplier;
 struct Team;
 
 struct Estimate {
-	using Overall = containers::array<unsigned, number_of_species>;
-	using Lead = containers::array<float, number_of_species>;
-	Estimate(Overall const & overall, Lead const & lead, unsigned total);
+	Estimate(OverallStats const & overall, LeadStats const & lead, unsigned total);
 	void update(Multiplier const & multiplier, Team const & team);
 	void update(Multiplier const & multiplier, Species seen);
 	Species most_likely() const;
