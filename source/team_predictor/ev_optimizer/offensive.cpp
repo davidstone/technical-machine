@@ -64,6 +64,7 @@ OffensiveEVs::OffensiveEVs(Pokemon const & pokemon) {
 		container.emplace_back(nature);
 	}
 	optimize(pokemon);
+	assert(!empty(container));
 }
 
 namespace {
