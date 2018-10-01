@@ -61,10 +61,10 @@ auto find_least_stat(Species const species, Level const level, Nature const natu
 
 OffensiveEVs::OffensiveEVs(Pokemon const & pokemon) {
 	for (auto const nature : containers::enum_range<Nature>()) {
-		container.emplace_back(nature);
+		m_container.emplace_back(nature);
 	}
 	optimize(pokemon);
-	assert(!empty(container));
+	assert(!empty(m_container));
 }
 
 namespace {
@@ -111,7 +111,7 @@ void OffensiveEVs::optimize(Pokemon const & pokemon) {
 	bool const is_physical = has_physical_move(pokemon);
 	bool const is_special = has_special_move(pokemon);
 	
-	remove_inferior_natures(container, is_physical, is_special);
+	remove_inferior_natures(m_container, is_physical, is_special);
 	
 	OffensiveData const stats{ideal_attack_stat(pokemon, is_physical), ideal_special_attack_stat(pokemon, is_special, is_physical)};
 
@@ -119,7 +119,7 @@ void OffensiveEVs::optimize(Pokemon const & pokemon) {
 }
 
 void OffensiveEVs::equal_stats(OffensiveData const initial, Species const species, Level const level) {
-	for (auto it = begin(container); it != end(container);) {
+	for (auto it = begin(m_container); it != end(m_container);) {
 		auto const nature = it->nature;
 		auto const atk_ev = find_least_stat<StatNames::ATK>(species, level, nature, initial.atk);
 		auto const spa_ev = find_least_stat<StatNames::SPA>(species, level, nature, initial.spa);
@@ -129,10 +129,10 @@ void OffensiveEVs::equal_stats(OffensiveData const initial, Species const specie
 			++it;
 		}
 		else {
-			it = erase(container, it);
+			it = erase(m_container, it);
 		}
 	}
-	assert(!empty(container));
+	assert(!empty(m_container));
 }
 
 }	// namespace technicalmachine

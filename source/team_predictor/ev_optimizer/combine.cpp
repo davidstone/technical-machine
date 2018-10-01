@@ -41,8 +41,8 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 	auto best = bounded::optional<Combined>{};
 	for (auto const & speed : speed_container) {
 		// Small enough container that a linear search is fine
-		auto const offensive = containers::find_if(o.container, [=](auto value) { return value.nature == speed.nature; });
-		if (offensive == end(o.container)) {
+		auto const offensive = o.find(speed.nature);
+		if (!offensive) {
 			continue;
 		}
 		auto const defensive = d.find(speed.nature);

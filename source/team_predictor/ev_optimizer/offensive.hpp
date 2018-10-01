@@ -24,17 +24,19 @@
 
 #include <bounded/integer.hpp>
 
+#include <containers/algorithms/find.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 struct Pokemon;
-struct Combined;
-struct DefensiveEVs;
-struct SpeedEVs;
 using namespace bounded::literal;
 
 struct OffensiveEVs {
 	explicit OffensiveEVs(Pokemon const & pokemon);
+
+	auto find(Nature const nature) const {
+		return containers::maybe_find_if(m_container, [=](auto const value) { return value.nature == nature; });
+	}
 private:
 	auto optimize(Pokemon const & pokemon) -> void;
 	struct OffensiveData {
@@ -45,7 +47,6 @@ private:
 		StatType spa;
 	};
 	auto equal_stats(OffensiveData initial, Species species, Level level) -> void;
-	friend auto combine(OffensiveEVs const &, DefensiveEVs const &, SpeedEVs const &) -> Combined;
 	struct OffensiveStats {
 		constexpr explicit OffensiveStats(Nature const nature_):
 			nature(nature_)
@@ -56,7 +57,7 @@ private:
 		EV attack = EV(0_bi);
 		EV special_attack = EV(0_bi);
 	};
-	containers::static_vector<OffensiveStats, size(containers::enum_range<Nature>()).value()> container;
+	containers::static_vector<OffensiveStats, size(containers::enum_range<Nature>()).value()> m_container;
 };
 
 }	// namespace technicalmachine
