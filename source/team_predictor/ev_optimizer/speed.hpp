@@ -31,7 +31,6 @@ struct DefensiveEVs;
 struct SpeedEVs {
 private:
 public:
-	static constexpr auto max_size = static_cast<std::intmax_t>(std::numeric_limits<Nature>::max() + 1_bi);
 	explicit SpeedEVs(Pokemon const & pokemon);
 	friend auto begin(SpeedEVs const & evs) {
 		return begin(evs.m_container);
@@ -44,6 +43,7 @@ private:
 		Nature nature;
 		EV ev;
 	};
+	static constexpr auto max_size = static_cast<std::intmax_t>(std::numeric_limits<Nature>::max() + 1_bi);
 	containers::static_vector<Mapped, max_size> m_container;
 };
 

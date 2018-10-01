@@ -24,15 +24,11 @@
 
 #include "../../pokemon/pokemon.hpp"
 
-#include "../../string_conversions/nature.hpp"
-
 #include <bounded/integer.hpp>
 
-#include <containers/static_vector/static_vector.hpp>
+#include <containers/algorithms/find.hpp>
 
-#include <algorithm>
 #include <cassert>
-#include <iostream>
 
 namespace technicalmachine {
 namespace {
@@ -54,7 +50,7 @@ constexpr auto sum(Combined const combined) {
 }	// namespace
 
 void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container, Pokemon & pokemon) {
-	containers::static_vector<Combined, SpeedEVs::max_size> container;
+	auto best = bounded::optional<Combined>{};
 	for (auto const & speed : speed_container) {
 		// Small enough container that a linear search is fine
 		auto const offensive = containers::find_if(o.container, [=](auto value) { return value.nature == speed.nature; });
@@ -65,7 +61,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 		if (defensive == end(d)) {
 			continue;
 		}
-		auto combined = Combined{
+		auto candidate = Combined{
 			speed.nature,
 			defensive->hp,
 			offensive->attack,
@@ -74,26 +70,20 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 			defensive->special_defense,
 			speed.ev
 		};
-		if (sum(combined) > EV::max_total) {
-			continue;
+		if (!best or sum(candidate) < sum(*best)) {
+			best.emplace(candidate);
 		}
-		push_back(container, combined);
 	}
-	assert(!empty(container));
+	assert(best);
+	assert(sum(*best) <= EV::max_total);
 
-	auto const lesser_mapped_type = [](auto const & lhs, auto const & rhs) {
-		return sum(lhs) < sum(rhs);
-	};
-	auto const it = std::min_element(begin(container), end(container), lesser_mapped_type);
-	assert(sum(*it) <= EV::max_total);
-
-	set_hp_ev(pokemon, it->hp);
-	set_stat_ev(pokemon, StatNames::ATK, it->attack);
-	set_stat_ev(pokemon, StatNames::DEF, it->defense);
-	set_stat_ev(pokemon, StatNames::SPA, it->special_attack);
-	set_stat_ev(pokemon, StatNames::SPD, it->special_defense);
-	set_stat_ev(pokemon, StatNames::SPE, it->speed);
-	get_nature(pokemon) = it->nature;
+	set_hp_ev(pokemon, best->hp);
+	set_stat_ev(pokemon, StatNames::ATK, best->attack);
+	set_stat_ev(pokemon, StatNames::DEF, best->defense);
+	set_stat_ev(pokemon, StatNames::SPA, best->special_attack);
+	set_stat_ev(pokemon, StatNames::SPD, best->special_defense);
+	set_stat_ev(pokemon, StatNames::SPE, best->speed);
+	get_nature(pokemon) = best->nature;
 }
 
 }	// namespace technicalmachine
