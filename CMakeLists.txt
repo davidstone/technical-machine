@@ -114,7 +114,6 @@ add_library(tm_common STATIC
 	source/team_predictor/ev_optimizer/defensive_data_point.cpp
 	source/team_predictor/ev_optimizer/ev_optimizer.cpp
 	source/team_predictor/ev_optimizer/offensive.cpp
-	source/team_predictor/ev_optimizer/single_classification_evs.cpp
 	source/team_predictor/ev_optimizer/speed.cpp
 
 	source/team_predictor/detailed_stats.cpp
