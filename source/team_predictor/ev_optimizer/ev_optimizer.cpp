@@ -62,10 +62,18 @@ void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 }
 
 void minimize_evs(Pokemon & pokemon) {
-	OffensiveEVs offensive(pokemon);
-	DefensiveEVs defensive(pokemon);
-	SpeedEVs speed(pokemon);
-	combine(offensive, defensive, speed, pokemon);
+	auto const offensive = OffensiveEVs(pokemon);
+	auto const defensive = DefensiveEVs(pokemon);
+	auto const speed = SpeedEVs(pokemon);
+	auto const result = combine(offensive, defensive, speed);
+	set_hp_ev(pokemon, result.hp);
+	set_stat_ev(pokemon, StatNames::ATK, result.attack);
+	set_stat_ev(pokemon, StatNames::DEF, result.defense);
+	set_stat_ev(pokemon, StatNames::SPA, result.special_attack);
+	set_stat_ev(pokemon, StatNames::SPD, result.special_defense);
+	set_stat_ev(pokemon, StatNames::SPE, result.speed);
+	get_nature(pokemon) = result.nature;
+
 }
 
 void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {

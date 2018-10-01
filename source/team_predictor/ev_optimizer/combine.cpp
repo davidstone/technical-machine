@@ -22,8 +22,6 @@
 #include "offensive.hpp"
 #include "speed.hpp"
 
-#include "../../pokemon/pokemon.hpp"
-
 #include <bounded/integer.hpp>
 
 #include <containers/algorithms/find.hpp>
@@ -33,23 +31,13 @@
 namespace technicalmachine {
 namespace {
 
-struct Combined {
-	Nature nature;
-	EV hp;
-	EV attack;
-	EV defense;
-	EV special_attack;
-	EV special_defense;
-	EV speed;
-};
-
 constexpr auto sum(Combined const combined) {
 	return combined.hp.value() + combined.attack.value() + combined.defense.value() + combined.special_attack.value() + combined.special_defense.value() + combined.speed.value();
 }
 
 }	// namespace
 
-void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container, Pokemon & pokemon) {
+auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> Combined {
 	auto best = bounded::optional<Combined>{};
 	for (auto const & speed : speed_container) {
 		// Small enough container that a linear search is fine
@@ -76,14 +64,7 @@ void combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 	}
 	assert(best);
 	assert(sum(*best) <= EV::max_total);
-
-	set_hp_ev(pokemon, best->hp);
-	set_stat_ev(pokemon, StatNames::ATK, best->attack);
-	set_stat_ev(pokemon, StatNames::DEF, best->defense);
-	set_stat_ev(pokemon, StatNames::SPA, best->special_attack);
-	set_stat_ev(pokemon, StatNames::SPD, best->special_defense);
-	set_stat_ev(pokemon, StatNames::SPE, best->speed);
-	get_nature(pokemon) = best->nature;
+	return *best;
 }
 
 }	// namespace technicalmachine

@@ -28,6 +28,7 @@
 
 namespace technicalmachine {
 struct Pokemon;
+struct Combined;
 struct DefensiveEVs;
 struct SpeedEVs;
 using namespace bounded::literal;
@@ -44,7 +45,7 @@ private:
 		StatType spa;
 	};
 	auto equal_stats(OffensiveData initial, Species species, Level level) -> void;
-	friend auto combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon) -> void;
+	friend auto combine(OffensiveEVs const &, DefensiveEVs const &, SpeedEVs const &) -> Combined;
 	struct OffensiveStats {
 		constexpr explicit OffensiveStats(Nature const nature_):
 			nature(nature_)

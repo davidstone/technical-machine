@@ -1,5 +1,5 @@
 // Combine all optimized EVs and correct the Pokemon
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,12 +18,24 @@
 
 #pragma once
 
+#include "../../stat/ev.hpp"
+#include "../../stat/nature.hpp"
+
 namespace technicalmachine {
-struct Pokemon;
 struct OffensiveEVs;
 struct DefensiveEVs;
 struct SpeedEVs;
 
-void combine(OffensiveEVs const & offensive, DefensiveEVs const & defensive, SpeedEVs const & speed, Pokemon & pokemon);
+struct Combined {
+	Nature nature;
+	EV hp;
+	EV attack;
+	EV defense;
+	EV special_attack;
+	EV special_defense;
+	EV speed;
+};
+
+auto combine(OffensiveEVs const &, DefensiveEVs const &, SpeedEVs const &) -> Combined;
 
 }	// namespace technicalmachine
