@@ -1,5 +1,5 @@
 // Nature functions
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,76 +21,6 @@
 #include "stat_names.hpp"
 
 namespace technicalmachine {
-
-auto make_nature(StatNames const boost, StatNames const drop) -> Nature {
-	switch (boost) {
-	case StatNames::ATK:
-		switch (drop) {
-			case StatNames::ATK:
-				return Nature::Bashful;
-			case StatNames::DEF:
-				return Nature::Lonely;
-			case StatNames::SPA:
-				return Nature::Adamant;
-			case StatNames::SPD:
-				return Nature::Naughty;
-			default:	// case StatNames::SPE:
-				return Nature::Brave;
-		}
-	case StatNames::DEF:
-		switch (drop) {
-			case StatNames::ATK:
-				return Nature::Bold;
-			case StatNames::DEF:
-				return Nature::Docile;
-			case StatNames::SPA:
-				return Nature::Impish;
-			case StatNames::SPD:
-				return Nature::Lax;
-			default:	// case StatNames::SPE:
-				return Nature::Relaxed;
-		}
-	case StatNames::SPA:
-		switch (drop) {
-			case StatNames::ATK:
-				return Nature::Modest;
-			case StatNames::DEF:
-				return Nature::Mild;
-			case StatNames::SPA:
-				return Nature::Hardy;
-			case StatNames::SPD:
-				return Nature::Rash;
-			default:	// case StatNames::SPE:
-				return Nature::Quiet;
-		}
-	case StatNames::SPD:
-		switch (drop) {
-			case StatNames::ATK:
-				return Nature::Calm;
-			case StatNames::DEF:
-				return Nature::Gentle;
-			case StatNames::SPA:
-				return Nature::Careful;
-			case StatNames::SPD:
-				return Nature::Quirky;
-			default:	// case StatNames::SPE:
-				return Nature::Sassy;
-		}
-	default:	// case StatNames::SPE:
-		switch (drop) {
-			case StatNames::ATK:
-				return Nature::Timid;
-			case StatNames::DEF:
-				return Nature::Hasty;
-			case StatNames::SPA:
-				return Nature::Jolly;
-			case StatNames::SPD:
-				return Nature::Naive;
-			default:	// case StatNames::SPE:
-				return Nature::Serious;
-		}
-	}
-}
 
 auto boosts_stat(Nature const nature, StatNames const stat) -> bool {
 	switch (stat) {

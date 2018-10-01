@@ -23,6 +23,7 @@
 #include "../../stat/nature.hpp"
 
 #include <containers/algorithms/find.hpp>
+#include <containers/integer_range.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
@@ -39,13 +40,9 @@ struct DefensiveEVs {
 	auto find(Nature const nature) const {
 		return containers::find_if(m_container, [=](auto const value) { return value.nature == nature; });
 	}
-	static constexpr auto number_of_natures = size(containers::enum_range<Nature>());
-	using BestPerNature = containers::static_vector<DataPoint, number_of_natures.value()>;
-	using Natures = containers::static_vector<Nature, number_of_natures.value()>;
 private:
-	void remove_inefficient_natures(Natures const & divided_natures);
-	void add_other_potential_natures();
-	BestPerNature m_container;
+	static constexpr auto number_of_natures = size(containers::enum_range<Nature>());
+	containers::static_vector<DataPoint, number_of_natures.value()> m_container;
 };
 
 }	// namespace technicalmachine

@@ -1,4 +1,3 @@
-// Optimize defensive EVs and nature to remove waste
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
@@ -18,59 +17,16 @@
 
 #pragma once
 
-#include "single_classification_evs.hpp"
-
-#include "../../pokemon/level.hpp"
-#include "../../pokemon/species_forward.hpp"
-
-#include "../../stat/calculate.hpp"
 #include "../../stat/ev.hpp"
-#include "../../stat/hp.hpp"
 #include "../../stat/nature.hpp"
-#include "../../stat/stat.hpp"
-
-#include <bounded/integer.hpp>
 
 namespace technicalmachine {
-using namespace bounded::literal;
 
 struct DataPoint {
-	constexpr DataPoint(SingleClassificationEVs const physical, SingleClassificationEVs const special):
-		hp(physical.hp),
-		defense(physical.defensive),
-		special_defense(special.defensive),
-		nature(physical.nature)
-	{
-		assert(physical.nature == special.nature);
-		assert(physical.hp == special.hp);
-	}
-
-	constexpr DataPoint(DataPoint const original, Nature const new_nature):
-		hp(original.hp),
-		defense(original.defense),
-		special_defense(original.special_defense),
-		nature(new_nature)
-	{
-	}
-
+	Nature nature;
 	EV hp;
 	EV defense;
 	EV special_defense;
-	Nature nature;
 };
-
-constexpr auto ev_sum(DataPoint const value) {
-	return value.hp.value() + value.defense.value() + value.special_defense.value();
-}
-
-inline auto defensive_product(DataPoint const value, Level const level, Species const species) {
-	auto single_product = [=](StatNames const stat) {
-		auto const defensive = (stat == StatNames::DEF) ? value.defense : value.special_defense;
-		auto const initial = initial_stat(stat, Stat(species, stat, defensive), level, value.nature);
-		return initial * HP(species, level, value.hp).max();
-	};
-
-	return single_product(StatNames::DEF) * single_product(StatNames::SPD);
-}
 
 }	// namespace technicalmachine

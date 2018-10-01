@@ -1,4 +1,3 @@
-// Optimize defensive EVs and nature to remove waste
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.

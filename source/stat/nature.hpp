@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -35,8 +35,6 @@ enum class Nature : uint8_t {
 	Naive, Naughty, Quiet, Quirky, Rash,
 	Relaxed, Sassy, Serious, Timid
 };
-
-auto make_nature(StatNames boost, StatNames drop) -> Nature;
 
 auto boosts_stat(Nature nature, StatNames stat) -> bool;
 auto lowers_stat(Nature nature, StatNames stat) -> bool;

@@ -1,5 +1,5 @@
 // Test EV optimizer
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,16 +17,18 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ev_optimizer.hpp"
-#include <iostream>
-#include <random>
+
 #include "../team.hpp"
 #include "../pokemon/species.hpp"
 #include "../stat/calculate.hpp"
+#include "../team_predictor/ev_optimizer/defensive.hpp"
 #include "../team_predictor/ev_optimizer/ev_optimizer.hpp"
-#include "../team_predictor/ev_optimizer/single_classification_evs.hpp"
 #include "../team_predictor/ev_optimizer/speed.hpp"
 #include "../move/moves.hpp"
 #include "../string_conversions/nature.hpp"
+
+#include <iostream>
+#include <random>
 
 #undef NDEBUG
 
@@ -74,10 +76,10 @@ void defensive_tests() {
 	nature = Nature::Bold;
 	all_moves(pokemon).emplace_back(Moves::Psychic);
 	
-	constexpr auto physical = true;
-	for (auto const & candidate : equal_defensiveness(pokemon, physical)) {
+	for (auto const & candidate : DefensiveEVs(pokemon)) {
 		assert(candidate.hp == get_hp(pokemon).ev());
-		assert(candidate.defensive == get_stat(pokemon, StatNames::DEF).ev());
+		assert(candidate.defense == get_stat(pokemon, StatNames::DEF).ev());
+		assert(candidate.special_defense >= get_stat(pokemon, StatNames::SPD).ev());
 		assert(boosts_stat(candidate.nature, StatNames::DEF));
 	}
 }
