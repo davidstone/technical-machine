@@ -46,12 +46,4 @@ SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
 	assert(!empty(m_container));
 }
 
-auto find(SpeedEVs const & container, Nature const nature) -> EV {
-	auto const it = containers::find_if(begin(container), end(container), [=](auto const & value) { return value.nature == nature; });
-	if (it == end(container)) {
-		throw InvalidNature(std::string(to_string(nature)));
-	}
-	return it->ev;
-}
-
 }	// namespace technicalmachine

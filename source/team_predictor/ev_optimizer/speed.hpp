@@ -23,8 +23,6 @@
 
 #include <containers/static_vector/static_vector.hpp>
 
-#include <stdexcept>
-
 namespace technicalmachine {
 struct Pokemon;
 struct OffensiveEVs;
@@ -47,12 +45,6 @@ private:
 		EV ev;
 	};
 	containers::static_vector<Mapped, max_size> m_container;
-};
-
-auto find(SpeedEVs const & container, Nature nature) -> EV;
-
-struct InvalidNature : std::logic_error {
-	using std::logic_error::logic_error;
 };
 
 }	// namespace technicalmachine
