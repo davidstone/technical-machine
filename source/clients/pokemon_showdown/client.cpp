@@ -187,6 +187,9 @@ void Client::handle_message(InMessage message) {
 		for (auto const & challenge : json.get_child("challengesFrom")) {
 			auto const is_trusted = m_trusted_users.find(challenge.first) != m_trusted_users.end();
 			auto const command = is_trusted ? "|/accept " : "|/reject ";
+			if (!is_trusted) {
+				std::cout << "Rejected a challenge from " << challenge.first << '\n';
+			}
 			write_message(command + challenge.first);
 		}
 		// "cancelchallenge" is the command to stop challenging someone
