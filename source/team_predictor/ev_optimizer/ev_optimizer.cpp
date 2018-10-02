@@ -1,5 +1,5 @@
 // Optimize EVs and nature to remove waste
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,16 +26,9 @@
 #include "../../pokemon/pokemon.hpp"
 
 #include <containers/algorithms/accumulate.hpp>
-#include <containers/algorithms/count.hpp>
 #include <containers/algorithms/transform.hpp>
-#include <containers/static_vector/make_static_vector.hpp>
 
-#include <algorithm>
-#include <cstddef>
-#include <cstdint>
-#include <functional>
 #include <random>
-#include <utility>
 
 namespace technicalmachine {
 namespace {
@@ -80,60 +73,30 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	// more EV point (4 EVs) to the current stat. I use a random_shuffle to
 	// create a uniform distribution of available stats non-maxed EVs. I repeat
 	// the process in case a stat is overfilled.
+	auto distribution = std::discrete_distribution{};
 	while (ev_sum(pokemon) < EV::max_total) {
-		auto const hp_is_full = get_hp(pokemon).ev().value() == EV::max;
-		auto is_full = [&](auto const stat_name) {
-			return
-				get_stat(pokemon, stat_name).ev().value() == EV::max or
+		auto remaining_evs = [&](auto const stat_name) {
+			auto const full_at_zero =
 				(stat_name == StatNames::ATK and !has_physical_move(pokemon)) or
 				(stat_name == StatNames::SPA and !has_special_move(pokemon));
+			auto const full = full_at_zero or get_stat(pokemon, stat_name).ev().value() == EV::max;
+			return full ? 0.0 : 1.0;
 		};
-		auto const full_stats = bounded::checked_integer<0, 4>(
-			containers::count_if(regular_stats(), is_full) +
-			BOUNDED_CONDITIONAL(hp_is_full, 1_bi, 0_bi)
-		);
-
-		constexpr auto number_of_stats = 6_bi;
-
-		auto const extra_evs = EV::max_total - ev_sum(pokemon);
-
-		auto const dividers = number_of_stats - full_stats - 1_bi;
-		auto shuffled = containers::static_vector(extra_evs + dividers, static_cast<bounded::integer<0, 1>>(1_bi));
-		std::fill(begin(shuffled), begin(shuffled) + dividers, 0_bi);
-		std::shuffle(data(shuffled), data(shuffled) + size(shuffled), random_engine);
-
-		auto find = [&](auto const it) { return containers::find(it, end(shuffled), 0_bi); };
-		auto new_ev = [&](auto const stat, auto const distance) {
-			return EV(bounded::clamped_integer<0, EV::max.value()>(distance + stat.ev().value()));
-		};
-
-		auto add_hp = [&]() {
-			auto & hp = get_hp(pokemon);
-			if (hp.ev().value() == EV::max) {
-				return begin(shuffled);
-			}
-			auto const it = find(begin(shuffled));
-			set_hp_ev(pokemon, new_ev(hp, it - begin(shuffled)));
-			return it;
-		};
-		auto it = add_hp();
-		if (it == end(shuffled)) {
-			continue;
+		distribution.param({
+			get_hp(pokemon).ev().value() == EV::max ? 0.0 : 1.0,
+			remaining_evs(StatNames::ATK),
+			remaining_evs(StatNames::DEF),
+			remaining_evs(StatNames::SPA),
+			remaining_evs(StatNames::SPD),
+			remaining_evs(StatNames::SPE),
+		});
+		auto const index = distribution(random_engine);
+		if (index == 0) {
+			set_hp_ev(pokemon, EV(EV::value_type(get_hp(pokemon).ev().value() + 4_bi)));
+		} else {
+			auto const stat_name = regular_stats()[bounded::integer<0, 4>(index - 1)];
+			set_stat_ev(pokemon, stat_name, EV(EV::value_type(get_stat(pokemon, stat_name).ev().value() + 4_bi)));
 		}
-		++it;
-		for (auto const stat_name : containers::enum_range(StatNames::NORMAL_END)) {
-			auto const previous = it;
-			it = find(previous);
-			// I use clamped here because I expect there to be some extra EVs
-			// assigned to some stats, which is why I put this in a loop.
-			set_stat_ev(pokemon, stat_name, new_ev(get_stat(pokemon, stat_name), it - previous));
-
-			if (it == end(shuffled)) {
-				break;
-			}
-			++it;
-		}
-		assert(it == end(shuffled));
 	}
 }
 
