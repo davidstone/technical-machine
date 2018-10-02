@@ -195,6 +195,7 @@ auto swap_items(Pokemon & user, Pokemon & target) {
 
 auto tri_attack_status(Variable const & variable) {
 	switch (variable.value.value()) {
+		case 0: return Statuses::clear;
 		case 1: return Statuses::burn;
 		case 2: return Statuses::freeze;
 		case 3: return Statuses::paralysis;
@@ -954,7 +955,9 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 		case Moves::Transform:		// Fix
 			break;
 		case Moves::Tri_Attack:
-			apply(tri_attack_status(variable), user, target.pokemon(), weather);
+			if (auto const status = tri_attack_status(variable); status != Statuses::clear) {
+				apply(status, user, target.pokemon(), weather);
+			}
 			break;
 		case Moves::Trick_Room:
 			weather.activate_trick_room();
