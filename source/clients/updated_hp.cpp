@@ -51,6 +51,7 @@ void UpdatedHP::mapped_type::direct_damage(damage_type set_damage) {
 }
 void UpdatedHP::mapped_type::faint() {
 	m_fainted = true;
+	m_new_hp = 0_bi;
 }
 void UpdatedHP::mapped_type::reset() {
 	m_damage = 0;
