@@ -73,7 +73,6 @@ void minimize_evs(Pokemon & pokemon) {
 	set_stat_ev(pokemon, StatNames::SPD, result.special_defense);
 	set_stat_ev(pokemon, StatNames::SPE, result.speed);
 	get_nature(pokemon) = result.nature;
-
 }
 
 void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
@@ -83,9 +82,14 @@ void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	// the process in case a stat is overfilled.
 	while (ev_sum(pokemon) < EV::max_total) {
 		auto const hp_is_full = get_hp(pokemon).ev().value() == EV::max;
-		auto checker = [&](auto const stat_name) { return get_stat(pokemon, stat_name).ev().value() == EV::max; };
-		auto const full_stats = bounded::checked_integer<0, 2>(
-			containers::count_if(regular_stats(), checker) +
+		auto is_full = [&](auto const stat_name) {
+			return
+				get_stat(pokemon, stat_name).ev().value() == EV::max or
+				(stat_name == StatNames::ATK and !has_physical_move(pokemon)) or
+				(stat_name == StatNames::SPA and !has_special_move(pokemon));
+		};
+		auto const full_stats = bounded::checked_integer<0, 4>(
+			containers::count_if(regular_stats(), is_full) +
 			BOUNDED_CONDITIONAL(hp_is_full, 1_bi, 0_bi)
 		);
 

@@ -25,22 +25,12 @@
 
 #include <bounded/optional.hpp>
 
-#include <containers/algorithms/all_any_none.hpp>
-
 #include <cassert>
 
 namespace technicalmachine {
 namespace {
 
 using namespace bounded::literal;
-
-bool has_physical_move(Pokemon const & pokemon) {
-	return containers::any(regular_moves(pokemon), is_physical);
-}
-
-bool has_special_move(Pokemon const & pokemon) {
-	return containers::any(regular_moves(pokemon), is_special);
-}
 
 template<StatNames stat_name, typename Initial>
 auto find_least_stat(Species const species, Level const level, Nature const nature, Initial const initial) -> bounded::optional<EV::value_type> {

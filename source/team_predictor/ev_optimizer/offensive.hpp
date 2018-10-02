@@ -18,12 +18,14 @@
 
 #pragma once
 
+#include "../../pokemon/pokemon.hpp"
 #include "../../stat/calculate.hpp"
 #include "../../stat/ev.hpp"
 #include "../../stat/nature.hpp"
 
 #include <bounded/integer.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/find.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
@@ -59,5 +61,13 @@ private:
 	};
 	containers::static_vector<OffensiveStats, size(containers::enum_range<Nature>()).value()> m_container;
 };
+
+inline bool has_physical_move(Pokemon const & pokemon) {
+	return containers::any(regular_moves(pokemon), is_physical);
+}
+
+inline bool has_special_move(Pokemon const & pokemon) {
+	return containers::any(regular_moves(pokemon), is_special);
+}
 
 }	// namespace technicalmachine
