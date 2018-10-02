@@ -99,7 +99,7 @@ Pokemon make_test_pokemon() {
 }
 
 auto find(SpeedEVs const & container, Nature const nature) {
-	auto const it = containers::find_if(begin(container), end(container), [=](auto const & value) { return value.nature == nature; });
+	auto const it = containers::find_if(container, [=](auto const & value) { return value.nature == nature; });
 	assert(it != end(container));
 	return it->ev;
 }

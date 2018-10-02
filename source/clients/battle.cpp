@@ -280,7 +280,7 @@ void Battle::handle_end(Result const result) {
 
 uint8_t Battle::switch_slot(Moves move) const {
 	Species const name = ai.team.pokemon(to_replacement(move));
-	auto const it = containers::find(begin(slot_memory), end(slot_memory), name);
+	auto const it = containers::find(slot_memory, name);
 	if (it == end(slot_memory)) {
 		throw PokemonNotFound(name);
 	}

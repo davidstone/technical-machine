@@ -65,7 +65,7 @@ struct Battle {
 	
 	auto move_index(Moves const move) const {
 		auto const moves = all_moves(ai.team.pokemon()).regular();
-		auto const it = containers::find(begin(moves), end(moves), move);
+		auto const it = containers::find(moves, move);
 		return it - begin(moves);
 	}
 	

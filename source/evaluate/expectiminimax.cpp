@@ -590,7 +590,7 @@ BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const we
 	} else if (switch_decision_required(ai.pokemon())) {
 		auto const switcher_move_name = is_baton_passing(ai.pokemon()) ? Moves::Baton_Pass : Moves::U_turn;
 		auto const & ai_moves = all_moves(ai.pokemon());
-		auto const move_it = containers::find(begin(ai_moves), end(ai_moves), switcher_move_name);
+		auto const move_it = containers::find(ai_moves, switcher_move_name);
 		assert(move_it != end(ai_moves));
 		return move_then_switch_branch(
 			ai,

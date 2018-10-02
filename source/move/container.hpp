@@ -95,7 +95,7 @@ using ::containers::detail::common::operator==;
 template<typename... MaybePP>
 auto & add_seen_move(MoveContainer & container, Moves const move, MaybePP... pp) {
 	auto const regular = container.regular();
-	auto const it = containers::find(begin(regular), end(regular), move);
+	auto const it = containers::find(regular, move);
 	if (it != end(regular)) {
 		return *it;
 	}

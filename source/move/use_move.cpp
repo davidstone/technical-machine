@@ -1001,7 +1001,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 auto lower_pp(MutableActivePokemon user, Move const move, Ability const target) {
 	if (is_regular(move) and !is_locked_in_to_bide(user)) {
 		auto const regular_moves = all_moves(user).regular();
-		auto const it = containers::find(begin(regular_moves), end(regular_moves), move);
+		auto const it = containers::find(regular_moves, move);
 		assert(it != regular_moves.end());
 		it->decrement_pp(target);
 	}
