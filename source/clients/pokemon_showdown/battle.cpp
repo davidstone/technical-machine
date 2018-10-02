@@ -320,7 +320,11 @@ void BattleParser::handle_message(InMessage message) {
 #endif
 	} else if (message.type() == "faint") {
 		constexpr auto slot = 0;
-		m_battle.handle_fainted(party_from_pokemon_id(message.next()), slot);
+		auto const party = party_from_pokemon_id(message.next());
+		m_battle.handle_fainted(party, slot);
+		if (m_battle.is_me(party)) {
+			send_move(m_battle.determine_action());
+		}
 	} else if (message.type() == "-fieldend") {
 #if 0
 		// Grassy Terrain, Gravity, Trick Room
