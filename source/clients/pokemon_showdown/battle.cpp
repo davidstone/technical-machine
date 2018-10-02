@@ -323,7 +323,7 @@ void BattleParser::handle_message(InMessage message) {
 		auto const party = party_from_pokemon_id(message.next());
 		m_battle.handle_fainted(party, slot);
 		if (m_battle.is_me(party)) {
-			send_move(m_battle.determine_action());
+			send_move(m_battle.determine_action(m_random_engine));
 		}
 	} else if (message.type() == "-fieldend") {
 #if 0
@@ -424,14 +424,14 @@ void BattleParser::handle_message(InMessage message) {
 		// position here is "0", "1", or "2"
 #endif
 	} else if (message.type() == "tie") {
-		m_battle.handle_end(Result::tied);
+		m_battle.handle_end(Result::tied, m_random_engine);
 		m_completed = true;
 	} else if (message.type() == "-transform") {
 		// message.remainder() == POKEMON|SPECIES
 	} else if (message.type() == "turn") {
 		auto const turn = to_integer<0, std::numeric_limits<std::uint32_t>::max()>(message.next());
 		m_battle.handle_begin_turn(turn);
-		send_move(m_battle.determine_action());
+		send_move(m_battle.determine_action(m_random_engine));
 	} else if (message.type() == "-unboost") {
 #if 0
 		auto const pokemon = message.next();
@@ -445,7 +445,7 @@ void BattleParser::handle_message(InMessage message) {
 #endif
 	} else if (message.type() == "win") {
 		auto const won = m_username == message.next();
-		m_battle.handle_end(won ? Result::won : Result::lost);
+		m_battle.handle_end(won ? Result::won : Result::lost, m_random_engine);
 		m_completed = true;
 	} else {
 		std::cout << "Received battle progress message of unknown type: " << message.type() << ": " << message.remainder() << '\n';
@@ -465,7 +465,7 @@ void BattleParser::send_random_move() {
 	// In doubles / triples we need to specify " TARGET" at the end for regular
 	// moves
 	auto distribution = std::uniform_int_distribution(1, static_cast<int>(max_moves_per_pokemon + max_pokemon_per_team));
-	auto const result = distribution(m_battle.random_engine());
+	auto const result = distribution(m_random_engine);
 
 	auto switch_move = [=]{ return std::to_string(result - max_moves_per_pokemon); };
 	auto move_index = [=]{ return std::to_string(result); };

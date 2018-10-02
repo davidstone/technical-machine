@@ -40,8 +40,6 @@
 
 #include <containers/static_vector/static_vector.hpp>
 
-#include <boost/beast/websocket.hpp>
-
 #include <cstdint>
 #include <filesystem>
 #include <iostream>
@@ -53,24 +51,20 @@ struct DetailedStats;
 struct Multiplier;
 
 struct Battle {
-	Battle(OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead, Multiplier const & multiplier, Evaluate const & evaluate, Party party, std::string opponent, unsigned battle_depth, std::mt19937 random_engine_, Team team, TeamSize foe_size, VisibleFoeHP max_damage_precision = 48_bi);
+	Battle(OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead, Multiplier const & multiplier, Evaluate const & evaluate, Party party, std::string opponent, unsigned battle_depth, Team team, TeamSize foe_size, VisibleFoeHP max_damage_precision = 48_bi);
 
-	Moves determine_action();
+	Team predict_foe_team(std::mt19937 & random_engine) const;
+	
+	Moves determine_action(std::mt19937 & random_engine) const;
 	
 	bool is_me(Party const other_party) const {
 		return my_party == other_party;
 	}
 
-	Team predict_foe_team();
-	
 	auto move_index(Moves const move) const {
 		auto const moves = all_moves(ai.team.pokemon()).regular();
 		auto const it = containers::find(moves, move);
 		return it - begin(moves);
-	}
-	
-	std::mt19937 & random_engine() {
-		return m_random_engine;
 	}
 	
 	template<typename Integer>
@@ -101,7 +95,7 @@ struct Battle {
 		updated_hp.faint(team.is_me(), team.pokemon());
 	}
 
-	void handle_end(Result const result);
+	void handle_end(Result const result, std::mt19937 & random_engine) const;
 
 	std::string const & opponent() const {
 		return opponent_name;
@@ -202,7 +196,6 @@ private:
 	Multiplier const & m_multiplier;
 	Evaluate m_evaluate;
 	std::string opponent_name;
-	std::mt19937 m_random_engine;
 	BattleTeam ai;
 	BattleTeam foe;
 	containers::static_vector<Species, static_cast<intmax_t>(max_pokemon_per_team)> slot_memory;

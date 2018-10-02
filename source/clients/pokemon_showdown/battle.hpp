@@ -26,6 +26,8 @@
 #include <bounded/optional.hpp>
 #include <containers/vector.hpp>
 
+#include <boost/beast/websocket.hpp>
+
 #include <iostream>
 #include <random>
 #include <string>
@@ -53,6 +55,7 @@ struct BattleParser {
 		m_websocket(websocket),
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
+		m_random_engine(random_engine),
 		m_battle(
 			overall,
 			detailed,
@@ -62,7 +65,6 @@ struct BattleParser {
 			party,
 			std::move(opponent),
 			depth,
-			random_engine,
 			std::move(team),
 			opponent_team_size,
 			100_bi
@@ -89,6 +91,7 @@ private:
 	boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & m_websocket;
 	std::string m_id;
 	std::string m_username;
+	std::mt19937 m_random_engine;
 	Battle m_battle;
 	using ShowdownIndex = decltype(std::declval<containers::index_type<PokemonContainer>>() + 1_bi);
 	containers::static_vector<ShowdownIndex, max_pokemon_per_team.value()> m_slot_memory;

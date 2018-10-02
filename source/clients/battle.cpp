@@ -66,7 +66,6 @@ Battle::Battle(
 	Party const party,
 	std::string opponent_,
 	unsigned const battle_depth,
-	std::mt19937 random_engine_,
 	Team team,
 	TeamSize const foe_size,
 	VisibleFoeHP max_damage_precision_
@@ -77,7 +76,6 @@ Battle::Battle(
 	m_multiplier(multiplier),
 	m_evaluate(evaluate),
 	opponent_name(std::move(opponent_)),
-	m_random_engine(random_engine_),
 	ai(std::move(team)),
 	foe(foe_size),
 	slot_memory(begin(ai.team.all_pokemon()), end(ai.team.all_pokemon())),
@@ -89,8 +87,8 @@ Battle::Battle(
 {
 }
 
-Team Battle::predict_foe_team() {
-	return predict_team(m_overall, m_detailed, m_lead, m_multiplier, foe.team, m_random_engine);
+Team Battle::predict_foe_team(std::mt19937 & random_engine) const {
+	return predict_team(m_overall, m_detailed, m_lead, m_multiplier, foe.team, random_engine);
 }
 
 void Battle::update_from_previous_turn() {
@@ -101,7 +99,7 @@ void Battle::update_from_previous_turn() {
 	correct_hp_and_report_errors(last->team);
 }
 
-Moves Battle::determine_action() {
+Moves Battle::determine_action(std::mt19937 & random_engine) const {
 	if (ai.team.size() == 0_bi or foe.team.size() == 0_bi) {
 		std::cerr << "Tried to determine an action with an empty team.\n";
 		return Moves::Struggle;
@@ -109,7 +107,7 @@ Moves Battle::determine_action() {
 
 	std::cout << std::string(20, '=') + '\n';
 	std::cout << "Predicting...\n";
-	auto predicted = predict_foe_team();
+	auto predicted = predict_foe_team(random_engine);
 	std::cout << to_string(predicted) << '\n';
 
 	return expectiminimax(ai.team, predicted, weather, depth, m_evaluate);
@@ -271,10 +269,10 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 
 }	// namespace
 
-void Battle::handle_end(Result const result) {
+void Battle::handle_end(Result const result, std::mt19937 & random_engine) const {
 	std::cout << timestamp() << ": " << to_string(result) << " a battle vs. " << opponent() << '\n';
 	if (result == Result::lost) {
-		pl::write_team(predict_foe_team(), generate_team_file_name(m_random_engine));
+		pl::write_team(predict_foe_team(random_engine), generate_team_file_name(random_engine));
 	}
 }
 
