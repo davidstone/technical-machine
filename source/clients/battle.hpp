@@ -153,6 +153,7 @@ private:
 
 
 	void correct_hp_and_report_errors(Team & team);
+	// Fix any rounding issues caused by not seeing the foe's exact HP.
 	void normalize_hp();
 	void normalize_hp(Team & team);
 	

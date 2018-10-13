@@ -311,23 +311,15 @@ void Battle::normalize_hp() {
 	normalize_hp(m_foe.team);
 }
 
-namespace {
-
-// Fix any rounding issues caused by not seeing the foe's exact HP.
-auto normalize_hp(MutableActivePokemon pokemon, bool const fainted) {
+void Battle::normalize_hp(Team & team) {
+	auto pokemon = team.pokemon();
+	bool const fainted = m_updated_hp.is_fainted(team.is_me(), pokemon);
 	if (fainted) {
 		pokemon.faint();
 	} else {
 		HP & hp = get_hp(pokemon);
 		hp = bounded::max(hp.current(), 1_bi);
 	}
-}
-
-}	// namespace
-
-void Battle::normalize_hp(Team & team) {
-	bool const fainted = m_updated_hp.is_fainted(team.is_me(), team.pokemon());
-	technicalmachine::normalize_hp(team.pokemon(), fainted);
 }
 
 } // namespace technicalmachine
