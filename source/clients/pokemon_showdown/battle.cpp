@@ -96,7 +96,7 @@ bounded::optional<Team> parse_team(boost::property_tree::ptree const & pt) {
 			
 			team.add_pokemon(details.species, details.level, details.gender, item, ability, Nature::Hardy);
 			
-			Pokemon & pokemon = team.replacement();
+			Pokemon & pokemon = back(team.all_pokemon());
 			for (auto const & move : pokemon_data.second.get_child("moves")) {
 				 add_seen_move(all_moves(pokemon), from_string<Moves>(move.second.get<std::string>("")));
 			}
