@@ -158,7 +158,7 @@ void BattleFactory::handle_message(InMessage message) {
 	} else if (message.type() == "teamsize") {
 		auto const player_id = message.next();
 		if (!m_player_id) {
-			std::cout << "Received a teamsize message before receiving a player id.\n";
+			std::cerr << "Received a teamsize message before receiving a player id.\n";
 		}
 		if (*m_player_id == player_id) {
 			m_opponent_team_size.emplace(to_integer<0, 6>(message.next()));
@@ -168,42 +168,42 @@ void BattleFactory::handle_message(InMessage message) {
 	} else if (message.type() == "title") {
 		// message.remainder() == PLAYER1 vs. PLAYER2
 	} else {
-		std::cout << "Received battle setup message of unknown type: " << message.type() << ": " << message.remainder() << '\n';
+		std::cerr << "Received battle setup message of unknown type: " << message.type() << ": " << message.remainder() << '\n';
 	}
 }
 
 bounded::optional<BattleParser> BattleFactory::make(boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) && {
 	assert(m_completed);
 	if (!m_opponent) {
-		std::cout << "Did not receive opponent\n";
+		std::cerr << "Did not receive opponent\n";
 		return bounded::none;
 	}
 	if (!m_player_id) {
-		std::cout << "Did not receive player_id\n";
+		std::cerr << "Did not receive player_id\n";
 		return bounded::none;
 	}
 	if (!m_type) {
-		std::cout << "Did not receive battle format\n";
+		std::cerr << "Did not receive battle format\n";
 		return bounded::none;
 	}
 	if (!m_tier) {
-		std::cout << "Did not receive tier\n";
+		std::cerr << "Did not receive tier\n";
 		return bounded::none;
 	}
 	if (!m_generation) {
-		std::cout << "Did not receive generation\n";
+		std::cerr << "Did not receive generation\n";
 		return bounded::none;
 	}
 	if (!m_opponent_team_size) {
-		std::cout << "Did not receive opponent team size\n";
+		std::cerr << "Did not receive opponent team size\n";
 		return bounded::none;
 	}
 	if (*m_type != "singles") {
-		std::cout << "Unsupported format " << *m_type << '\n';
+		std::cerr << "Unsupported format " << *m_type << '\n';
 		return bounded::none;
 	}
 	if (*m_generation != 4) {
-		std::cout << "Unsupported generation " << *m_generation << '\n';
+		std::cerr << "Unsupported generation " << *m_generation << '\n';
 		return bounded::none;
 	}
 	if (*m_player_id != "p1" and *m_player_id != "p2") {
@@ -458,7 +458,7 @@ void BattleParser::handle_message(InMessage message) {
 		m_battle.handle_end(won ? Result::won : Result::lost, m_random_engine);
 		m_completed = true;
 	} else {
-		std::cout << "Received battle progress message of unknown type: " << message.type() << ": " << message.remainder() << '\n';
+		std::cerr << "Received battle progress message of unknown type: " << message.type() << ": " << message.remainder() << '\n';
 	}
 }
 
