@@ -91,14 +91,6 @@ Team Battle::predict_foe_team(std::mt19937 & random_engine) const {
 	return predict_team(m_overall, m_detailed, m_lead, m_multiplier, m_foe.team, random_engine);
 }
 
-void Battle::update_from_previous_turn() {
-	do_turn();
-	assert(m_first);
-	assert(m_last);
-	correct_hp_and_report_errors(m_first->team);
-	correct_hp_and_report_errors(m_last->team);
-}
-
 Moves Battle::determine_action(std::mt19937 & random_engine) const {
 	if (m_ai.team.size() == 0_bi or m_foe.team.size() == 0_bi) {
 		std::cerr << "Tried to determine an action with an empty team.\n";

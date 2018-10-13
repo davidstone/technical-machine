@@ -71,7 +71,11 @@ struct Battle {
 	void handle_begin_turn(Integer const turn_count) {
 		std::cout << "Begin turn " << turn_count << '\n';
 		if (turn_count != 1_bi) {
-			update_from_previous_turn();
+			do_turn();
+			assert(m_first);
+			assert(m_last);
+			correct_hp_and_report_errors(m_first->team);
+			correct_hp_and_report_errors(m_last->team);
 		}
 		m_updated_hp.reset_between_turns();
 		
@@ -177,7 +181,6 @@ private:
 		return my_pokemon ? get_hp(changer).max() : m_max_damage_precision;
 	}
 	void do_turn();
-	void update_from_previous_turn();
 
 	auto get_team(Party const party) const -> BattleTeam const & {
 		return is_me(party) ? m_ai : m_foe;
