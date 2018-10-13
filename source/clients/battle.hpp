@@ -157,7 +157,7 @@ private:
 		auto const max_hp = get_hp(changer).max();
 		auto const max_visible_hp_change = BOUNDED_CONDITIONAL(my_pokemon, max_hp, m_max_damage_precision);
 		auto const result = bounded::max(1_bi, max_hp * visible_remaining_hp / max_visible_hp_change);
-		if (result.max() > HP::current_type::max()) {
+		if (result > HP::current_type::max()) {
 			throw std::runtime_error("Recieved an HP value that is too large.");
 		}
 		return HP::current_type(result);
