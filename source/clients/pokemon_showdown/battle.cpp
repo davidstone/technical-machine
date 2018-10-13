@@ -390,7 +390,9 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (message.type() == "player") {
 		// At the end of a battle, I received this with a body of "p1|"
 	} else if (message.type() == "request") {
-		std::cout << "request: " << message.remainder() << '\n';
+#if 0
+		auto const json = message.remainder();
+#endif
 	} else if (message.type() == "-resisted") {
 		// message.remainder() == POKEMON
 	} else if (message.type() == "-sideend") {
