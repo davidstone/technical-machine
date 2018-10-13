@@ -98,10 +98,6 @@ struct Battle {
 
 	void handle_end(Result result, std::mt19937 & random_engine) const;
 
-	std::string const & opponent() const {
-		return m_opponent;
-	}
-
 	void handle_hp_change(Party const changing, uint8_t /*slot*/, UpdatedHP::VisibleHP const remaining_hp) {
 		auto const & team = get_team(changing).team;
 		m_updated_hp.update(team.is_me(), team.replacement(), remaining_hp);

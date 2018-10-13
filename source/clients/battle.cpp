@@ -251,7 +251,7 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 }	// namespace
 
 void Battle::handle_end(Result const result, std::mt19937 & random_engine) const {
-	std::cout << timestamp() << ": " << to_string(result) << " a battle vs. " << opponent() << '\n';
+	std::cout << timestamp() << ": " << to_string(result) << " a battle vs. " << m_opponent << '\n';
 	if (result == Result::lost) {
 		pl::write_team(predict_foe_team(random_engine), generate_team_file_name(random_engine));
 	}
