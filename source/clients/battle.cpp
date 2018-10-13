@@ -180,30 +180,21 @@ void Battle::handle_direct_damage(Party const damaged, uint8_t const /*slot*/, U
 	auto const & pokemon = team.replacement();
 	std::cerr << "is me: " << team.is_me() << '\n';
 	std::cerr << to_string(static_cast<Species>(pokemon)) << '\n';
-	auto const change = rational(visible_damage, max_visible_hp_change(team));
+	auto const change = rational(visible_damage, max_visible_hp_change(team.is_me(), pokemon));
 	auto const damage = get_hp(pokemon).max() * change;
 	m_updated_hp.direct_damage(team.is_me(), pokemon, damage);
 	battle_team.flags.damaged = damage;
 }
 
-int Battle::hp_change(Party const changing, UpdatedHP::VisibleHP const remaining_hp) const {
-	auto const & team = get_team(changing).team;
-	auto const max_visible = max_visible_hp_change(team);
-	if (max_visible < remaining_hp) {
-		throw std::runtime_error("Maximum expected HP change is " + to_string(max_visible) + " but received " + to_string(remaining_hp));
-	}
-	auto const measurable_hp = max_visible * hp_ratio(team.replacement());
-	return static_cast<int>(measurable_hp - remaining_hp);
-}
-
 void Battle::correct_hp_and_report_errors(Team & team) {
 	for (auto & pokemon : team.all_pokemon()) {
-		auto const tm_estimate = max_visible_hp_change(team.is_me(), pokemon) * hp_ratio(pokemon);
+		auto const max_visible_for_this_pokemon = max_visible_hp_change(team.is_me(), pokemon);
+		auto const tm_estimate = max_visible_for_this_pokemon * hp_ratio(pokemon);
 		auto const new_hp = m_updated_hp.get(team.is_me(), pokemon);
 		if (tm_estimate == new_hp) {
 			continue;
 		}
-		auto const reported_hp = new_hp * get_hp(pokemon).max() / max_visible_hp_change(team.is_me(), pokemon);
+		auto const reported_hp = new_hp * get_hp(pokemon).max() / max_visible_for_this_pokemon;
 		auto const min_value = BOUNDED_CONDITIONAL(tm_estimate == 0_bi, 0_bi, tm_estimate - 1_bi);
 		auto const max_value = tm_estimate + 1_bi;
 		assert(max_value > tm_estimate);
@@ -213,7 +204,7 @@ void Battle::correct_hp_and_report_errors(Team & team) {
 				std::cerr << "approximately ";
 			}
 			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << get_hp(pokemon).current() << ".\n";
-			std::cerr << "max_visible_hp_change: " << max_visible_hp_change(team.is_me(), pokemon) << '\n';
+			std::cerr << "max_visible_hp_change: " << max_visible_for_this_pokemon << '\n';
 			std::cerr << "pokemon.hp.max: " << get_hp(pokemon).max() << '\n';
 			std::cerr << "new_hp: " << new_hp << '\n';
 			std::cerr << "tm_estimate: " << tm_estimate << '\n';

@@ -103,24 +103,9 @@ struct Battle {
 		m_updated_hp.update(team.is_me(), team.replacement(), remaining_hp);
 	}
 
-	bool is_valid_hp_change(Party const changer, UpdatedHP::VisibleHP const remaining_hp, int const received_change) const {
-		return hp_change(changer, remaining_hp) == received_change;
-	}
-
-	bool is_valid_precision(Party const changer, unsigned const precision) const {
-		return max_visible_hp_change(changer) == precision;
-	}
-
 	void handle_direct_damage(Party const damaged, uint8_t slot, UpdatedHP::VisibleHP damage);
 
 	uint8_t switch_slot(Moves move) const;
-
-	int hp_change(Party changing, UpdatedHP::VisibleHP remaining_hp) const;
-
-	using MaxVisibleHPChange = std::common_type<VisibleFoeHP, HP::max_type>::type;
-	auto max_visible_hp_change(Party const changer) const -> MaxVisibleHPChange {
-		return max_visible_hp_change(get_team(changer).team);
-	}
 
 	void handle_flinch(Party const party) {
 		set_flinch(get_team(party).variable, true);
@@ -168,13 +153,11 @@ private:
 	void correct_hp_and_report_errors(Team & team);
 	void normalize_hp();
 	void normalize_hp(Team & team);
+	
+	auto max_visible_hp_change(bool const my_pokemon, Pokemon const & changer) const {
+		return BOUNDED_CONDITIONAL(my_pokemon, get_hp(changer).max(), m_max_damage_precision);
+	}
 
-	auto max_visible_hp_change(Team const & changer) const -> MaxVisibleHPChange {
-		return max_visible_hp_change(changer.is_me(), changer.replacement());
-	}
-	auto max_visible_hp_change(bool const my_pokemon, Pokemon const & changer) const -> MaxVisibleHPChange {
-		return my_pokemon ? get_hp(changer).max() : m_max_damage_precision;
-	}
 	void do_turn();
 
 	auto get_team(Party const party) const -> BattleTeam const & {
