@@ -42,7 +42,6 @@ struct PokemonCollection {
 	using const_iterator = PokemonContainer::const_iterator;
 
 	explicit PokemonCollection(TeamSize const initial_size):
-		m_replacement(0_bi),
 		m_real_size(initial_size)
 	{
 	}
@@ -71,10 +70,6 @@ struct PokemonCollection {
 		return m_index;
 	}
 
-	auto initialize_replacement() {
-		m_replacement = index();
-	}
-
 	constexpr decltype(auto) operator()(containers::index_type<PokemonCollection> const specified_index) const {
 		check_range(specified_index);
 		return m_container[specified_index];
@@ -90,15 +85,6 @@ struct PokemonCollection {
 		return m_container[index()];
 	}
 
-	auto replacement() const {
-		return m_replacement;
-	}
-
-	auto set_replacement(containers::index_type<PokemonCollection> const new_index) {
-		check_range(new_index);
-		m_replacement = new_index;
-	}
-
 	auto real_size() const {
 		return m_real_size;
 	}
@@ -108,7 +94,6 @@ struct PokemonCollection {
 		if (size(m_container) == m_container.capacity()) {
 			throw std::runtime_error("Tried to add too many Pokemon");
 		}
-		m_replacement = size(m_container);
 		return m_container.emplace_back(m_real_size, std::forward<Args>(args)...);
 	}
 
@@ -121,8 +106,6 @@ private:
 
 	PokemonContainer m_container;
 	containers::index_type<PokemonCollection> m_index = 0_bi;
-	// If a Pokemon switches / faints, what Pokemon should replace it?
-	containers::index_type<PokemonCollection> m_replacement = 0_bi;
 	// The actual size of the foe's team, not just the Pokemon I've seen
 	TeamSize m_real_size;
 };

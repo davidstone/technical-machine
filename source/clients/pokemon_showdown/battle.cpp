@@ -18,6 +18,7 @@
 
 #include "battle.hpp"
 
+#include "../../string_conversions/item.hpp"
 #include "../../string_conversions/pokemon.hpp"
 
 #include <bounded/integer.hpp>
@@ -268,7 +269,8 @@ void BattleParser::handle_message(InMessage message) {
 #endif
 	} else if (message.type() == "-center") {
 	} else if (message.type() == "-crit") {
-		m_battle.handle_critical_hit(other(party_from_pokemon_id(message.next())));
+		// TODO: Is this the user or the target?
+		//auto const user = other(party_from_pokemon_id(message.next()));
 	} else if (message.type() == "-curestatus") {
 #if 0
 		auto const pokemon = message.next();
@@ -291,7 +293,7 @@ void BattleParser::handle_message(InMessage message) {
 		
 		auto parse_hp = [=]{
 			auto const hp_str = std::string_view(hp_and_status.data(), hp_and_status.find_first_of(" /"));
-			return to_integer<UpdatedHP::VisibleHP::min().value(), UpdatedHP::VisibleHP::max().value()>(hp_str);
+			return to_integer<VisibleHP::min().value(), VisibleHP::max().value()>(hp_str);
 		};
 		
 		constexpr auto slot = 0;
@@ -300,6 +302,7 @@ void BattleParser::handle_message(InMessage message) {
 		if (source == "item") {
 			m_battle.handle_item_message(party, from_string<Item>(item));
 		}
+		
 	} else if (message.type() == "deinit") {
 		// When you stay in a room too long
 	} else if (message.type() == "detailschange" or message.type() == "-formechange") {

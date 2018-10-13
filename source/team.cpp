@@ -88,7 +88,6 @@ bool Team::is_me() const {
 
 auto Team::reset_end_of_turn() -> void {
 	m_flags.reset_end_of_turn();
-	all_pokemon().initialize_replacement();
 }
 
 auto Team::reset_switch() -> void {

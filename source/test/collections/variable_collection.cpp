@@ -40,8 +40,6 @@ namespace {
 
 using bounded::to_string;
 
-constexpr auto move = Moves::Whirlwind;
-
 void add_pokemon(Team & team, Species const species) {
 	auto const level = Level(100_bi);
 	team.add_pokemon(species, level, Gender::male);
@@ -49,7 +47,7 @@ void add_pokemon(Team & team, Species const species) {
 
 void phaze_in_same_pokemon(Variable & variable, Team const & team) {
 	try {
-		set_phaze_index(variable, team, team.pokemon(), move);
+		set_phaze_index(variable, team, team.pokemon());
 		throw InvalidCollection("Can phaze in the same Pokemon.");
 	} catch (PhazingInSamePokemon const &) {
 		// Do nothing; the above operation should throw.
@@ -65,7 +63,7 @@ void phaze_in_different_pokemon(Variable & variable, Team const & team, containe
 		0_bi, 1_bi, 2_bi, 3_bi, bounded::none, 4_bi,
 		0_bi, 1_bi, 2_bi, 3_bi, 4_bi, bounded::none
 	);
-	set_phaze_index(variable, team, team.pokemon(new_index), move);
+	set_phaze_index(variable, team, team.pokemon(new_index));
 	auto const expected = expected_index[current_index][new_index];
 	assert(expected);
 	if (variable.value != *expected) {
@@ -79,7 +77,7 @@ void phaze_in_different_pokemon(Variable & variable, Team const & team, containe
 void test_combinations(Team team) {
 	for (auto const foe_size : containers::integer_range(2_bi, max_pokemon_per_team)) {
 		add_pokemon(team, static_cast<Species>(foe_size));
-		auto collection = all_probabilities(move, foe_size);
+		auto collection = all_probabilities(Moves::Whirlwind, foe_size);
 		auto const expected = foe_size - 1_bi;
 		if (size(collection) != expected) {
 			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected) + " but got " + to_string(size(collection)));

@@ -48,12 +48,6 @@ struct Team {
 	}
 	Pokemon const & pokemon(containers::index_type<PokemonCollection> index) const;
 	Pokemon & pokemon(containers::index_type<PokemonCollection> index);
-	auto const & replacement() const {
-		return all_pokemon()(all_pokemon().replacement());
-	}
-	auto & replacement() {
-		return all_pokemon()(all_pokemon().replacement());
-	}
 
 	template<typename... Args>
 	Pokemon & add_pokemon(Args&&... args) {

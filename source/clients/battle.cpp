@@ -24,7 +24,6 @@
 
 #include "pokemon_lab/write_team_file.hpp"
 
-#include "../endofturn.hpp"
 #include "../switch.hpp"
 #include "../team.hpp"
 #include "../weather.hpp"
@@ -78,7 +77,6 @@ Battle::Battle(
 	m_opponent(std::move(opponent_)),
 	m_ai(std::move(team)),
 	m_foe(foe_size),
-	m_updated_hp(m_ai.team),
 	m_depth(battle_depth),
 	m_max_damage_precision(max_damage_precision_),
 	
@@ -99,44 +97,47 @@ Moves Battle::determine_action(std::mt19937 & random_engine) const {
 	std::cout << std::string(20, '=') + '\n';
 	std::cout << "Predicting...\n";
 	auto predicted = predict_foe_team(random_engine);
-	std::cout << to_string(predicted) << '\n';
+	//std::cout << to_string(predicted) << '\n';
 
 	return expectiminimax(m_ai.team, predicted, m_weather, m_depth, m_evaluate);
 }
 
-void Battle::handle_use_move(Party const user, uint8_t /*slot*/, Moves const move_name) {
-	auto & active = is_me(user) ? m_ai : m_foe;
-	auto & inactive = is_me(user) ? m_foe : m_ai;
+void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const move_name) {
+	auto & user = is_me(party) ? m_ai : m_foe;
+	auto & other = is_me(party) ? m_foe : m_ai;
 
 	if (m_first == nullptr) {
-		m_first = std::addressof(active);
-		m_last = std::addressof(inactive);
+		m_first = std::addressof(user);
+		m_last = std::addressof(other);
 	}
 
-	active.team.move();
-	auto const move = add_seen_move(all_moves(active.team.replacement()), move_name);
-	active.flags.used_move.emplace(move, 0_bi);
+	auto const move = add_seen_move(all_moves(user.team.pokemon()), move_name);
+
+	Species const species = user.team.pokemon();
+	std::cout << user.team.who() << "'s move: " << to_string(species) << " uses " << to_string(move_name) << '\n';
+
+	constexpr auto other_move = bounded::none;
+	constexpr auto miss = false;
+	constexpr auto critical_hit = false;
+	call_move(user.team, move, static_cast<bool>(user.flags.damaged), other.team, other_move, static_cast<bool>(other.flags.damaged), m_weather, user.variable, miss, user.flags.awakens, critical_hit, other.flags.damaged);
 }
 
 namespace {
 
-auto set_index_of_seen(PokemonCollection & collection, Species const species) {
-	for (auto const replacement : containers::integer_range(size(collection))) {
-		if (species == collection(replacement)) {
-			collection.set_replacement(replacement);
-			return true;
-		}
-	}
-	return false;
+auto index_of_seen(PokemonCollection const & collection, Species const species) {
+	using index_type = containers::index_type<PokemonCollection>;
+	return static_cast<index_type>(containers::find(collection, species) - begin(collection));
 }
 
-template<typename...Args>
-auto switch_or_add(PokemonCollection & collection, Species const species, Args&&... args) {
-	auto const add_new_pokemon = !set_index_of_seen(collection, species);
-	if (add_new_pokemon) {
-		collection.add(species, std::forward<Args>(args)...);
+template<typename... Args>
+void switch_or_add(Team & switcher, Team & other, Weather & weather, Species const species, Args && ... args) {
+	auto const index = index_of_seen(switcher.all_pokemon(), species);
+	if (index == switcher.number_of_seen_pokemon()) {
+		switcher.all_pokemon().add(species, std::forward<Args>(args)...);
 	}
-	return add_new_pokemon;
+	// TODO: Call this only when a switch decision is required, not for the case
+	// where a Pokemon used "Switch" as its move.
+	switch_pokemon(switcher, other, weather, index);
 }
 
 }	// namespace
@@ -150,66 +151,13 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, std::
 		m_last = std::addressof(other);
 	}
 
-	// This is needed to make sure I don't overwrite important information in a
-	// situation in which a team switches multiple times in one turn (due to
-	// replacing fainted Pokemon).
-	auto const replacement = switcher.team.all_pokemon().replacement();
-	if (switcher.team.is_me()) {
-		std::cerr << to_string(static_cast<Species>(switcher.team.pokemon(replacement))) << '\n';
-	}
-	
 	// This assumes Species Clause is in effect
-	auto const added = switch_or_add(switcher.team.all_pokemon(), species, level, gender, nickname);
-	if (added) {
-		m_updated_hp.add(switcher.team.is_me(), switcher.team.replacement(), m_max_damage_precision);
-	}
+	switch_or_add(switcher.team, other.team, m_weather, species, level, gender, nickname);
 	
 	if (other.team.number_of_seen_pokemon() != 0_bi and other.flags.used_move and is_phaze(other.flags.used_move->move)) {
-		// Does not matter what move we put here if the Pokemon has not moved
-		auto const switcher_move = switcher.flags.used_move ? switcher.flags.used_move->move : Moves::Struggle;
-		set_phaze_index(other.variable, switcher.team, species, switcher_move);
+		set_phaze_index(other.variable, switcher.team, species);
 	} else if (!moved(switcher.team.pokemon())) {
-		switcher.flags.used_move.emplace(Move(to_switch(switcher.team.all_pokemon().replacement())), 0_bi);
-	}
-}
-
-void Battle::handle_direct_damage(Party const damaged, uint8_t const /*slot*/, UpdatedHP::VisibleHP const visible_damage) {
-	auto & battle_team = get_team(damaged);
-	auto const & team = battle_team.team;
-	auto const & pokemon = team.replacement();
-	std::cerr << "is me: " << team.is_me() << '\n';
-	std::cerr << to_string(static_cast<Species>(pokemon)) << '\n';
-	auto const change = rational(visible_damage, max_visible_hp_change(team.is_me(), pokemon));
-	auto const damage = get_hp(pokemon).max() * change;
-	m_updated_hp.direct_damage(team.is_me(), pokemon, damage);
-	battle_team.flags.damaged = damage;
-}
-
-void Battle::correct_hp_and_report_errors(Team & team) {
-	for (auto & pokemon : team.all_pokemon()) {
-		auto const max_visible_for_this_pokemon = max_visible_hp_change(team.is_me(), pokemon);
-		auto const tm_estimate = max_visible_for_this_pokemon * hp_ratio(pokemon);
-		auto const new_hp = m_updated_hp.get(team.is_me(), pokemon);
-		if (tm_estimate == new_hp) {
-			continue;
-		}
-		auto const reported_hp = new_hp * get_hp(pokemon).max() / max_visible_for_this_pokemon;
-		auto const min_value = BOUNDED_CONDITIONAL(tm_estimate == 0_bi, 0_bi, tm_estimate - 1_bi);
-		auto const max_value = tm_estimate + 1_bi;
-		assert(max_value > tm_estimate);
-		if (!(min_value <= new_hp and new_hp <= max_value)) {
-			std::cerr << "Uh oh! " << to_string(static_cast<Species>(pokemon)) << " has the wrong HP! The server reports ";
-			if (!team.is_me()) {
-				std::cerr << "approximately ";
-			}
-			std::cerr << reported_hp << " HP remaining, but TM thinks it has " << get_hp(pokemon).current() << ".\n";
-			std::cerr << "max_visible_hp_change: " << max_visible_for_this_pokemon << '\n';
-			std::cerr << "pokemon.hp.max: " << get_hp(pokemon).max() << '\n';
-			std::cerr << "new_hp: " << new_hp << '\n';
-			std::cerr << "tm_estimate: " << tm_estimate << '\n';
-//			assert(false);
-		}
-		get_hp(pokemon) = reported_hp;
+		switcher.flags.used_move.emplace(Move(to_switch(switcher.team.all_pokemon().index())), 0_bi);
 	}
 }
 
@@ -244,81 +192,6 @@ void Battle::handle_end(Result const result, std::mt19937 & random_engine) const
 	std::cout << timestamp() << ": " << to_string(result) << " a battle vs. " << m_opponent << '\n';
 	if (result == Result::lost) {
 		pl::write_team(predict_foe_team(random_engine), generate_team_file_name(random_engine));
-	}
-}
-
-void Battle::do_turn() {
-	assert(m_first);
-	assert(m_last);
-	m_first->team.move(false);
-	m_last->team.move(false);
-	auto const replacement = [&](Team & switcher, Team & other) {
-		switch_pokemon(switcher, other, m_weather, switcher.all_pokemon().replacement());
-		switcher.move(false);
-		normalize_hp();
-	};
-	if (switch_decision_required(m_first->team.pokemon())) {
-		normalize_hp();
-		replacement(m_first->team, m_last->team);
-		if (switch_decision_required(m_last->team.pokemon())) {
-			replacement(m_last->team, m_first->team);
-		}
-	} else if (switch_decision_required(m_last->team.pokemon())) {
-		normalize_hp();
-		replacement(m_last->team, m_first->team);
-	} else {
-		// Anything with recoil will mess this up
-
-		auto call_battle_move = [&](auto const & name, auto & user, auto & other, bounded::optional<UsedMove> const other_move) {
-			Species const species = user.team.pokemon();
-			auto const used_move = user.flags.used_move->move;
-			std::cout << name << " move: " << to_string(species) << " uses " << to_string(used_move) << '\n';
-
-			call_move(user.team, used_move, static_cast<bool>(user.flags.damaged), other.team, other_move, static_cast<bool>(other.flags.damaged), m_weather, user.variable, user.flags.miss, user.flags.awakens, user.flags.critical_hit, other.flags.damaged);
-
-			normalize_hp(other.team);
-		};
-
-		assert(m_first->flags.used_move);
-		call_battle_move("First", *m_first, *m_last, bounded::none);
-
-		if (m_last->flags.used_move) {
-			call_battle_move("Last", *m_last, *m_first, m_first->flags.used_move);
-		} else {
-			std::cout << "Last has not moved?\n";
-		}
-
-		end_of_turn(m_first->team, m_last->team, m_weather, m_first->flags.shed_skin, m_last->flags.shed_skin);
-		normalize_hp();
-		
-		// I only have to check if the foe fainted because if I fainted, I have
-		// to make a decision to replace that Pokemon. I update between each
-		// decision point so that is already taken into account.
-		while (is_fainted(m_foe.team.pokemon())) {
-			auto const move = to_switch(m_foe.team.all_pokemon().replacement());
-			// TODO: It is not quite correct to construct a new move, but it
-			// should not matter for this.
-			m_foe.flags.used_move = UsedMove{Move(move), 0_bi};
-			call_battle_move("Foe", m_foe, m_ai, m_ai.flags.used_move);
-		}
-	}
-	std::cout << to_string(m_first->team) << '\n';
-	std::cout << to_string(m_last->team) << '\n';
-}
-
-void Battle::normalize_hp() {
-	normalize_hp(m_ai.team);
-	normalize_hp(m_foe.team);
-}
-
-void Battle::normalize_hp(Team & team) {
-	auto pokemon = team.pokemon();
-	bool const fainted = m_updated_hp.is_fainted(team.is_me(), pokemon);
-	if (fainted) {
-		pokemon.faint();
-	} else {
-		HP & hp = get_hp(pokemon);
-		hp = bounded::max(hp.current(), 1_bi);
 	}
 }
 
