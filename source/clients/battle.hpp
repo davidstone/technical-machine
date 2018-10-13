@@ -96,22 +96,22 @@ struct Battle {
 		m_updated_hp.faint(team.is_me(), team.pokemon());
 	}
 
-	void handle_end(Result const result, std::mt19937 & random_engine) const;
+	void handle_end(Result result, std::mt19937 & random_engine) const;
 
 	std::string const & opponent() const {
 		return m_opponent;
 	}
 
-	void handle_hp_change(Party const changing, uint8_t /*slot*/, UpdatedHP::VisibleHP remaining_hp) {
+	void handle_hp_change(Party const changing, uint8_t /*slot*/, UpdatedHP::VisibleHP const remaining_hp) {
 		auto const & team = get_team(changing).team;
 		m_updated_hp.update(team.is_me(), team.replacement(), remaining_hp);
 	}
 
-	bool is_valid_hp_change(Party changer, UpdatedHP::VisibleHP remaining_hp, int received_change) const {
+	bool is_valid_hp_change(Party const changer, UpdatedHP::VisibleHP const remaining_hp, int const received_change) const {
 		return hp_change(changer, remaining_hp) == received_change;
 	}
 
-	bool is_valid_precision(Party changer, unsigned precision) const {
+	bool is_valid_precision(Party const changer, unsigned const precision) const {
 		return max_visible_hp_change(changer) == precision;
 	}
 
@@ -137,11 +137,11 @@ struct Battle {
 		get_team(party).flags.critical_hit = true;
 	}
 
-	void handle_ability_message(Party party, Ability ability) {
+	void handle_ability_message(Party const party, Ability const ability) {
 		get_ability(get_team(party).team.replacement()) = ability;
 	}
 
-	void handle_item_message(Party party, Item item) {
+	void handle_item_message(Party const party, Item const item) {
 		get_item(get_team(party).team.replacement()) = item;
 	}
 

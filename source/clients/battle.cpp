@@ -68,7 +68,7 @@ Battle::Battle(
 	unsigned const battle_depth,
 	Team team,
 	TeamSize const foe_size,
-	VisibleFoeHP max_damage_precision_
+	VisibleFoeHP const max_damage_precision_
 ):
 	m_overall(overall),
 	m_detailed(detailed),
@@ -105,7 +105,7 @@ Moves Battle::determine_action(std::mt19937 & random_engine) const {
 	return expectiminimax(m_ai.team, predicted, m_weather, m_depth, m_evaluate);
 }
 
-void Battle::handle_use_move(Party const user, uint8_t /*slot*/, Moves move_name) {
+void Battle::handle_use_move(Party const user, uint8_t /*slot*/, Moves const move_name) {
 	auto & active = is_me(user) ? m_ai : m_foe;
 	auto & inactive = is_me(user) ? m_foe : m_ai;
 
@@ -142,7 +142,7 @@ auto switch_or_add(PokemonCollection & collection, Species const species, Args&&
 
 }	// namespace
 
-void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8_t /*index*/, std::string const & nickname, Species species, Gender gender, Level const level) {
+void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8_t /*index*/, std::string const & nickname, Species const species, Gender const gender, Level const level) {
 	auto & switcher = get_team(switcher_party);
 	auto & other = get_team(technicalmachine::other(switcher_party));
 
@@ -257,7 +257,7 @@ void Battle::handle_end(Result const result, std::mt19937 & random_engine) const
 	}
 }
 
-uint8_t Battle::switch_slot(Moves move) const {
+uint8_t Battle::switch_slot(Moves const move) const {
 	Species const name = m_ai.team.pokemon(to_replacement(move));
 	auto const it = containers::find(m_slot_memory, name);
 	if (it == end(m_slot_memory)) {
