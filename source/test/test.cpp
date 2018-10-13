@@ -1,5 +1,5 @@
 // Test stuff
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,6 +18,7 @@
 
 #include <iostream>
 
+#include "clients/pokemon_showdown/slot_memory.hpp"
 #include "collections/collection.hpp"
 #include "damage.hpp"
 #include "ev_optimizer.hpp"
@@ -37,6 +38,7 @@ int main() {
 	stat_tests();
 	damage_tests();
 	collection_tests();
+
 	ev_optimizer_tests();
 	
 	evaluate_tests();
@@ -44,6 +46,7 @@ int main() {
 
 	pl::test ();
 	po::test ();
+	ps::test_slot_memory();
 
 	std::cout << "All tests passed.\n";
 	return 0;
