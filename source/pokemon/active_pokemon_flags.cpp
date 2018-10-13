@@ -26,6 +26,8 @@ auto ActivePokemonFlags::reset_end_of_turn() -> void {
 	me_first_is_active = false;
 	is_loafing_turn = !is_loafing_turn;
 	is_protecting = false;
+	is_fully_paralyzed = false;
+	confusion.end_of_turn_reset();
 }
 
 auto ActivePokemonFlags::reset_switch() -> void {
@@ -84,11 +86,6 @@ auto ActivePokemonFlags::reset_switch() -> void {
 	// vanished. Therefore, we need to reset it.
 	vanish = {};
 	yawn = {};
-}
-
-auto ActivePokemonFlags::reset_between_turns() -> void {
-	is_fully_paralyzed = false;
-	confusion.end_of_turn_reset();
 }
 
 }	// namespace technicalmachine

@@ -31,8 +31,6 @@
 
 #include <containers/vector.hpp>
 
-#include <boost/algorithm/string.hpp>
-
 #include <cstdint>
 #include <filesystem>
 #include <string>
@@ -88,13 +86,9 @@ bool Team::is_me() const {
 	return me;
 }
 
-void Team::reset_between_turns() {
-	m_flags.reset_between_turns();
-	all_pokemon().initialize_replacement();
-}
-
 auto Team::reset_end_of_turn() -> void {
 	m_flags.reset_end_of_turn();
+	all_pokemon().initialize_replacement();
 }
 
 auto Team::reset_switch() -> void {

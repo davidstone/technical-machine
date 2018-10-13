@@ -68,10 +68,6 @@ struct Team {
 	bool is_me() const;
 	std::string_view who() const;
 
-	// Not for variables that give a message at the end of the turn, this is
-	// just for some book-keeping variables.
-	void reset_between_turns();
-
 	auto reset_end_of_turn() -> void;
 	auto reset_switch() -> void;
 	void clear_field();

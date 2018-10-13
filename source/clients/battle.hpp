@@ -73,8 +73,6 @@ struct Battle {
 		if (turn_count != 1_bi) {
 			update_from_previous_turn();
 		}
-		ai.team.reset_between_turns();
-		foe.team.reset_between_turns();
 		updated_hp.reset_between_turns();
 		// Simulators might not send an HP change message if a move does 0 damage.
 		move_damage = false;

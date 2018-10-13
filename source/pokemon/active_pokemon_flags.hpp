@@ -111,7 +111,6 @@ struct ActivePokemonFlags {
 	TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS;
 	friend auto stage(MutableActivePokemon pokemon) -> Stage &;
 
-	auto reset_between_turns() -> void;
 	auto reset_end_of_turn() -> void;
 	auto reset_switch() -> void;
 
