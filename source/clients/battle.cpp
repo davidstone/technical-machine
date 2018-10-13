@@ -75,32 +75,32 @@ Battle::Battle(
 	m_lead(lead),
 	m_multiplier(multiplier),
 	m_evaluate(evaluate),
-	opponent_name(std::move(opponent_)),
-	ai(std::move(team)),
-	foe(foe_size),
-	slot_memory(begin(ai.team.all_pokemon()), end(ai.team.all_pokemon())),
-	updated_hp(ai.team),
-	depth(battle_depth),
-	max_damage_precision(max_damage_precision_),
+	m_opponent(std::move(opponent_)),
+	m_ai(std::move(team)),
+	m_foe(foe_size),
+	m_slot_memory(begin(m_ai.team.all_pokemon()), end(m_ai.team.all_pokemon())),
+	m_updated_hp(m_ai.team),
+	m_depth(battle_depth),
+	m_max_damage_precision(max_damage_precision_),
 	
-	my_party(party)
+	m_ai_party(party)
 {
 }
 
 Team Battle::predict_foe_team(std::mt19937 & random_engine) const {
-	return predict_team(m_overall, m_detailed, m_lead, m_multiplier, foe.team, random_engine);
+	return predict_team(m_overall, m_detailed, m_lead, m_multiplier, m_foe.team, random_engine);
 }
 
 void Battle::update_from_previous_turn() {
 	do_turn();
-	assert(first);
-	assert(last);
-	correct_hp_and_report_errors(first->team);
-	correct_hp_and_report_errors(last->team);
+	assert(m_first);
+	assert(m_last);
+	correct_hp_and_report_errors(m_first->team);
+	correct_hp_and_report_errors(m_last->team);
 }
 
 Moves Battle::determine_action(std::mt19937 & random_engine) const {
-	if (ai.team.size() == 0_bi or foe.team.size() == 0_bi) {
+	if (m_ai.team.size() == 0_bi or m_foe.team.size() == 0_bi) {
 		std::cerr << "Tried to determine an action with an empty team.\n";
 		return Moves::Struggle;
 	}
@@ -110,27 +110,24 @@ Moves Battle::determine_action(std::mt19937 & random_engine) const {
 	auto predicted = predict_foe_team(random_engine);
 	std::cout << to_string(predicted) << '\n';
 
-	return expectiminimax(ai.team, predicted, weather, depth, m_evaluate);
+	return expectiminimax(m_ai.team, predicted, m_weather, m_depth, m_evaluate);
 }
 
 void Battle::handle_use_move(Party const user, uint8_t /*slot*/, Moves move_name) {
 	// "slot" is only useful in situations other than 1v1, which TM does not yet
 	// support.
 
-	auto & active = is_me(user) ? ai : foe;
-	auto & inactive = is_me(user) ? foe : ai;
+	auto & active = is_me(user) ? m_ai : m_foe;
+	auto & inactive = is_me(user) ? m_foe : m_ai;
 
-	if (first == nullptr) {
-		first = std::addressof(active);
-		last = std::addressof(inactive);
+	if (m_first == nullptr) {
+		m_first = std::addressof(active);
+		m_last = std::addressof(inactive);
 	}
 
 	active.team.move();
 	auto const move = add_seen_move(all_moves(active.team.replacement()), move_name);
 	active.flags.used_move.emplace(move, 0_bi);
-	if (is_damaging(move_name)) {
-		move_damage = true;
-	}
 }
 
 namespace {
@@ -163,9 +160,9 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8
 	auto & switcher = get_team(switcher_party);
 	auto & other = get_team(technicalmachine::other(switcher_party));
 
-	if (first == nullptr) {
-		first = std::addressof(switcher);
-		last = std::addressof(other);
+	if (m_first == nullptr) {
+		m_first = std::addressof(switcher);
+		m_last = std::addressof(other);
 	}
 
 	// This is needed to make sure I don't overwrite important information in a
@@ -179,7 +176,7 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8
 	// This assumes Species Clause is in effect
 	auto const added = switch_or_add(switcher.team.all_pokemon(), species, level, gender, nickname);
 	if (added) {
-		updated_hp.add(switcher.team.is_me(), switcher.team.replacement(), max_damage_precision);
+		m_updated_hp.add(switcher.team.is_me(), switcher.team.replacement(), m_max_damage_precision);
 	}
 	
 	if (other.team.number_of_seen_pokemon() != 0_bi and other.flags.used_move and is_phaze(other.flags.used_move->move)) {
@@ -197,12 +194,10 @@ void Battle::handle_direct_damage(Party const damaged, uint8_t const /*slot*/, U
 	auto const & pokemon = team.replacement();
 	std::cerr << "is me: " << team.is_me() << '\n';
 	std::cerr << to_string(static_cast<Species>(pokemon)) << '\n';
-	assert(move_damage);
 	auto const change = rational(visible_damage, max_visible_hp_change(team));
 	auto const damage = get_hp(pokemon).max() * change;
-	updated_hp.direct_damage(team.is_me(), pokemon, damage);
+	m_updated_hp.direct_damage(team.is_me(), pokemon, damage);
 	battle_team.flags.damaged = damage;
-	move_damage = false;
 }
 
 int Battle::hp_change(Party const changing, UpdatedHP::VisibleHP const remaining_hp) const {
@@ -218,7 +213,7 @@ int Battle::hp_change(Party const changing, UpdatedHP::VisibleHP const remaining
 void Battle::correct_hp_and_report_errors(Team & team) {
 	for (auto & pokemon : team.all_pokemon()) {
 		auto const tm_estimate = max_visible_hp_change(team.is_me(), pokemon) * hp_ratio(pokemon);
-		auto const new_hp = updated_hp.get(team.is_me(), pokemon);
+		auto const new_hp = m_updated_hp.get(team.is_me(), pokemon);
 		if (tm_estimate == new_hp) {
 			continue;
 		}
@@ -277,33 +272,33 @@ void Battle::handle_end(Result const result, std::mt19937 & random_engine) const
 }
 
 uint8_t Battle::switch_slot(Moves move) const {
-	Species const name = ai.team.pokemon(to_replacement(move));
-	auto const it = containers::find(slot_memory, name);
-	if (it == end(slot_memory)) {
+	Species const name = m_ai.team.pokemon(to_replacement(move));
+	auto const it = containers::find(m_slot_memory, name);
+	if (it == end(m_slot_memory)) {
 		throw PokemonNotFound(name);
 	}
-	return static_cast<std::uint8_t>(it - begin(slot_memory));
+	return static_cast<std::uint8_t>(it - begin(m_slot_memory));
 }
 
 void Battle::do_turn() {
-	assert(first);
-	assert(last);
-	first->team.move(false);
-	last->team.move(false);
+	assert(m_first);
+	assert(m_last);
+	m_first->team.move(false);
+	m_last->team.move(false);
 	auto const replacement = [&](Team & switcher, Team & other) {
-		switch_pokemon(switcher, other, weather, switcher.all_pokemon().replacement());
+		switch_pokemon(switcher, other, m_weather, switcher.all_pokemon().replacement());
 		switcher.move(false);
 		normalize_hp();
 	};
-	if (switch_decision_required(first->team.pokemon())) {
+	if (switch_decision_required(m_first->team.pokemon())) {
 		normalize_hp();
-		replacement(first->team, last->team);
-		if (switch_decision_required(last->team.pokemon())) {
-			replacement(last->team, first->team);
+		replacement(m_first->team, m_last->team);
+		if (switch_decision_required(m_last->team.pokemon())) {
+			replacement(m_last->team, m_first->team);
 		}
-	} else if (switch_decision_required(last->team.pokemon())) {
+	} else if (switch_decision_required(m_last->team.pokemon())) {
 		normalize_hp();
-		replacement(last->team, first->team);
+		replacement(m_last->team, m_first->team);
 	} else {
 		// Anything with recoil will mess this up
 
@@ -312,41 +307,41 @@ void Battle::do_turn() {
 			auto const used_move = user.flags.used_move->move;
 			std::cout << name << " move: " << to_string(species) << " uses " << to_string(used_move) << '\n';
 
-			call_move(user.team, used_move, static_cast<bool>(user.flags.damaged), other.team, other_move, static_cast<bool>(other.flags.damaged), weather, user.variable, user.flags.miss, user.flags.awakens, user.flags.critical_hit, other.flags.damaged);
+			call_move(user.team, used_move, static_cast<bool>(user.flags.damaged), other.team, other_move, static_cast<bool>(other.flags.damaged), m_weather, user.variable, user.flags.miss, user.flags.awakens, user.flags.critical_hit, other.flags.damaged);
 
 			normalize_hp(other.team);
 		};
 
-		assert(first->flags.used_move);
-		call_battle_move("First", *first, *last, bounded::none);
+		assert(m_first->flags.used_move);
+		call_battle_move("First", *m_first, *m_last, bounded::none);
 
-		if (last->flags.used_move) {
-			call_battle_move("Last", *last, *first, first->flags.used_move);
+		if (m_last->flags.used_move) {
+			call_battle_move("Last", *m_last, *m_first, m_first->flags.used_move);
 		} else {
 			std::cout << "Last has not moved?\n";
 		}
 
-		end_of_turn(first->team, last->team, weather, first->flags.shed_skin, last->flags.shed_skin);
+		end_of_turn(m_first->team, m_last->team, m_weather, m_first->flags.shed_skin, m_last->flags.shed_skin);
 		normalize_hp();
 		
 		// I only have to check if the foe fainted because if I fainted, I have
 		// to make a decision to replace that Pokemon. I update between each
 		// decision point so that is already taken into account.
-		while (is_fainted(foe.team.pokemon())) {
-			auto const move = to_switch(foe.team.all_pokemon().replacement());
+		while (is_fainted(m_foe.team.pokemon())) {
+			auto const move = to_switch(m_foe.team.all_pokemon().replacement());
 			// TODO: It is not quite correct to construct a new move, but it
 			// should not matter for this.
-			foe.flags.used_move = UsedMove{Move(move), 0_bi};
-			call_battle_move("Foe", foe, ai, ai.flags.used_move);
+			m_foe.flags.used_move = UsedMove{Move(move), 0_bi};
+			call_battle_move("Foe", m_foe, m_ai, m_ai.flags.used_move);
 		}
 	}
-	std::cout << to_string(first->team) << '\n';
-	std::cout << to_string(last->team) << '\n';
+	std::cout << to_string(m_first->team) << '\n';
+	std::cout << to_string(m_last->team) << '\n';
 }
 
 void Battle::normalize_hp() {
-	normalize_hp(ai.team);
-	normalize_hp(foe.team);
+	normalize_hp(m_ai.team);
+	normalize_hp(m_foe.team);
 }
 
 namespace {
@@ -364,14 +359,14 @@ auto normalize_hp(MutableActivePokemon pokemon, bool const fainted) {
 }	// namespace
 
 void Battle::normalize_hp(Team & team) {
-	bool const fainted = updated_hp.is_fainted(team.is_me(), team.pokemon());
+	bool const fainted = m_updated_hp.is_fainted(team.is_me(), team.pokemon());
 	technicalmachine::normalize_hp(team.pokemon(), fainted);
 }
 
 void Battle::slot_memory_bring_to_front() {
-	auto const it = containers::find(begin(slot_memory), end(slot_memory), ai.team.replacement());
-	if (it != end(slot_memory)) {
-		std::swap(*it, front(slot_memory));
+	auto const it = containers::find(m_slot_memory, m_ai.team.replacement());
+	if (it != end(m_slot_memory)) {
+		std::swap(*it, front(m_slot_memory));
 	}
 }
 
