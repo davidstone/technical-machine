@@ -280,11 +280,26 @@ void BattleParser::handle_message(InMessage message) {
 #endif
 	} else if (message.type() == "-damage") {
 		auto const party = party_from_pokemon_id(message.next());
-		auto const hp = message.next(' ');
-		auto const status = message.next();
-		static_cast<void>(party);
-		std::cout << "-damage: hp: " << hp << " status: " << status << " remainder: " << message.remainder() << '\n';
-//		m_battle.handle_direct_damage(party, 0, 
+		auto const hp_and_status = message.next();
+		// `from` is "[from]" or empty.
+		auto const from [[maybe_unused]] = message.next(' ');
+		auto const source = message.next(':');
+		auto const item = message.next();
+		// from might be empty, might say it's from a status, and might say it
+		// is from Life Orb. This is the only indication we get that the user
+		// has Life Orb.
+		
+		auto parse_hp = [=]{
+			auto const hp_str = std::string_view(hp_and_status.data(), hp_and_status.find_first_of(" /"));
+			return to_integer<UpdatedHP::VisibleHP::min().value(), UpdatedHP::VisibleHP::max().value()>(hp_str);
+		};
+		
+		constexpr auto slot = 0;
+		m_battle.handle_hp_change(party, slot, parse_hp());
+		
+		if (source == "item") {
+			m_battle.handle_item_message(party, from_string<Item>(item));
+		}
 	} else if (message.type() == "deinit") {
 		// When you stay in a room too long
 	} else if (message.type() == "detailschange" or message.type() == "-formechange") {
