@@ -242,12 +242,12 @@ endfunction()
 
 if(MSVC)
 	target_compile_options(tm_common
-		PUBLIC "/std:c++17"
+		PUBLIC "/std:c++-latest"
 	)
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	target_compile_options(tm_common PUBLIC
 		"-g"
-		"-std=c++17"
+		"-std=c++2a"
 		"-march=native"
 		"-Weverything"
 		"-Werror"
@@ -287,7 +287,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	target_compile_options(tm_common PUBLIC
 		"-g"
-		"-std=c++17"
+		"-std=c++2a"
 		"-march=native"
 		"-Wall"
 		"-Wextra"
