@@ -50,6 +50,9 @@ namespace technicalmachine {
 struct DetailedStats;
 struct Multiplier;
 
+// In all of these functions, "slot" is useful only in NvN, which TM does not
+// yet support.
+
 struct Battle {
 	Battle(OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead, Multiplier const & multiplier, Evaluate const & evaluate, Party party, std::string opponent, unsigned battle_depth, Team team, TeamSize foe_size, VisibleFoeHP max_damage_precision = 48_bi);
 
@@ -88,8 +91,6 @@ struct Battle {
 	void handle_use_move(Party user, uint8_t slot, Moves move_name);
 	void handle_send_out(Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, Level level);
 	void handle_fainted(Party const fainter, uint8_t /*slot*/) {
-		// "slot" is only useful in situations other than 1v1, which TM does not yet
-		// support.
 		auto const & team = get_team(fainter).team;
 		std::cerr << to_string(static_cast<Species>(team.pokemon())) << " fainted\n";
 		m_updated_hp.faint(team.is_me(), team.pokemon());
@@ -102,8 +103,6 @@ struct Battle {
 	}
 
 	void handle_hp_change(Party const changing, uint8_t /*slot*/, UpdatedHP::VisibleHP remaining_hp) {
-		// "slot" is only useful in NvN, which TM does not yet
-		// support.
 		auto const & team = get_team(changing).team;
 		m_updated_hp.update(team.is_me(), team.replacement(), remaining_hp);
 	}

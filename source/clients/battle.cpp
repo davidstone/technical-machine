@@ -106,9 +106,6 @@ Moves Battle::determine_action(std::mt19937 & random_engine) const {
 }
 
 void Battle::handle_use_move(Party const user, uint8_t /*slot*/, Moves move_name) {
-	// "slot" is only useful in situations other than 1v1, which TM does not yet
-	// support.
-
 	auto & active = is_me(user) ? m_ai : m_foe;
 	auto & inactive = is_me(user) ? m_foe : m_ai;
 
@@ -146,9 +143,6 @@ auto switch_or_add(PokemonCollection & collection, Species const species, Args&&
 }	// namespace
 
 void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8_t /*index*/, std::string const & nickname, Species species, Gender gender, Level const level) {
-	// "slot" is only useful in situations other than 1v1, which TM does not yet
-	// support.
-
 	auto & switcher = get_team(switcher_party);
 	auto & other = get_team(technicalmachine::other(switcher_party));
 
