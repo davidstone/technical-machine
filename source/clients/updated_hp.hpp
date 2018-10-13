@@ -27,7 +27,7 @@
 namespace technicalmachine {
 struct Team;
 
-using VisibleFoeHP = bounded::integer<48, 100>;
+using VisibleFoeHP = bounded::checked_integer<48, 100>;
 
 struct UpdatedHP {
 	using VisibleHP = std::common_type<
