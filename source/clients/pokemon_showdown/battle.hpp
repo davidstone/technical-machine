@@ -32,6 +32,8 @@
 #include <iostream>
 #include <random>
 #include <string>
+#include <string_view>
+#include <utility>
 
 namespace technicalmachine {
 namespace ps {
