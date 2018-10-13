@@ -419,6 +419,8 @@ void BattleParser::handle_message(InMessage message) {
 		auto const pokemon = message.next();
 		// message.remainder() == DETAILS|HP STATUS
 #endif
+	} else if (message.type() == "-singleturn") {
+		// Received for things like Protect that last the rest of the turn
 	} else if (message.type() == "-start") {
 		// This should not be necessary, and it is in a weird format
 		// This at least tells me about the start of a substitute
