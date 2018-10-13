@@ -69,6 +69,13 @@ struct Battle {
 		auto const it = containers::find(moves, move);
 		return it - begin(moves);
 	}
+	// Requires that the species is actually on the AI's team
+	auto species_index(Species const species) const {
+		auto const & container = m_ai.team.all_pokemon();
+		auto const it = containers::find(container, species);
+		assert(it != end(container));
+		return TeamIndex(it - begin(container));
+	}
 	
 	template<typename Integer>
 	void handle_begin_turn(Integer const turn_count) {
@@ -89,7 +96,7 @@ struct Battle {
 	}
 
 	void handle_use_move(Party user, uint8_t slot, Moves move_name);
-	void handle_send_out(Party switcher, uint8_t slot, uint8_t index, std::string const & nickname, Species species, Gender gender, Level level);
+	void handle_send_out(Party switcher, uint8_t slot, std::string const & nickname, Species species, Gender gender, Level level);
 	void handle_fainted(Party const fainter, uint8_t /*slot*/) {
 		auto const & team = get_team(fainter).team;
 		std::cerr << to_string(static_cast<Species>(team.pokemon())) << " fainted\n";
@@ -104,8 +111,6 @@ struct Battle {
 	}
 
 	void handle_direct_damage(Party const damaged, uint8_t slot, UpdatedHP::VisibleHP damage);
-
-	uint8_t switch_slot(Moves move) const;
 
 	void handle_flinch(Party const party) {
 		set_flinch(get_team(party).variable, true);
@@ -125,8 +130,6 @@ struct Battle {
 	void handle_item_message(Party const party, Item const item) {
 		get_item(get_team(party).team.replacement()) = item;
 	}
-
-	void slot_memory_bring_to_front();
 private:
 	struct BattleTeam {
 		struct Flags {
@@ -175,7 +178,6 @@ private:
 	std::string m_opponent;
 	BattleTeam m_ai;
 	BattleTeam m_foe;
-	containers::static_vector<Species, static_cast<intmax_t>(max_pokemon_per_team)> m_slot_memory;
 	UpdatedHP m_updated_hp;
 	Weather m_weather;
 	BattleTeam * m_first = nullptr;

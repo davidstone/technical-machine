@@ -20,6 +20,7 @@
 
 #include "inmessage.hpp"
 #include "json_parser.hpp"
+#include "slot_memory.hpp"
 
 #include "../battle.hpp"
 
@@ -56,6 +57,7 @@ struct BattleParser {
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_random_engine(random_engine),
+		m_slot_memory(team.size()),
 		m_battle(
 			overall,
 			detailed,
@@ -70,9 +72,6 @@ struct BattleParser {
 			100_bi
 		)
 	{
-		for (auto const index : containers::integer_range(opponent_team_size)) {
-			push_back(m_slot_memory, index + 1_bi);
-		}
 	}
 	
 	void handle_message(InMessage message);
@@ -87,15 +86,17 @@ private:
 	void send_move(Moves const move);
 	void send_random_move();
 	void send_message(std::string_view message);
-
+	
 	boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & m_websocket;
 	std::string m_id;
 	std::string m_username;
 	std::mt19937 m_random_engine;
+
+	SlotMemory m_slot_memory;
+
 	Battle m_battle;
-	using ShowdownIndex = decltype(std::declval<containers::index_type<PokemonContainer>>() + 1_bi);
-	containers::static_vector<ShowdownIndex, max_pokemon_per_team.value()> m_slot_memory;
 	bool m_completed = false;
+	bool m_replacing_fainted = false;
 };
 
 

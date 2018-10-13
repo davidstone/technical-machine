@@ -170,6 +170,7 @@ add_executable(ai
 	source/clients/pokemon_showdown/client.cpp
 	source/clients/pokemon_showdown/inmessage.cpp
 	source/clients/pokemon_showdown/json_parser.cpp
+	source/clients/pokemon_showdown/slot_memory.cpp
 
 	source/clients/battle.cpp
 	source/clients/battle_result.cpp
@@ -203,6 +204,8 @@ target_link_libraries(predict
 
 
 add_executable(tm_test
+	source/test/clients/pokemon_showdown/slot_memory.cpp
+
 	source/test/collections/collection.cpp
 	source/test/collections/invalid_collection.cpp
 	source/test/collections/move_container.cpp

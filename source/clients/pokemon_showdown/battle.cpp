@@ -323,6 +323,7 @@ void BattleParser::handle_message(InMessage message) {
 		auto const party = party_from_pokemon_id(message.next());
 		m_battle.handle_fainted(party, slot);
 		if (m_battle.is_me(party)) {
+			m_replacing_fainted = true;
 			send_move(m_battle.determine_action(m_random_engine));
 		}
 	} else if (message.type() == "-fieldend") {
@@ -400,9 +401,18 @@ void BattleParser::handle_message(InMessage message) {
 		auto const status = message.next();
 		static_cast<void>(status);
 		
+		if (m_battle.is_me(party)) {
+			auto const index = m_battle.species_index(details.species);
+			if (m_replacing_fainted) {
+				m_slot_memory.replace_fainted(index);
+				m_replacing_fainted = false;
+			} else {
+				m_slot_memory.switch_to(index);
+			}
+		}
+
 		constexpr auto slot = 0;
-		constexpr auto index = 0;
-		m_battle.handle_send_out(party, slot, index, std::string(pokemon), details.species, details.gender, details.level);
+		m_battle.handle_send_out(party, slot, std::string(pokemon), details.species, details.gender, details.level);
 	} else if (message.type() == "replace") {
 #if 0
 		// Illusion ended
@@ -456,7 +466,7 @@ void BattleParser::send_move(Moves const move) {
 	// In doubles / triples we need to specify " TARGET" at the end for regular
 	// moves
 	using std::to_string;
-	auto switch_move = [&]{ return to_string(to_replacement(move) + 1_bi); };
+	auto switch_move = [&]{ return to_string(m_slot_memory[to_replacement(move)]); };
 	auto move_index = [&]{ return to_string(m_battle.move_index(move) + 1_bi); };
 	send_message(m_id + (is_switch(move) ? "|/switch " + switch_move() : "|/move " + move_index()));
 }
@@ -476,7 +486,6 @@ void BattleParser::send_random_move() {
 void BattleParser::send_message(std::string_view const message) {
 	m_websocket.write(boost::asio::buffer(message));
 }
-
 
 }	// namespace ps
 }	// namespace technicalmachine

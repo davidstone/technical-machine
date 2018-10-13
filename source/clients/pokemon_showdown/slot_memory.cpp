@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -15,21 +15,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-#include <bounded/integer.hpp>
-
-namespace technicalmachine {
-using namespace bounded::literal;
-
-constexpr auto max_pokemon_per_team = 6_bi;
-using TeamSize = bounded::checked_integer<
-	0,
-	static_cast<intmax_t>(max_pokemon_per_team)
->;
-using TeamIndex = bounded::checked_integer<
-	0,
-	static_cast<intmax_t>(max_pokemon_per_team - 1_bi)
->;
-
-}	// namespace technicalmachine
+#include "slot_memory.hpp"

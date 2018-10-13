@@ -78,7 +78,6 @@ Battle::Battle(
 	m_opponent(std::move(opponent_)),
 	m_ai(std::move(team)),
 	m_foe(foe_size),
-	m_slot_memory(begin(m_ai.team.all_pokemon()), end(m_ai.team.all_pokemon())),
 	m_updated_hp(m_ai.team),
 	m_depth(battle_depth),
 	m_max_damage_precision(max_damage_precision_),
@@ -142,7 +141,7 @@ auto switch_or_add(PokemonCollection & collection, Species const species, Args&&
 
 }	// namespace
 
-void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, uint8_t /*index*/, std::string const & nickname, Species const species, Gender const gender, Level const level) {
+void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, std::string const & nickname, Species const species, Gender const gender, Level const level) {
 	auto & switcher = get_team(switcher_party);
 	auto & other = get_team(technicalmachine::other(switcher_party));
 
@@ -248,15 +247,6 @@ void Battle::handle_end(Result const result, std::mt19937 & random_engine) const
 	}
 }
 
-uint8_t Battle::switch_slot(Moves const move) const {
-	Species const name = m_ai.team.pokemon(to_replacement(move));
-	auto const it = containers::find(m_slot_memory, name);
-	if (it == end(m_slot_memory)) {
-		throw PokemonNotFound(name);
-	}
-	return static_cast<std::uint8_t>(it - begin(m_slot_memory));
-}
-
 void Battle::do_turn() {
 	assert(m_first);
 	assert(m_last);
@@ -338,13 +328,6 @@ auto normalize_hp(MutableActivePokemon pokemon, bool const fainted) {
 void Battle::normalize_hp(Team & team) {
 	bool const fainted = m_updated_hp.is_fainted(team.is_me(), team.pokemon());
 	technicalmachine::normalize_hp(team.pokemon(), fainted);
-}
-
-void Battle::slot_memory_bring_to_front() {
-	auto const it = containers::find(m_slot_memory, m_ai.team.replacement());
-	if (it != end(m_slot_memory)) {
-		std::swap(*it, front(m_slot_memory));
-	}
 }
 
 } // namespace technicalmachine

@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,19 +17,11 @@
 
 #pragma once
 
-#include <bounded/integer.hpp>
-
 namespace technicalmachine {
-using namespace bounded::literal;
+namespace ps {
 
-constexpr auto max_pokemon_per_team = 6_bi;
-using TeamSize = bounded::checked_integer<
-	0,
-	static_cast<intmax_t>(max_pokemon_per_team)
->;
-using TeamIndex = bounded::checked_integer<
-	0,
-	static_cast<intmax_t>(max_pokemon_per_team - 1_bi)
->;
+void test_slot_memory();
 
-}	// namespace technicalmachine
+} // namespace ps
+} // namespace technicalmachine
+
