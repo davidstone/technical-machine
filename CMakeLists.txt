@@ -177,7 +177,6 @@ add_executable(ai
 	source/clients/no_pending_challenges.cpp
 	source/clients/party.cpp
 	source/clients/timestamp.cpp
-	source/clients/updated_hp.cpp
 
 	source/ai.cpp
 )
