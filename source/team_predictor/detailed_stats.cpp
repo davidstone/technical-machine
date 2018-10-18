@@ -81,7 +81,7 @@ auto top_sub_elements(boost::property_tree::ptree const & pt) {
 		containers::range_view(pointer_from(begin(data)), middle),
 		[](auto const & probability) { return from_string<Moves>(probability.second); }
 	);
-	return DetailedStats::UsedMoves(begin(range), end(range));
+	return DetailedStats::UsedMoves(range);
 }
 
 }	// namespace
