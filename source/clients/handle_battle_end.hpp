@@ -1,4 +1,4 @@
-// Predict foe's team
+// Generic battle
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
@@ -18,17 +18,19 @@
 
 #pragma once
 
-#include "load_stats.hpp"
+#include "battle_result.hpp"
 
-#include "../team.hpp"
+#include "../team_predictor/load_stats.hpp"
 
 #include <random>
+#include <string_view>
 
 namespace technicalmachine {
 
+struct Team;
 struct DetailedStats;
 struct Multiplier;
 
-Team predict_team(OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead_stats, Multiplier const & multiplier, Team team, std::mt19937 & random_engine);
+void handle_battle_end(Result result, std::string_view opponent, OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead, Multiplier const & multiplier, Team const & foe_team, std::mt19937 & random_engine);
 
 }	// namespace technicalmachine

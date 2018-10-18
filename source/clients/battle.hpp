@@ -19,6 +19,7 @@
 #pragma once
 
 #include "battle_result.hpp"
+#include "handle_battle_end.hpp"
 #include "party.hpp"
 
 #include "../endofturn.hpp"
@@ -138,7 +139,9 @@ struct Battle {
 		active_pokemon.faint();
 	}
 
-	void handle_end(Result result, std::mt19937 & random_engine) const;
+	void handle_end(Result result, std::mt19937 & random_engine) const {
+		handle_battle_end(result, m_opponent, m_overall, m_detailed, m_lead, m_multiplier, m_foe.team, random_engine);
+	}
 
 	void handle_hp_change(Party const changing, uint8_t /*slot*/, VisibleHP const visible_remaining_hp) {
 		auto & team = get_team(changing).team;

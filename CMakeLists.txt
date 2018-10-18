@@ -174,6 +174,7 @@ add_executable(ai
 
 	source/clients/battle.cpp
 	source/clients/battle_result.cpp
+	source/clients/handle_battle_end.cpp
 	source/clients/no_pending_challenges.cpp
 	source/clients/party.cpp
 	source/clients/timestamp.cpp

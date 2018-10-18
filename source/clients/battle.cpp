@@ -18,24 +18,15 @@
 
 #include "battle.hpp"
 
-#include "battle_result.hpp"
-#include "random_string.hpp"
-#include "timestamp.hpp"
-
-#include "pokemon_lab/write_team_file.hpp"
-
 #include "../switch.hpp"
 #include "../team.hpp"
 #include "../weather.hpp"
 
 #include "../evaluate/expectiminimax.hpp"
 
-#include "../move/is_switch.hpp"
 #include "../move/move.hpp"
 #include "../move/moves.hpp"
 #include "../move/use_move.hpp"
-
-#include "../pokemon/pokemon_not_found.hpp"
 
 #include "../string_conversions/move.hpp"
 #include "../string_conversions/pokemon.hpp"
@@ -43,15 +34,12 @@
 #include "../team_predictor/team_predictor.hpp"
 
 #include <containers/algorithms/find.hpp>
-#include <containers/integer_range.hpp>
+#include <containers/index_type.hpp>
 
-#include <algorithm>
-#include <cassert>
-#include <cstdint>
-#include <filesystem>
 #include <iostream>
 #include <random>
 #include <string>
+#include <utility>
 
 namespace technicalmachine {
 struct DetailedStats;
@@ -130,40 +118,6 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, std::
 		set_phaze_index(other.variable, switcher.team, species);
 	} else if (!moved(switcher.team.pokemon())) {
 		switcher.flags.used_move.emplace(Move(to_switch(switcher.team.all_pokemon().index())), 0_bi);
-	}
-}
-
-namespace {
-
-std::string get_extension() {
-	// TODO: add support for other formats
-	return ".sbt";
-}
-
-std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
-	// Randomly generates a file name in 8.3 format. It then checks to see if
-	// that file name already exists. If it does, it randomly generates a new
-	// file name, and continues until it generates a name that does not exist.
-	// This limits the potential for a race condition down to a 1 / 36^8 chance
-	// (about 1 / 2 ^ 41), assuming that another process / thread is also
-	// trying to save an 8 character file name with an identical extension at
-	// the same time. The result of this is that a team file would not be saved
-	// when it should have been, which is not a major issue.
-	constexpr unsigned file_name_length = 8;
-	std::filesystem::path foe_team_file;
-	do {
-		foe_team_file = "teams/foe";
-		foe_team_file /= random_string(random_engine, file_name_length) + get_extension();
-	} while (std::filesystem::exists(foe_team_file));
-	return foe_team_file;
-}
-
-}	// namespace
-
-void Battle::handle_end(Result const result, std::mt19937 & random_engine) const {
-	std::cout << timestamp() << ": " << to_string(result) << " a battle vs. " << m_opponent << '\n';
-	if (result == Result::lost) {
-		pl::write_team(predict_foe_team(random_engine), generate_team_file_name(random_engine));
 	}
 }
 
