@@ -56,34 +56,6 @@
 namespace technicalmachine {
 struct DetailedStats;
 
-Battle::Battle(
-	OverallStats const & overall,
-	DetailedStats const & detailed,
-	LeadStats const & lead,
-	Multiplier const & multiplier,
-	Evaluate const & evaluate,
-	Party const party,
-	std::string opponent_,
-	unsigned const battle_depth,
-	Team team,
-	TeamSize const foe_size,
-	VisibleFoeHP const max_damage_precision_
-):
-	m_overall(overall),
-	m_detailed(detailed),
-	m_lead(lead),
-	m_multiplier(multiplier),
-	m_evaluate(evaluate),
-	m_opponent(std::move(opponent_)),
-	m_ai(std::move(team)),
-	m_foe(foe_size),
-	m_depth(battle_depth),
-	m_max_damage_precision(max_damage_precision_),
-	
-	m_ai_party(party)
-{
-}
-
 Team Battle::predict_foe_team(std::mt19937 & random_engine) const {
 	return predict_team(m_overall, m_detailed, m_lead, m_multiplier, m_foe.team, random_engine);
 }

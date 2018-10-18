@@ -57,7 +57,33 @@ using VisibleHP = std::common_type_t<VisibleFoeHP, HP::current_type>;
 // yet support.
 
 struct Battle {
-	Battle(OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead, Multiplier const & multiplier, Evaluate const & evaluate, Party party, std::string opponent, unsigned battle_depth, Team team, TeamSize foe_size, VisibleFoeHP max_damage_precision = 48_bi);
+	Battle(
+		OverallStats const & overall,
+		DetailedStats const & detailed,
+		LeadStats const & lead,
+		Multiplier const & multiplier,
+		Evaluate const & evaluate,
+		Party const party,
+		std::string opponent_,
+		unsigned const battle_depth,
+		Team team,
+		TeamSize const foe_size,
+		VisibleFoeHP const max_damage_precision_ = 48_bi
+	):
+		m_overall(overall),
+		m_detailed(detailed),
+		m_lead(lead),
+		m_multiplier(multiplier),
+		m_evaluate(evaluate),
+		m_opponent(std::move(opponent_)),
+		m_ai(std::move(team)),
+		m_foe(foe_size),
+		m_depth(battle_depth),
+		m_max_damage_precision(max_damage_precision_),
+		m_ai_party(party)
+	{
+	}
+
 
 	Moves determine_action(std::mt19937 & random_engine) const;
 	
