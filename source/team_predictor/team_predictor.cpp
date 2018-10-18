@@ -18,10 +18,8 @@
 
 #include "team_predictor.hpp"
 
-#include "detailed_stats.hpp"
 #include "estimate.hpp"
-#include "load_stats.hpp"
-#include "multiplier.hpp"
+#include "usage_stats.hpp"
 
 #include "ev_optimizer/ev_optimizer.hpp"
 
@@ -67,10 +65,10 @@ void predict_move(MoveContainer & moves, DetailedStats::UsedMoves const & detail
 
 }	// namespace
 
-Team predict_team(OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead, Multiplier const & multiplier, Team team, std::mt19937 & random_engine) {
-	constexpr auto total = 961058U; // Total number of teams
-	
-	auto estimate = Estimate(overall, lead, total);
+Team predict_team(UsageStats const & usage_stats, LeadStats const lead_stats, Team team, std::mt19937 & random_engine) {
+	auto const & multiplier = usage_stats.multiplier();
+	auto const & detailed = usage_stats.detailed();
+	auto estimate = Estimate(usage_stats, lead_stats);
 	estimate.update(multiplier, team);
 
 	predict_pokemon(team, estimate, multiplier);

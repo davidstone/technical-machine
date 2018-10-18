@@ -118,9 +118,10 @@ add_library(tm_common STATIC
 
 	source/team_predictor/detailed_stats.cpp
 	source/team_predictor/estimate.cpp
-	source/team_predictor/load_stats.cpp
+	source/team_predictor/lead_stats.cpp
 	source/team_predictor/multiplier.cpp
 	source/team_predictor/team_predictor.cpp
+	source/team_predictor/usage_stats.cpp
 
 	source/type/collection.cpp
 	source/type/effectiveness.cpp

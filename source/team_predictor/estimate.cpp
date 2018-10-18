@@ -1,5 +1,4 @@
-// Class to help get the next most likely Pokemon
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,11 +17,13 @@
 
 #include "estimate.hpp"
 
-#include "multiplier.hpp"
+#include "usage_stats.hpp"
 
 #include "../team.hpp"
 
 #include <containers/algorithms/accumulate.hpp>
+#include <containers/algorithms/find.hpp>
+#include <containers/integer_range.hpp>
 
 #include <algorithm>
 #include <cstddef>
@@ -30,9 +31,12 @@
 
 namespace technicalmachine {
 
-Estimate::Estimate(OverallStats const & overall, LeadStats const & lead, unsigned const total) {
+Estimate::Estimate(UsageStats const & usage_stats, LeadStats const lead_stats) {
+	auto const & overall = usage_stats.overall();
+	auto const & lead = lead_stats.get(usage_stats);
+	auto const total = containers::accumulate(overall);
 	for (auto const species : containers::enum_range<Species>()) {
-		estimate[species] = lead[species] * static_cast<LeadStats::value_type>(overall[species] / static_cast<LeadStats::value_type>(total));
+		estimate[species] = lead[species] * static_cast<value_type>(overall[species]) / static_cast<value_type>(total);
 	}
 }
 

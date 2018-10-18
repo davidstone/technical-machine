@@ -20,17 +20,14 @@
 
 #include "battle_result.hpp"
 
-#include "../team_predictor/load_stats.hpp"
-
 #include <random>
 #include <string_view>
 
 namespace technicalmachine {
 
+struct UsageStats;
 struct Team;
-struct DetailedStats;
-struct Multiplier;
 
-void handle_battle_end(Result result, std::string_view opponent, OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead, Multiplier const & multiplier, Team const & foe_team, std::mt19937 & random_engine);
+void handle_battle_end(Result result, std::string_view opponent, UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine);
 
 }	// namespace technicalmachine

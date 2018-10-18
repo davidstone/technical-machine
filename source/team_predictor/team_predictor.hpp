@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "load_stats.hpp"
+#include "lead_stats.hpp"
 
 #include "../team.hpp"
 
@@ -26,9 +26,8 @@
 
 namespace technicalmachine {
 
-struct DetailedStats;
-struct Multiplier;
+struct UsageStats;
 
-Team predict_team(OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead_stats, Multiplier const & multiplier, Team team, std::mt19937 & random_engine);
+Team predict_team(UsageStats const & usage_stats, LeadStats lead_stats, Team team, std::mt19937 & random_engine);
 
 }	// namespace technicalmachine

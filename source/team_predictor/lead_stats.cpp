@@ -1,4 +1,3 @@
-// Header for loading stats like Pokemon usages
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,21 +15,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "lead_stats.hpp"
+#include "usage_stats.hpp"
 
-#include "../pokemon/species.hpp"
-
-#include <containers/array/array.hpp>
-
-#include <filesystem>
+#include <containers/array/make_array.hpp>
 
 namespace technicalmachine {
 
-using OverallStats = containers::array<unsigned, number_of_species>;
-auto overall_stats(std::filesystem::path const & path) -> OverallStats;
+auto LeadStats::get(UsageStats const & usage_stats) const -> containers::array<float, number_of_species> const & {
+	static constexpr auto unused_lead = containers::make_array_n(bounded::constant<number_of_species>, 1.0F);
+	return m_use_lead_stats ? usage_stats.lead() : unused_lead;
+}
 
-// Multiplier for Pokemon after you've seen the lead
-using LeadStats = containers::array<float, number_of_species>;
-auto lead_stats(std::filesystem::path const & path) -> LeadStats;
-
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -59,10 +59,10 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 
 }	// namespace
 
-void handle_battle_end(Result const result, std::string_view const opponent, OverallStats const & overall, DetailedStats const & detailed, LeadStats const & lead, Multiplier const & multiplier, Team const & foe_team, std::mt19937 & random_engine) {
+void handle_battle_end(Result const result, std::string_view const opponent, UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine) {
 	std::cout << timestamp() << ": " << to_string(result) << " a battle vs. " << opponent << '\n';
 	if (result == Result::lost) {
-		auto const team = predict_team(overall, detailed, lead, multiplier, foe_team, random_engine);
+		auto const team = predict_team(usage_stats, use_lead_stats, foe_team, random_engine);
 		pl::write_team(team, generate_team_file_name(random_engine));
 	}
 }

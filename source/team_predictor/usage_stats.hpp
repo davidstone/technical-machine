@@ -1,4 +1,3 @@
-// Teammate stat multipliers
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
@@ -18,6 +17,9 @@
 
 #pragma once
 
+#include "detailed_stats.hpp"
+#include "multiplier.hpp"
+
 #include "../pokemon/species.hpp"
 
 #include <containers/array/array.hpp>
@@ -26,18 +28,18 @@
 
 namespace technicalmachine {
 
-using OverallStats = containers::array<unsigned, number_of_species>;
-
-struct Multiplier {
-	using value_type = float;
-	Multiplier(OverallStats const & overall, std::filesystem::path const & teammate_stats);
-	value_type operator()(Species species1, Species species2) const;
+struct UsageStats {
+	explicit UsageStats(std::filesystem::path const & usage_stats_directory);
+	auto const & overall() const { return m_overall; }
+	auto const & lead() const { return m_lead; }
+	auto const & detailed() const { return m_detailed; }
+	auto const & multiplier() const { return m_multiplier; }
 private:
-	using Container = containers::array<value_type, number_of_species, number_of_species>;
-	static Container species_clause();
-	void load_listed_multipliers(OverallStats const & overall, std::filesystem::path const & teammate_stats, OverallStats & unaccounted);
-	void estimate_remaining(OverallStats const & overall, OverallStats const & unaccounted);
-	Container multiplier;
+	OverallStats m_overall;
+	// Multiplier for Pokemon after you've seen the lead
+	containers::array<float, number_of_species> m_lead;
+	DetailedStats m_detailed;
+	Multiplier m_multiplier;
 };
 
 }	// namespace technicalmachine

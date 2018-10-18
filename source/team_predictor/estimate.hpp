@@ -1,5 +1,4 @@
-// Class to help get the next most likely Pokemon
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,7 +17,8 @@
 
 #pragma once
 
-#include "load_stats.hpp"
+#include "lead_stats.hpp"
+
 #include "../pokemon/species.hpp"
 
 #include <containers/array/array.hpp>
@@ -26,18 +26,20 @@
 #include <random>
 
 namespace technicalmachine {
+
 struct Multiplier;
 struct Team;
+struct UsageStats;
 
 struct Estimate {
-	Estimate(OverallStats const & overall, LeadStats const & lead, unsigned total);
+	Estimate(UsageStats const & usage_stats, LeadStats lead_stats);
 	void update(Multiplier const & multiplier, Team const & team);
 	void update(Multiplier const & multiplier, Species seen);
 	Species most_likely() const;
 	Species random(std::mt19937 & random_engine) const;
 private:
-	using Container = containers::array<float, number_of_species>;
-	Container estimate;
+	using value_type = float;
+	containers::array<value_type, number_of_species> estimate;
 };
 
 }	// namespace technicalmachine

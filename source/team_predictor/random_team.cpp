@@ -19,8 +19,7 @@
 #include "random_team.hpp"
 
 #include "estimate.hpp"
-#include "load_stats.hpp"
-#include "multiplier.hpp"
+#include "usage_stats.hpp"
 
 #include "../team.hpp"
 
@@ -31,15 +30,13 @@
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/integer_range.hpp>
 
-#include <algorithm>
-#include <numeric>
 #include <random>
 
 namespace technicalmachine {
 
-void random_team(OverallStats const & overall, Multiplier const & multiplier, Team & team, std::mt19937 & random_engine) {
-	constexpr auto lead = containers::make_array_n(bounded::constant<number_of_species>, 1.0F);
-	auto estimate = Estimate(overall, lead, containers::accumulate(overall));
+void random_team(UsageStats const & usage_stats, Team & team, std::mt19937 & random_engine) {
+	auto estimate = Estimate(usage_stats, do_not_use_lead_stats);
+	auto const & multiplier = usage_stats.multiplier();
 	estimate.update(multiplier, team);
 	for (auto const n [[maybe_unused]] : containers::integer_range(max_pokemon_per_team - size(team.all_pokemon()))) {
 		auto const species = estimate.random(random_engine);

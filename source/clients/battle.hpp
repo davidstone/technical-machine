@@ -38,8 +38,6 @@
 #include "../string_conversions/move.hpp"
 #include "../string_conversions/pokemon.hpp"
 
-#include "../team_predictor/load_stats.hpp"
-
 #include <containers/static_vector/static_vector.hpp>
 
 #include <iostream>
@@ -48,8 +46,7 @@
 #include <utility>
 
 namespace technicalmachine {
-struct DetailedStats;
-struct Multiplier;
+struct UsageStats;
 
 using VisibleFoeHP = bounded::checked_integer<48, 100>;
 using VisibleHP = std::common_type_t<VisibleFoeHP, HP::current_type>;
@@ -59,10 +56,7 @@ using VisibleHP = std::common_type_t<VisibleFoeHP, HP::current_type>;
 
 struct Battle {
 	Battle(
-		OverallStats const & overall,
-		DetailedStats const & detailed,
-		LeadStats const & lead,
-		Multiplier const & multiplier,
+		UsageStats const & usage_stats,
 		Evaluate const & evaluate,
 		Party const party,
 		std::string opponent_,
@@ -71,10 +65,7 @@ struct Battle {
 		TeamSize const foe_size,
 		VisibleFoeHP const max_damage_precision_ = 48_bi
 	):
-		m_overall(overall),
-		m_detailed(detailed),
-		m_lead(lead),
-		m_multiplier(multiplier),
+		m_usage_stats(usage_stats),
 		m_evaluate(evaluate),
 		m_opponent(std::move(opponent_)),
 		m_ai(std::move(team)),
@@ -140,7 +131,7 @@ struct Battle {
 	}
 
 	void handle_end(Result result, std::mt19937 & random_engine) const {
-		handle_battle_end(result, m_opponent, m_overall, m_detailed, m_lead, m_multiplier, m_foe.team, random_engine);
+		handle_battle_end(result, m_opponent, m_usage_stats, m_foe.team, random_engine);
 	}
 
 	void handle_hp_change(Party const changing, uint8_t /*slot*/, VisibleHP const visible_remaining_hp) {
@@ -199,10 +190,7 @@ private:
 		return is_me(party) ? m_ai : m_foe;
 	}
 
-	OverallStats const & m_overall;
-	DetailedStats const & m_detailed;
-	LeadStats const & m_lead;
-	Multiplier const & m_multiplier;
+	UsageStats const & m_usage_stats;
 	Evaluate m_evaluate;
 	std::string m_opponent;
 	BattleTeam m_ai;

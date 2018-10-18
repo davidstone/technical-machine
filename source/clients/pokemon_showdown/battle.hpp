@@ -43,10 +43,7 @@ struct BattleParser {
 		boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket,
 		std::string id_,
 		std::string username,
-		OverallStats const & overall,
-		DetailedStats const & detailed,
-		LeadStats const & lead,
-		Multiplier const & multiplier,
+		UsageStats const & usage_stats,
 		Evaluate evaluate,
 		Party party,
 		std::string opponent,
@@ -61,10 +58,7 @@ struct BattleParser {
 		m_random_engine(random_engine),
 		m_slot_memory(team.size()),
 		m_battle(
-			overall,
-			detailed,
-			lead,
-			multiplier,
+			usage_stats,
 			evaluate,
 			party,
 			std::move(opponent),
@@ -106,10 +100,7 @@ struct BattleFactory {
 	BattleFactory(
 		std::string id_,
 		std::string username,
-		OverallStats const & overall,
-		DetailedStats const & detailed,
-		LeadStats const & lead,
-		Multiplier const & multiplier,
+		UsageStats const & usage_stats,
 		Evaluate evaluate,
 		unsigned depth,
 		std::mt19937 random_engine,
@@ -117,10 +108,7 @@ struct BattleFactory {
 	):
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
-		m_overall(overall),
-		m_detailed(detailed),
-		m_lead(lead),
-		m_multiplier(multiplier),
+		m_usage_stats(usage_stats),
 		m_evaluate(evaluate),
 		m_depth(depth),
 		m_random_engine(random_engine),
@@ -146,10 +134,7 @@ private:
 
 	std::string m_id;
 	std::string m_username;
-	OverallStats const & m_overall;
-	DetailedStats const & m_detailed;
-	LeadStats const & m_lead;
-	Multiplier const & m_multiplier;
+	UsageStats const & m_usage_stats;
 	Evaluate m_evaluate;
 	unsigned m_depth;
 	std::mt19937 m_random_engine;

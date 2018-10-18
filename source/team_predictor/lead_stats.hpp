@@ -1,4 +1,3 @@
-// Teammate stat multipliers
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
@@ -22,22 +21,23 @@
 
 #include <containers/array/array.hpp>
 
-#include <filesystem>
-
 namespace technicalmachine {
 
-using OverallStats = containers::array<unsigned, number_of_species>;
+struct UsageStats;
 
-struct Multiplier {
-	using value_type = float;
-	Multiplier(OverallStats const & overall, std::filesystem::path const & teammate_stats);
-	value_type operator()(Species species1, Species species2) const;
+struct LeadStats {
+	constexpr explicit LeadStats(bool const use_lead_stats):
+		m_use_lead_stats(use_lead_stats)
+	{
+	}
+	
+	auto get(UsageStats const & usage_stats) const -> containers::array<float, number_of_species> const &;
+
 private:
-	using Container = containers::array<value_type, number_of_species, number_of_species>;
-	static Container species_clause();
-	void load_listed_multipliers(OverallStats const & overall, std::filesystem::path const & teammate_stats, OverallStats & unaccounted);
-	void estimate_remaining(OverallStats const & overall, OverallStats const & unaccounted);
-	Container multiplier;
+	bool m_use_lead_stats;
 };
+
+constexpr auto use_lead_stats = LeadStats(true);
+constexpr auto do_not_use_lead_stats = LeadStats(false);
 
 }	// namespace technicalmachine

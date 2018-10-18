@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "load_stats.hpp"
+#include "usage_stats.hpp"
 
 #include "../invalid_settings_file.hpp"
 
@@ -53,12 +53,12 @@ auto load_stats_from_file(std::filesystem::path const & file_name) {
 
 }	// namespace
 
-auto overall_stats(std::filesystem::path const & path) -> OverallStats {
-	return load_stats_from_file<unsigned>(path);
-}
-
-auto lead_stats(std::filesystem::path const & path) -> LeadStats {
-	return load_stats_from_file<float>(path);
+UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory):
+	m_overall(load_stats_from_file<unsigned>(usage_stats_directory / "usage.txt")),
+	m_lead(load_stats_from_file<float>(usage_stats_directory / "lead.txt")),
+	m_detailed(),
+	m_multiplier(m_overall, usage_stats_directory / "teammate.txt")
+{
 }
 
 }	// namespace technicalmachine

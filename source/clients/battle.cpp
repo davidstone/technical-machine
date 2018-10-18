@@ -45,7 +45,7 @@ namespace technicalmachine {
 struct DetailedStats;
 
 Team Battle::predict_foe_team(std::mt19937 & random_engine) const {
-	return predict_team(m_overall, m_detailed, m_lead, m_multiplier, m_foe.team, random_engine);
+	return predict_team(m_usage_stats, use_lead_stats, m_foe.team, random_engine);
 }
 
 Moves Battle::determine_action(std::mt19937 & random_engine) const {
