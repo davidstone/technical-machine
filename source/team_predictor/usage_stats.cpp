@@ -35,7 +35,7 @@ namespace {
 
 template<typename T>
 auto load_stats_from_file(std::filesystem::path const & file_name) {
-	containers::array<T, number_of_species> overall = {{}};
+	containers::array<T, number_of_species> overall = {};
 	auto file = std::ifstream(file_name);
 	if (!file.is_open()) {
 		throw InvalidSettingsFile(file_name, InvalidSettingsFile::does_not_exist);
@@ -56,7 +56,7 @@ auto load_stats_from_file(std::filesystem::path const & file_name) {
 UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory):
 	m_overall(load_stats_from_file<unsigned>(usage_stats_directory / "usage.txt")),
 	m_lead(load_stats_from_file<float>(usage_stats_directory / "lead.txt")),
-	m_detailed(),
+	m_detailed(usage_stats_directory / "detailed.xml"),
 	m_multiplier(m_overall, usage_stats_directory / "teammate.txt")
 {
 }

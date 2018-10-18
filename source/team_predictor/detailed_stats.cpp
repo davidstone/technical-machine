@@ -86,12 +86,12 @@ auto top_sub_elements(boost::property_tree::ptree const & pt) {
 
 }	// namespace
 
-DetailedStats::DetailedStats():
+DetailedStats::DetailedStats(std::filesystem::path const & path):
 	item(),
 	ability(),
 	nature() {
 	boost::property_tree::ptree pt;
-	read_xml("settings/4/OU/detailed.xml", pt);
+	read_xml(path.string(), pt);
 	
 	auto const all_stats = pt.get_child("stats");
 	for (auto const & value : all_stats) {
