@@ -226,6 +226,26 @@ bounded::optional<BattleParser> BattleFactory::make(boost::beast::websocket::str
 	);
 }
 
+namespace {
+
+template<typename Container, typename Value>
+constexpr auto container_index(Container const & container, Value const value, std::string_view const text) {
+	auto const it = containers::find(container, value);
+	if (it == end(container)) {
+		throw std::runtime_error(std::string(text) + std::string(to_string(value)));
+	}
+	return static_cast<containers::index_type<Container>>(it - begin(container));
+}
+
+auto get_move_index(Pokemon const & pokemon, Moves const move) {
+	return container_index(all_moves(pokemon).regular(), move, "Pokemon does not know ");
+}
+auto get_species_index(Team const & team, Species const species) {
+	return container_index(team.all_pokemon(), species, "Team does not have a ");
+}
+
+} // namespace
+
 
 void BattleParser::handle_message(InMessage message) {
 	std::cout << "Message: " << message.type() << '\n';
@@ -419,7 +439,7 @@ void BattleParser::handle_message(InMessage message) {
 		static_cast<void>(status);
 		
 		if (m_battle.is_me(party)) {
-			auto const index = m_battle.species_index(details.species);
+			auto const index = get_species_index(m_battle.ai(), details.species);
 			if (m_replacing_fainted) {
 				m_slot_memory.replace_fainted(index);
 				m_replacing_fainted = false;
@@ -453,7 +473,7 @@ void BattleParser::handle_message(InMessage message) {
 		// position here is "0", "1", or "2"
 #endif
 	} else if (message.type() == "tie") {
-		m_battle.handle_end(Result::tied, m_random_engine);
+		handle_battle_end(Result::tied, m_battle.foe_name(), m_usage_stats, m_battle.foe(), m_random_engine);
 		m_completed = true;
 	} else if (message.type() == "-transform") {
 		// message.remainder() == POKEMON|SPECIES
@@ -474,7 +494,8 @@ void BattleParser::handle_message(InMessage message) {
 #endif
 	} else if (message.type() == "win") {
 		auto const won = m_username == message.next();
-		m_battle.handle_end(won ? Result::won : Result::lost, m_random_engine);
+		auto const result = won ? Result::won : Result::lost;
+		handle_battle_end(result, m_battle.foe_name(), m_usage_stats, m_battle.foe(), m_random_engine);
 		m_completed = true;
 	} else {
 		std::cerr << "Received battle progress message of unknown type: " << message.type() << ": " << message.remainder() << '\n';
@@ -486,7 +507,7 @@ void BattleParser::send_move(Moves const move) {
 	// moves
 	using std::to_string;
 	auto switch_move = [&]{ return to_string(m_slot_memory[to_replacement(move)]); };
-	auto move_index = [&]{ return to_string(m_battle.move_index(move) + 1_bi); };
+	auto move_index = [&]{ return to_string(get_move_index(m_battle.ai().pokemon(), move) + 1_bi); };
 	send_message(m_id + (is_switch(move) ? "|/switch " + switch_move() : "|/move " + move_index()));
 }
 

@@ -44,13 +44,12 @@
 namespace technicalmachine {
 
 Team Battle::predict_foe_team(std::mt19937 & random_engine) const {
-	return predict_team(m_usage_stats, use_lead_stats, m_foe.team, random_engine);
+	return predict_team(m_usage_stats, use_lead_stats, foe(), random_engine);
 }
 
 Moves Battle::determine_action(std::mt19937 & random_engine) const {
-	if (m_ai.team.size() == 0_bi or m_foe.team.size() == 0_bi) {
-		std::cerr << "Tried to determine an action with an empty team.\n";
-		return Moves::Struggle;
+	if (ai().size() == 0_bi or foe().size() == 0_bi) {
+		throw std::runtime_error("Tried to determine an action with an empty team.");
 	}
 
 	std::cout << std::string(20, '=') + '\n';
@@ -58,7 +57,7 @@ Moves Battle::determine_action(std::mt19937 & random_engine) const {
 	auto predicted = predict_foe_team(random_engine);
 	//std::cout << to_string(predicted) << '\n';
 
-	return expectiminimax(m_ai.team, predicted, m_weather, m_depth, m_evaluate);
+	return expectiminimax(ai(), predicted, m_weather, m_depth, m_evaluate);
 }
 
 void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const move_name) {

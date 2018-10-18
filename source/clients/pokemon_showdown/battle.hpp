@@ -52,6 +52,7 @@ struct BattleParser {
 		Team team,
 		TeamSize opponent_team_size
 	):
+		m_usage_stats(usage_stats),
 		m_websocket(websocket),
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
@@ -82,7 +83,9 @@ private:
 	void send_move(Moves const move);
 	void send_random_move();
 	void send_message(std::string_view message);
-	
+
+	UsageStats const & m_usage_stats;
+		
 	boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & m_websocket;
 	std::string m_id;
 	std::string m_username;

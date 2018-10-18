@@ -59,7 +59,7 @@ struct Battle {
 		UsageStats const & usage_stats,
 		Evaluate const & evaluate,
 		Party const party,
-		std::string opponent_,
+		std::string foe_name_,
 		unsigned const battle_depth,
 		Team team,
 		TeamSize const foe_size,
@@ -67,7 +67,7 @@ struct Battle {
 	):
 		m_usage_stats(usage_stats),
 		m_evaluate(evaluate),
-		m_opponent(std::move(opponent_)),
+		m_foe_name(std::move(foe_name_)),
 		m_ai(std::move(team)),
 		m_foe(foe_size),
 		m_depth(battle_depth),
@@ -75,7 +75,16 @@ struct Battle {
 		m_ai_party(party)
 	{
 	}
-
+	
+	auto const & ai() const {
+		return m_ai.team;
+	}
+	auto const & foe() const {
+		return m_foe.team;
+	}
+	auto foe_name() const -> std::string_view {
+		return m_foe_name;
+	}
 
 	Moves determine_action(std::mt19937 & random_engine) const;
 	
@@ -83,23 +92,6 @@ struct Battle {
 		return m_ai_party == other_party;
 	}
 
-	auto move_index(Moves const move) const {
-		auto const container = all_moves(m_ai.team.pokemon()).regular();
-		auto const it = containers::find(container, move);
-		if (it == end(container)) {
-			throw std::runtime_error("AI's active Pokemon does not know " + std::string(to_string(move)));
-		}
-		return it - begin(container);
-	}
-	auto species_index(Species const species) const {
-		auto const & container = m_ai.team.all_pokemon();
-		auto const it = containers::find(container, species);
-		if (it == end(container)) {
-			throw std::runtime_error("AI's team does not have a " + std::string(to_string(species)));
-		}
-		return TeamIndex(it - begin(container));
-	}
-	
 	template<typename Integer>
 	void handle_begin_turn(Integer const turn_count) {
 		std::cout << "Begin turn " << turn_count << '\n';
@@ -115,8 +107,8 @@ struct Battle {
 		m_ai.flags = {};
 		m_foe.flags = {};
 
-		std::cout << to_string(m_ai.team) << '\n';
-		std::cout << to_string(m_foe.team) << '\n';
+		std::cout << to_string(ai()) << '\n';
+		std::cout << to_string(foe()) << '\n';
 	}
 
 	// TODO: Require passing in all flags associated with this particular use
@@ -128,10 +120,6 @@ struct Battle {
 		auto active_pokemon = team.pokemon();
 		get_hp(active_pokemon) = 0_bi;
 		active_pokemon.faint();
-	}
-
-	void handle_end(Result result, std::mt19937 & random_engine) const {
-		handle_battle_end(result, m_opponent, m_usage_stats, m_foe.team, random_engine);
 	}
 
 	void handle_hp_change(Party const changing, uint8_t /*slot*/, VisibleHP const visible_remaining_hp) {
@@ -192,7 +180,7 @@ private:
 
 	UsageStats const & m_usage_stats;
 	Evaluate m_evaluate;
-	std::string m_opponent;
+	std::string m_foe_name;
 	BattleTeam m_ai;
 	BattleTeam m_foe;
 	Weather m_weather;
