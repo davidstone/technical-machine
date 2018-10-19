@@ -57,7 +57,7 @@ Moves Battle::determine_action(unsigned const depth, std::mt19937 & random_engin
 	auto predicted = predict_foe_team(random_engine);
 	//std::cout << to_string(predicted) << '\n';
 
-	return expectiminimax(ai(), predicted, m_weather, depth, m_evaluate);
+	return expectiminimax(ai(), predicted, weather(), depth, m_evaluate);
 }
 
 void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const move_name) {

@@ -81,6 +81,9 @@ struct Battle {
 	auto foe_name() const -> std::string_view {
 		return m_foe_name;
 	}
+	auto weather() const {
+		return m_weather;
+	}
 
 	Moves determine_action(unsigned depth, std::mt19937 & random_engine) const;
 	
