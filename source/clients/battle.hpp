@@ -58,7 +58,6 @@ struct Battle {
 		Evaluate const & evaluate,
 		Party const party,
 		std::string foe_name_,
-		unsigned const battle_depth,
 		Team team,
 		TeamSize const foe_size,
 		VisibleFoeHP const max_damage_precision_ = 48_bi
@@ -68,7 +67,6 @@ struct Battle {
 		m_foe_name(std::move(foe_name_)),
 		m_ai(std::move(team)),
 		m_foe(foe_size),
-		m_depth(battle_depth),
 		m_max_damage_precision(max_damage_precision_),
 		m_ai_party(party)
 	{
@@ -84,7 +82,7 @@ struct Battle {
 		return m_foe_name;
 	}
 
-	Moves determine_action(std::mt19937 & random_engine) const;
+	Moves determine_action(unsigned depth, std::mt19937 & random_engine) const;
 	
 	bool is_me(Party const other_party) const {
 		return m_ai_party == other_party;
@@ -184,7 +182,6 @@ private:
 	Weather m_weather;
 	BattleTeam * m_first = nullptr;
 	BattleTeam * m_last = nullptr;
-	unsigned m_depth;
 	VisibleFoeHP m_max_damage_precision;
 	Party m_ai_party;
 };

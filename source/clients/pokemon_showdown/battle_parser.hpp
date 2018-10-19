@@ -42,7 +42,7 @@ struct BattleParser {
 		Evaluate evaluate,
 		Party party,
 		std::string opponent,
-		unsigned depth,
+		unsigned const depth,
 		std::mt19937 random_engine,
 		Team team,
 		TeamSize opponent_team_size
@@ -58,11 +58,11 @@ struct BattleParser {
 			evaluate,
 			party,
 			std::move(opponent),
-			depth,
 			std::move(team),
 			opponent_team_size,
 			100_bi
-		)
+		),
+		m_depth(depth)
 	{
 	}
 	
@@ -89,6 +89,7 @@ private:
 	SlotMemory m_slot_memory;
 
 	Battle m_battle;
+	unsigned m_depth;
 	bool m_completed = false;
 	bool m_replacing_fainted = false;
 };

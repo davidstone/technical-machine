@@ -174,7 +174,7 @@ void BattleParser::handle_message(InMessage message) {
 		m_battle.handle_fainted(party, slot);
 		if (m_battle.is_me(party)) {
 			m_replacing_fainted = true;
-			send_move(m_battle.determine_action(m_random_engine));
+			send_move(m_battle.determine_action(m_depth, m_random_engine));
 		}
 	} else if (message.type() == "-fieldend") {
 #if 0
@@ -295,7 +295,7 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (message.type() == "turn") {
 		auto const turn = bounded::to_integer<0, std::numeric_limits<std::uint32_t>::max()>(message.next());
 		m_battle.handle_begin_turn(turn);
-		send_move(m_battle.determine_action(m_random_engine));
+		send_move(m_battle.determine_action(m_depth, m_random_engine));
 	} else if (message.type() == "-unboost") {
 #if 0
 		auto const pokemon = message.next();
