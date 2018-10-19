@@ -1,4 +1,4 @@
-// Pokemon Showdown battle logic
+// Handle Pokemon Showdown messages in a battle
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
@@ -19,17 +19,12 @@
 #pragma once
 
 #include "inmessage.hpp"
-#include "json_parser.hpp"
 #include "slot_memory.hpp"
 
 #include "../battle.hpp"
 
-#include <bounded/optional.hpp>
-#include <containers/vector.hpp>
-
 #include <boost/beast/websocket.hpp>
 
-#include <iostream>
 #include <random>
 #include <string>
 #include <string_view>
@@ -98,59 +93,29 @@ private:
 	bool m_replacing_fainted = false;
 };
 
+constexpr auto make_party(std::string_view player_id) {
+	return 	Party(BOUNDED_CONDITIONAL(player_id == "p1", 0_bi, 1_bi));
+}
 
-struct BattleFactory {
-	BattleFactory(
-		std::string id_,
-		std::string username,
-		UsageStats const & usage_stats,
-		Evaluate evaluate,
-		unsigned depth,
-		std::mt19937 random_engine,
-		Team team
-	):
-		m_id(std::move(id_)),
-		m_username(std::move(username)),
-		m_usage_stats(usage_stats),
-		m_evaluate(evaluate),
-		m_depth(depth),
-		m_random_engine(random_engine),
-		m_team(std::move(team))
-	{
-		std::cout << "Starting a battle with id " << m_id << '\n';
-	}
-	
-	std::string_view id() const {
-		return m_id;
-	}
-	
-	void handle_message(InMessage message);
-	
-	bool completed() const {
-		return m_completed;
-	}
-	bounded::optional<BattleParser> make(boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) &&;
-
-private:
-	enum class Clause { };
-	JSONParser m_parse_json;
-
-	std::string m_id;
-	std::string m_username;
-	UsageStats const & m_usage_stats;
-	Evaluate m_evaluate;
-	unsigned m_depth;
-	std::mt19937 m_random_engine;
-	Team m_team;
-	containers::vector<Clause> m_rules;
-	bounded::optional<std::string> m_opponent;
-	bounded::optional<std::string> m_player_id;
-	bounded::optional<std::string> m_type;	// singles, doubles, triples
-	bounded::optional<std::string> m_tier;
-	bounded::optional<bounded::integer<1, 7>> m_generation;
-	bounded::optional<TeamSize> m_opponent_team_size;
-	bool m_completed = false;
-};
+// This adds additional string scanning, but I don't think the performance
+// matters that much here
+inline auto parse_details(std::string_view details) {
+	auto parser = BufferView(details, ", ");
+	auto const species = from_string<Species>(parser.next());
+	auto const level = Level(bounded::to_integer<Level::min, Level::max>(parser.next().substr(1)));
+	auto const gender_str = parser.next();
+	auto const gender =
+		(gender_str == "F") ? Gender::female :
+		(gender_str == "M") ? Gender::male :
+		(gender_str == "") ? Gender::genderless :
+		throw std::runtime_error("Invalid gender string " + std::string(gender_str));
+	struct result {
+		Species species;
+		Level level;
+		Gender gender;
+	};
+	return result{species, level, gender};
+}
 
 }	// namespace ps
 }	// namespace technicalmachine

@@ -165,7 +165,8 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/test/test1.sbt DESTINATION ${CMAKE_
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/test/test1.tp DESTINATION ${CMAKE_BINARY_DIR}/test)
 
 add_executable(ai
-	source/clients/pokemon_showdown/battle.cpp
+	source/clients/pokemon_showdown/battle_factory.cpp
+	source/clients/pokemon_showdown/battle_parser.cpp
 	source/clients/pokemon_showdown/battles.cpp
 	source/clients/pokemon_showdown/battle_settings.cpp
 	source/clients/pokemon_showdown/client.cpp

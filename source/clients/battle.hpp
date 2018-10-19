@@ -38,8 +38,6 @@
 #include "../string_conversions/move.hpp"
 #include "../string_conversions/pokemon.hpp"
 
-#include <containers/static_vector/static_vector.hpp>
-
 #include <iostream>
 #include <random>
 #include <string>

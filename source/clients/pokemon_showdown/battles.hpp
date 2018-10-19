@@ -18,7 +18,8 @@
 
 #pragma once
 
-#include "battle.hpp"
+#include "battle_factory.hpp"
+#include "battle_parser.hpp"
 #include "../no_pending_challenges.hpp"
 
 #include <algorithm>

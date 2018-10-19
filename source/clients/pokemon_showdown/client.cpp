@@ -21,7 +21,6 @@
 
 #include "client.hpp"
 
-#include "battle.hpp"
 #include "inmessage.hpp"
 
 #include "../random_string.hpp"
