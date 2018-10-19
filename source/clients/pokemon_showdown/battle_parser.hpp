@@ -75,6 +75,7 @@ struct BattleParser {
 		return m_completed;
 	}
 private:
+	Moves determine_action();
 	void send_move(Moves const move);
 	void send_random_move();
 	void send_message(std::string_view message);
