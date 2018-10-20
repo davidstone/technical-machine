@@ -83,17 +83,17 @@ struct Battle {
 		return m_ai_party == other_party;
 	}
 
-	// TODO: require users to specify which team went first
+	// TODO: require users to specify which team went first and whether Shed
+	// Skin activated
 	template<typename Integer>
 	void handle_begin_turn(Integer const turn_count) {
 		std::cout << "Begin turn " << turn_count << '\n';
 		if (turn_count != 1_bi) {
-			end_of_turn(m_ai.team, m_foe.team, m_weather, m_ai.flags.shed_skin, m_foe.flags.shed_skin);
+			constexpr auto ai_shed_skin_activated = false;
+			constexpr auto foe_shed_skin_activated = false;
+			end_of_turn(m_ai.team, m_foe.team, m_weather, ai_shed_skin_activated, foe_shed_skin_activated);
 		}
 		
-		m_ai.flags = {};
-		m_foe.flags = {};
-
 		std::cout << to_string(ai()) << '\n';
 		std::cout << to_string(foe()) << '\n';
 	}
@@ -128,13 +128,6 @@ struct Battle {
 	}
 private:
 	struct BattleTeam {
-		struct Flags {
-			bounded::optional<damage_type> damaged;
-			bounded::optional<UsedMove> used_move;
-			bool awakens = false;
-			bool shed_skin = false;
-		};
-		
 		template<typename... Args>
 		BattleTeam(Args && ... args):
 			team(std::forward<Args>(args)...)
@@ -143,7 +136,6 @@ private:
 
 		Team team;
 		Variable variable;
-		Flags flags;
 	};
 
 	auto to_real_hp(bool const my_pokemon, Pokemon const & changer, VisibleHP const visible_remaining_hp) const -> HP::current_type {

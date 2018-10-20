@@ -50,7 +50,23 @@ void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const mo
 	constexpr auto other_move = bounded::none;
 	constexpr auto miss = false;
 	constexpr auto critical_hit = false;
-	call_move(user.team, move, static_cast<bool>(user.flags.damaged), other.team, other_move, static_cast<bool>(other.flags.damaged), m_weather, user.variable, miss, user.flags.awakens, critical_hit, other.flags.damaged);
+	constexpr auto awakens = false;
+	constexpr auto user_damaged = bounded::optional<damage_type>();
+	constexpr auto other_damaged = bounded::optional<damage_type>();
+	call_move(
+		user.team,
+		move,
+		static_cast<bool>(user_damaged),
+		other.team,
+		other_move,
+		static_cast<bool>(other_damaged),
+		m_weather,
+		user.variable,
+		miss,
+		awakens,
+		critical_hit,
+		other_damaged
+	);
 }
 
 namespace {
@@ -79,12 +95,6 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, std::
 
 	// This assumes Species Clause is in effect
 	switch_or_add(switcher.team, other.team, m_weather, species, level, gender, nickname);
-	
-	if (other.team.number_of_seen_pokemon() != 0_bi and other.flags.used_move and is_phaze(other.flags.used_move->move)) {
-		set_phaze_index(other.variable, switcher.team, species);
-	} else if (!moved(switcher.team.pokemon())) {
-		switcher.flags.used_move.emplace(Move(to_switch(switcher.team.all_pokemon().index())), 0_bi);
-	}
 }
 
 } // namespace technicalmachine
