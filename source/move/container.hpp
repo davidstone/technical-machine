@@ -93,11 +93,9 @@ using ::containers::detail::common::compare;
 using ::containers::detail::common::operator==;
 
 template<typename... MaybePP>
-auto & add_seen_move(MoveContainer & container, Moves const move, MaybePP... pp) {
-	auto const regular = container.regular();
-	auto const it = containers::find(regular, move);
-	if (it != end(regular)) {
-		return *it;
+auto add_seen_move(MoveContainer & container, Moves const move, MaybePP... pp) {
+	if (auto const ptr = containers::maybe_find(container, move)) {
+		return *ptr;
 	}
 	if (size(container.regular()) == max_moves_per_pokemon) {
 		throw std::runtime_error("Tried to add too many moves");
