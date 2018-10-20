@@ -42,11 +42,6 @@ void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const mo
 	auto & user = is_me(party) ? m_ai : m_foe;
 	auto & other = is_me(party) ? m_foe : m_ai;
 
-	if (m_first == nullptr) {
-		m_first = std::addressof(user);
-		m_last = std::addressof(other);
-	}
-
 	auto const move = add_seen_move(all_moves(user.team.pokemon()), move_name);
 
 	Species const species = user.team.pokemon();
@@ -81,11 +76,6 @@ void switch_or_add(Team & switcher, Team & other, Weather & weather, Species con
 void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, std::string const & nickname, Species const species, Gender const gender, Level const level) {
 	auto & switcher = get_team(switcher_party);
 	auto & other = get_team(technicalmachine::other(switcher_party));
-
-	if (m_first == nullptr) {
-		m_first = std::addressof(switcher);
-		m_last = std::addressof(other);
-	}
 
 	// This assumes Species Clause is in effect
 	switch_or_add(switcher.team, other.team, m_weather, species, level, gender, nickname);

@@ -83,18 +83,14 @@ struct Battle {
 		return m_ai_party == other_party;
 	}
 
+	// TODO: require users to specify which team went first
 	template<typename Integer>
 	void handle_begin_turn(Integer const turn_count) {
 		std::cout << "Begin turn " << turn_count << '\n';
 		if (turn_count != 1_bi) {
-			// TODO: This should not be assert
-			assert(m_first);
-			assert(m_last);
-			end_of_turn(m_first->team, m_last->team, m_weather, m_first->flags.shed_skin, m_last->flags.shed_skin);
+			end_of_turn(m_ai.team, m_foe.team, m_weather, m_ai.flags.shed_skin, m_foe.flags.shed_skin);
 		}
 		
-		m_first = nullptr;
-		m_last = nullptr;
 		m_ai.flags = {};
 		m_foe.flags = {};
 
@@ -171,8 +167,6 @@ private:
 	BattleTeam m_ai;
 	BattleTeam m_foe;
 	Weather m_weather;
-	BattleTeam * m_first = nullptr;
-	BattleTeam * m_last = nullptr;
 	VisibleFoeHP m_max_damage_precision;
 	Party m_ai_party;
 };
