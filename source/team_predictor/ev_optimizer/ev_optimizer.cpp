@@ -69,10 +69,6 @@ void minimize_evs(Pokemon & pokemon) {
 }
 
 void pad_random_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
-	// A value of 0 is the divider between stats. A value of 1 means to add one
-	// more EV point (4 EVs) to the current stat. I use a random_shuffle to
-	// create a uniform distribution of available stats non-maxed EVs. I repeat
-	// the process in case a stat is overfilled.
 	auto distribution = std::discrete_distribution{};
 	while (ev_sum(pokemon) < EV::max_total) {
 		auto remaining_evs = [&](auto const stat_name) {
