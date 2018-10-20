@@ -22,8 +22,6 @@
 #include "../team.hpp"
 #include "../weather.hpp"
 
-#include "../evaluate/expectiminimax.hpp"
-
 #include "../move/move.hpp"
 #include "../move/moves.hpp"
 #include "../move/use_move.hpp"
@@ -31,34 +29,14 @@
 #include "../string_conversions/move.hpp"
 #include "../string_conversions/pokemon.hpp"
 
-#include "../team_predictor/team_predictor.hpp"
-
 #include <containers/algorithms/find.hpp>
 #include <containers/index_type.hpp>
 
 #include <iostream>
-#include <random>
 #include <string>
 #include <utility>
 
 namespace technicalmachine {
-
-Team Battle::predict_foe_team(std::mt19937 & random_engine) const {
-	return predict_team(m_usage_stats, use_lead_stats, foe(), random_engine);
-}
-
-Moves Battle::determine_action(unsigned const depth, std::mt19937 & random_engine) const {
-	if (ai().size() == 0_bi or foe().size() == 0_bi) {
-		throw std::runtime_error("Tried to determine an action with an empty team.");
-	}
-
-	std::cout << std::string(20, '=') + '\n';
-	std::cout << "Predicting...\n";
-	auto predicted = predict_foe_team(random_engine);
-	//std::cout << to_string(predicted) << '\n';
-
-	return expectiminimax(ai(), predicted, weather(), depth, m_evaluate);
-}
 
 void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const move_name) {
 	auto & user = is_me(party) ? m_ai : m_foe;

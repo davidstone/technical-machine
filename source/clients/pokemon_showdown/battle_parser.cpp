@@ -17,6 +17,10 @@
 
 #include "battle_parser.hpp"
 
+#include "../../evaluate/expectiminimax.hpp"
+
+#include "../../team_predictor/team_predictor.hpp"
+
 #include "../../string_conversions/ability.hpp"
 #include "../../string_conversions/item.hpp"
 #include "../../string_conversions/move.hpp"
@@ -318,7 +322,16 @@ void BattleParser::handle_message(InMessage message) {
 }
 
 Moves BattleParser::determine_action() {
-	return m_battle.determine_action(m_depth, m_random_engine);
+	if (m_battle.ai().size() == 0_bi or m_battle.foe().size() == 0_bi) {
+		throw std::runtime_error("Tried to determine an action with an empty team.");
+	}
+
+	std::cout << std::string(20, '=') + '\n';
+	std::cout << "Predicting...\n";
+	auto predicted = predict_team(m_usage_stats, use_lead_stats, m_battle.foe(), m_random_engine);
+	//std::cout << to_string(predicted) << '\n';
+
+	return expectiminimax(m_battle.ai(), predicted, m_battle.weather(), m_depth, m_evaluate);
 }
 
 void BattleParser::send_move(Moves const move) {

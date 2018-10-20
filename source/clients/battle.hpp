@@ -27,8 +27,6 @@
 #include "../variable.hpp"
 #include "../weather.hpp"
 
-#include "../evaluate/evaluate.hpp"
-
 #include "../move/max_moves_per_pokemon.hpp"
 #include "../move/moves.hpp"
 #include "../move/use_move.hpp"
@@ -54,16 +52,12 @@ using VisibleHP = std::common_type_t<VisibleFoeHP, HP::current_type>;
 
 struct Battle {
 	Battle(
-		UsageStats const & usage_stats,
-		Evaluate const & evaluate,
 		Party const party,
 		std::string foe_name_,
 		Team team,
 		TeamSize const foe_size,
 		VisibleFoeHP const max_damage_precision_ = 48_bi
 	):
-		m_usage_stats(usage_stats),
-		m_evaluate(evaluate),
 		m_foe_name(std::move(foe_name_)),
 		m_ai(std::move(team)),
 		m_foe(foe_size),
@@ -85,8 +79,6 @@ struct Battle {
 		return m_weather;
 	}
 
-	Moves determine_action(unsigned depth, std::mt19937 & random_engine) const;
-	
 	bool is_me(Party const other_party) const {
 		return m_ai_party == other_party;
 	}
@@ -158,8 +150,6 @@ private:
 		Flags flags;
 	};
 
-	Team predict_foe_team(std::mt19937 & random_engine) const;
-	
 	auto to_real_hp(bool const my_pokemon, Pokemon const & changer, VisibleHP const visible_remaining_hp) const -> HP::current_type {
 		auto const max_hp = get_hp(changer).max();
 		auto const max_visible_hp_change = BOUNDED_CONDITIONAL(my_pokemon, max_hp, m_max_damage_precision);
@@ -177,8 +167,6 @@ private:
 		return is_me(party) ? m_ai : m_foe;
 	}
 
-	UsageStats const & m_usage_stats;
-	Evaluate m_evaluate;
 	std::string m_foe_name;
 	BattleTeam m_ai;
 	BattleTeam m_foe;

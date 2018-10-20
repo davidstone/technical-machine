@@ -23,6 +23,8 @@
 
 #include "../battle.hpp"
 
+#include "../../evaluate/evaluate.hpp"
+
 #include <boost/beast/websocket.hpp>
 
 #include <random>
@@ -53,9 +55,8 @@ struct BattleParser {
 		m_username(std::move(username)),
 		m_random_engine(random_engine),
 		m_slot_memory(team.size()),
+		m_evaluate(evaluate),
 		m_battle(
-			usage_stats,
-			evaluate,
 			party,
 			std::move(opponent),
 			std::move(team),
@@ -89,6 +90,7 @@ private:
 
 	SlotMemory m_slot_memory;
 
+	Evaluate m_evaluate;
 	Battle m_battle;
 	unsigned m_depth;
 	bool m_completed = false;
