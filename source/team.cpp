@@ -133,7 +133,7 @@ containers::string to_string(Team const & team, bool const include_owner) {
 	for (auto const & member : team.all_pokemon()) {
 		output = containers::concatenate<containers::string>(
 			std::move(output),
-			to_string(member, include_owner),
+			to_string(member),
 			containers::single_element_range('\n')
 		);
 	}
