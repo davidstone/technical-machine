@@ -76,25 +76,37 @@ auto index_of_seen(PokemonCollection const & collection, Species const species) 
 	return static_cast<index_type>(containers::find(collection, species) - begin(collection));
 }
 
-template<typename... Args>
-void switch_or_add(Team & switcher, Team & other, Weather & weather, Species const species, Args && ... args) {
+auto find_or_add_pokemon(Team & switcher, Species const species, Level const level, Gender const gender, std::string_view const nickname) {
 	auto const index = index_of_seen(switcher.all_pokemon(), species);
 	if (index == switcher.number_of_seen_pokemon()) {
-		switcher.all_pokemon().add(species, std::forward<Args>(args)...);
+		switcher.all_pokemon().add(species, level, gender, std::string(nickname));
 	}
-	// TODO: Call this only when a switch decision is required, not for the case
-	// where a Pokemon used "Switch" as its move.
-	switch_pokemon(switcher, other, weather, index);
+	return index;
 }
 
 }	// namespace
 
-void Battle::handle_send_out(Party const switcher_party, uint8_t /*slot*/, std::string const & nickname, Species const species, Gender const gender, Level const level) {
-	auto & switcher = get_team(switcher_party);
-	auto & other = get_team(technicalmachine::other(switcher_party));
+void Battle::handle_send_out(Party const switcher_party, uint8_t const slot, Species const species, Level const level, Gender const gender, std::string_view const nickname) {
+	auto & switcher = get_team(switcher_party).team;
+	auto const index = find_or_add_pokemon(switcher, species, level, gender, nickname);
 
-	// This assumes Species Clause is in effect
-	switch_or_add(switcher.team, other.team, m_weather, species, level, gender, nickname);
+	// TODO: switch_decision_required includes replacing a fainted Pokemon. When
+	// replacing a fainted Pokemon, should we call switch_pokemon or call_move?
+	// When using Baton Pass and U-turn, should we call switch_pokemon or
+	// call_move?
+	if (switch_decision_required(switcher.pokemon())) {
+		auto & other = get_team(technicalmachine::other(switcher_party)).team;
+		switch_pokemon(switcher, other, m_weather, index);
+	} else {
+		handle_use_move(switcher_party, slot, to_switch(index));
+	}
+}
+
+void Battle::handle_phaze(Party const phazer_party, uint8_t const phazer_slot, uint8_t /*switcher_slot*/, Moves const move, Species const species, Level const level, Gender const gender, std::string_view const nickname) {
+	auto & switcher = get_team(technicalmachine::other(phazer_party)).team;
+	auto index = find_or_add_pokemon(switcher, species, level, gender, nickname);
+	static_cast<void>(index);
+	handle_use_move(phazer_party, phazer_slot, move);
 }
 
 } // namespace technicalmachine

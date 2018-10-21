@@ -225,7 +225,14 @@ void BattleParser::handle_message(InMessage message) {
 		// target is sent only for moves that target one Pokemon
 		auto const target = message.next();
 #endif
-		m_battle.handle_use_move(party, slot, move);
+		if (is_phaze(move)) {
+			if (m_phaze_move) {
+				throw std::runtime_error("Recieved data for next move before receiving phaze data.");
+			}
+			m_phaze_move.emplace(party, move);
+		} else {
+			m_battle.handle_use_move(party, slot, move);
+		}
 	} else if (message.type() == "player") {
 		// At the end of a battle, I received this with a body of "p1|"
 	} else if (message.type() == "request") {
@@ -268,7 +275,18 @@ void BattleParser::handle_message(InMessage message) {
 		}
 
 		constexpr auto slot = 0;
-		m_battle.handle_send_out(party, slot, std::string(pokemon), details.species, details.gender, details.level);
+		if (m_phaze_move) {
+			if (message.type() != "drag") {
+				throw std::runtime_error("Never received phaze data.");
+			}
+			if (party == m_phaze_move->party) {
+				throw std::runtime_error("Received phaze data for the wrong team.");
+			}
+			m_battle.handle_phaze(m_phaze_move->party, slot, slot, m_phaze_move->move, details.species, details.level, details.gender, pokemon);
+			m_phaze_move = bounded::none;
+		} else {
+			m_battle.handle_send_out(party, slot, details.species, details.level, details.gender, pokemon);
+		}
 	} else if (message.type() == "replace") {
 #if 0
 		// Illusion ended

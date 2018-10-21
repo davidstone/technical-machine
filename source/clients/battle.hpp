@@ -100,8 +100,12 @@ struct Battle {
 
 	// TODO: Require passing in all flags associated with this particular use
 	// of the move, such as damage and CH
-	void handle_use_move(Party user, uint8_t slot, Moves move_name);
-	void handle_send_out(Party switcher, uint8_t slot, std::string const & nickname, Species species, Gender gender, Level level);
+	void handle_use_move(Party user, uint8_t slot, Moves move);
+	// This handles direct switches, replacing fainted Pokemon, and switching
+	// due to U-turn and Baton Pass. This assumes Species Clause is in effect.
+	void handle_send_out(Party switcher, uint8_t slot, Species species, Level level, Gender gender, std::string_view nickname);
+	// This assumes Species Clause is in effect
+	void handle_phaze(Party phazer_party, uint8_t phazer_slot, uint8_t switcher_slot, Moves move, Species species, Level level, Gender gender, std::string_view nickname);
 	void handle_fainted(Party const fainter, uint8_t /*slot*/) {
 		auto & team = get_team(fainter).team;
 		auto active_pokemon = team.pokemon();

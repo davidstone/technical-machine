@@ -93,6 +93,11 @@ private:
 	Evaluate m_evaluate;
 	Battle m_battle;
 	unsigned m_depth;
+	struct PhazeData {
+		Party party;
+		Moves move;
+	};
+	bounded::optional<PhazeData> m_phaze_move;
 	bool m_completed = false;
 	bool m_replacing_fainted = false;
 };
