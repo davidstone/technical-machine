@@ -64,7 +64,7 @@ void test_item() {
 void test_move() {
 	std::cout << "\t\tVerifying correct move.\n";
 	for(auto const original : containers::enum_range<Moves>()) {
-		if (!is_switch(original) and original != Moves::Hit_Self) {
+		if (is_regular(original)) {
 			auto const id = move_to_id(original);
 			auto const result = id_to_move(id);
 			if (original != result) {
