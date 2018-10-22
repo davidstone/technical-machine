@@ -26,6 +26,8 @@
 
 #include "../../string_conversions/move.hpp"
 
+#include <containers/algorithms/compare.hpp>
+#include <containers/algorithms/concatenate_view.hpp>
 #include <containers/array/array.hpp>
 #include <containers/static_vector/static_vector.hpp>
 #include <containers/integer_range.hpp>
@@ -37,11 +39,8 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-using ExpectedRegular = containers::array<Moves, 4>;
-using ExpectedShared = containers::static_vector<Moves, static_cast<int>(number_of_weird_moves + TeamSize::max())>;
-
-constexpr auto create_shared_moves(TeamSize const team_size) {
-	auto shared = ExpectedShared{
+auto create_shared_moves(TeamSize const team_size) {
+	auto shared = containers::static_vector<Moves, static_cast<int>(number_of_weird_moves + TeamSize::max())>{
 		Moves::Struggle,
 	};
 	if (team_size != 1_bi) {
@@ -51,36 +50,6 @@ constexpr auto create_shared_moves(TeamSize const team_size) {
 	}
 	return shared;
 }
-
-struct Verify {
-	Verify(ExpectedRegular m, TeamSize team_size):
-		m_moves(std::move(m)),
-		m_shared_moves(create_shared_moves(team_size)),
-		m_index(0_bi) {
-	}
-	void operator()(Moves const move) {
-		auto const mine = (m_index < size(m_moves)) ?
-			at(m_moves, m_index) :
-			at(m_shared_moves, m_index - size(m_moves));
-		if (mine != move) {
-			throw InvalidCollection(
-				"MoveContainer has the wrong moves. Expected: " +
-				std::string(to_string(mine)) +
-				" but got " +
-				std::string(to_string(move))
-			);
-		}
-		++m_index;
-	}
-private:
-	ExpectedRegular m_moves;
-	ExpectedShared m_shared_moves;
-	using Index = decltype(
-		std::declval<containers::index_type<ExpectedRegular>>() +
-		std::declval<containers::index_type<ExpectedShared>>()
-	);
-	Index m_index;
-};
 
 }	// namespace
 
@@ -101,9 +70,19 @@ void move_container_tests() {
 			throw InvalidCollection("MoveContainer has the wrong number of moves during addition of moves.");
 		}
 	}
-	auto verify = Verify(moves, team_size);
-	for (auto const move : c) {
-		verify(move);
+	auto const expected = containers::concatenate_view(moves, create_shared_moves(team_size));
+	if (!containers::equal(c, expected)) {
+		auto print_container = [](auto const & container) {
+			for (auto const move : container) {
+				std::cerr << to_string(move) << ", ";
+			}
+			std::cerr << '\n';
+		};
+		std::cerr << "MoveContainer has the wrong moves.\nExpected: ";
+		print_container(expected);
+		std::cerr << "Got: ";
+		print_container(c);
+		std::terminate();
 	}
 }
 
