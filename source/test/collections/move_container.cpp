@@ -18,15 +18,16 @@
 
 #include "move_container.hpp"
 
-#include "create_shared_moves.hpp"
 #include "invalid_collection.hpp"
 
-#include "../../move/moves.hpp"
 #include "../../move/container.hpp"
+#include "../../move/moves.hpp"
+#include "../../move/is_switch.hpp"
 
 #include "../../string_conversions/move.hpp"
 
 #include <containers/array/array.hpp>
+#include <containers/static_vector/static_vector.hpp>
 #include <containers/integer_range.hpp>
 
 #include <iostream>
@@ -36,8 +37,23 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
+using ExpectedRegular = containers::array<Moves, 4>;
+using ExpectedShared = containers::static_vector<Moves, static_cast<int>(number_of_weird_moves + TeamSize::max())>;
+
+constexpr auto create_shared_moves(TeamSize const team_size) {
+	auto shared = ExpectedShared{
+		Moves::Struggle,
+	};
+	if (team_size != 1_bi) {
+		for (auto const n : containers::integer_range(team_size)) {
+			shared.emplace_back(to_switch(n));
+		}
+	}
+	return shared;
+}
+
 struct Verify {
-	Verify(containers::array<Moves, 4> m, TeamSize team_size):
+	Verify(ExpectedRegular m, TeamSize team_size):
 		m_moves(std::move(m)),
 		m_shared_moves(create_shared_moves(team_size)),
 		m_index(0_bi) {
@@ -57,11 +73,11 @@ struct Verify {
 		++m_index;
 	}
 private:
-	containers::vector<Moves> m_moves;
-	containers::vector<Moves> m_shared_moves;
+	ExpectedRegular m_moves;
+	ExpectedShared m_shared_moves;
 	using Index = decltype(
-		std::declval<containers::index_type<decltype(m_moves)>>() +
-		std::declval<containers::index_type<decltype(m_shared_moves)>>()
+		std::declval<containers::index_type<ExpectedRegular>>() +
+		std::declval<containers::index_type<ExpectedShared>>()
 	);
 	Index m_index;
 };
