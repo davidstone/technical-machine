@@ -59,7 +59,7 @@ struct MoveContainer {
 		return static_cast<RegularMoveSize>(size(m_regular));
 	}
 
-	// Skips Struggle and switches
+	// Skips moves for which is_regular(move) is false
 	constexpr auto regular() const {
 		return range_view(begin(m_regular), end(m_regular));
 	}
