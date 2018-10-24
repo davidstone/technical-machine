@@ -22,7 +22,6 @@
 #include <containers/front_back.hpp>
 #include <containers/integer_range.hpp>
 
-#include <cassert>
 #include <initializer_list>
 #include <iostream>
 #include <random>
@@ -34,12 +33,14 @@ namespace {
 void validate_indexes(SlotMemory const & slot_memory, std::initializer_list<SlotMemory::Index> test) {
 	auto integer = bounded::integer<0, static_cast<int>(TeamIndex::max() + 1_bi)>(0_bi);
 	for (auto const & expected : test) {
-		assert(slot_memory[TeamIndex(integer)] == expected);
+		if (slot_memory[TeamIndex(integer)] != expected) {
+			std::terminate();
+		}
 		++integer;
 	}
 	try {
 		slot_memory[TeamIndex(integer)];
-		assert(false);
+		std::terminate();
 	} catch (std::exception const &) {
 	}
 }
