@@ -91,7 +91,7 @@ struct PokemonCollection {
 
 	template<typename... Args>
 	Pokemon & add(Args&&... args) {
-		if (size(m_container) == m_container.capacity()) {
+		if (size(m_container) == m_real_size) {
 			throw std::runtime_error("Tried to add too many Pokemon");
 		}
 		return m_container.emplace_back(m_real_size, std::forward<Args>(args)...);

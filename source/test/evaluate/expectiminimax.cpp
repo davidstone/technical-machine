@@ -184,7 +184,7 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		return make_shuffled_array(random_engine, args...);
 	};
 	constexpr auto depth = 5;
-	Team attacker(1_bi, true);
+	Team attacker(2_bi, true);
 	{
 		attacker.add_pokemon(Species::Smeargle, Level(100_bi), Gender::male, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly);
 		auto & smeargle = back(attacker.all_pokemon());
