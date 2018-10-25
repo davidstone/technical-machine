@@ -29,11 +29,4 @@ struct Weather;
 
 Moves expectiminimax(Team const & ai, Team const & foe, Weather weather, unsigned depth, Evaluate evaluate);
 
-// Called from the function that identifies transpositions
-struct BestMove {
-	Moves move;
-	double score;
-};
-BestMove select_type_of_move(Team const & ai, Team const & foe, Weather weather, unsigned depth, Evaluate evaluate, bool first_turn = false);
-
 }	// namespace technicalmachine

@@ -1,5 +1,5 @@
-// Transposition header
-// Copyright (C) 2014 David Stone
+// Cache scores in case we re-evaluate the same position
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,12 +18,17 @@
 
 #pragma once
 
+#include "../weather.hpp"
+
+#include <bounded/optional.hpp>
+
 namespace technicalmachine {
 
-struct Evaluate;
 struct Team;
-struct Weather;
 
-double transposition(Team const & team1, Team const & team2, Weather weather, unsigned depth, Evaluate evaluate);
+struct TranspositionTable {
+	auto add_score(Team const & ai, Team const & foe, Weather, unsigned depth, double score) -> void;
+	auto get_score(Team const & ai, Team const & foe, Weather, unsigned depth) const -> bounded::optional<double>;
+};
 
 }	// namespace technicalmachine
