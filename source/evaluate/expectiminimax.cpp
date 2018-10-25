@@ -422,8 +422,8 @@ SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_s
 	
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	auto best_move = Moves{};
-	auto const ai_indentation = depth.indentation(ai.is_me());
-	auto const foe_indentation = depth.indentation(foe.is_me());
+	auto const ai_indentation = depth.indentation(true);
+	auto const foe_indentation = depth.indentation(false);
 	for (auto const & ai_move : ai_moves) {
 		if (ai_indentation) {
 			print_action(ai, ai_move, *ai_indentation);
@@ -510,7 +510,7 @@ BestMove replace_both(Team const & ai, Team const & foe, Weather const weather, 
 		return select_type_of_move(deordered.ai, deordered.foe, weather, evaluate, depth.one_level_deeper()).score;
 	};
 	auto const ordered = faster_pokemon(ai, foe, weather);
-	auto const ai_indentation = depth.indentation(ai.is_me());
+	auto const ai_indentation = depth.indentation(true);
 	auto best_move = Moves{};
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	// TODO: use accumulate instead of a for loop?
