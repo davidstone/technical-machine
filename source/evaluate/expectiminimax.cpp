@@ -373,16 +373,16 @@ struct SelectMoveResult {
 	BothMoveScores move_scores;
 };
 
-SelectMoveResult select_move_branch(Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
+SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_selections, Team const & foe, StaticVectorMove const foe_selections, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
 	// This calls itself at one lower depth in order to get an initial estimate
 	// for move_scores because the algorithm works faster if you start with the
 	// correct result. The results from one less depth are used to estimate the
 	// correct result.
-	auto move_scores = (!depth.is_final_iteration()) ?
-		select_move_branch(ai, foe, weather, evaluate, depth.iterative_deepening_value()).move_scores :
+	auto move_scores = !depth.is_final_iteration() ?
+		select_move_branch(ai, ai_selections, foe, foe_selections, weather, evaluate, depth.iterative_deepening_value()).move_scores :
 		BothMoveScores{MoveScores(ai.pokemon()), MoveScores(foe.pokemon())};
-	auto const ai_moves = reorder(legal_selections(ai, foe.pokemon(), weather), move_scores.ai, true);
-	auto const foe_moves = reorder(legal_selections(foe, ai.pokemon(), weather), move_scores.foe, false);
+	auto const ai_moves = reorder(ai_selections, move_scores.ai, true);
+	auto const foe_moves = reorder(foe_selections, move_scores.foe, false);
 
 	// Working from the inside loop out:
 
@@ -652,7 +652,9 @@ BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const we
 		);
 	} else {
 		assert(!switch_decision_required(foe.pokemon()));
-		return select_move_branch(ai, foe, weather, evaluate, depth).move;
+		auto const ai_selections = legal_selections(ai, foe.pokemon(), weather);
+		auto const foe_selections = legal_selections(foe, ai.pokemon(), weather);
+		return select_move_branch(ai, ai_selections, foe, foe_selections, weather, evaluate, depth).move;
 	}
 }
 
