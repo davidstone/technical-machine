@@ -18,15 +18,18 @@
 
 #pragma once
 
-#include <random>
-#include "../move/moves.hpp"
+#include "evaluate.hpp"
+#include "../weather.hpp"
+
+#include <cstdint>
 
 namespace technicalmachine {
 
+enum class Moves : std::uint16_t;
 struct Evaluate;
 struct Team;
 struct Weather;
 
-Moves expectiminimax(Team const & ai, Team const & foe, Weather weather, unsigned depth, Evaluate evaluate);
+Moves expectiminimax(Team const & ai, Team const & foe, Weather weather, Evaluate evaluate, unsigned depth);
 
 }	// namespace technicalmachine

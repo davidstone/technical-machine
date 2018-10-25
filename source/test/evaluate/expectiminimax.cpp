@@ -79,7 +79,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		}
 	}
 
-	assert(expectiminimax(team1, team2, weather, depth, evaluate) == Moves::Thunderbolt);
+	assert(expectiminimax(team1, team2, weather, evaluate, depth) == Moves::Thunderbolt);
 	
 	Team team3(1_bi);
 	{
@@ -92,7 +92,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	}
 	
 	// TODO: implement Wonder_Guard
-//	assert(expectiminimax(team1, team3, weather, depth, evaluate) == Moves::Shadow_Ball);
+//	assert(expectiminimax(team1, team3, weather, evaluate, depth) == Moves::Shadow_Ball);
 }
 
 void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
@@ -120,7 +120,7 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 		set_stat_ev(swampert, StatNames::DEF, EV(252_bi));
 	}
 
-	assert(expectiminimax(attacker, defender, weather, depth, evaluate) == Moves::Shadow_Ball);
+	assert(expectiminimax(attacker, defender, weather, evaluate, depth) == Moves::Shadow_Ball);
 }
 
 void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
@@ -147,7 +147,7 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 		set_stat_ev(mew, StatNames::SPD, EV(64_bi));
 	}
 
-	assert(expectiminimax(attacker, defender, weather, depth, evaluate) == Moves::Belly_Drum);
+	assert(expectiminimax(attacker, defender, weather, evaluate, depth) == Moves::Belly_Drum);
 }
 
 void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
@@ -175,7 +175,7 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 		set_stat_ev(wobbuffet, StatNames::SPE, EV(4_bi));
 	}
 
-	assert(expectiminimax(attacker, defender, weather, depth, evaluate) == Moves::Curse);
+	assert(expectiminimax(attacker, defender, weather, evaluate, depth) == Moves::Curse);
 }
 
 
@@ -211,7 +211,7 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		containers::append(all_moves(misdreavus), shuffled(Moves::Shadow_Ball));
 	}
 
-	assert(expectiminimax(attacker, defender, weather, depth, evaluate) == Moves::Belly_Drum);
+	assert(expectiminimax(attacker, defender, weather, evaluate, depth) == Moves::Belly_Drum);
 }
 
 
@@ -254,7 +254,7 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	auto const variable = Variable{};
 	call_move(defender, Move(Moves::Surf), false, attacker, bounded::none, false, weather, variable, false, false, false, bounded::none);
 	
-	assert(expectiminimax(attacker, defender, weather, depth, evaluate) == Moves::Switch2);
+	assert(expectiminimax(attacker, defender, weather, evaluate, depth) == Moves::Switch2);
 }
 
 
@@ -284,7 +284,7 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 		set_stat_ev(suicune, StatNames::SPD, EV(136_bi));
 	}
 
-	assert(expectiminimax(attacker, defender, weather, depth, evaluate) == Moves::Calm_Mind);
+	assert(expectiminimax(attacker, defender, weather, evaluate, depth) == Moves::Calm_Mind);
 }
 
 void performance(Evaluate const & evaluate) {
@@ -306,7 +306,7 @@ void performance(Evaluate const & evaluate) {
 		}
 	}
 
-	expectiminimax(ai, foe, weather, depth, evaluate);
+	expectiminimax(ai, foe, weather, evaluate, depth);
 }
 
 }	// namespace
