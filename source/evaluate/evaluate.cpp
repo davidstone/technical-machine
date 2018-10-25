@@ -201,17 +201,28 @@ auto sleep_clause(Team const & team) -> Evaluate::type {
 	return 0_bi;
 }
 
-} // namespace
-
-auto Evaluate::win(Team const & team) -> type {
+auto single_team_win(Team const & team) -> Evaluate::type {
 	assert(team.size() != 0_bi);
 	if (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi) {
 		return BOUNDED_CONDITIONAL(team.is_me(), -victory, victory);
 	}
-	if (auto const clause = sleep_clause(team); clause != 0_bi) {
-		return clause;
-	}
 	return 0_bi;
+}
+
+} // namespace
+
+auto Evaluate::win(Team const & team1, Team const & team2) -> bounded::optional<double> {
+	auto const sleep_clause1 = sleep_clause(team1);
+	auto const sleep_clause2 = sleep_clause(team2);
+	if (sleep_clause1 != 0_bi or sleep_clause2 != 0_bi) {
+		return static_cast<double>(sleep_clause1 + sleep_clause2);
+	}
+	auto const win1 = single_team_win(team1);
+	auto const win2 = single_team_win(team2);
+	if (win1 != 0_bi or win2 != 0_bi) {
+		return static_cast<double>(win1 + win2);
+	}
+	return bounded::none;
 }
 
 Evaluate::Evaluate() {

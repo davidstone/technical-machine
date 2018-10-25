@@ -46,7 +46,7 @@ struct Evaluate {
 	auto operator()(Team const & ai, Team const & foe, Weather weather) const -> type;
 	// Return victory if the battle is won. Returns -victory if the battle is
 	// lost. Returns 0 otherwise.
-	static auto win(Team const & team) -> type;
+	static auto win(Team const & team1, Team const & team2) -> bounded::optional<double>;
 
 	// Arbitrary values
 	using value_type = bounded::integer<-4096, 4096>;

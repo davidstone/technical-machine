@@ -259,15 +259,12 @@ auto deorder(Team const & first, Team const & last) {
 	};
 }
 
+
 double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, DepthTracker const depth, ShedSkinFlag const first_flag, ShedSkinFlag const last_flag) {
 	end_of_turn(first, last, weather, first_flag.shed_skin, last_flag.shed_skin);
-
-	auto const game_over1 = Evaluate::win(first);
-	auto const game_over2 = Evaluate::win(last);
-	if (game_over1 != 0_bi or game_over2 != 0_bi) {
-		return static_cast<double>(game_over1 + game_over2);
+	if (auto const won = Evaluate::win(first, last)) {
+		return *won;
 	}
-
 	// TODO: Use TranspositionTable here
 	auto const & [ai, foe] = deorder(first, last);
 	if (depth.is_final_iteration()) {
@@ -300,10 +297,8 @@ double use_move_branch(Team & first, Move const first_move, Team & last, bounded
 		constexpr auto user_damaged = false;
 		constexpr auto other_damaged = false;
 		call_move(user, user_move, user_damaged, other, other_move, other_damaged, weather, user_variable, user_flags.miss, user_flags.awaken, user_flags.critical_hit, bounded::none);
-		auto const user_win = Evaluate::win(user);
-		auto const other_win = Evaluate::win(other);
-		if (user_win != 0_bi or other_win != 0_bi) {
-			return static_cast<double>(user_win + other_win);
+		if (auto const won = Evaluate::win(user, other)) {
+			return *won;
 		}
 		if (has_follow_up_decision(user_move) and size(user.all_pokemon()) > 1_bi) {
 			return move_then_switch_branch(
