@@ -361,6 +361,94 @@ double use_move_branch(Team & first, Move const first_move, Team & last, bounded
 }
 
 
+double order_branch(Team const & ai, Move const ai_move, Team const & foe, Move const foe_move, Weather const weather, Evaluate const evaluate, DepthTracker const depth);
+
+struct BothMoveScores {
+	MoveScores ai;
+	MoveScores foe;
+};
+
+struct SelectMoveResult {
+	BestMove move;
+	BothMoveScores move_scores;
+};
+
+SelectMoveResult select_move_branch(Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
+	// This calls itself at one lower depth in order to get an initial estimate
+	// for move_scores because the algorithm works faster if you start with the
+	// correct result. The results from one less depth are used to estimate the
+	// correct result.
+	auto move_scores = (!depth.is_final_iteration()) ?
+		select_move_branch(ai, foe, weather, evaluate, depth.iterative_deepening_value()).move_scores :
+		BothMoveScores{MoveScores(ai.pokemon()), MoveScores(foe.pokemon())};
+	auto const ai_moves = reorder(legal_selections(ai, foe.pokemon(), weather), move_scores.ai, true);
+	auto const foe_moves = reorder(legal_selections(foe, ai.pokemon(), weather), move_scores.foe, false);
+
+	// Working from the inside loop out:
+
+	// The following begins by setting beta to the largest possible value. This
+	// is the variable that the opposing player is trying to minimize. As long
+	// as the opposing player has any move that won't guarantee their loss,
+	// that move will score lower (more negative) than victory, and thus
+	// the opponent will set that as their best response to the particular move
+	// that the AI uses.
+
+	// After looking at each response the opponent has to a given move, beta is
+	// finally set to whatever the score will be if the AI uses that move.
+	// alpha is initially set to the lowest possible value, so as long as the
+	// AI has any move that won't guarantee its loss, that move will score
+	// higher (more positive) than -victory, and thus the AI will set
+	// that as its best response. It then replaces that move if it finds a move
+	// for which the opponent's best response is more positive than the first
+	// move found. In other words, it finds the move for the AI for which the
+	// foe's best response is the weakest.
+	
+	// Something to consider as a potential speed up at the cost of some
+	// accuracy (but would allow a deeper, thus more accurate, search) would be
+	// to pick from all random numbers randomly, rather than seeing the outcome
+	// of all of them and averaging it. In other words, do several trials
+	// assuming a particular (but different for each trial) set of random
+	// numbers are selected, and then average that result. This would give
+	// massive reductions to the branching factor, and with a large enough
+	// number of trials could be close enough to the average to potentially
+	// speed up the program enough to justify the loss in accuracy.
+	
+	// I subtract 1 from -victory to make sure that even a guaranteed
+	// loss is seen as better than not returning a result. This way, I can do
+	// some things when my intermediate scores are strictly greater than alpha,
+	// rather than greater than or equal to, which can save a few calculations.
+	
+	// For a similar reason, I later set beta to victory + 1.
+	
+	// This change also has the advantage of making sure a move is always put
+	// into best_move without any additional logic, such as pre-filling it with
+	// some result.
+	
+	auto alpha = static_cast<double>(-victory - 1_bi);
+	auto best_move = Moves{};
+	for (auto const & ai_move : ai_moves) {
+		print_action(ai, ai_move, depth);
+		auto beta = static_cast<double>(victory + 1_bi);
+		for (auto const & foe_move : foe_moves) {
+			print_action(foe, foe_move, depth);
+			auto const max_score = order_branch(ai, ai_move, foe, foe_move, weather, evaluate, depth);
+			update_foe_best_move(foe_move, move_scores.foe, beta, max_score, depth);
+			// Alpha-Beta pruning
+			if (beta <= alpha)
+				break;
+		}
+		move_scores.ai.set(ai_move, beta);
+		update_best_move(best_move, alpha, beta, ai_move, depth);
+		// The AI cannot have a better move than a guaranteed win
+		if (alpha == static_cast<double>(victory))
+			break;
+	}
+	return SelectMoveResult{
+		BestMove{best_move, alpha},
+		std::move(move_scores)
+	};
+}
+
 
 double switch_after_move_branch(Team switcher, Move const switcher_move, Team other, bounded::optional<Move> const other_move, Variable const & switcher_variable, Variable const & other_variable, Weather weather, Evaluate const evaluate, DepthTracker const depth, TeamIndex const replacement, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags) {
 	switch_pokemon(switcher, other, weather, replacement);
@@ -528,92 +616,6 @@ double order_branch(Team const & ai, Move const ai_move, Team const & foe, Move 
 		accuracy_branch(ordered->first.team, ordered->first.move, ordered->second.team, ordered->second.move, weather, evaluate, depth);
 }
 
-
-struct BothMoveScores {
-	MoveScores ai;
-	MoveScores foe;
-};
-
-struct SelectMoveResult {
-	BestMove move;
-	BothMoveScores move_scores;
-};
-
-SelectMoveResult select_move_branch(Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
-	// This calls itself at one lower depth in order to get an initial estimate
-	// for move_scores because the algorithm works faster if you start with the
-	// correct result. The results from one less depth are used to estimate the
-	// correct result.
-	auto move_scores = (!depth.is_final_iteration()) ?
-		select_move_branch(ai, foe, weather, evaluate, depth.iterative_deepening_value()).move_scores :
-		BothMoveScores{MoveScores(ai.pokemon()), MoveScores(foe.pokemon())};
-	auto const ai_moves = reorder(legal_selections(ai, foe.pokemon(), weather), move_scores.ai, true);
-	auto const foe_moves = reorder(legal_selections(foe, ai.pokemon(), weather), move_scores.foe, false);
-
-	// Working from the inside loop out:
-
-	// The following begins by setting beta to the largest possible value. This
-	// is the variable that the opposing player is trying to minimize. As long
-	// as the opposing player has any move that won't guarantee their loss,
-	// that move will score lower (more negative) than victory, and thus
-	// the opponent will set that as their best response to the particular move
-	// that the AI uses.
-
-	// After looking at each response the opponent has to a given move, beta is
-	// finally set to whatever the score will be if the AI uses that move.
-	// alpha is initially set to the lowest possible value, so as long as the
-	// AI has any move that won't guarantee its loss, that move will score
-	// higher (more positive) than -victory, and thus the AI will set
-	// that as its best response. It then replaces that move if it finds a move
-	// for which the opponent's best response is more positive than the first
-	// move found. In other words, it finds the move for the AI for which the
-	// foe's best response is the weakest.
-	
-	// Something to consider as a potential speed up at the cost of some
-	// accuracy (but would allow a deeper, thus more accurate, search) would be
-	// to pick from all random numbers randomly, rather than seeing the outcome
-	// of all of them and averaging it. In other words, do several trials
-	// assuming a particular (but different for each trial) set of random
-	// numbers are selected, and then average that result. This would give
-	// massive reductions to the branching factor, and with a large enough
-	// number of trials could be close enough to the average to potentially
-	// speed up the program enough to justify the loss in accuracy.
-	
-	// I subtract 1 from -victory to make sure that even a guaranteed
-	// loss is seen as better than not returning a result. This way, I can do
-	// some things when my intermediate scores are strictly greater than alpha,
-	// rather than greater than or equal to, which can save a few calculations.
-	
-	// For a similar reason, I later set beta to victory + 1.
-	
-	// This change also has the advantage of making sure a move is always put
-	// into best_move without any additional logic, such as pre-filling it with
-	// some result.
-	
-	auto alpha = static_cast<double>(-victory - 1_bi);
-	auto best_move = Moves{};
-	for (auto const & ai_move : ai_moves) {
-		print_action(ai, ai_move, depth);
-		auto beta = static_cast<double>(victory + 1_bi);
-		for (auto const & foe_move : foe_moves) {
-			print_action(foe, foe_move, depth);
-			auto const max_score = order_branch(ai, ai_move, foe, foe_move, weather, evaluate, depth);
-			update_foe_best_move(foe_move, move_scores.foe, beta, max_score, depth);
-			// Alpha-Beta pruning
-			if (beta <= alpha)
-				break;
-		}
-		move_scores.ai.set(ai_move, beta);
-		update_best_move(best_move, alpha, beta, ai_move, depth);
-		// The AI cannot have a better move than a guaranteed win
-		if (alpha == static_cast<double>(victory))
-			break;
-	}
-	return SelectMoveResult{
-		BestMove{best_move, alpha},
-		std::move(move_scores)
-	};
-}
 
 BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
 	auto team_is_empty [[maybe_unused]] = [](Team const & team) {
