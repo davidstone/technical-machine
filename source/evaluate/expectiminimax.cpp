@@ -72,11 +72,11 @@ struct DepthTracker {
 	constexpr auto is_final_iteration() const {
 		return m_depth_to_search - 1U == m_searched_so_far;
 	}
-	constexpr auto indentation(bool const is_me) const {
+	constexpr auto indentation(bool const is_me) const -> bounded::optional<unsigned> {
+		if (m_searched_so_far >= m_max_print_depth) {
+			return bounded::none;
+		}
 		return 2U * m_searched_so_far + (is_me ? 1U : 2U);
-	}
-	constexpr auto should_print() const {
-		return m_searched_so_far < m_max_print_depth;
 	}
 	
 	constexpr auto one_level_deeper() const {
@@ -114,45 +114,41 @@ void print_best_move(Team const & team, BestMove const best_move) {
 	std::cout << " for a minimum expected score of " << static_cast<std::int64_t>(best_move.score) << '\n';
 }
 
-void print_action(Team const & team, Moves const move, DepthTracker const depth) {
-	if (depth.should_print()) {
-		std::cout << std::string(depth.indentation(team.is_me()), '\t') << "Evaluating " << team.who();
-		if (is_switch(move)) {
-			auto const replacement_index = to_replacement(move);
-			std::cout << " switching to " << to_string(static_cast<Species>(team.pokemon(replacement_index))) << '\n';
-		} else {
-			std::cout << " using " << to_string(move) << '\n';
-		}
+void print_action(Team const & team, Moves const move, unsigned const indentation) {
+	std::cout << std::string(indentation, '\t') << "Evaluating " << team.who();
+	if (is_switch(move)) {
+		auto const replacement_index = to_replacement(move);
+		std::cout << " switching to " << to_string(static_cast<Species>(team.pokemon(replacement_index))) << '\n';
+	} else {
+		std::cout << " using " << to_string(move) << '\n';
 	}
 }
 
-void print_estimated_score(double const estimate, DepthTracker const depth, bool const is_me) {
-	if (depth.should_print()) {
-		std::cout << std::string(depth.indentation(is_me), '\t') << "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
-	}
+void print_estimated_score(double const estimate, unsigned const indentation) {
+	std::cout << std::string(indentation, '\t') << "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
 }
 
-
-
-void update_best_move(Moves & best_move, double & alpha, double const beta, Moves const new_move, DepthTracker const depth) {
+void update_best_move(Moves & best_move, double & alpha, double const beta, Moves const new_move, bounded::optional<unsigned> const indentation) {
 	// If their best response isn't as good as their previous best
 	// response, then this new move must be better than the
 	// previous AI's best move
 	if (beta > alpha) {
 		alpha = beta;
 		best_move = new_move;
-		constexpr bool is_me = true;
-		print_estimated_score(alpha, depth, is_me);
+		if (indentation) {
+			print_estimated_score(alpha, *indentation);
+		}
 	}
 }
 
-void update_foe_best_move(Moves const move, MoveScores & foe_scores, double & beta, double const max_score, DepthTracker const depth) {
+void update_foe_best_move(Moves const move, MoveScores & foe_scores, double & beta, double const max_score, bounded::optional<unsigned> const indentation) {
 	if (beta > max_score) {
 		beta = max_score;
 		foe_scores.set(move, beta);
 	}
-	constexpr bool is_me = false;
-	print_estimated_score(max_score, depth, is_me);
+	if (indentation) {
+		print_estimated_score(max_score, *indentation);
+	}
 }
 
 
@@ -426,19 +422,25 @@ SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_s
 	
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	auto best_move = Moves{};
+	auto const ai_indentation = depth.indentation(ai.is_me());
+	auto const foe_indentation = depth.indentation(foe.is_me());
 	for (auto const & ai_move : ai_moves) {
-		print_action(ai, ai_move, depth);
+		if (ai_indentation) {
+			print_action(ai, ai_move, *ai_indentation);
+		}
 		auto beta = static_cast<double>(victory + 1_bi);
 		for (auto const & foe_move : foe_moves) {
-			print_action(foe, foe_move, depth);
+			if (foe_indentation) {
+				print_action(foe, foe_move, *foe_indentation);
+			}
 			auto const max_score = order_branch(ai, ai_move, foe, foe_move, weather, evaluate, depth);
-			update_foe_best_move(foe_move, move_scores.foe, beta, max_score, depth);
+			update_foe_best_move(foe_move, move_scores.foe, beta, max_score, foe_indentation);
 			// Alpha-Beta pruning
 			if (beta <= alpha)
 				break;
 		}
 		move_scores.ai.set(ai_move, beta);
-		update_best_move(best_move, alpha, beta, ai_move, depth);
+		update_best_move(best_move, alpha, beta, ai_move, ai_indentation);
 		// The AI cannot have a better move than a guaranteed win
 		if (alpha == static_cast<double>(victory))
 			break;
@@ -477,16 +479,19 @@ BestMove move_then_switch_branch(Team const & switcher, Move const switcher_move
 	if (!switcher.is_me()) {
 		alpha = -alpha;
 	}
+	auto const switcher_indentation = depth.indentation(switcher.is_me());
 	auto best_switch = Moves{};
 	for (auto const replacement : valid_replacements(switcher.all_pokemon())) {
 		auto const replacement_move = to_switch(replacement);
-		print_action(switcher, replacement_move, depth);
+		if (switcher_indentation) {
+			print_action(switcher, replacement_move, *switcher_indentation);
+		}
 		auto const value = switch_after_move_branch(switcher, switcher_move, other, other_move, switcher_variable, other_variable, weather, evaluate, depth, replacement, switcher_flags, other_flags);
 		if (switcher.is_me()) {
-			update_best_move(best_switch, alpha, value, replacement_move, depth);
+			update_best_move(best_switch, alpha, value, replacement_move, switcher_indentation);
 		} else {
 			MoveScores foe_scores(switcher.pokemon());
-			update_foe_best_move(switcher_move, foe_scores, alpha, value, depth);
+			update_foe_best_move(switcher_move, foe_scores, alpha, value, switcher_indentation);
 		}
 	}
 	return BestMove{best_switch, alpha};
@@ -505,12 +510,15 @@ BestMove replace_both(Team const & ai, Team const & foe, Weather const weather, 
 		return select_type_of_move(deordered.ai, deordered.foe, weather, evaluate, depth.one_level_deeper()).score;
 	};
 	auto const ordered = faster_pokemon(ai, foe, weather);
+	auto const ai_indentation = depth.indentation(ai.is_me());
 	auto best_move = Moves{};
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	// TODO: use accumulate instead of a for loop?
 	for (auto const ai_replacement : valid_replacements(ai.all_pokemon())) {
 		auto const ai_move = to_switch(ai_replacement);
-		print_action(ai, ai_move, depth);
+		if (ai_indentation) {
+			print_action(ai, ai_move, *ai_indentation);
+		}
 		auto beta = static_cast<double>(victory + 1_bi);
 		for (auto const foe_replacement : valid_replacements(foe.all_pokemon())) {
 			auto get_replacement = [&](Team const & team) {
@@ -524,7 +532,7 @@ BestMove replace_both(Team const & ai, Team const & foe, Weather const weather, 
 				break;
 			}
 		}
-		update_best_move(best_move, alpha, beta, ai_move, depth);
+		update_best_move(best_move, alpha, beta, ai_move, ai_indentation);
 	}
 	return BestMove{best_move, alpha};
 }
@@ -538,14 +546,17 @@ BestMove replace_one(Team const & team, Team const & other, Weather const weathe
 		}
 		return select_type_of_move(ai, foe, weather, evaluate, depth.one_level_deeper()).score;
 	};
+	auto const indentation = depth.indentation(team.is_me());
 	auto best_move = Moves{};
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	// TODO: use accumulate instead of a for loop?
 	for (auto const replacement : valid_replacements(team.all_pokemon())) {
 		auto const move = to_switch(replacement);
-		print_action(team, move, depth);
+		if (indentation) {
+			print_action(team, move, *indentation);
+		}
 		auto const beta = fainted(team, replacement, other, weather);
-		update_best_move(best_move, alpha, beta, move, depth);
+		update_best_move(best_move, alpha, beta, move, indentation);
 	}
 	return BestMove{best_move, alpha};
 }
