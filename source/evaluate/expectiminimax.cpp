@@ -262,11 +262,6 @@ auto deorder(Team const & first, Team const & last) {
 double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, DepthTracker const depth, ShedSkinFlag const first_flag, ShedSkinFlag const last_flag) {
 	end_of_turn(first, last, weather, first_flag.shed_skin, last_flag.shed_skin);
 
-	auto const last_violated = Evaluate::sleep_clause(first);
-	auto const first_violated = Evaluate::sleep_clause(last);
-	if (last_violated != 0_bi or first_violated != 0_bi) {
-		return static_cast<double>(last_violated + first_violated);
-	}
 	auto const game_over1 = Evaluate::win(first);
 	auto const game_over2 = Evaluate::win(last);
 	if (game_over1 != 0_bi or game_over2 != 0_bi) {

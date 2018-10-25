@@ -188,21 +188,28 @@ auto Evaluate::operator()(Team const & ai, Team const & foe, Weather const weath
 	return score_team(*this, ai, foe, weather);
 }
 
-auto Evaluate::win(Team const & team) -> type {
-	assert(team.size() != 0_bi);
-	if (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi) {
-		return BOUNDED_CONDITIONAL(team.is_me(), -victory, victory);
-	}
-	return 0_bi;
-}
+namespace {
 
-auto Evaluate::sleep_clause (Team const & team) -> type {
+auto sleep_clause(Team const & team) -> Evaluate::type {
 	auto const sleepers = [](Pokemon const & pokemon) {
 		return is_sleeping_due_to_other(get_status(pokemon));
 	};
 	auto const sleeper_count = containers::count_if(team.all_pokemon(), sleepers);
 	if (sleeper_count > 1_bi) {
 		return BOUNDED_CONDITIONAL(team.is_me(), victory, -victory);
+	}
+	return 0_bi;
+}
+
+} // namespace
+
+auto Evaluate::win(Team const & team) -> type {
+	assert(team.size() != 0_bi);
+	if (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi) {
+		return BOUNDED_CONDITIONAL(team.is_me(), -victory, victory);
+	}
+	if (auto const clause = sleep_clause(team); clause != 0_bi) {
+		return clause;
 	}
 	return 0_bi;
 }

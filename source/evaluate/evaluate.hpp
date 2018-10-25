@@ -44,10 +44,9 @@ struct Evaluate {
 	using type = bounded::integer<-static_cast<int>(victory + 1_bi), static_cast<int>(victory + 1_bi)>;
 	Evaluate();
 	auto operator()(Team const & ai, Team const & foe, Weather weather) const -> type;
-	// Both of these return victory if the battle is won. Returns -victory
-	// if the battle is lost. Returns 0 otherwise.
+	// Return victory if the battle is won. Returns -victory if the battle is
+	// lost. Returns 0 otherwise.
 	static auto win(Team const & team) -> type;
-	static auto sleep_clause(Team const & team) -> type;
 
 	// Arbitrary values
 	using value_type = bounded::integer<-4096, 4096>;
