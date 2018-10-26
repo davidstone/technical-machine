@@ -54,7 +54,6 @@ auto ActivePokemonFlags::reset_switch() -> void {
 	destiny_bond = false;
 	disable = Disable{};
 	encore = {};
-	is_fainted = false;
 	flash_fire = false;
 	flinched = false;
 	fully_trapped = false;

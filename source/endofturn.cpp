@@ -116,12 +116,13 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	if (leech_seeded(pokemon)) {
 		auto const initial = get_hp(pokemon).current();
 		heal(pokemon, rational(-1_bi, 8_bi));
-		if (!is_fainted(foe)) {
+		auto & foe_hp = get_hp(foe);
+		if (foe_hp != 0_bi) {
+			auto const hp_change = initial - get_hp(pokemon).current();
 			if (damages_leechers(get_ability(pokemon))) {
-				get_hp(foe) -= initial - get_hp(pokemon).current();
-			}
-			else {
-				get_hp(foe) += initial - get_hp(pokemon).current();
+				foe_hp -= hp_change;
+			} else {
+				foe_hp += hp_change;
 			}
 		}
 	}

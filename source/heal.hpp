@@ -29,7 +29,7 @@ namespace technicalmachine {
 
 template<typename Numerator, typename Denominator>
 void heal(MutableActivePokemon pokemon, rational<Numerator, Denominator> const scale) {
-	if (is_fainted(pokemon)) {
+	if (get_hp(pokemon) == 0_bi) {
 		return;
 	}
 	auto const hp_healed = get_hp(pokemon).max() * scale;

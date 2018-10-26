@@ -203,8 +203,7 @@ bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon 
 	if (is_switch(move)) {
 		return true;
 	}
-	// TODO: fix
-	if (get_hp(user) == 0_bi or (is_fainted(other) and false)) {
+	if (get_hp(user) == 0_bi) {
 		return false;
 	}
 

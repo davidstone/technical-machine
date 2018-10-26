@@ -70,11 +70,6 @@ struct MutableActivePokemon;
 	/* Requires that move is actually one of this Pokemon's moves */ \
 	friend auto is_disabled(ActivePokemon pokemon, Moves move) -> bool; \
 	friend auto is_encored(ActivePokemon pokemon) -> bool; \
-	/* This function should be used instead of checking if hp == 0 to handle */ \
-	/* messages being sent about multiple Pokemon fainting in one turn. */ \
-	/* Using this function will allow TM to correctly update an entire turn */ \
-	/* from a message. */ \
-	friend auto is_fainted(ActivePokemon pokemon) -> bool; \
 	friend auto flash_fire_is_active(ActivePokemon pokemon) -> bool; \
 	friend auto flinched(ActivePokemon pokemon) -> bool; \
 	friend auto has_focused_energy(ActivePokemon pokemon) -> bool; \
@@ -190,7 +185,6 @@ private:
 	bool defense_curled = false;
 	bool destiny_bond = false;
 	bool enduring = false;
-	bool is_fainted = false;
 	bool flash_fire = false;
 	bool flinched = false;
 	bool has_focused_energy = false;
