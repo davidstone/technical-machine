@@ -41,6 +41,7 @@ using namespace bounded::literal;
 
 auto create_shared_moves(TeamSize const team_size) {
 	auto shared = containers::static_vector<Moves, static_cast<int>(number_of_weird_moves + TeamSize::max())>{
+		Moves::Pass,
 		Moves::Struggle,
 	};
 	if (team_size != 1_bi) {

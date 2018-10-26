@@ -1,5 +1,5 @@
 // Accuracy functions
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,6 +28,7 @@ using namespace bounded::literal;
 auto accuracy(Moves const move) -> BaseAccuracy {
 	using bounded::none;
 	switch (move) {
+		case Moves::Pass: return none;
 		case Moves::Switch0: return none;
 		case Moves::Switch1: return none;
 		case Moves::Switch2: return none;

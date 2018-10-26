@@ -28,7 +28,8 @@ namespace technicalmachine {
 
 std::string_view to_string(Moves const move) {
 	switch (move) {
-		// Generation 1
+		// Weird moves
+		case Moves::Pass: return "Pass";
 		case Moves::Switch0: return "Switch0";
 		case Moves::Switch1: return "Switch1";
 		case Moves::Switch2: return "Switch2";
@@ -36,6 +37,8 @@ std::string_view to_string(Moves const move) {
 		case Moves::Switch4: return "Switch4";
 		case Moves::Switch5: return "Switch5";
 		case Moves::Hit_Self: return "Hit self in confusion";
+
+		// Generation 1
 		case Moves::Pound: return "Pound";
 		case Moves::Karate_Chop: return "Karate Chop";
 		case Moves::DoubleSlap: return "DoubleSlap";
@@ -609,6 +612,7 @@ std::string_view to_string(Moves const move) {
 template<>
 Moves from_string(std::string_view const str) {
 	static std::map<std::string_view, Moves, lowercase_alphanumeric> const converter {
+		{ "pass", Moves::Pass },
 		{ "switch0", Moves::Switch0 },
 		{ "switch1", Moves::Switch1 },
 		{ "switch2", Moves::Switch2 },

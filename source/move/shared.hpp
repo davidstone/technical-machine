@@ -48,9 +48,10 @@ struct SharedMovesIterator {
 			static_cast<intmax_t>(number_of_weird_moves),
 			static_cast<intmax_t>(std::numeric_limits<SharedMoveSize>::max()) - 1
 		>;
-		static_assert(number_of_weird_moves == 1_bi, "Struggle is not the only weird move.");
-		return Move((m_index == 0_bi) ?
-			Moves::Struggle :
+		static_assert(number_of_weird_moves == 2_bi, "Add the extra 'weird' move here.");
+		return Move(
+			(m_index == 0_bi) ? Moves::Pass :
+			(m_index == 1_bi) ? Moves::Struggle :
 			to_switch(static_cast<switch_index_type>(m_index) - number_of_weird_moves)
 		);
 	}
@@ -71,7 +72,10 @@ struct SharedMovesIterator {
 
 	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(SharedMovesIterator)
 private:
-	using underlying_index_type = bounded::integer<0, static_cast<intmax_t>(std::numeric_limits<SharedMoveSize>::max())>;
+	using underlying_index_type = bounded::integer<
+		0,
+		static_cast<int>(std::numeric_limits<SharedMoveSize>::max())
+	>;
 	friend struct SharedMoves;
 	constexpr explicit SharedMovesIterator(underlying_index_type const other) noexcept:
 		m_index(other) {

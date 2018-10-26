@@ -1,4 +1,3 @@
-// Test stuff
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,40 +15,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
+#pragma once
 
-#include "clients/pokemon_showdown/slot_memory.hpp"
-#include "collections/collection.hpp"
-#include "damage.hpp"
-#include "ev_optimizer.hpp"
-#include "stat.hpp"
-#include "status.hpp"
-#include "string_conversion.hpp"
-#include "use_move.hpp"
-#include "evaluate/evaluate.hpp"
-#include "evaluate/expectiminimax.hpp"
-#include "pokemon_lab/test.hpp"
-#include "pokemon_online/test.hpp"
+namespace technicalmachine {
 
-int main() {
-	using namespace technicalmachine;
-	
-	string_conversion_tests();
-	status_tests();
-	stat_tests();
-	damage_tests();
-	collection_tests();
-	use_move_tests();
+void use_move_tests();
 
-	ev_optimizer_tests();
-	
-	evaluate_tests();
-	expectiminimax_tests();
+}	// namespace technicalmachine
 
-	pl::test ();
-	po::test ();
-	ps::test_slot_memory();
-
-	std::cout << "All tests passed.\n";
-	return 0;
-}

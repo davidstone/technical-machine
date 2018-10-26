@@ -83,6 +83,7 @@ auto hidden_power_type(Pokemon const & pokemon) {
 
 auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 	switch (move) {
+		case Moves::Pass: return Type::Typeless;
 		case Moves::Switch0: return Type::Typeless;
 		case Moves::Switch1: return Type::Typeless;
 		case Moves::Switch2: return Type::Typeless;

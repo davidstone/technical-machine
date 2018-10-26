@@ -52,6 +52,7 @@ auto is_usable_while_frozen(Moves const move) -> bool {
 
 auto is_regular(Moves const move) -> bool {
 	switch (move) {
+		case Moves::Pass:
 		case Moves::Hit_Self:
 		case Moves::Struggle:
 			return false;

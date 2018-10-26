@@ -183,7 +183,7 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
-	constexpr auto depth = 5;
+	constexpr auto depth = 4;
 	Team attacker(2_bi, true);
 	{
 		attacker.add_pokemon(Species::Smeargle, Level(100_bi), Gender::male, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly);
@@ -192,9 +192,10 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	}
 
 	{
-		attacker.add_pokemon(Species::Alakazam, Level(100_bi), Gender::male, Item::Choice_Band, Ability::Synchronize, Nature::Jolly);
+		attacker.add_pokemon(Species::Alakazam, Level(100_bi), Gender::male, Item::Lum_Berry, Ability::Synchronize, Nature::Jolly);
 		auto & alakazam = back(attacker.all_pokemon());
-		containers::append(all_moves(alakazam), shuffled(Moves::Bite, Moves::Recover));
+		containers::append(all_moves(alakazam), shuffled(Moves::Psycho_Cut, Moves::Recover));
+		set_stat_ev(alakazam, StatNames::ATK, EV(252_bi));
 	}
 
 	Team defender(2_bi);
@@ -209,6 +210,7 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		defender.add_pokemon(Species::Misdreavus, Level(100_bi), Gender::female, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
 		Pokemon & misdreavus = back(defender.all_pokemon());
 		containers::append(all_moves(misdreavus), shuffled(Moves::Shadow_Ball));
+		set_stat_ev(misdreavus, StatNames::SPA, EV(252_bi));
 	}
 
 	assert(expectiminimax(attacker, defender, weather, evaluate, depth) == Moves::Belly_Drum);

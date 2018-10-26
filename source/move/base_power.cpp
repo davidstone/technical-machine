@@ -29,6 +29,7 @@ auto base_power(Moves const move) -> bounded::optional<bounded::integer<0, 250>>
 	// anything else, as long as it is not 0.
 	static constexpr auto variable_power = 1_bi;
 	switch (move) {
+		case Moves::Pass: return 0_bi;
 		case Moves::Switch0: return 0_bi;
 		case Moves::Switch1: return 0_bi;
 		case Moves::Switch2: return 0_bi;

@@ -63,22 +63,30 @@ namespace {
 
 struct DepthTracker {
 	constexpr DepthTracker(unsigned const depth_to_search, unsigned max_print_depth):
-		m_searched_so_far(0),
+		m_searched_so_far(0U),
 		m_depth_to_search(depth_to_search),
-		m_max_print_depth(max_print_depth)
+		m_max_print_depth(max_print_depth),
+		m_indentation(1U)
 	{
 	}
 	
 	constexpr auto is_final_iteration() const {
 		return m_depth_to_search - 1U == m_searched_so_far;
 	}
-	constexpr auto indentation(bool const is_me) const -> bounded::optional<unsigned> {
+	constexpr auto indentation() const -> bounded::optional<unsigned> {
 		if (m_searched_so_far >= m_max_print_depth) {
 			return bounded::none;
 		}
-		return 2U * m_searched_so_far + (is_me ? 1U : 2U);
+		return m_indentation;
 	}
 	
+	constexpr auto increased_indentation(Moves const move) const {
+		auto copy = *this;
+		if (move != Moves::Pass) {
+			++copy.m_indentation;
+		}
+		return copy;
+	}
 	constexpr auto one_level_deeper() const {
 		auto copy = *this;
 		++copy.m_searched_so_far;
@@ -96,6 +104,7 @@ private:
 	unsigned m_searched_so_far;
 	unsigned m_depth_to_search;
 	unsigned m_max_print_depth;
+	unsigned m_indentation;
 };
 
 struct BestMove {
@@ -115,6 +124,9 @@ void print_best_move(Team const & team, BestMove const best_move) {
 }
 
 void print_action(Team const & team, Moves const move, unsigned const indentation) {
+	if (move == Moves::Pass) {
+		return;
+	}
 	std::cout << std::string(indentation, '\t') << "Evaluating " << team.who();
 	if (is_switch(move)) {
 		auto const replacement_index = to_replacement(move);
@@ -124,8 +136,10 @@ void print_action(Team const & team, Moves const move, unsigned const indentatio
 	}
 }
 
-void print_estimated_score(double const estimate, unsigned const indentation) {
-	std::cout << std::string(indentation, '\t') << "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
+void print_estimated_score(double const estimate, Moves const move, bounded::optional<unsigned> const indentation) {
+	if (indentation and move != Moves::Pass) {
+		std::cout << std::string(*indentation, '\t') << "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
+	}
 }
 
 void update_best_move(Moves & best_move, double & alpha, double const beta, Moves const new_move, bounded::optional<unsigned> const indentation) {
@@ -135,9 +149,7 @@ void update_best_move(Moves & best_move, double & alpha, double const beta, Move
 	if (beta > alpha) {
 		alpha = beta;
 		best_move = new_move;
-		if (indentation) {
-			print_estimated_score(alpha, *indentation);
-		}
+		print_estimated_score(alpha, new_move, indentation);
 	}
 }
 
@@ -146,34 +158,14 @@ void update_foe_best_move(Moves const move, MoveScores & foe_scores, double & be
 		beta = max_score;
 		foe_scores.set(move, beta);
 	}
-	if (indentation) {
-		print_estimated_score(max_score, *indentation);
-	}
+	print_estimated_score(max_score, move, indentation);
 }
 
 
-
-bool has_follow_up_decision(Moves const move) {
-	switch (move) {
-		case Moves::Baton_Pass:
-		case Moves::U_turn:
-			return true;
-		default:
-			return false;
-	}
-}
 
 bool can_critical_hit(Moves const move) {
 	auto const power = base_power(move);
 	return power and *power != 0_bi;
-}
-
-
-auto valid_replacements(PokemonCollection const & collection) {
-	assert(size(collection) > 1_bi);
-	return containers::filter(containers::integer_range(size(collection)), [&](auto const replacement_index) {
-		return replacement_index != collection.index();
-	});
 }
 
 
@@ -209,30 +201,27 @@ double generic_flag_branch(BaseFlag const first_flags, BaseFlag const last_flags
 
 
 struct MissFlag {
-	constexpr MissFlag() = default;
 	constexpr explicit MissFlag(bool const miss_):
 		miss(miss_)
 	{
 	}
-	bool const miss = false;
+	bool const miss;
 };
 struct AwakenFlag : MissFlag {
-	constexpr AwakenFlag() = default;
 	constexpr explicit AwakenFlag(MissFlag const miss_, bool const awaken_):
 		MissFlag(miss_),
 		awaken(awaken_)
 	{
 	}
-	bool const awaken = false;
+	bool const awaken;
 };
 struct CriticalHitFlag : AwakenFlag {
-	constexpr CriticalHitFlag() = default;
 	constexpr explicit CriticalHitFlag(AwakenFlag const awaken_, bool const critical_hit_):
 		AwakenFlag(awaken_),
 		critical_hit(critical_hit_)
 	{
 	}
-	bool const critical_hit = false;
+	bool const critical_hit;
 };
 struct ShedSkinFlag : CriticalHitFlag {
 	constexpr explicit ShedSkinFlag(CriticalHitFlag const critical_hit_, bool const shed_skin_):
@@ -242,9 +231,6 @@ struct ShedSkinFlag : CriticalHitFlag {
 	}
 	bool const shed_skin;
 };
-
-
-BestMove move_then_switch_branch(Team const & switcher, Move switcher_move, Team const & other, bounded::optional<Move> other_move, Variable const & switcher_variable, Variable const & other_variable, Weather const weather, Evaluate const evaluate, DepthTracker const depth, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags);
 
 
 auto deorder(Team const & first, Team const & last) {
@@ -260,95 +246,6 @@ auto deorder(Team const & first, Team const & last) {
 }
 
 
-double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, DepthTracker const depth, ShedSkinFlag const first_flag, ShedSkinFlag const last_flag) {
-	end_of_turn(first, last, weather, first_flag.shed_skin, last_flag.shed_skin);
-	if (auto const won = Evaluate::win(first, last)) {
-		return *won;
-	}
-	// TODO: Use TranspositionTable here
-	auto const & [ai, foe] = deorder(first, last);
-	if (depth.is_final_iteration()) {
-		return static_cast<double>(evaluate(ai, foe, weather));
-	}
-	return select_type_of_move(ai, foe, weather, evaluate, depth.one_level_deeper()).score;
-}
-
-
-double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Evaluate const evaluate, DepthTracker const depth, ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
-	auto get_flag = [&](auto const & match) {
-		return std::addressof(match) == std::addressof(team) ? team_flag : other_flag;
-	};
-	return !faster ?
-		(end_of_turn_branch(team, other, weather, evaluate, depth, team_flag, other_flag) + end_of_turn_branch(other, team, weather, evaluate, depth, other_flag, team_flag)) / 2.0 :
-		end_of_turn_branch(faster->first, faster->second, weather, evaluate, depth, get_flag(faster->first), get_flag(faster->second));
-}
-
-
-double use_move_branch(Team & first, Move const first_move, Team & last, bounded::optional<Move> const last_move, Variable const & first_variable, Variable const & last_variable, Weather weather, Evaluate const evaluate, DepthTracker const depth, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
-	auto use_move_and_follow_up = [&](Team & user, Move const user_move, Variable const & user_variable, CriticalHitFlag const user_flags, Team & other, bounded::optional<UsedMove> const other_move, Variable const & other_variable, CriticalHitFlag const other_flags) -> bounded::optional<double>{
-		// If first uses a phazing move before last gets a chance to move, the
-		// newly brought out Pokemon would try to move without checking to see
-		// if it has already moved. This check is also necessary for my Baton
-		// Pass and U-turn implementation to function.
-		if (moved(user.pokemon())) {
-			return bounded::none;
-		}
-		// TODO: implement properly
-		constexpr auto user_damaged = false;
-		constexpr auto other_damaged = false;
-		call_move(user, user_move, user_damaged, other, other_move, other_damaged, weather, user_variable, user_flags.miss, user_flags.awaken, user_flags.critical_hit, bounded::none);
-		if (auto const won = Evaluate::win(user, other)) {
-			return *won;
-		}
-		if (has_follow_up_decision(user_move) and size(user.all_pokemon()) > 1_bi) {
-			return move_then_switch_branch(
-				user,
-				user_move,
-				other,
-				BOUNDED_CONDITIONAL(other_move, other_move->move, bounded::none),
-				user_variable,
-				other_variable,
-				weather,
-				evaluate,
-				depth,
-				user_flags,
-				other_flags
-			).score;
-		}
-		return bounded::none;
-	};
-
-	auto const last_hp = get_hp(last.pokemon());
-	auto value = use_move_and_follow_up(first, first_move, first_variable, first_flags, last, bounded::none, last_variable, last_flags);
-	if (value) {
-		return *value;
-	}
-	if (last_move) {
-		auto const last_damaged = is_damaging(first_move) ? bounded::max(get_hp(last.pokemon()).current() - last_hp.current(), 0_bi) : 0_bi;
-		auto const used_move = bounded::optional<UsedMove>(UsedMove{first_move, last_damaged});
-		value = use_move_and_follow_up(last, *last_move, last_variable, last_flags, first, used_move, first_variable, first_flags);
-		if (value) {
-			return *value;
-		}
-	}
-
-	// Find the expected return on all possible outcomes at the end of the turn
-	
-	auto const teams = faster_pokemon(first, last, weather);
-	auto const end_of_turn_order = [&](ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
-		return end_of_turn_order_branch(first, last, teams, weather, evaluate, depth, team_flag, other_flag);
-	};
-	return generic_flag_branch<ShedSkinFlag>(
-		first_flags,
-		last_flags,
-		[&](auto const is_first) { return shed_skin_probability(is_first ? first.pokemon() : last.pokemon()); },
-		end_of_turn_order
-	);
-}
-
-
-double order_branch(Team const & ai, Move const ai_move, Team const & foe, Move const foe_move, Weather const weather, Evaluate const evaluate, DepthTracker const depth);
-
 struct BothMoveScores {
 	MoveScores ai;
 	MoveScores foe;
@@ -359,13 +256,14 @@ struct SelectMoveResult {
 	BothMoveScores move_scores;
 };
 
-SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_selections, Team const & foe, StaticVectorMove const foe_selections, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
+template<typename Function>
+SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_selections, Team const & foe, StaticVectorMove const foe_selections, Weather const weather, Evaluate const evaluate, DepthTracker const depth, Function const function) {
 	// This calls itself at one lower depth in order to get an initial estimate
 	// for move_scores because the algorithm works faster if you start with the
 	// correct result. The results from one less depth are used to estimate the
 	// correct result.
 	auto move_scores = !depth.is_final_iteration() ?
-		select_move_branch(ai, ai_selections, foe, foe_selections, weather, evaluate, depth.iterative_deepening_value()).move_scores :
+		select_move_branch(ai, ai_selections, foe, foe_selections, weather, evaluate, depth.iterative_deepening_value(), function).move_scores :
 		BothMoveScores{MoveScores(ai.pokemon()), MoveScores(foe.pokemon())};
 	auto const ai_moves = reorder(ai_selections, move_scores.ai, true);
 	auto const foe_moves = reorder(foe_selections, move_scores.foe, false);
@@ -409,31 +307,35 @@ SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_s
 	// This change also has the advantage of making sure a move is always put
 	// into best_move without any additional logic, such as pre-filling it with
 	// some result.
-	
+
 	auto alpha = static_cast<double>(-victory - 1_bi);
 	auto best_move = Moves{};
-	auto const ai_indentation = depth.indentation(true);
-	auto const foe_indentation = depth.indentation(false);
+	auto const ai_indentation = depth.indentation();
 	for (auto const & ai_move : ai_moves) {
 		if (ai_indentation) {
 			print_action(ai, ai_move, *ai_indentation);
 		}
 		auto beta = static_cast<double>(victory + 1_bi);
+		auto const foe_depth = depth.increased_indentation(ai_move);
+		auto const foe_indentation = foe_depth.indentation();
 		for (auto const & foe_move : foe_moves) {
 			if (foe_indentation) {
 				print_action(foe, foe_move, *foe_indentation);
 			}
-			auto const max_score = order_branch(ai, ai_move, foe, foe_move, weather, evaluate, depth);
+			auto const next_depth = foe_depth.increased_indentation(foe_move);
+			auto const max_score = function(ai, ai_move, foe, foe_move, weather, evaluate, next_depth);
 			update_foe_best_move(foe_move, move_scores.foe, beta, max_score, foe_indentation);
 			// Alpha-Beta pruning
-			if (beta <= alpha)
+			if (beta <= alpha) {
 				break;
+			}
 		}
 		move_scores.ai.set(ai_move, beta);
 		update_best_move(best_move, alpha, beta, ai_move, ai_indentation);
 		// The AI cannot have a better move than a guaranteed win
-		if (alpha == static_cast<double>(victory))
+		if (alpha == static_cast<double>(victory)) {
 			break;
+		}
 	}
 	return SelectMoveResult{
 		BestMove{best_move, alpha},
@@ -442,113 +344,116 @@ SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_s
 }
 
 
-double switch_after_move_branch(Team switcher, Move const switcher_move, Team other, bounded::optional<Move> const other_move, Variable const & switcher_variable, Variable const & other_variable, Weather weather, Evaluate const evaluate, DepthTracker const depth, TeamIndex const replacement, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags) {
-	switch_pokemon(switcher, other, weather, replacement);
-	assert(!empty(switcher.all_pokemon()));
-	assert(!empty(other.all_pokemon()));
-	// I don't have to correct for which of the Pokemon moved first because
-	// there are only two options:
-	
-	// Option 1: only the switcher has moved. Then it obviously went first and
-	// I'm passing them in the proper order.
-	
-	// Option 2: Both Pokemon have moved. use_move_branch then
-	// recalculates which Pokemon is faster to properly account for end-of-turn
-	// effects. In this case, it doesn't matter what order I pass them.
-	
-	// I also do not need to worry about the game ending due to entry hazards,
-	// because at the very least the Pokemon that used Baton Pass / U-turn is
-	// still alive.
+auto finish_end_of_turn(Team const & first, Team const & last, Weather const weather, Evaluate const evaluate, DepthTracker const depth) -> double {
+	// TODO: Use TranspositionTable here
+	auto const & [ai, foe] = deorder(first, last);
+	if (depth.is_final_iteration()) {
+		return static_cast<double>(evaluate(ai, foe, weather));
+	}
+	return select_type_of_move(ai, foe, weather, evaluate, depth.one_level_deeper()).score;
+};
 
-	return use_move_branch(switcher, switcher_move, other, other_move, switcher_variable, other_variable, weather, evaluate, depth, switcher_flags, other_flags);
+auto handle_end_of_turn_replacing(Team first, Move const first_move, Team last, Move const last_move, Weather weather, Evaluate const evaluate, DepthTracker const depth) -> double {
+	if (first_move != Moves::Pass) {
+		switch_pokemon(first, last, weather, to_replacement(first_move));
+	}
+	if (last_move != Moves::Pass) {
+		switch_pokemon(last, first, weather, to_replacement(last_move));
+	}
+	if (auto const won = Evaluate::win(first, last)) {
+		return *won;
+	}
+	return finish_end_of_turn(first, last, weather, evaluate, depth);
+};
+
+double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, DepthTracker const depth, ShedSkinFlag const first_flag, ShedSkinFlag const last_flag) {
+	end_of_turn(first, last, weather, first_flag.shed_skin, last_flag.shed_skin);
+	if (auto const won = Evaluate::win(first, last)) {
+		return *won;
+	}
+	if (get_hp(first.pokemon()) == 0_bi or get_hp(last.pokemon()) == 0_bi) {
+		auto const first_selections = legal_selections(first, last.pokemon(), weather);
+		auto const last_selections = legal_selections(last, first.pokemon(), weather);
+		return select_move_branch(first, first_selections, last, last_selections, weather, evaluate, depth, handle_end_of_turn_replacing).move.score;
+	}
+	return finish_end_of_turn(first, last, weather, evaluate, depth);
 }
 
 
-BestMove move_then_switch_branch(Team const & switcher, Move const switcher_move, Team const & other, bounded::optional<Move> const other_move, Variable const & switcher_variable, Variable const & other_variable, Weather const weather, Evaluate const evaluate, DepthTracker const depth, CriticalHitFlag const switcher_flags, CriticalHitFlag const other_flags) {
-	auto alpha = static_cast<double>(-victory - 1_bi);
-	if (!switcher.is_me()) {
-		alpha = -alpha;
-	}
-	auto const switcher_indentation = depth.indentation(switcher.is_me());
-	auto best_switch = Moves{};
-	for (auto const replacement : valid_replacements(switcher.all_pokemon())) {
-		auto const replacement_move = to_switch(replacement);
-		if (switcher_indentation) {
-			print_action(switcher, replacement_move, *switcher_indentation);
-		}
-		auto const value = switch_after_move_branch(switcher, switcher_move, other, other_move, switcher_variable, other_variable, weather, evaluate, depth, replacement, switcher_flags, other_flags);
-		if (switcher.is_me()) {
-			update_best_move(best_switch, alpha, value, replacement_move, switcher_indentation);
-		} else {
-			MoveScores foe_scores(switcher.pokemon());
-			update_foe_best_move(switcher_move, foe_scores, alpha, value, switcher_indentation);
-		}
-	}
-	return BestMove{best_switch, alpha};
-}
-
-
-// TODO: replace duplication in replace_one and replace_both
-BestMove replace_both(Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
-	auto fainted = [=](auto first, auto first_replacement, auto last, auto last_replacement, Weather weather_) {
-		switch_pokemon(first, last, weather_, first_replacement);
-		switch_pokemon(last, first, weather_, last_replacement);
-		auto const deordered = deorder(first, last);
-		if (depth.is_final_iteration()) {
-			return static_cast<double>(evaluate(deordered.ai, deordered.foe, weather));
-		}
-		return select_type_of_move(deordered.ai, deordered.foe, weather, evaluate, depth.one_level_deeper()).score;
+double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Evaluate const evaluate, DepthTracker const depth, ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
+	auto get_flag = [&](auto const & match) {
+		return std::addressof(match) == std::addressof(team) ? team_flag : other_flag;
 	};
-	auto const ordered = faster_pokemon(ai, foe, weather);
-	auto const ai_indentation = depth.indentation(true);
-	auto best_move = Moves{};
-	auto alpha = static_cast<double>(-victory - 1_bi);
-	// TODO: use accumulate instead of a for loop?
-	for (auto const ai_replacement : valid_replacements(ai.all_pokemon())) {
-		auto const ai_move = to_switch(ai_replacement);
-		if (ai_indentation) {
-			print_action(ai, ai_move, *ai_indentation);
-		}
-		auto beta = static_cast<double>(victory + 1_bi);
-		for (auto const foe_replacement : valid_replacements(foe.all_pokemon())) {
-			auto get_replacement = [&](Team const & team) {
-				return std::addressof(team) == std::addressof(ai) ? ai_replacement : foe_replacement;
-			};
-			beta = std::min(beta, !ordered ?
-				(fainted(ai, ai_replacement, foe, foe_replacement, weather) + fainted(foe, foe_replacement, ai, ai_replacement, weather)) / 2.0 :
-				fainted(ordered->first, get_replacement(ordered->first), ordered->second, get_replacement(ordered->second), weather)
-			);
-			if (beta <= alpha) {
-				break;
-			}
-		}
-		update_best_move(best_move, alpha, beta, ai_move, ai_indentation);
-	}
-	return BestMove{best_move, alpha};
+	return !faster ?
+		(end_of_turn_branch(team, other, weather, evaluate, depth, team_flag, other_flag) + end_of_turn_branch(other, team, weather, evaluate, depth, other_flag, team_flag)) / 2.0 :
+		end_of_turn_branch(faster->first, faster->second, weather, evaluate, depth, get_flag(faster->first), get_flag(faster->second));
 }
 
-BestMove replace_one(Team const & team, Team const & other, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
-	auto fainted = [=](auto team_, auto replacement, auto other_, auto weather_) {
-		switch_pokemon(team_, other_, weather_, replacement);
-		auto const & [ai, foe] = deorder(team, other);
-		if (depth.is_final_iteration()) {
-			return static_cast<double>(evaluate(ai, foe, weather));
+
+auto use_move_branch_inner(Variable const & last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+	return [=, &last_variable](Team first, Move, Team last, Move const last_move, Weather weather, Evaluate const evaluate, DepthTracker const depth) {
+		// TODO: properly handle used move here
+		// TODO: implement properly
+		constexpr auto first_damaged = false;
+		constexpr auto last_damaged = false;
+		call_move(last, last_move, last_damaged, first, bounded::none, first_damaged, weather, last_variable, false, false, false, bounded::none);
+		if (auto const won = Evaluate::win(first, last)) {
+			return *won;
 		}
-		return select_type_of_move(ai, foe, weather, evaluate, depth.one_level_deeper()).score;
+
+		auto const teams = faster_pokemon(first, last, weather);
+		auto const end_of_turn_order = [&](ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
+			return end_of_turn_order_branch(first, last, teams, weather, evaluate, depth, team_flag, other_flag);
+		};
+		return generic_flag_branch<ShedSkinFlag>(
+			first_flags,
+			last_flags,
+			[&](auto const is_first) { return shed_skin_probability(is_first ? first.pokemon() : last.pokemon()); },
+			end_of_turn_order
+		);
 	};
-	auto const indentation = depth.indentation(team.is_me());
-	auto best_move = Moves{};
-	auto alpha = static_cast<double>(-victory - 1_bi);
-	// TODO: use accumulate instead of a for loop?
-	for (auto const replacement : valid_replacements(team.all_pokemon())) {
-		auto const move = to_switch(replacement);
-		if (indentation) {
-			print_action(team, move, *indentation);
+}
+
+auto use_move_branch_outer(Move const last_move, Variable const & first_variable, Variable const & last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+	return [=, &first_variable, &last_variable](Team first, Move const first_move, Team last, Move, Weather weather, Evaluate const evaluate, DepthTracker const depth) {
+		// TODO: implement properly
+		constexpr auto first_damaged = false;
+		constexpr auto last_damaged = false;
+		call_move(first, first_move, first_damaged, last, bounded::none, last_damaged, weather, first_variable, false, false, false, bounded::none);
+		if (auto const won = Evaluate::win(first, last)) {
+			return *won;
 		}
-		auto const beta = fainted(team, replacement, other, weather);
-		update_best_move(best_move, alpha, beta, move, indentation);
+		// TODO: properly handle used move here
+		call_move(last, last_move, last_damaged, first, bounded::none, first_damaged, weather, last_variable, last_flags.miss, last_flags.awaken, last_flags.critical_hit, bounded::none);
+		if (auto const won = Evaluate::win(first, last)) {
+			return *won;
+		}
+		
+		auto const first_selections = StaticVectorMove({Move(Moves::Pass)});
+		auto const last_selections = legal_selections(last, first.pokemon(), weather);
+		return select_move_branch(first, first_selections, last, last_selections, weather, evaluate, depth, use_move_branch_inner(last_variable, first_flags, last_flags)).move.score;
+	};
+};
+
+double use_move_branch(Team first, Move const first_move, Team last, Move const last_move, Variable const & first_variable, Variable const & last_variable, Weather weather, Evaluate const evaluate, DepthTracker const depth, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+#if 0
+	auto const initial_last_hp = get_hp(last.pokemon());
+	auto const last_damaged = is_damaging(first_move) ? bounded::max(get_hp(last.pokemon()).current() - last_hp.current(), 0_bi) : 0_bi;
+	auto const used_move = bounded::optional<UsedMove>(UsedMove{first_move, last_damaged});
+#endif
+
+	// TODO: implement properly
+	constexpr auto first_damaged = false;
+	constexpr auto last_damaged = false;
+	
+	call_move(first, first_move, first_damaged, last, bounded::none, last_damaged, weather, first_variable, first_flags.miss, first_flags.awaken, first_flags.critical_hit, bounded::none);
+	if (auto const won = Evaluate::win(first, last)) {
+		return *won;
 	}
-	return BestMove{best_move, alpha};
+	auto const first_selections = legal_selections(first, last.pokemon(), weather);
+	auto const last_selections = StaticVectorMove({Move(Moves::Pass)});
+	// TODO: Figure out first / last vs ai / foe
+	return select_move_branch(first, first_selections, last, last_selections, weather, evaluate, depth, use_move_branch_outer(last_move, first_variable, last_variable, first_flags, last_flags)).move.score;
 }
 
 
@@ -560,16 +465,14 @@ double random_move_effects_branch(Team const & first, Move const first_move, Tea
 	auto const last_variables = all_probabilities(last_move, first.size());
 	for (auto const & first_variable : first_variables) {
 		for (auto const & last_variable : last_variables) {
-			auto const use_move_copy_branch = [&](CriticalHitFlag first_flags_, CriticalHitFlag last_flags_) {
-				auto first_ = first;
-				auto last_ = last;
-				return use_move_branch(first_, first_move, last_, last_move, first_variable, last_variable, weather, evaluate, depth, first_flags_, last_flags_);
+			auto const use_move_branch_adaptor = [&](CriticalHitFlag first_flags_, CriticalHitFlag last_flags_) {
+				return use_move_branch(first, first_move, last, last_move, first_variable, last_variable, weather, evaluate, depth, first_flags_, last_flags_);
 			};
 			score += last_variable.probability * first_variable.probability * generic_flag_branch<CriticalHitFlag>(
 				first_flags,
 				last_flags,
 				[&](auto const is_first) { return can_critical_hit(is_first ? first_move : last_move) ? (1.0 / 16.0) : 0.0; },
-				use_move_copy_branch
+				use_move_branch_adaptor
 			);
 		}
 	}
@@ -625,38 +528,9 @@ BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const we
 	assert(!team_is_empty(ai));
 	assert(!team_is_empty(foe));
 	
-	auto const replace_ai = get_hp(ai.pokemon()) == 0_bi;
-	auto const replace_foe = get_hp(foe.pokemon()) == 0_bi;
-	if (replace_ai and replace_foe) {
-		return replace_both(ai, foe, weather, evaluate, depth);
-	} else if (replace_ai) {
-		return replace_one(ai, foe, weather, evaluate, depth);
-	} else if (replace_foe) {
-		return replace_one(foe, ai, weather, evaluate, depth);
-	} else if (switch_decision_required(ai.pokemon())) {
-		auto const switcher_move_name = is_baton_passing(ai.pokemon()) ? Moves::Baton_Pass : Moves::U_turn;
-		auto const & ai_moves = all_moves(ai.pokemon());
-		auto const move_it = containers::find(ai_moves, switcher_move_name);
-		assert(move_it != end(ai_moves));
-		return move_then_switch_branch(
-			ai,
-			*move_it,
-			foe,
-			bounded::none,
-			Variable{},
-			Variable{},
-			weather,
-			evaluate,
-			depth,
-			CriticalHitFlag{},
-			CriticalHitFlag{}
-		);
-	} else {
-		assert(!switch_decision_required(foe.pokemon()));
-		auto const ai_selections = legal_selections(ai, foe.pokemon(), weather);
-		auto const foe_selections = legal_selections(foe, ai.pokemon(), weather);
-		return select_move_branch(ai, ai_selections, foe, foe_selections, weather, evaluate, depth).move;
-	}
+	auto const ai_selections = legal_selections(ai, foe.pokemon(), weather);
+	auto const foe_selections = legal_selections(foe, ai.pokemon(), weather);
+	return select_move_branch(ai, ai_selections, foe, foe_selections, weather, evaluate, depth, order_branch).move;
 }
 
 }	// namespace

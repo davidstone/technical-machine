@@ -33,7 +33,7 @@ using RegularMoveIndex = bounded::checked_integer<
 	static_cast<intmax_t>(std::numeric_limits<RegularMoveSize>::max() - 1_bi)
 >;
 
-constexpr auto number_of_weird_moves = 1_bi;	// Struggle
+constexpr auto number_of_weird_moves = 2_bi; // Pass, Struggle
 using SharedMoveSize = decltype(std::declval<TeamSize>() + number_of_weird_moves);
 using SharedMoveIndex = bounded::checked_integer<
 	0,

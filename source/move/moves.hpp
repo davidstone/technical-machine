@@ -1,5 +1,5 @@
 // Moves enum
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -27,7 +27,8 @@
 namespace technicalmachine {
 
 enum class Moves : uint16_t {
-	// Generation 1
+	// Weird moves
+	Pass,
 	Switch0,
 	Switch1,
 	Switch2,
@@ -35,6 +36,8 @@ enum class Moves : uint16_t {
 	Switch4,
 	Switch5,
 	Hit_Self,
+	
+	// Generation 1
 	Regular_Begin,
 	Pound = Regular_Begin,
 	Karate_Chop,

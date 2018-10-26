@@ -410,6 +410,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Outrage:
 		case Moves::Overheat:
 		case Moves::Pain_Split:
+		case Moves::Pass:
 		case Moves::Payback:
 		case Moves::Pay_Day:
 		case Moves::Peck:

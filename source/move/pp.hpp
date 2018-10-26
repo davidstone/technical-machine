@@ -95,6 +95,7 @@ private:
 	static constexpr auto base_pp(Moves const move) -> bounded::optional<base_type> {
 		using bounded::none;
 		switch (move) {
+			case Moves::Pass: return none;
 			case Moves::Switch0: return none;
 			case Moves::Switch1: return none;
 			case Moves::Switch2: return none;

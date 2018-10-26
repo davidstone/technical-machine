@@ -140,12 +140,24 @@ auto is_blocked_due_to_lock_in(ActivePokemon const user, Moves const move) {
 }
 
 auto is_legal_selection(Team const & user, Move const move, ActivePokemon const other, Weather const weather, bool const found_selectable_move) {
+	auto const & pokemon = user.pokemon();
+	if (switch_decision_required(pokemon)) {
+		return is_switch(move) and would_switch_to_different_pokemon(user.all_pokemon(), move);
+	}
+	auto const is_pass = move == Moves::Pass;
+	if (switch_decision_required(other)) {
+		return is_pass;
+	}
+	if (moved(pokemon)) {
+		return is_pass;
+	}
 	return
-		!is_blocked_by_bide(user.pokemon(), move) and
+		!is_pass and
+		!is_blocked_by_bide(pokemon, move) and
 		is_not_illegal_switch(user, move, other, weather) and
 		(move != Moves::Struggle or !found_selectable_move) and
-		!((block1(user.pokemon(), move, other)) or (block2(user.pokemon(), move, weather)) or blocked_by_torment(user.pokemon(), move)) and
-		!is_blocked_due_to_lock_in(user.pokemon(), move);
+		!((block1(pokemon, move, other)) or (block2(pokemon, move, weather)) or blocked_by_torment(pokemon, move)) and
+		!is_blocked_due_to_lock_in(pokemon, move);
 }
 
 }	// namespace

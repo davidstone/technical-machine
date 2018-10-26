@@ -230,6 +230,7 @@ add_executable(tm_test
 	source/test/status.cpp
 	source/test/string_conversion.cpp
 	source/test/test.cpp
+	source/test/use_move.cpp
 )
 target_link_libraries(tm_test
 	tm_common

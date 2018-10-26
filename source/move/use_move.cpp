@@ -1101,6 +1101,9 @@ auto use_move(Team & user, Move const move, bool const user_damaged, Team & targ
 }	// namespace
 
 auto call_move(Team & user, Move const move, bool const user_damaged, Team & target, bounded::optional<UsedMove> const target_move, bool const target_damaged, Weather & weather, Variable const & variable, bool const missed, bool const awakens, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
+	if (move == Moves::Pass) {
+		return;
+	}
 	user.move();
 	auto user_pokemon = user.pokemon();
 	auto target_pokemon = target.pokemon();
