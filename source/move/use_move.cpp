@@ -289,7 +289,9 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			}
 			break;
 		case Moves::Baton_Pass:
-			user.baton_pass();
+			if (user_team.size() > 1_bi) {
+				user.baton_pass();
+			}
 			break;
 		case Moves::Belly_Drum:
 			belly_drum(user);
@@ -963,7 +965,9 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			weather.activate_trick_room();
 			break;
 		case Moves::U_turn:
-			user.u_turn();
+			if (user_team.size() > 1_bi) {
+				user.u_turn();
+			}
 			break;
 		case Moves::Uproar:
 			// TODO: make this make sense
