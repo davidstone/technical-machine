@@ -65,7 +65,6 @@ struct Team {
 	auto reset_end_of_turn() -> void;
 	auto reset_switch() -> void;
 	void clear_field();
-	void move(bool value = true);
 
 	friend auto operator==(Team const & lhs, Team const & rhs) {
 		return

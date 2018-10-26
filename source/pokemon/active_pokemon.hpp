@@ -187,8 +187,8 @@ struct MutableActivePokemon {
 	auto advance_magnet_rise() {
 		m_flags.magnet_rise.advance_one_turn();
 	}
-	auto set_moved(bool const value) {
-		m_flags.moved = value;
+	auto set_not_moved() {
+		m_flags.moved = false;
 	}
 	auto activate_mud_sport() {
 		m_flags.mud_sport = true;

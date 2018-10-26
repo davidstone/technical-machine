@@ -155,7 +155,7 @@ auto active_pokemon_can_be_phazed(Team const & team) {
 auto phaze(Team & user, Team & target, Weather & weather, Variable const & variable) {
 	if (active_pokemon_can_be_phazed(target)) {
 		switch_pokemon(target, user, weather, phaze_index(variable, target.all_pokemon().index()));
-		target.move();
+		target.pokemon().update_before_move();
 	}
 }
 
@@ -1104,7 +1104,6 @@ auto call_move(Team & user, Move const move, bool const user_damaged, Team & tar
 	if (move == Moves::Pass) {
 		return;
 	}
-	user.move();
 	auto user_pokemon = user.pokemon();
 	auto target_pokemon = target.pokemon();
 	user_pokemon.update_before_move();

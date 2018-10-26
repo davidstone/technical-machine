@@ -92,6 +92,10 @@ struct Battle {
 			constexpr auto ai_shed_skin_activated = false;
 			constexpr auto foe_shed_skin_activated = false;
 			end_of_turn(m_ai.team, m_foe.team, m_weather, ai_shed_skin_activated, foe_shed_skin_activated);
+		} else {
+			for (auto side : {std::ref(m_ai), std::ref(m_foe)}) {
+				side.get().team.pokemon().set_not_moved();
+			}
 		}
 		
 		std::cout << to_string(ai()) << '\n';

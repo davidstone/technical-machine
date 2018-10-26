@@ -103,10 +103,6 @@ void Team::clear_field() {
 	entry_hazards = EntryHazards{};
 }
 
-void Team::move(bool const value) {
-	pokemon().set_moved(value);
-}
-
 Team load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) {
 	auto const files = open_directory_and_add_files(path);
 	if (empty(files)) {
