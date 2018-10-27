@@ -23,6 +23,7 @@
 #include "../stat/calculate.hpp"
 #include "../team_predictor/ev_optimizer/defensive.hpp"
 #include "../team_predictor/ev_optimizer/ev_optimizer.hpp"
+#include "../team_predictor/ev_optimizer/offensive.hpp"
 #include "../team_predictor/ev_optimizer/speed.hpp"
 #include "../move/moves.hpp"
 #include "../string_conversions/nature.hpp"
@@ -39,7 +40,9 @@ namespace {
 
 void optimize_already_optimized(std::mt19937 & random_engine) {
 	constexpr auto team_size = 1_bi;
-	auto pokemon = Pokemon(team_size, Species::Metagross, Level(100_bi), Gender::genderless);
+	constexpr auto species = Species::Metagross;
+	constexpr auto level = Level(100_bi);
+	auto pokemon = Pokemon(team_size, species, level, Gender::genderless);
 	set_hp_ev(pokemon, EV(252_bi));
 	set_stat_ev(pokemon, StatNames::ATK, EV(96_bi));
 	set_stat_ev(pokemon, StatNames::DEF, EV(96_bi));
@@ -50,19 +53,14 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	nature = Nature::Adamant;
 	all_moves(pokemon).emplace_back(Moves::Meteor_Mash);
 
-	auto assert_evs_unchanged = [original = pokemon](Pokemon const & test) {
-		assert(get_hp(original).ev() == get_hp(test).ev());
-		for (auto const stat : regular_stats()) {
-			assert(get_stat(original, stat).ev() == get_stat(test, stat).ev());
-		}
-	};
+	auto const stats = pull_out_stats(pokemon);
 	
-	minimize_evs(pokemon);
-	assert_evs_unchanged(pokemon);
+	constexpr auto include_attack = true;
+	constexpr auto include_special_attack = false;
+	assert(minimize_evs(stats, species, level, include_attack, include_special_attack) == stats);
+	assert(pad_random_evs(stats, include_attack, include_special_attack, random_engine) == stats);
 	optimize_evs(pokemon, random_engine);
-	assert_evs_unchanged(pokemon);
-	pad_random_evs(pokemon, random_engine);
-	assert_evs_unchanged(pokemon);
+	assert(pull_out_stats(pokemon) == stats);
 }
 
 void defensive_tests() {
@@ -108,6 +106,26 @@ void speed_tests() {
 	}
 }
 
+void not_level_100(std::mt19937 & random_engine) {
+	constexpr auto team_size = 1_bi;
+	constexpr auto species = Species::Masquerain;
+	constexpr auto level = Level(83_bi);
+	auto pokemon = Pokemon(team_size, species, level, Gender::genderless);
+	set_hp_ev(pokemon, EV(192_bi));
+	set_stat_ev(pokemon, StatNames::ATK, EV(0_bi));
+	set_stat_ev(pokemon, StatNames::DEF, EV(8_bi));
+	set_stat_ev(pokemon, StatNames::SPA, EV(120_bi));
+	set_stat_ev(pokemon, StatNames::SPD, EV(60_bi));
+	set_stat_ev(pokemon, StatNames::SPE, EV(128_bi));
+	auto & nature = get_nature(pokemon);
+	nature = Nature::Modest;
+	for (auto const move : {Moves::Hydro_Pump, Moves::Bug_Buzz, Moves::Roost, Moves::Air_Slash}) {
+		all_moves(pokemon).emplace_back(move);
+	}
+
+	optimize_evs(pokemon, random_engine);
+}
+
 }	// namespace
 
 void ev_optimizer_tests() {
@@ -119,6 +137,8 @@ void ev_optimizer_tests() {
 	std::random_device rd;
 	std::mt19937 random_engine(rd());
 	optimize_already_optimized(random_engine);
+
+	not_level_100(random_engine);
 
 	std::cout << "EV optimizer tests passed.\n\n";
 }
