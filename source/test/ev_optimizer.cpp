@@ -130,11 +130,8 @@ void ev_optimizer_tests() {
 	defensive_tests();
 	speed_tests();
 
-	auto pokemon = make_test_pokemon();
-	minimize_evs(pokemon);
 	std::random_device rd;
 	std::mt19937 random_engine(rd());
-	pad_random_evs(pokemon, random_engine);
 	optimize_already_optimized(random_engine);
 
 	std::cout << "EV optimizer tests passed.\n\n";
