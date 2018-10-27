@@ -37,18 +37,14 @@
 #include <containers/string.hpp>
 
 #include <cstdint>
-#include <string>
 
 namespace technicalmachine {
-// #define TECHNICALMACHINE_POKEMON_USE_NICKNAMES
 
 struct Pokemon {
-	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
-	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & nickname = std::string(), Happiness happiness = Happiness{});
+	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Happiness happiness = Happiness{});
+	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Item const & item, Ability const & ability, Nature const & nature, Happiness happiness = Happiness{});
 	operator Species() const;
 	
-	std::string_view get_nickname() const;
-
 	// These cannot be defined in the class because because I rely on a
 	// conversion operator. Friend functions only declared in a class body are
 	// not found by lookup rules in that case.
@@ -100,9 +96,6 @@ private:
 
 	MoveContainer m_moves;
 	
-	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
-	std::string nickname;
-	#endif
 	TypeCollection current_type;
 
 	Stats stats;
@@ -216,7 +209,7 @@ inline void switch_in(Pokemon & pokemon) {
 }
 
 
-containers::string to_string(Pokemon const & pokemon, bool include_nickname = false);
+containers::string to_string(Pokemon const & pokemon);
 
 inline auto hp_ratio(Pokemon const & pokemon) {
 	auto const & hp = get_hp(pokemon);

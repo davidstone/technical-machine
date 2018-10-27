@@ -107,9 +107,9 @@ struct Battle {
 	void handle_use_move(Party user, uint8_t slot, Moves move);
 	// This handles direct switches, replacing fainted Pokemon, and switching
 	// due to U-turn and Baton Pass. This assumes Species Clause is in effect.
-	void handle_send_out(Party switcher, uint8_t slot, Species species, Level level, Gender gender, std::string_view nickname);
+	void handle_send_out(Party switcher, uint8_t slot, Species species, Level level, Gender gender);
 	// This assumes Species Clause is in effect
-	void handle_phaze(Party phazer_party, uint8_t phazer_slot, uint8_t switcher_slot, Moves move, Species species, Level level, Gender gender, std::string_view nickname);
+	void handle_phaze(Party phazer_party, uint8_t phazer_slot, uint8_t switcher_slot, Moves move, Species species, Level level, Gender gender);
 	void handle_fainted(Party const fainter, uint8_t /*slot*/) {
 		auto & team = get_team(fainter).team;
 		auto active_pokemon = team.pokemon();

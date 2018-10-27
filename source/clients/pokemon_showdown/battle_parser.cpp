@@ -257,7 +257,7 @@ void BattleParser::handle_message(InMessage message) {
 		// message.remainder() == POKEMON
 	} else if (message.type() == "switch" or message.type() == "drag") {
 		auto const party = party_from_pokemon_id(message.next(": "));
-		auto const pokemon = message.next();
+		auto const nickname [[maybe_unused]] = message.next();
 		auto const details = parse_details(message.next());
 		auto const hp = message.next(' ');
 		static_cast<void>(hp);
@@ -282,10 +282,10 @@ void BattleParser::handle_message(InMessage message) {
 			if (party == m_phaze_move->party) {
 				throw std::runtime_error("Received phaze data for the wrong team.");
 			}
-			m_battle.handle_phaze(m_phaze_move->party, slot, slot, m_phaze_move->move, details.species, details.level, details.gender, pokemon);
+			m_battle.handle_phaze(m_phaze_move->party, slot, slot, m_phaze_move->move, details.species, details.level, details.gender);
 			m_phaze_move = bounded::none;
 		} else {
-			m_battle.handle_send_out(party, slot, details.species, details.level, details.gender, pokemon);
+			m_battle.handle_send_out(party, slot, details.species, details.level, details.gender);
 		}
 	} else if (message.type() == "replace") {
 #if 0

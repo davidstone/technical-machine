@@ -47,12 +47,9 @@
 
 namespace technicalmachine {
 
-Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Item const & item, Ability const & ability, Nature const & nature, std::string const & set_nickname [[maybe_unused]], Happiness const happiness):
+Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Item const & item, Ability const & ability, Nature const & nature, Happiness const happiness):
 	m_moves(my_team_size),
 	current_type(species),
-	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
-	nickname(set_nickname);
-	#endif
 	stats(species, level),
 
 	m_species(species),
@@ -73,8 +70,8 @@ Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const
 {
 }
 
-Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, std::string const & set_nickname, Happiness const happiness) : 
-	Pokemon::Pokemon(my_team_size, species, level, gender, Item::No_Item, Ability::Honey_Gather, Nature::Hardy, set_nickname, happiness)
+Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Happiness const happiness) : 
+	Pokemon::Pokemon(my_team_size, species, level, gender, Item::No_Item, Ability::Honey_Gather, Nature::Hardy, happiness)
 	{
 	m_ability_is_known = false;
 	m_item_is_known = false;
@@ -85,14 +82,6 @@ Pokemon::operator Species() const {
 	return m_species;
 }
 
-
-std::string_view Pokemon::get_nickname() const {
-	#if defined TECHNICALMACHINE_POKEMON_USE_NICKNAMES
-		return nickname;
-	#else
-		return to_string(m_species);
-	#endif
-}
 
 void Pokemon::change_type(Type const new_type) {
 	current_type.change_type(new_type);
@@ -111,10 +100,9 @@ bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {
 			lhs.m_level == rhs.m_level;
 }
 
-containers::string to_string(Pokemon const & pokemon, bool const include_nickname) {
+containers::string to_string(Pokemon const & pokemon) {
 	double const per_cent_hp = 100.0 * static_cast<double>(hp_ratio(pokemon));
 
-	auto const output_nickname = include_nickname and pokemon.get_nickname() != to_string(static_cast<Species>(pokemon));
 	auto const output_status = !is_clear(get_status(pokemon));
 	
 	#define TECHNICALMACHINE_STAT(stat, str) \
@@ -132,7 +120,6 @@ containers::string to_string(Pokemon const & pokemon, bool const include_nicknam
 		to_string(static_cast<Species>(pokemon)),
 		std::string_view(" ("), std::string_view((boost::format("%.1f") % per_cent_hp).str()), std::string_view("% HP) @ "),
 		to_string(get_item(pokemon)),
-		(output_nickname ? containers::concatenate<containers::string>(std::string_view(" ** "), pokemon.get_nickname()) : containers::string("")),
 		std::string_view("\n\tAbility: "), to_string(get_ability(pokemon)), std::string_view("\n"),
 		(output_status ? containers::concatenate<containers::string>(std::string_view("\tStatus: "), to_string(get_status(pokemon).name()), std::string_view("\n")) : containers::string("")),
 		std::string_view("\tNature: "), to_string(get_nature(pokemon)),

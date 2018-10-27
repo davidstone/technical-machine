@@ -30,6 +30,8 @@
 
 #include "../../stat/stat.hpp"
 
+#include "../../string_conversions/pokemon.hpp"
+
 #include <containers/integer_range.hpp>
 
 #include <boost/property_tree/ptree.hpp>
@@ -78,7 +80,7 @@ void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	member.put("<xmlattr>.Num", species.id);
 	member.put("<xmlattr>.Nature", nature_to_id(get_nature(pokemon)));
 	member.put("<xmlattr>.Shiny", 0);
-	member.put("<xmlattr>.Nickname", pokemon.get_nickname());
+	member.put("<xmlattr>.Nickname", to_string(static_cast<Species>(pokemon)));
 	member.put("<xmlattr>.Gen", 4);
 	member.put("<xmlattr>.Forme", species.forme);
 	member.put("<xmlattr>.Happiness", get_happiness(pokemon));

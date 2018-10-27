@@ -76,19 +76,19 @@ auto index_of_seen(PokemonCollection const & collection, Species const species) 
 	return static_cast<index_type>(containers::find(collection, species) - begin(collection));
 }
 
-auto find_or_add_pokemon(Team & switcher, Species const species, Level const level, Gender const gender, std::string_view const nickname) {
+auto find_or_add_pokemon(Team & switcher, Species const species, Level const level, Gender const gender) {
 	auto const index = index_of_seen(switcher.all_pokemon(), species);
 	if (index == switcher.number_of_seen_pokemon()) {
-		switcher.all_pokemon().add(species, level, gender, std::string(nickname));
+		switcher.all_pokemon().add(species, level, gender);
 	}
 	return index;
 }
 
 }	// namespace
 
-void Battle::handle_send_out(Party const switcher_party, uint8_t const slot, Species const species, Level const level, Gender const gender, std::string_view const nickname) {
+void Battle::handle_send_out(Party const switcher_party, uint8_t const slot, Species const species, Level const level, Gender const gender) {
 	auto & switcher = get_team(switcher_party).team;
-	auto const index = find_or_add_pokemon(switcher, species, level, gender, nickname);
+	auto const index = find_or_add_pokemon(switcher, species, level, gender);
 
 	// TODO: switch_decision_required includes replacing a fainted Pokemon. When
 	// replacing a fainted Pokemon, should we call switch_pokemon or call_move?
@@ -102,9 +102,9 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t const slot, Spe
 	}
 }
 
-void Battle::handle_phaze(Party const phazer_party, uint8_t const phazer_slot, uint8_t /*switcher_slot*/, Moves const move, Species const species, Level const level, Gender const gender, std::string_view const nickname) {
+void Battle::handle_phaze(Party const phazer_party, uint8_t const phazer_slot, uint8_t /*switcher_slot*/, Moves const move, Species const species, Level const level, Gender const gender) {
 	auto & switcher = get_team(technicalmachine::other(phazer_party)).team;
-	auto index = find_or_add_pokemon(switcher, species, level, gender, nickname);
+	auto index = find_or_add_pokemon(switcher, species, level, gender);
 	static_cast<void>(index);
 	handle_use_move(phazer_party, phazer_slot, move);
 }
