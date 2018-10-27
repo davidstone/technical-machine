@@ -1,5 +1,5 @@
 // Optimize Speed EVs and nature to remove waste
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,20 +18,18 @@
 
 #pragma once
 
-#include "../../stat/ev.hpp"
 #include "../../stat/nature.hpp"
+#include "../../stat/stat.hpp"
+#include "../../pokemon/level.hpp"
 
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
-struct Pokemon;
-struct OffensiveEVs;
-struct DefensiveEVs;
 
 struct SpeedEVs {
 private:
 public:
-	explicit SpeedEVs(Pokemon const & pokemon);
+	explicit SpeedEVs(Nature nature, Stat stat, Level level);
 	friend auto begin(SpeedEVs const & evs) {
 		return begin(evs.m_container);
 	}

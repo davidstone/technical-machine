@@ -1,5 +1,5 @@
 // Optimize Speed EVs and nature to remove waste
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,30 +17,28 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "speed.hpp"
-#include "../../pokemon/pokemon.hpp"
+
 #include "../../stat/calculate.hpp"
-#include "../../stat/nature.hpp"
 #include "../../stat/stat_names.hpp"
-#include "../../string_conversions/nature.hpp"
 
-#include <containers/algorithms/find.hpp>
+#include <containers/integer_range.hpp>
 
+#include <algorithm>
 #include <cassert>
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
-SpeedEVs::SpeedEVs(Pokemon const & pokemon) {
-	Stat stat = get_stat(pokemon, StatNames::SPE);
-	Level const level = get_level(pokemon);
-	auto const speed = initial_stat(StatNames::SPE, stat, level, get_nature(pokemon));
+SpeedEVs::SpeedEVs(Nature const initial_nature, Stat const initial_speed_stat, Level const level) {
+	auto const speed = initial_stat(StatNames::SPE, initial_speed_stat, level, initial_nature);
 	for (auto const nature : containers::enum_range<Nature>()) {
-		for (auto const ev : containers::integer_range(0_bi, EV::max + 4_bi, 4_bi)) {
-			stat = Stat(stat, EV(ev));
-			if (initial_stat(StatNames::SPE, stat, level, nature) >= speed) {
-				push_back(m_container, { nature, EV(ev) });
-				break;
-			}
+		auto const evs = containers::integer_range(0_bi, EV::max + 4_bi, 4_bi);
+		auto const it = std::partition_point(begin(evs), end(evs), [=](auto const ev) {
+			auto const stat = Stat(initial_speed_stat, EV(ev));
+			return initial_stat(StatNames::SPE, stat, level, nature) < speed;
+		});
+		if (it != end(evs)) {
+			m_container.emplace_back(nature, EV(*it));
 		}
 	}
 	assert(!empty(m_container));

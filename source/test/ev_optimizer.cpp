@@ -110,11 +110,11 @@ void speed_tests() {
 	auto const pokemon = make_test_pokemon();
 	auto const species = static_cast<Species>(pokemon);
 	auto const level = get_level(pokemon);
-	SpeedEVs speedEVs(pokemon);
+	auto const speed_evs = SpeedEVs(get_nature(pokemon), get_stat(pokemon, StatNames::SPE), get_level(pokemon));
 	auto const original_stat = get_stat(pokemon, StatNames::SPE);
 	auto const original_value = initial_stat(StatNames::SPE, original_stat, level, get_nature(pokemon));
 	for (auto const nature : containers::enum_range<Nature>()) {
-		auto const new_value = initial_stat(StatNames::SPE, Stat(species, StatNames::SPE, find(speedEVs, nature)), level, nature);
+		auto const new_value = initial_stat(StatNames::SPE, Stat(species, StatNames::SPE, find(speed_evs, nature)), level, nature);
 		if (boosts_stat(nature, StatNames::SPE) and !boosts_stat(get_nature(pokemon), StatNames::SPE)) {
 			assert(new_value == original_value or new_value == original_value + 1_bi);
 		} else {
