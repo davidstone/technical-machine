@@ -40,7 +40,6 @@ struct OffensiveEVs {
 		return containers::maybe_find_if(m_container, [=](auto const value) { return value.nature == nature; });
 	}
 private:
-	auto optimize(Pokemon const & pokemon) -> void;
 	struct OffensiveData {
 	private:
 		using StatType = decltype(initial_stat(std::declval<StatNames>(), std::declval<Stat>(), std::declval<Level>(), std::declval<Nature>()));

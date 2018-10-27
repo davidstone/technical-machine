@@ -47,18 +47,6 @@ auto find_least_stat(Species const species, Level const level, Nature const natu
 	return (test_stat() < initial) ? bounded::none : bounded::optional<EV::value_type>(ev);
 }
 
-}	// namespace
-
-OffensiveEVs::OffensiveEVs(Pokemon const & pokemon) {
-	for (auto const nature : containers::enum_range<Nature>()) {
-		m_container.emplace_back(nature);
-	}
-	optimize(pokemon);
-	assert(!empty(m_container));
-}
-
-namespace {
-
 auto ideal_attack_stat(Pokemon const & pokemon, bool const is_physical) {
 	// All we care about on this nature is the boost to Attack
 	auto const nature = is_physical ? get_nature(pokemon) : Nature::Modest;
@@ -92,7 +80,10 @@ auto remove_inferior_natures(Container & container, bool const is_physical, bool
 
 }	// namespace
 
-void OffensiveEVs::optimize(Pokemon const & pokemon) {
+OffensiveEVs::OffensiveEVs(Pokemon const & pokemon) {
+	for (auto const nature : containers::enum_range<Nature>()) {
+		m_container.emplace_back(nature);
+	}
 	// If I don't have a physical move, prefer to lower that because it lowers
 	// confusion damage. If I do have a physical move but no special move,
 	// prefer to lower Special Attack because it is the only remaining stat
@@ -106,6 +97,7 @@ void OffensiveEVs::optimize(Pokemon const & pokemon) {
 	OffensiveData const stats{ideal_attack_stat(pokemon, is_physical), ideal_special_attack_stat(pokemon, is_special, is_physical)};
 
 	equal_stats(stats, pokemon, get_level(pokemon));
+	assert(!empty(m_container));
 }
 
 void OffensiveEVs::equal_stats(OffensiveData const initial, Species const species, Level const level) {
