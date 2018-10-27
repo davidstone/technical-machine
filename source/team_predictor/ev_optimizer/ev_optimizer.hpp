@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "../../stat/ev.hpp"
+#include "../../stat/nature.hpp"
 #include "../../stat/stat_names.hpp"
 
 #include <containers/array/array.hpp>
@@ -26,6 +28,16 @@
 
 namespace technicalmachine {
 struct Pokemon;
+
+struct Combined {
+	Nature nature;
+	EV hp;
+	EV attack;
+	EV defense;
+	EV special_attack;
+	EV special_defense;
+	EV speed;
+};
 
 constexpr auto regular_stats() {
 	return containers::array{StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE};

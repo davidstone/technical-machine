@@ -18,7 +18,6 @@
 
 #include "ev_optimizer.hpp"
 
-#include "combine.hpp"
 #include "defensive.hpp"
 #include "offensive.hpp"
 #include "speed.hpp"
@@ -33,6 +32,10 @@
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
+
+constexpr auto sum(Combined const combined) {
+	return combined.hp.value() + combined.attack.value() + combined.defense.value() + combined.special_attack.value() + combined.special_defense.value() + combined.speed.value();
+}
 
 auto ev_sum(Pokemon const & pokemon) {
 	auto const ev_value = [&](StatNames const stat) {
@@ -50,6 +53,36 @@ bool has_physical_move(Pokemon const & pokemon) {
 
 bool has_special_move(Pokemon const & pokemon) {
 	return containers::any(regular_moves(pokemon), is_special);
+}
+
+auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> Combined {
+	auto best = bounded::optional<Combined>{};
+	for (auto const & speed : speed_container) {
+		// Small enough container that a linear search is fine
+		auto const offensive = o.find(speed.nature);
+		if (!offensive) {
+			continue;
+		}
+		auto const defensive = d.find(speed.nature);
+		if (defensive == end(d)) {
+			continue;
+		}
+		auto candidate = Combined{
+			speed.nature,
+			defensive->hp,
+			offensive->attack,
+			defensive->defense,
+			offensive->special_attack,
+			defensive->special_defense,
+			speed.ev
+		};
+		if (!best or sum(candidate) < sum(*best)) {
+			best.emplace(candidate);
+		}
+	}
+	assert(best);
+	assert(sum(*best) <= EV::max_total);
+	return *best;
 }
 
 }	// namespace

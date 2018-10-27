@@ -109,7 +109,6 @@ add_library(tm_common STATIC
 	source/string_conversions/pokemon.cpp
 	source/string_conversions/status.cpp
 
-	source/team_predictor/ev_optimizer/combine.cpp
 	source/team_predictor/ev_optimizer/defensive.cpp
 	source/team_predictor/ev_optimizer/defensive_data_point.cpp
 	source/team_predictor/ev_optimizer/ev_optimizer.cpp
