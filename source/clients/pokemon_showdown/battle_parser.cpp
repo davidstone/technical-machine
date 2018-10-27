@@ -176,7 +176,7 @@ void BattleParser::handle_message(InMessage message) {
 		constexpr auto slot = 0;
 		auto const party = party_from_pokemon_id(message.next());
 		m_battle.handle_fainted(party, slot);
-		if (m_battle.is_me(party)) {
+		if (m_battle.is_me(party) and (m_battle.ai().size() != 1_bi or get_hp(m_battle.ai().pokemon()) != 0_bi)) {
 			m_replacing_fainted = true;
 			send_move(determine_action());
 		}
