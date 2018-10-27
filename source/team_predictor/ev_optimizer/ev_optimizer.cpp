@@ -89,11 +89,10 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 }	// namespace
 
 void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
-	minimize_evs(pokemon);
-	while (ev_sum(pokemon) < EV::max_total) {
+	do {
 		pad_random_evs(pokemon, random_engine);
 		minimize_evs(pokemon);
-	}
+	} while (ev_sum(pokemon) < EV::max_total);
 }
 
 void minimize_evs(Pokemon & pokemon) {
