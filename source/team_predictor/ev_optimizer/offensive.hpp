@@ -18,23 +18,24 @@
 
 #pragma once
 
-#include "../../pokemon/pokemon.hpp"
+#include "../../pokemon/level.hpp"
+#include "../../pokemon/species_forward.hpp"
+
 #include "../../stat/calculate.hpp"
 #include "../../stat/ev.hpp"
 #include "../../stat/nature.hpp"
+#include "../../stat/stat.hpp"
 
 #include <bounded/integer.hpp>
 
-#include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/find.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
-struct Pokemon;
 using namespace bounded::literal;
 
 struct OffensiveEVs {
-	explicit OffensiveEVs(Pokemon const & pokemon);
+	OffensiveEVs(Species, Level, Nature, Stat attack, Stat special_attack, bool include_attack_evs, bool include_special_attack_evs);
 
 	auto find(Nature const nature) const {
 		return containers::maybe_find_if(m_container, [=](auto const value) { return value.nature == nature; });
@@ -60,13 +61,5 @@ private:
 	};
 	containers::static_vector<OffensiveStats, size(containers::enum_range<Nature>()).value()> m_container;
 };
-
-inline bool has_physical_move(Pokemon const & pokemon) {
-	return containers::any(regular_moves(pokemon), is_physical);
-}
-
-inline bool has_special_move(Pokemon const & pokemon) {
-	return containers::any(regular_moves(pokemon), is_special);
-}
 
 }	// namespace technicalmachine

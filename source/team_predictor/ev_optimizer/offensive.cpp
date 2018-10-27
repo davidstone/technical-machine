@@ -35,7 +35,7 @@ using namespace bounded::literal;
 template<StatNames stat_name, typename Initial>
 auto find_least_stat(Species const species, Level const level, Nature const nature, Initial const initial) -> bounded::optional<EV::value_type> {
 	EV::value_type ev = 0_bi;
-	Stat stat(species, stat_name, EV(ev));
+	auto stat = Stat(species, stat_name, EV(ev));
 	auto const test_stat = [&]() { return initial_stat(stat_name, stat, level, nature); };
 	while (test_stat() < initial) {
 		ev += 4_bi;
@@ -47,20 +47,20 @@ auto find_least_stat(Species const species, Level const level, Nature const natu
 	return (test_stat() < initial) ? bounded::none : bounded::optional<EV::value_type>(ev);
 }
 
-auto ideal_attack_stat(Pokemon const & pokemon, bool const is_physical) {
+auto ideal_attack_stat(Stat const original_stat, Level const level, Nature const original_nature, bool const is_physical) {
 	// All we care about on this nature is the boost to Attack
-	auto const nature = is_physical ? get_nature(pokemon) : Nature::Modest;
-	Stat const stat(pokemon, StatNames::ATK, is_physical ? get_stat(pokemon, StatNames::ATK).ev() : EV(0_bi));
-	return initial_stat(StatNames::ATK, stat, get_level(pokemon), nature);
+	auto const nature = is_physical ? original_nature : Nature::Modest;
+	auto const stat = is_physical ? original_stat : Stat(original_stat, EV(0_bi));
+	return initial_stat(StatNames::ATK, stat, level, nature);
 }
-auto ideal_special_attack_stat(Pokemon const & pokemon, bool const is_special, bool const is_physical) {
+auto ideal_special_attack_stat(Stat const original_stat, Level const level, Nature const original_nature, bool const is_special, bool const is_physical) {
 	// All we care about on this nature is the boost to Special Attack
 	auto const nature =
-		is_special ? get_nature(pokemon) :
+		is_special ? original_nature :
 		is_physical ? Nature::Adamant :
 		Nature::Hardy;
-	Stat const stat(pokemon, StatNames::SPA, is_special ? get_stat(pokemon, StatNames::SPA).ev() : EV(0_bi));
-	return initial_stat(StatNames::SPA, stat, get_level(pokemon), nature);
+	auto const stat = is_special ? original_stat : Stat(original_stat, EV(0_bi));
+	return initial_stat(StatNames::SPA, stat, level, nature);
 }
 
 template<typename Container>
@@ -80,7 +80,7 @@ auto remove_inferior_natures(Container & container, bool const is_physical, bool
 
 }	// namespace
 
-OffensiveEVs::OffensiveEVs(Pokemon const & pokemon) {
+OffensiveEVs::OffensiveEVs(Species const species, Level const level, Nature const original_nature, Stat const attack, Stat const special_attack, bool const include_attack_evs, bool const include_special_attack_evs) {
 	for (auto const nature : containers::enum_range<Nature>()) {
 		m_container.emplace_back(nature);
 	}
@@ -89,15 +89,14 @@ OffensiveEVs::OffensiveEVs(Pokemon const & pokemon) {
 	// prefer to lower Special Attack because it is the only remaining stat
 	// guaranteed to be unused. This allows me to maximize Speed and the
 	// defensive stats.
-	bool const is_physical = has_physical_move(pokemon);
-	bool const is_special = has_special_move(pokemon);
-	
-	remove_inferior_natures(m_container, is_physical, is_special);
-	
-	OffensiveData const stats{ideal_attack_stat(pokemon, is_physical), ideal_special_attack_stat(pokemon, is_special, is_physical)};
+	remove_inferior_natures(m_container, include_attack_evs, include_special_attack_evs);
 
-	equal_stats(stats, pokemon, get_level(pokemon));
-	assert(!empty(m_container));
+	auto const stats = OffensiveData{
+		ideal_attack_stat(attack, level, original_nature, include_attack_evs),
+		ideal_special_attack_stat(special_attack, level, original_nature, include_special_attack_evs, include_attack_evs)
+	};
+
+	equal_stats(stats, species, level);
 }
 
 void OffensiveEVs::equal_stats(OffensiveData const initial, Species const species, Level const level) {
@@ -109,8 +108,7 @@ void OffensiveEVs::equal_stats(OffensiveData const initial, Species const specie
 			it->attack = EV(*atk_ev);
 			it->special_attack = EV(*spa_ev);
 			++it;
-		}
-		else {
+		} else {
 			it = erase(m_container, it);
 		}
 	}

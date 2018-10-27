@@ -44,6 +44,14 @@ auto ev_sum(Pokemon const & pokemon) {
 	));
 }
 
+bool has_physical_move(Pokemon const & pokemon) {
+	return containers::any(regular_moves(pokemon), is_physical);
+}
+
+bool has_special_move(Pokemon const & pokemon) {
+	return containers::any(regular_moves(pokemon), is_special);
+}
+
 }	// namespace
 
 void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
@@ -61,7 +69,7 @@ void minimize_evs(Pokemon & pokemon) {
 	auto const hp = get_hp(pokemon);
 	auto stat = [&](StatNames const name) { return get_stat(pokemon, name); };
 
-	auto const offensive = OffensiveEVs(pokemon);
+	auto const offensive = OffensiveEVs(species, level, nature, stat(StatNames::ATK), stat(StatNames::SPA), has_physical_move(pokemon), has_special_move(pokemon));
 	auto const defensive = DefensiveEVs(species, level, nature, hp, stat(StatNames::DEF), stat(StatNames::SPD));
 	auto const speed = SpeedEVs(nature, stat(StatNames::SPE), level);
 
