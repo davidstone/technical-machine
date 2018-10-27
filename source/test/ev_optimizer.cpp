@@ -83,20 +83,6 @@ void defensive_tests() {
 	}
 }
 
-Pokemon make_test_pokemon() {
-	constexpr auto team_size = max_pokemon_per_team;
-	Level const level(100_bi);
-	Pokemon pokemon(team_size, Species::Snorlax, level, Gender::male);
-	set_hp_ev(pokemon, EV(128_bi));
-	for (auto const stat : containers::enum_range(StatNames::NORMAL_END)) {
-		set_stat_ev(pokemon, stat, EV(76_bi));
-	}
-	get_nature(pokemon) = Nature::Hardy;
-	all_moves(pokemon).emplace_back(Moves::Psychic);
-	all_moves(pokemon).emplace_back(Moves::Earthquake);
-	return pokemon;
-}
-
 auto find(SpeedEVs const & container, Nature const nature) {
 	auto const it = containers::find_if(container, [=](auto const & value) { return value.nature == nature; });
 	assert(it != end(container));
@@ -106,15 +92,15 @@ auto find(SpeedEVs const & container, Nature const nature) {
 void speed_tests() {
 	std::cout << "\tRunning speed tests.\n";
 	
-	auto const pokemon = make_test_pokemon();
-	auto const species = static_cast<Species>(pokemon);
-	auto const level = get_level(pokemon);
-	auto const speed_evs = SpeedEVs(get_nature(pokemon), get_stat(pokemon, StatNames::SPE), get_level(pokemon));
-	auto const original_stat = get_stat(pokemon, StatNames::SPE);
-	auto const original_value = initial_stat(StatNames::SPE, original_stat, level, get_nature(pokemon));
+	constexpr auto species = Species::Snorlax;
+	constexpr auto level = Level(100_bi);
+	constexpr auto original_nature = Nature::Hardy;
+	auto const original_stat = Stat(species, StatNames::SPE, EV(76_bi));
+	auto const speed_evs = SpeedEVs(original_nature, original_stat, level);
+	auto const original_value = initial_stat(StatNames::SPE, original_stat, level, original_nature);
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const new_value = initial_stat(StatNames::SPE, Stat(species, StatNames::SPE, find(speed_evs, nature)), level, nature);
-		if (boosts_stat(nature, StatNames::SPE) and !boosts_stat(get_nature(pokemon), StatNames::SPE)) {
+		if (boosts_stat(nature, StatNames::SPE) and !boosts_stat(original_nature, StatNames::SPE)) {
 			assert(new_value == original_value or new_value == original_value + 1_bi);
 		} else {
 			assert(new_value == original_value);
