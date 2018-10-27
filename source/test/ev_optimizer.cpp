@@ -67,19 +67,18 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 
 void defensive_tests() {
 	std::cout << "\tRunning defensive tests.\n";
-	constexpr auto team_size = max_pokemon_per_team;
-	Pokemon pokemon(team_size, Species::Celebi, Level(100_bi), Gender::genderless);
-	set_hp_ev(pokemon, EV(252_bi));
-	set_stat_ev(pokemon, StatNames::DEF, EV(252_bi));
-	set_stat_ev(pokemon, StatNames::SPD, EV(4_bi));
-	auto & nature = get_nature(pokemon);
-	nature = Nature::Bold;
-	all_moves(pokemon).emplace_back(Moves::Psychic);
+	constexpr auto species = Species::Celebi;
+	constexpr auto level = Level(100_bi);
+	constexpr auto nature = Nature::Bold;
+	auto const hp = HP(species, level, EV(252_bi));
+	auto const defense = Stat(species, StatNames::DEF, EV(252_bi));
+	auto const special_defense = Stat(species, StatNames::SPD, EV(4_bi));
 	
-	for (auto const & candidate : DefensiveEVs(pokemon)) {
-		assert(candidate.hp == get_hp(pokemon).ev());
-		assert(candidate.defense == get_stat(pokemon, StatNames::DEF).ev());
-		assert(candidate.special_defense >= get_stat(pokemon, StatNames::SPD).ev());
+	auto defensive_evs = DefensiveEVs(species, level, nature, hp, defense, special_defense);
+	for (auto const & candidate : defensive_evs) {
+		assert(candidate.hp == hp.ev());
+		assert(candidate.defense == defense.ev());
+		assert(candidate.special_defense >= special_defense.ev());
 		assert(boosts_stat(candidate.nature, StatNames::DEF));
 	}
 }

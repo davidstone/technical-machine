@@ -20,17 +20,21 @@
 
 #include "defensive_data_point.hpp"
 
+#include "../../pokemon/level.hpp"
+#include "../../pokemon/species_forward.hpp"
+
+#include "../../stat/hp.hpp"
 #include "../../stat/nature.hpp"
+#include "../../stat/stat.hpp"
 
 #include <containers/algorithms/find.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
-struct Pokemon;
 
 struct DefensiveEVs {
-	explicit DefensiveEVs(Pokemon const & pokemon);
+	DefensiveEVs(Species, Level, Nature, HP, Stat defense, Stat special_defense);
 	friend auto begin(DefensiveEVs const & defensive) {
 		return begin(defensive.m_container);
 	}

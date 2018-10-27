@@ -55,9 +55,16 @@ void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 }
 
 void minimize_evs(Pokemon & pokemon) {
+	auto const species = static_cast<Species>(pokemon);
+	auto const level = get_level(pokemon);
+	auto const nature = get_nature(pokemon);
+	auto const hp = get_hp(pokemon);
+	auto stat = [&](StatNames const name) { return get_stat(pokemon, name); };
+
 	auto const offensive = OffensiveEVs(pokemon);
-	auto const defensive = DefensiveEVs(pokemon);
-	auto const speed = SpeedEVs(get_nature(pokemon), get_stat(pokemon, StatNames::SPE), get_level(pokemon));
+	auto const defensive = DefensiveEVs(species, level, nature, hp, stat(StatNames::DEF), stat(StatNames::SPD));
+	auto const speed = SpeedEVs(nature, stat(StatNames::SPE), level);
+
 	auto const result = combine(offensive, defensive, speed);
 	set_hp_ev(pokemon, result.hp);
 	set_stat_ev(pokemon, StatNames::ATK, result.attack);

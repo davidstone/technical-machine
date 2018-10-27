@@ -51,14 +51,7 @@ auto reverse_initial_stat(T const target, Nature const nature, StatNames const s
 
 }	// namespace
 
-DefensiveEVs::DefensiveEVs(Pokemon const & pokemon) {
-	auto const species = static_cast<Species>(pokemon);
-	auto const level = get_level(pokemon);
-	auto const original_nature = get_nature(pokemon);
-	auto const original_hp = get_hp(pokemon);
-	auto const defense = get_stat(pokemon, StatNames::DEF);
-	auto const special_defense = get_stat(pokemon, StatNames::SPD);
-
+DefensiveEVs::DefensiveEVs(Species const species, Level const level, Nature const original_nature, HP const original_hp, Stat const defense, Stat const special_defense) {
 	auto product = [=](Nature const nature, HP const hp, StatNames const name, Stat const stat) {
 		return hp.max() * initial_stat(name, stat, level, nature);
 	};
