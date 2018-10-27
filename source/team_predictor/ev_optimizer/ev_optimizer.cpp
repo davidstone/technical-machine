@@ -33,8 +33,9 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-constexpr auto sum(Combined const combined) {
-	return combined.hp.value() + combined.attack.value() + combined.defense.value() + combined.special_attack.value() + combined.special_defense.value() + combined.speed.value();
+constexpr auto ev_sum(Combined const stats) {
+	constexpr auto impl = [](auto... args) { return (... + args.value()); };
+	return impl(stats.hp, stats.attack, stats.defense, stats.special_attack, stats.special_defense, stats.speed);
 }
 
 auto ev_sum(Pokemon const & pokemon) {
@@ -76,12 +77,12 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 			defensive->special_defense,
 			speed.ev
 		};
-		if (!best or sum(candidate) < sum(*best)) {
+		if (!best or ev_sum(candidate) < ev_sum(*best)) {
 			best.emplace(candidate);
 		}
 	}
 	assert(best);
-	assert(sum(*best) <= EV::max_total);
+	assert(ev_sum(*best) <= EV::max_total);
 	return *best;
 }
 
