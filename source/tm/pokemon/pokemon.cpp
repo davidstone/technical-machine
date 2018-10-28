@@ -107,7 +107,7 @@ containers::string to_string(Pokemon const & pokemon) {
 	auto moves_to_string = [&]{
 		containers::string output;
 		for (auto const & move : regular_moves(pokemon)) {
-			output = containers::concatenate<containers::string>(std::move(output), std::string_view("\n\t- "), to_string(move));
+			output = containers::concatenate<containers::string>(std::move(output), std::string_view("\n\t- "), to_string(move.name()));
 		}
 		return output;
 	};

@@ -94,13 +94,13 @@ using ::containers::detail::common::operator==;
 
 template<typename... MaybePP>
 auto add_seen_move(MoveContainer & container, Moves const move, MaybePP... pp) {
-	if (auto const ptr = containers::maybe_find(container, move)) {
-		return *ptr;
+	if (containers::any_equal(container, move)) {
+		return;
 	}
 	if (size(container.regular()) == max_moves_per_pokemon) {
 		throw std::runtime_error("Tried to add too many moves");
 	}
-	return container.emplace_back(move, pp...);
+	container.emplace_back(move, pp...);
 }
 
 }	// namespace technicalmachine

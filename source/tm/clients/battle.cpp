@@ -38,14 +38,14 @@
 
 namespace technicalmachine {
 
-void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const move_name) {
+void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const move) {
 	auto & user = is_me(party) ? m_ai : m_foe;
 	auto & other = is_me(party) ? m_foe : m_ai;
 
-	auto const move = add_seen_move(all_moves(user.team.pokemon()), move_name);
+	add_seen_move(all_moves(user.team.pokemon()), move);
 
 	auto const species = get_species(user.team.pokemon());
-	std::cout << user.team.who() << "'s move: " << to_string(species) << " uses " << to_string(move_name) << '\n';
+	std::cout << user.team.who() << "'s move: " << to_string(species) << " uses " << to_string(move) << '\n';
 
 	constexpr auto other_move = bounded::none;
 	constexpr auto miss = false;

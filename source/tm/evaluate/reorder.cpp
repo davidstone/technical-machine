@@ -1,5 +1,5 @@
 // Reorder moves for efficient evaluation
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,7 +19,6 @@
 #include <tm/evaluate/reorder.hpp>
 
 #include <tm/evaluate/move_scores.hpp>
-#include <tm/block.hpp>
 
 #include <containers/legacy_iterator.hpp>
 
@@ -35,7 +34,7 @@ StaticVectorMove reorder(StaticVectorMove container, MoveScores const & move_sco
 	// then only has to prove that further moves aren't as good as the move
 	// already searched; it is not important to know how much worse they are.
 	// Moves that cannot be selected are excluded.
-	auto compare = [&](auto const & lhs, auto const & rhs) {
+	auto compare = [&](Moves const lhs, Moves const rhs) {
 		auto const lhs_score = move_scores.get(lhs);
 		auto const rhs_score = move_scores.get(rhs);
 		return ai ? (lhs_score > rhs_score) : (lhs_score < rhs_score);

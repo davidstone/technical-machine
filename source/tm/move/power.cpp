@@ -55,7 +55,7 @@ auto power_of_mass_based_moves(Species species) -> bounded::integer<20, 120>;
 auto variable_adjusted_base_power(Team const & attacker_team, Move const move, Team const & defender_team, Weather const weather, Variable const & variable) -> VariableAdjustedBasePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
-	switch (static_cast<Moves>(move)) {
+	switch (move.name()) {
 		case Moves::Crush_Grip:
 		case Moves::Wring_Out:
 			return bounded::integer<1, 121>(120_bi * hp_ratio(defender) + 1_bi, bounded::non_check);
@@ -132,7 +132,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Move const move, T
 		case Moves::Trump_Card:
 			return move.pp().trump_card_power();
 		default:
-			return *base_power(move);
+			return *base_power(move.name());
 	}
 }
 
@@ -283,12 +283,12 @@ auto move_power(Team const & attacker_team, Move const move, bool const attacker
 	auto const base_power = variable_adjusted_base_power(attacker_team, move, defender_team, weather, variable);
 	return static_cast<MovePower>(bounded::max(1_bi,
 		base_power *
-		BOUNDED_CONDITIONAL(doubling(attacker, move, attacker_damaged, defender, defender_damaged, weather), 2_bi, 1_bi) *
-		item_modifier(attacker, move) *
-		BOUNDED_CONDITIONAL(charge_boosted(attacker, move), 2_bi, 1_bi) /
-		BOUNDED_CONDITIONAL(sport_is_active(defender, move), 2_bi, 1_bi) *
-		attacker_ability_power_modifier(attacker, move, defender, base_power) *
-		defender_ability_modifier(attacker, move, get_ability(defender))
+		BOUNDED_CONDITIONAL(doubling(attacker, move.name(), attacker_damaged, defender, defender_damaged, weather), 2_bi, 1_bi) *
+		item_modifier(attacker, move.name()) *
+		BOUNDED_CONDITIONAL(charge_boosted(attacker, move.name()), 2_bi, 1_bi) /
+		BOUNDED_CONDITIONAL(sport_is_active(defender, move.name()), 2_bi, 1_bi) *
+		attacker_ability_power_modifier(attacker, move.name(), defender, base_power) *
+		defender_ability_modifier(attacker, move.name(), get_ability(defender))
 	));
 }
 

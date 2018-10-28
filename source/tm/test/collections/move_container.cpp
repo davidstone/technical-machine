@@ -28,6 +28,7 @@
 
 #include <containers/algorithms/compare.hpp>
 #include <containers/algorithms/concatenate_view.hpp>
+#include <containers/algorithms/transform.hpp>
 #include <containers/array/array.hpp>
 #include <containers/static_vector/static_vector.hpp>
 #include <containers/integer_range.hpp>
@@ -82,7 +83,7 @@ void move_container_tests() {
 		std::cerr << "MoveContainer has the wrong moves.\nExpected: ";
 		print_container(expected);
 		std::cerr << "Got: ";
-		print_container(c);
+		print_container(containers::transform(c, [](Move const move) { return move.name(); }));
 		std::terminate();
 	}
 }

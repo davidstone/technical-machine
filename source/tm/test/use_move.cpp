@@ -62,17 +62,17 @@ void test_baton_pass() {
 	}
 	
 	auto weather = Weather{};
-	call_move(attacker, Move(Moves::Belly_Drum), false, defender, bounded::none, false, weather, Variable{}, false, false, false, bounded::none);
+	call_move(attacker, Moves::Belly_Drum, false, defender, bounded::none, false, weather, Variable{}, false, false, false, bounded::none);
 	if (stage(attacker.pokemon())[StatNames::ATK] != 6_bi) {
 		std::cerr << "Belly Drum did not max out Attack\n";
 		std::terminate();
 	}
-	call_move(attacker, Move(Moves::Baton_Pass), false, defender, bounded::none, false, weather, Variable{}, false, false, false, bounded::none);
+	call_move(attacker, Moves::Baton_Pass, false, defender, bounded::none, false, weather, Variable{}, false, false, false, bounded::none);
 	if (stage(attacker.pokemon())[StatNames::ATK] != 6_bi) {
 		std::cerr << "Baton Pass immediately cleared stat boosts\n";
 		std::terminate();
 	}
-	call_move(attacker, Move(Moves::Switch1), false, defender, bounded::none, false, weather, Variable{}, false, false, false, bounded::none);
+	call_move(attacker, Moves::Switch1, false, defender, bounded::none, false, weather, Variable{}, false, false, false, bounded::none);
 	if (stage(attacker.pokemon())[StatNames::ATK] != 6_bi) {
 		std::cerr << "Baton Pass cleared stat boosts after switching\n";
 		std::terminate();

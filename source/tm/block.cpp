@@ -82,14 +82,14 @@ auto imprison(Moves const move, ActivePokemon const other) {
 
 // Things that both block selection and block execution in between sleep and confusion
 auto block1 (ActivePokemon const user, Move const move, ActivePokemon const other) {
-	if (!is_regular(move)) {
+	if (!is_regular(move.name())) {
 		return false;
 	}
 	return
 		(move.pp().is_empty()) or
-		(is_disabled(user, move)) or
-		(heal_block_is_active(user) and (is_healing(move))) or
-		(imprison(move, other));
+		(is_disabled(user, move.name())) or
+		(heal_block_is_active(user) and (is_healing(move.name()))) or
+		(imprison(move.name(), other));
 }
 
 auto is_blocked_by_taunt(Moves const move) {
@@ -142,7 +142,7 @@ auto is_blocked_due_to_lock_in(ActivePokemon const user, Moves const move) {
 auto is_legal_selection(Team const & user, Move const move, ActivePokemon const other, Weather const weather, bool const found_selectable_move) {
 	auto const & pokemon = user.pokemon();
 	if (switch_decision_required(pokemon)) {
-		return is_switch(move) and would_switch_to_different_pokemon(user.all_pokemon(), move);
+		return is_switch(move.name()) and would_switch_to_different_pokemon(user.all_pokemon(), move.name());
 	}
 	auto const is_pass = move == Moves::Pass;
 	if (switch_decision_required(other)) {
@@ -153,11 +153,11 @@ auto is_legal_selection(Team const & user, Move const move, ActivePokemon const 
 	}
 	return
 		!is_pass and
-		!is_blocked_by_bide(pokemon, move) and
-		is_not_illegal_switch(user, move, other, weather) and
+		!is_blocked_by_bide(pokemon, move.name()) and
+		is_not_illegal_switch(user, move.name(), other, weather) and
 		(move != Moves::Struggle or !found_selectable_move) and
-		!((block1(pokemon, move, other)) or (block2(pokemon, move, weather)) or blocked_by_torment(pokemon, move)) and
-		!is_blocked_due_to_lock_in(pokemon, move);
+		!((block1(pokemon, move, other)) or (block2(pokemon, move.name(), weather)) or blocked_by_torment(pokemon, move.name())) and
+		!is_blocked_due_to_lock_in(pokemon, move.name());
 }
 
 }	// namespace
@@ -171,7 +171,7 @@ auto legal_selections(Team const & user, ActivePokemon const other, Weather cons
 	for (auto const move : all_moves(user.pokemon())) {
 		bool const found_selectable_move = !empty(result);
 		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
-			result.emplace_back(move);
+			result.emplace_back(move.name());
 		}
 	}
 	assert(!empty(result));
@@ -210,17 +210,17 @@ auto is_blocked_due_to_status(MutableActivePokemon user, Moves const move, bool 
 }	// namespace
 
 bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon const other, Weather const weather, bool const awakens) {
-	assert(!is_switch(move) or !is_recharging(user));
+	assert(!is_switch(move.name()) or !is_recharging(user));
 	
-	if (is_switch(move)) {
+	if (is_switch(move.name())) {
 		return true;
 	}
 	if (get_hp(user) == 0_bi) {
 		return false;
 	}
 
-	bool execute = !(is_blocked_due_to_status(user, move, awakens) or
-			block1 (user, move, other) or
+	bool execute = !(is_blocked_due_to_status(user, move.name(), awakens) or
+			block1(user, move, other) or
 			is_loafing(user));
 
 	if (execute) {
@@ -231,7 +231,7 @@ bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon 
 			if (boosts_speed_when_flinched(get_ability(user)))
 				boost(stage(user), StatNames::SPE, 1_bi);
 			execute = false;
-		} else if (block2(user, move, weather) or is_fully_paralyzed(user)) {
+		} else if (block2(user, move.name(), weather) or is_fully_paralyzed(user)) {
 			execute = false;
 		}
 	}

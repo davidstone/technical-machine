@@ -38,7 +38,7 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 	// this works in all situations.
 	for (auto const move : all_moves(pokemon)) {
 		constexpr auto initial = static_cast<double>(victory + 1_bi);
-		m_scores.emplace_back(move, initial);
+		m_scores.emplace_back(move.name(), initial);
 	}
 	std::sort(containers::legacy_iterator(begin(m_scores)), containers::legacy_iterator(end(m_scores)));
 }

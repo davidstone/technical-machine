@@ -20,7 +20,8 @@
 
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/move.hpp>
-#include <tm/pokemon/species_forward.hpp>
+
+#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 
@@ -28,6 +29,11 @@ struct ActivePokemon;
 struct MutableActivePokemon;
 struct Team;
 struct Weather;
+
+using StaticVectorMove = containers::static_vector<
+	Moves,
+	bounded::detail::normalize<std::numeric_limits<MoveSize>::max().value()>
+>;
 
 auto legal_selections(Team const & user, ActivePokemon other, Weather weather) -> StaticVectorMove;
 auto can_execute_move(MutableActivePokemon user, Move move, ActivePokemon other, Weather weather, bool awakens) -> bool;

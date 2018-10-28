@@ -44,7 +44,7 @@ namespace pl {
 namespace {
 
 void write_move (Move const move, boost::property_tree::ptree & pt) {
-	boost::property_tree::ptree & m = pt.add("moveset.move", to_string(move));
+	boost::property_tree::ptree & m = pt.add("moveset.move", to_string(move.name()));
 	// TODO: replace with real PP ups logic
 	m.put ("<xmlattr>.pp-up", 3);
 }

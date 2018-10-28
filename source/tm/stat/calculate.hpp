@@ -25,7 +25,6 @@
 #include <tm/stat/stat.hpp>
 #include <tm/stat/stat_names.hpp>
 
-#include <tm/move/move.hpp>
 #include <tm/pokemon/level.hpp>
 
 namespace technicalmachine {
@@ -58,10 +57,10 @@ auto calculate_speed(Team const & team, Weather weather) -> speed_type;
 
 struct OrderElement {
 	Team const & team;
-	Move move;
+	Moves move;
 };
 using Order = bounded::optional<std::pair<OrderElement, OrderElement>>;
-auto order(Team const & team1, Move move1, Team const & team2, Move move2, Weather weather) -> Order;
+auto order(Team const & team1, Moves move1, Team const & team2, Moves move2, Weather weather) -> Order;
 
 using Faster = bounded::optional<std::pair<Team const &, Team const &>>;
 auto faster_pokemon(Team const & team1, Team const & team2, Weather weather) -> Faster;

@@ -46,11 +46,11 @@ auto set_stats(Pokemon & pokemon, Combined const stats) {
 }
 
 bool has_physical_move(Pokemon const & pokemon) {
-	return containers::any(regular_moves(pokemon), is_physical);
+	return containers::any(regular_moves(pokemon), [](Move const move) { return is_physical(move.name()); });
 }
 
 bool has_special_move(Pokemon const & pokemon) {
-	return containers::any(regular_moves(pokemon), is_special);
+	return containers::any(regular_moves(pokemon), [](Move const move) { return is_special(move.name()); });
 }
 
 auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> Combined {

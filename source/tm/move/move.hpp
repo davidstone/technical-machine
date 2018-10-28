@@ -1,4 +1,4 @@
-// Copyright (C) 2017 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,15 +17,12 @@
 
 #pragma once
 
-#include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/pp.hpp>
 
 #include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
-
-#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -37,7 +34,7 @@ struct Move {
 	{
 	}
 
-	constexpr operator Moves() const {
+	constexpr auto name() const {
 		return m_name;
 	}
 
@@ -57,13 +54,13 @@ private:
 constexpr auto operator==(Move const lhs, Move const rhs) {
 	return
 		lhs.pp() == rhs.pp() and
-		static_cast<Moves>(lhs) == static_cast<Moves>(rhs);
+		lhs.name() == rhs.name();
 }
 constexpr auto operator==(Move const lhs, Moves const rhs) {
-	return static_cast<Moves>(lhs) == rhs;
+	return lhs.name() == rhs;
 }
 constexpr auto operator==(Moves const lhs, Move const rhs) {
-	return lhs == static_cast<Moves>(rhs);
+	return lhs == rhs.name();
 }
 
 auto is_regular(Moves move) -> bool;
@@ -75,7 +72,5 @@ auto is_damaging(Moves move) -> bool;
 auto is_phaze(Moves name) -> bool;
 
 auto is_usable_while_frozen(Moves move) -> bool;
-
-using StaticVectorMove = containers::static_vector<Move, static_cast<std::intmax_t>(std::numeric_limits<MoveSize>::max())>;
 
 }	// namespace technicalmachine

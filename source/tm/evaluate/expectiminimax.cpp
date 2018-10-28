@@ -353,7 +353,7 @@ auto finish_end_of_turn(Team const & first, Team const & last, Weather const wea
 	return select_type_of_move(ai, foe, weather, evaluate, depth.one_level_deeper()).score;
 };
 
-auto handle_end_of_turn_replacing(Team first, Move const first_move, Team last, Move const last_move, Weather weather, Evaluate const evaluate, DepthTracker const depth) -> double {
+auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last, Moves const last_move, Weather weather, Evaluate const evaluate, DepthTracker const depth) -> double {
 	if (first_move != Moves::Pass) {
 		switch_pokemon(first, last, weather, to_replacement(first_move));
 	}
@@ -391,7 +391,7 @@ double end_of_turn_order_branch(Team const & team, Team const & other, Faster co
 
 
 auto use_move_branch_inner(Variable const & last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
-	return [=, &last_variable](Team first, Move, Team last, Move const last_move, Weather weather, Evaluate const evaluate, DepthTracker const depth) {
+	return [=, &last_variable](Team first, Moves, Team last, Moves const last_move, Weather weather, Evaluate const evaluate, DepthTracker const depth) {
 		// TODO: properly handle used move here
 		// TODO: implement properly
 		constexpr auto first_damaged = false;
@@ -414,8 +414,8 @@ auto use_move_branch_inner(Variable const & last_variable, CriticalHitFlag const
 	};
 }
 
-auto use_move_branch_outer(Move const last_move, Variable const & first_variable, Variable const & last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
-	return [=, &first_variable, &last_variable](Team first, Move const first_move, Team last, Move, Weather weather, Evaluate const evaluate, DepthTracker const depth) {
+auto use_move_branch_outer(Moves const last_move, Variable const & first_variable, Variable const & last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+	return [=, &first_variable, &last_variable](Team first, Moves const first_move, Team last, Moves, Weather weather, Evaluate const evaluate, DepthTracker const depth) {
 		// TODO: implement properly
 		constexpr auto first_damaged = false;
 		constexpr auto last_damaged = false;
@@ -429,13 +429,13 @@ auto use_move_branch_outer(Move const last_move, Variable const & first_variable
 			return *won;
 		}
 		
-		auto const first_selections = StaticVectorMove({Move(Moves::Pass)});
+		auto const first_selections = StaticVectorMove({Moves::Pass});
 		auto const last_selections = legal_selections(last, first.pokemon(), weather);
 		return select_move_branch(first, first_selections, last, last_selections, weather, evaluate, depth, use_move_branch_inner(last_variable, first_flags, last_flags)).move.score;
 	};
 };
 
-double use_move_branch(Team first, Move const first_move, Team last, Move const last_move, Variable const & first_variable, Variable const & last_variable, Weather weather, Evaluate const evaluate, DepthTracker const depth, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+double use_move_branch(Team first, Moves const first_move, Team last, Moves const last_move, Variable const & first_variable, Variable const & last_variable, Weather weather, Evaluate const evaluate, DepthTracker const depth, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
 #if 0
 	auto const initial_last_hp = get_hp(last.pokemon());
 	auto const last_damaged = is_damaging(first_move) ? bounded::max(get_hp(last.pokemon()).current() - last_hp.current(), 0_bi) : 0_bi;
@@ -451,14 +451,14 @@ double use_move_branch(Team first, Move const first_move, Team last, Move const 
 		return *won;
 	}
 	auto const first_selections = legal_selections(first, last.pokemon(), weather);
-	auto const last_selections = StaticVectorMove({Move(Moves::Pass)});
+	auto const last_selections = StaticVectorMove({Moves::Pass});
 	// TODO: Figure out first / last vs ai / foe
 	return select_move_branch(first, first_selections, last, last_selections, weather, evaluate, depth, use_move_branch_outer(last_move, first_variable, last_variable, first_flags, last_flags)).move.score;
 }
 
 
 
-double random_move_effects_branch(Team const & first, Move const first_move, Team const & last, Move const last_move, Weather const weather, Evaluate const evaluate, DepthTracker const depth, AwakenFlag const first_flags, AwakenFlag const last_flags) {
+double random_move_effects_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, DepthTracker const depth, AwakenFlag const first_flags, AwakenFlag const last_flags) {
 	double score = 0.0;
 
 	auto const first_variables = all_probabilities(first_move, last.size());
@@ -480,7 +480,7 @@ double random_move_effects_branch(Team const & first, Move const first_move, Tea
 }
 
 
-double accuracy_branch(Team const & first, Move const first_move, Team const & last, Move const last_move, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
+double accuracy_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
 	auto const probability = [=](auto const & user, auto const user_move, auto const & target, bool const target_moved, bool const miss) {
 		auto const base = chance_to_hit(user, user_move, target, weather, target_moved);
 		assert(base >= 0.0);
@@ -513,7 +513,7 @@ double accuracy_branch(Team const & first, Move const first_move, Team const & l
 }
 
 
-double order_branch(Team const & ai, Move const ai_move, Team const & foe, Move const foe_move, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
+double order_branch(Team const & ai, Moves const ai_move, Team const & foe, Moves const foe_move, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
 	auto ordered = order(ai, ai_move, foe, foe_move, weather);
 	return !ordered ?
 		(accuracy_branch(ai, ai_move, foe, foe_move, weather, evaluate, depth) + accuracy_branch(foe, foe_move, ai, ai_move, weather, evaluate, depth)) / 2.0 :

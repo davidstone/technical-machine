@@ -1,5 +1,5 @@
 // Reorder moves for efficient evaluation
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <tm/move/move.hpp>
+#include <tm/block.hpp>
 
 namespace technicalmachine {
 

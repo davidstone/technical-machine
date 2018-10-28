@@ -50,7 +50,7 @@ Team max_damage_physical_attacker() {
 
 	attacker.pokemon().defense_curl();
 	for (unsigned n = 0; n != 10; ++n) {
-		attacker.pokemon().increment_move_use_counter(max_damage_physical_move);
+		attacker.pokemon().increment_move_use_counter(max_damage_physical_move.name());
 	}
 	
 	return attacker;
@@ -171,7 +171,7 @@ void special_damage_test() {
 	
 	get_item(a) = Item::Metronome;
 	for (auto const n [[maybe_unused]] : containers::integer_range(10_bi)) {
-		attacker.pokemon().increment_move_use_counter(move);
+		attacker.pokemon().increment_move_use_counter(move.name());
 	}
 
 	get_ability(a) = Ability::Blaze;
