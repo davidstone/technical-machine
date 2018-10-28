@@ -57,7 +57,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
-	constexpr auto depth = 1;
+	constexpr auto depth = Depth(1U, 0U);
 
 	Team team1(1_bi, true);
 	{
@@ -99,7 +99,7 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
-	constexpr auto depth = 1;
+	constexpr auto depth = Depth(1U, 0U);
 	
 	Team attacker(1_bi, true);
 	{
@@ -127,7 +127,7 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
-	constexpr auto depth = 2;
+	constexpr auto depth = Depth(2U, 0U);
 	Team attacker(1_bi, true);
 	{
 		attacker.add_pokemon(Species::Charizard, Level(100_bi), Gender::male, Item::Salac_Berry, Ability::Blaze, Nature::Adamant);
@@ -154,7 +154,7 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
-	constexpr auto depth = 7;
+	constexpr auto depth = Depth(7U, 0U);
 	Team attacker(1_bi, true);
 	{
 		attacker.add_pokemon(Species::Hippopotas, Level(100_bi), Gender::male, Item::Leftovers, Ability::Sand_Stream, Nature::Adamant);
@@ -183,7 +183,7 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
-	constexpr auto depth = 4;
+	constexpr auto depth = Depth(4U, 0U);
 	Team attacker(2_bi, true);
 	{
 		attacker.add_pokemon(Species::Smeargle, Level(100_bi), Gender::male, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly);
@@ -222,7 +222,7 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
-	constexpr auto depth = 2;
+	constexpr auto depth = Depth(2U, 0U);
 	Team attacker(3_bi, true);
 
 	attacker.add_pokemon(Species::Magikarp, Level(5_bi), Gender::male, Item::Leftovers, Ability::Swift_Swim, Nature::Jolly);
@@ -265,7 +265,7 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
-	constexpr auto depth = 3;
+	constexpr auto depth = Depth(3U, 0U);
 	Team attacker(1_bi, true);
 	{
 		attacker.add_pokemon(Species::Latias, Level(100_bi), Gender::female, Item::Leftovers, Ability::Levitate, Nature::Calm);
@@ -291,7 +291,7 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 
 void performance(Evaluate const & evaluate) {
 	auto const weather = Weather{};
-	constexpr auto depth = 2;
+	constexpr auto depth = Depth(2U, 0U);
 	auto add_pokemon = [&](Team & team, Species const species, auto... moves) {
 		team.add_pokemon(species, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Pickup, Nature::Hardy);
 		Pokemon & pokemon = back(team.all_pokemon());

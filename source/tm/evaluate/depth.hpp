@@ -26,12 +26,16 @@
 namespace technicalmachine {
 
 struct Depth {
-	constexpr Depth(unsigned const depth_to_search, unsigned max_print_depth):
+	constexpr Depth(unsigned const depth_to_search_, unsigned max_print_depth):
 		m_searched_so_far(0U),
-		m_depth_to_search(depth_to_search),
+		m_depth_to_search(depth_to_search_),
 		m_max_print_depth(max_print_depth),
 		m_indentation(1U)
 	{
+	}
+	
+	constexpr auto depth_to_search() const {
+		return m_depth_to_search;
 	}
 	
 	constexpr auto is_final_iteration() const {

@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <tm/evaluate/depth.hpp>
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/weather.hpp>
 
@@ -30,6 +31,6 @@ struct Evaluate;
 struct Team;
 struct Weather;
 
-Moves expectiminimax(Team const & ai, Team const & foe, Weather weather, Evaluate evaluate, unsigned depth);
+Moves expectiminimax(Team const & ai, Team const & foe, Weather weather, Evaluate evaluate, Depth depth);
 
 }	// namespace technicalmachine

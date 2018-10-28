@@ -18,7 +18,6 @@
 
 #include <tm/evaluate/expectiminimax.hpp>
 
-#include <tm/evaluate/depth.hpp>
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/evaluate/move_scores.hpp>
 #include <tm/evaluate/reorder.hpp>
@@ -490,11 +489,10 @@ BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const we
 
 }	// namespace
 
-Moves expectiminimax(Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, unsigned const depth) {
-	std::cout << std::string(20, '=') + "\nEvaluating to a depth of " << depth << "...\n";
+Moves expectiminimax(Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, Depth const depth) {
+	std::cout << std::string(20, '=') + "\nEvaluating to a depth of " << depth.depth_to_search() << "...\n";
 	boost::timer timer;
-	constexpr auto max_print_depth = 1U;
-	auto const best_move = select_type_of_move(ai, foe, weather, evaluate, Depth(depth, max_print_depth));
+	auto const best_move = select_type_of_move(ai, foe, weather, evaluate, depth);
 	std::cout << "Determined best move in " << timer.elapsed() << " seconds.\n";
 	print_best_move(ai, best_move);
 	return best_move.move;
