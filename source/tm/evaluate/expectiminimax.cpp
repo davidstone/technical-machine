@@ -18,6 +18,7 @@
 
 #include <tm/evaluate/expectiminimax.hpp>
 
+#include <tm/evaluate/depth.hpp>
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/evaluate/move_scores.hpp>
 #include <tm/evaluate/reorder.hpp>
@@ -61,57 +62,11 @@
 namespace technicalmachine {
 namespace {
 
-struct DepthTracker {
-	constexpr DepthTracker(unsigned const depth_to_search, unsigned max_print_depth):
-		m_searched_so_far(0U),
-		m_depth_to_search(depth_to_search),
-		m_max_print_depth(max_print_depth),
-		m_indentation(1U)
-	{
-	}
-	
-	constexpr auto is_final_iteration() const {
-		return m_depth_to_search - 1U == m_searched_so_far;
-	}
-	constexpr auto indentation() const -> bounded::optional<unsigned> {
-		if (m_searched_so_far >= m_max_print_depth) {
-			return bounded::none;
-		}
-		return m_indentation;
-	}
-	
-	constexpr auto increased_indentation(Moves const move) const {
-		auto copy = *this;
-		if (move != Moves::Pass) {
-			++copy.m_indentation;
-		}
-		return copy;
-	}
-	constexpr auto one_level_deeper() const {
-		auto copy = *this;
-		++copy.m_searched_so_far;
-		return copy;
-	}
-	constexpr auto iterative_deepening_value() const {
-		return DepthTracker(next_depth_to_search(), 0U);
-	}
-private:
-	constexpr auto next_depth_to_search() const -> unsigned {
-		assert(m_depth_to_search != m_searched_so_far);
-		return m_depth_to_search - m_searched_so_far - 1U;
-	}
-
-	unsigned m_searched_so_far;
-	unsigned m_depth_to_search;
-	unsigned m_max_print_depth;
-	unsigned m_indentation;
-};
-
 struct BestMove {
 	Moves move;
 	double score;
 };
-BestMove select_type_of_move(Team const & ai, Team const & foe, Weather weather, Evaluate evaluate, DepthTracker depth);
+BestMove select_type_of_move(Team const & ai, Team const & foe, Weather weather, Evaluate evaluate, Depth depth);
 
 
 void print_best_move(Team const & team, BestMove const best_move) {
@@ -257,7 +212,7 @@ struct SelectMoveResult {
 };
 
 template<typename Function>
-SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_selections, Team const & foe, StaticVectorMove const foe_selections, Weather const weather, Evaluate const evaluate, DepthTracker const depth, Function const function) {
+SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_selections, Team const & foe, StaticVectorMove const foe_selections, Weather const weather, Evaluate const evaluate, Depth const depth, Function const function) {
 	// This calls itself at one lower depth in order to get an initial estimate
 	// for move_scores because the algorithm works faster if you start with the
 	// correct result. The results from one less depth are used to estimate the
@@ -344,7 +299,7 @@ SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_s
 }
 
 
-auto finish_end_of_turn(Team const & first, Team const & last, Weather const weather, Evaluate const evaluate, DepthTracker const depth) -> double {
+auto finish_end_of_turn(Team const & first, Team const & last, Weather const weather, Evaluate const evaluate, Depth const depth) -> double {
 	// TODO: Use TranspositionTable here
 	auto const & [ai, foe] = deorder(first, last);
 	if (depth.is_final_iteration()) {
@@ -353,7 +308,7 @@ auto finish_end_of_turn(Team const & first, Team const & last, Weather const wea
 	return select_type_of_move(ai, foe, weather, evaluate, depth.one_level_deeper()).score;
 };
 
-auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last, Moves const last_move, Weather weather, Evaluate const evaluate, DepthTracker const depth) -> double {
+auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last, Moves const last_move, Weather weather, Evaluate const evaluate, Depth const depth) -> double {
 	if (first_move != Moves::Pass) {
 		switch_pokemon(first, last, weather, to_replacement(first_move));
 	}
@@ -366,7 +321,7 @@ auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last,
 	return finish_end_of_turn(first, last, weather, evaluate, depth);
 };
 
-double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, DepthTracker const depth, ShedSkinFlag const first_flag, ShedSkinFlag const last_flag) {
+double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, Depth const depth, ShedSkinFlag const first_flag, ShedSkinFlag const last_flag) {
 	end_of_turn(first, last, weather, first_flag.shed_skin, last_flag.shed_skin);
 	if (auto const won = Evaluate::win(first, last)) {
 		return *won;
@@ -380,7 +335,7 @@ double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const
 }
 
 
-double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Evaluate const evaluate, DepthTracker const depth, ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
+double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Evaluate const evaluate, Depth const depth, ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
 	auto get_flag = [&](auto const & match) {
 		return std::addressof(match) == std::addressof(team) ? team_flag : other_flag;
 	};
@@ -391,7 +346,7 @@ double end_of_turn_order_branch(Team const & team, Team const & other, Faster co
 
 
 auto use_move_branch_inner(Variable const & last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
-	return [=, &last_variable](Team first, Moves, Team last, Moves const last_move, Weather weather, Evaluate const evaluate, DepthTracker const depth) {
+	return [=, &last_variable](Team first, Moves, Team last, Moves const last_move, Weather weather, Evaluate const evaluate, Depth const depth) {
 		// TODO: properly handle used move here
 		// TODO: implement properly
 		constexpr auto first_damaged = false;
@@ -415,7 +370,7 @@ auto use_move_branch_inner(Variable const & last_variable, CriticalHitFlag const
 }
 
 auto use_move_branch_outer(Moves const last_move, Variable const & first_variable, Variable const & last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
-	return [=, &first_variable, &last_variable](Team first, Moves const first_move, Team last, Moves, Weather weather, Evaluate const evaluate, DepthTracker const depth) {
+	return [=, &first_variable, &last_variable](Team first, Moves const first_move, Team last, Moves, Weather weather, Evaluate const evaluate, Depth const depth) {
 		// TODO: implement properly
 		constexpr auto first_damaged = false;
 		constexpr auto last_damaged = false;
@@ -435,7 +390,7 @@ auto use_move_branch_outer(Moves const last_move, Variable const & first_variabl
 	};
 };
 
-double use_move_branch(Team first, Moves const first_move, Team last, Moves const last_move, Variable const & first_variable, Variable const & last_variable, Weather weather, Evaluate const evaluate, DepthTracker const depth, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+double use_move_branch(Team first, Moves const first_move, Team last, Moves const last_move, Variable const & first_variable, Variable const & last_variable, Weather weather, Evaluate const evaluate, Depth const depth, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
 #if 0
 	auto const initial_last_hp = get_hp(last.pokemon());
 	auto const last_damaged = is_damaging(first_move) ? bounded::max(get_hp(last.pokemon()).current() - last_hp.current(), 0_bi) : 0_bi;
@@ -458,7 +413,7 @@ double use_move_branch(Team first, Moves const first_move, Team last, Moves cons
 
 
 
-double random_move_effects_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, DepthTracker const depth, AwakenFlag const first_flags, AwakenFlag const last_flags) {
+double random_move_effects_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, AwakenFlag const first_flags, AwakenFlag const last_flags) {
 	double score = 0.0;
 
 	auto const first_variables = all_probabilities(first_move, last.size());
@@ -480,7 +435,7 @@ double random_move_effects_branch(Team const & first, Moves const first_move, Te
 }
 
 
-double accuracy_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
+double accuracy_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth) {
 	auto const probability = [=](auto const & user, auto const user_move, auto const & target, bool const target_moved, bool const miss) {
 		auto const base = chance_to_hit(user, user_move, target, weather, target_moved);
 		assert(base >= 0.0);
@@ -513,7 +468,7 @@ double accuracy_branch(Team const & first, Moves const first_move, Team const & 
 }
 
 
-double order_branch(Team const & ai, Moves const ai_move, Team const & foe, Moves const foe_move, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
+double order_branch(Team const & ai, Moves const ai_move, Team const & foe, Moves const foe_move, Weather const weather, Evaluate const evaluate, Depth const depth) {
 	auto ordered = order(ai, ai_move, foe, foe_move, weather);
 	return !ordered ?
 		(accuracy_branch(ai, ai_move, foe, foe_move, weather, evaluate, depth) + accuracy_branch(foe, foe_move, ai, ai_move, weather, evaluate, depth)) / 2.0 :
@@ -521,7 +476,7 @@ double order_branch(Team const & ai, Moves const ai_move, Team const & foe, Move
 }
 
 
-BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, DepthTracker const depth) {
+BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, Depth const depth) {
 	auto team_is_empty [[maybe_unused]] = [](Team const & team) {
 		return team.size() == 0_bi or (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi);
 	};
@@ -539,7 +494,7 @@ Moves expectiminimax(Team const & ai, Team const & foe, Weather const weather, E
 	std::cout << std::string(20, '=') + "\nEvaluating to a depth of " << depth << "...\n";
 	boost::timer timer;
 	constexpr auto max_print_depth = 1U;
-	auto const best_move = select_type_of_move(ai, foe, weather, evaluate, DepthTracker(depth, max_print_depth));
+	auto const best_move = select_type_of_move(ai, foe, weather, evaluate, Depth(depth, max_print_depth));
 	std::cout << "Determined best move in " << timer.elapsed() << " seconds.\n";
 	print_best_move(ai, best_move);
 	return best_move.move;

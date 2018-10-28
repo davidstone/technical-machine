@@ -40,6 +40,7 @@ add_library(tm_common STATIC
 
 	source/tm/clients/invalid_team_file_format.cpp
 
+	source/tm/evaluate/depth.cpp
 	source/tm/evaluate/evaluate.cpp
 	source/tm/evaluate/expectiminimax.cpp
 	source/tm/evaluate/move_scores.cpp
