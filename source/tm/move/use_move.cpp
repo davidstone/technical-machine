@@ -1087,8 +1087,15 @@ auto use_move(Team & user, Move const move, bool const user_damaged, Team & targ
 	do_side_effects(user, move.name(), target, target_move, weather, variable, damage);
 }
 
-auto find_move(Pokemon & pokemon, Moves const move_name) -> Move & {
-	auto const move_ptr = containers::maybe_find(all_moves(pokemon).regular(), move_name);
+auto find_move(MoveContainer const container, Moves const move_name) -> Move {
+	auto const move_ptr = containers::maybe_find(container, move_name);
+	assert(move_ptr);
+	return *move_ptr;
+}
+
+template<typename Container>
+auto find_regular_move(Container const container, Moves const move_name) -> Move & {
+	auto const move_ptr = containers::maybe_find(container, move_name);
 	assert(move_ptr);
 	return *move_ptr;
 }
@@ -1100,7 +1107,7 @@ auto call_move(Team & user, Moves const move_name, bool const user_damaged, Team
 		return;
 	}
 	auto user_pokemon = user.pokemon();
-	auto & move = find_move(user_pokemon, move_name);
+	auto const move = find_move(all_moves(user_pokemon), move_name);
 	auto target_pokemon = target.pokemon();
 	user_pokemon.update_before_move();
 	if (!can_execute_move(user_pokemon, move, target_pokemon, weather, awakens)) {
@@ -1108,7 +1115,7 @@ auto call_move(Team & user, Moves const move_name, bool const user_damaged, Team
 	}
 
 	if (is_regular(move_name) and !is_locked_in_to_bide(user_pokemon)) {
-		move.decrement_pp(get_ability(target_pokemon));
+		find_regular_move(all_moves(user_pokemon).regular(), move_name).decrement_pp(get_ability(target_pokemon));
 	}
 
 	if (calls_other_move(move_name)) {
