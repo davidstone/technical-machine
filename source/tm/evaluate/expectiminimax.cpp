@@ -490,10 +490,10 @@ BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const we
 }	// namespace
 
 Moves expectiminimax(Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, Depth const depth) {
-	std::cout << std::string(20, '=') + "\nEvaluating to a depth of " << depth.depth_to_search() << "...\n";
+	std::cout << "Evaluating to a depth of " << depth.depth_to_search() << "...\n";
 	boost::timer timer;
 	auto const best_move = select_type_of_move(ai, foe, weather, evaluate, depth);
-	std::cout << "Determined best move in " << timer.elapsed() << " seconds.\n";
+	std::cout << "Determined best move in " << timer.elapsed() << " seconds: ";
 	print_best_move(ai, best_move);
 	return best_move.move;
 }
