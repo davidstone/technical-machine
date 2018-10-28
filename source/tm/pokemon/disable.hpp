@@ -17,9 +17,9 @@
 
 #pragma once
 
-#include "../operators.hpp"
-#include "../move/max_moves_per_pokemon.hpp"
-#include "../move/moves.hpp"
+#include <tm/operators.hpp>
+#include <tm/move/max_moves_per_pokemon.hpp>
+#include <tm/move/moves.hpp>
 
 #include <bounded/optional.hpp>
 

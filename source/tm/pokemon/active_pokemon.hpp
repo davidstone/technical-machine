@@ -18,15 +18,15 @@
 
 #pragma once
 
-#include "active_pokemon_flags.hpp"
-#include "pokemon.hpp"
-#include "pokemon.hpp"
+#include <tm/pokemon/active_pokemon_flags.hpp>
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
-#include "../operators.hpp"
-#include "../rational.hpp"
+#include <tm/operators.hpp>
+#include <tm/rational.hpp>
 
-#include "../move/moves.hpp"
-#include "../move/is_switch.hpp"
+#include <tm/move/moves.hpp>
+#include <tm/move/is_switch.hpp>
 
 #include <bounded/integer.hpp>
 

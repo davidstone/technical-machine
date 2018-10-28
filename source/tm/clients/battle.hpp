@@ -18,23 +18,23 @@
 
 #pragma once
 
-#include "battle_result.hpp"
-#include "handle_battle_end.hpp"
-#include "party.hpp"
+#include <tm/clients/battle_result.hpp>
+#include <tm/clients/handle_battle_end.hpp>
+#include <tm/clients/party.hpp>
 
-#include "../endofturn.hpp"
-#include "../team.hpp"
-#include "../variable.hpp"
-#include "../weather.hpp"
+#include <tm/endofturn.hpp>
+#include <tm/team.hpp>
+#include <tm/variable.hpp>
+#include <tm/weather.hpp>
 
-#include "../move/max_moves_per_pokemon.hpp"
-#include "../move/moves.hpp"
-#include "../move/use_move.hpp"
+#include <tm/move/max_moves_per_pokemon.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/move/use_move.hpp>
 
-#include "../pokemon/species_forward.hpp"
+#include <tm/pokemon/species_forward.hpp>
 
-#include "../string_conversions/move.hpp"
-#include "../string_conversions/pokemon.hpp"
+#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/pokemon.hpp>
 
 #include <iostream>
 #include <random>

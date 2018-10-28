@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "battle_result.hpp"
+#include <tm/clients/battle_result.hpp>
 
 #include <random>
 #include <string_view>

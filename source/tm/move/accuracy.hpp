@@ -20,7 +20,7 @@
 
 #include <bounded/optional.hpp>
 #include <bounded/integer.hpp>
-#include "moves.hpp"
+#include <tm/move/moves.hpp>
 
 namespace technicalmachine {
 

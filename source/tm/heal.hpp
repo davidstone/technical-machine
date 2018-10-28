@@ -18,10 +18,10 @@
 
 #pragma once
 
-#include "ability.hpp"
-#include "rational.hpp"
+#include <tm/ability.hpp>
+#include <tm/rational.hpp>
 
-#include "pokemon/active_pokemon.hpp"
+#include <tm/pokemon/active_pokemon.hpp>
 
 #include <bounded/integer.hpp>
 

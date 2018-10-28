@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "move_scores.hpp"
-#include "evaluate.hpp"
-#include "../pokemon/pokemon.hpp"
+#include <tm/evaluate/move_scores.hpp>
+#include <tm/evaluate/evaluate.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
 #include <containers/legacy_iterator.hpp>
 

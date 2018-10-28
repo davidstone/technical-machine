@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "../../move/moves.hpp"
-#include "../../move/max_moves_per_pokemon.hpp"
+#include <tm/move/moves.hpp>
+#include <tm/move/max_moves_per_pokemon.hpp>
 
 #include <containers/array/array.hpp>
 

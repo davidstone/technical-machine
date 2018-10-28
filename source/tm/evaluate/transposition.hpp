@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "../weather.hpp"
+#include <tm/weather.hpp>
 
 #include <bounded/optional.hpp>
 

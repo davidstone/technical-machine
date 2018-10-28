@@ -18,10 +18,10 @@
 
 #pragma once
 
-#include "move/moves.hpp"
-#include "pokemon/collection.hpp"
-#include "pokemon/level.hpp"
-#include "pokemon/species_forward.hpp"
+#include <tm/move/moves.hpp>
+#include <tm/pokemon/collection.hpp>
+#include <tm/pokemon/level.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
 #include <bounded/integer.hpp>
 

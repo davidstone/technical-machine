@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "active_pokemon_flags.hpp"
+#include <tm/pokemon/active_pokemon_flags.hpp>
 
 namespace technicalmachine {
 

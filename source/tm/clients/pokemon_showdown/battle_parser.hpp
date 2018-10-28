@@ -18,12 +18,12 @@
 
 #pragma once
 
-#include "inmessage.hpp"
-#include "slot_memory.hpp"
+#include <tm/clients/pokemon_showdown/inmessage.hpp>
+#include <tm/clients/pokemon_showdown/slot_memory.hpp>
 
-#include "../battle.hpp"
+#include <tm/clients/pokemon_showdown/../battle.hpp>
 
-#include "../../evaluate/evaluate.hpp"
+#include <tm/evaluate/evaluate.hpp>
 
 #include <boost/beast/websocket.hpp>
 

@@ -16,27 +16,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "power.hpp"
+#include <tm/move/power.hpp>
 
-#include "base_power.hpp"
-#include "move.hpp"
-#include "moves.hpp"
+#include <tm/move/base_power.hpp>
+#include <tm/move/move.hpp>
+#include <tm/move/moves.hpp>
 
-#include "../ability.hpp"
-#include "../gender.hpp"
-#include "../item.hpp"
-#include "../rational.hpp"
-#include "../status.hpp"
-#include "../team.hpp"
-#include "../variable.hpp"
-#include "../weather.hpp"
+#include <tm/ability.hpp>
+#include <tm/gender.hpp>
+#include <tm/item.hpp>
+#include <tm/rational.hpp>
+#include <tm/status.hpp>
+#include <tm/team.hpp>
+#include <tm/variable.hpp>
+#include <tm/weather.hpp>
 
-#include "../stat/calculate.hpp"
+#include <tm/stat/calculate.hpp>
 
-#include "../pokemon/active_pokemon.hpp"
-#include "../pokemon/happiness.hpp"
-#include "../pokemon/pokemon.hpp"
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/happiness.hpp>
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/species.hpp>
 
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/filter_iterator.hpp>

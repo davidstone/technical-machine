@@ -16,27 +16,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "calculate.hpp"
+#include <tm/stat/calculate.hpp>
 
 #include <utility>
 
-#include "nature.hpp"
-#include "stat_names.hpp"
+#include <tm/stat/nature.hpp>
+#include <tm/stat/stat_names.hpp>
 
-#include "../ability.hpp"
-#include "../item.hpp"
-#include "../rational.hpp"
-#include "../status.hpp"
-#include "../team.hpp"
-#include "../weather.hpp"
+#include <tm/ability.hpp>
+#include <tm/item.hpp>
+#include <tm/rational.hpp>
+#include <tm/status.hpp>
+#include <tm/team.hpp>
+#include <tm/weather.hpp>
 
-#include "../move/moves.hpp"
-#include "../move/priority.hpp"
+#include <tm/move/moves.hpp>
+#include <tm/move/priority.hpp>
 
-#include "../pokemon/active_pokemon.hpp"
-#include "../pokemon/level.hpp"
-#include "../pokemon/pokemon.hpp"
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/level.hpp>
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/species.hpp>
 
 namespace technicalmachine {
 namespace {

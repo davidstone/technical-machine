@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "pokemon/collection.hpp"
+#include <tm/pokemon/collection.hpp>
 
 #include <stdexcept>
 

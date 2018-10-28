@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include "type.hpp"
-#include "../pokemon/species_forward.hpp"
-#include "../status.hpp"
+#include <tm/type/type.hpp>
+#include <tm/pokemon/species_forward.hpp>
+#include <tm/status.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/array/array.hpp>

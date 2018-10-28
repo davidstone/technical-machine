@@ -17,9 +17,9 @@
 
 #pragma once
 
-#include "enum.hpp"
-#include "operators.hpp"
-#include "rational.hpp"
+#include <tm/enum.hpp>
+#include <tm/operators.hpp>
+#include <tm/rational.hpp>
 
 #include <bounded/integer.hpp>
 #include <bounded/optional.hpp>

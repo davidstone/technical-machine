@@ -17,9 +17,9 @@
 
 #pragma once
 
-#include "stat_names.hpp"
-#include "../operators.hpp"
-#include "../rational.hpp"
+#include <tm/stat/stat_names.hpp>
+#include <tm/operators.hpp>
+#include <tm/rational.hpp>
 
 #include <bounded/integer.hpp>
 #include <containers/array/array.hpp>

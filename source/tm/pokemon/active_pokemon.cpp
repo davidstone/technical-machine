@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "active_pokemon.hpp"
+#include <tm/pokemon/active_pokemon.hpp>
 
-#include "../weather.hpp"
+#include <tm/weather.hpp>
 
-#include "../move/move.hpp"
+#include <tm/move/move.hpp>
 
 namespace technicalmachine {
 

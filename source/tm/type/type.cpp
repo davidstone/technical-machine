@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "type.hpp"
+#include <tm/type/type.hpp>
 
-#include "effectiveness.hpp"
-#include "../weather.hpp"
-#include "../move/moves.hpp"
-#include "../pokemon/pokemon.hpp"
+#include <tm/type/effectiveness.hpp>
+#include <tm/weather.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
 #include <containers/array/array.hpp>
 

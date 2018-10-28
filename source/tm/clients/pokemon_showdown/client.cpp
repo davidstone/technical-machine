@@ -19,13 +19,13 @@
 // See https://github.com/Zarel/Pokemon-Showdown/blob/master/protocol-doc.md
 // for the full protocol.
 
-#include "client.hpp"
+#include <tm/clients/pokemon_showdown/client.hpp>
 
-#include "inmessage.hpp"
+#include <tm/clients/pokemon_showdown/inmessage.hpp>
 
-#include "../random_string.hpp"
-#include "../../settings_file.hpp"
-#include "../../team.hpp"
+#include <tm/clients/pokemon_showdown/../random_string.hpp>
+#include <tm/settings_file.hpp>
+#include <tm/team.hpp>
 
 #include <boost/asio/connect.hpp>
 #include <boost/beast/http.hpp>

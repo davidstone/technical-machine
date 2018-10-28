@@ -16,18 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "endofturn.hpp"
+#include <tm/endofturn.hpp>
 
-#include "ability.hpp"
-#include "damage.hpp"
-#include "heal.hpp"
-#include "rational.hpp"
-#include "status.hpp"
-#include "team.hpp"
-#include "weather.hpp"
+#include <tm/ability.hpp>
+#include <tm/damage.hpp>
+#include <tm/heal.hpp>
+#include <tm/rational.hpp>
+#include <tm/status.hpp>
+#include <tm/team.hpp>
+#include <tm/weather.hpp>
 
-#include "pokemon/active_pokemon.hpp"
-#include "pokemon/pokemon.hpp"
+#include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
 namespace technicalmachine {
 namespace {

@@ -17,8 +17,8 @@
 
 #pragma once
 
-#include "operators.hpp"
-#include "screen.hpp"
+#include <tm/operators.hpp>
+#include <tm/screen.hpp>
 
 namespace technicalmachine {
 

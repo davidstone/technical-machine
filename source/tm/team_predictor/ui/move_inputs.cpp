@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "move_inputs.hpp"
-#include "input_constants.hpp"
-#include "../../string_conversions/move.hpp"
+#include <tm/team_predictor/ui/move_inputs.hpp>
+#include <tm/team_predictor/ui/input_constants.hpp>
+#include <tm/string_conversions/move.hpp>
 
 namespace technicalmachine {
 

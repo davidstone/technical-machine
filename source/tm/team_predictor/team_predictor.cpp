@@ -16,20 +16,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "team_predictor.hpp"
+#include <tm/team_predictor/team_predictor.hpp>
 
-#include "estimate.hpp"
-#include "usage_stats.hpp"
+#include <tm/team_predictor/estimate.hpp>
+#include <tm/team_predictor/usage_stats.hpp>
 
-#include "ev_optimizer/ev_optimizer.hpp"
+#include <tm/team_predictor/ev_optimizer/ev_optimizer.hpp>
 
-#include "../ability.hpp"
-#include "../team.hpp"
+#include <tm/ability.hpp>
+#include <tm/team.hpp>
 
-#include "../pokemon/pokemon.hpp"
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/species.hpp>
 
-#include "../move/moves.hpp"
+#include <tm/move/moves.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/array/make_array.hpp>

@@ -18,14 +18,14 @@
 
 #pragma once
 
-#include "defensive_data_point.hpp"
+#include <tm/team_predictor/ev_optimizer/defensive_data_point.hpp>
 
-#include "../../pokemon/level.hpp"
-#include "../../pokemon/species_forward.hpp"
+#include <tm/pokemon/level.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
-#include "../../stat/hp.hpp"
-#include "../../stat/nature.hpp"
-#include "../../stat/stat.hpp"
+#include <tm/stat/hp.hpp>
+#include <tm/stat/nature.hpp>
+#include <tm/stat/stat.hpp>
 
 #include <containers/algorithms/find.hpp>
 #include <containers/integer_range.hpp>

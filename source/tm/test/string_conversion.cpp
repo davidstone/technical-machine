@@ -16,27 +16,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "string_conversion.hpp"
+#include <tm/test/string_conversion.hpp>
 
-#include "../ability.hpp"
-#include "../gender.hpp"
-#include "../item.hpp"
-#include "../status.hpp"
+#include <tm/ability.hpp>
+#include <tm/gender.hpp>
+#include <tm/item.hpp>
+#include <tm/status.hpp>
 
-#include "../move/moves.hpp"
+#include <tm/move/moves.hpp>
 
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/species.hpp>
 
-#include "../stat/nature.hpp"
+#include <tm/stat/nature.hpp>
 
-#include "../string_conversions/ability.hpp"
-#include "../string_conversions/gender.hpp"
-#include "../string_conversions/item.hpp"
-#include "../string_conversions/move.hpp"
-#include "../string_conversions/nature.hpp"
-#include "../string_conversions/pokemon.hpp"
-#include "../string_conversions/status.hpp"
-#include "../string_conversions/invalid_string_conversion.hpp"
+#include <tm/string_conversions/ability.hpp>
+#include <tm/string_conversions/gender.hpp>
+#include <tm/string_conversions/item.hpp>
+#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/nature.hpp>
+#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/status.hpp>
+#include <tm/string_conversions/invalid_string_conversion.hpp>
 
 #include <containers/integer_range.hpp>
 

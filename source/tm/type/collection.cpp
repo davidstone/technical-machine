@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "collection.hpp"
+#include <tm/type/collection.hpp>
 
-#include "type.hpp"
+#include <tm/type/type.hpp>
 
-#include "../weather.hpp"
+#include <tm/weather.hpp>
 
-#include "../pokemon/active_pokemon.hpp"
-#include "../pokemon/pokemon.hpp"
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/species.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 

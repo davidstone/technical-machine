@@ -17,8 +17,8 @@
 
 #pragma once
 
-#include "../operators.hpp"
-#include "../rational.hpp"
+#include <tm/operators.hpp>
+#include <tm/rational.hpp>
 
 #include <bounded/integer.hpp>
 

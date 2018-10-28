@@ -17,9 +17,9 @@
 
 #pragma once
 
-#include "../damage.hpp"
-#include "../operators.hpp"
-#include "../stat/hp.hpp"
+#include <tm/damage.hpp>
+#include <tm/operators.hpp>
+#include <tm/stat/hp.hpp>
 
 #include <bounded/integer.hpp>
 

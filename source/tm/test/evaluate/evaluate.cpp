@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "evaluate.hpp"
+#include <tm/test/evaluate/evaluate.hpp>
 
-#include "../../evaluate/evaluate.hpp"
-#include "../../team.hpp"
-#include "../../weather.hpp"
+#include <tm/evaluate/evaluate.hpp>
+#include <tm/team.hpp>
+#include <tm/weather.hpp>
 
-#include "../../pokemon/species.hpp"
+#include <tm/pokemon/species.hpp>
 
 #include <bounded/integer.hpp>
 

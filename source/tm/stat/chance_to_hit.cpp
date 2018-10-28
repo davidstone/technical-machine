@@ -16,21 +16,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "chance_to_hit.hpp"
+#include <tm/stat/chance_to_hit.hpp>
 
 #include <algorithm>
 
-#include "stage.hpp"
-#include "stat_names.hpp"
+#include <tm/stat/stage.hpp>
+#include <tm/stat/stat_names.hpp>
 
-#include "../ability.hpp"
-#include "../rational.hpp"
-#include "../weather.hpp"
+#include <tm/ability.hpp>
+#include <tm/rational.hpp>
+#include <tm/weather.hpp>
 
-#include "../move/accuracy.hpp"
+#include <tm/move/accuracy.hpp>
 
-#include "../pokemon/active_pokemon.hpp"
-#include "../pokemon/pokemon.hpp"
+#include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
 namespace technicalmachine {
 namespace {

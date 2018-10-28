@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "moves.hpp"
-#include "../pokemon/max_pokemon_per_team.hpp"
+#include <tm/move/moves.hpp>
+#include <tm/pokemon/max_pokemon_per_team.hpp>
 
 #include <bounded/integer.hpp>
 

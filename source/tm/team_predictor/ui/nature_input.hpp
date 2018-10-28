@@ -19,7 +19,7 @@
 #pragma once
 
 #include <fltk/FL/Fl_Input.H>
-#include "../../stat/nature.hpp"
+#include <tm/stat/nature.hpp>
 
 namespace technicalmachine {
 

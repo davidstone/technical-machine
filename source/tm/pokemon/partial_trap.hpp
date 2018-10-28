@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "end_of_turn_counter.hpp"
-#include "../operators.hpp"
+#include <tm/pokemon/end_of_turn_counter.hpp>
+#include <tm/operators.hpp>
 
 namespace technicalmachine {
 struct MutableActivePokemon;

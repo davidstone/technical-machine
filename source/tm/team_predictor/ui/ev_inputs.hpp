@@ -19,7 +19,7 @@
 #pragma once
 
 #include <fltk/FL/Fl_Int_Input.H>
-#include "../../stat/ev.hpp"
+#include <tm/stat/ev.hpp>
 
 namespace technicalmachine {
 

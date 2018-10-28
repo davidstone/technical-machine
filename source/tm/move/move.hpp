@@ -17,11 +17,11 @@
 
 #pragma once
 
-#include "max_moves_per_pokemon.hpp"
-#include "moves.hpp"
-#include "pp.hpp"
+#include <tm/move/max_moves_per_pokemon.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/move/pp.hpp>
 
-#include "../operators.hpp"
+#include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
 

@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "effectiveness.hpp"
+#include <tm/type/effectiveness.hpp>
 
-#include "collection.hpp"
-#include "type.hpp"
-#include "../pokemon/pokemon.hpp"
-#include "../rational.hpp"
+#include <tm/type/collection.hpp>
+#include <tm/type/type.hpp>
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/rational.hpp>
 
 #include <iterator>
 

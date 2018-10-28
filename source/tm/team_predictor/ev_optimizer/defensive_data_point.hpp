@@ -17,8 +17,8 @@
 
 #pragma once
 
-#include "../../stat/ev.hpp"
-#include "../../stat/nature.hpp"
+#include <tm/stat/ev.hpp>
+#include <tm/stat/nature.hpp>
 
 namespace technicalmachine {
 

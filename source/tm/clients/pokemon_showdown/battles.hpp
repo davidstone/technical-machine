@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include "battle_factory.hpp"
-#include "battle_parser.hpp"
-#include "../no_pending_challenges.hpp"
+#include <tm/clients/pokemon_showdown/battle_factory.hpp>
+#include <tm/clients/pokemon_showdown/battle_parser.hpp>
+#include <tm/clients/pokemon_showdown/../no_pending_challenges.hpp>
 
 #include <algorithm>
 #include <list>

@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include "hp.hpp"
-#include "stat.hpp"
-#include "../pokemon/species_forward.hpp"
+#include <tm/stat/hp.hpp>
+#include <tm/stat/stat.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
 #include <containers/array/array.hpp>
 

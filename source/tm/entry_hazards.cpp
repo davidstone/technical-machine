@@ -15,17 +15,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "entry_hazards.hpp"
+#include <tm/entry_hazards.hpp>
 
 #include <cstdint>
 
-#include "heal.hpp"
-#include "team.hpp"
-#include "weather.hpp"
+#include <tm/heal.hpp>
+#include <tm/team.hpp>
+#include <tm/weather.hpp>
 
-#include "pokemon/active_pokemon.hpp"
+#include <tm/pokemon/active_pokemon.hpp>
 
-#include "type/effectiveness.hpp"
+#include <tm/type/effectiveness.hpp>
 
 namespace technicalmachine {
 namespace {

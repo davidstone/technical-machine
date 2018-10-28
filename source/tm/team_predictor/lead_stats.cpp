@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "lead_stats.hpp"
-#include "usage_stats.hpp"
+#include <tm/team_predictor/lead_stats.hpp>
+#include <tm/team_predictor/usage_stats.hpp>
 
 #include <containers/array/make_array.hpp>
 

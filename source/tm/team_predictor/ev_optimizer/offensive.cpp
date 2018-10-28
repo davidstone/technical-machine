@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "offensive.hpp"
+#include <tm/team_predictor/ev_optimizer/offensive.hpp>
 
-#include "../../pokemon/pokemon.hpp"
-#include "../../stat/calculate.hpp"
-#include "../../stat/nature.hpp"
-#include "../../stat/stat.hpp"
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/stat/calculate.hpp>
+#include <tm/stat/nature.hpp>
+#include <tm/stat/stat.hpp>
 
 #include <bounded/optional.hpp>
 

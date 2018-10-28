@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "random_team.hpp"
+#include <tm/team_predictor/random_team.hpp>
 
-#include "estimate.hpp"
-#include "usage_stats.hpp"
+#include <tm/team_predictor/estimate.hpp>
+#include <tm/team_predictor/usage_stats.hpp>
 
-#include "../team.hpp"
+#include <tm/team.hpp>
 
-#include "../pokemon/species.hpp"
-#include "../string_conversions/conversion.hpp"
+#include <tm/pokemon/species.hpp>
+#include <tm/string_conversions/conversion.hpp>
 
 #include <containers/array/make_array.hpp>
 #include <containers/algorithms/accumulate.hpp>

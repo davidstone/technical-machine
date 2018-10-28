@@ -16,19 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "random_team.hpp"
-#include "team_predictor.hpp"
-#include "usage_stats.hpp"
+#include <tm/team_predictor/random_team.hpp>
+#include <tm/team_predictor/team_predictor.hpp>
+#include <tm/team_predictor/usage_stats.hpp>
 
-#include "ev_optimizer/ev_optimizer.hpp"
+#include <tm/team_predictor/ev_optimizer/ev_optimizer.hpp>
 
-#include "ui/input_constants.hpp"
-#include "ui/pokemon_inputs.hpp"
+#include <tm/team_predictor/ui/input_constants.hpp>
+#include <tm/team_predictor/ui/pokemon_inputs.hpp>
 
-#include "../team.hpp"
+#include <tm/team.hpp>
 
-#include "../pokemon/max_pokemon_per_team.hpp"
-#include "../pokemon/pokemon.hpp"
+#include <tm/pokemon/max_pokemon_per_team.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
 #include <containers/array/array.hpp>
 #include <containers/vector.hpp>

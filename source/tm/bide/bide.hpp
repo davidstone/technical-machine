@@ -18,11 +18,11 @@
 
 #pragma once
 
-#include "damage.hpp"
-#include "duration.hpp"
+#include <tm/bide/damage.hpp>
+#include <tm/bide/duration.hpp>
 
-#include "../operators.hpp"
-#include "../stat/hp.hpp"
+#include <tm/operators.hpp>
+#include <tm/stat/hp.hpp>
 
 namespace technicalmachine {
 

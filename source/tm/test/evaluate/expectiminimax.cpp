@@ -16,18 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "expectiminimax.hpp"
+#include <tm/test/evaluate/expectiminimax.hpp>
 
-#include "../../evaluate/evaluate.hpp"
-#include "../../evaluate/expectiminimax.hpp"
-#include "../../team.hpp"
-#include "../../variable.hpp"
-#include "../../weather.hpp"
+#include <tm/evaluate/evaluate.hpp>
+#include <tm/evaluate/expectiminimax.hpp>
+#include <tm/team.hpp>
+#include <tm/variable.hpp>
+#include <tm/weather.hpp>
 
-#include "../../move/moves.hpp"
-#include "../../move/use_move.hpp"
+#include <tm/move/moves.hpp>
+#include <tm/move/use_move.hpp>
 
-#include "../../pokemon/species.hpp"
+#include <tm/pokemon/species.hpp>
 
 #include <bounded/integer.hpp>
 

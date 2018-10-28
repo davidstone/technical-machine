@@ -17,8 +17,8 @@
 
 #pragma once
 
-#include "species_forward.hpp"
-#include "../enum.hpp"
+#include <tm/pokemon/species_forward.hpp>
+#include <tm/enum.hpp>
 
 #include <cstdint>
 

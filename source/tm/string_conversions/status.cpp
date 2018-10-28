@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "status.hpp"
-#include "invalid_string_conversion.hpp"
+#include <tm/string_conversions/status.hpp>
+#include <tm/string_conversions/invalid_string_conversion.hpp>
 
-#include "../status.hpp"
+#include <tm/status.hpp>
 
 #include <map>
 

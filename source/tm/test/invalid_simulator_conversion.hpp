@@ -17,13 +17,13 @@
 
 #pragma once
 
-#include "../string_conversions/ability.hpp"
-#include "../string_conversions/gender.hpp"
-#include "../string_conversions/item.hpp"
-#include "../string_conversions/move.hpp"
-#include "../string_conversions/nature.hpp"
-#include "../string_conversions/pokemon.hpp"
-#include "../string_conversions/status.hpp"
+#include <tm/string_conversions/ability.hpp>
+#include <tm/string_conversions/gender.hpp>
+#include <tm/string_conversions/item.hpp>
+#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/nature.hpp>
+#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/status.hpp>
 
 #include <stdexcept>
 

@@ -17,9 +17,9 @@
 
 #pragma once
 
-#include "../operators.hpp"
+#include <tm/operators.hpp>
 
-#include "../move/moves.hpp"
+#include <tm/move/moves.hpp>
 
 #include <bounded/integer.hpp>
 

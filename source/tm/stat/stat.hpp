@@ -19,10 +19,10 @@
 #pragma once
 
 #include <bounded/integer.hpp>
-#include "ev.hpp"
-#include "iv.hpp"
-#include "stat_names.hpp"
-#include "../pokemon/species_forward.hpp"
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
+#include <tm/stat/stat_names.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;

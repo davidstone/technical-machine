@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "move.hpp"
+#include <tm/string_conversions/move.hpp>
 
-#include "invalid_string_conversion.hpp"
+#include <tm/string_conversions/invalid_string_conversion.hpp>
 
-#include "../move/moves.hpp"
+#include <tm/move/moves.hpp>
 
 #include <map>
 

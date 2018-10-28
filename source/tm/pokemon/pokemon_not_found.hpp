@@ -19,7 +19,7 @@
 #pragma once
 
 #include <stdexcept>
-#include "species_forward.hpp"
+#include <tm/pokemon/species_forward.hpp>
 
 namespace technicalmachine {
 

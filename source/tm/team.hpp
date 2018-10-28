@@ -17,15 +17,15 @@
 
 #pragma once
 
-#include "entry_hazards.hpp"
-#include "operators.hpp"
-#include "screens.hpp"
-#include "wish.hpp"
+#include <tm/entry_hazards.hpp>
+#include <tm/operators.hpp>
+#include <tm/screens.hpp>
+#include <tm/wish.hpp>
 
-#include "pokemon/active_pokemon.hpp"
-#include "pokemon/active_pokemon_flags.hpp"
-#include "pokemon/collection.hpp"
-#include "pokemon/species_forward.hpp"
+#include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/active_pokemon_flags.hpp>
+#include <tm/pokemon/collection.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
 #include <containers/string.hpp>
 

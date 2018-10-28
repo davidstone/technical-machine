@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "nature_input.hpp"
-#include "input_constants.hpp"
-#include "../../string_conversions/nature.hpp"
-#include "../../string_conversions/invalid_string_conversion.hpp"
+#include <tm/team_predictor/ui/nature_input.hpp>
+#include <tm/team_predictor/ui/input_constants.hpp>
+#include <tm/string_conversions/nature.hpp>
+#include <tm/string_conversions/invalid_string_conversion.hpp>
 
 namespace technicalmachine {
 namespace {

@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ev_optimizer.hpp"
+#include <tm/team_predictor/ev_optimizer/ev_optimizer.hpp>
 
-#include "defensive.hpp"
-#include "offensive.hpp"
-#include "speed.hpp"
+#include <tm/team_predictor/ev_optimizer/defensive.hpp>
+#include <tm/team_predictor/ev_optimizer/offensive.hpp>
+#include <tm/team_predictor/ev_optimizer/speed.hpp>
 
-#include "../../pokemon/pokemon.hpp"
+#include <tm/pokemon/pokemon.hpp>
 
 #include <random>
 

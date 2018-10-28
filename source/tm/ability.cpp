@@ -15,23 +15,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ability.hpp"
+#include <tm/ability.hpp>
 
 #include <cassert>
 
-#include "heal.hpp"
-#include "rational.hpp"
-#include "status.hpp"
-#include "weather.hpp"
+#include <tm/heal.hpp>
+#include <tm/rational.hpp>
+#include <tm/status.hpp>
+#include <tm/weather.hpp>
 
-#include "move/move.hpp"
-#include "move/moves.hpp"
+#include <tm/move/move.hpp>
+#include <tm/move/moves.hpp>
 
-#include "pokemon/active_pokemon.hpp"
+#include <tm/pokemon/active_pokemon.hpp>
 
-#include "stat/calculate.hpp"
+#include <tm/stat/calculate.hpp>
 
-#include "type/type.hpp"
+#include <tm/type/type.hpp>
 
 namespace technicalmachine {
 

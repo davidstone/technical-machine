@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "species_input.hpp"
-#include "input_constants.hpp"
-#include "../../pokemon/species_forward.hpp"
-#include "../../string_conversions/pokemon.hpp"
+#include <tm/team_predictor/ui/species_input.hpp>
+#include <tm/team_predictor/ui/input_constants.hpp>
+#include <tm/pokemon/species_forward.hpp>
+#include <tm/string_conversions/pokemon.hpp>
 
 namespace technicalmachine {
 

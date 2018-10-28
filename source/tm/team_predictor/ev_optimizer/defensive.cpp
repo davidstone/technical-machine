@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "defensive.hpp"
+#include <tm/team_predictor/ev_optimizer/defensive.hpp>
 
-#include "../../pokemon/pokemon.hpp"
+#include <tm/pokemon/pokemon.hpp>
 
-#include "../../stat/calculate.hpp"
-#include "../../stat/nature.hpp"
-#include "../../stat/stat_names.hpp"
+#include <tm/stat/calculate.hpp>
+#include <tm/stat/nature.hpp>
+#include <tm/stat/stat_names.hpp>
 
 #include <containers/algorithms/transform.hpp>
 #include <containers/integer_range.hpp>

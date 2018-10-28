@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ev_inputs.hpp"
+#include <tm/team_predictor/ui/ev_inputs.hpp>
 #include <string>
-#include "input_constants.hpp"
+#include <tm/team_predictor/ui/input_constants.hpp>
 
 namespace technicalmachine {
 

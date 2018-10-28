@@ -17,22 +17,22 @@
 
 #pragma once
 
-#include "happiness.hpp"
-#include "level.hpp"
-#include "species.hpp"
+#include <tm/pokemon/happiness.hpp>
+#include <tm/pokemon/level.hpp>
+#include <tm/pokemon/species.hpp>
 
-#include "../ability.hpp"
-#include "../gender.hpp"
-#include "../item.hpp"
-#include "../operators.hpp"
-#include "../status.hpp"
+#include <tm/ability.hpp>
+#include <tm/gender.hpp>
+#include <tm/item.hpp>
+#include <tm/operators.hpp>
+#include <tm/status.hpp>
 
-#include "../move/container.hpp"
+#include <tm/move/container.hpp>
 
-#include "../stat/nature.hpp"
-#include "../stat/stats.hpp"
+#include <tm/stat/nature.hpp>
+#include <tm/stat/stats.hpp>
 
-#include "../type/collection.hpp"
+#include <tm/type/collection.hpp>
 
 #include <containers/string.hpp>
 

@@ -18,12 +18,12 @@
 
 #pragma once
 
-#include "max_moves_per_pokemon.hpp"
-#include "move.hpp"
-#include "moves.hpp"
-#include "is_switch.hpp"
+#include <tm/move/max_moves_per_pokemon.hpp>
+#include <tm/move/move.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/move/is_switch.hpp>
 
-#include "../operators.hpp"
+#include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
 

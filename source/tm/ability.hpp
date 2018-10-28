@@ -17,12 +17,12 @@
 
 #pragma once
 
-#include "enum.hpp"
-#include "operators.hpp"
-#include "rational.hpp"
-#include "status.hpp"
-#include "move/base_power.hpp"
-#include "stat/stat_names.hpp"
+#include <tm/enum.hpp>
+#include <tm/operators.hpp>
+#include <tm/rational.hpp>
+#include <tm/status.hpp>
+#include <tm/move/base_power.hpp>
+#include <tm/stat/stat_names.hpp>
 
 #include <cstdint>
 

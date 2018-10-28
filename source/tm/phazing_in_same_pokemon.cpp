@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "phazing_in_same_pokemon.hpp"
+#include <tm/phazing_in_same_pokemon.hpp>
 
 namespace technicalmachine {
 

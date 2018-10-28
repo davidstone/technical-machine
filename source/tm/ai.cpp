@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "clients/pokemon_showdown/client.hpp"
+#include <tm/clients/pokemon_showdown/client.hpp>
 
-#include "move/max_moves_per_pokemon.hpp"
-#include "pokemon/max_pokemon_per_team.hpp"
+#include <tm/move/max_moves_per_pokemon.hpp>
+#include <tm/pokemon/max_pokemon_per_team.hpp>
 
 #include <boost/lexical_cast.hpp>
 

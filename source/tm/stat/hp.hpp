@@ -17,13 +17,13 @@
 
 #pragma once
 
-#include "ev.hpp"
-#include "iv.hpp"
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
 
-#include "../operators.hpp"
-#include "../pokemon/level.hpp"
-#include "../pokemon/species_forward.hpp"
-#include "../rational.hpp"
+#include <tm/operators.hpp>
+#include <tm/pokemon/level.hpp>
+#include <tm/pokemon/species_forward.hpp>
+#include <tm/rational.hpp>
 
 #include <bounded/integer.hpp>
 

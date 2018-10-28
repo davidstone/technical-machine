@@ -15,16 +15,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "battle_parser.hpp"
+#include <tm/clients/pokemon_showdown/battle_parser.hpp>
 
-#include "../../evaluate/expectiminimax.hpp"
+#include <tm/evaluate/expectiminimax.hpp>
 
-#include "../../team_predictor/team_predictor.hpp"
+#include <tm/team_predictor/team_predictor.hpp>
 
-#include "../../string_conversions/ability.hpp"
-#include "../../string_conversions/item.hpp"
-#include "../../string_conversions/move.hpp"
-#include "../../string_conversions/pokemon.hpp"
+#include <tm/string_conversions/ability.hpp>
+#include <tm/string_conversions/item.hpp>
+#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/pokemon.hpp>
 
 #include <bounded/integer.hpp>
 

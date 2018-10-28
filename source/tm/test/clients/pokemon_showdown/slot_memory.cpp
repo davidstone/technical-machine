@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "slot_memory.hpp"
+#include <tm/test//clients/pokemon_showdown/slot_memory.hpp>
 
-#include "../../../clients/pokemon_showdown/slot_memory.hpp"
+#include <tm/clients/pokemon_showdown/slot_memory.hpp>
 
 #include <containers/front_back.hpp>
 #include <containers/integer_range.hpp>

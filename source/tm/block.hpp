@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include "move/max_moves_per_pokemon.hpp"
-#include "move/move.hpp"
-#include "pokemon/species_forward.hpp"
+#include <tm/move/max_moves_per_pokemon.hpp>
+#include <tm/move/move.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
 namespace technicalmachine {
 

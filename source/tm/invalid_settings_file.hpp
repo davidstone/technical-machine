@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "enum.hpp"
+#include <tm/enum.hpp>
 
 #include <filesystem>
 #include <stdexcept>

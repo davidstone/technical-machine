@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "../../stat/stat.hpp"
+#include <tm/stat/stat.hpp>
 
 #include <containers/array/array.hpp>
 

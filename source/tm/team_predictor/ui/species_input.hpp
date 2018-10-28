@@ -19,7 +19,7 @@
 #pragma once
 
 #include <fltk/FL/Fl_Input.H>
-#include "../../pokemon/species_forward.hpp"
+#include <tm/pokemon/species_forward.hpp>
 
 namespace technicalmachine {
 

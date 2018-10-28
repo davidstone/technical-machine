@@ -16,20 +16,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "evaluate.hpp"
+#include <tm/evaluate/evaluate.hpp>
 
-#include "../team.hpp"
-#include "../weather.hpp"
+#include <tm/team.hpp>
+#include <tm/weather.hpp>
 
-#include "../move/move.hpp"
-#include "../move/moves.hpp"
+#include <tm/move/move.hpp>
+#include <tm/move/moves.hpp>
 
-#include "../pokemon/collection.hpp"
-#include "../pokemon/pokemon.hpp"
+#include <tm/pokemon/collection.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
-#include "../stat/stage.hpp"
+#include <tm/stat/stage.hpp>
 
-#include "../type/effectiveness.hpp"
+#include <tm/type/effectiveness.hpp>
 
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/all_any_none.hpp>

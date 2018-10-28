@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "pokemon/max_pokemon_per_team.hpp"
+#include <tm/pokemon/max_pokemon_per_team.hpp>
 
 namespace technicalmachine {
 

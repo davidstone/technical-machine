@@ -18,33 +18,33 @@
 
 #pragma once
 
-#include "confusion.hpp"
-#include "disable.hpp"
-#include "embargo.hpp"
-#include "encore.hpp"
-#include "heal_block.hpp"
-#include "last_used_move.hpp"
-#include "magnet_rise.hpp"
-#include "partial_trap.hpp"
-#include "perish_song.hpp"
-#include "rampage.hpp"
-#include "slow_start.hpp"
-#include "stockpile.hpp"
-#include "substitute.hpp"
-#include "taunt.hpp"
-#include "toxic.hpp"
-#include "uproar.hpp"
-#include "vanish.hpp"
-#include "yawn.hpp"
+#include <tm/pokemon/confusion.hpp>
+#include <tm/pokemon/disable.hpp>
+#include <tm/pokemon/embargo.hpp>
+#include <tm/pokemon/encore.hpp>
+#include <tm/pokemon/heal_block.hpp>
+#include <tm/pokemon/last_used_move.hpp>
+#include <tm/pokemon/magnet_rise.hpp>
+#include <tm/pokemon/partial_trap.hpp>
+#include <tm/pokemon/perish_song.hpp>
+#include <tm/pokemon/rampage.hpp>
+#include <tm/pokemon/slow_start.hpp>
+#include <tm/pokemon/stockpile.hpp>
+#include <tm/pokemon/substitute.hpp>
+#include <tm/pokemon/taunt.hpp>
+#include <tm/pokemon/toxic.hpp>
+#include <tm/pokemon/uproar.hpp>
+#include <tm/pokemon/vanish.hpp>
+#include <tm/pokemon/yawn.hpp>
 
-#include "../operators.hpp"
-#include "../random_damage.hpp"
+#include <tm/operators.hpp>
+#include <tm/random_damage.hpp>
 
-#include "../bide/bide.hpp"
+#include <tm/bide/bide.hpp>
 
-#include "../move/moves.hpp"
+#include <tm/move/moves.hpp>
 
-#include "../stat/stage.hpp"
+#include <tm/stat/stage.hpp>
 
 #include <bounded/integer.hpp>
 

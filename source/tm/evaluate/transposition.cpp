@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "transposition.hpp"
+#include <tm/evaluate/transposition.hpp>
 
-#include "../team.hpp"
+#include <tm/team.hpp>
 
 namespace technicalmachine {
 namespace {

@@ -15,15 +15,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "use_move.hpp"
+#include <tm/test/use_move.hpp>
 
-#include "incorrect_calculation.hpp"
+#include <tm/test/incorrect_calculation.hpp>
 
-#include "../move/use_move.hpp"
+#include <tm/move/use_move.hpp>
 
-#include "../team.hpp"
-#include "../variable.hpp"
-#include "../weather.hpp"
+#include <tm/team.hpp>
+#include <tm/variable.hpp>
+#include <tm/weather.hpp>
 
 #include <iostream>
 

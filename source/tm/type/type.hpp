@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "../status.hpp"
-#include "../move/moves.hpp"
+#include <tm/status.hpp>
+#include <tm/move/moves.hpp>
 
 namespace technicalmachine {
 struct Effectiveness;

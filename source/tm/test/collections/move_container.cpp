@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "move_container.hpp"
+#include <tm/test/collections/move_container.hpp>
 
-#include "invalid_collection.hpp"
+#include <tm/test/collections/invalid_collection.hpp>
 
-#include "../../move/container.hpp"
-#include "../../move/moves.hpp"
-#include "../../move/is_switch.hpp"
+#include <tm/move/container.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/move/is_switch.hpp>
 
-#include "../../string_conversions/move.hpp"
+#include <tm/string_conversions/move.hpp>
 
 #include <containers/algorithms/compare.hpp>
 #include <containers/algorithms/concatenate_view.hpp>

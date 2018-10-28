@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include "battle_parser.hpp"
-#include "inmessage.hpp"
-#include "json_parser.hpp"
+#include <tm/clients/pokemon_showdown/battle_parser.hpp>
+#include <tm/clients/pokemon_showdown/inmessage.hpp>
+#include <tm/clients/pokemon_showdown/json_parser.hpp>
 
 #include <bounded/optional.hpp>
 #include <containers/vector.hpp>

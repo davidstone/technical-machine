@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/species.hpp>
 
 #include <containers/array/array.hpp>
 

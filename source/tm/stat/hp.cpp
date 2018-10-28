@@ -15,11 +15,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "hp.hpp"
+#include <tm/stat/hp.hpp>
 
-#include "../pokemon/level.hpp"
-#include "../pokemon/pokemon.hpp"
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/level.hpp>
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/species.hpp>
 
 namespace technicalmachine {
 namespace {

@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "../stat/stage.hpp"
-#include "../stat/stat_names.hpp"
+#include <tm/stat/stage.hpp>
+#include <tm/stat/stat_names.hpp>
 
 #include <bounded/integer.hpp>
 

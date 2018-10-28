@@ -18,14 +18,14 @@
 
 #pragma once
 
-#include "battles.hpp"
-#include "inmessage.hpp"
-#include "json_parser.hpp"
+#include <tm/clients/pokemon_showdown/battles.hpp>
+#include <tm/clients/pokemon_showdown/inmessage.hpp>
+#include <tm/clients/pokemon_showdown/json_parser.hpp>
 
-#include "../battle_settings.hpp"
-#include "../../evaluate/evaluate.hpp"
-#include "../../team_predictor/usage_stats.hpp"
-#include "../../settings_file.hpp"
+#include <tm/clients/pokemon_showdown/../battle_settings.hpp>
+#include <tm/evaluate/evaluate.hpp>
+#include <tm/team_predictor/usage_stats.hpp>
+#include <tm/settings_file.hpp>
 
 #include <containers/vector.hpp>
 

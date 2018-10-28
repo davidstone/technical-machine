@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "enum.hpp"
+#include <tm/enum.hpp>
 
 #include <bounded/integer.hpp>
 

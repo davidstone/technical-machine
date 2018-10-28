@@ -16,34 +16,34 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "use_move.hpp"
+#include <tm/move/use_move.hpp>
 
 #include <algorithm>
 #include <cassert>
 
-#include "is_switch.hpp"
-#include "move.hpp"
-#include "moves.hpp"
+#include <tm/move/is_switch.hpp>
+#include <tm/move/move.hpp>
+#include <tm/move/moves.hpp>
 
-#include "../ability.hpp"
-#include "../block.hpp"
-#include "../damage.hpp"
-#include "../heal.hpp"
-#include "../rational.hpp"
-#include "../status.hpp"
-#include "../switch.hpp"
-#include "../team.hpp"
-#include "../variable.hpp"
-#include "../weather.hpp"
+#include <tm/ability.hpp>
+#include <tm/block.hpp>
+#include <tm/damage.hpp>
+#include <tm/heal.hpp>
+#include <tm/rational.hpp>
+#include <tm/status.hpp>
+#include <tm/switch.hpp>
+#include <tm/team.hpp>
+#include <tm/variable.hpp>
+#include <tm/weather.hpp>
 
-#include "../pokemon/active_pokemon.hpp"
-#include "../pokemon/pokemon.hpp"
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/species.hpp>
 
-#include "../stat/stat.hpp"
+#include <tm/stat/stat.hpp>
 
-#include "../type/effectiveness.hpp"
-#include "../type/type.hpp"
+#include <tm/type/effectiveness.hpp>
+#include <tm/type/type.hpp>
 
 namespace technicalmachine {
 namespace {

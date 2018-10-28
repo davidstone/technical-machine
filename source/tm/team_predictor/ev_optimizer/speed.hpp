@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include "../../stat/nature.hpp"
-#include "../../stat/stat.hpp"
-#include "../../pokemon/level.hpp"
+#include <tm/stat/nature.hpp>
+#include <tm/stat/stat.hpp>
+#include <tm/pokemon/level.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
 

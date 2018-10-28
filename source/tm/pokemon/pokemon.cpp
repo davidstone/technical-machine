@@ -15,26 +15,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "pokemon.hpp"
+#include <tm/pokemon/pokemon.hpp>
 
-#include "species.hpp"
+#include <tm/pokemon/species.hpp>
 
-#include "../ability.hpp"
-#include "../gender.hpp"
-#include "../operators.hpp"
-#include "../rational.hpp"
+#include <tm/ability.hpp>
+#include <tm/gender.hpp>
+#include <tm/operators.hpp>
+#include <tm/rational.hpp>
 
-#include "../move/is_switch.hpp"
-#include "../move/move.hpp"
+#include <tm/move/is_switch.hpp>
+#include <tm/move/move.hpp>
 
-#include "../stat/stat.hpp"
+#include <tm/stat/stat.hpp>
 
-#include "../string_conversions/ability.hpp"
-#include "../string_conversions/item.hpp"
-#include "../string_conversions/move.hpp"
-#include "../string_conversions/nature.hpp"
-#include "../string_conversions/pokemon.hpp"
-#include "../string_conversions/status.hpp"
+#include <tm/string_conversions/ability.hpp>
+#include <tm/string_conversions/item.hpp>
+#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/nature.hpp>
+#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/status.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
 

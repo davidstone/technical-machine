@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "test.hpp"
+#include <tm/test/pokemon_online/test.hpp>
 
 #include <iostream>
 
-#include "conversion.hpp"
-#include "team_file.hpp"
+#include <tm/test/pokemon_online/conversion.hpp>
+#include <tm/test/pokemon_online/team_file.hpp>
 
 namespace technicalmachine {
 namespace po {

@@ -16,25 +16,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "damage.hpp"
+#include <tm/damage.hpp>
 
-#include "ability.hpp"
-#include "item.hpp"
-#include "status.hpp"
-#include "rational.hpp"
-#include "team.hpp"
-#include "variable.hpp"
-#include "weather.hpp"
+#include <tm/ability.hpp>
+#include <tm/item.hpp>
+#include <tm/status.hpp>
+#include <tm/rational.hpp>
+#include <tm/team.hpp>
+#include <tm/variable.hpp>
+#include <tm/weather.hpp>
 
-#include "move/move.hpp"
-#include "move/moves.hpp"
-#include "move/power.hpp"
+#include <tm/move/move.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/move/power.hpp>
 
-#include "pokemon/pokemon.hpp"
+#include <tm/pokemon/pokemon.hpp>
 
-#include "stat/calculate.hpp"
+#include <tm/stat/calculate.hpp>
 
-#include "type/effectiveness.hpp"
+#include <tm/type/effectiveness.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;

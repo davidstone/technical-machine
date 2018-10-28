@@ -17,11 +17,11 @@
 
 #pragma once
 
-#include "../operators.hpp"
+#include <tm/operators.hpp>
 
-#include "../move/is_switch.hpp"
-#include "../move/moves.hpp"
-#include "../rational.hpp"
+#include <tm/move/is_switch.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/rational.hpp>
 
 #include <bounded/integer.hpp>
 

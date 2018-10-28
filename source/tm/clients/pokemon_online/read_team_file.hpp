@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "../../team.hpp"
+#include <tm/team.hpp>
 
 #include <filesystem>
 

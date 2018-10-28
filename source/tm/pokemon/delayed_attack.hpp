@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "end_of_turn_counter.hpp"
+#include <tm/pokemon/end_of_turn_counter.hpp>
 
 namespace technicalmachine {
 

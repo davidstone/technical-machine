@@ -17,10 +17,10 @@
 
 #pragma once
 
-#include "detailed_stats.hpp"
-#include "multiplier.hpp"
+#include <tm/team_predictor/detailed_stats.hpp>
+#include <tm/team_predictor/multiplier.hpp>
 
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/species.hpp>
 
 #include <containers/array/array.hpp>
 

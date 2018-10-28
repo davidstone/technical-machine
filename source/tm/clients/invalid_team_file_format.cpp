@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "invalid_team_file_format.hpp"
+#include <tm/clients/invalid_team_file_format.hpp>
 
 namespace technicalmachine {
 

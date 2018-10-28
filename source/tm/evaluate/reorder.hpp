@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "../move/move.hpp"
+#include <tm/move/move.hpp>
 
 namespace technicalmachine {
 

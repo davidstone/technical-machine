@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "max_pokemon_per_team.hpp"
-#include "pokemon.hpp"
+#include <tm/pokemon/max_pokemon_per_team.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
 

@@ -16,18 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "stat.hpp"
+#include <tm/test/stat.hpp>
 
-#include "incorrect_calculation.hpp"
+#include <tm/test/incorrect_calculation.hpp>
 
-#include "../team.hpp"
-#include "../weather.hpp"
+#include <tm/team.hpp>
+#include <tm/weather.hpp>
 
-#include "../pokemon/max_pokemon_per_team.hpp"
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/max_pokemon_per_team.hpp>
+#include <tm/pokemon/species.hpp>
 
-#include "../stat/calculate.hpp"
-#include "../stat/stat.hpp"
+#include <tm/stat/calculate.hpp>
+#include <tm/stat/stat.hpp>
 
 #include <iostream>
 #include <string>

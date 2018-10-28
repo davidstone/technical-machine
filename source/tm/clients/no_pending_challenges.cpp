@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "no_pending_challenges.hpp"
+#include <tm/clients/no_pending_challenges.hpp>
 
 namespace technicalmachine {
 

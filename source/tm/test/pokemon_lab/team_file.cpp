@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "team_file.hpp"
+#include <tm/test/pokemon_lab/team_file.hpp>
 
-#include "../../clients/pokemon_lab/read_team_file.hpp"
-#include "../../clients/pokemon_lab/write_team_file.hpp"
+#include <tm/clients/pokemon_lab/read_team_file.hpp>
+#include <tm/clients/pokemon_lab/write_team_file.hpp>
 
 #include <filesystem>
 #include <iostream>

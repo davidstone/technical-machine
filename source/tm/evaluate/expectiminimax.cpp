@@ -16,35 +16,35 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "expectiminimax.hpp"
+#include <tm/evaluate/expectiminimax.hpp>
 
-#include "evaluate.hpp"
-#include "move_scores.hpp"
-#include "reorder.hpp"
-#include "transposition.hpp"
+#include <tm/evaluate/evaluate.hpp>
+#include <tm/evaluate/move_scores.hpp>
+#include <tm/evaluate/reorder.hpp>
+#include <tm/evaluate/transposition.hpp>
 
-#include "../ability.hpp"
-#include "../block.hpp"
-#include "../endofturn.hpp"
-#include "../switch.hpp"
-#include "../team.hpp"
-#include "../variable.hpp"
-#include "../weather.hpp"
+#include <tm/ability.hpp>
+#include <tm/block.hpp>
+#include <tm/endofturn.hpp>
+#include <tm/switch.hpp>
+#include <tm/team.hpp>
+#include <tm/variable.hpp>
+#include <tm/weather.hpp>
 
-#include "../move/base_power.hpp"
-#include "../move/is_switch.hpp"
-#include "../move/move.hpp"
-#include "../move/moves.hpp"
-#include "../move/use_move.hpp"
+#include <tm/move/base_power.hpp>
+#include <tm/move/is_switch.hpp>
+#include <tm/move/move.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/move/use_move.hpp>
 
-#include "../pokemon/pokemon.hpp"
+#include <tm/pokemon/pokemon.hpp>
 
-#include "../stat/calculate.hpp"
-#include "../stat/chance_to_hit.hpp"
-#include "../stat/stat.hpp"
+#include <tm/stat/calculate.hpp>
+#include <tm/stat/chance_to_hit.hpp>
+#include <tm/stat/stat.hpp>
 
-#include "../string_conversions/move.hpp"
-#include "../string_conversions/pokemon.hpp"
+#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/pokemon.hpp>
 
 #include <containers/algorithms/filter_iterator.hpp>
 #include <containers/integer_range.hpp>

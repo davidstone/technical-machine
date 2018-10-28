@@ -16,13 +16,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "usage_stats.hpp"
+#include <tm/team_predictor/usage_stats.hpp>
 
-#include "../invalid_settings_file.hpp"
+#include <tm/invalid_settings_file.hpp>
 
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/species.hpp>
 
-#include "../string_conversions/pokemon.hpp"
+#include <tm/string_conversions/pokemon.hpp>
 
 #include <boost/lexical_cast.hpp>
 

@@ -16,23 +16,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "conversion.hpp"
+#include <tm/test/pokemon_online/conversion.hpp>
 
 #include <iostream>
 
-#include "../invalid_simulator_conversion.hpp"
+#include <tm/test/pokemon_online/../invalid_simulator_conversion.hpp>
 
-#include "../../ability.hpp"
+#include <tm/ability.hpp>
 
-#include "../../move/is_switch.hpp"
-#include "../../move/moves.hpp"
+#include <tm/move/is_switch.hpp>
+#include <tm/move/moves.hpp>
 
-#include "../../pokemon/pokemon.hpp"
-#include "../../pokemon/species.hpp"
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/species.hpp>
 
-#include "../../stat/nature.hpp"
+#include <tm/stat/nature.hpp>
 
-#include "../../clients/pokemon_online/conversion.hpp"
+#include <tm/clients/pokemon_online/conversion.hpp>
 
 namespace technicalmachine {
 namespace po {

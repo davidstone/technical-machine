@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "test.hpp"
+#include <tm/test/pokemon_lab/test.hpp>
 
 #include <iostream>
 
-#include "team_file.hpp"
+#include <tm/test/pokemon_lab/team_file.hpp>
 
 namespace technicalmachine {
 namespace pl {

@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "battle_factory.hpp"
+#include <tm/clients/pokemon_showdown/battle_factory.hpp>
 
-#include "../../string_conversions/item.hpp"
-#include "../../string_conversions/pokemon.hpp"
+#include <tm/string_conversions/item.hpp>
+#include <tm/string_conversions/pokemon.hpp>
 
 #include <bounded/integer.hpp>
 

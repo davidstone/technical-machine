@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "base_power.hpp"
+#include <tm/move/base_power.hpp>
 
-#include "moves.hpp"
+#include <tm/move/moves.hpp>
 
 #include <cassert>
 

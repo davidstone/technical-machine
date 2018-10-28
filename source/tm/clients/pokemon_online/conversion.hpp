@@ -18,16 +18,16 @@
 
 #pragma once
 
-#include "../../ability.hpp"
-#include "../../gender.hpp"
-#include "../../item.hpp"
+#include <tm/ability.hpp>
+#include <tm/gender.hpp>
+#include <tm/item.hpp>
 
-#include "../../move/moves.hpp"
+#include <tm/move/moves.hpp>
 
-#include "../../pokemon/species_forward.hpp"
+#include <tm/pokemon/species_forward.hpp>
 
-#include "../../stat/nature.hpp"
-#include "../../stat/stat.hpp"
+#include <tm/stat/nature.hpp>
+#include <tm/stat/stat.hpp>
 
 #include <bounded/integer.hpp>
 

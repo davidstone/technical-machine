@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "partial_trap.hpp"
-#include "../heal.hpp"
-#include "../rational.hpp"
+#include <tm/pokemon/partial_trap.hpp>
+#include <tm/heal.hpp>
+#include <tm/rational.hpp>
 
 namespace technicalmachine {
 namespace {

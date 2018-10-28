@@ -18,15 +18,15 @@
 
 #pragma once
 
-#include "ev_inputs.hpp"
-#include "move_inputs.hpp"
-#include "nature_input.hpp"
-#include "species_input.hpp"
-#include "../../move/max_moves_per_pokemon.hpp"
-#include "../../move/moves.hpp"
-#include "../../pokemon/species_forward.hpp"
-#include "../../stat/ev.hpp"
-#include "../../string_conversions/invalid_string_conversion.hpp"
+#include <tm/team_predictor/ui/ev_inputs.hpp>
+#include <tm/team_predictor/ui/move_inputs.hpp>
+#include <tm/team_predictor/ui/nature_input.hpp>
+#include <tm/team_predictor/ui/species_input.hpp>
+#include <tm/move/max_moves_per_pokemon.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/pokemon/species_forward.hpp>
+#include <tm/stat/ev.hpp>
+#include <tm/string_conversions/invalid_string_conversion.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
 

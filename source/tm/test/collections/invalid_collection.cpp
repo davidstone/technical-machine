@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "invalid_collection.hpp"
+#include <tm/test/collections/invalid_collection.hpp>
 
 namespace technicalmachine {
 

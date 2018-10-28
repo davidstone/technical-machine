@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "reorder.hpp"
+#include <tm/evaluate/reorder.hpp>
 
-#include "move_scores.hpp"
-#include "../block.hpp"
+#include <tm/evaluate/move_scores.hpp>
+#include <tm/block.hpp>
 
 #include <containers/legacy_iterator.hpp>
 

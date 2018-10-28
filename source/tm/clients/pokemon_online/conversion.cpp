@@ -16,19 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "conversion.hpp"
+#include <tm/clients/pokemon_online/conversion.hpp>
 
-#include "../../ability.hpp"
-#include "../../gender.hpp"
-#include "../../item.hpp"
+#include <tm/ability.hpp>
+#include <tm/gender.hpp>
+#include <tm/item.hpp>
 
-#include "../../move/moves.hpp"
+#include <tm/move/moves.hpp>
 
-#include "../../pokemon/species.hpp"
+#include <tm/pokemon/species.hpp>
 
-#include "../../stat/stat.hpp"
+#include <tm/stat/stat.hpp>
 
-#include "../../string_conversions/pokemon.hpp"
+#include <tm/string_conversions/pokemon.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/string.hpp>

@@ -15,11 +15,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "estimate.hpp"
+#include <tm/team_predictor/estimate.hpp>
 
-#include "usage_stats.hpp"
+#include <tm/team_predictor/usage_stats.hpp>
 
-#include "../team.hpp"
+#include <tm/team.hpp>
 
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/find.hpp>

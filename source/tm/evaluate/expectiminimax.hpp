@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "evaluate.hpp"
-#include "../weather.hpp"
+#include <tm/evaluate/evaluate.hpp>
+#include <tm/weather.hpp>
 
 #include <cstdint>
 

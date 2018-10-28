@@ -16,10 +16,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "collection.hpp"
+#include <tm/test/collections/collection.hpp>
 
-#include "move_container.hpp"
-#include "variable_collection.hpp"
+#include <tm/test/collections/move_container.hpp>
+#include <tm/test/collections/variable_collection.hpp>
 
 #include <iostream>
 

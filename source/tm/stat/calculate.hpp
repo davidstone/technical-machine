@@ -21,12 +21,12 @@
 #include <bounded/integer.hpp>
 #include <bounded/optional.hpp>
 
-#include "nature.hpp"
-#include "stat.hpp"
-#include "stat_names.hpp"
+#include <tm/stat/nature.hpp>
+#include <tm/stat/stat.hpp>
+#include <tm/stat/stat_names.hpp>
 
-#include "../move/move.hpp"
-#include "../pokemon/level.hpp"
+#include <tm/move/move.hpp>
+#include <tm/pokemon/level.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;

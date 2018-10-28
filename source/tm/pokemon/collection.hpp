@@ -18,12 +18,12 @@
 
 #pragma once
 
-#include "container.hpp"
-#include "max_pokemon_per_team.hpp"
-#include "pokemon.hpp"
+#include <tm/pokemon/container.hpp>
+#include <tm/pokemon/max_pokemon_per_team.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
-#include "../operators.hpp"
-#include "../range.hpp"
+#include <tm/operators.hpp>
+#include <tm/range.hpp>
 
 #include <bounded/integer.hpp>
 

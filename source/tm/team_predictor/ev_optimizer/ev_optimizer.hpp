@@ -18,14 +18,14 @@
 
 #pragma once
 
-#include "../../pokemon/level.hpp"
-#include "../../pokemon/species_forward.hpp"
+#include <tm/pokemon/level.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
-#include "../../stat/ev.hpp"
-#include "../../stat/nature.hpp"
-#include "../../stat/stat_names.hpp"
+#include <tm/stat/ev.hpp>
+#include <tm/stat/nature.hpp>
+#include <tm/stat/stat_names.hpp>
 
-#include "../../operators.hpp"
+#include <tm/operators.hpp>
 
 #include <containers/array/array.hpp>
 

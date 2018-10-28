@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include "move.hpp"
-#include "../damage.hpp"
+#include <tm/move/move.hpp>
+#include <tm/damage.hpp>
 
 #include <bounded/optional.hpp>
 

@@ -18,15 +18,15 @@
 
 #pragma once
 
-#include "../ability.hpp"
-#include "../item.hpp"
+#include <tm/ability.hpp>
+#include <tm/item.hpp>
 
-#include "../move/max_moves_per_pokemon.hpp"
-#include "../move/moves.hpp"
+#include <tm/move/max_moves_per_pokemon.hpp>
+#include <tm/move/moves.hpp>
 
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/species.hpp>
 
-#include "../stat/nature.hpp"
+#include <tm/stat/nature.hpp>
 
 #include <containers/array/array.hpp>
 #include <containers/static_vector/static_vector.hpp>

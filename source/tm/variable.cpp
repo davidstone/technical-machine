@@ -16,12 +16,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "variable.hpp"
-#include "phazing_in_same_pokemon.hpp"
-#include "team.hpp"
-#include "move/moves.hpp"
-#include "move/is_switch.hpp"
-#include "pokemon/pokemon_not_found.hpp"
+#include <tm/variable.hpp>
+#include <tm/phazing_in_same_pokemon.hpp>
+#include <tm/team.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/move/is_switch.hpp>
+#include <tm/pokemon/pokemon_not_found.hpp>
 
 #include <containers/integer_range.hpp>
 

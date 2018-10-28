@@ -17,8 +17,8 @@
 
 #pragma once
 
-#include "operators.hpp"
-#include "status.hpp"
+#include <tm/operators.hpp>
+#include <tm/status.hpp>
 
 #include <bounded/integer.hpp>
 

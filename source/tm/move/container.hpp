@@ -18,12 +18,12 @@
 
 #pragma once
 
-#include "max_moves_per_pokemon.hpp"
-#include "move.hpp"
-#include "shared.hpp"
+#include <tm/move/max_moves_per_pokemon.hpp>
+#include <tm/move/move.hpp>
+#include <tm/move/shared.hpp>
 
-#include "../operators.hpp"
-#include "../range.hpp"
+#include <tm/operators.hpp>
+#include <tm/range.hpp>
 
 #include <bounded/integer.hpp>
 

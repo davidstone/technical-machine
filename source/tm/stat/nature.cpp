@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "nature.hpp"
+#include <tm/stat/nature.hpp>
 
-#include "stat_names.hpp"
+#include <tm/stat/stat_names.hpp>
 
 namespace technicalmachine {
 

@@ -16,15 +16,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "handle_battle_end.hpp"
+#include <tm/clients/handle_battle_end.hpp>
 
-#include "battle_result.hpp"
-#include "random_string.hpp"
-#include "timestamp.hpp"
+#include <tm/clients/battle_result.hpp>
+#include <tm/clients/random_string.hpp>
+#include <tm/clients/timestamp.hpp>
 
-#include "pokemon_lab/write_team_file.hpp"
+#include <tm/clients/pokemon_lab/write_team_file.hpp>
 
-#include "../team_predictor/team_predictor.hpp"
+#include <tm/team_predictor/team_predictor.hpp>
 
 #include <filesystem>
 #include <iostream>

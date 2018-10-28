@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "confusion.hpp"
-#include "pokemon.hpp"
+#include <tm/pokemon/confusion.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
 namespace technicalmachine {
 // min_duration = 2;

@@ -16,8 +16,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "pokemon_not_found.hpp"
-#include "../string_conversions/pokemon.hpp"
+#include <tm/pokemon/pokemon_not_found.hpp>
+#include <tm/string_conversions/pokemon.hpp>
 
 namespace technicalmachine {
 

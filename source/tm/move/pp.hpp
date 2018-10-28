@@ -17,10 +17,10 @@
 
 #pragma once
 
-#include "moves.hpp"
+#include <tm/move/moves.hpp>
 
-#include "../ability.hpp"
-#include "../operators.hpp"
+#include <tm/ability.hpp>
+#include <tm/operators.hpp>
 
 #include <bounded/optional.hpp>
 #include <bounded/integer.hpp>

@@ -16,18 +16,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "block.hpp"
+#include <tm/block.hpp>
 
-#include "ability.hpp"
-#include "team.hpp"
-#include "weather.hpp"
+#include <tm/ability.hpp>
+#include <tm/team.hpp>
+#include <tm/weather.hpp>
 
-#include "move/move.hpp"
-#include "move/moves.hpp"
-#include "move/is_switch.hpp"
+#include <tm/move/move.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/move/is_switch.hpp>
 
-#include "pokemon/pokemon.hpp"
-#include "pokemon/active_pokemon.hpp"
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/active_pokemon.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 

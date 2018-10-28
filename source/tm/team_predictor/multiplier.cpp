@@ -16,16 +16,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "multiplier.hpp"
+#include <tm/team_predictor/multiplier.hpp>
 
-#include "../invalid_settings_file.hpp"
+#include <tm/invalid_settings_file.hpp>
 
-#include "../pokemon/max_pokemon_per_team.hpp"
-#include "../pokemon/pokemon.hpp"
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/max_pokemon_per_team.hpp>
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/species.hpp>
 
-#include "../string_conversions/move.hpp"
-#include "../string_conversions/pokemon.hpp"
+#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/pokemon.hpp>
 
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/integer_range.hpp>

@@ -18,18 +18,18 @@
 
 #include <iostream>
 
-#include "clients/pokemon_showdown/slot_memory.hpp"
-#include "collections/collection.hpp"
-#include "damage.hpp"
-#include "ev_optimizer.hpp"
-#include "stat.hpp"
-#include "status.hpp"
-#include "string_conversion.hpp"
-#include "use_move.hpp"
-#include "evaluate/evaluate.hpp"
-#include "evaluate/expectiminimax.hpp"
-#include "pokemon_lab/test.hpp"
-#include "pokemon_online/test.hpp"
+#include <tm/test/clients/pokemon_showdown/slot_memory.hpp>
+#include <tm/test/collections/collection.hpp>
+#include <tm/test/damage.hpp>
+#include <tm/test/ev_optimizer.hpp>
+#include <tm/test/stat.hpp>
+#include <tm/test/status.hpp>
+#include <tm/test/string_conversion.hpp>
+#include <tm/test/use_move.hpp>
+#include <tm/test/evaluate/evaluate.hpp>
+#include <tm/test/evaluate/expectiminimax.hpp>
+#include <tm/test/pokemon_lab/test.hpp>
+#include <tm/test/pokemon_online/test.hpp>
 
 int main() {
 	using namespace technicalmachine;

@@ -16,19 +16,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "damage.hpp"
+#include <tm/test/damage.hpp>
 
-#include "incorrect_calculation.hpp"
+#include <tm/test/incorrect_calculation.hpp>
 
-#include "../damage.hpp"
-#include "../team.hpp"
-#include "../variable.hpp"
-#include "../weather.hpp"
+#include <tm/damage.hpp>
+#include <tm/team.hpp>
+#include <tm/variable.hpp>
+#include <tm/weather.hpp>
 
-#include "../move/power.hpp"
-#include "../move/moves.hpp"
+#include <tm/move/power.hpp>
+#include <tm/move/moves.hpp>
 
-#include "../pokemon/species.hpp"
+#include <tm/pokemon/species.hpp>
 
 #include <containers/integer_range.hpp>
 

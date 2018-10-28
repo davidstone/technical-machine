@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "rational.hpp"
+#include <tm/rational.hpp>
 
 #include <bounded/integer.hpp>
 

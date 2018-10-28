@@ -18,9 +18,9 @@
 
 #pragma once
 
-#include "lead_stats.hpp"
+#include <tm/team_predictor/lead_stats.hpp>
 
-#include "../team.hpp"
+#include <tm/team.hpp>
 
 #include <random>
 

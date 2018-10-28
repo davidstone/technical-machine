@@ -16,11 +16,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "item.hpp"
+#include <tm/string_conversions/item.hpp>
 
-#include "invalid_string_conversion.hpp"
+#include <tm/string_conversions/invalid_string_conversion.hpp>
 
-#include "../item.hpp"
+#include <tm/item.hpp>
 
 #include <map>
 

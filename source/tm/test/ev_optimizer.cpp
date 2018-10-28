@@ -16,17 +16,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ev_optimizer.hpp"
+#include <tm/test/ev_optimizer.hpp>
 
-#include "../team.hpp"
-#include "../pokemon/species.hpp"
-#include "../stat/calculate.hpp"
-#include "../team_predictor/ev_optimizer/defensive.hpp"
-#include "../team_predictor/ev_optimizer/ev_optimizer.hpp"
-#include "../team_predictor/ev_optimizer/offensive.hpp"
-#include "../team_predictor/ev_optimizer/speed.hpp"
-#include "../move/moves.hpp"
-#include "../string_conversions/nature.hpp"
+#include <tm/team.hpp>
+#include <tm/pokemon/species.hpp>
+#include <tm/stat/calculate.hpp>
+#include <tm/team_predictor/ev_optimizer/defensive.hpp>
+#include <tm/team_predictor/ev_optimizer/ev_optimizer.hpp>
+#include <tm/team_predictor/ev_optimizer/offensive.hpp>
+#include <tm/team_predictor/ev_optimizer/speed.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/string_conversions/nature.hpp>
 
 #include <iostream>
 #include <random>

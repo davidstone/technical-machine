@@ -16,23 +16,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "read_team_file.hpp"
+#include <tm/clients/pokemon_online/read_team_file.hpp>
 
-#include "conversion.hpp"
-#include "invalid_team_file.hpp"
-#include "stat_order.hpp"
+#include <tm/clients/pokemon_online/conversion.hpp>
+#include <tm/clients/pokemon_online/invalid_team_file.hpp>
+#include <tm/clients/pokemon_online/stat_order.hpp>
 
-#include "../../ability.hpp"
-#include "../../item.hpp"
-#include "../../team.hpp"
+#include <tm/ability.hpp>
+#include <tm/item.hpp>
+#include <tm/team.hpp>
 
-#include "../../move/move.hpp"
-#include "../../move/moves.hpp"
+#include <tm/move/move.hpp>
+#include <tm/move/moves.hpp>
 
-#include "../../pokemon/pokemon.hpp"
-#include "../../pokemon/species_forward.hpp"
+#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
-#include "../../stat/stat.hpp"
+#include <tm/stat/stat.hpp>
 
 #include <containers/integer_range.hpp>
 

@@ -20,10 +20,10 @@
 #include <cstdint>
 #include <bounded/integer.hpp>
 
-#include "stat_names.hpp"
+#include <tm/stat/stat_names.hpp>
 
-#include "../enum.hpp"
-#include "../rational.hpp"
+#include <tm/enum.hpp>
+#include <tm/rational.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;

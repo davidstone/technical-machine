@@ -15,19 +15,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "team.hpp"
+#include <tm/team.hpp>
 
-#include "ability.hpp"
-#include "damage.hpp"
-#include "item.hpp"
-#include "status.hpp"
+#include <tm/ability.hpp>
+#include <tm/damage.hpp>
+#include <tm/item.hpp>
+#include <tm/status.hpp>
 
-#include "pokemon/pokemon.hpp"
+#include <tm/pokemon/pokemon.hpp>
 
-#include "clients/invalid_team_file_format.hpp"
+#include <tm/clients/invalid_team_file_format.hpp>
 
-#include "clients/pokemon_lab/read_team_file.hpp"
-#include "clients/pokemon_online/read_team_file.hpp"
+#include <tm/clients/pokemon_lab/read_team_file.hpp>
+#include <tm/clients/pokemon_online/read_team_file.hpp>
 
 #include <containers/vector.hpp>
 

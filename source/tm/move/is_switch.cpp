@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include "is_switch.hpp"
+#include <tm/move/is_switch.hpp>
 
-#include "moves.hpp"
+#include <tm/move/moves.hpp>
 
 #include <cassert>
 
