@@ -116,7 +116,7 @@ BestMove select_type_of_move(Team const & ai, Team const & foe, Weather weather,
 
 void print_best_move(Team const & team, BestMove const best_move) {
 	if (is_switch(best_move.move)) {
-		std::cout << "Switch to " << to_string(static_cast<Species>(team.pokemon(to_replacement(best_move.move))));
+		std::cout << "Switch to " << to_string(get_species(team.pokemon(to_replacement(best_move.move))));
 	} else {
 		std::cout << "Use " << to_string(best_move.move);
 	}
@@ -130,7 +130,7 @@ void print_action(Team const & team, Moves const move, unsigned const indentatio
 	std::cout << std::string(indentation, '\t') << "Evaluating " << team.who();
 	if (is_switch(move)) {
 		auto const replacement_index = to_replacement(move);
-		std::cout << " switching to " << to_string(static_cast<Species>(team.pokemon(replacement_index))) << '\n';
+		std::cout << " switching to " << to_string(get_species(team.pokemon(replacement_index))) << '\n';
 	} else {
 		std::cout << " using " << to_string(move) << '\n';
 	}

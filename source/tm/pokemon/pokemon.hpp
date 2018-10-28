@@ -43,7 +43,6 @@ namespace technicalmachine {
 struct Pokemon {
 	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Happiness happiness = Happiness{});
 	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Item const & item, Ability const & ability, Nature const & nature, Happiness happiness = Happiness{});
-	operator Species() const;
 	
 	// These cannot be defined in the class because because I rely on a
 	// conversion operator. Friend functions only declared in a class body are
@@ -64,6 +63,7 @@ struct Pokemon {
 	friend Nature const & get_nature(Pokemon const & pokemon);
 	friend Nature & get_nature(Pokemon & pokemon);
 	friend bool nature_is_known(Pokemon const & pokemon);
+	friend Species get_species(Pokemon const & pokemon);
 	friend HP const & get_hp(Pokemon const & pokemon);
 	friend HP & get_hp(Pokemon & pokemon);
 	friend Stat const & get_stat(Pokemon const & pokemon, StatNames index_stat);
@@ -117,8 +117,11 @@ private:
 	bool m_nature_is_known : 1;
 };
 
-inline auto operator==(Species const & lhs, Pokemon const & rhs) {
-	return lhs == static_cast<Species>(rhs);
+inline auto operator==(Species const lhs, Pokemon const & rhs) {
+	return lhs == get_species(rhs);
+}
+inline auto operator==(Pokemon const & lhs, Species const rhs) {
+	return get_species(lhs) == rhs;
 }
 
 inline auto all_moves(Pokemon const & pokemon) -> MoveContainer const & {
@@ -169,6 +172,10 @@ inline Nature & get_nature(Pokemon & pokemon) {
 }
 inline bool nature_is_known(Pokemon const & pokemon) {
 	return pokemon.m_nature_is_known;
+}
+
+inline Species get_species(Pokemon const & pokemon) {
+	return pokemon.m_species;
 }
 
 inline HP const & get_hp(Pokemon const & pokemon) {

@@ -44,7 +44,7 @@ void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const mo
 
 	auto const move = add_seen_move(all_moves(user.team.pokemon()), move_name);
 
-	Species const species = user.team.pokemon();
+	auto const species = get_species(user.team.pokemon());
 	std::cout << user.team.who() << "'s move: " << to_string(species) << " uses " << to_string(move_name) << '\n';
 
 	constexpr auto other_move = bounded::none;

@@ -47,7 +47,7 @@ void add_pokemon(Team & team, Species const species) {
 
 void phaze_in_same_pokemon(Variable & variable, Team const & team) {
 	try {
-		set_phaze_index(variable, team, team.pokemon());
+		set_phaze_index(variable, team, get_species(team.pokemon()));
 		throw InvalidCollection("Can phaze in the same Pokemon.");
 	} catch (PhazingInSamePokemon const &) {
 		// Do nothing; the above operation should throw.
@@ -63,7 +63,7 @@ void phaze_in_different_pokemon(Variable & variable, Team const & team, containe
 		0_bi, 1_bi, 2_bi, 3_bi, bounded::none, 4_bi,
 		0_bi, 1_bi, 2_bi, 3_bi, 4_bi, bounded::none
 	);
-	set_phaze_index(variable, team, team.pokemon(new_index));
+	set_phaze_index(variable, team, get_species(team.pokemon(new_index)));
 	auto const expected = expected_index[current_index][new_index];
 	assert(expected);
 	if (variable.value != *expected) {

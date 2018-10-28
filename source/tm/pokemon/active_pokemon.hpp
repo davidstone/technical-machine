@@ -47,9 +47,6 @@ struct ActivePokemon {
 	operator Pokemon const & () const {
 		return m_pokemon;
 	}
-	operator Species() const {
-		return static_cast<Pokemon const &>(*this);
-	}
 
 	TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS;
 
@@ -78,9 +75,6 @@ struct MutableActivePokemon {
 	}
 	operator Pokemon & () const {
 		return m_pokemon;
-	}
-	operator Species() const {
-		return static_cast<Species>(static_cast<ActivePokemon>(*this));
 	}
 
 	friend auto stage(MutableActivePokemon pokemon) -> Stage &;

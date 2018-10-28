@@ -78,10 +78,6 @@ Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const
 	m_nature_is_known = false;
 }
 
-Pokemon::operator Species() const {
-	return m_species;
-}
-
 
 void Pokemon::change_type(Type const new_type) {
 	current_type.change_type(new_type);
@@ -117,7 +113,7 @@ containers::string to_string(Pokemon const & pokemon) {
 	};
 
 	return containers::concatenate<containers::string>(
-		to_string(static_cast<Species>(pokemon)),
+		to_string(get_species(pokemon)),
 		std::string_view(" ("), std::string_view((boost::format("%.1f") % per_cent_hp).str()), std::string_view("% HP) @ "),
 		to_string(get_item(pokemon)),
 		std::string_view("\n\tAbility: "), to_string(get_ability(pokemon)), std::string_view("\n"),

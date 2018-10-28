@@ -67,7 +67,7 @@ auto set_hp_ev(Pokemon & pokemon, EV const ev) -> void {
 	set_hp_ev(pokemon, ev, get_hp(pokemon).iv());
 }
 auto set_hp_ev(Pokemon & pokemon, EV const ev, IV const iv) -> void {
-	get_hp(pokemon) = HP(pokemon, get_level(pokemon), ev, iv);
+	get_hp(pokemon) = HP(get_species(pokemon), get_level(pokemon), ev, iv);
 }
 
 namespace {

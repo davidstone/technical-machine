@@ -80,7 +80,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Move const move, T
 			return last_used_move(attacker).fury_cutter_power();
 		case Moves::Grass_Knot:
 		case Moves::Low_Kick:
-			return power_of_mass_based_moves(defender);
+			return power_of_mass_based_moves(get_species(defender));
 		case Moves::Gyro_Ball: {
 			auto const defender_speed = calculate_speed(defender_team, weather);
 			auto const attacker_speed = calculate_speed(attacker_team, weather);
@@ -246,11 +246,11 @@ auto item_modifier_numerator(Pokemon const & attacker, Moves const move) -> boun
 		case Item::Wave_Incense:
 			return BOUNDED_CONDITIONAL(type == Type::Water, 12_bi, base);
 		case Item::Adamant_Orb:
-			return BOUNDED_CONDITIONAL(is_boosted_by_adamant_orb(attacker) and (type == Type::Dragon or type == Type::Steel), 12_bi, base);
+			return BOUNDED_CONDITIONAL(is_boosted_by_adamant_orb(get_species(attacker)) and (type == Type::Dragon or type == Type::Steel), 12_bi, base);
 		case Item::Griseous_Orb:
-			return BOUNDED_CONDITIONAL(is_boosted_by_griseous_orb(attacker) and (type == Type::Dragon or type == Type::Ghost), 12_bi, base);
+			return BOUNDED_CONDITIONAL(is_boosted_by_griseous_orb(get_species(attacker)) and (type == Type::Dragon or type == Type::Ghost), 12_bi, base);
 		case Item::Lustrous_Orb:
-			return BOUNDED_CONDITIONAL(is_boosted_by_lustrous_orb(attacker) and (type == Type::Dragon or type == Type::Water), 12_bi, base);
+			return BOUNDED_CONDITIONAL(is_boosted_by_lustrous_orb(get_species(attacker)) and (type == Type::Dragon or type == Type::Water), 12_bi, base);
 		default:
 			return base;
 	}

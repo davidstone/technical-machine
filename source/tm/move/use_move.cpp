@@ -405,7 +405,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			boost(stage(target.pokemon()), StatNames::ATK, -2_bi);
 			break;
 		case Moves::Chatter:
-			if (can_confuse_with_chatter(user) and effect_activates(variable)) {
+			if (can_confuse_with_chatter(get_species(user)) and effect_activates(variable)) {
 				target.pokemon().confuse();
 			}
 			break;

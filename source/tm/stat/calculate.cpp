@@ -162,9 +162,9 @@ struct ItemNumerator<StatNames::ATK> {
 			case Item::Choice_Band:
 				return 3_bi;
 			case Item::Light_Ball:
-				return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(attacker), 2_bi * item_denominator, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(get_species(attacker)), 2_bi * item_denominator, item_denominator);
 			case Item::Thick_Club:
-				return BOUNDED_CONDITIONAL(is_boosted_by_thick_club(attacker), 2_bi * item_denominator, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_thick_club(get_species(attacker)), 2_bi * item_denominator, item_denominator);
 			default:
 				return item_denominator;
 		}
@@ -175,13 +175,13 @@ struct ItemNumerator<StatNames::SPA> {
 	auto operator()(Pokemon const & attacker) -> bounded::integer<2, 4> {
 		switch (get_item(attacker)) {
 			case Item::Soul_Dew:
-				return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(attacker), 3_bi, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(get_species(attacker)), 3_bi, item_denominator);
 			case Item::Choice_Specs:
 				return 3_bi;
 			case Item::DeepSeaTooth:
-				return BOUNDED_CONDITIONAL(is_boosted_by_deepseatooth(attacker), 2_bi * item_denominator, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_deepseatooth(get_species(attacker)), 2_bi * item_denominator, item_denominator);
 			case Item::Light_Ball:
-				return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(attacker), 2_bi * item_denominator, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(get_species(attacker)), 2_bi * item_denominator, item_denominator);
 			default:
 				return item_denominator;
 		}
@@ -191,7 +191,7 @@ template<>
 struct ItemNumerator<StatNames::DEF> {
 	auto operator()(Pokemon const & defender) -> bounded::integer<2, 3> {
 		return BOUNDED_CONDITIONAL(
-			get_item(defender) == Item::Metal_Powder and is_boosted_by_metal_powder(defender),
+			get_item(defender) == Item::Metal_Powder and is_boosted_by_metal_powder(get_species(defender)),
 			3_bi,
 			item_denominator
 		);
@@ -202,11 +202,11 @@ struct ItemNumerator<StatNames::SPD> {
 	auto operator()(Pokemon const & defender) -> bounded::integer<2, 4> {
 		switch (get_item(defender)) {
 			case Item::DeepSeaScale:
-				return BOUNDED_CONDITIONAL(is_boosted_by_deepseascale(defender), 2_bi * item_denominator, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_deepseascale(get_species(defender)), 2_bi * item_denominator, item_denominator);
 			case Item::Metal_Powder:
-				return BOUNDED_CONDITIONAL(is_boosted_by_metal_powder(defender), 3_bi, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_metal_powder(get_species(defender)), 3_bi, item_denominator);
 			case Item::Soul_Dew:
-				return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(defender), 3_bi, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(get_species(defender)), 3_bi, item_denominator);
 			default:
 				return item_denominator;
 		}
@@ -217,7 +217,7 @@ struct ItemNumerator<StatNames::SPE> {
 	auto operator()(Pokemon const & pokemon) -> bounded::integer<1, 4> {
 		switch (get_item(pokemon)) {
 			case Item::Quick_Powder:
-				return BOUNDED_CONDITIONAL(is_boosted_by_quick_powder(pokemon), 2_bi * item_denominator, item_denominator);
+				return BOUNDED_CONDITIONAL(is_boosted_by_quick_powder(get_species(pokemon)), 2_bi * item_denominator, item_denominator);
 			case Item::Choice_Scarf:
 				return 3_bi;
 			case Item::Macho_Brace:

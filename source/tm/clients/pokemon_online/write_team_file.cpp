@@ -76,13 +76,14 @@ void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	ptree & member = pt.add ("Pokemon", "");
 	member.put("<xmlattr>.Item", item_to_id(get_item(pokemon)));
 	member.put("<xmlattr>.Ability", ability_to_id (get_ability(pokemon)));
-	auto const species = species_to_id(pokemon);
-	member.put("<xmlattr>.Num", species.id);
+	auto const species = get_species(pokemon);
+	auto const po_species = species_to_id(species);
+	member.put("<xmlattr>.Num", po_species.id);
 	member.put("<xmlattr>.Nature", nature_to_id(get_nature(pokemon)));
 	member.put("<xmlattr>.Shiny", 0);
-	member.put("<xmlattr>.Nickname", to_string(static_cast<Species>(pokemon)));
+	member.put("<xmlattr>.Nickname", to_string(species));
 	member.put("<xmlattr>.Gen", 4);
-	member.put("<xmlattr>.Forme", species.forme);
+	member.put("<xmlattr>.Forme", po_species.forme);
 	member.put("<xmlattr>.Happiness", get_happiness(pokemon));
 	member.put("<xmlattr>.Lvl", get_level(pokemon)());
 	member.put("<xmlattr>.Gender", gender_to_id (get_gender(pokemon)));
