@@ -29,7 +29,7 @@ template<intmax_t normal_duration, intmax_t max_duration = normal_duration>
 struct Screen {
 	static_assert(normal_duration <= max_duration, "Max duration cannot be less than normal duration.");
 
-	constexpr operator bool() const {
+	constexpr explicit operator bool() const {
 		return m_turns_remaining != 0_bi;
 	}
 	constexpr auto turns_remaining() const {
