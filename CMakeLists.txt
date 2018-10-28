@@ -26,128 +26,128 @@ set_property(TARGET containers PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_IN
 
 # TODO: This should be an object library, but they do not really work yet.
 add_library(tm_common STATIC
-	source/bide/bide.cpp
-	source/bide/damage.cpp
-	source/bide/duration.cpp
+	source/tm/bide/bide.cpp
+	source/tm/bide/damage.cpp
+	source/tm/bide/duration.cpp
 
-	source/clients/pokemon_lab/read_team_file.cpp
-	source/clients/pokemon_lab/write_team_file.cpp
+	source/tm/clients/pokemon_lab/read_team_file.cpp
+	source/tm/clients/pokemon_lab/write_team_file.cpp
 
-	source/clients/pokemon_online/conversion.cpp
-	source/clients/pokemon_online/invalid_team_file.cpp
-	source/clients/pokemon_online/read_team_file.cpp
-	source/clients/pokemon_online/write_team_file.cpp
+	source/tm/clients/pokemon_online/conversion.cpp
+	source/tm/clients/pokemon_online/invalid_team_file.cpp
+	source/tm/clients/pokemon_online/read_team_file.cpp
+	source/tm/clients/pokemon_online/write_team_file.cpp
 
-	source/clients/invalid_team_file_format.cpp
+	source/tm/clients/invalid_team_file_format.cpp
 
-	source/evaluate/evaluate.cpp
-	source/evaluate/expectiminimax.cpp
-	source/evaluate/move_scores.cpp
-	source/evaluate/reorder.cpp
-	source/evaluate/transposition.cpp
+	source/tm/evaluate/evaluate.cpp
+	source/tm/evaluate/expectiminimax.cpp
+	source/tm/evaluate/move_scores.cpp
+	source/tm/evaluate/reorder.cpp
+	source/tm/evaluate/transposition.cpp
 
-	source/move/accuracy.cpp
-	source/move/base_power.cpp
-	source/move/container.cpp
-	source/move/is_switch.cpp
-	source/move/max_moves_per_pokemon.cpp
-	source/move/move.cpp
-	source/move/pp.cpp
-	source/move/power.cpp
-	source/move/priority.cpp
-	source/move/shared.cpp
-	source/move/use_move.cpp
+	source/tm/move/accuracy.cpp
+	source/tm/move/base_power.cpp
+	source/tm/move/container.cpp
+	source/tm/move/is_switch.cpp
+	source/tm/move/max_moves_per_pokemon.cpp
+	source/tm/move/move.cpp
+	source/tm/move/pp.cpp
+	source/tm/move/power.cpp
+	source/tm/move/priority.cpp
+	source/tm/move/shared.cpp
+	source/tm/move/use_move.cpp
 
-	source/pokemon/active_pokemon.cpp
-	source/pokemon/active_pokemon_flags.cpp
-	source/pokemon/collection.cpp
-	source/pokemon/confusion.cpp
-	source/pokemon/container.cpp
-	source/pokemon/delayed_attack.cpp
-	source/pokemon/disable.cpp
-	source/pokemon/embargo.cpp
-	source/pokemon/encore.cpp
-	source/pokemon/end_of_turn_counter.cpp
-	source/pokemon/happiness.cpp
-	source/pokemon/heal_block.cpp
-	source/pokemon/last_used_move.cpp
-	source/pokemon/level.cpp
-	source/pokemon/magnet_rise.cpp
-	source/pokemon/max_pokemon_per_team.cpp
-	source/pokemon/partial_trap.cpp
-	source/pokemon/perish_song.cpp
-	source/pokemon/pokemon.cpp
-	source/pokemon/pokemon_not_found.cpp
-	source/pokemon/rampage.cpp
-	source/pokemon/slow_start.cpp
-	source/pokemon/stockpile.cpp
-	source/pokemon/substitute.cpp
-	source/pokemon/taunt.cpp
-	source/pokemon/toxic.cpp
-	source/pokemon/uproar.cpp
-	source/pokemon/vanish.cpp
-	source/pokemon/yawn.cpp
+	source/tm/pokemon/active_pokemon.cpp
+	source/tm/pokemon/active_pokemon_flags.cpp
+	source/tm/pokemon/collection.cpp
+	source/tm/pokemon/confusion.cpp
+	source/tm/pokemon/container.cpp
+	source/tm/pokemon/delayed_attack.cpp
+	source/tm/pokemon/disable.cpp
+	source/tm/pokemon/embargo.cpp
+	source/tm/pokemon/encore.cpp
+	source/tm/pokemon/end_of_turn_counter.cpp
+	source/tm/pokemon/happiness.cpp
+	source/tm/pokemon/heal_block.cpp
+	source/tm/pokemon/last_used_move.cpp
+	source/tm/pokemon/level.cpp
+	source/tm/pokemon/magnet_rise.cpp
+	source/tm/pokemon/max_pokemon_per_team.cpp
+	source/tm/pokemon/partial_trap.cpp
+	source/tm/pokemon/perish_song.cpp
+	source/tm/pokemon/pokemon.cpp
+	source/tm/pokemon/pokemon_not_found.cpp
+	source/tm/pokemon/rampage.cpp
+	source/tm/pokemon/slow_start.cpp
+	source/tm/pokemon/stockpile.cpp
+	source/tm/pokemon/substitute.cpp
+	source/tm/pokemon/taunt.cpp
+	source/tm/pokemon/toxic.cpp
+	source/tm/pokemon/uproar.cpp
+	source/tm/pokemon/vanish.cpp
+	source/tm/pokemon/yawn.cpp
 
-	source/stat/calculate.cpp
-	source/stat/chance_to_hit.cpp
-	source/stat/ev.cpp
-	source/stat/hp.cpp
-	source/stat/iv.cpp
-	source/stat/nature.cpp
-	source/stat/stage.cpp
-	source/stat/stat.cpp
-	source/stat/stat_names.cpp
-	source/stat/stats.cpp
+	source/tm/stat/calculate.cpp
+	source/tm/stat/chance_to_hit.cpp
+	source/tm/stat/ev.cpp
+	source/tm/stat/hp.cpp
+	source/tm/stat/iv.cpp
+	source/tm/stat/nature.cpp
+	source/tm/stat/stage.cpp
+	source/tm/stat/stat.cpp
+	source/tm/stat/stat_names.cpp
+	source/tm/stat/stats.cpp
 
-	source/string_conversions/ability.cpp
-	source/string_conversions/conversion.cpp
-	source/string_conversions/gender.cpp
-	source/string_conversions/invalid_string_conversion.cpp
-	source/string_conversions/item.cpp
-	source/string_conversions/move.cpp
-	source/string_conversions/nature.cpp
-	source/string_conversions/pokemon.cpp
-	source/string_conversions/status.cpp
+	source/tm/string_conversions/ability.cpp
+	source/tm/string_conversions/conversion.cpp
+	source/tm/string_conversions/gender.cpp
+	source/tm/string_conversions/invalid_string_conversion.cpp
+	source/tm/string_conversions/item.cpp
+	source/tm/string_conversions/move.cpp
+	source/tm/string_conversions/nature.cpp
+	source/tm/string_conversions/pokemon.cpp
+	source/tm/string_conversions/status.cpp
 
-	source/team_predictor/ev_optimizer/defensive.cpp
-	source/team_predictor/ev_optimizer/defensive_data_point.cpp
-	source/team_predictor/ev_optimizer/ev_optimizer.cpp
-	source/team_predictor/ev_optimizer/offensive.cpp
-	source/team_predictor/ev_optimizer/speed.cpp
+	source/tm/team_predictor/ev_optimizer/defensive.cpp
+	source/tm/team_predictor/ev_optimizer/defensive_data_point.cpp
+	source/tm/team_predictor/ev_optimizer/ev_optimizer.cpp
+	source/tm/team_predictor/ev_optimizer/offensive.cpp
+	source/tm/team_predictor/ev_optimizer/speed.cpp
 
-	source/team_predictor/detailed_stats.cpp
-	source/team_predictor/estimate.cpp
-	source/team_predictor/lead_stats.cpp
-	source/team_predictor/multiplier.cpp
-	source/team_predictor/team_predictor.cpp
-	source/team_predictor/usage_stats.cpp
+	source/tm/team_predictor/detailed_stats.cpp
+	source/tm/team_predictor/estimate.cpp
+	source/tm/team_predictor/lead_stats.cpp
+	source/tm/team_predictor/multiplier.cpp
+	source/tm/team_predictor/team_predictor.cpp
+	source/tm/team_predictor/usage_stats.cpp
 
-	source/type/collection.cpp
-	source/type/effectiveness.cpp
-	source/type/type.cpp
+	source/tm/type/collection.cpp
+	source/tm/type/effectiveness.cpp
+	source/tm/type/type.cpp
 
-	source/ability.cpp
-	source/block.cpp
-	source/damage.cpp
-	source/endofturn.cpp
-	source/entry_hazards.cpp
-	source/enum.cpp
-	source/gender.cpp
-	source/heal.cpp
-	source/invalid_settings_file.cpp
-	source/item.cpp
-	source/operators.cpp
-	source/phazing_in_same_pokemon.cpp
-	source/random_damage.cpp
-	source/screen.cpp
-	source/screens.cpp
-	source/settings_file.cpp
-	source/status.cpp
-	source/switch.cpp
-	source/team.cpp
-	source/variable.cpp
-	source/weather.cpp
-	source/wish.cpp
+	source/tm/ability.cpp
+	source/tm/block.cpp
+	source/tm/damage.cpp
+	source/tm/endofturn.cpp
+	source/tm/entry_hazards.cpp
+	source/tm/enum.cpp
+	source/tm/gender.cpp
+	source/tm/heal.cpp
+	source/tm/invalid_settings_file.cpp
+	source/tm/item.cpp
+	source/tm/operators.cpp
+	source/tm/phazing_in_same_pokemon.cpp
+	source/tm/random_damage.cpp
+	source/tm/screen.cpp
+	source/tm/screens.cpp
+	source/tm/settings_file.cpp
+	source/tm/status.cpp
+	source/tm/switch.cpp
+	source/tm/team.cpp
+	source/tm/variable.cpp
+	source/tm/weather.cpp
+	source/tm/wish.cpp
 )
 target_link_libraries(tm_common
 	stdc++fs
@@ -156,31 +156,35 @@ target_link_libraries(tm_common
 	containers
 )
 
+target_include_directories(tm_common PUBLIC
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/source>
+	$<INSTALL_INTERFACE:source>
+)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/settings DESTINATION ${CMAKE_BINARY_DIR}/)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/teams DESTINATION ${CMAKE_BINARY_DIR}/)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/teams/foe)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/test/test1.sbt DESTINATION ${CMAKE_BINARY_DIR}/test)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/test/test1.tp DESTINATION ${CMAKE_BINARY_DIR}/test)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/tm/test/test1.sbt DESTINATION ${CMAKE_BINARY_DIR}/test)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/tm/test/test1.tp DESTINATION ${CMAKE_BINARY_DIR}/test)
 
 add_executable(ai
-	source/clients/pokemon_showdown/battle_factory.cpp
-	source/clients/pokemon_showdown/battle_parser.cpp
-	source/clients/pokemon_showdown/battles.cpp
-	source/clients/pokemon_showdown/battle_settings.cpp
-	source/clients/pokemon_showdown/client.cpp
-	source/clients/pokemon_showdown/inmessage.cpp
-	source/clients/pokemon_showdown/json_parser.cpp
-	source/clients/pokemon_showdown/slot_memory.cpp
+	source/tm/clients/pokemon_showdown/battle_factory.cpp
+	source/tm/clients/pokemon_showdown/battle_parser.cpp
+	source/tm/clients/pokemon_showdown/battles.cpp
+	source/tm/clients/pokemon_showdown/battle_settings.cpp
+	source/tm/clients/pokemon_showdown/client.cpp
+	source/tm/clients/pokemon_showdown/inmessage.cpp
+	source/tm/clients/pokemon_showdown/json_parser.cpp
+	source/tm/clients/pokemon_showdown/slot_memory.cpp
 
-	source/clients/battle.cpp
-	source/clients/battle_result.cpp
-	source/clients/handle_battle_end.cpp
-	source/clients/no_pending_challenges.cpp
-	source/clients/party.cpp
-	source/clients/timestamp.cpp
+	source/tm/clients/battle.cpp
+	source/tm/clients/battle_result.cpp
+	source/tm/clients/handle_battle_end.cpp
+	source/tm/clients/no_pending_challenges.cpp
+	source/tm/clients/party.cpp
+	source/tm/clients/timestamp.cpp
 
-	source/ai.cpp
+	source/tm/ai.cpp
 )
 target_link_libraries(ai
 	pthread
@@ -189,14 +193,14 @@ target_link_libraries(ai
 
 
 add_executable(predict
-	source/team_predictor/ui/ev_inputs.cpp
-	source/team_predictor/ui/move_inputs.cpp
-	source/team_predictor/ui/nature_input.cpp
-	source/team_predictor/ui/pokemon_inputs.cpp
-	source/team_predictor/ui/species_input.cpp
+	source/tm/team_predictor/ui/ev_inputs.cpp
+	source/tm/team_predictor/ui/move_inputs.cpp
+	source/tm/team_predictor/ui/nature_input.cpp
+	source/tm/team_predictor/ui/pokemon_inputs.cpp
+	source/tm/team_predictor/ui/species_input.cpp
 
-	source/team_predictor/predictor.cpp
-	source/team_predictor/random_team.cpp
+	source/tm/team_predictor/predictor.cpp
+	source/tm/team_predictor/random_team.cpp
 )
 target_link_libraries(predict
 	fltk
@@ -205,31 +209,31 @@ target_link_libraries(predict
 
 
 add_executable(tm_test
-	source/test/clients/pokemon_showdown/slot_memory.cpp
+	source/tm/test/clients/pokemon_showdown/slot_memory.cpp
 
-	source/test/collections/collection.cpp
-	source/test/collections/invalid_collection.cpp
-	source/test/collections/move_container.cpp
-	source/test/collections/variable_collection.cpp
+	source/tm/test/collections/collection.cpp
+	source/tm/test/collections/invalid_collection.cpp
+	source/tm/test/collections/move_container.cpp
+	source/tm/test/collections/variable_collection.cpp
 
-	source/test/evaluate/evaluate.cpp
-	source/test/evaluate/expectiminimax.cpp
+	source/tm/test/evaluate/evaluate.cpp
+	source/tm/test/evaluate/expectiminimax.cpp
 
-	source/test/pokemon_lab/team_file.cpp
-	source/test/pokemon_lab/test.cpp
+	source/tm/test/pokemon_lab/team_file.cpp
+	source/tm/test/pokemon_lab/test.cpp
 
-	source/test/pokemon_online/conversion.cpp
-	source/test/pokemon_online/team_file.cpp
-	source/test/pokemon_online/test.cpp
+	source/tm/test/pokemon_online/conversion.cpp
+	source/tm/test/pokemon_online/team_file.cpp
+	source/tm/test/pokemon_online/test.cpp
 
-	source/test/damage.cpp
-	source/test/ev_optimizer.cpp
-	source/test/incorrect_calculation.cpp
-	source/test/stat.cpp
-	source/test/status.cpp
-	source/test/string_conversion.cpp
-	source/test/test.cpp
-	source/test/use_move.cpp
+	source/tm/test/damage.cpp
+	source/tm/test/ev_optimizer.cpp
+	source/tm/test/incorrect_calculation.cpp
+	source/tm/test/stat.cpp
+	source/tm/test/status.cpp
+	source/tm/test/string_conversion.cpp
+	source/tm/test/test.cpp
+	source/tm/test/use_move.cpp
 )
 target_link_libraries(tm_test
 	tm_common
