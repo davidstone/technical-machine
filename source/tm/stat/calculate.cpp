@@ -1,5 +1,5 @@
 // Calculate a Pokemon's current stat
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -81,162 +81,129 @@ constexpr auto is_boosted_by_thick_club(Species const species) {
 	}
 }
 
-constexpr auto ability_denominator = 2_bi;
-
-template<StatNames stat>
-struct AbilityNumerator;
-
-template<>
-struct AbilityNumerator<StatNames::ATK> {
-	auto operator()(ActivePokemon const attacker, Weather const weather) -> bounded::integer<1, 4> {
-		switch (get_ability(attacker)) {
-			case Ability::Flower_Gift:
-				return BOUNDED_CONDITIONAL(weather.sun(), 3_bi, ability_denominator);
-			case Ability::Guts:
-				return BOUNDED_CONDITIONAL(!is_clear(get_status(attacker)), 3_bi, ability_denominator);
-			case Ability::Hustle:
-				return 3_bi;
-			case Ability::Huge_Power:
-			case Ability::Pure_Power:
-				return ability_denominator * 2_bi;
-			case Ability::Slow_Start:
-				return BOUNDED_CONDITIONAL(slow_start_is_active(attacker), 1_bi, ability_denominator);
-			default:
-				return ability_denominator;
-		}
-	}
-};
-template<>
-struct AbilityNumerator<StatNames::SPA> {
-	auto operator()(ActivePokemon const pokemon, Weather const weather) {
-		return BOUNDED_CONDITIONAL(boosts_special_attack(get_ability(pokemon), weather), 3_bi, ability_denominator);
-	}
-};
-template<>
-struct AbilityNumerator<StatNames::DEF> {
-	auto operator()(ActivePokemon const defender, Weather const) {
-		return BOUNDED_CONDITIONAL(boosts_defense(get_ability(defender), get_status(defender)), 3_bi, ability_denominator);
-	}
-};
-template<>
-struct AbilityNumerator<StatNames::SPD> {
-	auto operator()(ActivePokemon const pokemon, Weather const weather) {
-		return BOUNDED_CONDITIONAL(boosts_special_defense(get_ability(pokemon), weather), 3_bi, ability_denominator);
-	}
-};
-template<>
-struct AbilityNumerator<StatNames::SPE> {
-	auto operator()(ActivePokemon const pokemon, Weather const weather) -> bounded::integer<1, 4> {
-		switch (get_ability(pokemon)) {
-			case Ability::Chlorophyll:
-				return BOUNDED_CONDITIONAL(weather.sun(), ability_denominator * 2_bi, ability_denominator);
-			case Ability::Swift_Swim:
-				return BOUNDED_CONDITIONAL(weather.rain(), ability_denominator * 2_bi, ability_denominator);
-			case Ability::Unburden:
-				return BOUNDED_CONDITIONAL(was_lost(get_item(pokemon)), ability_denominator * 2_bi, ability_denominator);
-			case Ability::Quick_Feet:
-				return BOUNDED_CONDITIONAL(!is_clear(get_status(pokemon)), 3_bi, ability_denominator);
-			case Ability::Slow_Start:
-				return BOUNDED_CONDITIONAL(slow_start_is_active(pokemon), 1_bi, ability_denominator);
-			default:
-				return ability_denominator;
-		}
-	}
-};
 
 template<StatNames stat>
 auto ability_modifier(ActivePokemon const pokemon, Weather const weather) {
-	return rational(AbilityNumerator<stat>{}(pokemon, weather), ability_denominator);
+	constexpr auto denominator = 2_bi;
+	auto const numerator = [&]{
+		if constexpr (stat == StatNames::ATK) {
+			return [&]() -> bounded::integer<1, 4> {
+				switch (get_ability(pokemon)) {
+				case Ability::Flower_Gift:
+					return BOUNDED_CONDITIONAL(weather.sun(), 3_bi, denominator);
+				case Ability::Guts:
+					return BOUNDED_CONDITIONAL(!is_clear(get_status(pokemon)), 3_bi, denominator);
+				case Ability::Hustle:
+					return 3_bi;
+				case Ability::Huge_Power:
+				case Ability::Pure_Power:
+					return denominator * 2_bi;
+				case Ability::Slow_Start:
+					return BOUNDED_CONDITIONAL(slow_start_is_active(pokemon), 1_bi, denominator);
+				default:
+					return denominator;
+				}
+			}();
+		} else if constexpr (stat == StatNames::DEF) {
+			return BOUNDED_CONDITIONAL(boosts_defense(get_ability(pokemon), get_status(pokemon)), 3_bi, denominator);
+		} else if constexpr (stat == StatNames::SPA) {
+			return BOUNDED_CONDITIONAL(boosts_special_attack(get_ability(pokemon), weather), 3_bi, denominator);
+		} else if constexpr (stat == StatNames::SPD) {
+			return BOUNDED_CONDITIONAL(boosts_special_defense(get_ability(pokemon), weather), 3_bi, denominator);
+		} else if constexpr (stat == StatNames::SPE) {
+			return [&]() -> bounded::integer<1, 4> {
+				switch (get_ability(pokemon)) {
+				case Ability::Chlorophyll:
+					return BOUNDED_CONDITIONAL(weather.sun(), denominator * 2_bi, denominator);
+				case Ability::Swift_Swim:
+					return BOUNDED_CONDITIONAL(weather.rain(), denominator * 2_bi, denominator);
+				case Ability::Unburden:
+					return BOUNDED_CONDITIONAL(was_lost(get_item(pokemon)), denominator * 2_bi, denominator);
+				case Ability::Quick_Feet:
+					return BOUNDED_CONDITIONAL(!is_clear(get_status(pokemon)), 3_bi, denominator);
+				case Ability::Slow_Start:
+					return BOUNDED_CONDITIONAL(slow_start_is_active(pokemon), 1_bi, denominator);
+				default:
+					return denominator;
+				}
+			}();
+		}
+	}();
+	return rational(numerator, denominator);
 }
 
 
-constexpr auto item_denominator = 2_bi;
-
-template<StatNames>
-struct ItemNumerator;
-
-template<>
-struct ItemNumerator<StatNames::ATK> {
-	auto operator()(Pokemon const & attacker) -> bounded::integer<2, 4> {
-		switch (get_item(attacker)) {
-			case Item::Choice_Band:
-				return 3_bi;
-			case Item::Light_Ball:
-				return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(get_species(attacker)), 2_bi * item_denominator, item_denominator);
-			case Item::Thick_Club:
-				return BOUNDED_CONDITIONAL(is_boosted_by_thick_club(get_species(attacker)), 2_bi * item_denominator, item_denominator);
-			default:
-				return item_denominator;
-		}
-	}
-};
-template<>
-struct ItemNumerator<StatNames::SPA> {
-	auto operator()(Pokemon const & attacker) -> bounded::integer<2, 4> {
-		switch (get_item(attacker)) {
-			case Item::Soul_Dew:
-				return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(get_species(attacker)), 3_bi, item_denominator);
-			case Item::Choice_Specs:
-				return 3_bi;
-			case Item::DeepSeaTooth:
-				return BOUNDED_CONDITIONAL(is_boosted_by_deepseatooth(get_species(attacker)), 2_bi * item_denominator, item_denominator);
-			case Item::Light_Ball:
-				return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(get_species(attacker)), 2_bi * item_denominator, item_denominator);
-			default:
-				return item_denominator;
-		}
-	}
-};
-template<>
-struct ItemNumerator<StatNames::DEF> {
-	auto operator()(Pokemon const & defender) -> bounded::integer<2, 3> {
-		return BOUNDED_CONDITIONAL(
-			get_item(defender) == Item::Metal_Powder and is_boosted_by_metal_powder(get_species(defender)),
-			3_bi,
-			item_denominator
-		);
-	}
-};
-template<>
-struct ItemNumerator<StatNames::SPD> {
-	auto operator()(Pokemon const & defender) -> bounded::integer<2, 4> {
-		switch (get_item(defender)) {
-			case Item::DeepSeaScale:
-				return BOUNDED_CONDITIONAL(is_boosted_by_deepseascale(get_species(defender)), 2_bi * item_denominator, item_denominator);
-			case Item::Metal_Powder:
-				return BOUNDED_CONDITIONAL(is_boosted_by_metal_powder(get_species(defender)), 3_bi, item_denominator);
-			case Item::Soul_Dew:
-				return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(get_species(defender)), 3_bi, item_denominator);
-			default:
-				return item_denominator;
-		}
-	}
-};
-template<>
-struct ItemNumerator<StatNames::SPE> {
-	auto operator()(Pokemon const & pokemon) -> bounded::integer<1, 4> {
-		switch (get_item(pokemon)) {
-			case Item::Quick_Powder:
-				return BOUNDED_CONDITIONAL(is_boosted_by_quick_powder(get_species(pokemon)), 2_bi * item_denominator, item_denominator);
-			case Item::Choice_Scarf:
-				return 3_bi;
-			case Item::Macho_Brace:
-			case Item::Power_Anklet:
-			case Item::Power_Band:
-			case Item::Power_Belt:
-			case Item::Power_Bracer:
-			case Item::Power_Lens:
-			case Item::Power_Weight:
-				return 1_bi;
-			default:
-				return item_denominator;
-		}
-	}
-};
-
 template<StatNames stat>
 auto item_modifier(Pokemon const & pokemon) {
-	return rational(ItemNumerator<stat>{}(pokemon), item_denominator);
+	constexpr auto denominator = 2_bi;
+	auto const species [[maybe_unused]] = get_species(pokemon);
+	auto const numerator = [&]{
+		if constexpr (stat == StatNames::ATK) {
+			return [&]() -> bounded::integer<2, 4> {
+				switch (get_item(pokemon)) {
+				case Item::Choice_Band:
+					return 3_bi;
+				case Item::Light_Ball:
+					return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(species), 2_bi * denominator, denominator);
+				case Item::Thick_Club:
+					return BOUNDED_CONDITIONAL(is_boosted_by_thick_club(species), 2_bi * denominator, denominator);
+				default:
+					return denominator;
+				}
+			}();
+		} else if constexpr (stat == StatNames::DEF) {
+			auto const boosted = get_item(pokemon) == Item::Metal_Powder and is_boosted_by_metal_powder(species);
+			return BOUNDED_CONDITIONAL(boosted, 3_bi, denominator);
+		} else if constexpr (stat == StatNames::SPA) {
+			return [&]() -> bounded::integer<2, 4> {
+				switch (get_item(pokemon)) {
+				case Item::Soul_Dew:
+					return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(species), 3_bi, denominator);
+				case Item::Choice_Specs:
+					return 3_bi;
+				case Item::DeepSeaTooth:
+					return BOUNDED_CONDITIONAL(is_boosted_by_deepseatooth(species), 2_bi * denominator, denominator);
+				case Item::Light_Ball:
+					return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(species), 2_bi * denominator, denominator);
+				default:
+					return denominator;
+				}
+			}();
+		} else if constexpr (stat == StatNames::SPD) {
+			return [&]() -> bounded::integer<2, 4> {
+				switch (get_item(pokemon)) {
+				case Item::DeepSeaScale:
+					return BOUNDED_CONDITIONAL(is_boosted_by_deepseascale(species), 2_bi * denominator, denominator);
+				case Item::Metal_Powder:
+					return BOUNDED_CONDITIONAL(is_boosted_by_metal_powder(species), 3_bi, denominator);
+				case Item::Soul_Dew:
+					return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(species), 3_bi, denominator);
+				default:
+					return denominator;
+				}
+			}();
+		} else if constexpr (stat == StatNames::SPE) {
+			return [&]() -> bounded::integer<1, 4> {
+				switch (get_item(pokemon)) {
+				case Item::Quick_Powder:
+					return BOUNDED_CONDITIONAL(is_boosted_by_quick_powder(species), 2_bi * denominator, denominator);
+				case Item::Choice_Scarf:
+					return 3_bi;
+				case Item::Macho_Brace:
+				case Item::Power_Anklet:
+				case Item::Power_Band:
+				case Item::Power_Belt:
+				case Item::Power_Bracer:
+				case Item::Power_Lens:
+				case Item::Power_Weight:
+					return 1_bi;
+				default:
+					return denominator;
+				}
+			}();
+		}
+	}();
+	return rational(numerator, denominator);
 }
 
 
