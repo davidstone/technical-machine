@@ -23,7 +23,6 @@
 
 namespace technicalmachine {
 namespace ps {
-namespace detail {
 
 constexpr auto separator_size(char) {
 	return 1U;
@@ -41,8 +40,6 @@ constexpr auto split(std::string_view str, Separator const separator) {
 	return std::pair(str.substr(0, index), str.substr(index + separator_size(separator)));
 }
 
-}	// namespace detail
-
 // TODO: Maybe something with iterators?
 template<typename Separator>
 struct BufferView {
@@ -56,7 +53,7 @@ struct BufferView {
 	
 	template<typename S>
 	constexpr auto next(S const separator) -> std::string_view {
-		auto const [first, second] = detail::split(m_buffer, separator);
+		auto const [first, second] = split(m_buffer, separator);
 		m_buffer = second;
 		return first;
 	}
