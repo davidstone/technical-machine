@@ -19,9 +19,10 @@
 #pragma once
 
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
+#include <tm/clients/pokemon_showdown/move_state.hpp>
 #include <tm/clients/pokemon_showdown/slot_memory.hpp>
 
-#include <tm/clients/pokemon_showdown/../battle.hpp>
+#include <tm/clients/battle.hpp>
 
 #include <tm/evaluate/evaluate.hpp>
 
@@ -60,8 +61,7 @@ struct BattleParser {
 			party,
 			std::move(opponent),
 			std::move(team),
-			opponent_team_size,
-			100_bi
+			opponent_team_size
 		),
 		m_depth(depth)
 	{
@@ -76,6 +76,8 @@ struct BattleParser {
 		return m_completed;
 	}
 private:
+	void handle_damage(InMessage message);
+	void maybe_use_previous_move();
 	Moves determine_action();
 	void send_move(Moves const move);
 	void send_random_move();
@@ -93,11 +95,7 @@ private:
 	Evaluate m_evaluate;
 	Battle m_battle;
 	unsigned m_depth;
-	struct PhazeData {
-		Party party;
-		Moves move;
-	};
-	bounded::optional<PhazeData> m_phaze_move;
+	MoveState m_move_state;
 	bool m_completed = false;
 	bool m_replacing_fainted = false;
 };

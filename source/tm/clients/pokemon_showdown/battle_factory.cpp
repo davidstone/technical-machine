@@ -61,6 +61,10 @@ bounded::optional<Team> parse_team(boost::property_tree::ptree const & pt) {
 			for (auto const & move : pokemon_data.second.get_child("moves")) {
 				 add_seen_move(all_moves(pokemon), from_string<Moves>(move.second.get<std::string>("")));
 			}
+			set_hp_ev(pokemon, EV(80_bi));
+			for (auto const stat : {StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE}) {
+				set_stat_ev(pokemon, stat, EV(84_bi));
+			}
 			team.all_pokemon().reset_index();
 		}
 		return team;
@@ -103,7 +107,10 @@ void BattleFactory::handle_message(InMessage message) {
 
 		auto const json_data = message.remainder();
 		if (!json_data.empty()) {
+			std::cout << json_data << '\n';
 			if (auto team = parse_team(m_parse_json(json_data))) {
+				// TODO: maybe just do this on random battles, since we know
+				// what our team is otherwise?
 				m_team = *std::move(team);
 			}
 		}

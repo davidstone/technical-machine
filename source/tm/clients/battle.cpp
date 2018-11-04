@@ -20,6 +20,7 @@
 
 #include <tm/switch.hpp>
 #include <tm/team.hpp>
+#include <tm/variable.hpp>
 #include <tm/weather.hpp>
 
 #include <tm/move/move.hpp>
@@ -38,34 +39,31 @@
 
 namespace technicalmachine {
 
-void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const move) {
+void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const move, Variable const & variable, bool const miss, bool const critical_hit, bool const awakens, bounded::optional<damage_type> const damage) {
 	auto & user = is_me(party) ? m_ai : m_foe;
 	auto & other = is_me(party) ? m_foe : m_ai;
 
-	add_seen_move(all_moves(user.team.pokemon()), move);
+	add_seen_move(all_moves(user.pokemon()), move);
 
-	auto const species = get_species(user.team.pokemon());
-	std::cout << user.team.who() << "'s move: " << to_string(species) << " uses " << to_string(move) << '\n';
+	auto const species = get_species(user.pokemon());
+	std::cout << user.who() << "'s move: " << to_string(species) << " uses " << to_string(move) << '\n';
 
 	constexpr auto other_move = bounded::none;
-	constexpr auto miss = false;
-	constexpr auto critical_hit = false;
-	constexpr auto awakens = false;
 	constexpr auto user_damaged = bounded::optional<damage_type>();
 	constexpr auto other_damaged = bounded::optional<damage_type>();
 	call_move(
-		user.team,
+		user,
 		move,
 		static_cast<bool>(user_damaged),
-		other.team,
+		other,
 		other_move,
 		static_cast<bool>(other_damaged),
 		m_weather,
-		user.variable,
+		variable,
 		miss,
 		awakens,
 		critical_hit,
-		other_damaged
+		damage
 	);
 }
 
@@ -87,7 +85,7 @@ auto find_or_add_pokemon(Team & switcher, Species const species, Level const lev
 }	// namespace
 
 void Battle::handle_send_out(Party const switcher_party, uint8_t const slot, Species const species, Level const level, Gender const gender) {
-	auto & switcher = get_team(switcher_party).team;
+	auto & switcher = get_team(switcher_party);
 	auto const index = find_or_add_pokemon(switcher, species, level, gender);
 
 	// TODO: switch_decision_required includes replacing a fainted Pokemon. When
@@ -95,18 +93,18 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t const slot, Spe
 	// When using Baton Pass and U-turn, should we call switch_pokemon or
 	// call_move?
 	if (switch_decision_required(switcher.pokemon())) {
-		auto & other = get_team(technicalmachine::other(switcher_party)).team;
+		auto & other = get_team(technicalmachine::other(switcher_party));
 		switch_pokemon(switcher, other, m_weather, index);
 	} else {
-		handle_use_move(switcher_party, slot, to_switch(index));
+		constexpr auto miss = false;
+		constexpr auto critical_hit = false;
+		constexpr auto awakens = false;
+		handle_use_move(switcher_party, slot, to_switch(index), Variable{}, miss, critical_hit, awakens, bounded::none);
 	}
 }
 
-void Battle::handle_phaze(Party const phazer_party, uint8_t const phazer_slot, uint8_t /*switcher_slot*/, Moves const move, Species const species, Level const level, Gender const gender) {
-	auto & switcher = get_team(technicalmachine::other(phazer_party)).team;
-	auto index = find_or_add_pokemon(switcher, species, level, gender);
-	static_cast<void>(index);
-	handle_use_move(phazer_party, phazer_slot, move);
+void Battle::add_pokemon_from_phaze(Party const party, uint8_t /*slot*/, Species const species, Level const level, Gender const gender) {
+	find_or_add_pokemon(get_team(party), species, level, gender);
 }
 
 } // namespace technicalmachine

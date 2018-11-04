@@ -24,7 +24,6 @@
 
 #include <tm/endofturn.hpp>
 #include <tm/team.hpp>
-#include <tm/variable.hpp>
 #include <tm/weather.hpp>
 
 #include <tm/move/max_moves_per_pokemon.hpp>
@@ -43,9 +42,7 @@
 
 namespace technicalmachine {
 struct UsageStats;
-
-using VisibleFoeHP = bounded::checked_integer<48, 100>;
-using VisibleHP = std::common_type_t<VisibleFoeHP, HP::current_type>;
+struct Variable;
 
 // In all of these functions, "slot" is useful only in NvN, which TM does not
 // yet support.
@@ -55,22 +52,20 @@ struct Battle {
 		Party const party,
 		std::string foe_name_,
 		Team team,
-		TeamSize const foe_size,
-		VisibleFoeHP const max_damage_precision_ = 48_bi
+		TeamSize const foe_size
 	):
 		m_foe_name(std::move(foe_name_)),
 		m_ai(std::move(team)),
 		m_foe(foe_size),
-		m_max_damage_precision(max_damage_precision_),
 		m_ai_party(party)
 	{
 	}
 	
 	auto const & ai() const {
-		return m_ai.team;
+		return m_ai;
 	}
 	auto const & foe() const {
-		return m_foe.team;
+		return m_foe;
 	}
 	auto foe_name() const -> std::string_view {
 		return m_foe_name;
@@ -91,10 +86,10 @@ struct Battle {
 		if (turn_count != 1_bi) {
 			constexpr auto ai_shed_skin_activated = false;
 			constexpr auto foe_shed_skin_activated = false;
-			end_of_turn(m_ai.team, m_foe.team, m_weather, ai_shed_skin_activated, foe_shed_skin_activated);
+			end_of_turn(m_ai, m_foe, m_weather, ai_shed_skin_activated, foe_shed_skin_activated);
 		} else {
 			for (auto side : {std::ref(m_ai), std::ref(m_foe)}) {
-				side.get().team.pokemon().set_not_moved();
+				side.get().pokemon().set_not_moved();
 			}
 		}
 		
@@ -102,72 +97,40 @@ struct Battle {
 		std::cout << to_string(foe()) << '\n';
 	}
 
-	// TODO: Require passing in all flags associated with this particular use
-	// of the move, such as damage and CH
-	void handle_use_move(Party user, uint8_t slot, Moves move);
+	void handle_use_move(Party user, uint8_t slot, Moves move, Variable const & variable, bool miss, bool critical_hit, bool awakens, bounded::optional<damage_type> damage);
 	// This handles direct switches, replacing fainted Pokemon, and switching
 	// due to U-turn and Baton Pass. This assumes Species Clause is in effect.
 	void handle_send_out(Party switcher, uint8_t slot, Species species, Level level, Gender gender);
-	// This assumes Species Clause is in effect
-	void handle_phaze(Party phazer_party, uint8_t phazer_slot, uint8_t switcher_slot, Moves move, Species species, Level level, Gender gender);
+	// This assumes Species Clause is in effect. This is intended to be used
+	// with phazing moves only. It does not perform any switching, it just adds
+	// them to the team.
+	void add_pokemon_from_phaze(Party const party, uint8_t slot, Species species, Level level, Gender gender);
 	void handle_fainted(Party const fainter, uint8_t /*slot*/) {
-		auto & team = get_team(fainter).team;
+		auto & team = get_team(fainter);
 		auto active_pokemon = team.pokemon();
 		get_hp(active_pokemon) = 0_bi;
 		active_pokemon.faint();
 	}
 
-	void handle_hp_change(Party const changing, uint8_t /*slot*/, VisibleHP const visible_remaining_hp) {
-		auto & team = get_team(changing).team;
-		Pokemon & pokemon = team.pokemon();
-		get_hp(pokemon) = to_real_hp(team.is_me(), pokemon, visible_remaining_hp);
+	void set_value_on_active(Party const party, Ability const ability) {
+		get_ability(get_team(party).pokemon()) = ability;
 	}
 
-	void handle_flinch(Party const party) {
-		set_flinch(get_team(party).variable, true);
-	}
-
-	void handle_ability_message(Party const party, Ability const ability) {
-		get_ability(get_team(party).team.pokemon()) = ability;
-	}
-
-	void handle_item_message(Party const party, Item const item) {
-		get_item(get_team(party).team.pokemon()) = item;
+	void set_value_on_active(Party const party, Item const item) {
+		get_item(get_team(party).pokemon()) = item;
 	}
 private:
-	struct BattleTeam {
-		template<typename... Args>
-		BattleTeam(Args && ... args):
-			team(std::forward<Args>(args)...)
-		{
-		}
-
-		Team team;
-		Variable variable;
-	};
-
-	auto to_real_hp(bool const my_pokemon, Pokemon const & changer, VisibleHP const visible_remaining_hp) const -> HP::current_type {
-		auto const max_hp = get_hp(changer).max();
-		auto const max_visible_hp_change = BOUNDED_CONDITIONAL(my_pokemon, max_hp, m_max_damage_precision);
-		auto const result = bounded::max(1_bi, max_hp * visible_remaining_hp / max_visible_hp_change);
-		if (result > HP::current_type::max()) {
-			throw std::runtime_error("Recieved an HP value that is too large.");
-		}
-		return HP::current_type(result);
-	}
-
-	auto get_team(Party const party) const -> BattleTeam const & {
+	auto get_team(Party const party) const -> Team const & {
 		return is_me(party) ? m_ai : m_foe;
 	}
-	auto get_team(Party const party) -> BattleTeam & {
+	auto get_team(Party const party) -> Team & {
 		return is_me(party) ? m_ai : m_foe;
 	}
-
+	
 	std::string m_foe_name;
-	BattleTeam m_ai;
-	BattleTeam m_foe;
+	Team m_ai;
+	Team m_foe;
 	Weather m_weather;
-	VisibleFoeHP m_max_damage_precision;
 	Party m_ai_party;
 };
 
