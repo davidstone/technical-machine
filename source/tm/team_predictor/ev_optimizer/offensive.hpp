@@ -28,7 +28,7 @@
 
 #include <bounded/integer.hpp>
 
-#include <containers/algorithms/find.hpp>
+#include <containers/algorithms/maybe_find.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {

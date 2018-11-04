@@ -18,9 +18,6 @@
 
 #include <tm/move/use_move.hpp>
 
-#include <algorithm>
-#include <cassert>
-
 #include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
@@ -44,6 +41,11 @@
 
 #include <tm/type/effectiveness.hpp>
 #include <tm/type/type.hpp>
+
+#include <containers/algorithms/maybe_find.hpp>
+
+#include <cassert>
+#include <utility>
 
 namespace technicalmachine {
 namespace {
