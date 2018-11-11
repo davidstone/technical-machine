@@ -39,8 +39,6 @@ using namespace bounded::literal;
 struct Weather {
 	enum class Duration : int8_t { standard = 5, extended = 8, permanent = -1 };
 	
-	constexpr Weather() {}
-
 	constexpr auto trick_room() const {
 		return m_trick_room != 0_bi;
 	}
