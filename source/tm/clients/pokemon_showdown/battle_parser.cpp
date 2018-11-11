@@ -140,18 +140,19 @@ auto parse_hp_and_status(std::string_view const hp_and_status, Battle const & ba
 	};
 }
 
-using HPChangeSource = bounded::variant<std::monostate, Item, Ability>;
+struct FromWeather {};
+using HPChangeSource = bounded::variant<std::monostate, Item, Ability, FromWeather>;
 auto parse_hp_change_source(InMessage message) {
 	using Source = HPChangeSource;
 	// "[from]" or nothing
-	auto const from = message.next(' ');
+	auto const from [[maybe_unused]] = message.next(' ');
 	auto const source_type = message.next(':');
 	auto const source = message.next();
 	return
-		(from != "[from]") ? Source(bounded::detail::types<std::monostate>{}) :
 		(source_type == "item") ? Source(bounded::detail::types<Item>{}, from_string<Item>(source)) :
 		(source_type == "ability") ? Source(bounded::detail::types<Ability>{}, from_string<Ability>(source)) :
-		throw std::runtime_error("Unknown source type " + std::string(source_type) + " with source " + std::string(source));
+		(source_type == "Sandstorm" or source_type == "Hail") ? Source(bounded::detail::types<FromWeather>{}) :
+		Source(bounded::detail::types<std::monostate>{});
 }
 
 // This does work that we do not always need, but it should not matter in the
@@ -326,6 +327,7 @@ void BattleParser::handle_message(InMessage message) {
 		auto const party = parsed.party;
 		bounded::visit(parsed.source, bounded::overload(
 			[&](std::monostate) {},
+			[&](FromWeather) {},
 			[&](auto const value) { m_battle.set_value_on_active(party, value); }
 		));
 	} else if (type == "-hint") {
@@ -364,6 +366,8 @@ void BattleParser::handle_message(InMessage message) {
 		m_move_state.use_move(party, move);
 	} else if (type == "player") {
 		// At the end of a battle, I received this with a body of "p1|"
+	} else if (type == "-prepare") {
+		// From moves like SolarBeam on the charge turn
 	} else if (type == "request") {
 #if 0
 		auto const json = message.remainder();
@@ -482,9 +486,8 @@ void BattleParser::handle_damage(InMessage message) {
 			}
 			m_move_state.damage(other(party), static_cast<damage_type>(old_hp - new_hp));
 		},
-		[&](auto const value) {
-			m_battle.set_value_on_active(party, value);
-		}
+		[](FromWeather) {},
+		[&](auto const value) { m_battle.set_value_on_active(party, value); }
 	));
 }
 
