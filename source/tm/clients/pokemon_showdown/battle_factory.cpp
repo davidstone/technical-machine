@@ -22,7 +22,6 @@
 
 #include <bounded/integer.hpp>
 
-#include <charconv>
 #include <iostream>
 
 namespace technicalmachine {
@@ -30,48 +29,62 @@ namespace ps {
 
 namespace {
 
-bounded::optional<Team> parse_team(boost::property_tree::ptree const & pt) {
-	try {
-		auto const team_data = range_view(pt.get_child("side").get_child("pokemon").equal_range(""));
-		constexpr bool is_me = true;
-		Team team(TeamSize(containers::distance(team_data.begin(), team_data.end())), is_me);
-		for (auto const & pokemon_data : team_data) {
-			auto get = [&](auto const & key) { return pokemon_data.second.get<std::string>(key); };
+Team parse_team(boost::property_tree::ptree const & pt) {
+	auto const team_data = range_view(pt.get_child("side").get_child("pokemon").equal_range(""));
+	constexpr bool is_me = true;
+	Team team(TeamSize(containers::distance(team_data.begin(), team_data.end())), is_me);
+	for (auto const & pokemon_data : team_data) {
+		auto get = [&](auto const & key) { return pokemon_data.second.get<std::string>(key); };
 
-			auto const details = parse_details(get("details"));
-			
-			auto const condition = get("condition");
-			// current_hp/max_hp
-			// Presumably also gives me status information? Should be useful for
-			// rejoining battles
-			static_cast<void>(condition);
-			
-			auto const stats = get("stats");
-			// Need to turn this into EVs somehow
-			// {"atk":214,"def":147,"spa":197,"spd":147,"spe":180}
-			static_cast<void>(stats);
-			
-			auto const ability = from_string<Ability>(get("baseAbility"));
-			
-			auto const item = from_string<Item>(get("item"));
-			
-			team.add_pokemon(details.species, details.level, details.gender, item, ability, Nature::Hardy);
-			
-			Pokemon & pokemon = back(team.all_pokemon());
-			for (auto const & move : pokemon_data.second.get_child("moves")) {
-				 add_seen_move(all_moves(pokemon), from_string<Moves>(move.second.get<std::string>("")));
-			}
-			set_hp_ev(pokemon, EV(80_bi));
-			for (auto const stat : {StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE}) {
-				set_stat_ev(pokemon, stat, EV(84_bi));
-			}
-			team.all_pokemon().reset_index();
+		auto const details = parse_details(get("details"));
+		
+		auto const condition = get("condition");
+		// current_hp/max_hp
+		// Presumably also gives me status information? Should be useful for
+		// rejoining battles
+		// TODO: If we disconnect in a battle when the HP is 0, we might not
+		// have a '/'
+		auto const hp = bounded::to_integer<HP::current_type>(split(condition, '/').first);
+		
+		auto const stats = get("stats");
+		#if 0
+		auto const attack = stats.second.get<EV::value_type>("atk");
+		auto const defense = stats.second.get<EV::value_type>("def");
+		auto const special_attack = stats.second.get<EV::value_type>("spa");
+		auto const special_defense = stats.second.get<EV::value_type>("spd");
+		auto const speed = stats.second.get<EV::value_type>("spe");
+		// Need to turn this into EVs somehow
+		// {"atk":214,"def":147,"spa":197,"spd":147,"spe":180}
+		#endif
+		static_cast<void>(stats);
+		// TODO: Give the correct IVs for the Hidden Power type
+		
+		auto const ability = from_string<Ability>(get("baseAbility"));
+		
+		auto const item = from_string<Item>(get("item"));
+		
+		team.add_pokemon(details.species, details.level, details.gender, item, ability, Nature::Hardy);
+		
+		Pokemon & pokemon = back(team.all_pokemon());
+		for (auto const & move : pokemon_data.second.get_child("moves")) {
+			 add_seen_move(all_moves(pokemon), from_string<Moves>(move.second.get<std::string>("")));
 		}
-		return team;
-	} catch (std::exception const & ex) {
-		std::cerr << "Unable to parse team: " << ex.what() << '\n';
-		return bounded::none;
+		constexpr auto ev = 84_bi;
+		for (auto const stat : {StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE}) {
+			set_stat_ev(pokemon, stat, EV(ev));
+		}
+		auto const max_hp_ev_allowed = EV::max_total - 5_bi * ev;
+		for (auto const hp_ev : containers::integer_range(0_bi, max_hp_ev_allowed + 4_bi, 4_bi)) {
+			set_hp_ev(pokemon, EV(hp_ev));
+			if (get_hp(pokemon).max() == hp) {
+				break;
+			} else if (hp_ev == max_hp_ev_allowed) {
+				throw std::runtime_error("Sent a team with an impossible HP");
+			}
+		}
+		team.all_pokemon().reset_index();
 	}
+	return team;
 }
 
 }	// namespace
@@ -105,14 +118,11 @@ void BattleFactory::handle_message(InMessage message) {
 		// no data. Then it sends another request with data, which we need to
 		// parse for Random Battles.
 
+		// TODO: maybe just do this on random battles, since we know what our
+		// team is otherwise?
 		auto const json_data = message.remainder();
 		if (!json_data.empty()) {
-			std::cout << json_data << '\n';
-			if (auto team = parse_team(m_parse_json(json_data))) {
-				// TODO: maybe just do this on random battles, since we know
-				// what our team is otherwise?
-				m_team = *std::move(team);
-			}
+			m_team = parse_team(m_parse_json(json_data));
 		}
 	} else if (message.type() == "rule") {
 		// message.remainder() == RULE: DESCRIPTION
