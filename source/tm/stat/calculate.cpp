@@ -360,8 +360,8 @@ auto order(Team const & team1, Moves const move1, Team const & team2, Moves cons
 	auto const lhs = OrderElement{team1, move1};
 	auto const rhs = OrderElement{team2, move2};
 	
-	auto const lhs_first = Order(bounded::in_place, lhs, rhs);
-	auto const rhs_first = Order(bounded::in_place, rhs, lhs);
+	auto const lhs_first = Order(std::in_place, lhs, rhs);
+	auto const rhs_first = Order(std::in_place, rhs, lhs);
 
 	if (priority1 > priority2) {
 		return lhs_first;
@@ -381,9 +381,9 @@ auto faster_pokemon_before_trick_room(Team const & team1, Team const & team2, We
 	auto const speed2 = calculate_speed(team2, weather);
 
 	if (speed1 > speed2) {
-		return Faster(bounded::in_place, team1, team2);
+		return Faster(std::in_place, team1, team2);
 	} else if (speed1 < speed2) {
-		return Faster(bounded::in_place, team2, team1);
+		return Faster(std::in_place, team2, team1);
 	} else {
 		return bounded::none;
 	}
@@ -397,7 +397,7 @@ auto faster_pokemon(Team const & team1, Team const & team2, Weather const weathe
 		return bounded::none;
 	}
 	if (weather.trick_room()) {
-		return Faster(bounded::in_place, result->second, result->first);
+		return Faster(std::in_place, result->second, result->first);
 	}
 	return result;
 }
