@@ -469,7 +469,7 @@ inline auto vanish_doubles_power(ActivePokemon const pokemon, Moves const move_n
 }
 
 inline auto is_locked_in_to_bide(ActivePokemon const pokemon) -> bool {
-	return pokemon.m_flags.bide.is_active();
+	return static_cast<bool>(pokemon.m_flags.bide);
 }
 
 inline auto random_damage_multiplier(ActivePokemon const pokemon) -> decltype(pokemon.m_flags.random_damage()) {

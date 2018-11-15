@@ -20,39 +20,27 @@
 
 #include <tm/operators.hpp>
 
-#include <bounded/integer.hpp>
-#include <bounded/optional.hpp>
-
-#include <cassert>
+#include <utility>
 
 namespace technicalmachine {
 
 struct BideDuration {
-	constexpr auto activate() {
-		m_turns_active = 0_bi;
-	}
-	constexpr explicit operator bool() const {
-		return static_cast<bool>(m_turns_active);
-	}
 	// returns whether Bide releases damage
-	constexpr auto decrement() {
-		assert(this->operator bool());
-		if (*m_turns_active == max) {
-			m_turns_active = bounded::none;
+	[[nodiscard]] constexpr auto advance_one_turn() {
+		if (m_charged_up) {
 			return true;
 		} else {
-			++*m_turns_active;
+			m_charged_up = true;
 			return false;
 		}
 	}
 
 	friend constexpr auto operator==(BideDuration const lhs, BideDuration const rhs) {
-		return lhs.m_turns_active == rhs.m_turns_active;
+		return lhs.m_charged_up == rhs.m_charged_up;
 	}
 
 private:
-	static constexpr auto max = 1;
-	bounded::optional<bounded::integer<0, max>> m_turns_active = bounded::none;
+	bool m_charged_up = false;
 };
 
 }	// namespace technicalmachine

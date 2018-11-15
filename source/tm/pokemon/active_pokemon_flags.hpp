@@ -157,7 +157,7 @@ private:
 	friend struct ActivePokemon;
 	friend struct MutableActivePokemon;
 	
-	Bide bide;
+	bounded::optional<Bide> bide;
 	Confusion confusion;
 	Disable disable;
 	EmbargoCounter embargo;

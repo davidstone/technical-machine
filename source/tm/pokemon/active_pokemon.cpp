@@ -83,12 +83,13 @@ auto MutableActivePokemon::try_to_activate_yawn(Weather const weather) -> void {
 }
 
 auto MutableActivePokemon::use_bide(Pokemon & target) -> void {
-	if (!m_flags.bide.is_active()) {
-		m_flags.bide.activate();
-	}
-	else {
-		auto const bide_damage = m_flags.bide.decrement();
-		get_hp(target) -= bide_damage * 2_bi;
+	if (!m_flags.bide) {
+		m_flags.bide.emplace();
+	} else {
+		if (auto const damage = m_flags.bide->advance_one_turn()) {
+			get_hp(target) -= *damage * 2_bi;
+			m_flags.bide = bounded::none;
+		}
 	}
 }
 
@@ -113,7 +114,9 @@ auto MutableActivePokemon::direct_damage(damage_type const damage) -> void {
 		m_flags.substitute.damage(damage);
 	} else {
 		get_hp(*this) -= damage;
-		m_flags.bide.add_damage(damage);
+		if (m_flags.bide) {
+			m_flags.bide->add_damage(damage);
+		}
 	}
 }
 

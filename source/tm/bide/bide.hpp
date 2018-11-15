@@ -24,22 +24,16 @@
 #include <tm/operators.hpp>
 #include <tm/stat/hp.hpp>
 
+#include <bounded/optional.hpp>
+
 namespace technicalmachine {
 
 struct Bide {
-	constexpr auto is_active() const {
-		return static_cast<bool>(m_duration);
-	}
-	constexpr auto activate() {
-		m_duration.activate();
-	}
 	constexpr auto add_damage(damage_type const damage) {
-		if (is_active()) {
-			m_damage.add(damage);
-		}
+		m_damage.add(damage);
 	}
-	constexpr auto decrement() {
-		return BOUNDED_CONDITIONAL(m_duration.decrement(), m_damage.release(), 0_bi);
+	[[nodiscard]] constexpr auto advance_one_turn() {
+		return BOUNDED_CONDITIONAL(m_duration.advance_one_turn(), m_damage.release(), bounded::none);
 	}
 
 	friend constexpr auto operator==(Bide const lhs, Bide const rhs) {
