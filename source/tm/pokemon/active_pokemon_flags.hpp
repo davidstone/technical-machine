@@ -34,7 +34,6 @@
 #include <tm/pokemon/taunt.hpp>
 #include <tm/pokemon/toxic.hpp>
 #include <tm/pokemon/uproar.hpp>
-#include <tm/pokemon/vanish.hpp>
 #include <tm/pokemon/yawn.hpp>
 
 #include <tm/operators.hpp>
@@ -47,6 +46,9 @@
 #include <tm/stat/stage.hpp>
 
 #include <bounded/integer.hpp>
+#include <bounded/detail/variant/variant.hpp>
+
+#include <variant>
 
 namespace technicalmachine {
 
@@ -102,6 +104,17 @@ struct MutableActivePokemon;
 	friend auto is_locked_in_to_bide(ActivePokemon pokemon) -> bool; \
 	friend auto random_damage_multiplier(ActivePokemon pokemon) -> decltype(std::declval<RandomDamage>()())
 
+// Various states a Pokemon can be in due to vanishing moves.
+struct Bouncing {};
+struct Digging {};
+struct Diving {};
+struct Flying {};
+struct ShadowForcing{};
+
+struct BatonPassing {};
+struct Recharging {};
+struct UTurning {};
+
 struct ActivePokemonFlags {
 	TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS;
 	friend auto stage(MutableActivePokemon pokemon) -> Stage &;
@@ -111,9 +124,9 @@ struct ActivePokemonFlags {
 
 	friend constexpr auto operator==(ActivePokemonFlags const & lhs, ActivePokemonFlags const & rhs) {
 		return
+			lhs.lock_in == rhs.lock_in and
 			lhs.aqua_ring == rhs.aqua_ring and
 			lhs.attracted == rhs.attracted and
-			lhs.bide == rhs.bide and
 			lhs.charged == rhs.charged and
 			lhs.confusion == rhs.confusion and
 			lhs.is_cursed == rhs.is_cursed and
@@ -139,15 +152,12 @@ struct ActivePokemonFlags {
 			lhs.is_having_a_nightmare == rhs.is_having_a_nightmare and
 			lhs.partial_trap == rhs.partial_trap and
 			lhs.perish_song == rhs.perish_song and
-			lhs.rampage == rhs.rampage and
 			lhs.slow_start == rhs.slow_start and
 			lhs.stage == rhs.stage and
 			lhs.stockpile == rhs.stockpile and
 			lhs.taunt == rhs.taunt and
 			lhs.is_tormented == rhs.is_tormented and
 			lhs.toxic == rhs.toxic and
-			lhs.uproar == rhs.uproar and
-			lhs.vanish == rhs.vanish and
 			lhs.water_sport == rhs.water_sport and
 			lhs.yawn == rhs.yawn;
 	}
@@ -157,7 +167,21 @@ private:
 	friend struct ActivePokemon;
 	friend struct MutableActivePokemon;
 	
-	bounded::optional<Bide> bide;
+	// TODO: Include other mutually exclusive stuff such as Protect and Endure?
+	bounded::variant<
+		std::monostate,
+		Bouncing,
+		Digging,
+		Diving,
+		Flying,
+		ShadowForcing,
+		BatonPassing,
+		Bide,
+		Rampage,
+		Recharging,
+		UproarCounter,
+		UTurning
+	> lock_in{std::monostate{}};
 	Confusion confusion;
 	Disable disable;
 	EmbargoCounter embargo;
@@ -168,15 +192,12 @@ private:
 	Substitute substitute;
 	PartialTrap partial_trap;
 	PerishSong perish_song;
-	Rampage rampage;
 	RandomDamage random_damage;
 	Stage stage;
 	SlowStart slow_start;
 	Stockpile stockpile;
 	TauntCounter taunt;
 	Toxic toxic;
-	UproarCounter uproar;
-	Vanish vanish;
 	YawnCounter yawn;
 	bool aqua_ring = false;
 	bool attracted = false;
@@ -203,13 +224,10 @@ private:
 	bool moved = false;
 	bool mud_sport = false;
 	bool is_having_a_nightmare = false;
-	bool is_baton_passing = false;
 	bool power_trick_is_active = false;
 	bool is_protecting = false;
-	bool is_recharging = false;
 	bool is_roosting = false;
 	bool is_tormented = false;
-	bool u_turning = false;
 	bool water_sport = false;
 };
 

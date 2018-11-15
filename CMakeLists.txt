@@ -86,7 +86,6 @@ add_library(tm_common STATIC
 	source/tm/pokemon/taunt.cpp
 	source/tm/pokemon/toxic.cpp
 	source/tm/pokemon/uproar.cpp
-	source/tm/pokemon/vanish.cpp
 	source/tm/pokemon/yawn.cpp
 
 	source/tm/stat/calculate.cpp

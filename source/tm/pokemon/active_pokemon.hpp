@@ -29,6 +29,7 @@
 #include <tm/move/is_switch.hpp>
 
 #include <bounded/integer.hpp>
+#include <bounded/detail/overload.hpp>
 
 namespace technicalmachine {
 struct Weather;
@@ -96,7 +97,7 @@ struct MutableActivePokemon {
 		m_flags.attracted = true;
 	}
 	auto baton_pass() {
-		m_flags.is_baton_passing = true;
+		m_flags.lock_in = BatonPassing{};
 	}
 	auto charge() {
 		m_flags.charged = true;
@@ -210,11 +211,14 @@ struct MutableActivePokemon {
 		m_flags.is_protecting = false;
 	}
 	auto activate_rampage() {
-		m_flags.rampage.activate();
+		// TODO: Have it be active when it is constructed
+		auto rampage = Rampage{};
+		rampage.activate();
+		m_flags.lock_in = rampage;
 	}
 	auto recharge() -> bool;
 	auto use_recharge_move() {
-		m_flags.is_recharging = true;
+		m_flags.lock_in = Recharging{};
 	}
 	auto roost() {
 		m_flags.is_roosting = true;
@@ -239,10 +243,15 @@ struct MutableActivePokemon {
 		m_flags.toxic.increment();
 	}
 	auto u_turn() {
-		m_flags.u_turning = true;
+		m_flags.lock_in = UTurning{};
 	}
 	auto use_uproar() {
-		m_flags.uproar.advance_one_turn();
+		bounded::visit(m_flags.lock_in, bounded::overload(
+			// TODO: Have it be active when it is constructed
+			[&](std::monostate) { m_flags.lock_in.emplace(bounded::detail::types<UproarCounter>{}).advance_one_turn(); },
+			[](UproarCounter & uproar) { uproar.advance_one_turn(); },
+			[](auto const &) { assert(false); }
+		));
 	}
 	auto activate_water_sport() {
 		m_flags.water_sport = true;
@@ -255,19 +264,19 @@ struct MutableActivePokemon {
 
 	// Returns whether the Pokemon ends up in a Vanished state
 	auto bounce() {
-		return m_flags.vanish.bounce();
+		return use_vanish_move<Bouncing>();
 	}
 	auto dig() {
-		return m_flags.vanish.dig();
+		return use_vanish_move<Digging>();
 	}
 	auto dive() {
-		return m_flags.vanish.dive();
+		return use_vanish_move<Diving>();
 	}
 	auto fly() {
-		return m_flags.vanish.fly();
+		return use_vanish_move<Flying>();
 	}
 	auto shadow_force() {
-		return m_flags.vanish.shadow_force();
+		return use_vanish_move<ShadowForcing>();
 	}
 
 
@@ -282,6 +291,14 @@ struct MutableActivePokemon {
 	}
 	
 private:
+	template<typename T>
+	auto use_vanish_move() -> bool {
+		return bounded::visit(m_flags.lock_in, bounded::overload(
+			[&](T) { m_flags.lock_in = std::monostate{}; return false; },
+			[&](auto const &) { m_flags.lock_in = T{}; return true; }
+		));
+	}
+
 	Pokemon & m_pokemon;
 	ActivePokemonFlags & m_flags;
 };
@@ -311,7 +328,7 @@ inline auto aqua_ring_is_active(ActivePokemon const pokemon) -> bool {
 }
 
 inline auto is_baton_passing(ActivePokemon const pokemon) -> bool {
-	return pokemon.m_flags.is_baton_passing;
+	return bounded::holds_alternative(pokemon.m_flags.lock_in, bounded::detail::types<BatonPassing>{});
 }
 
 inline auto cannot_be_koed(ActivePokemon const pokemon) -> bool {
@@ -407,7 +424,7 @@ inline auto power_trick_is_active(ActivePokemon const pokemon) -> bool {
 }
 
 inline auto is_recharging(ActivePokemon const pokemon) -> bool {
-	return pokemon.m_flags.is_recharging;
+	return bounded::holds_alternative(pokemon.m_flags.lock_in, bounded::detail::types<Recharging>{});
 }
 
 inline auto is_roosting(ActivePokemon const pokemon) -> bool {
@@ -441,7 +458,11 @@ inline auto spit_up_power(ActivePokemon const pokemon) -> decltype(pokemon.m_fla
 }
 
 inline auto switch_decision_required(ActivePokemon const pokemon) -> bool {
-	return pokemon.m_flags.is_baton_passing or pokemon.m_flags.u_turning or get_hp(pokemon) == 0_bi;
+	return bounded::visit(pokemon.m_flags.lock_in, bounded::overload(
+		[](BatonPassing) { return true; },
+		[](UTurning) { return true; },
+		[&](auto const &) { return get_hp(pokemon) == 0_bi; }
+	));
 }
 
 inline auto fully_trapped(ActivePokemon const pokemon) -> bool {
@@ -465,11 +486,23 @@ inline auto is_taunted(ActivePokemon const pokemon) -> bool {
 }
 
 inline auto vanish_doubles_power(ActivePokemon const pokemon, Moves const move_name) -> bool {
-	return pokemon.m_flags.vanish.doubles_move_power(move_name);
+	auto const & variant = pokemon.m_flags.lock_in;
+	switch (move_name) {
+	case Moves::Earthquake:
+	case Moves::Magnitude:
+		return bounded::holds_alternative(variant, bounded::detail::types<Digging>{});
+	case Moves::Gust:
+	case Moves::Twister:
+		return bounded::holds_alternative(variant, bounded::detail::types<Bouncing>{}) or bounded::holds_alternative(variant, bounded::detail::types<Flying>{});
+	case Moves::Surf:
+		return bounded::holds_alternative(variant, bounded::detail::types<Diving>{});
+	default:
+		return false;
+	}
 }
 
 inline auto is_locked_in_to_bide(ActivePokemon const pokemon) -> bool {
-	return static_cast<bool>(pokemon.m_flags.bide);
+	return bounded::holds_alternative(pokemon.m_flags.lock_in, bounded::detail::types<Bide>{});
 }
 
 inline auto random_damage_multiplier(ActivePokemon const pokemon) -> decltype(pokemon.m_flags.random_damage()) {

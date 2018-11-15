@@ -32,15 +32,17 @@ auto MutableActivePokemon::confuse() -> void {
 }
 
 auto MutableActivePokemon::advance_lock_in() -> void {
-	// Cannot be locked into Rampage and Uproar at the same time
-	if (m_flags.rampage.is_active()) {
-		m_flags.rampage.advance_one_turn();
-		if (!m_flags.rampage.is_active()) {
-			confuse();
-		}
-	} else {
-		m_flags.uproar.advance_one_turn();
-	}
+	bounded::visit(m_flags.lock_in, bounded::overload(
+		[&](Rampage & rampage) {
+			rampage.advance_one_turn();
+			if (!rampage.is_active()) {
+				m_flags.lock_in = std::monostate{};
+				confuse();
+			}
+		},
+		[](UproarCounter & uproar) { uproar.advance_one_turn(); },
+		[](auto const &) {}
+	));
 }
 
 auto MutableActivePokemon::perish_song_turn() -> void {
@@ -51,9 +53,10 @@ auto MutableActivePokemon::perish_song_turn() -> void {
 }
 
 auto MutableActivePokemon::recharge() -> bool {
-	bool const return_value = is_recharging(*this);
-	m_flags.is_recharging = false;
-	return return_value;
+	return bounded::visit(m_flags.lock_in, bounded::overload(
+		[&](Recharging) { m_flags.lock_in = std::monostate{}; return true; },
+		[](auto const &) { return false; }
+	));
 }
 
 auto MutableActivePokemon::increase_sleep_counter(bool const awakens) -> void {
@@ -83,14 +86,15 @@ auto MutableActivePokemon::try_to_activate_yawn(Weather const weather) -> void {
 }
 
 auto MutableActivePokemon::use_bide(Pokemon & target) -> void {
-	if (!m_flags.bide) {
-		m_flags.bide.emplace();
-	} else {
-		if (auto const damage = m_flags.bide->advance_one_turn()) {
-			get_hp(target) -= *damage * 2_bi;
-			m_flags.bide = bounded::none;
+	bounded::visit(m_flags.lock_in, bounded::overload(
+		[&](auto const &) { m_flags.lock_in = Bide{}; },
+		[&](Bide & bide) {
+			if (auto const damage = bide.advance_one_turn()) {
+				get_hp(target) -= *damage * 2_bi;
+				m_flags.lock_in = std::monostate{};
+			}
 		}
-	}
+	));
 }
 
 namespace {
@@ -114,8 +118,9 @@ auto MutableActivePokemon::direct_damage(damage_type const damage) -> void {
 		m_flags.substitute.damage(damage);
 	} else {
 		get_hp(*this) -= damage;
-		if (m_flags.bide) {
-			m_flags.bide->add_damage(damage);
+		constexpr auto bide_index = bounded::detail::types<Bide>{};
+		if (bounded::holds_alternative(m_flags.lock_in, bide_index)) {
+			m_flags.lock_in[bide_index].add_damage(damage);
 		}
 	}
 }

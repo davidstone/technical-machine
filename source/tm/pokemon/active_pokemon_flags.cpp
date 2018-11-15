@@ -32,7 +32,7 @@ auto ActivePokemonFlags::reset_end_of_turn() -> void {
 
 auto ActivePokemonFlags::reset_switch() -> void {
 	// TODO: remove some of these when the foe switches, too
-	if (!is_baton_passing) {
+	if (!bounded::holds_alternative(lock_in, bounded::detail::types<BatonPassing>{})) {
 		aqua_ring = false;
 		confusion = {};
 		is_cursed = false;
@@ -69,22 +69,15 @@ auto ActivePokemonFlags::reset_switch() -> void {
 	mud_sport = false;
 	is_having_a_nightmare = false;
 	partial_trap = {};
-	is_baton_passing = false;
-	rampage = {};
 	is_roosting = false;
 	slow_start = {};
 	stockpile = {};
 	is_tormented = false;
-	u_turning = false;
 	water_sport = false;
-	bide = {};
 	taunt = {};
 	toxic = {};
-	uproar = {};
-	// Whirlwind can hit Flying Pokemon, so it's possible to switch while
-	// vanished. Therefore, we need to reset it.
-	vanish = {};
 	yawn = {};
+	lock_in = std::monostate{};
 }
 
 }	// namespace technicalmachine
