@@ -149,10 +149,10 @@ auto parse_hp_change_source(InMessage message) {
 	auto const source_type = message.next(':');
 	auto const source = message.next();
 	return
-		(source_type == "item") ? Source(bounded::detail::types<Item>{}, from_string<Item>(source)) :
-		(source_type == "ability") ? Source(bounded::detail::types<Ability>{}, from_string<Ability>(source)) :
-		(source_type == "Sandstorm" or source_type == "Hail") ? Source(bounded::detail::types<FromWeather>{}) :
-		Source(bounded::detail::types<std::monostate>{});
+		(source_type == "item") ? Source(from_string<Item>(source)) :
+		(source_type == "ability") ? Source(from_string<Ability>(source)) :
+		(source_type == "Sandstorm" or source_type == "Hail") ? Source(FromWeather{}) :
+		Source(std::monostate{});
 }
 
 // This does work that we do not always need, but it should not matter in the
