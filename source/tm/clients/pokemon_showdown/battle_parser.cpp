@@ -140,8 +140,10 @@ auto parse_hp_and_status(std::string_view const hp_and_status, Battle const & ba
 	};
 }
 
-struct FromWeather {};
-using HPChangeSource = bounded::variant<std::monostate, Item, Ability, FromWeather>;
+struct FromMove{};
+struct FromMiscellaneous{};
+
+using HPChangeSource = bounded::variant<FromMove, Item, Ability, FromMiscellaneous>;
 auto parse_hp_change_source(InMessage message) {
 	using Source = HPChangeSource;
 	// "[from]" or nothing
@@ -149,10 +151,11 @@ auto parse_hp_change_source(InMessage message) {
 	auto const source_type = message.next(':');
 	auto const source = message.next();
 	return
+		(source_type == "") ? Source(FromMove{}) :
 		(source_type == "item") ? Source(from_string<Item>(source)) :
 		(source_type == "ability") ? Source(from_string<Ability>(source)) :
-		(source_type == "Sandstorm" or source_type == "Hail") ? Source(FromWeather{}) :
-		Source(std::monostate{});
+		(source_type == "brn" or source_type == "psn" or source_type == "tox" or source_type == "Recoil" or source_type == "Spikes" or source_type == "Stealth Rock" or source_type == "Hail" or source_type == "Sandstorm") ? Source(FromMiscellaneous{}) :
+		throw std::runtime_error("Unhandled HP change source type: " + std::string(source_type));
 }
 
 // This does work that we do not always need, but it should not matter in the
@@ -238,11 +241,13 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-activate") {
 		// TODO: ???
 		std::cout << "Miscellaneous effect: " << message.remainder() << '\n';
+		#if 0
 		auto const party = party_from_pokemon_id(message.next());
 		auto const source = message.next();
 		if (source == "confusion") {
 			m_move_state.hit_self(party);
 		}
+		#endif
 	} else if (type == "-boost") {
 #if 0
 		auto const pokemon = message.next();
@@ -326,8 +331,8 @@ void BattleParser::handle_message(InMessage message) {
 		auto const parsed = parse_hp_message(message, m_battle);
 		auto const party = parsed.party;
 		bounded::visit(parsed.source, bounded::overload(
-			[&](std::monostate) {},
-			[&](FromWeather) {},
+			[&](FromMove) {},
+			[&](FromMiscellaneous) {},
 			[&](auto const value) { m_battle.set_value_on_active(party, value); }
 		));
 	} else if (type == "-hint") {
@@ -475,7 +480,7 @@ void BattleParser::handle_damage(InMessage message) {
 	auto const parsed = parse_hp_message(message, m_battle);
 	auto const party = parsed.party;
 	bounded::visit(parsed.source, bounded::overload(
-		[&](std::monostate) {
+		[&](FromMove) {
 			if (m_move_state.move_damages_self(party)) {
 				return;
 			}
@@ -486,7 +491,7 @@ void BattleParser::handle_damage(InMessage message) {
 			}
 			m_move_state.damage(other(party), static_cast<damage_type>(old_hp - new_hp));
 		},
-		[](FromWeather) {},
+		[](FromMiscellaneous) {},
 		[&](auto const value) { m_battle.set_value_on_active(party, value); }
 	));
 }
