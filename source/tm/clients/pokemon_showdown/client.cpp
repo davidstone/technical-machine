@@ -27,6 +27,8 @@
 #include <tm/settings_file.hpp>
 #include <tm/team.hpp>
 
+#include <containers/scope_guard.hpp>
+
 #include <boost/asio/connect.hpp>
 #include <boost/beast/http.hpp>
 
@@ -105,9 +107,11 @@ void Client::run() {
 			auto const room = has_room ? messages.next().substr(1) : std::string_view{};
 			while (!messages.remainder().empty()) {
 				auto const next = messages.next();
+				auto print_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
 				if (next != "" and next != "|") {
 					handle_message(InMessage(room, BufferView(next, '|')));
 				}
+				print_on_exception.dismiss();
 			}
 		}
 	} catch (std::exception const & ex) {
