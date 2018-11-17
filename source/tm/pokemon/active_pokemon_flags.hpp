@@ -66,6 +66,7 @@ struct MutableActivePokemon;
 	friend auto is_baton_passing(ActivePokemon pokemon) -> bool; \
 	friend auto cannot_be_koed(ActivePokemon pokemon) -> bool; \
 	friend auto charge_boosted(ActivePokemon pokemon, Moves move) -> bool; \
+	friend auto is_charging_up(ActivePokemon pokemon) -> bool; \
 	friend auto is_confused(ActivePokemon pokemon) -> bool; \
 	friend auto is_cursed(ActivePokemon pokemon) -> bool; \
 	friend auto defense_curled(ActivePokemon pokemon) -> bool; \
@@ -88,7 +89,7 @@ struct MutableActivePokemon;
 	friend auto moved(ActivePokemon pokemon) -> bool; \
 	friend auto is_having_a_nightmare(ActivePokemon pokemon) -> bool; \
 	friend auto power_trick_is_active(ActivePokemon pokemon) -> bool; \
-	friend auto is_recharging(ActivePokemon pokemon) -> bool; \
+	friend auto is_locked_in_by_move(ActivePokemon pokemon) -> bool; \
 	friend auto is_roosting(ActivePokemon pokemon) -> bool; \
 	friend auto slow_start_is_active(ActivePokemon pokemon) -> bool; \
 	friend auto sport_is_active(ActivePokemon pokemon, Moves foe_move) -> bool; \
@@ -101,19 +102,19 @@ struct MutableActivePokemon;
 	friend auto is_taunted(ActivePokemon pokemon) -> bool; \
 	friend auto toxic_ratio(ActivePokemon pokemon) -> decltype(std::declval<Toxic>().ratio_drained()); \
 	friend auto vanish_doubles_power(ActivePokemon pokemon, Moves move_name) -> bool; \
-	friend auto is_locked_in_to_bide(ActivePokemon pokemon) -> bool; \
 	friend auto random_damage_multiplier(ActivePokemon pokemon) -> decltype(std::declval<RandomDamage>()())
 
 // Various states a Pokemon can be in due to vanishing moves.
-struct Bouncing {};
-struct Digging {};
-struct Diving {};
-struct Flying {};
+struct Bouncing{};
+struct Digging{};
+struct Diving{};
+struct Flying{};
 struct ShadowForcing{};
 
-struct BatonPassing {};
-struct Recharging {};
-struct UTurning {};
+struct BatonPassing{};
+struct ChargingUp{};
+struct Recharging{};
+struct UTurning{};
 
 struct ActivePokemonFlags {
 	TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS;
@@ -177,6 +178,7 @@ private:
 		ShadowForcing,
 		BatonPassing,
 		Bide,
+		ChargingUp,
 		Rampage,
 		Recharging,
 		UproarCounter,

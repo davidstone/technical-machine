@@ -205,6 +205,14 @@ auto tri_attack_status(Variable const & variable) {
 	}
 }
 
+auto will_be_recharge_turn(ActivePokemon const user, Moves const move, Weather const weather) {
+	// TODO: Support Power Herb
+	switch (move) {
+		case Moves::SolarBeam: return !weather.sun() and !is_charging_up(user);
+		default: return false;
+	}
+}
+
 
 auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded::optional<UsedMove> const target_move, Weather & weather, Variable const & variable, damage_type const damage) {
 	auto user = user_team.pokemon();
@@ -874,7 +882,11 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			break;
 		case Moves::Snatch:	// Fix
 			break;
-		case Moves::SolarBeam:		// Fix
+		case Moves::SolarBeam:
+			// TODO: Support Power Herb
+			if (will_be_recharge_turn(user, move, weather)) {
+				user.use_charge_up_move();
+			}
 			break;
 		case Moves::Spikes:
 			target.entry_hazards.add_spikes();
@@ -1069,7 +1081,6 @@ auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_ty
 	}
 }
 
-
 auto use_move(Team & user, Move const move, bool const user_damaged, Team & target, bounded::optional<UsedMove> const target_move, bool const target_damaged, Weather & weather, Variable const & variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
@@ -1079,9 +1090,12 @@ auto use_move(Team & user, Move const move, bool const user_damaged, Team & targ
 
 	do_effects_before_moving(move.name(), get_status(user.pokemon()), target);
 
-	auto const damage = known_damage ?
-		*known_damage :
-		is_damaging(move.name()) ? damage_calculator(user, move, user_damaged, target, target_damaged, weather, variable, critical_hit) : 0_bi;
+	auto const damage =
+		known_damage ? *known_damage :
+		will_be_recharge_turn(user.pokemon(), move.name(), weather) ? 0_bi :
+		is_damaging(move.name()) ? damage_calculator(user, move, user_damaged, target, target_damaged, weather, variable, critical_hit) :
+		0_bi;
+
 	if (damage != 0_bi) {
 		do_damage(user.pokemon(), target.pokemon(), damage);
 	}
@@ -1116,7 +1130,7 @@ auto call_move(Team & user, Moves const move_name, bool const user_damaged, Team
 		return;
 	}
 
-	if (is_regular(move_name) and !is_locked_in_to_bide(user_pokemon)) {
+	if (is_regular(move_name) and !is_locked_in_by_move(user_pokemon)) {
 		find_regular_move(all_moves(user_pokemon).regular(), move_name).decrement_pp(get_ability(target_pokemon));
 	}
 

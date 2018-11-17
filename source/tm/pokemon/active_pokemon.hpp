@@ -1,5 +1,5 @@
 // ActivePokemon and MutableActivePokemon provide a view; they do not own data
-// Copyright (C) 2017 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -101,6 +101,9 @@ struct MutableActivePokemon {
 	}
 	auto charge() {
 		m_flags.charged = true;
+	}
+	auto use_charge_up_move() {
+		m_flags.lock_in = ChargingUp{};
 	}
 	auto confuse() -> void;
 	auto handle_confusion() {
@@ -339,6 +342,10 @@ inline auto charge_boosted(ActivePokemon const pokemon, Moves const move) -> boo
 	return pokemon.m_flags.charged and get_type(move, pokemon) == Type::Electric;
 }
 
+inline auto is_charging_up(ActivePokemon const pokemon) -> bool {
+	return bounded::holds_alternative(pokemon.m_flags.lock_in, bounded::detail::types<ChargingUp>{});
+}
+
 inline auto is_confused(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.confusion.is_active();
 }
@@ -423,8 +430,8 @@ inline auto power_trick_is_active(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.power_trick_is_active;
 }
 
-inline auto is_recharging(ActivePokemon const pokemon) -> bool {
-	return bounded::holds_alternative(pokemon.m_flags.lock_in, bounded::detail::types<Recharging>{});
+inline auto is_locked_in_by_move(ActivePokemon const pokemon) -> bool {
+	return !bounded::holds_alternative(pokemon.m_flags.lock_in, bounded::detail::types<std::monostate>{});
 }
 
 inline auto is_roosting(ActivePokemon const pokemon) -> bool {
@@ -499,10 +506,6 @@ inline auto vanish_doubles_power(ActivePokemon const pokemon, Moves const move_n
 	default:
 		return false;
 	}
-}
-
-inline auto is_locked_in_to_bide(ActivePokemon const pokemon) -> bool {
-	return bounded::holds_alternative(pokemon.m_flags.lock_in, bounded::detail::types<Bide>{});
 }
 
 inline auto random_damage_multiplier(ActivePokemon const pokemon) -> decltype(pokemon.m_flags.random_damage()) {

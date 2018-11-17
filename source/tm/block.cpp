@@ -36,10 +36,6 @@
 namespace technicalmachine {
 namespace {
 
-auto is_blocked_by_bide(ActivePokemon const user, Moves const move) {
-	return is_locked_in_to_bide(user) and move == Moves::Bide;
-}
-
 auto would_switch_to_different_pokemon(PokemonCollection const & collection, Moves const move) {
 	return to_replacement(move) != collection.index();
 }
@@ -112,9 +108,10 @@ auto is_blocked_by_gravity(Moves const move) {
 
 // Things that both block selection and block execution after flinching
 auto block2(ActivePokemon const user, Moves const move, Weather const weather) {
-	return !is_switch(move) and
-			((is_taunted(user) and is_blocked_by_taunt(move)) or
-			(weather.gravity() and is_blocked_by_gravity(move)));
+	return !is_switch(move) and (
+		(is_taunted(user) and is_blocked_by_taunt(move)) or
+		(weather.gravity() and is_blocked_by_gravity(move))
+	);
 }
 
 auto blocked_by_torment(ActivePokemon const user, Moves const move) {
@@ -122,7 +119,7 @@ auto blocked_by_torment(ActivePokemon const user, Moves const move) {
 }
 
 auto is_locked_in(ActivePokemon const user) {
-	return is_encored(user) or is_recharging(user) or is_choice_item(get_item(user));
+	return is_encored(user) or is_locked_in_by_move(user) or is_choice_item(get_item(user));
 }
 
 auto is_locked_in_to_different_move(ActivePokemon const user, Moves const move) {
@@ -135,7 +132,7 @@ auto standard_move_lock_in(ActivePokemon const user, Moves const move) {
 
 auto is_blocked_due_to_lock_in(ActivePokemon const user, Moves const move) {
 	return !is_regular(move) ?
-		is_recharging(user) :
+		is_locked_in_by_move(user) :
 		standard_move_lock_in(user, move);
 }
 
@@ -153,11 +150,14 @@ auto is_legal_selection(Team const & user, Move const move, ActivePokemon const 
 	}
 	return
 		!is_pass and
-		!is_blocked_by_bide(pokemon, move.name()) and
+		!is_blocked_due_to_lock_in(pokemon, move.name()) and
 		is_not_illegal_switch(user, move.name(), other, weather) and
 		(move != Moves::Struggle or !found_selectable_move) and
-		!((block1(pokemon, move, other)) or (block2(pokemon, move.name(), weather)) or blocked_by_torment(pokemon, move.name())) and
-		!is_blocked_due_to_lock_in(pokemon, move.name());
+		!(
+			(block1(pokemon, move, other)) or
+			(block2(pokemon, move.name(), weather)) or
+			blocked_by_torment(pokemon, move.name())
+		);
 }
 
 }	// namespace
@@ -210,8 +210,6 @@ auto is_blocked_due_to_status(MutableActivePokemon user, Moves const move, bool 
 }	// namespace
 
 bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon const other, Weather const weather, bool const awakens) {
-	assert(!is_switch(move.name()) or !is_recharging(user));
-	
 	if (is_switch(move.name())) {
 		return true;
 	}
@@ -219,25 +217,25 @@ bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon 
 		return false;
 	}
 
-	bool execute = !(is_blocked_due_to_status(user, move.name(), awakens) or
-			block1(user, move, other) or
-			is_loafing(user));
+	bool execute = !(is_blocked_due_to_status(user, move.name(), awakens) or block1(user, move, other) or is_loafing(user));
 
 	if (execute) {
 		// Confusion doesn't block execution, it just changes the move that will
 		// execute
 		user.handle_confusion();
 		if (flinched(user)) {
-			if (boosts_speed_when_flinched(get_ability(user)))
+			if (boosts_speed_when_flinched(get_ability(user))) {
 				boost(stage(user), StatNames::SPE, 1_bi);
+			}
 			execute = false;
 		} else if (block2(user, move.name(), weather) or is_fully_paralyzed(user)) {
 			execute = false;
 		}
 	}
 
-	if (user.recharge())
+	if (user.recharge()) {
 		execute = false;
+	}
 	return execute;
 }
 
