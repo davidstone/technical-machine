@@ -154,7 +154,7 @@ auto parse_hp_change_source(InMessage message) {
 		(source_type == "") ? Source(FromMove{}) :
 		(source_type == "item") ? Source(from_string<Item>(source)) :
 		(source_type == "ability") ? Source(from_string<Ability>(source)) :
-		(source_type == "brn" or source_type == "psn" or source_type == "tox" or source_type == "Recoil" or source_type == "Spikes" or source_type == "Stealth Rock" or source_type == "Hail" or source_type == "Sandstorm") ? Source(FromMiscellaneous{}) :
+		(source_type == "brn" or source_type == "psn" or source_type == "tox" or source_type == "Leech Seed" or source_type == "Recoil" or source_type == "Spikes" or source_type == "Stealth Rock" or source_type == "Hail" or source_type == "Sandstorm") ? Source(FromMiscellaneous{}) :
 		throw std::runtime_error("Unhandled HP change source type: " + std::string(source_type));
 }
 
@@ -369,6 +369,8 @@ void BattleParser::handle_message(InMessage message) {
 		auto const target = message.next();
 #endif
 		m_move_state.use_move(party, move);
+	} else if (type == "-notarget") {
+		// When you use a move, but there is no one to target
 	} else if (type == "player") {
 		// At the end of a battle, I received this with a body of "p1|"
 	} else if (type == "-prepare") {
