@@ -140,20 +140,21 @@ auto parse_hp_and_status(std::string_view const hp_and_status, Battle const & ba
 	};
 }
 
-struct DirectDamage{};
+struct MainEffect{};
+struct FromConfusion{};
 struct FromMiscellaneous{};
 
-using HPChangeSource = bounded::variant<DirectDamage, Item, Ability, FromMiscellaneous>;
+using HPChangeSource = bounded::variant<MainEffect, Item, Ability, FromConfusion, FromMiscellaneous>;
 auto parse_hp_change_source(InMessage message) {
 	using Source = HPChangeSource;
 	// "[from]" or nothing
 	auto const from [[maybe_unused]] = message.next(' ');
-	auto const source_type = message.next(':');
-	auto const source = message.next();
+	auto const [source_type, source] = split(message.next(), ':');
 	return
-		(source_type == "") ? Source(DirectDamage{}) :
+		(source_type == "") ? Source(MainEffect{}) :
 		(source_type == "item") ? Source(from_string<Item>(source)) :
 		(source_type == "ability") ? Source(from_string<Ability>(source)) :
+		(source_type == "confusion") ? Source(FromConfusion{}) :
 		(
 			source_type == "brn" or
 			source_type == "psn" or
@@ -251,14 +252,14 @@ void BattleParser::handle_message(InMessage message) {
 		m_battle.set_value_on_active(party, ability);
 	} else if (type == "-activate") {
 		// TODO: ???
-		std::cout << "Miscellaneous effect: " << message.remainder() << '\n';
-		#if 0
+		auto const activate_text = message.remainder();
 		auto const party = party_from_pokemon_id(message.next());
 		auto const source = message.next();
 		if (source == "confusion") {
-			m_move_state.hit_self(party);
+			static_cast<void>(party);
+		} else {
+			std::cout << "Miscellaneous effect: " << activate_text << '\n';
 		}
-		#endif
 	} else if (type == "-boost") {
 #if 0
 		auto const pokemon = message.next();
@@ -342,8 +343,9 @@ void BattleParser::handle_message(InMessage message) {
 		auto const parsed = parse_hp_message(message, m_battle);
 		auto const party = parsed.party;
 		bounded::visit(parsed.source, bounded::overload(
-			[&](DirectDamage) {},
-			[&](FromMiscellaneous) {},
+			[](MainEffect) {},
+			[](FromConfusion) { throw std::runtime_error("Confusion cannot heal"); },
+			[](FromMiscellaneous) {},
 			[&](auto const value) { m_battle.set_value_on_active(party, value); }
 		));
 	} else if (type == "-hint") {
@@ -493,7 +495,7 @@ void BattleParser::handle_damage(InMessage message) {
 	auto const parsed = parse_hp_message(message, m_battle);
 	auto const party = parsed.party;
 	bounded::visit(parsed.source, bounded::overload(
-		[&](DirectDamage) {
+		[&](MainEffect) {
 			if (m_move_state.move_damages_self(party)) {
 				return;
 			}
@@ -504,6 +506,7 @@ void BattleParser::handle_damage(InMessage message) {
 			}
 			m_move_state.damage(other(party), static_cast<damage_type>(old_hp - new_hp));
 		},
+		[&](FromConfusion) { m_move_state.hit_self(party); },
 		[](FromMiscellaneous) {},
 		[&](auto const value) { m_battle.set_value_on_active(party, value); }
 	));
