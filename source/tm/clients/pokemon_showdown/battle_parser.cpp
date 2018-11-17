@@ -278,6 +278,9 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-curestatus") {
 		auto const party = party_from_pokemon_id(message.next());
 		auto const status = message.next();
+		if (m_move_state.party() != party) {
+			maybe_use_previous_move();
+		}
 		if (status == "slp") {
 			m_move_state.awaken(party);
 		}

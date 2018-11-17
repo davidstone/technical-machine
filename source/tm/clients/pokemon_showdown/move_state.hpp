@@ -44,25 +44,40 @@ struct MoveState {
 		bool hit_self;
 		bool miss;
 	};
+	
+	auto party() const -> bounded::optional<Party> {
+		return m_party;
+	}
 
 	void use_move(Party const party, Moves const move) {
-		assert(!m_data);
-		m_data.emplace(party, move);
+		assert(!m_move);
+		if (m_party) {
+			if (*m_party != party) {
+				throw std::runtime_error("Early move state messages do not match party of user");
+			}
+		} else {
+			m_party.emplace(party);
+		}
+		m_move.emplace(move);
 	}
 	
 	bool move_damages_self(Party const party) const {
-		if (!m_data) {
+		if (!m_party or !m_move) {
 			throw_error();
 		}
-		auto const result = m_data->move == Moves::Substitute;
-		if (result and m_data->party != party) {
+		auto const result = *m_move == Moves::Substitute;
+		if (result and *m_party != party) {
 			throw_error();
 		}
 		return result;
 	}
 
 	void awaken(Party const party) {
-		validate(party);
+		if (m_party) {
+			validate(party);
+		} else {
+			m_party.emplace(party);
+		}
 		m_awakens = true;
 	}
 	void critical_hit(Party const party) {
@@ -88,20 +103,19 @@ struct MoveState {
 	}
 	void phaze_index(Party const party, Team const & team, Species const species) {
 		validate(party);
-		if (!is_phaze(m_data->move)) {
+		if (!is_phaze(*m_move)) {
 			throw std::runtime_error("We did not use a phazing move, but we were given phazing data");
 		}
 		set_phaze_index(m_variable, team, species);
 	}
 
 	auto complete() -> bounded::optional<Result> {
-		if (!m_data) {
+		if (!m_party or !m_move) {
 			return bounded::none;
 		}
-		auto const initial_data = *m_data;
 		auto const result = Result{
-			initial_data.party,
-			initial_data.move,
+			*m_party,
+			*m_move,
 			m_variable,
 			m_damage,
 			m_awakens,
@@ -114,7 +128,7 @@ struct MoveState {
 	}
 private:
 	void validate(Party const party) const {
-		if (!m_data or m_data->party != party) {
+		if (m_party != party or !m_move) {
 			throw_error();
 		}
 	}
@@ -122,11 +136,8 @@ private:
 	[[noreturn]] void throw_error() const {
 		throw std::runtime_error("Received battle messages out of order");
 	}
-	struct InitialMoveData {
-		Party party;
-		Moves move;
-	};
-	bounded::optional<InitialMoveData> m_data;
+	bounded::optional<Party> m_party;
+	bounded::optional<Moves> m_move;
 	bounded::optional<damage_type> m_damage;
 	Variable m_variable;
 	bool m_awakens = false;
