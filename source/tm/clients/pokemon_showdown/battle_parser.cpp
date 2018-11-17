@@ -140,10 +140,10 @@ auto parse_hp_and_status(std::string_view const hp_and_status, Battle const & ba
 	};
 }
 
-struct FromMove{};
+struct DirectDamage{};
 struct FromMiscellaneous{};
 
-using HPChangeSource = bounded::variant<FromMove, Item, Ability, FromMiscellaneous>;
+using HPChangeSource = bounded::variant<DirectDamage, Item, Ability, FromMiscellaneous>;
 auto parse_hp_change_source(InMessage message) {
 	using Source = HPChangeSource;
 	// "[from]" or nothing
@@ -151,10 +151,21 @@ auto parse_hp_change_source(InMessage message) {
 	auto const source_type = message.next(':');
 	auto const source = message.next();
 	return
-		(source_type == "") ? Source(FromMove{}) :
+		(source_type == "") ? Source(DirectDamage{}) :
 		(source_type == "item") ? Source(from_string<Item>(source)) :
 		(source_type == "ability") ? Source(from_string<Ability>(source)) :
-		(source_type == "brn" or source_type == "psn" or source_type == "tox" or source_type == "Leech Seed" or source_type == "Recoil" or source_type == "Spikes" or source_type == "Stealth Rock" or source_type == "Hail" or source_type == "Sandstorm") ? Source(FromMiscellaneous{}) :
+		(
+			source_type == "brn" or
+			source_type == "psn" or
+			source_type == "tox" or
+			source_type == "Leech Seed" or
+			source_type == "Move" or
+			source_type == "Recoil" or
+			source_type == "Spikes" or
+			source_type == "Stealth Rock" or
+			source_type == "Hail" or
+			source_type == "Sandstorm"
+		) ? Source(FromMiscellaneous{}) :
 		throw std::runtime_error("Unhandled HP change source type: " + std::string(source_type));
 }
 
@@ -331,7 +342,7 @@ void BattleParser::handle_message(InMessage message) {
 		auto const parsed = parse_hp_message(message, m_battle);
 		auto const party = parsed.party;
 		bounded::visit(parsed.source, bounded::overload(
-			[&](FromMove) {},
+			[&](DirectDamage) {},
 			[&](FromMiscellaneous) {},
 			[&](auto const value) { m_battle.set_value_on_active(party, value); }
 		));
@@ -482,7 +493,7 @@ void BattleParser::handle_damage(InMessage message) {
 	auto const parsed = parse_hp_message(message, m_battle);
 	auto const party = parsed.party;
 	bounded::visit(parsed.source, bounded::overload(
-		[&](FromMove) {
+		[&](DirectDamage) {
 			if (m_move_state.move_damages_self(party)) {
 				return;
 			}
