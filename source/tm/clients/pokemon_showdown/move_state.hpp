@@ -41,7 +41,6 @@ struct MoveState {
 		bounded::optional<damage_type> damage;
 		bool awakens;
 		bool critical_hit;
-		bool hit_self;
 		bool miss;
 	};
 	
@@ -93,10 +92,6 @@ struct MoveState {
 		// TODO: Validate that the used move can cause a flinch
 		set_flinch(m_variable, true);
 	}
-	void hit_self(Party const party) {
-		validate(party);
-		m_hit_self = true;
-	}
 	void miss(Party const party) {
 		validate(party);
 		m_miss = true;
@@ -120,7 +115,6 @@ struct MoveState {
 			m_damage,
 			m_awakens,
 			m_critical_hit,
-			m_hit_self,
 			m_miss
 		};
 		*this = {};
@@ -142,7 +136,6 @@ private:
 	Variable m_variable;
 	bool m_awakens = false;
 	bool m_critical_hit = false;
-	bool m_hit_self = false;
 	bool m_miss = false;
 };
 

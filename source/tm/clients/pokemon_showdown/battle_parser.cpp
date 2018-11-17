@@ -496,20 +496,23 @@ void BattleParser::handle_message(InMessage message) {
 
 void BattleParser::handle_damage(InMessage message) {
 	auto const parsed = parse_hp_message(message, m_battle);
+	auto move_damage = [&](Party const damaged_party, Party const user_party) {
+		auto const old_hp = get_hp(get_team(m_battle, damaged_party).pokemon()).current();
+		auto const new_hp = parsed.hp;
+		if (new_hp > old_hp) {
+			throw std::runtime_error("Took negative damage");
+		}
+		m_move_state.damage(user_party, static_cast<damage_type>(old_hp - new_hp));
+	};
 	auto const party = parsed.party;
 	bounded::visit(parsed.source, bounded::overload(
 		[&](MainEffect) {
 			if (m_move_state.move_damages_self(party)) {
 				return;
 			}
-			auto const old_hp = get_hp(get_team(m_battle, party).pokemon()).current();
-			auto const new_hp = parsed.hp;
-			if (new_hp > old_hp) {
-				throw std::runtime_error("Took negative damage");
-			}
-			m_move_state.damage(other(party), static_cast<damage_type>(old_hp - new_hp));
+			move_damage(party, other(party));
 		},
-		[&](FromConfusion) { m_move_state.hit_self(party); },
+		[&](FromConfusion) { move_damage(party, party); },
 		[](FromMiscellaneous) {},
 		[&](auto const value) { m_battle.set_value_on_active(party, value); }
 	));
