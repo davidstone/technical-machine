@@ -46,9 +46,6 @@
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 
-#include <containers/algorithms/filter_iterator.hpp>
-#include <containers/integer_range.hpp>
-
 #include <boost/timer.hpp>
 
 #include <cassert>

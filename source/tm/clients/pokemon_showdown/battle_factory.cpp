@@ -74,8 +74,8 @@ Team parse_team(boost::property_tree::ptree const & pt) {
 			set_stat_ev(pokemon, stat, EV(ev));
 		}
 		auto const max_hp_ev_allowed = EV::max_total - 5_bi * ev;
-		for (auto const hp_ev : containers::integer_range(0_bi, max_hp_ev_allowed + 4_bi, 4_bi)) {
-			set_hp_ev(pokemon, EV(hp_ev));
+		for (auto const hp_ev : ev_range(max_hp_ev_allowed)) {
+			set_hp_ev(pokemon, hp_ev);
 			if (get_hp(pokemon).max() == hp) {
 				break;
 			} else if (hp_ev == max_hp_ev_allowed) {

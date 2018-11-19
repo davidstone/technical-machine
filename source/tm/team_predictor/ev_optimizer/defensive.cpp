@@ -71,12 +71,8 @@ DefensiveEVs::DefensiveEVs(Species const species, Level const level, Nature cons
 	};
 
 	for (auto const nature : containers::enum_range<Nature>()) {
-		constexpr auto ev_range = containers::transform(
-			containers::integer_range(0_bi, EV::max + 4_bi, 4_bi),
-			[](auto const ev) { return EV(ev); }
-		);
 		auto best_per_nature = bounded::optional<DataPoint>{};
-		for (auto const hp_ev : ev_range) {
+		for (auto const hp_ev : ev_range()) {
 			auto const hp = HP(species, level, hp_ev, original_hp.iv());
 			auto find_minimum_matching = [=](StatNames const stat_name, Stat const stat, auto const original_product) {
 				auto const target_stat = round_up_divide(original_product, hp.max());

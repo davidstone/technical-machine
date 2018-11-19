@@ -29,6 +29,7 @@
 #include <bounded/integer.hpp>
 
 #include <containers/algorithms/maybe_find.hpp>
+#include <containers/integer_range.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {

@@ -20,6 +20,9 @@
 
 #include <bounded/integer.hpp>
 
+#include <containers/algorithms/transform.hpp>
+#include <containers/integer_range.hpp>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -42,8 +45,37 @@ private:
 constexpr auto compare(EV const lhs, EV const rhs) {
 	return compare(lhs.value(), rhs.value());
 }
+constexpr auto compare(EV const lhs, EV::value_type const rhs) {
+	return compare(lhs.value(), rhs);
+}
+constexpr auto compare(EV::value_type const lhs, EV const rhs) {
+	return compare(lhs, rhs.value());
+}
 constexpr auto operator==(EV const lhs, EV const rhs) {
 	return lhs.value() == rhs.value();
+}
+constexpr auto operator==(EV const lhs, EV::value_type const rhs) {
+	return lhs.value() == rhs;
+}
+constexpr auto operator==(EV::value_type const lhs, EV const rhs) {
+	return lhs == rhs.value();
+}
+
+template<typename Max>
+constexpr auto ev_range(Max const max) {
+	struct ConstructEV {
+		constexpr auto operator()(EV::value_type const ev) const {
+			return EV(ev);
+		}
+	};
+	return containers::transform(
+		containers::inclusive_integer_range(0_bi, max, 4_bi),
+		ConstructEV{}
+	);
+}
+
+constexpr auto ev_range() {
+	return ev_range(EV::max);
 }
 
 }	// namespace technicalmachine

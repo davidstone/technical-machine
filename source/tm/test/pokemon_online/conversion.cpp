@@ -18,8 +18,6 @@
 
 #include <tm/test/pokemon_online/conversion.hpp>
 
-#include <iostream>
-
 #include <tm/test/pokemon_online/../invalid_simulator_conversion.hpp>
 
 #include <tm/ability.hpp>
@@ -33,6 +31,10 @@
 #include <tm/stat/nature.hpp>
 
 #include <tm/clients/pokemon_online/conversion.hpp>
+
+#include <containers/integer_range.hpp>
+
+#include <iostream>
 
 namespace technicalmachine {
 namespace po {

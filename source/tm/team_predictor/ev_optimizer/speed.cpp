@@ -21,8 +21,6 @@
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/stat_names.hpp>
 
-#include <containers/integer_range.hpp>
-
 #include <algorithm>
 #include <cassert>
 
@@ -32,13 +30,13 @@ using namespace bounded::literal;
 SpeedEVs::SpeedEVs(Nature const initial_nature, Stat const initial_speed_stat, Level const level) {
 	auto const speed = initial_stat(StatNames::SPE, initial_speed_stat, level, initial_nature);
 	for (auto const nature : containers::enum_range<Nature>()) {
-		auto const evs = containers::integer_range(0_bi, EV::max + 4_bi, 4_bi);
+		auto const evs = ev_range();
 		auto const it = std::partition_point(begin(evs), end(evs), [=](auto const ev) {
-			auto const stat = Stat(initial_speed_stat, EV(ev));
+			auto const stat = Stat(initial_speed_stat, ev);
 			return initial_stat(StatNames::SPE, stat, level, nature) < speed;
 		});
 		if (it != end(evs)) {
-			m_container.emplace_back(nature, EV(*it));
+			m_container.emplace_back(nature, *it);
 		}
 	}
 	assert(!empty(m_container));

@@ -140,12 +140,12 @@ auto pad_random_evs(Combined combined, bool const include_attack, bool const inc
 	auto distribution = std::discrete_distribution{};
 	while (ev_sum(combined) < EV::max_total) {
 		distribution.param({
-			combined.hp.value() == EV::max ? 0.0 : 1.0,
-			(!include_attack or combined.attack.value() == EV::max) ? 0.0 : 1.0,
-			combined.defense.value() == EV::max ? 0.0 : 1.0,
-			(!include_special_attack or combined.special_attack.value() == EV::max) ? 0.0 : 1.0,
-			combined.special_defense.value() == EV::max ? 0.0 : 1.0,
-			combined.speed.value() == EV::max ? 0.0 : 1.0,
+			combined.hp == EV::max ? 0.0 : 1.0,
+			(!include_attack or combined.attack == EV::max) ? 0.0 : 1.0,
+			combined.defense == EV::max ? 0.0 : 1.0,
+			(!include_special_attack or combined.special_attack == EV::max) ? 0.0 : 1.0,
+			combined.special_defense == EV::max ? 0.0 : 1.0,
+			combined.speed == EV::max ? 0.0 : 1.0,
 		});
 		auto const index = distribution(random_engine);
 		auto & ev =

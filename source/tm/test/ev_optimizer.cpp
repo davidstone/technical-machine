@@ -28,6 +28,8 @@
 #include <tm/move/moves.hpp>
 #include <tm/string_conversions/nature.hpp>
 
+#include <containers/integer_range.hpp>
+
 #include <iostream>
 #include <random>
 
