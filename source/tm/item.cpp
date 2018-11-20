@@ -22,66 +22,6 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-bool allows_switching(Item const item) {
-	return item == Item::Shed_Shell;
-}
-
-bool boosts_super_effective_moves(Item const item) {
-	return item == Item::Expert_Belt;
-}
-
-bool causes_recoil(Item const item) {
-	return item == Item::Life_Orb;
-}
-
-bool grounds(Item const item) {
-	return item == Item::Iron_Ball;
-}
-
-bool is_choice_item(Item const item) {
-	switch (item) {
-		case Item::Choice_Band:
-		case Item::Choice_Scarf:
-		case Item::Choice_Specs:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool was_lost(Item const) {
-	// TODO
-	return false;
-}
-
-void remove(Item & item) {
-	item = Item::No_Item;
-}
-
-bool extends_hail(Item const item) {
-	return item == Item::Icy_Rock;
-}
-
-bool extends_rain(Item const item) {
-	return item == Item::Damp_Rock;
-}
-
-bool extends_sand(Item const item) {
-	return item == Item::Smooth_Rock;
-}
-
-bool extends_sun(Item const item) {
-	return item == Item::Heat_Rock;
-}
-
-bool extends_light_screen(Item const item) {
-	return item == Item::Light_Clay;
-}
-
-bool extends_reflect(Item const item) {
-	return item == Item::Light_Clay;
-}
-
 void steal(Item & mine, Item & other) {
 	if (mine == Item::No_Item and !blocks_trick(other)) {
 		using std::swap;

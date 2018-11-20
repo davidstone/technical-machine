@@ -115,22 +115,57 @@ enum class Item : uint16_t {
 	Zinc, Zoom_Lens
 };
 
-bool allows_switching(Item item);
-bool boosts_super_effective_moves(Item item);
-bool causes_recoil(Item item);
-bool grounds(Item item);
-bool is_choice_item(Item item);
-bool was_lost(Item item);
-void remove(Item & item);
+constexpr bool allows_switching(Item const item) {
+	return item == Item::Shed_Shell;
+}
+constexpr bool boosts_super_effective_moves(Item const item) {
+	return item == Item::Expert_Belt;
+}
+constexpr bool causes_recoil(Item const item) {
+	return item == Item::Life_Orb;
+}
+constexpr bool grounds(Item const item) {
+	return item == Item::Iron_Ball;
+}
+constexpr bool is_choice_item(Item const item) {
+	switch (item) {
+		case Item::Choice_Band:
+		case Item::Choice_Scarf:
+		case Item::Choice_Specs:
+			return true;
+		default:
+			return false;
+	}
+}
+constexpr bool was_lost(Item const) {
+	// TODO
+	return false;
+}
+constexpr void remove(Item & item) {
+	item = Item::No_Item;
+}
+constexpr bool extends_hail(Item const item) {
+	return item == Item::Icy_Rock;
+}
+constexpr bool extends_rain(Item const item) {
+	return item == Item::Damp_Rock;
+}
+constexpr bool extends_sand(Item const item) {
+	return item == Item::Smooth_Rock;
+}
+constexpr bool extends_sun(Item const item) {
+	return item == Item::Heat_Rock;
+}
+constexpr bool extends_light_screen(Item const item) {
+	return item == Item::Light_Clay;
+}
+constexpr bool extends_reflect(Item const item) {
+	return item == Item::Light_Clay;
+}
+
 bounded::integer<0, 80> berry_power(Item item);		// Returns 0 for non-berries
 bounded::integer<0, 130> fling_power(Item item);
 bool blocks_trick(Item item);
-bool extends_hail(Item item);
-bool extends_rain(Item item);
-bool extends_sand(Item item);
-bool extends_sun(Item item);
-bool extends_light_screen(Item item);
-bool extends_reflect(Item item);
 void steal(Item & mine, Item & other);
 
 }	// namespace technicalmachine
