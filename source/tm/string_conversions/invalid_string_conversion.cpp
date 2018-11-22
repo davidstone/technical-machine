@@ -17,6 +17,8 @@
 
 #include <tm/string_conversions/invalid_string_conversion.hpp>
 
+#include <string>
+
 namespace technicalmachine {
 
 InvalidFromStringConversion::InvalidFromStringConversion(std::string_view const target, std::string_view const requested):

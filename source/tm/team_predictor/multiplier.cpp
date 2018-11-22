@@ -29,6 +29,7 @@
 
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/integer_range.hpp>
+#include <containers/legacy_iterator.hpp>
 
 #include <boost/lexical_cast.hpp>
 
@@ -73,7 +74,7 @@ Multiplier::value_type Multiplier::operator() (Species const species1, Species c
 Multiplier::Container Multiplier::species_clause() {
 	Container multiplier;
 	for (auto & array : multiplier) {
-		std::fill(begin(array), end(array), not_set);
+		std::fill(containers::legacy_iterator(begin(array)), containers::legacy_iterator(end(array)), not_set);
 	}
 	for (auto const a : containers::enum_range<Species>()) {
 		for (auto const b : containers::enum_range<Species>()) {
@@ -136,7 +137,7 @@ void Multiplier::estimate_remaining(OverallStats const & overall, OverallStats c
 			// 1 is superior to 0 because if they use an unused Pokemon, this
 			// will have no effect instead of making everything equally 0
 			auto & m = multiplier[a];
-			std::fill(begin(m), end(m), 1.0F);
+			std::fill(containers::legacy_iterator(begin(m)), containers::legacy_iterator(end(m)), 1.0F);
 		}
 	}
 }

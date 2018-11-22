@@ -150,6 +150,7 @@ add_library(tm_common STATIC
 	source/tm/wish.cpp
 )
 target_link_libraries(tm_common
+	c++fs
 	stdc++fs
 	boost
 	bounded
