@@ -63,8 +63,8 @@ struct SharedMovesIterator {
 		return lhs.m_index - rhs.m_index;
 	}
 
-	friend constexpr auto compare(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
-		return bounded::compare(lhs.m_index, rhs.m_index);
+	friend constexpr auto operator<=>(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
+		return lhs.m_index <=> rhs.m_index;
 	}
 	friend constexpr auto operator==(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
 		return lhs.m_index == rhs.m_index;

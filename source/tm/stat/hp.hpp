@@ -68,12 +68,12 @@ auto operator-=(HP & lhs, T const & rhs) -> HP & {
 }
 
 template<auto min, auto max, typename overflow>
-auto compare(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
-	return bounded::compare(lhs.current(), rhs);
+auto operator<=>(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
+	return lhs.current() <=> rhs;
 }
 template<auto min, auto max, typename overflow>
-auto compare(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
-	return bounded::compare(rhs, lhs.current());
+auto operator<=>(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
+	return rhs <=> lhs.current();
 }
 
 template<auto min, auto max, typename overflow>

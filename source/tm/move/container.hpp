@@ -89,7 +89,7 @@ private:
 	SharedMoves m_shared;
 };
 
-using ::containers::detail::common::compare;
+using ::containers::detail::common::operator<=>;
 using ::containers::detail::common::operator==;
 
 template<typename... MaybePP>
