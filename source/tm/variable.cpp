@@ -48,25 +48,13 @@ auto get_phaze_index(Team const & team, Species const species) {
 	if (new_index == pokemon_index) {
 		throw PhazingInSamePokemon(new_index);
 	}
-	return (new_index < pokemon_index) ? TeamIndex(new_index) : TeamIndex(new_index - 1_bi);
+	return new_index;
 }
 
 }	// namespace
 
-auto set_phaze_index(Variable & variable, Team const & team, Species const species) -> void {
-	variable.value = get_phaze_index(team, species);
-}
-
-auto set_flinch(Variable & variable, bool const set) -> void {
-	variable.value = BOUNDED_CONDITIONAL(set, 1_bi, 0_bi);
-}
-
-auto effect_activates(Variable const variable) -> bool {
-	return variable.value != 0_bi;
-}
-
-auto present_heals(Variable const variable) -> bool {
-	return variable.value != 0_bi;
+auto Variable::set_phaze_index(Team const & team, Species const species) -> void {
+	m_value = get_phaze_index(team, species);
 }
 
 namespace {
@@ -85,42 +73,15 @@ constexpr auto get_magnitude(Variable::Magnitude const magnitude) -> bounded::in
 
 }	// namespace
 
-auto set_magnitude(Variable & variable, Variable::Magnitude const magnitude) -> void {
-	variable.value = get_magnitude(magnitude);
+auto Variable::set_magnitude(Magnitude const magnitude) -> void {
+	m_value = get_magnitude(magnitude);
 }
 
 namespace {
 
-constexpr auto magnitude_variables = Probabilities{
-	{ 10_bi, 0.05 },
-	{ 30_bi, 0.1 },
-	{ 50_bi, 0.2 },
-	{ 70_bi, 0.3 },
-	{ 90_bi, 0.2 },
-	{ 110_bi, 0.1 },
-	{ 150_bi, 0.05 }
-};
-
-constexpr auto present_variables = Probabilities{
-	{0_bi, 0.25 },
-	{40_bi, 0.25 },
-	{80_bi, 0.25 },
-	{120_bi, 0.25 }
-};
-
-constexpr auto psywave_variables = []{
-	Probabilities probabilities;
-	constexpr auto min = 50_bi;
-	constexpr auto max = 150_bi + 1_bi;
-	for (auto const n : containers::integer_range(min, max)) {
-		probabilities.emplace_back(n, 1.0 / static_cast<double>(max - min));
-	}
-	return probabilities;
-}();
-
 template<std::size_t... indexes, typename... Args>
 constexpr auto generic_probability(std::index_sequence<indexes...>, Args... probabilities) noexcept {
-	return Probabilities{ { bounded::constant<indexes>, probabilities }... };
+	return Probabilities{ { Variable(bounded::constant<indexes>), probabilities }... };
 }
 
 template<typename... Args>
@@ -132,18 +93,16 @@ template<typename Count>
 constexpr auto constant_probability(Count const count) noexcept {
 	Probabilities probabilities;
 	for (auto const n : containers::integer_range(count)) {
-		probabilities.emplace_back(n, 1.0 / static_cast<double>(count));
+		probabilities.emplace_back(Variable(n), 1.0 / static_cast<double>(count));
 	}
 	return probabilities;
 }
 
-constexpr auto guaranteed = generic_probability(1.0);
-
-constexpr auto phaze_probability(TeamSize const foe_size) {
+auto phaze_probability(TeamSize const foe_size) {
 	switch(foe_size.value()) {
 		case 1:
 		case 2:
-			return guaranteed;
+			return generic_probability(1.0);
 		default:
 			return constant_probability(bounded::integer<3, TeamSize::max().value()>(foe_size) - 1_bi);
 	}
@@ -601,7 +560,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Wring_Out:
 		case Moves::X_Scissor:
 		case Moves::Yawn:
-			return guaranteed;
+			return generic_probability(1.0);
 		case Moves::Acid:
 		case Moves::AncientPower:
 		case Moves::Aurora_Beam:
@@ -725,11 +684,32 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Tri_Attack:
 			return generic_probability(12.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0);
 		case Moves::Magnitude:
-			return magnitude_variables;
+			return Probabilities{
+				{Variable(10_bi), 0.05},
+				{Variable(30_bi), 0.1},
+				{Variable(50_bi), 0.2},
+				{Variable(70_bi), 0.3},
+				{Variable(90_bi), 0.2},
+				{Variable(110_bi), 0.1},
+				{Variable(150_bi), 0.05}
+			};
 		case Moves::Present:
-			return present_variables;
+			return Probabilities{
+				{Variable(0_bi), 0.25},
+				{Variable(40_bi), 0.25},
+				{Variable(80_bi), 0.25},
+				{Variable(120_bi), 0.25}
+			};
 		case Moves::Psywave:
-			return psywave_variables;
+			return []{
+				Probabilities probabilities;
+				constexpr auto min = 50_bi;
+				constexpr auto max = 150_bi + 1_bi;
+				for (auto const n : containers::integer_range(min, max)) {
+					probabilities.emplace_back(Variable(n), 1.0 / static_cast<double>(max - min));
+				}
+				return probabilities;
+			}();
 		case Moves::Acupressure:
 			// Possibly not correct due to the maxing out behavior
 			return constant_probability(7_bi);

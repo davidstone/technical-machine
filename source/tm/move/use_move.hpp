@@ -35,6 +35,6 @@ struct UsedMove {
 	damage_type damage;
 };
 
-auto call_move(Team & user, Moves move, bool user_damaged, Team & target, bounded::optional<UsedMove> target_move, bool target_damaged, Weather & weather, Variable const & variable, bool missed, bool awakens, bool critical_hit, bounded::optional<damage_type> known_damage) -> void;
+auto call_move(Team & user, Moves move, bool user_damaged, Team & target, bounded::optional<UsedMove> target_move, bool target_damaged, Weather & weather, Variable variable, bool missed, bool awakens, bool critical_hit, bounded::optional<damage_type> known_damage) -> void;
 
 }	// namespace technicalmachine

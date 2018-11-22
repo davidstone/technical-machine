@@ -341,8 +341,8 @@ double end_of_turn_order_branch(Team const & team, Team const & other, Faster co
 }
 
 
-auto use_move_branch_inner(Variable const & last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
-	return [=, &last_variable](Team first, Moves, Team last, Moves const last_move, Weather weather, Evaluate const evaluate, Depth const depth) {
+auto use_move_branch_inner(Variable const last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+	return [=](Team first, Moves, Team last, Moves const last_move, Weather weather, Evaluate const evaluate, Depth const depth) {
 		// TODO: properly handle used move here
 		// TODO: implement properly
 		constexpr auto first_damaged = false;
@@ -365,8 +365,8 @@ auto use_move_branch_inner(Variable const & last_variable, CriticalHitFlag const
 	};
 }
 
-auto use_move_branch_outer(Moves const last_move, Variable const & first_variable, Variable const & last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
-	return [=, &first_variable, &last_variable](Team first, Moves const first_move, Team last, Moves, Weather weather, Evaluate const evaluate, Depth const depth) {
+auto use_move_branch_outer(Moves const last_move, Variable const first_variable, Variable const last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+	return [=](Team first, Moves const first_move, Team last, Moves, Weather weather, Evaluate const evaluate, Depth const depth) {
 		// TODO: implement properly
 		constexpr auto first_damaged = false;
 		constexpr auto last_damaged = false;
@@ -386,7 +386,7 @@ auto use_move_branch_outer(Moves const last_move, Variable const & first_variabl
 	};
 };
 
-double use_move_branch(Team first, Moves const first_move, Team last, Moves const last_move, Variable const & first_variable, Variable const & last_variable, Weather weather, Evaluate const evaluate, Depth const depth, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+double use_move_branch(Team first, Moves const first_move, Team last, Moves const last_move, Variable const first_variable, Variable const last_variable, Weather weather, Evaluate const evaluate, Depth const depth, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
 #if 0
 	auto const initial_last_hp = get_hp(last.pokemon());
 	auto const last_damaged = is_damaging(first_move) ? bounded::max(get_hp(last.pokemon()).current() - last_hp.current(), 0_bi) : 0_bi;
@@ -417,7 +417,7 @@ double random_move_effects_branch(Team const & first, Moves const first_move, Te
 	for (auto const & first_variable : first_variables) {
 		for (auto const & last_variable : last_variables) {
 			auto const use_move_branch_adaptor = [&](CriticalHitFlag first_flags_, CriticalHitFlag last_flags_) {
-				return use_move_branch(first, first_move, last, last_move, first_variable, last_variable, weather, evaluate, depth, first_flags_, last_flags_);
+				return use_move_branch(first, first_move, last, last_move, first_variable.variable, last_variable.variable, weather, evaluate, depth, first_flags_, last_flags_);
 			};
 			score += last_variable.probability * first_variable.probability * generic_flag_branch<CriticalHitFlag>(
 				first_flags,

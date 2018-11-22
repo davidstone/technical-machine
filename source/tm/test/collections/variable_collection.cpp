@@ -45,29 +45,32 @@ void add_pokemon(Team & team, Species const species) {
 	team.add_pokemon(species, level, Gender::male);
 }
 
-void phaze_in_same_pokemon(Variable & variable, Team const & team) {
+void phaze_in_same_pokemon(Team const & team) {
 	try {
-		set_phaze_index(variable, team, get_species(team.pokemon()));
+		auto variable = Variable{};
+		variable.set_phaze_index(team, get_species(team.pokemon()));
 		throw InvalidCollection("Can phaze in the same Pokemon.");
 	} catch (PhazingInSamePokemon const &) {
 		// Do nothing; the above operation should throw.
 	}
 }
 
-void phaze_in_different_pokemon(Variable & variable, Team const & team, containers::index_type<PokemonCollection> const new_index, containers::index_type<PokemonCollection> const current_index, TeamSize foe_size) {
+void phaze_in_different_pokemon(Team const & team, containers::index_type<PokemonCollection> const new_index, containers::index_type<PokemonCollection> const current_index, TeamSize foe_size) {
 	static constexpr auto expected_index = containers::make_explicit_array<6, 6>(
-		bounded::none, 0_bi, 1_bi, 2_bi, 3_bi, 4_bi,
-		0_bi, bounded::none, 1_bi, 2_bi, 3_bi, 4_bi,
-		0_bi, 1_bi, bounded::none, 2_bi, 3_bi, 4_bi,
-		0_bi, 1_bi, 2_bi, bounded::none, 3_bi, 4_bi,
-		0_bi, 1_bi, 2_bi, 3_bi, bounded::none, 4_bi,
+		bounded::none, 1_bi, 2_bi, 3_bi, 4_bi, 5_bi,
+		0_bi, bounded::none, 2_bi, 3_bi, 4_bi, 5_bi,
+		0_bi, 1_bi, bounded::none, 3_bi, 4_bi, 5_bi,
+		0_bi, 1_bi, 2_bi, bounded::none, 4_bi, 5_bi,
+		0_bi, 1_bi, 2_bi, 3_bi, bounded::none, 5_bi,
 		0_bi, 1_bi, 2_bi, 3_bi, 4_bi, bounded::none
 	);
-	set_phaze_index(variable, team, get_species(team.pokemon(new_index)));
+	auto variable = Variable{};
+	variable.set_phaze_index(team, get_species(team.pokemon(new_index)));
 	auto const expected = expected_index[current_index][new_index];
 	assert(expected);
-	if (variable.value != *expected) {
-		throw InvalidCollection("Offsets for phazing are incorrect. Expected " + to_string(*expected) + " but got a result of " + to_string(variable.value) + ".");
+	auto const calculated = variable.phaze_index();
+	if (calculated != *expected) {
+		throw InvalidCollection("Offsets for phazing are incorrect. Expected " + to_string(*expected) + " but got a result of " + to_string(calculated) + ".");
 	}
 	if (new_index == foe_size) {
 		throw InvalidCollection("Phazing supports too many elements when the foe's size is " + to_string(foe_size) + ".");
@@ -82,13 +85,13 @@ void test_combinations(Team team) {
 		if (size(collection) != expected) {
 			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected) + " but got " + to_string(size(collection)));
 		}
-		for (auto const new_index : containers::integer_range(foe_size)) {
-			for (auto const current_index : containers::integer_range(foe_size)) {
-				team.all_pokemon().set_index(current_index);
+		for (auto const current_index : containers::integer_range(foe_size)) {
+			team.all_pokemon().set_index(current_index);
+			for (auto const new_index : containers::integer_range(foe_size)) {
 				if (current_index == new_index) {
-					phaze_in_same_pokemon(front(collection), team);
+					phaze_in_same_pokemon(team);
 				} else {
-					phaze_in_different_pokemon(front(collection), team, new_index, current_index, foe_size);
+					phaze_in_different_pokemon(team, new_index, current_index, foe_size);
 				}
 			}
 		}

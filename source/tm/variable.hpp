@@ -1,5 +1,5 @@
 // Random effects of moves
-// Copyright (C) 2017 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,9 +19,12 @@
 #pragma once
 
 #include <tm/move/moves.hpp>
+#include <tm/pokemon/active_pokemon.hpp>
 #include <tm/pokemon/collection.hpp>
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species_forward.hpp>
+#include <tm/status.hpp>
+#include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>
 
@@ -31,35 +34,91 @@ namespace technicalmachine {
 struct ActivePokemon;
 struct Team;
 
-// Used for moves with a variable power / length / other integer range. Moves of
-// variable power: Magnitude = 4-10, Psywave = 5-15, Present = 0-4 (0 = heal).
-// It is also used to determine whether random effects activate.
 struct Variable {
 	using value_type = bounded::integer<0, 150>;
-	using Probability = double;
-	using Magnitude = bounded::checked_integer<4, 10>;
 
-	value_type value;
-	Probability probability;
+	constexpr Variable() = default;
+	explicit constexpr Variable(value_type const value):
+		m_value(value)
+	{
+	}
+
+	constexpr auto effect_activates() const {
+		return m_value != 0_bi;
+	}
+	
+	constexpr auto acupressure_stat_boost() const {
+		return static_cast<StatNames>(m_value);
+	}
+
+	auto fang_side_effects(MutableActivePokemon user, MutableActivePokemon target, Weather const weather, Statuses const status) const {
+		switch (m_value.value()) {
+			case 0:
+				break;
+			case 1:
+				apply(status, user, target, weather);
+				break;
+			case 2:
+				target.flinch();
+				break;
+			case 3:	
+				apply(status, user, target, weather);
+				target.flinch();
+				break;
+			default:
+				assert(false);
+				__builtin_unreachable();
+				break;
+		}
+	}
+	
+	constexpr auto set_flinch(bool const set = true) {
+		m_value = BOUNDED_CONDITIONAL(set, 1_bi, 0_bi);
+	}
+
+	constexpr auto magnitude_power() const {
+		return m_value;
+	}
+	using Magnitude = bounded::checked_integer<4, 10>;
+	auto set_magnitude(Magnitude magnitude) -> void;
+
+	constexpr auto present_heals() const {
+		return m_value != 0_bi;
+	}
+	constexpr auto present_power() const {
+		return m_value;
+	}
+
+	constexpr auto phaze_index() const {
+		return static_cast<TeamIndex>(m_value);
+	}
+	// Team is the Team that was phazed, not the team that used the phazing move
+	auto set_phaze_index(Team const & team, Species species) -> void;
+
+	constexpr auto psywave_damage(Level const level) const {
+		return bounded::max(1_bi, level() * static_cast<bounded::integer<50, 150>>(m_value) / 100_bi);
+	}
+
+	constexpr auto tri_attack_status() const {
+		switch (m_value.value()) {
+			case 0: return Statuses::clear;
+			case 1: return Statuses::burn;
+			case 2: return Statuses::freeze;
+			case 3: return Statuses::paralysis;
+			default: assert(false); __builtin_unreachable();
+		}
+	}
+	
+private:
+	value_type m_value = 0_bi;
 };
 
-using Probabilities = containers::static_vector<Variable, 101>;
+struct VariableProbability {
+	Variable variable;
+	double probability;
+};
+
+using Probabilities = containers::static_vector<VariableProbability, 101>;
 auto all_probabilities(Moves move, TeamSize foe_size) -> Probabilities;
-
-// Team is the Team that was phazed, not the team that used the phazing move
-auto set_phaze_index(Variable & variable, Team const & team, Species species) -> void;
-auto set_flinch(Variable & variable, bool set = true) -> void;
-auto effect_activates(Variable variable) -> bool;
-constexpr auto phaze_index(Variable const variable, containers::index_type<PokemonCollection> const foe_index) {
-	return (variable.value < foe_index) ?
-		containers::index_type<PokemonCollection>(variable.value) :
-		containers::index_type<PokemonCollection>(variable.value + 1_bi);
-}
-auto present_heals(Variable variable) -> bool;
-
-inline auto psywave_damage(Variable const variable, Level const level) {
-	return bounded::max(1_bi, level() * static_cast<bounded::integer<50, 150>>(variable.value) / 100_bi);
-}
-auto set_magnitude(Variable & variable, Variable::Magnitude magnitude) -> void;
 
 }	// namespace technicalmachine

@@ -90,7 +90,7 @@ struct MoveState {
 	void flinch(Party const party) {
 		validate(party);
 		// TODO: Validate that the used move can cause a flinch
-		set_flinch(m_variable, true);
+		m_variable.set_flinch(true);
 	}
 	void miss(Party const party) {
 		validate(party);
@@ -101,7 +101,7 @@ struct MoveState {
 		if (!is_phaze(*m_move)) {
 			throw std::runtime_error("We did not use a phazing move, but we were given phazing data");
 		}
-		set_phaze_index(m_variable, team, species);
+		m_variable.set_phaze_index(team, species);
 	}
 
 	auto complete() -> bounded::optional<Result> {
@@ -133,7 +133,7 @@ private:
 	bounded::optional<Party> m_party;
 	bounded::optional<Moves> m_move;
 	bounded::optional<damage_type> m_damage;
-	Variable m_variable;
+	Variable m_variable{0_bi};
 	bool m_awakens = false;
 	bool m_critical_hit = false;
 	bool m_miss = false;

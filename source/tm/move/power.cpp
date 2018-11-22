@@ -52,7 +52,7 @@ using namespace bounded::literal;
 
 auto power_of_mass_based_moves(Species species) -> bounded::integer<20, 120>;
 
-auto variable_adjusted_base_power(Team const & attacker_team, Move const move, Team const & defender_team, Weather const weather, Variable const & variable) -> VariableAdjustedBasePower {
+auto variable_adjusted_base_power(Team const & attacker_team, Move const move, Team const & defender_team, Weather const weather, Variable const variable) -> VariableAdjustedBasePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	switch (move.name()) {
@@ -112,12 +112,12 @@ auto variable_adjusted_base_power(Team const & attacker_team, Move const move, T
 			return result;
 		}
 		case Moves::Magnitude:
-			return variable.value;
+			return variable.magnitude_power();
 		case Moves::Natural_Gift:
 			return berry_power(get_item(attacker));
 		case Moves::Present:
-			assert(!present_heals(variable));
-			return variable.value;
+			assert(!variable.present_heals());
+			return variable.present_power();
 		case Moves::Punishment: {
 			auto is_positive = [](auto const value) { return value > 0_bi; };
 			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::accumulate(containers::filter(stage(defender), is_positive)));
@@ -277,7 +277,7 @@ auto defender_ability_modifier(Pokemon const & attacker, Moves const move, Abili
 
 }	// namespace
 
-auto move_power(Team const & attacker_team, Move const move, bool const attacker_damaged, Team const & defender_team, bool const defender_damaged, Weather const weather, Variable const & variable) -> MovePower {
+auto move_power(Team const & attacker_team, Move const move, bool const attacker_damaged, Team const & defender_team, bool const defender_damaged, Weather const weather, Variable variable) -> MovePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	auto const base_power = variable_adjusted_base_power(attacker_team, move, defender_team, weather, variable);

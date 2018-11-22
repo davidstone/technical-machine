@@ -183,7 +183,7 @@ auto resistance_berry_divisor(Item const item, Type const type, Effectiveness co
 	return BOUNDED_CONDITIONAL(resistance_berry_activates(item, type, effectiveness), 2_bi, 1_bi);
 }
 
-auto regular_damage(Team const & attacker_team, Move const move, bool const attacker_damaged, Team const & defender, bool const defender_damaged, Weather const weather, Variable const & variable, bool const critical_hit) {
+auto regular_damage(Team const & attacker_team, Move const move, bool const attacker_damaged, Team const & defender, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
 	auto const & attacker = attacker_team.pokemon();
 	auto const type = get_type(move.name(), attacker);
 	auto const effectiveness = Effectiveness(type, defender.pokemon());
@@ -211,7 +211,7 @@ auto regular_damage(Team const & attacker_team, Move const move, bool const atta
 	);
 }
 
-damage_type raw_damage(Team const & attacker_team, Move const move, bool const attacker_damaged, Team const & defender, bool const defender_damaged, Weather const weather, Variable const & variable, bool const critical_hit) {
+damage_type raw_damage(Team const & attacker_team, Move const move, bool const attacker_damaged, Team const & defender, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
 	auto const & attacker = attacker_team.pokemon();
 	switch (move.name()) {
 		case Moves::Dragon_Rage:
@@ -227,7 +227,7 @@ damage_type raw_damage(Team const & attacker_team, Move const move, bool const a
 		case Moves::Seismic_Toss:
 			return get_level(attacker)();
 		case Moves::Psywave:
-			return psywave_damage(variable, get_level(attacker));
+			return variable.psywave_damage(get_level(attacker));
 		case Moves::SonicBoom:
 			return 20_bi;
 		case Moves::Super_Fang:
@@ -237,7 +237,7 @@ damage_type raw_damage(Team const & attacker_team, Move const move, bool const a
 	}
 }
 
-auto capped_damage(Team const & attacker, Move const move, bool const attacker_damaged, Team const & defender, bool const defender_damaged, Weather const weather, Variable const & variable, bool const critical_hit) {
+auto capped_damage(Team const & attacker, Move const move, bool const attacker_damaged, Team const & defender, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
 	auto const damage = raw_damage(attacker, move, attacker_damaged, defender, defender_damaged, weather, variable, critical_hit);
 	return (cannot_ko(move.name()) or cannot_be_koed(defender.pokemon())) ?
 		static_cast<damage_type>(bounded::min(get_hp(defender.pokemon()).current() - 1_bi, damage)) :
@@ -247,7 +247,7 @@ auto capped_damage(Team const & attacker, Move const move, bool const attacker_d
 }	// namespace
 
 
-damage_type damage_calculator(Team const & attacker, Move const move, bool const attacker_damaged, Team const & defender, bool const defender_damaged, Weather const weather, Variable const & variable, bool const critical_hit) {
+damage_type damage_calculator(Team const & attacker, Move const move, bool const attacker_damaged, Team const & defender, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
 	return affects_target(get_type(move.name(), attacker.pokemon()), defender.pokemon(), weather) ?
 		capped_damage(attacker, move, attacker_damaged, defender, defender_damaged, weather, variable, critical_hit) :
 		static_cast<damage_type>(0_bi);

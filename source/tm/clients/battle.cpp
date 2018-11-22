@@ -39,7 +39,7 @@
 
 namespace technicalmachine {
 
-void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const move, Variable const & variable, bool const miss, bool const critical_hit, bool const awakens, bounded::optional<damage_type> const damage) {
+void Battle::handle_use_move(Party const party, uint8_t /*slot*/, Moves const move, Variable const variable, bool const miss, bool const critical_hit, bool const awakens, bounded::optional<damage_type> const damage) {
 	auto & user = is_me(party) ? m_ai : m_foe;
 	auto & other = is_me(party) ? m_foe : m_ai;
 
@@ -99,7 +99,7 @@ void Battle::handle_send_out(Party const switcher_party, uint8_t const slot, Spe
 		constexpr auto miss = false;
 		constexpr auto critical_hit = false;
 		constexpr auto awakens = false;
-		handle_use_move(switcher_party, slot, to_switch(index), Variable{}, miss, critical_hit, awakens, bounded::none);
+		handle_use_move(switcher_party, slot, to_switch(index), Variable(0_bi), miss, critical_hit, awakens, bounded::none);
 	}
 }
 
