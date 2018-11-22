@@ -100,7 +100,7 @@ auto curse(MutableActivePokemon user, MutableActivePokemon target) {
 }
 
 
-auto fang_side_effects(Pokemon & user, MutableActivePokemon target, Weather const weather, Variable const & variable, Statuses const status) {
+auto fang_side_effects(MutableActivePokemon user, MutableActivePokemon target, Weather const weather, Variable const & variable, Statuses const status) {
 	switch (variable.value.value()) {
 		case 0:
 			break;
@@ -121,7 +121,7 @@ auto fang_side_effects(Pokemon & user, MutableActivePokemon target, Weather cons
 }
 
 
-auto recoil_status(Pokemon & user, Pokemon & target, Weather const weather, damage_type const damage, Variable const & variable, Statuses const status) {
+auto recoil_status(MutableActivePokemon user, MutableActivePokemon target, Weather const weather, damage_type const damage, Variable const & variable, Statuses const status) {
 	recoil(user, damage, 3_bi);
 	if (effect_activates(variable)) {
 		apply(status, user, target, weather);
@@ -162,7 +162,10 @@ auto phaze(Team & user, Team & target, Weather & weather, Variable const & varia
 }
 
 
-auto rest(Pokemon & user) {
+auto rest(Pokemon & user, bool const other_is_uproaring) {
+	if (other_is_uproaring) {
+		return;
+	}
 	HP & hp = get_hp(user);
 	if (hp.current() != hp.max()) {
 		hp = hp.max();
@@ -832,7 +835,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			get_status(user) = Status{};
 			break;
 		case Moves::Rest:
-			rest(user);
+			rest(user, is_uproaring(target.pokemon()));
 			break;
 		case Moves::Roar:
 		case Moves::Whirlwind:
@@ -984,8 +987,6 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			}
 			break;
 		case Moves::Uproar:
-			// TODO: make this make sense
-			weather.activate_uproar(variable.value);
 			user.use_uproar();
 			break;
 		case Moves::Volt_Tackle:

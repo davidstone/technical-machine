@@ -21,114 +21,125 @@
 #include <tm/status.hpp>
 
 #include <bounded/integer.hpp>
+#include <bounded/optional.hpp>
+#include <bounded/detail/variant/variant.hpp>
 
 #include <cstdint>
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
-// Weather is the set of things that are not specific to either team.
-
-// Due to the "acid weather" effect, multiple weathers can be in effect at the
-// same time. The order of the weathers is their order when all effects are
-// active.
-//
-// Uproar is considered Weather because it can be activated without being
-// associated with any particular Pokemon / Team.
-
 struct Weather {
+private:
+	enum class NormalWeather { clear, hail, sand, sun, rain };
 	enum class Duration : int8_t { standard = 5, extended = 8, permanent = -1 };
+	using Short = bounded::integer<0, static_cast<int>(Duration::standard)>;
+	using Long = bounded::integer<-1, static_cast<int>(Duration::extended)>;
+
+	constexpr auto activate_weather(NormalWeather const type, Duration const duration) {
+		if (type == m_active and duration != permanent) {
+			return;
+		}
+		m_active = type;
+		m_turns_remaining = static_cast<Long>(duration);
+	}
+	constexpr auto activate_weather(NormalWeather const type, bool const is_extended) {
+		activate_weather(type, is_extended ? Duration::extended : Duration::standard);
+	}
+
+	Short m_trick_room_turns_remaining = 0_bi;
+	Short m_gravity_turns_remaining = 0_bi;
+	NormalWeather m_active = NormalWeather::clear;
+	Long m_turns_remaining = 0_bi;
+	
+public:
+	static constexpr auto standard = Duration::standard;
+	static constexpr auto extended = Duration::extended;
+	static constexpr auto permanent = Duration::permanent;
 	
 	constexpr auto trick_room() const {
-		return m_trick_room != 0_bi;
-	}
-	constexpr auto fog() const {
-		return m_fog;
+		return m_trick_room_turns_remaining != 0_bi;
 	}
 	constexpr auto gravity() const {
-		return m_gravity != 0_bi;
-	}
-	constexpr auto uproar() const {
-		return m_uproar != 0_bi;
+		return m_gravity_turns_remaining != 0_bi;
 	}
 	constexpr auto hail() const {
-		return m_hail != 0_bi;
-	}
-	constexpr auto sun() const {
-		return m_sun != 0_bi;
+		return m_active == NormalWeather::hail;
 	}
 	constexpr auto sand() const {
-		return m_sand != 0_bi;
+		return m_active == NormalWeather::sand;
+	}
+	constexpr auto sun() const {
+		return m_active == NormalWeather::sun;
 	}
 	constexpr auto rain() const {
-		return m_rain != 0_bi;
+		return m_active == NormalWeather::rain;
 	}
 
-
-	auto advance_one_turn() -> void;
-
-	auto activate_trick_room() -> void;
-	auto activate_fog() -> void;
-	auto deactivate_fog() -> void;
-	auto activate_gravity() -> void;
-	template<typename T>
-	auto activate_uproar(T const duration) {
-		if (m_uproar < duration) {
-			m_uproar = duration;
+	constexpr auto advance_one_turn() {
+		constexpr auto conditional_decrement = [](auto & n) {
+			if (n > 0_bi) {
+				--n;
+			}
+		};
+		conditional_decrement(m_trick_room_turns_remaining);
+		conditional_decrement(m_gravity_turns_remaining);
+		conditional_decrement(m_turns_remaining);
+		if (m_turns_remaining == 0_bi) {
+			m_active = NormalWeather::clear;
 		}
 	}
-	auto activate_hail(Duration duration) -> void;
-	auto activate_sun(Duration duration) -> void;
-	auto activate_sand(Duration duration) -> void;
-	auto activate_rain(Duration duration) -> void;
-	auto activate_hail(bool is_extended) -> void;
-	auto activate_sun(bool is_extended) -> void;
-	auto activate_sand(bool is_extended) -> void;
-	auto activate_rain(bool is_extended) -> void;
 
-	auto blocks_status(Statuses status) const -> bool;
+
+	constexpr auto activate_trick_room() {
+		m_trick_room_turns_remaining = BOUNDED_CONDITIONAL(trick_room(), 0_bi, 5_bi);
+	}
+
+	constexpr auto activate_gravity() {
+		if (!gravity()) {
+			m_gravity_turns_remaining = 5_bi;
+		}
+	}
+	
+	constexpr auto deactivate_fog() {
+	}
+
+	constexpr auto activate_hail(Duration const duration) {
+		activate_weather(NormalWeather::hail, duration);
+	}
+	constexpr auto activate_sun(Duration const duration) {
+		activate_weather(NormalWeather::sun, duration);
+	}
+	constexpr auto activate_sand(Duration const duration) {
+		activate_weather(NormalWeather::sand, duration);
+	}
+	constexpr auto activate_rain(Duration const duration) {
+		activate_weather(NormalWeather::rain, duration);
+	}
+	constexpr auto activate_hail(bool const is_extended) {
+		activate_weather(NormalWeather::hail, is_extended);
+	}
+	constexpr auto activate_sun(bool const is_extended) {
+		activate_weather(NormalWeather::sun, is_extended);
+	}
+	constexpr auto activate_sand(bool const is_extended) {
+		activate_weather(NormalWeather::sand, is_extended);
+	}
+	constexpr auto activate_rain(bool const is_extended) {
+		activate_weather(NormalWeather::rain, is_extended);
+	}
+
+	constexpr auto blocks_status(Statuses const status) const {
+		return status == Statuses::freeze and sun();
+	}
 
 	friend constexpr auto operator==(Weather const lhs, Weather const rhs) {
 		return
-			lhs.m_trick_room == rhs.m_trick_room and
-			lhs.m_fog == rhs.m_fog and
-			lhs.m_gravity == rhs.m_gravity and
-			lhs.m_uproar == rhs.m_uproar and
-			lhs.m_hail == rhs.m_hail and
-			lhs.m_sun == rhs.m_sun and
-			lhs.m_sand == rhs.m_sand and
-			lhs.m_rain == rhs.m_rain;
+			lhs.m_trick_room_turns_remaining == rhs.m_trick_room_turns_remaining and
+			lhs.m_gravity_turns_remaining == rhs.m_gravity_turns_remaining and
+			lhs.m_active == rhs.m_active and
+			lhs.m_turns_remaining == rhs.m_turns_remaining;
 	}
-
-private:
-	template<typename T>
-	auto activate_weather(T & primary, bool const is_extended) {
-		activate_weather(primary, is_extended ? Duration::extended : Duration::standard);
-	}
-	template<typename T>
-	auto activate_weather(T & primary, Duration const duration) {
-		if (primary == 0_bi or duration == Duration::permanent) {
-			m_hail = 0_bi;
-			m_sand = 0_bi;
-			m_rain = 0_bi;
-			m_sun = 0_bi;
-			primary = static_cast<T>(duration);
-		}
-	}
-
-	// The number of turns remaining on that weather. A value of -1 indicates
-	// permanent weather. Fog is a bool because it only exists as a permanent
-	// weather condition.
-
-	bounded::integer<0, 5> m_trick_room = 0_bi;
-	bool m_fog = false;
-	bounded::integer<-1, 5> m_gravity = 0_bi;
-	bounded::integer<-1, 1> m_uproar = 0_bi;
-	using Standard = bounded::integer<-1, static_cast<intmax_t>(Duration::extended)>;
-	Standard m_hail = 0_bi;
-	Standard m_sun = 0_bi;
-	Standard m_sand = 0_bi;
-	Standard m_rain = 0_bi;
 };
 
 }	// namespace technicalmachine

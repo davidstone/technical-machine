@@ -492,6 +492,10 @@ inline auto is_taunted(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.taunt.is_active();
 }
 
+inline auto is_uproaring(ActivePokemon const pokemon) -> bool {
+	return bounded::holds_alternative(pokemon.m_flags.lock_in, bounded::detail::types<UproarCounter>{});
+}
+
 inline auto vanish_doubles_power(ActivePokemon const pokemon, Moves const move_name) -> bool {
 	auto const & variant = pokemon.m_flags.lock_in;
 	switch (move_name) {

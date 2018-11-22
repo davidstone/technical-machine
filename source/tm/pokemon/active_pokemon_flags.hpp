@@ -101,6 +101,7 @@ struct MutableActivePokemon;
 	friend auto is_tormented(ActivePokemon pokemon) -> bool; \
 	friend auto is_taunted(ActivePokemon pokemon) -> bool; \
 	friend auto toxic_ratio(ActivePokemon pokemon) -> decltype(std::declval<Toxic>().ratio_drained()); \
+	friend auto is_uproaring(ActivePokemon pokemon) -> bool; \
 	friend auto vanish_doubles_power(ActivePokemon pokemon, Moves move_name) -> bool; \
 	friend auto random_damage_multiplier(ActivePokemon pokemon) -> decltype(std::declval<RandomDamage>()())
 

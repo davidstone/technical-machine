@@ -22,7 +22,7 @@
 #include <tm/ability.hpp>
 #include <tm/weather.hpp>
 
-#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/active_pokemon.hpp>
 
 #include <tm/type/type.hpp>
 
@@ -30,12 +30,16 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-auto status_can_apply(Statuses const status, Ability const ability, Pokemon const & target, Weather const weather) {
+auto status_can_apply(Statuses const status, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) {
 	return
 		is_clear(get_status(target)) and
-		(ignores_blockers(ability) or !blocks_status(get_ability(target), status, weather)) and
+		(ignores_blockers(get_ability(user)) or !blocks_status(get_ability(target), status, weather)) and
 		!blocks_status(get_type(target), status) and
-		!weather.blocks_status(status);
+		!weather.blocks_status(status) and
+		(
+			(status != Statuses::sleep and status != Statuses::sleep_rest) or
+			(!is_uproaring(user) and !is_uproaring(target))
+		);
 }
 
 constexpr auto reflected_status(Statuses const status) -> bounded::optional<Statuses> {
@@ -103,10 +107,10 @@ auto Status::rest() -> void {
 	m_turns_already_slept = 0_bi;
 }
 
-auto apply(Statuses const status, Pokemon & user, Pokemon & target, Weather const weather) -> void {
+auto apply(Statuses const status, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {
 	assert(status != Statuses::clear);
 	assert(status != Statuses::sleep_rest);
-	if (status_can_apply(status, get_ability(user), target, weather)) {
+	if (status_can_apply(status, user, target, weather)) {
 		get_status(target).m_status = status;
 		if (status == Statuses::sleep) {
 			get_status(target).m_turns_already_slept = 0_bi;
@@ -118,11 +122,11 @@ auto apply(Statuses const status, Pokemon & user, Pokemon & target, Weather cons
 	}
 }
 
-auto apply(Statuses const status, Pokemon & target, Weather const weather) -> void {
+auto apply(Statuses const status, MutableActivePokemon target, Weather const weather) -> void {
 	apply(status, target, target, weather);
 }
 
-auto shift_status(Pokemon & user, Pokemon & target, Weather const weather) -> void {
+auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {
 	auto & status = get_status(user);
 	switch (status.name()) {
 		case Statuses::burn:

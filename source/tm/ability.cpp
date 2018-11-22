@@ -207,10 +207,10 @@ void activate_ability_on_switch(MutableActivePokemon switcher, MutableActivePoke
 			break;
 		}
 		case Ability::Drizzle:
-			weather.activate_rain(Weather::Duration::permanent);
+			weather.activate_rain(Weather::permanent);
 			break;
 		case Ability::Drought:
-			weather.activate_sun(Weather::Duration::permanent);
+			weather.activate_sun(Weather::permanent);
 			break;
 		case Ability::Forecast:	// TODO: fix this
 			break;
@@ -218,10 +218,10 @@ void activate_ability_on_switch(MutableActivePokemon switcher, MutableActivePoke
 			boost(stage(other), StatNames::ATK, -1_bi);
 			break;
 		case Ability::Sand_Stream:
-			weather.activate_sand(Weather::Duration::permanent);
+			weather.activate_sand(Weather::permanent);
 			break;
 		case Ability::Snow_Warning:
-			weather.activate_hail(Weather::Duration::permanent);
+			weather.activate_hail(Weather::permanent);
 			break;
 		case Ability::Trace:
 			break;

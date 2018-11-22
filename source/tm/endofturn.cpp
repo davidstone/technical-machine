@@ -39,15 +39,10 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 void end_of_turn6(Team & target, Weather const weather);
 void end_of_turn7(MutableActivePokemon pokemon);
 
-template<typename Integer>
-void decrement(Integer & n) {
-	if (n > 0)
-		--n;
-}
-
 }	// namespace
 
 void end_of_turn(Team & first, Team & last, Weather & weather, bool const first_shed_skin, bool const last_shed_skin) {
+	// TODO: Cure Pokemon of sleep if Uproar is active. Where is this effect ordered?
 	first.reset_end_of_turn();
 	last.reset_end_of_turn();
 	end_of_turn1(first);

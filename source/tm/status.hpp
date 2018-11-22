@@ -29,6 +29,7 @@
 namespace technicalmachine {
 
 enum class Ability : std::uint8_t;
+struct MutableActivePokemon;
 struct Pokemon;
 struct Weather;
 
@@ -60,8 +61,8 @@ struct Status {
 	}
 
 	auto rest() -> void;
-	friend auto apply(Statuses status, Pokemon & user, Pokemon & target, Weather weather) -> void;
-	friend auto shift_status(Pokemon & user, Pokemon & target, Weather weather) -> void;
+	friend auto apply(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
+	friend auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 
 	friend constexpr auto operator==(Status const lhs, Status const rhs) {
 		return
@@ -84,9 +85,9 @@ private:
 	SleepCounter m_turns_already_slept = bounded::none;
 };
 
-auto apply(Statuses status, Pokemon & user, Pokemon & target, Weather weather) -> void;
-auto shift_status(Pokemon & user, Pokemon & target, Weather weather) -> void;
-auto apply(Statuses status, Pokemon & target, Weather weather) -> void;
+auto apply(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
+auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
+auto apply(Statuses status, MutableActivePokemon target, Weather weather) -> void;
 auto is_clear(Status status) -> bool;
 auto is_frozen(Status status) -> bool;
 auto is_sleeping(Status status) -> bool;

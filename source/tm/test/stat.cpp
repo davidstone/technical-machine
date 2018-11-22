@@ -43,9 +43,9 @@ constexpr auto critical_hit = false;
 void attack_tests () {
 	std::cout << "\tRunning Attack tests.\n";
 	constexpr auto max_attack = 7368_bi;
-	Team attacker(max_pokemon_per_team);
+	auto attacker = Team(max_pokemon_per_team);
 
-	Level const level(100_bi);
+	auto const level = Level(100_bi);
 	attacker.add_pokemon(Species::Shuckle, level, Gender::male);
 	Pokemon & pokemon = attacker.pokemon();
 
@@ -63,11 +63,11 @@ void attack_tests () {
 void special_attack_tests () {
 	std::cout << "\tRunning Special Attack tests.\n";
 	constexpr auto max_special_attack = 4536_bi;
-	Weather weather;
-	weather.activate_sun(Weather::Duration::permanent);
-	Team attacker(max_pokemon_per_team);
+	auto weather = Weather{};
+	weather.activate_sun(Weather::permanent);
+	auto attacker = Team(max_pokemon_per_team);
 
-	Level const level(100_bi);
+	auto const level = Level(100_bi);
 	attacker.add_pokemon(Species::Deoxys_Attack, level, Gender::genderless);
 	Pokemon & pokemon = attacker.pokemon();
 
@@ -86,12 +86,12 @@ void max_defense_test() {
 	std::cout << "\t\tRunning max Defense test.\n";
 	constexpr auto max_defense = 3684_bi;
 
-	Team defender(max_pokemon_per_team);
-	Weather weather;
+	auto defender = Team(max_pokemon_per_team);
+	auto weather = Weather{};
 
-	Level const level(100_bi);
+	auto const level = Level(100_bi);
 	defender.add_pokemon(Species::Shuckle, level, Gender::male);
-	Pokemon & pokemon = defender.pokemon();
+	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(EV::max));
 	get_nature(pokemon) = Nature::Bold;
 
@@ -107,9 +107,9 @@ void min_defense_test() {
 	std::cout << "\t\tRunning min Defense test.\n";
 	constexpr auto min_defense = 1_bi;
 
-	Team defender(max_pokemon_per_team);
+	auto defender = Team(max_pokemon_per_team);
 
-	Level const level(1_bi);
+	auto const level = Level(1_bi);
 	defender.add_pokemon(Species::Combee, level, Gender::male);
 	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi));
@@ -132,11 +132,11 @@ void special_defense_tests () {
 	std::cout << "\tRunning Special Defense tests.\n";
 	constexpr auto max_special_defense = 3684_bi;
 
-	Team defender(max_pokemon_per_team);
-	Weather weather;
-	weather.activate_sand(Weather::Duration::permanent);
+	auto defender = Team(max_pokemon_per_team);
+	auto weather = Weather{};
+	weather.activate_sand(Weather::permanent);
 
-	Level const level(100_bi);
+	auto const level = Level(100_bi);
 	defender.add_pokemon(Species::Shuckle, level, Gender::male);
 	Pokemon & pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::SPD, EV(EV::max));
@@ -150,12 +150,12 @@ void special_defense_tests () {
 void speed_tests () {
 	std::cout << "\tRunning Speed tests.\n";
 	constexpr auto max_speed = 12096_bi;
-	Weather weather;
-	weather.activate_rain(Weather::Duration::permanent);
+	auto weather = Weather{};
+	weather.activate_rain(Weather::permanent);
 
-	Team team(max_pokemon_per_team);
+	auto team = Team(max_pokemon_per_team);
 
-	Level const level(100_bi);
+	auto const level = Level(100_bi);
 	team.add_pokemon(Species::Deoxys_Speed, level, Gender::genderless);
 	Pokemon & pokemon = team.pokemon();
 	set_stat_ev(pokemon, StatNames::SPE, EV(EV::max));
