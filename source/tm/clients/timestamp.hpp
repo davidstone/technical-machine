@@ -1,5 +1,4 @@
-// Construct a timestamp string
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,6 +21,7 @@
 
 namespace technicalmachine {
 
-std::string const & timestamp();
+// Not thread safe
+std::string timestamp();
 
 }	// namespace technicalmachine

@@ -1,5 +1,4 @@
-// Construct a timestamp string
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,28 +17,18 @@
 
 #include <tm/clients/timestamp.hpp>
 
+#include <cstring>
 #include <ctime>
-#include <iostream>
 
 namespace technicalmachine {
-namespace {
 
-std::string make_timestamp() {
-	#define SAMPLE_OUTPUT "2000-01-01 12:34:56"
+std::string timestamp() {
 	std::string result;
-	result.resize(sizeof(SAMPLE_OUTPUT));
+	result.resize(std::strlen("2000-01-01 12:34:56"));
 	std::time_t const current_time = std::time(nullptr);
-	tm const * const timeptr = localtime(&current_time);
-	std::strftime(&result.front(), result.size(), "%Y-%m-%d %H:%M:%S", timeptr);
+	tm const * const timeptr = std::localtime(&current_time);
+	std::strftime(result.data(), result.size(), "%Y-%m-%d %H:%M:%S", timeptr);
 	return result;
-}
-
-}	// namespace
-
-std::string const & timestamp() {
-	// TODO: Is this correct?
-	static auto const value = make_timestamp();
-	return value;
 }
 
 }	// namespace technicalmachine
