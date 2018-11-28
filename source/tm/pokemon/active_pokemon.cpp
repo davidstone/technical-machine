@@ -1,5 +1,5 @@
 // Flags for the active Pokemon
-// Copyright (C) 2017 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,6 +24,66 @@
 
 namespace technicalmachine {
 
+auto ActivePokemonFlags::reset_end_of_turn() -> void {
+	enduring = false;
+	flinched = false;
+	moved = false;
+	me_first_is_active = false;
+	is_loafing_turn = !is_loafing_turn;
+	is_protecting = false;
+	is_fully_paralyzed = false;
+	confusion.end_of_turn_reset();
+}
+
+auto ActivePokemonFlags::reset_switch() -> void {
+	// TODO: remove some of these when the foe switches, too
+	if (!bounded::holds_alternative(lock_in, bounded::detail::types<BatonPassing>{})) {
+		aqua_ring = false;
+		confusion = {};
+		is_cursed = false;
+		embargo = {};
+		has_focused_energy = false;
+		gastro_acid = false;
+		ingrained = false;
+		leech_seeded = false;
+		locked_on = false;
+		magnet_rise = {};
+		perish_song = {};
+		power_trick_is_active = false;
+		stage = {};
+		substitute = {};
+	}
+	attracted = false;
+	charged = false;
+	defense_curled = false;
+	destiny_bond = false;
+	disable = Disable{};
+	encore = {};
+	flash_fire = false;
+	flinched = false;
+	fully_trapped = false;
+	heal_block = {};
+	identified = false;
+	used_imprison = false;
+	last_used_move = {};
+	// Do I set to true or false? true makes it wrong when a fainted Pokemon is
+	// replaced; false makes it wrong otherwise
+	is_loafing_turn = false;
+	minimized = false;
+	me_first_is_active = false;
+	mud_sport = false;
+	is_having_a_nightmare = false;
+	partial_trap = {};
+	is_roosting = false;
+	slow_start = {};
+	stockpile = {};
+	is_tormented = false;
+	water_sport = false;
+	taunt = {};
+	toxic = {};
+	yawn = {};
+	lock_in = std::monostate{};
+}
 
 auto MutableActivePokemon::confuse() -> void {
 	if (!blocks_confusion(get_ability(*this))) {

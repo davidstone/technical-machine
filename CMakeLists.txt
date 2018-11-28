@@ -60,7 +60,6 @@ add_library(tm_common STATIC
 	source/tm/move/use_move.cpp
 
 	source/tm/pokemon/active_pokemon.cpp
-	source/tm/pokemon/active_pokemon_flags.cpp
 	source/tm/pokemon/collection.cpp
 	source/tm/pokemon/confusion.cpp
 	source/tm/pokemon/container.cpp

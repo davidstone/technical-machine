@@ -23,7 +23,6 @@
 #include <tm/wish.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
-#include <tm/pokemon/active_pokemon_flags.hpp>
 #include <tm/pokemon/collection.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
