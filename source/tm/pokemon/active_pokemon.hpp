@@ -265,6 +265,8 @@ private:
 	ActivePokemonFlags const & m_flags;
 };
 
+#undef TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS
+
 // A mutable reference to the currently active Pokemon
 struct MutableActivePokemon {
 	MutableActivePokemon(Pokemon & pokemon, ActivePokemonFlags & flags):
