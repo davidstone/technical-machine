@@ -453,11 +453,16 @@ void BattleParser::handle_message(InMessage message) {
 		// This should not be necessary, and it is in a weird format
 		// This at least tells me about the start of a substitute
 	} else if (type == "-status") {
-		std::cerr << message.remainder() << '\n';
-#if 0
-		auto const pokemon = message.next();
-		auto const status = message.next();
-#endif
+		auto const party = party_from_pokemon_id(message.next());
+		auto const status = parse_status(message.next());
+		auto const source = parse_hp_change_source(message);
+		// TODO: Do we want to break out Move from Miscellaneous?
+		bounded::visit(source, bounded::overload(
+			[](MainEffect) {},
+			[](FromConfusion) { throw std::runtime_error("Confusion cannot cause another status"); },
+			[&](FromMiscellaneous) { m_move_state.status(other(party), status); },
+			[&](auto const value) { m_battle.set_value_on_active(party, value); }
+		));
 	} else if (type == "swap") {
 #if 0
 		auto const pokemon = message.next();

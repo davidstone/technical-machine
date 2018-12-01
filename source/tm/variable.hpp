@@ -71,7 +71,8 @@ struct Variable {
 				break;
 		}
 	}
-	
+
+	// TODO: Handle Fangs
 	constexpr auto set_flinch(bool const set = true) {
 		m_value = BOUNDED_CONDITIONAL(set, 1_bi, 0_bi);
 	}
@@ -97,6 +98,27 @@ struct Variable {
 
 	constexpr auto psywave_damage(Level const level) const {
 		return bounded::max(1_bi, level() * static_cast<bounded::integer<50, 150>>(m_value) / 100_bi);
+	}
+	
+	constexpr void apply_status(Moves const move, Statuses const status) {
+		m_value = [=]() -> value_type {
+			switch (move) {
+				case Moves::Tri_Attack:
+					switch (status) {
+						case Statuses::burn: return 1_bi;
+						case Statuses::freeze: return 2_bi;
+						case Statuses::paralysis: return 3_bi;
+						default: throw std::runtime_error("Invalid Tri Attack status");
+					}
+				case Moves::Fire_Fang:
+				case Moves::Ice_Fang:
+				case Moves::Thunder_Fang:
+					// TODO: Handle flinch
+					return 1_bi;
+				default:
+					return 1_bi;
+			}
+		}();
 	}
 
 	constexpr auto tri_attack_status() const {

@@ -103,6 +103,10 @@ struct MoveState {
 		}
 		m_variable.set_phaze_index(team, species);
 	}
+	void status(Party const party, Statuses const status) {
+		validate(party);
+		m_variable.apply_status(*m_move, status);
+	}
 
 	auto complete() -> bounded::optional<Result> {
 		if (!m_party or !m_move) {
