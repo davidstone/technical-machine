@@ -103,7 +103,7 @@ void BattleFactory::handle_message(InMessage message) {
 		auto const player_id = message.next();
 		auto const username = message.next();
 		if (username == m_username) {
-			m_player_id.emplace(player_id);
+			m_party.emplace(make_party(player_id));
 		} else {
 			m_opponent.emplace(username);
 		}
@@ -134,11 +134,11 @@ void BattleFactory::handle_message(InMessage message) {
 	} else if (message.type() == "teampreview") {
 		// This appears to mean nothing
 	} else if (message.type() == "teamsize") {
-		auto const player_id = message.next();
-		if (!m_player_id) {
+		auto const party = make_party(message.next());
+		if (!m_party) {
 			std::cerr << "Received a teamsize message before receiving a player id.\n";
 		}
-		if (*m_player_id == player_id) {
+		if (*m_party == party) {
 			m_opponent_team_size.emplace(bounded::to_integer<TeamSize>(message.next()));
 		}
 	} else if (message.type() == "tier") {
@@ -156,8 +156,8 @@ bounded::optional<BattleParser> BattleFactory::make(boost::beast::websocket::str
 		std::cerr << "Did not receive opponent\n";
 		return bounded::none;
 	}
-	if (!m_player_id) {
-		std::cerr << "Did not receive player_id\n";
+	if (!m_party) {
+		std::cerr << "Did not receive party\n";
 		return bounded::none;
 	}
 	if (!m_type) {
@@ -184,17 +184,13 @@ bounded::optional<BattleParser> BattleFactory::make(boost::beast::websocket::str
 		std::cerr << "Unsupported generation " << *m_generation << '\n';
 		return bounded::none;
 	}
-	if (*m_player_id != "p1" and *m_player_id != "p2") {
-		std::cerr << "Invalid player id: " << *m_player_id << '\n';
-		return bounded::none;
-	}
 	return BattleParser(
 		websocket,
 		std::move(m_id),
 		std::move(m_username),
 		m_usage_stats,
 		m_evaluate,
-		make_party(*m_player_id),
+		*m_party,
 		*std::move(m_opponent),
 		m_depth,
 		m_random_engine,

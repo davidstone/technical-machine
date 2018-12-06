@@ -80,7 +80,7 @@ private:
 	Team m_team;
 	containers::vector<Clause> m_rules;
 	bounded::optional<std::string> m_opponent;
-	bounded::optional<std::string> m_player_id;
+	bounded::optional<Party> m_party;
 	bounded::optional<std::string> m_type;	// singles, doubles, triples
 	bounded::optional<std::string> m_tier;
 	bounded::optional<bounded::integer<1, 7>> m_generation;
