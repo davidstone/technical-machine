@@ -63,12 +63,7 @@ private:
 	}
 	
 	void move_to_active(std::list<BattleFactory>::iterator it, boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) {
-		auto const id = it->id();
-		if (auto battle = std::move(*it).make(websocket)) {
-			m_active.push_back(*std::move(battle));
-		} else {
-			std::cout << "Failed to create battle " << id << ".\n";
-		}
+		m_active.push_back(std::move(*it).make(websocket));
 		m_pending.erase(it);
 	}
 

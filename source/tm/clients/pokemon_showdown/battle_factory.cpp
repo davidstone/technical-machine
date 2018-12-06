@@ -168,43 +168,34 @@ void BattleFactory::handle_message(InMessage message) {
 	}
 }
 
-bounded::optional<BattleParser> BattleFactory::make(boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) && {
+BattleParser BattleFactory::make(boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) && {
 	assert(completed());
 	if (!m_opponent) {
-		std::cerr << "Did not receive opponent\n";
-		return bounded::none;
+		throw std::runtime_error("Did not receive opponent");
 	}
 	if (!m_party) {
-		std::cerr << "Did not receive party\n";
-		return bounded::none;
+		throw std::runtime_error("Did not receive party");
 	}
 	if (!m_type) {
-		std::cerr << "Did not receive battle format\n";
-		return bounded::none;
+		throw std::runtime_error("Did not receive battle format");
 	}
 	if (!m_tier) {
-		std::cerr << "Did not receive tier\n";
-		return bounded::none;
+		throw std::runtime_error("Did not receive tier");
 	}
 	if (!m_generation) {
-		std::cerr << "Did not receive generation\n";
-		return bounded::none;
+		throw std::runtime_error("Did not receive generation");
 	}
 	if (!m_opponent_team_size) {
-		std::cerr << "Did not receive opponent team size\n";
-		return bounded::none;
+		throw std::runtime_error("Did not receive opponent team size");
 	}
 	if (!m_opponent_starter) {
-		std::cerr << "Did not receive opponent's starting species\n";
-		return bounded::none;
+		throw std::runtime_error("Did not receive opponent's starting species");
 	}
 	if (*m_type != "singles") {
-		std::cerr << "Unsupported format " << *m_type << '\n';
-		return bounded::none;
+		throw std::runtime_error("Unsupported format " + *m_type);
 	}
 	if (*m_generation != 4) {
-		std::cerr << "Unsupported generation " << *m_generation << '\n';
-		return bounded::none;
+		throw std::runtime_error("Unsupported generation " + bounded::to_string(*m_generation));
 	}
 	auto make_foe_team = [&]{
 		auto team = Team(*m_opponent_team_size, false);

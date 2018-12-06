@@ -66,7 +66,7 @@ struct BattleFactory {
 		// TODO: Handle NvN battles
 		return m_ai_switched_in and m_opponent_starter;
 	}
-	bounded::optional<BattleParser> make(boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) &&;
+	BattleParser make(boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) &&;
 
 private:
 	enum class Clause { };
