@@ -51,12 +51,12 @@ struct Battle {
 	Battle(
 		Party const party,
 		std::string foe_name_,
-		Team team,
-		TeamSize const foe_size
+		Team ai_,
+		Team foe_
 	):
 		m_foe_name(std::move(foe_name_)),
-		m_ai(std::move(team)),
-		m_foe(foe_size),
+		m_ai(std::move(ai_)),
+		m_foe(std::move(foe_)),
 		m_ai_party(party)
 	{
 	}

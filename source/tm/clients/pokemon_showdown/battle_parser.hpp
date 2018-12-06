@@ -47,21 +47,21 @@ struct BattleParser {
 		std::string opponent,
 		unsigned const depth,
 		std::mt19937 random_engine,
-		Team team,
-		TeamSize opponent_team_size
+		Team ai,
+		Team foe
 	):
 		m_usage_stats(usage_stats),
 		m_websocket(websocket),
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_random_engine(random_engine),
-		m_slot_memory(team.size()),
+		m_slot_memory(ai.size()),
 		m_evaluate(evaluate),
 		m_battle(
 			party,
 			std::move(opponent),
-			std::move(team),
-			opponent_team_size
+			std::move(ai),
+			std::move(foe)
 		),
 		m_depth(depth)
 	{

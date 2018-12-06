@@ -186,6 +186,10 @@ bounded::optional<BattleParser> BattleFactory::make(boost::beast::websocket::str
 		std::cerr << "Unsupported generation " << *m_generation << '\n';
 		return bounded::none;
 	}
+	auto make_foe_team = [&]{
+		auto team = Team(*m_opponent_team_size, false);
+		return team;
+	};
 	return BattleParser(
 		websocket,
 		std::move(m_id),
@@ -197,7 +201,7 @@ bounded::optional<BattleParser> BattleFactory::make(boost::beast::websocket::str
 		m_depth,
 		m_random_engine,
 		std::move(m_team),
-		*m_opponent_team_size
+		make_foe_team()
 	);
 }
 
