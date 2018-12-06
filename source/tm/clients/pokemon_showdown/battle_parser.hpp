@@ -100,8 +100,12 @@ private:
 	bool m_replacing_fainted = false;
 };
 
-constexpr auto make_party(std::string_view player_id) {
-	return 	Party(BOUNDED_CONDITIONAL(player_id == "p1", 0_bi, 1_bi));
+constexpr auto make_party(std::string_view const player_id) {
+	return 	Party(
+		BOUNDED_CONDITIONAL(player_id == "p1", 0_bi,
+		player_id == "p2" ? 1_bi :
+		throw std::runtime_error("Invalid player id: " + std::string(player_id))
+	));
 }
 
 // This adds additional string scanning, but I don't think the performance
