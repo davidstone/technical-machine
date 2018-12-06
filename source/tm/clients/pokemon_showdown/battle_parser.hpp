@@ -128,5 +128,15 @@ inline auto parse_details(std::string_view details) {
 	return result{species, level, gender};
 }
 
+// TODO: Include HP
+struct ParsedSwitch {
+	Party party;
+	Species species;
+	Level level;
+	Gender gender;
+	Statuses status;
+};
+auto parse_switch(InMessage message) -> ParsedSwitch;
+
 }	// namespace ps
 }	// namespace technicalmachine

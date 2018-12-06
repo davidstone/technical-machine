@@ -415,16 +415,10 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-supereffective") {
 		// message.remainder() == POKEMON
 	} else if (type == "switch" or type == "drag") {
-		auto const party = party_from_pokemon_id(message.next(": "));
-		auto const nickname [[maybe_unused]] = message.next();
-		auto const details = parse_details(message.next());
-		auto const hp = message.next(' ');
-		static_cast<void>(hp);
-		auto const status = message.next();
-		static_cast<void>(status);
-		
-		if (m_battle.is_me(party)) {
-			auto const index = get_species_index(m_battle.ai(), details.species);
+		auto const parsed = parse_switch(message);
+
+		if (m_battle.is_me(parsed.party)) {
+			auto const index = get_species_index(m_battle.ai(), parsed.species);
 			if (m_replacing_fainted) {
 				m_slot_memory.replace_fainted(index);
 				m_replacing_fainted = false;
@@ -435,11 +429,11 @@ void BattleParser::handle_message(InMessage message) {
 
 		constexpr auto slot = 0;
 		if (type == "drag") {
-			auto const phazer_party = other(party);
-			m_move_state.phaze_index(phazer_party, get_team(m_battle, phazer_party), details.species);
-			m_battle.add_pokemon_from_phaze(party, slot, details.species, details.level, details.gender);
+			auto const phazer_party = other(parsed.party);
+			m_move_state.phaze_index(phazer_party, get_team(m_battle, phazer_party), parsed.species);
+			m_battle.add_pokemon_from_phaze(parsed.party, slot, parsed.species, parsed.level, parsed.gender);
 		} else {
-			m_battle.handle_send_out(party, slot, details.species, details.level, details.gender);
+			m_battle.handle_send_out(parsed.party, slot, parsed.species, parsed.level, parsed.gender);
 		}
 	} else if (type == "replace") {
 #if 0
@@ -568,6 +562,16 @@ void BattleParser::send_random_move() {
 
 void BattleParser::send_message(std::string_view const message) {
 	m_websocket.write(boost::asio::buffer(message));
+}
+
+auto parse_switch(InMessage message) -> ParsedSwitch {
+	auto const party = party_from_pokemon_id(message.next(": "));
+	auto const nickname [[maybe_unused]] = message.next();
+	auto const details = parse_details(message.next());
+	auto const hp = message.next(' ');
+	static_cast<void>(hp);
+	auto const status = parse_status(message.next());
+	return ParsedSwitch{party, details.species, details.level, details.gender, status};
 }
 
 }	// namespace ps
