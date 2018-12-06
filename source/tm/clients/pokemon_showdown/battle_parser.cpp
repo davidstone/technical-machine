@@ -108,7 +108,7 @@ auto to_real_hp(bool const is_me, Pokemon const & changer, std::string_view cons
 	return HP::current_type(bounded::max(1_bi, max_hp * remaining_visible_hp / max_visible_hp));
 }
 
-auto parse_status(std::string_view const str) {
+constexpr auto parse_status(std::string_view const str) {
 	return
 		(str == "") ? Statuses::clear :
 		(str == "fnt") ? Statuses::clear :
