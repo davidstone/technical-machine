@@ -134,12 +134,14 @@ void BattleFactory::handle_message(InMessage message) {
 	} else if (message.type() == "teampreview") {
 		// This appears to mean nothing
 	} else if (message.type() == "teamsize") {
-		auto const party = make_party(message.next());
 		if (!m_party) {
-			std::cerr << "Received a teamsize message before receiving a player id.\n";
+			throw std::runtime_error("Received a teamsize message before receiving a player id");
 		}
-		if (*m_party == party) {
-			m_opponent_team_size.emplace(bounded::to_integer<TeamSize>(message.next()));
+		auto const party = make_party(message.next());
+		auto const team_size = bounded::to_integer<TeamSize>(message.next());
+		// TODO: validate that the received teamsize matches my team size
+		if (*m_party != party) {
+			m_opponent_team_size.emplace(team_size);
 		}
 	} else if (message.type() == "tier") {
 		m_tier.emplace(message.next());
