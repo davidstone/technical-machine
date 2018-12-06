@@ -63,7 +63,8 @@ struct BattleFactory {
 	void handle_message(InMessage message);
 	
 	bool completed() const {
-		return m_completed;
+		// TODO: Handle NvN battles
+		return m_ai_switched_in and m_opponent_starter;
 	}
 	bounded::optional<BattleParser> make(boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) &&;
 
@@ -85,7 +86,8 @@ private:
 	bounded::optional<std::string> m_tier;
 	bounded::optional<bounded::integer<1, 7>> m_generation;
 	bounded::optional<TeamSize> m_opponent_team_size;
-	bool m_completed = false;
+	bounded::optional<ParsedSwitch> m_opponent_starter;
+	bool m_ai_switched_in = false;
 };
 
 }	// namespace ps

@@ -130,7 +130,23 @@ void BattleFactory::handle_message(InMessage message) {
 	} else if (message.type() == "seed") {
 		// I have no idea what this is
 	} else if (message.type() == "start") {
-		m_completed = true;
+		// We can't actually start the battle until we see the initial switch-in
+	} else if (message.type() == "switch") {
+		if (!m_party) {
+			throw std::runtime_error("Received a switch message before receiving a party");
+		}
+		auto const parsed = parse_switch(message);
+		if (*m_party == parsed.party) {
+			if (m_ai_switched_in) {
+				throw std::runtime_error("AI switched in twice");
+			}
+			m_ai_switched_in = true;
+		} else {
+			if (m_opponent_starter) {
+				throw std::runtime_error("Foe switched in twice");
+			}
+			m_opponent_starter.emplace(parsed);
+		}
 	} else if (message.type() == "teampreview") {
 		// This appears to mean nothing
 	} else if (message.type() == "teamsize") {
@@ -153,7 +169,7 @@ void BattleFactory::handle_message(InMessage message) {
 }
 
 bounded::optional<BattleParser> BattleFactory::make(boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) && {
-	assert(m_completed);
+	assert(completed());
 	if (!m_opponent) {
 		std::cerr << "Did not receive opponent\n";
 		return bounded::none;
@@ -178,6 +194,10 @@ bounded::optional<BattleParser> BattleFactory::make(boost::beast::websocket::str
 		std::cerr << "Did not receive opponent team size\n";
 		return bounded::none;
 	}
+	if (!m_opponent_starter) {
+		std::cerr << "Did not receive opponent's starting species\n";
+		return bounded::none;
+	}
 	if (*m_type != "singles") {
 		std::cerr << "Unsupported format " << *m_type << '\n';
 		return bounded::none;
@@ -188,6 +208,8 @@ bounded::optional<BattleParser> BattleFactory::make(boost::beast::websocket::str
 	}
 	auto make_foe_team = [&]{
 		auto team = Team(*m_opponent_team_size, false);
+		auto const pokemon = *m_opponent_starter;
+		team.add_pokemon(pokemon.species, pokemon.level, pokemon.gender);
 		return team;
 	};
 	return BattleParser(
