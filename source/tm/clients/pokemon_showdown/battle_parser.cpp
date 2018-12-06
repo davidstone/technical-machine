@@ -160,7 +160,7 @@ auto parse_hp_change_source(InMessage message) {
 			source_type == "psn" or
 			source_type == "tox" or
 			source_type == "Leech Seed" or
-			source_type == "Move" or
+			source_type == "move" or
 			source_type == "Recoil" or
 			source_type == "Spikes" or
 			source_type == "Stealth Rock" or
