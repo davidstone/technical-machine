@@ -40,7 +40,9 @@ namespace technicalmachine {
 using namespace bounded::literal;
 namespace {
 
-bool affects_target(Type const & move_type, ActivePokemon target, Weather weather);
+bool affects_target(Type const & move_type, ActivePokemon const target, Weather const weather) {
+	return !Effectiveness(move_type, target).has_no_effect() and (move_type != Type::Ground or grounded(target, weather));
+}
 
 auto reflect_is_active(Moves const move, Team const & defender) {
 	return defender.screens.reflect() and is_physical(move);
@@ -167,10 +169,6 @@ bool resistance_berry_activates(Item const item, Type const type, Effectiveness 
 		}
 	}
 	return false;
-}
-
-bool affects_target(Type const & move_type, ActivePokemon const target, Weather const weather) {
-	return !Effectiveness(move_type, target).has_no_effect() and (move_type != Type::Ground or grounded(target, weather));
 }
 
 constexpr bool cannot_ko(Moves const move) {
