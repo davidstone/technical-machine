@@ -121,8 +121,53 @@ auto calculate_expert_belt_modifier(Item const item, Effectiveness const & effec
 }
 
 
-bool resistance_berry_activates (Item item, Type type, Effectiveness const & effectiveness);
-
+bool resistance_berry_activates(Item const item, Type const type, Effectiveness const effectiveness) {
+	// Perhaps I should create some sort of item function that returns the type
+	// that the item grants resistance toward (and some sort of guard type to
+	// indicate that the item does not grant resistance). Then I can
+	// `return type == returned_type;`
+	if (item == Item::Chilan_Berry)
+		return type == Type::Normal;
+	else if (effectiveness.is_super_effective()) {
+		switch (item) {
+			case Item::Babiri_Berry:
+				return type == Type::Steel;
+			case Item::Charti_Berry:
+				return type == Type::Rock;
+			case Item::Chople_Berry:
+				return type == Type::Fighting;
+			case Item::Coba_Berry:
+				return type == Type::Flying;
+			case Item::Colbur_Berry:
+				return type == Type::Dark;
+			case Item::Haban_Berry:
+				return type == Type::Dragon;
+			case Item::Kasib_Berry:
+				return type == Type::Ghost;
+			case Item::Kebia_Berry:
+				return type == Type::Poison;
+			case Item::Occa_Berry:
+				return type == Type::Fire;
+			case Item::Passho_Berry:
+				return type == Type::Water;
+			case Item::Payapa_Berry:
+				return type == Type::Psychic;
+			case Item::Rindo_Berry:
+				return type == Type::Grass;
+			case Item::Shuca_Berry:
+				return type == Type::Ground;
+			case Item::Tanga_Berry:
+				return type == Type::Bug;
+			case Item::Wacan_Berry:
+				return type == Type::Electric;
+			case Item::Yache_Berry:
+				return type == Type::Ice;
+			default:
+				return false;
+		}
+	}
+	return false;
+}
 
 bool affects_target(Type const & move_type, ActivePokemon const target, Weather const weather) {
 	return !Effectiveness(move_type, target).has_no_effect() and (move_type != Type::Ground or grounded(target, weather));
@@ -260,55 +305,4 @@ void recoil(Pokemon & user, damage_type const damage, bounded::checked_integer<1
 	}
 }
 
-namespace {
-
-bool resistance_berry_activates(Item const item, Type const type, Effectiveness const & effectiveness) {
-	// Perhaps I should create some sort of item function that returns the type
-	// that the item grants resistance toward (and some sort of guard type to
-	// indicate that the item does not grant resistance). Then I can
-	// `return type == returned_type;`
-	if (item == Item::Chilan_Berry)
-		return type == Type::Normal;
-	else if (effectiveness.is_super_effective()) {
-		switch (item) {
-			case Item::Babiri_Berry:
-				return type == Type::Steel;
-			case Item::Charti_Berry:
-				return type == Type::Rock;
-			case Item::Chople_Berry:
-				return type == Type::Fighting;
-			case Item::Coba_Berry:
-				return type == Type::Flying;
-			case Item::Colbur_Berry:
-				return type == Type::Dark;
-			case Item::Haban_Berry:
-				return type == Type::Dragon;
-			case Item::Kasib_Berry:
-				return type == Type::Ghost;
-			case Item::Kebia_Berry:
-				return type == Type::Poison;
-			case Item::Occa_Berry:
-				return type == Type::Fire;
-			case Item::Passho_Berry:
-				return type == Type::Water;
-			case Item::Payapa_Berry:
-				return type == Type::Psychic;
-			case Item::Rindo_Berry:
-				return type == Type::Grass;
-			case Item::Shuca_Berry:
-				return type == Type::Ground;
-			case Item::Tanga_Berry:
-				return type == Type::Bug;
-			case Item::Wacan_Berry:
-				return type == Type::Electric;
-			case Item::Yache_Berry:
-				return type == Type::Ice;
-			default:
-				return false;
-		}
-	}
-	return false;
-}
-
-}	// namespace
 }	// namespace technicalmachine
