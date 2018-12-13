@@ -50,6 +50,10 @@ struct Variable {
 	constexpr auto acupressure_stat_boost() const {
 		return static_cast<StatNames>(m_value);
 	}
+	
+	constexpr auto confuse() {
+		m_value = 1_bi;
+	}
 
 	auto fang_side_effects(MutableActivePokemon user, MutableActivePokemon target, Weather const weather, Statuses const status) const {
 		switch (m_value.value()) {
