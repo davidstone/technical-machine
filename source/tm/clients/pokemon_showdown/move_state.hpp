@@ -79,6 +79,10 @@ struct MoveState {
 		}
 		m_awakens = true;
 	}
+	void confuse(Party const party) {
+		validate(party);
+		m_variable.confuse();
+	}
 	void critical_hit(Party const party) {
 		validate(party);
 		m_critical_hit = true;
