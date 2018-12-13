@@ -22,43 +22,31 @@
 
 #include <bounded/optional.hpp>
 
-#include <type_traits>
-
 namespace technicalmachine {
 using namespace bounded::literal;
-
-// TODO: fold expression
-template<typename T, T value_to_find, T... ts>
-struct Any;
-template<typename T, T value_to_find, T first, T... ts>
-struct Any<T, value_to_find, first, ts...> : std::integral_constant<bool, value_to_find == first or Any<T, value_to_find, ts...>::value> {};
-template<typename T, T value_to_find>
-struct Any<T, value_to_find> : std::integral_constant<bool, false> {};
-
-
 
 enum class CounterOperations { is_active, turns_active, advance_one_turn, advance_one_turn_deactivated, activate };
 
 template<intmax_t max_turns, CounterOperations... operations>
 struct EndOfTurnCounter {
 	constexpr auto is_active() const {
-		static_assert(Any<CounterOperations, CounterOperations::is_active, operations...>::value, "This type does not support checking if it is active.");
+		static_assert((... or (operations == CounterOperations::is_active)));
 		return static_cast<bool>(m_turns_active);
 	}
 	constexpr auto turns_active() const {
-		static_assert(Any<CounterOperations, CounterOperations::turns_active, operations...>::value, "This type does not support querying the turn count.");
+		static_assert((... or (operations == CounterOperations::turns_active)));
 		return m_turns_active;
 	}
 	constexpr auto activate() {
-		static_assert(Any<CounterOperations, CounterOperations::activate, operations...>::value, "This type does not support activation.");
+		static_assert((... or (operations == CounterOperations::activate)));
 		m_turns_active = 0_bi;
 	}
 	constexpr auto advance_one_turn() {
-		static_assert(Any<CounterOperations, CounterOperations::advance_one_turn, operations...>::value, "This type does not support advancing the counter by one.");
+		static_assert((... or (operations == CounterOperations::advance_one_turn)));
 		advance_one_turn_impl();
 	}
 	constexpr auto advance_one_turn_deactivated() {
-		static_assert(Any<CounterOperations, CounterOperations::advance_one_turn_deactivated, operations...>::value, "This type does not support advancing the counter by one and returning whether it just deactivated.");
+		static_assert((... or (operations == CounterOperations::advance_one_turn_deactivated)));
 		return advance_one_turn_impl();
 	}
 	friend constexpr auto operator==(EndOfTurnCounter const lhs, EndOfTurnCounter const rhs) {
