@@ -17,34 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/pokemon/confusion.hpp>
-#include <tm/pokemon/pokemon.hpp>
-
-namespace technicalmachine {
-// min_duration = 2;
-// max_duration = 5;
-
-namespace {
-auto register_self_hit(Pokemon &) -> void {
-	// TODO: write this
-}
-}	// namespace
-
-auto Confusion::do_turn(Pokemon & pokemon) -> void {
-	increment();
-	if (is_active() and m_is_hitting_self) {
-		register_self_hit(pokemon);
-	}
-}
-
-auto Confusion::increment() -> void {
-	if (!is_active()) {
-		return;
-	}
-	if (*m_turns_spent_confused == max_duration) {
-		m_turns_spent_confused = bounded::none;
-	} else {
-		++*m_turns_spent_confused;
-	}
-}
-
-}	// namespace technicalmachine

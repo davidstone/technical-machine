@@ -23,7 +23,6 @@
 #include <bounded/optional.hpp>
 
 namespace technicalmachine {
-struct Pokemon;
 using namespace bounded::literal;
 
 struct Confusion {
@@ -38,12 +37,17 @@ struct Confusion {
 		m_turns_spent_confused = 0_bi;
 	}
 
-	auto do_turn(Pokemon & pokemon) -> void;
-	constexpr auto end_of_turn_reset() {
-		m_is_hitting_self = false;
-	}
-	constexpr auto hit_self() {
-		m_is_hitting_self = true;
+	constexpr auto do_turn() {
+		// min_duration = 2;
+		// max_duration = 5;
+		if (!is_active()) {
+			return;
+		}
+		if (*m_turns_spent_confused == max_duration) {
+			m_turns_spent_confused = bounded::none;
+		} else {
+			++*m_turns_spent_confused;
+		}
 	}
 
 	friend constexpr auto operator==(Confusion const lhs, Confusion const rhs) {
@@ -51,11 +55,9 @@ struct Confusion {
 	}
 
 private:
-	auto increment() -> void;
 	friend struct Evaluate;
 	static constexpr auto max_duration = 4;
 	bounded::optional<bounded::integer<0, max_duration>> m_turns_spent_confused = bounded::none;
-	bool m_is_hitting_self = false;
 };
 
 }	// namespace technicalmachine

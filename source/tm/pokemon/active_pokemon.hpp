@@ -315,7 +315,7 @@ struct MutableActivePokemon {
 	}
 	auto confuse() -> void;
 	auto handle_confusion() {
-		m_flags.confusion.do_turn(*this);
+		m_flags.confusion.do_turn();
 	}
 	auto curse() {
 		m_flags.is_cursed = true;

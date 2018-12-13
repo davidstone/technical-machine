@@ -32,7 +32,6 @@ auto ActivePokemonFlags::reset_end_of_turn() -> void {
 	is_loafing_turn = !is_loafing_turn;
 	is_protecting = false;
 	is_fully_paralyzed = false;
-	confusion.end_of_turn_reset();
 }
 
 auto ActivePokemonFlags::reset_switch() -> void {
