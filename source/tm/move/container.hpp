@@ -94,6 +94,9 @@ using ::containers::detail::common::operator==;
 
 template<typename... MaybePP>
 auto add_seen_move(MoveContainer & container, Moves const move, MaybePP... pp) {
+	if (move == Moves::Pass or move == Moves::Struggle or move == Moves::Hit_Self) {
+		return;
+	}
 	if (containers::any_equal(container, move)) {
 		return;
 	}
