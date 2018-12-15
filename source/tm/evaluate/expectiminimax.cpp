@@ -151,32 +151,32 @@ double generic_flag_branch(BaseFlag const first_flags, BaseFlag const last_flags
 
 
 
-struct MissFlag {
-	constexpr explicit MissFlag(bool const miss_):
+struct Miss {
+	constexpr explicit Miss(bool const miss_):
 		miss(miss_)
 	{
 	}
 	bool const miss;
 };
-struct AwakenFlag : MissFlag {
-	constexpr explicit AwakenFlag(MissFlag const miss_, bool const awaken_):
-		MissFlag(miss_),
+struct Awaken : Miss {
+	constexpr explicit Awaken(Miss const miss_, bool const awaken_):
+		Miss(miss_),
 		awaken(awaken_)
 	{
 	}
 	bool const awaken;
 };
-struct CriticalHitFlag : AwakenFlag {
-	constexpr explicit CriticalHitFlag(AwakenFlag const awaken_, bool const critical_hit_):
-		AwakenFlag(awaken_),
+struct CriticalHit : Awaken {
+	constexpr explicit CriticalHit(Awaken const awaken_, bool const critical_hit_):
+		Awaken(awaken_),
 		critical_hit(critical_hit_)
 	{
 	}
 	bool const critical_hit;
 };
-struct ShedSkinFlag : CriticalHitFlag {
-	constexpr explicit ShedSkinFlag(CriticalHitFlag const critical_hit_, bool const shed_skin_):
-		CriticalHitFlag(critical_hit_),
+struct ShedSkin : CriticalHit {
+	constexpr explicit ShedSkin(CriticalHit const critical_hit_, bool const shed_skin_):
+		CriticalHit(critical_hit_),
 		shed_skin(shed_skin_)
 	{
 	}
@@ -317,7 +317,7 @@ auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last,
 	return finish_end_of_turn(first, last, weather, evaluate, depth);
 };
 
-double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, Depth const depth, ShedSkinFlag const first_flag, ShedSkinFlag const last_flag) {
+double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, Depth const depth, ShedSkin const first_flag, ShedSkin const last_flag) {
 	end_of_turn(first, last, weather, first_flag.shed_skin, last_flag.shed_skin);
 	if (auto const won = Evaluate::win(first, last)) {
 		return *won;
@@ -331,7 +331,7 @@ double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const
 }
 
 
-double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Evaluate const evaluate, Depth const depth, ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
+double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Evaluate const evaluate, Depth const depth, ShedSkin const team_flag, ShedSkin const other_flag) {
 	auto get_flag = [&](auto const & match) {
 		return std::addressof(match) == std::addressof(team) ? team_flag : other_flag;
 	};
@@ -341,7 +341,7 @@ double end_of_turn_order_branch(Team const & team, Team const & other, Faster co
 }
 
 
-auto use_move_branch_inner(Variable const last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+auto use_move_branch_inner(Variable const last_variable, CriticalHit const first_flags, CriticalHit const last_flags) {
 	return [=](Team first, Moves, Team last, Moves const last_move, Weather weather, Evaluate const evaluate, Depth const depth) {
 		// TODO: properly handle used move here
 		// TODO: implement properly
@@ -353,10 +353,10 @@ auto use_move_branch_inner(Variable const last_variable, CriticalHitFlag const f
 		}
 
 		auto const teams = faster_pokemon(first, last, weather);
-		auto const end_of_turn_order = [&](ShedSkinFlag const team_flag, ShedSkinFlag const other_flag) {
+		auto const end_of_turn_order = [&](ShedSkin const team_flag, ShedSkin const other_flag) {
 			return end_of_turn_order_branch(first, last, teams, weather, evaluate, depth, team_flag, other_flag);
 		};
-		return generic_flag_branch<ShedSkinFlag>(
+		return generic_flag_branch<ShedSkin>(
 			first_flags,
 			last_flags,
 			[&](auto const is_first) { return shed_skin_probability(is_first ? first.pokemon() : last.pokemon()); },
@@ -365,7 +365,7 @@ auto use_move_branch_inner(Variable const last_variable, CriticalHitFlag const f
 	};
 }
 
-auto use_move_branch_outer(Moves const last_move, Variable const first_variable, Variable const last_variable, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+auto use_move_branch_outer(Moves const last_move, Variable const first_variable, Variable const last_variable, CriticalHit const first_flags, CriticalHit const last_flags) {
 	return [=](Team first, Moves const first_move, Team last, Moves, Weather weather, Evaluate const evaluate, Depth const depth) {
 		// TODO: implement properly
 		constexpr auto first_damaged = false;
@@ -386,7 +386,7 @@ auto use_move_branch_outer(Moves const last_move, Variable const first_variable,
 	};
 };
 
-double use_move_branch(Team first, Moves const first_move, Team last, Moves const last_move, Variable const first_variable, Variable const last_variable, Weather weather, Evaluate const evaluate, Depth const depth, CriticalHitFlag const first_flags, CriticalHitFlag const last_flags) {
+double use_move_branch(Team first, Moves const first_move, Team last, Moves const last_move, Variable const first_variable, Variable const last_variable, Weather weather, Evaluate const evaluate, Depth const depth, CriticalHit const first_flags, CriticalHit const last_flags) {
 #if 0
 	auto const initial_last_hp = get_hp(last.pokemon());
 	auto const last_damaged = is_damaging(first_move) ? bounded::max(get_hp(last.pokemon()).current() - last_hp.current(), 0_bi) : 0_bi;
@@ -409,17 +409,17 @@ double use_move_branch(Team first, Moves const first_move, Team last, Moves cons
 
 
 
-double random_move_effects_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, AwakenFlag const first_flags, AwakenFlag const last_flags) {
+double random_move_effects_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, Awaken const first_flags, Awaken const last_flags) {
 	double score = 0.0;
 
 	auto const first_variables = all_probabilities(first_move, last.size());
 	auto const last_variables = all_probabilities(last_move, first.size());
 	for (auto const & first_variable : first_variables) {
 		for (auto const & last_variable : last_variables) {
-			auto const use_move_branch_adaptor = [&](CriticalHitFlag first_flags_, CriticalHitFlag last_flags_) {
+			auto const use_move_branch_adaptor = [&](CriticalHit first_flags_, CriticalHit last_flags_) {
 				return use_move_branch(first, first_move, last, last_move, first_variable.variable, last_variable.variable, weather, evaluate, depth, first_flags_, last_flags_);
 			};
-			score += last_variable.probability * first_variable.probability * generic_flag_branch<CriticalHitFlag>(
+			score += last_variable.probability * first_variable.probability * generic_flag_branch<CriticalHit>(
 				first_flags,
 				last_flags,
 				[&](auto const is_first) { return can_critical_hit(is_first ? first_move : last_move) ? (1.0 / 16.0) : 0.0; },
@@ -452,11 +452,11 @@ double accuracy_branch(Team const & first, Moves const first_move, Team const & 
 			if (p2 == 0.0) {
 				continue;
 			}
-			average_score += p1 * p2 * generic_flag_branch<AwakenFlag>(
-				MissFlag(first_flag),
-				MissFlag(last_flag),
+			average_score += p1 * p2 * generic_flag_branch<Awaken>(
+				Miss(first_flag),
+				Miss(last_flag),
 				[&](auto const is_first) { return awaken_probability(is_first ? first.pokemon() : last.pokemon()); },
-				[&](AwakenFlag const first_awaken, AwakenFlag const last_awaken) { return random_move_effects_branch(first, first_move, last, last_move, weather, evaluate, depth, first_awaken, last_awaken); }
+				[&](Awaken const first_awaken, Awaken const last_awaken) { return random_move_effects_branch(first, first_move, last, last_move, weather, evaluate, depth, first_awaken, last_awaken); }
 			);
 		}
 	}
