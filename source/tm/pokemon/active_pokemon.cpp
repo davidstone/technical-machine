@@ -105,7 +105,7 @@ auto MutableActivePokemon::advance_lock_in() -> void {
 }
 
 auto MutableActivePokemon::perish_song_turn() -> void {
-	bool const faints_this_turn = m_flags.perish_song.advance_one_turn_deactivated();
+	bool const faints_this_turn = m_flags.perish_song.advance_one_turn();
 	if (faints_this_turn) {
 		faint();
 	}
@@ -138,7 +138,7 @@ auto MutableActivePokemon::release_stockpile() -> bounded::integer<0, Stockpile:
 }
 
 auto MutableActivePokemon::try_to_activate_yawn(Weather const weather) -> void {
-	bool const put_to_sleep = m_flags.yawn.advance_one_turn_deactivated();
+	bool const put_to_sleep = m_flags.yawn.advance_one_turn();
 	if (put_to_sleep) {
 		apply(Statuses::sleep, *this, weather);
 	}

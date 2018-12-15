@@ -21,6 +21,6 @@
 
 namespace technicalmachine {
 
-using SlowStart = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::advance_one_turn>;
+using SlowStart = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::advance_one_turn_fixed>;
 
 }	// namespace technicalmachine

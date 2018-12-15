@@ -21,6 +21,6 @@
 
 namespace technicalmachine {
 
-using YawnCounter = EndOfTurnCounter<1, CounterOperations::advance_one_turn_deactivated, CounterOperations::activate>;
+using YawnCounter = EndOfTurnCounter<1, CounterOperations::advance_one_turn_fixed, CounterOperations::activate>;
 
 }	// namespace technicalmachine

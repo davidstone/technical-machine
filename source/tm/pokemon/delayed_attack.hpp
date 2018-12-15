@@ -22,6 +22,6 @@
 
 namespace technicalmachine {
 
-using DelayedAttack = EndOfTurnCounter<2, CounterOperations::activate, CounterOperations::advance_one_turn_deactivated>;
+using DelayedAttack = EndOfTurnCounter<2, CounterOperations::activate, CounterOperations::advance_one_turn_fixed>;
 
 }	// namespace technicalmachine

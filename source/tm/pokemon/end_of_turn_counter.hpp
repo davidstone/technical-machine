@@ -25,7 +25,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-enum class CounterOperations { is_active, turns_active, advance_one_turn, advance_one_turn_deactivated, activate };
+enum class CounterOperations { is_active, turns_active, advance_one_turn_fixed, advance_one_turn_variable, activate };
 
 template<intmax_t max_turns, CounterOperations... operations>
 struct EndOfTurnCounter {
@@ -42,26 +42,24 @@ struct EndOfTurnCounter {
 		m_turns_active = 0_bi;
 	}
 	constexpr auto advance_one_turn() {
-		static_assert((... or (operations == CounterOperations::advance_one_turn)));
-		advance_one_turn_impl();
-	}
-	constexpr auto advance_one_turn_deactivated() {
-		static_assert((... or (operations == CounterOperations::advance_one_turn_deactivated)));
-		return advance_one_turn_impl();
+		constexpr auto is_fixed = (... or (operations == CounterOperations::advance_one_turn_fixed));
+		constexpr auto is_variable = (... or (operations == CounterOperations::advance_one_turn_variable));
+		static_assert(is_fixed xor is_variable);
+		if (m_turns_active and *m_turns_active != bounded::constant<max_turns>) {
+			++*m_turns_active;
+		} else {
+			m_turns_active = bounded::none;
+		}
+
+		if constexpr (is_fixed) {
+			return static_cast<bool>(m_turns_active);
+		}
 	}
 	friend constexpr auto operator==(EndOfTurnCounter const lhs, EndOfTurnCounter const rhs) {
 		return lhs.m_turns_active == rhs.m_turns_active;
 	}
 	
 private:
-	constexpr auto advance_one_turn_impl() {
-		if (m_turns_active and *m_turns_active != bounded::constant<max_turns>) {
-			++*m_turns_active;
-		} else {
-			m_turns_active = bounded::none;
-		}
-		return static_cast<bool>(m_turns_active);
-	}
 	using Counter = bounded::optional<bounded::integer<0, max_turns>>;
 	Counter m_turns_active = bounded::none;
 };

@@ -21,6 +21,6 @@
 
 namespace technicalmachine {
 
-using HealBlock = EndOfTurnCounter<5, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
+using HealBlock = EndOfTurnCounter<5, CounterOperations::is_active, CounterOperations::advance_one_turn_fixed, CounterOperations::activate>;
 
 }	// namespace technicalmachine

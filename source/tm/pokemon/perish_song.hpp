@@ -21,6 +21,6 @@
 
 namespace technicalmachine {
 
-using PerishSong = EndOfTurnCounter<2, CounterOperations::is_active, CounterOperations::advance_one_turn_deactivated, CounterOperations::activate>;
+using PerishSong = EndOfTurnCounter<2, CounterOperations::is_active, CounterOperations::advance_one_turn_fixed, CounterOperations::activate>;
 
 }	// namespace technicalmachine

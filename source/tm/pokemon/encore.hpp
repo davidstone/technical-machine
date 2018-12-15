@@ -21,6 +21,6 @@
 
 namespace technicalmachine {
 
-using EncoreCounter = EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
+using EncoreCounter = EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::advance_one_turn_variable, CounterOperations::activate>;
 
 }	// namespace technicalmachine

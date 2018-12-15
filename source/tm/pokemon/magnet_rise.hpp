@@ -21,6 +21,6 @@
 
 namespace technicalmachine {
 
-using MagnetRise = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::turns_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
+using MagnetRise = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::turns_active, CounterOperations::advance_one_turn_fixed, CounterOperations::activate>;
  
 }	// namespace technicalmachine

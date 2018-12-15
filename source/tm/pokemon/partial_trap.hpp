@@ -39,7 +39,7 @@ struct PartialTrap {
 		return lhs.m_base == rhs.m_base;
 	}
 private:
-	EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::activate, CounterOperations::advance_one_turn> m_base;
+	EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::activate, CounterOperations::advance_one_turn_variable> m_base;
 };
 
 }	// namespace technicalmachine

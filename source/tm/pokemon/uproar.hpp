@@ -21,6 +21,6 @@
 
 namespace technicalmachine {
 
-using UproarCounter = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::advance_one_turn, CounterOperations::activate>;
+using UproarCounter = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::advance_one_turn_variable, CounterOperations::activate>;
 
 }	// namespace technicalmachine
