@@ -1099,10 +1099,12 @@ auto call_move(Team & user, Moves const move_name, bool const user_damaged, Team
 	if (!is_switch(move_name) and is_sleeping(get_status(user_pokemon))) {
 		user_pokemon.increase_sleep_counter(awakens);
 	}
+	// Need the side-effect from recharge
+	auto const is_recharging = user_pokemon.recharge();
 	if (!can_execute_move(user_pokemon, move, target_pokemon, weather)) {
 		return;
 	}
-	if (user_pokemon.recharge()) {
+	if (is_recharging) {
 		return;
 	}
 
