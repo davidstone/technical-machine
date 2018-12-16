@@ -224,10 +224,6 @@ bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon 
 			execute = false;
 		}
 	}
-
-	if (user.recharge()) {
-		execute = false;
-	}
 	return execute;
 }
 

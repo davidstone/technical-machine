@@ -1102,6 +1102,9 @@ auto call_move(Team & user, Moves const move_name, bool const user_damaged, Team
 	if (!can_execute_move(user_pokemon, move, target_pokemon, weather)) {
 		return;
 	}
+	if (user_pokemon.recharge()) {
+		return;
+	}
 
 	if (is_regular(move_name) and !is_locked_in_by_move(user_pokemon)) {
 		find_regular_move(all_moves(user_pokemon).regular(), move_name).decrement_pp(get_ability(target_pokemon));
