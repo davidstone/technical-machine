@@ -185,31 +185,23 @@ bool is_blocked_by_freeze(Pokemon const & user, Moves const move) {
 	return is_frozen(get_status(user)) and !is_usable_while_frozen(move);
 }
 
-bool is_blocked_by_sleep(Moves const move) {
+bool is_blocked_by_sleep(Pokemon const & pokemon, Moves const move) {
 	switch (move) {
 		case Moves::Sleep_Talk:
 		case Moves::Snore:
 			return false;
 		default:
-			return true;
+			return is_sleeping(get_status(pokemon));
 	}
 }
 
-bool handle_sleep_counter(MutableActivePokemon user, Moves const move, bool const awakens) {
-	if (!is_sleeping(get_status(user))) {
-		return false;
-	}
-	user.increase_sleep_counter(awakens);
-	return is_blocked_by_sleep(move);
-}
-
-auto is_blocked_due_to_status(MutableActivePokemon user, Moves const move, bool const awakens) {
-	return is_blocked_by_freeze(user, move) or handle_sleep_counter(user, move, awakens);
+auto is_blocked_due_to_status(Pokemon const & user, Moves const move) {
+	return is_blocked_by_freeze(user, move) or is_blocked_by_sleep(user, move);
 }
 
 }	// namespace
 
-bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon const other, Weather const weather, bool const awakens) {
+bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon const other, Weather const weather) {
 	if (is_switch(move.name())) {
 		return true;
 	}
@@ -217,7 +209,7 @@ bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon 
 		return false;
 	}
 
-	bool execute = !(is_blocked_due_to_status(user, move.name(), awakens) or block1(user, move, other) or is_loafing(user));
+	bool execute = !(is_blocked_due_to_status(user, move.name()) or block1(user, move, other) or is_loafing(user));
 
 	if (execute) {
 		// Confusion doesn't block execution, it just changes the move that will

@@ -1096,7 +1096,10 @@ auto call_move(Team & user, Moves const move_name, bool const user_damaged, Team
 	auto const move = find_move(all_moves(user_pokemon), move_name);
 	auto target_pokemon = target.pokemon();
 	user_pokemon.update_before_move();
-	if (!can_execute_move(user_pokemon, move, target_pokemon, weather, awakens)) {
+	if (is_sleeping(get_status(user_pokemon))) {
+		user_pokemon.increase_sleep_counter(awakens);
+	}
+	if (!can_execute_move(user_pokemon, move, target_pokemon, weather)) {
 		return;
 	}
 
