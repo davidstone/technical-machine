@@ -209,22 +209,24 @@ bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon 
 		return false;
 	}
 
-	bool execute = !(is_blocked_due_to_status(user, move.name()) or block1(user, move, other) or is_loafing(user));
-
-	if (execute) {
-		// Confusion doesn't block execution, it just changes the move that will
-		// execute
-		user.handle_confusion();
-		if (flinched(user)) {
-			if (boosts_speed_when_flinched(get_ability(user))) {
-				boost(stage(user), StatNames::SPE, 1_bi);
-			}
-			execute = false;
-		} else if (block2(user, move.name(), weather) or is_fully_paralyzed(user)) {
-			execute = false;
-		}
+	auto const blocked_due_to_status = is_blocked_due_to_status(user, move.name());
+	if (blocked_due_to_status or block1(user, move, other) or is_loafing(user)) {
+		return false;
 	}
-	return execute;
+
+	// Confusion doesn't block execution, it just changes the move that will
+	// execute
+	user.handle_confusion();
+	if (flinched(user)) {
+		if (boosts_speed_when_flinched(get_ability(user))) {
+			boost(stage(user), StatNames::SPE, 1_bi);
+		}
+		return false;
+	} else if (block2(user, move.name(), weather) or is_fully_paralyzed(user)) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 }	// namespace technicalmachine
