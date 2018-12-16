@@ -65,27 +65,6 @@ auto get_species_index(Team const & team, Species const species) {
 	return container_index(team.all_pokemon(), species, "Team does not have a ");
 }
 
-constexpr auto is_move_message(std::string_view const type) {
-	return
-		type == "-activate" or
-		type == "-crit" or
-		type == "-curestatus" or
-		type == "-damage" or
-		type == "-drag" or
-		type == "-enditem" or
-		type == "-fail" or
-		type == "-immune" or
-		type == "-miss" or
-		type == "move" or
-		type == "-resisted" or
-		type == "-sethp" or
-		type == "-substitute" or
-		type == "-status" or
-		type == "-supereffective" or
-		type == "-singleturn" or
-		type == "-start";
-}
-
 auto const & get_team(Battle const & battle, Party const party) {
 	return battle.is_me(party) ? battle.ai() : battle.foe();
 }
@@ -239,14 +218,16 @@ void BattleParser::handle_message(InMessage message) {
 	// Where PLAYER is "p1" or "p2", SLOT is "a", "b", or "c". Example: p1a: Mew
 	// SLOT is left off for inactive Pokemon
 	
-	if (!is_move_message(type)) {
+	if (type.empty() or (type.front() != '-' and type != "drag")) {
 		maybe_use_previous_move();
 	}
 
 	// Documented at
 	// https://github.com/Zarel/Pokemon-Showdown/blob/master/PROTOCOL.md
 	// under the section "Battle progress"
-	if (type == "-ability") {
+	if (type == "") {
+		// Do nothing. This message is used to indicate the end of a series.
+	} else if (type == "-ability") {
 		auto const party = party_from_pokemon_id(message.next());
 		auto const ability = from_string<Ability>(message.next());
 		m_battle.set_value_on_active(party, ability);
@@ -278,9 +259,6 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-curestatus") {
 		auto const party = party_from_pokemon_id(message.next());
 		auto const status = message.next();
-		if (m_move_state.party() != party) {
-			maybe_use_previous_move();
-		}
 		if (status == "slp") {
 			m_move_state.awaken(party);
 		}
@@ -376,8 +354,6 @@ void BattleParser::handle_message(InMessage message) {
 		auto const user_party = party_from_pokemon_id(message.next());
 		m_move_state.miss(user_party);
 	} else if (type == "move") {
-		maybe_use_previous_move();
-
 		auto const party = party_from_pokemon_id(message.next());
 		auto const move = from_string<Moves>(message.next());
 #if 0

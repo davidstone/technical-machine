@@ -108,9 +108,7 @@ void Client::run() {
 			while (!messages.remainder().empty()) {
 				auto const next = messages.next();
 				auto print_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
-				if (next != "" and next != "|") {
-					handle_message(InMessage(room, BufferView(next, '|')));
-				}
+				handle_message(InMessage(room, BufferView(next, '|')));
 				print_on_exception.dismiss();
 			}
 		}
