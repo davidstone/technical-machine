@@ -201,7 +201,7 @@ auto is_blocked_due_to_status(Pokemon const & user, Moves const move) {
 
 }	// namespace
 
-bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon const other, Weather const weather) {
+auto can_attempt_move_execution(ActivePokemon user, Move const move, ActivePokemon const other) -> bool {
 	if (is_switch(move.name())) {
 		return true;
 	}
@@ -213,20 +213,14 @@ bool can_execute_move(MutableActivePokemon user, Move const move, ActivePokemon 
 	if (blocked_due_to_status or block1(user, move, other) or is_loafing(user)) {
 		return false;
 	}
+	return true;
+}
 
-	// Confusion doesn't block execution, it just changes the move that will
-	// execute
-	user.handle_confusion();
-	if (flinched(user)) {
-		if (boosts_speed_when_flinched(get_ability(user))) {
-			boost(stage(user), StatNames::SPE, 1_bi);
-		}
-		return false;
-	} else if (block2(user, move.name(), weather) or is_fully_paralyzed(user)) {
-		return false;
-	} else {
+auto can_execute_move(ActivePokemon user, Move const move, Weather const weather, bool const is_recharging) -> bool {
+	if (is_switch(move.name()) or move.name() == Moves::Hit_Self) {
 		return true;
 	}
+	return !flinched(user) and !block2(user, move.name(), weather) and !is_fully_paralyzed(user) and !is_recharging;
 }
 
 }	// namespace technicalmachine

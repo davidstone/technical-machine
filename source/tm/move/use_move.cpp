@@ -986,26 +986,6 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 }
 
 
-auto calls_other_move(Moves const move) {
-	switch (move) {
-//		case Moves::Nature_Power:
-		case Moves::Assist:
-		case Moves::Copycat:
-		case Moves::Me_First:
-		case Moves::Metronome:
-		case Moves::Mirror_Move:
-		case Moves::Sleep_Talk:
-			return true;
-		default:
-			return false;
-	}
-}
-
-auto call_other_move(MutableActivePokemon) {
-	// TODO: implement
-}
-
-
 auto is_sound_based(Moves const move) {
 	switch (move) {
 		case Moves::Bug_Buzz:
@@ -1088,35 +1068,38 @@ auto find_regular_move(Container const container, Moves const move_name) -> Move
 
 }	// namespace
 
-auto call_move(Team & user, Moves const move_name, bool const user_damaged, Team & target, bounded::optional<UsedMove> const target_move, bool const target_damaged, Weather & weather, Variable const variable, bool const missed, bool const awakens, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
-	if (move_name == Moves::Pass) {
+auto call_move(Team & user, ExecutedMove const move, bool const user_damaged, Team & target, bounded::optional<UsedMove> const target_move, bool const target_damaged, Weather & weather, Variable const variable, bool const missed, bool const awakens, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
+	if (move.selected == Moves::Pass) {
 		return;
 	}
 	auto user_pokemon = user.pokemon();
-	auto const move = find_move(all_moves(user_pokemon), move_name);
+	auto const found_move = find_move(all_moves(user_pokemon), move.selected);
 	auto target_pokemon = target.pokemon();
 	user_pokemon.update_before_move();
-	if (!is_switch(move_name) and is_sleeping(get_status(user_pokemon))) {
+	if (!is_switch(move.selected) and is_sleeping(get_status(user_pokemon))) {
 		user_pokemon.increase_sleep_counter(awakens);
 	}
 	// Need the side-effect from recharge
 	auto const is_recharging = user_pokemon.recharge();
-	if (!can_execute_move(user_pokemon, move, target_pokemon, weather)) {
+	if (!can_attempt_move_execution(user_pokemon, found_move, target_pokemon)) {
 		return;
 	}
-	if (is_recharging) {
+	user_pokemon.handle_confusion();
+	if (move.executed != Moves::Hit_Self and flinched(user_pokemon)) {
+		if (boosts_speed_when_flinched(get_ability(user_pokemon))) {
+			boost(stage(user_pokemon), StatNames::SPE, 1_bi);
+		}
+	}
+	if (!can_execute_move(user_pokemon, found_move, weather, is_recharging)) {
 		return;
 	}
 
-	if (is_regular(move_name) and !is_locked_in_by_move(user_pokemon)) {
-		find_regular_move(all_moves(user_pokemon).regular(), move_name).decrement_pp(get_ability(target_pokemon));
+	if (is_regular(move.selected) and move.executed != Moves::Hit_Self and !is_locked_in_by_move(user_pokemon)) {
+		find_regular_move(all_moves(user_pokemon).regular(), move.selected).decrement_pp(get_ability(target_pokemon));
 	}
 
-	if (calls_other_move(move_name)) {
-		call_other_move(user_pokemon);
-	}
 	if (!missed) {
-		use_move(user, move, user_damaged, target, target_move, target_damaged, weather, variable, critical_hit, known_damage);
+		use_move(user, found_move, user_damaged, target, target_move, target_damaged, weather, variable, critical_hit, known_damage);
 	}
 }
 

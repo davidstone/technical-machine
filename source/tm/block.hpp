@@ -36,6 +36,7 @@ using StaticVectorMove = containers::static_vector<
 >;
 
 auto legal_selections(Team const & user, ActivePokemon other, Weather weather) -> StaticVectorMove;
-auto can_execute_move(MutableActivePokemon user, Move move, ActivePokemon other, Weather weather) -> bool;
+auto can_attempt_move_execution(ActivePokemon user, Move move, ActivePokemon other) -> bool;
+auto can_execute_move(ActivePokemon user, Move move, Weather weather, bool is_recharging) -> bool;
 
 }	// namespace technicalmachine

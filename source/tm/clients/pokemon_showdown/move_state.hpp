@@ -22,6 +22,7 @@
 
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
+#include <tm/move/use_move.hpp>
 
 #include <tm/damage.hpp>
 #include <tm/variable.hpp>
@@ -36,7 +37,7 @@ namespace ps {
 struct MoveState {
 	struct Result {
 		Party party;
-		Moves move;
+		ExecutedMove move;
 		Variable variable;
 		bounded::optional<damage_type> damage;
 		bool awakens;
@@ -57,14 +58,15 @@ struct MoveState {
 		} else {
 			m_party.emplace(party);
 		}
-		m_move.emplace(move);
+		// TODO: Fix this
+		m_move.emplace(move, move);
 	}
 	
 	bool move_damages_self(Party const party) const {
 		if (!m_party or !m_move) {
 			throw_error();
 		}
-		auto const result = *m_move == Moves::Substitute;
+		auto const result = m_move->executed == Moves::Substitute;
 		if (result and *m_party != party) {
 			throw_error();
 		}
@@ -102,14 +104,14 @@ struct MoveState {
 	}
 	void phaze_index(Party const party, Team const & team, Species const species) {
 		validate(party);
-		if (!is_phaze(*m_move)) {
+		if (!is_phaze(m_move->executed)) {
 			throw std::runtime_error("We did not use a phazing move, but we were given phazing data");
 		}
 		m_variable.set_phaze_index(team, species);
 	}
 	void status(Party const party, Statuses const status) {
 		validate(party);
-		m_variable.apply_status(*m_move, status);
+		m_variable.apply_status(m_move->executed, status);
 	}
 
 	auto complete() -> bounded::optional<Result> {
@@ -139,7 +141,7 @@ private:
 		throw std::runtime_error("Received battle messages out of order");
 	}
 	bounded::optional<Party> m_party;
-	bounded::optional<Moves> m_move;
+	bounded::optional<ExecutedMove> m_move;
 	bounded::optional<damage_type> m_damage;
 	Variable m_variable{0_bi};
 	bool m_awakens = false;

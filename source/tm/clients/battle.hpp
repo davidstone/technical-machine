@@ -97,7 +97,7 @@ struct Battle {
 		std::cout << to_string(foe()) << '\n';
 	}
 
-	void handle_use_move(Party user, uint8_t slot, Moves move, Variable variable, bool miss, bool critical_hit, bool awakens, bounded::optional<damage_type> damage);
+	void handle_use_move(Party user, uint8_t slot, ExecutedMove move, Variable variable, bool miss, bool critical_hit, bool awakens, bounded::optional<damage_type> damage);
 	// This handles direct switches, replacing fainted Pokemon, and switching
 	// due to U-turn and Baton Pass. This assumes Species Clause is in effect.
 	void handle_send_out(Party switcher, uint8_t slot, Species species, Level level, Gender gender);
