@@ -21,7 +21,8 @@
 
 namespace technicalmachine {
 
-// Not thread safe
+// Races with calls to std::gmtime, std::localtime, and std::ctime. Does not
+// race with itself.
 std::string timestamp();
 
 }	// namespace technicalmachine
