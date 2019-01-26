@@ -18,7 +18,7 @@
 
 #include <tm/test/pokemon_online/conversion.hpp>
 
-#include <tm/test/pokemon_online/../invalid_simulator_conversion.hpp>
+#include <tm/test/invalid_simulator_conversion.hpp>
 
 #include <tm/ability.hpp>
 

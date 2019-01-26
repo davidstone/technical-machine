@@ -22,7 +22,7 @@
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 #include <tm/clients/pokemon_showdown/json_parser.hpp>
 
-#include <tm/clients/pokemon_showdown/../battle_settings.hpp>
+#include <tm/clients/battle_settings.hpp>
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
 #include <tm/settings_file.hpp>

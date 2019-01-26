@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <tm/clients/pokemon_showdown/../battle_settings.hpp>
+#include <tm/clients/battle_settings.hpp>
 
 namespace technicalmachine {
 namespace ps {

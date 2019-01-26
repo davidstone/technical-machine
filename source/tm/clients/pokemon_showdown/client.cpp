@@ -23,7 +23,7 @@
 
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 
-#include <tm/clients/pokemon_showdown/../random_string.hpp>
+#include <tm/clients/random_string.hpp>
 #include <tm/settings_file.hpp>
 #include <tm/team.hpp>
 
