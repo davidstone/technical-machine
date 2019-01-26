@@ -119,11 +119,12 @@ auto parse_hp_and_status(std::string_view const hp_and_status, Battle const & ba
 	};
 }
 
+struct FromMove{};
 struct MainEffect{};
 struct FromConfusion{};
 struct FromMiscellaneous{};
 
-using HPChangeSource = bounded::variant<MainEffect, Item, Ability, FromConfusion, FromMiscellaneous>;
+using HPChangeSource = bounded::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromMiscellaneous>;
 auto parse_hp_change_source(InMessage message) {
 	using Source = HPChangeSource;
 	// "[from]" or nothing
@@ -133,13 +134,13 @@ auto parse_hp_change_source(InMessage message) {
 		(source_type == "") ? Source(MainEffect{}) :
 		(source_type == "item") ? Source(from_string<Item>(source)) :
 		(source_type == "ability") ? Source(from_string<Ability>(source)) :
+		(source_type == "move") ? Source(FromMove{}) :
 		(source_type == "confusion") ? Source(FromConfusion{}) :
 		(
 			source_type == "brn" or
 			source_type == "psn" or
 			source_type == "tox" or
 			source_type == "Leech Seed" or
-			source_type == "move" or
 			source_type == "Recoil" or
 			source_type == "Spikes" or
 			source_type == "Stealth Rock" or
@@ -232,14 +233,10 @@ void BattleParser::handle_message(InMessage message) {
 		auto const ability = from_string<Ability>(message.next());
 		m_battle.set_value_on_active(party, ability);
 	} else if (type == "-activate") {
-		// TODO: ???
-		auto const activate_text = message.remainder();
-		auto const party = party_from_pokemon_id(message.next());
+		auto const party [[maybe_unused]] = party_from_pokemon_id(message.next());
 		auto const source = message.next();
-		if (source == "confusion") {
-			static_cast<void>(party);
-		} else {
-			std::cout << "Miscellaneous effect: " << activate_text << '\n';
+		if (source != "confusion") {
+			std::cout << "Miscellaneous effect: " << source << '|' << message.remainder() << '\n';
 		}
 	} else if (type == "-boost") {
 #if 0
@@ -327,12 +324,19 @@ void BattleParser::handle_message(InMessage message) {
 			[](MainEffect) {},
 			[](FromConfusion) { throw std::runtime_error("Confusion cannot heal"); },
 			[](FromMiscellaneous) {},
+			[](FromMove) {},
 			[&](auto const value) { m_battle.set_value_on_active(party, value); }
 		));
 	} else if (type == "-hint") {
 		// message.remainder() == MESSAGE
 	} else if (type == "-immune") {
-		// message.remainder() == POKEMON
+		auto const party = party_from_pokemon_id(message.next());
+		auto const source = parse_hp_change_source(message);
+		bounded::visit(source, bounded::overload(
+			[](MainEffect) {},
+			[&](Ability const ability) { m_battle.set_value_on_active(party, ability); },
+			[](auto const &) { throw std::runtime_error("Surprising source of immunity."); }
+		));
 	} else if (type == "inactive") {
 		// message.remainder() == MESSAGE
 		// Timer is on
@@ -420,8 +424,18 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-singleturn") {
 		// Received for things like Protect that last the rest of the turn
 	} else if (type == "-start") {
-		// This should not be necessary, and it is in a weird format
-		// This at least tells me about the start of a substitute
+		auto const party = party_from_pokemon_id(message.next());
+		auto const thing = message.next();
+		if (thing == "confusion") {
+			auto const source = message.next();
+			if (source == "[fatigue]") {
+				
+			} else {
+				m_move_state.confuse(party);
+			}
+		} else {
+			std::cout << "Miscellaneous effect: " << thing << '|' << message.remainder() << '\n';
+		}
 	} else if (type == "-status") {
 		auto const party = party_from_pokemon_id(message.next());
 		auto const status = parse_status(message.next());
@@ -431,6 +445,7 @@ void BattleParser::handle_message(InMessage message) {
 			[](MainEffect) {},
 			[](FromConfusion) { throw std::runtime_error("Confusion cannot cause another status"); },
 			[&](FromMiscellaneous) { m_move_state.status(other(party), status); },
+			[&](FromMove) { m_move_state.status(party, status); },
 			[&](auto const value) { m_battle.set_value_on_active(party, value); }
 		));
 	} else if (type == "swap") {
@@ -489,6 +504,7 @@ void BattleParser::handle_damage(InMessage message) {
 		},
 		[&](FromConfusion) { move_damage(party, party); },
 		[](FromMiscellaneous) {},
+		[](FromMove) {},
 		[&](auto const value) { m_battle.set_value_on_active(party, value); }
 	));
 }
@@ -497,7 +513,6 @@ void BattleParser::maybe_use_previous_move() {
 	if (auto const maybe_data = m_move_state.complete()) {
 		auto const data = *maybe_data;
 		constexpr auto slot = 0;
-		// data.hit_self
 		m_battle.handle_use_move(data.party, slot, data.move, data.variable, data.miss, data.critical_hit, data.awakens, data.damage);
 	}
 }
