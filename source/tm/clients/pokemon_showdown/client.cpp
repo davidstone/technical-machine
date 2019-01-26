@@ -56,9 +56,8 @@ Client::Client(unsigned depth):
 }
 
 void Client::log_in() {
-	using tcp = boost::asio::ip::tcp;
-	auto resolver = tcp::resolver(m_io);
-	boost::asio::connect(m_socket, resolver.resolve(tcp::resolver::query(m_host, m_port)));
+	auto resolver = boost::asio::ip::tcp::resolver(m_io);
+	boost::asio::connect(m_socket, resolver.resolve(m_host, m_port));
 	m_websocket.handshake(m_host, m_resource);
 
 	std::cout << "Connected\n";
