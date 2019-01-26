@@ -122,7 +122,7 @@ bool can_critical_hit(Moves const move) {
 
 template<typename Flag, typename BaseFlag, typename Probability, typename NextBranch>
 double generic_flag_branch(BaseFlag const first_flags, BaseFlag const last_flags, Probability const & basic_probability, NextBranch const & next_branch) {
-	auto const probability = [=](auto const is_first, bool const flag) {
+	auto const probability = [=](bool const is_first, bool const flag) {
 		auto const base = basic_probability(is_first);
 		assert(base >= 0.0);
 		assert(base <= 1.0);
@@ -332,7 +332,7 @@ double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const
 
 
 double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Evaluate const evaluate, Depth const depth, ShedSkin const team_flag, ShedSkin const other_flag) {
-	auto get_flag = [&](auto const & match) {
+	auto get_flag = [&](Team const & match) {
 		return std::addressof(match) == std::addressof(team) ? team_flag : other_flag;
 	};
 	return !faster ?
@@ -359,7 +359,7 @@ auto use_move_branch_inner(Variable const last_variable, CriticalHit const first
 		return generic_flag_branch<ShedSkin>(
 			first_flags,
 			last_flags,
-			[&](auto const is_first) { return shed_skin_probability(is_first ? first.pokemon() : last.pokemon()); },
+			[&](bool const is_first) { return shed_skin_probability(is_first ? first.pokemon() : last.pokemon()); },
 			end_of_turn_order
 		);
 	};
@@ -422,7 +422,7 @@ double random_move_effects_branch(Team const & first, Moves const first_move, Te
 			score += last_variable.probability * first_variable.probability * generic_flag_branch<CriticalHit>(
 				first_flags,
 				last_flags,
-				[&](auto const is_first) { return can_critical_hit(is_first ? first_move : last_move) ? (1.0 / 16.0) : 0.0; },
+				[&](bool const is_first) { return can_critical_hit(is_first ? first_move : last_move) ? (1.0 / 16.0) : 0.0; },
 				use_move_branch_adaptor
 			);
 		}
@@ -432,7 +432,7 @@ double random_move_effects_branch(Team const & first, Moves const first_move, Te
 
 
 double accuracy_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth) {
-	auto const probability = [=](auto const & user, auto const user_move, auto const & target, bool const target_moved, bool const miss) {
+	auto const probability = [=](ActivePokemon const user, Moves const user_move, ActivePokemon const target, bool const target_moved, bool const miss) {
 		auto const base = chance_to_hit(user, user_move, target, weather, target_moved);
 		assert(base >= 0.0);
 		assert(base <= 1.0);
@@ -455,7 +455,7 @@ double accuracy_branch(Team const & first, Moves const first_move, Team const & 
 			average_score += p1 * p2 * generic_flag_branch<Awaken>(
 				Miss(first_flag),
 				Miss(last_flag),
-				[&](auto const is_first) { return awaken_probability(is_first ? first.pokemon() : last.pokemon()); },
+				[&](bool const is_first) { return awaken_probability(is_first ? first.pokemon() : last.pokemon()); },
 				[&](Awaken const first_awaken, Awaken const last_awaken) { return random_move_effects_branch(first, first_move, last, last_move, weather, evaluate, depth, first_awaken, last_awaken); }
 			);
 		}
