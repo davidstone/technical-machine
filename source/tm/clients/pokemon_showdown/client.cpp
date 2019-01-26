@@ -197,7 +197,7 @@ void Client::handle_message(InMessage message) {
 		// message.remainder() == number of users on server
 	} else if (message.type() == "users") {
 		// message.remainder() == comma separated list of users
-	} else if (m_battles.handle_message(message, m_websocket)) {
+	} else if (m_battles.handle_message(message, [&](std::string_view const output) { write_message(output); })) {
 	} else {
 		std::cout << "Received unknown message in room: " << message.room() << " type: " << message.type() << "\n\t" << message.remainder() << '\n';
 	}

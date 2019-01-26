@@ -25,7 +25,6 @@
 #include <algorithm>
 #include <list>
 #include <string>
-#include <unordered_map>
 
 namespace technicalmachine {
 namespace ps {
@@ -36,11 +35,12 @@ struct Battles {
 		m_pending.emplace_back(std::forward<Args>(args)...);
 	}
 	
-	bool handle_message(InMessage message, boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) {
+	template<typename SendMessageFunction>
+	bool handle_message(InMessage message, SendMessageFunction send_message) {
 		if (handle_message_impl(m_active, message, [&](auto const it) { m_active.erase(it); })) {
 			return true;
 		}
-		if (handle_message_impl(m_pending, message, [&](auto const it) { move_to_active(it, websocket); })) {
+		if (handle_message_impl(m_pending, message, [&](auto const it) { move_to_active(it, std::move(send_message)); })) {
 			return true;
 		}
 
@@ -62,8 +62,9 @@ private:
 		return true;
 	}
 	
-	void move_to_active(std::list<BattleFactory>::iterator it, boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) {
-		m_active.push_back(std::move(*it).make(websocket));
+	template<typename SendMessageFunction>
+	void move_to_active(std::list<BattleFactory>::iterator it, SendMessageFunction send_message) {
+		m_active.push_back(std::move(*it).make(std::move(send_message)));
 		m_pending.erase(it);
 	}
 

@@ -1,5 +1,5 @@
 // Handle Pokemon Showdown messages in a battle
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -26,8 +26,6 @@
 
 #include <tm/evaluate/evaluate.hpp>
 
-#include <boost/beast/websocket.hpp>
-
 #include <random>
 #include <string>
 #include <string_view>
@@ -37,8 +35,9 @@ namespace technicalmachine {
 namespace ps {
 
 struct BattleParser {
+	using SendMessageFunction = std::function<void(std::string_view)>;
 	BattleParser(
-		boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket,
+		SendMessageFunction send_message,
 		std::string id_,
 		std::string username,
 		UsageStats const & usage_stats,
@@ -51,7 +50,7 @@ struct BattleParser {
 		Team foe
 	):
 		m_usage_stats(usage_stats),
-		m_websocket(websocket),
+		m_send_message(std::move(send_message)),
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_random_engine(random_engine),
@@ -85,7 +84,7 @@ private:
 
 	UsageStats const & m_usage_stats;
 		
-	boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & m_websocket;
+	SendMessageFunction m_send_message;
 	std::string m_id;
 	std::string m_username;
 	std::mt19937 m_random_engine;

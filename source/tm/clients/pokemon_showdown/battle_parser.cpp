@@ -536,7 +536,7 @@ void BattleParser::send_move(Moves const move) {
 	using std::to_string;
 	auto switch_move = [&]{ return to_string(m_slot_memory[to_replacement(move)]); };
 	auto move_index = [&]{ return to_string(get_move_index(m_battle.ai().pokemon(), move) + 1_bi); };
-	send_message(m_id + (is_switch(move) ? "|/switch " + switch_move() : "|/move " + move_index()));
+	m_send_message(m_id + (is_switch(move) ? "|/switch " + switch_move() : "|/move " + move_index()));
 }
 
 void BattleParser::send_random_move() {
@@ -548,11 +548,7 @@ void BattleParser::send_random_move() {
 	auto switch_move = [=]{ return std::to_string(result - max_moves_per_pokemon); };
 	auto move_index = [=]{ return std::to_string(result); };
 	auto const is_switch = result > max_moves_per_pokemon;
-	send_message(m_id + (is_switch ? "|/switch " + switch_move() : "|/move " + move_index()));
-}
-
-void BattleParser::send_message(std::string_view const message) {
-	m_websocket.write(boost::asio::buffer(message));
+	m_send_message(m_id + (is_switch ? "|/switch " + switch_move() : "|/move " + move_index()));
 }
 
 auto parse_switch(InMessage message) -> ParsedSwitch {

@@ -1,5 +1,5 @@
 // Handle Pokemon Showdown messages setting up a battle
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,8 +24,6 @@
 
 #include <bounded/optional.hpp>
 #include <containers/vector.hpp>
-
-#include <boost/beast/websocket.hpp>
 
 #include <iostream>
 #include <random>
@@ -66,7 +64,7 @@ struct BattleFactory {
 		// TODO: Handle NvN battles
 		return m_ai_switched_in and m_opponent_starter;
 	}
-	BattleParser make(boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) &&;
+	BattleParser make(BattleParser::SendMessageFunction send_message) &&;
 
 private:
 	enum class Clause { };

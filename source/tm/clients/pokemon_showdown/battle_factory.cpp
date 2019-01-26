@@ -168,7 +168,7 @@ void BattleFactory::handle_message(InMessage message) {
 	}
 }
 
-BattleParser BattleFactory::make(boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> & websocket) && {
+BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message) && {
 	assert(completed());
 	if (!m_opponent) {
 		throw std::runtime_error("Did not receive opponent");
@@ -204,7 +204,7 @@ BattleParser BattleFactory::make(boost::beast::websocket::stream<boost::asio::ip
 		return team;
 	};
 	return BattleParser(
-		websocket,
+		std::move(send_message),
 		std::move(m_id),
 		std::move(m_username),
 		m_usage_stats,
