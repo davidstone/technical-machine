@@ -383,7 +383,7 @@ struct MutableActivePokemon {
 		m_flags.leech_seeded = true;
 	}
 	
-	auto advance_lock_in() -> void;
+	auto advance_lock_in(bool ending) -> void;
 	auto use_lock_on() {
 		m_flags.locked_on = true;
 	}

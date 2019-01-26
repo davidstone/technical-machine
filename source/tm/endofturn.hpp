@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,6 +22,6 @@ namespace technicalmachine {
 struct Team;
 struct Weather;
 
-void end_of_turn(Team & first, Team & last, Weather & weather, bool first_shed_skin, bool last_shed_skin);
+void end_of_turn(Team & first, bool first_shed_skin, bool first_lock_in_ends, Team & last, bool last_shed_skin, bool last_lock_in_ends, Weather & weather);
 
 }	// namespace technicalmachine

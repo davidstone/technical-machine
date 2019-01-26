@@ -90,16 +90,23 @@ auto MutableActivePokemon::confuse() -> void {
 	}
 }
 
-auto MutableActivePokemon::advance_lock_in() -> void {
+auto MutableActivePokemon::advance_lock_in(bool const ending) -> void {
 	bounded::visit(m_flags.lock_in, bounded::overload(
 		[&](Rampage & rampage) {
-			rampage.advance_one_turn();
-			if (!rampage.is_active()) {
+			if (ending) {
 				m_flags.lock_in = std::monostate{};
 				confuse();
+			} else {
+				rampage.advance_one_turn();
 			}
 		},
-		[](UproarCounter & uproar) { uproar.advance_one_turn(); },
+		[&](UproarCounter & uproar) {
+			if (ending) {
+				m_flags.lock_in = std::monostate{};
+			} else {
+				uproar.advance_one_turn();
+			}
+		},
 		[](auto const &) {}
 	));
 }

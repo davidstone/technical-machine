@@ -86,7 +86,9 @@ struct Battle {
 		if (turn_count != 1_bi) {
 			constexpr auto ai_shed_skin_activated = false;
 			constexpr auto foe_shed_skin_activated = false;
-			end_of_turn(m_ai, m_foe, m_weather, ai_shed_skin_activated, foe_shed_skin_activated);
+			constexpr auto ai_lock_in_ended = false;
+			constexpr auto foe_lock_in_ended = false;
+			end_of_turn(m_ai, ai_shed_skin_activated, ai_lock_in_ended, m_foe, foe_shed_skin_activated, foe_lock_in_ended, m_weather);
 		} else {
 			for (auto side : {std::ref(m_ai), std::ref(m_foe)}) {
 				side.get().pokemon().set_not_moved();

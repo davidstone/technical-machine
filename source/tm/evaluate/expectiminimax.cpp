@@ -182,6 +182,14 @@ struct ShedSkin : CriticalHit {
 	}
 	bool const shed_skin;
 };
+struct LockInEnds : ShedSkin {
+	constexpr explicit LockInEnds(ShedSkin const shed_skin_, bool const lock_in_ends_):
+		ShedSkin(shed_skin_),
+		lock_in_ends(lock_in_ends_)
+	{
+	}
+	bool const lock_in_ends;
+};
 
 
 auto deorder(Team const & first, Team const & last) {
@@ -317,8 +325,8 @@ auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last,
 	return finish_end_of_turn(first, last, weather, evaluate, depth);
 };
 
-double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, Depth const depth, ShedSkin const first_flag, ShedSkin const last_flag) {
-	end_of_turn(first, last, weather, first_flag.shed_skin, last_flag.shed_skin);
+double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, Depth const depth, LockInEnds const first_flag, LockInEnds const last_flag) {
+	end_of_turn(first, first_flag.shed_skin, first_flag.lock_in_ends, last, last_flag.shed_skin, last_flag.lock_in_ends, weather);
 	if (auto const won = Evaluate::win(first, last)) {
 		return *won;
 	}
@@ -331,7 +339,7 @@ double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const
 }
 
 
-double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Evaluate const evaluate, Depth const depth, ShedSkin const team_flag, ShedSkin const other_flag) {
+double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Evaluate const evaluate, Depth const depth, LockInEnds const team_flag, LockInEnds const other_flag) {
 	auto get_flag = [&](Team const & match) {
 		return std::addressof(match) == std::addressof(team) ? team_flag : other_flag;
 	};
@@ -340,6 +348,17 @@ double end_of_turn_order_branch(Team const & team, Team const & other, Faster co
 		end_of_turn_branch(faster->first, faster->second, weather, evaluate, depth, get_flag(faster->first), get_flag(faster->second));
 }
 
+auto end_of_turn_branch_shed_skin(Team const & team, Team const & other, Faster const faster, Weather const weather, Evaluate const evaluate, Depth const depth, ShedSkin const team_flag, ShedSkin const other_flag) {
+	return generic_flag_branch<LockInEnds>(
+		team_flag,
+		other_flag,
+		// TODO
+		[&](bool) { return true; },
+		[&](LockInEnds const team_lock_in, LockInEnds const other_lock_in) {
+			return end_of_turn_order_branch(team, other, faster, weather, evaluate, depth, team_lock_in, other_lock_in);
+		}
+	);
+}
 
 auto use_move_branch_inner(Variable const last_variable, CriticalHit const first_flags, CriticalHit const last_flags) {
 	return [=](Team first, Moves, Team last, Moves const last_move, Weather weather, Evaluate const evaluate, Depth const depth) {
@@ -353,14 +372,13 @@ auto use_move_branch_inner(Variable const last_variable, CriticalHit const first
 		}
 
 		auto const teams = faster_pokemon(first, last, weather);
-		auto const end_of_turn_order = [&](ShedSkin const team_flag, ShedSkin const other_flag) {
-			return end_of_turn_order_branch(first, last, teams, weather, evaluate, depth, team_flag, other_flag);
-		};
 		return generic_flag_branch<ShedSkin>(
 			first_flags,
 			last_flags,
 			[&](bool const is_first) { return shed_skin_probability(is_first ? first.pokemon() : last.pokemon()); },
-			end_of_turn_order
+			[&](ShedSkin const team_flag, ShedSkin const other_flag) {
+				return end_of_turn_branch_shed_skin(first, last, teams, weather, evaluate, depth, team_flag, other_flag);
+			}
 		);
 	};
 }
