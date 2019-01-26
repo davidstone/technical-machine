@@ -82,7 +82,6 @@ void Client::load_settings() {
 	auto settings = Settings();
 	m_evaluate = Evaluate{};
 	m_team_file = settings.team_file;
-	m_chattiness = settings.chattiness;
 	
 	Server & server = front(settings.servers);
 	m_host = server.host;

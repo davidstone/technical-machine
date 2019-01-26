@@ -89,7 +89,6 @@ private:
 	containers::vector<std::string> m_highlights;
 	std::unordered_set<std::string> m_trusted_users;
 	unsigned m_depth;
-	unsigned m_chattiness;
 	
 	Battles m_battles;
 };

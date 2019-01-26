@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
+<?xml version="1.0" encoding="utf-8"?>
 <settings>
-
 	<!--
 		If a directory is specified instead of a file, Technical Machine will
 		randomly use a file inside that directory recursively. For instance, if
@@ -14,22 +12,13 @@
 		Relative paths are relative to your executable, not this settings file.
 	-->
 	<team>teams/</team>
-
 	<servers>
-		<server name = "localhost">
-			<host>127.0.0.1</host>
-			<port>5080</port>
+		<server name="Smogon University">
+			<host>sim.smogon.com</host>
+			<port>8000</port>
+			<resource>/showdown/websocket</resource>
 			<username></username>
 			<password></password>
 		</server>
 	</servers>
-
-	<!--
-		chattiness determines how often Technical Machine randomly says a line
-		from "responses.txt". It occurs with a frequency of 1 / chattiness, so
-		a value of 1 will have Technical Machine saying a line every time it
-		moves.
-	-->
-	<chattiness>50</chattiness>
-
 </settings>

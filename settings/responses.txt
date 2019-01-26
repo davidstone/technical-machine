@@ -1,2 +1,0 @@
-// Technical Machine will randomly select lines from this file to say during a battle.
-// The frequency that this occurs can be set in settings.txt

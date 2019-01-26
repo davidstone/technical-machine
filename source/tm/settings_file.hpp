@@ -47,7 +47,6 @@ struct Settings {
 
 	std::filesystem::path team_file;
 	containers::vector<Server> servers;
-	unsigned chattiness;
 };
 
 }	// namespace technicalmachine

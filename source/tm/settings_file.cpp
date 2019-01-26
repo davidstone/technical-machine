@@ -34,7 +34,6 @@ Settings::Settings () {
 	team_file = root.get<std::filesystem::path>("team");
 	for (boost::property_tree::ptree::value_type const & server_tree : root.get_child ("servers"))
 		servers.emplace_back(server_tree.second);
-	chattiness = root.get <unsigned> ("chattiness");
 }
 
 Server::Server (boost::property_tree::ptree const & server):
@@ -55,10 +54,9 @@ void Settings::write () const {
 
 	root.add ("team", "teams/");
 	boost::property_tree::ptree & servers_tree = root.add ("servers", "");
-	for (Server const & server : servers)
+	for (Server const & server : servers) {
 		server.add (servers_tree);
-	root.add ("time", "%Y-%m-%d %H:%M:%S");
-	root.add ("chattiness", 50);
+	}
 
 	write_xml(file_name().string(), pt, std::locale (), format_settings);
 }
