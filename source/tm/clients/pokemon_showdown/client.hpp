@@ -47,7 +47,7 @@ struct Client {
 	Client(SettingsFile settings, unsigned depth);
 	void run();
 private:
-	void write_message(std::string_view message);
+	using tcp = boost::asio::ip::tcp;
 	
 	Team generate_team() {
 		return load_team_from_file(m_random_engine, m_settings.team_file);
@@ -64,16 +64,24 @@ private:
 	
 	BufferView<char> read_message();
 	
+	struct Sockets {
+		Sockets(std::string_view host, std::string_view port, std::string_view resource);
+		auto make_connected_socket(std::string_view host, std::string_view port) -> tcp::socket;
+		auto read_message() -> BufferView<char>;
+		void write_message(std::string_view message);
+	
+	private:
+		boost::beast::flat_buffer m_buffer;
+		boost::asio::io_service m_io;
+		tcp::socket m_socket;
+		boost::beast::websocket::stream<tcp::socket &> m_websocket;
+	};
+	
 	std::random_device m_rd;
 	std::mt19937 m_random_engine;
 
 	UsageStats m_usage_stats;
 	Evaluate m_evaluate;
-
-	boost::asio::io_service m_io;
-	boost::asio::ip::tcp::socket m_socket;
-	boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> m_websocket;
-	boost::beast::flat_buffer m_buffer;
 
 	SettingsFile m_settings;
 	
@@ -83,6 +91,8 @@ private:
 	unsigned m_depth;
 	
 	Battles m_battles;
+
+	Sockets m_sockets;
 };
 
 }	// namespace ps

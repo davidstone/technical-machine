@@ -53,19 +53,46 @@ auto load_lines_from_file(std::filesystem::path const & file_name) {
 
 }	// namespace
 
+Client::Sockets::Sockets(std::string_view const host, std::string_view const port, std::string_view const resource):
+	m_socket(make_connected_socket(host, port)),
+	m_websocket(m_socket)
+{
+	m_websocket.handshake(
+		boost::string_view(host.data(), host.size()),
+		boost::string_view(resource.data(), resource.size())
+	);
+}
+
+auto Client::Sockets::make_connected_socket(std::string_view const host, std::string_view const port) -> tcp::socket {
+	auto socket = tcp::socket(m_io);
+	auto resolver = tcp::resolver(m_io);
+	boost::asio::connect(m_socket, resolver.resolve(host, port));
+	return socket;
+}
+
+auto Client::Sockets::read_message() -> BufferView<char> {
+	m_buffer.consume(static_cast<std::size_t>(-1));
+	m_websocket.read(m_buffer);
+
+	auto const asio_buffer = m_buffer.data();
+	auto const sv = std::string_view(static_cast<char const *>(asio_buffer.data()), asio_buffer.size());
+
+	return BufferView(sv, '\n');
+}
+
+void Client::Sockets::write_message(std::string_view const message) {
+	m_websocket.write(boost::asio::buffer(message));
+}
+
+
 Client::Client(SettingsFile settings, unsigned depth):
 	m_random_engine(m_rd()),
 	m_usage_stats("settings/4/OU"),
-	m_socket(m_io),
-	m_websocket(m_socket),
 	m_settings(std::move(settings)),
 	m_trusted_users(load_lines_from_file("settings/trusted_users.txt")),
-	m_depth(depth)
+	m_depth(depth),
+	m_sockets(m_settings.host, m_settings.port, m_settings.resource)
 {
-	auto resolver = boost::asio::ip::tcp::resolver(m_io);
-	boost::asio::connect(m_socket, resolver.resolve(m_settings.host, m_settings.port));
-	m_websocket.handshake(m_settings.host, m_settings.resource);
-
 	std::cout << "Connected\n";
 }
 
@@ -73,7 +100,7 @@ void Client::run() {
 	std::cout << "Running\n";
 	try {
 		while (true) {
-			auto messages = read_message();
+			auto messages = m_sockets.read_message();
 			auto const has_room = !messages.remainder().empty() and messages.remainder().front() == '>';
 			auto const room = has_room ? messages.next().substr(1) : std::string_view{};
 			while (!messages.remainder().empty()) {
@@ -86,20 +113,6 @@ void Client::run() {
 	} catch (std::exception const & ex) {
 		std::cerr << ex.what() << '\n';
 	}
-}
-
-void Client::write_message(std::string_view const message) {
-	m_websocket.write(boost::asio::buffer(message));
-}
-
-BufferView<char> Client::read_message() {
-	m_buffer.consume(static_cast<std::size_t>(-1));
-	m_websocket.read(m_buffer);
-
-	auto const asio_buffer = m_buffer.data();
-	auto const sv = std::string_view(static_cast<char const *>(asio_buffer.data()), asio_buffer.size());
-
-	return BufferView(sv, '\n');
 }
 
 void Client::handle_message(InMessage message) {
@@ -157,7 +170,7 @@ void Client::handle_message(InMessage message) {
 			if (!is_trusted) {
 				std::cout << "Rejected a challenge from " << challenge.first << '\n';
 			}
-			write_message(command + challenge.first);
+			m_sockets.write_message(command + challenge.first);
 		}
 		// "cancelchallenge" is the command to stop challenging someone
 	} else if (message.type() == "updateuser") {
@@ -168,7 +181,7 @@ void Client::handle_message(InMessage message) {
 		// message.remainder() == number of users on server
 	} else if (message.type() == "users") {
 		// message.remainder() == comma separated list of users
-	} else if (m_battles.handle_message(message, [&](std::string_view const output) { write_message(output); })) {
+	} else if (m_battles.handle_message(message, [&](std::string_view const output) { m_sockets.write_message(output); })) {
 	} else {
 		std::cout << "Received unknown message in room: " << message.room() << " type: " << message.type() << "\n\t" << message.remainder() << '\n';
 	}
@@ -180,11 +193,8 @@ void Client::authenticate(std::string_view const challstr) {
 	// Otherwise, make HTTP POST: http://play.pokemonshowdown.com/action.php
 	// with data act=login&name=USERNAME&pass=PASSWORD&challstr=CHALLSTR
 	namespace http = boost::beast::http;
-	using tcp = boost::asio::ip::tcp;
-	auto socket = tcp::socket(m_io);
-	auto resolver = tcp::resolver(m_io);
 	constexpr auto host = "play.pokemonshowdown.com";
-	boost::asio::connect(socket, resolver.resolve(host, "80"));
+	auto socket = m_sockets.make_connected_socket(host, "80");
 	
 	constexpr auto version = 11U;
 	auto request = http::request<http::string_body>{
@@ -213,11 +223,11 @@ void Client::authenticate(std::string_view const challstr) {
 	// Response begins with ']' followed by JSON object.
 	response.body().erase(0U, 1U);
 	auto const json = m_parse_json(response.body());
-	write_message("|/trn " + m_settings.username + ",0," + json.get<std::string>("assertion"));
+	m_sockets.write_message("|/trn " + m_settings.username + ",0," + json.get<std::string>("assertion"));
 }
 
 void Client::join_channel(std::string const & channel) {
-	write_message("|/join " + channel);
+	m_sockets.write_message("|/join " + channel);
 }
 
 void Client::part_channel(std::string const & channel) {
@@ -226,7 +236,7 @@ void Client::part_channel(std::string const & channel) {
 }
 
 void Client::send_channel_message(std::string const & channel, std::string const & message) {
-	write_message(channel + "|/msg " + message);
+	m_sockets.write_message(channel + "|/msg " + message);
 }
 
 }	// namespace ps
