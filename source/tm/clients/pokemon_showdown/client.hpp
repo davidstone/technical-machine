@@ -57,7 +57,6 @@ private:
 	void send_channel_message(std::string const & channel, std::string const & message);
 	void send_private_message(std::string const & user, std::string const & message);
 
-	void log_in();
 	void join_channel(std::string const & channel);
 	void part_channel(std::string const & channel);
 	

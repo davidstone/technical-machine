@@ -29,11 +29,15 @@ auto load_settings_file(std::filesystem::path const & path) -> SettingsFile {
 	boost::property_tree::ptree pt;
 	read_xml(path.string(), pt);
 	auto const & server = pt.get_child("settings");
+	auto username = server.get<std::string>("username");
+	if (username.empty()) {
+		throw std::runtime_error("Missing username and password in settings file");
+	}
 	return SettingsFile{
 		server.get<std::filesystem::path>("team"),
 		server.get<std::string>("host"),
 		server.get<std::string>("port"),
-		server.get<std::string>("username"),
+		std::move(username),
 		server.get<std::string>("password"),
 		server.get<std::string>("resource")
 	};

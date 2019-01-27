@@ -62,13 +62,6 @@ Client::Client(SettingsFile settings, unsigned depth):
 	m_trusted_users(load_lines_from_file("settings/trusted_users.txt")),
 	m_depth(depth)
 {
-	if (m_settings.username.empty()) {
-		throw std::runtime_error("Missing username and password in settings file");
-	}
-	log_in();
-}
-
-void Client::log_in() {
 	auto resolver = boost::asio::ip::tcp::resolver(m_io);
 	boost::asio::connect(m_socket, resolver.resolve(m_settings.host, m_settings.port));
 	m_websocket.handshake(m_settings.host, m_settings.resource);
