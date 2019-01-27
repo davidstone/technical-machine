@@ -79,7 +79,6 @@ private:
 	
 	JSONParser m_parse_json;
 	
-	containers::vector<std::string> m_highlights;
 	std::unordered_set<std::string> m_trusted_users;
 	unsigned m_depth;
 	
