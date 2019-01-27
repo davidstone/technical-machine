@@ -1,5 +1,5 @@
 // Read and write settings files
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,66 +18,25 @@
 
 #include <tm/settings_file.hpp>
 
-#include <string>
-
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include <string>
+
 namespace technicalmachine {
 
-Settings::Settings () {
+auto load_settings_file(std::filesystem::path const & path) -> SettingsFile {
 	boost::property_tree::ptree pt;
-	read_xml(file_name().string(), pt);
-
-	boost::property_tree::ptree & root = pt.get_child ("settings");
-
-	team_file = root.get<std::filesystem::path>("team");
-	for (boost::property_tree::ptree::value_type const & server_tree : root.get_child ("servers"))
-		servers.emplace_back(server_tree.second);
+	read_xml(path.string(), pt);
+	auto const & server = pt.get_child("settings");
+	return SettingsFile{
+		server.get<std::filesystem::path>("team"),
+		server.get<std::string>("host"),
+		server.get<std::string>("port"),
+		server.get<std::string>("username"),
+		server.get<std::string>("password"),
+		server.get<std::string>("resource")
+	};
 }
-
-Server::Server (boost::property_tree::ptree const & server):
-	host (server.get <std::string> ("host")),
-	port (server.get <std::string> ("port")),
-	username (server.get <std::string> ("username")),
-	password (server.get <std::string> ("password")),
-	resource(server.get_optional<std::string>("resource")),
-	server_name(server.get<std::string>("<xmlattr>.name", std::string()))
-	{
-}
-
-void Settings::write () const {
-	boost::property_tree::ptree pt;
-	boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type> format_settings('\t', 1);
-
-	boost::property_tree::ptree & root = pt.add ("settings", "");
-
-	root.add ("team", "teams/");
-	boost::property_tree::ptree & servers_tree = root.add ("servers", "");
-	for (Server const & server : servers) {
-		server.add (servers_tree);
-	}
-
-	write_xml(file_name().string(), pt, std::locale (), format_settings);
-}
-
-void Server::add (boost::property_tree::ptree & root) const {
-	boost::property_tree::ptree & server_tree = root.add ("server", "");
-	server_tree.add ("<xmlattr>.name", server_name);
-	server_tree.add ("host", host);
-	server_tree.add ("port", port);
-	server_tree.add ("username", username);
-	server_tree.add ("password", password);
-	if (resource) {
-		server_tree.add("resource", *resource);
-	}
-}
-
-std::filesystem::path const & Settings::file_name() {
-	static auto const name = std::filesystem::path("settings/settings.xml");
-	return name;
-}
-
-
 
 }	// namespace technicalmachine

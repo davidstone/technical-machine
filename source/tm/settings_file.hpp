@@ -1,5 +1,5 @@
 // Read and write settings files
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include <containers/vector.hpp>
-
 #include <boost/property_tree/ptree.hpp>
 
 #include <filesystem>
@@ -27,26 +25,15 @@
 
 namespace technicalmachine {
 
-struct Server {
-	explicit Server (boost::property_tree::ptree const & root);
-	void add (boost::property_tree::ptree & root) const;
-
+struct SettingsFile {
+	std::filesystem::path team_file;
 	std::string host;
 	std::string port;
 	std::string username;
 	std::string password;
-	boost::optional<std::string> resource;
-private:
-	std::string server_name;
+	std::string resource;
 };
 
-struct Settings {
-	Settings();
-	void write() const;
-	static std::filesystem::path const & file_name();
-
-	std::filesystem::path team_file;
-	containers::vector<Server> servers;
-};
+auto load_settings_file(std::filesystem::path const & path) -> SettingsFile;
 
 }	// namespace technicalmachine

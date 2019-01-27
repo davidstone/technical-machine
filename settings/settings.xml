@@ -12,13 +12,9 @@
 		Relative paths are relative to your executable, not this settings file.
 	-->
 	<team>teams/</team>
-	<servers>
-		<server name="Smogon University">
-			<host>sim.smogon.com</host>
-			<port>8000</port>
-			<resource>/showdown/websocket</resource>
-			<username></username>
-			<password></password>
-		</server>
-	</servers>
+	<host>sim.smogon.com</host>
+	<port>8000</port>
+	<resource>/showdown/websocket</resource>
+	<username></username>
+	<password></password>
 </settings>

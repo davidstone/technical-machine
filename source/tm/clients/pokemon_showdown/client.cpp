@@ -38,31 +38,6 @@
 
 namespace technicalmachine {
 namespace ps {
-
-Client::Client(unsigned depth):
-	m_random_engine(m_rd()),
-	m_usage_stats("settings/4/OU"),
-	m_socket(m_io),
-	m_websocket(m_socket),
-	m_depth(depth)
-{
-	load_settings();
-	while (m_username.empty()) {
-		std::cerr << "Add a username and password entry to " << Settings::file_name() << " and hit enter.";
-		std::cin.get();
-		load_settings();
-	}
-	log_in();
-}
-
-void Client::log_in() {
-	auto resolver = boost::asio::ip::tcp::resolver(m_io);
-	boost::asio::connect(m_socket, resolver.resolve(m_host, m_port));
-	m_websocket.handshake(m_host, m_resource);
-
-	std::cout << "Connected\n";
-}
-
 namespace {
 
 auto load_lines_from_file(std::filesystem::path const & file_name) {
@@ -78,22 +53,27 @@ auto load_lines_from_file(std::filesystem::path const & file_name) {
 
 }	// namespace
 
-void Client::load_settings() {
-	auto settings = Settings();
-	m_evaluate = Evaluate{};
-	m_team_file = settings.team_file;
-	
-	Server & server = front(settings.servers);
-	m_host = server.host;
-	m_port = server.port;
-	m_resource = server.resource.value();
-	m_username = server.username;
-	if (server.password.empty()) {
-		server.password = random_string(m_random_engine, 31);
-		settings.write();
+Client::Client(SettingsFile settings, unsigned depth):
+	m_random_engine(m_rd()),
+	m_usage_stats("settings/4/OU"),
+	m_socket(m_io),
+	m_websocket(m_socket),
+	m_settings(std::move(settings)),
+	m_trusted_users(load_lines_from_file("settings/trusted_users.txt")),
+	m_depth(depth)
+{
+	if (m_settings.username.empty()) {
+		throw std::runtime_error("Missing username and password in settings file");
 	}
-	m_password = server.password;
-	m_trusted_users = load_lines_from_file("settings/trusted_users.txt");
+	log_in();
+}
+
+void Client::log_in() {
+	auto resolver = boost::asio::ip::tcp::resolver(m_io);
+	boost::asio::connect(m_socket, resolver.resolve(m_settings.host, m_settings.port));
+	m_websocket.handshake(m_settings.host, m_settings.resource);
+
+	std::cout << "Connected\n";
 }
 
 void Client::run() {
@@ -149,7 +129,7 @@ void Client::handle_message(InMessage message) {
 		if (message.next() == "battle") {
 			m_battles.add_pending(
 				std::string(message.room()),
-				m_username,
+				m_settings.username,
 				m_usage_stats,
 				m_evaluate,
 				m_depth,
@@ -218,7 +198,7 @@ void Client::authenticate(std::string_view const challstr) {
 		http::verb::post,
 		"/action.php",
 		version,
-		("act=login&name=" + m_username + "&pass=" + m_password + "&challstr=").append(challstr)
+		("act=login&name=" + m_settings.username + "&pass=" + m_settings.password + "&challstr=").append(challstr)
 	};
 	request.set(http::field::host, host);
 	request.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
@@ -240,7 +220,7 @@ void Client::authenticate(std::string_view const challstr) {
 	// Response begins with ']' followed by JSON object.
 	response.body().erase(0U, 1U);
 	auto const json = m_parse_json(response.body());
-	write_message("|/trn " + m_username + ",0," + json.get<std::string>("assertion"));
+	write_message("|/trn " + m_settings.username + ",0," + json.get<std::string>("assertion"));
 }
 
 void Client::join_channel(std::string const & channel) {

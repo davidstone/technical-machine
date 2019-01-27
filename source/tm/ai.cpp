@@ -45,7 +45,7 @@ int main(int argc, char * * argv) {
 	bool stopping = false;
 	while (!stopping) {
 		try {
-			ps::Client client(depth);
+			auto client = ps::Client(load_settings_file("settings/settings.xml"), depth);
 			client.run();
 			stopping = true;
 		} catch (std::exception const & ex) {

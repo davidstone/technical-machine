@@ -44,13 +44,13 @@ namespace technicalmachine {
 namespace ps {
 
 struct Client {
-	explicit Client(unsigned depth);
+	Client(SettingsFile settings, unsigned depth);
 	void run();
 private:
 	void write_message(std::string_view message);
 	
 	Team generate_team() {
-		return load_team_from_file(m_random_engine, m_team_file);
+		return load_team_from_file(m_random_engine, m_settings.team_file);
 	}
 
 	void handle_message(InMessage message);
@@ -58,7 +58,6 @@ private:
 	void send_private_message(std::string const & user, std::string const & message);
 
 	void log_in();
-	void load_settings();
 	void join_channel(std::string const & channel);
 	void part_channel(std::string const & channel);
 	
@@ -71,18 +70,13 @@ private:
 
 	UsageStats m_usage_stats;
 	Evaluate m_evaluate;
-	std::filesystem::path m_team_file;
 
 	boost::asio::io_service m_io;
 	boost::asio::ip::tcp::socket m_socket;
 	boost::beast::websocket::stream<boost::asio::ip::tcp::socket &> m_websocket;
 	boost::beast::flat_buffer m_buffer;
-	
-	std::string m_host;
-	std::string m_port;
-	std::string m_resource;
-	std::string m_username;
-	std::string m_password;
+
+	SettingsFile m_settings;
 	
 	JSONParser m_parse_json;
 	
