@@ -42,12 +42,11 @@ int main(int argc, char * * argv) {
 	print_debug_statements();
 	unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast<unsigned>(argv[1]);
 
-	bool stopping = false;
-	while (!stopping) {
+	while (true) {
 		try {
 			auto client = ps::Client(load_settings_file("settings/settings.xml"), depth);
 			client.run();
-			stopping = true;
+			break;
 		} catch (std::exception const & ex) {
 			constexpr auto timeout = std::chrono::seconds(10);
 			std::cerr << ex.what() << " Disconnected. Waiting " << timeout.count() << " seconds and trying again.\n";
