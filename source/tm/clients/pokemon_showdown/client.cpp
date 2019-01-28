@@ -120,6 +120,9 @@ void ClientImpl::run(BufferView<char> messages) {
 }
 
 void ClientImpl::handle_message(InMessage message) {
+	if (m_battles.handle_message(message, m_send_message)) {
+		return;
+	}
 	if (message.type() == ":") {
 		// message.remainder() == seconds since 1970
 	} else if (message.type() == "b" or message.type() == "B" or message.type() == "battle") {
@@ -185,7 +188,6 @@ void ClientImpl::handle_message(InMessage message) {
 		// message.remainder() == number of users on server
 	} else if (message.type() == "users") {
 		// message.remainder() == comma separated list of users
-	} else if (m_battles.handle_message(message, m_send_message)) {
 	} else {
 		std::cout << "Received unknown message in room: " << message.room() << " type: " << message.type() << "\n\t" << message.remainder() << '\n';
 	}
