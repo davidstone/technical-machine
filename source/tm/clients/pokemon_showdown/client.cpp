@@ -66,7 +66,7 @@ Client::Sockets::Sockets(std::string_view const host, std::string_view const por
 auto Client::Sockets::make_connected_socket(std::string_view const host, std::string_view const port) -> tcp::socket {
 	auto socket = tcp::socket(m_io);
 	auto resolver = tcp::resolver(m_io);
-	boost::asio::connect(m_socket, resolver.resolve(host, port));
+	boost::asio::connect(socket, resolver.resolve(host, port));
 	return socket;
 }
 
