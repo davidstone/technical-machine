@@ -46,7 +46,6 @@ int main(int argc, char * * argv) {
 		try {
 			auto client = ps::Client(load_settings_file("settings/settings.xml"), depth);
 			client.run();
-			break;
 		} catch (std::exception const & ex) {
 			constexpr auto timeout = std::chrono::seconds(10);
 			std::cerr << ex.what() << " Disconnected. Waiting " << timeout.count() << " seconds and trying again.\n";

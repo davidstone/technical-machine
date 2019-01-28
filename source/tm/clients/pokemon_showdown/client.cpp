@@ -98,20 +98,16 @@ Client::Client(SettingsFile settings, unsigned depth):
 
 void Client::run() {
 	std::cout << "Running\n";
-	try {
-		while (true) {
-			auto messages = m_sockets.read_message();
-			auto const has_room = !messages.remainder().empty() and messages.remainder().front() == '>';
-			auto const room = has_room ? messages.next().substr(1) : std::string_view{};
-			while (!messages.remainder().empty()) {
-				auto const next = messages.next();
-				auto print_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
-				handle_message(InMessage(room, BufferView(next, '|')));
-				print_on_exception.dismiss();
-			}
+	while (true) {
+		auto messages = m_sockets.read_message();
+		auto const has_room = !messages.remainder().empty() and messages.remainder().front() == '>';
+		auto const room = has_room ? messages.next().substr(1) : std::string_view{};
+		while (!messages.remainder().empty()) {
+			auto const next = messages.next();
+			auto print_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
+			handle_message(InMessage(room, BufferView(next, '|')));
+			print_on_exception.dismiss();
 		}
-	} catch (std::exception const & ex) {
-		std::cerr << ex.what() << '\n';
 	}
 }
 

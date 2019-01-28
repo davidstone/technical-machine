@@ -45,7 +45,7 @@ namespace ps {
 
 struct Client {
 	Client(SettingsFile settings, unsigned depth);
-	void run();
+	[[noreturn]] void run();
 private:
 	using tcp = boost::asio::ip::tcp;
 	
