@@ -1,5 +1,5 @@
 // Connect to Pokemon Showdown
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -42,13 +42,16 @@
 
 namespace technicalmachine {
 namespace ps {
+namespace http = boost::beast::http;
 
-struct Client {
-	Client(SettingsFile settings, unsigned depth);
-	[[noreturn]] void run();
+struct ClientImpl {
+	using AuthenticationFunction = std::function<
+		http::response<http::string_body>(std::string_view, std::string_view, http::request<http::string_body> const &)
+	>;
+	ClientImpl(SettingsFile settings, unsigned depth, BattleParser::SendMessageFunction send_message, AuthenticationFunction authenticate);
+	void run(BufferView<char> messages);
+
 private:
-	using tcp = boost::asio::ip::tcp;
-	
 	Team generate_team() {
 		return load_team_from_file(m_random_engine, m_settings.team_file);
 	}
@@ -63,20 +66,7 @@ private:
 	void authenticate(std::string_view challstr);
 	
 	BufferView<char> read_message();
-	
-	struct Sockets {
-		Sockets(std::string_view host, std::string_view port, std::string_view resource);
-		auto make_connected_socket(std::string_view host, std::string_view port) -> tcp::socket;
-		auto read_message() -> BufferView<char>;
-		void write_message(std::string_view message);
-	
-	private:
-		boost::beast::flat_buffer m_buffer;
-		boost::asio::io_service m_io;
-		tcp::socket m_socket;
-		boost::beast::websocket::stream<tcp::socket &> m_websocket;
-	};
-	
+
 	std::random_device m_rd;
 	std::mt19937 m_random_engine;
 
@@ -91,8 +81,35 @@ private:
 	unsigned m_depth;
 	
 	Battles m_battles;
+	
+	BattleParser::SendMessageFunction m_send_message;
+	AuthenticationFunction m_authenticate;
+};
 
+struct Client {
+	Client(SettingsFile settings, unsigned depth);
+	[[noreturn]] void run();
+private:
+	struct Sockets {
+		using tcp = boost::asio::ip::tcp;
+
+		Sockets(std::string_view host, std::string_view port, std::string_view resource);
+		Sockets(Sockets &&) = delete;
+
+		auto read_message() -> BufferView<char>;
+		void write_message(std::string_view message);
+		auto authenticate(std::string_view host, std::string_view port, http::request<http::string_body> const & request) -> http::response<http::string_body>;
+	
+	private:
+		auto make_connected_socket(std::string_view host, std::string_view port) -> tcp::socket;
+		boost::beast::flat_buffer m_buffer;
+		boost::asio::io_service m_io;
+		tcp::socket m_socket;
+		boost::beast::websocket::stream<tcp::socket &> m_websocket;
+	};
+	
 	Sockets m_sockets;
+	ClientImpl m_impl;
 };
 
 }	// namespace ps

@@ -1,5 +1,5 @@
 // Connect to Pokemon Showdown
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -84,34 +84,42 @@ void Client::Sockets::write_message(std::string_view const message) {
 	m_websocket.write(boost::asio::buffer(message));
 }
 
+auto Client::Sockets::authenticate(std::string_view const host, std::string_view const port, http::request<http::string_body> const & request) -> http::response<http::string_body> {
+	auto socket = make_connected_socket(host, port);
 
-Client::Client(SettingsFile settings, unsigned depth):
+	http::write(socket, request);
+	
+	auto buffer = boost::beast::flat_buffer{};
+	auto response = http::response<http::string_body>{};
+	http::read(socket, buffer, response);
+	return response;
+}
+
+
+ClientImpl::ClientImpl(SettingsFile settings, unsigned depth, BattleParser::SendMessageFunction send_message, AuthenticationFunction authenticate):
 	m_random_engine(m_rd()),
 	m_usage_stats("settings/4/OU"),
 	m_settings(std::move(settings)),
 	m_trusted_users(load_lines_from_file("settings/trusted_users.txt")),
 	m_depth(depth),
-	m_sockets(m_settings.host, m_settings.port, m_settings.resource)
+	m_send_message(std::move(send_message)),
+	m_authenticate(std::move(authenticate))
 {
 	std::cout << "Connected\n";
 }
 
-void Client::run() {
-	std::cout << "Running\n";
-	while (true) {
-		auto messages = m_sockets.read_message();
-		auto const has_room = !messages.remainder().empty() and messages.remainder().front() == '>';
-		auto const room = has_room ? messages.next().substr(1) : std::string_view{};
-		while (!messages.remainder().empty()) {
-			auto const next = messages.next();
-			auto print_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
-			handle_message(InMessage(room, BufferView(next, '|')));
-			print_on_exception.dismiss();
-		}
+void ClientImpl::run(BufferView<char> messages) {
+	auto const has_room = !messages.remainder().empty() and messages.remainder().front() == '>';
+	auto const room = has_room ? messages.next().substr(1) : std::string_view{};
+	while (!messages.remainder().empty()) {
+		auto const next = messages.next();
+		auto print_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
+		handle_message(InMessage(room, BufferView(next, '|')));
+		print_on_exception.dismiss();
 	}
 }
 
-void Client::handle_message(InMessage message) {
+void ClientImpl::handle_message(InMessage message) {
 	if (message.type() == ":") {
 		// message.remainder() == seconds since 1970
 	} else if (message.type() == "b" or message.type() == "B" or message.type() == "battle") {
@@ -166,7 +174,7 @@ void Client::handle_message(InMessage message) {
 			if (!is_trusted) {
 				std::cout << "Rejected a challenge from " << challenge.first << '\n';
 			}
-			m_sockets.write_message(command + challenge.first);
+			m_send_message(command + challenge.first);
 		}
 		// "cancelchallenge" is the command to stop challenging someone
 	} else if (message.type() == "updateuser") {
@@ -177,20 +185,19 @@ void Client::handle_message(InMessage message) {
 		// message.remainder() == number of users on server
 	} else if (message.type() == "users") {
 		// message.remainder() == comma separated list of users
-	} else if (m_battles.handle_message(message, [&](std::string_view const output) { m_sockets.write_message(output); })) {
+	} else if (m_battles.handle_message(message, m_send_message)) {
 	} else {
 		std::cout << "Received unknown message in room: " << message.room() << " type: " << message.type() << "\n\t" << message.remainder() << '\n';
 	}
 }
 
-void Client::authenticate(std::string_view const challstr) {
+void ClientImpl::authenticate(std::string_view const challstr) {
 	// In theory, if we ever support session cookies, make HTTP GET:
 	// http://play.pokemonshowdown.com/action.php?act=upkeep&challstr=CHALLSTR
 	// Otherwise, make HTTP POST: http://play.pokemonshowdown.com/action.php
 	// with data act=login&name=USERNAME&pass=PASSWORD&challstr=CHALLSTR
 	namespace http = boost::beast::http;
 	constexpr auto host = "play.pokemonshowdown.com";
-	auto socket = m_sockets.make_connected_socket(host, "80");
 	
 	constexpr auto version = 11U;
 	auto request = http::request<http::string_body>{
@@ -204,11 +211,7 @@ void Client::authenticate(std::string_view const challstr) {
 	request.set(http::field::content_type, "application/x-www-form-urlencoded");
 	request.prepare_payload();
 
-	http::write(socket, request);
-	
-	auto buffer = boost::beast::flat_buffer{};
-	auto response = http::response<http::string_body>{};
-	http::read(socket, buffer, response);
+	auto response = m_authenticate(host, "80", request);
 	
 	// Sadly, it does not look like it is possible to use
 	// boost::property_tree to directly parse JSON from some arbitrary
@@ -219,20 +222,38 @@ void Client::authenticate(std::string_view const challstr) {
 	// Response begins with ']' followed by JSON object.
 	response.body().erase(0U, 1U);
 	auto const json = m_parse_json(response.body());
-	m_sockets.write_message("|/trn " + m_settings.username + ",0," + json.get<std::string>("assertion"));
+	m_send_message("|/trn " + m_settings.username + ",0," + json.get<std::string>("assertion"));
 }
 
-void Client::join_channel(std::string const & channel) {
-	m_sockets.write_message("|/join " + channel);
+void ClientImpl::join_channel(std::string const & channel) {
+	m_send_message("|/join " + channel);
 }
 
-void Client::part_channel(std::string const & channel) {
+void ClientImpl::part_channel(std::string const & channel) {
 	std::cout << "part_channel\n";
 	static_cast<void>(channel);
 }
 
-void Client::send_channel_message(std::string const & channel, std::string const & message) {
-	m_sockets.write_message(channel + "|/msg " + message);
+void ClientImpl::send_channel_message(std::string const & channel, std::string const & message) {
+	m_send_message(channel + "|/msg " + message);
+}
+
+Client::Client(SettingsFile settings, unsigned const depth):
+	m_sockets(settings.host, settings.port, settings.resource),
+	m_impl(
+		std::move(settings),
+		depth,
+		[&](std::string_view const output) { m_sockets.write_message(output); },
+		[&](auto const & ... args) { return m_sockets.authenticate(args...); }
+	)
+{
+}
+
+void Client::run() {
+	std::cout << "Running\n";
+	while (true) {
+		m_impl.run(m_sockets.read_message());
+	}
 }
 
 }	// namespace ps
