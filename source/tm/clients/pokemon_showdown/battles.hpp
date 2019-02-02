@@ -1,5 +1,5 @@
 // Handles challenges / current battles
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -24,15 +24,22 @@
 
 #include <algorithm>
 #include <list>
+#include <filesystem>
 #include <string>
 
 namespace technicalmachine {
 namespace ps {
 
 struct Battles {
+	explicit Battles(std::filesystem::path log_directory):
+		m_log_directory(std::move(log_directory))
+	{
+		std::filesystem::create_directories(m_log_directory);
+	}
+
 	template<typename ... Args>
 	void add_pending(Args && ... args) {
-		m_pending.emplace_back(std::forward<Args>(args)...);
+		m_pending.emplace_back(m_log_directory, std::forward<Args>(args)...);
 	}
 	
 	template<typename SendMessageFunction>
@@ -68,6 +75,7 @@ private:
 		m_pending.erase(it);
 	}
 
+	std::filesystem::path m_log_directory;
 	std::list<BattleFactory> m_pending;
 	std::list<BattleParser> m_active;
 };

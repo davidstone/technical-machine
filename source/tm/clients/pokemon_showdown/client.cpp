@@ -102,6 +102,7 @@ ClientImpl::ClientImpl(SettingsFile settings, unsigned depth, BattleParser::Send
 	m_settings(std::move(settings)),
 	m_trusted_users(load_lines_from_file("settings/trusted_users.txt")),
 	m_depth(depth),
+	m_battles("battles"),
 	m_send_message(std::move(send_message)),
 	m_authenticate(std::move(authenticate))
 {

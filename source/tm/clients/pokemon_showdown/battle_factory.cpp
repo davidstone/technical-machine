@@ -90,6 +90,8 @@ Team parse_team(boost::property_tree::ptree const & pt) {
 }	// namespace
 
 void BattleFactory::handle_message(InMessage message) {
+	m_battle_logger.log(message);
+
 	// Documented at
 	// https://github.com/Zarel/Pokemon-Showdown/blob/master/PROTOCOL.md
 	// under the section "Battle Initialization"
@@ -205,6 +207,7 @@ BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message)
 	};
 	return BattleParser(
 		std::move(send_message),
+		std::move(m_battle_logger),
 		std::move(m_id),
 		std::move(m_username),
 		m_usage_stats,

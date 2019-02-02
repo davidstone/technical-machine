@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <tm/clients/pokemon_showdown/battle_logger.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 #include <tm/clients/pokemon_showdown/move_state.hpp>
 #include <tm/clients/pokemon_showdown/slot_memory.hpp>
@@ -38,6 +39,7 @@ struct BattleParser {
 	using SendMessageFunction = std::function<void(std::string_view)>;
 	BattleParser(
 		SendMessageFunction send_message,
+		BattleLogger battle_logger,
 		std::string id_,
 		std::string username,
 		UsageStats const & usage_stats,
@@ -51,6 +53,7 @@ struct BattleParser {
 	):
 		m_usage_stats(usage_stats),
 		m_send_message(std::move(send_message)),
+		m_battle_logger(std::move(battle_logger)),
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_random_engine(random_engine),
@@ -85,6 +88,7 @@ private:
 	UsageStats const & m_usage_stats;
 		
 	SendMessageFunction m_send_message;
+	BattleLogger m_battle_logger;
 	std::string m_id;
 	std::string m_username;
 	std::mt19937 m_random_engine;

@@ -206,6 +206,7 @@ auto parse_set_hp_message(InMessage message, Battle const & battle) {
 
 
 void BattleParser::handle_message(InMessage message) {
+	m_battle_logger.log(message);
 	auto const type = message.type();
 	std::cerr << "Message: " << type << '\n';
 	struct PokemonDetails {

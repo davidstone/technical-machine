@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <tm/clients/pokemon_showdown/battle_logger.hpp>
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 #include <tm/clients/pokemon_showdown/json_parser.hpp>
@@ -35,6 +36,7 @@ namespace ps {
 
 struct BattleFactory {
 	BattleFactory(
+		std::filesystem::path const & log_directory,
 		std::string id_,
 		std::string username,
 		UsageStats const & usage_stats,
@@ -43,6 +45,7 @@ struct BattleFactory {
 		std::mt19937 random_engine,
 		Team team
 	):
+		m_battle_logger(log_directory, id_),
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_usage_stats(usage_stats),
@@ -70,6 +73,7 @@ private:
 	enum class Clause { };
 	JSONParser m_parse_json;
 
+	BattleLogger m_battle_logger;
 	std::string m_id;
 	std::string m_username;
 	UsageStats const & m_usage_stats;
