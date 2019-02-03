@@ -169,6 +169,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/tm/test/test1.tp DESTINATION ${CMAK
 
 add_executable(ai
 	source/tm/clients/pokemon_showdown/battle_factory.cpp
+	source/tm/clients/pokemon_showdown/battle_logger.cpp
 	source/tm/clients/pokemon_showdown/battle_parser.cpp
 	source/tm/clients/pokemon_showdown/battles.cpp
 	source/tm/clients/pokemon_showdown/battle_settings.cpp
