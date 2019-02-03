@@ -19,6 +19,7 @@
 
 #include <tm/ability.hpp>
 #include <tm/damage.hpp>
+#include <tm/files_in_directory.hpp>
 #include <tm/item.hpp>
 #include <tm/status.hpp>
 
@@ -29,30 +30,11 @@
 #include <tm/clients/pokemon_lab/read_team_file.hpp>
 #include <tm/clients/pokemon_online/read_team_file.hpp>
 
-#include <containers/vector.hpp>
-
 #include <cstdint>
 #include <filesystem>
 #include <string>
 
 namespace technicalmachine {
-namespace {
-
-using Files = containers::vector<std::filesystem::path>;
-auto open_directory_and_add_files(std::filesystem::path const & team_file) -> Files {
-	Files files;
-	if (std::filesystem::is_directory(team_file)) {
-		for (auto it = std::filesystem::directory_iterator(team_file); it != std::filesystem::directory_iterator(); ++it) {
-			append(files, open_directory_and_add_files(it->path()));
-		}
-	} else if (std::filesystem::is_regular_file(team_file)) {
-		push_back(files, team_file);
-	}
-	return files;
-}
-
-
-}	// namespace
 
 Team::Team(TeamSize const initial_size, bool team_is_me) :
 	m_all_pokemon(initial_size),
@@ -104,12 +86,12 @@ void Team::clear_field() {
 }
 
 Team load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) {
-	auto const files = open_directory_and_add_files(path);
+	auto const files = recursive_files_in_path(path);
 	if (empty(files)) {
 		throw std::runtime_error(path.string() + " does not contain any team files.");
 	}
 	auto distribution = std::uniform_int_distribution<std::intmax_t>(0, static_cast<std::intmax_t>(size(files) - 1_bi));
-	auto const file = files[containers::index_type<Files>(distribution(random_engine))];
+	auto const file = files[containers::index_type<decltype(files)>(distribution(random_engine))];
 
 	auto const extension = file.extension();
 	if (extension == ".tp") {
