@@ -16,6 +16,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/clients/pokemon_showdown/battle_factory.hpp>
+#include <tm/clients/pokemon_showdown/chat.hpp>
 
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/pokemon.hpp>
@@ -91,11 +92,17 @@ Team parse_team(boost::property_tree::ptree const & pt) {
 
 void BattleFactory::handle_message(InMessage message) {
 	m_battle_logger.log(message);
+	
+	if (handle_chat_message(message)) {
+		return;
+	}
 
 	// Documented at
 	// https://github.com/Zarel/Pokemon-Showdown/blob/master/PROTOCOL.md
 	// under the section "Battle Initialization"
-	if (message.type() == "clearpoke") {
+	if (message.type() == "") {
+		// Unnecessary
+	} else if (message.type() == "clearpoke") {
 		// This appears to mean nothing
 	} else if (message.type() == "gametype") {
 		m_type.emplace(message.next());

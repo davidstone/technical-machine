@@ -19,8 +19,8 @@
 // See https://github.com/Zarel/Pokemon-Showdown/blob/master/protocol-doc.md
 // for the full protocol.
 
+#include <tm/clients/pokemon_showdown/chat.hpp>
 #include <tm/clients/pokemon_showdown/client.hpp>
-
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 
 #include <tm/clients/random_string.hpp>
@@ -124,14 +124,11 @@ void ClientImpl::handle_message(InMessage message) {
 	if (m_battles.handle_message(message, m_send_message)) {
 		return;
 	}
-	if (message.type() == ":") {
-		// message.remainder() == seconds since 1970
-	} else if (message.type() == "b" or message.type() == "B" or message.type() == "battle") {
+	if (handle_chat_message(message)) {
+		return;
+	}
+	if (message.type() == "b" or message.type() == "B" or message.type() == "battle") {
 		// message.remainder() == ROOMID|username|username
-	} else if (message.type() == "c" or message.type() == "chat") {
-		// message.remainder() == username|message
-	} else if (message.type() == "c:") {
-		// message.remainder() == seconds since 1970|username|message
 	} else if (message.type() == "challstr") {
 		authenticate(message.remainder());
 		// After logging in, send "|/search FORMAT_NAME" to begin laddering
@@ -151,12 +148,6 @@ void ClientImpl::handle_message(InMessage message) {
 				generate_team()
 			);
 		}
-	} else if (message.type() == "j" or message.type() == "J" or message.type() == "join") {
-		// message.remainder() == username
-	} else if (message.type() == "l" or message.type() == "L" or message.type() == "leave") {
-		// message.remainder() == username
-	} else if (message.type() == "n" or message.type() == "N" or message.type() == "name") {
-		// message.remainder() == new username|old username
 	} else if (message.type() == "nametaken") {
 		auto const username = message.next();
 		std::cerr << "Could not change username to " << username << " because: " << message.remainder() << '\n';

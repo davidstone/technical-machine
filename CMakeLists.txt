@@ -173,6 +173,7 @@ add_executable(ai
 	source/tm/clients/pokemon_showdown/battle_parser.cpp
 	source/tm/clients/pokemon_showdown/battles.cpp
 	source/tm/clients/pokemon_showdown/battle_settings.cpp
+	source/tm/clients/pokemon_showdown/chat.cpp
 	source/tm/clients/pokemon_showdown/client.cpp
 	source/tm/clients/pokemon_showdown/inmessage.cpp
 	source/tm/clients/pokemon_showdown/json_parser.cpp

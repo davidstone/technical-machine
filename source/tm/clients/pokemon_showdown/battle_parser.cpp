@@ -16,6 +16,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
+#include <tm/clients/pokemon_showdown/chat.hpp>
 
 #include <tm/evaluate/expectiminimax.hpp>
 
@@ -207,8 +208,11 @@ auto parse_set_hp_message(InMessage message, Battle const & battle) {
 
 void BattleParser::handle_message(InMessage message) {
 	m_battle_logger.log(message);
-	auto const type = message.type();
-	std::cerr << "Message: " << type << '\n';
+	
+	if (handle_chat_message(message)) {
+		return;
+	}
+
 	struct PokemonDetails {
 		Species species;
 		bool shiny; // "shiny" or nothing
@@ -216,10 +220,7 @@ void BattleParser::handle_message(InMessage message) {
 		Level level; // Level 100 by default
 	};
 
-	// POKEMON = PLAYER+SLOT: NAME
-	// Where PLAYER is "p1" or "p2", SLOT is "a", "b", or "c". Example: p1a: Mew
-	// SLOT is left off for inactive Pokemon
-	
+	auto const type = message.type();
 	if (type.empty() or (type.front() != '-' and type != "drag")) {
 		maybe_use_previous_move();
 	}
