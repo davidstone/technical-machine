@@ -426,14 +426,14 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-singleturn") {
 		// Received for things like Protect that last the rest of the turn
 	} else if (type == "-start") {
-		auto const party = party_from_pokemon_id(message.next());
+		auto const pokemon_id [[maybe_unused]] = message.next();
 		auto const thing = message.next();
 		if (thing == "confusion") {
 			auto const source = message.next();
 			if (source == "[fatigue]") {
 				
 			} else {
-				m_move_state.confuse(party);
+				m_move_state.confuse();
 			}
 		} else {
 			std::cout << "Miscellaneous effect: " << thing << '|' << message.remainder() << '\n';
