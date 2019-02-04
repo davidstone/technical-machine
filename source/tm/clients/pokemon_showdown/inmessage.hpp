@@ -72,17 +72,8 @@ private:
 BufferView(std::string_view, char const *) -> BufferView<std::string_view>;
 
 struct InMessage {
-	explicit constexpr InMessage(std::string_view const room, BufferView<char> view):
-		m_room(room),
-		// Because messages start with a '|', discard first empty string
-		m_type([&]{
-			auto const discarded = view.next();
-			if (!discarded.empty()) {
-				std::cerr << "Expected empty string, got " << discarded << '\n';
-			}
-			return view.next();
-		}()),
-		m_view(view)
+	constexpr InMessage(std::string_view const room, std::string_view const data):
+		InMessage(room, BufferView(data, '|'))
 	{
 	}
 
@@ -104,6 +95,20 @@ struct InMessage {
 	}
 
 private:
+	constexpr InMessage(std::string_view const room, BufferView<char> view):
+		m_room(room),
+		m_type([&]{
+			// Because messages start with a '|', discard first empty string
+			auto const discarded = view.next();
+			if (!discarded.empty()) {
+				std::cerr << "Expected empty string, got " << discarded << '\n';
+			}
+			return view.next();
+		}()),
+		m_view(view)
+	{
+	}
+
 	std::string_view m_room;
 	std::string_view m_type;
 	BufferView<char> m_view;

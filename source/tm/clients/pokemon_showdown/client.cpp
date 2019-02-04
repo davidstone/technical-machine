@@ -115,7 +115,7 @@ void ClientImpl::run(BufferView<char> messages) {
 	while (!messages.remainder().empty()) {
 		auto const next = messages.next();
 		auto print_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
-		handle_message(InMessage(room, BufferView(next, '|')));
+		handle_message(InMessage(room, next));
 		print_on_exception.dismiss();
 	}
 }
