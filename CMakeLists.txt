@@ -38,7 +38,23 @@ add_library(tm_common STATIC
 	source/tm/clients/pokemon_online/read_team_file.cpp
 	source/tm/clients/pokemon_online/write_team_file.cpp
 
+	source/tm/clients/pokemon_showdown/battle_factory.cpp
+	source/tm/clients/pokemon_showdown/battle_logger.cpp
+	source/tm/clients/pokemon_showdown/battle_parser.cpp
+	source/tm/clients/pokemon_showdown/battles.cpp
+	source/tm/clients/pokemon_showdown/chat.cpp
+	source/tm/clients/pokemon_showdown/client.cpp
+	source/tm/clients/pokemon_showdown/inmessage.cpp
+	source/tm/clients/pokemon_showdown/json_parser.cpp
+	source/tm/clients/pokemon_showdown/move_state.cpp
+	source/tm/clients/pokemon_showdown/slot_memory.cpp
+
+	source/tm/clients/battle.cpp
+	source/tm/clients/battle_result.cpp
+	source/tm/clients/handle_battle_end.cpp
 	source/tm/clients/invalid_team_file_format.cpp
+	source/tm/clients/party.cpp
+	source/tm/clients/timestamp.cpp
 
 	source/tm/evaluate/depth.cpp
 	source/tm/evaluate/evaluate.cpp
@@ -169,24 +185,8 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/tm/test/test1.sbt DESTINATION ${CMA
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/tm/test/test1.tp DESTINATION ${CMAKE_BINARY_DIR}/test)
 
 add_executable(ai
-	source/tm/clients/pokemon_showdown/battle_factory.cpp
-	source/tm/clients/pokemon_showdown/battle_logger.cpp
-	source/tm/clients/pokemon_showdown/battle_parser.cpp
-	source/tm/clients/pokemon_showdown/battles.cpp
 	source/tm/clients/pokemon_showdown/battle_settings.cpp
-	source/tm/clients/pokemon_showdown/chat.cpp
-	source/tm/clients/pokemon_showdown/client.cpp
-	source/tm/clients/pokemon_showdown/inmessage.cpp
-	source/tm/clients/pokemon_showdown/json_parser.cpp
-	source/tm/clients/pokemon_showdown/move_state.cpp
-	source/tm/clients/pokemon_showdown/slot_memory.cpp
-
-	source/tm/clients/battle.cpp
-	source/tm/clients/battle_result.cpp
-	source/tm/clients/handle_battle_end.cpp
 	source/tm/clients/no_pending_challenges.cpp
-	source/tm/clients/party.cpp
-	source/tm/clients/timestamp.cpp
 
 	source/tm/ai.cpp
 )
@@ -213,6 +213,7 @@ target_link_libraries(predict
 
 
 add_executable(tm_test
+	source/tm/test/clients/pokemon_showdown/battles.cpp
 	source/tm/test/clients/pokemon_showdown/slot_memory.cpp
 
 	source/tm/test/collections/collection.cpp

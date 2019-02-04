@@ -16,8 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
-
+#include <tm/test/clients/pokemon_showdown/battles.hpp>
 #include <tm/test/clients/pokemon_showdown/slot_memory.hpp>
 #include <tm/test/collections/collection.hpp>
 #include <tm/test/damage.hpp>
@@ -30,6 +29,8 @@
 #include <tm/test/evaluate/expectiminimax.hpp>
 #include <tm/test/pokemon_lab/test.hpp>
 #include <tm/test/pokemon_online/test.hpp>
+
+#include <iostream>
 
 int main() {
 	using namespace technicalmachine;
@@ -49,6 +50,7 @@ int main() {
 	pl::test ();
 	po::test ();
 	ps::test_slot_memory();
+	ps::test_battles();
 
 	std::cout << "All tests passed.\n";
 	return 0;
