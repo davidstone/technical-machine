@@ -45,6 +45,7 @@ int main(int argc, char * * argv) {
 	while (true) {
 		try {
 			auto client = ps::Client(load_settings_file("settings/settings.xml"), depth);
+			std::cout << "Connected\n";
 			client.run();
 		} catch (std::exception const & ex) {
 			constexpr auto timeout = std::chrono::seconds(10);

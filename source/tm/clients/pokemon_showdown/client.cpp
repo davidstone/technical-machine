@@ -106,7 +106,6 @@ ClientImpl::ClientImpl(SettingsFile settings, unsigned depth, BattleParser::Send
 	m_send_message(std::move(send_message)),
 	m_authenticate(std::move(authenticate))
 {
-	std::cout << "Connected\n";
 }
 
 void ClientImpl::run(BufferView<char> messages) {
@@ -166,9 +165,6 @@ void ClientImpl::handle_message(InMessage message) {
 		for (auto const & challenge : json.get_child("challengesFrom")) {
 			auto const is_trusted = m_trusted_users.find(challenge.first) != m_trusted_users.end();
 			auto const command = is_trusted ? "|/accept " : "|/reject ";
-			if (!is_trusted) {
-				std::cout << "Rejected a challenge from " << challenge.first << '\n';
-			}
 			m_send_message(command + challenge.first);
 		}
 		// "cancelchallenge" is the command to stop challenging someone
@@ -223,11 +219,6 @@ void ClientImpl::join_channel(std::string const & channel) {
 	m_send_message("|/join " + channel);
 }
 
-void ClientImpl::part_channel(std::string const & channel) {
-	std::cout << "part_channel\n";
-	static_cast<void>(channel);
-}
-
 void ClientImpl::send_channel_message(std::string const & channel, std::string const & message) {
 	m_send_message(channel + "|/msg " + message);
 }
@@ -244,7 +235,6 @@ Client::Client(SettingsFile settings, unsigned const depth):
 }
 
 void Client::run() {
-	std::cout << "Running\n";
 	while (true) {
 		m_impl.run(m_sockets.read_message());
 	}

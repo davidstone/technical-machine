@@ -60,7 +60,6 @@ private:
 	void send_private_message(std::string const & user, std::string const & message);
 
 	void join_channel(std::string const & channel);
-	void part_channel(std::string const & channel);
 	
 	void authenticate(std::string_view challstr);
 	

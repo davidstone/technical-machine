@@ -46,9 +46,6 @@ void Battle::handle_use_move(Party const party, uint8_t /*slot*/, ExecutedMove c
 	add_seen_move(all_moves(user.pokemon()), move.selected);
 	// TODO: Add move.executed in some circumstances
 
-	auto const species = get_species(user.pokemon());
-	std::cout << user.who() << "'s move: " << to_string(species) << " uses " << to_string(move.selected) << " as " << to_string(move.executed) << '\n';
-
 	constexpr auto other_move = bounded::none;
 	constexpr auto user_damaged = bounded::optional<damage_type>();
 	constexpr auto other_damaged = bounded::optional<damage_type>();

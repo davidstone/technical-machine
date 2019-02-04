@@ -28,6 +28,6 @@ namespace technicalmachine {
 struct UsageStats;
 struct Team;
 
-void handle_battle_end(Result result, std::string_view opponent, UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine);
+void handle_battle_end(Result result, UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine);
 
 }	// namespace technicalmachine

@@ -442,7 +442,6 @@ void BattleParser::handle_message(InMessage message) {
 		auto const party = party_from_pokemon_id(message.next());
 		auto const status = parse_status(message.next());
 		auto const source = parse_hp_change_source(message);
-		// TODO: Do we want to break out Move from Miscellaneous?
 		bounded::visit(source, bounded::overload(
 			[](MainEffect) {},
 			[](FromConfusion) { throw std::runtime_error("Confusion cannot cause another status"); },
@@ -457,7 +456,7 @@ void BattleParser::handle_message(InMessage message) {
 		// position here is "0", "1", or "2"
 #endif
 	} else if (type == "tie") {
-		handle_battle_end(Result::tied, m_battle.foe_name(), m_usage_stats, m_battle.foe(), m_random_engine);
+		handle_battle_end(Result::tied, m_usage_stats, m_battle.foe(), m_random_engine);
 		m_completed = true;
 	} else if (type == "-transform") {
 		// message.remainder() == POKEMON|SPECIES
@@ -479,7 +478,7 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "win") {
 		auto const won = m_username == message.next();
 		auto const result = won ? Result::won : Result::lost;
-		handle_battle_end(result, m_battle.foe_name(), m_usage_stats, m_battle.foe(), m_random_engine);
+		handle_battle_end(result, m_usage_stats, m_battle.foe(), m_random_engine);
 		m_completed = true;
 	} else {
 		std::cerr << "Received battle progress message of unknown type: " << type << ": " << message.remainder() << '\n';
@@ -524,8 +523,6 @@ Moves BattleParser::determine_action() {
 		throw std::runtime_error("Tried to determine an action with an empty team.");
 	}
 
-	std::cout << std::string(20, '=') + '\n';
-	std::cout << "Predicting...\n";
 	auto predicted = predict_team(m_usage_stats, use_lead_stats, m_battle.foe(), m_random_engine);
 	//std::cout << to_string(predicted) << '\n';
 

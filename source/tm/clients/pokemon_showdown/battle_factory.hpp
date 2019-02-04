@@ -26,7 +26,6 @@
 #include <bounded/optional.hpp>
 #include <containers/vector.hpp>
 
-#include <iostream>
 #include <random>
 #include <string>
 #include <utility>
@@ -54,7 +53,6 @@ struct BattleFactory {
 		m_random_engine(random_engine),
 		m_team(std::move(team))
 	{
-		std::cout << "Starting a battle with id " << m_id << '\n';
 	}
 	
 	std::string_view id() const {
@@ -82,7 +80,6 @@ private:
 	std::mt19937 m_random_engine;
 	Team m_team;
 	containers::vector<Clause> m_rules;
-	bounded::optional<std::string> m_opponent;
 	bounded::optional<Party> m_party;
 	bounded::optional<std::string> m_type;	// singles, doubles, triples
 	bounded::optional<std::string> m_tier;

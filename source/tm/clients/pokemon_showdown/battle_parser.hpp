@@ -45,7 +45,6 @@ struct BattleParser {
 		UsageStats const & usage_stats,
 		Evaluate evaluate,
 		Party party,
-		std::string opponent,
 		unsigned const depth,
 		std::mt19937 random_engine,
 		Team ai,
@@ -61,7 +60,6 @@ struct BattleParser {
 		m_evaluate(evaluate),
 		m_battle(
 			party,
-			std::move(opponent),
 			std::move(ai),
 			std::move(foe)
 		),

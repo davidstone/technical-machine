@@ -50,11 +50,9 @@ struct Variable;
 struct Battle {
 	Battle(
 		Party const party,
-		std::string foe_name_,
 		Team ai_,
 		Team foe_
 	):
-		m_foe_name(std::move(foe_name_)),
 		m_ai(std::move(ai_)),
 		m_foe(std::move(foe_)),
 		m_ai_party(party)
@@ -66,9 +64,6 @@ struct Battle {
 	}
 	auto const & foe() const {
 		return m_foe;
-	}
-	auto foe_name() const -> std::string_view {
-		return m_foe_name;
 	}
 	auto weather() const {
 		return m_weather;
@@ -82,7 +77,8 @@ struct Battle {
 	// Skin activated
 	template<typename Integer>
 	void handle_begin_turn(Integer const turn_count) {
-		std::cout << "Begin turn " << turn_count << '\n';
+		std::cout << std::string(20, '=');
+		std::cout << "\nBegin turn " << turn_count << '\n';
 		if (turn_count != 1_bi) {
 			constexpr auto ai_shed_skin_activated = false;
 			constexpr auto foe_shed_skin_activated = false;
@@ -94,9 +90,6 @@ struct Battle {
 				side.get().pokemon().set_not_moved();
 			}
 		}
-		
-		std::cout << to_string(ai()) << '\n';
-		std::cout << to_string(foe()) << '\n';
 	}
 
 	void handle_use_move(Party user, uint8_t slot, ExecutedMove move, Variable variable, bool miss, bool critical_hit, bool awakens, bounded::optional<damage_type> damage);
@@ -129,7 +122,6 @@ private:
 		return is_me(party) ? m_ai : m_foe;
 	}
 	
-	std::string m_foe_name;
 	Team m_ai;
 	Team m_foe;
 	Weather m_weather;

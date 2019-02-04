@@ -20,14 +20,12 @@
 
 #include <tm/clients/battle_result.hpp>
 #include <tm/clients/random_string.hpp>
-#include <tm/clients/timestamp.hpp>
 
 #include <tm/clients/pokemon_lab/write_team_file.hpp>
 
 #include <tm/team_predictor/team_predictor.hpp>
 
 #include <filesystem>
-#include <iostream>
 #include <random>
 #include <string>
 
@@ -59,8 +57,7 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 
 }	// namespace
 
-void handle_battle_end(Result const result, std::string_view const opponent, UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine) {
-	std::cout << timestamp() << ": " << to_string(result) << " a battle vs. " << opponent << '\n';
+void handle_battle_end(Result const result, UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine) {
 	if (result == Result::lost) {
 		auto const team = predict_team(usage_stats, use_lead_stats, foe_team, random_engine);
 		pl::write_team(team, generate_team_file_name(random_engine));

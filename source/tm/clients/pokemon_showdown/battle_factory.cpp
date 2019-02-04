@@ -23,8 +23,6 @@
 
 #include <bounded/integer.hpp>
 
-#include <iostream>
-
 namespace technicalmachine {
 namespace ps {
 
@@ -113,12 +111,9 @@ void BattleFactory::handle_message(InMessage message) {
 		auto const username = message.next();
 		if (username == m_username) {
 			m_party.emplace(make_party(player_id));
-		} else {
-			m_opponent.emplace(username);
 		}
 		// message.remainder() == AVATAR
 	} else if (message.type() == "poke") {
-		std::cout << "poke: " << message.remainder() << '\n';
 		// message.remainder() == PLAYER_ID|DETAILS|ITEM
 	} else if (message.type() == "rated") {
 		// Received if and only if the game is rated. We don't care about this
@@ -179,9 +174,6 @@ void BattleFactory::handle_message(InMessage message) {
 
 BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message) && {
 	assert(completed());
-	if (!m_opponent) {
-		throw std::runtime_error("Did not receive opponent");
-	}
 	if (!m_party) {
 		throw std::runtime_error("Did not receive party");
 	}
@@ -220,7 +212,6 @@ BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message)
 		m_usage_stats,
 		m_evaluate,
 		*m_party,
-		*std::move(m_opponent),
 		m_depth,
 		m_random_engine,
 		std::move(m_team),
