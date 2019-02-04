@@ -267,8 +267,6 @@ void BattleParser::handle_message(InMessage message) {
 #endif
 	} else if (type == "-damage") {
 		handle_damage(message);
-	} else if (type == "deinit") {
-		// When you stay in a room too long
 	} else if (type == "detailschange" or type == "-formechange") {
 #if 0
 		auto const pokemon = message.next();
@@ -293,8 +291,6 @@ void BattleParser::handle_message(InMessage message) {
 		if (message.remainder() != "[Invalid choice] There's nothing to choose") {
 			send_random_move();
 		}
-	} else if (type == "expire") {
-		// When you stay in a room too long
 	} else if (type == "-fail") {
 #if 0
 		auto const pokemon = message.next();

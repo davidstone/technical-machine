@@ -43,10 +43,15 @@ struct Battles {
 	
 	template<typename SendMessageFunction>
 	bool handle_message(InMessage message, SendMessageFunction send_message) {
-		if (handle_message_impl(m_active, message, [&](auto const it) { m_active.erase(it); })) {
+		auto complete_active_battle = [&](auto const it) {
+			m_active.erase(it);
+			send_message("|/leave " + std::string(message.room()));
+		};
+		if (handle_message_impl(m_active, message, complete_active_battle)) {
 			return true;
 		}
-		if (handle_message_impl(m_pending, message, [&](auto const it) { move_to_active(it, std::move(send_message)); })) {
+		auto begin_pending_battle = [&](auto const it) { move_to_active(it, std::move(send_message)); };
+		if (handle_message_impl(m_pending, message, begin_pending_battle)) {
 			return true;
 		}
 
