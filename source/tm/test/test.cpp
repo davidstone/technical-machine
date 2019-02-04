@@ -34,6 +34,7 @@
 
 int main() {
 	using namespace technicalmachine;
+	ps::test_battles();
 	
 	string_conversion_tests();
 	status_tests();
@@ -50,7 +51,6 @@ int main() {
 	pl::test ();
 	po::test ();
 	ps::test_slot_memory();
-	ps::test_battles();
 
 	std::cout << "All tests passed.\n";
 	return 0;
