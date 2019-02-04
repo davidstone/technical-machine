@@ -23,8 +23,6 @@
 
 #include <bounded/integer.hpp>
 
-#include <containers/scope_guard.hpp>
-
 #include <iostream>
 
 namespace technicalmachine {
@@ -53,9 +51,8 @@ void test_battles() {
 	constexpr auto depth = 1;
 
 	auto const battle_output_directory = std::filesystem::path("test/temp-battles");	
-	auto const remove_temporary_files = containers::scope_guard([&]{
-		std::filesystem::remove_all(battle_output_directory);
-	});
+	auto const remove_temporary_files = [&]{ std::filesystem::remove_all(battle_output_directory); };
+	remove_temporary_files();
 	auto battles = Battles(battle_output_directory);
 
 	for (auto const & path : recursive_files_in_path("test/battles")) {
@@ -79,6 +76,7 @@ void test_battles() {
 			);
 		}
 	}
+	remove_temporary_files();
 }
 
 } // namespace ps
