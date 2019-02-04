@@ -412,7 +412,7 @@ void BattleParser::handle_message(InMessage message) {
 		constexpr auto slot = 0;
 		if (type == "drag") {
 			auto const phazer_party = other(parsed.party);
-			m_move_state.phaze_index(phazer_party, get_team(m_battle, phazer_party), parsed.species);
+			m_move_state.phaze_index(phazer_party, get_team(m_battle, parsed.party), parsed.species);
 			m_battle.add_pokemon_from_phaze(parsed.party, slot, parsed.species, parsed.level, parsed.gender);
 		} else {
 			m_battle.handle_send_out(parsed.party, slot, parsed.species, parsed.level, parsed.gender);

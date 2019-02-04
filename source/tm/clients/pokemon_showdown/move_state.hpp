@@ -104,12 +104,12 @@ struct MoveState {
 		validate(party);
 		m_miss = true;
 	}
-	void phaze_index(Party const party, Team const & team, Species const species) {
+	void phaze_index(Party const party, Team const & phazed_team, Species const species) {
 		validate(party);
 		if (!is_phaze(m_move->executed)) {
 			throw std::runtime_error("We did not use a phazing move, but we were given phazing data");
 		}
-		m_variable.set_phaze_index(team, species);
+		m_variable.set_phaze_index(phazed_team, species);
 	}
 	void status(Party const party, Statuses const status) {
 		validate(party);
