@@ -154,7 +154,6 @@ auto parse_hp_change_source(InMessage message) {
 // This does work that we do not always need, but it should not matter in the
 // scheme of handling websocket messages.
 auto parse_hp_message(InMessage message, Battle const & battle) {
-	std::cerr << message.remainder() << '\n';
 	// TODO: This should just verify that the recieved HP matches the actual
 	// HP. The problem is that we tend to get this message too soon, so I need
 	// to defer checking until some time later.
@@ -176,7 +175,6 @@ auto parse_hp_message(InMessage message, Battle const & battle) {
 }
 
 auto parse_set_hp_message(InMessage message, Battle const & battle) {
-	std::cerr << message.remainder() << '\n';
 	// TODO: This should just verify that the recieved HP matches the actual
 	// HP. The problem is that we tend to get this message too soon, so I need
 	// to defer checking until some time later.
@@ -281,13 +279,11 @@ void BattleParser::handle_message(InMessage message) {
 		auto const ability = message.next();
 #endif
 	} else if (type == "-enditem") {
-		std::cerr << message.remainder() << '\n';
 #if 0
 		auto const pokemon = message.next();
 		auto const item = message.next();
 #endif
 	} else if (type == "error") {
-		std::cerr << message.remainder() << '\n';
 		if (message.remainder() != "[Invalid choice] There's nothing to choose") {
 			send_random_move();
 		}
@@ -351,7 +347,6 @@ void BattleParser::handle_message(InMessage message) {
 		auto const megastone = message.next();
 #endif
 	} else if (type == "-message") {
-		std::cerr << "Battle message: " << message.remainder() << '\n';
 	} else if (type == "-miss") {
 		auto const user_party = party_from_pokemon_id(message.next());
 		m_move_state.miss(user_party);
