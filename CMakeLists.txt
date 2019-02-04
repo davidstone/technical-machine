@@ -185,9 +185,6 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/tm/test/test1.sbt DESTINATION ${CMA
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source/tm/test/test1.tp DESTINATION ${CMAKE_BINARY_DIR}/test)
 
 add_executable(ai
-	source/tm/clients/pokemon_showdown/battle_settings.cpp
-	source/tm/clients/no_pending_challenges.cpp
-
 	source/tm/ai.cpp
 )
 target_link_libraries(ai
