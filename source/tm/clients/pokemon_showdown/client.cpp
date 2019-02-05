@@ -177,7 +177,7 @@ void ClientImpl::handle_message(InMessage message) {
 	} else if (message.type() == "users") {
 		// message.remainder() == comma separated list of users
 	} else {
-		std::cout << "Received unknown message in room: " << message.room() << " type: " << message.type() << "\n\t" << message.remainder() << '\n';
+		std::cerr << "Received unknown message in room: " << message.room() << " type: " << message.type() << "\n\t" << message.remainder() << '\n';
 	}
 }
 
