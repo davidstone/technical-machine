@@ -244,6 +244,9 @@ void BattleParser::handle_message(InMessage message) {
 		auto const stat = message.next();
 		auto const amount = message.next();
 #endif
+	} else if (type == "callback") {
+		// Looks like it's just another form of "cant", but it is probably used
+		// for more things than just that
 	} else if (type == "cant") {
 #if 0
 		auto const pokemon = message.next();
