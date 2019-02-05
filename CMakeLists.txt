@@ -228,6 +228,7 @@ add_executable(tm_test
 	source/tm/test/pokemon_online/team_file.cpp
 	source/tm/test/pokemon_online/test.cpp
 
+	source/tm/test/block.cpp
 	source/tm/test/damage.cpp
 	source/tm/test/ev_optimizer.cpp
 	source/tm/test/incorrect_calculation.cpp

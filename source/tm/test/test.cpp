@@ -19,6 +19,7 @@
 #include <tm/test/clients/pokemon_showdown/battles.hpp>
 #include <tm/test/clients/pokemon_showdown/slot_memory.hpp>
 #include <tm/test/collections/collection.hpp>
+#include <tm/test/block.hpp>
 #include <tm/test/damage.hpp>
 #include <tm/test/ev_optimizer.hpp>
 #include <tm/test/stat.hpp>
@@ -34,8 +35,10 @@
 
 int main() {
 	using namespace technicalmachine;
+
 	ps::test_battles();
 	
+	block_tests();
 	string_conversion_tests();
 	status_tests();
 	stat_tests();
