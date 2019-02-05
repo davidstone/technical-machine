@@ -23,6 +23,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <containers/scope_guard.hpp>
+
 #include <iostream>
 
 namespace technicalmachine {
@@ -41,11 +43,7 @@ auto parse_room(std::string_view const line, std::filesystem::path const & path)
 	return line.substr(1);
 }
 
-} // namespace
-
-void test_battles() {
-	std::cout << "Testing ps::Battles\n";
-
+void regression_tests() {
 	auto const usage_stats = UsageStats("settings/4/OU");
 	auto const evaluate = Evaluate{};
 	constexpr auto depth = 1;
@@ -69,14 +67,30 @@ void test_battles() {
 			Team(1_bi, true)
 		);
 		
+		auto print_file_on_exception = containers::scope_guard([&]{ std::cerr << "Error in " << path << '\n'; });
 		while (!messages.remainder().empty()) {
+			auto const next = messages.next();
+			auto print_message_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
 			battles.handle_message(
-				InMessage(room, messages.next()),
+				InMessage(room, next),
 				[](std::string_view) {}
 			);
+			print_message_on_exception.dismiss();
 		}
+		print_file_on_exception.dismiss();
 	}
 	remove_temporary_files();
+}
+
+} // namespace
+
+void test_battles() {
+	std::cout << "Testing ps::Battles\n";
+	try {
+		regression_tests();
+	} catch (...) {
+		throw;
+	}
 }
 
 } // namespace ps
