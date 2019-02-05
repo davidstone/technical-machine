@@ -1,4 +1,3 @@
-// Expectiminimax header
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
@@ -23,6 +22,7 @@
 #include <tm/weather.hpp>
 
 #include <cstdint>
+#include <ostream>
 
 namespace technicalmachine {
 
@@ -31,6 +31,6 @@ struct Evaluate;
 struct Team;
 struct Weather;
 
-Moves expectiminimax(Team const & ai, Team const & foe, Weather weather, Evaluate evaluate, Depth depth);
+Moves expectiminimax(Team const & ai, Team const & foe, Weather weather, Evaluate evaluate, Depth depth, std::ostream & log);
 
 }	// namespace technicalmachine
