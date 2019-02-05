@@ -42,7 +42,7 @@ struct Move {
 		return m_pp;
 	}
 
-	constexpr auto decrement_pp(Ability const & target) {
+	constexpr auto decrement_pp(Ability const target) {
 		m_pp.decrement(target);
 	}
 

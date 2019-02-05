@@ -42,7 +42,7 @@ namespace technicalmachine {
 
 struct Pokemon {
 	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Happiness happiness = Happiness{});
-	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Item const & item, Ability const & ability, Nature const & nature, Happiness happiness = Happiness{});
+	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Item item, Ability ability, Nature nature, Happiness happiness = Happiness{});
 	
 	// These cannot be defined in the class because because I rely on a
 	// conversion operator. Friend functions only declared in a class body are
