@@ -40,6 +40,7 @@ struct BattleParser {
 	BattleParser(
 		SendMessageFunction send_message,
 		BattleLogger battle_logger,
+		std::ofstream analysis_logger,
 		std::string id_,
 		std::string username,
 		UsageStats const & usage_stats,
@@ -53,6 +54,7 @@ struct BattleParser {
 		m_usage_stats(usage_stats),
 		m_send_message(std::move(send_message)),
 		m_battle_logger(std::move(battle_logger)),
+		m_analysis_logger(std::move(analysis_logger)),
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_random_engine(random_engine),
@@ -87,6 +89,7 @@ private:
 		
 	SendMessageFunction m_send_message;
 	BattleLogger m_battle_logger;
+	std::ofstream m_analysis_logger;
 	std::string m_id;
 	std::string m_username;
 	std::mt19937 m_random_engine;

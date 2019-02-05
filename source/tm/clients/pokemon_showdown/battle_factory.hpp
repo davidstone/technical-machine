@@ -35,7 +35,7 @@ namespace ps {
 
 struct BattleFactory {
 	BattleFactory(
-		std::filesystem::path const & log_directory,
+		std::filesystem::path const & base_log_directory,
 		std::string id_,
 		std::string username,
 		UsageStats const & usage_stats,
@@ -44,7 +44,8 @@ struct BattleFactory {
 		std::mt19937 random_engine,
 		Team team
 	):
-		m_battle_logger(log_directory, id_),
+		m_log_directory(base_log_directory / id_),
+		m_battle_logger(m_log_directory, id_),
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_usage_stats(usage_stats),
@@ -71,6 +72,7 @@ private:
 	enum class Clause { };
 	JSONParser m_parse_json;
 
+	std::filesystem::path m_log_directory;
 	BattleLogger m_battle_logger;
 	std::string m_id;
 	std::string m_username;

@@ -207,6 +207,7 @@ BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message)
 	return BattleParser(
 		std::move(send_message),
 		std::move(m_battle_logger),
+		std::ofstream(m_log_directory / "analysis.txt"),
 		std::move(m_id),
 		std::move(m_username),
 		m_usage_stats,

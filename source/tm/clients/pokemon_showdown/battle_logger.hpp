@@ -26,8 +26,7 @@ namespace technicalmachine {
 namespace ps {
 
 struct BattleLogger {
-	explicit BattleLogger(std::filesystem::path const & directory, std::string_view const battle_id) {
-		auto const path = directory / battle_id;
+	explicit BattleLogger(std::filesystem::path const & path, std::string_view const battle_id) {
 		std::filesystem::create_directory(path);
 		m_file.open(path / "server_messages.txt");
 		m_file << '>' << battle_id << '\n';

@@ -234,11 +234,6 @@ void BattleParser::handle_message(InMessage message) {
 		auto const ability = from_string<Ability>(message.next());
 		m_battle.set_value_on_active(party, ability);
 	} else if (type == "-activate") {
-		auto const party [[maybe_unused]] = party_from_pokemon_id(message.next());
-		auto const source = message.next();
-		if (source != "confusion") {
-			std::cout << "Miscellaneous -activate effect: " << source << '|' << message.remainder() << '\n';
-		}
 	} else if (type == "-boost") {
 #if 0
 		auto const pokemon = message.next();
@@ -462,6 +457,7 @@ void BattleParser::handle_message(InMessage message) {
 		// message.remainder() == POKEMON|SPECIES
 	} else if (type == "turn") {
 		auto const turn = bounded::to_integer<0, std::numeric_limits<std::uint32_t>::max()>(message.next());
+		m_analysis_logger << std::string(20, '=') << "\nBegin turn " << turn << '\n';
 		m_battle.handle_begin_turn(turn);
 		send_move(determine_action());
 	} else if (type == "-unboost") {
@@ -530,9 +526,9 @@ Moves BattleParser::determine_action() {
 	}
 
 	auto predicted = predict_team(m_usage_stats, use_lead_stats, m_battle.foe(), m_random_engine);
-	//std::cout << to_string(predicted) << '\n';
+	m_analysis_logger << to_string(predicted) << '\n';
 
-	return expectiminimax(m_battle.ai(), predicted, m_battle.weather(), m_evaluate, Depth(m_depth, 0U), std::cout);
+	return expectiminimax(m_battle.ai(), predicted, m_battle.weather(), m_evaluate, Depth(m_depth, 0U), m_analysis_logger);
 }
 
 void BattleParser::send_move(Moves const move) {

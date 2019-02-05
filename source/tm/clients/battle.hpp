@@ -35,7 +35,6 @@
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 
-#include <iostream>
 #include <random>
 #include <string>
 #include <utility>
@@ -77,8 +76,6 @@ struct Battle {
 	// Skin activated
 	template<typename Integer>
 	void handle_begin_turn(Integer const turn_count) {
-		std::cout << std::string(20, '=');
-		std::cout << "\nBegin turn " << turn_count << '\n';
 		if (turn_count != 1_bi) {
 			constexpr auto ai_shed_skin_activated = false;
 			constexpr auto foe_shed_skin_activated = false;
