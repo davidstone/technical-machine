@@ -153,11 +153,9 @@ auto is_legal_selection(Team const & user, Move const move, ActivePokemon const 
 		!is_blocked_due_to_lock_in(pokemon, move.name()) and
 		is_not_illegal_switch(user, move.name(), other, weather) and
 		(move != Moves::Struggle or !found_selectable_move) and
-		!(
-			(block1(pokemon, move, other)) or
-			(block2(pokemon, move.name(), weather)) or
-			blocked_by_torment(pokemon, move.name())
-		);
+		!(block1(pokemon, move, other)) and
+		!(block2(pokemon, move.name(), weather)) and
+		!blocked_by_torment(pokemon, move.name());
 }
 
 }	// namespace
