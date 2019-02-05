@@ -103,7 +103,7 @@ constexpr auto parse_status(std::string_view const str) {
 }
 
 auto parse_hp_and_status(std::string_view const hp_and_status, Battle const & battle, Party const party) {
-	// TODO: This should just verify that the recieved HP matches the actual
+	// TODO: This should just verify that the received HP matches the actual
 	// HP. The problem is that we tend to get this message too soon, so I need
 	// to defer checking until some time later.
 	// TODO: validate that the status we received matches our expected status
@@ -154,7 +154,7 @@ auto parse_hp_change_source(InMessage message) {
 // This does work that we do not always need, but it should not matter in the
 // scheme of handling websocket messages.
 auto parse_hp_message(InMessage message, Battle const & battle) {
-	// TODO: This should just verify that the recieved HP matches the actual
+	// TODO: This should just verify that the received HP matches the actual
 	// HP. The problem is that we tend to get this message too soon, so I need
 	// to defer checking until some time later.
 	struct Message {
@@ -175,7 +175,7 @@ auto parse_hp_message(InMessage message, Battle const & battle) {
 }
 
 auto parse_set_hp_message(InMessage message, Battle const & battle) {
-	// TODO: This should just verify that the recieved HP matches the actual
+	// TODO: This should just verify that the received HP matches the actual
 	// HP. The problem is that we tend to get this message too soon, so I need
 	// to defer checking until some time later.
 	struct MessagePokemon {
