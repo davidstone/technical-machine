@@ -141,6 +141,7 @@ auto parse_hp_change_source(InMessage message) {
 			source_type == "brn" or
 			source_type == "psn" or
 			source_type == "tox" or
+			source_type == "drain" or
 			source_type == "Leech Seed" or
 			source_type == "Recoil" or
 			source_type == "Spikes" or
