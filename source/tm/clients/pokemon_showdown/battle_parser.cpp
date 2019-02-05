@@ -219,7 +219,7 @@ void BattleParser::handle_message(InMessage message) {
 	};
 
 	auto const type = message.type();
-	if (type.empty() or (type.front() != '-' and type != "drag")) {
+	if (type.empty() or (type.front() != '-' and type != "drag" and type != "move")) {
 		maybe_use_previous_move();
 	}
 
@@ -357,6 +357,11 @@ void BattleParser::handle_message(InMessage message) {
 		// target is sent only for moves that target one Pokemon
 		auto const target = message.next();
 #endif
+		auto const previous_move_party = m_move_state.party();
+		if (previous_move_party == party) {
+			m_move_state.use_executed_move(move);
+		}
+		maybe_use_previous_move();
 		m_move_state.use_move(party, move);
 	} else if (type == "-notarget") {
 		// When you use a move, but there is no one to target

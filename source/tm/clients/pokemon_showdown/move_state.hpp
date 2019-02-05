@@ -58,8 +58,10 @@ struct MoveState {
 		} else {
 			m_party.emplace(party);
 		}
-		// TODO: Fix this
 		m_move.emplace(move, move);
+	}
+	void use_executed_move(Moves const move) {
+		m_move->executed = move;
 	}
 	
 	bool move_damages_self(Party const party) const {
@@ -117,7 +119,8 @@ struct MoveState {
 	}
 
 	auto complete() -> bounded::optional<Result> {
-		if (!m_party or !m_move) {
+		if (!m_move) {
+			m_party = bounded::none;
 			return bounded::none;
 		}
 		auto const result = Result{
