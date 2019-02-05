@@ -236,7 +236,7 @@ void BattleParser::handle_message(InMessage message) {
 		auto const party [[maybe_unused]] = party_from_pokemon_id(message.next());
 		auto const source = message.next();
 		if (source != "confusion") {
-			std::cout << "Miscellaneous effect: " << source << '|' << message.remainder() << '\n';
+			std::cout << "Miscellaneous -activate effect: " << source << '|' << message.remainder() << '\n';
 		}
 	} else if (type == "-boost") {
 #if 0
@@ -432,7 +432,7 @@ void BattleParser::handle_message(InMessage message) {
 				m_move_state.confuse();
 			}
 		} else {
-			std::cout << "Miscellaneous effect: " << thing << '|' << message.remainder() << '\n';
+			std::cout << "Miscellaneous -start effect: " << thing << '|' << message.remainder() << '\n';
 		}
 	} else if (type == "-status") {
 		auto const party = party_from_pokemon_id(message.next());
@@ -499,7 +499,13 @@ void BattleParser::handle_damage(InMessage message) {
 			}
 			move_damage(party, other(party));
 		},
-		[&](FromConfusion) { move_damage(party, party); },
+		[&](FromConfusion) {
+			// TODO: Technically you cannot select Hit Self, you just execute
+			// it. This matters for things like priority or determining whether
+			// Sucker Punch succeeds.
+			m_move_state.use_move(party, Moves::Hit_Self);
+			move_damage(party, party);
+		},
 		[](FromMiscellaneous) {},
 		[](FromMove) {},
 		[&](auto const value) { m_battle.set_value_on_active(party, value); }
