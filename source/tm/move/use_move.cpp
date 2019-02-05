@@ -1025,8 +1025,9 @@ auto do_effects_before_moving(Moves const move, Status & user_status, Team & tar
 
 
 auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_type const damage) {
+	auto const had_substitute = static_cast<bool>(substitute(target));
 	target.direct_damage(damage);
-	if (causes_recoil(get_item(user))) {
+	if (!had_substitute and causes_recoil(get_item(user))) {
 		heal(user, rational(-1_bi, 10_bi));
 	}
 }
