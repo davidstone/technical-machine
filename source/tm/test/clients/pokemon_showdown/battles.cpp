@@ -53,8 +53,8 @@ void regression_tests() {
 	remove_temporary_files();
 	auto battles = Battles(battle_output_directory);
 
-	for (auto const & path : recursive_files_in_path("test/battles")) {
-		auto const data = load_lines_from_file(path);
+	for (auto const & path : paths_in_directory("test/battles")) {
+		auto const data = load_lines_from_file(path / "server_messages.txt");
 		auto messages = BufferView(data, '\n');
 		auto const room = parse_room(messages.next(), path);
 		battles.add_pending(
@@ -67,7 +67,7 @@ void regression_tests() {
 			Team(1_bi, true)
 		);
 		
-		auto print_file_on_exception = containers::scope_guard([&]{ std::cerr << "Error in " << path << '\n'; });
+		auto print_file_on_exception = containers::scope_guard([&]{ std::cerr << "Error in " << path.path() << '\n'; });
 		while (!messages.remainder().empty()) {
 			auto const next = messages.next();
 			auto print_message_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
