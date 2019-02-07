@@ -525,8 +525,10 @@ Moves BattleParser::determine_action() {
 		throw std::runtime_error("Tried to determine an action with an empty team.");
 	}
 
+	m_analysis_logger << to_string(m_battle.ai()) << '\n';
+	m_analysis_logger << "Seen " << to_string(m_battle.foe()) << '\n';
 	auto predicted = predict_team(m_usage_stats, use_lead_stats, m_battle.foe(), m_random_engine);
-	m_analysis_logger << to_string(predicted) << '\n';
+	m_analysis_logger << "Predicted " << to_string(predicted) << '\n';
 
 	return expectiminimax(m_battle.ai(), predicted, m_battle.weather(), m_evaluate, Depth(m_depth, 0U), m_analysis_logger);
 }
