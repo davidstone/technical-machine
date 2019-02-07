@@ -51,7 +51,8 @@ void awakening_probability_tests() {
 		if (expected != calculated) {
 			throw InvalidSleepProbability(expected, calculated);
 		}
-		pokemon.increase_sleep_counter(false);
+		constexpr auto awaken = false;
+		status.increase_sleep_counter(ability, awaken);
 	}
 }
 

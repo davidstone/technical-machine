@@ -125,12 +125,6 @@ auto MutableActivePokemon::recharge() -> bool {
 	));
 }
 
-auto MutableActivePokemon::increase_sleep_counter(bool const awakens) -> void {
-	auto & status = get_status(*this);
-	auto const & ability = get_ability(*this);
-	status.increase_sleep_counter(ability, awakens);
-}
-
 auto MutableActivePokemon::increment_stockpile() -> void {
 	bool const increased = m_flags.stockpile.increment();
 	if (increased) {

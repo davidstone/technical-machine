@@ -1077,8 +1077,9 @@ auto call_move(Team & user, ExecutedMove const move, bool const user_damaged, Te
 	auto const found_move = find_move(all_moves(user_pokemon), move.selected);
 	auto target_pokemon = target.pokemon();
 	user_pokemon.update_before_move();
-	if (!is_switch(move.selected) and is_sleeping(get_status(user_pokemon))) {
-		user_pokemon.increase_sleep_counter(awakens);
+	auto & status = get_status(user_pokemon);
+	if (!is_switch(move.selected) and is_sleeping(status)) {
+		status.increase_sleep_counter(get_ability(user_pokemon), awakens);
 	}
 	// Need the side-effect from recharge
 	auto const is_recharging = user_pokemon.recharge();

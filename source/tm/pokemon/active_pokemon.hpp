@@ -434,7 +434,6 @@ struct MutableActivePokemon {
 	auto roost() {
 		m_flags.is_roosting = true;
 	}
-	auto increase_sleep_counter(bool awakens) -> void;
 
 	auto increment_stockpile() -> void;
 	auto release_stockpile() -> bounded::integer<0, Stockpile::max>;
