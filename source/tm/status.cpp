@@ -60,29 +60,8 @@ constexpr auto reflected_status(Statuses const status) -> bounded::optional<Stat
 
 }	// namespace
 
-auto is_clear(Status const status) -> bool {
-	return status.name() == Statuses::clear;
-}
-auto is_frozen(Status const status) -> bool {
-	return status.name() == Statuses::freeze;
-}
-auto is_sleeping(Status const status) -> bool {
-	switch (status.name()) {
-		case Statuses::sleep_rest:
-		case Statuses::sleep:
-			return true;
-		default:
-			return false;
-	}
-}
-auto is_sleeping_due_to_other(Status const status) -> bool {
-	return status.name() == Statuses::sleep;
-}
 auto lowers_speed(Status const status, Ability const & ability) -> bool {
 	return status.name() == Statuses::paralysis and !blocks_paralysis_speed_penalty(ability);
-}
-auto weakens_physical_attacks(Status const status) -> bool {
-	return status.name() == Statuses::burn;
 }
 auto boosts_facade(Status const status) -> bool {
 	switch (status.name()) {
@@ -97,14 +76,6 @@ auto boosts_facade(Status const status) -> bool {
 	case Statuses::sleep_rest:
 		return false;
 	}
-}
-auto boosts_smellingsalt(Status const status) -> bool {
-	return status.name() == Statuses::paralysis;
-}
-
-auto Status::rest() -> void {
-	m_status = Statuses::sleep_rest;
-	m_turns_already_slept = 0_bi;
 }
 
 auto apply(Statuses const status, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {

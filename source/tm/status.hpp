@@ -60,7 +60,11 @@ struct Status {
 		return m_status;
 	}
 
-	auto rest() -> void;
+	auto rest() {
+		m_status = Statuses::sleep_rest;
+		m_turns_already_slept = 0_bi;
+	}
+
 	friend auto apply(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 	friend auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 
@@ -88,13 +92,33 @@ private:
 auto apply(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 auto apply(Statuses status, MutableActivePokemon target, Weather weather) -> void;
-auto is_clear(Status status) -> bool;
-auto is_frozen(Status status) -> bool;
-auto is_sleeping(Status status) -> bool;
-auto is_sleeping_due_to_other(Status status) -> bool;
+
+constexpr auto is_clear(Status const status) {
+	return status.name() == Statuses::clear;
+}
+constexpr auto is_frozen(Status const status) {
+	return status.name() == Statuses::freeze;
+}
+constexpr auto is_sleeping(Status const status) {
+	switch (status.name()) {
+		case Statuses::sleep_rest:
+		case Statuses::sleep:
+			return true;
+		default:
+			return false;
+	}
+}
+constexpr auto is_sleeping_due_to_other(Status const status) {
+	return status.name() == Statuses::sleep;
+}
+constexpr auto weakens_physical_attacks(Status const status) {
+	return status.name() == Statuses::burn;
+}
+constexpr auto boosts_smellingsalt(Status const status) {
+	return status.name() == Statuses::paralysis;
+}
+
 auto lowers_speed(Status status, Ability const & ability) -> bool;
-auto weakens_physical_attacks(Status status) -> bool;
 auto boosts_facade(Status status) -> bool;
-auto boosts_smellingsalt(Status status) -> bool;
 
 }	// namespace technicalmachine
