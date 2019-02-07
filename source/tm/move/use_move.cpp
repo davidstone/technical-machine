@@ -1069,7 +1069,7 @@ auto find_regular_move(Container const container, Moves const move_name) -> Move
 
 }	// namespace
 
-auto call_move(Team & user, ExecutedMove const move, bool const user_damaged, Team & target, bounded::optional<UsedMove> const target_move, bool const target_damaged, Weather & weather, Variable const variable, bool const missed, bool const awakens, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
+auto call_move(Team & user, ExecutedMove const move, bool const user_damaged, Team & target, bounded::optional<UsedMove> const target_move, bool const target_damaged, Weather & weather, Variable const variable, bool const missed, bool const clear_status, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	if (move.selected == Moves::Pass) {
 		return;
 	}
@@ -1079,7 +1079,7 @@ auto call_move(Team & user, ExecutedMove const move, bool const user_damaged, Te
 	user_pokemon.update_before_move();
 	auto & status = get_status(user_pokemon);
 	if (!is_switch(move.selected) and is_sleeping(status)) {
-		status.increase_sleep_counter(get_ability(user_pokemon), awakens);
+		status.advance_from_move(get_ability(user_pokemon), clear_status);
 	}
 	// Need the side-effect from recharge
 	auto const is_recharging = user_pokemon.recharge();

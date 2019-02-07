@@ -256,7 +256,7 @@ void BattleParser::handle_message(InMessage message) {
 		auto const party = party_from_pokemon_id(message.next());
 		auto const status = message.next();
 		if (status == "slp") {
-			m_move_state.awaken(party);
+			m_move_state.clear_status(party);
 		}
 	} else if (type == "-cureteam") {
 #if 0
@@ -516,7 +516,7 @@ void BattleParser::maybe_use_previous_move() {
 	if (auto const maybe_data = m_move_state.complete()) {
 		auto const data = *maybe_data;
 		constexpr auto slot = 0;
-		m_battle.handle_use_move(data.party, slot, data.move, data.variable, data.miss, data.critical_hit, data.awakens, data.damage);
+		m_battle.handle_use_move(data.party, slot, data.move, data.variable, data.miss, data.critical_hit, data.clear_status, data.damage);
 	}
 }
 

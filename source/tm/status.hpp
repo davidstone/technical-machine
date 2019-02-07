@@ -51,7 +51,7 @@ namespace std {
 template<>
 struct numeric_limits<technicalmachine::Statuses> : technicalmachine::enum_numeric_limits<technicalmachine::Statuses::sleep_rest> {};
 
-}	// namespace bounded
+}	// namespace std
 
 namespace technicalmachine {
 
@@ -68,21 +68,18 @@ struct Status {
 	friend auto apply(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 	friend auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 	
+	auto advance_from_move(Ability ability, bool awaken) -> void;
 	auto handle_switch(Ability ability) -> void;
+	// Returns the probability the status can change from sleeping to awake in
+	// this move. Returns 0.0 if the Pokemon is already awake or if, due to the
+	// sleep counter, they will definitely not awaken.
+	auto probability_of_clearing(Ability ability) const -> double;
 
 	friend constexpr auto operator==(Status const lhs, Status const rhs) {
 		return
 			lhs.m_status == rhs.m_status and
 			lhs.m_turns_already_slept == rhs.m_turns_already_slept;
 	}
-
-	auto increase_sleep_counter (Ability ability, bool awaken) -> void;
-
-	// Returns the probability the status can change from sleeping to awake in
-	// this move. Returns 0.0 if the Pokemon is already awake or if, due to the
-	// sleep counter, they will definitely not awaken.
-	using AwakenProbability = double;
-	auto awaken_probability(Ability ability) const -> AwakenProbability;
 
 private:
 	// TODO: Implement this with std::variant

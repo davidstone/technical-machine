@@ -117,7 +117,7 @@ auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weathe
 	status = Status{};
 }
 
-auto Status::increase_sleep_counter(Ability const ability, bool awaken) -> void {
+auto Status::advance_from_move(Ability const ability, bool awaken) -> void {
 	if (awaken) {
 		m_turns_already_slept = bounded::none;
 		m_status = Statuses::clear;
@@ -157,7 +157,7 @@ auto Status::handle_switch(Ability const ability) -> void {
 	}
 }
 
-auto Status::awaken_probability(Ability const ability) const -> AwakenProbability {
+auto Status::probability_of_clearing(Ability const ability) const -> double {
 	static_assert(DefiniteSleepCounter::min() == SleepCounter::value_type::min());
 	static_assert(DefiniteSleepCounter::max() == SleepCounter::value_type::max());
 	if (!m_turns_already_slept) {

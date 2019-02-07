@@ -157,17 +157,17 @@ struct Miss {
 	}
 	bool const miss;
 };
-struct Awaken : Miss {
-	constexpr explicit Awaken(Miss const miss_, bool const awaken_):
+struct ClearStatus : Miss {
+	constexpr explicit ClearStatus(Miss const miss_, bool const clear_status_):
 		Miss(miss_),
-		awaken(awaken_)
+		clear_status(clear_status_)
 	{
 	}
-	bool const awaken;
+	bool const clear_status;
 };
-struct CriticalHit : Awaken {
-	constexpr explicit CriticalHit(Awaken const awaken_, bool const critical_hit_):
-		Awaken(awaken_),
+struct CriticalHit : ClearStatus {
+	constexpr explicit CriticalHit(ClearStatus const clear_status_, bool const critical_hit_):
+		ClearStatus(clear_status_),
 		critical_hit(critical_hit_)
 	{
 	}
@@ -392,7 +392,7 @@ auto use_move_branch_outer(Moves const last_move, Variable const first_variable,
 			return *won;
 		}
 		// TODO: properly handle used move here
-		call_move(last, ExecutedMove{last_move}, last_damaged, first, bounded::none, first_damaged, weather, last_variable, last_flags.miss, last_flags.awaken, last_flags.critical_hit, bounded::none);
+		call_move(last, ExecutedMove{last_move}, last_damaged, first, bounded::none, first_damaged, weather, last_variable, last_flags.miss, last_flags.clear_status, last_flags.critical_hit, bounded::none);
 		if (auto const won = Evaluate::win(first, last)) {
 			return *won;
 		}
@@ -414,7 +414,7 @@ double use_move_branch(Team first, Moves const first_move, Team last, Moves cons
 	constexpr auto first_damaged = false;
 	constexpr auto last_damaged = false;
 	
-	call_move(first, ExecutedMove{first_move}, first_damaged, last, bounded::none, last_damaged, weather, first_variable, first_flags.miss, first_flags.awaken, first_flags.critical_hit, bounded::none);
+	call_move(first, ExecutedMove{first_move}, first_damaged, last, bounded::none, last_damaged, weather, first_variable, first_flags.miss, first_flags.clear_status, first_flags.critical_hit, bounded::none);
 	if (auto const won = Evaluate::win(first, last)) {
 		return *won;
 	}
@@ -426,7 +426,7 @@ double use_move_branch(Team first, Moves const first_move, Team last, Moves cons
 
 
 
-double random_move_effects_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, Awaken const first_flags, Awaken const last_flags, std::ostream & log) {
+double random_move_effects_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, ClearStatus const first_flags, ClearStatus const last_flags, std::ostream & log) {
 	double score = 0.0;
 
 	auto const first_variables = all_probabilities(first_move, last.size());
@@ -457,7 +457,7 @@ double accuracy_branch(Team const & first, Moves const first_move, Team const & 
 	};
 	auto next_probability = [&](bool const is_first) {
 		auto const pokemon = is_first ? first.pokemon() : last.pokemon();
-		return get_status(pokemon).awaken_probability(get_ability(pokemon));
+		return get_status(pokemon).probability_of_clearing(get_ability(pokemon));
 	};
 
 	double average_score = 0.0;
@@ -473,11 +473,11 @@ double accuracy_branch(Team const & first, Moves const first_move, Team const & 
 			if (p2 == 0.0) {
 				continue;
 			}
-			average_score += p1 * p2 * generic_flag_branch<Awaken>(
+			average_score += p1 * p2 * generic_flag_branch<ClearStatus>(
 				Miss(first_flag),
 				Miss(last_flag),
 				next_probability,
-				[&](Awaken const first_awaken, Awaken const last_awaken) { return random_move_effects_branch(first, first_move, last, last_move, weather, evaluate, depth, first_awaken, last_awaken, log); }
+				[&](ClearStatus const first_clear_status, ClearStatus const last_clear_status) { return random_move_effects_branch(first, first_move, last, last_move, weather, evaluate, depth, first_clear_status, last_clear_status, log); }
 			);
 		}
 	}

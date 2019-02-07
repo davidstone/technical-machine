@@ -40,7 +40,7 @@ struct MoveState {
 		ExecutedMove move;
 		Variable variable;
 		bounded::optional<damage_type> damage;
-		bool awakens;
+		bool clear_status;
 		bool critical_hit;
 		bool miss;
 	};
@@ -75,13 +75,13 @@ struct MoveState {
 		return result;
 	}
 
-	void awaken(Party const party) {
+	void clear_status(Party const party) {
 		if (m_party) {
 			validate(party);
 		} else {
 			m_party.emplace(party);
 		}
-		m_awakens = true;
+		m_clear_status = true;
 	}
 	void confuse() {
 		if (!m_party or !m_move) {
@@ -128,7 +128,7 @@ struct MoveState {
 			*m_move,
 			m_variable,
 			m_damage,
-			m_awakens,
+			m_clear_status,
 			m_critical_hit,
 			m_miss
 		};
@@ -149,7 +149,7 @@ private:
 	bounded::optional<ExecutedMove> m_move;
 	bounded::optional<damage_type> m_damage;
 	Variable m_variable{0_bi};
-	bool m_awakens = false;
+	bool m_clear_status = false;
 	bool m_critical_hit = false;
 	bool m_miss = false;
 };
