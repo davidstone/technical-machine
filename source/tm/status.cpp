@@ -60,7 +60,7 @@ constexpr auto reflected_status(Statuses const status) -> bounded::optional<Stat
 
 }	// namespace
 
-auto lowers_speed(Status const status, Ability const & ability) -> bool {
+auto lowers_speed(Status const status, Ability const ability) -> bool {
 	return status.name() == Statuses::paralysis and !blocks_paralysis_speed_penalty(ability);
 }
 auto boosts_facade(Status const status) -> bool {
@@ -117,7 +117,7 @@ auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weathe
 	status = Status{};
 }
 
-auto Status::increase_sleep_counter(Ability const & ability, bool awaken) -> void {
+auto Status::increase_sleep_counter(Ability const ability, bool awaken) -> void {
 	if (awaken) {
 		m_turns_already_slept = bounded::none;
 		m_status = Statuses::clear;
@@ -151,7 +151,7 @@ auto non_early_bird_probability(DefiniteSleepCounter const turns_slept) {
 
 }	// namespace
 
-auto Status::awaken_probability(Ability const & ability) const -> AwakenProbability {
+auto Status::awaken_probability(Ability const ability) const -> AwakenProbability {
 	static_assert(DefiniteSleepCounter::min() == SleepCounter::value_type::min());
 	static_assert(DefiniteSleepCounter::max() == SleepCounter::value_type::max());
 	if (!m_turns_already_slept) {

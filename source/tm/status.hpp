@@ -74,13 +74,13 @@ struct Status {
 			lhs.m_turns_already_slept == rhs.m_turns_already_slept;
 	}
 
-	auto increase_sleep_counter (Ability const & ability, bool awaken) -> void;
+	auto increase_sleep_counter (Ability ability, bool awaken) -> void;
 
 	// Returns the probability the status can change from sleeping to awake in
 	// this move. Returns 0.0 if the Pokemon is already awake or if, due to the
 	// sleep counter, they will definitely not awaken.
 	using AwakenProbability = double;
-	auto awaken_probability(Ability const & ability) const -> AwakenProbability;
+	auto awaken_probability(Ability ability) const -> AwakenProbability;
 
 private:
 	// TODO: Implement this with std::variant
@@ -118,7 +118,7 @@ constexpr auto boosts_smellingsalt(Status const status) {
 	return status.name() == Statuses::paralysis;
 }
 
-auto lowers_speed(Status status, Ability const & ability) -> bool;
+auto lowers_speed(Status status, Ability ability) -> bool;
 auto boosts_facade(Status status) -> bool;
 
 }	// namespace technicalmachine
