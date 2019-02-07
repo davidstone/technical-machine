@@ -254,12 +254,10 @@ void BattleParser::handle_message(InMessage message) {
 		m_move_state.critical_hit(user);
 	} else if (type == "-curestatus") {
 		auto const party = party_from_pokemon_id(message.next());
-		auto const status = message.next();
-		// TODO: Handle getting hit with a fire move
-		if (status == "frz") {
+		if (m_move_state.party() != party) {
 			maybe_use_previous_move();
+			m_move_state.clear_status(party);
 		}
-		m_move_state.clear_status(party);
 	} else if (type == "-cureteam") {
 #if 0
 		auto const pokemon = message.next();
