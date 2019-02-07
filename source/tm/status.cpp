@@ -82,15 +82,16 @@ auto boosts_facade(Status const status) -> bool {
 auto apply(Statuses const status, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {
 	assert(status != Statuses::clear);
 	assert(status != Statuses::sleep_rest);
-	if (status_can_apply(status, user, target, weather)) {
-		get_status(target).m_status = status;
-		if (status == Statuses::sleep) {
-			get_status(target).m_turns_already_slept = 0_bi;
-		}
-		auto const reflected = reflected_status(status);
-		if (reflected and reflects_status(get_ability(target))) {
-			apply(*reflected, target, user, weather);
-		}
+	if (!status_can_apply(status, user, target, weather)) {
+		return;
+	}
+	get_status(target).m_status = status;
+	if (status == Statuses::sleep) {
+		get_status(target).m_turns_already_slept = 0_bi;
+	}
+	auto const reflected = reflected_status(status);
+	if (reflected and reflects_status(get_ability(target))) {
+		apply(*reflected, target, user, weather);
 	}
 }
 
