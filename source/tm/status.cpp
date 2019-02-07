@@ -127,31 +127,6 @@ auto Status::advance_from_move(Ability const ability, bool awaken) -> void {
 	}
 }
 
-namespace {
-
-constexpr auto max_sleep_turns = 4_bi;
-using DefiniteSleepCounter = bounded::integer<0, static_cast<intmax_t>(max_sleep_turns)>;
-
-// It's possible to acquire Early Bird in the middle of a sleep
-auto early_bird_probability(DefiniteSleepCounter const turns_slept) {
-	switch (turns_slept.value()) {
-	case 0:
-		return 1.0 / 4.0;
-	case 1:
-		return 1.0 / 2.0;
-	case 2:
-		return 2.0 / 3.0;
-	default:	// case 3, 4
-		return 1.0;
-	}
-}
-
-auto non_early_bird_probability(DefiniteSleepCounter const turns_slept) {
-	return (turns_slept == 0_bi) ? 0.0 : (1.0 / static_cast<double>(max_sleep_turns + 1_bi - turns_slept));
-}
-
-}	// namespace
-
 auto Status::handle_switch(Ability const ability) -> void {
 	if (clears_status_on_switch(ability)) {
 		*this = {};
@@ -190,6 +165,31 @@ auto Status::end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) ->
 			break;
 	}
 }
+
+namespace {
+
+constexpr auto max_sleep_turns = 4_bi;
+using DefiniteSleepCounter = bounded::integer<0, static_cast<intmax_t>(max_sleep_turns)>;
+
+// It's possible to acquire Early Bird in the middle of a sleep
+auto early_bird_probability(DefiniteSleepCounter const turns_slept) {
+	switch (turns_slept.value()) {
+	case 0:
+		return 1.0 / 4.0;
+	case 1:
+		return 1.0 / 2.0;
+	case 2:
+		return 2.0 / 3.0;
+	default:	// case 3, 4
+		return 1.0;
+	}
+}
+
+auto non_early_bird_probability(DefiniteSleepCounter const turns_slept) {
+	return (turns_slept == 0_bi) ? 0.0 : (1.0 / static_cast<double>(max_sleep_turns + 1_bi - turns_slept));
+}
+
+}	// namespace
 
 auto Status::probability_of_clearing(Ability const ability) const -> double {
 	static_assert(DefiniteSleepCounter::min() == SleepCounter::value_type::min());
