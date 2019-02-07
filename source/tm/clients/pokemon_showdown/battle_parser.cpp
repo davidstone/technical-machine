@@ -255,9 +255,11 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-curestatus") {
 		auto const party = party_from_pokemon_id(message.next());
 		auto const status = message.next();
-		if (status == "slp") {
-			m_move_state.clear_status(party);
+		// TODO: Handle getting hit with a fire move
+		if (status == "frz") {
+			maybe_use_previous_move();
 		}
+		m_move_state.clear_status(party);
 	} else if (type == "-cureteam") {
 #if 0
 		auto const pokemon = message.next();
