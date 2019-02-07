@@ -455,6 +455,10 @@ double accuracy_branch(Team const & first, Moves const first_move, Team const & 
 		assert(base <= 1.0);
 		return miss ? (1.0 - base) : base;
 	};
+	auto next_probability = [&](bool const is_first) {
+		auto const pokemon = is_first ? first.pokemon() : last.pokemon();
+		return get_status(pokemon).awaken_probability(get_ability(pokemon));
+	};
 
 	double average_score = 0.0;
 	for (auto const first_flag : { false, true }) {
@@ -472,7 +476,7 @@ double accuracy_branch(Team const & first, Moves const first_move, Team const & 
 			average_score += p1 * p2 * generic_flag_branch<Awaken>(
 				Miss(first_flag),
 				Miss(last_flag),
-				[&](bool const is_first) { return awaken_probability(is_first ? first.pokemon() : last.pokemon()); },
+				next_probability,
 				[&](Awaken const first_awaken, Awaken const last_awaken) { return random_move_effects_branch(first, first_move, last, last_move, weather, evaluate, depth, first_awaken, last_awaken, log); }
 			);
 		}

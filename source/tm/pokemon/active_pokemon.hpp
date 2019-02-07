@@ -529,10 +529,6 @@ inline auto shed_skin_probability(ActivePokemon const pokemon) {
 
 auto has_switched(ActivePokemon const pokemon) -> bool;
 
-inline auto awaken_probability(ActivePokemon const pokemon) {
-	return get_status(pokemon).awaken_probability(get_ability(pokemon));
-}
-
 
 inline auto aqua_ring_is_active(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.aqua_ring;
