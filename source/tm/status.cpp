@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,6 +20,7 @@
 #include <algorithm>
 
 #include <tm/ability.hpp>
+#include <tm/heal.hpp>
 #include <tm/weather.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
@@ -154,6 +155,39 @@ auto non_early_bird_probability(DefiniteSleepCounter const turns_slept) {
 auto Status::handle_switch(Ability const ability) -> void {
 	if (clears_status_on_switch(ability)) {
 		*this = {};
+	}
+}
+
+auto Status::end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) -> void {
+	switch (name()) {
+		case Statuses::burn: {
+			auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(get_ability(pokemon)), 16_bi, 8_bi);
+			heal(pokemon, rational(-1_bi, denominator));
+			break;
+		}
+		case Statuses::poison: {
+			auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(get_ability(pokemon)), 1_bi, -1_bi);
+			heal(pokemon, rational(numerator, 8_bi));
+			break;
+		}
+		case Statuses::poison_toxic:
+			pokemon.advance_toxic();
+			if (absorbs_poison_damage(get_ability(pokemon))) {
+				heal(pokemon, rational(1_bi, 8_bi));
+			} else {
+				heal(pokemon, toxic_ratio(pokemon));
+			}
+			break;
+		case Statuses::sleep:
+			if (is_having_a_nightmare(pokemon)) {
+				heal(pokemon, rational(-1_bi, 4_bi));
+			}
+			if (harms_sleepers(get_ability(other))) {
+				heal(pokemon, rational(-1_bi, 8_bi));
+			}
+			break;
+		default:
+			break;
 	}
 }
 

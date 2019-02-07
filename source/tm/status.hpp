@@ -70,6 +70,8 @@ struct Status {
 	
 	auto advance_from_move(Ability ability, bool awaken) -> void;
 	auto handle_switch(Ability ability) -> void;
+	auto end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) -> void;
+
 	// Returns the probability the status can change from sleeping to awake in
 	// this move. Returns 0.0 if the Pokemon is already awake or if, due to the
 	// sleep counter, they will definitely not awaken.

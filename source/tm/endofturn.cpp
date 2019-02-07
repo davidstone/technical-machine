@@ -121,36 +121,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 			}
 		}
 	}
-	switch (get_status(pokemon).name()) {
-		case Statuses::burn: {
-			auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(get_ability(pokemon)), 16_bi, 8_bi);
-			heal(pokemon, rational(-1_bi, denominator));
-			break;
-		}
-		case Statuses::poison: {
-			auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(get_ability(pokemon)), 1_bi, -1_bi);
-			heal(pokemon, rational(numerator, 8_bi));
-			break;
-		}
-		case Statuses::poison_toxic:
-			pokemon.advance_toxic();
-			if (absorbs_poison_damage(get_ability(pokemon))) {
-				heal(pokemon, rational(1_bi, 8_bi));
-			} else {
-				heal(pokemon, toxic_ratio(pokemon));
-			}
-			break;
-		case Statuses::sleep:
-			if (is_having_a_nightmare(pokemon)) {
-				heal(pokemon, rational(-1_bi, 4_bi));
-			}
-			if (harms_sleepers(get_ability(foe))) {
-				heal(pokemon, rational(-1_bi, 8_bi));
-			}
-			break;
-		default:
-			break;
-	}
+	get_status(pokemon).end_of_turn(pokemon, foe);
 	switch (get_item(pokemon)) {
 		case Item::Flame_Orb:
 			apply(Statuses::burn, pokemon, weather);
