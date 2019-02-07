@@ -1,4 +1,4 @@
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,6 +23,7 @@
 
 #include <bounded/integer.hpp>
 #include <bounded/optional.hpp>
+#include <bounded/detail/variant/variant.hpp>
 
 #include <cstdint>
 
@@ -56,38 +57,69 @@ struct numeric_limits<technicalmachine::Statuses> : technicalmachine::enum_numer
 namespace technicalmachine {
 
 struct Status {
-	constexpr auto name() const -> Statuses {
-		return m_status;
+	constexpr auto name() const {
+		return static_cast<Statuses>(m_state.index());
 	}
 
-	auto rest() {
-		m_status = Statuses::sleep_rest;
-		m_turns_already_slept = 0_bi;
+	constexpr auto rest() {
+		m_state = Rest{};
 	}
-
 	friend auto apply(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 	friend auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 	
-	auto advance_from_move(Ability ability, bool awaken) -> void;
+	auto advance_from_move(Ability ability, bool clear) -> void;
 	auto handle_switch(Ability ability) -> void;
 	auto end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) -> void;
 
-	// Returns the probability the status can change from sleeping to awake in
-	// this move. Returns 0.0 if the Pokemon is already awake or if, due to the
-	// sleep counter, they will definitely not awaken.
+	// If the current status is sleep or sleep_rest, returns the probability the
+	// status can change from sleeping to awake on this move. If the current
+	// status is freeze, returns the probability of thawing. Returns 0.0 if the
+	// Pokemon is not asleep or frozen or if, due to the sleep counter, they
+	// will definitely not awaken.
 	auto probability_of_clearing(Ability ability) const -> double;
 
 	friend constexpr auto operator==(Status const lhs, Status const rhs) {
-		return
-			lhs.m_status == rhs.m_status and
-			lhs.m_turns_already_slept == rhs.m_turns_already_slept;
+		return lhs.m_state == rhs.m_state;
 	}
 
 private:
-	// TODO: Implement this with std::variant
-	using SleepCounter = bounded::optional<bounded::integer<0, 4>>;
-	Statuses m_status = Statuses::clear;
-	SleepCounter m_turns_already_slept = bounded::none;
+	struct Clear{};
+	struct Burn{};
+	struct Freeze{};
+	struct Paralysis{};
+	struct Poison{};
+	struct Toxic {
+		constexpr auto increment() {
+			++m_counter;
+		}
+		constexpr auto ratio_drained() const {
+			return rational(-m_counter, 16_bi);
+		}
+		friend constexpr auto operator==(Toxic const lhs, Toxic const rhs) {
+			return lhs.m_counter == rhs.m_counter;
+		}
+	private:
+		// Number of turns this Pokemon has already taken Toxic damage (or
+		// would have if Magic Guard / Poison Heal weren't in play)
+		bounded::clamped_integer<0, 15> m_counter = 0_bi;
+	};
+	struct Sleep {
+		bounded::clamped_integer<0, 4> turns_slept = 0_bi;
+	};
+	struct Rest {
+		bounded::clamped_integer<0, 2> turns_slept = 0_bi;
+	};
+
+	bounded::variant<
+		Clear,
+		Burn,
+		Freeze,
+		Paralysis,
+		Poison,
+		Toxic,
+		Sleep,
+		Rest
+	> m_state{Clear{}};
 };
 
 auto apply(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;

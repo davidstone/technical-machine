@@ -79,7 +79,6 @@ auto ActivePokemonFlags::reset_switch() -> void {
 	is_tormented = false;
 	water_sport = false;
 	taunt = {};
-	toxic = {};
 	yawn = {};
 	lock_in = std::monostate{};
 }

@@ -99,7 +99,6 @@ add_library(tm_common STATIC
 	source/tm/pokemon/stockpile.cpp
 	source/tm/pokemon/substitute.cpp
 	source/tm/pokemon/taunt.cpp
-	source/tm/pokemon/toxic.cpp
 	source/tm/pokemon/uproar.cpp
 	source/tm/pokemon/yawn.cpp
 

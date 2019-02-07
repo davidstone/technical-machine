@@ -32,7 +32,6 @@
 #include <tm/pokemon/stockpile.hpp>
 #include <tm/pokemon/substitute.hpp>
 #include <tm/pokemon/taunt.hpp>
-#include <tm/pokemon/toxic.hpp>
 #include <tm/pokemon/uproar.hpp>
 #include <tm/pokemon/yawn.hpp>
 
@@ -103,7 +102,6 @@ struct Weather;
 	friend auto trapped(ActivePokemon pokemon) -> bool; \
 	friend auto is_tormented(ActivePokemon pokemon) -> bool; \
 	friend auto is_taunted(ActivePokemon pokemon) -> bool; \
-	friend auto toxic_ratio(ActivePokemon pokemon) -> decltype(std::declval<Toxic>().ratio_drained()); \
 	friend auto is_uproaring(ActivePokemon pokemon) -> bool; \
 	friend auto vanish_doubles_power(ActivePokemon pokemon, Moves move_name) -> bool; \
 	friend auto random_damage_multiplier(ActivePokemon pokemon) -> decltype(std::declval<RandomDamage>()())
@@ -163,7 +161,6 @@ struct ActivePokemonFlags {
 			lhs.stockpile == rhs.stockpile and
 			lhs.taunt == rhs.taunt and
 			lhs.is_tormented == rhs.is_tormented and
-			lhs.toxic == rhs.toxic and
 			lhs.water_sport == rhs.water_sport and
 			lhs.yawn == rhs.yawn;
 	}
@@ -203,7 +200,6 @@ private:
 	SlowStart slow_start;
 	Stockpile stockpile;
 	TauntCounter taunt;
-	Toxic toxic;
 	YawnCounter yawn;
 	bool aqua_ring = false;
 	bool attracted = false;
@@ -449,9 +445,6 @@ struct MutableActivePokemon {
 	auto torment() {
 		m_flags.is_tormented = true;
 	}
-	auto advance_toxic() {
-		m_flags.toxic.increment();
-	}
 	auto u_turn() {
 		m_flags.lock_in = UTurning{};
 	}
@@ -527,7 +520,6 @@ inline auto shed_skin_probability(ActivePokemon const pokemon) {
 }
 
 auto has_switched(ActivePokemon const pokemon) -> bool;
-
 
 inline auto aqua_ring_is_active(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.aqua_ring;
@@ -685,10 +677,6 @@ inline auto trapped(ActivePokemon const pokemon) -> bool {
 
 inline auto is_tormented(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.is_tormented;
-}
-
-inline auto toxic_ratio(ActivePokemon const pokemon) -> decltype(pokemon.m_flags.toxic.ratio_drained()) {
-	return pokemon.m_flags.toxic.ratio_drained();
 }
 
 inline auto is_taunted(ActivePokemon const pokemon) -> bool {

@@ -27,6 +27,8 @@
 
 #include <tm/type/type.hpp>
 
+#include <bounded/detail/overload.hpp>
+
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
@@ -85,9 +87,16 @@ auto apply(Statuses const status, MutableActivePokemon user, MutableActivePokemo
 	if (!status_can_apply(status, user, target, weather)) {
 		return;
 	}
-	get_status(target).m_status = status;
-	if (status == Statuses::sleep) {
-		get_status(target).m_turns_already_slept = 0_bi;
+	auto & state = get_status(target).m_state;
+	switch (status) {
+		case Statuses::burn: state = Status::Burn{}; break;
+		case Statuses::freeze: state = Status::Freeze{}; break;
+		case Statuses::paralysis: state = Status::Paralysis{}; break;
+		case Statuses::poison: state = Status::Poison{}; break;
+		case Statuses::poison_toxic: state = Status::Toxic{}; break;
+		case Statuses::sleep: state = Status::Sleep{}; break;
+		case Statuses::clear: __builtin_unreachable();
+		case Statuses::sleep_rest: __builtin_unreachable();
 	}
 	auto const reflected = reflected_status(status);
 	if (reflected and reflects_status(get_ability(target))) {
@@ -101,6 +110,7 @@ auto apply(Statuses const status, MutableActivePokemon target, Weather const wea
 
 auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {
 	auto & status = get_status(user);
+	// TODO: How does this work with Toxic? How does this work with Rest?
 	switch (status.name()) {
 		case Statuses::burn:
 		case Statuses::paralysis:
@@ -111,7 +121,6 @@ auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weathe
 		case Statuses::sleep:
 		case Statuses::sleep_rest:		// Fix
 			apply(Statuses::sleep, user, target, weather);
-			get_status(target).m_turns_already_slept = status.m_turns_already_slept;
 			break;
 		default:
 			break;
@@ -119,52 +128,64 @@ auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weathe
 	status = Status{};
 }
 
-auto Status::advance_from_move(Ability const ability, bool awaken) -> void {
-	if (awaken) {
-		m_turns_already_slept = bounded::none;
-		m_status = Statuses::clear;
+auto Status::advance_from_move(Ability const ability, bool const clear) -> void {
+	if (clear) {
+		m_state = Clear{};
 	} else {
-		*m_turns_already_slept += BOUNDED_CONDITIONAL(wakes_up_early(ability), 2_bi, 1_bi);
+		auto advance_sleep = [&](auto & sleep) {
+			sleep.turns_slept += BOUNDED_CONDITIONAL(wakes_up_early(ability), 2_bi, 1_bi);
+		};
+		bounded::visit(m_state, bounded::overload(
+			[=](Sleep & sleep) { advance_sleep(sleep); },
+			[=](Rest & sleep) { advance_sleep(sleep); },
+			[](auto) {}
+		));
 	}
 }
 
 auto Status::handle_switch(Ability const ability) -> void {
 	if (clears_status_on_switch(ability)) {
 		*this = {};
+	} else {
+		bounded::visit(m_state, bounded::overload(
+			[](Toxic & toxic) { toxic = {}; },
+			[](auto) {}
+		));
 	}
 }
 
 auto Status::end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) -> void {
-	switch (name()) {
-		case Statuses::burn: {
+	auto handle_sleep = [&]{
+		if (is_having_a_nightmare(pokemon)) {
+			heal(pokemon, rational(-1_bi, 4_bi));
+		}
+		if (harms_sleepers(get_ability(other))) {
+			heal(pokemon, rational(-1_bi, 8_bi));
+		}
+	};
+	bounded::visit(m_state, bounded::overload(
+		[](Clear) {},
+		[&](Burn) {
 			auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(get_ability(pokemon)), 16_bi, 8_bi);
 			heal(pokemon, rational(-1_bi, denominator));
-			break;
-		}
-		case Statuses::poison: {
+		},
+		[](Freeze) {},
+		[](Paralysis) {},
+		[&](Poison) {
 			auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(get_ability(pokemon)), 1_bi, -1_bi);
 			heal(pokemon, rational(numerator, 8_bi));
-			break;
-		}
-		case Statuses::poison_toxic:
-			pokemon.advance_toxic();
+		},
+		[&](Toxic & toxic) {
+			toxic.increment();
 			if (absorbs_poison_damage(get_ability(pokemon))) {
 				heal(pokemon, rational(1_bi, 8_bi));
 			} else {
-				heal(pokemon, toxic_ratio(pokemon));
+				heal(pokemon, toxic.ratio_drained());
 			}
-			break;
-		case Statuses::sleep:
-			if (is_having_a_nightmare(pokemon)) {
-				heal(pokemon, rational(-1_bi, 4_bi));
-			}
-			if (harms_sleepers(get_ability(other))) {
-				heal(pokemon, rational(-1_bi, 8_bi));
-			}
-			break;
-		default:
-			break;
-	}
+		},
+		[&](Sleep) { handle_sleep(); },
+		[&](Rest) { handle_sleep(); }
+	));
 }
 
 namespace {
@@ -172,7 +193,7 @@ namespace {
 using SleepCounter = bounded::integer<0, 4>;
 
 // It's possible to acquire Early Bird in the middle of a sleep
-auto early_bird_probability(SleepCounter const turns_slept) {
+constexpr auto early_bird_probability(SleepCounter const turns_slept) {
 	switch (turns_slept.value()) {
 	case 0:
 		return 1.0 / 4.0;
@@ -185,20 +206,26 @@ auto early_bird_probability(SleepCounter const turns_slept) {
 	}
 }
 
-auto non_early_bird_probability(SleepCounter const turns_slept) {
+constexpr auto non_early_bird_probability(SleepCounter const turns_slept) {
 	return (turns_slept == 0_bi) ? 0.0 : (1.0 / static_cast<double>(SleepCounter::max() + 1_bi - turns_slept));
+}
+
+constexpr auto awaken_probability(SleepCounter const turns_slept, Ability const ability) {
+	return wakes_up_early(ability) ?
+		early_bird_probability(turns_slept) :
+		non_early_bird_probability(turns_slept)
+	;
 }
 
 }	// namespace
 
 auto Status::probability_of_clearing(Ability const ability) const -> double {
-	if (!m_turns_already_slept) {
-		return 0.0;
-	}
-	return wakes_up_early(ability) ?
-		early_bird_probability(*m_turns_already_slept) :
-		non_early_bird_probability(*m_turns_already_slept)
-	;
+	return bounded::visit(m_state, bounded::overload(
+		[=](Sleep const sleep) { return awaken_probability(sleep.turns_slept, ability); },
+		[](Rest const sleep) { return sleep.turns_slept == sleep.turns_slept.max() ? 1.0 : 0.0; },
+		[](Freeze) { return 0.2; },
+		[](auto) { return 0.0; }
+	));
 }
 
 }	// namespace technicalmachine
