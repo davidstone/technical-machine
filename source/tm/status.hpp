@@ -67,6 +67,8 @@ struct Status {
 
 	friend auto apply(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 	friend auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
+	
+	auto handle_switch(Ability ability) -> void;
 
 	friend constexpr auto operator==(Status const lhs, Status const rhs) {
 		return

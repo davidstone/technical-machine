@@ -151,6 +151,12 @@ auto non_early_bird_probability(DefiniteSleepCounter const turns_slept) {
 
 }	// namespace
 
+auto Status::handle_switch(Ability const ability) -> void {
+	if (clears_status_on_switch(ability)) {
+		*this = {};
+	}
+}
+
 auto Status::awaken_probability(Ability const ability) const -> AwakenProbability {
 	static_assert(DefiniteSleepCounter::min() == SleepCounter::value_type::min());
 	static_assert(DefiniteSleepCounter::max() == SleepCounter::value_type::max());
