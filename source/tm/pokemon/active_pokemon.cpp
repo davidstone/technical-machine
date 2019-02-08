@@ -177,10 +177,10 @@ auto MutableActivePokemon::direct_damage(damage_type const damage) -> void {
 		m_flags.substitute.damage(damage);
 	} else {
 		get_hp(*this) -= damage;
-		constexpr auto bide_index = bounded::detail::types<Bide>{};
-		if (bounded::holds_alternative(m_flags.lock_in, bide_index)) {
-			m_flags.lock_in[bide_index].add_damage(damage);
-		}
+		bounded::visit(m_flags.lock_in, bounded::overload(
+			[=](Bide & bide) { bide.add_damage(damage); },
+			[](auto const &) {}
+		));
 	}
 }
 
