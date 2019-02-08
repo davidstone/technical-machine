@@ -1078,7 +1078,7 @@ auto call_move(Team & user, ExecutedMove const move, bool const user_damaged, Te
 	auto target_pokemon = target.pokemon();
 	user_pokemon.update_before_move();
 	auto & status = get_status(user_pokemon);
-	if (!is_switch(move.selected) and is_sleeping(status)) {
+	if (!is_switch(move.selected)) {
 		status.advance_from_move(get_ability(user_pokemon), clear_status);
 	}
 	// Need the side-effect from recharge
