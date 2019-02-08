@@ -1,5 +1,4 @@
-// Damage calculator forward declarations
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,11 +17,13 @@
 
 #pragma once
 
+#include <tm/move/move.hpp>
+
 #include <bounded/integer.hpp>
+#include <bounded/optional.hpp>
 
 namespace technicalmachine {
 
-struct Move;
 struct Pokemon;
 struct Team;
 struct Variable;
@@ -30,7 +31,12 @@ struct Weather;
 
 using damage_type = bounded::checked_integer<0, std::numeric_limits<std::uint32_t>::max()>;
 
-damage_type damage_calculator(Team const & attacker, Move move, bool attacker_damaged, Team const & defender, bool defender_damaged, Weather weather, Variable variable, bool critical_hit);
+struct UsedMove {
+	Move move;
+	damage_type damage;
+};
+
+damage_type damage_calculator(Team const & attacker, Move move, Team const & defender, bounded::optional<UsedMove> defender_move, bool defender_damaged, Weather weather, Variable variable, bool critical_hit);
 
 void recoil(Pokemon & user, damage_type damage, bounded::checked_integer<1, 4> denominator);
 

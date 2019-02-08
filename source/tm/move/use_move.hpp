@@ -35,11 +35,6 @@ struct ExecutedMove {
 	Moves executed = selected;
 };
 
-struct UsedMove {
-	Move move;
-	damage_type damage;
-};
-
-auto call_move(Team & user, ExecutedMove move, bool user_damaged, Team & target, bounded::optional<UsedMove> target_move, bool target_damaged, Weather & weather, Variable variable, bool missed, bool clear_status, bool critical_hit, bounded::optional<damage_type> known_damage) -> void;
+auto call_move(Team & user, ExecutedMove move, Team & target, bounded::optional<UsedMove> target_move, bool target_damaged, Weather & weather, Variable variable, bool missed, bool clear_status, bool critical_hit, bounded::optional<damage_type> known_damage) -> void;
 
 }	// namespace technicalmachine

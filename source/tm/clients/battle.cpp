@@ -47,12 +47,10 @@ void Battle::handle_use_move(Party const party, uint8_t /*slot*/, ExecutedMove c
 	// TODO: Add move.executed in some circumstances
 
 	constexpr auto other_move = bounded::none;
-	constexpr auto user_damaged = bounded::optional<damage_type>();
 	constexpr auto other_damaged = bounded::optional<damage_type>();
 	call_move(
 		user,
 		move,
-		static_cast<bool>(user_damaged),
 		other,
 		other_move,
 		static_cast<bool>(other_damaged),

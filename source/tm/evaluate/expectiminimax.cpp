@@ -364,8 +364,7 @@ auto use_move_branch_inner(Variable const last_variable, CriticalHit const first
 		// TODO: properly handle used move here
 		// TODO: implement properly
 		constexpr auto first_damaged = false;
-		constexpr auto last_damaged = false;
-		call_move(last, ExecutedMove{last_move}, last_damaged, first, bounded::none, first_damaged, weather, last_variable, false, false, false, bounded::none);
+		call_move(last, ExecutedMove{last_move}, first, bounded::none, first_damaged, weather, last_variable, false, false, false, bounded::none);
 		if (auto const won = Evaluate::win(first, last)) {
 			return *won;
 		}
@@ -387,12 +386,12 @@ auto use_move_branch_outer(Moves const last_move, Variable const first_variable,
 		// TODO: implement properly
 		constexpr auto first_damaged = false;
 		constexpr auto last_damaged = false;
-		call_move(first, ExecutedMove{first_move}, first_damaged, last, bounded::none, last_damaged, weather, first_variable, false, false, false, bounded::none);
+		call_move(first, ExecutedMove{first_move}, last, bounded::none, last_damaged, weather, first_variable, false, false, false, bounded::none);
 		if (auto const won = Evaluate::win(first, last)) {
 			return *won;
 		}
 		// TODO: properly handle used move here
-		call_move(last, ExecutedMove{last_move}, last_damaged, first, bounded::none, first_damaged, weather, last_variable, last_flags.miss, last_flags.clear_status, last_flags.critical_hit, bounded::none);
+		call_move(last, ExecutedMove{last_move}, first, bounded::none, first_damaged, weather, last_variable, last_flags.miss, last_flags.clear_status, last_flags.critical_hit, bounded::none);
 		if (auto const won = Evaluate::win(first, last)) {
 			return *won;
 		}
@@ -411,10 +410,9 @@ double use_move_branch(Team first, Moves const first_move, Team last, Moves cons
 #endif
 
 	// TODO: implement properly
-	constexpr auto first_damaged = false;
 	constexpr auto last_damaged = false;
 	
-	call_move(first, ExecutedMove{first_move}, first_damaged, last, bounded::none, last_damaged, weather, first_variable, first_flags.miss, first_flags.clear_status, first_flags.critical_hit, bounded::none);
+	call_move(first, ExecutedMove{first_move}, last, bounded::none, last_damaged, weather, first_variable, first_flags.miss, first_flags.clear_status, first_flags.critical_hit, bounded::none);
 	if (auto const won = Evaluate::win(first, last)) {
 		return *won;
 	}
