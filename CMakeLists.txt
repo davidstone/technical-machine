@@ -66,6 +66,7 @@ add_library(tm_common STATIC
 	source/tm/move/accuracy.cpp
 	source/tm/move/base_power.cpp
 	source/tm/move/container.cpp
+	source/tm/move/executed_move.cpp
 	source/tm/move/is_switch.cpp
 	source/tm/move/max_moves_per_pokemon.cpp
 	source/tm/move/move.cpp

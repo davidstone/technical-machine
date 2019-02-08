@@ -15,20 +15,5 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
 #include <tm/move/executed_move.hpp>
 
-#include <tm/damage.hpp>
-
-#include <bounded/optional.hpp>
-
-namespace technicalmachine {
-
-struct Team;
-struct Variable;
-struct Weather;
-
-auto call_move(Team & user, ExecutedMove move, Team & target, bounded::optional<UsedMove> target_move, bool target_damaged, Weather & weather, Variable variable, bool missed, bool clear_status, bool critical_hit, bounded::optional<damage_type> known_damage) -> void;
-
-}	// namespace technicalmachine

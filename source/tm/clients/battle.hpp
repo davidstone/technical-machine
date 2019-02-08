@@ -26,9 +26,9 @@
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
+#include <tm/move/executed_move.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/moves.hpp>
-#include <tm/move/use_move.hpp>
 
 #include <tm/pokemon/species_forward.hpp>
 

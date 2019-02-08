@@ -20,9 +20,9 @@
 
 #include <tm/clients/party.hpp>
 
+#include <tm/move/executed_move.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
-#include <tm/move/use_move.hpp>
 
 #include <tm/damage.hpp>
 #include <tm/variable.hpp>

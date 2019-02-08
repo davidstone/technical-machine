@@ -17,18 +17,15 @@
 
 #pragma once
 
-#include <tm/move/executed_move.hpp>
-
-#include <tm/damage.hpp>
-
-#include <bounded/optional.hpp>
+#include <cstdint>
 
 namespace technicalmachine {
 
-struct Team;
-struct Variable;
-struct Weather;
+enum class Moves : std::uint16_t;
 
-auto call_move(Team & user, ExecutedMove move, Team & target, bounded::optional<UsedMove> target_move, bool target_damaged, Weather & weather, Variable variable, bool missed, bool clear_status, bool critical_hit, bounded::optional<damage_type> known_damage) -> void;
+struct ExecutedMove {
+	Moves selected;
+	Moves executed = selected;
+};
 
 }	// namespace technicalmachine
