@@ -19,7 +19,6 @@
 #include <tm/endofturn.hpp>
 
 #include <tm/ability.hpp>
-#include <tm/damage.hpp>
 #include <tm/heal.hpp>
 #include <tm/rational.hpp>
 #include <tm/status.hpp>

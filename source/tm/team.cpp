@@ -18,7 +18,6 @@
 #include <tm/team.hpp>
 
 #include <tm/ability.hpp>
-#include <tm/damage.hpp>
 #include <tm/files_in_directory.hpp>
 #include <tm/item.hpp>
 #include <tm/status.hpp>

@@ -19,8 +19,7 @@
 
 #include <tm/move/damage_type.hpp>
 #include <tm/move/executed_move.hpp>
-
-#include <tm/damage.hpp>
+#include <tm/move/used_move.hpp>
 
 #include <bounded/optional.hpp>
 

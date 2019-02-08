@@ -23,19 +23,12 @@
 #include <tm/evaluate/reorder.hpp>
 #include <tm/evaluate/transposition.hpp>
 
-#include <tm/ability.hpp>
-#include <tm/block.hpp>
-#include <tm/endofturn.hpp>
-#include <tm/switch.hpp>
-#include <tm/team.hpp>
-#include <tm/variable.hpp>
-#include <tm/weather.hpp>
-
 #include <tm/move/base_power.hpp>
 #include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/use_move.hpp>
+#include <tm/move/used_move.hpp>
 
 #include <tm/pokemon/pokemon.hpp>
 
@@ -45,6 +38,14 @@
 
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/pokemon.hpp>
+
+#include <tm/ability.hpp>
+#include <tm/block.hpp>
+#include <tm/endofturn.hpp>
+#include <tm/switch.hpp>
+#include <tm/team.hpp>
+#include <tm/variable.hpp>
+#include <tm/weather.hpp>
 
 #include <boost/timer.hpp>
 

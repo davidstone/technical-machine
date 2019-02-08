@@ -19,17 +19,12 @@
 
 #include <tm/move/damage_type.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/used_move.hpp>
-
-#include <bounded/optional.hpp>
 
 namespace technicalmachine {
 
-struct Pokemon;
-struct Team;
-struct Variable;
-struct Weather;
-
-damage_type damage_calculator(Team const & attacker, Move move, Team const & defender, bounded::optional<UsedMove> defender_move, bool defender_damaged, Weather weather, Variable variable, bool critical_hit);
+struct UsedMove {
+	Move move;
+	damage_type damage;
+};
 
 }	// namespace technicalmachine

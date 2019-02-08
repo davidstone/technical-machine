@@ -76,6 +76,7 @@ add_library(tm_common STATIC
 	source/tm/move/priority.cpp
 	source/tm/move/shared.cpp
 	source/tm/move/use_move.cpp
+	source/tm/move/used_move.cpp
 
 	source/tm/pokemon/active_pokemon.cpp
 	source/tm/pokemon/collection.cpp
