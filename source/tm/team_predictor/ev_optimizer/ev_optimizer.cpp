@@ -30,12 +30,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-constexpr auto ev_sum(Combined const stats) {
-	constexpr auto impl = [](auto... args) { return (... + args.value()); };
-	return impl(stats.hp, stats.attack, stats.defense, stats.special_attack, stats.special_defense, stats.speed);
-}
-
-auto set_stats(Pokemon & pokemon, Combined const stats) {
+auto set_stats(Pokemon & pokemon, CombinedStats const stats) {
 	get_nature(pokemon) = stats.nature;
 	set_hp_ev(pokemon, stats.hp);
 	set_stat_ev(pokemon, StatNames::ATK, stats.attack);
@@ -53,8 +48,8 @@ bool has_special_move(Pokemon const & pokemon) {
 	return containers::any(regular_moves(pokemon), [](Move const move) { return is_special(move.name()); });
 }
 
-auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> Combined {
-	auto best = bounded::optional<Combined>{};
+auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats {
+	auto best = bounded::optional<CombinedStats>{};
 	for (auto const & speed : speed_container) {
 		auto const offensive = o.find(speed.nature);
 		if (!offensive) {
@@ -64,7 +59,7 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 		if (defensive == end(d)) {
 			continue;
 		}
-		auto candidate = Combined{
+		auto candidate = CombinedStats{
 			speed.nature,
 			defensive->hp,
 			offensive->attack,
@@ -82,7 +77,7 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 	return *best;
 }
 
-auto optimize_evs(Combined combined, Species const species, Level const level, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) {
+auto optimize_evs(CombinedStats combined, Species const species, Level const level, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) {
 	while (true) {
 		auto const previous = combined;
 		combined = pad_random_evs(combined, include_attack, include_special_attack, random_engine);
@@ -98,8 +93,8 @@ auto optimize_evs(Combined combined, Species const species, Level const level, b
 
 }	// namespace
 
-auto pull_out_stats(Pokemon const & pokemon) -> Combined {
-	return Combined{
+auto pull_out_stats(Pokemon const & pokemon) -> CombinedStats {
+	return CombinedStats{
 		get_nature(pokemon),
 		get_hp(pokemon).ev(),
 		get_stat(pokemon, StatNames::ATK).ev(),
@@ -119,7 +114,7 @@ void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
 	set_stats(pokemon, optimized);
 }
 
-auto minimize_evs(Combined const stats, Species const species, Level const level, bool const include_attack, bool const include_special_attack) -> Combined {
+auto minimize_evs(CombinedStats const stats, Species const species, Level const level, bool const include_attack, bool const include_special_attack) -> CombinedStats {
 	auto const nature = stats.nature;
 	auto const hp = HP(species, level, stats.hp);
 	auto const attack = Stat(species, StatNames::ATK, stats.attack);
@@ -136,7 +131,7 @@ auto minimize_evs(Combined const stats, Species const species, Level const level
 	return result;
 }
 
-auto pad_random_evs(Combined combined, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) -> Combined {
+auto pad_random_evs(CombinedStats combined, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) -> CombinedStats {
 	auto distribution = std::discrete_distribution{};
 	while (ev_sum(combined) < EV::max_total) {
 		distribution.param({

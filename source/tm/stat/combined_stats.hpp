@@ -17,29 +17,36 @@
 
 #pragma once
 
-#include <tm/pokemon/level.hpp>
-#include <tm/pokemon/species_forward.hpp>
-
-#include <tm/stat/combined_stats.hpp>
-#include <tm/stat/stat_names.hpp>
+#include <tm/stat/ev.hpp>
+#include <tm/stat/nature.hpp>
 
 #include <tm/operators.hpp>
 
-#include <containers/array/array.hpp>
-
-#include <random>
-
 namespace technicalmachine {
-struct Pokemon;
 
-constexpr auto regular_stats() {
-	return containers::array{StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE};
+struct CombinedStats {
+	Nature nature;
+	EV hp;
+	EV attack;
+	EV defense;
+	EV special_attack;
+	EV special_defense;
+	EV speed;
+};
+constexpr auto operator==(CombinedStats const lhs, CombinedStats const rhs) {
+	return
+		lhs.nature == rhs.nature and
+		lhs.hp == rhs.hp and
+		lhs.attack == rhs.attack and
+		lhs.defense == rhs.defense and
+		lhs.special_attack == rhs.special_attack and
+		lhs.special_defense == rhs.special_defense and
+		lhs.speed == rhs.speed;
 }
 
-auto pull_out_stats(Pokemon const & pokemon) -> CombinedStats;
-
-void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine);
-auto minimize_evs(CombinedStats stats, Species, Level, bool include_attack, bool include_special_attack) -> CombinedStats;
-auto pad_random_evs(CombinedStats combined, bool include_attack, bool include_special_attack, std::mt19937 & random_engine) -> CombinedStats;
+constexpr auto ev_sum(CombinedStats const stats) {
+	constexpr auto impl = [](auto... args) { return (... + args.value()); };
+	return impl(stats.hp, stats.attack, stats.defense, stats.special_attack, stats.special_defense, stats.speed);
+}
 
 }	// namespace technicalmachine
