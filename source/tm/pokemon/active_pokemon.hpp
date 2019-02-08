@@ -37,6 +37,7 @@
 
 #include <tm/bide/bide.hpp>
 
+#include <tm/move/damage_type.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/is_switch.hpp>
 

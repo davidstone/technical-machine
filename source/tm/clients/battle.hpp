@@ -1,5 +1,4 @@
-// Generic battle
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,10 +21,7 @@
 #include <tm/clients/handle_battle_end.hpp>
 #include <tm/clients/party.hpp>
 
-#include <tm/endofturn.hpp>
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
-
+#include <tm/move/damage_type.hpp>
 #include <tm/move/executed_move.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/moves.hpp>
@@ -34,6 +30,10 @@
 
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/pokemon.hpp>
+
+#include <tm/endofturn.hpp>
+#include <tm/team.hpp>
+#include <tm/weather.hpp>
 
 #include <random>
 #include <string>

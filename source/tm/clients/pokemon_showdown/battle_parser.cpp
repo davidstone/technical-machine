@@ -20,6 +20,8 @@
 
 #include <tm/evaluate/expectiminimax.hpp>
 
+#include <tm/move/damage_type.hpp>
+
 #include <tm/team_predictor/team_predictor.hpp>
 
 #include <tm/string_conversions/ability.hpp>

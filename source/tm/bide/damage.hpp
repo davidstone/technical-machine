@@ -17,9 +17,9 @@
 
 #pragma once
 
-#include <tm/damage.hpp>
-#include <tm/operators.hpp>
+#include <tm/move/damage_type.hpp>
 #include <tm/stat/hp.hpp>
+#include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
 

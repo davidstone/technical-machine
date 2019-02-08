@@ -1,5 +1,4 @@
-// Handle Pokemon Showdown messages in a battle
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,11 +19,11 @@
 
 #include <tm/clients/party.hpp>
 
+#include <tm/move/damage_type.hpp>
 #include <tm/move/executed_move.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 
-#include <tm/damage.hpp>
 #include <tm/variable.hpp>
 
 #include <bounded/optional.hpp>

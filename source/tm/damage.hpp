@@ -17,9 +17,9 @@
 
 #pragma once
 
+#include <tm/move/damage_type.hpp>
 #include <tm/move/move.hpp>
 
-#include <bounded/integer.hpp>
 #include <bounded/optional.hpp>
 
 namespace technicalmachine {
@@ -28,8 +28,6 @@ struct Pokemon;
 struct Team;
 struct Variable;
 struct Weather;
-
-using damage_type = bounded::checked_integer<0, std::numeric_limits<std::uint32_t>::max()>;
 
 struct UsedMove {
 	Move move;
