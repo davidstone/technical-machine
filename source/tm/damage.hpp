@@ -38,6 +38,4 @@ struct UsedMove {
 
 damage_type damage_calculator(Team const & attacker, Move move, Team const & defender, bounded::optional<UsedMove> defender_move, bool defender_damaged, Weather weather, Variable variable, bool critical_hit);
 
-void recoil(Pokemon & user, damage_type damage, bounded::checked_integer<1, 4> denominator);
-
 }	// namespace technicalmachine

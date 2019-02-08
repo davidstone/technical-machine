@@ -100,6 +100,12 @@ auto curse(MutableActivePokemon user, MutableActivePokemon target) {
 }
 
 
+void recoil(Pokemon & user, damage_type const damage, bounded::checked_integer<1, 4> const denominator) {
+	if (!blocks_recoil(get_ability(user))) {
+		get_hp(user) -= bounded::max(damage / denominator, 1_bi);
+	}
+}
+
 auto recoil_status(MutableActivePokemon user, MutableActivePokemon target, Weather const weather, damage_type const damage, Variable const variable, Statuses const status) {
 	recoil(user, damage, 3_bi);
 	if (variable.effect_activates()) {

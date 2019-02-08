@@ -317,11 +317,4 @@ damage_type damage_calculator(Team const & attacker, Move const move, Team const
 		static_cast<damage_type>(0_bi);
 }
 
-
-void recoil(Pokemon & user, damage_type const damage, bounded::checked_integer<1, 4> const denominator) {
-	if (!blocks_recoil(get_ability(user))) {
-		get_hp(user) -= bounded::max(damage / denominator, 1_bi);
-	}
-}
-
 }	// namespace technicalmachine
