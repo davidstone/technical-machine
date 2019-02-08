@@ -150,7 +150,7 @@ void physical_damage_test() {
 
 	Team defender = max_damage_physical_defender();
 	
-	check_equal(damage_calculator(attacker, max_damage_physical_move, defender, bounded::none, false, weather, Variable(0_bi), critical_hit), max_damage);
+	check_equal(calculate_damage(attacker, max_damage_physical_move, defender, bounded::none, false, weather, Variable(0_bi), critical_hit), max_damage);
 }
 
 void special_damage_test() {
@@ -178,7 +178,7 @@ void special_damage_test() {
 
 	Team defender = max_damage_special_defender();
 
-	check_equal(damage_calculator(attacker, move, defender, bounded::none, false, weather, Variable(0_bi), critical_hit), max_damage);
+	check_equal(calculate_damage(attacker, move, defender, bounded::none, false, weather, Variable(0_bi), critical_hit), max_damage);
 }
 
 void damage_test() {

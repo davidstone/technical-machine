@@ -310,7 +310,7 @@ auto capped_damage(Team const & attacker, Move const move, Team const & defender
 }	// namespace
 
 
-damage_type damage_calculator(Team const & attacker, Move const move, Team const & defender, bounded::optional<UsedMove> const defender_move, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
+damage_type calculate_damage(Team const & attacker, Move const move, Team const & defender, bounded::optional<UsedMove> const defender_move, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
 	return affects_target(get_type(move.name(), attacker.pokemon()), defender.pokemon(), weather) ?
 		capped_damage(attacker, move, defender, defender_move, defender_damaged, weather, variable, critical_hit) :
 		static_cast<damage_type>(0_bi);

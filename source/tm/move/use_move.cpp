@@ -1035,7 +1035,7 @@ auto use_move(Team & user, Move const move, Team & target, bounded::optional<Use
 	auto const damage =
 		known_damage ? *known_damage :
 		will_be_recharge_turn(user.pokemon(), move.name(), weather) ? 0_bi :
-		is_damaging(move.name()) ? damage_calculator(user, move, target, target_move, target_damaged, weather, variable, critical_hit) :
+		is_damaging(move.name()) ? calculate_damage(user, move, target, target_move, target_damaged, weather, variable, critical_hit) :
 		0_bi;
 
 	if (damage != 0_bi) {
