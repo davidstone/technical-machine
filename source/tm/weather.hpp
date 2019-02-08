@@ -21,7 +21,6 @@
 #include <tm/status.hpp>
 
 #include <bounded/integer.hpp>
-#include <bounded/optional.hpp>
 #include <bounded/detail/variant/variant.hpp>
 
 #include <cstdint>
