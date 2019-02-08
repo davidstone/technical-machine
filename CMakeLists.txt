@@ -66,6 +66,7 @@ add_library(tm_common STATIC
 	source/tm/move/accuracy.cpp
 	source/tm/move/base_power.cpp
 	source/tm/move/container.cpp
+	source/tm/move/calculate_damage.cpp
 	source/tm/move/damage_type.cpp
 	source/tm/move/executed_move.cpp
 	source/tm/move/is_switch.cpp
@@ -145,7 +146,6 @@ add_library(tm_common STATIC
 
 	source/tm/ability.cpp
 	source/tm/block.cpp
-	source/tm/damage.cpp
 	source/tm/endofturn.cpp
 	source/tm/entry_hazards.cpp
 	source/tm/enum.cpp
@@ -231,7 +231,7 @@ add_executable(tm_test
 	source/tm/test/pokemon_online/test.cpp
 
 	source/tm/test/block.cpp
-	source/tm/test/damage.cpp
+	source/tm/test/calculate_damage.cpp
 	source/tm/test/ev_optimizer.cpp
 	source/tm/test/incorrect_calculation.cpp
 	source/tm/test/stat.cpp

@@ -18,13 +18,13 @@
 
 #include <tm/move/use_move.hpp>
 
+#include <tm/move/calculate_damage.hpp>
 #include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 
 #include <tm/ability.hpp>
 #include <tm/block.hpp>
-#include <tm/damage.hpp>
 #include <tm/heal.hpp>
 #include <tm/rational.hpp>
 #include <tm/status.hpp>

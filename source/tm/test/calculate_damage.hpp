@@ -1,4 +1,3 @@
-// Test damage-related functions
 // Copyright (C) 2012 David Stone
 //
 // This file is part of Technical Machine.
@@ -20,7 +19,7 @@
 
 namespace technicalmachine {
 
-void damage_tests ();
+void damage_tests();
 
 }	// namespace technicalmachine
 

@@ -1,4 +1,3 @@
-// Test stuff
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
@@ -20,7 +19,7 @@
 #include <tm/test/clients/pokemon_showdown/slot_memory.hpp>
 #include <tm/test/collections/collection.hpp>
 #include <tm/test/block.hpp>
-#include <tm/test/damage.hpp>
+#include <tm/test/calculate_damage.hpp>
 #include <tm/test/ev_optimizer.hpp>
 #include <tm/test/stat.hpp>
 #include <tm/test/status.hpp>

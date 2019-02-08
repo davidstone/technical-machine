@@ -1,4 +1,3 @@
-// Test damage-related functions
 // Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
@@ -16,19 +15,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tm/test/damage.hpp>
+#include <tm/test/calculate_damage.hpp>
 
 #include <tm/test/incorrect_calculation.hpp>
 
-#include <tm/damage.hpp>
+#include <tm/move/calculate_damage.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/move/power.hpp>
+
+#include <tm/pokemon/species.hpp>
+
 #include <tm/team.hpp>
 #include <tm/variable.hpp>
 #include <tm/weather.hpp>
-
-#include <tm/move/power.hpp>
-#include <tm/move/moves.hpp>
-
-#include <tm/pokemon/species.hpp>
 
 #include <containers/integer_range.hpp>
 

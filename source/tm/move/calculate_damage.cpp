@@ -1,5 +1,4 @@
-// Damage calculator
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,7 +15,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tm/damage.hpp>
+#include <tm/move/calculate_damage.hpp>
 
 #include <tm/ability.hpp>
 #include <tm/item.hpp>
