@@ -50,7 +50,6 @@ struct MoveState {
 	}
 
 	void use_move(Party const party, Moves const move) {
-		assert(!m_move);
 		if (m_party) {
 			if (*m_party != party) {
 				throw std::runtime_error("Early move state messages do not match party of user");
@@ -58,10 +57,11 @@ struct MoveState {
 		} else {
 			m_party.emplace(party);
 		}
-		m_move.emplace(move, move);
-	}
-	void use_executed_move(Moves const move) {
-		m_move->executed = move;
+		if (m_move) {
+			m_move->executed = move;
+		} else {
+			m_move.emplace(move, move);
+		}
 	}
 	
 	bool move_damages_self(Party const party) const {

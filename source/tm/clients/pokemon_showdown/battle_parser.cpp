@@ -356,12 +356,10 @@ void BattleParser::handle_message(InMessage message) {
 		// target is sent only for moves that target one Pokemon
 		auto const target = message.next();
 #endif
-		if (m_move_state.party() == party) {
-			m_move_state.use_executed_move(move);
-		} else {
+		if (m_move_state.party() != party) {
 			maybe_use_previous_move();
-			m_move_state.use_move(party, move);
 		}
+		m_move_state.use_move(party, move);
 	} else if (type == "-notarget") {
 		// When you use a move, but there is no one to target
 	} else if (type == "player") {
@@ -438,7 +436,13 @@ void BattleParser::handle_message(InMessage message) {
 		auto const status = parse_status(message.next());
 		auto const source = parse_hp_change_source(message);
 		bounded::visit(source, bounded::overload(
-			[](MainEffect) {},
+			[&](MainEffect) {
+				auto const move_party = m_move_state.party();
+				if (!move_party) {
+					throw std::runtime_error("Got message about status for a move before getting the move.");
+				}
+				m_move_state.status(*move_party, status);
+			},
 			[](FromConfusion) { throw std::runtime_error("Confusion cannot cause another status"); },
 			[&](FromMiscellaneous) { m_move_state.status(other(party), status); },
 			[&](FromMove) { m_move_state.status(party, status); },
