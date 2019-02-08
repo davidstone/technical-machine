@@ -113,7 +113,20 @@ struct MoveState {
 		m_variable.set_phaze_index(phazed_team, species);
 	}
 	void status(Party const party, Statuses const status) {
-		validate(party);
+		if (m_move and is_switch(m_move->executed)) {
+			if (party != *m_party) {
+				throw_error();
+			}
+			// Don't need to do anything for Toxic Spikes
+			return;
+		}
+		if (m_move and m_move->executed == Moves::Rest) {
+			if (party != *m_party) {
+				throw_error();
+			}
+		} else {
+			validate(other(party));
+		}
 		m_variable.apply_status(m_move->executed, status);
 	}
 

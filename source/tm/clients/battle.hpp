@@ -90,13 +90,9 @@ struct Battle {
 	}
 
 	void handle_use_move(Party user, uint8_t slot, ExecutedMove move, Variable variable, bool miss, bool critical_hit, bool clear_status, bounded::optional<damage_type> damage);
-	// This handles direct switches, replacing fainted Pokemon, and switching
-	// due to U-turn and Baton Pass. This assumes Species Clause is in effect.
-	void handle_send_out(Party switcher, uint8_t slot, Species species, Level level, Gender gender);
-	// This assumes Species Clause is in effect. This is intended to be used
-	// with phazing moves only. It does not perform any switching, it just adds
-	// them to the team.
-	void add_pokemon_from_phaze(Party const party, uint8_t slot, Species species, Level level, Gender gender);
+	// This assumes Species Clause is in effect. This does not perform any
+	// switching, it just adds them to the team.
+	auto find_or_add_pokemon(Party const party, uint8_t slot, Species species, Level level, Gender gender) -> Moves;
 	void handle_fainted(Party const fainter, uint8_t /*slot*/) {
 		auto & team = get_team(fainter);
 		auto active_pokemon = team.pokemon();

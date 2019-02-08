@@ -405,12 +405,11 @@ void BattleParser::handle_message(InMessage message) {
 		}
 
 		constexpr auto slot = 0;
+		auto const move = m_battle.find_or_add_pokemon(parsed.party, slot, parsed.species, parsed.level, parsed.gender);
 		if (type == "drag") {
-			auto const phazer_party = other(parsed.party);
-			m_move_state.phaze_index(phazer_party, get_team(m_battle, parsed.party), parsed.species);
-			m_battle.add_pokemon_from_phaze(parsed.party, slot, parsed.species, parsed.level, parsed.gender);
+			m_move_state.phaze_index(other(parsed.party), get_team(m_battle, parsed.party), parsed.species);
 		} else {
-			m_battle.handle_send_out(parsed.party, slot, parsed.species, parsed.level, parsed.gender);
+			m_move_state.use_move(parsed.party, move);
 		}
 	} else if (type == "replace") {
 #if 0
@@ -438,13 +437,7 @@ void BattleParser::handle_message(InMessage message) {
 		auto const status = parse_status(message.next());
 		auto const source = parse_hp_change_source(message);
 		bounded::visit(source, bounded::overload(
-			[&](MainEffect) {
-				auto const move_party = m_move_state.party();
-				if (!move_party) {
-					throw std::runtime_error("Got message about status for a move before getting the move.");
-				}
-				m_move_state.status(*move_party, status);
-			},
+			[&](MainEffect) { m_move_state.status(party, status); },
 			[](FromConfusion) { throw std::runtime_error("Confusion cannot cause another status"); },
 			[&](FromMiscellaneous) { m_move_state.status(other(party), status); },
 			[&](FromMove) { m_move_state.status(party, status); },

@@ -70,37 +70,15 @@ auto index_of_seen(PokemonCollection const & collection, Species const species) 
 	return static_cast<index_type>(containers::find(collection, species) - begin(collection));
 }
 
-auto find_or_add_pokemon(Team & switcher, Species const species, Level const level, Gender const gender) {
+}	// namespace
+
+auto Battle::find_or_add_pokemon(Party const party, uint8_t /*slot*/, Species const species, Level const level, Gender const gender) -> Moves {
+	auto & switcher = get_team(party);
 	auto const index = index_of_seen(switcher.all_pokemon(), species);
 	if (index == switcher.number_of_seen_pokemon()) {
 		switcher.all_pokemon().add(species, level, gender);
 	}
-	return index;
-}
-
-}	// namespace
-
-void Battle::handle_send_out(Party const switcher_party, uint8_t const slot, Species const species, Level const level, Gender const gender) {
-	auto & switcher = get_team(switcher_party);
-	auto const index = find_or_add_pokemon(switcher, species, level, gender);
-
-	// TODO: switch_decision_required includes replacing a fainted Pokemon. When
-	// replacing a fainted Pokemon, should we call switch_pokemon or call_move?
-	// When using Baton Pass and U-turn, should we call switch_pokemon or
-	// call_move?
-	if (switch_decision_required(switcher.pokemon())) {
-		auto & other = get_team(technicalmachine::other(switcher_party));
-		switch_pokemon(switcher, other, m_weather, index);
-	} else {
-		constexpr auto miss = false;
-		constexpr auto critical_hit = false;
-		constexpr auto clear_status = false;
-		handle_use_move(switcher_party, slot, ExecutedMove{to_switch(index)}, Variable(0_bi), miss, critical_hit, clear_status, bounded::none);
-	}
-}
-
-void Battle::add_pokemon_from_phaze(Party const party, uint8_t /*slot*/, Species const species, Level const level, Gender const gender) {
-	find_or_add_pokemon(get_team(party), species, level, gender);
+	return to_switch(index);
 }
 
 } // namespace technicalmachine
