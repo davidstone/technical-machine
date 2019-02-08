@@ -20,11 +20,11 @@
 #include <tm/test/collections/collection.hpp>
 #include <tm/test/block.hpp>
 #include <tm/test/calculate_damage.hpp>
+#include <tm/test/call_move.hpp>
 #include <tm/test/ev_optimizer.hpp>
 #include <tm/test/stat.hpp>
 #include <tm/test/status.hpp>
 #include <tm/test/string_conversion.hpp>
-#include <tm/test/use_move.hpp>
 #include <tm/test/evaluate/evaluate.hpp>
 #include <tm/test/evaluate/expectiminimax.hpp>
 #include <tm/test/pokemon_lab/test.hpp>
@@ -43,7 +43,7 @@ int main() {
 	stat_tests();
 	damage_tests();
 	collection_tests();
-	use_move_tests();
+	call_move_tests();
 
 	ev_optimizer_tests();
 	

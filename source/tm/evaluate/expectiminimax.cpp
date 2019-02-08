@@ -24,10 +24,10 @@
 #include <tm/evaluate/transposition.hpp>
 
 #include <tm/move/base_power.hpp>
+#include <tm/move/call_move.hpp>
 #include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
-#include <tm/move/use_move.hpp>
 #include <tm/move/used_move.hpp>
 
 #include <tm/pokemon/pokemon.hpp>

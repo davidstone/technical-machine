@@ -15,11 +15,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tm/test/use_move.hpp>
+#include <tm/test/call_move.hpp>
 
 #include <tm/test/incorrect_calculation.hpp>
 
-#include <tm/move/use_move.hpp>
+#include <tm/move/call_move.hpp>
 
 #include <tm/team.hpp>
 #include <tm/variable.hpp>
@@ -85,8 +85,8 @@ void test_baton_pass() {
 
 }	// namespace
 
-void use_move_tests() {
-	std::cout << "Running use_move tests.\n";
+void call_move_tests() {
+	std::cout << "Running call_move tests.\n";
 	test_baton_pass();
 	std::cout << "Use move tests passed.\n\n";
 }

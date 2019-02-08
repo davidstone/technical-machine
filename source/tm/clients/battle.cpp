@@ -23,9 +23,9 @@
 #include <tm/variable.hpp>
 #include <tm/weather.hpp>
 
+#include <tm/move/call_move.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
-#include <tm/move/use_move.hpp>
 
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/pokemon.hpp>

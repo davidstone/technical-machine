@@ -1,4 +1,4 @@
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,7 +19,7 @@
 
 namespace technicalmachine {
 
-void use_move_tests();
+void call_move_tests();
 
 }	// namespace technicalmachine
 

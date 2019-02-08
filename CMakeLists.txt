@@ -65,18 +65,18 @@ add_library(tm_common STATIC
 
 	source/tm/move/accuracy.cpp
 	source/tm/move/base_power.cpp
-	source/tm/move/container.cpp
 	source/tm/move/calculate_damage.cpp
+	source/tm/move/call_move.cpp
+	source/tm/move/container.cpp
 	source/tm/move/damage_type.cpp
 	source/tm/move/executed_move.cpp
 	source/tm/move/is_switch.cpp
 	source/tm/move/max_moves_per_pokemon.cpp
 	source/tm/move/move.cpp
-	source/tm/move/pp.cpp
 	source/tm/move/power.cpp
+	source/tm/move/pp.cpp
 	source/tm/move/priority.cpp
 	source/tm/move/shared.cpp
-	source/tm/move/use_move.cpp
 	source/tm/move/used_move.cpp
 
 	source/tm/pokemon/active_pokemon.cpp
@@ -232,13 +232,13 @@ add_executable(tm_test
 
 	source/tm/test/block.cpp
 	source/tm/test/calculate_damage.cpp
+	source/tm/test/call_move.cpp
 	source/tm/test/ev_optimizer.cpp
 	source/tm/test/incorrect_calculation.cpp
 	source/tm/test/stat.cpp
 	source/tm/test/status.cpp
 	source/tm/test/string_conversion.cpp
 	source/tm/test/test.cpp
-	source/tm/test/use_move.cpp
 )
 target_link_libraries(tm_test
 	tm_common
