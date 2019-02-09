@@ -2,3 +2,4 @@ syntax: glob
 
 build*
 teams/foe
+test/temp-battles

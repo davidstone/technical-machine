@@ -1,0 +1,40 @@
+>battle-gen4randombattle-857973987
+|title|Technical Machine vs. david stone
+|j|☆Technical Machine
+|request|
+|j|☆david stone
+|player|p1|Technical Machine|101
+|request|{"active":[{"moves":[{"move":"Calm Mind","id":"calmmind","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Substitute","id":"substitute","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Baton Pass","id":"batonpass","pp":64,"maxpp":64,"target":"self","disabled":false},{"move":"Psychic","id":"psychic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Lunatone","details":"Lunatone, L83","condition":"252/252","active":true,"stats":{"atk":96,"def":156,"spa":205,"spd":189,"spe":164},"moves":["calmmind","substitute","batonpass","psychic"],"baseAbility":"levitate","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Drifblim","details":"Drifblim, L83, F","condition":"385/385","active":false,"stats":{"atk":140,"def":121,"spa":197,"spd":137,"spe":180},"moves":["shadowball","rest","calmmind","hiddenpowerfighting"],"baseAbility":"unburden","item":"chestoberry","pokeball":"pokeball"},{"ident":"p1: Dugtrio","details":"Dugtrio, L79, M","condition":"185/185","active":false,"stats":{"atk":172,"def":125,"spa":125,"spd":156,"spe":235},"moves":["suckerpunch","earthquake","stoneedge","substitute"],"baseAbility":"arenatrap","item":"lifeorb","pokeball":"pokeball"},{"ident":"p1: Swellow","details":"Swellow, L79, M","condition":"224/224","active":false,"stats":{"atk":180,"def":140,"spa":125,"spd":125,"spe":243},"moves":["protect","bravebird","uturn","facade"],"baseAbility":"guts","item":"toxicorb","pokeball":"pokeball"},{"ident":"p1: Raticate","details":"Raticate, L83, M","condition":"227/227","active":false,"stats":{"atk":182,"def":147,"spa":131,"spd":164,"spe":209},"moves":["uturn","protect","facade","suckerpunch"],"baseAbility":"guts","item":"toxicorb","pokeball":"pokeball"},{"ident":"p1: Gyarados","details":"Gyarados, L75, M","condition":"266/266","active":false,"stats":{"atk":231,"def":162,"spa":134,"spd":194,"spe":165},"moves":["bounce","stoneedge","waterfall","dragondance"],"baseAbility":"intimidate","item":"lifeorb","pokeball":"pokeball"}]},"rqid":2}
+|player|p2|david stone|266
+|teamsize|p1|6
+|teamsize|p2|6
+|gametype|singles
+|gen|4
+|tier|[Gen 4] Random Battle
+|seed|
+|rule|Sleep Clause Mod: Limit one foe put to sleep
+|rule|HP Percentage Mod: HP is shown in percentages
+||
+|start|
+|switch|p1a: Lunatone|Lunatone, L83|252/252
+|switch|p2a: Luxray|Luxray, L83, F|100/100
+|-ability|p2a: Luxray|Intimidate|boost
+|-unboost|p1a: Lunatone|atk|1
+|turn|1
+|request|{"active":[{"moves":[{"move":"Calm Mind","id":"calmmind","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Substitute","id":"substitute","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Baton Pass","id":"batonpass","pp":64,"maxpp":64,"target":"self","disabled":false},{"move":"Psychic","id":"psychic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Lunatone","details":"Lunatone, L83","condition":"204/252","active":true,"stats":{"atk":96,"def":156,"spa":205,"spd":189,"spe":164},"moves":["calmmind","substitute","batonpass","psychic"],"baseAbility":"levitate","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Drifblim","details":"Drifblim, L83, F","condition":"385/385","active":false,"stats":{"atk":140,"def":121,"spa":197,"spd":137,"spe":180},"moves":["shadowball","rest","calmmind","hiddenpowerfighting"],"baseAbility":"unburden","item":"chestoberry","pokeball":"pokeball"},{"ident":"p1: Dugtrio","details":"Dugtrio, L79, M","condition":"185/185","active":false,"stats":{"atk":172,"def":125,"spa":125,"spd":156,"spe":235},"moves":["suckerpunch","earthquake","stoneedge","substitute"],"baseAbility":"arenatrap","item":"lifeorb","pokeball":"pokeball"},{"ident":"p1: Swellow","details":"Swellow, L79, M","condition":"224/224","active":false,"stats":{"atk":180,"def":140,"spa":125,"spd":125,"spe":243},"moves":["protect","bravebird","uturn","facade"],"baseAbility":"guts","item":"toxicorb","pokeball":"pokeball"},{"ident":"p1: Raticate","details":"Raticate, L83, M","condition":"227/227","active":false,"stats":{"atk":182,"def":147,"spa":131,"spd":164,"spe":209},"moves":["uturn","protect","facade","suckerpunch"],"baseAbility":"guts","item":"toxicorb","pokeball":"pokeball"},{"ident":"p1: Gyarados","details":"Gyarados, L75, M","condition":"266/266","active":false,"stats":{"atk":231,"def":162,"spa":134,"spd":194,"spe":165},"moves":["bounce","stoneedge","waterfall","dragondance"],"baseAbility":"intimidate","item":"lifeorb","pokeball":"pokeball"}]},"rqid":4}
+||
+|move|p1a: Lunatone|Substitute|p1a: Lunatone
+|-start|p1a: Lunatone|Substitute
+|-damage|p1a: Lunatone|189/252
+|move|p2a: Luxray|Toxic||[still]
+|-fail|p2a: Luxray
+||
+|-heal|p1a: Lunatone|204/252|[from] item: Leftovers
+|upkeep|
+|turn|2
+|request|{"active":[{"moves":[{"move":"Sucker Punch","id":"suckerpunch","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Stone Edge","id":"stoneedge","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Dugtrio","details":"Dugtrio, L79, M","condition":"185/185","active":true,"stats":{"atk":172,"def":125,"spa":125,"spd":156,"spe":235},"moves":["suckerpunch","earthquake","stoneedge","substitute"],"baseAbility":"arenatrap","item":"lifeorb","pokeball":"pokeball"},{"ident":"p1: Drifblim","details":"Drifblim, L83, F","condition":"385/385","active":false,"stats":{"atk":140,"def":121,"spa":197,"spd":137,"spe":180},"moves":["shadowball","rest","calmmind","hiddenpowerfighting"],"baseAbility":"unburden","item":"chestoberry","pokeball":"pokeball"},{"ident":"p1: Lunatone","details":"Lunatone, L83","condition":"204/252","active":false,"stats":{"atk":96,"def":156,"spa":205,"spd":189,"spe":164},"moves":["calmmind","substitute","batonpass","psychic"],"baseAbility":"levitate","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Swellow","details":"Swellow, L79, M","condition":"224/224","active":false,"stats":{"atk":180,"def":140,"spa":125,"spd":125,"spe":243},"moves":["protect","bravebird","uturn","facade"],"baseAbility":"guts","item":"toxicorb","pokeball":"pokeball"},{"ident":"p1: Raticate","details":"Raticate, L83, M","condition":"227/227","active":false,"stats":{"atk":182,"def":147,"spa":131,"spd":164,"spe":209},"moves":["uturn","protect","facade","suckerpunch"],"baseAbility":"guts","item":"toxicorb","pokeball":"pokeball"},{"ident":"p1: Gyarados","details":"Gyarados, L75, M","condition":"266/266","active":false,"stats":{"atk":231,"def":162,"spa":134,"spd":194,"spe":165},"moves":["bounce","stoneedge","waterfall","dragondance"],"baseAbility":"intimidate","item":"lifeorb","pokeball":"pokeball"}]},"rqid":6}
+||
+|move|p1a: Lunatone|Substitute|p1a: Lunatone
+|-fail|p1a: Lunatone|move: Substitute
+|move|p2a: Luxray|Roar|p1a: Lunatone
+|drag|p1a: Dugtrio|Dugtrio, L79, M|185/185
