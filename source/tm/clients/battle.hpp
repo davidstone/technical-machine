@@ -18,7 +18,6 @@
 #pragma once
 
 #include <tm/clients/battle_result.hpp>
-#include <tm/clients/handle_battle_end.hpp>
 #include <tm/clients/party.hpp>
 
 #include <tm/move/damage_type.hpp>

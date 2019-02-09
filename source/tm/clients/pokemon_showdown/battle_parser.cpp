@@ -17,6 +17,7 @@
 
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
 #include <tm/clients/pokemon_showdown/chat.hpp>
+#include <tm/clients/handle_battle_end.hpp>
 
 #include <tm/evaluate/expectiminimax.hpp>
 
