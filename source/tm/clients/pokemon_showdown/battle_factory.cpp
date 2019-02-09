@@ -18,20 +18,88 @@
 #include <tm/clients/pokemon_showdown/battle_factory.hpp>
 #include <tm/clients/pokemon_showdown/chat.hpp>
 
+#include <tm/stat/combined_stats.hpp>
+#include <tm/stat/stat_to_ev.hpp>
+
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 
 #include <bounded/integer.hpp>
+
+#include <containers/algorithms/transform.hpp>
+#include <containers/legacy_iterator.hpp>
+
+#include <algorithm>
 
 namespace technicalmachine {
 namespace ps {
 
 namespace {
 
+auto hp_to_ev(Species const species, Level const level, HP::max_type const stat) {
+	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(species, level, ev).max(); });
+	auto const it = std::lower_bound(containers::legacy_iterator(begin(stat_range)), containers::legacy_iterator(end(stat_range)), stat);
+	if (it.base() == end(stat_range)) {
+		throw std::runtime_error("No valid HP EV for a given stat value");
+	}
+	return *it.base().base();
+}
+
+auto calculate_evs(boost::property_tree::ptree const & stats, Species const species, Level const level, HP::max_type const hp) -> CombinedStats {
+	using stat_value = bounded::checked_integer<4, 614>;
+	auto const attack = stats.get<stat_value>("atk");
+	auto const defense = stats.get<stat_value>("def");
+	auto const special_attack = stats.get<stat_value>("spa");
+	auto const special_defense = stats.get<stat_value>("spd");
+	auto const speed = stats.get<stat_value>("spe");
+	// TODO: Give the correct IVs for the Hidden Power type
+	
+	auto base_stat = [=](StatNames const stat) { return Stat(species, stat).base(); };
+	
+	auto const base_attack = base_stat(StatNames::ATK);
+	auto const base_defense = base_stat(StatNames::DEF);
+	auto const base_special_attack = base_stat(StatNames::SPA);
+	auto const base_special_defense = base_stat(StatNames::SPD);
+	auto const base_speed = base_stat(StatNames::SPE);
+	
+	auto to_ev = [](auto const integer) { return EV(EV::value_type(integer)); };
+	auto const hp_ev = hp_to_ev(species, level, hp);
+	for (auto const nature : containers::enum_range<Nature>()) {
+		auto const attack_ev = stat_to_ev(attack, nature, StatNames::ATK, base_attack, IV(31_bi), level);
+		if (attack_ev > EV::max) {
+			continue;
+		}
+		auto const defense_ev = stat_to_ev(defense, nature, StatNames::DEF, base_defense, IV(31_bi), level);
+		if (defense_ev > EV::max) {
+			continue;
+		}
+		auto const special_attack_ev = stat_to_ev(special_attack, nature, StatNames::SPA, base_special_attack, IV(31_bi), level);
+		if (special_attack_ev > EV::max) {
+			continue;
+		}
+		auto const special_defense_ev = stat_to_ev(special_defense, nature, StatNames::SPD, base_special_defense, IV(31_bi), level);
+		if (special_defense_ev > EV::max) {
+			continue;
+		}
+		auto const speed_ev = stat_to_ev(speed, nature, StatNames::SPE, base_speed, IV(31_bi), level);
+		if (speed_ev > EV::max) {
+			continue;
+		}
+
+		auto const combined = CombinedStats{nature, hp_ev, to_ev(attack_ev), to_ev(defense_ev), to_ev(special_attack_ev), to_ev(special_defense_ev), to_ev(speed_ev)};
+		if (ev_sum(combined) > EV::max_total) {
+			continue;
+		}
+		
+		return combined;
+	}
+	throw std::runtime_error("No Nature + EV combination combines to give the received stats");
+}
+
 Team parse_team(boost::property_tree::ptree const & pt) {
 	auto const team_data = range_view(pt.get_child("side").get_child("pokemon").equal_range(""));
 	constexpr bool is_me = true;
-	Team team(TeamSize(containers::distance(team_data.begin(), team_data.end())), is_me);
+	auto team = Team(TeamSize(containers::distance(team_data.begin(), team_data.end())), is_me);
 	for (auto const & pokemon_data : team_data) {
 		auto get = [&](auto const & key) { return pokemon_data.second.get<std::string>(key); };
 
@@ -43,46 +111,28 @@ Team parse_team(boost::property_tree::ptree const & pt) {
 		// rejoining battles
 		// TODO: If we disconnect in a battle when the HP is 0, we might not
 		// have a '/'
-		auto const hp = bounded::to_integer<HP::current_type>(split(condition, '/').first);
+		auto const hp = bounded::to_integer<HP::max_type>(split(condition, '/').first);
 		
-		auto const stats = get("stats");
-		#if 0
-		auto const attack = stats.second.get<EV::value_type>("atk");
-		auto const defense = stats.second.get<EV::value_type>("def");
-		auto const special_attack = stats.second.get<EV::value_type>("spa");
-		auto const special_defense = stats.second.get<EV::value_type>("spd");
-		auto const speed = stats.second.get<EV::value_type>("spe");
-		// Need to turn this into EVs somehow
-		// {"atk":214,"def":147,"spa":197,"spd":147,"spe":180}
-		#endif
-		static_cast<void>(stats);
-		// TODO: Give the correct IVs for the Hidden Power type
-		
+		auto const evs = calculate_evs(pokemon_data.second.get_child("stats"), details.species, details.level, hp);
+
 		auto const ability = from_string<Ability>(get("baseAbility"));
 		
 		auto const item = from_string<Item>(get("item"));
 		
-		team.add_pokemon(details.species, details.level, details.gender, item, ability, Nature::Hardy);
+		Pokemon & pokemon = team.add_pokemon(details.species, details.level, details.gender, item, ability, evs.nature);
 		
-		Pokemon & pokemon = back(team.all_pokemon());
 		for (auto const & move : pokemon_data.second.get_child("moves")) {
 			 add_seen_move(all_moves(pokemon), from_string<Moves>(move.second.get<std::string>("")));
 		}
-		constexpr auto ev = 84_bi;
-		for (auto const stat : {StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE}) {
-			set_stat_ev(pokemon, stat, EV(ev));
-		}
-		auto const max_hp_ev_allowed = EV::max_total - 5_bi * ev;
-		for (auto const hp_ev : ev_range(max_hp_ev_allowed)) {
-			set_hp_ev(pokemon, hp_ev);
-			if (get_hp(pokemon).max() == hp) {
-				break;
-			} else if (hp_ev == max_hp_ev_allowed) {
-				throw std::runtime_error("Sent a team with an impossible HP");
-			}
-		}
-		team.all_pokemon().reset_index();
+
+		set_hp_ev(pokemon, evs.hp);
+		set_stat_ev(pokemon, StatNames::ATK, evs.attack);
+		set_stat_ev(pokemon, StatNames::DEF, evs.defense);
+		set_stat_ev(pokemon, StatNames::SPA, evs.special_attack);
+		set_stat_ev(pokemon, StatNames::SPD, evs.special_defense);
+		set_stat_ev(pokemon, StatNames::SPE, evs.speed);
 	}
+	team.all_pokemon().reset_index();
 	return team;
 }
 
