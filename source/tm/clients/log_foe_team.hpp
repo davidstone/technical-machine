@@ -1,5 +1,4 @@
-// Generic battle
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,16 +17,13 @@
 
 #pragma once
 
-#include <tm/clients/battle_result.hpp>
-
 #include <random>
-#include <string_view>
 
 namespace technicalmachine {
 
 struct UsageStats;
 struct Team;
 
-void handle_battle_end(Result result, UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine);
+void log_foe_team(UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine);
 
 }	// namespace technicalmachine

@@ -51,8 +51,8 @@ add_library(tm_common STATIC
 
 	source/tm/clients/battle.cpp
 	source/tm/clients/battle_result.cpp
-	source/tm/clients/handle_battle_end.cpp
 	source/tm/clients/invalid_team_file_format.cpp
+	source/tm/clients/log_foe_team.cpp
 	source/tm/clients/party.cpp
 	source/tm/clients/timestamp.cpp
 

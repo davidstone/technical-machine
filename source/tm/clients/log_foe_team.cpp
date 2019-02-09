@@ -1,5 +1,4 @@
-// Generic battle
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,9 +15,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tm/clients/handle_battle_end.hpp>
+#include <tm/clients/log_foe_team.hpp>
 
-#include <tm/clients/battle_result.hpp>
 #include <tm/clients/random_string.hpp>
 
 #include <tm/clients/pokemon_lab/write_team_file.hpp>
@@ -57,11 +55,9 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 
 }	// namespace
 
-void handle_battle_end(Result const result, UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine) {
-	if (result == Result::lost) {
-		auto const team = predict_team(usage_stats, use_lead_stats, foe_team, random_engine);
-		pl::write_team(team, generate_team_file_name(random_engine));
-	}
+void log_foe_team(UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine) {
+	auto const team = predict_team(usage_stats, use_lead_stats, foe_team, random_engine);
+	pl::write_team(team, generate_team_file_name(random_engine));
 }
 
 } // namespace technicalmachine

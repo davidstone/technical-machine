@@ -17,7 +17,8 @@
 
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
 #include <tm/clients/pokemon_showdown/chat.hpp>
-#include <tm/clients/handle_battle_end.hpp>
+
+#include <tm/clients/log_foe_team.hpp>
 
 #include <tm/evaluate/expectiminimax.hpp>
 
@@ -472,7 +473,6 @@ void BattleParser::handle_message(InMessage message) {
 		// position here is "0", "1", or "2"
 #endif
 	} else if (type == "tie") {
-		handle_battle_end(Result::tied, m_usage_stats, m_battle.foe(), m_random_engine);
 		m_completed = true;
 	} else if (type == "-transform") {
 		// message.remainder() == POKEMON|SPECIES
@@ -494,8 +494,9 @@ void BattleParser::handle_message(InMessage message) {
 #endif
 	} else if (type == "win") {
 		auto const won = m_username == message.next();
-		auto const result = won ? Result::won : Result::lost;
-		handle_battle_end(result, m_usage_stats, m_battle.foe(), m_random_engine);
+		if (!won) {
+			log_foe_team(m_usage_stats, m_battle.foe(), m_random_engine);
+		}
 		m_completed = true;
 	} else {
 		std::cerr << "Received battle progress message of unknown type: " << type << ": " << message.remainder() << '\n';
