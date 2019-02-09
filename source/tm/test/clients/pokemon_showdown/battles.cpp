@@ -79,6 +79,7 @@ void regression_tests() {
 		}
 		print_file_on_exception.dismiss();
 	}
+	remove_temporary_files();
 }
 
 } // namespace
