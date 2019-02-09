@@ -237,13 +237,6 @@ void BattleParser::handle_message(InMessage message) {
 		return;
 	}
 
-	struct PokemonDetails {
-		Species species;
-		bool shiny; // "shiny" or nothing
-		Gender gender; // "M", "F", or nothing
-		Level level; // Level 100 by default
-	};
-
 	auto const type = message.type();
 	if (type.empty() or (type.front() != '-' and type != "drag" and type != "move")) {
 		maybe_use_previous_move();
