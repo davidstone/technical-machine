@@ -382,7 +382,7 @@ auto use_move_branch_inner(Variable const last_variable, CriticalHit const first
 	};
 }
 
-auto use_move_branch_outer(Moves const last_move, Variable const first_variable, Variable const last_variable, CriticalHit const first_flags, CriticalHit const last_flags) {
+auto use_move_branch_outer(Species const original_last_species, Moves const last_move, Variable const first_variable, Variable const last_variable, CriticalHit const first_flags, CriticalHit const last_flags) {
 	return [=](Team first, Moves const first_move, Team last, Moves, Weather weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
 		// TODO: implement properly
 		constexpr auto first_damaged = false;
@@ -392,7 +392,9 @@ auto use_move_branch_outer(Moves const last_move, Variable const first_variable,
 			return *won;
 		}
 		// TODO: properly handle used move here
-		call_move(last, ExecutedMove{last_move}, first, bounded::none, first_damaged, weather, last_variable, last_flags.miss, last_flags.clear_status, last_flags.critical_hit, bounded::none);
+		auto const current_last_species = get_species(last.pokemon());
+		auto const executed_move = ExecutedMove{original_last_species == current_last_species ? last_move : Moves::Pass};
+		call_move(last, executed_move, first, bounded::none, first_damaged, weather, last_variable, last_flags.miss, last_flags.clear_status, last_flags.critical_hit, bounded::none);
 		if (auto const won = Evaluate::win(first, last)) {
 			return *won;
 		}
@@ -413,6 +415,21 @@ double use_move_branch(Team first, Moves const first_move, Team last, Moves cons
 	// TODO: implement properly
 	constexpr auto last_damaged = false;
 	
+	// This complicated section of code is designed to handle U-turn and Baton
+	// Pass: The user of the move needs to go again before the other Pokemon
+	// moves and make a new selection. During that selection, the opponent
+	// cannot choose a move (which is why we say the only legal selection at
+	// this point is Pass). We store the original selected move and execute it
+	// after the Pokemon has moved again. In the event that the original move
+	// used was not U-turn or Baton Pass, the only legal selection will be Pass
+	// and nothing will happen.
+	//
+	// We also need to do the right thing when the first Pokemon to move phazes
+	// out the second Pokemon (for instance, because it was also using a phaze
+	// move). To detect this case, we see if the Pokemon is the same before and
+	// after the move, and if so, the second Pokemon can only execute Pass.
+
+	auto const original_last_species = get_species(last.pokemon());
 	call_move(first, ExecutedMove{first_move}, last, bounded::none, last_damaged, weather, first_variable, first_flags.miss, first_flags.clear_status, first_flags.critical_hit, bounded::none);
 	if (auto const won = Evaluate::win(first, last)) {
 		return *won;
@@ -420,7 +437,7 @@ double use_move_branch(Team first, Moves const first_move, Team last, Moves cons
 	auto const first_selections = legal_selections(first, last.pokemon(), weather);
 	auto const last_selections = StaticVectorMove({Moves::Pass});
 	// TODO: Figure out first / last vs ai / foe
-	return select_move_branch(first, first_selections, last, last_selections, weather, evaluate, depth, log, use_move_branch_outer(last_move, first_variable, last_variable, first_flags, last_flags)).move.score;
+	return select_move_branch(first, first_selections, last, last_selections, weather, evaluate, depth, log, use_move_branch_outer(original_last_species, last_move, first_variable, last_variable, first_flags, last_flags)).move.score;
 }
 
 
