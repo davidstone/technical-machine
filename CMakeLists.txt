@@ -116,6 +116,7 @@ add_library(tm_common STATIC
 	source/tm/stat/stage.cpp
 	source/tm/stat/stat.cpp
 	source/tm/stat/stat_names.cpp
+	source/tm/stat/stat_to_ev.cpp
 	source/tm/stat/stats.cpp
 
 	source/tm/string_conversions/ability.cpp

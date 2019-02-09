@@ -23,12 +23,12 @@
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat_names.hpp>
+#include <tm/stat/stat_to_ev.hpp>
 
 #include <containers/algorithms/transform.hpp>
 #include <containers/integer_range.hpp>
 
 #include <cassert>
-#include <iostream>
 
 namespace technicalmachine {
 namespace {
@@ -37,16 +37,6 @@ using namespace bounded::literal;
 
 constexpr auto ev_sum(DataPoint const data) {
 	return data.hp.value() + data.defense.value() + data.special_defense.value();
-}
-
-template<typename LHS, typename RHS>
-constexpr auto round_up_divide(LHS const lhs, RHS const rhs) {
-	return lhs / rhs + BOUNDED_CONDITIONAL(lhs % rhs == 0_bi, 0_bi, 1_bi);
-}
-
-template<typename T>
-auto reverse_initial_stat(T const target, Nature const nature, StatNames const stat_name, Stat::base_type const base, IV const iv, Level const level) {
-	return bounded::max(0_bi, (round_up_divide((round_up_divide(target, boost(nature, stat_name)) - 5_bi) * 100_bi, level()) - 2_bi * base - iv.value()) * 4_bi);
 }
 
 }	// namespace
@@ -76,7 +66,7 @@ DefensiveEVs::DefensiveEVs(Species const species, Level const level, Nature cons
 			auto const hp = HP(species, level, hp_ev, original_hp.iv());
 			auto find_minimum_matching = [=](StatNames const stat_name, Stat const stat, auto const original_product) {
 				auto const target_stat = round_up_divide(original_product, hp.max());
-				auto const expected = reverse_initial_stat(target_stat, nature, stat_name, stat.base(), stat.iv(), level);
+				auto const expected = stat_to_ev(target_stat, nature, stat_name, stat.base(), stat.iv(), level);
 				return BOUNDED_CONDITIONAL(expected <= EV::max, EV(EV::value_type(expected)), bounded::none);
 			};
 
