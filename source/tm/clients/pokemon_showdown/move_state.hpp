@@ -114,9 +114,6 @@ struct MoveState {
 	}
 	void status(Party const party, Statuses const status) {
 		if (m_move and is_switch(m_move->executed)) {
-			if (party != *m_party) {
-				throw_error();
-			}
 			// Don't need to do anything for Toxic Spikes
 			return;
 		}
