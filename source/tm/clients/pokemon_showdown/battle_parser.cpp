@@ -445,8 +445,6 @@ void BattleParser::handle_message(InMessage message) {
 			} else {
 				m_move_state.confuse();
 			}
-		} else {
-			std::cout << "Miscellaneous -start effect: " << thing << '|' << message.remainder() << '\n';
 		}
 	} else if (type == "-status") {
 		auto const party = party_from_player_id(message.next());
