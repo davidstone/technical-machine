@@ -35,6 +35,8 @@ std::string get_extension() {
 	return ".sbt";
 }
 
+constexpr auto team_file_directory = "teams/foe";
+
 std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 	// Randomly generates a file name in 8.3 format. It then checks to see if
 	// that file name already exists. If it does, it randomly generates a new
@@ -47,7 +49,7 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 	constexpr unsigned file_name_length = 8;
 	std::filesystem::path foe_team_file;
 	do {
-		foe_team_file = "teams/foe";
+		foe_team_file = team_file_directory;
 		foe_team_file /= random_string(random_engine, file_name_length) + get_extension();
 	} while (std::filesystem::exists(foe_team_file));
 	return foe_team_file;
@@ -57,7 +59,9 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 
 void log_foe_team(UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine) {
 	auto const team = predict_team(usage_stats, use_lead_stats, foe_team, random_engine);
-	pl::write_team(team, generate_team_file_name(random_engine));
+	auto const path = generate_team_file_name(random_engine);
+	std::filesystem::create_directory(team_file_directory);
+	pl::write_team(team, path);
 }
 
 } // namespace technicalmachine
