@@ -120,13 +120,29 @@ constexpr auto make_party(std::string_view const player_id) {
 inline auto parse_details(std::string_view details) {
 	auto parser = BufferView(details, ", ");
 	auto const species = from_string<Species>(parser.next());
-	auto const level = Level(bounded::to_integer<Level::min, Level::max>(parser.next().substr(1)));
-	auto const gender_str = parser.next();
-	auto const gender =
-		(gender_str == "F") ? Gender::female :
-		(gender_str == "M") ? Gender::male :
-		(gender_str == "") ? Gender::genderless :
-		throw std::runtime_error("Invalid gender string " + std::string(gender_str));
+	auto const level_or_gender_str = parser.next();
+	auto try_parse_gender = [](auto const str) {
+		return
+			BOUNDED_CONDITIONAL(str == "F", Gender::female,
+			BOUNDED_CONDITIONAL(str == "M", Gender::male,
+			BOUNDED_CONDITIONAL(str == "", Gender::genderless,
+			bounded::none
+		)));
+	};
+	auto const maybe_gender = try_parse_gender(level_or_gender_str);
+	auto const level = Level(maybe_gender ? 100_bi : bounded::to_integer<Level::min, Level::max>(level_or_gender_str.substr(1)));
+	auto parse_gender = [&]{
+		if (maybe_gender) {
+			return *maybe_gender;
+		}
+		auto const gender_str = parser.next();
+		auto const gender = try_parse_gender(gender_str);
+		if (!gender) {
+			throw std::runtime_error("Invalid gender string " + std::string(gender_str));
+		}
+		return *gender;
+	};
+	auto const gender = parse_gender();
 	struct result {
 		Species species;
 		Level level;
