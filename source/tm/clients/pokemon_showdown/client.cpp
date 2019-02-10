@@ -22,6 +22,7 @@
 #include <tm/clients/pokemon_showdown/chat.hpp>
 #include <tm/clients/pokemon_showdown/client.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
+#include <tm/clients/pokemon_showdown/packed_team.hpp>
 
 #include <tm/clients/random_string.hpp>
 #include <tm/settings_file.hpp>
@@ -213,6 +214,10 @@ void ClientImpl::authenticate(std::string_view const challstr) {
 	response.body().erase(0U, 1U);
 	auto const json = m_parse_json(response.body());
 	m_send_message("|/trn " + m_settings.username + ",0," + json.get<std::string>("assertion"));
+}
+
+void ClientImpl::send_team() {
+	m_send_message("|/utm " + to_packed_format(generate_team()));
 }
 
 void ClientImpl::join_channel(std::string const & channel) {

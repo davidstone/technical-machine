@@ -54,6 +54,8 @@ private:
 	Team generate_team() {
 		return load_team_from_file(m_random_engine, m_settings.team_file);
 	}
+	
+	void send_team();
 
 	void handle_message(InMessage message);
 	void send_channel_message(std::string const & channel, std::string const & message);
