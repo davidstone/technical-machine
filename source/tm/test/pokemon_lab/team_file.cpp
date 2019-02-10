@@ -31,7 +31,7 @@ void test_team_file () {
 	std::cout << "\tRunning Pokemon Lab team file tests.\n";
 	auto const directory = std::filesystem::path("test/teams");
 	write_team(load_team(directory / "test1.sbt"), directory / "test2.sbt");
-//	std::filesystem::remove(directory / "test2.sbt");
+	std::filesystem::remove(directory / "test2.sbt");
 }
 
 }	// namespace pl

@@ -31,6 +31,7 @@ void test_team_file () {
 	std::cout << "\tRunning Pokemon Online team file tests.\n";
 	auto const directory = std::filesystem::path("test/teams");
 	write_team(load_team(directory / "test1.tp"), directory / "test2.tp");
+	std::filesystem::remove(directory / "test2.tp");
 }
 
 }	// namespace po
