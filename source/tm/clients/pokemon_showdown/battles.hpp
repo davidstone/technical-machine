@@ -30,15 +30,16 @@ namespace technicalmachine {
 namespace ps {
 
 struct Battles {
-	explicit Battles(std::filesystem::path log_directory):
-		m_log_directory(std::move(log_directory))
+	explicit Battles(std::filesystem::path log_directory, bool const log_foe_teams):
+		m_log_directory(std::move(log_directory)),
+		m_log_foe_teams(log_foe_teams)
 	{
 		std::filesystem::create_directories(m_log_directory);
 	}
 
 	template<typename ... Args>
 	void add_pending(Args && ... args) {
-		m_pending.emplace_back(m_log_directory, std::forward<Args>(args)...);
+		m_pending.emplace_back(m_log_directory, m_log_foe_teams, std::forward<Args>(args)...);
 	}
 	
 	template<typename SendMessageFunction>
@@ -82,6 +83,7 @@ private:
 	std::filesystem::path m_log_directory;
 	std::list<BattleFactory> m_pending;
 	std::list<BattleParser> m_active;
+	bool m_log_foe_teams;
 };
 
 }	// namespace ps

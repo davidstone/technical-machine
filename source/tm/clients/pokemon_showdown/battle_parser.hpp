@@ -49,7 +49,8 @@ struct BattleParser {
 		unsigned const depth,
 		std::mt19937 random_engine,
 		Team ai,
-		Team foe
+		Team foe,
+		bool log_foe_teams
 	):
 		m_usage_stats(usage_stats),
 		m_send_message(std::move(send_message)),
@@ -65,7 +66,8 @@ struct BattleParser {
 			std::move(ai),
 			std::move(foe)
 		),
-		m_depth(depth)
+		m_depth(depth),
+		m_log_foe_teams(log_foe_teams)
 	{
 	}
 	
@@ -100,6 +102,7 @@ private:
 	Battle m_battle;
 	unsigned m_depth;
 	MoveState m_move_state;
+	bool m_log_foe_teams;
 	bool m_completed = false;
 	bool m_replacing_fainted = false;
 };

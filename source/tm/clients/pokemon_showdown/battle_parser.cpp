@@ -486,9 +486,11 @@ void BattleParser::handle_message(InMessage message) {
 		auto const weather = message.next();
 #endif
 	} else if (type == "win") {
-		auto const won = m_username == message.next();
-		if (!won) {
-			log_foe_team(m_usage_stats, m_battle.foe(), m_random_engine);
+		if (m_log_foe_teams) {
+			auto const won = m_username == message.next();
+			if (!won) {
+				log_foe_team(m_usage_stats, m_battle.foe(), m_random_engine);
+			}
 		}
 		m_completed = true;
 	} else {

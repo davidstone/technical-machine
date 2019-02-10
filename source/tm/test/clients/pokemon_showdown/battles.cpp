@@ -51,7 +51,8 @@ void regression_tests() {
 	auto const battle_output_directory = std::filesystem::path("test/temp-battles");	
 	auto const remove_temporary_files = [&]{ std::filesystem::remove_all(battle_output_directory); };
 	remove_temporary_files();
-	auto battles = Battles(battle_output_directory);
+	constexpr auto log_foe_teams = false;
+	auto battles = Battles(battle_output_directory, log_foe_teams);
 
 	for (auto const & path : paths_in_directory("test/battles")) {
 		auto const data = load_lines_from_file(path / "server_messages.txt");

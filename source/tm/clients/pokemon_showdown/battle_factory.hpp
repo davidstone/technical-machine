@@ -36,6 +36,7 @@ namespace ps {
 struct BattleFactory {
 	BattleFactory(
 		std::filesystem::path const & base_log_directory,
+		bool const log_foe_teams,
 		std::string id_,
 		std::string username,
 		UsageStats const & usage_stats,
@@ -52,7 +53,8 @@ struct BattleFactory {
 		m_evaluate(evaluate),
 		m_depth(depth),
 		m_random_engine(random_engine),
-		m_team(std::move(team))
+		m_team(std::move(team)),
+		m_log_foe_teams(log_foe_teams)
 	{
 	}
 	
@@ -89,6 +91,7 @@ private:
 	bounded::optional<TeamSize> m_opponent_team_size;
 	bounded::optional<ParsedSwitch> m_opponent_starter;
 	bool m_ai_switched_in = false;
+	bool m_log_foe_teams;
 };
 
 }	// namespace ps

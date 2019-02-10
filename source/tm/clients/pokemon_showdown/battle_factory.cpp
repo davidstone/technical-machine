@@ -266,7 +266,8 @@ BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message)
 		m_depth,
 		m_random_engine,
 		std::move(m_team),
-		make_foe_team()
+		make_foe_team(),
+		m_log_foe_teams
 	);
 }
 
