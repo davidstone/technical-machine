@@ -127,11 +127,16 @@ void ClientImpl::handle_message(InMessage message) {
 	if (handle_chat_message(message)) {
 		return;
 	}
+	auto send_challenge = [&]{
+		send_team();
+		m_send_message("|/challenge david stone,gen4ou");
+	};
 	if (message.type() == "b" or message.type() == "B" or message.type() == "battle") {
 		// message.remainder() == ROOMID|username|username
 	} else if (message.type() == "challstr") {
 		authenticate(message.remainder());
 		// After logging in, send "|/search FORMAT_NAME" to begin laddering
+		send_challenge();
 	} else if (message.type() == "formats") {
 		// message.remainder() == | separated list of formats with special rules
 	} else if (message.type() == "html") {
