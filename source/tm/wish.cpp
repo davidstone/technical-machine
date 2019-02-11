@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -21,7 +21,6 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
-struct Pokemon;
 
 auto Wish::activate() -> void {
 	if (!is_active()) {
@@ -31,12 +30,14 @@ auto Wish::activate() -> void {
 }
 
 auto Wish::decrement(MutableActivePokemon pokemon) -> void {
-	if (is_active()) {
+	if (!m_turns_until_activation) {
+		return;
+	}
+	if (*m_turns_until_activation == 0_bi) {
+		m_turns_until_activation = bounded::none;
+		heal(pokemon, rational(1_bi, 2_bi));
+	} else {
 		--*m_turns_until_activation;
-		if (*m_turns_until_activation == 0_bi) {
-			m_turns_until_activation = {};
-			heal(pokemon, rational(1_bi, 2_bi));
-		}
 	}
 }
 
