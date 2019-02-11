@@ -47,6 +47,10 @@ struct MoveState {
 	auto party() const -> bounded::optional<Party> {
 		return m_party;
 	}
+	// Requires that there is an executed move (use_move has been called).
+	auto executed_move() const {
+		return m_move->executed;
+	}
 
 	void use_move(Party const party, Moves const move) {
 		if (m_party) {

@@ -378,6 +378,10 @@ void BattleParser::handle_message(InMessage message) {
 			maybe_use_previous_move();
 		}
 		m_move_state.use_move(party, move);
+		if (m_battle.is_me(party) and move == Moves::Baton_Pass) {
+			maybe_use_previous_move();
+			send_move(determine_action());
+		}
 	} else if (type == "-notarget") {
 		// When you use a move, but there is no one to target
 	} else if (type == "player") {
@@ -513,6 +517,10 @@ void BattleParser::handle_damage(InMessage message) {
 				return;
 			}
 			move_damage(party, other(party));
+			if (m_battle.is_me(other(party)) and m_move_state.executed_move() == Moves::U_turn) {
+				maybe_use_previous_move();
+				send_move(determine_action());
+			}
 		},
 		[&](FromConfusion) {
 			// TODO: Technically you cannot select Hit Self, you just execute
