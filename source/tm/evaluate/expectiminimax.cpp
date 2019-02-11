@@ -233,16 +233,16 @@ SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_s
 	// is the variable that the opposing player is trying to minimize. As long
 	// as the opposing player has any move that won't guarantee their loss,
 	// that move will score lower (more negative) than victory, and thus
-	// the opponent will set that as their best response to the particular move
+	// the foe will set that as their best response to the particular move
 	// that the AI uses.
 
-	// After looking at each response the opponent has to a given move, beta is
+	// After looking at each response the foe has to a given move, beta is
 	// finally set to whatever the score will be if the AI uses that move.
 	// alpha is initially set to the lowest possible value, so as long as the
 	// AI has any move that won't guarantee its loss, that move will score
 	// higher (more positive) than -victory, and thus the AI will set
 	// that as its best response. It then replaces that move if it finds a move
-	// for which the opponent's best response is more positive than the first
+	// for which the foe's best response is more positive than the first
 	// move found. In other words, it finds the move for the AI for which the
 	// foe's best response is the weakest.
 	

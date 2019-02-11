@@ -66,7 +66,7 @@ struct BattleFactory {
 	
 	bool completed() const {
 		// TODO: Handle NvN battles
-		return m_ai_switched_in and m_opponent_starter;
+		return m_ai_switched_in and m_foe_starter;
 	}
 	BattleParser make(BattleParser::SendMessageFunction send_message) &&;
 
@@ -88,8 +88,8 @@ private:
 	bounded::optional<std::string> m_type;	// singles, doubles, triples
 	bounded::optional<std::string> m_tier;
 	bounded::optional<bounded::integer<1, 7>> m_generation;
-	bounded::optional<TeamSize> m_opponent_team_size;
-	bounded::optional<ParsedSwitch> m_opponent_starter;
+	bounded::optional<TeamSize> m_foe_team_size;
+	bounded::optional<ParsedSwitch> m_foe_starter;
 	bool m_ai_switched_in = false;
 	bool m_log_foe_teams;
 };

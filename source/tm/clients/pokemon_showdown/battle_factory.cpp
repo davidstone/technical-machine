@@ -196,10 +196,10 @@ void BattleFactory::handle_message(InMessage message) {
 			}
 			m_ai_switched_in = true;
 		} else {
-			if (m_opponent_starter) {
+			if (m_foe_starter) {
 				throw std::runtime_error("Foe switched in twice");
 			}
-			m_opponent_starter.emplace(parsed);
+			m_foe_starter.emplace(parsed);
 		}
 	} else if (message.type() == "teampreview") {
 		// This appears to mean nothing
@@ -211,7 +211,7 @@ void BattleFactory::handle_message(InMessage message) {
 		auto const team_size = bounded::to_integer<TeamSize>(message.next());
 		// TODO: validate that the received teamsize matches my team size
 		if (*m_party != party) {
-			m_opponent_team_size.emplace(team_size);
+			m_foe_team_size.emplace(team_size);
 		}
 	} else if (message.type() == "tier") {
 		m_tier.emplace(message.next());
@@ -236,11 +236,11 @@ BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message)
 	if (!m_generation) {
 		throw std::runtime_error("Did not receive generation");
 	}
-	if (!m_opponent_team_size) {
-		throw std::runtime_error("Did not receive opponent team size");
+	if (!m_foe_team_size) {
+		throw std::runtime_error("Did not receive foe team size");
 	}
-	if (!m_opponent_starter) {
-		throw std::runtime_error("Did not receive opponent's starting species");
+	if (!m_foe_starter) {
+		throw std::runtime_error("Did not receive foe's starting species");
 	}
 	if (*m_type != "singles") {
 		throw std::runtime_error("Unsupported format " + *m_type);
@@ -249,8 +249,8 @@ BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message)
 		throw std::runtime_error("Unsupported generation " + bounded::to_string(*m_generation));
 	}
 	auto make_foe_team = [&]{
-		auto team = Team(*m_opponent_team_size, false);
-		auto const pokemon = *m_opponent_starter;
+		auto team = Team(*m_foe_team_size, false);
+		auto const pokemon = *m_foe_starter;
 		team.add_pokemon(pokemon.species, pokemon.level, pokemon.gender);
 		return team;
 	};
