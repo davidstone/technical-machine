@@ -34,11 +34,16 @@ namespace technicalmachine {
 namespace ps {
 
 struct MoveState {
+	struct Damage {
+		HP::current_type current_hp;
+		HP::max_type max_hp;
+		Statuses status;
+	};
 	struct Result {
 		Party party;
 		ExecutedMove move;
 		Variable variable;
-		bounded::optional<damage_type> damage;
+		bounded::optional<Damage> damage;
 		bool clear_status;
 		bool critical_hit;
 		bool miss;
@@ -96,7 +101,7 @@ struct MoveState {
 		validate(party);
 		m_critical_hit = true;
 	}
-	void damage(Party const party, damage_type const damage_) {
+	void damage(Party const party, Damage const damage_) {
 		validate(party);
 		m_damage.emplace(damage_);
 	}
@@ -160,7 +165,7 @@ private:
 	}
 	bounded::optional<Party> m_party;
 	bounded::optional<ExecutedMove> m_move;
-	bounded::optional<damage_type> m_damage;
+	bounded::optional<Damage> m_damage;
 	Variable m_variable{0_bi};
 	bool m_clear_status = false;
 	bool m_critical_hit = false;
