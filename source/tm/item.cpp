@@ -22,13 +22,6 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-void steal(Item & mine, Item & other) {
-	if (mine == Item::No_Item and !blocks_trick(other)) {
-		using std::swap;
-		swap(mine, other);
-	}
-}
-
 bounded::integer<0, 80> berry_power(Item const item) {
 	switch (item) {
 		case Item::Aguav_Berry:

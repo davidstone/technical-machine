@@ -36,7 +36,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-auto move_can_miss(ActivePokemon user, BaseAccuracy const base_accuracy, Ability const & target_ability) -> bool;
+auto move_can_miss(ActivePokemon user, BaseAccuracy const base_accuracy, Ability const target_ability) -> bool;
 
 using AccuracyItemModifier = rational<bounded::integer<1, 11>, bounded::integer<1, 10>>;
 auto accuracy_item_modifier(Item const item, bool target_moved) -> AccuracyItemModifier;
@@ -70,7 +70,7 @@ auto chance_to_hit(ActivePokemon const user, Moves const move, ActivePokemon con
 
 namespace {
 
-auto move_can_miss(ActivePokemon const user, BaseAccuracy const base_accuracy, Ability const & target_ability) -> bool {
+auto move_can_miss(ActivePokemon const user, BaseAccuracy const base_accuracy, Ability const target_ability) -> bool {
 	return static_cast<bool>(base_accuracy) and !cannot_miss(get_ability(user)) and !cannot_miss(target_ability) and !locked_on(user);
 }
 

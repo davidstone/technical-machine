@@ -50,18 +50,18 @@ struct Pokemon {
 
 	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
 	friend auto all_moves(Pokemon & pokemon) -> MoveContainer &;
-	friend Ability const & get_ability(Pokemon const & pokemon);
-	friend Ability & get_ability(Pokemon & pokemon);
+	friend Ability get_ability(Pokemon const & pokemon);
+	friend void set_ability(Pokemon & pokemon, Ability ability);
 	friend bool ability_is_known(Pokemon const & pokemon);
-	friend Gender const & get_gender(Pokemon const & pokemon);
-	friend Gender & get_gender(Pokemon & pokemon);
+	friend Gender get_gender(Pokemon const & pokemon);
+	friend void set_gender(Pokemon & pokemon, Gender gender);
 	friend Happiness get_happiness(Pokemon const & pokemon);
-	friend Item const & get_item(Pokemon const & pokemon);
-	friend Item & get_item(Pokemon & pokemon);
+	friend Item get_item(Pokemon const & pokemon);
+	friend void set_item(Pokemon & pokemon, Item item);
 	friend bool item_is_known(Pokemon const & pokemon);
 	friend Level get_level(Pokemon const & pokemon);
-	friend Nature const & get_nature(Pokemon const & pokemon);
-	friend Nature & get_nature(Pokemon & pokemon);
+	friend Nature get_nature(Pokemon const & pokemon);
+	friend void set_nature(Pokemon & pokemon, Nature nature);
 	friend bool nature_is_known(Pokemon const & pokemon);
 	friend Species get_species(Pokemon const & pokemon);
 	friend HP const & get_hp(Pokemon const & pokemon);
@@ -137,38 +137,41 @@ inline decltype(auto) regular_moves(Pokemon & pokemon) {
 	return all_moves(pokemon).regular();
 }
 
-inline Ability const & get_ability(Pokemon const & pokemon) {
+inline Ability get_ability(Pokemon const & pokemon) {
 	return pokemon.m_ability;
 }
-inline Ability & get_ability(Pokemon & pokemon) {
-	return pokemon.m_ability;
+inline void set_ability(Pokemon & pokemon, Ability const ability) {
+	pokemon.m_ability = ability;
+	pokemon.m_ability_is_known = true;
 }
 inline bool ability_is_known(Pokemon const & pokemon) {
 	return pokemon.m_ability_is_known;
 }
 
-inline Gender const & get_gender(Pokemon const & pokemon) {
+inline Gender get_gender(Pokemon const & pokemon) {
 	return pokemon.m_gender;
 }
-inline Gender & get_gender(Pokemon & pokemon) {
-	return pokemon.m_gender;
+inline void set_gender(Pokemon & pokemon, Gender const gender) {
+	pokemon.m_gender = gender;
 }
 
-inline Item const & get_item(Pokemon const & pokemon) {
+inline Item get_item(Pokemon const & pokemon) {
 	return pokemon.m_item;
 }
-inline Item & get_item(Pokemon & pokemon) {
-	return pokemon.m_item;
+inline void set_item(Pokemon & pokemon, Item const item) {
+	pokemon.m_item = item;
+	pokemon.m_item_is_known = true;
 }
 inline bool item_is_known(Pokemon const & pokemon) {
 	return pokemon.m_item_is_known;
 }
 
-inline Nature const & get_nature(Pokemon const & pokemon) {
+inline Nature get_nature(Pokemon const & pokemon) {
 	return pokemon.m_nature;
 }
-inline Nature & get_nature(Pokemon & pokemon) {
-	return pokemon.m_nature;
+inline void set_nature(Pokemon & pokemon, Nature const nature) {
+	pokemon.m_nature = nature;
+	pokemon.m_nature_is_known = true;
 }
 inline bool nature_is_known(Pokemon const & pokemon) {
 	return pokemon.m_nature_is_known;

@@ -44,15 +44,13 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	constexpr auto team_size = 1_bi;
 	constexpr auto species = Species::Metagross;
 	constexpr auto level = Level(100_bi);
-	auto pokemon = Pokemon(team_size, species, level, Gender::genderless);
+	auto pokemon = Pokemon(team_size, species, level, Gender::genderless, Item::No_Item, Ability::Honey_Gather, Nature::Adamant);
 	set_hp_ev(pokemon, EV(252_bi));
 	set_stat_ev(pokemon, StatNames::ATK, EV(96_bi));
 	set_stat_ev(pokemon, StatNames::DEF, EV(96_bi));
 	set_stat_ev(pokemon, StatNames::SPA, EV(0_bi));
 	set_stat_ev(pokemon, StatNames::SPD, EV(4_bi));
 	set_stat_ev(pokemon, StatNames::SPE, EV(60_bi));
-	auto & nature = get_nature(pokemon);
-	nature = Nature::Adamant;
 	all_moves(pokemon).emplace_back(Moves::Meteor_Mash);
 
 	auto const stats = pull_out_stats(pokemon);
@@ -69,12 +67,11 @@ void defensive_tests() {
 	std::cout << "\tRunning defensive tests.\n";
 	constexpr auto species = Species::Celebi;
 	constexpr auto level = Level(100_bi);
-	constexpr auto nature = Nature::Bold;
 	auto const hp = HP(species, level, EV(252_bi));
 	auto const defense = Stat(species, StatNames::DEF, EV(252_bi));
 	auto const special_defense = Stat(species, StatNames::SPD, EV(4_bi));
 	
-	auto defensive_evs = DefensiveEVs(species, level, nature, hp, defense, special_defense);
+	auto defensive_evs = DefensiveEVs(species, level, Nature::Bold, hp, defense, special_defense);
 	for (auto const & candidate : defensive_evs) {
 		assert(candidate.hp == hp.ev());
 		assert(candidate.defense == defense.ev());
@@ -112,15 +109,13 @@ void not_level_100(std::mt19937 & random_engine) {
 	constexpr auto team_size = 1_bi;
 	constexpr auto species = Species::Masquerain;
 	constexpr auto level = Level(83_bi);
-	auto pokemon = Pokemon(team_size, species, level, Gender::genderless);
+	auto pokemon = Pokemon(team_size, species, level, Gender::genderless, Item::No_Item, Ability::Honey_Gather, Nature::Modest);
 	set_hp_ev(pokemon, EV(192_bi));
 	set_stat_ev(pokemon, StatNames::ATK, EV(0_bi));
 	set_stat_ev(pokemon, StatNames::DEF, EV(8_bi));
 	set_stat_ev(pokemon, StatNames::SPA, EV(120_bi));
 	set_stat_ev(pokemon, StatNames::SPD, EV(60_bi));
 	set_stat_ev(pokemon, StatNames::SPE, EV(128_bi));
-	auto & nature = get_nature(pokemon);
-	nature = Nature::Modest;
 	for (auto const move : {Moves::Hydro_Pump, Moves::Bug_Buzz, Moves::Roost, Moves::Air_Slash}) {
 		all_moves(pokemon).emplace_back(move);
 	}

@@ -141,9 +141,6 @@ constexpr bool was_lost(Item const) {
 	// TODO
 	return false;
 }
-constexpr void remove(Item & item) {
-	item = Item::No_Item;
-}
 constexpr bool extends_hail(Item const item) {
 	return item == Item::Icy_Rock;
 }
@@ -166,7 +163,6 @@ constexpr bool extends_reflect(Item const item) {
 bounded::integer<0, 80> berry_power(Item item);		// Returns 0 for non-berries
 bounded::integer<0, 130> fling_power(Item item);
 bool blocks_trick(Item item);
-void steal(Item & mine, Item & other);
 
 }	// namespace technicalmachine
 

@@ -75,13 +75,13 @@ Team predict_team(UsageStats const & usage_stats, LeadStats const lead_stats, Te
 	for (auto & pokemon : team.all_pokemon()) {
 		auto const species = get_species(pokemon);
 		if (!ability_is_known(pokemon)) {
-			get_ability(pokemon) = detailed.get<Ability>(species);
+			set_ability(pokemon, detailed.get<Ability>(species));
 		}
 		if (!item_is_known(pokemon)) {
-			get_item(pokemon) = detailed.get<Item>(species);
+			set_item(pokemon, detailed.get<Item>(species));
 		}
 		if (!nature_is_known(pokemon)) {
-			get_nature(pokemon) = detailed.get<Nature>(species);
+			set_nature(pokemon, detailed.get<Nature>(species));
 		}
 		predict_move(all_moves(pokemon), detailed.get<DetailedStats::UsedMoves>(species));
 		optimize_evs(pokemon, random_engine);

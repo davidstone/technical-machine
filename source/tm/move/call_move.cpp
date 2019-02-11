@@ -176,8 +176,10 @@ auto use_swallow(MutableActivePokemon user) {
 auto swap_items(Pokemon & user, Pokemon & target) {
 	// Add support for abilities that block Trick / Switcheroo
 	if (!blocks_trick(get_item(user)) and !blocks_trick(get_item(target))) {
-		using std::swap;
-		swap(get_item(user), get_item(target));
+		auto const user_item = get_item(user);
+		auto const target_item = get_item(target);
+		set_item(user, target_item);
+		set_item(target, user_item);
 	}
 }
 
@@ -437,9 +439,16 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			boost(stage(target.pokemon()), StatNames::SPE, -2_bi);
 			break;
 		case Moves::Covet:
-		case Moves::Thief:
-			steal(get_item(user), get_item(target.pokemon()));
+		case Moves::Thief: {
+			// TODO: Sticky Hold
+			auto const user_item = get_item(user);
+			auto const target_item = get_item(target.pokemon());
+			if (user_item == Item::No_Item and !blocks_trick(target_item)) {
+				set_item(user, target_item);
+				set_item(target.pokemon(), Item::No_Item);
+			}
 			break;
+		}
 		case Moves::Cross_Poison:
 		case Moves::Gunk_Shot:
 		case Moves::Poison_Jab:
@@ -551,7 +560,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & target, bounded:
 			confusing_stat_boost(target.pokemon(), StatNames::SPA, 1_bi);
 			break;
 		case Moves::Fling:
-			remove(get_item(user));
+			set_item(user, Item::No_Item);
 			break;
 		case Moves::Fly:
 			user.fly();

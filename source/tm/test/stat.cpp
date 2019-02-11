@@ -40,46 +40,35 @@ using namespace bounded::literal;
 
 constexpr auto critical_hit = false;
 
-void attack_tests () {
+void attack_tests() {
 	std::cout << "\tRunning Attack tests.\n";
 	constexpr auto max_attack = 7368_bi;
 	auto attacker = Team(max_pokemon_per_team);
 
-	auto const level = Level(100_bi);
-	attacker.add_pokemon(Species::Shuckle, level, Gender::male);
-	Pokemon & pokemon = attacker.pokemon();
+	attacker.add_pokemon(Species::Shuckle, Level(100_bi), Gender::male, Item::Choice_Band, Ability::Pure_Power, Nature::Impish);
+	auto pokemon = attacker.pokemon();
 
 	set_stat_ev(pokemon, StatNames::DEF, EV(EV::max));
-	get_nature(pokemon) = Nature::Impish;
-	attacker.pokemon().activate_power_trick();
-	get_ability(pokemon) = Ability::Pure_Power;
-	boost(stage(attacker.pokemon()), StatNames::ATK, 6_bi);
+	pokemon.activate_power_trick();
+	boost(stage(pokemon), StatNames::ATK, 6_bi);
 
-	get_item(pokemon) = Item::Choice_Band;
-	
-	check_equal(calculate_attack(attacker.pokemon(), Weather{}, critical_hit), max_attack);
+	check_equal(calculate_attack(pokemon, Weather{}, critical_hit), max_attack);
 }
 
-void special_attack_tests () {
+void special_attack_tests() {
 	std::cout << "\tRunning Special Attack tests.\n";
 	constexpr auto max_special_attack = 4536_bi;
 	auto weather = Weather{};
 	weather.activate_sun(Weather::permanent);
 	auto attacker = Team(max_pokemon_per_team);
 
-	auto const level = Level(100_bi);
-	attacker.add_pokemon(Species::Deoxys_Attack, level, Gender::genderless);
-	Pokemon & pokemon = attacker.pokemon();
+	attacker.add_pokemon(Species::Deoxys_Attack, Level(100_bi), Gender::genderless, Item::Choice_Specs, Ability::Solar_Power, Nature::Modest);
+	auto pokemon = attacker.pokemon();
 
 	set_stat_ev(pokemon, StatNames::SPA, EV(EV::max));
-	get_nature(pokemon) = Nature::Modest;
-	boost(stage(attacker.pokemon()), StatNames::SPA, 6_bi);
+	boost(stage(pokemon), StatNames::SPA, 6_bi);
 
-	get_ability(pokemon) = Ability::Solar_Power;
-
-	get_item(pokemon) = Item::Choice_Specs;
-	
-	check_equal(calculate_special_attack(attacker.pokemon(), weather, critical_hit), max_special_attack);
+	check_equal(calculate_special_attack(pokemon, weather, critical_hit), max_special_attack);
 }
 
 void max_defense_test() {
@@ -89,18 +78,15 @@ void max_defense_test() {
 	auto defender = Team(max_pokemon_per_team);
 	auto weather = Weather{};
 
-	auto const level = Level(100_bi);
-	defender.add_pokemon(Species::Shuckle, level, Gender::male);
+	defender.add_pokemon(Species::Shuckle, Level(100_bi), Gender::male, Item::No_Item, Ability::Marvel_Scale, Nature::Bold);
 	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(EV::max));
-	get_nature(pokemon) = Nature::Bold;
 
-	boost(stage(defender.pokemon()), StatNames::DEF, 6_bi);
+	boost(stage(pokemon), StatNames::DEF, 6_bi);
 
-	get_ability(pokemon) = Ability::Marvel_Scale;
 	apply(Statuses::burn, pokemon, weather);
 
-	check_equal(calculate_defense(defender.pokemon(), weather), max_defense);
+	check_equal(calculate_defense(pokemon, weather), max_defense);
 }
 
 void min_defense_test() {
@@ -109,26 +95,24 @@ void min_defense_test() {
 
 	auto defender = Team(max_pokemon_per_team);
 
-	auto const level = Level(1_bi);
-	defender.add_pokemon(Species::Combee, level, Gender::male);
+	defender.add_pokemon(Species::Combee, Level(1_bi), Gender::male, Item::No_Item, Ability::Honey_Gather, Nature::Hasty);
 	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi));
-	get_nature(pokemon) = Nature::Hasty;
 
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		boost(stage(pokemon), StatNames::DEF, -2_bi);
 	}
 
-	check_equal(calculate_defense(defender.pokemon(), Weather{}), min_defense);
+	check_equal(calculate_defense(pokemon, Weather{}), min_defense);
 }
 
-void defense_tests () {
+void defense_tests() {
 	std::cout << "\tRunning Defense tests.\n";
 	max_defense_test();
 	min_defense_test();
 }
 
-void special_defense_tests () {
+void special_defense_tests() {
 	std::cout << "\tRunning Special Defense tests.\n";
 	constexpr auto max_special_defense = 3684_bi;
 
@@ -136,18 +120,16 @@ void special_defense_tests () {
 	auto weather = Weather{};
 	weather.activate_sand(Weather::permanent);
 
-	auto const level = Level(100_bi);
-	defender.add_pokemon(Species::Shuckle, level, Gender::male);
-	Pokemon & pokemon = defender.pokemon();
+	defender.add_pokemon(Species::Shuckle, Level(100_bi), Gender::male, Item::No_Item, Ability::Honey_Gather, Nature::Calm);
+	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::SPD, EV(EV::max));
-	get_nature(pokemon) = Nature::Calm;
 
-	boost(stage(defender.pokemon()), StatNames::SPD, 6_bi);
+	boost(stage(pokemon), StatNames::SPD, 6_bi);
 
-	check_equal(calculate_special_defense(defender.pokemon(), weather), max_special_defense);
+	check_equal(calculate_special_defense(pokemon, weather), max_special_defense);
 }
 
-void speed_tests () {
+void speed_tests() {
 	std::cout << "\tRunning Speed tests.\n";
 	constexpr auto max_speed = 12096_bi;
 	auto weather = Weather{};
@@ -155,18 +137,12 @@ void speed_tests () {
 
 	auto team = Team(max_pokemon_per_team);
 
-	auto const level = Level(100_bi);
-	team.add_pokemon(Species::Deoxys_Speed, level, Gender::genderless);
-	Pokemon & pokemon = team.pokemon();
+	team.add_pokemon(Species::Deoxys_Speed, Level(100_bi), Gender::genderless, Item::Choice_Scarf, Ability::Swift_Swim, Nature::Timid);
+	auto pokemon = team.pokemon();
 	set_stat_ev(pokemon, StatNames::SPE, EV(EV::max));
-	get_nature(pokemon) = Nature::Timid;
 
-	boost(stage(team.pokemon()), StatNames::SPE, 6_bi);
+	boost(stage(pokemon), StatNames::SPE, 6_bi);
 
-	get_ability(pokemon) = Ability::Swift_Swim;
-
-	get_item(pokemon) = Item::Choice_Scarf;
-	
 	team.screens.activate_tailwind();
 	
 	check_equal(calculate_speed(team, weather), max_speed);
@@ -174,13 +150,13 @@ void speed_tests () {
 
 }	// namespace
 
-void stat_tests () {
+void stat_tests() {
 	std::cout << "Running stat tests.\n";
-	attack_tests ();
-	special_attack_tests ();
-	defense_tests ();
-	special_defense_tests ();
-	speed_tests ();
+	attack_tests();
+	special_attack_tests();
+	defense_tests();
+	special_defense_tests();
+	speed_tests();
 	std::cout << "Stat tests passed.\n\n";
 }
 

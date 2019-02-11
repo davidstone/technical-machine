@@ -31,7 +31,7 @@ namespace {
 using namespace bounded::literal;
 
 auto set_stats(Pokemon & pokemon, CombinedStats const stats) {
-	get_nature(pokemon) = stats.nature;
+	set_nature(pokemon, stats.nature);
 	set_hp_ev(pokemon, stats.hp);
 	set_stat_ev(pokemon, StatNames::ATK, stats.attack);
 	set_stat_ev(pokemon, StatNames::DEF, stats.defense);
