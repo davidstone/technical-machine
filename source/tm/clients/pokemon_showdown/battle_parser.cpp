@@ -482,6 +482,8 @@ void BattleParser::handle_damage(InMessage message) {
 			// TODO: Technically you cannot select Hit Self, you just execute
 			// it. This matters for things like priority or determining whether
 			// Sucker Punch succeeds.
+			// When hitting self in confusion, we get -activate then -damage
+			maybe_use_previous_move();
 			m_move_state.use_move(party, Moves::Hit_Self);
 			move_damage(party);
 		},
