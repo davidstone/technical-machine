@@ -1,0 +1,45 @@
+>battle-gen4ou-860890777
+|title|Technical Machine vs. david stone
+|j|☆Technical Machine
+|request|
+|j|☆david stone
+|player|p1|Technical Machine|266
+|request|{"active":[{"moves":[{"move":"Body Slam","id":"bodyslam","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Iron Head","id":"ironhead","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Stealth Rock","id":"stealthrock","pp":32,"maxpp":32,"target":"foeSide","disabled":false},{"move":"Wish","id":"wish","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Jirachi","details":"Jirachi","condition":"404/404","active":true,"stats":{"atk":238,"def":319,"spa":207,"spd":236,"spe":244},"moves":["bodyslam","ironhead","stealthrock","wish"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"384/384","active":false,"stats":{"atk":386,"def":205,"spa":149,"spd":206,"spe":146},"moves":["dynamicpunch","icepunch","payback","stoneedge"],"baseAbility":"noguard","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Blissey","details":"Blissey, F","condition":"651/651","active":false,"stats":{"atk":50,"def":119,"spa":206,"spd":385,"spe":146},"moves":["flamethrower","grassknot","softboiled","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Celebi","details":"Celebi","condition":"404/404","active":false,"stats":{"atk":199,"def":320,"spa":236,"spd":236,"spe":245},"moves":["grassknot","psychic","recover","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tyranitar","details":"Tyranitar, F","condition":"404/404","active":false,"stats":{"atk":403,"def":256,"spa":203,"spd":237,"spe":158},"moves":["aquatail","crunch","earthquake","stoneedge"],"baseAbility":"sandstream","item":"choiceband","pokeball":"pokeball"},{"ident":"p1: Starmie","details":"Starmie","condition":"271/271","active":false,"stats":{"atk":167,"def":206,"spa":299,"spd":206,"spe":352},"moves":["icebeam","recover","surf","thunderbolt"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"}]},"rqid":2}
+|player|p2|david stone|266
+|teamsize|p1|6
+|teamsize|p2|6
+|gametype|singles
+|gen|4
+|tier|[Gen 4] OU
+|seed|
+|rule|Sleep Clause Mod: Limit one foe put to sleep
+|rule|Species Clause: Limit one of each Pokémon
+|rule|OHKO Clause: OHKO moves are banned
+|rule|Moody Clause: Moody is banned
+|rule|Evasion Moves Clause: Evasion moves are banned
+|rule|Endless Battle Clause: Forcing endless battles is banned
+|rule|HP Percentage Mod: HP is shown in percentages
+|rule|Evasion Abilities Clause: Evasion abilities are banned
+|rule|Baton Pass Clause: Limit one Baton Passer, can't pass Spe and other stats simultaneously
+||
+|start|
+|switch|p1a: Jirachi|Jirachi|404/404
+|switch|p2a: Jirach|Jirachi|100/100
+|turn|1
+|request|{"active":[{"moves":[{"move":"Body Slam","id":"bodyslam","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Iron Head","id":"ironhead","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Stealth Rock","id":"stealthrock","pp":31,"maxpp":32,"target":"foeSide","disabled":false},{"move":"Wish","id":"wish","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Jirachi","details":"Jirachi","condition":"404/404","active":true,"stats":{"atk":238,"def":319,"spa":207,"spd":236,"spe":244},"moves":["bodyslam","ironhead","stealthrock","wish"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"384/384","active":false,"stats":{"atk":386,"def":205,"spa":149,"spd":206,"spe":146},"moves":["dynamicpunch","icepunch","payback","stoneedge"],"baseAbility":"noguard","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Blissey","details":"Blissey, F","condition":"651/651","active":false,"stats":{"atk":50,"def":119,"spa":206,"spd":385,"spe":146},"moves":["flamethrower","grassknot","softboiled","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Celebi","details":"Celebi","condition":"404/404","active":false,"stats":{"atk":199,"def":320,"spa":236,"spd":236,"spe":245},"moves":["grassknot","psychic","recover","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tyranitar","details":"Tyranitar, F","condition":"404/404","active":false,"stats":{"atk":403,"def":256,"spa":203,"spd":237,"spe":158},"moves":["aquatail","crunch","earthquake","stoneedge"],"baseAbility":"sandstream","item":"choiceband","pokeball":"pokeball"},{"ident":"p1: Starmie","details":"Starmie","condition":"271/271","active":false,"stats":{"atk":167,"def":206,"spa":299,"spd":206,"spe":352},"moves":["icebeam","recover","surf","thunderbolt"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"}]},"rqid":4}
+||
+|move|p1a: Jirachi|Stealth Rock|p2a: Jirach
+|-sidestart|p2: david stone|move: Stealth Rock
+|move|p2a: Jirach|Stealth Rock|p1a: Jirachi
+|-sidestart|p1: Technical Machine|move: Stealth Rock
+||
+|upkeep|
+|turn|2
+|request|{"active":[{"moves":[{"move":"Body Slam","id":"bodyslam","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Iron Head","id":"ironhead","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Stealth Rock","id":"stealthrock","pp":31,"maxpp":32,"target":"foeSide","disabled":false},{"move":"Wish","id":"wish","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Jirachi","details":"Jirachi","condition":"403/404","active":true,"stats":{"atk":238,"def":319,"spa":207,"spd":236,"spe":244},"moves":["bodyslam","ironhead","stealthrock","wish"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"384/384","active":false,"stats":{"atk":386,"def":205,"spa":149,"spd":206,"spe":146},"moves":["dynamicpunch","icepunch","payback","stoneedge"],"baseAbility":"noguard","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Blissey","details":"Blissey, F","condition":"651/651","active":false,"stats":{"atk":50,"def":119,"spa":206,"spd":385,"spe":146},"moves":["flamethrower","grassknot","softboiled","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Celebi","details":"Celebi","condition":"404/404","active":false,"stats":{"atk":199,"def":320,"spa":236,"spd":236,"spe":245},"moves":["grassknot","psychic","recover","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tyranitar","details":"Tyranitar, F","condition":"404/404","active":false,"stats":{"atk":403,"def":256,"spa":203,"spd":237,"spe":158},"moves":["aquatail","crunch","earthquake","stoneedge"],"baseAbility":"sandstream","item":"choiceband","pokeball":"pokeball"},{"ident":"p1: Starmie","details":"Starmie","condition":"271/271","active":false,"stats":{"atk":167,"def":206,"spa":299,"spd":206,"spe":352},"moves":["icebeam","recover","surf","thunderbolt"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"}]},"rqid":6}
+||
+|move|p2a: Jirach|Body Slam|p1a: Jirachi
+|-resisted|p1a: Jirachi
+|-damage|p1a: Jirachi|378/404
+|move|p1a: Jirachi|Body Slam|p2a: Jirach
+|-resisted|p2a: Jirach
+|-damage|p2a: Jirach|94/100
