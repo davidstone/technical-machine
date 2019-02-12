@@ -121,16 +121,16 @@ void ClientImpl::run(BufferView<char> messages) {
 }
 
 void ClientImpl::handle_message(InMessage message) {
-	if (m_battles.handle_message(message, m_send_message)) {
+	auto send_challenge = [&]{
+		send_team();
+		m_send_message("|/challenge david stone,gen4ou");
+	};
+	if (m_battles.handle_message(message, m_send_message, send_challenge)) {
 		return;
 	}
 	if (handle_chat_message(message)) {
 		return;
 	}
-	auto send_challenge = [&]{
-		send_team();
-		m_send_message("|/challenge david stone,gen4ou");
-	};
 	if (message.type() == "b" or message.type() == "B" or message.type() == "battle") {
 		// message.remainder() == ROOMID|username|username
 	} else if (message.type() == "challstr") {

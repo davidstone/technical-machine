@@ -74,7 +74,8 @@ void regression_tests() {
 			auto print_message_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
 			battles.handle_message(
 				InMessage(room, next),
-				[](std::string_view) {}
+				[](std::string_view) {},
+				[]{}
 			);
 			print_message_on_exception.dismiss();
 		}

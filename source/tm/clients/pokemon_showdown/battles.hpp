@@ -42,11 +42,12 @@ struct Battles {
 		m_pending.emplace_back(m_log_directory, m_log_foe_teams, std::forward<Args>(args)...);
 	}
 	
-	template<typename SendMessageFunction>
-	bool handle_message(InMessage message, SendMessageFunction send_message) {
+	template<typename SendMessageFunction, typename ChallengeFunction>
+	bool handle_message(InMessage message, SendMessageFunction send_message, ChallengeFunction challenge) {
 		auto complete_active_battle = [&](auto const it) {
 			m_active.erase(it);
 			send_message("|/leave " + std::string(message.room()));
+			challenge();
 		};
 		if (handle_message_impl(m_active, message, complete_active_battle)) {
 			return true;
