@@ -481,9 +481,11 @@ void BattleParser::handle_damage(InMessage message) {
 		[&](FromConfusion) {
 			// TODO: Technically you cannot select Hit Self, you just execute
 			// it. This matters for things like priority or determining whether
-			// Sucker Punch succeeds.
+			// Sucker Punch succeeds. As a workaround for now, say the user
+			// selected Struggle.
 			// When hitting self in confusion, we get -activate then -damage
 			maybe_use_previous_move();
+			m_move_state.use_move(party, Moves::Struggle);
 			m_move_state.use_move(party, Moves::Hit_Self);
 			move_damage(party);
 		},
@@ -506,7 +508,7 @@ auto to_real_hp(bool const is_me, Pokemon const & changer, HP::current_type cons
 	auto const max_hp = get_hp(changer).max();
 	auto const expected_max_visible_hp = BOUNDED_CONDITIONAL(is_me, max_hp, max_visible_foe_hp);
 	if (expected_max_visible_hp != max_visible_hp) {
-		throw std::runtime_error("Received an invalid max HP");
+		throw std::runtime_error("Received an invalid max HP. Expected: " + bounded::to_string(expected_max_visible_hp) + " but got " + bounded::to_string(max_visible_hp));
 	}
 	return HP::current_type(bounded::max(1_bi, max_hp * remaining_visible_hp / max_visible_hp));
 }
@@ -523,8 +525,9 @@ auto const & select_pokemon(Team const & team, Moves const move) {
 	return is_switch(move) ? team.pokemon(to_replacement(move)) : team.pokemon();
 }
 
-auto compute_damage(Battle const & battle, Party const party, Moves const move, MoveState::Damage const damage) {
-	auto const is_me = battle.is_me(party);
+auto compute_damage(Battle const & battle, Party const user_party, Moves const move, MoveState::Damage const damage) {
+	auto const damaged_party = move == Moves::Hit_Self ? user_party : other(user_party);
+	auto const is_me = battle.is_me(damaged_party);
 	auto const & team = is_me ? battle.ai() : battle.foe();
 	auto const & pokemon = select_pokemon(team, move);
 	auto const new_hp = to_real_hp(is_me, pokemon, damage.current_hp, damage.max_hp);
@@ -542,7 +545,7 @@ void BattleParser::maybe_use_previous_move() {
 	constexpr auto slot = 0;
 	auto const damage = BOUNDED_CONDITIONAL(
 		data.damage,
-		compute_damage(m_battle, other(data.party), data.move.executed, *data.damage),
+		compute_damage(m_battle, data.party, data.move.executed, *data.damage),
 		bounded::none
 	);
 	m_battle.handle_use_move(data.party, slot, data.move, data.variable, data.miss, data.critical_hit, data.clear_status, damage);
