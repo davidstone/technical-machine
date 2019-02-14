@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include <tm/pokemon/container.hpp>
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
@@ -37,9 +36,10 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct PokemonCollection {
-	using value_type = PokemonContainer::value_type;
-	using size_type = PokemonContainer::size_type;
-	using const_iterator = PokemonContainer::const_iterator;
+	using Container = containers::static_vector<Pokemon, max_pokemon_per_team.value()>;
+	using value_type = Container::value_type;
+	using size_type = Container::size_type;
+	using const_iterator = Container::const_iterator;
 
 	explicit PokemonCollection(TeamSize const initial_size):
 		m_real_size(initial_size)
@@ -104,7 +104,7 @@ private:
 		assert(new_index < containers::size(m_container));
 	}
 
-	PokemonContainer m_container;
+	Container m_container;
 	containers::index_type<PokemonCollection> m_index = 0_bi;
 	// The actual size of the foe's team, not just the Pokemon I've seen
 	TeamSize m_real_size;

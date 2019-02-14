@@ -83,7 +83,6 @@ add_library(tm_common STATIC
 	source/tm/pokemon/active_pokemon.cpp
 	source/tm/pokemon/collection.cpp
 	source/tm/pokemon/confusion.cpp
-	source/tm/pokemon/container.cpp
 	source/tm/pokemon/delayed_attack.cpp
 	source/tm/pokemon/disable.cpp
 	source/tm/pokemon/embargo.cpp
