@@ -30,57 +30,9 @@
 #include <tm/clients/pokemon_online/read_team_file.hpp>
 
 #include <cstdint>
-#include <filesystem>
-#include <string>
+#include <stdexcept>
 
 namespace technicalmachine {
-
-Team::Team(TeamSize const initial_size, bool team_is_me) :
-	m_all_pokemon(initial_size),
-	me(team_is_me)
-{
-}
-
-Pokemon const & Team::pokemon(containers::index_type<PokemonCollection> const index) const {
-	return all_pokemon()(index);
-}
-Pokemon & Team::pokemon(containers::index_type<PokemonCollection> const index) {
-	return all_pokemon()(index);
-}
-
-PokemonCollection const & Team::all_pokemon() const {
-	return m_all_pokemon;
-}
-
-PokemonCollection & Team::all_pokemon() {
-	return m_all_pokemon;
-}
-
-TeamSize Team::number_of_seen_pokemon() const {
-	return containers::size(all_pokemon());
-}
-TeamSize Team::size() const {
-	return all_pokemon().real_size();
-}
-
-bool Team::is_me() const {
-	return me;
-}
-
-auto Team::reset_end_of_turn() -> void {
-	m_flags.reset_end_of_turn();
-}
-
-auto Team::reset_switch() -> void {
-	m_flags.reset_switch();
-	auto p = pokemon();
-	get_status(p).handle_switch(get_ability(p));
-}
-
-void Team::clear_field() {
-	pokemon().clear_field();
-	entry_hazards = EntryHazards{};
-}
 
 Team load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) {
 	auto const files = recursive_files_in_path(path);
@@ -113,10 +65,6 @@ containers::string to_string(Team const & team, bool const include_owner) {
 		);
 	}
 	return output;
-}
-
-std::string_view Team::who() const {
-	return is_me() ? "AI" : "Foe";
 }
 
 }	// namespace technicalmachine

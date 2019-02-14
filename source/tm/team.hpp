@@ -28,42 +28,74 @@
 
 #include <containers/string.hpp>
 
-#include <cstdint>
 #include <filesystem>
 #include <random>
-#include <string>
+#include <string_view>
+#include <utility>
 
 namespace technicalmachine {
 struct Weather;
 
 struct Team {
-	explicit Team(TeamSize initial_size, bool is_me = false);
-	
+	explicit Team(TeamSize const initial_size, bool team_is_me = false) :
+		m_all_pokemon(initial_size),
+		me(team_is_me)
+	{
+	}
+
+	auto const & all_pokemon() const {
+		return m_all_pokemon;
+	}
+	auto & all_pokemon() {
+		return m_all_pokemon;
+	}
+
 	auto pokemon() const {
 		return ActivePokemon(all_pokemon()(), m_flags);
 	}
 	auto pokemon() {
 		return MutableActivePokemon(all_pokemon()(), m_flags);
 	}
-	Pokemon const & pokemon(containers::index_type<PokemonCollection> index) const;
-	Pokemon & pokemon(containers::index_type<PokemonCollection> index);
+	Pokemon const & pokemon(containers::index_type<PokemonCollection> const index) const {
+		return all_pokemon()(index);
+	}
+	Pokemon & pokemon(containers::index_type<PokemonCollection> const index) {
+		return all_pokemon()(index);
+	}
 
 	template<typename... Args>
 	Pokemon & add_pokemon(Args&&... args) {
 		return all_pokemon().add(std::forward<Args>(args)...);
 	}
-	PokemonCollection const & all_pokemon() const;
-	PokemonCollection & all_pokemon();
-	
-	TeamSize number_of_seen_pokemon() const;
-	TeamSize size() const;
-	
-	bool is_me() const;
-	std::string_view who() const;
 
-	auto reset_end_of_turn() -> void;
-	auto reset_switch() -> void;
-	void clear_field();
+	TeamSize number_of_seen_pokemon() const {
+		return containers::size(all_pokemon());
+	}
+	TeamSize size() const {
+		return all_pokemon().real_size();
+	}
+	
+	bool is_me() const {
+		return me;
+	}
+
+	std::string_view who() const {
+		return is_me() ? "AI" : "Foe";
+	}
+
+	auto reset_end_of_turn() -> void {
+		m_flags.reset_end_of_turn();
+	}
+	auto reset_switch() -> void {
+		m_flags.reset_switch();
+		auto p = pokemon();
+		get_status(p).handle_switch(get_ability(p));
+	}
+	void clear_field() {
+		pokemon().clear_field();
+		entry_hazards = EntryHazards{};
+	}
+
 
 	friend auto operator==(Team const & lhs, Team const & rhs) {
 		return
