@@ -1,5 +1,5 @@
 // Collection of Pokemon with index indicating current Pokemon
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -28,8 +28,10 @@
 
 #include <containers/common_container_functions.hpp>
 #include <containers/index_type.hpp>
+#include <containers/static_vector/static_vector.hpp>
 
 #include <cassert>
+#include <stdexcept>
 #include <utility>
 
 namespace technicalmachine {
@@ -111,6 +113,5 @@ private:
 };
 
 CONTAINERS_COMMON_USING_DECLARATIONS
-
 
 }	// namespace technicalmachine
