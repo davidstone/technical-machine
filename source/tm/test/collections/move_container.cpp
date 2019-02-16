@@ -83,7 +83,7 @@ void move_container_tests() {
 		std::cerr << "MoveContainer has the wrong moves.\nExpected: ";
 		print_container(expected);
 		std::cerr << "Got: ";
-		print_container(containers::transform(c, [](Move const move) { return move.name(); }));
+		print_container(containers::transform(c, &Move::name));
 		std::terminate();
 	}
 }
