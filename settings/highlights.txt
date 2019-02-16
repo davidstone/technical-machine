@@ -1,1 +1,0 @@
-// Enter a list of strings, separated by new lines. The chat will be watched, and any message in the chat that contains any of the following strings will be printed. This is similar to the "highlights" feature of most IRC clients. Case insensitive
