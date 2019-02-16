@@ -63,15 +63,7 @@ constexpr auto operator==(EV::value_type const lhs, EV const rhs) {
 
 template<typename Max>
 constexpr auto ev_range(Max const max) {
-	struct ConstructEV {
-		constexpr auto operator()(EV::value_type const ev) const {
-			return EV(ev);
-		}
-	};
-	return containers::transform(
-		containers::inclusive_integer_range(0_bi, max, 4_bi),
-		ConstructEV{}
-	);
+	return containers::transform(containers::inclusive_integer_range(0_bi, max, 4_bi), bounded::construct_return<EV>);
 }
 
 constexpr auto ev_range() {
