@@ -28,7 +28,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct Move {
-	constexpr explicit Move(Moves const move, Pp::pp_ups_type const pp_ups = 3_bi) :
+	constexpr explicit Move(Moves const move, PP::pp_ups_type const pp_ups = 3_bi) :
 		m_name(move),
 		m_pp(move, pp_ups)
 	{
@@ -48,7 +48,7 @@ struct Move {
 
 private:
 	Moves m_name;
-	Pp m_pp;
+	PP m_pp;
 };
 
 constexpr auto operator==(Move const lhs, Move const rhs) {

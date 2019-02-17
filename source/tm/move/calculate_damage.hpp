@@ -30,6 +30,6 @@ struct Team;
 struct Variable;
 struct Weather;
 
-damage_type calculate_damage(Team const & attacker, Move move, Team const & defender, bounded::optional<UsedMove> defender_move, bool defender_damaged, Weather weather, Variable variable, bool critical_hit);
+damage_type calculate_damage(Team const & attacker, Moves move, PP pp, Team const & defender, bounded::optional<UsedMove> defender_move, bool defender_damaged, Weather weather, Variable variable, bool critical_hit);
 
 }	// namespace technicalmachine

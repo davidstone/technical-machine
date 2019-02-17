@@ -21,7 +21,8 @@
 
 namespace technicalmachine {
 
-struct Move;
+enum class Moves : std::uint16_t;
+struct PP;
 struct Team;
 struct Variable;
 struct Weather;
@@ -29,6 +30,6 @@ struct Weather;
 // If a damaging move does not have power (for instance, OHKO moves and
 // fixed-damage moves), the behavior of this function is undefined.
 using MovePower = bounded::integer<1, 1440>;
-auto move_power(Team const & attacker, Move move, bool attacker_damaged, Team const & defender, bool defender_damaged, Weather weather, Variable variable) -> MovePower;
+auto move_power(Team const & attacker, Moves move, PP pp, bool attacker_damaged, Team const & defender, bool defender_damaged, Weather weather, Variable variable) -> MovePower;
 
 }	// namespace technicalmachine

@@ -83,11 +83,39 @@ void test_baton_pass() {
 	}
 }
 
+void sleep_talk() {
+	auto weather = Weather{};
+	auto attacker = Team(1_bi, true);
+	{
+		auto & jolteon = attacker.add_pokemon(Species::Jolteon, Level(100_bi), Gender::female, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+		containers::append(all_moves(jolteon), containers::array{Move(Moves::Sleep_Talk), Move(Moves::Thunderbolt)});
+		set_hp_ev(jolteon, EV(4_bi));
+		set_stat_ev(jolteon, StatNames::SPA, EV(252_bi));
+		set_stat_ev(jolteon, StatNames::SPE, EV(252_bi));
+	}
+
+	auto defender = Team(1_bi);
+	{
+		auto & gyarados = defender.add_pokemon(Species::Gyarados, Level(100_bi), Gender::male, Item::Life_Orb, Ability::Intimidate, Nature::Adamant);
+		push_back(all_moves(gyarados), Move(Moves::Earthquake));
+		set_hp_ev(gyarados, EV(4_bi));
+		set_stat_ev(gyarados, StatNames::ATK, EV(252_bi));
+		set_stat_ev(gyarados, StatNames::SPE, EV(252_bi));
+	}
+
+	auto jolteon = attacker.pokemon();
+	apply(Statuses::sleep, jolteon, weather);
+
+	call_move(attacker, ExecutedMove{Moves::Sleep_Talk, Moves::Thunderbolt}, defender, bounded::none, false, weather, Variable(0_bi), false, false, false, bounded::none);
+	assert(get_hp(defender.pokemon()).current() == 0_bi);
+}
+
 }	// namespace
 
 void call_move_tests() {
 	std::cout << "Running call_move tests.\n";
 	test_baton_pass();
+	sleep_talk();
 	std::cout << "Use move tests passed.\n\n";
 }
 

@@ -225,18 +225,18 @@ auto resistance_berry_divisor(Item const item, Type const type, Effectiveness co
 	return BOUNDED_CONDITIONAL(resistance_berry_activates(item, type, effectiveness), 2_bi, 1_bi);
 }
 
-auto regular_damage(Team const & attacker_team, Move const move, bool const attacker_damaged, Team const & defender, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
+auto regular_damage(Team const & attacker_team, Moves const move, PP const pp, bool const attacker_damaged, Team const & defender, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
 	auto const & attacker = attacker_team.pokemon();
-	auto const type = get_type(move.name(), attacker);
+	auto const type = get_type(move, attacker);
 	auto const effectiveness = Effectiveness(type, defender.pokemon());
 
 	auto const temp =
 		(level_multiplier(attacker) + 2_bi) *
-		move_power(attacker_team, move, attacker_damaged, defender, defender_damaged, weather, variable) *
-		physical_vs_special_modifier(attacker, move.name(), defender.pokemon(), weather, critical_hit) /
-		screen_divisor(move.name(), defender, critical_hit) *
+		move_power(attacker_team, move, pp, attacker_damaged, defender, defender_damaged, weather, variable) *
+		physical_vs_special_modifier(attacker, move, defender.pokemon(), weather, critical_hit) /
+		screen_divisor(move, defender, critical_hit) *
 		calculate_weather_modifier(type, weather) *
-		calculate_flash_fire_modifier(attacker, move.name()) +
+		calculate_flash_fire_modifier(attacker, move) +
 		2_bi;
 
 	return bounded::max(1_bi, temp *
@@ -244,7 +244,7 @@ auto regular_damage(Team const & attacker_team, Move const move, bool const atta
 		calculate_item_modifier(attacker) *
 		calculate_me_first_modifier(attacker) *
 		random_damage_multiplier(attacker) *
-		calculate_stab_modifier(attacker, move.name()) *
+		calculate_stab_modifier(attacker, move) *
 		effectiveness *
 		calculate_ability_effectiveness_modifier(get_ability(defender.pokemon()), effectiveness) *
 		calculate_expert_belt_modifier(get_item(attacker), effectiveness) *
@@ -253,9 +253,9 @@ auto regular_damage(Team const & attacker_team, Move const move, bool const atta
 	);
 }
 
-damage_type raw_damage(Team const & attacker_team, Move const move, Team const & defender, bounded::optional<UsedMove> const defender_move, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
+damage_type raw_damage(Team const & attacker_team, Moves const move, PP const pp, Team const & defender, bounded::optional<UsedMove> const defender_move, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
 	auto const & attacker = attacker_team.pokemon();
-	switch (move.name()) {
+	switch (move) {
 		case Moves::Counter:
 			return (defender_move and is_physical(defender_move->move.name())) ?
 				static_cast<damage_type>(defender_move->damage * 2_bi) :
@@ -290,6 +290,7 @@ damage_type raw_damage(Team const & attacker_team, Move const move, Team const &
 			return static_cast<damage_type>(regular_damage(
 				attacker_team,
 				move,
+				pp,
 				defender_move ? defender_move->damage != 0_bi : false,
 				defender,
 				defender_damaged,
@@ -300,9 +301,9 @@ damage_type raw_damage(Team const & attacker_team, Move const move, Team const &
 	}
 }
 
-auto capped_damage(Team const & attacker, Move const move, Team const & defender, bounded::optional<UsedMove> const defender_move, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
-	auto const damage = raw_damage(attacker, move, defender, defender_move, defender_damaged, weather, variable, critical_hit);
-	return (cannot_ko(move.name()) or cannot_be_koed(defender.pokemon())) ?
+auto capped_damage(Team const & attacker, Moves const move, PP const pp, Team const & defender, bounded::optional<UsedMove> const defender_move, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
+	auto const damage = raw_damage(attacker, move, pp, defender, defender_move, defender_damaged, weather, variable, critical_hit);
+	return (cannot_ko(move) or cannot_be_koed(defender.pokemon())) ?
 		static_cast<damage_type>(bounded::min(get_hp(defender.pokemon()).current() - 1_bi, damage)) :
 		damage;
 }
@@ -310,9 +311,9 @@ auto capped_damage(Team const & attacker, Move const move, Team const & defender
 }	// namespace
 
 
-damage_type calculate_damage(Team const & attacker, Move const move, Team const & defender, bounded::optional<UsedMove> const defender_move, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
-	return affects_target(get_type(move.name(), attacker.pokemon()), defender.pokemon(), weather) ?
-		capped_damage(attacker, move, defender, defender_move, defender_damaged, weather, variable, critical_hit) :
+damage_type calculate_damage(Team const & attacker, Moves const move, PP const pp, Team const & defender, bounded::optional<UsedMove> const defender_move, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
+	return affects_target(get_type(move, attacker.pokemon()), defender.pokemon(), weather) ?
+		capped_damage(attacker, move, pp, defender, defender_move, defender_damaged, weather, variable, critical_hit) :
 		static_cast<damage_type>(0_bi);
 }
 

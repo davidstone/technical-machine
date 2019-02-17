@@ -32,10 +32,10 @@ namespace technicalmachine {
 
 using namespace bounded::literal;
 
-struct Pp {
+struct PP {
 	using pp_ups_type = bounded::checked_integer<0, 3>;
 
-	constexpr Pp(Moves const move, pp_ups_type const pp_ups):
+	constexpr PP(Moves const move, pp_ups_type const pp_ups):
 		m_max(calculate_max(base_pp(move), pp_ups)),
 		m_current(m_max ? bounded::optional<current_type>(*m_max) : bounded::none)
 	{
@@ -71,7 +71,7 @@ struct Pp {
 
 	// Assumes max PP is the same because it assumes the same Move on the same
 	// Pokemon
-	friend constexpr auto operator==(Pp const lhs, Pp const rhs) {
+	friend constexpr auto operator==(PP const lhs, PP const rhs) {
 		return lhs.m_current == rhs.m_current;
 	}
 

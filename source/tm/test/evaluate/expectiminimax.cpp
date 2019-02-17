@@ -289,6 +289,48 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Calm_Mind);
 }
 
+void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
+	auto const weather = Weather{};
+	auto const shuffled = [&](auto... args) {
+		return make_shuffled_array(random_engine, args...);
+	};
+	constexpr auto depth = Depth(1U, 0U);
+	auto attacker = Team(1_bi, true);
+	{
+		auto & jolteon = attacker.add_pokemon(Species::Jolteon, Level(100_bi), Gender::female, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+		containers::append(all_moves(jolteon), shuffled(Moves::Sleep_Talk, Moves::Thunderbolt));
+		set_hp_ev(jolteon, EV(4_bi));
+		set_stat_ev(jolteon, StatNames::SPA, EV(252_bi));
+		set_stat_ev(jolteon, StatNames::SPE, EV(252_bi));
+	}
+
+	auto defender = Team(1_bi);
+	{
+		auto & gyarados = defender.add_pokemon(Species::Gyarados, Level(100_bi), Gender::male, Item::Life_Orb, Ability::Intimidate, Nature::Adamant);
+		containers::append(all_moves(gyarados), shuffled(Moves::Earthquake));
+		set_hp_ev(gyarados, EV(4_bi));
+		set_stat_ev(gyarados, StatNames::ATK, EV(252_bi));
+		set_stat_ev(gyarados, StatNames::SPE, EV(252_bi));
+	}
+
+	auto jolteon = attacker.pokemon();
+	auto const ability = get_ability(jolteon);
+	auto & status = get_status(jolteon);
+	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
+
+	apply(Statuses::sleep, jolteon, weather);
+	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cerr) == Moves::Sleep_Talk);
+
+	status.advance_from_move(ability, false);
+	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Sleep_Talk);
+
+	status.advance_from_move(ability, false);
+	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Sleep_Talk);
+
+	status.advance_from_move(ability, true);
+	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
+}
+
 void performance(Evaluate const & evaluate) {
 	auto const weather = Weather{};
 	constexpr auto depth = Depth(2U, 0U);
@@ -328,6 +370,7 @@ void expectiminimax_tests() {
 	baton_pass(evaluate, weather, random_engine);
 	replace_fainted(evaluate, random_engine);
 	latias_vs_suicune(evaluate, random_engine);
+	sleep_talk(evaluate, random_engine);
 	performance(evaluate);
 	
 	std::cout << "Evaluate tests passed.\n\n";

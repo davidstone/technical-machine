@@ -1031,26 +1031,26 @@ auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_ty
 	}
 }
 
-auto use_move(Team & user, Move const move, Team & target, bounded::optional<UsedMove> const target_move, bool const target_damaged, Weather & weather, Variable const variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
+auto use_move(Team & user, Moves const move, PP const pp, Team & target, bounded::optional<UsedMove> const target_move, bool const target_damaged, Weather & weather, Variable const variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	// TODO: Add targeting information and only block the move if the target is
 	// immune.
-	if (blocks_sound_moves(get_ability(target.pokemon())) and is_sound_based(move.name()) and move != Moves::Heal_Bell and move != Moves::Perish_Song) {
+	if (blocks_sound_moves(get_ability(target.pokemon())) and is_sound_based(move) and move != Moves::Heal_Bell and move != Moves::Perish_Song) {
 		return;
 	}
 
-	do_effects_before_moving(move.name(), get_status(user.pokemon()), target);
+	do_effects_before_moving(move, get_status(user.pokemon()), target);
 
 	auto const damage =
 		known_damage ? *known_damage :
-		will_be_recharge_turn(user.pokemon(), move.name(), weather) ? 0_bi :
-		is_damaging(move.name()) ? calculate_damage(user, move, target, target_move, target_damaged, weather, variable, critical_hit) :
+		will_be_recharge_turn(user.pokemon(), move, weather) ? 0_bi :
+		is_damaging(move) ? calculate_damage(user, move, pp, target, target_move, target_damaged, weather, variable, critical_hit) :
 		0_bi;
 
 	if (damage != 0_bi) {
 		do_damage(user.pokemon(), target.pokemon(), damage);
 	}
-	user.pokemon().increment_move_use_counter(move.name());
-	do_side_effects(user, move.name(), target, target_move, weather, variable, damage);
+	user.pokemon().increment_move_use_counter(move);
+	do_side_effects(user, move, target, target_move, weather, variable, damage);
 }
 
 auto find_move(MoveContainer const container, Moves const move_name) -> Move {
@@ -1099,8 +1099,9 @@ auto call_move(Team & user, ExecutedMove const move, Team & target, bounded::opt
 		find_regular_move(all_moves(user_pokemon).regular(), move.selected).decrement_pp(get_ability(target_pokemon));
 	}
 
+	// TODO: What happens if we Sleep Talk Trump Card?
 	if (!missed) {
-		use_move(user, found_move, target, target_move, target_damaged, weather, variable, critical_hit, known_damage);
+		use_move(user, move.executed, found_move.pp(), target, target_move, target_damaged, weather, variable, critical_hit, known_damage);
 	}
 }
 

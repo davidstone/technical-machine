@@ -37,6 +37,13 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
+auto calculate_damage(Team const & attacker, Move const move, Team const & defender, bounded::optional<UsedMove> defender_move, bool defender_damaged, Weather weather, Variable variable, bool critical_hit) {
+	return calculate_damage(attacker, move.name(), move.pp(), defender, defender_move, defender_damaged, weather, variable, critical_hit);
+}
+auto move_power(Team const & attacker, Move const move, bool attacker_damaged, Team const & defender, bool defender_damaged, Weather weather, Variable variable) {
+	return move_power(attacker, move.name(), move.pp(), attacker_damaged, defender, defender_damaged, weather, variable);
+}
+
 constexpr auto max_damage_physical_move = Move(Moves::Rollout);
 
 Team max_damage_physical_attacker(Item const item, Ability const ability, Nature const nature) {
