@@ -183,14 +183,18 @@ bool is_blocked_by_freeze(Pokemon const & user, Moves const move) {
 	return is_frozen(get_status(user)) and !is_usable_while_frozen(move);
 }
 
-bool is_blocked_by_sleep(Pokemon const & pokemon, Moves const move) {
+constexpr bool usable_while_sleeping(Moves const move) {
 	switch (move) {
 		case Moves::Sleep_Talk:
 		case Moves::Snore:
-			return false;
+			return true;
 		default:
-			return is_sleeping(get_status(pokemon));
+			return false;
 	}
+}
+
+bool is_blocked_by_sleep(Pokemon const & user, Moves const move) {
+	return usable_while_sleeping(move) != is_sleeping(get_status(user));
 }
 
 auto is_blocked_due_to_status(Pokemon const & user, Moves const move) {
