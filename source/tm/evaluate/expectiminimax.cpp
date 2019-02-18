@@ -153,24 +153,24 @@ double generic_flag_branch(BaseFlag const first_flags, BaseFlag const last_flags
 
 
 
-struct Hits {
-	constexpr explicit Hits(std::monostate, bool const hits_):
-		hits(hits_)
-	{
-	}
-	bool const hits;
-};
-struct ClearStatus : Hits {
-	constexpr explicit ClearStatus(Hits const hits_, bool const clear_status_):
-		Hits(hits_),
+struct ClearStatus {
+	constexpr explicit ClearStatus(std::monostate, bool const clear_status_):
 		clear_status(clear_status_)
 	{
 	}
 	bool const clear_status;
 };
-struct CriticalHit : ClearStatus {
-	constexpr explicit CriticalHit(ClearStatus const clear_status_, bool const critical_hit_):
+struct Hits : ClearStatus {
+	constexpr explicit Hits(ClearStatus const clear_status_, bool const hits_):
 		ClearStatus(clear_status_),
+		hits(hits_)
+	{
+	}
+	bool const hits;
+};
+struct CriticalHit : Hits {
+	constexpr explicit CriticalHit(Hits const hits_, bool const critical_hit_):
+		Hits(hits_),
 		critical_hit(critical_hit_)
 	{
 	}
@@ -415,19 +415,23 @@ template<typename Function>
 auto execute_move(Team const & user, ExecutedMove const move, Team const & other, bounded::optional<UsedMove> const other_move, bool const other_damaged, Weather const weather, Function const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
 	auto const variables = all_probabilities(move.executed, other.size());
-	auto score = 0.0;
-	for (auto const & variable : variables) {
-		score += variable.probability * generic_flag_branch<Hits>(
-			std::monostate{},
-			chance_to_hit(user_pokemon, move.executed, other.pokemon(), weather, static_cast<bool>(other_move)),
-			[&](Hits const hits) {
-				return generic_flag_branch<ClearStatus>(
-					hits,
-					get_status(user_pokemon).probability_of_clearing(get_ability(user_pokemon)),
-					[&](ClearStatus const clear_status) {
-						return generic_flag_branch<CriticalHit>(
-							clear_status,
-							can_critical_hit(move.executed) ? (1.0 / 16.0) : 0.0,
+	auto & status = get_status(user_pokemon);
+	auto const probability_of_clearing_status = status.probability_of_clearing(get_ability(user_pokemon));
+	auto const specific_chance_to_hit = chance_to_hit(user_pokemon, move.executed, other.pokemon(), weather, static_cast<bool>(other_move));
+	auto const move_can_critical_hit = can_critical_hit(move.executed);
+	return generic_flag_branch<ClearStatus>(
+		std::monostate{},
+		probability_of_clearing_status,
+		[&](ClearStatus const clear_status) {
+			return generic_flag_branch<Hits>(
+				clear_status,
+				specific_chance_to_hit,
+				[&](Hits const hits) {
+					auto score = 0.0;
+					for (auto const & variable : variables) {
+						score += variable.probability * generic_flag_branch<CriticalHit>(
+							hits,
+							hits.hits and move_can_critical_hit ? (1.0 / 16.0) : 0.0,
 							[&](CriticalHit const flags) {
 								auto user_copy = user;
 								auto other_copy = other;
@@ -440,11 +444,11 @@ auto execute_move(Team const & user, ExecutedMove const move, Team const & other
 							}
 						);
 					}
-				);
-			}
-		);
-	}
-	return score;
+					return score;
+				}
+			);
+		}
+	);
 }
 
 template<typename Function>
