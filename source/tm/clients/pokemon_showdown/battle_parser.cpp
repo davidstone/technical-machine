@@ -301,6 +301,12 @@ void BattleParser::handle_message(InMessage message) {
 		));
 	} else if (type == "-hint") {
 		// message.remainder() == MESSAGE
+	} else if (type == "-hitcount") {
+		auto const party = party_from_player_id(message.next());
+		auto const count = bounded::to_integer<2, 5>(message.next());
+		static_cast<void>(party);
+		static_cast<void>(count);
+		// TODO: Implement multi-hit moves
 	} else if (type == "-immune") {
 		auto const party = party_from_player_id(message.next());
 		auto const source = parse_hp_change_source(message);
