@@ -324,9 +324,7 @@ struct MutableActivePokemon {
 		m_flags.destiny_bond = true;
 	}
 	auto disable(Moves const move) {
-		if (is_regular(move)) {
-			m_flags.disable.activate(move);
-		}
+		m_flags.disable.activate(move);
 	}
 	auto advance_disable() {
 		m_flags.disable.advance_one_turn();

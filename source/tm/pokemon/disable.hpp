@@ -19,7 +19,7 @@
 
 #include <tm/operators.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move.hpp>
 
 #include <bounded/optional.hpp>
 
@@ -27,8 +27,10 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct Disable {
-	constexpr auto activate(Moves const move) {
-		m_disabled_move.emplace(move);
+	auto activate(Moves const move) {
+		if (is_regular(move)) {
+			m_disabled_move.emplace(move);
+		}
 	}
 	constexpr auto move_is_disabled(Moves const move) const {
 		return m_disabled_move == move;
