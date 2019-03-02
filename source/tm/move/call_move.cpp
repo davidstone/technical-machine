@@ -985,29 +985,6 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, bounded::
 }
 
 
-auto is_sound_based(Moves const move) {
-	switch (move) {
-		case Moves::Bug_Buzz:
-		case Moves::Chatter:
-		case Moves::GrassWhistle:
-		case Moves::Growl:
-		case Moves::Heal_Bell:
-		case Moves::Hyper_Voice:
-		case Moves::Metal_Sound:
-		case Moves::Perish_Song:
-		case Moves::Roar:
-		case Moves::Screech:
-		case Moves::Sing:
-		case Moves::Snore:
-		case Moves::Supersonic:
-		case Moves::Uproar:
-			return true;
-		default:
-			return false;
-	}
-}
-
-
 constexpr auto breaks_screens(Moves const move) {
 	return move == Moves::Brick_Break;
 }
@@ -1031,13 +1008,28 @@ auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_ty
 	}
 }
 
-auto use_move(Team & user, Moves const move, PP const pp, Team & other, bounded::optional<UsedMove> const other_move, bool const other_damaged, Weather & weather, Variable const variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
-	// TODO: Add targeting information and only block the move if the target is
-	// immune.
-	if (blocks_sound_moves(get_ability(other.pokemon())) and is_sound_based(move) and move != Moves::Heal_Bell and move != Moves::Perish_Song) {
-		return;
+constexpr auto move_fails(Moves const move, Ability const other_ability) {
+	switch (move) {
+		case Moves::Bug_Buzz:
+		case Moves::Chatter:
+		case Moves::GrassWhistle:
+		case Moves::Growl:
+		case Moves::Hyper_Voice:
+		case Moves::Metal_Sound:
+		case Moves::Roar:
+		case Moves::Screech:
+		case Moves::Sing:
+		case Moves::Snore:
+		case Moves::Supersonic:
+		case Moves::Uproar:
+			return blocks_sound_moves(other_ability);
+		default:
+			return false;
 	}
+}
 
+
+auto use_move(Team & user, Moves const move, PP const pp, Team & other, bounded::optional<UsedMove> const other_move, bool const other_damaged, Weather & weather, Variable const variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	do_effects_before_moving(move, get_status(user.pokemon()), other);
 
 	auto const damage =
@@ -1100,7 +1092,7 @@ auto call_move(Team & user, ExecutedMove const move, Team & other, bounded::opti
 	}
 
 	// TODO: What happens if we Sleep Talk Trump Card?
-	if (!missed) {
+	if (!missed and !move_fails(move.executed, get_ability(other_pokemon))) {
 		use_move(user, move.executed, found_move.pp(), other, other_move, other_damaged, weather, variable, critical_hit, known_damage);
 	}
 }
