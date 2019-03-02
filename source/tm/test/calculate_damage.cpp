@@ -37,13 +37,6 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-auto calculate_damage(Team const & attacker, Move const move, Team const & defender, bounded::optional<UsedMove> defender_move, bool defender_damaged, Weather weather, Variable variable, bool critical_hit) {
-	return calculate_damage(attacker, move.name(), move.pp(), defender, defender_move, defender_damaged, weather, variable, critical_hit);
-}
-auto move_power(Team const & attacker, Move const move, bool attacker_damaged, Team const & defender, bool defender_damaged, Weather weather, Variable variable) {
-	return move_power(attacker, move.name(), move.pp(), attacker_damaged, defender, defender_damaged, weather, variable);
-}
-
 constexpr auto max_damage_physical_move = Move(Moves::Rollout);
 
 Team max_damage_physical_attacker(Item const item, Ability const ability, Nature const nature) {
@@ -99,7 +92,16 @@ void physical_power_test() {
 
 	auto const attacker = max_damage_physical_attacker(Item::Rock_Incense, Ability::Rivalry, Nature::Hardy);
 
-	auto const power = move_power(attacker, max_damage_physical_move, false, max_damage_physical_defender(), false, Weather{}, Variable(0_bi));
+	auto const power = move_power(
+		attacker,
+		max_damage_physical_move.name(),
+		max_damage_physical_move.pp(),
+		false,
+		max_damage_physical_defender(),
+		false,
+		Weather{},
+		Variable(0_bi)
+	);
 	check_equal(power, max_power);
 }
 
@@ -114,7 +116,16 @@ void special_power_test() {
 	Team defender = max_damage_special_defender();
 	defender.pokemon().dive();
 
-	auto const power = move_power(attacker, move, false, defender, false, Weather{}, Variable(0_bi));
+	auto const power = move_power(
+		attacker,
+		move.name(),
+		move.pp(),
+		false,
+		defender,
+		false,
+		Weather{},
+		Variable(0_bi)
+	);
 	check_equal(power, max_power);
 }
 
@@ -141,7 +152,20 @@ void physical_damage_test() {
 
 	auto const defender = max_damage_physical_defender();
 	
-	check_equal(calculate_damage(attacker, max_damage_physical_move, defender, bounded::none, false, weather, Variable(0_bi), critical_hit), max_damage);
+	check_equal(
+		calculate_damage(
+			attacker,
+			max_damage_physical_move.name(),
+			max_damage_physical_move.pp(),
+			defender,
+			bounded::none,
+			false,
+			weather,
+			Variable(0_bi),
+			critical_hit
+		),
+		max_damage
+	);
 }
 
 void special_damage_test() {
@@ -166,7 +190,20 @@ void special_damage_test() {
 
 	Team defender = max_damage_special_defender();
 
-	check_equal(calculate_damage(attacker, move, defender, bounded::none, false, weather, Variable(0_bi), critical_hit), max_damage);
+	check_equal(
+		calculate_damage(
+			attacker,
+			move.name(),
+			move.pp(),
+			defender,
+			bounded::none,
+			false,
+			weather,
+			Variable(0_bi),
+			critical_hit
+		),
+		max_damage
+	);
 }
 
 void damage_test() {

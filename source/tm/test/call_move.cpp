@@ -62,17 +62,53 @@ void test_baton_pass() {
 	}
 	
 	auto weather = Weather{};
-	call_move(attacker, ExecutedMove{Moves::Belly_Drum}, defender, bounded::none, false, weather, Variable(0_bi), false, false, false, bounded::none);
+	call_move(
+		attacker,
+		ExecutedMove{Moves::Belly_Drum},
+		defender,
+		bounded::none,
+		false,
+		weather,
+		Variable(0_bi),
+		false,
+		false,
+		false,
+		bounded::none
+	);
 	if (stage(attacker.pokemon())[StatNames::ATK] != 6_bi) {
 		std::cerr << "Belly Drum did not max out Attack\n";
 		std::terminate();
 	}
-	call_move(attacker, ExecutedMove{Moves::Baton_Pass}, defender, bounded::none, false, weather, Variable(0_bi), false, false, false, bounded::none);
+	call_move(
+		attacker,
+		ExecutedMove{Moves::Baton_Pass},
+		defender,
+		bounded::none,
+		false,
+		weather,
+		Variable(0_bi),
+		false,
+		false,
+		false,
+		bounded::none
+	);
 	if (stage(attacker.pokemon())[StatNames::ATK] != 6_bi) {
 		std::cerr << "Baton Pass immediately cleared stat boosts\n";
 		std::terminate();
 	}
-	call_move(attacker, ExecutedMove{Moves::Switch1}, defender, bounded::none, false, weather, Variable(0_bi), false, false, false, bounded::none);
+	call_move(
+		attacker,
+		ExecutedMove{Moves::Switch1},
+		defender,
+		bounded::none,
+		false,
+		weather,
+		Variable(0_bi),
+		false,
+		false,
+		false,
+		bounded::none
+	);
 	if (stage(attacker.pokemon())[StatNames::ATK] != 6_bi) {
 		std::cerr << "Baton Pass cleared stat boosts after switching\n";
 		std::terminate();
@@ -106,7 +142,19 @@ void sleep_talk() {
 	auto jolteon = attacker.pokemon();
 	apply(Statuses::sleep, jolteon, weather);
 
-	call_move(attacker, ExecutedMove{Moves::Sleep_Talk, Moves::Thunderbolt}, defender, bounded::none, false, weather, Variable(0_bi), false, false, false, bounded::none);
+	call_move(
+		attacker,
+		ExecutedMove{Moves::Sleep_Talk, Moves::Thunderbolt},
+		defender,
+		bounded::none,
+		false,
+		weather,
+		Variable(0_bi),
+		false,
+		false,
+		false,
+		bounded::none
+	);
 	assert(get_hp(defender.pokemon()).current() == 0_bi);
 }
 
