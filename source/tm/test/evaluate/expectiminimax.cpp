@@ -254,7 +254,19 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	}
 
 	auto const variable = Variable{};
-	call_move(defender, ExecutedMove{Moves::Surf}, attacker, bounded::none, false, weather, variable, false, false, false, bounded::none);
+	call_move(
+		defender,
+		ExecutedMove{Moves::Surf},
+		attacker,
+		bounded::none,
+		false,
+		weather,
+		variable,
+		false,
+		false,
+		false,
+		bounded::none
+	);
 	
 	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Switch2);
 }
