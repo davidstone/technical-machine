@@ -123,18 +123,17 @@ auto is_locked_in(ActivePokemon const user) {
 }
 
 auto is_locked_in_to_different_move(ActivePokemon const user, Moves const move) {
+	if (not is_locked_in(user)) {
+		return false;
+	}
 	auto const last_move = last_used_move(user).name();
 	return not is_switch(last_move) and last_move != move;
-}
-
-auto standard_move_lock_in(ActivePokemon const user, Moves const move) {
-	return is_locked_in(user) ? is_locked_in_to_different_move(user, move) : false;
 }
 
 auto is_blocked_due_to_lock_in(ActivePokemon const user, Moves const move) {
 	return !is_regular(move) ?
 		is_locked_in_by_move(user) :
-		standard_move_lock_in(user, move);
+		is_locked_in_to_different_move(user, move);
 }
 
 auto is_legal_selection(Team const & user, Move const move, ActivePokemon const other, Weather const weather, bool const found_selectable_move) {
