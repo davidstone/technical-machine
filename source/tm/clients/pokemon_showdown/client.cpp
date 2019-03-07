@@ -123,7 +123,7 @@ void ClientImpl::run(BufferView<char> messages) {
 void ClientImpl::handle_message(InMessage message) {
 	auto send_challenge = [&]{
 		send_team();
-		m_send_message("|/challenge david stone,gen4ou");
+		m_send_message("|/challenge david stone,gen4randombattle");
 	};
 	if (m_battles.handle_message(message, m_send_message, send_challenge)) {
 		return;
