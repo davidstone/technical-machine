@@ -193,7 +193,7 @@ auto will_be_recharge_turn(ActivePokemon const user, Moves const move, Weather c
 }
 
 
-auto do_side_effects(Team & user_team, Moves const move, Team & other, bounded::optional<UsedMove> const other_move, Weather & weather, Variable const variable, damage_type const damage) {
+auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather & weather, Variable const variable, damage_type const damage) {
 	auto user = user_team.pokemon();
 	switch (move) {
 		case Moves::Absorb:
@@ -492,11 +492,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, bounded::
 			user.dig();
 			break;
 		case Moves::Disable:
-			// TODO: This should work on a move the Pokemon used the previous
-			// turn
-			if (other_move) {
-				other.pokemon().disable(other_move->move.name());
-			}
+			other.pokemon().disable(last_used_move(other.pokemon()).name());
 			break;
 		case Moves::Dive:
 			user.dive();
@@ -1041,8 +1037,7 @@ auto use_move(Team & user, Moves const move, PP const pp, Team & other, bounded:
 	if (damage != 0_bi) {
 		do_damage(user.pokemon(), other.pokemon(), damage);
 	}
-	user.pokemon().increment_move_use_counter(move);
-	do_side_effects(user, move, other, other_move, weather, variable, damage);
+	do_side_effects(user, move, other, weather, variable, damage);
 }
 
 auto find_move(MoveContainer const container, Moves const move_name) -> Move {
@@ -1094,6 +1089,9 @@ auto call_move(Team & user, ExecutedMove const move, Team & other, bounded::opti
 	// TODO: What happens if we Sleep Talk Trump Card?
 	if (!missed and !move_fails(move.executed, get_ability(other_pokemon))) {
 		use_move(user, move.executed, found_move.pp(), other, other_move, other_damaged, weather, variable, critical_hit, known_damage);
+		user_pokemon.increment_move_use_counter(move.selected);
+	} else {
+		user_pokemon.unsuccessfully_use_move(move.selected);
 	}
 }
 

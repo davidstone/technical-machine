@@ -491,6 +491,9 @@ struct MutableActivePokemon {
 	auto increment_move_use_counter(Moves const move) {
 		m_flags.last_used_move.increment(move);
 	}
+	auto unsuccessfully_use_move(Moves const move) {
+		m_flags.last_used_move.unsucessful_move(move);
+	}
 	
 private:
 	template<typename T>

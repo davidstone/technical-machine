@@ -1,4 +1,4 @@
-// Copyright (C) 2017 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,9 +17,6 @@
 
 #pragma once
 
-#include <tm/operators.hpp>
-
-#include <tm/move/is_switch.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/rational.hpp>
 
@@ -30,40 +27,42 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct LastUsedMove {
-	auto moved_since_switch() const {
-		return not is_switch(m_move);
+	constexpr auto name() const {
+		return m_move;
 	}
-	constexpr auto was_used_last(Moves const move) const {
-		return m_move == move;
+	
+	constexpr auto unsucessful_move(Moves const move) & {
+		m_move = move;
+		m_consecutive_successes = 0_bi;
 	}
 
 	constexpr auto increment(Moves const move) & {
 		if (m_move == move) {
-			++m_consecutive_turns_used;
+			++m_consecutive_successes;
 		} else {
 			m_move = move;
-			m_consecutive_turns_used = 1_bi;
+			m_consecutive_successes = 1_bi;
 		}
 	}
 
 
 	constexpr auto fury_cutter_power() const {
 		// 10 * 2 ^ n
-		auto const result = 10_bi << bounded::min(m_consecutive_turns_used, 4_bi);
+		auto const result = 10_bi << bounded::min(m_consecutive_successes, 4_bi);
 		static_assert(result.min() == 10_bi);
 		static_assert(result.max() == 160_bi);
 		return result;
 	}
 
 	constexpr auto momentum_move_power() const {
-		auto const result = 30_bi << bounded::min(m_consecutive_turns_used, 4_bi);
+		auto const result = 30_bi << bounded::min(m_consecutive_successes, 4_bi);
 		static_assert(result.min() == 30_bi);
 		static_assert(result.max() == 480_bi);
 		return result;
 	}
 
 	constexpr auto triple_kick_power() const {
-		auto const result = 10_bi * bounded::min(m_consecutive_turns_used + 1_bi, 3_bi);
+		auto const result = 10_bi * bounded::min(m_consecutive_successes + 1_bi, 3_bi);
 		static_assert(result.min() == 10_bi);
 		static_assert(result.max() == 30_bi);
 		return result;
@@ -71,18 +70,18 @@ struct LastUsedMove {
 
 	// TODO: Does Metronome boost Struggle?
 	constexpr auto metronome_boost() const {
-		return rational(10_bi + m_consecutive_turns_used, 10_bi);
+		return rational(10_bi + m_consecutive_successes, 10_bi);
 	}
 
 	friend constexpr auto operator==(LastUsedMove const lhs, LastUsedMove const rhs) {
 		return
 			lhs.m_move == rhs.m_move and
-			lhs.m_consecutive_turns_used == rhs.m_consecutive_turns_used;
+			lhs.m_consecutive_successes == rhs.m_consecutive_successes;
 	}
 
 private:
 	Moves m_move = Moves::Switch0;
-	bounded::clamped_integer<0, 10> m_consecutive_turns_used = 0_bi;
+	bounded::clamped_integer<0, 10> m_consecutive_successes = 0_bi;
 };
 
 }	// namespace technicalmachine
