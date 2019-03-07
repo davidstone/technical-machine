@@ -25,6 +25,7 @@
 namespace technicalmachine {
 
 auto ActivePokemonFlags::reset_end_of_turn() -> void {
+	damaged = false;
 	enduring = false;
 	flinched = false;
 	moved = false;
@@ -177,6 +178,7 @@ auto MutableActivePokemon::direct_damage(damage_type const damage) -> void {
 		m_flags.substitute.damage(damage);
 	} else {
 		get_hp(*this) -= damage;
+		m_flags.damaged = true;
 		bounded::visit(m_flags.lock_in, bounded::overload(
 			[=](Bide & bide) { bide.add_damage(damage); },
 			[](auto const &) {}

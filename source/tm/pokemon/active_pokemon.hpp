@@ -72,6 +72,7 @@ struct Weather;
 	friend auto is_charging_up(ActivePokemon pokemon) -> bool; \
 	friend auto is_confused(ActivePokemon pokemon) -> bool; \
 	friend auto is_cursed(ActivePokemon pokemon) -> bool; \
+	friend auto damaged(ActivePokemon pokemon) -> bool; \
 	friend auto defense_curled(ActivePokemon pokemon) -> bool; \
 	/* Requires that move is actually one of this Pokemon's moves */ \
 	friend auto is_disabled(ActivePokemon pokemon, Moves move) -> bool; \
@@ -206,6 +207,7 @@ private:
 	bool attracted = false;
 	bool charged = false;
 	bool is_cursed = false;
+	bool damaged = false;
 	bool defense_curled = false;
 	bool destiny_bond = false;
 	bool enduring = false;
@@ -553,6 +555,10 @@ inline auto is_cursed(ActivePokemon const pokemon) -> bool {
 
 inline auto defense_curled(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.defense_curled;
+}
+
+inline auto damaged(ActivePokemon const pokemon) -> bool {
+	return pokemon.m_flags.damaged;
 }
 
 inline auto is_disabled(ActivePokemon const pokemon, Moves const move_name) -> bool {

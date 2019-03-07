@@ -564,8 +564,6 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Focus_Energy:
 			user.focus_energy();
 			break;
-		case Moves::Focus_Punch:		// Fix
-			break;
 		case Moves::Follow_Me:		// Fix
 			break;
 		case Moves::Foresight:
@@ -1004,7 +1002,7 @@ auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_ty
 	}
 }
 
-constexpr auto move_fails(Moves const move, Ability const other_ability) {
+constexpr auto move_fails(Moves const move, bool const user_damaged, Ability const other_ability) {
 	switch (move) {
 		case Moves::Bug_Buzz:
 		case Moves::Chatter:
@@ -1019,6 +1017,8 @@ constexpr auto move_fails(Moves const move, Ability const other_ability) {
 		case Moves::Supersonic:
 		case Moves::Uproar:
 			return blocks_sound_moves(other_ability);
+		case Moves::Focus_Punch:
+			return user_damaged;
 		default:
 			return false;
 	}
@@ -1087,7 +1087,7 @@ auto call_move(Team & user, ExecutedMove const move, Team & other, bounded::opti
 	}
 
 	// TODO: What happens if we Sleep Talk Trump Card?
-	if (!missed and !move_fails(move.executed, get_ability(other_pokemon))) {
+	if (!missed and !move_fails(move.executed, damaged(user_pokemon), get_ability(other_pokemon))) {
 		use_move(user, move.executed, found_move.pp(), other, other_move, other_damaged, weather, variable, critical_hit, known_damage);
 		user_pokemon.increment_move_use_counter(move.selected);
 	} else {
