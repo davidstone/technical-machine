@@ -1025,13 +1025,13 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 }
 
 
-auto use_move(Team & user, Moves const move, PP const pp, Team & other, bounded::optional<UsedMove> const other_move, bool const other_damaged, Weather & weather, Variable const variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
+auto use_move(Team & user, Moves const move, PP const pp, Team & other, bounded::optional<UsedMove> const other_move, Weather & weather, Variable const variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	do_effects_before_moving(move, get_status(user.pokemon()), other);
 
 	auto const damage =
 		known_damage ? *known_damage :
 		will_be_recharge_turn(user.pokemon(), move, weather) ? 0_bi :
-		is_damaging(move) ? calculate_damage(user, move, pp, other, other_move, other_damaged, weather, variable, critical_hit) :
+		is_damaging(move) ? calculate_damage(user, move, pp, other, other_move, weather, variable, critical_hit) :
 		0_bi;
 
 	if (damage != 0_bi) {
@@ -1055,7 +1055,7 @@ auto find_regular_move(Container const container, Moves const move_name) -> Move
 
 }	// namespace
 
-auto call_move(Team & user, ExecutedMove const move, Team & other, bounded::optional<UsedMove> const other_move, bool const other_damaged, Weather & weather, Variable const variable, bool const missed, bool const clear_status, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
+auto call_move(Team & user, ExecutedMove const move, Team & other, bounded::optional<UsedMove> const other_move, Weather & weather, Variable const variable, bool const missed, bool const clear_status, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	if (move.selected == Moves::Pass) {
 		return;
 	}
@@ -1088,7 +1088,7 @@ auto call_move(Team & user, ExecutedMove const move, Team & other, bounded::opti
 
 	// TODO: What happens if we Sleep Talk Trump Card?
 	if (!missed and !move_fails(move.executed, damaged(user_pokemon), get_ability(other_pokemon))) {
-		use_move(user, move.executed, found_move.pp(), other, other_move, other_damaged, weather, variable, critical_hit, known_damage);
+		use_move(user, move.executed, found_move.pp(), other, other_move, weather, variable, critical_hit, known_damage);
 		user_pokemon.increment_move_use_counter(move.selected);
 	} else {
 		user_pokemon.unsuccessfully_use_move(move.selected);

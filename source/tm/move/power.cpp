@@ -136,7 +136,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Moves const move, 
 	}
 }
 
-auto doubling(ActivePokemon const attacker, Moves const move, bool const attacker_damaged, ActivePokemon const defender, bool const defender_damaged, Weather const weather) -> bool {
+auto doubling(ActivePokemon const attacker, Moves const move, ActivePokemon const defender, Weather const weather) -> bool {
 	// I account for the doubling of the base power for Pursuit in the
 	// switching function by simply multiplying the final base power by 2.
 	// Regardless of the combination of modifiers, this does not change the
@@ -150,10 +150,10 @@ auto doubling(ActivePokemon const attacker, Moves const move, bool const attacke
 		return true;
 	switch (move) {
 		case Moves::Assurance:
-			return defender_damaged;
+			return damaged(defender);
 		case Moves::Avalanche: 
 		case Moves::Revenge:
-			return attacker_damaged;
+			return damaged(attacker);
 		case Moves::Brine:
 			return get_hp(defender).current() <= get_hp(defender).max() / 2_bi;
 		case Moves::Facade:
@@ -277,13 +277,13 @@ auto defender_ability_modifier(Pokemon const & attacker, Moves const move, Abili
 
 }	// namespace
 
-auto move_power(Team const & attacker_team, Moves const move, PP const pp, bool const attacker_damaged, Team const & defender_team, bool const defender_damaged, Weather const weather, Variable variable) -> MovePower {
+auto move_power(Team const & attacker_team, Moves const move, PP const pp, Team const & defender_team, Weather const weather, Variable variable) -> MovePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	auto const base_power = variable_adjusted_base_power(attacker_team, move, pp, defender_team, weather, variable);
 	return static_cast<MovePower>(bounded::max(1_bi,
 		base_power *
-		BOUNDED_CONDITIONAL(doubling(attacker, move, attacker_damaged, defender, defender_damaged, weather), 2_bi, 1_bi) *
+		BOUNDED_CONDITIONAL(doubling(attacker, move, defender, weather), 2_bi, 1_bi) *
 		item_modifier(attacker, move) *
 		BOUNDED_CONDITIONAL(charge_boosted(attacker, move), 2_bi, 1_bi) /
 		BOUNDED_CONDITIONAL(sport_is_active(defender, move), 2_bi, 1_bi) *

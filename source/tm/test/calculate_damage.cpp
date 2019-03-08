@@ -96,9 +96,7 @@ void physical_power_test() {
 		attacker,
 		max_damage_physical_move.name(),
 		max_damage_physical_move.pp(),
-		false,
 		max_damage_physical_defender(),
-		false,
 		Weather{},
 		Variable(0_bi)
 	);
@@ -120,9 +118,7 @@ void special_power_test() {
 		attacker,
 		move.name(),
 		move.pp(),
-		false,
 		defender,
-		false,
 		Weather{},
 		Variable(0_bi)
 	);
@@ -159,7 +155,6 @@ void physical_damage_test() {
 			max_damage_physical_move.pp(),
 			defender,
 			bounded::none,
-			false,
 			weather,
 			Variable(0_bi),
 			critical_hit
@@ -197,7 +192,6 @@ void special_damage_test() {
 			move.pp(),
 			defender,
 			bounded::none,
-			false,
 			weather,
 			Variable(0_bi),
 			critical_hit

@@ -225,14 +225,14 @@ auto resistance_berry_divisor(Item const item, Type const type, Effectiveness co
 	return BOUNDED_CONDITIONAL(resistance_berry_activates(item, type, effectiveness), 2_bi, 1_bi);
 }
 
-auto regular_damage(Team const & attacker_team, Moves const move, PP const pp, bool const attacker_damaged, Team const & defender, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
+auto regular_damage(Team const & attacker_team, Moves const move, PP const pp, Team const & defender, Weather const weather, Variable const variable, bool const critical_hit) {
 	auto const & attacker = attacker_team.pokemon();
 	auto const type = get_type(move, attacker);
 	auto const effectiveness = Effectiveness(type, defender.pokemon());
 
 	auto const temp =
 		(level_multiplier(attacker) + 2_bi) *
-		move_power(attacker_team, move, pp, attacker_damaged, defender, defender_damaged, weather, variable) *
+		move_power(attacker_team, move, pp, defender, weather, variable) *
 		physical_vs_special_modifier(attacker, move, defender.pokemon(), weather, critical_hit) /
 		screen_divisor(move, defender, critical_hit) *
 		calculate_weather_modifier(type, weather) *
@@ -253,7 +253,7 @@ auto regular_damage(Team const & attacker_team, Moves const move, PP const pp, b
 	);
 }
 
-damage_type raw_damage(Team const & attacker_team, Moves const move, PP const pp, Team const & defender, bounded::optional<UsedMove> const defender_move, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
+damage_type raw_damage(Team const & attacker_team, Moves const move, PP const pp, Team const & defender, bounded::optional<UsedMove> const defender_move, Weather const weather, Variable const variable, bool const critical_hit) {
 	auto const & attacker = attacker_team.pokemon();
 	switch (move) {
 		case Moves::Counter:
@@ -291,9 +291,7 @@ damage_type raw_damage(Team const & attacker_team, Moves const move, PP const pp
 				attacker_team,
 				move,
 				pp,
-				defender_move ? defender_move->damage != 0_bi : false,
 				defender,
-				defender_damaged,
 				weather,
 				variable,
 				critical_hit
@@ -301,8 +299,8 @@ damage_type raw_damage(Team const & attacker_team, Moves const move, PP const pp
 	}
 }
 
-auto capped_damage(Team const & attacker, Moves const move, PP const pp, Team const & defender, bounded::optional<UsedMove> const defender_move, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
-	auto const damage = raw_damage(attacker, move, pp, defender, defender_move, defender_damaged, weather, variable, critical_hit);
+auto capped_damage(Team const & attacker, Moves const move, PP const pp, Team const & defender, bounded::optional<UsedMove> const defender_move, Weather const weather, Variable const variable, bool const critical_hit) {
+	auto const damage = raw_damage(attacker, move, pp, defender, defender_move, weather, variable, critical_hit);
 	return (cannot_ko(move) or cannot_be_koed(defender.pokemon())) ?
 		static_cast<damage_type>(bounded::min(get_hp(defender.pokemon()).current() - 1_bi, damage)) :
 		damage;
@@ -311,9 +309,9 @@ auto capped_damage(Team const & attacker, Moves const move, PP const pp, Team co
 }	// namespace
 
 
-damage_type calculate_damage(Team const & attacker, Moves const move, PP const pp, Team const & defender, bounded::optional<UsedMove> const defender_move, bool const defender_damaged, Weather const weather, Variable const variable, bool const critical_hit) {
+damage_type calculate_damage(Team const & attacker, Moves const move, PP const pp, Team const & defender, bounded::optional<UsedMove> const defender_move, Weather const weather, Variable const variable, bool const critical_hit) {
 	return affects_target(get_type(move, attacker.pokemon()), defender.pokemon(), weather) ?
-		capped_damage(attacker, move, pp, defender, defender_move, defender_damaged, weather, variable, critical_hit) :
+		capped_damage(attacker, move, pp, defender, defender_move, weather, variable, critical_hit) :
 		static_cast<damage_type>(0_bi);
 }
 

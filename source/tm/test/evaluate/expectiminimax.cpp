@@ -259,7 +259,6 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		ExecutedMove{Moves::Surf},
 		attacker,
 		bounded::none,
-		false,
 		weather,
 		variable,
 		false,

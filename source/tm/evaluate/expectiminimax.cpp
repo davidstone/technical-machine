@@ -412,7 +412,7 @@ double generic_flag_branch(BaseFlag const flags, double const basic_probability,
 }
 
 template<typename Function>
-auto execute_move(Team const & user, ExecutedMove const move, Team const & other, bounded::optional<UsedMove> const other_move, bool const other_damaged, Weather const weather, Function const continuation) -> double {
+auto execute_move(Team const & user, ExecutedMove const move, Team const & other, bounded::optional<UsedMove> const other_move, Weather const weather, Function const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
 	auto const variables = all_probabilities(move.executed, other.size());
 	auto & status = get_status(user_pokemon);
@@ -436,7 +436,7 @@ auto execute_move(Team const & user, ExecutedMove const move, Team const & other
 								auto user_copy = user;
 								auto other_copy = other;
 								auto weather_copy = weather;
-								call_move(user_copy, move, other_copy, other_move, other_damaged, weather_copy, variable.variable, !flags.hits, flags.clear_status, flags.critical_hit, bounded::none);
+								call_move(user_copy, move, other_copy, other_move, weather_copy, variable.variable, !flags.hits, flags.clear_status, flags.critical_hit, bounded::none);
 								if (auto const won = Evaluate::win(user_copy, other_copy)) {
 									return *won;
 								}
@@ -452,9 +452,9 @@ auto execute_move(Team const & user, ExecutedMove const move, Team const & other
 }
 
 template<typename Function>
-auto score_executed_moves(Team const & user, Moves const selected_move, Team const & other, bounded::optional<UsedMove> const other_move, bool const other_damaged, Weather const weather, Function const continuation) -> double {
+auto score_executed_moves(Team const & user, Moves const selected_move, Team const & other, bounded::optional<UsedMove> const other_move, Weather const weather, Function const continuation) -> double {
 	auto const score_move = [&](Moves const executed_move) {
-		return execute_move(user, ExecutedMove{selected_move, executed_move}, other, other_move, other_damaged, weather, continuation);
+		return execute_move(user, ExecutedMove{selected_move, executed_move}, other, other_move, weather, continuation);
 	};
 	return average_transformed_sum(selected_move_to_executed_move(selected_move, user), score_move);
 }
@@ -462,10 +462,8 @@ auto score_executed_moves(Team const & user, Moves const selected_move, Team con
 
 auto use_move_branch_inner = [](Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
 	assert(first_move == Moves::Pass);
-	// TODO: implement properly
 	// TODO: properly handle used move here
-	constexpr auto first_damaged = false;
-	return score_executed_moves(last, last_move, first, bounded::none, first_damaged, weather, [&](Team const & updated_last, Team const & updated_first, Weather const updated_weather) {
+	return score_executed_moves(last, last_move, first, bounded::none, weather, [&](Team const & updated_last, Team const & updated_first, Weather const updated_weather) {
 		auto const teams = faster_pokemon(updated_first, updated_last, updated_weather);
 		return generic_flag_branch<ShedSkin>(
 			std::monostate{},
@@ -488,14 +486,11 @@ auto use_move_branch_inner = [](Team const & first, Moves const first_move, Team
 
 auto use_move_branch_outer(Species const original_last_species, Moves const last_move) {
 	return [=](Team const & first, Moves const first_move, Team const & last, Moves, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
-		// TODO: implement properly
-		constexpr auto first_damaged = false;
-		constexpr auto last_damaged = false;
-		return score_executed_moves(first, first_move, last, bounded::none, last_damaged, weather, [&](Team const & pre_updated_first, Team const & pre_updated_last, Weather const pre_updated_weather) {
+		return score_executed_moves(first, first_move, last, bounded::none, weather, [&](Team const & pre_updated_first, Team const & pre_updated_last, Weather const pre_updated_weather) {
 			// TODO: properly handle used move here
 			auto const current_last_species = get_species(last.pokemon());
 			auto const actual_last_move = original_last_species == current_last_species ? last_move : Moves::Pass;
-			return score_executed_moves(pre_updated_last, actual_last_move, pre_updated_first, bounded::none, first_damaged, pre_updated_weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
+			return score_executed_moves(pre_updated_last, actual_last_move, pre_updated_first, bounded::none, pre_updated_weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
 				auto const first_selections = StaticVectorMove({Moves::Pass});
 				auto const last_selections = legal_selections(updated_last, updated_first.pokemon(), weather);
 				return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, evaluate, depth, log, use_move_branch_inner).move.score;
@@ -511,9 +506,6 @@ double use_move_branch(Team const & first, Moves const first_move, Team const & 
 	auto const used_move = bounded::optional<UsedMove>(UsedMove{first_move, last_damaged});
 #endif
 
-	// TODO: implement properly
-	constexpr auto last_damaged = false;
-	
 	// This complicated section of code is designed to handle U-turn and Baton
 	// Pass: The user of the move needs to go again before the other Pokemon
 	// moves and make a new selection. During that selection, the opponent
@@ -529,7 +521,7 @@ double use_move_branch(Team const & first, Moves const first_move, Team const & 
 	// after the move, and if so, the second Pokemon can only execute Pass.
 
 	auto const original_last_species = get_species(last.pokemon());
-	return score_executed_moves(first, first_move, last, bounded::none, last_damaged, weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
+	return score_executed_moves(first, first_move, last, bounded::none, weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
 		auto const first_selections = legal_selections(updated_first, updated_last.pokemon(), weather);
 		auto const last_selections = StaticVectorMove({Moves::Pass});
 		// TODO: Figure out first / last vs ai / foe
