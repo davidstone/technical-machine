@@ -484,6 +484,12 @@ auto use_move_branch_inner = [](Team const & first, Moves const first_move, Team
 	});
 };
 
+constexpr auto all_are_pass_or_switch(StaticVectorMove const legal_selections) {
+	return
+		(size(legal_selections) == 1_bi and front(legal_selections) == Moves::Pass) or
+		containers::all(legal_selections, is_switch);
+}
+
 auto use_move_branch_outer(Species const original_last_species, Moves const last_move) {
 	return [=](Team const & first, Moves const first_move, Team const & last, Moves, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
 		return score_executed_moves(first, first_move, last, bounded::none, weather, [&](Team const & pre_updated_first, Team const & pre_updated_last, Weather const pre_updated_weather) {
@@ -493,6 +499,7 @@ auto use_move_branch_outer(Species const original_last_species, Moves const last
 			return score_executed_moves(pre_updated_last, actual_last_move, pre_updated_first, bounded::none, pre_updated_weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
 				auto const first_selections = StaticVectorMove({Moves::Pass});
 				auto const last_selections = legal_selections(updated_last, updated_first.pokemon(), weather);
+				assert(all_are_pass_or_switch(last_selections));
 				return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, evaluate, depth, log, use_move_branch_inner).move.score;
 			});
 		});
@@ -517,6 +524,7 @@ double use_move_branch(Team const & first, Moves const first_move, Team const & 
 	auto const original_last_species = get_species(last.pokemon());
 	return score_executed_moves(first, first_move, last, bounded::none, weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
 		auto const first_selections = legal_selections(updated_first, updated_last.pokemon(), weather);
+		assert(all_are_pass_or_switch(first_selections));
 		auto const last_selections = StaticVectorMove({Moves::Pass});
 		// TODO: Figure out first / last vs ai / foe
 		return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, evaluate, depth, log, use_move_branch_outer(original_last_species, last_move)).move.score;
