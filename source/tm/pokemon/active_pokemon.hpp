@@ -489,6 +489,7 @@ struct MutableActivePokemon {
 	auto direct_damage(damage_type damage) -> void;
 	auto indirect_damage(damage_type const damage) {
 		get_hp(*this) -= damage;
+		m_flags.damaged = true;
 	}
 	auto increment_move_use_counter(Moves const move) {
 		m_flags.last_used_move.increment(move);
