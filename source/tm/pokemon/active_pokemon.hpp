@@ -73,6 +73,7 @@ struct Weather;
 	friend auto is_confused(ActivePokemon pokemon) -> bool; \
 	friend auto is_cursed(ActivePokemon pokemon) -> bool; \
 	friend auto damaged(ActivePokemon pokemon) -> bool; \
+	friend auto direct_damage_received(ActivePokemon pokemon) -> HP::current_type; \
 	friend auto defense_curled(ActivePokemon pokemon) -> bool; \
 	/* Requires that move is actually one of this Pokemon's moves */ \
 	friend auto is_disabled(ActivePokemon pokemon, Moves move) -> bool; \
@@ -203,6 +204,7 @@ private:
 	Stockpile stockpile;
 	TauntCounter taunt;
 	YawnCounter yawn;
+	HP::current_type direct_damage_received = 0_bi;
 	bool aqua_ring = false;
 	bool attracted = false;
 	bool charged = false;
@@ -560,6 +562,10 @@ inline auto defense_curled(ActivePokemon const pokemon) -> bool {
 
 inline auto damaged(ActivePokemon const pokemon) -> bool {
 	return pokemon.m_flags.damaged;
+}
+
+inline auto direct_damage_received(ActivePokemon const pokemon) -> HP::current_type {
+	return pokemon.m_flags.direct_damage_received;
 }
 
 inline auto is_disabled(ActivePokemon const pokemon, Moves const move_name) -> bool {

@@ -28,7 +28,6 @@
 #include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
-#include <tm/move/used_move.hpp>
 
 #include <tm/pokemon/pokemon.hpp>
 
@@ -412,7 +411,7 @@ double generic_flag_branch(BaseFlag const flags, double const basic_probability,
 }
 
 template<typename Function>
-auto execute_move(Team const & user, ExecutedMove const move, Team const & other, bounded::optional<UsedMove> const other_move, Weather const weather, Function const continuation) -> double {
+auto execute_move(Team const & user, ExecutedMove const move, Team const & other, bounded::optional<Moves> const other_move, Weather const weather, Function const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
 	auto const variables = all_probabilities(move.executed, other.size());
 	auto & status = get_status(user_pokemon);
@@ -452,7 +451,7 @@ auto execute_move(Team const & user, ExecutedMove const move, Team const & other
 }
 
 template<typename Function>
-auto score_executed_moves(Team const & user, Moves const selected_move, Team const & other, bounded::optional<UsedMove> const other_move, Weather const weather, Function const continuation) -> double {
+auto score_executed_moves(Team const & user, Moves const selected_move, Team const & other, bounded::optional<Moves> const other_move, Weather const weather, Function const continuation) -> double {
 	auto const score_move = [&](Moves const executed_move) {
 		return execute_move(user, ExecutedMove{selected_move, executed_move}, other, other_move, weather, continuation);
 	};
@@ -500,12 +499,6 @@ auto use_move_branch_outer(Species const original_last_species, Moves const last
 };
 
 double use_move_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
-#if 0
-	auto const initial_last_hp = get_hp(last.pokemon());
-	auto const last_damaged = is_damaging(first_move) ? bounded::max(get_hp(last.pokemon()).current() - last_hp.current(), 0_bi) : 0_bi;
-	auto const used_move = bounded::optional<UsedMove>(UsedMove{first_move, last_damaged});
-#endif
-
 	// This complicated section of code is designed to handle U-turn and Baton
 	// Pass: The user of the move needs to go again before the other Pokemon
 	// moves and make a new selection. During that selection, the opponent

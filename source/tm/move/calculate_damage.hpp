@@ -19,7 +19,6 @@
 
 #include <tm/move/damage_type.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/used_move.hpp>
 
 #include <bounded/optional.hpp>
 
@@ -30,6 +29,6 @@ struct Team;
 struct Variable;
 struct Weather;
 
-damage_type calculate_damage(Team const & attacker, Moves move, PP pp, Team const & defender, bounded::optional<UsedMove> defender_move, Weather weather, Variable variable, bool critical_hit);
+damage_type calculate_damage(Team const & attacker, Moves move, PP pp, Team const & defender, bounded::optional<Moves> defender_move, Weather weather, Variable variable, bool critical_hit);
 
 }	// namespace technicalmachine

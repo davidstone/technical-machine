@@ -19,7 +19,6 @@
 
 #include <tm/move/damage_type.hpp>
 #include <tm/move/executed_move.hpp>
-#include <tm/move/used_move.hpp>
 
 #include <bounded/optional.hpp>
 
@@ -29,6 +28,6 @@ struct Team;
 struct Variable;
 struct Weather;
 
-auto call_move(Team & user, ExecutedMove move, Team & target, bounded::optional<UsedMove> target_move, Weather & weather, Variable variable, bool missed, bool clear_status, bool critical_hit, bounded::optional<damage_type> known_damage) -> void;
+auto call_move(Team & user, ExecutedMove move, Team & target, bounded::optional<Moves> target_move, Weather & weather, Variable variable, bool missed, bool clear_status, bool critical_hit, bounded::optional<damage_type> known_damage) -> void;
 
 }	// namespace technicalmachine

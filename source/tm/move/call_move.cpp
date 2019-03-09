@@ -1025,7 +1025,7 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 }
 
 
-auto use_move(Team & user, Moves const move, PP const pp, Team & other, bounded::optional<UsedMove> const other_move, Weather & weather, Variable const variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
+auto use_move(Team & user, Moves const move, PP const pp, Team & other, bounded::optional<Moves> const other_move, Weather & weather, Variable const variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	do_effects_before_moving(move, get_status(user.pokemon()), other);
 
 	auto const damage =
@@ -1055,7 +1055,7 @@ auto find_regular_move(Container const container, Moves const move_name) -> Move
 
 }	// namespace
 
-auto call_move(Team & user, ExecutedMove const move, Team & other, bounded::optional<UsedMove> const other_move, Weather & weather, Variable const variable, bool const missed, bool const clear_status, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
+auto call_move(Team & user, ExecutedMove const move, Team & other, bounded::optional<Moves> const other_move, Weather & weather, Variable const variable, bool const missed, bool const clear_status, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	if (move.selected == Moves::Pass) {
 		return;
 	}
