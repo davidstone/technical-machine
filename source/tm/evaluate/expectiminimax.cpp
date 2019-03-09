@@ -413,10 +413,11 @@ double generic_flag_branch(BaseFlag const flags, double const basic_probability,
 template<typename Function>
 auto execute_move(Team const & user, ExecutedMove const move, Team const & other, bounded::optional<Moves> const other_move, Weather const weather, Function const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
+	auto const other_pokemon = other.pokemon();
 	auto const variables = all_probabilities(move.executed, other.size());
 	auto & status = get_status(user_pokemon);
 	auto const probability_of_clearing_status = status.probability_of_clearing(get_ability(user_pokemon));
-	auto const specific_chance_to_hit = chance_to_hit(user_pokemon, move.executed, other.pokemon(), weather, static_cast<bool>(other_move));
+	auto const specific_chance_to_hit = chance_to_hit(user_pokemon, move.executed, other_pokemon, weather, moved(other_pokemon));
 	auto const move_can_critical_hit = can_critical_hit(move.executed);
 	return generic_flag_branch<ClearStatus>(
 		std::monostate{},
