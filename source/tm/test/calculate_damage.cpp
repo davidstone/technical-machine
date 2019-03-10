@@ -154,7 +154,7 @@ void physical_damage_test() {
 			max_damage_physical_move.name(),
 			max_damage_physical_move.pp(),
 			defender,
-			bounded::none,
+			FutureMove{false},
 			weather,
 			Variable(0_bi),
 			critical_hit
@@ -191,7 +191,7 @@ void special_damage_test() {
 			move.name(),
 			move.pp(),
 			defender,
-			bounded::none,
+			FutureMove{false},
 			weather,
 			Variable(0_bi),
 			critical_hit

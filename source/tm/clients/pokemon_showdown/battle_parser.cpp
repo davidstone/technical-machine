@@ -267,9 +267,8 @@ void BattleParser::handle_message(InMessage message) {
 		}
 	} else if (type == "-fail") {
 #if 0
-		auto const pokemon = message.next();
-		auto const action = message.next();
-		// Depending on what `action` is, there could be more
+		auto const party = party_from_player_id(message.next());
+		// There can be more to this message, but nothing we care about
 #endif
 	} else if (type == "faint") {
 		constexpr auto slot = 0;
@@ -549,12 +548,19 @@ void BattleParser::maybe_use_previous_move() {
 	}
 	auto const data = *maybe_data;
 	constexpr auto slot = 0;
+	// TODO: This should never be bounded::none, just 0.
 	auto const damage = BOUNDED_CONDITIONAL(
 		data.damage,
 		compute_damage(m_battle, data.party, data.move.executed, *data.damage),
 		bounded::none
 	);
-	m_battle.handle_use_move(data.party, slot, data.move, data.variable, data.miss, data.critical_hit, data.clear_status, damage);
+	
+	auto const other_pokemon = get_team(m_battle, data.party).pokemon();
+	auto const other_move = moved(other_pokemon) ?
+		OtherMove(last_used_move(other_pokemon).name()) :
+		OtherMove(FutureMove{(data.move.executed == Moves::Sucker_Punch) and damage and *damage != 0_bi});
+
+	m_battle.handle_use_move(data.party, slot, data.move, data.variable, data.miss, data.critical_hit, data.clear_status, damage, other_move);
 }
 
 Moves BattleParser::determine_action() {

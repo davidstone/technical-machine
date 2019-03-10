@@ -411,7 +411,7 @@ double generic_flag_branch(BaseFlag const flags, double const basic_probability,
 }
 
 template<typename Function>
-auto execute_move(Team const & user, ExecutedMove const move, Team const & other, bounded::optional<Moves> const other_move, Weather const weather, Function const continuation) -> double {
+auto execute_move(Team const & user, ExecutedMove const move, Team const & other, OtherMove const other_move, Weather const weather, Function const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	auto const variables = all_probabilities(move.executed, other.size());
@@ -452,7 +452,7 @@ auto execute_move(Team const & user, ExecutedMove const move, Team const & other
 }
 
 template<typename Function>
-auto score_executed_moves(Team const & user, Moves const selected_move, Team const & other, bounded::optional<Moves> const other_move, Weather const weather, Function const continuation) -> double {
+auto score_executed_moves(Team const & user, Moves const selected_move, Team const & other, OtherMove const other_move, Weather const weather, Function const continuation) -> double {
 	auto const score_move = [&](Moves const executed_move) {
 		return execute_move(user, ExecutedMove{selected_move, executed_move}, other, other_move, weather, continuation);
 	};
@@ -460,28 +460,50 @@ auto score_executed_moves(Team const & user, Moves const selected_move, Team con
 }
 
 
-auto use_move_branch_inner = [](Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
-	assert(first_move == Moves::Pass);
-	// TODO: properly handle used move here
-	return score_executed_moves(last, last_move, first, bounded::none, weather, [&](Team const & updated_last, Team const & updated_first, Weather const updated_weather) {
-		auto const teams = faster_pokemon(updated_first, updated_last, updated_weather);
-		return generic_flag_branch<ShedSkin>(
-			std::monostate{},
-			std::monostate{},
-			[&](bool const is_first) { return shed_skin_probability(is_first ? updated_first.pokemon() : updated_last.pokemon()); },
-			[&](ShedSkin const team_flag, ShedSkin const other_flag) {
-				return generic_flag_branch<LockInEnds>(
-					team_flag,
-					other_flag,
-					// TODO
-					[&](bool) { return true; },
-					[&](LockInEnds const team_lock_in, LockInEnds const other_lock_in) {
-						return end_of_turn_order_branch(updated_first, updated_last, teams, updated_weather, evaluate, depth, team_lock_in, other_lock_in, log);
-					}
-				);
-			}
-		);
-	});
+auto use_move_branch_inner(Moves const first_used_move) {
+	return [=](Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
+		assert(first_move == Moves::Pass);
+		return score_executed_moves(last, last_move, first, first_used_move, weather, [&](Team const & updated_last, Team const & updated_first, Weather const updated_weather) {
+			auto const teams = faster_pokemon(updated_first, updated_last, updated_weather);
+			return generic_flag_branch<ShedSkin>(
+				std::monostate{},
+				std::monostate{},
+				[&](bool const is_first) { return shed_skin_probability(is_first ? updated_first.pokemon() : updated_last.pokemon()); },
+				[&](ShedSkin const team_flag, ShedSkin const other_flag) {
+					return generic_flag_branch<LockInEnds>(
+						team_flag,
+						other_flag,
+						// TODO
+						[&](bool) { return true; },
+						[&](LockInEnds const team_lock_in, LockInEnds const other_lock_in) {
+							return end_of_turn_order_branch(updated_first, updated_last, teams, updated_weather, evaluate, depth, team_lock_in, other_lock_in, log);
+						}
+					);
+				}
+			);
+		});
+	};
+}
+
+struct OriginalPokemon {
+	explicit OriginalPokemon(Pokemon const & pokemon, Moves const other_move):
+		m_species(get_species(pokemon)),
+		m_hp(get_hp(pokemon).current()),
+		m_other_move(other_move)
+	{
+	}
+	
+	auto is_same_pokemon(Pokemon const & pokemon) const {
+		return get_species(pokemon) == m_species;
+	}
+	auto other_move() const {
+		return m_other_move;
+	}
+
+private:
+	Species m_species;
+	HP::current_type m_hp;
+	Moves m_other_move;
 };
 
 constexpr auto all_are_pass_or_switch(StaticVectorMove const legal_selections) {
@@ -490,21 +512,21 @@ constexpr auto all_are_pass_or_switch(StaticVectorMove const legal_selections) {
 		containers::all(legal_selections, is_switch);
 }
 
-auto use_move_branch_outer(Species const original_last_species, Moves const last_move) {
+auto use_move_branch_outer(OriginalPokemon const original_last_pokemon, Moves const last_move) {
 	return [=](Team const & first, Moves const first_move, Team const & last, Moves, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
-		return score_executed_moves(first, first_move, last, bounded::none, weather, [&](Team const & pre_updated_first, Team const & pre_updated_last, Weather const pre_updated_weather) {
-			// TODO: properly handle used move here
-			auto const current_last_species = get_species(last.pokemon());
-			auto const actual_last_move = original_last_species == current_last_species ? last_move : Moves::Pass;
-			return score_executed_moves(pre_updated_last, actual_last_move, pre_updated_first, bounded::none, pre_updated_weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
+		return score_executed_moves(first, first_move, last, FutureMove{is_damaging(last_move)}, weather, [&](Team const & pre_updated_first, Team const & pre_updated_last, Weather const pre_updated_weather) {
+			auto const is_same_pokemon = original_last_pokemon.is_same_pokemon(last.pokemon());
+			auto const actual_last_move = is_same_pokemon ? last_move : Moves::Pass;
+			auto const first_used_move = original_last_pokemon.other_move();
+			return score_executed_moves(pre_updated_last, actual_last_move, pre_updated_first, first_used_move, pre_updated_weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
 				auto const first_selections = StaticVectorMove({Moves::Pass});
 				auto const last_selections = legal_selections(updated_last, updated_first.pokemon(), weather);
 				assert(all_are_pass_or_switch(last_selections));
-				return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, evaluate, depth, log, use_move_branch_inner).move.score;
+				return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, evaluate, depth, log, use_move_branch_inner(first_used_move)).move.score;
 			});
 		});
 	};
-};
+}
 
 double use_move_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
 	// This complicated section of code is designed to handle U-turn and Baton
@@ -521,13 +543,15 @@ double use_move_branch(Team const & first, Moves const first_move, Team const & 
 	// move). To detect this case, we see if the Pokemon is the same before and
 	// after the move, and if so, the second Pokemon can only execute Pass.
 
-	auto const original_last_species = get_species(last.pokemon());
-	return score_executed_moves(first, first_move, last, bounded::none, weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
+	auto const last_pokemon = last.pokemon();
+	auto const original_last_pokemon = OriginalPokemon(last_pokemon, first_move);
+
+	return score_executed_moves(first, first_move, last, FutureMove{is_damaging(last_move)}, weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
 		auto const first_selections = legal_selections(updated_first, updated_last.pokemon(), weather);
 		assert(all_are_pass_or_switch(first_selections));
 		auto const last_selections = StaticVectorMove({Moves::Pass});
 		// TODO: Figure out first / last vs ai / foe
-		return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, evaluate, depth, log, use_move_branch_outer(original_last_species, last_move)).move.score;
+		return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, evaluate, depth, log, use_move_branch_outer(original_last_pokemon, last_move)).move.score;
 	});
 }
 

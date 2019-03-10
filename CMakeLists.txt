@@ -74,6 +74,7 @@ add_library(tm_common STATIC
 	source/tm/move/is_switch.cpp
 	source/tm/move/max_moves_per_pokemon.cpp
 	source/tm/move/move.cpp
+	source/tm/move/other_move.cpp
 	source/tm/move/power.cpp
 	source/tm/move/pp.cpp
 	source/tm/move/priority.cpp

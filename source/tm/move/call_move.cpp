@@ -1002,7 +1002,7 @@ auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_ty
 	}
 }
 
-constexpr auto move_fails(Moves const move, bool const user_damaged, Ability const other_ability) {
+constexpr auto move_fails(Moves const move, bool const user_damaged, Ability const other_ability, OtherMove const other_move) {
 	switch (move) {
 		case Moves::Bug_Buzz:
 		case Moves::Chatter:
@@ -1019,13 +1019,15 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 			return blocks_sound_moves(other_ability);
 		case Moves::Focus_Punch:
 			return user_damaged;
+		case Moves::Sucker_Punch:
+			return !other_move.future_move_is_damaging();
 		default:
 			return false;
 	}
 }
 
 
-auto use_move(Team & user, Moves const move, PP const pp, Team & other, bounded::optional<Moves> const other_move, Weather & weather, Variable const variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
+auto use_move(Team & user, Moves const move, PP const pp, Team & other, OtherMove const other_move, Weather & weather, Variable const variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	do_effects_before_moving(move, get_status(user.pokemon()), other);
 
 	auto const damage =
@@ -1055,7 +1057,7 @@ auto find_regular_move(Container const container, Moves const move_name) -> Move
 
 }	// namespace
 
-auto call_move(Team & user, ExecutedMove const move, Team & other, bounded::optional<Moves> const other_move, Weather & weather, Variable const variable, bool const missed, bool const clear_status, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
+auto call_move(Team & user, ExecutedMove const move, Team & other, OtherMove const other_move, Weather & weather, Variable const variable, bool const missed, bool const clear_status, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
 	if (move.selected == Moves::Pass) {
 		return;
 	}
@@ -1087,7 +1089,7 @@ auto call_move(Team & user, ExecutedMove const move, Team & other, bounded::opti
 	}
 
 	// TODO: What happens if we Sleep Talk Trump Card?
-	if (!missed and !move_fails(move.executed, damaged(user_pokemon), get_ability(other_pokemon))) {
+	if (!missed and !move_fails(move.executed, damaged(user_pokemon), get_ability(other_pokemon), other_move)) {
 		use_move(user, move.executed, found_move.pp(), other, other_move, weather, variable, critical_hit, known_damage);
 		user_pokemon.increment_move_use_counter(move.selected);
 	} else {

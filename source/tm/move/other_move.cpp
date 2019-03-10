@@ -15,21 +15,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-#include <tm/move/damage_type.hpp>
-#include <tm/move/move.hpp>
 #include <tm/move/other_move.hpp>
-
-#include <bounded/optional.hpp>
-
-namespace technicalmachine {
-
-struct Pokemon;
-struct Team;
-struct Variable;
-struct Weather;
-
-damage_type calculate_damage(Team const & attacker, Moves move, PP pp, Team const & defender, OtherMove defender_move, Weather weather, Variable variable, bool critical_hit);
-
-}	// namespace technicalmachine

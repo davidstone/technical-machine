@@ -39,14 +39,13 @@
 
 namespace technicalmachine {
 
-void Battle::handle_use_move(Party const party, uint8_t /*slot*/, ExecutedMove const move, Variable const variable, bool const miss, bool const critical_hit, bool const clear_status, bounded::optional<damage_type> const damage) {
+void Battle::handle_use_move(Party const party, uint8_t /*slot*/, ExecutedMove const move, Variable const variable, bool const miss, bool const critical_hit, bool const clear_status, bounded::optional<damage_type> const damage, OtherMove const other_move) {
 	auto & user = is_me(party) ? m_ai : m_foe;
 	auto & other = is_me(party) ? m_foe : m_ai;
 
 	add_seen_move(all_moves(user.pokemon()), move.selected);
 	// TODO: Add move.executed in some circumstances
 
-	constexpr auto other_move = bounded::none;
 	call_move(
 		user,
 		move,
