@@ -474,7 +474,7 @@ auto score_executed_moves(Team const & user, Moves const selected_move, Team con
 
 
 auto use_move_branch_inner(Moves const first_used_move) {
-	return [=](Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
+	return [=](Team const & first, Moves const first_move [[maybe_unused]], Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
 		assert(first_move == Moves::Pass);
 		return score_executed_moves(last, last_move, first, first_used_move, weather, [&](Team const & updated_last, Team const & updated_first, Weather const updated_weather) {
 			auto shed_skin_probability = [&](bool const is_first) {
@@ -523,7 +523,7 @@ private:
 	Moves m_other_move;
 };
 
-constexpr auto all_are_pass_or_switch(StaticVectorMove const legal_selections) {
+constexpr auto all_are_pass_or_switch [[maybe_unused]](StaticVectorMove const legal_selections) {
 	return
 		(size(legal_selections) == 1_bi and front(legal_selections) == Moves::Pass) or
 		containers::all(legal_selections, is_switch);
