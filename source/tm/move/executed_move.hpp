@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include <tm/variable.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -26,6 +28,9 @@ enum class Moves : std::uint16_t;
 struct ExecutedMove {
 	Moves selected;
 	Moves executed = selected;
+	Variable variable{0_bi};
+	bool critical_hit = false;
+	bool miss = false;
 };
 
 }	// namespace technicalmachine

@@ -26,9 +26,8 @@
 namespace technicalmachine {
 
 struct Team;
-struct Variable;
 struct Weather;
 
-auto call_move(Team & user, ExecutedMove move, Team & other, OtherMove other_move, Weather & weather, Variable variable, bool missed, bool clear_status, bool critical_hit, bounded::optional<damage_type> known_damage) -> void;
+auto call_move(Team & user, ExecutedMove move, Team & other, OtherMove other_move, Weather & weather, bool clear_status, bounded::optional<damage_type> known_damage) -> void;
 
 }	// namespace technicalmachine

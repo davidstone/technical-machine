@@ -410,8 +410,13 @@ double generic_flag_branch(BaseFlag const flags, double const basic_probability,
 	return average_score;
 }
 
+struct SelectedAndExecuted {
+	Moves selected;
+	Moves executed;
+};
+
 template<typename Function>
-auto execute_move(Team const & user, ExecutedMove const move, Team const & other, OtherMove const other_move, Weather const weather, Function const continuation) -> double {
+auto execute_move(Team const & user, SelectedAndExecuted const move, Team const & other, OtherMove const other_move, Weather const weather, Function const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	auto const variables = all_probabilities(move.executed, other.size());
@@ -436,7 +441,15 @@ auto execute_move(Team const & user, ExecutedMove const move, Team const & other
 								auto user_copy = user;
 								auto other_copy = other;
 								auto weather_copy = weather;
-								call_move(user_copy, move, other_copy, other_move, weather_copy, variable.variable, !flags.hits, flags.clear_status, flags.critical_hit, bounded::none);
+								call_move(
+									user_copy,
+									ExecutedMove{move.selected, move.executed, variable.variable, flags.critical_hit, !flags.hits},
+									other_copy,
+									other_move,
+									weather_copy,
+									flags.clear_status,
+									bounded::none
+								);
 								if (auto const won = Evaluate::win(user_copy, other_copy)) {
 									return *won;
 								}
@@ -454,7 +467,7 @@ auto execute_move(Team const & user, ExecutedMove const move, Team const & other
 template<typename Function>
 auto score_executed_moves(Team const & user, Moves const selected_move, Team const & other, OtherMove const other_move, Weather const weather, Function const continuation) -> double {
 	auto const score_move = [&](Moves const executed_move) {
-		return execute_move(user, ExecutedMove{selected_move, executed_move}, other, other_move, weather, continuation);
+		return execute_move(user, SelectedAndExecuted{selected_move, executed_move}, other, other_move, weather, continuation);
 	};
 	return average_transformed_sum(selected_move_to_executed_move(selected_move, user), score_move);
 }

@@ -560,7 +560,7 @@ void BattleParser::maybe_use_previous_move() {
 		OtherMove(other_pokemon.last_used_move().name()) :
 		OtherMove(FutureMove{(data.move.executed == Moves::Sucker_Punch) and damage and *damage != 0_bi});
 
-	m_battle.handle_use_move(data.party, slot, data.move, data.variable, data.miss, data.critical_hit, data.clear_status, damage, other_move);
+	m_battle.handle_use_move(data.party, slot, data.move, data.clear_status, damage, other_move);
 }
 
 Moves BattleParser::determine_action() {

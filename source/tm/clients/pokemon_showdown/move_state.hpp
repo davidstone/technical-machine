@@ -24,8 +24,6 @@
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 
-#include <tm/variable.hpp>
-
 #include <bounded/optional.hpp>
 
 #include <stdexcept>
@@ -42,11 +40,8 @@ struct MoveState {
 	struct Result {
 		Party party;
 		ExecutedMove move;
-		Variable variable;
 		bounded::optional<Damage> damage;
 		bool clear_status;
-		bool critical_hit;
-		bool miss;
 	};
 	
 	auto party() const -> bounded::optional<Party> {
@@ -95,11 +90,11 @@ struct MoveState {
 		if (!m_party or !m_move) {
 			throw_error();
 		}
-		m_variable.confuse();
+		m_move->variable.confuse();
 	}
 	void critical_hit(Party const party) {
 		validate(party);
-		m_critical_hit = true;
+		m_move->critical_hit = true;
 	}
 	void damage(Party const party, Damage const damage_) {
 		validate(party);
@@ -108,18 +103,18 @@ struct MoveState {
 	void flinch(Party const party) {
 		validate(party);
 		// TODO: Validate that the used move can cause a flinch
-		m_variable.set_flinch(true);
+		m_move->variable.set_flinch(true);
 	}
 	void miss(Party const party) {
 		validate(party);
-		m_miss = true;
+		m_move->miss = true;
 	}
 	void phaze_index(Party const party, Team const & phazed_team, Species const species) {
 		validate(party);
 		if (!is_phaze(m_move->executed)) {
 			throw std::runtime_error("We did not use a phazing move, but we were given phazing data");
 		}
-		m_variable.set_phaze_index(phazed_team, species);
+		m_move->variable.set_phaze_index(phazed_team, species);
 	}
 	void status(Party const party, Statuses const status) {
 		if (m_move and is_switch(m_move->executed)) {
@@ -133,7 +128,7 @@ struct MoveState {
 		} else {
 			validate(other(party));
 		}
-		m_variable.apply_status(m_move->executed, status);
+		m_move->variable.apply_status(m_move->executed, status);
 	}
 
 	auto complete() -> bounded::optional<Result> {
@@ -144,11 +139,8 @@ struct MoveState {
 		auto const result = Result{
 			*m_party,
 			*m_move,
-			m_variable,
 			m_damage,
-			m_clear_status,
-			m_critical_hit,
-			m_miss
+			m_clear_status
 		};
 		*this = {};
 		return result;
@@ -166,10 +158,7 @@ private:
 	bounded::optional<Party> m_party;
 	bounded::optional<ExecutedMove> m_move;
 	bounded::optional<Damage> m_damage;
-	Variable m_variable{0_bi};
 	bool m_clear_status = false;
-	bool m_critical_hit = false;
-	bool m_miss = false;
 };
 
 }	// namespace ps

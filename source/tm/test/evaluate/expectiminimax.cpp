@@ -253,16 +253,12 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		set_stat_ev(suicune, StatNames::SPD, EV(4_bi));
 	}
 
-	auto const variable = Variable{};
 	call_move(
 		defender,
 		ExecutedMove{Moves::Surf},
 		attacker,
 		FutureMove{false},
 		weather,
-		variable,
-		false,
-		false,
 		false,
 		bounded::none
 	);

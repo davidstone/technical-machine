@@ -41,7 +41,6 @@
 
 namespace technicalmachine {
 struct UsageStats;
-struct Variable;
 
 // In all of these functions, "slot" is useful only in NvN, which TM does not
 // yet support.
@@ -89,7 +88,7 @@ struct Battle {
 		}
 	}
 
-	void handle_use_move(Party user, uint8_t slot, ExecutedMove move, Variable variable, bool miss, bool critical_hit, bool clear_status, bounded::optional<damage_type> damage, OtherMove other_move);
+	void handle_use_move(Party user, uint8_t slot, ExecutedMove move, bool clear_status, bounded::optional<damage_type> damage, OtherMove other_move);
 	// This assumes Species Clause is in effect. This does not perform any
 	// switching, it just adds them to the team.
 	auto find_or_add_pokemon(Party const party, uint8_t slot, Species species, Level level, Gender gender) -> Moves;

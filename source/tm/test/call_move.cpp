@@ -22,7 +22,6 @@
 #include <tm/move/call_move.hpp>
 
 #include <tm/team.hpp>
-#include <tm/variable.hpp>
 #include <tm/weather.hpp>
 
 #include <iostream>
@@ -68,9 +67,6 @@ void test_baton_pass() {
 		defender,
 		FutureMove{false},
 		weather,
-		Variable(0_bi),
-		false,
-		false,
 		false,
 		bounded::none
 	);
@@ -84,9 +80,6 @@ void test_baton_pass() {
 		defender,
 		FutureMove{false},
 		weather,
-		Variable(0_bi),
-		false,
-		false,
 		false,
 		bounded::none
 	);
@@ -100,9 +93,6 @@ void test_baton_pass() {
 		defender,
 		FutureMove{false},
 		weather,
-		Variable(0_bi),
-		false,
-		false,
 		false,
 		bounded::none
 	);
@@ -145,9 +135,6 @@ void sleep_talk() {
 		defender,
 		FutureMove{false},
 		weather,
-		Variable(0_bi),
-		false,
-		false,
 		false,
 		bounded::none
 	);

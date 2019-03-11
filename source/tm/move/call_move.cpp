@@ -1057,7 +1057,7 @@ auto find_regular_move(Container const container, Moves const move_name) -> Move
 
 }	// namespace
 
-auto call_move(Team & user, ExecutedMove const move, Team & other, OtherMove const other_move, Weather & weather, Variable const variable, bool const missed, bool const clear_status, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
+auto call_move(Team & user, ExecutedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, bounded::optional<damage_type> const known_damage) -> void {
 	if (move.selected == Moves::Pass) {
 		return;
 	}
@@ -1089,8 +1089,8 @@ auto call_move(Team & user, ExecutedMove const move, Team & other, OtherMove con
 	}
 
 	// TODO: What happens if we Sleep Talk Trump Card?
-	if (!missed and !move_fails(move.executed, user_pokemon.damaged(), get_ability(other_pokemon), other_move)) {
-		use_move(user, move.executed, found_move.pp(), other, other_move, weather, variable, critical_hit, known_damage);
+	if (!move.miss and !move_fails(move.executed, user_pokemon.damaged(), get_ability(other_pokemon), other_move)) {
+		use_move(user, move.executed, found_move.pp(), other, other_move, weather, move.variable, move.critical_hit, known_damage);
 		user_pokemon.increment_move_use_counter(move.selected);
 	} else {
 		user_pokemon.unsuccessfully_use_move(move.selected);
