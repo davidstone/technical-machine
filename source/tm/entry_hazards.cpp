@@ -32,7 +32,7 @@ namespace {
 using namespace bounded::literal;
 
 auto removes_toxic_spikes(ActivePokemon const switcher) {
-	return is_type(switcher, Type::Poison, is_roosting(switcher));
+	return is_type(switcher, Type::Poison, switcher.is_roosting());
 }
 
 auto apply_toxic_spikes(EntryHazards const & hazards, MutableActivePokemon switcher, Weather const weather) {

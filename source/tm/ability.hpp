@@ -195,11 +195,6 @@ constexpr bool boosts_stab(Ability const ability) {
 	return ability == Ability::Adaptability;
 }
 
-constexpr bool is_loafing(Ability const ability, bool const loaf) {
-	return ability == Ability::Truant and loaf;
-}
-
-
 void activate_ability_on_switch(MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather);
 void weather_healing_ability(MutableActivePokemon pokemon, Weather weather);
 

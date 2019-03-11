@@ -41,7 +41,7 @@ auto would_switch_to_different_pokemon(PokemonCollection const & collection, Mov
 }
 
 auto is_blocked_from_switching(ActivePokemon const user, Pokemon const & other, Weather const weather) {
-	auto const block_attempted = blocks_switching(get_ability(other), user, weather) or trapped(user);
+	auto const block_attempted = blocks_switching(get_ability(other), user, weather) or user.trapped();
 	auto const result = block_attempted and !allows_switching(get_item(user));
 	return result;
 }
@@ -73,7 +73,7 @@ auto is_healing(Moves const name) {
 }
 
 auto imprison(Moves const move, ActivePokemon const other) {
-	return used_imprison(other) and containers::any_equal(regular_moves(other), move);
+	return other.used_imprison() and containers::any_equal(regular_moves(other), move);
 }
 
 // Things that both block selection and block execution in between sleep and confusion
@@ -83,8 +83,8 @@ auto block1 (ActivePokemon const user, Move const move, ActivePokemon const othe
 	}
 	return
 		(move.pp().is_empty()) or
-		(is_disabled(user, move.name())) or
-		(heal_block_is_active(user) and (is_healing(move.name()))) or
+		(user.is_disabled(move.name())) or
+		(user.heal_block_is_active() and (is_healing(move.name()))) or
 		(imprison(move.name(), other));
 }
 
@@ -109,43 +109,43 @@ auto is_blocked_by_gravity(Moves const move) {
 // Things that both block selection and block execution after flinching
 auto block2(ActivePokemon const user, Moves const move, Weather const weather) {
 	return !is_switch(move) and (
-		(is_taunted(user) and is_blocked_by_taunt(move)) or
+		(user.is_taunted() and is_blocked_by_taunt(move)) or
 		(weather.gravity() and is_blocked_by_gravity(move))
 	);
 }
 
 auto blocked_by_torment(ActivePokemon const user, Moves const move) {
-	return is_tormented(user) and last_used_move(user).name() == move and not is_switch(move) and move != Moves::Struggle;
+	return user.is_tormented() and user.last_used_move().name() == move and not is_switch(move) and move != Moves::Struggle;
 }
 
 auto is_locked_in(ActivePokemon const user) {
-	return is_encored(user) or is_locked_in_by_move(user) or is_choice_item(get_item(user));
+	return user.is_encored() or user.is_locked_in_by_move() or is_choice_item(get_item(user));
 }
 
 auto is_locked_in_to_different_move(ActivePokemon const user, Moves const move) {
 	if (not is_locked_in(user)) {
 		return false;
 	}
-	auto const last_move = last_used_move(user).name();
+	auto const last_move = user.last_used_move().name();
 	return not is_switch(last_move) and last_move != move;
 }
 
 auto is_blocked_due_to_lock_in(ActivePokemon const user, Moves const move) {
 	return !is_regular(move) ?
-		is_locked_in_by_move(user) :
+		user.is_locked_in_by_move() :
 		is_locked_in_to_different_move(user, move);
 }
 
 auto is_legal_selection(Team const & user, Move const move, ActivePokemon const other, Weather const weather, bool const found_selectable_move) {
 	auto const & pokemon = user.pokemon();
-	if (switch_decision_required(pokemon)) {
+	if (pokemon.switch_decision_required()) {
 		return is_switch(move.name()) and would_switch_to_different_pokemon(user.all_pokemon(), move.name());
 	}
 	auto const is_pass = move == Moves::Pass;
-	if (switch_decision_required(other)) {
+	if (other.switch_decision_required()) {
 		return is_pass;
 	}
-	if (moved(pokemon)) {
+	if (pokemon.moved()) {
 		return is_pass;
 	}
 	return
@@ -212,7 +212,7 @@ auto can_attempt_move_execution(ActivePokemon user, Move const move, ActivePokem
 	}
 
 	auto const blocked_due_to_status = is_blocked_due_to_status(user, move.name());
-	if (blocked_due_to_status or block1(user, move, other) or is_loafing(user)) {
+	if (blocked_due_to_status or block1(user, move, other) or user.is_loafing()) {
 		return false;
 	}
 	return true;
@@ -222,7 +222,7 @@ auto can_execute_move(ActivePokemon user, Move const move, Weather const weather
 	if (is_switch(move.name()) or move.name() == Moves::Hit_Self) {
 		return true;
 	}
-	return !flinched(user) and !block2(user, move.name(), weather) and !is_fully_paralyzed(user) and !is_recharging;
+	return !user.flinched() and !block2(user, move.name(), weather) and !user.is_fully_paralyzed() and !is_recharging;
 }
 
 }	// namespace technicalmachine

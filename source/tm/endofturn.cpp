@@ -84,14 +84,14 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	if (get_hp(pokemon) == 0_bi) {
 		return;
 	}
-	if (ingrained(pokemon)) {
+	if (pokemon.ingrained()) {
 		heal(pokemon, rational(1_bi, 16_bi));
 	}
-	if (aqua_ring_is_active(pokemon)) {
+	if (pokemon.aqua_ring_is_active()) {
 		heal(pokemon, rational(1_bi, 16_bi));
 	}
 	if (boosts_speed(get_ability(pokemon))) {
-		boost(stage(pokemon), StatNames::SPE, 1_bi);
+		boost(pokemon.stage(), StatNames::SPE, 1_bi);
 	} else if (shed_skin_activated) {
 		get_status(pokemon) = Status{};
 	}
@@ -107,7 +107,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 		default:
 			break;
 	}
-	if (leech_seeded(pokemon)) {
+	if (pokemon.leech_seeded()) {
 		auto const initial = get_hp(pokemon).current();
 		heal(pokemon, rational(-1_bi, 8_bi));
 		auto & foe_hp = get_hp(foe);
@@ -131,7 +131,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 		default:
 			break;
 	}
-	if (is_cursed(pokemon)) {
+	if (pokemon.is_cursed()) {
 		heal(pokemon, rational(-1_bi, 4_bi));
 	}
 	pokemon.partial_trap_damage();

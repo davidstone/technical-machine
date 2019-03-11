@@ -41,7 +41,7 @@ auto status_can_apply(Statuses const status, MutableActivePokemon user, MutableA
 		!weather.blocks_status(status) and
 		(
 			(status != Statuses::sleep and status != Statuses::sleep_rest) or
-			(!is_uproaring(user) and !is_uproaring(target))
+			(!user.is_uproaring() and !target.is_uproaring())
 		);
 }
 
@@ -156,7 +156,7 @@ auto Status::handle_switch(Ability const ability) -> void {
 
 auto Status::end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) -> void {
 	auto handle_sleep = [&]{
-		if (is_having_a_nightmare(pokemon)) {
+		if (pokemon.is_having_a_nightmare()) {
 			heal(pokemon, rational(-1_bi, 4_bi));
 		}
 		if (harms_sleepers(get_ability(other))) {

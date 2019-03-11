@@ -556,8 +556,8 @@ void BattleParser::maybe_use_previous_move() {
 	);
 	
 	auto const other_pokemon = get_team(m_battle, data.party).pokemon();
-	auto const other_move = moved(other_pokemon) ?
-		OtherMove(last_used_move(other_pokemon).name()) :
+	auto const other_move = other_pokemon.moved() ?
+		OtherMove(other_pokemon.last_used_move().name()) :
 		OtherMove(FutureMove{(data.move.executed == Moves::Sucker_Punch) and damage and *damage != 0_bi});
 
 	m_battle.handle_use_move(data.party, slot, data.move, data.variable, data.miss, data.critical_hit, data.clear_status, damage, other_move);

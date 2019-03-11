@@ -42,7 +42,7 @@ bool blocks_switching(Ability const ability, ActivePokemon const switcher, Weath
 		case Ability::Arena_Trap:
 			return grounded(switcher, weather);
 		case Ability::Magnet_Pull:
-			return is_type(switcher, Type::Steel, is_roosting(switcher));
+			return is_type(switcher, Type::Steel, switcher.is_roosting());
 		default:
 			return false;
 	}
@@ -122,7 +122,7 @@ auto ability_evasion_modifier(ActivePokemon const target, Weather const weather)
 		case Ability::Snow_Cloak:
 			return weather.hail() ? AbilityEvasionModifier(4_bi, 5_bi) : AbilityEvasionModifier(1_bi, 1_bi);
 		case Ability::Tangled_Feet:
-			return is_confused(target) ? AbilityEvasionModifier(4_bi, 5_bi) : AbilityEvasionModifier(1_bi, 1_bi);
+			return target.is_confused() ? AbilityEvasionModifier(4_bi, 5_bi) : AbilityEvasionModifier(1_bi, 1_bi);
 		default:
 			return AbilityEvasionModifier(1_bi, 1_bi);
 	}
@@ -203,7 +203,7 @@ void activate_ability_on_switch(MutableActivePokemon switcher, MutableActivePoke
 		case Ability::Download: {
 			auto const defense = calculate_defense(other, weather);
 			auto const special_defense = calculate_special_defense(other, weather);
-			boost(stage(switcher), defense >= special_defense ? StatNames::SPA : StatNames::ATK, 1_bi);
+			boost(switcher.stage(), defense >= special_defense ? StatNames::SPA : StatNames::ATK, 1_bi);
 			break;
 		}
 		case Ability::Drizzle:
@@ -215,7 +215,7 @@ void activate_ability_on_switch(MutableActivePokemon switcher, MutableActivePoke
 		case Ability::Forecast:	// TODO: fix this
 			break;
 		case Ability::Intimidate:
-			boost(stage(other), StatNames::ATK, -1_bi);
+			boost(other.stage(), StatNames::ATK, -1_bi);
 			break;
 		case Ability::Sand_Stream:
 			weather.activate_sand(Weather::permanent);

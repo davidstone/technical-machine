@@ -54,13 +54,13 @@ struct MaxTurns<EndOfTurnCounter<max_turns, operations...>> {
 
 auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const pokemon) {
 	using stage_type = decltype(Stage::number_of_stats * (std::declval<Stage::value_type>() * std::declval<Evaluate::value_type>()));
-	auto const substitute = technicalmachine::substitute(pokemon);
-	auto const magnet_rise = technicalmachine::magnet_rise(pokemon);
-	auto const & stage = technicalmachine::stage(pokemon);
+	auto const substitute = pokemon.substitute();
+	auto const magnet_rise = pokemon.magnet_rise();
+	auto const & stage = pokemon.stage();
 	return
-		(aqua_ring_is_active(pokemon) ? evaluate.aqua_ring() : 0_bi) +
-		(has_focused_energy(pokemon) ? evaluate.focus_energy() : 0_bi) +
-		(ingrained(pokemon) ? evaluate.ingrain() : 0_bi) +
+		(pokemon.aqua_ring_is_active() ? evaluate.aqua_ring() : 0_bi) +
+		(pokemon.has_focused_energy() ? evaluate.focus_energy() : 0_bi) +
+		(pokemon.ingrained() ? evaluate.ingrain() : 0_bi) +
 		(magnet_rise.is_active() ? evaluate.magnet_rise() * (bounded::constant<MaxTurns<MagnetRise>::value> - *magnet_rise.turns_active()) : 0_bi) +
 		(substitute ? (evaluate.substitute() + evaluate.substitute_hp() * substitute.hp() / get_hp(pokemon).max()) : 0_bi) +
 		std::inner_product(begin(stage), end(stage), begin(evaluate.stage()), static_cast<stage_type>(0_bi))
@@ -112,13 +112,13 @@ auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens con
 auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon) {
 	auto const has_baton_pass = containers::any_equal(regular_moves(pokemon), Moves::Baton_Pass);
 	return
-		BOUNDED_CONDITIONAL(is_cursed(pokemon), evaluate.curse(), 0_bi) +
-		BOUNDED_CONDITIONAL(used_imprison(pokemon), evaluate.imprison(), 0_bi) +
-		BOUNDED_CONDITIONAL(leech_seeded(pokemon), evaluate.leech_seed(), 0_bi) +
-		BOUNDED_CONDITIONAL(is_loafing(pokemon), evaluate.loaf(), 0_bi) +
-		BOUNDED_CONDITIONAL(fully_trapped(pokemon), evaluate.trapped(), 0_bi) +
-		BOUNDED_CONDITIONAL(is_having_a_nightmare(pokemon), evaluate.nightmare(), 0_bi) +
-		BOUNDED_CONDITIONAL(is_tormented(pokemon), evaluate.torment(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.is_cursed(), evaluate.curse(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.used_imprison(), evaluate.imprison(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.leech_seeded(), evaluate.leech_seed(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.is_loafing(), evaluate.loaf(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.fully_trapped(), evaluate.trapped(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.is_having_a_nightmare(), evaluate.nightmare(), 0_bi) +
+		BOUNDED_CONDITIONAL(pokemon.is_tormented(), evaluate.torment(), 0_bi) +
 		baton_passable_score(evaluate, pokemon) * BOUNDED_CONDITIONAL(has_baton_pass, 2_bi, 1_bi)
 	;
 }

@@ -99,7 +99,7 @@ auto ability_modifier(ActivePokemon const pokemon, Weather const weather) {
 				case Ability::Pure_Power:
 					return denominator * 2_bi;
 				case Ability::Slow_Start:
-					return BOUNDED_CONDITIONAL(slow_start_is_active(pokemon), 1_bi, denominator);
+					return BOUNDED_CONDITIONAL(pokemon.slow_start_is_active(), 1_bi, denominator);
 				default:
 					return denominator;
 				}
@@ -122,7 +122,7 @@ auto ability_modifier(ActivePokemon const pokemon, Weather const weather) {
 				case Ability::Quick_Feet:
 					return BOUNDED_CONDITIONAL(!is_clear(get_status(pokemon)), 3_bi, denominator);
 				case Ability::Slow_Start:
-					return BOUNDED_CONDITIONAL(slow_start_is_active(pokemon), 1_bi, denominator);
+					return BOUNDED_CONDITIONAL(pokemon.slow_start_is_active(), 1_bi, denominator);
 				default:
 					return denominator;
 				}
@@ -231,7 +231,7 @@ constexpr auto other_physical_stat(StatNames const stat) {
 auto calculate_initial_stat(StatNames const stat, ActivePokemon const pokemon) {
 	auto const level = get_level(pokemon);
 	auto const nature = get_nature(pokemon);
-	return !is_physical(stat) or !power_trick_is_active(pokemon) ?
+	return !is_physical(stat) or !pokemon.power_trick_is_active() ?
 		initial_stat(stat, get_stat(pokemon, stat), level, nature) :
 		initial_stat(other_physical_stat(stat), get_stat(pokemon, other_physical_stat(stat)), level, nature);
 }
@@ -239,7 +239,7 @@ auto calculate_initial_stat(StatNames const stat, ActivePokemon const pokemon) {
 template<StatNames stat>
 auto calculate_common_offensive_stat(ActivePokemon const pokemon, Weather const weather, bool const critical_hit) {
 	auto const attack = calculate_initial_stat(stat, pokemon) *
-		modifier<stat>(stage(pokemon), critical_hit) *
+		modifier<stat>(pokemon.stage(), critical_hit) *
 		ability_modifier<stat>(pokemon, weather) *
 		item_modifier<stat>(pokemon);
 	
@@ -290,7 +290,7 @@ auto calculate_defending_stat(Moves const move, ActivePokemon const defender, We
 auto calculate_defense(ActivePokemon const defender, Weather const weather, bool const critical_hit, bool is_self_KO) -> defense_type {
 	constexpr auto stat = StatNames::DEF;
 	auto const defense = calculate_initial_stat(stat, defender) *
-		modifier<stat>(stage(defender), critical_hit) *
+		modifier<stat>(defender.stage(), critical_hit) *
 		ability_modifier<stat>(defender, weather) *
 		item_modifier<stat>(defender);
 	
@@ -303,7 +303,7 @@ auto calculate_defense(ActivePokemon const defender, Weather const weather, bool
 namespace {
 
 auto special_defense_sandstorm_boost(ActivePokemon const defender, Weather const weather) {
-	return rational(BOUNDED_CONDITIONAL(is_type(defender, Type::Rock, is_roosting(defender)) and weather.sand(), 3_bi, 2_bi), 2_bi);
+	return rational(BOUNDED_CONDITIONAL(is_type(defender, Type::Rock, defender.is_roosting()) and weather.sand(), 3_bi, 2_bi), 2_bi);
 }
 
 }	// namespace
@@ -311,7 +311,7 @@ auto special_defense_sandstorm_boost(ActivePokemon const defender, Weather const
 auto calculate_special_defense(ActivePokemon const defender, Weather const weather, bool const critical_hit) -> special_defense_type {
 	constexpr auto stat = StatNames::SPD;
 	auto const defense = calculate_initial_stat(stat, defender) *	
-		modifier<stat>(stage(defender), critical_hit) *
+		modifier<stat>(defender.stage(), critical_hit) *
 		ability_modifier<stat>(defender, weather) *
 		item_modifier<stat>(defender) *
 		special_defense_sandstorm_boost(defender, weather);
@@ -341,7 +341,7 @@ auto calculate_speed(Team const & team, Weather const weather) -> speed_type {
 	constexpr auto stat = StatNames::SPE;
 	auto const & pokemon = team.pokemon();
 	auto const speed = calculate_initial_stat(stat, pokemon) *
-		modifier<stat>(stage(pokemon)) *
+		modifier<stat>(pokemon.stage()) *
 		ability_modifier<stat>(pokemon, weather) *
 		item_modifier<stat>(pokemon) /
 		paralysis_speed_divisor (pokemon) *

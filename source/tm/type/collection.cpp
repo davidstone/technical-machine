@@ -754,48 +754,33 @@ auto is_type(Pokemon const & pokemon, Type const type, bool const roosting) -> b
 
 namespace {
 
-// If it is not an ActivePokemon, these flags cannot apply
-template<typename T>
-constexpr auto ingrained(T const &) {
-	static_assert(!std::is_same<std::decay_t<T>, ActivePokemon>::value, "Not valid with ActivePokemon.");
-	return false;
-}
-template<typename T>
-constexpr auto is_roosting(T const &) {
-	static_assert(!std::is_same<std::decay_t<T>, ActivePokemon>::value, "Not valid with ActivePokemon.");
-	return false;
-}
-auto is_magnet_rising(ActivePokemon const pokemon) {
-	return magnet_rise(pokemon).is_active();
-}
-constexpr auto is_magnet_rising(Pokemon const &) {
-	return false;
+auto forced_grounded(Pokemon const & pokemon, Weather const weather) -> bool {
+	return weather.gravity() or grounds(get_item(pokemon));
 }
 
 template<typename PossiblyActivePokemon>
-auto forced_grounded(PossiblyActivePokemon const & pokemon, Weather const weather) -> bool {
-	return weather.gravity() or grounds(get_item(pokemon)) or ingrained(pokemon);
-}
-
-template<typename PossiblyActivePokemon>
-auto is_immune_to_ground(PossiblyActivePokemon const & pokemon) -> bool {
+auto is_permanently_immune_to_ground(PossiblyActivePokemon const & pokemon, bool const roosting) -> bool {
 	return
-		is_type(pokemon, Type::Flying, is_roosting(pokemon)) or
-		is_immune_to_ground(get_ability(pokemon)) or
-		is_magnet_rising(pokemon)
+		is_type(pokemon, Type::Flying, roosting) or
+		is_immune_to_ground(get_ability(pokemon));
 	;
 }
 
 }	// namespace
 
-auto grounded(MutableActivePokemon pokemon, Weather const weather) -> bool {
+auto grounded(MutableActivePokemon const pokemon, Weather const weather) -> bool {
 	return grounded(static_cast<ActivePokemon>(pokemon), weather);
 }
 auto grounded(ActivePokemon const pokemon, Weather const weather) -> bool {
-	return !is_immune_to_ground(pokemon) or forced_grounded(pokemon, weather);
+	return
+		!(is_permanently_immune_to_ground(pokemon, pokemon.is_roosting()) or pokemon.magnet_rise().is_active()) or
+		forced_grounded(pokemon, weather) or
+		pokemon.ingrained();
 }
 auto grounded(Pokemon const & pokemon, Weather const weather) -> bool {
-	return !is_immune_to_ground(pokemon) or forced_grounded(pokemon, weather);
+	return
+		!is_permanently_immune_to_ground(pokemon, false) or
+		forced_grounded(pokemon, weather);
 }
 
 
