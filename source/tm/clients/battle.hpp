@@ -21,10 +21,10 @@
 #include <tm/clients/party.hpp>
 
 #include <tm/move/damage_type.hpp>
-#include <tm/move/executed_move.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/other_move.hpp>
+#include <tm/move/used_move.hpp>
 
 #include <tm/pokemon/species_forward.hpp>
 
@@ -88,7 +88,7 @@ struct Battle {
 		}
 	}
 
-	void handle_use_move(Party user, uint8_t slot, ExecutedMove move, bool clear_status, bounded::optional<damage_type> damage, OtherMove other_move);
+	void handle_use_move(Party user, uint8_t slot, UsedMove move, bool clear_status, bounded::optional<damage_type> damage, OtherMove other_move);
 	// This assumes Species Clause is in effect. This does not perform any
 	// switching, it just adds them to the team.
 	auto find_or_add_pokemon(Party const party, uint8_t slot, Species species, Level level, Gender gender) -> Moves;

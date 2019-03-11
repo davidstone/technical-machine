@@ -63,7 +63,7 @@ void test_baton_pass() {
 	auto weather = Weather{};
 	call_move(
 		attacker,
-		ExecutedMove{Moves::Belly_Drum},
+		UsedMove{Moves::Belly_Drum},
 		defender,
 		FutureMove{false},
 		weather,
@@ -76,7 +76,7 @@ void test_baton_pass() {
 	}
 	call_move(
 		attacker,
-		ExecutedMove{Moves::Baton_Pass},
+		UsedMove{Moves::Baton_Pass},
 		defender,
 		FutureMove{false},
 		weather,
@@ -89,7 +89,7 @@ void test_baton_pass() {
 	}
 	call_move(
 		attacker,
-		ExecutedMove{Moves::Switch1},
+		UsedMove{Moves::Switch1},
 		defender,
 		FutureMove{false},
 		weather,
@@ -131,7 +131,7 @@ void sleep_talk() {
 
 	call_move(
 		attacker,
-		ExecutedMove{Moves::Sleep_Talk, Moves::Thunderbolt},
+		UsedMove{Moves::Sleep_Talk, Moves::Thunderbolt},
 		defender,
 		FutureMove{false},
 		weather,

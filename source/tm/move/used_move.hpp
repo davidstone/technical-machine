@@ -17,21 +17,26 @@
 
 #pragma once
 
-#include <tm/move/pp.hpp>
 #include <tm/move/executed_move.hpp>
 
-#include <tm/weather.hpp>
+#include <tm/variable.hpp>
 
-#include <bounded/integer.hpp>
+#include <cstdint>
 
 namespace technicalmachine {
 
 enum class Moves : std::uint16_t;
-struct Team;
 
-// If a damaging move does not have power (for instance, OHKO moves and
-// fixed-damage moves), the behavior of this function is undefined.
-using MovePower = bounded::integer<1, 1440>;
-auto move_power(Team const & attacker, ExecutedMove move, PP pp, Team const & defender, Weather weather) -> MovePower;
+struct UsedMove {
+	Moves selected;
+	Moves executed = selected;
+	Variable variable{0_bi};
+	bool critical_hit = false;
+	bool miss = false;
+	
+	constexpr operator ExecutedMove() const {
+		return ExecutedMove{executed, variable, critical_hit};
+	}
+};
 
 }	// namespace technicalmachine

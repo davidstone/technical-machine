@@ -39,7 +39,7 @@
 
 namespace technicalmachine {
 
-void Battle::handle_use_move(Party const party, uint8_t /*slot*/, ExecutedMove const move, bool const clear_status, bounded::optional<damage_type> const damage, OtherMove const other_move) {
+void Battle::handle_use_move(Party const party, uint8_t /*slot*/, UsedMove const move, bool const clear_status, bounded::optional<damage_type> const damage, OtherMove const other_move) {
 	auto & user = is_me(party) ? m_ai : m_foe;
 	auto & other = is_me(party) ? m_foe : m_ai;
 

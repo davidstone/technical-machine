@@ -91,6 +91,7 @@ struct Variable {
 		return m_value != 0_bi;
 	}
 	constexpr auto present_power() const {
+		assert(!present_heals());
 		return m_value;
 	}
 

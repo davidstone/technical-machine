@@ -15,23 +15,5 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include <tm/move/used_move.hpp>
 
-#include <tm/move/pp.hpp>
-#include <tm/move/executed_move.hpp>
-
-#include <tm/weather.hpp>
-
-#include <bounded/integer.hpp>
-
-namespace technicalmachine {
-
-enum class Moves : std::uint16_t;
-struct Team;
-
-// If a damaging move does not have power (for instance, OHKO moves and
-// fixed-damage moves), the behavior of this function is undefined.
-using MovePower = bounded::integer<1, 1440>;
-auto move_power(Team const & attacker, ExecutedMove move, PP pp, Team const & defender, Weather weather) -> MovePower;
-
-}	// namespace technicalmachine

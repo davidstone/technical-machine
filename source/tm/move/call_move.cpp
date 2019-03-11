@@ -29,7 +29,6 @@
 #include <tm/status.hpp>
 #include <tm/switch.hpp>
 #include <tm/team.hpp>
-#include <tm/variable.hpp>
 #include <tm/weather.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
@@ -193,9 +192,9 @@ auto will_be_recharge_turn(ActivePokemon const user, Moves const move, Weather c
 }
 
 
-auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather & weather, Variable const variable, damage_type const damage) {
+auto do_side_effects(Team & user_team, ExecutedMove const move, Team & other, Weather & weather, damage_type const damage) {
 	auto user = user_team.pokemon();
-	switch (move) {
+	switch (move.name) {
 		case Moves::Absorb:
 		case Moves::Drain_Punch:
 		case Moves::Giga_Drain:
@@ -212,7 +211,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Luster_Purge:
 		case Moves::Psychic:
 		case Moves::Shadow_Ball:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				boost(other.pokemon().stage(), StatNames::SPD, -1_bi);
 			}
 			break;
@@ -222,7 +221,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			boost(user.stage(), StatNames::DEF, 2_bi);
 			break;
 		case Moves::Acupressure:
-			boost(user.stage(), variable.acupressure_stat_boost(), 2_bi);
+			boost(user.stage(), move.variable.acupressure_stat_boost(), 2_bi);
 			break;
 		case Moves::Agility:
 		case Moves::Rock_Polish:
@@ -247,7 +246,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Twister:
 		case Moves::Waterfall:
 		case Moves::Zen_Headbutt:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				other.pokemon().flinch();
 			}
 			break;
@@ -257,7 +256,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::AncientPower:
 		case Moves::Ominous_Wind:
 		case Moves::Silver_Wind:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				boost_regular(user.stage(), 1_bi);
 			}
 			break;
@@ -265,7 +264,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			user.activate_aqua_ring();
 			break;
 		case Moves::Aurora_Beam:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				boost(other.pokemon().stage(), StatNames::ATK, -1_bi);
 			}
 			break;
@@ -315,7 +314,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Heat_Wave:
 		case Moves::Lava_Plume:
 		case Moves::Sacred_Fire:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				apply(Statuses::burn, user, other.pokemon(), weather);
 			}
 			break;
@@ -323,7 +322,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Ice_Beam:
 		case Moves::Ice_Punch:
 		case Moves::Powder_Snow:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				apply(Statuses::freeze, user, other.pokemon(), weather);
 			}
 			break;
@@ -343,12 +342,12 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Thunderbolt:
 		case Moves::ThunderPunch:
 		case Moves::ThunderShock:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				apply(Statuses::paralysis, user, other.pokemon(), weather);
 			}
 			break;
 		case Moves::Bounce:
-			if (user.bounce() and variable.effect_activates()) {
+			if (user.bounce() and move.variable.effect_activates()) {
 				apply(Statuses::paralysis, user, other.pokemon(), weather);
 			}
 			break;
@@ -360,7 +359,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Bubble:
 		case Moves::BubbleBeam:
 		case Moves::Constrict:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				boost(other.pokemon().stage(), StatNames::SPE, -1_bi);
 			}
 			break;
@@ -385,7 +384,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			boost(user.stage(), StatNames::SPD, 1_bi);
 			break;
 		case Moves::Charge_Beam:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				boost(user.stage(), StatNames::SPA, 1_bi);
 			}
 			break;
@@ -394,7 +393,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			boost(other.pokemon().stage(), StatNames::ATK, -2_bi);
 			break;
 		case Moves::Chatter:
-			if (can_confuse_with_chatter(get_species(user)) and variable.effect_activates()) {
+			if (can_confuse_with_chatter(get_species(user)) and move.variable.effect_activates()) {
 				other.pokemon().confuse();
 			}
 			break;
@@ -414,7 +413,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Rock_Climb:
 		case Moves::Signal_Beam:
 		case Moves::Water_Pulse:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				other.pokemon().confuse();
 			}
 			break;
@@ -430,7 +429,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Crush_Claw:
 		case Moves::Iron_Tail:
 		case Moves::Rock_Smash:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				boost(other.pokemon().stage(), StatNames::DEF, -1_bi);
 			}
 			break;
@@ -457,7 +456,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Sludge:
 		case Moves::Sludge_Bomb:
 		case Moves::Smog:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				apply(Statuses::poison, user, other.pokemon(), weather);
 			}
 			break;
@@ -540,10 +539,10 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			other.pokemon().break_protect();
 			break;
 		case Moves::Fire_Fang:
-			variable.fang_side_effects(user, other.pokemon(), weather, Statuses::burn);
+			move.variable.fang_side_effects(user, other.pokemon(), weather, Statuses::burn);
 			break;
 		case Moves::Flare_Blitz:
-			recoil_status(user, other.pokemon(), weather, damage, variable, Statuses::burn);
+			recoil_status(user, other.pokemon(), weather, damage, move.variable, Statuses::burn);
 			break;
 		case Moves::Flash:
 		case Moves::Kinesis:
@@ -636,7 +635,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Metal_Claw:
 		case Moves::Meditate:
 		case Moves::Meteor_Mash:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				boost(user.stage(), StatNames::ATK, 1_bi);
 			}
 			break;
@@ -644,7 +643,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Rollout:
 			break;
 		case Moves::Ice_Fang:
-			variable.fang_side_effects(user, other.pokemon(), weather, Statuses::freeze);
+			move.variable.fang_side_effects(user, other.pokemon(), weather, Statuses::freeze);
 			break;
 		case Moves::Icy_Wind:
 		case Moves::Mud_Shot:
@@ -698,7 +697,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Mud_Bomb:
 		case Moves::Muddy_Water:
 		case Moves::Octazooka:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				boost(other.pokemon().stage(), StatNames::ACC, -1_bi);
 			}
 			break;
@@ -706,7 +705,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			user_team.screens.activate_mist();
 			break;
 		case Moves::Mist_Ball:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				boost(other.pokemon().stage(), StatNames::SPA, -1_bi);
 			}
 			break;
@@ -751,7 +750,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			other.pokemon().activate_perish_song();
 			break;
 		case Moves::Poison_Fang:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				apply(Statuses::poison_toxic, user, other.pokemon(), weather);
 			}
 			break;
@@ -766,7 +765,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			user.activate_power_trick();
 			break;
 		case Moves::Present:
-			if (variable.present_heals()) {
+			if (move.variable.present_heals()) {
 				get_hp(other.pokemon()) += 80_bi;
 			}
 			break;
@@ -784,7 +783,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			weather.activate_rain(extends_rain(get_item(user)));
 			break;
 		case Moves::Rapid_Spin:
-			clear_field(user_team, move, other.pokemon());
+			clear_field(user_team, move.name, other.pokemon());
 			break;
 		case Moves::Razor_Wind:	// Fix
 			break;
@@ -801,7 +800,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			break;
 		case Moves::Roar:
 		case Moves::Whirlwind:
-			phaze(user_team, other, weather, variable);
+			phaze(user_team, other, weather, move.variable);
 			break;
 		case Moves::Role_Play:		// Fix
 			break;
@@ -819,7 +818,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			boost(other.pokemon().stage(), StatNames::DEF, -2_bi);
 			break;
 		case Moves::Seed_Flare:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				boost(other.pokemon().stage(), StatNames::SPD, -2_bi);
 			}
 			break;
@@ -836,7 +835,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Skull_Bash: // Fix
 			break;
 		case Moves::Sky_Attack:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				other.pokemon().flinch();
 			}
 			break;
@@ -849,7 +848,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			break;
 		case Moves::SolarBeam:
 			// TODO: Support Power Herb
-			if (will_be_recharge_turn(user, move, weather)) {
+			if (will_be_recharge_turn(user, move.name, weather)) {
 				user.use_charge_up_move();
 			}
 			break;
@@ -865,7 +864,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			other.entry_hazards.add_stealth_rock();
 			break;
 		case Moves::Steel_Wing:
-			if (variable.effect_activates()) {
+			if (move.variable.effect_activates()) {
 				boost(user.stage(), StatNames::DEF, 1_bi);
 			}
 			break;
@@ -903,7 +902,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Switch3:
 		case Moves::Switch4:
 		case Moves::Switch5:
-			switch_pokemon(user_team, other, weather, to_replacement(move));
+			switch_pokemon(user_team, other, weather, to_replacement(move.name));
 			break;
 		case Moves::Switcheroo:
 		case Moves::Trick:
@@ -919,7 +918,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			other.pokemon().taunt();
 			break;
 		case Moves::Thunder_Fang:
-			variable.fang_side_effects(user, other.pokemon(), weather, Statuses::paralysis);
+			move.variable.fang_side_effects(user, other.pokemon(), weather, Statuses::paralysis);
 			break;
 		case Moves::Tickle:
 			boost_physical(other.pokemon().stage(), -1_bi);
@@ -936,7 +935,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 		case Moves::Transform:		// Fix
 			break;
 		case Moves::Tri_Attack:
-			if (auto const status = variable.tri_attack_status(); status != Statuses::clear) {
+			if (auto const status = move.variable.tri_attack_status(); status != Statuses::clear) {
 				apply(status, user, other.pokemon(), weather);
 			}
 			break;
@@ -952,7 +951,7 @@ auto do_side_effects(Team & user_team, Moves const move, Team & other, Weather &
 			user.use_uproar();
 			break;
 		case Moves::Volt_Tackle:
-			recoil_status(user, other.pokemon(), weather, damage, variable, Statuses::paralysis);
+			recoil_status(user, other.pokemon(), weather, damage, move.variable, Statuses::paralysis);
 			break;
 		case Moves::Wake_Up_Slap:
 			if (is_sleeping(get_status(other.pokemon()))) {
@@ -1027,19 +1026,19 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 }
 
 
-auto use_move(Team & user, Moves const move, PP const pp, Team & other, OtherMove const other_move, Weather & weather, Variable const variable, bool const critical_hit, bounded::optional<damage_type> const known_damage) -> void {
-	do_effects_before_moving(move, get_status(user.pokemon()), other);
+auto use_move(Team & user, ExecutedMove const move, PP const pp, Team & other, OtherMove const other_move, Weather & weather, bounded::optional<damage_type> const known_damage) -> void {
+	do_effects_before_moving(move.name, get_status(user.pokemon()), other);
 
 	auto const damage =
 		known_damage ? *known_damage :
-		will_be_recharge_turn(user.pokemon(), move, weather) ? 0_bi :
-		is_damaging(move) ? calculate_damage(user, move, pp, other, other_move, weather, variable, critical_hit) :
+		will_be_recharge_turn(user.pokemon(), move.name, weather) ? 0_bi :
+		is_damaging(move.name) ? calculate_damage(user, move, pp, other, other_move, weather) :
 		0_bi;
 
 	if (damage != 0_bi) {
 		do_damage(user.pokemon(), other.pokemon(), damage);
 	}
-	do_side_effects(user, move, other, weather, variable, damage);
+	do_side_effects(user, move, other, weather, damage);
 }
 
 auto find_move(MoveContainer const container, Moves const move_name) -> Move {
@@ -1057,7 +1056,7 @@ auto find_regular_move(Container const container, Moves const move_name) -> Move
 
 }	// namespace
 
-auto call_move(Team & user, ExecutedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, bounded::optional<damage_type> const known_damage) -> void {
+auto call_move(Team & user, UsedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, bounded::optional<damage_type> const known_damage) -> void {
 	if (move.selected == Moves::Pass) {
 		return;
 	}
@@ -1090,7 +1089,7 @@ auto call_move(Team & user, ExecutedMove const move, Team & other, OtherMove con
 
 	// TODO: What happens if we Sleep Talk Trump Card?
 	if (!move.miss and !move_fails(move.executed, user_pokemon.damaged(), get_ability(other_pokemon), other_move)) {
-		use_move(user, move.executed, found_move.pp(), other, other_move, weather, move.variable, move.critical_hit, known_damage);
+		use_move(user, move, found_move.pp(), other, other_move, weather, known_damage);
 		user_pokemon.increment_move_use_counter(move.selected);
 	} else {
 		user_pokemon.unsuccessfully_use_move(move.selected);

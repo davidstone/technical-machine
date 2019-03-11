@@ -18,18 +18,16 @@
 #pragma once
 
 #include <tm/move/damage_type.hpp>
-#include <tm/move/move.hpp>
+#include <tm/move/executed_move.hpp>
 #include <tm/move/other_move.hpp>
-
-#include <bounded/optional.hpp>
+#include <tm/move/pp.hpp>
 
 namespace technicalmachine {
 
 struct Pokemon;
 struct Team;
-struct Variable;
 struct Weather;
 
-damage_type calculate_damage(Team const & attacker, Moves move, PP pp, Team const & defender, OtherMove defender_move, Weather weather, Variable variable, bool critical_hit);
+auto calculate_damage(Team const & attacker, ExecutedMove move, PP pp, Team const & defender, OtherMove defender_move, Weather weather) -> damage_type;
 
 }	// namespace technicalmachine

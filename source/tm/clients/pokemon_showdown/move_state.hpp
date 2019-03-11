@@ -20,9 +20,9 @@
 #include <tm/clients/party.hpp>
 
 #include <tm/move/damage_type.hpp>
-#include <tm/move/executed_move.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
+#include <tm/move/used_move.hpp>
 
 #include <bounded/optional.hpp>
 
@@ -39,7 +39,7 @@ struct MoveState {
 	};
 	struct Result {
 		Party party;
-		ExecutedMove move;
+		UsedMove move;
 		bounded::optional<Damage> damage;
 		bool clear_status;
 	};
@@ -156,7 +156,7 @@ private:
 		throw std::runtime_error("Received battle messages out of order");
 	}
 	bounded::optional<Party> m_party;
-	bounded::optional<ExecutedMove> m_move;
+	bounded::optional<UsedMove> m_move;
 	bounded::optional<Damage> m_damage;
 	bool m_clear_status = false;
 };

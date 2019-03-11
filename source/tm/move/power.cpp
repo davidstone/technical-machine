@@ -28,7 +28,6 @@
 #include <tm/rational.hpp>
 #include <tm/status.hpp>
 #include <tm/team.hpp>
-#include <tm/variable.hpp>
 #include <tm/weather.hpp>
 
 #include <tm/stat/calculate.hpp>
@@ -52,10 +51,10 @@ using namespace bounded::literal;
 
 auto power_of_mass_based_moves(Species species) -> bounded::integer<20, 120>;
 
-auto variable_adjusted_base_power(Team const & attacker_team, Moves const move, PP const pp, Team const & defender_team, Weather const weather, Variable const variable) -> VariableAdjustedBasePower {
+auto variable_adjusted_base_power(Team const & attacker_team, ExecutedMove const move, PP const pp, Team const & defender_team, Weather const weather) -> VariableAdjustedBasePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
-	switch (move) {
+	switch (move.name) {
 		case Moves::Crush_Grip:
 		case Moves::Wring_Out:
 			return bounded::integer<1, 121>(120_bi * hp_ratio(defender) + 1_bi, bounded::non_check);
@@ -112,12 +111,11 @@ auto variable_adjusted_base_power(Team const & attacker_team, Moves const move, 
 			return result;
 		}
 		case Moves::Magnitude:
-			return variable.magnitude_power();
+			return move.variable.magnitude_power();
 		case Moves::Natural_Gift:
 			return berry_power(get_item(attacker));
 		case Moves::Present:
-			assert(!variable.present_heals());
-			return variable.present_power();
+			return move.variable.present_power();
 		case Moves::Punishment: {
 			auto is_positive = [](auto const value) { return value > 0_bi; };
 			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::accumulate(containers::filter(defender.stage(), is_positive)));
@@ -132,7 +130,7 @@ auto variable_adjusted_base_power(Team const & attacker_team, Moves const move, 
 		case Moves::Trump_Card:
 			return pp.trump_card_power();
 		default:
-			return *base_power(move);
+			return *base_power(move.name);
 	}
 }
 
@@ -277,18 +275,18 @@ auto defender_ability_modifier(Pokemon const & attacker, Moves const move, Abili
 
 }	// namespace
 
-auto move_power(Team const & attacker_team, Moves const move, PP const pp, Team const & defender_team, Weather const weather, Variable variable) -> MovePower {
+auto move_power(Team const & attacker_team, ExecutedMove const move, PP const pp, Team const & defender_team, Weather const weather) -> MovePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
-	auto const base_power = variable_adjusted_base_power(attacker_team, move, pp, defender_team, weather, variable);
+	auto const base_power = variable_adjusted_base_power(attacker_team, move, pp, defender_team, weather);
 	return static_cast<MovePower>(bounded::max(1_bi,
 		base_power *
-		BOUNDED_CONDITIONAL(doubling(attacker, move, defender, weather), 2_bi, 1_bi) *
-		item_modifier(attacker, move) *
-		BOUNDED_CONDITIONAL(attacker.charge_boosted(move), 2_bi, 1_bi) /
-		BOUNDED_CONDITIONAL(defender.sport_is_active(move), 2_bi, 1_bi) *
-		attacker_ability_power_modifier(attacker, move, defender, base_power) *
-		defender_ability_modifier(attacker, move, get_ability(defender))
+		BOUNDED_CONDITIONAL(doubling(attacker, move.name, defender, weather), 2_bi, 1_bi) *
+		item_modifier(attacker, move.name) *
+		BOUNDED_CONDITIONAL(attacker.charge_boosted(move.name), 2_bi, 1_bi) /
+		BOUNDED_CONDITIONAL(defender.sport_is_active(move.name), 2_bi, 1_bi) *
+		attacker_ability_power_modifier(attacker, move.name, defender, base_power) *
+		defender_ability_modifier(attacker, move.name, get_ability(defender))
 	));
 }
 

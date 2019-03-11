@@ -18,8 +18,8 @@
 #pragma once
 
 #include <tm/move/damage_type.hpp>
-#include <tm/move/executed_move.hpp>
 #include <tm/move/other_move.hpp>
+#include <tm/move/used_move.hpp>
 
 #include <bounded/optional.hpp>
 
@@ -28,6 +28,6 @@ namespace technicalmachine {
 struct Team;
 struct Weather;
 
-auto call_move(Team & user, ExecutedMove move, Team & other, OtherMove other_move, Weather & weather, bool clear_status, bounded::optional<damage_type> known_damage) -> void;
+auto call_move(Team & user, UsedMove move, Team & other, OtherMove other_move, Weather & weather, bool clear_status, bounded::optional<damage_type> known_damage) -> void;
 
 }	// namespace technicalmachine

@@ -443,7 +443,7 @@ auto execute_move(Team const & user, SelectedAndExecuted const move, Team const 
 								auto weather_copy = weather;
 								call_move(
 									user_copy,
-									ExecutedMove{move.selected, move.executed, variable.variable, flags.critical_hit, !flags.hits},
+									UsedMove{move.selected, move.executed, variable.variable, flags.critical_hit, !flags.hits},
 									other_copy,
 									other_move,
 									weather_copy,

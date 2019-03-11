@@ -86,6 +86,8 @@ Team max_damage_special_defender() {
 	return defender;
 }
 
+constexpr auto critical_hit = true;
+
 void physical_power_test() {
 	std::cout << "\t\tRunning physical power tests.\n";
 	constexpr auto max_power = 1440_bi;
@@ -94,11 +96,10 @@ void physical_power_test() {
 
 	auto const power = move_power(
 		attacker,
-		max_damage_physical_move.name(),
+		ExecutedMove{max_damage_physical_move.name(), Variable{}, critical_hit},
 		max_damage_physical_move.pp(),
 		max_damage_physical_defender(),
-		Weather{},
-		Variable(0_bi)
+		Weather{}
 	);
 	check_equal(power, max_power);
 }
@@ -116,11 +117,10 @@ void special_power_test() {
 
 	auto const power = move_power(
 		attacker,
-		move.name(),
+		ExecutedMove{move.name(), Variable{}, critical_hit},
 		move.pp(),
 		defender,
-		Weather{},
-		Variable(0_bi)
+		Weather{}
 	);
 	check_equal(power, max_power);
 }
@@ -130,8 +130,6 @@ void power_test() {
 	physical_power_test();
 	special_power_test();
 }
-
-constexpr auto critical_hit = true;
 
 void physical_damage_test() {
 	std::cout << "\t\tRunning max physical damage tests.\n";
@@ -151,13 +149,11 @@ void physical_damage_test() {
 	check_equal(
 		calculate_damage(
 			attacker,
-			max_damage_physical_move.name(),
+			ExecutedMove{max_damage_physical_move.name(), Variable{}, critical_hit},
 			max_damage_physical_move.pp(),
 			defender,
 			FutureMove{false},
-			weather,
-			Variable(0_bi),
-			critical_hit
+			weather
 		),
 		max_damage
 	);
@@ -188,13 +184,11 @@ void special_damage_test() {
 	check_equal(
 		calculate_damage(
 			attacker,
-			move.name(),
+			ExecutedMove{move.name(), Variable{}, critical_hit},
 			move.pp(),
 			defender,
 			FutureMove{false},
-			weather,
-			Variable(0_bi),
-			critical_hit
+			weather
 		),
 		max_damage
 	);

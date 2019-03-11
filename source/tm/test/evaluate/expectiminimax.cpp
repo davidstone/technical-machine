@@ -255,7 +255,7 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 
 	call_move(
 		defender,
-		ExecutedMove{Moves::Surf},
+		UsedMove{Moves::Surf},
 		attacker,
 		FutureMove{false},
 		weather,

@@ -26,11 +26,9 @@ namespace technicalmachine {
 enum class Moves : std::uint16_t;
 
 struct ExecutedMove {
-	Moves selected;
-	Moves executed = selected;
-	Variable variable{0_bi};
-	bool critical_hit = false;
-	bool miss = false;
+	Moves name;
+	Variable variable;
+	bool critical_hit;
 };
 
 }	// namespace technicalmachine
