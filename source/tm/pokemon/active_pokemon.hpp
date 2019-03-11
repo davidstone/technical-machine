@@ -592,10 +592,6 @@ inline auto substitute(ActivePokemon const pokemon) -> Substitute const & {
 }
 
 
-inline auto shed_skin_probability(ActivePokemon const pokemon) {
-	return can_clear_status(get_ability(pokemon), get_status(pokemon)) ? 0.3 : 0.0;
-}
-
 auto has_switched(ActivePokemon const pokemon) -> bool;
 
 inline auto aqua_ring_is_active(ActivePokemon const pokemon) -> bool {

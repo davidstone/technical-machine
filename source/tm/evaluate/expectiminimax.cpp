@@ -464,11 +464,15 @@ auto use_move_branch_inner(Moves const first_used_move) {
 	return [=](Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
 		assert(first_move == Moves::Pass);
 		return score_executed_moves(last, last_move, first, first_used_move, weather, [&](Team const & updated_last, Team const & updated_first, Weather const updated_weather) {
+			auto shed_skin_probability = [&](bool const is_first) {
+				Pokemon const & pokemon = (is_first ? updated_first : updated_last).pokemon();
+				return can_clear_status(get_ability(pokemon), get_status(pokemon)) ? 0.3 : 0.0;
+			};
 			auto const teams = faster_pokemon(updated_first, updated_last, updated_weather);
 			return generic_flag_branch<ShedSkin>(
 				std::monostate{},
 				std::monostate{},
-				[&](bool const is_first) { return shed_skin_probability(is_first ? updated_first.pokemon() : updated_last.pokemon()); },
+				shed_skin_probability,
 				[&](ShedSkin const team_flag, ShedSkin const other_flag) {
 					return generic_flag_branch<LockInEnds>(
 						team_flag,
