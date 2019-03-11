@@ -36,6 +36,7 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Switch4: return none;
 		case Moves::Switch5: return none;
 		case Moves::Hit_Self: return none;
+		case Moves::Flash_Fire: return none;
 		case Moves::Pound: return 100_bi;
 		case Moves::Karate_Chop: return 100_bi;
 		case Moves::DoubleSlap: return 85_bi;

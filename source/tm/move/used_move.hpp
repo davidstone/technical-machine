@@ -17,8 +17,6 @@
 
 #pragma once
 
-#include <tm/move/executed_move.hpp>
-
 #include <tm/variable.hpp>
 
 #include <cstdint>
@@ -33,10 +31,6 @@ struct UsedMove {
 	Variable variable{0_bi};
 	bool critical_hit = false;
 	bool miss = false;
-	
-	constexpr operator ExecutedMove() const {
-		return ExecutedMove{executed, variable, critical_hit};
-	}
 };
 
 }	// namespace technicalmachine

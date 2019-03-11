@@ -55,6 +55,7 @@ auto is_regular(Moves const move) -> bool {
 		case Moves::Pass:
 		case Moves::Hit_Self:
 		case Moves::Struggle:
+		case Moves::Flash_Fire:
 			return false;
 		default:
 			return !is_switch(move);

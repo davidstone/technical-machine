@@ -91,6 +91,7 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Switch4: return Type::Typeless;
 		case Moves::Switch5: return Type::Typeless;
 		case Moves::Hit_Self: return Type::Typeless;
+		case Moves::Flash_Fire: return Type::Typeless;
 		case Moves::Pound: return Type::Normal;
 		case Moves::Karate_Chop: return Type::Fighting;
 		case Moves::DoubleSlap: return Type::Normal;

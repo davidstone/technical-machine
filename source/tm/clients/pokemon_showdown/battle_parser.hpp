@@ -86,6 +86,7 @@ private:
 	void send_move(Moves const move);
 	void send_random_move();
 	void send_message(std::string_view message);
+	void handle_u_turn(Party const party);
 
 	UsageStats const & m_usage_stats;
 		

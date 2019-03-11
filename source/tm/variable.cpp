@@ -237,6 +237,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Flame_Burst:
 		case Moves::Flame_Charge:
 		case Moves::Flash:
+		case Moves::Flash_Fire:
 		case Moves::Flatter:
 		case Moves::Fling:
 		case Moves::Fly:

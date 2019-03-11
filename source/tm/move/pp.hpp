@@ -103,6 +103,7 @@ private:
 			case Moves::Switch4: return none;
 			case Moves::Switch5: return none;
 			case Moves::Hit_Self: return none;
+			case Moves::Flash_Fire: return none;
 			case Moves::Pound: return 35_bi;
 			case Moves::Karate_Chop: return 25_bi;
 			case Moves::DoubleSlap: return 10_bi;

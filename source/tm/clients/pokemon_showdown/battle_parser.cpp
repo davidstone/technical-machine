@@ -113,31 +113,36 @@ struct MainEffect{};
 struct FromConfusion{};
 struct FromMiscellaneous{};
 
-using HPChangeSource = bounded::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromMiscellaneous>;
+using EffectSource = bounded::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromMiscellaneous>;
+
+auto parse_effect_source(std::string_view const type, std::string_view const source) {
+	return
+		(type == "") ? EffectSource(MainEffect{}) :
+		(type == "item") ? EffectSource(from_string<Item>(source)) :
+		(type == "ability") ? EffectSource(from_string<Ability>(source)) :
+		(type == "move") ? EffectSource(FromMove{}) :
+		(type == "confusion") ? EffectSource(FromConfusion{}) :
+		(
+			type == "brn" or
+			type == "psn" or
+			type == "tox" or
+			type == "drain" or
+			type == "Leech Seed" or
+			type == "Recoil" or
+			type == "Spikes" or
+			type == "Stealth Rock" or
+			type == "Hail" or
+			type == "Sandstorm" or
+			type == "Substitute"
+		) ? EffectSource(FromMiscellaneous{}) :
+		throw std::runtime_error("Unhandled effect source type: " + std::string(type));
+}
+
 auto parse_hp_change_source(InMessage message) {
-	using Source = HPChangeSource;
 	// "[from]" or nothing
 	auto const from [[maybe_unused]] = message.next(' ');
-	auto const [source_type, source] = split(message.next(), ':');
-	return
-		(source_type == "") ? Source(MainEffect{}) :
-		(source_type == "item") ? Source(from_string<Item>(source)) :
-		(source_type == "ability") ? Source(from_string<Ability>(source)) :
-		(source_type == "move") ? Source(FromMove{}) :
-		(source_type == "confusion") ? Source(FromConfusion{}) :
-		(
-			source_type == "brn" or
-			source_type == "psn" or
-			source_type == "tox" or
-			source_type == "drain" or
-			source_type == "Leech Seed" or
-			source_type == "Recoil" or
-			source_type == "Spikes" or
-			source_type == "Stealth Rock" or
-			source_type == "Hail" or
-			source_type == "Sandstorm"
-		) ? Source(FromMiscellaneous{}) :
-		throw std::runtime_error("Unhandled HP change source type: " + std::string(source_type));
+	auto const [type, source] = split(message.next(), ':');
+	return parse_effect_source(type, source);
 }
 
 auto parse_hp_message(InMessage message) {
@@ -146,7 +151,7 @@ auto parse_hp_message(InMessage message) {
 		HP::current_type current_hp;
 		HP::max_type max_hp;
 		Statuses status;
-		HPChangeSource source;
+		EffectSource source;
 	};
 	auto const party = party_from_player_id(message.next());
 	auto const hp_and_status = parse_hp_and_status(message.next());
@@ -173,7 +178,7 @@ auto parse_set_hp_message(InMessage message) {
 	struct Message {
 		MessagePokemon pokemon1;
 		MessagePokemon pokemon2;
-		HPChangeSource source;
+		EffectSource source;
 	};
 	auto const party1 = party_from_player_id(message.next());
 	auto const hp_and_status1 = parse_hp_and_status(message.next());
@@ -213,6 +218,12 @@ void BattleParser::handle_message(InMessage message) {
 		auto const ability = from_string<Ability>(message.next());
 		m_battle.set_value_on_active(party, ability);
 	} else if (type == "-activate") {
+		auto const party = party_from_player_id(message.next());
+		auto const what = message.next();
+		auto const details = message.next();
+		if (what == "Substitute" and details == "[damage]") {
+			handle_u_turn(other(party));
+		}
 	} else if (type == "-boost") {
 #if 0
 		auto const pokemon = message.next();
@@ -307,13 +318,6 @@ void BattleParser::handle_message(InMessage message) {
 		static_cast<void>(count);
 		// TODO: Implement multi-hit moves
 	} else if (type == "-immune") {
-		auto const party = party_from_player_id(message.next());
-		auto const source = parse_hp_change_source(message);
-		bounded::visit(source, bounded::overload(
-			[](MainEffect) {},
-			[&](Ability const ability) { m_battle.set_value_on_active(party, ability); },
-			[](auto const &) { throw std::runtime_error("Surprising source of immunity."); }
-		));
 	} else if (type == "inactive") {
 		// message.remainder() == MESSAGE
 		// Timer is on
@@ -406,16 +410,23 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-singleturn") {
 		// Received for things like Protect that last the rest of the turn
 	} else if (type == "-start") {
-		auto const pokemon_id [[maybe_unused]] = message.next();
-		auto const thing = message.next();
-		if (thing == "confusion") {
-			auto const source = message.next();
-			if (source == "[fatigue]") {
-				
-			} else {
-				m_move_state.confuse();
-			}
-		}
+		auto const party = party_from_player_id(message.next());
+		auto const [source_type, string_source] = split(message.next(), ':');
+		auto const source = parse_effect_source(source_type, string_source);
+		bounded::visit(source, bounded::overload(
+			[](MainEffect) { throw std::runtime_error("Unexpected -start source MainEffect"); },
+			[&](FromConfusion) {
+				auto const how = message.next();
+				if (how == "[fatigue]") {
+					// TODO
+				} else {
+					m_move_state.confuse();
+				}
+			},
+			[](FromMiscellaneous) {},
+			[](FromMove) {},
+			[&](auto const value) { m_battle.set_value_on_active(party, value); }
+		));
 	} else if (type == "-status") {
 		auto const party = party_from_player_id(message.next());
 		auto const status = parse_status(message.next());
@@ -478,10 +489,7 @@ void BattleParser::handle_damage(InMessage message) {
 				return;
 			}
 			move_damage(other(party));
-			if (m_battle.is_me(other(party)) and m_move_state.executed_move() == Moves::U_turn) {
-				maybe_use_previous_move();
-				send_move(determine_action());
-			}
+			handle_u_turn(other(party));
 		},
 		[&](FromConfusion) {
 			// TODO: Technically you cannot select Hit Self, you just execute
@@ -605,6 +613,13 @@ auto parse_switch(InMessage message) -> ParsedSwitch {
 	static_cast<void>(hp);
 	auto const status = parse_status(message.next());
 	return ParsedSwitch{party, details.species, details.level, details.gender, status};
+}
+
+void BattleParser::handle_u_turn(Party const party) {
+	if (m_battle.is_me(party) and m_move_state.executed_move() == Moves::U_turn) {
+		maybe_use_previous_move();
+		send_move(determine_action());
+	}
 }
 
 }	// namespace ps
