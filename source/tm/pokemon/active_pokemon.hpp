@@ -46,6 +46,7 @@
 #include <tm/operators.hpp>
 #include <tm/random_damage.hpp>
 #include <tm/rational.hpp>
+#include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>
 #include <bounded/detail/variant/variant.hpp>
@@ -56,7 +57,6 @@
 namespace technicalmachine {
 struct ActivePokemon;
 struct MutableActivePokemon;
-struct Weather;
 
 // I use a macro here because I rely on a conversion operator. Friend functions
 // declared only in a class body are not found by lookup rules in that case. The
@@ -295,169 +295,210 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 
 	friend auto stage(MutableActivePokemon pokemon) -> Stage &;
 
-	auto clear_field() {
+	auto clear_field() const {
 		m_flags.leech_seeded = false;
 		m_flags.partial_trap = {};
 	}
-	auto update_before_move() {
+	auto update_before_move() const {
 		m_flags.destiny_bond = false;
 		m_flags.locked_on = false;
 		m_flags.moved = true;
 	}
 
-	auto activate_aqua_ring() {
+	auto activate_aqua_ring() const {
 		m_flags.aqua_ring = true;
 	}
-	auto attract() {
+	auto attract() const {
 		m_flags.attracted = true;
 	}
-	auto baton_pass() {
+	auto baton_pass() const {
 		m_flags.lock_in = BatonPassing{};
 	}
-	auto charge() {
+	auto charge() const {
 		m_flags.charged = true;
 	}
-	auto use_charge_up_move() {
+	auto use_charge_up_move() const {
 		m_flags.lock_in = ChargingUp{};
 	}
-	auto confuse() -> void;
-	auto handle_confusion() {
+	auto confuse() const -> void {
+		if (!blocks_confusion(get_ability(*this))) {
+			m_flags.confusion.activate();
+		}
+	}
+	auto handle_confusion() const {
 		m_flags.confusion.do_turn();
 	}
-	auto curse() {
+	auto curse() const {
 		m_flags.is_cursed = true;
 	}
-	auto defense_curl() {
+	auto defense_curl() const {
 		m_flags.defense_curled = true;
 	}
-	auto use_destiny_bond() {
+	auto use_destiny_bond() const {
 		m_flags.destiny_bond = true;
 	}
-	auto disable(Moves const move) {
+	auto disable(Moves const move) const {
 		m_flags.disable.activate(move);
 	}
-	auto advance_disable() {
+	auto advance_disable() const {
 		m_flags.disable.advance_one_turn();
 	}
-	auto activate_embargo() {
+	auto activate_embargo() const {
 		m_flags.embargo.activate();
 	}
-	auto advance_embargo() {
+	auto advance_embargo() const {
 		m_flags.embargo.advance_one_turn();
 	}
-	auto activate_encore() {
+	auto activate_encore() const {
 		m_flags.encore.activate();
 	}
-	auto advance_encore() {
+	auto advance_encore() const {
 		m_flags.encore.advance_one_turn();
 	}
-	auto endure() {
+	auto endure() const {
 		m_flags.enduring = true;
 	}
-	auto faint() {
+	auto faint() const {
 		get_hp(*this) = 0_bi;
 	}
-	auto activate_flash_fire() {
+	auto activate_flash_fire() const {
 		m_flags.flash_fire = true;
 	}
-	auto flinch() {
+	auto flinch() const {
 		m_flags.flinched = true;
 	}
-	auto focus_energy() {
+	auto focus_energy() const {
 		m_flags.has_focused_energy = true;
 	}
-	auto fully_trap() {
+	auto fully_trap() const {
 		m_flags.fully_trapped = true;
 	}
-	auto activate_heal_block() {
+	auto activate_heal_block() const {
 		m_flags.heal_block.activate();
 	}
-	auto advance_heal_block() {
+	auto advance_heal_block() const {
 		m_flags.heal_block.advance_one_turn();
 	}
-	auto identify() {
+	auto identify() const {
 		m_flags.identified = true;
 	}
-	auto use_imprison() {
+	auto use_imprison() const {
 		m_flags.used_imprison = true;
 	}
-	auto ingrain() {
+	auto ingrain() const {
 		m_flags.ingrained = true;
 	}
-	auto hit_with_leech_seed() {
+	auto hit_with_leech_seed() const {
 		m_flags.leech_seeded = true;
 	}
-	
-	auto advance_lock_in(bool ending) -> void;
-	auto use_lock_on() {
+	auto advance_lock_in(bool const ending) const -> void {
+		bounded::visit(m_flags.lock_in, bounded::overload(
+			[&](Rampage & rampage) {
+				if (ending) {
+					m_flags.lock_in = std::monostate{};
+					confuse();
+				} else {
+					rampage.advance_one_turn();
+				}
+			},
+			[&](UproarCounter & uproar) {
+				if (ending) {
+					m_flags.lock_in = std::monostate{};
+				} else {
+					uproar.advance_one_turn();
+				}
+			},
+			[](auto const &) {}
+		));
+	}
+	auto use_lock_on() const {
 		m_flags.locked_on = true;
 	}
-	auto activate_magnet_rise() {
+	auto activate_magnet_rise() const {
 		m_flags.magnet_rise.activate();
 	}
-	auto advance_magnet_rise() {
+	auto advance_magnet_rise() const {
 		m_flags.magnet_rise.advance_one_turn();
 	}
-	auto set_not_moved() {
+	auto set_not_moved() const {
 		m_flags.moved = false;
 	}
-	auto activate_mud_sport() {
+	auto activate_mud_sport() const {
 		m_flags.mud_sport = true;
 	}
-	auto give_nightmares() {
+	auto give_nightmares() const {
 		m_flags.is_having_a_nightmare = true;
 	}
-	auto partially_trap() {
+	auto partially_trap() const {
 		m_flags.partial_trap.activate();
 	}
-	auto partial_trap_damage() {
+	auto partial_trap_damage() const {
 		m_flags.partial_trap.damage(*this);
 	}
-	auto activate_perish_song() {
+	auto activate_perish_song() const {
 		m_flags.perish_song.activate();
 	}
-	auto perish_song_turn() -> void;
-	auto activate_power_trick() {
+	auto perish_song_turn() const -> void {
+		bool const faints_this_turn = m_flags.perish_song.advance_one_turn();
+		if (faints_this_turn) {
+			faint();
+		}
+	}
+	auto activate_power_trick() const {
 		m_flags.power_trick_is_active = !m_flags.power_trick_is_active;
 	}
-	auto protect() {
+	auto protect() const {
 		m_flags.is_protecting = true;
 	}
-	auto break_protect() {
+	auto break_protect() const {
 		m_flags.is_protecting = false;
 	}
-	auto activate_rampage() {
+	auto activate_rampage() const {
 		// TODO: Have it be active when it is constructed
 		auto rampage = Rampage{};
 		rampage.activate();
 		m_flags.lock_in = rampage;
 	}
-	auto recharge() -> bool;
-	auto use_recharge_move() {
+	auto recharge() const -> bool {
+		return bounded::visit(m_flags.lock_in, bounded::overload(
+			[&](Recharging) { m_flags.lock_in = std::monostate{}; return true; },
+			[](auto const &) { return false; }
+		));
+	}
+	auto use_recharge_move() const {
 		m_flags.lock_in = Recharging{};
 	}
-	auto roost() {
+	auto roost() const {
 		m_flags.is_roosting = true;
 	}
+	
+	auto increment_stockpile() const -> void {
+		bool const increased = m_flags.stockpile.increment();
+		if (increased) {
+			boost_defensive(stage(*this), 1_bi);
+		}
+	}
+	auto release_stockpile() const -> bounded::integer<0, Stockpile::max> {
+		auto const stages = m_flags.stockpile.release();
+		boost_defensive(stage(*this), -stages);
+		return stages;
+	}
 
-	auto increment_stockpile() -> void;
-	auto release_stockpile() -> bounded::integer<0, Stockpile::max>;
+	auto use_substitute() const -> void;
 
-	auto use_substitute() -> void;
-
-	auto taunt() {
+	auto taunt() const {
 		m_flags.taunt.activate();
 	}
-	auto advance_taunt() {
+	auto advance_taunt() const {
 		m_flags.taunt.advance_one_turn();
 	}
-	auto torment() {
+	auto torment() const {
 		m_flags.is_tormented = true;
 	}
-	auto u_turn() {
+	auto u_turn() const {
 		m_flags.lock_in = UTurning{};
 	}
-	auto use_uproar() {
+	auto use_uproar() const {
 		bounded::visit(m_flags.lock_in, bounded::overload(
 			// TODO: Have it be active when it is constructed
 			[&](std::monostate) { m_flags.lock_in.emplace(bounded::detail::types<UproarCounter>{}).advance_one_turn(); },
@@ -465,50 +506,76 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 			[](auto const &) { assert(false); }
 		));
 	}
-	auto activate_water_sport() {
+	auto activate_water_sport() const {
 		m_flags.water_sport = true;
 	}
-	auto hit_with_yawn() {
+	auto hit_with_yawn() const {
 		m_flags.yawn.activate();
 	}
-	// Advance the yawn counter and possibly put the Pokemon to sleep
-	auto try_to_activate_yawn(Weather weather) -> void;
+	auto try_to_activate_yawn(Weather const weather) const -> void {
+		bool const put_to_sleep = m_flags.yawn.advance_one_turn();
+		if (put_to_sleep) {
+			apply(Statuses::sleep, *this, weather);
+		}
+	}
 
 	// Returns whether the Pokemon ends up in a Vanished state
-	auto bounce() {
+	auto bounce() const {
 		return use_vanish_move<Bouncing>();
 	}
-	auto dig() {
+	auto dig() const {
 		return use_vanish_move<Digging>();
 	}
-	auto dive() {
+	auto dive() const {
 		return use_vanish_move<Diving>();
 	}
-	auto fly() {
+	auto fly() const {
 		return use_vanish_move<Flying>();
 	}
-	auto shadow_force() {
+	auto shadow_force() const {
 		return use_vanish_move<ShadowForcing>();
 	}
 
 
-	auto use_bide(Pokemon & target) -> void;
+	auto use_bide(Pokemon & target) const -> void {
+		bounded::visit(m_flags.lock_in, bounded::overload(
+			[&](auto const &) { m_flags.lock_in = Bide{}; },
+			[&](Bide & bide) {
+				if (auto const damage = bide.advance_one_turn()) {
+					get_hp(target) -= *damage * 2_bi;
+					m_flags.lock_in = std::monostate{};
+				}
+			}
+		));
+	}
 
-	auto direct_damage(damage_type damage) -> void;
-	auto indirect_damage(damage_type const damage) {
+	auto direct_damage(damage_type const damage) const -> void {
+		if (m_flags.substitute) {
+			m_flags.substitute.damage(damage);
+		} else {
+			get_hp(*this) -= damage;
+			m_flags.damaged = true;
+			m_flags.direct_damage_received = damage;
+			bounded::visit(m_flags.lock_in, bounded::overload(
+				[=](Bide & bide) { bide.add_damage(damage); },
+				[](auto const &) {}
+			));
+		}
+	}
+	auto indirect_damage(damage_type const damage) const {
 		get_hp(*this) -= damage;
 		m_flags.damaged = true;
 	}
-	auto increment_move_use_counter(Moves const move) {
+	auto increment_move_use_counter(Moves const move) const {
 		m_flags.last_used_move.increment(move);
 	}
-	auto unsuccessfully_use_move(Moves const move) {
+	auto unsuccessfully_use_move(Moves const move) const {
 		m_flags.last_used_move.unsucessful_move(move);
 	}
 	
 private:
 	template<typename T>
-	auto use_vanish_move() -> bool {
+	auto use_vanish_move() const -> bool {
 		return bounded::visit(m_flags.lock_in, bounded::overload(
 			[&](T) { m_flags.lock_in = std::monostate{}; return false; },
 			[&](auto const &) { m_flags.lock_in = T{}; return true; }

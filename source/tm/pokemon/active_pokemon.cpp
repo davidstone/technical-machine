@@ -85,79 +85,6 @@ auto ActivePokemonFlags::reset_switch() -> void {
 	lock_in = std::monostate{};
 }
 
-auto MutableActivePokemon::confuse() -> void {
-	if (!blocks_confusion(get_ability(*this))) {
-		m_flags.confusion.activate();
-	}
-}
-
-auto MutableActivePokemon::advance_lock_in(bool const ending) -> void {
-	bounded::visit(m_flags.lock_in, bounded::overload(
-		[&](Rampage & rampage) {
-			if (ending) {
-				m_flags.lock_in = std::monostate{};
-				confuse();
-			} else {
-				rampage.advance_one_turn();
-			}
-		},
-		[&](UproarCounter & uproar) {
-			if (ending) {
-				m_flags.lock_in = std::monostate{};
-			} else {
-				uproar.advance_one_turn();
-			}
-		},
-		[](auto const &) {}
-	));
-}
-
-auto MutableActivePokemon::perish_song_turn() -> void {
-	bool const faints_this_turn = m_flags.perish_song.advance_one_turn();
-	if (faints_this_turn) {
-		faint();
-	}
-}
-
-auto MutableActivePokemon::recharge() -> bool {
-	return bounded::visit(m_flags.lock_in, bounded::overload(
-		[&](Recharging) { m_flags.lock_in = std::monostate{}; return true; },
-		[](auto const &) { return false; }
-	));
-}
-
-auto MutableActivePokemon::increment_stockpile() -> void {
-	bool const increased = m_flags.stockpile.increment();
-	if (increased) {
-		boost_defensive(stage(*this), 1_bi);
-	}
-}
-
-auto MutableActivePokemon::release_stockpile() -> bounded::integer<0, Stockpile::max> {
-	auto const stages = m_flags.stockpile.release();
-	boost_defensive(stage(*this), -stages);
-	return stages;
-}
-
-auto MutableActivePokemon::try_to_activate_yawn(Weather const weather) -> void {
-	bool const put_to_sleep = m_flags.yawn.advance_one_turn();
-	if (put_to_sleep) {
-		apply(Statuses::sleep, *this, weather);
-	}
-}
-
-auto MutableActivePokemon::use_bide(Pokemon & target) -> void {
-	bounded::visit(m_flags.lock_in, bounded::overload(
-		[&](auto const &) { m_flags.lock_in = Bide{}; },
-		[&](Bide & bide) {
-			if (auto const damage = bide.advance_one_turn()) {
-				get_hp(target) -= *damage * 2_bi;
-				m_flags.lock_in = std::monostate{};
-			}
-		}
-	));
-}
-
 namespace {
 
 auto can_use_substitute(Pokemon const & pokemon) -> bool {
@@ -167,26 +94,11 @@ auto can_use_substitute(Pokemon const & pokemon) -> bool {
 
 }	// namespace
 
-auto MutableActivePokemon::use_substitute() -> void {
+auto MutableActivePokemon::use_substitute() const -> void {
 	if (!can_use_substitute(*this))
 		return;
 	auto const max_hp = get_hp(*this).max();
 	indirect_damage(m_flags.substitute.create(max_hp));
 }
-
-auto MutableActivePokemon::direct_damage(damage_type const damage) -> void {
-	if (m_flags.substitute) {
-		m_flags.substitute.damage(damage);
-	} else {
-		get_hp(*this) -= damage;
-		m_flags.damaged = true;
-		m_flags.direct_damage_received = damage;
-		bounded::visit(m_flags.lock_in, bounded::overload(
-			[=](Bide & bide) { bide.add_damage(damage); },
-			[](auto const &) {}
-		));
-	}
-}
-
 
 }	// namespace technicalmachine
