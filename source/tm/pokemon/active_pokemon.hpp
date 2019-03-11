@@ -238,53 +238,59 @@ private:
 	bool water_sport = false;
 };
 
-
-// A reference to the currently active Pokemon
-struct ActivePokemon {
-	ActivePokemon(Pokemon const & pokemon, ActivePokemonFlags const & flags):
+// TODO: Implement both ActivePokemon and MutableActivePokemon as typedefs once
+// we get requires clauses.
+template<bool is_const>
+struct ActivePokemonImpl {
+private:
+	using PokemonRef = std::conditional_t<is_const, Pokemon const &, Pokemon &>;
+	using FlagsRef = std::conditional_t<is_const, ActivePokemonFlags const &, ActivePokemonFlags &>;
+public:
+	ActivePokemonImpl(PokemonRef pokemon, FlagsRef flags):
 		m_pokemon(pokemon),
 		m_flags(flags)
 	{
 	}
-	ActivePokemon(ActivePokemon const & other) = default;
-	ActivePokemon(ActivePokemon && other) = default;
-	ActivePokemon & operator=(ActivePokemon const & other) = delete;
-	ActivePokemon & operator=(ActivePokemon && other) = delete;
-
-	operator Pokemon const & () const {
-		return m_pokemon;
-	}
+	ActivePokemonImpl(ActivePokemonImpl const & other) = default;
+	ActivePokemonImpl(ActivePokemonImpl && other) = default;
+	ActivePokemonImpl & operator=(ActivePokemonImpl const & other) = delete;
+	ActivePokemonImpl & operator=(ActivePokemonImpl && other) = delete;
 
 	TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS;
 
-	friend auto operator==(ActivePokemon const lhs, ActivePokemon const rhs) {
+	friend auto operator==(ActivePokemonImpl const lhs, ActivePokemonImpl const rhs) {
 		return lhs.m_flags == rhs.m_flags;
 	}
+	
+	operator PokemonRef() const {
+		return m_pokemon;
+	}
 
-private:
-	Pokemon const & m_pokemon;
-	ActivePokemonFlags const & m_flags;
+protected:
+	PokemonRef m_pokemon;
+	FlagsRef m_flags;
+};
+
+
+// A reference to the currently active Pokemon
+struct ActivePokemon : ActivePokemonImpl<true> {
+	ActivePokemon(Pokemon const & pokemon, ActivePokemonFlags const & flags):
+		ActivePokemonImpl(pokemon, flags)
+	{
+	}
 };
 
 #undef TECHNICALMACHINE_ACTIVE_POKEMON_FRIEND_FUNCTIONS
 
 // A mutable reference to the currently active Pokemon
-struct MutableActivePokemon {
+struct MutableActivePokemon : ActivePokemonImpl<false> {
 	MutableActivePokemon(Pokemon & pokemon, ActivePokemonFlags & flags):
-		m_pokemon(pokemon),
-		m_flags(flags)
+		ActivePokemonImpl(pokemon, flags)
 	{
 	}
-	MutableActivePokemon(MutableActivePokemon const & other) = default;
-	MutableActivePokemon(MutableActivePokemon && other) = default;
-	MutableActivePokemon & operator=(MutableActivePokemon const & other) = delete;
-	MutableActivePokemon & operator=(MutableActivePokemon && other) = delete;
 
 	operator ActivePokemon() const {
 		return ActivePokemon(m_pokemon, m_flags);
-	}
-	operator Pokemon & () const {
-		return m_pokemon;
 	}
 
 	friend auto stage(MutableActivePokemon pokemon) -> Stage &;
@@ -508,9 +514,6 @@ private:
 			[&](auto const &) { m_flags.lock_in = T{}; return true; }
 		));
 	}
-
-	Pokemon & m_pokemon;
-	ActivePokemonFlags & m_flags;
 };
 
 
