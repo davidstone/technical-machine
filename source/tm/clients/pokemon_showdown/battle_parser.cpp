@@ -89,23 +89,13 @@ constexpr auto parse_status(std::string_view const str) {
 		throw std::runtime_error("Received an invalid status");
 }
 
-auto parse_hp_and_status(std::string_view const hp_and_status) {
-	// TODO: This should just verify that the received HP matches the actual
-	// HP. The problem is that we tend to get this message too soon, so I need
-	// to defer checking until some time later.
-	// TODO: validate that the status we received matches our expected status
+constexpr auto parse_hp_and_status(std::string_view const hp_and_status) {
 	struct Result {
-		HP::current_type current_hp;
-		HP::max_type max_hp;
+		ParsedHP hp;
 		Statuses status;
 	};
 	auto const [hp_fraction, status] = split(hp_and_status, ' ');
-	auto const [remaining_visible_hp, max_visible_hp] = split(hp_fraction, '/');
-	return Result{
-		bounded::to_integer<HP::current_type>(remaining_visible_hp),
-		max_visible_hp.empty() ? 100_bi : bounded::to_integer<HP::max_type>(max_visible_hp),
-		parse_status(status)
-	};
+	return Result{ParsedHP(hp_fraction), parse_status(status)};
 }
 
 struct FromMove{};
@@ -116,7 +106,7 @@ struct FromRecoil{};
 
 using EffectSource = bounded::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromMiscellaneous, FromRecoil>;
 
-auto parse_effect_source(std::string_view const type, std::string_view const source) {
+constexpr auto parse_effect_source(std::string_view const type, std::string_view const source) {
 	return
 		(type == "") ? EffectSource(MainEffect{}) :
 		(type == "item") ? EffectSource(from_string<Item>(source)) :
@@ -149,8 +139,7 @@ auto parse_hp_change_source(InMessage message) {
 auto parse_hp_message(InMessage message) {
 	struct Message {
 		Party party;
-		HP::current_type current_hp;
-		HP::max_type max_hp;
+		ParsedHP hp;
 		Statuses status;
 		EffectSource source;
 	};
@@ -159,8 +148,7 @@ auto parse_hp_message(InMessage message) {
 	auto const source = parse_hp_change_source(message);
 	return Message{
 		party,
-		hp_and_status.current_hp,
-		hp_and_status.max_hp,
+		hp_and_status.hp,
 		hp_and_status.status,
 		source
 	};
@@ -172,8 +160,7 @@ auto parse_set_hp_message(InMessage message) {
 	// to defer checking until some time later.
 	struct MessagePokemon {
 		Party party;
-		HP::current_type current_hp;
-		HP::max_type max_hp;
+		ParsedHP hp;
 		Statuses status;
 	};
 	struct Message {
@@ -188,8 +175,8 @@ auto parse_set_hp_message(InMessage message) {
 	auto const source = parse_hp_change_source(message);
 	
 	return Message{
-		{party1, hp_and_status1.current_hp, hp_and_status1.max_hp, hp_and_status1.status},
-		{party2, hp_and_status2.current_hp, hp_and_status1.max_hp, hp_and_status2.status},
+		{party1, hp_and_status1.hp, hp_and_status1.status},
+		{party2, hp_and_status2.hp, hp_and_status2.status},
 		source
 	};
 }
@@ -484,7 +471,7 @@ void BattleParser::handle_message(InMessage message) {
 void BattleParser::handle_damage(InMessage message) {
 	auto const parsed = parse_hp_message(message);
 	auto move_damage = [&](Party const party) {
-		m_move_state.damage(party, {parsed.current_hp, parsed.max_hp, parsed.status});
+		m_move_state.damage(party, {parsed.hp, parsed.status});
 	};
 	auto const party = parsed.party;
 	bounded::visit(parsed.source, bounded::overload(
@@ -515,20 +502,17 @@ void BattleParser::handle_damage(InMessage message) {
 
 namespace {
 
-auto to_real_hp(bool const is_me, Pokemon const & changer, HP::current_type const remaining_visible_hp, HP::max_type const max_visible_hp) -> HP::current_type {
-	if (remaining_visible_hp == 0_bi) {
+auto to_real_hp(bool const is_me, Pokemon const & changer, ParsedHP const visible_hp) -> HP::current_type {
+	if (visible_hp.current == 0_bi) {
 		return 0_bi;
-	}
-	if (remaining_visible_hp > max_visible_hp) {
-		throw std::runtime_error("Received a current HP greater than max HP");
 	}
 	constexpr auto max_visible_foe_hp = 100_bi;
 	auto const max_hp = get_hp(changer).max();
 	auto const expected_max_visible_hp = BOUNDED_CONDITIONAL(is_me, max_hp, max_visible_foe_hp);
-	if (expected_max_visible_hp != max_visible_hp) {
-		throw std::runtime_error("Received an invalid max HP. Expected: " + bounded::to_string(expected_max_visible_hp) + " but got " + bounded::to_string(max_visible_hp));
+	if (expected_max_visible_hp != visible_hp.max) {
+		throw std::runtime_error("Received an invalid max HP. Expected: " + bounded::to_string(expected_max_visible_hp) + " but got " + bounded::to_string(visible_hp.max));
 	}
-	return HP::current_type(bounded::max(1_bi, max_hp * remaining_visible_hp / max_visible_hp));
+	return HP::current_type(bounded::max(1_bi, max_hp * visible_hp.current / visible_hp.max));
 }
 
 auto hp_to_damage(Pokemon const & pokemon, HP::current_type const new_hp) {
@@ -548,7 +532,7 @@ auto compute_damage(Battle const & battle, Party const user_party, Moves const m
 	auto const is_me = battle.is_me(damaged_party);
 	auto const & team = is_me ? battle.ai() : battle.foe();
 	auto const & pokemon = select_pokemon(team, move);
-	auto const new_hp = to_real_hp(is_me, pokemon, damage.current_hp, damage.max_hp);
+	auto const new_hp = to_real_hp(is_me, pokemon, damage.hp);
 	return hp_to_damage(pokemon, new_hp);
 }
 
@@ -633,13 +617,10 @@ void BattleParser::send_random_move() {
 }
 
 auto parse_switch(InMessage message) -> ParsedSwitch {
-	auto const party = party_from_player_id(message.next(": "));
-	auto const nickname [[maybe_unused]] = message.next();
+	auto const party = party_from_player_id(message.next());
 	auto const details = parse_details(message.next());
-	auto const hp = message.next(' ');
-	static_cast<void>(hp);
-	auto const status = parse_status(message.next());
-	return ParsedSwitch{party, details.species, details.level, details.gender, status};
+	auto const hp_and_status = parse_hp_and_status(message.next());
+	return ParsedSwitch{party, details.species, details.level, details.gender, hp_and_status.status};
 }
 
 void BattleParser::handle_u_turn(Party const party) {

@@ -48,6 +48,7 @@ add_library(tm_common STATIC
 	source/tm/clients/pokemon_showdown/json_parser.cpp
 	source/tm/clients/pokemon_showdown/move_state.cpp
 	source/tm/clients/pokemon_showdown/packed_team.cpp
+	source/tm/clients/pokemon_showdown/parsed_hp.cpp
 	source/tm/clients/pokemon_showdown/slot_memory.cpp
 
 	source/tm/clients/battle.cpp

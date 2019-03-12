@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include <tm/clients/pokemon_showdown/parsed_hp.hpp>
+
 #include <tm/clients/party.hpp>
 
 #include <tm/move/damage_type.hpp>
@@ -33,8 +35,7 @@ namespace ps {
 
 struct MoveState {
 	struct Damage {
-		HP::current_type current_hp;
-		HP::max_type max_hp;
+		ParsedHP hp;
 		Statuses status;
 	};
 	struct Result {
