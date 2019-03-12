@@ -42,6 +42,7 @@ struct MoveState {
 		UsedMove move;
 		bounded::optional<Damage> damage;
 		bool clear_status;
+		bool recoil;
 	};
 	
 	auto party() const -> bounded::optional<Party> {
@@ -116,6 +117,10 @@ struct MoveState {
 		}
 		m_move->variable.set_phaze_index(phazed_team, species);
 	}
+	void recoil(Party const party) {
+		validate(party);
+		m_recoil = true;
+	}
 	void status(Party const party, Statuses const status) {
 		if (m_move and is_switch(m_move->executed)) {
 			// Don't need to do anything for Toxic Spikes
@@ -140,7 +145,8 @@ struct MoveState {
 			*m_party,
 			*m_move,
 			m_damage,
-			m_clear_status
+			m_clear_status,
+			m_recoil
 		};
 		*this = {};
 		return result;
@@ -159,6 +165,7 @@ private:
 	bounded::optional<UsedMove> m_move;
 	bounded::optional<Damage> m_damage;
 	bool m_clear_status = false;
+	bool m_recoil = false;
 };
 
 }	// namespace ps

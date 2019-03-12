@@ -112,8 +112,9 @@ struct FromMove{};
 struct MainEffect{};
 struct FromConfusion{};
 struct FromMiscellaneous{};
+struct FromRecoil{};
 
-using EffectSource = bounded::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromMiscellaneous>;
+using EffectSource = bounded::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromMiscellaneous, FromRecoil>;
 
 auto parse_effect_source(std::string_view const type, std::string_view const source) {
 	return
@@ -122,13 +123,13 @@ auto parse_effect_source(std::string_view const type, std::string_view const sou
 		(type == "ability") ? EffectSource(from_string<Ability>(source)) :
 		(type == "move") ? EffectSource(FromMove{}) :
 		(type == "confusion") ? EffectSource(FromConfusion{}) :
+		(type == "Recoil") ? EffectSource(FromRecoil{}) :
 		(
 			type == "brn" or
 			type == "psn" or
 			type == "tox" or
 			type == "drain" or
 			type == "Leech Seed" or
-			type == "Recoil" or
 			type == "Spikes" or
 			type == "Stealth Rock" or
 			type == "Hail" or
@@ -307,6 +308,7 @@ void BattleParser::handle_message(InMessage message) {
 			[](FromConfusion) { throw std::runtime_error("Confusion cannot heal"); },
 			[](FromMiscellaneous) {},
 			[](FromMove) {},
+			[](FromRecoil) { throw std::runtime_error("Recoil cannot heal"); },
 			[&](auto const value) { m_battle.set_value_on_active(party, value); }
 		));
 	} else if (type == "-hint") {
@@ -425,6 +427,7 @@ void BattleParser::handle_message(InMessage message) {
 			},
 			[](FromMiscellaneous) {},
 			[](FromMove) {},
+			[](FromRecoil) { throw std::runtime_error("Unexpected -start source FromRecoil"); },
 			[&](auto const value) { m_battle.set_value_on_active(party, value); }
 		));
 	} else if (type == "-status") {
@@ -436,6 +439,7 @@ void BattleParser::handle_message(InMessage message) {
 			[](FromConfusion) { throw std::runtime_error("Confusion cannot cause another status"); },
 			[&](FromMiscellaneous) { m_move_state.status(other(party), status); },
 			[&](FromMove) { m_move_state.status(party, status); },
+			[](FromRecoil) { throw std::runtime_error("Recoil cannot cause another status"); },
 			[&](auto const value) { m_battle.set_value_on_active(party, value); }
 		));
 	} else if (type == "swap") {
@@ -504,6 +508,7 @@ void BattleParser::handle_damage(InMessage message) {
 		},
 		[](FromMiscellaneous) {},
 		[](FromMove) {},
+		[&](FromRecoil) { m_move_state.recoil(party); },
 		[&](auto const value) { m_battle.set_value_on_active(party, value); }
 	));
 }
@@ -547,6 +552,22 @@ auto compute_damage(Battle const & battle, Party const user_party, Moves const m
 	return hp_to_damage(pokemon, new_hp);
 }
 
+constexpr auto causes_recoil(Moves const move) {
+	switch (move) {
+		case Moves::Brave_Bird:
+		case Moves::Double_Edge:
+		case Moves::Flare_Blitz:
+		case Moves::Head_Smash:
+		case Moves::Submission:
+		case Moves::Take_Down:
+		case Moves::Volt_Tackle:
+		case Moves::Wood_Hammer:
+			return true;
+		default:
+			return false;
+	}
+}
+
 } // namespace
 
 void BattleParser::maybe_use_previous_move() {
@@ -555,6 +576,12 @@ void BattleParser::maybe_use_previous_move() {
 		return;
 	}
 	auto const data = *maybe_data;
+	
+	if (causes_recoil(data.move.executed) and !data.recoil) {
+		// TODO: This could also be Magic Guard
+		m_battle.set_value_on_active(data.party, Ability::Rock_Head);
+	}
+	
 	constexpr auto slot = 0;
 	// TODO: This should never be bounded::none, just 0.
 	auto const damage = BOUNDED_CONDITIONAL(
