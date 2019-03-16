@@ -26,14 +26,12 @@
 #include <iostream>
 #include <thread>
 
-using namespace technicalmachine;
-
 namespace {
 
 void print_debug_statements() {
-	std::cout << "sizeof(Team): " << sizeof(Team) << '\n';
-	std::cout << "sizeof(Pokemon): " << sizeof(Pokemon) << '\n';
-	std::cout << "sizeof(Move): " << sizeof(Move) << '\n';
+	std::cout << "sizeof(Team): " << sizeof(technicalmachine::Team) << '\n';
+	std::cout << "sizeof(Pokemon): " << sizeof(technicalmachine::Pokemon) << '\n';
+	std::cout << "sizeof(Move): " << sizeof(technicalmachine::Move) << '\n';
 }
 
 }	// namespace
@@ -44,7 +42,8 @@ int main(int argc, char * * argv) {
 
 	while (true) {
 		try {
-			auto client = ps::Client(load_settings_file("settings/settings.xml"), depth);
+			namespace tm = technicalmachine;
+			auto client = tm::ps::Client(tm::load_settings_file("settings/settings.xml"), depth);
 			std::cout << "Connected\n";
 			client.run();
 		} catch (std::exception const & ex) {
