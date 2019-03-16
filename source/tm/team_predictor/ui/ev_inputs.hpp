@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <fltk/FL/Fl_Int_Input.H>
+#include <FL/Fl_Int_Input.H>
 #include <tm/stat/ev.hpp>
 
 namespace technicalmachine {

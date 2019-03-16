@@ -23,7 +23,7 @@
 
 #include <containers/array/array.hpp>
 
-#include <fltk/FL/Fl_Input.H>
+#include <FL/Fl_Input.H>
 
 namespace technicalmachine {
 

@@ -33,11 +33,11 @@
 #include <containers/array/array.hpp>
 #include <containers/vector.hpp>
 
-#include <fltk/FL/Fl.H>
-#include <fltk/FL/Fl_Window.H>
-#include <fltk/FL/Fl_Return_Button.H>
-#include <fltk/FL/Fl_Int_Input.H>
-#include <fltk/FL/Fl_Multiline_Output.H>
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Return_Button.H>
+#include <FL/Fl_Int_Input.H>
+#include <FL/Fl_Multiline_Output.H>
 
 #include <random>
 

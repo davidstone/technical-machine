@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <fltk/FL/Fl_Input.H>
+#include <FL/Fl_Input.H>
 #include <tm/pokemon/species_forward.hpp>
 
 namespace technicalmachine {
