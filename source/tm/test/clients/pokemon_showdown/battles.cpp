@@ -55,7 +55,7 @@ void regression_tests() {
 	auto battles = Battles(battle_output_directory, log_foe_teams);
 
 	for (auto const & path : paths_in_directory("test/battles")) {
-		auto const data = load_lines_from_file(path / "server_messages.txt");
+		auto const data = load_lines_from_file(path.path() / "server_messages.txt");
 		auto messages = BufferView(data, '\n');
 		auto const room = parse_room(messages.next(), path);
 		battles.add_pending(
