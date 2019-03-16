@@ -305,7 +305,10 @@ SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_s
 
 auto finish_end_of_turn(Team const & first, Team const & last, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) -> double {
 	// TODO: Use TranspositionTable here
-	auto const & [ai, foe] = deorder(first, last);
+	// TODO: Use structured bindings
+	auto const deordered = deorder(first, last);
+	auto const & ai = deordered.ai;
+	auto const & foe = deordered.foe;
 	if (depth.is_final_iteration()) {
 		return static_cast<double>(evaluate(ai, foe, weather));
 	}
