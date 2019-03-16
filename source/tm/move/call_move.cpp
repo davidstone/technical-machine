@@ -1050,8 +1050,7 @@ auto find_move(MoveContainer const container, Moves const move_name) -> Move {
 	return *move_ptr;
 }
 
-template<typename Container>
-auto find_regular_move(Container const container, Moves const move_name) -> Move & {
+auto find_regular_move(RegularMoveContainer & container, Moves const move_name) -> Move & {
 	auto const move_ptr = containers::maybe_find(container, move_name);
 	assert(move_ptr);
 	return *move_ptr;

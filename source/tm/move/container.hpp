@@ -60,11 +60,11 @@ struct MoveContainer {
 	}
 
 	// Skips moves for which is_regular(move) is false
-	constexpr auto regular() const {
-		return range_view(begin(m_regular), end(m_regular));
+	constexpr auto const & regular() const {
+		return m_regular;
 	}
-	constexpr auto regular() {
-		return range_view(begin(m_regular), end(m_regular));
+	constexpr auto & regular() {
+		return m_regular;
 	}
 	
 	friend constexpr auto begin(MoveContainer const & container) {
@@ -89,7 +89,7 @@ private:
 	SharedMoves m_shared;
 };
 
-using ::containers::detail::common::operator<=>;
+using ::containers::detail::common::compare;
 using ::containers::detail::common::operator==;
 
 template<typename... MaybePP>
