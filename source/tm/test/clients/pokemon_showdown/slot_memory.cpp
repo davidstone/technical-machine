@@ -47,7 +47,7 @@ void validate_indexes(SlotMemory const & slot_memory, std::initializer_list<Slot
 
 template<typename T>
 auto make_distribution() {
-	return std::uniform_int_distribution<typename T::underlying_type>(T::min().value(), T::max().value());
+	return std::uniform_int_distribution<int>(T::min().value(), T::max().value());
 }
 
 template<typename Integer>
