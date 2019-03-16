@@ -59,7 +59,7 @@ Multiplier::Multiplier(OverallStats const & overall, std::filesystem::path const
 	// Pokemon not on the team mate stats is equal to the relative overall
 	// distribution and divide up all remaining usages proportionally.
 	OverallStats unaccounted;
-	std::transform(begin(overall), end(overall), begin(unaccounted), [](unsigned const element) {
+	std::transform(containers::legacy_iterator(begin(overall)), containers::legacy_iterator(end(overall)), containers::legacy_iterator(begin(unaccounted)), [](unsigned const element) {
 		return element * static_cast<unsigned>(other_pokemon_per_team);
 	});
 
