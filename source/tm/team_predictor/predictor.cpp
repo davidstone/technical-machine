@@ -41,11 +41,12 @@
 
 #include <random>
 
-using namespace technicalmachine;
 using namespace bounded::literal;
 
 // A GUI version of the team predictor.
 
+// TODO: Move much of this code into its own file
+namespace technicalmachine {
 namespace {
 
 using AllPokemonInputs = containers::array<PokemonInputs, max_pokemon_per_team.value()>;
@@ -59,7 +60,7 @@ struct Data {
 		m_team(max_pokemon_per_team)
 	{
 	}
-	Team & team() {
+	auto & team() {
 		return m_team;
 	}
 
@@ -111,7 +112,7 @@ struct PokemonInputValues {
 			inputs.spe()
 		},
 		moves(inputs.moves())
-		{
+	{
 	}
 	void add_to_team(Team & team) const {
 		auto & pokemon = team.add_pokemon(species, Level(100_bi), Gender::genderless, item, ability, nature);
@@ -133,7 +134,7 @@ private:
 };
 
 
-void function (Fl_Widget *, void * d) {
+void function(Fl_Widget *, void * d) {
 	auto & data = *reinterpret_cast<Data *> (d);
 	bool using_lead = false;
 	for (PokemonInputs const & inputs : data.inputs) {
@@ -159,9 +160,11 @@ void function (Fl_Widget *, void * d) {
 	data.team() = Team(max_pokemon_per_team);
 }
 
-}	// namespace
+} // namespace
+} // namespace technicalmachine
 
 int main () {
+	using namespace technicalmachine;
 	Fl_Window win(window_width, window_height, "Team Predictor");
 		int button_number = 0;
 		AllPokemonInputs all_pokemon_inputs{{
