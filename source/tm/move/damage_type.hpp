@@ -21,6 +21,6 @@
 
 namespace technicalmachine {
 
-using damage_type = bounded::checked_integer<0, std::numeric_limits<std::uint32_t>::max()>;
+using damage_type = bounded::checked_integer<0, 4294967295>;
 
 }	// namespace technicalmachine
