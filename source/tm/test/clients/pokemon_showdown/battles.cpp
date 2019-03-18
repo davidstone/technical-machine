@@ -52,34 +52,36 @@ void regression_tests() {
 	auto const remove_temporary_files = [&]{ std::filesystem::remove_all(battle_output_directory); };
 	remove_temporary_files();
 	constexpr auto log_foe_teams = false;
-	auto battles = Battles(battle_output_directory, log_foe_teams);
+	{
+		auto battles = Battles(battle_output_directory, log_foe_teams);
 
-	for (auto const & path : paths_in_directory("test/battles")) {
-		auto const data = load_lines_from_file(path.path() / "server_messages.txt");
-		auto messages = BufferView(data, '\n');
-		auto const room = parse_room(messages.next(), path);
-		battles.add_pending(
-			std::string(room),
-			"Technical Machine",
-			usage_stats,
-			evaluate,
-			depth,
-			std::mt19937(std::random_device{}()),
-			Team(1_bi, true)
-		);
-		
-		auto print_file_on_exception = containers::scope_guard([&]{ std::cerr << "Error in " << path.path() << '\n'; });
-		while (!messages.remainder().empty()) {
-			auto const next = messages.next();
-			auto print_message_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
-			battles.handle_message(
-				InMessage(room, next),
-				[](std::string_view) {},
-				[]{}
+		for (auto const & path : paths_in_directory("test/battles")) {
+			auto const data = load_lines_from_file(path.path() / "server_messages.txt");
+			auto messages = BufferView(data, '\n');
+			auto const room = parse_room(messages.next(), path);
+			battles.add_pending(
+				std::string(room),
+				"Technical Machine",
+				usage_stats,
+				evaluate,
+				depth,
+				std::mt19937(std::random_device{}()),
+				Team(1_bi, true)
 			);
-			print_message_on_exception.dismiss();
+
+			auto print_file_on_exception = containers::scope_guard([&] { std::cerr << "Error in " << path.path() << '\n'; });
+			while (!messages.remainder().empty()) {
+				auto const next = messages.next();
+				auto print_message_on_exception = containers::scope_guard([=] { std::cerr << next << '\n'; });
+				battles.handle_message(
+					InMessage(room, next),
+					[](std::string_view) {},
+					[] {}
+				);
+				print_message_on_exception.dismiss();
+			}
+			print_file_on_exception.dismiss();
 		}
-		print_file_on_exception.dismiss();
 	}
 	remove_temporary_files();
 }
@@ -90,7 +92,7 @@ void test_battles() {
 	std::cout << "Testing ps::Battles\n";
 	try {
 		regression_tests();
-	} catch (...) {
+	} catch (std::exception const & ex [[maybe_unused]]) {
 		throw;
 	}
 }
