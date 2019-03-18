@@ -1,9 +1,9 @@
-# Copyright David Stone 2018.
+# Copyright David Stone 2019.
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
-cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 project(technical_machine LANGUAGES CXX)
 
 find_package(Boost REQUIRED)
@@ -16,7 +16,17 @@ target_compile_definitions(boost INTERFACE
 	BOOST_ERROR_CODE_HEADER_ONLY
 	BOOST_SYSTEM_NO_DEPRECATED
 )
-set_property(TARGET boost PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR})
+target_include_directories(boost SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
+
+set(FLTK_SKIP_OPENGL On)
+set(FLTK_SKIP_FORMS On)
+set(FLTK_SKIP_IMAGES On)
+set(FLTK_SKIP_FLUID On)
+find_package(FLTK REQUIRED)
+add_library(fltk INTERFACE IMPORTED)
+target_include_directories(fltk SYSTEM INTERFACE ${FLTK_INCLUDE_DIR})
+target_link_libraries(fltk INTERFACE ${FLTK_LIBRARIES})
+
 enable_testing()
 
 add_library(bounded INTERFACE)
@@ -172,8 +182,6 @@ add_library(tm_common STATIC
 	source/tm/wish.cpp
 )
 target_link_libraries(tm_common
-	c++fs
-	stdc++fs
 	boost
 	bounded
 	containers
@@ -192,7 +200,6 @@ add_executable(ai
 	source/tm/ai.cpp
 )
 target_link_libraries(ai
-	pthread
 	tm_common
 )
 
@@ -208,10 +215,9 @@ add_executable(predict
 	source/tm/team_predictor/random_team.cpp
 )
 target_link_libraries(predict
-	fltk
 	tm_common
+	fltk
 )
-
 
 add_executable(tm_test
 	source/tm/test/clients/pokemon_showdown/battles.cpp
@@ -247,60 +253,113 @@ target_link_libraries(tm_test
 )
 
 
-function(set_sanitizers target)
-	if(USE_SANITIZERS)
-		foreach(SANITIZER -fsanitize=undefined -fsanitize=address)
-			target_compile_options(${target} PUBLIC ${SANITIZER})
-			target_link_libraries(${target} ${SANITIZER})
-		endforeach()
-	endif()
-endfunction()
+set(COMMON_CLANG_COMPILE_OPTIONS
+	"-Weverything"
+	"-Werror"
+	"-Wno-c++98-compat"
+	"-Wno-c++98-compat-pedantic"
+	# Complains about comments like "//<N3757>" referring to an ISO paper number
+	"-Wno-documentation"
+	# Floating-point comparisons are safe in these tests
+	"-Wno-float-equal"
+	# -Wmissing-braces wants two sets of braces when using constructs such
+	# as std::array
+	"-Wno-missing-braces"
+	"-Wno-newline-eof"
+	"-Wno-padded"
+	# Still don't need compatibility with older standards
+	"-Wno-return-std-move-in-c++11"
+	# -Wswitch-enum warns even if you have default
+	"-Wno-switch-enum"
+	# -Wundefined-func-template has a bug that triggers on deduction guides
+	"-Wno-undefined-func-template"
+	# -Wunneeded-member-function has a bug that blocks constexpr libraries
+	# from using it: https://llvm.org/bugs/show_bug.cgi?id=25084
+	"-Wno-unneeded-member-function"
+	# Has a bug that warns even for templates that are used
+	"-Wno-unused-template"
+	# -Wweak-vtables is incompatible with header-only libraries
+	"-Wno-weak-vtables"
+	# -Wzero-as-null-pointer-constant does not work with the `operator<=>`
+	# emulation
+	"-Wno-zero-as-null-pointer-constant"
+	"-Wno-exit-time-destructors"
+)
 
 if(MSVC)
-	target_compile_options(tm_common
-		PUBLIC "/std:c++-latest"
-	)
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 	target_compile_options(tm_common PUBLIC
+		"/std:c++latest"
+		"/MP"
+	)
+	target_link_options(tm_common PUBLIC
+		"/STACK:8388608"
+	)
+	target_link_options(tm_common PUBLIC
+		"/WX"
+	)
+	set_target_properties(tm_test PROPERTIES
+		VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+	)
+
+	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+		target_compile_options(tm_common PUBLIC
+			${COMMON_CLANG_COMPILE_OPTIONS}
+			# For some reason, exceptions are turned off here but not in bounded
+			"/EHsc"
+			# Setting boost as a system include does not turn off these warnings on Windows
+			"-Wno-gnu-anonymous-struct"
+			"-Wno-comma"
+			"-Wno-conversion"
+			"-Wno-covered-switch-default"
+			"-Wno-deprecated"
+			"-Wno-deprecated-dynamic-exception-spec"
+			"-Wno-documentation-unknown-command"
+			"-Wno-extra-semi"
+			"-Wno-global-constructors"
+			"-Wno-implicit-fallthrough"
+			"-Wno-inconsistent-missing-destructor-override"
+			"-Wno-language-extension-token"
+			"-Wno-missing-noreturn"
+			"-Wno-nonportable-system-include-path"
+			"-Wno-non-virtual-dtor"
+			"-Wno-old-style-cast"
+			"-Wno-redundant-parens"
+			"-Wno-reserved-id-macro"
+			"-Wno-shadow"
+			"-Wno-shadow-field-in-constructor"
+			"-Wno-shadow-uncaptured-local"
+			"-Wno-shorten-64-to-32"
+			"-Wno-sign-conversion"
+			"-Wno-undef"
+			"-Wno-unused-private-field"
+			# FLTK has this warning
+			"-Wno-shift-sign-overflow"
+		)
+		# Sanitizers currently do not work very well on Windows
+		set(USE_SANITIZERS OFF)
+	else()
+		set(COMPILE_OPTIONS
+			"/FI ciso646"
+		)
+		set(USE_SANITIZERS OFF)
+	endif()
+
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	target_link_libraries(tm_common
+		c++fs
+	)
+	target_compile_options(tm_common PUBLIC
+		${COMMON_CLANG_COMPILE_OPTIONS}
 		"-g"
 		"-std=c++2a"
 		"-march=native"
-		"-Weverything"
-		"-Werror"
-		"-Wno-c++98-compat"
-		"-Wno-c++98-compat-pedantic"
-		# Floating-point comparisons are safe in these tests
-		"-Wno-float-equal"
-		# -Wmissing-braces wants two sets of braces when using constructs such
-		# as std::array
-		"-Wno-missing-braces"
-		"-Wno-newline-eof"
-		"-Wno-padded"
-		# Still don't need compatibility with older standards
-		"-Wno-return-std-move-in-c++11"
-		# -Wswitch-enum warns even if you have default
-		"-Wno-switch-enum"
-		# -Wundefined-func-template has a bug that triggers on deduction guides
-		"-Wno-undefined-func-template"
-		# -Wunneeded-member-function has a bug that blocks constexpr libraries
-		# from using it: https://llvm.org/bugs/show_bug.cgi?id=25084
-		"-Wno-unneeded-member-function"
-		# Has a bug that warns even for templates that are used
-		"-Wno-unused-template"
-		# -Wweak-vtables is incompatible with header-only libraries
-		"-Wno-weak-vtables"
-		# -Wzero-as-null-pointer-constant does not work with the `operator<=>`
-		# emulation
-		"-Wno-zero-as-null-pointer-constant"
-		"-Wno-exit-time-destructors"
 	)
 
-	set_sanitizers(tm_common)
-	set_sanitizers(ai)
-	set_sanitizers(predict)
-	set_sanitizers(tm_test)
-
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+	target_link_libraries(tm_common
+		stdc++fs
+	)
 	target_compile_options(tm_common PUBLIC
 		"-g"
 		"-std=c++2a"
@@ -379,11 +438,22 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		# "-Wzero-as-null-pointer-constant"
 		"-Werror"
 	)
+endif()
 
-	set_sanitizers(tm_common)
-	set_sanitizers(ai)
-	set_sanitizers(predict)
-	set_sanitizers(tm_test)
+set(sanitizers "-fsanitize=undefined" "-fsanitize=address")
+
+if(DEFINED USE_SANITIZERS)
+	if(${USE_SANITIZERS})
+		target_compile_options(tm_common PUBLIC ${sanitizers})
+		target_link_options(tm_common PUBLIC ${sanitizers})
+	endif()
+else()
+	target_compile_options(tm_common PUBLIC
+		$<$<CONFIG:Debug>:${sanitizers}>
+	)
+	target_link_options(tm_common PUBLIC
+		$<$<CONFIG:Debug>:${sanitizers}>
+	)
 endif()
 
 add_test(tm_test tm_test)
