@@ -54,7 +54,11 @@ public:
 	}
 
 private:
-	bounded::clamped_integer<hp_type::min().value(), hp_type::max().value()> m_hp = 0_bi;
+	// TODO: Use change_policy
+	bounded::clamped_integer<
+		static_cast<int>(hp_type::min()),
+		static_cast<int>(hp_type::max())
+	> m_hp = 0_bi;
 };
 
 constexpr auto operator==(Substitute const lhs, Substitute const rhs) {

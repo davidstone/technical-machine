@@ -32,9 +32,10 @@ BOUNDED_COMMON_ARITHMETIC
 using namespace bounded::literal;
 
 template<auto maximum>
-struct enum_numeric_limits : private std::numeric_limits<bounded::integer<0, static_cast<std::intmax_t>(maximum)>> {
+struct enum_numeric_limits : private std::numeric_limits<bounded::integer<0, static_cast<int>(maximum)>> {
 private:
-	using base = std::numeric_limits<bounded::integer<0, static_cast<std::intmax_t>(maximum)>>;
+	static_assert(static_cast<std::intmax_t>(maximum) == static_cast<int>(maximum));
+	using base = std::numeric_limits<bounded::integer<0, static_cast<int>(maximum)>>;
 public:
 	static constexpr bool is_specialized = true;
 	static constexpr bool is_signed = false;

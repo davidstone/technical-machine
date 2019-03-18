@@ -64,7 +64,7 @@ private:
 	container_type m_stages;
 };
 
-using ::containers::detail::common::operator<=>;
+using ::containers::detail::common::compare;
 using ::containers::detail::common::operator==;
 
 namespace detail {

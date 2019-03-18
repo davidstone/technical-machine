@@ -33,7 +33,7 @@ struct Pokemon;
 using namespace bounded::literal;
 
 struct HP {
-	static constexpr auto max_value = 714U;
+	static constexpr auto max_value = 714;
 	using max_type = bounded::integer<1, max_value>;
 	using current_type = bounded::integer<0, max_value>;
 	
@@ -68,12 +68,12 @@ auto operator-=(HP & lhs, T const & rhs) -> HP & {
 }
 
 template<auto min, auto max, typename overflow>
-auto operator<=>(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
-	return lhs.current() <=> rhs;
+auto compare(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
+	return compare(lhs.current(), rhs);
 }
 template<auto min, auto max, typename overflow>
-auto operator<=>(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
-	return rhs <=> lhs.current();
+auto compare(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
+	return compare(rhs, lhs.current());
 }
 
 template<auto min, auto max, typename overflow>

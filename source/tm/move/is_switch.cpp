@@ -39,12 +39,12 @@ auto is_switch(Moves const move) -> bool {
 }
 
 auto to_switch(TeamIndex const replacement) -> Moves {
-	return static_cast<Moves>(replacement + bounded::constant<static_cast<std::intmax_t>(Moves::Switch0)>);
+	return static_cast<Moves>(replacement + bounded::constant<static_cast<int>(Moves::Switch0)>);
 }
 
 auto to_replacement(Moves const move) -> TeamIndex {
 	assert(is_switch(move));
-	return static_cast<TeamIndex>(bounded::integer(move) - bounded::constant<static_cast<std::intmax_t>(Moves::Switch0)>);
+	return static_cast<TeamIndex>(bounded::integer(move) - bounded::constant<static_cast<int>(Moves::Switch0)>);
 }
 
 }	// namespace technicalmachine

@@ -27,7 +27,7 @@ using namespace bounded::literal;
 
 enum class CounterOperations { is_active, turns_active, advance_one_turn_fixed, advance_one_turn_variable, activate };
 
-template<intmax_t max_turns, CounterOperations... operations>
+template<int max_turns, CounterOperations... operations>
 struct EndOfTurnCounter {
 	constexpr auto is_active() const {
 		static_assert((... or (operations == CounterOperations::is_active)));

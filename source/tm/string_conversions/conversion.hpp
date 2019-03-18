@@ -40,7 +40,7 @@ struct lowercase_alphanumeric {
 			};
 			return containers::filter(containers::transform(input, to_lower), is_valid);
 		};
-		return transform_filter(lhs) <=> transform_filter(rhs) < 0;
+		return compare(transform_filter(lhs), transform_filter(rhs)) < 0;
 	}
 };
 

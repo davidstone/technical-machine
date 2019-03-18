@@ -25,7 +25,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-template<intmax_t normal_duration, intmax_t max_duration = normal_duration>
+template<int normal_duration, int max_duration = normal_duration>
 struct Screen {
 	static_assert(normal_duration <= max_duration, "Max duration cannot be less than normal duration.");
 
@@ -62,7 +62,7 @@ private:
 	duration_type m_turns_remaining = duration_type(0_bi);
 };
 
-template<intmax_t normal_duration, intmax_t max_duration>
+template<int normal_duration, int max_duration>
 constexpr auto operator==(Screen<normal_duration, max_duration> const lhs, Screen<normal_duration, max_duration> const rhs) {
 	return lhs.turns_remaining() == rhs.turns_remaining();
 }

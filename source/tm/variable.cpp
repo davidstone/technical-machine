@@ -104,7 +104,7 @@ auto phaze_probability(TeamSize const foe_size) {
 		case 2:
 			return generic_probability(1.0);
 		default:
-			return constant_probability(bounded::integer<3, TeamSize::max().value()>(foe_size) - 1_bi);
+			return constant_probability(bounded::integer<3, static_cast<int>(TeamSize::max())>(foe_size) - 1_bi);
 	}
 }
 

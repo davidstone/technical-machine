@@ -48,7 +48,7 @@ namespace {
 
 template<typename T>
 struct MaxTurns;
-template<intmax_t max_turns, CounterOperations... operations>
+template<int max_turns, CounterOperations... operations>
 struct MaxTurns<EndOfTurnCounter<max_turns, operations...>> {
 	static constexpr auto value = max_turns;
 };
@@ -231,7 +231,11 @@ Evaluate::Evaluate() {
 	read_xml("settings/evaluate.xml", file);
 	boost::property_tree::ptree const pt = file.get_child("score");
 
-	using underlying_type = bounded::checked_integer<value_type::min().value(), value_type::max().value()>;
+	// TODO: Use change_policy
+	using underlying_type = bounded::checked_integer<
+		static_cast<int>(value_type::min()),
+		static_cast<int>(value_type::max())
+	>;
 
 	m_light_screen = pt.get<underlying_type>("light_screen", 0_bi);
 	m_lucky_chant = pt.get<underlying_type>("lucky_chant", 0_bi);

@@ -45,8 +45,8 @@ struct SharedMovesIterator {
 
 	constexpr auto operator*() const -> value_type {
 		using switch_index_type = bounded::integer<
-			static_cast<intmax_t>(number_of_weird_moves),
-			static_cast<intmax_t>(std::numeric_limits<SharedMoveSize>::max()) - 1
+			static_cast<int>(number_of_weird_moves),
+			static_cast<int>(std::numeric_limits<SharedMoveSize>::max()) - 1
 		>;
 		static_assert(number_of_weird_moves == 2_bi, "Add the extra 'weird' move here.");
 		return Move(
@@ -63,8 +63,8 @@ struct SharedMovesIterator {
 		return lhs.m_index - rhs.m_index;
 	}
 
-	friend constexpr auto operator<=>(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
-		return lhs.m_index <=> rhs.m_index;
+	friend constexpr auto compare(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
+		return compare(lhs.m_index, rhs.m_index);
 	}
 	friend constexpr auto operator==(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
 		return lhs.m_index == rhs.m_index;

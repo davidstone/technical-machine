@@ -42,14 +42,14 @@ private:
 	bounded::clamped_integer<0, static_cast<int>(max)> m_value;
 };
 
-constexpr auto operator<=>(EV const lhs, EV const rhs) {
-	return lhs.value() <=> rhs.value();
+constexpr auto compare(EV const lhs, EV const rhs) {
+	return compare(lhs.value(), rhs.value());
 }
-constexpr auto operator<=>(EV const lhs, EV::value_type const rhs) {
-	return lhs.value() <=> rhs;
+constexpr auto compare(EV const lhs, EV::value_type const rhs) {
+	return compare(lhs.value(), rhs);
 }
-constexpr auto operator<=>(EV::value_type const lhs, EV const rhs) {
-	return lhs <=> rhs.value();
+constexpr auto compare(EV::value_type const lhs, EV const rhs) {
+	return compare(lhs, rhs.value());
 }
 constexpr auto operator==(EV const lhs, EV const rhs) {
 	return lhs.value() == rhs.value();

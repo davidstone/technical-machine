@@ -22,7 +22,7 @@
 namespace technicalmachine {
 
 struct IV {
-	static constexpr auto max = 31U;
+	static constexpr auto max = 31;
 	using value_type = bounded::checked_integer<0, max>;
 	constexpr explicit IV(value_type const iv) noexcept:
 		m_value(iv) {
