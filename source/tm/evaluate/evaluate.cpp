@@ -35,12 +35,13 @@
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/count.hpp>
 #include <containers/algorithms/filter_iterator.hpp>
+#include <containers/legacy_iterator.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include <algorithm>
-#include <cstdint>
+#include <numeric>
+#include <type_traits>
 
 namespace technicalmachine {
 namespace {
@@ -63,7 +64,7 @@ auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const pokemon
 		(pokemon.ingrained() ? evaluate.ingrain() : 0_bi) +
 		(magnet_rise.is_active() ? evaluate.magnet_rise() * (bounded::constant<MaxTurns<MagnetRise>::value> - *magnet_rise.turns_active()) : 0_bi) +
 		(substitute ? (evaluate.substitute() + evaluate.substitute_hp() * substitute.hp() / get_hp(pokemon).max()) : 0_bi) +
-		std::inner_product(begin(stage), end(stage), begin(evaluate.stage()), static_cast<stage_type>(0_bi))
+		std::inner_product(containers::legacy_iterator(begin(stage)), containers::legacy_iterator(end(stage)), containers::legacy_iterator(begin(evaluate.stage())), static_cast<stage_type>(0_bi))
 	;
 }
 
