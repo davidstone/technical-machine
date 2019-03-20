@@ -286,6 +286,13 @@ set(COMMON_CLANG_COMPILE_OPTIONS
 	"-Wno-exit-time-destructors"
 )
 
+if(${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL 8)
+	set(COMMON_CLANG_COMPILE_OPTIONS
+		${COMMON_CLANG_COMPILE_OPTIONS}
+		"-Wno-ctad-maybe-unsupported"
+	)
+endif()
+
 if(MSVC)
 	set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 	target_compile_options(tm_common PUBLIC
