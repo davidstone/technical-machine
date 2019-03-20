@@ -40,19 +40,18 @@ For a full overview of the program, see http://doublewise.net/pokemon/
 
 ## Prerequisites
 
-* clang version 7.0 or newer
-* gcc install of 8.1.0 for the standard library
-* Boost 1.67.0
+* clang 7.0+ and libc++ (clang's standard library)
+* Boost 1.67.0+
 * fltk is needed the stand-alone team predictor / builder. It is not needed to actually run the battling AI.
-* CMake 3.10+
-* Ninja (tested on 1.8.2)
+* CMake 3.14+
+* A build tool for CMake to generate (Ninja is recommended)
 
 ## Building (Linux)
 
 * `cd path/to/technical-machine`
 * `mkdir build`
 * `cd build`
-* `cmake .. -G"Ninja" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release` (you can also use `-G"Unix Makefiles"` instead if you do not install ninja)
+* `cmake .. -G"Ninja" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_BUILD_TYPE=Release` (you can use `-G"Unix Makefiles"` instead if you do not install ninja)
 * `ninja`
 * Fill in server information for the server you want to connect to, as found in "build/settings/settings.xml".
 * Run the program with `./ai [depth]`, where depth is an optional value that tells Technical Machine how many turns ahead to look (defaults to 2).
