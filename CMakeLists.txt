@@ -360,6 +360,9 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		"-std=c++2a"
 		"-march=native"
 	)
+	target_link_options(tm_common PUBLIC
+		"-Wl,--fatal-warnings"
+	)
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	target_link_libraries(tm_common
@@ -442,6 +445,9 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		# emulation
 		# "-Wzero-as-null-pointer-constant"
 		"-Werror"
+	)
+	target_link_options(tm_common PUBLIC
+		"-Wl,--fatal-warnings"
 	)
 endif()
 
