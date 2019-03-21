@@ -271,8 +271,6 @@ set(COMMON_CLANG_COMPILE_OPTIONS
 	"-Wno-return-std-move-in-c++11"
 	# -Wswitch-enum warns even if you have default
 	"-Wno-switch-enum"
-	# -Wundefined-func-template has a bug that triggers on deduction guides
-	"-Wno-undefined-func-template"
 	# -Wunneeded-member-function has a bug that blocks constexpr libraries
 	# from using it: https://llvm.org/bugs/show_bug.cgi?id=25084
 	"-Wno-unneeded-member-function"

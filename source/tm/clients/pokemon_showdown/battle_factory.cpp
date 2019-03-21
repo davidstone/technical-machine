@@ -21,6 +21,7 @@
 #include <tm/stat/combined_stats.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
+#include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 
