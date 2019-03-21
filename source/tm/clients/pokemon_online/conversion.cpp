@@ -1397,7 +1397,7 @@ AbilityID ability_to_id(Ability const ability) {
 		case Ability::Water_Veil: return 41_bi;
 		case Ability::White_Smoke: return 73_bi;
 		case Ability::Wonder_Guard: return 25_bi;
-	};
+	}
 }
 
 struct InvalidPart : std::runtime_error {

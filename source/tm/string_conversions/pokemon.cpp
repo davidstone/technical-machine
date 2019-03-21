@@ -704,7 +704,7 @@ std::string_view to_string(Species const species) {
 		case Species::Keldeo: return "Keldeo";
 		case Species::Meloetta: return "Meloetta";
 		case Species::Genesect: return "Genesect";
-	};
+	}
 }
 
 template<>

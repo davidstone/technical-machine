@@ -88,7 +88,7 @@ auto optimize_evs(CombinedStats combined, Species const species, Level const lev
 		if (previous == combined) {
 			return combined;
 		}
-	};
+	}
 }
 
 }	// namespace

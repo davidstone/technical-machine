@@ -763,7 +763,6 @@ auto is_permanently_immune_to_ground(PossiblyActivePokemon const & pokemon, bool
 	return
 		is_type(pokemon, Type::Flying, roosting) or
 		is_immune_to_ground(get_ability(pokemon));
-	;
 }
 
 }	// namespace
