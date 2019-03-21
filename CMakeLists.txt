@@ -284,7 +284,7 @@ set(COMMON_CLANG_COMPILE_OPTIONS
 	"-Wno-exit-time-destructors"
 )
 
-if(${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL 8)
+if(${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 8)
 	set(COMMON_CLANG_COMPILE_OPTIONS
 		${COMMON_CLANG_COMPILE_OPTIONS}
 		"-Wno-ctad-maybe-unsupported"
@@ -354,6 +354,9 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	target_link_libraries(tm_common
 		c++fs
 	)
+	target_link_libraries(ai
+		pthread
+	)
 	target_compile_options(tm_common PUBLIC
 		${COMMON_CLANG_COMPILE_OPTIONS}
 		"-g"
@@ -367,6 +370,9 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	target_link_libraries(tm_common
 		stdc++fs
+	)
+	target_link_libraries(ai
+		pthread
 	)
 	target_compile_options(tm_common PUBLIC
 		"-g"
