@@ -67,23 +67,23 @@ public:
 	}
 
 	template<typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
-	friend constexpr auto operator*(rational<Numerator, Denominator> const lhs, Integer const rhs) {
+	friend constexpr auto operator*(rational const lhs, Integer const rhs) {
 		return rhs * lhs.m_numerator / lhs.m_denominator;
 	}
 	
-	template<typename N1, typename D1, typename N2, typename D2>
-	friend constexpr auto operator*(rational<N1, D1> const lhs, rational<N2, D2> const rhs) {
+	template<typename N2, typename D2>
+	friend constexpr auto operator*(rational const lhs, rational<N2, D2> const rhs) {
 		return make_rational(lhs.m_numerator * rhs.m_numerator, lhs.m_denominator * rhs.m_denominator);
 	}
-	template<typename N1, typename D1, typename N2, typename D2>
-	friend constexpr auto operator+(rational<N1, D1> const lhs, rational<N2, D2> const rhs) {
+	template<typename N2, typename D2>
+	friend constexpr auto operator+(rational const lhs, rational<N2, D2> const rhs) {
 		return make_rational(
 			lhs.m_numerator * rhs.m_denominator + rhs.m_numerator * lhs.m_denominator,
 			lhs.m_denominator * rhs.m_denominator
 		);
 	}
-	template<typename N1, typename D1, typename N2, typename D2>
-	friend constexpr auto operator-(rational<N1, D1> const lhs, rational<N2, D2> const rhs) {
+	template<typename N2, typename D2>
+	friend constexpr auto operator-(rational const lhs, rational<N2, D2> const rhs) {
 		return make_rational(
 			lhs.m_numerator * rhs.m_denominator - rhs.m_numerator * lhs.m_denominator,
 			lhs.m_denominator * rhs.m_denominator
@@ -91,8 +91,8 @@ public:
 	}
 
 
-	template<typename LN, typename LD, typename RN, typename RD>
-	friend constexpr auto compare(rational<LN, LD> const lhs, rational<RN, RD> const rhs) {
+	template<typename RN, typename RD>
+	friend constexpr auto compare(rational const lhs, rational<RN, RD> const rhs) {
 		return compare(lhs.m_numerator * rhs.m_denominator, rhs.m_numerator * lhs.m_denominator);
 	}
 	
@@ -106,8 +106,8 @@ public:
 		return compare(lhs * rhs.m_denominator, rhs.m_numerator);
 	}
 
-	template<typename LN, typename LD, typename RN, typename RD>
-	friend constexpr auto operator==(rational<LN, LD> const lhs, rational<RN, RD> const rhs) {
+	template<typename RN, typename RD>
+	friend constexpr auto operator==(rational const lhs, rational<RN, RD> const rhs) {
 		return lhs.m_numerator * rhs.m_denominator == rhs.m_numerator * lhs.m_denominator;
 	}
 	
@@ -122,7 +122,7 @@ public:
 	}
 
 
-	friend std::string to_string(rational<Numerator, Denominator> const r) {
+	friend std::string to_string(rational const r) {
 		using bounded::to_string;
 		return to_string(r.m_numerator) + " / " + to_string(r.m_denominator);
 	}
