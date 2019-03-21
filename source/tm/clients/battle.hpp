@@ -106,6 +106,12 @@ struct Battle {
 	void set_value_on_active(Party const party, Item const item) {
 		set_item(get_team(party).pokemon(), item);
 	}
+
+	// maybe_index is either an index into a PokemonCollection or nothing
+	template<typename... MaybeIndex>	
+	auto & hp(Party const party, MaybeIndex... maybe_index) {
+		return get_hp(get_team(party).pokemon(maybe_index...));
+	}
 private:
 	auto get_team(Party const party) const -> Team const & {
 		return is_me(party) ? m_ai : m_foe;

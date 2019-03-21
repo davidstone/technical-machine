@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/clients/pokemon_showdown/hp_and_status.hpp>
 #include <tm/clients/pokemon_showdown/parsed_hp.hpp>
 
 #include <tm/clients/party.hpp>
@@ -34,14 +35,12 @@ namespace technicalmachine {
 namespace ps {
 
 struct MoveState {
-	struct Damage {
-		ParsedHP hp;
-		Statuses status;
-	};
 	struct Result {
 		Party party;
 		UsedMove move;
-		bounded::optional<Damage> damage;
+		bounded::optional<HPAndStatus> damage;
+		bounded::optional<HPAndStatus> user_hp_and_status;
+		bounded::optional<HPAndStatus> other_hp_and_status;
 		bool clear_status;
 		bool recoil;
 	};
@@ -98,14 +97,22 @@ struct MoveState {
 		validate(party);
 		m_move->critical_hit = true;
 	}
-	void damage(Party const party, Damage const damage_) {
+	void damage(Party const party, HPAndStatus const hp_and_status) {
 		validate(party);
-		m_damage.emplace(damage_);
+		m_damage.emplace(hp_and_status);
 	}
 	void flinch(Party const party) {
 		validate(party);
 		// TODO: Validate that the used move can cause a flinch
 		m_move->variable.set_flinch(true);
+	}
+	void hp_change(Party const party, HPAndStatus const hp_and_status) {
+		if (!m_party) {
+			// TODO: Handle end-of-turn damage
+			return;
+		}
+		auto & target_hp_and_status = (*m_party == party) ? m_user_hp_and_status : m_other_hp_and_status;
+		target_hp_and_status.emplace(hp_and_status);
 	}
 	void miss(Party const party) {
 		validate(party);
@@ -146,6 +153,8 @@ struct MoveState {
 			*m_party,
 			*m_move,
 			m_damage,
+			m_user_hp_and_status,
+			m_other_hp_and_status,
 			m_clear_status,
 			m_recoil
 		};
@@ -164,7 +173,9 @@ private:
 	}
 	bounded::optional<Party> m_party;
 	bounded::optional<UsedMove> m_move;
-	bounded::optional<Damage> m_damage;
+	bounded::optional<HPAndStatus> m_damage;
+	bounded::optional<HPAndStatus> m_user_hp_and_status;
+	bounded::optional<HPAndStatus> m_other_hp_and_status;
 	bool m_clear_status = false;
 	bool m_recoil = false;
 };
