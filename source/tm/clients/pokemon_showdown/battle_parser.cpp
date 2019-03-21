@@ -294,7 +294,11 @@ void BattleParser::handle_message(InMessage message) {
 #endif
 	} else if (type == "-end") {
 		// Tells me if the substitute is destroyed, probably other stuff ending
-		// message.remainder() == PLAYER: POKEMON|EFFECT
+		auto const party = party_from_player_id(message.next());
+		auto const source = message.next();
+		if (source == "Substitute") {
+			handle_u_turn(other(party));
+		}
 	} else if (type == "-endability") {
 #if 0
 		auto const pokemon = message.next();
