@@ -63,7 +63,11 @@ auto is_regular(Moves const move) -> bool {
 }
 
 
-auto is_physical(Moves const move) -> bool {
+namespace {
+
+enum class MoveCategory { physical, special, other };
+
+constexpr auto move_category(Moves const move) {
 	switch (move) {
 		case Moves::Hit_Self:
 		case Moves::Pound:
@@ -287,14 +291,7 @@ auto is_physical(Moves const move) -> bool {
 		case Moves::Icicle_Crash:
 		case Moves::V_create:
 		case Moves::Fusion_Bolt:
-			return true;
-		default:
-			return false;
-	}
-}
-
-auto is_special(Moves const move) -> bool {
-	switch (move) {
+			return MoveCategory::physical;
 		case Moves::Razor_Wind:
 		case Moves::Gust:
 		case Moves::SonicBoom:
@@ -438,10 +435,223 @@ auto is_special(Moves const move) -> bool {
 		case Moves::Ice_Burn:
 		case Moves::Snarl:
 		case Moves::Fusion_Flare:
-			return true;
-		default:
-			return false;
+			return MoveCategory::special;
+		case Moves::Pass:
+		case Moves::Switch0:
+		case Moves::Switch1:
+		case Moves::Switch2:
+		case Moves::Switch3:
+		case Moves::Switch4:
+		case Moves::Switch5:
+		case Moves::Flash_Fire:
+		case Moves::Swords_Dance:
+		case Moves::Whirlwind:
+		case Moves::Sand_Attack:
+		case Moves::Tail_Whip:
+		case Moves::Leer:
+		case Moves::Growl:
+		case Moves::Roar:
+		case Moves::Sing:
+		case Moves::Supersonic:
+		case Moves::Disable:
+		case Moves::Mist:
+		case Moves::Leech_Seed:
+		case Moves::Growth:
+		case Moves::PoisonPowder:
+		case Moves::Stun_Spore:
+		case Moves::Sleep_Powder:
+		case Moves::String_Shot:
+		case Moves::Thunder_Wave:
+		case Moves::Toxic:
+		case Moves::Hypnosis:
+		case Moves::Meditate:
+		case Moves::Agility:
+		case Moves::Teleport:
+		case Moves::Mimic:
+		case Moves::Screech:
+		case Moves::Double_Team:
+		case Moves::Recover:
+		case Moves::Harden:
+		case Moves::Minimize:
+		case Moves::SmokeScreen:
+		case Moves::Confuse_Ray:
+		case Moves::Withdraw:
+		case Moves::Defense_Curl:
+		case Moves::Barrier:
+		case Moves::Light_Screen:
+		case Moves::Haze:
+		case Moves::Reflect:
+		case Moves::Focus_Energy:
+		case Moves::Metronome:
+		case Moves::Mirror_Move:
+		case Moves::Amnesia:
+		case Moves::Kinesis:
+		case Moves::Softboiled:
+		case Moves::Glare:
+		case Moves::Poison_Gas:
+		case Moves::Lovely_Kiss:
+		case Moves::Transform:
+		case Moves::Spore:
+		case Moves::Flash:
+		case Moves::Splash:
+		case Moves::Acid_Armor:
+		case Moves::Rest:
+		case Moves::Sharpen:
+		case Moves::Conversion:
+		case Moves::Substitute:
+		case Moves::Sketch:
+		case Moves::Spider_Web:
+		case Moves::Mind_Reader:
+		case Moves::Nightmare:
+		case Moves::Curse:
+		case Moves::Conversion_2:
+		case Moves::Cotton_Spore:
+		case Moves::Spite:
+		case Moves::Protect:
+		case Moves::Scary_Face:
+		case Moves::Sweet_Kiss:
+		case Moves::Belly_Drum:
+		case Moves::Spikes:
+		case Moves::Foresight:
+		case Moves::Destiny_Bond:
+		case Moves::Perish_Song:
+		case Moves::Detect:
+		case Moves::Lock_On:
+		case Moves::Sandstorm:
+		case Moves::Endure:
+		case Moves::Charm:
+		case Moves::Swagger:
+		case Moves::Milk_Drink:
+		case Moves::Mean_Look:
+		case Moves::Attract:
+		case Moves::Sleep_Talk:
+		case Moves::Heal_Bell:
+		case Moves::Safeguard:
+		case Moves::Pain_Split:
+		case Moves::Baton_Pass:
+		case Moves::Encore:
+		case Moves::Sweet_Scent:
+		case Moves::Morning_Sun:
+		case Moves::Synthesis:
+		case Moves::Moonlight:
+		case Moves::Rain_Dance:
+		case Moves::Sunny_Day:
+		case Moves::Psych_Up:
+		case Moves::Stockpile:
+		case Moves::Swallow:
+		case Moves::Hail:
+		case Moves::Torment:
+		case Moves::Flatter:
+		case Moves::Will_O_Wisp:
+		case Moves::Memento:
+		case Moves::Follow_Me:
+		case Moves::Nature_Power:
+		case Moves::Charge:
+		case Moves::Taunt:
+		case Moves::Helping_Hand:
+		case Moves::Trick:
+		case Moves::Role_Play:
+		case Moves::Wish:
+		case Moves::Assist:
+		case Moves::Ingrain:
+		case Moves::Magic_Coat:
+		case Moves::Recycle:
+		case Moves::Yawn:
+		case Moves::Skill_Swap:
+		case Moves::Imprison:
+		case Moves::Refresh:
+		case Moves::Grudge:
+		case Moves::Snatch:
+		case Moves::Camouflage:
+		case Moves::Tail_Glow:
+		case Moves::FeatherDance:
+		case Moves::Teeter_Dance:
+		case Moves::Mud_Sport:
+		case Moves::Slack_Off:
+		case Moves::Aromatherapy:
+		case Moves::Fake_Tears:
+		case Moves::Odor_Sleuth:
+		case Moves::Metal_Sound:
+		case Moves::GrassWhistle:
+		case Moves::Tickle:
+		case Moves::Cosmic_Power:
+		case Moves::Iron_Defense:
+		case Moves::Block:
+		case Moves::Howl:
+		case Moves::Bulk_Up:
+		case Moves::Water_Sport:
+		case Moves::Calm_Mind:
+		case Moves::Dragon_Dance:
+		case Moves::Roost:
+		case Moves::Gravity:
+		case Moves::Miracle_Eye:
+		case Moves::Healing_Wish:
+		case Moves::Tailwind:
+		case Moves::Acupressure:
+		case Moves::Embargo:
+		case Moves::Psycho_Shift:
+		case Moves::Heal_Block:
+		case Moves::Power_Trick:
+		case Moves::Gastro_Acid:
+		case Moves::Lucky_Chant:
+		case Moves::Me_First:
+		case Moves::Copycat:
+		case Moves::Power_Swap:
+		case Moves::Guard_Swap:
+		case Moves::Worry_Seed:
+		case Moves::Toxic_Spikes:
+		case Moves::Heart_Swap:
+		case Moves::Aqua_Ring:
+		case Moves::Magnet_Rise:
+		case Moves::Rock_Polish:
+		case Moves::Switcheroo:
+		case Moves::Nasty_Plot:
+		case Moves::Defog:
+		case Moves::Trick_Room:
+		case Moves::Captivate:
+		case Moves::Stealth_Rock:
+		case Moves::Defend_Order:
+		case Moves::Heal_Order:
+		case Moves::Lunar_Dance:
+		case Moves::Dark_Void:
+		case Moves::Hone_Claws:
+		case Moves::Wide_Guard:
+		case Moves::Guard_Split:
+		case Moves::Power_Split:
+		case Moves::Wonder_Room:
+		case Moves::Autotomize:
+		case Moves::Rage_Powder:
+		case Moves::Telekinesis:
+		case Moves::Magic_Room:
+		case Moves::Quiver_Dance:
+		case Moves::Soak:
+		case Moves::Coil:
+		case Moves::Simple_Beam:
+		case Moves::Entrainment:
+		case Moves::After_You:
+		case Moves::Quick_Guard:
+		case Moves::Ally_Switch:
+		case Moves::Shell_Smash:
+		case Moves::Heal_Pulse:
+		case Moves::Shift_Gear:
+		case Moves::Quash:
+		case Moves::Reflect_Type:
+		case Moves::Bestow:
+		case Moves::Work_Up:
+		case Moves::Cotton_Guard:
+			return MoveCategory::other;
 	}
+}
+
+} // namespace
+
+
+auto is_physical(Moves const move) -> bool {
+	return move_category(move) == MoveCategory::physical;
+}
+
+auto is_special(Moves const move) -> bool {
+	return move_category(move) == MoveCategory::special;
 }
 
 }	// namespace technicalmachine
