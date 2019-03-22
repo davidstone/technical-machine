@@ -37,7 +37,6 @@ auto base_power(Moves const move) -> bounded::optional<bounded::integer<0, 250>>
 		case Moves::Switch4: return 0_bi;
 		case Moves::Switch5: return 0_bi;
 		case Moves::Hit_Self: return 40_bi;
-		case Moves::Flash_Fire: return 0_bi;
 		case Moves::Pound: return 40_bi;
 		case Moves::Karate_Chop: return 50_bi;
 		case Moves::DoubleSlap: return 15_bi;

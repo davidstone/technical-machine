@@ -37,7 +37,6 @@ std::string_view to_string(Moves const move) {
 		case Moves::Switch4: return "Switch4";
 		case Moves::Switch5: return "Switch5";
 		case Moves::Hit_Self: return "Hit self in confusion";
-		case Moves::Flash_Fire: return "Flash Fire";
 
 		// Generation 1
 		case Moves::Pound: return "Pound";
@@ -621,7 +620,6 @@ Moves from_string(std::string_view const str) {
 		{ "switch4", Moves::Switch4 },
 		{ "switch5", Moves::Switch5 },
 		{ "hit self in confusion", Moves::Hit_Self },
-		{ "flash fire", Moves::Flash_Fire },
 		{ "pound", Moves::Pound },
 		{ "karatechop", Moves::Karate_Chop },
 		{ "doubleslap", Moves::DoubleSlap },

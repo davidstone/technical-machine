@@ -551,9 +551,6 @@ auto do_side_effects(Team & user_team, ExecutedMove const move, Team & other, We
 		case Moves::SmokeScreen:
 			boost(other.pokemon().stage(), StatNames::ACC, -1_bi);
 			break;
-		case Moves::Flash_Fire:
-			other.pokemon().activate_flash_fire();
-			break;
 		case Moves::Flatter:
 			confusing_stat_boost(other.pokemon(), StatNames::SPA, 1_bi);
 			break;
@@ -1092,16 +1089,19 @@ auto call_move(Team & user, UsedMove const move, Team & other, OtherMove const o
 	}
 
 	// TODO: What happens if we Sleep Talk Trump Card?
-	if (!move.miss and !move_fails(move.executed, user_pokemon.damaged(), other_ability, other_move)) {
-		auto const move_type = get_type(move.executed, user_pokemon);
-		auto const flash_fire_activates = move_type == Type::Fire and other_ability == Ability::Flash_Fire;
-		auto const executed_move_name = flash_fire_activates ? Moves::Flash_Fire : move.executed;
-		auto const executed_move = ExecutedMove{executed_move_name, move.variable, move.critical_hit};
-		use_move(user, executed_move, found_move.pp(), other, other_move, weather, known_damage);
-		user_pokemon.increment_move_use_counter(move.selected);
-	} else {
+	if (move.miss or move_fails(move.executed, user_pokemon.damaged(), other_ability, other_move)) {
 		user_pokemon.unsuccessfully_use_move(move.selected);
+		return;
 	}
+
+	// TODO: Add targeting information
+	if (get_type(move.executed, user_pokemon) == Type::Fire and other_ability == Ability::Flash_Fire) {
+		other.pokemon().activate_flash_fire();
+	} else {
+		auto const executed_move = ExecutedMove{move.executed, move.variable, move.critical_hit};
+		use_move(user, executed_move, found_move.pp(), other, other_move, weather, known_damage);
+	}
+	user_pokemon.increment_move_use_counter(move.selected);
 }
 
 }	// namespace technicalmachine

@@ -36,7 +36,6 @@ enum class Moves : uint16_t {
 	Switch4,
 	Switch5,
 	Hit_Self,
-	Flash_Fire,
 	
 	// Generation 1
 	Regular_Begin,
