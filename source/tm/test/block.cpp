@@ -17,6 +17,7 @@
 
 #include <tm/test/block.hpp>
 
+#include <tm/move/moves.hpp>
 #include <tm/string_conversions/move.hpp>
 #include <tm/block.hpp>
 #include <tm/team.hpp>

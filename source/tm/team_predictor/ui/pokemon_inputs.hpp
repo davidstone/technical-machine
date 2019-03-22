@@ -23,7 +23,6 @@
 #include <tm/team_predictor/ui/nature_input.hpp>
 #include <tm/team_predictor/ui/species_input.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
-#include <tm/move/moves.hpp>
 #include <tm/pokemon/species_forward.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/string_conversions/invalid_string_conversion.hpp>
@@ -31,6 +30,7 @@
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 
 struct PokemonInputs {
 	struct construct_t{};

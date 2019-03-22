@@ -22,7 +22,6 @@
 
 #include <tm/move/damage_type.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
-#include <tm/move/moves.hpp>
 #include <tm/move/other_move.hpp>
 #include <tm/move/used_move.hpp>
 
@@ -40,6 +39,8 @@
 #include <utility>
 
 namespace technicalmachine {
+
+enum class Moves : std::uint16_t;
 struct UsageStats;
 
 // In all of these functions, "slot" is useful only in NvN, which TM does not

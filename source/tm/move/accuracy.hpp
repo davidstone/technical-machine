@@ -20,9 +20,9 @@
 
 #include <bounded/optional.hpp>
 #include <bounded/integer.hpp>
-#include <tm/move/moves.hpp>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 
 // A value that is not present indicates that the move cannot miss.
 using BaseAccuracy = bounded::optional<bounded::integer<30, 100>>;

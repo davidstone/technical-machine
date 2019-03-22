@@ -21,8 +21,6 @@
 #include <tm/ability.hpp>
 #include <tm/item.hpp>
 
-#include <tm/move/moves.hpp>
-
 #include <tm/pokemon/species.hpp>
 
 #include <tm/stat/nature.hpp>
@@ -49,6 +47,7 @@
 #include <string>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 
 namespace {
 

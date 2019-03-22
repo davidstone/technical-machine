@@ -27,7 +27,6 @@
 #include <tm/team.hpp>
 
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
 
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species_forward.hpp>
@@ -42,6 +41,7 @@
 #include <string>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 namespace po {
 namespace {
 using boost::property_tree::ptree;

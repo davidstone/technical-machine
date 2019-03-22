@@ -22,7 +22,6 @@
 #include <tm/item.hpp>
 
 #include <tm/move/max_moves_per_pokemon.hpp>
-#include <tm/move/moves.hpp>
 
 #include <tm/pokemon/species.hpp>
 
@@ -35,6 +34,7 @@
 #include <filesystem>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 
 struct DetailedStats {
 	using UsedMoves = containers::static_vector<Moves, max_moves_per_pokemon.value()>;

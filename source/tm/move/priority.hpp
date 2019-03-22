@@ -17,13 +17,12 @@
 
 #pragma once
 
-#include <tm/move/moves.hpp>
-
 #include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 
 struct Priority {
 	explicit Priority(Moves move);

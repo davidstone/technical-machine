@@ -20,6 +20,7 @@
 #include <tm/test/incorrect_calculation.hpp>
 
 #include <tm/move/call_move.hpp>
+#include <tm/move/moves.hpp>
 
 #include <tm/team.hpp>
 #include <tm/weather.hpp>

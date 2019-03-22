@@ -29,12 +29,11 @@
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
-#include <tm/move/moves.hpp>
-
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/array/make_array.hpp>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 namespace {
 
 void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier) {

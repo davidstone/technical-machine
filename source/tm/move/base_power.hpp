@@ -21,9 +21,8 @@
 #include <bounded/integer.hpp>
 #include <bounded/optional.hpp>
 
-#include <tm/move/moves.hpp>
-
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 
 // variable power returns non-0. Fixed damage is the uninitialized state.
 auto base_power(Moves move) -> bounded::optional<bounded::integer<0, 250>>;

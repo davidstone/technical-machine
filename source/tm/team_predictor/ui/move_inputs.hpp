@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include <tm/move/moves.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 
 #include <containers/array/array.hpp>
@@ -26,6 +25,7 @@
 #include <FL/Fl_Input.H>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 
 struct MoveInput {
 	MoveInput(int button_number, int x_position, char const * label = "");

@@ -19,9 +19,9 @@
 #pragma once
 
 #include <tm/status.hpp>
-#include <tm/move/moves.hpp>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 struct Effectiveness;
 struct Pokemon;
 struct Weather;

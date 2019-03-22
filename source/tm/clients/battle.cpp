@@ -25,7 +25,6 @@
 
 #include <tm/move/call_move.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
 
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/pokemon.hpp>
@@ -38,6 +37,8 @@
 #include <utility>
 
 namespace technicalmachine {
+
+enum class Moves : std::uint16_t;
 
 void Battle::handle_use_move(Party const party, uint8_t /*slot*/, UsedMove const move, bool const clear_status, bounded::optional<damage_type> const damage, OtherMove const other_move) {
 	auto & user = is_me(party) ? m_ai : m_foe;

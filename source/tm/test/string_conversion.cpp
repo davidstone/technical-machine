@@ -23,8 +23,6 @@
 #include <tm/item.hpp>
 #include <tm/status.hpp>
 
-#include <tm/move/moves.hpp>
-
 #include <tm/pokemon/species.hpp>
 
 #include <tm/stat/nature.hpp>
@@ -44,6 +42,7 @@
 #include <string>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 namespace {
 
 // I make the ToString conversion a logic error because I only convert to a

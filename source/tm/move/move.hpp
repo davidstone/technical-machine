@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include <tm/move/moves.hpp>
 #include <tm/move/pp.hpp>
 
 #include <tm/operators.hpp>
@@ -25,6 +24,7 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 using namespace bounded::literal;
 
 struct Move {

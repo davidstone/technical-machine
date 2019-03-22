@@ -18,12 +18,12 @@
 
 #pragma once
 
-#include <tm/move/moves.hpp>
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 using namespace bounded::literal;
 
 constexpr auto max_moves_per_pokemon = 4_bi;

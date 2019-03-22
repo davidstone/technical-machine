@@ -19,7 +19,6 @@
 #include <tm/clients/pokemon_lab/read_team_file.hpp>
 
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
 
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
@@ -41,6 +40,7 @@
 #include <unordered_map>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 namespace pl {
 namespace {
 

@@ -23,7 +23,6 @@
 #include <tm/ability.hpp>
 
 #include <tm/move/is_switch.hpp>
-#include <tm/move/moves.hpp>
 
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
@@ -37,6 +36,7 @@
 #include <iostream>
 
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 namespace po {
 namespace {
 

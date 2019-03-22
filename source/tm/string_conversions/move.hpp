@@ -18,9 +18,8 @@
 
 #include <tm/string_conversions/conversion.hpp>
 
-#include <tm/move/moves.hpp>
-
 namespace technicalmachine {
+enum class Moves : std::uint16_t;
 
 std::string_view to_string(Moves name);
 
