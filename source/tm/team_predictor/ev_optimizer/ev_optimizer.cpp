@@ -22,6 +22,7 @@
 #include <tm/team_predictor/ev_optimizer/offensive.hpp>
 #include <tm/team_predictor/ev_optimizer/speed.hpp>
 
+#include <tm/move/category.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
 #include <random>

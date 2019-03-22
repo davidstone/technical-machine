@@ -19,11 +19,7 @@
 
 #include <cassert>
 
-#include <tm/heal.hpp>
-#include <tm/rational.hpp>
-#include <tm/status.hpp>
-#include <tm/weather.hpp>
-
+#include <tm/move/category.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 
@@ -32,6 +28,11 @@
 #include <tm/stat/calculate.hpp>
 
 #include <tm/type/type.hpp>
+
+#include <tm/heal.hpp>
+#include <tm/rational.hpp>
+#include <tm/status.hpp>
+#include <tm/weather.hpp>
 
 namespace technicalmachine {
 

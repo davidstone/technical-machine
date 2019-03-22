@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/move/category.hpp>
 #include <tm/move/move.hpp>
 
 #include <bounded/detail/variant/variant.hpp>
@@ -43,13 +44,13 @@ struct OtherMove {
 
 	constexpr auto used_move_is_physical() const {
 		return bounded::visit(m_move, bounded::overload(
-			[&](Moves const used) { return is_physical(used); },
+			[](Moves const used) { return is_physical(used); },
 			[](FutureMove) { return false; }
 		));
 	}
 	constexpr auto used_move_is_special() const {
 		return bounded::visit(m_move, bounded::overload(
-			[&](Moves const used) { return is_special(used); },
+			[](Moves const used) { return is_special(used); },
 			[](FutureMove) { return false; }
 		));
 	}

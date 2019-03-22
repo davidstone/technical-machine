@@ -21,6 +21,7 @@
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
+#include <tm/move/category.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 

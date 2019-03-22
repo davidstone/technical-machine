@@ -65,9 +65,6 @@ constexpr auto operator==(Moves const lhs, Move const rhs) {
 
 auto is_regular(Moves move) -> bool;
 
-auto is_physical(Moves move) -> bool;
-auto is_special(Moves move) -> bool;
-
 auto is_damaging(Moves move) -> bool;
 auto is_phaze(Moves name) -> bool;
 
