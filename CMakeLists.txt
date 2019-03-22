@@ -79,6 +79,7 @@ add_library(tm_common STATIC
 	source/tm/move/base_power.cpp
 	source/tm/move/calculate_damage.cpp
 	source/tm/move/call_move.cpp
+	source/tm/move/category.cpp
 	source/tm/move/container.cpp
 	source/tm/move/damage_type.cpp
 	source/tm/move/executed_move.cpp
