@@ -40,6 +40,7 @@
 
 namespace technicalmachine {
 
+enum class Generation;
 enum class Moves : std::uint16_t;
 struct UsageStats;
 
@@ -58,6 +59,9 @@ struct Battle {
 	{
 	}
 	
+	auto generation() const {
+		return m_generation;
+	}
 	auto const & ai() const {
 		return m_ai;
 	}
@@ -121,6 +125,8 @@ private:
 		return is_me(party) ? m_ai : m_foe;
 	}
 	
+	// TODO: Use the correct generation
+	Generation m_generation = Generation::four;
 	Team m_ai;
 	Team m_foe;
 	Weather m_weather;

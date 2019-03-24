@@ -31,6 +31,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct ActivePokemon;
+enum class Generation;
 enum class Moves : std::uint16_t;
 struct Team;
 struct Weather;
@@ -60,7 +61,7 @@ struct OrderElement {
 	Moves move;
 };
 using Order = bounded::optional<std::pair<OrderElement, OrderElement>>;
-auto order(Team const & team1, Moves move1, Team const & team2, Moves move2, Weather weather) -> Order;
+auto order(Generation generation, Team const & team1, Moves move1, Team const & team2, Moves move2, Weather weather) -> Order;
 
 using Faster = bounded::optional<std::pair<Team const &, Team const &>>;
 auto faster_pokemon(Team const & team1, Team const & team2, Weather weather) -> Faster;

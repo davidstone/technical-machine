@@ -28,15 +28,15 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Hit_Self:
 		case Moves::Pound:
 		case Moves::Karate_Chop:
-		case Moves::DoubleSlap:
+		case Moves::Double_Slap:
 		case Moves::Comet_Punch:
 		case Moves::Mega_Punch:
 		case Moves::Pay_Day:
 		case Moves::Fire_Punch:
 		case Moves::Ice_Punch:
-		case Moves::ThunderPunch:
+		case Moves::Thunder_Punch:
 		case Moves::Scratch:
-		case Moves::ViceGrip:
+		case Moves::Vice_Grip:
 		case Moves::Guillotine:
 		case Moves::Cut:
 		case Moves::Wing_Attack:
@@ -78,7 +78,7 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Quick_Attack:
 		case Moves::Rage:
 		case Moves::Bide:
-		case Moves::Selfdestruct:
+		case Moves::Self_Destruct:
 		case Moves::Egg_Bomb:
 		case Moves::Lick:
 		case Moves::Bone_Club:
@@ -87,7 +87,7 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Skull_Bash:
 		case Moves::Spike_Cannon:
 		case Moves::Constrict:
-		case Moves::Hi_Jump_Kick:
+		case Moves::High_Jump_Kick:
 		case Moves::Barrage:
 		case Moves::Leech_Life:
 		case Moves::Sky_Attack:
@@ -107,7 +107,7 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Flail:
 		case Moves::Reversal:
 		case Moves::Mach_Punch:
-		case Moves::Faint_Attack:
+		case Moves::Feint_Attack:
 		case Moves::Bone_Rush:
 		case Moves::Outrage:
 		case Moves::Rollout:
@@ -120,7 +120,7 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Frustration:
 		case Moves::Sacred_Fire:
 		case Moves::Magnitude:
-		case Moves::DynamicPunch:
+		case Moves::Dynamic_Punch:
 		case Moves::Megahorn:
 		case Moves::Pursuit:
 		case Moves::Rapid_Spin:
@@ -129,13 +129,13 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Vital_Throw:
 		case Moves::Cross_Chop:
 		case Moves::Crunch:
-		case Moves::ExtremeSpeed:
+		case Moves::Extreme_Speed:
 		case Moves::Rock_Smash:
 		case Moves::Beat_Up:
 		case Moves::Fake_Out:
 		case Moves::Facade:
 		case Moves::Focus_Punch:
-		case Moves::SmellingSalt:
+		case Moves::Smelling_Salts:
 		case Moves::Superpower:
 		case Moves::Revenge:
 		case Moves::Brick_Break:
@@ -247,10 +247,65 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Icicle_Crash:
 		case Moves::V_create:
 		case Moves::Fusion_Bolt:
+		case Moves::Flying_Press:
+		case Moves::Fell_Stinger:
+		case Moves::Phantom_Force:
+		case Moves::Petal_Blizzard:
+		case Moves::Play_Rough:
+		case Moves::Diamond_Storm:
+		case Moves::Nuzzle:
+		case Moves::Hold_Back:
+		case Moves::Power_Up_Punch:
+		case Moves::Thousand_Arrows:
+		case Moves::Thousand_Waves:
+		case Moves::Lands_Wrath:
+		case Moves::Precipice_Blades:
+		case Moves::Dragon_Ascent:
+		case Moves::Hyperspace_Fury:
+		case Moves::Catastropika:
+		case Moves::First_Impression:
+		case Moves::Spirit_Shackle:
+		case Moves::Darkest_Lariat:
+		case Moves::Ice_Hammer:
+		case Moves::High_Horsepower:
+		case Moves::Solar_Blade:
+		case Moves::Leafage:
+		case Moves::Throat_Chop:
+		case Moves::Anchor_Shot:
+		case Moves::Lunge:
+		case Moves::Fire_Lash:
+		case Moves::Power_Trip:
+		case Moves::Smart_Strike:
+		case Moves::Trop_Kick:
+		case Moves::Beak_Blast:
+		case Moves::Dragon_Hammer:
+		case Moves::Brutal_Swing:
+		case Moves::Sinister_Arrow_Raid:
+		case Moves::Malicious_Moonsault:
+		case Moves::Soul_Stealing_7_Star_Strike:
+		case Moves::Pulverizing_Pancake:
+		case Moves::Psychic_Fangs:
+		case Moves::Stomping_Tantrum:
+		case Moves::Shadow_Bone:
+		case Moves::Accelerock:
+		case Moves::Liquidation:
+		case Moves::Spectral_Thief:
+		case Moves::Sunsteel_Strike:
+		case Moves::Zing_Zap:
+		case Moves::Multi_Attack:
+		case Moves::Plasma_Fists:
+		case Moves::Lets_Snuggle_Forever:
+		case Moves::Splintered_Stormshards:
+		case Moves::Zippy_Zap:
+		case Moves::Floaty_Fall:
+		case Moves::Sizzly_Slide:
+		case Moves::Sappy_Seed:
+		case Moves::Veevee_Volley:
+		case Moves::Double_Iron_Bash:
 			return MoveCategory::physical;
 		case Moves::Razor_Wind:
 		case Moves::Gust:
-		case Moves::SonicBoom:
+		case Moves::Sonic_Boom:
 		case Moves::Acid:
 		case Moves::Ember:
 		case Moves::Flamethrower:
@@ -260,16 +315,16 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Ice_Beam:
 		case Moves::Blizzard:
 		case Moves::Psybeam:
-		case Moves::BubbleBeam:
+		case Moves::Bubble_Beam:
 		case Moves::Aurora_Beam:
 		case Moves::Hyper_Beam:
 		case Moves::Absorb:
 		case Moves::Mega_Drain:
-		case Moves::SolarBeam:
+		case Moves::Solar_Beam:
 		case Moves::Petal_Dance:
 		case Moves::Dragon_Rage:
 		case Moves::Fire_Spin:
-		case Moves::ThunderShock:
+		case Moves::Thunder_Shock:
 		case Moves::Thunderbolt:
 		case Moves::Thunder:
 		case Moves::Confusion:
@@ -292,11 +347,11 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Zap_Cannon:
 		case Moves::Icy_Wind:
 		case Moves::Giga_Drain:
-		case Moves::DragonBreath:
+		case Moves::Dragon_Breath:
 		case Moves::Hidden_Power:
 		case Moves::Twister:
 		case Moves::Mirror_Coat:
-		case Moves::AncientPower:
+		case Moves::Ancient_Power:
 		case Moves::Shadow_Ball:
 		case Moves::Future_Sight:
 		case Moves::Whirlpool:
@@ -391,6 +446,53 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Ice_Burn:
 		case Moves::Snarl:
 		case Moves::Fusion_Flare:
+		case Moves::Belch:
+		case Moves::Parabolic_Charge:
+		case Moves::Freeze_Dry:
+		case Moves::Disarming_Voice:
+		case Moves::Draining_Kiss:
+		case Moves::Fairy_Wind:
+		case Moves::Moonblast:
+		case Moves::Boomburst:
+		case Moves::Steam_Eruption:
+		case Moves::Hyperspace_Hole:
+		case Moves::Water_Shuriken:
+		case Moves::Mystical_Fire:
+		case Moves::Dazzling_Gleam:
+		case Moves::Infestation:
+		case Moves::Oblivion_Wing:
+		case Moves::Light_of_Ruin:
+		case Moves::Origin_Pulse:
+		case Moves::Sparkling_Aria:
+		case Moves::Pollen_Puff:
+		case Moves::Burn_Up:
+		case Moves::Revelation_Dance:
+		case Moves::Core_Enforcer:
+		case Moves::Clanging_Scales:
+		case Moves::Oceanic_Operetta:
+		case Moves::Guardian_of_Alola:
+		case Moves::Stoked_Sparksurfer:
+		case Moves::Genesis_Supernova:
+		case Moves::Shell_Trap:
+		case Moves::Fleur_Cannon:
+		case Moves::Prismatic_Laser:
+		case Moves::Moongeist_Beam:
+		case Moves::Natures_Madness:
+		case Moves::m10000000_Volt_Thunderbolt:
+		case Moves::Mind_Blown:
+		case Moves::Photon_Geyser:
+		case Moves::Light_That_Burns_the_Sky:
+		case Moves::Searing_Sunraze_Smash:
+		case Moves::Menacing_Moonraze_Maelstrom:
+		case Moves::Clangorous_Soulblaze:
+		case Moves::Splishy_Splash:
+		case Moves::Pika_Papow:
+		case Moves::Bouncy_Bubble:
+		case Moves::Buzzy_Buzz:
+		case Moves::Glitzy_Glow:
+		case Moves::Baddy_Bad:
+		case Moves::Freezy_Frost:
+		case Moves::Sparkly_Swirl:
 			return MoveCategory::special;
 		case Moves::Pass:
 		case Moves::Switch0:
@@ -412,7 +514,7 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Mist:
 		case Moves::Leech_Seed:
 		case Moves::Growth:
-		case Moves::PoisonPowder:
+		case Moves::Poison_Powder:
 		case Moves::Stun_Spore:
 		case Moves::Sleep_Powder:
 		case Moves::String_Shot:
@@ -428,7 +530,7 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Recover:
 		case Moves::Harden:
 		case Moves::Minimize:
-		case Moves::SmokeScreen:
+		case Moves::Smokescreen:
 		case Moves::Confuse_Ray:
 		case Moves::Withdraw:
 		case Moves::Defense_Curl:
@@ -441,7 +543,7 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Mirror_Move:
 		case Moves::Amnesia:
 		case Moves::Kinesis:
-		case Moves::Softboiled:
+		case Moves::Soft_Boiled:
 		case Moves::Glare:
 		case Moves::Poison_Gas:
 		case Moves::Lovely_Kiss:
@@ -519,7 +621,7 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Snatch:
 		case Moves::Camouflage:
 		case Moves::Tail_Glow:
-		case Moves::FeatherDance:
+		case Moves::Feather_Dance:
 		case Moves::Teeter_Dance:
 		case Moves::Mud_Sport:
 		case Moves::Slack_Off:
@@ -527,7 +629,7 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Fake_Tears:
 		case Moves::Odor_Sleuth:
 		case Moves::Metal_Sound:
-		case Moves::GrassWhistle:
+		case Moves::Grass_Whistle:
 		case Moves::Tickle:
 		case Moves::Cosmic_Power:
 		case Moves::Iron_Defense:
@@ -594,6 +696,71 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Bestow:
 		case Moves::Work_Up:
 		case Moves::Cotton_Guard:
+		case Moves::Mat_Block:
+		case Moves::Rototiller:
+		case Moves::Sticky_Web:
+		case Moves::Trick_or_Treat:
+		case Moves::Noble_Roar:
+		case Moves::Ion_Deluge:
+		case Moves::Forests_Curse:
+		case Moves::Parting_Shot:
+		case Moves::Topsy_Turvy:
+		case Moves::Crafty_Shield:
+		case Moves::Flower_Shield:
+		case Moves::Grassy_Terrain:
+		case Moves::Misty_Terrain:
+		case Moves::Electrify:
+		case Moves::Fairy_Lock:
+		case Moves::Kings_Shield:
+		case Moves::Play_Nice:
+		case Moves::Confide:
+		case Moves::Spiky_Shield:
+		case Moves::Aromatic_Mist:
+		case Moves::Eerie_Impulse:
+		case Moves::Venom_Drench:
+		case Moves::Powder:
+		case Moves::Geomancy:
+		case Moves::Magnetic_Flux:
+		case Moves::Happy_Hour:
+		case Moves::Electric_Terrain:
+		case Moves::Celebrate:
+		case Moves::Hold_Hands:
+		case Moves::Baby_Doll_Eyes:
+		case Moves::Shore_Up:
+		case Moves::Baneful_Bunker:
+		case Moves::Floral_Healing:
+		case Moves::Strength_Sap:
+		case Moves::Spotlight:
+		case Moves::Toxic_Thread:
+		case Moves::Laser_Focus:
+		case Moves::Gear_Up:
+		case Moves::Psychic_Terrain:
+		case Moves::Speed_Swap:
+		case Moves::Purify:
+		case Moves::Instruct:
+		case Moves::Aurora_Veil:
+		case Moves::Extreme_Evoboost:
+		case Moves::Tearful_Look:
+			return MoveCategory::other;
+		// TODO, can be either, also Hidden Power in earlier generations
+		case Moves::Breakneck_Blitz:
+		case Moves::All_Out_Pummeling:
+		case Moves::Supersonic_Skystrike:
+		case Moves::Acid_Downpour:
+		case Moves::Tectonic_Rage:
+		case Moves::Continental_Crush:
+		case Moves::Savage_Spin_Out:
+		case Moves::Never_Ending_Nightmare:
+		case Moves::Corkscrew_Crash:
+		case Moves::Inferno_Overdrive:
+		case Moves::Hydro_Vortex:
+		case Moves::Bloom_Doom:
+		case Moves::Gigavolt_Havoc:
+		case Moves::Shattered_Psyche:
+		case Moves::Subzero_Slammer:
+		case Moves::Devastating_Drake:
+		case Moves::Black_Hole_Eclipse:
+		case Moves::Twinkle_Tackle:
 			return MoveCategory::other;
 	}
 }

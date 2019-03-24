@@ -1,5 +1,5 @@
 // Base power calculation
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -22,10 +22,11 @@
 #include <bounded/optional.hpp>
 
 namespace technicalmachine {
+enum class Generation;
 enum class Moves : std::uint16_t;
 
 // variable power returns non-0. Fixed damage is the uninitialized state.
-auto base_power(Moves move) -> bounded::optional<bounded::integer<0, 250>>;
+auto base_power(Generation generation, Moves move) -> bounded::optional<bounded::integer<0, 250>>;
 
 // Fling gives 0, Rollout gives 480
 using VariableAdjustedBasePower = bounded::integer<0, 480>;

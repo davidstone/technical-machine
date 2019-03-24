@@ -26,8 +26,9 @@
 
 namespace technicalmachine {
 
+enum class Generation;
 struct UsageStats;
 
-Team predict_team(UsageStats const & usage_stats, LeadStats lead_stats, Team team, std::mt19937 & random_engine);
+Team predict_team(Generation generation, UsageStats const & usage_stats, LeadStats lead_stats, Team team, std::mt19937 & random_engine);
 
 }	// namespace technicalmachine

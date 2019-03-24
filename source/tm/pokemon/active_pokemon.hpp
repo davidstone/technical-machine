@@ -43,6 +43,7 @@
 
 #include <tm/stat/stage.hpp>
 
+#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/random_damage.hpp>
 #include <tm/rational.hpp>
@@ -224,7 +225,8 @@ public:
 	}
 
 	auto charge_boosted(Moves const move) const -> bool {
-		return m_flags.charged and get_type(move, m_pokemon) == Type::Electric;
+		constexpr auto generation = Generation::seven;
+		return m_flags.charged and get_type(generation, move, m_pokemon) == Type::Electric;
 	}
 
 	auto is_charging_up() const -> bool {
@@ -337,13 +339,11 @@ public:
 	}
 
 	auto sport_is_active(Moves const foe_move) const -> bool {
-		switch (get_type(foe_move, m_pokemon)) {
-		case Type::Electric:
-			return m_flags.mud_sport;
-		case Type::Fire:
-			return m_flags.water_sport;
-		default:
-			return false;
+		constexpr auto generation = Generation::seven;
+		switch (get_type(generation, foe_move, m_pokemon)) {
+			case Type::Electric: return m_flags.mud_sport;
+			case Type::Fire: return m_flags.water_sport;
+			default: return false;
 		}
 	}
 

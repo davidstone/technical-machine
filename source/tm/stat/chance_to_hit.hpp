@@ -22,12 +22,13 @@
 
 namespace technicalmachine {
 
+enum class Generation;
 enum class Moves : std::uint16_t;
 struct ActivePokemon;
 struct Weather;
 
 using ChanceToHit = double;
 
-auto chance_to_hit(ActivePokemon user, Moves move, ActivePokemon target, Weather weather, bool target_moved) -> ChanceToHit;
+auto chance_to_hit(Generation generation, ActivePokemon user, Moves move, ActivePokemon target, Weather weather, bool target_moved) -> ChanceToHit;
 
 }	// namespace technicalmachine

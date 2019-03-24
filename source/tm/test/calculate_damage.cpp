@@ -25,6 +25,7 @@
 
 #include <tm/pokemon/species.hpp>
 
+#include <tm/generation.hpp>
 #include <tm/team.hpp>
 #include <tm/variable.hpp>
 #include <tm/weather.hpp>
@@ -37,7 +38,9 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-constexpr auto max_damage_physical_move = Move(Moves::Rollout);
+constexpr auto generation = Generation::four;
+
+constexpr auto max_damage_physical_move = Move(generation, Moves::Rollout);
 
 Team max_damage_physical_attacker(Item const item, Ability const ability, Nature const nature) {
 	auto attacker = Team(max_pokemon_per_team);
@@ -95,6 +98,7 @@ void physical_power_test() {
 	auto const attacker = max_damage_physical_attacker(Item::Rock_Incense, Ability::Rivalry, Nature::Hardy);
 
 	auto const power = move_power(
+		generation,
 		attacker,
 		ExecutedMove{max_damage_physical_move.name(), Variable{}, critical_hit},
 		max_damage_physical_move.pp(),
@@ -110,12 +114,13 @@ void special_power_test() {
 
 	auto attacker = max_damage_special_attacker(Item::Wave_Incense, Ability::Torrent, Nature::Hardy);
 	Pokemon & pokemon = attacker.pokemon();
-	auto const move = all_moves(pokemon).emplace_back(Moves::Surf);
+	auto const move = all_moves(pokemon).emplace_back(generation, Moves::Surf);
 
 	Team defender = max_damage_special_defender();
 	defender.pokemon().dive();
 
 	auto const power = move_power(
+		generation,
 		attacker,
 		ExecutedMove{move.name(), Variable{}, critical_hit},
 		move.pp(),
@@ -148,6 +153,7 @@ void physical_damage_test() {
 	
 	check_equal(
 		calculate_damage(
+			generation,
 			attacker,
 			ExecutedMove{max_damage_physical_move.name(), Variable{}, critical_hit},
 			max_damage_physical_move.pp(),
@@ -167,7 +173,7 @@ void special_damage_test() {
 
 	auto attacker = max_damage_special_attacker(Item::Metronome, Ability::Blaze, Nature::Modest);
 	Pokemon & a = attacker.pokemon();
-	auto const move = all_moves(a).emplace_back(Moves::Blast_Burn);
+	auto const move = all_moves(a).emplace_back(generation, Moves::Blast_Burn);
 	a.change_type(Type::Fire);
 
 	set_stat_ev(a, StatNames::SPA, EV(EV::max));
@@ -183,6 +189,7 @@ void special_damage_test() {
 
 	check_equal(
 		calculate_damage(
+			generation,
 			attacker,
 			ExecutedMove{move.name(), Variable{}, critical_hit},
 			move.pp(),

@@ -19,9 +19,13 @@
 #include <tm/type/type.hpp>
 
 #include <tm/type/effectiveness.hpp>
-#include <tm/weather.hpp>
+
 #include <tm/move/moves.hpp>
+
 #include <tm/pokemon/pokemon.hpp>
+
+#include <tm/generation.hpp>
+#include <tm/weather.hpp>
 
 #include <containers/array/array.hpp>
 
@@ -81,7 +85,7 @@ auto hidden_power_type(Pokemon const & pokemon) {
 
 }	// namespace
 
-auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
+auto get_type(Generation const generation, Moves const move, Pokemon const & pokemon) -> Type {
 	switch (move) {
 		case Moves::Pass: return Type::Typeless;
 		case Moves::Switch0: return Type::Typeless;
@@ -92,21 +96,21 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Switch5: return Type::Typeless;
 		case Moves::Hit_Self: return Type::Typeless;
 		case Moves::Pound: return Type::Normal;
-		case Moves::Karate_Chop: return Type::Fighting;
-		case Moves::DoubleSlap: return Type::Normal;
+		case Moves::Karate_Chop: return BOUNDED_CONDITIONAL(generation == Generation::one, Type::Normal, Type::Fighting);
+		case Moves::Double_Slap: return Type::Normal;
 		case Moves::Comet_Punch: return Type::Normal;
 		case Moves::Mega_Punch: return Type::Normal;
 		case Moves::Pay_Day: return Type::Normal;
 		case Moves::Fire_Punch: return Type::Fire;
 		case Moves::Ice_Punch: return Type::Ice;
-		case Moves::ThunderPunch: return Type::Electric;
+		case Moves::Thunder_Punch: return Type::Electric;
 		case Moves::Scratch: return Type::Normal;
-		case Moves::ViceGrip: return Type::Normal;
+		case Moves::Vice_Grip: return Type::Normal;
 		case Moves::Guillotine: return Type::Normal;
 		case Moves::Razor_Wind: return Type::Normal;
 		case Moves::Swords_Dance: return Type::Normal;
 		case Moves::Cut: return Type::Normal;
-		case Moves::Gust: return Type::Flying;
+		case Moves::Gust: return BOUNDED_CONDITIONAL(generation == Generation::one, Type::Normal, Type::Flying);
 		case Moves::Wing_Attack: return Type::Flying;
 		case Moves::Whirlwind: return Type::Normal;
 		case Moves::Fly: return Type::Flying;
@@ -118,7 +122,7 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Mega_Kick: return Type::Normal;
 		case Moves::Jump_Kick: return Type::Fighting;
 		case Moves::Rolling_Kick: return Type::Fighting;
-		case Moves::Sand_Attack: return Type::Ground;
+		case Moves::Sand_Attack: return BOUNDED_CONDITIONAL(generation == Generation::one, Type::Normal, Type::Ground);
 		case Moves::Headbutt: return Type::Normal;
 		case Moves::Horn_Attack: return Type::Normal;
 		case Moves::Fury_Attack: return Type::Normal;
@@ -134,12 +138,12 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Twineedle: return Type::Bug;
 		case Moves::Pin_Missile: return Type::Bug;
 		case Moves::Leer: return Type::Normal;
-		case Moves::Bite: return Type::Dark;
+		case Moves::Bite: return BOUNDED_CONDITIONAL(generation == Generation::one, Type::Normal, Type::Dark);
 		case Moves::Growl: return Type::Normal;
 		case Moves::Roar: return Type::Normal;
 		case Moves::Sing: return Type::Normal;
 		case Moves::Supersonic: return Type::Normal;
-		case Moves::SonicBoom: return Type::Normal;
+		case Moves::Sonic_Boom: return Type::Normal;
 		case Moves::Disable: return Type::Normal;
 		case Moves::Acid: return Type::Poison;
 		case Moves::Ember: return Type::Fire;
@@ -151,7 +155,7 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Ice_Beam: return Type::Ice;
 		case Moves::Blizzard: return Type::Ice;
 		case Moves::Psybeam: return Type::Psychic;
-		case Moves::BubbleBeam: return Type::Water;
+		case Moves::Bubble_Beam: return Type::Water;
 		case Moves::Aurora_Beam: return Type::Ice;
 		case Moves::Hyper_Beam: return Type::Normal;
 		case Moves::Peck: return Type::Flying;
@@ -166,15 +170,15 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Leech_Seed: return Type::Grass;
 		case Moves::Growth: return Type::Normal;
 		case Moves::Razor_Leaf: return Type::Grass;
-		case Moves::SolarBeam: return Type::Grass;
-		case Moves::PoisonPowder: return Type::Poison;
+		case Moves::Solar_Beam: return Type::Grass;
+		case Moves::Poison_Powder: return Type::Poison;
 		case Moves::Stun_Spore: return Type::Grass;
 		case Moves::Sleep_Powder: return Type::Grass;
 		case Moves::Petal_Dance: return Type::Grass;
 		case Moves::String_Shot: return Type::Bug;
 		case Moves::Dragon_Rage: return Type::Dragon;
 		case Moves::Fire_Spin: return Type::Fire;
-		case Moves::ThunderShock: return Type::Electric;
+		case Moves::Thunder_Shock: return Type::Electric;
 		case Moves::Thunderbolt: return Type::Electric;
 		case Moves::Thunder_Wave: return Type::Electric;
 		case Moves::Thunder: return Type::Electric;
@@ -198,7 +202,7 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Recover: return Type::Normal;
 		case Moves::Harden: return Type::Normal;
 		case Moves::Minimize: return Type::Normal;
-		case Moves::SmokeScreen: return Type::Normal;
+		case Moves::Smokescreen: return Type::Normal;
 		case Moves::Confuse_Ray: return Type::Ghost;
 		case Moves::Withdraw: return Type::Water;
 		case Moves::Defense_Curl: return Type::Normal;
@@ -210,7 +214,7 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Bide: return Type::Normal;
 		case Moves::Metronome: return Type::Normal;
 		case Moves::Mirror_Move: return Type::Flying;
-		case Moves::Selfdestruct: return Type::Normal;
+		case Moves::Self_Destruct: return Type::Normal;
 		case Moves::Egg_Bomb: return Type::Normal;
 		case Moves::Lick: return Type::Ghost;
 		case Moves::Smog: return Type::Poison;
@@ -225,8 +229,8 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Constrict: return Type::Normal;
 		case Moves::Amnesia: return Type::Psychic;
 		case Moves::Kinesis: return Type::Psychic;
-		case Moves::Softboiled: return Type::Normal;
-		case Moves::Hi_Jump_Kick: return Type::Fighting;
+		case Moves::Soft_Boiled: return Type::Normal;
+		case Moves::High_Jump_Kick: return Type::Fighting;
 		case Moves::Glare: return Type::Normal;
 		case Moves::Dream_Eater: return Type::Psychic;
 		case Moves::Poison_Gas: return Type::Poison;
@@ -255,7 +259,7 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Super_Fang: return Type::Normal;
 		case Moves::Slash: return Type::Normal;
 		case Moves::Substitute: return Type::Normal;
-		case Moves::Struggle: return Type::Typeless;
+		case Moves::Struggle: return BOUNDED_CONDITIONAL(generation == Generation::one, Type::Normal, Type::Typeless);
 		case Moves::Sketch: return Type::Normal;
 		case Moves::Triple_Kick: return Type::Fighting;
 		case Moves::Thief: return Type::Dark;
@@ -275,7 +279,7 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Protect: return Type::Normal;
 		case Moves::Mach_Punch: return Type::Fighting;
 		case Moves::Scary_Face: return Type::Normal;
-		case Moves::Faint_Attack: return Type::Dark;
+		case Moves::Feint_Attack: return Type::Dark;
 		case Moves::Sweet_Kiss: return Type::Normal;
 		case Moves::Belly_Drum: return Type::Normal;
 		case Moves::Sludge_Bomb: return Type::Poison;
@@ -313,9 +317,9 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Pain_Split: return Type::Normal;
 		case Moves::Sacred_Fire: return Type::Fire;
 		case Moves::Magnitude: return Type::Ground;
-		case Moves::DynamicPunch: return Type::Fighting;
+		case Moves::Dynamic_Punch: return Type::Fighting;
 		case Moves::Megahorn: return Type::Bug;
-		case Moves::DragonBreath: return Type::Dragon;
+		case Moves::Dragon_Breath: return Type::Dragon;
 		case Moves::Baton_Pass: return Type::Normal;
 		case Moves::Encore: return Type::Normal;
 		case Moves::Pursuit: return Type::Dark;
@@ -335,8 +339,8 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Crunch: return Type::Dark;
 		case Moves::Mirror_Coat: return Type::Psychic;
 		case Moves::Psych_Up: return Type::Normal;
-		case Moves::ExtremeSpeed: return Type::Normal;
-		case Moves::AncientPower: return Type::Rock;
+		case Moves::Extreme_Speed: return Type::Normal;
+		case Moves::Ancient_Power: return Type::Rock;
 		case Moves::Shadow_Ball: return Type::Ghost;
 		case Moves::Future_Sight: return Type::Psychic;
 		case Moves::Rock_Smash: return Type::Fighting;
@@ -355,7 +359,7 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Memento: return Type::Dark;
 		case Moves::Facade: return Type::Normal;
 		case Moves::Focus_Punch: return Type::Fighting;
-		case Moves::SmellingSalt: return Type::Normal;
+		case Moves::Smelling_Salts: return Type::Normal;
 		case Moves::Follow_Me: return Type::Normal;
 		case Moves::Nature_Power: return Type::Normal;
 		case Moves::Charge: return Type::Electric;
@@ -387,7 +391,7 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Tail_Glow: return Type::Bug;
 		case Moves::Luster_Purge: return Type::Psychic;
 		case Moves::Mist_Ball: return Type::Psychic;
-		case Moves::FeatherDance: return Type::Flying;
+		case Moves::Feather_Dance: return Type::Flying;
 		case Moves::Teeter_Dance: return Type::Normal;
 		case Moves::Blaze_Kick: return Type::Fire;
 		case Moves::Mud_Sport: return Type::Ground;
@@ -410,7 +414,7 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::Rock_Tomb: return Type::Rock;
 		case Moves::Silver_Wind: return Type::Bug;
 		case Moves::Metal_Sound: return Type::Steel;
-		case Moves::GrassWhistle: return Type::Grass;
+		case Moves::Grass_Whistle: return Type::Grass;
 		case Moves::Tickle: return Type::Normal;
 		case Moves::Cosmic_Power: return Type::Psychic;
 		case Moves::Water_Spout: return Type::Water;
@@ -650,6 +654,171 @@ auto get_type(Moves const move, Pokemon const & pokemon) -> Type {
 		case Moves::V_create: return Type::Fire;
 		case Moves::Fusion_Flare: return Type::Fire;
 		case Moves::Fusion_Bolt: return Type::Electric;
+		case Moves::Flying_Press: return Type::Fighting;
+		case Moves::Mat_Block: return Type::Fighting;
+		case Moves::Belch: return Type::Poison;
+		case Moves::Rototiller: return Type::Ground;
+		case Moves::Sticky_Web: return Type::Bug;
+		case Moves::Fell_Stinger: return Type::Bug;
+		case Moves::Phantom_Force: return Type::Ghost;
+		case Moves::Trick_or_Treat: return Type::Ghost;
+		case Moves::Noble_Roar: return Type::Normal;
+		case Moves::Ion_Deluge: return Type::Electric;
+		case Moves::Parabolic_Charge: return Type::Electric;
+		case Moves::Forests_Curse: return Type::Grass;
+		case Moves::Petal_Blizzard: return Type::Grass;
+		case Moves::Freeze_Dry: return Type::Ice;
+		case Moves::Disarming_Voice: return Type::Typeless;
+		case Moves::Parting_Shot: return Type::Dark;
+		case Moves::Topsy_Turvy: return Type::Dark;
+		case Moves::Draining_Kiss: return Type::Typeless;
+		case Moves::Crafty_Shield: return Type::Typeless;
+		case Moves::Flower_Shield: return Type::Typeless;
+		case Moves::Grassy_Terrain: return Type::Grass;
+		case Moves::Misty_Terrain: return Type::Typeless;
+		case Moves::Electrify: return Type::Electric;
+		case Moves::Play_Rough: return Type::Typeless;
+		case Moves::Fairy_Wind: return Type::Typeless;
+		case Moves::Moonblast: return Type::Typeless;
+		case Moves::Boomburst: return Type::Normal;
+		case Moves::Fairy_Lock: return Type::Typeless;
+		case Moves::Kings_Shield: return Type::Steel;
+		case Moves::Play_Nice: return Type::Normal;
+		case Moves::Confide: return Type::Normal;
+		case Moves::Diamond_Storm: return Type::Rock;
+		case Moves::Steam_Eruption: return Type::Water;
+		case Moves::Hyperspace_Hole: return Type::Psychic;
+		case Moves::Water_Shuriken: return Type::Water;
+		case Moves::Mystical_Fire: return Type::Fire;
+		case Moves::Spiky_Shield: return Type::Grass;
+		case Moves::Aromatic_Mist: return Type::Typeless;
+		case Moves::Eerie_Impulse: return Type::Electric;
+		case Moves::Venom_Drench: return Type::Poison;
+		case Moves::Powder: return Type::Bug;
+		case Moves::Geomancy: return Type::Typeless;
+		case Moves::Magnetic_Flux: return Type::Electric;
+		case Moves::Happy_Hour: return Type::Normal;
+		case Moves::Electric_Terrain: return Type::Electric;
+		case Moves::Dazzling_Gleam: return Type::Typeless;
+		case Moves::Celebrate: return Type::Normal;
+		case Moves::Hold_Hands: return Type::Normal;
+		case Moves::Baby_Doll_Eyes: return Type::Typeless;
+		case Moves::Nuzzle: return Type::Electric;
+		case Moves::Hold_Back: return Type::Normal;
+		case Moves::Infestation: return Type::Bug;
+		case Moves::Power_Up_Punch: return Type::Fighting;
+		case Moves::Oblivion_Wing: return Type::Flying;
+		case Moves::Thousand_Arrows: return Type::Ground;
+		case Moves::Thousand_Waves: return Type::Ground;
+		case Moves::Lands_Wrath: return Type::Ground;
+		case Moves::Light_of_Ruin: return Type::Typeless;
+		case Moves::Origin_Pulse: return Type::Water;
+		case Moves::Precipice_Blades: return Type::Ground;
+		case Moves::Dragon_Ascent: return Type::Flying;
+		case Moves::Hyperspace_Fury: return Type::Dark;
+		case Moves::Breakneck_Blitz: return Type::Normal;
+		case Moves::All_Out_Pummeling: return Type::Fighting;
+		case Moves::Supersonic_Skystrike: return Type::Flying;
+		case Moves::Acid_Downpour: return Type::Poison;
+		case Moves::Tectonic_Rage: return Type::Ground;
+		case Moves::Continental_Crush: return Type::Rock;
+		case Moves::Savage_Spin_Out: return Type::Bug;
+		case Moves::Never_Ending_Nightmare: return Type::Ghost;
+		case Moves::Corkscrew_Crash: return Type::Steel;
+		case Moves::Inferno_Overdrive: return Type::Fire;
+		case Moves::Hydro_Vortex: return Type::Water;
+		case Moves::Bloom_Doom: return Type::Grass;
+		case Moves::Gigavolt_Havoc: return Type::Electric;
+		case Moves::Shattered_Psyche: return Type::Psychic;
+		case Moves::Subzero_Slammer: return Type::Ice;
+		case Moves::Devastating_Drake: return Type::Dragon;
+		case Moves::Black_Hole_Eclipse: return Type::Dark;
+		case Moves::Twinkle_Tackle: return Type::Typeless;
+		case Moves::Catastropika: return Type::Electric;
+		case Moves::Shore_Up: return Type::Ground;
+		case Moves::First_Impression: return Type::Bug;
+		case Moves::Baneful_Bunker: return Type::Poison;
+		case Moves::Spirit_Shackle: return Type::Ghost;
+		case Moves::Darkest_Lariat: return Type::Dark;
+		case Moves::Sparkling_Aria: return Type::Water;
+		case Moves::Ice_Hammer: return Type::Ice;
+		case Moves::Floral_Healing: return Type::Typeless;
+		case Moves::High_Horsepower: return Type::Ground;
+		case Moves::Strength_Sap: return Type::Grass;
+		case Moves::Solar_Blade: return Type::Grass;
+		case Moves::Leafage: return Type::Grass;
+		case Moves::Spotlight: return Type::Normal;
+		case Moves::Toxic_Thread: return Type::Poison;
+		case Moves::Laser_Focus: return Type::Normal;
+		case Moves::Gear_Up: return Type::Steel;
+		case Moves::Throat_Chop: return Type::Dark;
+		case Moves::Pollen_Puff: return Type::Bug;
+		case Moves::Anchor_Shot: return Type::Steel;
+		case Moves::Psychic_Terrain: return Type::Psychic;
+		case Moves::Lunge: return Type::Bug;
+		case Moves::Fire_Lash: return Type::Fire;
+		case Moves::Power_Trip: return Type::Dark;
+		case Moves::Burn_Up: return Type::Fire;
+		case Moves::Speed_Swap: return Type::Psychic;
+		case Moves::Smart_Strike: return Type::Steel;
+		case Moves::Purify: return Type::Poison;
+		case Moves::Revelation_Dance: return Type::Normal;
+		case Moves::Core_Enforcer: return Type::Dragon;
+		case Moves::Trop_Kick: return Type::Grass;
+		case Moves::Instruct: return Type::Psychic;
+		case Moves::Beak_Blast: return Type::Flying;
+		case Moves::Clanging_Scales: return Type::Dragon;
+		case Moves::Dragon_Hammer: return Type::Dragon;
+		case Moves::Brutal_Swing: return Type::Dark;
+		case Moves::Aurora_Veil: return Type::Ice;
+		case Moves::Sinister_Arrow_Raid: return Type::Ghost;
+		case Moves::Malicious_Moonsault: return Type::Dark;
+		case Moves::Oceanic_Operetta: return Type::Water;
+		case Moves::Guardian_of_Alola: return Type::Typeless;
+		case Moves::Soul_Stealing_7_Star_Strike: return Type::Ghost;
+		case Moves::Stoked_Sparksurfer: return Type::Electric;
+		case Moves::Pulverizing_Pancake: return Type::Normal;
+		case Moves::Extreme_Evoboost: return Type::Normal;
+		case Moves::Genesis_Supernova: return Type::Psychic;
+		case Moves::Shell_Trap: return Type::Fire;
+		case Moves::Fleur_Cannon: return Type::Typeless;
+		case Moves::Psychic_Fangs: return Type::Psychic;
+		case Moves::Stomping_Tantrum: return Type::Ground;
+		case Moves::Shadow_Bone: return Type::Ghost;
+		case Moves::Accelerock: return Type::Rock;
+		case Moves::Liquidation: return Type::Water;
+		case Moves::Prismatic_Laser: return Type::Psychic;
+		case Moves::Spectral_Thief: return Type::Ghost;
+		case Moves::Sunsteel_Strike: return Type::Steel;
+		case Moves::Moongeist_Beam: return Type::Ghost;
+		case Moves::Tearful_Look: return Type::Normal;
+		case Moves::Zing_Zap: return Type::Electric;
+		case Moves::Natures_Madness: return Type::Typeless;
+		case Moves::Multi_Attack: return Type::Normal;
+		case Moves::m10000000_Volt_Thunderbolt: return Type::Electric;
+		case Moves::Mind_Blown: return Type::Fire;
+		case Moves::Plasma_Fists: return Type::Electric;
+		case Moves::Photon_Geyser: return Type::Psychic;
+		case Moves::Light_That_Burns_the_Sky: return Type::Psychic;
+		case Moves::Searing_Sunraze_Smash: return Type::Steel;
+		case Moves::Menacing_Moonraze_Maelstrom: return Type::Ghost;
+		case Moves::Lets_Snuggle_Forever: return Type::Typeless;
+		case Moves::Splintered_Stormshards: return Type::Rock;
+		case Moves::Clangorous_Soulblaze: return Type::Dragon;
+		case Moves::Zippy_Zap: return Type::Electric;
+		case Moves::Splishy_Splash: return Type::Water;
+		case Moves::Floaty_Fall: return Type::Flying;
+		case Moves::Pika_Papow: return Type::Electric;
+		case Moves::Bouncy_Bubble: return Type::Water;
+		case Moves::Buzzy_Buzz: return Type::Electric;
+		case Moves::Sizzly_Slide: return Type::Fire;
+		case Moves::Glitzy_Glow: return Type::Psychic;
+		case Moves::Baddy_Bad: return Type::Dark;
+		case Moves::Sappy_Seed: return Type::Grass;
+		case Moves::Freezy_Frost: return Type::Ice;
+		case Moves::Sparkly_Swirl: return Type::Typeless;
+		case Moves::Veevee_Volley: return Type::Normal;
+		case Moves::Double_Iron_Bash: return Type::Steel;
 	}
 }
 

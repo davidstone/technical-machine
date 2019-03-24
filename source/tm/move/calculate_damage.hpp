@@ -24,10 +24,11 @@
 
 namespace technicalmachine {
 
+enum class Generation;
 struct Pokemon;
 struct Team;
 struct Weather;
 
-auto calculate_damage(Team const & attacker, ExecutedMove move, PP pp, Team const & defender, OtherMove defender_move, Weather weather) -> damage_type;
+auto calculate_damage(Generation generation, Team const & attacker, ExecutedMove move, PP pp, Team const & defender, OtherMove defender_move, Weather weather) -> damage_type;
 
 }	// namespace technicalmachine

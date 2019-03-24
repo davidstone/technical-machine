@@ -29,6 +29,7 @@
 namespace technicalmachine {
 
 struct ActivePokemon;
+enum class Generation;
 struct MutableActivePokemon;
 struct Move;
 struct Weather;
@@ -210,7 +211,7 @@ using AbilityEvasionModifier = rational<
 >;
 auto ability_evasion_modifier(ActivePokemon target, Weather weather) -> AbilityEvasionModifier;
 
-auto attacker_ability_power_modifier(Pokemon const & attacker, Moves move, Pokemon const & defender, VariableAdjustedBasePower base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>>;
+auto attacker_ability_power_modifier(Generation generation, Pokemon const & attacker, Moves move, Pokemon const & defender, VariableAdjustedBasePower base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>>;
 
 }	// namespace technicalmachine
 

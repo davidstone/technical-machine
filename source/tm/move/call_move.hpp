@@ -25,9 +25,10 @@
 
 namespace technicalmachine {
 
+enum class Generation;
 struct Team;
 struct Weather;
 
-auto call_move(Team & user, UsedMove move, Team & other, OtherMove other_move, Weather & weather, bool clear_status, bounded::optional<damage_type> known_damage) -> void;
+auto call_move(Generation generation, Team & user, UsedMove move, Team & other, OtherMove other_move, Weather & weather, bool clear_status, bounded::optional<damage_type> known_damage) -> void;
 
 }	// namespace technicalmachine

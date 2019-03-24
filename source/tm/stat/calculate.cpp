@@ -273,7 +273,7 @@ namespace {
 auto is_self_KO(Moves const move) {
 	switch (move) {
 		case Moves::Explosion:
-		case Moves::Selfdestruct:
+		case Moves::Self_Destruct:
 			return true;
 		default:
 			return false;
@@ -354,9 +354,9 @@ auto calculate_speed(Team const & team, Weather const weather) -> speed_type {
 	return static_cast<speed_type>(bounded::max(speed, 1_bi));
 }
 
-auto order(Team const & team1, Moves const move1, Team const & team2, Moves const move2, Weather const weather) -> Order {
-	auto const priority1 = Priority(move1);
-	auto const priority2 = Priority(move2);
+auto order(Generation const generation, Team const & team1, Moves const move1, Team const & team2, Moves const move2, Weather const weather) -> Order {
+	auto const priority1 = Priority(generation, move1);
+	auto const priority2 = Priority(generation, move2);
 	
 	auto const lhs = OrderElement{team1, move1};
 	auto const rhs = OrderElement{team2, move2};

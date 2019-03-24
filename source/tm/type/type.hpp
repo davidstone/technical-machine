@@ -21,6 +21,7 @@
 #include <tm/status.hpp>
 
 namespace technicalmachine {
+enum class Generation;
 enum class Moves : std::uint16_t;
 struct Effectiveness;
 struct Pokemon;
@@ -47,7 +48,7 @@ enum class Type : uint8_t {
 	Typeless
 };
 
-auto get_type(Moves move, Pokemon const & pokemon) -> Type;
+auto get_type(Generation generation, Moves move, Pokemon const & pokemon) -> Type;
 
 constexpr auto is_boosted_by_flash_fire(Type const type) {
 	return type == Type::Fire;
@@ -55,7 +56,7 @@ constexpr auto is_boosted_by_flash_fire(Type const type) {
 constexpr auto is_immune_to_hail(Type const type) {
 	return type == Type::Ice;
 }
-inline auto is_immune_to_sandstorm(Type const type) {
+constexpr auto is_immune_to_sandstorm(Type const type) {
 	switch (type) {
 		case Type::Ground:
 		case Type::Rock:
@@ -71,17 +72,16 @@ auto is_strengthened_by_weather(Type type, Weather weather) -> bool;
 auto is_weakened_by_weather(Type type, Weather weather) -> bool;
 
 constexpr auto blocks_status(Type const type, Statuses const status) {
-	switch (status)
-	{
-	case Statuses::burn:
-		return type == Type::Fire;
-	case Statuses::freeze:
-		return type == Type::Ice;
-	case Statuses::poison:
-	case Statuses::poison_toxic:
-		return type == Type::Poison or type == Type::Steel;
-	default:
-		return false;
+	switch (status) {
+		case Statuses::burn:
+			return type == Type::Fire;
+		case Statuses::freeze:
+			return type == Type::Ice;
+		case Statuses::poison:
+		case Statuses::poison_toxic:
+			return type == Type::Poison or type == Type::Steel;
+		default:
+			return false;
 	}
 }
 

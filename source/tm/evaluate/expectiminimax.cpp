@@ -41,6 +41,7 @@
 #include <tm/ability.hpp>
 #include <tm/block.hpp>
 #include <tm/endofturn.hpp>
+#include <tm/generation.hpp>
 #include <tm/switch.hpp>
 #include <tm/team.hpp>
 #include <tm/variable.hpp>
@@ -58,6 +59,9 @@
 
 namespace technicalmachine {
 namespace {
+
+// TODO: Make this a parameter
+constexpr auto generation = Generation::four;
 
 struct BestMove {
 	Moves move;
@@ -116,7 +120,9 @@ void update_foe_best_move(Moves const move, MoveScores & foe_scores, double & be
 
 
 bool can_critical_hit(Moves const move) {
-	auto const power = base_power(move);
+	// I do not think this changes whether a move can critical hit
+	// constexpr auto generation = Generation::seven;
+	auto const power = base_power(generation, move);
 	return power and *power != 0_bi;
 }
 
@@ -370,7 +376,7 @@ constexpr auto can_be_selected_by_sleep_talk(Moves const move) {
 		case Moves::Hyper_Beam:
 		case Moves::Roar_of_Time:
 		case Moves::Rock_Wrecker:
-		case Moves::SolarBeam:
+		case Moves::Solar_Beam:
 			return false;
 		default:
 			return true;
@@ -425,7 +431,7 @@ auto execute_move(Team const & user, SelectedAndExecuted const move, Team const 
 	auto const variables = all_probabilities(move.executed, other.size());
 	auto & status = get_status(user_pokemon);
 	auto const probability_of_clearing_status = status.probability_of_clearing(get_ability(user_pokemon));
-	auto const specific_chance_to_hit = chance_to_hit(user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());
+	auto const specific_chance_to_hit = chance_to_hit(generation, user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());
 	auto const move_can_critical_hit = can_critical_hit(move.executed);
 	return generic_flag_branch<ClearStatus>(
 		std::monostate{},
@@ -445,6 +451,7 @@ auto execute_move(Team const & user, SelectedAndExecuted const move, Team const 
 								auto other_copy = other;
 								auto weather_copy = weather;
 								call_move(
+									generation,
 									user_copy,
 									UsedMove{move.selected, move.executed, variable.variable, flags.critical_hit, !flags.hits},
 									other_copy,
@@ -577,7 +584,7 @@ double use_move_branch(Team const & first, Moves const first_move, Team const & 
 
 
 double order_branch(Team const & ai, Moves const ai_move, Team const & foe, Moves const foe_move, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
-	auto ordered = order(ai, ai_move, foe, foe_move, weather);
+	auto ordered = order(generation, ai, ai_move, foe, foe_move, weather);
 	return !ordered ?
 		(use_move_branch(ai, ai_move, foe, foe_move, weather, evaluate, depth, log) + use_move_branch(foe, foe_move, ai, ai_move, weather, evaluate, depth, log)) / 2.0 :
 		use_move_branch(ordered->first.team, ordered->first.move, ordered->second.team, ordered->second.move, weather, evaluate, depth, log);

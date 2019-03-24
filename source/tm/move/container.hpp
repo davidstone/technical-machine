@@ -75,10 +75,14 @@ struct MoveContainer {
 		return containers::concatenate_view_sentinel(end(container.m_shared));
 	}
 
-	template<typename M, typename... MaybePP>
-	constexpr auto & emplace_back(M const move, MaybePP... maybe_pp) {
-		assert(containers::none_equal(m_regular, move));
-		return m_regular.emplace_back(move, maybe_pp...);
+	constexpr auto & emplace_back(Move const move) {
+		assert(containers::none_equal(m_regular, move.name()));
+		return m_regular.emplace_back(move);
+	}
+
+	template<typename... MaybePP>
+	constexpr auto & emplace_back(Generation const generation, Moves const move, MaybePP... maybe_pp) {
+		return emplace_back(Move(generation, move, maybe_pp...));
 	}
 
 	constexpr auto remove_switch() {
@@ -94,7 +98,7 @@ using ::containers::detail::common::compare;
 using ::containers::detail::common::operator==;
 
 template<typename... MaybePP>
-auto add_seen_move(MoveContainer & container, Moves const move, MaybePP... pp) {
+auto add_seen_move(MoveContainer & container, Generation const generation, Moves const move, MaybePP... pp) {
 	if (move == Moves::Pass or move == Moves::Struggle or move == Moves::Hit_Self) {
 		return;
 	}
@@ -104,7 +108,7 @@ auto add_seen_move(MoveContainer & container, Moves const move, MaybePP... pp) {
 	if (size(container.regular()) == max_moves_per_pokemon) {
 		throw std::runtime_error("Tried to add too many moves");
 	}
-	container.emplace_back(move, pp...);
+	container.emplace_back(generation, move, pp...);
 }
 
 }	// namespace technicalmachine

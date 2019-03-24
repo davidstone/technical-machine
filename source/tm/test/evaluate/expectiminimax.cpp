@@ -43,11 +43,13 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
+constexpr auto generation = Generation::four;
+
 template<typename RandomEngine, typename... Ts>
 auto make_shuffled_array(RandomEngine & random_engine, Ts ... ts) {
 	// Random order to prevent ordering effects from accidentally arriving at
 	// the correct move each time
-	auto array = containers::array{Move(ts)...};
+	auto array = containers::array{Move(generation, ts)...};
 	// gcc's stdlib does not support std::shuffle user defined integers
 	std::shuffle(data(array), data(array) + size(array), random_engine);
 	return array;
@@ -142,7 +144,7 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 	{
 		defender.add_pokemon(Species::Mew, Level(100_bi), Gender::male, Item::Leftovers, Ability::Synchronize, Nature::Impish);
 		Pokemon & mew = defender.pokemon();
-		containers::append(all_moves(mew), shuffled(Moves::Softboiled));
+		containers::append(all_moves(mew), shuffled(Moves::Soft_Boiled));
 		set_hp_ev(mew, EV(252_bi));
 		set_stat_ev(mew, StatNames::SPD, EV(64_bi));
 	}
@@ -236,7 +238,7 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	{
 		attacker.add_pokemon(Species::Zapdos, Level(100_bi), Gender::genderless, Item::Choice_Specs, Ability::Pressure, Nature::Modest);
 		auto & zapdos = back(attacker.all_pokemon());
-		all_moves(zapdos).emplace_back(Moves::Thunderbolt);
+		all_moves(zapdos).emplace_back(generation, Moves::Thunderbolt);
 		set_hp_ev(zapdos, EV(4_bi));
 		for (auto const stat : { StatNames::SPA, StatNames::SPE }) {
 			set_stat_ev(zapdos, stat, EV(252_bi));
@@ -254,6 +256,7 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	}
 
 	call_move(
+		generation,
 		defender,
 		UsedMove{Moves::Surf},
 		attacker,
@@ -344,7 +347,7 @@ void performance(Evaluate const & evaluate) {
 	auto add_pokemon = [&](Team & team, Species const species, auto... moves) {
 		team.add_pokemon(species, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Pickup, Nature::Hardy);
 		Pokemon & pokemon = back(team.all_pokemon());
-		containers::append(all_moves(pokemon), containers::array{Move(moves)...});
+		containers::append(all_moves(pokemon), containers::array{Move(generation, moves)...});
 		set_hp_ev(pokemon, EV(252_bi));
 		set_stat_ev(pokemon, StatNames::DEF, EV(120_bi));
 		set_stat_ev(pokemon, StatNames::SPD, EV(136_bi));

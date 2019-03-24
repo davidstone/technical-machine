@@ -24,13 +24,14 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
+enum class Generation;
 enum class Moves : std::uint16_t;
 using namespace bounded::literal;
 
 struct Move {
-	constexpr explicit Move(Moves const move, PP::pp_ups_type const pp_ups = 3_bi) :
+	constexpr explicit Move(Generation const generation, Moves const move, PP::pp_ups_type const pp_ups = 3_bi) :
 		m_name(move),
-		m_pp(move, pp_ups)
+		m_pp(generation, move, pp_ups)
 	{
 	}
 

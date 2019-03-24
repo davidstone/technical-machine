@@ -25,10 +25,11 @@
 #include <tm/team_predictor/ui/input_constants.hpp>
 #include <tm/team_predictor/ui/pokemon_inputs.hpp>
 
-#include <tm/team.hpp>
-
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/pokemon.hpp>
+
+#include <tm/generation.hpp>
+#include <tm/team.hpp>
 
 #include <containers/array/array.hpp>
 #include <containers/vector.hpp>
@@ -48,6 +49,8 @@ using namespace bounded::literal;
 // TODO: Move much of this code into its own file
 namespace technicalmachine {
 namespace {
+
+constexpr auto generation = Generation::four;
 
 using AllPokemonInputs = containers::array<PokemonInputs, max_pokemon_per_team.value()>;
 
@@ -121,7 +124,7 @@ struct PokemonInputValues {
 			set_stat_ev(pokemon, stat, containers::at(evs, bounded::integer(stat) + 1_bi));
 		}
 		for (auto const move : moves) {
-			all_moves(pokemon).emplace_back(move);
+			all_moves(pokemon).emplace_back(generation, move);
 		}
 	}
 private:
@@ -151,6 +154,7 @@ void function(Fl_Widget *, void * d) {
 	}
 	random_team(data.usage_stats, data.team(), data.random_engine);
 	auto const team_str = to_string(predict_team(
+		generation,
 		data.usage_stats,
 		LeadStats(using_lead),
 		data.team(),

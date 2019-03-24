@@ -32,6 +32,8 @@
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 
+#include <tm/generation.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -43,6 +45,9 @@ namespace technicalmachine {
 enum class Moves : std::uint16_t;
 namespace pl {
 namespace {
+
+// TODO
+constexpr auto generation = Generation::four;
 
 auto lookup_stat(std::string_view const name) {
 	static std::unordered_map<std::string_view, StatNames> const stats = {
@@ -105,7 +110,7 @@ auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child("moveset")) {
 		auto const name = from_string<Moves>(value.second.get_value<std::string>());
 		auto const pp_ups = value.second.get<PP::pp_ups_type>("<xmlattr>.pp-up");
-		add_seen_move(all_moves(pokemon), name, pp_ups);
+		add_seen_move(all_moves(pokemon), generation, name, pp_ups);
 	}
 	for (auto const & value : pt.get_child("stats")) {
 		load_stats(pokemon, value.second);

@@ -21,9 +21,10 @@
 
 namespace technicalmachine {
 
+enum class Generation;
 struct UsageStats;
 struct Team;
 
-void log_foe_team(UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine);
+void log_foe_team(Generation generation, UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine);
 
 }	// namespace technicalmachine

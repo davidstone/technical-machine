@@ -18,6 +18,7 @@
 #include <tm/move/calculate_damage.hpp>
 
 #include <tm/ability.hpp>
+#include <tm/generation.hpp>
 #include <tm/item.hpp>
 #include <tm/status.hpp>
 #include <tm/rational.hpp>
@@ -65,7 +66,9 @@ auto calculate_weather_modifier(Type const type, Weather const weather) {
 }
 
 auto calculate_flash_fire_modifier(ActivePokemon const attacker, Moves const move) {
-	auto const type = get_type(move, attacker);
+	// The generation never changes this
+	constexpr auto generation = Generation::seven;
+	auto const type = get_type(generation, move, attacker);
 	return BOUNDED_CONDITIONAL(attacker.flash_fire_is_active() and is_boosted_by_flash_fire(type),
 		rational(3_bi, 2_bi),
 		rational(1_bi, 1_bi)
@@ -99,8 +102,8 @@ auto calculate_stab_boost(Ability const ability) {
 	);
 }
 
-auto calculate_stab_modifier(ActivePokemon const attacker, Moves const move) {
-	auto const type = get_type(move, attacker);
+auto calculate_stab_modifier(Generation const generation, ActivePokemon const attacker, Moves const move) {
+	auto const type = get_type(generation, move, attacker);
 	return BOUNDED_CONDITIONAL(is_type(attacker, type, attacker.is_roosting()) and type != Type::Typeless,
 		calculate_stab_boost(get_ability(attacker)),
 		rational(1_bi, 1_bi)
@@ -225,15 +228,15 @@ auto resistance_berry_divisor(Item const item, Type const type, Effectiveness co
 	return BOUNDED_CONDITIONAL(resistance_berry_activates(item, type, effectiveness), 2_bi, 1_bi);
 }
 
-auto regular_damage(Team const & attacker_team, ExecutedMove const move, PP const pp, Team const & defender_team, Weather const weather) {
+auto regular_damage(Generation const generation, Team const & attacker_team, ExecutedMove const move, PP const pp, Team const & defender_team, Weather const weather) {
 	auto const attacker = attacker_team.pokemon();
 	auto const defender = defender_team.pokemon();
-	auto const type = get_type(move.name, attacker);
+	auto const type = get_type(generation, move.name, attacker);
 	auto const effectiveness = Effectiveness(type, defender);
 
 	auto const temp =
 		(level_multiplier(attacker) + 2_bi) *
-		move_power(attacker_team, move, pp, defender_team, weather) *
+		move_power(generation, attacker_team, move, pp, defender_team, weather) *
 		physical_vs_special_modifier(attacker, move.name, defender, weather, move.critical_hit) /
 		screen_divisor(move.name, defender_team, move.critical_hit) *
 		calculate_weather_modifier(type, weather) *
@@ -245,7 +248,7 @@ auto regular_damage(Team const & attacker_team, ExecutedMove const move, PP cons
 		calculate_item_modifier(attacker) *
 		calculate_me_first_modifier(attacker) *
 		attacker.random_damage_multiplier() *
-		calculate_stab_modifier(attacker, move.name) *
+		calculate_stab_modifier(generation, attacker, move.name) *
 		effectiveness *
 		calculate_ability_effectiveness_modifier(get_ability(defender), effectiveness) *
 		calculate_expert_belt_modifier(get_item(attacker), effectiveness) *
@@ -254,10 +257,13 @@ auto regular_damage(Team const & attacker_team, ExecutedMove const move, PP cons
 	);
 }
 
-auto raw_damage(Team const & attacker_team, ExecutedMove const move, PP const pp, Team const & defender_team, OtherMove const defender_move, Weather const weather) -> damage_type {
+auto raw_damage(Generation const generation, Team const & attacker_team, ExecutedMove const move, PP const pp, Team const & defender_team, OtherMove const defender_move, Weather const weather) -> damage_type {
 	auto const attacker = attacker_team.pokemon();
 	auto const defender = defender_team.pokemon();
 	switch (move.name) {
+		case Moves::Bide:
+			// TODO: Determine the damage here
+			return 0_bi;
 		case Moves::Counter:
 			return defender_move.used_move_is_physical() ? attacker.direct_damage_received() * 2_bi : 0_bi;
 		case Moves::Dragon_Rage:
@@ -280,12 +286,13 @@ auto raw_damage(Team const & attacker_team, ExecutedMove const move, PP const pp
 			return get_level(attacker)();
 		case Moves::Psywave:
 			return move.variable.psywave_damage(get_level(attacker));
-		case Moves::SonicBoom:
+		case Moves::Sonic_Boom:
 			return 20_bi;
 		case Moves::Super_Fang:
 			return get_hp(defender).current() / 2_bi;
 		default:
 			return static_cast<damage_type>(regular_damage(
+				generation,
 				attacker_team,
 				move,
 				pp,
@@ -295,9 +302,9 @@ auto raw_damage(Team const & attacker_team, ExecutedMove const move, PP const pp
 	}
 }
 
-auto capped_damage(Team const & attacker, ExecutedMove const move, PP const pp, Team const & defender_team, OtherMove const defender_move, Weather const weather) {
+auto capped_damage(Generation const generation, Team const & attacker, ExecutedMove const move, PP const pp, Team const & defender_team, OtherMove const defender_move, Weather const weather) {
 	auto const defender = defender_team.pokemon();
-	auto const damage = raw_damage(attacker, move, pp, defender_team, defender_move, weather);
+	auto const damage = raw_damage(generation, attacker, move, pp, defender_team, defender_move, weather);
 	return (cannot_ko(move.name) or defender.cannot_be_koed()) ?
 		static_cast<damage_type>(bounded::min(get_hp(defender).current() - 1_bi, damage)) :
 		damage;
@@ -306,9 +313,9 @@ auto capped_damage(Team const & attacker, ExecutedMove const move, PP const pp, 
 }	// namespace
 
 
-auto calculate_damage(Team const & attacker, ExecutedMove const move, PP const pp, Team const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
-	return affects_target(get_type(move.name, attacker.pokemon()), defender.pokemon(), weather) ?
-		capped_damage(attacker, move, pp, defender, defender_move, weather) :
+auto calculate_damage(Generation const generation, Team const & attacker, ExecutedMove const move, PP const pp, Team const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
+	return affects_target(get_type(generation, move.name, attacker.pokemon()), defender.pokemon(), weather) ?
+		capped_damage(generation, attacker, move, pp, defender, defender_move, weather) :
 		static_cast<damage_type>(0_bi);
 }
 

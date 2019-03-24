@@ -57,8 +57,8 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 
 }	// namespace
 
-void log_foe_team(UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine) {
-	auto const team = predict_team(usage_stats, use_lead_stats, foe_team, random_engine);
+void log_foe_team(Generation const generation, UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine) {
+	auto const team = predict_team(generation, usage_stats, use_lead_stats, foe_team, random_engine);
 	auto const path = generate_team_file_name(random_engine);
 	std::filesystem::create_directory(team_file_directory);
 	pl::write_team(team, path);

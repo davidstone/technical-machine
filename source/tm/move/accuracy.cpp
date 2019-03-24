@@ -1,5 +1,5 @@
 // Accuracy functions
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,12 +20,14 @@
 
 #include <tm/move/moves.hpp>
 
+#include <tm/generation.hpp>
+
 #include <cassert>
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
-auto accuracy(Moves const move) -> BaseAccuracy {
+auto accuracy(Generation const generation, Moves const move) -> BaseAccuracy {
 	using bounded::none;
 	switch (move) {
 		case Moves::Pass: return none;
@@ -38,24 +40,36 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Hit_Self: return none;
 		case Moves::Pound: return 100_bi;
 		case Moves::Karate_Chop: return 100_bi;
-		case Moves::DoubleSlap: return 85_bi;
+		case Moves::Double_Slap: return 85_bi;
 		case Moves::Comet_Punch: return 85_bi;
 		case Moves::Mega_Punch: return 85_bi;
 		case Moves::Pay_Day: return 100_bi;
 		case Moves::Fire_Punch: return 100_bi;
 		case Moves::Ice_Punch: return 100_bi;
-		case Moves::ThunderPunch: return 100_bi;
+		case Moves::Thunder_Punch: return 100_bi;
 		case Moves::Scratch: return 100_bi;
-		case Moves::ViceGrip: return 100_bi;
-		case Moves::Guillotine: return 30_bi;
-		case Moves::Razor_Wind: return 100_bi;
+		case Moves::Vice_Grip: return 100_bi;
+		case Moves::Guillotine: return 30_bi; // TODO: Fix
+		case Moves::Razor_Wind: return BOUNDED_CONDITIONAL(generation <= Generation::two, 75_bi, 100_bi);
 		case Moves::Swords_Dance: return none;
 		case Moves::Cut: return 95_bi;
 		case Moves::Gust: return 100_bi;
 		case Moves::Wing_Attack: return 100_bi;
-		case Moves::Whirlwind: return 100_bi;
+		case Moves::Whirlwind:
+			switch (generation) {
+				case Generation::one:
+					return 85_bi;
+				case Generation::two:
+				case Generation::three:
+				case Generation::four:
+				case Generation::five:
+					return 100_bi;
+				case Generation::six:
+				case Generation::seven:
+					return none;
+			}
 		case Moves::Fly: return 95_bi;
-		case Moves::Bind: return 85_bi;
+		case Moves::Bind: return BOUNDED_CONDITIONAL(generation <= Generation::four, 75_bi, 85_bi);
 		case Moves::Slam: return 75_bi;
 		case Moves::Vine_Whip: return 100_bi;
 		case Moves::Stomp: return 100_bi;
@@ -67,25 +81,37 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Headbutt: return 100_bi;
 		case Moves::Horn_Attack: return 100_bi;
 		case Moves::Fury_Attack: return 85_bi;
-		case Moves::Horn_Drill: return 30_bi;
-		case Moves::Tackle: return 100_bi;
+		case Moves::Horn_Drill: return 30_bi; // TODO: Fix
+		case Moves::Tackle: return BOUNDED_CONDITIONAL(generation <= Generation::four, 95_bi, 100_bi);
 		case Moves::Body_Slam: return 100_bi;
-		case Moves::Wrap: return 90_bi;
+		case Moves::Wrap: return BOUNDED_CONDITIONAL(generation <= Generation::four, 85_bi, 90_bi);
 		case Moves::Take_Down: return 85_bi;
 		case Moves::Thrash: return 100_bi;
 		case Moves::Double_Edge: return 100_bi;
 		case Moves::Tail_Whip: return 100_bi;
 		case Moves::Poison_Sting: return 100_bi;
 		case Moves::Twineedle: return 100_bi;
-		case Moves::Pin_Missile: return 85_bi;
+		case Moves::Pin_Missile: return BOUNDED_CONDITIONAL(generation <= Generation::five, 85_bi, 95_bi);
 		case Moves::Leer: return 100_bi;
 		case Moves::Bite: return 100_bi;
 		case Moves::Growl: return 100_bi;
-		case Moves::Roar: return 100_bi;
+		case Moves::Roar: return BOUNDED_CONDITIONAL(generation <= Generation::five, 100_bi, none);
 		case Moves::Sing: return 55_bi;
 		case Moves::Supersonic: return 55_bi;
-		case Moves::SonicBoom: return 90_bi;
-		case Moves::Disable: return 100_bi;
+		case Moves::Sonic_Boom: return 90_bi;
+		case Moves::Disable:
+			switch (generation) {
+				case Generation::one:
+				case Generation::two:
+				case Generation::three:
+					return 55_bi;
+				case Generation::four:
+					return 80_bi;
+				case Generation::five:
+				case Generation::six:
+				case Generation::seven:
+					return 100_bi;
+			}
 		case Moves::Acid: return 100_bi;
 		case Moves::Ember: return 100_bi;
 		case Moves::Flamethrower: return 100_bi;
@@ -94,15 +120,15 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Hydro_Pump: return 80_bi;
 		case Moves::Surf: return 100_bi;
 		case Moves::Ice_Beam: return 100_bi;
-		case Moves::Blizzard: return 70_bi;
+		case Moves::Blizzard: return BOUNDED_CONDITIONAL(generation == Generation::one, 90_bi, 70_bi);
 		case Moves::Psybeam: return 100_bi;
-		case Moves::BubbleBeam: return 100_bi;
+		case Moves::Bubble_Beam: return 100_bi;
 		case Moves::Aurora_Beam: return 100_bi;
 		case Moves::Hyper_Beam: return 90_bi;
 		case Moves::Peck: return 100_bi;
 		case Moves::Drill_Peck: return 100_bi;
 		case Moves::Submission: return 80_bi;
-		case Moves::Low_Kick: return 100_bi;
+		case Moves::Low_Kick: return BOUNDED_CONDITIONAL(generation <= Generation::two, 90_bi, 100_bi);
 		case Moves::Counter: return 100_bi;
 		case Moves::Seismic_Toss: return 100_bi;
 		case Moves::Strength: return 100_bi;
@@ -111,23 +137,23 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Leech_Seed: return 90_bi;
 		case Moves::Growth: return none;
 		case Moves::Razor_Leaf: return 95_bi;
-		case Moves::SolarBeam: return 100_bi;
-		case Moves::PoisonPowder: return 75_bi;
+		case Moves::Solar_Beam: return 100_bi;
+		case Moves::Poison_Powder: return 75_bi;
 		case Moves::Stun_Spore: return 75_bi;
 		case Moves::Sleep_Powder: return 75_bi;
 		case Moves::Petal_Dance: return 100_bi;
 		case Moves::String_Shot: return 95_bi;
 		case Moves::Dragon_Rage: return 100_bi;
-		case Moves::Fire_Spin: return 85_bi;
-		case Moves::ThunderShock: return 100_bi;
+		case Moves::Fire_Spin: return BOUNDED_CONDITIONAL(generation <= Generation::four, 70_bi, 85_bi);
+		case Moves::Thunder_Shock: return 100_bi;
 		case Moves::Thunderbolt: return 100_bi;
-		case Moves::Thunder_Wave: return 100_bi;
+		case Moves::Thunder_Wave: return BOUNDED_CONDITIONAL(generation <= Generation::six, 100_bi, 90_bi);
 		case Moves::Thunder: return 70_bi;
-		case Moves::Rock_Throw: return 90_bi;
+		case Moves::Rock_Throw: return BOUNDED_CONDITIONAL(generation == Generation::one, 65_bi, 90_bi);
 		case Moves::Earthquake: return 100_bi;
-		case Moves::Fissure: return 30_bi;
+		case Moves::Fissure: return 30_bi; // TODO: Fix
 		case Moves::Dig: return 100_bi;
-		case Moves::Toxic: return 90_bi;
+		case Moves::Toxic: return BOUNDED_CONDITIONAL(generation <= Generation::four, 85_bi, 90_bi);
 		case Moves::Confusion: return 100_bi;
 		case Moves::Psychic: return 100_bi;
 		case Moves::Hypnosis: return 60_bi;
@@ -137,13 +163,13 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Rage: return 100_bi;
 		case Moves::Teleport: return none;
 		case Moves::Night_Shade: return 100_bi;
-		case Moves::Mimic: return none;
+		case Moves::Mimic: return BOUNDED_CONDITIONAL(generation <= Generation::two, 100_bi, none);
 		case Moves::Screech: return 85_bi;
 		case Moves::Double_Team: return none;
 		case Moves::Recover: return none;
 		case Moves::Harden: return none;
 		case Moves::Minimize: return none;
-		case Moves::SmokeScreen: return 100_bi;
+		case Moves::Smokescreen: return 100_bi;
 		case Moves::Confuse_Ray: return 100_bi;
 		case Moves::Withdraw: return none;
 		case Moves::Defense_Curl: return none;
@@ -152,10 +178,22 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Haze: return none;
 		case Moves::Reflect: return none;
 		case Moves::Focus_Energy: return none;
-		case Moves::Bide: return none;
+		case Moves::Bide:
+			switch (generation) {
+				case Generation::one:
+					return none;
+				case Generation::two:
+				case Generation::three:
+					return 100_bi;
+				case Generation::four:
+				case Generation::five:
+				case Generation::six:
+				case Generation::seven:
+					return none;
+			}
 		case Moves::Metronome: return none;
 		case Moves::Mirror_Move: return none;
-		case Moves::Selfdestruct: return 100_bi;
+		case Moves::Self_Destruct: return 100_bi;
 		case Moves::Egg_Bomb: return 75_bi;
 		case Moves::Lick: return 100_bi;
 		case Moves::Smog: return 70_bi;
@@ -163,18 +201,42 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Bone_Club: return 85_bi;
 		case Moves::Fire_Blast: return 85_bi;
 		case Moves::Waterfall: return 100_bi;
-		case Moves::Clamp: return 85_bi;
+		case Moves::Clamp: return BOUNDED_CONDITIONAL(generation <= Generation::four, 75_bi, 85_bi);
 		case Moves::Swift: return none;
 		case Moves::Skull_Bash: return 100_bi;
 		case Moves::Spike_Cannon: return 100_bi;
 		case Moves::Constrict: return 100_bi;
 		case Moves::Amnesia: return none;
 		case Moves::Kinesis: return 80_bi;
-		case Moves::Softboiled: return none;
-		case Moves::Hi_Jump_Kick: return 90_bi;
-		case Moves::Glare: return 90_bi;
+		case Moves::Soft_Boiled: return none;
+		case Moves::High_Jump_Kick: return 90_bi;
+		case Moves::Glare:
+			switch (generation) {
+				case Generation::one:
+				case Generation::two:
+				case Generation::three:
+				case Generation::four:
+					return 75_bi;
+				case Generation::five:
+					return 90_bi;
+				case Generation::six:
+				case Generation::seven:
+					return 100_bi;
+			}
 		case Moves::Dream_Eater: return 100_bi;
-		case Moves::Poison_Gas: return 80_bi;
+		case Moves::Poison_Gas:
+			switch (generation) {
+				case Generation::one:
+				case Generation::two:
+				case Generation::three:
+				case Generation::four:
+					return 55_bi;
+				case Generation::five:
+					return 80_bi;
+				case Generation::six:
+				case Generation::seven:
+					return 90_bi;
+			}
 		case Moves::Barrage: return 85_bi;
 		case Moves::Leech_Life: return 100_bi;
 		case Moves::Lovely_Kiss: return 75_bi;
@@ -183,11 +245,11 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Bubble: return 100_bi;
 		case Moves::Dizzy_Punch: return 100_bi;
 		case Moves::Spore: return 100_bi;
-		case Moves::Flash: return 100_bi;
-		case Moves::Psywave: return 80_bi;
+		case Moves::Flash: return BOUNDED_CONDITIONAL(generation <= Generation::three, 70_bi, 100_bi);
+		case Moves::Psywave: return BOUNDED_CONDITIONAL(generation <= Generation::five, 80_bi, 100_bi);
 		case Moves::Splash: return none;
 		case Moves::Acid_Armor: return none;
-		case Moves::Crabhammer: return 90_bi;
+		case Moves::Crabhammer: return BOUNDED_CONDITIONAL(generation <= Generation::four, 85_bi, 90_bi);
 		case Moves::Explosion: return 100_bi;
 		case Moves::Fury_Swipes: return 80_bi;
 		case Moves::Bonemerang: return 90_bi;
@@ -200,12 +262,12 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Super_Fang: return 90_bi;
 		case Moves::Slash: return 100_bi;
 		case Moves::Substitute: return none;
-		case Moves::Struggle: return none;
+		case Moves::Struggle: return BOUNDED_CONDITIONAL(generation <= Generation::three, 100_bi, none);
 		case Moves::Sketch: return none;
 		case Moves::Triple_Kick: return 90_bi;
 		case Moves::Thief: return 100_bi;
 		case Moves::Spider_Web: return none;
-		case Moves::Mind_Reader: return none;
+		case Moves::Mind_Reader: return BOUNDED_CONDITIONAL(generation <= Generation::three, 100_bi, none);
 		case Moves::Nightmare: return 100_bi;
 		case Moves::Flame_Wheel: return 100_bi;
 		case Moves::Snore: return 100_bi;
@@ -213,14 +275,14 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Flail: return 100_bi;
 		case Moves::Conversion_2: return none;
 		case Moves::Aeroblast: return 95_bi;
-		case Moves::Cotton_Spore: return 100_bi;
+		case Moves::Cotton_Spore: return BOUNDED_CONDITIONAL(generation <= Generation::four, 85_bi, 100_bi);
 		case Moves::Reversal: return 100_bi;
 		case Moves::Spite: return 100_bi;
 		case Moves::Powder_Snow: return 100_bi;
 		case Moves::Protect: return none;
 		case Moves::Mach_Punch: return 100_bi;
-		case Moves::Scary_Face: return 100_bi;
-		case Moves::Faint_Attack: return none;
+		case Moves::Scary_Face: return BOUNDED_CONDITIONAL(generation <= Generation::four, 90_bi, 100_bi);
+		case Moves::Feint_Attack: return none;
 		case Moves::Sweet_Kiss: return 75_bi;
 		case Moves::Belly_Drum: return none;
 		case Moves::Sludge_Bomb: return 100_bi;
@@ -228,13 +290,13 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Octazooka: return 85_bi;
 		case Moves::Spikes: return none;
 		case Moves::Zap_Cannon: return 50_bi;
-		case Moves::Foresight: return none;
+		case Moves::Foresight: return BOUNDED_CONDITIONAL(generation <= Generation::three, 100_bi, none);
 		case Moves::Destiny_Bond: return none;
 		case Moves::Perish_Song: return none;
 		case Moves::Icy_Wind: return 95_bi;
 		case Moves::Detect: return none;
-		case Moves::Bone_Rush: return 90_bi;
-		case Moves::Lock_On: return none;
+		case Moves::Bone_Rush: return BOUNDED_CONDITIONAL(generation <= Generation::four, 80_bi, 90_bi);
+		case Moves::Lock_On: return BOUNDED_CONDITIONAL(generation <= Generation::three, 100_bi, none);
 		case Moves::Outrage: return 100_bi;
 		case Moves::Sandstorm: return none;
 		case Moves::Giga_Drain: return 100_bi;
@@ -242,7 +304,7 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Charm: return 100_bi;
 		case Moves::Rollout: return 90_bi;
 		case Moves::False_Swipe: return 100_bi;
-		case Moves::Swagger: return 90_bi;
+		case Moves::Swagger: return BOUNDED_CONDITIONAL(generation <= Generation::six, 90_bi, 85_bi);
 		case Moves::Milk_Drink: return none;
 		case Moves::Spark: return 100_bi;
 		case Moves::Fury_Cutter: return 95_bi;
@@ -255,12 +317,12 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Present: return 90_bi;
 		case Moves::Frustration: return 100_bi;
 		case Moves::Safeguard: return none;
-		case Moves::Pain_Split: return none;
+		case Moves::Pain_Split: return BOUNDED_CONDITIONAL(generation <= Generation::two, 100_bi, none);
 		case Moves::Sacred_Fire: return 95_bi;
 		case Moves::Magnitude: return 100_bi;
-		case Moves::DynamicPunch: return 50_bi;
+		case Moves::Dynamic_Punch: return 50_bi;
 		case Moves::Megahorn: return 85_bi;
-		case Moves::DragonBreath: return 100_bi;
+		case Moves::Dragon_Breath: return 100_bi;
 		case Moves::Baton_Pass: return none;
 		case Moves::Encore: return 100_bi;
 		case Moves::Pursuit: return 100_bi;
@@ -280,12 +342,12 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Crunch: return 100_bi;
 		case Moves::Mirror_Coat: return 100_bi;
 		case Moves::Psych_Up: return none;
-		case Moves::ExtremeSpeed: return 100_bi;
-		case Moves::AncientPower: return 100_bi;
+		case Moves::Extreme_Speed: return 100_bi;
+		case Moves::Ancient_Power: return 100_bi;
 		case Moves::Shadow_Ball: return 100_bi;
-		case Moves::Future_Sight: return 100_bi;
+		case Moves::Future_Sight: return BOUNDED_CONDITIONAL(generation <= Generation::four, 90_bi, 100_bi);
 		case Moves::Rock_Smash: return 100_bi;
-		case Moves::Whirlpool: return 85_bi;
+		case Moves::Whirlpool: return BOUNDED_CONDITIONAL(generation <= Generation::four, 70_bi, 85_bi);
 		case Moves::Beat_Up: return 100_bi;
 		case Moves::Fake_Out: return 100_bi;
 		case Moves::Uproar: return 100_bi;
@@ -296,11 +358,11 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Hail: return none;
 		case Moves::Torment: return 100_bi;
 		case Moves::Flatter: return 100_bi;
-		case Moves::Will_O_Wisp: return 75_bi;
+		case Moves::Will_O_Wisp: return BOUNDED_CONDITIONAL(generation <= Generation::five, 75_bi, 85_bi);
 		case Moves::Memento: return 100_bi;
 		case Moves::Facade: return 100_bi;
 		case Moves::Focus_Punch: return 100_bi;
-		case Moves::SmellingSalt: return 100_bi;
+		case Moves::Smelling_Salts: return 100_bi;
 		case Moves::Follow_Me: return none;
 		case Moves::Nature_Power: return none;
 		case Moves::Charge: return none;
@@ -332,7 +394,7 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Tail_Glow: return none;
 		case Moves::Luster_Purge: return 100_bi;
 		case Moves::Mist_Ball: return 100_bi;
-		case Moves::FeatherDance: return 100_bi;
+		case Moves::Feather_Dance: return 100_bi;
 		case Moves::Teeter_Dance: return 100_bi;
 		case Moves::Blaze_Kick: return 90_bi;
 		case Moves::Mud_Sport: return none;
@@ -344,18 +406,18 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Crush_Claw: return 95_bi;
 		case Moves::Blast_Burn: return 90_bi;
 		case Moves::Hydro_Cannon: return 90_bi;
-		case Moves::Meteor_Mash: return 85_bi;
+		case Moves::Meteor_Mash: return BOUNDED_CONDITIONAL(generation <= Generation::five, 85_bi, 90_bi);
 		case Moves::Astonish: return 100_bi;
 		case Moves::Weather_Ball: return 100_bi;
 		case Moves::Aromatherapy: return none;
 		case Moves::Fake_Tears: return 100_bi;
 		case Moves::Air_Cutter: return 95_bi;
 		case Moves::Overheat: return 90_bi;
-		case Moves::Odor_Sleuth: return none;
-		case Moves::Rock_Tomb: return 80_bi;
+		case Moves::Odor_Sleuth: return BOUNDED_CONDITIONAL(generation <= Generation::three, 100_bi, none);
+		case Moves::Rock_Tomb: return BOUNDED_CONDITIONAL(generation <= Generation::five, 80_bi, 95_bi);
 		case Moves::Silver_Wind: return 100_bi;
 		case Moves::Metal_Sound: return 85_bi;
-		case Moves::GrassWhistle: return 55_bi;
+		case Moves::Grass_Whistle: return 55_bi;
 		case Moves::Tickle: return 100_bi;
 		case Moves::Cosmic_Power: return none;
 		case Moves::Water_Spout: return 100_bi;
@@ -363,8 +425,8 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Shadow_Punch: return none;
 		case Moves::Extrasensory: return 100_bi;
 		case Moves::Sky_Uppercut: return 90_bi;
-		case Moves::Sand_Tomb: return 85_bi;
-		case Moves::Sheer_Cold: return 30_bi;
+		case Moves::Sand_Tomb: return BOUNDED_CONDITIONAL(generation <= Generation::four, 70_bi, 85_bi);
+		case Moves::Sheer_Cold: return none;
 		case Moves::Muddy_Water: return 85_bi;
 		case Moves::Bullet_Seed: return 100_bi;
 		case Moves::Aerial_Ace: return none;
@@ -385,10 +447,10 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Calm_Mind: return none;
 		case Moves::Leaf_Blade: return 100_bi;
 		case Moves::Dragon_Dance: return none;
-		case Moves::Rock_Blast: return 90_bi;
+		case Moves::Rock_Blast: return BOUNDED_CONDITIONAL(generation <= Generation::four, 80_bi, 90_bi);
 		case Moves::Shock_Wave: return none;
 		case Moves::Water_Pulse: return 100_bi;
-		case Moves::Doom_Desire: return 100_bi;
+		case Moves::Doom_Desire: return BOUNDED_CONDITIONAL(generation <= Generation::four, 85_bi, 100_bi);
 		case Moves::Psycho_Boost: return 90_bi;
 		case Moves::Roost: return none;
 		case Moves::Gravity: return none;
@@ -410,7 +472,7 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Assurance: return 100_bi;
 		case Moves::Embargo: return 100_bi;
 		case Moves::Fling: return 100_bi;
-		case Moves::Psycho_Shift: return 90_bi;
+		case Moves::Psycho_Shift: return BOUNDED_CONDITIONAL(generation <= Generation::five, 90_bi, 100_bi);
 		case Moves::Trump_Card: return none;
 		case Moves::Heal_Block: return 100_bi;
 		case Moves::Wring_Out: return 100_bi;
@@ -476,7 +538,7 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Power_Whip: return 85_bi;
 		case Moves::Rock_Wrecker: return 90_bi;
 		case Moves::Cross_Poison: return 100_bi;
-		case Moves::Gunk_Shot: return 70_bi;
+		case Moves::Gunk_Shot: return BOUNDED_CONDITIONAL(generation <= Generation::five, 70_bi, 80_bi);
 		case Moves::Iron_Head: return 100_bi;
 		case Moves::Magnet_Bomb: return none;
 		case Moves::Stone_Edge: return 80_bi;
@@ -498,8 +560,8 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::Spacial_Rend: return 95_bi;
 		case Moves::Lunar_Dance: return none;
 		case Moves::Crush_Grip: return 100_bi;
-		case Moves::Magma_Storm: return 75_bi;
-		case Moves::Dark_Void: return 80_bi;
+		case Moves::Magma_Storm: return BOUNDED_CONDITIONAL(generation <= Generation::four, 70_bi, 75_bi);
+		case Moves::Dark_Void: return BOUNDED_CONDITIONAL(generation <= Generation::six, 80_bi, 50_bi);
 		case Moves::Seed_Flare: return 85_bi;
 		case Moves::Ominous_Wind: return 100_bi;
 		case Moves::Shadow_Force: return 100_bi;
@@ -595,6 +657,171 @@ auto accuracy(Moves const move) -> BaseAccuracy {
 		case Moves::V_create: return 95_bi;
 		case Moves::Fusion_Flare: return 100_bi;
 		case Moves::Fusion_Bolt: return 100_bi;
+		case Moves::Flying_Press: return 95_bi;
+		case Moves::Mat_Block: return none;
+		case Moves::Belch: return 90_bi;
+		case Moves::Rototiller: return none;
+		case Moves::Sticky_Web: return none;
+		case Moves::Fell_Stinger: return 100_bi;
+		case Moves::Phantom_Force: return 100_bi;
+		case Moves::Trick_or_Treat: return 100_bi;
+		case Moves::Noble_Roar: return 100_bi;
+		case Moves::Ion_Deluge: return none;
+		case Moves::Parabolic_Charge: return 100_bi;
+		case Moves::Forests_Curse: return 100_bi;
+		case Moves::Petal_Blizzard: return 100_bi;
+		case Moves::Freeze_Dry: return 100_bi;
+		case Moves::Disarming_Voice: return none;
+		case Moves::Parting_Shot: return 100_bi;
+		case Moves::Topsy_Turvy: return BOUNDED_CONDITIONAL(generation <= Generation::six, 100_bi, none);
+		case Moves::Draining_Kiss: return 100_bi;
+		case Moves::Crafty_Shield: return none;
+		case Moves::Flower_Shield: return none;
+		case Moves::Grassy_Terrain: return none;
+		case Moves::Misty_Terrain: return none;
+		case Moves::Electrify: return none;
+		case Moves::Play_Rough: return 90_bi;
+		case Moves::Fairy_Wind: return 100_bi;
+		case Moves::Moonblast: return 100_bi;
+		case Moves::Boomburst: return 100_bi;
+		case Moves::Fairy_Lock: return none;
+		case Moves::Kings_Shield: return none;
+		case Moves::Play_Nice: return none;
+		case Moves::Confide: return none;
+		case Moves::Diamond_Storm: return 95_bi;
+		case Moves::Steam_Eruption: return 95_bi;
+		case Moves::Hyperspace_Hole: return none;
+		case Moves::Water_Shuriken: return 100_bi;
+		case Moves::Mystical_Fire: return 100_bi;
+		case Moves::Spiky_Shield: return none;
+		case Moves::Aromatic_Mist: return none;
+		case Moves::Eerie_Impulse: return 100_bi;
+		case Moves::Venom_Drench: return 100_bi;
+		case Moves::Powder: return 100_bi;
+		case Moves::Geomancy: return none;
+		case Moves::Magnetic_Flux: return none;
+		case Moves::Happy_Hour: return none;
+		case Moves::Electric_Terrain: return none;
+		case Moves::Dazzling_Gleam: return 100_bi;
+		case Moves::Celebrate: return none;
+		case Moves::Hold_Hands: return none;
+		case Moves::Baby_Doll_Eyes: return 100_bi;
+		case Moves::Nuzzle: return 100_bi;
+		case Moves::Hold_Back: return 100_bi;
+		case Moves::Infestation: return 100_bi;
+		case Moves::Power_Up_Punch: return 100_bi;
+		case Moves::Oblivion_Wing: return 100_bi;
+		case Moves::Thousand_Arrows: return 100_bi;
+		case Moves::Thousand_Waves: return 100_bi;
+		case Moves::Lands_Wrath: return 100_bi;
+		case Moves::Light_of_Ruin: return 90_bi;
+		case Moves::Origin_Pulse: return 85_bi;
+		case Moves::Precipice_Blades: return 85_bi;
+		case Moves::Dragon_Ascent: return 100_bi;
+		case Moves::Hyperspace_Fury: return none;
+		case Moves::Breakneck_Blitz: return none;
+		case Moves::All_Out_Pummeling: return none;
+		case Moves::Supersonic_Skystrike: return none;
+		case Moves::Acid_Downpour: return none;
+		case Moves::Tectonic_Rage: return none;
+		case Moves::Continental_Crush: return none;
+		case Moves::Savage_Spin_Out: return none;
+		case Moves::Never_Ending_Nightmare: return none;
+		case Moves::Corkscrew_Crash: return none;
+		case Moves::Inferno_Overdrive: return none;
+		case Moves::Hydro_Vortex: return none;
+		case Moves::Bloom_Doom: return none;
+		case Moves::Gigavolt_Havoc: return none;
+		case Moves::Shattered_Psyche: return none;
+		case Moves::Subzero_Slammer: return none;
+		case Moves::Devastating_Drake: return none;
+		case Moves::Black_Hole_Eclipse: return none;
+		case Moves::Twinkle_Tackle: return none;
+		case Moves::Catastropika: return none;
+		case Moves::Shore_Up: return none;
+		case Moves::First_Impression: return 100_bi;
+		case Moves::Baneful_Bunker: return none;
+		case Moves::Spirit_Shackle: return 100_bi;
+		case Moves::Darkest_Lariat: return 100_bi;
+		case Moves::Sparkling_Aria: return 100_bi;
+		case Moves::Ice_Hammer: return 90_bi;
+		case Moves::Floral_Healing: return none;
+		case Moves::High_Horsepower: return 95_bi;
+		case Moves::Strength_Sap: return 100_bi;
+		case Moves::Solar_Blade: return 100_bi;
+		case Moves::Leafage: return 100_bi;
+		case Moves::Spotlight: return none;
+		case Moves::Toxic_Thread: return 100_bi;
+		case Moves::Laser_Focus: return none;
+		case Moves::Gear_Up: return none;
+		case Moves::Throat_Chop: return 100_bi;
+		case Moves::Pollen_Puff: return 100_bi;
+		case Moves::Anchor_Shot: return 100_bi;
+		case Moves::Psychic_Terrain: return none;
+		case Moves::Lunge: return 100_bi;
+		case Moves::Fire_Lash: return 100_bi;
+		case Moves::Power_Trip: return 100_bi;
+		case Moves::Burn_Up: return 100_bi;
+		case Moves::Speed_Swap: return none;
+		case Moves::Smart_Strike: return none;
+		case Moves::Purify: return none;
+		case Moves::Revelation_Dance: return 100_bi;
+		case Moves::Core_Enforcer: return 100_bi;
+		case Moves::Trop_Kick: return 100_bi;
+		case Moves::Instruct: return none;
+		case Moves::Beak_Blast: return 100_bi;
+		case Moves::Clanging_Scales: return 100_bi;
+		case Moves::Dragon_Hammer: return 100_bi;
+		case Moves::Brutal_Swing: return 100_bi;
+		case Moves::Aurora_Veil: return none;
+		case Moves::Sinister_Arrow_Raid: return none;
+		case Moves::Malicious_Moonsault: return none;
+		case Moves::Oceanic_Operetta: return none;
+		case Moves::Guardian_of_Alola: return none;
+		case Moves::Soul_Stealing_7_Star_Strike: return none;
+		case Moves::Stoked_Sparksurfer: return none;
+		case Moves::Pulverizing_Pancake: return none;
+		case Moves::Extreme_Evoboost: return none;
+		case Moves::Genesis_Supernova: return none;
+		case Moves::Shell_Trap: return 100_bi;
+		case Moves::Fleur_Cannon: return 90_bi;
+		case Moves::Psychic_Fangs: return 100_bi;
+		case Moves::Stomping_Tantrum: return 100_bi;
+		case Moves::Shadow_Bone: return 100_bi;
+		case Moves::Accelerock: return 100_bi;
+		case Moves::Liquidation: return 100_bi;
+		case Moves::Prismatic_Laser: return 100_bi;
+		case Moves::Spectral_Thief: return 100_bi;
+		case Moves::Sunsteel_Strike: return 100_bi;
+		case Moves::Moongeist_Beam: return 100_bi;
+		case Moves::Tearful_Look: return none;
+		case Moves::Zing_Zap: return 100_bi;
+		case Moves::Natures_Madness: return 90_bi;
+		case Moves::Multi_Attack: return 100_bi;
+		case Moves::m10000000_Volt_Thunderbolt: return none;
+		case Moves::Mind_Blown: return 100_bi;
+		case Moves::Plasma_Fists: return 100_bi;
+		case Moves::Photon_Geyser: return 100_bi;
+		case Moves::Light_That_Burns_the_Sky: return none;
+		case Moves::Searing_Sunraze_Smash: return none;
+		case Moves::Menacing_Moonraze_Maelstrom: return none;
+		case Moves::Lets_Snuggle_Forever: return none;
+		case Moves::Splintered_Stormshards: return none;
+		case Moves::Clangorous_Soulblaze: return none;
+		case Moves::Zippy_Zap: return 100_bi;
+		case Moves::Splishy_Splash: return 100_bi;
+		case Moves::Floaty_Fall: return 95_bi;
+		case Moves::Pika_Papow: return none;
+		case Moves::Bouncy_Bubble: return 100_bi;
+		case Moves::Buzzy_Buzz: return 100_bi;
+		case Moves::Sizzly_Slide: return 100_bi;
+		case Moves::Glitzy_Glow: return 100_bi;
+		case Moves::Baddy_Bad: return 100_bi;
+		case Moves::Sappy_Seed: return 100_bi;
+		case Moves::Freezy_Frost: return 100_bi;
+		case Moves::Sparkly_Swirl: return 100_bi;
+		case Moves::Veevee_Volley: return none;
+		case Moves::Double_Iron_Bash: return 100_bi;
 	}
 }
 

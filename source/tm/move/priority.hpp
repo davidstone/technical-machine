@@ -22,10 +22,11 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
+enum class Generation;
 enum class Moves : std::uint16_t;
 
 struct Priority {
-	explicit Priority(Moves move);
+	explicit Priority(Generation generation, Moves move);
 	inline friend auto compare(Priority const lhs, Priority const rhs) {
 		return compare(lhs.priority, rhs.priority);
 	}
@@ -33,7 +34,7 @@ struct Priority {
 		return lhs.priority == rhs.priority;
 	}
 private:
-	bounded::checked_integer<-6, 6> priority;
+	bounded::integer<-6, 6> priority;
 };
 
 }	// namespace technicalmachine

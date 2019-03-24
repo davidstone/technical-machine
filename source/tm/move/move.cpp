@@ -26,12 +26,15 @@
 namespace technicalmachine {
 
 auto is_damaging(Moves const move) -> bool {
-	auto const power = base_power(move);
+	// No move changes whether it is damaging between generations
+	auto const power = base_power(Generation::seven, move);
 	return !static_cast<bool>(power) or *power != 0_bi;
 }
 
 auto is_phaze(Moves const move) -> bool {
 	switch (move) {
+		case Moves::Circle_Throw:
+		case Moves::Dragon_Tail:
 		case Moves::Roar:
 		case Moves::Whirlwind:
 			return true;

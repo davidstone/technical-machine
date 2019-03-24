@@ -137,7 +137,7 @@ bool is_boosted_by_iron_fist(Moves const move) {
 		case Moves::Comet_Punch:
 		case Moves::Dizzy_Punch:
 		case Moves::Drain_Punch:
-		case Moves::DynamicPunch:
+		case Moves::Dynamic_Punch:
 		case Moves::Fire_Punch:
 		case Moves::Focus_Punch:
 		case Moves::Hammer_Arm:
@@ -147,7 +147,7 @@ bool is_boosted_by_iron_fist(Moves const move) {
 		case Moves::Meteor_Mash:
 		case Moves::Shadow_Punch:
 		case Moves::Sky_Uppercut:
-		case Moves::ThunderPunch:
+		case Moves::Thunder_Punch:
 			return true;
 		default:
 			return false;
@@ -170,24 +170,23 @@ bool is_boosted_by_reckless(Moves const move) {
 	}
 }
 
-auto pinch_ability_activates(Pokemon const & attacker, Type const type, Moves const move) {
-	return get_type(move, attacker) == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
-}
-
 }	// namespace
 
-auto attacker_ability_power_modifier(Pokemon const & attacker, Moves const move, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
+auto attacker_ability_power_modifier(Generation const generation, Pokemon const & attacker, Moves const move, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
+	auto pinch_ability_activates = [&](Type const type) {
+		return get_type(generation, move, attacker) == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
+	};
 	switch (get_ability(attacker)) {
 		case Ability::Technician:
 			return rational(BOUNDED_CONDITIONAL(base_power <= 60_bi, 3_bi, 2_bi), 2_bi);
 		case Ability::Blaze:
-			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Fire, move), 3_bi, 2_bi), 2_bi);
+			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(Type::Fire), 3_bi, 2_bi), 2_bi);
 		case Ability::Overgrow:
-			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Grass, move), 3_bi, 2_bi), 2_bi);
+			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(Type::Grass), 3_bi, 2_bi), 2_bi);
 		case Ability::Swarm:
-			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Bug, move), 3_bi, 2_bi), 2_bi);
+			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(Type::Bug), 3_bi, 2_bi), 2_bi);
 		case Ability::Torrent:
-			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(attacker, Type::Water, move), 3_bi, 2_bi), 2_bi);
+			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(Type::Water), 3_bi, 2_bi), 2_bi);
 		case Ability::Iron_Fist:
 			return rational(BOUNDED_CONDITIONAL(is_boosted_by_iron_fist(move), 6_bi, 5_bi), 5_bi);
 		case Ability::Reckless:

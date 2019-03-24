@@ -40,6 +40,8 @@
 namespace technicalmachine {
 namespace {
 
+constexpr auto generation = Generation::four;
+
 void optimize_already_optimized(std::mt19937 & random_engine) {
 	constexpr auto team_size = 1_bi;
 	constexpr auto species = Species::Metagross;
@@ -51,7 +53,7 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	set_stat_ev(pokemon, StatNames::SPA, EV(0_bi));
 	set_stat_ev(pokemon, StatNames::SPD, EV(4_bi));
 	set_stat_ev(pokemon, StatNames::SPE, EV(60_bi));
-	all_moves(pokemon).emplace_back(Moves::Meteor_Mash);
+	all_moves(pokemon).emplace_back(generation, Moves::Meteor_Mash);
 
 	auto const stats = pull_out_stats(pokemon);
 	
@@ -117,7 +119,7 @@ void not_level_100(std::mt19937 & random_engine) {
 	set_stat_ev(pokemon, StatNames::SPD, EV(60_bi));
 	set_stat_ev(pokemon, StatNames::SPE, EV(128_bi));
 	for (auto const move : {Moves::Hydro_Pump, Moves::Bug_Buzz, Moves::Roost, Moves::Air_Slash}) {
-		all_moves(pokemon).emplace_back(move);
+		all_moves(pokemon).emplace_back(generation, move);
 	}
 
 	optimize_evs(pokemon, random_engine);

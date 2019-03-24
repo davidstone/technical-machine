@@ -43,17 +43,19 @@ struct SharedMovesIterator {
 	using reference = value_type;
 	using iterator_category = std::random_access_iterator_tag;
 
+	static constexpr auto generation = Generation::four;
+
 	constexpr auto operator*() const -> value_type {
 		using switch_index_type = bounded::integer<
 			static_cast<int>(number_of_weird_moves),
 			static_cast<int>(std::numeric_limits<SharedMoveSize>::max()) - 1
 		>;
 		static_assert(number_of_weird_moves == 2_bi, "Add the extra 'weird' move here.");
-		return Move(
+		auto const move_name = 
 			(m_index == 0_bi) ? Moves::Pass :
 			(m_index == 1_bi) ? Moves::Struggle :
-			to_switch(static_cast<switch_index_type>(m_index) - number_of_weird_moves)
-		);
+			to_switch(static_cast<switch_index_type>(m_index) - number_of_weird_moves);
+		return Move(generation, move_name);
 	}
 
 	friend constexpr auto operator+(SharedMovesIterator const lhs, difference_type const rhs) {
@@ -78,13 +80,15 @@ private:
 	>;
 	friend struct SharedMoves;
 	constexpr explicit SharedMovesIterator(underlying_index_type const other) noexcept:
-		m_index(other) {
+		m_index(other)
+	{
 	}
 
 	underlying_index_type m_index;
 };
 
 
+// TODO: Support other generations
 struct SharedMoves {
 	using size_type = SharedMoveSize;
 	using const_iterator = SharedMovesIterator;

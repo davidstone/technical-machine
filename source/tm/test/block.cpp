@@ -28,17 +28,35 @@
 namespace technicalmachine {
 namespace {
 
+constexpr auto generation = Generation::four;
+
 void basic() {
 	auto user = Team(1_bi, true);
 	{
 		auto & jolteon = user.add_pokemon(Species::Jolteon, Level(100_bi), Gender::male, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
-		containers::append(all_moves(jolteon), containers::array{Move(Moves::Thunderbolt), Move(Moves::Charm), Move(Moves::Thunder), Move(Moves::Shadow_Ball)});
+		containers::append(
+			all_moves(jolteon),
+			containers::array{
+				Move(generation, Moves::Thunderbolt),
+				Move(generation, Moves::Charm),
+				Move(generation, Moves::Thunder),
+				Move(generation, Moves::Shadow_Ball)
+			}
+		);
 	}
 
 	auto other = Team(1_bi, false);
 	{
 		auto & gyarados = other.add_pokemon(Species::Gyarados, Level(100_bi), Gender::male, Item::Leftovers, Ability::Intimidate, Nature::Adamant);
-		containers::append(all_moves(gyarados), containers::array{Move(Moves::Dragon_Dance), Move(Moves::Waterfall), Move(Moves::Stone_Edge), Move(Moves::Taunt)});
+		containers::append(
+			all_moves(gyarados),
+			containers::array{
+				Move(generation, Moves::Dragon_Dance),
+				Move(generation, Moves::Waterfall),
+				Move(generation, Moves::Stone_Edge),
+				Move(generation, Moves::Taunt)
+			}
+		);
 	}
 
 	auto const selections = legal_selections(user, other.pokemon(), Weather{});
@@ -55,9 +73,9 @@ void test_two_moves_with_one_out_of_pp() {
 			move.decrement_pp(Ability::Static);
 		}
 	};
-	auto & thunder = all_moves(pokemon).emplace_back(Moves::Thunder, 0_bi);
+	auto & thunder = all_moves(pokemon).emplace_back(generation, Moves::Thunder, 0_bi);
 	empty_pp(thunder);
-	all_moves(pokemon).emplace_back(Moves::Thunderbolt, 0_bi);
+	all_moves(pokemon).emplace_back(generation, Moves::Thunderbolt, 0_bi);
 
 	auto other = Team(1_bi, false);
 	other.add_pokemon(Species::Pikachu, Level(100_bi), Gender::female);
@@ -79,9 +97,9 @@ void test_two_moves_with_both_out_of_pp() {
 			move.decrement_pp(Ability::Static);
 		}
 	};
-	auto & thunder = all_moves(pokemon).emplace_back(Moves::Thunder, 0_bi);
+	auto & thunder = all_moves(pokemon).emplace_back(generation, Moves::Thunder, 0_bi);
 	empty_pp(thunder);
-	auto & thunderbolt = all_moves(pokemon).emplace_back(Moves::Thunderbolt, 0_bi);
+	auto & thunderbolt = all_moves(pokemon).emplace_back(generation, Moves::Thunderbolt, 0_bi);
 	empty_pp(thunderbolt);
 
 	auto other = Team(1_bi, false);

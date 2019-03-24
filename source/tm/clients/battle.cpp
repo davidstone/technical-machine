@@ -44,10 +44,11 @@ void Battle::handle_use_move(Party const party, uint8_t /*slot*/, UsedMove const
 	auto & user = is_me(party) ? m_ai : m_foe;
 	auto & other = is_me(party) ? m_foe : m_ai;
 
-	add_seen_move(all_moves(user.pokemon()), move.selected);
+	add_seen_move(all_moves(user.pokemon()), m_generation, move.selected);
 	// TODO: Add move.executed in some circumstances
 
 	call_move(
+		m_generation,
 		user,
 		move,
 		other,

@@ -62,7 +62,7 @@ auto is_healing(Moves const name) {
 		case Moves::Rest:
 		case Moves::Roost:
 		case Moves::Slack_Off:
-		case Moves::Softboiled:
+		case Moves::Soft_Boiled:
 		case Moves::Swallow:
 		case Moves::Synthesis:
 		case Moves::Wish:
@@ -96,7 +96,7 @@ auto is_blocked_by_gravity(Moves const move) {
 	switch (move) {
 		case Moves::Bounce:
 		case Moves::Fly:
-		case Moves::Hi_Jump_Kick:
+		case Moves::High_Jump_Kick:
 		case Moves::Jump_Kick:
 		case Moves::Magnet_Rise:
 		case Moves::Splash:

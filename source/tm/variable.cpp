@@ -195,7 +195,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Double_Edge:
 		case Moves::Double_Hit:
 		case Moves::Double_Kick:
-		case Moves::DoubleSlap:
+		case Moves::Double_Slap:
 		case Moves::Double_Team:
 		case Moves::Draco_Meteor:
 		case Moves::Dragon_Claw:
@@ -220,13 +220,13 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Entrainment:
 		case Moves::Eruption:
 		case Moves::Explosion:
-		case Moves::ExtremeSpeed:
+		case Moves::Extreme_Speed:
 		case Moves::Facade:
-		case Moves::Faint_Attack:
+		case Moves::Feint_Attack:
 		case Moves::Fake_Out:
 		case Moves::Fake_Tears:
 		case Moves::False_Swipe:
-		case Moves::FeatherDance:
+		case Moves::Feather_Dance:
 		case Moves::Feint:
 		case Moves::Fiery_Dance:
 		case Moves::Final_Gambit:
@@ -262,7 +262,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Glare:
 		case Moves::Grass_Knot:
 		case Moves::Grass_Pledge:
-		case Moves::GrassWhistle:
+		case Moves::Grass_Whistle:
 		case Moves::Gravity:
 		case Moves::Growl:
 		case Moves::Growth:
@@ -289,7 +289,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Helping_Hand:
 		case Moves::Hex:
 		case Moves::Hidden_Power:
-		case Moves::Hi_Jump_Kick:
+		case Moves::High_Jump_Kick:
 		case Moves::Hit_Self:
 		case Moves::Hone_Claws:
 		case Moves::Horn_Attack:
@@ -378,7 +378,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Pin_Missile:
 		case Moves::Pluck:
 		case Moves::Poison_Gas:
-		case Moves::PoisonPowder:
+		case Moves::Poison_Powder:
 		case Moves::Pound:
 		case Moves::Power_Gem:
 		case Moves::Power_Split:
@@ -435,7 +435,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Secret_Sword:
 		case Moves::Seed_Bomb:
 		case Moves::Seismic_Toss:
-		case Moves::Selfdestruct:
+		case Moves::Self_Destruct:
 		case Moves::Shadow_Claw:
 		case Moves::Shadow_Force:
 		case Moves::Shadow_Punch:
@@ -458,14 +458,14 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Sleep_Powder:
 		case Moves::Sleep_Talk:
 		case Moves::Smack_Down:
-		case Moves::SmellingSalt:
-		case Moves::SmokeScreen:
+		case Moves::Smelling_Salts:
+		case Moves::Smokescreen:
 		case Moves::Snarl:
 		case Moves::Snatch:
 		case Moves::Soak:
-		case Moves::Softboiled:
-		case Moves::SolarBeam:
-		case Moves::SonicBoom:
+		case Moves::Soft_Boiled:
+		case Moves::Solar_Beam:
+		case Moves::Sonic_Boom:
 		case Moves::Spacial_Rend:
 		case Moves::Spider_Web:
 		case Moves::Spike_Cannon:
@@ -535,7 +535,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Vacuum_Wave:
 		case Moves::V_create:
 		case Moves::Venoshock:
-		case Moves::ViceGrip:
+		case Moves::Vice_Grip:
 		case Moves::Vine_Whip:
 		case Moves::Vital_Throw:
 		case Moves::Volt_Switch:
@@ -562,7 +562,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Yawn:
 			return generic_probability(1.0);
 		case Moves::Acid:
-		case Moves::AncientPower:
+		case Moves::Ancient_Power:
 		case Moves::Aurora_Beam:
 		case Moves::Bite:
 		case Moves::Blaze_Kick:
@@ -570,7 +570,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Body_Slam:
 		case Moves::Bone_Club:
 		case Moves::Bubble:
-		case Moves::BubbleBeam:
+		case Moves::Bubble_Beam:
 		case Moves::Bug_Buzz:
 		case Moves::Confusion:
 		case Moves::Constrict:
@@ -607,8 +607,8 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Steel_Wing:
 		case Moves::Stomp:
 		case Moves::Thunderbolt:
-		case Moves::ThunderPunch:
-		case Moves::ThunderShock:
+		case Moves::Thunder_Punch:
+		case Moves::Thunder_Shock:
 		case Moves::Volt_Tackle:
 			return generic_probability(0.9, 0.1);
 		case Moves::Blue_Flare:
@@ -630,7 +630,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Astonish:
 		case Moves::Bounce:
 		case Moves::Discharge:
-		case Moves::DragonBreath:
+		case Moves::Dragon_Breath:
 		case Moves::Force_Palm:
 		case Moves::Freeze_Shock:
 		case Moves::Gunk_Shot:
@@ -673,7 +673,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 			return generic_probability(0.5, 0.5);
 		case Moves::Charge_Beam:
 			return generic_probability(0.3, 0.7);
-		case Moves::DynamicPunch:
+		case Moves::Dynamic_Punch:
 		case Moves::Inferno:
 		case Moves::Zap_Cannon:
 			return generic_probability(0.0, 1.0);
@@ -716,6 +716,173 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Roar:
 		case Moves::Whirlwind:
 			return phaze_probability(foe_size);
+		case Moves::Flying_Press:
+		case Moves::Mat_Block:
+		case Moves::Belch:
+		case Moves::Rototiller:
+		case Moves::Sticky_Web:
+		case Moves::Fell_Stinger:
+		case Moves::Phantom_Force:
+		case Moves::Trick_or_Treat:
+		case Moves::Noble_Roar:
+		case Moves::Ion_Deluge:
+		case Moves::Parabolic_Charge:
+		case Moves::Forests_Curse:
+		case Moves::Petal_Blizzard:
+		case Moves::Freeze_Dry:
+		case Moves::Disarming_Voice:
+		case Moves::Parting_Shot:
+		case Moves::Topsy_Turvy:
+		case Moves::Draining_Kiss:
+		case Moves::Crafty_Shield:
+		case Moves::Flower_Shield:
+		case Moves::Grassy_Terrain:
+		case Moves::Misty_Terrain:
+		case Moves::Electrify:
+		case Moves::Play_Rough:
+		case Moves::Fairy_Wind:
+		case Moves::Moonblast:
+		case Moves::Boomburst:
+		case Moves::Fairy_Lock:
+		case Moves::Kings_Shield:
+		case Moves::Play_Nice:
+		case Moves::Confide:
+		case Moves::Diamond_Storm:
+		case Moves::Steam_Eruption:
+		case Moves::Hyperspace_Hole:
+		case Moves::Water_Shuriken:
+		case Moves::Mystical_Fire:
+		case Moves::Spiky_Shield:
+		case Moves::Aromatic_Mist:
+		case Moves::Eerie_Impulse:
+		case Moves::Venom_Drench:
+		case Moves::Powder:
+		case Moves::Geomancy:
+		case Moves::Magnetic_Flux:
+		case Moves::Happy_Hour:
+		case Moves::Electric_Terrain:
+		case Moves::Dazzling_Gleam:
+		case Moves::Celebrate:
+		case Moves::Hold_Hands:
+		case Moves::Baby_Doll_Eyes:
+		case Moves::Nuzzle:
+		case Moves::Hold_Back:
+		case Moves::Infestation:
+		case Moves::Power_Up_Punch:
+		case Moves::Oblivion_Wing:
+		case Moves::Thousand_Arrows:
+		case Moves::Thousand_Waves:
+		case Moves::Lands_Wrath:
+		case Moves::Light_of_Ruin:
+		case Moves::Origin_Pulse:
+		case Moves::Precipice_Blades:
+		case Moves::Dragon_Ascent:
+		case Moves::Hyperspace_Fury:
+		case Moves::Breakneck_Blitz:
+		case Moves::All_Out_Pummeling:
+		case Moves::Supersonic_Skystrike:
+		case Moves::Acid_Downpour:
+		case Moves::Tectonic_Rage:
+		case Moves::Continental_Crush:
+		case Moves::Savage_Spin_Out:
+		case Moves::Never_Ending_Nightmare:
+		case Moves::Corkscrew_Crash:
+		case Moves::Inferno_Overdrive:
+		case Moves::Hydro_Vortex:
+		case Moves::Bloom_Doom:
+		case Moves::Gigavolt_Havoc:
+		case Moves::Shattered_Psyche:
+		case Moves::Subzero_Slammer:
+		case Moves::Devastating_Drake:
+		case Moves::Black_Hole_Eclipse:
+		case Moves::Twinkle_Tackle:
+		case Moves::Catastropika:
+		case Moves::Shore_Up:
+		case Moves::First_Impression:
+		case Moves::Baneful_Bunker:
+		case Moves::Spirit_Shackle:
+		case Moves::Darkest_Lariat:
+		case Moves::Sparkling_Aria:
+		case Moves::Ice_Hammer:
+		case Moves::Floral_Healing:
+		case Moves::High_Horsepower:
+		case Moves::Strength_Sap:
+		case Moves::Solar_Blade:
+		case Moves::Leafage:
+		case Moves::Spotlight:
+		case Moves::Toxic_Thread:
+		case Moves::Laser_Focus:
+		case Moves::Gear_Up:
+		case Moves::Throat_Chop:
+		case Moves::Pollen_Puff:
+		case Moves::Anchor_Shot:
+		case Moves::Psychic_Terrain:
+		case Moves::Lunge:
+		case Moves::Fire_Lash:
+		case Moves::Power_Trip:
+		case Moves::Burn_Up:
+		case Moves::Speed_Swap:
+		case Moves::Smart_Strike:
+		case Moves::Purify:
+		case Moves::Revelation_Dance:
+		case Moves::Core_Enforcer:
+		case Moves::Trop_Kick:
+		case Moves::Instruct:
+		case Moves::Beak_Blast:
+		case Moves::Clanging_Scales:
+		case Moves::Dragon_Hammer:
+		case Moves::Brutal_Swing:
+		case Moves::Aurora_Veil:
+		case Moves::Sinister_Arrow_Raid:
+		case Moves::Malicious_Moonsault:
+		case Moves::Oceanic_Operetta:
+		case Moves::Guardian_of_Alola:
+		case Moves::Soul_Stealing_7_Star_Strike:
+		case Moves::Stoked_Sparksurfer:
+		case Moves::Pulverizing_Pancake:
+		case Moves::Extreme_Evoboost:
+		case Moves::Genesis_Supernova:
+		case Moves::Shell_Trap:
+		case Moves::Fleur_Cannon:
+		case Moves::Psychic_Fangs:
+		case Moves::Stomping_Tantrum:
+		case Moves::Shadow_Bone:
+		case Moves::Accelerock:
+		case Moves::Liquidation:
+		case Moves::Prismatic_Laser:
+		case Moves::Spectral_Thief:
+		case Moves::Sunsteel_Strike:
+		case Moves::Moongeist_Beam:
+		case Moves::Tearful_Look:
+		case Moves::Zing_Zap:
+		case Moves::Natures_Madness:
+		case Moves::Multi_Attack:
+		case Moves::m10000000_Volt_Thunderbolt:
+		case Moves::Mind_Blown:
+		case Moves::Plasma_Fists:
+		case Moves::Photon_Geyser:
+		case Moves::Light_That_Burns_the_Sky:
+		case Moves::Searing_Sunraze_Smash:
+		case Moves::Menacing_Moonraze_Maelstrom:
+		case Moves::Lets_Snuggle_Forever:
+		case Moves::Splintered_Stormshards:
+		case Moves::Clangorous_Soulblaze:
+		case Moves::Zippy_Zap:
+		case Moves::Splishy_Splash:
+		case Moves::Floaty_Fall:
+		case Moves::Pika_Papow:
+		case Moves::Bouncy_Bubble:
+		case Moves::Buzzy_Buzz:
+		case Moves::Sizzly_Slide:
+		case Moves::Glitzy_Glow:
+		case Moves::Baddy_Bad:
+		case Moves::Sappy_Seed:
+		case Moves::Freezy_Frost:
+		case Moves::Sparkly_Swirl:
+		case Moves::Veevee_Volley:
+		case Moves::Double_Iron_Bash:
+			// TODO
+			return generic_probability(1.0);
 	}
 }
 }	// namespace technicalmachine

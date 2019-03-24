@@ -46,6 +46,9 @@ namespace po {
 namespace {
 using boost::property_tree::ptree;
 
+// TODO
+constexpr auto generation = Generation::four;
+
 auto load_species(ptree const & pt) -> bounded::optional<SpeciesIDs::ID> {
 	// Pokemon Online gives Missingno. the ID 0, and uses that to represent the
 	// empty slots in teams smaller than 6 Pokemon.
@@ -75,7 +78,7 @@ ptree::const_iterator load_moves(Pokemon & pokemon, ptree::const_iterator it) {
 		auto const move_id = it->second.get_value<ReadMoveID>();
 		if (move_id != 0_bi) {
 			// TODO: Throw an exception if we attempt to add the same move twice
-			add_seen_move(all_moves(pokemon), id_to_move(MoveID(move_id)));
+			add_seen_move(all_moves(pokemon), generation, id_to_move(MoveID(move_id)));
 		}
 		++it;
 	}

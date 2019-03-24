@@ -98,6 +98,8 @@ auto calculate_evs(boost::property_tree::ptree const & stats, Species const spec
 }
 
 Team parse_team(boost::property_tree::ptree const & pt) {
+	// TODO: Parse this
+	constexpr auto generation = Generation::four;
 	auto const team_data = range_view(pt.get_child("side").get_child("pokemon").equal_range(""));
 	constexpr bool is_me = true;
 	auto team = Team(TeamSize(containers::distance(team_data.begin(), team_data.end())), is_me);
@@ -123,7 +125,7 @@ Team parse_team(boost::property_tree::ptree const & pt) {
 		Pokemon & pokemon = team.add_pokemon(details.species, details.level, details.gender, item, ability, evs.nature);
 		
 		for (auto const & move : pokemon_data.second.get_child("moves")) {
-			 add_seen_move(all_moves(pokemon), from_string<Moves>(move.second.get<std::string>("")));
+			 add_seen_move(all_moves(pokemon), generation, from_string<Moves>(move.second.get<std::string>("")));
 		}
 
 		set_hp_ev(pokemon, evs.hp);

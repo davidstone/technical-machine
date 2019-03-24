@@ -49,7 +49,7 @@ void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multipli
 	team.all_pokemon().set_index(index);
 }
 
-void predict_move(MoveContainer & moves, DetailedStats::UsedMoves const & detailed) {
+void predict_move(MoveContainer & moves, Generation const generation, DetailedStats::UsedMoves const & detailed) {
 	for (Moves const move : detailed) {
 		auto const regular = moves.regular();
 		if (size(regular) == max_moves_per_pokemon) {
@@ -58,13 +58,13 @@ void predict_move(MoveContainer & moves, DetailedStats::UsedMoves const & detail
 		if (containers::any_equal(regular, move)) {
 			continue;
 		}
-		moves.emplace_back(move);
+		moves.emplace_back(generation, move);
 	}
 }
 
 }	// namespace
 
-Team predict_team(UsageStats const & usage_stats, LeadStats const lead_stats, Team team, std::mt19937 & random_engine) {
+Team predict_team(Generation const generation, UsageStats const & usage_stats, LeadStats const lead_stats, Team team, std::mt19937 & random_engine) {
 	auto const & multiplier = usage_stats.multiplier();
 	auto const & detailed = usage_stats.detailed();
 	auto estimate = Estimate(usage_stats, lead_stats);
@@ -82,7 +82,7 @@ Team predict_team(UsageStats const & usage_stats, LeadStats const lead_stats, Te
 		if (!nature_is_known(pokemon)) {
 			set_nature(pokemon, detailed.get<Nature>(species));
 		}
-		predict_move(all_moves(pokemon), detailed.get<DetailedStats::UsedMoves>(species));
+		predict_move(all_moves(pokemon), generation, detailed.get<DetailedStats::UsedMoves>(species));
 		optimize_evs(pokemon, random_engine);
 	}
 	return team;

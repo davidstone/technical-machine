@@ -23,14 +23,15 @@
 #include <tm/stat/stage.hpp>
 #include <tm/stat/stat_names.hpp>
 
-#include <tm/ability.hpp>
-#include <tm/rational.hpp>
-#include <tm/weather.hpp>
-
 #include <tm/move/accuracy.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
 #include <tm/pokemon/pokemon.hpp>
+
+#include <tm/ability.hpp>
+#include <tm/generation.hpp>
+#include <tm/rational.hpp>
+#include <tm/weather.hpp>
 
 namespace technicalmachine {
 namespace {
@@ -46,8 +47,8 @@ auto evasion_item_modifier(Item const item) -> EvasionItemModifier;
 
 }	// namespace
 
-auto chance_to_hit(ActivePokemon const user, Moves const move, ActivePokemon const target, Weather const weather, bool target_moved) -> ChanceToHit {
-	auto const base_accuracy = accuracy(move);
+auto chance_to_hit(Generation const generation, ActivePokemon const user, Moves const move, ActivePokemon const target, Weather const weather, bool target_moved) -> ChanceToHit {
+	auto const base_accuracy = accuracy(generation, move);
 	if (!move_can_miss(user, base_accuracy, get_ability(target))) {
 		return 1.0;
 	}
