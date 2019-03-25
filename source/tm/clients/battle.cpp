@@ -44,7 +44,9 @@ void Battle::handle_use_move(Party const party, uint8_t /*slot*/, UsedMove const
 	auto & user = is_me(party) ? m_ai : m_foe;
 	auto & other = is_me(party) ? m_foe : m_ai;
 
+	std::cerr << "Adding " << to_string(move.selected) << " to " << to_string(user.pokemon()) << '\n';
 	add_seen_move(all_moves(user.pokemon()), m_generation, move.selected);
+	std::cerr << "Added move\n";
 	// TODO: Add move.executed in some circumstances
 
 	call_move(

@@ -325,6 +325,10 @@ public:
 	auto power_trick_is_active() const -> bool {
 		return m_flags.power_trick_is_active;
 	}
+	
+	auto is_protecting() const {
+		return m_flags.is_protecting;
+	}
 
 	auto is_locked_in_by_move() const -> bool {
 		return !bounded::holds_alternative(m_flags.lock_in, bounded::detail::types<std::monostate>{});

@@ -21,6 +21,7 @@
 #include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
+#include <tm/move/target.hpp>
 
 #include <tm/ability.hpp>
 #include <tm/block.hpp>
@@ -536,6 +537,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			boost(other.pokemon().stage(), StatNames::SPD, -2_bi);
 			break;
 		case Moves::Feint:
+		case Moves::Hyperspace_Fury:
+		case Moves::Hyperspace_Hole:
+		case Moves::Phantom_Force:
 			other.pokemon().break_protect();
 			break;
 		case Moves::Fire_Fang:
@@ -824,6 +828,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Shadow_Force:
 			user.shadow_force();
+			// TODO: other.pokemon().break_protect();
 			break;
 		case Moves::Sharpen:
 			boost(user.stage(), StatNames::ATK, 1_bi);
@@ -1053,6 +1058,37 @@ auto find_regular_move(RegularMoveContainer & container, Moves const move_name) 
 	return *move_ptr;
 }
 
+auto blocked_by_protect(Generation const generation, Moves const move) {
+	switch (move_target(generation, move)) {
+		case Target::user:
+		case Target::all_allies:
+		case Target::all:
+		case Target::field:
+		case Target::user_team:
+		case Target::user_field:
+		case Target::foe_field:
+			return false;
+		case Target::adjacent_ally:
+		case Target::user_or_adjacent_ally:
+		case Target::adjacent_foe:
+		case Target::all_adjacent_foes:
+		case Target::any:
+		case Target::all_adjacent:
+			return true;
+		case Target::adjacent:
+			switch (move) {
+				case Moves::Feint:
+				case Moves::Hyperspace_Fury:
+				case Moves::Hyperspace_Hole:
+				case Moves::Phantom_Force:
+				case Moves::Shadow_Force:
+					return false;
+				default:
+					return true;
+			}
+	}
+}
+
 }	// namespace
 
 auto call_move(Generation const generation, Team & user, UsedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, bounded::optional<damage_type> const known_damage) -> void {
@@ -1089,7 +1125,11 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 	}
 
 	// TODO: What happens if we Sleep Talk Trump Card?
-	if (move.miss or move_fails(move.executed, user_pokemon.damaged(), other_ability, other_move)) {
+	auto const unsuccessful =
+		move.miss or
+		move_fails(move.executed, user_pokemon.damaged(), other_ability, other_move) or
+		(other_pokemon.is_protecting() and blocked_by_protect(generation, move.executed));
+	if (unsuccessful) {
 		user_pokemon.unsuccessfully_use_move(move.selected);
 		return;
 	}
