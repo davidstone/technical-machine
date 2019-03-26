@@ -357,6 +357,17 @@ void BattleParser::handle_message(InMessage message) {
 		static_cast<void>(count);
 		// TODO: Implement multi-hit moves
 	} else if (type == "-immune") {
+		auto const party = party_from_player_id(message.next());
+		auto const source = parse_hp_change_source(message);
+		bounded::visit(source, bounded::overload(
+			// TODO: Validate that the type should be immune
+			[](MainEffect) {},
+			[](FromConfusion) { throw std::runtime_error("Confusion cannot cause immunity"); },
+			[](FromMiscellaneous) { throw std::runtime_error("Miscellaneous effects cannot cause immunity"); },
+			[](FromMove) { throw std::runtime_error("Moves cannot cause immunity"); },
+			[](FromRecoil) { throw std::runtime_error("Recoil cannot cause immunity"); },
+			[&](auto const value) { m_battle.set_value_on_active(party, value); }
+		));
 	} else if (type == "inactive") {
 		// message.remainder() == MESSAGE
 		// Timer is on
