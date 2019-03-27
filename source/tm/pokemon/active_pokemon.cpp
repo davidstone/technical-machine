@@ -25,14 +25,13 @@
 namespace technicalmachine {
 
 auto ActivePokemonFlags::reset_end_of_turn() -> void {
+	damage_blocker = {};
 	damaged = false;
 	direct_damage_received = 0_bi;
-	enduring = false;
 	flinched = false;
 	moved = false;
 	me_first_is_active = false;
 	is_loafing_turn = !is_loafing_turn;
-	is_protecting = false;
 	is_fully_paralyzed = false;
 }
 
@@ -56,6 +55,7 @@ auto ActivePokemonFlags::reset_switch() -> void {
 	}
 	attracted = false;
 	charged = false;
+	damage_blocker = {};
 	defense_curled = false;
 	destiny_bond = false;
 	disable = Disable{};

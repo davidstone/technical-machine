@@ -1,4 +1,4 @@
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,6 +18,7 @@
 #pragma once
 
 #include <tm/pokemon/confusion.hpp>
+#include <tm/pokemon/damage_blocker.hpp>
 #include <tm/pokemon/disable.hpp>
 #include <tm/pokemon/embargo.hpp>
 #include <tm/pokemon/encore.hpp>
@@ -119,7 +120,8 @@ private:
 	friend struct ActivePokemonImpl;
 	friend struct MutableActivePokemon;
 	
-	// TODO: Include other mutually exclusive stuff such as Protect and Endure?
+	// TODO: Include other mutually exclusive stuff such as DamageBlocker
+	// (Protect + Endure)?
 	bounded::variant<
 		std::monostate,
 		Bouncing,
@@ -136,6 +138,7 @@ private:
 		UTurning
 	> lock_in{std::monostate{}};
 	Confusion confusion;
+	DamageBlocker damage_blocker;
 	Disable disable;
 	EmbargoCounter embargo;
 	EncoreCounter encore;
@@ -159,7 +162,6 @@ private:
 	bool damaged = false;
 	bool defense_curled = false;
 	bool destiny_bond = false;
-	bool enduring = false;
 	bool flash_fire = false;
 	bool flinched = false;
 	bool has_focused_energy = false;
@@ -179,7 +181,6 @@ private:
 	bool mud_sport = false;
 	bool is_having_a_nightmare = false;
 	bool power_trick_is_active = false;
-	bool is_protecting = false;
 	bool is_roosting = false;
 	bool is_tormented = false;
 	bool water_sport = false;
@@ -221,7 +222,7 @@ public:
 	}
 
 	auto cannot_be_koed() const -> bool {
-		return m_flags.enduring;
+		return m_flags.damage_blocker.is_enduring();
 	}
 
 	auto charge_boosted(Moves const move) const -> bool {
@@ -327,7 +328,7 @@ public:
 	}
 	
 	auto is_protecting() const {
-		return m_flags.is_protecting;
+		return m_flags.damage_blocker.is_protecting();
 	}
 
 	auto is_locked_in_by_move() const -> bool {
@@ -505,7 +506,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.encore.advance_one_turn();
 	}
 	auto endure() const {
-		m_flags.enduring = true;
+		m_flags.damage_blocker.endure();
 	}
 	auto faint() const {
 		get_hp(*this) = 0_bi;
@@ -597,10 +598,10 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.power_trick_is_active = !m_flags.power_trick_is_active;
 	}
 	auto protect() const {
-		m_flags.is_protecting = true;
+		m_flags.damage_blocker.protect();
 	}
 	auto break_protect() const {
-		m_flags.is_protecting = false;
+		m_flags.damage_blocker.break_protect();
 	}
 	auto activate_rampage() const {
 		// TODO: Have it be active when it is constructed
