@@ -147,7 +147,7 @@ auto phaze(Team & user, Team & target, Weather & weather, Variable const variabl
 
 
 auto rest(Pokemon & user, bool const other_is_uproaring) {
-	if (other_is_uproaring) {
+	if (other_is_uproaring or is_sleeping(get_status(user))) {
 		return;
 	}
 	HP & hp = get_hp(user);
