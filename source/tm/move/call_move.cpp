@@ -17,11 +17,11 @@
 
 #include <tm/move/call_move.hpp>
 
-#include <tm/move/calculate_damage.hpp>
 #include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/target.hpp>
+#include <tm/move/will_be_recharge_turn.hpp>
 
 #include <tm/ability.hpp>
 #include <tm/block.hpp>
@@ -180,15 +180,6 @@ auto swap_items(Pokemon & user, Pokemon & other) {
 		auto const other_item = get_item(other);
 		set_item(user, other_item);
 		set_item(other, user_item);
-	}
-}
-
-
-auto will_be_recharge_turn(ActivePokemon const user, Moves const move, Weather const weather) {
-	// TODO: Support Power Herb
-	switch (move) {
-		case Moves::Solar_Beam: return !weather.sun() and !user.is_charging_up();
-		default: return false;
 	}
 }
 
@@ -1031,14 +1022,10 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 }
 
 
-auto use_move(Generation const generation, Team & user, ExecutedMove const move, PP const pp, Team & other, OtherMove const other_move, Weather & weather, bounded::optional<damage_type> const known_damage) -> void {
+auto use_move(Generation const generation, Team & user, ExecutedMove const move, PP const pp, Team & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
 	do_effects_before_moving(move.name, get_status(user.pokemon()), other);
 
-	auto const damage =
-		known_damage ? *known_damage :
-		will_be_recharge_turn(user.pokemon(), move.name, weather) ? 0_bi :
-		is_damaging(move.name) ? calculate_damage(generation, user, move, pp, other, other_move, weather) :
-		0_bi;
+	auto const damage = actual_damage.value(generation, user, move, pp, other, other_move, weather);
 
 	if (damage != 0_bi) {
 		do_damage(user.pokemon(), other.pokemon(), damage);
@@ -1091,7 +1078,7 @@ auto blocked_by_protect(Generation const generation, Moves const move) {
 
 }	// namespace
 
-auto call_move(Generation const generation, Team & user, UsedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, bounded::optional<damage_type> const known_damage) -> void {
+auto call_move(Generation const generation, Team & user, UsedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
 	if (move.selected == Moves::Pass) {
 		return;
 	}
@@ -1139,7 +1126,7 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 		other.pokemon().activate_flash_fire();
 	} else {
 		auto const executed_move = ExecutedMove{move.executed, move.variable, move.critical_hit};
-		use_move(generation, user, executed_move, found_move.pp(), other, other_move, weather, known_damage);
+		use_move(generation, user, executed_move, found_move.pp(), other, other_move, weather, actual_damage);
 	}
 	user_pokemon.increment_move_use_counter(move.selected);
 }

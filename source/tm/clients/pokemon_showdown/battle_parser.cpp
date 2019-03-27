@@ -256,6 +256,7 @@ void BattleParser::handle_message(InMessage message) {
 		auto const what = message.next();
 		auto const details = message.next();
 		if (what == "Substitute" and details == "[damage]") {
+			m_move_state.damage_substitute(other(party));
 			handle_u_turn(other(party));
 		}
 	} else if (type == "-boost") {
@@ -298,6 +299,7 @@ void BattleParser::handle_message(InMessage message) {
 		auto const party = party_from_player_id(message.next());
 		auto const source = message.next();
 		if (source == "Substitute") {
+			m_move_state.break_substitute(other(party));
 			handle_u_turn(other(party));
 		}
 	} else if (type == "-endability") {
@@ -622,20 +624,37 @@ void BattleParser::maybe_use_previous_move() {
 		m_battle.set_value_on_active(data.party, Ability::Rock_Head);
 	}
 	
-	constexpr auto slot = 0;
-	// TODO: This should never be bounded::none, just 0.
-	auto const damage = BOUNDED_CONDITIONAL(
-		data.damage,
-		compute_damage(m_battle, data.party, data.move.executed, *data.damage),
-		bounded::none
-	);
-	
 	auto const other_pokemon = get_team(m_battle, other(data.party)).pokemon();
+
+	constexpr auto slot = 0;
+	struct LocalDamage {
+		ActualDamage value;
+		bool did_any_damage;
+	};
+	auto const damage = bounded::visit(data.damage, bounded::overload(
+		[](std::monostate) {
+			return LocalDamage{ActualDamage::Known{0_bi}, false};
+		},
+		[&](HPAndStatus const hp_and_status) -> LocalDamage {
+			auto const value = compute_damage(m_battle, data.party, data.move.executed, hp_and_status);
+			return LocalDamage{
+				ActualDamage::Known{value},
+				value != 0_bi
+			};
+		},
+		[&](MoveState::SubstituteDamaged) -> LocalDamage {
+			return LocalDamage{ActualDamage::Capped{get_hp(other_pokemon).max() / 4_bi}, true};
+		},
+		[&](MoveState::SubstituteBroke) -> LocalDamage {
+			return LocalDamage{ActualDamage::Known{other_pokemon.substitute().hp()}, true};
+		}
+	));
+	
 	auto const other_move = other_pokemon.moved() ?
 		OtherMove(other_pokemon.last_used_move().name()) :
-		OtherMove(FutureMove{(data.move.executed == Moves::Sucker_Punch) and damage and *damage != 0_bi});
+		OtherMove(FutureMove{(data.move.executed == Moves::Sucker_Punch) and damage.did_any_damage});
 
-	m_battle.handle_use_move(data.party, slot, data.move, data.clear_status, damage, other_move);
+	m_battle.handle_use_move(data.party, slot, data.move, data.clear_status, damage.value, other_move);
 
 	auto const user_is_me = m_battle.is_me(data.party);
 	if (data.user_hp_and_status) {

@@ -17,18 +17,20 @@
 
 #pragma once
 
-#include <tm/move/actual_damage.hpp>
-#include <tm/move/other_move.hpp>
-#include <tm/move/used_move.hpp>
+#include <tm/move/moves.hpp>
 
-#include <bounded/optional.hpp>
+#include <tm/pokemon/active_pokemon.hpp>
+
+#include <tm/weather.hpp>
 
 namespace technicalmachine {
 
-enum class Generation;
-struct Team;
-struct Weather;
-
-auto call_move(Generation generation, Team & user, UsedMove move, Team & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void;
+inline auto will_be_recharge_turn(ActivePokemon const user, Moves const move, Weather const weather) {
+	// TODO: Support Power Herb
+	switch (move) {
+		case Moves::Solar_Beam: return !weather.sun() and !user.is_charging_up();
+		default: return false;
+	}
+}
 
 }	// namespace technicalmachine

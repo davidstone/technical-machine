@@ -15,20 +15,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-#include <tm/move/actual_damage.hpp>
-#include <tm/move/other_move.hpp>
-#include <tm/move/used_move.hpp>
-
-#include <bounded/optional.hpp>
-
-namespace technicalmachine {
-
-enum class Generation;
-struct Team;
-struct Weather;
-
-auto call_move(Generation generation, Team & user, UsedMove move, Team & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void;
-
-}	// namespace technicalmachine
+#include <tm/move/will_be_recharge_turn.hpp>

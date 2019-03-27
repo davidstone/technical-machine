@@ -32,6 +32,7 @@ namespace {
 using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
+constexpr auto damage = ActualDamage::Unknown{};	
 
 template<typename... Moves>
 constexpr auto move_array(Moves... moves) {
@@ -67,7 +68,7 @@ void test_baton_pass() {
 		containers::append(all_moves(misdreavus), move_array(Moves::Shadow_Ball));
 		set_stat_ev(misdreavus, StatNames::SPA, EV(252_bi));
 	}
-	
+
 	auto weather = Weather{};
 	call_move(
 		generation,
@@ -77,7 +78,7 @@ void test_baton_pass() {
 		FutureMove{false},
 		weather,
 		false,
-		bounded::none
+		damage
 	);
 	if (attacker.pokemon().stage()[StatNames::ATK] != 6_bi) {
 		std::cerr << "Belly Drum did not max out Attack\n";
@@ -91,7 +92,7 @@ void test_baton_pass() {
 		FutureMove{false},
 		weather,
 		false,
-		bounded::none
+		damage
 	);
 	if (attacker.pokemon().stage()[StatNames::ATK] != 6_bi) {
 		std::cerr << "Baton Pass immediately cleared stat boosts\n";
@@ -105,7 +106,7 @@ void test_baton_pass() {
 		FutureMove{false},
 		weather,
 		false,
-		bounded::none
+		damage
 	);
 	if (attacker.pokemon().stage()[StatNames::ATK] != 6_bi) {
 		std::cerr << "Baton Pass cleared stat boosts after switching\n";
@@ -148,7 +149,7 @@ void sleep_talk() {
 		FutureMove{false},
 		weather,
 		false,
-		bounded::none
+		damage
 	);
 	assert(get_hp(defender.pokemon()).current() == 0_bi);
 }

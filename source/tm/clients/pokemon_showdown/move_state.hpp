@@ -27,6 +27,7 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/used_move.hpp>
 
+#include <bounded/detail/variant/variant.hpp>
 #include <bounded/optional.hpp>
 
 #include <stdexcept>
@@ -35,10 +36,13 @@ namespace technicalmachine {
 namespace ps {
 
 struct MoveState {
+	struct SubstituteDamaged {};
+	struct SubstituteBroke {};
+	using Damage = bounded::variant<std::monostate, HPAndStatus, SubstituteDamaged, SubstituteBroke>;
 	struct Result {
 		Party party;
 		UsedMove move;
-		bounded::optional<HPAndStatus> damage;
+		Damage damage;
 		bounded::optional<HPAndStatus> user_hp_and_status;
 		bounded::optional<HPAndStatus> other_hp_and_status;
 		bool clear_status;
@@ -79,6 +83,19 @@ struct MoveState {
 		return result;
 	}
 
+	void damage(Party const party, HPAndStatus const hp_and_status) {
+		validate(party);
+		m_damage = hp_and_status;
+	}
+	void damage_substitute(Party const party) {
+		validate(party);
+		m_damage = SubstituteDamaged{};
+	}
+	void break_substitute(Party const party) {
+		validate(party);
+		m_damage = SubstituteBroke{};
+	}
+
 	void clear_status(Party const party) {
 		if (m_party) {
 			validate(party);
@@ -96,10 +113,6 @@ struct MoveState {
 	void critical_hit(Party const party) {
 		validate(party);
 		m_move->critical_hit = true;
-	}
-	void damage(Party const party, HPAndStatus const hp_and_status) {
-		validate(party);
-		m_damage.emplace(hp_and_status);
 	}
 	void flinch(Party const party) {
 		validate(party);
@@ -173,7 +186,7 @@ private:
 	}
 	bounded::optional<Party> m_party;
 	bounded::optional<UsedMove> m_move;
-	bounded::optional<HPAndStatus> m_damage;
+	Damage m_damage{std::monostate{}};
 	bounded::optional<HPAndStatus> m_user_hp_and_status;
 	bounded::optional<HPAndStatus> m_other_hp_and_status;
 	bool m_clear_status = false;

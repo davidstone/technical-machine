@@ -17,18 +17,51 @@
 
 #pragma once
 
-#include <tm/move/actual_damage.hpp>
+#include <tm/move/damage_type.hpp>
+#include <tm/move/executed_move.hpp>
 #include <tm/move/other_move.hpp>
-#include <tm/move/used_move.hpp>
+#include <tm/move/pp.hpp>
 
-#include <bounded/optional.hpp>
+#include <tm/stat/hp.hpp>
+
+#include <tm/weather.hpp>
+
+#include <bounded/detail/variant/variant.hpp>
 
 namespace technicalmachine {
 
 enum class Generation;
 struct Team;
-struct Weather;
 
-auto call_move(Generation generation, Team & user, UsedMove move, Team & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void;
+struct ActualDamage {
+	struct Unknown {};
+	struct Capped {
+		bounded::integer<0, HP::max_value / 4> value;
+	};
+	struct Known {
+		damage_type value;
+	};
+
+	constexpr ActualDamage(Unknown const value_):
+		m_value(value_)
+	{
+	}
+	constexpr ActualDamage(Capped const value_):
+		m_value(value_)
+	{
+	}
+	constexpr ActualDamage(Known const value_):
+		m_value(value_)
+	{
+	}
+	
+	auto value(Generation generation, Team const & user, ExecutedMove move, PP pp, Team const & other, OtherMove other_move, Weather weather) const -> damage_type;
+private:
+	bounded::variant<
+		Unknown,
+		Capped,
+		Known
+	> m_value;
+};
 
 }	// namespace technicalmachine

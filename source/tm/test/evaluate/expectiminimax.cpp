@@ -263,7 +263,7 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		FutureMove{false},
 		weather,
 		false,
-		bounded::none
+		ActualDamage::Unknown{}
 	);
 	
 	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Switch2);

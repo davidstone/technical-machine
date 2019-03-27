@@ -1,0 +1,127 @@
+>battle-gen4ou-882996573
+|title|Technical Machine vs. david stone
+|j|☆Technical Machine
+|request|
+|j|☆david stone
+|player|p1|Technical Machine|102
+|request|{"active":[{"moves":[{"move":"Body Slam","id":"bodyslam","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Iron Head","id":"ironhead","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Stealth Rock","id":"stealthrock","pp":32,"maxpp":32,"target":"foeSide","disabled":false},{"move":"Wish","id":"wish","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Jirachi","details":"Jirachi","condition":"404/404","active":true,"stats":{"atk":238,"def":319,"spa":207,"spd":236,"spe":244},"moves":["bodyslam","ironhead","stealthrock","wish"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, F","condition":"384/384","active":false,"stats":{"atk":386,"def":205,"spa":149,"spd":206,"spe":146},"moves":["icepunch","payback","stoneedge"],"baseAbility":"noguard","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Blissey","details":"Blissey, F","condition":"651/651","active":false,"stats":{"atk":50,"def":119,"spa":206,"spd":385,"spe":146},"moves":["flamethrower","grassknot","softboiled","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Celebi","details":"Celebi","condition":"404/404","active":false,"stats":{"atk":199,"def":320,"spa":236,"spd":236,"spe":245},"moves":["grassknot","psychic","recover","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tyranitar","details":"Tyranitar, F","condition":"404/404","active":false,"stats":{"atk":403,"def":256,"spa":203,"spd":237,"spe":158},"moves":["aquatail","crunch","earthquake","stoneedge"],"baseAbility":"sandstream","item":"choiceband","pokeball":"pokeball"},{"ident":"p1: Starmie","details":"Starmie","condition":"271/271","active":false,"stats":{"atk":167,"def":206,"spa":299,"spd":206,"spe":352},"moves":["icebeam","recover","surf","thunderbolt"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"}]},"rqid":2}
+|player|p2|david stone|102
+|teamsize|p1|6
+|teamsize|p2|1
+|gametype|singles
+|gen|4
+|tier|[Gen 4] OU
+|rule|Sleep Clause Mod: Limit one foe put to sleep
+|rule|Species Clause: Limit one of each Pokémon
+|rule|OHKO Clause: OHKO moves are banned
+|rule|Moody Clause: Moody is banned
+|rule|Evasion Moves Clause: Evasion moves are banned
+|rule|Endless Battle Clause: Forcing endless battles is banned
+|rule|HP Percentage Mod: HP is shown in percentages
+|rule|Evasion Abilities Clause: Evasion abilities are banned
+|rule|Baton Pass Clause: Limit one Baton Passer, can't pass Spe and other stats simultaneously
+||
+|start|
+|switch|p1a: Jirachi|Jirachi|404/404
+|switch|p2a: Registeel|Registeel|100/100
+|turn|1
+|request|{"active":[{"moves":[{"move":"Aqua Tail","id":"aquatail","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Stone Edge","id":"stoneedge","pp":8,"maxpp":8,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tyranitar","details":"Tyranitar, F","condition":"404/404","active":true,"stats":{"atk":403,"def":256,"spa":203,"spd":237,"spe":158},"moves":["aquatail","crunch","earthquake","stoneedge"],"baseAbility":"sandstream","item":"choiceband","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, F","condition":"384/384","active":false,"stats":{"atk":386,"def":205,"spa":149,"spd":206,"spe":146},"moves":["icepunch","payback","stoneedge"],"baseAbility":"noguard","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Blissey","details":"Blissey, F","condition":"651/651","active":false,"stats":{"atk":50,"def":119,"spa":206,"spd":385,"spe":146},"moves":["flamethrower","grassknot","softboiled","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Celebi","details":"Celebi","condition":"404/404","active":false,"stats":{"atk":199,"def":320,"spa":236,"spd":236,"spe":245},"moves":["grassknot","psychic","recover","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Jirachi","details":"Jirachi","condition":"404/404","active":false,"stats":{"atk":238,"def":319,"spa":207,"spd":236,"spe":244},"moves":["bodyslam","ironhead","stealthrock","wish"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Starmie","details":"Starmie","condition":"271/271","active":false,"stats":{"atk":167,"def":206,"spa":299,"spd":206,"spe":352},"moves":["icebeam","recover","surf","thunderbolt"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"}]},"rqid":4}
+||
+|switch|p1a: Tyranitar|Tyranitar, F|404/404
+|-weather|Sandstorm|[from] ability: Sand Stream|[of] p1a: Tyranitar
+|move|p2a: Registeel|Curse|p2a: Registeel
+|-unboost|p2a: Registeel|spe|1
+|-boost|p2a: Registeel|atk|1
+|-boost|p2a: Registeel|def|1
+||
+|-weather|Sandstorm|[upkeep]
+|upkeep|
+|turn|2
+|request|{"active":[{"moves":[{"move":"Aqua Tail","id":"aquatail","pp":16,"maxpp":16,"target":"normal","disabled":true},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":true},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Stone Edge","id":"stoneedge","pp":8,"maxpp":8,"target":"normal","disabled":true}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tyranitar","details":"Tyranitar, F","condition":"404/404","active":true,"stats":{"atk":403,"def":256,"spa":203,"spd":237,"spe":158},"moves":["aquatail","crunch","earthquake","stoneedge"],"baseAbility":"sandstream","item":"choiceband","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, F","condition":"384/384","active":false,"stats":{"atk":386,"def":205,"spa":149,"spd":206,"spe":146},"moves":["icepunch","payback","stoneedge"],"baseAbility":"noguard","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Blissey","details":"Blissey, F","condition":"651/651","active":false,"stats":{"atk":50,"def":119,"spa":206,"spd":385,"spe":146},"moves":["flamethrower","grassknot","softboiled","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Celebi","details":"Celebi","condition":"404/404","active":false,"stats":{"atk":199,"def":320,"spa":236,"spd":236,"spe":245},"moves":["grassknot","psychic","recover","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Jirachi","details":"Jirachi","condition":"404/404","active":false,"stats":{"atk":238,"def":319,"spa":207,"spd":236,"spe":244},"moves":["bodyslam","ironhead","stealthrock","wish"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Starmie","details":"Starmie","condition":"271/271","active":false,"stats":{"atk":167,"def":206,"spa":299,"spd":206,"spe":352},"moves":["icebeam","recover","surf","thunderbolt"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"}]},"rqid":6}
+||
+|move|p1a: Tyranitar|Earthquake|p2a: Registeel
+|-supereffective|p2a: Registeel
+|-damage|p2a: Registeel|57/100
+|move|p2a: Registeel|Curse|p2a: Registeel
+|-unboost|p2a: Registeel|spe|1
+|-boost|p2a: Registeel|atk|1
+|-boost|p2a: Registeel|def|1
+||
+|-weather|Sandstorm|[upkeep]
+|-heal|p2a: Registeel|63/100|[from] item: Leftovers
+|upkeep|
+|turn|3
+|request|{"active":[{"moves":[{"move":"Aqua Tail","id":"aquatail","pp":16,"maxpp":16,"target":"normal","disabled":true},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":true},{"move":"Earthquake","id":"earthquake","pp":14,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Stone Edge","id":"stoneedge","pp":8,"maxpp":8,"target":"normal","disabled":true}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tyranitar","details":"Tyranitar, F","condition":"404/404","active":true,"stats":{"atk":403,"def":256,"spa":203,"spd":237,"spe":158},"moves":["aquatail","crunch","earthquake","stoneedge"],"baseAbility":"sandstream","item":"choiceband","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, F","condition":"384/384","active":false,"stats":{"atk":386,"def":205,"spa":149,"spd":206,"spe":146},"moves":["icepunch","payback","stoneedge"],"baseAbility":"noguard","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Blissey","details":"Blissey, F","condition":"651/651","active":false,"stats":{"atk":50,"def":119,"spa":206,"spd":385,"spe":146},"moves":["flamethrower","grassknot","softboiled","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Celebi","details":"Celebi","condition":"404/404","active":false,"stats":{"atk":199,"def":320,"spa":236,"spd":236,"spe":245},"moves":["grassknot","psychic","recover","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Jirachi","details":"Jirachi","condition":"404/404","active":false,"stats":{"atk":238,"def":319,"spa":207,"spd":236,"spe":244},"moves":["bodyslam","ironhead","stealthrock","wish"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Starmie","details":"Starmie","condition":"271/271","active":false,"stats":{"atk":167,"def":206,"spa":299,"spd":206,"spe":352},"moves":["icebeam","recover","surf","thunderbolt"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"}]},"rqid":8}
+||
+|move|p1a: Tyranitar|Earthquake|p2a: Registeel
+|-supereffective|p2a: Registeel
+|-damage|p2a: Registeel|36/100
+|move|p2a: Registeel|Curse|p2a: Registeel
+|-unboost|p2a: Registeel|spe|1
+|-boost|p2a: Registeel|atk|1
+|-boost|p2a: Registeel|def|1
+||
+|-weather|Sandstorm|[upkeep]
+|-heal|p2a: Registeel|42/100|[from] item: Leftovers
+|upkeep|
+|turn|4
+|request|{"active":[{"moves":[{"move":"Aqua Tail","id":"aquatail","pp":16,"maxpp":16,"target":"normal","disabled":true},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":true},{"move":"Earthquake","id":"earthquake","pp":13,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Stone Edge","id":"stoneedge","pp":8,"maxpp":8,"target":"normal","disabled":true}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tyranitar","details":"Tyranitar, F","condition":"404/404","active":true,"stats":{"atk":403,"def":256,"spa":203,"spd":237,"spe":158},"moves":["aquatail","crunch","earthquake","stoneedge"],"baseAbility":"sandstream","item":"choiceband","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, F","condition":"384/384","active":false,"stats":{"atk":386,"def":205,"spa":149,"spd":206,"spe":146},"moves":["icepunch","payback","stoneedge"],"baseAbility":"noguard","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Blissey","details":"Blissey, F","condition":"651/651","active":false,"stats":{"atk":50,"def":119,"spa":206,"spd":385,"spe":146},"moves":["flamethrower","grassknot","softboiled","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Celebi","details":"Celebi","condition":"404/404","active":false,"stats":{"atk":199,"def":320,"spa":236,"spd":236,"spe":245},"moves":["grassknot","psychic","recover","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Jirachi","details":"Jirachi","condition":"404/404","active":false,"stats":{"atk":238,"def":319,"spa":207,"spd":236,"spe":244},"moves":["bodyslam","ironhead","stealthrock","wish"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Starmie","details":"Starmie","condition":"271/271","active":false,"stats":{"atk":167,"def":206,"spa":299,"spd":206,"spe":352},"moves":["icebeam","recover","surf","thunderbolt"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"}]},"rqid":10}
+||
+|move|p1a: Tyranitar|Earthquake|p2a: Registeel
+|-supereffective|p2a: Registeel
+|-damage|p2a: Registeel|19/100
+|move|p2a: Registeel|Rest|p2a: Registeel
+|-status|p2a: Registeel|slp
+|-heal|p2a: Registeel|100/100 slp|[silent]
+|-status|p2a: Registeel|slp|[from] move: Rest
+||
+|-weather|Sandstorm|[upkeep]
+|upkeep|
+|turn|5
+|request|{"active":[{"moves":[{"move":"Aqua Tail","id":"aquatail","pp":16,"maxpp":16,"target":"normal","disabled":true},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":true},{"move":"Earthquake","id":"earthquake","pp":12,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Stone Edge","id":"stoneedge","pp":8,"maxpp":8,"target":"normal","disabled":true}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tyranitar","details":"Tyranitar, F","condition":"404/404","active":true,"stats":{"atk":403,"def":256,"spa":203,"spd":237,"spe":158},"moves":["aquatail","crunch","earthquake","stoneedge"],"baseAbility":"sandstream","item":"choiceband","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, F","condition":"384/384","active":false,"stats":{"atk":386,"def":205,"spa":149,"spd":206,"spe":146},"moves":["icepunch","payback","stoneedge"],"baseAbility":"noguard","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Blissey","details":"Blissey, F","condition":"651/651","active":false,"stats":{"atk":50,"def":119,"spa":206,"spd":385,"spe":146},"moves":["flamethrower","grassknot","softboiled","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Celebi","details":"Celebi","condition":"404/404","active":false,"stats":{"atk":199,"def":320,"spa":236,"spd":236,"spe":245},"moves":["grassknot","psychic","recover","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Jirachi","details":"Jirachi","condition":"404/404","active":false,"stats":{"atk":238,"def":319,"spa":207,"spd":236,"spe":244},"moves":["bodyslam","ironhead","stealthrock","wish"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Starmie","details":"Starmie","condition":"271/271","active":false,"stats":{"atk":167,"def":206,"spa":299,"spd":206,"spe":352},"moves":["icebeam","recover","surf","thunderbolt"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"}]},"rqid":12}
+||
+|move|p1a: Tyranitar|Earthquake|p2a: Registeel
+|-supereffective|p2a: Registeel
+|-damage|p2a: Registeel|76/100 slp
+|cant|p2a: Registeel|slp
+|move|p2a: Registeel|Sleep Talk|p2a: Registeel
+|move|p2a: Registeel|Rest|p2a: Registeel|[from]Sleep Talk
+|-fail|p2a: Registeel
+||
+|-weather|Sandstorm|[upkeep]
+|-heal|p2a: Registeel|82/100 slp|[from] item: Leftovers
+|upkeep|
+|turn|6
+|request|{"active":[{"moves":[{"move":"Aqua Tail","id":"aquatail","pp":16,"maxpp":16,"target":"normal","disabled":true},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":true},{"move":"Earthquake","id":"earthquake","pp":11,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Stone Edge","id":"stoneedge","pp":8,"maxpp":8,"target":"normal","disabled":true}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tyranitar","details":"Tyranitar, F","condition":"404/404","active":true,"stats":{"atk":403,"def":256,"spa":203,"spd":237,"spe":158},"moves":["aquatail","crunch","earthquake","stoneedge"],"baseAbility":"sandstream","item":"choiceband","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, F","condition":"384/384","active":false,"stats":{"atk":386,"def":205,"spa":149,"spd":206,"spe":146},"moves":["icepunch","payback","stoneedge"],"baseAbility":"noguard","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Blissey","details":"Blissey, F","condition":"651/651","active":false,"stats":{"atk":50,"def":119,"spa":206,"spd":385,"spe":146},"moves":["flamethrower","grassknot","softboiled","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Celebi","details":"Celebi","condition":"404/404","active":false,"stats":{"atk":199,"def":320,"spa":236,"spd":236,"spe":245},"moves":["grassknot","psychic","recover","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Jirachi","details":"Jirachi","condition":"404/404","active":false,"stats":{"atk":238,"def":319,"spa":207,"spd":236,"spe":244},"moves":["bodyslam","ironhead","stealthrock","wish"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Starmie","details":"Starmie","condition":"271/271","active":false,"stats":{"atk":167,"def":206,"spa":299,"spd":206,"spe":352},"moves":["icebeam","recover","surf","thunderbolt"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"}]},"rqid":14}
+||
+|move|p1a: Tyranitar|Earthquake|p2a: Registeel
+|-supereffective|p2a: Registeel
+|-damage|p2a: Registeel|59/100 slp
+|cant|p2a: Registeel|slp
+|move|p2a: Registeel|Sleep Talk|p2a: Registeel
+|move|p2a: Registeel|Substitute|p2a: Registeel|[from]Sleep Talk
+|-start|p2a: Registeel|Substitute
+|-damage|p2a: Registeel|34/100 slp
+||
+|-weather|Sandstorm|[upkeep]
+|-heal|p2a: Registeel|40/100 slp|[from] item: Leftovers
+|upkeep|
+|turn|7
+|request|{"active":[{"moves":[{"move":"Aqua Tail","id":"aquatail","pp":16,"maxpp":16,"target":"normal","disabled":true},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":true},{"move":"Earthquake","id":"earthquake","pp":10,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Stone Edge","id":"stoneedge","pp":8,"maxpp":8,"target":"normal","disabled":true}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tyranitar","details":"Tyranitar, F","condition":"404/404","active":true,"stats":{"atk":403,"def":256,"spa":203,"spd":237,"spe":158},"moves":["aquatail","crunch","earthquake","stoneedge"],"baseAbility":"sandstream","item":"choiceband","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, F","condition":"384/384","active":false,"stats":{"atk":386,"def":205,"spa":149,"spd":206,"spe":146},"moves":["icepunch","payback","stoneedge"],"baseAbility":"noguard","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Blissey","details":"Blissey, F","condition":"651/651","active":false,"stats":{"atk":50,"def":119,"spa":206,"spd":385,"spe":146},"moves":["flamethrower","grassknot","softboiled","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Celebi","details":"Celebi","condition":"404/404","active":false,"stats":{"atk":199,"def":320,"spa":236,"spd":236,"spe":245},"moves":["grassknot","psychic","recover","thunderwave"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Jirachi","details":"Jirachi","condition":"404/404","active":false,"stats":{"atk":238,"def":319,"spa":207,"spd":236,"spe":244},"moves":["bodyslam","ironhead","stealthrock","wish"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Starmie","details":"Starmie","condition":"271/271","active":false,"stats":{"atk":167,"def":206,"spa":299,"spd":206,"spe":352},"moves":["icebeam","recover","surf","thunderbolt"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball"}]},"rqid":16}
+||
+|move|p1a: Tyranitar|Earthquake|p2a: Registeel
+|-supereffective|p2a: Registeel
+|-activate|p2a: Registeel|Substitute|[damage]
+|-curestatus|p2a: Registeel|slp|[msg]
+|move|p2a: Registeel|Curse|p2a: Registeel
+|-unboost|p2a: Registeel|spe|1
+|-boost|p2a: Registeel|atk|1
+|-boost|p2a: Registeel|def|1
+||
+|-weather|Sandstorm|[upkeep]
+|-heal|p2a: Registeel|46/100|[from] item: Leftovers
+|upkeep|
+|turn|8
+|-message|david stone forfeited.
+||
+|win|Technical Machine

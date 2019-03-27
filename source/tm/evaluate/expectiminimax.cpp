@@ -458,7 +458,7 @@ auto execute_move(Team const & user, SelectedAndExecuted const move, Team const 
 									other_move,
 									weather_copy,
 									flags.clear_status,
-									bounded::none
+									ActualDamage::Unknown{}
 								);
 								if (auto const won = Evaluate::win(user_copy, other_copy)) {
 									return *won;

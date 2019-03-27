@@ -76,6 +76,7 @@ add_library(tm_common STATIC
 	source/tm/evaluate/transposition.cpp
 
 	source/tm/move/accuracy.cpp
+	source/tm/move/actual_damage.cpp
 	source/tm/move/base_power.cpp
 	source/tm/move/calculate_damage.cpp
 	source/tm/move/call_move.cpp
@@ -93,6 +94,7 @@ add_library(tm_common STATIC
 	source/tm/move/shared.cpp
 	source/tm/move/target.cpp
 	source/tm/move/used_move.cpp
+	source/tm/move/will_be_recharge_turn.cpp
 
 	source/tm/pokemon/active_pokemon.cpp
 	source/tm/pokemon/collection.cpp
