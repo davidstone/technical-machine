@@ -34,12 +34,12 @@ struct MoveScores {
 	explicit MoveScores(Pokemon const & pokemon);
 	double get(Moves const move) const {
 		auto const it = m_scores.find(move);
-		assert(it != m_scores.end());
+		assert(it != end(m_scores));
 		return it->mapped();
 	}
 	void set(Moves const move, double const value) {
 		auto const it = m_scores.find(move);
-		assert(it != m_scores.end());
+		assert(it != end(m_scores));
 		it->mapped() = value;
 	}
 private:
