@@ -127,8 +127,8 @@ bool can_critical_hit(Moves const move) {
 }
 
 
-template<typename Flag, typename BaseFlag, typename Probability, typename NextBranch>
-double generic_flag_branch(BaseFlag const first_flags, BaseFlag const last_flags, Probability const & basic_probability, NextBranch const & next_branch) {
+template<typename Probability, typename NextBranch>
+double generic_flag_branch(Probability const & basic_probability, NextBranch const & next_branch) {
 	auto const probability = [=](bool const is_first, bool const flag) {
 		auto const base = basic_probability(is_first);
 		assert(base >= 0.0);
@@ -147,55 +147,12 @@ double generic_flag_branch(BaseFlag const first_flags, BaseFlag const last_flags
 			if (p2 == 0.0) {
 				continue;
 			}
-			average_score += p1 * p2 * next_branch(
-				Flag(first_flags, first_flag),
-				Flag(last_flags, last_flag)
-			);
+			average_score += p1 * p2 * next_branch(first_flag, last_flag);
 		}
 	}
 	return average_score;
 }
 
-
-
-struct ClearStatus {
-	constexpr explicit ClearStatus(std::monostate, bool const clear_status_):
-		clear_status(clear_status_)
-	{
-	}
-	bool const clear_status;
-};
-struct Hits : ClearStatus {
-	constexpr explicit Hits(ClearStatus const clear_status_, bool const hits_):
-		ClearStatus(clear_status_),
-		hits(hits_)
-	{
-	}
-	bool const hits;
-};
-struct CriticalHit : Hits {
-	constexpr explicit CriticalHit(Hits const hits_, bool const critical_hit_):
-		Hits(hits_),
-		critical_hit(critical_hit_)
-	{
-	}
-	bool const critical_hit;
-};
-struct ShedSkin {
-	constexpr explicit ShedSkin(std::monostate, bool const shed_skin_):
-		shed_skin(shed_skin_)
-	{
-	}
-	bool const shed_skin;
-};
-struct LockInEnds : ShedSkin {
-	constexpr explicit LockInEnds(ShedSkin const shed_skin_, bool const lock_in_ends_):
-		ShedSkin(shed_skin_),
-		lock_in_ends(lock_in_ends_)
-	{
-	}
-	bool const lock_in_ends;
-};
 
 
 auto deorder(Team const & first, Team const & last) {
@@ -334,7 +291,17 @@ auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last,
 	return finish_end_of_turn(first, last, weather, evaluate, depth, log);
 };
 
-double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, Depth const depth, LockInEnds const first_flag, LockInEnds const last_flag, std::ostream & log) {
+struct EndOfTurnFlags {
+	constexpr EndOfTurnFlags(bool const shed_skin_, bool const lock_in_ends_):
+		shed_skin(shed_skin_),
+		lock_in_ends(lock_in_ends_)
+	{
+	}
+	bool shed_skin;
+	bool lock_in_ends;
+};
+
+double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, Depth const depth, EndOfTurnFlags const first_flag, EndOfTurnFlags const last_flag, std::ostream & log) {
 	end_of_turn(first, first_flag.shed_skin, first_flag.lock_in_ends, last, last_flag.shed_skin, last_flag.lock_in_ends, weather);
 	if (auto const won = Evaluate::win(first, last)) {
 		return *won;
@@ -348,7 +315,7 @@ double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const
 }
 
 
-double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Evaluate const evaluate, Depth const depth, LockInEnds const team_flag, LockInEnds const other_flag, std::ostream & log) {
+double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Evaluate const evaluate, Depth const depth, EndOfTurnFlags const team_flag, EndOfTurnFlags const other_flag, std::ostream & log) {
 	auto get_flag = [&](Team const & match) {
 		return std::addressof(match) == std::addressof(team) ? team_flag : other_flag;
 	};
@@ -405,8 +372,8 @@ constexpr auto average_transformed_sum(Range && range, Function transformation) 
 	return containers::accumulate(containers::transform(BOUNDED_FORWARD(range), std::move(transformation))) / static_cast<double>(range_size);
 }
 
-template<typename Flag, typename BaseFlag, typename NextBranch>
-double generic_flag_branch(BaseFlag const flags, double const basic_probability, NextBranch const & next_branch) {
+template<typename NextBranch>
+double generic_flag_branch(double const basic_probability, NextBranch const & next_branch) {
 	assert(0.0 <= basic_probability and basic_probability <= 1.0);
 	double average_score = 0.0;
 	for (auto const flag : { false, true }) {
@@ -414,7 +381,7 @@ double generic_flag_branch(BaseFlag const flags, double const basic_probability,
 		if (probability == 0.0) {
 			continue;
 		}
-		average_score += probability * next_branch(Flag(flags, flag));
+		average_score += probability * next_branch(flag);
 	}
 	return average_score;
 }
@@ -433,31 +400,28 @@ auto execute_move(Team const & user, SelectedAndExecuted const move, Team const 
 	auto const probability_of_clearing_status = status.probability_of_clearing(get_ability(user_pokemon));
 	auto const specific_chance_to_hit = chance_to_hit(generation, user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());
 	auto const move_can_critical_hit = can_critical_hit(move.executed);
-	return generic_flag_branch<ClearStatus>(
-		std::monostate{},
+	return generic_flag_branch(
 		probability_of_clearing_status,
-		[&](ClearStatus const clear_status) {
-			return generic_flag_branch<Hits>(
-				clear_status,
+		[&](bool const clear_status) {
+			return generic_flag_branch(
 				specific_chance_to_hit,
-				[&](Hits const hits) {
+				[&](bool const hits) {
 					auto score = 0.0;
 					for (auto const & variable : variables) {
-						score += variable.probability * generic_flag_branch<CriticalHit>(
-							hits,
-							hits.hits and move_can_critical_hit ? (1.0 / 16.0) : 0.0,
-							[&](CriticalHit const flags) {
+						score += variable.probability * generic_flag_branch(
+							hits and move_can_critical_hit ? (1.0 / 16.0) : 0.0,
+							[&](bool const critical_hit) {
 								auto user_copy = user;
 								auto other_copy = other;
 								auto weather_copy = weather;
 								call_move(
 									generation,
 									user_copy,
-									UsedMove{move.selected, move.executed, variable.variable, flags.critical_hit, !flags.hits},
+									UsedMove{move.selected, move.executed, variable.variable, critical_hit, !hits},
 									other_copy,
 									other_move,
 									weather_copy,
-									flags.clear_status,
+									clear_status,
 									ActualDamage::Unknown{}
 								);
 								if (auto const won = Evaluate::win(user_copy, other_copy)) {
@@ -492,18 +456,24 @@ auto use_move_branch_inner(Moves const first_used_move) {
 				return can_clear_status(get_ability(pokemon), get_status(pokemon)) ? 0.3 : 0.0;
 			};
 			auto const teams = faster_pokemon(updated_first, updated_last, updated_weather);
-			return generic_flag_branch<ShedSkin>(
-				std::monostate{},
-				std::monostate{},
+			return generic_flag_branch(
 				shed_skin_probability,
-				[&](ShedSkin const team_flag, ShedSkin const other_flag) {
-					return generic_flag_branch<LockInEnds>(
-						team_flag,
-						other_flag,
+				[&](bool const team_shed_skin, bool const other_shed_skin) {
+					return generic_flag_branch(
 						// TODO
 						[&](bool) { return true; },
-						[&](LockInEnds const team_lock_in, LockInEnds const other_lock_in) {
-							return end_of_turn_order_branch(updated_first, updated_last, teams, updated_weather, evaluate, depth, team_lock_in, other_lock_in, log);
+						[&](bool const team_lock_in_ends, bool const other_lock_in_ends) {
+							return end_of_turn_order_branch(
+								updated_first,
+								updated_last,
+								teams,
+								updated_weather,
+								evaluate,
+								depth,
+								EndOfTurnFlags{team_shed_skin, team_lock_in_ends},
+								EndOfTurnFlags{other_shed_skin, other_lock_in_ends},
+								log
+							);
 						}
 					);
 				}
