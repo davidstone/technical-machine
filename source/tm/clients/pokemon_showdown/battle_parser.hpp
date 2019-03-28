@@ -121,7 +121,7 @@ constexpr auto make_party(std::string_view const player_id) {
 inline auto parse_details(std::string_view details) {
 	auto parser = BufferView(details, ", ");
 	auto const species = from_string<Species>(parser.next());
-	auto const level_or_gender_str = parser.next();
+	auto const level_or_gender_or_shiny_str = parser.next();
 	auto try_parse_gender = [](auto const str) {
 		return
 			BOUNDED_CONDITIONAL(str == "F", Gender::female,
@@ -130,8 +130,12 @@ inline auto parse_details(std::string_view details) {
 			bounded::none
 		)));
 	};
-	auto const maybe_gender = try_parse_gender(level_or_gender_str);
-	auto const level = Level(maybe_gender ? 100_bi : bounded::to_integer<Level::min, Level::max>(level_or_gender_str.substr(1)));
+	auto const maybe_gender = try_parse_gender(level_or_gender_or_shiny_str);
+	auto const is_shiny = level_or_gender_or_shiny_str == "shiny";
+	auto const level = Level(maybe_gender or is_shiny ?
+		100_bi :
+		bounded::to_integer<Level::min, Level::max>(level_or_gender_or_shiny_str.substr(1))
+	);
 	auto parse_gender = [&]{
 		if (maybe_gender) {
 			return *maybe_gender;
