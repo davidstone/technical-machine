@@ -400,42 +400,36 @@ auto execute_move(Team const & user, SelectedAndExecuted const move, Team const 
 	auto const probability_of_clearing_status = status.probability_of_clearing(get_ability(user_pokemon));
 	auto const specific_chance_to_hit = chance_to_hit(generation, user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());
 	auto const move_can_critical_hit = can_critical_hit(move.executed);
-	return generic_flag_branch(
-		probability_of_clearing_status,
-		[&](bool const clear_status) {
-			return generic_flag_branch(
-				specific_chance_to_hit,
-				[&](bool const hits) {
-					auto score = 0.0;
-					for (auto const & variable : variables) {
-						score += variable.probability * generic_flag_branch(
-							hits and move_can_critical_hit ? (1.0 / 16.0) : 0.0,
-							[&](bool const critical_hit) {
-								auto user_copy = user;
-								auto other_copy = other;
-								auto weather_copy = weather;
-								call_move(
-									generation,
-									user_copy,
-									UsedMove{move.selected, move.executed, variable.variable, critical_hit, !hits},
-									other_copy,
-									other_move,
-									weather_copy,
-									clear_status,
-									ActualDamage::Unknown{}
-								);
-								if (auto const won = Evaluate::win(user_copy, other_copy)) {
-									return *won;
-								}
-								return continuation(user_copy, other_copy, weather_copy);
-							}
+	return generic_flag_branch(probability_of_clearing_status, [&](bool const clear_status) {
+		return generic_flag_branch(specific_chance_to_hit, [&](bool const hits) {
+			auto score = 0.0;
+			for (auto const & variable : variables) {
+				score += variable.probability * generic_flag_branch(
+					hits and move_can_critical_hit ? (1.0 / 16.0) : 0.0,
+					[&](bool const critical_hit) {
+						auto user_copy = user;
+						auto other_copy = other;
+						auto weather_copy = weather;
+						call_move(
+							generation,
+							user_copy,
+							UsedMove{move.selected, move.executed, variable.variable, critical_hit, !hits},
+							other_copy,
+							other_move,
+							weather_copy,
+							clear_status,
+							ActualDamage::Unknown{}
 						);
+						if (auto const won = Evaluate::win(user_copy, other_copy)) {
+							return *won;
+						}
+						return continuation(user_copy, other_copy, weather_copy);
 					}
-					return score;
-				}
-			);
-		}
-	);
+				);
+			}
+			return score;
+		});
+	});
 }
 
 template<typename Function>
@@ -456,28 +450,25 @@ auto use_move_branch_inner(Moves const first_used_move) {
 				return can_clear_status(get_ability(pokemon), get_status(pokemon)) ? 0.3 : 0.0;
 			};
 			auto const teams = faster_pokemon(updated_first, updated_last, updated_weather);
-			return generic_flag_branch(
-				shed_skin_probability,
-				[&](bool const team_shed_skin, bool const other_shed_skin) {
-					return generic_flag_branch(
-						// TODO
-						[&](bool) { return true; },
-						[&](bool const team_lock_in_ends, bool const other_lock_in_ends) {
-							return end_of_turn_order_branch(
-								updated_first,
-								updated_last,
-								teams,
-								updated_weather,
-								evaluate,
-								depth,
-								EndOfTurnFlags{team_shed_skin, team_lock_in_ends},
-								EndOfTurnFlags{other_shed_skin, other_lock_in_ends},
-								log
-							);
-						}
-					);
-				}
-			);
+			return generic_flag_branch(shed_skin_probability, [&](bool const team_shed_skin, bool const other_shed_skin) {
+				return generic_flag_branch(
+					// TODO
+					[&](bool) { return true; },
+					[&](bool const team_lock_in_ends, bool const other_lock_in_ends) {
+						return end_of_turn_order_branch(
+							updated_first,
+							updated_last,
+							teams,
+							updated_weather,
+							evaluate,
+							depth,
+							EndOfTurnFlags{team_shed_skin, team_lock_in_ends},
+							EndOfTurnFlags{other_shed_skin, other_lock_in_ends},
+							log
+						);
+					}
+				);
+			});
 		});
 	};
 }
