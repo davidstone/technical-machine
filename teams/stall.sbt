@@ -121,27 +121,27 @@
 </stats>
 </pokemon>
 
-<pokemon species="Rotom-w">
+<pokemon species="Spiritomb">
 <nickname></nickname>
 <level>100</level>
 <happiness>255</happiness>
 <gender>No Gender</gender>
 <nature>Calm</nature>
 <item>Leftovers</item>
-<ability>Levitate</ability>
+<ability>Pressure</ability>
 <moveset>
-	<move pp-up="3">Thunderbolt</move>
 	<move pp-up="3">Shadow Ball</move>
-	<move pp-up="3">Reflect</move>
-	<move pp-up="3">Hydro Pump</move>
+	<move pp-up="3">Hidden Power</move>
+	<move pp-up="3">Rest</move>
+	<move pp-up="3">Sleep Talk</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
-	<stat name="Atk" iv="31" ev="0" />
-	<stat name="Def" iv="31" ev="136" />
-	<stat name="Spd" iv="31" ev="0" />
-	<stat name="SpAtk" iv="31" ev="0" />
-	<stat name="SpDef" iv="31" ev="120" />
+	<stat name="Atk" iv="3" ev="0" />
+	<stat name="Def" iv="30" ev="100" />
+	<stat name="Spd" iv="30" ev="0" />
+	<stat name="SpAtk" iv="30" ev="0" />
+	<stat name="SpDef" iv="30" ev="156" />
 </stats>
 </pokemon>
 

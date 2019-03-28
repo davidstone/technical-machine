@@ -35,9 +35,9 @@
 <ability>No Guard</ability>
 <moveset>
 	<move pp-up="3">DynamicPunch</move>
-	<move pp-up="3">Ice Punch</move>
 	<move pp-up="3">Payback</move>
-	<move pp-up="3">Stone Edge</move>
+	<move pp-up="3">Rest</move>
+	<move pp-up="3">Sleep Talk</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
