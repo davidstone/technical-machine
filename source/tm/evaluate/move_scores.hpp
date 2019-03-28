@@ -20,8 +20,10 @@
 
 #include <tm/move/max_moves_per_pokemon.hpp>
 
+#include <containers/flat_map.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
+#include <cassert>
 #include <limits>
 
 namespace technicalmachine {
@@ -30,11 +32,22 @@ struct Pokemon;
 
 struct MoveScores {
 	explicit MoveScores(Pokemon const & pokemon);
-	double get(Moves move) const;
-	void set(Moves move, double value);
+	double get(Moves const move) const {
+		auto const it = m_scores.find(move);
+		assert(it != m_scores.end());
+		return it->mapped();
+	}
+	void set(Moves const move, double const value) {
+		auto const it = m_scores.find(move);
+		assert(it != m_scores.end());
+		it->mapped() = value;
+	}
 private:
-	static constexpr auto capacity = std::numeric_limits<MoveSize>::max();
-	containers::static_vector<std::pair<Moves, double>, static_cast<intmax_t>(capacity)> m_scores;
+	using value_type = containers::map_value_type<Moves, double>;
+	containers::basic_flat_map<containers::static_vector<
+		value_type,
+		static_cast<int>(std::numeric_limits<MoveSize>::max())
+	>> m_scores;
 };
 
 }	// namespace technicalmachine

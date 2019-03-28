@@ -20,15 +20,10 @@
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
-#include <containers/legacy_iterator.hpp>
-
-#include <algorithm>
-#include <cassert>
-
 namespace technicalmachine {
 using namespace bounded::literal;
 
-MoveScores::MoveScores(Pokemon const & pokemon) {
+MoveScores::MoveScores(Pokemon const & pokemon):
 	// Set the score of all foe moves to an illegally high value, so that they
 	// get sorted last. If they didn't even need to be checked for their
 	// complete value before, they probably still don't need to be.
@@ -36,36 +31,10 @@ MoveScores::MoveScores(Pokemon const & pokemon) {
 	// If this is for my team, then it doesn't matter what I set the scores to,
 	// because I evaluate every move of mine and give it a score. Therefore,
 	// this works in all situations.
-	for (auto const move : all_moves(pokemon)) {
-		constexpr auto initial = static_cast<double>(victory + 1_bi);
-		m_scores.emplace_back(move.name(), initial);
-	}
-	std::sort(containers::legacy_iterator(begin(m_scores)), containers::legacy_iterator(end(m_scores)));
-}
-
-namespace {
-
-template<typename Container>
-auto & search(Container & container, Moves const move) {
-	auto compare = [](auto const & element, auto const & requested) { return element.first < requested; };
-	auto const it = std::lower_bound(
-		containers::legacy_iterator(begin(container)),
-		containers::legacy_iterator(end(container)),
-		move,
-		compare
-	);
-	assert(it.base() != end(container));
-	assert(it->first == move);
-	return it->second;
-}
-
-}	// namespace
-
-double MoveScores::get(Moves const move) const {
-	return search(m_scores, move);
-}
-void MoveScores::set(Moves const move, double const value) {
-	search(m_scores, move) = value;
+	m_scores(containers::transform(all_moves(pokemon), [](Move const move) {
+		return value_type(move.name(), static_cast<double>(victory + 1_bi));
+	}))
+{
 }
 
 }	// namespace technicalmachine
