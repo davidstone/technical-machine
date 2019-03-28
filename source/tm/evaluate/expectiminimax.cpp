@@ -291,18 +291,8 @@ auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last,
 	return finish_end_of_turn(first, last, weather, evaluate, depth, log);
 };
 
-struct EndOfTurnFlags {
-	constexpr EndOfTurnFlags(bool const shed_skin_, bool const lock_in_ends_):
-		shed_skin(shed_skin_),
-		lock_in_ends(lock_in_ends_)
-	{
-	}
-	bool shed_skin;
-	bool lock_in_ends;
-};
-
 double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, Depth const depth, EndOfTurnFlags const first_flag, EndOfTurnFlags const last_flag, std::ostream & log) {
-	end_of_turn(first, first_flag.shed_skin, first_flag.lock_in_ends, last, last_flag.shed_skin, last_flag.lock_in_ends, weather);
+	end_of_turn(first, first_flag, last, last_flag, weather);
 	if (auto const won = Evaluate::win(first, last)) {
 		return *won;
 	}

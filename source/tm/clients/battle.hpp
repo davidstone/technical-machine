@@ -82,11 +82,9 @@ struct Battle {
 	template<typename Integer>
 	void handle_begin_turn(Integer const turn_count) {
 		if (turn_count != 1_bi) {
-			constexpr auto ai_shed_skin_activated = false;
-			constexpr auto foe_shed_skin_activated = false;
-			constexpr auto ai_lock_in_ended = false;
-			constexpr auto foe_lock_in_ended = false;
-			end_of_turn(m_ai, ai_shed_skin_activated, ai_lock_in_ended, m_foe, foe_shed_skin_activated, foe_lock_in_ended, m_weather);
+			constexpr auto ai_flags = EndOfTurnFlags{false, false};
+			constexpr auto foe_flags = EndOfTurnFlags{false, false};
+			end_of_turn(m_ai, ai_flags, m_foe, foe_flags, m_weather);
 		} else {
 			for (auto side : {std::ref(m_ai), std::ref(m_foe)}) {
 				side.get().pokemon().set_not_moved();

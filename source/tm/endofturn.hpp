@@ -22,6 +22,16 @@ namespace technicalmachine {
 struct Team;
 struct Weather;
 
-void end_of_turn(Team & first, bool first_shed_skin, bool first_lock_in_ends, Team & last, bool last_shed_skin, bool last_lock_in_ends, Weather & weather);
+struct EndOfTurnFlags {
+	constexpr EndOfTurnFlags(bool const shed_skin_, bool const lock_in_ends_):
+		shed_skin(shed_skin_),
+		lock_in_ends(lock_in_ends_)
+	{
+	}
+	bool shed_skin;
+	bool lock_in_ends;
+};
+
+void end_of_turn(Team & first, EndOfTurnFlags first_flags, Team & last, EndOfTurnFlags last_flags, Weather & weather);
 
 }	// namespace technicalmachine

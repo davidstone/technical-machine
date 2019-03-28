@@ -34,13 +34,13 @@ namespace {
 void end_of_turn1(Team & team);
 void end_of_turn2(Team & team);
 void end_of_turn3(MutableActivePokemon pokemon, Weather const weather);
-void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, bool shed_skin_activated, bool lock_in_ends);
+void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags flags);
 void end_of_turn6(Team & target, Weather const weather);
 void end_of_turn7(MutableActivePokemon pokemon);
 
 }	// namespace
 
-void end_of_turn(Team & first, bool const first_shed_skin, bool const first_lock_in_ends, Team & last, bool const last_shed_skin, bool const last_lock_in_ends, Weather & weather) {
+void end_of_turn(Team & first, EndOfTurnFlags const first_flags, Team & last, EndOfTurnFlags const last_flags, Weather & weather) {
 	// TODO: Cure Pokemon of sleep if Uproar is active. Where is this effect ordered?
 	first.reset_end_of_turn();
 	last.reset_end_of_turn();
@@ -53,8 +53,8 @@ void end_of_turn(Team & first, bool const first_shed_skin, bool const first_lock
 		end_of_turn3(first.pokemon(), weather);
 		end_of_turn3(last.pokemon(), weather);
 	}
-	end_of_turn5(first.pokemon(), last.pokemon(), weather, first_shed_skin, first_lock_in_ends);
-	end_of_turn5(last.pokemon(), first.pokemon(), weather, last_shed_skin, last_lock_in_ends);
+	end_of_turn5(first.pokemon(), last.pokemon(), weather, first_flags);
+	end_of_turn5(last.pokemon(), first.pokemon(), weather, last_flags);
 	end_of_turn6(first, weather);
 	end_of_turn6(last, weather);
 	end_of_turn7(first.pokemon());
@@ -80,7 +80,7 @@ void end_of_turn3(MutableActivePokemon pokemon, Weather const weather) {
 	weather_healing_ability(pokemon, weather);
 }
 
-void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, bool const shed_skin_activated, bool const lock_in_ends) {
+void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags const flags) {
 	if (get_hp(pokemon) == 0_bi) {
 		return;
 	}
@@ -92,7 +92,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	}
 	if (boosts_speed(get_ability(pokemon))) {
 		boost(pokemon.stage(), StatNames::SPE, 1_bi);
-	} else if (shed_skin_activated) {
+	} else if (flags.shed_skin) {
 		get_status(pokemon) = Status{};
 	}
 	switch (get_item(pokemon)) {
@@ -136,7 +136,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	}
 	pokemon.partial_trap_damage();
 	
-	pokemon.advance_lock_in(lock_in_ends);
+	pokemon.advance_lock_in(flags.lock_in_ends);
 	
 	pokemon.advance_disable();
 	pokemon.advance_encore();
