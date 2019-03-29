@@ -23,6 +23,8 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/shared.hpp>
 
+#include <tm/string_conversions/move.hpp>
+
 #include <tm/operators.hpp>
 #include <tm/range.hpp>
 
@@ -106,7 +108,14 @@ auto add_seen_move(MoveContainer & container, Generation const generation, Moves
 		return;
 	}
 	if (size(container.regular()) == max_moves_per_pokemon) {
-		throw std::runtime_error("Tried to add too many moves");
+		auto message = std::string("Tried to add too many moves. Already have: ");
+		for (auto const existing_move : container.regular()) {
+			message += to_string(existing_move.name());
+			message += ", ";
+		}
+		message += "-- Tried to add ";
+		message += to_string(move);
+		throw std::runtime_error(message);
 	}
 	container.emplace_back(generation, move, pp...);
 }
