@@ -273,6 +273,7 @@ set(COMMON_CLANG_COMPILE_OPTIONS
 	"-Wno-missing-braces"
 	"-Wno-newline-eof"
 	"-Wno-padded"
+	"-Wno-range-loop-analysis"
 	# Still don't need compatibility with older standards
 	"-Wno-return-std-move-in-c++11"
 	# -Wswitch-enum warns even if you have default
