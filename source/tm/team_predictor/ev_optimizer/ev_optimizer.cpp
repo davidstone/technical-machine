@@ -33,7 +33,12 @@ using namespace bounded::literal;
 
 auto set_stats(Pokemon & pokemon, CombinedStats const stats) {
 	set_nature(pokemon, stats.nature);
+
+	auto const original_hp = get_hp(pokemon);
 	set_hp_ev(pokemon, stats.hp);
+	auto & new_hp = get_hp(pokemon);
+	new_hp = new_hp.max() * original_hp.current() / original_hp.max();
+
 	set_stat_ev(pokemon, StatNames::ATK, stats.attack);
 	set_stat_ev(pokemon, StatNames::DEF, stats.defense);
 	set_stat_ev(pokemon, StatNames::SPA, stats.special_attack);
