@@ -26,6 +26,8 @@
 #include <utility>
 
 namespace technicalmachine {
+enum class Generation;
+enum class Moves : std::uint16_t;
 using namespace bounded::literal;
 
 struct Substitute {
@@ -64,5 +66,8 @@ private:
 constexpr auto operator==(Substitute const lhs, Substitute const rhs) {
 	return lhs.hp() == rhs.hp();
 }
+
+auto blocked_by_substitute(Generation generation, Moves move) -> bool;
+auto damage_blocked_by_substitute(Generation generation, Moves move) -> bool;
 
 }	// namespace technicalmachine

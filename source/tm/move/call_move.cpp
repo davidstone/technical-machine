@@ -1023,14 +1023,19 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 
 
 auto use_move(Generation const generation, Team & user, ExecutedMove const move, PP const pp, Team & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
-	do_effects_before_moving(move.name, get_status(user.pokemon()), other);
+	auto const user_pokemon = user.pokemon();
+	auto const other_pokemon = other.pokemon();
+	do_effects_before_moving(move.name, get_status(user_pokemon), other);
 
 	auto const damage = actual_damage.value(generation, user, move, pp, other, other_move, weather);
 
+	auto const substitute = other_pokemon.substitute();
 	if (damage != 0_bi) {
-		do_damage(user.pokemon(), other.pokemon(), damage);
+		do_damage(user_pokemon, other_pokemon, damage);
 	}
-	do_side_effects(generation, user, move, other, weather, damage);
+	if (!substitute or !blocked_by_substitute(generation, move.name)) {
+		do_side_effects(generation, user, move, other, weather, damage);
+	}
 }
 
 auto find_move(MoveContainer const container, Moves const move_name) -> Move {
