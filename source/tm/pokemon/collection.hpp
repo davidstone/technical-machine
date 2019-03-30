@@ -24,13 +24,13 @@
 #include <tm/operators.hpp>
 #include <tm/range.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
 #include <containers/common_container_functions.hpp>
 #include <containers/index_type.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
-#include <cassert>
 #include <stdexcept>
 #include <utility>
 
@@ -103,7 +103,7 @@ struct PokemonCollection {
 
 private:
 	void check_range(containers::index_type<PokemonCollection> const new_index [[maybe_unused]]) const {
-		assert(new_index < containers::size(m_container));
+		BOUNDED_ASSERT(new_index < containers::size(m_container));
 	}
 
 	Container m_container;

@@ -41,9 +41,10 @@
 #include <tm/type/effectiveness.hpp>
 #include <tm/type/type.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <containers/algorithms/maybe_find.hpp>
 
-#include <cassert>
 #include <utility>
 
 namespace technicalmachine {
@@ -1039,14 +1040,14 @@ auto use_move(Generation const generation, Team & user, ExecutedMove const move,
 }
 
 auto find_move(MoveContainer const container, Moves const move_name) -> Move {
-	auto const move_ptr = containers::maybe_find(container, move_name);
-	assert(move_ptr);
-	return *move_ptr;
+	auto const maybe_move = containers::maybe_find(container, move_name);
+	BOUNDED_ASSERT(maybe_move);
+	return *maybe_move;
 }
 
 auto find_regular_move(RegularMoveContainer & container, Moves const move_name) -> Move & {
 	auto const move_ptr = containers::maybe_find(container, move_name);
-	assert(move_ptr);
+	BOUNDED_ASSERT_OR_ASSUME(move_ptr);
 	return *move_ptr;
 }
 

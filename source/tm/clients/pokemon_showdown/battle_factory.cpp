@@ -25,6 +25,7 @@
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
 #include <containers/algorithms/transform.hpp>
@@ -226,7 +227,7 @@ void BattleFactory::handle_message(InMessage message) {
 }
 
 BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message) && {
-	assert(completed());
+	BOUNDED_ASSERT(completed());
 	if (!m_party) {
 		throw std::runtime_error("Did not receive party");
 	}

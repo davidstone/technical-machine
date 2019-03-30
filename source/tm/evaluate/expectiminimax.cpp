@@ -47,11 +47,12 @@
 #include <tm/variable.hpp>
 #include <tm/weather.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <containers/algorithms/accumulate.hpp>
 
 #include <boost/timer.hpp>
 
-#include <cassert>
 #include <cstddef>
 #include <cstdint>
 #include <random>
@@ -131,8 +132,8 @@ template<typename Probability, typename NextBranch>
 double generic_flag_branch(Probability const & basic_probability, NextBranch const & next_branch) {
 	auto const probability = [=](bool const is_first, bool const flag) {
 		auto const base = basic_probability(is_first);
-		assert(base >= 0.0);
-		assert(base <= 1.0);
+		BOUNDED_ASSERT_OR_ASSUME(base >= 0.0);
+		BOUNDED_ASSERT_OR_ASSUME(base <= 1.0);
 		return flag ? base : (1.0 - base);
 	};
 
@@ -156,7 +157,7 @@ double generic_flag_branch(Probability const & basic_probability, NextBranch con
 
 
 auto deorder(Team const & first, Team const & last) {
-	assert(first.is_me() or last.is_me());
+	BOUNDED_ASSERT(first.is_me() or last.is_me());
 	struct Deorder {
 		Team const & ai;
 		Team const & foe;
@@ -364,7 +365,7 @@ constexpr auto average_transformed_sum(Range && range, Function transformation) 
 
 template<typename NextBranch>
 double generic_flag_branch(double const basic_probability, NextBranch const & next_branch) {
-	assert(0.0 <= basic_probability and basic_probability <= 1.0);
+	BOUNDED_ASSERT_OR_ASSUME(0.0 <= basic_probability and basic_probability <= 1.0);
 	double average_score = 0.0;
 	for (auto const flag : { false, true }) {
 		auto const probability = flag ? basic_probability : (1.0 - basic_probability);
@@ -433,7 +434,7 @@ auto score_executed_moves(Team const & user, Moves const selected_move, Team con
 
 auto use_move_branch_inner(Moves const first_used_move) {
 	return [=](Team const & first, Moves const first_move [[maybe_unused]], Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
-		assert(first_move == Moves::Pass);
+		BOUNDED_ASSERT_OR_ASSUME(first_move == Moves::Pass);
 		return score_executed_moves(last, last_move, first, first_used_move, weather, [&](Team const & updated_last, Team const & updated_first, Weather const updated_weather) {
 			auto shed_skin_probability = [&](bool const is_first) {
 				Pokemon const & pokemon = (is_first ? updated_first : updated_last).pokemon();
@@ -499,7 +500,7 @@ auto use_move_branch_outer(OriginalPokemon const original_last_pokemon, Moves co
 			return score_executed_moves(pre_updated_last, actual_last_move, pre_updated_first, first_used_move, pre_updated_weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
 				auto const first_selections = StaticVectorMove({Moves::Pass});
 				auto const last_selections = legal_selections(updated_last, updated_first.pokemon(), weather);
-				assert(all_are_pass_or_switch(last_selections));
+				BOUNDED_ASSERT(all_are_pass_or_switch(last_selections));
 				return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, evaluate, depth, log, use_move_branch_inner(first_used_move)).move.score;
 			});
 		});
@@ -526,7 +527,7 @@ double use_move_branch(Team const & first, Moves const first_move, Team const & 
 
 	return score_executed_moves(first, first_move, last, FutureMove{is_damaging(last_move)}, weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
 		auto const first_selections = legal_selections(updated_first, updated_last.pokemon(), weather);
-		assert(all_are_pass_or_switch(first_selections));
+		BOUNDED_ASSERT(all_are_pass_or_switch(first_selections));
 		auto const last_selections = StaticVectorMove({Moves::Pass});
 		// TODO: Figure out first / last vs ai / foe
 		return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, evaluate, depth, log, use_move_branch_outer(original_last_pokemon, last_move)).move.score;
@@ -546,8 +547,8 @@ BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const we
 	auto team_is_empty [[maybe_unused]] = [](Team const & team) {
 		return team.size() == 0_bi or (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi);
 	};
-	assert(!team_is_empty(ai));
-	assert(!team_is_empty(foe));
+	BOUNDED_ASSERT(!team_is_empty(ai));
+	BOUNDED_ASSERT(!team_is_empty(foe));
 	
 	auto const ai_selections = legal_selections(ai, foe.pokemon(), weather);
 	auto const foe_selections = legal_selections(foe, ai.pokemon(), weather);

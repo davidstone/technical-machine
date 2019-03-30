@@ -31,6 +31,7 @@
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
 #include <containers/adapt.hpp>
@@ -42,7 +43,6 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include <algorithm>
-#include <cassert>
 #include <cstddef>
 #include <string>
 
@@ -94,7 +94,7 @@ DetailedStats::DetailedStats(std::filesystem::path const & path):
 	
 	auto const all_stats = pt.get_child("stats");
 	for (auto const & value : all_stats) {
-		assert(value.first == "pokemon");
+		BOUNDED_ASSERT(value.first == "pokemon");
 		auto const pokemon = value.second;
 		auto const species = from_string<Species>(pokemon.get<std::string>("species"));
 		ability[species] = most_likely_sub_elements<Ability>(pokemon.get_child("abilities"));

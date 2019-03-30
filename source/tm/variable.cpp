@@ -23,6 +23,8 @@
 #include <tm/move/is_switch.hpp>
 #include <tm/pokemon/pokemon_not_found.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <containers/integer_range.hpp>
 
 #include <cassert>
@@ -41,7 +43,7 @@ auto find_index(PokemonCollection const & collection, Species const species) {
 }
 
 auto get_phaze_index(Team const & team, Species const species) {
-	assert(team.size() > 1_bi);
+	BOUNDED_ASSERT(team.size() > 1_bi);
 	auto const & all = team.all_pokemon();
 	auto const pokemon_index = all.index();
 	auto const new_index = find_index(all, species);

@@ -20,7 +20,7 @@
 
 #include <tm/move/moves.hpp>
 
-#include <cassert>
+#include <bounded/assert.hpp>
 
 namespace technicalmachine {
 
@@ -43,7 +43,7 @@ auto to_switch(TeamIndex const replacement) -> Moves {
 }
 
 auto to_replacement(Moves const move) -> TeamIndex {
-	assert(is_switch(move));
+	BOUNDED_ASSERT(is_switch(move));
 	return static_cast<TeamIndex>(bounded::integer(move) - bounded::constant<static_cast<int>(Moves::Switch0)>);
 }
 

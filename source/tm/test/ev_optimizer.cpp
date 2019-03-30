@@ -28,14 +28,12 @@
 #include <tm/move/moves.hpp>
 #include <tm/string_conversions/nature.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <containers/integer_range.hpp>
 
 #include <iostream>
 #include <random>
-
-#undef NDEBUG
-
-#include <cassert>
 
 namespace technicalmachine {
 namespace {
@@ -59,10 +57,10 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
-	assert(minimize_evs(stats, species, level, include_attack, include_special_attack) == stats);
-	assert(pad_random_evs(stats, include_attack, include_special_attack, random_engine) == stats);
+	BOUNDED_ASSERT(minimize_evs(stats, species, level, include_attack, include_special_attack) == stats);
+	BOUNDED_ASSERT(pad_random_evs(stats, include_attack, include_special_attack, random_engine) == stats);
 	optimize_evs(pokemon, random_engine);
-	assert(pull_out_stats(pokemon) == stats);
+	BOUNDED_ASSERT(pull_out_stats(pokemon) == stats);
 }
 
 void defensive_tests() {
@@ -75,16 +73,16 @@ void defensive_tests() {
 	
 	auto defensive_evs = DefensiveEVs(species, level, Nature::Bold, hp, defense, special_defense);
 	for (auto const & candidate : defensive_evs) {
-		assert(candidate.hp == hp.ev());
-		assert(candidate.defense == defense.ev());
-		assert(candidate.special_defense >= special_defense.ev());
-		assert(boosts_stat(candidate.nature, StatNames::DEF));
+		BOUNDED_ASSERT(candidate.hp == hp.ev());
+		BOUNDED_ASSERT(candidate.defense == defense.ev());
+		BOUNDED_ASSERT(candidate.special_defense >= special_defense.ev());
+		BOUNDED_ASSERT(boosts_stat(candidate.nature, StatNames::DEF));
 	}
 }
 
 auto find(SpeedEVs const & container, Nature const nature) {
 	auto const it = containers::find_if(container, [=](auto const & value) { return value.nature == nature; });
-	assert(it != end(container));
+	BOUNDED_ASSERT(it != end(container));
 	return it->ev;
 }
 
@@ -100,9 +98,9 @@ void speed_tests() {
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const new_value = initial_stat(StatNames::SPE, Stat(species, StatNames::SPE, find(speed_evs, nature)), level, nature);
 		if (boosts_stat(nature, StatNames::SPE) and !boosts_stat(original_nature, StatNames::SPE)) {
-			assert(new_value == original_value or new_value == original_value + 1_bi);
+			BOUNDED_ASSERT(new_value == original_value or new_value == original_value + 1_bi);
 		} else {
-			assert(new_value == original_value);
+			BOUNDED_ASSERT(new_value == original_value);
 		}
 	}
 }

@@ -29,15 +29,12 @@
 
 #include <tm/pokemon/species.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
 #include <containers/array/array.hpp>
 
 #include <iostream>
-
-#undef NDEBUG
-
-#include <cassert>
 
 namespace technicalmachine {
 namespace {
@@ -81,7 +78,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		}
 	}
 
-	assert(expectiminimax(team1, team2, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
+	BOUNDED_ASSERT(expectiminimax(team1, team2, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
 	
 	Team team3(1_bi);
 	{
@@ -94,7 +91,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	}
 	
 	// TODO: implement Wonder_Guard
-//	assert(expectiminimax(team1, team3, weather, evaluate, depth, std::cout) == Moves::Shadow_Ball);
+//	BOUNDED_ASSERT(expectiminimax(team1, team3, weather, evaluate, depth, std::cout) == Moves::Shadow_Ball);
 }
 
 void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
@@ -122,7 +119,7 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 		set_stat_ev(swampert, StatNames::DEF, EV(252_bi));
 	}
 
-	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Shadow_Ball);
+	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Shadow_Ball);
 }
 
 void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
@@ -149,7 +146,7 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 		set_stat_ev(mew, StatNames::SPD, EV(64_bi));
 	}
 
-	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Belly_Drum);
+	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Belly_Drum);
 }
 
 void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
@@ -177,7 +174,7 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 		set_stat_ev(wobbuffet, StatNames::SPE, EV(4_bi));
 	}
 
-	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Curse);
+	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Curse);
 }
 
 
@@ -215,7 +212,7 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		set_stat_ev(misdreavus, StatNames::SPA, EV(252_bi));
 	}
 
-	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Belly_Drum);
+	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Belly_Drum);
 }
 
 
@@ -266,7 +263,7 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		ActualDamage::Unknown{}
 	);
 	
-	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Switch2);
+	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Switch2);
 }
 
 
@@ -296,7 +293,7 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 		set_stat_ev(suicune, StatNames::SPD, EV(136_bi));
 	}
 
-	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Calm_Mind);
+	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Calm_Mind);
 }
 
 void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
@@ -326,19 +323,19 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	auto jolteon = attacker.pokemon();
 	auto const ability = get_ability(jolteon);
 	auto & status = get_status(jolteon);
-	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
+	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
 
 	apply(Statuses::sleep, jolteon, weather);
-	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cerr) == Moves::Sleep_Talk);
+	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cerr) == Moves::Sleep_Talk);
 
 	status.advance_from_move(ability, false);
-	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Sleep_Talk);
+	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Sleep_Talk);
 
 	status.advance_from_move(ability, false);
-	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Sleep_Talk);
+	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Sleep_Talk);
 
 	status.advance_from_move(ability, true);
-	assert(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
+	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
 }
 
 void performance(Evaluate const & evaluate) {

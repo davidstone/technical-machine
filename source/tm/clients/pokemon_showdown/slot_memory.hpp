@@ -19,6 +19,7 @@
 
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
 #include <containers/algorithms/find.hpp>
@@ -61,7 +62,7 @@ private:
 	using Container = containers::static_vector<Index, max_pokemon_per_team.value()>;
 	auto swap_to_front(TeamIndex const index) -> Container::iterator {
 		auto const it = containers::find(m_container, 1_bi);
-		assert(it != end(m_container));
+		BOUNDED_ASSERT(it != end(m_container));
 		std::swap(*it, containers::at(m_container, index));
 		return it;
 	}

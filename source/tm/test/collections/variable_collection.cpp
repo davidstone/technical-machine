@@ -31,6 +31,8 @@
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/species.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <containers/integer_range.hpp>
 
 #include <iostream>
@@ -67,7 +69,7 @@ void phaze_in_different_pokemon(Team const & team, containers::index_type<Pokemo
 	auto variable = Variable{};
 	variable.set_phaze_index(team, get_species(team.pokemon(new_index)));
 	auto const expected = expected_index[current_index][new_index];
-	assert(expected);
+	BOUNDED_ASSERT(expected);
 	auto const calculated = variable.phaze_index();
 	if (calculated != *expected) {
 		throw InvalidCollection("Offsets for phazing are incorrect. Expected " + to_string(*expected) + " but got a result of " + to_string(calculated) + ".");

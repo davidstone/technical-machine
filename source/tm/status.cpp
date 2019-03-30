@@ -27,6 +27,7 @@
 
 #include <tm/type/type.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/detail/overload.hpp>
 
 namespace technicalmachine {
@@ -82,8 +83,8 @@ auto boosts_facade(Status const status) -> bool {
 }
 
 auto apply(Statuses const status, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {
-	assert(status != Statuses::clear);
-	assert(status != Statuses::sleep_rest);
+	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
+	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::sleep_rest);
 	if (!status_can_apply(status, user, target, weather)) {
 		return;
 	}
@@ -95,8 +96,8 @@ auto apply(Statuses const status, MutableActivePokemon user, MutableActivePokemo
 		case Statuses::poison: state = Status::Poison{}; break;
 		case Statuses::poison_toxic: state = Status::Toxic{}; break;
 		case Statuses::sleep: state = Status::Sleep{}; break;
-		case Statuses::clear: __builtin_unreachable();
-		case Statuses::sleep_rest: __builtin_unreachable();
+		case Statuses::clear: BOUNDED_ASSERT_OR_ASSUME(false);
+		case Statuses::sleep_rest: BOUNDED_ASSERT_OR_ASSUME(false);
 	}
 	auto const reflected = reflected_status(status);
 	if (reflected and reflects_status(get_ability(target))) {

@@ -23,10 +23,10 @@
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
 
-#include <bounded/optional.hpp>
+#include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
+#include <bounded/optional.hpp>
 
-#include <cassert>
 #include <utility>
 
 namespace technicalmachine {
@@ -55,7 +55,7 @@ struct PP {
 			return;
 		}
 		// I think it is always an error to try to decrement a move without PP.
-		assert(m_current and *m_current != 0_bi);
+		BOUNDED_ASSERT(*m_current != 0_bi);
 		*m_current -= BOUNDED_CONDITIONAL(uses_extra_pp(foe_ability), 2_bi, 1_bi);
 	}
 

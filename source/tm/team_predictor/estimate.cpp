@@ -21,6 +21,8 @@
 
 #include <tm/team.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/find.hpp>
 #include <containers/integer_range.hpp>
@@ -68,7 +70,7 @@ Species Estimate::random(std::mt19937 & random_engine) const {
 		usage_threshold -= value;
 		return usage_threshold <= 0.0F;
 	});
-	assert(it != end(estimate));
+	BOUNDED_ASSERT(it != end(estimate));
 	return static_cast<Species>(it - begin(estimate));
 }
 

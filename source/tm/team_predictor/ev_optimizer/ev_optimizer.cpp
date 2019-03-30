@@ -25,6 +25,8 @@
 #include <tm/move/category.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <random>
 
 namespace technicalmachine {
@@ -78,8 +80,8 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 			best.emplace(candidate);
 		}
 	}
-	assert(best);
-	assert(ev_sum(*best) <= EV::max_total);
+	BOUNDED_ASSERT(best);
+	BOUNDED_ASSERT(ev_sum(*best) <= EV::max_total);
 	return *best;
 }
 

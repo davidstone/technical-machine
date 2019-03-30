@@ -19,9 +19,8 @@
 
 #include <tm/move/moves.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/optional.hpp>
-
-#include <cassert>
 
 namespace technicalmachine {
 
@@ -65,7 +64,7 @@ struct Depth {
 	}
 private:
 	constexpr auto next_depth_to_search() const -> unsigned {
-		assert(m_depth_to_search != m_searched_so_far);
+		BOUNDED_ASSERT(m_depth_to_search != m_searched_so_far);
 		return m_depth_to_search - m_searched_so_far - 1U;
 	}
 

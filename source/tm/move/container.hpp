@@ -28,13 +28,12 @@
 #include <tm/operators.hpp>
 #include <tm/range.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/concatenate_view.hpp>
 #include <containers/static_vector/static_vector.hpp>
-
-#include <cassert>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -78,7 +77,7 @@ struct MoveContainer {
 	}
 
 	constexpr auto & emplace_back(Move const move) {
-		assert(containers::none_equal(m_regular, move.name()));
+		BOUNDED_ASSERT(containers::none_equal(m_regular, move.name()));
 		return m_regular.emplace_back(move);
 	}
 

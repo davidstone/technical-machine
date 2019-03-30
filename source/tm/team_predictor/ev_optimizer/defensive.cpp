@@ -25,6 +25,8 @@
 #include <tm/stat/stat_names.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <containers/algorithms/transform.hpp>
 #include <containers/integer_range.hpp>
 
@@ -98,7 +100,7 @@ DefensiveEVs::DefensiveEVs(Species const species, Level const level, Nature cons
 			push_back(m_container, *best_per_nature);
 		}
 	}
-	assert(!empty(m_container));
+	BOUNDED_ASSERT(!empty(m_container));
 }
 
 }	// namespace technicalmachine

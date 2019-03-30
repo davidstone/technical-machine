@@ -23,9 +23,8 @@
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/optional.hpp>
-
-#include <cassert>
 
 namespace technicalmachine {
 namespace {
@@ -75,7 +74,7 @@ auto remove_inferior_natures(Container & container, bool const is_physical, bool
 			containers::erase_if(container, [](auto candidate) { return boosts_stat(candidate.nature, StatNames::SPA); });
 		}
 	}
-	assert(!empty(container));
+	BOUNDED_ASSERT(!empty(container));
 }
 
 }	// namespace
@@ -112,7 +111,7 @@ void OffensiveEVs::equal_stats(OffensiveData const initial, Species const specie
 			it = erase(m_container, it);
 		}
 	}
-	assert(!empty(m_container));
+	BOUNDED_ASSERT(!empty(m_container));
 }
 
 }	// namespace technicalmachine

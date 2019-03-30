@@ -27,6 +27,8 @@
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/legacy_iterator.hpp>
@@ -34,7 +36,6 @@
 #include <boost/lexical_cast.hpp>
 
 #include <algorithm>
-#include <cassert>
 #include <cstddef>
 #include <fstream>
 #include <string>
@@ -100,7 +101,7 @@ void Multiplier::load_listed_multipliers(OverallStats const & overall, std::file
 		auto const ally = from_string<Species>(line.substr(x + 1, y - x - 1));
 
 		auto const number_used_with = boost::lexical_cast<unsigned>(line.substr(y + 1));
-		assert(unaccounted[member] >= number_used_with);
+		BOUNDED_ASSERT(unaccounted[member] >= number_used_with);
 		unaccounted[member] -= number_used_with;
 		auto const per_cent_used_with = static_cast<value_type>(number_used_with) / static_cast<value_type>(overall[member]);
 		auto const per_cent_used = static_cast<value_type>(overall[ally]) / total;

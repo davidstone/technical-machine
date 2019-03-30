@@ -22,6 +22,8 @@
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
+#include <bounded/assert.hpp>
+
 namespace technicalmachine {
 
 auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, EV const ev) -> void {
@@ -3461,7 +3463,7 @@ constexpr auto get_base(Species const species, StatNames const stat) -> Stat::ba
 		case StatNames::SPA: return get_base(species, stat_tag<StatNames::SPA>{});
 		case StatNames::SPD: return get_base(species, stat_tag<StatNames::SPD>{});
 		case StatNames::SPE: return get_base(species, stat_tag<StatNames::SPE>{});
-		default: assert(false); __builtin_unreachable();
+		default: BOUNDED_ASSERT_OR_ASSUME(false);
 	}
 }
 

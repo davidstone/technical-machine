@@ -1,5 +1,5 @@
 // Hold move scores to allow efficient reordering
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -20,10 +20,11 @@
 
 #include <tm/move/max_moves_per_pokemon.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <containers/flat_map.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
-#include <cassert>
 #include <limits>
 
 namespace technicalmachine {
@@ -34,12 +35,12 @@ struct MoveScores {
 	explicit MoveScores(Pokemon const & pokemon);
 	double get(Moves const move) const {
 		auto const it = m_scores.find(move);
-		assert(it != end(m_scores));
+		BOUNDED_ASSERT(it != end(m_scores));
 		return it->mapped();
 	}
 	void set(Moves const move, double const value) {
 		auto const it = m_scores.find(move);
-		assert(it != end(m_scores));
+		BOUNDED_ASSERT(it != end(m_scores));
 		it->mapped() = value;
 	}
 private:

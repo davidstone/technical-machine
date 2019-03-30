@@ -29,6 +29,8 @@
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/active_pokemon.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <containers/algorithms/all_any_none.hpp>
 
 #include <cassert>
@@ -163,7 +165,7 @@ auto is_legal_selection(Team const & user, Move const move, ActivePokemon const 
 auto legal_selections(Team const & user, ActivePokemon const other, Weather const weather) -> StaticVectorMove {
 	// TODO: implement as
 	// auto result = filter(all_moves(user.pokemon()), [] { legal selection; });
-	// assert(!empty);
+	// BOUNDED_ASSERT(!empty);
 	// return result;
 	auto result = StaticVectorMove{};
 	for (auto const move : all_moves(user.pokemon())) {
@@ -172,7 +174,7 @@ auto legal_selections(Team const & user, ActivePokemon const other, Weather cons
 			result.emplace_back(move.name());
 		}
 	}
-	assert(!empty(result));
+	BOUNDED_ASSERT(!empty(result));
 	return result;
 }
 

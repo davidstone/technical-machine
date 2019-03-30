@@ -28,16 +28,12 @@
 
 #include <iostream>
 
-#undef NDEBUG
-
-#include <cassert>
-
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
 void assert_lower_score(Evaluate const & evaluate, Team const & lesser, Team const & greater) {
-	assert(evaluate(lesser, greater, Weather{}) < 0_bi);
+	BOUNDED_ASSERT(evaluate(lesser, greater, Weather{}) < 0_bi);
 }
 
 }	// namespace

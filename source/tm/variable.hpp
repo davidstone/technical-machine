@@ -26,6 +26,7 @@
 #include <tm/status.hpp>
 #include <tm/weather.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
@@ -70,9 +71,7 @@ struct Variable {
 				target.flinch();
 				break;
 			default:
-				assert(false);
-				__builtin_unreachable();
-				break;
+				BOUNDED_ASSERT_OR_ASSUME(false);
 		}
 	}
 
@@ -91,7 +90,7 @@ struct Variable {
 		return m_value != 0_bi;
 	}
 	constexpr auto present_power() const {
-		assert(!present_heals());
+		BOUNDED_ASSERT(!present_heals());
 		return m_value;
 	}
 
@@ -132,7 +131,7 @@ struct Variable {
 			case 1: return Statuses::burn;
 			case 2: return Statuses::freeze;
 			case 3: return Statuses::paralysis;
-			default: assert(false); __builtin_unreachable();
+			default: BOUNDED_ASSERT_OR_ASSUME(false);
 		}
 	}
 	

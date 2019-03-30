@@ -34,6 +34,8 @@
 
 #include <tm/type/collection.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <containers/string.hpp>
 
 #include <cstdint>
@@ -80,7 +82,7 @@ struct Pokemon {
 	// on the same team, so the same species implies many other things are the
 	// same
 	friend auto operator==(Pokemon const & lhs, Pokemon const & rhs) {
-		assert(illegal_inequality_check(lhs, rhs));
+		BOUNDED_ASSERT(illegal_inequality_check(lhs, rhs));
 		return
 			lhs.m_moves == rhs.m_moves and
 			lhs.m_species == rhs.m_species and

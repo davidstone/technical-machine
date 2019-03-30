@@ -21,12 +21,12 @@
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/stat_names.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
 #include <containers/legacy_iterator.hpp>
 
 #include <algorithm>
-#include <cassert>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -43,7 +43,7 @@ SpeedEVs::SpeedEVs(Nature const initial_nature, Stat const initial_speed_stat, L
 			m_container.emplace_back(nature, *it);
 		}
 	}
-	assert(!empty(m_container));
+	BOUNDED_ASSERT(!empty(m_container));
 }
 
 }	// namespace technicalmachine

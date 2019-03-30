@@ -18,8 +18,6 @@
 
 #include <tm/stat/calculate.hpp>
 
-#include <utility>
-
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat_names.hpp>
 
@@ -38,6 +36,10 @@
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
+
+#include <bounded/assert.hpp>
+
+#include <utility>
 
 namespace technicalmachine {
 namespace {
@@ -220,12 +222,9 @@ constexpr auto is_physical(StatNames const stat) {
 
 constexpr auto other_physical_stat(StatNames const stat) {
 	switch (stat) {
-	case StatNames::ATK:
-		return StatNames::DEF;
-	case StatNames::DEF:
-		return StatNames::ATK;
-	default:
-		assert(false); __builtin_unreachable();
+		case StatNames::ATK: return StatNames::DEF;
+		case StatNames::DEF: return StatNames::ATK;
+		default: BOUNDED_ASSERT_OR_ASSUME(false);
 	}
 }
 

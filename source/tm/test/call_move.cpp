@@ -25,6 +25,8 @@
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <iostream>
 
 namespace technicalmachine {
@@ -151,7 +153,7 @@ void sleep_talk() {
 		false,
 		damage
 	);
-	assert(get_hp(defender.pokemon()).current() == 0_bi);
+	BOUNDED_ASSERT(get_hp(defender.pokemon()).current() == 0_bi);
 }
 
 }	// namespace

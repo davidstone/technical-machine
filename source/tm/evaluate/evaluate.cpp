@@ -204,7 +204,7 @@ auto sleep_clause(Team const & team) -> Evaluate::type {
 }
 
 auto single_team_win(Team const & team) -> Evaluate::type {
-	assert(team.size() != 0_bi);
+	BOUNDED_ASSERT(team.size() != 0_bi);
 	if (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi) {
 		return BOUNDED_CONDITIONAL(team.is_me(), -victory, victory);
 	}

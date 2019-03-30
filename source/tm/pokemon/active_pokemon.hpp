@@ -50,6 +50,7 @@
 #include <tm/rational.hpp>
 #include <tm/weather.hpp>
 
+#include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 #include <bounded/detail/variant/variant.hpp>
 #include <bounded/detail/overload.hpp>
@@ -653,7 +654,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 			// TODO: Have it be active when it is constructed
 			[&](std::monostate) { m_flags.lock_in.emplace(bounded::detail::types<UproarCounter>{}).advance_one_turn(); },
 			[](UproarCounter & uproar) { uproar.advance_one_turn(); },
-			[](auto const &) { assert(false); }
+			[](auto const &) { BOUNDED_ASSERT_OR_ASSUME(false); }
 		));
 	}
 	auto activate_water_sport() const {

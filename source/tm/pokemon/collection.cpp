@@ -18,13 +18,13 @@
 
 #include <tm/pokemon/collection.hpp>
 
-#include <cassert>
+#include <bounded/assert.hpp>
 
 namespace technicalmachine {
 
 void PokemonCollection::remove_active(containers::index_type<PokemonCollection> const index_of_replacement) {
 	auto const original_index = index();
-	assert(original_index != index_of_replacement);
+	BOUNDED_ASSERT(original_index != index_of_replacement);
 	containers::erase(m_container, begin(m_container) + original_index);
 	--m_real_size;
 	set_index((index_of_replacement < original_index) ?
