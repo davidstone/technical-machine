@@ -39,9 +39,9 @@ enum class Statuses : uint8_t {
 	freeze,
 	paralysis,
 	poison,
-	poison_toxic,
+	toxic,
 	sleep,
-	sleep_rest
+	rest
 };
 
 }	// namespace technicalmachine
@@ -49,7 +49,7 @@ enum class Statuses : uint8_t {
 namespace std {
 
 template<>
-struct numeric_limits<technicalmachine::Statuses> : technicalmachine::enum_numeric_limits<technicalmachine::Statuses::sleep_rest> {};
+struct numeric_limits<technicalmachine::Statuses> : technicalmachine::enum_numeric_limits<technicalmachine::Statuses::rest> {};
 
 }	// namespace std
 
@@ -70,7 +70,7 @@ struct Status {
 	auto handle_switch(Ability ability) -> void;
 	auto end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) -> void;
 
-	// If the current status is sleep or sleep_rest, returns the probability the
+	// If the current status is sleep or rest, returns the probability the
 	// status can change from sleeping to awake on this move. If the current
 	// status is freeze, returns the probability of thawing. Returns 0.0 if the
 	// Pokemon is not asleep or frozen or if, due to the sleep counter, they
@@ -133,7 +133,7 @@ constexpr auto is_frozen(Status const status) {
 }
 constexpr auto is_sleeping(Status const status) {
 	switch (status.name()) {
-		case Statuses::sleep_rest:
+		case Statuses::rest:
 		case Statuses::sleep:
 			return true;
 		default:

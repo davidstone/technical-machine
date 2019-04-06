@@ -41,7 +41,7 @@ auto status_can_apply(Statuses const status, MutableActivePokemon user, MutableA
 		!blocks_status(get_type(target), status) and
 		!weather.blocks_status(status) and
 		(
-			(status != Statuses::sleep and status != Statuses::sleep_rest) or
+			(status != Statuses::sleep and status != Statuses::rest) or
 			(!user.is_uproaring() and !target.is_uproaring())
 		);
 }
@@ -52,12 +52,12 @@ constexpr auto reflected_status(Statuses const status) -> bounded::optional<Stat
 	case Statuses::paralysis:
 	case Statuses::poison:
 		return status;
-	case Statuses::poison_toxic:
+	case Statuses::toxic:
 		return Statuses::poison;
 	case Statuses::clear:
 	case Statuses::freeze:
 	case Statuses::sleep:
-	case Statuses::sleep_rest:
+	case Statuses::rest:
 		return bounded::none;
 	}
 }
@@ -72,19 +72,19 @@ auto boosts_facade(Status const status) -> bool {
 	case Statuses::burn:
 	case Statuses::paralysis:
 	case Statuses::poison:
-	case Statuses::poison_toxic:
+	case Statuses::toxic:
 		return true;
 	case Statuses::clear:
 	case Statuses::freeze:
 	case Statuses::sleep:
-	case Statuses::sleep_rest:
+	case Statuses::rest:
 		return false;
 	}
 }
 
 auto apply(Statuses const status, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {
 	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
-	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::sleep_rest);
+	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
 	if (!status_can_apply(status, user, target, weather)) {
 		return;
 	}
@@ -94,10 +94,10 @@ auto apply(Statuses const status, MutableActivePokemon user, MutableActivePokemo
 		case Statuses::freeze: state = Status::Freeze{}; break;
 		case Statuses::paralysis: state = Status::Paralysis{}; break;
 		case Statuses::poison: state = Status::Poison{}; break;
-		case Statuses::poison_toxic: state = Status::Toxic{}; break;
+		case Statuses::toxic: state = Status::Toxic{}; break;
 		case Statuses::sleep: state = Status::Sleep{}; break;
 		case Statuses::clear: BOUNDED_ASSERT_OR_ASSUME(false);
-		case Statuses::sleep_rest: BOUNDED_ASSERT_OR_ASSUME(false);
+		case Statuses::rest: BOUNDED_ASSERT_OR_ASSUME(false);
 	}
 	auto const reflected = reflected_status(status);
 	if (reflected and reflects_status(get_ability(target))) {
@@ -116,11 +116,11 @@ auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weathe
 		case Statuses::burn:
 		case Statuses::paralysis:
 		case Statuses::poison:
-		case Statuses::poison_toxic:
+		case Statuses::toxic:
 			apply(status.name(), user, target, weather);
 			break;
 		case Statuses::sleep:
-		case Statuses::sleep_rest:		// Fix
+		case Statuses::rest:		// Fix
 			apply(Statuses::sleep, user, target, weather);
 			break;
 		default:

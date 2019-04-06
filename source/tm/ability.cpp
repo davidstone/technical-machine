@@ -72,7 +72,7 @@ bool blocks_status(Ability const ability, Statuses const status, Weather const w
 			return false;
 		}
 	case Statuses::poison:
-	case Statuses::poison_toxic:
+	case Statuses::toxic:
 		switch (ability) {
 		case Ability::Immunity:
 			return true;
@@ -82,7 +82,7 @@ bool blocks_status(Ability const ability, Statuses const status, Weather const w
 			return false;
 		}
 	case Statuses::sleep:
-	case Statuses::sleep_rest:
+	case Statuses::rest:
 		switch (ability) {
 			case Ability::Insomnia:
 			case Ability::Vital_Spirit:

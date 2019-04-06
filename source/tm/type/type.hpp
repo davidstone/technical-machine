@@ -78,7 +78,7 @@ constexpr auto blocks_status(Type const type, Statuses const status) {
 		case Statuses::freeze:
 			return type == Type::Ice;
 		case Statuses::poison:
-		case Statuses::poison_toxic:
+		case Statuses::toxic:
 			return type == Type::Poison or type == Type::Steel;
 		default:
 			return false;

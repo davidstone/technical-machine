@@ -747,7 +747,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Poison_Fang:
 			if (move.variable.effect_activates()) {
-				apply(Statuses::poison_toxic, user, other.pokemon(), weather);
+				apply(Statuses::toxic, user, other.pokemon(), weather);
 			}
 			break;
 		case Moves::Poison_Gas:
@@ -924,7 +924,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().torment();
 			break;
 		case Moves::Toxic:
-			apply(Statuses::poison_toxic, user, other.pokemon(), weather);
+			apply(Statuses::toxic, user, other.pokemon(), weather);
 			break;
 		case Moves::Toxic_Spikes:
 			other.entry_hazards.add_toxic_spikes();

@@ -79,9 +79,9 @@ auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> Evaluat
 			return evaluate.paralysis();
 		case Statuses::poison:
 			return evaluate.poison();
-		case Statuses::poison_toxic:
+		case Statuses::toxic:
 			return evaluate.toxic();
-		case Statuses::sleep_rest:
+		case Statuses::rest:
 		case Statuses::sleep:
 			return evaluate.sleep();
 		default:

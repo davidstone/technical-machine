@@ -32,9 +32,9 @@ std::string_view to_string(Statuses const status) {
 		case Statuses::freeze: return "Freeze";
 		case Statuses::paralysis: return "Paralysis";
 		case Statuses::poison: return "Poison";
-		case Statuses::poison_toxic: return "Toxic";
+		case Statuses::toxic: return "Toxic";
 		case Statuses::sleep: return "Sleep";
-		case Statuses::sleep_rest: return "Rest";
+		case Statuses::rest: return "Rest";
 	}
 }
 
@@ -46,9 +46,9 @@ Statuses from_string(std::string_view const str) {
 		{ "Freeze", Statuses::freeze },
 		{ "Paralysis", Statuses::paralysis },
 		{ "Poison", Statuses::poison },
-		{ "Toxic", Statuses::poison_toxic },
+		{ "Toxic", Statuses::toxic },
 		{ "Sleep", Statuses::sleep },
-		{ "Rest", Statuses::sleep_rest }
+		{ "Rest", Statuses::rest }
 	};
 	auto const it = converter.find(str);
 	if (it != end(converter)) {

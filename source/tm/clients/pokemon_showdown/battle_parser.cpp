@@ -84,9 +84,9 @@ constexpr auto parse_status(std::string_view const str) {
 		(str == "frz") ? Statuses::freeze :
 		(str == "par") ? Statuses::paralysis :
 		(str == "psn") ? Statuses::poison :
-		(str == "tox") ? Statuses::poison_toxic :
+		(str == "tox") ? Statuses::toxic :
 		(str == "slp") ? Statuses::sleep :
-//		(str == "") ? Statuses::sleep_rest :
+//		(str == "") ? Statuses::rest :
 		throw std::runtime_error("Received an invalid status");
 }
 
