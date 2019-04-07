@@ -147,12 +147,20 @@ struct MoveState {
 			// Don't need to do anything for Toxic Spikes
 			return;
 		}
+		auto update_status = [=](bounded::optional<HPAndStatus> & old_hp_and_status) {
+			// TODO: Should update status even if we didn't get HP in the past
+			if (old_hp_and_status) {
+				old_hp_and_status->status = status;
+			}
+		};
 		if (m_move and m_move->executed == Moves::Rest) {
 			if (party != *m_party) {
 				throw_error();
 			}
+			update_status(m_user_hp_and_status);
 		} else {
 			validate(other(party));
+			update_status(m_other_hp_and_status);
 		}
 		m_move->variable.apply_status(m_move->executed, status);
 	}
