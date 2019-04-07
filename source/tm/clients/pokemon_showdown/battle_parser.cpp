@@ -31,6 +31,7 @@
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/status.hpp>
 
 #include <bounded/integer.hpp>
 #include <bounded/detail/overload.hpp>
@@ -210,8 +211,7 @@ auto to_real_hp(bool const is_me, HP const actual_hp, ParsedHP const visible_hp)
 	}
 }
 
-void validate_hp_and_status(bool const is_me, HP & original_hp, HPAndStatus const hp_and_status) {
-	auto const [visible_hp, status] = hp_and_status;
+void correct_hp(HP & original_hp, bool const is_me, ParsedHP const visible_hp) {
 	auto const current_hp = original_hp.current();
 	auto const seen_hp = to_real_hp(is_me, original_hp, visible_hp);
 	if (seen_hp.min > current_hp or seen_hp.max < current_hp) {
@@ -220,11 +220,24 @@ void validate_hp_and_status(bool const is_me, HP & original_hp, HPAndStatus cons
 		std::cerr << "HP out of sync with server messages\n";
 	}
 	original_hp = seen_hp.value;
-	#if 0
-	if (status != original_status.name()) {
-		throw std::runtime_error("Status out of sync with server messages");
+}
+
+void correct_status(Status & original_status, Statuses const visible_status) {
+	auto const normalized_original_status = (original_status.name() == Statuses::rest) ? Statuses::sleep : original_status.name();
+	if (normalized_original_status != visible_status) {
+		std::cerr << "Status out of sync with server messages: expected " << to_string(original_status.name()) << " but received " << to_string(visible_status) << '\n';
+		original_status = visible_status;
 	}
-	#endif
+}
+
+void correct_hp_and_status(bool const is_me, Battle::HPAndStatusRef original_hp_and_status, HPAndStatus const hp_and_status) {
+	auto const [visible_hp, visible_status] = hp_and_status;
+	auto const [original_hp, original_status] = original_hp_and_status;
+	correct_hp(original_hp, is_me, visible_hp);
+	if (visible_hp.current == 0_bi) {
+		return;
+	}
+	correct_status(original_status, visible_status);
 }
 
 } // namespace
@@ -449,9 +462,9 @@ void BattleParser::handle_message(InMessage message) {
 
 		constexpr auto slot = 0;
 		auto const move = m_battle.find_or_add_pokemon(parsed.party, slot, parsed.species, parsed.level, parsed.gender);
-		validate_hp_and_status(
+		correct_hp_and_status(
 			is_me,
-			m_battle.hp(parsed.party, to_replacement(move)),
+			m_battle.hp_and_status(parsed.party, to_replacement(move)),
 			HPAndStatus{parsed.hp, parsed.status}
 		);
 		if (type == "drag") {
@@ -576,7 +589,9 @@ namespace {
 auto hp_to_damage(Pokemon const & pokemon, HP::current_type const new_hp) {
 	auto const old_hp = get_hp(pokemon).current();
 	if (new_hp > old_hp) {
-		throw std::runtime_error("Took negative damage");
+		std::cerr << "Took negative damage\n";
+		return damage_type(0_bi);
+		// throw std::runtime_error("Took negative damage");
 	}
 	return static_cast<damage_type>(old_hp - new_hp);
 }
@@ -658,16 +673,16 @@ void BattleParser::maybe_use_previous_move() {
 
 	auto const user_is_me = m_battle.is_me(data.party);
 	if (data.user_hp_and_status) {
-		validate_hp_and_status(
+		correct_hp_and_status(
 			user_is_me,
-			m_battle.hp(data.party),
+			m_battle.hp_and_status(data.party),
 			*data.user_hp_and_status
 		);
 	}
 	if (data.other_hp_and_status) {
-		validate_hp_and_status(
+		correct_hp_and_status(
 			!user_is_me,
-			m_battle.hp(other(data.party)),
+			m_battle.hp_and_status(other(data.party)),
 			*data.other_hp_and_status
 		);
 	}

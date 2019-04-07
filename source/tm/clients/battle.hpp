@@ -112,9 +112,17 @@ struct Battle {
 	}
 
 	// maybe_index is either an index into a PokemonCollection or nothing
+	struct HPAndStatusRef {
+		HP & hp;
+		Status & status;
+	};
 	template<typename... MaybeIndex>	
-	auto & hp(Party const party, MaybeIndex... maybe_index) {
-		return get_hp(get_team(party).pokemon(maybe_index...));
+	auto hp_and_status(Party const party, MaybeIndex... maybe_index) {
+		auto && pokemon = get_team(party).pokemon(maybe_index...);
+		return HPAndStatusRef{
+			get_hp(pokemon),
+			get_status(pokemon)
+		};
 	}
 private:
 	auto get_team(Party const party) const -> Team const & {
