@@ -88,17 +88,7 @@ auto apply(Statuses const status, MutableActivePokemon user, MutableActivePokemo
 	if (!status_can_apply(status, user, target, weather)) {
 		return;
 	}
-	auto & state = get_status(target).m_state;
-	switch (status) {
-		case Statuses::burn: state = Status::Burn{}; break;
-		case Statuses::freeze: state = Status::Freeze{}; break;
-		case Statuses::paralysis: state = Status::Paralysis{}; break;
-		case Statuses::poison: state = Status::Poison{}; break;
-		case Statuses::toxic: state = Status::Toxic{}; break;
-		case Statuses::sleep: state = Status::Sleep{}; break;
-		case Statuses::clear: BOUNDED_ASSERT_OR_ASSUME(false);
-		case Statuses::rest: BOUNDED_ASSERT_OR_ASSUME(false);
-	}
+	get_status(target) = status;
 	auto const reflected = reflected_status(status);
 	if (reflected and reflects_status(get_ability(target))) {
 		apply(*reflected, target, user, weather);

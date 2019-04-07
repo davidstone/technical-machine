@@ -154,7 +154,7 @@ auto rest(Pokemon & user, bool const other_is_uproaring) {
 	HP & hp = get_hp(user);
 	if (hp.current() != hp.max()) {
 		hp = hp.max();
-		get_status(user).rest();
+		get_status(user) = Statuses::rest;
 	}
 }
 

@@ -56,16 +56,32 @@ struct numeric_limits<technicalmachine::Statuses> : technicalmachine::enum_numer
 namespace technicalmachine {
 
 struct Status {
+	constexpr Status() = default;
+	constexpr explicit Status(Statuses const status):
+		m_state([=]{
+			switch (status) {
+				case Statuses::clear: return State(Clear{});
+				case Statuses::burn: return State(Burn{});
+				case Statuses::freeze: return State(Freeze{});
+				case Statuses::paralysis: return State(Paralysis{});
+				case Statuses::poison: return State(Poison{});
+				case Statuses::toxic: return State(Toxic{});
+				case Statuses::sleep: return State(Sleep{});
+				case Statuses::rest: return State(Rest{});
+			}
+		}())
+	{
+	}
+
 	constexpr auto name() const {
 		return static_cast<Statuses>(m_state.index());
 	}
-
-	constexpr auto rest() {
-		m_state = Rest{};
-	}
-	friend auto apply(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
-	friend auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 	
+	constexpr Status & operator=(Statuses const status) & {
+		*this = Status(status);
+		return *this;
+	}
+
 	auto advance_from_move(Ability ability, bool clear) -> void;
 	auto handle_switch(Ability ability) -> void;
 	auto end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) -> void;
@@ -109,7 +125,7 @@ private:
 		bounded::clamped_integer<0, 2> turns_slept = 0_bi;
 	};
 
-	bounded::variant<
+	using State = bounded::variant<
 		Clear,
 		Burn,
 		Freeze,
@@ -118,9 +134,11 @@ private:
 		Toxic,
 		Sleep,
 		Rest
-	> m_state{Clear{}};
+	>;
+	State m_state{Clear{}};
 };
 
+	
 auto apply(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
 auto apply(Statuses status, MutableActivePokemon target, Weather weather) -> void;
