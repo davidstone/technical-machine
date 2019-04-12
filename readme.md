@@ -51,7 +51,7 @@ For a full overview of the program, see http://doublewise.net/pokemon/
 * `cd path/to/technical-machine`
 * `mkdir build`
 * `cd build`
-* `cmake .. -G"Ninja" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_BUILD_TYPE=Release` (you can use `-G"Unix Makefiles"` instead if you do not install ninja)
+* `cmake .. -G"Ninja" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release` (you can use `-G"Unix Makefiles"` instead if you do not install ninja)
 * `ninja`
 * Fill in server information for the server you want to connect to, as found in "build/settings/settings.xml".
 * Run the program with `./ai [depth]`, where depth is an optional value that tells Technical Machine how many turns ahead to look (defaults to 2).
