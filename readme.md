@@ -59,7 +59,7 @@ For a full overview of the program, see http://doublewise.net/pokemon/
 ### Build targets
 
 ai
-:	The AI with maximum optimizations. Accepts a single, optional command-line argument, the depth to search. Higher depth means stronger play, but it also takes longer to search. If no value is entered, 2 is assumed. Recommended at 1 through 5, depending on how fast your computer is and whether you built in release mode (the default). If you set the depth of search to 0, Technical Machine moves randomly.
+:	The AI with maximum optimizations. Accepts a single, optional command-line argument, the depth to search. Higher depth means stronger play, but it also takes longer to search. If no value is entered, 2 is assumed. Recommended at 1 through 3, depending on how fast your computer is and whether you built in release mode (the default). If you have a lot of time on your hands, you can try depth=4.
 
 predict
 :	Team predictor. Enter in Pokemon already seen and it shows its prediction of the remaining team. If a Pokemon is put into the first slot, it is assumed to be the lead Pokemon. If no Pokemon is put in that slot, no lead stats are used.
