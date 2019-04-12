@@ -366,12 +366,20 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	)
 	target_compile_options(tm_common PUBLIC
 		${COMMON_CLANG_COMPILE_OPTIONS}
+		# TODO: Test libc++ on Windows
+		"-stdlib=libc++"
 		"-g"
 		"-std=c++2a"
+		"-O3"
+		"-flto=thin"
 		"-march=native"
 	)
 	target_link_options(tm_common PUBLIC
 		"-Wl,--fatal-warnings"
+		"-stdlib=libc++"
+		"-fuse-ld=lld"
+		# TODO: Figure out how to make this work on Visual Studio
+		"-Wl,--thinlto-cache-dir=${CMAKE_BINARY_DIR}/lto-cache"
 	)
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
