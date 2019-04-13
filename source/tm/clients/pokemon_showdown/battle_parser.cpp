@@ -272,6 +272,13 @@ void BattleParser::handle_message(InMessage message) {
 			m_move_state.damage_substitute(other(party));
 			handle_u_turn(other(party));
 		}
+	} else if (type == "-anim") {
+#if 0
+		auto const party = party_from_player_id(message.next());
+		// Solar Beam is the only example I have of this
+		auto const move? = message.next();
+		auto const target? = message.next();
+#endif
 	} else if (type == "-boost") {
 #if 0
 		auto const pokemon = message.next();
