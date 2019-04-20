@@ -420,7 +420,7 @@ void BattleParser::handle_message(InMessage message) {
 			maybe_use_previous_move();
 		}
 		m_move_state.use_move(party, move);
-		if (m_battle.is_me(party) and move == Moves::Baton_Pass) {
+		if (m_battle.is_me(party) and move == Moves::Baton_Pass and m_battle.ai().size() != 1_bi) {
 			maybe_use_previous_move();
 			send_move(determine_action());
 		}
@@ -737,7 +737,7 @@ auto parse_switch(InMessage message) -> ParsedSwitch {
 }
 
 void BattleParser::handle_u_turn(Party const party) {
-	if (m_battle.is_me(party) and m_move_state.executed_move() == Moves::U_turn) {
+	if (m_battle.is_me(party) and m_move_state.executed_move() == Moves::U_turn and get_hp(m_battle.foe().pokemon()).current() == 0_bi and m_battle.ai().size() != 1_bi) {
 		maybe_use_previous_move();
 		send_move(determine_action());
 	}
