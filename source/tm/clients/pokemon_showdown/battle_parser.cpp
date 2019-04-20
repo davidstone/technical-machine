@@ -328,10 +328,9 @@ void BattleParser::handle_message(InMessage message) {
 		auto const ability = message.next();
 #endif
 	} else if (type == "-enditem") {
-#if 0
-		auto const pokemon = message.next();
-		auto const item = message.next();
-#endif
+		auto const party = party_from_player_id(message.next());
+		auto const item = from_string<Item>(message.next());
+		m_battle.set_value_on_active(party, item);
 	} else if (type == "error") {
 		if (message.remainder() != "[Invalid choice] There's nothing to choose") {
 			send_random_move();
