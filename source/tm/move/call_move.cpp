@@ -1051,8 +1051,8 @@ auto find_regular_move(RegularMoveContainer & container, Moves const move_name) 
 	return *move_ptr;
 }
 
-auto blocked_by_protect(Generation const generation, Moves const move) {
-	switch (move_target(generation, move)) {
+constexpr auto blocked_by_protect(Target const target, Moves const move) {
+	switch (target) {
 		case Target::user:
 		case Target::all_allies:
 		case Target::all:
@@ -1079,6 +1079,27 @@ auto blocked_by_protect(Generation const generation, Moves const move) {
 				default:
 					return true;
 			}
+	}
+}
+
+constexpr auto fails_against_fainted(Target const target) {
+	switch (target) {
+		case Target::user:
+		case Target::all_allies:
+		case Target::all:
+		case Target::field:
+		case Target::user_team:
+		case Target::user_field:
+		case Target::all_adjacent_foes:
+		case Target::foe_field:
+		case Target::all_adjacent:
+			return false;
+		case Target::adjacent_ally:
+		case Target::user_or_adjacent_ally:
+		case Target::adjacent_foe:
+		case Target::adjacent:
+		case Target::any:
+			return true;
 	}
 }
 
@@ -1116,12 +1137,14 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 	if (is_regular(move.selected) and move.executed != Moves::Hit_Self and !user_pokemon.is_locked_in_by_move()) {
 		find_regular_move(all_moves(user_pokemon).regular(), move.selected).decrement_pp(other_ability);
 	}
-
+	
+	auto const target = move_target(generation, move.executed);
 	// TODO: What happens if we Sleep Talk Trump Card?
 	auto const unsuccessful =
 		move.miss or
 		move_fails(move.executed, user_pokemon.damaged(), other_ability, other_move) or
-		(other_pokemon.is_protecting() and blocked_by_protect(generation, move.executed));
+		(get_hp(other_pokemon).current() == 0_bi and fails_against_fainted(target)) or
+		(other_pokemon.is_protecting() and blocked_by_protect(target, move.executed));
 	if (unsuccessful) {
 		user_pokemon.unsuccessfully_use_move(move.selected);
 		return;
