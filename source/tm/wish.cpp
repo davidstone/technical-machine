@@ -16,6 +16,9 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/wish.hpp>
+
+#include <tm/pokemon/active_pokemon.hpp>
+
 #include <tm/heal.hpp>
 #include <tm/rational.hpp>
 

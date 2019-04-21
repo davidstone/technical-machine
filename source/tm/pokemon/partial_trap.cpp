@@ -1,4 +1,3 @@
-// Partial trap timer (things like Wrap and Clamp)
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -17,6 +16,9 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/pokemon/partial_trap.hpp>
+
+#include <tm/pokemon/active_pokemon.hpp>
+
 #include <tm/heal.hpp>
 #include <tm/rational.hpp>
 

@@ -21,22 +21,23 @@
 #include <tm/ability.hpp>
 #include <tm/rational.hpp>
 
-#include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
 
 template<typename Numerator, typename Denominator>
-void heal(MutableActivePokemon pokemon, rational<Numerator, Denominator> const scale) {
-	if (get_hp(pokemon) == 0_bi) {
+void heal(Pokemon & pokemon, rational<Numerator, Denominator> const scale) {
+	auto & hp = get_hp(pokemon);
+	if (hp == 0_bi) {
 		return;
 	}
-	auto const hp_healed = get_hp(pokemon).max() * scale;
+	auto const hp_healed = hp.max() * scale;
 	if (scale > 0_bi) {
-		get_hp(pokemon) += bounded::max(hp_healed, 1_bi);
+		hp += bounded::max(hp_healed, 1_bi);
 	} else if (!blocks_secondary_damage(get_ability(pokemon))) {
-		get_hp(pokemon) += bounded::min(hp_healed, -1_bi);
+		hp += bounded::min(hp_healed, -1_bi);
 	}
 }
 
