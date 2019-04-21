@@ -73,6 +73,7 @@ struct Pokemon {
 	friend Status const & get_status(Pokemon const & pokemon);
 	friend Status & get_status(Pokemon & pokemon);
 	friend TypeCollection const & get_type(Pokemon const & pokemon);
+	friend void switch_out(Pokemon & pokemon);
 	friend void switch_in(Pokemon & pokemon);
 
 	void change_type(Type new_type);
@@ -216,6 +217,9 @@ inline Happiness get_happiness(Pokemon const & pokemon) {
 	return pokemon.m_happiness;
 }
 
+inline void switch_out(Pokemon & pokemon) {
+	pokemon.m_status.handle_switch(get_ability(pokemon));
+}
 inline void switch_in(Pokemon & pokemon) {
 	pokemon.m_has_been_seen = true;
 }

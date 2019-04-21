@@ -94,10 +94,10 @@ struct Team {
 
 	auto switch_pokemon(Team & other, Weather & weather, TeamIndex const replacement) -> void {
 		m_flags.reset_switch();
-		auto const original_pokemon = pokemon();
-		get_status(original_pokemon).handle_switch(get_ability(original_pokemon));
+		Pokemon & original_pokemon = pokemon();
+		switch_out(original_pokemon);
 
-		if (get_hp(pokemon()) != 0_bi) {
+		if (get_hp(original_pokemon) != 0_bi) {
 			all_pokemon().set_index(replacement);
 		} else {
 			all_pokemon().remove_active(replacement);
