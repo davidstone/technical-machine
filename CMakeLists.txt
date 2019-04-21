@@ -181,7 +181,6 @@ add_library(tm_common STATIC
 	source/tm/screens.cpp
 	source/tm/settings_file.cpp
 	source/tm/status.cpp
-	source/tm/switch.cpp
 	source/tm/team.cpp
 	source/tm/variable.cpp
 	source/tm/weather.cpp
