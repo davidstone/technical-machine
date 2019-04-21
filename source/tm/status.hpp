@@ -82,9 +82,9 @@ struct Status {
 		return *this;
 	}
 
-	auto advance_from_move(Ability ability, bool clear) -> void;
-	auto handle_switch(Ability ability) -> void;
-	auto end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) -> void;
+	auto advance_from_move(Ability ability, bool clear) & -> void;
+	auto handle_switch(Ability ability) & -> void;
+	auto end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) & -> void;
 
 	// If the current status is sleep or rest, returns the probability the
 	// status can change from sleeping to awake on this move. If the current

@@ -119,7 +119,7 @@ auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weathe
 	status = Status{};
 }
 
-auto Status::advance_from_move(Ability const ability, bool const clear) -> void {
+auto Status::advance_from_move(Ability const ability, bool const clear) & -> void {
 	if (clear) {
 		m_state = Clear{};
 	} else {
@@ -134,7 +134,7 @@ auto Status::advance_from_move(Ability const ability, bool const clear) -> void 
 	}
 }
 
-auto Status::handle_switch(Ability const ability) -> void {
+auto Status::handle_switch(Ability const ability) & -> void {
 	if (clears_status_on_switch(ability)) {
 		*this = {};
 	} else {
@@ -145,7 +145,7 @@ auto Status::handle_switch(Ability const ability) -> void {
 	}
 }
 
-auto Status::end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) -> void {
+auto Status::end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) & -> void {
 	auto handle_sleep = [&]{
 		if (pokemon.is_having_a_nightmare()) {
 			heal(pokemon, rational(-1_bi, 4_bi));
