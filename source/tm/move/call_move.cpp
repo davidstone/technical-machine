@@ -28,7 +28,6 @@
 #include <tm/heal.hpp>
 #include <tm/rational.hpp>
 #include <tm/status.hpp>
-#include <tm/switch.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
@@ -141,7 +140,7 @@ auto active_pokemon_can_be_phazed(Team const & team) {
 
 auto phaze(Team & user, Team & target, Weather & weather, Variable const variable) {
 	if (active_pokemon_can_be_phazed(target)) {
-		switch_pokemon(target, user, weather, variable.phaze_index());
+		target.switch_pokemon(user, weather, variable.phaze_index());
 		target.pokemon().update_before_move();
 	}
 }
@@ -899,7 +898,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Switch3:
 		case Moves::Switch4:
 		case Moves::Switch5:
-			switch_pokemon(user_team, other, weather, to_replacement(move.name));
+			user_team.switch_pokemon(other, weather, to_replacement(move.name));
 			break;
 		case Moves::Switcheroo:
 		case Moves::Trick:

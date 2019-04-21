@@ -24,6 +24,7 @@
 
 #include <tm/pokemon/active_pokemon.hpp>
 #include <tm/pokemon/collection.hpp>
+#include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
 #include <containers/string.hpp>
@@ -86,16 +87,33 @@ struct Team {
 	auto reset_end_of_turn() -> void {
 		m_flags.reset_end_of_turn();
 	}
-	auto reset_switch() -> void {
-		m_flags.reset_switch();
-		auto p = pokemon();
-		get_status(p).handle_switch(get_ability(p));
-	}
 	void clear_field() {
 		pokemon().clear_field();
 		entry_hazards = EntryHazards{};
 	}
 
+	auto switch_pokemon(Team & other, Weather & weather, TeamIndex const replacement) -> void {
+		m_flags.reset_switch();
+		auto const original_pokemon = pokemon();
+		get_status(original_pokemon).handle_switch(get_ability(original_pokemon));
+
+		if (get_hp(pokemon()) != 0_bi) {
+			all_pokemon().set_index(replacement);
+		} else {
+			all_pokemon().remove_active(replacement);
+			// If the last Pokemon is fainted; there is nothing left to do.
+			if (empty(all_pokemon())) {
+				return;
+			}
+		}
+
+		auto const replacement_pokemon = pokemon();
+		switch_in(replacement_pokemon);
+		apply(entry_hazards, replacement_pokemon, weather);
+		if (get_hp(replacement_pokemon) != 0_bi) {
+			activate_ability_on_switch(replacement_pokemon, other.pokemon(), weather);
+		}
+	}
 
 	friend auto operator==(Team const & lhs, Team const & rhs) {
 		return

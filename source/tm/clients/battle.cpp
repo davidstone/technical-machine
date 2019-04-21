@@ -18,7 +18,6 @@
 
 #include <tm/clients/battle.hpp>
 
-#include <tm/switch.hpp>
 #include <tm/team.hpp>
 #include <tm/variable.hpp>
 #include <tm/weather.hpp>
