@@ -521,7 +521,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Explosion:
 		case Moves::Self_Destruct:
-			user.faint();
+			get_hp(user) = 0_bi;
 			break;
 		case Moves::Fake_Tears:
 		case Moves::Metal_Sound:
@@ -682,7 +682,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Memento:
 			boost_offensive(other.pokemon().stage(), -2_bi);
-			user.faint();
+			get_hp(user) = 0_bi;
 			break;
 		case Moves::Mimic:		// Fix
 			break;

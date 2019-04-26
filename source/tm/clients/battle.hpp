@@ -100,7 +100,6 @@ struct Battle {
 		auto & team = get_team(fainter);
 		auto pokemon = team.pokemon();
 		get_hp(pokemon) = 0_bi;
-		pokemon.faint();
 	}
 
 	void set_value_on_active(Party const party, Ability const ability) {

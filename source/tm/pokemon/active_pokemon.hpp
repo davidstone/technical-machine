@@ -509,9 +509,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto endure() const {
 		m_flags.damage_blocker.endure();
 	}
-	auto faint() const {
-		get_hp(*this) = 0_bi;
-	}
 	auto activate_flash_fire() const {
 		m_flags.flash_fire = true;
 	}
@@ -592,7 +589,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto perish_song_turn() const -> void {
 		bool const faints_this_turn = m_flags.perish_song.advance_one_turn();
 		if (faints_this_turn) {
-			faint();
+			get_hp(*this) = 0_bi;
 		}
 	}
 	auto activate_power_trick() const {
