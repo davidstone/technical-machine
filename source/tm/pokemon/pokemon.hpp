@@ -72,6 +72,7 @@ struct Pokemon {
 	friend Stat & get_stat(Pokemon & pokemon, StatNames index_stat);
 	friend Status const & get_status(Pokemon const & pokemon);
 	friend Status & get_status(Pokemon & pokemon);
+	friend auto clear_status(Pokemon & pokemon) -> void;
 	friend void rest(Pokemon & user, bool other_is_uproaring);
 	friend TypeCollection const & get_type(Pokemon const & pokemon);
 	friend void switch_out(Pokemon & pokemon);
@@ -204,6 +205,10 @@ inline Status const & get_status(Pokemon const & pokemon) {
 }
 inline Status & get_status(Pokemon & pokemon) {
 	return pokemon.m_status;
+}
+
+inline auto clear_status(Pokemon & pokemon) -> void {
+	pokemon.m_status = {};
 }
 
 inline void rest(Pokemon & user, bool const other_is_uproaring) {

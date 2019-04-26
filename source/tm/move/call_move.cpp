@@ -776,7 +776,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user_team.screens.activate_reflect(extends_reflect(get_item(user)));
 			break;
 		case Moves::Refresh:
-			get_status(user) = Status{};
+			clear_status(user);
 			break;
 		case Moves::Rest:
 			rest(user, other.pokemon().is_uproaring());
