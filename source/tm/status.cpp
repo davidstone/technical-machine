@@ -145,9 +145,13 @@ auto Status::handle_switch(Ability const ability) & -> void {
 	}
 }
 
-auto Status::end_of_turn(MutableActivePokemon pokemon, Pokemon const & other) & -> void {
+auto Status::end_of_turn(Pokemon & pokemon, bool const is_having_a_nightmare, Pokemon const & other, bool const uproar) & -> void {
 	auto handle_sleep = [&]{
-		if (pokemon.is_having_a_nightmare()) {
+		if (uproar) {
+			m_state = Clear{};
+			return;
+		}
+		if (is_having_a_nightmare) {
 			heal(pokemon, rational(-1_bi, 4_bi));
 		}
 		if (harms_sleepers(get_ability(other))) {

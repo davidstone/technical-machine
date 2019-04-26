@@ -41,7 +41,6 @@ void end_of_turn7(MutableActivePokemon pokemon);
 }	// namespace
 
 void end_of_turn(Team & first, EndOfTurnFlags const first_flags, Team & last, EndOfTurnFlags const last_flags, Weather & weather) {
-	// TODO: Cure Pokemon of sleep if Uproar is active. Where is this effect ordered?
 	first.reset_end_of_turn();
 	last.reset_end_of_turn();
 	end_of_turn1(first);
@@ -120,7 +119,9 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 			}
 		}
 	}
-	get_status(pokemon).end_of_turn(pokemon, foe);
+	// TODO: Not sure if this effect is in the correct order
+	auto const uproar = pokemon.is_uproaring() or foe.is_uproaring();
+	get_status(pokemon).end_of_turn(pokemon, pokemon.is_having_a_nightmare(), foe, uproar);
 	switch (get_item(pokemon)) {
 		case Item::Flame_Orb:
 			apply(Statuses::burn, pokemon, weather);
