@@ -97,9 +97,7 @@ struct Battle {
 	// switching, it just adds them to the team.
 	auto find_or_add_pokemon(Party const party, uint8_t slot, Species species, Level level, Gender gender) -> Moves;
 	void handle_fainted(Party const fainter, uint8_t /*slot*/) {
-		auto & team = get_team(fainter);
-		auto pokemon = team.pokemon();
-		get_hp(pokemon) = 0_bi;
+		get_hp(get_team(fainter).pokemon()) = 0_bi;
 	}
 
 	void set_value_on_active(Party const party, Ability const ability) {
