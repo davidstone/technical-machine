@@ -222,11 +222,15 @@ void correct_hp(HP & original_hp, bool const is_me, ParsedHP const visible_hp) {
 	original_hp = seen_hp.value;
 }
 
-void correct_status(Status & original_status, Statuses const visible_status) {
-	auto const normalized_original_status = (original_status.name() == Statuses::rest) ? Statuses::sleep : original_status.name();
+void validate_status(Statuses const original_status, Statuses const visible_status) {
+	auto const normalized_original_status = (original_status == Statuses::rest) ? Statuses::sleep : original_status;
 	if (normalized_original_status != visible_status) {
-		std::cerr << "Status out of sync with server messages: expected " << to_string(original_status.name()) << " but received " << to_string(visible_status) << '\n';
-		original_status = visible_status;
+		throw std::runtime_error(
+			"Status out of sync with server messages: expected " +
+			std::string(to_string(original_status)) +
+			" but received " +
+			std::string(to_string(visible_status))
+		);
 	}
 }
 
@@ -237,7 +241,7 @@ void correct_hp_and_status(bool const is_me, Battle::HPAndStatusRef original_hp_
 	if (visible_hp.current == 0_bi) {
 		return;
 	}
-	correct_status(original_status, visible_status);
+	validate_status(original_status.name(), visible_status);
 }
 
 } // namespace
