@@ -966,12 +966,12 @@ constexpr auto breaks_screens(Moves const move) {
 	return move == Moves::Brick_Break;
 }
 
-auto do_effects_before_moving(Moves const move, Status & user_status, Team & other) {
+auto do_effects_before_moving(Moves const move, Pokemon & user, Team & other) {
 	if (breaks_screens(move)) {
 		other.screens.shatter();
 	} else if (is_usable_while_frozen(move)) {
-		if (is_frozen(user_status)) {
-			user_status = Status{};
+		if (is_frozen(get_status(user))) {
+			clear_status(user);
 		}
 	}
 }
@@ -1013,7 +1013,7 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 auto use_move(Generation const generation, Team & user, ExecutedMove const move, PP const pp, Team & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
-	do_effects_before_moving(move.name, get_status(user_pokemon), other);
+	do_effects_before_moving(move.name, user_pokemon, other);
 
 	auto const damage = actual_damage.value(generation, user, move, pp, other, other_move, weather);
 
