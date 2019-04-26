@@ -92,12 +92,18 @@ struct Battle {
 		}
 	}
 
+	// maybe_index is either an index into a PokemonCollection or nothing
+	template<typename... MaybeIndex>	
+	auto active_pokemon(Party const party, MaybeIndex... maybe_index) -> Pokemon & {
+		return get_team(party).pokemon(maybe_index...);
+	}
+
 	void handle_use_move(Party user, uint8_t slot, UsedMove move, bool clear_status, ActualDamage visible_damage, OtherMove other_move);
 	// This assumes Species Clause is in effect. This does not perform any
 	// switching, it just adds them to the team.
 	auto find_or_add_pokemon(Party const party, uint8_t slot, Species species, Level level, Gender gender) -> Moves;
 	void handle_fainted(Party const fainter, uint8_t /*slot*/) {
-		get_hp(get_team(fainter).pokemon()) = 0_bi;
+		get_hp(active_pokemon(fainter)) = 0_bi;
 	}
 
 	void set_value_on_active(Party const party, Ability const ability) {
@@ -108,19 +114,6 @@ struct Battle {
 		set_item(get_team(party).pokemon(), item);
 	}
 
-	// maybe_index is either an index into a PokemonCollection or nothing
-	struct HPAndStatusRef {
-		HP & hp;
-		Status & status;
-	};
-	template<typename... MaybeIndex>	
-	auto hp_and_status(Party const party, MaybeIndex... maybe_index) {
-		auto && pokemon = get_team(party).pokemon(maybe_index...);
-		return HPAndStatusRef{
-			get_hp(pokemon),
-			get_status(pokemon)
-		};
-	}
 private:
 	auto get_team(Party const party) const -> Team const & {
 		return is_me(party) ? m_ai : m_foe;

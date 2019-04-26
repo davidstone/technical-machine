@@ -234,14 +234,14 @@ void validate_status(Statuses const original_status, Statuses const visible_stat
 	}
 }
 
-void correct_hp_and_status(bool const is_me, Battle::HPAndStatusRef original_hp_and_status, HPAndStatus const hp_and_status) {
+void correct_hp_and_status(bool const is_me, Pokemon & pokemon, HPAndStatus const hp_and_status) {
 	auto const [visible_hp, visible_status] = hp_and_status;
-	auto const [original_hp, original_status] = original_hp_and_status;
+	auto & original_hp = get_hp(pokemon);
 	correct_hp(original_hp, is_me, visible_hp);
 	if (visible_hp.current == 0_bi) {
 		return;
 	}
-	validate_status(original_status.name(), visible_status);
+	validate_status(get_status(pokemon).name(), visible_status);
 }
 
 } // namespace
@@ -474,7 +474,7 @@ void BattleParser::handle_message(InMessage message) {
 		auto const move = m_battle.find_or_add_pokemon(parsed.party, slot, parsed.species, parsed.level, parsed.gender);
 		correct_hp_and_status(
 			is_me,
-			m_battle.hp_and_status(parsed.party, to_replacement(move)),
+			m_battle.active_pokemon(parsed.party, to_replacement(move)),
 			HPAndStatus{parsed.hp, parsed.status}
 		);
 		if (type == "drag") {
@@ -685,14 +685,14 @@ void BattleParser::maybe_use_previous_move() {
 	if (data.user_hp_and_status) {
 		correct_hp_and_status(
 			user_is_me,
-			m_battle.hp_and_status(data.party),
+			m_battle.active_pokemon(data.party),
 			*data.user_hp_and_status
 		);
 	}
 	if (data.other_hp_and_status) {
 		correct_hp_and_status(
 			!user_is_me,
-			m_battle.hp_and_status(other(data.party)),
+			m_battle.active_pokemon(other(data.party)),
 			*data.other_hp_and_status
 		);
 	}
