@@ -76,7 +76,15 @@ struct MoveState {
 		if (!m_party or !m_move) {
 			throw_error();
 		}
-		auto const result = m_move->executed == Moves::Substitute;
+		auto const result = [&]{
+			switch (m_move->executed) {
+				case Moves::Belly_Drum:
+				case Moves::Substitute:
+					return true;
+				default:
+					return false;
+			}
+		}();
 		if (result and *m_party != party) {
 			throw_error();
 		}
