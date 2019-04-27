@@ -241,7 +241,7 @@ void weather_healing_ability(MutableActivePokemon pokemon, Weather const weather
 			break;
 		case Ability::Hydration:
 			if (weather.rain()) {
-				get_status(pokemon) = Status{};
+				clear_status(pokemon);
 			}
 			break;
 		case Ability::Ice_Body:

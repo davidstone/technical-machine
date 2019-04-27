@@ -20,14 +20,16 @@
 
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/evaluate/expectiminimax.hpp>
-#include <tm/team.hpp>
-#include <tm/variable.hpp>
-#include <tm/weather.hpp>
 
 #include <tm/move/call_move.hpp>
 #include <tm/move/moves.hpp>
 
 #include <tm/pokemon/species.hpp>
+
+#include <tm/endofturn.hpp>
+#include <tm/team.hpp>
+#include <tm/variable.hpp>
+#include <tm/weather.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
@@ -297,7 +299,7 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 }
 
 void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
-	auto const weather = Weather{};
+	auto weather = Weather{};
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(random_engine, args...);
 	};
@@ -319,23 +321,49 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		set_stat_ev(gyarados, StatNames::ATK, EV(252_bi));
 		set_stat_ev(gyarados, StatNames::SPE, EV(252_bi));
 	}
+	
+	constexpr auto keep_status = false;
+	constexpr auto unknown_damage = ActualDamage::Unknown{};
+	constexpr auto sleep_talk = UsedMove{Moves::Sleep_Talk};
+	constexpr auto thunderbolt = UsedMove{Moves::Thunderbolt};
+	constexpr auto other_move = FutureMove{false};
+	constexpr auto uproar = false;
+	
+	auto next_turn = [&]{
+		constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false);
+		end_of_turn(attacker, end_of_turn_flags, defender, end_of_turn_flags, weather);
+	};
 
 	auto jolteon = attacker.pokemon();
-	auto const ability = get_ability(jolteon);
-	auto & status = get_status(jolteon);
+	
+	// TODO: Validate score, too
+
+	BOUNDED_ASSERT(get_status(jolteon).name() == Statuses::clear);
 	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
 
-	apply(Statuses::sleep, jolteon, weather);
+	call_move(generation, attacker, sleep_talk, defender, other_move, weather, keep_status, unknown_damage);
+	apply(Statuses::sleep, jolteon, weather, uproar);
+	next_turn();
+	BOUNDED_ASSERT(get_status(jolteon).name() == Statuses::sleep);
 	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cerr) == Moves::Sleep_Talk);
 
-	status.advance_from_move(ability, false);
+	call_move(generation, attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
+	next_turn();
+	BOUNDED_ASSERT(get_status(jolteon).name() == Statuses::sleep);
 	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Sleep_Talk);
 
-	status.advance_from_move(ability, false);
+	call_move(generation, attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
+	next_turn();
+	BOUNDED_ASSERT(get_status(jolteon).name() == Statuses::sleep);
 	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Sleep_Talk);
 
-	status.advance_from_move(ability, true);
-	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
+	#if 0
+		// Same probability of either move
+		call_move(generation, attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
+		next_turn();
+		BOUNDED_ASSERT(get_status(jolteon).name() == Statuses::sleep);
+		BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == ???);
+	#endif
 }
 
 void performance(Evaluate const & evaluate) {

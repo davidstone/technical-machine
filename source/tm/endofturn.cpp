@@ -92,7 +92,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	if (boosts_speed(get_ability(pokemon))) {
 		boost(pokemon.stage(), StatNames::SPE, 1_bi);
 	} else if (flags.shed_skin) {
-		get_status(pokemon) = Status{};
+		clear_status(pokemon);
 	}
 	switch (get_item(pokemon)) {
 		case Item::Leftovers:
@@ -121,13 +121,13 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	}
 	// TODO: Not sure if this effect is in the correct order
 	auto const uproar = pokemon.is_uproaring() or foe.is_uproaring();
-	get_status(pokemon).end_of_turn(pokemon, pokemon.is_having_a_nightmare(), foe, uproar);
+	advance_status_end_of_turn(pokemon, pokemon.is_having_a_nightmare(), foe, uproar);
 	switch (get_item(pokemon)) {
 		case Item::Flame_Orb:
-			apply(Statuses::burn, pokemon, weather);
+			apply(Statuses::burn, pokemon, weather, uproar);
 			break;
 		case Item::Toxic_Orb:
-			apply(Statuses::toxic, pokemon, weather);
+			apply(Statuses::toxic, pokemon, weather, uproar);
 			break;
 		default:
 			break;
@@ -145,7 +145,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	pokemon.advance_magnet_rise();
 	pokemon.advance_heal_block();
 	pokemon.advance_embargo();
-	pokemon.try_to_activate_yawn(weather);
+	pokemon.try_to_activate_yawn(weather, uproar);
 	if (get_item(pokemon) == Item::Sticky_Barb) {
 		heal(pokemon, rational(-1_bi, 8_bi));
 	}

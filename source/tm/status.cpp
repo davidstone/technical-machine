@@ -17,52 +17,16 @@
 
 #include <tm/status.hpp>
 
-#include <algorithm>
-
 #include <tm/ability.hpp>
 #include <tm/heal.hpp>
-#include <tm/weather.hpp>
 
-#include <tm/pokemon/active_pokemon.hpp>
-
-#include <tm/type/type.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/detail/overload.hpp>
 
 namespace technicalmachine {
-namespace {
 using namespace bounded::literal;
-
-auto status_can_apply(Statuses const status, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) {
-	return
-		is_clear(get_status(target)) and
-		(ignores_blockers(get_ability(user)) or !blocks_status(get_ability(target), status, weather)) and
-		!blocks_status(get_type(target), status) and
-		!weather.blocks_status(status) and
-		(
-			(status != Statuses::sleep and status != Statuses::rest) or
-			(!user.is_uproaring() and !target.is_uproaring())
-		);
-}
-
-constexpr auto reflected_status(Statuses const status) -> bounded::optional<Statuses> {
-	switch (status) {
-	case Statuses::burn:
-	case Statuses::paralysis:
-	case Statuses::poison:
-		return status;
-	case Statuses::toxic:
-		return Statuses::poison;
-	case Statuses::clear:
-	case Statuses::freeze:
-	case Statuses::sleep:
-	case Statuses::rest:
-		return bounded::none;
-	}
-}
-
-}	// namespace
 
 auto lowers_speed(Status const status, Ability const ability) -> bool {
 	return status.name() == Statuses::paralysis and !blocks_paralysis_speed_penalty(ability);
@@ -80,43 +44,6 @@ auto boosts_facade(Status const status) -> bool {
 	case Statuses::rest:
 		return false;
 	}
-}
-
-auto apply(Statuses const status, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {
-	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
-	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
-	if (!status_can_apply(status, user, target, weather)) {
-		return;
-	}
-	get_status(target) = status;
-	auto const reflected = reflected_status(status);
-	if (reflected and reflects_status(get_ability(target))) {
-		apply(*reflected, target, user, weather);
-	}
-}
-
-auto apply(Statuses const status, MutableActivePokemon target, Weather const weather) -> void {
-	apply(status, target, target, weather);
-}
-
-auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {
-	auto & status = get_status(user);
-	// TODO: How does this work with Toxic? How does this work with Rest?
-	switch (status.name()) {
-		case Statuses::burn:
-		case Statuses::paralysis:
-		case Statuses::poison:
-		case Statuses::toxic:
-			apply(status.name(), user, target, weather);
-			break;
-		case Statuses::sleep:
-		case Statuses::rest:		// Fix
-			apply(Statuses::sleep, user, target, weather);
-			break;
-		default:
-			break;
-	}
-	status = Status{};
 }
 
 auto Status::advance_from_move(Ability const ability, bool const clear) & -> void {

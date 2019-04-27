@@ -23,6 +23,7 @@
 #include <tm/gender.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
+#include <tm/weather.hpp>
 
 #include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
@@ -94,6 +95,48 @@ bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {
 			lhs.m_gender == rhs.m_gender and
 			lhs.m_nature == rhs.m_nature and
 			lhs.m_level == rhs.m_level;
+}
+
+namespace {
+
+auto status_can_apply(Statuses const status, Pokemon const & user, Pokemon const & target, Weather const weather, bool const uproar) {
+	return
+		is_clear(get_status(target)) and
+		(ignores_blockers(get_ability(user)) or !blocks_status(get_ability(target), status, weather)) and
+		!blocks_status(get_type(target), status) and
+		!weather.blocks_status(status) and
+		(!uproar or (status != Statuses::sleep and status != Statuses::rest));
+}
+
+constexpr auto reflected_status(Statuses const status) -> bounded::optional<Statuses> {
+	switch (status) {
+	case Statuses::burn:
+	case Statuses::paralysis:
+	case Statuses::poison:
+		return status;
+	case Statuses::toxic:
+		return Statuses::poison;
+	case Statuses::clear:
+	case Statuses::freeze:
+	case Statuses::sleep:
+	case Statuses::rest:
+		return bounded::none;
+	}
+}
+
+}	// namespace
+
+auto apply(Statuses const status, Pokemon & user, Pokemon & target, Weather const weather, bool const uproar) -> void {
+	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
+	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
+	if (!status_can_apply(status, user, target, weather, uproar)) {
+		return;
+	}
+	target.m_status = status;
+	auto const reflected = reflected_status(status);
+	if (reflected and reflects_status(get_ability(target))) {
+		apply(*reflected, user, weather, uproar);
+	}
 }
 
 containers::string to_string(Pokemon const & pokemon) {

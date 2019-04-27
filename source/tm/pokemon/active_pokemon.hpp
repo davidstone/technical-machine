@@ -660,10 +660,10 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto hit_with_yawn() const {
 		m_flags.yawn.activate();
 	}
-	auto try_to_activate_yawn(Weather const weather) const -> void {
+	auto try_to_activate_yawn(Weather const weather, bool const either_is_uproaring) const -> void {
 		bool const put_to_sleep = m_flags.yawn.advance_one_turn();
 		if (put_to_sleep) {
-			apply(Statuses::sleep, *this, weather);
+			apply(Statuses::sleep, *this, weather, either_is_uproaring);
 		}
 	}
 

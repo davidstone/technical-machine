@@ -36,7 +36,9 @@ auto removes_toxic_spikes(ActivePokemon const switcher) {
 }
 
 auto apply_toxic_spikes(EntryHazards const & hazards, MutableActivePokemon switcher, Weather const weather) {
-	apply(hazards.toxic_spikes() == 1_bi ? Statuses::poison : Statuses::toxic, switcher, weather);
+	// Irrelevant
+	constexpr auto uproar = false;
+	apply(hazards.toxic_spikes() == 1_bi ? Statuses::poison : Statuses::toxic, switcher, weather, uproar);
 }
 
 }	// namespace

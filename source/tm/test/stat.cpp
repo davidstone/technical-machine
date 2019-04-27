@@ -84,7 +84,8 @@ void max_defense_test() {
 
 	boost(pokemon.stage(), StatNames::DEF, 6_bi);
 
-	apply(Statuses::burn, pokemon, weather);
+	constexpr auto uproar = false;
+	apply(Statuses::burn, pokemon, weather, uproar);
 
 	check_equal(calculate_defense(pokemon, weather), max_defense);
 }

@@ -138,10 +138,6 @@ private:
 	State m_state{Clear{}};
 };
 
-	
-auto apply(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
-auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather weather) -> void;
-auto apply(Statuses status, MutableActivePokemon target, Weather weather) -> void;
 
 constexpr auto is_clear(Status const status) {
 	return status.name() == Statuses::clear;
