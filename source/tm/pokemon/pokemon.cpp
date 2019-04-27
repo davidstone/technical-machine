@@ -132,7 +132,7 @@ auto apply(Statuses const status, Pokemon & user, Pokemon & target, Weather cons
 	if (!status_can_apply(status, user, target, weather, uproar)) {
 		return;
 	}
-	target.m_status = status;
+	target.set_status(status);
 	auto const reflected = reflected_status(status);
 	if (reflected and reflects_status(get_ability(target))) {
 		apply(*reflected, user, weather, uproar);

@@ -103,6 +103,14 @@ struct Pokemon {
 
 private:
 	friend bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs);
+	
+	void set_status(Statuses const status) {
+		if (clears_status(m_item, status)) {
+			m_item = Item::No_Item;
+		} else {
+			m_status = status;
+		}
+	}
 
 	MoveContainer m_moves;
 	
@@ -226,7 +234,7 @@ inline void rest(Pokemon & user, bool const other_is_uproaring) {
 	HP & hp = get_hp(user);
 	if (hp.current() != hp.max()) {
 		hp = hp.max();
-		user.m_status = Statuses::rest;
+		user.set_status(Statuses::rest);
 	}
 }
 

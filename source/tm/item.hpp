@@ -18,9 +18,11 @@
 #pragma once
 
 #include <tm/enum.hpp>
+#include <tm/status.hpp>
+
+#include <bounded/integer.hpp>
 
 #include <cstdint>
-#include <bounded/integer.hpp>
 
 namespace technicalmachine {
 
@@ -163,6 +165,28 @@ constexpr bool extends_reflect(Item const item) {
 bounded::integer<0, 80> berry_power(Item item);		// Returns 0 for non-berries
 bounded::integer<0, 130> fling_power(Item item);
 bool blocks_trick(Item item);
+
+constexpr auto clears_status(Item const item, Statuses const status) -> bool {
+	switch (item) {
+		case Item::Aspear_Berry: return status == Statuses::freeze;
+		case Item::Cheri_Berry: return status == Statuses::paralysis;
+		case Item::Chesto_Berry: return status == Statuses::sleep or status == Statuses::rest;
+		case Item::Lum_Berry: return true;
+		case Item::Pecha_Berry: return status == Statuses::poison or status == Statuses::toxic;
+		case Item::Rawst_Berry: return status == Statuses::burn;
+		default: return false;
+	}
+}
+
+constexpr auto clears_confusion(Item const item) -> bool {
+	switch (item) {
+		case Item::Lum_Berry:
+		case Item::Persim_Berry:
+			return true;
+		default:
+			return false;
+	}
+}
 
 }	// namespace technicalmachine
 

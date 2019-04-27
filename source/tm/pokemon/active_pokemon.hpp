@@ -472,7 +472,12 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.lock_in = ChargingUp{};
 	}
 	auto confuse() const -> void {
-		if (!blocks_confusion(get_ability(*this))) {
+		if (blocks_confusion(get_ability(*this))) {
+			return;
+		}
+		if (clears_confusion(get_item(*this))) {
+			set_item(*this, Item::No_Item);
+		} else {
 			m_flags.confusion.activate();
 		}
 	}
