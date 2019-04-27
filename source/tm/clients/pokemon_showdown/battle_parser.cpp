@@ -127,7 +127,7 @@ constexpr auto parse_effect_source(std::string_view const type, std::string_view
 		throw std::runtime_error("Unhandled effect source type: " + std::string(type));
 }
 
-auto parse_hp_change_source(InMessage message) {
+auto parse_from_source(InMessage message) {
 	// "[from]" or nothing
 	auto const from [[maybe_unused]] = message.next(' ');
 	auto const [type, source] = split(message.next(), ':');
@@ -143,7 +143,7 @@ auto parse_hp_message(InMessage message) {
 	};
 	auto const party = party_from_player_id(message.next());
 	auto const hp_and_status = parse_hp_and_status(message.next());
-	auto const source = parse_hp_change_source(message);
+	auto const source = parse_from_source(message);
 	return Message{
 		party,
 		hp_and_status.hp,
@@ -170,7 +170,7 @@ auto parse_set_hp_message(InMessage message) {
 	auto const hp_and_status1 = parse_hp_and_status(message.next());
 	auto const party2 = party_from_player_id(message.next());
 	auto const hp_and_status2 = parse_hp_and_status(message.next());
-	auto const source = parse_hp_change_source(message);
+	auto const source = parse_from_source(message);
 	
 	return Message{
 		{party1, hp_and_status1.hp, hp_and_status1.status},
@@ -383,7 +383,7 @@ void BattleParser::handle_message(InMessage message) {
 		// TODO: Implement multi-hit moves
 	} else if (type == "-immune") {
 		auto const party = party_from_player_id(message.next());
-		auto const source = parse_hp_change_source(message);
+		auto const source = parse_from_source(message);
 		bounded::visit(source, bounded::overload(
 			// TODO: Validate that the type should be immune
 			[](MainEffect) {},
@@ -492,8 +492,18 @@ void BattleParser::handle_message(InMessage message) {
 		// Received for things like Protect that last the rest of the turn
 	} else if (type == "-start") {
 		auto const party = party_from_player_id(message.next());
-		auto const [source_type, string_source] = split(message.next(), ':');
-		auto const source = parse_effect_source(source_type, string_source);
+		auto const first_part_of_source = message.next();
+		auto parse_remainder_of_source = [&]{
+			if (first_part_of_source == "typechange") {
+				auto const changed_type = message.next();
+				static_cast<void>(changed_type);
+				return parse_from_source(message);
+			} else {
+				auto const [source_type, string_source] = split(first_part_of_source, ':');
+				return parse_effect_source(source_type, string_source);
+			}
+		};
+		auto const source = parse_remainder_of_source();
 		bounded::visit(source, bounded::overload(
 			[](MainEffect) { throw std::runtime_error("Unexpected -start source MainEffect"); },
 			[&](FromConfusion) {
@@ -512,7 +522,7 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-status") {
 		auto const party = party_from_player_id(message.next());
 		auto const status = parse_status(message.next());
-		auto const source = parse_hp_change_source(message);
+		auto const source = parse_from_source(message);
 		bounded::visit(source, bounded::overload(
 			[&](MainEffect) { m_move_state.status(party, status); },
 			[](FromConfusion) { throw std::runtime_error("Confusion cannot cause another status"); },
