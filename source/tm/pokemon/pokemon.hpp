@@ -53,33 +53,33 @@ struct Pokemon {
 
 	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
 	friend auto all_moves(Pokemon & pokemon) -> MoveContainer &;
-	friend Ability get_ability(Pokemon const & pokemon);
+	friend Ability get_ability(Pokemon pokemon);
 	friend void set_ability(Pokemon & pokemon, Ability ability);
-	friend bool ability_is_known(Pokemon const & pokemon);
-	friend Gender get_gender(Pokemon const & pokemon);
+	friend bool ability_is_known(Pokemon pokemon);
+	friend Gender get_gender(Pokemon pokemon);
 	friend void set_gender(Pokemon & pokemon, Gender gender);
-	friend Happiness get_happiness(Pokemon const & pokemon);
-	friend Item get_item(Pokemon const & pokemon);
+	friend Happiness get_happiness(Pokemon pokemon);
+	friend Item get_item(Pokemon pokemon);
 	friend void set_item(Pokemon & pokemon, Item item);
-	friend bool item_is_known(Pokemon const & pokemon);
-	friend Level get_level(Pokemon const & pokemon);
-	friend Nature get_nature(Pokemon const & pokemon);
+	friend bool item_is_known(Pokemon pokemon);
+	friend Level get_level(Pokemon pokemon);
+	friend Nature get_nature(Pokemon pokemon);
 	friend void set_nature(Pokemon & pokemon, Nature nature);
-	friend bool nature_is_known(Pokemon const & pokemon);
-	friend Species get_species(Pokemon const & pokemon);
+	friend bool nature_is_known(Pokemon pokemon);
+	friend Species get_species(Pokemon pokemon);
 	friend HP const & get_hp(Pokemon const & pokemon);
 	friend HP & get_hp(Pokemon & pokemon);
 	friend Stat const & get_stat(Pokemon const & pokemon, StatNames index_stat);
 	friend Stat & get_stat(Pokemon & pokemon, StatNames index_stat);
 
-	friend Status get_status(Pokemon const & pokemon);
+	friend Status get_status(Pokemon pokemon);
 	friend auto apply(Statuses status, Pokemon & user, Pokemon & target, Weather weather, bool uproar) -> void;
 	friend auto clear_status(Pokemon & pokemon) -> void;
 	friend void rest(Pokemon & user, bool other_is_uproaring);
 	friend void advance_status_from_move(Pokemon & pokemon, bool clear_status);
-	friend void advance_status_end_of_turn(Pokemon & pokemon, bool is_having_a_nightmare, Pokemon const & other_pokemon, bool uproar);
+	friend void advance_status_end_of_turn(Pokemon & pokemon, bool is_having_a_nightmare, Pokemon other_pokemon, bool uproar);
 
-	friend TypeCollection const & get_type(Pokemon const & pokemon);
+	friend TypeCollection get_type(Pokemon pokemon);
 	friend void switch_out(Pokemon & pokemon);
 	friend void switch_in(Pokemon & pokemon);
 
@@ -89,7 +89,7 @@ struct Pokemon {
 	// Species clause is assumed, and Pokemon will only be compared for equality
 	// on the same team, so the same species implies many other things are the
 	// same
-	friend auto operator==(Pokemon const & lhs, Pokemon const & rhs) {
+	friend auto operator==(Pokemon const lhs, Pokemon const rhs) {
 		BOUNDED_ASSERT(illegal_inequality_check(lhs, rhs));
 		return
 			lhs.m_moves == rhs.m_moves and
@@ -102,7 +102,7 @@ struct Pokemon {
 
 
 private:
-	friend bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs);
+	friend bool illegal_inequality_check(Pokemon lhs, Pokemon rhs);
 	
 	void set_status(Statuses const status) {
 		if (clears_status(m_item, status)) {
@@ -135,10 +135,10 @@ private:
 	bool m_nature_is_known : 1;
 };
 
-inline auto operator==(Species const lhs, Pokemon const & rhs) {
+inline auto operator==(Species const lhs, Pokemon const rhs) {
 	return lhs == get_species(rhs);
 }
-inline auto operator==(Pokemon const & lhs, Species const rhs) {
+inline auto operator==(Pokemon const lhs, Species const rhs) {
 	return get_species(lhs) == rhs;
 }
 
@@ -155,47 +155,47 @@ inline decltype(auto) regular_moves(Pokemon & pokemon) {
 	return all_moves(pokemon).regular();
 }
 
-inline Ability get_ability(Pokemon const & pokemon) {
+inline Ability get_ability(Pokemon const pokemon) {
 	return pokemon.m_ability;
 }
 inline void set_ability(Pokemon & pokemon, Ability const ability) {
 	pokemon.m_ability = ability;
 	pokemon.m_ability_is_known = true;
 }
-inline bool ability_is_known(Pokemon const & pokemon) {
+inline bool ability_is_known(Pokemon const pokemon) {
 	return pokemon.m_ability_is_known;
 }
 
-inline Gender get_gender(Pokemon const & pokemon) {
+inline Gender get_gender(Pokemon const pokemon) {
 	return pokemon.m_gender;
 }
 inline void set_gender(Pokemon & pokemon, Gender const gender) {
 	pokemon.m_gender = gender;
 }
 
-inline Item get_item(Pokemon const & pokemon) {
+inline Item get_item(Pokemon const pokemon) {
 	return pokemon.m_item;
 }
 inline void set_item(Pokemon & pokemon, Item const item) {
 	pokemon.m_item = item;
 	pokemon.m_item_is_known = true;
 }
-inline bool item_is_known(Pokemon const & pokemon) {
+inline bool item_is_known(Pokemon const pokemon) {
 	return pokemon.m_item_is_known;
 }
 
-inline Nature get_nature(Pokemon const & pokemon) {
+inline Nature get_nature(Pokemon const pokemon) {
 	return pokemon.m_nature;
 }
 inline void set_nature(Pokemon & pokemon, Nature const nature) {
 	pokemon.m_nature = nature;
 	pokemon.m_nature_is_known = true;
 }
-inline bool nature_is_known(Pokemon const & pokemon) {
+inline bool nature_is_known(Pokemon const pokemon) {
 	return pokemon.m_nature_is_known;
 }
 
-inline Species get_species(Pokemon const & pokemon) {
+inline Species get_species(Pokemon const pokemon) {
 	return pokemon.m_species;
 }
 
@@ -213,7 +213,7 @@ inline Stat & get_stat(Pokemon & pokemon, StatNames const index_stat) {
 	return pokemon.stats[index_stat];
 }
 
-inline Status get_status(Pokemon const & pokemon) {
+inline Status get_status(Pokemon const pokemon) {
 	return pokemon.m_status;
 }
 
@@ -265,19 +265,19 @@ inline void advance_status_from_move(Pokemon & pokemon, bool const clear_status)
 	pokemon.m_status.advance_from_move(get_ability(pokemon), clear_status);
 }
 
-inline void advance_status_end_of_turn(Pokemon & pokemon, bool const is_having_a_nightmare, Pokemon const & other, bool const uproar) {
+inline void advance_status_end_of_turn(Pokemon & pokemon, bool const is_having_a_nightmare, Pokemon const other, bool const uproar) {
 	pokemon.m_status.end_of_turn(pokemon, is_having_a_nightmare, other, uproar);
 }
 
-inline TypeCollection const & get_type(Pokemon const & pokemon) {
+inline TypeCollection get_type(Pokemon const pokemon) {
 	return pokemon.current_type;
 }
 
-inline Level get_level(Pokemon const & pokemon) {
+inline Level get_level(Pokemon const pokemon) {
 	return pokemon.m_level;
 }
 
-inline Happiness get_happiness(Pokemon const & pokemon) {
+inline Happiness get_happiness(Pokemon const pokemon) {
 	return pokemon.m_happiness;
 }
 
@@ -289,9 +289,9 @@ inline void switch_in(Pokemon & pokemon) {
 }
 
 
-containers::string to_string(Pokemon const & pokemon);
+containers::string to_string(Pokemon pokemon);
 
-inline auto hp_ratio(Pokemon const & pokemon) {
+inline auto hp_ratio(Pokemon const pokemon) {
 	auto const & hp = get_hp(pokemon);
 	return rational(hp.current(), hp.max());
 }

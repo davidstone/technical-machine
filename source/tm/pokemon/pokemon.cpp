@@ -88,7 +88,7 @@ auto Pokemon::has_been_seen() const -> bool {
 	return m_has_been_seen;
 }
 
-bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {
+bool illegal_inequality_check(Pokemon const lhs, Pokemon const rhs) {
 	if (lhs.m_species != rhs.m_species)
 		return true;
 	return lhs.m_ability == rhs.m_ability and
@@ -99,7 +99,7 @@ bool illegal_inequality_check(Pokemon const & lhs, Pokemon const & rhs) {
 
 namespace {
 
-auto status_can_apply(Statuses const status, Pokemon const & user, Pokemon const & target, Weather const weather, bool const uproar) {
+auto status_can_apply(Statuses const status, Pokemon const user, Pokemon const target, Weather const weather, bool const uproar) {
 	return
 		is_clear(get_status(target)) and
 		(ignores_blockers(get_ability(user)) or !blocks_status(get_ability(target), status, weather)) and
@@ -139,7 +139,7 @@ auto apply(Statuses const status, Pokemon & user, Pokemon & target, Weather cons
 	}
 }
 
-containers::string to_string(Pokemon const & pokemon) {
+containers::string to_string(Pokemon const pokemon) {
 	double const per_cent_hp = 100.0 * static_cast<double>(hp_ratio(pokemon));
 
 	auto const output_status = !is_clear(get_status(pokemon));

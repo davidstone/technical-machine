@@ -46,7 +46,7 @@ auto parse_room(std::string_view const line, std::filesystem::path const & path)
 void regression_tests() {
 	auto const usage_stats = UsageStats("settings/4/OU");
 	auto const evaluate = Evaluate{};
-	constexpr auto depth = 1;
+	constexpr auto depth = 2;
 
 	auto const battle_output_directory = std::filesystem::path("test/temp-battles");	
 	auto const remove_temporary_files = [&]{ std::filesystem::remove_all(battle_output_directory); };
