@@ -24,6 +24,7 @@
 #include <tm/stat/stat_names.hpp>
 
 #include <tm/move/accuracy.hpp>
+#include <tm/move/category.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
 #include <tm/pokemon/pokemon.hpp>
@@ -37,13 +38,53 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-auto move_can_miss(ActivePokemon user, BaseAccuracy const base_accuracy, Ability const target_ability) -> bool;
+auto move_can_miss(ActivePokemon const user, BaseAccuracy const base_accuracy, Ability const target_ability) -> bool {
+	return static_cast<bool>(base_accuracy) and !cannot_miss(get_ability(user)) and !cannot_miss(target_ability) and !user.locked_on();
+}
 
-using AccuracyItemModifier = rational<bounded::integer<1, 11>, bounded::integer<1, 10>>;
-auto accuracy_item_modifier(Item const item, bool target_moved) -> AccuracyItemModifier;
+auto accuracy_item_modifier(Item const item, bool target_moved) {
+	using Modifier = rational<bounded::integer<1, 11>, bounded::integer<1, 10>>;
+	switch (item) {
+		case Item::Wide_Lens: return Modifier(11_bi, 10_bi);
+		case Item::Zoom_Lens: return target_moved ? Modifier(6_bi, 5_bi) : Modifier(1_bi, 1_bi);
+		default: return Modifier(1_bi, 1_bi);
+	}
+}
 
-using EvasionItemModifier = rational<bounded::integer<1, 19>, bounded::integer<1, 20>>;
-auto evasion_item_modifier(Item const item) -> EvasionItemModifier;
+auto ability_accuracy_modifier(ActivePokemon const user, Moves const move) {
+	using Modifier = rational<
+		bounded::integer<1, 13>,
+		bounded::integer<1, 10>
+	>;
+	switch (get_ability(user)) {
+		case Ability::Compoundeyes: return Modifier(13_bi, 10_bi);
+		case Ability::Hustle: return is_physical(move) ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
+		default: return Modifier(1_bi, 1_bi);
+	}
+}
+
+auto evasion_item_modifier(Item const item) {
+	using Modifier = rational<bounded::integer<1, 19>, bounded::integer<1, 20>>;
+	switch (item) {
+		case Item::BrightPowder: return Modifier(9_bi, 10_bi);
+		case Item::Lax_Incense: return Modifier(19_bi, 20_bi);
+		default: return Modifier(1_bi, 1_bi);
+	}
+}
+
+
+auto ability_evasion_modifier(ActivePokemon const target, Weather const weather) {
+	using Modifier = rational<
+		bounded::integer<1, 4>,
+		bounded::integer<1, 5>
+	>;
+	switch (get_ability(target)) {
+		case Ability::Sand_Veil: return weather.sand() ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
+		case Ability::Snow_Cloak: return weather.hail() ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
+		case Ability::Tangled_Feet: return target.is_confused() ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
+		default: return Modifier(1_bi, 1_bi);
+	}
+}
 
 }	// namespace
 
@@ -69,33 +110,4 @@ auto chance_to_hit(Generation const generation, ActivePokemon const user, Moves 
 	return static_cast<double>(bounded::clamped_integer<0, max>(calculated_accuracy)) / static_cast<double>(max);
 }
 
-namespace {
-
-auto move_can_miss(ActivePokemon const user, BaseAccuracy const base_accuracy, Ability const target_ability) -> bool {
-	return static_cast<bool>(base_accuracy) and !cannot_miss(get_ability(user)) and !cannot_miss(target_ability) and !user.locked_on();
-}
-
-auto accuracy_item_modifier(Item const item, bool target_moved) -> AccuracyItemModifier {
-	switch (item) {
-		case Item::Wide_Lens:
-			return AccuracyItemModifier(11_bi, 10_bi);
-		case Item::Zoom_Lens:
-			return target_moved ? AccuracyItemModifier(6_bi, 5_bi) : AccuracyItemModifier(1_bi, 1_bi);
-		default:
-			return AccuracyItemModifier(1_bi, 1_bi);
-	}
-}
-
-auto evasion_item_modifier(Item const item) -> EvasionItemModifier {
-	switch (item) {
-		case Item::BrightPowder:
-			return EvasionItemModifier(9_bi, 10_bi);
-		case Item::Lax_Incense:
-			return EvasionItemModifier(19_bi, 20_bi);
-		default:
-			return EvasionItemModifier(1_bi, 1_bi);
-	}
-}
-
-}	// namespace
 }	// namespace technicalmachine

@@ -18,20 +18,14 @@
 #pragma once
 
 #include <tm/enum.hpp>
-#include <tm/operators.hpp>
-#include <tm/rational.hpp>
 #include <tm/status.hpp>
-#include <tm/move/base_power.hpp>
-#include <tm/stat/stat_names.hpp>
 
 #include <cstdint>
 
 namespace technicalmachine {
 
 struct ActivePokemon;
-enum class Generation;
 struct MutableActivePokemon;
-struct Move;
 struct Weather;
 
 enum class Ability : std::uint8_t {
@@ -198,20 +192,6 @@ constexpr bool boosts_stab(Ability const ability) {
 
 void activate_ability_on_switch(MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather);
 void weather_healing_ability(MutableActivePokemon pokemon, Weather weather);
-
-using AbilityAccuracyModifier = rational<
-	bounded::integer<1, 13>,
-	bounded::integer<1, 10>
->;
-auto ability_accuracy_modifier(ActivePokemon user, Moves move) -> AbilityAccuracyModifier;
-
-using AbilityEvasionModifier = rational<
-	bounded::integer<1, 4>,
-	bounded::integer<1, 5>
->;
-auto ability_evasion_modifier(ActivePokemon target, Weather weather) -> AbilityEvasionModifier;
-
-auto attacker_ability_power_modifier(Generation generation, Pokemon const & attacker, Moves move, Pokemon const & defender, VariableAdjustedBasePower base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>>;
 
 }	// namespace technicalmachine
 

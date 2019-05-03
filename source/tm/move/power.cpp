@@ -281,6 +281,71 @@ auto item_modifier(Generation const generation, Pokemon const & attacker, Moves 
 	return rational(item_modifier_numerator(generation, attacker, move), 10_bi);
 }
 
+bool is_boosted_by_iron_fist(Moves const move) {
+	switch (move) {
+		case Moves::Bullet_Punch:
+		case Moves::Comet_Punch:
+		case Moves::Dizzy_Punch:
+		case Moves::Drain_Punch:
+		case Moves::Dynamic_Punch:
+		case Moves::Fire_Punch:
+		case Moves::Focus_Punch:
+		case Moves::Hammer_Arm:
+		case Moves::Ice_Punch:
+		case Moves::Mach_Punch:
+		case Moves::Mega_Punch:
+		case Moves::Meteor_Mash:
+		case Moves::Shadow_Punch:
+		case Moves::Sky_Uppercut:
+		case Moves::Thunder_Punch:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool is_boosted_by_reckless(Moves const move) {
+	switch (move) {
+		case Moves::Brave_Bird:
+		case Moves::Double_Edge:
+		case Moves::Flare_Blitz:
+		case Moves::Head_Smash:
+		case Moves::Submission:
+		case Moves::Take_Down:
+		case Moves::Volt_Tackle:
+		case Moves::Wood_Hammer:
+			return true;
+		default:
+			return false;
+	}
+}
+
+auto attacker_ability_power_modifier(Generation const generation, Pokemon const & attacker, Moves const move, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
+	auto pinch_ability_activates = [&](Type const type) {
+		return get_type(generation, move, attacker) == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
+	};
+	switch (get_ability(attacker)) {
+		case Ability::Technician:
+			return rational(BOUNDED_CONDITIONAL(base_power <= 60_bi, 3_bi, 2_bi), 2_bi);
+		case Ability::Blaze:
+			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(Type::Fire), 3_bi, 2_bi), 2_bi);
+		case Ability::Overgrow:
+			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(Type::Grass), 3_bi, 2_bi), 2_bi);
+		case Ability::Swarm:
+			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(Type::Bug), 3_bi, 2_bi), 2_bi);
+		case Ability::Torrent:
+			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(Type::Water), 3_bi, 2_bi), 2_bi);
+		case Ability::Iron_Fist:
+			return rational(BOUNDED_CONDITIONAL(is_boosted_by_iron_fist(move), 6_bi, 5_bi), 5_bi);
+		case Ability::Reckless:
+			return rational(BOUNDED_CONDITIONAL(is_boosted_by_reckless(move), 6_bi, 5_bi), 5_bi);
+		case Ability::Rivalry:
+			return rational(4_bi + multiplier(get_gender(attacker), get_gender(defender)), 4_bi);
+		default:
+			return rational(1_bi, 1_bi);
+	}
+}
+
 auto defender_ability_modifier(Generation const generation, Pokemon const & attacker, Moves const move, Ability const ability) -> rational<bounded::integer<1, 5>, bounded::integer<1, 4>> {
 	switch (ability) {
 		case Ability::Dry_Skin:
