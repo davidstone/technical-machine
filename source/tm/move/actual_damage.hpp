@@ -20,7 +20,6 @@
 #include <tm/move/damage_type.hpp>
 #include <tm/move/executed_move.hpp>
 #include <tm/move/other_move.hpp>
-#include <tm/move/pp.hpp>
 
 #include <tm/stat/hp.hpp>
 
@@ -55,7 +54,7 @@ struct ActualDamage {
 	{
 	}
 	
-	auto value(Generation generation, Team const & user, ExecutedMove move, PP pp, Team const & other, OtherMove other_move, Weather weather) const -> damage_type;
+	auto value(Generation generation, Team const & user, ExecutedMove move, Team const & other, OtherMove other_move, Weather weather) const -> damage_type;
 private:
 	bounded::variant<
 		Unknown,

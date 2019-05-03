@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include <tm/move/pp.hpp>
+
 #include <tm/variable.hpp>
 
 #include <cstdint>
@@ -27,6 +29,7 @@ enum class Moves : std::uint16_t;
 
 struct ExecutedMove {
 	Moves name;
+	PP pp;
 	Variable variable;
 	bool critical_hit;
 };

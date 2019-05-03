@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include <tm/move/pp.hpp>
 #include <tm/move/executed_move.hpp>
 
 #include <tm/weather.hpp>
@@ -32,6 +31,6 @@ struct Team;
 // If a damaging move does not have power (for instance, OHKO moves and
 // fixed-damage moves), the behavior of this function is undefined.
 using MovePower = bounded::integer<1, 1440>;
-auto move_power(Generation const generation, Team const & attacker, ExecutedMove move, PP pp, Team const & defender, Weather weather) -> MovePower;
+auto move_power(Generation const generation, Team const & attacker, ExecutedMove move, Team const & defender, Weather weather) -> MovePower;
 
 }	// namespace technicalmachine

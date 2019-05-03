@@ -1027,12 +1027,12 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 }
 
 
-auto use_move(Generation const generation, Team & user, ExecutedMove const move, PP const pp, Team & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
+auto use_move(Generation const generation, Team & user, ExecutedMove const move, Team & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	do_effects_before_moving(move.name, user_pokemon, other);
 
-	auto const damage = actual_damage.value(generation, user, move, pp, other, other_move, weather);
+	auto const damage = actual_damage.value(generation, user, move, other, other_move, weather);
 
 	auto const substitute = other_pokemon.substitute();
 	if (damage != 0_bi) {
@@ -1157,8 +1157,13 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 	if (get_type(generation, move.executed, user_pokemon) == Type::Fire and other_ability == Ability::Flash_Fire) {
 		other.pokemon().activate_flash_fire();
 	} else {
-		auto const executed_move = ExecutedMove{move.executed, move.variable, move.critical_hit};
-		use_move(generation, user, executed_move, found_move.pp(), other, other_move, weather, actual_damage);
+		auto const executed_move = ExecutedMove{
+			move.executed,
+			found_move.pp(),
+			move.variable,
+			move.critical_hit
+		};
+		use_move(generation, user, executed_move, other, other_move, weather, actual_damage);
 	}
 	user_pokemon.increment_move_use_counter(move.selected);
 }

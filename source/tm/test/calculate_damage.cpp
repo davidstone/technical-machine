@@ -100,8 +100,12 @@ void physical_power_test() {
 	auto const power = move_power(
 		generation,
 		attacker,
-		ExecutedMove{max_damage_physical_move.name(), Variable{}, critical_hit},
-		max_damage_physical_move.pp(),
+		ExecutedMove{
+			max_damage_physical_move.name(),
+			max_damage_physical_move.pp(),
+			Variable{},
+			critical_hit
+		},
 		max_damage_physical_defender(),
 		Weather{}
 	);
@@ -122,8 +126,12 @@ void special_power_test() {
 	auto const power = move_power(
 		generation,
 		attacker,
-		ExecutedMove{move.name(), Variable{}, critical_hit},
-		move.pp(),
+		ExecutedMove{
+			move.name(),
+			move.pp(),
+			Variable{},
+			critical_hit
+		},
 		defender,
 		Weather{}
 	);
@@ -155,8 +163,12 @@ void physical_damage_test() {
 		calculate_damage(
 			generation,
 			attacker,
-			ExecutedMove{max_damage_physical_move.name(), Variable{}, critical_hit},
-			max_damage_physical_move.pp(),
+			ExecutedMove{
+				max_damage_physical_move.name(),
+				max_damage_physical_move.pp(),
+				Variable{},
+				critical_hit
+			},
 			defender,
 			FutureMove{false},
 			weather
@@ -191,8 +203,7 @@ void special_damage_test() {
 		calculate_damage(
 			generation,
 			attacker,
-			ExecutedMove{move.name(), Variable{}, critical_hit},
-			move.pp(),
+			ExecutedMove{move.name(), move.pp(), Variable{}, critical_hit},
 			defender,
 			FutureMove{false},
 			weather

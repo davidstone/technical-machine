@@ -20,7 +20,6 @@
 #include <tm/move/damage_type.hpp>
 #include <tm/move/executed_move.hpp>
 #include <tm/move/other_move.hpp>
-#include <tm/move/pp.hpp>
 
 namespace technicalmachine {
 
@@ -29,6 +28,6 @@ struct Pokemon;
 struct Team;
 struct Weather;
 
-auto calculate_damage(Generation generation, Team const & attacker, ExecutedMove move, PP pp, Team const & defender, OtherMove defender_move, Weather weather) -> damage_type;
+auto calculate_damage(Generation generation, Team const & attacker, ExecutedMove move, Team const & defender, OtherMove defender_move, Weather weather) -> damage_type;
 
 }	// namespace technicalmachine

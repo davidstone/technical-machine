@@ -54,7 +54,7 @@ using namespace bounded::literal;
 auto power_of_mass_based_moves(Species species) -> bounded::integer<20, 120>;
 
 // TODO: Verify the behavior of these for other generations
-auto variable_adjusted_base_power(Generation const generation, Team const & attacker_team, ExecutedMove const move, PP const pp, Team const & defender_team, Weather const weather) -> VariableAdjustedBasePower {
+auto variable_adjusted_base_power(Generation const generation, Team const & attacker_team, ExecutedMove const move, Team const & defender_team, Weather const weather) -> VariableAdjustedBasePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	switch (move.name) {
@@ -151,7 +151,7 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Triple_Kick:
 			return attacker.last_used_move().triple_kick_power();
 		case Moves::Trump_Card:
-			return pp.trump_card_power();
+			return move.pp.trump_card_power();
 		default:
 			return *base_power(generation, move.name);
 	}
@@ -363,10 +363,10 @@ auto defender_ability_modifier(Generation const generation, Pokemon const & atta
 
 }	// namespace
 
-auto move_power(Generation const generation, Team const & attacker_team, ExecutedMove const move, PP const pp, Team const & defender_team, Weather const weather) -> MovePower {
+auto move_power(Generation const generation, Team const & attacker_team, ExecutedMove const move, Team const & defender_team, Weather const weather) -> MovePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
-	auto const base_power = variable_adjusted_base_power(generation, attacker_team, move, pp, defender_team, weather);
+	auto const base_power = variable_adjusted_base_power(generation, attacker_team, move, defender_team, weather);
 	return static_cast<MovePower>(bounded::max(1_bi,
 		base_power *
 		BOUNDED_CONDITIONAL(doubling(attacker, move.name, defender, weather), 2_bi, 1_bi) *
