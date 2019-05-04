@@ -19,6 +19,7 @@
 #include <tm/clients/pokemon_showdown/chat.hpp>
 
 #include <tm/stat/combined_stats.hpp>
+#include <tm/stat/generic_stats.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
 #include <tm/string_conversions/ability.hpp>
@@ -28,32 +29,17 @@
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
-#include <containers/algorithms/transform.hpp>
-#include <containers/legacy_iterator.hpp>
-
 #include <algorithm>
+#include <stdexcept>
+#include <string>
 
 namespace technicalmachine {
 namespace ps {
 
 namespace {
 
-auto hp_to_ev(Species const species, Level const level, HP::max_type const stat) {
-	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(species, level, ev).max(); });
-	auto const it = std::lower_bound(containers::legacy_iterator(begin(stat_range)), containers::legacy_iterator(end(stat_range)), stat);
-	if (it.base() == end(stat_range)) {
-		throw std::runtime_error("No valid HP EV for a given stat value");
-	}
-	return *it.base().base();
-}
-
-auto calculate_evs(boost::property_tree::ptree const & stats, Species const species, Level const level, HP::max_type const hp) -> CombinedStats {
-	using stat_value = bounded::checked_integer<4, 614>;
-	auto const attack = stats.get<stat_value>("atk");
-	auto const defense = stats.get<stat_value>("def");
-	auto const special_attack = stats.get<stat_value>("spa");
-	auto const special_defense = stats.get<stat_value>("spd");
-	auto const speed = stats.get<stat_value>("spe");
+using StatValue = bounded::integer<4, 614>;
+auto calculate_evs(Species const species, Level const level, GenericStats<HP::max_type, StatValue> const stats) -> CombinedStats {
 	// TODO: Give the correct IVs for the Hidden Power type
 	
 	auto base_stat = [=](StatNames const stat) { return Stat(species, stat).base(); };
@@ -65,25 +51,25 @@ auto calculate_evs(boost::property_tree::ptree const & stats, Species const spec
 	auto const base_speed = base_stat(StatNames::SPE);
 	
 	auto to_ev = [](auto const integer) { return EV(EV::value_type(integer)); };
-	auto const hp_ev = hp_to_ev(species, level, hp);
+	auto const hp_ev = hp_to_ev(species, level, stats.hp);
 	for (auto const nature : containers::enum_range<Nature>()) {
-		auto const attack_ev = stat_to_ev(attack, nature, StatNames::ATK, base_attack, IV(31_bi), level);
+		auto const attack_ev = stat_to_ev(stats.attack, nature, StatNames::ATK, base_attack, IV(31_bi), level);
 		if (attack_ev > EV::max) {
 			continue;
 		}
-		auto const defense_ev = stat_to_ev(defense, nature, StatNames::DEF, base_defense, IV(31_bi), level);
+		auto const defense_ev = stat_to_ev(stats.defense, nature, StatNames::DEF, base_defense, IV(31_bi), level);
 		if (defense_ev > EV::max) {
 			continue;
 		}
-		auto const special_attack_ev = stat_to_ev(special_attack, nature, StatNames::SPA, base_special_attack, IV(31_bi), level);
+		auto const special_attack_ev = stat_to_ev(stats.special_attack, nature, StatNames::SPA, base_special_attack, IV(31_bi), level);
 		if (special_attack_ev > EV::max) {
 			continue;
 		}
-		auto const special_defense_ev = stat_to_ev(special_defense, nature, StatNames::SPD, base_special_defense, IV(31_bi), level);
+		auto const special_defense_ev = stat_to_ev(stats.special_defense, nature, StatNames::SPD, base_special_defense, IV(31_bi), level);
 		if (special_defense_ev > EV::max) {
 			continue;
 		}
-		auto const speed_ev = stat_to_ev(speed, nature, StatNames::SPE, base_speed, IV(31_bi), level);
+		auto const speed_ev = stat_to_ev(stats.speed, nature, StatNames::SPE, base_speed, IV(31_bi), level);
 		if (speed_ev > EV::max) {
 			continue;
 		}
@@ -96,6 +82,19 @@ auto calculate_evs(boost::property_tree::ptree const & stats, Species const spec
 		return combined;
 	}
 	throw std::runtime_error("No Nature + EV combination combines to give the received stats");
+}
+
+auto parse_stats(HP::max_type const hp, boost::property_tree::ptree const & stats) {
+	auto get = [&](char const * str) {
+		using CheckedStatValue = bounded::change_policy<StatValue, bounded::checked_integer>;
+		return StatValue(stats.get<CheckedStatValue>(str));
+	};
+	auto const attack = get("atk");
+	auto const defense = get("def");
+	auto const special_attack = get("spa");
+	auto const special_defense = get("spd");
+	auto const speed = get("spe");
+	return GenericStats{hp, attack, defense, special_attack, special_defense, speed};
 }
 
 Team parse_team(boost::property_tree::ptree const & pt) {
@@ -117,7 +116,7 @@ Team parse_team(boost::property_tree::ptree const & pt) {
 		// have a '/'
 		auto const hp = bounded::to_integer<HP::max_type>(split(condition, '/').first);
 		
-		auto const evs = calculate_evs(pokemon_data.second.get_child("stats"), details.species, details.level, hp);
+		auto const evs = calculate_evs(details.species, details.level, parse_stats(hp, pokemon_data.second.get_child("stats")));
 
 		auto const ability = from_string<Ability>(get("baseAbility"));
 		

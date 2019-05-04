@@ -18,6 +18,7 @@
 #pragma once
 
 #include <tm/stat/ev.hpp>
+#include <tm/stat/hp.hpp>
 #include <tm/stat/iv.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat.hpp>
@@ -25,12 +26,26 @@
 
 #include <tm/pokemon/level.hpp>
 
+#include <containers/algorithms/transform.hpp>
+#include <containers/legacy_iterator.hpp>
+
+#include <stdexcept>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
 template<typename LHS, typename RHS>
 constexpr auto round_up_divide(LHS const lhs, RHS const rhs) {
 	return lhs / rhs + BOUNDED_CONDITIONAL(lhs % rhs == 0_bi, 0_bi, 1_bi);
+}
+
+constexpr auto hp_to_ev(Species const species, Level const level, HP::max_type const stat) {
+	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(species, level, ev).max(); });
+	auto const it = std::lower_bound(containers::legacy_iterator(begin(stat_range)), containers::legacy_iterator(end(stat_range)), stat);
+	if (it.base() == end(stat_range)) {
+		throw std::runtime_error("No valid HP EV for a given stat value");
+	}
+	return *it.base().base();
 }
 
 // `target` is not just bounded::integer<4, 614> because this function is also

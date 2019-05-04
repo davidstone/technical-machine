@@ -66,7 +66,7 @@ Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const
 	m_happiness(happiness),
 	
 	// TODO: Pass in Generation somehow
-	m_hidden_power(Generation::four, IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
+	m_hidden_power(Generation::four, GenericStats<IV>{IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)}),
 	
 	m_has_been_seen(false),
 

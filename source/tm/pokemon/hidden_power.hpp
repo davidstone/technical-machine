@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <tm/stat/base_stats.hpp>
+#include <tm/stat/generic_stats.hpp>
 #include <tm/stat/iv.hpp>
 
 #include <tm/type/type.hpp>
@@ -31,10 +31,9 @@ namespace technicalmachine {
 // TODO: Make this a template based on the generation so we don't need to store
 // the power
 struct HiddenPower {
-	template<typename... IVs>
-	constexpr HiddenPower(Generation const generation, IVs const ... ivs):
-		m_power(calculate_power(generation, std::make_index_sequence<sizeof...(ivs)>{}, ivs...)),
-		m_type(calculate_type(std::make_index_sequence<sizeof...(ivs)>{}, ivs...))
+	constexpr HiddenPower(Generation const generation, GenericStats<IV> const ivs):
+		m_power(calculate_power(generation, ivs)),
+		m_type(calculate_type(ivs))
 	{
 	}
 	
@@ -47,20 +46,25 @@ struct HiddenPower {
 	
 private:
 	using Power = bounded::integer<30, 70>;
+	
+	template<typename Function>
+	static constexpr auto sum_stats(GenericStats<IV> const ivs, Function const transform) {
+		return transform(0_bi, ivs.hp) + transform(1_bi, ivs.attack) + transform(2_bi, ivs.defense) + transform(3_bi, ivs.special_attack) + transform(4_bi, ivs.special_defense) + transform(5_bi, ivs.speed);
+	}
 
-	template<std::size_t... indexes, typename... IVs>
-	static constexpr auto calculate_power(Generation const generation, std::index_sequence<indexes...>, IVs... ivs) -> Power {
+	static constexpr auto calculate_power(Generation const generation, GenericStats<IV> const ivs) -> Power {
 		// TODO: This is probably best expressed with bit operations
+		auto transform = [](auto const index, IV const iv) { return ((iv.value() / 2_bi) % 2_bi) << index; };
 		return BOUNDED_CONDITIONAL(generation >= Generation::six,
 			60_bi,
-			(... + (((ivs.value() / 2_bi) % 2_bi) << bounded::constant<indexes>)) * 40_bi / 63_bi + 30_bi
+			sum_stats(ivs, transform) * 40_bi / 63_bi + 30_bi
 		);
 	}
 	
-	template<std::size_t... indexes, typename... IVs>
-	static constexpr auto calculate_type(std::index_sequence<indexes...>, IVs... ivs) -> Type {
+	static constexpr auto calculate_type(GenericStats<IV> const ivs) -> Type {
 		// TODO: This is probably best expressed with bit operations
-		auto const index = (... + ((ivs.value() % 2_bi) << bounded::constant<indexes>)) * 15_bi / 63_bi;
+		auto transform = [](auto const index, IV const iv) { return (iv.value() % 2_bi) << index; };
+		auto const index = sum_stats(ivs, transform) * 15_bi / 63_bi;
 		switch (index.value()) {
 			case 0: return Type::Fighting;
 			case 1: return Type::Flying;
