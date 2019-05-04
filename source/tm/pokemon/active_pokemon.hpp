@@ -226,9 +226,8 @@ public:
 		return m_flags.damage_blocker.is_enduring();
 	}
 
-	auto charge_boosted(Moves const move) const -> bool {
-		constexpr auto generation = Generation::seven;
-		return m_flags.charged and get_type(generation, move, m_pokemon) == Type::Electric;
+	auto charge_boosted(Type const move_type) const -> bool {
+		return m_flags.charged and move_type == Type::Electric;
 	}
 
 	auto is_charging_up() const -> bool {
@@ -344,9 +343,8 @@ public:
 		return m_flags.slow_start.is_active();
 	}
 
-	auto sport_is_active(Moves const foe_move) const -> bool {
-		constexpr auto generation = Generation::seven;
-		switch (get_type(generation, foe_move, m_pokemon)) {
+	auto sport_is_active(Type const move_type) const -> bool {
+		switch (move_type) {
 			case Type::Electric: return m_flags.mud_sport;
 			case Type::Fire: return m_flags.water_sport;
 			default: return false;

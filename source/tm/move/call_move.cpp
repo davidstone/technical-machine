@@ -128,14 +128,6 @@ auto equalize(HP & hp1, HP & hp2) {
 }
 
 
-auto clear_field(Generation const generation, Team & user, Moves const move, Pokemon const & other) {
-	auto const type = get_type(generation, move, user.pokemon());
-	if (!Effectiveness(type, other).has_no_effect()) {
-		user.clear_field();
-	}
-}
-
-
 auto active_pokemon_can_be_phazed(Team const & team) {
 	return !team.pokemon().ingrained() and !blocks_phazing(get_ability(team.pokemon())) and size(team.all_pokemon()) > 1_bi;
 }
@@ -174,7 +166,7 @@ auto swap_items(Pokemon & user, Pokemon & other) {
 }
 
 
-auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove const move, Team & other, Weather & weather, damage_type const damage) {
+auto do_side_effects(Generation, Team & user_team, ExecutedMove const move, Type const move_type, Team & other, Weather & weather, damage_type const damage) {
 	auto user = user_team.pokemon();
 	switch (move.name) {
 		case Moves::Absorb:
@@ -778,7 +770,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			weather.activate_rain(extends_rain(get_item(user)));
 			break;
 		case Moves::Rapid_Spin:
-			clear_field(generation, user_team, move.name, other.pokemon());
+			if (!Effectiveness(move_type, other.pokemon()).has_no_effect()) {
+				user_team.clear_field();
+			}
 			break;
 		case Moves::Razor_Wind:	// Fix
 			break;
@@ -1027,7 +1021,7 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 }
 
 
-auto use_move(Generation const generation, Team & user, ExecutedMove const move, Team & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
+auto use_move(Generation const generation, Team & user, ExecutedMove const move, Type const move_type, Team & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	do_effects_before_moving(move.name, user_pokemon, other);
@@ -1039,7 +1033,7 @@ auto use_move(Generation const generation, Team & user, ExecutedMove const move,
 		do_damage(user_pokemon, other_pokemon, damage);
 	}
 	if (!substitute or !blocked_by_substitute(generation, move.name)) {
-		do_side_effects(generation, user, move, other, weather, damage);
+		do_side_effects(generation, user, move, move_type, other, weather, damage);
 	}
 }
 
@@ -1154,7 +1148,8 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 	}
 
 	// TODO: Add targeting information
-	if (get_type(generation, move.executed, user_pokemon) == Type::Fire and other_ability == Ability::Flash_Fire) {
+	auto const move_type = get_type(generation, move.executed, get_hidden_power(user_pokemon).type());
+	if (move_type == Type::Fire and other_ability == Ability::Flash_Fire) {
 		other.pokemon().activate_flash_fire();
 	} else {
 		auto const executed_move = ExecutedMove{
@@ -1163,7 +1158,7 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 			move.variable,
 			move.critical_hit
 		};
-		use_move(generation, user, executed_move, other, other_move, weather, actual_damage);
+		use_move(generation, user, executed_move, move_type, other, other_move, weather, actual_damage);
 	}
 	user_pokemon.increment_move_use_counter(move.selected);
 }

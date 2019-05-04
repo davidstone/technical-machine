@@ -18,13 +18,12 @@
 
 #pragma once
 
+#include <tm/enum.hpp>
 #include <tm/status.hpp>
 
 namespace technicalmachine {
 enum class Generation;
 enum class Moves : std::uint16_t;
-struct Effectiveness;
-struct Pokemon;
 struct Weather;
 
 enum class Type : uint8_t {
@@ -48,7 +47,7 @@ enum class Type : uint8_t {
 	Typeless
 };
 
-auto get_type(Generation generation, Moves move, Pokemon const & pokemon) -> Type;
+auto get_type(Generation generation, Moves move, Type hidden_power) -> Type;
 
 constexpr auto is_boosted_by_flash_fire(Type const type) {
 	return type == Type::Fire;

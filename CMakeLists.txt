@@ -107,6 +107,7 @@ add_library(tm_common STATIC
 	source/tm/pokemon/end_of_turn_counter.cpp
 	source/tm/pokemon/happiness.cpp
 	source/tm/pokemon/heal_block.cpp
+	source/tm/pokemon/hidden_power.cpp
 	source/tm/pokemon/last_used_move.cpp
 	source/tm/pokemon/level.cpp
 	source/tm/pokemon/magnet_rise.cpp

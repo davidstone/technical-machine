@@ -48,6 +48,8 @@
 
 namespace technicalmachine {
 
+// TODO: Setting IVs requires modifying the Pokemon after construction, which
+// will not update Hidden Power
 Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Item const item, Ability const ability, Nature const nature, Happiness const happiness):
 	m_moves(my_team_size),
 	current_type(species),
@@ -62,6 +64,9 @@ Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const
 	m_level(level),
 
 	m_happiness(happiness),
+	
+	// TODO: Pass in Generation somehow
+	m_hidden_power(Generation::four, IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
 	
 	m_has_been_seen(false),
 

@@ -18,18 +18,10 @@
 
 #include <tm/type/type.hpp>
 
-#include <tm/type/effectiveness.hpp>
-
 #include <tm/move/moves.hpp>
-
-#include <tm/pokemon/pokemon.hpp>
 
 #include <tm/generation.hpp>
 #include <tm/weather.hpp>
-
-#include <containers/array/array.hpp>
-
-#include <algorithm>
 
 namespace technicalmachine {
 
@@ -41,51 +33,7 @@ auto is_weakened_by_weather(Type const type, Weather const weather) -> bool {
 	return (weather.rain() and type == Type::Fire) or (weather.sun() and type == Type::Water);
 }
 
-namespace {
-
-auto hidden_power_type(Pokemon const & pokemon) {
-	// TODO: This is probably best expressed with bit operations
-	auto compute_generic = [](auto const stat, auto const shift) {
-		return (stat.iv().value() % 2_bi) << shift;
-	};
-	auto compute = [&](auto const stat_name, auto const shift) {
-		return compute_generic(get_stat(pokemon, stat_name), shift);
-	};
-	auto const initial =
-		compute_generic(get_hp(pokemon), 0_bi) +
-		compute(StatNames::ATK, 1_bi) +
-		compute(StatNames::DEF, 2_bi) +
-		compute(StatNames::SPE, 3_bi) +
-		compute(StatNames::SPA, 4_bi) +
-		compute(StatNames::SPD, 5_bi);
-	auto const index = initial * 15_bi / 63_bi;
-	// TODO: switch statement when it can do unreachable properly
-	static constexpr auto lookup = containers::array{
-		Type::Fighting,
-		Type::Flying,
-		Type::Poison,
-		Type::Ground,
-		Type::Rock,
-		Type::Bug,
-		Type::Ghost,
-		Type::Steel,
-		Type::Fire,
-		Type::Water,
-		Type::Grass,
-		Type::Electric,
-		Type::Psychic,
-		Type::Ice,
-		Type::Dragon,
-		Type::Dark
-	};
-	static_assert(std::numeric_limits<decltype(index)>::min() == 0_bi, "Incorrect minimum index.");
-	static_assert(std::numeric_limits<decltype(index)>::max() == size(lookup) - 1_bi, "Incorrect maximum index.");
-	return lookup[index];
-}
-
-}	// namespace
-
-auto get_type(Generation const generation, Moves const move, Pokemon const & pokemon) -> Type {
+auto get_type(Generation const generation, Moves const move, Type const hidden_power) -> Type {
 	switch (move) {
 		case Moves::Pass: return Type::Typeless;
 		case Moves::Switch0: return Type::Typeless;
@@ -331,7 +279,7 @@ auto get_type(Generation const generation, Moves const move, Pokemon const & pok
 		case Moves::Morning_Sun: return Type::Normal;
 		case Moves::Synthesis: return Type::Grass;
 		case Moves::Moonlight: return Type::Normal;
-		case Moves::Hidden_Power: return hidden_power_type(pokemon);
+		case Moves::Hidden_Power: return hidden_power;
 		case Moves::Cross_Chop: return Type::Fighting;
 		case Moves::Twister: return Type::Dragon;
 		case Moves::Rain_Dance: return Type::Water;

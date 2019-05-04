@@ -109,30 +109,8 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
 			return attacker.last_used_move().momentum_move_power();
-		case Moves::Hidden_Power: {
-			if (generation >= Generation::six) {
-				return 60_bi;
-			}
-			// TODO: This is probably best expressed with bit operations
-			auto compute_generic = [](auto const stat, auto const shift) {
-				return ((stat.iv().value() / 2_bi) % 2_bi) << shift;
-			};
-			auto compute = [&](auto const stat_name, auto const shift) {
-				return compute_generic(get_stat(attacker, stat_name), shift);
-			};
-			auto const initial =
-				compute_generic(get_hp(attacker), 0_bi) +
-				compute(StatNames::ATK, 1_bi) +
-				compute(StatNames::DEF, 2_bi) +
-				compute(StatNames::SPE, 3_bi) +
-				compute(StatNames::SPA, 4_bi) +
-				compute(StatNames::SPD, 5_bi);
-
-			auto const result = initial * 40_bi / 63_bi + 30_bi;
-			static_assert(result.min() == 30_bi, "Incorrect Hidden Power minimum.");
-			static_assert(result.max() == 70_bi, "Incorrect Hidden Power maximum.");
-			return result;
-		}
+		case Moves::Hidden_Power:
+			return get_hidden_power(attacker).power();
 		case Moves::Magnitude:
 			return move.variable.magnitude_power();
 		case Moves::Natural_Gift:
@@ -204,9 +182,8 @@ auto is_boosted_by_adamant_orb(Species species) -> bool;
 auto is_boosted_by_griseous_orb(Species species) -> bool;
 auto is_boosted_by_lustrous_orb(Species species) -> bool;
 
-auto item_modifier_numerator(Generation const generation, Pokemon const & attacker, Moves const move) -> bounded::integer<10, 12> {
+auto item_modifier_numerator(Pokemon const attacker, Moves const move, Type const move_type) -> bounded::integer<10, 12> {
 	static constexpr auto base = 10_bi;
-	auto const type = get_type(generation, move, attacker);
 	switch (get_item(attacker)) {
 		case Item::Muscle_Band:
 			return BOUNDED_CONDITIONAL(is_physical(move), 11_bi, base);
@@ -214,71 +191,71 @@ auto item_modifier_numerator(Generation const generation, Pokemon const & attack
 			return BOUNDED_CONDITIONAL(is_special(move), 11_bi, base);
 		case Item::Insect_Plate:
 		case Item::SilverPowder:
-			return BOUNDED_CONDITIONAL(type == Type::Bug, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Bug, 12_bi, base);
 		case Item::Dread_Plate:	
 		case Item::BlackGlasses:
-			return BOUNDED_CONDITIONAL(type == Type::Dark, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Dark, 12_bi, base);
 		case Item::Draco_Plate:
 		case Item::Dragon_Fang:
-			return BOUNDED_CONDITIONAL(type == Type::Dragon, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Dragon, 12_bi, base);
 		case Item::Zap_Plate:
 		case Item::Magnet:
-			return BOUNDED_CONDITIONAL(type == Type::Electric, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Electric, 12_bi, base);
 		case Item::Fist_Plate:
 		case Item::Black_Belt:
-			return BOUNDED_CONDITIONAL(type == Type::Fighting, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Fighting, 12_bi, base);
 		case Item::Flame_Plate:
 		case Item::Charcoal:
-			return BOUNDED_CONDITIONAL(type == Type::Fire, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Fire, 12_bi, base);
 		case Item::Sky_Plate:
 		case Item::Sharp_Beak:
-			return BOUNDED_CONDITIONAL(type == Type::Flying, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Flying, 12_bi, base);
 		case Item::Spooky_Plate:
 		case Item::Spell_Tag:
-			return BOUNDED_CONDITIONAL(type == Type::Ghost, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Ghost, 12_bi, base);
 		case Item::Meadow_Plate:
 		case Item::Miracle_Seed:
-			return BOUNDED_CONDITIONAL(type == Type::Grass, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Grass, 12_bi, base);
 		case Item::Earth_Plate:
 		case Item::Soft_Sand:
-			return BOUNDED_CONDITIONAL(type == Type::Ground, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Ground, 12_bi, base);
 		case Item::Icicle_Plate:
 		case Item::NeverMeltIce:
-			return BOUNDED_CONDITIONAL(type == Type::Ice, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Ice, 12_bi, base);
 		case Item::Silk_Scarf:
-			return BOUNDED_CONDITIONAL(type == Type::Normal, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Normal, 12_bi, base);
 		case Item::Toxic_Plate:
 		case Item::Poison_Barb:
-			return BOUNDED_CONDITIONAL(type == Type::Poison, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Poison, 12_bi, base);
 		case Item::Mind_Plate:
 		case Item::TwistedSpoon:
 		case Item::Odd_Incense:
-			return BOUNDED_CONDITIONAL(type == Type::Psychic, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Psychic, 12_bi, base);
 		case Item::Stone_Plate:
 		case Item::Hard_Stone:
 		case Item::Rock_Incense:
-			return BOUNDED_CONDITIONAL(type == Type::Rock, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Rock, 12_bi, base);
 		case Item::Iron_Plate:
 		case Item::Metal_Coat:
-			return BOUNDED_CONDITIONAL(type == Type::Steel, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Steel, 12_bi, base);
 		case Item::Splash_Plate:
 		case Item::Mystic_Water:
 		case Item::Sea_Incense:
 		case Item::Wave_Incense:
-			return BOUNDED_CONDITIONAL(type == Type::Water, 12_bi, base);
+			return BOUNDED_CONDITIONAL(move_type == Type::Water, 12_bi, base);
 		case Item::Adamant_Orb:
-			return BOUNDED_CONDITIONAL(is_boosted_by_adamant_orb(get_species(attacker)) and (type == Type::Dragon or type == Type::Steel), 12_bi, base);
+			return BOUNDED_CONDITIONAL(is_boosted_by_adamant_orb(get_species(attacker)) and (move_type == Type::Dragon or move_type == Type::Steel), 12_bi, base);
 		case Item::Griseous_Orb:
-			return BOUNDED_CONDITIONAL(is_boosted_by_griseous_orb(get_species(attacker)) and (type == Type::Dragon or type == Type::Ghost), 12_bi, base);
+			return BOUNDED_CONDITIONAL(is_boosted_by_griseous_orb(get_species(attacker)) and (move_type == Type::Dragon or move_type == Type::Ghost), 12_bi, base);
 		case Item::Lustrous_Orb:
-			return BOUNDED_CONDITIONAL(is_boosted_by_lustrous_orb(get_species(attacker)) and (type == Type::Dragon or type == Type::Water), 12_bi, base);
+			return BOUNDED_CONDITIONAL(is_boosted_by_lustrous_orb(get_species(attacker)) and (move_type == Type::Dragon or move_type == Type::Water), 12_bi, base);
 		default:
 			return base;
 	}
 }
 
-auto item_modifier(Generation const generation, Pokemon const & attacker, Moves const move) {
-	return rational(item_modifier_numerator(generation, attacker, move), 10_bi);
+auto item_modifier(Pokemon const attacker, Moves const move, Type const move_type) {
+	return rational(item_modifier_numerator(attacker, move, move_type), 10_bi);
 }
 
 bool is_boosted_by_iron_fist(Moves const move) {
@@ -322,7 +299,7 @@ bool is_boosted_by_reckless(Moves const move) {
 
 auto attacker_ability_power_modifier(Generation const generation, Pokemon const & attacker, Moves const move, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
 	auto pinch_ability_activates = [&](Type const type) {
-		return get_type(generation, move, attacker) == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
+		return get_type(generation, move, get_hidden_power(attacker).type()) == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
 	};
 	switch (get_ability(attacker)) {
 		case Ability::Technician:
@@ -346,18 +323,12 @@ auto attacker_ability_power_modifier(Generation const generation, Pokemon const 
 	}
 }
 
-auto defender_ability_modifier(Generation const generation, Pokemon const & attacker, Moves const move, Ability const ability) -> rational<bounded::integer<1, 5>, bounded::integer<1, 4>> {
+auto defender_ability_modifier(Type const move_type, Ability const ability) -> rational<bounded::integer<1, 5>, bounded::integer<1, 4>> {
 	switch (ability) {
-		case Ability::Dry_Skin:
-			return rational(BOUNDED_CONDITIONAL(get_type(generation, move, attacker) == Type::Fire, 5_bi, 4_bi), 4_bi);
-		case Ability::Heatproof:
-			return rational(1_bi, BOUNDED_CONDITIONAL(get_type(generation, move, attacker) == Type::Fire, 2_bi, 1_bi));
-		case Ability::Thick_Fat: {
-			auto const type = get_type(generation, move, attacker);
-			return rational(1_bi, BOUNDED_CONDITIONAL(type == Type::Fire or type == Type::Ice, 2_bi, 1_bi));
-		}
-		default:
-			return rational(1_bi, 1_bi);
+		case Ability::Dry_Skin: return rational(BOUNDED_CONDITIONAL(move_type == Type::Fire, 5_bi, 4_bi), 4_bi);
+		case Ability::Heatproof: return rational(1_bi, BOUNDED_CONDITIONAL(move_type == Type::Fire, 2_bi, 1_bi));
+		case Ability::Thick_Fat: return rational(1_bi, BOUNDED_CONDITIONAL(move_type == Type::Fire or move_type == Type::Ice, 2_bi, 1_bi));
+		default: return rational(1_bi, 1_bi);
 	}
 }
 
@@ -367,14 +338,15 @@ auto move_power(Generation const generation, Team const & attacker_team, Execute
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	auto const base_power = variable_adjusted_base_power(generation, attacker_team, move, defender_team, weather);
+	auto const move_type = get_type(generation, move.name, get_hidden_power(attacker).type());
 	return static_cast<MovePower>(bounded::max(1_bi,
 		base_power *
 		BOUNDED_CONDITIONAL(doubling(attacker, move.name, defender, weather), 2_bi, 1_bi) *
-		item_modifier(generation, attacker, move.name) *
-		BOUNDED_CONDITIONAL(attacker.charge_boosted(move.name), 2_bi, 1_bi) /
-		BOUNDED_CONDITIONAL(defender.sport_is_active(move.name), 2_bi, 1_bi) *
+		item_modifier(attacker, move.name, move_type) *
+		BOUNDED_CONDITIONAL(attacker.charge_boosted(move_type), 2_bi, 1_bi) /
+		BOUNDED_CONDITIONAL(defender.sport_is_active(move_type), 2_bi, 1_bi) *
 		attacker_ability_power_modifier(generation, attacker, move.name, defender, base_power) *
-		defender_ability_modifier(generation, attacker, move.name, get_ability(defender))
+		defender_ability_modifier(move_type, get_ability(defender))
 	));
 }
 

@@ -18,6 +18,7 @@
 #pragma once
 
 #include <tm/pokemon/happiness.hpp>
+#include <tm/pokemon/hidden_power.hpp>
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species.hpp>
 
@@ -59,6 +60,7 @@ struct Pokemon {
 	friend Gender get_gender(Pokemon pokemon);
 	friend void set_gender(Pokemon & pokemon, Gender gender);
 	friend Happiness get_happiness(Pokemon pokemon);
+	friend HiddenPower get_hidden_power(Pokemon pokemon);
 	friend Item get_item(Pokemon pokemon);
 	friend void set_item(Pokemon & pokemon, Item item);
 	friend bool item_is_known(Pokemon pokemon);
@@ -127,6 +129,7 @@ private:
 
 	Level m_level;
 	Happiness m_happiness;
+	HiddenPower m_hidden_power;
 
 	bool m_has_been_seen : 1;
 	
@@ -279,6 +282,10 @@ inline Level get_level(Pokemon const pokemon) {
 
 inline Happiness get_happiness(Pokemon const pokemon) {
 	return pokemon.m_happiness;
+}
+
+inline HiddenPower get_hidden_power(Pokemon const pokemon) {
+	return pokemon.m_hidden_power;
 }
 
 inline void switch_out(Pokemon & pokemon) {
