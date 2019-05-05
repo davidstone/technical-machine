@@ -16,3 +16,17 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/stat/stat_to_ev.hpp>
+#include <tm/pokemon/species.hpp>
+
+namespace technicalmachine {
+namespace {
+
+static_assert(round_up_divide(1_bi, 2_bi) == 1_bi);
+static_assert(round_up_divide(1_bi, 1_bi) == 1_bi);
+static_assert(round_up_divide(5_bi, 1_bi) == 5_bi);
+static_assert(round_up_divide(6_bi, 5_bi) == 2_bi);
+
+//static_assert(hp_to_ev(Species::Diglett, Level(1_bi), 10_bi) == 0_bi);
+
+} // namespace
+} // namespace technicalmachine
