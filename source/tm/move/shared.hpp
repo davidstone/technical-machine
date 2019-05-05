@@ -37,6 +37,12 @@ BOUNDED_COMPARISON
 BOUNDED_COMMON_ARITHMETIC
 
 struct SharedMovesIterator {
+private:
+	using underlying_index_type = bounded::integer<
+		0,
+		static_cast<int>(std::numeric_limits<SharedMoveSize>::max())
+	>;
+public:
 	using value_type = Move const;
 	using difference_type = containers::basic_difference_type<SharedMoveSize>;
 	using pointer = value_type *;
@@ -44,6 +50,11 @@ struct SharedMovesIterator {
 	using iterator_category = std::random_access_iterator_tag;
 
 	static constexpr auto generation = Generation::four;
+
+	constexpr explicit SharedMovesIterator(underlying_index_type const other) noexcept:
+		m_index(other)
+	{
+	}
 
 	constexpr auto operator*() const -> value_type {
 		using switch_index_type = bounded::integer<
@@ -74,16 +85,6 @@ struct SharedMovesIterator {
 
 	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(SharedMovesIterator)
 private:
-	using underlying_index_type = bounded::integer<
-		0,
-		static_cast<int>(std::numeric_limits<SharedMoveSize>::max())
-	>;
-	friend struct SharedMoves;
-	constexpr explicit SharedMovesIterator(underlying_index_type const other) noexcept:
-		m_index(other)
-	{
-	}
-
 	underlying_index_type m_index;
 };
 
