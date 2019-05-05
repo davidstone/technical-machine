@@ -397,7 +397,8 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		"-Wall"
 		"-Wextra"
 		"-Wpedantic"
-		"-Wabi"
+		# Do not care about ABI differences
+		# "-Wabi"
 		"-Wcast-align"
 		"-Wcast-qual"
 		# It seems impossible to initialize bit fields with this warning on
@@ -433,6 +434,11 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		# are handled explicitly and each case is a return statement.
 		"-Wno-return-type"
 		"-Wshadow"
+		# -Wsign-compare warns in constexpr code for which comparison is safe.
+		# Putting in the necessary casts to silence this warning would silence
+		# the more useful warning on clang that warns if the value would
+		# actually change.
+		"-Wno-sign-compare"
 		"-Wsign-conversion"
 		# -Wsign-promo triggers on code that is guaranteed safe due to the use
 		# of the bounded::integer library. Working around the warning would lead
@@ -460,6 +466,12 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		# range-based for loop).  It is also warning for the constructor of a
 		# const array of const std::string where there is no loop in user code.
 		# "-Wunsafe-loop-optimizations"
+		# -Wunused-but-set-parameter does not properly account for
+		# `if constexpr` branches.
+		"-Wno-unused-but-set-parameter"
+		# -Wunused-but-set-variable does not properly account for
+		# `if constexpr` branches.
+		"-Wno-unused-but-set-variable"
 		# -Wuseless-cast is incompatible with BOUNDED_INTEGER_CONDITIONAL
 		# "-Wuseless-cast"
 		"-Wvector-operation-performance"
