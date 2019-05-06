@@ -62,16 +62,34 @@ struct ActivePokemon;
 struct MutableActivePokemon;
 
 // Various states a Pokemon can be in due to vanishing moves.
-struct Bouncing{};
-struct Digging{};
-struct Diving{};
-struct Flying{};
-struct ShadowForcing{};
+struct Bouncing {
+	friend constexpr auto operator==(Bouncing, Bouncing) noexcept -> bool { return true; }
+};
+struct Digging {
+	friend constexpr auto operator==(Digging, Digging) noexcept -> bool { return true; }
+};
+struct Diving {
+	friend constexpr auto operator==(Diving, Diving) noexcept -> bool { return true; }
+};
+struct Flying {
+	friend constexpr auto operator==(Flying, Flying) noexcept -> bool { return true; }
+};
+struct ShadowForcing {
+	friend constexpr auto operator==(ShadowForcing, ShadowForcing) noexcept -> bool { return true; }
+};
 
-struct BatonPassing{};
-struct ChargingUp{};
-struct Recharging{};
-struct UTurning{};
+struct BatonPassing {
+	friend constexpr auto operator==(BatonPassing, BatonPassing) noexcept -> bool { return true; }
+};
+struct ChargingUp {
+	friend constexpr auto operator==(ChargingUp, ChargingUp) noexcept -> bool { return true; }
+};
+struct Recharging {
+	friend constexpr auto operator==(Recharging, Recharging) noexcept -> bool { return true; }
+};
+struct UTurning {
+	friend constexpr auto operator==(UTurning, UTurning) noexcept -> bool { return true; }
+};
 
 struct ActivePokemonFlags {
 	auto reset_end_of_turn() -> void;

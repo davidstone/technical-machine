@@ -98,11 +98,21 @@ struct Status {
 	}
 
 private:
-	struct Clear{};
-	struct Burn{};
-	struct Freeze{};
-	struct Paralysis{};
-	struct Poison{};
+	struct Clear {
+		friend constexpr auto operator==(Clear, Clear) noexcept -> bool { return true; }
+	};
+	struct Burn {
+		friend constexpr auto operator==(Burn, Burn) noexcept -> bool { return true; }
+	};
+	struct Freeze {
+		friend constexpr auto operator==(Freeze, Freeze) noexcept -> bool { return true; }
+	};
+	struct Paralysis {
+		friend constexpr auto operator==(Paralysis, Paralysis) noexcept -> bool { return true; }
+	};
+	struct Poison {
+		friend constexpr auto operator==(Poison, Poison) noexcept -> bool { return true; }
+	};
 	struct Toxic {
 		constexpr auto increment() {
 			++m_counter;
@@ -110,7 +120,7 @@ private:
 		constexpr auto ratio_drained() const {
 			return rational(-m_counter, 16_bi);
 		}
-		friend constexpr auto operator==(Toxic const lhs, Toxic const rhs) {
+		friend constexpr auto operator==(Toxic const lhs, Toxic const rhs) noexcept -> bool {
 			return lhs.m_counter == rhs.m_counter;
 		}
 	private:
@@ -120,9 +130,15 @@ private:
 	};
 	struct Sleep {
 		bounded::clamped_integer<0, 4> turns_slept = 0_bi;
+		friend constexpr auto operator==(Sleep const lhs, Sleep const rhs) noexcept -> bool {
+			return lhs.turns_slept == rhs.turns_slept;
+		}
 	};
 	struct Rest {
 		bounded::clamped_integer<0, 2> turns_slept = 0_bi;
+		friend constexpr auto operator==(Rest const lhs, Rest const rhs) noexcept -> bool {
+			return lhs.turns_slept == rhs.turns_slept;
+		}
 	};
 
 	using State = bounded::variant<
