@@ -362,7 +362,7 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		call_move(generation, attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 		next_turn();
 		BOUNDED_ASSERT(get_status(jolteon).name() == Statuses::sleep);
-		BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == ???);
+		BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout) == ?);
 	#endif
 }
 
