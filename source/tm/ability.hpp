@@ -56,6 +56,15 @@ enum class Ability : std::uint8_t {
 	Water_Veil, White_Smoke, Wonder_Guard
 };
 
+} // namespace technicalmachine
+namespace std {
+
+template<>
+struct numeric_limits<technicalmachine::Ability> : technicalmachine::enum_numeric_limits<technicalmachine::Ability::Wonder_Guard> {};
+
+}	// namespace std
+namespace technicalmachine {
+
 bool blocks_switching(Ability ability, ActivePokemon switcher, Weather weather);
 
 constexpr bool blocks_weather(Ability const ability) {
@@ -194,10 +203,3 @@ void activate_ability_on_switch(MutableActivePokemon switcher, MutableActivePoke
 void weather_healing_ability(MutableActivePokemon pokemon, Weather weather);
 
 }	// namespace technicalmachine
-
-namespace std {
-
-template<>
-struct numeric_limits<technicalmachine::Ability> : technicalmachine::enum_numeric_limits<technicalmachine::Ability::Wonder_Guard> {};
-
-}	// namespace std

@@ -117,6 +117,15 @@ enum class Item : uint16_t {
 	Zinc, Zoom_Lens
 };
 
+} // namespace technicalmachine
+namespace std {
+
+template<>
+struct numeric_limits<technicalmachine::Item> : technicalmachine::enum_numeric_limits<technicalmachine::Item::Zoom_Lens> {};
+
+}	// namespace std
+namespace technicalmachine {
+
 constexpr bool allows_switching(Item const item) {
 	return item == Item::Shed_Shell;
 }
@@ -189,11 +198,3 @@ constexpr auto clears_confusion(Item const item) -> bool {
 }
 
 }	// namespace technicalmachine
-
-namespace std {
-
-template<>
-struct numeric_limits<technicalmachine::Item> : technicalmachine::enum_numeric_limits<technicalmachine::Item::Zoom_Lens> {};
-
-}	// namespace bounded
-

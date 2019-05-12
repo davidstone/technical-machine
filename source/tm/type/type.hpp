@@ -47,6 +47,15 @@ enum class Type : uint8_t {
 	Typeless
 };
 
+} // namespace technicalmachine
+namespace std {
+
+template<>
+struct numeric_limits<technicalmachine::Type> : technicalmachine::enum_numeric_limits<technicalmachine::Type::Typeless> {};
+
+}	// namespace std
+namespace technicalmachine {
+
 auto get_type(Generation generation, Moves move, Type hidden_power) -> Type;
 
 constexpr auto is_boosted_by_flash_fire(Type const type) {
@@ -85,10 +94,3 @@ constexpr auto blocks_status(Type const type, Statuses const status) {
 }
 
 }	// namespace technicalmachine
-
-namespace std {
-
-template<>
-struct numeric_limits<technicalmachine::Type> : technicalmachine::enum_numeric_limits<technicalmachine::Type::Typeless> {};
-
-}	// namespace std
