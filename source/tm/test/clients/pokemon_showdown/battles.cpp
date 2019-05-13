@@ -17,7 +17,6 @@
 
 #include <tm/test/clients/pokemon_showdown/battles.hpp>
 
-#include <tm/files_in_directory.hpp>
 #include <tm/clients/pokemon_showdown/battles.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
 
@@ -46,7 +45,7 @@ auto parse_room(std::string_view const line, std::filesystem::path const & path)
 void regression_tests() {
 	auto const usage_stats = UsageStats("settings/4/OU");
 	auto const evaluate = Evaluate{};
-	constexpr auto depth = 2;
+	constexpr auto depth = 1;
 
 	auto const battle_output_directory = std::filesystem::path("test/temp-battles");	
 	auto const remove_temporary_files = [&]{ std::filesystem::remove_all(battle_output_directory); };
@@ -55,7 +54,11 @@ void regression_tests() {
 	{
 		auto battles = Battles(battle_output_directory, log_foe_teams);
 
-		for (auto const & path : paths_in_directory("test/battles")) {
+		auto const paths_in_directory = containers::range_view(
+			std::filesystem::directory_iterator("test/battles"),
+			std::filesystem::directory_iterator()
+		);
+		for (auto const & path : paths_in_directory) {
 			auto const data = load_lines_from_file(path.path() / "server_messages.txt");
 			auto messages = BufferView(data, '\n');
 			auto const room = parse_room(messages.next(), path);

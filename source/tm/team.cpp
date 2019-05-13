@@ -18,7 +18,6 @@
 #include <tm/team.hpp>
 
 #include <tm/ability.hpp>
-#include <tm/files_in_directory.hpp>
 #include <tm/item.hpp>
 #include <tm/status.hpp>
 
@@ -29,13 +28,19 @@
 #include <tm/clients/pokemon_lab/read_team_file.hpp>
 #include <tm/clients/pokemon_online/read_team_file.hpp>
 
+#include <containers/vector.hpp>
+
 #include <cstdint>
+#include <filesystem>
 #include <stdexcept>
 
 namespace technicalmachine {
 
 Team load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) {
-	auto const files = recursive_files_in_path(path);
+	auto const files = containers::vector<std::filesystem::path>(
+		std::filesystem::recursive_directory_iterator(path),
+		std::filesystem::recursive_directory_iterator{}
+	);
 	if (empty(files)) {
 		throw std::runtime_error(path.string() + " does not contain any team files.");
 	}
