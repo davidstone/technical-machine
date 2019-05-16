@@ -38,6 +38,6 @@ auto TranspositionTable::get_score(Team const & ai, Team const & foe, Weather we
 	static_cast<void>(weather);
 	static_cast<void>(depth);
 	return bounded::none;
-};
+}
 
 }	// namespace technicalmachine
