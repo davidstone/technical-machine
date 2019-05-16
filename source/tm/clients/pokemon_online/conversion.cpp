@@ -1459,7 +1459,7 @@ Ability battle_id_to_ability (uint16_t id, uint8_t part) {
 		case 66: return Ability::Trace;
 		case 67: return Ability::Truant;
 		case 71: return Ability::Wonder_Guard;
-		default: throw std::runtime_error("Invalid ability ID: " + std::to_string(id));
+		default: throw std::runtime_error("Invalid ability ID: " + std::to_string(static_cast<int>(id)));
 	}
 }
 
