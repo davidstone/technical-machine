@@ -23,7 +23,6 @@
 #include <tm/operators.hpp>
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species_forward.hpp>
-#include <tm/rational.hpp>
 
 #include <bounded/integer.hpp>
 

@@ -42,8 +42,6 @@ constexpr auto make_rational(Numerator const numerator, Denominator const denomi
 template<typename Numerator, typename Denominator>
 struct rational {
 private:
-	template<typename N, typename D>
-	friend struct rational;
 	Numerator m_numerator;
 	Denominator m_denominator;
 	using numerator_type = Numerator;
@@ -61,70 +59,77 @@ public:
 		std::numeric_limits<D>::max() <= std::numeric_limits<Denominator>::max()
 	)>
 	constexpr rational(rational<N, D> const other):
-		m_numerator(other.m_numerator),
-		m_denominator(other.m_denominator)
+		m_numerator(other.numerator()),
+		m_denominator(other.denominator())
 	{
+	}
+
+	constexpr auto numerator() const {
+		return m_numerator;
+	}
+	constexpr auto denominator() const {
+		return m_denominator;
 	}
 
 	template<typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
 	friend constexpr auto operator*(rational const lhs, Integer const rhs) {
-		return rhs * lhs.m_numerator / lhs.m_denominator;
+		return rhs * lhs.numerator() / lhs.denominator();
 	}
 	
 	template<typename N2, typename D2>
 	friend constexpr auto operator*(rational const lhs, rational<N2, D2> const rhs) {
-		return make_rational(lhs.m_numerator * rhs.m_numerator, lhs.m_denominator * rhs.m_denominator);
+		return make_rational(lhs.numerator() * rhs.numerator(), lhs.denominator() * rhs.denominator());
 	}
 	template<typename N2, typename D2>
 	friend constexpr auto operator+(rational const lhs, rational<N2, D2> const rhs) {
 		return make_rational(
-			lhs.m_numerator * rhs.m_denominator + rhs.m_numerator * lhs.m_denominator,
-			lhs.m_denominator * rhs.m_denominator
+			lhs.numerator() * rhs.denominator() + rhs.numerator() * lhs.denominator(),
+			lhs.denominator() * rhs.denominator()
 		);
 	}
 	template<typename N2, typename D2>
 	friend constexpr auto operator-(rational const lhs, rational<N2, D2> const rhs) {
 		return make_rational(
-			lhs.m_numerator * rhs.m_denominator - rhs.m_numerator * lhs.m_denominator,
-			lhs.m_denominator * rhs.m_denominator
+			lhs.numerator() * rhs.denominator() - rhs.numerator() * lhs.denominator(),
+			lhs.denominator() * rhs.denominator()
 		);
 	}
 
 
 	template<typename RN, typename RD>
 	friend constexpr auto compare(rational const lhs, rational<RN, RD> const rhs) {
-		return compare(lhs.m_numerator * rhs.m_denominator, rhs.m_numerator * lhs.m_denominator);
+		return compare(lhs.numerator() * rhs.denominator(), rhs.numerator() * lhs.denominator());
 	}
 	
 	template<typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
 	friend constexpr auto compare(rational const lhs, Integer const rhs) {
-		return compare(lhs.m_numerator, rhs * lhs.m_denominator);
+		return compare(lhs.numerator(), rhs * lhs.denominator());
 	}
 
 	template<typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
 	friend constexpr auto compare(Integer const lhs, rational const rhs) {
-		return compare(lhs * rhs.m_denominator, rhs.m_numerator);
+		return compare(lhs * rhs.denominator(), rhs.numerator());
 	}
 
 	template<typename RN, typename RD>
 	friend constexpr auto operator==(rational const lhs, rational<RN, RD> const rhs) {
-		return lhs.m_numerator * rhs.m_denominator == rhs.m_numerator * lhs.m_denominator;
+		return lhs.numerator() * rhs.denominator() == rhs.numerator() * lhs.denominator();
 	}
 	
 	template<typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
 	friend constexpr auto operator==(rational const lhs, Integer const rhs) {
-		return lhs.m_numerator == rhs * lhs.m_denominator;
+		return lhs.numerator() == rhs * lhs.denominator();
 	}
 
 	template<typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
 	friend constexpr auto operator==(Integer const lhs, rational const rhs) {
-		return lhs * rhs.m_denominator == rhs.m_numerator;
+		return lhs * rhs.denominator() == rhs.numerator();
 	}
 
 
 	friend std::string to_string(rational const r) {
 		using bounded::to_string;
-		return to_string(r.m_numerator) + " / " + to_string(r.m_denominator);
+		return to_string(r.numerator()) + " / " + to_string(r.denominator());
 	}
 	
 	// Convert allows narrowing conversions, constructor does not
