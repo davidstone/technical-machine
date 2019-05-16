@@ -276,7 +276,7 @@ auto finish_end_of_turn(Team const & first, Team const & last, Weather const wea
 		return static_cast<double>(evaluate(ai, foe, weather));
 	}
 	return select_type_of_move(ai, foe, weather, evaluate, depth.one_level_deeper(), log).score;
-};
+}
 
 auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last, Moves const last_move, Weather weather, Evaluate const evaluate, Depth const depth, std::ostream & log) -> double {
 	if (first_move != Moves::Pass) {
@@ -289,7 +289,7 @@ auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last,
 		return *won;
 	}
 	return finish_end_of_turn(first, last, weather, evaluate, depth, log);
-};
+}
 
 double end_of_turn_branch(Team first, Team last, Weather weather, Evaluate const evaluate, Depth const depth, EndOfTurnFlags const first_flag, EndOfTurnFlags const last_flag, std::ostream & log) {
 	end_of_turn(first, first_flag, last, last_flag, weather);
