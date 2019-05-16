@@ -41,7 +41,7 @@ constexpr auto round_up_divide(LHS const lhs, RHS const rhs) {
 	return lhs / rhs + BOUNDED_CONDITIONAL(lhs % rhs == 0_bi, 0_bi, 1_bi);
 }
 
-auto hp_to_ev(Species const species, Level const level, HP::max_type const stat) {
+inline auto hp_to_ev(Species const species, Level const level, HP::max_type const stat) {
 	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(species, level, ev).max(); });
 	auto const it = std::lower_bound(containers::legacy_iterator(begin(stat_range)), containers::legacy_iterator(end(stat_range)), stat);
 	if (it.base() == end(stat_range)) {
@@ -60,7 +60,7 @@ constexpr auto stat_to_ev(Integer const target, Nature const nature, StatNames c
 
 
 using StatValue = bounded::integer<4, 614>;
-auto calculate_evs(Species const species, Level const level, GenericStats<HP::max_type, StatValue> const stats) -> CombinedStats {
+inline auto calculate_evs(Species const species, Level const level, GenericStats<HP::max_type, StatValue> const stats) -> CombinedStats {
 	// TODO: Give the correct IVs for the Hidden Power type
 	
 	auto base_stat = [=](StatNames const stat) { return Stat(species, stat).base(); };
