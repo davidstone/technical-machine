@@ -258,6 +258,7 @@ target_link_libraries(tm_test
 	tm_common
 )
 
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 
 set(COMMON_CLANG_COMPILE_OPTIONS
 	"-Weverything"
@@ -299,7 +300,6 @@ if(${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 8)
 endif()
 
 if(MSVC)
-	set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 	target_compile_options(tm_common PUBLIC
 		"/std:c++latest"
 		"/MP"
@@ -392,7 +392,12 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	target_compile_options(tm_common PUBLIC
 		"-g"
 		"-std=c++2a"
+		"-O3"
 		"-march=native"
+		# Maybe do this only in a release build?
+		"-flto=4"
+		"-flto-odr-type-merging"
+		"-fuse-linker-plugin"
 		"-Wall"
 		"-Wextra"
 		"-Wpedantic"
@@ -413,6 +418,9 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		# -Wfloat-equal warns for safe comparisons
 		# "-Wfloat-equal"
 		"-Wformat=2"
+		# gcc does not understand switching over an enum where only explicitly
+		# defined enumerators are valid
+		"-Wno-implicit-fallthrough"
 		"-Winit-self"
 		"-Winvalid-pch"
 		# -Wlogical-op warns for expressions that happen to be equal in a
