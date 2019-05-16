@@ -102,7 +102,7 @@ struct PokemonCollection {
 	void remove_active(containers::index_type<PokemonCollection> index_of_replacement);
 
 private:
-	void check_range(containers::index_type<PokemonCollection> const new_index [[maybe_unused]]) const {
+	constexpr void check_range(containers::index_type<PokemonCollection> const new_index [[maybe_unused]]) const {
 		BOUNDED_ASSERT(new_index < containers::size(m_container));
 	}
 
