@@ -22,7 +22,8 @@
 
 #include <tm/ability.hpp>
 
-#include <map>
+#include <containers/flat_map.hpp>
+#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 
@@ -157,7 +158,8 @@ std::string_view to_string(Ability const ability) {
 
 template<>
 Ability from_string<Ability>(std::string_view const str) {
-	static std::map<std::string_view, Ability, lowercase_alphanumeric> const converter {
+	using Storage = containers::static_vector<containers::map_value_type<std::string_view, Ability>, 123>;
+	static containers::basic_flat_map<Storage, lowercase_alphanumeric> const converter {
 		{ "adaptability", Ability::Adaptability },
 		{ "aftermath", Ability::Aftermath },
 		{ "AirLock", Ability::Air_Lock },
@@ -284,7 +286,7 @@ Ability from_string<Ability>(std::string_view const str) {
 	};
 	auto const it = converter.find(str);
 	if (it != end(converter)) {
-		return it->second;
+		return it->mapped();
 	} else {
 		throw InvalidFromStringConversion("Ability", str);
 	}

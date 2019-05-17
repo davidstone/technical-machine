@@ -23,7 +23,8 @@
 
 #include <tm/gender.hpp>
 
-#include <map>
+#include <containers/flat_map.hpp>
+#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 
@@ -37,7 +38,8 @@ std::string_view to_string(Gender const gender) {
 
 template<>
 Gender from_string(std::string_view const str) {
-	static std::map<std::string_view, Gender> const converter {
+	using Storage = containers::static_vector<containers::map_value_type<std::string_view, Gender>, 5>;
+	static containers::basic_flat_map<Storage, lowercase_alphanumeric> const converter {
 		{ "Genderless", Gender::genderless },
 		{ "None", Gender::genderless },
 		{ "No Gender", Gender::genderless },
@@ -46,7 +48,7 @@ Gender from_string(std::string_view const str) {
 	};
 	auto const it = converter.find(str);
 	if (it != end(converter)) {
-		return it->second;
+		return it->mapped();
 	} else {
 		throw InvalidFromStringConversion("Gender", str);
 	}

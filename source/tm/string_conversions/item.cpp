@@ -22,7 +22,8 @@
 
 #include <tm/item.hpp>
 
-#include <map>
+#include <containers/flat_map.hpp>
+#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 
@@ -470,7 +471,8 @@ std::string_view to_string(Item const item) {
 
 template<>
 Item from_string(std::string_view const str) {
-	static std::map<std::string_view, Item, lowercase_alphanumeric> const converter {
+	using Storage = containers::static_vector<containers::map_value_type<std::string_view, Item>, 438>;
+	static containers::basic_flat_map<Storage, lowercase_alphanumeric> const converter {
 		{ "NoItem", Item::No_Item },
 		{ "AdamantOrb", Item::Adamant_Orb },
 		{ "AguavBerry", Item::Aguav_Berry },
@@ -912,7 +914,7 @@ Item from_string(std::string_view const str) {
 	};
 	auto const it = converter.find(str);
 	if (it != end(converter)) {
-		return it->second;
+		return it->mapped();
 	} else {
 		throw InvalidFromStringConversion("Item", str);
 	}
