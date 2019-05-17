@@ -26,6 +26,7 @@
 #include <tm/stat/stat.hpp>
 
 #include <tm/string_conversions/ability.hpp>
+#include <tm/string_conversions/conversion.hpp>
 #include <tm/string_conversions/gender.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
@@ -34,12 +35,14 @@
 
 #include <tm/generation.hpp>
 
+#include <containers/flat_map.hpp>
+#include <containers/static_vector/static_vector.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 #include <string>
 #include <string_view>
-#include <unordered_map>
 
 namespace technicalmachine {
 enum class Moves : std::uint16_t;
@@ -50,14 +53,15 @@ namespace {
 constexpr auto generation = Generation::four;
 
 auto lookup_stat(std::string_view const name) {
-	static std::unordered_map<std::string_view, StatNames> const stats = {
+	using Storage = containers::static_vector<containers::map_value_type<std::string_view, StatNames>, 5>;
+	static containers::basic_flat_map<Storage, lowercase_alphanumeric> const converter {
 		{ "Atk", StatNames::ATK },
 		{ "Def", StatNames::DEF },
 		{ "SpAtk", StatNames::SPA },
 		{ "SpDef", StatNames::SPD },
 		{ "Spd", StatNames::SPE }
 	};
-	return stats.at(name);
+	return converter.at(name);
 }
 
 auto load_stats(Pokemon & pokemon, boost::property_tree::ptree const & pt) {
@@ -72,7 +76,8 @@ auto load_stats(Pokemon & pokemon, boost::property_tree::ptree const & pt) {
 }
 
 auto from_simulator_string(std::string_view const str) {
-	static std::unordered_map<std::string_view, Species> const converter = {
+	using Storage = containers::static_vector<containers::map_value_type<std::string_view, Species>, 16>;
+	static containers::basic_flat_map<Storage, lowercase_alphanumeric> const converter {
 		{ "Deoxys", Species::Deoxys_Mediocre },
 		{ "Deoxys-f", Species::Deoxys_Attack },
 		{ "Deoxys-l", Species::Deoxys_Defense },
@@ -91,7 +96,7 @@ auto from_simulator_string(std::string_view const str) {
 		{ "Wormadam-s", Species::Wormadam_Trash }
 	};
 	auto const it = converter.find(str);
-	return (it != end(converter)) ? it->second : from_string<Species>(str);
+	return (it != end(converter)) ? it->mapped() : from_string<Species>(str);
 }
 
 auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
