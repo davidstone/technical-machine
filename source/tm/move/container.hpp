@@ -33,6 +33,7 @@
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/concatenate_view.hpp>
+#include <containers/algorithms/transform.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
@@ -40,13 +41,22 @@ using namespace bounded::literal;
 
 using RegularMoveContainer = containers::static_vector<Move, max_moves_per_pokemon.value()>;
 
+template<typename Range>
+constexpr auto move_container_transform(Range const & range) {
+	auto const transformed = containers::transform(range, [](auto value) { return value; });
+	return containers::range_view(transformed);
+}
+
 struct MoveContainer {
+private:
+	template<typename Range>
+	using Transformed = decltype(move_container_transform(std::declval<Range>()));
+public:
 	using value_type = Move;
 	using size_type = MoveSize;
 	using const_iterator = containers::concatenate_view_iterator<
-		RegularMoveContainer::const_iterator,
-		RegularMoveContainer::const_iterator,
-		SharedMoves::const_iterator
+		Transformed<RegularMoveContainer>,
+		Transformed<SharedMoves>
 	>;
 	using iterator = const_iterator;
 	using const_regular_iterator = RegularMoveContainer::const_iterator;
@@ -70,10 +80,13 @@ struct MoveContainer {
 	}
 	
 	friend constexpr auto begin(MoveContainer const & container) {
-		return const_iterator(begin(container.m_regular), end(container.m_regular), begin(container.m_shared));
+		return const_iterator(
+			move_container_transform(container.m_regular),
+			move_container_transform(container.m_shared)
+		);
 	}
-	friend constexpr auto end(MoveContainer const & container) {
-		return containers::concatenate_view_sentinel(end(container.m_shared));
+	friend constexpr auto end(MoveContainer) {
+		return containers::concatenate_view_sentinel();
 	}
 
 	constexpr auto & emplace_back(Move const move) {
