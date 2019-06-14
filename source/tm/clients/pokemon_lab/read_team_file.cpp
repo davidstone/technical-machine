@@ -52,16 +52,16 @@ namespace {
 // TODO
 constexpr auto generation = Generation::four;
 
+using StatStorage = containers::static_vector<containers::map_value_type<std::string_view, StatNames>, 5>;
+auto const stat_converter = containers::basic_flat_map<StatStorage, lowercase_alphanumeric>{
+	{ "Atk", StatNames::ATK },
+	{ "Def", StatNames::DEF },
+	{ "SpAtk", StatNames::SPA },
+	{ "SpDef", StatNames::SPD },
+	{ "Spd", StatNames::SPE }
+};
 auto lookup_stat(std::string_view const name) {
-	using Storage = containers::static_vector<containers::map_value_type<std::string_view, StatNames>, 5>;
-	static containers::basic_flat_map<Storage, lowercase_alphanumeric> const converter {
-		{ "Atk", StatNames::ATK },
-		{ "Def", StatNames::DEF },
-		{ "SpAtk", StatNames::SPA },
-		{ "SpDef", StatNames::SPD },
-		{ "Spd", StatNames::SPE }
-	};
-	return converter.at(name);
+	return stat_converter.at(name);
 }
 
 auto load_stats(Pokemon & pokemon, boost::property_tree::ptree const & pt) {
