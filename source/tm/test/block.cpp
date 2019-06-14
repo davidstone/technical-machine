@@ -35,7 +35,7 @@ void basic() {
 	{
 		auto & jolteon = user.add_pokemon(Species::Jolteon, Level(100_bi), Gender::male, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
 		containers::append(
-			all_moves(jolteon),
+			regular_moves(jolteon),
 			containers::array{
 				Move(generation, Moves::Thunderbolt),
 				Move(generation, Moves::Charm),
@@ -49,7 +49,7 @@ void basic() {
 	{
 		auto & gyarados = other.add_pokemon(Species::Gyarados, Level(100_bi), Gender::male, Item::Leftovers, Ability::Intimidate, Nature::Adamant);
 		containers::append(
-			all_moves(gyarados),
+			regular_moves(gyarados),
 			containers::array{
 				Move(generation, Moves::Dragon_Dance),
 				Move(generation, Moves::Waterfall),
