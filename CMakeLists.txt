@@ -394,10 +394,9 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		"-std=c++2a"
 		"-O3"
 		"-march=native"
+		"-fconcepts"
 		# Maybe do this only in a release build?
-		"-flto=4"
-		"-flto-odr-type-merging"
-		"-fuse-linker-plugin"
+		$<$<CONFIG:Release>:-flto=4 -flto-odr-type-merging -fuse-linker-plugin>
 		"-Wall"
 		"-Wextra"
 		"-Wpedantic"
@@ -407,8 +406,10 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		"-Wcast-qual"
 		# It seems impossible to initialize bit fields with this warning on
 		#"-Wconversion"
-		"-Wctor-dtor-privacy"
-		"-Wdisabled-optimization"
+		# Wctor-dtor-privacy has some bugs, including a partial warning that
+		# just gives notes
+		"-Wno-ctor-dtor-privacy"
+		"-Wno-disabled-optimization"
 		"-Wdouble-promotion"
 		# -Weffc++ includes a warning if all data members are not explicitly
 		# initialized in the initializer list. I intentionally do not do this in
@@ -426,6 +427,8 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		# -Wlogical-op warns for expressions that happen to be equal in a
 		# template instantiation
 		# "-Wlogical-op"
+		# False positive on variant implementation if lto is off
+		"-Wno-maybe-uninitialized"
 		"-Wmissing-declarations"
 		# -Wmissing-format-attribute is not used because I do not use GNU
 		# extensions. Same for -Wsuggest-attribute and several others.
