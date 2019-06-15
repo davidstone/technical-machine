@@ -31,7 +31,6 @@
 
 #include <tm/heal.hpp>
 #include <tm/rational.hpp>
-#include <tm/status.hpp>
 #include <tm/weather.hpp>
 
 namespace technicalmachine {
@@ -46,54 +45,6 @@ bool blocks_switching(Ability const ability, ActivePokemon const switcher, Weath
 			return is_type(switcher, Type::Steel, switcher.is_roosting());
 		default:
 			return false;
-	}
-}
-
-bool blocks_status(Ability const ability, Statuses const status, Weather const weather) {
-	switch (status) {
-	case Statuses::burn:
-		switch (ability) {
-		case Ability::Leaf_Guard:
-			return weather.sun();
-		case Ability::Water_Veil:
-			return true;
-		default:
-			return false;
-		}
-	case Statuses::freeze:
-		return ability == Ability::Magma_Armor;
-	case Statuses::paralysis:
-		switch (ability) {
-		case Ability::Leaf_Guard:
-			return weather.sun();
-		case Ability::Limber:
-			return true;
-		default:
-			return false;
-		}
-	case Statuses::poison:
-	case Statuses::toxic:
-		switch (ability) {
-		case Ability::Immunity:
-			return true;
-		case Ability::Leaf_Guard:
-			return weather.sun();
-		default:
-			return false;
-		}
-	case Statuses::sleep:
-	case Statuses::rest:
-		switch (ability) {
-			case Ability::Insomnia:
-			case Ability::Vital_Spirit:
-				return true;
-			case Ability::Leaf_Guard:
-				return weather.sun();
-			default:
-				return false;
-		}
-	case Statuses::clear:
-		return false;
 	}
 }
 

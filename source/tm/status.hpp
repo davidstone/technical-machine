@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/ability.hpp>
 #include <tm/enum.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
@@ -28,7 +29,6 @@
 
 namespace technicalmachine {
 
-enum class Ability : std::uint8_t;
 struct MutableActivePokemon;
 struct Pokemon;
 struct Weather;
@@ -56,47 +56,6 @@ struct numeric_limits<technicalmachine::Statuses> : technicalmachine::enum_numer
 namespace technicalmachine {
 
 struct Status {
-	constexpr Status() = default;
-	constexpr explicit Status(Statuses const status):
-		m_state([=]{
-			switch (status) {
-				case Statuses::clear: return State(Clear{});
-				case Statuses::burn: return State(Burn{});
-				case Statuses::freeze: return State(Freeze{});
-				case Statuses::paralysis: return State(Paralysis{});
-				case Statuses::poison: return State(Poison{});
-				case Statuses::toxic: return State(Toxic{});
-				case Statuses::sleep: return State(Sleep{});
-				case Statuses::rest: return State(Rest{});
-			}
-		}())
-	{
-	}
-
-	constexpr auto name() const {
-		return static_cast<Statuses>(m_state.index());
-	}
-	
-	constexpr Status & operator=(Statuses const status) & {
-		*this = Status(status);
-		return *this;
-	}
-
-	auto advance_from_move(Ability ability, bool clear) & -> void;
-	auto handle_switch(Ability ability) & -> void;
-	auto end_of_turn(Pokemon & pokemon, bool is_having_a_nightmare, Pokemon const & other, bool uproar) & -> void;
-
-	// If the current status is sleep or rest, returns the probability the
-	// status can change from sleeping to awake on this move. If the current
-	// status is freeze, returns the probability of thawing. Returns 0.0 if the
-	// Pokemon is not asleep or frozen or if, due to the sleep counter, they
-	// will definitely not awaken.
-	auto probability_of_clearing(Ability ability) const -> double;
-
-	friend constexpr auto operator==(Status const lhs, Status const rhs) {
-		return lhs.m_state == rhs.m_state;
-	}
-
 private:
 	struct Clear {
 		friend constexpr auto operator==(Clear, Clear) noexcept -> bool { return true; }
@@ -141,6 +100,49 @@ private:
 		}
 	};
 
+public:
+	constexpr Status() = default;
+	constexpr explicit Status(Statuses const status):
+		m_state([=]{
+			switch (status) {
+				case Statuses::clear: return State(Clear{});
+				case Statuses::burn: return State(Burn{});
+				case Statuses::freeze: return State(Freeze{});
+				case Statuses::paralysis: return State(Paralysis{});
+				case Statuses::poison: return State(Poison{});
+				case Statuses::toxic: return State(Toxic{});
+				case Statuses::sleep: return State(Sleep{});
+				case Statuses::rest: return State(Rest{});
+			}
+		}())
+	{
+	}
+
+	constexpr auto name() const {
+		return static_cast<Statuses>(m_state.index());
+	}
+	
+	constexpr Status & operator=(Statuses const status) & {
+		*this = Status(status);
+		return *this;
+	}
+
+	auto advance_from_move(Ability ability, bool clear) & -> void;
+	auto handle_switch(Ability ability) & -> void;
+	auto end_of_turn(Pokemon & pokemon, bool is_having_a_nightmare, Pokemon const & other, bool uproar) & -> void;
+
+	// If the current status is sleep or rest, returns the probability the
+	// status can change from sleeping to awake on this move. If the current
+	// status is freeze, returns the probability of thawing. Returns 0.0 if the
+	// Pokemon is not asleep or frozen or if, due to the sleep counter, they
+	// will definitely not awaken.
+	auto probability_of_clearing(Ability ability) const -> double;
+
+	friend constexpr auto operator==(Status const lhs, Status const rhs) {
+		return lhs.m_state == rhs.m_state;
+	}
+
+private:
 	using State = bounded::variant<
 		Clear,
 		Burn,
@@ -182,5 +184,16 @@ constexpr auto boosts_smellingsalt(Status const status) {
 
 auto lowers_speed(Status status, Ability ability) -> bool;
 auto boosts_facade(Status status) -> bool;
+
+
+bool blocks_status(Ability ability, Statuses status, Weather weather);
+
+constexpr bool can_clear_status(Ability const ability, Status const status) {
+	return ability == Ability::Shed_Skin and !is_clear(status);
+}
+
+constexpr bool boosts_defense(Ability const ability, Status const status) {
+	return ability == Ability::Marvel_Scale and !is_clear(status);
+}
 
 }	// namespace technicalmachine

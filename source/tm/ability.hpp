@@ -18,7 +18,6 @@
 #pragma once
 
 #include <tm/enum.hpp>
-#include <tm/status.hpp>
 
 #include <cstdint>
 
@@ -77,8 +76,6 @@ constexpr bool blocks_weather(Ability const ability) {
 	}
 }
 
-bool blocks_status(Ability ability, Statuses status, Weather weather);
-
 constexpr bool blocks_confusion(Ability const ability) {
 	return ability == Ability::Own_Tempo;
 }
@@ -101,10 +98,6 @@ constexpr bool blocks_paralysis_speed_penalty(Ability const ability) {
 
 constexpr bool blocks_sound_moves(Ability const ability) {
 	return ability == Ability::Soundproof;
-}
-
-constexpr bool can_clear_status(Ability const ability, Status const status) {
-	return ability == Ability::Shed_Skin and !is_clear(status);
 }
 
 constexpr bool clears_status_on_switch(Ability const ability) {
@@ -177,10 +170,6 @@ constexpr bool ignores_blockers(Ability const ability) {
 
 constexpr bool boosts_critical_hits(Ability const ability) {
 	return ability == Ability::Sniper;
-}
-
-constexpr bool boosts_defense(Ability const ability, Status const status) {
-	return ability == Ability::Marvel_Scale and !is_clear(status);
 }
 
 bool boosts_special_attack(Ability ability, Weather weather);
