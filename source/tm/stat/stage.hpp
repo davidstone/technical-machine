@@ -80,7 +80,7 @@ constexpr auto base_stat_boost() {
 
 }	// namespace detail
 
-template<StatNames stat, BOUNDED_REQUIRES(stat == StatNames::ATK or stat == StatNames::SPA)>
+template<StatNames stat> requires(stat == StatNames::ATK or stat == StatNames::SPA)
 auto modifier(Stage const & stage, bool const ch) {
 	constexpr auto base = detail::base_stat_boost<stat>();
 	return BOUNDED_CONDITIONAL((stage[stat] >= 0_bi),
@@ -89,7 +89,7 @@ auto modifier(Stage const & stage, bool const ch) {
 	);
 }
 
-template<StatNames stat, BOUNDED_REQUIRES(stat == StatNames::DEF or stat == StatNames::SPD)>
+template<StatNames stat> requires(stat == StatNames::DEF or stat == StatNames::SPD)
 auto modifier(Stage const & stage, bool const ch) {
 	constexpr auto base = detail::base_stat_boost<stat>();
 	return BOUNDED_CONDITIONAL((stage[stat] <= 0_bi),
@@ -98,7 +98,7 @@ auto modifier(Stage const & stage, bool const ch) {
 	);
 }
 
-template<StatNames stat, BOUNDED_REQUIRES(stat == StatNames::SPE or stat == StatNames::ACC or stat == StatNames::EVA)>
+template<StatNames stat> requires(stat == StatNames::SPE or stat == StatNames::ACC or stat == StatNames::EVA)
 auto modifier(Stage const & stage) {
 	constexpr auto base = detail::base_stat_boost<stat>();
 	return BOUNDED_CONDITIONAL((stage[stat] >= 0_bi),

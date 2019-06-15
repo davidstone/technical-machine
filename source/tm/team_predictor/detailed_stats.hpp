@@ -41,19 +41,19 @@ struct DetailedStats {
 	
 	explicit DetailedStats(std::filesystem::path const & path);
 
-	template<typename T, BOUNDED_REQUIRES(std::is_same<T, Ability>::value)>
+	template<typename T> requires std::is_same_v<T, Ability>
 	auto get(Species const species) const {
 		return ability[species];
 	}
-	template<typename T, BOUNDED_REQUIRES(std::is_same<T, Item>::value)>
+	template<typename T> requires std::is_same_v<T, Item>
 	auto get(Species const species) const {
 		return item[species];
 	}
-	template<typename T, BOUNDED_REQUIRES(std::is_same<T, Nature>::value)>
+	template<typename T> requires std::is_same_v<T, Nature>
 	auto get(Species const species) const {
 		return nature[species];
 	}
-	template<typename T, BOUNDED_REQUIRES(std::is_same<T, UsedMoves>::value)>
+	template<typename T> requires std::is_same_v<T, UsedMoves>
 	auto get(Species const species) const {
 		return move[species];
 	}

@@ -52,12 +52,12 @@ public:
 		m_denominator(denominator) {
 	}
 	
-	template<typename N, typename D, BOUNDED_REQUIRES(
+	template<typename N, typename D> requires(
 		std::numeric_limits<N>::min() >= std::numeric_limits<Numerator>::min() and
 		std::numeric_limits<N>::max() <= std::numeric_limits<Numerator>::max() and
 		std::numeric_limits<D>::min() >= std::numeric_limits<Denominator>::min() and
 		std::numeric_limits<D>::max() <= std::numeric_limits<Denominator>::max()
-	)>
+	)
 	constexpr rational(rational<N, D> const other):
 		m_numerator(other.numerator()),
 		m_denominator(other.denominator())
@@ -99,7 +99,7 @@ constexpr auto complement(rational<Numerator, Denominator> const r) {
 	return rational(1_bi, 1_bi) - r;
 }
 
-template<typename N, typename D, typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+template<typename N, typename D, typename Integer> requires bounded::is_bounded_integer<Integer>
 constexpr auto operator*(rational<N, D> const lhs, Integer const rhs) {
 	return rhs * lhs.numerator() / lhs.denominator();
 }
@@ -129,12 +129,12 @@ constexpr auto compare(rational<N1, D1> const lhs, rational<N2, D2> const rhs) {
 	return compare(lhs.numerator() * rhs.denominator(), rhs.numerator() * lhs.denominator());
 }
 
-template<typename N, typename D, typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+template<typename N, typename D, typename Integer> requires bounded::is_bounded_integer<Integer>
 constexpr auto compare(rational<N, D> const lhs, Integer const rhs) {
 	return compare(lhs.numerator(), rhs * lhs.denominator());
 }
 
-template<typename Integer, typename N, typename D, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+template<typename Integer, typename N, typename D> requires bounded::is_bounded_integer<Integer>
 constexpr auto compare(Integer const lhs, rational<N, D> const rhs) {
 	return compare(lhs * rhs.denominator(), rhs.numerator());
 }
@@ -144,29 +144,29 @@ constexpr auto operator==(rational<N1, D1> const lhs, rational<N2, D2> const rhs
 	return lhs.numerator() * rhs.denominator() == rhs.numerator() * lhs.denominator();
 }
 
-template<typename N, typename D, typename Integer, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+template<typename N, typename D, typename Integer> requires bounded::is_bounded_integer<Integer>
 constexpr auto operator==(rational<N, D> const lhs, Integer const rhs) {
 	return lhs.numerator() == rhs * lhs.denominator();
 }
 
-template<typename Integer, typename N, typename D, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+template<typename Integer, typename N, typename D> requires bounded::is_bounded_integer<Integer>
 constexpr auto operator==(Integer const lhs, rational<N, D> const rhs) {
 	return lhs * rhs.denominator() == rhs.numerator();
 }
 
-template<typename Integer, typename N, typename D, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+template<typename Integer, typename N, typename D> requires bounded::is_bounded_integer<Integer>
 constexpr auto operator*(Integer const lhs, rational<N, D> const rhs) {
 	return rhs * lhs;
 }
 
 
-template<typename Integer, typename N, typename D, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+template<typename Integer, typename N, typename D> requires bounded::is_bounded_integer<Integer>
 constexpr auto operator/(Integer const lhs, rational<N, D> const rhs) {
 	return lhs * rhs.invert();
 }
 
 
-template<typename Integer, typename N, typename D, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+template<typename Integer, typename N, typename D> requires bounded::is_bounded_integer<Integer>
 constexpr auto operator%(Integer const lhs, rational<N, D> const rhs) {
 	auto const quotient = lhs / rhs;
 	return lhs - quotient * rhs;
