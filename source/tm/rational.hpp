@@ -154,20 +154,20 @@ constexpr auto operator==(Integer const lhs, rational<N, D> const rhs) {
 	return lhs * rhs.denominator() == rhs.numerator();
 }
 
-template<typename T, typename N, typename D, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
-constexpr auto operator*(T const lhs, rational<N, D> const rhs) {
+template<typename Integer, typename N, typename D, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+constexpr auto operator*(Integer const lhs, rational<N, D> const rhs) {
 	return rhs * lhs;
 }
 
 
-template<typename T, typename N, typename D, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
-constexpr auto operator/(T const lhs, rational<N, D> const rhs) {
+template<typename Integer, typename N, typename D, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+constexpr auto operator/(Integer const lhs, rational<N, D> const rhs) {
 	return lhs * rhs.invert();
 }
 
 
-template<typename T, typename N, typename D, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
-constexpr auto operator%(T const lhs, rational<N, D> const rhs) {
+template<typename Integer, typename N, typename D, BOUNDED_REQUIRES(bounded::is_bounded_integer<Integer>)>
+constexpr auto operator%(Integer const lhs, rational<N, D> const rhs) {
 	auto const quotient = lhs / rhs;
 	return lhs - quotient * rhs;
 }
