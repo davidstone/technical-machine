@@ -40,7 +40,7 @@ SpeedEVs::SpeedEVs(Nature const initial_nature, Stat const initial_speed_stat, L
 			return initial_stat(StatNames::SPE, stat, level, nature) < speed;
 		});
 		if (it.base() != end(evs)) {
-			m_container.emplace_back(nature, *it);
+			containers::emplace_back(m_container, nature, *it);
 		}
 	}
 	BOUNDED_ASSERT(!empty(m_container));

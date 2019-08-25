@@ -52,7 +52,7 @@ struct PokemonInputs {
 		containers::static_vector<Moves, max_moves_per_pokemon.value()> result;
 		for (auto const & move : m_moves.value) {
 			try {
-				result.emplace_back(move.value());
+				containers::push_back(result, move.value());
 			} catch (InvalidFromStringConversion const &) {
 				// Ignore invalid moves
 			}

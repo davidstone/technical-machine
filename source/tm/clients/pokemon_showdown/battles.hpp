@@ -39,7 +39,7 @@ struct Battles {
 
 	template<typename ... Args>
 	void add_pending(Args && ... args) {
-		m_pending.emplace_back(m_log_directory, m_log_foe_teams, std::forward<Args>(args)...);
+		containers::emplace_back(m_pending, m_log_directory, m_log_foe_teams, std::forward<Args>(args)...);
 	}
 	
 	template<typename SendMessageFunction, typename ChallengeFunction>

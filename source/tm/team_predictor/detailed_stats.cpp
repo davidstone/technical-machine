@@ -60,7 +60,7 @@ Probabilities all_sub_elements(boost::property_tree::ptree const & pt) {
 	for (auto const & value : pt) {
 		auto const name = value.second.get<std::string>("name");
 		auto const probability = value.second.get<double>("probability");
-		data.emplace_back(probability, name);
+		containers::emplace_back(data, probability, name);
 	}
 	return data;
 }

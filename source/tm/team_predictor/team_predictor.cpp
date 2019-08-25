@@ -58,7 +58,7 @@ void predict_move(MoveContainer & moves, Generation const generation, DetailedSt
 		if (containers::any_equal(regular, move)) {
 			continue;
 		}
-		moves.emplace_back(generation, move);
+		containers::emplace_back(moves, generation, move);
 	}
 }
 

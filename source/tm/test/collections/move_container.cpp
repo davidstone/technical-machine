@@ -51,7 +51,7 @@ auto create_shared_moves(TeamSize const team_size) {
 	};
 	if (team_size != 1_bi) {
 		for (auto const n : containers::integer_range(team_size)) {
-			shared.emplace_back(to_switch(n));
+			containers::push_back(shared, to_switch(n));
 		}
 	}
 	return shared;
@@ -71,7 +71,7 @@ void move_container_tests() {
 		Moves::Absorb, Moves::Tackle, Moves::Quick_Attack, Moves::Body_Slam
 	};
 	for (auto const n : containers::integer_range(size(moves))) {
-		c.emplace_back(generation, moves[n]);
+		containers::emplace_back(c, generation, moves[n]);
 		if (size(c) != shared_moves_size + n + 1_bi or size(c) != static_cast<bounded::checked_integer<0, 100>>(c.number_of_regular_moves()) + shared_moves_size) {
 			throw InvalidCollection("MoveContainer has the wrong number of moves during addition of moves.");
 		}

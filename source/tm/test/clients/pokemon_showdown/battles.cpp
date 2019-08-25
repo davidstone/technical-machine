@@ -32,7 +32,7 @@ namespace {
 
 auto load_lines_from_file(std::filesystem::path const & file_name) {
 	auto file = std::ifstream(file_name);
-	return containers::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>{});
+	return containers::string(containers::range_view(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()));
 }
 
 auto parse_room(std::string_view const line, std::filesystem::path const & path) {

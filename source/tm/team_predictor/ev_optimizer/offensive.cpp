@@ -81,7 +81,7 @@ auto remove_inferior_natures(Container & container, bool const is_physical, bool
 
 OffensiveEVs::OffensiveEVs(Species const species, Level const level, Nature const original_nature, Stat const attack, Stat const special_attack, bool const include_attack_evs, bool const include_special_attack_evs) {
 	for (auto const nature : containers::enum_range<Nature>()) {
-		m_container.emplace_back(nature);
+		containers::emplace_back(m_container, nature);
 	}
 	// If I don't have a physical move, prefer to lower that because it lowers
 	// confusion damage. If I do have a physical move but no special move,

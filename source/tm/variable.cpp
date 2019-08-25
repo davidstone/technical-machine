@@ -95,7 +95,7 @@ template<typename Count>
 constexpr auto constant_probability(Count const count) noexcept {
 	Probabilities probabilities;
 	for (auto const n : containers::integer_range(count)) {
-		probabilities.emplace_back(Variable(n), 1.0 / static_cast<double>(count));
+		containers::emplace_back(probabilities, Variable(n), 1.0 / static_cast<double>(count));
 	}
 	return probabilities;
 }
@@ -708,7 +708,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 				constexpr auto min = 50_bi;
 				constexpr auto max = 150_bi + 1_bi;
 				for (auto const n : containers::integer_range(min, max)) {
-					probabilities.emplace_back(Variable(n), 1.0 / static_cast<double>(max - min));
+					containers::emplace_back(probabilities, Variable(n), 1.0 / static_cast<double>(max - min));
 				}
 				return probabilities;
 			}();

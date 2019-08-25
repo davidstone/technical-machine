@@ -171,7 +171,7 @@ auto legal_selections(Team const & user, ActivePokemon const other, Weather cons
 	for (auto const move : all_moves(user.pokemon())) {
 		bool const found_selectable_move = !empty(result);
 		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
-			result.emplace_back(move.name());
+			containers::push_back(result, move.name());
 		}
 	}
 	BOUNDED_ASSERT(!empty(result));

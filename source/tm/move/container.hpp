@@ -91,7 +91,7 @@ public:
 
 	constexpr auto & emplace_back(Move const move) {
 		BOUNDED_ASSERT(containers::none_equal(m_regular, move.name()));
-		return m_regular.emplace_back(move);
+		return containers::push_back(m_regular, move);
 	}
 
 	template<typename... MaybePP>
@@ -129,7 +129,7 @@ auto add_seen_move(MoveContainer & container, Generation const generation, Moves
 		message += to_string(move);
 		throw std::runtime_error(message);
 	}
-	container.emplace_back(generation, move, pp...);
+	containers::emplace_back(container, generation, move, pp...);
 }
 
 }	// namespace technicalmachine

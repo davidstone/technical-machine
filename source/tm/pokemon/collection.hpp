@@ -96,7 +96,7 @@ struct PokemonCollection {
 		if (size(m_container) == m_real_size) {
 			throw std::runtime_error("Tried to add too many Pokemon");
 		}
-		return m_container.emplace_back(m_real_size, std::forward<Args>(args)...);
+		return containers::emplace_back(m_container, m_real_size, std::forward<Args>(args)...);
 	}
 
 	void remove_active(containers::index_type<PokemonCollection> index_of_replacement);

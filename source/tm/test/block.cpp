@@ -73,9 +73,9 @@ void test_two_moves_with_one_out_of_pp() {
 			move.decrement_pp(Ability::Static);
 		}
 	};
-	auto & thunder = all_moves(pokemon).emplace_back(generation, Moves::Thunder, 0_bi);
+	auto & thunder = containers::emplace_back(all_moves(pokemon), generation, Moves::Thunder, 0_bi);
 	empty_pp(thunder);
-	all_moves(pokemon).emplace_back(generation, Moves::Thunderbolt, 0_bi);
+	containers::emplace_back(all_moves(pokemon), generation, Moves::Thunderbolt, 0_bi);
 
 	auto other = Team(1_bi, false);
 	other.add_pokemon(Species::Pikachu, Level(100_bi), Gender::female);
@@ -97,9 +97,9 @@ void test_two_moves_with_both_out_of_pp() {
 			move.decrement_pp(Ability::Static);
 		}
 	};
-	auto & thunder = all_moves(pokemon).emplace_back(generation, Moves::Thunder, 0_bi);
+	auto & thunder = containers::emplace_back(all_moves(pokemon), generation, Moves::Thunder, 0_bi);
 	empty_pp(thunder);
-	auto & thunderbolt = all_moves(pokemon).emplace_back(generation, Moves::Thunderbolt, 0_bi);
+	auto & thunderbolt = containers::emplace_back(all_moves(pokemon), generation, Moves::Thunderbolt, 0_bi);
 	empty_pp(thunderbolt);
 
 	auto other = Team(1_bi, false);
