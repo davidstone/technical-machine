@@ -62,44 +62,44 @@ public:
 	using const_regular_iterator = RegularMoveContainer::const_iterator;
 	using regular_iterator = RegularMoveContainer::iterator;
 	
-	explicit constexpr MoveContainer(TeamSize const my_team_size):
+	explicit MoveContainer(TeamSize const my_team_size):
 		m_shared(my_team_size)
 	{
 	}
 
-	constexpr auto number_of_regular_moves() const {
+	auto number_of_regular_moves() const {
 		return static_cast<RegularMoveSize>(size(m_regular));
 	}
 
 	// Skips moves for which is_regular(move) is false
-	constexpr auto const & regular() const {
+	auto const & regular() const {
 		return m_regular;
 	}
-	constexpr auto & regular() {
+	auto & regular() {
 		return m_regular;
 	}
 	
-	friend constexpr auto begin(MoveContainer const & container) {
+	friend auto begin(MoveContainer const & container) {
 		return const_iterator(
 			move_container_transform(container.m_regular),
 			move_container_transform(container.m_shared)
 		);
 	}
-	friend constexpr auto end(MoveContainer) {
+	friend auto end(MoveContainer) {
 		return containers::concatenate_view_sentinel();
 	}
 
-	constexpr auto & emplace_back(Move const move) {
+	auto & emplace_back(Move const move) {
 		BOUNDED_ASSERT(containers::none_equal(m_regular, move.name()));
-		return containers::push_back(m_regular, move);
+		return containers::emplace_back(m_regular, move);
 	}
 
 	template<typename... MaybePP>
-	constexpr auto & emplace_back(Generation const generation, Moves const move, MaybePP... maybe_pp) {
+	auto & emplace_back(Generation const generation, Moves const move, MaybePP... maybe_pp) {
 		return emplace_back(Move(generation, move, maybe_pp...));
 	}
 
-	constexpr auto remove_switch() {
+	auto remove_switch() {
 		m_shared.remove_switch();
 	}
 	
