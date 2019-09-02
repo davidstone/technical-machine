@@ -24,7 +24,7 @@
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/move.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
@@ -54,9 +54,9 @@ auto parse_stats(HP::max_type const hp, boost::property_tree::ptree const & stat
 Team parse_team(boost::property_tree::ptree const & pt) {
 	// TODO: Parse this
 	constexpr auto generation = Generation::four;
-	auto const team_data = range_view(pt.get_child("side").get_child("pokemon").equal_range(""));
+	auto const team_data = containers::range_view(pt.get_child("side").get_child("pokemon").equal_range(""));
 	constexpr bool is_me = true;
-	auto team = Team(TeamSize(containers::distance(team_data.begin(), team_data.end())), is_me);
+	auto team = Team(TeamSize(containers::distance(begin(team_data), end(team_data))), is_me);
 	for (auto const & pokemon_data : team_data) {
 		auto get = [&](auto const & key) { return pokemon_data.second.get<std::string>(key); };
 
