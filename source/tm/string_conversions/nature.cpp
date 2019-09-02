@@ -19,11 +19,12 @@
 #include <tm/string_conversions/nature.hpp>
 
 #include <tm/string_conversions/invalid_string_conversion.hpp>
+#include <tm/string_conversions/lowercase_alphanumeric.hpp>
 
 #include <tm/stat/nature.hpp>
 
+#include <containers/array/array.hpp>
 #include <containers/flat_map.hpp>
-#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 
@@ -59,35 +60,39 @@ std::string_view to_string(Nature const nature) {
 
 template<>
 Nature from_string<Nature>(std::string_view const str) {
-	using Storage = containers::static_vector<containers::map_value_type<std::string_view, Nature>, 25>;
-	static containers::basic_flat_map<Storage, lowercase_alphanumeric> const converter {
-		{ "Adamant", Nature::Adamant },
-		{ "Bashful", Nature::Bashful },
-		{ "Bold", Nature::Bold },
-		{ "Brave", Nature::Brave },
-		{ "Calm", Nature::Calm },
-		{ "Careful", Nature::Careful },
-		{ "Docile", Nature::Docile },
-		{ "Gentle", Nature::Gentle },
-		{ "Hardy", Nature::Hardy },
-		{ "Hasty", Nature::Hasty },
-		{ "Impish", Nature::Impish },
-		{ "Jolly", Nature::Jolly },
-		{ "Lax", Nature::Lax },
-		{ "Lonely", Nature::Lonely },
-		{ "Mild", Nature::Mild },
-		{ "Modest", Nature::Modest },
-		{ "Naive", Nature::Naive },
-		{ "Naughty", Nature::Naughty },
-		{ "Quiet", Nature::Quiet },
-		{ "Quirky", Nature::Quirky },
-		{ "Rash", Nature::Rash },
-		{ "Relaxed", Nature::Relaxed },
-		{ "Sassy", Nature::Sassy },
-		{ "Serious", Nature::Serious },
-		{ "Timid", Nature::Timid }
-	};
-	auto const it = converter.find(str);
+	using Storage = containers::array<containers::map_value_type<std::string_view, Nature>, 25>;
+	static constexpr auto converter = containers::basic_flat_map<Storage>(
+		containers::assume_sorted_unique,
+		Storage{{
+			{ "adamant", Nature::Adamant },
+			{ "bashful", Nature::Bashful },
+			{ "bold", Nature::Bold },
+			{ "brave", Nature::Brave },
+			{ "calm", Nature::Calm },
+			{ "careful", Nature::Careful },
+			{ "docile", Nature::Docile },
+			{ "gentle", Nature::Gentle },
+			{ "hardy", Nature::Hardy },
+			{ "hasty", Nature::Hasty },
+			{ "impish", Nature::Impish },
+			{ "jolly", Nature::Jolly },
+			{ "lax", Nature::Lax },
+			{ "lonely", Nature::Lonely },
+			{ "mild", Nature::Mild },
+			{ "modest", Nature::Modest },
+			{ "naive", Nature::Naive },
+			{ "naughty", Nature::Naughty },
+			{ "quiet", Nature::Quiet },
+			{ "quirky", Nature::Quirky },
+			{ "rash", Nature::Rash },
+			{ "relaxed", Nature::Relaxed },
+			{ "sassy", Nature::Sassy },
+			{ "serious", Nature::Serious },
+			{ "timid", Nature::Timid }
+		}}
+	);
+	auto const converted = fixed_capacity_lowercase_and_digit_string<7>(str);
+	auto const it = converter.find(converted);
 	if (it != end(converter)) {
 		return it->mapped();
 	} else {

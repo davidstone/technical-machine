@@ -20,11 +20,12 @@
 
 #include <tm/string_conversions/conversion.hpp>
 #include <tm/string_conversions/invalid_string_conversion.hpp>
+#include <tm/string_conversions/lowercase_alphanumeric.hpp>
 
 #include <tm/gender.hpp>
 
+#include <containers/array/array.hpp>
 #include <containers/flat_map.hpp>
-#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 
@@ -38,15 +39,19 @@ std::string_view to_string(Gender const gender) {
 
 template<>
 Gender from_string(std::string_view const str) {
-	using Storage = containers::static_vector<containers::map_value_type<std::string_view, Gender>, 5>;
-	static containers::basic_flat_map<Storage, lowercase_alphanumeric> const converter {
-		{ "Genderless", Gender::genderless },
-		{ "None", Gender::genderless },
-		{ "No Gender", Gender::genderless },
-		{ "Female", Gender::female },
-		{ "Male", Gender::male }
-	};
-	auto const it = converter.find(str);
+	using Storage = containers::array<containers::map_value_type<std::string_view, Gender>, 5>;
+	constexpr auto converter = containers::basic_flat_map<Storage>(
+		containers::assume_sorted_unique,
+		Storage{{
+			{ "female", Gender::female },
+			{ "genderless", Gender::genderless },
+			{ "male", Gender::male },
+			{ "nogender", Gender::genderless },
+			{ "none", Gender::genderless },
+		}}
+	);
+	auto const converted = fixed_capacity_lowercase_and_digit_string<10>(str);
+	auto const it = converter.find(converted);
 	if (it != end(converter)) {
 		return it->mapped();
 	} else {

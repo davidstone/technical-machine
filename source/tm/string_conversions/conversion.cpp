@@ -16,25 +16,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/string_conversions/conversion.hpp>
-
-namespace technicalmachine {
-namespace {
-
-constexpr auto compare = lowercase_alphanumeric{};
-constexpr auto a = std::string_view("adaptability");
-constexpr auto b = std::string_view("Adaptability");
-static_assert(!compare(a, b));
-static_assert(!compare(b, a));
-constexpr auto c = std::string_view("Aftermath");
-static_assert(compare(a, c));
-static_assert(compare(b, c));
-static_assert(!compare(c, a));
-static_assert(!compare(c, b));
-constexpr auto d = std::string_view("----aftermath----");
-static_assert(compare(a, d));
-static_assert(!compare(d, a));
-static_assert(!compare(d, c));
-static_assert(!compare(c, d));
-
-} // namespace
-} // namespace technical machine

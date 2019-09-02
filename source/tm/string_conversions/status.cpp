@@ -18,11 +18,12 @@
 
 #include <tm/string_conversions/status.hpp>
 #include <tm/string_conversions/invalid_string_conversion.hpp>
+#include <tm/string_conversions/lowercase_alphanumeric.hpp>
 
 #include <tm/status.hpp>
 
+#include <containers/array/array.hpp>
 #include <containers/flat_map.hpp>
-#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 
@@ -41,18 +42,22 @@ std::string_view to_string(Statuses const status) {
 
 template<>
 Statuses from_string(std::string_view const str) {
-	using Storage = containers::static_vector<containers::map_value_type<std::string_view, Statuses>, 8>;
-	static containers::basic_flat_map<Storage, lowercase_alphanumeric> const converter {
-		{ "No status", Statuses::clear },
-		{ "Burn", Statuses::burn },
-		{ "Freeze", Statuses::freeze },
-		{ "Paralysis", Statuses::paralysis },
-		{ "Poison", Statuses::poison },
-		{ "Toxic", Statuses::toxic },
-		{ "Sleep", Statuses::sleep },
-		{ "Rest", Statuses::rest }
-	};
-	auto const it = converter.find(str);
+	using Storage = containers::array<containers::map_value_type<std::string_view, Statuses>, 8>;
+	static constexpr auto converter = containers::basic_flat_map<Storage>(
+		containers::assume_sorted_unique,
+		Storage{{
+			{ "burn", Statuses::burn },
+			{ "freeze", Statuses::freeze },
+			{ "nostatus", Statuses::clear },
+			{ "paralysis", Statuses::paralysis },
+			{ "poison", Statuses::poison },
+			{ "rest", Statuses::rest },
+			{ "sleep", Statuses::sleep },
+			{ "toxic", Statuses::toxic },
+		}}
+	);
+	auto const converted = fixed_capacity_lowercase_and_digit_string<9>(str);
+	auto const it = converter.find(converted);
 	if (it != end(converter)) {
 		return it->mapped();
 	} else {

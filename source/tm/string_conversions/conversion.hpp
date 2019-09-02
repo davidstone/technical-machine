@@ -18,31 +18,9 @@
 
 #pragma once
 
-#include <containers/algorithms/compare.hpp>
-#include <containers/algorithms/filter_iterator.hpp>
-#include <containers/algorithms/transform.hpp>
-
 #include <string_view>
 
 namespace technicalmachine {
-
-struct lowercase_alphanumeric {
-	constexpr auto operator()(std::string_view const lhs, std::string_view const rhs) const noexcept {
-		auto transform_filter = [](std::string_view const & input) {
-			// Not portable because it does not respect character encodings.
-			// We do not want to use cctype functions because we do not want to
-			// use locales.
-			auto to_lower = [](char c) {
-				return static_cast<char>(('A' <= c and c <= 'Z') ? c + 'a' - 'A' : c);
-			};
-			auto is_valid = [](char c) {
-				return ('0' <= c and c <= '9') or ('a' <= c and c <= 'z');
-			};
-			return containers::filter(containers::transform(input, to_lower), is_valid);
-		};
-		return compare(transform_filter(lhs), transform_filter(rhs)) < 0;
-	}
-};
 
 template<typename T>
 T from_string(std::string_view str);

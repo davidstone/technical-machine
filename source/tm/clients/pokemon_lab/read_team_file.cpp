@@ -26,7 +26,6 @@
 #include <tm/stat/stat.hpp>
 
 #include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/conversion.hpp>
 #include <tm/string_conversions/gender.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
@@ -35,8 +34,8 @@
 
 #include <tm/generation.hpp>
 
+#include <containers/array/array.hpp>
 #include <containers/flat_map.hpp>
-#include <containers/static_vector/static_vector.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -52,16 +51,19 @@ namespace {
 // TODO
 constexpr auto generation = Generation::four;
 
-using StatStorage = containers::static_vector<containers::map_value_type<std::string_view, StatNames>, 5>;
-auto const stat_converter = containers::basic_flat_map<StatStorage, lowercase_alphanumeric>{
-	{ "Atk", StatNames::ATK },
-	{ "Def", StatNames::DEF },
-	{ "SpAtk", StatNames::SPA },
-	{ "SpDef", StatNames::SPD },
-	{ "Spd", StatNames::SPE }
-};
 auto lookup_stat(std::string_view const name) {
-	return stat_converter.at(name);
+	using Storage = containers::array<containers::map_value_type<std::string_view, StatNames>, 5>;
+	constexpr auto converter = containers::basic_flat_map<Storage>(
+		containers::assume_sorted_unique,
+		Storage{{
+			{ "Atk", StatNames::ATK },
+			{ "Def", StatNames::DEF },
+			{ "SpAtk", StatNames::SPA },
+			{ "SpDef", StatNames::SPD },
+			{ "Spd", StatNames::SPE }
+		}}
+	);
+	return converter.at(name);
 }
 
 auto load_stats(Pokemon & pokemon, boost::property_tree::ptree const & pt) {
@@ -76,25 +78,28 @@ auto load_stats(Pokemon & pokemon, boost::property_tree::ptree const & pt) {
 }
 
 auto from_simulator_string(std::string_view const str) {
-	using Storage = containers::static_vector<containers::map_value_type<std::string_view, Species>, 16>;
-	static containers::basic_flat_map<Storage, lowercase_alphanumeric> const converter {
-		{ "Deoxys", Species::Deoxys_Mediocre },
-		{ "Deoxys-f", Species::Deoxys_Attack },
-		{ "Deoxys-l", Species::Deoxys_Defense },
-		{ "Deoxys-e", Species::Deoxys_Speed },
-		{ "Giratina", Species::Giratina_Altered },
-		{ "Giratina-o", Species::Giratina_Origin },
-		{ "Rotom-c", Species::Rotom_Mow },
-		{ "Rotom-f", Species::Rotom_Frost },
-		{ "Rotom-h", Species::Rotom_Heat },
-		{ "Rotom-s", Species::Rotom_Fan },
-		{ "Rotom-w", Species::Rotom_Wash },
-		{ "Shaymin", Species::Shaymin_Land },
-		{ "Shaymin-s", Species::Shaymin_Sky },
-		{ "Wormadam", Species::Wormadam_Plant },
-		{ "Wormadam-g", Species::Wormadam_Sandy },
-		{ "Wormadam-s", Species::Wormadam_Trash }
-	};
+	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 16>;
+	constexpr auto converter = containers::basic_flat_map<Storage>(
+		containers::assume_sorted_unique,
+		Storage{{
+			{ "Deoxys", Species::Deoxys_Mediocre },
+			{ "Deoxys-e", Species::Deoxys_Speed },
+			{ "Deoxys-f", Species::Deoxys_Attack },
+			{ "Deoxys-l", Species::Deoxys_Defense },
+			{ "Giratina", Species::Giratina_Altered },
+			{ "Giratina-o", Species::Giratina_Origin },
+			{ "Rotom-c", Species::Rotom_Mow },
+			{ "Rotom-f", Species::Rotom_Frost },
+			{ "Rotom-h", Species::Rotom_Heat },
+			{ "Rotom-s", Species::Rotom_Fan },
+			{ "Rotom-w", Species::Rotom_Wash },
+			{ "Shaymin", Species::Shaymin_Land },
+			{ "Shaymin-s", Species::Shaymin_Sky },
+			{ "Wormadam", Species::Wormadam_Plant },
+			{ "Wormadam-g", Species::Wormadam_Sandy },
+			{ "Wormadam-s", Species::Wormadam_Trash }
+		}}
+	);
 	auto const it = converter.find(str);
 	return (it != end(converter)) ? it->mapped() : from_string<Species>(str);
 }
