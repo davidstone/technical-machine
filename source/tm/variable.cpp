@@ -83,7 +83,7 @@ namespace {
 
 template<std::size_t... indexes, typename... Args>
 constexpr auto generic_probability(std::index_sequence<indexes...>, Args... probabilities) noexcept {
-	return Probabilities{ { Variable(bounded::constant<indexes>), probabilities }... };
+	return Probabilities{{Variable{bounded::constant<indexes>}, probabilities}...};
 }
 
 template<typename... Args>
@@ -95,7 +95,7 @@ template<typename Count>
 constexpr auto constant_probability(Count const count) noexcept {
 	Probabilities probabilities;
 	for (auto const n : containers::integer_range(count)) {
-		containers::emplace_back(probabilities, Variable(n), 1.0 / static_cast<double>(count));
+		containers::emplace_back(probabilities, Variable{n}, 1.0 / static_cast<double>(count));
 	}
 	return probabilities;
 }
@@ -687,20 +687,20 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 			return generic_probability(12.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0);
 		case Moves::Magnitude:
 			return Probabilities{
-				{Variable(10_bi), 0.05},
-				{Variable(30_bi), 0.1},
-				{Variable(50_bi), 0.2},
-				{Variable(70_bi), 0.3},
-				{Variable(90_bi), 0.2},
-				{Variable(110_bi), 0.1},
-				{Variable(150_bi), 0.05}
+				{Variable{10_bi}, 0.05},
+				{Variable{30_bi}, 0.1},
+				{Variable{50_bi}, 0.2},
+				{Variable{70_bi}, 0.3},
+				{Variable{90_bi}, 0.2},
+				{Variable{110_bi}, 0.1},
+				{Variable{150_bi}, 0.05}
 			};
 		case Moves::Present:
 			return Probabilities{
-				{Variable(0_bi), 0.25},
-				{Variable(40_bi), 0.25},
-				{Variable(80_bi), 0.25},
-				{Variable(120_bi), 0.25}
+				{Variable{0_bi}, 0.25},
+				{Variable{40_bi}, 0.25},
+				{Variable{80_bi}, 0.25},
+				{Variable{120_bi}, 0.25}
 			};
 		case Moves::Psywave:
 			return []{
@@ -708,7 +708,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 				constexpr auto min = 50_bi;
 				constexpr auto max = 150_bi + 1_bi;
 				for (auto const n : containers::integer_range(min, max)) {
-					containers::emplace_back(probabilities, Variable(n), 1.0 / static_cast<double>(max - min));
+					containers::emplace_back(probabilities, Variable{n}, 1.0 / static_cast<double>(max - min));
 				}
 				return probabilities;
 			}();

@@ -38,12 +38,6 @@ struct Team;
 struct Variable {
 	using value_type = bounded::integer<0, 150>;
 
-	constexpr Variable() = default;
-	explicit constexpr Variable(value_type const value):
-		m_value(value)
-	{
-	}
-
 	constexpr auto effect_activates() const {
 		return m_value != 0_bi;
 	}
@@ -136,9 +130,9 @@ struct Variable {
 			default: BOUNDED_ASSERT_OR_ASSUME(false);
 		}
 	}
-	
-private:
-	value_type m_value = 0_bi;
+
+	// Treat this as private. Must be public to qualify as an aggregate	
+	value_type m_value;
 };
 
 struct VariableProbability {
