@@ -62,77 +62,20 @@ struct ActivePokemon;
 struct MutableActivePokemon;
 
 // Various states a Pokemon can be in due to vanishing moves.
-struct Bouncing {
-	friend constexpr auto operator==(Bouncing, Bouncing) noexcept -> bool { return true; }
-};
-struct Digging {
-	friend constexpr auto operator==(Digging, Digging) noexcept -> bool { return true; }
-};
-struct Diving {
-	friend constexpr auto operator==(Diving, Diving) noexcept -> bool { return true; }
-};
-struct Flying {
-	friend constexpr auto operator==(Flying, Flying) noexcept -> bool { return true; }
-};
-struct ShadowForcing {
-	friend constexpr auto operator==(ShadowForcing, ShadowForcing) noexcept -> bool { return true; }
-};
+struct Bouncing {};
+struct Digging {};
+struct Diving {};
+struct Flying {};
+struct ShadowForcing {};
 
-struct BatonPassing {
-	friend constexpr auto operator==(BatonPassing, BatonPassing) noexcept -> bool { return true; }
-};
-struct ChargingUp {
-	friend constexpr auto operator==(ChargingUp, ChargingUp) noexcept -> bool { return true; }
-};
-struct Recharging {
-	friend constexpr auto operator==(Recharging, Recharging) noexcept -> bool { return true; }
-};
-struct UTurning {
-	friend constexpr auto operator==(UTurning, UTurning) noexcept -> bool { return true; }
-};
+struct BatonPassing {};
+struct ChargingUp {};
+struct Recharging {};
+struct UTurning {};
 
 struct ActivePokemonFlags {
 	auto reset_end_of_turn() -> void;
 	auto reset_switch() -> void;
-
-	friend constexpr auto operator==(ActivePokemonFlags const & lhs, ActivePokemonFlags const & rhs) {
-		return
-			lhs.lock_in == rhs.lock_in and
-			lhs.aqua_ring == rhs.aqua_ring and
-			lhs.attracted == rhs.attracted and
-			lhs.charged == rhs.charged and
-			lhs.confusion == rhs.confusion and
-			lhs.is_cursed == rhs.is_cursed and
-			lhs.defense_curled == rhs.defense_curled and
-			lhs.destiny_bond == rhs.destiny_bond and
-			lhs.disable == rhs.disable and
-			lhs.embargo == rhs.embargo and
-			lhs.encore == rhs.encore and
-			lhs.flash_fire == rhs.flash_fire and
-			lhs.has_focused_energy == rhs.has_focused_energy and
-			lhs.fully_trapped == rhs.fully_trapped and
-			lhs.heal_block == rhs.heal_block and
-			lhs.identified == rhs.identified and
-			lhs.used_imprison == rhs.used_imprison and
-			lhs.ingrained == rhs.ingrained and
-			lhs.last_used_move == rhs.last_used_move and
-			lhs.leech_seeded == rhs.leech_seeded and
-			lhs.is_loafing_turn == rhs.is_loafing_turn and
-			lhs.locked_on == rhs.locked_on and
-			lhs.magnet_rise == rhs.magnet_rise and
-			lhs.minimized == rhs.minimized and
-			lhs.mud_sport == rhs.mud_sport and
-			lhs.is_having_a_nightmare == rhs.is_having_a_nightmare and
-			lhs.partial_trap == rhs.partial_trap and
-			lhs.perish_song == rhs.perish_song and
-			lhs.slow_start == rhs.slow_start and
-			lhs.stage == rhs.stage and
-			lhs.stockpile == rhs.stockpile and
-			lhs.taunt == rhs.taunt and
-			lhs.is_tormented == rhs.is_tormented and
-			lhs.water_sport == rhs.water_sport and
-			lhs.yawn == rhs.yawn;
-	}
 
 private:
 	template<bool>
@@ -425,10 +368,6 @@ public:
 		return m_flags.random_damage();
 	}
 
-	friend auto operator==(ActivePokemonImpl const lhs, ActivePokemonImpl const rhs) {
-		return lhs.m_flags == rhs.m_flags;
-	}
-	
 	operator PokemonRef() const {
 		return m_pokemon;
 	}
