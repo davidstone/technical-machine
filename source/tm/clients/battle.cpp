@@ -25,9 +25,6 @@
 #include <tm/move/call_move.hpp>
 #include <tm/move/move.hpp>
 
-#include <tm/string_conversions/move.hpp>
-#include <tm/string_conversions/pokemon.hpp>
-
 #include <containers/algorithms/find.hpp>
 #include <containers/index_type.hpp>
 

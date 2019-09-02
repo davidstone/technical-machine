@@ -18,15 +18,15 @@
 
 #include <tm/test/ev_optimizer.hpp>
 
-#include <tm/team.hpp>
+#include <tm/move/moves.hpp>
 #include <tm/pokemon/species.hpp>
 #include <tm/stat/calculate.hpp>
+#include <tm/string_conversions/nature.hpp>
 #include <tm/team_predictor/ev_optimizer/defensive.hpp>
 #include <tm/team_predictor/ev_optimizer/ev_optimizer.hpp>
 #include <tm/team_predictor/ev_optimizer/offensive.hpp>
 #include <tm/team_predictor/ev_optimizer/speed.hpp>
-#include <tm/move/moves.hpp>
-#include <tm/string_conversions/nature.hpp>
+#include <tm/team.hpp>
 
 #include <bounded/assert.hpp>
 

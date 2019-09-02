@@ -24,6 +24,7 @@
 
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
+#include <tm/load_team_from_file.hpp>
 #include <tm/settings_file.hpp>
 
 #include <containers/vector.hpp>
@@ -34,7 +35,6 @@
 #include <boost/beast/websocket.hpp>
 
 #include <cstdint>
-#include <filesystem>
 #include <unordered_set>
 #include <random>
 #include <string>

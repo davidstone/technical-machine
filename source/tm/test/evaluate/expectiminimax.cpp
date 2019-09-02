@@ -35,8 +35,10 @@
 #include <bounded/integer.hpp>
 
 #include <containers/array/array.hpp>
+#include <containers/append.hpp>
 
 #include <iostream>
+#include <random>
 
 namespace technicalmachine {
 namespace {

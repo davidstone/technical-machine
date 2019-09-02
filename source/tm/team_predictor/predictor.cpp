@@ -28,10 +28,13 @@
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
+#include <tm/string_conversions/team.hpp>
+
 #include <tm/generation.hpp>
 #include <tm/team.hpp>
 
 #include <containers/array/array.hpp>
+#include <containers/static_vector/static_vector.hpp>
 #include <containers/vector.hpp>
 
 #include <FL/Fl.H>

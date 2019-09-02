@@ -22,7 +22,6 @@
 #include <tm/pokemon/pokemon.hpp>
 
 #include <tm/operators.hpp>
-#include <tm/range.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
@@ -32,7 +31,6 @@
 #include <containers/static_vector/static_vector.hpp>
 
 #include <stdexcept>
-#include <utility>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -96,7 +94,7 @@ struct PokemonCollection {
 		if (size(m_container) == m_real_size) {
 			throw std::runtime_error("Tried to add too many Pokemon");
 		}
-		return containers::emplace_back(m_container, m_real_size, std::forward<Args>(args)...);
+		return containers::emplace_back(m_container, m_real_size, BOUNDED_FORWARD(args)...);
 	}
 
 	void remove_active(containers::index_type<PokemonCollection> index_of_replacement);

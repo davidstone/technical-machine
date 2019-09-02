@@ -29,8 +29,6 @@
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 
-#include <tm/pokemon/pokemon.hpp>
-
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/chance_to_hit.hpp>
 #include <tm/stat/stat.hpp>

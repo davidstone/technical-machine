@@ -27,6 +27,8 @@
 
 #include <tm/evaluate/evaluate.hpp>
 
+#include <tm/string_conversions/pokemon.hpp>
+
 #include <random>
 #include <string>
 #include <string_view>

@@ -28,9 +28,6 @@
 
 #include <tm/pokemon/species_forward.hpp>
 
-#include <tm/string_conversions/move.hpp>
-#include <tm/string_conversions/pokemon.hpp>
-
 #include <tm/endofturn.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>

@@ -32,6 +32,7 @@
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 #include <tm/string_conversions/status.hpp>
+#include <tm/string_conversions/team.hpp>
 
 #include <bounded/integer.hpp>
 #include <bounded/detail/overload.hpp>
