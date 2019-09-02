@@ -143,6 +143,7 @@ add_library(tm_common STATIC
 	source/tm/string_conversions/gender.cpp
 	source/tm/string_conversions/invalid_string_conversion.cpp
 	source/tm/string_conversions/item.cpp
+	source/tm/string_conversions/lowercase_alphanumeric.cpp
 	source/tm/string_conversions/move.cpp
 	source/tm/string_conversions/nature.cpp
 	source/tm/string_conversions/pokemon.cpp
