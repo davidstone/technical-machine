@@ -26,7 +26,22 @@
 #include <bounded/assert.hpp>
 #include <bounded/optional.hpp>
 
+#include <containers/algorithms/maybe_find.hpp>
+
 namespace technicalmachine {
+
+auto OffensiveEVs::find(Nature const nature) const -> OffensiveStats const * {
+	return containers::maybe_find_if(m_container, [=](auto const value) { return value.nature == nature; });
+}
+
+struct OffensiveEVs::OffensiveData {
+private:
+	using StatType = decltype(initial_stat(std::declval<StatNames>(), std::declval<Stat>(), std::declval<Level>(), std::declval<Nature>()));
+public:
+	StatType atk;
+	StatType spa;
+};
+
 namespace {
 
 using namespace bounded::literal;

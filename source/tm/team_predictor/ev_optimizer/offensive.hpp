@@ -21,45 +21,36 @@
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
-#include <tm/stat/calculate.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/nature.hpp>
-#include <tm/stat/stat.hpp>
 
 #include <bounded/integer.hpp>
 
-#include <containers/algorithms/maybe_find.hpp>
-#include <containers/integer_range.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
+struct Stat;
+
+struct OffensiveStats {
+	constexpr explicit OffensiveStats(Nature const nature_):
+		nature(nature_)
+	{
+	}
+
+	Nature nature;
+	EV attack = EV(0_bi);
+	EV special_attack = EV(0_bi);
+};
+
 struct OffensiveEVs {
 	OffensiveEVs(Species, Level, Nature, Stat attack, Stat special_attack, bool include_attack_evs, bool include_special_attack_evs);
 
-	auto find(Nature const nature) const {
-		return containers::maybe_find_if(m_container, [=](auto const value) { return value.nature == nature; });
-	}
+	auto find(Nature const nature) const -> OffensiveStats const *;
 private:
-	struct OffensiveData {
-	private:
-		using StatType = decltype(initial_stat(std::declval<StatNames>(), std::declval<Stat>(), std::declval<Level>(), std::declval<Nature>()));
-	public:
-		StatType atk;
-		StatType spa;
-	};
+	struct OffensiveData;
 	auto equal_stats(OffensiveData initial, Species species, Level level) -> void;
-	struct OffensiveStats {
-		constexpr explicit OffensiveStats(Nature const nature_):
-			nature(nature_)
-		{
-		}
-
-		Nature nature;
-		EV attack = EV(0_bi);
-		EV special_attack = EV(0_bi);
-	};
 	containers::static_vector<OffensiveStats, size(containers::enum_range<Nature>()).value()> m_container;
 };
 
