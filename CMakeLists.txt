@@ -261,6 +261,8 @@ target_link_libraries(tm_test
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 
 set(COMMON_CLANG_COMPILE_OPTIONS
+	"-Xclang"
+	"-fconcepts-ts"
 	"-Weverything"
 	"-Werror"
 	"-Wno-c++98-compat"
@@ -395,7 +397,6 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		"-O3"
 		"-march=native"
 		"-fconcepts"
-		# Maybe do this only in a release build?
 		$<$<CONFIG:Release>:-flto=4 -flto-odr-type-merging -fuse-linker-plugin>
 		"-Wall"
 		"-Wextra"
@@ -437,7 +438,9 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		"-Wno-non-template-friend"
 		"-Wodr"
 		"-Wold-style-cast"
-		"-Woverloaded-virtual"
+		# Nothing wrong with this warning, but there is an impossible-to-reduce
+		# bug in gcc that is avoided with this warning turned off
+		# "-Woverloaded-virtual"
 		"-Wno-padded"
 		"-Wredundant-decls"
 		# -Wreturn-type warns even for a switch over an enum for which all cases
