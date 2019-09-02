@@ -15,4 +15,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tm/team.hpp>
+#pragma once
+
+#include <containers/string.hpp>
+
+namespace technicalmachine {
+
+struct Team;
+
+auto to_string(Team const & team, bool include_owner = true) -> containers::string;
+
+}	// namespace technicalmachine

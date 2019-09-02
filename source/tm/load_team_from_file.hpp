@@ -15,4 +15,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#pragma once
+
 #include <tm/team.hpp>
+
+#include <filesystem>
+#include <random>
+
+namespace technicalmachine {
+
+auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) -> Team;
+
+}	// namespace technicalmachine

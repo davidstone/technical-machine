@@ -27,12 +27,9 @@
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
-#include <containers/string.hpp>
+#include <bounded/detail/forward.hpp>
 
-#include <filesystem>
-#include <random>
 #include <string_view>
-#include <utility>
 
 namespace technicalmachine {
 struct Weather;
@@ -66,7 +63,7 @@ struct Team {
 
 	template<typename... Args>
 	Pokemon & add_pokemon(Args&&... args) {
-		return all_pokemon().add(std::forward<Args>(args)...);
+		return all_pokemon().add(BOUNDED_FORWARD(args)...);
 	}
 
 	TeamSize number_of_seen_pokemon() const {
@@ -115,16 +112,6 @@ struct Team {
 		}
 	}
 
-	friend auto operator==(Team const & lhs, Team const & rhs) {
-		return
-			lhs.all_pokemon() == rhs.all_pokemon() and
-			lhs.m_flags == rhs.m_flags and
-			lhs.screens == rhs.screens and
-			lhs.wish == rhs.wish and
-			lhs.entry_hazards == rhs.entry_hazards and
-			lhs.me == rhs.me;
-	}
-
 private:
 	friend struct Evaluate;
 	
@@ -137,9 +124,5 @@ public:
 private:
 	bool me;
 };
-
-Team load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path);
-
-containers::string to_string(Team const & team, bool include_owner = true);
 
 }	// namespace technicalmachine

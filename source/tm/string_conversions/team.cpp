@@ -15,4 +15,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include <tm/string_conversions/team.hpp>
+
 #include <tm/team.hpp>
+
+namespace technicalmachine {
+
+auto to_string(Team const & team, bool const include_owner) -> containers::string {
+	containers::string output;
+	if (include_owner) {
+		output = containers::concatenate<containers::string>(std::move(output), team.who(), std::string_view("'s team:\n"));
+	}
+	for (auto const & member : team.all_pokemon()) {
+		output = containers::concatenate<containers::string>(
+			std::move(output),
+			to_string(member),
+			containers::single_element_range('\n')
+		);
+	}
+	return output;
+}
+
+}	// namespace technicalmachine
