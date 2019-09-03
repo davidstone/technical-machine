@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <bounded/detail/construct_destroy.hpp>
 #include <bounded/integer.hpp>
 
 #include <containers/algorithms/transform.hpp>
