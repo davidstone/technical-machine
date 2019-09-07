@@ -1,6 +1,0 @@
-syntax: glob
-
-build*
-.vscode
-teams/foe
-test/temp-battles
