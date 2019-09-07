@@ -1,0 +1,3 @@
+[submodule "bounded_integer"]
+	path = bounded_integer
+	url = https://bitbucket.org/davidstone/bounded_integer
