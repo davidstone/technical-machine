@@ -20,23 +20,15 @@
 
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
 #include <tm/move/shared.hpp>
-
-#include <tm/string_conversions/move.hpp>
 
 #include <tm/operators.hpp>
 
-#include <bounded/assert.hpp>
-#include <bounded/integer.hpp>
-
-#include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/concatenate_view.hpp>
 #include <containers/algorithms/transform.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
-using namespace bounded::literal;
 
 using RegularMoveContainer = containers::static_vector<Move, max_moves_per_pokemon.value()>;
 
@@ -88,10 +80,7 @@ public:
 		return containers::concatenate_view_sentinel();
 	}
 
-	auto & emplace_back(Move const move) {
-		BOUNDED_ASSERT(containers::none_equal(m_regular, move.name()));
-		return containers::emplace_back(m_regular, move);
-	}
+	auto emplace_back(Move const move) -> Move &;
 
 	template<typename... MaybePP>
 	auto & emplace_back(Generation const generation, Moves const move, MaybePP... maybe_pp) {
@@ -110,25 +99,7 @@ private:
 using ::containers::detail::common::compare;
 using ::containers::detail::common::operator==;
 
-template<typename... MaybePP>
-auto add_seen_move(MoveContainer & container, Generation const generation, Moves const move, MaybePP... pp) {
-	if (move == Moves::Pass or move == Moves::Struggle or move == Moves::Hit_Self) {
-		return;
-	}
-	if (containers::any_equal(container, move)) {
-		return;
-	}
-	if (size(container.regular()) == max_moves_per_pokemon) {
-		auto message = std::string("Tried to add too many moves. Already have: ");
-		for (auto const existing_move : container.regular()) {
-			message += to_string(existing_move.name());
-			message += ", ";
-		}
-		message += "-- Tried to add ";
-		message += to_string(move);
-		throw std::runtime_error(message);
-	}
-	containers::emplace_back(container, generation, move, pp...);
-}
+auto add_seen_move(MoveContainer &, Generation, Moves) -> void;
+auto add_seen_move(MoveContainer &, Generation, Moves, PP::pp_ups_type) -> void;
 
 }	// namespace technicalmachine

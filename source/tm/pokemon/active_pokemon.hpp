@@ -50,10 +50,8 @@
 #include <tm/rational.hpp>
 #include <tm/weather.hpp>
 
-#include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 #include <bounded/detail/variant/variant.hpp>
-#include <bounded/detail/overload.hpp>
 
 #include <variant>
 
@@ -78,6 +76,13 @@ struct ActivePokemonFlags {
 	auto reset_switch() -> void;
 
 private:
+	auto is_baton_passing() const -> bool;
+	auto is_charging_up() const -> bool;
+	auto is_locked_in_by_move() const -> bool;
+	auto switch_decision_required(Pokemon const & pokemon) const -> bool;
+	auto is_uproaring() const -> bool;
+	auto vanish_doubles_power(Moves move_name) const -> bool;
+
 	template<bool>
 	friend struct ActivePokemonImpl;
 	friend struct MutableActivePokemon;
@@ -180,7 +185,7 @@ public:
 	}
 
 	auto is_baton_passing() const -> bool {
-		return bounded::holds_alternative(m_flags.lock_in, bounded::detail::types<BatonPassing>{});
+		return m_flags.is_baton_passing();
 	}
 
 	auto cannot_be_koed() const -> bool {
@@ -192,7 +197,7 @@ public:
 	}
 
 	auto is_charging_up() const -> bool {
-		return bounded::holds_alternative(m_flags.lock_in, bounded::detail::types<ChargingUp>{});
+		return m_flags.is_charging_up();
 	}
 
 	auto is_confused() const -> bool {
@@ -293,7 +298,7 @@ public:
 	}
 
 	auto is_locked_in_by_move() const -> bool {
-		return !bounded::holds_alternative(m_flags.lock_in, bounded::detail::types<std::monostate>{});
+		return m_flags.is_locked_in_by_move();
 	}
 
 	auto is_roosting() const -> bool {
@@ -321,11 +326,7 @@ public:
 	}
 
 	auto switch_decision_required() const -> bool {
-		return bounded::visit(m_flags.lock_in, bounded::overload(
-			[](BatonPassing) { return true; },
-			[](UTurning) { return true; },
-			[&](auto const &) { return get_hp(m_pokemon) == 0_bi; }
-		));
+		return m_flags.switch_decision_required(m_pokemon);
 	}
 
 	auto fully_trapped() const -> bool {
@@ -345,23 +346,11 @@ public:
 	}
 
 	auto is_uproaring() const -> bool {
-		return bounded::holds_alternative(m_flags.lock_in, bounded::detail::types<UproarCounter>{});
+		return m_flags.is_uproaring();
 	}
 
 	auto vanish_doubles_power(Moves const move_name) const -> bool {
-		auto const & variant = m_flags.lock_in;
-		switch (move_name) {
-		case Moves::Earthquake:
-		case Moves::Magnitude:
-			return bounded::holds_alternative(variant, bounded::detail::types<Digging>{});
-		case Moves::Gust:
-		case Moves::Twister:
-			return bounded::holds_alternative(variant, bounded::detail::types<Bouncing>{}) or bounded::holds_alternative(variant, bounded::detail::types<Flying>{});
-		case Moves::Surf:
-			return bounded::holds_alternative(variant, bounded::detail::types<Diving>{});
-		default:
-			return false;
-		}
+		return m_flags.vanish_doubles_power(move_name);
 	}
 
 	auto random_damage_multiplier() const {
@@ -377,6 +366,8 @@ protected:
 	FlagsRef m_flags;
 };
 
+extern template struct ActivePokemonImpl<true>;
+extern template struct ActivePokemonImpl<false>;
 
 // A reference to the currently active Pokemon
 struct ActivePokemon : ActivePokemonImpl<true> {
@@ -417,15 +408,11 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto attract() const {
 		m_flags.attracted = true;
 	}
-	auto baton_pass() const {
-		m_flags.lock_in = BatonPassing{};
-	}
+	auto baton_pass() const -> void;
 	auto charge() const {
 		m_flags.charged = true;
 	}
-	auto use_charge_up_move() const {
-		m_flags.lock_in = ChargingUp{};
-	}
+	auto use_charge_up_move() const -> void;
 	auto confuse() const -> void {
 		if (blocks_confusion(get_ability(*this))) {
 			return;
@@ -499,26 +486,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto hit_with_leech_seed() const {
 		m_flags.leech_seeded = true;
 	}
-	auto advance_lock_in(bool const ending) const -> void {
-		bounded::visit(m_flags.lock_in, bounded::overload(
-			[&](Rampage & rampage) {
-				if (ending) {
-					m_flags.lock_in = std::monostate{};
-					confuse();
-				} else {
-					rampage.advance_one_turn();
-				}
-			},
-			[&](UproarCounter & uproar) {
-				if (ending) {
-					m_flags.lock_in = std::monostate{};
-				} else {
-					uproar.advance_one_turn();
-				}
-			},
-			[](auto const &) {}
-		));
-	}
+	auto advance_lock_in(bool const ending) const -> void;
 	auto use_lock_on() const {
 		m_flags.locked_on = true;
 	}
@@ -561,21 +529,9 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto break_protect() const {
 		m_flags.damage_blocker.break_protect();
 	}
-	auto activate_rampage() const {
-		// TODO: Have it be active when it is constructed
-		auto rampage = Rampage{};
-		rampage.activate();
-		m_flags.lock_in = rampage;
-	}
-	auto recharge() const -> bool {
-		return bounded::visit(m_flags.lock_in, bounded::overload(
-			[&](Recharging) { m_flags.lock_in = std::monostate{}; return true; },
-			[](auto const &) { return false; }
-		));
-	}
-	auto use_recharge_move() const {
-		m_flags.lock_in = Recharging{};
-	}
+	auto activate_rampage() const -> void;
+	auto recharge() const -> bool;
+	auto use_recharge_move() const -> void;
 	auto roost() const {
 		m_flags.is_roosting = true;
 	}
@@ -603,17 +559,8 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto torment() const {
 		m_flags.is_tormented = true;
 	}
-	auto u_turn() const {
-		m_flags.lock_in = UTurning{};
-	}
-	auto use_uproar() const {
-		bounded::visit(m_flags.lock_in, bounded::overload(
-			// TODO: Have it be active when it is constructed
-			[&](std::monostate) { m_flags.lock_in.emplace(bounded::detail::types<UproarCounter>{}).advance_one_turn(); },
-			[](UproarCounter & uproar) { uproar.advance_one_turn(); },
-			[](auto const &) { BOUNDED_ASSERT_OR_ASSUME(false); }
-		));
-	}
+	auto u_turn() const -> void;
+	auto use_uproar() const -> void;
 	auto activate_water_sport() const {
 		m_flags.water_sport = true;
 	}
@@ -628,48 +575,15 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 
 	// Returns whether the Pokemon ends up in a Vanished state
-	auto bounce() const {
-		return use_vanish_move<Bouncing>();
-	}
-	auto dig() const {
-		return use_vanish_move<Digging>();
-	}
-	auto dive() const {
-		return use_vanish_move<Diving>();
-	}
-	auto fly() const {
-		return use_vanish_move<Flying>();
-	}
-	auto shadow_force() const {
-		return use_vanish_move<ShadowForcing>();
-	}
+	auto bounce() const -> bool;
+	auto dig() const -> bool;
+	auto dive() const -> bool;
+	auto fly() const -> bool;
+	auto shadow_force() const -> bool;
 
+	auto use_bide(Pokemon & target) const -> void;
 
-	auto use_bide(Pokemon & target) const -> void {
-		bounded::visit(m_flags.lock_in, bounded::overload(
-			[&](auto const &) { m_flags.lock_in = Bide{}; },
-			[&](Bide & bide) {
-				if (auto const damage = bide.advance_one_turn()) {
-					get_hp(target) -= *damage * 2_bi;
-					m_flags.lock_in = std::monostate{};
-				}
-			}
-		));
-	}
-
-	auto direct_damage(damage_type const damage) const -> void {
-		if (m_flags.substitute) {
-			m_flags.substitute.damage(damage);
-		} else {
-			get_hp(*this) -= damage;
-			m_flags.damaged = true;
-			m_flags.direct_damage_received = damage;
-			bounded::visit(m_flags.lock_in, bounded::overload(
-				[=](Bide & bide) { bide.add_damage(damage); },
-				[](auto const &) {}
-			));
-		}
-	}
+	auto direct_damage(damage_type const damage) const -> void;
 	auto indirect_damage(damage_type const damage) const {
 		get_hp(*this) -= damage;
 		m_flags.damaged = true;
@@ -679,15 +593,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 	auto unsuccessfully_use_move(Moves const move) const {
 		m_flags.last_used_move.unsucessful_move(move);
-	}
-	
-private:
-	template<typename T>
-	auto use_vanish_move() const -> bool {
-		return bounded::visit(m_flags.lock_in, bounded::overload(
-			[&](T) { m_flags.lock_in = std::monostate{}; return false; },
-			[&](auto const &) { m_flags.lock_in = T{}; return true; }
-		));
 	}
 };
 

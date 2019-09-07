@@ -17,3 +17,55 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/move/container.hpp>
+#include <tm/move/moves.hpp>
+
+#include <tm/string_conversions/move.hpp>
+
+#include <containers/algorithms/all_any_none.hpp>
+
+#include <bounded/assert.hpp>
+
+namespace technicalmachine {
+
+namespace {
+
+template<typename... MaybePP>
+auto add_seen_move_impl(MoveContainer & container, Generation const generation, Moves const move, MaybePP... pp) {
+	if (move == Moves::Pass or move == Moves::Struggle or move == Moves::Hit_Self) {
+		return;
+	}
+	if (containers::any_equal(container, move)) {
+		return;
+	}
+	if (size(container.regular()) == max_moves_per_pokemon) {
+		auto message = std::string("Tried to add too many moves. Already have: ");
+		for (auto const existing_move : container.regular()) {
+			message += to_string(existing_move.name());
+			message += ", ";
+		}
+		message += "-- Tried to add ";
+		message += to_string(move);
+		throw std::runtime_error(message);
+	}
+	containers::emplace_back(container, generation, move, pp...);
+}
+
+
+} // namespace
+
+auto MoveContainer::emplace_back(Move const move) -> Move & {
+	BOUNDED_ASSERT(containers::none_equal(m_regular, move.name()));
+	return containers::emplace_back(m_regular, move);
+}
+
+
+
+auto add_seen_move(MoveContainer & container, Generation const generation, Moves const move) -> void {
+	add_seen_move_impl(container, generation, move);
+}
+
+auto add_seen_move(MoveContainer & container, Generation const generation, Moves const move, PP::pp_ups_type pp_ups) -> void {
+	add_seen_move_impl(container, generation, move, pp_ups);
+}
+
+} // namespace technicalmachine
