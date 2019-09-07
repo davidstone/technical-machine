@@ -32,7 +32,7 @@ struct Weather;
 
 using StaticVectorMove = containers::static_vector<
 	Moves,
-	bounded::detail::normalize<std::numeric_limits<MoveSize>::max().value()>
+	bounded::detail::normalize<MoveSize::max().value()>
 >;
 
 auto legal_selections(Team const & user, ActivePokemon other, Weather weather) -> StaticVectorMove;
