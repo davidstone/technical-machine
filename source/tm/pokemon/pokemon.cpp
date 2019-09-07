@@ -93,15 +93,6 @@ auto Pokemon::has_been_seen() const -> bool {
 	return m_has_been_seen;
 }
 
-bool illegal_inequality_check(Pokemon const lhs, Pokemon const rhs) {
-	if (lhs.m_species != rhs.m_species)
-		return true;
-	return lhs.m_ability == rhs.m_ability and
-			lhs.m_gender == rhs.m_gender and
-			lhs.m_nature == rhs.m_nature and
-			lhs.m_level == rhs.m_level;
-}
-
 namespace {
 
 auto status_can_apply(Statuses const status, Pokemon const user, Pokemon const target, Weather const weather, bool const uproar) {

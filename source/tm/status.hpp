@@ -57,30 +57,17 @@ namespace technicalmachine {
 
 struct Status {
 private:
-	struct Clear {
-		friend constexpr auto operator==(Clear, Clear) noexcept -> bool { return true; }
-	};
-	struct Burn {
-		friend constexpr auto operator==(Burn, Burn) noexcept -> bool { return true; }
-	};
-	struct Freeze {
-		friend constexpr auto operator==(Freeze, Freeze) noexcept -> bool { return true; }
-	};
-	struct Paralysis {
-		friend constexpr auto operator==(Paralysis, Paralysis) noexcept -> bool { return true; }
-	};
-	struct Poison {
-		friend constexpr auto operator==(Poison, Poison) noexcept -> bool { return true; }
-	};
+	struct Clear {};
+	struct Burn {};
+	struct Freeze {};
+	struct Paralysis {};
+	struct Poison {};
 	struct Toxic {
 		constexpr auto increment() {
 			++m_counter;
 		}
 		constexpr auto ratio_drained() const {
 			return rational(-m_counter, 16_bi);
-		}
-		friend constexpr auto operator==(Toxic const lhs, Toxic const rhs) noexcept -> bool {
-			return lhs.m_counter == rhs.m_counter;
 		}
 	private:
 		// Number of turns this Pokemon has already taken Toxic damage (or
@@ -89,15 +76,9 @@ private:
 	};
 	struct Sleep {
 		bounded::clamped_integer<0, 4> turns_slept = 0_bi;
-		friend constexpr auto operator==(Sleep const lhs, Sleep const rhs) noexcept -> bool {
-			return lhs.turns_slept == rhs.turns_slept;
-		}
 	};
 	struct Rest {
 		bounded::clamped_integer<0, 2> turns_slept = 0_bi;
-		friend constexpr auto operator==(Rest const lhs, Rest const rhs) noexcept -> bool {
-			return lhs.turns_slept == rhs.turns_slept;
-		}
 	};
 
 public:
@@ -137,10 +118,6 @@ public:
 	// Pokemon is not asleep or frozen or if, due to the sleep counter, they
 	// will definitely not awaken.
 	auto probability_of_clearing(Ability ability) const -> double;
-
-	friend constexpr auto operator==(Status const lhs, Status const rhs) {
-		return lhs.m_state == rhs.m_state;
-	}
 
 private:
 	using State = bounded::variant<

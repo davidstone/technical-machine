@@ -88,24 +88,7 @@ struct Pokemon {
 	void change_type(Type new_type);
 	auto has_been_seen() const -> bool;
 
-	// Species clause is assumed, and Pokemon will only be compared for equality
-	// on the same team, so the same species implies many other things are the
-	// same
-	friend auto operator==(Pokemon const lhs, Pokemon const rhs) {
-		BOUNDED_ASSERT(illegal_inequality_check(lhs, rhs));
-		return
-			lhs.m_moves == rhs.m_moves and
-			lhs.m_species == rhs.m_species and
-			lhs.m_status == rhs.m_status and
-			lhs.has_been_seen() == rhs.has_been_seen() and
-			lhs.m_item == rhs.m_item and
-			get_hp(lhs).current() == get_hp(rhs).current();
-	}
-
-
 private:
-	friend bool illegal_inequality_check(Pokemon lhs, Pokemon rhs);
-	
 	void set_status(Statuses const status) {
 		if (clears_status(m_item, status)) {
 			m_item = Item::No_Item;
