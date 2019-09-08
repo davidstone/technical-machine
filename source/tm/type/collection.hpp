@@ -25,8 +25,6 @@
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/array/array.hpp>
 
-#include <type_traits>
-
 namespace technicalmachine {
 struct ActivePokemon;
 struct MutableActivePokemon;
