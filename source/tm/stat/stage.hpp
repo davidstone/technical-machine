@@ -36,21 +36,21 @@ struct Stage {
 	using size_type = std::decay_t<decltype(number_of_stats)>;
 	using container_type = containers::array<value_type, number_of_stats.value()>;
 
-	constexpr Stage() noexcept:
+	constexpr Stage():
 		m_stages(containers::make_array_n(number_of_stats, static_cast<value_type>(0_bi)))
 	{
 	}
 
-	friend constexpr auto begin(Stage const & stage) noexcept {
+	friend constexpr auto begin(Stage const & stage) {
 		return begin(stage.m_stages);
 	}
-	friend constexpr auto begin(Stage & stage) noexcept {
+	friend constexpr auto begin(Stage & stage) {
 		return begin(stage.m_stages);
 	}
-	friend constexpr auto end(Stage const & stage) noexcept {
+	friend constexpr auto end(Stage const & stage) {
 		return end(stage.m_stages);
 	}
-	friend constexpr auto end(Stage & stage) noexcept {
+	friend constexpr auto end(Stage & stage) {
 		return end(stage.m_stages);
 	}
 

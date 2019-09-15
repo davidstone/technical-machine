@@ -48,7 +48,7 @@ struct Disable {
 		}
 	}
 
-	friend constexpr auto operator==(Disable const lhs, Disable const rhs) noexcept {
+	friend constexpr auto operator==(Disable const lhs, Disable const rhs) {
 		return
 			lhs.m_turns_disabled == rhs.m_turns_disabled and
 			lhs.m_disabled_move == rhs.m_disabled_move;

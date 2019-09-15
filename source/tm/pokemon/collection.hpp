@@ -46,16 +46,16 @@ struct PokemonCollection {
 	{
 	}
 
-	friend auto begin(PokemonCollection const & collection) noexcept {
+	friend auto begin(PokemonCollection const & collection) {
 		return begin(collection.m_container);
 	}
-	friend auto begin(PokemonCollection & collection) noexcept {
+	friend auto begin(PokemonCollection & collection) {
 		return begin(collection.m_container);
 	}
-	friend auto end(PokemonCollection const & collection) noexcept {
+	friend auto end(PokemonCollection const & collection) {
 		return end(collection.m_container);
 	}
-	friend auto end(PokemonCollection & collection) noexcept {
+	friend auto end(PokemonCollection & collection) {
 		return end(collection.m_container);
 	}
 	

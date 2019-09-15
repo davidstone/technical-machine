@@ -47,7 +47,7 @@ public:
 		m_hp -= damage_done;
 	}
 
-	constexpr auto hp() const noexcept -> hp_type {
+	constexpr auto hp() const -> hp_type {
 		return m_hp;
 	}
 

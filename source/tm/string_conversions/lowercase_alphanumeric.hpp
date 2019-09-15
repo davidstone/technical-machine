@@ -27,7 +27,7 @@
 
 namespace technicalmachine {
 
-inline constexpr auto lowercase_alphanumeric = [](std::string_view input) noexcept {
+inline constexpr auto lowercase_alphanumeric = [](std::string_view input) {
 	// Not portable because it does not respect character encodings.
 	// We do not want to use cctype functions because we do not want to
 	// use locales.

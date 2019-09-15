@@ -32,22 +32,22 @@ struct Screens {
 		m_tailwind.decrement();
 	}
 
-	constexpr auto light_screen() const noexcept {
+	constexpr auto light_screen() const {
 		return m_light_screen;
 	}
-	constexpr auto reflect() const noexcept {
+	constexpr auto reflect() const {
 		return m_reflect;
 	}
-	constexpr auto lucky_chant() const noexcept {
+	constexpr auto lucky_chant() const {
 		return m_lucky_chant;
 	}
-	constexpr auto mist() const noexcept {
+	constexpr auto mist() const {
 		return m_mist;
 	}
-	constexpr auto safeguard() const noexcept {
+	constexpr auto safeguard() const {
 		return m_safeguard;
 	}
-	constexpr auto tailwind() const noexcept {
+	constexpr auto tailwind() const {
 		return m_tailwind;
 	}
 

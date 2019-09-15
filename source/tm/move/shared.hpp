@@ -51,7 +51,7 @@ public:
 
 	static constexpr auto generation = Generation::four;
 
-	constexpr explicit SharedMovesIterator(underlying_index_type const other) noexcept:
+	constexpr explicit SharedMovesIterator(underlying_index_type const other):
 		m_index(other)
 	{
 	}
@@ -76,10 +76,10 @@ public:
 		return lhs.m_index - rhs.m_index;
 	}
 
-	friend constexpr auto compare(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
+	friend constexpr auto compare(SharedMovesIterator const lhs, SharedMovesIterator const rhs) {
 		return compare(lhs.m_index, rhs.m_index);
 	}
-	friend constexpr auto operator==(SharedMovesIterator const lhs, SharedMovesIterator const rhs) noexcept {
+	friend constexpr auto operator==(SharedMovesIterator const lhs, SharedMovesIterator const rhs) {
 		return lhs.m_index == rhs.m_index;
 	}
 

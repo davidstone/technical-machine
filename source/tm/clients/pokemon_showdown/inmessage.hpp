@@ -77,10 +77,10 @@ struct InMessage {
 	{
 	}
 
-	constexpr auto room() const noexcept {
+	constexpr auto room() const {
 		return m_room;
 	}
-	constexpr auto type() const noexcept {
+	constexpr auto type() const {
 		return m_type;
 	}
 	template<typename Separator>
@@ -90,7 +90,7 @@ struct InMessage {
 	constexpr auto next() {
 		return m_view.next();
 	}
-	constexpr auto remainder() const noexcept {
+	constexpr auto remainder() const {
 		return m_view.remainder();
 	}
 
