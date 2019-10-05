@@ -129,7 +129,7 @@ constexpr auto early_bird_probability(SleepCounter const turns_slept) {
 }
 
 constexpr auto non_early_bird_probability(SleepCounter const turns_slept) {
-	return (turns_slept == 0_bi) ? 0.0 : (1.0 / static_cast<double>(SleepCounter::max() + 1_bi - turns_slept));
+	return (turns_slept == 0_bi) ? 0.0 : (1.0 / static_cast<double>(bounded::max_value<SleepCounter> + 1_bi - turns_slept));
 }
 
 constexpr auto awaken_probability(SleepCounter const turns_slept, Ability const ability) {
@@ -144,7 +144,7 @@ constexpr auto awaken_probability(SleepCounter const turns_slept, Ability const 
 auto Status::probability_of_clearing(Ability const ability) const -> double {
 	return bounded::visit(m_state, bounded::overload(
 		[=](Sleep const sleep) { return awaken_probability(sleep.turns_slept, ability); },
-		[](Rest const sleep) { return sleep.turns_slept == sleep.turns_slept.max() ? 1.0 : 0.0; },
+		[](Rest const sleep) { return sleep.turns_slept == bounded::max_value<decltype(sleep.turns_slept)> ? 1.0 : 0.0; },
 		[](Freeze) { return 0.2; },
 		[](auto) { return 0.0; }
 	));

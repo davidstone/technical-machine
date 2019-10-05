@@ -562,7 +562,7 @@ Species id_to_species(SpeciesIDs const species) {
 		case 477: return Species::Dusknoir;
 		case 478: return Species::Froslass;
 		case 479:
-			static_assert(species.forme.max() <= 5_bi);
+			static_assert(bounded::max_value<decltype(species.forme)> <= 5_bi);
 			switch (species.forme.value()) {
 				case 0: return Species::Rotom;
 				case 1: return Species::Rotom_Mow;

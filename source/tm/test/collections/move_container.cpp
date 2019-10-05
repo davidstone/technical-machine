@@ -45,7 +45,7 @@ using namespace bounded::literal;
 constexpr auto generation = Generation::four;
 
 auto create_shared_moves(TeamSize const team_size) {
-	auto shared = containers::static_vector<Moves, static_cast<int>(number_of_weird_moves + TeamSize::max())>{
+	auto shared = containers::static_vector<Moves, static_cast<int>(number_of_weird_moves + bounded::max_value<TeamSize>)>{
 		Moves::Pass,
 		Moves::Struggle,
 	};

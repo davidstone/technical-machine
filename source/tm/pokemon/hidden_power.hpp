@@ -82,7 +82,7 @@ private:
 			case 13: return Type::Ice;
 			case 14: return Type::Dragon;
 			case 15: return Type::Dark;
-			default: static_assert(index.max() == 15); BOUNDED_ASSERT_OR_ASSUME(false);
+			default: static_assert(bounded::max_value<decltype(index)> == 15); BOUNDED_ASSERT_OR_ASSUME(false);
 		}
 	}
 

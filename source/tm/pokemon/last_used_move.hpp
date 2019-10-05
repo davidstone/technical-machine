@@ -49,22 +49,22 @@ struct LastUsedMove {
 	constexpr auto fury_cutter_power() const {
 		// 10 * 2 ^ n
 		auto const result = 10_bi << bounded::min(m_consecutive_successes, 4_bi);
-		static_assert(result.min() == 10_bi);
-		static_assert(result.max() == 160_bi);
+		static_assert(bounded::min_value<decltype(result)> == 10_bi);
+		static_assert(bounded::max_value<decltype(result)> == 160_bi);
 		return result;
 	}
 
 	constexpr auto momentum_move_power() const {
 		auto const result = 30_bi << bounded::min(m_consecutive_successes, 4_bi);
-		static_assert(result.min() == 30_bi);
-		static_assert(result.max() == 480_bi);
+		static_assert(bounded::min_value<decltype(result)> == 30_bi);
+		static_assert(bounded::max_value<decltype(result)> == 480_bi);
 		return result;
 	}
 
 	constexpr auto triple_kick_power() const {
 		auto const result = 10_bi * bounded::min(m_consecutive_successes + 1_bi, 3_bi);
-		static_assert(result.min() == 10_bi);
-		static_assert(result.max() == 30_bi);
+		static_assert(bounded::min_value<decltype(result)> == 10_bi);
+		static_assert(bounded::max_value<decltype(result)> == 30_bi);
 		return result;
 	}
 

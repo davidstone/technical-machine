@@ -58,8 +58,8 @@ public:
 private:
 	// TODO: Use change_policy
 	bounded::clamped_integer<
-		static_cast<int>(hp_type::min()),
-		static_cast<int>(hp_type::max())
+		static_cast<int>(bounded::min_value<hp_type>),
+		static_cast<int>(bounded::max_value<hp_type>)
 	> m_hp = 0_bi;
 };
 

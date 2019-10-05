@@ -234,8 +234,8 @@ Evaluate::Evaluate() {
 
 	// TODO: Use change_policy
 	using underlying_type = bounded::checked_integer<
-		static_cast<int>(value_type::min()),
-		static_cast<int>(value_type::max())
+		static_cast<int>(bounded::min_value<value_type>),
+		static_cast<int>(bounded::max_value<value_type>)
 	>;
 
 	m_light_screen = pt.get<underlying_type>("light_screen", 0_bi);
