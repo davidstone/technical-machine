@@ -32,7 +32,7 @@ using namespace bounded::literal;
 struct Stage {
 	using value_type = bounded::clamped_integer<-6, 6>;
 	using boost_type = bounded::checked_integer<-3, 12>;
-	static constexpr auto number_of_stats = std::numeric_limits<StatNames>::max() + 1_bi;
+	static constexpr auto number_of_stats = bounded::constant<bounded::max_value<StatNames>> + 1_bi;
 	using size_type = std::decay_t<decltype(number_of_stats)>;
 	using container_type = containers::array<value_type, number_of_stats.value()>;
 
@@ -55,10 +55,10 @@ struct Stage {
 	}
 
 	auto operator[](StatNames index) const -> value_type const & {
-		return m_stages[index];
+		return at(m_stages, index);
 	}
 	auto operator[](StatNames index) -> value_type & {
-		return m_stages[index];
+		return at(m_stages, index);
 	}
 private:
 	container_type m_stages;

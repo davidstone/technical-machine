@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include <tm/enum.hpp>
-
 #include <bounded/integer.hpp>
 
 #include <cstdint>
@@ -778,10 +776,12 @@ enum class Moves : uint16_t {
 };
 
 }	// namespace technicalmachine
-
-namespace std {
+namespace bounded {
 
 template<>
-struct numeric_limits<technicalmachine::Moves> : technicalmachine::enum_numeric_limits<technicalmachine::Moves::Fusion_Bolt> {};
+inline constexpr auto min_value<technicalmachine::Moves> = technicalmachine::Moves();
 
-}	// namespace std
+template<>
+inline constexpr auto max_value<technicalmachine::Moves> = technicalmachine::Moves::Fusion_Bolt;
+
+}	// namespace bounded

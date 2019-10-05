@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include <tm/enum.hpp>
 #include <tm/status.hpp>
 
 #include <bounded/integer.hpp>
@@ -118,12 +117,15 @@ enum class Item : uint16_t {
 };
 
 } // namespace technicalmachine
-namespace std {
+namespace bounded {
 
 template<>
-struct numeric_limits<technicalmachine::Item> : technicalmachine::enum_numeric_limits<technicalmachine::Item::Zoom_Lens> {};
+inline constexpr auto min_value<technicalmachine::Item> = technicalmachine::Item();
 
-}	// namespace std
+template<>
+inline constexpr auto max_value<technicalmachine::Item> = technicalmachine::Item::Zoom_Lens;
+
+}	// namespace bounded
 namespace technicalmachine {
 
 constexpr bool allows_switching(Item const item) {

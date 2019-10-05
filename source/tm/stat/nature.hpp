@@ -19,12 +19,13 @@
 
 #include <tm/stat/stat_names.hpp>
 
-#include <tm/enum.hpp>
 #include <tm/rational.hpp>
 
 #include <bounded/integer.hpp>
 
 #include <cstdint>
+#include <functional>
+#include <type_traits>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -135,14 +136,24 @@ constexpr auto boost(Nature const nature, StatNames const stat) {
 }
 
 }	// namespace technicalmachine
+namespace bounded {
 
+template<>
+inline constexpr auto min_value<technicalmachine::Nature> = technicalmachine::Nature();
+
+template<>
+inline constexpr auto max_value<technicalmachine::Nature> = technicalmachine::Nature::Timid;
+
+}	// namespace bounded
 namespace std {
 
 template<>
-struct hash<technicalmachine::Nature> : public technicalmachine::std_hash<technicalmachine::Nature> {};
-
-template<>
-struct numeric_limits<technicalmachine::Nature> : technicalmachine::enum_numeric_limits<technicalmachine::Nature::Timid> {};
+struct hash<technicalmachine::Nature> {
+	auto operator()(technicalmachine::Nature const e) const {
+		using T = std::underlying_type_t<technicalmachine::Nature>;
+		return std::hash<T>{}(static_cast<T>(e));
+	}
+};
 
 }	// namespace std
 

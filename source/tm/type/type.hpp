@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include <tm/enum.hpp>
 #include <tm/status.hpp>
 
 namespace technicalmachine {
@@ -48,12 +47,15 @@ enum class Type : uint8_t {
 };
 
 } // namespace technicalmachine
-namespace std {
+namespace bounded {
 
 template<>
-struct numeric_limits<technicalmachine::Type> : technicalmachine::enum_numeric_limits<technicalmachine::Type::Typeless> {};
+inline constexpr auto min_value<technicalmachine::Type> = technicalmachine::Type();
 
-}	// namespace std
+template<>
+inline constexpr auto max_value<technicalmachine::Type> = technicalmachine::Type::Typeless;
+
+}	// namespace bounded
 namespace technicalmachine {
 
 auto get_type(Generation generation, Moves move, Type hidden_power) -> Type;

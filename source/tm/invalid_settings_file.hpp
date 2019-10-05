@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <tm/enum.hpp>
+#include <bounded/integer.hpp>
 
 #include <filesystem>
 #include <stdexcept>
@@ -35,12 +35,12 @@ struct InvalidSettingsFile : std::runtime_error {
 };
 
 }	// namespace technicalmachine
-
-namespace std {
+namespace bounded {
 
 template<>
-struct numeric_limits<technicalmachine::InvalidSettingsFile::Problem> :
-	technicalmachine::enum_numeric_limits<technicalmachine::InvalidSettingsFile::Problem::invalid_data> {
-};
+inline constexpr auto min_value<technicalmachine::InvalidSettingsFile::Problem> = technicalmachine::InvalidSettingsFile::Problem();
 
-}	// namespace std
+template<>
+inline constexpr auto max_value<technicalmachine::InvalidSettingsFile::Problem> = technicalmachine::InvalidSettingsFile::Problem::invalid_data;
+
+}	// namespace bounded

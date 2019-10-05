@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include <tm/enum.hpp>
-
 #include <bounded/integer.hpp>
 
 #include <cstdint>
@@ -31,13 +29,18 @@ namespace technicalmachine {
 enum class Gender : uint8_t { female, genderless, male };
 
 } // namespace technicalmachine
-namespace std {
+namespace bounded {
 
 template<>
-struct numeric_limits<technicalmachine::Gender> : technicalmachine::enum_numeric_limits<technicalmachine::Gender::male> {};
+inline constexpr auto min_value<technicalmachine::Gender> = technicalmachine::Gender();
 
-}	// namespace std
+template<>
+inline constexpr auto max_value<technicalmachine::Gender> = technicalmachine::Gender::male;
+
+}	// namespace bounded
 namespace technicalmachine {
+
+using namespace bounded::literal;
 
 constexpr bounded::integer<-1, 1> multiplier(Gender const my, Gender const foe) {
 	if (my == Gender::genderless or foe == Gender::genderless) {

@@ -46,7 +46,7 @@ auto load_stats_from_file(std::filesystem::path const & file_name) {
 		auto const position = line.find(delimiter);
 		auto const species = from_string<Species>(line.substr(0, position));
 		auto const value = boost::lexical_cast<T>(line.substr(position + 1));
-		overall[species] = value;
+		at(overall, species) = value;
 	}
 	return overall;
 }

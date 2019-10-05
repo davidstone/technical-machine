@@ -171,7 +171,6 @@ add_library(tm_common STATIC
 	source/tm/block.cpp
 	source/tm/endofturn.cpp
 	source/tm/entry_hazards.cpp
-	source/tm/enum.cpp
 	source/tm/gender.cpp
 	source/tm/generation.cpp
 	source/tm/heal.cpp
@@ -363,9 +362,6 @@ if(MSVC)
 	endif()
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-	target_link_libraries(tm_common
-		c++fs
-	)
 	target_link_libraries(ai
 		pthread
 	)

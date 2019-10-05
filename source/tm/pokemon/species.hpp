@@ -18,7 +18,8 @@
 #pragma once
 
 #include <tm/pokemon/species_forward.hpp>
-#include <tm/enum.hpp>
+
+#include <bounded/integer.hpp>
 
 #include <cstdint>
 
@@ -727,10 +728,12 @@ enum class Species : uint16_t {
 constexpr auto number_of_species = static_cast<unsigned>(Species::Genesect) + 1;
 
 }	// namespace technicalmachine
-
-namespace std {
+namespace bounded {
 
 template<>
-struct numeric_limits<technicalmachine::Species> : technicalmachine::enum_numeric_limits<technicalmachine::Species::Genesect> {};
+inline constexpr auto min_value<technicalmachine::Species> = technicalmachine::Species();
 
-}	// namespace std
+template<>
+inline constexpr auto max_value<technicalmachine::Species> = technicalmachine::Species::Genesect;
+
+} // namespace bounded

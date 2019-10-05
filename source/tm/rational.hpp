@@ -52,10 +52,10 @@ public:
 	}
 	
 	template<typename N, typename D> requires(
-		std::numeric_limits<N>::min() >= std::numeric_limits<Numerator>::min() and
-		std::numeric_limits<N>::max() <= std::numeric_limits<Numerator>::max() and
-		std::numeric_limits<D>::min() >= std::numeric_limits<Denominator>::min() and
-		std::numeric_limits<D>::max() <= std::numeric_limits<Denominator>::max()
+		bounded::min_value<N> >= bounded::min_value<Numerator> and
+		bounded::max_value<N> <= bounded::max_value<Numerator> and
+		bounded::min_value<D> >= bounded::min_value<Denominator> and
+		bounded::max_value<D> <= bounded::max_value<Denominator>
 	)
 	constexpr rational(rational<N, D> const other):
 		m_numerator(other.numerator()),

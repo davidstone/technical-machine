@@ -18,7 +18,6 @@
 #pragma once
 
 #include <tm/ability.hpp>
-#include <tm/enum.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
 
@@ -45,14 +44,15 @@ enum class Statuses : uint8_t {
 };
 
 }	// namespace technicalmachine
-
-namespace std {
+namespace bounded {
 
 template<>
-struct numeric_limits<technicalmachine::Statuses> : technicalmachine::enum_numeric_limits<technicalmachine::Statuses::rest> {};
+inline constexpr auto min_value<technicalmachine::Statuses> = technicalmachine::Statuses();
 
-}	// namespace std
+template<>
+inline constexpr auto max_value<technicalmachine::Statuses> = technicalmachine::Statuses::rest;
 
+}	// namespace bounded
 namespace technicalmachine {
 
 struct Status {

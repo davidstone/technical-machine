@@ -43,19 +43,19 @@ struct DetailedStats {
 
 	template<typename T> requires std::is_same_v<T, Ability>
 	auto get(Species const species) const {
-		return ability[species];
+		return at(ability, species);
 	}
 	template<typename T> requires std::is_same_v<T, Item>
 	auto get(Species const species) const {
-		return item[species];
+		return at(item, species);
 	}
 	template<typename T> requires std::is_same_v<T, Nature>
 	auto get(Species const species) const {
-		return nature[species];
+		return at(nature, species);
 	}
 	template<typename T> requires std::is_same_v<T, UsedMoves>
 	auto get(Species const species) const {
-		return move[species];
+		return at(move, species);
 	}
 private:
 	containers::array<UsedMoves, number_of_species> move;

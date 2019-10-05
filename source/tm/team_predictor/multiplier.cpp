@@ -69,7 +69,7 @@ Multiplier::Multiplier(OverallStats const & overall, std::filesystem::path const
 }
 
 Multiplier::value_type Multiplier::operator() (Species const species1, Species const species2) const {
-	return multiplier[species1][species2];
+	return at(at(multiplier, species1), species2);
 }
 
 Multiplier::Container Multiplier::species_clause() {
@@ -80,7 +80,7 @@ Multiplier::Container Multiplier::species_clause() {
 	for (auto const a : containers::enum_range<Species>()) {
 		for (auto const b : containers::enum_range<Species>()) {
 			if (is_alternate_form(a, b)) {
-				multiplier[a][b] = 0.0F;
+				at(at(multiplier, a), b) = 0.0F;
 			}
 		}
 	}
@@ -101,11 +101,11 @@ void Multiplier::load_listed_multipliers(OverallStats const & overall, std::file
 		auto const ally = from_string<Species>(line.substr(x + 1, y - x - 1));
 
 		auto const number_used_with = boost::lexical_cast<unsigned>(line.substr(y + 1));
-		BOUNDED_ASSERT(unaccounted[member] >= number_used_with);
-		unaccounted[member] -= number_used_with;
-		auto const per_cent_used_with = static_cast<value_type>(number_used_with) / static_cast<value_type>(overall[member]);
-		auto const per_cent_used = static_cast<value_type>(overall[ally]) / total;
-		multiplier[member][ally] = per_cent_used_with / per_cent_used;
+		BOUNDED_ASSERT(at(unaccounted, member) >= number_used_with);
+		at(unaccounted, member) -= number_used_with;
+		auto const per_cent_used_with = static_cast<value_type>(number_used_with) / static_cast<value_type>(at(overall, member));
+		auto const per_cent_used = static_cast<value_type>(at(overall, ally)) / total;
+		at(at(multiplier, member), ally) = per_cent_used_with / per_cent_used;
 	}
 }
 
@@ -126,18 +126,18 @@ void Multiplier::estimate_remaining(OverallStats const & overall, OverallStats c
 	// list, then we can be sure that it is used less than the current method
 	// suggests.
 	for (auto const a : containers::enum_range<Species>()) {
-		if (overall[a] != 0_bi) {
-			for (value_type & value : multiplier[a]) {
+		if (at(overall, a) != 0_bi) {
+			for (value_type & value : at(multiplier, a)) {
 				if (value == not_set) {
-					value = (unaccounted[a] != 0_bi) ?
-						(static_cast<value_type>(unaccounted[a]) / static_cast<value_type>(overall[a] * static_cast<unsigned>(other_pokemon_per_team))) :
+					value = (at(unaccounted, a) != 0_bi) ?
+						(static_cast<value_type>(at(unaccounted, a)) / static_cast<value_type>(at(overall, a) * static_cast<unsigned>(other_pokemon_per_team))) :
 						0.0F;
 				}
 			}
 		} else {
 			// 1 is superior to 0 because if they use an unused Pokemon, this
 			// will have no effect instead of making everything equally 0
-			auto & m = multiplier[a];
+			auto & m = at(multiplier, a);
 			std::fill(containers::legacy_iterator(begin(m)), containers::legacy_iterator(end(m)), 1.0F);
 		}
 	}

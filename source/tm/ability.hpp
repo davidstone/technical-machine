@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <tm/enum.hpp>
+#include <bounded/integer.hpp>
 
 #include <cstdint>
 
@@ -56,12 +56,15 @@ enum class Ability : std::uint8_t {
 };
 
 } // namespace technicalmachine
-namespace std {
+namespace bounded {
 
 template<>
-struct numeric_limits<technicalmachine::Ability> : technicalmachine::enum_numeric_limits<technicalmachine::Ability::Wonder_Guard> {};
+inline constexpr auto min_value<technicalmachine::Ability> = technicalmachine::Ability();
 
-}	// namespace std
+template<>
+inline constexpr auto max_value<technicalmachine::Ability> = technicalmachine::Ability::Wonder_Guard;
+
+}	// namespace bounded
 namespace technicalmachine {
 
 bool blocks_switching(Ability ability, ActivePokemon switcher, Weather weather);

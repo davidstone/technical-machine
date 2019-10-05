@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <tm/enum.hpp>
+#include <bounded/integer.hpp>
 
 namespace technicalmachine {
 
@@ -35,10 +35,12 @@ enum class StatNames {
 };
 
 }	// namespace technicalmachine
-
-namespace std {
+namespace bounded {
 
 template<>
-struct numeric_limits<technicalmachine::StatNames> : technicalmachine::enum_numeric_limits<technicalmachine::StatNames::EVA> {};
+inline constexpr auto min_value<technicalmachine::StatNames> = technicalmachine::StatNames();
+
+template<>
+inline constexpr auto max_value<technicalmachine::StatNames> = technicalmachine::StatNames::EVA;
 
 }	// namespace bounded

@@ -96,10 +96,10 @@ DetailedStats::DetailedStats(std::filesystem::path const & path):
 		BOUNDED_ASSERT(value.first == "pokemon");
 		auto const pokemon = value.second;
 		auto const species = from_string<Species>(pokemon.get<std::string>("species"));
-		ability[species] = most_likely_sub_elements<Ability>(pokemon.get_child("abilities"));
-		item[species] = most_likely_sub_elements<Item>(pokemon.get_child("items"));
-		nature[species] = most_likely_sub_elements<Nature>(pokemon.get_child("natures"));
-		move[species] = top_sub_elements(pokemon.get_child("moves"));
+		at(ability, species) = most_likely_sub_elements<Ability>(pokemon.get_child("abilities"));
+		at(item, species) = most_likely_sub_elements<Item>(pokemon.get_child("items"));
+		at(nature, species) = most_likely_sub_elements<Nature>(pokemon.get_child("natures"));
+		at(move, species) = top_sub_elements(pokemon.get_child("moves"));
 	}
 }
 

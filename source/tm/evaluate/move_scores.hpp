@@ -47,7 +47,7 @@ private:
 	using value_type = containers::map_value_type<Moves, double>;
 	containers::basic_flat_map<containers::static_vector<
 		value_type,
-		static_cast<int>(std::numeric_limits<MoveSize>::max())
+		static_cast<int>(bounded::max_value<MoveSize>)
 	>> m_scores;
 };
 

@@ -32,8 +32,8 @@ auto initial_hp(base_type const base, EV const ev, IV const iv, Level const leve
 		(2_bi * base + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 10_bi + level(),
 		1_bi
 	);
-	static_assert(std::numeric_limits<decltype(value)>::min() == std::numeric_limits<HP::max_type>::min(), "Incorrect HP min.");
-	static_assert(std::numeric_limits<decltype(value)>::max() == std::numeric_limits<HP::max_type>::max(), "Incorrect HP max.");
+	static_assert(bounded::min_value<decltype(value)> == bounded::min_value<HP::max_type>, "Incorrect HP min.");
+	static_assert(bounded::max_value<decltype(value)> == bounded::max_value<HP::max_type>, "Incorrect HP max.");
 	return value;
 }
 

@@ -38,7 +38,7 @@ Estimate::Estimate(UsageStats const & usage_stats, LeadStats const lead_stats) {
 	auto const & lead = lead_stats.get(usage_stats);
 	auto const total = containers::accumulate(overall);
 	for (auto const species : containers::enum_range<Species>()) {
-		estimate[species] = lead[species] * static_cast<value_type>(overall[species]) / static_cast<value_type>(total);
+		at(estimate, species) = at(lead, species) * static_cast<value_type>(at(overall, species)) / static_cast<value_type>(total);
 	}
 }
 
@@ -50,7 +50,7 @@ void Estimate::update(Multiplier const & multiplier, Team const & team) {
 
 void Estimate::update(Multiplier const & multiplier, Species const seen) {
 	for (auto const predicted : containers::enum_range<Species>()) {
-		estimate[predicted] *= multiplier(seen, predicted);
+		at(estimate, predicted) *= multiplier(seen, predicted);
 	}
 }
 

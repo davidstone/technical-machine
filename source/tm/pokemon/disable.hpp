@@ -41,7 +41,7 @@ struct Disable {
 			return;
 		}
 		// TODO: update with proper probability actions
-		if (m_turns_disabled < std::numeric_limits<TurnCount>::max()) {
+		if (m_turns_disabled < bounded::max_value<TurnCount>) {
 			++m_turns_disabled;
 		} else {
 			*this = Disable{};

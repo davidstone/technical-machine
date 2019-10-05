@@ -40,7 +40,7 @@ struct SharedMovesIterator {
 private:
 	using underlying_index_type = bounded::integer<
 		0,
-		static_cast<int>(std::numeric_limits<SharedMoveSize>::max())
+		static_cast<int>(bounded::max_value<SharedMoveSize>)
 	>;
 public:
 	using value_type = Move const;
@@ -59,7 +59,7 @@ public:
 	constexpr auto operator*() const -> value_type {
 		using switch_index_type = bounded::integer<
 			static_cast<int>(number_of_weird_moves),
-			static_cast<int>(std::numeric_limits<SharedMoveSize>::max()) - 1
+			static_cast<int>(bounded::max_value<SharedMoveSize>) - 1
 		>;
 		static_assert(number_of_weird_moves == 2_bi, "Add the extra 'weird' move here.");
 		auto const move_name = 

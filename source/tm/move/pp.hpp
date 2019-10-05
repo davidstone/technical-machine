@@ -88,7 +88,7 @@ private:
 	}
 
 	// clamped_integer simplifies situations like Pressure and Leppa
-	using current_type = bounded::clamped_integer<0, static_cast<int>(std::numeric_limits<max_type>::max())>;
+	using current_type = bounded::clamped_integer<0, static_cast<int>(bounded::max_value<max_type>)>;
 	// TODO: Use optional<pair> instead of pair<optional>
 	bounded::optional<max_type> m_max;
 	bounded::optional<current_type> m_current;

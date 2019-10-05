@@ -543,7 +543,7 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-transform") {
 		// message.remainder() == POKEMON|SPECIES
 	} else if (type == "turn") {
-		auto const turn = bounded::to_integer<0, std::numeric_limits<std::uint32_t>::max()>(message.next());
+		auto const turn = bounded::to_integer<0, bounded::max_value<std::uint32_t>>(message.next());
 		m_analysis_logger << std::string(20, '=') << "\nBegin turn " << turn << '\n';
 		m_battle.handle_begin_turn(turn);
 		send_move(determine_action());
