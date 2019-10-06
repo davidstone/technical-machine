@@ -28,6 +28,22 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
+Status::Status(Statuses const status):
+	m_state([=]{
+		switch (status) {
+			case Statuses::clear: return State(Clear{});
+			case Statuses::burn: return State(Burn{});
+			case Statuses::freeze: return State(Freeze{});
+			case Statuses::paralysis: return State(Paralysis{});
+			case Statuses::poison: return State(Poison{});
+			case Statuses::toxic: return State(Toxic{});
+			case Statuses::sleep: return State(Sleep{});
+			case Statuses::rest: return State(Rest{});
+		}
+	}())
+{
+}
+
 auto lowers_speed(Status const status, Ability const ability) -> bool {
 	return status.name() == Statuses::paralysis and !blocks_paralysis_speed_penalty(ability);
 }
