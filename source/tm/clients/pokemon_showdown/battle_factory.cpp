@@ -28,6 +28,7 @@
 
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
+#include <bounded/to_integer.hpp>
 
 #include <algorithm>
 #include <stdexcept>

@@ -17,8 +17,12 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/team_predictor/ui/ev_inputs.hpp>
-#include <string>
 #include <tm/team_predictor/ui/input_constants.hpp>
+
+#include <bounded/integer.hpp>
+#include <bounded/to_integer.hpp>
+
+#include <string>
 
 namespace technicalmachine {
 

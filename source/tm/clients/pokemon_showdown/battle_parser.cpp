@@ -34,6 +34,7 @@
 #include <tm/string_conversions/team.hpp>
 
 #include <bounded/integer.hpp>
+#include <bounded/to_integer.hpp>
 #include <bounded/detail/overload.hpp>
 
 #include <containers/algorithms/find.hpp>

@@ -21,6 +21,9 @@
 
 #include <tm/stat/hp.hpp>
 
+#include <bounded/integer.hpp>
+#include <bounded/to_integer.hpp>
+
 #include <stdexcept>
 
 namespace technicalmachine {

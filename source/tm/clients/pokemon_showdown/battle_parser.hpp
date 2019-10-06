@@ -29,6 +29,9 @@
 
 #include <tm/string_conversions/pokemon.hpp>
 
+#include <bounded/integer.hpp>
+#include <bounded/to_integer.hpp>
+
 #include <random>
 #include <string>
 #include <string_view>
