@@ -38,7 +38,6 @@
 
 #include <tm/bide/bide.hpp>
 
-#include <tm/move/damage_type.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/is_switch.hpp>
 
@@ -583,8 +582,8 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 
 	auto use_bide(Pokemon & target) const -> void;
 
-	auto direct_damage(damage_type const damage) const -> void;
-	auto indirect_damage(damage_type const damage) const {
+	auto direct_damage(HP::current_type const damage) const -> void;
+	auto indirect_damage(HP::current_type const damage) const {
 		get_hp(*this) -= damage;
 		m_flags.damaged = true;
 	}

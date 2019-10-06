@@ -20,7 +20,6 @@
 #include <tm/clients/battle_result.hpp>
 #include <tm/clients/party.hpp>
 
-#include <tm/move/damage_type.hpp>
 #include <tm/move/actual_damage.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/other_move.hpp>

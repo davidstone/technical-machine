@@ -245,7 +245,7 @@ auto MutableActivePokemon::use_bide(Pokemon & target) const -> void {
 	));
 }
 
-auto MutableActivePokemon::direct_damage(damage_type const damage) const -> void {
+auto MutableActivePokemon::direct_damage(HP::current_type const damage) const -> void {
 	if (m_flags.substitute) {
 		m_flags.substitute.damage(damage);
 	} else {

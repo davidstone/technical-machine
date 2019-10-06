@@ -22,7 +22,6 @@
 
 #include <tm/clients/party.hpp>
 
-#include <tm/move/damage_type.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/used_move.hpp>

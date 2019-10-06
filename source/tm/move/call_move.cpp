@@ -50,7 +50,7 @@ namespace technicalmachine {
 namespace {
 
 // I could potentially treat this as negative recoil
-auto absorb_hp(Pokemon & user, Pokemon const & target, damage_type const damage) -> void {
+auto absorb_hp(Pokemon & user, Pokemon const & target, HP::current_type const damage) -> void {
 	auto & hp = get_hp(user);
 	auto const absorbed = damage / 2_bi;
 	if (damages_leechers(get_ability(target))) {
@@ -99,13 +99,13 @@ auto curse(MutableActivePokemon user, MutableActivePokemon target) {
 }
 
 
-void recoil(Pokemon & user, damage_type const damage, bounded::checked_integer<1, 4> const denominator) {
+void recoil(Pokemon & user, HP::current_type const damage, bounded::checked_integer<1, 4> const denominator) {
 	if (!blocks_recoil(get_ability(user))) {
 		get_hp(user) -= bounded::max(damage / denominator, 1_bi);
 	}
 }
 
-auto recoil_status(Pokemon & user, Pokemon & target, Weather const weather, damage_type const damage, Variable const variable, Statuses const status) {
+auto recoil_status(Pokemon & user, Pokemon & target, Weather const weather, HP::current_type const damage, Variable const variable, Statuses const status) {
 	// Uproar is irrelevant in this function
 	constexpr auto uproaring = false;
 	recoil(user, damage, 3_bi);
@@ -166,7 +166,7 @@ auto swap_items(Pokemon & user, Pokemon & other) {
 }
 
 
-auto do_side_effects(Generation, Team & user_team, ExecutedMove const move, Type const move_type, Team & other, Weather & weather, damage_type const damage) {
+auto do_side_effects(Generation, Team & user_team, ExecutedMove const move, Type const move_type, Team & other, Weather & weather, HP::current_type const damage) {
 	auto user = user_team.pokemon();
 	switch (move.name) {
 		case Moves::Absorb:
@@ -988,7 +988,7 @@ auto do_effects_before_moving(Moves const move, Pokemon & user, Team & other) {
 }
 
 
-auto do_damage(MutableActivePokemon user, MutableActivePokemon target, damage_type const damage) {
+auto do_damage(MutableActivePokemon user, MutableActivePokemon target, HP::current_type const damage) {
 	auto const had_substitute = static_cast<bool>(target.substitute());
 	target.direct_damage(damage);
 	if (!had_substitute and causes_recoil(get_item(user))) {

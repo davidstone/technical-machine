@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include <tm/move/damage_type.hpp>
 #include <tm/move/executed_move.hpp>
 #include <tm/move/other_move.hpp>
 
@@ -38,7 +37,7 @@ struct ActualDamage {
 		bounded::integer<0, HP::max_value / 4> value;
 	};
 	struct Known {
-		damage_type value;
+		HP::current_type value;
 	};
 
 	constexpr ActualDamage(Unknown const value_):
@@ -54,7 +53,7 @@ struct ActualDamage {
 	{
 	}
 	
-	auto value(Generation generation, Team const & user, ExecutedMove move, Team const & other, OtherMove other_move, Weather weather) const -> damage_type;
+	auto value(Generation generation, Team const & user, ExecutedMove move, Team const & other, OtherMove other_move, Weather weather) const -> HP::current_type;
 private:
 	bounded::variant<
 		Unknown,

@@ -160,7 +160,7 @@ void physical_damage_test() {
 	auto const defender = max_damage_physical_defender();
 	
 	check_equal(
-		calculate_damage(
+		calculate_uncapped_damage(
 			generation,
 			attacker,
 			ExecutedMove{
@@ -200,7 +200,7 @@ void special_damage_test() {
 	Team defender = max_damage_special_defender();
 
 	check_equal(
-		calculate_damage(
+		calculate_uncapped_damage(
 			generation,
 			attacker,
 			ExecutedMove{move.name(), move.pp(), Variable{}, critical_hit},

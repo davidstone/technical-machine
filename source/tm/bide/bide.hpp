@@ -29,7 +29,7 @@
 namespace technicalmachine {
 
 struct Bide {
-	constexpr auto add_damage(damage_type const damage) {
+	constexpr auto add_damage(HP::current_type const damage) {
 		m_damage.add(damage);
 	}
 	[[nodiscard]] constexpr auto advance_one_turn() {

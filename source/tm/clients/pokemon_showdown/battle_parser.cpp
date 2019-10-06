@@ -22,7 +22,6 @@
 
 #include <tm/evaluate/expectiminimax.hpp>
 
-#include <tm/move/damage_type.hpp>
 #include <tm/move/moves.hpp>
 
 #include <tm/team_predictor/team_predictor.hpp>
@@ -611,10 +610,10 @@ auto hp_to_damage(Pokemon const & pokemon, HP::current_type const new_hp) {
 	auto const old_hp = get_hp(pokemon).current();
 	if (new_hp > old_hp) {
 		std::cerr << "Took negative damage\n";
-		return damage_type(0_bi);
+		return HP::current_type(0_bi);
 		// throw std::runtime_error("Took negative damage");
 	}
-	return static_cast<damage_type>(old_hp - new_hp);
+	return HP::current_type(old_hp - new_hp);
 }
 
 auto const & select_pokemon(Team const & team, Moves const move) {

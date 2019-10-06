@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include <tm/move/damage_type.hpp>
 #include <tm/move/executed_move.hpp>
 #include <tm/move/other_move.hpp>
 
@@ -28,6 +27,10 @@ struct Pokemon;
 struct Team;
 struct Weather;
 
-auto calculate_damage(Generation generation, Team const & attacker, ExecutedMove move, Team const & defender, OtherMove defender_move, Weather weather) -> damage_type;
+using damage_type = bounded::checked_integer<0, 4294967295>;
+
+auto calculate_uncapped_damage(Generation const generation, Team const & attacker, ExecutedMove const move, Team const & defender, OtherMove const defender_move, Weather const weather) -> damage_type;
+
+auto calculate_damage(Generation generation, Team const & attacker, ExecutedMove move, Team const & defender, OtherMove defender_move, Weather weather) -> HP::current_type;
 
 }	// namespace technicalmachine

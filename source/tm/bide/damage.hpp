@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include <tm/move/damage_type.hpp>
 #include <tm/stat/hp.hpp>
 #include <tm/operators.hpp>
 
@@ -27,7 +26,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct BideDamage {
-	constexpr auto add(damage_type const damage) -> void {
+	constexpr auto add(HP::current_type const damage) -> void {
 		m_damage += damage;
 	}
 

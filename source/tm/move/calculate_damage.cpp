@@ -297,7 +297,7 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 	}
 }
 
-auto capped_damage(Generation const generation, Team const & attacker, ExecutedMove const move, Type const move_type, Team const & defender_team, OtherMove const defender_move, Weather const weather) {
+auto restricted_damage(Generation const generation, Team const & attacker, ExecutedMove const move, Type const move_type, Team const & defender_team, OtherMove const defender_move, Weather const weather) {
 	auto const defender = defender_team.pokemon();
 	auto const damage = raw_damage(generation, attacker, move, move_type, defender_team, defender_move, weather);
 	return (cannot_ko(move.name) or defender.cannot_be_koed()) ?
@@ -308,11 +308,19 @@ auto capped_damage(Generation const generation, Team const & attacker, ExecutedM
 }	// namespace
 
 
-auto calculate_damage(Generation const generation, Team const & attacker, ExecutedMove const move, Team const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
+auto calculate_uncapped_damage(Generation const generation, Team const & attacker, ExecutedMove const move, Team const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
 	auto const move_type = get_type(generation, move.name, get_hidden_power(attacker.pokemon()).type());
 	return affects_target(move_type, defender.pokemon(), weather) ?
-		capped_damage(generation, attacker, move, move_type, defender, defender_move, weather) :
+		restricted_damage(generation, attacker, move, move_type, defender, defender_move, weather) :
 		static_cast<damage_type>(0_bi);
 }
+
+auto calculate_damage(Generation const generation, Team const & attacker, ExecutedMove const move, Team const & defender, OtherMove const defender_move, Weather const weather) -> HP::current_type {
+	return bounded::min(
+		calculate_uncapped_damage(generation, attacker, move, defender, defender_move, weather),
+		get_hp(defender.pokemon()).current()
+	);
+}
+
 
 }	// namespace technicalmachine
