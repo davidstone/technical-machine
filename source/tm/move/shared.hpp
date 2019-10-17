@@ -76,8 +76,8 @@ public:
 		return lhs.m_index - rhs.m_index;
 	}
 
-	friend constexpr auto compare(SharedMovesIterator const lhs, SharedMovesIterator const rhs) {
-		return compare(lhs.m_index, rhs.m_index);
+	friend constexpr auto operator<=>(SharedMovesIterator const lhs, SharedMovesIterator const rhs) {
+		return lhs.m_index <=> rhs.m_index;
 	}
 	friend constexpr auto operator==(SharedMovesIterator const lhs, SharedMovesIterator const rhs) {
 		return lhs.m_index == rhs.m_index;

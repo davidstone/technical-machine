@@ -96,7 +96,7 @@ private:
 	SharedMoves m_shared;
 };
 
-using ::containers::detail::common::compare;
+using ::containers::detail::common::operator<=>;
 using ::containers::detail::common::operator==;
 
 auto add_seen_move(MoveContainer &, Generation, Moves) -> void;

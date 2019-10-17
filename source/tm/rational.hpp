@@ -124,18 +124,18 @@ constexpr auto operator-(rational<N1, D1> const lhs, rational<N2, D2> const rhs)
 
 
 template<typename N1, typename D1, typename N2, typename D2>
-constexpr auto compare(rational<N1, D1> const lhs, rational<N2, D2> const rhs) {
-	return compare(lhs.numerator() * rhs.denominator(), rhs.numerator() * lhs.denominator());
+constexpr auto operator<=>(rational<N1, D1> const lhs, rational<N2, D2> const rhs) {
+	return lhs.numerator() * rhs.denominator() <=> rhs.numerator() * lhs.denominator();
 }
 
 template<typename N, typename D, bounded::bounded_integer Integer>
-constexpr auto compare(rational<N, D> const lhs, Integer const rhs) {
-	return compare(lhs.numerator(), rhs * lhs.denominator());
+constexpr auto operator<=>(rational<N, D> const lhs, Integer const rhs) {
+	return lhs.numerator() <=> rhs * lhs.denominator();
 }
 
 template<bounded::bounded_integer Integer, typename N, typename D>
-constexpr auto compare(Integer const lhs, rational<N, D> const rhs) {
-	return compare(lhs * rhs.denominator(), rhs.numerator());
+constexpr auto operator<=>(Integer const lhs, rational<N, D> const rhs) {
+	return lhs * rhs.denominator() <=> rhs.numerator();
 }
 
 template<typename N1, typename D1, typename N2, typename D2>

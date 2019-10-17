@@ -27,8 +27,8 @@ enum class Moves : std::uint16_t;
 
 struct Priority {
 	explicit Priority(Generation generation, Moves move);
-	inline friend auto compare(Priority const lhs, Priority const rhs) {
-		return compare(lhs.priority, rhs.priority);
+	inline friend auto operator<=>(Priority const lhs, Priority const rhs) {
+		return lhs.priority <=> rhs.priority;
 	}
 	inline friend auto operator==(Priority const lhs, Priority const rhs) {
 		return lhs.priority == rhs.priority;

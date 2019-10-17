@@ -17,14 +17,8 @@
 
 #pragma once
 
-#include <tm/operators.hpp>
-
 namespace technicalmachine {
 
 enum class Generation { one, two, three, four, five, six, seven };
-
-constexpr auto compare(Generation const lhs, Generation const rhs) {
-	return bounded::compare(static_cast<int>(lhs), static_cast<int>(rhs));
-}
 
 } // namespace technicalmachine

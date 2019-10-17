@@ -81,7 +81,7 @@ DefensiveEVs::DefensiveEVs(Species const species, Level const level, Nature cons
 				continue;
 			}
 			auto is_better = [=](DataPoint const candidate, DataPoint const current) {
-				auto const cmp = compare(ev_sum(candidate), ev_sum(current));
+				auto const cmp = ev_sum(candidate) <=> ev_sum(current);
 				if (cmp < 0) {
 					return true;
 				} else if (cmp > 0) {
