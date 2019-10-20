@@ -35,9 +35,8 @@ struct Screen {
 	constexpr auto turns_remaining() const {
 		return m_turns_remaining;
 	}
-	template<typename ... Args>
-	constexpr auto activate(Args && ... args) -> void {
-		activate(std::integral_constant<bool, normal_duration == max_duration>{}, std::forward<Args>(args)...);
+	constexpr auto activate(auto && ... args) -> void {
+		activate(std::integral_constant<bool, normal_duration == max_duration>{}, BOUNDED_FORWARD(args)...);
 	}
 	constexpr auto decrement() -> void {
 		--m_turns_remaining;

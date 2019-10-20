@@ -62,8 +62,7 @@ constexpr auto operator==(EV::value_type const lhs, EV const rhs) {
 	return lhs == rhs.value();
 }
 
-template<typename Max>
-constexpr auto ev_range(Max const max) {
+constexpr auto ev_range(auto const max) {
 	return containers::transform(containers::inclusive_integer_range(0_bi, max, 4_bi), bounded::construct_return<EV>);
 }
 

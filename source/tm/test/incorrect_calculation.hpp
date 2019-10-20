@@ -17,28 +17,27 @@
 
 #pragma once
 
+#include <bounded/detail/forward.hpp>
+
 #include <stdexcept>
 #include <string>
 
 namespace technicalmachine {
 
 struct IncorrectCalculation : std::logic_error {
-	template<typename LHS, typename RHS>
-	IncorrectCalculation(LHS const result, RHS const expected):
+	IncorrectCalculation(auto const result, auto const expected):
 		std::logic_error("Result of " + to_string(result) + " instead of the expected " + to_string(expected) + '\n')
 		{
 	}
 private:
-	template<typename T>
-	static std::string to_string(T && t) {
+	static std::string to_string(auto && value) {
 		using std::to_string;
-		return to_string(std::forward<T>(t));
+		return to_string(BOUNDED_FORWARD(value));
 	}
 
 };
 
-template<typename LHS, typename RHS>
-void check_equal(LHS const lhs, RHS const rhs) {
+void check_equal(auto const lhs, auto const rhs) {
 	if (lhs != rhs) {
 		throw IncorrectCalculation(lhs, rhs);
 	}

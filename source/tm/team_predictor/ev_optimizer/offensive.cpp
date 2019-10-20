@@ -46,8 +46,8 @@ namespace {
 
 using namespace bounded::literal;
 
-template<StatNames stat_name, typename Initial>
-auto find_least_stat(Species const species, Level const level, Nature const nature, Initial const initial) -> bounded::optional<EV::value_type> {
+template<StatNames stat_name>
+auto find_least_stat(Species const species, Level const level, Nature const nature, auto const initial) -> bounded::optional<EV::value_type> {
 	EV::value_type ev = 0_bi;
 	auto stat = Stat(species, stat_name, EV(ev));
 	auto const test_stat = [&]() { return initial_stat(stat_name, stat, level, nature); };
@@ -77,8 +77,7 @@ auto ideal_special_attack_stat(Stat const original_stat, Level const level, Natu
 	return initial_stat(StatNames::SPA, stat, level, nature);
 }
 
-template<typename Container>
-auto remove_inferior_natures(Container & container, bool const is_physical, bool const is_special) {
+auto remove_inferior_natures(auto & container, bool const is_physical, bool const is_special) {
 	if (!is_physical) {
 		containers::erase_if(container, [](auto candidate) { return !lowers_stat(candidate.nature, StatNames::ATK); });
 	}

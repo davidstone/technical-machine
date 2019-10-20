@@ -37,8 +37,7 @@ struct HP {
 	using current_type = bounded::integer<0, max_value>;
 	
 	HP(Species species, Level level, EV ev_ = EV(0_bi), IV iv_ = IV(31_bi));
-	template<typename T>
-	auto & operator=(T const & value) {
+	auto & operator=(auto const & value) {
 		m_current = bounded::min(value, m_max);
 		return *this;
 	}
@@ -56,31 +55,25 @@ private:
 auto set_hp_ev(Pokemon & pokemon, EV ev) -> void;
 auto set_hp_ev(Pokemon & pokemon, EV ev, IV iv) -> void;
 
-template<typename T>
-auto operator+=(HP & lhs, T const & rhs) -> HP & {
+auto operator+=(HP & lhs, auto const & rhs) -> HP & {
 	return lhs = lhs.current() + rhs;
 }
 
-template<typename T>
-auto operator-=(HP & lhs, T const & rhs) -> HP & {
+auto operator-=(HP & lhs, auto const & rhs) -> HP & {
 	return lhs += -rhs;
 }
 
-template<auto min, auto max, typename overflow>
-auto operator<=>(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
+auto operator<=>(HP const lhs, bounded::bounded_integer auto const rhs) {
 	return lhs.current() <=> rhs;
 }
-template<auto min, auto max, typename overflow>
-auto operator<=>(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
+auto operator<=>(bounded::bounded_integer auto const lhs, HP const rhs) {
 	return rhs <=> lhs.current();
 }
 
-template<auto min, auto max, typename overflow>
-auto operator==(HP const lhs, bounded::integer<min, max, overflow> const rhs) {
+auto operator==(HP const lhs, bounded::bounded_integer auto const rhs) {
 	return lhs.current() == rhs;
 }
-template<auto min, auto max, typename overflow>
-auto operator==(bounded::integer<min, max, overflow> const lhs, HP const rhs) {
+auto operator==(bounded::bounded_integer auto const lhs, HP const rhs) {
 	return rhs == lhs.current();
 }
 

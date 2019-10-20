@@ -46,8 +46,7 @@ using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
 
-template<typename RandomEngine, typename... Ts>
-auto make_shuffled_array(RandomEngine & random_engine, Ts ... ts) {
+auto make_shuffled_array(auto & random_engine, auto... ts) {
 	// Random order to prevent ordering effects from accidentally arriving at
 	// the correct move each time
 	auto array = containers::array{Move(generation, ts)...};

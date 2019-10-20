@@ -81,18 +81,16 @@ auto Variable::set_magnitude(Magnitude const magnitude) -> void {
 
 namespace {
 
-template<std::size_t... indexes, typename... Args>
-constexpr auto generic_probability(std::index_sequence<indexes...>, Args... probabilities) {
+template<std::size_t... indexes>
+constexpr auto generic_probability(std::index_sequence<indexes...>, auto... probabilities) {
 	return Probabilities{{Variable{bounded::constant<indexes>}, probabilities}...};
 }
 
-template<typename... Args>
-constexpr auto generic_probability(Args... probabilities) {
+constexpr auto generic_probability(auto... probabilities) {
 	return generic_probability(bounded::make_index_sequence(bounded::constant<sizeof...(probabilities)>), probabilities...);
 }
 
-template<typename Count>
-constexpr auto constant_probability(Count const count) {
+constexpr auto constant_probability(auto const count) {
 	Probabilities probabilities;
 	for (auto const n : containers::integer_range(count)) {
 		containers::emplace_back(probabilities, Variable{n}, 1.0 / static_cast<double>(count));

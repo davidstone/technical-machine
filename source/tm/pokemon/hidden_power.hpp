@@ -47,8 +47,7 @@ struct HiddenPower {
 private:
 	using Power = bounded::integer<30, 70>;
 	
-	template<typename Function>
-	static constexpr auto sum_stats(GenericStats<IV> const ivs, Function const transform) {
+	static constexpr auto sum_stats(GenericStats<IV> const ivs, auto const transform) {
 		return transform(0_bi, ivs.hp) + transform(1_bi, ivs.attack) + transform(2_bi, ivs.defense) + transform(3_bi, ivs.special_attack) + transform(4_bi, ivs.special_defense) + transform(5_bi, ivs.speed);
 	}
 

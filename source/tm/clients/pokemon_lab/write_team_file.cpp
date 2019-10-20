@@ -49,8 +49,7 @@ void write_move (Move const move, boost::property_tree::ptree & pt) {
 	m.put ("<xmlattr>.pp-up", 3);
 }
 
-template<typename StatType>
-void write_stat(StatType const & stat, std::string_view const str, boost::property_tree::ptree & pt) {
+void write_stat(auto const & stat, std::string_view const str, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & s = pt.add("stats.stat", "");
 	s.put("<xmlattr>.name", str);
 	s.put("<xmlattr>.iv", stat.iv().value());

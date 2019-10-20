@@ -172,13 +172,13 @@ using ScoreTeam = decltype(score_team(std::declval<Evaluate>(), std::declval<Tea
 template<typename LHS, typename RHS>
 struct TypeMismatchInEvaluateMessage;
 
-template<typename LHS, typename RHS, bool = std::is_same_v<LHS, RHS>>
-struct TypeMismatchInEvaluate {
-	static constexpr auto value = true;
-};
 template<typename LHS, typename RHS>
-struct TypeMismatchInEvaluate<LHS, RHS, false> {
+struct TypeMismatchInEvaluate {
 	static constexpr auto value = TypeMismatchInEvaluateMessage<LHS, RHS>{};
+};
+template<typename T>
+struct TypeMismatchInEvaluate<T, T> {
+	static constexpr auto value = true;
 };
 
 using ResultType = decltype(std::declval<ScoreTeam>() + extra);

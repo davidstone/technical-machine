@@ -31,8 +31,7 @@ constexpr auto separator_size(std::string_view const separator) {
 	return separator.size();
 }
 
-template<typename Separator>
-constexpr auto split(std::string_view str, Separator const separator) {
+constexpr auto split(std::string_view str, auto const separator) {
 	auto const index = str.find(separator);
 	if (index == std::string_view::npos) {
 		return std::pair(str, std::string_view{});
@@ -51,8 +50,7 @@ struct BufferView {
 	{
 	}
 	
-	template<typename S>
-	constexpr auto next(S const separator) -> std::string_view {
+	constexpr auto next(auto const separator) -> std::string_view {
 		auto const [first, second] = split(m_buffer, separator);
 		m_buffer = second;
 		return first;
@@ -83,8 +81,7 @@ struct InMessage {
 	constexpr auto type() const {
 		return m_type;
 	}
-	template<typename Separator>
-	constexpr auto next(Separator const separator) {
+	constexpr auto next(auto const separator) {
 		return m_view.next(separator);
 	}
 	constexpr auto next() {

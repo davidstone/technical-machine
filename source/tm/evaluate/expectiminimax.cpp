@@ -126,8 +126,7 @@ bool can_critical_hit(Moves const move) {
 }
 
 
-template<typename Probability, typename NextBranch>
-double generic_flag_branch(Probability const & basic_probability, NextBranch const & next_branch) {
+double generic_flag_branch(auto const & basic_probability, auto const & next_branch) {
 	auto const probability = [=](bool const is_first, bool const flag) {
 		auto const base = basic_probability(is_first);
 		BOUNDED_ASSERT_OR_ASSUME(base >= 0.0);
@@ -177,8 +176,7 @@ struct SelectMoveResult {
 	BothMoveScores move_scores;
 };
 
-template<typename Function>
-SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_selections, Team const & foe, StaticVectorMove const foe_selections, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log, Function const function) {
+SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_selections, Team const & foe, StaticVectorMove const foe_selections, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log, auto const function) {
 	// This calls itself at one lower depth in order to get an initial estimate
 	// for move_scores because the algorithm works faster if you start with the
 	// correct result. The results from one less depth are used to estimate the
@@ -355,14 +353,12 @@ auto selected_move_to_executed_move(Moves const selected_move, Team const & user
 	}
 }
 
-template<typename Range, typename Function>
-constexpr auto average_transformed_sum(Range && range, Function transformation) {
+constexpr auto average_transformed_sum(auto && range, auto transformation) {
 	auto const range_size = size(range);
 	return containers::accumulate(containers::transform(BOUNDED_FORWARD(range), std::move(transformation))) / static_cast<double>(range_size);
 }
 
-template<typename NextBranch>
-double generic_flag_branch(double const basic_probability, NextBranch const & next_branch) {
+double generic_flag_branch(double const basic_probability, auto const & next_branch) {
 	BOUNDED_ASSERT_OR_ASSUME(0.0 <= basic_probability and basic_probability <= 1.0);
 	double average_score = 0.0;
 	for (auto const flag : { false, true }) {
@@ -380,8 +376,7 @@ struct SelectedAndExecuted {
 	Moves executed;
 };
 
-template<typename Function>
-auto execute_move(Team const & user, SelectedAndExecuted const move, Team const & other, OtherMove const other_move, Weather const weather, Function const continuation) -> double {
+auto execute_move(Team const & user, SelectedAndExecuted const move, Team const & other, OtherMove const other_move, Weather const weather, auto const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	auto const variables = all_probabilities(move.executed, other.size());
@@ -421,8 +416,7 @@ auto execute_move(Team const & user, SelectedAndExecuted const move, Team const 
 	});
 }
 
-template<typename Function>
-auto score_executed_moves(Team const & user, Moves const selected_move, Team const & other, OtherMove const other_move, Weather const weather, Function const continuation) -> double {
+auto score_executed_moves(Team const & user, Moves const selected_move, Team const & other, OtherMove const other_move, Weather const weather, auto const continuation) -> double {
 	auto const score_move = [&](Moves const executed_move) {
 		return execute_move(user, SelectedAndExecuted{selected_move, executed_move}, other, other_move, weather, continuation);
 	};

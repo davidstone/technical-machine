@@ -37,13 +37,11 @@ struct Battles {
 		std::filesystem::create_directories(m_log_directory);
 	}
 
-	template<typename ... Args>
-	void add_pending(Args && ... args) {
-		containers::emplace_back(m_pending, m_log_directory, m_log_foe_teams, std::forward<Args>(args)...);
+	void add_pending(auto && ... args) {
+		containers::emplace_back(m_pending, m_log_directory, m_log_foe_teams, BOUNDED_FORWARD(args)...);
 	}
 	
-	template<typename SendMessageFunction, typename ChallengeFunction>
-	bool handle_message(InMessage message, SendMessageFunction send_message, ChallengeFunction challenge) {
+	bool handle_message(InMessage message, auto send_message, auto challenge) {
 		auto complete_active_battle = [&](auto const it) {
 			m_active.erase(it);
 			send_message("|/leave " + std::string(message.room()));
@@ -61,8 +59,7 @@ struct Battles {
 	}
 
 private:
-	template<typename Container, typename Function>
-	static bool handle_message_impl(Container & container, InMessage message, Function if_completed) {
+	static bool handle_message_impl(auto & container, InMessage message, auto if_completed) {
 		auto const function = [=](auto const & battle) { return battle.id() == message.room(); };
 		auto const it = std::find_if(container.begin(), container.end(), function);
 		if (it == container.end()) {
@@ -75,8 +72,7 @@ private:
 		return true;
 	}
 	
-	template<typename SendMessageFunction>
-	void move_to_active(std::list<BattleFactory>::iterator it, SendMessageFunction send_message) {
+	void move_to_active(std::list<BattleFactory>::iterator it, auto send_message) {
 		m_active.push_back(std::move(*it).make(std::move(send_message)));
 		m_pending.erase(it);
 	}

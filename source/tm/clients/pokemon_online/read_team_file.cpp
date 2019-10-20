@@ -94,8 +94,7 @@ struct StatType<EV> {
 		static std::string const str = "EV";
 		return str;
 	}
-	template<typename Type>
-	static auto get(Type & stat) {
+	static auto get(auto & stat) {
 		return stat.ev();
 	}
 };
@@ -105,8 +104,7 @@ struct StatType<IV> {
 		static std::string const str = "DV";
 		return str;
 	}
-	template<typename Type>
-	static auto get(Type & stat) {
+	static auto get(auto & stat) {
 		return stat.iv();
 	}
 };

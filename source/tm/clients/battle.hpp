@@ -75,8 +75,7 @@ struct Battle {
 
 	// TODO: require users to specify which team went first and whether Shed
 	// Skin activated
-	template<typename Integer>
-	void handle_begin_turn(Integer const turn_count) {
+	void handle_begin_turn(auto const turn_count) {
 		if (turn_count != 1_bi) {
 			constexpr auto ai_flags = EndOfTurnFlags{false, false};
 			constexpr auto foe_flags = EndOfTurnFlags{false, false};
@@ -89,8 +88,7 @@ struct Battle {
 	}
 
 	// maybe_index is either an index into a PokemonCollection or nothing
-	template<typename... MaybeIndex>	
-	auto active_pokemon(Party const party, MaybeIndex... maybe_index) -> Pokemon & {
+	auto active_pokemon(Party const party, auto... maybe_index) -> Pokemon & {
 		return get_team(party).pokemon(maybe_index...);
 	}
 

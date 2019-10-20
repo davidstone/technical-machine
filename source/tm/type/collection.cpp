@@ -758,8 +758,7 @@ auto forced_grounded(Pokemon const & pokemon, Weather const weather) -> bool {
 	return weather.gravity() or grounds(get_item(pokemon));
 }
 
-template<typename PossiblyActivePokemon>
-auto is_permanently_immune_to_ground(PossiblyActivePokemon const & pokemon, bool const roosting) -> bool {
+auto is_permanently_immune_to_ground(auto const & pokemon, bool const roosting) -> bool {
 	return
 		is_type(pokemon, Type::Flying, roosting) or
 		is_immune_to_ground(get_ability(pokemon));

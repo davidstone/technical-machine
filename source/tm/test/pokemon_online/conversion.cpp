@@ -40,8 +40,8 @@ enum class Moves : std::uint16_t;
 namespace po {
 namespace {
 
-template<typename Enum, typename ToID, typename FromID>
-void test_enum(std::string const & name, ToID && to_id, FromID && from_id) {
+template<typename Enum>
+void test_enum(std::string const & name, auto && to_id, auto && from_id) {
 	std::cout << "\t\tVerifying correct " << name << ".\n";
 	for (auto const original : containers::enum_range<Enum>()) {
 		auto const id = to_id(original);

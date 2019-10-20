@@ -207,8 +207,8 @@ auto MutableActivePokemon::use_uproar() const -> void {
 
 namespace {
 
-template<typename T, typename LockIn>
-auto use_vanish_move(LockIn & lock_in) -> bool {
+template<typename T>
+auto use_vanish_move(auto & lock_in) -> bool {
 	return bounded::visit(lock_in, bounded::overload(
 		[&](T) { lock_in = std::monostate{}; return false; },
 		[&](auto const &) { lock_in = T{}; return true; }

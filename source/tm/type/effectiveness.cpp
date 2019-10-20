@@ -398,8 +398,7 @@ constexpr auto lookup_effectiveness(Type const attacking, Type const defending) 
 	}
 }
 
-template<typename Container, typename... Products>
-auto check_effectiveness(Container const & effectiveness, Products... results) {
+auto check_effectiveness(auto const & effectiveness, auto... results) {
 	auto const value = effectiveness[0_bi] * effectiveness[1_bi];
 	return (... or (value == results));
 }

@@ -31,8 +31,7 @@ namespace technicalmachine {
 struct Pokemon;
 
 struct InvalidSimulatorConversion : std::logic_error {
-	template<typename Test>
-	InvalidSimulatorConversion(Test original, Test result):
+	InvalidSimulatorConversion(auto original, auto result):
 		std::logic_error(std::string(to_string(original)) + " is seen as " + std::string(to_string(result))) {
 	}
 };

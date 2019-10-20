@@ -61,8 +61,7 @@ auto absorb_hp(Pokemon & user, Pokemon const & target, HP::current_type const da
 }
 
 
-template<typename Predicate>
-auto cure_all_status(Team & user, Predicate const & predicate) -> void {
+auto cure_all_status(Team & user, auto const & predicate) -> void {
 	for (auto & pokemon : user.all_pokemon()) {
 		if (predicate(pokemon)) {
 			clear_status(pokemon);

@@ -46,8 +46,7 @@ struct GenericStats {
 	}
 
 private:
-	template<typename Generic>
-	static constexpr auto && operator_bracket(Generic && generic, StatNames const index) {
+	static constexpr auto && operator_bracket(auto && generic, StatNames const index) {
 		switch (index) {
 			case StatNames::ATK: return generic.attack;
 			case StatNames::DEF: return generic.defense;

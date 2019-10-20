@@ -35,8 +35,7 @@ struct Effectiveness {
 	auto is_not_very_effective() const -> bool;
 	auto has_no_effect() const -> bool;
 
-	template<typename Integer>
-	auto operator*(Integer const number) const {
+	auto operator*(auto const number) const {
 		return number * m_effectiveness[0_bi] * m_effectiveness[1_bi];
 	}
 private:
@@ -49,8 +48,7 @@ private:
 
 };
 
-template<typename Integer>
-auto operator*(Integer const number, Effectiveness const & effectiveness) {
+auto operator*(auto const number, Effectiveness const & effectiveness) {
 	return effectiveness * number;
 }
 

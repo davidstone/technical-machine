@@ -36,8 +36,7 @@ using namespace bounded::literal;
 constexpr auto generation = Generation::four;
 constexpr auto damage = ActualDamage::Unknown{};	
 
-template<typename... Moves>
-constexpr auto move_array(Moves... moves) {
+constexpr auto move_array(auto... moves) {
 	return containers::array{Move(generation, moves)...};
 }
 

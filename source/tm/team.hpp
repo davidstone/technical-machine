@@ -61,8 +61,7 @@ struct Team {
 		return all_pokemon()(index);
 	}
 
-	template<typename... Args>
-	Pokemon & add_pokemon(Args&&... args) {
+	Pokemon & add_pokemon(auto && ... args) {
 		return all_pokemon().add(BOUNDED_FORWARD(args)...);
 	}
 

@@ -50,13 +50,12 @@ namespace {
 // if there is a logic error in my program.
 
 struct InvalidToStringConversion : std::logic_error {
-	template<typename Test>
-	InvalidToStringConversion(Test original, Test result, std::string_view const intermediate):
+	InvalidToStringConversion(auto original, auto result, std::string_view const intermediate):
 		std::logic_error(to_string(bounded::integer(original)) + " is seen as " + to_string(bounded::integer(result)) + " with an intermediate string of " + std::string(intermediate) + ".\n") {
 	}
 };
 
-template <typename Enum>
+template<typename Enum>
 void test_generic (std::string const & thing) {
 	std::cout << "\tVerifying correct " + thing + ".\n";
 	for (auto const original : containers::enum_range<Enum>()) {

@@ -29,8 +29,7 @@ namespace technicalmachine {
 
 namespace {
 
-template<typename... MaybePP>
-auto add_seen_move_impl(MoveContainer & container, Generation const generation, Moves const move, MaybePP... pp) {
+auto add_seen_move_impl(MoveContainer & container, Generation const generation, Moves const move, auto... maybe_pp) {
 	if (move == Moves::Pass or move == Moves::Struggle or move == Moves::Hit_Self) {
 		return;
 	}
@@ -47,7 +46,7 @@ auto add_seen_move_impl(MoveContainer & container, Generation const generation, 
 		message += to_string(move);
 		throw std::runtime_error(message);
 	}
-	containers::emplace_back(container, generation, move, pp...);
+	containers::emplace_back(container, generation, move, maybe_pp...);
 }
 
 

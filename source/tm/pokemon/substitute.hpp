@@ -42,8 +42,7 @@ public:
 		return m_hp;
 	}
 
-	template<typename Damage>
-	constexpr auto damage(Damage const damage_done) {
+	constexpr auto damage(auto const damage_done) {
 		m_hp -= damage_done;
 	}
 

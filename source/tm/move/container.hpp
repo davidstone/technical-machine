@@ -32,8 +32,7 @@ namespace technicalmachine {
 
 using RegularMoveContainer = containers::static_vector<Move, max_moves_per_pokemon.value()>;
 
-template<typename Range>
-constexpr auto move_container_transform(Range const & range) {
+constexpr auto move_container_transform(auto const & range) {
 	auto const transformed = containers::transform(range, [](auto value) { return value; });
 	return containers::range_view(transformed);
 }
@@ -82,8 +81,7 @@ public:
 
 	auto emplace_back(Move const move) -> Move &;
 
-	template<typename... MaybePP>
-	auto & emplace_back(Generation const generation, Moves const move, MaybePP... maybe_pp) {
+	auto & emplace_back(Generation const generation, Moves const move, auto... maybe_pp) {
 		return emplace_back(Move(generation, move, maybe_pp...));
 	}
 

@@ -58,8 +58,8 @@ constexpr auto party_from_player_id(std::string_view const player_id) {
 	return make_party(player_id.substr(0, 2));
 }
 
-template<typename Container, typename Value>
-constexpr auto container_index(Container const & container, Value const value, std::string_view const text) {
+template<typename Container>
+constexpr auto container_index(Container const & container, auto const value, std::string_view const text) {
 	auto const it = containers::find(container, value);
 	if (it == end(container)) {
 		throw std::runtime_error(std::string(text) + std::string(to_string(value)));

@@ -50,8 +50,7 @@ auto make_distribution() {
 	return std::uniform_int_distribution<int>(bounded::min_value<T>.value(), bounded::max_value<T>.value());
 }
 
-template<typename Integer>
-void fuzz(Integer const iterations) {
+void fuzz(auto const iterations) {
 	auto random_engine = std::mt19937(std::random_device{}());
 	auto action_distribution = std::uniform_int_distribution<int>(0, 3);
 	auto random_size = [&, distribution = make_distribution<TeamSize>()]() mutable {
