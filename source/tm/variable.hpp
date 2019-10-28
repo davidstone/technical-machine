@@ -28,6 +28,7 @@
 
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
+#include <bounded/unreachable.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
 
@@ -67,7 +68,7 @@ struct Variable {
 				target.flinch();
 				break;
 			default:
-				BOUNDED_ASSERT_OR_ASSUME(false);
+				bounded::assert_or_assume_unreachable();
 		}
 	}
 
@@ -127,7 +128,7 @@ struct Variable {
 			case 1: return Statuses::burn;
 			case 2: return Statuses::freeze;
 			case 3: return Statuses::paralysis;
-			default: BOUNDED_ASSERT_OR_ASSUME(false);
+			default: bounded::assert_or_assume_unreachable();
 		}
 	}
 

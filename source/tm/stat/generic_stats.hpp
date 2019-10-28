@@ -19,8 +19,8 @@
 
 #include <tm/stat/stat_names.hpp>
 
-#include <bounded/assert.hpp>
 #include <bounded/detail/tuple.hpp>
+#include <bounded/unreachable.hpp>
 
 namespace technicalmachine {
 
@@ -53,7 +53,7 @@ private:
 			case StatNames::SPA: return generic.special_attack;
 			case StatNames::SPD: return generic.special_defense;
 			case StatNames::SPE: return generic.speed;
-			default: BOUNDED_ASSERT_OR_ASSUME(false);
+			default: bounded::assert_or_assume_unreachable();
 		}
 	}
 };

@@ -4,6 +4,13 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+endif()
+
+
 project(technical_machine LANGUAGES CXX)
 
 find_package(Boost REQUIRED)
@@ -258,8 +265,6 @@ add_executable(tm_test
 target_link_libraries(tm_test
 	tm_common
 )
-
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 
 set(COMMON_CLANG_COMPILE_OPTIONS
 	"-Xclang"

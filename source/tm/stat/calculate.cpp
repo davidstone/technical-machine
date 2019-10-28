@@ -224,7 +224,7 @@ constexpr auto other_physical_stat(StatNames const stat) {
 	switch (stat) {
 		case StatNames::ATK: return StatNames::DEF;
 		case StatNames::DEF: return StatNames::ATK;
-		default: BOUNDED_ASSERT_OR_ASSUME(false);
+		default: bounded::unreachable();
 	}
 }
 

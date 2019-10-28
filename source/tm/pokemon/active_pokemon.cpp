@@ -24,6 +24,7 @@
 
 #include <bounded/assert.hpp>
 #include <bounded/detail/overload.hpp>
+#include <bounded/unreachable.hpp>
 
 namespace technicalmachine {
 
@@ -201,7 +202,7 @@ auto MutableActivePokemon::use_uproar() const -> void {
 		// TODO: Have it be active when it is constructed
 		[&](std::monostate) { m_flags.lock_in.emplace(bounded::detail::types<UproarCounter>{}).advance_one_turn(); },
 		[](UproarCounter & uproar) { uproar.advance_one_turn(); },
-		[](auto const &) { BOUNDED_ASSERT_OR_ASSUME(false); }
+		[](auto const &) { bounded::assert_or_assume_unreachable(); }
 	));
 }
 

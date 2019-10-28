@@ -31,6 +31,7 @@
 #include <tm/string_conversions/pokemon.hpp>
 
 #include <bounded/assert.hpp>
+#include <bounded/unreachable.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/string.hpp>
@@ -570,7 +571,7 @@ Species id_to_species(SpeciesIDs const species) {
 				case 3: return Species::Rotom_Frost;
 				case 4: return Species::Rotom_Wash;
 				case 5: return Species::Rotom_Fan;
-				default: BOUNDED_ASSERT_OR_ASSUME(false);
+				default: bounded::unreachable();
 			}
 		case 480: return Species::Uxie;
 		case 481: return Species::Mesprit;
@@ -597,7 +598,10 @@ Species id_to_species(SpeciesIDs const species) {
 			}
 		case 493: return Species::Arceus;
 		
-		default: BOUNDED_ASSERT_OR_ASSUME(false);
+		default: {
+			static_assert(bounded::max_value<decltype(species.id)> == 493);
+			bounded::unreachable();
+		}
 	}
 }
 
@@ -1269,7 +1273,10 @@ Ability id_to_ability(AbilityID const id) {
 		case 121: return Ability::Multitype;
 		case 122: return Ability::Flower_Gift;
 		case 123: return Ability::Bad_Dreams;
-		default: BOUNDED_ASSERT_OR_ASSUME(false);
+		default: {
+			static_assert(bounded::max_value<decltype(id)> == 123);
+			bounded::unreachable();
+		}
 	}
 }
 
@@ -1468,7 +1475,10 @@ Gender id_to_gender(GenderID const id) {
 		case 0: return Gender::genderless;
 		case 1: return Gender::male;
 		case 2: return Gender::female;
-		default: BOUNDED_ASSERT_OR_ASSUME(false);
+		default: {
+			static_assert(bounded::max_value<decltype(id)> == 2);
+			bounded::unreachable();
+		}
 	}
 }
 
@@ -1709,7 +1719,10 @@ Item id_to_item(ItemID const id) {
 		case 224: return Item::Space_Mail;
 		case 225: return Item::Steel_Mail;
 		case 226: return Item::Tunnel_Mail;
-		default: BOUNDED_ASSERT_OR_ASSUME(false);
+		default: {
+			static_assert(bounded::max_value<decltype(id)> == 226);
+			bounded::unreachable();
+		}
 	}
 }
 
@@ -2213,7 +2226,10 @@ Nature id_to_nature(NatureID const id) {
 		case 22: return Nature::Sassy;
 		case 23: return Nature::Careful;
 		case 24: return Nature::Quirky;
-		default: BOUNDED_ASSERT_OR_ASSUME(false);
+		default: {
+			static_assert(bounded::max_value<decltype(id)> == 24);
+			bounded::unreachable();
+		}
 	}
 }
 

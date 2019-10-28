@@ -23,6 +23,7 @@
 #include <tm/pokemon/species.hpp>
 
 #include <bounded/assert.hpp>
+#include <bounded/unreachable.hpp>
 
 namespace technicalmachine {
 
@@ -3463,7 +3464,7 @@ constexpr auto get_base(Species const species, StatNames const stat) -> Stat::ba
 		case StatNames::SPA: return get_base(species, stat_tag<StatNames::SPA>{});
 		case StatNames::SPD: return get_base(species, stat_tag<StatNames::SPD>{});
 		case StatNames::SPE: return get_base(species, stat_tag<StatNames::SPE>{});
-		default: BOUNDED_ASSERT_OR_ASSUME(false);
+		default: bounded::assert_or_assume_unreachable();
 	}
 }
 
