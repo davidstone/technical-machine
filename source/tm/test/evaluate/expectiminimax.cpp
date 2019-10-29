@@ -171,7 +171,7 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 	{
 		defender.add_pokemon(generation, Species::Wobbuffet, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Shadow_Tag, Nature::Bold);
 		Pokemon & wobbuffet = defender.pokemon();
-		containers::append(regular_moves(wobbuffet), shuffled(Moves::Counter, Moves::Safeguard));
+		containers::append(regular_moves(wobbuffet), shuffled(Moves::Counter, Moves::Encore));
 		set_hp_ev(generation, wobbuffet, EV(252_bi));
 		set_stat_ev(wobbuffet, StatNames::DEF, EV(252_bi));
 		set_stat_ev(wobbuffet, StatNames::SPE, EV(4_bi));
