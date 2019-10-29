@@ -139,7 +139,7 @@ inline auto parse_details(std::string_view details) {
 	auto const is_shiny = level_or_gender_or_shiny_str == "shiny";
 	auto const level = Level(maybe_gender or is_shiny ?
 		100_bi :
-		bounded::to_integer<Level::min, Level::max>(level_or_gender_or_shiny_str.substr(1))
+		bounded::to_integer<Level::value_type>(level_or_gender_or_shiny_str.substr(1))
 	);
 	auto parse_gender = [&]{
 		if (maybe_gender) {

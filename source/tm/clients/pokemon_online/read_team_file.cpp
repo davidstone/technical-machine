@@ -133,7 +133,7 @@ void load_pokemon(ptree const & pt, Team & team, SpeciesIDs::ID) {
 	auto const species = id_to_species({ pt.get<SpeciesIDs::ID>("<xmlattr>.Num"), pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")} );
 	// auto const nickname = pt.get<std::string>("<xmlattr>.Nickname");
 	auto const gender = Gender(id_to_gender(pt.get<GenderID>("<xmlattr>.Gender")));
-	auto const level = Level(pt.get<bounded::checked_integer<Level::min, Level::max>>("<xmlattr>.Lvl"));
+	auto const level = Level(pt.get<Level::value_type>("<xmlattr>.Lvl"));
 	auto const happiness = Happiness(pt.get<Happiness::value_type>("<xmlattr>.Happiness"));
 	auto const item = id_to_item(pt.get<ItemID>("<xmlattr>.Item"));
 	auto const ability = id_to_ability(pt.get<AbilityID>("<xmlattr>.Ability"));

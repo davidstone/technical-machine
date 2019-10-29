@@ -24,17 +24,16 @@
 namespace technicalmachine {
 
 struct Level {
-	static constexpr int min = 1;
-	static constexpr int max = 100;
-	constexpr explicit Level(bounded::integer<min, max> const level) :
+	using value_type = bounded::checked_integer<1, 100>;
+	constexpr explicit Level(value_type const level) :
 		m_value(level)
 	{
 	}
-	constexpr auto operator()() const -> bounded::integer<min, max> {
+	constexpr auto operator()() const -> bounded::change_policy<value_type, bounded::integer> {
 		return m_value;
 	}
 private:
-	bounded::checked_integer<min, max> m_value;
+	value_type m_value;
 };
 
 constexpr auto operator==(Level const lhs, Level const rhs) {
