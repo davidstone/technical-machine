@@ -1,4 +1,4 @@
-// Copyright (C) 2019 David Stone
+// Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,19 +17,11 @@
 
 #pragma once
 
-#include <tm/generation.hpp>
-#include <tm/team.hpp>
-
-#include <containers/string.hpp>
-
-#include <string_view>
-
 namespace technicalmachine {
-
 namespace ps {
 
-auto to_packed_format(Team const &) -> containers::string;
-auto packed_format_to_team(std::string_view, Generation) -> Team;
+void test_packed_team();
 
-}	// namespace ps
-}	// namespace technicalmachine
+} // namespace ps
+} // namespace technicalmachine
+

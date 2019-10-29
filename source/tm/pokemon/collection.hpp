@@ -91,15 +91,22 @@ struct PokemonCollection {
 	}
 
 	Pokemon & add(Generation const generation, auto && ... args) {
-		if (size(m_container) == m_real_size) {
-			throw std::runtime_error("Tried to add too many Pokemon");
-		}
+		check_not_full();
 		return containers::emplace_back(m_container, generation, m_real_size, BOUNDED_FORWARD(args)...);
+	}
+	Pokemon & add(Pokemon pokemon) {
+		check_not_full();
+		return containers::emplace_back(m_container, std::move(pokemon));
 	}
 
 	void remove_active(containers::index_type<PokemonCollection> index_of_replacement);
 
 private:
+	void check_not_full() {
+		if (size(m_container) == m_real_size) {
+			throw std::runtime_error("Tried to add too many Pokemon");
+		}
+	}
 	constexpr void check_range(containers::index_type<PokemonCollection> const new_index [[maybe_unused]]) const {
 		BOUNDED_ASSERT(new_index < containers::size(m_container));
 	}

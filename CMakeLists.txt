@@ -236,6 +236,7 @@ target_link_libraries(predict
 
 add_executable(tm_test
 	source/tm/test/clients/pokemon_showdown/battles.cpp
+	source/tm/test/clients/pokemon_showdown/packed_team.cpp
 	source/tm/test/clients/pokemon_showdown/slot_memory.cpp
 
 	source/tm/test/collections/collection.cpp

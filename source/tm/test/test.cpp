@@ -16,6 +16,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/test/clients/pokemon_showdown/battles.hpp>
+#include <tm/test/clients/pokemon_showdown/packed_team.hpp>
 #include <tm/test/clients/pokemon_showdown/slot_memory.hpp>
 #include <tm/test/collections/collection.hpp>
 #include <tm/test/block.hpp>
@@ -35,8 +36,6 @@
 int main() {
 	using namespace technicalmachine;
 
-	ps::test_battles();
-	
 	block_tests();
 	string_conversion_tests();
 	status_tests();
@@ -52,8 +51,11 @@ int main() {
 
 	pl::test ();
 	po::test ();
+	ps::test_packed_team();
 	ps::test_slot_memory();
 
+	ps::test_battles();
+	
 	std::cout << "All tests passed.\n";
 	return 0;
 }
