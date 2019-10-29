@@ -27,7 +27,6 @@
 #include <tm/team.hpp>
 
 #include <tm/pokemon/pokemon.hpp>
-#include <tm/pokemon/species.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/array/make_array.hpp>
@@ -36,12 +35,12 @@ namespace technicalmachine {
 enum class Moves : std::uint16_t;
 namespace {
 
-void predict_pokemon(Team & team, Estimate estimate, Multiplier const & multiplier) {
+void predict_pokemon(Generation const generation, Team & team, Estimate estimate, Multiplier const & multiplier) {
 	auto const index = team.all_pokemon().index();
 	while (team.number_of_seen_pokemon() < team.size()) {
 		Species const name = estimate.most_likely();
 		Level const level(100_bi);
-		team.add_pokemon(name, level, Gender::genderless);
+		team.add_pokemon(generation, name, level, Gender::genderless);
 		if (team.number_of_seen_pokemon() == team.size())
 			break;
 		estimate.update(multiplier, name);
@@ -70,7 +69,7 @@ Team predict_team(Generation const generation, UsageStats const & usage_stats, L
 	auto estimate = Estimate(usage_stats, lead_stats);
 	estimate.update(multiplier, team);
 
-	predict_pokemon(team, estimate, multiplier);
+	predict_pokemon(generation, team, estimate, multiplier);
 	for (auto & pokemon : team.all_pokemon()) {
 		auto const species = get_species(pokemon);
 		if (!ability_is_known(pokemon)) {
@@ -83,7 +82,7 @@ Team predict_team(Generation const generation, UsageStats const & usage_stats, L
 			set_nature(pokemon, detailed.get<Nature>(species));
 		}
 		predict_move(all_moves(pokemon), generation, detailed.get<DetailedStats::UsedMoves>(species));
-		optimize_evs(pokemon, random_engine);
+		optimize_evs(generation, pokemon, random_engine);
 	}
 	return team;
 }

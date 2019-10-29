@@ -43,7 +43,7 @@ constexpr auto ev_sum(DataPoint const data) {
 
 }	// namespace
 
-DefensiveEVs::DefensiveEVs(Species const species, Level const level, Nature const original_nature, HP const original_hp, Stat const defense, Stat const special_defense) {
+DefensiveEVs::DefensiveEVs(Generation const generation, Species const species, Level const level, Nature const original_nature, HP const original_hp, Stat const defense, Stat const special_defense) {
 	auto product = [=](Nature const nature, HP const hp, StatNames const name, Stat const stat) {
 		return hp.max() * initial_stat(name, stat, level, nature);
 	};
@@ -54,9 +54,9 @@ DefensiveEVs::DefensiveEVs(Species const species, Level const level, Nature cons
 	auto const special_defense_product = initial_product(StatNames::SPD, special_defense);
 
 	auto defensive_product = [=](DataPoint const value) {
-		auto const hp = HP(species, level, value.hp);
+		auto const hp = HP(generation, species, level, value.hp);
 		auto single_product = [=](StatNames const stat, EV const ev) {
-			return product(value.nature, hp, stat, Stat(species, stat, ev));
+			return product(value.nature, hp, stat, Stat(generation, species, stat, ev));
 		};
 
 		return single_product(StatNames::DEF, value.defense) * single_product(StatNames::SPD, value.special_defense);
@@ -65,7 +65,7 @@ DefensiveEVs::DefensiveEVs(Species const species, Level const level, Nature cons
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto best_per_nature = bounded::optional<DataPoint>{};
 		for (auto const hp_ev : ev_range()) {
-			auto const hp = HP(species, level, hp_ev, original_hp.iv());
+			auto const hp = HP(generation, species, level, hp_ev, original_hp.iv());
 			auto find_minimum_matching = [=](StatNames const stat_name, Stat const stat, auto const original_product) {
 				auto const target_stat = round_up_divide(original_product, hp.max());
 				auto const expected = stat_to_ev(target_stat, nature, stat_name, stat.base(), stat.iv(), level);

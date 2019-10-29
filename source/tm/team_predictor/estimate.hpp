@@ -19,7 +19,7 @@
 
 #include <tm/team_predictor/lead_stats.hpp>
 
-#include <tm/pokemon/species.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
 #include <containers/array/array.hpp>
 

@@ -68,7 +68,7 @@ auto Battle::find_or_add_pokemon(Party const party, uint8_t /*slot*/, Species co
 	auto & switcher = get_team(party);
 	auto const index = index_of_seen(switcher.all_pokemon(), species);
 	if (index == switcher.number_of_seen_pokemon()) {
-		switcher.all_pokemon().add(species, level, gender);
+		switcher.all_pokemon().add(m_generation, species, level, gender);
 	}
 	return to_switch(index);
 }

@@ -21,6 +21,8 @@
 #include <tm/stat/stage.hpp>
 #include <tm/stat/stat_names.hpp>
 
+#include <tm/generation.hpp>
+
 #include <bounded/integer.hpp>
 
 #include <containers/array/array.hpp>
@@ -50,6 +52,8 @@ struct Evaluate {
 
 	// Arbitrary values
 	using value_type = bounded::integer<-4096, 4096>;
+
+	auto generation() const { return m_generation; }
 
 	auto light_screen() const { return m_light_screen; }
 	auto lucky_chant() const { return m_lucky_chant; }
@@ -87,6 +91,8 @@ struct Evaluate {
 	auto no_pp() const { return m_no_pp; }
 	auto stage() const { return m_stage; }
 private:
+	Generation m_generation;
+
 	value_type m_light_screen;
 	value_type m_lucky_chant;
 	value_type m_mist;

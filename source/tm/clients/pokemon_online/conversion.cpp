@@ -456,7 +456,7 @@ Species id_to_species(SpeciesIDs const species) {
 		case 385: return Species::Jirachi;
 		case 386:
 			switch (species.forme.value()) {
-				case 0: return Species::Deoxys_Mediocre;
+				case 0: return Species::Deoxys_Normal;
 				case 1: return Species::Deoxys_Attack;
 				case 2: return Species::Deoxys_Defense;
 				case 3: return Species::Deoxys_Speed;
@@ -994,7 +994,7 @@ constexpr SpeciesIDs::ID to_id_only(Species const species) {
 		case Species::Groudon: return 383_bi;
 		case Species::Rayquaza: return 384_bi;
 		case Species::Jirachi: return 385_bi;
-		case Species::Deoxys_Mediocre: return 386_bi;
+		case Species::Deoxys_Normal: return 386_bi;
 		case Species::Deoxys_Attack: return 386_bi;
 		case Species::Deoxys_Defense: return 386_bi;
 		case Species::Deoxys_Speed: return 386_bi;

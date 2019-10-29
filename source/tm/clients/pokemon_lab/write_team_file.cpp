@@ -70,7 +70,7 @@ void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 
 std::string_view to_simulator_string(Species const species) {
 	switch (species) {
-		case Species::Deoxys_Mediocre: return "Deoxys";
+		case Species::Deoxys_Normal: return "Deoxys";
 		case Species::Deoxys_Attack: return "Deoxys-f";
 		case Species::Deoxys_Defense: return "Deoxys-l";
 		case Species::Deoxys_Speed: return "Deoxys-e";

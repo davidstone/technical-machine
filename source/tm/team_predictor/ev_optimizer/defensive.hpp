@@ -27,6 +27,8 @@
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat.hpp>
 
+#include <tm/generation.hpp>
+
 #include <containers/algorithms/find.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/static_vector/static_vector.hpp>
@@ -34,7 +36,7 @@
 namespace technicalmachine {
 
 struct DefensiveEVs {
-	DefensiveEVs(Species, Level, Nature, HP, Stat defense, Stat special_defense);
+	DefensiveEVs(Generation, Species, Level, Nature, HP, Stat defense, Stat special_defense);
 	friend auto begin(DefensiveEVs const & defensive) {
 		return begin(defensive.m_container);
 	}

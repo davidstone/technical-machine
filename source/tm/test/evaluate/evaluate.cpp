@@ -48,10 +48,12 @@ void evaluate_tests() {
 	auto const ability = Ability::Natural_Cure;
 	auto const nature = Nature::Bold;
 
+	constexpr auto generation = Generation::four;
+
 	Team team1(1_bi);
-	team1.add_pokemon(species, level, gender, item, ability, nature);
+	team1.add_pokemon(generation, species, level, gender, item, ability, nature);
 	Team team2(1_bi);
-	team2.add_pokemon(species, level, gender, item, ability, nature);
+	team2.add_pokemon(generation, species, level, gender, item, ability, nature);
 	get_hp(team1.pokemon()) -= 50_bi;
 	Evaluate const evaluate;
 	assert_lower_score(evaluate, team1, team2);

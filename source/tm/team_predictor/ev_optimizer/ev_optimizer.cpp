@@ -33,11 +33,11 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-auto set_stats(Pokemon & pokemon, CombinedStats const stats) {
+auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats const stats) {
 	set_nature(pokemon, stats.nature);
 
 	auto const original_hp = get_hp(pokemon);
-	set_hp_ev(pokemon, stats.hp);
+	set_hp_ev(generation, pokemon, stats.hp);
 	auto & new_hp = get_hp(pokemon);
 	new_hp = new_hp.max() * original_hp.current() / original_hp.max();
 
@@ -85,11 +85,11 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 	return *best;
 }
 
-auto optimize_evs(CombinedStats combined, Species const species, Level const level, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) {
+auto optimize_evs(Generation const generation, CombinedStats combined, Species const species, Level const level, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) {
 	while (true) {
 		auto const previous = combined;
 		combined = pad_random_evs(combined, include_attack, include_special_attack, random_engine);
-		combined = minimize_evs(combined, species, level, include_attack, include_special_attack);
+		combined = minimize_evs(generation, combined, species, level, include_attack, include_special_attack);
 		// Technically this isn't correct based on how I pad: I could have some
 		// leftover EVs that could have done some good somewhere else, but were
 		// not enough to increase the stat they were randomly assigned to.
@@ -113,27 +113,27 @@ auto pull_out_stats(Pokemon const & pokemon) -> CombinedStats {
 	};
 }
 
-void optimize_evs(Pokemon & pokemon, std::mt19937 & random_engine) {
+void optimize_evs(Generation const generation, Pokemon & pokemon, std::mt19937 & random_engine) {
 	auto const species = get_species(pokemon);
 	auto const level = get_level(pokemon);
 	auto const include_attack = has_physical_move(pokemon);
 	auto const include_special_attack = has_special_move(pokemon);
-	auto const optimized = optimize_evs(pull_out_stats(pokemon), species, level, include_attack, include_special_attack, random_engine);
-	set_stats(pokemon, optimized);
+	auto const optimized = optimize_evs(generation, pull_out_stats(pokemon), species, level, include_attack, include_special_attack, random_engine);
+	set_stats(generation, pokemon, optimized);
 }
 
-auto minimize_evs(CombinedStats const stats, Species const species, Level const level, bool const include_attack, bool const include_special_attack) -> CombinedStats {
+auto minimize_evs(Generation const generation, CombinedStats const stats, Species const species, Level const level, bool const include_attack, bool const include_special_attack) -> CombinedStats {
 	auto const nature = stats.nature;
-	auto const hp = HP(species, level, stats.hp);
-	auto const attack = Stat(species, StatNames::ATK, stats.attack);
-	auto const defense = Stat(species, StatNames::DEF, stats.defense);
-	auto const special_attack = Stat(species, StatNames::SPA, stats.special_attack);
-	auto const special_defense = Stat(species, StatNames::SPD, stats.special_defense);
-	auto const speed = Stat(species, StatNames::SPE, stats.speed);
+	auto const hp = HP(generation, species, level, stats.hp);
+	auto const attack = Stat(generation, species, StatNames::ATK, stats.attack);
+	auto const defense = Stat(generation, species, StatNames::DEF, stats.defense);
+	auto const special_attack = Stat(generation, species, StatNames::SPA, stats.special_attack);
+	auto const special_defense = Stat(generation, species, StatNames::SPD, stats.special_defense);
+	auto const speed = Stat(generation, species, StatNames::SPE, stats.speed);
 
 	auto const result = combine(
-		OffensiveEVs(species, level, nature, attack, special_attack, include_attack, include_special_attack),
-		DefensiveEVs(species, level, nature, hp, defense, special_defense),
+		OffensiveEVs(generation, species, level, nature, attack, special_attack, include_attack, include_special_attack),
+		DefensiveEVs(generation, species, level, nature, hp, defense, special_defense),
 		SpeedEVs(nature, speed, level)
 	);
 	return result;

@@ -18,6 +18,7 @@
 #pragma once
 
 #include <tm/entry_hazards.hpp>
+#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/screens.hpp>
 #include <tm/wish.hpp>
@@ -88,7 +89,7 @@ struct Team {
 		entry_hazards = EntryHazards{};
 	}
 
-	auto switch_pokemon(Team & other, Weather & weather, TeamIndex const replacement) -> void {
+	auto switch_pokemon(Generation const generation, Team & other, Weather & weather, TeamIndex const replacement) -> void {
 		m_flags.reset_switch();
 		Pokemon & original_pokemon = pokemon();
 		switch_out(original_pokemon);
@@ -105,7 +106,7 @@ struct Team {
 
 		auto const replacement_pokemon = pokemon();
 		switch_in(replacement_pokemon);
-		apply(entry_hazards, replacement_pokemon, weather);
+		apply(generation, entry_hazards, replacement_pokemon, weather);
 		if (get_hp(replacement_pokemon) != 0_bi) {
 			activate_ability_on_switch(replacement_pokemon, other.pokemon(), weather);
 		}

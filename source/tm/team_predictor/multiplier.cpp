@@ -165,7 +165,7 @@ bool is_deoxys(Species const species) {
 	switch (species) {
 		case Species::Deoxys_Attack:
 		case Species::Deoxys_Defense:
-		case Species::Deoxys_Mediocre:
+		case Species::Deoxys_Normal:
 		case Species::Deoxys_Speed:
 			return true;
 		default:

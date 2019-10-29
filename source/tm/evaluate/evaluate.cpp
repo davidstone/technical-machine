@@ -131,7 +131,7 @@ auto score_pokemon(Evaluate const & evaluate, Pokemon const & pokemon, EntryHaza
 		evaluate.members() +
 		hp_ratio(pokemon) * evaluate.hp() +
 		BOUNDED_CONDITIONAL(!pokemon.has_been_seen(), evaluate.hidden(), 0_bi) +
-		BOUNDED_CONDITIONAL(entry_hazards.stealth_rock(), Effectiveness(Type::Rock, pokemon) * evaluate.stealth_rock(), 0_bi) +
+		BOUNDED_CONDITIONAL(entry_hazards.stealth_rock(), Effectiveness(evaluate.generation(), Type::Rock, pokemon) * evaluate.stealth_rock(), 0_bi) +
 		BOUNDED_CONDITIONAL(grounded(pokemon, weather), entry_hazards.spikes() * evaluate.spikes() + entry_hazards.toxic_spikes() * evaluate.toxic_spikes(), 0_bi) +
 		score_status(evaluate, pokemon) +
 		score_moves(evaluate, pokemon, other.screens, weather)
@@ -227,6 +227,7 @@ auto Evaluate::win(Team const & team1, Team const & team2) -> bounded::optional<
 	return bounded::none;
 }
 
+// TODO: Load generation from configuration
 Evaluate::Evaluate() {
 	boost::property_tree::ptree file;
 	read_xml("settings/evaluate.xml", file);
@@ -237,6 +238,8 @@ Evaluate::Evaluate() {
 		static_cast<int>(bounded::min_value<value_type>),
 		static_cast<int>(bounded::max_value<value_type>)
 	>;
+
+	m_generation = Generation::four;
 
 	m_light_screen = pt.get<underlying_type>("light_screen", 0_bi);
 	m_lucky_chant = pt.get<underlying_type>("lucky_chant", 0_bi);

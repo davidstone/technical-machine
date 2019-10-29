@@ -45,7 +45,7 @@ constexpr auto max_damage_physical_move = Move(generation, Moves::Rollout);
 Team max_damage_physical_attacker(Item const item, Ability const ability, Nature const nature) {
 	auto attacker = Team(max_pokemon_per_team);
 	
-	auto & pokemon = attacker.add_pokemon(Species::Shuckle, Level(100_bi), Gender::male, item, ability, nature);
+	auto & pokemon = attacker.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, item, ability, nature);
 	containers::emplace_back(all_moves(pokemon), max_damage_physical_move);
 
 	attacker.pokemon().defense_curl();
@@ -59,7 +59,7 @@ Team max_damage_physical_attacker(Item const item, Ability const ability, Nature
 Team max_damage_special_attacker(Item const item, Ability const ability, Nature const nature) {
 	auto attacker = Team(max_pokemon_per_team);
 
-	attacker.add_pokemon(Species::Deoxys_Attack, Level(100_bi), Gender::genderless, item, ability, nature);
+	attacker.add_pokemon(generation, Species::Deoxys_Attack, Level(100_bi), Gender::genderless, item, ability, nature);
 	get_hp(attacker.pokemon()) = 1_bi;
 	
 	return attacker;
@@ -67,7 +67,7 @@ Team max_damage_special_attacker(Item const item, Ability const ability, Nature 
 
 Team max_damage_physical_defender() {
 	auto defender = Team(max_pokemon_per_team);
-	defender.add_pokemon(Species::Combee, Level(1_bi), Gender::male, Item::No_Item, Ability::Honey_Gather, Nature::Hasty);
+	defender.add_pokemon(generation, Species::Combee, Level(1_bi), Gender::male, Item::No_Item, Ability::Honey_Gather, Nature::Hasty);
 	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi), IV(0_bi));
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
@@ -78,7 +78,7 @@ Team max_damage_physical_defender() {
 
 Team max_damage_special_defender() {
 	auto defender = Team(max_pokemon_per_team);
-	defender.add_pokemon(Species::Paras, Level(1_bi), Gender::male, Item::No_Item, Ability::Dry_Skin, Nature::Hardy);
+	defender.add_pokemon(generation, Species::Paras, Level(1_bi), Gender::male, Item::No_Item, Ability::Dry_Skin, Nature::Hardy);
 
 	auto d = defender.pokemon();
 	set_stat_ev(d, StatNames::SPD, EV(0_bi), IV(0_bi));

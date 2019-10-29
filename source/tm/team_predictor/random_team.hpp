@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include <tm/generation.hpp>
+
 #include <random>
 
 namespace technicalmachine {
@@ -26,6 +28,6 @@ struct UsageStats;
 struct Team;
 
 // Fill an existing team with random Pokemon, weighted by usage
-void random_team(UsageStats const & usage_stats, Team & team, std::mt19937 & random_engine);
+void random_team(Generation, UsageStats const & usage_stats, Team & team, std::mt19937 & random_engine);
 
 }	// namespace technicalmachine

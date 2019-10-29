@@ -139,7 +139,7 @@ void load_pokemon(ptree const & pt, Team & team, SpeciesIDs::ID) {
 	auto const ability = id_to_ability(pt.get<AbilityID>("<xmlattr>.Ability"));
 	auto const nature = id_to_nature(pt.get<NatureID>("<xmlattr>.Nature"));
 
-	auto & pokemon = team.add_pokemon(species, level, gender, item, ability, nature, happiness);
+	auto & pokemon = team.add_pokemon(generation, species, level, gender, item, ability, nature, happiness);
 
 	// Get past the xml attributes
 	auto it = ++pt.get_child("").begin();

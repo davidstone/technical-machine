@@ -38,6 +38,8 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
+constexpr auto generation = Generation::four;
+
 constexpr auto critical_hit = false;
 
 void attack_tests() {
@@ -45,7 +47,7 @@ void attack_tests() {
 	constexpr auto max_attack = 7368_bi;
 	auto attacker = Team(max_pokemon_per_team);
 
-	attacker.add_pokemon(Species::Shuckle, Level(100_bi), Gender::male, Item::Choice_Band, Ability::Pure_Power, Nature::Impish);
+	attacker.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::Choice_Band, Ability::Pure_Power, Nature::Impish);
 	auto pokemon = attacker.pokemon();
 
 	set_stat_ev(pokemon, StatNames::DEF, EV(EV::max));
@@ -62,7 +64,7 @@ void special_attack_tests() {
 	weather.activate_sun(Weather::permanent);
 	auto attacker = Team(max_pokemon_per_team);
 
-	attacker.add_pokemon(Species::Deoxys_Attack, Level(100_bi), Gender::genderless, Item::Choice_Specs, Ability::Solar_Power, Nature::Modest);
+	attacker.add_pokemon(generation, Species::Deoxys_Attack, Level(100_bi), Gender::genderless, Item::Choice_Specs, Ability::Solar_Power, Nature::Modest);
 	auto pokemon = attacker.pokemon();
 
 	set_stat_ev(pokemon, StatNames::SPA, EV(EV::max));
@@ -78,7 +80,7 @@ void max_defense_test() {
 	auto defender = Team(max_pokemon_per_team);
 	auto weather = Weather{};
 
-	defender.add_pokemon(Species::Shuckle, Level(100_bi), Gender::male, Item::No_Item, Ability::Marvel_Scale, Nature::Bold);
+	defender.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::No_Item, Ability::Marvel_Scale, Nature::Bold);
 	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(EV::max));
 
@@ -96,7 +98,7 @@ void min_defense_test() {
 
 	auto defender = Team(max_pokemon_per_team);
 
-	defender.add_pokemon(Species::Combee, Level(1_bi), Gender::male, Item::No_Item, Ability::Honey_Gather, Nature::Hasty);
+	defender.add_pokemon(generation, Species::Combee, Level(1_bi), Gender::male, Item::No_Item, Ability::Honey_Gather, Nature::Hasty);
 	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi));
 
@@ -121,7 +123,7 @@ void special_defense_tests() {
 	auto weather = Weather{};
 	weather.activate_sand(Weather::permanent);
 
-	defender.add_pokemon(Species::Shuckle, Level(100_bi), Gender::male, Item::No_Item, Ability::Honey_Gather, Nature::Calm);
+	defender.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::No_Item, Ability::Honey_Gather, Nature::Calm);
 	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::SPD, EV(EV::max));
 
@@ -138,7 +140,7 @@ void speed_tests() {
 
 	auto team = Team(max_pokemon_per_team);
 
-	team.add_pokemon(Species::Deoxys_Speed, Level(100_bi), Gender::genderless, Item::Choice_Scarf, Ability::Swift_Swim, Nature::Timid);
+	team.add_pokemon(generation, Species::Deoxys_Speed, Level(100_bi), Gender::genderless, Item::Choice_Scarf, Ability::Swift_Swim, Nature::Timid);
 	auto pokemon = team.pokemon();
 	set_stat_ev(pokemon, StatNames::SPE, EV(EV::max));
 

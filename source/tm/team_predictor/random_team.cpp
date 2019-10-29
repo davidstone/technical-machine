@@ -23,8 +23,6 @@
 
 #include <tm/team.hpp>
 
-#include <tm/pokemon/species.hpp>
-
 #include <containers/array/make_array.hpp>
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/integer_range.hpp>
@@ -33,14 +31,14 @@
 
 namespace technicalmachine {
 
-void random_team(UsageStats const & usage_stats, Team & team, std::mt19937 & random_engine) {
+void random_team(Generation const generation, UsageStats const & usage_stats, Team & team, std::mt19937 & random_engine) {
 	auto estimate = Estimate(usage_stats, do_not_use_lead_stats);
 	auto const & multiplier = usage_stats.multiplier();
 	estimate.update(multiplier, team);
 	for (auto const n [[maybe_unused]] : containers::integer_range(max_pokemon_per_team - size(team.all_pokemon()))) {
 		auto const species = estimate.random(random_engine);
 		estimate.update(multiplier, species);
-		team.add_pokemon(species, Level(100_bi), Gender::genderless);
+		team.add_pokemon(generation, species, Level(100_bi), Gender::genderless);
 	}
 }
 

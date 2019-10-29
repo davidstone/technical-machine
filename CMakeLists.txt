@@ -130,6 +130,7 @@ add_library(tm_common STATIC
 	source/tm/pokemon/uproar.cpp
 	source/tm/pokemon/yawn.cpp
 
+	source/tm/stat/base_stats.cpp
 	source/tm/stat/calculate.cpp
 	source/tm/stat/chance_to_hit.cpp
 	source/tm/stat/combined_stats.cpp

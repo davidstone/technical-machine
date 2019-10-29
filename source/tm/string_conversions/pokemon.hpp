@@ -20,7 +20,7 @@
 
 #include <tm/string_conversions/conversion.hpp>
 
-#include <tm/pokemon/species.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
 namespace technicalmachine {
 

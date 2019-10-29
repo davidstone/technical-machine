@@ -18,6 +18,7 @@
 #include <tm/test/block.hpp>
 
 #include <tm/move/moves.hpp>
+#include <tm/pokemon/species.hpp>
 #include <tm/string_conversions/move.hpp>
 #include <tm/block.hpp>
 #include <tm/team.hpp>
@@ -33,7 +34,7 @@ constexpr auto generation = Generation::four;
 void basic() {
 	auto user = Team(1_bi, true);
 	{
-		auto & jolteon = user.add_pokemon(Species::Jolteon, Level(100_bi), Gender::male, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+		auto & jolteon = user.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::male, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
 		containers::append(
 			regular_moves(jolteon),
 			containers::array{
@@ -47,7 +48,7 @@ void basic() {
 
 	auto other = Team(1_bi, false);
 	{
-		auto & gyarados = other.add_pokemon(Species::Gyarados, Level(100_bi), Gender::male, Item::Leftovers, Ability::Intimidate, Nature::Adamant);
+		auto & gyarados = other.add_pokemon(generation, Species::Gyarados, Level(100_bi), Gender::male, Item::Leftovers, Ability::Intimidate, Nature::Adamant);
 		containers::append(
 			regular_moves(gyarados),
 			containers::array{
@@ -67,7 +68,7 @@ void basic() {
 
 void test_two_moves_with_one_out_of_pp() {
 	auto user = Team(1_bi, true);
-	auto & pokemon = user.add_pokemon(Species::Pikachu, Level(100_bi), Gender::female);
+	auto & pokemon = user.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
 	auto empty_pp = [](Move & move) {
 		while (!move.pp().is_empty()) {
 			move.decrement_pp(Ability::Static);
@@ -78,7 +79,7 @@ void test_two_moves_with_one_out_of_pp() {
 	containers::emplace_back(all_moves(pokemon), generation, Moves::Thunderbolt, 0_bi);
 
 	auto other = Team(1_bi, false);
-	other.add_pokemon(Species::Pikachu, Level(100_bi), Gender::female);
+	other.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
 	
 	auto const selections = legal_selections(user, other.pokemon(), Weather{});
 	if (size(selections) != 1_bi) {
@@ -91,7 +92,7 @@ void test_two_moves_with_one_out_of_pp() {
 
 void test_two_moves_with_both_out_of_pp() {
 	auto user = Team(1_bi, true);
-	auto & pokemon = user.add_pokemon(Species::Pikachu, Level(100_bi), Gender::female);
+	auto & pokemon = user.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
 	auto empty_pp = [](Move & move) {
 		while (!move.pp().is_empty()) {
 			move.decrement_pp(Ability::Static);
@@ -103,7 +104,7 @@ void test_two_moves_with_both_out_of_pp() {
 	empty_pp(thunderbolt);
 
 	auto other = Team(1_bi, false);
-	other.add_pokemon(Species::Pikachu, Level(100_bi), Gender::female);
+	other.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
 	
 	auto const selections = legal_selections(user, other.pokemon(), Weather{});
 	if (size(selections) != 1_bi) {

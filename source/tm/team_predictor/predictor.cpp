@@ -121,8 +121,8 @@ struct PokemonInputValues {
 	{
 	}
 	void add_to_team(Team & team) const {
-		auto & pokemon = team.add_pokemon(species, Level(100_bi), Gender::genderless, item, ability, nature);
-		set_hp_ev(pokemon, evs[0_bi]);
+		auto & pokemon = team.add_pokemon(generation, species, Level(100_bi), Gender::genderless, item, ability, nature);
+		set_hp_ev(generation, pokemon, evs[0_bi]);
 		for (auto const stat : regular_stats()) {
 			set_stat_ev(pokemon, stat, containers::at(evs, bounded::integer(stat) + 1_bi));
 		}
@@ -155,7 +155,7 @@ void function(Fl_Widget *, void * d) {
 			using_lead = true;
 		}
 	}
-	random_team(data.usage_stats, data.team(), data.random_engine);
+	random_team(generation, data.usage_stats, data.team(), data.random_engine);
 	auto const team_str = to_string(predict_team(
 		generation,
 		data.usage_stats,

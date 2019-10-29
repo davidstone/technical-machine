@@ -20,6 +20,7 @@
 #include <tm/stat/ev.hpp>
 #include <tm/stat/iv.hpp>
 
+#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species_forward.hpp>
@@ -36,15 +37,27 @@ struct HP {
 	using max_type = bounded::integer<1, max_value>;
 	using current_type = bounded::integer<0, max_value>;
 	
-	HP(Species species, Level level, EV ev_ = EV(0_bi), IV iv_ = IV(31_bi));
+	HP(Generation generation, Species species, Level level, EV ev_ = EV(0_bi), IV iv_ = IV(31_bi));
 	auto & operator=(auto const & value) {
 		m_current = bounded::min(value, m_max);
 		return *this;
 	}
-	auto current() const -> current_type;
-	auto max() const -> max_type;
-	auto ev() const -> EV;
-	auto iv() const -> IV;
+	auto current() const -> current_type {
+		return m_current;
+	}
+
+	auto max() const -> max_type {
+		return m_max;
+	}
+
+	auto ev() const -> EV {
+		return m_ev;
+	}
+
+	auto iv() const -> IV {
+		return m_iv;
+	}
+
 private:
 	EV m_ev;
 	IV m_iv;
@@ -52,8 +65,8 @@ private:
 	bounded::clamped_integer<0, max_value> m_current;
 };
 
-auto set_hp_ev(Pokemon & pokemon, EV ev) -> void;
-auto set_hp_ev(Pokemon & pokemon, EV ev, IV iv) -> void;
+auto set_hp_ev(Generation, Pokemon & pokemon, EV ev) -> void;
+auto set_hp_ev(Generation, Pokemon & pokemon, EV ev, IV iv) -> void;
 
 auto operator+=(HP & lhs, auto const & rhs) -> HP & {
 	return lhs = lhs.current() + rhs;

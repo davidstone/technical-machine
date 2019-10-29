@@ -1,5 +1,4 @@
-// All 'normal' stats that a Pokemon has
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,26 +17,47 @@
 
 #pragma once
 
-#include <tm/stat/hp.hpp>
-#include <tm/stat/stat.hpp>
 #include <tm/pokemon/species_forward.hpp>
-
 #include <tm/generation.hpp>
 
-#include <containers/array/array.hpp>
+#include <bounded/integer.hpp>
 
 namespace technicalmachine {
-struct Level;
 
-struct Stats {
-	Stats(Generation, Species species, Level level);
-	auto hp() const -> HP const &;
-	auto hp() -> HP &;
-	auto operator[](StatNames stat) const -> Stat const &;
-	auto operator[](StatNames stat) -> Stat &;
+struct BaseStats {
+	explicit BaseStats(Generation generation, Species species);
+
+	auto hp() const { return m_hp; }
+	auto atk() const { return m_atk; }
+	auto def() const { return m_def; }
+	auto spa() const { return m_spa; }
+	auto spd() const { return m_spd; }
+	auto spe() const { return m_spe; }
+
 private:
+	using HP = bounded::integer<1, 255>;
+	using Atk = bounded::integer<5, 190>;
+	using Def = bounded::integer<5, 230>;
+	using SpA = bounded::integer<10, 194>;
+	using SpD = bounded::integer<20, 230>;
+	using Spe = bounded::integer<5, 180>;
+
+	BaseStats(HP hp_, Atk atk_, Def def_, SpA spa_, SpD spd_, Spe spe_):
+		m_hp(hp_),
+		m_atk(atk_),
+		m_def(def_),
+		m_spa(spa_),
+		m_spd(spd_),
+		m_spe(spe_)
+	{
+	}
+
 	HP m_hp;
-	containers::array<Stat, 5> m_stats;
+	Atk m_atk;
+	Def m_def;
+	SpA m_spa;
+	SpD m_spd;
+	Spe m_spe;
 };
 
 }	// namespace technicalmachine

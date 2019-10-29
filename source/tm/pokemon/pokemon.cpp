@@ -17,8 +17,6 @@
 
 #include <tm/pokemon/pokemon.hpp>
 
-#include <tm/pokemon/species.hpp>
-
 #include <tm/ability.hpp>
 #include <tm/gender.hpp>
 #include <tm/operators.hpp>
@@ -50,10 +48,10 @@ namespace technicalmachine {
 
 // TODO: Setting IVs requires modifying the Pokemon after construction, which
 // will not update Hidden Power
-Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Item const item, Ability const ability, Nature const nature, Happiness const happiness):
+Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Item const item, Ability const ability, Nature const nature, Happiness const happiness):
 	m_moves(my_team_size),
 	current_type(species),
-	stats(species, level),
+	stats(generation, species, level),
 
 	m_species(species),
 	m_item(item),
@@ -65,8 +63,7 @@ Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const
 
 	m_happiness(happiness),
 	
-	// TODO: Pass in Generation somehow
-	m_hidden_power(Generation::four, GenericStats<IV>{IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)}),
+	m_hidden_power(generation, GenericStats<IV>{IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)}),
 	
 	m_has_been_seen(false),
 
@@ -76,8 +73,8 @@ Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const
 {
 }
 
-Pokemon::Pokemon(TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Happiness const happiness) : 
-	Pokemon::Pokemon(my_team_size, species, level, gender, Item::No_Item, Ability::Honey_Gather, Nature::Hardy, happiness)
+Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Happiness const happiness) : 
+	Pokemon::Pokemon(generation, my_team_size, species, level, gender, Item::No_Item, Ability::Honey_Gather, Nature::Hardy, happiness)
 	{
 	m_ability_is_known = false;
 	m_item_is_known = false;

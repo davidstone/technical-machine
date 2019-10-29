@@ -22,6 +22,8 @@
 #include <tm/move/call_move.hpp>
 #include <tm/move/moves.hpp>
 
+#include <tm/pokemon/species.hpp>
+
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
@@ -43,13 +45,13 @@ constexpr auto move_array(auto... moves) {
 void test_baton_pass() {
 	Team attacker(2_bi, true);
 	{
-		attacker.add_pokemon(Species::Smeargle, Level(100_bi), Gender::male, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly);
+		attacker.add_pokemon(generation, Species::Smeargle, Level(100_bi), Gender::male, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly);
 		auto & smeargle = back(attacker.all_pokemon());
 		containers::append(regular_moves(smeargle), move_array(Moves::Baton_Pass, Moves::Belly_Drum));
 	}
 
 	{
-		attacker.add_pokemon(Species::Alakazam, Level(100_bi), Gender::male, Item::Lum_Berry, Ability::Synchronize, Nature::Jolly);
+		attacker.add_pokemon(generation, Species::Alakazam, Level(100_bi), Gender::male, Item::Lum_Berry, Ability::Synchronize, Nature::Jolly);
 		auto & alakazam = back(attacker.all_pokemon());
 		containers::append(regular_moves(alakazam), move_array(Moves::Psycho_Cut, Moves::Recover));
 		set_stat_ev(alakazam, StatNames::ATK, EV(252_bi));
@@ -57,14 +59,14 @@ void test_baton_pass() {
 
 	Team defender(2_bi);
 	{
-		defender.add_pokemon(Species::Gengar, Level(100_bi), Gender::male, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
+		defender.add_pokemon(generation, Species::Gengar, Level(100_bi), Gender::male, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
 		Pokemon & gengar = defender.pokemon();
 		containers::append(regular_moves(gengar), move_array(Moves::Shadow_Ball));
 		set_stat_ev(gengar, StatNames::SPA, EV(252_bi));
 	}
 
 	{
-		defender.add_pokemon(Species::Misdreavus, Level(100_bi), Gender::female, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
+		defender.add_pokemon(generation, Species::Misdreavus, Level(100_bi), Gender::female, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
 		Pokemon & misdreavus = back(defender.all_pokemon());
 		containers::append(regular_moves(misdreavus), move_array(Moves::Shadow_Ball));
 		set_stat_ev(misdreavus, StatNames::SPA, EV(252_bi));
@@ -123,18 +125,18 @@ void sleep_talk() {
 	auto weather = Weather{};
 	auto attacker = Team(1_bi, true);
 	{
-		auto & jolteon = attacker.add_pokemon(Species::Jolteon, Level(100_bi), Gender::female, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+		auto & jolteon = attacker.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::female, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
 		containers::append(regular_moves(jolteon), move_array(Moves::Sleep_Talk, Moves::Thunderbolt));
-		set_hp_ev(jolteon, EV(4_bi));
+		set_hp_ev(generation, jolteon, EV(4_bi));
 		set_stat_ev(jolteon, StatNames::SPA, EV(252_bi));
 		set_stat_ev(jolteon, StatNames::SPE, EV(252_bi));
 	}
 
 	auto defender = Team(1_bi);
 	{
-		auto & gyarados = defender.add_pokemon(Species::Gyarados, Level(100_bi), Gender::male, Item::Life_Orb, Ability::Intimidate, Nature::Adamant);
+		auto & gyarados = defender.add_pokemon(generation, Species::Gyarados, Level(100_bi), Gender::male, Item::Life_Orb, Ability::Intimidate, Nature::Adamant);
 		push_back(regular_moves(gyarados), Move(generation, Moves::Earthquake));
-		set_hp_ev(gyarados, EV(4_bi));
+		set_hp_ev(generation, gyarados, EV(4_bi));
 		set_stat_ev(gyarados, StatNames::ATK, EV(252_bi));
 		set_stat_ev(gyarados, StatNames::SPE, EV(252_bi));
 	}

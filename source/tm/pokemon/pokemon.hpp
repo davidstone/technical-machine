@@ -20,10 +20,11 @@
 #include <tm/pokemon/happiness.hpp>
 #include <tm/pokemon/hidden_power.hpp>
 #include <tm/pokemon/level.hpp>
-#include <tm/pokemon/species.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
 #include <tm/ability.hpp>
 #include <tm/gender.hpp>
+#include <tm/generation.hpp>
 #include <tm/item.hpp>
 #include <tm/operators.hpp>
 #include <tm/status.hpp>
@@ -45,8 +46,8 @@
 namespace technicalmachine {
 
 struct Pokemon {
-	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Happiness happiness = Happiness{});
-	Pokemon(TeamSize my_team_size, Species species, Level level, Gender gender, Item item, Ability ability, Nature nature, Happiness happiness = Happiness{});
+	Pokemon(Generation, TeamSize my_team_size, Species species, Level level, Gender gender, Happiness happiness = Happiness{});
+	Pokemon(Generation, TeamSize my_team_size, Species species, Level level, Gender gender, Item item, Ability ability, Nature nature, Happiness happiness = Happiness{});
 	
 	// These cannot be defined in the class because because I rely on a
 	// conversion operator. Friend functions only declared in a class body are

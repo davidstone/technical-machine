@@ -18,6 +18,7 @@
 #pragma once
 
 #include <tm/type/type.hpp>
+#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
 
@@ -29,8 +30,8 @@ namespace technicalmachine {
 struct Pokemon;
 
 struct Effectiveness {
-	Effectiveness(Type type, Pokemon const & defender);
-	Effectiveness(Type attacking, Type defending);
+	Effectiveness(Generation generation, Type type, Pokemon const & defender);
+	Effectiveness(Generation generation, Type attacking, Type defending);
 	auto is_super_effective() const -> bool;
 	auto is_not_very_effective() const -> bool;
 	auto has_no_effect() const -> bool;
@@ -39,7 +40,7 @@ struct Effectiveness {
 		return number * m_effectiveness[0_bi] * m_effectiveness[1_bi];
 	}
 private:
-	Effectiveness(Type attacking, Type defending1, Type defending2);
+	Effectiveness(Generation generation, Type attacking, Type defending1, Type defending2);
 	using SingleType = rational<bounded::integer<0, 2>, bounded::integer<1, 2>>;
 	using Product = decltype(std::declval<SingleType>() * std::declval<SingleType>());
 	using container_type = containers::array<SingleType, 2>;

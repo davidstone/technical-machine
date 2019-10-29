@@ -21,7 +21,7 @@
 #include <tm/ability.hpp>
 #include <tm/item.hpp>
 
-#include <tm/pokemon/species.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
 #include <tm/stat/nature.hpp>
 

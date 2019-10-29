@@ -43,7 +43,7 @@ auto apply_toxic_spikes(EntryHazards const & hazards, MutableActivePokemon switc
 
 }	// namespace
 
-auto apply(EntryHazards & hazards, MutableActivePokemon switcher, Weather const weather) -> void {
+auto apply(Generation const generation, EntryHazards & hazards, MutableActivePokemon switcher, Weather const weather) -> void {
 	if (blocks_secondary_damage(get_ability(switcher)))
 		return;
 
@@ -60,7 +60,7 @@ auto apply(EntryHazards & hazards, MutableActivePokemon switcher, Weather const 
 		}
 	}
 	if (hazards.stealth_rock()) {
-		heal(switcher, rational(-1_bi, 8_bi) * Effectiveness(Type::Rock, switcher));
+		heal(switcher, rational(-1_bi, 8_bi) * Effectiveness(generation, Type::Rock, switcher));
 	}
 }
 

@@ -27,6 +27,9 @@
 #include <tm/stat/stat_names.hpp>
 
 #include <tm/pokemon/level.hpp>
+#include <tm/pokemon/species_forward.hpp>
+
+#include <tm/generation.hpp>
 
 #include <containers/algorithms/transform.hpp>
 #include <containers/legacy_iterator.hpp>
@@ -40,8 +43,8 @@ constexpr auto round_up_divide(auto const lhs, auto const rhs) {
 	return lhs / rhs + BOUNDED_CONDITIONAL(lhs % rhs == 0_bi, 0_bi, 1_bi);
 }
 
-inline auto hp_to_ev(Species const species, Level const level, HP::max_type const stat) {
-	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(species, level, ev).max(); });
+inline auto hp_to_ev(Generation const generation, Species const species, Level const level, HP::max_type const stat) {
+	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(generation, species, level, ev).max(); });
 	auto const it = std::lower_bound(containers::legacy_iterator(begin(stat_range)), containers::legacy_iterator(end(stat_range)), stat);
 	if (it.base() == end(stat_range)) {
 		throw std::runtime_error("No valid HP EV for a given stat value");
@@ -58,10 +61,10 @@ constexpr auto stat_to_ev(auto const target, Nature const nature, StatNames cons
 
 
 using StatValue = bounded::integer<4, 614>;
-inline auto calculate_evs(Species const species, Level const level, GenericStats<HP::max_type, StatValue> const stats) -> CombinedStats {
+inline auto calculate_evs(Generation const generation, Species const species, Level const level, GenericStats<HP::max_type, StatValue> const stats) -> CombinedStats {
 	// TODO: Give the correct IVs for the Hidden Power type
 	
-	auto base_stat = [=](StatNames const stat) { return Stat(species, stat).base(); };
+	auto base_stat = [=](StatNames const stat) { return Stat(generation, species, stat).base(); };
 	
 	auto const base_attack = base_stat(StatNames::ATK);
 	auto const base_defense = base_stat(StatNames::DEF);
@@ -70,7 +73,7 @@ inline auto calculate_evs(Species const species, Level const level, GenericStats
 	auto const base_speed = base_stat(StatNames::SPE);
 	
 	auto to_ev = [](auto const integer) { return EV(EV::value_type(integer)); };
-	auto const hp_ev = hp_to_ev(species, level, stats.hp);
+	auto const hp_ev = hp_to_ev(generation, species, level, stats.hp);
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const attack_ev = stat_to_ev(stats.attack, nature, StatNames::ATK, base_attack, IV(31_bi), level);
 		if (attack_ev > EV::max) {

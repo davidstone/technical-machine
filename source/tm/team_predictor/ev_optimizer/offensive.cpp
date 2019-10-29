@@ -47,9 +47,9 @@ namespace {
 using namespace bounded::literal;
 
 template<StatNames stat_name>
-auto find_least_stat(Species const species, Level const level, Nature const nature, auto const initial) -> bounded::optional<EV::value_type> {
+auto find_least_stat(Generation const generation, Species const species, Level const level, Nature const nature, auto const initial) -> bounded::optional<EV::value_type> {
 	EV::value_type ev = 0_bi;
-	auto stat = Stat(species, stat_name, EV(ev));
+	auto stat = Stat(generation, species, stat_name, EV(ev));
 	auto const test_stat = [&]() { return initial_stat(stat_name, stat, level, nature); };
 	while (test_stat() < initial) {
 		ev += 4_bi;
@@ -93,7 +93,7 @@ auto remove_inferior_natures(auto & container, bool const is_physical, bool cons
 
 }	// namespace
 
-OffensiveEVs::OffensiveEVs(Species const species, Level const level, Nature const original_nature, Stat const attack, Stat const special_attack, bool const include_attack_evs, bool const include_special_attack_evs) {
+OffensiveEVs::OffensiveEVs(Generation const generation, Species const species, Level const level, Nature const original_nature, Stat const attack, Stat const special_attack, bool const include_attack_evs, bool const include_special_attack_evs) {
 	for (auto const nature : containers::enum_range<Nature>()) {
 		containers::emplace_back(m_container, nature);
 	}
@@ -109,14 +109,14 @@ OffensiveEVs::OffensiveEVs(Species const species, Level const level, Nature cons
 		ideal_special_attack_stat(special_attack, level, original_nature, include_special_attack_evs, include_attack_evs)
 	};
 
-	equal_stats(stats, species, level);
+	equal_stats(generation, stats, species, level);
 }
 
-void OffensiveEVs::equal_stats(OffensiveData const initial, Species const species, Level const level) {
+void OffensiveEVs::equal_stats(Generation const generation, OffensiveData const initial, Species const species, Level const level) {
 	for (auto it = begin(m_container); it != end(m_container);) {
 		auto const nature = it->nature;
-		auto const atk_ev = find_least_stat<StatNames::ATK>(species, level, nature, initial.atk);
-		auto const spa_ev = find_least_stat<StatNames::SPA>(species, level, nature, initial.spa);
+		auto const atk_ev = find_least_stat<StatNames::ATK>(generation, species, level, nature, initial.atk);
+		auto const spa_ev = find_least_stat<StatNames::SPA>(generation, species, level, nature, initial.spa);
 		if (atk_ev and spa_ev) {
 			it->attack = EV(*atk_ev);
 			it->special_attack = EV(*spa_ev);

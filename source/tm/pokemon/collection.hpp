@@ -21,6 +21,7 @@
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
+#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 
 #include <bounded/assert.hpp>
@@ -89,11 +90,11 @@ struct PokemonCollection {
 		return m_real_size;
 	}
 
-	Pokemon & add(auto && ... args) {
+	Pokemon & add(Generation const generation, auto && ... args) {
 		if (size(m_container) == m_real_size) {
 			throw std::runtime_error("Tried to add too many Pokemon");
 		}
-		return containers::emplace_back(m_container, m_real_size, BOUNDED_FORWARD(args)...);
+		return containers::emplace_back(m_container, generation, m_real_size, BOUNDED_FORWARD(args)...);
 	}
 
 	void remove_active(containers::index_type<PokemonCollection> index_of_replacement);

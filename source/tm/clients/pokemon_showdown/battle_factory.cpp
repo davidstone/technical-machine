@@ -71,19 +71,19 @@ Team parse_team(boost::property_tree::ptree const & pt) {
 		// have a '/'
 		auto const hp = bounded::to_integer<HP::max_type>(split(condition, '/').first);
 		
-		auto const evs = calculate_evs(details.species, details.level, parse_stats(hp, pokemon_data.second.get_child("stats")));
+		auto const evs = calculate_evs(generation, details.species, details.level, parse_stats(hp, pokemon_data.second.get_child("stats")));
 
 		auto const ability = from_string<Ability>(get("baseAbility"));
 		
 		auto const item = from_string<Item>(get("item"));
 		
-		Pokemon & pokemon = team.add_pokemon(details.species, details.level, details.gender, item, ability, evs.nature);
+		Pokemon & pokemon = team.add_pokemon(generation, details.species, details.level, details.gender, item, ability, evs.nature);
 		
 		for (auto const & move : pokemon_data.second.get_child("moves")) {
 			 add_seen_move(all_moves(pokemon), generation, from_string<Moves>(move.second.get<std::string>("")));
 		}
 
-		set_hp_ev(pokemon, evs.hp);
+		set_hp_ev(generation, pokemon, evs.hp);
 		set_stat_ev(pokemon, StatNames::ATK, evs.attack);
 		set_stat_ev(pokemon, StatNames::DEF, evs.defense);
 		set_stat_ev(pokemon, StatNames::SPA, evs.special_attack);
@@ -181,6 +181,8 @@ void BattleFactory::handle_message(InMessage message) {
 }
 
 BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message) && {
+	// TODO
+	constexpr auto generation = Generation::four;
 	BOUNDED_ASSERT(completed());
 	if (!m_party) {
 		throw std::runtime_error("Did not receive party");
@@ -209,7 +211,7 @@ BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message)
 	auto make_foe_team = [&]{
 		auto team = Team(*m_foe_team_size, false);
 		auto const pokemon = *m_foe_starter;
-		team.add_pokemon(pokemon.species, pokemon.level, pokemon.gender);
+		team.add_pokemon(generation, pokemon.species, pokemon.level, pokemon.gender);
 		return team;
 	};
 	return BattleParser(

@@ -40,8 +40,10 @@ namespace technicalmachine {
 using namespace bounded::literal;
 namespace {
 
-bool affects_target(Type const & move_type, ActivePokemon const target, Weather const weather) {
-	return !Effectiveness(move_type, target).has_no_effect() and (move_type != Type::Ground or grounded(target, weather));
+bool affects_target(Generation const generation, Type const & move_type, ActivePokemon const target, Weather const weather) {
+	return
+		!Effectiveness(generation, move_type, target).has_no_effect() and
+		(move_type != Type::Ground or grounded(target, weather));
 }
 
 auto reflect_is_active(Moves const move, Team const & defender) {
@@ -227,7 +229,7 @@ auto resistance_berry_divisor(Item const item, Type const type, Effectiveness co
 auto regular_damage(Generation const generation, Team const & attacker_team, ExecutedMove const move, Type const move_type, Team const & defender_team, Weather const weather) {
 	auto const attacker = attacker_team.pokemon();
 	auto const defender = defender_team.pokemon();
-	auto const effectiveness = Effectiveness(move_type, defender);
+	auto const effectiveness = Effectiveness(generation, move_type, defender);
 
 	auto const temp =
 		(level_multiplier(attacker) + 2_bi) *
@@ -310,7 +312,7 @@ auto restricted_damage(Generation const generation, Team const & attacker, Execu
 
 auto calculate_uncapped_damage(Generation const generation, Team const & attacker, ExecutedMove const move, Team const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
 	auto const move_type = get_type(generation, move.name, get_hidden_power(attacker.pokemon()).type());
-	return affects_target(move_type, defender.pokemon(), weather) ?
+	return affects_target(generation, move_type, defender.pokemon(), weather) ?
 		restricted_damage(generation, attacker, move, move_type, defender, defender_move, weather) :
 		static_cast<damage_type>(0_bi);
 }

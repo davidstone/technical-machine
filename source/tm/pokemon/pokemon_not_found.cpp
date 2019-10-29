@@ -19,6 +19,8 @@
 #include <tm/pokemon/pokemon_not_found.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 
+#include <string>
+
 namespace technicalmachine {
 
 PokemonNotFound::PokemonNotFound(Species const species):

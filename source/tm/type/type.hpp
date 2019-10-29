@@ -30,6 +30,7 @@ enum class Type : uint8_t {
 	Dark,
 	Dragon,
 	Electric,
+	Fairy,
 	Fighting,
 	Fire,
 	Flying,

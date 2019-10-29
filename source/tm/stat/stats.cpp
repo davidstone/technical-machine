@@ -20,14 +20,14 @@
 
 namespace technicalmachine {
 
-Stats::Stats(Species const species, Level const level):
-	m_hp(species, level),
+Stats::Stats(Generation const generation, Species const species, Level const level):
+	m_hp(generation, species, level),
 	m_stats{
-		Stat(species, StatNames::ATK),
-		Stat(species, StatNames::DEF),
-		Stat(species, StatNames::SPA),
-		Stat(species, StatNames::SPD),
-		Stat(species, StatNames::SPE)
+		Stat(generation, species, StatNames::ATK),
+		Stat(generation, species, StatNames::DEF),
+		Stat(generation, species, StatNames::SPA),
+		Stat(generation, species, StatNames::SPD),
+		Stat(generation, species, StatNames::SPE)
 	} {
 }
 

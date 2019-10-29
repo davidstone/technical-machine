@@ -277,10 +277,10 @@ auto finish_end_of_turn(Team const & first, Team const & last, Weather const wea
 
 auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last, Moves const last_move, Weather weather, Evaluate const evaluate, Depth const depth, std::ostream & log) -> double {
 	if (first_move != Moves::Pass) {
-		first.switch_pokemon(last, weather, to_replacement(first_move));
+		first.switch_pokemon(generation, last, weather, to_replacement(first_move));
 	}
 	if (last_move != Moves::Pass) {
-		last.switch_pokemon(first, weather, to_replacement(last_move));
+		last.switch_pokemon(generation, first, weather, to_replacement(last_move));
 	}
 	if (auto const won = Evaluate::win(first, last)) {
 		return *won;

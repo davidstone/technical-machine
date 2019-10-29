@@ -29,7 +29,6 @@
 
 #include <tm/pokemon/collection.hpp>
 #include <tm/pokemon/max_pokemon_per_team.hpp>
-#include <tm/pokemon/species.hpp>
 
 #include <bounded/assert.hpp>
 
@@ -42,9 +41,11 @@ namespace {
 
 using bounded::to_string;
 
+constexpr auto generation = Generation::four;
+
 void add_pokemon(Team & team, Species const species) {
 	auto const level = Level(100_bi);
-	team.add_pokemon(species, level, Gender::male);
+	team.add_pokemon(generation, species, level, Gender::male);
 }
 
 void phaze_in_same_pokemon(Team const & team) {

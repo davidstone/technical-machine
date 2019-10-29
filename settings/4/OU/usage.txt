@@ -383,7 +383,7 @@ Kyogre	0
 Groudon	0
 Rayquaza	0
 Jirachi	144533
-Deoxys-Mediocre	0
+Deoxys-Normal	0
 Deoxys-Attack	0
 Deoxys-Defense	0
 Deoxys-Speed	0
@@ -559,8 +559,7 @@ Cottonee	0
 Whimsicott	0
 Petilil	0
 Lilligant	0
-Basculin-Red	0
-Basculin-Blue	0
+Basculin	0
 Sandile	0
 Krokorok	0
 Krookodile	0

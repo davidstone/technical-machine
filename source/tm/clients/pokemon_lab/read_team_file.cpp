@@ -71,7 +71,7 @@ auto load_stats(Pokemon & pokemon, boost::property_tree::ptree const & pt) {
 	IV const iv(pt.get<IV::value_type>("<xmlattr>.iv"));
 	EV const ev(pt.get<EV::value_type>("<xmlattr>.ev"));
 	if (name == "HP") {
-		set_hp_ev(pokemon, ev, iv);
+		set_hp_ev(generation, pokemon, ev, iv);
 	} else {
 		set_stat_ev(pokemon, lookup_stat(name), ev, iv);
 	}
@@ -82,7 +82,7 @@ auto from_simulator_string(std::string_view const str) {
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
-			{ "Deoxys", Species::Deoxys_Mediocre },
+			{ "Deoxys", Species::Deoxys_Normal },
 			{ "Deoxys-e", Species::Deoxys_Speed },
 			{ "Deoxys-f", Species::Deoxys_Attack },
 			{ "Deoxys-l", Species::Deoxys_Defense },
@@ -115,7 +115,7 @@ auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 	auto const nature = from_string<Nature>(pt.get<std::string>("nature"));
 	auto const item = from_string<Item>(pt.get<std::string>("item"));
 	auto const ability = Ability(from_string<Ability>(pt.get<std::string>("ability")));
-	auto & pokemon = team.add_pokemon(species, level, gender, item, ability, nature, happiness);
+	auto & pokemon = team.add_pokemon(generation, species, level, gender, item, ability, nature, happiness);
 	
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child("moveset")) {
 		auto const name = from_string<Moves>(value.second.get_value<std::string>());

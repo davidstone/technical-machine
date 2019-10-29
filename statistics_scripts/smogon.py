@@ -19,13 +19,11 @@ def normalize_name(name):
 	elif name == 'NidoranF':
 		return 'Nidoran-F'
 	elif name == 'Deoxys':
-		return 'Deoxys-Mediocre'
+		return 'Deoxys-Normal'
 	elif name == 'Wormadam':
 		return 'Wormadam-Plant'
 	elif name == 'Shaymin':
 		return 'Shaymin-Land'
-	elif name == 'Basculin':
-		return 'Basculin-Blue'
 	else:
 		return name
 

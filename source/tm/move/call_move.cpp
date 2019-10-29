@@ -131,9 +131,9 @@ auto active_pokemon_can_be_phazed(Team const & team) {
 	return !team.pokemon().ingrained() and !blocks_phazing(get_ability(team.pokemon())) and size(team.all_pokemon()) > 1_bi;
 }
 
-auto phaze(Team & user, Team & target, Weather & weather, Variable const variable) {
+auto phaze(Generation const generation, Team & user, Team & target, Weather & weather, Variable const variable) {
 	if (active_pokemon_can_be_phazed(target)) {
-		target.switch_pokemon(user, weather, variable.phaze_index());
+		target.switch_pokemon(generation, user, weather, variable.phaze_index());
 		target.pokemon().update_before_move();
 	}
 }
@@ -165,7 +165,7 @@ auto swap_items(Pokemon & user, Pokemon & other) {
 }
 
 
-auto do_side_effects(Generation, Team & user_team, ExecutedMove const move, Type const move_type, Team & other, Weather & weather, HP::current_type const damage) {
+auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove const move, Type const move_type, Team & other, Weather & weather, HP::current_type const damage) {
 	auto user = user_team.pokemon();
 	switch (move.name) {
 		case Moves::Absorb:
@@ -769,7 +769,7 @@ auto do_side_effects(Generation, Team & user_team, ExecutedMove const move, Type
 			weather.activate_rain(extends_rain(get_item(user)));
 			break;
 		case Moves::Rapid_Spin:
-			if (!Effectiveness(move_type, other.pokemon()).has_no_effect()) {
+			if (!Effectiveness(generation, move_type, other.pokemon()).has_no_effect()) {
 				user_team.clear_field();
 			}
 			break;
@@ -788,7 +788,7 @@ auto do_side_effects(Generation, Team & user_team, ExecutedMove const move, Type
 			break;
 		case Moves::Roar:
 		case Moves::Whirlwind:
-			phaze(user_team, other, weather, move.variable);
+			phaze(generation, user_team, other, weather, move.variable);
 			break;
 		case Moves::Role_Play:		// Fix
 			break;
@@ -891,7 +891,7 @@ auto do_side_effects(Generation, Team & user_team, ExecutedMove const move, Type
 		case Moves::Switch3:
 		case Moves::Switch4:
 		case Moves::Switch5:
-			user_team.switch_pokemon(other, weather, to_replacement(move.name));
+			user_team.switch_pokemon(generation, other, weather, to_replacement(move.name));
 			break;
 		case Moves::Switcheroo:
 		case Moves::Trick:
