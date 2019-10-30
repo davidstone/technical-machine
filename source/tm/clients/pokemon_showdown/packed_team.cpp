@@ -113,7 +113,7 @@ auto parse_moves(std::string_view const str) {
 }
 
 auto parse_nature(std::string_view const str) {
-	return str.empty() ? Nature::Hardy : from_string<Nature>(str);
+	return str.empty() ? Nature::Serious : from_string<Nature>(str);
 }
 
 template<typename T>
