@@ -1,5 +1,4 @@
-// Class to abstract UI of getting Nature for the team builder
-// Copyright (C) 2012 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,28 +15,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tm/team_predictor/ui/nature_input.hpp>
-#include <tm/team_predictor/ui/input_constants.hpp>
-#include <tm/string_conversions/nature.hpp>
-#include <tm/string_conversions/invalid_string_conversion.hpp>
+#pragma once
+
+#include <ostream>
+#include <string_view>
 
 namespace technicalmachine {
-namespace {
-constexpr int nature_input_width = 80;
-}
 
-NatureInput::NatureInput(int const button_number):
-	input(left_padding + pokemon_indent, y_position(button_number), nature_input_width, input_height, "Nature")
-	{
-}
-
-Nature NatureInput::value() const {
-	try {
-		return from_string<Nature>(input.value());
-	}
-	catch (InvalidFromStringConversion const &) {
-		return Nature::Hardy;
-	}
-}
+void generate_team_builder_ui(std::ostream & output, std::string_view query_string, std::string_view generated);
 
 }	// namespace technicalmachine

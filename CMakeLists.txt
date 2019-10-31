@@ -25,15 +25,6 @@ target_compile_definitions(boost INTERFACE
 )
 target_include_directories(boost SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
 
-set(FLTK_SKIP_OPENGL On)
-set(FLTK_SKIP_FORMS On)
-set(FLTK_SKIP_IMAGES On)
-set(FLTK_SKIP_FLUID On)
-find_package(FLTK REQUIRED)
-add_library(fltk INTERFACE IMPORTED)
-target_include_directories(fltk SYSTEM INTERFACE ${FLTK_INCLUDE_DIR})
-target_link_libraries(fltk INTERFACE ${FLTK_LIBRARIES})
-
 enable_testing()
 
 add_library(bounded INTERFACE)
@@ -220,18 +211,12 @@ target_link_libraries(ai
 
 
 add_executable(predict
-	source/tm/team_predictor/ui/ev_inputs.cpp
-	source/tm/team_predictor/ui/move_inputs.cpp
-	source/tm/team_predictor/ui/nature_input.cpp
-	source/tm/team_predictor/ui/pokemon_inputs.cpp
-	source/tm/team_predictor/ui/species_input.cpp
-
+	source/tm/team_predictor/generate_team_builder_ui.cpp
 	source/tm/team_predictor/predictor.cpp
 	source/tm/team_predictor/random_team.cpp
 )
 target_link_libraries(predict
 	tm_common
-	fltk
 )
 
 add_executable(tm_test
@@ -355,8 +340,6 @@ if(MSVC)
 			"-Wno-sign-conversion"
 			"-Wno-undef"
 			"-Wno-unused-private-field"
-			# FLTK has this warning
-			"-Wno-shift-sign-overflow"
 		)
 		# Sanitizers currently do not work very well on Windows
 		set(USE_SANITIZERS OFF)

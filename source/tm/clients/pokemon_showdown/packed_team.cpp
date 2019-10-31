@@ -189,11 +189,11 @@ auto parse_pokemon(std::string_view const str, Generation const generation, Team
 	return pokemon;
 }
 
+constexpr auto pokemon_delimiter = ']';
+
 } // namespace
 
-auto packed_format_to_team(std::string_view const str, Generation const generation) -> Team {
-	constexpr auto pokemon_delimiter = ']';
-	auto const team_size = TeamSize(std::count(str.begin(), str.end(), pokemon_delimiter) + 1);
+auto packed_format_to_team(std::string_view const str, Generation const generation, TeamSize const team_size) -> Team {
 	auto buffer = BufferView(str, pokemon_delimiter);
 
 	constexpr auto is_me = true;
@@ -203,6 +203,11 @@ auto packed_format_to_team(std::string_view const str, Generation const generati
 		team.add_pokemon(parse_pokemon(buffer.next(), generation, team_size));
 	}
 	return team;
+}
+
+auto packed_format_to_team(std::string_view const str, Generation const generation) -> Team {
+	auto const team_size = TeamSize(std::count(str.begin(), str.end(), pokemon_delimiter) + 1);
+	return packed_format_to_team(str, generation, team_size);
 }
 
 }	// namespace ps

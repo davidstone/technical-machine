@@ -40,6 +40,25 @@ constexpr auto split(std::string_view str, auto const separator) {
 }
 
 // TODO: Maybe something with iterators?
+struct BufferViewBase {
+	explicit constexpr BufferViewBase(std::string_view buffer):
+		m_buffer(buffer)
+	{
+	}
+	
+	constexpr auto next(auto const separator) -> std::string_view {
+		auto const [first, second] = split(m_buffer, separator);
+		m_buffer = second;
+		return first;
+	}
+	constexpr auto remainder() const {
+		return m_buffer;
+	}
+	
+private:
+	std::string_view m_buffer;
+};
+
 template<typename Separator>
 struct BufferView {
 	static_assert(std::is_same_v<Separator, char> or std::is_same_v<Separator, std::string_view>);
@@ -51,19 +70,17 @@ struct BufferView {
 	}
 	
 	constexpr auto next(auto const separator) -> std::string_view {
-		auto const [first, second] = split(m_buffer, separator);
-		m_buffer = second;
-		return first;
+		return m_buffer.next(separator);
 	}
 	constexpr auto next() -> std::string_view {
 		return next(m_separator);
 	}
 	constexpr auto remainder() const {
-		return m_buffer;
+		return m_buffer.remainder();
 	}
 	
 private:
-	std::string_view m_buffer;
+	BufferViewBase m_buffer;
 	Separator m_separator;
 };
 

@@ -1,5 +1,4 @@
-// Predict foe's team
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -16,180 +15,214 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+#include <tm/clients/pokemon_showdown/inmessage.hpp>
+
+#include <tm/team_predictor/generate_team_builder_ui.hpp>
 #include <tm/team_predictor/random_team.hpp>
 #include <tm/team_predictor/team_predictor.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
 
-#include <tm/team_predictor/ev_optimizer/ev_optimizer.hpp>
-
-#include <tm/team_predictor/ui/input_constants.hpp>
-#include <tm/team_predictor/ui/pokemon_inputs.hpp>
-
-#include <tm/pokemon/max_pokemon_per_team.hpp>
-#include <tm/pokemon/pokemon.hpp>
-
+#include <tm/string_conversions/ability.hpp>
+#include <tm/string_conversions/gender.hpp>
+#include <tm/string_conversions/item.hpp>
+#include <tm/string_conversions/nature.hpp>
+#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/pokemon.hpp>
 #include <tm/string_conversions/team.hpp>
 
 #include <tm/generation.hpp>
 #include <tm/team.hpp>
 
-#include <containers/array/array.hpp>
-#include <containers/static_vector/static_vector.hpp>
-#include <containers/vector.hpp>
+#include <bounded/optional.hpp>
+#include <bounded/to_integer.hpp>
 
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Return_Button.H>
-#include <FL/Fl_Int_Input.H>
-#include <FL/Fl_Multiline_Output.H>
+#include <boost/beast/core.hpp>
+#include <boost/beast/http.hpp>
+#include <boost/beast/version.hpp>
+#include <boost/asio.hpp>
 
 #include <random>
+#include <string>
+#include <utility>
 
-using namespace bounded::literal;
+#include <iostream>
 
-// A GUI version of the team predictor.
+namespace {
 
-// TODO: Move much of this code into its own file
+namespace beast = boost::beast;
+namespace http = beast::http;
+using tcp = boost::asio::ip::tcp;
+
+} // namespace
+
 namespace technicalmachine {
 namespace {
 
-constexpr auto generation = Generation::four;
+using namespace bounded::literal;
 
-using AllPokemonInputs = containers::array<PokemonInputs, max_pokemon_per_team.value()>;
-
-struct Data {
-	explicit Data(AllPokemonInputs const & inputs_, Fl_Multiline_Output & output_):
-		inputs(inputs_),
-		output(output_),
-		usage_stats("settings/4/OU/"),
-		random_engine(rd()),
-		m_team(max_pokemon_per_team)
-	{
+auto get_expected_base(std::string_view const input, std::string_view const expected_key) {
+	auto [key, value] = ps::split(input, '=');
+	if (key != expected_key) {
+		throw std::runtime_error("Expected " + std::string(expected_key) + " but got " + std::string(key));
 	}
-	auto & team() {
-		return m_team;
-	}
+	return value;
+}
 
-	AllPokemonInputs const & inputs;
-	Fl_Multiline_Output & output;
-	UsageStats usage_stats;
-	std::random_device rd;
-	std::mt19937 random_engine;
-private:
-	Team m_team;
-};
+template<typename T>
+auto get_expected(std::string_view const input, std::string const & key, std::string const & index) {
+	auto const value = get_expected_base(input, key + index);
+	return BOUNDED_CONDITIONAL(value == "Select+" + key, bounded::none, from_string<T>(value));
+}
 
-constexpr int number_of_stats = 6;
-constexpr int button_height = input_height;
+template<typename T>
+auto get_expected_integer_wrapper(std::string_view const input, std::string_view const key) {
+	return T(bounded::to_integer<typename T::value_type>(get_expected_base(input, key)));
+}
 
-constexpr int input_lines_per_pokemon = 4;
-constexpr int total_input_lines = static_cast<int>(max_pokemon_per_team) * input_lines_per_pokemon;
-constexpr int total_input_height = total_input_lines * (input_height + padding);
+auto parse_html_team(std::string_view str, Generation const generation) -> Team {
+	auto buffer = ps::BufferView(str, '&');
 
-constexpr int output_width = 400;
-constexpr int height_per_line = 16;
-constexpr int output_lines_for_ability = 1;
-constexpr int output_lines_for_nature_and_evs = 2;
-constexpr int output_lines_for_moves = 4;
-constexpr int output_lines_per_pokemon = 1 + output_lines_for_ability + output_lines_for_nature_and_evs + output_lines_for_moves;
-constexpr int output_lines_per_team = static_cast<int>(max_pokemon_per_team) * output_lines_per_pokemon;
-constexpr int output_team_padding = 10;
-constexpr int output_team_height = output_lines_per_team * height_per_line + output_team_padding;
-constexpr int output_height = output_team_height;
-constexpr int output_x_position = left_padding + ev_input_width * number_of_stats + left_padding;
-constexpr int total_output_height = output_height + padding + button_height;
+	constexpr auto is_me = true;
+	auto team = Team(max_pokemon_per_team, is_me);
 
-constexpr int window_width = output_x_position + output_width + padding;
-constexpr int window_height = padding + bounded::max(total_input_height, total_output_height) + padding;
+	for (auto const index : containers::integer_range(max_pokemon_per_team)) {
+		auto species = get_expected<Species>(buffer.next(), "species", bounded::to_string(index));
+		auto level = get_expected_integer_wrapper<Level>(buffer.next(), "level" + bounded::to_string(index));
+		auto gender = get_expected<Gender>(buffer.next(), "gender", bounded::to_string(index));
+		auto item = get_expected<Item>(buffer.next(), "item", bounded::to_string(index));
+		auto ability = get_expected<Ability>(buffer.next(), "ability", bounded::to_string(index));
+		auto nature = get_expected<Nature>(buffer.next(), "nature", bounded::to_string(index));
+		auto hp = get_expected_integer_wrapper<EV>(buffer.next(), "hp" + bounded::to_string(index));
+		auto atk = get_expected_integer_wrapper<EV>(buffer.next(), "atk" + bounded::to_string(index));
+		auto def = get_expected_integer_wrapper<EV>(buffer.next(), "def" + bounded::to_string(index));
+		auto spa = get_expected_integer_wrapper<EV>(buffer.next(), "spa" + bounded::to_string(index));
+		auto spd = get_expected_integer_wrapper<EV>(buffer.next(), "spd" + bounded::to_string(index));
+		auto spe = get_expected_integer_wrapper<EV>(buffer.next(), "spe" + bounded::to_string(index));
 
-struct PokemonInputValues {
-	PokemonInputValues(PokemonInputs const & inputs):
-		species(inputs.species()),
-		// TODO: load actual item?
-		item(Item::No_Item),
-		ability(Ability::Honey_Gather),
-		nature(inputs.nature()),
-		evs{
-			inputs.hp(),
-			inputs.atk(),
-			inputs.def(),
-			inputs.spa(),
-			inputs.spd(),
-			inputs.spe()
-		},
-		moves(inputs.moves())
-	{
-	}
-	void add_to_team(Team & team) const {
-		auto & pokemon = team.add_pokemon(generation, species, Level(100_bi), Gender::genderless, item, ability, nature);
-		set_hp_ev(generation, pokemon, evs[0_bi]);
-		for (auto const stat : regular_stats()) {
-			set_stat_ev(pokemon, stat, containers::at(evs, bounded::integer(stat) + 1_bi));
+		auto moves = containers::static_vector<Moves, max_moves_per_pokemon.value()>();
+		for (auto const move_index : containers::integer_range(max_moves_per_pokemon)) {
+			auto const move = get_expected<Moves>(buffer.next(), "move", bounded::to_string(index) + "_" + bounded::to_string(move_index));
+			if (move) {
+				emplace_back(moves, *move);
+			}
 		}
-		for (auto const move : moves) {
-			containers::emplace_back(all_moves(pokemon), generation, move);
+
+		if (hp.value() + atk.value() + def.value() + spa.value() + spd.value() + spe.value() > EV::max_total) {
+			throw std::runtime_error("Too many EVs");
 		}
-	}
-private:
-	Species species;
-	Item item;
-	Ability ability;
-	Nature nature;
-	containers::array<EV, number_of_stats> evs;
-	containers::static_vector<Moves, max_moves_per_pokemon.value()> moves;
-};
 
-
-void function(Fl_Widget *, void * d) {
-	auto & data = *reinterpret_cast<Data *> (d);
-	bool using_lead = false;
-	for (PokemonInputs const & inputs : data.inputs) {
-		if (size(data.team().all_pokemon()) >= max_pokemon_per_team)
-			break;
-		if (!inputs.is_valid()) {
+		if (!species) {
 			continue;
 		}
-		PokemonInputValues input(inputs);
-		input.add_to_team(data.team());
-		if (&inputs == &front(data.inputs)) {
-			using_lead = true;
+		auto & pokemon = team.add_pokemon(
+			generation,
+			*species,
+			level,
+			value_or(gender, Gender::genderless)
+		);
+		if (item) {
+			set_item(pokemon, *item);
+		}
+		if (ability) {
+			set_ability(pokemon, *ability);
+		}
+		if (nature) {
+			set_nature(pokemon, *nature);
+		}
+		for (auto const move : moves) {
+			add_seen_move(all_moves(pokemon), generation, move);
+		}
+		set_hp_ev(generation, pokemon, hp);
+		set_stat_ev(pokemon, StatNames::ATK, atk);
+		set_stat_ev(pokemon, StatNames::DEF, def);
+		set_stat_ev(pokemon, StatNames::SPA, spa);
+		set_stat_ev(pokemon, StatNames::SPD, spd);
+		set_stat_ev(pokemon, StatNames::SPE, spe);
+	}
+
+	return team;
+}
+
+struct Data {
+	Data() = default;
+
+	auto team_string(std::string_view const input_data) -> containers::string {
+		constexpr auto using_lead = false;
+		try {
+			auto team = parse_html_team(input_data, m_generation);
+			random_team(m_generation, m_usage_stats, team, m_random_engine);
+			return to_string(predict_team(
+				m_generation,
+				m_usage_stats,
+				LeadStats(using_lead),
+				team,
+				m_random_engine
+			), false);
+		} catch (std::exception const & ex) {
+			return containers::string(ex.what());
 		}
 	}
-	random_team(generation, data.usage_stats, data.team(), data.random_engine);
-	auto const team_str = to_string(predict_team(
-		generation,
-		data.usage_stats,
-		LeadStats(using_lead),
-		data.team(),
-		data.random_engine
-	), false);
-	data.output.value(std::string(begin(team_str), end(team_str)).c_str());
-	data.team() = Team(max_pokemon_per_team);
-}
+
+private:
+	Generation m_generation = Generation::four;
+	UsageStats m_usage_stats{"settings/4/OU/"};
+	std::mt19937 m_random_engine{std::random_device()()};
+};
+
+struct Connection {
+	explicit Connection(tcp::socket socket):
+		m_socket(std::move(socket))
+	{
+	}
+
+	void process() {
+		auto request = Request();
+		auto buffer = beast::flat_static_buffer<8192>();
+		http::read(m_socket, buffer, request);
+		auto const & body = request.body();
+		auto const query_string = body.empty() ? default_query_string : std::string_view(body);
+		auto response = create_response(request.version(), query_string);
+		http::write(m_socket, response);
+	}
+
+private:
+	using Request = http::request<http::string_body>;
+	using Response = http::response<http::dynamic_body>;
+
+	static constexpr auto default_query_string = std::string_view("species0=Select+species&level0=100&gender0=Select+gender&item0=Select+item&ability0=Select+ability&nature0=Select+nature&hp0=0&atk0=0&def0=0&spa0=0&spd0=0&spe0=0&move0_0=Select+move&move0_1=Select+move&move0_2=Select+move&move0_3=Select+move&species1=Select+species&level1=100&gender1=Select+gender&item1=Select+item&ability1=Select+ability&nature1=Select+nature&hp1=0&atk1=0&def1=0&spa1=0&spd1=0&spe1=0&move1_0=Select+move&move1_1=Select+move&move1_2=Select+move&move1_3=Select+move&species2=Select+species&level2=100&gender2=Select+gender&item2=Select+item&ability2=Select+ability&nature2=Select+nature&hp2=0&atk2=0&def2=0&spa2=0&spd2=0&spe2=0&move2_0=Select+move&move2_1=Select+move&move2_2=Select+move&move2_3=Select+move&species3=Select+species&level3=100&gender3=Select+gender&item3=Select+item&ability3=Select+ability&nature3=Select+nature&hp3=0&atk3=0&def3=0&spa3=0&spd3=0&spe3=0&move3_0=Select+move&move3_1=Select+move&move3_2=Select+move&move3_3=Select+move&species4=Select+species&level4=100&gender4=Select+gender&item4=Select+item&ability4=Select+ability&nature4=Select+nature&hp4=0&atk4=0&def4=0&spa4=0&spd4=0&spe4=0&move4_0=Select+move&move4_1=Select+move&move4_2=Select+move&move4_3=Select+move&species5=Select+species&level5=100&gender5=Select+gender&item5=Select+item&ability5=Select+ability&nature5=Select+nature&hp5=0&atk5=0&def5=0&spa5=0&spd5=0&spe5=0&move5_0=Select+move&move5_1=Select+move&move5_2=Select+move&move5_3=Select+move");
+
+	auto create_response(unsigned const version, std::string_view const query_string) -> Response {
+		auto response = Response();
+		response.version(version);
+		response.keep_alive(false);
+
+		response.result(http::status::ok);
+		response.set(http::field::server, "Beast");
+		response.set(http::field::content_type, "text/html");
+		auto output = beast::ostream(response.body());
+		generate_team_builder_ui(output, query_string, m_data.team_string(query_string));
+
+		return response;
+	}
+
+	tcp::socket m_socket;
+	Data m_data;
+};
 
 } // namespace
 } // namespace technicalmachine
 
-int main () {
-	using namespace technicalmachine;
-	Fl_Window win(window_width, window_height, "Team Predictor");
-		int button_number = 0;
-		AllPokemonInputs all_pokemon_inputs{{
-			{button_number, PokemonInputs::construct},
-			{button_number, PokemonInputs::construct},
-			{button_number, PokemonInputs::construct},
-			{button_number, PokemonInputs::construct},
-			{button_number, PokemonInputs::construct},
-			{button_number, PokemonInputs::construct}
-		}};
-		Fl_Multiline_Output output(output_x_position, padding, output_width, output_height);
-		Fl_Return_Button calculate(output_x_position, padding + output_height + padding, output_width, button_height, "Calculate");
-	end(win);
+int main() {
+	auto const address = boost::asio::ip::make_address("127.0.0.1");
+	auto const port = static_cast<unsigned short>(46923);
 
-	Data data(all_pokemon_inputs, output);
+	auto ioc = boost::asio::io_context();
 
-	calculate.callback (function, &data);
-	win.show();
-
-	return Fl::run();
+	auto acceptor = tcp::acceptor(ioc, {address, port});
+	while (true) {
+		auto socket = tcp::socket(ioc);
+		acceptor.accept(socket);
+		auto connection = technicalmachine::Connection(std::move(socket));
+		connection.process();
+	}
 }

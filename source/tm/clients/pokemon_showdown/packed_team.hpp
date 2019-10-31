@@ -30,6 +30,7 @@ namespace ps {
 
 auto to_packed_format(Team const &) -> containers::string;
 auto packed_format_to_team(std::string_view, Generation) -> Team;
+auto packed_format_to_team(std::string_view, Generation, TeamSize) -> Team;
 
 }	// namespace ps
 }	// namespace technicalmachine

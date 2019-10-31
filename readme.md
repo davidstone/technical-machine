@@ -40,9 +40,8 @@ For a full overview of the program, see http://doublewise.net/pokemon/
 
 ## Prerequisites
 
-* clang 7.0+ and libc++ (clang's standard library)
+* clang-concepts branch with libc++ (clang's standard library)
 * Boost 1.67.0+
-* fltk is needed the stand-alone team predictor / builder. It is not needed to actually run the battling AI.
 * CMake 3.14+
 * A build tool for CMake to generate (Ninja is recommended)
 
@@ -62,7 +61,7 @@ ai
 :	The AI with maximum optimizations. Accepts a single, optional command-line argument, the depth to search. Higher depth means stronger play, but it also takes longer to search. If no value is entered, 2 is assumed. Recommended at 1 through 3, depending on how fast your computer is and whether you built in release mode (the default). If you have a lot of time on your hands, you can try depth=4.
 
 predict
-:	Team predictor. Enter in Pokemon already seen and it shows its prediction of the remaining team. If a Pokemon is put into the first slot, it is assumed to be the lead Pokemon. If no Pokemon is put in that slot, no lead stats are used.
+:	Team predictor. Go to localhost:46923 in your web browser after running this to use the team builder / predictor. Enter in Pokemon already seen and it shows its prediction of the remaining team. If a Pokemon is put into the first slot, it is assumed to be the lead Pokemon. If no Pokemon is put in that slot, no lead stats are used.
 
 tm_test
 :	Runs some tests to verify there are no regressions. Should be run before committing anything.
