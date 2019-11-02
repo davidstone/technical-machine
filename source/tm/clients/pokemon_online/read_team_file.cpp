@@ -46,9 +46,6 @@ namespace po {
 namespace {
 using boost::property_tree::ptree;
 
-// TODO
-constexpr auto generation = Generation::four;
-
 auto load_species(ptree const & pt) -> bounded::optional<SpeciesIDs::ID> {
 	// Pokemon Online gives Missingno. the ID 0, and uses that to represent the
 	// empty slots in teams smaller than 6 Pokemon.
@@ -68,7 +65,7 @@ TeamSize number_of_pokemon(ptree const & pt) {
 	return pokemon_count;
 }
 
-ptree::const_iterator load_moves(Pokemon & pokemon, ptree::const_iterator it) {
+ptree::const_iterator load_moves(Generation const generation, Pokemon & pokemon, ptree::const_iterator it) {
 	for (auto const n [[maybe_unused]] : containers::integer_range(4_bi)) {
 		if (it->first != "Move") {
 			throw InvalidTeamFile("Move", it->first);
@@ -129,7 +126,7 @@ ptree::const_iterator load_stats(Pokemon & pokemon, ptree::const_iterator it) {
 	return it;
 }
 
-void load_pokemon(ptree const & pt, Team & team, SpeciesIDs::ID) {
+void load_pokemon(ptree const & pt, Generation const generation, Team & team, SpeciesIDs::ID) {
 	auto const species = id_to_species({ pt.get<SpeciesIDs::ID>("<xmlattr>.Num"), pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")} );
 	// auto const nickname = pt.get<std::string>("<xmlattr>.Nickname");
 	auto const gender = Gender(id_to_gender(pt.get<GenderID>("<xmlattr>.Gender")));
@@ -143,7 +140,7 @@ void load_pokemon(ptree const & pt, Team & team, SpeciesIDs::ID) {
 
 	// Get past the xml attributes
 	auto it = ++pt.get_child("").begin();
-	it = load_moves(pokemon, it);
+	it = load_moves(generation, pokemon, it);
 	it = load_stats<IV>(pokemon, it);
 	load_stats<EV>(pokemon, it);
 }
@@ -155,12 +152,14 @@ Team load_team(std::filesystem::path const & team_file) {
 	read_xml(team_file.string(), pt);
 	
 	auto const all_pokemon = pt.get_child("Team");
+	using GenerationInteger = bounded::checked_integer<1, 7, InvalidTeamFile>;
+	auto const generation = static_cast<Generation>(all_pokemon.get<GenerationInteger>("<xmlattr>.gen"));
 	constexpr bool is_me = true;
 	auto team = Team(number_of_pokemon(all_pokemon), is_me);
 	for (auto const & value : all_pokemon) {
 		if (value.first == "Pokemon") {
 			if (auto const species = load_species(value.second)) {
-				load_pokemon(value.second, team, *species);
+				load_pokemon(value.second, generation, team, *species);
 			}
 		}
 	}

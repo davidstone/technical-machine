@@ -21,8 +21,14 @@
 namespace technicalmachine {
 namespace po {
 
+InvalidTeamFile::InvalidTeamFile(std::string const & message):
+	std::runtime_error(message)
+{
+}
+
 InvalidTeamFile::InvalidTeamFile(std::string const & expected, std::string const & received):
-	std::runtime_error("Expected a field labeled " + expected + " but got " + received) {
+	InvalidTeamFile("Expected a field labeled " + expected + " but got " + received)
+{
 }
 
 }	// namespace po
