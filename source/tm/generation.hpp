@@ -19,6 +19,14 @@
 
 namespace technicalmachine {
 
-enum class Generation { one, two, three, four, five, six, seven };
+enum class Generation {
+	one = 1,
+	two = 2,
+	three = 3,
+	four = 4,
+	five = 5,
+	six = 6,
+	seven = 7,
+};
 
 } // namespace technicalmachine
