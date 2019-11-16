@@ -131,17 +131,18 @@ void ClientImpl::handle_message(InMessage message) {
 	if (handle_chat_message(message)) {
 		return;
 	}
-	if (message.type() == "b" or message.type() == "B" or message.type() == "battle") {
+	auto const type = message.type();
+	if (type == "b" or type == "B" or type == "battle") {
 		// message.remainder() == ROOMID|username|username
-	} else if (message.type() == "challstr") {
+	} else if (type == "challstr") {
 		authenticate(message.remainder());
 		// After logging in, send "|/search FORMAT_NAME" to begin laddering
 		send_challenge();
-	} else if (message.type() == "formats") {
+	} else if (type == "formats") {
 		// message.remainder() == | separated list of formats with special rules
-	} else if (message.type() == "html") {
+	} else if (type == "html") {
 		// message.remainder() == HTML
-	} else if (message.type() == "init") {
+	} else if (type == "init") {
 		if (message.next() == "battle") {
 			m_battles.add_pending(
 				std::string(message.room()),
@@ -153,20 +154,20 @@ void ClientImpl::handle_message(InMessage message) {
 				generate_team()
 			);
 		}
-	} else if (message.type() == "nametaken") {
+	} else if (type == "nametaken") {
 		auto const username = message.next();
 		std::cerr << "Could not change username to " << username << " because: " << message.remainder() << '\n';
-	} else if (message.type() == "popup") {
+	} else if (type == "popup") {
 		std::cout << "popup message: " << message.remainder() << '\n';
-	} else if (message.type() == "pm") {
+	} else if (type == "pm") {
 		auto const from = message.next();
 		auto const to = message.next();
 		std::cout << "PM from " << from << " to " << to << ": " << message.remainder() << '\n';
-	} else if (message.type() == "queryresponse") {
+	} else if (type == "queryresponse") {
 		// message.remainder() == QUERYTYPE|JSON
-	} else if (message.type() == "uhtml" or message.type() == "uhtmlchange") {
+	} else if (type == "uhtml" or type == "uhtmlchange") {
 		// message.remainder() == NAME|HTML
-	} else if (message.type() == "updatechallenges") {
+	} else if (type == "updatechallenges") {
 		auto const json = m_parse_json(message.remainder());
 		for (auto const & challenge : json.get_child("challengesFrom")) {
 			auto const is_trusted = m_trusted_users.find(challenge.first) != m_trusted_users.end();
@@ -174,16 +175,16 @@ void ClientImpl::handle_message(InMessage message) {
 			m_send_message(command + challenge.first);
 		}
 		// "cancelchallenge" is the command to stop challenging someone
-	} else if (message.type() == "updateuser") {
+	} else if (type == "updateuser") {
 		// message.remainder() == username|guest ? 0 : 1|AVATAR
-	} else if (message.type() == "updatesearch") {
+	} else if (type == "updatesearch") {
 		// message.remainder() == JSON: battles you are searching for
-	} else if (message.type() == "usercount") {
+	} else if (type == "usercount") {
 		// message.remainder() == number of users on server
-	} else if (message.type() == "users") {
+	} else if (type == "users") {
 		// message.remainder() == comma separated list of users
 	} else {
-		std::cerr << "Received unknown message in room: " << message.room() << " type: " << message.type() << "\n\t" << message.remainder() << '\n';
+		std::cerr << "Received unknown message in room: " << message.room() << " type: " << type << "\n\t" << message.remainder() << '\n';
 	}
 }
 

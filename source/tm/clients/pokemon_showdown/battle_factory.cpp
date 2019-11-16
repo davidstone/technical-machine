@@ -106,26 +106,26 @@ void BattleFactory::handle_message(InMessage message) {
 	// Documented at
 	// https://github.com/Zarel/Pokemon-Showdown/blob/master/PROTOCOL.md
 	// under the section "Battle Initialization"
-	if (message.type() == "") {
+	auto const type = message.type();
+	if (type == "") {
 		// Unnecessary
-	} else if (message.type() == "clearpoke") {
+	} else if (type == "clearpoke") {
 		// This appears to mean nothing
-	} else if (message.type() == "gametype") {
+	} else if (type == "gametype") {
 		m_type.emplace(message.next());
-	} else if (message.type() == "gen") {
-		m_generation.emplace(bounded::to_integer<1, 7>(message.next()));
-	} else if (message.type() == "player") {
+	} else if (type == "gen") {
+	} else if (type == "player") {
 		auto const player_id = message.next();
 		auto const username = message.next();
 		if (username == m_username) {
 			m_party.emplace(make_party(player_id));
 		}
 		// message.remainder() == AVATAR
-	} else if (message.type() == "poke") {
+	} else if (type == "poke") {
 		// message.remainder() == PLAYER_ID|DETAILS|ITEM
-	} else if (message.type() == "rated") {
+	} else if (type == "rated") {
 		// Received if and only if the game is rated. We don't care about this
-	} else if (message.type() == "request") {
+	} else if (type == "request") {
 		// It seems that the game starts off with a single "request" that has
 		// no data. Then it sends another request with data, which we need to
 		// parse for Random Battles.
@@ -136,14 +136,14 @@ void BattleFactory::handle_message(InMessage message) {
 		if (!json_data.empty()) {
 			m_team = parse_team(m_parse_json(json_data));
 		}
-	} else if (message.type() == "rule") {
+	} else if (type == "rule") {
 		// message.remainder() == RULE: DESCRIPTION
 		// Received for each clause in effect
-	} else if (message.type() == "seed") {
+	} else if (type == "seed") {
 		// I have no idea what this is
-	} else if (message.type() == "start") {
+	} else if (type == "start") {
 		// We can't actually start the battle until we see the initial switch-in
-	} else if (message.type() == "switch") {
+	} else if (type == "switch") {
 		if (!m_party) {
 			throw std::runtime_error("Received a switch message before receiving a party");
 		}
@@ -159,9 +159,9 @@ void BattleFactory::handle_message(InMessage message) {
 			}
 			m_foe_starter.emplace(parsed);
 		}
-	} else if (message.type() == "teampreview") {
+	} else if (type == "teampreview") {
 		// This appears to mean nothing
-	} else if (message.type() == "teamsize") {
+	} else if (type == "teamsize") {
 		if (!m_party) {
 			throw std::runtime_error("Received a teamsize message before receiving a player id");
 		}
@@ -171,12 +171,12 @@ void BattleFactory::handle_message(InMessage message) {
 		if (*m_party != party) {
 			m_foe_team_size.emplace(team_size);
 		}
-	} else if (message.type() == "tier") {
+	} else if (type == "tier") {
 		m_tier.emplace(message.next());
-	} else if (message.type() == "title") {
+	} else if (type == "title") {
 		// message.remainder() == PLAYER1 vs. PLAYER2
 	} else {
-		std::cerr << "Received battle setup message of unknown type: " << message.type() << ": " << message.remainder() << '\n';
+		std::cerr << "Received battle setup message of unknown type: " << type << ": " << message.remainder() << '\n';
 	}
 }
 
