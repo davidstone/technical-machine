@@ -20,7 +20,6 @@
 
 #include <tm/clients/pokemon_online/conversion.hpp>
 #include <tm/clients/pokemon_online/invalid_team_file.hpp>
-#include <tm/clients/pokemon_online/stat_order.hpp>
 
 #include <tm/ability.hpp>
 #include <tm/item.hpp>
@@ -82,48 +81,34 @@ ptree::const_iterator load_moves(Generation const generation, Pokemon & pokemon,
 	return it;
 }
 
-template<typename Field>
-struct StatType;
-
-template<>
-struct StatType<EV> {
-	static auto const & name() {
-		static std::string const str = "EV";
-		return str;
-	}
-	static auto get(auto & stat) {
-		return stat.ev();
-	}
-};
-template<>
-struct StatType<IV> {
-	static auto const & name() {
-		static std::string const str = "DV";
-		return str;
-	}
-	static auto get(auto & stat) {
-		return stat.iv();
-	}
-};
-
 template<typename Type>
-ptree::const_iterator load_stats(Pokemon & pokemon, ptree::const_iterator it) {
-	std::string const & name = StatType<Type>::name();
+auto load_stats(std::string const & name, ptree::const_iterator it) {
 	if (it->first != name) {
 		throw InvalidTeamFile(name, it->first);
 	}
-	HP & hp = get_hp(pokemon);
-	StatType<Type>::get(hp) = Type(it->second.get_value<typename Type::value_type>());
-	++it;
-	for (auto const & stat_name : stat_order) {
-		if (it->first != name) {
-			throw InvalidTeamFile(name, it->first);
-		}
-		Stat & stat = get_stat(pokemon, stat_name);
-		StatType<Type>::get(stat) = Type(it->second.get_value<typename Type::value_type>());
+	struct Parsed {
+		Type hp;
+		Type atk;
+		Type def;
+		Type spa;
+		Type spd;
+		Type spe;
+		ptree::const_iterator it;
+	};
+	auto get_next = [&]{
+		auto const result = Type(it->second.get_value<typename Type::value_type>());
 		++it;
-	}
-	return it;
+		return result;
+	};
+	return Parsed{
+		get_next(),
+		get_next(),
+		get_next(),
+		get_next(),
+		get_next(),
+		get_next(),
+		it
+	};
 }
 
 void load_pokemon(ptree const & pt, Generation const generation, Team & team, SpeciesIDs::ID) {
@@ -141,11 +126,17 @@ void load_pokemon(ptree const & pt, Generation const generation, Team & team, Sp
 	// Get past the xml attributes
 	auto it = ++pt.get_child("").begin();
 	it = load_moves(generation, pokemon, it);
-	it = load_stats<IV>(pokemon, it);
-	load_stats<EV>(pokemon, it);
+	auto ivs = load_stats<IV>("DV", it);
+	auto evs = load_stats<EV>("EV", ivs.it);
+	set_hp_ev(generation, pokemon, evs.hp, ivs.hp);
+	set_stat_ev(pokemon, StatNames::ATK, evs.atk, ivs.atk);
+	set_stat_ev(pokemon, StatNames::DEF, evs.def, ivs.def);
+	set_stat_ev(pokemon, StatNames::SPA, evs.spa, ivs.spa);
+	set_stat_ev(pokemon, StatNames::SPD, evs.spd, ivs.spd);
+	set_stat_ev(pokemon, StatNames::SPE, evs.spe, ivs.spe);
 }
 
-}	// anonymous namespace
+} // namespace
 
 Team load_team(std::filesystem::path const & team_file) {
 	ptree pt;
