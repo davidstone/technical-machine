@@ -19,6 +19,8 @@
 
 #include <tm/pokemon/species.hpp>
 
+#include <tm/generation.hpp>
+
 namespace technicalmachine {
 
 using namespace bounded::literal;

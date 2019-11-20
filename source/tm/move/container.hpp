@@ -52,8 +52,8 @@ public:
 	using const_regular_iterator = RegularMoveContainer::const_iterator;
 	using regular_iterator = RegularMoveContainer::iterator;
 	
-	explicit MoveContainer(TeamSize const my_team_size):
-		m_shared(my_team_size)
+	explicit MoveContainer(Generation const generation, TeamSize const my_team_size):
+		m_shared(generation, my_team_size)
 	{
 	}
 

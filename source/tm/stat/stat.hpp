@@ -22,13 +22,13 @@
 #include <tm/stat/iv.hpp>
 #include <tm/stat/stat_names.hpp>
 #include <tm/pokemon/species_forward.hpp>
-#include <tm/generation.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
+enum class Generation : std::uint8_t;
 struct Pokemon;
 
 struct Stat {

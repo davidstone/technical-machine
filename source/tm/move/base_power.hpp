@@ -22,7 +22,7 @@
 #include <bounded/optional.hpp>
 
 namespace technicalmachine {
-enum class Generation;
+enum class Generation : std::uint8_t;
 enum class Moves : std::uint16_t;
 
 // variable power returns non-0. Fixed damage is the uninitialized state.

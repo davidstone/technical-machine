@@ -22,7 +22,7 @@
 
 namespace technicalmachine {
 
-enum class Generation;
+enum class Generation : std::uint8_t;
 enum class Moves : std::uint16_t;
 struct ActivePokemon;
 struct Weather;

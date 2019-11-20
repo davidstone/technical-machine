@@ -18,7 +18,6 @@
 #pragma once
 
 #include <tm/type/type.hpp>
-#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
 
@@ -27,6 +26,7 @@
 #include <containers/array/array.hpp>
 
 namespace technicalmachine {
+enum class Generation : std::uint8_t;
 struct Pokemon;
 
 struct Effectiveness {

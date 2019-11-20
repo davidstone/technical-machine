@@ -719,7 +719,7 @@ Moves BattleParser::determine_action() {
 	auto predicted = predict_team(m_battle.generation(), m_usage_stats, use_lead_stats, m_battle.foe(), m_random_engine);
 	m_analysis_logger << "Predicted " << to_string(predicted) << '\n' << std::flush;
 
-	return expectiminimax(m_battle.ai(), predicted, m_battle.weather(), m_evaluate, Depth(m_depth, 1U), m_analysis_logger);
+	return expectiminimax(m_battle.generation(), m_battle.ai(), predicted, m_battle.weather(), m_evaluate, Depth(m_depth, 1U), m_analysis_logger);
 }
 
 void BattleParser::send_move(Moves const move) {

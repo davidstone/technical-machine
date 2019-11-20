@@ -48,6 +48,7 @@ struct BattleParser {
 		std::ofstream analysis_logger,
 		std::string id_,
 		std::string username,
+		Generation const generation,
 		UsageStats const & usage_stats,
 		Evaluate evaluate,
 		Party party,
@@ -67,6 +68,7 @@ struct BattleParser {
 		m_slot_memory(ai.size()),
 		m_evaluate(evaluate),
 		m_battle(
+			generation,
 			party,
 			std::move(ai),
 			std::move(foe)

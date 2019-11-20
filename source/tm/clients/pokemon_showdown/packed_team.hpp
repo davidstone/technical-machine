@@ -17,7 +17,6 @@
 
 #pragma once
 
-#include <tm/generation.hpp>
 #include <tm/team.hpp>
 
 #include <containers/string.hpp>
@@ -25,6 +24,8 @@
 #include <string_view>
 
 namespace technicalmachine {
+
+enum class Generation : std::uint8_t;
 
 namespace ps {
 

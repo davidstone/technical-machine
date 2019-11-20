@@ -26,11 +26,12 @@
 
 namespace technicalmachine {
 
+enum class Generation : std::uint8_t;
 enum class Moves : std::uint16_t;
 struct Evaluate;
 struct Team;
 struct Weather;
 
-Moves expectiminimax(Team const & ai, Team const & foe, Weather weather, Evaluate evaluate, Depth depth, std::ostream & log);
+Moves expectiminimax(Generation, Team const & ai, Team const & foe, Weather, Evaluate, Depth, std::ostream & log);
 
 }	// namespace technicalmachine

@@ -21,7 +21,6 @@
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
-#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 
 #include <bounded/assert.hpp>
@@ -35,6 +34,7 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
+enum class Generation : std::uint8_t;
 
 struct PokemonCollection {
 	using Container = containers::static_vector<Pokemon, max_pokemon_per_team.value()>;

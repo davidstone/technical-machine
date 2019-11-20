@@ -18,7 +18,6 @@
 #pragma once
 
 #include <tm/entry_hazards.hpp>
-#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/screens.hpp>
 #include <tm/wish.hpp>
@@ -33,6 +32,7 @@
 #include <string_view>
 
 namespace technicalmachine {
+enum class Generation : std::uint8_t;
 struct Weather;
 
 struct Team {

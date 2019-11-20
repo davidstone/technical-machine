@@ -32,8 +32,10 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
+constexpr auto generation = Generation::four;
+
 void assert_lower_score(Evaluate const & evaluate, Team const & lesser, Team const & greater) {
-	BOUNDED_ASSERT(evaluate(lesser, greater, Weather{}) < 0_bi);
+	BOUNDED_ASSERT(evaluate(generation, lesser, greater, Weather{}) < 0_bi);
 }
 
 }	// namespace
@@ -47,8 +49,6 @@ void evaluate_tests() {
 	auto const item = Item::Leftovers;
 	auto const ability = Ability::Natural_Cure;
 	auto const nature = Nature::Bold;
-
-	constexpr auto generation = Generation::four;
 
 	Team team1(1_bi);
 	team1.add_pokemon(generation, species, level, gender, item, ability, nature);

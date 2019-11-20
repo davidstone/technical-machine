@@ -18,12 +18,12 @@
 
 #pragma once
 
-#include <tm/generation.hpp>
-
+#include <cstdint>
 #include <random>
 
 namespace technicalmachine {
 
+enum class Generation : std::uint8_t;
 struct UsageStats;
 struct Team;
 

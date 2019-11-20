@@ -20,7 +20,6 @@
 #include <tm/stat/ev.hpp>
 #include <tm/stat/iv.hpp>
 
-#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species_forward.hpp>
@@ -28,6 +27,7 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
+enum class Generation : std::uint8_t;
 struct Level;
 struct Pokemon;
 using namespace bounded::literal;

@@ -17,13 +17,13 @@
 
 #pragma once
 
-#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
+enum class Generation : std::uint8_t;
 struct MutableActivePokemon;
 struct Team;
 struct Weather;
@@ -65,6 +65,6 @@ constexpr auto operator==(EntryHazards const lhs, EntryHazards const rhs) {
 		lhs.stealth_rock() == rhs.stealth_rock();
 }
 
-auto apply(Generation const generation, EntryHazards & hazards, MutableActivePokemon switcher, Weather weather) -> void;
+auto apply(Generation, EntryHazards &, MutableActivePokemon switcher, Weather) -> void;
 
 }	// namespace technicalmachine

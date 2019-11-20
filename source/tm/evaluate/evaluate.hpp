@@ -21,8 +21,6 @@
 #include <tm/stat/stage.hpp>
 #include <tm/stat/stat_names.hpp>
 
-#include <tm/generation.hpp>
-
 #include <bounded/integer.hpp>
 
 #include <containers/array/array.hpp>
@@ -32,6 +30,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
+enum class Generation : std::uint8_t;
 struct EntryHazards;
 struct Pokemon;
 struct Status;
@@ -45,15 +44,13 @@ struct Evaluate {
 	// +1 gives me room to create a value that will always be overwritten
 	using type = bounded::integer<-static_cast<int>(victory + 1_bi), static_cast<int>(victory + 1_bi)>;
 	Evaluate();
-	auto operator()(Team const & ai, Team const & foe, Weather weather) const -> type;
+	auto operator()(Generation, Team const & ai, Team const & foe, Weather weather) const -> type;
 	// Return victory if the battle is won. Returns -victory if the battle is
 	// lost. Returns 0 otherwise.
 	static auto win(Team const & team1, Team const & team2) -> bounded::optional<double>;
 
 	// Arbitrary values
 	using value_type = bounded::integer<-4096, 4096>;
-
-	auto generation() const { return m_generation; }
 
 	auto light_screen() const { return m_light_screen; }
 	auto lucky_chant() const { return m_lucky_chant; }
@@ -90,9 +87,8 @@ struct Evaluate {
 	auto baton_pass() const { return m_baton_pass; }
 	auto no_pp() const { return m_no_pp; }
 	auto stage() const { return m_stage; }
-private:
-	Generation m_generation;
 
+private:
 	value_type m_light_screen;
 	value_type m_lucky_chant;
 	value_type m_mist;

@@ -24,8 +24,6 @@
 #include <tm/stat/ev.hpp>
 #include <tm/stat/nature.hpp>
 
-#include <tm/generation.hpp>
-
 #include <bounded/integer.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
@@ -33,6 +31,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
+enum class Generation : std::uint8_t;
 struct Stat;
 
 struct OffensiveStats {

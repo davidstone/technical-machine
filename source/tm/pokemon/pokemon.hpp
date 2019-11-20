@@ -24,7 +24,6 @@
 
 #include <tm/ability.hpp>
 #include <tm/gender.hpp>
-#include <tm/generation.hpp>
 #include <tm/item.hpp>
 #include <tm/operators.hpp>
 #include <tm/status.hpp>
@@ -44,6 +43,8 @@
 #include <cstdint>
 
 namespace technicalmachine {
+
+enum class Generation : std::uint8_t;
 
 struct Pokemon {
 	Pokemon(Generation, TeamSize my_team_size, Species species, Level level, Gender gender, Happiness happiness = Happiness{});

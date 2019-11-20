@@ -22,11 +22,10 @@
 #include <tm/stat/stat.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
-#include <tm/generation.hpp>
-
 #include <containers/array/array.hpp>
 
 namespace technicalmachine {
+enum class Generation : std::uint8_t;
 struct Level;
 
 struct Stats {

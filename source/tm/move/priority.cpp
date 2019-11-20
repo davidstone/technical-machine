@@ -369,20 +369,13 @@ constexpr auto gen_seven_priority(Moves const move) -> PriorityInteger {
 
 constexpr auto get_priority(Generation const generation, Moves const move) {
 	switch (generation) {
-		case Generation::one:
-			return gen_one_priority(move);
-		case Generation::two:
-			return gen_two_priority(move);
-		case Generation::three:
-			return gen_three_priority(move);
-		case Generation::four:
-			return gen_four_priority(move);
-		case Generation::five:
-			return gen_five_priority(move);
-		case Generation::six:
-			return gen_six_priority(move);
-		case Generation::seven:
-			return gen_seven_priority(move);
+		case Generation::one: return gen_one_priority(move);
+		case Generation::two: return gen_two_priority(move);
+		case Generation::three: return gen_three_priority(move);
+		case Generation::four: return gen_four_priority(move);
+		case Generation::five: return gen_five_priority(move);
+		case Generation::six: return gen_six_priority(move);
+		case Generation::seven: return gen_seven_priority(move);
 	}
 }
 

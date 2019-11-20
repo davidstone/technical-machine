@@ -43,7 +43,6 @@
 
 #include <tm/stat/stage.hpp>
 
-#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/random_damage.hpp>
 #include <tm/rational.hpp>

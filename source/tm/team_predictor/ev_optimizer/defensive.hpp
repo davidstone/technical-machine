@@ -27,13 +27,13 @@
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat.hpp>
 
-#include <tm/generation.hpp>
-
 #include <containers/algorithms/find.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
+
+enum class Generation : std::uint8_t;
 
 struct DefensiveEVs {
 	DefensiveEVs(Generation, Species, Level, Nature, HP, Stat defense, Stat special_defense);

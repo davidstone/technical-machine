@@ -29,14 +29,13 @@
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
-#include <tm/generation.hpp>
-
 #include <containers/algorithms/transform.hpp>
 #include <containers/legacy_iterator.hpp>
 
 #include <stdexcept>
 
 namespace technicalmachine {
+enum class Generation : std::uint8_t;
 using namespace bounded::literal;
 
 constexpr auto round_up_divide(auto const lhs, auto const rhs) {

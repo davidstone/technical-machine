@@ -30,11 +30,11 @@
 #include <tm/pokemon/pokemon.hpp>
 
 #include <tm/ability.hpp>
-#include <tm/generation.hpp>
 #include <tm/rational.hpp>
 #include <tm/weather.hpp>
 
 namespace technicalmachine {
+enum class Generation : std::uint8_t;
 namespace {
 using namespace bounded::literal;
 

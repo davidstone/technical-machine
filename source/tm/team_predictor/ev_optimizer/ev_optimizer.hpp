@@ -23,7 +23,6 @@
 #include <tm/stat/combined_stats.hpp>
 #include <tm/stat/stat_names.hpp>
 
-#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 
 #include <containers/array/array.hpp>
@@ -31,6 +30,7 @@
 #include <random>
 
 namespace technicalmachine {
+enum class Generation : std::uint8_t;
 struct Pokemon;
 
 constexpr auto regular_stats() {

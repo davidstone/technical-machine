@@ -18,7 +18,6 @@
 #include <tm/move/calculate_damage.hpp>
 
 #include <tm/ability.hpp>
-#include <tm/generation.hpp>
 #include <tm/item.hpp>
 #include <tm/status.hpp>
 #include <tm/rational.hpp>
@@ -37,7 +36,10 @@
 #include <tm/type/effectiveness.hpp>
 
 namespace technicalmachine {
+
 using namespace bounded::literal;
+enum class Generation : std::uint8_t;
+
 namespace {
 
 bool affects_target(Generation const generation, Type const & move_type, ActivePokemon const target, Weather const weather) {

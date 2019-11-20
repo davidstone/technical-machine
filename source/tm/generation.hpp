@@ -17,9 +17,11 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace technicalmachine {
 
-enum class Generation {
+enum class Generation : std::uint8_t {
 	one = 1,
 	two = 2,
 	three = 3,

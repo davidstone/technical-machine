@@ -49,9 +49,8 @@ public:
 	using reference = value_type;
 	using iterator_category = std::random_access_iterator_tag;
 
-	static constexpr auto generation = Generation::four;
-
-	constexpr explicit SharedMovesIterator(underlying_index_type const other):
+	constexpr explicit SharedMovesIterator(Generation const generation, underlying_index_type const other):
+		m_generation(generation),
 		m_index(other)
 	{
 	}
@@ -66,11 +65,11 @@ public:
 			(m_index == 0_bi) ? Moves::Pass :
 			(m_index == 1_bi) ? Moves::Struggle :
 			to_switch(static_cast<switch_index_type>(m_index) - number_of_weird_moves);
-		return Move(generation, move_name);
+		return Move(m_generation, move_name);
 	}
 
 	friend constexpr auto operator+(SharedMovesIterator const lhs, difference_type const rhs) {
-		return SharedMovesIterator(static_cast<underlying_index_type>(lhs.m_index + rhs));
+		return SharedMovesIterator(lhs.m_generation, static_cast<underlying_index_type>(lhs.m_index + rhs));
 	}
 	friend constexpr auto operator-(SharedMovesIterator const lhs, SharedMovesIterator const rhs) {
 		return lhs.m_index - rhs.m_index;
@@ -85,6 +84,7 @@ public:
 
 	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(SharedMovesIterator)
 private:
+	Generation m_generation;
 	underlying_index_type m_index;
 };
 
@@ -94,15 +94,20 @@ struct SharedMoves {
 	using size_type = SharedMoveSize;
 	using const_iterator = SharedMovesIterator;
 
-	constexpr explicit SharedMoves(TeamSize const team_size = max_pokemon_per_team):
-		m_number_of_switches(BOUNDED_CONDITIONAL(team_size > 1_bi, team_size, 0_bi)) {
+	constexpr explicit SharedMoves(Generation const generation, TeamSize const team_size):
+		m_generation(generation),
+		m_number_of_switches(BOUNDED_CONDITIONAL(team_size > 1_bi, team_size, 0_bi))
+	{
 	}
 
-	friend constexpr auto begin(SharedMoves) {
-		return const_iterator(0_bi);
+	friend constexpr auto begin(SharedMoves const container) {
+		return const_iterator(container.m_generation, 0_bi);
 	}
 	friend constexpr auto end(SharedMoves const container) {
-		return const_iterator(container.m_number_of_switches + number_of_weird_moves);
+		return const_iterator(
+			container.m_generation,
+			container.m_number_of_switches + number_of_weird_moves
+		);
 	}
 
 	constexpr void remove_switch() {
@@ -114,11 +119,13 @@ struct SharedMoves {
 
 	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(SharedMoves)
 private:
+	Generation m_generation;
 	TeamSize m_number_of_switches;
 };
 
+// It is undefined behavior to compare SharedMoves from different generations
 constexpr auto operator==(SharedMoves const lhs, SharedMoves const rhs) {
-	return containers::size(lhs) == containers::size(rhs);
+	return end(lhs) == end(rhs);
 }
 
 

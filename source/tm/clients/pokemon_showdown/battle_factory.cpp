@@ -52,9 +52,7 @@ auto parse_stats(HP::max_type const hp, boost::property_tree::ptree const & stat
 	return GenericStats{hp, attack, defense, special_attack, special_defense, speed};
 }
 
-Team parse_team(boost::property_tree::ptree const & pt) {
-	// TODO: Parse this
-	constexpr auto generation = Generation::four;
+Team parse_team(boost::property_tree::ptree const & pt, Generation const generation) {
 	auto const team_data = containers::range_view(pt.get_child("side").get_child("pokemon").equal_range(""));
 	constexpr bool is_me = true;
 	auto team = Team(TeamSize(containers::distance(begin(team_data), end(team_data))), is_me);
@@ -94,6 +92,13 @@ Team parse_team(boost::property_tree::ptree const & pt) {
 	return team;
 }
 
+void validate_generation(std::string_view const received, Generation const expected) {
+	auto const parsed = static_cast<Generation>(bounded::to_integer<1, 7>(received));
+	if (parsed != expected) {
+		throw std::runtime_error("Received wrong generation. Expected " + std::to_string(static_cast<int>(expected)) + "but got " + std::string(received));
+	}
+}
+
 }	// namespace
 
 void BattleFactory::handle_message(InMessage message) {
@@ -114,6 +119,7 @@ void BattleFactory::handle_message(InMessage message) {
 	} else if (type == "gametype") {
 		m_type.emplace(message.next());
 	} else if (type == "gen") {
+		validate_generation(message.next(), m_generation);
 	} else if (type == "player") {
 		auto const player_id = message.next();
 		auto const username = message.next();
@@ -134,7 +140,7 @@ void BattleFactory::handle_message(InMessage message) {
 		// team is otherwise?
 		auto const json_data = message.remainder();
 		if (!json_data.empty()) {
-			m_team = parse_team(m_parse_json(json_data));
+			m_team = parse_team(m_parse_json(json_data), m_generation);
 		}
 	} else if (type == "rule") {
 		// message.remainder() == RULE: DESCRIPTION
@@ -181,8 +187,6 @@ void BattleFactory::handle_message(InMessage message) {
 }
 
 BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message) && {
-	// TODO
-	constexpr auto generation = Generation::four;
 	BOUNDED_ASSERT(completed());
 	if (!m_party) {
 		throw std::runtime_error("Did not receive party");
@@ -193,9 +197,6 @@ BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message)
 	if (!m_tier) {
 		throw std::runtime_error("Did not receive tier");
 	}
-	if (!m_generation) {
-		throw std::runtime_error("Did not receive generation");
-	}
 	if (!m_foe_team_size) {
 		throw std::runtime_error("Did not receive foe team size");
 	}
@@ -205,13 +206,10 @@ BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message)
 	if (*m_type != "singles") {
 		throw std::runtime_error("Unsupported format " + *m_type);
 	}
-	if (*m_generation != 4) {
-		throw std::runtime_error("Unsupported generation " + bounded::to_string(*m_generation));
-	}
 	auto make_foe_team = [&]{
 		auto team = Team(*m_foe_team_size, false);
 		auto const pokemon = *m_foe_starter;
-		team.add_pokemon(generation, pokemon.species, pokemon.level, pokemon.gender);
+		team.add_pokemon(m_generation, pokemon.species, pokemon.level, pokemon.gender);
 		return team;
 	};
 	return BattleParser(
@@ -220,6 +218,7 @@ BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message)
 		std::ofstream(m_log_directory / "analysis.txt"),
 		std::move(m_id),
 		std::move(m_username),
+		m_generation,
 		m_usage_stats,
 		m_evaluate,
 		*m_party,
@@ -229,6 +228,21 @@ BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message)
 		make_foe_team(),
 		m_log_foe_teams
 	);
+}
+
+
+auto BattleFactory::parse_generation(std::string const & id) -> Generation {
+	// TODO: This won't work for generation 10
+	constexpr auto generation_index = std::char_traits<char>::length("battle-gen");
+	if (id.size() < generation_index) {
+		throw std::runtime_error("Invalid battle id. Expected something in the format of: \"battle-gen[generation_number]\", but got " + id);
+	}
+	auto const generation_char = id[generation_index];
+	auto const generation = generation_char - '0';
+	if (generation < 1 or 8 < generation) {
+		throw std::runtime_error("Invalid generation. Expected a value between 1 and 8, but got " + std::string(1, generation_char));
+	}
+	return static_cast<Generation>(generation);
 }
 
 }	// namespace ps

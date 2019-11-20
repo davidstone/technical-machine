@@ -18,11 +18,12 @@
 #pragma once
 
 #include <tm/pokemon/species_forward.hpp>
-#include <tm/generation.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
+
+enum class Generation : std::uint8_t;
 
 struct BaseStats {
 	explicit BaseStats(Generation generation, Species species);

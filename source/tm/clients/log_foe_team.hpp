@@ -21,7 +21,7 @@
 
 namespace technicalmachine {
 
-enum class Generation;
+enum class Generation : std::uint8_t;
 struct UsageStats;
 struct Team;
 
