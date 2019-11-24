@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include <tm/stat/generic_stats.hpp>
+
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
@@ -33,5 +35,7 @@ struct IV {
 private:
 	value_type m_value;
 };
+
+using IVs = GenericStats<IV>;
 
 }	// namespace technicalmachine
