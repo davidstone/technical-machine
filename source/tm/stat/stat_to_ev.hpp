@@ -29,8 +29,8 @@
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
+#include <containers/algorithms/binary_search.hpp>
 #include <containers/algorithms/transform.hpp>
-#include <containers/legacy_iterator.hpp>
 
 #include <stdexcept>
 
@@ -44,11 +44,11 @@ constexpr auto round_up_divide(auto const lhs, auto const rhs) {
 
 inline auto hp_to_ev(Generation const generation, Species const species, Level const level, HP::max_type const stat) {
 	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(generation, species, level, ev).max(); });
-	auto const it = std::lower_bound(containers::legacy_iterator(begin(stat_range)), containers::legacy_iterator(end(stat_range)), stat);
-	if (it.base() == end(stat_range)) {
+	auto const it = containers::lower_bound(stat_range, stat);
+	if (it == end(stat_range)) {
 		throw std::runtime_error("No valid HP EV for a given stat value");
 	}
-	return *it.base().base();
+	return *it.base();
 }
 
 // `target` is not just bounded::integer<4, 614> because this function is also
