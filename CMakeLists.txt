@@ -363,7 +363,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		"-std=c++2a"
 		"-O3"
 		"-flto=thin"
-		"-march=native"
+		# "-march=native"
 	)
 	target_link_options(tm_common PUBLIC
 		"-Wl,--fatal-warnings"
@@ -384,7 +384,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		"-g"
 		"-std=c++2a"
 		"-O3"
-		"-march=native"
+		# "-march=native"
 		"-fconcepts"
 		$<$<CONFIG:Release>:-flto=4 -flto-odr-type-merging -fuse-linker-plugin>
 		"-Wall"
