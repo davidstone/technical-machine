@@ -248,12 +248,6 @@ auto calculate_common_offensive_stat(ActivePokemon const pokemon, Weather const 
 
 }	// namespace
 
-auto calculate_attacking_stat(ActivePokemon const attacker, Moves const move, Weather const weather, bool const critical_hit) -> std::common_type_t<attack_type, special_attack_type> {
-	return is_physical(move) ?
-		calculate_attack(attacker, weather, critical_hit) :
-		calculate_special_attack(attacker, weather, critical_hit);
-}
-
 auto calculate_attack(ActivePokemon const attacker, Weather const weather, bool const critical_hit) -> attack_type {
 	// static_cast here because it looks as though the strongest attacker would
 	// hold a Light Ball, but because of the restriction on the attacker being
@@ -280,12 +274,6 @@ auto is_self_KO(Moves const move) {
 }
 
 }	// namespace
-
-auto calculate_defending_stat(Moves const move, ActivePokemon const defender, Weather const weather, bool const critical_hit) -> std::common_type_t<defense_type, special_defense_type> {
-	return is_physical(move) ?
-		calculate_defense(defender, weather, critical_hit, is_self_KO(move)) :
-		calculate_special_defense(defender, weather, critical_hit);
-}
 
 auto calculate_defense(ActivePokemon const defender, Weather const weather, bool const critical_hit, bool is_self_KO) -> defense_type {
 	constexpr auto stat = StatNames::DEF;
