@@ -81,7 +81,7 @@ struct Battle {
 		if (turn_count != 1_bi) {
 			constexpr auto ai_flags = EndOfTurnFlags{false, false};
 			constexpr auto foe_flags = EndOfTurnFlags{false, false};
-			end_of_turn(m_ai, ai_flags, m_foe, foe_flags, m_weather);
+			end_of_turn(m_generation, m_ai, ai_flags, m_foe, foe_flags, m_weather);
 		} else {
 			for (auto side : {std::ref(m_ai), std::ref(m_foe)}) {
 				side.get().pokemon().set_not_moved();

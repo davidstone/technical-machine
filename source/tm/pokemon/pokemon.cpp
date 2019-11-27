@@ -50,7 +50,7 @@ namespace technicalmachine {
 // will not update Hidden Power
 Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Item const item, Ability const ability, Nature const nature, Happiness const happiness):
 	m_moves(generation, my_team_size),
-	current_type(species),
+	current_type(generation, species),
 	stats(generation, species, level),
 
 	m_species(species),

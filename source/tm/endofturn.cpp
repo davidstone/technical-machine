@@ -40,7 +40,7 @@ void end_of_turn7(MutableActivePokemon pokemon);
 
 }	// namespace
 
-void end_of_turn(Team & first, EndOfTurnFlags const first_flags, Team & last, EndOfTurnFlags const last_flags, Weather & weather) {
+void end_of_turn(Generation, Team & first, EndOfTurnFlags const first_flags, Team & last, EndOfTurnFlags const last_flags, Weather & weather) {
 	first.reset_end_of_turn();
 	last.reset_end_of_turn();
 	end_of_turn1(first);

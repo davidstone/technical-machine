@@ -263,6 +263,7 @@ auto calculate_special_attack(ActivePokemon const attacker, Weather const weathe
 
 namespace {
 
+#if 0
 auto is_self_KO(Moves const move) {
 	switch (move) {
 		case Moves::Explosion:
@@ -272,6 +273,7 @@ auto is_self_KO(Moves const move) {
 			return false;
 	}
 }
+#endif
 
 }	// namespace
 
@@ -290,19 +292,19 @@ auto calculate_defense(ActivePokemon const defender, Weather const weather, bool
 
 namespace {
 
-auto special_defense_sandstorm_boost(ActivePokemon const defender, Weather const weather) {
-	return rational(BOUNDED_CONDITIONAL(is_type(defender, Type::Rock, defender.is_roosting()) and weather.sand(), 3_bi, 2_bi), 2_bi);
+auto special_defense_sandstorm_boost(Generation const generation, ActivePokemon const defender, Weather const weather) {
+	return rational(BOUNDED_CONDITIONAL(is_type(defender, Type::Rock, defender.is_roosting()) and weather.sand() and generation >= Generation::four, 3_bi, 2_bi), 2_bi);
 }
 
 }	// namespace
 
-auto calculate_special_defense(ActivePokemon const defender, Weather const weather, bool const critical_hit) -> special_defense_type {
+auto calculate_special_defense(Generation const generation, ActivePokemon const defender, Weather const weather, bool const critical_hit) -> special_defense_type {
 	constexpr auto stat = StatNames::SPD;
 	auto const defense = calculate_initial_stat(stat, defender) *	
 		modifier<stat>(defender.stage(), critical_hit) *
 		ability_modifier<stat>(defender, weather) *
 		item_modifier<stat>(defender) *
-		special_defense_sandstorm_boost(defender, weather);
+		special_defense_sandstorm_boost(generation, defender, weather);
 	
 	// static_cast here because it looks as though the strongest defender would
 	// hold DeepSeaScale, but because of the restriction on the defender being

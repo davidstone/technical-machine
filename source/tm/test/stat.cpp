@@ -129,7 +129,7 @@ void special_defense_tests() {
 
 	boost(pokemon.stage(), StatNames::SPD, 6_bi);
 
-	check_equal(calculate_special_defense(pokemon, weather), max_special_defense);
+	check_equal(calculate_special_defense(generation, pokemon, weather), max_special_defense);
 }
 
 void speed_tests() {

@@ -332,7 +332,7 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	
 	auto next_turn = [&]{
 		constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false);
-		end_of_turn(attacker, end_of_turn_flags, defender, end_of_turn_flags, weather);
+		end_of_turn(generation, attacker, end_of_turn_flags, defender, end_of_turn_flags, weather);
 	};
 
 	auto jolteon = attacker.pokemon();

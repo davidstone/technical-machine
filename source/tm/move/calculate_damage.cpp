@@ -189,7 +189,7 @@ auto weakening_from_status(Pokemon const & attacker) {
 	);
 }
 
-auto physical_vs_special_modifier(ActivePokemon const attacker, Moves const move, ActivePokemon const defender, Weather const weather, bool const critical_hit) {
+auto physical_vs_special_modifier(Generation const generation, ActivePokemon const attacker, Moves const move, ActivePokemon const defender, Weather const weather, bool const critical_hit) {
 	// For all integers a, b, and c:
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
@@ -200,7 +200,7 @@ auto physical_vs_special_modifier(ActivePokemon const attacker, Moves const move
 		),
 		rational(
 			calculate_special_attack(attacker, weather, critical_hit),
-			50_bi * calculate_special_defense(defender, weather, critical_hit)
+			50_bi * calculate_special_defense(generation, defender, weather, critical_hit)
 		)
 	);
 }
@@ -236,7 +236,7 @@ auto regular_damage(Generation const generation, Team const & attacker_team, Exe
 	auto const temp =
 		(level_multiplier(attacker) + 2_bi) *
 		move_power(generation, attacker_team, move, defender_team, weather) *
-		physical_vs_special_modifier(attacker, move.name, defender, weather, move.critical_hit) /
+		physical_vs_special_modifier(generation, attacker, move.name, defender, weather, move.critical_hit) /
 		screen_divisor(move.name, defender_team, move.critical_hit) *
 		calculate_weather_modifier(move_type, weather) *
 		calculate_flash_fire_modifier(attacker, move_type) +

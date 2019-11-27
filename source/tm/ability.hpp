@@ -24,6 +24,7 @@
 namespace technicalmachine {
 
 struct ActivePokemon;
+enum class Generation : std::uint8_t;
 struct MutableActivePokemon;
 struct Weather;
 
@@ -67,7 +68,7 @@ inline constexpr auto max_value<technicalmachine::Ability> = technicalmachine::A
 }	// namespace bounded
 namespace technicalmachine {
 
-bool blocks_switching(Ability ability, ActivePokemon switcher, Weather weather);
+bool blocks_switching(Generation, Ability, ActivePokemon switcher, Weather);
 
 constexpr bool blocks_weather(Ability const ability) {
 	switch (ability) {
@@ -191,7 +192,7 @@ constexpr bool boosts_stab(Ability const ability) {
 	return ability == Ability::Adaptability;
 }
 
-void activate_ability_on_switch(MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather);
+void activate_ability_on_switch(Generation, MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather);
 void weather_healing_ability(MutableActivePokemon pokemon, Weather weather);
 
 }	// namespace technicalmachine

@@ -49,7 +49,7 @@ auto calculate_special_attack(ActivePokemon attacker, Weather weather, bool crit
 using defense_type = bounded::integer<1, 3684>;
 using special_defense_type = bounded::integer<1, 3684>;
 auto calculate_defense(ActivePokemon defender, Weather weather, bool critical_hit = false, bool is_self_KO = false) -> defense_type;
-auto calculate_special_defense(ActivePokemon defender, Weather weather, bool critical_hit = false) -> special_defense_type;
+auto calculate_special_defense(Generation, ActivePokemon defender, Weather, bool critical_hit = false) -> special_defense_type;
 
 using speed_type = bounded::integer<1, 12096>;
 auto calculate_speed(Team const & team, Weather weather) -> speed_type;

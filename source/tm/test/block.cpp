@@ -60,7 +60,7 @@ void basic() {
 		);
 	}
 
-	auto const selections = legal_selections(user, other.pokemon(), Weather{});
+	auto const selections = legal_selections(generation, user, other.pokemon(), Weather{});
 	if (size(selections) != 4_bi) {
 		throw std::runtime_error("Invalid number of legal selections");
 	}
@@ -81,7 +81,7 @@ void test_two_moves_with_one_out_of_pp() {
 	auto other = Team(1_bi, false);
 	other.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
 	
-	auto const selections = legal_selections(user, other.pokemon(), Weather{});
+	auto const selections = legal_selections(generation, user, other.pokemon(), Weather{});
 	if (size(selections) != 1_bi) {
 		throw std::runtime_error("Incorrect number of selections with one of two moves out of PP. Expected 1, got " + to_string(size(selections)));
 	}
@@ -106,7 +106,7 @@ void test_two_moves_with_both_out_of_pp() {
 	auto other = Team(1_bi, false);
 	other.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
 	
-	auto const selections = legal_selections(user, other.pokemon(), Weather{});
+	auto const selections = legal_selections(generation, user, other.pokemon(), Weather{});
 	if (size(selections) != 1_bi) {
 		throw std::runtime_error("Incorrect number of selections with two of two moves out of PP. Expected 1, got " + to_string(size(selections)));
 	}

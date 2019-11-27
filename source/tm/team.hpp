@@ -108,7 +108,7 @@ struct Team {
 		switch_in(replacement_pokemon);
 		apply(generation, entry_hazards, replacement_pokemon, weather);
 		if (get_hp(replacement_pokemon) != 0_bi) {
-			activate_ability_on_switch(replacement_pokemon, other.pokemon(), weather);
+			activate_ability_on_switch(generation, replacement_pokemon, other.pokemon(), weather);
 		}
 	}
 

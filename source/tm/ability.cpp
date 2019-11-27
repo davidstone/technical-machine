@@ -35,7 +35,7 @@
 
 namespace technicalmachine {
 
-bool blocks_switching(Ability const ability, ActivePokemon const switcher, Weather const weather) {
+bool blocks_switching(Generation, Ability const ability, ActivePokemon const switcher, Weather const weather) {
 	switch (ability) {
 		case Ability::Shadow_Tag:
 			return get_ability(switcher) != Ability::Shadow_Tag;
@@ -56,11 +56,11 @@ bool boosts_special_defense(Ability const ability, Weather const weather) {
 	return ability == Ability::Flower_Gift and weather.sun();
 }
 
-void activate_ability_on_switch(MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather) {
+void activate_ability_on_switch(Generation const generation, MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather) {
 	switch (get_ability(switcher)) {
 		case Ability::Download: {
 			auto const defense = calculate_defense(other, weather);
-			auto const special_defense = calculate_special_defense(other, weather);
+			auto const special_defense = calculate_special_defense(generation, other, weather);
 			boost(switcher.stage(), defense >= special_defense ? StatNames::SPA : StatNames::ATK, 1_bi);
 			break;
 		}

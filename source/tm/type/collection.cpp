@@ -20,6 +20,7 @@
 
 #include <tm/type/type.hpp>
 
+#include <tm/generation.hpp>
 #include <tm/weather.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
@@ -39,7 +40,7 @@ constexpr auto make_types(Type const type1, Type const type2) {
 	return containers::array{type1, type2};
 }
 
-constexpr auto get_type(Species const species) {
+constexpr auto get_type(Generation const generation, Species const species) {
 	switch (species) {
 		// Generation 1
 		case Species::Bulbasaur: return make_types(Type::Grass, Type::Poison);
@@ -76,12 +77,12 @@ constexpr auto get_type(Species const species) {
 		case Species::Nidoran_M: return make_types(Type::Poison);
 		case Species::Nidorino: return make_types(Type::Poison);
 		case Species::Nidoking: return make_types(Type::Poison, Type::Ground);
-		case Species::Clefairy: return make_types(Type::Normal);
-		case Species::Clefable: return make_types(Type::Normal);
+		case Species::Clefairy: return generation <= Generation::five ? make_types(Type::Normal) : make_types(Type::Fairy);
+		case Species::Clefable: return generation <= Generation::five ? make_types(Type::Normal) : make_types(Type::Fairy);
 		case Species::Vulpix: return make_types(Type::Fire);
 		case Species::Ninetales: return make_types(Type::Fire);
-		case Species::Jigglypuff: return make_types(Type::Normal);
-		case Species::Wigglytuff: return make_types(Type::Normal);
+		case Species::Jigglypuff: return generation <= Generation::five ? make_types(Type::Normal) : make_types(Type::Normal, Type::Fairy);
+		case Species::Wigglytuff: return generation <= Generation::five ? make_types(Type::Normal) : make_types(Type::Normal, Type::Fairy);
 		case Species::Zubat: return make_types(Type::Poison, Type::Flying);
 		case Species::Golbat: return make_types(Type::Poison, Type::Flying);
 		case Species::Oddish: return make_types(Type::Grass, Type::Poison);
@@ -122,8 +123,8 @@ constexpr auto get_type(Species const species) {
 		case Species::Rapidash: return make_types(Type::Fire);
 		case Species::Slowpoke: return make_types(Type::Water, Type::Psychic);
 		case Species::Slowbro: return make_types(Type::Water, Type::Psychic);
-		case Species::Magnemite: return make_types(Type::Electric, Type::Steel);
-		case Species::Magneton: return make_types(Type::Electric, Type::Steel);
+		case Species::Magnemite: return generation <= Generation::one ? make_types(Type::Electric) : make_types(Type::Electric, Type::Steel);
+		case Species::Magneton: return generation <= Generation::one ? make_types(Type::Electric) : make_types(Type::Electric, Type::Steel);
 		case Species::Farfetchd: return make_types(Type::Normal, Type::Flying);
 		case Species::Doduo: return make_types(Type::Normal, Type::Flying);
 		case Species::Dodrio: return make_types(Type::Normal, Type::Flying);
@@ -163,7 +164,7 @@ constexpr auto get_type(Species const species) {
 		case Species::Seaking: return make_types(Type::Water);
 		case Species::Staryu: return make_types(Type::Water);
 		case Species::Starmie: return make_types(Type::Water, Type::Psychic);
-		case Species::Mr_Mime: return make_types(Type::Psychic);
+		case Species::Mr_Mime: return generation <= Generation::five ? make_types(Type::Psychic) : make_types(Type::Psychic, Type::Fairy);
 		case Species::Scyther: return make_types(Type::Bug, Type::Flying);
 		case Species::Jynx: return make_types(Type::Ice, Type::Psychic);
 		case Species::Electabuzz: return make_types(Type::Electric);
@@ -216,18 +217,18 @@ constexpr auto get_type(Species const species) {
 		case Species::Chinchou: return make_types(Type::Water, Type::Electric);
 		case Species::Lanturn: return make_types(Type::Water, Type::Electric);
 		case Species::Pichu: return make_types(Type::Electric);
-		case Species::Cleffa: return make_types(Type::Normal);
-		case Species::Igglybuff: return make_types(Type::Normal);
-		case Species::Togepi: return make_types(Type::Normal);
-		case Species::Togetic: return make_types(Type::Normal, Type::Flying);
+		case Species::Cleffa: return generation <= Generation::five ? make_types(Type::Normal) : make_types(Type::Fairy);
+		case Species::Igglybuff: return generation <= Generation::five ? make_types(Type::Normal) : make_types(Type::Normal, Type::Fairy);
+		case Species::Togepi: return generation <= Generation::five ? make_types(Type::Normal) : make_types(Type::Fairy);
+		case Species::Togetic: return generation <= Generation::five ? make_types(Type::Normal, Type::Flying) : make_types(Type::Fairy);
 		case Species::Natu: return make_types(Type::Psychic, Type::Flying);
 		case Species::Xatu: return make_types(Type::Psychic, Type::Flying);
 		case Species::Mareep: return make_types(Type::Electric);
 		case Species::Flaaffy: return make_types(Type::Electric);
 		case Species::Ampharos: return make_types(Type::Electric);
 		case Species::Bellossom: return make_types(Type::Grass);
-		case Species::Marill: return make_types(Type::Water);
-		case Species::Azumarill: return make_types(Type::Water);
+		case Species::Marill: return generation <= Generation::five ? make_types(Type::Water) : make_types(Type::Water, Type::Fairy);
+		case Species::Azumarill: return generation <= Generation::five ? make_types(Type::Water) : make_types(Type::Water, Type::Fairy);
 		case Species::Sudowoodo: return make_types(Type::Rock);
 		case Species::Politoed: return make_types(Type::Water);
 		case Species::Hoppip: return make_types(Type::Grass, Type::Flying);
@@ -252,8 +253,8 @@ constexpr auto get_type(Species const species) {
 		case Species::Dunsparce: return make_types(Type::Normal);
 		case Species::Gligar: return make_types(Type::Ground, Type::Flying);
 		case Species::Steelix: return make_types(Type::Steel, Type::Ground);
-		case Species::Snubbull: return make_types(Type::Normal);
-		case Species::Granbull: return make_types(Type::Normal);
+		case Species::Snubbull: return generation <= Generation::five ? make_types(Type::Normal) : make_types(Type::Fairy);
+		case Species::Granbull: return generation <= Generation::five ? make_types(Type::Normal) : make_types(Type::Fairy);
 		case Species::Qwilfish: return make_types(Type::Water, Type::Poison);
 		case Species::Scizor: return make_types(Type::Bug, Type::Steel);
 		case Species::Shuckle: return make_types(Type::Bug, Type::Rock);
@@ -325,9 +326,9 @@ constexpr auto get_type(Species const species) {
 		case Species::Swellow: return make_types(Type::Normal, Type::Flying);
 		case Species::Wingull: return make_types(Type::Water, Type::Flying);
 		case Species::Pelipper: return make_types(Type::Water, Type::Flying);
-		case Species::Ralts: return make_types(Type::Psychic);
-		case Species::Kirlia: return make_types(Type::Psychic);
-		case Species::Gardevoir: return make_types(Type::Psychic);
+		case Species::Ralts: return generation <= Generation::five ? make_types(Type::Psychic) : make_types(Type::Psychic, Type::Fairy);
+		case Species::Kirlia: return generation <= Generation::five ? make_types(Type::Psychic) : make_types(Type::Psychic, Type::Fairy);
+		case Species::Gardevoir: return generation <= Generation::five ? make_types(Type::Psychic) : make_types(Type::Psychic, Type::Fairy);
 		case Species::Surskit: return make_types(Type::Bug, Type::Water);
 		case Species::Masquerain: return make_types(Type::Bug, Type::Flying);
 		case Species::Shroomish: return make_types(Type::Grass);
@@ -343,12 +344,12 @@ constexpr auto get_type(Species const species) {
 		case Species::Exploud: return make_types(Type::Normal);
 		case Species::Makuhita: return make_types(Type::Fighting);
 		case Species::Hariyama: return make_types(Type::Fighting);
-		case Species::Azurill: return make_types(Type::Normal);
+		case Species::Azurill: return generation <= Generation::five ? make_types(Type::Normal) : make_types(Type::Normal, Type::Fairy);
 		case Species::Nosepass: return make_types(Type::Rock);
 		case Species::Skitty: return make_types(Type::Normal);
 		case Species::Delcatty: return make_types(Type::Normal);
 		case Species::Sableye: return make_types(Type::Dark, Type::Ghost);
-		case Species::Mawile: return make_types(Type::Steel);
+		case Species::Mawile: return generation <= Generation::five ? make_types(Type::Steel) : make_types(Type::Steel, Type::Fairy);
 		case Species::Aron: return make_types(Type::Steel, Type::Rock);
 		case Species::Lairon: return make_types(Type::Steel, Type::Rock);
 		case Species::Aggron: return make_types(Type::Steel, Type::Rock);
@@ -494,7 +495,7 @@ constexpr auto get_type(Species const species) {
 		case Species::Bronzor: return make_types(Type::Steel, Type::Psychic);
 		case Species::Bronzong: return make_types(Type::Steel, Type::Psychic);
 		case Species::Bonsly: return make_types(Type::Rock);
-		case Species::Mime_Jr: return make_types(Type::Psychic);
+		case Species::Mime_Jr: return generation <= Generation::five ? make_types(Type::Psychic) : make_types(Type::Psychic, Type::Fairy);
 		case Species::Happiny: return make_types(Type::Normal);
 		case Species::Chatot: return make_types(Type::Normal, Type::Flying);
 		case Species::Spiritomb: return make_types(Type::Ghost, Type::Dark);
@@ -523,7 +524,7 @@ constexpr auto get_type(Species const species) {
 		case Species::Tangrowth: return make_types(Type::Grass);
 		case Species::Electivire: return make_types(Type::Electric);
 		case Species::Magmortar: return make_types(Type::Fire);
-		case Species::Togekiss: return make_types(Type::Normal, Type::Flying);
+		case Species::Togekiss: return generation <= Generation::five ? make_types(Type::Normal, Type::Flying) : make_types(Type::Fairy, Type::Flying);
 		case Species::Yanmega: return make_types(Type::Bug, Type::Flying);
 		case Species::Leafeon: return make_types(Type::Grass);
 		case Species::Glaceon: return make_types(Type::Ice);
@@ -535,16 +536,11 @@ constexpr auto get_type(Species const species) {
 		case Species::Dusknoir: return make_types(Type::Ghost);
 		case Species::Froslass: return make_types(Type::Ice, Type::Ghost);
 		case Species::Rotom: return make_types(Type::Electric, Type::Ghost);
-			// return make_types(Type::Electric, Type::Fire);
-		case Species::Rotom_Heat: return make_types(Type::Electric, Type::Ghost);
-			// return make_types(Type::Electric, Type::Water);
-		case Species::Rotom_Wash: return make_types(Type::Electric, Type::Ghost);
-			// return make_types(Type::Electric, Type::Ice);
-		case Species::Rotom_Frost: return make_types(Type::Electric, Type::Ghost);
-			// return make_types(Type::Electric, Type::Flying);
-		case Species::Rotom_Fan: return make_types(Type::Electric, Type::Ghost);
-			// return make_types(Type::Electric, Type::Grass);
-		case Species::Rotom_Mow: return make_types(Type::Electric, Type::Ghost);
+		case Species::Rotom_Heat: return generation <= Generation::four ? make_types(Type::Electric, Type::Ghost) : make_types(Type::Electric, Type::Fire);
+		case Species::Rotom_Wash: return generation <= Generation::five ? make_types(Type::Electric, Type::Ghost) : make_types(Type::Electric, Type::Water);
+		case Species::Rotom_Frost: return generation <= Generation::five ? make_types(Type::Electric, Type::Ghost) : make_types(Type::Electric, Type::Ice);
+		case Species::Rotom_Fan: return generation <= Generation::five ? make_types(Type::Electric, Type::Ghost) : make_types(Type::Electric, Type::Flying);
+		case Species::Rotom_Mow: return generation <= Generation::four ? make_types(Type::Electric, Type::Ghost) : make_types(Type::Electric, Type::Grass);
 		case Species::Uxie: return make_types(Type::Psychic);
 		case Species::Mesprit: return make_types(Type::Psychic);
 		case Species::Azelf: return make_types(Type::Psychic);
@@ -615,8 +611,8 @@ constexpr auto get_type(Species const species) {
 		case Species::Venipede: return make_types(Type::Bug, Type::Poison);
 		case Species::Whirlipede: return make_types(Type::Bug, Type::Poison);
 		case Species::Scolipede: return make_types(Type::Bug, Type::Poison);
-		case Species::Cottonee: return make_types(Type::Grass);
-		case Species::Whimsicott: return make_types(Type::Grass);
+		case Species::Cottonee: return generation <= Generation::five ? make_types(Type::Grass) : make_types(Type::Grass, Type::Fairy);
+		case Species::Whimsicott: return generation <= Generation::five ? make_types(Type::Grass) : make_types(Type::Grass, Type::Fairy);
 		case Species::Petilil: return make_types(Type::Grass);
 		case Species::Lilligant: return make_types(Type::Grass);
 		case Species::Basculin: return make_types(Type::Water);
@@ -930,8 +926,8 @@ constexpr auto get_type(Species const species) {
 
 }	// namespace
 
-TypeCollection::TypeCollection(Species const species):
-	types(get_type(species)) {
+TypeCollection::TypeCollection(Generation const generation, Species const species):
+	types(get_type(generation, species)) {
 }
 
 auto is_immune_to_sandstorm(TypeCollection const collection) -> bool {

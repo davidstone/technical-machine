@@ -27,12 +27,13 @@
 
 namespace technicalmachine {
 struct ActivePokemon;
+enum class Generation : std::uint8_t;
 struct MutableActivePokemon;
 struct Pokemon;
 struct Weather;
 
 struct TypeCollection {
-	explicit TypeCollection(Species name);
+	explicit TypeCollection(Generation, Species name);
 	friend auto is_immune_to_hail(TypeCollection const collection) -> bool;
 	friend auto is_immune_to_sandstorm(TypeCollection const collection) -> bool;
 	friend auto blocks_status(TypeCollection const collection, Statuses const status) -> bool {
@@ -42,12 +43,12 @@ struct TypeCollection {
 	}
 	auto change_type(Type const type) -> void;
 private:
-	friend auto is_type(Pokemon const & pokemon, Type type, bool roosting) -> bool;
+	friend auto is_type(Pokemon const &, Type, bool roosting) -> bool;
 	friend struct Effectiveness;
 	containers::array<Type, 2> types;
 };
 
-auto is_type(Pokemon const & pokemon, Type type, bool roosting) -> bool;
+auto is_type(Pokemon const &, Type, bool roosting) -> bool;
 
 auto grounded(ActivePokemon pokemon, Weather weather) -> bool;
 auto grounded(MutableActivePokemon pokemon, Weather weather) -> bool;
