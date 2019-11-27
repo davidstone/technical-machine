@@ -98,6 +98,43 @@ auto curse(MutableActivePokemon user, MutableActivePokemon target) {
 }
 
 
+auto fling_side_effects(Pokemon & user, MutableActivePokemon target, Weather const weather) {
+	// TODO: Activate berry
+	auto apply_status = [&](Statuses const status) {
+		// Uproar is irrelevant in this function
+		constexpr auto uproaring = false;
+		apply(status, user, target, weather, uproaring);
+	};
+	switch (get_item(user)) {
+		case Item::Flame_Orb:
+			apply_status(Statuses::burn);
+			break;
+		case Item::Kings_Rock:
+		case Item::Razor_Fang:
+			target.flinch();
+			break;
+		case Item::Light_Ball:
+			apply_status(Statuses::paralysis);
+			break;
+		case Item::Mental_Herb:
+			// TODO: cure infatuation, taunt, encore, torment, disable, and
+			// cursed body on target
+			break;
+		case Item::Poison_Barb:
+			apply_status(Statuses::poison);
+			break;
+		case Item::Toxic_Orb:
+			apply_status(Statuses::toxic);
+			break;
+		case Item::White_Herb:
+			// TODO: Restore lowered stats on target
+			break;
+		default:
+			break;
+	}
+}
+
+
 void recoil(Pokemon & user, HP::current_type const damage, bounded::checked_integer<1, 4> const denominator) {
 	if (!blocks_recoil(get_ability(user))) {
 		get_hp(user) -= bounded::max(damage / denominator, 1_bi);
@@ -536,6 +573,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			confusing_stat_boost(other.pokemon(), StatNames::SPA, 1_bi);
 			break;
 		case Moves::Fling:
+			fling_side_effects(user, other.pokemon(), weather);
 			set_item(user, Item::No_Item);
 			break;
 		case Moves::Fly:
@@ -987,14 +1025,6 @@ auto do_effects_before_moving(Moves const move, Pokemon & user, Team & other) {
 }
 
 
-auto do_damage(MutableActivePokemon user, MutableActivePokemon target, HP::current_type const damage) {
-	auto const had_substitute = static_cast<bool>(target.substitute());
-	target.direct_damage(damage);
-	if (!had_substitute and causes_recoil(get_item(user))) {
-		heal(user, rational(-1_bi, 10_bi));
-	}
-}
-
 constexpr auto move_fails(Moves const move, bool const user_damaged, Ability const other_ability, OtherMove const other_move) {
 	switch (move) {
 		case Moves::Bug_Buzz:
@@ -1029,10 +1059,13 @@ auto use_move(Generation const generation, Team & user, ExecutedMove const move,
 
 	auto const substitute = other_pokemon.substitute();
 	if (damage != 0_bi) {
-		do_damage(user_pokemon, other_pokemon, damage);
+		other_pokemon.direct_damage(damage);
 	}
 	if (!substitute or !blocked_by_substitute(generation, move.name)) {
 		do_side_effects(generation, user, move, move_type, other, weather, damage);
+	}
+	if (!static_cast<bool>(substitute) and causes_recoil(get_item(user_pokemon))) {
+		heal(user_pokemon, rational(-1_bi, 10_bi));
 	}
 }
 
