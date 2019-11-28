@@ -29,7 +29,6 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 enum class Generation : std::uint8_t;
-struct Pokemon;
 
 struct Stat {
 	using base_type = bounded::checked_integer<5, 230>;
@@ -52,8 +51,5 @@ private:
 	EV m_ev;
 	IV m_iv;
 };
-
-auto set_stat_ev(Pokemon & pokemon, StatNames stat_name, EV ev) -> void;
-auto set_stat_ev(Pokemon & pokemon, StatNames stat_name, EV ev, IV iv) -> void;
 
 }	// namespace technicalmachine

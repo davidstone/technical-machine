@@ -51,12 +51,11 @@ namespace {
 
 // I could potentially treat this as negative recoil
 auto absorb_hp(Pokemon & user, Pokemon const & target, HP::current_type const damage) -> void {
-	auto & hp = get_hp(user);
 	auto const absorbed = damage / 2_bi;
 	if (damages_leechers(get_ability(target))) {
-		hp -= absorbed;
+		change_hp(user, -absorbed);
 	} else {
-		hp += absorbed;
+		change_hp(user, absorbed);
 	}
 }
 
@@ -71,9 +70,9 @@ auto cure_all_status(Team & user, auto const & predicate) -> void {
 
 
 auto belly_drum(MutableActivePokemon user) {
-	HP & hp = get_hp(user);
+	auto const hp = get_hp(user);
 	if (hp.current() > hp.max() / 2_bi and hp.current() > 1_bi) {
-		hp -= hp.max() / 2_bi;
+		change_hp(user, -hp.max() / 2_bi);
 		boost(user.stage(), StatNames::ATK, 12_bi);
 	}
 }
@@ -137,7 +136,7 @@ auto fling_side_effects(Pokemon & user, MutableActivePokemon target, Weather con
 
 void recoil(Pokemon & user, HP::current_type const damage, bounded::checked_integer<1, 4> const denominator) {
 	if (!blocks_recoil(get_ability(user))) {
-		get_hp(user) -= bounded::max(damage / denominator, 1_bi);
+		change_hp(user, -bounded::max(damage / denominator, 1_bi));
 	}
 }
 
@@ -157,10 +156,10 @@ auto confusing_stat_boost(MutableActivePokemon target, StatNames const stat, bou
 }
 
 
-auto equalize(HP & hp1, HP & hp2) {
-	auto const temp = (hp1.current() + hp2.current()) / 2_bi;
-	hp1 = temp;
-	hp2 = temp;
+auto equalize_hp(Pokemon & lhs, Pokemon & rhs) {
+	auto const average = (get_hp(lhs).current() + get_hp(rhs).current()) / 2_bi;
+	set_hp(lhs, average);
+	set_hp(rhs, average);
 }
 
 
@@ -177,8 +176,7 @@ auto phaze(Generation const generation, Team & user, Team & target, Weather & we
 
 
 auto struggle(Pokemon & user) {
-	auto & hp = get_hp(user);
-	hp -= hp.max() / 4_bi;
+	change_hp(user, -get_hp(user).max() / 4_bi);
 }
 
 
@@ -544,7 +542,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Explosion:
 		case Moves::Self_Destruct:
-			get_hp(user) = 0_bi;
+			set_hp(user, 0_bi);
 			break;
 		case Moves::Fake_Tears:
 		case Moves::Metal_Sound:
@@ -708,7 +706,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Memento:
 			boost_offensive(other.pokemon().stage(), -2_bi);
-			get_hp(user) = 0_bi;
+			set_hp(user, 0_bi);
 			break;
 		case Moves::Mimic:		// Fix
 			break;
@@ -764,7 +762,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.activate_rampage();
 			break;
 		case Moves::Pain_Split:
-			equalize(get_hp(user), get_hp(other.pokemon()));
+			equalize_hp(user, other.pokemon());
 			break;
 		case Moves::Perish_Song:
 			user.activate_perish_song();
@@ -790,7 +788,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Present:
 			if (move.variable.present_heals()) {
-				get_hp(other.pokemon()) += 80_bi;
+				change_hp(other.pokemon(), 80_bi);
 			}
 			break;
 		case Moves::Psych_Up:

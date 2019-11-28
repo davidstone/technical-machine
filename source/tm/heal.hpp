@@ -29,15 +29,15 @@ namespace technicalmachine {
 
 template<typename Numerator, typename Denominator>
 void heal(Pokemon & pokemon, rational<Numerator, Denominator> const scale) {
-	auto & hp = get_hp(pokemon);
+	auto const hp = get_hp(pokemon);
 	if (hp == 0_bi) {
 		return;
 	}
 	auto const hp_healed = hp.max() * scale;
 	if (scale > 0_bi) {
-		hp += bounded::max(hp_healed, 1_bi);
+		change_hp(pokemon, bounded::max(hp_healed, 1_bi));
 	} else if (!blocks_secondary_damage(get_ability(pokemon))) {
-		hp += bounded::min(hp_healed, -1_bi);
+		change_hp(pokemon, bounded::min(hp_healed, -1_bi));
 	}
 }
 

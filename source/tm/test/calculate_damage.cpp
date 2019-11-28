@@ -60,7 +60,7 @@ Team max_damage_special_attacker(Item const item, Ability const ability, Nature 
 	auto attacker = Team(max_pokemon_per_team);
 
 	attacker.add_pokemon(generation, Species::Deoxys_Attack, Level(100_bi), Gender::genderless, item, ability, nature);
-	get_hp(attacker.pokemon()) = 1_bi;
+	set_hp(attacker.pokemon(), 1_bi);
 	
 	return attacker;
 }

@@ -29,7 +29,6 @@
 namespace technicalmachine {
 enum class Generation : std::uint8_t;
 struct Level;
-struct Pokemon;
 using namespace bounded::literal;
 
 struct HP {
@@ -38,7 +37,7 @@ struct HP {
 	using current_type = bounded::integer<0, max_value>;
 	
 	HP(Generation generation, Species species, Level level, EV ev_ = EV(0_bi), IV iv_ = IV(31_bi));
-	auto & operator=(auto const & value) {
+	auto & operator=(auto const & value) & {
 		m_current = bounded::min(value, m_max);
 		return *this;
 	}
@@ -64,17 +63,6 @@ private:
 	max_type m_max;
 	bounded::clamped_integer<0, max_value> m_current;
 };
-
-auto set_hp_ev(Generation, Pokemon & pokemon, EV ev) -> void;
-auto set_hp_ev(Generation, Pokemon & pokemon, EV ev, IV iv) -> void;
-
-auto operator+=(HP & lhs, auto const & rhs) -> HP & {
-	return lhs = lhs.current() + rhs;
-}
-
-auto operator-=(HP & lhs, auto const & rhs) -> HP & {
-	return lhs += -rhs;
-}
 
 auto operator<=>(HP const lhs, bounded::bounded_integer auto const rhs) {
 	return lhs.current() <=> rhs;

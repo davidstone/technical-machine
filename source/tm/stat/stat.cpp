@@ -20,22 +20,12 @@
 
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/stat_names.hpp>
-#include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/unreachable.hpp>
 
 namespace technicalmachine {
-
-auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, EV const ev) -> void {
-	set_stat_ev(pokemon, stat_name, ev, get_stat(pokemon, stat_name).iv());
-}
-auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, EV const ev, IV const iv) -> void {
-	auto & stat = get_stat(pokemon, stat_name);
-	stat = Stat(stat, ev, iv);
-}
-
 namespace {
 
 auto get_base(Generation const generation, Species const species, StatNames const stat) -> Stat::base_type {

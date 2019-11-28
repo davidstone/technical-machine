@@ -212,7 +212,7 @@ auto to_real_hp(bool const is_me, HP const actual_hp, ParsedHP const visible_hp)
 	}
 }
 
-void correct_hp(HP & original_hp, bool const is_me, ParsedHP const visible_hp) {
+auto correct_hp(HP const original_hp, bool const is_me, ParsedHP const visible_hp) {
 	auto const current_hp = original_hp.current();
 	auto const seen_hp = to_real_hp(is_me, original_hp, visible_hp);
 	if (seen_hp.min > current_hp or seen_hp.max < current_hp) {
@@ -220,7 +220,7 @@ void correct_hp(HP & original_hp, bool const is_me, ParsedHP const visible_hp) {
 		// better way to fail unit tests if this happens.
 		std::cerr << "HP out of sync with server messages\n";
 	}
-	original_hp = seen_hp.value;
+	return seen_hp.value;
 }
 
 void validate_status(Statuses const original_status, Statuses const visible_status) {
@@ -237,8 +237,8 @@ void validate_status(Statuses const original_status, Statuses const visible_stat
 
 void correct_hp_and_status(bool const is_me, Pokemon & pokemon, HPAndStatus const hp_and_status) {
 	auto const [visible_hp, visible_status] = hp_and_status;
-	auto & original_hp = get_hp(pokemon);
-	correct_hp(original_hp, is_me, visible_hp);
+	auto const original_hp = get_hp(pokemon);
+	set_hp(pokemon, correct_hp(original_hp, is_me, visible_hp));
 	if (visible_hp.current == 0_bi) {
 		return;
 	}

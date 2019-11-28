@@ -515,7 +515,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto perish_song_turn() const -> void {
 		bool const faints_this_turn = m_flags.perish_song.advance_one_turn();
 		if (faints_this_turn) {
-			get_hp(*this) = 0_bi;
+			set_hp(*this, 0_bi);
 		}
 	}
 	auto activate_power_trick() const {
@@ -583,7 +583,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 
 	auto direct_damage(HP::current_type const damage) const -> void;
 	auto indirect_damage(HP::current_type const damage) const {
-		get_hp(*this) -= damage;
+		change_hp(*this, -damage);
 		m_flags.damaged = true;
 	}
 	auto increment_move_use_counter(Moves const move) const {

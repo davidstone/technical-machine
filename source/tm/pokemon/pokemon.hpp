@@ -71,10 +71,11 @@ struct Pokemon {
 	friend void set_nature(Pokemon & pokemon, Nature nature);
 	friend bool nature_is_known(Pokemon pokemon);
 	friend Species get_species(Pokemon pokemon);
-	friend HP const & get_hp(Pokemon const & pokemon);
-	friend HP & get_hp(Pokemon & pokemon);
-	friend Stat const & get_stat(Pokemon const & pokemon, StatNames index_stat);
-	friend Stat & get_stat(Pokemon & pokemon, StatNames index_stat);
+	friend HP get_hp(Pokemon pokemon);
+	friend void set_hp(Pokemon & pokemon, auto hp);
+	friend auto set_hp_ev(Generation, Pokemon &, EV, IV) -> void;
+	friend Stat get_stat(Pokemon pokemon, StatNames index_stat);
+	friend auto set_stat_ev(Pokemon &, StatNames, EV, IV) -> void;
 
 	friend Status get_status(Pokemon pokemon);
 	friend auto apply(Statuses status, Pokemon & user, Pokemon & target, Weather weather, bool uproar) -> void;
@@ -187,19 +188,35 @@ inline Species get_species(Pokemon const pokemon) {
 	return pokemon.m_species;
 }
 
-inline HP const & get_hp(Pokemon const & pokemon) {
+
+inline HP get_hp(Pokemon const pokemon) {
 	return pokemon.stats.hp();
 }
-inline HP & get_hp(Pokemon & pokemon) {
-	return pokemon.stats.hp();
+inline void set_hp(Pokemon & pokemon, auto const hp) {
+	pokemon.stats.hp() = hp;
+}
+inline void change_hp(Pokemon & pokemon, auto const change) {
+	set_hp(pokemon, get_hp(pokemon).current() + change);
+}
+inline auto set_hp_ev(Generation const generation, Pokemon & pokemon, EV const ev, IV const iv) -> void {
+	pokemon.stats.hp() = HP(generation, get_species(pokemon), get_level(pokemon), ev, iv);
+}
+inline auto set_hp_ev(Generation const generation, Pokemon & pokemon, EV const ev) -> void {
+	set_hp_ev(generation, pokemon, ev, get_hp(pokemon).iv());
 }
 
-inline Stat const & get_stat(Pokemon const & pokemon, StatNames const index_stat) {
+
+inline Stat get_stat(Pokemon const pokemon, StatNames const index_stat) {
 	return pokemon.stats[index_stat];
 }
-inline Stat & get_stat(Pokemon & pokemon, StatNames const index_stat) {
-	return pokemon.stats[index_stat];
+inline auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, EV const ev, IV const iv) -> void {
+	auto & stat = pokemon.stats[stat_name];
+	stat = Stat(stat, ev, iv);
 }
+inline auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, EV const ev) -> void {
+	set_stat_ev(pokemon, stat_name, ev, get_stat(pokemon, stat_name).iv());
+}
+
 
 inline Status get_status(Pokemon const pokemon) {
 	return pokemon.m_status;
@@ -219,9 +236,9 @@ inline void rest(Pokemon & user, bool const other_is_uproaring) {
 	if (other_is_uproaring or is_sleeping(get_status(user))) {
 		return;
 	}
-	HP & hp = get_hp(user);
+	auto const hp = get_hp(user);
 	if (hp.current() != hp.max()) {
-		hp = hp.max();
+		set_hp(user, hp.max());
 		user.set_status(Statuses::rest);
 	}
 }
@@ -284,7 +301,7 @@ inline void switch_in(Pokemon & pokemon) {
 containers::string to_string(Pokemon pokemon);
 
 inline auto hp_ratio(Pokemon const pokemon) {
-	auto const & hp = get_hp(pokemon);
+	auto const hp = get_hp(pokemon);
 	return rational(hp.current(), hp.max());
 }
 

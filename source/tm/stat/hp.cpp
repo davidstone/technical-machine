@@ -18,7 +18,6 @@
 #include <tm/stat/hp.hpp>
 
 #include <tm/pokemon/level.hpp>
-#include <tm/pokemon/pokemon.hpp>
 #include <tm/stat/base_stats.hpp>
 
 namespace technicalmachine {
@@ -43,13 +42,6 @@ HP::HP(Generation const generation, Species const species, Level const level, EV
 	m_max(initial_hp(generation, species, m_ev, m_iv, level)),
 	m_current(m_max)
 	{
-}
-
-auto set_hp_ev(Generation const generation, Pokemon & pokemon, EV const ev) -> void {
-	set_hp_ev(generation, pokemon, ev, get_hp(pokemon).iv());
-}
-auto set_hp_ev(Generation const generation, Pokemon & pokemon, EV const ev, IV const iv) -> void {
-	get_hp(pokemon) = HP(generation, get_species(pokemon), get_level(pokemon), ev, iv);
 }
 
 }	// namespace technicalmachine

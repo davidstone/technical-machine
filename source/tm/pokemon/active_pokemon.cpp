@@ -239,7 +239,7 @@ auto MutableActivePokemon::use_bide(Pokemon & target) const -> void {
 		[&](auto const &) { m_flags.lock_in = Bide{}; },
 		[&](Bide & bide) {
 			if (auto const damage = bide.advance_one_turn()) {
-				get_hp(target) -= *damage * 2_bi;
+				change_hp(target, -*damage * 2_bi);
 				m_flags.lock_in = std::monostate{};
 			}
 		}
@@ -250,7 +250,7 @@ auto MutableActivePokemon::direct_damage(HP::current_type const damage) const ->
 	if (m_flags.substitute) {
 		m_flags.substitute.damage(damage);
 	} else {
-		get_hp(*this) -= damage;
+		change_hp(*this, -damage);
 		m_flags.damaged = true;
 		m_flags.direct_damage_received = damage;
 		bounded::visit(m_flags.lock_in, bounded::overload(
