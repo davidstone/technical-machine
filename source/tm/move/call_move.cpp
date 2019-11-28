@@ -1131,6 +1131,23 @@ constexpr auto fails_against_fainted(Target const target) {
 	}
 }
 
+auto activate_pp_restore_berry(Move & move, Pokemon & pokemon) {
+	if (move.pp().is_empty()) {
+		switch (get_item(pokemon)) {
+			case Item::Leppa_Berry:
+				move.restore_pp(10_bi);
+				set_item(pokemon, Item::None);
+				break;
+			case Item::MysteryBerry:
+				move.restore_pp(5_bi);
+				set_item(pokemon, Item::None);
+				break;
+			default:
+				break;
+		}
+	}
+}
+
 }	// namespace
 
 auto call_move(Generation const generation, Team & user, UsedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
@@ -1162,7 +1179,9 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 	auto const other_ability = get_ability(other_pokemon);
 
 	if (is_regular(move.selected) and move.executed != Moves::Hit_Self and !user_pokemon.is_locked_in_by_move()) {
-		find_regular_move(all_moves(user_pokemon).regular(), move.selected).decrement_pp(other_ability);
+		auto & move_ref = find_regular_move(all_moves(user_pokemon).regular(), move.selected);
+		move_ref.decrement_pp(other_ability);
+		activate_pp_restore_berry(move_ref, user_pokemon);
 	}
 	
 	auto const target = move_target(generation, move.executed);

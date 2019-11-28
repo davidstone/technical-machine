@@ -43,16 +43,19 @@ inline auto initial_stat(StatNames const stat_name, Stat const stat, Level const
 
 using attack_type = bounded::integer<1, 7368>;
 using special_attack_type = bounded::integer<1, 4536>;
-auto calculate_attack(ActivePokemon attacker, Weather weather, bool critical_hit) -> attack_type;
-auto calculate_special_attack(ActivePokemon attacker, Weather weather, bool critical_hit) -> special_attack_type;
+auto calculate_attack(Generation, ActivePokemon attacker, Weather, bool critical_hit) -> attack_type;
+auto calculate_special_attack(Generation, ActivePokemon attacker, Weather, bool critical_hit) -> special_attack_type;
 
 using defense_type = bounded::integer<1, 3684>;
 using special_defense_type = bounded::integer<1, 3684>;
-auto calculate_defense(ActivePokemon defender, Weather weather, bool critical_hit = false, bool is_self_KO = false) -> defense_type;
+auto calculate_defense(Generation, ActivePokemon defender, Weather, bool critical_hit = false, bool is_self_KO = false) -> defense_type;
 auto calculate_special_defense(Generation, ActivePokemon defender, Weather, bool critical_hit = false) -> special_defense_type;
 
 using speed_type = bounded::integer<1, 12096>;
-auto calculate_speed(Team const & team, Weather weather) -> speed_type;
+auto calculate_speed(Generation, Team const &, Weather) -> speed_type;
+
+using Faster = bounded::optional<std::pair<Team const &, Team const &>>;
+auto faster_pokemon(Generation, Team const & team1, Team const & team2, Weather) -> Faster;
 
 struct OrderElement {
 	Team const & team;
@@ -60,8 +63,5 @@ struct OrderElement {
 };
 using Order = bounded::optional<std::pair<OrderElement, OrderElement>>;
 auto order(Generation generation, Team const & team1, Moves move1, Team const & team2, Moves move2, Weather weather) -> Order;
-
-using Faster = bounded::optional<std::pair<Team const &, Team const &>>;
-auto faster_pokemon(Team const & team1, Team const & team2, Weather weather) -> Faster;
 
 }	// namespace technicalmachine

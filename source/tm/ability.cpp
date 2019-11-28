@@ -59,7 +59,7 @@ bool boosts_special_defense(Ability const ability, Weather const weather) {
 void activate_ability_on_switch(Generation const generation, MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather) {
 	switch (get_ability(switcher)) {
 		case Ability::Download: {
-			auto const defense = calculate_defense(other, weather);
+			auto const defense = calculate_defense(generation, other, weather);
 			auto const special_defense = calculate_special_defense(generation, other, weather);
 			boost(switcher.stage(), defense >= special_defense ? StatNames::SPA : StatNames::ATK, 1_bi);
 			break;

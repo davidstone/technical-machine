@@ -189,11 +189,14 @@ inline Species get_species(Pokemon const pokemon) {
 }
 
 
+void activate_pinch_item(Pokemon & pokemon);
+
 inline HP get_hp(Pokemon const pokemon) {
 	return pokemon.stats.hp();
 }
 inline void set_hp(Pokemon & pokemon, auto const hp) {
 	pokemon.stats.hp() = hp;
+	activate_pinch_item(pokemon);
 }
 inline void change_hp(Pokemon & pokemon, auto const change) {
 	set_hp(pokemon, get_hp(pokemon).current() + change);

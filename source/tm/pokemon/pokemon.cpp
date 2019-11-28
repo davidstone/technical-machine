@@ -119,6 +119,31 @@ constexpr auto reflected_status(Statuses const status) -> bounded::optional<Stat
 
 }	// namespace
 
+void activate_pinch_item(Pokemon & pokemon) {
+	// TODO: Confusion damage does not activate healing berries in Generation 5+
+	auto consume = [&] { set_item(pokemon, Item::None); };
+	auto const current_hp = hp_ratio(pokemon);
+	auto healing_berry = [&](auto const amount) {
+		if (current_hp <= rational(1_bi, 2_bi)) {
+			change_hp(pokemon, amount);
+			consume();
+		}
+	};
+	switch (get_item(pokemon)) {
+		case Item::Berry:
+			healing_berry(10_bi);
+			break;
+		case Item::Berry_Juice:
+			healing_berry(20_bi);
+			break;
+		case Item::Gold_Berry:
+			healing_berry(30_bi);
+			break;
+		default:
+			break;
+	}
+}
+
 auto apply(Statuses const status, Pokemon & user, Pokemon & target, Weather const weather, bool const uproar) -> void {
 	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
 	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);

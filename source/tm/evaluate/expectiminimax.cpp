@@ -57,6 +57,9 @@
 namespace technicalmachine {
 namespace {
 
+// TODO: Implement Focus_Band, Kings_Rock, Lucky_Punch, Quick_Claw, Stick, Leek,
+// Scope_Lens
+
 struct BestMove {
 	Moves move;
 	double score;
@@ -425,7 +428,7 @@ auto use_move_branch_inner(Moves const first_used_move) {
 				Pokemon const & pokemon = (is_first ? updated_first : updated_last).pokemon();
 				return can_clear_status(get_ability(pokemon), get_status(pokemon)) ? 0.3 : 0.0;
 			};
-			auto const teams = faster_pokemon(updated_first, updated_last, updated_weather);
+			auto const teams = faster_pokemon(generation, updated_first, updated_last, updated_weather);
 			return generic_flag_branch(shed_skin_probability, [&](bool const team_shed_skin, bool const other_shed_skin) {
 				return generic_flag_branch(
 					// TODO

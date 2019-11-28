@@ -65,8 +65,8 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Wring_Out:
 			return bounded::integer<1, 121>(120_bi * hp_ratio(defender) + 1_bi, bounded::non_check);
 		case Moves::Electro_Ball: {
-			auto const defender_speed = calculate_speed(defender_team, weather);
-			auto const attacker_speed = calculate_speed(attacker_team, weather);
+			auto const defender_speed = calculate_speed(generation, defender_team, weather);
+			auto const attacker_speed = calculate_speed(generation, attacker_team, weather);
 			auto const quotient = attacker_speed / defender_speed;
 			if (quotient >= 4_bi) { return 150_bi; }
 			else if (quotient == 3_bi) { return 120_bi; }
@@ -97,8 +97,8 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Low_Kick:
 			return BOUNDED_CONDITIONAL(generation <= Generation::two, 50_bi, power_of_mass_based_moves(get_species(defender)));
 		case Moves::Gyro_Ball: {
-			auto const defender_speed = calculate_speed(defender_team, weather);
-			auto const attacker_speed = calculate_speed(attacker_team, weather);
+			auto const defender_speed = calculate_speed(generation, defender_team, weather);
+			auto const attacker_speed = calculate_speed(generation, attacker_team, weather);
 			auto const uncapped_power = 25_bi * defender_speed / attacker_speed + 1_bi;
 			return bounded::min(uncapped_power, 150_bi);
 		}
@@ -182,8 +182,15 @@ auto is_boosted_by_adamant_orb(Species species) -> bool;
 auto is_boosted_by_griseous_orb(Species species) -> bool;
 auto is_boosted_by_lustrous_orb(Species species) -> bool;
 
-auto item_modifier_numerator(Pokemon const attacker, Moves const move, Type const move_type) -> bounded::integer<10, 12> {
+using ItemModifierNumerator = bounded::integer<10, 12>;
+auto item_modifier_numerator(Generation const generation, Pokemon const attacker, Moves const move, Type const move_type) -> ItemModifierNumerator {
 	static constexpr auto base = 10_bi;
+	auto type_boost = [=](Type const type) -> ItemModifierNumerator {
+		if (move_type != type) {
+			return base;
+		}
+		return BOUNDED_CONDITIONAL(generation <= Generation::three, 11_bi, 12_bi);
+	};
 	switch (get_item(attacker)) {
 		case Item::Muscle_Band:
 			return BOUNDED_CONDITIONAL(is_physical(move), 11_bi, base);
@@ -191,58 +198,63 @@ auto item_modifier_numerator(Pokemon const attacker, Moves const move, Type cons
 			return BOUNDED_CONDITIONAL(is_special(move), 11_bi, base);
 		case Item::Insect_Plate:
 		case Item::Silver_Powder:
-			return BOUNDED_CONDITIONAL(move_type == Type::Bug, 12_bi, base);
+			return type_boost(Type::Bug);
 		case Item::Dread_Plate:	
 		case Item::Black_Glasses:
-			return BOUNDED_CONDITIONAL(move_type == Type::Dark, 12_bi, base);
+			return type_boost(Type::Dark);
 		case Item::Draco_Plate:
+			return type_boost(Type::Dragon);
 		case Item::Dragon_Fang:
-			return BOUNDED_CONDITIONAL(move_type == Type::Dragon, 12_bi, base);
+			return BOUNDED_CONDITIONAL(generation <= Generation::two, base, type_boost(Type::Dragon));
+		case Item::Dragon_Scale:
+			return BOUNDED_CONDITIONAL(generation <= Generation::two, type_boost(Type::Dragon), base);
 		case Item::Zap_Plate:
 		case Item::Magnet:
-			return BOUNDED_CONDITIONAL(move_type == Type::Electric, 12_bi, base);
+			return type_boost(Type::Electric);
 		case Item::Fist_Plate:
 		case Item::Black_Belt:
-			return BOUNDED_CONDITIONAL(move_type == Type::Fighting, 12_bi, base);
+			return type_boost(Type::Fighting);
 		case Item::Flame_Plate:
 		case Item::Charcoal:
-			return BOUNDED_CONDITIONAL(move_type == Type::Fire, 12_bi, base);
+			return type_boost(Type::Fire);
 		case Item::Sky_Plate:
 		case Item::Sharp_Beak:
-			return BOUNDED_CONDITIONAL(move_type == Type::Flying, 12_bi, base);
+			return type_boost(Type::Flying);
 		case Item::Spooky_Plate:
 		case Item::Spell_Tag:
-			return BOUNDED_CONDITIONAL(move_type == Type::Ghost, 12_bi, base);
+			return type_boost(Type::Ghost);
 		case Item::Meadow_Plate:
 		case Item::Miracle_Seed:
-			return BOUNDED_CONDITIONAL(move_type == Type::Grass, 12_bi, base);
+			return type_boost(Type::Grass);
 		case Item::Earth_Plate:
 		case Item::Soft_Sand:
-			return BOUNDED_CONDITIONAL(move_type == Type::Ground, 12_bi, base);
+			return type_boost(Type::Ground);
 		case Item::Icicle_Plate:
 		case Item::Never_Melt_Ice:
-			return BOUNDED_CONDITIONAL(move_type == Type::Ice, 12_bi, base);
+			return type_boost(Type::Ice);
+		case Item::Pink_Bow:
+		case Item::Polkadot_Bow:
 		case Item::Silk_Scarf:
-			return BOUNDED_CONDITIONAL(move_type == Type::Normal, 12_bi, base);
+			return type_boost(Type::Normal);
 		case Item::Toxic_Plate:
 		case Item::Poison_Barb:
-			return BOUNDED_CONDITIONAL(move_type == Type::Poison, 12_bi, base);
+			return type_boost(Type::Poison);
 		case Item::Mind_Plate:
 		case Item::Twisted_Spoon:
 		case Item::Odd_Incense:
-			return BOUNDED_CONDITIONAL(move_type == Type::Psychic, 12_bi, base);
+			return type_boost(Type::Psychic);
 		case Item::Stone_Plate:
 		case Item::Hard_Stone:
 		case Item::Rock_Incense:
-			return BOUNDED_CONDITIONAL(move_type == Type::Rock, 12_bi, base);
+			return type_boost(Type::Rock);
 		case Item::Iron_Plate:
 		case Item::Metal_Coat:
-			return BOUNDED_CONDITIONAL(move_type == Type::Steel, 12_bi, base);
+			return type_boost(Type::Steel);
 		case Item::Splash_Plate:
 		case Item::Mystic_Water:
 		case Item::Sea_Incense:
 		case Item::Wave_Incense:
-			return BOUNDED_CONDITIONAL(move_type == Type::Water, 12_bi, base);
+			return type_boost(Type::Water);
 		case Item::Adamant_Orb:
 			return BOUNDED_CONDITIONAL(is_boosted_by_adamant_orb(get_species(attacker)) and (move_type == Type::Dragon or move_type == Type::Steel), 12_bi, base);
 		case Item::Griseous_Orb:
@@ -254,8 +266,8 @@ auto item_modifier_numerator(Pokemon const attacker, Moves const move, Type cons
 	}
 }
 
-auto item_modifier(Pokemon const attacker, Moves const move, Type const move_type) {
-	return rational(item_modifier_numerator(attacker, move, move_type), 10_bi);
+auto item_modifier(Generation const generation, Pokemon const attacker, Moves const move, Type const move_type) {
+	return rational(item_modifier_numerator(generation, attacker, move, move_type), 10_bi);
 }
 
 bool is_boosted_by_iron_fist(Moves const move) {
@@ -342,7 +354,7 @@ auto move_power(Generation const generation, Team const & attacker_team, Execute
 	return static_cast<MovePower>(bounded::max(1_bi,
 		base_power *
 		BOUNDED_CONDITIONAL(doubling(attacker, move.name, defender, weather), 2_bi, 1_bi) *
-		item_modifier(attacker, move.name, move_type) *
+		item_modifier(generation, attacker, move.name, move_type) *
 		BOUNDED_CONDITIONAL(attacker.charge_boosted(move_type), 2_bi, 1_bi) /
 		BOUNDED_CONDITIONAL(defender.sport_is_active(move_type), 2_bi, 1_bi) *
 		attacker_ability_power_modifier(generation, attacker, move.name, defender, base_power) *

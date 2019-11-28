@@ -110,6 +110,9 @@ struct Team {
 		if (get_hp(replacement_pokemon) != 0_bi) {
 			activate_ability_on_switch(generation, replacement_pokemon, other.pokemon(), weather);
 		}
+		if (get_item(replacement_pokemon) == Item::Berserk_Gene) {
+			activate_berserk_gene(replacement_pokemon);
+		}
 	}
 
 private:

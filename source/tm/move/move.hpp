@@ -43,8 +43,12 @@ struct Move {
 		return m_pp;
 	}
 
-	constexpr auto decrement_pp(Ability const target) {
+	constexpr auto decrement_pp(Ability const target) & {
 		m_pp.decrement(target);
+	}
+
+	constexpr auto restore_pp(auto const value) & {
+		m_pp.restore(value);
 	}
 
 private:

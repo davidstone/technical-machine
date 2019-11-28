@@ -850,19 +850,34 @@ bool blocks_trick(Item item);
 
 constexpr auto clears_status(Item const item, Statuses const status) -> bool {
 	switch (item) {
-		case Item::Aspear_Berry: return status == Statuses::freeze;
-		case Item::Cheri_Berry: return status == Statuses::paralysis;
-		case Item::Chesto_Berry: return status == Statuses::sleep or status == Statuses::rest;
-		case Item::Lum_Berry: return true;
-		case Item::Pecha_Berry: return status == Statuses::poison or status == Statuses::toxic;
-		case Item::Rawst_Berry: return status == Statuses::burn;
-		default: return false;
+		case Item::Ice_Berry:
+		case Item::Rawst_Berry:
+			return status == Statuses::burn;
+		case Item::Aspear_Berry:
+		case Item::Burnt_Berry:
+			return status == Statuses::freeze;
+		case Item::Cheri_Berry:
+		case Item::PRZCureBerry:
+			return status == Statuses::paralysis;
+		case Item::Chesto_Berry:
+		case Item::Mint_Berry:
+			return status == Statuses::rest or status == Statuses::sleep;
+		case Item::Pecha_Berry:
+		case Item::PSNCureBerry:
+			return status == Statuses::poison or status == Statuses::toxic;
+		case Item::Lum_Berry:
+		case Item::MiracleBerry:
+			return true;
+		default:
+			return false;
 	}
 }
 
 constexpr auto clears_confusion(Item const item) -> bool {
 	switch (item) {
+		case Item::Bitter_Berry:
 		case Item::Lum_Berry:
+		case Item::MiracleBerry:
 		case Item::Persim_Berry:
 			return true;
 		default:

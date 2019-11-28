@@ -46,11 +46,16 @@ struct PP {
 		return m_current and *m_current == 0_bi;
 	}
 
+	constexpr auto restore(auto const value) & {
+		BOUNDED_ASSERT(*m_current == 0_bi);
+		*m_current = value;
+	}
+
 	constexpr auto has_unlimited_pp() const {
 		return !m_max;
 	}
 
-	constexpr auto decrement(Ability const foe_ability) {
+	constexpr auto decrement(Ability const foe_ability) & {
 		if (has_unlimited_pp()) {
 			return;
 		}

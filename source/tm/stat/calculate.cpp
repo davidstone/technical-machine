@@ -137,7 +137,7 @@ auto ability_modifier(ActivePokemon const pokemon, Weather const weather) {
 
 
 template<StatNames stat>
-auto item_modifier(Pokemon const & pokemon) {
+auto item_modifier(Generation const generation, Pokemon const & pokemon) {
 	constexpr auto denominator = 2_bi;
 	auto const species [[maybe_unused]] = get_species(pokemon);
 	auto const numerator = [&]{
@@ -147,6 +147,9 @@ auto item_modifier(Pokemon const & pokemon) {
 				case Item::Choice_Band:
 					return 3_bi;
 				case Item::Light_Ball:
+					if (generation <= Generation::three) {
+						return denominator;
+					}
 					return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(species), 2_bi * denominator, denominator);
 				case Item::Thick_Club:
 					return BOUNDED_CONDITIONAL(is_boosted_by_thick_club(species), 2_bi * denominator, denominator);
@@ -156,7 +159,13 @@ auto item_modifier(Pokemon const & pokemon) {
 			}();
 		} else if constexpr (stat == StatNames::DEF) {
 			auto const boosted = get_item(pokemon) == Item::Metal_Powder and is_boosted_by_metal_powder(species);
-			return BOUNDED_CONDITIONAL(boosted, 3_bi, denominator);
+			return [&]() -> bounded::integer<2, 4> {
+				// TODO: Boost in Generation 3+ only if not transformed
+				if (!boosted) {
+					return denominator;
+				}
+				return BOUNDED_CONDITIONAL(generation <= Generation::two, 3_bi, 4_bi);
+			}();
 		} else if constexpr (stat == StatNames::SPA) {
 			return [&]() -> bounded::integer<2, 4> {
 				switch (get_item(pokemon)) {
@@ -178,7 +187,7 @@ auto item_modifier(Pokemon const & pokemon) {
 				case Item::Deep_Sea_Scale:
 					return BOUNDED_CONDITIONAL(is_boosted_by_deep_sea_scale(species), 2_bi * denominator, denominator);
 				case Item::Metal_Powder:
-					return BOUNDED_CONDITIONAL(is_boosted_by_metal_powder(species), 3_bi, denominator);
+					return BOUNDED_CONDITIONAL(generation <= Generation::two and is_boosted_by_metal_powder(species), 3_bi, denominator);
 				case Item::Soul_Dew:
 					return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(species), 3_bi, denominator);
 				default:
@@ -237,28 +246,28 @@ auto calculate_initial_stat(StatNames const stat, ActivePokemon const pokemon) {
 }
 
 template<StatNames stat>
-auto calculate_common_offensive_stat(ActivePokemon const pokemon, Weather const weather, bool const critical_hit) {
+auto calculate_common_offensive_stat(Generation const generation, ActivePokemon const pokemon, Weather const weather, bool const critical_hit) {
 	auto const attack = calculate_initial_stat(stat, pokemon) *
 		modifier<stat>(pokemon.stage(), critical_hit) *
 		ability_modifier<stat>(pokemon, weather) *
-		item_modifier<stat>(pokemon);
+		item_modifier<stat>(generation, pokemon);
 	
 	return bounded::max(attack, 1_bi);
 }
 
 }	// namespace
 
-auto calculate_attack(ActivePokemon const attacker, Weather const weather, bool const critical_hit) -> attack_type {
+auto calculate_attack(Generation const generation, ActivePokemon const attacker, Weather const weather, bool const critical_hit) -> attack_type {
 	// static_cast here because it looks as though the strongest attacker would
 	// hold a Light Ball, but because of the restriction on the attacker being
 	// Pikachu, it is better to use a Power Trick Shuckle with a Choice Band.
-	return static_cast<attack_type>(calculate_common_offensive_stat<StatNames::ATK>(attacker, weather, critical_hit));
+	return static_cast<attack_type>(calculate_common_offensive_stat<StatNames::ATK>(generation, attacker, weather, critical_hit));
 }
 
-auto calculate_special_attack(ActivePokemon const attacker, Weather const weather, bool const critical_hit) -> special_attack_type {
+auto calculate_special_attack(Generation const generation, ActivePokemon const attacker, Weather const weather, bool const critical_hit) -> special_attack_type {
 	// see above comment about Light Ball, except the strongest Special Attack
 	// Pokemon is actually a Choice Specs Deoxys-Attack.
-	return static_cast<special_attack_type>(calculate_common_offensive_stat<StatNames::SPA>(attacker, weather, critical_hit));
+	return static_cast<special_attack_type>(calculate_common_offensive_stat<StatNames::SPA>(generation, attacker, weather, critical_hit));
 }
 
 namespace {
@@ -277,12 +286,12 @@ auto is_self_KO(Moves const move) {
 
 }	// namespace
 
-auto calculate_defense(ActivePokemon const defender, Weather const weather, bool const critical_hit, bool is_self_KO) -> defense_type {
+auto calculate_defense(Generation const generation, ActivePokemon const defender, Weather const weather, bool const critical_hit, bool is_self_KO) -> defense_type {
 	constexpr auto stat = StatNames::DEF;
 	auto const defense = calculate_initial_stat(stat, defender) *
 		modifier<stat>(defender.stage(), critical_hit) *
 		ability_modifier<stat>(defender, weather) *
-		item_modifier<stat>(defender);
+		item_modifier<stat>(generation, defender);
 	
 	// static_cast here because it looks as though the strongest defender would
 	// hold Metal Powder, but because of the restriction on the attacker being
@@ -303,7 +312,7 @@ auto calculate_special_defense(Generation const generation, ActivePokemon const 
 	auto const defense = calculate_initial_stat(stat, defender) *	
 		modifier<stat>(defender.stage(), critical_hit) *
 		ability_modifier<stat>(defender, weather) *
-		item_modifier<stat>(defender) *
+		item_modifier<stat>(generation, defender) *
 		special_defense_sandstorm_boost(generation, defender, weather);
 	
 	// static_cast here because it looks as though the strongest defender would
@@ -327,13 +336,13 @@ auto tailwind_speed_multiplier(Team const & team) {
 
 }	// namespace
 
-auto calculate_speed(Team const & team, Weather const weather) -> speed_type {
+auto calculate_speed(Generation const generation, Team const & team, Weather const weather) -> speed_type {
 	constexpr auto stat = StatNames::SPE;
 	auto const & pokemon = team.pokemon();
 	auto const speed = calculate_initial_stat(stat, pokemon) *
 		modifier<stat>(pokemon.stage()) *
 		ability_modifier<stat>(pokemon, weather) *
-		item_modifier<stat>(pokemon) /
+		item_modifier<stat>(generation, pokemon) /
 		paralysis_speed_divisor (pokemon) *
 		tailwind_speed_multiplier (team);
 
@@ -341,6 +350,34 @@ auto calculate_speed(Team const & team, Weather const weather) -> speed_type {
 	// hold Quick Powder, but because of the restriction on the Pokemon being
 	// Ditto, it is better to use a Deoxys-Speed with Choice Scarf.
 	return static_cast<speed_type>(bounded::max(speed, 1_bi));
+}
+
+namespace {
+
+auto faster_pokemon_before_trick_room(Generation const generation, Team const & team1, Team const & team2, Weather const weather) -> Faster {
+	auto const speed1 = calculate_speed(generation, team1, weather);
+	auto const speed2 = calculate_speed(generation, team2, weather);
+
+	if (speed1 > speed2) {
+		return Faster(std::in_place, team1, team2);
+	} else if (speed1 < speed2) {
+		return Faster(std::in_place, team2, team1);
+	} else {
+		return bounded::none;
+	}
+}
+
+}	// namespace
+
+auto faster_pokemon(Generation const generation, Team const & team1, Team const & team2, Weather const weather) -> Faster {
+	auto result = faster_pokemon_before_trick_room(generation, team1, team2, weather);
+	if (!result) {
+		return bounded::none;
+	}
+	if (weather.trick_room()) {
+		return Faster(std::in_place, result->second, result->first);
+	}
+	return result;
 }
 
 auto order(Generation const generation, Team const & team1, Moves const move1, Team const & team2, Moves const move2, Weather const weather) -> Order {
@@ -357,39 +394,11 @@ auto order(Generation const generation, Team const & team1, Moves const move1, T
 		return lhs_first;
 	} else if (priority1 < priority2) {
 		return rhs_first;
-	} else if (auto const ordered = faster_pokemon(team1, team2, weather)) {
+	} else if (auto const ordered = faster_pokemon(generation, team1, team2, weather)) {
 		return (std::addressof(ordered->first) == std::addressof(team1)) ? lhs_first : rhs_first;
 	} else {
 		return bounded::none;
 	}
-}
-
-namespace {
-
-auto faster_pokemon_before_trick_room(Team const & team1, Team const & team2, Weather const weather) -> Faster {
-	auto const speed1 = calculate_speed(team1, weather);
-	auto const speed2 = calculate_speed(team2, weather);
-
-	if (speed1 > speed2) {
-		return Faster(std::in_place, team1, team2);
-	} else if (speed1 < speed2) {
-		return Faster(std::in_place, team2, team1);
-	} else {
-		return bounded::none;
-	}
-}
-
-}	// namespace
-
-auto faster_pokemon(Team const & team1, Team const & team2, Weather const weather) -> Faster {
-	auto result = faster_pokemon_before_trick_room(team1, team2, weather);
-	if (!result) {
-		return bounded::none;
-	}
-	if (weather.trick_room()) {
-		return Faster(std::in_place, result->second, result->first);
-	}
-	return result;
 }
 
 }	// namespace technicalmachine
