@@ -1876,7 +1876,7 @@ ItemID item_to_id(Item const item) {
 		case Item::White_Flute: return 145_bi;
 		case Item::X_Accuracy: return 146_bi;
 		case Item::X_Attack: return 147_bi;
-		case Item::X_Defense: return 148_bi;
+		case Item::X_Defend: return 148_bi;
 		case Item::X_Special: return 149_bi;
 		case Item::X_Sp_Def: return 150_bi;
 		case Item::X_Speed: return 151_bi;
