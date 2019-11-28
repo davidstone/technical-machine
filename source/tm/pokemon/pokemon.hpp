@@ -93,7 +93,7 @@ struct Pokemon {
 private:
 	void set_status(Statuses const status) {
 		if (clears_status(m_item, status)) {
-			m_item = Item::No_Item;
+			m_item = Item::None;
 		} else {
 			m_status = status;
 		}

@@ -80,7 +80,7 @@ void max_defense_test() {
 	auto defender = Team(max_pokemon_per_team);
 	auto weather = Weather{};
 
-	defender.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::No_Item, Ability::Marvel_Scale, Nature::Bold);
+	defender.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::None, Ability::Marvel_Scale, Nature::Bold);
 	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(EV::max));
 
@@ -98,7 +98,7 @@ void min_defense_test() {
 
 	auto defender = Team(max_pokemon_per_team);
 
-	defender.add_pokemon(generation, Species::Combee, Level(1_bi), Gender::male, Item::No_Item, Ability::Honey_Gather, Nature::Hasty);
+	defender.add_pokemon(generation, Species::Combee, Level(1_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Hasty);
 	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi));
 
@@ -123,7 +123,7 @@ void special_defense_tests() {
 	auto weather = Weather{};
 	weather.activate_sand(Weather::permanent);
 
-	defender.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::No_Item, Ability::Honey_Gather, Nature::Calm);
+	defender.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Calm);
 	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::SPD, EV(EV::max));
 

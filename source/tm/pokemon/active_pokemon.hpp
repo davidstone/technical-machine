@@ -416,7 +416,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 			return;
 		}
 		if (clears_confusion(get_item(*this))) {
-			set_item(*this, Item::No_Item);
+			set_item(*this, Item::None);
 		} else {
 			m_flags.confusion.activate();
 		}

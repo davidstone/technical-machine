@@ -66,7 +66,7 @@ auto ability_accuracy_modifier(ActivePokemon const user, Moves const move) {
 auto evasion_item_modifier(Item const item) {
 	using Modifier = rational<bounded::integer<1, 19>, bounded::integer<1, 20>>;
 	switch (item) {
-		case Item::BrightPowder: return Modifier(9_bi, 10_bi);
+		case Item::Bright_Powder: return Modifier(9_bi, 10_bi);
 		case Item::Lax_Incense: return Modifier(19_bi, 20_bi);
 		default: return Modifier(1_bi, 1_bi);
 	}

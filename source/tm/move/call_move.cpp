@@ -456,9 +456,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			// TODO: Sticky Hold
 			auto const user_item = get_item(user);
 			auto const other_item = get_item(other.pokemon());
-			if (user_item == Item::No_Item and !blocks_trick(other_item)) {
+			if (user_item == Item::None and !blocks_trick(other_item)) {
 				set_item(user, other_item);
-				set_item(other.pokemon(), Item::No_Item);
+				set_item(other.pokemon(), Item::None);
 			}
 			break;
 		}
@@ -574,7 +574,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Fling:
 			fling_side_effects(user, other.pokemon(), weather);
-			set_item(user, Item::No_Item);
+			set_item(user, Item::None);
 			break;
 		case Moves::Fly:
 			user.fly();

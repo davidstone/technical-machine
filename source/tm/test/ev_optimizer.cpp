@@ -44,7 +44,7 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	constexpr auto team_size = 1_bi;
 	constexpr auto species = Species::Metagross;
 	constexpr auto level = Level(100_bi);
-	auto pokemon = Pokemon(generation, team_size, species, level, Gender::genderless, Item::No_Item, Ability::Honey_Gather, Nature::Adamant);
+	auto pokemon = Pokemon(generation, team_size, species, level, Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Adamant);
 	set_hp_ev(generation, pokemon, EV(252_bi));
 	set_stat_ev(pokemon, StatNames::ATK, EV(96_bi));
 	set_stat_ev(pokemon, StatNames::DEF, EV(96_bi));
@@ -109,7 +109,7 @@ void not_level_100(std::mt19937 & random_engine) {
 	constexpr auto team_size = 1_bi;
 	constexpr auto species = Species::Masquerain;
 	constexpr auto level = Level(83_bi);
-	auto pokemon = Pokemon(generation, team_size, species, level, Gender::genderless, Item::No_Item, Ability::Honey_Gather, Nature::Modest);
+	auto pokemon = Pokemon(generation, team_size, species, level, Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Modest);
 	set_hp_ev(generation, pokemon, EV(192_bi));
 	set_stat_ev(pokemon, StatNames::ATK, EV(0_bi));
 	set_stat_ev(pokemon, StatNames::DEF, EV(8_bi));

@@ -44,11 +44,11 @@
 namespace technicalmachine {
 namespace {
 
-constexpr auto is_boosted_by_deepseascale(Species const species) {
+constexpr auto is_boosted_by_deep_sea_scale(Species const species) {
 	return species == Species::Clamperl;
 }
 
-constexpr auto is_boosted_by_deepseatooth(Species const species) {
+constexpr auto is_boosted_by_deep_sea_tooth(Species const species) {
 	return species == Species::Clamperl;
 }
 
@@ -164,8 +164,8 @@ auto item_modifier(Pokemon const & pokemon) {
 					return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(species), 3_bi, denominator);
 				case Item::Choice_Specs:
 					return 3_bi;
-				case Item::DeepSeaTooth:
-					return BOUNDED_CONDITIONAL(is_boosted_by_deepseatooth(species), 2_bi * denominator, denominator);
+				case Item::Deep_Sea_Tooth:
+					return BOUNDED_CONDITIONAL(is_boosted_by_deep_sea_tooth(species), 2_bi * denominator, denominator);
 				case Item::Light_Ball:
 					return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(species), 2_bi * denominator, denominator);
 				default:
@@ -175,8 +175,8 @@ auto item_modifier(Pokemon const & pokemon) {
 		} else if constexpr (stat == StatNames::SPD) {
 			return [&]() -> bounded::integer<2, 4> {
 				switch (get_item(pokemon)) {
-				case Item::DeepSeaScale:
-					return BOUNDED_CONDITIONAL(is_boosted_by_deepseascale(species), 2_bi * denominator, denominator);
+				case Item::Deep_Sea_Scale:
+					return BOUNDED_CONDITIONAL(is_boosted_by_deep_sea_scale(species), 2_bi * denominator, denominator);
 				case Item::Metal_Powder:
 					return BOUNDED_CONDITIONAL(is_boosted_by_metal_powder(species), 3_bi, denominator);
 				case Item::Soul_Dew:
@@ -307,7 +307,7 @@ auto calculate_special_defense(Generation const generation, ActivePokemon const 
 		special_defense_sandstorm_boost(generation, defender, weather);
 	
 	// static_cast here because it looks as though the strongest defender would
-	// hold DeepSeaScale, but because of the restriction on the defender being
+	// hold Deep Sea Scale, but because of the restriction on the defender being
 	// Clamperl, it is better to use a Shuckle with no boosting item available.
 	// This also gives more Special Defense than Latias with Soul Dew. It also
 	// looks like the best ability would be Flower Gift in the Sun, but this is

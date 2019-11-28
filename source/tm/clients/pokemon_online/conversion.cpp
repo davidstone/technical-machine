@@ -1492,10 +1492,10 @@ GenderID gender_to_id(Gender const gender) {
 
 Item id_to_item(ItemID const id) {
 	switch (id.value()) {
-		case 0: return Item::No_Item;
+		case 0: return Item::None;
 		case 1: return Item::Big_Root;
 		case 2: return Item::Blue_Scarf;
-		case 3: return Item::BrightPowder;
+		case 3: return Item::Bright_Powder;
 		case 4: return Item::Choice_Band;
 		case 5: return Item::Choice_Scarf;
 		case 6: return Item::Choice_Specs;
@@ -1524,7 +1524,7 @@ Item id_to_item(ItemID const id) {
 		case 29: return Item::Sea_Incense;
 		case 30: return Item::Shed_Shell;
 		case 31: return Item::Silk_Scarf;
-		case 32: return Item::SilverPowder;
+		case 32: return Item::Silver_Powder;
 		case 33: return Item::Smooth_Rock;
 		case 34: return Item::Soft_Sand;
 		case 35: return Item::Soothe_Bell;
@@ -1543,7 +1543,7 @@ Item id_to_item(ItemID const id) {
 		case 48: return Item::Black_Belt;
 		case 49: return Item::Black_Flute;
 		case 50: return Item::Black_Sludge;
-		case 51: return Item::BlackGlasses;
+		case 51: return Item::Black_Glasses;
 		case 52: return Item::Blue_Flute;
 		case 53: return Item::Blue_Shard;
 		case 54: return Item::Burn_Heal;
@@ -1552,12 +1552,12 @@ Item id_to_item(ItemID const id) {
 		case 57: return Item::Charcoal;
 		case 58: return Item::Cleanse_Tag;
 		case 59: return Item::Damp_Mulch;
-		case 60: return Item::DeepSeaScale;
+		case 60: return Item::Deep_Sea_Scale;
 		case 61: return Item::Dire_Hit;
 		case 62: return Item::Dragon_Scale;
 		case 63: return Item::Elixir;
 		case 64: return Item::Energy_Root;
-		case 65: return Item::EnergyPowder;
+		case 65: return Item::Energy_Powder;
 		case 66: return Item::Escape_Rope;
 		case 67: return Item::Ether;
 		case 68: return Item::Everstone;
@@ -1596,13 +1596,13 @@ Item id_to_item(ItemID const id) {
 		case 101: return Item::Metal_Coat;
 		case 102: return Item::Metronome;
 		case 103: return Item::Miracle_Seed;
-		case 104: return Item::MooMoo_Milk;
+		case 104: return Item::Moomoo_Milk;
 		case 105: return Item::Moon_Stone;
 		case 106: return Item::Mystic_Water;
-		case 107: return Item::NeverMeltIce;
+		case 107: return Item::Never_Melt_Ice;
 		case 108: return Item::Nugget;
 		case 109: return Item::Old_Gateau;
-		case 110: return Item::Parlyz_Heal;
+		case 110: return Item::Paralyze_Heal;
 		case 111: return Item::Pearl;
 		case 112: return Item::Poke_Doll;
 		case 113: return Item::Potion;
@@ -1631,10 +1631,10 @@ Item id_to_item(ItemID const id) {
 		case 136: return Item::Sun_Stone;
 		case 137: return Item::Super_Potion;
 		case 138: return Item::Super_Repel;
-		case 139: return Item::Thunderstone;
-		case 140: return Item::TinyMushroom;
+		case 139: return Item::Thunder_Stone;
+		case 140: return Item::Tiny_Mushroom;
 		case 141: return Item::Toxic_Orb;
-		case 142: return Item::TwistedSpoon;
+		case 142: return Item::Twisted_Spoon;
 		case 143: return Item::Up_Grade;
 		case 144: return Item::Water_Stone;
 		case 145: return Item::White_Flute;
@@ -1676,7 +1676,7 @@ Item id_to_item(ItemID const id) {
 		case 181: return Item::Razor_Claw;
 		case 182: return Item::Shiny_Stone;
 		case 183: return Item::Sticky_Barb;
-		case 184: return Item::DeepSeaTooth;
+		case 184: return Item::Deep_Sea_Tooth;
 		case 185: return Item::Draco_Plate;
 		case 186: return Item::Dread_Plate;
 		case 187: return Item::Earth_Plate;
@@ -1728,10 +1728,10 @@ Item id_to_item(ItemID const id) {
 
 ItemID item_to_id(Item const item) {
 	switch (item) {
-		case Item::No_Item: return 0_bi;
+		case Item::None: return 0_bi;
 		case Item::Big_Root: return 1_bi;
 		case Item::Blue_Scarf: return 2_bi;
-		case Item::BrightPowder: return 3_bi;
+		case Item::Bright_Powder: return 3_bi;
 		case Item::Choice_Band: return 4_bi;
 		case Item::Choice_Scarf: return 5_bi;
 		case Item::Choice_Specs: return 6_bi;
@@ -1760,7 +1760,7 @@ ItemID item_to_id(Item const item) {
 		case Item::Sea_Incense: return 29_bi;
 		case Item::Shed_Shell: return 30_bi;
 		case Item::Silk_Scarf: return 31_bi;
-		case Item::SilverPowder: return 32_bi;
+		case Item::Silver_Powder: return 32_bi;
 		case Item::Smooth_Rock: return 33_bi;
 		case Item::Soft_Sand: return 34_bi;
 		case Item::Soothe_Bell: return 35_bi;
@@ -1779,7 +1779,7 @@ ItemID item_to_id(Item const item) {
 		case Item::Black_Belt: return 48_bi;
 		case Item::Black_Flute: return 49_bi;
 		case Item::Black_Sludge: return 50_bi;
-		case Item::BlackGlasses: return 51_bi;
+		case Item::Black_Glasses: return 51_bi;
 		case Item::Blue_Flute: return 52_bi;
 		case Item::Blue_Shard: return 53_bi;
 		case Item::Burn_Heal: return 54_bi;
@@ -1788,12 +1788,12 @@ ItemID item_to_id(Item const item) {
 		case Item::Charcoal: return 57_bi;
 		case Item::Cleanse_Tag: return 58_bi;
 		case Item::Damp_Mulch: return 59_bi;
-		case Item::DeepSeaScale: return 60_bi;
+		case Item::Deep_Sea_Scale: return 60_bi;
 		case Item::Dire_Hit: return 61_bi;
 		case Item::Dragon_Scale: return 62_bi;
 		case Item::Elixir: return 63_bi;
 		case Item::Energy_Root: return 64_bi;
-		case Item::EnergyPowder: return 65_bi;
+		case Item::Energy_Powder: return 65_bi;
 		case Item::Escape_Rope: return 66_bi;
 		case Item::Ether: return 67_bi;
 		case Item::Everstone: return 68_bi;
@@ -1832,13 +1832,13 @@ ItemID item_to_id(Item const item) {
 		case Item::Metal_Coat: return 101_bi;
 		case Item::Metronome: return 102_bi;
 		case Item::Miracle_Seed: return 103_bi;
-		case Item::MooMoo_Milk: return 104_bi;
+		case Item::Moomoo_Milk: return 104_bi;
 		case Item::Moon_Stone: return 105_bi;
 		case Item::Mystic_Water: return 106_bi;
-		case Item::NeverMeltIce: return 107_bi;
+		case Item::Never_Melt_Ice: return 107_bi;
 		case Item::Nugget: return 108_bi;
 		case Item::Old_Gateau: return 109_bi;
-		case Item::Parlyz_Heal: return 110_bi;
+		case Item::Paralyze_Heal: return 110_bi;
 		case Item::Pearl: return 111_bi;
 		case Item::Poke_Doll: return 112_bi;
 		case Item::Potion: return 113_bi;
@@ -1867,16 +1867,16 @@ ItemID item_to_id(Item const item) {
 		case Item::Sun_Stone: return 136_bi;
 		case Item::Super_Potion: return 137_bi;
 		case Item::Super_Repel: return 138_bi;
-		case Item::Thunderstone: return 139_bi;
-		case Item::TinyMushroom: return 140_bi;
+		case Item::Thunder_Stone: return 139_bi;
+		case Item::Tiny_Mushroom: return 140_bi;
 		case Item::Toxic_Orb: return 141_bi;
-		case Item::TwistedSpoon: return 142_bi;
+		case Item::Twisted_Spoon: return 142_bi;
 		case Item::Up_Grade: return 143_bi;
 		case Item::Water_Stone: return 144_bi;
 		case Item::White_Flute: return 145_bi;
 		case Item::X_Accuracy: return 146_bi;
 		case Item::X_Attack: return 147_bi;
-		case Item::X_Defend: return 148_bi;
+		case Item::X_Defense: return 148_bi;
 		case Item::X_Special: return 149_bi;
 		case Item::X_Sp_Def: return 150_bi;
 		case Item::X_Speed: return 151_bi;
@@ -1912,7 +1912,7 @@ ItemID item_to_id(Item const item) {
 		case Item::Razor_Claw: return 181_bi;
 		case Item::Shiny_Stone: return 182_bi;
 		case Item::Sticky_Barb: return 183_bi;
-		case Item::DeepSeaTooth: return 184_bi;
+		case Item::Deep_Sea_Tooth: return 184_bi;
 		case Item::Draco_Plate: return 185_bi;
 		case Item::Dread_Plate: return 186_bi;
 		case Item::Earth_Plate: return 187_bi;
@@ -1955,218 +1955,7 @@ ItemID item_to_id(Item const item) {
 		case Item::Space_Mail: return 224_bi;
 		case Item::Steel_Mail: return 225_bi;
 		case Item::Tunnel_Mail: return 226_bi;
-		case Item::Aguav_Berry:
-		case Item::Apicot_Berry:
-		case Item::Aspear_Berry:
-		case Item::Babiri_Berry:
-		case Item::Belue_Berry:
-		case Item::Bicycle:
-		case Item::Bluk_Berry:
-		case Item::Charti_Berry:
-		case Item::Cheri_Berry:
-		case Item::Cherish_Ball:
-		case Item::Chesto_Berry:
-		case Item::Chilan_Berry:
-		case Item::Chople_Berry:
-		case Item::Coba_Berry:
-		case Item::Coin_Case:
-		case Item::Colbur_Berry:
-		case Item::Cornn_Berry:
-		case Item::Coupon_1:
-		case Item::Coupon_2:
-		case Item::Coupon_3:
-		case Item::Custap_Berry:
-		case Item::Dive_Ball:
-		case Item::Durin_Berry:
-		case Item::Dusk_Ball:
-		case Item::Enigma_Berry:
-		case Item::Explorer_Kit:
-		case Item::Fashion_Case:
-		case Item::Figy_Berry:
-		case Item::Galactic_Key:
-		case Item::Ganlon_Berry:
-		case Item::Good_Rod:
-		case Item::Great_Ball:
-		case Item::Grepa_Berry:
-		case Item::Haban_Berry:
-		case Item::Heal_Ball:
-		case Item::HM01:
-		case Item::HM02:
-		case Item::HM03:
-		case Item::HM04:
-		case Item::HM05:
-		case Item::HM06:
-		case Item::HM07:
-		case Item::HM08:
-		case Item::Hondew_Berry:
-		case Item::Iapapa_Berry:
-		case Item::Jaboca_Berry:
-		case Item::Journal:
-		case Item::Kasib_Berry:
-		case Item::Kebia_Berry:
-		case Item::Kelpsy_Berry:
-		case Item::Lansat_Berry:
-		case Item::Leppa_Berry:
-		case Item::Liechi_Berry:
-		case Item::Loot_Sack:
-		case Item::Lum_Berry:
-		case Item::Lunar_Wing:
-		case Item::Luxury_Ball:
-		case Item::Mago_Berry:
-		case Item::Magost_Berry:
-		case Item::Master_Ball:
-		case Item::Member_Card:
-		case Item::Micle_Berry:
-		case Item::Nanab_Berry:
-		case Item::Nest_Ball:
-		case Item::Net_Ball:
-		case Item::Nomel_Berry:
-		case Item::Oaks_Letter:
-		case Item::Occa_Berry:
-		case Item::Old_Charm:
-		case Item::Old_Rod:
-		case Item::Oran_Berry:
-		case Item::Pal_Pad:
-		case Item::Pamtre_Berry:
-		case Item::Parcel:
-		case Item::Passho_Berry:
-		case Item::Payapa_Berry:
-		case Item::Pecha_Berry:
-		case Item::Persim_Berry:
-		case Item::Petaya_Berry:
-		case Item::Pinap_Berry:
-		case Item::Poffin_Case:
-		case Item::Point_Card:
-		case Item::Poke_Ball:
-		case Item::Poke_Radar:
-		case Item::Pomeg_Berry:
-		case Item::Premier_Ball:
-		case Item::Qualot_Berry:
-		case Item::Quick_Ball:
-		case Item::Rabuta_Berry:
-		case Item::Rawst_Berry:
-		case Item::Razz_Berry:
-		case Item::Repeat_Ball:
-		case Item::Rindo_Berry:
-		case Item::Rowap_Berry:
-		case Item::Safari_Ball:
-		case Item::Salac_Berry:
-		case Item::Seal_Bag:
-		case Item::Seal_Case:
-		case Item::SecretPotion:
-		case Item::Shuca_Berry:
-		case Item::Sitrus_Berry:
-		case Item::Spelon_Berry:
-		case Item::Sprayduck:
-		case Item::Starf_Berry:
-		case Item::Storage_Key:
-		case Item::Suite_Key:
-		case Item::Super_Rod:
-		case Item::Tamato_Berry:
-		case Item::Tanga_Berry:
-		case Item::Timer_Ball:
-		case Item::TM01:
-		case Item::TM02:
-		case Item::TM03:
-		case Item::TM04:
-		case Item::TM05:
-		case Item::TM06:
-		case Item::TM07:
-		case Item::TM08:
-		case Item::TM09:
-		case Item::TM10:
-		case Item::TM11:
-		case Item::TM12:
-		case Item::TM13:
-		case Item::TM14:
-		case Item::TM15:
-		case Item::TM16:
-		case Item::TM17:
-		case Item::TM18:
-		case Item::TM19:
-		case Item::TM20:
-		case Item::TM21:
-		case Item::TM22:
-		case Item::TM23:
-		case Item::TM24:
-		case Item::TM25:
-		case Item::TM26:
-		case Item::TM27:
-		case Item::TM28:
-		case Item::TM29:
-		case Item::TM30:
-		case Item::TM31:
-		case Item::TM32:
-		case Item::TM33:
-		case Item::TM34:
-		case Item::TM35:
-		case Item::TM36:
-		case Item::TM37:
-		case Item::TM38:
-		case Item::TM39:
-		case Item::TM40:
-		case Item::TM41:
-		case Item::TM42:
-		case Item::TM43:
-		case Item::TM44:
-		case Item::TM45:
-		case Item::TM46:
-		case Item::TM47:
-		case Item::TM48:
-		case Item::TM49:
-		case Item::TM50:
-		case Item::TM51:
-		case Item::TM52:
-		case Item::TM53:
-		case Item::TM54:
-		case Item::TM55:
-		case Item::TM56:
-		case Item::TM57:
-		case Item::TM58:
-		case Item::TM59:
-		case Item::TM60:
-		case Item::TM61:
-		case Item::TM62:
-		case Item::TM63:
-		case Item::TM64:
-		case Item::TM65:
-		case Item::TM66:
-		case Item::TM67:
-		case Item::TM68:
-		case Item::TM69:
-		case Item::TM70:
-		case Item::TM71:
-		case Item::TM72:
-		case Item::TM73:
-		case Item::TM74:
-		case Item::TM75:
-		case Item::TM76:
-		case Item::TM77:
-		case Item::TM78:
-		case Item::TM79:
-		case Item::TM80:
-		case Item::TM81:
-		case Item::TM82:
-		case Item::TM83:
-		case Item::TM84:
-		case Item::TM85:
-		case Item::TM86:
-		case Item::TM87:
-		case Item::TM88:
-		case Item::TM89:
-		case Item::TM90:
-		case Item::TM91:
-		case Item::TM92:
-		case Item::Town_Map:
-		case Item::Ultra_Ball:
-		case Item::VS_Seeker:
-		case Item::Wacan_Berry:
-		case Item::Watmel_Berry:
-		case Item::Wepear_Berry:
-		case Item::Wiki_Berry:
-		case Item::Works_Key:
-		case Item::Yache_Berry:
-			return 0_bi;
+		default: return 0_bi;
 	}
 }
 

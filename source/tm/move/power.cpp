@@ -190,10 +190,10 @@ auto item_modifier_numerator(Pokemon const attacker, Moves const move, Type cons
 		case Item::Wise_Glasses:
 			return BOUNDED_CONDITIONAL(is_special(move), 11_bi, base);
 		case Item::Insect_Plate:
-		case Item::SilverPowder:
+		case Item::Silver_Powder:
 			return BOUNDED_CONDITIONAL(move_type == Type::Bug, 12_bi, base);
 		case Item::Dread_Plate:	
-		case Item::BlackGlasses:
+		case Item::Black_Glasses:
 			return BOUNDED_CONDITIONAL(move_type == Type::Dark, 12_bi, base);
 		case Item::Draco_Plate:
 		case Item::Dragon_Fang:
@@ -220,7 +220,7 @@ auto item_modifier_numerator(Pokemon const attacker, Moves const move, Type cons
 		case Item::Soft_Sand:
 			return BOUNDED_CONDITIONAL(move_type == Type::Ground, 12_bi, base);
 		case Item::Icicle_Plate:
-		case Item::NeverMeltIce:
+		case Item::Never_Melt_Ice:
 			return BOUNDED_CONDITIONAL(move_type == Type::Ice, 12_bi, base);
 		case Item::Silk_Scarf:
 			return BOUNDED_CONDITIONAL(move_type == Type::Normal, 12_bi, base);
@@ -228,7 +228,7 @@ auto item_modifier_numerator(Pokemon const attacker, Moves const move, Type cons
 		case Item::Poison_Barb:
 			return BOUNDED_CONDITIONAL(move_type == Type::Poison, 12_bi, base);
 		case Item::Mind_Plate:
-		case Item::TwistedSpoon:
+		case Item::Twisted_Spoon:
 		case Item::Odd_Incense:
 			return BOUNDED_CONDITIONAL(move_type == Type::Psychic, 12_bi, base);
 		case Item::Stone_Plate:
