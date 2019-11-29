@@ -23,8 +23,6 @@
 
 #include <bounded/integer.hpp>
 
-#include <containers/array/array.hpp>
-
 namespace technicalmachine {
 enum class Generation : std::uint8_t;
 struct Pokemon;
@@ -38,7 +36,7 @@ struct Effectiveness {
 
 private:
 	auto product() const {
-		return m_effectiveness[0_bi] * m_effectiveness[1_bi];
+		return m_first * m_second;
 	}
 
 	friend auto operator*(Effectiveness const lhs, auto const rhs) {
@@ -46,12 +44,10 @@ private:
 	}
 
 	Effectiveness(Generation generation, Type attacking, Type defending1, Type defending2);
+
 	using SingleType = rational<bounded::integer<0, 2>, bounded::integer<1, 2>>;
-	using Product = decltype(std::declval<SingleType>() * std::declval<SingleType>());
-	using container_type = containers::array<SingleType, 2>;
-
-	container_type m_effectiveness;
-
+	SingleType m_first;
+	SingleType m_second;
 };
 
 auto operator*(auto const lhs, Effectiveness const rhs) {

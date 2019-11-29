@@ -440,10 +440,8 @@ constexpr auto lookup_effectiveness(Generation const generation, Type const atta
 }	// namespace
 
 Effectiveness::Effectiveness(Generation const generation, Type const attacking, Type const defending1, Type const defending2):
-	m_effectiveness({
-		lookup_effectiveness(generation, attacking, defending1),
-		lookup_effectiveness(generation, attacking, defending2)
-	})
+	m_first(lookup_effectiveness(generation, attacking, defending1)),
+	m_second(lookup_effectiveness(generation, attacking, defending2))
 {
 }
 
