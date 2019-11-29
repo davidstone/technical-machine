@@ -55,42 +55,44 @@ struct Pokemon {
 	// not found by lookup rules in that case.
 
 	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
-	friend auto all_moves(Pokemon & pokemon) -> MoveContainer &;
 	friend Ability get_ability(Pokemon pokemon);
-	friend void set_ability(Pokemon & pokemon, Ability ability);
-	friend bool ability_is_known(Pokemon pokemon);
 	friend Gender get_gender(Pokemon pokemon);
-	friend void set_gender(Pokemon & pokemon, Gender gender);
 	friend Happiness get_happiness(Pokemon pokemon);
 	friend HiddenPower get_hidden_power(Pokemon pokemon);
 	friend Item get_item(Pokemon pokemon);
-	friend void set_item(Pokemon & pokemon, Item item);
-	friend bool item_is_known(Pokemon pokemon);
 	friend Level get_level(Pokemon pokemon);
 	friend Nature get_nature(Pokemon pokemon);
-	friend void set_nature(Pokemon & pokemon, Nature nature);
-	friend bool nature_is_known(Pokemon pokemon);
 	friend Species get_species(Pokemon pokemon);
 	friend HP get_hp(Pokemon pokemon);
-	friend void set_hp(Pokemon & pokemon, auto hp);
-	friend auto set_hp_ev(Generation, Pokemon &, EV, IV) -> void;
 	friend Stat get_stat(Pokemon pokemon, StatNames index_stat);
-	friend auto set_stat_ev(Pokemon &, StatNames, EV, IV) -> void;
-
 	friend Status get_status(Pokemon pokemon);
+	friend TypeCollection get_type(Pokemon pokemon);
+
 	friend auto apply(Statuses status, Pokemon & user, Pokemon & target, Weather weather, bool uproar) -> void;
 	friend auto clear_status(Pokemon & pokemon) -> void;
 	friend void rest(Pokemon & user, bool other_is_uproaring);
 	friend void advance_status_from_move(Pokemon & pokemon, bool clear_status);
 	friend void advance_status_end_of_turn(Pokemon & pokemon, bool is_having_a_nightmare, Pokemon other_pokemon, bool uproar);
 
-	friend TypeCollection get_type(Pokemon pokemon);
 	friend void switch_out(Pokemon & pokemon);
 	friend void switch_in(Pokemon & pokemon);
 
 	void change_type(Type new_type);
+
 	auto has_been_seen() const -> bool;
 
+	friend auto all_moves(Pokemon & pokemon) -> MoveContainer &;
+	friend void set_hp(Pokemon & pokemon, auto hp);
+
+	friend void set_ability(Pokemon & pokemon, Ability ability);
+	friend bool ability_is_known(Pokemon pokemon);
+	friend void set_gender(Pokemon & pokemon, Gender gender);
+	friend void set_item(Pokemon & pokemon, Item item);
+	friend bool item_is_known(Pokemon pokemon);
+	friend void set_nature(Pokemon & pokemon, Nature nature);
+	friend bool nature_is_known(Pokemon pokemon);
+	friend auto set_hp_ev(Generation, Pokemon &, EV, IV) -> void;
+	friend auto set_stat_ev(Pokemon &, StatNames, EV, IV) -> void;
 private:
 	void set_status(Statuses const status) {
 		if (clears_status(m_item, status)) {
