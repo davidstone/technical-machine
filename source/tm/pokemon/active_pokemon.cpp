@@ -132,6 +132,18 @@ auto ActivePokemonFlags::vanish_doubles_power(Moves const move_name) const -> bo
 }
 
 
+auto grounded(ActivePokemon const pokemon, Weather const weather) -> bool {
+	return
+		!(
+			is_type(pokemon, Type::Flying, pokemon.is_roosting()) or
+			is_immune_to_ground(get_ability(pokemon)) or
+			pokemon.magnet_rise().is_active()
+		) or
+		weather.gravity() or
+		grounds(get_item(pokemon)) or
+		pokemon.ingrained();
+}
+
 
 auto MutableActivePokemon::baton_pass() const -> void {
 	m_flags.lock_in = BatonPassing{};

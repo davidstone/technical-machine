@@ -378,6 +378,8 @@ struct ActivePokemon : ActivePokemonImpl<true> {
 	}
 };
 
+auto grounded(ActivePokemon, Weather) -> bool;
+
 // A mutable reference to the currently active Pokemon
 struct MutableActivePokemon : ActivePokemonImpl<false> {
 	MutableActivePokemon(Pokemon & pokemon, ActivePokemonFlags & flags):

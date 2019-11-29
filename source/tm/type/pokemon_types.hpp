@@ -24,11 +24,8 @@
 #include <containers/array/array.hpp>
 
 namespace technicalmachine {
-struct ActivePokemon;
 enum class Generation : std::uint8_t;
-struct MutableActivePokemon;
 struct Pokemon;
-struct Weather;
 
 struct PokemonTypes {
 	// Can a Pokemon ever have 0 types?
@@ -58,9 +55,5 @@ private:
 };
 
 auto is_type(Pokemon const &, Type, bool roosting) -> bool;
-
-auto grounded(ActivePokemon pokemon, Weather weather) -> bool;
-auto grounded(MutableActivePokemon pokemon, Weather weather) -> bool;
-auto grounded(Pokemon const & pokemon, Weather weather) -> bool;
 
 }	// namespace technicalmachine

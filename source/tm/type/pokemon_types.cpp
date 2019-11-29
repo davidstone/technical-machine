@@ -18,14 +18,10 @@
 
 #include <tm/type/pokemon_types.hpp>
 
+#include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
 #include <tm/generation.hpp>
-#include <tm/weather.hpp>
-
-#include <tm/pokemon/active_pokemon.hpp>
-#include <tm/pokemon/pokemon.hpp>
-#include <tm/pokemon/species.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 
@@ -919,35 +915,5 @@ PokemonTypes::PokemonTypes(Generation const generation, Species const species):
 auto is_type(Pokemon const & pokemon, Type const type, bool const roosting) -> bool {
 	return (type != Type::Flying or !roosting) and containers::any_equal(get_type(pokemon), type);
 }
-
-namespace {
-
-auto forced_grounded(Pokemon const & pokemon, Weather const weather) -> bool {
-	return weather.gravity() or grounds(get_item(pokemon));
-}
-
-auto is_permanently_immune_to_ground(auto const & pokemon, bool const roosting) -> bool {
-	return
-		is_type(pokemon, Type::Flying, roosting) or
-		is_immune_to_ground(get_ability(pokemon));
-}
-
-}	// namespace
-
-auto grounded(MutableActivePokemon const pokemon, Weather const weather) -> bool {
-	return grounded(static_cast<ActivePokemon>(pokemon), weather);
-}
-auto grounded(ActivePokemon const pokemon, Weather const weather) -> bool {
-	return
-		!(is_permanently_immune_to_ground(pokemon, pokemon.is_roosting()) or pokemon.magnet_rise().is_active()) or
-		forced_grounded(pokemon, weather) or
-		pokemon.ingrained();
-}
-auto grounded(Pokemon const & pokemon, Weather const weather) -> bool {
-	return
-		!is_permanently_immune_to_ground(pokemon, false) or
-		forced_grounded(pokemon, weather);
-}
-
 
 }	// namespace technicalmachine
