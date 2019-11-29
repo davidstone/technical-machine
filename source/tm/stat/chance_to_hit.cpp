@@ -67,12 +67,9 @@ auto evasion_item_modifier(Generation const generation, Item const item) {
 	using Modifier = rational<bounded::integer<1, 19>, bounded::integer<1, 64>>;
 	switch (item) {
 		case Item::Bright_Powder:
-			return BOUNDED_CONDITIONAL(generation <= Generation::two,
-				Modifier(5_bi, 64_bi),
-				Modifier(9_bi, 10_bi)
-			);
+			return generation <= Generation::two ? Modifier(5_bi, 64_bi) : Modifier(9_bi, 10_bi);
 		case Item::Lax_Incense:
-			return Modifier(19_bi, 20_bi);
+			return generation <= Generation::three ? Modifier(19_bi, 20_bi) : Modifier(9_bi, 10_bi);
 		default:
 			return Modifier(1_bi, 1_bi);
 	}

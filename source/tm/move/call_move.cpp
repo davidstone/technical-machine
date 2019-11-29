@@ -97,7 +97,7 @@ auto curse(MutableActivePokemon user, MutableActivePokemon target) {
 }
 
 
-auto fling_side_effects(Pokemon & user, MutableActivePokemon target, Weather const weather) {
+auto fling_side_effects(Generation const generation, Pokemon & user, MutableActivePokemon target, Weather const weather) {
 	// TODO: Activate berry
 	auto apply_status = [&](Statuses const status) {
 		// Uproar is irrelevant in this function
@@ -116,8 +116,7 @@ auto fling_side_effects(Pokemon & user, MutableActivePokemon target, Weather con
 			apply_status(Statuses::paralysis);
 			break;
 		case Item::Mental_Herb:
-			// TODO: cure infatuation, taunt, encore, torment, disable, and
-			// cursed body on target
+			apply_mental_herb(generation, target);
 			break;
 		case Item::Poison_Barb:
 			apply_status(Statuses::poison);
@@ -126,11 +125,13 @@ auto fling_side_effects(Pokemon & user, MutableActivePokemon target, Weather con
 			apply_status(Statuses::toxic);
 			break;
 		case Item::White_Herb:
-			// TODO: Restore lowered stats on target
+			apply_white_herb(target);
 			break;
 		default:
 			break;
 	}
+	// TODO: Some items cannot be lost
+	set_item(user, Item::None);
 }
 
 
@@ -281,7 +282,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Attract:
 			if (multiplier(get_gender(user), get_gender(other.pokemon())) == -1_bi) {
-				other.pokemon().attract();
+				other.pokemon().attract(generation);
 			}
 			break;
 		case Moves::Baton_Pass:
@@ -504,7 +505,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.dig();
 			break;
 		case Moves::Disable:
-			other.pokemon().disable(other.pokemon().last_used_move().name());
+			other.pokemon().disable(generation, other.pokemon().last_used_move().name());
 			break;
 		case Moves::Dive:
 			user.dive();
@@ -535,7 +536,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().activate_embargo();
 			break;
 		case Moves::Encore:
-			other.pokemon().activate_encore();
+			other.pokemon().activate_encore(generation);
 			break;
 		case Moves::Endure:
 			user.endure();
@@ -571,8 +572,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			confusing_stat_boost(other.pokemon(), StatNames::SPA, 1_bi);
 			break;
 		case Moves::Fling:
-			fling_side_effects(user, other.pokemon(), weather);
-			set_item(user, Item::None);
+			fling_side_effects(generation, user, other.pokemon(), weather);
 			break;
 		case Moves::Fly:
 			user.fly();
@@ -940,7 +940,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user_team.screens.activate_tailwind();
 			break;
 		case Moves::Taunt:
-			other.pokemon().taunt();
+			other.pokemon().taunt(generation);
 			break;
 		case Moves::Thunder_Fang:
 			move.variable.fang_side_effects(user, other.pokemon(), weather, Statuses::paralysis);
@@ -949,7 +949,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			boost_physical(other.pokemon().stage(), -1_bi);
 			break;
 		case Moves::Torment:
-			other.pokemon().torment();
+			other.pokemon().torment(generation);
 			break;
 		case Moves::Toxic: {
 			constexpr auto uproar = false;
@@ -1062,8 +1062,11 @@ auto use_move(Generation const generation, Team & user, ExecutedMove const move,
 	if (!substitute or !blocked_by_substitute(generation, move.name)) {
 		do_side_effects(generation, user, move, move_type, other, weather, damage);
 	}
-	if (!static_cast<bool>(substitute) and causes_recoil(get_item(user_pokemon))) {
+	auto const item = get_item(user_pokemon);
+	if (!static_cast<bool>(substitute) and causes_recoil(item)) {
 		heal(user_pokemon, rational(-1_bi, 10_bi));
+	} else if (item == Item::Shell_Bell) {
+		change_hp(user_pokemon, bounded::max(damage / 8_bi, 1_bi));
 	}
 }
 

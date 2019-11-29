@@ -178,24 +178,47 @@ auto doubling(ActivePokemon const attacker, Moves const move, ActivePokemon cons
 }
 
 
-auto is_boosted_by_adamant_orb(Species species) -> bool;
-auto is_boosted_by_griseous_orb(Species species) -> bool;
-auto is_boosted_by_lustrous_orb(Species species) -> bool;
+constexpr auto is_boosted_by_adamant_orb(Species const species, Type const move_type) {
+	return
+		species == Species::Dialga and
+		(move_type == Type::Dragon or move_type == Type::Steel);
+}
 
-using ItemModifierNumerator = bounded::integer<10, 12>;
+constexpr auto is_boosted_by_griseous_orb(Species const species, Type const move_type) {
+	return
+		species == Species::Palkia and
+		(move_type == Type::Dragon or move_type == Type::Water);
+}
+
+constexpr auto is_boosted_by_lustrous_orb(Species const species, Type const move_type) {
+	return
+		species == Species::Giratina_Origin and
+		(move_type == Type::Dragon or move_type == Type::Ghost);
+}
+
+constexpr auto is_boosted_by_soul_dew(Generation const generation, Species const species, Type const move_type) {
+	return
+		generation >= Generation::seven and
+		(species == Species::Latias or species == Species::Latios) and
+		(move_type == Type::Dragon or move_type == Type::Psychic);
+}
+
+
+constexpr auto item_modifier_denominator = 20_bi;
+using ItemModifierNumerator = bounded::integer<20, 24>;
 auto item_modifier_numerator(Generation const generation, Pokemon const attacker, Moves const move, Type const move_type) -> ItemModifierNumerator {
-	static constexpr auto base = 10_bi;
+	constexpr auto none = item_modifier_denominator;
 	auto type_boost = [=](Type const type) -> ItemModifierNumerator {
 		if (move_type != type) {
-			return base;
+			return none;
 		}
-		return BOUNDED_CONDITIONAL(generation <= Generation::three, 11_bi, 12_bi);
+		return BOUNDED_CONDITIONAL(generation <= Generation::three, none * 11_bi / 10_bi, none * 12_bi / 10_bi);
 	};
 	switch (get_item(attacker)) {
 		case Item::Muscle_Band:
-			return BOUNDED_CONDITIONAL(is_physical(move), 11_bi, base);
+			return BOUNDED_CONDITIONAL(is_physical(move), none * 11_bi / 10_bi, none);
 		case Item::Wise_Glasses:
-			return BOUNDED_CONDITIONAL(is_special(move), 11_bi, base);
+			return BOUNDED_CONDITIONAL(is_special(move), none * 11_bi / 10_bi, none);
 		case Item::Insect_Plate:
 		case Item::Silver_Powder:
 			return type_boost(Type::Bug);
@@ -205,9 +228,9 @@ auto item_modifier_numerator(Generation const generation, Pokemon const attacker
 		case Item::Draco_Plate:
 			return type_boost(Type::Dragon);
 		case Item::Dragon_Fang:
-			return BOUNDED_CONDITIONAL(generation <= Generation::two, base, type_boost(Type::Dragon));
+			return BOUNDED_CONDITIONAL(generation <= Generation::two, none, type_boost(Type::Dragon));
 		case Item::Dragon_Scale:
-			return BOUNDED_CONDITIONAL(generation <= Generation::two, type_boost(Type::Dragon), base);
+			return BOUNDED_CONDITIONAL(generation <= Generation::two, type_boost(Type::Dragon), none);
 		case Item::Zap_Plate:
 		case Item::Magnet:
 			return type_boost(Type::Electric);
@@ -250,24 +273,49 @@ auto item_modifier_numerator(Generation const generation, Pokemon const attacker
 		case Item::Iron_Plate:
 		case Item::Metal_Coat:
 			return type_boost(Type::Steel);
+		case Item::Sea_Incense:
+			return BOUNDED_CONDITIONAL(generation <= Generation::three,
+				BOUNDED_CONDITIONAL(move_type == Type::Water, none * 21_bi / 20_bi, none),
+				type_boost(Type::Water)
+			);
 		case Item::Splash_Plate:
 		case Item::Mystic_Water:
-		case Item::Sea_Incense:
 		case Item::Wave_Incense:
 			return type_boost(Type::Water);
 		case Item::Adamant_Orb:
-			return BOUNDED_CONDITIONAL(is_boosted_by_adamant_orb(get_species(attacker)) and (move_type == Type::Dragon or move_type == Type::Steel), 12_bi, base);
+			return BOUNDED_CONDITIONAL(
+				is_boosted_by_adamant_orb(get_species(attacker), move_type),
+				none * 12_bi / 10_bi,
+				none
+			);
 		case Item::Griseous_Orb:
-			return BOUNDED_CONDITIONAL(is_boosted_by_griseous_orb(get_species(attacker)) and (move_type == Type::Dragon or move_type == Type::Ghost), 12_bi, base);
+			return BOUNDED_CONDITIONAL(
+				is_boosted_by_griseous_orb(get_species(attacker), move_type),
+				none * 12_bi / 10_bi,
+				none
+			);
 		case Item::Lustrous_Orb:
-			return BOUNDED_CONDITIONAL(is_boosted_by_lustrous_orb(get_species(attacker)) and (move_type == Type::Dragon or move_type == Type::Water), 12_bi, base);
+			return BOUNDED_CONDITIONAL(
+				is_boosted_by_lustrous_orb(get_species(attacker), move_type),
+				none * 12_bi / 10_bi,
+				none
+			);
+		case Item::Soul_Dew:
+			return BOUNDED_CONDITIONAL(
+				is_boosted_by_soul_dew(generation, get_species(attacker), move_type),
+				none * 12_bi / 10_bi,
+				none
+			);
 		default:
-			return base;
+			return none;
 	}
 }
 
 auto item_modifier(Generation const generation, Pokemon const attacker, Moves const move, Type const move_type) {
-	return rational(item_modifier_numerator(generation, attacker, move, move_type), 10_bi);
+	return rational(
+		item_modifier_numerator(generation, attacker, move, move_type),
+		item_modifier_denominator
+	);
 }
 
 bool is_boosted_by_iron_fist(Moves const move) {
@@ -363,18 +411,6 @@ auto move_power(Generation const generation, Team const & attacker_team, Execute
 }
 
 namespace {
-
-auto is_boosted_by_adamant_orb(Species const species) -> bool {
-	return species == Species::Dialga;
-}
-
-auto is_boosted_by_griseous_orb(Species const species) -> bool {
-	return species == Species::Palkia;
-}
-
-auto is_boosted_by_lustrous_orb(Species const species) -> bool {
-	return species == Species::Giratina_Origin;
-}
 
 auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 120> {
 	switch (species) {

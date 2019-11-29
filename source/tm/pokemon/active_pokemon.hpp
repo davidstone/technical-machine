@@ -43,6 +43,7 @@
 
 #include <tm/stat/stage.hpp>
 
+#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/random_damage.hpp>
 #include <tm/rational.hpp>
@@ -367,6 +368,8 @@ protected:
 extern template struct ActivePokemonImpl<true>;
 extern template struct ActivePokemonImpl<false>;
 
+auto apply_own_mental_herb(Generation const generation, MutableActivePokemon const pokemon) -> void;
+
 // A reference to the currently active Pokemon
 struct ActivePokemon : ActivePokemonImpl<true> {
 	ActivePokemon(Pokemon const & pokemon, ActivePokemonFlags const & flags):
@@ -403,8 +406,20 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto activate_aqua_ring() const {
 		m_flags.aqua_ring = true;
 	}
-	auto attract() const {
-		m_flags.attracted = true;
+	auto attract(Generation const generation) const {
+		auto const ability_cures_attract = get_ability(*this) == Ability::Oblivious;
+		if (generation <= Generation::four) {
+			if (!ability_cures_attract) {
+				m_flags.attracted = true;
+				apply_own_mental_herb(generation, *this);
+			}
+		} else {
+			m_flags.attracted = true;
+			apply_own_mental_herb(generation, *this);
+			if (ability_cures_attract) {
+				m_flags.attracted = false;
+			}
+		}
 	}
 	auto baton_pass() const -> void;
 	auto charge() const {
@@ -433,8 +448,9 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto use_destiny_bond() const {
 		m_flags.destiny_bond = true;
 	}
-	auto disable(Moves const move) const {
+	auto disable(Generation const generation, Moves const move) const {
 		m_flags.disable.activate(move);
+		apply_own_mental_herb(generation, *this);
 	}
 	auto advance_disable() const {
 		m_flags.disable.advance_one_turn();
@@ -445,8 +461,9 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto advance_embargo() const {
 		m_flags.embargo.advance_one_turn();
 	}
-	auto activate_encore() const {
+	auto activate_encore(Generation const generation) const {
 		m_flags.encore.activate();
+		apply_own_mental_herb(generation, *this);
 	}
 	auto advance_encore() const {
 		m_flags.encore.advance_one_turn();
@@ -493,6 +510,15 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 	auto advance_magnet_rise() const {
 		m_flags.magnet_rise.advance_one_turn();
+	}
+	friend auto apply_mental_herb(Generation const generation, MutableActivePokemon const pokemon) {
+		pokemon.m_flags.attracted = false;
+		if (generation >= Generation::five) {
+			pokemon.m_flags.disable = {};
+			pokemon.m_flags.encore = {};
+			pokemon.m_flags.taunt = {};
+			pokemon.m_flags.is_tormented = false;
+		}
 	}
 	auto set_not_moved() const {
 		m_flags.moved = false;
@@ -548,14 +574,16 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 
 	auto use_substitute() const -> void;
 
-	auto taunt() const {
+	auto taunt(Generation const generation) const {
 		m_flags.taunt.activate();
+		apply_own_mental_herb(generation, *this);
 	}
 	auto advance_taunt() const {
 		m_flags.taunt.advance_one_turn();
 	}
-	auto torment() const {
+	auto torment(Generation const generation) const {
 		m_flags.is_tormented = true;
+		apply_own_mental_herb(generation, *this);
 	}
 	auto u_turn() const -> void;
 	auto use_uproar() const -> void;
@@ -601,6 +629,28 @@ inline auto activate_berserk_gene(MutableActivePokemon pokemon) {
 	// switching out was confused.
 	pokemon.confuse();
 	set_item(pokemon, Item::None);
+}
+
+inline auto apply_own_mental_herb(Generation const generation, MutableActivePokemon const pokemon) -> void {
+	if (get_item(pokemon) == Item::Mental_Herb) {
+		apply_mental_herb(generation, pokemon);
+		set_item(pokemon, Item::None);
+	}
+}
+
+inline auto apply_white_herb(MutableActivePokemon const pokemon) {
+	for (auto & stage : pokemon.stage()) {
+		if (stage < 0_bi) {
+			stage = 0_bi;
+		}
+	}
+}
+
+inline auto apply_own_white_herb(MutableActivePokemon const pokemon) {
+	if (get_item(pokemon) == Item::White_Herb) {
+		apply_white_herb(pokemon);
+		set_item(pokemon, Item::None);
+	}
 }
 
 }	// namespace technicalmachine
