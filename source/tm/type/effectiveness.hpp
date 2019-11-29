@@ -36,10 +36,15 @@ struct Effectiveness {
 	auto is_not_very_effective() const -> bool;
 	auto has_no_effect() const -> bool;
 
-	auto operator*(auto const number) const {
-		return number * m_effectiveness[0_bi] * m_effectiveness[1_bi];
-	}
 private:
+	auto product() const {
+		return m_effectiveness[0_bi] * m_effectiveness[1_bi];
+	}
+
+	friend auto operator*(Effectiveness const lhs, auto const rhs) {
+		return rhs * lhs.product();
+	}
+
 	Effectiveness(Generation generation, Type attacking, Type defending1, Type defending2);
 	using SingleType = rational<bounded::integer<0, 2>, bounded::integer<1, 2>>;
 	using Product = decltype(std::declval<SingleType>() * std::declval<SingleType>());
@@ -49,8 +54,8 @@ private:
 
 };
 
-auto operator*(auto const number, Effectiveness const & effectiveness) {
-	return effectiveness * number;
+auto operator*(auto const lhs, Effectiveness const rhs) {
+	return rhs * lhs;
 }
 
 }	// namespace technicalmachine

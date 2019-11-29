@@ -437,13 +437,6 @@ constexpr auto lookup_effectiveness(Generation const generation, Type const atta
 	}
 }
 
-auto check_effectiveness(auto const & effectiveness, auto... results) {
-	auto const value = effectiveness[0_bi] * effectiveness[1_bi];
-	return (... or (value == results));
-}
-
-
-
 }	// namespace
 
 Effectiveness::Effectiveness(Generation const generation, Type const attacking, Type const defending1, Type const defending2):
@@ -470,15 +463,15 @@ Effectiveness::Effectiveness(Generation const generation, Type const attacking, 
 }
 
 auto Effectiveness::is_super_effective() const -> bool {
-	return check_effectiveness(m_effectiveness, Product(super_effective), Product(super_effective * super_effective));
+	return product() == super_effective or product() == super_effective * super_effective;
 }
 
 auto Effectiveness::is_not_very_effective() const -> bool {
-	return check_effectiveness(m_effectiveness, Product(not_very_effective), Product(not_very_effective * not_very_effective));
+	return product() == not_very_effective or product() == not_very_effective * not_very_effective;
 }
 
 auto Effectiveness::has_no_effect() const -> bool {
-	return check_effectiveness(m_effectiveness, Product(no_effect));
+	return product() == no_effect;
 }
 
 }	// namespace technicalmachine
