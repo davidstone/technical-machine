@@ -18,12 +18,7 @@
 
 #include <tm/type/effectiveness.hpp>
 
-#include <tm/type/pokemon_types.hpp>
-#include <tm/type/type.hpp>
-#include <tm/pokemon/pokemon.hpp>
-#include <tm/rational.hpp>
-
-#include <iterator>
+#include <tm/generation.hpp>
 
 namespace technicalmachine {
 namespace {
@@ -439,24 +434,13 @@ constexpr auto lookup_effectiveness(Generation const generation, Type const atta
 
 }	// namespace
 
-Effectiveness::Effectiveness(Generation const generation, Type const attacking, Type const defending1, Type const defending2):
-	m_first(lookup_effectiveness(generation, attacking, defending1)),
-	m_second(lookup_effectiveness(generation, attacking, defending2))
-{
-}
 
-Effectiveness::Effectiveness(Generation const generation, Type const type, Pokemon const & defender):
-	Effectiveness(
-		generation,
-		type,
-		*begin(get_type(defender)),
-		*containers::next(begin(get_type(defender)))
+Effectiveness::Effectiveness(Generation const generation, Type const attacking, PokemonTypes const defending):
+	m_first(lookup_effectiveness(generation, attacking, front(defending))),
+	m_second(containers::size(defending) == 1_bi ?
+		SingleType(1_bi, 1_bi) :
+		lookup_effectiveness(generation, attacking, back(defending))
 	)
-{
-}
-
-Effectiveness::Effectiveness(Generation const generation, Type const attacking, Type const defending):
-	Effectiveness(generation, attacking, defending, Type::Typeless)
 {
 }
 

@@ -17,19 +17,19 @@
 
 #pragma once
 
-#include <tm/type/type.hpp>
+#include <tm/type/pokemon_types.hpp>
+
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
+struct ActivePokemon;
 enum class Generation : std::uint8_t;
-struct Pokemon;
 
 struct Effectiveness {
-	Effectiveness(Generation generation, Type type, Pokemon const & defender);
-	Effectiveness(Generation generation, Type attacking, Type defending);
+	Effectiveness(Generation generation, Type attacking, PokemonTypes defending);
 	auto is_super_effective() const -> bool;
 	auto is_not_very_effective() const -> bool;
 	auto has_no_effect() const -> bool;
@@ -42,8 +42,6 @@ private:
 	friend auto operator*(Effectiveness const lhs, auto const rhs) {
 		return rhs * lhs.product();
 	}
-
-	Effectiveness(Generation generation, Type attacking, Type defending1, Type defending2);
 
 	using SingleType = rational<bounded::integer<0, 2>, bounded::integer<1, 2>>;
 	SingleType m_first;
