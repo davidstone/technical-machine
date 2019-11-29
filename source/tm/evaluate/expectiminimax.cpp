@@ -45,6 +45,7 @@
 #include <bounded/assert.hpp>
 
 #include <containers/algorithms/accumulate.hpp>
+#include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/filter_iterator.hpp>
 
 #include <boost/timer.hpp>

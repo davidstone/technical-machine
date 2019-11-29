@@ -64,20 +64,6 @@ auto get_type(Generation generation, Moves move, Type hidden_power) -> Type;
 constexpr auto is_boosted_by_flash_fire(Type const type) {
 	return type == Type::Fire;
 }
-constexpr auto is_immune_to_hail(Type const type) {
-	return type == Type::Ice;
-}
-constexpr auto is_immune_to_sandstorm(Type const type) {
-	switch (type) {
-		case Type::Ground:
-		case Type::Rock:
-		case Type::Steel:
-			return true;
-		default:
-			return false;
-	}
-}
-
 
 auto is_strengthened_by_weather(Type type, Weather weather) -> bool;
 auto is_weakened_by_weather(Type type, Weather weather) -> bool;

@@ -927,23 +927,16 @@ constexpr auto get_type(Generation const generation, Species const species) {
 }	// namespace
 
 PokemonTypes::PokemonTypes(Generation const generation, Species const species):
-	types(get_type(generation, species)) {
-}
-
-auto is_immune_to_sandstorm(PokemonTypes const collection) -> bool {
-	return containers::any(collection.types, [](auto const type) { return is_immune_to_sandstorm(type); });
-}
-
-auto is_immune_to_hail(PokemonTypes const collection) -> bool {
-	return containers::any(collection.types, [](auto const type) { return is_immune_to_hail(type); });
+	m_types(get_type(generation, species))
+{
 }
 
 auto PokemonTypes::change_type(Type const type) -> void {
-	types = make_types(type);
+	m_types = make_types(type);
 }
 
 auto is_type(Pokemon const & pokemon, Type const type, bool const roosting) -> bool {
-	return (type != Type::Flying or !roosting) and containers::any_equal(get_type(pokemon).types, type);
+	return (type != Type::Flying or !roosting) and containers::any_equal(get_type(pokemon), type);
 }
 
 namespace {

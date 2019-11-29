@@ -458,8 +458,8 @@ Effectiveness::Effectiveness(Generation const generation, Type const type, Pokem
 	Effectiveness(
 		generation,
 		type,
-		*begin(get_type(defender).types),
-		*containers::next(begin(get_type(defender).types))
+		*begin(get_type(defender)),
+		*containers::next(begin(get_type(defender)))
 	)
 {
 }

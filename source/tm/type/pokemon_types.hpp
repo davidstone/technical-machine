@@ -22,7 +22,6 @@
 #include <tm/pokemon/species_forward.hpp>
 #include <tm/status.hpp>
 
-#include <containers/algorithms/all_any_none.hpp>
 #include <containers/array/array.hpp>
 
 namespace technicalmachine {
@@ -33,19 +32,21 @@ struct Pokemon;
 struct Weather;
 
 struct PokemonTypes {
+	// Can a Pokemon ever have 0 types?
+	using size_type = bounded::integer<1, 2>;
+
 	explicit PokemonTypes(Generation, Species name);
-	friend auto is_immune_to_hail(PokemonTypes const collection) -> bool;
-	friend auto is_immune_to_sandstorm(PokemonTypes const collection) -> bool;
-	friend auto blocks_status(PokemonTypes const collection, Statuses const status) -> bool {
-		return containers::any(collection.types, [=](auto const type) {
-			return blocks_status(type, status);
-		});
+
+	friend constexpr auto begin(PokemonTypes const & types) {
+		return begin(types.m_types);
 	}
+	friend constexpr auto end(PokemonTypes const & types) {
+		return begin(types) + BOUNDED_CONDITIONAL(types.m_types[1_bi] == Type::Typeless, 1_bi, 2_bi);
+	}
+
 	auto change_type(Type const type) -> void;
 private:
-	friend auto is_type(Pokemon const &, Type, bool roosting) -> bool;
-	friend struct Effectiveness;
-	containers::array<Type, 2> types;
+	containers::array<Type, 2> m_types;
 };
 
 auto is_type(Pokemon const &, Type, bool roosting) -> bool;

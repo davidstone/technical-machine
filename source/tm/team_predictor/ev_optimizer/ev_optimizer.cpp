@@ -27,6 +27,8 @@
 
 #include <bounded/assert.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
+
 #include <random>
 
 namespace technicalmachine {

@@ -28,6 +28,8 @@
 #include <tm/pokemon/active_pokemon.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
+
 namespace technicalmachine {
 namespace {
 
@@ -68,6 +70,23 @@ void end_of_turn1(Team & team) {
 
 void end_of_turn2(Team & team) {
 	team.wish.decrement(team.pokemon());
+}
+
+auto is_immune_to_hail(PokemonTypes const types) -> bool {
+	return containers::any(types, [](Type const type) { return type == Type::Ice; });
+}
+
+auto is_immune_to_sandstorm(PokemonTypes const types) -> bool {
+	return containers::any(types, [](Type const type) {
+		switch (type) {
+			case Type::Ground:
+			case Type::Rock:
+			case Type::Steel:
+				return true;
+			default:
+				return false;
+		}
+	});
 }
 
 void end_of_turn3(MutableActivePokemon pokemon, Weather const weather) {

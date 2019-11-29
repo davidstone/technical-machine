@@ -35,6 +35,7 @@
 #include <tm/string_conversions/pokemon.hpp>
 #include <tm/string_conversions/status.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/concatenate.hpp>
 
 #include <boost/format.hpp>
@@ -96,7 +97,7 @@ auto status_can_apply(Statuses const status, Pokemon const user, Pokemon const t
 	return
 		is_clear(get_status(target)) and
 		(ignores_blockers(get_ability(user)) or !blocks_status(get_ability(target), status, weather)) and
-		!blocks_status(get_type(target), status) and
+		!containers::any(get_type(target), [=](Type const type) { return blocks_status(type, status); }) and
 		!weather.blocks_status(status) and
 		(!uproar or (status != Statuses::sleep and status != Statuses::rest));
 }
