@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tm/type/collection.hpp>
+#include <tm/type/pokemon_types.hpp>
 
 #include <tm/type/type.hpp>
 
@@ -926,19 +926,19 @@ constexpr auto get_type(Generation const generation, Species const species) {
 
 }	// namespace
 
-TypeCollection::TypeCollection(Generation const generation, Species const species):
+PokemonTypes::PokemonTypes(Generation const generation, Species const species):
 	types(get_type(generation, species)) {
 }
 
-auto is_immune_to_sandstorm(TypeCollection const collection) -> bool {
+auto is_immune_to_sandstorm(PokemonTypes const collection) -> bool {
 	return containers::any(collection.types, [](auto const type) { return is_immune_to_sandstorm(type); });
 }
 
-auto is_immune_to_hail(TypeCollection const collection) -> bool {
+auto is_immune_to_hail(PokemonTypes const collection) -> bool {
 	return containers::any(collection.types, [](auto const type) { return is_immune_to_hail(type); });
 }
 
-auto TypeCollection::change_type(Type const type) -> void {
+auto PokemonTypes::change_type(Type const type) -> void {
 	types = make_types(type);
 }
 

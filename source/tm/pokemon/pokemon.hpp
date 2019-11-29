@@ -34,7 +34,7 @@
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stats.hpp>
 
-#include <tm/type/collection.hpp>
+#include <tm/type/pokemon_types.hpp>
 
 #include <bounded/assert.hpp>
 
@@ -66,7 +66,7 @@ struct Pokemon {
 	friend HP get_hp(Pokemon pokemon);
 	friend Stat get_stat(Pokemon pokemon, StatNames index_stat);
 	friend Status get_status(Pokemon pokemon);
-	friend TypeCollection get_type(Pokemon pokemon);
+	friend PokemonTypes get_type(Pokemon pokemon);
 
 	friend auto apply(Statuses status, Pokemon & user, Pokemon & target, Weather weather, bool uproar) -> void;
 	friend auto clear_status(Pokemon & pokemon) -> void;
@@ -104,7 +104,7 @@ private:
 
 	MoveContainer m_moves;
 	
-	TypeCollection current_type;
+	PokemonTypes current_type;
 
 	Stats stats;
 
@@ -279,7 +279,7 @@ inline void advance_status_end_of_turn(Pokemon & pokemon, bool const is_having_a
 	pokemon.m_status.end_of_turn(pokemon, is_having_a_nightmare, other, uproar);
 }
 
-inline TypeCollection get_type(Pokemon const pokemon) {
+inline PokemonTypes get_type(Pokemon const pokemon) {
 	return pokemon.current_type;
 }
 

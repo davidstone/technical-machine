@@ -32,11 +32,11 @@ struct MutableActivePokemon;
 struct Pokemon;
 struct Weather;
 
-struct TypeCollection {
-	explicit TypeCollection(Generation, Species name);
-	friend auto is_immune_to_hail(TypeCollection const collection) -> bool;
-	friend auto is_immune_to_sandstorm(TypeCollection const collection) -> bool;
-	friend auto blocks_status(TypeCollection const collection, Statuses const status) -> bool {
+struct PokemonTypes {
+	explicit PokemonTypes(Generation, Species name);
+	friend auto is_immune_to_hail(PokemonTypes const collection) -> bool;
+	friend auto is_immune_to_sandstorm(PokemonTypes const collection) -> bool;
+	friend auto blocks_status(PokemonTypes const collection, Statuses const status) -> bool {
 		return containers::any(collection.types, [=](auto const type) {
 			return blocks_status(type, status);
 		});

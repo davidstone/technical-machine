@@ -162,8 +162,8 @@ add_library(tm_common STATIC
 	source/tm/team_predictor/team_predictor.cpp
 	source/tm/team_predictor/usage_stats.cpp
 
-	source/tm/type/collection.cpp
 	source/tm/type/effectiveness.cpp
+	source/tm/type/pokemon_types.cpp
 	source/tm/type/type.cpp
 
 	source/tm/ability.cpp

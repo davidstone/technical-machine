@@ -18,7 +18,7 @@
 
 #include <tm/type/effectiveness.hpp>
 
-#include <tm/type/collection.hpp>
+#include <tm/type/pokemon_types.hpp>
 #include <tm/type/type.hpp>
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/rational.hpp>
