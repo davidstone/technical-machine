@@ -20,7 +20,6 @@
 
 #include <tm/type/type.hpp>
 #include <tm/pokemon/species_forward.hpp>
-#include <tm/status.hpp>
 
 #include <containers/array/array.hpp>
 
@@ -35,7 +34,12 @@ struct PokemonTypes {
 	// Can a Pokemon ever have 0 types?
 	using size_type = bounded::integer<1, 2>;
 
-	explicit PokemonTypes(Generation, Species name);
+	PokemonTypes(Generation, Species);
+
+	constexpr explicit PokemonTypes(Type const type):
+		m_types{type, Type::Typeless}
+	{
+	}
 
 	friend constexpr auto begin(PokemonTypes const & types) {
 		return begin(types.m_types);
@@ -44,8 +48,12 @@ struct PokemonTypes {
 		return begin(types) + BOUNDED_CONDITIONAL(types.m_types[1_bi] == Type::Typeless, 1_bi, 2_bi);
 	}
 
-	auto change_type(Type const type) -> void;
 private:
+	constexpr explicit PokemonTypes(Type const type1, Type const type2):
+		m_types{type1, type2}
+	{
+	}
+
 	containers::array<Type, 2> m_types;
 };
 

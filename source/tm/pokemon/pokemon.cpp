@@ -84,7 +84,7 @@ Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Speci
 
 
 void Pokemon::change_type(Type const new_type) {
-	current_type.change_type(new_type);
+	current_type = PokemonTypes(new_type);
 }
 
 auto Pokemon::has_been_seen() const -> bool {
