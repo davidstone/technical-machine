@@ -145,7 +145,7 @@ void activate_pinch_item(Pokemon & pokemon) {
 	}
 }
 
-auto apply(Statuses const status, Pokemon & user, Pokemon & target, Weather const weather, bool const uproar) -> void {
+auto apply_status(Statuses const status, Pokemon & user, Pokemon & target, Weather const weather, bool const uproar) -> void {
 	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
 	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
 	if (!status_can_apply(status, user, target, weather, uproar)) {
@@ -154,7 +154,7 @@ auto apply(Statuses const status, Pokemon & user, Pokemon & target, Weather cons
 	target.set_status(status);
 	auto const reflected = reflected_status(status);
 	if (reflected and reflects_status(get_ability(target))) {
-		apply(*reflected, user, weather, uproar);
+		apply_status(*reflected, user, weather, uproar);
 	}
 }
 

@@ -142,10 +142,10 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	advance_status_end_of_turn(pokemon, pokemon.is_having_a_nightmare(), foe, uproar);
 	switch (get_item(pokemon)) {
 		case Item::Flame_Orb:
-			apply(Statuses::burn, pokemon, weather, uproar);
+			apply_status(Statuses::burn, pokemon, weather, uproar);
 			break;
 		case Item::Toxic_Orb:
-			apply(Statuses::toxic, pokemon, weather, uproar);
+			apply_status(Statuses::toxic, pokemon, weather, uproar);
 			break;
 		default:
 			break;

@@ -102,7 +102,7 @@ auto fling_side_effects(Generation const generation, Pokemon & user, MutableActi
 	auto apply_status = [&](Statuses const status) {
 		// Uproar is irrelevant in this function
 		constexpr auto uproaring = false;
-		apply(status, user, target, weather, uproaring);
+		technicalmachine::apply_status(status, user, target, weather, uproaring);
 	};
 	switch (get_item(user)) {
 		case Item::Flame_Orb:
@@ -146,7 +146,7 @@ auto recoil_status(Pokemon & user, Pokemon & target, Weather const weather, HP::
 	constexpr auto uproaring = false;
 	recoil(user, damage, 3_bi);
 	if (variable.effect_activates()) {
-		apply(status, user, target, weather, uproaring);
+		apply_status(status, user, target, weather, uproaring);
 	}
 }
 
@@ -325,7 +325,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Sacred_Fire:
 			if (move.variable.effect_activates()) {
 				constexpr auto uproar = false;
-				apply(Statuses::burn, user, other.pokemon(), weather, uproar);
+				apply_status(Statuses::burn, user, other.pokemon(), weather, uproar);
 			}
 			break;
 		case Moves::Blizzard:
@@ -334,7 +334,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Powder_Snow:
 			if (move.variable.effect_activates()) {
 				constexpr auto uproar = false;
-				apply(Statuses::freeze, user, other.pokemon(), weather, uproar);
+				apply_status(Statuses::freeze, user, other.pokemon(), weather, uproar);
 			}
 			break;
 		case Moves::Block:
@@ -355,13 +355,13 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Thunder_Shock:
 			if (move.variable.effect_activates()) {
 				constexpr auto uproar = false;
-				apply(Statuses::paralysis, user, other.pokemon(), weather, uproar);
+				apply_status(Statuses::paralysis, user, other.pokemon(), weather, uproar);
 			}
 			break;
 		case Moves::Bounce:
 			if (user.bounce() and move.variable.effect_activates()) {
 				constexpr auto uproar = false;
-				apply(Statuses::paralysis, user, other.pokemon(), weather, uproar);
+				apply_status(Statuses::paralysis, user, other.pokemon(), weather, uproar);
 			}
 			break;
 		case Moves::Brave_Bird:
@@ -471,7 +471,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Smog:
 			if (move.variable.effect_activates()) {
 				constexpr auto uproar = false;
-				apply(Statuses::poison, user, other.pokemon(), weather, uproar);
+				apply_status(Statuses::poison, user, other.pokemon(), weather, uproar);
 			}
 			break;
 		case Moves::Curse:
@@ -484,7 +484,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Sing:
 		case Moves::Sleep_Powder:
 		case Moves::Spore:
-			apply(Statuses::sleep, user, other.pokemon(), weather, user.is_uproaring() or other.pokemon().is_uproaring());
+			apply_status(Statuses::sleep, user, other.pokemon(), weather, user.is_uproaring() or other.pokemon().is_uproaring());
 			break;
 		case Moves::Defense_Curl:
 			boost(user.stage(), StatNames::DEF, 1_bi);
@@ -593,7 +593,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Thunder_Wave:
 		case Moves::Zap_Cannon: {
 			constexpr auto uproar = false;
-			apply(Statuses::paralysis, user, other.pokemon(), weather, uproar);
+			apply_status(Statuses::paralysis, user, other.pokemon(), weather, uproar);
 			break;
 		}
 		case Moves::Gravity:
@@ -771,13 +771,13 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Poison_Fang:
 			if (move.variable.effect_activates()) {
 				constexpr auto uproar = false;
-				apply(Statuses::toxic, user, other.pokemon(), weather, uproar);
+				apply_status(Statuses::toxic, user, other.pokemon(), weather, uproar);
 			}
 			break;
 		case Moves::Poison_Gas:
 		case Moves::Poison_Powder: {
 			constexpr auto uproar = false;
-			apply(Statuses::poison, user, other.pokemon(), weather, uproar);
+			apply_status(Statuses::poison, user, other.pokemon(), weather, uproar);
 			break;
 		}
 		case Moves::Power_Swap:
@@ -953,7 +953,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Toxic: {
 			constexpr auto uproar = false;
-			apply(Statuses::toxic, user, other.pokemon(), weather, uproar);
+			apply_status(Statuses::toxic, user, other.pokemon(), weather, uproar);
 			break;
 		}
 		case Moves::Toxic_Spikes:
@@ -964,7 +964,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Tri_Attack:
 			if (auto const status = move.variable.tri_attack_status(); status != Statuses::clear) {
 				constexpr auto uproar = false;
-				apply(status, user, other.pokemon(), weather, uproar);
+				apply_status(status, user, other.pokemon(), weather, uproar);
 			}
 			break;
 		case Moves::Trick_Room:
@@ -991,7 +991,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Will_O_Wisp: {
 			constexpr auto uproar = false;
-			apply(Statuses::burn, user, other.pokemon(), weather, uproar);
+			apply_status(Statuses::burn, user, other.pokemon(), weather, uproar);
 			break;
 		}
 		case Moves::Wish:

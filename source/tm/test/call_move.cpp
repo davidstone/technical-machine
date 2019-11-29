@@ -143,7 +143,7 @@ void sleep_talk() {
 
 	auto jolteon = attacker.pokemon();
 	constexpr auto uproar = false;
-	apply(Statuses::sleep, jolteon, weather, uproar);
+	apply_status(Statuses::sleep, jolteon, weather, uproar);
 
 	call_move(
 		generation,

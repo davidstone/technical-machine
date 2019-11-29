@@ -68,7 +68,7 @@ struct Pokemon {
 	friend Status get_status(Pokemon pokemon);
 	friend PokemonTypes get_type(Pokemon pokemon);
 
-	friend auto apply(Statuses status, Pokemon & user, Pokemon & target, Weather weather, bool uproar) -> void;
+	friend auto apply_status(Statuses status, Pokemon & user, Pokemon & target, Weather weather, bool uproar) -> void;
 	friend auto clear_status(Pokemon & pokemon) -> void;
 	friend void rest(Pokemon & user, bool other_is_uproaring);
 	friend void advance_status_from_move(Pokemon & pokemon, bool clear_status);
@@ -227,10 +227,10 @@ inline Status get_status(Pokemon const pokemon) {
 	return pokemon.m_status;
 }
 
-auto apply(Statuses status, Pokemon & user, Pokemon & target, Weather weather, bool uproar) -> void;
+auto apply_status(Statuses status, Pokemon & user, Pokemon & target, Weather weather, bool uproar) -> void;
 
-inline auto apply(Statuses const status, Pokemon & target, Weather const weather, bool const uproar) -> void {
-	apply(status, target, target, weather, uproar);
+inline auto apply_status(Statuses const status, Pokemon & target, Weather const weather, bool const uproar) -> void {
+	apply_status(status, target, target, weather, uproar);
 }
 
 inline auto clear_status(Pokemon & pokemon) -> void {
@@ -258,11 +258,11 @@ inline auto shift_status(Pokemon & user, Pokemon & target, Weather const weather
 		case Statuses::paralysis:
 		case Statuses::poison:
 		case Statuses::toxic:
-			apply(status, user, target, weather, uproar);
+			apply_status(status, user, target, weather, uproar);
 			break;
 		case Statuses::sleep:
 		case Statuses::rest:		// Fix
-			apply(Statuses::sleep, user, target, weather, uproar);
+			apply_status(Statuses::sleep, user, target, weather, uproar);
 			break;
 		default:
 			break;
