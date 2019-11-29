@@ -68,9 +68,13 @@ struct Pokemon {
 	friend Status get_status(Pokemon pokemon);
 	friend PokemonTypes get_type(Pokemon pokemon);
 
-	friend auto apply_status(Statuses status, Pokemon & user, Pokemon & target, Weather weather, bool uproar) -> void;
-	friend auto clear_status(Pokemon & pokemon) -> void;
-	friend void rest(Pokemon & user, bool other_is_uproaring);
+	void set_status(Statuses const status) & {
+		if (clears_status(m_item, status) and status != Statuses::clear) {
+			m_item = Item::None;
+		} else {
+			m_status = status;
+		}
+	}
 	friend void advance_status_from_move(Pokemon & pokemon, bool clear_status);
 	friend void advance_status_end_of_turn(Pokemon & pokemon, bool is_having_a_nightmare, Pokemon other_pokemon, bool uproar);
 
@@ -94,14 +98,6 @@ struct Pokemon {
 	friend auto set_hp_ev(Generation, Pokemon &, EV, IV) -> void;
 	friend auto set_stat_ev(Pokemon &, StatNames, EV, IV) -> void;
 private:
-	void set_status(Statuses const status) {
-		if (clears_status(m_item, status)) {
-			m_item = Item::None;
-		} else {
-			m_status = status;
-		}
-	}
-
 	MoveContainer m_moves;
 	
 	PokemonTypes current_type;
@@ -227,49 +223,10 @@ inline Status get_status(Pokemon const pokemon) {
 	return pokemon.m_status;
 }
 
-auto apply_status(Statuses status, Pokemon & user, Pokemon & target, Weather weather, bool uproar) -> void;
-
-inline auto apply_status(Statuses const status, Pokemon & target, Weather const weather, bool const uproar) -> void {
-	apply_status(status, target, target, weather, uproar);
-}
-
 inline auto clear_status(Pokemon & pokemon) -> void {
-	pokemon.m_status = {};
+	pokemon.set_status(Statuses::clear);
 }
 
-inline void rest(Pokemon & user, bool const other_is_uproaring) {
-	if (other_is_uproaring or is_sleeping(get_status(user))) {
-		return;
-	}
-	auto const hp = get_hp(user);
-	if (hp.current() != hp.max()) {
-		set_hp(user, hp.max());
-		user.set_status(Statuses::rest);
-	}
-}
-
-inline auto shift_status(Pokemon & user, Pokemon & target, Weather const weather) -> void {
-	// Uproar is irrelevant in this function
-	constexpr auto uproar = false;
-	auto const status = get_status(user).name();
-	// TODO: How does this work with Toxic? How does this work with Rest?
-	switch (status) {
-		case Statuses::burn:
-		case Statuses::paralysis:
-		case Statuses::poison:
-		case Statuses::toxic:
-			apply_status(status, user, target, weather, uproar);
-			break;
-		case Statuses::sleep:
-		case Statuses::rest:		// Fix
-			apply_status(Statuses::sleep, user, target, weather, uproar);
-			break;
-		default:
-			break;
-	}
-	// TODO: Does this clear status when the shift fails?
-	clear_status(user);
-}
 
 inline void advance_status_from_move(Pokemon & pokemon, bool const clear_status) {
 	pokemon.m_status.advance_from_move(get_ability(pokemon), clear_status);

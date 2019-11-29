@@ -97,7 +97,7 @@ auto curse(MutableActivePokemon user, MutableActivePokemon target) {
 }
 
 
-auto fling_side_effects(Generation const generation, Pokemon & user, MutableActivePokemon target, Weather const weather) {
+auto fling_side_effects(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) {
 	// TODO: Activate berry
 	auto apply_status = [&](Statuses const status) {
 		// Uproar is irrelevant in this function
@@ -141,7 +141,7 @@ void recoil(Pokemon & user, HP::current_type const damage, bounded::checked_inte
 	}
 }
 
-auto recoil_status(Pokemon & user, Pokemon & target, Weather const weather, HP::current_type const damage, Variable const variable, Statuses const status) {
+auto recoil_status(MutableActivePokemon user, MutableActivePokemon target, Weather const weather, HP::current_type const damage, Variable const variable, Statuses const status) {
 	// Uproar is irrelevant in this function
 	constexpr auto uproaring = false;
 	recoil(user, damage, 3_bi);

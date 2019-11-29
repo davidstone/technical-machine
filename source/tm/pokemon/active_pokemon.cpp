@@ -26,6 +26,8 @@
 #include <bounded/detail/overload.hpp>
 #include <bounded/unreachable.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
+
 namespace technicalmachine {
 
 template struct ActivePokemonImpl<true>;
@@ -269,6 +271,48 @@ auto MutableActivePokemon::direct_damage(HP::current_type const damage) const ->
 			[=](Bide & bide) { bide.add_damage(damage); },
 			[](auto const &) {}
 		));
+	}
+}
+
+namespace {
+
+auto status_can_apply(Statuses const status, Pokemon const user, ActivePokemon const target, Weather const weather, bool const uproar) {
+	return
+		is_clear(get_status(target)) and
+		(ignores_blockers(get_ability(user)) or !blocks_status(get_ability(target), status, weather)) and
+		!containers::any(get_type(target), [=](Type const type) { return blocks_status(type, status); }) and
+		!weather.blocks_status(status) and
+		(!uproar or (status != Statuses::sleep and status != Statuses::rest));
+}
+
+constexpr auto reflected_status(Statuses const status) -> bounded::optional<Statuses> {
+	switch (status) {
+	case Statuses::burn:
+	case Statuses::paralysis:
+	case Statuses::poison:
+		return status;
+	case Statuses::toxic:
+		return Statuses::poison;
+	case Statuses::clear:
+	case Statuses::freeze:
+	case Statuses::sleep:
+	case Statuses::rest:
+		return bounded::none;
+	}
+}
+
+} // namespace
+
+auto apply_status(Statuses const status, MutableActivePokemon user, MutableActivePokemon target, Weather const weather, bool const uproar) -> void {
+	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
+	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
+	if (!status_can_apply(status, user, target, weather, uproar)) {
+		return;
+	}
+	static_cast<Pokemon &>(target).set_status(status);
+	auto const reflected = reflected_status(status);
+	if (reflected and reflects_status(get_ability(target))) {
+		apply_status(*reflected, user, weather, uproar);
 	}
 }
 

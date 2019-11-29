@@ -91,35 +91,6 @@ auto Pokemon::has_been_seen() const -> bool {
 	return m_has_been_seen;
 }
 
-namespace {
-
-auto status_can_apply(Statuses const status, Pokemon const user, Pokemon const target, Weather const weather, bool const uproar) {
-	return
-		is_clear(get_status(target)) and
-		(ignores_blockers(get_ability(user)) or !blocks_status(get_ability(target), status, weather)) and
-		!containers::any(get_type(target), [=](Type const type) { return blocks_status(type, status); }) and
-		!weather.blocks_status(status) and
-		(!uproar or (status != Statuses::sleep and status != Statuses::rest));
-}
-
-constexpr auto reflected_status(Statuses const status) -> bounded::optional<Statuses> {
-	switch (status) {
-	case Statuses::burn:
-	case Statuses::paralysis:
-	case Statuses::poison:
-		return status;
-	case Statuses::toxic:
-		return Statuses::poison;
-	case Statuses::clear:
-	case Statuses::freeze:
-	case Statuses::sleep:
-	case Statuses::rest:
-		return bounded::none;
-	}
-}
-
-}	// namespace
-
 void activate_pinch_item(Pokemon & pokemon) {
 	// TODO: Confusion damage does not activate healing berries in Generation 5+
 	auto consume = [&] { set_item(pokemon, Item::None); };
@@ -142,19 +113,6 @@ void activate_pinch_item(Pokemon & pokemon) {
 			break;
 		default:
 			break;
-	}
-}
-
-auto apply_status(Statuses const status, Pokemon & user, Pokemon & target, Weather const weather, bool const uproar) -> void {
-	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
-	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
-	if (!status_can_apply(status, user, target, weather, uproar)) {
-		return;
-	}
-	target.set_status(status);
-	auto const reflected = reflected_status(status);
-	if (reflected and reflects_status(get_ability(target))) {
-		apply_status(*reflected, user, weather, uproar);
 	}
 }
 

@@ -51,7 +51,7 @@ struct Variable {
 		m_value = 1_bi;
 	}
 
-	auto fang_side_effects(Pokemon & user, MutableActivePokemon target, Weather const weather, Statuses const status) const {
+	auto fang_side_effects(MutableActivePokemon user, MutableActivePokemon target, Weather const weather, Statuses const status) const {
 		// Uproar is irrelevant here
 		constexpr auto uproar = false;
 		switch (m_value.value()) {
