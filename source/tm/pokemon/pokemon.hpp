@@ -83,7 +83,9 @@ struct Pokemon {
 
 	void change_type(Type new_type);
 
-	auto has_been_seen() const -> bool;
+	auto has_been_seen() const -> bool {
+		return m_has_been_seen;
+	}
 
 	friend auto all_moves(Pokemon & pokemon) -> MoveContainer &;
 	friend void set_hp(Pokemon & pokemon, auto hp);

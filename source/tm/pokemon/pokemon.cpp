@@ -76,7 +76,7 @@ Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Speci
 
 Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Happiness const happiness) : 
 	Pokemon::Pokemon(generation, my_team_size, species, level, gender, Item::None, Ability::Honey_Gather, Nature::Hardy, happiness)
-	{
+{
 	m_ability_is_known = false;
 	m_item_is_known = false;
 	m_nature_is_known = false;
@@ -85,10 +85,6 @@ Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Speci
 
 void Pokemon::change_type(Type const new_type) {
 	current_type = PokemonTypes(new_type);
-}
-
-auto Pokemon::has_been_seen() const -> bool {
-	return m_has_been_seen;
 }
 
 void activate_pinch_item(Pokemon & pokemon) {
