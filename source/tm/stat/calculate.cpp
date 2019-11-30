@@ -302,7 +302,7 @@ auto calculate_defense(Generation const generation, ActivePokemon const defender
 namespace {
 
 auto special_defense_sandstorm_boost(Generation const generation, ActivePokemon const defender, Weather const weather) {
-	return rational(BOUNDED_CONDITIONAL(is_type(defender, Type::Rock, defender.is_roosting()) and weather.sand() and generation >= Generation::four, 3_bi, 2_bi), 2_bi);
+	return rational(BOUNDED_CONDITIONAL(is_type(defender, Type::Rock) and weather.sand() and generation >= Generation::four, 3_bi, 2_bi), 2_bi);
 }
 
 }	// namespace

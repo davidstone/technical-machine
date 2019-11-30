@@ -42,7 +42,7 @@ bool blocks_switching(Generation, Ability const ability, ActivePokemon const swi
 		case Ability::Arena_Trap:
 			return grounded(switcher, weather);
 		case Ability::Magnet_Pull:
-			return is_type(switcher, Type::Steel, switcher.is_roosting());
+			return is_type(switcher, Type::Steel);
 		default:
 			return false;
 	}

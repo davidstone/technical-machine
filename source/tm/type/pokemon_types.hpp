@@ -25,7 +25,6 @@
 
 namespace technicalmachine {
 enum class Generation : std::uint8_t;
-struct Pokemon;
 
 struct PokemonTypes {
 	// Can a Pokemon ever have 0 types?
@@ -53,7 +52,5 @@ private:
 
 	containers::array<Type, 2> m_types;
 };
-
-auto is_type(Pokemon const &, Type, bool roosting) -> bool;
 
 }	// namespace technicalmachine

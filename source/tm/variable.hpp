@@ -33,7 +33,6 @@
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
-struct ActivePokemon;
 struct Team;
 
 struct Variable {

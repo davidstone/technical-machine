@@ -18,12 +18,9 @@
 
 #include <tm/type/pokemon_types.hpp>
 
-#include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
 #include <tm/generation.hpp>
-
-#include <containers/algorithms/all_any_none.hpp>
 
 namespace technicalmachine {
 
@@ -910,10 +907,6 @@ PokemonTypes::PokemonTypes(Generation const generation, Species const species):
 		case Species::Marowak_Alolan: return PokemonTypes(Type::Fire, Type::Ghost);
 	}}())
 {
-}
-
-auto is_type(Pokemon const & pokemon, Type const type, bool const roosting) -> bool {
-	return (type != Type::Flying or !roosting) and containers::any_equal(get_type(pokemon), type);
 }
 
 }	// namespace technicalmachine

@@ -118,7 +118,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 			heal(pokemon, rational(1_bi, 16_bi));
 			break;
 		case Item::Black_Sludge: {
-			auto const numerator = BOUNDED_CONDITIONAL(is_type(pokemon, Type::Poison, false), 1_bi, -1_bi);
+			auto const numerator = BOUNDED_CONDITIONAL(is_type(pokemon, Type::Poison), 1_bi, -1_bi);
 			heal(pokemon, rational(numerator, 16_bi));
 			break;
 		}

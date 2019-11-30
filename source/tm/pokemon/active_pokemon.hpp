@@ -43,6 +43,8 @@
 
 #include <tm/stat/stage.hpp>
 
+#include <tm/type/pokemon_types.hpp>
+
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/random_damage.hpp>
@@ -51,6 +53,8 @@
 
 #include <bounded/integer.hpp>
 #include <bounded/detail/variant/variant.hpp>
+
+#include <containers/algorithms/all_any_none.hpp>
 
 #include <variant>
 
@@ -377,6 +381,12 @@ struct ActivePokemon : ActivePokemonImpl<true> {
 	{
 	}
 };
+
+inline auto is_type(ActivePokemon const pokemon, Type const type) -> bool {
+	return
+		(type != Type::Flying or !pokemon.is_roosting()) and
+		containers::any_equal(get_type(pokemon), type);
+}
 
 auto grounded(ActivePokemon, Weather) -> bool;
 
