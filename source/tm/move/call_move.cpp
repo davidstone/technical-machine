@@ -805,7 +805,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			weather.activate_rain(extends_rain(get_item(user)));
 			break;
 		case Moves::Rapid_Spin:
-			if (!Effectiveness(generation, move_type, get_type(other.pokemon())).has_no_effect()) {
+			if (!Effectiveness(generation, move_type, other.pokemon().types()).has_no_effect()) {
 				user_team.clear_field();
 			}
 			break;

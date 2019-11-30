@@ -104,7 +104,7 @@ struct Team {
 		}
 
 		auto const replacement_pokemon = pokemon();
-		replacement_pokemon.switch_in();
+		replacement_pokemon.switch_in(generation);
 		apply(generation, entry_hazards, replacement_pokemon, weather);
 		if (get_hp(replacement_pokemon) != 0_bi) {
 			activate_ability_on_switch(generation, replacement_pokemon, other, weather);

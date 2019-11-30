@@ -44,7 +44,7 @@ namespace {
 
 bool affects_target(Generation const generation, Type const & move_type, ActivePokemon const target, Weather const weather) {
 	return
-		!Effectiveness(generation, move_type, get_type(target)).has_no_effect() and
+		!Effectiveness(generation, move_type, target.types()).has_no_effect() and
 		(move_type != Type::Ground or grounded(target, weather));
 }
 
@@ -231,7 +231,7 @@ auto resistance_berry_divisor(Item const item, Type const type, Effectiveness co
 auto regular_damage(Generation const generation, Team const & attacker_team, ExecutedMove const move, Type const move_type, Team const & defender_team, Weather const weather) {
 	auto const attacker = attacker_team.pokemon();
 	auto const defender = defender_team.pokemon();
-	auto const effectiveness = Effectiveness(generation, move_type, get_type(defender));
+	auto const effectiveness = Effectiveness(generation, move_type, defender.types());
 
 	auto const temp =
 		(level_multiplier(attacker) + 2_bi) *

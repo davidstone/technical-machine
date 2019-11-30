@@ -51,7 +51,6 @@ namespace technicalmachine {
 // will not update Hidden Power
 Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Species const species, Level const level, Gender const gender, Item const item, Ability const ability, Nature const nature, Happiness const happiness):
 	m_moves(generation, my_team_size),
-	current_type(generation, species),
 	stats(generation, species, level),
 
 	m_species(species),
@@ -82,10 +81,6 @@ Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Speci
 	m_nature_is_known = false;
 }
 
-
-void Pokemon::change_type(Type const new_type) {
-	current_type = PokemonTypes(new_type);
-}
 
 void activate_pinch_item(Pokemon & pokemon) {
 	// TODO: Confusion damage does not activate healing berries in Generation 5+

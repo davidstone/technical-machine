@@ -127,7 +127,7 @@ auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon
 
 
 auto score_pokemon(Evaluate const & evaluate, Generation const generation, Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const weather) {
-	auto const types = get_type(pokemon);
+	auto const types = PokemonTypes(generation, get_species(pokemon));
 	auto const grounded =
 		containers::any_equal(types, Type::Flying) or
 		is_immune_to_ground(get_ability(pokemon));

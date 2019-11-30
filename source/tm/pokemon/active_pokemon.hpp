@@ -122,6 +122,7 @@ private:
 	SlowStart slow_start;
 	Stockpile stockpile;
 	TauntCounter taunt;
+	PokemonTypes types{Type::Typeless};
 	YawnCounter yawn;
 	HP::current_type direct_damage_received = 0_bi;
 	bool aqua_ring = false;
@@ -347,6 +348,10 @@ public:
 		return m_flags.taunt.is_active();
 	}
 
+	auto types() const {
+		return m_flags.types;
+	}
+
 	auto is_uproaring() const -> bool {
 		return m_flags.is_uproaring();
 	}
@@ -384,7 +389,7 @@ struct ActivePokemon : ActivePokemonImpl<true> {
 inline auto is_type(ActivePokemon const pokemon, Type const type) -> bool {
 	return
 		(type != Type::Flying or !pokemon.is_roosting()) and
-		containers::any_equal(get_type(pokemon), type);
+		containers::any_equal(pokemon.types(), type);
 }
 
 auto grounded(ActivePokemon, Weather) -> bool;
@@ -590,8 +595,9 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 
 	auto use_substitute() const -> void;
 
-	auto switch_in() const {
+	auto switch_in(Generation const generation) const {
 		m_pokemon.mark_as_seen();
+		m_flags.types = PokemonTypes(generation, get_species(m_pokemon));
 		if (get_item(m_pokemon) == Item::Berserk_Gene) {
 			activate_berserk_gene(*this);
 		}
@@ -611,6 +617,9 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto torment(Generation const generation) const {
 		m_flags.is_tormented = true;
 		apply_own_mental_herb(generation, *this);
+	}
+	auto set_type(Type const type) const {
+		m_flags.types = PokemonTypes(type);
 	}
 	auto u_turn() const -> void;
 	auto use_uproar() const -> void;

@@ -61,7 +61,7 @@ auto apply(Generation const generation, EntryHazards & hazards, MutableActivePok
 		}
 	}
 	if (hazards.stealth_rock()) {
-		heal(switcher, rational(-1_bi, 8_bi) * Effectiveness(generation, Type::Rock, get_type(switcher)));
+		heal(switcher, rational(-1_bi, 8_bi) * Effectiveness(generation, Type::Rock, switcher.types()));
 	}
 }
 

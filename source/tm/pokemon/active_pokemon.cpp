@@ -280,7 +280,7 @@ auto status_can_apply(Statuses const status, Pokemon const user, ActivePokemon c
 	return
 		is_clear(get_status(target)) and
 		(ignores_blockers(get_ability(user)) or !blocks_status(get_ability(target), status, weather)) and
-		!containers::any(get_type(target), [=](Type const type) { return blocks_status(type, status); }) and
+		!containers::any(target.types(), [=](Type const type) { return blocks_status(type, status); }) and
 		!weather.blocks_status(status) and
 		(!uproar or (status != Statuses::sleep and status != Statuses::rest));
 }

@@ -90,9 +90,9 @@ auto is_immune_to_sandstorm(PokemonTypes const types) -> bool {
 }
 
 void end_of_turn3(MutableActivePokemon pokemon, Weather const weather) {
-	if (weather.hail() and !is_immune_to_hail(get_type(pokemon)))
+	if (weather.hail() and !is_immune_to_hail(pokemon.types()))
 		heal(pokemon, rational(-1_bi, 16_bi));
-	if (weather.sand() and !is_immune_to_sandstorm(get_type(pokemon))) {
+	if (weather.sand() and !is_immune_to_sandstorm(pokemon.types())) {
 		heal(pokemon, rational(-1_bi, 16_bi));
 	}
 	weather_healing_ability(pokemon, weather);

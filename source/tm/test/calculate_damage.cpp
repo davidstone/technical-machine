@@ -49,7 +49,7 @@ Team max_damage_physical_attacker(Item const item, Ability const ability, Nature
 	auto pokemon = attacker.pokemon();
 	containers::emplace_back(all_moves(pokemon), max_damage_physical_move);
 
-	pokemon.switch_in();
+	pokemon.switch_in(generation);
 	
 	pokemon.defense_curl();
 	for (unsigned n = 0; n != 10; ++n) {
@@ -72,7 +72,7 @@ Team max_damage_physical_defender() {
 	auto defender = Team(max_pokemon_per_team);
 	defender.add_pokemon(generation, Species::Combee, Level(1_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Hasty);
 	auto pokemon = defender.pokemon();
-	pokemon.switch_in();
+	pokemon.switch_in(generation);
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi), IV(0_bi));
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		boost(pokemon.stage(), StatNames::DEF, -2_bi);
@@ -84,7 +84,7 @@ Team max_damage_special_defender() {
 	auto defender = Team(max_pokemon_per_team);
 	defender.add_pokemon(generation, Species::Paras, Level(1_bi), Gender::male, Item::None, Ability::Dry_Skin, Nature::Hardy);
 	auto d = defender.pokemon();
-	d.switch_in();
+	d.switch_in(generation);
 	set_stat_ev(d, StatNames::SPD, EV(0_bi), IV(0_bi));
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		boost(d.stage(), StatNames::SPD, -2_bi);
@@ -188,9 +188,9 @@ void special_damage_test() {
 	weather.activate_sun(Weather::permanent);
 
 	auto attacker = max_damage_special_attacker(Item::Metronome, Ability::Blaze, Nature::Modest);
-	Pokemon & a = attacker.pokemon();
+	auto a = attacker.pokemon();
 	auto const move = containers::emplace_back(all_moves(a), generation, Moves::Blast_Burn);
-	a.change_type(Type::Fire);
+	a.set_type(Type::Fire);
 
 	set_stat_ev(a, StatNames::SPA, EV(EV::max));
 	boost(attacker.pokemon().stage(), StatNames::SPA, 6_bi);

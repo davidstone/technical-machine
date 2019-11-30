@@ -34,8 +34,6 @@
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stats.hpp>
 
-#include <tm/type/pokemon_types.hpp>
-
 #include <bounded/assert.hpp>
 
 #include <containers/string.hpp>
@@ -66,8 +64,6 @@ struct Pokemon {
 	friend HP get_hp(Pokemon pokemon);
 	friend Stat get_stat(Pokemon pokemon, StatNames index_stat);
 	friend Status get_status(Pokemon pokemon);
-	friend PokemonTypes get_type(Pokemon pokemon);
-
 	void set_status(Statuses const status) & {
 		if (clears_status(m_item, status) and status != Statuses::clear) {
 			m_item = Item::None;
@@ -75,14 +71,13 @@ struct Pokemon {
 			m_status = status;
 		}
 	}
+
 	friend void advance_status_from_move(Pokemon & pokemon, bool clear_status);
 	friend void advance_status_end_of_turn(Pokemon & pokemon, bool is_having_a_nightmare, Pokemon other_pokemon, bool uproar);
 
 	void switch_out() & {
 		m_status.handle_switch(get_ability(*this));
 	}
-
-	void change_type(Type new_type);
 
 	auto has_been_seen() const -> bool {
 		return m_has_been_seen;
@@ -106,8 +101,6 @@ struct Pokemon {
 private:
 	MoveContainer m_moves;
 	
-	PokemonTypes current_type;
-
 	Stats stats;
 
 	Species m_species;
@@ -233,17 +226,12 @@ inline auto clear_status(Pokemon & pokemon) -> void {
 	pokemon.set_status(Statuses::clear);
 }
 
-
 inline void advance_status_from_move(Pokemon & pokemon, bool const clear_status) {
 	pokemon.m_status.advance_from_move(get_ability(pokemon), clear_status);
 }
 
 inline void advance_status_end_of_turn(Pokemon & pokemon, bool const is_having_a_nightmare, Pokemon const other, bool const uproar) {
 	pokemon.m_status.end_of_turn(pokemon, is_having_a_nightmare, other, uproar);
-}
-
-inline PokemonTypes get_type(Pokemon const pokemon) {
-	return pokemon.current_type;
 }
 
 inline Level get_level(Pokemon const pokemon) {
@@ -257,7 +245,6 @@ inline Happiness get_happiness(Pokemon const pokemon) {
 inline HiddenPower get_hidden_power(Pokemon const pokemon) {
 	return pokemon.m_hidden_power;
 }
-
 
 containers::string to_string(Pokemon pokemon);
 
