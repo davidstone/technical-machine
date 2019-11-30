@@ -125,7 +125,9 @@ void sleep_talk() {
 	auto weather = Weather{};
 	auto attacker = Team(1_bi, true);
 	{
-		auto & jolteon = attacker.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::female, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+		attacker.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::female, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+		auto jolteon = attacker.pokemon();
+		jolteon.switch_in();
 		containers::append(regular_moves(jolteon), move_array(Moves::Sleep_Talk, Moves::Thunderbolt));
 		set_hp_ev(generation, jolteon, EV(4_bi));
 		set_stat_ev(jolteon, StatNames::SPA, EV(252_bi));
@@ -134,7 +136,9 @@ void sleep_talk() {
 
 	auto defender = Team(1_bi);
 	{
-		auto & gyarados = defender.add_pokemon(generation, Species::Gyarados, Level(100_bi), Gender::male, Item::Life_Orb, Ability::Intimidate, Nature::Adamant);
+		defender.add_pokemon(generation, Species::Gyarados, Level(100_bi), Gender::male, Item::Life_Orb, Ability::Intimidate, Nature::Adamant);
+		auto gyarados = defender.pokemon();
+		gyarados.switch_in();
 		push_back(regular_moves(gyarados), Move(generation, Moves::Earthquake));
 		set_hp_ev(generation, gyarados, EV(4_bi));
 		set_stat_ev(gyarados, StatNames::ATK, EV(252_bi));

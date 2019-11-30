@@ -83,9 +83,9 @@ struct Battle {
 			constexpr auto foe_flags = EndOfTurnFlags{false, false};
 			end_of_turn(m_generation, m_ai, ai_flags, m_foe, foe_flags, m_weather);
 		} else {
-			for (auto side : {std::ref(m_ai), std::ref(m_foe)}) {
-				side.get().pokemon().set_not_moved();
-			}
+			// TODO: Properly order this
+			m_ai.pokemon().switch_in();
+			m_foe.pokemon().switch_in();
 		}
 	}
 

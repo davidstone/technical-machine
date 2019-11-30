@@ -64,7 +64,8 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	Team team1(1_bi, true);
 	{
 		team1.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::male, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
-		Pokemon & jolteon = team1.pokemon();
+		auto jolteon = team1.pokemon();
+		jolteon.switch_in();
 		containers::append(regular_moves(jolteon), shuffled(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball));
 		for (auto const stat : {StatNames::SPA, StatNames::SPE}) {
 			set_stat_ev(jolteon, stat, EV(252_bi));
@@ -74,7 +75,8 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	Team team2(1_bi);
 	{
 		team2.add_pokemon(generation, Species::Gyarados, Level(100_bi), Gender::male, Item::Leftovers, Ability::Intimidate, Nature::Adamant);
-		Pokemon & gyarados = team2.pokemon();
+		auto gyarados = team2.pokemon();
+		gyarados.switch_in();
 		containers::append(regular_moves(gyarados), shuffled(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt));
 		for (auto const stat : {StatNames::ATK, StatNames::SPE}) {
 			set_stat_ev(gyarados, stat, EV(252_bi));
@@ -86,7 +88,8 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	Team team3(1_bi);
 	{
 		team3.add_pokemon(generation, Species::Shedinja, Level(100_bi), Gender::male, Item::Lum_Berry, Ability::Wonder_Guard, Nature::Adamant);
-		Pokemon & shedinja = team3.pokemon();
+		auto shedinja = team3.pokemon();
+		shedinja.switch_in();
 		containers::append(regular_moves(shedinja), shuffled(Moves::Swords_Dance, Moves::X_Scissor, Moves::Shadow_Sneak, Moves::Will_O_Wisp));
 		for (auto const stat : {StatNames::ATK, StatNames::SPE}) {
 			set_stat_ev(shedinja, stat, EV(252_bi));
@@ -106,7 +109,8 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 	Team attacker(1_bi, true);
 	{
 		attacker.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::male, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
-		Pokemon & jolteon = attacker.pokemon();
+		auto jolteon = attacker.pokemon();
+		jolteon.switch_in();
 		containers::append(regular_moves(jolteon), shuffled(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball));
 		for (auto const stat : {StatNames::SPA, StatNames::SPE}) {
 			set_stat_ev(jolteon, stat, EV(252_bi));
@@ -116,7 +120,8 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 	Team defender(1_bi);
 	{
 		defender.add_pokemon(generation, Species::Swampert, Level(100_bi), Gender::male, Item::Leftovers, Ability::Torrent, Nature::Bold);
-		Pokemon & swampert = defender.pokemon();
+		auto swampert = defender.pokemon();
+		swampert.switch_in();
 		containers::append(regular_moves(swampert), shuffled(Moves::Surf, Moves::Ice_Beam));
 		set_hp_ev(generation, swampert, EV(252_bi));
 		set_stat_ev(swampert, StatNames::DEF, EV(252_bi));
@@ -133,7 +138,8 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 	Team attacker(1_bi, true);
 	{
 		attacker.add_pokemon(generation, Species::Charizard, Level(100_bi), Gender::male, Item::Salac_Berry, Ability::Blaze, Nature::Adamant);
-		Pokemon & charizard = attacker.pokemon();
+		auto charizard = attacker.pokemon();
+		charizard.switch_in();
 		containers::append(regular_moves(charizard), shuffled(Moves::Fire_Punch, Moves::Belly_Drum, Moves::Earthquake, Moves::Double_Edge));
 		for (auto const stat : {StatNames::ATK, StatNames::SPE}) {
 			set_stat_ev(charizard, stat, EV(252_bi));
@@ -143,7 +149,8 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 	Team defender(1_bi);
 	{
 		defender.add_pokemon(generation, Species::Mew, Level(100_bi), Gender::male, Item::Leftovers, Ability::Synchronize, Nature::Impish);
-		Pokemon & mew = defender.pokemon();
+		auto mew = defender.pokemon();
+		mew.switch_in();
 		containers::append(regular_moves(mew), shuffled(Moves::Soft_Boiled));
 		set_hp_ev(generation, mew, EV(252_bi));
 		set_stat_ev(mew, StatNames::SPD, EV(64_bi));
@@ -160,7 +167,8 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 	Team attacker(1_bi, true);
 	{
 		attacker.add_pokemon(generation, Species::Hippopotas, Level(100_bi), Gender::male, Item::Leftovers, Ability::Sand_Stream, Nature::Adamant);
-		Pokemon & hippopotas = attacker.pokemon();
+		auto hippopotas = attacker.pokemon();
+		hippopotas.switch_in();
 		containers::append(regular_moves(hippopotas), shuffled(Moves::Curse, Moves::Crunch));
 		set_hp_ev(generation, hippopotas, EV(252_bi));
 		set_stat_ev(hippopotas, StatNames::ATK, EV(252_bi));
@@ -170,7 +178,8 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 	Team defender(1_bi);
 	{
 		defender.add_pokemon(generation, Species::Wobbuffet, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Shadow_Tag, Nature::Bold);
-		Pokemon & wobbuffet = defender.pokemon();
+		auto wobbuffet = defender.pokemon();
+		wobbuffet.switch_in();
 		containers::append(regular_moves(wobbuffet), shuffled(Moves::Counter, Moves::Encore));
 		set_hp_ev(generation, wobbuffet, EV(252_bi));
 		set_stat_ev(wobbuffet, StatNames::DEF, EV(252_bi));
@@ -189,13 +198,13 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	Team attacker(2_bi, true);
 	{
 		attacker.add_pokemon(generation, Species::Smeargle, Level(100_bi), Gender::male, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly);
-		auto & smeargle = back(attacker.all_pokemon());
+		auto smeargle = attacker.pokemon();
+		smeargle.switch_in();
 		containers::append(regular_moves(smeargle), shuffled(Moves::Baton_Pass, Moves::Belly_Drum));
 	}
 
 	{
-		attacker.add_pokemon(generation, Species::Alakazam, Level(100_bi), Gender::male, Item::Lum_Berry, Ability::Synchronize, Nature::Jolly);
-		auto & alakazam = back(attacker.all_pokemon());
+		auto & alakazam = attacker.add_pokemon(generation, Species::Alakazam, Level(100_bi), Gender::male, Item::Lum_Berry, Ability::Synchronize, Nature::Jolly);
 		containers::append(regular_moves(alakazam), shuffled(Moves::Psycho_Cut, Moves::Recover));
 		set_stat_ev(alakazam, StatNames::ATK, EV(252_bi));
 	}
@@ -203,14 +212,14 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	Team defender(2_bi);
 	{
 		defender.add_pokemon(generation, Species::Gengar, Level(100_bi), Gender::male, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
-		Pokemon & gengar = defender.pokemon();
+		auto gengar = defender.pokemon();
+		gengar.switch_in();
 		containers::append(regular_moves(gengar), shuffled(Moves::Shadow_Ball));
 		set_stat_ev(gengar, StatNames::SPA, EV(252_bi));
 	}
 
 	{
-		defender.add_pokemon(generation, Species::Misdreavus, Level(100_bi), Gender::female, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
-		Pokemon & misdreavus = back(defender.all_pokemon());
+		auto & misdreavus = defender.add_pokemon(generation, Species::Misdreavus, Level(100_bi), Gender::female, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
 		containers::append(regular_moves(misdreavus), shuffled(Moves::Shadow_Ball));
 		set_stat_ev(misdreavus, StatNames::SPA, EV(252_bi));
 	}
@@ -228,16 +237,15 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	Team attacker(3_bi, true);
 
 	attacker.add_pokemon(generation, Species::Magikarp, Level(5_bi), Gender::male, Item::Leftovers, Ability::Swift_Swim, Nature::Jolly);
+	attacker.pokemon().switch_in();
 
 	{
-		attacker.add_pokemon(generation, Species::Slugma, Level(100_bi), Gender::male, Item::Choice_Specs, Ability::Magma_Armor, Nature::Jolly);
-		auto & slugma = back(attacker.all_pokemon());
+		auto & slugma = attacker.add_pokemon(generation, Species::Slugma, Level(100_bi), Gender::male, Item::Choice_Specs, Ability::Magma_Armor, Nature::Jolly);
 		containers::append(regular_moves(slugma), shuffled(Moves::Flamethrower, Moves::Earth_Power));
 	}
 
 	{
-		attacker.add_pokemon(generation, Species::Zapdos, Level(100_bi), Gender::genderless, Item::Choice_Specs, Ability::Pressure, Nature::Modest);
-		auto & zapdos = back(attacker.all_pokemon());
+		auto & zapdos = attacker.add_pokemon(generation, Species::Zapdos, Level(100_bi), Gender::genderless, Item::Choice_Specs, Ability::Pressure, Nature::Modest);
 		containers::emplace_back(regular_moves(zapdos), generation, Moves::Thunderbolt);
 		set_hp_ev(generation, zapdos, EV(4_bi));
 		for (auto const stat : { StatNames::SPA, StatNames::SPE }) {
@@ -248,7 +256,8 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	Team defender(1_bi);
 	{
 		defender.add_pokemon(generation, Species::Suicune, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Pressure, Nature::Bold);
-		Pokemon & suicune = defender.pokemon();
+		auto suicune = defender.pokemon();
+		suicune.switch_in();
 		containers::append(regular_moves(suicune), shuffled(Moves::Calm_Mind, Moves::Surf, Moves::Ice_Beam));
 		set_hp_ev(generation, suicune, EV(252_bi));
 		set_stat_ev(suicune, StatNames::DEF, EV(252_bi));
@@ -279,7 +288,8 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 	Team attacker(1_bi, true);
 	{
 		attacker.add_pokemon(generation, Species::Latias, Level(100_bi), Gender::female, Item::Leftovers, Ability::Levitate, Nature::Calm);
-		Pokemon & latias = attacker.pokemon();
+		auto latias = attacker.pokemon();
+		latias.switch_in();
 		containers::append(regular_moves(latias), shuffled(Moves::Calm_Mind, Moves::Dragon_Pulse, Moves::Recover));
 		set_hp_ev(generation, latias, EV(252_bi));
 		set_stat_ev(latias, StatNames::SPA, EV(120_bi));
@@ -289,7 +299,8 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 	Team defender(1_bi);
 	{
 		defender.add_pokemon(generation, Species::Suicune, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Pressure, Nature::Calm);
-		Pokemon & suicune = defender.pokemon();
+		auto suicune = defender.pokemon();
+		suicune.switch_in();
 		containers::append(regular_moves(suicune), shuffled(Moves::Ice_Beam, Moves::Rest));
 		set_hp_ev(generation, suicune, EV(252_bi));
 		set_stat_ev(suicune, StatNames::SPA, EV(120_bi));
@@ -307,7 +318,9 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	constexpr auto depth = Depth(1U, 0U);
 	auto attacker = Team(1_bi, true);
 	{
-		auto & jolteon = attacker.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::female, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+		attacker.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::female, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+		auto jolteon = attacker.pokemon();
+		jolteon.switch_in();
 		containers::append(regular_moves(jolteon), shuffled(Moves::Sleep_Talk, Moves::Thunderbolt));
 		set_hp_ev(generation, jolteon, EV(4_bi));
 		set_stat_ev(jolteon, StatNames::SPA, EV(252_bi));
@@ -316,7 +329,9 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 
 	auto defender = Team(1_bi);
 	{
-		auto & gyarados = defender.add_pokemon(generation, Species::Gyarados, Level(100_bi), Gender::male, Item::Life_Orb, Ability::Intimidate, Nature::Adamant);
+		defender.add_pokemon(generation, Species::Gyarados, Level(100_bi), Gender::male, Item::Life_Orb, Ability::Intimidate, Nature::Adamant);
+		auto gyarados = defender.pokemon();
+		gyarados.switch_in();
 		containers::append(regular_moves(gyarados), shuffled(Moves::Earthquake));
 		set_hp_ev(generation, gyarados, EV(4_bi));
 		set_stat_ev(gyarados, StatNames::ATK, EV(252_bi));
@@ -371,8 +386,7 @@ void performance(Evaluate const & evaluate) {
 	auto const weather = Weather{};
 	constexpr auto depth = Depth(2U, 0U);
 	auto add_pokemon = [&](Team & team, Species const species, auto... moves) {
-		team.add_pokemon(generation, species, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Pickup, Nature::Hardy);
-		Pokemon & pokemon = back(team.all_pokemon());
+		auto & pokemon = team.add_pokemon(generation, species, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Pickup, Nature::Hardy);
 		containers::append(regular_moves(pokemon), containers::array{Move(generation, moves)...});
 		set_hp_ev(generation, pokemon, EV(252_bi));
 		set_stat_ev(pokemon, StatNames::DEF, EV(120_bi));
@@ -385,6 +399,8 @@ void performance(Evaluate const & evaluate) {
 			add_pokemon(*team, species, Moves::Recover, Moves::Dragon_Claw, Moves::Earthquake, Moves::Dragon_Dance);
 		}
 	}
+	ai.pokemon().switch_in();
+	foe.pokemon().switch_in();
 
 	expectiminimax(generation, ai, foe, weather, evaluate, depth, std::cout);
 }
