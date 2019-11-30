@@ -168,7 +168,7 @@ auto active_pokemon_can_be_phazed(Team const & team) {
 	return !team.pokemon().ingrained() and !blocks_phazing(get_ability(team.pokemon())) and size(team.all_pokemon()) > 1_bi;
 }
 
-auto phaze(Generation const generation, Team & user, Team & target, Weather & weather, Variable const variable) {
+auto phaze(Generation const generation, MutableActivePokemon user, Team & target, Weather & weather, Variable const variable) {
 	if (active_pokemon_can_be_phazed(target)) {
 		target.switch_pokemon(generation, user, weather, variable.phaze_index());
 		target.pokemon().update_before_move();
@@ -824,7 +824,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Roar:
 		case Moves::Whirlwind:
-			phaze(generation, user_team, other, weather, move.variable);
+			phaze(generation, user, other, weather, move.variable);
 			break;
 		case Moves::Role_Play:		// Fix
 			break;
@@ -927,7 +927,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Switch3:
 		case Moves::Switch4:
 		case Moves::Switch5:
-			user_team.switch_pokemon(generation, other, weather, to_replacement(move.name));
+			user_team.switch_pokemon(generation, other.pokemon(), weather, to_replacement(move.name));
 			break;
 		case Moves::Switcheroo:
 		case Moves::Trick:

@@ -89,10 +89,9 @@ struct Team {
 		entry_hazards = EntryHazards{};
 	}
 
-	auto switch_pokemon(Generation const generation, Team & other, Weather & weather, TeamIndex const replacement) -> void {
-		m_flags.reset_switch();
-		Pokemon & original_pokemon = pokemon();
-		switch_out(original_pokemon);
+	auto switch_pokemon(Generation const generation, MutableActivePokemon other, Weather & weather, TeamIndex const replacement) -> void {
+		auto original_pokemon = pokemon();
+		original_pokemon.switch_out();
 
 		if (get_hp(original_pokemon) != 0_bi) {
 			all_pokemon().set_index(replacement);
@@ -105,13 +104,10 @@ struct Team {
 		}
 
 		auto const replacement_pokemon = pokemon();
-		switch_in(replacement_pokemon);
+		replacement_pokemon.switch_in();
 		apply(generation, entry_hazards, replacement_pokemon, weather);
 		if (get_hp(replacement_pokemon) != 0_bi) {
-			activate_ability_on_switch(generation, replacement_pokemon, other.pokemon(), weather);
-		}
-		if (get_item(replacement_pokemon) == Item::Berserk_Gene) {
-			activate_berserk_gene(replacement_pokemon);
+			activate_ability_on_switch(generation, replacement_pokemon, other, weather);
 		}
 	}
 

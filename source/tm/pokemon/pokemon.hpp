@@ -78,13 +78,17 @@ struct Pokemon {
 	friend void advance_status_from_move(Pokemon & pokemon, bool clear_status);
 	friend void advance_status_end_of_turn(Pokemon & pokemon, bool is_having_a_nightmare, Pokemon other_pokemon, bool uproar);
 
-	friend void switch_out(Pokemon & pokemon);
-	friend void switch_in(Pokemon & pokemon);
+	void switch_out() & {
+		m_status.handle_switch(get_ability(*this));
+	}
 
 	void change_type(Type new_type);
 
 	auto has_been_seen() const -> bool {
 		return m_has_been_seen;
+	}
+	void mark_as_seen() & {
+		m_has_been_seen = true;
 	}
 
 	friend auto all_moves(Pokemon & pokemon) -> MoveContainer &;
@@ -252,13 +256,6 @@ inline Happiness get_happiness(Pokemon const pokemon) {
 
 inline HiddenPower get_hidden_power(Pokemon const pokemon) {
 	return pokemon.m_hidden_power;
-}
-
-inline void switch_out(Pokemon & pokemon) {
-	pokemon.m_status.handle_switch(get_ability(pokemon));
-}
-inline void switch_in(Pokemon & pokemon) {
-	pokemon.m_has_been_seen = true;
 }
 
 

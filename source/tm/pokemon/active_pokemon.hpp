@@ -76,12 +76,11 @@ struct UTurning {};
 
 struct ActivePokemonFlags {
 	auto reset_end_of_turn() -> void;
-	auto reset_switch() -> void;
-
 private:
 	auto is_baton_passing() const -> bool;
 	auto is_charging_up() const -> bool;
 	auto is_locked_in_by_move() const -> bool;
+	auto reset_switch() -> void;
 	auto switch_decision_required(Pokemon const & pokemon) const -> bool;
 	auto is_uproaring() const -> bool;
 	auto vanish_doubles_power(Moves move_name) const -> bool;
@@ -393,6 +392,8 @@ auto grounded(ActivePokemon, Weather) -> bool;
 auto apply_status(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather, bool uproar) -> void;
 auto apply_status(Statuses const status, MutableActivePokemon target, Weather const weather, bool const uproar) -> void;
 
+auto activate_berserk_gene(MutableActivePokemon pokemon) -> void;
+
 // A mutable reference to the currently active Pokemon
 struct MutableActivePokemon : ActivePokemonImpl<false> {
 	MutableActivePokemon(Pokemon & pokemon, ActivePokemonFlags & flags):
@@ -589,6 +590,17 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 
 	auto use_substitute() const -> void;
 
+	auto switch_in() const {
+		m_pokemon.mark_as_seen();
+		if (get_item(m_pokemon) == Item::Berserk_Gene) {
+			activate_berserk_gene(*this);
+		}
+	}
+	auto switch_out() const {
+		m_flags.reset_switch();
+		m_pokemon.switch_out();
+	}
+
 	auto taunt(Generation const generation) const {
 		m_flags.taunt.activate();
 		apply_own_mental_herb(generation, *this);
@@ -677,7 +689,7 @@ inline void rest(MutableActivePokemon user, bool const other_is_uproaring) {
 }
 
 
-inline auto activate_berserk_gene(MutableActivePokemon pokemon) {
+inline auto activate_berserk_gene(MutableActivePokemon pokemon) -> void {
 	boost(pokemon.stage(), StatNames::ATK, 2_bi);
 	// TODO: Berserk Gene causes 256-turn confusion, unless the Pokemon
 	// switching out was confused.
