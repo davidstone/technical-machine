@@ -18,9 +18,10 @@
 
 #include <tm/pokemon/active_pokemon.hpp>
 
-#include <tm/weather.hpp>
-
 #include <tm/move/move.hpp>
+
+#include <tm/heal.hpp>
+#include <tm/weather.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/detail/overload.hpp>
@@ -32,6 +33,47 @@ namespace technicalmachine {
 
 template struct ActivePokemonImpl<true>;
 template struct ActivePokemonImpl<false>;
+
+auto ActiveStatus::end_of_turn(MutableActivePokemon pokemon, Pokemon const & other, bool const uproar) & -> void {
+	switch (get_status(pokemon).name()) {
+		case Statuses::clear:
+		case Statuses::freeze:
+		case Statuses::paralysis:
+			return;
+		case Statuses::burn: {
+			auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(get_ability(pokemon)), 16_bi, 8_bi);
+			heal(pokemon, rational(-1_bi, denominator));
+			return;
+		}
+		case Statuses::poison: {
+			auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(get_ability(pokemon)), 1_bi, -1_bi);
+			heal(pokemon, rational(numerator, 8_bi));
+			return;
+		}
+		case Statuses::toxic: {
+			if (absorbs_poison_damage(get_ability(pokemon))) {
+				heal(pokemon, rational(1_bi, 8_bi));
+			} else {
+				heal(pokemon, rational(-m_toxic_counter, 16_bi));
+			}
+			++m_toxic_counter;
+			return;
+		}
+		case Statuses::sleep:
+		case Statuses::rest:
+			if (uproar) {
+				clear_status(pokemon);
+				return;
+			}
+			if (m_nightmare) {
+				heal(pokemon, rational(-1_bi, 4_bi));
+			}
+			if (harms_sleepers(get_ability(other))) {
+				heal(pokemon, rational(-1_bi, 8_bi));
+			}
+			return;
+	}
+}
 
 auto ActivePokemonFlags::reset_end_of_turn() -> void {
 	damage_blocker = {};
@@ -81,7 +123,6 @@ auto ActivePokemonFlags::reset_switch() -> void {
 	minimized = false;
 	me_first_is_active = false;
 	mud_sport = false;
-	is_having_a_nightmare = false;
 	partial_trap = {};
 	is_roosting = false;
 	slow_start = {};
@@ -302,15 +343,16 @@ constexpr auto reflected_status(Statuses const status) -> bounded::optional<Stat
 
 } // namespace
 
-auto apply_status(Statuses const status, MutableActivePokemon user, MutableActivePokemon target, Weather const weather, bool const uproar) -> void {
+auto MutableActivePokemon::apply_status(Statuses const status, MutableActivePokemon user, Weather const weather, bool const uproar) const -> void {
 	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
 	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
-	if (!status_can_apply(status, user, target, weather, uproar)) {
+	if (!status_can_apply(status, user, *this, weather, uproar)) {
 		return;
 	}
-	static_cast<Pokemon &>(target).set_status(status);
+	m_pokemon.set_status(status);
+	m_flags.status.set(status);
 	auto const reflected = reflected_status(status);
-	if (reflected and reflects_status(get_ability(target))) {
+	if (reflected and reflects_status(get_ability(*this))) {
 		apply_status_to_self(*reflected, user, weather, uproar);
 	}
 }

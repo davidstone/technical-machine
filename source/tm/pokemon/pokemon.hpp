@@ -64,6 +64,7 @@ struct Pokemon {
 	friend HP get_hp(Pokemon pokemon);
 	friend Stat get_stat(Pokemon pokemon, StatNames index_stat);
 	friend Status get_status(Pokemon pokemon);
+	// Should be called only by MutableActivePokemon and clear_status
 	void set_status(Statuses const status) & {
 		if (clears_status(m_item, status) and status != Statuses::clear) {
 			m_item = Item::None;
@@ -73,11 +74,6 @@ struct Pokemon {
 	}
 
 	friend void advance_status_from_move(Pokemon & pokemon, bool clear_status);
-	friend void advance_status_end_of_turn(Pokemon & pokemon, bool is_having_a_nightmare, Pokemon other_pokemon, bool uproar);
-
-	void switch_out() & {
-		m_status.handle_switch(get_ability(*this));
-	}
 
 	auto has_been_seen() const -> bool {
 		return m_has_been_seen;
@@ -228,10 +224,6 @@ inline auto clear_status(Pokemon & pokemon) -> void {
 
 inline void advance_status_from_move(Pokemon & pokemon, bool const clear_status) {
 	pokemon.m_status.advance_from_move(get_ability(pokemon), clear_status);
-}
-
-inline void advance_status_end_of_turn(Pokemon & pokemon, bool const is_having_a_nightmare, Pokemon const other, bool const uproar) {
-	pokemon.m_status.end_of_turn(pokemon, is_having_a_nightmare, other, uproar);
 }
 
 inline Level get_level(Pokemon const pokemon) {

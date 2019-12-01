@@ -74,6 +74,34 @@ struct ChargingUp {};
 struct Recharging {};
 struct UTurning {};
 
+struct ActiveStatus {
+	constexpr auto set(Statuses const status) & -> void {
+		switch (status) {
+			case Statuses::rest:
+			case Statuses::sleep:
+				m_nightmare = false;
+				break;
+			case Statuses::toxic:
+				m_toxic_counter = 1_bi;
+				break;
+			default:
+				break;
+		}
+	}
+	constexpr auto give_nightmares() & -> void {
+		m_nightmare = true;
+	}
+
+	auto end_of_turn(MutableActivePokemon pokemon, Pokemon const & other, bool uproar) & -> void;
+private:
+	// The discriminator is the status of the active Pokemon. The default value
+	// is irrelevant.
+	union {
+		bool m_nightmare;
+		bounded::clamped_integer<1, 15> m_toxic_counter;
+	};
+};
+
 struct ActivePokemonFlags {
 	auto reset_end_of_turn() -> void;
 private:
@@ -119,6 +147,7 @@ private:
 	PerishSong perish_song;
 	RandomDamage random_damage;
 	Stage stage;
+	ActiveStatus status;
 	SlowStart slow_start;
 	Stockpile stockpile;
 	TauntCounter taunt;
@@ -148,7 +177,6 @@ private:
 	bool minimized = false;
 	bool moved = false;
 	bool mud_sport = false;
-	bool is_having_a_nightmare = false;
 	bool power_trick_is_active = false;
 	bool is_roosting = false;
 	bool is_tormented = false;
@@ -281,10 +309,6 @@ public:
 
 	auto moved() const -> bool {
 		return m_flags.moved;
-	}
-
-	auto is_having_a_nightmare() const -> bool {
-		return m_flags.is_having_a_nightmare;
 	}
 
 	auto power_trick_is_active() const -> bool {
@@ -542,8 +566,10 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto activate_mud_sport() const {
 		m_flags.mud_sport = true;
 	}
-	auto give_nightmares() const {
-		m_flags.is_having_a_nightmare = true;
+	auto try_to_give_nightmares() const {
+		if (is_sleeping(get_status(m_pokemon))) {
+			m_flags.status.give_nightmares();
+		}
 	}
 	auto partially_trap() const {
 		m_flags.partial_trap.activate();
@@ -576,6 +602,22 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.is_roosting = true;
 	}
 	
+	auto apply_status(Statuses status, MutableActivePokemon user, Weather weather, bool uproar = false) const -> void;
+	void rest(bool const other_is_uproaring) const {
+		if (other_is_uproaring or is_sleeping(get_status(m_pokemon))) {
+			return;
+		}
+		auto const hp = get_hp(m_pokemon);
+		if (hp.current() != hp.max()) {
+			set_hp(m_pokemon, hp.max());
+			m_pokemon.set_status(Statuses::rest);
+			m_flags.status.set(Statuses::rest);
+		}
+	}
+	auto end_of_turn_status(Pokemon const & other, bool const uproar) const {
+		m_flags.status.end_of_turn(*this, other, uproar);
+	}
+	
 	auto increment_stockpile() const -> void {
 		bool const increased = m_flags.stockpile.increment();
 		if (increased) {
@@ -593,13 +635,16 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto switch_in(Generation const generation) const {
 		m_pokemon.mark_as_seen();
 		m_flags.types = PokemonTypes(generation, get_species(m_pokemon));
+		m_flags.status.set(get_status(m_pokemon).name());
 		if (get_item(m_pokemon) == Item::Berserk_Gene) {
 			activate_berserk_gene(*this);
 		}
 	}
 	auto switch_out() const {
+		if (clears_status_on_switch(get_ability(*this))) {
+			clear_status(*this);
+		}
 		m_flags.reset_switch();
-		m_pokemon.switch_out();
 	}
 
 	auto taunt(Generation const generation) const {
@@ -662,11 +707,11 @@ inline auto shift_status(MutableActivePokemon user, MutableActivePokemon target,
 		case Statuses::paralysis:
 		case Statuses::poison:
 		case Statuses::toxic:
-			apply_status(status, user, target, weather);
+			target.apply_status(status, user, weather);
 			break;
 		case Statuses::sleep:
-		case Statuses::rest:		// Fix
-			apply_status(Statuses::sleep, user, target, weather);
+		case Statuses::rest: // TODO: How does Rest shift?
+			target.apply_status(Statuses::sleep, user, weather);
 			break;
 		default:
 			break;
@@ -677,18 +722,7 @@ inline auto shift_status(MutableActivePokemon user, MutableActivePokemon target,
 
 auto apply_status(Statuses const status, MutableActivePokemon target, Weather const weather, bool const uproar) -> void;
 inline auto apply_status_to_self(Statuses const status, MutableActivePokemon target, Weather const weather, bool const uproar) -> void {
-	apply_status(status, target, target, weather, uproar);
-}
-
-inline void rest(MutableActivePokemon user, bool const other_is_uproaring) {
-	if (other_is_uproaring or is_sleeping(get_status(user))) {
-		return;
-	}
-	auto const hp = get_hp(user);
-	if (hp.current() != hp.max()) {
-		set_hp(user, hp.max());
-		static_cast<Pokemon &>(user).set_status(Statuses::rest);
-	}
+	target.apply_status(status, target, weather, uproar);
 }
 
 

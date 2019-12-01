@@ -77,55 +77,6 @@ auto Status::advance_from_move(Ability const ability, bool const clear) & -> voi
 	}
 }
 
-auto Status::handle_switch(Ability const ability) & -> void {
-	if (clears_status_on_switch(ability)) {
-		*this = {};
-	} else {
-		bounded::visit(m_state, bounded::overload(
-			[](Toxic & toxic) { toxic = {}; },
-			[](auto) {}
-		));
-	}
-}
-
-auto Status::end_of_turn(Pokemon & pokemon, bool const is_having_a_nightmare, Pokemon const & other, bool const uproar) & -> void {
-	auto handle_sleep = [&]{
-		if (uproar) {
-			m_state = Clear{};
-			return;
-		}
-		if (is_having_a_nightmare) {
-			heal(pokemon, rational(-1_bi, 4_bi));
-		}
-		if (harms_sleepers(get_ability(other))) {
-			heal(pokemon, rational(-1_bi, 8_bi));
-		}
-	};
-	bounded::visit(m_state, bounded::overload(
-		[](Clear) {},
-		[&](Burn) {
-			auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(get_ability(pokemon)), 16_bi, 8_bi);
-			heal(pokemon, rational(-1_bi, denominator));
-		},
-		[](Freeze) {},
-		[](Paralysis) {},
-		[&](Poison) {
-			auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(get_ability(pokemon)), 1_bi, -1_bi);
-			heal(pokemon, rational(numerator, 8_bi));
-		},
-		[&](Toxic & toxic) {
-			toxic.increment();
-			if (absorbs_poison_damage(get_ability(pokemon))) {
-				heal(pokemon, rational(1_bi, 8_bi));
-			} else {
-				heal(pokemon, toxic.ratio_drained());
-			}
-		},
-		[&](Sleep) { handle_sleep(); },
-		[&](Rest) { handle_sleep(); }
-	));
-}
-
 namespace {
 
 using SleepCounter = bounded::integer<0, 4>;

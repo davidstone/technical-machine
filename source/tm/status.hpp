@@ -62,18 +62,7 @@ private:
 	struct Freeze {};
 	struct Paralysis {};
 	struct Poison {};
-	struct Toxic {
-		constexpr auto increment() {
-			++m_counter;
-		}
-		constexpr auto ratio_drained() const {
-			return rational(-m_counter, 16_bi);
-		}
-	private:
-		// Number of turns this Pokemon has already taken Toxic damage (or
-		// would have if Magic Guard / Poison Heal weren't in play)
-		bounded::clamped_integer<0, 15> m_counter = 0_bi;
-	};
+	struct Toxic {};
 	struct Sleep {
 		bounded::clamped_integer<0, 4> turns_slept = 0_bi;
 	};
@@ -95,8 +84,6 @@ public:
 	}
 
 	auto advance_from_move(Ability ability, bool clear) & -> void;
-	auto handle_switch(Ability ability) & -> void;
-	auto end_of_turn(Pokemon & pokemon, bool is_having_a_nightmare, Pokemon const & other, bool uproar) & -> void;
 
 	// If the current status is sleep or rest, returns the probability the
 	// status can change from sleeping to awake on this move. If the current

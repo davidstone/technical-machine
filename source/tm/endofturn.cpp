@@ -137,9 +137,9 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 			}
 		}
 	}
-	// TODO: Not sure if this effect is in the correct order
+	// TODO: Not sure if this check for Uproar is in the correct place
 	auto const uproar = pokemon.is_uproaring() or foe.is_uproaring();
-	advance_status_end_of_turn(pokemon, pokemon.is_having_a_nightmare(), foe, uproar);
+	pokemon.end_of_turn_status(foe, uproar);
 	switch (get_item(pokemon)) {
 		case Item::Flame_Orb:
 			apply_status_to_self(Statuses::burn, pokemon, weather);

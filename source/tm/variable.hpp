@@ -55,13 +55,13 @@ struct Variable {
 			case 0:
 				break;
 			case 1:
-				technicalmachine::apply_status(status, user, target, weather);
+				target.apply_status(status, user, weather);
 				break;
 			case 2:
 				target.flinch();
 				break;
-			case 3:	
-				technicalmachine::apply_status(status, user, target, weather);
+			case 3:
+				target.apply_status(status, user, weather);
 				target.flinch();
 				break;
 			default:
