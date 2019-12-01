@@ -135,7 +135,6 @@ private:
 	bool flash_fire = false;
 	bool flinched = false;
 	bool has_focused_energy = false;
-	bool is_fully_paralyzed = false;
 	// Block, Mean Look, Spider Web
 	bool fully_trapped = false;
 	bool gastro_acid = false;
@@ -254,10 +253,6 @@ public:
 
 	auto heal_block_is_active() const -> bool {
 		return m_flags.heal_block.is_active();
-	}
-
-	auto is_fully_paralyzed() const -> bool {
-		return m_flags.is_fully_paralyzed;
 	}
 
 	auto leech_seeded() const -> bool {

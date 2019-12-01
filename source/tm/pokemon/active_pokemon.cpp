@@ -41,7 +41,6 @@ auto ActivePokemonFlags::reset_end_of_turn() -> void {
 	moved = false;
 	me_first_is_active = false;
 	is_loafing_turn = !is_loafing_turn;
-	is_fully_paralyzed = false;
 }
 
 auto ActivePokemonFlags::reset_switch() -> void {

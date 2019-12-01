@@ -221,10 +221,12 @@ auto can_attempt_move_execution(ActivePokemon user, Move const move, ActivePokem
 }
 
 auto can_execute_move(ActivePokemon user, Move const move, Weather const weather, bool const is_recharging) -> bool {
+	// TODO: handle is_fully_paralyzed
+	constexpr auto is_fully_paralyzed = false;
 	if (is_switch(move.name()) or move.name() == Moves::Hit_Self) {
 		return true;
 	}
-	return !user.flinched() and !block2(user, move.name(), weather) and !user.is_fully_paralyzed() and !is_recharging;
+	return !user.flinched() and !block2(user, move.name(), weather) and !is_fully_paralyzed and !is_recharging;
 }
 
 }	// namespace technicalmachine
