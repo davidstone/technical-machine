@@ -38,7 +38,7 @@ struct Team;
 struct Weather;
 
 // 100% chance to win
-constexpr auto victory = 41402368_bi;
+constexpr auto victory = 41394176_bi;
 
 struct Evaluate {
 	// +1 gives me room to create a value that will always be overwritten
@@ -72,7 +72,6 @@ struct Evaluate {
 	auto leech_seed() const { return m_leech_seed; }
 	auto loaf() const { return m_loaf; }
 	auto magnet_rise() const { return m_magnet_rise; }
-	auto nightmare() const { return m_nightmare; }
 	auto substitute() const { return m_substitute; }
 	auto substitute_hp() const { return m_substitute_hp; }
 	auto torment() const { return m_torment; }
@@ -112,7 +111,6 @@ private:
 	value_type m_leech_seed;
 	value_type m_loaf;
 	value_type m_magnet_rise;
-	value_type m_nightmare;
 	value_type m_substitute;
 	value_type m_substitute_hp;
 	value_type m_torment;

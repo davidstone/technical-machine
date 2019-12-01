@@ -119,7 +119,6 @@ auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon
 		BOUNDED_CONDITIONAL(pokemon.leech_seeded(), evaluate.leech_seed(), 0_bi) +
 		BOUNDED_CONDITIONAL(pokemon.is_loafing(), evaluate.loaf(), 0_bi) +
 		BOUNDED_CONDITIONAL(pokemon.fully_trapped(), evaluate.trapped(), 0_bi) +
-		BOUNDED_CONDITIONAL(pokemon.is_having_a_nightmare(), evaluate.nightmare(), 0_bi) +
 		BOUNDED_CONDITIONAL(pokemon.is_tormented(), evaluate.torment(), 0_bi) +
 		baton_passable_score(evaluate, pokemon) * BOUNDED_CONDITIONAL(has_baton_pass, 2_bi, 1_bi)
 	;
@@ -263,7 +262,6 @@ Evaluate::Evaluate() {
 	m_leech_seed = pt.get<underlying_type>("leech_seed", 0_bi);
 	m_loaf = pt.get<underlying_type>("loaf", 0_bi);
 	m_magnet_rise = pt.get<underlying_type>("magnet_rise", 0_bi);
-	m_nightmare = pt.get<underlying_type>("nightmare", 0_bi);
 	m_substitute = pt.get<underlying_type>("substitute", 0_bi);
 	m_substitute_hp = pt.get<underlying_type>("substitute_hp", 0_bi);
 	m_torment = pt.get<underlying_type>("torment", 0_bi);
