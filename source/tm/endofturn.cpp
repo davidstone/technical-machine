@@ -43,8 +43,6 @@ void end_of_turn7(MutableActivePokemon pokemon);
 }	// namespace
 
 void end_of_turn(Generation, Team & first, EndOfTurnFlags const first_flags, Team & last, EndOfTurnFlags const last_flags, Weather & weather) {
-	first.reset_end_of_turn();
-	last.reset_end_of_turn();
 	end_of_turn1(first);
 	end_of_turn1(last);
 	end_of_turn2(first);
@@ -60,6 +58,8 @@ void end_of_turn(Generation, Team & first, EndOfTurnFlags const first_flags, Tea
 	end_of_turn6(last, weather);
 	end_of_turn7(first.pokemon());
 	end_of_turn7(last.pokemon());
+	first.reset_end_of_turn();
+	last.reset_end_of_turn();
 }
 
 namespace {
