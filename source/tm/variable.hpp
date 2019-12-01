@@ -51,19 +51,17 @@ struct Variable {
 	}
 
 	auto fang_side_effects(MutableActivePokemon user, MutableActivePokemon target, Weather const weather, Statuses const status) const {
-		// Uproar is irrelevant here
-		constexpr auto uproar = false;
 		switch (m_value.value()) {
 			case 0:
 				break;
 			case 1:
-				technicalmachine::apply_status(status, user, target, weather, uproar);
+				technicalmachine::apply_status(status, user, target, weather);
 				break;
 			case 2:
 				target.flinch();
 				break;
 			case 3:	
-				technicalmachine::apply_status(status, user, target, weather, uproar);
+				technicalmachine::apply_status(status, user, target, weather);
 				target.flinch();
 				break;
 			default:

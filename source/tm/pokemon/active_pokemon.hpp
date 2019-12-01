@@ -394,8 +394,8 @@ inline auto is_type(ActivePokemon const pokemon, Type const type) -> bool {
 
 auto grounded(ActivePokemon, Weather) -> bool;
 
-auto apply_status(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather, bool uproar) -> void;
-auto apply_status_to_self(Statuses status, MutableActivePokemon target, Weather weather, bool uproar) -> void;
+auto apply_status(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather, bool uproar = false) -> void;
+auto apply_status_to_self(Statuses status, MutableActivePokemon target, Weather weather, bool uproar = false) -> void;
 
 auto activate_berserk_gene(MutableActivePokemon pokemon) -> void;
 
@@ -660,8 +660,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 
 
 inline auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {
-	// Uproar is irrelevant in this function
-	constexpr auto uproar = false;
 	auto const status = get_status(user).name();
 	// TODO: How does this work with Toxic? How does this work with Rest?
 	switch (status) {
@@ -669,11 +667,11 @@ inline auto shift_status(MutableActivePokemon user, MutableActivePokemon target,
 		case Statuses::paralysis:
 		case Statuses::poison:
 		case Statuses::toxic:
-			apply_status(status, user, target, weather, uproar);
+			apply_status(status, user, target, weather);
 			break;
 		case Statuses::sleep:
 		case Statuses::rest:		// Fix
-			apply_status(Statuses::sleep, user, target, weather, uproar);
+			apply_status(Statuses::sleep, user, target, weather);
 			break;
 		default:
 			break;
