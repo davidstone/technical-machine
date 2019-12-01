@@ -83,7 +83,10 @@ struct Pokemon {
 	}
 
 	friend auto all_moves(Pokemon & pokemon) -> MoveContainer &;
-	friend void set_hp(Pokemon & pokemon, auto hp);
+
+	void set_hp(auto const hp) & {
+		stats.hp() = hp;
+	}
 
 	friend void set_ability(Pokemon & pokemon, Ability ability);
 	friend bool ability_is_known(Pokemon pokemon);
@@ -182,17 +185,8 @@ inline Species get_species(Pokemon const pokemon) {
 }
 
 
-void activate_pinch_item(Pokemon & pokemon);
-
 inline HP get_hp(Pokemon const pokemon) {
 	return pokemon.stats.hp();
-}
-inline void set_hp(Pokemon & pokemon, auto const hp) {
-	pokemon.stats.hp() = hp;
-	activate_pinch_item(pokemon);
-}
-inline void change_hp(Pokemon & pokemon, auto const change) {
-	set_hp(pokemon, get_hp(pokemon).current() + change);
 }
 inline auto set_hp_ev(Generation const generation, Pokemon & pokemon, EV const ev, IV const iv) -> void {
 	pokemon.stats.hp() = HP(generation, get_species(pokemon), get_level(pokemon), ev, iv);

@@ -288,7 +288,7 @@ auto MutableActivePokemon::shadow_force() const -> bool {
 	return use_vanish_move<ShadowForcing>(m_flags.lock_in);
 }
 
-auto MutableActivePokemon::use_bide(Pokemon & target) const -> void {
+auto MutableActivePokemon::use_bide(MutableActivePokemon target) const -> void {
 	bounded::visit(m_flags.lock_in, bounded::overload(
 		[&](auto const &) { m_flags.lock_in = Bide{}; },
 		[&](Bide & bide) {
@@ -300,12 +300,16 @@ auto MutableActivePokemon::use_bide(Pokemon & target) const -> void {
 	));
 }
 
+auto MutableActivePokemon::indirect_damage(HP::current_type const damage) const -> void {
+	change_hp(*this, -damage);
+	m_flags.damaged = true;
+}
+
 auto MutableActivePokemon::direct_damage(HP::current_type const damage) const -> void {
 	if (m_flags.substitute) {
 		m_flags.substitute.damage(damage);
 	} else {
-		change_hp(*this, -damage);
-		m_flags.damaged = true;
+		indirect_damage(damage);
 		m_flags.direct_damage_received = damage;
 		bounded::visit(m_flags.lock_in, bounded::overload(
 			[=](Bide & bide) { bide.add_damage(damage); },
@@ -354,6 +358,31 @@ auto MutableActivePokemon::apply_status(Statuses const status, MutableActivePoke
 	auto const reflected = reflected_status(status);
 	if (reflected and reflects_status(get_ability(*this))) {
 		apply_status_to_self(*reflected, user, weather, uproar);
+	}
+}
+
+auto activate_pinch_item(MutableActivePokemon pokemon) -> void {
+	// TODO: Confusion damage does not activate healing berries in Generation 5+
+	auto consume = [&] { set_item(pokemon, Item::None); };
+	auto const current_hp = hp_ratio(pokemon);
+	auto healing_berry = [&](auto const amount) {
+		if (current_hp <= rational(1_bi, 2_bi)) {
+			change_hp(pokemon, amount);
+			consume();
+		}
+	};
+	switch (get_item(pokemon)) {
+		case Item::Berry:
+			healing_berry(10_bi);
+			break;
+		case Item::Berry_Juice:
+			healing_berry(20_bi);
+			break;
+		case Item::Gold_Berry:
+			healing_berry(30_bi);
+			break;
+		default:
+			break;
 	}
 }
 

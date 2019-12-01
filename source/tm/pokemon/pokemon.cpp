@@ -82,31 +82,6 @@ Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Speci
 }
 
 
-void activate_pinch_item(Pokemon & pokemon) {
-	// TODO: Confusion damage does not activate healing berries in Generation 5+
-	auto consume = [&] { set_item(pokemon, Item::None); };
-	auto const current_hp = hp_ratio(pokemon);
-	auto healing_berry = [&](auto const amount) {
-		if (current_hp <= rational(1_bi, 2_bi)) {
-			change_hp(pokemon, amount);
-			consume();
-		}
-	};
-	switch (get_item(pokemon)) {
-		case Item::Berry:
-			healing_berry(10_bi);
-			break;
-		case Item::Berry_Juice:
-			healing_berry(20_bi);
-			break;
-		case Item::Gold_Berry:
-			healing_berry(30_bi);
-			break;
-		default:
-			break;
-	}
-}
-
 containers::string to_string(Pokemon const pokemon) {
 	double const per_cent_hp = 100.0 * static_cast<double>(hp_ratio(pokemon));
 

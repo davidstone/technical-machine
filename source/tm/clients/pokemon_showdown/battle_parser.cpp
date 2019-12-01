@@ -235,10 +235,11 @@ void validate_status(Statuses const original_status, Statuses const visible_stat
 	}
 }
 
+// TODO: What happens here if a Pokemon has a pinch item?
 void correct_hp_and_status(bool const is_me, Pokemon & pokemon, HPAndStatus const hp_and_status) {
 	auto const [visible_hp, visible_status] = hp_and_status;
 	auto const original_hp = get_hp(pokemon);
-	set_hp(pokemon, correct_hp(original_hp, is_me, visible_hp));
+	pokemon.set_hp(correct_hp(original_hp, is_me, visible_hp));
 	if (visible_hp.current == 0_bi) {
 		return;
 	}

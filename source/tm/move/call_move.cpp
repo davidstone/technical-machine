@@ -50,7 +50,7 @@ namespace technicalmachine {
 namespace {
 
 // I could potentially treat this as negative recoil
-auto absorb_hp(Pokemon & user, Pokemon const & target, HP::current_type const damage) -> void {
+auto absorb_hp(MutableActivePokemon user, MutableActivePokemon target, HP::current_type const damage) -> void {
 	auto const absorbed = damage / 2_bi;
 	if (damages_leechers(get_ability(target))) {
 		change_hp(user, -absorbed);
@@ -143,7 +143,7 @@ auto fling_side_effects(Generation const generation, MutableActivePokemon user, 
 }
 
 
-void recoil(Pokemon & user, HP::current_type const damage, bounded::checked_integer<1, 4> const denominator) {
+void recoil(MutableActivePokemon user, HP::current_type const damage, bounded::checked_integer<1, 4> const denominator) {
 	if (!blocks_recoil(get_ability(user))) {
 		change_hp(user, -bounded::max(damage / denominator, 1_bi));
 	}
@@ -164,10 +164,10 @@ auto confusing_stat_boost(MutableActivePokemon target, StatNames const stat, bou
 }
 
 
-auto equalize_hp(Pokemon & lhs, Pokemon & rhs) {
+auto equalize_hp(MutableActivePokemon lhs, MutableActivePokemon rhs) {
 	auto const average = (get_hp(lhs).current() + get_hp(rhs).current()) / 2_bi;
-	set_hp(lhs, average);
-	set_hp(rhs, average);
+	lhs.set_hp(average);
+	rhs.set_hp(average);
 }
 
 
@@ -183,7 +183,7 @@ auto phaze(Generation const generation, MutableActivePokemon user, Team & target
 }
 
 
-auto struggle(Pokemon & user) {
+auto struggle(MutableActivePokemon user) {
 	change_hp(user, -get_hp(user).max() / 4_bi);
 }
 
@@ -545,7 +545,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Explosion:
 		case Moves::Self_Destruct:
-			set_hp(user, 0_bi);
+			user.set_hp(0_bi);
 			break;
 		case Moves::Fake_Tears:
 		case Moves::Metal_Sound:
@@ -707,7 +707,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Memento:
 			boost_offensive(other.pokemon().stage(), -2_bi);
-			set_hp(user, 0_bi);
+			user.set_hp(0_bi);
 			break;
 		case Moves::Mimic:		// Fix
 			break;

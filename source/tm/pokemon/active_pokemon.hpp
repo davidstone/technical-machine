@@ -417,6 +417,7 @@ auto apply_status(Statuses status, MutableActivePokemon user, MutableActivePokem
 auto apply_status_to_self(Statuses status, MutableActivePokemon target, Weather weather, bool uproar = false) -> void;
 
 auto activate_berserk_gene(MutableActivePokemon pokemon) -> void;
+auto activate_pinch_item(MutableActivePokemon pokemon) -> void;
 
 // A mutable reference to the currently active Pokemon
 struct MutableActivePokemon : ActivePokemonImpl<false> {
@@ -583,7 +584,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto perish_song_turn() const -> void {
 		bool const faints_this_turn = m_flags.perish_song.advance_one_turn();
 		if (faints_this_turn) {
-			set_hp(*this, 0_bi);
+			set_hp(0_bi);
 		}
 	}
 	auto activate_power_trick() const {
@@ -601,7 +602,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto roost() const {
 		m_flags.is_roosting = true;
 	}
-	
+
 	auto apply_status(Statuses status, MutableActivePokemon user, Weather weather, bool uproar = false) const -> void;
 	void rest(bool const other_is_uproaring) const {
 		if (other_is_uproaring or is_sleeping(get_status(m_pokemon))) {
@@ -609,7 +610,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		}
 		auto const hp = get_hp(m_pokemon);
 		if (hp.current() != hp.max()) {
-			set_hp(m_pokemon, hp.max());
+			m_pokemon.set_hp(hp.max());
 			m_pokemon.set_status(Statuses::rest);
 			m_flags.status.set(Statuses::rest);
 		}
@@ -683,13 +684,15 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto fly() const -> bool;
 	auto shadow_force() const -> bool;
 
-	auto use_bide(Pokemon & target) const -> void;
+	auto use_bide(MutableActivePokemon target) const -> void;
 
-	auto direct_damage(HP::current_type const damage) const -> void;
-	auto indirect_damage(HP::current_type const damage) const {
-		change_hp(*this, -damage);
-		m_flags.damaged = true;
+	auto set_hp(auto const hp) const -> void {
+		m_pokemon.set_hp(hp);
+		activate_pinch_item(*this);
 	}
+	auto indirect_damage(HP::current_type const damage) const -> void;
+	auto direct_damage(HP::current_type const damage) const -> void;
+
 	auto increment_move_use_counter(Moves const move) const {
 		m_flags.last_used_move.increment(move);
 	}
@@ -698,6 +701,9 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 };
 
+inline auto change_hp(MutableActivePokemon pokemon, auto const change) {
+	pokemon.set_hp(get_hp(pokemon).current() + change);
+}
 
 inline auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {
 	auto const status = get_status(user).name();

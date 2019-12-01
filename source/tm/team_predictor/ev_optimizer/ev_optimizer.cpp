@@ -41,7 +41,7 @@ auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats con
 	auto const original_hp = get_hp(pokemon);
 	set_hp_ev(generation, pokemon, stats.hp);
 	auto const new_hp = get_hp(pokemon);
-	set_hp(pokemon, new_hp.max() * original_hp.current() / original_hp.max());
+	pokemon.set_hp(new_hp.max() * original_hp.current() / original_hp.max());
 
 	set_stat_ev(pokemon, StatNames::ATK, stats.attack);
 	set_stat_ev(pokemon, StatNames::DEF, stats.defense);

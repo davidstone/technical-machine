@@ -21,14 +21,14 @@
 #include <tm/ability.hpp>
 #include <tm/rational.hpp>
 
-#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/active_pokemon.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
 
 template<typename Numerator, typename Denominator>
-void heal(Pokemon & pokemon, rational<Numerator, Denominator> const scale) {
+void heal(MutableActivePokemon pokemon, rational<Numerator, Denominator> const scale) {
 	auto const hp = get_hp(pokemon);
 	if (hp == 0_bi) {
 		return;
