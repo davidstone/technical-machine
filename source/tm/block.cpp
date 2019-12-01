@@ -224,6 +224,7 @@ auto can_execute_move(ActivePokemon user, Move const move, Weather const weather
 	// TODO: handle is_fully_paralyzed
 	constexpr auto is_fully_paralyzed = false;
 	if (is_switch(move.name()) or move.name() == Moves::Hit_Self) {
+		BOUNDED_ASSERT(!is_recharging);
 		return true;
 	}
 	return !user.flinched() and !block2(user, move.name(), weather) and !is_fully_paralyzed and !is_recharging;
