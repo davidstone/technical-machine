@@ -39,7 +39,7 @@ auto apply_toxic_spikes(EntryHazards const & hazards, MutableActivePokemon switc
 	// Uproar is irrelevant
 	constexpr auto uproar = false;
 	auto const status = hazards.toxic_spikes() == 1_bi ? Statuses::poison : Statuses::toxic;
-	apply_status(status, switcher, weather, uproar);
+	apply_status_to_self(status, switcher, weather, uproar);
 }
 
 }	// namespace

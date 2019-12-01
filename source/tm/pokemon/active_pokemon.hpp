@@ -395,7 +395,7 @@ inline auto is_type(ActivePokemon const pokemon, Type const type) -> bool {
 auto grounded(ActivePokemon, Weather) -> bool;
 
 auto apply_status(Statuses status, MutableActivePokemon user, MutableActivePokemon target, Weather weather, bool uproar) -> void;
-auto apply_status(Statuses const status, MutableActivePokemon target, Weather const weather, bool const uproar) -> void;
+auto apply_status_to_self(Statuses status, MutableActivePokemon target, Weather weather, bool uproar) -> void;
 
 auto activate_berserk_gene(MutableActivePokemon pokemon) -> void;
 
@@ -632,7 +632,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto try_to_activate_yawn(Weather const weather, bool const either_is_uproaring) const -> void {
 		bool const put_to_sleep = m_flags.yawn.advance_one_turn();
 		if (put_to_sleep) {
-			apply_status(Statuses::sleep, *this, weather, either_is_uproaring);
+			apply_status_to_self(Statuses::sleep, *this, weather, either_is_uproaring);
 		}
 	}
 
@@ -682,7 +682,8 @@ inline auto shift_status(MutableActivePokemon user, MutableActivePokemon target,
 	clear_status(user);
 }
 
-inline auto apply_status(Statuses const status, MutableActivePokemon target, Weather const weather, bool const uproar) -> void {
+auto apply_status(Statuses const status, MutableActivePokemon target, Weather const weather, bool const uproar) -> void;
+inline auto apply_status_to_self(Statuses const status, MutableActivePokemon target, Weather const weather, bool const uproar) -> void {
 	apply_status(status, target, target, weather, uproar);
 }
 

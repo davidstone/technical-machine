@@ -312,7 +312,7 @@ auto apply_status(Statuses const status, MutableActivePokemon user, MutableActiv
 	static_cast<Pokemon &>(target).set_status(status);
 	auto const reflected = reflected_status(status);
 	if (reflected and reflects_status(get_ability(target))) {
-		apply_status(*reflected, user, weather, uproar);
+		apply_status_to_self(*reflected, user, weather, uproar);
 	}
 }
 
