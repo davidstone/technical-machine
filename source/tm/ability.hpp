@@ -193,6 +193,6 @@ constexpr bool boosts_stab(Ability const ability) {
 }
 
 void activate_ability_on_switch(Generation, MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather);
-void weather_healing_ability(MutableActivePokemon pokemon, Weather weather);
+void weather_healing_ability(Generation, MutableActivePokemon pokemon, Weather weather);
 
 }	// namespace technicalmachine

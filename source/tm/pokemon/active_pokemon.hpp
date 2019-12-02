@@ -92,7 +92,7 @@ struct ActiveStatus {
 		m_nightmare = true;
 	}
 
-	auto end_of_turn(MutableActivePokemon pokemon, Pokemon const & other, bool uproar) & -> void;
+	auto end_of_turn(Generation, MutableActivePokemon pokemon, Pokemon const & other, bool uproar) & -> void;
 private:
 	// The discriminator is the status of the active Pokemon. The default value
 	// is irrelevant.
@@ -417,7 +417,7 @@ auto apply_status(Statuses status, MutableActivePokemon user, MutableActivePokem
 auto apply_status_to_self(Statuses status, MutableActivePokemon target, Weather weather, bool uproar = false) -> void;
 
 auto activate_berserk_gene(MutableActivePokemon pokemon) -> void;
-auto activate_pinch_item(MutableActivePokemon pokemon) -> void;
+auto activate_pinch_item(Generation const generation, MutableActivePokemon pokemon) -> void;
 
 // A mutable reference to the currently active Pokemon
 struct MutableActivePokemon : ActivePokemonImpl<false> {
@@ -575,8 +575,8 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto partially_trap() const {
 		m_flags.partial_trap.activate();
 	}
-	auto partial_trap_damage() const {
-		m_flags.partial_trap.damage(*this);
+	auto partial_trap_damage(Generation const generation) const {
+		m_flags.partial_trap.damage(generation, *this);
 	}
 	auto activate_perish_song() const {
 		m_flags.perish_song.activate();
@@ -584,7 +584,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto perish_song_turn() const -> void {
 		bool const faints_this_turn = m_flags.perish_song.advance_one_turn();
 		if (faints_this_turn) {
-			set_hp(0_bi);
+			m_pokemon.set_hp(0_bi);
 		}
 	}
 	auto activate_power_trick() const {
@@ -615,8 +615,8 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 			m_flags.status.set(Statuses::rest);
 		}
 	}
-	auto end_of_turn_status(Pokemon const & other, bool const uproar) const {
-		m_flags.status.end_of_turn(*this, other, uproar);
+	auto end_of_turn_status(Generation const generation, Pokemon const & other, bool const uproar) const {
+		m_flags.status.end_of_turn(generation, *this, other, uproar);
 	}
 	
 	auto increment_stockpile() const -> void {
@@ -631,7 +631,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		return stages;
 	}
 
-	auto use_substitute() const -> void;
+	auto use_substitute(Generation) const -> void;
 
 	auto switch_in(Generation const generation) const {
 		m_pokemon.mark_as_seen();
@@ -684,14 +684,14 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto fly() const -> bool;
 	auto shadow_force() const -> bool;
 
-	auto use_bide(MutableActivePokemon target) const -> void;
+	auto use_bide(Generation, MutableActivePokemon target) const -> void;
 
-	auto set_hp(auto const hp) const -> void {
+	auto set_hp(Generation const generation, auto const hp) const -> void {
 		m_pokemon.set_hp(hp);
-		activate_pinch_item(*this);
+		activate_pinch_item(generation);
 	}
-	auto indirect_damage(HP::current_type const damage) const -> void;
-	auto direct_damage(HP::current_type const damage) const -> void;
+	auto indirect_damage(Generation, HP::current_type const damage) const -> void;
+	auto direct_damage(Generation, HP::current_type const damage) const -> void;
 
 	auto increment_move_use_counter(Moves const move) const {
 		m_flags.last_used_move.increment(move);
@@ -699,10 +699,13 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto unsuccessfully_use_move(Moves const move) const {
 		m_flags.last_used_move.unsucessful_move(move);
 	}
+
+private:
+	auto activate_pinch_item(Generation) const -> void;
 };
 
-inline auto change_hp(MutableActivePokemon pokemon, auto const change) {
-	pokemon.set_hp(get_hp(pokemon).current() + change);
+inline auto change_hp(Generation const generation, MutableActivePokemon pokemon, auto const change) {
+	pokemon.set_hp(generation, get_hp(pokemon).current() + change);
 }
 
 inline auto shift_status(MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {

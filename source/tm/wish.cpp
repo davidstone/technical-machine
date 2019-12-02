@@ -32,13 +32,13 @@ auto Wish::activate() -> void {
 	}
 }
 
-auto Wish::decrement(MutableActivePokemon pokemon) -> void {
+auto Wish::decrement(Generation const generation, MutableActivePokemon pokemon) -> void {
 	if (!m_turns_until_activation) {
 		return;
 	}
 	if (*m_turns_until_activation == 0_bi) {
 		m_turns_until_activation = bounded::none;
-		heal(pokemon, rational(1_bi, 2_bi));
+		heal(generation, pokemon, rational(1_bi, 2_bi));
 	} else {
 		--*m_turns_until_activation;
 	}

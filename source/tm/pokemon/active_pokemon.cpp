@@ -34,7 +34,7 @@ namespace technicalmachine {
 template struct ActivePokemonImpl<true>;
 template struct ActivePokemonImpl<false>;
 
-auto ActiveStatus::end_of_turn(MutableActivePokemon pokemon, Pokemon const & other, bool const uproar) & -> void {
+auto ActiveStatus::end_of_turn(Generation const generation, MutableActivePokemon pokemon, Pokemon const & other, bool const uproar) & -> void {
 	switch (get_status(pokemon).name()) {
 		case Statuses::clear:
 		case Statuses::freeze:
@@ -42,19 +42,19 @@ auto ActiveStatus::end_of_turn(MutableActivePokemon pokemon, Pokemon const & oth
 			return;
 		case Statuses::burn: {
 			auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(get_ability(pokemon)), 16_bi, 8_bi);
-			heal(pokemon, rational(-1_bi, denominator));
+			heal(generation, pokemon, rational(-1_bi, denominator));
 			return;
 		}
 		case Statuses::poison: {
 			auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(get_ability(pokemon)), 1_bi, -1_bi);
-			heal(pokemon, rational(numerator, 8_bi));
+			heal(generation, pokemon, rational(numerator, 8_bi));
 			return;
 		}
 		case Statuses::toxic: {
 			if (absorbs_poison_damage(get_ability(pokemon))) {
-				heal(pokemon, rational(1_bi, 8_bi));
+				heal(generation, pokemon, rational(1_bi, 8_bi));
 			} else {
-				heal(pokemon, rational(-m_toxic_counter, 16_bi));
+				heal(generation, pokemon, rational(-m_toxic_counter, 16_bi));
 			}
 			++m_toxic_counter;
 			return;
@@ -66,10 +66,10 @@ auto ActiveStatus::end_of_turn(MutableActivePokemon pokemon, Pokemon const & oth
 				return;
 			}
 			if (m_nightmare) {
-				heal(pokemon, rational(-1_bi, 4_bi));
+				heal(generation, pokemon, rational(-1_bi, 4_bi));
 			}
 			if (harms_sleepers(get_ability(other))) {
-				heal(pokemon, rational(-1_bi, 8_bi));
+				heal(generation, pokemon, rational(-1_bi, 8_bi));
 			}
 			return;
 	}
@@ -241,11 +241,11 @@ auto can_use_substitute(Pokemon const & pokemon) -> bool {
 
 }	// namespace
 
-auto MutableActivePokemon::use_substitute() const -> void {
+auto MutableActivePokemon::use_substitute(Generation const generation) const -> void {
 	if (!can_use_substitute(*this))
 		return;
 	auto const max_hp = get_hp(*this).max();
-	indirect_damage(m_flags.substitute.create(max_hp));
+	indirect_damage(generation, m_flags.substitute.create(max_hp));
 }
 
 auto MutableActivePokemon::u_turn() const -> void {
@@ -288,28 +288,28 @@ auto MutableActivePokemon::shadow_force() const -> bool {
 	return use_vanish_move<ShadowForcing>(m_flags.lock_in);
 }
 
-auto MutableActivePokemon::use_bide(MutableActivePokemon target) const -> void {
+auto MutableActivePokemon::use_bide(Generation const generation, MutableActivePokemon target) const -> void {
 	bounded::visit(m_flags.lock_in, bounded::overload(
 		[&](auto const &) { m_flags.lock_in = Bide{}; },
 		[&](Bide & bide) {
 			if (auto const damage = bide.advance_one_turn()) {
-				change_hp(target, -*damage * 2_bi);
+				change_hp(generation, target, -*damage * 2_bi);
 				m_flags.lock_in = std::monostate{};
 			}
 		}
 	));
 }
 
-auto MutableActivePokemon::indirect_damage(HP::current_type const damage) const -> void {
-	change_hp(*this, -damage);
+auto MutableActivePokemon::indirect_damage(Generation const generation, HP::current_type const damage) const -> void {
+	change_hp(generation, *this, -damage);
 	m_flags.damaged = true;
 }
 
-auto MutableActivePokemon::direct_damage(HP::current_type const damage) const -> void {
+auto MutableActivePokemon::direct_damage(Generation const generation, HP::current_type const damage) const -> void {
 	if (m_flags.substitute) {
 		m_flags.substitute.damage(damage);
 	} else {
-		indirect_damage(damage);
+		indirect_damage(generation, damage);
 		m_flags.direct_damage_received = damage;
 		bounded::visit(m_flags.lock_in, bounded::overload(
 			[=](Bide & bide) { bide.add_damage(damage); },
@@ -361,25 +361,90 @@ auto MutableActivePokemon::apply_status(Statuses const status, MutableActivePoke
 	}
 }
 
-auto activate_pinch_item(MutableActivePokemon pokemon) -> void {
+auto MutableActivePokemon::activate_pinch_item(Generation const generation) const -> void {
 	// TODO: Confusion damage does not activate healing berries in Generation 5+
-	auto consume = [&] { set_item(pokemon, Item::None); };
-	auto const current_hp = hp_ratio(pokemon);
+	auto consume = [&] { set_item(m_pokemon, Item::None); };
+
+	auto const current_hp = hp_ratio(m_pokemon);
+
 	auto healing_berry = [&](auto const amount) {
-		if (current_hp <= rational(1_bi, 2_bi)) {
-			change_hp(pokemon, amount);
-			consume();
+		auto const threshold = BOUNDED_CONDITIONAL(generation <= Generation::six, rational(1_bi, 2_bi), rational(1_bi, 4_bi));
+		if (current_hp > threshold) {
+			return false;
+		}
+		consume();
+		m_pokemon.set_hp(get_hp(m_pokemon).current() + amount);
+		return true;
+	};
+
+	auto confusion_berry = [&](StatNames const stat) {
+		auto const amount = get_hp(m_pokemon).max() / BOUNDED_CONDITIONAL(generation <= Generation::six, 8_bi, 2_bi);
+		auto const activated = healing_berry(amount);
+		if (activated and lowers_stat(get_nature(m_pokemon), stat)) {
+			confuse();
 		}
 	};
-	switch (get_item(pokemon)) {
+
+	auto stat_boost_berry = [&](StatNames const stat) {
+		auto const threshold = BOUNDED_CONDITIONAL(get_ability(*this) == Ability::Gluttony, rational(1_bi, 2_bi), rational(1_bi, 4_bi));
+		if (current_hp > threshold) {
+			return;
+		}
+		consume();
+		boost(stage(), stat, 1_bi);
+	};
+
+	switch (get_item(m_pokemon)) {
+		case Item::Aguav_Berry:
+			confusion_berry(StatNames::SPD);
+			break;
+		case Item::Apicot_Berry:
+			stat_boost_berry(StatNames::SPD);
+			break;
 		case Item::Berry:
+		case Item::Oran_Berry:
 			healing_berry(10_bi);
 			break;
 		case Item::Berry_Juice:
 			healing_berry(20_bi);
 			break;
+		case Item::Figy_Berry:
+			confusion_berry(StatNames::ATK);
+			break;
+		case Item::Ganlon_Berry:
+			stat_boost_berry(StatNames::DEF);
+			break;
 		case Item::Gold_Berry:
 			healing_berry(30_bi);
+			break;
+		case Item::Iapapa_Berry:
+			confusion_berry(StatNames::DEF);
+			break;
+		case Item::Lansat_Berry:
+			// TODO: Raise CH rate
+			consume();
+			break;
+		case Item::Liechi_Berry:
+			stat_boost_berry(StatNames::ATK);
+			break;
+		case Item::Mago_Berry:
+			confusion_berry(StatNames::SPE);
+			break;
+		case Item::Petaya_Berry:
+			stat_boost_berry(StatNames::SPA);
+			break;
+		case Item::Salac_Berry:
+			stat_boost_berry(StatNames::SPE);
+			break;
+		case Item::Sitrus_Berry:
+			healing_berry(BOUNDED_CONDITIONAL(generation <= Generation::three, 30_bi, get_hp(m_pokemon).max() / 4_bi));
+			break;
+		case Item::Starf_Berry:
+			// TODO: Raise Atk, Def, SpA, SpD, or Spe +2
+			consume();
+			break;
+		case Item::Wiki_Berry:
+			confusion_berry(StatNames::SPA);
 			break;
 		default:
 			break;

@@ -22,6 +22,8 @@
 #include <tm/operators.hpp>
 
 namespace technicalmachine {
+
+enum class Generation : std::uint8_t;
 struct MutableActivePokemon;
 
 // This handles the number of turns remaining on Bind, Clamp, Fire Spin,
@@ -33,7 +35,7 @@ struct PartialTrap {
 	constexpr auto activate() {
 		m_base.activate();
 	}
-	auto damage(MutableActivePokemon pokemon) -> void;
+	auto damage(Generation, MutableActivePokemon) -> void;
 
 	friend constexpr auto operator==(PartialTrap const lhs, PartialTrap const rhs) {
 		return lhs.m_base == rhs.m_base;

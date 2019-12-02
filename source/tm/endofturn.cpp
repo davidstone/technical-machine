@@ -34,26 +34,26 @@ namespace technicalmachine {
 namespace {
 
 void end_of_turn1(Team & team);
-void end_of_turn2(Team & team);
-void end_of_turn3(MutableActivePokemon pokemon, Weather const weather);
-void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags flags);
+void end_of_turn2(Generation, Team & team);
+void end_of_turn3(Generation, MutableActivePokemon pokemon, Weather const weather);
+void end_of_turn5(Generation, MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags flags);
 void end_of_turn6(Team & target, Weather const weather);
 void end_of_turn7(MutableActivePokemon pokemon);
 
 }	// namespace
 
-void end_of_turn(Generation, Team & first, EndOfTurnFlags const first_flags, Team & last, EndOfTurnFlags const last_flags, Weather & weather) {
+void end_of_turn(Generation const generation, Team & first, EndOfTurnFlags const first_flags, Team & last, EndOfTurnFlags const last_flags, Weather & weather) {
 	end_of_turn1(first);
 	end_of_turn1(last);
-	end_of_turn2(first);
-	end_of_turn2(last);
+	end_of_turn2(generation, first);
+	end_of_turn2(generation, last);
 	weather.advance_one_turn();
 	if (!blocks_weather(get_ability(first.pokemon())) and !blocks_weather(get_ability(last.pokemon()))) {
-		end_of_turn3(first.pokemon(), weather);
-		end_of_turn3(last.pokemon(), weather);
+		end_of_turn3(generation, first.pokemon(), weather);
+		end_of_turn3(generation, last.pokemon(), weather);
 	}
-	end_of_turn5(first.pokemon(), last.pokemon(), weather, first_flags);
-	end_of_turn5(last.pokemon(), first.pokemon(), weather, last_flags);
+	end_of_turn5(generation, first.pokemon(), last.pokemon(), weather, first_flags);
+	end_of_turn5(generation, last.pokemon(), first.pokemon(), weather, last_flags);
 	end_of_turn6(first, weather);
 	end_of_turn6(last, weather);
 	end_of_turn7(first.pokemon());
@@ -68,8 +68,8 @@ void end_of_turn1(Team & team) {
 	team.screens.decrement();
 }
 
-void end_of_turn2(Team & team) {
-	team.wish.decrement(team.pokemon());
+void end_of_turn2(Generation const generation, Team & team) {
+	team.wish.decrement(generation, team.pokemon());
 }
 
 auto is_immune_to_hail(PokemonTypes const types) -> bool {
@@ -89,24 +89,24 @@ auto is_immune_to_sandstorm(PokemonTypes const types) -> bool {
 	});
 }
 
-void end_of_turn3(MutableActivePokemon pokemon, Weather const weather) {
+void end_of_turn3(Generation const generation, MutableActivePokemon pokemon, Weather const weather) {
 	if (weather.hail() and !is_immune_to_hail(pokemon.types()))
-		heal(pokemon, rational(-1_bi, 16_bi));
+		heal(generation, pokemon, rational(-1_bi, 16_bi));
 	if (weather.sand() and !is_immune_to_sandstorm(pokemon.types())) {
-		heal(pokemon, rational(-1_bi, 16_bi));
+		heal(generation, pokemon, rational(-1_bi, 16_bi));
 	}
-	weather_healing_ability(pokemon, weather);
+	weather_healing_ability(generation, pokemon, weather);
 }
 
-void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags const flags) {
+void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags const flags) {
 	if (get_hp(pokemon) == 0_bi) {
 		return;
 	}
 	if (pokemon.ingrained()) {
-		heal(pokemon, rational(1_bi, 16_bi));
+		heal(generation, pokemon, rational(1_bi, 16_bi));
 	}
 	if (pokemon.aqua_ring_is_active()) {
-		heal(pokemon, rational(1_bi, 16_bi));
+		heal(generation, pokemon, rational(1_bi, 16_bi));
 	}
 	if (boosts_speed(get_ability(pokemon))) {
 		boost(pokemon.stage(), StatNames::SPE, 1_bi);
@@ -115,11 +115,11 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	}
 	switch (get_item(pokemon)) {
 		case Item::Leftovers:
-			heal(pokemon, rational(1_bi, 16_bi));
+			heal(generation, pokemon, rational(1_bi, 16_bi));
 			break;
 		case Item::Black_Sludge: {
 			auto const numerator = BOUNDED_CONDITIONAL(is_type(pokemon, Type::Poison), 1_bi, -1_bi);
-			heal(pokemon, rational(numerator, 16_bi));
+			heal(generation, pokemon, rational(numerator, 16_bi));
 			break;
 		}
 		default:
@@ -127,19 +127,19 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	}
 	if (pokemon.leech_seeded()) {
 		auto const initial = get_hp(pokemon).current();
-		heal(pokemon, rational(-1_bi, 8_bi));
+		heal(generation, pokemon, rational(-1_bi, 8_bi));
 		if (get_hp(foe) != 0_bi) {
 			auto const hp_change = initial - get_hp(pokemon).current();
 			if (damages_leechers(get_ability(pokemon))) {
-				change_hp(foe, -hp_change);
+				change_hp(generation, foe, -hp_change);
 			} else {
-				change_hp(foe, hp_change);
+				change_hp(generation, foe, hp_change);
 			}
 		}
 	}
 	// TODO: Not sure if this check for Uproar is in the correct place
 	auto const uproar = pokemon.is_uproaring() or foe.is_uproaring();
-	pokemon.end_of_turn_status(foe, uproar);
+	pokemon.end_of_turn_status(generation, foe, uproar);
 	switch (get_item(pokemon)) {
 		case Item::Flame_Orb:
 			apply_status_to_self(Statuses::burn, pokemon, weather);
@@ -151,9 +151,9 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 			break;
 	}
 	if (pokemon.is_cursed()) {
-		heal(pokemon, rational(-1_bi, 4_bi));
+		heal(generation, pokemon, rational(-1_bi, 4_bi));
 	}
-	pokemon.partial_trap_damage();
+	pokemon.partial_trap_damage(generation);
 	
 	pokemon.advance_lock_in(flags.lock_in_ends);
 	
@@ -165,7 +165,7 @@ void end_of_turn5(MutableActivePokemon pokemon, MutableActivePokemon foe, Weathe
 	pokemon.advance_embargo();
 	pokemon.try_to_activate_yawn(weather, uproar);
 	if (get_item(pokemon) == Item::Sticky_Barb) {
-		heal(pokemon, rational(-1_bi, 8_bi));
+		heal(generation, pokemon, rational(-1_bi, 8_bi));
 	}
 }
 

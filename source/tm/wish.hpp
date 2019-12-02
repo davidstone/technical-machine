@@ -23,12 +23,13 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
+enum class Generation : std::uint8_t;
 struct MutableActivePokemon;
 struct Pokemon;
 
 struct Wish {
 	auto activate() -> void;
-	auto decrement(MutableActivePokemon pokemon) -> void;
+	auto decrement(Generation, MutableActivePokemon pokemon) -> void;
 	constexpr auto is_active() const {
 		return static_cast<bool>(m_turns_until_activation);
 	}

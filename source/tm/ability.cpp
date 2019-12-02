@@ -88,13 +88,13 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 	}
 }
 
-void weather_healing_ability(MutableActivePokemon pokemon, Weather const weather) {
+void weather_healing_ability(Generation const generation, MutableActivePokemon pokemon, Weather const weather) {
 	switch (get_ability(pokemon)) {
 		case Ability::Dry_Skin:
 			if (weather.rain()) {
-				heal(pokemon, rational(1_bi, 8_bi));
+				heal(generation, pokemon, rational(1_bi, 8_bi));
 			} else if (weather.sun()) {
-				heal(pokemon, rational(-1_bi, 8_bi));
+				heal(generation, pokemon, rational(-1_bi, 8_bi));
 			}
 			break;
 		case Ability::Hydration:
@@ -104,12 +104,12 @@ void weather_healing_ability(MutableActivePokemon pokemon, Weather const weather
 			break;
 		case Ability::Ice_Body:
 			if (weather.hail()) {
-				heal(pokemon, rational(1_bi, 16_bi));
+				heal(generation, pokemon, rational(1_bi, 16_bi));
 			}
 			break;
 		case Ability::Rain_Dish:
 			if (weather.rain()) {
-				heal(pokemon, rational(1_bi, 16_bi));
+				heal(generation, pokemon, rational(1_bi, 16_bi));
 			}
 			break;
 		default:

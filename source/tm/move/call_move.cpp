@@ -50,12 +50,12 @@ namespace technicalmachine {
 namespace {
 
 // I could potentially treat this as negative recoil
-auto absorb_hp(MutableActivePokemon user, MutableActivePokemon target, HP::current_type const damage) -> void {
+auto absorb_hp(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, HP::current_type const damage) -> void {
 	auto const absorbed = damage / 2_bi;
 	if (damages_leechers(get_ability(target))) {
-		change_hp(user, -absorbed);
+		change_hp(generation, user, -absorbed);
 	} else {
-		change_hp(user, absorbed);
+		change_hp(generation, user, absorbed);
 	}
 }
 
@@ -69,10 +69,10 @@ auto cure_all_status(Team & user, auto const & predicate) -> void {
 }
 
 
-auto belly_drum(MutableActivePokemon user) {
+auto belly_drum(Generation const generation, MutableActivePokemon user) {
 	auto const hp = get_hp(user);
 	if (hp.current() > hp.max() / 2_bi and hp.current() > 1_bi) {
-		change_hp(user, -hp.max() / 2_bi);
+		change_hp(generation, user, -hp.max() / 2_bi);
 		boost(user.stage(), StatNames::ATK, 12_bi);
 	}
 }
@@ -83,10 +83,10 @@ auto can_confuse_with_chatter(Species const pokemon) {
 }
 
 
-auto curse(MutableActivePokemon user, MutableActivePokemon target) {
+auto curse(Generation const generation, MutableActivePokemon user, MutableActivePokemon target) {
 	if (is_type(user, Type::Ghost) and !blocks_secondary_damage(get_ability(user))) {
 		if (!target.is_cursed()) {
-			user.indirect_damage(get_hp(user).max() / 2_bi);
+			user.indirect_damage(generation, get_hp(user).max() / 2_bi);
 			target.curse();
 		}
 	} else {
@@ -143,15 +143,15 @@ auto fling_side_effects(Generation const generation, MutableActivePokemon user, 
 }
 
 
-void recoil(MutableActivePokemon user, HP::current_type const damage, bounded::checked_integer<1, 4> const denominator) {
+void recoil(Generation const generation, MutableActivePokemon user, HP::current_type const damage, bounded::checked_integer<1, 4> const denominator) {
 	if (!blocks_recoil(get_ability(user))) {
-		change_hp(user, -bounded::max(damage / denominator, 1_bi));
+		change_hp(generation, user, -bounded::max(damage / denominator, 1_bi));
 	}
 }
 
-auto recoil_status(MutableActivePokemon user, MutableActivePokemon target, Weather const weather, HP::current_type const damage, Variable const variable, Statuses const status) {
+auto recoil_status(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather, HP::current_type const damage, Variable const variable, Statuses const status) {
 	BOUNDED_ASSERT(uproar_does_not_apply(status));
-	recoil(user, damage, 3_bi);
+	recoil(generation, user, damage, 3_bi);
 	if (variable.effect_activates()) {
 		target.apply_status(status, user, weather);
 	}
@@ -164,10 +164,10 @@ auto confusing_stat_boost(MutableActivePokemon target, StatNames const stat, bou
 }
 
 
-auto equalize_hp(MutableActivePokemon lhs, MutableActivePokemon rhs) {
+auto equalize_hp(Generation const generation, MutableActivePokemon lhs, MutableActivePokemon rhs) {
 	auto const average = (get_hp(lhs).current() + get_hp(rhs).current()) / 2_bi;
-	lhs.set_hp(average);
-	rhs.set_hp(average);
+	lhs.set_hp(generation, average);
+	rhs.set_hp(generation, average);
 }
 
 
@@ -183,17 +183,17 @@ auto phaze(Generation const generation, MutableActivePokemon user, Team & target
 }
 
 
-auto struggle(MutableActivePokemon user) {
-	change_hp(user, -get_hp(user).max() / 4_bi);
+auto struggle(Generation const generation, MutableActivePokemon user) {
+	change_hp(generation, user, -get_hp(user).max() / 4_bi);
 }
 
 
-auto use_swallow(MutableActivePokemon user) {
+auto use_swallow(Generation const generation, MutableActivePokemon user) {
 	auto const stockpiles = user.release_stockpile();
 	if (stockpiles == 0_bi) {
 		return;
 	}
-	heal(user, swallow_healing(bounded::integer<1, Stockpile::max>(stockpiles)));
+	heal(generation, user, swallow_healing(bounded::integer<1, Stockpile::max>(stockpiles)));
 }
 
 
@@ -216,7 +216,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Giga_Drain:
 		case Moves::Leech_Life:
 		case Moves::Mega_Drain:
-			absorb_hp(user, other.pokemon(), damage);
+			absorb_hp(generation, user, other.pokemon(), damage);
 			break;
 		case Moves::Acid:
 		case Moves::Bug_Buzz:
@@ -298,10 +298,10 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		case Moves::Belly_Drum:
-			belly_drum(user);
+			belly_drum(generation, user);
 			break;
 		case Moves::Bide:
-			user.use_bide(other.pokemon());
+			user.use_bide(generation, other.pokemon());
 			break;
 		case Moves::Bind:
 		case Moves::Clamp:
@@ -370,7 +370,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Brave_Bird:
 		case Moves::Double_Edge:
 		case Moves::Wood_Hammer:
-			recoil(user, damage, 3_bi);
+			recoil(generation, user, damage, 3_bi);
 			break;
 		case Moves::Bubble:
 		case Moves::Bubble_Beam:
@@ -477,7 +477,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		case Moves::Curse:
-			curse(user, other.pokemon());
+			curse(generation, user, other.pokemon());
 			break;
 		case Moves::Dark_Void:
 		case Moves::Grass_Whistle:
@@ -531,7 +531,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Dream_Eater:
 			if (is_sleeping(get_status(other.pokemon()))) {
-				absorb_hp(user, other.pokemon(), damage);
+				absorb_hp(generation, user, other.pokemon(), damage);
 			}
 			break;
 		case Moves::Embargo:
@@ -545,7 +545,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Explosion:
 		case Moves::Self_Destruct:
-			user.set_hp(0_bi);
+			user.set_hp(generation, 0_bi);
 			break;
 		case Moves::Fake_Tears:
 		case Moves::Metal_Sound:
@@ -561,7 +561,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			move.variable.fang_side_effects(user, other.pokemon(), weather, Statuses::burn);
 			break;
 		case Moves::Flare_Blitz:
-			recoil_status(user, other.pokemon(), weather, damage, move.variable, Statuses::burn);
+			recoil_status(generation, user, other.pokemon(), weather, damage, move.variable, Statuses::burn);
 			break;
 		case Moves::Flash:
 		case Moves::Kinesis:
@@ -626,7 +626,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().stage() = Stage{};
 			break;
 		case Moves::Head_Smash:
-			recoil(user, damage, 2_bi);
+			recoil(generation, user, damage, 2_bi);
 			break;
 		case Moves::Heal_Bell:
 			cure_all_status(user_team, [](Pokemon const & pokemon) {
@@ -641,7 +641,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Recover:
 		case Moves::Slack_Off:
 		case Moves::Soft_Boiled:
-			heal(user, rational(1_bi, 2_bi));
+			heal(generation, user, rational(1_bi, 2_bi));
 			break;
 		case Moves::Healing_Wish:		// Fix
 			break;
@@ -707,7 +707,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Memento:
 			boost_offensive(other.pokemon().stage(), -2_bi);
-			user.set_hp(0_bi);
+			user.set_hp(generation, 0_bi);
 			break;
 		case Moves::Mimic:		// Fix
 			break;
@@ -744,7 +744,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 					return Result(1_bi, 2_bi);
 				}
 			};
-			heal(user, amount());
+			heal(generation, user, amount());
 			break;
 		}
 		case Moves::Mud_Sport:
@@ -763,7 +763,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.activate_rampage();
 			break;
 		case Moves::Pain_Split:
-			equalize_hp(user, other.pokemon());
+			equalize_hp(generation, user, other.pokemon());
 			break;
 		case Moves::Perish_Song:
 			user.activate_perish_song();
@@ -787,7 +787,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Present:
 			if (move.variable.present_heals()) {
-				change_hp(other.pokemon(), 80_bi);
+				change_hp(generation, other.pokemon(), 80_bi);
 			}
 			break;
 		case Moves::Psych_Up:
@@ -829,7 +829,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Roost:
 			user.roost();
-			heal(user, rational(1_bi, 2_bi));
+			heal(generation, user, rational(1_bi, 2_bi));
 			break;
 		case Moves::Safeguard:
 			user_team.screens.activate_safeguard();
@@ -896,14 +896,14 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.increment_stockpile();
 			break;
 		case Moves::Struggle:
-			struggle(user);
+			struggle(generation, user);
 			break;
 		case Moves::Submission:
 		case Moves::Take_Down:
-			recoil(user, damage, 4_bi);
+			recoil(generation, user, damage, 4_bi);
 			break;
 		case Moves::Substitute:
-			user.use_substitute();		
+			user.use_substitute(generation);		
 			break;
 		case Moves::Sunny_Day:
 			weather.activate_sun(extends_sun(get_item(user)));
@@ -915,7 +915,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			confusing_stat_boost(other.pokemon(), StatNames::ATK, 2_bi);
 			break;
 		case Moves::Swallow:
-			use_swallow(user);
+			use_swallow(generation, user);
 			break;
 		case Moves::Sweet_Scent:
 			boost(other.pokemon().stage(), StatNames::EVA, -1_bi);
@@ -977,7 +977,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.use_uproar();
 			break;
 		case Moves::Volt_Tackle:
-			recoil_status(user, other.pokemon(), weather, damage, move.variable, Statuses::paralysis);
+			recoil_status(generation, user, other.pokemon(), weather, damage, move.variable, Statuses::paralysis);
 			break;
 		case Moves::Wake_Up_Slap:
 			if (is_sleeping(get_status(other.pokemon()))) {
@@ -1054,16 +1054,24 @@ auto use_move(Generation const generation, Team & user, ExecutedMove const move,
 
 	auto const substitute = other_pokemon.substitute();
 	if (damage != 0_bi) {
-		other_pokemon.direct_damage(damage);
+		other_pokemon.direct_damage(generation, damage);
 	}
 	if (!substitute or !blocked_by_substitute(generation, move.name)) {
+		auto const enigma_berry_activates =
+			generation >= Generation::four and
+			Effectiveness(generation, move_type, other_pokemon.types()).is_super_effective() and
+			get_item(other_pokemon) == Item::Enigma_Berry;
+		if (enigma_berry_activates) {
+			set_item(other_pokemon, Item::None);
+			heal(generation, other_pokemon, rational(1_bi, 4_bi));
+		}
 		do_side_effects(generation, user, move, move_type, other, weather, damage);
 	}
 	auto const item = get_item(user_pokemon);
 	if (!static_cast<bool>(substitute) and causes_recoil(item)) {
-		heal(user_pokemon, rational(-1_bi, 10_bi));
+		heal(generation, user_pokemon, rational(-1_bi, 10_bi));
 	} else if (item == Item::Shell_Bell) {
-		change_hp(user_pokemon, bounded::max(damage / 8_bi, 1_bi));
+		change_hp(generation, user_pokemon, bounded::max(damage / 8_bi, 1_bi));
 	}
 }
 
