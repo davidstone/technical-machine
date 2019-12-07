@@ -447,21 +447,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto activate_aqua_ring() const {
 		m_flags.aqua_ring = true;
 	}
-	auto attract(Generation const generation) const {
-		auto const ability_cures_attract = get_ability(*this) == Ability::Oblivious;
-		if (generation <= Generation::four) {
-			if (!ability_cures_attract) {
-				m_flags.attracted = true;
-				apply_own_mental_herb(generation, *this);
-			}
-		} else {
-			m_flags.attracted = true;
-			apply_own_mental_herb(generation, *this);
-			if (ability_cures_attract) {
-				m_flags.attracted = false;
-			}
-		}
-	}
+	auto attract(Generation, MutableActivePokemon other) const -> void;
 	auto baton_pass() const -> void;
 	auto charge() const {
 		m_flags.charged = true;

@@ -187,6 +187,35 @@ auto grounded(ActivePokemon const pokemon, Weather const weather) -> bool {
 }
 
 
+auto MutableActivePokemon::attract(Generation const generation, MutableActivePokemon other) const -> void {
+	auto handle_item = [&] {
+		switch (get_item(m_pokemon)) {
+			case Item::Mental_Herb:
+				apply_own_mental_herb(generation, *this);
+				break;
+			case Item::Destiny_Knot:
+				set_item(*this, Item::None);
+				other.attract(generation, *this);
+				break;
+			default:
+				break;
+		}
+	};
+	auto const ability_cures_attract = get_ability(*this) == Ability::Oblivious;
+	if (generation <= Generation::four) {
+		if (!ability_cures_attract) {
+			m_flags.attracted = true;
+			handle_item();
+		}
+	} else {
+		m_flags.attracted = true;
+		handle_item();
+		if (ability_cures_attract) {
+			m_flags.attracted = false;
+		}
+	}
+}
+
 auto MutableActivePokemon::baton_pass() const -> void {
 	m_flags.lock_in = BatonPassing{};
 }

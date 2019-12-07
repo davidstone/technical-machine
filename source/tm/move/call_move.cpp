@@ -289,7 +289,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Attract:
 			if (multiplier(get_gender(user), get_gender(other.pokemon())) == -1_bi) {
-				other.pokemon().attract(generation);
+				other.pokemon().attract(generation, user);
 			}
 			break;
 		case Moves::Baton_Pass:
@@ -310,6 +310,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Sand_Tomb:
 		case Moves::Whirlpool:
 		case Moves::Wrap:
+			// TODO: Handle Grip_Claw
 			other.pokemon().partially_trap();
 			break;
 		case Moves::Blast_Burn:
