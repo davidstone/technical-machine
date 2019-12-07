@@ -27,11 +27,17 @@ target_include_directories(boost SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
 
 enable_testing()
 
+add_library(operators INTERFACE)
+set_property(TARGET operators PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/operators/include)
+
 add_library(bounded INTERFACE)
 add_library(containers INTERFACE)
 set_property(TARGET bounded PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/bounded_integer/include)
 set_property(TARGET containers PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/bounded_integer/include)
 
+target_link_libraries(bounded INTERFACE
+	operators
+)
 # TODO: This should be an object library, but they do not really work yet.
 add_library(tm_common STATIC
 	source/tm/bide/bide.cpp

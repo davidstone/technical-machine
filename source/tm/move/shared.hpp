@@ -30,6 +30,8 @@
 #include <containers/common_container_functions.hpp>
 #include <containers/size.hpp>
 
+#include <operators/operators.hpp>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -82,7 +84,7 @@ public:
 		return lhs.m_index == rhs.m_index;
 	}
 
-	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(SharedMovesIterator)
+	OPERATORS_BRACKET_ITERATOR_DEFINITIONS
 private:
 	Generation m_generation;
 	underlying_index_type m_index;
@@ -117,7 +119,7 @@ struct SharedMoves {
 		}
 	}
 
-	CONTAINERS_OPERATOR_BRACKET_DEFINITIONS(SharedMoves)
+	OPERATORS_BRACKET_SEQUENCE_RANGE_DEFINITIONS
 private:
 	Generation m_generation;
 	TeamSize m_number_of_switches;
