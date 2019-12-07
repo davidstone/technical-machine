@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/rational.hpp>
 #include <tm/status.hpp>
 
 #include <bounded/integer.hpp>
@@ -842,6 +843,13 @@ constexpr bool extends_light_screen(Item const item) {
 }
 constexpr bool extends_reflect(Item const item) {
 	return item == Item::Light_Clay;
+}
+
+constexpr auto healing_multiplier(Item const item) {
+	return rational(
+		BOUNDED_CONDITIONAL(item == Item::Big_Root, 13_bi, 10_bi),
+		10_bi
+	);
 }
 
 bounded::integer<0, 80> berry_power(Item item);		// Returns 0 for non-berries

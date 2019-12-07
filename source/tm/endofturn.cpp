@@ -103,10 +103,10 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 		return;
 	}
 	if (pokemon.ingrained()) {
-		heal(generation, pokemon, rational(1_bi, 16_bi));
+		heal(generation, pokemon, rational(1_bi, 16_bi) * healing_multiplier(get_item(pokemon)));
 	}
 	if (pokemon.aqua_ring_is_active()) {
-		heal(generation, pokemon, rational(1_bi, 16_bi));
+		heal(generation, pokemon, rational(1_bi, 16_bi) * healing_multiplier(get_item(pokemon)));
 	}
 	if (boosts_speed(get_ability(pokemon))) {
 		boost(pokemon.stage(), StatNames::SPE, 1_bi);
@@ -129,7 +129,7 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 		auto const initial = get_hp(pokemon).current();
 		heal(generation, pokemon, rational(-1_bi, 8_bi));
 		if (get_hp(foe) != 0_bi) {
-			auto const hp_change = initial - get_hp(pokemon).current();
+			auto const hp_change = (initial - get_hp(pokemon).current()) * healing_multiplier(get_item(pokemon));
 			if (damages_leechers(get_ability(pokemon))) {
 				change_hp(generation, foe, -hp_change);
 			} else {

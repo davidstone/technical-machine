@@ -51,7 +51,7 @@ namespace {
 
 // I could potentially treat this as negative recoil
 auto absorb_hp(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, HP::current_type const damage) -> void {
-	auto const absorbed = damage / 2_bi;
+	auto const absorbed = damage / 2_bi * healing_multiplier(get_item(user));
 	if (damages_leechers(get_ability(target))) {
 		change_hp(generation, user, -absorbed);
 	} else {
