@@ -201,6 +201,7 @@ auto item_modifier(Generation const generation, Pokemon const & pokemon) {
 					return BOUNDED_CONDITIONAL(is_boosted_by_quick_powder(species), 2_bi * denominator, denominator);
 				case Item::Choice_Scarf:
 					return 3_bi;
+				case Item::Iron_Ball:
 				case Item::Macho_Brace:
 				case Item::Power_Anklet:
 				case Item::Power_Band:
@@ -374,6 +375,7 @@ auto faster_pokemon(Generation const generation, Team const & team1, Team const 
 	if (!result) {
 		return bounded::none;
 	}
+	// TODO: Handle Full_Incense, Lagging_Tail, and Stall
 	if (weather.trick_room()) {
 		return Faster(std::in_place, result->second, result->first);
 	}
