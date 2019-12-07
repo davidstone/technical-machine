@@ -117,11 +117,9 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 		case Item::Leftovers:
 			heal(generation, pokemon, rational(1_bi, 16_bi));
 			break;
-		case Item::Black_Sludge: {
-			auto const numerator = BOUNDED_CONDITIONAL(is_type(pokemon, Type::Poison), 1_bi, -1_bi);
-			heal(generation, pokemon, rational(numerator, 16_bi));
+		case Item::Black_Sludge:
+			heal(generation, pokemon, BOUNDED_CONDITIONAL(is_type(pokemon, Type::Poison), rational(1_bi, 16_bi), rational(-1_bi, 8_bi)));
 			break;
-		}
 		default:
 			break;
 	}
