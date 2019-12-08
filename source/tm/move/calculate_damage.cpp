@@ -304,7 +304,7 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 auto restricted_damage(Generation const generation, Team const & attacker, ExecutedMove const move, Type const move_type, Team const & defender_team, OtherMove const defender_move, Weather const weather) {
 	auto const defender = defender_team.pokemon();
 	auto const damage = raw_damage(generation, attacker, move, move_type, defender_team, defender_move, weather);
-	return (cannot_ko(move.name) or defender.cannot_be_koed()) ?
+	return ((cannot_ko(move.name) or defender.cannot_be_koed()) and !defender.substitute()) ?
 		static_cast<damage_type>(bounded::min(get_hp(defender).current() - 1_bi, damage)) :
 		damage;
 }
