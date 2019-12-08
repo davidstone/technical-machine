@@ -660,7 +660,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		}
 	}
 
-	// Returns whether the Pokemon ends up in a Vanished state
+	// Returns whether the move hits
 	auto bounce() const -> bool;
 	auto dig() const -> bool;
 	auto dive() const -> bool;

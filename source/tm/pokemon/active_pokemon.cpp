@@ -292,29 +292,39 @@ auto MutableActivePokemon::use_uproar() const -> void {
 namespace {
 
 template<typename T>
-auto use_vanish_move(auto & lock_in) -> bool {
+auto use_vanish_move(Pokemon & user, auto & lock_in) -> bool {
 	return bounded::visit(lock_in, bounded::overload(
-		[&](T) { lock_in = std::monostate{}; return false; },
-		[&](auto const &) { lock_in = T{}; return true; }
+		[&](T) {
+			lock_in = std::monostate{};
+			return true;
+		},
+		[&](auto) {
+			if (get_item(user) == Item::Power_Herb) {
+				set_item(user, Item::None);
+				return true;
+			}
+			lock_in = T{};
+			return false;
+		}
 	));
 }
 
 } // namespace
 
 auto MutableActivePokemon::bounce() const -> bool {
-	return use_vanish_move<Bouncing>(m_flags.lock_in);
+	return use_vanish_move<Bouncing>(m_pokemon, m_flags.lock_in);
 }
 auto MutableActivePokemon::dig() const -> bool {
-	return use_vanish_move<Digging>(m_flags.lock_in);
+	return use_vanish_move<Digging>(m_pokemon, m_flags.lock_in);
 }
 auto MutableActivePokemon::dive() const -> bool {
-	return use_vanish_move<Diving>(m_flags.lock_in);
+	return use_vanish_move<Diving>(m_pokemon, m_flags.lock_in);
 }
 auto MutableActivePokemon::fly() const -> bool {
-	return use_vanish_move<Flying>(m_flags.lock_in);
+	return use_vanish_move<Flying>(m_pokemon, m_flags.lock_in);
 }
 auto MutableActivePokemon::shadow_force() const -> bool {
-	return use_vanish_move<ShadowForcing>(m_flags.lock_in);
+	return use_vanish_move<ShadowForcing>(m_pokemon, m_flags.lock_in);
 }
 
 auto MutableActivePokemon::use_bide(Generation const generation, MutableActivePokemon target) const -> void {
