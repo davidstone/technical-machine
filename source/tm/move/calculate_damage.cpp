@@ -79,12 +79,12 @@ auto calculate_flash_fire_modifier(ActivePokemon const attacker, Type const move
 }
 
 using ItemModifier = rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
-auto calculate_item_modifier(ActivePokemon const attacker) -> ItemModifier {
+auto calculate_item_modifier(Generation const generation, ActivePokemon const attacker) -> ItemModifier {
 	switch (get_item(attacker)) {
 		case Item::Life_Orb:
 			return rational(13_bi, 10_bi);
 		case Item::Metronome:
-			return attacker.last_used_move().metronome_boost();
+			return attacker.last_used_move().metronome_boost(generation);
 		default:
 			return rational(10_bi, 10_bi);
 	}
@@ -242,7 +242,7 @@ auto regular_damage(Generation const generation, Team const & attacker_team, Exe
 
 	return bounded::max(1_bi, temp *
 		critical_hit_multiplier(attacker, move.critical_hit) *
-		calculate_item_modifier(attacker) *
+		calculate_item_modifier(generation, attacker) *
 		calculate_me_first_modifier(attacker) *
 		attacker.random_damage_multiplier() *
 		calculate_stab_modifier(attacker, move_type) *

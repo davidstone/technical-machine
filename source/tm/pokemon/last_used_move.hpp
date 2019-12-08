@@ -18,6 +18,7 @@
 #pragma once
 
 #include <tm/move/moves.hpp>
+#include <tm/generation.hpp>
 #include <tm/rational.hpp>
 
 #include <bounded/integer.hpp>
@@ -69,8 +70,13 @@ struct LastUsedMove {
 	}
 
 	// TODO: Does Metronome boost Struggle?
-	constexpr auto metronome_boost() const {
-		return rational(10_bi + m_consecutive_successes, 10_bi);
+	constexpr auto metronome_boost(Generation const generation) const {
+		auto const boost = BOUNDED_CONDITIONAL(
+			generation <= Generation::four,
+			m_consecutive_successes,
+			2_bi * bounded::min(m_consecutive_successes, 5_bi)
+		);
+		return rational(10_bi + boost, 10_bi);
 	}
 
 	friend constexpr auto operator==(LastUsedMove const lhs, LastUsedMove const rhs) {

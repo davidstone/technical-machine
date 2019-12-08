@@ -1204,7 +1204,7 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 		(get_hp(other_pokemon).current() == 0_bi and fails_against_fainted(target)) or
 		(other_pokemon.is_protecting() and blocked_by_protect(target, move.executed));
 	if (unsuccessful) {
-		user_pokemon.unsuccessfully_use_move(move.selected);
+		user_pokemon.unsuccessfully_use_move(move.executed);
 		return;
 	}
 
@@ -1221,7 +1221,7 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 		};
 		use_move(generation, user, executed_move, move_type, other, other_move, weather, actual_damage);
 	}
-	user_pokemon.increment_move_use_counter(move.selected);
+	user_pokemon.increment_move_use_counter(move.executed);
 }
 
 }	// namespace technicalmachine
