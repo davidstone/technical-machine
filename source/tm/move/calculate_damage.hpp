@@ -17,20 +17,18 @@
 
 #pragma once
 
-#include <tm/move/executed_move.hpp>
-#include <tm/move/other_move.hpp>
+#include <bounded/integer.hpp>
 
 namespace technicalmachine {
 
+struct ExecutedMove;
 enum class Generation : std::uint8_t;
-struct Pokemon;
+struct OtherMove;
 struct Team;
 struct Weather;
 
 using damage_type = bounded::checked_integer<0, 4294967295>;
 
-auto calculate_uncapped_damage(Generation const generation, Team const & attacker, ExecutedMove const move, Team const & defender, OtherMove const defender_move, Weather const weather) -> damage_type;
-
-auto calculate_damage(Generation generation, Team const & attacker, ExecutedMove move, Team const & defender, OtherMove defender_move, Weather weather) -> HP::current_type;
+auto calculate_damage(Generation, Team const & attacker, ExecutedMove, Team const & defender, OtherMove defender_move, Weather) -> damage_type;
 
 }	// namespace technicalmachine

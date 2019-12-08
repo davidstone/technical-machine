@@ -1054,9 +1054,9 @@ auto use_move(Generation const generation, Team & user, ExecutedMove const move,
 	auto const damage = actual_damage.value(generation, user, move, other, other_move, weather);
 
 	auto const substitute = other_pokemon.substitute();
-	if (damage != 0_bi) {
-		other_pokemon.direct_damage(generation, damage);
-	}
+	auto const damage_done = damage != 0_bi ?
+		other_pokemon.direct_damage(generation, move.name, damage) :
+		0_bi;
 	if (!substitute or !blocked_by_substitute(generation, move.name)) {
 		auto const enigma_berry_activates =
 			generation >= Generation::four and
@@ -1066,13 +1066,15 @@ auto use_move(Generation const generation, Team & user, ExecutedMove const move,
 			set_item(other_pokemon, Item::None);
 			heal(generation, other_pokemon, rational(1_bi, 4_bi));
 		}
-		do_side_effects(generation, user, move, move_type, other, weather, damage);
+		do_side_effects(generation, user, move, move_type, other, weather, damage_done);
 	}
-	auto const item = get_item(user_pokemon);
-	if (!static_cast<bool>(substitute) and causes_recoil(item)) {
-		heal(generation, user_pokemon, rational(-1_bi, 10_bi));
-	} else if (item == Item::Shell_Bell) {
-		change_hp(generation, user_pokemon, bounded::max(damage / 8_bi, 1_bi));
+	if (!static_cast<bool>(substitute)) {
+		auto const item = get_item(user_pokemon);
+		if (causes_recoil(item)) {
+			heal(generation, user_pokemon, rational(-1_bi, 10_bi));
+		} else if (item == Item::Shell_Bell) {
+			change_hp(generation, user_pokemon, bounded::max(damage_done / 8_bi, 1_bi));
+		}
 	}
 }
 

@@ -21,6 +21,7 @@
 
 #include <tm/move/calculate_damage.hpp>
 #include <tm/move/moves.hpp>
+#include <tm/move/other_move.hpp>
 #include <tm/move/power.hpp>
 
 #include <tm/pokemon/species.hpp>
@@ -164,7 +165,7 @@ void physical_damage_test() {
 	auto const defender = max_damage_physical_defender();
 	
 	check_equal(
-		calculate_uncapped_damage(
+		calculate_damage(
 			generation,
 			attacker,
 			ExecutedMove{
@@ -204,7 +205,7 @@ void special_damage_test() {
 	Team defender = max_damage_special_defender();
 
 	check_equal(
-		calculate_uncapped_damage(
+		calculate_damage(
 			generation,
 			attacker,
 			ExecutedMove{move.name(), move.pp(), Variable{}, critical_hit},

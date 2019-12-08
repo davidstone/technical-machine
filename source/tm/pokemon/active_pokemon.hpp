@@ -38,6 +38,7 @@
 
 #include <tm/bide/bide.hpp>
 
+#include <tm/move/calculate_damage.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/is_switch.hpp>
 
@@ -216,10 +217,6 @@ public:
 
 	auto is_baton_passing() const -> bool {
 		return m_flags.is_baton_passing();
-	}
-
-	auto cannot_be_koed() const -> bool {
-		return m_flags.damage_blocker.is_enduring();
 	}
 
 	auto charge_boosted(Type const move_type) const -> bool {
@@ -677,7 +674,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		activate_pinch_item(generation);
 	}
 	auto indirect_damage(Generation, HP::current_type const damage) const -> void;
-	auto direct_damage(Generation, HP::current_type const damage) const -> void;
+	auto direct_damage(Generation, Moves, damage_type const damage) const -> HP::current_type;
 
 	auto increment_move_use_counter(Moves const move) const {
 		m_flags.last_used_move.increment(move);

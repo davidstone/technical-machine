@@ -26,7 +26,7 @@
 
 namespace technicalmachine {
 
-auto ActualDamage::value(Generation const generation, Team const & user, ExecutedMove const move, Team const & other, OtherMove const other_move, Weather const weather) const -> HP::current_type {
+auto ActualDamage::value(Generation const generation, Team const & user, ExecutedMove const move, Team const & other, OtherMove const other_move, Weather const weather) const -> damage_type {
 	auto calculate = [&]{
 		auto const no_damage =
 			!is_damaging(move.name) or
@@ -36,9 +36,9 @@ auto ActualDamage::value(Generation const generation, Team const & user, Execute
 	};
 
 	return bounded::visit(m_value, bounded::overload(
-		[=](Unknown) -> HP::current_type { return calculate(); },
-		[=](Capped const capped) -> HP::current_type { return bounded::min(calculate(), capped.value); },
-		[](Known const known) { return known.value; }
+		[=](Unknown) { return calculate(); },
+		[=](Capped const capped) -> damage_type { return bounded::min(calculate(), capped.value); },
+		[](Known const known) -> damage_type { return known.value; }
 	));
 }
 

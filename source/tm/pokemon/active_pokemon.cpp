@@ -334,17 +334,42 @@ auto MutableActivePokemon::indirect_damage(Generation const generation, HP::curr
 	m_flags.damaged = true;
 }
 
-auto MutableActivePokemon::direct_damage(Generation const generation, HP::current_type const damage) const -> void {
-	if (m_flags.substitute) {
-		m_flags.substitute.damage(damage);
-	} else {
-		indirect_damage(generation, damage);
-		m_flags.direct_damage_received = damage;
-		bounded::visit(m_flags.lock_in, bounded::overload(
-			[=](Bide & bide) { bide.add_damage(damage); },
-			[](auto const &) {}
-		));
+namespace {
+
+constexpr bool cannot_ko(Moves const move) {
+	return move == Moves::False_Swipe;
+}
+
+auto handle_ohko(MutableActivePokemon defender, bool const is_enduring, Moves const move) {
+	if (cannot_ko(move) or is_enduring) {
+		return true;
 	}
+	auto const hp = get_hp(defender);
+	if (hp.current() == hp.max() and get_item(defender) == Item::Focus_Sash) {
+		set_item(defender, Item::None);
+		return true;
+	}
+	return false;
+}
+
+} // namespace
+
+auto MutableActivePokemon::direct_damage(Generation const generation, Moves const move, damage_type const damage) const -> HP::current_type {
+	if (m_flags.substitute) {
+		return m_flags.substitute.damage(damage);
+	}
+	auto const original_hp = get_hp(m_pokemon).current();
+	auto const block_ohko = original_hp <= damage and handle_ohko(*this, m_flags.damage_blocker.is_enduring(), move);
+	auto const applied_damage = block_ohko ?
+		static_cast<HP::current_type>(original_hp - 1_bi) :
+		bounded::min(damage, original_hp);
+	indirect_damage(generation, applied_damage);
+	m_flags.direct_damage_received = applied_damage;
+	bounded::visit(m_flags.lock_in, bounded::overload(
+		[=](Bide & bide) { bide.add_damage(applied_damage); },
+		[](auto const &) {}
+	));
+	return applied_damage;
 }
 
 namespace {

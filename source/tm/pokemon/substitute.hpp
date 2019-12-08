@@ -43,7 +43,9 @@ public:
 	}
 
 	constexpr auto damage(auto const damage_done) {
+		auto const original_hp = m_hp;
 		m_hp -= damage_done;
+		return HP::current_type(original_hp - m_hp);
 	}
 
 	constexpr auto hp() const -> hp_type {
