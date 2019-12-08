@@ -806,9 +806,6 @@ constexpr bool allows_switching(Item const item) {
 constexpr bool boosts_super_effective_moves(Item const item) {
 	return item == Item::Expert_Belt;
 }
-constexpr bool causes_recoil(Item const item) {
-	return item == Item::Life_Orb;
-}
 constexpr bool grounds(Item const item) {
 	return item == Item::Iron_Ball;
 }

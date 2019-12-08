@@ -1070,7 +1070,8 @@ auto use_move(Generation const generation, Team & user, ExecutedMove const move,
 	}
 	if (!static_cast<bool>(substitute)) {
 		auto const item = get_item(user_pokemon);
-		if (causes_recoil(item)) {
+		// TODO: Doom Desire / Future Sight are not handled correctly
+		if (item == Item::Life_Orb) {
 			heal(generation, user_pokemon, rational(-1_bi, 10_bi));
 		} else if (item == Item::Shell_Bell) {
 			change_hp(generation, user_pokemon, bounded::max(damage_done / 8_bi, 1_bi));
