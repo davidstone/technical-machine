@@ -1045,36 +1045,95 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 	}
 }
 
+// Returns whether the attack is weakened by the item
+auto activate_when_hit_item(Generation const generation, Moves const move, Type const move_type, MutableActivePokemon defender, Effectiveness const effectiveness) -> bool {
+	if (defender.substitute() and blocked_by_substitute(generation, move)) {
+		return false;
+	}
+	auto resistance_berry = [&](Type const resisted) {
+		if (move_type != resisted) {
+			return false;
+		}
+		set_item(defender, Item::None);
+		return true;
+	};
+	auto se_resistance_berry = [&](Type const resisted) {
+		if (!effectiveness.is_super_effective()) {
+			return false;
+		}
+		return resistance_berry(resisted);
+	};
+	switch (get_item(defender)) {
+		case Item::Babiri_Berry:
+			return se_resistance_berry(Type::Steel);
+		case Item::Charti_Berry:
+			return se_resistance_berry(Type::Rock);
+		case Item::Chople_Berry:
+			return se_resistance_berry(Type::Fighting);
+		case Item::Chilan_Berry:
+			return resistance_berry(Type::Normal);
+		case Item::Coba_Berry:
+			return se_resistance_berry(Type::Flying);
+		case Item::Colbur_Berry:
+			return se_resistance_berry(Type::Dark);
+		case Item::Enigma_Berry:
+			if (effectiveness.is_super_effective() and generation >= Generation::four) {
+				set_item(defender, Item::None);
+				heal(generation, defender, rational(1_bi, 4_bi));
+			}
+			return false;
+		case Item::Haban_Berry:
+			return se_resistance_berry(Type::Dragon);
+		case Item::Kasib_Berry:
+			return se_resistance_berry(Type::Ghost);
+		case Item::Kebia_Berry:
+			return se_resistance_berry(Type::Poison);
+		case Item::Occa_Berry:
+			return se_resistance_berry(Type::Fire);
+		case Item::Passho_Berry:
+			return se_resistance_berry(Type::Water);
+		case Item::Payapa_Berry:
+			return se_resistance_berry(Type::Psychic);
+		case Item::Rindo_Berry:
+			return se_resistance_berry(Type::Grass);
+		case Item::Shuca_Berry:
+			return se_resistance_berry(Type::Ground);
+		case Item::Tanga_Berry:
+			return se_resistance_berry(Type::Bug);
+		case Item::Wacan_Berry:
+			return se_resistance_berry(Type::Electric);
+		case Item::Yache_Berry:
+			return se_resistance_berry(Type::Ice);
+		default:
+			return false;
+	}
+}
 
 auto use_move(Generation const generation, Team & user, ExecutedMove const move, Type const move_type, Team & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	do_effects_before_moving(move.name, user_pokemon, other);
 
-	auto const damage = actual_damage.value(generation, user, move, other, other_move, weather);
+	auto const effectiveness = Effectiveness(generation, move_type, other_pokemon.types());
+	auto const weakened = activate_when_hit_item(generation, move.name, move_type, other_pokemon, effectiveness);
+	auto const damage = actual_damage.value(generation, user, move, weakened, other, other_move, weather);
 
-	auto const substitute = other_pokemon.substitute();
+	auto const had_substitute = static_cast<bool>(other_pokemon.substitute());
+	// Should this check if we did any damage or if the move is damaging?
 	auto const damage_done = damage != 0_bi ?
 		other_pokemon.direct_damage(generation, move.name, damage) :
 		0_bi;
-	if (!substitute or !blocked_by_substitute(generation, move.name)) {
-		auto const enigma_berry_activates =
-			generation >= Generation::four and
-			Effectiveness(generation, move_type, other_pokemon.types()).is_super_effective() and
-			get_item(other_pokemon) == Item::Enigma_Berry;
-		if (enigma_berry_activates) {
-			set_item(other_pokemon, Item::None);
-			heal(generation, other_pokemon, rational(1_bi, 4_bi));
-		}
+	if (!had_substitute or !blocked_by_substitute(generation, move.name)) {
 		do_side_effects(generation, user, move, move_type, other, weather, damage_done);
-	}
-	if (!static_cast<bool>(substitute)) {
-		auto const item = get_item(user_pokemon);
-		// TODO: Doom Desire / Future Sight are not handled correctly
-		if (item == Item::Life_Orb) {
-			heal(generation, user_pokemon, rational(-1_bi, 10_bi));
-		} else if (item == Item::Shell_Bell) {
-			change_hp(generation, user_pokemon, bounded::max(damage_done / 8_bi, 1_bi));
+		// Should this check if we did any damage or if the move is damaging?
+		if (damage_done != 0_bi) {
+			auto const item = get_item(user_pokemon);
+			// TODO: Doom Desire / Future Sight are not handled correctly
+			if (item == Item::Life_Orb) {
+				heal(generation, user_pokemon, rational(-1_bi, 10_bi));
+			} else if (item == Item::Shell_Bell) {
+				change_hp(generation, user_pokemon, bounded::max(damage_done / 8_bi, 1_bi));
+			}
 		}
 	}
 }

@@ -29,6 +29,6 @@ struct Weather;
 
 using damage_type = bounded::checked_integer<0, 4294967295>;
 
-auto calculate_damage(Generation, Team const & attacker, ExecutedMove, Team const & defender, OtherMove defender_move, Weather) -> damage_type;
+auto calculate_damage(Generation, Team const & attacker, ExecutedMove, bool move_weakened_from_item, Team const & defender, OtherMove defender_move, Weather) -> damage_type;
 
 }	// namespace technicalmachine

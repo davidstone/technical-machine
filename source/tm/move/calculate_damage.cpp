@@ -127,54 +127,6 @@ auto calculate_expert_belt_modifier(Item const item, Effectiveness const & effec
 }
 
 
-bool resistance_berry_activates(Item const item, Type const type, Effectiveness const effectiveness) {
-	// Perhaps I should create some sort of item function that returns the type
-	// that the item grants resistance toward (and some sort of guard type to
-	// indicate that the item does not grant resistance). Then I can
-	// `return type == returned_type;`
-	if (item == Item::Chilan_Berry)
-		return type == Type::Normal;
-	else if (effectiveness.is_super_effective()) {
-		switch (item) {
-			case Item::Babiri_Berry:
-				return type == Type::Steel;
-			case Item::Charti_Berry:
-				return type == Type::Rock;
-			case Item::Chople_Berry:
-				return type == Type::Fighting;
-			case Item::Coba_Berry:
-				return type == Type::Flying;
-			case Item::Colbur_Berry:
-				return type == Type::Dark;
-			case Item::Haban_Berry:
-				return type == Type::Dragon;
-			case Item::Kasib_Berry:
-				return type == Type::Ghost;
-			case Item::Kebia_Berry:
-				return type == Type::Poison;
-			case Item::Occa_Berry:
-				return type == Type::Fire;
-			case Item::Passho_Berry:
-				return type == Type::Water;
-			case Item::Payapa_Berry:
-				return type == Type::Psychic;
-			case Item::Rindo_Berry:
-				return type == Type::Grass;
-			case Item::Shuca_Berry:
-				return type == Type::Ground;
-			case Item::Tanga_Berry:
-				return type == Type::Bug;
-			case Item::Wacan_Berry:
-				return type == Type::Electric;
-			case Item::Yache_Berry:
-				return type == Type::Ice;
-			default:
-				return false;
-		}
-	}
-	return false;
-}
-
 auto level_multiplier(Pokemon const & attacker) -> decltype(get_level(attacker)() * 2_bi / 5_bi) {
 	return get_level(attacker)() * 2_bi / 5_bi;
 }
@@ -222,11 +174,11 @@ auto tinted_lens_multiplier(Ability const ability, Effectiveness const & effecti
 	);
 }
 
-auto resistance_berry_divisor(Item const item, Type const type, Effectiveness const & effectiveness) {
-	return BOUNDED_CONDITIONAL(resistance_berry_activates(item, type, effectiveness), 2_bi, 1_bi);
+auto resistance_berry_divisor(bool const move_weakened_from_item) {
+	return BOUNDED_CONDITIONAL(move_weakened_from_item, 2_bi, 1_bi);
 }
 
-auto regular_damage(Generation const generation, Team const & attacker_team, ExecutedMove const move, Type const move_type, Team const & defender_team, Weather const weather) {
+auto regular_damage(Generation const generation, Team const & attacker_team, ExecutedMove const move, Type const move_type, bool const move_weakened_from_item, Team const & defender_team, Weather const weather) {
 	auto const attacker = attacker_team.pokemon();
 	auto const defender = defender_team.pokemon();
 	auto const effectiveness = Effectiveness(generation, move_type, defender.types());
@@ -250,11 +202,11 @@ auto regular_damage(Generation const generation, Team const & attacker_team, Exe
 		calculate_ability_effectiveness_modifier(get_ability(defender), effectiveness) *
 		calculate_expert_belt_modifier(get_item(attacker), effectiveness) *
 		tinted_lens_multiplier(get_ability(attacker), effectiveness) /
-		resistance_berry_divisor(get_item(defender), move_type, effectiveness)
+		resistance_berry_divisor(move_weakened_from_item)
 	);
 }
 
-auto raw_damage(Generation const generation, Team const & attacker_team, ExecutedMove const move, Type const move_type, Team const & defender_team, OtherMove const defender_move, Weather const weather) -> damage_type {
+auto raw_damage(Generation const generation, Team const & attacker_team, ExecutedMove const move, Type const move_type, bool const move_weakened_from_item, Team const & defender_team, OtherMove const defender_move, Weather const weather) -> damage_type {
 	auto const attacker = attacker_team.pokemon();
 	auto const defender = defender_team.pokemon();
 	switch (move.name) {
@@ -293,6 +245,7 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 				attacker_team,
 				move,
 				move_type,
+				move_weakened_from_item,
 				defender_team,
 				weather
 			));
@@ -302,10 +255,10 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 }	// namespace
 
 
-auto calculate_damage(Generation const generation, Team const & attacker, ExecutedMove const move, Team const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
+auto calculate_damage(Generation const generation, Team const & attacker, ExecutedMove const move, bool const move_weakened_from_item, Team const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
 	auto const move_type = get_type(generation, move.name, get_hidden_power(attacker.pokemon()).type());
 	return affects_target(generation, move_type, defender.pokemon(), weather) ?
-		raw_damage(generation, attacker, move, move_type, defender, defender_move, weather) :
+		raw_damage(generation, attacker, move, move_type, move_weakened_from_item, defender, defender_move, weather) :
 		static_cast<damage_type>(0_bi);
 }
 

@@ -54,7 +54,7 @@ struct ActualDamage {
 	{
 	}
 	
-	auto value(Generation generation, Team const & user, ExecutedMove move, Team const & other, OtherMove other_move, Weather weather) const -> damage_type;
+	auto value(Generation, Team const & user, ExecutedMove, bool move_weakened_from_item, Team const & other, OtherMove, Weather) const -> damage_type;
 private:
 	bounded::variant<
 		Unknown,

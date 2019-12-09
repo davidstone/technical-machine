@@ -149,6 +149,8 @@ void power_test() {
 	special_power_test();
 }
 
+constexpr auto resistance_berry_activated = false;
+
 void physical_damage_test() {
 	std::cout << "\t\tRunning max physical damage tests.\n";
 	constexpr auto max_damage = 95064912_bi;
@@ -174,6 +176,7 @@ void physical_damage_test() {
 				Variable{},
 				critical_hit
 			},
+			resistance_berry_activated,
 			defender,
 			FutureMove{false},
 			weather
@@ -209,6 +212,7 @@ void special_damage_test() {
 			generation,
 			attacker,
 			ExecutedMove{move.name(), move.pp(), Variable{}, critical_hit},
+			resistance_berry_activated,
 			defender,
 			FutureMove{false},
 			weather
