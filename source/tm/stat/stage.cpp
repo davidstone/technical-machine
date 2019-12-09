@@ -22,34 +22,30 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-auto boost(Stage & stage, StatNames const stat, Stage::boost_type const number_of_stages) -> void {
-	stage[stat] += number_of_stages;
-}
-
 auto boost_regular(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : { StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE }) {
-		boost(stage, stat, number_of_stages);
+		stage[stat] += number_of_stages;
 	}
 }
 
 auto boost_physical(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : { StatNames::ATK, StatNames::DEF }) {
-		boost(stage, stat, number_of_stages);
+		stage[stat] += number_of_stages;
 	}
 }
 auto boost_special(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : { StatNames::SPA, StatNames::SPD }) {
-		boost(stage, stat, number_of_stages);
+		stage[stat] += number_of_stages;
 	}
 }
 auto boost_defensive(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : { StatNames::DEF, StatNames::SPD }) {
-		boost(stage, stat, number_of_stages);
+		stage[stat] += number_of_stages;
 	}
 }
 auto boost_offensive(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : { StatNames::ATK, StatNames::SPA }) {
-		boost(stage, stat, number_of_stages);
+		stage[stat] += number_of_stages;
 	}
 }
 

@@ -455,7 +455,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation) cons
 			return;
 		}
 		consume();
-		boost(stage(), stat, 1_bi);
+		stage()[stat] += 1_bi;
 	};
 
 	switch (get_item(m_pokemon)) {

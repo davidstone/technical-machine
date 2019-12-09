@@ -76,7 +76,7 @@ Team max_damage_physical_defender() {
 	pokemon.switch_in(generation);
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi), IV(0_bi));
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
-		boost(pokemon.stage(), StatNames::DEF, -2_bi);
+		pokemon.stage()[StatNames::DEF] += -2_bi;
 	}
 	return defender;
 }
@@ -88,7 +88,7 @@ Team max_damage_special_defender() {
 	d.switch_in(generation);
 	set_stat_ev(d, StatNames::SPD, EV(0_bi), IV(0_bi));
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
-		boost(d.stage(), StatNames::SPD, -2_bi);
+		d.stage()[StatNames::SPD] += -2_bi;
 	}
 
 	return defender;
@@ -162,7 +162,7 @@ void physical_damage_test() {
 
 	set_stat_ev(a, StatNames::DEF, EV(EV::max));
 	a.activate_power_trick();
-	boost(a.stage(), StatNames::ATK, 6_bi);
+	a.stage()[StatNames::ATK] += 6_bi;
 
 	auto const defender = max_damage_physical_defender();
 	
@@ -197,7 +197,7 @@ void special_damage_test() {
 	a.set_type(Type::Fire);
 
 	set_stat_ev(a, StatNames::SPA, EV(EV::max));
-	boost(attacker.pokemon().stage(), StatNames::SPA, 6_bi);
+	attacker.pokemon().stage()[StatNames::SPA] += 6_bi;
 	
 	for (auto const n [[maybe_unused]] : containers::integer_range(10_bi)) {
 		attacker.pokemon().increment_move_use_counter(move.name());

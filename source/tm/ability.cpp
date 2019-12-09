@@ -61,7 +61,7 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 		case Ability::Download: {
 			auto const defense = calculate_defense(generation, other, weather);
 			auto const special_defense = calculate_special_defense(generation, other, weather);
-			boost(switcher.stage(), defense >= special_defense ? StatNames::SPA : StatNames::ATK, 1_bi);
+			switcher.stage()[defense >= special_defense ? StatNames::SPA : StatNames::ATK] += 1_bi;
 			break;
 		}
 		case Ability::Drizzle:
@@ -73,7 +73,7 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 		case Ability::Forecast:	// TODO: fix this
 			break;
 		case Ability::Intimidate:
-			boost(other.stage(), StatNames::ATK, -1_bi);
+			other.stage()[StatNames::ATK] += -1_bi;
 			break;
 		case Ability::Sand_Stream:
 			weather.activate_sand(Weather::permanent);

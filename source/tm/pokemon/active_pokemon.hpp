@@ -719,7 +719,7 @@ inline auto apply_status_to_self(Statuses const status, MutableActivePokemon tar
 
 
 inline auto activate_berserk_gene(MutableActivePokemon pokemon) -> void {
-	boost(pokemon.stage(), StatNames::ATK, 2_bi);
+	pokemon.stage()[StatNames::ATK] += 2_bi;
 	// TODO: Berserk Gene causes 256-turn confusion, unless the Pokemon
 	// switching out was confused.
 	pokemon.confuse();

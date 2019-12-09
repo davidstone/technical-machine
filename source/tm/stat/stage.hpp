@@ -108,7 +108,6 @@ auto modifier(Stage const & stage) {
 }
 
 
-auto boost(Stage & stage, StatNames stat, Stage::boost_type number_of_stages) -> void;
 auto boost_regular(Stage & stage, Stage::boost_type number_of_stages) -> void;
 auto boost_physical(Stage & stage, Stage::boost_type number_of_stages) -> void;
 auto boost_special(Stage & stage, Stage::boost_type number_of_stages) -> void;

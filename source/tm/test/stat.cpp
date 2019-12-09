@@ -52,7 +52,7 @@ void attack_tests() {
 
 	set_stat_ev(pokemon, StatNames::DEF, EV(EV::max));
 	pokemon.activate_power_trick();
-	boost(pokemon.stage(), StatNames::ATK, 6_bi);
+	pokemon.stage()[StatNames::ATK] += 6_bi;
 
 	check_equal(calculate_attack(generation, pokemon, Weather{}, critical_hit), max_attack);
 }
@@ -68,7 +68,7 @@ void special_attack_tests() {
 	auto pokemon = attacker.pokemon();
 
 	set_stat_ev(pokemon, StatNames::SPA, EV(EV::max));
-	boost(pokemon.stage(), StatNames::SPA, 6_bi);
+	pokemon.stage()[StatNames::SPA] += 6_bi;
 
 	check_equal(calculate_special_attack(generation, pokemon, weather, critical_hit), max_special_attack);
 }
@@ -84,7 +84,7 @@ void max_defense_test() {
 	auto pokemon = defender.pokemon();
 	set_stat_ev(pokemon, StatNames::DEF, EV(EV::max));
 
-	boost(pokemon.stage(), StatNames::DEF, 6_bi);
+	pokemon.stage()[StatNames::DEF] += 6_bi;
 
 	apply_status_to_self(Statuses::burn, pokemon, weather);
 
@@ -102,7 +102,7 @@ void min_defense_test() {
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi));
 
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
-		boost(pokemon.stage(), StatNames::DEF, -2_bi);
+		pokemon.stage()[StatNames::DEF] += -2_bi;
 	}
 
 	check_equal(calculate_defense(generation, pokemon, Weather{}), min_defense);
@@ -127,7 +127,7 @@ void special_defense_tests() {
 	pokemon.switch_in(generation);
 	set_stat_ev(pokemon, StatNames::SPD, EV(EV::max));
 
-	boost(pokemon.stage(), StatNames::SPD, 6_bi);
+	pokemon.stage()[StatNames::SPD] += 6_bi;
 
 	check_equal(calculate_special_defense(generation, pokemon, weather), max_special_defense);
 }
@@ -144,7 +144,7 @@ void speed_tests() {
 	auto pokemon = team.pokemon();
 	set_stat_ev(pokemon, StatNames::SPE, EV(EV::max));
 
-	boost(pokemon.stage(), StatNames::SPE, 6_bi);
+	pokemon.stage()[StatNames::SPE] += 6_bi;
 
 	team.screens.activate_tailwind();
 	

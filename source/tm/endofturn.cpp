@@ -109,7 +109,7 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 		heal(generation, pokemon, rational(1_bi, 16_bi) * healing_multiplier(get_item(pokemon)));
 	}
 	if (boosts_speed(get_ability(pokemon))) {
-		boost(pokemon.stage(), StatNames::SPE, 1_bi);
+		pokemon.stage()[StatNames::SPE] += 1_bi;
 	} else if (flags.shed_skin) {
 		clear_status(pokemon);
 	}
