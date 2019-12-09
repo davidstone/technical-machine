@@ -234,6 +234,8 @@ auto item_modifier_numerator(Generation const generation, Pokemon const attacker
 		case Item::Zap_Plate:
 		case Item::Magnet:
 			return type_boost(Type::Electric);
+		case Item::Pixie_Plate:
+			return type_boost(Type::Fairy);
 		case Item::Fist_Plate:
 		case Item::Black_Belt:
 			return type_boost(Type::Fighting);
