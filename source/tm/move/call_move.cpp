@@ -1073,24 +1073,29 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 		return resistance_berry(resisted);
 	};
 	constexpr auto max_stage = bounded::max_value<Stage::value_type>;
-	auto stat_boost = [&](Type const type, StatNames const stat) {
+	auto stat_boost = [&](StatNames const stat) {
 		auto & stage = defender.stage()[stat];
-		if (move_type == type and stage != max_stage and !substitute()) {
+		if (stage != max_stage and !substitute()) {
 			stage += 1_bi;
 			set_item(defender, Item::None);
+		}
+	};
+	auto stat_boost_move_type = [&](Type const type, StatNames const stat) {
+		if (move_type == type) {
+			stat_boost(stat);
 		}
 		return false;
 	};
 	switch (get_item(defender)) {
 		case Item::Absorb_Bulb:
-			return stat_boost(Type::Water, StatNames::SPA);
+			return stat_boost_move_type(Type::Water, StatNames::SPA);
 		case Item::Air_Balloon:
 			set_item(defender, Item::None);
 			return false;
 		case Item::Babiri_Berry:
 			return se_resistance_berry(Type::Steel);
 		case Item::Cell_Battery:
-			return stat_boost(Type::Electric, StatNames::ATK);
+			return stat_boost_move_type(Type::Electric, StatNames::ATK);
 		case Item::Charti_Berry:
 			return se_resistance_berry(Type::Rock);
 		case Item::Chople_Berry:
@@ -1113,8 +1118,18 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 			return se_resistance_berry(Type::Ghost);
 		case Item::Kebia_Berry:
 			return se_resistance_berry(Type::Poison);
+		case Item::Kee_Berry:
+			if (is_physical(move)) {
+				stat_boost(StatNames::DEF);
+			}
+			return false;
 		case Item::Luminous_Moss:
-			return stat_boost(Type::Water, StatNames::SPD);
+			return stat_boost_move_type(Type::Water, StatNames::SPD);
+		case Item::Maranga_Berry:
+			if (is_special(move)) {
+				stat_boost(StatNames::SPD);
+			}
+			return false;
 		case Item::Occa_Berry:
 			return se_resistance_berry(Type::Fire);
 		case Item::Passho_Berry:
@@ -1123,10 +1138,12 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 			return se_resistance_berry(Type::Psychic);
 		case Item::Rindo_Berry:
 			return se_resistance_berry(Type::Grass);
+		case Item::Roseli_Berry:
+			return se_resistance_berry(Type::Fairy);
 		case Item::Shuca_Berry:
 			return se_resistance_berry(Type::Ground);
 		case Item::Snowball:
-			return stat_boost(Type::Ice, StatNames::ATK);
+			return stat_boost_move_type(Type::Ice, StatNames::ATK);
 		case Item::Tanga_Berry:
 			return se_resistance_berry(Type::Bug);
 		case Item::Wacan_Berry:
