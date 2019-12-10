@@ -1312,8 +1312,17 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 	
 	auto const target = move_target(generation, move.executed);
 	// TODO: What happens if we Sleep Talk Trump Card?
+	// TODO: Make sure this does not happen because we missed due to a vanishing
+	// state
+	if (move.miss) {
+		user_pokemon.unsuccessfully_use_move(move.executed);
+		if (get_item(user_pokemon) == Item::Blunder_Policy) {
+			user_pokemon.stage()[StatNames::SPE] += 2_bi;
+			set_item(user_pokemon, Item::None);
+		}
+		return;
+	}
 	auto const unsuccessful =
-		move.miss or
 		move_fails(move.executed, user_pokemon.damaged(), other_ability, other_move) or
 		(get_hp(other_pokemon).current() == 0_bi and fails_against_fainted(target)) or
 		(other_pokemon.is_protecting() and blocked_by_protect(target, move.executed));
