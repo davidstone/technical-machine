@@ -72,9 +72,18 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 			break;
 		case Ability::Forecast:	// TODO: fix this
 			break;
-		case Ability::Intimidate:
-			other.stage()[StatNames::ATK] += -1_bi;
+		case Ability::Intimidate: {
+			auto & attack = other.stage()[StatNames::ATK];
+			if (attack != bounded::min_value<Stage::value_type>) {
+				attack -= 1_bi;
+				auto & speed = other.stage()[StatNames::SPE];
+				if (get_item(other) == Item::Adrenaline_Orb and speed != bounded::max_value<Stage::value_type>) {
+					speed += 1_bi;
+					set_item(other, Item::None);
+				}
+			}
 			break;
+		}
 		case Ability::Sand_Stream:
 			weather.activate_sand(Weather::permanent);
 			break;
