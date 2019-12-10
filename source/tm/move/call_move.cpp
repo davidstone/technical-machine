@@ -1045,13 +1045,22 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 	}
 }
 
+// TODO: This is probably duplicating some logic that I have elsewhere. For
+// instance, this also needs to check against things like Water Absorb
+// activating. I probably want to guard code that calls this with checking that
+// the move affected the Pokemon, rather than having this function try to guard
+// itself.
+
 // Returns whether the attack is weakened by the item
 auto activate_when_hit_item(Generation const generation, Moves const move, Type const move_type, MutableActivePokemon defender, Effectiveness const effectiveness) -> bool {
-	if (defender.substitute() and blocked_by_substitute(generation, move)) {
+	if (!is_damaging(move) or effectiveness.has_no_effect()) {
 		return false;
 	}
+	auto substitute = [&] {
+		return defender.substitute() and blocked_by_substitute(generation, move);
+	};
 	auto resistance_berry = [&](Type const resisted) {
-		if (move_type != resisted) {
+		if (move_type != resisted or substitute()) {
 			return false;
 		}
 		set_item(defender, Item::None);
@@ -1063,9 +1072,25 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 		}
 		return resistance_berry(resisted);
 	};
+	constexpr auto max_stage = bounded::max_value<Stage::value_type>;
+	auto stat_boost = [&](Type const type, StatNames const stat) {
+		auto & stage = defender.stage()[stat];
+		if (move_type == type and stage != max_stage and !substitute()) {
+			stage += 1_bi;
+			set_item(defender, Item::None);
+		}
+		return false;
+	};
 	switch (get_item(defender)) {
+		case Item::Absorb_Bulb:
+			return stat_boost(Type::Water, StatNames::SPA);
+		case Item::Air_Balloon:
+			set_item(defender, Item::None);
+			return false;
 		case Item::Babiri_Berry:
 			return se_resistance_berry(Type::Steel);
+		case Item::Cell_Battery:
+			return stat_boost(Type::Electric, StatNames::ATK);
 		case Item::Charti_Berry:
 			return se_resistance_berry(Type::Rock);
 		case Item::Chople_Berry:
@@ -1077,7 +1102,7 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 		case Item::Colbur_Berry:
 			return se_resistance_berry(Type::Dark);
 		case Item::Enigma_Berry:
-			if (effectiveness.is_super_effective() and generation >= Generation::four) {
+			if (effectiveness.is_super_effective() and generation >= Generation::four and !substitute()) {
 				set_item(defender, Item::None);
 				heal(generation, defender, rational(1_bi, 4_bi));
 			}
@@ -1088,6 +1113,8 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 			return se_resistance_berry(Type::Ghost);
 		case Item::Kebia_Berry:
 			return se_resistance_berry(Type::Poison);
+		case Item::Luminous_Moss:
+			return stat_boost(Type::Water, StatNames::SPD);
 		case Item::Occa_Berry:
 			return se_resistance_berry(Type::Fire);
 		case Item::Passho_Berry:
@@ -1098,10 +1125,21 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 			return se_resistance_berry(Type::Grass);
 		case Item::Shuca_Berry:
 			return se_resistance_berry(Type::Ground);
+		case Item::Snowball:
+			return stat_boost(Type::Ice, StatNames::ATK);
 		case Item::Tanga_Berry:
 			return se_resistance_berry(Type::Bug);
 		case Item::Wacan_Berry:
 			return se_resistance_berry(Type::Electric);
+		case Item::Weakness_Policy:
+			if (effectiveness.is_super_effective() and !substitute()) {
+				auto & stage = defender.stage();
+				if (stage[StatNames::ATK] != max_stage and stage[StatNames::SPA] != max_stage) {
+					boost_offensive(stage, 2_bi);
+					set_item(defender, Item::None);
+				}
+			}
+			return false;
 		case Item::Yache_Berry:
 			return se_resistance_berry(Type::Ice);
 		default:

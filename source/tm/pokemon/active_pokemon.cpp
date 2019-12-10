@@ -175,14 +175,16 @@ auto ActivePokemonFlags::vanish_doubles_power(Moves const move_name) const -> bo
 
 
 auto grounded(ActivePokemon const pokemon, Weather const weather) -> bool {
+	auto const item = get_item(pokemon);
 	return
 		!(
 			is_type(pokemon, Type::Flying) or
 			is_immune_to_ground(get_ability(pokemon)) or
-			pokemon.magnet_rise().is_active()
+			pokemon.magnet_rise().is_active() or
+			item == Item::Air_Balloon
 		) or
 		weather.gravity() or
-		grounds(get_item(pokemon)) or
+		grounds(item) or
 		pokemon.ingrained();
 }
 
