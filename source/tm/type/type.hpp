@@ -18,14 +18,15 @@
 
 #pragma once
 
-#include <tm/status.hpp>
+#include <bounded/integer.hpp>
+
+#include <cstdint>
 
 namespace technicalmachine {
 enum class Generation : std::uint8_t;
 enum class Moves : std::uint16_t;
-struct Weather;
 
-enum class Type : uint8_t {
+enum class Type : std::uint8_t {
 	Bug,
 	Dark,
 	Dragon,
@@ -63,23 +64,6 @@ auto get_type(Generation generation, Moves move, Type hidden_power) -> Type;
 
 constexpr auto is_boosted_by_flash_fire(Type const type) {
 	return type == Type::Fire;
-}
-
-auto is_strengthened_by_weather(Type type, Weather weather) -> bool;
-auto is_weakened_by_weather(Type type, Weather weather) -> bool;
-
-constexpr auto blocks_status(Type const type, Statuses const status) {
-	switch (status) {
-		case Statuses::burn:
-			return type == Type::Fire;
-		case Statuses::freeze:
-			return type == Type::Ice;
-		case Statuses::poison:
-		case Statuses::toxic:
-			return type == Type::Poison or type == Type::Steel;
-		default:
-			return false;
-	}
 }
 
 }	// namespace technicalmachine

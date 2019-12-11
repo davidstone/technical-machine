@@ -62,11 +62,23 @@ auto screen_is_active(Moves const move, Team const & defender, bool const critic
 	return !critical_hit and (reflect_is_active(move, defender) or light_screen_is_active(move, defender));
 }
 
-
-auto calculate_weather_modifier(Type const type, Weather const weather) {
+constexpr auto is_strengthened_by_weather(Type const type, Weather const weather, bool const ability_blocks_weather) -> bool {
 	return
-		BOUNDED_CONDITIONAL(is_strengthened_by_weather(type, weather), rational(3_bi, 2_bi),
-		BOUNDED_CONDITIONAL(is_weakened_by_weather(type, weather), rational(1_bi, 2_bi),
+		(weather.rain(ability_blocks_weather) and type == Type::Water) or
+		(weather.sun(ability_blocks_weather) and type == Type::Fire);
+}
+
+constexpr auto is_weakened_by_weather(Type const type, Weather const weather, bool const ability_blocks_weather) -> bool {
+	return
+		(weather.rain(ability_blocks_weather) and type == Type::Fire) or
+		(weather.sun(ability_blocks_weather) and type == Type::Water);
+}
+
+
+auto calculate_weather_modifier(Type const type, Weather const weather, bool const ability_blocks_weather) {
+	return
+		BOUNDED_CONDITIONAL(is_strengthened_by_weather(type, weather, ability_blocks_weather), rational(3_bi, 2_bi),
+		BOUNDED_CONDITIONAL(is_weakened_by_weather(type, weather, ability_blocks_weather), rational(1_bi, 2_bi),
 		rational(1_bi, 1_bi)
 	));
 }
@@ -140,17 +152,19 @@ auto weakening_from_status(Pokemon const & attacker) {
 }
 
 auto physical_vs_special_modifier(Generation const generation, ActivePokemon const attacker, Moves const move, ActivePokemon const defender, Weather const weather, bool const critical_hit) {
+	auto const attacker_ability = get_ability(attacker);
+	auto const defender_ability = get_ability(defender);
 	// For all integers a, b, and c:
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
 	return BOUNDED_CONDITIONAL(is_physical(move),
 		rational(
-			calculate_attack(generation, attacker, weather, critical_hit),
-			50_bi * calculate_defense(generation, defender, weather, critical_hit) * weakening_from_status(attacker)
+			calculate_attack(generation, attacker, defender_ability, weather, critical_hit),
+			50_bi * calculate_defense(generation, defender, attacker_ability, weather, critical_hit) * weakening_from_status(attacker)
 		),
 		rational(
-			calculate_special_attack(generation, attacker, weather, critical_hit),
-			50_bi * calculate_special_defense(generation, defender, weather, critical_hit)
+			calculate_special_attack(generation, attacker, defender_ability, weather, critical_hit),
+			50_bi * calculate_special_defense(generation, defender, attacker_ability, weather, critical_hit)
 		)
 	);
 }
@@ -188,7 +202,7 @@ auto regular_damage(Generation const generation, Team const & attacker_team, Exe
 		move_power(generation, attacker_team, move, defender_team, weather) *
 		physical_vs_special_modifier(generation, attacker, move.name, defender, weather, move.critical_hit) /
 		screen_divisor(move.name, defender_team, move.critical_hit) *
-		calculate_weather_modifier(move_type, weather) *
+		calculate_weather_modifier(move_type, weather, weather_is_blocked_by_ability(get_ability(attacker), get_ability(defender))) *
 		calculate_flash_fire_modifier(attacker, move_type) +
 		2_bi;
 

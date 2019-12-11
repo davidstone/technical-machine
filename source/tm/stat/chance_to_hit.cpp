@@ -76,14 +76,16 @@ auto evasion_item_modifier(Generation const generation, Item const item) {
 }
 
 
-auto ability_evasion_modifier(ActivePokemon const target, Weather const weather) {
+auto ability_evasion_modifier(ActivePokemon const target, Ability const user_ability, Weather const weather) {
 	using Modifier = rational<
 		bounded::integer<1, 4>,
 		bounded::integer<1, 5>
 	>;
-	switch (get_ability(target)) {
-		case Ability::Sand_Veil: return weather.sand() ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
-		case Ability::Snow_Cloak: return weather.hail() ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
+	auto const target_ability = get_ability(target);
+	auto const blocks_weather = weather_is_blocked_by_ability(target_ability, user_ability);
+	switch (target_ability) {
+		case Ability::Sand_Veil: return weather.sand(blocks_weather) ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
+		case Ability::Snow_Cloak: return weather.hail(blocks_weather) ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
 		case Ability::Tangled_Feet: return target.is_confused() ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
 		default: return Modifier(1_bi, 1_bi);
 	}
@@ -105,7 +107,7 @@ auto chance_to_hit(Generation const generation, ActivePokemon const user, Moves 
 		accuracy_item_modifier(get_item(user), target_moved) *
 		ability_accuracy_modifier(user, move) *
 		evasion_item_modifier(generation, get_item(target)) *
-		ability_evasion_modifier(target, weather) *
+		ability_evasion_modifier(target, get_ability(user), weather) *
 		gravity_multiplier
 	;
 	

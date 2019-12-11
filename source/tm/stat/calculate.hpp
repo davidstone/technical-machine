@@ -30,6 +30,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
+enum class Ability : std::uint8_t;
 struct ActivePokemon;
 enum class Generation : std::uint8_t;
 enum class Moves : std::uint16_t;
@@ -43,16 +44,16 @@ inline auto initial_stat(StatNames const stat_name, Stat const stat, Level const
 
 using attack_type = bounded::integer<1, 7368>;
 using special_attack_type = bounded::integer<1, 4536>;
-auto calculate_attack(Generation, ActivePokemon attacker, Weather, bool critical_hit) -> attack_type;
-auto calculate_special_attack(Generation, ActivePokemon attacker, Weather, bool critical_hit) -> special_attack_type;
+auto calculate_attack(Generation, ActivePokemon attacker, Ability other_ability, Weather, bool critical_hit) -> attack_type;
+auto calculate_special_attack(Generation, ActivePokemon attacker, Ability other_ability, Weather, bool critical_hit) -> special_attack_type;
 
 using defense_type = bounded::integer<1, 3684>;
 using special_defense_type = bounded::integer<1, 3684>;
-auto calculate_defense(Generation, ActivePokemon defender, Weather, bool critical_hit = false, bool is_self_KO = false) -> defense_type;
-auto calculate_special_defense(Generation, ActivePokemon defender, Weather, bool critical_hit = false) -> special_defense_type;
+auto calculate_defense(Generation, ActivePokemon defender, Ability other_ability, Weather, bool critical_hit = false, bool is_self_KO = false) -> defense_type;
+auto calculate_special_defense(Generation, ActivePokemon defender, Ability attacker_ability, Weather, bool critical_hit = false) -> special_defense_type;
 
 using speed_type = bounded::integer<1, 12096>;
-auto calculate_speed(Generation, Team const &, Weather) -> speed_type;
+auto calculate_speed(Generation, Team const &, Ability other_ability, Weather) -> speed_type;
 
 using Faster = bounded::optional<std::pair<Team const &, Team const &>>;
 auto faster_pokemon(Generation, Team const & team1, Team const & team2, Weather) -> Faster;

@@ -389,9 +389,8 @@ namespace {
 auto status_can_apply(Statuses const status, Pokemon const user, ActivePokemon const target, Weather const weather, bool const uproar) {
 	return
 		is_clear(get_status(target)) and
-		(ignores_blockers(get_ability(user)) or !blocks_status(get_ability(target), status, weather)) and
+		!blocks_status(get_ability(target), get_ability(user), status, weather) and
 		!containers::any(target.types(), [=](Type const type) { return blocks_status(type, status); }) and
-		!weather.blocks_status(status) and
 		(!uproar or (status != Statuses::sleep and status != Statuses::rest));
 }
 

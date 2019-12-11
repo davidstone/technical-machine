@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/ability.hpp>
 #include <tm/operators.hpp>
 #include <tm/status.hpp>
 
@@ -27,6 +28,19 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
+
+constexpr auto weather_is_blocked_by_ability(Ability const ability) {
+	switch (ability) {
+		case Ability::Air_Lock:
+		case Ability::Cloud_Nine:
+			return true;
+		default:
+			return false;
+	}
+}
+constexpr auto weather_is_blocked_by_ability(Ability const ability1, Ability const ability2) {
+	return weather_is_blocked_by_ability(ability1) or weather_is_blocked_by_ability(ability2);
+}
 
 struct Weather {
 private:
@@ -50,6 +64,10 @@ private:
 	Short m_gravity_turns_remaining = 0_bi;
 	NormalWeather m_active = NormalWeather::clear;
 	Long m_turns_remaining = 0_bi;
+
+	constexpr auto is_active(NormalWeather const type, bool const blocked_by_ability) const {
+		return m_active == type and !blocked_by_ability;
+	}
 	
 public:
 	static constexpr auto standard = Duration::standard;
@@ -62,17 +80,17 @@ public:
 	constexpr auto gravity() const {
 		return m_gravity_turns_remaining != 0_bi;
 	}
-	constexpr auto hail() const {
-		return m_active == NormalWeather::hail;
+	constexpr auto hail(bool const blocked_by_ability) const {
+		return is_active(NormalWeather::hail, blocked_by_ability);
 	}
-	constexpr auto sand() const {
-		return m_active == NormalWeather::sand;
+	constexpr auto sand(bool const blocked_by_ability) const {
+		return is_active(NormalWeather::sand, blocked_by_ability);
 	}
-	constexpr auto sun() const {
-		return m_active == NormalWeather::sun;
+	constexpr auto sun(bool const blocked_by_ability) const {
+		return is_active(NormalWeather::sun, blocked_by_ability);
 	}
-	constexpr auto rain() const {
-		return m_active == NormalWeather::rain;
+	constexpr auto rain(bool const blocked_by_ability) const {
+		return is_active(NormalWeather::rain, blocked_by_ability);
 	}
 
 	constexpr auto advance_one_turn() {
@@ -126,10 +144,6 @@ public:
 	}
 	constexpr auto activate_rain(bool const is_extended) {
 		activate_weather(NormalWeather::rain, is_extended);
-	}
-
-	constexpr auto blocks_status(Statuses const status) const {
-		return status == Statuses::freeze and sun();
 	}
 
 	friend constexpr auto operator==(Weather const lhs, Weather const rhs) {

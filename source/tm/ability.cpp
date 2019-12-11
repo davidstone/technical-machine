@@ -33,14 +33,18 @@
 #include <tm/rational.hpp>
 #include <tm/weather.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
+
 namespace technicalmachine {
 
-bool blocks_switching(Generation, Ability const ability, ActivePokemon const switcher, Weather const weather) {
+bool blocks_switching(Generation const generation, Ability const ability, ActivePokemon const switcher, Weather const weather) {
 	switch (ability) {
 		case Ability::Shadow_Tag:
 			return get_ability(switcher) != Ability::Shadow_Tag;
 		case Ability::Arena_Trap:
-			return grounded(switcher, weather);
+			return
+				(generation >= Generation::six and containers::any_equal(switcher.types(), Type::Ghost)) or
+				grounded(switcher, weather);
 		case Ability::Magnet_Pull:
 			return is_type(switcher, Type::Steel);
 		default:
@@ -48,19 +52,12 @@ bool blocks_switching(Generation, Ability const ability, ActivePokemon const swi
 	}
 }
 
-bool boosts_special_attack(Ability const ability, Weather const weather) {
-	return ability == Ability::Solar_Power and weather.sun();
-}
-
-bool boosts_special_defense(Ability const ability, Weather const weather) {
-	return ability == Ability::Flower_Gift and weather.sun();
-}
-
 void activate_ability_on_switch(Generation const generation, MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather) {
-	switch (get_ability(switcher)) {
+	auto const switcher_ability = get_ability(switcher);
+	switch (switcher_ability) {
 		case Ability::Download: {
-			auto const defense = calculate_defense(generation, other, weather);
-			auto const special_defense = calculate_special_defense(generation, other, weather);
+			auto const defense = calculate_defense(generation, other, switcher_ability, weather);
+			auto const special_defense = calculate_special_defense(generation, other, switcher_ability, weather);
 			switcher.stage()[defense >= special_defense ? StatNames::SPA : StatNames::ATK] += 1_bi;
 			break;
 		}
@@ -91,35 +88,6 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 			weather.activate_hail(Weather::permanent);
 			break;
 		case Ability::Trace:
-			break;
-		default:
-			break;
-	}
-}
-
-void weather_healing_ability(Generation const generation, MutableActivePokemon pokemon, Weather const weather) {
-	switch (get_ability(pokemon)) {
-		case Ability::Dry_Skin:
-			if (weather.rain()) {
-				heal(generation, pokemon, rational(1_bi, 8_bi));
-			} else if (weather.sun()) {
-				heal(generation, pokemon, rational(-1_bi, 8_bi));
-			}
-			break;
-		case Ability::Hydration:
-			if (weather.rain()) {
-				clear_status(pokemon);
-			}
-			break;
-		case Ability::Ice_Body:
-			if (weather.hail()) {
-				heal(generation, pokemon, rational(1_bi, 16_bi));
-			}
-			break;
-		case Ability::Rain_Dish:
-			if (weather.rain()) {
-				heal(generation, pokemon, rational(1_bi, 16_bi));
-			}
 			break;
 		default:
 			break;

@@ -70,16 +70,6 @@ namespace technicalmachine {
 
 bool blocks_switching(Generation, Ability, ActivePokemon switcher, Weather);
 
-constexpr bool blocks_weather(Ability const ability) {
-	switch (ability) {
-		case Ability::Air_Lock:
-		case Ability::Cloud_Nine:
-			return true;
-		default:
-			return false;
-	}
-}
-
 constexpr bool blocks_confusion(Ability const ability) {
 	return ability == Ability::Own_Tempo;
 }
@@ -168,17 +158,9 @@ constexpr bool uses_extra_pp(Ability const ability) {
 	return ability == Ability::Pressure;
 }
 
-constexpr bool ignores_blockers(Ability const ability) {
-	return ability == Ability::Mold_Breaker;
-}
-
 constexpr bool boosts_critical_hits(Ability const ability) {
 	return ability == Ability::Sniper;
 }
-
-bool boosts_special_attack(Ability ability, Weather weather);
-
-bool boosts_special_defense(Ability ability, Weather weather);
 
 constexpr bool boosts_speed(Ability const ability) {
 	return ability == Ability::Speed_Boost;
@@ -193,6 +175,5 @@ constexpr bool boosts_stab(Ability const ability) {
 }
 
 void activate_ability_on_switch(Generation, MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather);
-void weather_healing_ability(Generation, MutableActivePokemon pokemon, Weather weather);
 
 }	// namespace technicalmachine

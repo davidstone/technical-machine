@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/type/type.hpp>
 #include <tm/ability.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
@@ -136,7 +137,21 @@ auto lowers_speed(Status status, Ability ability) -> bool;
 auto boosts_facade(Status status) -> bool;
 
 
-bool blocks_status(Ability ability, Statuses status, Weather weather);
+bool blocks_status(Ability ability, Ability other_ability, Statuses status, Weather weather);
+
+constexpr auto blocks_status(Type const type, Statuses const status) {
+	switch (status) {
+		case Statuses::burn:
+			return type == Type::Fire;
+		case Statuses::freeze:
+			return type == Type::Ice;
+		case Statuses::poison:
+		case Statuses::toxic:
+			return type == Type::Poison or type == Type::Steel;
+		default:
+			return false;
+	}
+}
 
 constexpr bool can_clear_status(Ability const ability, Status const status) {
 	return ability == Ability::Shed_Skin and !is_clear(status);

@@ -733,13 +733,15 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Moonlight:
 		case Moves::Morning_Sun:
 		case Moves::Synthesis: {
-			auto const amount = [weather]() {
+			auto const amount = [&]() {
 				using Numerator = bounded::integer<1, 2>;
 				using Denominator = bounded::integer<2, 4>;
 				using Result = rational<Numerator, Denominator>;
-				if (weather.sun()) {
+				
+				auto const blocks_weather = weather_is_blocked_by_ability(get_ability(user), get_ability(other.pokemon()));
+				if (weather.sun(blocks_weather)) {
 					return Result(2_bi, 3_bi);
-				} else if (weather.hail() or weather.rain() or weather.sand()) {
+				} else if (weather.hail(blocks_weather) or weather.rain(blocks_weather) or weather.sand(blocks_weather)) {
 					return Result(1_bi, 4_bi);
 				} else {
 					return Result(1_bi, 2_bi);
@@ -873,7 +875,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Solar_Beam:
 			// TODO: Support Power Herb
-			if (will_be_recharge_turn(user, move.name, weather)) {
+			if (will_be_recharge_turn(user, move.name, get_ability(other.pokemon()), weather)) {
 				user.use_charge_up_move();
 			}
 			break;

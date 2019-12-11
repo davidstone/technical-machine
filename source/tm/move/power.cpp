@@ -65,8 +65,8 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Wring_Out:
 			return bounded::integer<1, 121>(120_bi * hp_ratio(defender) + 1_bi, bounded::non_check);
 		case Moves::Electro_Ball: {
-			auto const defender_speed = calculate_speed(generation, defender_team, weather);
-			auto const attacker_speed = calculate_speed(generation, attacker_team, weather);
+			auto const defender_speed = calculate_speed(generation, defender_team, get_ability(attacker), weather);
+			auto const attacker_speed = calculate_speed(generation, attacker_team, get_ability(defender), weather);
 			auto const quotient = attacker_speed / defender_speed;
 			if (quotient >= 4_bi) { return 150_bi; }
 			else if (quotient == 3_bi) { return 120_bi; }
@@ -97,8 +97,8 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Low_Kick:
 			return BOUNDED_CONDITIONAL(generation <= Generation::two, 50_bi, power_of_mass_based_moves(get_species(defender)));
 		case Moves::Gyro_Ball: {
-			auto const defender_speed = calculate_speed(generation, defender_team, weather);
-			auto const attacker_speed = calculate_speed(generation, attacker_team, weather);
+			auto const defender_speed = calculate_speed(generation, defender_team, get_ability(attacker), weather);
+			auto const attacker_speed = calculate_speed(generation, attacker_team, get_ability(defender), weather);
 			auto const uncapped_power = 25_bi * defender_speed / attacker_speed + 1_bi;
 			return bounded::min(uncapped_power, 150_bi);
 		}
@@ -165,13 +165,15 @@ auto doubling(ActivePokemon const attacker, Moves const move, ActivePokemon cons
 		case Moves::Smelling_Salts:
 			return boosts_smellingsalt(get_status(defender));
 		case Moves::Solar_Beam:
-			return !weather.rain();
+			return !weather.rain(weather_is_blocked_by_ability(get_ability(attacker), get_ability(defender)));
 		case Moves::Stomp:
 			return defender.minimized();
 		case Moves::Wake_Up_Slap:
 			return is_sleeping(get_status(defender));
-		case Moves::Weather_Ball:
-			return weather.hail() or weather.rain() or weather.sand() or weather.sun();
+		case Moves::Weather_Ball: {
+			auto const blocks_weather = weather_is_blocked_by_ability(get_ability(attacker), get_ability(defender));
+			return weather.hail(blocks_weather) or weather.rain(blocks_weather) or weather.sand(blocks_weather) or weather.sun(blocks_weather);
+		}
 		default:
 			return false;
 	}

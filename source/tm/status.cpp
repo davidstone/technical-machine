@@ -117,23 +117,33 @@ auto Status::probability_of_clearing(Ability const ability) const -> double {
 	));
 }
 
-bool blocks_status(Ability const ability, Statuses const status, Weather const weather) {
+bool blocks_status(Ability const ability, Ability const other_ability, Statuses const status, Weather const weather) {
+	auto is_sunny = [&] {
+		return weather.sun(weather_is_blocked_by_ability(ability, other_ability));
+	};
+	auto const ability_blocked = other_ability == Ability::Mold_Breaker;
 	switch (status) {
 	case Statuses::burn:
+		if (ability_blocked) {
+			return false;
+		}
 		switch (ability) {
 		case Ability::Leaf_Guard:
-			return weather.sun();
+			return is_sunny();
 		case Ability::Water_Veil:
 			return true;
 		default:
 			return false;
 		}
 	case Statuses::freeze:
-		return ability == Ability::Magma_Armor;
+		return is_sunny() or (!ability_blocked and ability == Ability::Magma_Armor);
 	case Statuses::paralysis:
+		if (ability_blocked) {
+			return false;
+		}
 		switch (ability) {
 		case Ability::Leaf_Guard:
-			return weather.sun();
+			return is_sunny();
 		case Ability::Limber:
 			return true;
 		default:
@@ -141,22 +151,28 @@ bool blocks_status(Ability const ability, Statuses const status, Weather const w
 		}
 	case Statuses::poison:
 	case Statuses::toxic:
+		if (ability_blocked) {
+			return false;
+		}
 		switch (ability) {
 		case Ability::Immunity:
 			return true;
 		case Ability::Leaf_Guard:
-			return weather.sun();
+			return is_sunny();
 		default:
 			return false;
 		}
 	case Statuses::sleep:
 	case Statuses::rest:
+		if (ability_blocked) {
+			return false;
+		}
 		switch (ability) {
 			case Ability::Insomnia:
 			case Ability::Vital_Spirit:
 				return true;
 			case Ability::Leaf_Guard:
-				return weather.sun();
+				return is_sunny();
 			default:
 				return false;
 		}

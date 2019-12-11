@@ -24,6 +24,8 @@
 #include <containers/array/array.hpp>
 
 namespace technicalmachine {
+using namespace bounded::literal;
+
 enum class Generation : std::uint8_t;
 
 struct PokemonTypes {

@@ -54,7 +54,7 @@ void attack_tests() {
 	pokemon.activate_power_trick();
 	pokemon.stage()[StatNames::ATK] += 6_bi;
 
-	check_equal(calculate_attack(generation, pokemon, Weather{}, critical_hit), max_attack);
+	check_equal(calculate_attack(generation, pokemon, Ability::Honey_Gather, Weather{}, critical_hit), max_attack);
 }
 
 void special_attack_tests() {
@@ -70,7 +70,7 @@ void special_attack_tests() {
 	set_stat_ev(pokemon, StatNames::SPA, EV(EV::max));
 	pokemon.stage()[StatNames::SPA] += 6_bi;
 
-	check_equal(calculate_special_attack(generation, pokemon, weather, critical_hit), max_special_attack);
+	check_equal(calculate_special_attack(generation, pokemon, Ability::Honey_Gather, weather, critical_hit), max_special_attack);
 }
 
 void max_defense_test() {
@@ -88,7 +88,7 @@ void max_defense_test() {
 
 	apply_status_to_self(Statuses::burn, pokemon, weather);
 
-	check_equal(calculate_defense(generation, pokemon, weather), max_defense);
+	check_equal(calculate_defense(generation, pokemon, Ability::Honey_Gather, weather), max_defense);
 }
 
 void min_defense_test() {
@@ -105,7 +105,7 @@ void min_defense_test() {
 		pokemon.stage()[StatNames::DEF] += -2_bi;
 	}
 
-	check_equal(calculate_defense(generation, pokemon, Weather{}), min_defense);
+	check_equal(calculate_defense(generation, pokemon, Ability::Honey_Gather, Weather{}), min_defense);
 }
 
 void defense_tests() {
@@ -129,7 +129,7 @@ void special_defense_tests() {
 
 	pokemon.stage()[StatNames::SPD] += 6_bi;
 
-	check_equal(calculate_special_defense(generation, pokemon, weather), max_special_defense);
+	check_equal(calculate_special_defense(generation, pokemon, Ability::Honey_Gather, weather), max_special_defense);
 }
 
 void speed_tests() {
@@ -148,7 +148,7 @@ void speed_tests() {
 
 	team.screens.activate_tailwind();
 	
-	check_equal(calculate_speed(generation, team, weather), max_speed);
+	check_equal(calculate_speed(generation, team, Ability::Honey_Gather, weather), max_speed);
 }
 
 }	// namespace
