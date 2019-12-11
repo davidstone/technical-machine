@@ -64,8 +64,7 @@ auto accuracy(Generation const generation, Moves const move) -> BaseAccuracy {
 				case Generation::four:
 				case Generation::five:
 					return 100_bi;
-				case Generation::six:
-				case Generation::seven:
+				default:
 					return none;
 			}
 		case Moves::Fly: return 95_bi;
@@ -107,9 +106,7 @@ auto accuracy(Generation const generation, Moves const move) -> BaseAccuracy {
 					return 55_bi;
 				case Generation::four:
 					return 80_bi;
-				case Generation::five:
-				case Generation::six:
-				case Generation::seven:
+				default:
 					return 100_bi;
 			}
 		case Moves::Acid: return 100_bi;
@@ -185,10 +182,7 @@ auto accuracy(Generation const generation, Moves const move) -> BaseAccuracy {
 				case Generation::two:
 				case Generation::three:
 					return 100_bi;
-				case Generation::four:
-				case Generation::five:
-				case Generation::six:
-				case Generation::seven:
+				default:
 					return none;
 			}
 		case Moves::Metronome: return none;
@@ -219,8 +213,7 @@ auto accuracy(Generation const generation, Moves const move) -> BaseAccuracy {
 					return 75_bi;
 				case Generation::five:
 					return 90_bi;
-				case Generation::six:
-				case Generation::seven:
+				default:
 					return 100_bi;
 			}
 		case Moves::Dream_Eater: return 100_bi;
@@ -233,8 +226,7 @@ auto accuracy(Generation const generation, Moves const move) -> BaseAccuracy {
 					return 55_bi;
 				case Generation::five:
 					return 80_bi;
-				case Generation::six:
-				case Generation::seven:
+				default:
 					return 90_bi;
 			}
 		case Moves::Barrage: return 85_bi;

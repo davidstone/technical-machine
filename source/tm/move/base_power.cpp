@@ -72,9 +72,7 @@ auto base_power(Generation const generation, Moves const move) -> bounded::optio
 					return 70_bi;
 				case Generation::four:
 					return 85_bi;
-				case Generation::five:
-				case Generation::six:
-				case Generation::seven:
+				default:
 					return 100_bi;
 			}
 		case Moves::Rolling_Kick: return 60_bi;
@@ -93,7 +91,7 @@ auto base_power(Generation const generation, Moves const move) -> bounded::optio
 				case Generation::five:
 				case Generation::six:
 					return 50_bi;
-				case Generation::seven:
+				default:
 					return 40_bi;
 			}
 		case Moves::Body_Slam: return 85_bi;
@@ -151,9 +149,7 @@ auto base_power(Generation const generation, Moves const move) -> bounded::optio
 					return 70_bi;
 				case Generation::four:
 					return 90_bi;
-				case Generation::five:
-				case Generation::six:
-				case Generation::seven:
+				default:
 					return 120_bi;
 			}
 		case Moves::String_Shot: return 0_bi;
@@ -173,10 +169,7 @@ auto base_power(Generation const generation, Moves const move) -> bounded::optio
 				case Generation::two:
 				case Generation::three:
 					return 60_bi;
-				case Generation::four:
-				case Generation::five:
-				case Generation::six:
-				case Generation::seven:
+				default:
 					return 80_bi;
 			}
 		case Moves::Toxic: return 0_bi;
@@ -231,9 +224,7 @@ auto base_power(Generation const generation, Moves const move) -> bounded::optio
 					return 85_bi;
 				case Generation::four:
 					return 100_bi;
-				case Generation::five:
-				case Generation::six:
-				case Generation::seven:
+				default:
 					return 130_bi;
 			}
 		case Moves::Glare: return 0_bi;
@@ -318,8 +309,7 @@ auto base_power(Generation const generation, Moves const move) -> bounded::optio
 					return 10_bi;
 				case Generation::five:
 					return 20_bi;
-				case Generation::six:
-				case Generation::seven:
+				default:
 					return 40_bi;
 			}
 		case Moves::Steel_Wing: return 70_bi;
@@ -370,8 +360,7 @@ auto base_power(Generation const generation, Moves const move) -> bounded::optio
 					return 80_bi;
 				case Generation::five:
 					return 100_bi;
-				case Generation::six:
-				case Generation::seven:
+				default:
 					return 120_bi;
 			}
 		case Moves::Rock_Smash: return BOUNDED_CONDITIONAL(generation <= Generation::three, 20_bi, 40_bi);

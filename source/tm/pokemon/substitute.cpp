@@ -200,6 +200,10 @@ constexpr auto gen7_bypasses_substitute(Moves const move) {
 	return gen6_bypasses_substitute(move);
 }
 
+constexpr auto gen8_bypasses_substitute(Moves const move) {
+	return gen7_bypasses_substitute(move); // TODO
+}
+
 constexpr auto move_bypasses_substitute(Generation const generation, Moves const move) {
 	switch (generation) {
 		case Generation::one: return gen1_bypasses_substitute(move);
@@ -209,6 +213,7 @@ constexpr auto move_bypasses_substitute(Generation const generation, Moves const
 		case Generation::five: return gen5_bypasses_substitute(move);
 		case Generation::six: return gen6_bypasses_substitute(move);
 		case Generation::seven: return gen7_bypasses_substitute(move);
+		case Generation::eight: return gen8_bypasses_substitute(move);
 	}
 }
 
@@ -325,6 +330,10 @@ constexpr auto gen7_damage_blocked_by_substitute(Moves) {
 	return false;
 }
 
+constexpr auto gen8_damage_blocked_by_substitute(Moves) {
+	return false;
+}
+
 } // namespace
 
 auto damage_blocked_by_substitute(Generation const generation, Moves const move) -> bool {
@@ -336,6 +345,7 @@ auto damage_blocked_by_substitute(Generation const generation, Moves const move)
 		case Generation::five: return gen5_damage_blocked_by_substitute(move);
 		case Generation::six: return gen6_damage_blocked_by_substitute(move);
 		case Generation::seven: return gen7_damage_blocked_by_substitute(move);
+		case Generation::eight: return gen8_damage_blocked_by_substitute(move);
 	}
 }
 

@@ -139,8 +139,7 @@ private:
 					case Generation::four:
 					case Generation::five:
 						return 15_bi;
-					case Generation::six:
-					case Generation::seven:
+					default:
 						return 25_bi;
 				}
 			return BOUNDED_CONDITIONAL(generation <= Generation::three, 10_bi, 15_bi);
