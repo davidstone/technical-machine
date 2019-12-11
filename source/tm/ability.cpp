@@ -52,6 +52,25 @@ bool blocks_switching(Generation const generation, Ability const ability, Active
 	}
 }
 
+namespace {
+
+constexpr auto blocks_intimidate(Generation const generation, Ability const ability) -> bool {
+	if (generation <= Generation::eight) {
+		return false;
+	}
+	switch (ability) {
+		case Ability::Inner_Focus:
+		case Ability::Oblivious:
+		case Ability::Scrappy:
+		case Ability::Own_Tempo:
+			return true;
+		default:
+			return false;
+	}
+}
+
+} // namespace
+
 void activate_ability_on_switch(Generation const generation, MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather) {
 	auto const switcher_ability = get_ability(switcher);
 	switch (switcher_ability) {
@@ -70,14 +89,18 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 		case Ability::Forecast:	// TODO: fix this
 			break;
 		case Ability::Intimidate: {
+			if (blocks_intimidate(generation, get_ability(other))) {
+				break;
+			}
 			auto & attack = other.stage()[StatNames::ATK];
-			if (attack != bounded::min_value<Stage::value_type>) {
-				attack -= 1_bi;
-				auto & speed = other.stage()[StatNames::SPE];
-				if (get_item(other) == Item::Adrenaline_Orb and speed != bounded::max_value<Stage::value_type>) {
-					speed += 1_bi;
-					set_item(other, Item::None);
-				}
+			if (attack == bounded::min_value<Stage::value_type>) {
+				break;
+			}
+			attack -= 1_bi;
+			auto & speed = other.stage()[StatNames::SPE];
+			if (get_item(other) == Item::Adrenaline_Orb and speed != bounded::max_value<Stage::value_type>) {
+				speed += 1_bi;
+				set_item(other, Item::None);
 			}
 			break;
 		}
