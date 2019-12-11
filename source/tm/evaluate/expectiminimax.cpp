@@ -117,9 +117,16 @@ void update_foe_best_move(Moves const move, MoveScores & foe_scores, double & be
 
 
 
-bool can_critical_hit(Generation const generation, Moves const move) {
-	auto const power = base_power(generation, move);
-	return power and *power != 0_bi;
+bool can_critical_hit(Generation const generation, Moves const move, Ability const defender_ability) {
+	switch (defender_ability) {
+		case Ability::Battle_Armor:
+		case Ability::Shell_Armor:
+			return false;
+		default: {
+			auto const power = base_power(generation, move);
+			return power and *power != 0_bi;
+		}
+	}
 }
 
 
@@ -380,7 +387,7 @@ auto execute_move(Generation const generation, Team const & user, SelectedAndExe
 	auto const status = get_status(user_pokemon);
 	auto const probability_of_clearing_status = status.probability_of_clearing(get_ability(user_pokemon));
 	auto const specific_chance_to_hit = chance_to_hit(generation, user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());
-	auto const move_can_critical_hit = can_critical_hit(generation, move.executed);
+	auto const move_can_critical_hit = can_critical_hit(generation, move.executed, get_ability(other.pokemon()));
 	return generic_flag_branch(probability_of_clearing_status, [&](bool const clear_status) {
 		return generic_flag_branch(specific_chance_to_hit, [&](bool const hits) {
 			auto score = 0.0;
