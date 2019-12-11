@@ -1163,7 +1163,7 @@ Ability id_to_ability(AbilityID const id) {
 		case 11: return Ability::Water_Absorb;
 		case 12: return Ability::Oblivious;
 		case 13: return Ability::Cloud_Nine;
-		case 14: return Ability::Compoundeyes;
+		case 14: return Ability::Compound_Eyes;
 		case 15: return Ability::Insomnia;
 		case 16: return Ability::Color_Change;
 		case 17: return Ability::Immunity;
@@ -1295,7 +1295,7 @@ AbilityID ability_to_id(Ability const ability) {
 		case Ability::Clear_Body: return 29_bi;
 		case Ability::Cloud_Nine: return 13_bi;
 		case Ability::Color_Change: return 16_bi;
-		case Ability::Compoundeyes: return 14_bi;
+		case Ability::Compound_Eyes: return 14_bi;
 		case Ability::Cute_Charm: return 56_bi;
 		case Ability::Damp: return 6_bi;
 		case Ability::Download: return 88_bi;

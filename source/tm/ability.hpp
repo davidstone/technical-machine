@@ -31,7 +31,7 @@ struct Weather;
 enum class Ability : std::uint8_t {
 	Adaptability, Aftermath, Air_Lock, Anger_Point, Anticipation,
 	Arena_Trap, Bad_Dreams, Battle_Armor, Blaze, Chlorophyll,
-	Clear_Body, Cloud_Nine, Color_Change, Compoundeyes, Cute_Charm,
+	Clear_Body, Cloud_Nine, Color_Change, Compound_Eyes, Cute_Charm,
 	Damp, Download, Drizzle, Drought, Dry_Skin,
 	Early_Bird, Effect_Spore, Filter, Flame_Body, Flash_Fire,
 	Flower_Gift, Forecast, Forewarn, Frisk, Gluttony,

@@ -57,7 +57,7 @@ auto ability_accuracy_modifier(ActivePokemon const user, Moves const move) {
 		bounded::integer<1, 10>
 	>;
 	switch (get_ability(user)) {
-		case Ability::Compoundeyes: return Modifier(13_bi, 10_bi);
+		case Ability::Compound_Eyes: return Modifier(13_bi, 10_bi);
 		case Ability::Hustle: return is_physical(move) ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
 		default: return Modifier(1_bi, 1_bi);
 	}

@@ -43,7 +43,7 @@ std::string_view to_string(Ability const ability) {
 		case Ability::Clear_Body: return "Clear Body";
 		case Ability::Cloud_Nine: return "Cloud Nine";
 		case Ability::Color_Change: return "Color Change";
-		case Ability::Compoundeyes: return "Compoundeyes";
+		case Ability::Compound_Eyes: return "Compound Eyes";
 		case Ability::Cute_Charm: return "Cute Charm";
 		case Ability::Damp: return "Damp";
 		case Ability::Download: return "Download";
@@ -175,7 +175,7 @@ Ability from_string<Ability>(std::string_view const str) {
 			{ "clearbody", Ability::Clear_Body },
 			{ "cloudnine", Ability::Cloud_Nine },
 			{ "colorchange", Ability::Color_Change },
-			{ "compoundeyes", Ability::Compoundeyes },
+			{ "compoundeyes", Ability::Compound_Eyes },
 			{ "cutecharm", Ability::Cute_Charm },
 			{ "damp", Ability::Damp },
 			{ "download", Ability::Download },
