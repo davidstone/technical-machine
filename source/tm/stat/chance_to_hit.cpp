@@ -30,6 +30,7 @@
 #include <tm/pokemon/pokemon.hpp>
 
 #include <tm/ability.hpp>
+#include <tm/generation.hpp>
 #include <tm/rational.hpp>
 #include <tm/weather.hpp>
 
@@ -95,7 +96,8 @@ auto ability_evasion_modifier(ActivePokemon const target, Ability const user_abi
 
 auto chance_to_hit(Generation const generation, ActivePokemon const user, Moves const move, ActivePokemon const target, Weather const weather, bool target_moved) -> ChanceToHit {
 	auto const base_accuracy = accuracy(generation, move);
-	if (!move_can_miss(user, base_accuracy, get_ability(target))) {
+	auto const target_ability = get_ability(target);
+	if (!move_can_miss(user, base_accuracy, target_ability)) {
 		return 1.0;
 	}
 	constexpr auto gravity_denominator = 3_bi;
@@ -103,7 +105,7 @@ auto chance_to_hit(Generation const generation, ActivePokemon const user, Moves 
 	auto const gravity_multiplier = rational(gravity_numerator, gravity_denominator);
 	auto const calculated_accuracy = *base_accuracy *
 		modifier<StatNames::ACC>(user.stage()) *
-		modifier<StatNames::EVA>(target.stage()) *
+		modifier<StatNames::EVA>(generation >= Generation::six and target_ability == Ability::Keen_Eye ? Stage() : target.stage()) *
 		accuracy_item_modifier(get_item(user), target_moved) *
 		ability_accuracy_modifier(user, move) *
 		evasion_item_modifier(generation, get_item(target)) *
