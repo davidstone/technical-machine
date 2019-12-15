@@ -670,6 +670,15 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Knock_Off:
 			other.pokemon().remove_item();
 			break;
+		case Moves::Leaf_Tornado:
+		case Moves::Mirror_Shot:
+		case Moves::Mud_Bomb:
+		case Moves::Muddy_Water:
+		case Moves::Octazooka:
+			if (move.variable.effect_activates()) {
+				other.pokemon().stage()[StatNames::ACC] -= 1_bi;
+			}
+			break;
 		case Moves::Leech_Seed:
 			other.pokemon().hit_with_leech_seed();
 			break;
@@ -703,14 +712,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Mimic:		// Fix
 			break;
 		case Moves::Miracle_Eye:		// Fix
-			break;
-		case Moves::Mirror_Shot:
-		case Moves::Mud_Bomb:
-		case Moves::Muddy_Water:
-		case Moves::Octazooka:
-			if (move.variable.effect_activates()) {
-				other.pokemon().stage()[StatNames::ACC] += -1_bi;
-			}
 			break;
 		case Moves::Mist:
 			user_team.screens.activate_mist();
