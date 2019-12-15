@@ -664,6 +664,13 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Imprison:
 			user.use_imprison();
 			break;
+		case Moves::Incinerate: {
+			auto other_pokemon = other.pokemon();
+			if (can_be_incinerated(get_item(other_pokemon), get_ability(other_pokemon))) {
+				other_pokemon.destroy_item();
+			}
+			break;
+		}
 		case Moves::Ingrain:
 			user.ingrain();
 			break;
