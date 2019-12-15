@@ -107,7 +107,8 @@ struct Battle {
 	}
 
 	void set_value_on_active(Party const party, Item const item) {
-		set_item(get_team(party).pokemon(), item);
+		Pokemon & pokemon = get_team(party).pokemon();
+		pokemon.set_item(item);
 	}
 
 private:

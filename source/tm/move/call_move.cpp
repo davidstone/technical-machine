@@ -138,9 +138,15 @@ auto fling_side_effects(Generation const generation, MutableActivePokemon user, 
 		default:
 			break;
 	}
-	// TODO: Some items cannot be lost
-	set_item(user, Item::None);
+	user.remove_item();
 }
+
+
+constexpr bool can_be_incinerated(Item const item, Ability const holder_ability) {
+	// TODO: Destroy gems
+	return holder_ability != Ability::Sticky_Hold and berry_power(item) != 0_bi;
+}
+
 
 
 void recoil(Generation const generation, MutableActivePokemon user, HP::current_type const damage, bounded::checked_integer<1, 4> const denominator) {
@@ -194,17 +200,6 @@ auto use_swallow(Generation const generation, MutableActivePokemon user) {
 		return;
 	}
 	heal(generation, user, swallow_healing(bounded::integer<1, Stockpile::max>(stockpiles)));
-}
-
-
-auto swap_items(Pokemon & user, Pokemon & other) {
-	// Add support for abilities that block Trick / Switcheroo
-	if (!blocks_trick(get_item(user)) and !blocks_trick(get_item(other))) {
-		auto const user_item = get_item(user);
-		auto const other_item = get_item(other);
-		set_item(user, other_item);
-		set_item(other, user_item);
-	}
 }
 
 
@@ -455,16 +450,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().stage()[StatNames::SPE] += -2_bi;
 			break;
 		case Moves::Covet:
-		case Moves::Thief: {
-			// TODO: Sticky Hold
-			auto const user_item = get_item(user);
-			auto const other_item = get_item(other.pokemon());
-			if (user_item == Item::None and !blocks_trick(other_item)) {
-				set_item(user, other_item);
-				set_item(other.pokemon(), Item::None);
-			}
+		case Moves::Thief:
+			user.steal_item(other.pokemon());
 			break;
-		}
 		case Moves::Cross_Poison:
 		case Moves::Gunk_Shot:
 		case Moves::Poison_Jab:
@@ -678,7 +666,8 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Ingrain:
 			user.ingrain();
 			break;
-		case Moves::Knock_Off:		// Fix
+		case Moves::Knock_Off:
+			other.pokemon().remove_item();
 			break;
 		case Moves::Leech_Seed:
 			other.pokemon().hit_with_leech_seed();
@@ -813,7 +802,8 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Razor_Wind:	// Fix
 			break;
-		case Moves::Recycle:		// Fix
+		case Moves::Recycle:
+			user.recycle_item();
 			break;
 		case Moves::Reflect:
 			user_team.screens.activate_reflect(extends_reflect(get_item(user)));
@@ -1065,7 +1055,7 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 		if (move_type != resisted or substitute()) {
 			return false;
 		}
-		set_item(defender, Item::None);
+		defender.remove_item();
 		return true;
 	};
 	auto se_resistance_berry = [&](Type const resisted) {
@@ -1079,7 +1069,7 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 		auto & stage = defender.stage()[stat];
 		if (stage != max_stage and !substitute()) {
 			stage += 1_bi;
-			set_item(defender, Item::None);
+			defender.remove_item();
 		}
 	};
 	auto stat_boost_move_type = [&](Type const type, StatNames const stat) {
@@ -1092,7 +1082,7 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 		case Item::Absorb_Bulb:
 			return stat_boost_move_type(Type::Water, StatNames::SPA);
 		case Item::Air_Balloon:
-			set_item(defender, Item::None);
+			defender.remove_item();
 			return false;
 		case Item::Babiri_Berry:
 			return se_resistance_berry(Type::Steel);
@@ -1110,7 +1100,7 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 			return se_resistance_berry(Type::Dark);
 		case Item::Enigma_Berry:
 			if (effectiveness.is_super_effective() and generation >= Generation::four and !substitute()) {
-				set_item(defender, Item::None);
+				defender.remove_item();
 				heal(generation, defender, rational(1_bi, 4_bi));
 			}
 			return false;
@@ -1155,7 +1145,7 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 				auto & stage = defender.stage();
 				if (stage[StatNames::ATK] != max_stage and stage[StatNames::SPA] != max_stage) {
 					boost_offensive(stage, 2_bi);
-					set_item(defender, Item::None);
+					defender.remove_item();
 				}
 			}
 			return false;
@@ -1264,11 +1254,11 @@ auto activate_pp_restore_berry(Move & move, Pokemon & pokemon) {
 		switch (get_item(pokemon)) {
 			case Item::Leppa_Berry:
 				move.restore_pp(10_bi);
-				set_item(pokemon, Item::None);
+				pokemon.remove_item();
 				break;
 			case Item::MysteryBerry:
 				move.restore_pp(5_bi);
-				set_item(pokemon, Item::None);
+				pokemon.remove_item();
 				break;
 			default:
 				break;
@@ -1320,7 +1310,7 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 		user_pokemon.unsuccessfully_use_move(move.executed);
 		if (get_item(user_pokemon) == Item::Blunder_Policy) {
 			user_pokemon.stage()[StatNames::SPE] += 2_bi;
-			set_item(user_pokemon, Item::None);
+			user_pokemon.remove_item();
 		}
 		return;
 	}

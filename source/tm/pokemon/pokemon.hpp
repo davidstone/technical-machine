@@ -24,7 +24,7 @@
 
 #include <tm/ability.hpp>
 #include <tm/gender.hpp>
-#include <tm/item.hpp>
+#include <tm/held_item.hpp>
 #include <tm/operators.hpp>
 #include <tm/status.hpp>
 #include <tm/weather.hpp>
@@ -66,8 +66,8 @@ struct Pokemon {
 	friend Status get_status(Pokemon pokemon);
 	// Should be called only by MutableActivePokemon and clear_status
 	void set_status(Statuses const status) & {
-		if (clears_status(m_item, status) and status != Statuses::clear) {
-			m_item = Item::None;
+		if (clears_status(m_item.get(), status) and status != Statuses::clear) {
+			m_item.remove();
 		} else {
 			m_status = status;
 		}
@@ -88,10 +88,23 @@ struct Pokemon {
 		stats.hp() = hp;
 	}
 
+	auto remove_item() & {
+		return m_item.remove();
+	}
+	auto destroy_item() & {
+		return m_item.destroy();
+	}
+	auto recycle_item() & -> void {
+		m_item.recycle();
+	}
+	auto set_item(Item const item) & -> void {
+		m_item = HeldItem(item);
+		m_item_is_known = true;
+	}
+
 	friend void set_ability(Pokemon & pokemon, Ability ability);
 	friend bool ability_is_known(Pokemon pokemon);
 	friend void set_gender(Pokemon & pokemon, Gender gender);
-	friend void set_item(Pokemon & pokemon, Item item);
 	friend bool item_is_known(Pokemon pokemon);
 	friend void set_nature(Pokemon & pokemon, Nature nature);
 	friend bool nature_is_known(Pokemon pokemon);
@@ -103,7 +116,7 @@ private:
 	Stats stats;
 
 	Species m_species;
-	Item m_item;
+	HeldItem m_item;
 	Ability m_ability;
 	Gender m_gender;
 	Status m_status;
@@ -159,11 +172,7 @@ inline void set_gender(Pokemon & pokemon, Gender const gender) {
 }
 
 inline Item get_item(Pokemon const pokemon) {
-	return pokemon.m_item;
-}
-inline void set_item(Pokemon & pokemon, Item const item) {
-	pokemon.m_item = item;
-	pokemon.m_item_is_known = true;
+	return pokemon.m_item.get();
 }
 inline bool item_is_known(Pokemon const pokemon) {
 	return pokemon.m_item_is_known;

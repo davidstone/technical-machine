@@ -100,7 +100,7 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 			auto & speed = other.stage()[StatNames::SPE];
 			if (get_item(other) == Item::Adrenaline_Orb and speed != bounded::max_value<Stage::value_type>) {
 				speed += 1_bi;
-				set_item(other, Item::None);
+				other.remove_item();
 			}
 			break;
 		}

@@ -19,6 +19,7 @@
 #pragma once
 
 #include <tm/ability.hpp>
+#include <tm/item.hpp>
 #include <tm/rational.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
@@ -39,6 +40,13 @@ void heal(Generation const generation, MutableActivePokemon pokemon, rational<Nu
 	} else if (!blocks_secondary_damage(get_ability(pokemon))) {
 		change_hp(generation, pokemon, bounded::min(hp_healed, -1_bi));
 	}
+}
+
+constexpr auto healing_multiplier(Item const item) {
+	return rational(
+		BOUNDED_CONDITIONAL(item == Item::Big_Root, 13_bi, 10_bi),
+		10_bi
+	);
 }
 
 }	// namespace technicalmachine

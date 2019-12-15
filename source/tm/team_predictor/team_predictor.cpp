@@ -76,7 +76,7 @@ Team predict_team(Generation const generation, UsageStats const & usage_stats, L
 			set_ability(pokemon, detailed.get<Ability>(species));
 		}
 		if (!item_is_known(pokemon)) {
-			set_item(pokemon, detailed.get<Item>(species));
+			pokemon.set_item(detailed.get<Item>(species));
 		}
 		if (!nature_is_known(pokemon)) {
 			set_nature(pokemon, detailed.get<Nature>(species));

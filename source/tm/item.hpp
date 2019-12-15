@@ -17,16 +17,13 @@
 
 #pragma once
 
-#include <tm/rational.hpp>
-#include <tm/status.hpp>
-
 #include <bounded/integer.hpp>
 
 #include <cstdint>
 
 namespace technicalmachine {
 
-enum class Item : uint16_t {
+enum class Item : std::uint16_t {
 	// Generation 1
 	None,
 
@@ -819,10 +816,6 @@ constexpr bool is_choice_item(Item const item) {
 			return false;
 	}
 }
-constexpr bool was_lost(Item const) {
-	// TODO
-	return false;
-}
 constexpr bool extends_hail(Item const item) {
 	return item == Item::Icy_Rock;
 }
@@ -842,41 +835,7 @@ constexpr bool extends_reflect(Item const item) {
 	return item == Item::Light_Clay;
 }
 
-constexpr auto healing_multiplier(Item const item) {
-	return rational(
-		BOUNDED_CONDITIONAL(item == Item::Big_Root, 13_bi, 10_bi),
-		10_bi
-	);
-}
-
 bounded::integer<0, 80> berry_power(Item item);		// Returns 0 for non-berries
-bounded::integer<0, 130> fling_power(Item item);
-bool blocks_trick(Item item);
-
-constexpr auto clears_status(Item const item, Statuses const status) -> bool {
-	switch (item) {
-		case Item::Ice_Berry:
-		case Item::Rawst_Berry:
-			return status == Statuses::burn;
-		case Item::Aspear_Berry:
-		case Item::Burnt_Berry:
-			return status == Statuses::freeze;
-		case Item::Cheri_Berry:
-		case Item::PRZCureBerry:
-			return status == Statuses::paralysis;
-		case Item::Chesto_Berry:
-		case Item::Mint_Berry:
-			return status == Statuses::rest or status == Statuses::sleep;
-		case Item::Pecha_Berry:
-		case Item::PSNCureBerry:
-			return status == Statuses::poison or status == Statuses::toxic;
-		case Item::Lum_Berry:
-		case Item::MiracleBerry:
-			return true;
-		default:
-			return false;
-	}
-}
 
 constexpr auto clears_confusion(Item const item) -> bool {
 	switch (item) {

@@ -179,6 +179,7 @@ add_library(tm_common STATIC
 	source/tm/gender.cpp
 	source/tm/generation.cpp
 	source/tm/heal.cpp
+	source/tm/held_item.cpp
 	source/tm/invalid_settings_file.cpp
 	source/tm/item.cpp
 	source/tm/load_team_from_file.cpp

@@ -19,6 +19,7 @@
 
 #include <tm/type/type.hpp>
 #include <tm/ability.hpp>
+#include <tm/item.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
 
@@ -148,6 +149,31 @@ constexpr auto blocks_status(Type const type, Statuses const status) {
 		case Statuses::poison:
 		case Statuses::toxic:
 			return type == Type::Poison or type == Type::Steel;
+		default:
+			return false;
+	}
+}
+
+constexpr auto clears_status(Item const item, Statuses const status) -> bool {
+	switch (item) {
+		case Item::Ice_Berry:
+		case Item::Rawst_Berry:
+			return status == Statuses::burn;
+		case Item::Aspear_Berry:
+		case Item::Burnt_Berry:
+			return status == Statuses::freeze;
+		case Item::Cheri_Berry:
+		case Item::PRZCureBerry:
+			return status == Statuses::paralysis;
+		case Item::Chesto_Berry:
+		case Item::Mint_Berry:
+			return status == Statuses::rest or status == Statuses::sleep;
+		case Item::Pecha_Berry:
+		case Item::PSNCureBerry:
+			return status == Statuses::poison or status == Statuses::toxic;
+		case Item::Lum_Berry:
+		case Item::MiracleBerry:
+			return true;
 		default:
 			return false;
 	}

@@ -128,6 +128,7 @@ auto ActivePokemonFlags::reset_switch() -> void {
 	slow_start = {};
 	stockpile = {};
 	is_tormented = false;
+	unburdened = false;
 	water_sport = false;
 	taunt = {};
 	yawn = {};
@@ -196,7 +197,7 @@ auto MutableActivePokemon::attract(Generation const generation, MutableActivePok
 				apply_own_mental_herb(generation, *this);
 				break;
 			case Item::Destiny_Knot:
-				set_item(*this, Item::None);
+				remove_item();
 				other.attract(generation, *this);
 				break;
 			default:
@@ -302,7 +303,7 @@ auto use_vanish_move(Pokemon & user, auto & lock_in) -> bool {
 		},
 		[&](auto) {
 			if (get_item(user) == Item::Power_Herb) {
-				set_item(user, Item::None);
+				user.remove_item();
 				return true;
 			}
 			lock_in = T{};
@@ -358,7 +359,7 @@ auto handle_ohko(MutableActivePokemon defender, bool const is_enduring, Moves co
 	}
 	auto const hp = get_hp(defender);
 	if (hp.current() == hp.max() and get_item(defender) == Item::Focus_Sash) {
-		set_item(defender, Item::None);
+		defender.remove_item();
 		return true;
 	}
 	return false;
@@ -428,7 +429,7 @@ auto MutableActivePokemon::apply_status(Statuses const status, MutableActivePoke
 
 auto MutableActivePokemon::activate_pinch_item(Generation const generation) const -> void {
 	// TODO: Confusion damage does not activate healing berries in Generation 5+
-	auto consume = [&] { set_item(m_pokemon, Item::None); };
+	auto consume = [&] { remove_item(); };
 
 	auto const current_hp = hp_ratio(m_pokemon);
 

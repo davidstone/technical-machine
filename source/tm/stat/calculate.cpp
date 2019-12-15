@@ -131,7 +131,7 @@ auto ability_modifier(ActivePokemon const pokemon, Ability const other_ability, 
 				case Ability::Swift_Swim:
 					return BOUNDED_CONDITIONAL(weather.rain(weather_is_blocked_by_ability(ability, other_ability)), denominator * 2_bi, denominator);
 				case Ability::Unburden:
-					return BOUNDED_CONDITIONAL(was_lost(get_item(pokemon)), denominator * 2_bi, denominator);
+					return BOUNDED_CONDITIONAL(pokemon.is_unburdened(), denominator * 2_bi, denominator);
 				case Ability::Quick_Feet:
 					return BOUNDED_CONDITIONAL(!is_clear(get_status(pokemon)), 3_bi, denominator);
 				case Ability::Slow_Start:

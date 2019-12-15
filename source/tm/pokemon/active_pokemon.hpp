@@ -181,6 +181,7 @@ private:
 	bool power_trick_is_active = false;
 	bool is_roosting = false;
 	bool is_tormented = false;
+	bool unburdened = false;
 	bool water_sport = false;
 };
 
@@ -368,6 +369,10 @@ public:
 		return m_flags.types;
 	}
 
+	auto is_unburdened() const {
+		return m_flags.unburdened;
+	}
+
 	auto is_uproaring() const -> bool {
 		return m_flags.is_uproaring();
 	}
@@ -455,7 +460,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 			return;
 		}
 		if (clears_confusion(get_item(*this))) {
-			set_item(*this, Item::None);
+			remove_item();
 		} else {
 			m_flags.confusion.activate();
 		}
@@ -522,6 +527,43 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto ingrain() const {
 		m_flags.ingrained = true;
 	}
+
+	auto remove_item() const -> bounded::optional<Item> {
+		auto result = m_pokemon.remove_item();
+		if (result) {
+			m_flags.unburdened = true;
+		}
+		return result;
+	}
+	auto destroy_item() const -> bool {
+		auto result = m_pokemon.destroy_item();
+		if (result) {
+			m_flags.unburdened = true;
+		}
+		return result;
+	}
+	auto recycle_item() const -> void {
+		m_pokemon.recycle_item();
+	}
+	auto steal_item(MutableActivePokemon other) const -> void {
+		if (get_item(m_pokemon) != Item::None) {
+			return;
+		}
+		if (auto const other_item = other.remove_item()) {
+			m_pokemon.set_item(*other_item);
+		}
+	}
+	friend auto swap_items(MutableActivePokemon user, MutableActivePokemon other) -> void {
+		if (!cannot_be_lost(get_item(user)) and !cannot_be_lost(get_item(other))) {
+			auto const user_item = get_item(user);
+			auto const other_item = get_item(other);
+			user.m_pokemon.set_item(other_item);
+			other.m_pokemon.set_item(user_item);
+		}
+	}
+
+
+
 	auto hit_with_leech_seed() const {
 		m_flags.leech_seeded = true;
 	}
@@ -723,13 +765,13 @@ inline auto activate_berserk_gene(MutableActivePokemon pokemon) -> void {
 	// TODO: Berserk Gene causes 256-turn confusion, unless the Pokemon
 	// switching out was confused.
 	pokemon.confuse();
-	set_item(pokemon, Item::None);
+	pokemon.remove_item();
 }
 
 inline auto apply_own_mental_herb(Generation const generation, MutableActivePokemon const pokemon) -> void {
 	if (get_item(pokemon) == Item::Mental_Herb) {
 		apply_mental_herb(generation, pokemon);
-		set_item(pokemon, Item::None);
+		pokemon.remove_item();
 	}
 }
 
@@ -744,7 +786,7 @@ inline auto apply_white_herb(MutableActivePokemon const pokemon) {
 inline auto apply_own_white_herb(MutableActivePokemon const pokemon) {
 	if (get_item(pokemon) == Item::White_Herb) {
 		apply_white_herb(pokemon);
-		set_item(pokemon, Item::None);
+		pokemon.remove_item();
 	}
 }
 
