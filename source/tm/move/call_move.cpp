@@ -671,6 +671,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		}
+		case Moves::Inferno:
+			other.pokemon().apply_status(Statuses::burn, user, weather);
+			break;
 		case Moves::Ingrain:
 			user.ingrain();
 			break;
