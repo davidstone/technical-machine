@@ -248,6 +248,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Fake_Out:
 		case Moves::Headbutt:
 		case Moves::Hyper_Fang:
+		case Moves::Icicle_Crash:
 		case Moves::Iron_Head:
 		case Moves::Needle_Arm:
 		case Moves::Rock_Slide:
@@ -582,10 +583,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Glare:
 		case Moves::Stun_Spore:
 		case Moves::Thunder_Wave:
-		case Moves::Zap_Cannon: {
+		case Moves::Zap_Cannon:
 			other.pokemon().apply_status(Statuses::paralysis, user, weather);
 			break;
-		}
 		case Moves::Gravity:
 			weather.activate_gravity();
 			break;
