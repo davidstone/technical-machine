@@ -655,6 +655,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			move.variable.fang_side_effects(user, other.pokemon(), weather, Statuses::freeze);
 			break;
 		case Moves::Icy_Wind:
+		case Moves::Low_Sweep:
 		case Moves::Mud_Shot:
 		case Moves::Rock_Tomb:
 		case Moves::String_Shot:
