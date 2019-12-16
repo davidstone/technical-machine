@@ -869,6 +869,14 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Sharpen:
 			user.stage()[StatNames::ATK] += 1_bi;
 			break;
+		case Moves::Shell_Smash:
+			for (auto const stat : {StatNames::DEF, StatNames::SPD}) {
+				user.stage()[stat] -= 1_bi;
+			}
+			for (auto const stat : {StatNames::ATK, StatNames::SPA, StatNames::SPE}) {
+				user.stage()[stat] += 2_bi;
+			}
+			break;
 		case Moves::Sketch:		// Fix
 			break;
 		case Moves::Skill_Swap:		// Fix
