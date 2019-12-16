@@ -328,6 +328,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Lava_Plume:
 		case Moves::Sacred_Fire:
 		case Moves::Scald: // TODO: Thaw frozen enemy
+		case Moves::Searing_Shot:
 			if (move.variable.effect_activates()) {
 				other.pokemon().apply_status(generation, Statuses::burn, user, weather);
 			}
