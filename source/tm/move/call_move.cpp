@@ -1011,6 +1011,11 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Uproar:
 			user.use_uproar();
 			break;
+		case Moves::V_create:
+			for (auto const stat : {StatNames::DEF, StatNames::SPD, StatNames::SPE}) {
+				user.stage()[stat] -= 1_bi;
+			}
+			break;
 		case Moves::Volt_Tackle:
 			recoil_status(generation, user, other.pokemon(), weather, damage, move.variable, Statuses::paralysis);
 			break;
