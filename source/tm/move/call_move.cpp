@@ -464,6 +464,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Poison_Tail:
 		case Moves::Sludge:
 		case Moves::Sludge_Bomb:
+		case Moves::Sludge_Wave:
 		case Moves::Smog:
 			if (move.variable.effect_activates()) {
 				other.pokemon().apply_status(generation, Statuses::poison, user, weather);
