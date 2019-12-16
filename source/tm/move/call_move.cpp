@@ -684,6 +684,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Mirror_Shot:
 		case Moves::Mud_Bomb:
 		case Moves::Muddy_Water:
+		case Moves::Night_Daze:
 		case Moves::Octazooka:
 			if (move.variable.effect_activates()) {
 				other.pokemon().stage()[StatNames::ACC] -= 1_bi;
