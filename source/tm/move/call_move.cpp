@@ -441,6 +441,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Crunch:
 		case Moves::Crush_Claw:
 		case Moves::Iron_Tail:
+		case Moves::Razor_Shell:
 		case Moves::Rock_Smash:
 			if (move.variable.effect_activates()) {
 				other.pokemon().stage()[StatNames::DEF] += -1_bi;
