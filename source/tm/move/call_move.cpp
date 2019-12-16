@@ -900,6 +900,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		case Moves::Snarl:
+		case Moves::Struggle_Bug:
 			other.pokemon().stage()[StatNames::SPA] -= 1_bi;
 			break;
 		case Moves::Snatch:	// Fix
