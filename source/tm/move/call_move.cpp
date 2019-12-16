@@ -806,6 +806,11 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 				shift_status(generation, user, other.pokemon(), weather);
 			}
 			break;
+		case Moves::Quiver_Dance:
+			for (auto const stat : {StatNames::SPA, StatNames::SPD, StatNames::SPE}) {
+				user.stage()[stat] += 1_bi;
+			}
+			break;
 		case Moves::Rage:		// Fix
 			break;
 		case Moves::Rain_Dance:
