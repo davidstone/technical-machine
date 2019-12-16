@@ -47,6 +47,7 @@ auto is_usable_while_frozen(Moves const move) -> bool {
 	switch (move) {
 		case Moves::Flame_Wheel:
 		case Moves::Sacred_Fire:
+		case Moves::Scald:
 			return true;
 		default:
 			return false;
