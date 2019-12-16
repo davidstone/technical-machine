@@ -35,8 +35,8 @@ struct HeldItem {
 	{
 	}
 
-	constexpr auto get(Generation const generation, bool const embargo) const {
-		if (!m_active or (embargo and affected_by_embargo(generation))) {
+	constexpr auto get(Generation const generation, bool const embargo, bool const magic_room) const {
+		if (!m_active or (embargo and affected_by_embargo(generation)) or magic_room) {
 			return Item::None;
 		}
 		return m_item;

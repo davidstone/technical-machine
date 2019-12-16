@@ -34,7 +34,7 @@ namespace technicalmachine {
 template struct ActivePokemonImpl<true>;
 template struct ActivePokemonImpl<false>;
 
-auto ActiveStatus::end_of_turn(Generation const generation, MutableActivePokemon pokemon, Pokemon const & other, bool const uproar) & -> void {
+auto ActiveStatus::end_of_turn(Generation const generation, MutableActivePokemon pokemon, Pokemon const & other, Weather const weather, bool const uproar) & -> void {
 	switch (get_status(pokemon).name()) {
 		case Statuses::clear:
 		case Statuses::freeze:
@@ -42,19 +42,19 @@ auto ActiveStatus::end_of_turn(Generation const generation, MutableActivePokemon
 			return;
 		case Statuses::burn: {
 			auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(get_ability(pokemon)), 16_bi, 8_bi);
-			heal(generation, pokemon, rational(-1_bi, denominator));
+			heal(generation, pokemon, weather, rational(-1_bi, denominator));
 			return;
 		}
 		case Statuses::poison: {
 			auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(get_ability(pokemon)), 1_bi, -1_bi);
-			heal(generation, pokemon, rational(numerator, 8_bi));
+			heal(generation, pokemon, weather, rational(numerator, 8_bi));
 			return;
 		}
 		case Statuses::toxic: {
 			if (absorbs_poison_damage(get_ability(pokemon))) {
-				heal(generation, pokemon, rational(1_bi, 8_bi));
+				heal(generation, pokemon, weather, rational(1_bi, 8_bi));
 			} else {
-				heal(generation, pokemon, rational(-m_toxic_counter, 16_bi));
+				heal(generation, pokemon, weather, rational(-m_toxic_counter, 16_bi));
 			}
 			++m_toxic_counter;
 			return;
@@ -66,10 +66,10 @@ auto ActiveStatus::end_of_turn(Generation const generation, MutableActivePokemon
 				return;
 			}
 			if (m_nightmare) {
-				heal(generation, pokemon, rational(-1_bi, 4_bi));
+				heal(generation, pokemon, weather, rational(-1_bi, 4_bi));
 			}
 			if (harms_sleepers(get_ability(other))) {
-				heal(generation, pokemon, rational(-1_bi, 8_bi));
+				heal(generation, pokemon, weather, rational(-1_bi, 8_bi));
 			}
 			return;
 	}
@@ -176,10 +176,10 @@ auto ActivePokemonFlags::vanish_doubles_power(Moves const move_name) const -> bo
 
 namespace {
 
-auto item_grounds(Generation const generation, ActivePokemon const pokemon) -> bool {
+auto item_grounds(Generation const generation, ActivePokemon const pokemon, Weather const weather) -> bool {
 	auto const item = generation <= Generation::four ?
-		pokemon.item_ignoring_embargo(generation) :
-		pokemon.item(generation);
+		pokemon.unrestricted_item(generation) :
+		pokemon.item(generation, weather);
 	return item == Item::Iron_Ball;
 }
 
@@ -191,23 +191,23 @@ auto grounded(Generation const generation, ActivePokemon const pokemon, Weather 
 			is_type(pokemon, Type::Flying) or
 			is_immune_to_ground(get_ability(pokemon)) or
 			pokemon.magnet_rise().is_active() or
-			pokemon.item(generation) == Item::Air_Balloon
+			pokemon.item(generation, weather) == Item::Air_Balloon
 		) or
 		weather.gravity() or
-		item_grounds(generation, pokemon) or
+		item_grounds(generation, pokemon, weather) or
 		pokemon.ingrained();
 }
 
 
-auto MutableActivePokemon::attract(Generation const generation, MutableActivePokemon other) const -> void {
+auto MutableActivePokemon::attract(Generation const generation, MutableActivePokemon other, Weather const weather) const -> void {
 	auto handle_item = [&] {
-		switch (item(generation)) {
+		switch (item(generation, weather)) {
 			case Item::Mental_Herb:
-				apply_own_mental_herb(generation, *this);
+				apply_own_mental_herb(generation, *this, weather);
 				break;
 			case Item::Destiny_Knot:
 				remove_item();
-				other.attract(generation, *this);
+				other.attract(generation, *this, weather);
 				break;
 			default:
 				break;
@@ -236,12 +236,12 @@ auto MutableActivePokemon::use_charge_up_move() const -> void {
 	m_flags.lock_in = ChargingUp{};
 }
 
-auto MutableActivePokemon::advance_lock_in(Generation const generation, bool const ending) const -> void {
+auto MutableActivePokemon::advance_lock_in(Generation const generation, bool const ending, Weather const weather) const -> void {
 	bounded::visit(m_flags.lock_in, bounded::overload(
 		[&](Rampage & rampage) {
 			if (ending) {
 				m_flags.lock_in = std::monostate{};
-				confuse(generation);
+				confuse(generation, weather);
 			} else {
 				rampage.advance_one_turn();
 			}
@@ -282,11 +282,11 @@ auto can_use_substitute(Pokemon const & pokemon) -> bool {
 
 }	// namespace
 
-auto MutableActivePokemon::use_substitute(Generation const generation) const -> void {
+auto MutableActivePokemon::use_substitute(Generation const generation, Weather const weather) const -> void {
 	if (!can_use_substitute(*this))
 		return;
 	auto const max_hp = get_hp(*this).max();
-	indirect_damage(generation, m_flags.substitute.create(max_hp));
+	indirect_damage(generation, weather, m_flags.substitute.create(max_hp));
 }
 
 auto MutableActivePokemon::u_turn() const -> void {
@@ -302,14 +302,14 @@ auto MutableActivePokemon::use_uproar() const -> void {
 }
 
 template<typename T>
-auto MutableActivePokemon::use_vanish_move(Generation const generation) const -> bool {
+auto MutableActivePokemon::use_vanish_move(Generation const generation, Weather const weather) const -> bool {
 	return bounded::visit(m_flags.lock_in, bounded::overload(
 		[&](T) {
 			m_flags.lock_in = std::monostate{};
 			return true;
 		},
 		[&](auto) {
-			if (item(generation) == Item::Power_Herb) {
+			if (item(generation, weather) == Item::Power_Herb) {
 				remove_item();
 				return true;
 			}
@@ -319,36 +319,36 @@ auto MutableActivePokemon::use_vanish_move(Generation const generation) const ->
 	));
 }
 
-auto MutableActivePokemon::bounce(Generation const generation) const -> bool {
-	return use_vanish_move<Bouncing>(generation);
+auto MutableActivePokemon::bounce(Generation const generation, Weather const weather) const -> bool {
+	return use_vanish_move<Bouncing>(generation, weather);
 }
-auto MutableActivePokemon::dig(Generation const generation) const -> bool {
-	return use_vanish_move<Digging>(generation);
+auto MutableActivePokemon::dig(Generation const generation, Weather const weather) const -> bool {
+	return use_vanish_move<Digging>(generation, weather);
 }
-auto MutableActivePokemon::dive(Generation const generation) const -> bool {
-	return use_vanish_move<Diving>(generation);
+auto MutableActivePokemon::dive(Generation const generation, Weather const weather) const -> bool {
+	return use_vanish_move<Diving>(generation, weather);
 }
-auto MutableActivePokemon::fly(Generation const generation) const -> bool {
-	return use_vanish_move<Flying>(generation);
+auto MutableActivePokemon::fly(Generation const generation, Weather const weather) const -> bool {
+	return use_vanish_move<Flying>(generation, weather);
 }
-auto MutableActivePokemon::shadow_force(Generation const generation) const -> bool {
-	return use_vanish_move<ShadowForcing>(generation);
+auto MutableActivePokemon::shadow_force(Generation const generation, Weather const weather) const -> bool {
+	return use_vanish_move<ShadowForcing>(generation, weather);
 }
 
-auto MutableActivePokemon::use_bide(Generation const generation, MutableActivePokemon target) const -> void {
+auto MutableActivePokemon::use_bide(Generation const generation, MutableActivePokemon target, Weather const weather) const -> void {
 	bounded::visit(m_flags.lock_in, bounded::overload(
 		[&](auto const &) { m_flags.lock_in = Bide{}; },
 		[&](Bide & bide) {
 			if (auto const damage = bide.advance_one_turn()) {
-				change_hp(generation, target, -*damage * 2_bi);
+				change_hp(generation, target, weather, -*damage * 2_bi);
 				m_flags.lock_in = std::monostate{};
 			}
 		}
 	));
 }
 
-auto MutableActivePokemon::indirect_damage(Generation const generation, HP::current_type const damage) const -> void {
-	change_hp(generation, *this, -damage);
+auto MutableActivePokemon::indirect_damage(Generation const generation, Weather const weather, HP::current_type const damage) const -> void {
+	change_hp(generation, *this, weather, -damage);
 	m_flags.damaged = true;
 }
 
@@ -358,12 +358,12 @@ constexpr bool cannot_ko(Moves const move) {
 	return move == Moves::False_Swipe;
 }
 
-auto handle_ohko(Generation const generation, MutableActivePokemon defender, bool const is_enduring, Moves const move) {
+auto handle_ohko(Generation const generation, MutableActivePokemon defender, bool const is_enduring, Moves const move, Weather const weather) {
 	if (cannot_ko(move) or is_enduring) {
 		return true;
 	}
 	auto const hp = get_hp(defender);
-	if (hp.current() == hp.max() and defender.item(generation) == Item::Focus_Sash) {
+	if (hp.current() == hp.max() and defender.item(generation, weather) == Item::Focus_Sash) {
 		defender.remove_item();
 		return true;
 	}
@@ -372,16 +372,16 @@ auto handle_ohko(Generation const generation, MutableActivePokemon defender, boo
 
 } // namespace
 
-auto MutableActivePokemon::direct_damage(Generation const generation, Moves const move, damage_type const damage) const -> HP::current_type {
+auto MutableActivePokemon::direct_damage(Generation const generation, Moves const move, Weather const weather, damage_type const damage) const -> HP::current_type {
 	if (m_flags.substitute) {
 		return m_flags.substitute.damage(damage);
 	}
 	auto const original_hp = get_hp(m_pokemon).current();
-	auto const block_ohko = original_hp <= damage and handle_ohko(generation, *this, m_flags.damage_blocker.is_enduring(), move);
+	auto const block_ohko = original_hp <= damage and handle_ohko(generation, *this, m_flags.damage_blocker.is_enduring(), move, weather);
 	auto const applied_damage = block_ohko ?
 		static_cast<HP::current_type>(original_hp - 1_bi) :
 		bounded::min(damage, original_hp);
-	indirect_damage(generation, applied_damage);
+	indirect_damage(generation, weather, applied_damage);
 	m_flags.direct_damage_received = applied_damage;
 	bounded::visit(m_flags.lock_in, bounded::overload(
 		[=](Bide & bide) { bide.add_damage(applied_damage); },
@@ -424,7 +424,7 @@ auto MutableActivePokemon::apply_status(Generation const generation, Statuses co
 	if (!status_can_apply(status, user, *this, weather, uproar)) {
 		return;
 	}
-	set_status(generation, status);
+	set_status(generation, status, weather);
 	auto const reflected = reflected_status(status);
 	if (reflected and reflects_status(get_ability(*this))) {
 		apply_status_to_self(generation, *reflected, user, weather, uproar);
@@ -444,10 +444,10 @@ auto MutableActivePokemon::rest(Generation const generation, Weather const weath
 		return;
 	}
 	m_pokemon.set_hp(hp.max());
-	set_status(generation, Statuses::rest);
+	set_status(generation, Statuses::rest, weather);
 }
 
-auto MutableActivePokemon::activate_pinch_item(Generation const generation) const -> void {
+auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weather const weather) const -> void {
 	// TODO: Confusion damage does not activate healing berries in Generation 5+
 	auto consume = [&] { remove_item(); };
 
@@ -467,7 +467,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation) cons
 		auto const amount = get_hp(m_pokemon).max() / BOUNDED_CONDITIONAL(generation <= Generation::six, 8_bi, 2_bi);
 		auto const activated = healing_berry(amount);
 		if (activated and lowers_stat(get_nature(m_pokemon), stat)) {
-			confuse(generation);
+			confuse(generation, weather);
 		}
 	};
 
@@ -480,7 +480,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation) cons
 		stage()[stat] += 1_bi;
 	};
 
-	switch (item(generation)) {
+	switch (item(generation, weather)) {
 		case Item::Aguav_Berry:
 			confusion_berry(StatNames::SPD);
 			break;

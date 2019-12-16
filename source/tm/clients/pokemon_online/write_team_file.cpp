@@ -74,9 +74,7 @@ void write_blank_stats (ptree & pt) {
 
 void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	ptree & member = pt.add ("Pokemon", "");
-	constexpr auto generation = Generation::four;
-	constexpr auto embargo = false;
-	member.put("<xmlattr>.Item", item_to_id(pokemon.item(generation, embargo)));
+	member.put("<xmlattr>.Item", item_to_id(pokemon.unmodified_item()));
 	member.put("<xmlattr>.Ability", ability_to_id (get_ability(pokemon)));
 	auto const species = get_species(pokemon);
 	auto const po_species = species_to_id(species);

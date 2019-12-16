@@ -25,6 +25,7 @@ namespace technicalmachine {
 
 enum class Generation : std::uint8_t;
 struct MutableActivePokemon;
+struct Weather;
 
 // This handles the number of turns remaining on Bind, Clamp, Fire Spin,
 // Magma Storm, Sand Tomb, Whirlpool, and Wrap
@@ -35,7 +36,7 @@ struct PartialTrap {
 	constexpr auto activate() {
 		m_base.activate();
 	}
-	auto damage(Generation, MutableActivePokemon) -> void;
+	auto damage(Generation, MutableActivePokemon, Weather) -> void;
 
 	friend constexpr auto operator==(PartialTrap const lhs, PartialTrap const rhs) {
 		return lhs.m_base == rhs.m_base;

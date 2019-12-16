@@ -124,7 +124,7 @@ void special_defense_tests() {
 
 	defender.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Calm);
 	auto pokemon = defender.pokemon();
-	pokemon.switch_in(generation);
+	pokemon.switch_in(generation, weather);
 	set_stat_ev(pokemon, StatNames::SPD, EV(EV::max));
 
 	pokemon.stage()[StatNames::SPD] += 6_bi;

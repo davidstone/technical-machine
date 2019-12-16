@@ -93,7 +93,7 @@ struct ActiveStatus {
 		m_nightmare = true;
 	}
 
-	auto end_of_turn(Generation, MutableActivePokemon pokemon, Pokemon const & other, bool uproar) & -> void;
+	auto end_of_turn(Generation, MutableActivePokemon pokemon, Pokemon const & other, Weather, bool uproar) & -> void;
 private:
 	// The discriminator is the status of the active Pokemon. The default value
 	// is irrelevant.
@@ -281,11 +281,11 @@ public:
 		return m_flags.ingrained;
 	}
 
-	auto item(Generation const generation) const -> Item {
-		return m_pokemon.item(generation, m_flags.embargo.is_active());
+	auto item(Generation const generation, Weather const weather) const -> Item {
+		return m_pokemon.item(generation, m_flags.embargo.is_active(), weather.magic_room());
 	}
-	auto item_ignoring_embargo(Generation const generation) const -> Item {
-		return m_pokemon.item(generation, false);
+	auto unrestricted_item(Generation const generation) const -> Item {
+		return m_pokemon.item(generation, false, false);
 	}
 
 	auto leech_seeded() const -> bool {
@@ -404,7 +404,7 @@ protected:
 extern template struct ActivePokemonImpl<true>;
 extern template struct ActivePokemonImpl<false>;
 
-auto apply_own_mental_herb(Generation const generation, MutableActivePokemon const pokemon) -> void;
+auto apply_own_mental_herb(Generation, MutableActivePokemon, Weather) -> void;
 
 // A reference to the currently active Pokemon
 struct ActivePokemon : ActivePokemonImpl<true> {
@@ -424,8 +424,8 @@ auto grounded(Generation, ActivePokemon, Weather) -> bool;
 
 auto apply_status_to_self(Generation, Statuses, MutableActivePokemon target, Weather, bool uproar = false) -> void;
 
-auto activate_berserk_gene(Generation, MutableActivePokemon) -> void;
-auto activate_pinch_item(Generation, MutableActivePokemon) -> void;
+auto activate_berserk_gene(Generation, MutableActivePokemon, Weather) -> void;
+auto activate_pinch_item(Generation, MutableActivePokemon, Weather) -> void;
 
 // A mutable reference to the currently active Pokemon
 struct MutableActivePokemon : ActivePokemonImpl<false> {
@@ -455,17 +455,17 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto activate_aqua_ring() const {
 		m_flags.aqua_ring = true;
 	}
-	auto attract(Generation, MutableActivePokemon other) const -> void;
+	auto attract(Generation, MutableActivePokemon other, Weather) const -> void;
 	auto baton_pass() const -> void;
 	auto charge() const {
 		m_flags.charged = true;
 	}
 	auto use_charge_up_move() const -> void;
-	auto confuse(Generation const generation) const -> void {
+	auto confuse(Generation const generation, Weather const weather) const -> void {
 		if (blocks_confusion(get_ability(*this))) {
 			return;
 		}
-		if (clears_confusion(item(generation))) {
+		if (clears_confusion(item(generation, weather))) {
 			remove_item();
 		} else {
 			m_flags.confusion.activate();
@@ -483,9 +483,9 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto use_destiny_bond() const {
 		m_flags.destiny_bond = true;
 	}
-	auto disable(Generation const generation, Moves const move) const {
+	auto disable(Generation const generation, Moves const move, Weather const weather) const {
 		m_flags.disable.activate(move);
-		apply_own_mental_herb(generation, *this);
+		apply_own_mental_herb(generation, *this, weather);
 	}
 	auto advance_disable() const {
 		m_flags.disable.advance_one_turn();
@@ -496,9 +496,9 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto advance_embargo() const {
 		m_flags.embargo.advance_one_turn();
 	}
-	auto activate_encore(Generation const generation) const {
+	auto activate_encore(Generation const generation, Weather const weather) const {
 		m_flags.encore.activate();
-		apply_own_mental_herb(generation, *this);
+		apply_own_mental_herb(generation, *this, weather);
 	}
 	auto advance_encore() const {
 		m_flags.encore.advance_one_turn();
@@ -552,7 +552,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_pokemon.recycle_item();
 	}
 	auto steal_item(Generation const generation, MutableActivePokemon other) const -> void {
-		if (item_ignoring_embargo(generation) != Item::None) {
+		if (unrestricted_item(generation) != Item::None) {
 			return;
 		}
 		if (auto const other_item = other.remove_item()) {
@@ -560,8 +560,8 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		}
 	}
 	friend auto swap_items(Generation const generation, MutableActivePokemon user, MutableActivePokemon other) -> void {
-		auto const user_item = user.item_ignoring_embargo(generation);
-		auto const other_item = other.item_ignoring_embargo(generation);
+		auto const user_item = user.unrestricted_item(generation);
+		auto const other_item = other.unrestricted_item(generation);
 		if (!cannot_be_lost(user_item) and !cannot_be_lost(other_item)) {
 			user.m_pokemon.set_item(other_item);
 			other.m_pokemon.set_item(user_item);
@@ -573,7 +573,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto hit_with_leech_seed() const {
 		m_flags.leech_seeded = true;
 	}
-	auto advance_lock_in(Generation, bool const ending) const -> void;
+	auto advance_lock_in(Generation, bool ending, Weather) const -> void;
 	auto use_lock_on() const {
 		m_flags.locked_on = true;
 	}
@@ -606,8 +606,8 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto partially_trap() const {
 		m_flags.partial_trap.activate();
 	}
-	auto partial_trap_damage(Generation const generation) const {
-		m_flags.partial_trap.damage(generation, *this);
+	auto partial_trap_damage(Generation const generation, Weather const weather) const {
+		m_flags.partial_trap.damage(generation, *this, weather);
 	}
 	auto activate_perish_song() const {
 		m_flags.perish_song.activate();
@@ -636,8 +636,8 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 
 	auto apply_status(Generation, Statuses, MutableActivePokemon user, Weather, bool uproar = false) const -> void;
 	auto rest(Generation, Weather, bool other_is_uproaring) const -> void;
-	auto end_of_turn_status(Generation const generation, Pokemon const & other, bool const uproar) const {
-		m_flags.status.end_of_turn(generation, *this, other, uproar);
+	auto end_of_turn_status(Generation const generation, Pokemon const & other, Weather const weather, bool const uproar) const {
+		m_flags.status.end_of_turn(generation, *this, other, weather, uproar);
 	}
 	auto clear_status() const -> void {
 		constexpr auto status = Statuses::clear;
@@ -657,14 +657,14 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		return stages;
 	}
 
-	auto use_substitute(Generation) const -> void;
+	auto use_substitute(Generation, Weather) const -> void;
 
-	auto switch_in(Generation const generation) const {
+	auto switch_in(Generation const generation, Weather const weather) const {
 		m_pokemon.mark_as_seen();
 		m_flags.types = PokemonTypes(generation, get_species(m_pokemon));
 		m_flags.status.set(get_status(m_pokemon).name());
-		if (item(generation) == Item::Berserk_Gene) {
-			activate_berserk_gene(generation, *this);
+		if (item(generation, weather) == Item::Berserk_Gene) {
+			activate_berserk_gene(generation, *this, weather);
 		}
 	}
 	auto switch_out() const {
@@ -674,16 +674,16 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.reset_switch();
 	}
 
-	auto taunt(Generation const generation) const {
+	auto taunt(Generation const generation, Weather const weather) const {
 		m_flags.taunt.activate();
-		apply_own_mental_herb(generation, *this);
+		apply_own_mental_herb(generation, *this, weather);
 	}
 	auto advance_taunt() const {
 		m_flags.taunt.advance_one_turn();
 	}
-	auto torment(Generation const generation) const {
+	auto torment(Generation const generation, Weather const weather) const {
 		m_flags.is_tormented = true;
-		apply_own_mental_herb(generation, *this);
+		apply_own_mental_herb(generation, *this, weather);
 	}
 	auto set_type(Type const type) const {
 		m_flags.types = PokemonTypes(type);
@@ -704,20 +704,20 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 
 	// Returns whether the move hits
-	auto bounce(Generation) const -> bool;
-	auto dig(Generation) const -> bool;
-	auto dive(Generation) const -> bool;
-	auto fly(Generation) const -> bool;
-	auto shadow_force(Generation) const -> bool;
+	auto bounce(Generation, Weather) const -> bool;
+	auto dig(Generation, Weather) const -> bool;
+	auto dive(Generation, Weather) const -> bool;
+	auto fly(Generation, Weather) const -> bool;
+	auto shadow_force(Generation, Weather) const -> bool;
 
-	auto use_bide(Generation, MutableActivePokemon target) const -> void;
+	auto use_bide(Generation, MutableActivePokemon target, Weather) const -> void;
 
-	auto set_hp(Generation const generation, auto const hp) const -> void {
+	auto set_hp(Generation const generation, Weather const weather, auto const hp) const -> void {
 		m_pokemon.set_hp(hp);
-		activate_pinch_item(generation);
+		activate_pinch_item(generation, weather);
 	}
-	auto indirect_damage(Generation, HP::current_type const damage) const -> void;
-	auto direct_damage(Generation, Moves, damage_type const damage) const -> HP::current_type;
+	auto indirect_damage(Generation, Weather, HP::current_type const damage) const -> void;
+	auto direct_damage(Generation, Moves, Weather, damage_type const damage) const -> HP::current_type;
 
 	auto increment_move_use_counter(Moves const move) const {
 		m_flags.last_used_move.increment(move);
@@ -727,10 +727,10 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 
 private:
-	auto activate_pinch_item(Generation) const -> void;
+	auto activate_pinch_item(Generation, Weather) const -> void;
 
-	auto set_status(Generation const generation, Statuses const status) const -> void {
-		if (clears_status(item(generation), status)) {
+	auto set_status(Generation const generation, Statuses const status, Weather const weather) const -> void {
+		if (clears_status(item(generation, weather), status)) {
 			remove_item();
 		} else {
 			m_pokemon.set_status(status);
@@ -739,11 +739,11 @@ private:
 	}
 
 	template<typename T>
-	auto use_vanish_move(Generation const generation) const -> bool;
+	auto use_vanish_move(Generation, Weather) const -> bool;
 };
 
-inline auto change_hp(Generation const generation, MutableActivePokemon pokemon, auto const change) {
-	pokemon.set_hp(generation, get_hp(pokemon).current() + change);
+inline auto change_hp(Generation const generation, MutableActivePokemon pokemon, Weather const weather, auto const change) {
+	pokemon.set_hp(generation, weather, get_hp(pokemon).current() + change);
 }
 
 inline auto shift_status(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {
@@ -771,16 +771,16 @@ inline auto apply_status_to_self(Generation const generation, Statuses const sta
 }
 
 
-inline auto activate_berserk_gene(Generation const generation, MutableActivePokemon pokemon) -> void {
+inline auto activate_berserk_gene(Generation const generation, MutableActivePokemon pokemon, Weather const weather) -> void {
 	pokemon.stage()[StatNames::ATK] += 2_bi;
 	// TODO: Berserk Gene causes 256-turn confusion, unless the Pokemon
 	// switching out was confused.
-	pokemon.confuse(generation);
+	pokemon.confuse(generation, weather);
 	pokemon.remove_item();
 }
 
-inline auto apply_own_mental_herb(Generation const generation, MutableActivePokemon const pokemon) -> void {
-	if (pokemon.item(generation) == Item::Mental_Herb) {
+inline auto apply_own_mental_herb(Generation const generation, MutableActivePokemon const pokemon, Weather const weather) -> void {
+	if (pokemon.item(generation, weather) == Item::Mental_Herb) {
 		apply_mental_herb(generation, pokemon);
 		pokemon.remove_item();
 	}
@@ -794,8 +794,8 @@ inline auto apply_white_herb(MutableActivePokemon const pokemon) {
 	}
 }
 
-inline auto apply_own_white_herb(Generation const generation, MutableActivePokemon const pokemon) {
-	if (pokemon.item(generation) == Item::White_Herb) {
+inline auto apply_own_white_herb(Generation const generation, MutableActivePokemon const pokemon, Weather const weather) {
+	if (pokemon.item(generation, weather) == Item::White_Herb) {
 		apply_white_herb(pokemon);
 		pokemon.remove_item();
 	}

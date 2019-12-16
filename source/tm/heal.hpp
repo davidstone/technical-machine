@@ -29,16 +29,16 @@
 namespace technicalmachine {
 
 template<typename Numerator, typename Denominator>
-void heal(Generation const generation, MutableActivePokemon pokemon, rational<Numerator, Denominator> const scale) {
+void heal(Generation const generation, MutableActivePokemon pokemon, Weather const weather, rational<Numerator, Denominator> const scale) {
 	auto const hp = get_hp(pokemon);
 	if (hp == 0_bi) {
 		return;
 	}
 	auto const hp_healed = hp.max() * scale;
 	if (scale > 0_bi) {
-		change_hp(generation, pokemon, bounded::max(hp_healed, 1_bi));
+		change_hp(generation, pokemon, weather, bounded::max(hp_healed, 1_bi));
 	} else if (!blocks_secondary_damage(get_ability(pokemon))) {
-		change_hp(generation, pokemon, bounded::min(hp_healed, -1_bi));
+		change_hp(generation, pokemon, weather, bounded::min(hp_healed, -1_bi));
 	}
 }
 

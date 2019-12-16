@@ -43,7 +43,7 @@ auto apply_toxic_spikes(Generation const generation, EntryHazards const & hazard
 }	// namespace
 
 auto apply(Generation const generation, EntryHazards & hazards, MutableActivePokemon switcher, Weather const weather) -> void {
-	if (blocks_secondary_damage(get_ability(switcher)) or switcher.item(generation) == Item::Heavy_Duty_Boots)
+	if (blocks_secondary_damage(get_ability(switcher)) or switcher.item(generation, weather) == Item::Heavy_Duty_Boots)
 		return;
 
 	if (grounded(generation, switcher, weather)) {
@@ -55,11 +55,11 @@ auto apply(Generation const generation, EntryHazards & hazards, MutableActivePok
 			}
 		}
 		if (hazards.spikes() != 0_bi) {
-			heal(generation, switcher, rational(-hazards.spikes() - 1_bi, 16_bi));
+			heal(generation, switcher, weather, rational(-hazards.spikes() - 1_bi, 16_bi));
 		}
 	}
 	if (hazards.stealth_rock()) {
-		heal(generation, switcher, rational(-1_bi, 8_bi) * Effectiveness(generation, Type::Rock, switcher.types()));
+		heal(generation, switcher, weather, rational(-1_bi, 8_bi) * Effectiveness(generation, Type::Rock, switcher.types()));
 	}
 }
 

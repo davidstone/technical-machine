@@ -91,8 +91,8 @@ auto calculate_flash_fire_modifier(ActivePokemon const attacker, Type const move
 }
 
 using ItemModifier = rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
-auto calculate_item_modifier(Generation const generation, ActivePokemon const attacker) -> ItemModifier {
-	switch (attacker.item(generation)) {
+auto calculate_item_modifier(Generation const generation, ActivePokemon const attacker, Weather const weather) -> ItemModifier {
+	switch (attacker.item(generation, weather)) {
 		case Item::Life_Orb:
 			return rational(13_bi, 10_bi);
 		case Item::Metronome:
@@ -208,13 +208,13 @@ auto regular_damage(Generation const generation, Team const & attacker_team, Exe
 
 	return bounded::max(1_bi, temp *
 		critical_hit_multiplier(attacker, move.critical_hit) *
-		calculate_item_modifier(generation, attacker) *
+		calculate_item_modifier(generation, attacker, weather) *
 		calculate_me_first_modifier(attacker) *
 		attacker.random_damage_multiplier() *
 		calculate_stab_modifier(attacker, move_type) *
 		effectiveness *
 		calculate_ability_effectiveness_modifier(get_ability(defender), effectiveness) *
-		calculate_expert_belt_modifier(attacker.item(generation), effectiveness) *
+		calculate_expert_belt_modifier(attacker.item(generation, weather), effectiveness) *
 		tinted_lens_multiplier(get_ability(attacker), effectiveness) /
 		resistance_berry_divisor(move_weakened_from_item)
 	);

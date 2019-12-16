@@ -84,8 +84,8 @@ struct Battle {
 			end_of_turn(m_generation, m_ai, ai_flags, m_foe, foe_flags, m_weather);
 		} else {
 			// TODO: Properly order this
-			m_ai.pokemon().switch_in(m_generation);
-			m_foe.pokemon().switch_in(m_generation);
+			m_ai.pokemon().switch_in(m_generation, m_weather);
+			m_foe.pokemon().switch_in(m_generation, m_weather);
 		}
 	}
 

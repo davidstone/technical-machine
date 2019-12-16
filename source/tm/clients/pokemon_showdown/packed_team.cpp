@@ -45,9 +45,7 @@ auto to_packed_format(Team const & team) -> containers::string {
 		}
 		result += to_string(get_species(pokemon));
 		result += "||";
-		constexpr auto generation = Generation::eight; // irrelevant
-		constexpr auto embargo = false;
-		result += to_string(pokemon.item(generation, embargo));
+		result += to_string(pokemon.unmodified_item());
 		result += '|';
 		result += to_string(get_ability(pokemon));
 		result += '|';

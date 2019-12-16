@@ -44,7 +44,7 @@ auto would_switch_to_different_pokemon(PokemonCollection const & collection, Mov
 
 auto is_blocked_from_switching(Generation const generation, ActivePokemon const user, Pokemon const & other, Weather const weather) {
 	auto const block_attempted = blocks_switching(generation, get_ability(other), user, weather) or user.trapped();
-	auto const result = block_attempted and !allows_switching(user.item(generation));
+	auto const result = block_attempted and !allows_switching(user.item(generation, weather));
 	return result;
 }
 
@@ -120,22 +120,22 @@ auto blocked_by_torment(ActivePokemon const user, Moves const move) {
 	return user.is_tormented() and user.last_used_move().name() == move and not is_switch(move) and move != Moves::Struggle;
 }
 
-auto is_locked_in(Generation const generation, ActivePokemon const user) {
-	return user.is_encored() or user.is_locked_in_by_move() or is_choice_item(user.item(generation));
+auto is_locked_in(Generation const generation, ActivePokemon const user, Weather const weather) {
+	return user.is_encored() or user.is_locked_in_by_move() or is_choice_item(user.item(generation, weather));
 }
 
-auto is_locked_in_to_different_move(Generation const generation, ActivePokemon const user, Moves const move) {
-	if (not is_locked_in(generation, user)) {
+auto is_locked_in_to_different_move(Generation const generation, ActivePokemon const user, Moves const move, Weather const weather) {
+	if (not is_locked_in(generation, user, weather)) {
 		return false;
 	}
 	auto const last_move = user.last_used_move().name();
 	return not is_switch(last_move) and last_move != move;
 }
 
-auto is_blocked_due_to_lock_in(Generation const generation, ActivePokemon const user, Moves const move) {
+auto is_blocked_due_to_lock_in(Generation const generation, ActivePokemon const user, Moves const move, Weather const weather) {
 	return !is_regular(move) ?
 		user.is_locked_in_by_move() :
-		is_locked_in_to_different_move(generation, user, move);
+		is_locked_in_to_different_move(generation, user, move, weather);
 }
 
 auto is_legal_selection(Generation const generation, Team const & user, Move const move, ActivePokemon const other, Weather const weather, bool const found_selectable_move) {
@@ -152,7 +152,7 @@ auto is_legal_selection(Generation const generation, Team const & user, Move con
 	}
 	return
 		!is_pass and
-		!is_blocked_due_to_lock_in(generation, pokemon, move.name()) and
+		!is_blocked_due_to_lock_in(generation, pokemon, move.name(), weather) and
 		is_not_illegal_switch(generation, user, move.name(), other, weather) and
 		(move != Moves::Struggle or !found_selectable_move) and
 		!(block1(pokemon, move, other)) and

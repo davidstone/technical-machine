@@ -62,6 +62,7 @@ private:
 
 	Short m_trick_room_turns_remaining = 0_bi;
 	Short m_gravity_turns_remaining = 0_bi;
+	Short m_magic_room_turns_remaining = 0_bi;
 	NormalWeather m_active = NormalWeather::clear;
 	Long m_turns_remaining = 0_bi;
 
@@ -79,6 +80,9 @@ public:
 	}
 	constexpr auto gravity() const {
 		return m_gravity_turns_remaining != 0_bi;
+	}
+	constexpr auto magic_room() const {
+		return m_magic_room_turns_remaining != 0_bi;
 	}
 	constexpr auto hail(bool const blocked_by_ability) const {
 		return is_active(NormalWeather::hail, blocked_by_ability);
@@ -101,6 +105,7 @@ public:
 		};
 		conditional_decrement(m_trick_room_turns_remaining);
 		conditional_decrement(m_gravity_turns_remaining);
+		conditional_decrement(m_magic_room_turns_remaining);
 		conditional_decrement(m_turns_remaining);
 		if (m_turns_remaining == 0_bi) {
 			m_active = NormalWeather::clear;
@@ -116,6 +121,10 @@ public:
 		if (!gravity()) {
 			m_gravity_turns_remaining = 5_bi;
 		}
+	}
+	
+	constexpr auto activate_magic_room() {
+		m_magic_room_turns_remaining = BOUNDED_CONDITIONAL(magic_room(), 0_bi, 5_bi);
 	}
 	
 	constexpr auto deactivate_fog() {
@@ -150,6 +159,7 @@ public:
 		return
 			lhs.m_trick_room_turns_remaining == rhs.m_trick_room_turns_remaining and
 			lhs.m_gravity_turns_remaining == rhs.m_gravity_turns_remaining and
+			lhs.m_magic_room_turns_remaining == rhs.m_magic_room_turns_remaining and
 			lhs.m_active == rhs.m_active and
 			lhs.m_turns_remaining == rhs.m_turns_remaining;
 	}

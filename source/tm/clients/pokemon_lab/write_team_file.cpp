@@ -98,9 +98,7 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	member.put ("happiness", get_happiness(pokemon));
 	member.put ("gender", to_string(get_gender(pokemon)));
 	member.put ("nature", to_string(get_nature(pokemon)));
-	constexpr auto embargo = false;
-	constexpr auto generation = Generation::four; // irrelevant
-	member.put ("item", to_string(pokemon.item(generation, embargo)));
+	member.put ("item", to_string(pokemon.unmodified_item()));
 	member.put ("ability", to_string(get_ability(pokemon)));
 	for (auto const & move : regular_moves(pokemon)) {
 		write_move(move, member);

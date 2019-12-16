@@ -26,10 +26,11 @@ namespace technicalmachine {
 enum class Generation : std::uint8_t;
 struct MutableActivePokemon;
 struct Pokemon;
+struct Weather;
 
 struct Wish {
 	auto activate() -> void;
-	auto decrement(Generation, MutableActivePokemon pokemon) -> void;
+	auto decrement(Generation, MutableActivePokemon, Weather) -> void;
 	constexpr auto is_active() const {
 		return static_cast<bool>(m_turns_until_activation);
 	}

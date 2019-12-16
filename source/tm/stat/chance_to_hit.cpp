@@ -106,9 +106,9 @@ auto chance_to_hit(Generation const generation, ActivePokemon const user, Moves 
 	auto const calculated_accuracy = *base_accuracy *
 		modifier<StatNames::ACC>(user.stage()) *
 		modifier<StatNames::EVA>(generation >= Generation::six and target_ability == Ability::Keen_Eye ? Stage() : target.stage()) *
-		accuracy_item_modifier(user.item(generation), target_moved) *
+		accuracy_item_modifier(user.item(generation, weather), target_moved) *
 		ability_accuracy_modifier(user, move) *
-		evasion_item_modifier(generation, target.item(generation)) *
+		evasion_item_modifier(generation, target.item(generation, weather)) *
 		ability_evasion_modifier(target, get_ability(user), weather) *
 		gravity_multiplier
 	;

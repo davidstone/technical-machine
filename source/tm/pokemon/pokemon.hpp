@@ -82,8 +82,11 @@ struct Pokemon {
 		stats.hp() = hp;
 	}
 
-	auto item(Generation const generation, bool const embargo) const -> Item {
-		return m_item.get(generation, embargo);
+	auto item(Generation const generation, bool const embargo, bool const magic_room) const -> Item {
+		return m_item.get(generation, embargo, magic_room);
+	}
+	auto unmodified_item() const -> Item {
+		return m_item.get(Generation::eight, false, false);
 	}
 	auto remove_item() & {
 		return m_item.remove();

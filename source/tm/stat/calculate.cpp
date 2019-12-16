@@ -147,10 +147,10 @@ auto ability_modifier(ActivePokemon const pokemon, Ability const other_ability, 
 
 
 template<StatNames stat>
-auto item_modifier(Generation const generation, ActivePokemon const pokemon) {
+auto item_modifier(Generation const generation, ActivePokemon const pokemon, Weather const weather) {
 	constexpr auto denominator = 2_bi;
 	auto const species [[maybe_unused]] = get_species(pokemon);
-	auto const item = pokemon.item(generation);
+	auto const item = pokemon.item(generation, weather);
 	auto const numerator = [&]{
 		if constexpr (stat == StatNames::ATK) {
 			return [&]() -> bounded::integer<2, 4> {
@@ -262,7 +262,7 @@ auto calculate_common_offensive_stat(Generation const generation, ActivePokemon 
 	auto const attack = calculate_initial_stat(stat, pokemon) *
 		modifier<stat>(pokemon.stage(), critical_hit) *
 		ability_modifier<stat>(pokemon, other_ability, weather) *
-		item_modifier<stat>(generation, pokemon);
+		item_modifier<stat>(generation, pokemon, weather);
 	
 	return bounded::max(attack, 1_bi);
 }
@@ -303,7 +303,7 @@ auto calculate_defense(Generation const generation, ActivePokemon const defender
 	auto const defense = calculate_initial_stat(stat, defender) *
 		modifier<stat>(defender.stage(), critical_hit) *
 		ability_modifier<stat>(defender, other_ability, weather) *
-		item_modifier<stat>(generation, defender);
+		item_modifier<stat>(generation, defender, weather);
 	
 	// static_cast here because it looks as though the strongest defender would
 	// hold Metal Powder, but because of the restriction on the attacker being
@@ -325,7 +325,7 @@ auto calculate_special_defense(Generation const generation, ActivePokemon const 
 	auto const defense = calculate_initial_stat(stat, defender) *	
 		modifier<stat>(defender.stage(), critical_hit) *
 		ability_modifier<stat>(defender, attacker_ability, weather) *
-		item_modifier<stat>(generation, defender) *
+		item_modifier<stat>(generation, defender, weather) *
 		special_defense_sandstorm_boost(generation, defender, attacker_ability, weather);
 	
 	// static_cast here because it looks as though the strongest defender would
@@ -355,7 +355,7 @@ auto calculate_speed(Generation const generation, Team const & team, Ability con
 	auto const speed = calculate_initial_stat(stat, pokemon) *
 		modifier<stat>(pokemon.stage()) *
 		ability_modifier<stat>(pokemon, other_ability, weather) *
-		item_modifier<stat>(generation, pokemon) /
+		item_modifier<stat>(generation, pokemon, weather) /
 		paralysis_speed_divisor (pokemon) *
 		tailwind_speed_multiplier (team);
 
