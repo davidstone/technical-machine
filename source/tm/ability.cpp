@@ -44,7 +44,7 @@ bool blocks_switching(Generation const generation, Ability const ability, Active
 		case Ability::Arena_Trap:
 			return
 				(generation >= Generation::six and containers::any_equal(switcher.types(), Type::Ghost)) or
-				grounded(switcher, weather);
+				grounded(generation, switcher, weather);
 		case Ability::Magnet_Pull:
 			return is_type(switcher, Type::Steel);
 		default:
@@ -98,7 +98,7 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 			}
 			attack -= 1_bi;
 			auto & speed = other.stage()[StatNames::SPE];
-			if (get_item(other) == Item::Adrenaline_Orb and speed != bounded::max_value<Stage::value_type>) {
+			if (other.item(generation) == Item::Adrenaline_Orb and speed != bounded::max_value<Stage::value_type>) {
 				speed += 1_bi;
 				other.remove_item();
 			}

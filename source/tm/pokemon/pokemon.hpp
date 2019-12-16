@@ -57,20 +57,14 @@ struct Pokemon {
 	friend Gender get_gender(Pokemon pokemon);
 	friend Happiness get_happiness(Pokemon pokemon);
 	friend HiddenPower get_hidden_power(Pokemon pokemon);
-	friend Item get_item(Pokemon pokemon);
 	friend Level get_level(Pokemon pokemon);
 	friend Nature get_nature(Pokemon pokemon);
 	friend Species get_species(Pokemon pokemon);
 	friend HP get_hp(Pokemon pokemon);
 	friend Stat get_stat(Pokemon pokemon, StatNames index_stat);
 	friend Status get_status(Pokemon pokemon);
-	// Should be called only by MutableActivePokemon and clear_status
 	void set_status(Statuses const status) & {
-		if (clears_status(m_item.get(), status) and status != Statuses::clear) {
-			m_item.remove();
-		} else {
-			m_status = status;
-		}
+		m_status = status;
 	}
 
 	friend void advance_status_from_move(Pokemon & pokemon, bool clear_status);
@@ -88,6 +82,9 @@ struct Pokemon {
 		stats.hp() = hp;
 	}
 
+	auto item(Generation const generation, bool const embargo) const -> Item {
+		return m_item.get(generation, embargo);
+	}
 	auto remove_item() & {
 		return m_item.remove();
 	}
@@ -171,9 +168,6 @@ inline void set_gender(Pokemon & pokemon, Gender const gender) {
 	pokemon.m_gender = gender;
 }
 
-inline Item get_item(Pokemon const pokemon) {
-	return pokemon.m_item.get();
-}
 inline bool item_is_known(Pokemon const pokemon) {
 	return pokemon.m_item_is_known;
 }
@@ -219,10 +213,6 @@ inline auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, EV const e
 
 inline Status get_status(Pokemon const pokemon) {
 	return pokemon.m_status;
-}
-
-inline auto clear_status(Pokemon & pokemon) -> void {
-	pokemon.set_status(Statuses::clear);
 }
 
 inline void advance_status_from_move(Pokemon & pokemon, bool const clear_status) {

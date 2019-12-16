@@ -146,7 +146,7 @@ void sleep_talk() {
 	}
 
 	auto jolteon = attacker.pokemon();
-	apply_status_to_self(Statuses::sleep, jolteon, weather);
+	apply_status_to_self(generation, Statuses::sleep, jolteon, weather);
 
 	call_move(
 		generation,

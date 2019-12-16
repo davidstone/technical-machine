@@ -50,18 +50,18 @@ struct Variable {
 		m_value = 1_bi;
 	}
 
-	auto fang_side_effects(MutableActivePokemon user, MutableActivePokemon target, Weather const weather, Statuses const status) const {
+	auto fang_side_effects(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather, Statuses const status) const {
 		switch (m_value.value()) {
 			case 0:
 				break;
 			case 1:
-				target.apply_status(status, user, weather);
+				target.apply_status(generation, status, user, weather);
 				break;
 			case 2:
 				target.flinch();
 				break;
 			case 3:
-				target.apply_status(status, user, weather);
+				target.apply_status(generation, status, user, weather);
 				target.flinch();
 				break;
 			default:

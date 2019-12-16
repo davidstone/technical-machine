@@ -100,7 +100,7 @@ void weather_healing_ability(Generation const generation, MutableActivePokemon p
 			break;
 		case Ability::Hydration:
 			if (weather.rain(ability_blocks_weather)) {
-				clear_status(pokemon);
+				pokemon.clear_status();
 			}
 			break;
 		case Ability::Ice_Body:
@@ -133,17 +133,17 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 		return;
 	}
 	if (pokemon.ingrained()) {
-		heal(generation, pokemon, rational(1_bi, 16_bi) * healing_multiplier(get_item(pokemon)));
+		heal(generation, pokemon, rational(1_bi, 16_bi) * healing_multiplier(pokemon.item(generation)));
 	}
 	if (pokemon.aqua_ring_is_active()) {
-		heal(generation, pokemon, rational(1_bi, 16_bi) * healing_multiplier(get_item(pokemon)));
+		heal(generation, pokemon, rational(1_bi, 16_bi) * healing_multiplier(pokemon.item(generation)));
 	}
 	if (boosts_speed(get_ability(pokemon))) {
 		pokemon.stage()[StatNames::SPE] += 1_bi;
 	} else if (flags.shed_skin) {
-		clear_status(pokemon);
+		pokemon.clear_status();
 	}
-	switch (get_item(pokemon)) {
+	switch (pokemon.item(generation)) {
 		case Item::Leftovers:
 			heal(generation, pokemon, rational(1_bi, 16_bi));
 			break;
@@ -157,7 +157,7 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 		auto const initial = get_hp(pokemon).current();
 		heal(generation, pokemon, rational(-1_bi, 8_bi));
 		if (get_hp(foe) != 0_bi) {
-			auto const hp_change = (initial - get_hp(pokemon).current()) * healing_multiplier(get_item(pokemon));
+			auto const hp_change = (initial - get_hp(pokemon).current()) * healing_multiplier(pokemon.item(generation));
 			if (damages_leechers(get_ability(pokemon))) {
 				change_hp(generation, foe, -hp_change);
 			} else {
@@ -168,12 +168,12 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 	// TODO: Not sure if this check for Uproar is in the correct place
 	auto const uproar = pokemon.is_uproaring() or foe.is_uproaring();
 	pokemon.end_of_turn_status(generation, foe, uproar);
-	switch (get_item(pokemon)) {
+	switch (pokemon.item(generation)) {
 		case Item::Flame_Orb:
-			apply_status_to_self(Statuses::burn, pokemon, weather);
+			apply_status_to_self(generation, Statuses::burn, pokemon, weather);
 			break;
 		case Item::Toxic_Orb:
-			apply_status_to_self(Statuses::toxic, pokemon, weather);
+			apply_status_to_self(generation, Statuses::toxic, pokemon, weather);
 			break;
 		default:
 			break;
@@ -183,7 +183,7 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 	}
 	pokemon.partial_trap_damage(generation);
 	
-	pokemon.advance_lock_in(flags.lock_in_ends);
+	pokemon.advance_lock_in(generation, flags.lock_in_ends);
 	
 	pokemon.advance_disable();
 	pokemon.advance_encore();
@@ -191,8 +191,8 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 	pokemon.advance_magnet_rise();
 	pokemon.advance_heal_block();
 	pokemon.advance_embargo();
-	pokemon.try_to_activate_yawn(weather, uproar);
-	if (get_item(pokemon) == Item::Sticky_Barb) {
+	pokemon.try_to_activate_yawn(generation, weather, uproar);
+	if (pokemon.item(generation) == Item::Sticky_Barb) {
 		heal(generation, pokemon, rational(-1_bi, 8_bi));
 	}
 }

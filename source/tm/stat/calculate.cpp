@@ -147,13 +147,14 @@ auto ability_modifier(ActivePokemon const pokemon, Ability const other_ability, 
 
 
 template<StatNames stat>
-auto item_modifier(Generation const generation, Pokemon const & pokemon) {
+auto item_modifier(Generation const generation, ActivePokemon const pokemon) {
 	constexpr auto denominator = 2_bi;
 	auto const species [[maybe_unused]] = get_species(pokemon);
+	auto const item = pokemon.item(generation);
 	auto const numerator = [&]{
 		if constexpr (stat == StatNames::ATK) {
 			return [&]() -> bounded::integer<2, 4> {
-				switch (get_item(pokemon)) {
+				switch (item) {
 				case Item::Choice_Band:
 					return 3_bi;
 				case Item::Light_Ball:
@@ -168,7 +169,7 @@ auto item_modifier(Generation const generation, Pokemon const & pokemon) {
 				}
 			}();
 		} else if constexpr (stat == StatNames::DEF) {
-			auto const boosted = get_item(pokemon) == Item::Metal_Powder and is_boosted_by_metal_powder(species);
+			auto const boosted = item == Item::Metal_Powder and is_boosted_by_metal_powder(species);
 			return [&]() -> bounded::integer<2, 4> {
 				// TODO: Boost in Generation 3+ only if not transformed
 				if (!boosted) {
@@ -178,7 +179,7 @@ auto item_modifier(Generation const generation, Pokemon const & pokemon) {
 			}();
 		} else if constexpr (stat == StatNames::SPA) {
 			return [&]() -> bounded::integer<2, 4> {
-				switch (get_item(pokemon)) {
+				switch (item) {
 				case Item::Soul_Dew:
 					return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(species), 3_bi, denominator);
 				case Item::Choice_Specs:
@@ -193,7 +194,7 @@ auto item_modifier(Generation const generation, Pokemon const & pokemon) {
 			}();
 		} else if constexpr (stat == StatNames::SPD) {
 			return [&]() -> bounded::integer<2, 4> {
-				switch (get_item(pokemon)) {
+				switch (item) {
 				case Item::Deep_Sea_Scale:
 					return BOUNDED_CONDITIONAL(is_boosted_by_deep_sea_scale(species), 2_bi * denominator, denominator);
 				case Item::Metal_Powder:
@@ -206,7 +207,7 @@ auto item_modifier(Generation const generation, Pokemon const & pokemon) {
 			}();
 		} else if constexpr (stat == StatNames::SPE) {
 			return [&]() -> bounded::integer<1, 4> {
-				switch (get_item(pokemon)) {
+				switch (item) {
 				case Item::Quick_Powder:
 					return BOUNDED_CONDITIONAL(is_boosted_by_quick_powder(species), 2_bi * denominator, denominator);
 				case Item::Choice_Scarf:

@@ -62,7 +62,7 @@ auto ActiveStatus::end_of_turn(Generation const generation, MutableActivePokemon
 		case Statuses::sleep:
 		case Statuses::rest:
 			if (uproar) {
-				clear_status(pokemon);
+				pokemon.clear_status();
 				return;
 			}
 			if (m_nightmare) {
@@ -174,25 +174,34 @@ auto ActivePokemonFlags::vanish_doubles_power(Moves const move_name) const -> bo
 	}
 }
 
+namespace {
 
-auto grounded(ActivePokemon const pokemon, Weather const weather) -> bool {
-	auto const item = get_item(pokemon);
+auto item_grounds(Generation const generation, ActivePokemon const pokemon) -> bool {
+	auto const item = generation <= Generation::four ?
+		pokemon.item_ignoring_embargo(generation) :
+		pokemon.item(generation);
+	return item == Item::Iron_Ball;
+}
+
+} // namespace
+
+auto grounded(Generation const generation, ActivePokemon const pokemon, Weather const weather) -> bool {
 	return
 		!(
 			is_type(pokemon, Type::Flying) or
 			is_immune_to_ground(get_ability(pokemon)) or
 			pokemon.magnet_rise().is_active() or
-			item == Item::Air_Balloon
+			pokemon.item(generation) == Item::Air_Balloon
 		) or
 		weather.gravity() or
-		grounds(item) or
+		item_grounds(generation, pokemon) or
 		pokemon.ingrained();
 }
 
 
 auto MutableActivePokemon::attract(Generation const generation, MutableActivePokemon other) const -> void {
 	auto handle_item = [&] {
-		switch (get_item(m_pokemon)) {
+		switch (item(generation)) {
 			case Item::Mental_Herb:
 				apply_own_mental_herb(generation, *this);
 				break;
@@ -227,12 +236,12 @@ auto MutableActivePokemon::use_charge_up_move() const -> void {
 	m_flags.lock_in = ChargingUp{};
 }
 
-auto MutableActivePokemon::advance_lock_in(bool const ending) const -> void {
+auto MutableActivePokemon::advance_lock_in(Generation const generation, bool const ending) const -> void {
 	bounded::visit(m_flags.lock_in, bounded::overload(
 		[&](Rampage & rampage) {
 			if (ending) {
 				m_flags.lock_in = std::monostate{};
-				confuse();
+				confuse(generation);
 			} else {
 				rampage.advance_one_turn();
 			}
@@ -292,42 +301,38 @@ auto MutableActivePokemon::use_uproar() const -> void {
 	));
 }
 
-namespace {
-
 template<typename T>
-auto use_vanish_move(Pokemon & user, auto & lock_in) -> bool {
-	return bounded::visit(lock_in, bounded::overload(
+auto MutableActivePokemon::use_vanish_move(Generation const generation) const -> bool {
+	return bounded::visit(m_flags.lock_in, bounded::overload(
 		[&](T) {
-			lock_in = std::monostate{};
+			m_flags.lock_in = std::monostate{};
 			return true;
 		},
 		[&](auto) {
-			if (get_item(user) == Item::Power_Herb) {
-				user.remove_item();
+			if (item(generation) == Item::Power_Herb) {
+				remove_item();
 				return true;
 			}
-			lock_in = T{};
+			m_flags.lock_in = T{};
 			return false;
 		}
 	));
 }
 
-} // namespace
-
-auto MutableActivePokemon::bounce() const -> bool {
-	return use_vanish_move<Bouncing>(m_pokemon, m_flags.lock_in);
+auto MutableActivePokemon::bounce(Generation const generation) const -> bool {
+	return use_vanish_move<Bouncing>(generation);
 }
-auto MutableActivePokemon::dig() const -> bool {
-	return use_vanish_move<Digging>(m_pokemon, m_flags.lock_in);
+auto MutableActivePokemon::dig(Generation const generation) const -> bool {
+	return use_vanish_move<Digging>(generation);
 }
-auto MutableActivePokemon::dive() const -> bool {
-	return use_vanish_move<Diving>(m_pokemon, m_flags.lock_in);
+auto MutableActivePokemon::dive(Generation const generation) const -> bool {
+	return use_vanish_move<Diving>(generation);
 }
-auto MutableActivePokemon::fly() const -> bool {
-	return use_vanish_move<Flying>(m_pokemon, m_flags.lock_in);
+auto MutableActivePokemon::fly(Generation const generation) const -> bool {
+	return use_vanish_move<Flying>(generation);
 }
-auto MutableActivePokemon::shadow_force() const -> bool {
-	return use_vanish_move<ShadowForcing>(m_pokemon, m_flags.lock_in);
+auto MutableActivePokemon::shadow_force(Generation const generation) const -> bool {
+	return use_vanish_move<ShadowForcing>(generation);
 }
 
 auto MutableActivePokemon::use_bide(Generation const generation, MutableActivePokemon target) const -> void {
@@ -353,12 +358,12 @@ constexpr bool cannot_ko(Moves const move) {
 	return move == Moves::False_Swipe;
 }
 
-auto handle_ohko(MutableActivePokemon defender, bool const is_enduring, Moves const move) {
+auto handle_ohko(Generation const generation, MutableActivePokemon defender, bool const is_enduring, Moves const move) {
 	if (cannot_ko(move) or is_enduring) {
 		return true;
 	}
 	auto const hp = get_hp(defender);
-	if (hp.current() == hp.max() and get_item(defender) == Item::Focus_Sash) {
+	if (hp.current() == hp.max() and defender.item(generation) == Item::Focus_Sash) {
 		defender.remove_item();
 		return true;
 	}
@@ -372,7 +377,7 @@ auto MutableActivePokemon::direct_damage(Generation const generation, Moves cons
 		return m_flags.substitute.damage(damage);
 	}
 	auto const original_hp = get_hp(m_pokemon).current();
-	auto const block_ohko = original_hp <= damage and handle_ohko(*this, m_flags.damage_blocker.is_enduring(), move);
+	auto const block_ohko = original_hp <= damage and handle_ohko(generation, *this, m_flags.damage_blocker.is_enduring(), move);
 	auto const applied_damage = block_ohko ?
 		static_cast<HP::current_type>(original_hp - 1_bi) :
 		bounded::min(damage, original_hp);
@@ -413,18 +418,33 @@ constexpr auto reflected_status(Statuses const status) -> bounded::optional<Stat
 
 } // namespace
 
-auto MutableActivePokemon::apply_status(Statuses const status, MutableActivePokemon user, Weather const weather, bool const uproar) const -> void {
+auto MutableActivePokemon::apply_status(Generation const generation, Statuses const status, MutableActivePokemon user, Weather const weather, bool const uproar) const -> void {
 	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
 	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
 	if (!status_can_apply(status, user, *this, weather, uproar)) {
 		return;
 	}
-	m_pokemon.set_status(status);
-	m_flags.status.set(status);
+	set_status(generation, status);
 	auto const reflected = reflected_status(status);
 	if (reflected and reflects_status(get_ability(*this))) {
-		apply_status_to_self(*reflected, user, weather, uproar);
+		apply_status_to_self(generation, *reflected, user, weather, uproar);
 	}
+}
+
+auto MutableActivePokemon::rest(Generation const generation, Weather const weather, bool const other_is_uproaring) const -> void {
+	if (other_is_uproaring or is_sleeping(get_status(m_pokemon))) {
+		return;
+	}
+	auto const ability = get_ability(m_pokemon);
+	if (blocks_status(ability, ability, Statuses::rest, weather)) {
+		return;
+	}
+	auto const hp = get_hp(m_pokemon);
+	if (hp.current() == hp.max()) {
+		return;
+	}
+	m_pokemon.set_hp(hp.max());
+	set_status(generation, Statuses::rest);
 }
 
 auto MutableActivePokemon::activate_pinch_item(Generation const generation) const -> void {
@@ -447,7 +467,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation) cons
 		auto const amount = get_hp(m_pokemon).max() / BOUNDED_CONDITIONAL(generation <= Generation::six, 8_bi, 2_bi);
 		auto const activated = healing_berry(amount);
 		if (activated and lowers_stat(get_nature(m_pokemon), stat)) {
-			confuse();
+			confuse(generation);
 		}
 	};
 
@@ -460,7 +480,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation) cons
 		stage()[stat] += 1_bi;
 	};
 
-	switch (get_item(m_pokemon)) {
+	switch (item(generation)) {
 		case Item::Aguav_Berry:
 			confusion_berry(StatNames::SPD);
 			break;

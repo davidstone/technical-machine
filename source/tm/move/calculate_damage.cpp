@@ -47,7 +47,7 @@ namespace {
 bool affects_target(Generation const generation, Type const & move_type, ActivePokemon const target, Weather const weather) {
 	return
 		!Effectiveness(generation, move_type, target.types()).has_no_effect() and
-		(move_type != Type::Ground or grounded(target, weather));
+		(move_type != Type::Ground or grounded(generation, target, weather));
 }
 
 auto reflect_is_active(Moves const move, Team const & defender) {
@@ -92,7 +92,7 @@ auto calculate_flash_fire_modifier(ActivePokemon const attacker, Type const move
 
 using ItemModifier = rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
 auto calculate_item_modifier(Generation const generation, ActivePokemon const attacker) -> ItemModifier {
-	switch (get_item(attacker)) {
+	switch (attacker.item(generation)) {
 		case Item::Life_Orb:
 			return rational(13_bi, 10_bi);
 		case Item::Metronome:
@@ -214,7 +214,7 @@ auto regular_damage(Generation const generation, Team const & attacker_team, Exe
 		calculate_stab_modifier(attacker, move_type) *
 		effectiveness *
 		calculate_ability_effectiveness_modifier(get_ability(defender), effectiveness) *
-		calculate_expert_belt_modifier(get_item(attacker), effectiveness) *
+		calculate_expert_belt_modifier(attacker.item(generation), effectiveness) *
 		tinted_lens_multiplier(get_ability(attacker), effectiveness) /
 		resistance_berry_divisor(move_weakened_from_item)
 	);

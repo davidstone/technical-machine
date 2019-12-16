@@ -86,7 +86,7 @@ void max_defense_test() {
 
 	pokemon.stage()[StatNames::DEF] += 6_bi;
 
-	apply_status_to_self(Statuses::burn, pokemon, weather);
+	apply_status_to_self(generation, Statuses::burn, pokemon, weather);
 
 	check_equal(calculate_defense(generation, pokemon, Ability::Honey_Gather, weather), max_defense);
 }

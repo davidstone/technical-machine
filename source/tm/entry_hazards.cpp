@@ -35,23 +35,23 @@ auto removes_toxic_spikes(ActivePokemon const switcher) {
 	return is_type(switcher, Type::Poison);
 }
 
-auto apply_toxic_spikes(EntryHazards const & hazards, MutableActivePokemon switcher, Weather const weather) {
+auto apply_toxic_spikes(Generation const generation, EntryHazards const & hazards, MutableActivePokemon switcher, Weather const weather) {
 	auto const status = hazards.toxic_spikes() == 1_bi ? Statuses::poison : Statuses::toxic;
-	apply_status_to_self(status, switcher, weather);
+	apply_status_to_self(generation, status, switcher, weather);
 }
 
 }	// namespace
 
 auto apply(Generation const generation, EntryHazards & hazards, MutableActivePokemon switcher, Weather const weather) -> void {
-	if (blocks_secondary_damage(get_ability(switcher)) or get_item(switcher) == Item::Heavy_Duty_Boots)
+	if (blocks_secondary_damage(get_ability(switcher)) or switcher.item(generation) == Item::Heavy_Duty_Boots)
 		return;
 
-	if (grounded(switcher, weather)) {
+	if (grounded(generation, switcher, weather)) {
 		if (hazards.toxic_spikes() != 0_bi) {
 			if (removes_toxic_spikes(switcher)) {
 				hazards.clear_toxic_spikes();
 			} else {
-				apply_toxic_spikes(hazards, switcher, weather);
+				apply_toxic_spikes(generation, hazards, switcher, weather);
 			}
 		}
 		if (hazards.spikes() != 0_bi) {

@@ -803,9 +803,6 @@ constexpr bool allows_switching(Item const item) {
 constexpr bool boosts_super_effective_moves(Item const item) {
 	return item == Item::Expert_Belt;
 }
-constexpr bool grounds(Item const item) {
-	return item == Item::Iron_Ball;
-}
 constexpr bool is_choice_item(Item const item) {
 	switch (item) {
 		case Item::Choice_Band:

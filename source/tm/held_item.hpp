@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/generation.hpp>
 #include <tm/item.hpp>
 
 #include <bounded/integer.hpp>
@@ -34,8 +35,11 @@ struct HeldItem {
 	{
 	}
 
-	constexpr auto get() const {
-		return m_active ? m_item : Item::None;
+	constexpr auto get(Generation const generation, bool const embargo) const {
+		if (!m_active or (embargo and affected_by_embargo(generation))) {
+			return Item::None;
+		}
+		return m_item;
 	}
 
 	// Remove the item in a way that can be recovered with Recycle
@@ -61,6 +65,23 @@ struct HeldItem {
 		m_active = true;
 	}
 private:
+	constexpr auto affected_by_embargo(Generation const generation) const -> bool {
+		// Iron_Ball is disabled in Generation 4 for the Speed check but not for
+		// the grounding check
+		switch (m_item) {
+			case Item::Iron_Ball:
+			case Item::Macho_Brace:
+			case Item::Power_Anklet:
+			case Item::Power_Band:
+			case Item::Power_Belt:
+			case Item::Power_Bracer:
+			case Item::Power_Lens:
+			case Item::Power_Weight:
+				return generation <= Generation::four;
+			default:
+				return true;
+		}
+	}
 	Item m_item : bounded::representation_bits<Item>.value();
 	bool m_active : 1;
 };

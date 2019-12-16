@@ -88,7 +88,7 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 			else return 20_bi;
 		}
 		case Moves::Fling:
-			return fling_power(get_item(attacker));
+			return fling_power(attacker.item(generation));
 		case Moves::Frustration:
 			return frustration_power(get_happiness(attacker));
 		case Moves::Fury_Cutter:
@@ -114,7 +114,7 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Magnitude:
 			return move.variable.magnitude_power();
 		case Moves::Natural_Gift:
-			return berry_power(get_item(attacker));
+			return berry_power(attacker.item(generation));
 		case Moves::Present:
 			return move.variable.present_power();
 		case Moves::Punishment: {
@@ -208,7 +208,7 @@ constexpr auto is_boosted_by_soul_dew(Generation const generation, Species const
 
 constexpr auto item_modifier_denominator = 20_bi;
 using ItemModifierNumerator = bounded::integer<20, 24>;
-auto item_modifier_numerator(Generation const generation, Pokemon const attacker, Moves const move, Type const move_type) -> ItemModifierNumerator {
+auto item_modifier_numerator(Generation const generation, ActivePokemon const attacker, Moves const move, Type const move_type) -> ItemModifierNumerator {
 	constexpr auto none = item_modifier_denominator;
 	auto type_boost = [=](Type const type) -> ItemModifierNumerator {
 		if (move_type != type) {
@@ -216,7 +216,7 @@ auto item_modifier_numerator(Generation const generation, Pokemon const attacker
 		}
 		return BOUNDED_CONDITIONAL(generation <= Generation::three, none * 11_bi / 10_bi, none * 12_bi / 10_bi);
 	};
-	switch (get_item(attacker)) {
+	switch (attacker.item(generation)) {
 		case Item::Muscle_Band:
 			return BOUNDED_CONDITIONAL(is_physical(move), none * 11_bi / 10_bi, none);
 		case Item::Wise_Glasses:
@@ -315,7 +315,7 @@ auto item_modifier_numerator(Generation const generation, Pokemon const attacker
 	}
 }
 
-auto item_modifier(Generation const generation, Pokemon const attacker, Moves const move, Type const move_type) {
+auto item_modifier(Generation const generation, ActivePokemon const attacker, Moves const move, Type const move_type) {
 	return rational(
 		item_modifier_numerator(generation, attacker, move, move_type),
 		item_modifier_denominator

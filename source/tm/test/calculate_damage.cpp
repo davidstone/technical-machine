@@ -126,7 +126,7 @@ void special_power_test() {
 	auto const move = containers::emplace_back(all_moves(pokemon), generation, Moves::Surf);
 
 	Team defender = max_damage_special_defender();
-	defender.pokemon().dive();
+	defender.pokemon().dive(generation);
 
 	auto const power = move_power(
 		generation,
