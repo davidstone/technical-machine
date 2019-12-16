@@ -877,6 +877,10 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 				user.stage()[stat] += 2_bi;
 			}
 			break;
+		case Moves::Shift_Gear:
+			user.stage()[StatNames::ATK] += 1_bi;
+			user.stage()[StatNames::SPE] += 2_bi;
+			break;
 		case Moves::Sketch:		// Fix
 			break;
 		case Moves::Skill_Swap:		// Fix
