@@ -166,6 +166,7 @@ auto doubling(ActivePokemon const attacker, Moves const move, ActivePokemon cons
 			return boosts_smellingsalt(get_status(defender));
 		case Moves::Solar_Beam:
 			return !weather.rain(weather_is_blocked_by_ability(get_ability(attacker), get_ability(defender)));
+		case Moves::Steamroller:
 		case Moves::Stomp:
 			return defender.minimized();
 		case Moves::Wake_Up_Slap:

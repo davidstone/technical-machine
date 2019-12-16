@@ -40,7 +40,12 @@ namespace {
 using namespace bounded::literal;
 
 auto move_can_miss(ActivePokemon const user, BaseAccuracy const base_accuracy, Ability const target_ability) -> bool {
-	return static_cast<bool>(base_accuracy) and !cannot_miss(get_ability(user)) and !cannot_miss(target_ability) and !user.locked_on();
+	// TODO: Steamroller / Stomp + Minimize in Generation 6+ cannot miss
+	return
+		static_cast<bool>(base_accuracy) and
+		!cannot_miss(get_ability(user)) and
+		!cannot_miss(target_ability) and
+		!user.locked_on();
 }
 
 auto accuracy_item_modifier(Item const item, bool target_moved) {

@@ -254,6 +254,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Rock_Slide:
 		case Moves::Rolling_Kick:
 		case Moves::Snore:
+		case Moves::Steamroller:
 		case Moves::Stomp:
 		case Moves::Twister:
 		case Moves::Waterfall:
