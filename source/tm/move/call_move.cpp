@@ -898,6 +898,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 				get_status(other.pokemon()) = Status{};
 			}
 			break;
+		case Moves::Snarl:
+			other.pokemon().stage()[StatNames::SPA] -= 1_bi;
+			break;
 		case Moves::Snatch:	// Fix
 			break;
 		case Moves::Solar_Beam:
