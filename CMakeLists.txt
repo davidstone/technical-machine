@@ -27,17 +27,8 @@ target_include_directories(boost SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
 
 enable_testing()
 
-add_library(operators INTERFACE)
-set_property(TARGET operators PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/operators/include)
+add_subdirectory(bounded_integer)
 
-add_library(bounded INTERFACE)
-add_library(containers INTERFACE)
-set_property(TARGET bounded PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/bounded_integer/include)
-set_property(TARGET containers PROPERTY INTERFACE_INCLUDE_DIRECTORIES $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/bounded_integer/include)
-
-target_link_libraries(bounded INTERFACE
-	operators
-)
 # TODO: This should be an object library, but they do not really work yet.
 add_library(tm_common STATIC
 	source/tm/bide/bide.cpp
@@ -198,6 +189,7 @@ add_library(tm_common STATIC
 target_link_libraries(tm_common
 	boost
 	bounded
+	bounded_warnings
 	containers
 )
 
@@ -262,56 +254,19 @@ target_link_libraries(tm_test
 )
 
 set(COMMON_CLANG_COMPILE_OPTIONS
-	"-Xclang"
-	"-fconcepts-ts"
-	"-Weverything"
-	"-Werror"
-	"-Wno-c++98-compat"
-	"-Wno-c++98-compat-pedantic"
 	# Complains about comments like "//<N3757>" referring to an ISO paper number
 	"-Wno-documentation"
-	# Floating-point comparisons are safe in these tests
-	"-Wno-float-equal"
-	# -Wmissing-braces wants two sets of braces when using constructs such
-	# as std::array
-	"-Wno-missing-braces"
-	"-Wno-newline-eof"
-	"-Wno-padded"
 	"-Wno-range-loop-analysis"
 	# Still don't need compatibility with older standards
 	"-Wno-return-std-move-in-c++11"
 	# -Wswitch-enum warns even if you have default
 	"-Wno-switch-enum"
-	# -Wunneeded-member-function has a bug that blocks constexpr libraries
-	# from using it: https://llvm.org/bugs/show_bug.cgi?id=25084
-	"-Wno-unneeded-member-function"
-	# Has a bug that warns even for templates that are used
-	"-Wno-unused-template"
-	# -Wweak-vtables is incompatible with header-only libraries
-	"-Wno-weak-vtables"
-	# -Wzero-as-null-pointer-constant does not work with the `operator<=>`
-	# emulation
-	"-Wno-zero-as-null-pointer-constant"
 	"-Wno-exit-time-destructors"
 )
 
-if(${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 8)
-	set(COMMON_CLANG_COMPILE_OPTIONS
-		${COMMON_CLANG_COMPILE_OPTIONS}
-		"-Wno-ctad-maybe-unsupported"
-	)
-endif()
-
 if(MSVC)
-	target_compile_options(tm_common PUBLIC
-		"/std:c++latest"
-		"/MP"
-	)
 	target_link_options(tm_common PUBLIC
 		"/STACK:8388608"
-	)
-	target_link_options(tm_common PUBLIC
-		"/WX"
 	)
 	set_target_properties(tm_test PROPERTIES
 		VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
@@ -352,9 +307,6 @@ if(MSVC)
 		# Sanitizers currently do not work very well on Windows
 		set(USE_SANITIZERS OFF)
 	else()
-		set(COMPILE_OPTIONS
-			"/FI ciso646"
-		)
 		set(USE_SANITIZERS OFF)
 	endif()
 
@@ -362,22 +314,13 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	target_link_libraries(ai
 		pthread
 	)
+	target_link_libraries(predict
+		pthread
+	)
 	target_compile_options(tm_common PUBLIC
 		${COMMON_CLANG_COMPILE_OPTIONS}
-		# TODO: Test libc++ on Windows
-		"-stdlib=libc++"
-		"-g"
-		"-std=c++2a"
 		"-O3"
 		"-flto=thin"
-		# "-march=native"
-	)
-	target_link_options(tm_common PUBLIC
-		"-Wl,--fatal-warnings"
-		"-stdlib=libc++"
-		"-fuse-ld=lld"
-		# TODO: Figure out how to make this work on Visual Studio
-		"-Wl,--thinlto-cache-dir=${CMAKE_BINARY_DIR}/lto-cache"
 	)
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -387,114 +330,25 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	target_link_libraries(ai
 		pthread
 	)
+	target_link_libraries(predict
+		pthread
+	)
 	target_compile_options(tm_common PUBLIC
-		"-g"
-		"-std=c++2a"
 		"-O3"
-		# "-march=native"
-		"-fconcepts"
-		$<$<CONFIG:Release>:-flto=4 -flto-odr-type-merging -fuse-linker-plugin>
-		"-Wall"
-		"-Wextra"
-		"-Wpedantic"
-		# Do not care about ABI differences
-		# "-Wabi"
-		"-Wcast-align"
-		"-Wcast-qual"
-		# It seems impossible to initialize bit fields with this warning on
-		#"-Wconversion"
-		# Wctor-dtor-privacy has some bugs, including a partial warning that
-		# just gives notes
-		"-Wno-ctor-dtor-privacy"
-		"-Wno-disabled-optimization"
-		"-Wdouble-promotion"
-		# -Weffc++ includes a warning if all data members are not explicitly
-		# initialized in the initializer list. I intentionally do not do this in
-		# many cases. This would be more useful as a collection of warnings
-		# like -Wall instead of a single warning on its own.
-		# "-Weffc++"
-		# -Wfloat-equal warns for safe comparisons
-		# "-Wfloat-equal"
-		"-Wformat=2"
 		# gcc does not understand switching over an enum where only explicitly
 		# defined enumerators are valid
 		"-Wno-implicit-fallthrough"
-		"-Winit-self"
-		"-Winvalid-pch"
-		# -Wlogical-op warns for expressions that happen to be equal in a
-		# template instantiation
-		# "-Wlogical-op"
 		# False positive on variant implementation if lto is off
 		"-Wno-maybe-uninitialized"
-		"-Wmissing-declarations"
-		# -Wmissing-format-attribute is not used because I do not use GNU
-		# extensions. Same for -Wsuggest-attribute and several others.
-		"-Wmissing-include-dirs"
-		#"-Wnoexcept"
-		"-Wno-non-template-friend"
 		"-Wodr"
-		"-Wold-style-cast"
-		# Nothing wrong with this warning, but there is an impossible-to-reduce
-		# bug in gcc that is avoided with this warning turned off
-		# "-Woverloaded-virtual"
-		"-Wno-padded"
-		"-Wredundant-decls"
 		# -Wreturn-type warns even for a switch over an enum for which all cases
 		# are handled explicitly and each case is a return statement.
 		"-Wno-return-type"
-		"-Wshadow"
-		# -Wsign-compare warns in constexpr code for which comparison is safe.
-		# Putting in the necessary casts to silence this warning would silence
-		# the more useful warning on clang that warns if the value would
-		# actually change.
-		"-Wno-sign-compare"
-		"-Wsign-conversion"
-		# -Wsign-promo triggers on code that is guaranteed safe due to the use
-		# of the bounded::integer library. Working around the warning would lead
-		# to either less efficient code or more obfuscated code.
-		"-Wsign-promo"
-		# -Wsuggest-final-methods and -Wsuggest-final-types is a linker warning,
-		# so it is not possible to disable it for boost and other third-party
-		# libraries by saying they are system headers.
-		# "-Wsuggest-final-methods"
-		# "-Wsuggest-final-types"
-		"-Wstrict-null-sentinel"
-		# -Wstrict-overflow=2 warns about comparing two pointers
-		"-Wstrict-overflow=1"
-		# -Wswitch-default warns even for a switch over an enum for which all
-		# cases are handled explicitly
-		# "-Wswitch-default"
-		# -Wswitch-enum warns even if there is a default case
-		# "-Wswitch-enum"
-		"-Wtrampolines"
-		"-Wundef"
-		# -Wunsafe-loop-optimizations causes too many spurious warnings. It may
-		# be useful to apply this one periodically and manually verify the
-		# results. It generated this warning in my code when I looped over all
-		# elements in a vector to apply a set of functions to them (using the
-		# range-based for loop).  It is also warning for the constructor of a
-		# const array of const std::string where there is no loop in user code.
-		# "-Wunsafe-loop-optimizations"
-		# -Wunused-but-set-parameter does not properly account for
-		# `if constexpr` branches.
-		"-Wno-unused-but-set-parameter"
-		# -Wunused-but-set-variable does not properly account for
-		# `if constexpr` branches.
-		"-Wno-unused-but-set-variable"
-		# -Wuseless-cast is incompatible with BOUNDED_INTEGER_CONDITIONAL
-		# "-Wuseless-cast"
-		"-Wvector-operation-performance"
-		# -Wzero-as-null-pointer-constant does not work with the `operator<=>`
-		# emulation
-		# "-Wzero-as-null-pointer-constant"
-		"-Werror"
 	)
 	target_link_options(tm_common PUBLIC
 		"-Wl,--fatal-warnings"
 	)
 endif()
-
-set(sanitizers "-fsanitize=undefined" "-fsanitize=address")
 
 if(DEFINED USE_SANITIZERS)
 	if(${USE_SANITIZERS})
