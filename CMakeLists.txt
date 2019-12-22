@@ -189,8 +189,8 @@ add_library(tm_common STATIC
 target_link_libraries(tm_common
 	boost
 	bounded
-	bounded_warnings
 	containers
+	strict_defaults
 )
 
 target_include_directories(tm_common PUBLIC
@@ -254,13 +254,6 @@ target_link_libraries(tm_test
 )
 
 set(COMMON_CLANG_COMPILE_OPTIONS
-	# Complains about comments like "//<N3757>" referring to an ISO paper number
-	"-Wno-documentation"
-	"-Wno-range-loop-analysis"
-	# Still don't need compatibility with older standards
-	"-Wno-return-std-move-in-c++11"
-	# -Wswitch-enum warns even if you have default
-	"-Wno-switch-enum"
 	"-Wno-exit-time-destructors"
 )
 
