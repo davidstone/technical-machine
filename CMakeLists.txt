@@ -253,21 +253,16 @@ target_link_libraries(tm_test
 	tm_common
 )
 
-set(COMMON_CLANG_COMPILE_OPTIONS
-	"-Wno-exit-time-destructors"
-)
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	if(MSVC)
+		target_link_options(tm_common PUBLIC
+			"/STACK:8388608"
+		)
+		set_target_properties(tm_test PROPERTIES
+			VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+		)
 
-if(MSVC)
-	target_link_options(tm_common PUBLIC
-		"/STACK:8388608"
-	)
-	set_target_properties(tm_test PROPERTIES
-		VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-	)
-
-	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		target_compile_options(tm_common PUBLIC
-			${COMMON_CLANG_COMPILE_OPTIONS}
 			# For some reason, exceptions are turned off here but not in bounded
 			"/EHsc"
 			# Setting boost as a system include does not turn off these warnings on Windows
@@ -297,13 +292,7 @@ if(MSVC)
 			"-Wno-undef"
 			"-Wno-unused-private-field"
 		)
-		# Sanitizers currently do not work very well on Windows
-		set(USE_SANITIZERS OFF)
-	else()
-		set(USE_SANITIZERS OFF)
 	endif()
-
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	target_link_libraries(ai
 		pthread
 	)
@@ -311,7 +300,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		pthread
 	)
 	target_compile_options(tm_common PUBLIC
-		${COMMON_CLANG_COMPILE_OPTIONS}
+		"-Wno-exit-time-destructors"
 		"-O3"
 		"-flto=thin"
 	)
@@ -337,23 +326,6 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		# -Wreturn-type warns even for a switch over an enum for which all cases
 		# are handled explicitly and each case is a return statement.
 		"-Wno-return-type"
-	)
-	target_link_options(tm_common PUBLIC
-		"-Wl,--fatal-warnings"
-	)
-endif()
-
-if(DEFINED USE_SANITIZERS)
-	if(${USE_SANITIZERS})
-		target_compile_options(tm_common PUBLIC ${sanitizers})
-		target_link_options(tm_common PUBLIC ${sanitizers})
-	endif()
-else()
-	target_compile_options(tm_common PUBLIC
-		$<$<CONFIG:Debug>:${sanitizers}>
-	)
-	target_link_options(tm_common PUBLIC
-		$<$<CONFIG:Debug>:${sanitizers}>
 	)
 endif()
 
