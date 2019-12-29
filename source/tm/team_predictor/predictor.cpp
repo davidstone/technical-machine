@@ -118,7 +118,7 @@ auto parse_html_team(std::string_view str, Generation const generation) -> Team 
 			generation,
 			*species,
 			level,
-			value_or(gender, Gender::genderless)
+			gender ? *gender : Gender::genderless
 		);
 		if (item) {
 			pokemon.set_item(*item);
