@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <bounded/detail/forward.hpp>
+#include <bounded/forward.hpp>
 
 #include <stdexcept>
 #include <string>

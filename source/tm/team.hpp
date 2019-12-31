@@ -27,7 +27,7 @@
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
-#include <bounded/detail/forward.hpp>
+#include <bounded/forward.hpp>
 
 #include <string_view>
 
