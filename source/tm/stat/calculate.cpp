@@ -372,9 +372,9 @@ auto faster_pokemon_before_trick_room(Generation const generation, Team const & 
 	auto const speed2 = calculate_speed(generation, team2, get_ability(team1.pokemon()), weather);
 
 	if (speed1 > speed2) {
-		return Faster(std::in_place, team1, team2);
+		return Faster({team1, team2});
 	} else if (speed1 < speed2) {
-		return Faster(std::in_place, team2, team1);
+		return Faster({team2, team1});
 	} else {
 		return bounded::none;
 	}
@@ -389,7 +389,7 @@ auto faster_pokemon(Generation const generation, Team const & team1, Team const 
 	}
 	// TODO: Handle Full_Incense, Lagging_Tail, and Stall
 	if (weather.trick_room()) {
-		return Faster(std::in_place, result->second, result->first);
+		return Faster({result->second, result->first});
 	}
 	return result;
 }
@@ -401,8 +401,8 @@ auto order(Generation const generation, Team const & team1, Moves const move1, T
 	auto const lhs = OrderElement{team1, move1};
 	auto const rhs = OrderElement{team2, move2};
 	
-	auto const lhs_first = Order(std::in_place, lhs, rhs);
-	auto const rhs_first = Order(std::in_place, rhs, lhs);
+	auto const lhs_first = Order({lhs, rhs});
+	auto const rhs_first = Order({rhs, lhs});
 
 	if (priority1 > priority2) {
 		return lhs_first;
