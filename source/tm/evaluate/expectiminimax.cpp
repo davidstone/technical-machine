@@ -436,7 +436,7 @@ auto use_move_branch_inner(Moves const first_used_move) {
 				Pokemon const & pokemon = (is_first ? updated_first : updated_last).pokemon();
 				return can_clear_status(get_ability(pokemon), get_status(pokemon)) ? 0.3 : 0.0;
 			};
-			auto const teams = faster_pokemon(generation, updated_first, updated_last, updated_weather);
+			auto const teams = Faster(generation, updated_first, updated_last, updated_weather);
 			return generic_flag_branch(shed_skin_probability, [&](bool const team_shed_skin, bool const other_shed_skin) {
 				return generic_flag_branch(
 					// TODO
@@ -533,7 +533,7 @@ double use_move_branch(Generation const generation, Team const & first, Moves co
 
 
 double order_branch(Generation const generation, Team const & ai, Moves const ai_move, Team const & foe, Moves const foe_move, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
-	auto ordered = order(generation, ai, ai_move, foe, foe_move, weather);
+	auto ordered = Order(generation, ai, ai_move, foe, foe_move, weather);
 	return !ordered ?
 		(use_move_branch(generation, ai, ai_move, foe, foe_move, weather, evaluate, depth, log) + use_move_branch(generation, foe, foe_move, ai, ai_move, weather, evaluate, depth, log)) / 2.0 :
 		use_move_branch(generation, ordered->first.team, ordered->first.move, ordered->second.team, ordered->second.move, weather, evaluate, depth, log);

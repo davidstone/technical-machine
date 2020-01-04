@@ -29,7 +29,7 @@ using namespace bounded::literal;
 struct Disable {
 	auto activate(Moves const move) {
 		if (is_regular(move)) {
-			m_disabled_move.emplace(move);
+			insert(m_disabled_move, move);
 		}
 	}
 	constexpr auto move_is_disabled(Moves const move) const {

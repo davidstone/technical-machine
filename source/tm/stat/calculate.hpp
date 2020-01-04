@@ -27,6 +27,8 @@
 
 #include <tm/pokemon/level.hpp>
 
+#include <operators/arrow.hpp>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -55,14 +57,50 @@ auto calculate_special_defense(Generation, ActivePokemon defender, Ability attac
 using speed_type = bounded::integer<1, 12096>;
 auto calculate_speed(Generation, Team const &, Ability other_ability, Weather) -> speed_type;
 
-using Faster = bounded::optional<std::pair<Team const &, Team const &>>;
-auto faster_pokemon(Generation, Team const & team1, Team const & team2, Weather) -> Faster;
+struct Faster : operators::arrow<Faster> {
+	Faster(Generation, Team const & team1, Team const & team2, Weather);
+	constexpr explicit operator bool() const {
+		return static_cast<bool>(m_teams);
+	}
+	constexpr auto const & operator*() const {
+		return *m_teams;
+	}
+private:
+	using pair = std::pair<Team const &, Team const &>;
 
-struct OrderElement {
-	Team const & team;
-	Moves move;
+	Faster() = default;
+	constexpr Faster(Team const & faster, Team const & slower):
+		m_teams(pair(faster, slower))
+	{
+	}
+	static auto before_trick_room(Generation, Team const & team1, Team const & team2, Weather) -> Faster;
+
+	bounded::optional<pair> m_teams;
 };
-using Order = bounded::optional<std::pair<OrderElement, OrderElement>>;
-auto order(Generation generation, Team const & team1, Moves move1, Team const & team2, Moves move2, Weather weather) -> Order;
+
+struct Order : operators::arrow<Order> {
+	Order(Generation, Team const & team1, Moves move1, Team const & team2, Moves move2, Weather);
+
+	constexpr explicit operator bool() const {
+		return static_cast<bool>(m_elements);
+	}
+	constexpr auto const & operator*() const {
+		return *m_elements;
+	}
+private:
+	struct Element {
+		Team const & team;
+		Moves move;
+	};
+	using pair = std::pair<Element, Element>;
+
+	Order() = default;
+	constexpr Order(Element const lhs, Element const rhs):
+		m_elements(pair(lhs, rhs))
+	{
+	}
+
+	bounded::optional<pair> m_elements;
+};
 
 }	// namespace technicalmachine

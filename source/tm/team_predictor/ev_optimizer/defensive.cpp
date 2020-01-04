@@ -93,7 +93,7 @@ DefensiveEVs::DefensiveEVs(Generation const generation, Species const species, L
 			};
 			auto const candidate = DataPoint{nature, hp_ev, *defense_ev, *special_defense_ev};
 			if (!best_per_nature or is_better(candidate, *best_per_nature)) {
-				best_per_nature.emplace(candidate);
+				insert(best_per_nature, candidate);
 			}
 		}
 		if (best_per_nature) {

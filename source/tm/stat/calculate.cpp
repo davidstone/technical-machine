@@ -365,54 +365,47 @@ auto calculate_speed(Generation const generation, Team const & team, Ability con
 	return static_cast<speed_type>(bounded::max(speed, 1_bi));
 }
 
-namespace {
-
-auto faster_pokemon_before_trick_room(Generation const generation, Team const & team1, Team const & team2, Weather const weather) -> Faster {
+auto Faster::before_trick_room(Generation const generation, Team const & team1, Team const & team2, Weather const weather) -> Faster {
 	auto const speed1 = calculate_speed(generation, team1, get_ability(team2.pokemon()), weather);
 	auto const speed2 = calculate_speed(generation, team2, get_ability(team1.pokemon()), weather);
 
-	if (speed1 > speed2) {
-		return Faster({team1, team2});
-	} else if (speed1 < speed2) {
-		return Faster({team2, team1});
-	} else {
-		return bounded::none;
-	}
+	return
+		speed1 > speed2 ? Faster(team1, team2) :
+		speed1 < speed2 ? Faster(team2, team1) :
+		Faster();
 }
 
-}	// namespace
-
-auto faster_pokemon(Generation const generation, Team const & team1, Team const & team2, Weather const weather) -> Faster {
-	auto result = faster_pokemon_before_trick_room(generation, team1, team2, weather);
+Faster::Faster(Generation const generation, Team const & team1, Team const & team2, Weather const weather) {
+	auto result = before_trick_room(generation, team1, team2, weather);
 	if (!result) {
-		return bounded::none;
+		return;
 	}
 	// TODO: Handle Full_Incense, Lagging_Tail, and Stall
-	if (weather.trick_room()) {
-		return Faster({result->second, result->first});
-	}
-	return result;
+	bounded::insert(m_teams, weather.trick_room() ? pair(result->second, result->first) : pair(result->first, result->second));
 }
 
-auto order(Generation const generation, Team const & team1, Moves const move1, Team const & team2, Moves const move2, Weather const weather) -> Order {
-	auto const priority1 = Priority(generation, move1);
-	auto const priority2 = Priority(generation, move2);
-	
-	auto const lhs = OrderElement{team1, move1};
-	auto const rhs = OrderElement{team2, move2};
-	
-	auto const lhs_first = Order({lhs, rhs});
-	auto const rhs_first = Order({rhs, lhs});
+Order::Order(Generation const generation, Team const & team1, Moves const move1, Team const & team2, Moves const move2, Weather const weather):
+	Order([&]{
+		auto const priority1 = Priority(generation, move1);
+		auto const priority2 = Priority(generation, move2);
+		
+		auto const lhs = Element{team1, move1};
+		auto const rhs = Element{team2, move2};
+		
+		auto const lhs_first = Order(lhs, rhs);
+		auto const rhs_first = Order(rhs, lhs);
 
-	if (priority1 > priority2) {
-		return lhs_first;
-	} else if (priority1 < priority2) {
-		return rhs_first;
-	} else if (auto const ordered = faster_pokemon(generation, team1, team2, weather)) {
-		return (std::addressof(ordered->first) == std::addressof(team1)) ? lhs_first : rhs_first;
-	} else {
-		return bounded::none;
-	}
+		if (priority1 > priority2) {
+			return lhs_first;
+		} else if (priority1 < priority2) {
+			return rhs_first;
+		} else if (auto const ordered = Faster(generation, team1, team2, weather)) {
+			return (std::addressof(ordered->first) == std::addressof(team1)) ? lhs_first : rhs_first;
+		} else {
+			return Order();
+		}
+	}())
+{
 }
 
 }	// namespace technicalmachine

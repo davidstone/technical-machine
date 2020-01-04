@@ -62,12 +62,12 @@ struct MoveState {
 				throw std::runtime_error("Early move state messages do not match party of user");
 			}
 		} else {
-			m_party.emplace(party);
+			insert(m_party, party);
 		}
 		if (m_move) {
 			m_move->executed = move;
 		} else {
-			m_move.emplace(move, move);
+			insert(m_move, UsedMove{move});
 		}
 	}
 	
@@ -107,7 +107,7 @@ struct MoveState {
 		if (m_party) {
 			validate(party);
 		} else {
-			m_party.emplace(party);
+			insert(m_party, party);
 		}
 		m_clear_status = true;
 	}
@@ -132,7 +132,7 @@ struct MoveState {
 			return;
 		}
 		auto & target_hp_and_status = (*m_party == party) ? m_user_hp_and_status : m_other_hp_and_status;
-		target_hp_and_status.emplace(hp_and_status);
+		insert(target_hp_and_status, hp_and_status);
 	}
 	void miss(Party const party) {
 		validate(party);

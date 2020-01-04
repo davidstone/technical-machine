@@ -79,7 +79,7 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 			speed.ev
 		};
 		if (!best or ev_sum(candidate) < ev_sum(*best)) {
-			best.emplace(candidate);
+			insert(best, candidate);
 		}
 	}
 	BOUNDED_ASSERT(best);

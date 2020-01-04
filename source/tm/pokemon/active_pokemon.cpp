@@ -24,6 +24,7 @@
 #include <tm/weather.hpp>
 
 #include <bounded/assert.hpp>
+#include <bounded/insert.hpp>
 #include <bounded/detail/overload.hpp>
 #include <bounded/unreachable.hpp>
 
@@ -295,7 +296,7 @@ auto MutableActivePokemon::u_turn() const -> void {
 auto MutableActivePokemon::use_uproar() const -> void {
 	bounded::visit(m_flags.lock_in, bounded::overload(
 		// TODO: Have it be active when it is constructed
-		[&](std::monostate) { m_flags.lock_in.emplace(bounded::detail::types<UproarCounter>{}).advance_one_turn(); },
+		[&](std::monostate) { bounded::insert(m_flags.lock_in, UproarCounter()).advance_one_turn(); },
 		[](UproarCounter & uproar) { uproar.advance_one_turn(); },
 		[](auto const &) { bounded::assert_or_assume_unreachable(); }
 	));

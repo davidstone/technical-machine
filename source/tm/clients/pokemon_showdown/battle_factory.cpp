@@ -117,14 +117,14 @@ void BattleFactory::handle_message(InMessage message) {
 	} else if (type == "clearpoke") {
 		// This appears to mean nothing
 	} else if (type == "gametype") {
-		m_type.emplace(message.next());
+		insert(m_type, message.next());
 	} else if (type == "gen") {
 		validate_generation(message.next(), m_generation);
 	} else if (type == "player") {
 		auto const player_id = message.next();
 		auto const username = message.next();
 		if (username == m_username) {
-			m_party.emplace(make_party(player_id));
+			insert(m_party, make_party(player_id));
 		}
 		// message.remainder() == AVATAR
 	} else if (type == "poke") {
@@ -163,7 +163,7 @@ void BattleFactory::handle_message(InMessage message) {
 			if (m_foe_starter) {
 				throw std::runtime_error("Foe switched in twice");
 			}
-			m_foe_starter.emplace(parsed);
+			insert(m_foe_starter, parsed);
 		}
 	} else if (type == "teampreview") {
 		// This appears to mean nothing
@@ -175,10 +175,10 @@ void BattleFactory::handle_message(InMessage message) {
 		auto const team_size = bounded::to_integer<TeamSize>(message.next());
 		// TODO: validate that the received teamsize matches my team size
 		if (*m_party != party) {
-			m_foe_team_size.emplace(team_size);
+			insert(m_foe_team_size, team_size);
 		}
 	} else if (type == "tier") {
-		m_tier.emplace(message.next());
+		insert(m_tier, message.next());
 	} else if (type == "title") {
 		// message.remainder() == PLAYER1 vs. PLAYER2
 	} else {
