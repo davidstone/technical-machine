@@ -92,7 +92,7 @@ struct PokemonCollection {
 
 	Pokemon & add(Generation const generation, auto && ... args) {
 		check_not_full();
-		return containers::emplace_back(m_container, generation, m_real_size, BOUNDED_FORWARD(args)...);
+		return containers::emplace_back(m_container, generation, m_real_size, OPERATORS_FORWARD(args)...);
 	}
 	Pokemon & add(Pokemon pokemon) {
 		check_not_full();

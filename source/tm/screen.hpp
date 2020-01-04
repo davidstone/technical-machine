@@ -36,7 +36,7 @@ struct Screen {
 		return m_turns_remaining;
 	}
 	constexpr auto activate(auto && ... args) -> void {
-		activate(std::integral_constant<bool, normal_duration == max_duration>{}, BOUNDED_FORWARD(args)...);
+		activate(std::integral_constant<bool, normal_duration == max_duration>{}, OPERATORS_FORWARD(args)...);
 	}
 	constexpr auto decrement() -> void {
 		--m_turns_remaining;

@@ -22,6 +22,7 @@
 #include <tm/stat/stat_names.hpp>
 
 #include <bounded/integer.hpp>
+#include <bounded/optional.hpp>
 
 #include <containers/array/array.hpp>
 

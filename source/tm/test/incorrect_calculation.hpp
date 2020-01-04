@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <bounded/forward.hpp>
+#include <operators/forward.hpp>
 
 #include <stdexcept>
 #include <string>
@@ -32,7 +32,7 @@ struct IncorrectCalculation : std::logic_error {
 private:
 	static std::string to_string(auto && value) {
 		using std::to_string;
-		return to_string(BOUNDED_FORWARD(value));
+		return to_string(OPERATORS_FORWARD(value));
 	}
 
 };

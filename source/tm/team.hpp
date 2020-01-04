@@ -27,7 +27,7 @@
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
-#include <bounded/forward.hpp>
+#include <operators/forward.hpp>
 
 #include <string_view>
 
@@ -63,7 +63,7 @@ struct Team {
 	}
 
 	Pokemon & add_pokemon(auto && ... args) {
-		return all_pokemon().add(BOUNDED_FORWARD(args)...);
+		return all_pokemon().add(OPERATORS_FORWARD(args)...);
 	}
 
 	TeamSize number_of_seen_pokemon() const {

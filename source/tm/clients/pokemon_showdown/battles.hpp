@@ -38,7 +38,7 @@ struct Battles {
 	}
 
 	void add_pending(auto && ... args) {
-		containers::emplace_back(m_pending, m_log_directory, m_log_foe_teams, BOUNDED_FORWARD(args)...);
+		containers::emplace_back(m_pending, m_log_directory, m_log_foe_teams, OPERATORS_FORWARD(args)...);
 	}
 	
 	bool handle_message(InMessage message, auto send_message, auto challenge) {
