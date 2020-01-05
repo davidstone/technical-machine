@@ -1060,6 +1060,7 @@ auto do_effects_before_moving(Moves const move, MutableActivePokemon user, Team 
 }
 
 
+// TODO: Mold Breaker
 constexpr auto move_fails(Moves const move, bool const user_damaged, Ability const other_ability, OtherMove const other_move) {
 	switch (move) {
 		case Moves::Bug_Buzz:
@@ -1075,6 +1076,10 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 		case Moves::Supersonic:
 		case Moves::Uproar:
 			return blocks_sound_moves(other_ability);
+		case Moves::Explosion:
+		case Moves::Mind_Blown:
+		case Moves::Self_Destruct:
+			return other_ability == Ability::Damp;
 		case Moves::Focus_Punch:
 			return user_damaged;
 		case Moves::Sucker_Punch:
