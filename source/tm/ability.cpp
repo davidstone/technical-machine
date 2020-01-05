@@ -83,10 +83,10 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 			break;
 		}
 		case Ability::Drizzle:
-			weather.activate_rain(Weather::permanent);
+			weather.activate_rain_from_ability(generation, extends_rain(switcher.item(generation, weather)));
 			break;
 		case Ability::Drought:
-			weather.activate_sun(Weather::permanent);
+			weather.activate_sun_from_ability(generation, extends_sun(switcher.item(generation, weather)));
 			break;
 		case Ability::Forecast:	// TODO: fix this
 			break;
@@ -107,10 +107,10 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 			break;
 		}
 		case Ability::Sand_Stream:
-			weather.activate_sand(Weather::permanent);
+			weather.activate_sand_from_ability(generation, extends_sand(switcher.item(generation, weather)));
 			break;
 		case Ability::Snow_Warning:
-			weather.activate_hail(Weather::permanent);
+			weather.activate_hail_from_ability(generation, extends_hail(switcher.item(generation, weather)));
 			break;
 		case Ability::Trace:
 			break;

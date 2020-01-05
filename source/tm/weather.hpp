@@ -18,6 +18,7 @@
 #pragma once
 
 #include <tm/ability.hpp>
+#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/status.hpp>
 
@@ -44,12 +45,14 @@ constexpr auto weather_is_blocked_by_ability(Ability const ability1, Ability con
 
 struct Weather {
 private:
-	enum class NormalWeather { clear, hail, sand, sun, rain };
-	enum class Duration : int8_t { standard = 5, extended = 8, permanent = -1 };
-	using Short = bounded::integer<0, static_cast<int>(Duration::standard)>;
-	using Long = bounded::integer<-1, static_cast<int>(Duration::extended)>;
+	enum class NormalWeather : std::uint8_t { clear, hail, sand, sun, rain };
+	static constexpr auto standard = 5_bi;
+	static constexpr auto extended = 8_bi;
+	static constexpr auto permanent = -1_bi;
+	using Short = bounded::integer<0, static_cast<int>(standard)>;
+	using Long = bounded::integer<-1, static_cast<int>(extended)>;
 
-	constexpr auto activate_weather(NormalWeather const type, Duration const duration) {
+	constexpr auto activate_weather(NormalWeather const type, Long const duration) {
 		if (type == m_active and duration != permanent) {
 			return;
 		}
@@ -57,7 +60,15 @@ private:
 		m_turns_remaining = static_cast<Long>(duration);
 	}
 	constexpr auto activate_weather(NormalWeather const type, bool const is_extended) {
-		activate_weather(type, is_extended ? Duration::extended : Duration::standard);
+		activate_weather(type, BOUNDED_CONDITIONAL(is_extended, extended, standard));
+	}
+	constexpr auto activate_weather_from_ability(Generation const generation, NormalWeather const type, bool const is_extended) {
+		auto const duration =
+			BOUNDED_CONDITIONAL(generation <= Generation::five, permanent,
+			BOUNDED_CONDITIONAL(is_extended, extended,
+			standard
+		));
+		activate_weather(type, duration);
 	}
 
 	Short m_trick_room_turns_remaining = 0_bi;
@@ -71,10 +82,6 @@ private:
 	}
 	
 public:
-	static constexpr auto standard = Duration::standard;
-	static constexpr auto extended = Duration::extended;
-	static constexpr auto permanent = Duration::permanent;
-	
 	constexpr auto trick_room() const {
 		return m_trick_room_turns_remaining != 0_bi;
 	}
@@ -114,45 +121,45 @@ public:
 
 
 	constexpr auto activate_trick_room() {
-		m_trick_room_turns_remaining = BOUNDED_CONDITIONAL(trick_room(), 0_bi, 5_bi);
+		m_trick_room_turns_remaining = BOUNDED_CONDITIONAL(trick_room(), 0_bi, standard);
 	}
 
 	constexpr auto activate_gravity() {
 		if (!gravity()) {
-			m_gravity_turns_remaining = 5_bi;
+			m_gravity_turns_remaining = standard;
 		}
 	}
 	
 	constexpr auto activate_magic_room() {
-		m_magic_room_turns_remaining = BOUNDED_CONDITIONAL(magic_room(), 0_bi, 5_bi);
+		m_magic_room_turns_remaining = BOUNDED_CONDITIONAL(magic_room(), 0_bi, standard);
 	}
 	
 	constexpr auto deactivate_fog() {
 	}
 
-	constexpr auto activate_hail(Duration const duration) {
-		activate_weather(NormalWeather::hail, duration);
-	}
-	constexpr auto activate_sun(Duration const duration) {
-		activate_weather(NormalWeather::sun, duration);
-	}
-	constexpr auto activate_sand(Duration const duration) {
-		activate_weather(NormalWeather::sand, duration);
-	}
-	constexpr auto activate_rain(Duration const duration) {
-		activate_weather(NormalWeather::rain, duration);
-	}
-	constexpr auto activate_hail(bool const is_extended) {
+	constexpr auto activate_hail_from_move(bool const is_extended) {
 		activate_weather(NormalWeather::hail, is_extended);
 	}
-	constexpr auto activate_sun(bool const is_extended) {
+	constexpr auto activate_hail_from_ability(Generation const generation, bool const is_extended) {
+		activate_weather_from_ability(generation, NormalWeather::hail, is_extended);
+	}
+	constexpr auto activate_sun_from_move(bool const is_extended) {
 		activate_weather(NormalWeather::sun, is_extended);
 	}
-	constexpr auto activate_sand(bool const is_extended) {
+	constexpr auto activate_sun_from_ability(Generation const generation, bool const is_extended) {
+		activate_weather_from_ability(generation, NormalWeather::sun, is_extended);
+	}
+	constexpr auto activate_sand_from_move(bool const is_extended) {
 		activate_weather(NormalWeather::sand, is_extended);
 	}
-	constexpr auto activate_rain(bool const is_extended) {
+	constexpr auto activate_sand_from_ability(Generation const generation, bool const is_extended) {
+		activate_weather_from_ability(generation, NormalWeather::sand, is_extended);
+	}
+	constexpr auto activate_rain_from_move(bool const is_extended) {
 		activate_weather(NormalWeather::rain, is_extended);
+	}
+	constexpr auto activate_rain_from_ability(Generation const generation, bool const is_extended) {
+		activate_weather_from_ability(generation, NormalWeather::rain, is_extended);
 	}
 
 	friend constexpr auto operator==(Weather const lhs, Weather const rhs) {

@@ -188,7 +188,7 @@ void special_damage_test() {
 	std::cout << "\t\tRunning max special damage tests.\n";
 	constexpr auto max_damage = 25696272_bi;
 	Weather weather;
-	weather.activate_sun(Weather::permanent);
+	weather.activate_sun_from_move(false);
 
 	auto attacker = max_damage_special_attacker(Item::Metronome, Ability::Blaze, Nature::Modest);
 	auto a = attacker.pokemon();

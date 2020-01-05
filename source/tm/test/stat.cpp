@@ -63,7 +63,7 @@ void special_attack_tests() {
 	std::cout << "\tRunning Special Attack tests.\n";
 	constexpr auto max_special_attack = 4536_bi;
 	auto weather = Weather{};
-	weather.activate_sun(Weather::permanent);
+	weather.activate_sun_from_move(false);
 	auto attacker = Team(max_pokemon_per_team);
 
 	attacker.add_pokemon(generation, Species::Deoxys_Attack, Level(100_bi), Gender::genderless, Item::Choice_Specs, Ability::Solar_Power, Nature::Modest);
@@ -122,7 +122,7 @@ void special_defense_tests() {
 
 	auto defender = Team(max_pokemon_per_team);
 	auto weather = Weather{};
-	weather.activate_sand(Weather::permanent);
+	weather.activate_sand_from_move(false);
 
 	defender.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Calm);
 	auto pokemon = defender.pokemon();
@@ -138,7 +138,7 @@ void speed_tests() {
 	std::cout << "\tRunning Speed tests.\n";
 	constexpr auto max_speed = 12096_bi;
 	auto weather = Weather{};
-	weather.activate_rain(Weather::permanent);
+	weather.activate_rain_from_move(false);
 
 	auto team = Team(max_pokemon_per_team);
 

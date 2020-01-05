@@ -606,7 +606,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			swap_defensive(user.stage(), other.pokemon().stage());
 			break;
 		case Moves::Hail:
-			weather.activate_hail(extends_hail(user.item(generation, weather)));
+			weather.activate_hail_from_move(extends_hail(user.item(generation, weather)));
 			break;
 		case Moves::Hammer_Arm:
 			user.stage()[StatNames::SPE] += -1_bi;
@@ -819,7 +819,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Rage:		// Fix
 			break;
 		case Moves::Rain_Dance:
-			weather.activate_rain(extends_rain(user.item(generation, weather)));
+			weather.activate_rain_from_move(extends_rain(user.item(generation, weather)));
 			break;
 		case Moves::Rapid_Spin:
 			if (!Effectiveness(generation, move_type, other.pokemon().types()).has_no_effect()) {
@@ -854,7 +854,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user_team.screens.activate_safeguard();
 			break;
 		case Moves::Sandstorm:
-			weather.activate_sand(extends_sand(user.item(generation, weather)));
+			weather.activate_sand_from_move(extends_sand(user.item(generation, weather)));
 			break;
 		case Moves::Screech:
 			other.pokemon().stage()[StatNames::DEF] += -2_bi;
@@ -941,7 +941,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.use_substitute(generation, weather);		
 			break;
 		case Moves::Sunny_Day:
-			weather.activate_sun(extends_sun(user.item(generation, weather)));
+			weather.activate_sun_from_move(extends_sun(user.item(generation, weather)));
 			break;
 		case Moves::Superpower:
 			boost_physical(user.stage(), -1_bi);
