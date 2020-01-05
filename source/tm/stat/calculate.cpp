@@ -84,6 +84,22 @@ constexpr auto is_boosted_by_thick_club(Species const species) {
 	}
 }
 
+bool is_boosted_by_guts(Generation const generation, Statuses const status) {
+	switch (status) {
+		case Statuses::clear:
+			return false;
+		case Statuses::freeze:
+			return generation <= Generation::four;
+		case Statuses::burn:
+		case Statuses::paralysis:
+		case Statuses::poison:
+		case Statuses::toxic:
+		case Statuses::sleep:
+		case Statuses::rest:
+			return true;
+	}
+}
+
 // TODO: Reduce duplication here vs. in power
 auto pinch_ability_activates(Generation const generation, Type const ability_type, ActivePokemon const pokemon, Moves const move) {
 	return generation >= Generation::five and get_type(generation, move, get_hidden_power(pokemon).type()) == ability_type and hp_ratio(pokemon) <= rational(1_bi, 3_bi);
@@ -125,7 +141,7 @@ auto ability_modifier(Generation const generation, ActivePokemon const pokemon, 
 				case Ability::Swarm: return pinch_ability(Type::Bug);
 				case Ability::Torrent: return pinch_ability(Type::Water);
 				case Ability::Flower_Gift: return BOUNDED_CONDITIONAL(weather.sun(weather_is_blocked_by_ability(ability, other_ability)), 3_bi, denominator);
-				case Ability::Guts: return BOUNDED_CONDITIONAL(!is_clear(get_status(pokemon)), 3_bi, denominator);
+				case Ability::Guts: return BOUNDED_CONDITIONAL(is_boosted_by_guts(generation, get_status(pokemon).name()), 3_bi, denominator);
 				case Ability::Hustle: return 3_bi;
 				case Ability::Huge_Power:
 				case Ability::Pure_Power:
