@@ -1318,6 +1318,14 @@ auto activate_pp_restore_berry(Generation const generation, Move & move, Mutable
 	}
 }
 
+auto flash_fire_activates(Generation const generation, Moves const move, Type const move_type, ActivePokemon const target) -> bool {
+	return
+		get_ability(target) == Ability::Flash_Fire and
+		move_type == Type::Fire and
+		(generation >= Generation::four or move != Moves::Will_O_Wisp) and
+		(generation >= Generation::five or get_status(target).name() != Statuses::freeze);
+}
+
 }	// namespace
 
 auto call_move(Generation const generation, Team & user, UsedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
@@ -1377,7 +1385,7 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 
 	// TODO: Add targeting information
 	auto const move_type = get_type(generation, move.executed, get_hidden_power(user_pokemon).type());
-	if (move_type == Type::Fire and other_ability == Ability::Flash_Fire) {
+	if (flash_fire_activates(generation, move.executed, move_type, other_pokemon)) {
 		other.pokemon().activate_flash_fire();
 	} else {
 		auto const executed_move = ExecutedMove{
