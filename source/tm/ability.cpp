@@ -38,15 +38,16 @@
 namespace technicalmachine {
 
 bool blocks_switching(Generation const generation, Ability const ability, ActivePokemon const switcher, Weather const weather) {
+	auto ghost_immunity = [&]{
+		return generation >= Generation::six and is_type(switcher, Type::Ghost);
+	};
 	switch (ability) {
 		case Ability::Shadow_Tag:
-			return get_ability(switcher) != Ability::Shadow_Tag;
+			return (generation <= Generation::three or get_ability(switcher) != Ability::Shadow_Tag) and !ghost_immunity();
 		case Ability::Arena_Trap:
-			return
-				(generation >= Generation::six and containers::any_equal(switcher.types(), Type::Ghost)) or
-				grounded(generation, switcher, weather);
+			return grounded(generation, switcher, weather) and !ghost_immunity();
 		case Ability::Magnet_Pull:
-			return is_type(switcher, Type::Steel);
+			return is_type(switcher, Type::Steel) and !ghost_immunity();
 		default:
 			return false;
 	}
