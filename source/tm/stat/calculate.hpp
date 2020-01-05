@@ -46,12 +46,12 @@ inline auto initial_stat(StatNames const stat_name, Stat const stat, Level const
 
 using attack_type = bounded::integer<1, 7368>;
 using special_attack_type = bounded::integer<1, 4536>;
-auto calculate_attack(Generation, ActivePokemon attacker, Ability other_ability, Weather, bool critical_hit) -> attack_type;
-auto calculate_special_attack(Generation, ActivePokemon attacker, Ability other_ability, Weather, bool critical_hit) -> special_attack_type;
+auto calculate_attack(Generation, ActivePokemon attacker, Moves, Ability other_ability, Weather, bool critical_hit) -> attack_type;
+auto calculate_special_attack(Generation, ActivePokemon attacker, Moves, Ability other_ability, Weather, bool critical_hit) -> special_attack_type;
 
 using defense_type = bounded::integer<1, 3684>;
 using special_defense_type = bounded::integer<1, 3684>;
-auto calculate_defense(Generation, ActivePokemon defender, Ability other_ability, Weather, bool critical_hit = false, bool is_self_KO = false) -> defense_type;
+auto calculate_defense(Generation, ActivePokemon defender, Moves, Ability other_ability, Weather, bool critical_hit = false) -> defense_type;
 auto calculate_special_defense(Generation, ActivePokemon defender, Ability attacker_ability, Weather, bool critical_hit = false) -> special_defense_type;
 
 using speed_type = bounded::integer<1, 12096>;

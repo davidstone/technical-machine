@@ -75,7 +75,9 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 	auto const switcher_ability = get_ability(switcher);
 	switch (switcher_ability) {
 		case Ability::Download: {
-			auto const defense = calculate_defense(generation, other, switcher_ability, weather);
+			// Move is irrelevant here
+			constexpr auto move = Moves::Switch0;
+			auto const defense = calculate_defense(generation, other, move, switcher_ability, weather);
 			auto const special_defense = calculate_special_defense(generation, other, switcher_ability, weather);
 			switcher.stage()[defense >= special_defense ? StatNames::SPA : StatNames::ATK] += 1_bi;
 			break;

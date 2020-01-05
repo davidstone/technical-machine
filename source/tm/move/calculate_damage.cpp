@@ -159,11 +159,11 @@ auto physical_vs_special_modifier(Generation const generation, ActivePokemon con
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
 	return BOUNDED_CONDITIONAL(is_physical(move),
 		rational(
-			calculate_attack(generation, attacker, defender_ability, weather, critical_hit),
-			50_bi * calculate_defense(generation, defender, attacker_ability, weather, critical_hit) * weakening_from_status(attacker)
+			calculate_attack(generation, attacker, move, defender_ability, weather, critical_hit),
+			50_bi * calculate_defense(generation, defender, move, attacker_ability, weather, critical_hit) * weakening_from_status(attacker)
 		),
 		rational(
-			calculate_special_attack(generation, attacker, defender_ability, weather, critical_hit),
+			calculate_special_attack(generation, attacker, move, defender_ability, weather, critical_hit),
 			50_bi * calculate_special_defense(generation, defender, attacker_ability, weather, critical_hit)
 		)
 	);
