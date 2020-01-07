@@ -623,8 +623,8 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			recoil(generation, user, weather, damage, 2_bi);
 			break;
 		case Moves::Heal_Bell:
-			cure_all_status(user_team, [](Pokemon const & pokemon) {
-				return !blocks_sound_moves(get_ability(pokemon));
+			cure_all_status(user_team, [=](Pokemon const & pokemon) {
+				return generation == Generation::five or !blocks_sound_moves(get_ability(pokemon));
 			});
 			break;
 		case Moves::Heal_Block:
@@ -779,8 +779,8 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			equalize_hp(generation, user, other.pokemon(), weather);
 			break;
 		case Moves::Perish_Song:
-			user.activate_perish_song();
-			other.pokemon().activate_perish_song();
+			user.try_activate_perish_song();
+			other.pokemon().try_activate_perish_song();
 			break;
 		case Moves::Poison_Fang:
 			if (move.variable.effect_activates()) {
@@ -1063,16 +1063,28 @@ auto do_effects_before_moving(Moves const move, MutableActivePokemon user, Team 
 // TODO: Mold Breaker
 constexpr auto move_fails(Moves const move, bool const user_damaged, Ability const other_ability, OtherMove const other_move) {
 	switch (move) {
+		case Moves::Boomburst:
 		case Moves::Bug_Buzz:
 		case Moves::Chatter:
+		case Moves::Clanging_Scales:
+		case Moves::Clangorous_Soulblaze:
+		case Moves::Confide:
+		case Moves::Disarming_Voice:
+		case Moves::Echoed_Voice:
 		case Moves::Grass_Whistle:
 		case Moves::Growl:
 		case Moves::Hyper_Voice:
 		case Moves::Metal_Sound:
+		case Moves::Noble_Roar:
+		case Moves::Parting_Shot:
+		case Moves::Relic_Song:
 		case Moves::Roar:
+		case Moves::Round:
 		case Moves::Screech:
 		case Moves::Sing:
+		case Moves::Snarl:
 		case Moves::Snore:
+		case Moves::Sparkling_Aria:
 		case Moves::Supersonic:
 		case Moves::Uproar:
 			return blocks_sound_moves(other_ability);
