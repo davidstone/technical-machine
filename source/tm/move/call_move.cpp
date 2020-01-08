@@ -49,6 +49,12 @@
 namespace technicalmachine {
 namespace {
 
+auto item_can_be_lost(Generation const generation, ActivePokemon const pokemon) {
+	return
+		get_ability(pokemon) != Ability::Sticky_Hold or
+		(generation >= Generation::five and get_hp(pokemon).current() == 0_bi);
+}
+
 // I could potentially treat this as negative recoil
 auto absorb_hp(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather, HP::current_type const damage) -> void {
 	auto const absorbed = damage / 2_bi * healing_multiplier(user.item(generation, weather));
@@ -142,9 +148,9 @@ auto fling_side_effects(Generation const generation, MutableActivePokemon user, 
 }
 
 
-constexpr bool can_be_incinerated(Item const item, Ability const holder_ability) {
+auto item_can_be_incinerated(Generation const generation, ActivePokemon const target, Weather const weather) -> bool {
 	// TODO: Destroy gems
-	return holder_ability != Ability::Sticky_Hold and berry_power(item) != 0_bi;
+	return item_can_be_lost(generation, target) and berry_power(target.item(generation, weather)) != 0_bi;
 }
 
 
@@ -380,8 +386,12 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		case Moves::Bug_Bite:			// Fix
-		case Moves::Pluck:
+		case Moves::Pluck: {
+			auto const other_pokemon = other.pokemon();
+			if (item_can_be_lost(generation, other_pokemon)) {
+			}
 			break;
+		}
 		case Moves::Bulk_Up:
 			boost_physical(user.stage(), 1_bi);
 			break;
@@ -456,7 +466,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Covet:
 		case Moves::Thief:
-			user.steal_item(generation, other.pokemon());
+			if (item_can_be_lost(generation, other.pokemon())) {
+				user.steal_item(generation, other.pokemon());
+			}
 			break;
 		case Moves::Cross_Poison:
 		case Moves::Gunk_Shot:
@@ -671,7 +683,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Incinerate: {
 			auto other_pokemon = other.pokemon();
-			if (can_be_incinerated(other_pokemon.item(generation, weather), get_ability(other_pokemon))) {
+			if (item_can_be_incinerated(generation, other_pokemon, weather)) {
 				other_pokemon.destroy_item();
 			}
 			break;
@@ -682,9 +694,13 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Ingrain:
 			user.ingrain();
 			break;
-		case Moves::Knock_Off:
-			other.pokemon().remove_item();
+		case Moves::Knock_Off: {
+			auto const other_pokemon = other.pokemon();
+			if (item_can_be_lost(generation, other_pokemon)) {
+				other_pokemon.remove_item();
+			}
 			break;
+		}
 		case Moves::Leaf_Tornado:
 		case Moves::Mirror_Shot:
 		case Moves::Mud_Bomb:
@@ -964,9 +980,13 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user_team.switch_pokemon(generation, other.pokemon(), weather, to_replacement(move.name));
 			break;
 		case Moves::Switcheroo:
-		case Moves::Trick:
-			swap_items(generation, user, other.pokemon());
+		case Moves::Trick: {
+			auto const other_pokemon = other.pokemon();
+			if (item_can_be_lost(generation, other_pokemon)) {
+				swap_items(generation, user, other.pokemon());
+			}
 			break;
+		}
 		case Moves::Swords_Dance:
 			user.stage()[StatNames::ATK] += 2_bi;
 			break;
