@@ -180,6 +180,7 @@ private:
 	bool mud_sport = false;
 	bool power_trick_is_active = false;
 	bool is_roosting = false;
+	bool switched_in_this_turn = false;
 	bool is_tormented = false;
 	bool unburdened = false;
 	bool water_sport = false;
@@ -209,8 +210,6 @@ public:
 	auto substitute() const -> Substitute const & {
 		return m_flags.substitute;
 	}
-
-	auto has_switched() const -> bool;
 
 	auto aqua_ring_is_active() const -> bool {
 		return m_flags.aqua_ring;
@@ -354,6 +353,9 @@ public:
 
 	auto switch_decision_required() const -> bool {
 		return m_flags.switch_decision_required(m_pokemon);
+	}
+	auto switched_in_this_turn() const -> bool {
+		return m_flags.switched_in_this_turn;
 	}
 
 	auto fully_trapped() const -> bool {
@@ -663,6 +665,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 
 	auto switch_in(Generation const generation, Weather const weather) const {
 		m_pokemon.mark_as_seen();
+		m_flags.switched_in_this_turn = true;
 		m_flags.types = PokemonTypes(generation, get_species(m_pokemon));
 		m_flags.status.set(get_status(m_pokemon).name());
 		if (item(generation, weather) == Item::Berserk_Gene) {

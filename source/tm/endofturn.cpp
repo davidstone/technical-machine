@@ -138,7 +138,7 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 	if (pokemon.aqua_ring_is_active()) {
 		heal(generation, pokemon, weather, rational(1_bi, 16_bi) * healing_multiplier(pokemon.item(generation, weather)));
 	}
-	if (boosts_speed(get_ability(pokemon))) {
+	if (!pokemon.switched_in_this_turn() and boosts_speed(get_ability(pokemon))) {
 		pokemon.stage()[StatNames::SPE] += 1_bi;
 	} else if (flags.shed_skin) {
 		pokemon.clear_status();
