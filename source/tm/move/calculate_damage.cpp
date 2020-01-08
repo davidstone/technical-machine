@@ -239,7 +239,7 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 		case Moves::Guillotine:
 		case Moves::Horn_Drill:
 		case Moves::Sheer_Cold:
-			return get_hp(defender).max();
+			return BOUNDED_CONDITIONAL(get_ability(defender) == Ability::Sturdy, 0_bi, get_hp(defender).max());
 		case Moves::Metal_Burst:
 			return attacker.direct_damage_received() * 3_bi / 2_bi;
 		case Moves::Mirror_Coat:
