@@ -1356,29 +1356,54 @@ auto activate_pp_restore_berry(Generation const generation, Move & move, Mutable
 	}
 }
 
-auto flash_fire_activates(Generation const generation, Moves const move, Type const move_type, ActivePokemon const target) -> bool {
+auto absorb_ability_activates(Generation const generation, Moves const move, Type const move_type, Type const absorbed_type) -> bool {
 	if (!move_targets_foe(generation, move)) {
 		return false;
 	}
-	if (move_type != Type::Fire) {
-		return false;
-	}
-	if (generation <= Generation::three and move == Moves::Will_O_Wisp) {
-		return false;
-	}
-	if (generation <= Generation::four and get_status(target).name() == Statuses::freeze) {
+	if (move_type != absorbed_type) {
 		return false;
 	}
 	return true;
 }
 
-auto handle_ability_absorbs_move(Generation const generation, Moves const move, Type const move_type, MutableActivePokemon const target) {
+auto flash_fire_activates(Generation const generation, Moves const move, Type const move_type, ActivePokemon const target) -> bool {
+	if (generation <= Generation::four and get_status(target).name() == Statuses::freeze) {
+		return false;
+	}
+	return
+		absorb_ability_activates(generation, move, move_type, Type::Fire) and
+		(generation >= Generation::four or move != Moves::Will_O_Wisp);
+}
+
+auto volt_absorb_activates(Generation const generation, Moves const move, Type const move_type) -> bool {
+	return
+		absorb_ability_activates(generation, move, move_type, Type::Electric) and
+		(generation >= Generation::four or move != Moves::Thunder_Wave);
+}
+
+auto water_absorb_activates(Generation const generation, Moves const move, Type const move_type) -> bool {
+	return absorb_ability_activates(generation, move, move_type, Type::Water);
+}
+
+auto handle_ability_absorbs_move(Generation const generation, Moves const move, Type const move_type, MutableActivePokemon const target, Weather const weather) {
 	switch (target.ability()) {
 		case Ability::Flash_Fire:
 			if (!flash_fire_activates(generation, move, move_type, target)) {
 				return false;
 			}
 			target.activate_flash_fire();
+			return true;
+		case Ability::Volt_Absorb:
+			if (!volt_absorb_activates(generation, move, move_type)) {
+				return false;
+			}
+			heal(generation, target, weather, rational(1_bi, 4_bi));
+			return true;
+		case Ability::Water_Absorb:
+			if (!water_absorb_activates(generation, move, move_type)) {
+				return false;
+			}
+			heal(generation, target, weather, rational(1_bi, 4_bi));
 			return true;
 		default:
 			return false;
@@ -1444,7 +1469,7 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 
 	// TODO: Add targeting information
 	auto const move_type = get_type(generation, move.executed, get_hidden_power(user_pokemon).type());
-	if (!handle_ability_absorbs_move(generation, move.executed, move_type, other_pokemon)) {
+	if (!handle_ability_absorbs_move(generation, move.executed, move_type, other_pokemon, weather)) {
 		auto const executed_move = ExecutedMove{
 			move.executed,
 			found_move.pp(),
