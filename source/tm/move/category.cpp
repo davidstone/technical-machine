@@ -776,4 +776,8 @@ auto is_special(Moves const move) -> bool {
 	return move_category(move) == MoveCategory::special;
 }
 
+auto is_damaging(Moves const move) -> bool {
+	return move_category(move) != MoveCategory::other;
+}
+
 }	// namespace technicalmachine

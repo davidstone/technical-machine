@@ -70,7 +70,6 @@ constexpr auto operator==(Moves const lhs, Move const rhs) {
 
 auto is_regular(Moves move) -> bool;
 
-auto is_damaging(Moves move) -> bool;
 auto is_phaze(Moves name) -> bool;
 
 auto is_usable_while_frozen(Moves move) -> bool;

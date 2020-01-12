@@ -25,6 +25,7 @@
 
 #include <tm/move/base_power.hpp>
 #include <tm/move/call_move.hpp>
+#include <tm/move/category.hpp>
 #include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>

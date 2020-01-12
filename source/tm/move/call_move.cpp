@@ -18,6 +18,7 @@
 #include <tm/move/call_move.hpp>
 
 #include <tm/move/is_switch.hpp>
+#include <tm/move/category.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/target.hpp>
@@ -1385,7 +1386,7 @@ auto water_absorb_activates(Generation const generation, Moves const move, Type 
 	return absorb_ability_activates(generation, move, move_type, Type::Water);
 }
 
-auto handle_ability_absorbs_move(Generation const generation, Moves const move, Type const move_type, MutableActivePokemon const target, Weather const weather) {
+auto handle_ability_blocks_move(Generation const generation, Moves const move, Type const move_type, MutableActivePokemon const target, Weather const weather) {
 	switch (target.ability()) {
 		case Ability::Flash_Fire:
 			if (!flash_fire_activates(generation, move, move_type, target)) {
@@ -1405,6 +1406,23 @@ auto handle_ability_absorbs_move(Generation const generation, Moves const move, 
 			}
 			heal(generation, target, weather, rational(1_bi, 4_bi));
 			return true;
+		case Ability::Wonder_Guard:
+			if (!is_damaging(move)) {
+				return false;
+			}
+			if (Effectiveness(generation, move_type, target.types()).is_super_effective()) {
+				return false;
+			}
+			switch (move) {
+				case Moves::Struggle:
+					return false;
+				case Moves::Beat_Up:
+					return generation >= Generation::five;
+				case Moves::Fire_Fang:
+					return generation != Generation::four;
+				default:
+					return true;
+			}
 		default:
 			return false;
 	}
@@ -1467,9 +1485,8 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 		return;
 	}
 
-	// TODO: Add targeting information
 	auto const move_type = get_type(generation, move.executed, get_hidden_power(user_pokemon).type());
-	if (!handle_ability_absorbs_move(generation, move.executed, move_type, other_pokemon, weather)) {
+	if (!handle_ability_blocks_move(generation, move.executed, move_type, other_pokemon, weather)) {
 		auto const executed_move = ExecutedMove{
 			move.executed,
 			found_move.pp(),

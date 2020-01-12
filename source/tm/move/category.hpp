@@ -24,5 +24,6 @@ enum class Moves : std::uint16_t;
 
 auto is_physical(Moves move) -> bool;
 auto is_special(Moves move) -> bool;
+auto is_damaging(Moves move) -> bool;
 
 }	// namespace technicalmachine

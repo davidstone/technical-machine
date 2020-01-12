@@ -96,8 +96,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		}
 	}
 	
-	// TODO: implement Wonder_Guard
-//	BOUNDED_ASSERT(expectiminimax(generation, team1, team3, weather, evaluate, depth, std::cout) == Moves::Shadow_Ball);
+	BOUNDED_ASSERT(expectiminimax(generation, team1, team3, weather, evaluate, depth, std::cout) == Moves::Shadow_Ball);
 }
 
 void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {

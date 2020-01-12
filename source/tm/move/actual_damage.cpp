@@ -18,6 +18,7 @@
 #include <tm/move/actual_damage.hpp>
 
 #include <tm/move/calculate_damage.hpp>
+#include <tm/move/category.hpp>
 #include <tm/move/will_be_recharge_turn.hpp>
 
 #include <tm/team.hpp>

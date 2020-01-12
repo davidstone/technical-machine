@@ -164,12 +164,54 @@ void sleep_talk() {
 	BOUNDED_ASSERT(get_hp(defender.pokemon()).current() == 0_bi);
 }
 
+void wonder_guard() {
+	auto weather = Weather();
+
+	auto attacker = Team(1_bi, true);
+	attacker.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::female, Item::None, Ability::Volt_Absorb, Nature::Timid);
+	auto jolteon = attacker.pokemon();
+	jolteon.switch_in(generation, weather);
+	containers::append(regular_moves(jolteon), move_array(Moves::Shadow_Ball, Moves::Thunderbolt));
+
+	auto defender = Team(1_bi);
+	defender.add_pokemon(generation, Species::Shedinja, Level(100_bi), Gender::male, Item::None, Ability::Wonder_Guard, Nature::Adamant);
+	auto shedinja = defender.pokemon();
+	shedinja.switch_in(generation, weather);
+
+	BOUNDED_ASSERT(get_hp(shedinja).current() == 1_bi);
+
+	call_move(
+		generation,
+		attacker,
+		UsedMove{Moves::Thunderbolt},
+		defender,
+		FutureMove{false},
+		weather,
+		false,
+		damage
+	);
+	BOUNDED_ASSERT(get_hp(shedinja).current() == 1_bi);
+
+	call_move(
+		generation,
+		attacker,
+		UsedMove{Moves::Shadow_Ball},
+		defender,
+		FutureMove{false},
+		weather,
+		false,
+		damage
+	);
+	BOUNDED_ASSERT(get_hp(shedinja).current() == 0_bi);
+}
+
 }	// namespace
 
 void call_move_tests() {
 	std::cout << "Running call_move tests.\n";
 	test_baton_pass();
 	sleep_talk();
+	wonder_guard();
 	std::cout << "Use move tests passed.\n\n";
 }
 
