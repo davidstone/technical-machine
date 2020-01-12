@@ -43,6 +43,8 @@ constexpr auto move_array(auto... moves) {
 }
 
 void test_baton_pass() {
+	auto weather = Weather();
+
 	Team attacker(2_bi, true);
 	{
 		attacker.add_pokemon(generation, Species::Smeargle, Level(100_bi), Gender::male, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly);
@@ -56,6 +58,7 @@ void test_baton_pass() {
 		containers::append(regular_moves(alakazam), move_array(Moves::Psycho_Cut, Moves::Recover));
 		set_stat_ev(alakazam, StatNames::ATK, EV(252_bi));
 	}
+	attacker.pokemon().switch_in(generation, weather);
 
 	Team defender(2_bi);
 	{
@@ -71,8 +74,8 @@ void test_baton_pass() {
 		containers::append(regular_moves(misdreavus), move_array(Moves::Shadow_Ball));
 		set_stat_ev(misdreavus, StatNames::SPA, EV(252_bi));
 	}
+	defender.pokemon().switch_in(generation, weather);
 
-	auto weather = Weather{};
 	call_move(
 		generation,
 		attacker,

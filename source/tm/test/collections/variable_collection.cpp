@@ -46,6 +46,7 @@ constexpr auto generation = Generation::four;
 void add_pokemon(Team & team, Species const species) {
 	auto const level = Level(100_bi);
 	team.add_pokemon(generation, species, level, Gender::male);
+	team.pokemon().set_ability_to_base_ability();
 }
 
 void phaze_in_same_pokemon(Team const & team) {

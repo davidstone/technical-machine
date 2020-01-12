@@ -135,6 +135,7 @@ private:
 		UproarCounter,
 		UTurning
 	> lock_in{std::monostate{}};
+	Ability ability;
 	Confusion confusion;
 	DamageBlocker damage_blocker;
 	Disable disable;
@@ -212,7 +213,7 @@ public:
 	}
 
 	auto ability() const {
-		return m_pokemon.initial_ability();
+		return m_flags.ability;
 	}
 
 	auto aqua_ring_is_active() const -> bool {
@@ -458,6 +459,14 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.moved = true;
 	}
 
+	auto set_base_ability(Ability const ability) const {
+		m_pokemon.set_initial_ability(ability);
+		m_flags.ability = ability;
+	}
+	auto set_ability_to_base_ability() const {
+		m_flags.ability = m_pokemon.initial_ability();
+	}
+
 	auto activate_aqua_ring() const {
 		m_flags.aqua_ring = true;
 	}
@@ -673,6 +682,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 
 	auto switch_in(Generation const generation, Weather const weather) const {
 		m_pokemon.mark_as_seen();
+		m_flags.ability = m_pokemon.initial_ability();
 		m_flags.switched_in_this_turn = true;
 		m_flags.types = PokemonTypes(generation, get_species(m_pokemon));
 		m_flags.status.set(get_status(m_pokemon).name());

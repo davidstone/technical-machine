@@ -86,6 +86,10 @@ struct Pokemon {
 	auto initial_ability() const {
 		return m_ability;
 	}
+	void set_initial_ability(Ability const ability) & {
+		m_ability = ability;
+		m_ability_is_known = true;
+	}
 
 	auto item(Generation const generation, bool const embargo, bool const magic_room) const -> Item {
 		return m_item.get(generation, embargo, magic_room);
@@ -107,7 +111,6 @@ struct Pokemon {
 		m_item_is_known = true;
 	}
 
-	friend void set_ability(Pokemon & pokemon, Ability ability);
 	friend bool ability_is_known(Pokemon pokemon);
 	friend void set_gender(Pokemon & pokemon, Gender gender);
 	friend bool item_is_known(Pokemon pokemon);
@@ -158,10 +161,6 @@ inline decltype(auto) regular_moves(Pokemon & pokemon) {
 	return all_moves(pokemon).regular();
 }
 
-inline void set_ability(Pokemon & pokemon, Ability const ability) {
-	pokemon.m_ability = ability;
-	pokemon.m_ability_is_known = true;
-}
 inline bool ability_is_known(Pokemon const pokemon) {
 	return pokemon.m_ability_is_known;
 }

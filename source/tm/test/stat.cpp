@@ -52,22 +52,27 @@ void attack_tests() {
 	attacker.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::Choice_Band, Ability::Pure_Power, Nature::Impish);
 	auto pokemon = attacker.pokemon();
 
+	auto weather = Weather();
+
+	pokemon.switch_in(generation, weather);
+
 	set_stat_ev(pokemon, StatNames::DEF, EV(EV::max));
 	pokemon.activate_power_trick();
 	pokemon.stage()[StatNames::ATK] += 6_bi;
 
-	check_equal(calculate_attack(generation, pokemon, physical_move, Ability::Honey_Gather, Weather{}, critical_hit), max_attack);
+	check_equal(calculate_attack(generation, pokemon, physical_move, Ability::Honey_Gather, weather, critical_hit), max_attack);
 }
 
 void special_attack_tests() {
 	std::cout << "\tRunning Special Attack tests.\n";
 	constexpr auto max_special_attack = 4536_bi;
-	auto weather = Weather{};
+	auto weather = Weather();
 	weather.activate_sun_from_move(false);
 	auto attacker = Team(max_pokemon_per_team);
 
 	attacker.add_pokemon(generation, Species::Deoxys_Attack, Level(100_bi), Gender::genderless, Item::Choice_Specs, Ability::Solar_Power, Nature::Modest);
 	auto pokemon = attacker.pokemon();
+	pokemon.switch_in(generation, weather);
 
 	set_stat_ev(pokemon, StatNames::SPA, EV(EV::max));
 	pokemon.stage()[StatNames::SPA] += 6_bi;
@@ -84,6 +89,7 @@ void max_defense_test() {
 
 	defender.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::None, Ability::Marvel_Scale, Nature::Bold);
 	auto pokemon = defender.pokemon();
+	pokemon.switch_in(generation, weather);
 	set_stat_ev(pokemon, StatNames::DEF, EV(EV::max));
 
 	pokemon.stage()[StatNames::DEF] += 6_bi;
@@ -97,17 +103,20 @@ void min_defense_test() {
 	std::cout << "\t\tRunning min Defense test.\n";
 	constexpr auto min_defense = 1_bi;
 
+	auto weather = Weather();
+
 	auto defender = Team(max_pokemon_per_team);
 
 	defender.add_pokemon(generation, Species::Combee, Level(1_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Hasty);
 	auto pokemon = defender.pokemon();
+	pokemon.switch_in(generation, weather);
 	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi));
 
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		pokemon.stage()[StatNames::DEF] += -2_bi;
 	}
 
-	check_equal(calculate_defense(generation, pokemon, physical_move, Ability::Honey_Gather, Weather{}), min_defense);
+	check_equal(calculate_defense(generation, pokemon, physical_move, Ability::Honey_Gather, weather), min_defense);
 }
 
 void defense_tests() {
@@ -137,13 +146,14 @@ void special_defense_tests() {
 void speed_tests() {
 	std::cout << "\tRunning Speed tests.\n";
 	constexpr auto max_speed = 12096_bi;
-	auto weather = Weather{};
+	auto weather = Weather();
 	weather.activate_rain_from_move(false);
 
 	auto team = Team(max_pokemon_per_team);
 
 	team.add_pokemon(generation, Species::Deoxys_Speed, Level(100_bi), Gender::genderless, Item::Choice_Scarf, Ability::Swift_Swim, Nature::Timid);
 	auto pokemon = team.pokemon();
+	pokemon.switch_in(generation, weather);
 	set_stat_ev(pokemon, StatNames::SPE, EV(EV::max));
 
 	pokemon.stage()[StatNames::SPE] += 6_bi;

@@ -73,7 +73,11 @@ Team predict_team(Generation const generation, UsageStats const & usage_stats, L
 	for (auto & pokemon : team.all_pokemon()) {
 		auto const species = get_species(pokemon);
 		if (!ability_is_known(pokemon)) {
-			set_ability(pokemon, detailed.get<Ability>(species));
+			pokemon.set_initial_ability(detailed.get<Ability>(species));
+			auto active_pokemon = team.pokemon();
+			if (std::addressof(pokemon) == std::addressof(static_cast<Pokemon const &>(active_pokemon))) {
+				active_pokemon.set_ability_to_base_ability();
+			}
 		}
 		if (!item_is_known(pokemon)) {
 			pokemon.set_item(detailed.get<Item>(species));

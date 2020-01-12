@@ -124,7 +124,7 @@ auto parse_html_team(std::string_view str, Generation const generation) -> Team 
 			pokemon.set_item(*item);
 		}
 		if (ability) {
-			set_ability(pokemon, *ability);
+			pokemon.set_initial_ability(*ability);
 		}
 		if (nature) {
 			set_nature(pokemon, *nature);

@@ -45,6 +45,8 @@ void basic() {
 			}
 		);
 	}
+	auto weather = Weather();
+	user.pokemon().switch_in(generation, weather);
 
 	auto other = Team(1_bi, false);
 	{
@@ -59,8 +61,9 @@ void basic() {
 			}
 		);
 	}
+	other.pokemon().switch_in(generation, weather);
 
-	auto const selections = legal_selections(generation, user, other.pokemon(), Weather{});
+	auto const selections = legal_selections(generation, user, other.pokemon(), weather);
 	if (size(selections) != 4_bi) {
 		throw std::runtime_error("Invalid number of legal selections");
 	}
@@ -74,14 +77,17 @@ void test_two_moves_with_one_out_of_pp() {
 			move.decrement_pp(Ability::Static);
 		}
 	};
+	auto weather = Weather();
+	user.pokemon().switch_in(generation, weather);
 	auto & thunder = containers::emplace_back(all_moves(pokemon), generation, Moves::Thunder, 0_bi);
 	empty_pp(thunder);
 	containers::emplace_back(all_moves(pokemon), generation, Moves::Thunderbolt, 0_bi);
 
 	auto other = Team(1_bi, false);
 	other.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
+	other.pokemon().switch_in(generation, weather);
 	
-	auto const selections = legal_selections(generation, user, other.pokemon(), Weather{});
+	auto const selections = legal_selections(generation, user, other.pokemon(), weather);
 	if (size(selections) != 1_bi) {
 		throw std::runtime_error("Incorrect number of selections with one of two moves out of PP. Expected 1, got " + to_string(size(selections)));
 	}
@@ -98,6 +104,8 @@ void test_two_moves_with_both_out_of_pp() {
 			move.decrement_pp(Ability::Static);
 		}
 	};
+	auto weather = Weather();
+	user.pokemon().switch_in(generation, weather);
 	auto & thunder = containers::emplace_back(all_moves(pokemon), generation, Moves::Thunder, 0_bi);
 	empty_pp(thunder);
 	auto & thunderbolt = containers::emplace_back(all_moves(pokemon), generation, Moves::Thunderbolt, 0_bi);
@@ -105,6 +113,7 @@ void test_two_moves_with_both_out_of_pp() {
 
 	auto other = Team(1_bi, false);
 	other.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
+	other.pokemon().switch_in(generation, weather);
 	
 	auto const selections = legal_selections(generation, user, other.pokemon(), Weather{});
 	if (size(selections) != 1_bi) {

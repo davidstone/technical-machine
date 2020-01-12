@@ -62,9 +62,11 @@ Team max_damage_physical_attacker(Item const item, Ability const ability, Nature
 
 Team max_damage_special_attacker(Item const item, Ability const ability, Nature const nature) {
 	auto attacker = Team(max_pokemon_per_team);
+	auto weather = Weather();
 
 	attacker.add_pokemon(generation, Species::Deoxys_Attack, Level(100_bi), Gender::genderless, item, ability, nature);
-	attacker.pokemon().set_hp(generation, Weather(), 1_bi);
+	attacker.pokemon().switch_in(generation, weather);
+	attacker.pokemon().set_hp(generation, weather, 1_bi);
 	
 	return attacker;
 }
