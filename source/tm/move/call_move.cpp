@@ -1357,11 +1357,32 @@ auto activate_pp_restore_berry(Generation const generation, Move & move, Mutable
 }
 
 auto flash_fire_activates(Generation const generation, Moves const move, Type const move_type, ActivePokemon const target) -> bool {
-	return
-		target.ability() == Ability::Flash_Fire and
-		move_type == Type::Fire and
-		(generation >= Generation::four or move != Moves::Will_O_Wisp) and
-		(generation >= Generation::five or get_status(target).name() != Statuses::freeze);
+	if (!move_targets_foe(generation, move)) {
+		return false;
+	}
+	if (move_type != Type::Fire) {
+		return false;
+	}
+	if (generation <= Generation::three and move == Moves::Will_O_Wisp) {
+		return false;
+	}
+	if (generation <= Generation::four and get_status(target).name() == Statuses::freeze) {
+		return false;
+	}
+	return true;
+}
+
+auto handle_ability_absorbs_move(Generation const generation, Moves const move, Type const move_type, MutableActivePokemon const target) {
+	switch (target.ability()) {
+		case Ability::Flash_Fire:
+			if (!flash_fire_activates(generation, move, move_type, target)) {
+				return false;
+			}
+			target.activate_flash_fire();
+			return true;
+		default:
+			return false;
+	}
 }
 
 }	// namespace
@@ -1423,9 +1444,7 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 
 	// TODO: Add targeting information
 	auto const move_type = get_type(generation, move.executed, get_hidden_power(user_pokemon).type());
-	if (flash_fire_activates(generation, move.executed, move_type, other_pokemon)) {
-		other.pokemon().activate_flash_fire();
-	} else {
+	if (!handle_ability_absorbs_move(generation, move.executed, move_type, other_pokemon)) {
 		auto const executed_move = ExecutedMove{
 			move.executed,
 			found_move.pp(),
