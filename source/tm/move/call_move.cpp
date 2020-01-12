@@ -188,6 +188,8 @@ auto active_pokemon_can_be_phazed(Team const & team) {
 }
 
 auto phaze(Generation const generation, MutableActivePokemon user, Team & target, Weather & weather, Variable const variable) {
+	// TODO: Phazing activates Synchronize if Toxic Spikes cause status before
+	// generation 5
 	if (active_pokemon_can_be_phazed(target)) {
 		target.switch_pokemon(generation, user, weather, variable.phaze_index());
 		target.pokemon().update_before_move();

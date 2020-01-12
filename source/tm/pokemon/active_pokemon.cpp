@@ -407,14 +407,14 @@ auto status_can_apply(Statuses const status, ActivePokemon const user, ActivePok
 		(!uproar or (status != Statuses::sleep and status != Statuses::rest));
 }
 
-constexpr auto reflected_status(Statuses const status) -> bounded::optional<Statuses> {
+constexpr auto reflected_status(Generation const generation, Statuses const status) -> bounded::optional<Statuses> {
 	switch (status) {
 	case Statuses::burn:
 	case Statuses::paralysis:
 	case Statuses::poison:
 		return status;
 	case Statuses::toxic:
-		return Statuses::poison;
+		return generation <= Generation::four ? Statuses::poison : Statuses::toxic;
 	case Statuses::clear:
 	case Statuses::freeze:
 	case Statuses::sleep:
@@ -432,9 +432,9 @@ auto MutableActivePokemon::apply_status(Generation const generation, Statuses co
 		return;
 	}
 	set_status(generation, status, weather);
-	auto const reflected = reflected_status(status);
+	auto const reflected = reflected_status(generation, status);
 	if (reflected and reflects_status(ability())) {
-		apply_status_to_self(generation, *reflected, user, weather, uproar);
+		user.apply_status(generation, *reflected, *this, weather, uproar);
 	}
 }
 
