@@ -359,12 +359,18 @@ constexpr bool cannot_ko(Moves const move) {
 	return move == Moves::False_Swipe;
 }
 
-auto handle_ohko(Generation const generation, MutableActivePokemon defender, bool const is_enduring, Moves const move, Weather const weather) {
+auto handle_ko(Generation const generation, MutableActivePokemon defender, bool const is_enduring, Moves const move, Weather const weather) {
 	if (cannot_ko(move) or is_enduring) {
 		return true;
 	}
 	auto const hp = get_hp(defender);
-	if (hp.current() == hp.max() and defender.item(generation, weather) == Item::Focus_Sash) {
+	if (hp.current() != hp.max()) {
+		return false;
+	}
+	if (generation >= Generation::five and defender.ability() == Ability::Sturdy) {
+		return true;
+	}
+	if (defender.item(generation, weather) == Item::Focus_Sash) {
 		defender.remove_item();
 		return true;
 	}
@@ -378,8 +384,8 @@ auto MutableActivePokemon::direct_damage(Generation const generation, Moves cons
 		return m_flags.substitute.damage(damage);
 	}
 	auto const original_hp = get_hp(m_pokemon).current();
-	auto const block_ohko = original_hp <= damage and handle_ohko(generation, *this, m_flags.damage_blocker.is_enduring(), move, weather);
-	auto const applied_damage = block_ohko ?
+	auto const block_ko = original_hp <= damage and handle_ko(generation, *this, m_flags.damage_blocker.is_enduring(), move, weather);
+	auto const applied_damage = block_ko ?
 		static_cast<HP::current_type>(original_hp - 1_bi) :
 		bounded::min(damage, original_hp);
 	indirect_damage(generation, weather, applied_damage);
