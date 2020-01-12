@@ -32,7 +32,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-enum class Ability : std::uint8_t;
+enum class Ability : std::uint16_t;
 struct ActivePokemon;
 enum class Generation : std::uint8_t;
 enum class Moves : std::uint16_t;

@@ -40,10 +40,9 @@ enum class Moves : std::uint16_t;
 namespace po {
 namespace {
 
-template<typename Enum>
-void test_enum(std::string const & name, auto && to_id, auto && from_id) {
+void test_enum(std::string const & name, auto && to_id, auto && from_id, auto max) {
 	std::cout << "\t\tVerifying correct " << name << ".\n";
-	for (auto const original : containers::enum_range<Enum>()) {
+	for (auto const original : containers::enum_range(max)) {
 		auto const id = to_id(original);
 		auto const result = from_id(id);
 		if (original != result) {
@@ -76,30 +75,16 @@ void test_move() {
 	}
 }
 
-void test_species() {
-	std::cout << "\t\tVerifying correct species.\n";
-	for (auto const original : containers::enum_range<Species>()) {
-		if (original == Species::Victini) {
-			break;
-		}
-		auto const ids = species_to_id(original);
-		auto const result = id_to_species(ids);
-		if (original != result) {
-			throw InvalidSimulatorConversion(original, result);
-		}
-	}
-}
-
 }	// namespace
 
 void test_conversions () {
 	std::cout << "\tRunning Pokemon Online conversion tests.\n";
-	test_enum<Ability>("Ability", ability_to_id, id_to_ability);
-	test_enum<Gender>("Gender", gender_to_id, id_to_gender);
+	test_enum("Ability", ability_to_id, id_to_ability, Ability::Bad_Dreams);
+	test_enum("Gender", gender_to_id, id_to_gender, bounded::max_value<Gender>);
 	test_item();
 	test_move();
-	test_enum<Nature>("Nature", nature_to_id, id_to_nature);
-	test_species();
+	test_enum("Nature", nature_to_id, id_to_nature, bounded::max_value<Nature>);
+	test_enum("Species", species_to_id, id_to_species, Species::Arceus);
 }
 
 }	// namespace po

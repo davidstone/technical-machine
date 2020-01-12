@@ -28,6 +28,7 @@
 
 #include <tm/stat/stat.hpp>
 
+#include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 
 #include <bounded/assert.hpp>
@@ -55,7 +56,7 @@ struct InvalidFormeID : std::runtime_error {
 
 struct UnsupportedSpecies : std::runtime_error {
 	explicit UnsupportedSpecies(Species const species):
-		std::runtime_error(std::string(to_string(species)) + " not supported in Pokemon online.")
+		std::runtime_error(std::string(to_string(species)) + " not supported in Pokemon Online.")
 	{
 	}
 };
@@ -1180,7 +1181,7 @@ Ability id_to_ability(AbilityID const id) {
 		case 28: return Ability::Synchronize;
 		case 29: return Ability::Clear_Body;
 		case 30: return Ability::Natural_Cure;
-		case 31: return Ability::Lightningrod;
+		case 31: return Ability::Lightning_Rod;
 		case 32: return Ability::Serene_Grace;
 		case 33: return Ability::Swift_Swim;
 		case 34: return Ability::Chlorophyll;
@@ -1330,7 +1331,7 @@ AbilityID ability_to_id(Ability const ability) {
 		case Ability::Klutz: return 103_bi;
 		case Ability::Leaf_Guard: return 102_bi;
 		case Ability::Levitate: return 26_bi;
-		case Ability::Lightningrod: return 31_bi;
+		case Ability::Lightning_Rod: return 31_bi;
 		case Ability::Limber: return 7_bi;
 		case Ability::Liquid_Ooze: return 64_bi;
 		case Ability::Magic_Guard: return 98_bi;
@@ -1405,6 +1406,7 @@ AbilityID ability_to_id(Ability const ability) {
 		case Ability::Water_Veil: return 41_bi;
 		case Ability::White_Smoke: return 73_bi;
 		case Ability::Wonder_Guard: return 25_bi;
+		default: throw std::runtime_error(std::string(to_string(ability)) + " not supported in Pokemon Online");
 	}
 }
 
