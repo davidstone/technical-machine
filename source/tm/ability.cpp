@@ -70,6 +70,38 @@ constexpr auto blocks_intimidate(Generation const generation, Ability const abil
 	}
 }
 
+constexpr auto traceable(Generation const generation, Ability const ability) {
+	switch (ability) {
+		case Ability::Multitype:
+		case Ability::Illusion:
+		case Ability::Zen_Mode:
+		case Ability::Imposter:
+		case Ability::Stance_Change:
+		case Ability::Power_of_Alchemy:
+		case Ability::Receiver:
+		case Ability::Schooling:
+		case Ability::Comatose:
+		case Ability::Shields_Down:
+		case Ability::Disguise:
+		case Ability::RKS_System:
+		case Ability::Battle_Bond:
+		case Ability::Power_Construct:
+		case Ability::Gulp_Missile:
+		case Ability::Ice_Face:
+		case Ability::Neutralizing_Gas:
+		case Ability::Hunger_Switch:
+			return false;
+		case Ability::Trace:
+			return generation <= Generation::three;
+		case Ability::Forecast:
+			return generation <= Generation::three;
+		case Ability::Flower_Gift:
+			return generation <= Generation::four;
+		default:
+			return true;
+	}
+}
+
 } // namespace
 
 void activate_ability_on_switch(Generation const generation, MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather) {
@@ -113,8 +145,13 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 		case Ability::Snow_Warning:
 			weather.activate_hail_from_ability(generation, extends_hail(switcher.item(generation, weather)));
 			break;
-		case Ability::Trace:
+		case Ability::Trace: {
+			auto const other_ability = other.ability();
+			if (traceable(generation, other_ability)) {
+				switcher.set_ability(other_ability);
+			}
 			break;
+		}
 		default:
 			break;
 	}

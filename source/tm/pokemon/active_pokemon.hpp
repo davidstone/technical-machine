@@ -459,12 +459,15 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.moved = true;
 	}
 
-	auto set_base_ability(Ability const ability) const {
-		m_pokemon.set_initial_ability(ability);
+	auto set_ability(Ability const ability) const {
 		m_flags.ability = ability;
 	}
+	auto set_base_ability(Ability const ability) const {
+		m_pokemon.set_initial_ability(ability);
+		set_ability(ability);
+	}
 	auto set_ability_to_base_ability() const {
-		m_flags.ability = m_pokemon.initial_ability();
+		set_ability(m_pokemon.initial_ability());
 	}
 
 	auto activate_aqua_ring() const {
