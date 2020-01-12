@@ -43,7 +43,7 @@ bool blocks_switching(Generation const generation, Ability const ability, Active
 	};
 	switch (ability) {
 		case Ability::Shadow_Tag:
-			return (generation <= Generation::three or get_ability(switcher) != Ability::Shadow_Tag) and !ghost_immunity();
+			return (generation <= Generation::three or switcher.ability() != Ability::Shadow_Tag) and !ghost_immunity();
 		case Ability::Arena_Trap:
 			return grounded(generation, switcher, weather) and !ghost_immunity();
 		case Ability::Magnet_Pull:
@@ -73,7 +73,7 @@ constexpr auto blocks_intimidate(Generation const generation, Ability const abil
 } // namespace
 
 void activate_ability_on_switch(Generation const generation, MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather) {
-	auto const switcher_ability = get_ability(switcher);
+	auto const switcher_ability = switcher.ability();
 	switch (switcher_ability) {
 		case Ability::Download: {
 			// Move is irrelevant here
@@ -92,7 +92,7 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 		case Ability::Forecast:	// TODO: fix this
 			break;
 		case Ability::Intimidate: {
-			if (blocks_intimidate(generation, get_ability(other))) {
+			if (blocks_intimidate(generation, other.ability())) {
 				break;
 			}
 			auto & attack = other.stage()[StatNames::ATK];

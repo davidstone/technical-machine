@@ -47,7 +47,7 @@ auto to_packed_format(Team const & team) -> containers::string {
 		result += "||";
 		result += to_string(pokemon.unmodified_item());
 		result += '|';
-		result += to_string(get_ability(pokemon));
+		result += to_string(pokemon.initial_ability());
 		result += '|';
 		auto const moves = regular_moves(pokemon);
 		for (auto it = begin(moves); it != end(moves); ++it) {

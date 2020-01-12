@@ -42,8 +42,8 @@ auto would_switch_to_different_pokemon(PokemonCollection const & collection, Mov
 	return to_replacement(move) != collection.index();
 }
 
-auto is_blocked_from_switching(Generation const generation, ActivePokemon const user, Pokemon const & other, Weather const weather) {
-	auto const block_attempted = blocks_switching(generation, get_ability(other), user, weather) or user.trapped();
+auto is_blocked_from_switching(Generation const generation, ActivePokemon const user, ActivePokemon const other, Weather const weather) {
+	auto const block_attempted = blocks_switching(generation, other.ability(), user, weather) or user.trapped();
 	auto const result = block_attempted and !allows_switching(user.item(generation, weather));
 	return result;
 }

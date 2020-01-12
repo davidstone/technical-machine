@@ -43,7 +43,7 @@ auto move_can_miss(ActivePokemon const user, BaseAccuracy const base_accuracy, A
 	// TODO: Steamroller / Stomp + Minimize in Generation 6+ cannot miss
 	return
 		static_cast<bool>(base_accuracy) and
-		!cannot_miss(get_ability(user)) and
+		!cannot_miss(user.ability()) and
 		!cannot_miss(target_ability) and
 		!user.locked_on();
 }
@@ -62,7 +62,7 @@ auto ability_accuracy_modifier(ActivePokemon const user, Moves const move) {
 		bounded::integer<1, 13>,
 		bounded::integer<1, 10>
 	>;
-	switch (get_ability(user)) {
+	switch (user.ability()) {
 		case Ability::Compound_Eyes: return Modifier(13_bi, 10_bi);
 		case Ability::Hustle: return is_physical(move) ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
 		default: return Modifier(1_bi, 1_bi);
@@ -87,7 +87,7 @@ auto ability_evasion_modifier(ActivePokemon const target, Ability const user_abi
 		bounded::integer<1, 4>,
 		bounded::integer<1, 5>
 	>;
-	auto const target_ability = get_ability(target);
+	auto const target_ability = target.ability();
 	auto const blocks_weather = weather_is_blocked_by_ability(target_ability, user_ability);
 	switch (target_ability) {
 		case Ability::Sand_Veil: return weather.sand(blocks_weather) ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
@@ -101,7 +101,7 @@ auto ability_evasion_modifier(ActivePokemon const target, Ability const user_abi
 
 auto chance_to_hit(Generation const generation, ActivePokemon const user, Moves const move, ActivePokemon const target, Weather const weather, bool target_moved) -> ChanceToHit {
 	auto const base_accuracy = accuracy(generation, move);
-	auto const target_ability = get_ability(target);
+	auto const target_ability = target.ability();
 	if (!move_can_miss(user, base_accuracy, target_ability)) {
 		return 1.0;
 	}
@@ -114,7 +114,7 @@ auto chance_to_hit(Generation const generation, ActivePokemon const user, Moves 
 		accuracy_item_modifier(user.item(generation, weather), target_moved) *
 		ability_accuracy_modifier(user, move) *
 		evasion_item_modifier(generation, target.item(generation, weather)) *
-		ability_evasion_modifier(target, get_ability(user), weather) *
+		ability_evasion_modifier(target, user.ability(), weather) *
 		gravity_multiplier
 	;
 	

@@ -93,7 +93,7 @@ struct ActiveStatus {
 		m_nightmare = true;
 	}
 
-	auto end_of_turn(Generation, MutableActivePokemon pokemon, Pokemon const & other, Weather, bool uproar) & -> void;
+	auto end_of_turn(Generation, MutableActivePokemon pokemon, ActivePokemon const other, Weather, bool uproar) & -> void;
 private:
 	// The discriminator is the status of the active Pokemon. The default value
 	// is irrelevant.
@@ -211,6 +211,10 @@ public:
 		return m_flags.substitute;
 	}
 
+	auto ability() const {
+		return m_pokemon.initial_ability();
+	}
+
 	auto aqua_ring_is_active() const -> bool {
 		return m_flags.aqua_ring;
 	}
@@ -292,7 +296,7 @@ public:
 	}
 
 	auto is_loafing() const -> bool {
-		return get_ability(m_pokemon) == Ability::Truant and m_flags.is_loafing_turn;
+		return ability() == Ability::Truant and m_flags.is_loafing_turn;
 	}
 
 	auto locked_on() const -> bool {
@@ -464,7 +468,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 	auto use_charge_up_move() const -> void;
 	auto confuse(Generation const generation, Weather const weather) const -> void {
-		if (blocks_confusion(get_ability(*this))) {
+		if (blocks_confusion(ability())) {
 			return;
 		}
 		if (clears_confusion(item(generation, weather))) {
@@ -612,7 +616,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.partial_trap.damage(generation, *this, weather);
 	}
 	auto try_activate_perish_song() const {
-		if (!blocks_sound_moves(get_ability(*this))) {
+		if (!blocks_sound_moves(ability())) {
 			m_flags.perish_song.activate();
 		}
 	}
@@ -640,7 +644,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 
 	auto apply_status(Generation, Statuses, MutableActivePokemon user, Weather, bool uproar = false) const -> void;
 	auto rest(Generation, Weather, bool other_is_uproaring) const -> void;
-	auto end_of_turn_status(Generation const generation, Pokemon const & other, Weather const weather, bool const uproar) const {
+	auto end_of_turn_status(Generation const generation, ActivePokemon const other, Weather const weather, bool const uproar) const {
 		m_flags.status.end_of_turn(generation, *this, other, weather, uproar);
 	}
 	auto clear_status() const -> void {
@@ -648,6 +652,10 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_pokemon.set_status(status);
 		m_flags.status.set(status);
 	}
+	auto advance_status_from_move(bool const clear_status) & {
+		m_pokemon.advance_status_from_move(ability(), clear_status);
+	}
+
 	
 	auto increment_stockpile() const -> void {
 		bool const increased = m_flags.stockpile.increment();
@@ -673,7 +681,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		}
 	}
 	auto switch_out() const {
-		if (clears_status_on_switch(get_ability(*this))) {
+		if (clears_status_on_switch(ability())) {
 			clear_status();
 		}
 		m_flags.reset_switch();

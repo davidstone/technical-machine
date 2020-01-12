@@ -35,24 +35,24 @@ namespace technicalmachine {
 template struct ActivePokemonImpl<true>;
 template struct ActivePokemonImpl<false>;
 
-auto ActiveStatus::end_of_turn(Generation const generation, MutableActivePokemon pokemon, Pokemon const & other, Weather const weather, bool const uproar) & -> void {
+auto ActiveStatus::end_of_turn(Generation const generation, MutableActivePokemon pokemon, ActivePokemon const other, Weather const weather, bool const uproar) & -> void {
 	switch (get_status(pokemon).name()) {
 		case Statuses::clear:
 		case Statuses::freeze:
 		case Statuses::paralysis:
 			return;
 		case Statuses::burn: {
-			auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(get_ability(pokemon)), 16_bi, 8_bi);
+			auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(pokemon.ability()), 16_bi, 8_bi);
 			heal(generation, pokemon, weather, rational(-1_bi, denominator));
 			return;
 		}
 		case Statuses::poison: {
-			auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(get_ability(pokemon)), 1_bi, -1_bi);
+			auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(pokemon.ability()), 1_bi, -1_bi);
 			heal(generation, pokemon, weather, rational(numerator, 8_bi));
 			return;
 		}
 		case Statuses::toxic: {
-			if (absorbs_poison_damage(get_ability(pokemon))) {
+			if (absorbs_poison_damage(pokemon.ability())) {
 				heal(generation, pokemon, weather, rational(1_bi, 8_bi));
 			} else {
 				heal(generation, pokemon, weather, rational(-m_toxic_counter, 16_bi));
@@ -69,7 +69,7 @@ auto ActiveStatus::end_of_turn(Generation const generation, MutableActivePokemon
 			if (m_nightmare) {
 				heal(generation, pokemon, weather, rational(-1_bi, 4_bi));
 			}
-			if (harms_sleepers(get_ability(other))) {
+			if (harms_sleepers(other.ability())) {
 				heal(generation, pokemon, weather, rational(-1_bi, 8_bi));
 			}
 			return;
@@ -190,7 +190,7 @@ auto grounded(Generation const generation, ActivePokemon const pokemon, Weather 
 	return
 		!(
 			is_type(pokemon, Type::Flying) or
-			is_immune_to_ground(get_ability(pokemon)) or
+			is_immune_to_ground(pokemon.ability()) or
 			pokemon.magnet_rise().is_active() or
 			pokemon.item(generation, weather) == Item::Air_Balloon
 		) or
@@ -214,7 +214,7 @@ auto MutableActivePokemon::attract(Generation const generation, MutableActivePok
 				break;
 		}
 	};
-	auto const ability_cures_attract = get_ability(*this) == Ability::Oblivious;
+	auto const ability_cures_attract = ability() == Ability::Oblivious;
 	if (generation <= Generation::four) {
 		if (!ability_cures_attract) {
 			m_flags.attracted = true;
@@ -393,10 +393,10 @@ auto MutableActivePokemon::direct_damage(Generation const generation, Moves cons
 
 namespace {
 
-auto status_can_apply(Statuses const status, Pokemon const user, ActivePokemon const target, Weather const weather, bool const uproar) {
+auto status_can_apply(Statuses const status, ActivePokemon const user, ActivePokemon const target, Weather const weather, bool const uproar) {
 	return
 		is_clear(get_status(target)) and
-		!blocks_status(get_ability(target), get_ability(user), status, weather) and
+		!blocks_status(target.ability(), user.ability(), status, weather) and
 		!containers::any(target.types(), [=](Type const type) { return blocks_status(type, status); }) and
 		(!uproar or (status != Statuses::sleep and status != Statuses::rest));
 }
@@ -427,7 +427,7 @@ auto MutableActivePokemon::apply_status(Generation const generation, Statuses co
 	}
 	set_status(generation, status, weather);
 	auto const reflected = reflected_status(status);
-	if (reflected and reflects_status(get_ability(*this))) {
+	if (reflected and reflects_status(ability())) {
 		apply_status_to_self(generation, *reflected, user, weather, uproar);
 	}
 }
@@ -436,8 +436,7 @@ auto MutableActivePokemon::rest(Generation const generation, Weather const weath
 	if (other_is_uproaring or is_sleeping(get_status(m_pokemon))) {
 		return;
 	}
-	auto const ability = get_ability(m_pokemon);
-	if (blocks_status(ability, ability, Statuses::rest, weather)) {
+	if (blocks_status(ability(), ability(), Statuses::rest, weather)) {
 		return;
 	}
 	auto const hp = get_hp(m_pokemon);
@@ -473,7 +472,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 	};
 
 	auto stat_boost_berry = [&](StatNames const stat) {
-		auto const threshold = BOUNDED_CONDITIONAL(get_ability(*this) == Ability::Gluttony, rational(1_bi, 2_bi), rational(1_bi, 4_bi));
+		auto const threshold = BOUNDED_CONDITIONAL(ability() == Ability::Gluttony, rational(1_bi, 2_bi), rational(1_bi, 4_bi));
 		if (current_hp > threshold) {
 			return;
 		}

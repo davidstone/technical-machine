@@ -31,7 +31,7 @@ auto ActualDamage::value(Generation const generation, Team const & user, Execute
 		auto const no_damage =
 			!is_damaging(move.name) or
 			(other.pokemon().substitute() and damage_blocked_by_substitute(generation, move.name)) or
-			will_be_recharge_turn(user.pokemon(), move.name, get_ability(other.pokemon()), weather);
+			will_be_recharge_turn(user.pokemon(), move.name, other.pokemon().ability(), weather);
 		return no_damage ? 0_bi : calculate_damage(generation, user, move, move_weakened_from_item, other, other_move, weather);
 	};
 

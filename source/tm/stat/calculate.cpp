@@ -106,7 +106,7 @@ auto pinch_ability_activates(Generation const generation, Type const ability_typ
 }
 
 bool boosts_special_attack(Generation const generation, ActivePokemon const pokemon, Moves const move, Ability const other_ability, Weather const weather) {
-	auto const ability = get_ability(pokemon);
+	auto const ability = pokemon.ability();
 	auto pinch_ability = [&](Type const type) {
 		return pinch_ability_activates(generation, type, pokemon, move);
 	};
@@ -129,7 +129,7 @@ template<StatNames stat>
 auto ability_modifier(Generation const generation, ActivePokemon const pokemon, Moves const move, Ability const other_ability, Weather const weather) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = [&]{
-		auto const ability = get_ability(pokemon);
+		auto const ability = pokemon.ability();
 		if constexpr (stat == StatNames::ATK) {
 			return [&]() -> bounded::integer<1, 4> {
 				auto pinch_ability = [&](Type const type) {
@@ -339,7 +339,7 @@ auto calculate_defense(Generation const generation, ActivePokemon const defender
 namespace {
 
 auto special_defense_sandstorm_boost(Generation const generation, ActivePokemon const defender, Ability const attacker_ability, Weather const weather) {
-	auto const blocks_weather = weather_is_blocked_by_ability(get_ability(defender), attacker_ability);
+	auto const blocks_weather = weather_is_blocked_by_ability(defender.ability(), attacker_ability);
 	return rational(BOUNDED_CONDITIONAL(is_type(defender, Type::Rock) and weather.sand(blocks_weather) and generation >= Generation::four, 3_bi, 2_bi), 2_bi);
 }
 
@@ -364,8 +364,8 @@ auto calculate_special_defense(Generation const generation, ActivePokemon const 
 
 namespace {
 
-auto paralysis_speed_divisor(Pokemon const & pokemon) {
-	return BOUNDED_CONDITIONAL(lowers_speed(get_status(pokemon), get_ability(pokemon)), 4_bi, 1_bi);
+auto paralysis_speed_divisor(ActivePokemon const pokemon) {
+	return BOUNDED_CONDITIONAL(lowers_speed(get_status(pokemon), pokemon.ability()), 4_bi, 1_bi);
 }
 
 auto tailwind_speed_multiplier(Team const & team) {
@@ -391,8 +391,8 @@ auto calculate_speed(Generation const generation, Team const & team, Ability con
 }
 
 auto Faster::before_trick_room(Generation const generation, Team const & team1, Team const & team2, Weather const weather) -> Faster {
-	auto const speed1 = calculate_speed(generation, team1, get_ability(team2.pokemon()), weather);
-	auto const speed2 = calculate_speed(generation, team2, get_ability(team1.pokemon()), weather);
+	auto const speed1 = calculate_speed(generation, team1, team2.pokemon().ability(), weather);
+	auto const speed2 = calculate_speed(generation, team2, team1.pokemon().ability(), weather);
 
 	return
 		speed1 > speed2 ? Faster(team1, team2) :

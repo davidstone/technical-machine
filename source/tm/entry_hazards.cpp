@@ -43,7 +43,7 @@ auto apply_toxic_spikes(Generation const generation, EntryHazards const & hazard
 }	// namespace
 
 auto apply(Generation const generation, EntryHazards & hazards, MutableActivePokemon switcher, Weather const weather) -> void {
-	if (blocks_secondary_damage(get_ability(switcher)) or switcher.item(generation, weather) == Item::Heavy_Duty_Boots)
+	if (blocks_secondary_damage(switcher.ability()) or switcher.item(generation, weather) == Item::Heavy_Duty_Boots)
 		return;
 
 	if (grounded(generation, switcher, weather)) {

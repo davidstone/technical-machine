@@ -129,7 +129,7 @@ auto score_pokemon(Evaluate const & evaluate, Generation const generation, Pokem
 	auto const types = PokemonTypes(generation, get_species(pokemon));
 	auto const grounded =
 		containers::any_equal(types, Type::Flying) or
-		is_immune_to_ground(get_ability(pokemon));
+		is_immune_to_ground(pokemon.initial_ability());
 	return
 		evaluate.members() +
 		hp_ratio(pokemon) * evaluate.hp() +

@@ -37,7 +37,7 @@ void heal(Generation const generation, MutableActivePokemon pokemon, Weather con
 	auto const hp_healed = hp.max() * scale;
 	if (scale > 0_bi) {
 		change_hp(generation, pokemon, weather, bounded::max(hp_healed, 1_bi));
-	} else if (!blocks_secondary_damage(get_ability(pokemon))) {
+	} else if (!blocks_secondary_damage(pokemon.ability())) {
 		change_hp(generation, pokemon, weather, bounded::min(hp_healed, -1_bi));
 	}
 }

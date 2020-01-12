@@ -90,7 +90,7 @@ auto is_immune_to_sandstorm(PokemonTypes const types) -> bool {
 }
 
 void weather_healing_ability(Generation const generation, MutableActivePokemon pokemon, Weather const weather, bool const ability_blocks_weather) {
-	switch (get_ability(pokemon)) {
+	switch (pokemon.ability()) {
 		case Ability::Dry_Skin:
 			if (weather.rain(ability_blocks_weather)) {
 				heal(generation, pokemon, weather, rational(1_bi, 8_bi));
@@ -119,7 +119,7 @@ void weather_healing_ability(Generation const generation, MutableActivePokemon p
 }
 
 void end_of_turn3(Generation const generation, MutableActivePokemon pokemon, ActivePokemon other, Weather const weather) {
-	auto const ability_blocks_weather = weather_is_blocked_by_ability(get_ability(pokemon), get_ability(other));
+	auto const ability_blocks_weather = weather_is_blocked_by_ability(pokemon.ability(), other.ability());
 	if (weather.hail(ability_blocks_weather) and !is_immune_to_hail(pokemon.types()))
 		heal(generation, pokemon, weather, rational(-1_bi, 16_bi));
 	if (weather.sand(ability_blocks_weather) and !is_immune_to_sandstorm(pokemon.types())) {
@@ -138,7 +138,7 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 	if (pokemon.aqua_ring_is_active()) {
 		heal(generation, pokemon, weather, rational(1_bi, 16_bi) * healing_multiplier(pokemon.item(generation, weather)));
 	}
-	if (!pokemon.switched_in_this_turn() and boosts_speed(get_ability(pokemon))) {
+	if (!pokemon.switched_in_this_turn() and boosts_speed(pokemon.ability())) {
 		pokemon.stage()[StatNames::SPE] += 1_bi;
 	} else if (flags.shed_skin) {
 		pokemon.clear_status();
@@ -158,7 +158,7 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 		heal(generation, pokemon, weather, rational(-1_bi, 8_bi));
 		if (get_hp(foe) != 0_bi) {
 			auto const hp_change = (initial - get_hp(pokemon).current()) * healing_multiplier(pokemon.item(generation, weather));
-			if (damages_leechers(get_ability(pokemon))) {
+			if (damages_leechers(pokemon.ability())) {
 				change_hp(generation, foe, weather, -hp_change);
 			} else {
 				change_hp(generation, foe, weather, hp_change);

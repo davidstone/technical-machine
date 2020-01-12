@@ -119,7 +119,7 @@ auto calculate_stab_boost(Ability const ability) {
 
 auto calculate_stab_modifier(ActivePokemon const attacker, Type const move_type) {
 	return BOUNDED_CONDITIONAL(is_type(attacker, move_type) and move_type != Type::Typeless,
-		calculate_stab_boost(get_ability(attacker)),
+		calculate_stab_boost(attacker.ability()),
 		rational(1_bi, 1_bi)
 	);
 }
@@ -143,17 +143,17 @@ auto level_multiplier(Pokemon const & attacker) -> decltype(get_level(attacker)(
 	return get_level(attacker)() * 2_bi / 5_bi;
 }
 
-auto weakening_from_status(Pokemon const & attacker) {
+auto weakening_from_status(ActivePokemon const attacker) {
 	return BOUNDED_CONDITIONAL(
-		weakens_physical_attacks(get_status(attacker)) and blocks_burn_damage_penalty(get_ability(attacker)),
+		weakens_physical_attacks(get_status(attacker)) and blocks_burn_damage_penalty(attacker.ability()),
 		2_bi,
 		1_bi
 	);
 }
 
 auto physical_vs_special_modifier(Generation const generation, ActivePokemon const attacker, Moves const move, ActivePokemon const defender, Weather const weather, bool const critical_hit) {
-	auto const attacker_ability = get_ability(attacker);
-	auto const defender_ability = get_ability(defender);
+	auto const attacker_ability = attacker.ability();
+	auto const defender_ability = defender.ability();
 	// For all integers a, b, and c:
 	// (a / b) / c == a / (b * c)
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
@@ -176,7 +176,7 @@ auto screen_divisor(Moves const move, Team const & defender, bool const critical
 auto critical_hit_multiplier(ActivePokemon const attacker, bool const critical_hit) {
 	return BOUNDED_CONDITIONAL(
 		!critical_hit, 1_bi,
-		BOUNDED_CONDITIONAL(boosts_critical_hits(get_ability(attacker)), 3_bi, 2_bi)
+		BOUNDED_CONDITIONAL(boosts_critical_hits(attacker.ability()), 3_bi, 2_bi)
 	);
 }
 
@@ -202,7 +202,7 @@ auto regular_damage(Generation const generation, Team const & attacker_team, Exe
 		move_power(generation, attacker_team, move, defender_team, weather) *
 		physical_vs_special_modifier(generation, attacker, move.name, defender, weather, move.critical_hit) /
 		screen_divisor(move.name, defender_team, move.critical_hit) *
-		calculate_weather_modifier(move_type, weather, weather_is_blocked_by_ability(get_ability(attacker), get_ability(defender))) *
+		calculate_weather_modifier(move_type, weather, weather_is_blocked_by_ability(attacker.ability(), defender.ability())) *
 		calculate_flash_fire_modifier(attacker, move_type) +
 		2_bi;
 
@@ -213,9 +213,9 @@ auto regular_damage(Generation const generation, Team const & attacker_team, Exe
 		attacker.random_damage_multiplier() *
 		calculate_stab_modifier(attacker, move_type) *
 		effectiveness *
-		calculate_ability_effectiveness_modifier(get_ability(defender), effectiveness) *
+		calculate_ability_effectiveness_modifier(defender.ability(), effectiveness) *
 		calculate_expert_belt_modifier(attacker.item(generation, weather), effectiveness) *
-		tinted_lens_multiplier(get_ability(attacker), effectiveness) /
+		tinted_lens_multiplier(attacker.ability(), effectiveness) /
 		resistance_berry_divisor(move_weakened_from_item)
 	);
 }
@@ -239,7 +239,7 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 		case Moves::Guillotine:
 		case Moves::Horn_Drill:
 		case Moves::Sheer_Cold:
-			return BOUNDED_CONDITIONAL(get_ability(defender) == Ability::Sturdy, 0_bi, get_hp(defender).max());
+			return BOUNDED_CONDITIONAL(defender.ability() == Ability::Sturdy, 0_bi, get_hp(defender).max());
 		case Moves::Metal_Burst:
 			return attacker.direct_damage_received() * 3_bi / 2_bi;
 		case Moves::Mirror_Coat:

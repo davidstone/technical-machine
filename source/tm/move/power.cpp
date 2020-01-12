@@ -65,8 +65,8 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Wring_Out:
 			return bounded::integer<1, 121>(120_bi * hp_ratio(defender) + 1_bi, bounded::non_check);
 		case Moves::Electro_Ball: {
-			auto const defender_speed = calculate_speed(generation, defender_team, get_ability(attacker), weather);
-			auto const attacker_speed = calculate_speed(generation, attacker_team, get_ability(defender), weather);
+			auto const defender_speed = calculate_speed(generation, defender_team, attacker.ability(), weather);
+			auto const attacker_speed = calculate_speed(generation, attacker_team, defender.ability(), weather);
 			auto const quotient = attacker_speed / defender_speed;
 			if (quotient >= 4_bi) { return 150_bi; }
 			else if (quotient == 3_bi) { return 120_bi; }
@@ -97,8 +97,8 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Low_Kick:
 			return BOUNDED_CONDITIONAL(generation <= Generation::two, 50_bi, power_of_mass_based_moves(get_species(defender)));
 		case Moves::Gyro_Ball: {
-			auto const defender_speed = calculate_speed(generation, defender_team, get_ability(attacker), weather);
-			auto const attacker_speed = calculate_speed(generation, attacker_team, get_ability(defender), weather);
+			auto const defender_speed = calculate_speed(generation, defender_team, attacker.ability(), weather);
+			auto const attacker_speed = calculate_speed(generation, attacker_team, defender.ability(), weather);
 			auto const uncapped_power = 25_bi * defender_speed / attacker_speed + 1_bi;
 			return bounded::min(uncapped_power, 150_bi);
 		}
@@ -165,14 +165,14 @@ auto doubling(ActivePokemon const attacker, Moves const move, ActivePokemon cons
 		case Moves::Smelling_Salts:
 			return boosts_smellingsalt(get_status(defender));
 		case Moves::Solar_Beam:
-			return !weather.rain(weather_is_blocked_by_ability(get_ability(attacker), get_ability(defender)));
+			return !weather.rain(weather_is_blocked_by_ability(attacker.ability(), defender.ability()));
 		case Moves::Steamroller:
 		case Moves::Stomp:
 			return defender.minimized();
 		case Moves::Wake_Up_Slap:
 			return is_sleeping(get_status(defender));
 		case Moves::Weather_Ball: {
-			auto const blocks_weather = weather_is_blocked_by_ability(get_ability(attacker), get_ability(defender));
+			auto const blocks_weather = weather_is_blocked_by_ability(attacker.ability(), defender.ability());
 			return weather.hail(blocks_weather) or weather.rain(blocks_weather) or weather.sand(blocks_weather) or weather.sun(blocks_weather);
 		}
 		default:
@@ -362,11 +362,11 @@ bool is_boosted_by_reckless(Moves const move) {
 	}
 }
 
-auto attacker_ability_power_modifier(Generation const generation, Pokemon const & attacker, Moves const move, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
+auto attacker_ability_power_modifier(Generation const generation, ActivePokemon const attacker, Moves const move, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
 	auto pinch_ability_activates = [&](Type const type) {
 		return generation <= Generation::four and get_type(generation, move, get_hidden_power(attacker).type()) == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
 	};
-	switch (get_ability(attacker)) {
+	switch (attacker.ability()) {
 		case Ability::Technician:
 			return rational(BOUNDED_CONDITIONAL(base_power <= 60_bi, 3_bi, 2_bi), 2_bi);
 		case Ability::Blaze:
@@ -411,7 +411,7 @@ auto move_power(Generation const generation, Team const & attacker_team, Execute
 		BOUNDED_CONDITIONAL(attacker.charge_boosted(move_type), 2_bi, 1_bi) /
 		BOUNDED_CONDITIONAL(defender.sport_is_active(move_type), 2_bi, 1_bi) *
 		attacker_ability_power_modifier(generation, attacker, move.name, defender, base_power) *
-		defender_ability_modifier(move_type, get_ability(defender))
+		defender_ability_modifier(move_type, defender.ability())
 	));
 }
 

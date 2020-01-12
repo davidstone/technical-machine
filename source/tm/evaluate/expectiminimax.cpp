@@ -385,9 +385,9 @@ auto execute_move(Generation const generation, Team const & user, SelectedAndExe
 	auto const other_pokemon = other.pokemon();
 	auto const variables = all_probabilities(move.executed, other.size());
 	auto const status = get_status(user_pokemon);
-	auto const probability_of_clearing_status = status.probability_of_clearing(get_ability(user_pokemon));
+	auto const probability_of_clearing_status = status.probability_of_clearing(user_pokemon.ability());
 	auto const specific_chance_to_hit = chance_to_hit(generation, user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());
-	auto const move_can_critical_hit = can_critical_hit(generation, move.executed, get_ability(other.pokemon()));
+	auto const move_can_critical_hit = can_critical_hit(generation, move.executed, other.pokemon().ability());
 	return generic_flag_branch(probability_of_clearing_status, [&](bool const clear_status) {
 		return generic_flag_branch(specific_chance_to_hit, [&](bool const hits) {
 			auto score = 0.0;
@@ -433,8 +433,8 @@ auto use_move_branch_inner(Moves const first_used_move) {
 		BOUNDED_ASSERT_OR_ASSUME(first_move == Moves::Pass);
 		return score_executed_moves(generation, last, last_move, first, first_used_move, weather, [&](Team const & updated_last, Team const & updated_first, Weather const updated_weather) {
 			auto shed_skin_probability = [&](bool const is_first) {
-				Pokemon const & pokemon = (is_first ? updated_first : updated_last).pokemon();
-				return can_clear_status(get_ability(pokemon), get_status(pokemon)) ? 0.3 : 0.0;
+				auto const pokemon = (is_first ? updated_first : updated_last).pokemon();
+				return can_clear_status(pokemon.ability(), get_status(pokemon)) ? 0.3 : 0.0;
 			};
 			auto const teams = Faster(generation, updated_first, updated_last, updated_weather);
 			return generic_flag_branch(shed_skin_probability, [&](bool const team_shed_skin, bool const other_shed_skin) {

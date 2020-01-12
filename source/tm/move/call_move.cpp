@@ -51,14 +51,14 @@ namespace {
 
 auto item_can_be_lost(Generation const generation, ActivePokemon const pokemon) {
 	return
-		get_ability(pokemon) != Ability::Sticky_Hold or
+		pokemon.ability() != Ability::Sticky_Hold or
 		(generation >= Generation::five and get_hp(pokemon).current() == 0_bi);
 }
 
 // I could potentially treat this as negative recoil
 auto absorb_hp(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather, HP::current_type const damage) -> void {
 	auto const absorbed = damage / 2_bi * healing_multiplier(user.item(generation, weather));
-	if (damages_leechers(get_ability(target))) {
+	if (damages_leechers(target.ability())) {
 		change_hp(generation, user, weather, -absorbed);
 	} else {
 		change_hp(generation, user, weather, absorbed);
@@ -90,7 +90,7 @@ auto can_confuse_with_chatter(Species const pokemon) {
 
 
 auto curse(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) {
-	if (is_type(user, Type::Ghost) and !blocks_secondary_damage(get_ability(user))) {
+	if (is_type(user, Type::Ghost) and !blocks_secondary_damage(user.ability())) {
 		if (!target.is_cursed()) {
 			user.indirect_damage(generation, weather, get_hp(user).max() / 2_bi);
 			target.curse();
@@ -156,7 +156,7 @@ auto item_can_be_incinerated(Generation const generation, ActivePokemon const ta
 
 
 void recoil(Generation const generation, MutableActivePokemon user, Weather const weather, HP::current_type const damage, bounded::checked_integer<1, 4> const denominator) {
-	if (!blocks_recoil(get_ability(user))) {
+	if (!blocks_recoil(user.ability())) {
 		change_hp(generation, user, weather, -bounded::max(damage / denominator, 1_bi));
 	}
 }
@@ -184,7 +184,7 @@ auto equalize_hp(Generation const generation, MutableActivePokemon lhs, MutableA
 
 
 auto active_pokemon_can_be_phazed(Team const & team) {
-	return !team.pokemon().ingrained() and !blocks_phazing(get_ability(team.pokemon())) and size(team.all_pokemon()) > 1_bi;
+	return !team.pokemon().ingrained() and !blocks_phazing(team.pokemon().ability()) and size(team.all_pokemon()) > 1_bi;
 }
 
 auto phaze(Generation const generation, MutableActivePokemon user, Team & target, Weather & weather, Variable const variable) {
@@ -636,7 +636,11 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Heal_Bell:
 			cure_all_status(user_team, [=](Pokemon const & pokemon) {
-				return generation == Generation::five or !blocks_sound_moves(get_ability(pokemon));
+				auto ability = [&]{
+					auto const is_active = std::addressof(pokemon) == std::addressof(static_cast<Pokemon const &>(user));
+					return is_active ? user.ability() : pokemon.initial_ability();
+				};
+				return generation == Generation::five or !blocks_sound_moves(ability());
 			});
 			break;
 		case Moves::Heal_Block:
@@ -764,7 +768,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 				using Denominator = bounded::integer<2, 4>;
 				using Result = rational<Numerator, Denominator>;
 				
-				auto const blocks_weather = weather_is_blocked_by_ability(get_ability(user), get_ability(other.pokemon()));
+				auto const blocks_weather = weather_is_blocked_by_ability(user.ability(), other.pokemon().ability());
 				if (weather.sun(blocks_weather)) {
 					return Result(2_bi, 3_bi);
 				} else if (weather.hail(blocks_weather) or weather.rain(blocks_weather) or weather.sand(blocks_weather)) {
@@ -923,7 +927,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Solar_Beam:
 			// TODO: Support Power Herb
-			if (will_be_recharge_turn(user, move.name, get_ability(other.pokemon()), weather)) {
+			if (will_be_recharge_turn(user, move.name, other.pokemon().ability(), weather)) {
 				user.use_charge_up_move();
 			}
 			break;
@@ -1352,7 +1356,7 @@ auto activate_pp_restore_berry(Generation const generation, Move & move, Mutable
 
 auto flash_fire_activates(Generation const generation, Moves const move, Type const move_type, ActivePokemon const target) -> bool {
 	return
-		get_ability(target) == Ability::Flash_Fire and
+		target.ability() == Ability::Flash_Fire and
 		move_type == Type::Fire and
 		(generation >= Generation::four or move != Moves::Will_O_Wisp) and
 		(generation >= Generation::five or get_status(target).name() != Statuses::freeze);
@@ -1369,7 +1373,7 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 	auto other_pokemon = other.pokemon();
 	user_pokemon.update_before_move();
 	if (!is_switch(move.selected)) {
-		advance_status_from_move(user_pokemon, clear_status);
+		user_pokemon.advance_status_from_move(clear_status);
 	}
 	// Need the side-effect from recharge
 	auto const is_recharging = user_pokemon.recharge();
@@ -1378,7 +1382,7 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 	}
 	user_pokemon.handle_confusion();
 	if (move.executed != Moves::Hit_Self and user_pokemon.flinched()) {
-		if (boosts_speed_when_flinched(get_ability(user_pokemon))) {
+		if (boosts_speed_when_flinched(user_pokemon.ability())) {
 			user_pokemon.stage()[StatNames::SPE] += 1_bi;
 		}
 	}
@@ -1386,7 +1390,7 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 		return;
 	}
 	
-	auto const other_ability = get_ability(other_pokemon);
+	auto const other_ability = other_pokemon.ability();
 
 	if (is_regular(move.selected) and move.executed != Moves::Hit_Self and !user_pokemon.is_locked_in_by_move()) {
 		auto & move_ref = find_regular_move(all_moves(user_pokemon).regular(), move.selected);

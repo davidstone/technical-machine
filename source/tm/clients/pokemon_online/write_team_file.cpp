@@ -75,7 +75,7 @@ void write_blank_stats (ptree & pt) {
 void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 	ptree & member = pt.add ("Pokemon", "");
 	member.put("<xmlattr>.Item", item_to_id(pokemon.unmodified_item()));
-	member.put("<xmlattr>.Ability", ability_to_id (get_ability(pokemon)));
+	member.put("<xmlattr>.Ability", ability_to_id (pokemon.initial_ability()));
 	auto const species = get_species(pokemon);
 	auto const po_species = species_to_id(species);
 	member.put("<xmlattr>.Num", po_species.id);

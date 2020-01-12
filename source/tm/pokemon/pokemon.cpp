@@ -102,7 +102,7 @@ containers::string to_string(Pokemon const pokemon) {
 		to_string(get_species(pokemon)),
 		std::string_view(" ("), std::string_view((boost::format("%.1f") % per_cent_hp).str()), std::string_view("% HP) @ "),
 		to_string(pokemon.unmodified_item()),
-		std::string_view("\n\tAbility: "), to_string(get_ability(pokemon)), std::string_view("\n"),
+		std::string_view("\n\tAbility: "), to_string(pokemon.initial_ability()), std::string_view("\n"),
 		(output_status ? containers::concatenate<containers::string>(std::string_view("\tStatus: "), to_string(get_status(pokemon).name()), std::string_view("\n")) : containers::string("")),
 		std::string_view("\tNature: "), to_string(get_nature(pokemon)),
 		std::string_view("\n\t"),

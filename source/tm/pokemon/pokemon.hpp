@@ -53,7 +53,6 @@ struct Pokemon {
 	// not found by lookup rules in that case.
 
 	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
-	friend Ability get_ability(Pokemon pokemon);
 	friend Gender get_gender(Pokemon pokemon);
 	friend Happiness get_happiness(Pokemon pokemon);
 	friend HiddenPower get_hidden_power(Pokemon pokemon);
@@ -67,7 +66,9 @@ struct Pokemon {
 		m_status = status;
 	}
 
-	friend void advance_status_from_move(Pokemon & pokemon, bool clear_status);
+	auto advance_status_from_move(Ability const ability, bool const clear_status) & {
+		m_status.advance_from_move(ability, clear_status);
+	}
 
 	auto has_been_seen() const -> bool {
 		return m_has_been_seen;
@@ -80,6 +81,10 @@ struct Pokemon {
 
 	void set_hp(auto const hp) & {
 		stats.hp() = hp;
+	}
+
+	auto initial_ability() const {
+		return m_ability;
 	}
 
 	auto item(Generation const generation, bool const embargo, bool const magic_room) const -> Item {
@@ -153,9 +158,6 @@ inline decltype(auto) regular_moves(Pokemon & pokemon) {
 	return all_moves(pokemon).regular();
 }
 
-inline Ability get_ability(Pokemon const pokemon) {
-	return pokemon.m_ability;
-}
 inline void set_ability(Pokemon & pokemon, Ability const ability) {
 	pokemon.m_ability = ability;
 	pokemon.m_ability_is_known = true;
@@ -216,10 +218,6 @@ inline auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, EV const e
 
 inline Status get_status(Pokemon const pokemon) {
 	return pokemon.m_status;
-}
-
-inline void advance_status_from_move(Pokemon & pokemon, bool const clear_status) {
-	pokemon.m_status.advance_from_move(get_ability(pokemon), clear_status);
 }
 
 inline Level get_level(Pokemon const pokemon) {
