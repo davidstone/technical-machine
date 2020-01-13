@@ -27,7 +27,6 @@ namespace technicalmachine {
 
 inline auto will_be_recharge_turn(ActivePokemon const user, Moves const move, Ability const other_ability, Weather const weather) {
 	auto const blocks_weather = weather_is_blocked_by_ability(user.ability(), other_ability);
-	// TODO: Support Power Herb
 	switch (move) {
 		case Moves::Solar_Beam: return !weather.sun(blocks_weather) and !user.is_charging_up();
 		default: return false;

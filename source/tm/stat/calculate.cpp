@@ -405,7 +405,6 @@ Faster::Faster(Generation const generation, Team const & team1, Team const & tea
 	if (!result) {
 		return;
 	}
-	// TODO: Handle Full_Incense, Lagging_Tail, and Stall
 	bounded::insert(m_teams, weather.trick_room() ? pair(result->second, result->first) : pair(result->first, result->second));
 }
 

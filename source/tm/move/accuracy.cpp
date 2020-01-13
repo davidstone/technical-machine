@@ -49,7 +49,7 @@ auto accuracy(Generation const generation, Moves const move) -> BaseAccuracy {
 		case Moves::Thunder_Punch: return 100_bi;
 		case Moves::Scratch: return 100_bi;
 		case Moves::Vice_Grip: return 100_bi;
-		case Moves::Guillotine: return 30_bi; // TODO: Fix
+		case Moves::Guillotine: return 30_bi;
 		case Moves::Razor_Wind: return BOUNDED_CONDITIONAL(generation <= Generation::two, 75_bi, 100_bi);
 		case Moves::Swords_Dance: return none;
 		case Moves::Cut: return 95_bi;
@@ -80,7 +80,7 @@ auto accuracy(Generation const generation, Moves const move) -> BaseAccuracy {
 		case Moves::Headbutt: return 100_bi;
 		case Moves::Horn_Attack: return 100_bi;
 		case Moves::Fury_Attack: return 85_bi;
-		case Moves::Horn_Drill: return 30_bi; // TODO: Fix
+		case Moves::Horn_Drill: return 30_bi;
 		case Moves::Tackle: return BOUNDED_CONDITIONAL(generation <= Generation::four, 95_bi, 100_bi);
 		case Moves::Body_Slam: return 100_bi;
 		case Moves::Wrap: return BOUNDED_CONDITIONAL(generation <= Generation::four, 85_bi, 90_bi);
@@ -148,7 +148,7 @@ auto accuracy(Generation const generation, Moves const move) -> BaseAccuracy {
 		case Moves::Thunder: return 70_bi;
 		case Moves::Rock_Throw: return BOUNDED_CONDITIONAL(generation == Generation::one, 65_bi, 90_bi);
 		case Moves::Earthquake: return 100_bi;
-		case Moves::Fissure: return 30_bi; // TODO: Fix
+		case Moves::Fissure: return 30_bi;
 		case Moves::Dig: return 100_bi;
 		case Moves::Toxic: return BOUNDED_CONDITIONAL(generation <= Generation::four, 85_bi, 90_bi);
 		case Moves::Confusion: return 100_bi;

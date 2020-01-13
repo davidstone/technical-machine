@@ -376,7 +376,7 @@ constexpr auto get_priority(Generation const generation, Moves const move) {
 		case Generation::five: return gen_five_priority(move);
 		case Generation::six: return gen_six_priority(move);
 		case Generation::seven: return gen_seven_priority(move);
-		case Generation::eight: return gen_seven_priority(move); // TODO	
+		case Generation::eight: return gen_seven_priority(move);
 	}
 }
 

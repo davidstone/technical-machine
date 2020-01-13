@@ -513,7 +513,6 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			confusion_berry(StatNames::DEF);
 			break;
 		case Item::Lansat_Berry:
-			// TODO: Raise CH rate
 			consume();
 			break;
 		case Item::Liechi_Berry:

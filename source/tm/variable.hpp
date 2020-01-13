@@ -69,7 +69,6 @@ struct Variable {
 		}
 	}
 
-	// TODO: Handle Fangs
 	constexpr auto set_flinch(bool const set = true) {
 		m_value = BOUNDED_CONDITIONAL(set, 1_bi, 0_bi);
 	}
@@ -111,7 +110,6 @@ struct Variable {
 				case Moves::Fire_Fang:
 				case Moves::Ice_Fang:
 				case Moves::Thunder_Fang:
-					// TODO: Handle flinch
 					return 1_bi;
 				default:
 					return 1_bi;

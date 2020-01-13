@@ -778,7 +778,7 @@ inline auto shift_status(Generation const generation, MutableActivePokemon user,
 		case Statuses::burn:
 		case Statuses::paralysis:
 		case Statuses::poison:
-		case Statuses::toxic: // TODO: How does Toxic shift?
+		case Statuses::toxic:
 			target.apply_status(generation, status, user, weather);
 			break;
 		case Statuses::sleep:
@@ -788,7 +788,6 @@ inline auto shift_status(Generation const generation, MutableActivePokemon user,
 		default:
 			break;
 	}
-	// TODO: Does this clear status when the shift fails?
 	user.clear_status();
 }
 

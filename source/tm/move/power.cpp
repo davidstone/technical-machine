@@ -53,13 +53,11 @@ using namespace bounded::literal;
 
 auto power_of_mass_based_moves(Species species) -> bounded::integer<20, 120>;
 
-// TODO: Verify the behavior of these for other generations
 auto variable_adjusted_base_power(Generation const generation, Team const & attacker_team, ExecutedMove const move, Team const & defender_team, Weather const weather) -> VariableAdjustedBasePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	switch (move.name) {
 		case Moves::Beat_Up:
-			// TODO
 			return 1_bi;
 		case Moves::Crush_Grip:
 		case Moves::Wring_Out:
@@ -104,7 +102,6 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		}
 		case Moves::Heat_Crash:
 		case Moves::Heavy_Slam:
-			// TODO
 			return 1_bi;
 		case Moves::Ice_Ball:
 		case Moves::Rollout:

@@ -316,7 +316,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Sand_Tomb:
 		case Moves::Whirlpool:
 		case Moves::Wrap:
-			// TODO: Handle Grip_Claw
 			other.pokemon().partially_trap();
 			break;
 		case Moves::Blast_Burn:
@@ -337,7 +336,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Heat_Wave:
 		case Moves::Lava_Plume:
 		case Moves::Sacred_Fire:
-		case Moves::Scald: // TODO: Thaw frozen enemy
+		case Moves::Scald:
 		case Moves::Searing_Shot:
 			if (move.variable.effect_activates()) {
 				other.pokemon().apply_status(generation, Statuses::burn, user, weather);
@@ -388,7 +387,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 				other.pokemon().stage()[StatNames::SPE] += -1_bi;
 			}
 			break;
-		case Moves::Bug_Bite:			// Fix
+		case Moves::Bug_Bite:
 		case Moves::Pluck: {
 			auto const other_pokemon = other.pokemon();
 			if (item_can_be_lost(generation, other_pokemon)) {
@@ -446,9 +445,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 				other.pokemon().confuse(generation, weather);
 			}
 			break;
-		case Moves::Conversion:		// Fix
+		case Moves::Conversion:
 			break;
-		case Moves::Conversion_2:	// Fix
+		case Moves::Conversion_2:
 			break;
 		case Moves::Cosmic_Power:
 		case Moves::Defend_Order:
@@ -522,7 +521,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Dive:
 			user.dive(generation, weather);
 			break;
-		case Moves::Doom_Desire:	// Fix
+		case Moves::Doom_Desire:
 		case Moves::Future_Sight:
 			break;
 		case Moves::Double_Team:
@@ -592,13 +591,13 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Focus_Energy:
 			user.focus_energy();
 			break;
-		case Moves::Follow_Me:		// Fix
+		case Moves::Follow_Me:
 			break;
 		case Moves::Foresight:
 		case Moves::Odor_Sleuth:
 			other.pokemon().identify();
 			break;
-		case Moves::Gastro_Acid:		// Fix
+		case Moves::Gastro_Acid:
 			break;
 		case Moves::Glare:
 		case Moves::Stun_Spore:
@@ -615,7 +614,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Growth:
 			user.stage()[StatNames::SPA] += 1_bi;
 			break;
-		case Moves::Grudge:		// Fix
+		case Moves::Grudge:
 			break;
 		case Moves::Guard_Swap:
 			swap_defensive(user.stage(), other.pokemon().stage());
@@ -656,12 +655,12 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Soft_Boiled:
 			heal(generation, user, weather, rational(1_bi, 2_bi));
 			break;
-		case Moves::Healing_Wish:		// Fix
+		case Moves::Healing_Wish:
 			break;
 		case Moves::Heart_Swap:
 			std::swap(user.stage(), other.pokemon().stage());
 			break;
-		case Moves::High_Jump_Kick:		// Fix
+		case Moves::High_Jump_Kick:
 		case Moves::Jump_Kick:
 			break;
 		case Moves::Howl:
@@ -672,7 +671,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 				user.stage()[StatNames::ATK] += 1_bi;
 			}
 			break;
-		case Moves::Ice_Ball:		// Fix
+		case Moves::Ice_Ball:
 		case Moves::Rollout:
 			break;
 		case Moves::Ice_Fang:
@@ -735,9 +734,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Lucky_Chant:
 			user_team.screens.activate_lucky_chant();
 			break;
-		case Moves::Lunar_Dance:		// Fix
+		case Moves::Lunar_Dance:
 			break;
-		case Moves::Magic_Coat:		// Fix
+		case Moves::Magic_Coat:
 			break;
 		case Moves::Magic_Room:
 			weather.activate_magic_room();
@@ -745,15 +744,15 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Magnet_Rise:
 			user.activate_magnet_rise();
 			break;
-		case Moves::Me_First:		// Fix
+		case Moves::Me_First:
 			break;
 		case Moves::Memento:
 			boost_offensive(other.pokemon().stage(), -2_bi);
 			user.set_hp(generation, weather, 0_bi);
 			break;
-		case Moves::Mimic:		// Fix
+		case Moves::Mimic:
 			break;
-		case Moves::Miracle_Eye:		// Fix
+		case Moves::Miracle_Eye:
 			break;
 		case Moves::Mist:
 			user_team.screens.activate_mist();
@@ -839,7 +838,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 				user.stage()[stat] += 1_bi;
 			}
 			break;
-		case Moves::Rage:		// Fix
+		case Moves::Rage:
 			break;
 		case Moves::Rain_Dance:
 			weather.activate_rain_from_move(extends_rain(user.item(generation, weather)));
@@ -849,7 +848,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 				user_team.clear_field();
 			}
 			break;
-		case Moves::Razor_Wind:	// Fix
+		case Moves::Razor_Wind:
 			break;
 		case Moves::Recycle:
 			user.recycle_item();
@@ -867,7 +866,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Whirlwind:
 			phaze(generation, user, other, weather, move.variable);
 			break;
-		case Moves::Role_Play:		// Fix
+		case Moves::Role_Play:
 			break;
 		case Moves::Roost:
 			user.roost();
@@ -906,11 +905,11 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.stage()[StatNames::ATK] += 1_bi;
 			user.stage()[StatNames::SPE] += 2_bi;
 			break;
-		case Moves::Sketch:		// Fix
+		case Moves::Sketch:
 			break;
-		case Moves::Skill_Swap:		// Fix
+		case Moves::Skill_Swap:
 			break;
-		case Moves::Skull_Bash: // Fix
+		case Moves::Skull_Bash:
 			break;
 		case Moves::Sky_Attack:
 			if (move.variable.effect_activates()) {
@@ -926,10 +925,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Struggle_Bug:
 			other.pokemon().stage()[StatNames::SPA] -= 1_bi;
 			break;
-		case Moves::Snatch:	// Fix
+		case Moves::Snatch:
 			break;
 		case Moves::Solar_Beam:
-			// TODO: Support Power Herb
 			if (will_be_recharge_turn(user, move.name, other.pokemon().ability(), weather)) {
 				user.use_charge_up_move();
 			}
@@ -940,7 +938,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Spit_Up:
 			user.release_stockpile();
 			break;
-		case Moves::Spite:		// Fix
+		case Moves::Spite:
 			break;
 		case Moves::Stealth_Rock:
 			other.entry_hazards.add_stealth_rock();
@@ -1019,7 +1017,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Toxic_Spikes:
 			other.entry_hazards.add_toxic_spikes();
 			break;
-		case Moves::Transform:		// Fix
+		case Moves::Transform:
 			break;
 		case Moves::Tri_Attack:
 			if (auto const status = move.variable.tri_attack_status(); status != Statuses::clear) {
@@ -1061,7 +1059,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Wish:
 			user_team.wish.activate();
 			break;
-		case Moves::Worry_Seed:		// Fix
+		case Moves::Worry_Seed:
 			break;
 		case Moves::Yawn:
 			other.pokemon().hit_with_yawn();
@@ -1087,7 +1085,6 @@ auto do_effects_before_moving(Moves const move, MutableActivePokemon user, Team 
 }
 
 
-// TODO: Mold Breaker
 constexpr auto move_fails(Moves const move, bool const user_damaged, Ability const other_ability, OtherMove const other_move) {
 	switch (move) {
 		case Moves::Boomburst:
@@ -1127,12 +1124,6 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 			return false;
 	}
 }
-
-// TODO: This is probably duplicating some logic that I have elsewhere. For
-// instance, this also needs to check against things like Water Absorb
-// activating. I probably want to guard code that calls this with checking that
-// the move affected the Pokemon, rather than having this function try to guard
-// itself.
 
 // Returns whether the attack is weakened by the item
 auto activate_when_hit_item(Generation const generation, Moves const move, Type const move_type, MutableActivePokemon defender, Weather const weather, Effectiveness const effectiveness) -> bool {

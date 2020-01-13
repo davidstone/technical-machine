@@ -24,8 +24,6 @@
 
 namespace technicalmachine {
 
-// TODO: Get rid of the intermediate struct
-
 enum class Gender : uint8_t { female, genderless, male };
 
 } // namespace technicalmachine

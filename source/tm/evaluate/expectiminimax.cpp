@@ -59,9 +59,6 @@
 namespace technicalmachine {
 namespace {
 
-// TODO: Implement Focus_Band, Kings_Rock, Lucky_Punch, Quick_Claw, Stick, Leek,
-// Scope_Lens
-
 struct BestMove {
 	Moves move;
 	double score;
@@ -270,7 +267,6 @@ SelectMoveResult select_move_branch(Generation const generation, Team const & ai
 
 auto finish_end_of_turn(Generation const generation, Team const & first, Team const & last, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) -> double {
 	// TODO: Use TranspositionTable here
-	// TODO: Use structured bindings
 	auto const deordered = deorder(first, last);
 	auto const & ai = deordered.ai;
 	auto const & foe = deordered.foe;
@@ -343,7 +339,6 @@ constexpr auto can_be_selected_by_sleep_talk(Moves const move) {
 }
 
 auto selected_move_to_executed_move(Moves const selected_move, Team const & user_team) {
-	// TODO: Fill in with all moves
 	using result = containers::static_vector<Moves, 3>;
 	auto const user_pokemon = user_team.pokemon();
 	using containers::filter;

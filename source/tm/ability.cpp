@@ -121,7 +121,7 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 		case Ability::Drought:
 			weather.activate_sun_from_ability(generation, extends_sun(switcher.item(generation, weather)));
 			break;
-		case Ability::Forecast:	// TODO: fix this
+		case Ability::Forecast:
 			break;
 		case Ability::Intimidate: {
 			if (blocks_intimidate(generation, other.ability())) {

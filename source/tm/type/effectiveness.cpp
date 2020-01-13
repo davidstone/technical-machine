@@ -434,7 +434,6 @@ constexpr auto lookup_effectiveness(Generation const generation, Type const atta
 
 }	// namespace
 
-// TODO: Handle Iron Ball
 Effectiveness::Effectiveness(Generation const generation, Type const attacking, PokemonTypes const defending):
 	m_first(lookup_effectiveness(generation, attacking, front(defending))),
 	m_second(containers::size(defending) == 1_bi ?

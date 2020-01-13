@@ -201,7 +201,7 @@ constexpr auto gen7_bypasses_substitute(Moves const move) {
 }
 
 constexpr auto gen8_bypasses_substitute(Moves const move) {
-	return gen7_bypasses_substitute(move); // TODO
+	return gen7_bypasses_substitute(move);
 }
 
 constexpr auto move_bypasses_substitute(Generation const generation, Moves const move) {

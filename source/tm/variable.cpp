@@ -881,7 +881,6 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Sparkly_Swirl:
 		case Moves::Veevee_Volley:
 		case Moves::Double_Iron_Bash:
-			// TODO
 			return generic_probability(1.0);
 	}
 }

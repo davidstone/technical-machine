@@ -793,7 +793,6 @@ auto fling_power(Item const item) -> bounded::integer<0, 130> {
 		case Item::Zoom_Lens:
 			return 10_bi;
 		TECHNICALMACHINE_ITEM_CANNOT_BE_LOST_CASES
-			// TODO: This makes the move fail
 			return 0_bi;
 	}
 }
