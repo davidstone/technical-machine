@@ -91,7 +91,7 @@ auto can_confuse_with_chatter(Species const pokemon) {
 
 
 auto curse(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) {
-	if (is_type(user, Type::Ghost) and !blocks_secondary_damage(user.ability())) {
+	if (is_type(user, Type::Ghost)) {
 		if (!target.is_cursed()) {
 			user.indirect_damage(generation, weather, get_hp(user).max() / 2_bi);
 			target.curse();
