@@ -326,14 +326,18 @@ bool is_boosted_by_iron_fist(Moves const move) {
 		case Moves::Comet_Punch:
 		case Moves::Dizzy_Punch:
 		case Moves::Drain_Punch:
+		case Moves::Double_Iron_Bash:
 		case Moves::Dynamic_Punch:
 		case Moves::Fire_Punch:
 		case Moves::Focus_Punch:
 		case Moves::Hammer_Arm:
+		case Moves::Ice_Hammer:
 		case Moves::Ice_Punch:
 		case Moves::Mach_Punch:
 		case Moves::Mega_Punch:
 		case Moves::Meteor_Mash:
+		case Moves::Plasma_Fists:
+		case Moves::Power_Up_Punch:
 		case Moves::Shadow_Punch:
 		case Moves::Sky_Uppercut:
 		case Moves::Thunder_Punch:
