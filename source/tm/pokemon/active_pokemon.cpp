@@ -459,8 +459,11 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 
 	auto const current_hp = hp_ratio(m_pokemon);
 
-	auto healing_berry = [&](auto const amount) {
-		auto const threshold = BOUNDED_CONDITIONAL(generation <= Generation::six, rational(1_bi, 2_bi), rational(1_bi, 4_bi));
+	auto quarter_threshold = [&] {
+		return BOUNDED_CONDITIONAL(ability() == Ability::Gluttony, rational(1_bi, 2_bi), rational(1_bi, 4_bi));
+	};
+
+	auto healing_berry = [&](auto const threshold, auto const amount) {
 		if (current_hp > threshold) {
 			return false;
 		}
@@ -471,15 +474,15 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 
 	auto confusion_berry = [&](StatNames const stat) {
 		auto const amount = get_hp(m_pokemon).max() / BOUNDED_CONDITIONAL(generation <= Generation::six, 8_bi, 2_bi);
-		auto const activated = healing_berry(amount);
+		auto const threshold = generation <= Generation::six ? rational(1_bi, 2_bi) : quarter_threshold();
+		auto const activated = healing_berry(threshold, amount);
 		if (activated and lowers_stat(get_nature(m_pokemon), stat)) {
 			confuse(generation, weather);
 		}
 	};
 
 	auto stat_boost_berry = [&](StatNames const stat) {
-		auto const threshold = BOUNDED_CONDITIONAL(ability() == Ability::Gluttony, rational(1_bi, 2_bi), rational(1_bi, 4_bi));
-		if (current_hp > threshold) {
+		if (current_hp > quarter_threshold()) {
 			return;
 		}
 		consume();
@@ -495,10 +498,13 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			break;
 		case Item::Berry:
 		case Item::Oran_Berry:
-			healing_berry(10_bi);
+			healing_berry(rational(1_bi, 2_bi), 10_bi);
 			break;
 		case Item::Berry_Juice:
-			healing_berry(20_bi);
+			healing_berry(rational(1_bi, 2_bi), 20_bi);
+			break;
+		case Item::Custap_Berry:
+			consume();
 			break;
 		case Item::Figy_Berry:
 			confusion_berry(StatNames::ATK);
@@ -507,7 +513,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			stat_boost_berry(StatNames::DEF);
 			break;
 		case Item::Gold_Berry:
-			healing_berry(30_bi);
+			healing_berry(rational(1_bi, 2_bi), 30_bi);
 			break;
 		case Item::Iapapa_Berry:
 			confusion_berry(StatNames::DEF);
@@ -521,6 +527,9 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 		case Item::Mago_Berry:
 			confusion_berry(StatNames::SPE);
 			break;
+		case Item::Micle_Berry:
+			consume();
+			break;
 		case Item::Petaya_Berry:
 			stat_boost_berry(StatNames::SPA);
 			break;
@@ -528,7 +537,10 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			stat_boost_berry(StatNames::SPE);
 			break;
 		case Item::Sitrus_Berry:
-			healing_berry(BOUNDED_CONDITIONAL(generation <= Generation::three, 30_bi, get_hp(m_pokemon).max() / 4_bi));
+			healing_berry(
+				rational(1_bi, 2_bi),
+				BOUNDED_CONDITIONAL(generation <= Generation::three, 30_bi, get_hp(m_pokemon).max() / 4_bi)
+			);
 			break;
 		case Item::Starf_Berry:
 			// TODO: Raise Atk, Def, SpA, SpD, or Spe +2
