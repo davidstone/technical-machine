@@ -274,9 +274,15 @@ void BattleParser::handle_message(InMessage message) {
 		auto const party = party_from_player_id(message.next());
 		auto const what = message.next();
 		auto const details = message.next();
-		if (what == "Substitute" and details == "[damage]") {
-			m_move_state.damage_substitute(other(party));
-			handle_u_turn(other(party));
+		if (what == "Substitute") {
+			if (details == "[damage]") {
+				m_move_state.damage_substitute(other(party));
+				handle_u_turn(other(party));
+			}
+		} else {
+			// what = ability: Forewarn
+			// details = Earthquake
+			// remainder() = [of] p1a: Excadrill
 		}
 	} else if (type == "-anim") {
 #if 0
