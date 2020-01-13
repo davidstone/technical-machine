@@ -1392,6 +1392,7 @@ auto handle_ability_blocks_move(Generation const generation, Moves const move, T
 			heal(generation, target, weather, rational(1_bi, 4_bi));
 			return true;
 		case Ability::Water_Absorb:
+		case Ability::Dry_Skin:
 			if (!water_absorb_activates(generation, move, move_type)) {
 				return false;
 			}
