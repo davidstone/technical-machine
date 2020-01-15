@@ -91,7 +91,7 @@ auto ability_evasion_modifier(ActivePokemon const target, Ability const user_abi
 	switch (target_ability) {
 		case Ability::Sand_Veil: return weather.sand(blocks_weather) ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
 		case Ability::Snow_Cloak: return weather.hail(blocks_weather) ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
-		case Ability::Tangled_Feet: return target.is_confused() ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
+		case Ability::Tangled_Feet: return target.is_confused() ? Modifier(1_bi, 2_bi) : Modifier(1_bi, 1_bi);
 		default: return Modifier(1_bi, 1_bi);
 	}
 }
