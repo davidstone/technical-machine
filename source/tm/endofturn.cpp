@@ -72,16 +72,12 @@ void end_of_turn2(Generation const generation, Team & team, Weather const weathe
 	team.wish.decrement(generation, team.pokemon(), weather);
 }
 
-auto is_immune_to_hail(ActivePokemon const pokemon) -> bool {
-	auto const ability_prevents_damage = pokemon.ability() == Ability::Snow_Cloak;
-	return ability_prevents_damage or containers::any(pokemon.types(), [](Type const type) {
-		return type == Type::Ice;
-	});
+auto is_immune_to_hail(PokemonTypes const types) -> bool {
+	return containers::any(types, [](Type const type) { return type == Type::Ice; });
 }
 
-auto is_immune_to_sandstorm(ActivePokemon const pokemon) -> bool {
-	auto const ability_prevents_damage = pokemon.ability() == Ability::Sand_Veil;
-	return ability_prevents_damage or containers::any(pokemon.types(), [](Type const type) {
+auto is_immune_to_sandstorm(PokemonTypes const types) -> bool {
+	return containers::any(types, [](Type const type) {
 		switch (type) {
 			case Type::Ground:
 			case Type::Rock:
@@ -93,29 +89,55 @@ auto is_immune_to_sandstorm(ActivePokemon const pokemon) -> bool {
 	});
 }
 
-void weather_healing_ability(Generation const generation, MutableActivePokemon pokemon, Weather const weather, bool const ability_blocks_weather) {
+void hail_effect(Generation const generation, MutableActivePokemon pokemon, Weather const weather) {
+	switch (pokemon.ability()) {
+		case Ability::Ice_Body:
+			heal(generation, pokemon, weather, rational(1_bi, 16_bi));
+			break;
+		case Ability::Snow_Cloak:
+			break;
+		default:
+			if (!is_immune_to_hail(pokemon.types())) {
+				heal(generation, pokemon, weather, rational(-1_bi, 16_bi));
+			}
+			break;
+	}
+}
+
+void rain_effect(Generation const generation, MutableActivePokemon pokemon, Weather const weather) {
 	switch (pokemon.ability()) {
 		case Ability::Dry_Skin:
-			if (weather.rain(ability_blocks_weather)) {
-				heal(generation, pokemon, weather, rational(1_bi, 8_bi));
-			} else if (weather.sun(ability_blocks_weather)) {
-				heal(generation, pokemon, weather, rational(-1_bi, 8_bi));
-			}
+			heal(generation, pokemon, weather, rational(1_bi, 8_bi));
 			break;
 		case Ability::Hydration:
-			if (weather.rain(ability_blocks_weather)) {
-				pokemon.clear_status();
-			}
-			break;
-		case Ability::Ice_Body:
-			if (weather.hail(ability_blocks_weather)) {
-				heal(generation, pokemon, weather, rational(1_bi, 16_bi));
-			}
+			pokemon.clear_status();
 			break;
 		case Ability::Rain_Dish:
-			if (weather.rain(ability_blocks_weather)) {
-				heal(generation, pokemon, weather, rational(1_bi, 16_bi));
+			heal(generation, pokemon, weather, rational(1_bi, 16_bi));
+			break;
+		default:
+			break;
+	}
+}
+
+void sand_effect(Generation const generation, MutableActivePokemon pokemon, Weather const weather) {
+	switch (pokemon.ability()) {
+		case Ability::Sand_Veil:
+			break;
+		default:
+			if (!is_immune_to_sandstorm(pokemon.types())) {
+				heal(generation, pokemon, weather, rational(-1_bi, 16_bi));
 			}
+	}
+}
+
+void sun_effect(Generation const generation, MutableActivePokemon pokemon, Weather const weather) {
+	switch (pokemon.ability()) {
+		case Ability::Dry_Skin:
+			heal(generation, pokemon, weather, rational(1_bi, 8_bi));
+			break;
+		case Ability::Solar_Power:
+			heal(generation, pokemon, weather, rational(-1_bi, 8_bi));
 			break;
 		default:
 			break;
@@ -124,13 +146,15 @@ void weather_healing_ability(Generation const generation, MutableActivePokemon p
 
 void end_of_turn3(Generation const generation, MutableActivePokemon pokemon, ActivePokemon other, Weather const weather) {
 	auto const ability_blocks_weather = weather_is_blocked_by_ability(pokemon.ability(), other.ability());
-	if (weather.hail(ability_blocks_weather) and !is_immune_to_hail(pokemon)) {
-		heal(generation, pokemon, weather, rational(-1_bi, 16_bi));
+	if (weather.hail(ability_blocks_weather)) {
+		hail_effect(generation, pokemon, weather);
+	} else if (weather.rain(ability_blocks_weather)) {
+		rain_effect(generation, pokemon, weather);
+	} else if (weather.sand(ability_blocks_weather)) {
+		sand_effect(generation, pokemon, weather);
+	} else if (weather.sun(ability_blocks_weather)) {
+		sun_effect(generation, pokemon, weather);
 	}
-	if (weather.sand(ability_blocks_weather) and !is_immune_to_sandstorm(pokemon)) {
-		heal(generation, pokemon, weather, rational(-1_bi, 16_bi));
-	}
-	weather_healing_ability(generation, pokemon, weather, ability_blocks_weather);
 }
 
 void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags const flags) {
