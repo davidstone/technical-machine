@@ -352,11 +352,16 @@ bool is_boosted_by_reckless(Moves const move) {
 		case Moves::Brave_Bird:
 		case Moves::Double_Edge:
 		case Moves::Flare_Blitz:
+		case Moves::Head_Charge:
 		case Moves::Head_Smash:
+		case Moves::High_Jump_Kick:
+		case Moves::Jump_Kick:
+		case Moves::Light_of_Ruin:
 		case Moves::Submission:
 		case Moves::Take_Down:
 		case Moves::Volt_Tackle:
 		case Moves::Wood_Hammer:
+		case Moves::Wild_Charge:
 			return true;
 		default:
 			return false;
