@@ -1415,6 +1415,12 @@ auto handle_ability_blocks_move(Generation const generation, Moves const move, T
 				default:
 					return true;
 			}
+		case Ability::Motor_Drive:
+			if (!absorb_ability_activates(generation, move, move_type, Type::Electric)) {
+				return false;
+			}
+			target.stage()[StatNames::SPE] += 1_bi;
+			return true;
 		default:
 			return false;
 	}
