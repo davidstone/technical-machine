@@ -402,10 +402,6 @@ constexpr bool uses_extra_pp(Ability const ability) {
 	return ability == Ability::Pressure;
 }
 
-constexpr bool boosts_critical_hits(Ability const ability) {
-	return ability == Ability::Sniper;
-}
-
 constexpr bool boosts_speed(Ability const ability) {
 	return ability == Ability::Speed_Boost;
 }

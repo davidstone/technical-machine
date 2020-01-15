@@ -173,10 +173,14 @@ auto screen_divisor(Moves const move, Team const & defender, bool const critical
 	return BOUNDED_CONDITIONAL(screen_is_active(move, defender, critical_hit), 2_bi, 1_bi);
 }
 
-auto critical_hit_multiplier(ActivePokemon const attacker, bool const critical_hit) {
-	return BOUNDED_CONDITIONAL(
-		!critical_hit, 1_bi,
-		BOUNDED_CONDITIONAL(boosts_critical_hits(attacker.ability()), 3_bi, 2_bi)
+auto critical_hit_multiplier(Generation const generation, Ability const ability, bool const critical_hit) {
+	auto const boosted = ability == Ability::Sniper;
+	return BOUNDED_CONDITIONAL(!critical_hit,
+		rational(1_bi, 1_bi),
+		BOUNDED_CONDITIONAL(generation >= Generation::six,
+			BOUNDED_CONDITIONAL(boosted, rational(9_bi, 4_bi), rational(3_bi, 2_bi)),
+			BOUNDED_CONDITIONAL(boosted, rational(3_bi, 1_bi), rational(2_bi, 1_bi))
+		)
 	);
 }
 
@@ -194,6 +198,7 @@ auto resistance_berry_divisor(bool const move_weakened_from_item) {
 
 auto regular_damage(Generation const generation, Team const & attacker_team, ExecutedMove const move, Type const move_type, bool const move_weakened_from_item, Team const & defender_team, Weather const weather) {
 	auto const attacker = attacker_team.pokemon();
+	auto const attacker_ability = attacker.ability();
 	auto const defender = defender_team.pokemon();
 	auto const effectiveness = Effectiveness(generation, move_type, defender.types());
 
@@ -202,12 +207,12 @@ auto regular_damage(Generation const generation, Team const & attacker_team, Exe
 		move_power(generation, attacker_team, move, defender_team, weather) *
 		physical_vs_special_modifier(generation, attacker, move.name, defender, weather, move.critical_hit) /
 		screen_divisor(move.name, defender_team, move.critical_hit) *
-		calculate_weather_modifier(move_type, weather, weather_is_blocked_by_ability(attacker.ability(), defender.ability())) *
+		calculate_weather_modifier(move_type, weather, weather_is_blocked_by_ability(attacker_ability, defender.ability())) *
 		calculate_flash_fire_modifier(attacker, move_type) +
 		2_bi;
 
 	return bounded::max(1_bi, temp *
-		critical_hit_multiplier(attacker, move.critical_hit) *
+		critical_hit_multiplier(generation, attacker_ability, move.critical_hit) *
 		calculate_item_modifier(generation, attacker, weather) *
 		calculate_me_first_modifier(attacker) *
 		attacker.random_damage_multiplier() *
@@ -215,7 +220,7 @@ auto regular_damage(Generation const generation, Team const & attacker_team, Exe
 		effectiveness *
 		calculate_ability_effectiveness_modifier(defender.ability(), effectiveness) *
 		calculate_expert_belt_modifier(attacker.item(generation, weather), effectiveness) *
-		tinted_lens_multiplier(attacker.ability(), effectiveness) /
+		tinted_lens_multiplier(attacker_ability, effectiveness) /
 		resistance_berry_divisor(move_weakened_from_item)
 	);
 }
