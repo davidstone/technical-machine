@@ -31,7 +31,6 @@ struct EV {
 	static constexpr auto max = 252_bi;
 	static constexpr auto max_total = 508_bi;
 	using value_type = bounded::checked_integer<0, static_cast<int>(max)>;
-	using total_type = bounded::checked_integer<0, static_cast<int>(max_total)>;
 
 	constexpr explicit EV(value_type evs):
 		m_value(evs) {
