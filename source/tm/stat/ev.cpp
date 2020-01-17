@@ -17,10 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/stat/ev.hpp>
-
-namespace technicalmachine {
-
-constexpr decltype(EV::max) EV::max;
-constexpr decltype(EV::max_total) EV::max_total;
-
-}	// namespace technicalmachine
