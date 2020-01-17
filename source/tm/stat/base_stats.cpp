@@ -1165,9 +1165,25 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Honedge: return {45_bi, 80_bi, 100_bi, 35_bi, 37_bi, 28_bi};
 			case Species::Doublade: return {59_bi, 110_bi, 150_bi, 45_bi, 49_bi, 35_bi};
 			// Changes before using defensive move
-			case Species::Aegislash: return {60_bi, 50_bi, 150_bi, 50_bi, 150_bi, 60_bi};
+			case Species::Aegislash: return {
+				60_bi,
+				50_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::seven, 140_bi, 150_bi),
+				50_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::seven, 140_bi, 150_bi),
+				60_bi
+			};
 			// Changes before using offensive move
-			// case Species::Aegislash_Blade: return {60_bi, 150_bi, 50_bi, 150_bi, 50_bi, 60_bi};
+			#if 0
+			case Species::Aegislash_Blade: return {
+				60_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::seven, 140_bi, 150_bi),
+				50_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::seven, 140_bi, 150_bi),
+				50_bi,
+				60_bi
+			};
+			#endif
 			case Species::Spritzee: return {78_bi, 52_bi, 60_bi, 63_bi, 65_bi, 23_bi};
 			case Species::Aromatisse: return {101_bi, 72_bi, 72_bi, 99_bi, 89_bi, 29_bi};
 			case Species::Swirlix: return {62_bi, 48_bi, 66_bi, 59_bi, 57_bi, 49_bi};
