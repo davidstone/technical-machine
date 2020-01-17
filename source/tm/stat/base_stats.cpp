@@ -32,14 +32,56 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Ivysaur: return {60_bi, 62_bi, 63_bi, 80_bi, 80_bi, 60_bi};
 			case Species::Venusaur: return {80_bi, 82_bi, 83_bi, 100_bi, 100_bi, 80_bi};
 			// case Species::Venusaur_Mega: return {80_bi, 100_bi, 123_bi, 122_bi, 120_bi, 80_bi};
-			case Species::Charmander: return {39_bi, 52_bi, 43_bi, 60_bi, 50_bi, 65_bi};
-			case Species::Charmeleon: return {58_bi, 64_bi, 58_bi, 80_bi, 65_bi, 80_bi};
-			case Species::Charizard: return {78_bi, 84_bi, 78_bi, 109_bi, 85_bi, 100_bi};
+			case Species::Charmander: return {
+				39_bi,
+				52_bi,
+				43_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 50_bi, 60_bi),
+				50_bi,
+				65_bi
+			};
+			case Species::Charmeleon: return {
+				58_bi,
+				64_bi,
+				58_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 65_bi, 80_bi),
+				65_bi,
+				80_bi
+			};
+			case Species::Charizard: return {
+				78_bi,
+				84_bi,
+				78_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 85_bi, 109_bi),
+				85_bi,
+				100_bi
+			};
 			// case Species::Charizard_Mega_X: return {78_bi, 130_bi, 111_bi, 130_bi, 85_bi, 100_bi};
 			// case Species::Charizard_Mega_Y: return {78_bi, 104_bi, 78_bi, 159_bi, 115_bi, 100_bi};
-			case Species::Squirtle: return {44_bi, 48_bi, 65_bi, 50_bi, 64_bi, 43_bi};
-			case Species::Wartortle: return {59_bi, 63_bi, 80_bi, 65_bi, 80_bi, 58_bi};
-			case Species::Blastoise: return {79_bi, 83_bi, 100_bi, 85_bi, 105_bi, 78_bi};
+			case Species::Squirtle: return {
+				44_bi,
+				48_bi,
+				65_bi,
+				50_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 50_bi, 64_bi),
+				43_bi
+			};
+			case Species::Wartortle: return {
+				59_bi,
+				63_bi,
+				80_bi,
+				65_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 65_bi, 80_bi),
+				58_bi
+			};
+			case Species::Blastoise: return {
+				79_bi,
+				83_bi,
+				100_bi,
+				85_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 85_bi, 105_bi),
+				78_bi
+			};
 			// case Species::Blastoise_Mega: return {79_bi, 103_bi, 120_bi, 135_bi, 115_bi, 78_bi};
 			case Species::Caterpie: return {45_bi, 30_bi, 35_bi, 20_bi, 20_bi, 45_bi};
 			case Species::Metapod: return {50_bi, 20_bi, 55_bi, 25_bi, 25_bi, 30_bi};
@@ -58,7 +100,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::five, 80_bi, 90_bi),
 				40_bi,
 				45_bi,
-				80_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 45_bi, 80_bi),
 				75_bi
 			};
 			// case Species::Beedrill_Mega: return {65_bi, 150_bi, 40_bi, 15_bi, 80_bi, 145_bi};
@@ -73,19 +115,40 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::five, 91_bi, 101_bi)
 			};
 			// case Species::Pidgeot_Mega: return {83_bi, 80_bi, 80_bi, 135_bi, 80_bi, 121_bi};
-			case Species::Rattata: return {30_bi, 56_bi, 35_bi, 25_bi, 35_bi, 72_bi};
+			case Species::Rattata: return {
+				30_bi,
+				56_bi,
+				35_bi,
+				25_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 25_bi, 35_bi),
+				72_bi
+			};
 			case Species::Rattata_Alolan: return {30_bi, 56_bi, 35_bi, 25_bi, 35_bi, 72_bi};
-			case Species::Raticate: return {55_bi, 81_bi, 60_bi, 50_bi, 70_bi, 97_bi};
+			case Species::Raticate: return {
+				55_bi,
+				81_bi,
+				60_bi,
+				50_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 50_bi, 70_bi),
+				97_bi
+			};
 			case Species::Raticate_Alolan: return {75_bi, 71_bi, 70_bi, 40_bi, 80_bi, 77_bi};
 			case Species::Spearow: return {40_bi, 60_bi, 30_bi, 31_bi, 31_bi, 70_bi};
 			case Species::Fearow: return {65_bi, 90_bi, 65_bi, 61_bi, 61_bi, 100_bi};
-			case Species::Ekans: return {35_bi, 60_bi, 44_bi, 40_bi, 54_bi, 55_bi};
+			case Species::Ekans: return {
+				35_bi,
+				60_bi,
+				44_bi,
+				40_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 40_bi, 54_bi),
+				55_bi
+			};
 			case Species::Arbok: return {
 				60_bi,
 				BOUNDED_CONDITIONAL(generation <= Generation::six, 85_bi, 95_bi),
 				69_bi,
 				65_bi,
-				79_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 65_bi, 79_bi),
 				80_bi
 			};
 			case Species::Pikachu: return {35_bi, 55_bi, 40_bi, 50_bi, 50_bi, 90_bi};
@@ -94,13 +157,27 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				90_bi,
 				55_bi,
 				90_bi,
-				80_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 90_bi, 80_bi),
 				BOUNDED_CONDITIONAL(generation <= Generation::five, 100_bi, 110_bi)
 			};
 			case Species::Raichu_Alolan: return {60_bi, 85_bi, 50_bi, 95_bi, 85_bi, 110_bi};
-			case Species::Sandshrew: return {50_bi, 75_bi, 85_bi, 20_bi, 30_bi, 40_bi};
+			case Species::Sandshrew: return {
+				50_bi,
+				75_bi,
+				85_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 30_bi, 20_bi),
+				30_bi,
+				40_bi
+			};
 			case Species::Sandshrew_Alolan: return {50_bi, 75_bi, 90_bi, 10_bi, 35_bi, 40_bi};
-			case Species::Sandslash: return {75_bi, 100_bi, 110_bi, 45_bi, 55_bi, 65_bi};
+			case Species::Sandslash: return {
+				75_bi,
+				100_bi,
+				110_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 55_bi, 45_bi),
+				55_bi,
+				65_bi
+			};
 			case Species::Sandslash_Alolan: return {75_bi, 100_bi, 120_bi, 25_bi, 65_bi, 65_bi};
 			case Species::Nidoran_F: return {55_bi, 47_bi, 52_bi, 40_bi, 40_bi, 41_bi};
 			case Species::Nidorina: return {70_bi, 62_bi, 67_bi, 55_bi, 55_bi, 56_bi};
@@ -109,7 +186,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::five, 82_bi, 92_bi),
 				87_bi,
 				75_bi,
-				85_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 75_bi, 85_bi),
 				76_bi
 			};
 			case Species::Nidoran_M: return {46_bi, 57_bi, 40_bi, 40_bi, 40_bi, 50_bi};
@@ -118,55 +195,146 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				81_bi,
 				BOUNDED_CONDITIONAL(generation <= Generation::five, 92_bi, 102_bi),
 				77_bi,
-				85_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 75_bi, 85_bi),
 				75_bi,
 				85_bi
 			};
-			case Species::Clefairy: return {70_bi, 45_bi, 48_bi, 60_bi, 65_bi, 35_bi};
+			case Species::Clefairy: return {
+				70_bi,
+				45_bi,
+				48_bi,
+				60_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 60_bi, 65_bi),
+				35_bi
+			};
 			case Species::Clefable: return {
 				95_bi,
 				70_bi,
 				73_bi,
 				BOUNDED_CONDITIONAL(generation <= Generation::five, 85_bi, 95_bi),
-				90_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 85_bi, 90_bi),
 				60_bi
 			};
-			case Species::Vulpix: return {38_bi, 41_bi, 40_bi, 50_bi, 65_bi, 65_bi};
+			case Species::Vulpix: return {
+				38_bi,
+				41_bi,
+				40_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 65_bi, 50_bi),
+				65_bi,
+				65_bi
+			};
 			case Species::Vulpix_Alolan: return {38_bi, 41_bi, 40_bi, 50_bi, 65_bi, 65_bi};
-			case Species::Ninetales: return {73_bi, 76_bi, 75_bi, 81_bi, 100_bi, 100_bi};
+			case Species::Ninetales: return {
+				73_bi,
+				76_bi,
+				75_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 100_bi, 81_bi),
+				100_bi,
+				100_bi
+			};
 			case Species::Ninetales_Alolan: return {73_bi, 67_bi, 75_bi, 81_bi, 100_bi, 109_bi};
-			case Species::Jigglypuff: return {115_bi, 45_bi, 20_bi, 45_bi, 25_bi, 20_bi};
+			case Species::Jigglypuff: return {
+				115_bi,
+				45_bi,
+				20_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 25_bi, 45_bi),
+				25_bi,
+				20_bi
+			};
 			case Species::Wigglytuff: return {
 				140_bi,
 				70_bi,
 				45_bi,
-				BOUNDED_CONDITIONAL(generation <= Generation::five, 75_bi, 85_bi),
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 50_bi, BOUNDED_CONDITIONAL(generation <= Generation::five, 75_bi, 85_bi)),
 				50_bi,
 				45_bi
 			};
-			case Species::Zubat: return {40_bi, 45_bi, 35_bi, 30_bi, 40_bi, 55_bi};
-			case Species::Golbat: return {75_bi, 80_bi, 70_bi, 65_bi, 75_bi, 90_bi};
-			case Species::Oddish: return {45_bi, 50_bi, 55_bi, 75_bi, 65_bi, 30_bi};
-			case Species::Gloom: return {60_bi, 65_bi, 70_bi, 85_bi, 75_bi, 40_bi};
+			case Species::Zubat: return {
+				40_bi,
+				45_bi,
+				35_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 40_bi, 30_bi),
+				40_bi,
+				55_bi
+			};
+			case Species::Golbat: return {
+				75_bi,
+				80_bi,
+				70_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 75_bi, 65_bi),
+				75_bi,
+				90_bi
+			};
+			case Species::Oddish: return {
+				45_bi,
+				50_bi,
+				55_bi,
+				75_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 75_bi, 65_bi),
+				30_bi
+			};
+			case Species::Gloom: return {
+				60_bi,
+				65_bi,
+				70_bi,
+				85_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 85_bi, 75_bi),
+				40_bi
+			};
 			case Species::Vileplume: return {
 				75_bi,
 				80_bi,
 				85_bi,
 				BOUNDED_CONDITIONAL(generation <= Generation::five, 100_bi, 110_bi),
-				90_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 100_bi, 90_bi),
 				50_bi
 			};
-			case Species::Paras: return {35_bi, 70_bi, 55_bi, 45_bi, 55_bi, 25_bi};
-			case Species::Parasect: return {60_bi, 95_bi, 80_bi, 60_bi, 80_bi, 30_bi};
-			case Species::Venonat: return {60_bi, 55_bi, 50_bi, 40_bi, 55_bi, 45_bi};
-			case Species::Venomoth: return {70_bi, 65_bi, 60_bi, 90_bi, 75_bi, 90_bi};
-			case Species::Diglett: return {10_bi, 55_bi, 25_bi, 35_bi, 45_bi, 95_bi};
+			case Species::Paras: return {
+				35_bi,
+				70_bi,
+				55_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 55_bi, 45_bi),
+				55_bi,
+				25_bi
+			};
+			case Species::Parasect: return {
+				60_bi,
+				95_bi,
+				80_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 80_bi, 60_bi),
+				80_bi,
+				30_bi
+			};
+			case Species::Venonat: return {
+				60_bi,
+				55_bi,
+				50_bi,
+				40_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 40_bi, 55_bi),
+				45_bi
+			};
+			case Species::Venomoth: return {
+				70_bi,
+				65_bi,
+				60_bi,
+				90_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 90_bi, 75_bi),
+				90_bi
+			};
+			case Species::Diglett: return {
+				10_bi,
+				55_bi,
+				25_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 45_bi, 35_bi),
+				45_bi,
+				95_bi
+			};
 			case Species::Diglett_Alolan: return {10_bi, 55_bi, 30_bi, 35_bi, 45_bi, 90_bi};
 			case Species::Dugtrio: return {
 				35_bi,
 				BOUNDED_CONDITIONAL(generation <= Generation::six, 80_bi, 100_bi),
 				50_bi,
-				50_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 70_bi, 50_bi),
 				70_bi,
 				120_bi
 			};
@@ -175,12 +343,54 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Meowth_Alolan: return {40_bi, 35_bi, 35_bi, 50_bi, 40_bi, 90_bi};
 			case Species::Persian: return {65_bi, 70_bi, 60_bi, 65_bi, 65_bi, 115_bi};
 			case Species::Persian_Alolan: return {65_bi, 60_bi, 60_bi, 75_bi, 65_bi, 115_bi};
-			case Species::Psyduck: return {50_bi, 52_bi, 48_bi, 65_bi, 50_bi, 55_bi};
-			case Species::Golduck: return {80_bi, 82_bi, 78_bi, 95_bi, 80_bi, 85_bi};
-			case Species::Mankey: return {40_bi, 80_bi, 35_bi, 35_bi, 45_bi, 70_bi};
-			case Species::Primeape: return {65_bi, 105_bi, 60_bi, 60_bi, 70_bi, 95_bi};
-			case Species::Growlithe: return {55_bi, 70_bi, 45_bi, 70_bi, 50_bi, 60_bi};
-			case Species::Arcanine: return {90_bi, 110_bi, 80_bi, 100_bi, 80_bi, 95_bi};
+			case Species::Psyduck: return {
+				50_bi,
+				52_bi,
+				48_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 50_bi, 65_bi),
+				50_bi,
+				55_bi
+			};
+			case Species::Golduck: return {
+				80_bi,
+				82_bi,
+				78_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 80_bi, 95_bi),
+				80_bi,
+				85_bi
+			};
+			case Species::Mankey: return {
+				40_bi,
+				80_bi,
+				35_bi,
+				35_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 35_bi, 45_bi),
+				70_bi
+			};
+			case Species::Primeape: return {
+				65_bi,
+				105_bi,
+				60_bi,
+				60_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 60_bi, 70_bi),
+				95_bi
+			};
+			case Species::Growlithe: return {
+				55_bi,
+				70_bi,
+				45_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 50_bi, 70_bi),
+				50_bi,
+				60_bi
+			};
+			case Species::Arcanine: return {
+				90_bi,
+				110_bi,
+				80_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 80_bi, 100_bi),
+				80_bi,
+				95_bi
+			};
 			case Species::Poliwag: return {40_bi, 50_bi, 40_bi, 40_bi, 40_bi, 90_bi};
 			case Species::Poliwhirl: return {65_bi, 65_bi, 65_bi, 50_bi, 50_bi, 90_bi};
 			case Species::Poliwrath: return {
@@ -188,17 +398,31 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::five, 85_bi, 95_bi),
 				95_bi,
 				70_bi,
-				90_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 70_bi, 90_bi),
 				70_bi
 			};
-			case Species::Abra: return {25_bi, 20_bi, 15_bi, 105_bi, 55_bi, 90_bi};
-			case Species::Kadabra: return {40_bi, 35_bi, 30_bi, 120_bi, 70_bi, 105_bi};
+			case Species::Abra: return {
+				25_bi,
+				20_bi,
+				15_bi,
+				105_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 105_bi, 55_bi),
+				90_bi
+			};
+			case Species::Kadabra: return {
+				40_bi,
+				35_bi,
+				30_bi,
+				120_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 120_bi, 70_bi),
+				105_bi
+			};
 			case Species::Alakazam: return {
 				55_bi,
 				50_bi,
 				45_bi,
 				135_bi,
-				BOUNDED_CONDITIONAL(generation <= Generation::five, 85_bi, 95_bi),
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 135_bi, BOUNDED_CONDITIONAL(generation <= Generation::five, 85_bi, 95_bi)),
 				120_bi
 			};
 			#if 0
@@ -207,25 +431,67 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				50_bi,
 				65_bi,
 				175_bi,
-				BOUNDED_CONDITIONAL(generation <= Generation::five, 95_bi, 105_bi),
+				BOUNDED_CONDITIONAL(generation <= Generation::six, 95_bi, 105_bi),
 				150_bi
 			};
 			#endif
 			case Species::Machop: return {70_bi, 80_bi, 50_bi, 35_bi, 35_bi, 35_bi};
-			case Species::Machoke: return {80_bi, 100_bi, 70_bi, 50_bi, 60_bi, 45_bi};
-			case Species::Machamp: return {90_bi, 130_bi, 80_bi, 65_bi, 85_bi, 55_bi};
-			case Species::Bellsprout: return {50_bi, 75_bi, 35_bi, 70_bi, 30_bi, 40_bi};
-			case Species::Weepinbell: return {65_bi, 90_bi, 50_bi, 85_bi, 45_bi, 55_bi};
+			case Species::Machoke: return {
+				80_bi,
+				100_bi,
+				70_bi,
+				50_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 50_bi, 60_bi),
+				45_bi
+			};
+			case Species::Machamp: return {
+				90_bi,
+				130_bi,
+				80_bi,
+				65_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 65_bi, 85_bi),
+				55_bi
+			};
+			case Species::Bellsprout: return {
+				50_bi,
+				75_bi,
+				35_bi,
+				70_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 70_bi, 30_bi),
+				40_bi
+			};
+			case Species::Weepinbell: return {
+				65_bi,
+				90_bi,
+				50_bi,
+				85_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 85_bi, 45_bi),
+				55_bi
+			};
 			case Species::Victreebel: return {
 				80_bi,
 				105_bi,
 				65_bi,
 				100_bi,
-				BOUNDED_CONDITIONAL(generation <= Generation::five, 60_bi, 70_bi),
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 100_bi, BOUNDED_CONDITIONAL(generation <= Generation::five, 60_bi, 70_bi)),
 				70_bi
 			};
-			case Species::Tentacool: return {40_bi, 40_bi, 35_bi, 50_bi, 100_bi, 70_bi};
-			case Species::Tentacruel: return {80_bi, 70_bi, 65_bi, 80_bi, 120_bi, 100_bi};
+			case Species::Tentacool: return {
+				40_bi,
+				40_bi,
+				35_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 100_bi, 50_bi),
+				100_bi,
+				70_bi
+			};
+			case Species::Tentacruel: return {
+				80_bi,
+				70_bi,
+				65_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 120_bi, 80_bi),
+				120_bi,
+				100_bi
+			};
 			case Species::Geodude: return {40_bi, 80_bi, 100_bi, 30_bi, 30_bi, 20_bi};
 			case Species::Geodude_Alolan: return {40_bi, 80_bi, 100_bi, 30_bi, 30_bi, 20_bi};
 			case Species::Graveler: return {55_bi, 95_bi, 115_bi, 45_bi, 45_bi, 35_bi};
@@ -235,23 +501,44 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::five, 110_bi, 120_bi),
 				130_bi,
 				55_bi,
-				65_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 55_bi, 65_bi),
 				45_bi
 			};
 			case Species::Golem_Alolan: return {80_bi, 120_bi, 130_bi, 55_bi, 65_bi, 45_bi};
 			case Species::Ponyta: return {50_bi, 85_bi, 55_bi, 65_bi, 65_bi, 90_bi};
 			case Species::Rapidash: return {65_bi, 100_bi, 70_bi, 80_bi, 80_bi, 105_bi};
 			case Species::Slowpoke: return {90_bi, 65_bi, 65_bi, 40_bi, 40_bi, 15_bi};
-			case Species::Slowbro: return {95_bi, 75_bi, 110_bi, 100_bi, 80_bi, 30_bi};
+			case Species::Slowbro: return {
+				95_bi,
+				75_bi,
+				110_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 80_bi, 100_bi),
+				80_bi,
+				30_bi
+			};
 			// case Species::Slowbro_Mega: return {95_bi, 75_bi, 180_bi, 130_bi, 80_bi, 30_bi};
-			case Species::Magnemite: return {25_bi, 35_bi, 70_bi, 95_bi, 55_bi, 45_bi};
-			case Species::Magneton: return {50_bi, 60_bi, 95_bi, 120_bi, 70_bi, 70_bi};
+			case Species::Magnemite: return {
+				25_bi,
+				35_bi,
+				70_bi,
+				95_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 95_bi, 55_bi),
+				45_bi
+			};
+			case Species::Magneton: return {
+				50_bi,
+				60_bi,
+				95_bi,
+				120_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 120_bi, 70_bi),
+				70_bi
+			};
 			case Species::Farfetchd: return {
 				52_bi,
 				BOUNDED_CONDITIONAL(generation <= Generation::six, 65_bi, 90_bi),
 				55_bi,
 				58_bi,
-				62_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 58_bi, 62_bi),
 				60_bi
 			};
 			case Species::Doduo: return {35_bi, 85_bi, 45_bi, 35_bi, 35_bi, 75_bi};
@@ -263,21 +550,105 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				60_bi,
 				BOUNDED_CONDITIONAL(generation <= Generation::six, 100_bi, 110_bi),
 			};
-			case Species::Seel: return {65_bi, 45_bi, 55_bi, 45_bi, 70_bi, 45_bi};
-			case Species::Dewgong: return {90_bi, 70_bi, 80_bi, 70_bi, 95_bi, 70_bi};
-			case Species::Grimer: return {80_bi, 80_bi, 50_bi, 40_bi, 50_bi, 25_bi};
+			case Species::Seel: return {
+				65_bi,
+				45_bi,
+				55_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 70_bi, 45_bi),
+				70_bi,
+				45_bi
+			};
+			case Species::Dewgong: return {
+				90_bi,
+				70_bi,
+				80_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 95_bi, 70_bi),
+				95_bi,
+				70_bi
+			};
+			case Species::Grimer: return {
+				80_bi,
+				80_bi,
+				50_bi,
+				40_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 40_bi, 50_bi),
+				25_bi
+			};
 			case Species::Grimer_Alolan: return {80_bi, 80_bi, 50_bi, 40_bi, 50_bi, 25_bi};
-			case Species::Muk: return {105_bi, 105_bi, 75_bi, 65_bi, 100_bi, 50_bi};
+			case Species::Muk: return {
+				105_bi,
+				105_bi,
+				75_bi,
+				65_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 65_bi, 100_bi),
+				50_bi
+			};
 			case Species::Muk_Alolan: return {105_bi, 105_bi, 75_bi, 65_bi, 100_bi, 50_bi};
-			case Species::Shellder: return {30_bi, 65_bi, 100_bi, 45_bi, 25_bi, 40_bi};
-			case Species::Cloyster: return {50_bi, 95_bi, 180_bi, 85_bi, 45_bi, 70_bi};
-			case Species::Gastly: return {30_bi, 35_bi, 30_bi, 100_bi, 35_bi, 80_bi};
-			case Species::Haunter: return {45_bi, 50_bi, 45_bi, 115_bi, 55_bi, 95_bi};
-			case Species::Gengar: return {60_bi, 65_bi, 60_bi, 130_bi, 75_bi, 110_bi};
+			case Species::Shellder: return {
+				30_bi,
+				65_bi,
+				100_bi,
+				45_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 45_bi, 25_bi),
+				40_bi
+			};
+			case Species::Cloyster: return {
+				50_bi,
+				95_bi,
+				180_bi,
+				85_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 85_bi, 45_bi),
+				70_bi
+			};
+			case Species::Gastly: return {
+				30_bi,
+				35_bi,
+				30_bi,
+				100_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 100_bi, 35_bi),
+				80_bi
+			};
+			case Species::Haunter: return {
+				45_bi,
+				50_bi,
+				45_bi,
+				115_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 115_bi, 55_bi),
+				95_bi
+			};
+			case Species::Gengar: return {
+				60_bi,
+				65_bi,
+				60_bi,
+				130_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 130_bi, 75_bi),
+				110_bi
+			};
 			// case Species::Gengar_Mega: return {60_bi, 65_bi, 80_bi, 170_bi, 95_bi, 130_bi};
-			case Species::Onix: return {35_bi, 45_bi, 160_bi, 30_bi, 45_bi, 70_bi};
-			case Species::Drowzee: return {60_bi, 48_bi, 45_bi, 43_bi, 90_bi, 42_bi};
-			case Species::Hypno: return {85_bi, 73_bi, 70_bi, 73_bi, 115_bi, 67_bi};
+			case Species::Onix: return {
+				35_bi,
+				45_bi,
+				160_bi,
+				30_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 30_bi, 45_bi),
+				70_bi
+			};
+			case Species::Drowzee: return {
+				60_bi,
+				48_bi,
+				45_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 90_bi, 43_bi),
+				90_bi,
+				42_bi
+			};
+			case Species::Hypno: return {
+				85_bi,
+				73_bi,
+				70_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 115_bi, 73_bi),
+				115_bi,
+				67_bi
+			};
 			case Species::Krabby: return {30_bi, 105_bi, 90_bi, 25_bi, 25_bi, 50_bi};
 			case Species::Kingler: return {55_bi, 130_bi, 115_bi, 50_bi, 50_bi, 75_bi};
 			case Species::Voltorb: return {40_bi, 30_bi, 50_bi, 55_bi, 55_bi, 100_bi};
@@ -289,68 +660,362 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				80_bi,
 				BOUNDED_CONDITIONAL(generation <= Generation::six, 140_bi, 150_bi)
 			};
-			case Species::Exeggcute: return {60_bi, 40_bi, 80_bi, 60_bi, 45_bi, 40_bi};
+			case Species::Exeggcute: return {
+				60_bi,
+				40_bi,
+				80_bi,
+				60_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 60_bi, 45_bi),
+				40_bi
+			};
 			case Species::Exeggutor: return {
 				95_bi,
 				95_bi,
 				85_bi,
 				125_bi,
-				BOUNDED_CONDITIONAL(generation <= Generation::six, 65_bi, 75_bi),
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 125_bi, BOUNDED_CONDITIONAL(generation <= Generation::six, 65_bi, 75_bi)),
 				55_bi
 			};
 			case Species::Exeggutor_Alolan: return {95_bi, 105_bi, 85_bi, 125_bi, 75_bi, 45_bi};
-			case Species::Cubone: return {50_bi, 50_bi, 95_bi, 40_bi, 50_bi, 35_bi};
-			case Species::Marowak: return {60_bi, 80_bi, 110_bi, 50_bi, 80_bi, 45_bi};
+			case Species::Cubone: return {
+				50_bi,
+				50_bi,
+				95_bi,
+				40_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 40_bi, 50_bi),
+				35_bi
+			};
+			case Species::Marowak: return {
+				60_bi,
+				80_bi,
+				110_bi,
+				50_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 50_bi, 80_bi),
+				45_bi
+			};
 			case Species::Marowak_Alolan: return {60_bi, 80_bi, 110_bi, 50_bi, 80_bi, 45_bi};
-			case Species::Hitmonlee: return {50_bi, 120_bi, 53_bi, 35_bi, 110_bi, 87_bi};
-			case Species::Hitmonchan: return {50_bi, 105_bi, 79_bi, 35_bi, 110_bi, 76_bi};
-			case Species::Lickitung: return {90_bi, 55_bi, 75_bi, 60_bi, 75_bi, 30_bi};
-			case Species::Koffing: return {40_bi, 65_bi, 95_bi, 60_bi, 45_bi, 35_bi};
-			case Species::Weezing: return {65_bi, 90_bi, 120_bi, 85_bi, 70_bi, 60_bi};
+			case Species::Hitmonlee: return {
+				50_bi,
+				120_bi,
+				53_bi,
+				35_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 35_bi, 110_bi),
+				87_bi
+			};
+			case Species::Hitmonchan: return {
+				50_bi,
+				105_bi,
+				79_bi,
+				35_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 35_bi, 110_bi),
+				76_bi
+			};
+			case Species::Lickitung: return {
+				90_bi,
+				55_bi,
+				75_bi,
+				60_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 60_bi, 75_bi),
+				30_bi
+			};
+			case Species::Koffing: return {
+				40_bi,
+				65_bi,
+				95_bi,
+				60_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 60_bi, 45_bi),
+				35_bi
+			};
+			case Species::Weezing: return {
+				65_bi,
+				90_bi,
+				120_bi,
+				85_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 85_bi, 70_bi),
+				60_bi
+			};
 			case Species::Rhyhorn: return {80_bi, 85_bi, 95_bi, 30_bi, 30_bi, 25_bi};
 			case Species::Rhydon: return {105_bi, 130_bi, 120_bi, 45_bi, 45_bi, 40_bi};
-			case Species::Chansey: return {250_bi, 5_bi, 5_bi, 35_bi, 105_bi, 50_bi};
-			case Species::Tangela: return {65_bi, 55_bi, 115_bi, 100_bi, 40_bi, 60_bi};
-			case Species::Kangaskhan: return {105_bi, 95_bi, 80_bi, 40_bi, 80_bi, 90_bi};
+			case Species::Chansey: return {
+				250_bi,
+				5_bi,
+				5_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 105_bi, 35_bi),
+				105_bi,
+				50_bi
+			};
+			case Species::Tangela: return {
+				65_bi,
+				55_bi,
+				115_bi,
+				100_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 100_bi, 40_bi),
+				60_bi
+			};
+			case Species::Kangaskhan: return {
+				105_bi,
+				95_bi,
+				80_bi,
+				40_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 40_bi, 80_bi),
+				90_bi
+			};
 			// case Species::Kangaskhan_Mega: return {105_bi, 125_bi, 100_bi, 60_bi, 100_bi, 100_bi};
-			case Species::Horsea: return {30_bi, 40_bi, 70_bi, 70_bi, 25_bi, 60_bi};
-			case Species::Seadra: return {55_bi, 65_bi, 95_bi, 95_bi, 45_bi, 85_bi};
-			case Species::Goldeen: return {45_bi, 67_bi, 60_bi, 35_bi, 50_bi, 63_bi};
-			case Species::Seaking: return {80_bi, 92_bi, 65_bi, 65_bi, 80_bi, 68_bi};
-			case Species::Staryu: return {30_bi, 45_bi, 55_bi, 70_bi, 55_bi, 85_bi};
-			case Species::Starmie: return {60_bi, 75_bi, 85_bi, 100_bi, 85_bi, 115_bi};
-			case Species::Mr_Mime: return {40_bi, 45_bi, 65_bi, 100_bi, 120_bi, 90_bi};
-			case Species::Scyther: return {70_bi, 110_bi, 80_bi, 55_bi, 80_bi, 105_bi};
-			case Species::Jynx: return {65_bi, 50_bi, 35_bi, 115_bi, 95_bi, 95_bi};
-			case Species::Electabuzz: return {65_bi, 83_bi, 57_bi, 95_bi, 85_bi, 105_bi};
-			case Species::Magmar: return {65_bi, 95_bi, 57_bi, 100_bi, 85_bi, 93_bi};
-			case Species::Pinsir: return {65_bi, 125_bi, 100_bi, 55_bi, 70_bi, 85_bi};
+			case Species::Horsea: return {
+				30_bi,
+				40_bi,
+				70_bi,
+				70_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 70_bi, 25_bi),
+				60_bi
+			};
+			case Species::Seadra: return {
+				55_bi,
+				65_bi,
+				95_bi,
+				95_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 95_bi, 45_bi),
+				85_bi
+			};
+			case Species::Goldeen: return {
+				45_bi,
+				67_bi,
+				60_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 50_bi, 35_bi),
+				50_bi,
+				63_bi
+			};
+			case Species::Seaking: return {
+				80_bi,
+				92_bi,
+				65_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 80_bi, 65_bi),
+				80_bi,
+				68_bi
+			};
+			case Species::Staryu: return {
+				30_bi,
+				45_bi,
+				55_bi,
+				70_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 70_bi, 55_bi),
+				85_bi
+			};
+			case Species::Starmie: return {
+				60_bi,
+				75_bi,
+				85_bi,
+				100_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 100_bi, 85_bi),
+				115_bi
+			};
+			case Species::Mr_Mime: return {
+				40_bi,
+				45_bi,
+				65_bi,
+				100_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 100_bi, 120_bi),
+				90_bi
+			};
+			case Species::Scyther: return {
+				70_bi,
+				110_bi,
+				80_bi,
+				55_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 55_bi, 80_bi),
+				105_bi
+			};
+			case Species::Jynx: return {
+				65_bi,
+				50_bi,
+				35_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 95_bi, 115_bi),
+				95_bi,
+				95_bi
+			};
+			case Species::Electabuzz: return {
+				65_bi,
+				83_bi,
+				57_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 85_bi, 95_bi),
+				85_bi,
+				105_bi
+			};
+			case Species::Magmar: return {
+				65_bi,
+				95_bi,
+				57_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 85_bi, 100_bi),
+				85_bi,
+				93_bi
+			};
+			case Species::Pinsir: return {
+				65_bi,
+				125_bi,
+				100_bi,
+				55_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 55_bi, 70_bi),
+				85_bi
+			};
 			// case Species::Pinsir_Mega: return {65_bi, 155_bi, 120_bi, 65_bi, 90_bi, 105_bi};
-			case Species::Tauros: return {75_bi, 100_bi, 95_bi, 40_bi, 70_bi, 110_bi};
-			case Species::Magikarp: return {20_bi, 10_bi, 55_bi, 15_bi, 20_bi, 80_bi};
-			case Species::Gyarados: return {95_bi, 125_bi, 79_bi, 60_bi, 100_bi, 81_bi};
+			case Species::Tauros: return {
+				75_bi,
+				100_bi,
+				95_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 70_bi, 40_bi),
+				70_bi,
+				110_bi
+			};
+			case Species::Magikarp: return {
+				20_bi,
+				10_bi,
+				55_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 20_bi, 15_bi),
+				20_bi,
+				80_bi
+			};
+			case Species::Gyarados: return {
+				95_bi,
+				125_bi,
+				79_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 100_bi, 60_bi),
+				100_bi,
+				81_bi
+			};
 			// case Species::Gyarados_Mega: return {95_bi, 155_bi, 109_bi, 70_bi, 130_bi, 81_bi};
-			case Species::Lapras: return {130_bi, 85_bi, 80_bi, 85_bi, 95_bi, 60_bi};
+			case Species::Lapras: return {
+				130_bi,
+				85_bi,
+				80_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 95_bi, 85_bi),
+				95_bi,
+				60_bi
+			};
 			case Species::Ditto: return {48_bi, 48_bi, 48_bi, 48_bi, 48_bi, 48_bi};
-			case Species::Eevee: return {55_bi, 55_bi, 50_bi, 45_bi, 65_bi, 55_bi};
-			case Species::Vaporeon: return {130_bi, 65_bi, 60_bi, 110_bi, 95_bi, 65_bi};
-			case Species::Jolteon: return {65_bi, 65_bi, 60_bi, 110_bi, 95_bi, 130_bi};
-			case Species::Flareon: return {65_bi, 130_bi, 60_bi, 95_bi, 110_bi, 65_bi};
-			case Species::Porygon: return {65_bi, 60_bi, 70_bi, 85_bi, 75_bi, 40_bi};
-			case Species::Omanyte: return {35_bi, 40_bi, 100_bi, 90_bi, 55_bi, 35_bi};
-			case Species::Omastar: return {70_bi, 60_bi, 125_bi, 115_bi, 70_bi, 55_bi};
-			case Species::Kabuto: return {30_bi, 80_bi, 90_bi, 55_bi, 45_bi, 55_bi};
-			case Species::Kabutops: return {60_bi, 115_bi, 105_bi, 65_bi, 70_bi, 80_bi};
-			case Species::Aerodactyl: return {80_bi, 105_bi, 65_bi, 60_bi, 75_bi, 130_bi};
+			case Species::Eevee: return {
+				55_bi,
+				55_bi,
+				50_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 65_bi, 45_bi),
+				65_bi,
+				55_bi
+			};
+			case Species::Vaporeon: return {
+				130_bi,
+				65_bi,
+				60_bi,
+				110_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 110_bi, 95_bi),
+				65_bi
+			};
+			case Species::Jolteon: return {
+				65_bi,
+				65_bi,
+				60_bi,
+				110_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 110_bi, 95_bi),
+				130_bi
+			};
+			case Species::Flareon: return {
+				65_bi,
+				130_bi,
+				60_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 110_bi, 95_bi),
+				110_bi,
+				65_bi
+			};
+			case Species::Porygon: return {
+				65_bi,
+				60_bi,
+				70_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 75_bi, 85_bi),
+				75_bi,
+				40_bi
+			};
+			case Species::Omanyte: return {
+				35_bi,
+				40_bi,
+				100_bi,
+				90_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 90_bi, 55_bi),
+				35_bi
+			};
+			case Species::Omastar: return {
+				70_bi,
+				60_bi,
+				125_bi,
+				115_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 115_bi, 70_bi),
+				55_bi
+			};
+			case Species::Kabuto: return {
+				30_bi,
+				80_bi,
+				90_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 45_bi, 55_bi),
+				45_bi,
+				55_bi
+			};
+			case Species::Kabutops: return {
+				60_bi,
+				115_bi,
+				105_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 70_bi, 65_bi),
+				70_bi,
+				80_bi
+			};
+			case Species::Aerodactyl: return {
+				80_bi,
+				105_bi,
+				65_bi,
+				60_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 60_bi, 75_bi),
+				130_bi
+			};
 			// case Species::Aerodactyl_Mega: return {80_bi, 135_bi, 85_bi, 70_bi, 95_bi, 150_bi};
-			case Species::Snorlax: return {160_bi, 110_bi, 65_bi, 65_bi, 110_bi, 30_bi};
-			case Species::Articuno: return {90_bi, 85_bi, 100_bi, 95_bi, 125_bi, 85_bi};
-			case Species::Zapdos: return {90_bi, 90_bi, 85_bi, 125_bi, 90_bi, 100_bi};
-			case Species::Moltres: return {90_bi, 100_bi, 90_bi, 125_bi, 85_bi, 90_bi};
+			case Species::Snorlax: return {
+				160_bi,
+				110_bi,
+				65_bi,
+				65_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 65_bi, 110_bi),
+				30_bi
+			};
+			case Species::Articuno: return {
+				90_bi,
+				85_bi,
+				100_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 125_bi, 95_bi),
+				125_bi,
+				85_bi
+			};
+			case Species::Zapdos: return {
+				90_bi,
+				90_bi,
+				85_bi,
+				125_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 125_bi, 90_bi),
+				100_bi
+			};
+			case Species::Moltres: return {
+				90_bi,
+				100_bi,
+				90_bi,
+				125_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 125_bi, 85_bi),
+				90_bi
+			};
 			case Species::Dratini: return {41_bi, 64_bi, 45_bi, 50_bi, 50_bi, 50_bi};
 			case Species::Dragonair: return {61_bi, 84_bi, 65_bi, 70_bi, 70_bi, 70_bi};
 			case Species::Dragonite: return {91_bi, 134_bi, 95_bi, 100_bi, 100_bi, 80_bi};
-			case Species::Mewtwo: return {106_bi, 110_bi, 90_bi, 154_bi, 90_bi, 130_bi};
+			case Species::Mewtwo: return {
+				106_bi,
+				110_bi,
+				90_bi,
+				154_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::one, 154_bi, 90_bi),
+				130_bi
+			};
 			// case Species::Mewtwo_Mega_X: return {106_bi, 190_bi, 100_bi, 154_bi, 100_bi, 130_bi};
 			// case Species::Mewtwo_Mega_Y: return {106_bi, 150_bi, 70_bi, 194_bi, 120_bi, 140_bi};
 			case Species::Mew: return {100_bi, 100_bi, 100_bi, 100_bi, 100_bi, 100_bi};
