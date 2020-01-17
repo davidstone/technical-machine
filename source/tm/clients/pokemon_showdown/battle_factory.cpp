@@ -93,7 +93,7 @@ Team parse_team(boost::property_tree::ptree const & pt, Generation const generat
 }
 
 void validate_generation(std::string_view const received, Generation const expected) {
-	auto const parsed = static_cast<Generation>(bounded::to_integer<1, 7>(received));
+	auto const parsed = static_cast<Generation>(bounded::to_integer<1, 8>(received));
 	if (parsed != expected) {
 		throw std::runtime_error("Received wrong generation. Expected " + std::to_string(static_cast<int>(expected)) + "but got " + std::string(received));
 	}
