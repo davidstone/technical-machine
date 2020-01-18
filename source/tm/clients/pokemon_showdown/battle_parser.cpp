@@ -118,6 +118,7 @@ constexpr auto parse_effect_source(std::string_view const type, std::string_view
 			type == "psn" or
 			type == "tox" or
 			type == "drain" or
+			type == "Encore" or
 			type == "Leech Seed" or
 			type == "Spikes" or
 			type == "Stealth Rock" or
