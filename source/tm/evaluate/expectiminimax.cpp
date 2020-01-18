@@ -535,11 +535,11 @@ double order_branch(Generation const generation, Team const & ai, Moves const ai
 		use_move_branch(generation, ordered->first.team, ordered->first.move, ordered->second.team, ordered->second.move, weather, evaluate, depth, log);
 }
 
+auto team_is_empty(Team const & team) {
+	return team.size() == 0_bi or (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi);
+};
 
 BestMove select_type_of_move(Generation const generation, Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
-	auto team_is_empty [[maybe_unused]] = [](Team const & team) {
-		return team.size() == 0_bi or (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi);
-	};
 	BOUNDED_ASSERT(!team_is_empty(ai));
 	BOUNDED_ASSERT(!team_is_empty(foe));
 	
@@ -551,6 +551,9 @@ BestMove select_type_of_move(Generation const generation, Team const & ai, Team 
 }	// namespace
 
 Moves expectiminimax(Generation const generation, Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
+	if (team_is_empty(ai) or team_is_empty(foe)) {
+		throw std::runtime_error("Tried to evaluate a position with an empty team");
+	}
 	log << "Evaluating to a depth of " << depth.depth_to_search() << "...\n";
 	boost::timer timer;
 	auto const best_move = select_type_of_move(generation, ai, foe, weather, evaluate, depth, log);
