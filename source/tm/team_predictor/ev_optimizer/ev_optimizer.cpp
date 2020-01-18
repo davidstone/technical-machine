@@ -58,7 +58,7 @@ bool has_special_move(Pokemon const & pokemon) {
 	return containers::any(regular_moves(pokemon), [](Move const move) { return is_special(move.name()); });
 }
 
-auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats {
+auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats {
 	auto best = bounded::optional<CombinedStats>{};
 	for (auto const & speed : speed_container) {
 		auto const offensive = o.find(speed.nature);
@@ -83,14 +83,14 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 		}
 	}
 	BOUNDED_ASSERT(best);
-	BOUNDED_ASSERT(ev_sum(*best) <= EV::max_total);
+	BOUNDED_ASSERT(ev_sum(*best) <= max_total_evs(generation));
 	return *best;
 }
 
 auto optimize_evs(Generation const generation, CombinedStats combined, Species const species, Level const level, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) {
 	while (true) {
 		auto const previous = combined;
-		combined = pad_random_evs(combined, include_attack, include_special_attack, random_engine);
+		combined = pad_random_evs(generation, combined, include_attack, include_special_attack, random_engine);
 		combined = minimize_evs(generation, combined, species, level, include_attack, include_special_attack);
 		// Technically this isn't correct based on how I pad: I could have some
 		// leftover EVs that could have done some good somewhere else, but were
@@ -125,6 +125,17 @@ void optimize_evs(Generation const generation, Pokemon & pokemon, std::mt19937 &
 }
 
 auto minimize_evs(Generation const generation, CombinedStats const stats, Species const species, Level const level, bool const include_attack, bool const include_special_attack) -> CombinedStats {
+	if (generation <= Generation::two) {
+		return CombinedStats{
+			stats.nature,
+			stats.hp,
+			include_attack ? stats.attack : EV(0_bi),
+			stats.defense,
+			stats.special_attack,
+			stats.special_defense,
+			stats.speed
+		};
+	}
 	auto const nature = stats.nature;
 	auto const hp = HP(generation, species, level, stats.hp);
 	auto const attack = Stat(generation, species, StatNames::ATK, stats.attack);
@@ -133,17 +144,26 @@ auto minimize_evs(Generation const generation, CombinedStats const stats, Specie
 	auto const special_defense = Stat(generation, species, StatNames::SPD, stats.special_defense);
 	auto const speed = Stat(generation, species, StatNames::SPE, stats.speed);
 
-	auto const result = combine(
+	return combine(
+		generation,
 		OffensiveEVs(generation, species, level, nature, attack, special_attack, include_attack, include_special_attack),
 		DefensiveEVs(generation, species, level, nature, hp, defense, special_defense),
 		SpeedEVs(nature, speed, level)
 	);
-	return result;
 }
 
-auto pad_random_evs(CombinedStats combined, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) -> CombinedStats {
+auto pad_random_evs(Generation const generation, CombinedStats combined, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) -> CombinedStats {
+	if (generation <= Generation::two) {
+		combined.hp = EV(EV::max);
+		combined.attack = include_attack ? EV(EV::max) : EV(0_bi);
+		combined.defense = EV(EV::max);
+		combined.special_attack = EV(EV::max);
+		combined.special_defense = EV(EV::max);
+		combined.speed = EV(EV::max);
+		return combined;
+	}
 	auto distribution = std::discrete_distribution{};
-	while (ev_sum(combined) < EV::max_total) {
+	while (ev_sum(combined) < max_total_evs(generation)) {
 		distribution.param({
 			combined.hp == EV::max ? 0.0 : 1.0,
 			(!include_attack or combined.attack == EV::max) ? 0.0 : 1.0,

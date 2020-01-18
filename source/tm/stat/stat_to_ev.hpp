@@ -96,7 +96,7 @@ inline auto calculate_evs(Generation const generation, Species const species, Le
 		}
 
 		auto const combined = CombinedStats{nature, hp_ev, to_ev(attack_ev), to_ev(defense_ev), to_ev(special_attack_ev), to_ev(special_defense_ev), to_ev(speed_ev)};
-		if (ev_sum(combined) > EV::max_total) {
+		if (ev_sum(combined) > max_total_evs(generation)) {
 			continue;
 		}
 		

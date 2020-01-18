@@ -38,9 +38,8 @@
 namespace technicalmachine {
 namespace {
 
-constexpr auto generation = Generation::four;
-
 void optimize_already_optimized(std::mt19937 & random_engine) {
+	constexpr auto generation = Generation::four;
 	constexpr auto team_size = 1_bi;
 	constexpr auto species = Species::Metagross;
 	constexpr auto level = Level(100_bi);
@@ -58,13 +57,15 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
 	BOUNDED_ASSERT(minimize_evs(generation, stats, species, level, include_attack, include_special_attack) == stats);
-	BOUNDED_ASSERT(pad_random_evs(stats, include_attack, include_special_attack, random_engine) == stats);
+	BOUNDED_ASSERT(pad_random_evs(generation, stats, include_attack, include_special_attack, random_engine) == stats);
 	optimize_evs(generation, pokemon, random_engine);
 	BOUNDED_ASSERT(pull_out_stats(pokemon) == stats);
 }
 
 void defensive_tests() {
 	std::cout << "\tRunning defensive tests.\n";
+
+	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Celebi;
 	constexpr auto level = Level(100_bi);
 	auto const hp = HP(generation, species, level, EV(252_bi));
@@ -89,6 +90,7 @@ auto find(SpeedEVs const & container, Nature const nature) {
 void speed_tests() {
 	std::cout << "\tRunning speed tests.\n";
 	
+	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Snorlax;
 	constexpr auto level = Level(100_bi);
 	constexpr auto original_nature = Nature::Hardy;
@@ -106,6 +108,7 @@ void speed_tests() {
 }
 
 void not_level_100(std::mt19937 & random_engine) {
+	constexpr auto generation = Generation::four;
 	constexpr auto team_size = 1_bi;
 	constexpr auto species = Species::Masquerain;
 	constexpr auto level = Level(83_bi);
@@ -123,6 +126,31 @@ void not_level_100(std::mt19937 & random_engine) {
 	optimize_evs(generation, pokemon, random_engine);
 }
 
+void generation_two(std::mt19937 & random_engine) {
+	constexpr auto generation = Generation::two;
+	constexpr auto team_size = 1_bi;
+	constexpr auto species = Species::Mew;
+	constexpr auto level = Level(100_bi);
+	auto pokemon = Pokemon(generation, team_size, species, level, Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Hardy);
+	set_hp_ev(generation, pokemon, EV(252_bi));
+	set_stat_ev(pokemon, StatNames::ATK, EV(252_bi));
+	set_stat_ev(pokemon, StatNames::DEF, EV(252_bi));
+	set_stat_ev(pokemon, StatNames::SPA, EV(252_bi));
+	set_stat_ev(pokemon, StatNames::SPD, EV(252_bi));
+	set_stat_ev(pokemon, StatNames::SPE, EV(252_bi));
+	containers::emplace_back(all_moves(pokemon), generation, Moves::Tackle);
+	containers::emplace_back(all_moves(pokemon), generation, Moves::Psychic);
+
+	auto const stats = pull_out_stats(pokemon);
+	
+	constexpr auto include_attack = true;
+	constexpr auto include_special_attack = true;
+	BOUNDED_ASSERT(minimize_evs(generation, stats, species, level, include_attack, include_special_attack) == stats);
+	BOUNDED_ASSERT(pad_random_evs(generation, stats, include_attack, include_special_attack, random_engine) == stats);
+	optimize_evs(generation, pokemon, random_engine);
+	BOUNDED_ASSERT(pull_out_stats(pokemon) == stats);
+}
+
 }	// namespace
 
 void ev_optimizer_tests() {
@@ -136,6 +164,8 @@ void ev_optimizer_tests() {
 	optimize_already_optimized(random_engine);
 
 	not_level_100(random_engine);
+
+	generation_two(random_engine);
 
 	std::cout << "EV optimizer tests passed.\n\n";
 }

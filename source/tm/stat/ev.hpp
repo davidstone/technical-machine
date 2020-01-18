@@ -18,6 +18,9 @@
 
 #pragma once
 
+#include <tm/generation.hpp>
+
+#include <bounded/detail/conditional.hpp>
 #include <bounded/detail/construct_destroy.hpp>
 #include <bounded/integer.hpp>
 
@@ -29,7 +32,6 @@ using namespace bounded::literal;
 
 struct EV {
 	static constexpr auto max = 252_bi;
-	static constexpr auto max_total = 508_bi;
 	using value_type = bounded::checked_integer<0, static_cast<int>(max)>;
 
 	constexpr explicit EV(value_type evs):
@@ -67,6 +69,14 @@ constexpr auto ev_range(auto const max) {
 
 constexpr auto ev_range() {
 	return ev_range(EV::max);
+}
+
+constexpr auto max_total_evs(Generation const generation) {
+	return
+		BOUNDED_CONDITIONAL(generation <= Generation::one, 252_bi * 5_bi,
+		BOUNDED_CONDITIONAL(generation <= Generation::two, 252_bi * 6_bi,
+		508_bi
+	));
 }
 
 }	// namespace technicalmachine

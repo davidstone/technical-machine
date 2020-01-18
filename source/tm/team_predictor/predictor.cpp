@@ -107,7 +107,7 @@ auto parse_html_team(std::string_view str, Generation const generation) -> Team 
 			}
 		}
 
-		if (hp.value() + atk.value() + def.value() + spa.value() + spd.value() + spe.value() > EV::max_total) {
+		if (hp.value() + atk.value() + def.value() + spa.value() + spd.value() + spe.value() > max_total_evs(generation)) {
 			throw std::runtime_error("Too many EVs");
 		}
 
