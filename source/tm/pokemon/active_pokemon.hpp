@@ -688,6 +688,9 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.ability = m_pokemon.initial_ability();
 		m_flags.switched_in_this_turn = true;
 		m_flags.types = PokemonTypes(generation, get_species(m_pokemon));
+		if (generation <= Generation::two and get_status(m_pokemon).name() == Statuses::toxic) {
+			m_pokemon.set_status(Statuses::poison);
+		}
 		m_flags.status.set(get_status(m_pokemon).name());
 		if (item(generation, weather) == Item::Berserk_Gene) {
 			activate_berserk_gene(generation, *this, weather);

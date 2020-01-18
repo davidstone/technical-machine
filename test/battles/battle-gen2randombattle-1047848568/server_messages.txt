@@ -1,0 +1,624 @@
+>battle-gen2randombattle-1047848568
+|title|Technical Machine vs. david stone
+|j|☆Technical Machine
+|request|
+||
+|j|☆david stone
+||
+|player|p1|Technical Machine|170|
+|request|{"active":[{"moves":[{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":true,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":2}
+||
+|player|p2|david stone|102|
+|teamsize|p1|6
+|teamsize|p2|6
+|gametype|singles
+|gen|2
+|tier|[Gen 2] Random Battle
+|rule|Sleep Clause Mod: Limit one foe put to sleep
+|rule|Freeze Clause Mod: Limit one foe frozen
+|rule|Species Clause: Limit one of each Pokémon
+|rule|OHKO Clause: OHKO moves are banned
+|rule|Evasion Moves Clause: Evasion moves are banned
+|rule|HP Percentage Mod: HP is shown in percentages
+||
+|start|
+|switch|p1a: Unown|Unown, L98|285/285
+|switch|p2a: Fearow|Fearow, L80, M|100/100
+|turn|1
+|request|{"active":[{"moves":[{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":23,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":true,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":4}
+||
+||
+|switch|p2a: Forretress|Forretress, L68, M|100/100
+|move|p1a: Unown|Hidden Power|p2a: Forretress
+|-damage|p2a: Forretress|79/100
+||
+|-heal|p2a: Forretress|85/100|[from] item: Leftovers
+|upkeep|
+|turn|2
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":6}
+||
+||
+|switch|p1a: Umbreon|Umbreon, L68, M|270/270
+|move|p2a: Forretress|Spikes|p1a: Umbreon
+|-sidestart|p1: Technical Machine|Spikes
+||
+|-heal|p2a: Forretress|91/100|[from] item: Leftovers
+|upkeep|
+|turn|3
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":8}
+||
+||
+|switch|p2a: Smeargle|Smeargle, L70, M|100/100
+|move|p1a: Umbreon|Hidden Power|p2a: Smeargle
+|-damage|p2a: Smeargle|69/100
+||
+|-heal|p2a: Smeargle|75/100|[from] item: Leftovers
+|upkeep|
+|turn|4
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":22,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":10}
+||
+||
+|move|p2a: Smeargle|Spider Web|p1a: Umbreon
+|-activate|p1a: Umbreon|trapped
+|move|p1a: Umbreon|Hidden Power|p2a: Smeargle
+|-damage|p2a: Smeargle|47/100
+||
+|-heal|p2a: Smeargle|53/100|[from] item: Leftovers
+|upkeep|
+|turn|5
+|request|{"wait":true,"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":12}
+||
+||
+|move|p2a: Smeargle|Baton Pass|p2a: Smeargle
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":21,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":14}
+||
+||
+|switch|p2a: Quagsire|Quagsire, L74, M|100/100|[from]move: Baton Pass
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|84/100
+||
+|-heal|p2a: Quagsire|91/100|[from] item: Leftovers
+|upkeep|
+|turn|6
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":20,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":16}
+||
+||
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|75/100
+|move|p2a: Quagsire|Curse|p2a: Quagsire
+|-unboost|p2a: Quagsire|spe|1
+|-boost|p2a: Quagsire|atk|1
+|-boost|p2a: Quagsire|def|1
+||
+|-heal|p2a: Quagsire|81/100|[from] item: Leftovers
+|upkeep|
+|turn|7
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":19,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":18}
+||
+||
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|64/100
+|move|p2a: Quagsire|Curse|p2a: Quagsire
+|-unboost|p2a: Quagsire|spe|1
+|-boost|p2a: Quagsire|atk|1
+|-boost|p2a: Quagsire|def|1
+||
+|-heal|p2a: Quagsire|70/100|[from] item: Leftovers
+|upkeep|
+|turn|8
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":18,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":20}
+||
+||
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|53/100
+|move|p2a: Quagsire|Curse|p2a: Quagsire
+|-unboost|p2a: Quagsire|spe|1
+|-boost|p2a: Quagsire|atk|1
+|-boost|p2a: Quagsire|def|1
+||
+|-heal|p2a: Quagsire|59/100|[from] item: Leftovers
+|upkeep|
+|turn|9
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":17,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":22}
+||
+||
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|41/100
+|move|p2a: Quagsire|Curse|p2a: Quagsire
+|-unboost|p2a: Quagsire|spe|1
+|-boost|p2a: Quagsire|atk|1
+|-boost|p2a: Quagsire|def|1
+||
+|-heal|p2a: Quagsire|47/100|[from] item: Leftovers
+|upkeep|
+|turn|10
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":16,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":24}
+||
+||
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|32/100
+|move|p2a: Quagsire|Rest|p2a: Quagsire
+|-status|p2a: Quagsire|slp|[from] move: Rest
+|-heal|p2a: Quagsire|100/100 slp|[silent]
+||
+|upkeep|
+|turn|11
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":15,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":26}
+||
+||
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|83/100 slp
+|cant|p2a: Quagsire|slp
+||
+|-heal|p2a: Quagsire|90/100 slp|[from] item: Leftovers
+|upkeep|
+|turn|12
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":14,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":28}
+||
+||
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|72/100 slp
+|cant|p2a: Quagsire|slp
+||
+|-heal|p2a: Quagsire|78/100 slp|[from] item: Leftovers
+|upkeep|
+|turn|13
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":13,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":30}
+||
+||
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|62/100 slp
+|-curestatus|p2a: Quagsire|slp|[msg]
+|move|p2a: Quagsire|Curse|p2a: Quagsire
+|-unboost|p2a: Quagsire|spe|1
+|-boost|p2a: Quagsire|atk|1
+|-boost|p2a: Quagsire|def|1
+||
+|-heal|p2a: Quagsire|68/100|[from] item: Leftovers
+|upkeep|
+|turn|14
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":13,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":32}
+||
+||
+|move|p1a: Umbreon|Toxic|p2a: Quagsire
+|-status|p2a: Quagsire|tox
+|move|p2a: Quagsire|Curse|p2a: Quagsire
+|-unboost|p2a: Quagsire|spe|1
+|-boost|p2a: Quagsire|atk|1
+|-boost|p2a: Quagsire|def|1
+|-damage|p2a: Quagsire|62/100 tox|[from] psn
+||
+|-heal|p2a: Quagsire|68/100 tox|[from] item: Leftovers
+|upkeep|
+|turn|15
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":12,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":34}
+||
+||
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|52/100 tox
+|move|p2a: Quagsire|Rest|p2a: Quagsire
+|-status|p2a: Quagsire|slp|[from] move: Rest
+|-heal|p2a: Quagsire|100/100 slp|[silent]
+||
+|upkeep|
+|turn|16
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":11,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":36}
+||
+||
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|83/100 slp
+|cant|p2a: Quagsire|slp
+||
+|-heal|p2a: Quagsire|90/100 slp|[from] item: Leftovers
+|upkeep|
+|turn|17
+|request|{"active":[{"moves":[{"move":"Toxic","id":"toxic","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":10,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}],"trapped":true}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"270/270","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":38}
+||
+||
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|72/100 slp
+|cant|p2a: Quagsire|slp
+||
+|-heal|p2a: Quagsire|78/100 slp|[from] item: Leftovers
+|upkeep|
+|turn|18
+|request|{"forceSwitch":[true],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":true,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"noCancel":true,"rqid":40}
+||
+||
+|move|p1a: Umbreon|Hidden Power|p2a: Quagsire
+|-damage|p2a: Quagsire|60/100 slp
+|-curestatus|p2a: Quagsire|slp|[msg]
+|move|p2a: Quagsire|Earthquake|p1a: Umbreon
+|-crit|p1a: Umbreon
+|-damage|p1a: Umbreon|0 fnt
+|faint|p1a: Umbreon
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Sleep Powder","id":"sleeppowder","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"254/271","active":true,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":42}
+||
+||
+|switch|p1a: Victreebel|Victreebel, L74, M|271/271
+|-damage|p1a: Victreebel|238/271|[from] Spikes
+||
+|-heal|p1a: Victreebel|254/271|[from] item: Leftovers
+|-heal|p2a: Quagsire|66/100|[from] item: Leftovers
+|upkeep|
+|turn|19
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Sleep Powder","id":"sleeppowder","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":true,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":44}
+||
+||
+|switch|p2a: Crobat|Crobat, L74, M|100/100
+|move|p1a: Victreebel|Giga Drain|p2a: Crobat
+|-resisted|p2a: Crobat
+|-damage|p2a: Crobat|95/100
+|-heal|p1a: Victreebel|261/271|[from] drain|[of] p2a: Crobat
+||
+|-heal|p1a: Victreebel|271/271|[from] item: Leftovers
+|upkeep|
+|turn|20
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"235/271","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":46}
+||
+||
+|switch|p1a: Articuno|Articuno, L70|271/271
+|move|p2a: Crobat|Wing Attack|p1a: Articuno
+|-damage|p1a: Articuno|219/271
+||
+|-heal|p1a: Articuno|235/271|[from] item: Leftovers
+|upkeep|
+|turn|21
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"251/271","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"256/256","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":48}
+||
+||
+|switch|p2a: Forretress|Forretress, L68, M|91/100
+|move|p1a: Articuno|Ice Beam|p2a: Forretress
+|-resisted|p2a: Forretress
+|-damage|p2a: Forretress|70/100
+||
+|-heal|p1a: Articuno|251/271|[from] item: Leftovers
+|-heal|p2a: Forretress|77/100|[from] item: Leftovers
+|upkeep|
+|turn|22
+|request|{"active":[{"moves":[{"move":"Surf","id":"surf","pp":24,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Ice Beam","id":"icebeam","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"240/256 tox","active":true,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"251/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":50}
+||
+||
+|switch|p1a: Omastar|Omastar, L74, M|256/256
+|-damage|p1a: Omastar|224/256|[from] Spikes
+|move|p2a: Forretress|Toxic|p1a: Omastar
+|-status|p1a: Omastar|tox
+||
+|-heal|p1a: Omastar|240/256 tox|[from] item: Leftovers
+|-heal|p2a: Forretress|83/100|[from] item: Leftovers
+|upkeep|
+|turn|23
+|request|{"active":[{"moves":[{"move":"Surf","id":"surf","pp":24,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Ice Beam","id":"icebeam","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Toxic","id":"toxic","pp":15,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"240/256 tox","active":true,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"251/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":52}
+||
+||
+|switch|p2a: Kingdra|Kingdra, L70, M|100/100
+|move|p1a: Omastar|Toxic|p2a: Kingdra|[miss]
+|-miss|p1a: Omastar
+|-damage|p1a: Omastar|224/256 tox|[from] psn
+||
+|-heal|p1a: Omastar|240/256 tox|[from] item: Leftovers
+|upkeep|
+|turn|24
+|request|{"active":[{"moves":[{"move":"Surf","id":"surf","pp":24,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Ice Beam","id":"icebeam","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Toxic","id":"toxic","pp":15,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":true,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"251/271","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":54}
+||
+||
+|move|p2a: Kingdra|Surf|p1a: Omastar
+|-damage|p1a: Omastar|142/256 tox
+|move|p1a: Omastar|Ice Beam|p2a: Kingdra
+|-damage|p2a: Kingdra|74/100
+|-damage|p1a: Omastar|110/256 tox|[from] psn
+||
+|-heal|p2a: Kingdra|80/100|[from] item: Leftovers
+|-heal|p1a: Omastar|126/256 tox|[from] item: Leftovers
+|upkeep|
+|turn|25
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"197/271","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":56}
+||
+||
+|switch|p1a: Articuno|Articuno, L70|251/271
+|move|p2a: Kingdra|Surf|p1a: Articuno
+|-damage|p1a: Articuno|181/271
+||
+|-heal|p2a: Kingdra|86/100|[from] item: Leftovers
+|-heal|p1a: Articuno|197/271|[from] item: Leftovers
+|upkeep|
+|turn|26
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":14,"maxpp":16,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"213/271","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":58}
+||
+||
+|switch|p2a: Forretress|Forretress, L68, M|83/100
+|move|p1a: Articuno|Ice Beam|p2a: Forretress
+|-resisted|p2a: Forretress
+|-damage|p2a: Forretress|59/100
+||
+|-heal|p1a: Articuno|213/271|[from] item: Leftovers
+|-heal|p2a: Forretress|66/100|[from] item: Leftovers
+|upkeep|
+|turn|27
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":14,"maxpp":16,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271 slp","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":60}
+||
+||
+|move|p1a: Articuno|Rest|p1a: Articuno
+|-status|p1a: Articuno|slp|[from] move: Rest
+|-heal|p1a: Articuno|271/271 slp|[silent]
+|move|p2a: Forretress|Toxic||[still]
+|-fail|p2a: Forretress
+||
+|-heal|p2a: Forretress|72/100|[from] item: Leftovers
+|upkeep|
+|turn|28
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":14,"maxpp":16,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"263/271 slp","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":62}
+||
+||
+|cant|p1a: Articuno|slp
+|move|p1a: Articuno|Sleep Talk|p1a: Articuno
+|move|p1a: Articuno|Toxic|p2a: Forretress|[from]Sleep Talk
+|-immune|p2a: Forretress
+|move|p2a: Forretress|Hidden Power|p1a: Articuno
+|-resisted|p1a: Articuno
+|-damage|p1a: Articuno|247/271 slp
+||
+|-heal|p1a: Articuno|263/271 slp|[from] item: Leftovers
+|-heal|p2a: Forretress|78/100|[from] item: Leftovers
+|upkeep|
+|turn|29
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":14,"maxpp":16,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271 slp","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":64}
+||
+||
+|cant|p1a: Articuno|slp
+|move|p1a: Articuno|Sleep Talk|p1a: Articuno
+|move|p1a: Articuno|Rest|p1a: Articuno|[from]Sleep Talk
+|-status|p1a: Articuno|slp|[from] move: Rest
+|-heal|p1a: Articuno|271/271 slp|[silent]
+|move|p2a: Forretress|Toxic||[still]
+|-fail|p2a: Forretress
+||
+|-heal|p2a: Forretress|84/100|[from] item: Leftovers
+|upkeep|
+|turn|30
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":14,"maxpp":16,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"260/271 slp","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":66}
+||
+||
+|cant|p1a: Articuno|slp
+|move|p2a: Forretress|Hidden Power|p1a: Articuno
+|-resisted|p1a: Articuno
+|-damage|p1a: Articuno|244/271 slp
+||
+|-heal|p1a: Articuno|260/271 slp|[from] item: Leftovers
+|-heal|p2a: Forretress|90/100|[from] item: Leftovers
+|upkeep|
+|turn|31
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":14,"maxpp":16,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"249/271 slp","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":68}
+||
+||
+|cant|p1a: Articuno|slp
+|move|p2a: Forretress|Hidden Power|p1a: Articuno
+|-resisted|p1a: Articuno
+|-damage|p1a: Articuno|233/271 slp
+||
+|-heal|p1a: Articuno|249/271 slp|[from] item: Leftovers
+|-heal|p2a: Forretress|96/100|[from] item: Leftovers
+|upkeep|
+|turn|32
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":13,"maxpp":16,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"265/271","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":70}
+||
+||
+|-curestatus|p1a: Articuno|slp|[msg]
+|move|p1a: Articuno|Ice Beam|p2a: Forretress
+|-resisted|p2a: Forretress
+|-damage|p2a: Forretress|74/100
+|move|p2a: Forretress|Toxic|p1a: Articuno|[miss]
+|-miss|p2a: Forretress
+||
+|-heal|p1a: Articuno|265/271|[from] item: Leftovers
+|-heal|p2a: Forretress|80/100|[from] item: Leftovers
+|upkeep|
+|turn|33
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":12,"maxpp":16,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":72}
+||
+||
+|move|p1a: Articuno|Ice Beam|p2a: Forretress
+|-resisted|p2a: Forretress
+|-damage|p2a: Forretress|56/100
+|move|p2a: Forretress|Toxic|p1a: Articuno|[miss]
+|-miss|p2a: Forretress
+||
+|-heal|p1a: Articuno|271/271|[from] item: Leftovers
+|-heal|p2a: Forretress|63/100|[from] item: Leftovers
+|upkeep|
+|turn|34
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":11,"maxpp":16,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"271/271 tox","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":74}
+||
+||
+|move|p1a: Articuno|Ice Beam|p2a: Forretress
+|-resisted|p2a: Forretress
+|-damage|p2a: Forretress|42/100
+|move|p2a: Forretress|Toxic|p1a: Articuno
+|-status|p1a: Articuno|tox
+||
+|-heal|p2a: Forretress|48/100|[from] item: Leftovers
+|upkeep|
+|turn|35
+|request|{"forceSwitch":[true],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":true,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"285/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":76}
+||
+||
+|move|p1a: Articuno|Ice Beam|p2a: Forretress
+|-resisted|p2a: Forretress
+|-damage|p2a: Forretress|24/100
+|-damage|p1a: Articuno|255/271 tox|[from] psn
+|move|p2a: Forretress|Explosion|p1a: Articuno
+|-damage|p1a: Articuno|0 fnt
+|faint|p2a: Forretress
+|faint|p1a: Articuno
+|request|{"active":[{"moves":[{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":23,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Unown","details":"Unown, L98","condition":"250/285","active":true,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":78}
+||
+||
+|switch|p1a: Unown|Unown, L98|285/285
+|switch|p2a: Crobat|Crobat, L74, M|95/100
+|-damage|p1a: Unown|250/285|[from] Spikes
+||
+|upkeep|
+|turn|36
+|request|{"active":[{"moves":[{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":22,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Unown","details":"Unown, L98","condition":"208/285","active":true,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":80}
+||
+||
+|move|p2a: Crobat|Hidden Power|p1a: Unown
+|-damage|p1a: Unown|208/285
+|move|p1a: Unown|Hidden Power|p2a: Crobat
+|-supereffective|p2a: Crobat
+|-damage|p2a: Crobat|40/100
+||
+|upkeep|
+|turn|37
+|request|{"active":[{"moves":[{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":21,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Unown","details":"Unown, L98","condition":"208/285","active":true,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":82}
+||
+||
+|switch|p2a: Quagsire|Quagsire, L74, M|66/100
+|move|p1a: Unown|Hidden Power|p2a: Quagsire
+|-resisted|p2a: Quagsire
+|-damage|p2a: Quagsire|55/100
+||
+|-heal|p2a: Quagsire|61/100|[from] item: Leftovers
+|upkeep|
+|turn|38
+|request|{"active":[{"moves":[{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":20,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Unown","details":"Unown, L98","condition":"110/285","active":true,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":84}
+||
+||
+|move|p1a: Unown|Hidden Power|p2a: Quagsire
+|-resisted|p2a: Quagsire
+|-damage|p2a: Quagsire|49/100
+|move|p2a: Quagsire|Earthquake|p1a: Unown
+|-damage|p1a: Unown|110/285
+||
+|-heal|p2a: Quagsire|55/100|[from] item: Leftovers
+|upkeep|
+|turn|39
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Sleep Powder","id":"sleeppowder","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"254/271","active":true,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"110/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":86}
+||
+||
+|switch|p1a: Victreebel|Victreebel, L74, M|271/271
+|-damage|p1a: Victreebel|238/271|[from] Spikes
+|move|p2a: Quagsire|Curse|p2a: Quagsire
+|-unboost|p2a: Quagsire|spe|1
+|-boost|p2a: Quagsire|atk|1
+|-boost|p2a: Quagsire|def|1
+||
+|-heal|p1a: Victreebel|254/271|[from] item: Leftovers
+|-heal|p2a: Quagsire|61/100|[from] item: Leftovers
+|upkeep|
+|turn|40
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Sleep Powder","id":"sleeppowder","pp":23,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"270/271","active":true,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"110/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":88}
+||
+||
+|switch|p2a: Kingdra|Kingdra, L70, M|86/100
+|move|p1a: Victreebel|Sleep Powder|p2a: Kingdra
+|-status|p2a: Kingdra|slp|[from] move: Sleep Powder
+||
+|-heal|p2a: Kingdra|92/100 slp|[from] item: Leftovers
+|-heal|p1a: Victreebel|270/271|[from] item: Leftovers
+|upkeep|
+|turn|41
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Sleep Powder","id":"sleeppowder","pp":23,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"271/271","active":true,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"110/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":90}
+||
+||
+|switch|p2a: Crobat|Crobat, L74, M|40/100
+|move|p1a: Victreebel|Sludge Bomb|p2a: Crobat
+|-resisted|p2a: Crobat
+|-damage|p2a: Crobat|22/100
+||
+|-heal|p1a: Victreebel|271/271|[from] item: Leftovers
+|upkeep|
+|turn|42
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":14,"maxpp":16,"target":"normal","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Sleep Powder","id":"sleeppowder","pp":23,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"154/271","active":true,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"110/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":92}
+||
+||
+|move|p2a: Crobat|Wing Attack|p1a: Victreebel
+|-supereffective|p1a: Victreebel
+|-damage|p1a: Victreebel|138/271
+|move|p1a: Victreebel|Sludge Bomb|p2a: Crobat
+|-resisted|p2a: Crobat
+|-damage|p2a: Crobat|4/100
+||
+|-heal|p1a: Victreebel|154/271|[from] item: Leftovers
+|upkeep|
+|turn|43
+|request|{"wait":true,"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"26/271","active":true,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"110/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":94}
+||
+||
+|move|p2a: Crobat|Wing Attack|p1a: Victreebel
+|-supereffective|p1a: Victreebel
+|-damage|p1a: Victreebel|26/271
+|move|p1a: Victreebel|Sludge Bomb|p2a: Crobat
+|-crit|p2a: Crobat
+|-resisted|p2a: Crobat
+|-damage|p2a: Crobat|0 fnt
+|faint|p2a: Crobat
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":13,"maxpp":16,"target":"normal","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Sleep Powder","id":"sleeppowder","pp":23,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"42/271","active":true,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"110/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":96}
+||
+||
+|switch|p2a: Fearow|Fearow, L80, M|100/100
+||
+|-heal|p1a: Victreebel|42/271|[from] item: Leftovers
+|upkeep|
+|turn|44
+|request|{"forceSwitch":[true],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"0 fnt","active":true,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"271/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"110/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"noCancel":true,"rqid":98}
+||
+||
+|move|p2a: Fearow|Return|p1a: Victreebel
+|-damage|p1a: Victreebel|0 fnt
+|faint|p1a: Victreebel
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Ancient Power","id":"ancientpower","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Hidden Power Bug 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"254/271","active":true,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"0 fnt","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"110/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":100}
+||
+||
+|switch|p1a: Donphan|Donphan, L70, M|271/271
+|-damage|p1a: Donphan|238/271|[from] Spikes
+||
+|-heal|p1a: Donphan|254/271|[from] item: Leftovers
+|upkeep|
+|turn|45
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Ancient Power","id":"ancientpower","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Hidden Power Bug 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"270/271","active":true,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"0 fnt","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"110/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":102}
+||
+||
+|move|p2a: Fearow|Substitute|p2a: Fearow
+|-start|p2a: Fearow|Substitute
+|-damage|p2a: Fearow|76/100
+|move|p1a: Donphan|Ancient Power|p2a: Fearow
+|-supereffective|p2a: Fearow
+|-end|p2a: Fearow|Substitute
+|-boost|p1a: Donphan|atk|1
+|-boost|p1a: Donphan|def|1
+|-boost|p1a: Donphan|spa|1
+|-boost|p1a: Donphan|spd|1
+|-boost|p1a: Donphan|spe|1
+||
+|-heal|p2a: Fearow|82/100|[from] item: Leftovers
+|-heal|p1a: Donphan|270/271|[from] item: Leftovers
+|upkeep|
+|turn|46
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Ancient Power","id":"ancientpower","pp":6,"maxpp":8,"target":"normal","disabled":false},{"move":"Hidden Power Bug 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"100/271","active":true,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"0 fnt","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"126/256 tox","active":false,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"110/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":104}
+||
+||
+|move|p2a: Fearow|Return|p1a: Donphan
+|-crit|p1a: Donphan
+|-damage|p1a: Donphan|84/271
+|move|p1a: Donphan|Ancient Power|p2a: Fearow
+|-supereffective|p2a: Fearow
+|-damage|p2a: Fearow|26/100
+|-boost|p1a: Donphan|atk|1
+|-boost|p1a: Donphan|def|1
+|-boost|p1a: Donphan|spa|1
+|-boost|p1a: Donphan|spd|1
+|-boost|p1a: Donphan|spe|1
+||
+|-heal|p1a: Donphan|100/271|[from] item: Leftovers
+|-heal|p2a: Fearow|32/100|[from] item: Leftovers
+|upkeep|
+|turn|47
+|request|{"active":[{"moves":[{"move":"Surf","id":"surf","pp":24,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Ice Beam","id":"icebeam","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Toxic","id":"toxic","pp":15,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Omastar","details":"Omastar, L74, M","condition":"38/256 psn","active":true,"stats":{"atk":162,"def":258,"spa":244,"spd":177,"spe":155},"moves":["surf","rest","icebeam","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Articuno","details":"Articuno, L70","condition":"0 fnt","active":false,"stats":{"atk":189,"def":210,"spa":203,"spd":245,"spe":189},"moves":["icebeam","rest","sleeptalk","toxic"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Victreebel","details":"Victreebel, L74, M","condition":"0 fnt","active":false,"stats":{"atk":229,"def":170,"spa":221,"spd":162,"spe":177},"moves":["swordsdance","sludgebomb","gigadrain","sleeppowder"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Donphan","details":"Donphan, L70, M","condition":"100/271","active":false,"stats":{"atk":235,"def":235,"spa":154,"spd":154,"spe":140},"moves":["curse","earthquake","ancientpower","hiddenpowerbug"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Unown","details":"Unown, L98","condition":"110/285","active":false,"stats":{"atk":233,"def":184,"spa":237,"spd":190,"spe":190},"moves":["hiddenpowerrock"],"baseAbility":"none","item":"hardstone","pokeball":"pokeball"},{"ident":"p1: Umbreon","details":"Umbreon, L68, M","condition":"0 fnt","active":false,"stats":{"atk":156,"def":217,"spa":149,"spd":245,"spe":156},"moves":["toxic","reflect","hiddenpowerdark","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":106}
+||
+||
+|switch|p1a: Omastar|Omastar, L74, M|126/256 tox
+|-status|p1a: Omastar|psn|[silent]
+|-damage|p1a: Omastar|94/256 psn|[from] Spikes
+|-damage|p1a: Omastar|62/256 psn|[from] psn
+|move|p2a: Fearow|Return|p1a: Omastar
