@@ -35,9 +35,8 @@ struct DV {
 		return m_value;
 	}
 
-	// TODO: ???
 	constexpr explicit operator IV() const {
-		return IV(value());
+		return IV(2_bi * value());
 	}
 private:
 	value_type m_value;
