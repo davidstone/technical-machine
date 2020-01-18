@@ -303,7 +303,7 @@ std::string_view to_string(Ability const ability) {
 
 template<>
 Ability from_string<Ability>(std::string_view const str) {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Ability>, 258>;
+	using Storage = containers::array<containers::map_value_type<std::string_view, Ability>, 259>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
@@ -441,6 +441,7 @@ Ability from_string<Ability>(std::string_view const str) {
 			{"neuroforce", Ability::Neuroforce},
 			{"neutralizinggas", Ability::Neutralizing_Gas},
 			{"noguard", Ability::No_Guard},
+			{"none", Ability::Honey_Gather}, // TODO: ???
 			{"normalize", Ability::Normalize},
 			{"oblivious", Ability::Oblivious},
 			{"overcoat", Ability::Overcoat},
