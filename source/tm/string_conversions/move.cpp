@@ -769,7 +769,7 @@ std::string_view to_string(Moves const move) {
 
 template<>
 Moves from_string(std::string_view const str) {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Moves>, 751>;
+	using Storage = containers::array<containers::map_value_type<std::string_view, Moves>, 752>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
@@ -1292,6 +1292,7 @@ Moves from_string(std::string_view const str) {
 			{ "rest", Moves::Rest },
 			{ "retaliate", Moves::Retaliate },
 			{ "return", Moves::Return },
+			{ "return102", Moves::Return },
 			{ "revelationdance", Moves::Revelation_Dance },
 			{ "revenge", Moves::Revenge },
 			{ "reversal", Moves::Reversal },
