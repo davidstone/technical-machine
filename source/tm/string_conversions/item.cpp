@@ -794,10 +794,11 @@ std::string_view to_string(Item const item) {
 
 template<>
 Item from_string(std::string_view const str) {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Item>, 744>;
+	using Storage = containers::array<containers::map_value_type<std::string_view, Item>, 745>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
+			{"", Item::None},
 			{"abilitycapsule", Item::Ability_Capsule},
 			{"abomasite", Item::Abomasite},
 			{"absolite", Item::Absolite},
