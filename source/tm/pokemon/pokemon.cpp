@@ -63,7 +63,13 @@ Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Speci
 
 	m_happiness(happiness),
 	
-	m_hidden_power(generation, GenericStats<IV>{IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)}),
+	m_hidden_power([=]{
+		constexpr auto dv = DV(15_bi);
+		constexpr auto iv = IV(31_bi);
+		return generation <= Generation::two ?
+			HiddenPower(generation, DVs{dv, dv, dv, dv}) :
+			HiddenPower(generation, IVs{iv, iv, iv, iv, iv, iv});
+	}()),
 	
 	m_has_been_seen(false),
 
