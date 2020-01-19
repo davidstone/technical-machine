@@ -40,16 +40,16 @@ struct EntryHazards {
 	constexpr auto toxic_spikes() const {
 		return m_toxic_spikes;
 	}
-	constexpr auto add_spikes() {
+	constexpr auto add_spikes() & {
 		++m_spikes;
 	}
-	constexpr auto add_toxic_spikes() {
+	constexpr auto add_toxic_spikes() & {
 		++m_toxic_spikes;
 	}
-	constexpr auto clear_toxic_spikes() {
+	constexpr auto clear_toxic_spikes() & {
 		m_toxic_spikes = 0_bi;
 	}
-	constexpr auto add_stealth_rock() {
+	constexpr auto add_stealth_rock() & {
 		m_stealth_rock = true;
 	}
 private:

@@ -147,7 +147,7 @@ auto score_pokemon(Evaluate const & evaluate, Generation const generation, Pokem
 auto score_all_pokemon(Evaluate const & evaluate, Generation const generation, Team const & team, Team const & other, Weather const weather) {
 	auto has_hp = [](auto const & pokemon) { return get_hp(pokemon) != 0_bi; };
 	auto get_score = [&](auto const & pokemon) {
-		return score_pokemon(evaluate, generation, pokemon, team.entry_hazards, other, weather);
+		return score_pokemon(evaluate, generation, pokemon, team.entry_hazards(), other, weather);
 	};
 	return
 		containers::accumulate(containers::transform(containers::filter(team.all_pokemon(), has_hp), get_score)) +

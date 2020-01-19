@@ -933,7 +933,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		case Moves::Spikes:
-			other.entry_hazards.add_spikes();
+			other.add_spikes();
 			break;
 		case Moves::Spit_Up:
 			user.release_stockpile();
@@ -941,7 +941,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Spite:
 			break;
 		case Moves::Stealth_Rock:
-			other.entry_hazards.add_stealth_rock();
+			other.add_stealth_rock();
 			break;
 		case Moves::Steel_Wing:
 			if (executed.variable.effect_activates()) {
@@ -1015,7 +1015,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		}
 		case Moves::Toxic_Spikes:
-			other.entry_hazards.add_toxic_spikes();
+			other.add_toxic_spikes();
 			break;
 		case Moves::Transform:
 			break;

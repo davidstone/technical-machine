@@ -86,7 +86,7 @@ struct Team {
 	}
 	void clear_field() {
 		pokemon().clear_field();
-		entry_hazards = EntryHazards{};
+		m_entry_hazards = EntryHazards{};
 	}
 
 	auto switch_pokemon(Generation const generation, MutableActivePokemon other, Weather & weather, TeamIndex const replacement) -> void {
@@ -105,7 +105,7 @@ struct Team {
 
 		auto const replacement_pokemon = pokemon();
 		replacement_pokemon.switch_in(generation, weather);
-		apply(generation, entry_hazards, replacement_pokemon, weather);
+		apply(generation, m_entry_hazards, replacement_pokemon, weather);
 		if (get_hp(replacement_pokemon) != 0_bi) {
 			activate_ability_on_switch(generation, replacement_pokemon, other, weather);
 		}
@@ -164,16 +164,25 @@ struct Team {
 		m_wish.decrement(generation, pokemon(), weather);
 	}
 
+	auto entry_hazards() const {
+		return m_entry_hazards;
+	}
+	auto add_spikes() & {
+		m_entry_hazards.add_spikes();
+	}
+	auto add_stealth_rock() & {
+		m_entry_hazards.add_stealth_rock();
+	}
+	auto add_toxic_spikes() & {
+		m_entry_hazards.add_toxic_spikes();
+	}
+
 private:
-	friend struct Evaluate;
-	
 	PokemonCollection m_all_pokemon;
 	ActivePokemonFlags m_flags;
 	Screens m_screens;
 	Wish m_wish;
-public:
-	EntryHazards entry_hazards;
-private:
+	EntryHazards m_entry_hazards;
 	bool me;
 };
 
