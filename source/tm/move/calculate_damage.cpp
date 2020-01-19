@@ -51,11 +51,11 @@ bool affects_target(Generation const generation, Type const & move_type, ActiveP
 }
 
 auto reflect_is_active(Generation const generation, KnownMove const move, Team const & defender) {
-	return defender.screens.reflect() and is_physical(generation, move);
+	return defender.reflect() and is_physical(generation, move);
 }
 
 auto light_screen_is_active(Generation const generation, KnownMove const move, Team const & defender) {
-	return defender.screens.light_screen() and is_special(generation, move);
+	return defender.light_screen() and is_special(generation, move);
 }
 
 auto screen_is_active(Generation const generation, ExecutedMove const executed, Team const & defender) {

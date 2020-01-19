@@ -23,7 +23,7 @@
 namespace technicalmachine {
 
 struct Screens {
-	constexpr auto decrement() {
+	constexpr auto decrement() & {
 		m_light_screen.decrement();
 		m_reflect.decrement();
 		m_lucky_chant.decrement();
@@ -51,42 +51,42 @@ struct Screens {
 		return m_tailwind;
 	}
 
-	constexpr auto activate_light_screen(bool is_extended = false) {
+	constexpr auto activate_light_screen(bool is_extended = false) & {
 		m_light_screen.activate(is_extended);
 	}
 
-	constexpr auto activate_reflect(bool is_extended = false) {
+	constexpr auto activate_reflect(bool is_extended = false) & {
 		m_reflect.activate(is_extended);
 	}
 
-	constexpr auto activate_lucky_chant() {
+	constexpr auto activate_lucky_chant() & {
 		m_lucky_chant.activate();
 	}
 
-	constexpr auto activate_mist() {
+	constexpr auto activate_mist() & {
 		m_mist.activate();
 	}
 
-	constexpr auto activate_safeguard() {
+	constexpr auto activate_safeguard() & {
 		m_safeguard.activate();
 	}
 
-	constexpr auto activate_tailwind() {
+	constexpr auto activate_tailwind() & {
 		m_tailwind.activate();
 	}
 
-	constexpr auto shatter() {
-		m_light_screen = LightScreenEffect{};
-		m_reflect = ReflectEffect{};
+	constexpr auto shatter() & {
+		m_light_screen = LightScreen();
+		m_reflect = Reflect();
 	}
 
 private:
-	LightScreenEffect m_light_screen;
-	ReflectEffect m_reflect;
-	LuckyChantEffect m_lucky_chant;
-	MistEffect m_mist;
-	SafeguardEffect m_safeguard;
-	TailwindEffect m_tailwind;
+	LightScreen m_light_screen;
+	Reflect m_reflect;
+	LuckyChant m_lucky_chant;
+	Mist m_mist;
+	Safeguard m_safeguard;
+	Tailwind m_tailwind;
 };
 
 constexpr auto operator==(Screens const lhs, Screens const rhs) {

@@ -35,25 +35,25 @@ struct Screen {
 	constexpr auto turns_remaining() const {
 		return m_turns_remaining;
 	}
-	constexpr auto activate(auto && ... args) -> void {
+	constexpr auto activate(auto && ... args) & -> void {
 		activate(std::integral_constant<bool, normal_duration == max_duration>{}, OPERATORS_FORWARD(args)...);
 	}
-	constexpr auto decrement() -> void {
+	constexpr auto decrement() & -> void {
 		--m_turns_remaining;
 	}
 	
 private:
-	constexpr auto activate(std::true_type) -> void {
+	constexpr auto activate(std::true_type) & -> void {
 		set(bounded::constant<normal_duration>);
 	}
-	constexpr auto activate(std::false_type, bool const is_extended) -> void {
+	constexpr auto activate(std::false_type, bool const is_extended) & -> void {
 		set(BOUNDED_CONDITIONAL(is_extended,
 			bounded::constant<max_duration>,
 			bounded::constant<normal_duration>
 		));
 	}
 	using duration_type = bounded::clamped_integer<0, max_duration>;
-	constexpr auto set(duration_type const duration) -> void {
+	constexpr auto set(duration_type const duration) & -> void {
 		if (m_turns_remaining == 0_bi) {
 			m_turns_remaining = duration;
 		}
@@ -66,11 +66,11 @@ constexpr auto operator==(Screen<normal_duration, max_duration> const lhs, Scree
 	return lhs.turns_remaining() == rhs.turns_remaining();
 }
 
-using LuckyChantEffect = Screen<5>;
-using MistEffect = Screen<5>;
-using SafeguardEffect = Screen<5>;
-using ReflectEffect = Screen<5, 8>;
-using LightScreenEffect = Screen<5, 8>;
-using TailwindEffect = Screen<3>;
+using LuckyChant = Screen<5>;
+using Mist = Screen<5>;
+using Safeguard = Screen<5>;
+using Reflect = Screen<5, 8>;
+using LightScreen = Screen<5, 8>;
+using Tailwind = Screen<3>;
 
 }	// namespace technicalmachine

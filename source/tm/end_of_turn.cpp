@@ -34,7 +34,7 @@ namespace technicalmachine {
 namespace {
 
 void end_of_turn1(Team & team) {
-	team.screens.decrement();
+	team.decrement_screens();
 }
 
 void end_of_turn2(Generation const generation, Team & team, Weather const weather) {

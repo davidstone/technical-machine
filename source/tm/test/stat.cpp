@@ -157,7 +157,7 @@ void speed_tests() {
 
 	pokemon.stage()[StatNames::SPE] += 6_bi;
 
-	team.screens.activate_tailwind();
+	team.activate_tailwind();
 	
 	check_equal(calculate_speed(generation, team, Ability::Honey_Gather, weather), max_speed);
 }

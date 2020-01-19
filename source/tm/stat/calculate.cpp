@@ -434,7 +434,7 @@ auto paralysis_speed_divisor(ActivePokemon const pokemon) {
 }
 
 auto tailwind_speed_multiplier(Team const & team) {
-	return BOUNDED_CONDITIONAL(team.screens.tailwind(), 2_bi, 1_bi);
+	return BOUNDED_CONDITIONAL(team.tailwind(), 2_bi, 1_bi);
 }
 
 }	// namespace

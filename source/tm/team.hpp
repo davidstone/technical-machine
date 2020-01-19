@@ -111,6 +111,49 @@ struct Team {
 		}
 	}
 
+	auto decrement_screens() & -> void {
+		m_screens.decrement();
+	}
+	auto light_screen() const {
+		return m_screens.light_screen();
+	}
+	auto reflect() const {
+		return m_screens.reflect();
+	}
+	auto lucky_chant() const {
+		return m_screens.lucky_chant();
+	}
+	auto mist() const {
+		return m_screens.mist();
+	}
+	auto safeguard() const {
+		return m_screens.safeguard();
+	}
+	auto tailwind() const {
+		return m_screens.tailwind();
+	}
+	auto activate_light_screen(Generation const generation, Weather const weather) & {
+		m_screens.activate_light_screen(extends_light_screen(pokemon().item(generation, weather)));
+	}
+	auto activate_reflect(Generation const generation, Weather const weather) & {
+		m_screens.activate_reflect(extends_reflect(pokemon().item(generation, weather)));
+	}
+	auto activate_lucky_chant() & {
+		m_screens.activate_lucky_chant();
+	}
+	auto activate_mist() & {
+		m_screens.activate_mist();
+	}
+	auto activate_safeguard() & {
+		m_screens.activate_safeguard();
+	}
+	auto activate_tailwind() & {
+		m_screens.activate_tailwind();
+	}
+	auto shatter_screens() & {
+		m_screens.shatter();
+	}
+
 	auto wish_is_active() const -> bool {
 		return m_wish.is_active();
 	}
@@ -126,9 +169,7 @@ private:
 	
 	PokemonCollection m_all_pokemon;
 	ActivePokemonFlags m_flags;
-public:
-	Screens screens;
-private:
+	Screens m_screens;
 	Wish m_wish;
 public:
 	EntryHazards entry_hazards;

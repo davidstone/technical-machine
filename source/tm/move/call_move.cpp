@@ -725,14 +725,14 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().stage()[StatNames::DEF] += -1_bi;
 			break;
 		case Moves::Light_Screen:
-			user_team.screens.activate_light_screen(extends_light_screen(user.item(generation, weather)));
+			user_team.activate_light_screen(generation, weather);
 			break;
 		case Moves::Lock_On:
 		case Moves::Mind_Reader:
 			user.use_lock_on();
 			break;
 		case Moves::Lucky_Chant:
-			user_team.screens.activate_lucky_chant();
+			user_team.activate_lucky_chant();
 			break;
 		case Moves::Lunar_Dance:
 			break;
@@ -755,7 +755,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Miracle_Eye:
 			break;
 		case Moves::Mist:
-			user_team.screens.activate_mist();
+			user_team.activate_mist();
 			break;
 		case Moves::Mist_Ball:
 			if (executed.variable.effect_activates()) {
@@ -854,7 +854,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.recycle_item();
 			break;
 		case Moves::Reflect:
-			user_team.screens.activate_reflect(extends_reflect(user.item(generation, weather)));
+			user_team.activate_reflect(generation, weather);
 			break;
 		case Moves::Refresh:
 			user.clear_status();
@@ -873,7 +873,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			heal(generation, user, weather, rational(1_bi, 2_bi));
 			break;
 		case Moves::Safeguard:
-			user_team.screens.activate_safeguard();
+			user_team.activate_safeguard();
 			break;
 		case Moves::Sandstorm:
 			weather.activate_sand_from_move(extends_sand(user.item(generation, weather)));
@@ -996,7 +996,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.stage()[StatNames::ATK] += 2_bi;
 			break;
 		case Moves::Tailwind:
-			user_team.screens.activate_tailwind();
+			user_team.activate_tailwind();
 			break;
 		case Moves::Taunt:
 			other.pokemon().taunt(generation, weather);
@@ -1076,7 +1076,7 @@ constexpr auto breaks_screens(Moves const move) {
 
 auto do_effects_before_moving(Moves const move, MutableActivePokemon user, Team & other) {
 	if (breaks_screens(move)) {
-		other.screens.shatter();
+		other.shatter_screens();
 	} else if (is_usable_while_frozen(move)) {
 		if (is_frozen(get_status(user))) {
 			user.clear_status();

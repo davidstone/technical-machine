@@ -89,10 +89,10 @@ auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> Evaluat
 	}
 }
 
-auto score_move(Evaluate const & evaluate, Generation const generation, Move const move, Type const move_type, Screens const & other) {
-	auto const reflect_turns = other.reflect().turns_remaining();
+auto score_move(Evaluate const & evaluate, Generation const generation, Move const move, Type const move_type, LightScreen const other_light_screen, Reflect const other_reflect) {
+	auto const reflect_turns = other_reflect.turns_remaining();
 	auto const score_reflect = reflect_turns != 0_bi and is_physical(generation, {move.name(), move_type});
-	auto const light_screen_turns = other.light_screen().turns_remaining();
+	auto const light_screen_turns = other_light_screen.turns_remaining();
 	auto const score_light_screen = light_screen_turns != 0_bi and is_special(generation, {move.name(), move_type});
 	return
 		(
@@ -104,11 +104,11 @@ auto score_move(Evaluate const & evaluate, Generation const generation, Move con
 	;
 }
 
-auto score_moves(Evaluate const & evaluate, Generation const generation, Pokemon const & pokemon, Screens const & other, Weather const) {
+auto score_moves(Evaluate const & evaluate, Generation const generation, Pokemon const & pokemon, LightScreen const other_light_screen, Reflect const other_reflect, Weather const) {
 	// TODO: alter the score of a move based on the weather
 	auto get_score = [&](Move const move) {
 		auto const move_type = get_type(generation, move.name(), get_hidden_power(pokemon).type());
-		return score_move(evaluate, generation, move, move_type, other);
+		return score_move(evaluate, generation, move, move_type, other_light_screen, other_reflect);
 	};
 	return containers::accumulate(containers::transform(regular_moves(pokemon), get_score));
 }
@@ -140,7 +140,7 @@ auto score_pokemon(Evaluate const & evaluate, Generation const generation, Pokem
 		BOUNDED_CONDITIONAL(entry_hazards.stealth_rock(), Effectiveness(generation, Type::Rock, types) * evaluate.stealth_rock(), 0_bi) +
 		BOUNDED_CONDITIONAL(grounded, entry_hazards.spikes() * evaluate.spikes() + entry_hazards.toxic_spikes() * evaluate.toxic_spikes(), 0_bi) +
 		score_status(evaluate, pokemon) +
-		score_moves(evaluate, generation, pokemon, other.screens, weather)
+		score_moves(evaluate, generation, pokemon, other.light_screen(), other.reflect(), weather)
 	;
 }
 
@@ -154,26 +154,23 @@ auto score_all_pokemon(Evaluate const & evaluate, Generation const generation, T
 		score_active_pokemon(evaluate, team.pokemon());
 }
 
-auto score_field_effects(Evaluate const & evaluate, Screens const & screens, bool const wish) {
+auto score_team(Evaluate const & evaluate, Generation const generation, Team const & team, Team const & other, Weather const weather) {
 	return
-		screens.lucky_chant().turns_remaining() * evaluate.lucky_chant() +
-		screens.mist().turns_remaining() * evaluate.mist() +
-		screens.safeguard().turns_remaining() * evaluate.safeguard() +
-		screens.tailwind().turns_remaining() * evaluate.tailwind() +
-		BOUNDED_CONDITIONAL(wish, 1_bi, 0_bi) * evaluate.wish()
+		score_all_pokemon(evaluate, generation, team, other, weather) +
+		team.lucky_chant().turns_remaining() * evaluate.lucky_chant() +
+		team.mist().turns_remaining() * evaluate.mist() +
+		team.safeguard().turns_remaining() * evaluate.safeguard() +
+		team.tailwind().turns_remaining() * evaluate.tailwind() +
+		BOUNDED_CONDITIONAL(team.wish_is_active(), 1_bi, 0_bi) * evaluate.wish()
 	;
 }
 
-auto score_team(Evaluate const & evaluate, Generation const generation, Team const & ai, Team const & foe, Weather const weather) {
-	auto const ai_field_effects = score_field_effects(evaluate, ai.screens, ai.wish_is_active());
-	auto const foe_field_effects = score_field_effects(evaluate, foe.screens, foe.wish_is_active());
-	auto const ai_pokemon = score_all_pokemon(evaluate, generation, ai, foe, weather);
-	auto const foe_pokemon = score_all_pokemon(evaluate, generation, foe, ai, weather);
-	return ai_field_effects - foe_field_effects + ai_pokemon - foe_pokemon;
+auto score_teams(Evaluate const & evaluate, Generation const generation, Team const & ai, Team const & foe, Weather const weather) {
+	return score_team(evaluate, generation, ai, foe, weather) - score_team(evaluate, generation, foe, ai, weather);
 }
 // Extra is here to allow for one-past-the-end on both sides
 constexpr bounded::integer<-1, 1> extra = 0_bi;
-using ScoreTeam = decltype(score_team(std::declval<Evaluate>(), std::declval<Generation>(), std::declval<Team>(), std::declval<Team>(), std::declval<Weather>()));
+using ScoreTeam = decltype(score_teams(std::declval<Evaluate>(), std::declval<Generation>(), std::declval<Team>(), std::declval<Team>(), std::declval<Weather>()));
 
 template<typename LHS, typename RHS>
 struct TypeMismatchInEvaluateMessage;
@@ -193,7 +190,7 @@ using ResultType = decltype(std::declval<ScoreTeam>() + extra);
 
 auto Evaluate::operator()(Generation const generation, Team const & ai, Team const & foe, Weather const weather) const -> type {
 	static_cast<void>(TypeMismatchInEvaluate<ResultType, Evaluate::type>::value);
-	return score_team(*this, generation, ai, foe, weather);
+	return score_teams(*this, generation, ai, foe, weather);
 }
 
 namespace {
