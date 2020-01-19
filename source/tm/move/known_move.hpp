@@ -1,4 +1,4 @@
-// Copyright (C) 2019 David Stone
+// Copyright (C) 2020 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,15 +17,14 @@
 
 #pragma once
 
-#include <tm/move/known_move.hpp>
-#include <tm/generation.hpp>
-
-#include <cstdint>
+#include <tm/move/move.hpp>
+#include <tm/type/type.hpp>
 
 namespace technicalmachine {
 
-auto is_physical(Generation, KnownMove) -> bool;
-auto is_special(Generation, KnownMove) -> bool;
-auto is_damaging(Moves) -> bool;
+struct KnownMove {
+	Moves name;
+	Type type;
+};
 
 }	// namespace technicalmachine

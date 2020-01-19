@@ -42,7 +42,6 @@ constexpr auto generation = Generation::four;
 
 constexpr auto critical_hit = false;
 constexpr auto physical_move = Moves::Tackle;
-constexpr auto special_move = Moves::Surf;
 
 void attack_tests() {
 	std::cout << "\tRunning Attack tests.\n";
@@ -60,7 +59,7 @@ void attack_tests() {
 	pokemon.activate_power_trick();
 	pokemon.stage()[StatNames::ATK] += 6_bi;
 
-	check_equal(calculate_attack(generation, pokemon, physical_move, Ability::Honey_Gather, weather, critical_hit), max_attack);
+	check_equal(calculate_attack(generation, pokemon, Type::Normal, Ability::Honey_Gather, weather, critical_hit), max_attack);
 }
 
 void special_attack_tests() {
@@ -77,7 +76,7 @@ void special_attack_tests() {
 	set_stat_ev(pokemon, StatNames::SPA, EV(EV::max));
 	pokemon.stage()[StatNames::SPA] += 6_bi;
 
-	check_equal(calculate_special_attack(generation, pokemon, special_move, Ability::Honey_Gather, weather, critical_hit), max_special_attack);
+	check_equal(calculate_special_attack(generation, pokemon, Type::Water, Ability::Honey_Gather, weather, critical_hit), max_special_attack);
 }
 
 void max_defense_test() {
@@ -96,7 +95,7 @@ void max_defense_test() {
 
 	apply_status_to_self(generation, Statuses::burn, pokemon, weather);
 
-	check_equal(calculate_defense(generation, pokemon, physical_move, Ability::Honey_Gather, weather), max_defense);
+	check_equal(calculate_defense(generation, pokemon, physical_move, weather), max_defense);
 }
 
 void min_defense_test() {
@@ -116,7 +115,7 @@ void min_defense_test() {
 		pokemon.stage()[StatNames::DEF] += -2_bi;
 	}
 
-	check_equal(calculate_defense(generation, pokemon, physical_move, Ability::Honey_Gather, weather), min_defense);
+	check_equal(calculate_defense(generation, pokemon, physical_move, weather), min_defense);
 }
 
 void defense_tests() {

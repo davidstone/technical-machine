@@ -18,17 +18,18 @@
 
 #pragma once
 
+#include <tm/move/known_move.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
 
 enum class Generation : std::uint8_t;
-enum class Moves : std::uint16_t;
 struct ActivePokemon;
 struct Weather;
 
 using ChanceToHit = double;
 
-auto chance_to_hit(Generation generation, ActivePokemon user, Moves move, ActivePokemon target, Weather weather, bool target_moved) -> ChanceToHit;
+auto chance_to_hit(Generation generation, ActivePokemon user, KnownMove move, ActivePokemon target, Weather weather, bool target_moved) -> ChanceToHit;
 
 }	// namespace technicalmachine

@@ -1,4 +1,4 @@
-// Copyright (C) 2019 David Stone
+// Copyright (C) 2020 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -15,17 +15,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
 #include <tm/move/known_move.hpp>
-#include <tm/generation.hpp>
-
-#include <cstdint>
-
-namespace technicalmachine {
-
-auto is_physical(Generation, KnownMove) -> bool;
-auto is_special(Generation, KnownMove) -> bool;
-auto is_damaging(Moves) -> bool;
-
-}	// namespace technicalmachine

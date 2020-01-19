@@ -17,7 +17,9 @@
 
 #pragma once
 
-#include <tm/move/pp.hpp>
+#include <tm/move/known_move.hpp>
+
+#include <tm/type/type.hpp>
 
 #include <tm/variable.hpp>
 
@@ -25,10 +27,8 @@
 
 namespace technicalmachine {
 
-enum class Moves : std::uint16_t;
-
 struct ExecutedMove {
-	Moves name;
+	KnownMove move;
 	PP pp;
 	Variable variable;
 	bool critical_hit;

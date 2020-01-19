@@ -53,10 +53,10 @@ using namespace bounded::literal;
 
 auto power_of_mass_based_moves(Species species) -> bounded::integer<20, 120>;
 
-auto variable_adjusted_base_power(Generation const generation, Team const & attacker_team, ExecutedMove const move, Team const & defender_team, Weather const weather) -> VariableAdjustedBasePower {
+auto variable_adjusted_base_power(Generation const generation, Team const & attacker_team, ExecutedMove const executed, Team const & defender_team, Weather const weather) -> VariableAdjustedBasePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
-	switch (move.name) {
+	switch (executed.move.name) {
 		case Moves::Beat_Up:
 			return 1_bi;
 		case Moves::Crush_Grip:
@@ -109,11 +109,11 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Hidden_Power:
 			return get_hidden_power(attacker).power();
 		case Moves::Magnitude:
-			return move.variable.magnitude_power();
+			return executed.variable.magnitude_power();
 		case Moves::Natural_Gift:
 			return berry_power(attacker.item(generation, weather));
 		case Moves::Present:
-			return move.variable.present_power();
+			return executed.variable.present_power();
 		case Moves::Punishment: {
 			auto is_positive = [](auto const value) { return value > 0_bi; };
 			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::accumulate(containers::filter(defender.stage(), is_positive)));
@@ -126,9 +126,9 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Triple_Kick:
 			return attacker.last_used_move().triple_kick_power();
 		case Moves::Trump_Card:
-			return move.pp.trump_card_power();
+			return executed.pp.trump_card_power();
 		default:
-			return *base_power(generation, move.name);
+			return *base_power(generation, executed.move.name);
 	}
 }
 
@@ -206,19 +206,19 @@ constexpr auto is_boosted_by_soul_dew(Generation const generation, Species const
 
 constexpr auto item_modifier_denominator = 20_bi;
 using ItemModifierNumerator = bounded::integer<20, 24>;
-auto item_modifier_numerator(Generation const generation, ActivePokemon const attacker, Moves const move, Type const move_type, Weather const weather) -> ItemModifierNumerator {
+auto item_modifier_numerator(Generation const generation, ActivePokemon const attacker, KnownMove const move, Weather const weather) -> ItemModifierNumerator {
 	constexpr auto none = item_modifier_denominator;
 	auto type_boost = [=](Type const type) -> ItemModifierNumerator {
-		if (move_type != type) {
+		if (move.type != type) {
 			return none;
 		}
 		return BOUNDED_CONDITIONAL(generation <= Generation::three, none * 11_bi / 10_bi, none * 12_bi / 10_bi);
 	};
 	switch (attacker.item(generation, weather)) {
 		case Item::Muscle_Band:
-			return BOUNDED_CONDITIONAL(is_physical(move), none * 11_bi / 10_bi, none);
+			return BOUNDED_CONDITIONAL(is_physical(generation, move), none * 11_bi / 10_bi, none);
 		case Item::Wise_Glasses:
-			return BOUNDED_CONDITIONAL(is_special(move), none * 11_bi / 10_bi, none);
+			return BOUNDED_CONDITIONAL(is_special(generation, move), none * 11_bi / 10_bi, none);
 		case Item::Insect_Plate:
 		case Item::Silver_Powder:
 			return type_boost(Type::Bug);
@@ -277,7 +277,7 @@ auto item_modifier_numerator(Generation const generation, ActivePokemon const at
 			return type_boost(Type::Steel);
 		case Item::Sea_Incense:
 			return BOUNDED_CONDITIONAL(generation <= Generation::three,
-				BOUNDED_CONDITIONAL(move_type == Type::Water, none * 21_bi / 20_bi, none),
+				BOUNDED_CONDITIONAL(move.type == Type::Water, none * 21_bi / 20_bi, none),
 				type_boost(Type::Water)
 			);
 		case Item::Splash_Plate:
@@ -286,25 +286,25 @@ auto item_modifier_numerator(Generation const generation, ActivePokemon const at
 			return type_boost(Type::Water);
 		case Item::Adamant_Orb:
 			return BOUNDED_CONDITIONAL(
-				is_boosted_by_adamant_orb(get_species(attacker), move_type),
+				is_boosted_by_adamant_orb(get_species(attacker), move.type),
 				none * 12_bi / 10_bi,
 				none
 			);
 		case Item::Griseous_Orb:
 			return BOUNDED_CONDITIONAL(
-				is_boosted_by_griseous_orb(get_species(attacker), move_type),
+				is_boosted_by_griseous_orb(get_species(attacker), move.type),
 				none * 12_bi / 10_bi,
 				none
 			);
 		case Item::Lustrous_Orb:
 			return BOUNDED_CONDITIONAL(
-				is_boosted_by_lustrous_orb(get_species(attacker), move_type),
+				is_boosted_by_lustrous_orb(get_species(attacker), move.type),
 				none * 12_bi / 10_bi,
 				none
 			);
 		case Item::Soul_Dew:
 			return BOUNDED_CONDITIONAL(
-				is_boosted_by_soul_dew(generation, get_species(attacker), move_type),
+				is_boosted_by_soul_dew(generation, get_species(attacker), move.type),
 				none * 12_bi / 10_bi,
 				none
 			);
@@ -313,9 +313,9 @@ auto item_modifier_numerator(Generation const generation, ActivePokemon const at
 	}
 }
 
-auto item_modifier(Generation const generation, ActivePokemon const attacker, Moves const move, Type const move_type, Weather const weather) {
+auto item_modifier(Generation const generation, ActivePokemon const attacker, KnownMove const move, Weather const weather) {
 	return rational(
-		item_modifier_numerator(generation, attacker, move, move_type, weather),
+		item_modifier_numerator(generation, attacker, move, weather),
 		item_modifier_denominator
 	);
 }
@@ -368,13 +368,13 @@ bool is_boosted_by_reckless(Moves const move) {
 	}
 }
 
-auto attacker_ability_power_modifier(Generation const generation, ActivePokemon const attacker, Moves const move, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
+auto attacker_ability_power_modifier(Generation const generation, ActivePokemon const attacker, KnownMove const move, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
 	auto pinch_ability_activates = [&](Type const type) {
-		return generation <= Generation::four and get_type(generation, move, get_hidden_power(attacker).type()) == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
+		return generation <= Generation::four and move.type == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
 	};
 	switch (attacker.ability()) {
 		case Ability::Technician:
-			return rational(BOUNDED_CONDITIONAL(base_power <= 60_bi and move != Moves::Hit_Self, 3_bi, 2_bi), 2_bi);
+			return rational(BOUNDED_CONDITIONAL(base_power <= 60_bi and move.name != Moves::Hit_Self, 3_bi, 2_bi), 2_bi);
 		case Ability::Blaze:
 			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(Type::Fire), 3_bi, 2_bi), 2_bi);
 		case Ability::Overgrow:
@@ -384,9 +384,9 @@ auto attacker_ability_power_modifier(Generation const generation, ActivePokemon 
 		case Ability::Torrent:
 			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(Type::Water), 3_bi, 2_bi), 2_bi);
 		case Ability::Iron_Fist:
-			return rational(BOUNDED_CONDITIONAL(is_boosted_by_iron_fist(move), 6_bi, 5_bi), 5_bi);
+			return rational(BOUNDED_CONDITIONAL(is_boosted_by_iron_fist(move.name), 6_bi, 5_bi), 5_bi);
 		case Ability::Reckless:
-			return rational(BOUNDED_CONDITIONAL(is_boosted_by_reckless(move), 6_bi, 5_bi), 5_bi);
+			return rational(BOUNDED_CONDITIONAL(is_boosted_by_reckless(move.name), 6_bi, 5_bi), 5_bi);
 		case Ability::Rivalry:
 			return rational(4_bi + multiplier(get_gender(attacker), get_gender(defender)), 4_bi);
 		default:
@@ -405,19 +405,18 @@ auto defender_ability_modifier(Type const move_type, Ability const ability) -> r
 
 }	// namespace
 
-auto move_power(Generation const generation, Team const & attacker_team, ExecutedMove const move, Team const & defender_team, Weather const weather) -> MovePower {
+auto move_power(Generation const generation, Team const & attacker_team, ExecutedMove const executed, Team const & defender_team, Weather const weather) -> MovePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
-	auto const base_power = variable_adjusted_base_power(generation, attacker_team, move, defender_team, weather);
-	auto const move_type = get_type(generation, move.name, get_hidden_power(attacker).type());
+	auto const base_power = variable_adjusted_base_power(generation, attacker_team, executed, defender_team, weather);
 	return static_cast<MovePower>(bounded::max(1_bi,
 		base_power *
-		BOUNDED_CONDITIONAL(doubling(attacker, move.name, defender, weather), 2_bi, 1_bi) *
-		item_modifier(generation, attacker, move.name, move_type, weather) *
-		BOUNDED_CONDITIONAL(attacker.charge_boosted(move_type), 2_bi, 1_bi) /
-		BOUNDED_CONDITIONAL(defender.sport_is_active(move_type), 2_bi, 1_bi) *
-		attacker_ability_power_modifier(generation, attacker, move.name, defender, base_power) *
-		defender_ability_modifier(move_type, defender.ability())
+		BOUNDED_CONDITIONAL(doubling(attacker, executed.move.name, defender, weather), 2_bi, 1_bi) *
+		item_modifier(generation, attacker, executed.move, weather) *
+		BOUNDED_CONDITIONAL(attacker.charge_boosted(executed.move.type), 2_bi, 1_bi) /
+		BOUNDED_CONDITIONAL(defender.sport_is_active(executed.move.type), 2_bi, 1_bi) *
+		attacker_ability_power_modifier(generation, attacker, executed.move, defender, base_power) *
+		defender_ability_modifier(executed.move.type, defender.ability())
 	));
 }
 

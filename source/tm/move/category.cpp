@@ -23,8 +23,32 @@ namespace {
 
 enum class MoveCategory { physical, special, other };
 
-constexpr auto move_category(Moves const move) {
-	switch (move) {
+constexpr auto type_based_category(Type const type) {
+	switch (type) {
+		case Type::Bug: return MoveCategory::physical;
+		case Type::Dark: return MoveCategory::special;
+		case Type::Dragon: return MoveCategory::special;
+		case Type::Electric: return MoveCategory::special;
+		case Type::Fairy: return MoveCategory::physical; // unreachable?
+		case Type::Fighting: return MoveCategory::physical;
+		case Type::Fire: return MoveCategory::special;
+		case Type::Flying: return MoveCategory::physical;
+		case Type::Ghost: return MoveCategory::physical;
+		case Type::Grass: return MoveCategory::special;
+		case Type::Ground: return MoveCategory::physical;
+		case Type::Ice: return MoveCategory::special;
+		case Type::Normal: return MoveCategory::physical;
+		case Type::Poison: return MoveCategory::physical;
+		case Type::Psychic: return MoveCategory::special;
+		case Type::Rock: return MoveCategory::physical;
+		case Type::Steel: return MoveCategory::physical;
+		case Type::Water: return MoveCategory::special;
+		case Type::Typeless: return MoveCategory::physical;
+	}
+}
+
+constexpr auto move_category(Generation const generation, KnownMove const move) {
+	switch (move.name) {
 		case Moves::Hit_Self:
 		case Moves::Pound:
 		case Moves::Karate_Chop:
@@ -302,7 +326,9 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Sappy_Seed:
 		case Moves::Veevee_Volley:
 		case Moves::Double_Iron_Bash:
-			return MoveCategory::physical;
+			return generation <= Generation::three ?
+				type_based_category(move.type) :
+				MoveCategory::physical;
 		case Moves::Razor_Wind:
 		case Moves::Gust:
 		case Moves::Sonic_Boom:
@@ -493,7 +519,9 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Baddy_Bad:
 		case Moves::Freezy_Frost:
 		case Moves::Sparkly_Swirl:
-			return MoveCategory::special;
+			return generation <= Generation::three ?
+				type_based_category(move.type) :
+				MoveCategory::special;
 		case Moves::Pass:
 		case Moves::Switch0:
 		case Moves::Switch1:
@@ -742,7 +770,7 @@ constexpr auto move_category(Moves const move) {
 		case Moves::Extreme_Evoboost:
 		case Moves::Tearful_Look:
 			return MoveCategory::other;
-		// TODO, can be either, also Hidden Power in earlier generations
+		// TODO, can be either
 		case Moves::Breakneck_Blitz:
 		case Moves::All_Out_Pummeling:
 		case Moves::Supersonic_Skystrike:
@@ -768,16 +796,17 @@ constexpr auto move_category(Moves const move) {
 } // namespace
 
 
-auto is_physical(Moves const move) -> bool {
-	return move_category(move) == MoveCategory::physical;
+auto is_physical(Generation const generation, KnownMove const move) -> bool {
+	return move_category(generation, move) == MoveCategory::physical;
 }
 
-auto is_special(Moves const move) -> bool {
-	return move_category(move) == MoveCategory::special;
+auto is_special(Generation const generation, KnownMove const move) -> bool {
+	return move_category(generation, move) == MoveCategory::special;
 }
 
 auto is_damaging(Moves const move) -> bool {
-	return move_category(move) != MoveCategory::other;
+	// Generation and Type do not change whether a move is damaging
+	return move_category(Generation::eight, {move, Type::Typeless}) != MoveCategory::other;
 }
 
 }	// namespace technicalmachine

@@ -89,11 +89,11 @@ auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> Evaluat
 	}
 }
 
-auto score_move(Evaluate const & evaluate, Move const move, Screens const & other) {
+auto score_move(Evaluate const & evaluate, Generation const generation, Move const move, Type const move_type, Screens const & other) {
 	auto const reflect_turns = other.reflect().turns_remaining();
-	auto const score_reflect = reflect_turns != 0_bi and is_physical(move.name());
+	auto const score_reflect = reflect_turns != 0_bi and is_physical(generation, {move.name(), move_type});
 	auto const light_screen_turns = other.light_screen().turns_remaining();
-	auto const score_light_screen = !score_reflect and light_screen_turns != 0_bi and is_special(move.name());
+	auto const score_light_screen = light_screen_turns != 0_bi and is_special(generation, {move.name(), move_type});
 	return
 		(
 			BOUNDED_CONDITIONAL(score_reflect, evaluate.reflect() * reflect_turns,
@@ -104,9 +104,12 @@ auto score_move(Evaluate const & evaluate, Move const move, Screens const & othe
 	;
 }
 
-auto score_moves(Evaluate const & evaluate, Pokemon const & pokemon, Screens const & other, Weather const) {
+auto score_moves(Evaluate const & evaluate, Generation const generation, Pokemon const & pokemon, Screens const & other, Weather const) {
 	// TODO: alter the score of a move based on the weather
-	auto get_score = [&](auto const move) { return score_move(evaluate, move, other); };
+	auto get_score = [&](Move const move) {
+		auto const move_type = get_type(generation, move.name(), get_hidden_power(pokemon).type());
+		return score_move(evaluate, generation, move, move_type, other);
+	};
 	return containers::accumulate(containers::transform(regular_moves(pokemon), get_score));
 }
 
@@ -137,7 +140,7 @@ auto score_pokemon(Evaluate const & evaluate, Generation const generation, Pokem
 		BOUNDED_CONDITIONAL(entry_hazards.stealth_rock(), Effectiveness(generation, Type::Rock, types) * evaluate.stealth_rock(), 0_bi) +
 		BOUNDED_CONDITIONAL(grounded, entry_hazards.spikes() * evaluate.spikes() + entry_hazards.toxic_spikes() * evaluate.toxic_spikes(), 0_bi) +
 		score_status(evaluate, pokemon) +
-		score_moves(evaluate, pokemon, other.screens, weather)
+		score_moves(evaluate, generation, pokemon, other.screens, weather)
 	;
 }
 

@@ -695,8 +695,14 @@ void BattleParser::maybe_use_previous_move() {
 	));
 	
 	auto const other_move = other_pokemon.moved() ?
-		OtherMove(other_pokemon.last_used_move().name()) :
-		OtherMove(FutureMove{(data.move.executed == Moves::Sucker_Punch) and damage.did_any_damage});
+		OtherMove([&]{
+			auto const move = other_pokemon.last_used_move().name();
+			auto const type = get_type(m_battle.generation(), move, get_hidden_power(other_pokemon).type());
+			return KnownMove{move, type};
+		}()) :
+		OtherMove(FutureMove{
+			data.move.executed == Moves::Sucker_Punch and damage.did_any_damage
+		});
 
 	m_battle.handle_use_move(data.party, slot, data.move, data.clear_status, damage.value, other_move);
 

@@ -212,9 +212,9 @@ auto use_swallow(Generation const generation, MutableActivePokemon user, Weather
 }
 
 
-auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove const move, Type const move_type, Team & other, Weather & weather, HP::current_type const damage) {
+auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove const executed, Team & other, Weather & weather, HP::current_type const damage) {
 	auto user = user_team.pokemon();
-	switch (move.name) {
+	switch (executed.move.name) {
 		case Moves::Absorb:
 		case Moves::Drain_Punch:
 		case Moves::Giga_Drain:
@@ -231,7 +231,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Luster_Purge:
 		case Moves::Psychic:
 		case Moves::Shadow_Ball:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().stage()[StatNames::SPD] += -1_bi;
 			}
 			break;
@@ -241,7 +241,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.stage()[StatNames::DEF] += 2_bi;
 			break;
 		case Moves::Acupressure:
-			user.stage()[move.variable.acupressure_stat_boost()] += 2_bi;
+			user.stage()[executed.variable.acupressure_stat_boost()] += 2_bi;
 			break;
 		case Moves::Agility:
 		case Moves::Rock_Polish:
@@ -268,7 +268,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Twister:
 		case Moves::Waterfall:
 		case Moves::Zen_Headbutt:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().flinch();
 			}
 			break;
@@ -278,7 +278,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Ancient_Power:
 		case Moves::Ominous_Wind:
 		case Moves::Silver_Wind:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				boost_regular(user.stage(), 1_bi);
 			}
 			break;
@@ -286,7 +286,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.activate_aqua_ring();
 			break;
 		case Moves::Aurora_Beam:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().stage()[StatNames::ATK] += -1_bi;
 			}
 			break;
@@ -338,7 +338,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Sacred_Fire:
 		case Moves::Scald:
 		case Moves::Searing_Shot:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().apply_status(generation, Statuses::burn, user, weather);
 			}
 			break;
@@ -346,7 +346,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Ice_Beam:
 		case Moves::Ice_Punch:
 		case Moves::Powder_Snow:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().apply_status(generation, Statuses::freeze, user, weather);
 			}
 			break;
@@ -366,12 +366,12 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Thunderbolt:
 		case Moves::Thunder_Punch:
 		case Moves::Thunder_Shock:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().apply_status(generation, Statuses::paralysis, user, weather);
 			}
 			break;
 		case Moves::Bounce:
-			if (user.bounce(generation, weather) and move.variable.effect_activates()) {
+			if (user.bounce(generation, weather) and executed.variable.effect_activates()) {
 				other.pokemon().apply_status(generation, Statuses::paralysis, user, weather);
 			}
 			break;
@@ -383,7 +383,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Bubble:
 		case Moves::Bubble_Beam:
 		case Moves::Constrict:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().stage()[StatNames::SPE] += -1_bi;
 			}
 			break;
@@ -412,7 +412,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.stage()[StatNames::SPD] += 1_bi;
 			break;
 		case Moves::Charge_Beam:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				user.stage()[StatNames::SPA] += 1_bi;
 			}
 			break;
@@ -421,7 +421,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().stage()[StatNames::ATK] += -2_bi;
 			break;
 		case Moves::Chatter:
-			if (can_confuse_with_chatter(get_species(user)) and move.variable.effect_activates()) {
+			if (can_confuse_with_chatter(get_species(user)) and executed.variable.effect_activates()) {
 				other.pokemon().confuse(generation, weather);
 			}
 			break;
@@ -441,7 +441,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Rock_Climb:
 		case Moves::Signal_Beam:
 		case Moves::Water_Pulse:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().confuse(generation, weather);
 			}
 			break;
@@ -458,7 +458,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Iron_Tail:
 		case Moves::Razor_Shell:
 		case Moves::Rock_Smash:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().stage()[StatNames::DEF] += -1_bi;
 			}
 			break;
@@ -481,7 +481,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Sludge_Bomb:
 		case Moves::Sludge_Wave:
 		case Moves::Smog:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().apply_status(generation, Statuses::poison, user, weather);
 			}
 			break;
@@ -567,10 +567,10 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().break_protect();
 			break;
 		case Moves::Fire_Fang:
-			move.variable.fang_side_effects(generation, user, other.pokemon(), weather, Statuses::burn);
+			executed.variable.fang_side_effects(generation, user, other.pokemon(), weather, Statuses::burn);
 			break;
 		case Moves::Flare_Blitz:
-			recoil_status(generation, user, other.pokemon(), weather, damage, move.variable, Statuses::burn);
+			recoil_status(generation, user, other.pokemon(), weather, damage, executed.variable, Statuses::burn);
 			break;
 		case Moves::Flash:
 		case Moves::Kinesis:
@@ -667,7 +667,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Metal_Claw:
 		case Moves::Meditate:
 		case Moves::Meteor_Mash:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				user.stage()[StatNames::ATK] += 1_bi;
 			}
 			break;
@@ -675,7 +675,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Rollout:
 			break;
 		case Moves::Ice_Fang:
-			move.variable.fang_side_effects(generation, user, other.pokemon(), weather, Statuses::freeze);
+			executed.variable.fang_side_effects(generation, user, other.pokemon(), weather, Statuses::freeze);
 			break;
 		case Moves::Icy_Wind:
 		case Moves::Low_Sweep:
@@ -713,7 +713,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Muddy_Water:
 		case Moves::Night_Daze:
 		case Moves::Octazooka:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().stage()[StatNames::ACC] -= 1_bi;
 			}
 			break;
@@ -758,7 +758,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user_team.screens.activate_mist();
 			break;
 		case Moves::Mist_Ball:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().stage()[StatNames::SPA] += -1_bi;
 			}
 			break;
@@ -805,7 +805,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().try_activate_perish_song();
 			break;
 		case Moves::Poison_Fang:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().apply_status(generation, Statuses::toxic, user, weather);
 			}
 			break;
@@ -821,7 +821,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.activate_power_trick();
 			break;
 		case Moves::Present:
-			if (move.variable.present_heals()) {
+			if (executed.variable.present_heals()) {
 				change_hp(generation, other.pokemon(), weather, 80_bi);
 			}
 			break;
@@ -844,7 +844,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			weather.activate_rain_from_move(extends_rain(user.item(generation, weather)));
 			break;
 		case Moves::Rapid_Spin:
-			if (!Effectiveness(generation, move_type, other.pokemon().types()).has_no_effect()) {
+			if (!Effectiveness(generation, executed.move.type, other.pokemon().types()).has_no_effect()) {
 				user_team.clear_field();
 			}
 			break;
@@ -864,7 +864,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Roar:
 		case Moves::Whirlwind:
-			phaze(generation, user, other, weather, move.variable);
+			phaze(generation, user, other, weather, executed.variable);
 			break;
 		case Moves::Role_Play:
 			break;
@@ -882,7 +882,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().stage()[StatNames::DEF] += -2_bi;
 			break;
 		case Moves::Seed_Flare:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().stage()[StatNames::SPD] += -2_bi;
 			}
 			break;
@@ -912,7 +912,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Skull_Bash:
 			break;
 		case Moves::Sky_Attack:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().flinch();
 			}
 			break;
@@ -928,7 +928,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Snatch:
 			break;
 		case Moves::Solar_Beam:
-			if (will_be_recharge_turn(user, move.name, other.pokemon().ability(), weather)) {
+			if (will_be_recharge_turn(user, executed.move.name, other.pokemon().ability(), weather)) {
 				user.use_charge_up_move();
 			}
 			break;
@@ -944,7 +944,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.entry_hazards.add_stealth_rock();
 			break;
 		case Moves::Steel_Wing:
-			if (move.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				user.stage()[StatNames::DEF] += 1_bi;
 			}
 			break;
@@ -982,7 +982,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Switch3:
 		case Moves::Switch4:
 		case Moves::Switch5:
-			user_team.switch_pokemon(generation, other.pokemon(), weather, to_replacement(move.name));
+			user_team.switch_pokemon(generation, other.pokemon(), weather, to_replacement(executed.move.name));
 			break;
 		case Moves::Switcheroo:
 		case Moves::Trick: {
@@ -1002,7 +1002,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().taunt(generation, weather);
 			break;
 		case Moves::Thunder_Fang:
-			move.variable.fang_side_effects(generation, user, other.pokemon(), weather, Statuses::paralysis);
+			executed.variable.fang_side_effects(generation, user, other.pokemon(), weather, Statuses::paralysis);
 			break;
 		case Moves::Tickle:
 			boost_physical(other.pokemon().stage(), -1_bi);
@@ -1020,7 +1020,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Transform:
 			break;
 		case Moves::Tri_Attack:
-			if (auto const status = move.variable.tri_attack_status(); status != Statuses::clear) {
+			if (auto const status = executed.variable.tri_attack_status(); status != Statuses::clear) {
 				BOUNDED_ASSERT(uproar_does_not_apply(status));
 				other.pokemon().apply_status(generation, status, user, weather);
 			}
@@ -1042,7 +1042,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		case Moves::Volt_Tackle:
-			recoil_status(generation, user, other.pokemon(), weather, damage, move.variable, Statuses::paralysis);
+			recoil_status(generation, user, other.pokemon(), weather, damage, executed.variable, Statuses::paralysis);
 			break;
 		case Moves::Wake_Up_Slap:
 			if (is_sleeping(get_status(other.pokemon()))) {
@@ -1126,15 +1126,15 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 }
 
 // Returns whether the attack is weakened by the item
-auto activate_when_hit_item(Generation const generation, Moves const move, Type const move_type, MutableActivePokemon defender, Weather const weather, Effectiveness const effectiveness) -> bool {
-	if (!is_damaging(move) or effectiveness.has_no_effect()) {
+auto activate_when_hit_item(Generation const generation, KnownMove const move, MutableActivePokemon defender, Weather const weather, Effectiveness const effectiveness) -> bool {
+	if (!is_damaging(move.name) or effectiveness.has_no_effect()) {
 		return false;
 	}
 	auto substitute = [&] {
-		return defender.substitute() and blocked_by_substitute(generation, move);
+		return defender.substitute() and blocked_by_substitute(generation, move.name);
 	};
 	auto resistance_berry = [&](Type const resisted) {
-		if (move_type != resisted or substitute()) {
+		if (move.type != resisted or substitute()) {
 			return false;
 		}
 		defender.remove_item();
@@ -1155,7 +1155,7 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 		}
 	};
 	auto stat_boost_move_type = [&](Type const type, StatNames const stat) {
-		if (move_type == type) {
+		if (move.type == type) {
 			stat_boost(stat);
 		}
 		return false;
@@ -1193,14 +1193,14 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 		case Item::Kebia_Berry:
 			return se_resistance_berry(Type::Poison);
 		case Item::Kee_Berry:
-			if (is_physical(move)) {
+			if (is_physical(generation, move)) {
 				stat_boost(StatNames::DEF);
 			}
 			return false;
 		case Item::Luminous_Moss:
 			return stat_boost_move_type(Type::Water, StatNames::SPD);
 		case Item::Maranga_Berry:
-			if (is_special(move)) {
+			if (is_special(generation, move)) {
 				stat_boost(StatNames::SPD);
 			}
 			return false;
@@ -1238,22 +1238,22 @@ auto activate_when_hit_item(Generation const generation, Moves const move, Type 
 	}
 }
 
-auto use_move(Generation const generation, Team & user, ExecutedMove const move, Type const move_type, Team & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
+auto use_move(Generation const generation, Team & user, ExecutedMove const executed, Team & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
-	do_effects_before_moving(move.name, user_pokemon, other);
+	do_effects_before_moving(executed.move.name, user_pokemon, other);
 
-	auto const effectiveness = Effectiveness(generation, move_type, other_pokemon.types());
-	auto const weakened = activate_when_hit_item(generation, move.name, move_type, other_pokemon, weather, effectiveness);
-	auto const damage = actual_damage.value(generation, user, move, weakened, other, other_move, weather);
+	auto const effectiveness = Effectiveness(generation, executed.move.type, other_pokemon.types());
+	auto const weakened = activate_when_hit_item(generation, executed.move, other_pokemon, weather, effectiveness);
+	auto const damage = actual_damage.value(generation, user, executed, weakened, other, other_move, weather);
 
 	auto const had_substitute = static_cast<bool>(other_pokemon.substitute());
 	// Should this check if we did any damage or if the move is damaging?
 	auto const damage_done = damage != 0_bi ?
-		other_pokemon.direct_damage(generation, move.name, weather, damage) :
+		other_pokemon.direct_damage(generation, executed.move.name, weather, damage) :
 		0_bi;
-	if (!had_substitute or !blocked_by_substitute(generation, move.name)) {
-		do_side_effects(generation, user, move, move_type, other, weather, damage_done);
+	if (!had_substitute or !blocked_by_substitute(generation, executed.move.name)) {
+		do_side_effects(generation, user, executed, other, weather, damage_done);
 		// Should this check if we did any damage or if the move is damaging?
 		if (damage_done != 0_bi) {
 			auto const item = user_pokemon.item(generation, weather);
@@ -1348,64 +1348,64 @@ auto activate_pp_restore_berry(Generation const generation, Move & move, Mutable
 	}
 }
 
-auto absorb_ability_activates(Generation const generation, Moves const move, Type const move_type, Type const absorbed_type) -> bool {
-	if (!move_targets_foe(generation, move)) {
+auto absorb_ability_activates(Generation const generation, KnownMove const move, Type const absorbed_type) -> bool {
+	if (!move_targets_foe(generation, move.name)) {
 		return false;
 	}
-	if (move_type != absorbed_type) {
+	if (move.type != absorbed_type) {
 		return false;
 	}
 	return true;
 }
 
-auto flash_fire_activates(Generation const generation, Moves const move, Type const move_type, ActivePokemon const target) -> bool {
+auto flash_fire_activates(Generation const generation, KnownMove const move, ActivePokemon const target) -> bool {
 	if (generation <= Generation::four and get_status(target).name() == Statuses::freeze) {
 		return false;
 	}
 	return
-		absorb_ability_activates(generation, move, move_type, Type::Fire) and
-		(generation >= Generation::four or move != Moves::Will_O_Wisp);
+		absorb_ability_activates(generation, move, Type::Fire) and
+		(generation >= Generation::four or move.name != Moves::Will_O_Wisp);
 }
 
-auto volt_absorb_activates(Generation const generation, Moves const move, Type const move_type) -> bool {
+auto volt_absorb_activates(Generation const generation, KnownMove const move) -> bool {
 	return
-		absorb_ability_activates(generation, move, move_type, Type::Electric) and
-		(generation >= Generation::four or move != Moves::Thunder_Wave);
+		absorb_ability_activates(generation, move, Type::Electric) and
+		(generation >= Generation::four or move.name != Moves::Thunder_Wave);
 }
 
-auto water_absorb_activates(Generation const generation, Moves const move, Type const move_type) -> bool {
-	return absorb_ability_activates(generation, move, move_type, Type::Water);
+auto water_absorb_activates(Generation const generation, KnownMove const move) -> bool {
+	return absorb_ability_activates(generation, move, Type::Water);
 }
 
-auto handle_ability_blocks_move(Generation const generation, Moves const move, Type const move_type, MutableActivePokemon const target, Weather const weather) {
+auto handle_ability_blocks_move(Generation const generation, KnownMove const move, MutableActivePokemon const target, Weather const weather) {
 	switch (target.ability()) {
 		case Ability::Flash_Fire:
-			if (!flash_fire_activates(generation, move, move_type, target)) {
+			if (!flash_fire_activates(generation, move, target)) {
 				return false;
 			}
 			target.activate_flash_fire();
 			return true;
 		case Ability::Volt_Absorb:
-			if (!volt_absorb_activates(generation, move, move_type)) {
+			if (!volt_absorb_activates(generation, move)) {
 				return false;
 			}
 			heal(generation, target, weather, rational(1_bi, 4_bi));
 			return true;
 		case Ability::Water_Absorb:
 		case Ability::Dry_Skin:
-			if (!water_absorb_activates(generation, move, move_type)) {
+			if (!water_absorb_activates(generation, move)) {
 				return false;
 			}
 			heal(generation, target, weather, rational(1_bi, 4_bi));
 			return true;
 		case Ability::Wonder_Guard:
-			if (!is_damaging(move)) {
+			if (!is_damaging(move.name)) {
 				return false;
 			}
-			if (Effectiveness(generation, move_type, target.types()).is_super_effective()) {
+			if (Effectiveness(generation, move.type, target.types()).is_super_effective()) {
 				return false;
 			}
-			switch (move) {
+			switch (move.name) {
 				case Moves::Struggle:
 					return false;
 				case Moves::Beat_Up:
@@ -1416,7 +1416,7 @@ auto handle_ability_blocks_move(Generation const generation, Moves const move, T
 					return true;
 			}
 		case Ability::Motor_Drive:
-			if (!absorb_ability_activates(generation, move, move_type, Type::Electric)) {
+			if (!absorb_ability_activates(generation, move, Type::Electric)) {
 				return false;
 			}
 			target.stage()[StatNames::SPE] += 1_bi;
@@ -1483,15 +1483,18 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 		return;
 	}
 
-	auto const move_type = get_type(generation, move.executed, get_hidden_power(user_pokemon).type());
-	if (!handle_ability_blocks_move(generation, move.executed, move_type, other_pokemon, weather)) {
+	auto const known_move = KnownMove{
+		move.executed,
+		get_type(generation, move.executed, get_hidden_power(user_pokemon).type())
+	};
+	if (!handle_ability_blocks_move(generation, known_move, other_pokemon, weather)) {
 		auto const executed_move = ExecutedMove{
-			move.executed,
+			known_move,
 			found_move.pp(),
 			move.variable,
 			move.critical_hit
 		};
-		use_move(generation, user, executed_move, move_type, other, other_move, weather, actual_damage);
+		use_move(generation, user, executed_move, other, other_move, weather, actual_damage);
 	}
 	user_pokemon.increment_move_use_counter(move.executed);
 }

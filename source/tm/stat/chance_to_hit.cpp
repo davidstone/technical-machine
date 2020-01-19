@@ -56,14 +56,14 @@ auto accuracy_item_modifier(Item const item, bool target_moved) {
 	}
 }
 
-auto ability_accuracy_modifier(ActivePokemon const user, Moves const move) {
+auto ability_accuracy_modifier(Generation const generation, Ability const ability, KnownMove const move) {
 	using Modifier = rational<
 		bounded::integer<1, 13>,
 		bounded::integer<1, 10>
 	>;
-	switch (user.ability()) {
+	switch (ability) {
 		case Ability::Compound_Eyes: return Modifier(13_bi, 10_bi);
-		case Ability::Hustle: return is_physical(move) ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
+		case Ability::Hustle: return is_physical(generation, move) ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
 		default: return Modifier(1_bi, 1_bi);
 	}
 }
@@ -98,8 +98,8 @@ auto ability_evasion_modifier(ActivePokemon const target, Ability const user_abi
 
 }	// namespace
 
-auto chance_to_hit(Generation const generation, ActivePokemon const user, Moves const move, ActivePokemon const target, Weather const weather, bool target_moved) -> ChanceToHit {
-	auto const base_accuracy = accuracy(generation, move);
+auto chance_to_hit(Generation const generation, ActivePokemon const user, KnownMove const move, ActivePokemon const target, Weather const weather, bool target_moved) -> ChanceToHit {
+	auto const base_accuracy = accuracy(generation, move.name);
 	auto const target_ability = target.ability();
 	if (!move_can_miss(user, base_accuracy, target_ability)) {
 		return 1.0;
@@ -111,7 +111,7 @@ auto chance_to_hit(Generation const generation, ActivePokemon const user, Moves 
 		modifier<StatNames::ACC>(user.stage()) *
 		modifier<StatNames::EVA>(generation >= Generation::six and target_ability == Ability::Keen_Eye ? Stage() : target.stage()) *
 		accuracy_item_modifier(user.item(generation, weather), target_moved) *
-		ability_accuracy_modifier(user, move) *
+		ability_accuracy_modifier(generation, user.ability(), move) *
 		evasion_item_modifier(generation, target.item(generation, weather)) *
 		ability_evasion_modifier(target, user.ability(), weather) *
 		gravity_multiplier

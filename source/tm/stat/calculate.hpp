@@ -18,14 +18,16 @@
 
 #pragma once
 
-#include <bounded/integer.hpp>
-#include <bounded/optional.hpp>
-
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat.hpp>
 #include <tm/stat/stat_names.hpp>
 
 #include <tm/pokemon/level.hpp>
+
+#include <tm/type/type.hpp>
+
+#include <bounded/integer.hpp>
+#include <bounded/optional.hpp>
 
 #include <operators/arrow.hpp>
 
@@ -46,12 +48,12 @@ inline auto initial_stat(StatNames const stat_name, Stat const stat, Level const
 
 using attack_type = bounded::integer<1, 7368>;
 using special_attack_type = bounded::integer<1, 4536>;
-auto calculate_attack(Generation, ActivePokemon attacker, Moves, Ability other_ability, Weather, bool critical_hit) -> attack_type;
-auto calculate_special_attack(Generation, ActivePokemon attacker, Moves, Ability other_ability, Weather, bool critical_hit) -> special_attack_type;
+auto calculate_attack(Generation, ActivePokemon attacker, Type move_type, Ability other_ability, Weather, bool critical_hit) -> attack_type;
+auto calculate_special_attack(Generation, ActivePokemon attacker, Type move_type, Ability other_ability, Weather, bool critical_hit) -> special_attack_type;
 
 using defense_type = bounded::integer<1, 3684>;
 using special_defense_type = bounded::integer<1, 3684>;
-auto calculate_defense(Generation, ActivePokemon defender, Moves, Ability other_ability, Weather, bool critical_hit = false) -> defense_type;
+auto calculate_defense(Generation, ActivePokemon defender, Moves, Weather, bool critical_hit = false) -> defense_type;
 auto calculate_special_defense(Generation, ActivePokemon defender, Ability attacker_ability, Weather, bool critical_hit = false) -> special_defense_type;
 
 using speed_type = bounded::integer<1, 12096>;

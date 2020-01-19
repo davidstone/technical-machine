@@ -312,8 +312,8 @@ double end_of_turn_order_branch(Generation const generation, Team const & team, 
 		end_of_turn_branch(generation, faster->first, faster->second, weather, evaluate, depth, get_flag(faster->first), get_flag(faster->second), log);
 }
 
-constexpr auto can_be_selected_by_sleep_talk(Moves const move) {
-	switch (move) {
+constexpr auto can_be_selected_by_sleep_talk(KnownMove const move) {
+	switch (move.name) {
 		case Moves::Assist:
 		case Moves::Bide:
 		case Moves::Chatter:
@@ -338,18 +338,24 @@ constexpr auto can_be_selected_by_sleep_talk(Moves const move) {
 	}
 }
 
-auto selected_move_to_executed_move(Moves const selected_move, Team const & user_team) {
-	using result = containers::static_vector<Moves, 3>;
+auto selected_move_to_executed_move(Generation const generation, Moves const selected_move, Team const & user_team) {
+	using result = containers::static_vector<KnownMove, 3>;
 	auto const user_pokemon = user_team.pokemon();
+	auto type = [=](Moves const move) {
+		return get_type(generation, move, get_hidden_power(user_pokemon).type());
+	};
+	auto known = [=](Move const move) {
+		return KnownMove{move.name(), type(move.name())};
+	};
 	using containers::filter;
 	using containers::transform;
 	switch (selected_move) {
 		case Moves::Sleep_Talk:
 			return is_sleeping(get_status(user_pokemon)) ?
-				result{filter(transform(regular_moves(user_pokemon), &Move::name), can_be_selected_by_sleep_talk)} :
-				result{selected_move};
+				result(filter(transform(regular_moves(user_pokemon), known), can_be_selected_by_sleep_talk)) :
+				result{KnownMove{selected_move, type(selected_move)}};
 		default:
-			return result{selected_move};
+			return result{KnownMove{selected_move, type(selected_move)}};
 	}
 }
 
@@ -373,17 +379,17 @@ double generic_flag_branch(double const basic_probability, auto const & next_bra
 
 struct SelectedAndExecuted {
 	Moves selected;
-	Moves executed;
+	KnownMove executed;
 };
 
 auto execute_move(Generation const generation, Team const & user, SelectedAndExecuted const move, Team const & other, OtherMove const other_move, Weather const weather, auto const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
-	auto const variables = all_probabilities(move.executed, other.size());
+	auto const variables = all_probabilities(move.executed.name, other.size());
 	auto const status = get_status(user_pokemon);
 	auto const probability_of_clearing_status = status.probability_of_clearing(user_pokemon.ability());
 	auto const specific_chance_to_hit = chance_to_hit(generation, user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());
-	auto const move_can_critical_hit = can_critical_hit(generation, move.executed, other.pokemon().ability());
+	auto const move_can_critical_hit = can_critical_hit(generation, move.executed.name, other.pokemon().ability());
 	return generic_flag_branch(probability_of_clearing_status, [&](bool const clear_status) {
 		return generic_flag_branch(specific_chance_to_hit, [&](bool const hits) {
 			auto score = 0.0;
@@ -397,7 +403,7 @@ auto execute_move(Generation const generation, Team const & user, SelectedAndExe
 						call_move(
 							generation,
 							user_copy,
-							UsedMove{move.selected, move.executed, variable.variable, critical_hit, !hits},
+							UsedMove{move.selected, move.executed.name, variable.variable, critical_hit, !hits},
 							other_copy,
 							other_move,
 							weather_copy,
@@ -417,14 +423,14 @@ auto execute_move(Generation const generation, Team const & user, SelectedAndExe
 }
 
 auto score_executed_moves(Generation const generation, Team const & user, Moves const selected_move, Team const & other, OtherMove const other_move, Weather const weather, auto const continuation) -> double {
-	auto const score_move = [&](Moves const executed_move) {
+	auto const score_move = [&](KnownMove const executed_move) {
 		return execute_move(generation, user, SelectedAndExecuted{selected_move, executed_move}, other, other_move, weather, continuation);
 	};
-	return average_transformed_sum(selected_move_to_executed_move(selected_move, user), score_move);
+	return average_transformed_sum(selected_move_to_executed_move(generation, selected_move, user), score_move);
 }
 
 
-auto use_move_branch_inner(Moves const first_used_move) {
+auto use_move_branch_inner(KnownMove const first_used_move) {
 	return [=](Generation const generation, Team const & first, Moves const first_move [[maybe_unused]], Team const & last, Moves const last_move, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
 		BOUNDED_ASSERT_OR_ASSUME(first_move == Moves::Pass);
 		return score_executed_moves(generation, last, last_move, first, first_used_move, weather, [&](Team const & updated_last, Team const & updated_first, Weather const updated_weather) {
@@ -458,10 +464,13 @@ auto use_move_branch_inner(Moves const first_used_move) {
 }
 
 struct OriginalPokemon {
-	explicit OriginalPokemon(Pokemon const & pokemon, Moves const other_move):
+	explicit OriginalPokemon(Generation const generation, Pokemon const & pokemon, Moves const other_move):
 		m_species(get_species(pokemon)),
 		m_hp(get_hp(pokemon).current()),
-		m_other_move(other_move)
+		m_other_move{
+			other_move,
+			get_type(generation, other_move, get_hidden_power(pokemon).type())
+		}
 	{
 	}
 	
@@ -475,7 +484,7 @@ struct OriginalPokemon {
 private:
 	Species m_species;
 	HP::current_type m_hp;
-	Moves m_other_move;
+	KnownMove m_other_move;
 };
 
 constexpr auto all_are_pass_or_switch [[maybe_unused]](StaticVectorMove const legal_selections) {
@@ -516,7 +525,7 @@ double use_move_branch(Generation const generation, Team const & first, Moves co
 	// after the move, and if so, the second Pokemon can only execute Pass.
 
 	auto const last_pokemon = last.pokemon();
-	auto const original_last_pokemon = OriginalPokemon(last_pokemon, first_move);
+	auto const original_last_pokemon = OriginalPokemon(generation, last_pokemon, first_move);
 
 	return score_executed_moves(generation, first, first_move, last, FutureMove{is_damaging(last_move)}, weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
 		auto const first_selections = legal_selections(generation, updated_first, updated_last.pokemon(), weather);

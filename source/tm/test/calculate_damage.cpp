@@ -40,8 +40,15 @@ namespace {
 using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
-
+constexpr auto critical_hit = true;
 constexpr auto max_damage_physical_move = Move(generation, Moves::Rollout);
+constexpr auto max_damage_physical_move_type = Type::Rock;
+constexpr auto max_damage_executed_physical_move = ExecutedMove{
+	{max_damage_physical_move.name(), max_damage_physical_move_type},
+	max_damage_physical_move.pp(),
+	Variable{},
+	critical_hit
+};
 
 Team max_damage_physical_attacker(Item const item, Ability const ability, Nature const nature) {
 	auto attacker = Team(max_pokemon_per_team);
@@ -96,8 +103,6 @@ Team max_damage_special_defender() {
 	return defender;
 }
 
-constexpr auto critical_hit = true;
-
 void physical_power_test() {
 	std::cout << "\t\tRunning physical power tests.\n";
 	constexpr auto max_power = 1440_bi;
@@ -107,12 +112,7 @@ void physical_power_test() {
 	auto const power = move_power(
 		generation,
 		attacker,
-		ExecutedMove{
-			max_damage_physical_move.name(),
-			max_damage_physical_move.pp(),
-			Variable{},
-			critical_hit
-		},
+		max_damage_executed_physical_move,
 		max_damage_physical_defender(),
 		Weather()
 	);
@@ -134,7 +134,7 @@ void special_power_test() {
 		generation,
 		attacker,
 		ExecutedMove{
-			move.name(),
+			{move.name(), Type::Water},
 			move.pp(),
 			Variable{},
 			critical_hit
@@ -171,12 +171,7 @@ void physical_damage_test() {
 		calculate_damage(
 			generation,
 			attacker,
-			ExecutedMove{
-				max_damage_physical_move.name(),
-				max_damage_physical_move.pp(),
-				Variable{},
-				critical_hit
-			},
+			max_damage_executed_physical_move,
 			resistance_berry_activated,
 			defender,
 			FutureMove{false},
@@ -212,7 +207,7 @@ void special_damage_test() {
 		calculate_damage(
 			generation,
 			attacker,
-			ExecutedMove{move.name(), move.pp(), Variable{}, critical_hit},
+			ExecutedMove{{move.name(), Type::Fire}, move.pp(), Variable{}, critical_hit},
 			resistance_berry_activated,
 			defender,
 			FutureMove{false},

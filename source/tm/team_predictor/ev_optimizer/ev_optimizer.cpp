@@ -50,12 +50,21 @@ auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats con
 	set_stat_ev(pokemon, StatNames::SPE, stats.speed);
 }
 
-bool has_physical_move(Pokemon const & pokemon) {
-	return containers::any(regular_moves(pokemon), [](Move const move) { return is_physical(move.name()); });
+auto any_move_matches(Generation const generation, Pokemon const & pokemon, auto condition) {
+	return containers::any(regular_moves(pokemon), [=](Move const move) {
+		return condition(
+			generation,
+			KnownMove{move.name(), get_type(generation, move.name(), get_hidden_power(pokemon).type())}
+		);
+	});
 }
 
-bool has_special_move(Pokemon const & pokemon) {
-	return containers::any(regular_moves(pokemon), [](Move const move) { return is_special(move.name()); });
+bool has_physical_move(Generation const generation, Pokemon const & pokemon) {
+	return any_move_matches(generation, pokemon, is_physical);
+}
+
+bool has_special_move(Generation const generation, Pokemon const & pokemon) {
+	return any_move_matches(generation, pokemon, is_special);
 }
 
 auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats {
@@ -118,8 +127,8 @@ auto pull_out_stats(Pokemon const & pokemon) -> CombinedStats {
 void optimize_evs(Generation const generation, Pokemon & pokemon, std::mt19937 & random_engine) {
 	auto const species = get_species(pokemon);
 	auto const level = get_level(pokemon);
-	auto const include_attack = has_physical_move(pokemon);
-	auto const include_special_attack = has_special_move(pokemon);
+	auto const include_attack = has_physical_move(generation, pokemon);
+	auto const include_special_attack = has_special_move(generation, pokemon);
 	auto const optimized = optimize_evs(generation, pull_out_stats(pokemon), species, level, include_attack, include_special_attack, random_engine);
 	set_stats(generation, pokemon, optimized);
 }
