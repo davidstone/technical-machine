@@ -33,37 +33,6 @@
 namespace technicalmachine {
 namespace {
 
-void end_of_turn1(Team & team);
-void end_of_turn2(Generation, Team & team, Weather);
-void end_of_turn3(Generation, MutableActivePokemon pokemon, ActivePokemon other, Weather const weather);
-void end_of_turn5(Generation, MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags flags);
-void end_of_turn6(Team & target, Weather const weather);
-void end_of_turn7(MutableActivePokemon pokemon);
-
-}	// namespace
-
-void end_of_turn(Generation const generation, Team & first, EndOfTurnFlags const first_flags, Team & last, EndOfTurnFlags const last_flags, Weather & weather) {
-	end_of_turn1(first);
-	end_of_turn1(last);
-	end_of_turn2(generation, first, weather);
-	end_of_turn2(generation, last, weather);
-	weather.advance_one_turn();
-	auto const first_pokemon = first.pokemon();
-	auto const last_pokemon = last.pokemon();
-	end_of_turn3(generation, first_pokemon, last_pokemon, weather);
-	end_of_turn3(generation, last_pokemon, first_pokemon, weather);
-	end_of_turn5(generation, first_pokemon, last_pokemon, weather, first_flags);
-	end_of_turn5(generation, last_pokemon, first_pokemon, weather, last_flags);
-	end_of_turn6(first, weather);
-	end_of_turn6(last, weather);
-	end_of_turn7(first_pokemon);
-	end_of_turn7(last_pokemon);
-	first.reset_end_of_turn();
-	last.reset_end_of_turn();
-}
-
-namespace {
-
 void end_of_turn1(Team & team) {
 	team.screens.decrement();
 }
@@ -234,5 +203,26 @@ void end_of_turn7(MutableActivePokemon pokemon) {
 	pokemon.perish_song_turn();
 }
 
-}	// namespace
-}	// namespace technicalmachine
+} // namespace
+
+void end_of_turn(Generation const generation, Team & first, EndOfTurnFlags const first_flags, Team & last, EndOfTurnFlags const last_flags, Weather & weather) {
+	end_of_turn1(first);
+	end_of_turn1(last);
+	end_of_turn2(generation, first, weather);
+	end_of_turn2(generation, last, weather);
+	weather.advance_one_turn();
+	auto const first_pokemon = first.pokemon();
+	auto const last_pokemon = last.pokemon();
+	end_of_turn3(generation, first_pokemon, last_pokemon, weather);
+	end_of_turn3(generation, last_pokemon, first_pokemon, weather);
+	end_of_turn5(generation, first_pokemon, last_pokemon, weather, first_flags);
+	end_of_turn5(generation, last_pokemon, first_pokemon, weather, last_flags);
+	end_of_turn6(first, weather);
+	end_of_turn6(last, weather);
+	end_of_turn7(first_pokemon);
+	end_of_turn7(last_pokemon);
+	first.reset_end_of_turn();
+	last.reset_end_of_turn();
+}
+
+} // namespace technicalmachine
