@@ -33,14 +33,6 @@
 namespace technicalmachine {
 namespace {
 
-void end_of_turn1(Team & team) {
-	team.decrement_screens();
-}
-
-void end_of_turn2(Generation const generation, Team & team, Weather const weather) {
-	team.decrement_wish(generation, weather);
-}
-
 auto is_immune_to_hail(PokemonTypes const types) -> bool {
 	return containers::any(types, [](Type const type) { return type == Type::Ice; });
 }
@@ -113,7 +105,7 @@ void sun_effect(Generation const generation, MutableActivePokemon pokemon, Weath
 	}
 }
 
-void end_of_turn3(Generation const generation, MutableActivePokemon pokemon, ActivePokemon other, Weather const weather) {
+void weather_effects(Generation const generation, MutableActivePokemon pokemon, ActivePokemon other, Weather const weather) {
 	auto const ability_blocks_weather = weather_is_blocked_by_ability(pokemon.ability(), other.ability());
 	if (weather.hail(ability_blocks_weather)) {
 		hail_effect(generation, pokemon, weather);
@@ -126,7 +118,7 @@ void end_of_turn3(Generation const generation, MutableActivePokemon pokemon, Act
 	}
 }
 
-void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags const flags) {
+void other_effects(Generation const generation, MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags const flags) {
 	if (get_hp(pokemon) == 0_bi) {
 		return;
 	}
@@ -195,32 +187,30 @@ void end_of_turn5(Generation const generation, MutableActivePokemon pokemon, Mut
 	}
 }
 
-void end_of_turn6(Team &, Weather const) {
-	// TODO: Doom Desire / Future Sight
-}
-
-void end_of_turn7(MutableActivePokemon pokemon) {
-	pokemon.perish_song_turn();
-}
-
 } // namespace
 
 void end_of_turn(Generation const generation, Team & first, EndOfTurnFlags const first_flags, Team & last, EndOfTurnFlags const last_flags, Weather & weather) {
-	end_of_turn1(first);
-	end_of_turn1(last);
-	end_of_turn2(generation, first, weather);
-	end_of_turn2(generation, last, weather);
-	weather.advance_one_turn();
+	first.decrement_screens();
+	last.decrement_screens();
+
+	first.decrement_wish(generation, weather);
+	last.decrement_wish(generation, weather);
+
 	auto const first_pokemon = first.pokemon();
 	auto const last_pokemon = last.pokemon();
-	end_of_turn3(generation, first_pokemon, last_pokemon, weather);
-	end_of_turn3(generation, last_pokemon, first_pokemon, weather);
-	end_of_turn5(generation, first_pokemon, last_pokemon, weather, first_flags);
-	end_of_turn5(generation, last_pokemon, first_pokemon, weather, last_flags);
-	end_of_turn6(first, weather);
-	end_of_turn6(last, weather);
-	end_of_turn7(first_pokemon);
-	end_of_turn7(last_pokemon);
+
+	weather.advance_one_turn();
+	weather_effects(generation, first_pokemon, last_pokemon, weather);
+	weather_effects(generation, last_pokemon, first_pokemon, weather);
+
+	other_effects(generation, first_pokemon, last_pokemon, weather, first_flags);
+	other_effects(generation, last_pokemon, first_pokemon, weather, last_flags);
+
+	// TODO: Doom Desire / Future Sight
+
+	first_pokemon.perish_song_turn();
+	last_pokemon.perish_song_turn();
+
 	first.reset_end_of_turn();
 	last.reset_end_of_turn();
 }
