@@ -105,8 +105,10 @@ void sun_effect(Generation const generation, MutableActivePokemon pokemon, Weath
 	}
 }
 
-void weather_effects(Generation const generation, MutableActivePokemon pokemon, ActivePokemon other, Weather const weather) {
-	auto const ability_blocks_weather = weather_is_blocked_by_ability(pokemon.ability(), other.ability());
+void weather_effects(Generation const generation, MutableActivePokemon first, MutableActivePokemon last, Weather & weather) {
+	weather.advance_one_turn();
+	auto const ability_blocks_weather = weather_is_blocked_by_ability(first.ability(), last.ability());
+	for (auto const pokemon : {first, last}) {
 	if (weather.hail(ability_blocks_weather)) {
 		hail_effect(generation, pokemon, weather);
 	} else if (weather.rain(ability_blocks_weather)) {
@@ -116,6 +118,7 @@ void weather_effects(Generation const generation, MutableActivePokemon pokemon, 
 	} else if (weather.sun(ability_blocks_weather)) {
 		sun_effect(generation, pokemon, weather);
 	}
+}
 }
 
 void other_effects(Generation const generation, MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags const flags) {
@@ -199,9 +202,7 @@ void end_of_turn(Generation const generation, Team & first, EndOfTurnFlags const
 	auto const first_pokemon = first.pokemon();
 	auto const last_pokemon = last.pokemon();
 
-	weather.advance_one_turn();
 	weather_effects(generation, first_pokemon, last_pokemon, weather);
-	weather_effects(generation, last_pokemon, first_pokemon, weather);
 
 	other_effects(generation, first_pokemon, last_pokemon, weather, first_flags);
 	other_effects(generation, last_pokemon, first_pokemon, weather, last_flags);
