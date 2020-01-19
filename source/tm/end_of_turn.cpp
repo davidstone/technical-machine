@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tm/endofturn.hpp>
+#include <tm/end_of_turn.hpp>
 
 #include <tm/ability.hpp>
 #include <tm/heal.hpp>

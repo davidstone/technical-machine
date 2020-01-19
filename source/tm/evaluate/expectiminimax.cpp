@@ -39,7 +39,7 @@
 
 #include <tm/ability.hpp>
 #include <tm/block.hpp>
-#include <tm/endofturn.hpp>
+#include <tm/end_of_turn.hpp>
 #include <tm/team.hpp>
 #include <tm/variable.hpp>
 
