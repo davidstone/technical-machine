@@ -38,7 +38,7 @@ void end_of_turn1(Team & team) {
 }
 
 void end_of_turn2(Generation const generation, Team & team, Weather const weather) {
-	team.wish.decrement(generation, team.pokemon(), weather);
+	team.decrement_wish(generation, weather);
 }
 
 auto is_immune_to_hail(PokemonTypes const types) -> bool {

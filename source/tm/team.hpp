@@ -111,6 +111,16 @@ struct Team {
 		}
 	}
 
+	auto wish_is_active() const -> bool {
+		return m_wish.is_active();
+	}
+	auto activate_wish() & -> void {
+		m_wish.activate();
+	}
+	auto decrement_wish(Generation const generation, Weather const weather) & -> void {
+		m_wish.decrement(generation, pokemon(), weather);
+	}
+
 private:
 	friend struct Evaluate;
 	
@@ -118,7 +128,9 @@ private:
 	ActivePokemonFlags m_flags;
 public:
 	Screens screens;
-	Wish wish;
+private:
+	Wish m_wish;
+public:
 	EntryHazards entry_hazards;
 private:
 	bool me;

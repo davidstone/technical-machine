@@ -29,11 +29,17 @@ struct Pokemon;
 struct Weather;
 
 struct Wish {
-	auto activate() -> void;
-	auto decrement(Generation, MutableActivePokemon, Weather) -> void;
 	constexpr auto is_active() const {
 		return static_cast<bool>(m_turns_until_activation);
 	}
+	constexpr auto activate() & -> void {
+		if (!is_active()) {
+			constexpr auto turn_delay = 1_bi;
+			m_turns_until_activation = counter_type(turn_delay);
+		}
+	}
+
+	auto decrement(Generation, MutableActivePokemon, Weather) & -> void;
 	friend constexpr auto operator==(Wish const lhs, Wish const rhs) {
 		return lhs.m_turns_until_activation == rhs.m_turns_until_activation;
 	}

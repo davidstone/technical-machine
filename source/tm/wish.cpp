@@ -25,14 +25,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-auto Wish::activate() -> void {
-	if (!is_active()) {
-		static constexpr auto turn_delay = 1_bi;
-		m_turns_until_activation = counter_type(turn_delay);
-	}
-}
-
-auto Wish::decrement(Generation const generation, MutableActivePokemon pokemon, Weather const weather) -> void {
+auto Wish::decrement(Generation const generation, MutableActivePokemon pokemon, Weather const weather) & -> void {
 	if (!m_turns_until_activation) {
 		return;
 	}

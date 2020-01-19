@@ -1057,7 +1057,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		}
 		case Moves::Wish:
-			user_team.wish.activate();
+			user_team.activate_wish();
 			break;
 		case Moves::Worry_Seed:
 			break;

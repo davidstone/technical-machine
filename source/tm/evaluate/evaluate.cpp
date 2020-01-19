@@ -154,19 +154,19 @@ auto score_all_pokemon(Evaluate const & evaluate, Generation const generation, T
 		score_active_pokemon(evaluate, team.pokemon());
 }
 
-auto score_field_effects(Evaluate const & evaluate, Screens const & screens, Wish const & wish) {
+auto score_field_effects(Evaluate const & evaluate, Screens const & screens, bool const wish) {
 	return
 		screens.lucky_chant().turns_remaining() * evaluate.lucky_chant() +
 		screens.mist().turns_remaining() * evaluate.mist() +
 		screens.safeguard().turns_remaining() * evaluate.safeguard() +
 		screens.tailwind().turns_remaining() * evaluate.tailwind() +
-		BOUNDED_CONDITIONAL(wish.is_active(), 1_bi, 0_bi) * evaluate.wish()
+		BOUNDED_CONDITIONAL(wish, 1_bi, 0_bi) * evaluate.wish()
 	;
 }
 
 auto score_team(Evaluate const & evaluate, Generation const generation, Team const & ai, Team const & foe, Weather const weather) {
-	auto const ai_field_effects = score_field_effects(evaluate, ai.screens, ai.wish);
-	auto const foe_field_effects = score_field_effects(evaluate, foe.screens, foe.wish);
+	auto const ai_field_effects = score_field_effects(evaluate, ai.screens, ai.wish_is_active());
+	auto const foe_field_effects = score_field_effects(evaluate, foe.screens, foe.wish_is_active());
 	auto const ai_pokemon = score_all_pokemon(evaluate, generation, ai, foe, weather);
 	auto const foe_pokemon = score_all_pokemon(evaluate, generation, foe, ai, weather);
 	return ai_field_effects - foe_field_effects + ai_pokemon - foe_pokemon;
