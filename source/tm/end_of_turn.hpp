@@ -35,6 +35,8 @@ struct EndOfTurnFlags {
 	bool lock_in_ends;
 };
 
-void end_of_turn(Generation, Team & first, EndOfTurnFlags first_flags, Team & last, EndOfTurnFlags last_flags, Weather & weather);
+void end_of_attack(Generation, Team & user, Team & other, Weather);
+
+void end_of_turn(Generation, Team & first, EndOfTurnFlags first_flags, Team & last, EndOfTurnFlags last_flags, Weather &);
 
 }	// namespace technicalmachine

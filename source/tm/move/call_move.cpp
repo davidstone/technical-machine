@@ -26,6 +26,7 @@
 
 #include <tm/ability.hpp>
 #include <tm/block.hpp>
+#include <tm/end_of_turn.hpp>
 #include <tm/heal.hpp>
 #include <tm/rational.hpp>
 #include <tm/status.hpp>
@@ -1426,9 +1427,7 @@ auto handle_ability_blocks_move(Generation const generation, KnownMove const mov
 	}
 }
 
-}	// namespace
-
-auto call_move(Generation const generation, Team & user, UsedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
+auto try_use_move(Generation const generation, Team & user, UsedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
 	if (move.selected == Moves::Pass) {
 		return;
 	}
@@ -1499,4 +1498,11 @@ auto call_move(Generation const generation, Team & user, UsedMove const move, Te
 	user_pokemon.increment_move_use_counter(move.executed);
 }
 
-}	// namespace technicalmachine
+} // namespace
+
+auto call_move(Generation const generation, Team & user, UsedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
+	try_use_move(generation, user, move, other, other_move, weather, clear_status, actual_damage);
+	end_of_attack(generation, user, other, weather);
+}
+
+} // namespace technicalmachine

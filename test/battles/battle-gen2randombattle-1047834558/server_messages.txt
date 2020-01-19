@@ -1,0 +1,627 @@
+>battle-gen2randombattle-1047834558
+|title|Technical Machine vs. david stone
+|j|☆Technical Machine
+|request|
+||
+|j|☆david stone
+||
+|player|p1|Technical Machine|170|
+|request|{"active":[{"moves":[{"move":"Fire Blast","id":"fireblast","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Body Slam","id":"bodyslam","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Sunny Day","id":"sunnyday","pp":8,"maxpp":8,"target":"all","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":true,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"190/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":2}
+||
+|player|p2|david stone|102|
+|teamsize|p1|6
+|teamsize|p2|6
+|gametype|singles
+|gen|2
+|tier|[Gen 2] Random Battle
+|rule|Sleep Clause Mod: Limit one foe put to sleep
+|rule|Freeze Clause Mod: Limit one foe frozen
+|rule|Species Clause: Limit one of each Pokémon
+|rule|OHKO Clause: OHKO moves are banned
+|rule|Evasion Moves Clause: Evasion moves are banned
+|rule|HP Percentage Mod: HP is shown in percentages
+||
+|start|
+|switch|p1a: Arcanine|Arcanine, L74, M|286/286
+|switch|p2a: Ariados|Ariados, L80, M|100/100
+|turn|1
+|request|{"active":[{"moves":[{"move":"Fire Blast","id":"fireblast","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Body Slam","id":"bodyslam","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Sunny Day","id":"sunnyday","pp":8,"maxpp":8,"target":"all","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":true,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"190/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":4}
+||
+||
+|switch|p2a: Rhydon|Rhydon, L68, M|100/100
+|move|p1a: Arcanine|Body Slam|p2a: Rhydon
+|-resisted|p2a: Rhydon
+|-damage|p2a: Rhydon|91/100
+|-status|p2a: Rhydon|par
+||
+|-heal|p2a: Rhydon|97/100 par|[from] item: Leftovers
+|upkeep|
+|turn|2
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"154/190","active":true,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":6}
+||
+||
+|switch|p1a: Shuckle|Shuckle, L80, M|190/190
+|move|p2a: Rhydon|Earthquake|p1a: Shuckle
+|-damage|p1a: Shuckle|143/190
+||
+|-heal|p1a: Shuckle|154/190|[from] item: Leftovers
+|-heal|p2a: Rhydon|100/100 par|[from] item: Leftovers
+|upkeep|
+|turn|3
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"122/190","active":true,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":8}
+||
+||
+|move|p1a: Shuckle|Curse|p1a: Shuckle
+|-unboost|p1a: Shuckle|spe|1
+|-boost|p1a: Shuckle|atk|1
+|-boost|p1a: Shuckle|def|1
+|move|p2a: Rhydon|Rock Slide|p1a: Shuckle
+|-supereffective|p1a: Shuckle
+|-damage|p1a: Shuckle|111/190
+||
+|-heal|p1a: Shuckle|122/190|[from] item: Leftovers
+|upkeep|
+|turn|4
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"133/190","active":true,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":10}
+||
+||
+|switch|p2a: Mr. Mime|Mr. Mime, L74, M|100/100
+|move|p1a: Shuckle|Curse|p1a: Shuckle
+|-unboost|p1a: Shuckle|spe|1
+|-boost|p1a: Shuckle|atk|1
+|-boost|p1a: Shuckle|def|1
+||
+|-heal|p1a: Shuckle|133/190|[from] item: Leftovers
+|upkeep|
+|turn|5
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":13,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":true},{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":true},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":true}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"144/190","active":true,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":12}
+||
+||
+|move|p2a: Mr. Mime|Encore|p1a: Shuckle
+|-start|p1a: Shuckle|Encore
+|move|p1a: Shuckle|Curse|p1a: Shuckle
+|-unboost|p1a: Shuckle|spe|1
+|-boost|p1a: Shuckle|atk|1
+|-boost|p1a: Shuckle|def|1
+||
+|-heal|p1a: Shuckle|144/190|[from] item: Leftovers
+|upkeep|
+|turn|6
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":12,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":true},{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":true},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":true}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"116/190","active":true,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":14}
+||
+||
+|move|p2a: Mr. Mime|Psychic|p1a: Shuckle
+|-damage|p1a: Shuckle|105/190
+|move|p1a: Shuckle|Curse|p1a: Shuckle
+|-unboost|p1a: Shuckle|spe|1
+|-boost|p1a: Shuckle|atk|1
+|-boost|p1a: Shuckle|def|0
+||
+|-heal|p1a: Shuckle|116/190|[from] item: Leftovers
+|upkeep|
+|turn|7
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":11,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":true},{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":true},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":true}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"87/190","active":true,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":16}
+||
+||
+|move|p2a: Mr. Mime|Psychic|p1a: Shuckle
+|-damage|p1a: Shuckle|76/190
+|move|p1a: Shuckle|Curse|p1a: Shuckle
+|-unboost|p1a: Shuckle|spe|1
+|-boost|p1a: Shuckle|atk|1
+|-boost|p1a: Shuckle|def|0
+||
+|-heal|p1a: Shuckle|87/190|[from] item: Leftovers
+|upkeep|
+|turn|8
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":10,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":true},{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":true},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":true}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"59/190","active":true,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":18}
+||
+||
+|move|p2a: Mr. Mime|Psychic|p1a: Shuckle
+|-damage|p1a: Shuckle|48/190
+|move|p1a: Shuckle|Curse|p1a: Shuckle
+|-unboost|p1a: Shuckle|spe|1
+|-boost|p1a: Shuckle|atk|1
+|-boost|p1a: Shuckle|def|0
+||
+|-heal|p1a: Shuckle|59/190|[from] item: Leftovers
+|upkeep|
+|turn|9
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":9,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":true},{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":true},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":true}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"30/190","active":true,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":20}
+||
+||
+|move|p2a: Mr. Mime|Psychic|p1a: Shuckle
+|-damage|p1a: Shuckle|19/190
+|move|p1a: Shuckle|Curse|p1a: Shuckle
+|-unboost|p1a: Shuckle|spe|0
+|-boost|p1a: Shuckle|atk|0
+|-boost|p1a: Shuckle|def|0
+||
+|-heal|p1a: Shuckle|30/190|[from] item: Leftovers
+|upkeep|
+|turn|10
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Recover","id":"recover","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"240/269","active":true,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"30/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":22}
+||
+||
+|switch|p1a: Mewtwo|Mewtwo, L64|269/269
+|move|p2a: Mr. Mime|Psychic|p1a: Mewtwo
+|-resisted|p1a: Mewtwo
+|-damage|p1a: Mewtwo|224/269
+||
+|-heal|p1a: Mewtwo|240/269|[from] item: Leftovers
+|upkeep|
+|turn|11
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Recover","id":"recover","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"256/269 slp","active":true,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"30/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":24}
+||
+||
+|move|p1a: Mewtwo|Psychic|p2a: Mr. Mime
+|-resisted|p2a: Mr. Mime
+|-damage|p2a: Mr. Mime|83/100
+|move|p2a: Mr. Mime|Hypnosis|p1a: Mewtwo
+|-status|p1a: Mewtwo|slp|[from] move: Hypnosis
+||
+|-heal|p1a: Mewtwo|256/269 slp|[from] item: Leftovers
+|-heal|p2a: Mr. Mime|89/100|[from] item: Leftovers
+|upkeep|
+|turn|12
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Recover","id":"recover","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":true,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"30/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":26}
+||
+||
+|switch|p2a: Celebi|Celebi, L64|100/100
+|cant|p1a: Mewtwo|slp
+||
+|-heal|p1a: Mewtwo|269/269 slp|[from] item: Leftovers
+|upkeep|
+|turn|13
+|request|{"active":[{"moves":[{"move":"Growth","id":"growth","pp":64,"maxpp":64,"target":"self","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Synthesis","id":"synthesis","pp":8,"maxpp":8,"target":"self","disabled":false},{"move":"Hidden Power Ice 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":true,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"30/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":28}
+||
+||
+|switch|p1a: Sunflora|Sunflora, L80, M|284/284
+|move|p2a: Celebi|Leech Seed|p1a: Sunflora
+|-immune|p1a: Sunflora
+||
+|upkeep|
+|turn|14
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":9,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"12/190","active":true,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":30}
+||
+||
+|switch|p1a: Shuckle|Shuckle, L80, M|30/190
+|move|p2a: Celebi|Psychic|p1a: Shuckle
+|-damage|p1a: Shuckle|1/190
+||
+|-heal|p1a: Shuckle|12/190|[from] item: Leftovers
+|upkeep|
+|turn|15
+|request|{"active":[{"moves":[{"move":"Growth","id":"growth","pp":64,"maxpp":64,"target":"self","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Synthesis","id":"synthesis","pp":8,"maxpp":8,"target":"self","disabled":false},{"move":"Hidden Power Ice 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"236/284","active":true,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"12/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":32}
+||
+||
+|switch|p1a: Sunflora|Sunflora, L80, M|284/284
+|move|p2a: Celebi|Psychic|p1a: Sunflora
+|-damage|p1a: Sunflora|219/284
+||
+|-heal|p1a: Sunflora|236/284|[from] item: Leftovers
+|upkeep|
+|turn|16
+|request|{"active":[{"moves":[{"move":"Growth","id":"growth","pp":64,"maxpp":64,"target":"self","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Synthesis","id":"synthesis","pp":8,"maxpp":8,"target":"self","disabled":false},{"move":"Hidden Power Ice 70","id":"hiddenpower","pp":23,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"253/284","active":true,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"12/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"257/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":34}
+||
+||
+|switch|p2a: Ariados|Ariados, L80, M|100/100
+|move|p1a: Sunflora|Hidden Power|p2a: Ariados
+|-damage|p2a: Ariados|75/100
+||
+|-heal|p2a: Ariados|81/100|[from] item: Leftovers
+|-heal|p1a: Sunflora|253/284|[from] item: Leftovers
+|upkeep|
+|turn|17
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Hydro Pump","id":"hydropump","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"170/257","active":true,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"12/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"253/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":36}
+||
+||
+|switch|p1a: Tentacruel|Tentacruel, L70, M|257/257
+|move|p2a: Ariados|Sludge Bomb|p1a: Tentacruel
+|-crit|p1a: Tentacruel
+|-resisted|p1a: Tentacruel
+|-damage|p1a: Tentacruel|154/257
+||
+|-heal|p1a: Tentacruel|170/257|[from] item: Leftovers
+|-heal|p2a: Ariados|87/100|[from] item: Leftovers
+|upkeep|
+|turn|18
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Hydro Pump","id":"hydropump","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"74/257","active":true,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"12/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"253/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":38}
+||
+||
+|move|p1a: Tentacruel|Sludge Bomb|p2a: Ariados
+|-resisted|p2a: Ariados
+|-damage|p2a: Ariados|74/100
+|move|p2a: Ariados|Hidden Power|p1a: Tentacruel
+|-supereffective|p1a: Tentacruel
+|-damage|p1a: Tentacruel|58/257
+||
+|-heal|p1a: Tentacruel|74/257|[from] item: Leftovers
+|-heal|p2a: Ariados|80/100|[from] item: Leftovers
+|upkeep|
+|turn|19
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Hydro Pump","id":"hydropump","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":15,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":true,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"286/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"12/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"253/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":40}
+||
+||
+|move|p1a: Tentacruel|Substitute|p1a: Tentacruel
+|-start|p1a: Tentacruel|Substitute
+|-damage|p1a: Tentacruel|10/257
+|move|p2a: Ariados|Hidden Power|p1a: Tentacruel
+|-supereffective|p1a: Tentacruel
+|-end|p1a: Tentacruel|Substitute
+||
+|-heal|p1a: Tentacruel|26/257|[from] item: Leftovers
+|-heal|p2a: Ariados|86/100|[from] item: Leftovers
+|upkeep|
+|turn|20
+|request|{"active":[{"moves":[{"move":"Fire Blast","id":"fireblast","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Body Slam","id":"bodyslam","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Sunny Day","id":"sunnyday","pp":8,"maxpp":8,"target":"all","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"227/286","active":true,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"12/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"253/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":42}
+||
+||
+|switch|p1a: Arcanine|Arcanine, L74, M|286/286
+|move|p2a: Ariados|Return|p1a: Arcanine
+|-damage|p1a: Arcanine|210/286
+||
+|-heal|p1a: Arcanine|227/286|[from] item: Leftovers
+|-heal|p2a: Ariados|93/100|[from] item: Leftovers
+|upkeep|
+|turn|21
+|request|{"active":[{"moves":[{"move":"Fire Blast","id":"fireblast","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Body Slam","id":"bodyslam","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Sunny Day","id":"sunnyday","pp":8,"maxpp":8,"target":"all","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"244/286","active":true,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"12/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"253/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":44}
+||
+||
+|switch|p2a: Rhydon|Rhydon, L68, M|100/100 par
+|move|p1a: Arcanine|Fire Blast|p2a: Rhydon
+|-resisted|p2a: Rhydon
+|-damage|p2a: Rhydon|72/100 par
+||
+|-heal|p1a: Arcanine|244/286|[from] item: Leftovers
+|-heal|p2a: Rhydon|78/100 par|[from] item: Leftovers
+|upkeep|
+|turn|22
+|request|{"active":[{"moves":[{"move":"Growth","id":"growth","pp":64,"maxpp":64,"target":"self","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Synthesis","id":"synthesis","pp":8,"maxpp":8,"target":"self","disabled":false},{"move":"Hidden Power Ice 70","id":"hiddenpower","pp":23,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"207/284","active":true,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"12/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"244/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":46}
+||
+||
+|switch|p1a: Sunflora|Sunflora, L80, M|253/284
+|move|p2a: Rhydon|Earthquake|p1a: Sunflora
+|-resisted|p1a: Sunflora
+|-damage|p1a: Sunflora|190/284
+||
+|-heal|p1a: Sunflora|207/284|[from] item: Leftovers
+|-heal|p2a: Rhydon|84/100 par|[from] item: Leftovers
+|upkeep|
+|turn|23
+|request|{"active":[{"moves":[{"move":"Growth","id":"growth","pp":64,"maxpp":64,"target":"self","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Synthesis","id":"synthesis","pp":8,"maxpp":8,"target":"self","disabled":false},{"move":"Hidden Power Ice 70","id":"hiddenpower","pp":23,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"234/284","active":true,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"12/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"244/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":48}
+||
+||
+|switch|p2a: Ariados|Ariados, L80, M|93/100
+|move|p1a: Sunflora|Giga Drain|p2a: Ariados
+|-resisted|p2a: Ariados
+|-damage|p2a: Ariados|85/100
+|-heal|p1a: Sunflora|217/284|[from] drain|[of] p2a: Ariados
+||
+|-heal|p2a: Ariados|91/100|[from] item: Leftovers
+|-heal|p1a: Sunflora|234/284|[from] item: Leftovers
+|upkeep|
+|turn|24
+|request|{"active":[{"moves":[{"move":"Growth","id":"growth","pp":64,"maxpp":64,"target":"self","disabled":false},{"move":"Giga Drain","id":"gigadrain","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Synthesis","id":"synthesis","pp":7,"maxpp":8,"target":"self","disabled":false},{"move":"Hidden Power Ice 70","id":"hiddenpower","pp":23,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"173/284","active":true,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"12/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"244/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":50}
+||
+||
+|move|p2a: Ariados|Sludge Bomb|p1a: Sunflora
+|-supereffective|p1a: Sunflora
+|-damage|p1a: Sunflora|14/284
+|move|p1a: Sunflora|Synthesis|p1a: Sunflora
+|-heal|p1a: Sunflora|156/284
+||
+|-heal|p2a: Ariados|97/100|[from] item: Leftovers
+|-heal|p1a: Sunflora|173/284|[from] item: Leftovers
+|upkeep|
+|turn|25
+|request|{"forceSwitch":[true],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":true,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"12/190","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"244/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"noCancel":true,"rqid":52}
+||
+||
+|move|p2a: Ariados|Sludge Bomb|p1a: Sunflora
+|-supereffective|p1a: Sunflora
+|-damage|p1a: Sunflora|0 fnt
+|faint|p1a: Sunflora
+|request|{"active":[{"moves":[{"move":"Curse","id":"curse","pp":9,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Hidden Power Rock 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"23/190","active":true,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"244/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":54}
+||
+||
+|switch|p1a: Shuckle|Shuckle, L80, M|12/190
+||
+|-heal|p2a: Ariados|100/100|[from] item: Leftovers
+|-heal|p1a: Shuckle|23/190|[from] item: Leftovers
+|upkeep|
+|turn|26
+|request|{"forceSwitch":[true],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":true,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"244/286","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"noCancel":true,"rqid":56}
+||
+||
+|move|p2a: Ariados|Hidden Power|p1a: Shuckle
+|-damage|p1a: Shuckle|0 fnt
+|faint|p1a: Shuckle
+|request|{"active":[{"moves":[{"move":"Fire Blast","id":"fireblast","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Body Slam","id":"bodyslam","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Sunny Day","id":"sunnyday","pp":8,"maxpp":8,"target":"all","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"261/286","active":true,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":58}
+||
+||
+|switch|p1a: Arcanine|Arcanine, L74, M|244/286
+||
+|-heal|p1a: Arcanine|261/286|[from] item: Leftovers
+|upkeep|
+|turn|27
+|request|{"active":[{"moves":[{"move":"Fire Blast","id":"fireblast","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Body Slam","id":"bodyslam","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Sunny Day","id":"sunnyday","pp":7,"maxpp":8,"target":"all","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"278/286","active":true,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":60}
+||
+||
+|switch|p2a: Rhydon|Rhydon, L68, M|84/100 par
+|move|p1a: Arcanine|Sunny Day|p1a: Arcanine
+|-weather|SunnyDay
+||
+|-weather|SunnyDay|[upkeep]
+|-heal|p1a: Arcanine|278/286|[from] item: Leftovers
+|-heal|p2a: Rhydon|90/100 par|[from] item: Leftovers
+|upkeep|
+|turn|28
+|request|{"forceSwitch":[true],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":true,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"noCancel":true,"rqid":62}
+||
+||
+|move|p1a: Arcanine|Fire Blast|p2a: Rhydon
+|-resisted|p2a: Rhydon
+|-damage|p2a: Rhydon|40/100 par
+|move|p2a: Rhydon|Earthquake|p1a: Arcanine
+|-crit|p1a: Arcanine
+|-supereffective|p1a: Arcanine
+|-damage|p1a: Arcanine|0 fnt
+|faint|p1a: Arcanine
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Hydro Pump","id":"hydropump","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":15,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"42/257","active":true,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":64}
+||
+||
+|switch|p1a: Tentacruel|Tentacruel, L70, M|26/257
+||
+|-weather|SunnyDay|[upkeep]
+|-heal|p1a: Tentacruel|42/257|[from] item: Leftovers
+|-heal|p2a: Rhydon|46/100 par|[from] item: Leftovers
+|upkeep|
+|turn|29
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Hydro Pump","id":"hydropump","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":15,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"58/257","active":true,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269 slp","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":66}
+||
+||
+|switch|p2a: Ariados|Ariados, L80, M|100/100
+|move|p1a: Tentacruel|Hydro Pump|p2a: Ariados
+|-damage|p2a: Ariados|81/100
+||
+|-weather|SunnyDay|[upkeep]
+|-heal|p1a: Tentacruel|58/257|[from] item: Leftovers
+|-heal|p2a: Ariados|87/100|[from] item: Leftovers
+|upkeep|
+|turn|30
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Recover","id":"recover","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"234/269 slp","active":true,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"58/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":68}
+||
+||
+|switch|p1a: Mewtwo|Mewtwo, L64|269/269 slp
+|move|p2a: Ariados|Hidden Power|p1a: Mewtwo
+|-damage|p1a: Mewtwo|218/269 slp
+||
+|-weather|SunnyDay|[upkeep]
+|-heal|p1a: Mewtwo|234/269 slp|[from] item: Leftovers
+|-heal|p2a: Ariados|93/100|[from] item: Leftovers
+|upkeep|
+|turn|31
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Recover","id":"recover","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"250/269 slp","active":true,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"58/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":70}
+||
+||
+|switch|p2a: Celebi|Celebi, L64|100/100
+|cant|p1a: Mewtwo|slp
+||
+|-weather|none
+|-heal|p1a: Mewtwo|250/269 slp|[from] item: Leftovers
+|upkeep|
+|turn|32
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":14,"maxpp":16,"target":"normal","disabled":false},{"move":"Recover","id":"recover","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"266/269","active":true,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"58/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":72}
+||
+||
+|-curestatus|p1a: Mewtwo|slp|[msg]
+|move|p1a: Mewtwo|Psychic|p2a: Celebi
+|-resisted|p2a: Celebi
+|-damage|p2a: Celebi|84/100
+|move|p2a: Celebi|Leech Seed|p1a: Mewtwo
+|-start|p1a: Mewtwo|move: Leech Seed
+||
+|-heal|p1a: Mewtwo|266/269|[from] item: Leftovers
+|-heal|p2a: Celebi|90/100|[from] item: Leftovers
+|upkeep|
+|turn|33
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":14,"maxpp":16,"target":"normal","disabled":false},{"move":"Recover","id":"recover","pp":31,"maxpp":32,"target":"self","disabled":false},{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"252/269","active":true,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"58/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":74}
+||
+||
+|switch|p2a: Mr. Mime|Mr. Mime, L74, M|89/100
+|move|p1a: Mewtwo|Recover|p1a: Mewtwo
+|-heal|p1a: Mewtwo|269/269
+|-damage|p1a: Mewtwo|236/269|[from] Leech Seed|[of] p2a: Mr. Mime
+|-heal|p2a: Mr. Mime|100/100|[silent]
+||
+|-heal|p1a: Mewtwo|252/269|[from] item: Leftovers
+|upkeep|
+|turn|34
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":14,"maxpp":16,"target":"normal","disabled":true},{"move":"Recover","id":"recover","pp":30,"maxpp":32,"target":"self","disabled":false},{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":true},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":true}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"252/269","active":true,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"58/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":76}
+||
+||
+|move|p1a: Mewtwo|Recover|p1a: Mewtwo
+|-heal|p1a: Mewtwo|269/269
+|-damage|p1a: Mewtwo|236/269|[from] Leech Seed|[of] p2a: Mr. Mime
+|move|p2a: Mr. Mime|Encore|p1a: Mewtwo
+|-start|p1a: Mewtwo|Encore
+||
+|-heal|p1a: Mewtwo|252/269|[from] item: Leftovers
+|upkeep|
+|turn|35
+|request|{"active":[{"moves":[{"move":"Thunderbolt","id":"thunderbolt","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":true,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"58/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"252/269","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":78}
+||
+||
+|switch|p1a: Raikou|Raikou, L68|263/263
+|switch|p2a: Snorlax|Snorlax, L66, M|100/100
+||
+|upkeep|
+|turn|36
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":14,"maxpp":16,"target":"normal","disabled":false},{"move":"Recover","id":"recover","pp":30,"maxpp":32,"target":"self","disabled":false},{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"268/269","active":true,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"58/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":80}
+||
+||
+|switch|p1a: Mewtwo|Mewtwo, L64|252/269
+|move|p2a: Snorlax|Curse|p2a: Snorlax
+|-unboost|p2a: Snorlax|spe|1
+|-boost|p2a: Snorlax|atk|1
+|-boost|p2a: Snorlax|def|1
+||
+|-heal|p1a: Mewtwo|268/269|[from] item: Leftovers
+|upkeep|
+|turn|37
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":13,"maxpp":16,"target":"normal","disabled":false},{"move":"Recover","id":"recover","pp":30,"maxpp":32,"target":"self","disabled":false},{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"269/269","active":true,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"58/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":82}
+||
+||
+|move|p1a: Mewtwo|Psychic|p2a: Snorlax
+|-damage|p2a: Snorlax|74/100
+|move|p2a: Snorlax|Curse|p2a: Snorlax
+|-unboost|p2a: Snorlax|spe|1
+|-boost|p2a: Snorlax|atk|1
+|-boost|p2a: Snorlax|def|1
+||
+|-heal|p1a: Mewtwo|269/269|[from] item: Leftovers
+|-heal|p2a: Snorlax|80/100|[from] item: Leftovers
+|upkeep|
+|turn|38
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":12,"maxpp":16,"target":"normal","disabled":false},{"move":"Recover","id":"recover","pp":30,"maxpp":32,"target":"self","disabled":false},{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"allySide","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"69/269","active":true,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"58/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":84}
+||
+||
+|move|p1a: Mewtwo|Psychic|p2a: Snorlax
+|-damage|p2a: Snorlax|54/100
+|move|p2a: Snorlax|Double-Edge|p1a: Mewtwo
+|-damage|p1a: Mewtwo|53/269
+|-damage|p2a: Snorlax|39/100|[from] Recoil|[of] p1a: Mewtwo
+||
+|-heal|p1a: Mewtwo|69/269|[from] item: Leftovers
+|-heal|p2a: Snorlax|45/100|[from] item: Leftovers
+|upkeep|
+|turn|39
+|request|{"forceSwitch":[true],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":true,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"58/257","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"noCancel":true,"rqid":86}
+||
+||
+|move|p1a: Mewtwo|Psychic|p2a: Snorlax
+|-damage|p2a: Snorlax|22/100
+|move|p2a: Snorlax|Double-Edge|p1a: Mewtwo
+|-damage|p1a: Mewtwo|0 fnt
+|-damage|p2a: Snorlax|17/100|[from] Recoil|[of] p1a: Mewtwo
+|faint|p1a: Mewtwo
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Hydro Pump","id":"hydropump","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":15,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"74/257","active":true,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":88}
+||
+||
+|switch|p1a: Tentacruel|Tentacruel, L70, M|58/257
+||
+|-heal|p1a: Tentacruel|74/257|[from] item: Leftovers
+|-heal|p2a: Snorlax|23/100|[from] item: Leftovers
+|upkeep|
+|turn|40
+|request|{"active":[{"moves":[{"move":"Swords Dance","id":"swordsdance","pp":48,"maxpp":48,"target":"self","disabled":false},{"move":"Sludge Bomb","id":"sludgebomb","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Hydro Pump","id":"hydropump","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":14,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"26/257","active":true,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":90}
+||
+||
+|move|p1a: Tentacruel|Substitute|p1a: Tentacruel
+|-start|p1a: Tentacruel|Substitute
+|-damage|p1a: Tentacruel|10/257
+|move|p2a: Snorlax|Double-Edge|p1a: Tentacruel
+|-end|p1a: Tentacruel|Substitute
+|-damage|p2a: Snorlax|23/100|[from] Recoil|[of] p1a: Tentacruel
+||
+|-heal|p1a: Tentacruel|26/257|[from] item: Leftovers
+|-heal|p2a: Snorlax|29/100|[from] item: Leftovers
+|upkeep|
+|turn|41
+|request|{"forceSwitch":[true],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"0 fnt","active":true,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":false,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"noCancel":true,"rqid":92}
+||
+||
+|move|p1a: Tentacruel|Sludge Bomb|p2a: Snorlax
+|-damage|p2a: Snorlax|16/100
+|move|p2a: Snorlax|Double-Edge|p1a: Tentacruel
+|-damage|p1a: Tentacruel|0 fnt
+|-damage|p2a: Snorlax|14/100|[from] Recoil|[of] p1a: Tentacruel
+|faint|p1a: Tentacruel
+|request|{"active":[{"moves":[{"move":"Thunderbolt","id":"thunderbolt","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":true,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"0 fnt","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":94}
+||
+||
+|switch|p1a: Raikou|Raikou, L68|263/263
+||
+|-heal|p2a: Snorlax|20/100|[from] item: Leftovers
+|upkeep|
+|turn|42
+|request|{"wait":true,"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":true,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"0 fnt","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":96}
+||
+||
+|move|p1a: Raikou|Thunderbolt|p2a: Snorlax
+|-damage|p2a: Snorlax|0 fnt
+|faint|p2a: Snorlax
+|request|{"active":[{"moves":[{"move":"Thunderbolt","id":"thunderbolt","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":true,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"0 fnt","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":98}
+||
+||
+|switch|p2a: Rhydon|Rhydon, L68, M|46/100 par
+||
+|-heal|p2a: Rhydon|52/100 par|[from] item: Leftovers
+|upkeep|
+|turn|43
+|request|{"active":[{"moves":[{"move":"Thunderbolt","id":"thunderbolt","pp":22,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Crunch","id":"crunch","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":true,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"0 fnt","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":100}
+||
+||
+|switch|p2a: Celebi|Celebi, L64|90/100
+|move|p1a: Raikou|Thunderbolt|p2a: Celebi
+|-resisted|p2a: Celebi
+|-damage|p2a: Celebi|74/100
+||
+|-heal|p2a: Celebi|80/100|[from] item: Leftovers
+|upkeep|
+|turn|44
+|request|{"active":[{"moves":[{"move":"Thunderbolt","id":"thunderbolt","pp":22,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Crunch","id":"crunch","pp":23,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":true,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"0 fnt","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":102}
+||
+||
+|move|p1a: Raikou|Crunch|p2a: Celebi
+|-supereffective|p2a: Celebi
+|-damage|p2a: Celebi|41/100
+|move|p2a: Celebi|Heal Bell|p2a: Celebi
+|-cureteam|p2a: Celebi|[from] move: Heal Bell
+||
+|-heal|p2a: Celebi|47/100|[from] item: Leftovers
+|upkeep|
+|turn|45
+|request|{"active":[{"moves":[{"move":"Thunderbolt","id":"thunderbolt","pp":22,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Crunch","id":"crunch","pp":22,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":true,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"0 fnt","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":104}
+||
+||
+|move|p1a: Raikou|Crunch|p2a: Celebi
+|-supereffective|p2a: Celebi
+|-damage|p2a: Celebi|10/100
+|-unboost|p2a: Celebi|spd|1
+|move|p2a: Celebi|Leech Seed|p1a: Raikou
+|-start|p1a: Raikou|move: Leech Seed
+||
+|-heal|p2a: Celebi|16/100|[from] item: Leftovers
+|upkeep|
+|turn|46
+|request|{"wait":true,"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":true,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"0 fnt","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":106}
+||
+||
+|move|p1a: Raikou|Crunch|p2a: Celebi
+|-supereffective|p2a: Celebi
+|-damage|p2a: Celebi|0 fnt
+|faint|p2a: Celebi
+|request|{"active":[{"moves":[{"move":"Thunderbolt","id":"thunderbolt","pp":22,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Crunch","id":"crunch","pp":21,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Raikou","details":"Raikou, L68","condition":"263/263","active":true,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"0 fnt","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":108}
+||
+||
+|switch|p2a: Rhydon|Rhydon, L68, M|52/100
+||
+|-heal|p2a: Rhydon|58/100|[from] item: Leftovers
+|upkeep|
+|turn|47
+|request|{"active":[{"moves":[{"move":"Thunderbolt","id":"thunderbolt","pp":21,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Crunch","id":"crunch","pp":21,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Raikou","details":"Raikou, L68","condition":"20/263","active":true,"stats":{"atk":183,"def":170,"spa":224,"spd":204,"spe":224},"moves":["thunderbolt","rest","sleeptalk","crunch"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Mewtwo","details":"Mewtwo, L64","condition":"0 fnt","active":false,"stats":{"atk":205,"def":179,"spa":261,"spd":179,"spe":230},"moves":["psychic","recover","thunderwave","reflect"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Arcanine","details":"Arcanine, L74, M","condition":"0 fnt","active":false,"stats":{"atk":236,"def":192,"spa":221,"spd":192,"spe":214},"moves":["fireblast","crunch","bodyslam","sunnyday"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"0 fnt","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Tentacruel","details":"Tentacruel, L70, M","condition":"0 fnt","active":false,"stats":{"atk":168,"def":161,"spa":182,"spd":238,"spe":210},"moves":["swordsdance","sludgebomb","hydropump","substitute"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Shuckle","details":"Shuckle, L80, M","condition":"0 fnt","active":false,"stats":{"atk":92,"def":442,"spa":95,"spd":447,"spe":87},"moves":["curse","earthquake","hiddenpowerrock","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":110}
+||
+||
+|move|p1a: Raikou|Thunderbolt|p2a: Rhydon
+|-immune|p2a: Rhydon
+|-damage|p1a: Raikou|231/263|[from] Leech Seed|[of] p2a: Rhydon
+|-heal|p2a: Rhydon|69/100|[silent]
+|move|p2a: Rhydon|Earthquake|p1a: Raikou
+|-supereffective|p1a: Raikou
+|-damage|p1a: Raikou|4/263
+||
+|-heal|p1a: Raikou|20/263|[from] item: Leftovers
+|-heal|p2a: Rhydon|75/100|[from] item: Leftovers
+|upkeep|
+|turn|48

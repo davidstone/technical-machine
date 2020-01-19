@@ -91,16 +91,16 @@ public:
 	constexpr auto magic_room() const {
 		return m_magic_room_turns_remaining != 0_bi;
 	}
-	constexpr auto hail(bool const blocked_by_ability) const {
+	constexpr auto hail(bool const blocked_by_ability = false) const {
 		return is_active(NormalWeather::hail, blocked_by_ability);
 	}
-	constexpr auto sand(bool const blocked_by_ability) const {
+	constexpr auto sand(bool const blocked_by_ability = false) const {
 		return is_active(NormalWeather::sand, blocked_by_ability);
 	}
-	constexpr auto sun(bool const blocked_by_ability) const {
+	constexpr auto sun(bool const blocked_by_ability = false) const {
 		return is_active(NormalWeather::sun, blocked_by_ability);
 	}
-	constexpr auto rain(bool const blocked_by_ability) const {
+	constexpr auto rain(bool const blocked_by_ability = false) const {
 		return is_active(NormalWeather::rain, blocked_by_ability);
 	}
 

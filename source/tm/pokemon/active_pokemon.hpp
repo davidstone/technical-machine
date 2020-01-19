@@ -93,8 +93,10 @@ struct ActiveStatus {
 		m_nightmare = true;
 	}
 
-	auto end_of_turn(Generation, MutableActivePokemon pokemon, ActivePokemon const other, Weather, bool uproar) & -> void;
+	auto status_and_leech_seed_effects(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather, bool uproar) & -> void;
 private:
+	auto end_of_attack(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather) & -> void;
+	auto end_of_turn(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather, bool uproar) & -> void;
 	// The discriminator is the status of the active Pokemon. The default value
 	// is irrelevant.
 	union {
@@ -656,8 +658,8 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 
 	auto apply_status(Generation, Statuses, MutableActivePokemon user, Weather, bool uproar = false) const -> void;
 	auto rest(Generation, Weather, bool other_is_uproaring) const -> void;
-	auto end_of_turn_status(Generation const generation, ActivePokemon const other, Weather const weather, bool const uproar) const {
-		m_flags.status.end_of_turn(generation, *this, other, weather, uproar);
+	auto status_and_leech_seed_effects(Generation const generation, MutableActivePokemon const other, Weather const weather, bool const uproar = false) const {
+		m_flags.status.status_and_leech_seed_effects(generation, *this, other, weather, uproar);
 	}
 	auto clear_status() const -> void {
 		constexpr auto status = Statuses::clear;
