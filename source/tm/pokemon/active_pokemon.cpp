@@ -160,7 +160,7 @@ auto ActiveStatus::status_and_leech_seed_effects(Generation const generation, Mu
 	}
 }
 
-auto ActivePokemonFlags::reset_end_of_turn() -> void {
+auto ActivePokemonFlags::reset_start_of_turn() -> void {
 	damage_blocker = {};
 	damaged = false;
 	direct_damage_received = 0_bi;
@@ -202,9 +202,7 @@ auto ActivePokemonFlags::reset_switch() -> void {
 	identified = false;
 	used_imprison = false;
 	last_used_move = {};
-	// Do I set to true or false? true makes it wrong when a fainted Pokemon is
-	// replaced; false makes it wrong otherwise
-	is_loafing_turn = false;
+	is_loafing_turn = true;
 	minimized = false;
 	me_first_is_active = false;
 	mud_sport = false;

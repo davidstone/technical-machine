@@ -56,6 +56,9 @@ struct Battle {
 		m_generation(generation),
 		m_ai_party(party)
 	{
+		// TODO: Properly order this
+		m_ai.pokemon().switch_in(m_generation, m_weather);
+		m_foe.pokemon().switch_in(m_generation, m_weather);
 	}
 	
 	auto generation() const {
@@ -75,18 +78,16 @@ struct Battle {
 		return m_ai_party == other_party;
 	}
 
+	void handle_begin_turn() & {
+		m_ai.reset_start_of_turn();
+		m_foe.reset_start_of_turn();
+	}
 	// TODO: require users to specify which team went first and whether Shed
 	// Skin activated
-	void handle_begin_turn(auto const turn_count) {
-		if (turn_count != 1_bi) {
-			constexpr auto ai_flags = EndOfTurnFlags{false, false};
-			constexpr auto foe_flags = EndOfTurnFlags{false, false};
-			end_of_turn(m_generation, m_ai, ai_flags, m_foe, foe_flags, m_weather);
-		} else {
-			// TODO: Properly order this
-			m_ai.pokemon().switch_in(m_generation, m_weather);
-			m_foe.pokemon().switch_in(m_generation, m_weather);
-		}
+	void handle_end_turn() & {
+		constexpr auto ai_flags = EndOfTurnFlags{false, false};
+		constexpr auto foe_flags = EndOfTurnFlags{false, false};
+		end_of_turn(m_generation, m_ai, ai_flags, m_foe, foe_flags, m_weather);
 	}
 
 	// maybe_index is either an index into a PokemonCollection or nothing

@@ -106,7 +106,7 @@ private:
 };
 
 struct ActivePokemonFlags {
-	auto reset_end_of_turn() -> void;
+	auto reset_start_of_turn() -> void;
 private:
 	auto is_baton_passing() const -> bool;
 	auto is_charging_up() const -> bool;

@@ -81,8 +81,8 @@ struct Team {
 		return is_me() ? "AI" : "Foe";
 	}
 
-	auto reset_end_of_turn() -> void {
-		m_flags.reset_end_of_turn();
+	auto reset_start_of_turn() -> void {
+		m_flags.reset_start_of_turn();
 	}
 	void clear_field() {
 		pokemon().clear_field();

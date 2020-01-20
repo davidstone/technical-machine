@@ -555,7 +555,7 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "turn") {
 		auto const turn = bounded::to_integer<0, bounded::max_value<std::uint32_t>>(message.next());
 		m_analysis_logger << std::string(20, '=') << "\nBegin turn " << turn << '\n';
-		m_battle.handle_begin_turn(turn);
+		m_battle.handle_begin_turn();
 		send_move(determine_action());
 	} else if (type == "-unboost") {
 #if 0
@@ -564,6 +564,7 @@ void BattleParser::handle_message(InMessage message) {
 		auto const amount = message.next();
 #endif
 	} else if (type == "upkeep") {
+		m_battle.handle_end_turn();
 	} else if (type == "-weather") {
 #if 0
 		auto const weather = message.next();

@@ -286,6 +286,8 @@ auto handle_end_of_turn_replacing(Generation const generation, Team first, Moves
 	if (auto const won = Evaluate::win(first, last)) {
 		return *won;
 	}
+	first.reset_start_of_turn();
+	last.reset_start_of_turn();
 	return finish_end_of_turn(generation, first, last, weather, evaluate, depth, log);
 }
 
@@ -299,6 +301,8 @@ double end_of_turn_branch(Generation const generation, Team first, Team last, We
 		auto const last_selections = legal_selections(generation, last, first.pokemon(), weather);
 		return select_move_branch(generation, first, first_selections, last, last_selections, weather, evaluate, depth, log, handle_end_of_turn_replacing).move.score;
 	}
+	first.reset_start_of_turn();
+	last.reset_start_of_turn();
 	return finish_end_of_turn(generation, first, last, weather, evaluate, depth, log);
 }
 

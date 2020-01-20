@@ -228,9 +228,6 @@ void generation_2_end_of_turn(Team & first_team, Team & last_team, Weather & wea
 
 	first.advance_encore();
 	last.advance_encore();
-
-	first_team.reset_end_of_turn();
-	last_team.reset_end_of_turn();
 }
 
 void generation_3_plus_end_of_turn(Generation const generation, Team & first_team, EndOfTurnFlags const first_flags, Team & last_team, EndOfTurnFlags const last_flags, Weather & weather) {
@@ -252,9 +249,6 @@ void generation_3_plus_end_of_turn(Generation const generation, Team & first_tea
 
 	first.perish_song_turn();
 	last.perish_song_turn();
-
-	first_team.reset_end_of_turn();
-	last_team.reset_end_of_turn();
 }
 
 } // namespace
