@@ -174,7 +174,7 @@ struct MoveState {
 
 	auto complete() -> bounded::optional<Result> {
 		if (!m_move) {
-			m_party = bounded::none;
+			*this = {};
 			return bounded::none;
 		}
 		auto const result = Result{
