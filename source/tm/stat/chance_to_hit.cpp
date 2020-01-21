@@ -39,11 +39,22 @@ enum class Generation : std::uint8_t;
 namespace {
 using namespace bounded::literal;
 
-auto move_can_miss(ActivePokemon const user, BaseAccuracy const base_accuracy, Ability const target_ability) -> bool {
+constexpr auto weather_makes_move_not_miss(Moves const move, Weather const weather, bool const blocks_weather) {
+	if (weather.hail(blocks_weather)) {
+		return move == Moves::Blizzard;
+	} else if (weather.rain(blocks_weather)) {
+		return move == Moves::Thunder;
+	} else {
+		return false;
+	}
+}
+
+auto move_can_miss(ActivePokemon const user, Moves const move, BaseAccuracy const base_accuracy, Ability const target_ability, Weather const weather, bool const blocks_weather) -> bool {
 	return
 		static_cast<bool>(base_accuracy) and
 		!cannot_miss(user.ability()) and
 		!cannot_miss(target_ability) and
+		!weather_makes_move_not_miss(move, weather, blocks_weather) and
 		!user.locked_on();
 }
 
@@ -81,13 +92,12 @@ auto evasion_item_modifier(Generation const generation, Item const item) {
 }
 
 
-auto ability_evasion_modifier(ActivePokemon const target, Ability const user_ability, Weather const weather) {
+auto ability_evasion_modifier(ActivePokemon const target, Weather const weather, bool const blocks_weather) {
 	using Modifier = rational<
 		bounded::integer<1, 4>,
 		bounded::integer<1, 5>
 	>;
 	auto const target_ability = target.ability();
-	auto const blocks_weather = weather_is_blocked_by_ability(target_ability, user_ability);
 	switch (target_ability) {
 		case Ability::Sand_Veil: return weather.sand(blocks_weather) ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
 		case Ability::Snow_Cloak: return weather.hail(blocks_weather) ? Modifier(4_bi, 5_bi) : Modifier(1_bi, 1_bi);
@@ -99,9 +109,11 @@ auto ability_evasion_modifier(ActivePokemon const target, Ability const user_abi
 }	// namespace
 
 auto chance_to_hit(Generation const generation, ActivePokemon const user, KnownMove const move, ActivePokemon const target, Weather const weather, bool target_moved) -> ChanceToHit {
-	auto const base_accuracy = accuracy(generation, move.name);
+	auto const user_ability = user.ability();
 	auto const target_ability = target.ability();
-	if (!move_can_miss(user, base_accuracy, target_ability)) {
+	auto const blocks_weather = weather_is_blocked_by_ability(target_ability, user_ability);
+	auto const base_accuracy = accuracy(generation, move.name);
+	if (!move_can_miss(user, move.name, base_accuracy, target_ability, weather, blocks_weather)) {
 		return 1.0;
 	}
 	constexpr auto gravity_denominator = 3_bi;
@@ -111,9 +123,9 @@ auto chance_to_hit(Generation const generation, ActivePokemon const user, KnownM
 		modifier<StatNames::ACC>(user.stage()) *
 		modifier<StatNames::EVA>(generation >= Generation::six and target_ability == Ability::Keen_Eye ? Stage() : target.stage()) *
 		accuracy_item_modifier(user.item(generation, weather), target_moved) *
-		ability_accuracy_modifier(generation, user.ability(), move) *
+		ability_accuracy_modifier(generation, user_ability, move) *
 		evasion_item_modifier(generation, target.item(generation, weather)) *
-		ability_evasion_modifier(target, user.ability(), weather) *
+		ability_evasion_modifier(target, weather, blocks_weather) *
 		gravity_multiplier
 	;
 	
