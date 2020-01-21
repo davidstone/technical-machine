@@ -219,7 +219,7 @@ auto correct_hp(HP const original_hp, bool const is_me, ParsedHP const visible_h
 	if (seen_hp.min > current_hp or seen_hp.max < current_hp) {
 		// TODO: Find a better way to sync this up with server messages. Find a
 		// better way to fail unit tests if this happens.
-		std::cerr << "HP out of sync with server messages\n";
+		std::cerr << "HP out of sync with server messages. Expected " << current_hp << " but visible HP is between " << seen_hp.min << " and " << seen_hp.max << " (max of " << original_hp.max() << ")\n";
 	}
 	return seen_hp.value;
 }
