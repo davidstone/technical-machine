@@ -534,7 +534,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Future_Sight:
 			break;
 		case Moves::Double_Team:
-		case Moves::Minimize:
 			user.stage()[StatNames::EVA] += 1_bi;
 			break;
 		case Moves::Draco_Meteor:
@@ -760,6 +759,10 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.set_hp(generation, weather, 0_bi);
 			break;
 		case Moves::Mimic:
+			break;
+		case Moves::Minimize:
+			user.stage()[StatNames::EVA] += 1_bi;
+			user.minimize();
 			break;
 		case Moves::Miracle_Eye:
 			break;

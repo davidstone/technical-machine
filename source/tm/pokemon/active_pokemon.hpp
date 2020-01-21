@@ -612,6 +612,9 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 			pokemon.m_flags.is_tormented = false;
 		}
 	}
+	auto minimize() const {
+		m_flags.minimized = true;
+	}
 	auto set_not_moved() const {
 		m_flags.moved = false;
 	}
