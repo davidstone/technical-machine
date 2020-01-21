@@ -845,9 +845,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			weather.activate_rain_from_move(extends_rain(user.item(generation, weather)));
 			break;
 		case Moves::Rapid_Spin:
-			if (!Effectiveness(generation, executed.move.type, other.pokemon().types()).has_no_effect()) {
-				user_team.clear_field();
-			}
+			user_team.clear_field();
 			break;
 		case Moves::Razor_Wind:
 			break;
@@ -1128,11 +1126,8 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 
 // Returns whether the attack is weakened by the item
 auto activate_when_hit_item(Generation const generation, KnownMove const move, MutableActivePokemon defender, Weather const weather, Effectiveness const effectiveness) -> bool {
-	if (!is_damaging(move.name) or effectiveness.has_no_effect()) {
-		return false;
-	}
 	auto substitute = [&] {
-		return defender.substitute() and blocked_by_substitute(generation, move.name);
+		return defender.substitute() and substitute_interaction(generation, move.name) != Substitute::bypassed;
 	};
 	auto resistance_berry = [&](Type const resisted) {
 		if (move.type != resisted or substitute()) {
@@ -1239,31 +1234,68 @@ auto activate_when_hit_item(Generation const generation, KnownMove const move, M
 	}
 }
 
-auto use_move(Generation const generation, Team & user, ExecutedMove const executed, Team & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
+constexpr auto targets_foe_specifically(Target const target) {
+	switch (target) {
+		case Target::adjacent_foe:
+		case Target::adjacent:
+		case Target::any:
+			return true;
+		case Target::user:
+		case Target::adjacent_ally:
+		case Target::user_or_adjacent_ally:
+		case Target::all_allies:
+		case Target::user_team:
+		case Target::user_field:
+		case Target::foe_field:
+		case Target::field:
+		case Target::all_adjacent_foes:
+		case Target::all_adjacent:
+		case Target::all:
+			return false;
+	}
+}
+
+auto use_move(Generation const generation, Team & user, ExecutedMove const executed, Target const target, Team & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	do_effects_before_moving(executed.move.name, user_pokemon, other);
 
 	auto const effectiveness = Effectiveness(generation, executed.move.type, other_pokemon.types());
-	auto const weakened = activate_when_hit_item(generation, executed.move, other_pokemon, weather, effectiveness);
+	if (targets_foe_specifically(target) and effectiveness.has_no_effect()) {
+		return;
+	}
+
+	auto const damaging = is_damaging(executed.move.name);
+	auto const weakened = damaging and activate_when_hit_item(generation, executed.move, other_pokemon, weather, effectiveness);
 	auto const damage = actual_damage.value(generation, user, executed, weakened, other, other_move, weather);
+	BOUNDED_ASSERT(damaging or damage == 0_bi);
 
 	auto const had_substitute = static_cast<bool>(other_pokemon.substitute());
+	auto const effects = had_substitute ?
+		substitute_interaction(generation, executed.move.name) :
+		Substitute::bypassed;
+	if (effects == Substitute::causes_failure) {
+		return;
+	}
+
 	// Should this check if we did any damage or if the move is damaging?
 	auto const damage_done = damage != 0_bi ?
 		other_pokemon.direct_damage(generation, executed.move.name, weather, damage) :
 		0_bi;
-	if (!had_substitute or !blocked_by_substitute(generation, executed.move.name)) {
-		do_side_effects(generation, user, executed, other, weather, damage_done);
-		// Should this check if we did any damage or if the move is damaging?
-		if (damage_done != 0_bi) {
-			auto const item = user_pokemon.item(generation, weather);
-			// TODO: Doom Desire / Future Sight are not handled correctly
-			if (item == Item::Life_Orb) {
-				heal(generation, user_pokemon, weather, rational(-1_bi, 10_bi));
-			} else if (item == Item::Shell_Bell) {
-				change_hp(generation, user_pokemon, weather, bounded::max(damage_done / 8_bi, 1_bi));
-			}
+
+	// TODO: When are side-effects on the user blocked?
+	if (effects == Substitute::absorbs) {
+		return;
+	}
+	do_side_effects(generation, user, executed, other, weather, damage_done);
+	// Should this check if we did any damage or if the move is damaging?
+	if (damage_done != 0_bi) {
+		auto const item = user_pokemon.item(generation, weather);
+		// TODO: Doom Desire / Future Sight are not handled correctly
+		if (item == Item::Life_Orb) {
+			heal(generation, user_pokemon, weather, rational(-1_bi, 10_bi));
+		} else if (item == Item::Shell_Bell) {
+			change_hp(generation, user_pokemon, weather, bounded::max(damage_done / 8_bi, 1_bi));
 		}
 	}
 }
@@ -1461,7 +1493,6 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 		activate_pp_restore_berry(generation, move_ref, user_pokemon, weather);
 	}
 	
-	auto const target = move_target(generation, move.executed);
 	// TODO: What happens if we Sleep Talk Trump Card?
 	// TODO: Make sure this does not happen because we missed due to a vanishing
 	// state
@@ -1473,6 +1504,9 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 		}
 		return;
 	}
+
+	auto const target = move_target(generation, move.executed);
+
 	auto const unsuccessful =
 		move_fails(move.executed, user_pokemon.damaged(), other_ability, other_move) or
 		(get_hp(other_pokemon).current() == 0_bi and fails_against_fainted(target)) or
@@ -1493,7 +1527,7 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 			move.variable,
 			move.critical_hit
 		};
-		use_move(generation, user, executed_move, other, other_move, weather, actual_damage);
+		use_move(generation, user, executed_move, target, other, other_move, weather, actual_damage);
 	}
 	user_pokemon.increment_move_use_counter(move.executed);
 }

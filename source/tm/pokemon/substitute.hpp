@@ -34,6 +34,12 @@ struct Substitute {
 private:
 	using hp_type = decltype(std::declval<HP::current_type>() / 4_bi);
 public:
+	enum class Interaction { absorbs, bypassed, causes_failure };
+	// TODO: using enum
+	static constexpr auto absorbs = Interaction::absorbs;
+	static constexpr auto bypassed = Interaction::bypassed;
+	static constexpr auto causes_failure = Interaction::causes_failure;
+
 	constexpr auto create(HP::current_type const total_hp) -> hp_type {
 		if (static_cast<bool>(*this)) {
 			return 0_bi;
@@ -68,7 +74,6 @@ constexpr auto operator==(Substitute const lhs, Substitute const rhs) {
 	return lhs.hp() == rhs.hp();
 }
 
-auto blocked_by_substitute(Generation generation, Moves move) -> bool;
-auto damage_blocked_by_substitute(Generation generation, Moves move) -> bool;
+auto substitute_interaction(Generation, Moves) -> Substitute::Interaction;
 
 }	// namespace technicalmachine

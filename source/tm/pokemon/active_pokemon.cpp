@@ -462,7 +462,9 @@ auto handle_ko(Generation const generation, MutableActivePokemon defender, bool 
 } // namespace
 
 auto MutableActivePokemon::direct_damage(Generation const generation, Moves const move, Weather const weather, damage_type const damage) const -> HP::current_type {
-	if (m_flags.substitute) {
+	auto const interaction = substitute_interaction(generation, move);
+	BOUNDED_ASSERT(!m_flags.substitute or interaction != Substitute::causes_failure);
+	if (m_flags.substitute and interaction == Substitute::absorbs) {
 		return m_flags.substitute.damage(damage);
 	}
 	auto const original_hp = get_hp(m_pokemon).current();

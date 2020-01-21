@@ -25,7 +25,32 @@
 namespace technicalmachine {
 namespace {
 
-constexpr auto gen1_bypasses_substitute(Moves const move) {
+auto target_based(Generation const generation, Moves const move) {
+	switch (move_target(generation, move)) {
+		case Target::user:
+		case Target::all_allies:
+		case Target::adjacent_ally:
+		case Target::user_team:
+		case Target::user_field:
+		case Target::foe_field:
+		case Target::all:
+		case Target::field:
+			return Substitute::bypassed;
+		case Target::adjacent_foe:
+		case Target::all_adjacent_foes:
+		case Target::adjacent:
+		case Target::any:
+		case Target::all_adjacent:
+			return Substitute::absorbs;
+		case Target::user_or_adjacent_ally:
+			// TODO: Generation 5 allows it only when used on itself
+			return generation <= Generation::four ?
+				Substitute::causes_failure :
+				Substitute::bypassed;
+	}
+}
+
+constexpr auto gen1_substitute_interaction(Moves const move) {
 	switch (move) {
 		case Moves::Disable:
 		case Moves::Leech_Seed:
@@ -35,13 +60,31 @@ constexpr auto gen1_bypasses_substitute(Moves const move) {
 		case Moves::Clamp:
 		case Moves::Fire_Spin:
 		case Moves::Wrap:
-			return true;
+			return Substitute::bypassed;
 		default:
-			return false;
+			return target_based(Generation::one, move);
 	}
 }
 
-constexpr auto gen2_bypasses_substitute(Moves const move) {
+constexpr auto gen2_substitute_interaction(Moves const move) {
+	// Fails if user has Substitute
+	#if 0
+		case Moves::Counter:
+		case Moves::Mirror_Coat:
+		case Moves::Protect:
+		case Moves::Detect:
+		case Moves::Endure:
+	}
+	#endif
+	// Partially blocked
+	#if 0
+	switch (move) {
+		case Moves::Curse: (Ghost, effect only)
+		case Moves::Swagger: (confusion only)
+	}
+	#endif
+	// Cancel partial trap
+	// Boost Rage even if Substitute hit
 	switch (move) {
 		case Moves::Attract:
 		case Moves::Disable:
@@ -55,13 +98,27 @@ constexpr auto gen2_bypasses_substitute(Moves const move) {
 		case Moves::Spite:
 		case Moves::Transform:
 		case Moves::Whirlwind:
-			return true;
+			return Substitute::bypassed;
+		case Moves::Absorb:
+		case Moves::Dream_Eater:
+		case Moves::Giga_Drain:
+		case Moves::Leech_Life:
+		case Moves::Mega_Drain:
+			return Substitute::causes_failure;
 		default:
-			return false;
+			return target_based(Generation::two, move);
 	}
 }
 
-constexpr auto gen3_bypasses_substitute(Moves const move) {
+constexpr auto gen3_substitute_interaction(Moves const move) {
+	// Fails
+	#if 0
+	switch (move) {
+		case Moves::Curse: (Ghost, effect only)
+	}
+	#endif
+	// Block Intimidate
+	// Absorb Uproar
 	switch (move) {
 		case Moves::Attract:
 		case Moves::Disable:
@@ -78,13 +135,27 @@ constexpr auto gen3_bypasses_substitute(Moves const move) {
 		case Moves::Torment:
 		case Moves::Transform:
 		case Moves::Whirlwind:
-			return true;
+			return Substitute::bypassed;
+		case Moves::Dream_Eater:
+			return Substitute::causes_failure;
 		default:
-			return false;
+			return target_based(Generation::three, move);
 	}
 }
 
-constexpr auto gen4_bypasses_substitute(Moves const move) {
+constexpr auto gen4_substitute_interaction(Moves const move) {
+	// Fails
+	#if 0
+	switch (move) {
+		case Moves::Curse: (Ghost, effect only)
+	}
+	#endif
+	// Block Intimidate
+	// Block confusion from berries
+	// Blocks Intimidate even if U-turn breaks the Substitute
+	// Blocks Toxic Spikes poisoning
+	// Defog doesn't lower evasiveness
+	// Absorb Uproar
 	switch (move) {
 		case Moves::Attract:
 		case Moves::Disable:
@@ -104,13 +175,18 @@ constexpr auto gen4_bypasses_substitute(Moves const move) {
 		case Moves::Torment:
 		case Moves::Transform:
 		case Moves::Whirlwind:
-			return true;
+			return Substitute::bypassed;
+		case Moves::Dream_Eater:
+			return Substitute::causes_failure;
 		default:
-			return false;
+			return target_based(Generation::four, move);
 	}
 }
 
-constexpr auto gen5_bypasses_substitute(Moves const move) {
+constexpr auto gen5_substitute_interaction(Moves const move) {
+	// Block Intimidate
+	// Block Imposter
+	// Absorb Uproar
 	switch (move) {
 		case Moves::After_You:
 		case Moves::Attract:
@@ -132,13 +208,16 @@ constexpr auto gen5_bypasses_substitute(Moves const move) {
 		case Moves::Taunt:
 		case Moves::Torment:
 		case Moves::Whirlwind:
-			return true;
+			return Substitute::bypassed;
 		default:
-			return false;
+			return target_based(Generation::five, move);
 	}
 }
 
-constexpr auto gen6_bypasses_substitute(Moves const move) {
+constexpr auto latest_substitute_interaction(Generation const generation, Moves const move) {
+	// Block Intimidate
+	// Block Imposter
+	// Absorb Uproar
 	switch (move) {
 		case Moves::After_You:
 		case Moves::Attract:
@@ -190,162 +269,22 @@ constexpr auto gen6_bypasses_substitute(Moves const move) {
 		case Moves::Taunt:
 		case Moves::Torment:
 		case Moves::Whirlwind:
-			return true;
+			return Substitute::bypassed;
 		default:
-			return false;
-	}
-}
-
-constexpr auto gen7_bypasses_substitute(Moves const move) {
-	return gen6_bypasses_substitute(move);
-}
-
-constexpr auto gen8_bypasses_substitute(Moves const move) {
-	return gen7_bypasses_substitute(move);
-}
-
-constexpr auto move_bypasses_substitute(Generation const generation, Moves const move) {
-	switch (generation) {
-		case Generation::one: return gen1_bypasses_substitute(move);
-		case Generation::two: return gen2_bypasses_substitute(move);
-		case Generation::three: return gen3_bypasses_substitute(move);
-		case Generation::four: return gen4_bypasses_substitute(move);
-		case Generation::five: return gen5_bypasses_substitute(move);
-		case Generation::six: return gen6_bypasses_substitute(move);
-		case Generation::seven: return gen7_bypasses_substitute(move);
-		case Generation::eight: return gen8_bypasses_substitute(move);
+			return target_based(generation, move);
 	}
 }
 
 } // namespace
 
-auto blocked_by_substitute(Generation const generation, Moves const move) -> bool {
-	switch (move_target(generation, move)) {
-		case Target::user:
-		case Target::all_allies:
-		case Target::adjacent_ally:
-		case Target::user_team:
-		case Target::user_field:
-		case Target::foe_field:
-		case Target::all:
-		case Target::field:
-			return false;
-		case Target::adjacent_foe:
-		case Target::all_adjacent_foes:
-		case Target::adjacent:
-		case Target::any:
-		case Target::all_adjacent:
-			return !move_bypasses_substitute(generation, move);
-		case Target::user_or_adjacent_ally:
-			// TODO: Generation 5 allows it only when used on itself
-			return generation <= Generation::four;
-	}
-	// Gen 2
-	// Fails if user has Substitute
-	#if 0
-		case Moves::Counter:
-		case Moves::Mirror_Coat:
-		case Moves::Protect:
-		case Moves::Detect:
-		case Moves::Endure:
-	}
-	#endif
-	// Partially blocked
-	#if 0
-	switch (move) {
-		case Moves::Curse: (Ghost, effect only)
-		case Moves::Swagger: (confusion only)
-	}
-	#endif
-	// Cancel partial trap
-	// Boost Rage even if Substitute hit
-	// Gen 3
-	// Fails
-	#if 0
-	switch (move) {
-		case Moves::Curse: (Ghost, effect only)
-	}
-	#endif
-	// Block Intimidate
-	// Absorb Uproar
-	// Gen 4
-	// Fails
-	#if 0
-	switch (move) {
-		case Moves::Curse: (Ghost, effect only)
-	}
-	#endif
-	// Block Intimidate
-	// Block confusion from berries
-	// Blocks Intimidate even if U-turn breaks the Substitute
-	// Blocks Toxic Spikes poisoning
-	// Defog doesn't lower evasiveness
-	// Absorb Uproar
-	// Gen 5
-	// Block Intimidate
-	// Block Imposter
-	// Absorb Uproar
-	// Gen 6
-	// Block Intimidate
-	// Block Imposter
-	// Absorb Uproar
-}
-
-namespace {
-
-constexpr auto gen1_damage_blocked_by_substitute(Moves) {
-	return false;
-}
-
-constexpr auto gen2_damage_blocked_by_substitute(Moves const move) {
-	switch (move) {
-		case Moves::Absorb:
-		case Moves::Dream_Eater:
-		case Moves::Giga_Drain:
-		case Moves::Leech_Life:
-		case Moves::Mega_Drain:
-			return true;
-		default:
-			return false;
-	}
-}
-
-constexpr auto gen3_damage_blocked_by_substitute(Moves const move) {
-	return move == Moves::Dream_Eater;
-}
-
-constexpr auto gen4_damage_blocked_by_substitute(Moves const move) {
-	return move == Moves::Dream_Eater;
-}
-
-constexpr auto gen5_damage_blocked_by_substitute(Moves) {
-	return false;
-}
-
-constexpr auto gen6_damage_blocked_by_substitute(Moves) {
-	return false;
-}
-
-constexpr auto gen7_damage_blocked_by_substitute(Moves) {
-	return false;
-}
-
-constexpr auto gen8_damage_blocked_by_substitute(Moves) {
-	return false;
-}
-
-} // namespace
-
-auto damage_blocked_by_substitute(Generation const generation, Moves const move) -> bool {
+auto substitute_interaction(Generation const generation, Moves const move) -> Substitute::Interaction {
 	switch (generation) {
-		case Generation::one: return gen1_damage_blocked_by_substitute(move);
-		case Generation::two: return gen2_damage_blocked_by_substitute(move);
-		case Generation::three: return gen3_damage_blocked_by_substitute(move);
-		case Generation::four: return gen4_damage_blocked_by_substitute(move);
-		case Generation::five: return gen5_damage_blocked_by_substitute(move);
-		case Generation::six: return gen6_damage_blocked_by_substitute(move);
-		case Generation::seven: return gen7_damage_blocked_by_substitute(move);
-		case Generation::eight: return gen8_damage_blocked_by_substitute(move);
+		case Generation::one: return gen1_substitute_interaction(move);
+		case Generation::two: return gen2_substitute_interaction(move);
+		case Generation::three: return gen3_substitute_interaction(move);
+		case Generation::four: return gen4_substitute_interaction(move);
+		case Generation::five: return gen5_substitute_interaction(move);
+		default: return latest_substitute_interaction(generation, move);
 	}
 }
 

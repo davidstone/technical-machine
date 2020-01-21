@@ -29,9 +29,10 @@ namespace technicalmachine {
 
 auto ActualDamage::value(Generation const generation, Team const & user, ExecutedMove const executed, bool const move_weakened_from_item, Team const & other, OtherMove const other_move, Weather const weather) const -> damage_type {
 	auto calculate = [&]{
+		auto const substitute = substitute_interaction(generation, executed.move.name);
 		auto const no_damage =
 			!is_damaging(executed.move.name) or
-			(other.pokemon().substitute() and damage_blocked_by_substitute(generation, executed.move.name)) or
+			(other.pokemon().substitute() and substitute != Substitute::bypassed) or
 			will_be_recharge_turn(user.pokemon(), executed.move.name, other.pokemon().ability(), weather);
 		return no_damage ? 0_bi : calculate_damage(generation, user, executed, move_weakened_from_item, other, other_move, weather);
 	};
