@@ -243,10 +243,13 @@ auto ActivePokemonFlags::is_uproaring() const -> bool {
 }
 
 auto ActivePokemonFlags::vanish_doubles_power(Generation const generation, Moves const move_name) const -> bool {
+	if (generation <= Generation::one) {
+		return false;
+	}
 	switch (move_name) {
 	case Moves::Earthquake:
 	case Moves::Magnitude:
-		return generation >= Generation::two and bounded::holds_alternative(lock_in, bounded::detail::types<Digging>{});
+		return bounded::holds_alternative(lock_in, bounded::detail::types<Digging>{});
 	case Moves::Gust:
 	case Moves::Twister:
 		return bounded::holds_alternative(lock_in, bounded::detail::types<Bouncing>{}) or bounded::holds_alternative(lock_in, bounded::detail::types<Flying>{});
