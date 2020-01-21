@@ -19,15 +19,20 @@
 #include <tm/stat/stats.hpp>
 
 namespace technicalmachine {
+namespace {
+
+constexpr auto default_ev = EV(0_bi);
+
+} // namespace
 
 Stats::Stats(Generation const generation, Species const species, Level const level):
-	m_hp(generation, species, level),
+	m_hp(generation, species, level, default_ev),
 	m_stats{
-		Stat(generation, species, StatNames::ATK),
-		Stat(generation, species, StatNames::DEF),
-		Stat(generation, species, StatNames::SPA),
-		Stat(generation, species, StatNames::SPD),
-		Stat(generation, species, StatNames::SPE)
+		Stat(generation, species, StatNames::ATK, default_ev),
+		Stat(generation, species, StatNames::DEF, default_ev),
+		Stat(generation, species, StatNames::SPA, default_ev),
+		Stat(generation, species, StatNames::SPD, default_ev),
+		Stat(generation, species, StatNames::SPE, default_ev)
 	} {
 }
 

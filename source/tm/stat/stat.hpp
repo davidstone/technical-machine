@@ -33,7 +33,7 @@ enum class Generation : std::uint8_t;
 struct Stat {
 	using base_type = bounded::checked_integer<5, 230>;
 
-	Stat(Generation generation, Species name, StatNames stat, EV ev = EV(0_bi), IV iv = IV(31_bi));
+	Stat(Generation generation, Species name, StatNames stat, EV ev, IV iv = IV(31_bi));
 	Stat(Stat other, EV ev);
 	Stat(Stat other, EV ev, IV vi);
 	
