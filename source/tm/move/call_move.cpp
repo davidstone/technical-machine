@@ -620,7 +620,29 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().stage()[StatNames::ATK] += -1_bi;
 			break;
 		case Moves::Growth:
-			user.stage()[StatNames::SPA] += 1_bi;
+			switch (generation) {
+				case Generation::one:
+					for (auto const stat : {StatNames::SPA, StatNames::SPD}) {
+						user.stage()[stat] += 1_bi;
+					}
+					break;
+				case Generation::two:
+				case Generation::three:
+				case Generation::four:
+					user.stage()[StatNames::SPA] += 1_bi;
+					break;
+				default: {
+					auto const boost = BOUNDED_CONDITIONAL(
+						weather.sun(weather_is_blocked_by_ability(user.ability(), other.pokemon().ability())),
+						2_bi,
+						1_bi
+					);
+					for (auto const stat : {StatNames::ATK, StatNames::SPA}) {
+						user.stage()[stat] += boost;
+					}
+					break;
+				}
+			}
 			break;
 		case Moves::Grudge:
 			break;
