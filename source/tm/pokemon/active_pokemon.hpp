@@ -114,7 +114,7 @@ private:
 	auto reset_switch() -> void;
 	auto switch_decision_required(Pokemon const & pokemon) const -> bool;
 	auto is_uproaring() const -> bool;
-	auto vanish_doubles_power(Moves move_name) const -> bool;
+	auto vanish_doubles_power(Generation, Moves) const -> bool;
 
 	template<bool>
 	friend struct ActivePokemonImpl;
@@ -393,8 +393,8 @@ public:
 		return m_flags.is_uproaring();
 	}
 
-	auto vanish_doubles_power(Moves const move_name) const -> bool {
-		return m_flags.vanish_doubles_power(move_name);
+	auto vanish_doubles_power(Generation const generation, Moves const move_name) const -> bool {
+		return m_flags.vanish_doubles_power(generation, move_name);
 	}
 
 	auto random_damage_multiplier() const {

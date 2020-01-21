@@ -242,11 +242,11 @@ auto ActivePokemonFlags::is_uproaring() const -> bool {
 	return bounded::holds_alternative(lock_in, bounded::detail::types<UproarCounter>{});
 }
 
-auto ActivePokemonFlags::vanish_doubles_power(Moves const move_name) const -> bool {
+auto ActivePokemonFlags::vanish_doubles_power(Generation const generation, Moves const move_name) const -> bool {
 	switch (move_name) {
 	case Moves::Earthquake:
 	case Moves::Magnitude:
-		return bounded::holds_alternative(lock_in, bounded::detail::types<Digging>{});
+		return generation >= Generation::two and bounded::holds_alternative(lock_in, bounded::detail::types<Digging>{});
 	case Moves::Gust:
 	case Moves::Twister:
 		return bounded::holds_alternative(lock_in, bounded::detail::types<Bouncing>{}) or bounded::holds_alternative(lock_in, bounded::detail::types<Flying>{});

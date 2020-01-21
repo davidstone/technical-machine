@@ -142,7 +142,7 @@ auto doubling(Generation const generation, ActivePokemon const attacker, Moves c
 	// attacker nor target is genderless. This will cause the base power to be
 	// 1 less than it should be.
 
-	if (defender.vanish_doubles_power(move))
+	if (defender.vanish_doubles_power(generation, move))
 		return true;
 	switch (move) {
 		case Moves::Assurance:
