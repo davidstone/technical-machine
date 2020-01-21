@@ -132,7 +132,7 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 	}
 }
 
-auto doubling(ActivePokemon const attacker, Moves const move, ActivePokemon const defender, Weather const weather) -> bool {
+auto doubling(Generation const generation, ActivePokemon const attacker, Moves const move, ActivePokemon const defender, Weather const weather) -> bool {
 	// I account for the doubling of the base power for Pursuit in the
 	// switching function by simply multiplying the final base power by 2.
 	// Regardless of the combination of modifiers, this does not change the
@@ -150,6 +150,8 @@ auto doubling(ActivePokemon const attacker, Moves const move, ActivePokemon cons
 		case Moves::Avalanche: 
 		case Moves::Revenge:
 			return attacker.damaged();
+		case Moves::Body_Slam:
+			return generation >= Generation::six and defender.minimized();
 		case Moves::Brine:
 			return get_hp(defender).current() <= get_hp(defender).max() / 2_bi;
 		case Moves::Facade:
@@ -411,7 +413,7 @@ auto move_power(Generation const generation, Team const & attacker_team, Execute
 	auto const base_power = variable_adjusted_base_power(generation, attacker_team, executed, defender_team, weather);
 	return static_cast<MovePower>(bounded::max(1_bi,
 		base_power *
-		BOUNDED_CONDITIONAL(doubling(attacker, executed.move.name, defender, weather), 2_bi, 1_bi) *
+		BOUNDED_CONDITIONAL(doubling(generation, attacker, executed.move.name, defender, weather), 2_bi, 1_bi) *
 		item_modifier(generation, attacker, executed.move, weather) *
 		BOUNDED_CONDITIONAL(attacker.charge_boosted(executed.move.type), 2_bi, 1_bi) /
 		BOUNDED_CONDITIONAL(defender.sport_is_active(executed.move.type), 2_bi, 1_bi) *

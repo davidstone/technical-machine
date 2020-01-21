@@ -49,12 +49,13 @@ constexpr auto weather_makes_move_not_miss(Moves const move, Weather const weath
 	}
 }
 
-auto move_can_miss(ActivePokemon const user, Moves const move, BaseAccuracy const base_accuracy, Ability const target_ability, Weather const weather, bool const blocks_weather) -> bool {
+auto move_can_miss(ActivePokemon const user, Moves const move, BaseAccuracy const base_accuracy, ActivePokemon const target, Weather const weather, bool const blocks_weather) -> bool {
 	return
 		static_cast<bool>(base_accuracy) and
 		!cannot_miss(user.ability()) and
-		!cannot_miss(target_ability) and
+		!cannot_miss(target.ability()) and
 		!weather_makes_move_not_miss(move, weather, blocks_weather) and
+		!(move == Moves::Body_Slam and target.minimized()) and
 		!user.locked_on();
 }
 
@@ -113,7 +114,7 @@ auto chance_to_hit(Generation const generation, ActivePokemon const user, KnownM
 	auto const target_ability = target.ability();
 	auto const blocks_weather = weather_is_blocked_by_ability(target_ability, user_ability);
 	auto const base_accuracy = accuracy(generation, move.name);
-	if (!move_can_miss(user, move.name, base_accuracy, target_ability, weather, blocks_weather)) {
+	if (!move_can_miss(user, move.name, base_accuracy, target, weather, blocks_weather)) {
 		return 1.0;
 	}
 	constexpr auto gravity_denominator = 3_bi;
