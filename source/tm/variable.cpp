@@ -114,7 +114,7 @@ auto phaze_probability(TeamSize const foe_size) {
 
 }	// namespace
 
-auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabilities {
+auto all_probabilities(Generation const generation, Moves const move, TeamSize const foe_size) -> Probabilities {
 	switch (move) {
 		case Moves::Absorb:
 		case Moves::Acid_Armor:
@@ -568,7 +568,6 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Acid:
 		case Moves::Ancient_Power:
 		case Moves::Aurora_Beam:
-		case Moves::Bite:
 		case Moves::Blaze_Kick:
 		case Moves::Blizzard:
 		case Moves::Body_Slam:
@@ -681,6 +680,8 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Inferno:
 		case Moves::Zap_Cannon:
 			return single_probability(1.0);
+		case Moves::Bite:
+			return generation <= Generation::one ? single_probability(0.1) : single_probability(0.3);
 		case Moves::Fire_Fang:
 		case Moves::Ice_Fang:
 		case Moves::Thunder_Fang:

@@ -84,7 +84,7 @@ void phaze_in_different_pokemon(Team const & team, containers::index_type<Pokemo
 void test_combinations(Team team) {
 	for (auto const foe_size : containers::integer_range(2_bi, max_pokemon_per_team)) {
 		add_pokemon(team, static_cast<Species>(foe_size));
-		auto collection = all_probabilities(Moves::Whirlwind, foe_size);
+		auto collection = all_probabilities(generation, Moves::Whirlwind, foe_size);
 		auto const expected = foe_size - 1_bi;
 		if (size(collection) != expected) {
 			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected) + " but got " + to_string(size(collection)));

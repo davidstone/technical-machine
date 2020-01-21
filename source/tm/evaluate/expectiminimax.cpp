@@ -389,7 +389,7 @@ struct SelectedAndExecuted {
 auto execute_move(Generation const generation, Team const & user, SelectedAndExecuted const move, Team const & other, OtherMove const other_move, Weather const weather, auto const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
-	auto const variables = all_probabilities(move.executed.name, other.size());
+	auto const variables = all_probabilities(generation, move.executed.name, other.size());
 	auto const status = get_status(user_pokemon);
 	auto const probability_of_clearing_status = status.probability_of_clearing(user_pokemon.ability());
 	auto const specific_chance_to_hit = chance_to_hit(generation, user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());
