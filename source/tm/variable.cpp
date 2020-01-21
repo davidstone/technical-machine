@@ -90,6 +90,10 @@ constexpr auto generic_probability(auto... probabilities) {
 	return generic_probability(bounded::make_index_sequence(bounded::constant<sizeof...(probabilities)>), probabilities...);
 }
 
+constexpr auto single_probability(double const probability) {
+	return generic_probability(1.0 - probability, probability);
+}
+
 constexpr auto constant_probability(auto const count) {
 	Probabilities probabilities;
 	for (auto const n : containers::integer_range(count)) {
@@ -610,7 +614,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Thunder_Punch:
 		case Moves::Thunder_Shock:
 		case Moves::Volt_Tackle:
-			return generic_probability(0.9, 0.1);
+			return single_probability(0.1);
 		case Moves::Blue_Flare:
 		case Moves::Bolt_Strike:
 		case Moves::Crunch:
@@ -625,7 +629,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Waterfall:
 		case Moves::Water_Pulse:
 		case Moves::Zen_Headbutt:
-			return generic_probability(0.8, 0.2);
+			return single_probability(0.2);
 		case Moves::Air_Slash:
 		case Moves::Astonish:
 		case Moves::Bounce:
@@ -659,24 +663,24 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Spark:
 		case Moves::Steamroller:
 		case Moves::Thunder:
-			return generic_probability(0.7, 0.3);
+			return single_probability(0.3);
 		case Moves::Night_Daze:
 		case Moves::Seed_Flare:
 		case Moves::Smog:
-			return generic_probability(0.6, 0.4);
+			return single_probability(0.4);
 		case Moves::Crush_Claw:
 		case Moves::Mist_Ball:
 		case Moves::Octazooka:
 		case Moves::Razor_Shell:
 		case Moves::Rock_Smash:
 		case Moves::Sacred_Fire:
-			return generic_probability(0.5, 0.5);
+			return single_probability(0.5);
 		case Moves::Charge_Beam:
-			return generic_probability(0.3, 0.7);
+			return single_probability(0.7);
 		case Moves::Dynamic_Punch:
 		case Moves::Inferno:
 		case Moves::Zap_Cannon:
-			return generic_probability(0.0, 1.0);
+			return single_probability(1.0);
 		case Moves::Fire_Fang:
 		case Moves::Ice_Fang:
 		case Moves::Thunder_Fang:
@@ -881,7 +885,7 @@ auto all_probabilities(Moves const move, TeamSize const foe_size) -> Probabiliti
 		case Moves::Sparkly_Swirl:
 		case Moves::Veevee_Volley:
 		case Moves::Double_Iron_Bash:
-			return generic_probability(1.0);
+			return single_probability(0.0);
 	}
 }
 }	// namespace technicalmachine
