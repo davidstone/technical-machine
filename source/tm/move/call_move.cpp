@@ -268,6 +268,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Amnesia:
 			user.stage()[StatNames::SPD] += 2_bi;
+			if (generation == Generation::one) {
+				user.stage()[StatNames::SPA] += 2_bi;
+			}
 			break;
 		case Moves::Ancient_Power:
 		case Moves::Ominous_Wind:
