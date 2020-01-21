@@ -572,7 +572,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Bone_Club:
 		case Moves::Bug_Buzz:
 		case Moves::Confusion:
-		case Moves::Constrict:
 		case Moves::Cross_Poison:
 		case Moves::Earth_Power:
 		case Moves::Ember:
@@ -680,6 +679,7 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Aurora_Beam:
 		case Moves::Bubble:
 		case Moves::Bubble_Beam:
+		case Moves::Constrict:
 			return generation <= Generation::one ? single_probability(0.332) : single_probability(0.1);
 		case Moves::Bite:
 			return generation <= Generation::one ? single_probability(0.1) : single_probability(0.3);
