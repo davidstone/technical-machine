@@ -570,7 +570,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Blizzard:
 		case Moves::Body_Slam:
 		case Moves::Bone_Club:
-		case Moves::Bubble_Beam:
 		case Moves::Bug_Buzz:
 		case Moves::Confusion:
 		case Moves::Constrict:
@@ -680,6 +679,7 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Acid:
 		case Moves::Aurora_Beam:
 		case Moves::Bubble:
+		case Moves::Bubble_Beam:
 			return generation <= Generation::one ? single_probability(0.332) : single_probability(0.1);
 		case Moves::Bite:
 			return generation <= Generation::one ? single_probability(0.1) : single_probability(0.3);
