@@ -1527,7 +1527,11 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 			move.variable,
 			move.critical_hit
 		};
-		use_move(generation, user, executed_move, target, other, other_move, weather, actual_damage);
+		if (executed_move.move.name == Moves::Hit_Self) {
+			use_move(generation, user, executed_move, target, user, other_move, weather, actual_damage);
+		} else {
+			use_move(generation, user, executed_move, target, other, other_move, weather, actual_damage);
+		}
 	}
 	user_pokemon.increment_move_use_counter(move.executed);
 }
