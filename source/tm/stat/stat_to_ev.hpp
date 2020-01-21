@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/stat/base_stats.hpp>
 #include <tm/stat/combined_stats.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/generic_stats.hpp>
@@ -63,34 +64,28 @@ using StatValue = bounded::integer<4, 614>;
 inline auto calculate_evs(Generation const generation, Species const species, Level const level, GenericStats<HP::max_type, StatValue> const stats) -> CombinedStats {
 	// TODO: Give the correct IVs for the Hidden Power type
 	
-	auto base_stat = [=](StatNames const stat) { return Stat(generation, species, stat).base(); };
-	
-	auto const base_attack = base_stat(StatNames::ATK);
-	auto const base_defense = base_stat(StatNames::DEF);
-	auto const base_special_attack = base_stat(StatNames::SPA);
-	auto const base_special_defense = base_stat(StatNames::SPD);
-	auto const base_speed = base_stat(StatNames::SPE);
+	auto const base = BaseStats(generation, species);
 	
 	auto to_ev = [](auto const integer) { return EV(EV::value_type(integer)); };
 	auto const hp_ev = hp_to_ev(generation, species, level, stats.hp);
 	for (auto const nature : containers::enum_range<Nature>()) {
-		auto const attack_ev = stat_to_ev(stats.attack, nature, StatNames::ATK, base_attack, IV(31_bi), level);
+		auto const attack_ev = stat_to_ev(stats.attack, nature, StatNames::ATK, base.atk(), IV(31_bi), level);
 		if (attack_ev > EV::max) {
 			continue;
 		}
-		auto const defense_ev = stat_to_ev(stats.defense, nature, StatNames::DEF, base_defense, IV(31_bi), level);
+		auto const defense_ev = stat_to_ev(stats.defense, nature, StatNames::DEF, base.def(), IV(31_bi), level);
 		if (defense_ev > EV::max) {
 			continue;
 		}
-		auto const special_attack_ev = stat_to_ev(stats.special_attack, nature, StatNames::SPA, base_special_attack, IV(31_bi), level);
+		auto const special_attack_ev = stat_to_ev(stats.special_attack, nature, StatNames::SPA, base.spa(), IV(31_bi), level);
 		if (special_attack_ev > EV::max) {
 			continue;
 		}
-		auto const special_defense_ev = stat_to_ev(stats.special_defense, nature, StatNames::SPD, base_special_defense, IV(31_bi), level);
+		auto const special_defense_ev = stat_to_ev(stats.special_defense, nature, StatNames::SPD, base.spd(), IV(31_bi), level);
 		if (special_defense_ev > EV::max) {
 			continue;
 		}
-		auto const speed_ev = stat_to_ev(stats.speed, nature, StatNames::SPE, base_speed, IV(31_bi), level);
+		auto const speed_ev = stat_to_ev(stats.speed, nature, StatNames::SPE, base.spe(), IV(31_bi), level);
 		if (speed_ev > EV::max) {
 			continue;
 		}
