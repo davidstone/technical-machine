@@ -565,7 +565,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::X_Scissor:
 		case Moves::Yawn:
 			return generic_probability(1.0);
-		case Moves::Acid:
 		case Moves::Ancient_Power:
 		case Moves::Aurora_Beam:
 		case Moves::Blaze_Kick:
@@ -680,6 +679,8 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Inferno:
 		case Moves::Zap_Cannon:
 			return single_probability(1.0);
+		case Moves::Acid:
+			return generation <= Generation::one ? single_probability(0.332) : single_probability(0.1);
 		case Moves::Bite:
 			return generation <= Generation::one ? single_probability(0.1) : single_probability(0.3);
 		case Moves::Fire_Fang:
