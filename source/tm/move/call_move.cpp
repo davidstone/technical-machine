@@ -375,7 +375,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Brave_Bird:
 		case Moves::Double_Edge:
 		case Moves::Wood_Hammer:
-			recoil(generation, user, weather, damage, 3_bi);
+			recoil(generation, user, weather, damage, BOUNDED_CONDITIONAL(generation <= Generation::two, 4_bi, 3_bi));
 			break;
 		case Moves::Bubble:
 		case Moves::Bubble_Beam:
