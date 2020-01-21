@@ -224,16 +224,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			absorb_hp(generation, user, other.pokemon(), weather, damage);
 			break;
 		case Moves::Acid:
-		case Moves::Bug_Buzz:
-		case Moves::Earth_Power:
-		case Moves::Energy_Ball:
-		case Moves::Flash_Cannon:
-		case Moves::Focus_Blast:
-		case Moves::Luster_Purge:
-		case Moves::Psychic:
-		case Moves::Shadow_Ball:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().stage()[StatNames::SPD] += -1_bi;
+				auto const stat = generation <= Generation::three ? StatNames::DEF : StatNames::SPD;
+				other.pokemon().stage()[stat] += -1_bi;
 			}
 			break;
 		case Moves::Acid_Armor:
@@ -395,6 +388,18 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		}
+		case Moves::Bug_Buzz:
+		case Moves::Earth_Power:
+		case Moves::Energy_Ball:
+		case Moves::Flash_Cannon:
+		case Moves::Focus_Blast:
+		case Moves::Luster_Purge:
+		case Moves::Psychic:
+		case Moves::Shadow_Ball:
+			if (executed.variable.effect_activates()) {
+				other.pokemon().stage()[StatNames::SPD] += -1_bi;
+			}
+			break;
 		case Moves::Bulk_Up:
 			boost_physical(user.stage(), 1_bi);
 			break;
