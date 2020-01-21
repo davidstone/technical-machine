@@ -577,7 +577,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Ember:
 		case Moves::Energy_Ball:
 		case Moves::Extrasensory:
-		case Moves::Fire_Blast:
 		case Moves::Fire_Punch:
 		case Moves::Flamethrower:
 		case Moves::Flame_Wheel:
@@ -684,6 +683,8 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 			return generation <= Generation::one ? single_probability(0.1) : single_probability(0.3);
 		case Moves::Dizzy_Punch:
 			return generation <= Generation::one ? generic_probability(1.0) : single_probability(0.2);
+		case Moves::Fire_Blast:
+			return generation <= Generation::one ? single_probability(0.3) : single_probability(0.1);
 		case Moves::Fire_Fang:
 		case Moves::Ice_Fang:
 		case Moves::Thunder_Fang:
