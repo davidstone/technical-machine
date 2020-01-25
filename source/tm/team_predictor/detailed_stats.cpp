@@ -35,6 +35,7 @@
 #include <bounded/integer.hpp>
 
 #include <containers/adapt.hpp>
+#include <containers/emplace_back.hpp>
 #include <containers/range_view.hpp>
 #include <containers/vector.hpp>
 

@@ -27,6 +27,7 @@
 #include <bounded/optional.hpp>
 
 #include <containers/algorithms/maybe_find.hpp>
+#include <containers/emplace_back.hpp>
 
 namespace technicalmachine {
 

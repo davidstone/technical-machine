@@ -21,6 +21,8 @@
 #include <tm/clients/pokemon_showdown/battle_factory.hpp>
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
 
+#include <containers/emplace_back.hpp>
+
 #include <algorithm>
 #include <list>
 #include <filesystem>

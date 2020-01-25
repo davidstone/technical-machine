@@ -24,6 +24,7 @@
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
+#include <containers/emplace_back.hpp>
 #include <containers/legacy_iterator.hpp>
 
 #include <algorithm>

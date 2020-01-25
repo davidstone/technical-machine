@@ -25,6 +25,7 @@
 
 #include <bounded/assert.hpp>
 
+#include <containers/emplace_back.hpp>
 #include <containers/integer_range.hpp>
 
 #include <cassert>
