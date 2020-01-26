@@ -40,7 +40,7 @@ For a full overview of the program, see http://doublewise.net/pokemon/
 
 ## Prerequisites
 
-* clang-concepts branch with libc++ (clang's standard library)
+* clang master with libc++ (clang's standard library)
 * Boost 1.67.0+
 * CMake 3.14+
 * A build tool for CMake to generate (Ninja is recommended)
