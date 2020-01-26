@@ -79,11 +79,7 @@ public:
 		return containers::concatenate_view_sentinel();
 	}
 
-	auto emplace_back(Move const move) -> Move &;
-
-	auto & emplace_back(Generation const generation, Moves const move, auto... maybe_pp) {
-		return emplace_back(Move(generation, move, maybe_pp...));
-	}
+	auto add(Move const move) -> Move &;
 
 	auto remove_switch() {
 		m_shared.remove_switch();

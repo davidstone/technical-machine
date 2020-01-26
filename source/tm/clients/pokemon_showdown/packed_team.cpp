@@ -178,7 +178,7 @@ auto parse_pokemon(std::string_view const str, Generation const generation, Team
 	auto const hidden_power_type [[maybe_unused]] = buffer.remainder();
 	auto pokemon = Pokemon(generation, team_size, species, level, gender, item, ability, nature, happiness);
 	for (auto const move : moves) {
-		all_moves(pokemon).emplace_back(generation, move);
+		all_moves(pokemon).add(Move(generation, move));
 	}
 	set_hp_ev(generation, pokemon, evs.hp, ivs.hp);
 	set_stat_ev(pokemon, StatNames::ATK, evs.atk, ivs.atk);

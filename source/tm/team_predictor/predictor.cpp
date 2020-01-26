@@ -103,7 +103,7 @@ auto parse_html_team(std::string_view str, Generation const generation) -> Team 
 		for (auto const move_index : containers::integer_range(max_moves_per_pokemon)) {
 			auto const move = get_expected<Moves>(buffer.next(), "move", bounded::to_string(index) + "_" + bounded::to_string(move_index));
 			if (move) {
-				emplace_back(moves, *move);
+				push_back(moves, *move);
 			}
 		}
 

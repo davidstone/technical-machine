@@ -79,9 +79,9 @@ void test_two_moves_with_one_out_of_pp() {
 	};
 	auto weather = Weather();
 	user.pokemon().switch_in(generation, weather);
-	auto & thunder = containers::emplace_back(all_moves(pokemon), generation, Moves::Thunder, 0_bi);
+	auto & thunder = all_moves(pokemon).add(Move(generation, Moves::Thunder, 0_bi));
 	empty_pp(thunder);
-	containers::emplace_back(all_moves(pokemon), generation, Moves::Thunderbolt, 0_bi);
+	all_moves(pokemon).add(Move(generation, Moves::Thunderbolt, 0_bi));
 
 	auto other = Team(1_bi, false);
 	other.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
@@ -106,9 +106,9 @@ void test_two_moves_with_both_out_of_pp() {
 	};
 	auto weather = Weather();
 	user.pokemon().switch_in(generation, weather);
-	auto & thunder = containers::emplace_back(all_moves(pokemon), generation, Moves::Thunder, 0_bi);
+	auto & thunder = all_moves(pokemon).add(Move(generation, Moves::Thunder, 0_bi));
 	empty_pp(thunder);
-	auto & thunderbolt = containers::emplace_back(all_moves(pokemon), generation, Moves::Thunderbolt, 0_bi);
+	auto & thunderbolt = all_moves(pokemon).add(Move(generation, Moves::Thunderbolt, 0_bi));
 	empty_pp(thunderbolt);
 
 	auto other = Team(1_bi, false);

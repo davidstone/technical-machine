@@ -71,7 +71,7 @@ void move_container_tests() {
 		Moves::Absorb, Moves::Tackle, Moves::Quick_Attack, Moves::Body_Slam
 	};
 	for (auto const n : containers::integer_range(size(moves))) {
-		containers::emplace_back(c, generation, moves[n]);
+		c.add(Move(generation, moves[n]));
 		if (size(c) != shared_moves_size + n + 1_bi or size(c) != static_cast<bounded::checked_integer<0, 100>>(c.number_of_regular_moves()) + shared_moves_size) {
 			throw InvalidCollection("MoveContainer has the wrong number of moves during addition of moves.");
 		}

@@ -46,15 +46,15 @@ auto add_seen_move_impl(MoveContainer & container, Generation const generation, 
 		message += to_string(move);
 		throw std::runtime_error(message);
 	}
-	containers::emplace_back(container, generation, move, maybe_pp...);
+	container.add(Move(generation, move, maybe_pp...));
 }
 
 
 } // namespace
 
-auto MoveContainer::emplace_back(Move const move) -> Move & {
+auto MoveContainer::add(Move const move) -> Move & {
 	BOUNDED_ASSERT(containers::none_equal(m_regular, move.name()));
-	return containers::emplace_back(m_regular, move);
+	return containers::push_back(m_regular, move);
 }
 
 
