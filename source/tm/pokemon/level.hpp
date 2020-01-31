@@ -36,7 +36,7 @@ private:
 	value_type m_value;
 };
 
-constexpr auto operator==(Level const lhs, Level const rhs) {
+constexpr auto operator==(Level const lhs, Level const rhs) -> bool {
 	return lhs() == rhs();
 }
 

@@ -35,7 +35,7 @@ struct BideDuration {
 		}
 	}
 
-	friend constexpr auto operator==(BideDuration const lhs, BideDuration const rhs) {
+	friend constexpr auto operator==(BideDuration const lhs, BideDuration const rhs) -> bool {
 		return lhs.m_charged_up == rhs.m_charged_up;
 	}
 

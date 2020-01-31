@@ -139,17 +139,17 @@ constexpr auto operator<=>(bounded::bounded_integer auto const lhs, rational<N, 
 }
 
 template<typename N1, typename D1, typename N2, typename D2>
-constexpr auto operator==(rational<N1, D1> const lhs, rational<N2, D2> const rhs) {
+constexpr auto operator==(rational<N1, D1> const lhs, rational<N2, D2> const rhs) -> bool {
 	return lhs.numerator() * rhs.denominator() == rhs.numerator() * lhs.denominator();
 }
 
 template<typename N, typename D>
-constexpr auto operator==(rational<N, D> const lhs, bounded::bounded_integer auto const rhs) {
+constexpr auto operator==(rational<N, D> const lhs, bounded::bounded_integer auto const rhs) -> bool {
 	return lhs.numerator() == rhs * lhs.denominator();
 }
 
 template<typename N, typename D>
-constexpr auto operator==(bounded::bounded_integer auto const lhs, rational<N, D> const rhs) {
+constexpr auto operator==(bounded::bounded_integer auto const lhs, rational<N, D> const rhs) -> bool {
 	return lhs * rhs.denominator() == rhs.numerator();
 }
 

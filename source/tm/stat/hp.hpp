@@ -71,10 +71,10 @@ auto operator<=>(bounded::bounded_integer auto const lhs, HP const rhs) {
 	return rhs <=> lhs.current();
 }
 
-auto operator==(HP const lhs, bounded::bounded_integer auto const rhs) {
+auto operator==(HP const lhs, bounded::bounded_integer auto const rhs) -> bool {
 	return lhs.current() == rhs;
 }
-auto operator==(bounded::bounded_integer auto const lhs, HP const rhs) {
+auto operator==(bounded::bounded_integer auto const lhs, HP const rhs) -> bool {
 	return rhs == lhs.current();
 }
 

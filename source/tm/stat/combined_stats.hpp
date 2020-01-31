@@ -33,7 +33,7 @@ struct CombinedStats {
 	EV special_defense;
 	EV speed;
 };
-constexpr auto operator==(CombinedStats const lhs, CombinedStats const rhs) {
+constexpr auto operator==(CombinedStats const lhs, CombinedStats const rhs) -> bool {
 	return
 		lhs.nature == rhs.nature and
 		lhs.hp == rhs.hp and

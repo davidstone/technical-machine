@@ -62,7 +62,7 @@ private:
 };
 
 template<int normal_duration, int max_duration>
-constexpr auto operator==(Screen<normal_duration, max_duration> const lhs, Screen<normal_duration, max_duration> const rhs) {
+constexpr auto operator==(Screen<normal_duration, max_duration> const lhs, Screen<normal_duration, max_duration> const rhs) -> bool {
 	return lhs.turns_remaining() == rhs.turns_remaining();
 }
 

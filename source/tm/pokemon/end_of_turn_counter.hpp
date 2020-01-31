@@ -55,7 +55,7 @@ struct EndOfTurnCounter {
 			return static_cast<bool>(m_turns_active);
 		}
 	}
-	friend constexpr auto operator==(EndOfTurnCounter const lhs, EndOfTurnCounter const rhs) {
+	friend constexpr auto operator==(EndOfTurnCounter const lhs, EndOfTurnCounter const rhs) -> bool {
 		return lhs.m_turns_active == rhs.m_turns_active;
 	}
 	

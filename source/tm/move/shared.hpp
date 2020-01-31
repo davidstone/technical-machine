@@ -35,7 +35,6 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-BOUNDED_COMPARISON
 BOUNDED_COMMON_ARITHMETIC
 
 struct SharedMovesIterator {
@@ -80,7 +79,7 @@ public:
 	friend constexpr auto operator<=>(SharedMovesIterator const lhs, SharedMovesIterator const rhs) {
 		return lhs.m_index <=> rhs.m_index;
 	}
-	friend constexpr auto operator==(SharedMovesIterator const lhs, SharedMovesIterator const rhs) {
+	friend constexpr auto operator==(SharedMovesIterator const lhs, SharedMovesIterator const rhs) -> bool {
 		return lhs.m_index == rhs.m_index;
 	}
 
@@ -126,7 +125,7 @@ private:
 };
 
 // It is undefined behavior to compare SharedMoves from different generations
-constexpr auto operator==(SharedMoves const lhs, SharedMoves const rhs) {
+constexpr auto operator==(SharedMoves const lhs, SharedMoves const rhs) -> bool {
 	return end(lhs) == end(rhs);
 }
 

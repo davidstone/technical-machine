@@ -38,7 +38,7 @@ struct PartialTrap {
 	}
 	auto damage(Generation, MutableActivePokemon, Weather) -> void;
 
-	friend constexpr auto operator==(PartialTrap const lhs, PartialTrap const rhs) {
+	friend constexpr auto operator==(PartialTrap const lhs, PartialTrap const rhs) -> bool {
 		return lhs.m_base == rhs.m_base;
 	}
 private:

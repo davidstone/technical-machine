@@ -70,7 +70,7 @@ private:
 	> m_hp = 0_bi;
 };
 
-constexpr auto operator==(Substitute const lhs, Substitute const rhs) {
+constexpr auto operator==(Substitute const lhs, Substitute const rhs) -> bool {
 	return lhs.hp() == rhs.hp();
 }
 

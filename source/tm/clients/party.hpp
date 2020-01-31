@@ -39,7 +39,7 @@ private:
 	value_type m_party;
 };
 
-constexpr auto operator==(Party const lhs, Party const rhs) {
+constexpr auto operator==(Party const lhs, Party const rhs) -> bool {
 	return lhs.value() == rhs.value();
 }
 

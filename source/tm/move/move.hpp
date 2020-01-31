@@ -56,15 +56,15 @@ private:
 	PP m_pp;
 };
 
-constexpr auto operator==(Move const lhs, Move const rhs) {
+constexpr auto operator==(Move const lhs, Move const rhs) -> bool {
 	return
 		lhs.pp() == rhs.pp() and
 		lhs.name() == rhs.name();
 }
-constexpr auto operator==(Move const lhs, Moves const rhs) {
+constexpr auto operator==(Move const lhs, Moves const rhs) -> bool {
 	return lhs.name() == rhs;
 }
-constexpr auto operator==(Moves const lhs, Move const rhs) {
+constexpr auto operator==(Moves const lhs, Move const rhs) -> bool {
 	return lhs == rhs.name();
 }
 

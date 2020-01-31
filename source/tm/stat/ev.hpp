@@ -53,13 +53,13 @@ constexpr auto operator<=>(EV const lhs, EV::value_type const rhs) {
 constexpr auto operator<=>(EV::value_type const lhs, EV const rhs) {
 	return lhs <=> rhs.value();
 }
-constexpr auto operator==(EV const lhs, EV const rhs) {
+constexpr auto operator==(EV const lhs, EV const rhs) -> bool {
 	return lhs.value() == rhs.value();
 }
-constexpr auto operator==(EV const lhs, EV::value_type const rhs) {
+constexpr auto operator==(EV const lhs, EV::value_type const rhs) -> bool {
 	return lhs.value() == rhs;
 }
-constexpr auto operator==(EV::value_type const lhs, EV const rhs) {
+constexpr auto operator==(EV::value_type const lhs, EV const rhs) -> bool {
 	return lhs == rhs.value();
 }
 

@@ -89,7 +89,7 @@ private:
 	Tailwind m_tailwind;
 };
 
-constexpr auto operator==(Screens const lhs, Screens const rhs) {
+constexpr auto operator==(Screens const lhs, Screens const rhs) -> bool {
 	return
 		lhs.light_screen() == rhs.light_screen() and
 		lhs.reflect() == rhs.reflect() and

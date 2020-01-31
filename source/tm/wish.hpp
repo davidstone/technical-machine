@@ -40,7 +40,7 @@ struct Wish {
 	}
 
 	auto decrement(Generation, MutableActivePokemon, Weather) & -> void;
-	friend constexpr auto operator==(Wish const lhs, Wish const rhs) {
+	friend constexpr auto operator==(Wish const lhs, Wish const rhs) -> bool {
 		return lhs.m_turns_until_activation == rhs.m_turns_until_activation;
 	}
 

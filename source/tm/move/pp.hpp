@@ -77,7 +77,7 @@ struct PP {
 
 	// Assumes max PP is the same because it assumes the same Move on the same
 	// Pokemon
-	friend constexpr auto operator==(PP const lhs, PP const rhs) {
+	friend constexpr auto operator==(PP const lhs, PP const rhs) -> bool {
 		return lhs.m_current == rhs.m_current;
 	}
 

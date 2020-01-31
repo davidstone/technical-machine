@@ -162,7 +162,7 @@ public:
 		activate_weather_from_ability(generation, NormalWeather::rain, is_extended);
 	}
 
-	friend constexpr auto operator==(Weather const lhs, Weather const rhs) {
+	friend constexpr auto operator==(Weather const lhs, Weather const rhs) -> bool {
 		return
 			lhs.m_trick_room_turns_remaining == rhs.m_trick_room_turns_remaining and
 			lhs.m_gravity_turns_remaining == rhs.m_gravity_turns_remaining and

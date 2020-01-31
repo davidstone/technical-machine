@@ -50,7 +50,7 @@ struct Confusion {
 		}
 	}
 
-	friend constexpr auto operator==(Confusion const lhs, Confusion const rhs) {
+	friend constexpr auto operator==(Confusion const lhs, Confusion const rhs) -> bool {
 		return lhs.m_turns_spent_confused == rhs.m_turns_spent_confused;
 	}
 

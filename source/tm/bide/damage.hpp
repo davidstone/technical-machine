@@ -36,7 +36,7 @@ struct BideDamage {
 		return output_damage;
 	}
 
-	friend constexpr auto operator==(BideDamage const lhs, BideDamage const rhs) {
+	friend constexpr auto operator==(BideDamage const lhs, BideDamage const rhs) -> bool {
 		return lhs.m_damage == rhs.m_damage;
 	}
 	

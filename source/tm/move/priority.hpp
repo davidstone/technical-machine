@@ -30,7 +30,7 @@ struct Priority {
 	inline friend auto operator<=>(Priority const lhs, Priority const rhs) {
 		return lhs.priority <=> rhs.priority;
 	}
-	inline friend auto operator==(Priority const lhs, Priority const rhs) {
+	inline friend auto operator==(Priority const lhs, Priority const rhs) -> bool {
 		return lhs.priority == rhs.priority;
 	}
 private:

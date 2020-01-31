@@ -58,7 +58,7 @@ private:
 	bool m_stealth_rock = false;
 };
 
-constexpr auto operator==(EntryHazards const lhs, EntryHazards const rhs) {
+constexpr auto operator==(EntryHazards const lhs, EntryHazards const rhs) -> bool {
 	return
 		lhs.spikes() == rhs.spikes() and
 		lhs.toxic_spikes() == rhs.toxic_spikes() and

@@ -40,7 +40,7 @@ struct GenericStats {
 		return operator_bracket(*this, index);
 	}
 	
-	friend constexpr auto operator==(GenericStats const lhs, GenericStats const rhs) {
+	friend constexpr auto operator==(GenericStats const lhs, GenericStats const rhs) -> bool {
 		auto tie = [](GenericStats const stats) { return bounded::tuple(stats.hp, stats.attack, stats.defense, stats.special_attack, stats.special_defense, stats.speed); };
 		return tie(lhs) == tie(rhs);
 	}
