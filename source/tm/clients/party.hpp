@@ -35,13 +35,11 @@ struct Party {
 		return m_party;
 	}
 
+	friend auto operator==(Party const &, Party const &) -> bool = default;
+
 private:
 	value_type m_party;
 };
-
-constexpr auto operator==(Party const lhs, Party const rhs) -> bool {
-	return lhs.value() == rhs.value();
-}
 
 constexpr auto other(Party const party) -> Party {
 	using namespace bounded::literal;

@@ -32,17 +32,9 @@ struct CombinedStats {
 	EV special_attack;
 	EV special_defense;
 	EV speed;
+
+	friend auto operator==(CombinedStats const &, CombinedStats const &) -> bool = default;
 };
-constexpr auto operator==(CombinedStats const lhs, CombinedStats const rhs) -> bool {
-	return
-		lhs.nature == rhs.nature and
-		lhs.hp == rhs.hp and
-		lhs.attack == rhs.attack and
-		lhs.defense == rhs.defense and
-		lhs.special_attack == rhs.special_attack and
-		lhs.special_defense == rhs.special_defense and
-		lhs.speed == rhs.speed;
-}
 
 constexpr auto ev_sum(CombinedStats const stats) {
 	constexpr auto impl = [](auto... args) { return (... + args.value()); };

@@ -40,27 +40,18 @@ struct EV {
 	constexpr auto value() const -> bounded::integer<0, static_cast<int>(max)> {
 		return m_value;
 	}
+
+	friend auto operator<=>(EV const &, EV const &) = default;
+
 private:
 	bounded::clamped_integer<0, static_cast<int>(max)> m_value;
 };
 
-constexpr auto operator<=>(EV const lhs, EV const rhs) {
-	return lhs.value() <=> rhs.value();
-}
 constexpr auto operator<=>(EV const lhs, EV::value_type const rhs) {
 	return lhs.value() <=> rhs;
 }
-constexpr auto operator<=>(EV::value_type const lhs, EV const rhs) {
-	return lhs <=> rhs.value();
-}
-constexpr auto operator==(EV const lhs, EV const rhs) -> bool {
-	return lhs.value() == rhs.value();
-}
 constexpr auto operator==(EV const lhs, EV::value_type const rhs) -> bool {
 	return lhs.value() == rhs;
-}
-constexpr auto operator==(EV::value_type const lhs, EV const rhs) -> bool {
-	return lhs == rhs.value();
 }
 
 constexpr auto ev_range(auto const max) {

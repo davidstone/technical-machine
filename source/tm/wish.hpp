@@ -40,10 +40,8 @@ struct Wish {
 	}
 
 	auto decrement(Generation, MutableActivePokemon, Weather) & -> void;
-	friend constexpr auto operator==(Wish const lhs, Wish const rhs) -> bool {
-		return lhs.m_turns_until_activation == rhs.m_turns_until_activation;
-	}
-
+	friend auto operator==(Wish const &, Wish const &) -> bool = default;
+	
 private:
 	using counter_type = bounded::checked_integer<0, 1>;
 	bounded::optional<counter_type> m_turns_until_activation = bounded::none;

@@ -32,12 +32,11 @@ struct Level {
 	constexpr auto operator()() const -> bounded::change_policy<value_type, bounded::integer> {
 		return m_value;
 	}
+
+	friend auto operator==(Level const &, Level const &) -> bool = default;
+
 private:
 	value_type m_value;
 };
-
-constexpr auto operator==(Level const lhs, Level const rhs) -> bool {
-	return lhs() == rhs();
-}
 
 }	// namespace technicalmachine

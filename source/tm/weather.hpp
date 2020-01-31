@@ -162,14 +162,7 @@ public:
 		activate_weather_from_ability(generation, NormalWeather::rain, is_extended);
 	}
 
-	friend constexpr auto operator==(Weather const lhs, Weather const rhs) -> bool {
-		return
-			lhs.m_trick_room_turns_remaining == rhs.m_trick_room_turns_remaining and
-			lhs.m_gravity_turns_remaining == rhs.m_gravity_turns_remaining and
-			lhs.m_magic_room_turns_remaining == rhs.m_magic_room_turns_remaining and
-			lhs.m_active == rhs.m_active and
-			lhs.m_turns_remaining == rhs.m_turns_remaining;
-	}
+	friend auto operator==(Weather const &, Weather const &) -> bool = default;
 };
 
 }	// namespace technicalmachine

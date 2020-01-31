@@ -51,21 +51,15 @@ struct Move {
 		m_pp.restore(value);
 	}
 
+	friend auto operator==(Move const &, Move const &) -> bool = default;
+
 private:
 	Moves m_name;
 	PP m_pp;
 };
 
-constexpr auto operator==(Move const lhs, Move const rhs) -> bool {
-	return
-		lhs.pp() == rhs.pp() and
-		lhs.name() == rhs.name();
-}
 constexpr auto operator==(Move const lhs, Moves const rhs) -> bool {
 	return lhs.name() == rhs;
-}
-constexpr auto operator==(Moves const lhs, Move const rhs) -> bool {
-	return lhs == rhs.name();
 }
 
 auto is_regular(Moves move) -> bool;

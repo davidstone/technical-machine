@@ -79,11 +79,7 @@ struct LastUsedMove {
 		return rational(10_bi + boost, 10_bi);
 	}
 
-	friend constexpr auto operator==(LastUsedMove const lhs, LastUsedMove const rhs) -> bool {
-		return
-			lhs.m_move == rhs.m_move and
-			lhs.m_consecutive_successes == rhs.m_consecutive_successes;
-	}
+	friend auto operator==(LastUsedMove const &, LastUsedMove const &) -> bool = default;
 
 private:
 	Moves m_move = Moves::Switch0;

@@ -80,6 +80,8 @@ struct Screens {
 		m_reflect = Reflect();
 	}
 
+	friend auto operator==(Screens const &, Screens const &) -> bool = default;
+	
 private:
 	LightScreen m_light_screen;
 	Reflect m_reflect;
@@ -88,16 +90,5 @@ private:
 	Safeguard m_safeguard;
 	Tailwind m_tailwind;
 };
-
-constexpr auto operator==(Screens const lhs, Screens const rhs) -> bool {
-	return
-		lhs.light_screen() == rhs.light_screen() and
-		lhs.reflect() == rhs.reflect() and
-		lhs.lucky_chant() == rhs.lucky_chant() and
-		lhs.mist() == rhs.mist() and
-		lhs.safeguard() == rhs.safeguard() and
-		lhs.tailwind() == rhs.tailwind();
-}
-
 
 }	// namespace technicalmachine

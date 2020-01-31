@@ -36,11 +36,7 @@ struct Bide {
 		return BOUNDED_CONDITIONAL(m_duration.advance_one_turn(), m_damage.release(), bounded::none);
 	}
 
-	friend constexpr auto operator==(Bide const lhs, Bide const rhs) -> bool {
-		return
-			lhs.m_damage == rhs.m_damage and
-			lhs.m_duration == rhs.m_duration;
-	}
+	friend auto operator==(Bide const &, Bide const &) -> bool = default;
 
 private:
 	BideDamage m_damage;

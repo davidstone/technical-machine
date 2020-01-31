@@ -36,9 +36,7 @@ struct BideDamage {
 		return output_damage;
 	}
 
-	friend constexpr auto operator==(BideDamage const lhs, BideDamage const rhs) -> bool {
-		return lhs.m_damage == rhs.m_damage;
-	}
+	friend auto operator==(BideDamage const &, BideDamage const &) -> bool = default;
 	
 private:
 	// This is the greatest range that matters since anything more is overkill

@@ -55,9 +55,7 @@ struct EndOfTurnCounter {
 			return static_cast<bool>(m_turns_active);
 		}
 	}
-	friend constexpr auto operator==(EndOfTurnCounter const lhs, EndOfTurnCounter const rhs) -> bool {
-		return lhs.m_turns_active == rhs.m_turns_active;
-	}
+	friend auto operator==(EndOfTurnCounter const &, EndOfTurnCounter const &) -> bool = default;
 	
 private:
 	using Counter = bounded::optional<bounded::integer<0, max_turns>>;

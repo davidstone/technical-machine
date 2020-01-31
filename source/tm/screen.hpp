@@ -42,6 +42,8 @@ struct Screen {
 		--m_turns_remaining;
 	}
 	
+	friend auto operator==(Screen const &, Screen const &) -> bool = default;
+
 private:
 	constexpr auto activate(std::true_type) & -> void {
 		set(bounded::constant<normal_duration>);
@@ -60,11 +62,6 @@ private:
 	}
 	duration_type m_turns_remaining = duration_type(0_bi);
 };
-
-template<int normal_duration, int max_duration>
-constexpr auto operator==(Screen<normal_duration, max_duration> const lhs, Screen<normal_duration, max_duration> const rhs) -> bool {
-	return lhs.turns_remaining() == rhs.turns_remaining();
-}
 
 using LuckyChant = Screen<5>;
 using Mist = Screen<5>;

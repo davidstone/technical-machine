@@ -52,18 +52,14 @@ struct EntryHazards {
 	constexpr auto add_stealth_rock() & {
 		m_stealth_rock = true;
 	}
+
+	friend auto operator==(EntryHazards const &, EntryHazards const &) -> bool = default;
+	
 private:
 	bounded::clamped_integer<0, 3> m_spikes = 0_bi;
 	bounded::clamped_integer<0, 2> m_toxic_spikes = 0_bi;
 	bool m_stealth_rock = false;
 };
-
-constexpr auto operator==(EntryHazards const lhs, EntryHazards const rhs) -> bool {
-	return
-		lhs.spikes() == rhs.spikes() and
-		lhs.toxic_spikes() == rhs.toxic_spikes() and
-		lhs.stealth_rock() == rhs.stealth_rock();
-}
 
 auto apply(Generation, EntryHazards &, MutableActivePokemon switcher, Weather) -> void;
 

@@ -62,6 +62,8 @@ public:
 		return hp() != 0_bi;
 	}
 
+	friend auto operator==(Substitute const &, Substitute const &) -> bool = default;
+
 private:
 	// TODO: Use change_policy
 	bounded::clamped_integer<
@@ -69,10 +71,6 @@ private:
 		static_cast<int>(bounded::max_value<hp_type>)
 	> m_hp = 0_bi;
 };
-
-constexpr auto operator==(Substitute const lhs, Substitute const rhs) -> bool {
-	return lhs.hp() == rhs.hp();
-}
 
 auto substitute_interaction(Generation, Moves) -> Substitute::Interaction;
 

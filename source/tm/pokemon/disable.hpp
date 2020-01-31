@@ -48,11 +48,7 @@ struct Disable {
 		}
 	}
 
-	friend constexpr auto operator==(Disable const lhs, Disable const rhs) -> bool {
-		return
-			lhs.m_turns_disabled == rhs.m_turns_disabled and
-			lhs.m_disabled_move == rhs.m_disabled_move;
-	}
+	friend auto operator==(Disable const &, Disable const &) -> bool = default;
 
 private:
 	// TODO: Use an optional struct?

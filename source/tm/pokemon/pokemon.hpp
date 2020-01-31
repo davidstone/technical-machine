@@ -141,9 +141,6 @@ private:
 	bool m_nature_is_known : 1;
 };
 
-inline auto operator==(Species const lhs, Pokemon const rhs) -> bool {
-	return lhs == get_species(rhs);
-}
 inline auto operator==(Pokemon const lhs, Species const rhs) -> bool {
 	return get_species(lhs) == rhs;
 }

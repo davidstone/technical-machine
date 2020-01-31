@@ -38,9 +38,7 @@ struct PartialTrap {
 	}
 	auto damage(Generation, MutableActivePokemon, Weather) -> void;
 
-	friend constexpr auto operator==(PartialTrap const lhs, PartialTrap const rhs) -> bool {
-		return lhs.m_base == rhs.m_base;
-	}
+	friend auto operator==(PartialTrap const &, PartialTrap const &) -> bool = default;
 private:
 	EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::activate, CounterOperations::advance_one_turn_variable> m_base;
 };
