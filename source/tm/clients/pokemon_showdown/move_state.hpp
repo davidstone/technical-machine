@@ -35,9 +35,10 @@ namespace technicalmachine {
 namespace ps {
 
 struct MoveState {
+	struct NoDamage {};
 	struct SubstituteDamaged {};
 	struct SubstituteBroke {};
-	using Damage = bounded::variant<std::monostate, HPAndStatus, SubstituteDamaged, SubstituteBroke>;
+	using Damage = bounded::variant<NoDamage, HPAndStatus, SubstituteDamaged, SubstituteBroke>;
 	struct Result {
 		Party party;
 		UsedMove move;
@@ -201,7 +202,7 @@ private:
 	}
 	bounded::optional<Party> m_party;
 	bounded::optional<UsedMove> m_move;
-	Damage m_damage{std::monostate{}};
+	Damage m_damage{NoDamage()};
 	bounded::optional<HPAndStatus> m_user_hp_and_status;
 	bounded::optional<HPAndStatus> m_other_hp_and_status;
 	bool m_clear_status = false;

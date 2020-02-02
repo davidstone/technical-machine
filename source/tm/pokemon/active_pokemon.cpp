@@ -38,7 +38,7 @@ template struct ActivePokemonImpl<false>;
 auto ActivePokemonFlags::reset_start_of_turn() & -> void {
 	bounded::visit(used_move_effects, [&]<typename T>(T) {
 		if constexpr (std::is_same_v<T, Enduring> or std::is_same_v<T, Protecting>) {
-			used_move_effects = std::monostate();
+			used_move_effects = Empty();
 		}
 	});
 	damaged = false;
@@ -93,7 +93,7 @@ auto ActivePokemonFlags::reset_switch() & -> void {
 	water_sport = false;
 	taunt = {};
 	yawn = {};
-	used_move_effects = std::monostate{};
+	used_move_effects = Empty();
 }
 
 auto ActivePokemonFlags::is_baton_passing() const -> bool {
@@ -113,7 +113,7 @@ auto ActivePokemonFlags::endure() & -> void {
 }
 
 auto ActivePokemonFlags::is_locked_in_by_move() const -> bool {
-	return !bounded::holds_alternative(used_move_effects, bounded::detail::types<std::monostate>{});
+	return !bounded::holds_alternative(used_move_effects, bounded::detail::types<Empty>{});
 }
 
 auto ActivePokemonFlags::is_protecting() const -> bool {
@@ -126,7 +126,7 @@ auto ActivePokemonFlags::protect() & -> void {
 
 auto ActivePokemonFlags::break_protect() & -> void {
 	if (is_protecting()) {
-		used_move_effects = std::monostate();
+		used_move_effects = Empty();
 	}
 }
 
@@ -226,7 +226,7 @@ auto MutableActivePokemon::advance_lock_in(Generation const generation, bool con
 	bounded::visit(m_flags.used_move_effects, bounded::overload(
 		[&](Rampage & rampage) {
 			if (ending) {
-				m_flags.used_move_effects = std::monostate{};
+				m_flags.used_move_effects = Empty();
 				confuse(generation, weather);
 			} else {
 				rampage.advance_one_turn();
@@ -234,7 +234,7 @@ auto MutableActivePokemon::advance_lock_in(Generation const generation, bool con
 		},
 		[&](UproarCounter & uproar) {
 			if (ending) {
-				m_flags.used_move_effects = std::monostate{};
+				m_flags.used_move_effects = Empty();
 			} else {
 				uproar.advance_one_turn();
 			}
@@ -251,7 +251,7 @@ auto MutableActivePokemon::activate_rampage() const -> void {
 }
 auto MutableActivePokemon::recharge() const -> bool {
 	return bounded::visit(m_flags.used_move_effects, bounded::overload(
-		[&](Recharging) { m_flags.used_move_effects = std::monostate{}; return true; },
+		[&](Recharging) { m_flags.used_move_effects = Empty(); return true; },
 		[](auto const &) { return false; }
 	));
 }
@@ -281,7 +281,7 @@ auto MutableActivePokemon::u_turn() const -> void {
 auto MutableActivePokemon::use_uproar() const -> void {
 	bounded::visit(m_flags.used_move_effects, bounded::overload(
 		// TODO: Have it be active when it is constructed
-		[&](std::monostate) { bounded::insert(m_flags.used_move_effects, UproarCounter()).advance_one_turn(); },
+		[&](Empty) { bounded::insert(m_flags.used_move_effects, UproarCounter()).advance_one_turn(); },
 		[](UproarCounter & uproar) { uproar.advance_one_turn(); },
 		[](auto const &) { bounded::assert_or_assume_unreachable(); }
 	));
@@ -291,7 +291,7 @@ template<typename T>
 auto MutableActivePokemon::use_vanish_move(Generation const generation, Weather const weather) const -> bool {
 	return bounded::visit(m_flags.used_move_effects, bounded::overload(
 		[&](T) {
-			m_flags.used_move_effects = std::monostate{};
+			m_flags.used_move_effects = Empty();
 			return true;
 		},
 		[&](auto) {
@@ -327,7 +327,7 @@ auto MutableActivePokemon::use_bide(Generation const generation, MutableActivePo
 		[&](Bide & bide) {
 			if (auto const damage = bide.advance_one_turn()) {
 				change_hp(generation, target, weather, -*damage * 2_bi);
-				m_flags.used_move_effects = std::monostate{};
+				m_flags.used_move_effects = Empty();
 			}
 		}
 	));

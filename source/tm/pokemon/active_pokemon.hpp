@@ -56,11 +56,11 @@
 
 #include <containers/algorithms/all_any_none.hpp>
 
-#include <variant>
-
 namespace technicalmachine {
 struct ActivePokemon;
 struct MutableActivePokemon;
+
+struct Empty {};
 
 // Various states a Pokemon can be in due to vanishing moves.
 struct Bouncing {};
@@ -97,7 +97,7 @@ private:
 	friend struct MutableActivePokemon;
 	
 	bounded::variant<
-		std::monostate,
+		Empty,
 		Bouncing,
 		Digging,
 		Diving,
@@ -112,7 +112,7 @@ private:
 		Recharging,
 		UproarCounter,
 		UTurning
-	> used_move_effects{std::monostate{}};
+	> used_move_effects{Empty()};
 	Ability ability;
 	Confusion confusion;
 	Disable disable;

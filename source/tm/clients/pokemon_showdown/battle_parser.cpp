@@ -47,7 +47,6 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
-#include <variant>
 
 namespace technicalmachine {
 namespace ps {
@@ -679,7 +678,7 @@ void BattleParser::maybe_use_previous_move() {
 		bool did_any_damage;
 	};
 	auto const damage = bounded::visit(data.damage, bounded::overload(
-		[](std::monostate) {
+		[](MoveState::NoDamage) {
 			return LocalDamage{ActualDamage::Known{0_bi}, false};
 		},
 		[&](HPAndStatus const hp_and_status) -> LocalDamage {
