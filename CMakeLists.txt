@@ -93,6 +93,7 @@ add_library(tm_common STATIC
 	source/tm/move/will_be_recharge_turn.cpp
 
 	source/tm/pokemon/active_pokemon.cpp
+	source/tm/pokemon/active_status.cpp
 	source/tm/pokemon/collection.cpp
 	source/tm/pokemon/confusion.cpp
 	source/tm/pokemon/delayed_attack.cpp

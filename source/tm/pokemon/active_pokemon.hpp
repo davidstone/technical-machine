@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/pokemon/active_status.hpp>
 #include <tm/pokemon/confusion.hpp>
 #include <tm/pokemon/disable.hpp>
 #include <tm/pokemon/embargo.hpp>
@@ -74,36 +75,6 @@ struct Enduring {};
 struct Protecting {};
 struct Recharging {};
 struct UTurning {};
-
-struct ActiveStatus {
-	constexpr auto set(Statuses const status) & -> void {
-		switch (status) {
-			case Statuses::rest:
-			case Statuses::sleep:
-				m_nightmare = false;
-				break;
-			case Statuses::toxic:
-				m_toxic_counter = 1_bi;
-				break;
-			default:
-				break;
-		}
-	}
-	constexpr auto give_nightmares() & -> void {
-		m_nightmare = true;
-	}
-
-	auto status_and_leech_seed_effects(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather, bool uproar) & -> void;
-private:
-	auto end_of_attack(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather) & -> void;
-	auto end_of_turn(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather, bool uproar) & -> void;
-	// The discriminator is the status of the active Pokemon. The default value
-	// is irrelevant.
-	union {
-		bool m_nightmare;
-		bounded::clamped_integer<1, 15> m_toxic_counter;
-	};
-};
 
 struct ActivePokemonFlags {
 	auto reset_start_of_turn() & -> void;
