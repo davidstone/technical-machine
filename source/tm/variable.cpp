@@ -328,7 +328,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Light_Screen:
 		case Moves::Lock_On:
 		case Moves::Lovely_Kiss:
-		case Moves::Low_Kick:
 		case Moves::Low_Sweep:
 		case Moves::Lucky_Chant:
 		case Moves::Lunar_Dance:
@@ -690,6 +689,8 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Ice_Fang:
 		case Moves::Thunder_Fang:
 			return generic_probability(0.79, 0.10, 0.10, 0.01);
+		case Moves::Low_Kick:
+			return generation <= Generation::two ? single_probability(0.3) : generic_probability(1.0);
 		case Moves::Tri_Attack:
 			return generic_probability(12.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0);
 		case Moves::Magnitude:

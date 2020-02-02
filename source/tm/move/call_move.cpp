@@ -761,6 +761,11 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Mind_Reader:
 			user.use_lock_on();
 			break;
+		case Moves::Low_Kick:
+			if (generation <= Generation::two and executed.variable.effect_activates()) {
+				other.pokemon().flinch();
+			}
+			break;
 		case Moves::Lucky_Chant:
 			user_team.activate_lucky_chant();
 			break;
