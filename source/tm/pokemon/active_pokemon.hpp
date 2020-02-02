@@ -18,7 +18,6 @@
 #pragma once
 
 #include <tm/pokemon/confusion.hpp>
-#include <tm/pokemon/damage_blocker.hpp>
 #include <tm/pokemon/disable.hpp>
 #include <tm/pokemon/embargo.hpp>
 #include <tm/pokemon/encore.hpp>
@@ -72,6 +71,8 @@ struct ShadowForcing {};
 
 struct BatonPassing {};
 struct ChargingUp {};
+struct Enduring {};
+struct Protecting {};
 struct Recharging {};
 struct UTurning {};
 
@@ -106,12 +107,17 @@ private:
 };
 
 struct ActivePokemonFlags {
-	auto reset_start_of_turn() -> void;
+	auto reset_start_of_turn() & -> void;
 private:
 	auto is_baton_passing() const -> bool;
 	auto is_charging_up() const -> bool;
+	auto is_enduring() const -> bool;
+	auto endure() & -> void;
 	auto is_locked_in_by_move() const -> bool;
-	auto reset_switch() -> void;
+	auto is_protecting() const -> bool;
+	auto protect() & -> void;
+	auto break_protect() & -> void;
+	auto reset_switch() & -> void;
 	auto switch_decision_required(Pokemon const & pokemon) const -> bool;
 	auto is_uproaring() const -> bool;
 	auto vanish_doubles_power(Generation, Moves) const -> bool;
@@ -120,8 +126,6 @@ private:
 	friend struct ActivePokemonImpl;
 	friend struct MutableActivePokemon;
 	
-	// TODO: Include other mutually exclusive stuff such as DamageBlocker
-	// (Protect + Endure)?
 	bounded::variant<
 		std::monostate,
 		Bouncing,
@@ -132,14 +136,15 @@ private:
 		BatonPassing,
 		Bide,
 		ChargingUp,
+		Enduring,
+		Protecting,
 		Rampage,
 		Recharging,
 		UproarCounter,
 		UTurning
-	> lock_in{std::monostate{}};
+	> used_move_effects{std::monostate{}};
 	Ability ability;
 	Confusion confusion;
-	DamageBlocker damage_blocker;
 	Disable disable;
 	EmbargoCounter embargo;
 	EncoreCounter encore;
@@ -327,7 +332,7 @@ public:
 	}
 	
 	auto is_protecting() const {
-		return m_flags.damage_blocker.is_protecting();
+		return m_flags.is_protecting();
 	}
 
 	auto is_locked_in_by_move() const -> bool {
@@ -524,7 +529,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.encore.advance_one_turn();
 	}
 	auto endure() const {
-		m_flags.damage_blocker.endure();
+		m_flags.endure();
 	}
 	auto activate_flash_fire() const {
 		m_flags.flash_fire = true;
@@ -648,10 +653,10 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.power_trick_is_active = !m_flags.power_trick_is_active;
 	}
 	auto protect() const {
-		m_flags.damage_blocker.protect();
+		m_flags.protect();
 	}
 	auto break_protect() const {
-		m_flags.damage_blocker.break_protect();
+		m_flags.break_protect();
 	}
 	auto activate_rampage() const -> void;
 	auto recharge() const -> bool;
