@@ -114,6 +114,17 @@ constexpr bool uproar_does_not_apply(Statuses const status) {
 	}
 }
 
+auto fang_side_effects(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather, Statuses const status, Variable const variable) {
+	auto const effect = variable.fang_side_effects();
+	if (effect.status) {
+		target.apply_status(generation, status, user, weather);
+	}
+	if (effect.flinch) {
+		target.flinch();
+	}
+}
+
+
 auto fling_side_effects(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) {
 	// TODO: Activate berry
 	auto apply_status = [&](Statuses const status) {
@@ -575,7 +586,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().break_protect();
 			break;
 		case Moves::Fire_Fang:
-			executed.variable.fang_side_effects(generation, user, other.pokemon(), weather, Statuses::burn);
+			fang_side_effects(generation, user, other.pokemon(), weather, Statuses::burn, executed.variable);
 			break;
 		case Moves::Flare_Blitz:
 			recoil_status(generation, user, other.pokemon(), weather, damage, executed.variable, Statuses::burn);
@@ -704,7 +715,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Rollout:
 			break;
 		case Moves::Ice_Fang:
-			executed.variable.fang_side_effects(generation, user, other.pokemon(), weather, Statuses::freeze);
+			fang_side_effects(generation, user, other.pokemon(), weather, Statuses::freeze, executed.variable);
 			break;
 		case Moves::Icy_Wind:
 		case Moves::Low_Sweep:
@@ -1040,7 +1051,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().taunt(generation, weather);
 			break;
 		case Moves::Thunder_Fang:
-			executed.variable.fang_side_effects(generation, user, other.pokemon(), weather, Statuses::paralysis);
+			fang_side_effects(generation, user, other.pokemon(), weather, Statuses::paralysis, executed.variable);
 			break;
 		case Moves::Tickle:
 			boost_physical(other.pokemon().stage(), -1_bi);

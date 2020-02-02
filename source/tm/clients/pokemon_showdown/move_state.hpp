@@ -22,6 +22,7 @@
 
 #include <tm/clients/party.hpp>
 
+#include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/used_move.hpp>

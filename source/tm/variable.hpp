@@ -19,14 +19,12 @@
 #pragma once
 
 #include <tm/move/moves.hpp>
-#include <tm/pokemon/active_pokemon.hpp>
-#include <tm/pokemon/collection.hpp>
 #include <tm/pokemon/level.hpp>
+#include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/species_forward.hpp>
+#include <tm/stat/stat_names.hpp>
 #include <tm/status.hpp>
-#include <tm/weather.hpp>
 
-#include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 #include <bounded/unreachable.hpp>
 
@@ -50,22 +48,17 @@ struct Variable {
 		m_value = 1_bi;
 	}
 
-	auto fang_side_effects(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather, Statuses const status) const {
+	auto fang_side_effects() const {
+		struct Result {
+			bool status;
+			bool flinch;
+		};
 		switch (m_value.value()) {
-			case 0:
-				break;
-			case 1:
-				target.apply_status(generation, status, user, weather);
-				break;
-			case 2:
-				target.flinch();
-				break;
-			case 3:
-				target.apply_status(generation, status, user, weather);
-				target.flinch();
-				break;
-			default:
-				bounded::assert_or_assume_unreachable();
+			case 0: return Result{false, false};
+			case 1: return Result{true, false};
+			case 2: return Result{false, true};
+			case 3: return Result{true, true};
+			default: bounded::assert_or_assume_unreachable();
 		}
 	}
 
