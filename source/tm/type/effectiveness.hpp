@@ -19,14 +19,17 @@
 
 #include <tm/type/pokemon_types.hpp>
 
+#include <tm/move/known_move.hpp>
+#include <tm/pokemon/active_pokemon.hpp>
+
+#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
+#include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
-struct ActivePokemon;
-enum class Generation : std::uint8_t;
 
 struct Effectiveness {
 	Effectiveness(Generation generation, Type attacking, PokemonTypes defending);
@@ -50,6 +53,13 @@ private:
 
 auto operator*(auto const lhs, Effectiveness const rhs) {
 	return rhs * lhs;
+}
+
+inline auto affects_target(Generation const generation, KnownMove const move, ActivePokemon const target, Weather const weather) -> bool {
+	auto const effectiveness = Effectiveness(generation, move.type, target.types());
+	return
+		(!effectiveness.has_no_effect() or (generation == Generation::one and move.name == Moves::Night_Shade)) and
+		(move.type != Type::Ground or grounded(generation, target, weather));
 }
 
 }	// namespace technicalmachine

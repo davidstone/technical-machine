@@ -1299,12 +1299,12 @@ auto use_move(Generation const generation, Team & user, ExecutedMove const execu
 	auto const other_pokemon = other.pokemon();
 	do_effects_before_moving(executed.move.name, user_pokemon, other);
 
-	auto const effectiveness = Effectiveness(generation, executed.move.type, other_pokemon.types());
-	if (targets_foe_specifically(target) and effectiveness.has_no_effect()) {
+	if (targets_foe_specifically(target) and !affects_target(generation, executed.move, other_pokemon, weather)) {
 		return;
 	}
 
 	auto const damaging = is_damaging(executed.move.name);
+	auto const effectiveness = Effectiveness(generation, executed.move.type, other_pokemon.types());
 	auto const weakened = damaging and activate_when_hit_item(generation, executed.move, other_pokemon, weather, effectiveness);
 	auto const damage = actual_damage.value(generation, user, executed, weakened, other, other_move, weather);
 	BOUNDED_ASSERT(damaging or damage == 0_bi);

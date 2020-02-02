@@ -18,6 +18,7 @@
 #include <tm/move/calculate_damage.hpp>
 
 #include <tm/ability.hpp>
+#include <tm/generation.hpp>
 #include <tm/item.hpp>
 #include <tm/status.hpp>
 #include <tm/rational.hpp>
@@ -40,15 +41,8 @@
 namespace technicalmachine {
 
 using namespace bounded::literal;
-enum class Generation : std::uint8_t;
 
 namespace {
-
-bool affects_target(Generation const generation, Type const & move_type, ActivePokemon const target, Weather const weather) {
-	return
-		!Effectiveness(generation, move_type, target.types()).has_no_effect() and
-		(move_type != Type::Ground or grounded(generation, target, weather));
-}
 
 auto reflect_is_active(Generation const generation, KnownMove const move, Team const & defender) {
 	return defender.reflect() and is_physical(generation, move);
@@ -274,7 +268,7 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 
 
 auto calculate_damage(Generation const generation, Team const & attacker, ExecutedMove const executed, bool const move_weakened_from_item, Team const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
-	return affects_target(generation, executed.move.type, defender.pokemon(), weather) ?
+	return affects_target(generation, executed.move, defender.pokemon(), weather) ?
 		raw_damage(generation, attacker, executed, move_weakened_from_item, defender, defender_move, weather) :
 		static_cast<damage_type>(0_bi);
 }
