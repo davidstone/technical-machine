@@ -213,7 +213,7 @@ constexpr auto lookup_effectiveness(Generation const generation, Type const atta
 			case Type::Ice: return regular;
 			case Type::Normal: return no_effect;
 			case Type::Poison: return regular;
-			case Type::Psychic: return BOUNDED_CONDITIONAL(generation <= Generation::one, not_very_effective, super_effective);
+			case Type::Psychic: return BOUNDED_CONDITIONAL(generation <= Generation::one, no_effect, super_effective);
 			case Type::Rock: return regular;
 			case Type::Steel: return BOUNDED_CONDITIONAL(generation <= Generation::five, not_very_effective, regular);
 			case Type::Water: return regular;
