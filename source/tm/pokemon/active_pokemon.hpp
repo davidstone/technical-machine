@@ -47,7 +47,6 @@
 
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
-#include <tm/random_damage.hpp>
 #include <tm/rational.hpp>
 #include <tm/weather.hpp>
 
@@ -154,7 +153,6 @@ private:
 	Substitute substitute;
 	PartialTrap partial_trap;
 	PerishSong perish_song;
-	RandomDamage random_damage;
 	Stage stage;
 	ActiveStatus status;
 	SlowStart slow_start;
@@ -400,10 +398,6 @@ public:
 
 	auto vanish_doubles_power(Generation const generation, Moves const move_name) const -> bool {
 		return m_flags.vanish_doubles_power(generation, move_name);
-	}
-
-	auto random_damage_multiplier() const {
-		return m_flags.random_damage();
 	}
 
 	operator PokemonRef() const {

@@ -21,6 +21,7 @@
 #include <tm/generation.hpp>
 #include <tm/item.hpp>
 #include <tm/status.hpp>
+#include <tm/random_damage.hpp>
 #include <tm/rational.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
@@ -209,7 +210,7 @@ auto regular_damage(Generation const generation, Team const & attacker_team, Exe
 		critical_hit_multiplier(generation, attacker_ability, executed.critical_hit) *
 		calculate_item_modifier(generation, attacker, weather) *
 		calculate_me_first_modifier(attacker) *
-		attacker.random_damage_multiplier() *
+		RandomDamage()() *
 		calculate_stab_modifier(attacker, executed.move.type) *
 		effectiveness *
 		calculate_ability_effectiveness_modifier(defender.ability(), effectiveness) *
