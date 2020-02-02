@@ -695,7 +695,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Howl:
 		case Moves::Metal_Claw:
-		case Moves::Meditate:
 		case Moves::Meteor_Mash:
 			if (executed.variable.effect_activates()) {
 				user.stage()[StatNames::ATK] += 1_bi;
@@ -780,6 +779,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.activate_magnet_rise();
 			break;
 		case Moves::Me_First:
+			break;
+		case Moves::Meditate:
+			user.stage()[StatNames::ATK] += 1_bi;
 			break;
 		case Moves::Memento:
 			boost_offensive(other.pokemon().stage(), -2_bi);
