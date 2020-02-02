@@ -790,8 +790,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Mimic:
 			break;
 		case Moves::Minimize:
-			user.stage()[StatNames::EVA] += 1_bi;
-			user.minimize();
+			user.minimize(generation);
 			break;
 		case Moves::Miracle_Eye:
 			break;

@@ -612,8 +612,9 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 			pokemon.m_flags.is_tormented = false;
 		}
 	}
-	auto minimize() const {
+	auto minimize(Generation const generation) const {
 		m_flags.minimized = true;
+		stage()[StatNames::EVA] += BOUNDED_CONDITIONAL(generation <= Generation::four, 1_bi, 2_bi);
 	}
 	auto set_not_moved() const {
 		m_flags.moved = false;
