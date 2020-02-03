@@ -90,7 +90,7 @@ struct LastUsedMove {
 	auto use_charge_up_move() & -> void;
 
 	constexpr auto is_destiny_bonded() const {
-		return m_move == Moves::Destiny_Bond and m_consecutive_successes >= 1_bi;
+		return successful_last_move(Moves::Destiny_Bond);
 	}
 
 	auto is_enduring() const -> bool;
@@ -107,6 +107,10 @@ struct LastUsedMove {
 	auto is_locked_in_by_move() const -> bool;
 	// Returns whether the use should get confused
 	auto advance_lock_in(bool const ending) & -> bool;
+
+	constexpr auto locked_on() const {
+		return successful_last_move(Moves::Lock_On) or successful_last_move(Moves::Mind_Reader);
+	}
 
 	// TODO: Does Metronome boost Struggle?
 	constexpr auto metronome_boost(Generation const generation) const {
@@ -152,6 +156,9 @@ struct LastUsedMove {
 	auto shadow_force(Item) & -> VanishOutcome;
 
 private:
+	constexpr auto successful_last_move(Moves const move) const -> bool {
+		return m_move == move and m_consecutive_successes >= 1_bi;
+	}
 	auto is_u_turning() const -> bool;
 	template<typename T>
 	auto use_vanish_move(Item) & -> VanishOutcome;

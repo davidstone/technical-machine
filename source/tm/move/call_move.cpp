@@ -205,7 +205,6 @@ auto phaze(Generation const generation, MutableActivePokemon user, Team & target
 	// generation 5
 	if (active_pokemon_can_be_phazed(target)) {
 		target.switch_pokemon(generation, user, weather, variable.phaze_index());
-		target.pokemon().update_before_move();
 	}
 }
 
@@ -763,10 +762,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Light_Screen:
 			user_team.activate_light_screen(generation, weather);
-			break;
-		case Moves::Lock_On:
-		case Moves::Mind_Reader:
-			user.use_lock_on();
 			break;
 		case Moves::Low_Kick:
 			if (generation <= Generation::two and executed.variable.effect_activates()) {
@@ -1515,7 +1510,6 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 
 	auto const found_move = find_move(all_moves(user_pokemon), move.selected);
 	auto other_pokemon = other.pokemon();
-	user_pokemon.update_before_move();
 	if (!is_switch(move.selected)) {
 		user_pokemon.advance_status_from_move(clear_status);
 	}

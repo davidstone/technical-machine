@@ -118,7 +118,6 @@ auto MutableActivePokemon::switch_out() const -> void {
 		m_flags.gastro_acid = false;
 		m_flags.ingrained = false;
 		m_flags.leech_seeded = false;
-		m_flags.locked_on = false;
 		m_flags.magnet_rise = {};
 		m_flags.perish_song = {};
 		m_flags.power_trick_is_active = false;

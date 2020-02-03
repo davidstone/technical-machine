@@ -105,7 +105,6 @@ private:
 	bool ingrained = false;
 	bool leech_seeded = false;
 	bool is_loafing_turn = false;
-	bool locked_on = false;
 	bool me_first_is_active = false;
 	bool minimized = false;
 	bool mud_sport = false;
@@ -231,7 +230,7 @@ public:
 	}
 
 	auto locked_on() const -> bool {
-		return m_flags.locked_on;
+		return m_flags.last_used_move.locked_on();
 	}
 
 	auto magnet_rise() const -> MagnetRise const & {
@@ -379,9 +378,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.leech_seeded = false;
 		m_flags.partial_trap = {};
 	}
-	auto update_before_move() const {
-		m_flags.locked_on = false;
-	}
 
 	auto set_ability(Ability const ability) const {
 		m_flags.ability = ability;
@@ -521,9 +517,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		if (confused) {
 			confuse(generation, weather);
 		}
-	}
-	auto use_lock_on() const {
-		m_flags.locked_on = true;
 	}
 	auto activate_magnet_rise() const {
 		m_flags.magnet_rise.activate();
