@@ -688,6 +688,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Heal_Order:
 		case Moves::Milk_Drink:
 		case Moves::Recover:
+		case Moves::Roost:
 		case Moves::Slack_Off:
 		case Moves::Soft_Boiled:
 			heal(generation, user, weather, rational(1_bi, 2_bi));
@@ -908,10 +909,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			phaze(generation, user, other, weather, executed.variable);
 			break;
 		case Moves::Role_Play:
-			break;
-		case Moves::Roost:
-			user.roost();
-			heal(generation, user, weather, rational(1_bi, 2_bi));
 			break;
 		case Moves::Safeguard:
 			user_team.activate_safeguard();

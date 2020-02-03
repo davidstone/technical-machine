@@ -135,6 +135,11 @@ struct LastUsedMove {
 	auto activate_rampage() & -> void;
 	auto recharge() & -> bool;
 	auto use_recharge_move() & -> void;
+
+	constexpr auto is_roosting() const {
+		return m_moved_this_turn and successful_last_move(Moves::Roost);
+	}
+
 	auto switch_decision_required() const -> bool;
 
 	constexpr auto triple_kick_power() const {

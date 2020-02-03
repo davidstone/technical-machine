@@ -141,7 +141,6 @@ auto MutableActivePokemon::switch_out() const -> void {
 	m_flags.me_first_is_active = false;
 	m_flags.mud_sport = false;
 	m_flags.partial_trap = {};
-	m_flags.is_roosting = false;
 	m_flags.slow_start = {};
 	m_flags.stockpile = {};
 	m_flags.is_tormented = false;

@@ -109,7 +109,6 @@ private:
 	bool minimized = false;
 	bool mud_sport = false;
 	bool power_trick_is_active = false;
-	bool is_roosting = false;
 	bool switched_in_this_turn = false;
 	bool is_tormented = false;
 	bool unburdened = false;
@@ -262,7 +261,7 @@ public:
 	}
 
 	auto is_roosting() const -> bool {
-		return m_flags.is_roosting;
+		return m_flags.last_used_move.is_roosting();
 	}
 
 	auto slow_start_is_active() const -> bool {
@@ -579,9 +578,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 	auto use_recharge_move() const {
 		m_flags.last_used_move.use_recharge_move();
-	}
-	auto roost() const {
-		m_flags.is_roosting = true;
 	}
 
 	auto apply_status(Generation, Statuses, MutableActivePokemon user, Weather, bool uproar = false) const -> void;
