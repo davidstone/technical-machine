@@ -559,9 +559,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Encore:
 			other.pokemon().activate_encore(generation, weather);
 			break;
-		case Moves::Endure:
-			user.endure();
-			break;
 		case Moves::Explosion:
 		case Moves::Self_Destruct:
 			user.set_hp(generation, weather, 0_bi);

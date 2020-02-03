@@ -46,7 +46,6 @@ struct Flying {};
 struct ShadowForcing {};
 
 struct ChargingUp {};
-struct Enduring {};
 struct Protecting {};
 struct Recharging {};
 
@@ -93,8 +92,9 @@ struct LastUsedMove {
 		return successful_last_move(Moves::Destiny_Bond);
 	}
 
-	auto is_enduring() const -> bool;
-	auto endure() & -> void;
+	constexpr auto is_enduring() const -> bool {
+		return moved_this_turn() and successful_last_move(Moves::Endure);
+	}
 
 	constexpr auto fury_cutter_power() const {
 		// 10 * 2 ^ n
@@ -186,7 +186,6 @@ private:
 		ShadowForcing,
 		Bide,
 		ChargingUp,
-		Enduring,
 		Protecting,
 		Rampage,
 		Recharging,

@@ -24,7 +24,7 @@ namespace technicalmachine {
 auto LastUsedMove::reset_start_of_turn() & -> void {
 	m_moved_this_turn = false;
 	bounded::visit(m_effects, [&]<typename T>(T) {
-		if constexpr (std::is_same_v<T, Enduring> or std::is_same_v<T, Protecting>) {
+		if constexpr (std::is_same_v<T, Protecting>) {
 			m_effects = Empty();
 		}
 	});
@@ -57,14 +57,6 @@ auto LastUsedMove::is_charging_up() const -> bool {
 
 auto LastUsedMove::use_charge_up_move() & -> void {
 	m_effects = ChargingUp{};
-}
-
-auto LastUsedMove::is_enduring() const -> bool {
-	return bounded::holds_alternative(m_effects, bounded::detail::types<Enduring>());
-}
-
-auto LastUsedMove::endure() & -> void {
-	m_effects = Enduring();
 }
 
 auto LastUsedMove::is_locked_in_by_move() const -> bool {

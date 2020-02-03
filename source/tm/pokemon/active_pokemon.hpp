@@ -433,9 +433,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto advance_encore() const {
 		m_flags.encore.advance_one_turn();
 	}
-	auto endure() const {
-		m_flags.last_used_move.endure();
-	}
 	auto activate_flash_fire() const {
 		m_flags.flash_fire = true;
 	}
