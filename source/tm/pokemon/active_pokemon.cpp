@@ -128,7 +128,6 @@ auto MutableActivePokemon::switch_out() const -> void {
 	m_flags.attracted = false;
 	m_flags.charged = false;
 	m_flags.defense_curled = false;
-	m_flags.destiny_bond = false;
 	m_flags.disable = Disable{};
 	m_flags.encore = {};
 	m_flags.flash_fire = false;
@@ -190,7 +189,7 @@ auto handle_ko(Generation const generation, MutableActivePokemon defender, bool 
 
 } // namespace
 
-auto MutableActivePokemon::direct_damage(Generation const generation, Moves const move, Weather const weather, damage_type const damage) const -> HP::current_type {
+auto MutableActivePokemon::direct_damage(Generation const generation, Moves const move, MutableActivePokemon user, Weather const weather, damage_type const damage) const -> HP::current_type {
 	auto const interaction = substitute_interaction(generation, move);
 	BOUNDED_ASSERT(!m_flags.substitute or interaction != Substitute::causes_failure);
 	if (m_flags.substitute and interaction == Substitute::absorbs) {
@@ -201,9 +200,15 @@ auto MutableActivePokemon::direct_damage(Generation const generation, Moves cons
 	auto const applied_damage = block_ko ?
 		static_cast<HP::current_type>(original_hp - 1_bi) :
 		bounded::min(damage, original_hp);
+
 	indirect_damage(generation, weather, applied_damage);
 	m_flags.direct_damage_received = applied_damage;
 	m_flags.last_used_move.direct_damage(applied_damage);
+
+	// TODO: Resolve ties properly
+	if (m_flags.last_used_move.is_destiny_bonded() and applied_damage == original_hp) {
+		user.set_hp(generation, weather, 0_bi);
+	}
 	return applied_damage;
 }
 

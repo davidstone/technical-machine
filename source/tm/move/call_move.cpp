@@ -525,9 +525,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			weather.deactivate_fog();
 			other.pokemon().stage()[StatNames::EVA] += -1_bi;
 			break;
-		case Moves::Destiny_Bond:
-			user.use_destiny_bond();
-			break;
 		case Moves::Detect:
 		case Moves::Protect:
 			user.protect();
@@ -1330,7 +1327,7 @@ auto use_move(Generation const generation, Team & user, ExecutedMove const execu
 
 	// Should this check if we did any damage or if the move is damaging?
 	auto const damage_done = damage != 0_bi ?
-		other_pokemon.direct_damage(generation, executed.move.name, weather, damage) :
+		other_pokemon.direct_damage(generation, executed.move.name, other.pokemon(), weather, damage) :
 		0_bi;
 
 	// TODO: When are side-effects on the user blocked?

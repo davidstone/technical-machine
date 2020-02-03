@@ -94,7 +94,6 @@ private:
 	bool is_cursed = false;
 	bool damaged = false;
 	bool defense_curled = false;
-	bool destiny_bond = false;
 	bool flash_fire = false;
 	bool flinched = false;
 	bool has_focused_energy = false;
@@ -381,7 +380,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.partial_trap = {};
 	}
 	auto update_before_move() const {
-		m_flags.destiny_bond = false;
 		m_flags.locked_on = false;
 	}
 
@@ -427,9 +425,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 	auto defense_curl() const {
 		m_flags.defense_curled = true;
-	}
-	auto use_destiny_bond() const {
-		m_flags.destiny_bond = true;
 	}
 	auto disable(Generation const generation, Moves const move, Weather const weather) const {
 		m_flags.disable.activate(move);
@@ -699,7 +694,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		activate_pinch_item(generation, weather);
 	}
 	auto indirect_damage(Generation, Weather, HP::current_type const damage) const -> void;
-	auto direct_damage(Generation, Moves, Weather, damage_type const damage) const -> HP::current_type;
+	auto direct_damage(Generation, Moves, MutableActivePokemon user, Weather, damage_type const damage) const -> HP::current_type;
 
 	auto successfully_use_move(Moves const move) const {
 		m_flags.last_used_move.successful_move(move);

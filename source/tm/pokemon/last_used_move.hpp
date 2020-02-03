@@ -88,6 +88,11 @@ struct LastUsedMove {
 
 	auto is_charging_up() const -> bool;
 	auto use_charge_up_move() & -> void;
+
+	constexpr auto is_destiny_bonded() const {
+		return m_move == Moves::Destiny_Bond and m_consecutive_successes >= 1_bi;
+	}
+
 	auto is_enduring() const -> bool;
 	auto endure() & -> void;
 
