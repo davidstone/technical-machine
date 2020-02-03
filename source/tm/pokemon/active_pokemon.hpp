@@ -109,7 +109,6 @@ private:
 	bool minimized = false;
 	bool mud_sport = false;
 	bool power_trick_is_active = false;
-	bool switched_in_this_turn = false;
 	bool is_tormented = false;
 	bool unburdened = false;
 	bool water_sport = false;
@@ -288,7 +287,7 @@ public:
 		return get_hp(m_pokemon) == 0_bi or m_flags.last_used_move.switch_decision_required();
 	}
 	auto switched_in_this_turn() const -> bool {
-		return m_flags.switched_in_this_turn;
+		return m_flags.last_used_move.switched_in_this_turn();
 	}
 
 	auto fully_trapped() const -> bool {
@@ -614,7 +613,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.ability = m_pokemon.initial_ability();
 		// The exact switch is irrelevant
 		m_flags.last_used_move.successful_move(Moves::Switch0);
-		m_flags.switched_in_this_turn = true;
 		m_flags.types = PokemonTypes(generation, get_species(m_pokemon));
 		if (generation <= Generation::two and get_status(m_pokemon).name() == Statuses::toxic) {
 			m_pokemon.set_status(Statuses::poison);

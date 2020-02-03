@@ -23,6 +23,7 @@
 #include <tm/bide/bide.hpp>
 
 #include <tm/move/moves.hpp>
+#include <tm/move/is_switch.hpp>
 
 #include <tm/generation.hpp>
 #include <tm/rational.hpp>
@@ -140,6 +141,9 @@ struct LastUsedMove {
 		return m_moved_this_turn and successful_last_move(Moves::Roost);
 	}
 
+	constexpr auto switched_in_this_turn() const {
+		return m_moved_this_turn and m_consecutive_successes != 0_bi and is_switch(m_move);
+	}
 	auto switch_decision_required() const -> bool;
 
 	constexpr auto triple_kick_power() const {
