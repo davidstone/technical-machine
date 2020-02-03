@@ -305,11 +305,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 				other.pokemon().attract(generation, user, weather);
 			}
 			break;
-		case Moves::Baton_Pass:
-			if (user_team.size() > 1_bi) {
-				user.baton_pass();
-			}
-			break;
 		case Moves::Belly_Drum:
 			belly_drum(generation, user, weather);
 			break;
@@ -1065,11 +1060,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Trick_Room:
 			weather.activate_trick_room();
-			break;
-		case Moves::U_turn:
-			if (user_team.size() > 1_bi) {
-				user.u_turn();
-			}
 			break;
 		case Moves::Uproar:
 			user.use_uproar();

@@ -38,7 +38,7 @@ using StaticVectorMove = containers::static_vector<
 	bounded::detail::builtin_max_value<MoveSize>
 >;
 
-auto legal_selections(Generation, Team const & user, ActivePokemon other, Weather) -> StaticVectorMove;
+auto legal_selections(Generation, Team const & user, Team const & other, Weather) -> StaticVectorMove;
 auto can_attempt_move_execution(ActivePokemon user, Move move, ActivePokemon other) -> bool;
 auto can_execute_move(ActivePokemon user, Move move, Weather weather, bool is_recharging) -> bool;
 

@@ -45,12 +45,10 @@ struct Diving {};
 struct Flying {};
 struct ShadowForcing {};
 
-struct BatonPassing {};
 struct ChargingUp {};
 struct Enduring {};
 struct Protecting {};
 struct Recharging {};
-struct UTurning {};
 
 enum class VanishOutcome { vanishes, attacks, consumes_item };
 
@@ -81,8 +79,9 @@ struct LastUsedMove {
 		return m_moved_this_turn;
 	}
 
-	auto is_baton_passing() const -> bool;
-	auto baton_pass() & -> void;
+	constexpr auto is_baton_passing() const -> bool {
+		return moved_this_turn() and successful_last_move(Moves::Baton_Pass);
+	}
 
 	auto use_bide() & -> bounded::optional<HP::current_type>;
 	auto direct_damage(HP::current_type damage) & -> void;
@@ -138,13 +137,15 @@ struct LastUsedMove {
 	auto use_recharge_move() & -> void;
 
 	constexpr auto is_roosting() const {
-		return m_moved_this_turn and successful_last_move(Moves::Roost);
+		return moved_this_turn() and successful_last_move(Moves::Roost);
 	}
 
 	constexpr auto switched_in_this_turn() const {
-		return m_moved_this_turn and m_consecutive_successes != 0_bi and is_switch(m_move);
+		return moved_this_turn() and m_consecutive_successes != 0_bi and is_switch(m_move);
 	}
-	auto switch_decision_required() const -> bool;
+	constexpr auto switch_decision_required() const -> bool {
+		return is_baton_passing() or is_u_turning();
+	}
 
 	constexpr auto triple_kick_power() const {
 		auto const result = 10_bi * bounded::min(m_consecutive_successes + 1_bi, 3_bi);
@@ -155,7 +156,6 @@ struct LastUsedMove {
 
 	auto is_uproaring() const -> bool;
 	auto use_uproar() & -> void;
-	auto u_turn() & -> void;
 	auto vanish_doubles_power(Generation const generation, Moves const move_name) const -> bool;
 
 	auto bounce(Item) & -> VanishOutcome;
@@ -168,7 +168,9 @@ private:
 	constexpr auto successful_last_move(Moves const move) const -> bool {
 		return m_move == move and m_consecutive_successes >= 1_bi;
 	}
-	auto is_u_turning() const -> bool;
+	constexpr auto is_u_turning() const -> bool {
+		return moved_this_turn() and successful_last_move(Moves::U_turn);
+	}
 	template<typename T>
 	auto use_vanish_move(Item) & -> VanishOutcome;
 
@@ -182,15 +184,13 @@ private:
 		Diving,
 		Flying,
 		ShadowForcing,
-		BatonPassing,
 		Bide,
 		ChargingUp,
 		Enduring,
 		Protecting,
 		Rampage,
 		Recharging,
-		UproarCounter,
-		UTurning
+		UproarCounter
 	> m_effects{Empty()};
 };
 

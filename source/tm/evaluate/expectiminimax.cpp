@@ -297,8 +297,8 @@ double end_of_turn_branch(Generation const generation, Team first, Team last, We
 		return *won;
 	}
 	if (get_hp(first.pokemon()) == 0_bi or get_hp(last.pokemon()) == 0_bi) {
-		auto const first_selections = legal_selections(generation, first, last.pokemon(), weather);
-		auto const last_selections = legal_selections(generation, last, first.pokemon(), weather);
+		auto const first_selections = legal_selections(generation, first, last, weather);
+		auto const last_selections = legal_selections(generation, last, first, weather);
 		return select_move_branch(generation, first, first_selections, last, last_selections, weather, evaluate, depth, log, handle_end_of_turn_replacing).move.score;
 	}
 	first.reset_start_of_turn();
@@ -505,7 +505,7 @@ auto use_move_branch_outer(OriginalPokemon const original_last_pokemon, Moves co
 			auto const first_used_move = original_last_pokemon.other_move();
 			return score_executed_moves(generation, pre_updated_last, actual_last_move, pre_updated_first, first_used_move, pre_updated_weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
 				auto const first_selections = StaticVectorMove({Moves::Pass});
-				auto const last_selections = legal_selections(generation, updated_last, updated_first.pokemon(), weather);
+				auto const last_selections = legal_selections(generation, updated_last, updated_first, weather);
 				BOUNDED_ASSERT(all_are_pass_or_switch(last_selections));
 				return select_move_branch(generation, updated_first, first_selections, updated_last, last_selections, updated_weather, evaluate, depth, log, use_move_branch_inner(first_used_move)).move.score;
 			});
@@ -532,7 +532,7 @@ double use_move_branch(Generation const generation, Team const & first, Moves co
 	auto const original_last_pokemon = OriginalPokemon(generation, last_pokemon, first_move);
 
 	return score_executed_moves(generation, first, first_move, last, FutureMove{is_damaging(last_move)}, weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
-		auto const first_selections = legal_selections(generation, updated_first, updated_last.pokemon(), weather);
+		auto const first_selections = legal_selections(generation, updated_first, updated_last, weather);
 		BOUNDED_ASSERT(all_are_pass_or_switch(first_selections));
 		auto const last_selections = StaticVectorMove({Moves::Pass});
 		// TODO: Figure out first / last vs ai / foe
@@ -556,8 +556,8 @@ BestMove select_type_of_move(Generation const generation, Team const & ai, Team 
 	BOUNDED_ASSERT(!team_is_empty(ai));
 	BOUNDED_ASSERT(!team_is_empty(foe));
 	
-	auto const ai_selections = legal_selections(generation, ai, foe.pokemon(), weather);
-	auto const foe_selections = legal_selections(generation, foe, ai.pokemon(), weather);
+	auto const ai_selections = legal_selections(generation, ai, foe, weather);
+	auto const foe_selections = legal_selections(generation, foe, ai, weather);
 	return select_move_branch(generation, ai, ai_selections, foe, foe_selections, weather, evaluate, depth, log, order_branch).move;
 }
 

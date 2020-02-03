@@ -30,14 +30,6 @@ auto LastUsedMove::reset_start_of_turn() & -> void {
 	});
 }
 
-auto LastUsedMove::is_baton_passing() const -> bool {
-	return bounded::holds_alternative(m_effects, bounded::detail::types<BatonPassing>());
-}
-
-auto LastUsedMove::baton_pass() & -> void {
-	m_effects = BatonPassing();
-}
-
 auto LastUsedMove::use_bide() & -> bounded::optional<HP::current_type> {
 	return bounded::visit(m_effects, bounded::overload(
 		[&](Bide & bide) {
@@ -136,10 +128,6 @@ auto LastUsedMove::use_recharge_move() & -> void {
 	m_effects = Recharging();
 }
 
-auto LastUsedMove::switch_decision_required() const -> bool {
-	return is_baton_passing() or is_u_turning();
-}
-
 auto LastUsedMove::is_uproaring() const -> bool {
 	return bounded::holds_alternative(m_effects, bounded::detail::types<UproarCounter>());
 }
@@ -155,13 +143,6 @@ auto LastUsedMove::use_uproar() & -> void {
 		[](UproarCounter & uproar) { uproar.advance_one_turn(); },
 		[](auto) { bounded::assert_or_assume_unreachable(); }
 	));
-}
-
-auto LastUsedMove::is_u_turning() const -> bool {
-	return bounded::holds_alternative(m_effects, bounded::detail::types<UTurning>());
-}
-auto LastUsedMove::u_turn() & -> void {
-	m_effects = UTurning{};
 }
 
 auto LastUsedMove::vanish_doubles_power(Generation const generation, Moves const move_name) const -> bool {

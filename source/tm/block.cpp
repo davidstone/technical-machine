@@ -139,13 +139,14 @@ auto is_blocked_due_to_lock_in(Generation const generation, ActivePokemon const 
 		is_locked_in_to_different_move(generation, user, move, weather);
 }
 
-auto is_legal_selection(Generation const generation, Team const & user, Move const move, ActivePokemon const other, Weather const weather, bool const found_selectable_move) {
-	auto const & pokemon = user.pokemon();
-	if (pokemon.switch_decision_required()) {
+auto is_legal_selection(Generation const generation, Team const & user, Move const move, Team const & other, Weather const weather, bool const found_selectable_move) {
+	auto const pokemon = user.pokemon();
+	auto const other_pokemon = other.pokemon();
+	if (user.size() > 1_bi and pokemon.switch_decision_required()) {
 		return is_switch(move.name()) and would_switch_to_different_pokemon(user.all_pokemon(), move.name());
 	}
 	auto const is_pass = move == Moves::Pass;
-	if (other.switch_decision_required()) {
+	if (other.size() > 1_bi and other_pokemon.switch_decision_required()) {
 		return is_pass;
 	}
 	if (pokemon.moved()) {
@@ -154,16 +155,16 @@ auto is_legal_selection(Generation const generation, Team const & user, Move con
 	return
 		!is_pass and
 		!is_blocked_due_to_lock_in(generation, pokemon, move.name(), weather) and
-		is_not_illegal_switch(generation, user, move.name(), other, weather) and
+		is_not_illegal_switch(generation, user, move.name(), other_pokemon, weather) and
 		(move != Moves::Struggle or !found_selectable_move) and
-		!(block1(pokemon, move, other)) and
+		!(block1(pokemon, move, other_pokemon)) and
 		!(block2(pokemon, move.name(), weather)) and
 		!blocked_by_torment(pokemon, move.name());
 }
 
 }	// namespace
 
-auto legal_selections(Generation const generation, Team const & user, ActivePokemon const other, Weather const weather) -> StaticVectorMove {
+auto legal_selections(Generation const generation, Team const & user, Team const & other, Weather const weather) -> StaticVectorMove {
 	// TODO: implement as
 	// auto result = filter(all_moves(user.pokemon()), [] { legal selection; });
 	// BOUNDED_ASSERT(!empty);

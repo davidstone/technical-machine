@@ -66,7 +66,7 @@ void basic() {
 
 	user.reset_start_of_turn();
 
-	auto const selections = legal_selections(generation, user, other.pokemon(), weather);
+	auto const selections = legal_selections(generation, user, other, weather);
 	if (!containers::equal(selections, expected)) {
 		for (auto const & move : selections) {
 			std::cerr << to_string(move) << '\n';
@@ -95,7 +95,7 @@ void test_two_moves_with_one_out_of_pp() {
 	
 	user.reset_start_of_turn();
 
-	auto const selections = legal_selections(generation, user, other.pokemon(), weather);
+	auto const selections = legal_selections(generation, user, other, weather);
 	if (size(selections) != 1_bi) {
 		throw std::runtime_error("Incorrect number of selections with one of two moves out of PP. Expected 1, got " + to_string(size(selections)));
 	}
@@ -125,7 +125,7 @@ void test_two_moves_with_both_out_of_pp() {
 	
 	user.reset_start_of_turn();
 
-	auto const selections = legal_selections(generation, user, other.pokemon(), Weather{});
+	auto const selections = legal_selections(generation, user, other, Weather{});
 	if (size(selections) != 1_bi) {
 		throw std::runtime_error("Incorrect number of selections with two of two moves out of PP. Expected 1, got " + to_string(size(selections)));
 	}

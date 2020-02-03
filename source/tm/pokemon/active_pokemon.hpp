@@ -147,10 +147,6 @@ public:
 		return m_flags.aqua_ring;
 	}
 
-	auto is_baton_passing() const -> bool {
-		return m_flags.last_used_move.is_baton_passing();
-	}
-
 	auto charge_boosted(Type const move_type) const -> bool {
 		return m_flags.charged and move_type == Type::Electric;
 	}
@@ -392,9 +388,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.aqua_ring = true;
 	}
 	auto attract(Generation, MutableActivePokemon other, Weather) const -> void;
-	auto baton_pass() const -> void {
-		m_flags.last_used_move.baton_pass();
-	}
 	auto charge() const {
 		m_flags.charged = true;
 	}
@@ -637,9 +630,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 	auto set_type(Type const type) const {
 		m_flags.types = PokemonTypes(type);
-	}
-	auto u_turn() const {
-		m_flags.last_used_move.u_turn();
 	}
 	auto use_uproar() const -> void {
 		m_flags.last_used_move.use_uproar();
