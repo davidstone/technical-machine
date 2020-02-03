@@ -1510,10 +1510,12 @@ auto handle_ability_blocks_move(Generation const generation, KnownMove const mov
 }
 
 auto try_use_move(Generation const generation, Team & user, UsedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
-	if (move.selected == Moves::Pass) {
-		return;
-	}
 	auto user_pokemon = user.pokemon();
+
+	auto unsuccessfully_use_move = [&] {
+		user_pokemon.unsuccessfully_use_move(move.executed);
+	};
+
 	auto const found_move = find_move(all_moves(user_pokemon), move.selected);
 	auto other_pokemon = other.pokemon();
 	user_pokemon.update_before_move();
@@ -1523,6 +1525,7 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 	// Need the side-effect from recharge
 	auto const is_recharging = user_pokemon.recharge();
 	if (!can_attempt_move_execution(user_pokemon, found_move, other_pokemon)) {
+		unsuccessfully_use_move();
 		return;
 	}
 	user_pokemon.handle_confusion();
@@ -1532,6 +1535,7 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 		}
 	}
 	if (!can_execute_move(user_pokemon, found_move, weather, is_recharging)) {
+		unsuccessfully_use_move();
 		return;
 	}
 	
@@ -1547,7 +1551,7 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 	// TODO: Make sure this does not happen because we missed due to a vanishing
 	// state
 	if (move.miss) {
-		user_pokemon.unsuccessfully_use_move(move.executed);
+		unsuccessfully_use_move();
 		if (user_pokemon.item(generation, weather) == Item::Blunder_Policy) {
 			user_pokemon.stage()[StatNames::SPE] += 2_bi;
 			user_pokemon.remove_item();
@@ -1562,7 +1566,7 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 		(get_hp(other_pokemon).current() == 0_bi and fails_against_fainted(target)) or
 		(other_pokemon.is_protecting() and blocked_by_protect(target, move.executed));
 	if (unsuccessful) {
-		user_pokemon.unsuccessfully_use_move(move.executed);
+		unsuccessfully_use_move();
 		return;
 	}
 
@@ -1583,12 +1587,15 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 			use_move(generation, user, executed_move, target, other, other_move, weather, actual_damage);
 		}
 	}
-	user_pokemon.increment_move_use_counter(move.executed);
+	user_pokemon.successfully_use_move(move.executed);
 }
 
 } // namespace
 
 auto call_move(Generation const generation, Team & user, UsedMove const move, Team & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
+	if (move.selected == Moves::Pass) {
+		return;
+	}
 	try_use_move(generation, user, move, other, other_move, weather, clear_status, actual_damage);
 	end_of_attack(generation, user, other, weather);
 }

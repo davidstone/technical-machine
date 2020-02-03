@@ -61,7 +61,7 @@ Team max_damage_physical_attacker(Item const item, Ability const ability, Nature
 	
 	pokemon.defense_curl();
 	for (unsigned n = 0; n != 10; ++n) {
-		pokemon.increment_move_use_counter(max_damage_physical_move.name());
+		pokemon.successfully_use_move(max_damage_physical_move.name());
 	}
 
 	return attacker;
@@ -196,7 +196,7 @@ void special_damage_test() {
 	attacker.pokemon().stage()[StatNames::SPA] += 6_bi;
 	
 	for (auto const n [[maybe_unused]] : containers::integer_range(10_bi)) {
-		attacker.pokemon().increment_move_use_counter(move.name());
+		attacker.pokemon().successfully_use_move(move.name());
 	}
 
 	attacker.pokemon().activate_flash_fire();

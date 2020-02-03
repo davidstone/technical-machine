@@ -61,7 +61,6 @@ struct ActivePokemonFlags {
 		damaged = false;
 		direct_damage_received = 0_bi;
 		flinched = false;
-		moved = false;
 		me_first_is_active = false;
 		is_loafing_turn = !is_loafing_turn;
 	}
@@ -110,7 +109,6 @@ private:
 	bool locked_on = false;
 	bool me_first_is_active = false;
 	bool minimized = false;
-	bool moved = false;
 	bool mud_sport = false;
 	bool power_trick_is_active = false;
 	bool is_roosting = false;
@@ -250,7 +248,7 @@ public:
 	}
 
 	auto moved() const -> bool {
-		return m_flags.moved;
+		return m_flags.last_used_move.moved_this_turn();
 	}
 
 	auto power_trick_is_active() const -> bool {
@@ -385,7 +383,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto update_before_move() const {
 		m_flags.destiny_bond = false;
 		m_flags.locked_on = false;
-		m_flags.moved = true;
 	}
 
 	auto set_ability(Ability const ability) const {
@@ -552,9 +549,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.minimized = true;
 		stage()[StatNames::EVA] += BOUNDED_CONDITIONAL(generation <= Generation::four, 1_bi, 2_bi);
 	}
-	auto set_not_moved() const {
-		m_flags.moved = false;
-	}
 	auto activate_mud_sport() const {
 		m_flags.mud_sport = true;
 	}
@@ -634,6 +628,8 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto switch_in(Generation const generation, Weather const weather) const {
 		m_pokemon.mark_as_seen();
 		m_flags.ability = m_pokemon.initial_ability();
+		// The exact switch is irrelevant
+		m_flags.last_used_move.successful_move(Moves::Switch0);
 		m_flags.switched_in_this_turn = true;
 		m_flags.types = PokemonTypes(generation, get_species(m_pokemon));
 		if (generation <= Generation::two and get_status(m_pokemon).name() == Statuses::toxic) {
@@ -705,8 +701,8 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto indirect_damage(Generation, Weather, HP::current_type const damage) const -> void;
 	auto direct_damage(Generation, Moves, Weather, damage_type const damage) const -> HP::current_type;
 
-	auto increment_move_use_counter(Moves const move) const {
-		m_flags.last_used_move.increment(move);
+	auto successfully_use_move(Moves const move) const {
+		m_flags.last_used_move.successful_move(move);
 	}
 	auto unsuccessfully_use_move(Moves const move) const {
 		m_flags.last_used_move.unsucessful_move(move);

@@ -70,6 +70,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		for (auto const stat : {StatNames::SPA, StatNames::SPE}) {
 			set_stat_ev(jolteon, stat, EV(252_bi));
 		}
+		team1.reset_start_of_turn();
 	}
 
 	Team team2(1_bi);
@@ -81,6 +82,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		for (auto const stat : {StatNames::ATK, StatNames::SPE}) {
 			set_stat_ev(gyarados, stat, EV(252_bi));
 		}
+		team2.reset_start_of_turn();
 	}
 
 	BOUNDED_ASSERT(expectiminimax(generation, team1, team2, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
@@ -94,6 +96,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		for (auto const stat : {StatNames::ATK, StatNames::SPE}) {
 			set_stat_ev(shedinja, stat, EV(252_bi));
 		}
+		team3.reset_start_of_turn();
 	}
 	
 	BOUNDED_ASSERT(expectiminimax(generation, team1, team3, weather, evaluate, depth, std::cout) == Moves::Shadow_Ball);
@@ -114,6 +117,7 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 		for (auto const stat : {StatNames::SPA, StatNames::SPE}) {
 			set_stat_ev(jolteon, stat, EV(252_bi));
 		}
+		attacker.reset_start_of_turn();
 	}
 
 	Team defender(1_bi);
@@ -124,6 +128,7 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 		containers::append(regular_moves(swampert), shuffled(Moves::Surf, Moves::Ice_Beam));
 		set_hp_ev(generation, swampert, EV(252_bi));
 		set_stat_ev(swampert, StatNames::DEF, EV(252_bi));
+		defender.reset_start_of_turn();
 	}
 
 	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Shadow_Ball);
@@ -143,6 +148,7 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 		for (auto const stat : {StatNames::ATK, StatNames::SPE}) {
 			set_stat_ev(charizard, stat, EV(252_bi));
 		}
+		attacker.reset_start_of_turn();
 	}
 
 	Team defender(1_bi);
@@ -153,6 +159,7 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 		containers::append(regular_moves(mew), shuffled(Moves::Soft_Boiled));
 		set_hp_ev(generation, mew, EV(252_bi));
 		set_stat_ev(mew, StatNames::SPD, EV(64_bi));
+		defender.reset_start_of_turn();
 	}
 
 	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Belly_Drum);
@@ -172,6 +179,7 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 		set_hp_ev(generation, hippopotas, EV(252_bi));
 		set_stat_ev(hippopotas, StatNames::ATK, EV(252_bi));
 		set_stat_ev(hippopotas, StatNames::SPE, EV(4_bi));
+		attacker.reset_start_of_turn();
 	}
 
 	Team defender(1_bi);
@@ -183,6 +191,7 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 		set_hp_ev(generation, wobbuffet, EV(252_bi));
 		set_stat_ev(wobbuffet, StatNames::DEF, EV(252_bi));
 		set_stat_ev(wobbuffet, StatNames::SPE, EV(4_bi));
+		defender.reset_start_of_turn();
 	}
 
 	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Curse);
@@ -207,6 +216,7 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		containers::append(regular_moves(alakazam), shuffled(Moves::Psycho_Cut, Moves::Recover));
 		set_stat_ev(alakazam, StatNames::ATK, EV(252_bi));
 	}
+	attacker.reset_start_of_turn();
 
 	Team defender(2_bi);
 	{
@@ -222,6 +232,7 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		containers::append(regular_moves(misdreavus), shuffled(Moves::Shadow_Ball));
 		set_stat_ev(misdreavus, StatNames::SPA, EV(252_bi));
 	}
+	defender.reset_start_of_turn();
 
 	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Belly_Drum);
 }
@@ -251,6 +262,7 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 			set_stat_ev(zapdos, stat, EV(252_bi));
 		}
 	}
+	attacker.reset_start_of_turn();
 
 	Team defender(1_bi);
 	{
@@ -274,6 +286,8 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		ActualDamage::Unknown{}
 	);
 	
+	defender.reset_start_of_turn();
+
 	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Switch2);
 }
 
@@ -293,6 +307,7 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 		set_hp_ev(generation, latias, EV(252_bi));
 		set_stat_ev(latias, StatNames::SPA, EV(120_bi));
 		set_stat_ev(latias, StatNames::SPD, EV(136_bi));
+		attacker.reset_start_of_turn();
 	}
 
 	Team defender(1_bi);
@@ -304,6 +319,7 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 		set_hp_ev(generation, suicune, EV(252_bi));
 		set_stat_ev(suicune, StatNames::SPA, EV(120_bi));
 		set_stat_ev(suicune, StatNames::SPD, EV(136_bi));
+		defender.reset_start_of_turn();
 	}
 
 	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Calm_Mind);
@@ -324,6 +340,7 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		set_hp_ev(generation, jolteon, EV(4_bi));
 		set_stat_ev(jolteon, StatNames::SPA, EV(252_bi));
 		set_stat_ev(jolteon, StatNames::SPE, EV(252_bi));
+		attacker.reset_start_of_turn();
 	}
 
 	auto defender = Team(1_bi);
@@ -335,6 +352,7 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		set_hp_ev(generation, gyarados, EV(4_bi));
 		set_stat_ev(gyarados, StatNames::ATK, EV(252_bi));
 		set_stat_ev(gyarados, StatNames::SPE, EV(252_bi));
+		defender.reset_start_of_turn();
 	}
 	
 	constexpr auto keep_status = false;
@@ -401,6 +419,8 @@ void performance(Evaluate const & evaluate) {
 	}
 	ai.pokemon().switch_in(generation, weather);
 	foe.pokemon().switch_in(generation, weather);
+	ai.reset_start_of_turn();
+	foe.reset_start_of_turn();
 
 	expectiminimax(generation, ai, foe, weather, evaluate, depth, std::cout);
 }

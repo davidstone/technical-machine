@@ -570,6 +570,9 @@ Moves expectiminimax(Generation const generation, Team const & ai, Team const & 
 	log << "Evaluating to a depth of " << depth.depth_to_search() << "...\n";
 	boost::timer timer;
 	auto const best_move = select_type_of_move(generation, ai, foe, weather, evaluate, depth, log);
+	if (best_move.move == Moves::Pass) {
+		throw std::runtime_error("Should never evaluate a position in which it is legal to use Pass.");
+	}
 	log << "Determined best move in " << timer.elapsed() << " seconds: ";
 	print_best_move(ai, best_move, log);
 	return best_move.move;

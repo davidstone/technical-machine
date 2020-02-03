@@ -32,17 +32,18 @@ namespace {
 constexpr auto generation = Generation::four;
 
 void basic() {
+	constexpr auto expected = containers::array{
+		Move(generation, Moves::Thunderbolt),
+		Move(generation, Moves::Charm),
+		Move(generation, Moves::Thunder),
+		Move(generation, Moves::Shadow_Ball)
+	};
 	auto user = Team(1_bi, true);
 	{
 		auto & jolteon = user.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::male, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
 		containers::append(
 			regular_moves(jolteon),
-			containers::array{
-				Move(generation, Moves::Thunderbolt),
-				Move(generation, Moves::Charm),
-				Move(generation, Moves::Thunder),
-				Move(generation, Moves::Shadow_Ball)
-			}
+			expected
 		);
 	}
 	auto weather = Weather();
@@ -63,9 +64,14 @@ void basic() {
 	}
 	other.pokemon().switch_in(generation, weather);
 
+	user.reset_start_of_turn();
+
 	auto const selections = legal_selections(generation, user, other.pokemon(), weather);
-	if (size(selections) != 4_bi) {
-		throw std::runtime_error("Invalid number of legal selections");
+	if (!containers::equal(selections, expected)) {
+		for (auto const & move : selections) {
+			std::cerr << to_string(move) << '\n';
+		}
+		throw std::runtime_error("Invalid legal selections");
 	}
 }
 
@@ -87,6 +93,8 @@ void test_two_moves_with_one_out_of_pp() {
 	other.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
 	other.pokemon().switch_in(generation, weather);
 	
+	user.reset_start_of_turn();
+
 	auto const selections = legal_selections(generation, user, other.pokemon(), weather);
 	if (size(selections) != 1_bi) {
 		throw std::runtime_error("Incorrect number of selections with one of two moves out of PP. Expected 1, got " + to_string(size(selections)));
@@ -115,6 +123,8 @@ void test_two_moves_with_both_out_of_pp() {
 	other.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
 	other.pokemon().switch_in(generation, weather);
 	
+	user.reset_start_of_turn();
+
 	auto const selections = legal_selections(generation, user, other.pokemon(), Weather{});
 	if (size(selections) != 1_bi) {
 		throw std::runtime_error("Incorrect number of selections with two of two moves out of PP. Expected 1, got " + to_string(size(selections)));

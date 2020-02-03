@@ -63,15 +63,21 @@ struct LastUsedMove {
 	constexpr auto unsucessful_move(Moves const move) & {
 		m_move = move;
 		m_consecutive_successes = 0_bi;
+		m_moved_this_turn = true;
 	}
 
-	constexpr auto increment(Moves const move) & {
+	constexpr auto successful_move(Moves const move) & {
 		if (m_move == move) {
 			++m_consecutive_successes;
 		} else {
 			m_move = move;
 			m_consecutive_successes = 1_bi;
 		}
+		m_moved_this_turn = true;
+	}
+
+	constexpr auto moved_this_turn() const {
+		return m_moved_this_turn;
 	}
 
 	auto is_baton_passing() const -> bool;
@@ -147,6 +153,7 @@ private:
 
 	Moves m_move = Moves::Switch0;
 	bounded::clamped_integer<0, 10> m_consecutive_successes = 0_bi;
+	bool m_moved_this_turn = false;
 	bounded::variant<
 		Empty,
 		Bouncing,
