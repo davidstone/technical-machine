@@ -25,7 +25,6 @@
 
 #include <bounded/assert.hpp>
 #include <bounded/insert.hpp>
-#include <bounded/detail/overload.hpp>
 #include <bounded/unreachable.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
@@ -34,131 +33,6 @@ namespace technicalmachine {
 
 template struct ActivePokemonImpl<true>;
 template struct ActivePokemonImpl<false>;
-
-auto ActivePokemonFlags::reset_start_of_turn() & -> void {
-	bounded::visit(used_move_effects, [&]<typename T>(T) {
-		if constexpr (std::is_same_v<T, Enduring> or std::is_same_v<T, Protecting>) {
-			used_move_effects = Empty();
-		}
-	});
-	damaged = false;
-	direct_damage_received = 0_bi;
-	flinched = false;
-	moved = false;
-	me_first_is_active = false;
-	is_loafing_turn = !is_loafing_turn;
-}
-
-auto ActivePokemonFlags::reset_switch() & -> void {
-	// TODO: remove some of these when the foe switches, too
-	if (!bounded::holds_alternative(used_move_effects, bounded::detail::types<BatonPassing>{})) {
-		aqua_ring = false;
-		confusion = {};
-		is_cursed = false;
-		embargo = {};
-		has_focused_energy = false;
-		gastro_acid = false;
-		ingrained = false;
-		leech_seeded = false;
-		locked_on = false;
-		magnet_rise = {};
-		perish_song = {};
-		power_trick_is_active = false;
-		stage = {};
-		substitute = {};
-	}
-	attracted = false;
-	charged = false;
-	defense_curled = false;
-	destiny_bond = false;
-	disable = Disable{};
-	encore = {};
-	flash_fire = false;
-	flinched = false;
-	fully_trapped = false;
-	heal_block = {};
-	identified = false;
-	used_imprison = false;
-	last_used_move = {};
-	is_loafing_turn = true;
-	minimized = false;
-	me_first_is_active = false;
-	mud_sport = false;
-	partial_trap = {};
-	is_roosting = false;
-	slow_start = {};
-	stockpile = {};
-	is_tormented = false;
-	unburdened = false;
-	water_sport = false;
-	taunt = {};
-	yawn = {};
-	used_move_effects = Empty();
-}
-
-auto ActivePokemonFlags::is_baton_passing() const -> bool {
-	return bounded::holds_alternative(used_move_effects, bounded::detail::types<BatonPassing>{});
-}
-
-auto ActivePokemonFlags::is_charging_up() const -> bool {
-	return bounded::holds_alternative(used_move_effects, bounded::detail::types<ChargingUp>{});
-}
-
-auto ActivePokemonFlags::is_enduring() const -> bool {
-	return bounded::holds_alternative(used_move_effects, bounded::detail::types<Enduring>());
-}
-
-auto ActivePokemonFlags::endure() & -> void {
-	used_move_effects = Enduring();
-}
-
-auto ActivePokemonFlags::is_locked_in_by_move() const -> bool {
-	return !bounded::holds_alternative(used_move_effects, bounded::detail::types<Empty>{});
-}
-
-auto ActivePokemonFlags::is_protecting() const -> bool {
-	return bounded::holds_alternative(used_move_effects, bounded::detail::types<Protecting>());
-}
-
-auto ActivePokemonFlags::protect() & -> void {
-	used_move_effects = Protecting();
-}
-
-auto ActivePokemonFlags::break_protect() & -> void {
-	if (is_protecting()) {
-		used_move_effects = Empty();
-	}
-}
-
-auto ActivePokemonFlags::switch_decision_required(Pokemon const & pokemon) const -> bool {
-	return bounded::visit(used_move_effects, bounded::overload(
-		[](BatonPassing) { return true; },
-		[](UTurning) { return true; },
-		[&](auto const &) { return get_hp(pokemon) == 0_bi; }
-	));
-}
-
-auto ActivePokemonFlags::is_uproaring() const -> bool {
-	return bounded::holds_alternative(used_move_effects, bounded::detail::types<UproarCounter>{});
-}
-
-auto ActivePokemonFlags::vanish_doubles_power(Generation const generation, Moves const move_name) const -> bool {
-	if (generation <= Generation::one) {
-		return false;
-	}
-	switch (move_name) {
-	case Moves::Earthquake:
-	case Moves::Magnitude:
-		return bounded::holds_alternative(used_move_effects, bounded::detail::types<Digging>{});
-	case Moves::Gust:
-	case Moves::Twister:
-		return bounded::holds_alternative(used_move_effects, bounded::detail::types<Bouncing>{}) or bounded::holds_alternative(used_move_effects, bounded::detail::types<Flying>{});
-	case Moves::Surf:
-		return bounded::holds_alternative(used_move_effects, bounded::detail::types<Diving>{});
-	default:
-		return false;
-	}
-}
 
 namespace {
 
@@ -214,51 +88,6 @@ auto MutableActivePokemon::attract(Generation const generation, MutableActivePok
 	}
 }
 
-auto MutableActivePokemon::baton_pass() const -> void {
-	m_flags.used_move_effects = BatonPassing{};
-}
-
-auto MutableActivePokemon::use_charge_up_move() const -> void {
-	m_flags.used_move_effects = ChargingUp{};
-}
-
-auto MutableActivePokemon::advance_lock_in(Generation const generation, bool const ending, Weather const weather) const -> void {
-	bounded::visit(m_flags.used_move_effects, bounded::overload(
-		[&](Rampage & rampage) {
-			if (ending) {
-				m_flags.used_move_effects = Empty();
-				confuse(generation, weather);
-			} else {
-				rampage.advance_one_turn();
-			}
-		},
-		[&](UproarCounter & uproar) {
-			if (ending) {
-				m_flags.used_move_effects = Empty();
-			} else {
-				uproar.advance_one_turn();
-			}
-		},
-		[](auto const &) {}
-	));
-}
-
-auto MutableActivePokemon::activate_rampage() const -> void {
-	// TODO: Have it be active when it is constructed
-	auto rampage = Rampage{};
-	rampage.activate();
-	m_flags.used_move_effects = rampage;
-}
-auto MutableActivePokemon::recharge() const -> bool {
-	return bounded::visit(m_flags.used_move_effects, bounded::overload(
-		[&](Recharging) { m_flags.used_move_effects = Empty(); return true; },
-		[](auto const &) { return false; }
-	));
-}
-auto MutableActivePokemon::use_recharge_move() const -> void {
-	m_flags.used_move_effects = Recharging{};
-}
-
 namespace {
 
 auto can_use_substitute(Pokemon const & pokemon) -> bool {
@@ -275,62 +104,59 @@ auto MutableActivePokemon::use_substitute(Generation const generation, Weather c
 	indirect_damage(generation, weather, m_flags.substitute.create(max_hp));
 }
 
-auto MutableActivePokemon::u_turn() const -> void {
-	m_flags.used_move_effects = UTurning{};
-}
-auto MutableActivePokemon::use_uproar() const -> void {
-	bounded::visit(m_flags.used_move_effects, bounded::overload(
-		// TODO: Have it be active when it is constructed
-		[&](Empty) { bounded::insert(m_flags.used_move_effects, UproarCounter()).advance_one_turn(); },
-		[](UproarCounter & uproar) { uproar.advance_one_turn(); },
-		[](auto const &) { bounded::assert_or_assume_unreachable(); }
-	));
-}
-
-template<typename T>
-auto MutableActivePokemon::use_vanish_move(Generation const generation, Weather const weather) const -> bool {
-	return bounded::visit(m_flags.used_move_effects, bounded::overload(
-		[&](T) {
-			m_flags.used_move_effects = Empty();
-			return true;
-		},
-		[&](auto) {
-			if (item(generation, weather) == Item::Power_Herb) {
-				remove_item();
-				return true;
-			}
-			m_flags.used_move_effects = T{};
-			return false;
-		}
-	));
-}
-
-auto MutableActivePokemon::bounce(Generation const generation, Weather const weather) const -> bool {
-	return use_vanish_move<Bouncing>(generation, weather);
-}
-auto MutableActivePokemon::dig(Generation const generation, Weather const weather) const -> bool {
-	return use_vanish_move<Digging>(generation, weather);
-}
-auto MutableActivePokemon::dive(Generation const generation, Weather const weather) const -> bool {
-	return use_vanish_move<Diving>(generation, weather);
-}
-auto MutableActivePokemon::fly(Generation const generation, Weather const weather) const -> bool {
-	return use_vanish_move<Flying>(generation, weather);
-}
-auto MutableActivePokemon::shadow_force(Generation const generation, Weather const weather) const -> bool {
-	return use_vanish_move<ShadowForcing>(generation, weather);
+auto MutableActivePokemon::switch_out() const -> void {
+	if (clears_status_on_switch(ability())) {
+		clear_status();
+	}
+	// TODO: remove some of these when the foe switches, too
+	if (!m_flags.last_used_move.is_baton_passing()) {
+		m_flags.aqua_ring = false;
+		m_flags.confusion = {};
+		m_flags.is_cursed = false;
+		m_flags.embargo = {};
+		m_flags.has_focused_energy = false;
+		m_flags.gastro_acid = false;
+		m_flags.ingrained = false;
+		m_flags.leech_seeded = false;
+		m_flags.locked_on = false;
+		m_flags.magnet_rise = {};
+		m_flags.perish_song = {};
+		m_flags.power_trick_is_active = false;
+		m_flags.stage = {};
+		m_flags.substitute = {};
+	}
+	m_flags.attracted = false;
+	m_flags.charged = false;
+	m_flags.defense_curled = false;
+	m_flags.destiny_bond = false;
+	m_flags.disable = Disable{};
+	m_flags.encore = {};
+	m_flags.flash_fire = false;
+	m_flags.flinched = false;
+	m_flags.fully_trapped = false;
+	m_flags.heal_block = {};
+	m_flags.identified = false;
+	m_flags.used_imprison = false;
+	m_flags.last_used_move = {};
+	m_flags.is_loafing_turn = true;
+	m_flags.minimized = false;
+	m_flags.me_first_is_active = false;
+	m_flags.mud_sport = false;
+	m_flags.partial_trap = {};
+	m_flags.is_roosting = false;
+	m_flags.slow_start = {};
+	m_flags.stockpile = {};
+	m_flags.is_tormented = false;
+	m_flags.unburdened = false;
+	m_flags.water_sport = false;
+	m_flags.taunt = {};
+	m_flags.yawn = {};
 }
 
 auto MutableActivePokemon::use_bide(Generation const generation, MutableActivePokemon target, Weather const weather) const -> void {
-	bounded::visit(m_flags.used_move_effects, bounded::overload(
-		[&](auto const &) { m_flags.used_move_effects = Bide{}; },
-		[&](Bide & bide) {
-			if (auto const damage = bide.advance_one_turn()) {
-				change_hp(generation, target, weather, -*damage * 2_bi);
-				m_flags.used_move_effects = Empty();
-			}
-		}
-	));
+	if (auto const damage = m_flags.last_used_move.use_bide()) {
+		change_hp(generation, target, weather, -*damage * 2_bi);
+	}
 }
 
 auto MutableActivePokemon::indirect_damage(Generation const generation, Weather const weather, HP::current_type const damage) const -> void {
@@ -371,16 +197,13 @@ auto MutableActivePokemon::direct_damage(Generation const generation, Moves cons
 		return m_flags.substitute.damage(damage);
 	}
 	auto const original_hp = get_hp(m_pokemon).current();
-	auto const block_ko = original_hp <= damage and handle_ko(generation, *this, m_flags.is_enduring(), move, weather);
+	auto const block_ko = original_hp <= damage and handle_ko(generation, *this, m_flags.last_used_move.is_enduring(), move, weather);
 	auto const applied_damage = block_ko ?
 		static_cast<HP::current_type>(original_hp - 1_bi) :
 		bounded::min(damage, original_hp);
 	indirect_damage(generation, weather, applied_damage);
 	m_flags.direct_damage_received = applied_damage;
-	bounded::visit(m_flags.used_move_effects, bounded::overload(
-		[=](Bide & bide) { bide.add_damage(applied_damage); },
-		[](auto const &) {}
-	));
+	m_flags.last_used_move.direct_damage(applied_damage);
 	return applied_damage;
 }
 

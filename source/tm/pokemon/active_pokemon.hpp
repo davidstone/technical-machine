@@ -28,15 +28,11 @@
 #include <tm/pokemon/partial_trap.hpp>
 #include <tm/pokemon/perish_song.hpp>
 #include <tm/pokemon/pokemon.hpp>
-#include <tm/pokemon/rampage.hpp>
 #include <tm/pokemon/slow_start.hpp>
 #include <tm/pokemon/stockpile.hpp>
 #include <tm/pokemon/substitute.hpp>
 #include <tm/pokemon/taunt.hpp>
-#include <tm/pokemon/uproar.hpp>
 #include <tm/pokemon/yawn.hpp>
-
-#include <tm/bide/bide.hpp>
 
 #include <tm/move/calculate_damage.hpp>
 #include <tm/move/moves.hpp>
@@ -52,7 +48,6 @@
 #include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>
-#include <bounded/detail/variant/variant.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 
@@ -60,59 +55,21 @@ namespace technicalmachine {
 struct ActivePokemon;
 struct MutableActivePokemon;
 
-struct Empty {};
-
-// Various states a Pokemon can be in due to vanishing moves.
-struct Bouncing {};
-struct Digging {};
-struct Diving {};
-struct Flying {};
-struct ShadowForcing {};
-
-struct BatonPassing {};
-struct ChargingUp {};
-struct Enduring {};
-struct Protecting {};
-struct Recharging {};
-struct UTurning {};
-
 struct ActivePokemonFlags {
-	auto reset_start_of_turn() & -> void;
+	auto reset_start_of_turn() & {
+		last_used_move.reset_start_of_turn();
+		damaged = false;
+		direct_damage_received = 0_bi;
+		flinched = false;
+		moved = false;
+		me_first_is_active = false;
+		is_loafing_turn = !is_loafing_turn;
+	}
 private:
-	auto is_baton_passing() const -> bool;
-	auto is_charging_up() const -> bool;
-	auto is_enduring() const -> bool;
-	auto endure() & -> void;
-	auto is_locked_in_by_move() const -> bool;
-	auto is_protecting() const -> bool;
-	auto protect() & -> void;
-	auto break_protect() & -> void;
-	auto reset_switch() & -> void;
-	auto switch_decision_required(Pokemon const & pokemon) const -> bool;
-	auto is_uproaring() const -> bool;
-	auto vanish_doubles_power(Generation, Moves) const -> bool;
-
 	template<bool>
 	friend struct ActivePokemonImpl;
 	friend struct MutableActivePokemon;
 	
-	bounded::variant<
-		Empty,
-		Bouncing,
-		Digging,
-		Diving,
-		Flying,
-		ShadowForcing,
-		BatonPassing,
-		Bide,
-		ChargingUp,
-		Enduring,
-		Protecting,
-		Rampage,
-		Recharging,
-		UproarCounter,
-		UTurning
-	> used_move_effects{Empty()};
 	Ability ability;
 	Confusion confusion;
 	Disable disable;
@@ -197,7 +154,7 @@ public:
 	}
 
 	auto is_baton_passing() const -> bool {
-		return m_flags.is_baton_passing();
+		return m_flags.last_used_move.is_baton_passing();
 	}
 
 	auto charge_boosted(Type const move_type) const -> bool {
@@ -205,7 +162,7 @@ public:
 	}
 
 	auto is_charging_up() const -> bool {
-		return m_flags.is_charging_up();
+		return m_flags.last_used_move.is_charging_up();
 	}
 
 	auto is_confused() const -> bool {
@@ -301,11 +258,11 @@ public:
 	}
 	
 	auto is_protecting() const {
-		return m_flags.is_protecting();
+		return m_flags.last_used_move.is_protecting();
 	}
 
 	auto is_locked_in_by_move() const -> bool {
-		return m_flags.is_locked_in_by_move();
+		return m_flags.last_used_move.is_locked_in_by_move();
 	}
 
 	auto is_roosting() const -> bool {
@@ -333,7 +290,7 @@ public:
 	}
 
 	auto switch_decision_required() const -> bool {
-		return m_flags.switch_decision_required(m_pokemon);
+		return get_hp(m_pokemon) == 0_bi or m_flags.last_used_move.switch_decision_required();
 	}
 	auto switched_in_this_turn() const -> bool {
 		return m_flags.switched_in_this_turn;
@@ -364,11 +321,11 @@ public:
 	}
 
 	auto is_uproaring() const -> bool {
-		return m_flags.is_uproaring();
+		return m_flags.last_used_move.is_uproaring();
 	}
 
 	auto vanish_doubles_power(Generation const generation, Moves const move_name) const -> bool {
-		return m_flags.vanish_doubles_power(generation, move_name);
+		return m_flags.last_used_move.vanish_doubles_power(generation, move_name);
 	}
 
 	operator PokemonRef() const {
@@ -446,11 +403,15 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.aqua_ring = true;
 	}
 	auto attract(Generation, MutableActivePokemon other, Weather) const -> void;
-	auto baton_pass() const -> void;
+	auto baton_pass() const -> void {
+		m_flags.last_used_move.baton_pass();
+	}
 	auto charge() const {
 		m_flags.charged = true;
 	}
-	auto use_charge_up_move() const -> void;
+	auto use_charge_up_move() const -> void {
+		m_flags.last_used_move.use_charge_up_move();
+	}
 	auto confuse(Generation const generation, Weather const weather) const -> void {
 		if (blocks_confusion(ability())) {
 			return;
@@ -494,7 +455,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.encore.advance_one_turn();
 	}
 	auto endure() const {
-		m_flags.endure();
+		m_flags.last_used_move.endure();
 	}
 	auto activate_flash_fire() const {
 		m_flags.flash_fire = true;
@@ -563,7 +524,12 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto hit_with_leech_seed() const {
 		m_flags.leech_seeded = true;
 	}
-	auto advance_lock_in(Generation, bool ending, Weather) const -> void;
+	auto advance_lock_in(Generation const generation, bool const ending, Weather const weather) const {
+		auto const confused = m_flags.last_used_move.advance_lock_in(ending);
+		if (confused) {
+			confuse(generation, weather);
+		}
+	}
 	auto use_lock_on() const {
 		m_flags.locked_on = true;
 	}
@@ -618,14 +584,20 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.power_trick_is_active = !m_flags.power_trick_is_active;
 	}
 	auto protect() const {
-		m_flags.protect();
+		m_flags.last_used_move.protect();
 	}
 	auto break_protect() const {
-		m_flags.break_protect();
+		m_flags.last_used_move.break_protect();
 	}
-	auto activate_rampage() const -> void;
-	auto recharge() const -> bool;
-	auto use_recharge_move() const -> void;
+	auto activate_rampage() const {
+		m_flags.last_used_move.activate_rampage();
+	}
+	auto recharge() const -> bool {
+		return m_flags.last_used_move.recharge();
+	}
+	auto use_recharge_move() const {
+		m_flags.last_used_move.use_recharge_move();
+	}
 	auto roost() const {
 		m_flags.is_roosting = true;
 	}
@@ -672,12 +644,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 			activate_berserk_gene(generation, *this, weather);
 		}
 	}
-	auto switch_out() const {
-		if (clears_status_on_switch(ability())) {
-			clear_status();
-		}
-		m_flags.reset_switch();
-	}
+	auto switch_out() const -> void;
 
 	auto taunt(Generation const generation, Weather const weather) const {
 		m_flags.taunt.activate();
@@ -693,8 +660,12 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	auto set_type(Type const type) const {
 		m_flags.types = PokemonTypes(type);
 	}
-	auto u_turn() const -> void;
-	auto use_uproar() const -> void;
+	auto u_turn() const {
+		m_flags.last_used_move.u_turn();
+	}
+	auto use_uproar() const -> void {
+		m_flags.last_used_move.use_uproar();
+	}
 	auto activate_water_sport() const {
 		m_flags.water_sport = true;
 	}
@@ -709,11 +680,21 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 
 	// Returns whether the move hits
-	auto bounce(Generation, Weather) const -> bool;
-	auto dig(Generation, Weather) const -> bool;
-	auto dive(Generation, Weather) const -> bool;
-	auto fly(Generation, Weather) const -> bool;
-	auto shadow_force(Generation, Weather) const -> bool;
+	auto bounce(Generation const generation, Weather const weather) const -> bool {
+		return use_vanish_move(generation, weather, &LastUsedMove::bounce);
+	}
+	auto dig(Generation const generation, Weather const weather) const -> bool {
+		return use_vanish_move(generation, weather, &LastUsedMove::dig);
+	}
+	auto dive(Generation const generation, Weather const weather) const -> bool {
+		return use_vanish_move(generation, weather, &LastUsedMove::dive);
+	}
+	auto fly(Generation const generation, Weather const weather) const -> bool {
+		return use_vanish_move(generation, weather, &LastUsedMove::fly);
+	}
+	auto shadow_force(Generation const generation, Weather const weather) const -> bool {
+		return use_vanish_move(generation, weather, &LastUsedMove::shadow_force);
+	}
 
 	auto use_bide(Generation, MutableActivePokemon target, Weather) const -> void;
 
@@ -743,8 +724,15 @@ private:
 		}
 	}
 
-	template<typename T>
-	auto use_vanish_move(Generation, Weather) const -> bool;
+	using VanishFunction = auto (LastUsedMove::*)(Item) & -> VanishOutcome;
+	auto use_vanish_move(Generation const generation, Weather const weather, VanishFunction function) const -> bool {
+		auto result = std::invoke(function, m_flags.last_used_move, item(generation, weather));
+		switch (result) {
+			case VanishOutcome::vanishes: return false;
+			case VanishOutcome::attacks: return true;
+			case VanishOutcome::consumes_item: remove_item(); return true;
+		}
+	}
 };
 
 inline auto change_hp(Generation const generation, MutableActivePokemon pokemon, Weather const weather, auto const change) {
