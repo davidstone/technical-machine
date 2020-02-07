@@ -141,24 +141,26 @@ auto LastUsedMove::vanish_doubles_power(Generation const generation, Moves const
 	if (generation <= Generation::one) {
 		return false;
 	}
-	switch (move_name) {
-	case Moves::Earthquake:
-	case Moves::Magnitude:
-		return bounded::holds_alternative(m_effects, bounded::detail::types<Digging>());
-	case Moves::Gust:
-	case Moves::Twister:
-		return bounded::holds_alternative(m_effects, bounded::detail::types<Bouncing>()) or bounded::holds_alternative(m_effects, bounded::detail::types<Flying>());
-	case Moves::Surf:
-		return bounded::holds_alternative(m_effects, bounded::detail::types<Diving>());
-	default:
+	if (!bounded::holds_alternative(m_effects, bounded::detail::types<Vanishing>())) {
 		return false;
+	}
+	switch (move_name) {
+		case Moves::Earthquake:
+		case Moves::Magnitude:
+			return m_move == Moves::Dig;
+		case Moves::Gust:
+		case Moves::Twister:
+			return m_move == Moves::Bounce or m_move == Moves::Fly;
+		case Moves::Surf:
+			return m_move == Moves::Dive;
+		default:
+			return false;
 	}
 }
 
-template<typename T>
 auto LastUsedMove::use_vanish_move(Item const item) & -> VanishOutcome {
 	return bounded::visit(m_effects, bounded::overload(
-		[&](T) {
+		[&](Vanishing) {
 			m_effects = Empty();
 			return VanishOutcome::vanishes;
 		},
@@ -166,26 +168,10 @@ auto LastUsedMove::use_vanish_move(Item const item) & -> VanishOutcome {
 			if (item == Item::Power_Herb) {
 				return VanishOutcome::consumes_item;
 			}
-			m_effects = T{};
+			m_effects = Vanishing();
 			return VanishOutcome::attacks;
 		}
 	));
-}
-
-auto LastUsedMove::bounce(Item const item) & -> VanishOutcome {
-	return use_vanish_move<Bouncing>(item);
-}
-auto LastUsedMove::dig(Item const item) & -> VanishOutcome {
-	return use_vanish_move<Digging>(item);
-}
-auto LastUsedMove::dive(Item const item) & -> VanishOutcome {
-	return use_vanish_move<Diving>(item);
-}
-auto LastUsedMove::fly(Item const item) & -> VanishOutcome {
-	return use_vanish_move<Flying>(item);
-}
-auto LastUsedMove::shadow_force(Item const item) & -> VanishOutcome {
-	return use_vanish_move<ShadowForcing>(item);
 }
 
 } // namespace technicalmachine

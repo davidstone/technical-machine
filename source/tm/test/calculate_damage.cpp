@@ -128,7 +128,10 @@ void special_power_test() {
 	auto const move = all_moves(pokemon).add(Move(generation, Moves::Surf));
 
 	Team defender = max_damage_special_defender();
-	defender.pokemon().dive(generation, Weather());
+	auto defender_pokemon = defender.pokemon();
+	all_moves(defender_pokemon).add(Move(generation, Moves::Dive));
+	defender_pokemon.successfully_use_move(Moves::Dive);
+	defender_pokemon.use_vanish_move(generation, Weather());
 
 	auto const power = move_power(
 		generation,

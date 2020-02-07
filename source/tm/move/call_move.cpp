@@ -373,7 +373,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		case Moves::Bounce:
-			if (user.bounce(generation, weather) and executed.variable.effect_activates()) {
+			if (user.use_vanish_move(generation, weather) and executed.variable.effect_activates()) {
 				other.pokemon().apply_status(generation, Statuses::paralysis, user, weather);
 			}
 			break;
@@ -524,13 +524,12 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.protect();
 			break;
 		case Moves::Dig:
-			user.dig(generation, weather);
+		case Moves::Dive:
+		case Moves::Fly:
+			user.use_vanish_move(generation, weather);
 			break;
 		case Moves::Disable:
 			other.pokemon().disable(generation, other.pokemon().last_used_move().name(), weather);
-			break;
-		case Moves::Dive:
-			user.dive(generation, weather);
 			break;
 		case Moves::Doom_Desire:
 		case Moves::Future_Sight:
@@ -591,9 +590,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Fling:
 			fling_side_effects(generation, user, other.pokemon(), weather);
-			break;
-		case Moves::Fly:
-			user.fly(generation, weather);
 			break;
 		case Moves::Focus_Energy:
 			user.focus_energy();
@@ -917,7 +913,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		case Moves::Shadow_Force:
-			user.shadow_force(generation, weather);
+			user.use_vanish_move(generation, weather);
 			// TODO: other.pokemon().break_protect();
 			break;
 		case Moves::Sharpen:

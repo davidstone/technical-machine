@@ -645,20 +645,13 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 
 	// Returns whether the move hits
-	auto bounce(Generation const generation, Weather const weather) const -> bool {
-		return use_vanish_move(generation, weather, &LastUsedMove::bounce);
-	}
-	auto dig(Generation const generation, Weather const weather) const -> bool {
-		return use_vanish_move(generation, weather, &LastUsedMove::dig);
-	}
-	auto dive(Generation const generation, Weather const weather) const -> bool {
-		return use_vanish_move(generation, weather, &LastUsedMove::dive);
-	}
-	auto fly(Generation const generation, Weather const weather) const -> bool {
-		return use_vanish_move(generation, weather, &LastUsedMove::fly);
-	}
-	auto shadow_force(Generation const generation, Weather const weather) const -> bool {
-		return use_vanish_move(generation, weather, &LastUsedMove::shadow_force);
+	auto use_vanish_move(Generation const generation, Weather const weather) const -> bool {
+		auto result = m_flags.last_used_move.use_vanish_move(item(generation, weather));
+		switch (result) {
+			case VanishOutcome::vanishes: return false;
+			case VanishOutcome::attacks: return true;
+			case VanishOutcome::consumes_item: remove_item(); return true;
+		}
 	}
 
 	auto use_bide(Generation, MutableActivePokemon target, Weather) const -> void;
@@ -686,16 +679,6 @@ private:
 		} else {
 			m_pokemon.set_status(status);
 			m_flags.status.set(status);
-		}
-	}
-
-	using VanishFunction = auto (LastUsedMove::*)(Item) & -> VanishOutcome;
-	auto use_vanish_move(Generation const generation, Weather const weather, VanishFunction function) const -> bool {
-		auto result = std::invoke(function, m_flags.last_used_move, item(generation, weather));
-		switch (result) {
-			case VanishOutcome::vanishes: return false;
-			case VanishOutcome::attacks: return true;
-			case VanishOutcome::consumes_item: remove_item(); return true;
 		}
 	}
 };

@@ -36,19 +36,6 @@ namespace technicalmachine {
 
 using namespace bounded::literal;
 
-struct Empty {};
-
-// Various states a Pokemon can be in due to vanishing moves.
-struct Bouncing {};
-struct Digging {};
-struct Diving {};
-struct Flying {};
-struct ShadowForcing {};
-
-struct ChargingUp {};
-struct Protecting {};
-struct Recharging {};
-
 enum class VanishOutcome { vanishes, attacks, consumes_item };
 
 struct LastUsedMove {
@@ -158,12 +145,7 @@ struct LastUsedMove {
 	auto use_uproar() & -> void;
 	auto vanish_doubles_power(Generation const generation, Moves const move_name) const -> bool;
 
-	auto bounce(Item) & -> VanishOutcome;
-	auto dig(Item) & -> VanishOutcome;
-	auto dive(Item) & -> VanishOutcome;
-	auto fly(Item) & -> VanishOutcome;
-	auto shadow_force(Item) & -> VanishOutcome;
-
+	auto use_vanish_move(Item) & -> VanishOutcome;
 private:
 	constexpr auto successful_last_move(Moves const move) const -> bool {
 		return m_move == move and m_consecutive_successes >= 1_bi;
@@ -171,25 +153,26 @@ private:
 	constexpr auto is_u_turning() const -> bool {
 		return moved_this_turn() and successful_last_move(Moves::U_turn);
 	}
-	template<typename T>
-	auto use_vanish_move(Item) & -> VanishOutcome;
 
 	Moves m_move = Moves::Switch0;
 	bounded::clamped_integer<0, 10> m_consecutive_successes = 0_bi;
 	bool m_moved_this_turn = false;
+
+	struct Empty {};
+	struct ChargingUp {};
+	struct Protecting {};
+	struct Recharging {};
+	struct Vanishing {};
+
 	bounded::variant<
 		Empty,
-		Bouncing,
-		Digging,
-		Diving,
-		Flying,
-		ShadowForcing,
 		Bide,
 		ChargingUp,
 		Protecting,
 		Rampage,
 		Recharging,
-		UproarCounter
+		UproarCounter,
+		Vanishing
 	> m_effects{Empty()};
 };
 
