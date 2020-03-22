@@ -575,6 +575,7 @@ Moves expectiminimax(Generation const generation, Team const & ai, Team const & 
 	}
 	log << "Determined best move in " << timer.elapsed() << " seconds: ";
 	print_best_move(ai, best_move, log);
+	log << std::flush;
 	return best_move.move;
 }
 
