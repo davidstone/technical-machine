@@ -23,17 +23,27 @@
 #include <tm/clients/pokemon_online/read_team_file.hpp>
 
 #include <containers/range_view.hpp>
+#include <containers/single_element_range.hpp>
 #include <containers/vector.hpp>
 
 #include <stdexcept>
 
 namespace technicalmachine {
+namespace {
+
+auto files_in_path(std::filesystem::path const & path) {
+	return std::filesystem::is_directory(path) ?
+		containers::vector<std::filesystem::path>(containers::range_view(
+			std::filesystem::recursive_directory_iterator(path),
+			std::filesystem::recursive_directory_iterator()
+		)) :
+		containers::vector<std::filesystem::path>(containers::single_element_range(path));
+}
+
+} // namespace
 
 auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) -> Team {
-	auto const files = containers::vector<std::filesystem::path>(containers::range_view(
-		std::filesystem::recursive_directory_iterator(path),
-		std::filesystem::recursive_directory_iterator()
-	));
+	auto const files = files_in_path(path);
 	if (empty(files)) {
 		throw std::runtime_error(path.string() + " does not contain any team files.");
 	}
