@@ -358,6 +358,7 @@ void BattleParser::handle_message(InMessage message) {
 		m_battle.handle_fainted(party, slot);
 		if (m_battle.is_me(party) and m_battle.ai().size() != 1_bi) {
 			m_replacing_fainted = true;
+			send_move(determine_action());
 		}
 	} else if (type == "-fieldend") {
 #if 0
@@ -444,9 +445,6 @@ void BattleParser::handle_message(InMessage message) {
 #if 0
 		auto const json = message.remainder();
 #endif
-		if (m_replacing_fainted) {
-			send_move(determine_action());
-		}
 	} else if (type == "-resisted") {
 		// message.remainder() == POKEMON
 	} else if (type == "-sethp") {
