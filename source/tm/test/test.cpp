@@ -23,6 +23,7 @@
 #include <tm/test/calculate_damage.hpp>
 #include <tm/test/call_move.hpp>
 #include <tm/test/ev_optimizer.hpp>
+#include <tm/test/sleep.hpp>
 #include <tm/test/stat.hpp>
 #include <tm/test/status.hpp>
 #include <tm/test/string_conversion.hpp>
@@ -43,6 +44,7 @@ int main() {
 	damage_tests();
 	collection_tests();
 	call_move_tests();
+	sleep_tests();
 
 	ev_optimizer_tests();
 	

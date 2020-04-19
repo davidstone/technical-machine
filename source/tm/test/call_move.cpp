@@ -124,46 +124,6 @@ void test_baton_pass() {
 	}
 }
 
-void sleep_talk() {
-	auto weather = Weather{};
-	auto attacker = Team(1_bi, true);
-	{
-		attacker.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::female, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
-		auto jolteon = attacker.pokemon();
-		jolteon.switch_in(generation, weather);
-		containers::append(regular_moves(jolteon), move_array(Moves::Sleep_Talk, Moves::Thunderbolt));
-		set_hp_ev(generation, jolteon, EV(4_bi));
-		set_stat_ev(jolteon, StatNames::SPA, EV(252_bi));
-		set_stat_ev(jolteon, StatNames::SPE, EV(252_bi));
-	}
-
-	auto defender = Team(1_bi);
-	{
-		defender.add_pokemon(generation, Species::Gyarados, Level(100_bi), Gender::male, Item::Life_Orb, Ability::Intimidate, Nature::Adamant);
-		auto gyarados = defender.pokemon();
-		gyarados.switch_in(generation, weather);
-		push_back(regular_moves(gyarados), Move(generation, Moves::Earthquake));
-		set_hp_ev(generation, gyarados, EV(4_bi));
-		set_stat_ev(gyarados, StatNames::ATK, EV(252_bi));
-		set_stat_ev(gyarados, StatNames::SPE, EV(252_bi));
-	}
-
-	auto jolteon = attacker.pokemon();
-	apply_status_to_self(generation, Statuses::sleep, jolteon, weather);
-
-	call_move(
-		generation,
-		attacker,
-		UsedMove{Moves::Sleep_Talk, Moves::Thunderbolt},
-		defender,
-		FutureMove{false},
-		weather,
-		false,
-		damage
-	);
-	BOUNDED_ASSERT(get_hp(defender.pokemon()).current() == 0_bi);
-}
-
 void wonder_guard() {
 	auto weather = Weather();
 
@@ -210,7 +170,6 @@ void wonder_guard() {
 void call_move_tests() {
 	std::cout << "Running call_move tests.\n";
 	test_baton_pass();
-	sleep_talk();
 	wonder_guard();
 	std::cout << "Use move tests passed.\n\n";
 }

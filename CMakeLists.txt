@@ -246,6 +246,7 @@ add_executable(tm_test
 	source/tm/test/call_move.cpp
 	source/tm/test/ev_optimizer.cpp
 	source/tm/test/incorrect_calculation.cpp
+	source/tm/test/sleep.cpp
 	source/tm/test/stat.cpp
 	source/tm/test/status.cpp
 	source/tm/test/string_conversion.cpp
