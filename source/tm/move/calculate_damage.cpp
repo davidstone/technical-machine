@@ -248,7 +248,7 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 		case Moves::Seismic_Toss:
 			return get_level(attacker)();
 		case Moves::Psywave:
-			return executed.variable.psywave_damage(get_level(attacker));
+			return executed.variable.psywave_damage(generation, get_level(attacker));
 		case Moves::Sonic_Boom:
 			return 20_bi;
 		case Moves::Super_Fang:

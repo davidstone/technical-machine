@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <tm/generation.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/max_pokemon_per_team.hpp>
@@ -86,8 +87,21 @@ struct Variable {
 	// Team is the Team that was phazed, not the team that used the phazing move
 	auto set_phaze_index(Team const & team, Species species) -> void;
 
-	constexpr auto psywave_damage(Level const level) const {
-		return bounded::max(1_bi, level() * static_cast<bounded::integer<50, 150>>(m_value) / 100_bi);
+	constexpr auto psywave_damage(Generation const generation, Level const level) const {
+		switch (generation) {
+			case Generation::one:
+			case Generation::two:
+				// Close enough
+				return bounded::max(1_bi, level() * m_value / 100_bi);
+			case Generation::three:
+			case Generation::four:
+				return bounded::max(1_bi, level() * (bounded::integer<0, 10>(m_value) * 10_bi + 50_bi) / 100_bi);
+			case Generation::five:
+			case Generation::six:
+			case Generation::seven:
+			case Generation::eight:
+				return bounded::max(1_bi, level() * (bounded::integer<0, 100>(m_value) + 50_bi) / 100_bi);
+		}
 	}
 	
 	constexpr void apply_status(Moves const move, Statuses const status) {

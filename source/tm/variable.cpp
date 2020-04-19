@@ -710,16 +710,30 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 				{Variable{80_bi}, 0.25},
 				{Variable{120_bi}, 0.25}
 			};
-		case Moves::Psywave:
-			return []{
+		case Moves::Psywave: {
+			auto compute = [](auto const max_value) {
+				auto const range = containers::inclusive_integer_range(max_value);
 				Probabilities probabilities;
-				constexpr auto min = 50_bi;
-				constexpr auto max = 150_bi + 1_bi;
-				for (auto const n : containers::integer_range(min, max)) {
-					containers::emplace_back(probabilities, Variable{n}, 1.0 / static_cast<double>(max - min));
+				for (auto const n : range) {
+					containers::emplace_back(probabilities, Variable{n}, 1.0 / static_cast<double>(size(range)));
 				}
 				return probabilities;
-			}();
+			};
+			switch (generation) {
+				case Generation::one:
+				case Generation::two:
+					// Close enough
+					return compute(150_bi);
+				case Generation::three:
+				case Generation::four:
+					return compute(10_bi);
+				case Generation::five:
+				case Generation::six:
+				case Generation::seven:
+				case Generation::eight:
+					return compute(100_bi);
+			}
+		}
 		case Moves::Acupressure:
 			// Possibly not correct due to the maxing out behavior
 			return constant_probability(7_bi);
