@@ -402,7 +402,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Flash_Cannon:
 		case Moves::Focus_Blast:
 		case Moves::Luster_Purge:
-		case Moves::Psychic:
 		case Moves::Shadow_Ball:
 			if (executed.variable.effect_activates()) {
 				other.pokemon().stage()[StatNames::SPD] += -1_bi;
@@ -859,6 +858,14 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Psych_Up:
 			user.stage() = other.pokemon().stage();
+			break;
+		case Moves::Psychic:
+			if (executed.variable.effect_activates()) {
+				if (generation == Generation::one) {
+					other.pokemon().stage()[StatNames::SPA] -= 1_bi;
+				}
+				other.pokemon().stage()[StatNames::SPD] -= 1_bi;
+			}
 			break;
 		case Moves::Psycho_Shift:
 			if (is_clear(get_status(other.pokemon()))) {
