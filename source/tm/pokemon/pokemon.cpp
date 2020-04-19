@@ -38,8 +38,6 @@
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/concatenate.hpp>
 
-#include <boost/format.hpp>
-
 #include <cassert>
 #include <cstdint>
 #include <string>
@@ -89,7 +87,13 @@ Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Speci
 
 
 containers::string to_string(Pokemon const pokemon) {
-	double const per_cent_hp = 100.0 * static_cast<double>(hp_ratio(pokemon));
+	// Boost.Format fails to compile with C++20, so we have to do this instead
+	auto hp_string = [&] {
+		auto const buffer = std::to_string(100.0 * static_cast<double>(hp_ratio(pokemon)));
+		auto const it = containers::find(buffer, '.');
+		auto const last = (end(buffer) - it <= 2) ? end(buffer) : it + 2;
+		return containers::string(containers::range_view(begin(buffer), last));
+	};
 
 	auto const output_status = !is_clear(get_status(pokemon));
 	
@@ -106,7 +110,7 @@ containers::string to_string(Pokemon const pokemon) {
 
 	return containers::concatenate<containers::string>(
 		to_string(get_species(pokemon)),
-		std::string_view(" ("), std::string_view((boost::format("%.1f") % per_cent_hp).str()), std::string_view("% HP) @ "),
+		std::string_view(" ("), hp_string(), std::string_view("% HP) @ "),
 		to_string(pokemon.unmodified_item()),
 		std::string_view("\n\tAbility: "), to_string(pokemon.initial_ability()), std::string_view("\n"),
 		(output_status ? containers::concatenate<containers::string>(std::string_view("\tStatus: "), to_string(get_status(pokemon).name()), std::string_view("\n")) : containers::string("")),
