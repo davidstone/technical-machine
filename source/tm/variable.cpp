@@ -594,7 +594,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Poison_Tail:
 		case Moves::Powder_Snow:
 		case Moves::Psybeam:
-		case Moves::Psychic:
 		case Moves::Relic_Song:
 		case Moves::Rolling_Kick:
 		case Moves::Signal_Beam:
@@ -677,6 +676,7 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Bubble:
 		case Moves::Bubble_Beam:
 		case Moves::Constrict:
+		case Moves::Psychic:
 			return generation <= Generation::one ? single_probability(0.332) : single_probability(0.1);
 		case Moves::Bite:
 		case Moves::Poison_Sting:
