@@ -157,25 +157,20 @@ auto parse_set_hp_message(InMessage message) {
 	// TODO: This should just verify that the received HP matches the actual
 	// HP. The problem is that we tend to get this message too soon, so I need
 	// to defer checking until some time later.
-	struct MessagePokemon {
+	struct Message {
 		Party party;
 		ParsedHP hp;
 		Statuses status;
-	};
-	struct Message {
-		MessagePokemon pokemon1;
-		MessagePokemon pokemon2;
 		EffectSource source;
 	};
-	auto const party1 = party_from_player_id(message.next());
-	auto const hp_and_status1 = parse_hp_and_status(message.next());
-	auto const party2 = party_from_player_id(message.next());
-	auto const hp_and_status2 = parse_hp_and_status(message.next());
+	auto const party = party_from_player_id(message.next());
+	auto const hp_and_status = parse_hp_and_status(message.next());
 	auto const source = parse_from_source(message);
 	
 	return Message{
-		{party1, hp_and_status1.hp, hp_and_status1.status},
-		{party2, hp_and_status2.hp, hp_and_status2.status},
+		party,
+		hp_and_status.hp,
+		hp_and_status.status,
 		source
 	};
 }
