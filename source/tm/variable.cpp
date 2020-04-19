@@ -591,7 +591,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Iron_Tail:
 		case Moves::Metal_Claw:
 		case Moves::Ominous_Wind:
-		case Moves::Poison_Sting:
 		case Moves::Poison_Tail:
 		case Moves::Powder_Snow:
 		case Moves::Psybeam:
@@ -680,6 +679,7 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Constrict:
 			return generation <= Generation::one ? single_probability(0.332) : single_probability(0.1);
 		case Moves::Bite:
+		case Moves::Poison_Sting:
 			return generation <= Generation::one ? single_probability(0.1) : single_probability(0.3);
 		case Moves::Dizzy_Punch:
 			return generation <= Generation::one ? generic_probability(1.0) : single_probability(0.2);
