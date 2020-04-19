@@ -22,6 +22,6 @@
 
 namespace technicalmachine {
 
-using Rampage = EndOfTurnCounter<2, CounterOperations::is_active, CounterOperations::advance_one_turn_variable, CounterOperations::activate>;
+using Rampage = EndOfTurnCounter<3, CounterOperations::is_active, CounterOperations::advance_one_turn_variable, CounterOperations::activate>;
 
 }	// namespace technicalmachine
