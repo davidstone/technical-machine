@@ -11252,7 +11252,7 @@
 				<probability>71.7</probability>
 			</ability>
 			<ability>
-				<name>Lightning Rod</name>
+				<name>Lightningrod</name>
 				<probability>28.3</probability>
 			</ability>
 		</abilities>
@@ -15139,7 +15139,7 @@
 				<probability>56.2</probability>
 			</ability>
 			<ability>
-				<name>Lightning Rod</name>
+				<name>Lightningrod</name>
 				<probability>43.8</probability>
 			</ability>
 		</abilities>
@@ -32324,7 +32324,7 @@
 				<probability>84.7</probability>
 			</ability>
 			<ability>
-				<name>Lightning Rod</name>
+				<name>Lightningrod</name>
 				<probability>15.3</probability>
 			</ability>
 		</abilities>
@@ -33074,7 +33074,7 @@
 				<probability>89.40000000000001</probability>
 			</ability>
 			<ability>
-				<name>Lightning Rod</name>
+				<name>Lightningrod</name>
 				<probability>10.6</probability>
 			</ability>
 		</abilities>
@@ -45908,7 +45908,7 @@
 		<species>Rhydon</species>
 		<abilities>
 			<ability>
-				<name>Lightning Rod</name>
+				<name>Lightningrod</name>
 				<probability>58.6</probability>
 			</ability>
 			<ability>
@@ -46065,7 +46065,7 @@
 				<probability>57.1</probability>
 			</ability>
 			<ability>
-				<name>Lightning Rod</name>
+				<name>Lightningrod</name>
 				<probability>42.9</probability>
 			</ability>
 		</abilities>
@@ -46250,7 +46250,7 @@
 				<probability>91.90000000000001</probability>
 			</ability>
 			<ability>
-				<name>Lightning Rod</name>
+				<name>Lightningrod</name>
 				<probability>8.1</probability>
 			</ability>
 		</abilities>
