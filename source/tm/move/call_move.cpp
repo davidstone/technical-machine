@@ -182,6 +182,12 @@ auto recoil_status(Generation const generation, MutableActivePokemon user, Mutab
 	}
 }
 
+auto recover_half(Generation const generation, MutableActivePokemon user, Weather const weather) {
+	if (generation == Generation::one and healing_move_fails_in_generation_1(get_hp(user))) {
+		return;
+	}
+	heal(generation, user, weather, rational(1_bi, 2_bi));
+}
 
 auto confusing_stat_boost(Generation const generation, MutableActivePokemon target, Weather const weather, StatNames const stat, bounded::checked_integer<1, 2> const stages) {
 	target.stage()[stat] += stages;
@@ -678,7 +684,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Roost:
 		case Moves::Slack_Off:
 		case Moves::Soft_Boiled:
-			heal(generation, user, weather, rational(1_bi, 2_bi));
+			recover_half(generation, user, weather);
 			break;
 		case Moves::Healing_Wish:
 			break;

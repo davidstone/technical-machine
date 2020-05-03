@@ -72,4 +72,9 @@ auto operator==(HP const lhs, bounded::bounded_integer auto const rhs) -> bool {
 	return lhs.current() == rhs;
 }
 
+inline auto healing_move_fails_in_generation_1(HP const hp) {
+	auto const difference = hp.max() - hp.current();
+	return difference % 256_bi == 255_bi;
+}
+
 }	// namespace technicalmachine
