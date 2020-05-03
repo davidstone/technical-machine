@@ -233,7 +233,7 @@ auto base_power(Generation const generation, Moves const move) -> bounded::optio
 		case Moves::Barrage: return 15_bi;
 		case Moves::Leech_Life: return BOUNDED_CONDITIONAL(generation <= Generation::six, 20_bi, 80_bi);
 		case Moves::Lovely_Kiss: return 0_bi;
-		case Moves::Sky_Attack: return 200_bi;
+		case Moves::Sky_Attack: return 140_bi;
 		case Moves::Transform: return 0_bi;
 		case Moves::Bubble: return BOUNDED_CONDITIONAL(generation <= Generation::five, 20_bi, 40_bi);
 		case Moves::Dizzy_Punch: return 70_bi;
