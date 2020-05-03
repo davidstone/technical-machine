@@ -100,7 +100,7 @@ auto curse(Generation const generation, MutableActivePokemon user, MutableActive
 	} else {
 		auto & stat_stage = user.stage();
 		boost_physical(stat_stage, 1_bi);
-		stat_stage[StatNames::SPE] += -1_bi;
+		stat_stage[StatNames::SPE] -= 1_bi;
 	}
 }
 
@@ -242,7 +242,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Acid:
 			if (executed.variable.effect_activates()) {
 				auto const stat = generation <= Generation::three ? StatNames::DEF : StatNames::SPD;
-				other.pokemon().stage()[stat] += -1_bi;
+				other.pokemon().stage()[stat] -= 1_bi;
 			}
 			break;
 		case Moves::Acid_Armor:
@@ -300,7 +300,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Aurora_Beam:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().stage()[StatNames::ATK] += -1_bi;
+				other.pokemon().stage()[StatNames::ATK] -= 1_bi;
 			}
 			break;
 		case Moves::Aromatherapy:
@@ -392,7 +392,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Bubble_Beam:
 		case Moves::Constrict:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().stage()[StatNames::SPE] += -1_bi;
+				other.pokemon().stage()[StatNames::SPE] -= 1_bi;
 			}
 			break;
 		case Moves::Bug_Bite:
@@ -410,7 +410,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Luster_Purge:
 		case Moves::Shadow_Ball:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().stage()[StatNames::SPD] += -1_bi;
+				other.pokemon().stage()[StatNames::SPD] -= 1_bi;
 			}
 			break;
 		case Moves::Bulk_Up:
@@ -423,7 +423,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Captivate:
 			if (multiplier(get_gender(user), get_gender(other.pokemon())) == -1_bi) {
-				other.pokemon().stage()[StatNames::SPD] += -2_bi;
+				other.pokemon().stage()[StatNames::SPD] -= 2_bi;
 			}
 			break;
 		case Moves::Charge:
@@ -437,7 +437,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Charm:
 		case Moves::Feather_Dance:
-			other.pokemon().stage()[StatNames::ATK] += -2_bi;
+			other.pokemon().stage()[StatNames::ATK] -= 2_bi;
 			break;
 		case Moves::Chatter:
 			if (can_confuse_with_chatter(get_species(user)) and executed.variable.effect_activates()) {
@@ -478,12 +478,12 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Razor_Shell:
 		case Moves::Rock_Smash:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().stage()[StatNames::DEF] += -1_bi;
+				other.pokemon().stage()[StatNames::DEF] -= 1_bi;
 			}
 			break;
 		case Moves::Cotton_Spore:
 		case Moves::Scary_Face:
-			other.pokemon().stage()[StatNames::SPE] += -2_bi;
+			other.pokemon().stage()[StatNames::SPE] -= 2_bi;
 			break;
 		case Moves::Covet:
 		case Moves::Thief:
@@ -522,7 +522,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Defog:
 			weather.deactivate_fog();
-			other.pokemon().stage()[StatNames::EVA] += -1_bi;
+			other.pokemon().stage()[StatNames::EVA] -= 1_bi;
 			break;
 		case Moves::Detect:
 		case Moves::Protect:
@@ -546,7 +546,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Leaf_Storm:
 		case Moves::Overheat:
 		case Moves::Psycho_Boost:
-			user.stage()[StatNames::SPA] += -2_bi;
+			user.stage()[StatNames::SPA] -= 2_bi;
 			break;
 		case Moves::Dragon_Dance:
 			user.stage()[StatNames::ATK] += 1_bi;
@@ -569,7 +569,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Fake_Tears:
 		case Moves::Metal_Sound:
-			other.pokemon().stage()[StatNames::SPD] += -2_bi;
+			other.pokemon().stage()[StatNames::SPD] -= 2_bi;
 			break;
 		case Moves::Feint:
 		case Moves::Hyperspace_Fury:
@@ -588,7 +588,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Mud_Slap:
 		case Moves::Sand_Attack:
 		case Moves::Smokescreen:
-			other.pokemon().stage()[StatNames::ACC] += -1_bi;
+			other.pokemon().stage()[StatNames::ACC] -= 1_bi;
 			break;
 		case Moves::Flatter:
 			confusing_stat_boost(generation, other.pokemon(), weather, StatNames::SPA, 1_bi);
@@ -617,7 +617,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			weather.activate_gravity();
 			break;
 		case Moves::Growl:
-			other.pokemon().stage()[StatNames::ATK] += -1_bi;
+			other.pokemon().stage()[StatNames::ATK] -= 1_bi;
 			break;
 		case Moves::Growth:
 			switch (generation) {
@@ -653,7 +653,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			weather.activate_hail_from_move(extends_hail(user.item(generation, weather)));
 			break;
 		case Moves::Hammer_Arm:
-			user.stage()[StatNames::SPE] += -1_bi;
+			user.stage()[StatNames::SPE] -= 1_bi;
 			break;
 		case Moves::Harden:
 		case Moves::Withdraw:
@@ -716,7 +716,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Mud_Shot:
 		case Moves::Rock_Tomb:
 		case Moves::String_Shot:
-			other.pokemon().stage()[StatNames::SPE] += -1_bi;
+			other.pokemon().stage()[StatNames::SPE] -= 1_bi;
 			break;
 		case Moves::Imprison:
 			user.use_imprison();
@@ -756,7 +756,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Leer:
 		case Moves::Tail_Whip:
-			other.pokemon().stage()[StatNames::DEF] += -1_bi;
+			other.pokemon().stage()[StatNames::DEF] -= 1_bi;
 			break;
 		case Moves::Light_Screen:
 			user_team.activate_light_screen(generation, weather);
@@ -800,7 +800,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Mist_Ball:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().stage()[StatNames::SPA] += -1_bi;
+				other.pokemon().stage()[StatNames::SPA] -= 1_bi;
 			}
 			break;
 		case Moves::Moonlight:
@@ -933,11 +933,11 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			weather.activate_sand_from_move(extends_sand(user.item(generation, weather)));
 			break;
 		case Moves::Screech:
-			other.pokemon().stage()[StatNames::DEF] += -2_bi;
+			other.pokemon().stage()[StatNames::DEF] -= 2_bi;
 			break;
 		case Moves::Seed_Flare:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().stage()[StatNames::SPD] += -2_bi;
+				other.pokemon().stage()[StatNames::SPD] -= 2_bi;
 			}
 			break;
 		case Moves::Shadow_Force:
@@ -1028,7 +1028,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			use_swallow(generation, user, weather);
 			break;
 		case Moves::Sweet_Scent:
-			other.pokemon().stage()[StatNames::EVA] += -1_bi;
+			other.pokemon().stage()[StatNames::EVA] -= 1_bi;
 			break;
 		case Moves::Switch0:
 		case Moves::Switch1:
