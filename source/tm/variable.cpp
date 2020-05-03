@@ -595,7 +595,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Powder_Snow:
 		case Moves::Psybeam:
 		case Moves::Relic_Song:
-		case Moves::Rolling_Kick:
 		case Moves::Signal_Beam:
 		case Moves::Silver_Wind:
 		case Moves::Sludge_Wave:
@@ -642,6 +641,7 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Needle_Arm:
 		case Moves::Poison_Fang:
 		case Moves::Poison_Jab:
+		case Moves::Rolling_Kick:
 		case Moves::Scald:
 		case Moves::Searing_Shot:
 		case Moves::Secret_Power:
