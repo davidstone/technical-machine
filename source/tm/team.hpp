@@ -92,6 +92,9 @@ struct Team {
 	auto switch_pokemon(Generation const generation, MutableActivePokemon other, Weather & weather, TeamIndex const replacement) -> void {
 		auto original_pokemon = pokemon();
 		original_pokemon.switch_out();
+		if (generation == Generation::one) {
+			shatter_screens();
+		}
 
 		if (get_hp(original_pokemon) != 0_bi) {
 			all_pokemon().set_index(replacement);
@@ -150,7 +153,7 @@ struct Team {
 	auto activate_tailwind() & {
 		m_screens.activate_tailwind();
 	}
-	auto shatter_screens() & {
+	auto shatter_screens() & -> void {
 		m_screens.shatter();
 	}
 
