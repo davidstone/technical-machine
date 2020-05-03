@@ -512,8 +512,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Hypnosis:
 		case Moves::Lovely_Kiss:
 		case Moves::Sing:
-		case Moves::Sleep_Powder:
-		case Moves::Spore:
 			other.pokemon().apply_status(generation, Statuses::sleep, user, weather, user.is_uproaring() or other.pokemon().is_uproaring());
 			break;
 		case Moves::Defense_Curl:
@@ -977,6 +975,12 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 				user.use_charge_up_move();
 			} else if (executed.variable.effect_activates()) {
 				other.pokemon().flinch();
+			}
+			break;
+		case Moves::Sleep_Powder:
+		case Moves::Spore:
+			if (generation <= Generation::five or !is_type(other.pokemon(), Type::Grass)) {
+				other.pokemon().apply_status(generation, Statuses::sleep, user, weather, user.is_uproaring() or other.pokemon().is_uproaring());
 			}
 			break;
 		case Moves::Smelling_Salts:
