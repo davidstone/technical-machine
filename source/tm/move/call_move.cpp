@@ -229,7 +229,7 @@ auto use_swallow(Generation const generation, MutableActivePokemon user, Weather
 }
 
 
-auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove const executed, Team & other, Weather & weather, HP::current_type const damage) {
+auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove const executed, Team & other, Weather & weather, HP::current_type const damage, bool const had_substitute) {
 	auto user = user_team.pokemon();
 	switch (executed.move.name) {
 		case Moves::Absorb:
@@ -565,7 +565,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Explosion:
 		case Moves::Self_Destruct:
-			user.set_hp(generation, weather, 0_bi);
+			if (generation >= Generation::one or (had_substitute and !other.pokemon().substitute())) {
+				user.set_hp(generation, weather, 0_bi);
+			}
 			break;
 		case Moves::Fake_Tears:
 		case Moves::Metal_Sound:
@@ -1337,7 +1339,7 @@ auto use_move(Generation const generation, Team & user, ExecutedMove const execu
 	if (effects == Substitute::absorbs) {
 		return;
 	}
-	do_side_effects(generation, user, executed, other, weather, damage_done);
+	do_side_effects(generation, user, executed, other, weather, damage_done, had_substitute);
 	// Should this check if we did any damage or if the move is damaging?
 	if (damage_done != 0_bi) {
 		auto const item = user_pokemon.item(generation, weather);
