@@ -662,6 +662,10 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Haze:
 			user.stage() = Stage{};
 			other.pokemon().stage() = Stage{};
+			if (generation == Generation::one) {
+				user_team.shatter_screens();
+				other.shatter_screens();
+			}
 			break;
 		case Moves::Head_Smash:
 			recoil(generation, user, weather, damage, 2_bi);
