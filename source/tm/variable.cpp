@@ -645,7 +645,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Scald:
 		case Moves::Searing_Shot:
 		case Moves::Secret_Power:
-		case Moves::Sludge:
 		case Moves::Sludge_Bomb:
 		case Moves::Snore:
 		case Moves::Spark:
@@ -689,6 +688,8 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 			return generic_probability(0.79, 0.10, 0.10, 0.01);
 		case Moves::Low_Kick:
 			return generation <= Generation::two ? single_probability(0.3) : generic_probability(1.0);
+		case Moves::Sludge:
+			return generation <= Generation::one ? single_probability(0.4) : single_probability(0.3);
 		case Moves::Tri_Attack:
 			return generic_probability(12.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0);
 		case Moves::Magnitude:
