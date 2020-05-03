@@ -642,7 +642,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Needle_Arm:
 		case Moves::Poison_Fang:
 		case Moves::Poison_Jab:
-		case Moves::Rock_Slide:
 		case Moves::Scald:
 		case Moves::Searing_Shot:
 		case Moves::Secret_Power:
@@ -740,6 +739,8 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Roar:
 		case Moves::Whirlwind:
 			return phaze_probability(foe_size);
+		case Moves::Rock_Slide:
+			return generation == Generation::one ? single_probability(0.0) : generic_probability(0.7, 0.3);
 		case Moves::Flying_Press:
 		case Moves::Mat_Block:
 		case Moves::Belch:
