@@ -911,7 +911,18 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Roar:
 		case Moves::Whirlwind:
-			phaze(generation, user, other, weather, executed.variable);
+			switch (generation) {
+				case Generation::one:
+					break;
+				case Generation::two:
+					if (other.pokemon().moved()) {
+						phaze(generation, user, other, weather, executed.variable);
+					}
+					break;
+				default:
+					phaze(generation, user, other, weather, executed.variable);
+					break;
+			}
 			break;
 		case Moves::Role_Play:
 			break;
