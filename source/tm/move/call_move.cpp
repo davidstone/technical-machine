@@ -896,6 +896,10 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user_team.clear_field();
 			break;
 		case Moves::Razor_Wind:
+		case Moves::Solar_Beam:
+			if (will_be_recharge_turn(user, executed.move.name, other.pokemon().ability(), weather)) {
+				user.use_charge_up_move();
+			}
 			break;
 		case Moves::Recycle:
 			user.recycle_item();
@@ -993,11 +997,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().stage()[StatNames::SPA] -= 1_bi;
 			break;
 		case Moves::Snatch:
-			break;
-		case Moves::Solar_Beam:
-			if (will_be_recharge_turn(user, executed.move.name, other.pokemon().ability(), weather)) {
-				user.use_charge_up_move();
-			}
 			break;
 		case Moves::Spikes:
 			other.add_spikes();
