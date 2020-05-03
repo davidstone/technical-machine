@@ -966,9 +966,16 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Skill_Swap:
 			break;
 		case Moves::Skull_Bash:
+			if (will_be_recharge_turn(user, executed.move.name, other.pokemon().ability(), weather)) {
+				user.use_charge_up_move();
+			} else if (generation >= Generation::two) {
+				user.stage()[StatNames::DEF] += 1_bi;
+			}
 			break;
 		case Moves::Sky_Attack:
-			if (executed.variable.effect_activates()) {
+			if (will_be_recharge_turn(user, executed.move.name, other.pokemon().ability(), weather)) {
+				user.use_charge_up_move();
+			} else if (executed.variable.effect_activates()) {
 				other.pokemon().flinch();
 			}
 			break;

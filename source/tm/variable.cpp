@@ -645,7 +645,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Scald:
 		case Moves::Searing_Shot:
 		case Moves::Secret_Power:
-		case Moves::Sky_Attack:
 		case Moves::Sludge:
 		case Moves::Sludge_Bomb:
 		case Moves::Snore:
@@ -733,14 +732,16 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 					return compute(100_bi);
 			}
 		}
+		case Moves::Rock_Slide:
+			return generation == Generation::one ? generic_probability(1.0) : single_probability(0.3);
+		case Moves::Sky_Attack:
+			return generation <= Generation::two ? generic_probability(1.0) : single_probability(0.3);
 		case Moves::Acupressure:
 			// Possibly not correct due to the maxing out behavior
 			return constant_probability(7_bi);
 		case Moves::Roar:
 		case Moves::Whirlwind:
 			return phaze_probability(foe_size);
-		case Moves::Rock_Slide:
-			return generation == Generation::one ? single_probability(0.0) : generic_probability(0.7, 0.3);
 		case Moves::Flying_Press:
 		case Moves::Mat_Block:
 		case Moves::Belch:
