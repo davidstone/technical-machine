@@ -252,14 +252,17 @@ auto MutableActivePokemon::apply_status(Generation const generation, Statuses co
 }
 
 auto MutableActivePokemon::rest(Generation const generation, Weather const weather, bool const other_is_uproaring) const -> void {
-	if (other_is_uproaring or is_sleeping(get_status(m_pokemon))) {
+	if (other_is_uproaring) {
+		return;
+	}
+	if (generation >= Generation::three and is_sleeping(get_status(m_pokemon))) {
 		return;
 	}
 	if (blocks_status(ability(), ability(), Statuses::rest, weather)) {
 		return;
 	}
 	auto const hp = get_hp(m_pokemon);
-	if (hp.current() == hp.max()) {
+	if (hp.current() == hp.max() or healing_move_fails_in_generation_1(hp)) {
 		return;
 	}
 	m_pokemon.set_hp(hp.max());
