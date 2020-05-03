@@ -57,9 +57,19 @@ auto operator*(auto const lhs, Effectiveness const rhs) {
 
 inline auto affects_target(Generation const generation, KnownMove const move, ActivePokemon const target, Weather const weather) -> bool {
 	auto const effectiveness = Effectiveness(generation, move.type, target.types());
-	return
-		(!effectiveness.has_no_effect() or (generation == Generation::one and move.name == Moves::Night_Shade)) and
-		(move.type != Type::Ground or grounded(generation, target, weather));
+	auto generation_1_fixed_damage_move = [=] {
+		switch (move.name) {
+			case Moves::Night_Shade:
+			case Moves::Seismic_Toss:
+				return true;
+			default:
+				return false;
+		}
+	};
+	if (generation == Generation::one and generation_1_fixed_damage_move()) {
+		return true;
+	}
+	return !effectiveness.has_no_effect() and (move.type != Type::Ground or grounded(generation, target, weather));
 }
 
 }	// namespace technicalmachine
