@@ -615,7 +615,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Shadow_Ball:
 		case Moves::Twineedle:
 		case Moves::Twister:
-		case Moves::Waterfall:
 		case Moves::Water_Pulse:
 		case Moves::Zen_Headbutt:
 			return single_probability(0.2);
@@ -692,6 +691,8 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 			return generation <= Generation::one ? single_probability(0.4) : single_probability(0.3);
 		case Moves::Tri_Attack:
 			return generic_probability(12.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0);
+		case Moves::Waterfall:
+			return generation <= Generation::three ? generic_probability(1.0) : single_probability(0.2);
 		case Moves::Magnitude:
 			return Probabilities{
 				{Variable{10_bi}, 0.05},
