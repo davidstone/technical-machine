@@ -301,6 +301,8 @@ void BattleParser::handle_message(InMessage message) {
 		// message.remainder() == "REASON" or "REASON|MOVE"
 #endif
 	} else if (type == "-center") {
+	} else if (type == "-clearallboost") {
+		// We already know what Haze does
 	} else if (type == "-crit") {
 		auto const user = other(party_from_player_id(message.next()));
 		m_move_state.critical_hit(user);
