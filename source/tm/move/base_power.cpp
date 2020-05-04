@@ -137,7 +137,8 @@ auto base_power(Generation const generation, Moves const move) -> bounded::optio
 		case Moves::Leech_Seed: return 0_bi;
 		case Moves::Growth: return 0_bi;
 		case Moves::Razor_Leaf: return 55_bi;
-		case Moves::Solar_Beam: return 120_bi;
+		// Base power is doubled in certain weather, including clear weather
+		case Moves::Solar_Beam: return 60_bi;
 		case Moves::Poison_Powder: return 0_bi;
 		case Moves::Stun_Spore: return 0_bi;
 		case Moves::Sleep_Powder: return 0_bi;

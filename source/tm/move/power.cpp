@@ -163,8 +163,22 @@ auto doubling(Generation const generation, ActivePokemon const attacker, Moves c
 			return defender.moved();
 		case Moves::Smelling_Salts:
 			return boosts_smellingsalt(get_status(defender));
-		case Moves::Solar_Beam:
-			return !weather.rain(weather_is_blocked_by_ability(attacker.ability(), defender.ability()));
+		case Moves::Solar_Beam: {
+			auto const blocks_weather = weather_is_blocked_by_ability(attacker.ability(), defender.ability());
+			switch (generation) {
+				case Generation::one:
+					return true;
+				case Generation::two:
+					return !weather.rain(blocks_weather);
+				case Generation::three:
+				case Generation::four:
+				case Generation::five:
+				case Generation::six:
+				case Generation::seven:
+				case Generation::eight:
+					return !weather.hail(blocks_weather) and !weather.rain(blocks_weather) and !weather.sand(blocks_weather);
+			}
+		}
 		case Moves::Steamroller:
 		case Moves::Stomp:
 			return defender.minimized();
