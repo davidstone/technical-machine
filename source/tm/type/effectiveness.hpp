@@ -61,6 +61,7 @@ inline auto affects_target(Generation const generation, KnownMove const move, Ac
 		switch (move.name) {
 			case Moves::Night_Shade:
 			case Moves::Seismic_Toss:
+			case Moves::Sonic_Boom:
 				return true;
 			default:
 				return false;
