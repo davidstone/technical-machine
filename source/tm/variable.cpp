@@ -649,7 +649,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Snore:
 		case Moves::Spark:
 		case Moves::Steamroller:
-		case Moves::Thunder:
 			return single_probability(0.3);
 		case Moves::Night_Daze:
 		case Moves::Seed_Flare:
@@ -677,6 +676,7 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 			return generation <= Generation::one ? single_probability(0.332) : single_probability(0.1);
 		case Moves::Bite:
 		case Moves::Poison_Sting:
+		case Moves::Thunder:
 			return generation <= Generation::one ? single_probability(0.1) : single_probability(0.3);
 		case Moves::Dizzy_Punch:
 			return generation <= Generation::one ? generic_probability(1.0) : single_probability(0.2);
