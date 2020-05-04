@@ -102,7 +102,7 @@ auto chance_to_hit(Generation const generation, ActivePokemon const user, KnownM
 	auto const user_ability = user.ability();
 	auto const target_ability = target.ability();
 	auto const blocks_weather = weather_is_blocked_by_ability(target_ability, user_ability);
-	auto const base_accuracy = accuracy(generation, move.name, weather, blocks_weather);
+	auto const base_accuracy = accuracy(generation, move.name, weather, blocks_weather, is_type(user, Type::Poison));
 	if (!move_can_miss(user, move.name, base_accuracy, target)) {
 		return 1.0;
 	}

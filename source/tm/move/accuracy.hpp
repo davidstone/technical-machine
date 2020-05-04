@@ -28,6 +28,6 @@ struct Weather;
 
 // A value that is not present indicates that the move cannot miss.
 using BaseAccuracy = bounded::optional<bounded::integer<30, 100>>;
-auto accuracy(Generation generation, Moves move, Weather const weather, bool weather_blocked) -> BaseAccuracy;
+auto accuracy(Generation generation, Moves move, Weather const weather, bool weather_blocked, bool user_is_poison) -> BaseAccuracy;
 
 }	// namespace technicalmachine

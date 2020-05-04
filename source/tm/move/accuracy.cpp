@@ -30,7 +30,7 @@ using namespace bounded::literal;
 
 // TODO: Simplify some of these after fix for
 // https://bugs.llvm.org/show_bug.cgi?id=44666
-auto accuracy(Generation const generation, Moves const move, Weather const weather, bool const weather_blocked) -> BaseAccuracy {
+auto accuracy(Generation const generation, Moves const move, Weather const weather, bool const weather_blocked, bool const user_is_poison) -> BaseAccuracy {
 	using bounded::none;
 	switch (move) {
 		case Moves::Pass: return none;
@@ -161,7 +161,18 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 		case Moves::Earthquake: return 100_bi;
 		case Moves::Fissure: return 30_bi;
 		case Moves::Dig: return 100_bi;
-		case Moves::Toxic: return BOUNDED_CONDITIONAL(generation <= Generation::four, 85_bi, 90_bi);
+		case Moves::Toxic:
+			switch (generation) {
+				case Generation::one:
+				case Generation::two:
+				case Generation::three:
+				case Generation::four:
+					return 85_bi;
+				case Generation::five:
+					return 90_bi;
+				default:
+					return user_is_poison ? none : BaseAccuracy(90_bi);
+			}
 		case Moves::Confusion: return 100_bi;
 		case Moves::Psychic: return 100_bi;
 		case Moves::Hypnosis: return 60_bi;
