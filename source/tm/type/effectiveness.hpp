@@ -62,6 +62,7 @@ inline auto affects_target(Generation const generation, KnownMove const move, Ac
 			case Moves::Night_Shade:
 			case Moves::Seismic_Toss:
 			case Moves::Sonic_Boom:
+			case Moves::Super_Fang:
 				return true;
 			default:
 				return false;
