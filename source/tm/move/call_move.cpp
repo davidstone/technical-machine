@@ -715,7 +715,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Low_Sweep:
 		case Moves::Mud_Shot:
 		case Moves::Rock_Tomb:
-		case Moves::String_Shot:
 			other.pokemon().stage()[StatNames::SPE] -= 1_bi;
 			break;
 		case Moves::Imprison:
@@ -1016,6 +1015,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Stockpile:
 			user.increment_stockpile();
+			break;
+		case Moves::String_Shot:
+			other.pokemon().stage()[StatNames::SPE] -= BOUNDED_CONDITIONAL(generation <= Generation::five, 1_bi, 2_bi);
 			break;
 		case Moves::Struggle:
 			struggle(generation, user, weather);
