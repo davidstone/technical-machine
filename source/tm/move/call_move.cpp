@@ -161,6 +161,13 @@ auto fling_side_effects(Generation const generation, MutableActivePokemon user, 
 }
 
 
+auto grass_status(Generation const generation, MutableActivePokemon const user, MutableActivePokemon const target, Weather const weather, Statuses const status) {
+	if (generation <= Generation::five or !is_type(target, Type::Grass)) {
+		target.apply_status(generation, status, user, weather);
+	}
+}
+
+
 auto item_can_be_incinerated(Generation const generation, ActivePokemon const target, Weather const weather) -> bool {
 	// TODO: Destroy gems
 	return item_can_be_lost(generation, target) and berry_power(target.item(generation, weather)) != 0_bi;
@@ -622,7 +629,6 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Gastro_Acid:
 			break;
 		case Moves::Glare:
-		case Moves::Stun_Spore:
 		case Moves::Thunder_Wave:
 		case Moves::Zap_Cannon:
 			other.pokemon().apply_status(generation, Statuses::paralysis, user, weather);
@@ -864,10 +870,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		case Moves::Poison_Gas:
-		case Moves::Poison_Powder: {
-			other.pokemon().apply_status(generation, Statuses::poison, user, weather);
+		case Moves::Poison_Powder:
+			grass_status(generation, user, other.pokemon(), weather, Statuses::poison);
 			break;
-		}
 		case Moves::Power_Swap:
 			swap_offensive(user.stage(), other.pokemon().stage());
 			break;
@@ -996,9 +1001,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Sleep_Powder:
 		case Moves::Spore:
-			if (generation <= Generation::five or !is_type(other.pokemon(), Type::Grass)) {
-				other.pokemon().apply_status(generation, Statuses::sleep, user, weather, user.is_uproaring() or other.pokemon().is_uproaring());
-			}
+			grass_status(generation, user, other.pokemon(), weather, Statuses::sleep);
 			break;
 		case Moves::Smelling_Salts:
 			if (boosts_smellingsalt(get_status(other.pokemon()))) {
@@ -1029,6 +1032,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Stockpile:
 			user.increment_stockpile();
+			break;
+		case Moves::Stun_Spore:
+			grass_status(generation, user, other.pokemon(), weather, Statuses::paralysis);
 			break;
 		case Moves::String_Shot:
 			other.pokemon().stage()[StatNames::SPE] -= BOUNDED_CONDITIONAL(generation <= Generation::five, 1_bi, 2_bi);
