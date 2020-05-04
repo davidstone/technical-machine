@@ -215,8 +215,22 @@ auto phaze(Generation const generation, MutableActivePokemon user, Team & target
 }
 
 
-auto struggle(Generation const generation, MutableActivePokemon user, Weather const weather) {
-	change_hp(generation, user, weather, -get_hp(user).max() / 4_bi);
+auto struggle(Generation const generation, MutableActivePokemon user, Weather const weather, HP::current_type const damage) {
+	switch (generation) {
+		case Generation::one:
+			recoil(generation, user, weather, damage, 2_bi);
+			break;
+		case Generation::two:
+		case Generation::three:
+			recoil(generation, user, weather, damage, 4_bi);
+			break;
+		case Generation::four:
+		case Generation::five:
+		case Generation::six:
+		case Generation::seven:
+		case Generation::eight:
+			change_hp(generation, user, weather, bounded::max(-get_hp(user).max() / 4_bi, 1_bi));
+	}
 }
 
 
@@ -1020,7 +1034,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().stage()[StatNames::SPE] -= BOUNDED_CONDITIONAL(generation <= Generation::five, 1_bi, 2_bi);
 			break;
 		case Moves::Struggle:
-			struggle(generation, user, weather);
+			struggle(generation, user, weather, damage);
 			break;
 		case Moves::Submission:
 		case Moves::Take_Down:
