@@ -1517,12 +1517,13 @@ auto handle_ability_blocks_move(Generation const generation, KnownMove const mov
 				return false;
 			}
 			switch (move.name) {
-				case Moves::Struggle:
-					return false;
 				case Moves::Beat_Up:
 					return generation >= Generation::five;
 				case Moves::Fire_Fang:
 					return generation != Generation::four;
+				case Moves::Hit_Self:
+				case Moves::Struggle:
+					return false;
 				default:
 					return true;
 			}
