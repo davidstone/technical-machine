@@ -39,22 +39,11 @@ enum class Generation : std::uint8_t;
 namespace {
 using namespace bounded::literal;
 
-constexpr auto weather_makes_move_not_miss(Moves const move, Weather const weather, bool const blocks_weather) {
-	if (weather.hail(blocks_weather)) {
-		return move == Moves::Blizzard;
-	} else if (weather.rain(blocks_weather)) {
-		return move == Moves::Thunder;
-	} else {
-		return false;
-	}
-}
-
-auto move_can_miss(ActivePokemon const user, Moves const move, BaseAccuracy const base_accuracy, ActivePokemon const target, Weather const weather, bool const blocks_weather) -> bool {
+auto move_can_miss(ActivePokemon const user, Moves const move, BaseAccuracy const base_accuracy, ActivePokemon const target) -> bool {
 	return
 		static_cast<bool>(base_accuracy) and
 		!cannot_miss(user.ability()) and
 		!cannot_miss(target.ability()) and
-		!weather_makes_move_not_miss(move, weather, blocks_weather) and
 		!(move == Moves::Body_Slam and target.minimized()) and
 		!user.locked_on();
 }
@@ -113,8 +102,8 @@ auto chance_to_hit(Generation const generation, ActivePokemon const user, KnownM
 	auto const user_ability = user.ability();
 	auto const target_ability = target.ability();
 	auto const blocks_weather = weather_is_blocked_by_ability(target_ability, user_ability);
-	auto const base_accuracy = accuracy(generation, move.name);
-	if (!move_can_miss(user, move.name, base_accuracy, target, weather, blocks_weather)) {
+	auto const base_accuracy = accuracy(generation, move.name, weather, blocks_weather);
+	if (!move_can_miss(user, move.name, base_accuracy, target)) {
 		return 1.0;
 	}
 	constexpr auto gravity_denominator = 3_bi;

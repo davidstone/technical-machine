@@ -21,6 +21,7 @@
 #include <tm/move/moves.hpp>
 
 #include <tm/generation.hpp>
+#include <tm/weather.hpp>
 
 #include <cassert>
 
@@ -29,7 +30,7 @@ using namespace bounded::literal;
 
 // TODO: Simplify some of these after fix for
 // https://bugs.llvm.org/show_bug.cgi?id=44666
-auto accuracy(Generation const generation, Moves const move) -> BaseAccuracy {
+auto accuracy(Generation const generation, Moves const move, Weather const weather, bool const weather_blocked) -> BaseAccuracy {
 	using bounded::none;
 	switch (move) {
 		case Moves::Pass: return none;
@@ -119,7 +120,11 @@ auto accuracy(Generation const generation, Moves const move) -> BaseAccuracy {
 		case Moves::Hydro_Pump: return 80_bi;
 		case Moves::Surf: return 100_bi;
 		case Moves::Ice_Beam: return 100_bi;
-		case Moves::Blizzard: return BOUNDED_CONDITIONAL(generation == Generation::one, 90_bi, 70_bi);
+		case Moves::Blizzard:
+			if (weather.hail(weather_blocked)) {
+				return none;
+			}
+			return BOUNDED_CONDITIONAL(generation == Generation::one, 90_bi, 70_bi);
 		case Moves::Psybeam: return 100_bi;
 		case Moves::Bubble_Beam: return 100_bi;
 		case Moves::Aurora_Beam: return 100_bi;
@@ -147,7 +152,11 @@ auto accuracy(Generation const generation, Moves const move) -> BaseAccuracy {
 		case Moves::Thunder_Shock: return 100_bi;
 		case Moves::Thunderbolt: return 100_bi;
 		case Moves::Thunder_Wave: return BOUNDED_CONDITIONAL(generation <= Generation::six, 100_bi, 90_bi);
-		case Moves::Thunder: return 70_bi;
+		case Moves::Thunder:
+			return
+				weather.rain(weather_blocked) ? BaseAccuracy(none) :
+				weather.sun(weather_blocked) ? BaseAccuracy(50_bi) :
+				BaseAccuracy(70_bi);
 		case Moves::Rock_Throw: return BOUNDED_CONDITIONAL(generation == Generation::one, 65_bi, 90_bi);
 		case Moves::Earthquake: return 100_bi;
 		case Moves::Fissure: return 30_bi;
