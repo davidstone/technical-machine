@@ -395,6 +395,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Thunderbolt:
 		case Moves::Thunder_Punch:
 		case Moves::Thunder_Shock:
+			if (generation == Generation::one and is_type(other.pokemon(), executed.move.type)) {
+				break;
+			}
 			if (executed.variable.effect_activates()) {
 				other.pokemon().apply_status(generation, Statuses::paralysis, user, weather);
 			}
