@@ -169,7 +169,7 @@ auto parse_pokemon(std::string_view const str, Generation const generation, Team
 	auto const nature = parse_nature(buffer.next());
 	auto const evs = parse_stat_components(buffer.next(), EV(0_bi));
 	auto const gender = parse_gender(buffer.next());
-	auto const ivs = parse_stat_components(buffer.next(), IV(31_bi));
+	auto const ivs = parse_stat_components(buffer.next(), default_iv(generation));
 	auto const shiny [[maybe_unused]] = parse_shiny(buffer.next());
 	auto const level = parse_integer_wrapper<Level>(buffer.next());
 	auto const happiness = parse_integer_wrapper<Happiness>(buffer.next(','));

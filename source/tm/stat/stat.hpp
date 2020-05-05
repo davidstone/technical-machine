@@ -22,18 +22,21 @@
 #include <tm/stat/iv.hpp>
 #include <tm/stat/stat_names.hpp>
 #include <tm/pokemon/species_forward.hpp>
+#include <tm/generation.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
-enum class Generation : std::uint8_t;
-
 struct Stat {
 	using base_type = bounded::checked_integer<5, 230>;
 
-	Stat(Generation generation, Species name, StatNames stat, EV ev, IV iv = IV(31_bi));
+	Stat(Generation generation, Species name, StatNames stat, EV ev, IV iv);
+	Stat(Generation generation, Species name, StatNames stat, EV ev):
+		Stat(generation, name, stat, ev, generation <= Generation::two ? IV(30_bi) : IV(31_bi))
+	{
+	}
 	Stat(Stat other, EV ev);
 	Stat(Stat other, EV ev, IV vi);
 	

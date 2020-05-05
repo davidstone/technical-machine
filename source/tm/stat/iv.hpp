@@ -19,9 +19,13 @@
 
 #include <tm/stat/generic_stats.hpp>
 
+#include <tm/generation.hpp>
+
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
+
+using namespace bounded::literal;
 
 struct IV {
 	static constexpr auto max = 31;
@@ -39,5 +43,9 @@ private:
 };
 
 using IVs = GenericStats<IV>;
+
+constexpr auto default_iv(Generation const generation) {
+	return generation <= Generation::two ? IV(30_bi) : IV(31_bi);
+}
 
 }	// namespace technicalmachine

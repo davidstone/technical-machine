@@ -30,6 +30,8 @@
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
+#include <tm/string_conversions/pokemon.hpp>
+
 #include <containers/algorithms/binary_search.hpp>
 #include <containers/algorithms/transform.hpp>
 
@@ -56,9 +58,11 @@ inline auto hp_to_ev(Generation const generation, Species const species, Level c
 // used in the EV optimizer, where values outside the legal range are regularly
 // encountered as part of speculative computation.
 constexpr auto stat_to_ev(auto const target, Nature const nature, StatNames const stat_name, Stat::base_type const base, IV const iv, Level const level) {
-	return bounded::max(0_bi, (round_up_divide((round_up_divide(target, boost(nature, stat_name)) - 5_bi) * 100_bi, level()) - 2_bi * base - iv.value()) * 4_bi);
+	return bounded::max(
+		0_bi,
+		(round_up_divide((round_up_divide(target, boost(nature, stat_name)) - 5_bi) * 100_bi, level()) - 2_bi * base - iv.value()) * 4_bi
+	);
 }
-
 
 using StatValue = bounded::integer<4, 614>;
 inline auto calculate_evs(Generation const generation, Species const species, Level const level, GenericStats<HP::max_type, StatValue> const stats) -> CombinedStats {
@@ -68,24 +72,30 @@ inline auto calculate_evs(Generation const generation, Species const species, Le
 	
 	auto to_ev = [](auto const integer) { return EV(EV::value_type(integer)); };
 	auto const hp_ev = hp_to_ev(generation, species, level, stats.hp);
-	for (auto const nature : containers::enum_range<Nature>()) {
-		auto const attack_ev = stat_to_ev(stats.attack, nature, StatNames::ATK, base.atk(), IV(31_bi), level);
+
+	auto const nature_range = generation <= Generation::two ? 
+		containers::enum_range(Nature::Hardy, Nature::Hardy) :
+		containers::enum_range<Nature>();
+
+	auto const iv = default_iv(generation);
+	for (auto const nature : nature_range) {
+		auto const attack_ev = stat_to_ev(stats.attack, nature, StatNames::ATK, base.atk(), iv, level);
 		if (attack_ev > EV::max) {
 			continue;
 		}
-		auto const defense_ev = stat_to_ev(stats.defense, nature, StatNames::DEF, base.def(), IV(31_bi), level);
+		auto const defense_ev = stat_to_ev(stats.defense, nature, StatNames::DEF, base.def(), iv, level);
 		if (defense_ev > EV::max) {
 			continue;
 		}
-		auto const special_attack_ev = stat_to_ev(stats.special_attack, nature, StatNames::SPA, base.spa(), IV(31_bi), level);
+		auto const special_attack_ev = stat_to_ev(stats.special_attack, nature, StatNames::SPA, base.spa(), iv, level);
 		if (special_attack_ev > EV::max) {
 			continue;
 		}
-		auto const special_defense_ev = stat_to_ev(stats.special_defense, nature, StatNames::SPD, base.spd(), IV(31_bi), level);
+		auto const special_defense_ev = stat_to_ev(stats.special_defense, nature, StatNames::SPD, base.spd(), iv, level);
 		if (special_defense_ev > EV::max) {
 			continue;
 		}
-		auto const speed_ev = stat_to_ev(stats.speed, nature, StatNames::SPE, base.spe(), IV(31_bi), level);
+		auto const speed_ev = stat_to_ev(stats.speed, nature, StatNames::SPE, base.spe(), iv, level);
 		if (speed_ev > EV::max) {
 			continue;
 		}
@@ -97,7 +107,16 @@ inline auto calculate_evs(Generation const generation, Species const species, Le
 		
 		return combined;
 	}
-	throw std::runtime_error("No Nature + EV combination combines to give the received stats");
+	throw std::runtime_error(
+		"No Nature + EV combination combines to give the received stats: "
+		"Species: " + std::string(to_string(species)) +
+		" HP: " + bounded::to_string(stats.hp) +
+		" Attack: " + bounded::to_string(stats.attack) +
+		" Defense: " + bounded::to_string(stats.defense) +
+		" Special Attack: " + bounded::to_string(stats.special_attack) +
+		" Special Defense: " + bounded::to_string(stats.special_defense) +
+		" Speed: " + bounded::to_string(stats.speed)
+	);
 }
 
 }	// namespace technicalmachine

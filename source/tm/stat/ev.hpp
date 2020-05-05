@@ -64,10 +64,9 @@ constexpr auto ev_range() {
 
 constexpr auto max_total_evs(Generation const generation) {
 	return
-		BOUNDED_CONDITIONAL(generation <= Generation::one, 252_bi * 5_bi,
 		BOUNDED_CONDITIONAL(generation <= Generation::two, 252_bi * 6_bi,
 		508_bi
-	));
+	);
 }
 
 }	// namespace technicalmachine
