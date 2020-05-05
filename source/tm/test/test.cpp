@@ -17,6 +17,7 @@
 
 #include <tm/test/clients/pokemon_showdown/battles.hpp>
 #include <tm/test/clients/pokemon_showdown/packed_team.hpp>
+#include <tm/test/clients/pokemon_showdown/parse_team.hpp>
 #include <tm/test/clients/pokemon_showdown/slot_memory.hpp>
 #include <tm/test/collections/collection.hpp>
 #include <tm/test/block.hpp>
@@ -53,6 +54,7 @@ int main() {
 
 	pl::test ();
 	po::test ();
+	ps::test_parse_team();
 	ps::test_packed_team();
 	ps::test_slot_memory();
 
