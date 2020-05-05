@@ -39,6 +39,7 @@ struct ActiveStatus {
 				m_toxic_counter = 1_bi;
 				break;
 			default:
+				m_none = {};
 				break;
 		}
 	}
@@ -47,12 +48,19 @@ struct ActiveStatus {
 	}
 
 	auto status_and_leech_seed_effects(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather, bool uproar) & -> void;
+
+	// TODO: ???
+	friend auto operator==(ActiveStatus const & lhs, ActiveStatus const & rhs) -> bool {
+		// TODO: std::bit_cast
+		return reinterpret_cast<std::byte const &>(lhs) == reinterpret_cast<std::byte const &>(rhs);
+	}
 private:
 	auto end_of_attack(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather) & -> void;
 	auto end_of_turn(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather, bool uproar) & -> void;
-	// The discriminator is the status of the active Pokemon. The default value
-	// is irrelevant.
+	// The discriminator is the status of the active Pokemon.
+	struct None {};
 	union {
+		None m_none{};
 		bool m_nightmare;
 		bounded::clamped_integer<1, 15> m_toxic_counter;
 	};

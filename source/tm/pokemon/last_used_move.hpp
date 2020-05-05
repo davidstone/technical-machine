@@ -146,6 +146,8 @@ struct LastUsedMove {
 	auto vanish_doubles_power(Generation const generation, Moves const move_name) const -> bool;
 
 	auto use_vanish_move(Item) & -> VanishOutcome;
+
+	friend auto operator==(LastUsedMove const &, LastUsedMove const &) -> bool = default;
 private:
 	constexpr auto successful_last_move(Moves const move) const -> bool {
 		return m_move == move and m_consecutive_successes >= 1_bi;
@@ -158,11 +160,21 @@ private:
 	bounded::clamped_integer<0, 10> m_consecutive_successes = 0_bi;
 	bool m_moved_this_turn = false;
 
-	struct Empty {};
-	struct ChargingUp {};
-	struct Protecting {};
-	struct Recharging {};
-	struct Vanishing {};
+	struct Empty {
+		friend auto operator==(Empty const &, Empty const &) -> bool = default;
+	};
+	struct ChargingUp {
+		friend auto operator==(ChargingUp const &, ChargingUp const &) -> bool = default;
+	};
+	struct Protecting {
+		friend auto operator==(Protecting const &, Protecting const &) -> bool = default;
+	};
+	struct Recharging {
+		friend auto operator==(Recharging const &, Recharging const &) -> bool = default;
+	};
+	struct Vanishing {
+		friend auto operator==(Vanishing const &, Vanishing const &) -> bool = default;
+	};
 
 	bounded::variant<
 		Empty,

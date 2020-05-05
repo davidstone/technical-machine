@@ -103,6 +103,7 @@ struct PokemonCollection {
 
 	void remove_active(containers::index_type<PokemonCollection> index_of_replacement);
 
+	friend auto operator==(PokemonCollection const &, PokemonCollection const &) -> bool = default;
 private:
 	void check_not_full() {
 		if (size(m_container) == m_real_size) {

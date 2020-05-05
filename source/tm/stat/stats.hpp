@@ -34,6 +34,8 @@ struct Stats {
 	auto hp() -> HP &;
 	auto operator[](StatNames stat) const -> Stat const &;
 	auto operator[](StatNames stat) -> Stat &;
+
+	friend auto operator==(Stats const &, Stats const &) -> bool = default;
 private:
 	HP m_hp;
 	containers::array<Stat, 5> m_stats;

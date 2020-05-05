@@ -57,6 +57,8 @@ struct HP {
 		return m_iv;
 	}
 
+	friend auto operator==(HP const &, HP const &) -> bool = default;
+
 private:
 	EV m_ev;
 	IV m_iv;

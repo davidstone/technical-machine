@@ -32,6 +32,8 @@ struct IV {
 	constexpr auto value() const -> bounded::integer<0, max> {
 		return m_value;
 	}
+
+	friend auto operator==(IV const &, IV const &) -> bool = default;
 private:
 	value_type m_value;
 };

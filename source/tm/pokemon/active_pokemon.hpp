@@ -64,6 +64,8 @@ struct ActivePokemonFlags {
 		me_first_is_active = false;
 		is_loafing_turn = !is_loafing_turn;
 	}
+
+	friend auto operator==(ActivePokemonFlags const &, ActivePokemonFlags const &) -> bool = default;
 private:
 	template<bool>
 	friend struct ActivePokemonImpl;

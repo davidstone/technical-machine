@@ -64,6 +64,9 @@ struct HeldItem {
 	constexpr auto recycle() & -> void {
 		m_active = true;
 	}
+
+	friend auto operator==(HeldItem const &, HeldItem const &) -> bool = default;
+
 private:
 	constexpr auto affected_by_embargo(Generation const generation) const -> bool {
 		// Iron_Ball is disabled in Generation 4 for the Speed check but not for

@@ -46,6 +46,8 @@ struct Stat {
 	auto iv() const {
 		return m_iv;
 	}
+
+	friend auto operator==(Stat const &, Stat const &) -> bool = default;
 private:
 	base_type m_base;
 	EV m_ev;

@@ -52,6 +52,7 @@ struct HiddenPower {
 		return m_type;
 	}
 	
+	friend auto operator==(HiddenPower const &, HiddenPower const &) -> bool = default;
 private:
 	using Power = bounded::integer<30, 70>;
 	

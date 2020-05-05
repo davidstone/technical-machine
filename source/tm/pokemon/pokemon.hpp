@@ -118,6 +118,8 @@ struct Pokemon {
 	friend bool nature_is_known(Pokemon pokemon);
 	friend auto set_hp_ev(Generation, Pokemon &, EV, IV) -> void;
 	friend auto set_stat_ev(Pokemon &, StatNames, EV, IV) -> void;
+
+	friend auto operator==(Pokemon const &, Pokemon const &) -> bool = default;
 private:
 	MoveContainer m_moves;
 	

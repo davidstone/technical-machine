@@ -180,6 +180,8 @@ struct Team {
 		m_entry_hazards.add_toxic_spikes();
 	}
 
+	friend auto operator==(Team const &, Team const &) -> bool = default;
+
 private:
 	PokemonCollection m_all_pokemon;
 	ActivePokemonFlags m_flags;

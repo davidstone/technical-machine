@@ -59,17 +59,31 @@ namespace technicalmachine {
 
 struct Status {
 private:
-	struct Clear {};
-	struct Burn {};
-	struct Freeze {};
-	struct Paralysis {};
-	struct Poison {};
-	struct Toxic {};
+	struct Clear {
+		friend auto operator==(Clear const &, Clear const &) -> bool = default;
+	};
+	struct Burn {
+		friend auto operator==(Burn const &, Burn const &) -> bool = default;
+	};
+	struct Freeze {
+		friend auto operator==(Freeze const &, Freeze const &) -> bool = default;
+	};
+	struct Paralysis {
+		friend auto operator==(Paralysis const &, Paralysis const &) -> bool = default;
+	};
+	struct Poison {
+		friend auto operator==(Poison const &, Poison const &) -> bool = default;
+	};
+	struct Toxic {
+		friend auto operator==(Toxic const &, Toxic const &) -> bool = default;
+	};
 	struct Sleep {
 		bounded::clamped_integer<0, 4> turns_slept = 0_bi;
+		friend auto operator==(Sleep const &, Sleep const &) -> bool = default;
 	};
 	struct Rest {
 		bounded::clamped_integer<0, 2> turns_slept = 0_bi;
+		friend auto operator==(Rest const &, Rest const &) -> bool = default;
 	};
 
 public:
@@ -93,6 +107,8 @@ public:
 	// Pokemon is not asleep or frozen or if, due to the sleep counter, they
 	// will definitely not awaken.
 	auto probability_of_clearing(Ability ability) const -> double;
+
+	friend auto operator==(Status const &, Status const &) -> bool = default;
 
 private:
 	using State = bounded::variant<
