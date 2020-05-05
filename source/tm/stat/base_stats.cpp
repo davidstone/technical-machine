@@ -151,7 +151,14 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::one, 65_bi, 79_bi),
 				80_bi
 			};
-			case Species::Pikachu: return {35_bi, 55_bi, 40_bi, 50_bi, 50_bi, 90_bi};
+			case Species::Pikachu: return {
+				35_bi,
+				55_bi,
+				BOUNDED_CONDITIONAL(generation <= Generation::five, 30_bi, 40_bi),
+				50_bi,
+				50_bi,
+				90_bi
+			};
 			case Species::Raichu: return {
 				60_bi,
 				90_bi,
