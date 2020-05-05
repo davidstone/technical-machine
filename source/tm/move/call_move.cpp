@@ -354,7 +354,9 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Hyper_Beam:
 		case Moves::Roar_of_Time:
 		case Moves::Rock_Wrecker:
-			user.use_recharge_move();
+			if (generation >= Generation::two or get_hp(other.pokemon()).current() != 0_bi) {
+				user.use_recharge_move();
+			}
 			break;
 		case Moves::Blaze_Kick:
 		case Moves::Ember:
