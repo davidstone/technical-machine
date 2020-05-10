@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tm/clients/pokemon_showdown/inmessage.hpp>
-
 #include <tm/team_predictor/generate_team_builder_ui.hpp>
 #include <tm/team_predictor/random_team.hpp>
 #include <tm/team_predictor/team_predictor.hpp>
@@ -30,6 +28,7 @@
 #include <tm/string_conversions/pokemon.hpp>
 #include <tm/string_conversions/team.hpp>
 
+#include <tm/buffer_view.hpp>
 #include <tm/generation.hpp>
 #include <tm/team.hpp>
 
@@ -61,7 +60,7 @@ namespace {
 using namespace bounded::literal;
 
 auto get_expected_base(std::string_view const input, std::string_view const expected_key) {
-	auto [key, value] = ps::split(input, '=');
+	auto [key, value] = split(input, '=');
 	if (key != expected_key) {
 		throw std::runtime_error("Expected " + std::string(expected_key) + " but got " + std::string(key));
 	}
@@ -80,7 +79,7 @@ auto get_expected_integer_wrapper(std::string_view const input, std::string_view
 }
 
 auto parse_html_team(std::string_view str, Generation const generation) -> Team {
-	auto buffer = ps::BufferView(str, '&');
+	auto buffer = BufferView(str, '&');
 
 	constexpr auto is_me = true;
 	auto team = Team(max_pokemon_per_team, is_me);

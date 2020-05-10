@@ -168,6 +168,7 @@ add_library(tm_common STATIC
 
 	source/tm/ability.cpp
 	source/tm/block.cpp
+	source/tm/buffer_view.cpp
 	source/tm/end_of_turn.cpp
 	source/tm/entry_hazards.cpp
 	source/tm/gender.cpp

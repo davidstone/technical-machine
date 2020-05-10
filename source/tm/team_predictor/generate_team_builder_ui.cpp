@@ -17,7 +17,6 @@
 
 #include <tm/team_predictor/generate_team_builder_ui.hpp>
 
-#include <tm/clients/pokemon_showdown/inmessage.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
@@ -31,6 +30,7 @@
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 #include <tm/ability.hpp>
+#include <tm/buffer_view.hpp>
 #include <tm/gender.hpp>
 #include <tm/item.hpp>
 
@@ -83,7 +83,7 @@ void generate_team_builder_ui(std::ostream & output, std::string_view const quer
 		"<head><title>Team Builder</title></head>"
 		"<body>"
 		"<form method=\"post\">";
-	auto query_buffer = ps::BufferViewBase(query_string);
+	auto query_buffer = BufferViewBase(query_string);
 	auto next_default = [&]{
 		query_buffer.next('=');
 		return query_buffer.next('&');

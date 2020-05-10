@@ -17,9 +17,8 @@
 
 #include <tm/clients/pokemon_showdown/packed_team.hpp>
 
+#include <tm/buffer_view.hpp>
 #include <tm/team.hpp>
-
-#include <tm/clients/pokemon_showdown/inmessage.hpp>
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
