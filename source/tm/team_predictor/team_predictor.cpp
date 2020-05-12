@@ -35,7 +35,7 @@ namespace technicalmachine {
 enum class Moves : std::uint16_t;
 namespace {
 
-void predict_pokemon(Generation const generation, Team & team, Estimate estimate, Multiplier const & multiplier) {
+void predict_pokemon(Generation const generation, Team & team, Estimate estimate, UsageStats const & usage_stats) {
 	auto const index = team.all_pokemon().index();
 	while (team.number_of_seen_pokemon() < team.size()) {
 		Species const name = estimate.most_likely();
@@ -43,12 +43,12 @@ void predict_pokemon(Generation const generation, Team & team, Estimate estimate
 		team.add_pokemon(generation, name, level, Gender::genderless);
 		if (team.number_of_seen_pokemon() == team.size())
 			break;
-		estimate.update(multiplier, name);
+		estimate.update(usage_stats, name);
 	}
 	team.all_pokemon().set_index(index);
 }
 
-void predict_move(MoveContainer & moves, Generation const generation, DetailedStats::UsedMoves const & detailed) {
+void predict_move(MoveContainer & moves, Generation const generation, containers::static_vector<Moves, max_moves_per_pokemon.value()> const detailed) {
 	for (Moves const move : detailed) {
 		auto const regular = moves.regular();
 		if (size(regular) == max_moves_per_pokemon) {
@@ -64,28 +64,27 @@ void predict_move(MoveContainer & moves, Generation const generation, DetailedSt
 }	// namespace
 
 Team predict_team(Generation const generation, UsageStats const & usage_stats, LeadStats const lead_stats, Team team, std::mt19937 & random_engine) {
-	auto const & multiplier = usage_stats.multiplier();
-	auto const & detailed = usage_stats.detailed();
 	auto estimate = Estimate(usage_stats, lead_stats);
-	estimate.update(multiplier, team);
+	update_estimate(estimate, usage_stats, team);
 
-	predict_pokemon(generation, team, estimate, multiplier);
+	predict_pokemon(generation, team, estimate, usage_stats);
 	for (auto & pokemon : team.all_pokemon()) {
 		auto const species = get_species(pokemon);
+		auto const & detailed = usage_stats.get(species);
 		if (!ability_is_known(pokemon)) {
-			pokemon.set_initial_ability(detailed.get<Ability>(species));
+			pokemon.set_initial_ability(detailed.ability);
 			auto active_pokemon = team.pokemon();
 			if (std::addressof(pokemon) == std::addressof(static_cast<Pokemon const &>(active_pokemon))) {
 				active_pokemon.set_ability_to_base_ability();
 			}
 		}
 		if (!item_is_known(pokemon)) {
-			pokemon.set_item(detailed.get<Item>(species));
+			pokemon.set_item(detailed.item);
 		}
 		if (!nature_is_known(pokemon)) {
-			set_nature(pokemon, detailed.get<Nature>(species));
+			set_nature(pokemon, detailed.stats.nature);
 		}
-		predict_move(all_moves(pokemon), generation, detailed.get<DetailedStats::UsedMoves>(species));
+		predict_move(all_moves(pokemon), generation, detailed.moves);
 		optimize_evs(generation, pokemon, random_engine);
 	}
 	return team;

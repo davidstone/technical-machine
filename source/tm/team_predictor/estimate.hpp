@@ -27,19 +27,19 @@
 
 namespace technicalmachine {
 
-struct Multiplier;
 struct Team;
 struct UsageStats;
 
 struct Estimate {
 	Estimate(UsageStats const & usage_stats, LeadStats lead_stats);
-	void update(Multiplier const & multiplier, Team const & team);
-	void update(Multiplier const & multiplier, Species seen);
+	void update(UsageStats const & usage_stats, Species seen);
 	Species most_likely() const;
 	Species random(std::mt19937 & random_engine) const;
 private:
 	using value_type = float;
-	containers::array<value_type, number_of_species> estimate;
+	containers::array<value_type, number_of_species> m_estimate;
 };
+
+void update_estimate(Estimate & estimate, UsageStats const & usage_stats, Team const & team);
 
 }	// namespace technicalmachine

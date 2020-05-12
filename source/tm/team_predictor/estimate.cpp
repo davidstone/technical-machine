@@ -34,44 +34,42 @@
 namespace technicalmachine {
 
 Estimate::Estimate(UsageStats const & usage_stats, LeadStats const lead_stats) {
-	auto const & overall = usage_stats.overall();
 	auto const & lead = lead_stats.get(usage_stats);
-	auto const total = containers::accumulate(overall);
+	auto const total = usage_stats.total_weighted_usage();
 	for (auto const species : containers::enum_range<Species>()) {
-		at(estimate, species) = at(lead, species) * static_cast<value_type>(at(overall, species)) / static_cast<value_type>(total);
+		at(m_estimate, species) = at(lead, species) * usage_stats.get(species).weighted_usage / static_cast<value_type>(total);
 	}
 }
 
-void Estimate::update(Multiplier const & multiplier, Team const & team) {
+void update_estimate(Estimate & estimate, UsageStats const & usage_stats, Team const & team) {
 	for (auto const & pokemon : team.all_pokemon()) {
-		update(multiplier, get_species(pokemon));
+		estimate.update(usage_stats, get_species(pokemon));
 	}
 }
 
-void Estimate::update(Multiplier const & multiplier, Species const seen) {
+void Estimate::update(UsageStats const & usage_stats, Species const seen) {
 	for (auto const predicted : containers::enum_range<Species>()) {
-		at(estimate, predicted) *= multiplier(seen, predicted);
+		at(m_estimate, predicted) *= at(usage_stats.get(seen).teammates, predicted);
 	}
 }
 
 Species Estimate::most_likely() const {
-	auto const it = std::max_element(begin(estimate), end(estimate));
+	auto const it = std::max_element(begin(m_estimate), end(m_estimate));
 	// Estimate is indexed by Species ID. The Species ID is therefore the
 	// distance between the found element and the beginning.
-	return static_cast<Species>(it - begin(estimate));
+	return static_cast<Species>(it - begin(m_estimate));
 }
 
 Species Estimate::random(std::mt19937 & random_engine) const {
-	auto const total = containers::accumulate(estimate);
+	auto const total = containers::accumulate(m_estimate);
 	auto distribution = std::uniform_real_distribution<float>(0.0F, total);
 	auto usage_threshold = distribution(random_engine);
-	
-	auto const it = containers::find_if(estimate, [=](auto const value) mutable {
+	auto const it = containers::find_if(m_estimate, [=](auto const value) mutable {
 		usage_threshold -= value;
 		return usage_threshold <= 0.0F;
 	});
-	BOUNDED_ASSERT(it != end(estimate));
-	return static_cast<Species>(it - begin(estimate));
+	BOUNDED_ASSERT(it != end(m_estimate));
+	return static_cast<Species>(it - begin(m_estimate));
 }
 
 }	// namespace technicalmachine

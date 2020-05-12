@@ -24,7 +24,9 @@ namespace technicalmachine {
 
 auto LeadStats::get(UsageStats const & usage_stats) const -> containers::array<float, number_of_species> const & {
 	static constexpr auto unused_lead = containers::make_array_n(bounded::constant<number_of_species>, 1.0F);
-	return m_use_lead_stats ? usage_stats.lead() : unused_lead;
+	static_cast<void>(usage_stats);
+	static_cast<void>(m_use_lead_stats);
+	return unused_lead;
 }
 
 } // namespace technicalmachine

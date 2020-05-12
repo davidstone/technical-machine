@@ -35,6 +35,8 @@
 #include <bounded/optional.hpp>
 #include <bounded/to_integer.hpp>
 
+#include <containers/integer_range.hpp>
+
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
@@ -42,6 +44,7 @@
 
 #include <random>
 #include <string>
+#include <unordered_map>
 #include <utility>
 
 #include <iostream>
@@ -78,11 +81,17 @@ auto get_expected_integer_wrapper(std::string_view const input, std::string_view
 	return T(bounded::to_integer<typename T::value_type>(get_expected_base(input, key)));
 }
 
-auto parse_html_team(std::string_view str, Generation const generation) -> Team {
+struct HTMLTeam {
+	Generation generation;
+	Team team;
+};
+auto parse_html_team(std::string_view str) -> HTMLTeam {
 	auto buffer = BufferView(str, '&');
 
 	constexpr auto is_me = true;
 	auto team = Team(max_pokemon_per_team, is_me);
+
+	auto const generation = Generation(bounded::to_integer<1, 8>(get_expected_base(buffer.next(), "generation")));
 
 	for (auto const index : containers::integer_range(max_pokemon_per_team)) {
 		auto species = get_expected<Species>(buffer.next(), "species", bounded::to_string(index));
@@ -139,20 +148,24 @@ auto parse_html_team(std::string_view str, Generation const generation) -> Team 
 		set_stat_ev(pokemon, StatNames::SPE, spe);
 	}
 
-	return team;
+	return {generation, team};
 }
 
 struct Data {
-	Data() = default;
+	Data(std::unordered_map<Generation, UsageStats> const & usage_stats):
+		m_usage_stats(usage_stats)
+	{
+	}
 
 	auto team_string(std::string_view const input_data) -> containers::string {
 		constexpr auto using_lead = false;
 		try {
-			auto team = parse_html_team(input_data, m_generation);
-			random_team(m_generation, m_usage_stats, team, m_random_engine);
+			auto [generation, team] = parse_html_team(input_data);
+			auto const & usage_stats = m_usage_stats.at(generation);
+			random_team(generation, usage_stats, team, m_random_engine);
 			return to_string(predict_team(
-				m_generation,
-				m_usage_stats,
+				generation,
+				usage_stats,
 				LeadStats(using_lead),
 				team,
 				m_random_engine
@@ -163,13 +176,13 @@ struct Data {
 	}
 
 private:
-	Generation m_generation = Generation::four;
-	UsageStats m_usage_stats{"settings/4/OU/"};
+	std::unordered_map<Generation, UsageStats> const & m_usage_stats;
 	std::mt19937 m_random_engine{std::random_device()()};
 };
 
 struct Connection {
-	explicit Connection(tcp::socket socket):
+	explicit Connection(std::unordered_map<Generation, UsageStats> const & usage_stats, tcp::socket socket):
+		m_data(usage_stats),
 		m_socket(std::move(socket))
 	{
 	}
@@ -188,7 +201,7 @@ private:
 	using Request = http::request<http::string_body>;
 	using Response = http::response<http::dynamic_body>;
 
-	static constexpr auto default_query_string = std::string_view("species0=Select+species&level0=100&gender0=Select+gender&item0=Select+item&ability0=Select+ability&nature0=Select+nature&hp0=0&atk0=0&def0=0&spa0=0&spd0=0&spe0=0&move0_0=Select+move&move0_1=Select+move&move0_2=Select+move&move0_3=Select+move&species1=Select+species&level1=100&gender1=Select+gender&item1=Select+item&ability1=Select+ability&nature1=Select+nature&hp1=0&atk1=0&def1=0&spa1=0&spd1=0&spe1=0&move1_0=Select+move&move1_1=Select+move&move1_2=Select+move&move1_3=Select+move&species2=Select+species&level2=100&gender2=Select+gender&item2=Select+item&ability2=Select+ability&nature2=Select+nature&hp2=0&atk2=0&def2=0&spa2=0&spd2=0&spe2=0&move2_0=Select+move&move2_1=Select+move&move2_2=Select+move&move2_3=Select+move&species3=Select+species&level3=100&gender3=Select+gender&item3=Select+item&ability3=Select+ability&nature3=Select+nature&hp3=0&atk3=0&def3=0&spa3=0&spd3=0&spe3=0&move3_0=Select+move&move3_1=Select+move&move3_2=Select+move&move3_3=Select+move&species4=Select+species&level4=100&gender4=Select+gender&item4=Select+item&ability4=Select+ability&nature4=Select+nature&hp4=0&atk4=0&def4=0&spa4=0&spd4=0&spe4=0&move4_0=Select+move&move4_1=Select+move&move4_2=Select+move&move4_3=Select+move&species5=Select+species&level5=100&gender5=Select+gender&item5=Select+item&ability5=Select+ability&nature5=Select+nature&hp5=0&atk5=0&def5=0&spa5=0&spd5=0&spe5=0&move5_0=Select+move&move5_1=Select+move&move5_2=Select+move&move5_3=Select+move");
+	static constexpr auto default_query_string = std::string_view("generation=4&species0=Select+species&level0=100&gender0=Select+gender&item0=Select+item&ability0=Select+ability&nature0=Select+nature&hp0=0&atk0=0&def0=0&spa0=0&spd0=0&spe0=0&move0_0=Select+move&move0_1=Select+move&move0_2=Select+move&move0_3=Select+move&species1=Select+species&level1=100&gender1=Select+gender&item1=Select+item&ability1=Select+ability&nature1=Select+nature&hp1=0&atk1=0&def1=0&spa1=0&spd1=0&spe1=0&move1_0=Select+move&move1_1=Select+move&move1_2=Select+move&move1_3=Select+move&species2=Select+species&level2=100&gender2=Select+gender&item2=Select+item&ability2=Select+ability&nature2=Select+nature&hp2=0&atk2=0&def2=0&spa2=0&spd2=0&spe2=0&move2_0=Select+move&move2_1=Select+move&move2_2=Select+move&move2_3=Select+move&species3=Select+species&level3=100&gender3=Select+gender&item3=Select+item&ability3=Select+ability&nature3=Select+nature&hp3=0&atk3=0&def3=0&spa3=0&spd3=0&spe3=0&move3_0=Select+move&move3_1=Select+move&move3_2=Select+move&move3_3=Select+move&species4=Select+species&level4=100&gender4=Select+gender&item4=Select+item&ability4=Select+ability&nature4=Select+nature&hp4=0&atk4=0&def4=0&spa4=0&spd4=0&spe4=0&move4_0=Select+move&move4_1=Select+move&move4_2=Select+move&move4_3=Select+move&species5=Select+species&level5=100&gender5=Select+gender&item5=Select+item&ability5=Select+ability&nature5=Select+nature&hp5=0&atk5=0&def5=0&spa5=0&spd5=0&spe5=0&move5_0=Select+move&move5_1=Select+move&move5_2=Select+move&move5_3=Select+move");
 
 	auto create_response(unsigned const version, std::string_view const query_string) -> Response {
 		auto response = Response();
@@ -204,14 +217,29 @@ private:
 		return response;
 	}
 
-	tcp::socket m_socket;
 	Data m_data;
+	tcp::socket m_socket;
+};
+
+auto load_all_usage_stats() {
+	auto usage_stats = std::unordered_map<Generation, UsageStats>();
+	for (auto const generation : containers::enum_range(Generation::one, Generation::five)) {
+		usage_stats.try_emplace(
+			generation,
+			std::filesystem::path("settings") / std::to_string(static_cast<int>(generation)) / "OU"
+		);
+	}
+	return usage_stats;
 };
 
 } // namespace
 } // namespace technicalmachine
 
 int main() {
+	using technicalmachine::Generation;
+	using technicalmachine::UsageStats;
+	auto const usage_stats = technicalmachine::load_all_usage_stats();
+
 	auto const address = boost::asio::ip::make_address("127.0.0.1");
 	auto const port = static_cast<unsigned short>(46923);
 
@@ -221,7 +249,7 @@ int main() {
 	while (true) {
 		auto socket = tcp::socket(ioc);
 		acceptor.accept(socket);
-		auto connection = technicalmachine::Connection(std::move(socket));
+		auto connection = technicalmachine::Connection(usage_stats, std::move(socket));
 		connection.process();
 	}
 }

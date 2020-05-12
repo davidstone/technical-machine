@@ -17,29 +17,52 @@
 
 #pragma once
 
-#include <tm/team_predictor/detailed_stats.hpp>
-#include <tm/team_predictor/multiplier.hpp>
-
+#include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/pokemon/species.hpp>
+#include <tm/stat/combined_stats.hpp>
+
+#include <tm/ability.hpp>
+#include <tm/item.hpp>
 
 #include <containers/array/array.hpp>
+#include <containers/legacy_iterator.hpp>
+#include <containers/static_vector/static_vector.hpp>
 
+#include <algorithm>
 #include <filesystem>
 
 namespace technicalmachine {
 
 struct UsageStats {
+	struct PerPokemon {
+		float weighted_usage = 0.0F;
+		containers::array<float, number_of_species> teammates = {};
+		containers::static_vector<Moves, max_moves_per_pokemon.value()> moves;
+		Ability ability = Ability::Honey_Gather;
+		Item item = Item::None;	
+		CombinedStats stats = {
+			Nature::Hardy,
+			EV(EV::max),
+			EV(EV::max),
+			EV(EV::max),
+			EV(EV::max),
+			EV(EV::max),
+			EV(EV::max)
+		};
+	};
+
 	explicit UsageStats(std::filesystem::path const & usage_stats_directory);
-	auto const & overall() const { return m_overall; }
-	auto const & lead() const { return m_lead; }
-	auto const & detailed() const { return m_detailed; }
-	auto const & multiplier() const { return m_multiplier; }
+
+	auto total_weighted_usage() const {
+		return m_total_weighted_usage;
+	}
+
+	auto const & get(Species const species) const {
+		return at(m_all_per_pokemon, species);
+	}
 private:
-	OverallStats m_overall;
-	// Multiplier for Pokemon after you've seen the lead
-	containers::array<float, number_of_species> m_lead;
-	DetailedStats m_detailed;
-	Multiplier m_multiplier;
+	float m_total_weighted_usage = 0.0F;
+	containers::array<PerPokemon, number_of_species> m_all_per_pokemon;
 };
 
 }	// namespace technicalmachine

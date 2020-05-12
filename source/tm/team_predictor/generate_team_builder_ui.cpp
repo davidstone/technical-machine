@@ -42,9 +42,21 @@ namespace {
 
 using namespace bounded::literal;
 
+constexpr auto to_string(Generation const generation) -> std::string_view {
+	switch (generation) {
+		case Generation::one: return "1";
+		case Generation::two: return "2";
+		case Generation::three: return "3";
+		case Generation::four: return "4";
+		case Generation::five: return "5";
+		case Generation::six: return "6";
+		case Generation::seven: return "7";
+		case Generation::eight: return "8";
+	}
+}
+
 template<typename Range>
-auto add_dropdown(std::ostream & output, std::string const & type, std::string const & index, Range range, std::string_view const default_value) {
-	auto const id = type + index;
+auto add_dropdown_with_id(std::ostream & output, std::string const & type, std::string_view const id, Range range, std::string_view const default_value) {
 	output <<
 		"<select name=\"" << id << "\" id=\"" << id << "\">";
 	auto add_option = [&](std::string_view const value) {
@@ -55,6 +67,11 @@ auto add_dropdown(std::ostream & output, std::string const & type, std::string c
 		add_option(to_string(value));
 	}
 	output << "</select>";
+}
+
+template<typename Range>
+auto add_dropdown(std::ostream & output, std::string const & type, std::string const & index, Range range, std::string_view const default_value) {
+	add_dropdown_with_id(output, type, type + index, std::move(range), default_value);
 }
 
 template<typename Enum>
@@ -88,6 +105,8 @@ void generate_team_builder_ui(std::ostream & output, std::string_view const quer
 		query_buffer.next('=');
 		return query_buffer.next('&');
 	};
+	add_dropdown_with_id(output, "generation", "generation", containers::enum_range(Generation::one, Generation::eight), next_default());
+	output << "<br>";
 	for (auto const pokemon_index : containers::integer_range(max_pokemon_per_team)) {
 		auto const index_str = bounded::to_string(pokemon_index);
 		add_dropdown<Species>(output, "species", index_str, next_default());

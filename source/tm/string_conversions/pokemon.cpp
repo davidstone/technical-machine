@@ -909,7 +909,7 @@ std::string_view to_string(Species const species) {
 
 template<>
 Species from_string(std::string_view const str) {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 882>;
+	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 885>;
 	static constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
@@ -1307,6 +1307,7 @@ Species from_string(std::string_view const str) {
 			{ "kyuremwhite", Species::Kyurem_White },
 			{ "lairon", Species::Lairon },
 			{ "lampent", Species::Lampent },
+			{ "landorus", Species::Landorus_Incarnate },
 			{ "landorusincarnate", Species::Landorus_Incarnate },
 			{ "landorustherian", Species::Landorus_Therian },
 			{ "lanturn", Species::Lanturn },
@@ -1682,6 +1683,7 @@ Species from_string(std::string_view const str) {
 			{ "tepig", Species::Tepig },
 			{ "terrakion", Species::Terrakion },
 			{ "throh", Species::Throh },
+			{ "thundurus", Species::Thundurus_Incarnate },
 			{ "thundurusincarnate", Species::Thundurus_Incarnate },
 			{ "thundurustherian", Species::Thundurus_Therian },
 			{ "timburr", Species::Timburr },
@@ -1692,6 +1694,7 @@ Species from_string(std::string_view const str) {
 			{ "togetic", Species::Togetic },
 			{ "torchic", Species::Torchic },
 			{ "torkoal", Species::Torkoal },
+			{ "tornadus", Species::Tornadus_Incarnate },
 			{ "tornadusincarnate", Species::Tornadus_Incarnate },
 			{ "tornadustherian", Species::Tornadus_Therian },
 			{ "torracat", Species::Torracat },
