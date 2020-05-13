@@ -19,6 +19,7 @@
 
 #include <tm/type/type.hpp>
 #include <tm/ability.hpp>
+#include <tm/generation.hpp>
 #include <tm/item.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
@@ -106,7 +107,7 @@ public:
 	// status is freeze, returns the probability of thawing. Returns 0.0 if the
 	// Pokemon is not asleep or frozen or if, due to the sleep counter, they
 	// will definitely not awaken.
-	auto probability_of_clearing(Ability ability) const -> double;
+	auto probability_of_clearing(Generation, Ability) const -> double;
 
 	friend auto operator==(Status const &, Status const &) -> bool = default;
 

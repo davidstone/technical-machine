@@ -108,11 +108,11 @@ constexpr auto awaken_probability(SleepCounter const turns_slept, Ability const 
 
 }	// namespace
 
-auto Status::probability_of_clearing(Ability const ability) const -> double {
+auto Status::probability_of_clearing(Generation const generation, Ability const ability) const -> double {
 	return bounded::visit(m_state, bounded::overload(
 		[=](Sleep const sleep) { return awaken_probability(sleep.turns_slept, ability); },
 		[](Rest const sleep) { return sleep.turns_slept == bounded::max_value<decltype(sleep.turns_slept)> ? 1.0 : 0.0; },
-		[](Freeze) { return 0.2; },
+		[=](Freeze) { return generation == Generation::one ? 0.0 : 0.2; },
 		[](auto) { return 0.0; }
 	));
 }

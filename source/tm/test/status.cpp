@@ -38,7 +38,7 @@ void awakening_probability_tests() {
 	auto const ability = Ability::Pressure;
 	auto status = Status(Statuses::sleep);
 	for (auto const expected : { 0.0, 1.0 / 4.0, 1.0 / 3.0, 1.0 / 2.0, 1.0 / 1.0 }) {
-		auto const calculated = status.probability_of_clearing(ability);
+		auto const calculated = status.probability_of_clearing(Generation::four, ability);
 		if (expected != calculated) {
 			throw InvalidSleepProbability(expected, calculated);
 		}
