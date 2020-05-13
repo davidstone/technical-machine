@@ -19,7 +19,6 @@
 #include <tm/team_predictor/random_team.hpp>
 
 #include <tm/team_predictor/estimate.hpp>
-#include <tm/team_predictor/usage_stats.hpp>
 
 #include <tm/team.hpp>
 

@@ -16,11 +16,12 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/team_predictor/lead_stats.hpp>
-#include <tm/team_predictor/usage_stats.hpp>
 
 #include <containers/array/make_array.hpp>
 
 namespace technicalmachine {
+
+struct UsageStats;
 
 auto LeadStats::get(UsageStats const & usage_stats) const -> containers::array<float, number_of_species> const & {
 	static constexpr auto unused_lead = containers::make_array_n(bounded::constant<number_of_species>, 1.0F);

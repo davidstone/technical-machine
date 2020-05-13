@@ -33,6 +33,7 @@
 namespace technicalmachine {
 
 enum class Generation : std::uint8_t;
+struct UsageStats;
 
 namespace ps {
 

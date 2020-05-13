@@ -38,6 +38,9 @@
 #include <utility>
 
 namespace technicalmachine {
+
+struct UsageStats;
+
 namespace ps {
 
 struct BattleParser {
