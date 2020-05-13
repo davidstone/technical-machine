@@ -432,6 +432,8 @@ void BattleParser::handle_message(InMessage message) {
 			maybe_use_previous_move();
 			send_move(determine_action());
 		}
+	} else if (type == "-mustrecharge") {
+		// After moves like Hyper Beam
 	} else if (type == "-notarget") {
 		// When you use a move, but there is no one to target
 	} else if (type == "player") {
