@@ -56,6 +56,7 @@ auto LastUsedMove::is_charging_up() const -> bool {
 }
 
 auto LastUsedMove::use_charge_up_move() & -> void {
+	BOUNDED_ASSERT(!is_locked_in_by_move());
 	m_effects = ChargingUp{};
 }
 
@@ -93,6 +94,7 @@ auto LastUsedMove::is_protecting() const -> bool {
 }
 
 auto LastUsedMove::protect() & -> void {
+	BOUNDED_ASSERT(!is_locked_in_by_move());
 	m_effects = Protecting();
 }
 
@@ -103,6 +105,7 @@ auto LastUsedMove::break_protect() & -> void {
 }
 
 auto LastUsedMove::activate_rampage() & -> void {
+	BOUNDED_ASSERT(!is_locked_in_by_move());
 	// TODO: Have it be active when it is constructed
 	auto rampage = Rampage();
 	rampage.activate();
@@ -117,6 +120,7 @@ auto LastUsedMove::recharge() & -> bool {
 }
 
 auto LastUsedMove::use_recharge_move() & -> void {
+	BOUNDED_ASSERT(!is_locked_in_by_move());
 	m_effects = Recharging();
 }
 
