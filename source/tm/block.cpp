@@ -39,8 +39,8 @@
 namespace technicalmachine {
 namespace {
 
-auto would_switch_to_different_pokemon(PokemonCollection const & collection, Moves const move) {
-	return to_replacement(move) != collection.index();
+auto would_switch_to_same_pokemon(PokemonCollection const & collection, Moves const move) {
+	return to_replacement(move) == collection.index();
 }
 
 auto is_blocked_from_switching(Generation const generation, ActivePokemon const user, ActivePokemon const other, Weather const weather) {
@@ -49,10 +49,11 @@ auto is_blocked_from_switching(Generation const generation, ActivePokemon const 
 	return result;
 }
 
-auto is_not_illegal_switch(Generation const generation, Team const & user, Moves const move, ActivePokemon const other, Weather const weather) {
-	return is_switch(move) ?
-		would_switch_to_different_pokemon(user.all_pokemon(), move) and !is_blocked_from_switching(generation, user.pokemon(), other, weather) :
-		true;
+auto is_illegal_switch(Generation const generation, Team const & user, Moves const move, ActivePokemon const other, Weather const weather) {
+	return is_switch(move) and (
+		would_switch_to_same_pokemon(user.all_pokemon(), move) or
+		is_blocked_from_switching(generation, user.pokemon(), other, weather)
+	);
 }
 
 auto is_healing(Moves const name) {
@@ -140,10 +141,11 @@ auto is_blocked_due_to_lock_in(Generation const generation, ActivePokemon const 
 }
 
 auto is_legal_selection(Generation const generation, Team const & user, Move const move, Team const & other, Weather const weather, bool const found_selectable_move) {
+	BOUNDED_ASSERT(move != Moves::Hit_Self);
 	auto const pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	if (user.size() > 1_bi and pokemon.switch_decision_required()) {
-		return is_switch(move.name()) and would_switch_to_different_pokemon(user.all_pokemon(), move.name());
+		return is_switch(move.name()) and !would_switch_to_same_pokemon(user.all_pokemon(), move.name());
 	}
 	auto const is_pass = move == Moves::Pass;
 	if (other.size() > 1_bi and other_pokemon.switch_decision_required()) {
@@ -152,13 +154,15 @@ auto is_legal_selection(Generation const generation, Team const & user, Move con
 	if (pokemon.moved()) {
 		return is_pass;
 	}
+	if (move == Moves::Struggle) {
+		return !found_selectable_move;
+	}
 	return
 		!is_pass and
 		!is_blocked_due_to_lock_in(generation, pokemon, move.name(), weather) and
-		is_not_illegal_switch(generation, user, move.name(), other_pokemon, weather) and
-		(move != Moves::Struggle or !found_selectable_move) and
-		!(block1(pokemon, move, other_pokemon)) and
-		!(block2(pokemon, move.name(), weather)) and
+		!is_illegal_switch(generation, user, move.name(), other_pokemon, weather) and
+		!block1(pokemon, move, other_pokemon) and
+		!block2(pokemon, move.name(), weather) and
 		!blocked_by_torment(pokemon, move.name());
 }
 
@@ -225,8 +229,9 @@ auto can_attempt_move_execution(ActivePokemon user, Move const move, ActivePokem
 auto can_execute_move(ActivePokemon user, Move const move, Weather const weather, bool const is_recharging) -> bool {
 	// TODO: handle is_fully_paralyzed
 	constexpr auto is_fully_paralyzed = false;
-	if (is_switch(move.name()) or move.name() == Moves::Hit_Self) {
-		BOUNDED_ASSERT(!is_recharging);
+	auto const switching = is_switch(move.name());
+	if (switching or move.name() == Moves::Hit_Self) {
+		BOUNDED_ASSERT(!is_recharging or (switching and get_hp(user).current() == 0_bi));
 		return true;
 	}
 	return !user.flinched() and !block2(user, move.name(), weather) and !is_fully_paralyzed and !is_recharging;
