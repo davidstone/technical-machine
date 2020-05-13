@@ -143,7 +143,7 @@ struct VariableProbability {
 	double probability;
 };
 
-using Probabilities = containers::static_vector<VariableProbability, 101>;
+using Probabilities = containers::static_vector<VariableProbability, 151>;
 auto all_probabilities(Generation, Moves, TeamSize foe_size) -> Probabilities;
 
 }	// namespace technicalmachine
