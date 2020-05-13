@@ -215,27 +215,25 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 	auto const & data = pt.get_child("data");
 	for (auto const & pokemon : data) {
 		auto const species = from_string<Species>(pokemon.first);
-		auto const usage = pokemon.second.get<float>("usage");
-		check_finite(usage);
-		check_non_negative(usage);
-		m_total_weighted_usage += usage;
-		auto teammates = containers::array<float, number_of_species>();
+		auto & per_pokemon = m_all_per_pokemon[bounded::integer(species)];
+
+		per_pokemon.weighted_usage = pokemon.second.get<float>("usage");
+		check_finite(per_pokemon.weighted_usage);
+		check_non_negative(per_pokemon.weighted_usage);
+		m_total_weighted_usage += per_pokemon.weighted_usage;
+
 		for (auto const teammate : pokemon.second.get_child("Teammates")) {
 			if (teammate.first == "empty") {
 				continue;
 			}
 			auto const value = std::stof(teammate.second.get<std::string>(""));
 			check_finite(value);
-			at(teammates, from_string<Species>(teammate.first)) = value;
+			at(per_pokemon.teammates, from_string<Species>(teammate.first)) = value;
 		}
-		m_all_per_pokemon[bounded::integer(species)] = {
-			usage,
-			teammates,
-			per_pokemon_data<Moves>(pokemon.second.get_child("Moves"), max_moves_per_pokemon),
-			per_pokemon_datum<Ability>(pokemon.second.get_child("Abilities")),
-			per_pokemon_datum<Item>(pokemon.second.get_child("Items")),
-			per_pokemon_datum<CombinedStats>(pokemon.second.get_child("Spreads"))
-		};
+		per_pokemon.moves = per_pokemon_data<Moves>(pokemon.second.get_child("Moves"), max_moves_per_pokemon);
+		per_pokemon.ability = per_pokemon_datum<Ability>(pokemon.second.get_child("Abilities"));
+		per_pokemon.item = per_pokemon_datum<Item>(pokemon.second.get_child("Items"));
+		per_pokemon.stats = per_pokemon_datum<CombinedStats>(pokemon.second.get_child("Spreads"));
 	}
 
 	check_finite(m_total_weighted_usage);
