@@ -298,10 +298,12 @@ void BattleParser::handle_message(InMessage message) {
 		// Looks like it's just another form of "cant", but it is probably used
 		// for more things than just that
 	} else if (type == "cant") {
-#if 0
-		auto const pokemon = message.next();
-		// message.remainder() == "REASON" or "REASON|MOVE"
-#endif
+		// TODO: Figure out how to solve this in general...
+		auto const party = party_from_player_id(message.next());
+		auto const & team = m_battle.is_me(party) ? m_battle.ai() : m_battle.foe();
+		auto const reason = message.next();
+		auto const move = reason == "recharge" ? team.pokemon().last_used_move().name() : Moves::Struggle;
+		m_move_state.use_move(party, move);
 	} else if (type == "-center") {
 	} else if (type == "-clearallboost") {
 		// We already know what Haze does
