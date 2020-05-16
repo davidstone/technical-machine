@@ -95,23 +95,32 @@ constexpr auto early_bird_probability(SleepCounter const turns_slept) {
 	}
 }
 
-constexpr auto non_early_bird_probability(SleepCounter const turns_slept) {
-	return (turns_slept == 0_bi) ? 0.0 : (1.0 / static_cast<double>(bounded::max_value<SleepCounter> + 1_bi - turns_slept));
+constexpr auto non_early_bird_probability(Generation const generation, SleepCounter const turns_slept) {
+	auto const adjusted_turns = BOUNDED_CONDITIONAL(generation == Generation::one, turns_slept - 1_bi, turns_slept);
+	return (adjusted_turns == 0_bi) ?
+		0.0 :
+		1.0 / static_cast<double>(bounded::max_value<SleepCounter> + 1_bi - adjusted_turns);
 }
 
-constexpr auto awaken_probability(SleepCounter const turns_slept, Ability const ability) {
+constexpr auto awaken_probability(Generation const generation, SleepCounter const turns_slept, Ability const ability) {
 	return wakes_up_early(ability) ?
 		early_bird_probability(turns_slept) :
-		non_early_bird_probability(turns_slept)
+		non_early_bird_probability(generation, turns_slept)
 	;
+}
+
+// TODO: Make sure this is accurate with Early Bird
+constexpr auto rest_awaken_probability(Generation const generation, bounded::integer<0, 2> const turns_slept) {
+	auto const max_duration = BOUNDED_CONDITIONAL(generation == Generation::one, 1_bi, bounded::max_value<decltype(turns_slept)>);
+	return turns_slept == max_duration ? 1.0 : 0.0;
 }
 
 }	// namespace
 
 auto Status::probability_of_clearing(Generation const generation, Ability const ability) const -> double {
 	return bounded::visit(m_state, bounded::overload(
-		[=](Sleep const sleep) { return awaken_probability(sleep.turns_slept, ability); },
-		[](Rest const sleep) { return sleep.turns_slept == bounded::max_value<decltype(sleep.turns_slept)> ? 1.0 : 0.0; },
+		[=](Sleep const sleep) { return awaken_probability(generation, sleep.turns_slept, ability); },
+		[=](Rest const sleep) { return rest_awaken_probability(generation, sleep.turns_slept); },
 		[=](Freeze) { return generation == Generation::one ? 0.0 : 0.2; },
 		[](auto) { return 0.0; }
 	));

@@ -1559,12 +1559,13 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 
 	auto const found_move = find_move(all_moves(user_pokemon), move.selected);
 	auto other_pokemon = other.pokemon();
+	auto const was_asleep = is_sleeping(get_status(user_pokemon));
 	if (!is_switch(move.selected)) {
 		user_pokemon.advance_status_from_move(clear_status);
 	}
 	// Need the side-effect from recharge
 	auto const is_recharging = user_pokemon.recharge();
-	if (!can_attempt_move_execution(user_pokemon, found_move, other_pokemon)) {
+	if (!can_attempt_move_execution(generation, user_pokemon, found_move, other_pokemon, was_asleep)) {
 		unsuccessfully_use_move();
 		return;
 	}
