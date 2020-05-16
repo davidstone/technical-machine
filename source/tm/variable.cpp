@@ -568,7 +568,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Ancient_Power:
 		case Moves::Blaze_Kick:
 		case Moves::Blizzard:
-		case Moves::Body_Slam:
 		case Moves::Bone_Club:
 		case Moves::Bug_Buzz:
 		case Moves::Confusion:
@@ -620,6 +619,7 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 			return single_probability(0.2);
 		case Moves::Air_Slash:
 		case Moves::Astonish:
+		case Moves::Body_Slam:
 		case Moves::Bounce:
 		case Moves::Discharge:
 		case Moves::Dragon_Breath:
