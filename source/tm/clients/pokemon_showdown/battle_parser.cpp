@@ -313,6 +313,15 @@ void BattleParser::handle_message(InMessage message) {
 		if (m_move_state.party() != party) {
 			maybe_use_previous_move();
 			m_move_state.clear_status(party);
+			if (m_battle.generation() == Generation::one) {
+				// TODO: Try to do something smarter here
+				m_move_state.use_move(party, Moves::Struggle);
+			}
+			auto const source = parse_from_source(message);
+			bounded::visit(source, bounded::overload(
+				[&](Ability const ability) { m_battle.set_value_on_active(party, ability); },
+				[](auto) { }
+			));
 		}
 	} else if (type == "-cureteam") {
 #if 0
