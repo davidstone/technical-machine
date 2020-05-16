@@ -119,9 +119,11 @@ constexpr auto parse_effect_source(std::string_view const type, std::string_view
 			type == "drain" or
 			type == "Encore" or
 			type == "Leech Seed" or
+			type == "Light Screen" or
 			type == "Spikes" or
 			type == "Stealth Rock" or
 			type == "Hail" or
+			type == "Reflect" or
 			type == "Sandstorm" or
 			type == "Substitute"
 		) ? EffectSource(FromMiscellaneous{}) :
