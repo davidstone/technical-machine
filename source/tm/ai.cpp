@@ -44,7 +44,7 @@ int main(int argc, char * * argv) {
 		try {
 			namespace tm = technicalmachine;
 			auto client = tm::ps::Client(tm::load_settings_file("settings/settings.xml"), depth);
-			std::cout << "Connected\n";
+			std::cout << "Connected\n" << std::flush;
 			client.run();
 		} catch (std::exception const & ex) {
 			constexpr auto timeout = std::chrono::seconds(10);
