@@ -46,7 +46,7 @@ void regression_tests() {
 	auto const evaluate = Evaluate{};
 	constexpr auto depth = 1;
 
-	auto const battle_output_directory = std::filesystem::path("test/temp-battles");	
+	auto const battle_output_directory = std::filesystem::path("test/temp-battles");
 	auto const remove_temporary_files = [&]{ std::filesystem::remove_all(battle_output_directory); };
 	remove_temporary_files();
 	constexpr auto log_foe_teams = false;

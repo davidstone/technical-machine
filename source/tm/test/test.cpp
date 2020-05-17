@@ -24,6 +24,7 @@
 #include <tm/test/calculate_damage.hpp>
 #include <tm/test/call_move.hpp>
 #include <tm/test/ev_optimizer.hpp>
+#include <tm/test/files_in_path.hpp>
 #include <tm/test/sleep.hpp>
 #include <tm/test/stat.hpp>
 #include <tm/test/status.hpp>
@@ -37,6 +38,8 @@
 
 int main() {
 	using namespace technicalmachine;
+
+	test_files_in_path();
 
 	block_tests();
 	string_conversion_tests();

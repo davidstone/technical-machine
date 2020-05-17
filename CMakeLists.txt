@@ -169,6 +169,7 @@ add_library(tm_common STATIC
 	source/tm/buffer_view.cpp
 	source/tm/end_of_turn.cpp
 	source/tm/entry_hazards.cpp
+	source/tm/files_in_path.cpp
 	source/tm/gender.cpp
 	source/tm/generation.cpp
 	source/tm/heal.cpp
@@ -246,6 +247,7 @@ add_executable(tm_test
 	source/tm/test/calculate_damage.cpp
 	source/tm/test/call_move.cpp
 	source/tm/test/ev_optimizer.cpp
+	source/tm/test/files_in_path.cpp
 	source/tm/test/incorrect_calculation.cpp
 	source/tm/test/sleep.cpp
 	source/tm/test/stat.cpp
