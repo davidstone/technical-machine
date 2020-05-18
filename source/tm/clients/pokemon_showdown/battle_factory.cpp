@@ -22,6 +22,8 @@
 #include <tm/stat/combined_stats.hpp>
 #include <tm/stat/generic_stats.hpp>
 
+#include <tm/team_predictor/usage_stats.hpp>
+
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 #include <bounded/to_integer.hpp>
@@ -129,7 +131,7 @@ void BattleFactory::handle_message(InMessage message) {
 	}
 }
 
-BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message) && {
+BattleParser BattleFactory::make(AllUsageStats const & all_usage_stats, BattleParser::SendMessageFunction send_message) && {
 	BOUNDED_ASSERT(completed());
 	if (!m_party) {
 		throw std::runtime_error("Did not receive party");
@@ -162,7 +164,7 @@ BattleParser BattleFactory::make(BattleParser::SendMessageFunction send_message)
 		std::move(m_id),
 		std::move(m_username),
 		m_generation,
-		m_usage_stats,
+		all_usage_stats[m_generation],
 		m_evaluate,
 		*m_party,
 		m_depth,

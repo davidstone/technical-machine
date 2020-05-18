@@ -43,9 +43,10 @@ int main(int argc, char * * argv) {
 	while (true) {
 		try {
 			namespace tm = technicalmachine;
-			auto client = tm::ps::Client(tm::load_settings_file("settings/settings.xml"), depth);
+			// Too large to fit on stack
+			auto client = std::make_unique<tm::ps::Client>(tm::load_settings_file("settings/settings.xml"), depth);
 			std::cout << "Connected\n" << std::flush;
-			client.run();
+			client->run();
 		} catch (std::exception const & ex) {
 			constexpr auto timeout = std::chrono::seconds(10);
 			std::cerr << ex.what() << " Disconnected. Waiting " << timeout.count() << " seconds and trying again.\n";

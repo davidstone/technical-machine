@@ -22,6 +22,7 @@
 #include <tm/stat/combined_stats.hpp>
 
 #include <tm/ability.hpp>
+#include <tm/generation.hpp>
 #include <tm/item.hpp>
 
 #include <containers/array/array.hpp>
@@ -63,6 +64,16 @@ struct UsageStats {
 private:
 	float m_total_weighted_usage = 0.0F;
 	containers::array<PerPokemon, number_of_species> m_all_per_pokemon;
+};
+
+struct AllUsageStats {
+	AllUsageStats();
+	auto operator[](Generation const generation) const -> UsageStats const & {
+		return m_all_stats[bounded::integer(generation) - 1_bi];
+	}
+private:
+	// static_cast<unsigned>(bounded::max_value<Generation>)
+	containers::array<UsageStats, 7> m_all_stats;
 };
 
 }	// namespace technicalmachine

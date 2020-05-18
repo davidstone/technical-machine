@@ -99,7 +99,6 @@ auto Client::Sockets::authenticate(std::string_view const host, std::string_view
 
 ClientImpl::ClientImpl(SettingsFile settings, unsigned depth, BattleParser::SendMessageFunction send_message, AuthenticationFunction authenticate):
 	m_random_engine(m_rd()),
-	m_usage_stats("settings/4/OU"),
 	m_settings(std::move(settings)),
 	m_trusted_users(load_lines_from_file("settings/trusted_users.txt")),
 	m_depth(depth),
@@ -125,7 +124,7 @@ void ClientImpl::handle_message(InMessage message) {
 		send_team();
 		m_send_message("|/challenge david stone,gen4randombattle");
 	};
-	if (m_battles.handle_message(message, m_send_message, send_challenge)) {
+	if (m_battles.handle_message(m_all_usage_stats, message, m_send_message, send_challenge)) {
 		return;
 	}
 	if (handle_chat_message(message)) {
@@ -147,7 +146,6 @@ void ClientImpl::handle_message(InMessage message) {
 			m_battles.add_pending(
 				std::string(message.room()),
 				m_settings.username,
-				m_usage_stats,
 				m_evaluate,
 				m_depth,
 				std::mt19937(m_rd()),

@@ -29,6 +29,9 @@
 #include <string>
 
 namespace technicalmachine {
+
+struct AllUsageStats;
+
 namespace ps {
 
 struct Battles {
@@ -43,7 +46,7 @@ struct Battles {
 		containers::emplace_back(m_pending, m_log_directory, m_log_foe_teams, OPERATORS_FORWARD(args)...);
 	}
 	
-	bool handle_message(InMessage message, auto send_message, auto challenge) {
+	bool handle_message(AllUsageStats const & usage_stats, InMessage message, auto send_message, auto challenge) {
 		auto complete_active_battle = [&](auto const it) {
 			m_active.erase(it);
 			send_message("|/leave " + std::string(message.room()));
@@ -52,7 +55,7 @@ struct Battles {
 		if (handle_message_impl(m_active, message, complete_active_battle)) {
 			return true;
 		}
-		auto begin_pending_battle = [&](auto const it) { move_to_active(it, std::move(send_message)); };
+		auto begin_pending_battle = [&](auto const it) { move_to_active(usage_stats, it, std::move(send_message)); };
 		if (handle_message_impl(m_pending, message, begin_pending_battle)) {
 			return true;
 		}
@@ -74,8 +77,8 @@ private:
 		return true;
 	}
 	
-	void move_to_active(std::list<BattleFactory>::iterator it, auto send_message) {
-		m_active.push_back(std::move(*it).make(std::move(send_message)));
+	void move_to_active(AllUsageStats const & usage_stats, std::list<BattleFactory>::iterator it, auto send_message) {
+		m_active.push_back(std::move(*it).make(usage_stats, std::move(send_message)));
 		m_pending.erase(it);
 	}
 

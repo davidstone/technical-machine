@@ -70,7 +70,7 @@ private:
 	std::random_device m_rd;
 	std::mt19937 m_random_engine;
 
-	UsageStats m_usage_stats;
+	AllUsageStats m_all_usage_stats;
 	Evaluate m_evaluate;
 
 	SettingsFile m_settings;

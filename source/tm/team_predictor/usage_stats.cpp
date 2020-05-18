@@ -241,4 +241,27 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 	turn_teammates_into_multiplier(m_all_per_pokemon);
 }
 
-}	// namespace technicalmachine
+namespace {
+
+auto stats_for_generation(Generation const generation) {
+	return UsageStats(std::filesystem::path("settings") / bounded::to_string(bounded::integer(generation)) / "OU");
+}
+
+} // namespace
+
+AllUsageStats::AllUsageStats():
+	m_all_stats{
+		stats_for_generation(Generation::one),
+		stats_for_generation(Generation::two),
+		stats_for_generation(Generation::three),
+		stats_for_generation(Generation::four),
+		stats_for_generation(Generation::five),
+		stats_for_generation(Generation::six),
+		stats_for_generation(Generation::seven)
+		// stats_for_generation(Generation::eight)
+	}
+{
+	static_assert(bounded::max_value<Generation> == Generation::eight);
+}
+
+} // namespace technicalmachine

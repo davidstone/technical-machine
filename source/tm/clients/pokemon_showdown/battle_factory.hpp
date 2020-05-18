@@ -33,7 +33,7 @@
 namespace technicalmachine {
 
 enum class Generation : std::uint8_t;
-struct UsageStats;
+struct AllUsageStats;
 
 namespace ps {
 
@@ -43,7 +43,6 @@ struct BattleFactory {
 		bool const log_foe_teams,
 		std::string id_,
 		std::string username,
-		UsageStats const & usage_stats,
 		Evaluate evaluate,
 		unsigned depth,
 		std::mt19937 random_engine,
@@ -53,7 +52,6 @@ struct BattleFactory {
 		m_log_directory(base_log_directory / m_id),
 		m_battle_logger(m_log_directory, m_id),
 		m_username(std::move(username)),
-		m_usage_stats(usage_stats),
 		m_evaluate(evaluate),
 		m_depth(depth),
 		m_random_engine(random_engine),
@@ -73,7 +71,7 @@ struct BattleFactory {
 		// TODO: Handle NvN battles
 		return m_ai_switched_in and m_foe_starter;
 	}
-	BattleParser make(BattleParser::SendMessageFunction send_message) &&;
+	BattleParser make(AllUsageStats const &, BattleParser::SendMessageFunction) &&;
 
 private:
 	enum class Clause { };
@@ -86,7 +84,6 @@ private:
 	std::filesystem::path m_log_directory;
 	BattleLogger m_battle_logger;
 	std::string m_username;
-	UsageStats const & m_usage_stats;
 	Evaluate m_evaluate;
 	unsigned m_depth;
 	std::mt19937 m_random_engine;

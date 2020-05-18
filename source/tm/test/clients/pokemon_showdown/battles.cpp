@@ -44,6 +44,8 @@ auto parse_room(std::string_view const line, std::filesystem::path const & path)
 
 void regression_tests() {
 	auto const evaluate = Evaluate{};
+	// Too large to fit on the stack
+	auto const all_usage_stats = std::make_unique<AllUsageStats>();
 	constexpr auto depth = 1;
 
 	auto const battle_output_directory = std::filesystem::path("test/temp-battles");
@@ -61,8 +63,6 @@ void regression_tests() {
 		};
 
 		for (auto const & generation : paths_in_directory("test/battles")) {
-			auto const usage_stats = UsageStats("settings" / generation.path().filename() / "OU");
-
 			for (auto const & path : paths_in_directory(generation)) {
 				auto const data = load_lines_from_file(path.path() / "server_messages.txt");
 				auto messages = BufferView(data, '\n');
@@ -70,7 +70,6 @@ void regression_tests() {
 				battles.add_pending(
 					std::string(room),
 					"Technical Machine",
-					usage_stats,
 					evaluate,
 					depth,
 					std::mt19937(std::random_device{}()),
@@ -82,6 +81,7 @@ void regression_tests() {
 					auto const next = messages.next();
 					auto print_message_on_exception = containers::scope_guard([=] { std::cerr << next << '\n'; });
 					battles.handle_message(
+						*all_usage_stats,
 						InMessage(room, next),
 						[](std::string_view) {},
 						[] {}
