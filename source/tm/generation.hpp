@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include <bounded/integer.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -33,3 +35,12 @@ enum class Generation : std::uint8_t {
 };
 
 } // namespace technicalmachine
+namespace bounded {
+
+template<>
+inline constexpr auto min_value<technicalmachine::Generation> = technicalmachine::Generation::one;
+
+template<>
+inline constexpr auto max_value<technicalmachine::Generation> = technicalmachine::Generation::eight;
+
+}	// namespace bounded
