@@ -105,7 +105,7 @@ void generate_team_builder_ui(std::ostream & output, std::string_view const quer
 		query_buffer.next('=');
 		return query_buffer.next('&');
 	};
-	add_dropdown_with_id(output, "generation", "generation", containers::enum_range(Generation::one, Generation::eight), next_default());
+	add_dropdown_with_id(output, "generation", "generation", containers::enum_range(Generation::one, Generation::seven), next_default());
 	output << "<br>";
 	for (auto const pokemon_index : containers::integer_range(max_pokemon_per_team)) {
 		auto const index_str = bounded::to_string(pokemon_index);
