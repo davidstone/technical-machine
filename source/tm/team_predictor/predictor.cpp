@@ -225,8 +225,6 @@ private:
 } // namespace technicalmachine
 
 int main() {
-	using technicalmachine::Generation;
-	using technicalmachine::UsageStats;
 	auto const all_usage_stats = std::make_unique<technicalmachine::AllUsageStats>();
 
 	auto const address = boost::asio::ip::make_address("127.0.0.1");
