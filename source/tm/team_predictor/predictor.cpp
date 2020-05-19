@@ -152,8 +152,8 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 }
 
 struct Data {
-	Data(std::unordered_map<Generation, UsageStats> const & usage_stats):
-		m_usage_stats(usage_stats)
+	Data(AllUsageStats const & all_usage_stats):
+		m_all_usage_stats(all_usage_stats)
 	{
 	}
 
@@ -161,7 +161,7 @@ struct Data {
 		constexpr auto using_lead = false;
 		try {
 			auto [generation, team] = parse_html_team(input_data);
-			auto const & usage_stats = m_usage_stats.at(generation);
+			auto const & usage_stats = m_all_usage_stats[generation];
 			random_team(generation, usage_stats, team, m_random_engine);
 			return to_string(predict_team(
 				generation,
@@ -176,13 +176,13 @@ struct Data {
 	}
 
 private:
-	std::unordered_map<Generation, UsageStats> const & m_usage_stats;
+	AllUsageStats const & m_all_usage_stats;
 	std::mt19937 m_random_engine{std::random_device()()};
 };
 
 struct Connection {
-	explicit Connection(std::unordered_map<Generation, UsageStats> const & usage_stats, tcp::socket socket):
-		m_data(usage_stats),
+	explicit Connection(AllUsageStats const & all_usage_stats, tcp::socket socket):
+		m_data(all_usage_stats),
 		m_socket(std::move(socket))
 	{
 	}
@@ -221,24 +221,13 @@ private:
 	tcp::socket m_socket;
 };
 
-auto load_all_usage_stats() {
-	auto usage_stats = std::unordered_map<Generation, UsageStats>();
-	for (auto const generation : containers::enum_range(Generation::one, Generation::five)) {
-		usage_stats.try_emplace(
-			generation,
-			std::filesystem::path("settings") / std::to_string(static_cast<int>(generation)) / "OU"
-		);
-	}
-	return usage_stats;
-};
-
 } // namespace
 } // namespace technicalmachine
 
 int main() {
 	using technicalmachine::Generation;
 	using technicalmachine::UsageStats;
-	auto const usage_stats = technicalmachine::load_all_usage_stats();
+	auto const all_usage_stats = std::make_unique<technicalmachine::AllUsageStats>();
 
 	auto const address = boost::asio::ip::make_address("127.0.0.1");
 	auto const port = static_cast<unsigned short>(46923);
@@ -249,7 +238,7 @@ int main() {
 	while (true) {
 		auto socket = tcp::socket(ioc);
 		acceptor.accept(socket);
-		auto connection = technicalmachine::Connection(usage_stats, std::move(socket));
+		auto connection = technicalmachine::Connection(*all_usage_stats, std::move(socket));
 		connection.process();
 	}
 }
