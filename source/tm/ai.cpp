@@ -40,11 +40,12 @@ int main(int argc, char * * argv) {
 	print_debug_statements();
 	unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast<unsigned>(argv[1]);
 
+	auto const settings = technicalmachine::load_settings_file("settings/settings.xml");
+
 	while (true) {
 		try {
-			namespace tm = technicalmachine;
 			// Too large to fit on stack
-			auto client = std::make_unique<tm::ps::Client>(tm::load_settings_file("settings/settings.xml"), depth);
+			auto client = std::make_unique<technicalmachine::ps::Client>(settings, depth);
 			std::cout << "Connected\n" << std::flush;
 			client->run();
 		} catch (std::exception const & ex) {
