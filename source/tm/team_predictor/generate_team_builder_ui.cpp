@@ -87,8 +87,8 @@ void add_level(std::ostream & output, std::string_view const id, std::string_vie
 
 void add_ev(std::ostream & output, std::string_view const id, std::string_view const label, std::string_view const default_value) {
 	output <<
-		"<label for=\"" << id << "\">" << label << " EVs: </label>"
-		"<input type=\"number\" min=\"0\" max=\"255\" value=\"" << default_value << "\" name=\"" << id << "\">";
+		R"(<label for=")" << id << R"(">)" << label << R"( EVs: </label>)"
+		R"(<input type="number" min="0" max="255" style="width: 3em" value=")" << default_value << R"(" name=")" << id << R"(">)";
 }
 
 } // namespace
