@@ -94,18 +94,29 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 	auto const generation = Generation(bounded::to_integer<1, 8>(get_expected_base(buffer.next(), "generation")));
 
 	for (auto const index : containers::integer_range(max_pokemon_per_team)) {
-		auto species = get_expected<Species>(buffer.next(), "species", bounded::to_string(index));
-		auto level = get_expected_integer_wrapper<Level>(buffer.next(), "level" + bounded::to_string(index));
-		auto gender = get_expected<Gender>(buffer.next(), "gender", bounded::to_string(index));
-		auto item = get_expected<Item>(buffer.next(), "item", bounded::to_string(index));
-		auto ability = get_expected<Ability>(buffer.next(), "ability", bounded::to_string(index));
-		auto nature = get_expected<Nature>(buffer.next(), "nature", bounded::to_string(index));
-		auto hp = get_expected_integer_wrapper<EV>(buffer.next(), "hp" + bounded::to_string(index));
-		auto atk = get_expected_integer_wrapper<EV>(buffer.next(), "atk" + bounded::to_string(index));
-		auto def = get_expected_integer_wrapper<EV>(buffer.next(), "def" + bounded::to_string(index));
-		auto spa = get_expected_integer_wrapper<EV>(buffer.next(), "spa" + bounded::to_string(index));
-		auto spd = get_expected_integer_wrapper<EV>(buffer.next(), "spd" + bounded::to_string(index));
-		auto spe = get_expected_integer_wrapper<EV>(buffer.next(), "spe" + bounded::to_string(index));
+		auto const index_str = bounded::to_string(index);
+		auto get_integer_wrapper = [&]<typename T>(bounded::detail::types<T>, char const * const key) {
+			return get_expected_integer_wrapper<T>(buffer.next(), key + index_str);
+		};
+		auto get = [&]<typename T>(bounded::detail::types<T>, std::string const & key) {
+			return get_expected<T>(buffer.next(), key, index_str);
+		};
+		auto get_ev = [&](std::string const & key) {
+			return get_integer_wrapper(bounded::detail::types<EV>(), key);
+		};
+
+		auto species = get(bounded::detail::types<Species>(), "species");
+		auto level = get_integer_wrapper(bounded::detail::types<Level>(), "level");
+		auto gender = get(bounded::detail::types<Gender>(), "gender");
+		auto item = get(bounded::detail::types<Item>(), "item");
+		auto ability = get(bounded::detail::types<Ability>(), "ability");
+		auto nature = get(bounded::detail::types<Nature>(), "nature");
+		auto hp = get_ev("hp");
+		auto atk = get_ev("atk");
+		auto def = get_ev("def");
+		auto spa = get_ev("spa");
+		auto spd = get_ev("spd");
+		auto spe = get_ev("spe");
 
 		auto moves = containers::static_vector<Moves, max_moves_per_pokemon.value()>();
 		for (auto const move_index : containers::integer_range(max_moves_per_pokemon)) {
