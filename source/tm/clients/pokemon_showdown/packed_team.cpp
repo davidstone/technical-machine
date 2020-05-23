@@ -101,7 +101,7 @@ auto parse_ability(std::string_view const ability_str, Species const species [[m
 
 auto parse_moves(std::string_view const str) {
 	auto moves = containers::static_vector<Moves, max_moves_per_pokemon.value()>();
-	auto buffer = BufferView(str, ',');
+	auto buffer = DelimitedBufferView(str, ',');
 	while (!buffer.remainder().empty()) {
 		if (size(moves) == moves.capacity()) {
 			throw std::runtime_error("Too many moves: " + std::string(str));
@@ -117,7 +117,7 @@ auto parse_nature(std::string_view const str) {
 
 template<typename T>
 auto parse_stat_components(std::string_view const str, T default_value) {
-	auto buffer = BufferView(str, ',');
+	auto buffer = DelimitedBufferView(str, ',');
 	auto next = [&] {
 		auto maybe = buffer.next();
 		return maybe.empty() ? default_value : T(bounded::to_integer<typename T::value_type>(maybe));
@@ -159,7 +159,7 @@ auto parse_integer_wrapper(std::string_view const str) {
 }
 
 auto parse_pokemon(std::string_view const str, Generation const generation, TeamSize const team_size) {
-	auto buffer = BufferView(str, '|');
+	auto buffer = DelimitedBufferView(str, '|');
 	auto const nickname = buffer.next();
 	auto const species = parse_species(buffer.next(), nickname);
 	auto const item = from_string<Item>(buffer.next());
@@ -193,7 +193,7 @@ constexpr auto pokemon_delimiter = ']';
 } // namespace
 
 auto packed_format_to_team(std::string_view const str, Generation const generation, TeamSize const team_size) -> Team {
-	auto buffer = BufferView(str, pokemon_delimiter);
+	auto buffer = DelimitedBufferView(str, pokemon_delimiter);
 
 	constexpr auto is_me = true;
 	auto team = Team(team_size, is_me);

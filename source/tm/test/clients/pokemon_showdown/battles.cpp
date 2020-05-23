@@ -65,7 +65,7 @@ void regression_tests() {
 		for (auto const & generation : paths_in_directory("test/battles")) {
 			for (auto const & path : paths_in_directory(generation)) {
 				auto const data = load_lines_from_file(path.path() / "server_messages.txt");
-				auto messages = BufferView(std::string_view(data), '\n');
+				auto messages = DelimitedBufferView(std::string_view(data), '\n');
 				auto const room = parse_room(messages.next(), path);
 				battles.add_pending(
 					std::string(room),

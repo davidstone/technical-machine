@@ -50,10 +50,10 @@ constexpr auto split(View const buffer, Separator const separator) {
 
 // TODO: Maybe something with iterators?
 template<typename View>
-struct BufferViewBase {
+struct BufferView {
 	static_assert(std::is_nothrow_copy_constructible_v<View>);
 
-	explicit constexpr BufferViewBase(View const buffer):
+	explicit constexpr BufferView(View const buffer):
 		m_buffer(buffer)
 	{
 	}
@@ -72,10 +72,10 @@ private:
 };
 
 template<typename View, typename Separator = typename View::value_type>
-struct BufferView {
+struct DelimitedBufferView {
 	static_assert(std::is_nothrow_copy_constructible_v<View>);
 
-	constexpr BufferView(View const buffer, Separator const separator):
+	constexpr DelimitedBufferView(View const buffer, Separator const separator):
 		m_buffer(buffer),
 		m_separator(separator)
 	{
@@ -92,7 +92,7 @@ struct BufferView {
 	}
 	
 private:
-	BufferViewBase<View> m_buffer;
+	BufferView<View> m_buffer;
 	Separator m_separator;
 };
 

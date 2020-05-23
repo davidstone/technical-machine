@@ -86,7 +86,7 @@ struct HTMLTeam {
 	Team team;
 };
 auto parse_html_team(std::string_view str) -> HTMLTeam {
-	auto buffer = BufferView(str, '&');
+	auto buffer = DelimitedBufferView(str, '&');
 
 	constexpr auto is_me = true;
 	auto team = Team(max_pokemon_per_team, is_me);

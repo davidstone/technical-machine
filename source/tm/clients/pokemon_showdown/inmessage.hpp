@@ -28,7 +28,7 @@ namespace ps {
 
 struct InMessage {
 	constexpr InMessage(std::string_view const room, std::string_view const data):
-		InMessage(room, BufferView(data, '|'))
+		InMessage(room, DelimitedBufferView(data, '|'))
 	{
 	}
 
@@ -49,7 +49,7 @@ struct InMessage {
 	}
 
 private:
-	constexpr InMessage(std::string_view const room, BufferView<std::string_view> view):
+	constexpr InMessage(std::string_view const room, DelimitedBufferView<std::string_view> view):
 		m_room(room),
 		m_type([&]{
 			// Because messages start with a '|', discard first empty string
@@ -65,7 +65,7 @@ private:
 
 	std::string_view m_room;
 	std::string_view m_type;
-	BufferView<std::string_view> m_view;
+	DelimitedBufferView<std::string_view> m_view;
 };
 
 }	// namespace ps

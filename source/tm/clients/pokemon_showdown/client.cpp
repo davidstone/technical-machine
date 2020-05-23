@@ -71,7 +71,7 @@ auto Client::Sockets::make_connected_socket(std::string_view const host, std::st
 	return socket;
 }
 
-auto Client::Sockets::read_message() -> BufferView<std::string_view> {
+auto Client::Sockets::read_message() -> DelimitedBufferView<std::string_view> {
 	m_buffer.consume(static_cast<std::size_t>(-1));
 	m_websocket.read(m_buffer);
 
@@ -108,7 +108,7 @@ ClientImpl::ClientImpl(SettingsFile settings, unsigned depth, BattleParser::Send
 {
 }
 
-void ClientImpl::run(BufferView<std::string_view> messages) {
+void ClientImpl::run(DelimitedBufferView<std::string_view> messages) {
 	auto const has_room = !messages.remainder().empty() and messages.remainder().front() == '>';
 	auto const room = has_room ? messages.next().substr(1) : std::string_view{};
 	while (!messages.remainder().empty()) {

@@ -100,7 +100,7 @@ void generate_team_builder_ui(std::ostream & output, std::string_view const quer
 		"<head><title>Team Builder</title></head>"
 		"<body>"
 		"<form method=\"post\">";
-	auto query_buffer = BufferViewBase(query_string);
+	auto query_buffer = BufferView(query_string);
 	auto next_default = [&]{
 		query_buffer.next('=');
 		return query_buffer.next('&');

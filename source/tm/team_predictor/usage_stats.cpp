@@ -59,7 +59,7 @@ auto from_statistics_string(std::string_view const str) {
 			str == "noability" ? Ability::Honey_Gather :
 			from_string<Ability>(str);
 	} else if constexpr (std::is_same_v<T, CombinedStats>) {
-		auto buffer = BufferView(str, '/');
+		auto buffer = DelimitedBufferView(str, '/');
 		auto const nature = from_string<Nature>(buffer.next(':'));
 		auto get_ev = [&]{
 			return EV(bounded::to_integer<EV::value_type>(buffer.next()));
