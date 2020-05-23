@@ -132,8 +132,8 @@ constexpr auto make_party(std::string_view const player_id) {
 // matters that much here
 inline auto parse_details(std::string_view details) {
 	auto parser = DelimitedBufferView(details, std::string_view(", "));
-	auto const species = from_string<Species>(parser.next());
-	auto const level_or_gender_or_shiny_str = parser.next();
+	auto const species = from_string<Species>(parser.pop());
+	auto const level_or_gender_or_shiny_str = parser.pop();
 	auto try_parse_gender = [](auto const str) {
 		return
 			BOUNDED_CONDITIONAL(str == "F", Gender::female,
@@ -152,7 +152,7 @@ inline auto parse_details(std::string_view details) {
 		if (maybe_gender) {
 			return *maybe_gender;
 		}
-		auto const gender_str = parser.next();
+		auto const gender_str = parser.pop();
 		auto const gender = try_parse_gender(gender_str);
 		if (!gender) {
 			throw std::runtime_error("Invalid gender string " + std::string(gender_str));

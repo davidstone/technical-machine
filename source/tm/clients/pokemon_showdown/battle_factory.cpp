@@ -62,12 +62,12 @@ void BattleFactory::handle_message(InMessage message) {
 	} else if (type == "clearpoke") {
 		// This appears to mean nothing
 	} else if (type == "gametype") {
-		insert(m_type, message.next());
+		insert(m_type, message.pop());
 	} else if (type == "gen") {
-		validate_generation(message.next(), m_generation);
+		validate_generation(message.pop(), m_generation);
 	} else if (type == "player") {
-		auto const player_id = message.next();
-		auto const username = message.next();
+		auto const player_id = message.pop();
+		auto const username = message.pop();
 		if (username == m_username) {
 			insert(m_party, make_party(player_id));
 		}
@@ -116,14 +116,14 @@ void BattleFactory::handle_message(InMessage message) {
 		if (!m_party) {
 			throw std::runtime_error("Received a teamsize message before receiving a player id");
 		}
-		auto const party = make_party(message.next());
-		auto const team_size = bounded::to_integer<TeamSize>(message.next());
+		auto const party = make_party(message.pop());
+		auto const team_size = bounded::to_integer<TeamSize>(message.pop());
 		// TODO: validate that the received teamsize matches my team size
 		if (*m_party != party) {
 			insert(m_foe_team_size, team_size);
 		}
 	} else if (type == "tier") {
-		insert(m_tier, message.next());
+		insert(m_tier, message.pop());
 	} else if (type == "title") {
 		// message.remainder() == PLAYER1 vs. PLAYER2
 	} else {

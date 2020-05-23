@@ -63,7 +63,7 @@ namespace {
 using namespace bounded::literal;
 
 auto get_expected_base(std::string_view const input, std::string_view const expected_key) {
-	auto [key, value] = split(input, '=');
+	auto [key, value] = split_view(input, '=');
 	if (key != expected_key) {
 		throw std::runtime_error("Expected " + std::string(expected_key) + " but got " + std::string(key));
 	}
@@ -91,15 +91,15 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 	constexpr auto is_me = true;
 	auto team = Team(max_pokemon_per_team, is_me);
 
-	auto const generation = Generation(bounded::to_integer<1, 8>(get_expected_base(buffer.next(), "generation")));
+	auto const generation = Generation(bounded::to_integer<1, 8>(get_expected_base(buffer.pop(), "generation")));
 
 	for (auto const index : containers::integer_range(max_pokemon_per_team)) {
 		auto const index_str = bounded::to_string(index);
-		auto get_integer_wrapper = [&]<typename T>(bounded::detail::types<T>, char const * const key) {
-			return get_expected_integer_wrapper<T>(buffer.next(), key + index_str);
+		auto get_integer_wrapper = [&]<typename T>(bounded::detail::types<T>, std::string const & key) {
+			return get_expected_integer_wrapper<T>(buffer.pop(), key + index_str);
 		};
 		auto get = [&]<typename T>(bounded::detail::types<T>, std::string const & key) {
-			return get_expected<T>(buffer.next(), key, index_str);
+			return get_expected<T>(buffer.pop(), key, index_str);
 		};
 		auto get_ev = [&](std::string const & key) {
 			return get_integer_wrapper(bounded::detail::types<EV>(), key);
@@ -120,7 +120,7 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 
 		auto moves = containers::static_vector<Moves, max_moves_per_pokemon.value()>();
 		for (auto const move_index : containers::integer_range(max_moves_per_pokemon)) {
-			auto const move = get_expected<Moves>(buffer.next(), "move", bounded::to_string(index) + "_" + bounded::to_string(move_index));
+			auto const move = get_expected<Moves>(buffer.pop(), "move", bounded::to_string(index) + "_" + bounded::to_string(move_index));
 			if (move) {
 				push_back(moves, *move);
 			}

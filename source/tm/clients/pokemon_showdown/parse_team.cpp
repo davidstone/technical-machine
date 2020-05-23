@@ -63,7 +63,7 @@ auto parse_team(boost::property_tree::ptree const & pt, Generation const generat
 		// rejoining battles
 		// TODO: If we disconnect in a battle when the HP is 0, we might not
 		// have a '/'
-		auto const hp = bounded::to_integer<HP::max_type>(split(condition, '/').first);
+		auto const hp = bounded::to_integer<HP::max_type>(split_view(condition, '/').first);
 		
 		auto const evs = calculate_evs(generation, details.species, details.level, parse_stats(hp, pokemon_data.second.get_child("stats")));
 

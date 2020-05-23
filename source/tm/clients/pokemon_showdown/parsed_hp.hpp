@@ -32,7 +32,7 @@ namespace ps {
 struct ParsedHP {
 public:
 	constexpr explicit ParsedHP(std::string_view const str):
-		ParsedHP(split(str, '/'))
+		ParsedHP(split_view(str, '/'))
 	{
 	}
 	

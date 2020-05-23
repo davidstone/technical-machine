@@ -38,11 +38,11 @@ struct InMessage {
 	constexpr auto type() const {
 		return m_type;
 	}
-	constexpr auto next(auto const separator) {
-		return m_view.next(separator);
+	constexpr auto pop(auto const separator) {
+		return m_view.pop(separator);
 	}
-	constexpr auto next() {
-		return m_view.next();
+	constexpr auto pop() {
+		return m_view.pop();
 	}
 	constexpr auto remainder() const {
 		return m_view.remainder();
@@ -53,11 +53,11 @@ private:
 		m_room(room),
 		m_type([&]{
 			// Because messages start with a '|', discard first empty string
-			auto const discarded = view.next();
+			auto const discarded = view.pop();
 			if (!discarded.empty()) {
 				std::cerr << "Expected empty string, got " << discarded << '\n';
 			}
-			return view.next();
+			return view.pop();
 		}()),
 		m_view(view)
 	{

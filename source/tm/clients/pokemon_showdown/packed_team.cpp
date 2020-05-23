@@ -106,7 +106,7 @@ auto parse_moves(std::string_view const str) {
 		if (size(moves) == moves.capacity()) {
 			throw std::runtime_error("Too many moves: " + std::string(str));
 		}
-		push_back(moves, from_string<Moves>(buffer.next()));
+		push_back(moves, from_string<Moves>(buffer.pop()));
 	}
 	return moves;
 }
@@ -119,7 +119,7 @@ template<typename T>
 auto parse_stat_components(std::string_view const str, T default_value) {
 	auto buffer = DelimitedBufferView(str, ',');
 	auto next = [&] {
-		auto maybe = buffer.next();
+		auto maybe = buffer.pop();
 		return maybe.empty() ? default_value : T(bounded::to_integer<typename T::value_type>(maybe));
 	};
 	struct result {
@@ -160,19 +160,19 @@ auto parse_integer_wrapper(std::string_view const str) {
 
 auto parse_pokemon(std::string_view const str, Generation const generation, TeamSize const team_size) {
 	auto buffer = DelimitedBufferView(str, '|');
-	auto const nickname = buffer.next();
-	auto const species = parse_species(buffer.next(), nickname);
-	auto const item = from_string<Item>(buffer.next());
-	auto const ability = parse_ability(buffer.next(), species);
-	auto const moves = parse_moves(buffer.next());
-	auto const nature = parse_nature(buffer.next());
-	auto const evs = parse_stat_components(buffer.next(), EV(0_bi));
-	auto const gender = parse_gender(buffer.next());
-	auto const ivs = parse_stat_components(buffer.next(), default_iv(generation));
-	auto const shiny [[maybe_unused]] = parse_shiny(buffer.next());
-	auto const level = parse_integer_wrapper<Level>(buffer.next());
-	auto const happiness = parse_integer_wrapper<Happiness>(buffer.next(','));
-	auto const pokeball [[maybe_unused]] = buffer.next(',');
+	auto const nickname = buffer.pop();
+	auto const species = parse_species(buffer.pop(), nickname);
+	auto const item = from_string<Item>(buffer.pop());
+	auto const ability = parse_ability(buffer.pop(), species);
+	auto const moves = parse_moves(buffer.pop());
+	auto const nature = parse_nature(buffer.pop());
+	auto const evs = parse_stat_components(buffer.pop(), EV(0_bi));
+	auto const gender = parse_gender(buffer.pop());
+	auto const ivs = parse_stat_components(buffer.pop(), default_iv(generation));
+	auto const shiny [[maybe_unused]] = parse_shiny(buffer.pop());
+	auto const level = parse_integer_wrapper<Level>(buffer.pop());
+	auto const happiness = parse_integer_wrapper<Happiness>(buffer.pop(','));
+	auto const pokeball [[maybe_unused]] = buffer.pop(',');
 	// TODO: Support Hyper Training
 	auto const hidden_power_type [[maybe_unused]] = buffer.remainder();
 	auto pokemon = Pokemon(generation, team_size, species, level, gender, item, ability, nature, happiness);
@@ -199,7 +199,7 @@ auto packed_format_to_team(std::string_view const str, Generation const generati
 	auto team = Team(team_size, is_me);
 
 	while (!buffer.remainder().empty()) {
-		team.add_pokemon(parse_pokemon(buffer.next(), generation, team_size));
+		team.add_pokemon(parse_pokemon(buffer.pop(), generation, team_size));
 	}
 	return team;
 }

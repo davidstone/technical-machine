@@ -25,28 +25,39 @@
 #include <utility>
 
 namespace technicalmachine {
+namespace detail {
+
+struct split_offsets {
+	template<typename View>
+	constexpr split_offsets(View const buffer, typename View::value_type const delimiter):
+		first(static_cast<std::size_t>(containers::find(buffer, delimiter) - buffer.begin())),
+		discard(1U)
+	{
+	}
+
+	template<typename View, typename Delimiter> requires std::is_same_v<typename View::value_type, typename Delimiter::value_type>
+	constexpr split_offsets(View const buffer, Delimiter const delimiter):
+		first(static_cast<std::size_t>(std::search(buffer.begin(), buffer.end(), delimiter.begin(), delimiter.end()) - buffer.begin())),
+		discard(delimiter.size())
+	{
+	}
+
+	std::size_t first;
+	std::size_t discard;
+};
 
 template<typename View>
-constexpr auto split_impl(View buffer, std::size_t separator_size, auto const position) {
-	if (position == buffer.end()) {
+constexpr auto split_impl(View const buffer, split_offsets const offsets) {
+	if (offsets.first == buffer.size()) {
 		return std::pair(buffer, View());
 	}
-	auto const offset = static_cast<std::size_t>(position - buffer.begin());
 	return std::pair(
-		View(buffer.data(), offset),
-		View(buffer.data() + offset + separator_size, buffer.size() - separator_size - offset)
+		View(buffer.data(), offsets.first),
+		View(buffer.data() + offsets.first + offsets.discard, buffer.size() - offsets.discard - offsets.first)
 	);
 }
 
-template<typename View>
-constexpr auto split(View const buffer, typename View::value_type const separator) {
-	return split_impl(buffer, 1U, containers::find(buffer, separator));
-}
-
-template<typename View, typename Separator> requires std::is_same_v<typename View::value_type, typename Separator::value_type>
-constexpr auto split(View const buffer, Separator const separator) {
-	return split_impl(buffer, separator.size(), std::search(buffer.begin(), buffer.end(), separator.begin(), separator.end()));
-}
+} // namespace detail
 
 // TODO: Maybe something with iterators?
 template<typename View>
@@ -58,10 +69,13 @@ struct BufferView {
 	{
 	}
 	
-	constexpr auto next(auto const separator) {
-		auto const [first, second] = split(m_buffer, separator);
-		m_buffer = second;
-		return first;
+	constexpr auto pop(std::size_t const elements) {
+		if (elements > m_buffer.size()) {
+			throw std::runtime_error("Attempted to pop too many elements.");
+		}
+		auto result = View(m_buffer.data(), elements);
+		m_buffer = View(m_buffer.data() + elements, m_buffer.size() - elements);
+		return result;
 	}
 	constexpr auto remainder() const {
 		return m_buffer;
@@ -71,21 +85,36 @@ private:
 	View m_buffer;
 };
 
-template<typename View, typename Separator = typename View::value_type>
+constexpr auto split_view(auto const buffer, auto const delimiter) {
+	return detail::split_impl(buffer, detail::split_offsets(buffer, delimiter));
+}
+
+template<typename View>
+constexpr auto pop_to_delimiter(BufferView<View> & buffer_view, auto const delimiter) {
+	auto const view = buffer_view.remainder();
+	auto const offsets = detail::split_offsets(view, delimiter);
+	auto result = buffer_view.pop(offsets.first);
+	if (offsets.first != view.size()) {
+		buffer_view.pop(offsets.discard);
+	}
+	return result;
+}
+
+template<typename View, typename Delimiter = typename View::value_type>
 struct DelimitedBufferView {
 	static_assert(std::is_nothrow_copy_constructible_v<View>);
 
-	constexpr DelimitedBufferView(View const buffer, Separator const separator):
+	constexpr DelimitedBufferView(View const buffer, Delimiter const delimiter):
 		m_buffer(buffer),
-		m_separator(separator)
+		m_delimiter(delimiter)
 	{
 	}
 	
-	constexpr auto next(auto const separator) {
-		return m_buffer.next(separator);
+	constexpr auto pop(auto const delimiter) {
+		return pop_to_delimiter(m_buffer, delimiter);
 	}
-	constexpr auto next() {
-		return next(m_separator);
+	constexpr auto pop() {
+		return pop(m_delimiter);
 	}
 	constexpr auto remainder() const {
 		return m_buffer.remainder();
@@ -93,7 +122,7 @@ struct DelimitedBufferView {
 	
 private:
 	BufferView<View> m_buffer;
-	Separator m_separator;
+	Delimiter m_delimiter;
 };
 
 } // namespace technicalmachine

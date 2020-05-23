@@ -60,9 +60,9 @@ auto from_statistics_string(std::string_view const str) {
 			from_string<Ability>(str);
 	} else if constexpr (std::is_same_v<T, CombinedStats>) {
 		auto buffer = DelimitedBufferView(str, '/');
-		auto const nature = from_string<Nature>(buffer.next(':'));
+		auto const nature = from_string<Nature>(buffer.pop(':'));
 		auto get_ev = [&]{
-			return EV(bounded::to_integer<EV::value_type>(buffer.next()));
+			return EV(bounded::to_integer<EV::value_type>(buffer.pop()));
 		};
 		auto const hp = get_ev();
 		auto const atk = get_ev();

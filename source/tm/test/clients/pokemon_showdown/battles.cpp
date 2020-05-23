@@ -66,7 +66,7 @@ void regression_tests() {
 			for (auto const & path : paths_in_directory(generation)) {
 				auto const data = load_lines_from_file(path.path() / "server_messages.txt");
 				auto messages = DelimitedBufferView(std::string_view(data), '\n');
-				auto const room = parse_room(messages.next(), path);
+				auto const room = parse_room(messages.pop(), path);
 				battles.add_pending(
 					std::string(room),
 					"Technical Machine",
@@ -78,7 +78,7 @@ void regression_tests() {
 
 				auto print_file_on_exception = containers::scope_guard([&] { std::cerr << "Error in " << path.path() << '\n'; });
 				while (!messages.remainder().empty()) {
-					auto const next = messages.next();
+					auto const next = messages.pop();
 					auto print_message_on_exception = containers::scope_guard([=] { std::cerr << next << '\n'; });
 					battles.handle_message(
 						*all_usage_stats,

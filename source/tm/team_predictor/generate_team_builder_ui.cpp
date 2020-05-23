@@ -102,8 +102,8 @@ void generate_team_builder_ui(std::ostream & output, std::string_view const quer
 		"<form method=\"post\">";
 	auto query_buffer = BufferView(query_string);
 	auto next_default = [&]{
-		query_buffer.next('=');
-		return query_buffer.next('&');
+		query_buffer.pop('=');
+		return query_buffer.pop('&');
 	};
 	add_dropdown_with_id(output, "generation", "generation", containers::enum_range(Generation::one, Generation::seven), next_default());
 	output << "<br>";

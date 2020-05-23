@@ -110,9 +110,9 @@ ClientImpl::ClientImpl(SettingsFile settings, unsigned depth, BattleParser::Send
 
 void ClientImpl::run(DelimitedBufferView<std::string_view> messages) {
 	auto const has_room = !messages.remainder().empty() and messages.remainder().front() == '>';
-	auto const room = has_room ? messages.next().substr(1) : std::string_view{};
+	auto const room = has_room ? messages.pop().substr(1) : std::string_view{};
 	while (!messages.remainder().empty()) {
-		auto const next = messages.next();
+		auto const next = messages.pop();
 		auto print_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
 		handle_message(InMessage(room, next));
 		print_on_exception.dismiss();
@@ -142,7 +142,7 @@ void ClientImpl::handle_message(InMessage message) {
 	} else if (type == "html") {
 		// message.remainder() == HTML
 	} else if (type == "init") {
-		if (message.next() == "battle") {
+		if (message.pop() == "battle") {
 			m_battles.add_pending(
 				std::string(message.room()),
 				m_settings.username,
@@ -153,13 +153,13 @@ void ClientImpl::handle_message(InMessage message) {
 			);
 		}
 	} else if (type == "nametaken") {
-		auto const username = message.next();
+		auto const username = message.pop();
 		std::cerr << "Could not change username to " << username << " because: " << message.remainder() << '\n';
 	} else if (type == "popup") {
 		std::cout << "popup message: " << message.remainder() << '\n';
 	} else if (type == "pm") {
-		auto const from = message.next();
-		auto const to = message.next();
+		auto const from = message.pop();
+		auto const to = message.pop();
 		std::cout << "PM from " << from << " to " << to << ": " << message.remainder() << '\n';
 	} else if (type == "queryresponse") {
 		// message.remainder() == QUERYTYPE|JSON

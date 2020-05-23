@@ -92,7 +92,7 @@ constexpr auto parse_status(std::string_view const str) {
 }
 
 constexpr auto parse_hp_and_status(std::string_view const hp_and_status) {
-	auto const [hp_fraction, status] = split(hp_and_status, ' ');
+	auto const [hp_fraction, status] = split_view(hp_and_status, ' ');
 	return HPAndStatus{ParsedHP(hp_fraction), parse_status(status)};
 }
 
@@ -132,8 +132,8 @@ constexpr auto parse_effect_source(std::string_view const type, std::string_view
 
 auto parse_from_source(InMessage message) {
 	// "[from]" or nothing
-	auto const from [[maybe_unused]] = message.next(' ');
-	auto const [type, source] = split(message.next(), ':');
+	auto const from [[maybe_unused]] = message.pop(' ');
+	auto const [type, source] = split_view(message.pop(), ':');
 	return parse_effect_source(type, source);
 }
 
@@ -144,8 +144,8 @@ auto parse_hp_message(InMessage message) {
 		Statuses status;
 		EffectSource source;
 	};
-	auto const party = party_from_player_id(message.next());
-	auto const hp_and_status = parse_hp_and_status(message.next());
+	auto const party = party_from_player_id(message.pop());
+	auto const hp_and_status = parse_hp_and_status(message.pop());
 	auto const source = parse_from_source(message);
 	return Message{
 		party,
@@ -165,8 +165,8 @@ auto parse_set_hp_message(InMessage message) {
 		Statuses status;
 		EffectSource source;
 	};
-	auto const party = party_from_player_id(message.next());
-	auto const hp_and_status = parse_hp_and_status(message.next());
+	auto const party = party_from_player_id(message.pop());
+	auto const hp_and_status = parse_hp_and_status(message.pop());
 	auto const source = parse_from_source(message);
 	
 	return Message{
@@ -264,13 +264,13 @@ void BattleParser::handle_message(InMessage message) {
 	if (type == "") {
 		// Do nothing. This message is used to indicate the end of a series.
 	} else if (type == "-ability") {
-		auto const party = party_from_player_id(message.next());
-		auto const ability = from_string<Ability>(message.next());
+		auto const party = party_from_player_id(message.pop());
+		auto const ability = from_string<Ability>(message.pop());
 		m_battle.set_value_on_active(party, ability);
 	} else if (type == "-activate") {
-		auto const party = party_from_player_id(message.next());
-		auto const what = message.next();
-		auto const details = message.next();
+		auto const party = party_from_player_id(message.pop());
+		auto const what = message.pop();
+		auto const details = message.pop();
 		if (what == "Substitute") {
 			if (details == "[damage]") {
 				m_move_state.damage_substitute(other(party));
@@ -283,35 +283,35 @@ void BattleParser::handle_message(InMessage message) {
 		}
 	} else if (type == "-anim") {
 #if 0
-		auto const party = party_from_player_id(message.next());
+		auto const party = party_from_player_id(message.pop());
 		// Solar Beam is the only example I have of this
-		auto const move? = message.next();
-		auto const target? = message.next();
+		auto const move? = message.pop();
+		auto const target? = message.pop();
 #endif
 	} else if (type == "-boost") {
 #if 0
-		auto const pokemon = message.next();
-		auto const stat = message.next();
-		auto const amount = message.next();
+		auto const pokemon = message.pop();
+		auto const stat = message.pop();
+		auto const amount = message.pop();
 #endif
 	} else if (type == "callback") {
 		// Looks like it's just another form of "cant", but it is probably used
 		// for more things than just that
 	} else if (type == "cant") {
 		// TODO: Figure out how to solve this in general...
-		auto const party = party_from_player_id(message.next());
+		auto const party = party_from_player_id(message.pop());
 		auto const & team = m_battle.is_me(party) ? m_battle.ai() : m_battle.foe();
-		auto const reason = message.next();
+		auto const reason = message.pop();
 		auto const move = reason == "recharge" ? team.pokemon().last_used_move().name() : Moves::Struggle;
 		m_move_state.use_move(party, move);
 	} else if (type == "-center") {
 	} else if (type == "-clearallboost") {
 		// We already know what Haze does
 	} else if (type == "-crit") {
-		auto const user = other(party_from_player_id(message.next()));
+		auto const user = other(party_from_player_id(message.pop()));
 		m_move_state.critical_hit(user);
 	} else if (type == "-curestatus") {
-		auto const party = party_from_player_id(message.next());
+		auto const party = party_from_player_id(message.pop());
 		if (m_move_state.party() != party) {
 			maybe_use_previous_move();
 			m_move_state.clear_status(party);
@@ -327,31 +327,31 @@ void BattleParser::handle_message(InMessage message) {
 		}
 	} else if (type == "-cureteam") {
 #if 0
-		auto const pokemon = message.next();
+		auto const pokemon = message.pop();
 #endif
 	} else if (type == "-damage") {
 		handle_damage(message);
 	} else if (type == "detailschange" or type == "-formechange") {
 #if 0
-		auto const pokemon = message.next();
+		auto const pokemon = message.pop();
 		// message.remainder() == DETAILS|HP STATUS
 #endif
 	} else if (type == "-end") {
 		// Tells me if the substitute is destroyed, probably other stuff ending
-		auto const party = party_from_player_id(message.next());
-		auto const source = message.next();
+		auto const party = party_from_player_id(message.pop());
+		auto const source = message.pop();
 		if (source == "Substitute") {
 			m_move_state.break_substitute(other(party));
 			handle_u_turn(other(party));
 		}
 	} else if (type == "-endability") {
 #if 0
-		auto const pokemon = message.next();
-		auto const ability = message.next();
+		auto const pokemon = message.pop();
+		auto const ability = message.pop();
 #endif
 	} else if (type == "-enditem") {
-		auto const party = party_from_player_id(message.next());
-		auto const item = from_string<Item>(message.next());
+		auto const party = party_from_player_id(message.pop());
+		auto const item = from_string<Item>(message.pop());
 		m_battle.set_value_on_active(party, item);
 	} else if (type == "error") {
 		if (message.remainder() != "[Invalid choice] There's nothing to choose") {
@@ -359,12 +359,12 @@ void BattleParser::handle_message(InMessage message) {
 		}
 	} else if (type == "-fail") {
 #if 0
-		auto const party = party_from_player_id(message.next());
+		auto const party = party_from_player_id(message.pop());
 		// There can be more to this message, but nothing we care about
 #endif
 	} else if (type == "faint") {
 		constexpr auto slot = 0;
-		auto const party = party_from_player_id(message.next());
+		auto const party = party_from_player_id(message.pop());
 		m_battle.handle_fainted(party, slot);
 		if (m_battle.is_me(party) and m_battle.ai().size() != 1_bi) {
 			m_replacing_fainted = true;
@@ -373,12 +373,12 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-fieldend") {
 #if 0
 		// Grassy Terrain, Gravity, Trick Room
-		auto const condition = message.next();
+		auto const condition = message.pop();
 #endif
 	} else if (type == "-fieldstart") {
 #if 0
 		// Grassy Terrain, Gravity, Trick Room
-		auto const condition = message.next();
+		auto const condition = message.pop();
 #endif
 	} else if (type == "-heal") {
 		auto const parsed = parse_hp_message(message);
@@ -394,13 +394,13 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-hint") {
 		// message.remainder() == MESSAGE
 	} else if (type == "-hitcount") {
-		auto const party = party_from_player_id(message.next());
-		auto const count = bounded::to_integer<2, 5>(message.next());
+		auto const party = party_from_player_id(message.pop());
+		auto const count = bounded::to_integer<2, 5>(message.pop());
 		static_cast<void>(party);
 		static_cast<void>(count);
 		// TODO: Implement multi-hit moves
 	} else if (type == "-immune") {
-		auto const party = party_from_player_id(message.next());
+		auto const party = party_from_player_id(message.pop());
 		auto const source = parse_from_source(message);
 		bounded::visit(source, bounded::overload(
 			// TODO: Validate that the type should be immune
@@ -418,24 +418,24 @@ void BattleParser::handle_message(InMessage message) {
 		// message.remainder() == MESSAGE
 		// Timer is off
 	} else if (type == "-item") {
-		auto const party = party_from_player_id(message.next());
-		auto const item = from_string<Item>(message.next());
+		auto const party = party_from_player_id(message.pop());
+		auto const item = from_string<Item>(message.pop());
 		m_battle.set_value_on_active(party, item);
 	} else if (type == "-mega") {
 #if 0
-		auto const pokemon = message.next();
-		auto const megastone = message.next();
+		auto const pokemon = message.pop();
+		auto const megastone = message.pop();
 #endif
 	} else if (type == "-message") {
 	} else if (type == "-miss") {
-		auto const user_party = party_from_player_id(message.next());
+		auto const user_party = party_from_player_id(message.pop());
 		m_move_state.miss(user_party);
 	} else if (type == "move") {
-		auto const party = party_from_player_id(message.next());
-		auto const move = from_string<Moves>(message.next());
+		auto const party = party_from_player_id(message.pop());
+		auto const move = from_string<Moves>(message.pop());
 #if 0
 		// target is sent only for moves that target one Pokemon
-		auto const target = message.next();
+		auto const target = message.pop();
 #endif
 		if (m_move_state.party() != party) {
 			maybe_use_previous_move();
@@ -465,14 +465,14 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-sideend") {
 #if 0
 		// Light Screen, Reflect, etc.
-		auto const side = message.next();
-		auto const condition = message.next();
+		auto const side = message.pop();
+		auto const condition = message.pop();
 #endif
 	} else if (type == "-sidestart") {
 #if 0
 		// Light Screen, Reflect, etc.
-		auto const side = message.next();
-		auto const condition = message.next();
+		auto const side = message.pop();
+		auto const condition = message.pop();
 #endif
 	} else if (type == "-supereffective") {
 		// message.remainder() == POKEMON
@@ -505,21 +505,21 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "replace") {
 #if 0
 		// Illusion ended
-		auto const pokemon = message.next();
+		auto const pokemon = message.pop();
 		// message.remainder() == DETAILS|HP STATUS
 #endif
 	} else if (type == "-singleturn") {
 		// Received for things like Protect that last the rest of the turn
 	} else if (type == "-start") {
-		auto const party = party_from_player_id(message.next());
-		auto const first_part_of_source = message.next();
+		auto const party = party_from_player_id(message.pop());
+		auto const first_part_of_source = message.pop();
 		auto parse_remainder_of_source = [&]{
 			if (first_part_of_source == "typechange") {
-				auto const changed_type = message.next();
+				auto const changed_type = message.pop();
 				static_cast<void>(changed_type);
 				return parse_from_source(message);
 			} else {
-				auto const [source_type, string_source] = split(first_part_of_source, ':');
+				auto const [source_type, string_source] = split_view(first_part_of_source, ':');
 				return parse_effect_source(source_type, string_source);
 			}
 		};
@@ -527,7 +527,7 @@ void BattleParser::handle_message(InMessage message) {
 		bounded::visit(source, bounded::overload(
 			[](MainEffect) { throw std::runtime_error("Unexpected -start source MainEffect"); },
 			[&](FromConfusion) {
-				auto const how = message.next();
+				auto const how = message.pop();
 				if (how == "[fatigue]") {
 					// TODO
 				} else {
@@ -540,8 +540,8 @@ void BattleParser::handle_message(InMessage message) {
 			[&](auto const value) { m_battle.set_value_on_active(party, value); }
 		));
 	} else if (type == "-status") {
-		auto const party = party_from_player_id(message.next());
-		auto const status = parse_status(message.next());
+		auto const party = party_from_player_id(message.pop());
+		auto const status = parse_status(message.pop());
 		auto const source = parse_from_source(message);
 		bounded::visit(source, bounded::overload(
 			[&](MainEffect) { m_move_state.status(party, status); },
@@ -553,8 +553,8 @@ void BattleParser::handle_message(InMessage message) {
 		));
 	} else if (type == "swap") {
 #if 0
-		auto const pokemon = message.next();
-		auto const position = message.next();
+		auto const pokemon = message.pop();
+		auto const position = message.pop();
 		// position here is "0", "1", or "2"
 #endif
 	} else if (type == "tie") {
@@ -562,25 +562,25 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-transform") {
 		// message.remainder() == POKEMON|SPECIES
 	} else if (type == "turn") {
-		auto const turn = bounded::to_integer<0, bounded::max_value<std::uint32_t>>(message.next());
+		auto const turn = bounded::to_integer<0, bounded::max_value<std::uint32_t>>(message.pop());
 		m_analysis_logger << std::string(20, '=') << "\nBegin turn " << turn << '\n';
 		m_battle.handle_begin_turn();
 		send_move(determine_action());
 	} else if (type == "-unboost") {
 #if 0
-		auto const pokemon = message.next();
-		auto const stat = message.next();
-		auto const amount = message.next();
+		auto const pokemon = message.pop();
+		auto const stat = message.pop();
+		auto const amount = message.pop();
 #endif
 	} else if (type == "upkeep") {
 		m_battle.handle_end_turn();
 	} else if (type == "-weather") {
 #if 0
-		auto const weather = message.next();
+		auto const weather = message.pop();
 #endif
 	} else if (type == "win") {
 		if (m_log_foe_teams) {
-			auto const won = m_username == message.next();
+			auto const won = m_username == message.pop();
 			if (!won) {
 				log_foe_team(m_battle.generation(), m_usage_stats, m_battle.foe(), m_random_engine);
 			}
@@ -770,9 +770,9 @@ void BattleParser::send_random_move() {
 }
 
 auto parse_switch(InMessage message) -> ParsedSwitch {
-	auto const party = party_from_player_id(message.next());
-	auto const details = parse_details(message.next());
-	auto const [visible_hp, status] = parse_hp_and_status(message.next());
+	auto const party = party_from_player_id(message.pop());
+	auto const details = parse_details(message.pop());
+	auto const [visible_hp, status] = parse_hp_and_status(message.pop());
 	return ParsedSwitch{party, details.species, details.level, details.gender, visible_hp, status};
 }
 
