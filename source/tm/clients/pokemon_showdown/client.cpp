@@ -71,14 +71,14 @@ auto Client::Sockets::make_connected_socket(std::string_view const host, std::st
 	return socket;
 }
 
-auto Client::Sockets::read_message() -> BufferView<char> {
+auto Client::Sockets::read_message() -> BufferView<std::string_view> {
 	m_buffer.consume(static_cast<std::size_t>(-1));
 	m_websocket.read(m_buffer);
 
 	auto const asio_buffer = m_buffer.data();
 	auto const sv = std::string_view(static_cast<char const *>(asio_buffer.data()), asio_buffer.size());
 
-	return BufferView(sv, '\n');
+	return {sv, '\n'};
 }
 
 void Client::Sockets::write_message(std::string_view const message) {
@@ -108,7 +108,7 @@ ClientImpl::ClientImpl(SettingsFile settings, unsigned depth, BattleParser::Send
 {
 }
 
-void ClientImpl::run(BufferView<char> messages) {
+void ClientImpl::run(BufferView<std::string_view> messages) {
 	auto const has_room = !messages.remainder().empty() and messages.remainder().front() == '>';
 	auto const room = has_room ? messages.next().substr(1) : std::string_view{};
 	while (!messages.remainder().empty()) {

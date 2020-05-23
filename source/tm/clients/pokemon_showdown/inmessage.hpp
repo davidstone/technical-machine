@@ -49,7 +49,7 @@ struct InMessage {
 	}
 
 private:
-	constexpr InMessage(std::string_view const room, BufferView<char> view):
+	constexpr InMessage(std::string_view const room, BufferView<std::string_view> view):
 		m_room(room),
 		m_type([&]{
 			// Because messages start with a '|', discard first empty string
@@ -65,7 +65,7 @@ private:
 
 	std::string_view m_room;
 	std::string_view m_type;
-	BufferView<char> m_view;
+	BufferView<std::string_view> m_view;
 };
 
 }	// namespace ps

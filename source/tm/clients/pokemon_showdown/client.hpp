@@ -48,7 +48,7 @@ struct ClientImpl {
 		http::response<http::string_body>(std::string_view, std::string_view, http::request<http::string_body> const &)
 	>;
 	ClientImpl(SettingsFile settings, unsigned depth, BattleParser::SendMessageFunction send_message, AuthenticationFunction authenticate);
-	void run(BufferView<char> messages);
+	void run(BufferView<std::string_view> messages);
 
 private:
 	Team generate_team() {
@@ -65,7 +65,7 @@ private:
 	
 	void authenticate(std::string_view challstr);
 	
-	BufferView<char> read_message();
+	BufferView<std::string_view> read_message();
 
 	std::random_device m_rd;
 	std::mt19937 m_random_engine;
@@ -96,7 +96,7 @@ private:
 		Sockets(std::string_view host, std::string_view port, std::string_view resource);
 		Sockets(Sockets &&) = delete;
 
-		auto read_message() -> BufferView<char>;
+		auto read_message() -> BufferView<std::string_view>;
 		void write_message(std::string_view message);
 		auto authenticate(std::string_view host, std::string_view port, http::request<http::string_body> const & request) -> http::response<http::string_body>;
 	

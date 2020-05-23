@@ -1,4 +1,3 @@
-// Pokemon Showdown incoming messages
 // Copyright (C) 2020 David Stone
 //
 // This file is part of Technical Machine.
@@ -18,33 +17,48 @@
 
 #pragma once
 
-#include <string_view>
+#include <containers/algorithms/find.hpp>
+
+#include <algorithm>
+#include <cstddef>
+#include <type_traits>
+#include <utility>
 
 namespace technicalmachine {
 
-constexpr auto separator_size(char) {
-	return 1U;
-}
-constexpr auto separator_size(std::string_view const separator) {
-	return separator.size();
+template<typename View>
+constexpr auto split_impl(View buffer, std::size_t separator_size, auto const position) {
+	if (position == buffer.end()) {
+		return std::pair(buffer, View());
+	}
+	auto const offset = static_cast<std::size_t>(position - buffer.begin());
+	return std::pair(
+		View(buffer.data(), offset),
+		View(buffer.data() + offset + separator_size, buffer.size() - separator_size - offset)
+	);
 }
 
-constexpr auto split(std::string_view str, auto const separator) {
-	auto const index = str.find(separator);
-	if (index == std::string_view::npos) {
-		return std::pair(str, std::string_view{});
-	}
-	return std::pair(str.substr(0, index), str.substr(index + separator_size(separator)));
+template<typename View>
+constexpr auto split(View const buffer, typename View::value_type const separator) {
+	return split_impl(buffer, 1U, containers::find(buffer, separator));
+}
+
+template<typename View, typename Separator> requires std::is_same_v<typename View::value_type, typename Separator::value_type>
+constexpr auto split(View const buffer, Separator const separator) {
+	return split_impl(buffer, separator.size(), std::search(buffer.begin(), buffer.end(), separator.begin(), separator.end()));
 }
 
 // TODO: Maybe something with iterators?
+template<typename View>
 struct BufferViewBase {
-	explicit constexpr BufferViewBase(std::string_view buffer):
+	static_assert(std::is_nothrow_copy_constructible_v<View>);
+
+	explicit constexpr BufferViewBase(View const buffer):
 		m_buffer(buffer)
 	{
 	}
 	
-	constexpr auto next(auto const separator) -> std::string_view {
+	constexpr auto next(auto const separator) {
 		auto const [first, second] = split(m_buffer, separator);
 		m_buffer = second;
 		return first;
@@ -54,23 +68,23 @@ struct BufferViewBase {
 	}
 	
 private:
-	std::string_view m_buffer;
+	View m_buffer;
 };
 
-template<typename Separator>
+template<typename View, typename Separator = typename View::value_type>
 struct BufferView {
-	static_assert(std::is_same_v<Separator, char> or std::is_same_v<Separator, std::string_view>);
+	static_assert(std::is_nothrow_copy_constructible_v<View>);
 
-	constexpr BufferView(std::string_view buffer, Separator const separator):
+	constexpr BufferView(View const buffer, Separator const separator):
 		m_buffer(buffer),
 		m_separator(separator)
 	{
 	}
 	
-	constexpr auto next(auto const separator) -> std::string_view {
+	constexpr auto next(auto const separator) {
 		return m_buffer.next(separator);
 	}
-	constexpr auto next() -> std::string_view {
+	constexpr auto next() {
 		return next(m_separator);
 	}
 	constexpr auto remainder() const {
@@ -78,10 +92,8 @@ struct BufferView {
 	}
 	
 private:
-	BufferViewBase m_buffer;
+	BufferViewBase<View> m_buffer;
 	Separator m_separator;
 };
-
-BufferView(std::string_view, char const *) -> BufferView<std::string_view>;
 
 } // namespace technicalmachine

@@ -131,7 +131,7 @@ constexpr auto make_party(std::string_view const player_id) {
 // This adds additional string scanning, but I don't think the performance
 // matters that much here
 inline auto parse_details(std::string_view details) {
-	auto parser = BufferView(details, ", ");
+	auto parser = BufferView(details, std::string_view(", "));
 	auto const species = from_string<Species>(parser.next());
 	auto const level_or_gender_or_shiny_str = parser.next();
 	auto try_parse_gender = [](auto const str) {
