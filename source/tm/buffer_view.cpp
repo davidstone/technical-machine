@@ -62,6 +62,19 @@ constexpr auto pop_some() {
 
 static_assert(pop_some());
 
+constexpr auto pop_char_delimiter_from_empty() {
+	auto view = DelimitedBufferView(std::string_view(""), 'c');
+
+	BOUNDED_ASSERT(view.remainder() == "");
+
+	auto const result = view.pop();
+	BOUNDED_ASSERT(result == "");
+	BOUNDED_ASSERT(view.remainder() == "");
+	return true;
+}
+
+static_assert(pop_char_delimiter_from_empty());
+
 constexpr auto pop_to_found_char_delimiter() {
 	auto view = BufferView(std::string_view("pokemon"));
 
