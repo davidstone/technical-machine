@@ -1,4 +1,3 @@
-// Pokemon string functions
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.

@@ -23,6 +23,7 @@
 #include <bounded/integer.hpp>
 
 #include <containers/scope_guard.hpp>
+#include <containers/string.hpp>
 
 #include <iostream>
 

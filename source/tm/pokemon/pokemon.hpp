@@ -36,8 +36,6 @@
 
 #include <bounded/assert.hpp>
 
-#include <containers/string.hpp>
-
 #include <cstdint>
 
 namespace technicalmachine {
@@ -229,8 +227,6 @@ inline Happiness get_happiness(Pokemon const pokemon) {
 inline HiddenPower get_hidden_power(Pokemon const pokemon) {
 	return pokemon.m_hidden_power;
 }
-
-containers::string to_string(Pokemon pokemon);
 
 inline auto hp_ratio(Pokemon const pokemon) {
 	auto const hp = get_hp(pokemon);

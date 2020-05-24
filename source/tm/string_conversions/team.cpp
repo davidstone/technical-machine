@@ -17,6 +17,8 @@
 
 #include <tm/string_conversions/team.hpp>
 
+#include <tm/string_conversions/pokemon.hpp>
+
 #include <tm/team.hpp>
 
 namespace technicalmachine {

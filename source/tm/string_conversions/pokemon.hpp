@@ -1,4 +1,4 @@
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2020 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -19,13 +19,12 @@
 
 #include <tm/string_conversions/conversion.hpp>
 
-#include <tm/pokemon/species_forward.hpp>
+#include <containers/string.hpp>
 
 namespace technicalmachine {
 
-auto to_string(Species species) -> std::string_view;
+struct Pokemon;
 
-template<>
-auto from_string<Species>(std::string_view str) -> Species;
+auto to_string(Pokemon pokemon) -> containers::string;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

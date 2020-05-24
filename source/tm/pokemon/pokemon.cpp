@@ -17,32 +17,6 @@
 
 #include <tm/pokemon/pokemon.hpp>
 
-#include <tm/ability.hpp>
-#include <tm/gender.hpp>
-#include <tm/operators.hpp>
-#include <tm/rational.hpp>
-#include <tm/weather.hpp>
-
-#include <tm/move/is_switch.hpp>
-#include <tm/move/move.hpp>
-
-#include <tm/stat/stat.hpp>
-
-#include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move.hpp>
-#include <tm/string_conversions/nature.hpp>
-#include <tm/string_conversions/species.hpp>
-#include <tm/string_conversions/status.hpp>
-
-#include <containers/algorithms/all_any_none.hpp>
-#include <containers/algorithms/concatenate.hpp>
-
-#include <cassert>
-#include <cstdint>
-#include <string>
-#include <string_view>
-
 namespace technicalmachine {
 
 // TODO: Setting IVs requires modifying the Pokemon after construction, which
@@ -85,46 +59,4 @@ Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Speci
 	m_nature_is_known = false;
 }
 
-
-containers::string to_string(Pokemon const pokemon) {
-	// Boost.Format fails to compile with C++20, so we have to do this instead
-	auto hp_string = [&] {
-		auto const buffer = std::to_string(100.0 * static_cast<double>(hp_ratio(pokemon)));
-		auto const it = containers::find(buffer, '.');
-		auto const last = (end(buffer) - it <= 2) ? end(buffer) : it + 2;
-		return containers::string(containers::range_view(begin(buffer), last));
-	};
-
-	auto const output_status = !is_clear(get_status(pokemon));
-	
-	#define TECHNICALMACHINE_STAT(stat, str) \
-		std::string_view(" / "), std::string_view(bounded::to_string(get_stat(pokemon, stat).ev().value())), std::string_view(" " str)
-	
-	auto moves_to_string = [&]{
-		containers::string output;
-		for (auto const & move : regular_moves(pokemon)) {
-			output = containers::concatenate<containers::string>(std::move(output), std::string_view("\n\t- "), to_string(move.name()));
-		}
-		return output;
-	};
-
-	return containers::concatenate<containers::string>(
-		to_string(get_species(pokemon)),
-		std::string_view(" ("), hp_string(), std::string_view("% HP) @ "),
-		to_string(pokemon.unmodified_item()),
-		std::string_view("\n\tAbility: "), to_string(pokemon.initial_ability()), std::string_view("\n"),
-		(output_status ? containers::concatenate<containers::string>(std::string_view("\tStatus: "), to_string(get_status(pokemon).name()), std::string_view("\n")) : containers::string("")),
-		std::string_view("\tNature: "), to_string(get_nature(pokemon)),
-		std::string_view("\n\t"),
-		std::string_view(bounded::to_string(get_hp(pokemon).ev().value())), std::string_view(" HP"),
-		TECHNICALMACHINE_STAT(StatNames::ATK, "Atk"),
-		TECHNICALMACHINE_STAT(StatNames::DEF, "Def"),
-		TECHNICALMACHINE_STAT(StatNames::SPA, "SpA"),
-		TECHNICALMACHINE_STAT(StatNames::SPD, "SpD"),
-		TECHNICALMACHINE_STAT(StatNames::SPE, "Spe"),
-		moves_to_string()
-	);
-	#undef TECHNICALMACHINE_STAT
-}
-
-}	// namespace technicalmachine
+} // namespace technicalmachine
