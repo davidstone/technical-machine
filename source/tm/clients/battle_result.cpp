@@ -17,20 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/clients/battle_result.hpp>
-
-#include <string>
-
-namespace technicalmachine {
-
-std::string to_string (Result const result) {
-	switch (result) {
-		case Result::won:
-			return "Won";
-		case Result::lost:
-			return "Lost";
-		default:
-			return "Tied";
-	}
-}
-
-}	// namespace technicalmachine

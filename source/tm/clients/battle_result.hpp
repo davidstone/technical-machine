@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <string>
+#include <string_view>
 
 namespace technicalmachine {
 
@@ -28,6 +28,12 @@ enum class Result {
 	tied = 0
 };
 
-std::string to_string (Result result);
+constexpr auto to_string(Result const result) -> std::string_view {
+	switch (result) {
+		case Result::won: return "Won";
+		case Result::lost: return "Lost";
+		case Result::tied: return "Tied";
+	}
+}
 
 }	// namespace technicalmachine
