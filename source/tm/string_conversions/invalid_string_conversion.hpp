@@ -22,12 +22,8 @@
 
 namespace technicalmachine {
 
-// I make the FromString a runtime error because I only convert from a string
-// that I get from 'outside' the program. It may also represent a logic error,
-// but it is definitely a runtime error.
-
 struct InvalidFromStringConversion : std::runtime_error {
-	InvalidFromStringConversion(std::string_view const target, std::string_view const requested);
+	InvalidFromStringConversion(std::string_view target, std::string_view requested);
 };
 
 }	// namespace technicalmachine

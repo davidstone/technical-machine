@@ -29,7 +29,7 @@
 
 namespace technicalmachine {
 
-std::string_view to_string(Gender const gender) {
+auto to_string(Gender const gender) -> std::string_view {
 	switch (gender) {
 		case Gender::female: return "Female";
 		case Gender::male: return "Male";
@@ -38,7 +38,7 @@ std::string_view to_string(Gender const gender) {
 }
 
 template<>
-Gender from_string(std::string_view const str) {
+auto from_string(std::string_view const str) -> Gender {
 	using Storage = containers::array<containers::map_value_type<std::string_view, Gender>, 5>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,

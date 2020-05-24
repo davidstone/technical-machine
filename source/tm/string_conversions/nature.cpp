@@ -28,7 +28,7 @@
 
 namespace technicalmachine {
 
-std::string_view to_string(Nature const nature) {
+auto to_string(Nature const nature) -> std::string_view {
 	switch (nature) {
 		case Nature::Adamant: return "Adamant";
 		case Nature::Bashful: return "Bashful";
@@ -59,7 +59,7 @@ std::string_view to_string(Nature const nature) {
 }
 
 template<>
-Nature from_string<Nature>(std::string_view const str) {
+auto from_string<Nature>(std::string_view const str) -> Nature {
 	using Storage = containers::array<containers::map_value_type<std::string_view, Nature>, 25>;
 	static constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,

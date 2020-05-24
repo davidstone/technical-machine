@@ -27,7 +27,7 @@
 
 namespace technicalmachine {
 
-std::string_view to_string(Statuses const status) {
+auto to_string(Statuses const status) -> std::string_view {
 	switch (status) {
 		case Statuses::clear: return "No status";
 		case Statuses::burn: return "Burn";
@@ -41,7 +41,7 @@ std::string_view to_string(Statuses const status) {
 }
 
 template<>
-Statuses from_string(std::string_view const str) {
+auto from_string(std::string_view const str) -> Statuses {
 	using Storage = containers::array<containers::map_value_type<std::string_view, Statuses>, 8>;
 	static constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,

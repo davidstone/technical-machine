@@ -28,7 +28,7 @@
 
 namespace technicalmachine {
 
-std::string_view to_string(Ability const ability) {
+auto to_string(Ability const ability) -> std::string_view {
 	switch (ability) {
 		case Ability::Stench: return "Stench";
 		case Ability::Drizzle: return "Drizzle";
@@ -302,7 +302,7 @@ std::string_view to_string(Ability const ability) {
 }
 
 template<>
-Ability from_string<Ability>(std::string_view const str) {
+auto from_string<Ability>(std::string_view const str) -> Ability {
 	using Storage = containers::array<containers::map_value_type<std::string_view, Ability>, 260>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,

@@ -23,9 +23,9 @@
 namespace technicalmachine {
 enum class Moves : std::uint16_t;
 
-std::string_view to_string(Moves name);
+auto to_string(Moves name) -> std::string_view;
 
 template<>
-Moves from_string<Moves>(std::string_view const str);
+auto from_string<Moves>(std::string_view const str) -> Moves;
 
 }	// namespace technicalmachine

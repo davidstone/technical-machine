@@ -22,9 +22,9 @@
 
 namespace technicalmachine {
 
-std::string_view to_string(Gender const gender);
+auto to_string(Gender const gender) -> std::string_view;
 
 template<>
-Gender from_string<Gender>(std::string_view const str);
+auto from_string<Gender>(std::string_view const str) -> Gender;
 
 }	// namespace technicalmachine

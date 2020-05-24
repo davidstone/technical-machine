@@ -23,6 +23,6 @@
 namespace technicalmachine {
 
 template<typename T>
-T from_string(std::string_view str);
+auto from_string(std::string_view str) -> T;
 
 }	// namespace technicalmachine

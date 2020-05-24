@@ -28,7 +28,7 @@
 
 namespace technicalmachine {
 
-std::string_view to_string(Species const species) {
+auto to_string(Species const species) -> std::string_view {
 	switch (species) {
 		// Generation 1
 		case Species::Bulbasaur: return "Bulbasaur";
@@ -908,7 +908,7 @@ std::string_view to_string(Species const species) {
 }
 
 template<>
-Species from_string(std::string_view const str) {
+auto from_string(std::string_view const str) -> Species {
 	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 979>;
 	static constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,

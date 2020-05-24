@@ -24,9 +24,9 @@
 
 namespace technicalmachine {
 
-std::string_view to_string(Ability const name);
+auto to_string(Ability const name) -> std::string_view;
 
 template<>
-Ability from_string<Ability>(std::string_view const str);
+auto from_string<Ability>(std::string_view const str) -> Ability;
 
 }	// namespace technicalmachine

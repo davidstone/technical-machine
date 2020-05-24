@@ -28,7 +28,7 @@
 
 namespace technicalmachine {
 
-std::string_view to_string(Moves const move) {
+auto to_string(Moves const move) -> std::string_view {
 	switch (move) {
 		// Weird moves
 		case Moves::Pass: return "Pass";
@@ -768,7 +768,7 @@ std::string_view to_string(Moves const move) {
 }
 
 template<>
-Moves from_string(std::string_view const str) {
+auto from_string(std::string_view const str) -> Moves {
 	using Storage = containers::array<containers::map_value_type<std::string_view, Moves>, 752>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,

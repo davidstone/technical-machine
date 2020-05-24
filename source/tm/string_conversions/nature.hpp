@@ -22,9 +22,9 @@
 
 namespace technicalmachine {
 
-std::string_view to_string(Nature nature);
+auto to_string(Nature nature) -> std::string_view;
 
 template<>
-Nature from_string<Nature>(std::string_view const str);
+auto from_string<Nature>(std::string_view const str) -> Nature;
 
 }	// namespace technicalmachine
