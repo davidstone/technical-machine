@@ -33,7 +33,7 @@
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/nature.hpp>
-#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/species.hpp>
 #include <tm/string_conversions/status.hpp>
 #include <tm/string_conversions/invalid_string_conversion.hpp>
 

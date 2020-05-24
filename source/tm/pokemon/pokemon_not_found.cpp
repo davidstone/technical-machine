@@ -17,7 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/pokemon/pokemon_not_found.hpp>
-#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/species.hpp>
 
 #include <string>
 

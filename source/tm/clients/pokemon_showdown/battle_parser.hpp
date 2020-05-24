@@ -27,7 +27,7 @@
 
 #include <tm/evaluate/evaluate.hpp>
 
-#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/species.hpp>
 
 #include <bounded/integer.hpp>
 #include <bounded/to_integer.hpp>

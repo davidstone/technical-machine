@@ -30,7 +30,7 @@
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
-#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/species.hpp>
 
 #include <containers/algorithms/binary_search.hpp>
 #include <containers/algorithms/transform.hpp>

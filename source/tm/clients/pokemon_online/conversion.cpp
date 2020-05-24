@@ -29,7 +29,7 @@
 #include <tm/stat/stat.hpp>
 
 #include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/species.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/unreachable.hpp>

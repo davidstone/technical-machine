@@ -30,7 +30,7 @@
 
 #include <tm/stat/stat.hpp>
 
-#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/species.hpp>
 
 #include <containers/integer_range.hpp>
 

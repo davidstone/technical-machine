@@ -28,7 +28,7 @@
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/move.hpp>
-#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/species.hpp>
 #include <tm/ability.hpp>
 #include <tm/buffer_view.hpp>
 #include <tm/gender.hpp>

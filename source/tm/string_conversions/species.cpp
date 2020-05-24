@@ -16,7 +16,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/species.hpp>
 
 #include <tm/string_conversions/invalid_string_conversion.hpp>
 #include <tm/string_conversions/lowercase_alphanumeric.hpp>

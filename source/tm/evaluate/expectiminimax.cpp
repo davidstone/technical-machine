@@ -35,7 +35,7 @@
 #include <tm/stat/stat.hpp>
 
 #include <tm/string_conversions/move.hpp>
-#include <tm/string_conversions/pokemon.hpp>
+#include <tm/string_conversions/species.hpp>
 
 #include <tm/ability.hpp>
 #include <tm/block.hpp>

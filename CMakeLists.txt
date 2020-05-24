@@ -145,7 +145,7 @@ add_library(tm_common STATIC
 	source/tm/string_conversions/lowercase_alphanumeric.cpp
 	source/tm/string_conversions/move.cpp
 	source/tm/string_conversions/nature.cpp
-	source/tm/string_conversions/pokemon.cpp
+	source/tm/string_conversions/species.cpp
 	source/tm/string_conversions/status.cpp
 	source/tm/string_conversions/team.cpp
 
