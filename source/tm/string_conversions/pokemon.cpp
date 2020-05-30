@@ -106,8 +106,8 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 		atk_def, stat_to_string(StatNames::DEF),
 		def_spa, stat_to_string(StatNames::SPA),
 		spa_spd, stat_to_string(StatNames::SPD),
-		spd_spe, stat_to_string(StatNames::SPE), spe_moves,
-		moves_to_string()
+		spd_spe, stat_to_string(StatNames::SPE),
+		spe_moves, moves_to_string()
 	);
 }
 
