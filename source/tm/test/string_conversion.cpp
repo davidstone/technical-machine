@@ -1,4 +1,3 @@
-// Test string conversions
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -33,6 +32,7 @@
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/nature.hpp>
+#include <tm/string_conversions/pokemon.hpp>
 #include <tm/string_conversions/species.hpp>
 #include <tm/string_conversions/status.hpp>
 #include <tm/string_conversions/invalid_string_conversion.hpp>
@@ -56,8 +56,8 @@ struct InvalidToStringConversion : std::logic_error {
 };
 
 template<typename Enum>
-void test_generic (std::string const & thing) {
-	std::cout << "\tVerifying correct " + thing + ".\n";
+void test_generic(std::string_view const thing) {
+	std::cout << "\tVerifying correct " << thing << ".\n";
 	for (auto const original : containers::enum_range<Enum>()) {
 		auto const str = to_string(original);
 		auto const result = from_string<Enum>(str);
@@ -67,18 +67,64 @@ void test_generic (std::string const & thing) {
 	}
 }
 
-}	// namespace
+void test_pokemon() {
+	constexpr auto generation = Generation::three;
+	constexpr auto team_size = 6_bi;
+	constexpr auto species = Species::Mewtwo;
+	constexpr auto level = Level(100_bi);
+	constexpr auto gender = Gender::genderless;
+	constexpr auto item = Item::Leftovers;
+	constexpr auto ability = Ability::Pressure;
+	constexpr auto nature = Nature::Modest;
 
-void string_conversion_tests () {
+	constexpr auto hp = EV(4_bi);
+	constexpr auto atk = EV(12_bi);
+	constexpr auto def = EV(24_bi);
+	constexpr auto spa = EV(0_bi);
+	constexpr auto spd = EV(32_bi);
+	constexpr auto spe = EV(100_bi);
+	constexpr auto iv = default_iv(generation);
+
+	auto pokemon = Pokemon(generation, 6_bi, species, level, gender, item, ability, nature);
+	set_hp_ev(generation, pokemon, hp, iv);
+	set_stat_ev(pokemon, StatNames::ATK, atk, iv);
+	set_stat_ev(pokemon, StatNames::DEF, def, iv);
+	set_stat_ev(pokemon, StatNames::SPA, spa, iv);
+	set_stat_ev(pokemon, StatNames::SPD, spd, iv);
+	set_stat_ev(pokemon, StatNames::SPE, spe, iv);
+
+	auto check = [&] {
+		auto const str = to_string(pokemon);
+		auto const result = pokemon_from_string(str, generation, team_size);
+
+		if (pokemon != result) {
+			std::cerr << str << '\n';
+			throw std::exception();
+		}
+	};
+
+	check();
+	for (auto const move : {Moves::Psychic, Moves::Recover, Moves::Calm_Mind, Moves::Taunt}) {
+		all_moves(pokemon).add(Move(generation, move));
+		check();
+	}
+	pokemon.set_status(Statuses::burn);
+	check();
+}
+
+} // namespace
+
+void string_conversion_tests() {
 	std::cout << "Running string conversion tests.\n";
-	test_generic<Ability> ("ability");
-	test_generic<Gender> ("gender");
-	test_generic<Item> ("item");
-	test_generic<Moves> ("move");
-	test_generic<Nature> ("nature");
-	test_generic<Species> ("species");
-	test_generic<Statuses> ("status");
+	test_generic<Ability>("ability");
+	test_generic<Gender>("gender");
+	test_generic<Item>("item");
+	test_generic<Moves>("move");
+	test_generic<Nature>("nature");
+	test_generic<Species>("species");
+	test_generic<Statuses>("status");
+	test_pokemon();
 	std::cout << "String conversion tests passed.\n\n";
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

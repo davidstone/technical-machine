@@ -17,14 +17,17 @@
 
 #pragma once
 
-#include <tm/string_conversions/conversion.hpp>
+#include <tm/generation.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
 #include <containers/string.hpp>
 
+#include <string_view>
+
 namespace technicalmachine {
 
-struct Pokemon;
-
 auto to_string(Pokemon pokemon) -> containers::string;
+
+auto pokemon_from_string(std::string_view str, Generation, TeamSize) -> Pokemon;
 
 } // namespace technicalmachine
