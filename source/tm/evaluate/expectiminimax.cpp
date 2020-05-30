@@ -185,7 +185,7 @@ SelectMoveResult select_move_branch(Generation const generation, Team const & ai
 	// correct result.
 	auto move_scores = !depth.is_final_iteration() ?
 		select_move_branch(generation, ai, ai_selections, foe, foe_selections, weather, evaluate, depth.iterative_deepening_value(), log, function).move_scores :
-		BothMoveScores{MoveScores(ai.pokemon()), MoveScores(foe.pokemon())};
+		BothMoveScores{MoveScores(ai_selections), MoveScores(foe_selections)};
 	auto const ai_moves = reorder(ai_selections, move_scores.ai, true);
 	auto const foe_moves = reorder(foe_selections, move_scores.foe, false);
 

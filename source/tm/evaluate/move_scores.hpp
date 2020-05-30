@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <tm/block.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 
 #include <bounded/assert.hpp>
@@ -32,7 +33,7 @@ enum class Moves : std::uint16_t;
 struct Pokemon;
 
 struct MoveScores {
-	explicit MoveScores(Pokemon const & pokemon);
+	explicit MoveScores(StaticVectorMove legal_selections);
 	double get(Moves const move) const {
 		auto const it = m_scores.find(move);
 		BOUNDED_ASSERT(it != end(m_scores));
