@@ -69,7 +69,6 @@ add_library(tm_common STATIC
 	source/tm/evaluate/evaluate.cpp
 	source/tm/evaluate/expectiminimax.cpp
 	source/tm/evaluate/move_scores.cpp
-	source/tm/evaluate/reorder.cpp
 	source/tm/evaluate/transposition.cpp
 
 	source/tm/move/accuracy.cpp

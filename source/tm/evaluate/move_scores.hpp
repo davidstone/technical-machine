@@ -34,22 +34,20 @@ struct Pokemon;
 
 struct MoveScores {
 	explicit MoveScores(StaticVectorMove legal_selections);
-	double get(Moves const move) const {
-		auto const it = m_scores.find(move);
-		BOUNDED_ASSERT(it != end(m_scores));
-		return it->mapped();
-	}
 	void set(Moves const move, double const value) {
-		auto const it = m_scores.find(move);
+		auto const it = containers::lower_bound(m_scores, move, [](value_type const lhs, Moves const rhs) {
+			return lhs.key() < rhs;
+		});
 		BOUNDED_ASSERT(it != end(m_scores));
 		it->mapped() = value;
 	}
+	auto ordered_moves(bool ai) const -> StaticVectorMove;
 private:
 	using value_type = containers::map_value_type<Moves, double>;
-	containers::basic_flat_map<containers::static_vector<
+	containers::static_vector<
 		value_type,
 		static_cast<int>(bounded::max_value<MoveSize>)
-	>> m_scores;
+	> m_scores;
 };
 
 }	// namespace technicalmachine

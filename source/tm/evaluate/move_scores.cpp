@@ -20,6 +20,8 @@
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
+#include <containers/algorithms/sort.hpp>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -32,12 +34,23 @@ MoveScores::MoveScores(StaticVectorMove const legal_selections):
 	// because I evaluate every move of mine and give it a score. Therefore,
 	// this works in all situations.
 	m_scores(
-		containers::assume_unique,
 		containers::transform(legal_selections, [](Moves const move) {
 			return value_type(move, static_cast<double>(victory + 1_bi));
 		})
 	)
 {
+	containers::sort(m_scores, [](value_type const lhs, value_type const rhs) {
+		return lhs.key() < rhs.key();
+	});
 }
 
-}	// namespace technicalmachine
+auto MoveScores::ordered_moves(bool const ai) const -> StaticVectorMove {
+	auto intermediate = containers::static_vector<value_type, static_cast<int>(bounded::max_value<MoveSize>)>(m_scores);
+	auto compare = [=](value_type const lhs, value_type const rhs) {
+		return ai ? lhs.mapped() > rhs.mapped() : lhs.mapped() < rhs.mapped();
+	};
+	std::sort(containers::legacy_iterator(begin(intermediate)), containers::legacy_iterator(end(intermediate)), compare);
+	return StaticVectorMove(containers::transform(intermediate, [](value_type const value) { return value.key(); }));
+}
+
+} // namespace technicalmachine
