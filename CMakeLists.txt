@@ -101,6 +101,7 @@ add_library(tm_common STATIC
 	source/tm/pokemon/encore.cpp
 	source/tm/pokemon/end_of_turn_counter.cpp
 	source/tm/pokemon/happiness.cpp
+	source/tm/pokemon/has_physical_or_special_move.cpp
 	source/tm/pokemon/heal_block.cpp
 	source/tm/pokemon/hidden_power.cpp
 	source/tm/pokemon/last_used_move.cpp

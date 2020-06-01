@@ -23,11 +23,11 @@
 #include <tm/team_predictor/ev_optimizer/speed.hpp>
 
 #include <tm/move/category.hpp>
+
+#include <tm/pokemon/has_physical_or_special_move.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
 #include <bounded/assert.hpp>
-
-#include <containers/algorithms/all_any_none.hpp>
 
 #include <random>
 
@@ -48,23 +48,6 @@ auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats con
 	set_stat_ev(pokemon, StatNames::SPA, stats.special_attack);
 	set_stat_ev(pokemon, StatNames::SPD, stats.special_defense);
 	set_stat_ev(pokemon, StatNames::SPE, stats.speed);
-}
-
-auto any_move_matches(Generation const generation, Pokemon const & pokemon, auto condition) {
-	return containers::any(regular_moves(pokemon), [=](Move const move) {
-		return condition(
-			generation,
-			KnownMove{move.name(), get_type(generation, move.name(), get_hidden_power(pokemon).type())}
-		);
-	});
-}
-
-bool has_physical_move(Generation const generation, Pokemon const & pokemon) {
-	return any_move_matches(generation, pokemon, is_physical);
-}
-
-bool has_special_move(Generation const generation, Pokemon const & pokemon) {
-	return any_move_matches(generation, pokemon, is_special);
 }
 
 auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats {
