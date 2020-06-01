@@ -1,4 +1,4 @@
-// Copyright (C) 2019 David Stone
+// Copyright (C) 2020 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,18 +17,23 @@
 
 #pragma once
 
-#include <tm/clients/pokemon_showdown/parsed_hp.hpp>
-
-#include <tm/visible_hp.hpp>
-#include <tm/status.hpp>
+#include <tm/stat/hp.hpp>
 
 namespace technicalmachine {
-namespace ps {
 
-struct HPAndStatus {
-	VisibleHP hp;
-	Statuses status;
+// For the AI's Pokemon, this is exact. For the foe's Pokemon, this is a rounded
+// fraction out of 42 or 100.
+struct VisibleHP {
+	HP::current_type current;
+	HP::max_type max;
 };
 
-}	// namespace ps
-}	// namespace technicalmachine
+struct AllowedHP {
+	HP::current_type min;
+	HP::current_type value;
+	HP::current_type max;
+};
+
+auto to_real_hp(bool is_ai, HP, VisibleHP) -> AllowedHP;
+
+} // namespace technicalmachine

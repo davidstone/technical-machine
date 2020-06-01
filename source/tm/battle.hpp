@@ -29,10 +29,10 @@
 
 #include <tm/end_of_turn.hpp>
 #include <tm/team.hpp>
+#include <tm/visible_hp.hpp>
 #include <tm/weather.hpp>
 
-#include <random>
-#include <string>
+#include <cstdint>
 #include <utility>
 
 namespace technicalmachine {
@@ -83,11 +83,6 @@ struct Battle {
 		end_of_turn(m_generation, m_ai, ai_flags, m_foe, foe_flags, m_weather);
 	}
 
-	// maybe_index is either an index into a PokemonCollection or nothing
-	auto active_pokemon(bool const is_ai, auto... maybe_index) -> Pokemon & {
-		return (is_ai ? m_ai : m_foe).pokemon(maybe_index...);
-	}
-
 	void handle_use_move(bool is_ai, uint8_t slot, UsedMove move, bool clear_status, ActualDamage visible_damage, OtherMove other_move);
 	// This assumes Species Clause is in effect. This does not perform any
 	// switching, it just adds them to the team.
@@ -105,7 +100,25 @@ struct Battle {
 		pokemon.set_item(item);
 	}
 
+	// TODO: What happens here if a Pokemon has a pinch item?
+	void correct_hp_and_status(bool const is_ai, VisibleHP const visible_hp, Statuses const visible_status, auto... maybe_index) {
+		auto & pokemon = active_pokemon(is_ai, maybe_index...);
+		auto const original_hp = get_hp(pokemon);
+		pokemon.set_hp(correct_hp(is_ai, original_hp, visible_hp));
+		if (visible_hp.current == 0_bi) {
+			return;
+		}
+		validate_status(get_status(pokemon).name(), visible_status);
+	}
+
 private:
+	// maybe_index is either an index into a PokemonCollection or nothing
+	auto active_pokemon(bool const is_ai, auto... maybe_index) -> Pokemon & {
+		return (is_ai ? m_ai : m_foe).pokemon(maybe_index...);
+	}
+	auto correct_hp(bool is_ai, HP, VisibleHP) -> HP::current_type;
+	void validate_status(Statuses const original_status, Statuses const visible_status);
+
 	Team m_ai;
 	Team m_foe;
 	Weather m_weather;

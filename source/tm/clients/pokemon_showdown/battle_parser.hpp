@@ -183,7 +183,7 @@ struct ParsedSwitch {
 	Species species;
 	Level level;
 	Gender gender;
-	ParsedHP hp;
+	VisibleHP hp;
 	Statuses status;
 };
 auto parse_switch(InMessage message) -> ParsedSwitch;

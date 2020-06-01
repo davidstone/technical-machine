@@ -18,12 +18,14 @@
 
 #include <tm/battle.hpp>
 
+#include <tm/move/call_move.hpp>
+#include <tm/move/move.hpp>
+
+#include <tm/string_conversions/status.hpp>
+
 #include <tm/team.hpp>
 #include <tm/variable.hpp>
 #include <tm/weather.hpp>
-
-#include <tm/move/call_move.hpp>
-#include <tm/move/move.hpp>
 
 #include <containers/algorithms/find.hpp>
 #include <containers/index_type.hpp>
@@ -62,7 +64,7 @@ auto index_of_seen(PokemonCollection const & collection, Species const species) 
 	return static_cast<index_type>(containers::find(collection, species) - begin(collection));
 }
 
-}	// namespace
+} // namespace
 
 auto Battle::find_or_add_pokemon(bool const is_ai, uint8_t /*slot*/, Species const species, Level const level, Gender const gender) -> Moves {
 	auto & switcher = is_ai ? m_ai : m_foe;
@@ -71,6 +73,29 @@ auto Battle::find_or_add_pokemon(bool const is_ai, uint8_t /*slot*/, Species con
 		switcher.all_pokemon().add(m_generation, species, level, gender);
 	}
 	return to_switch(index);
+}
+
+auto Battle::correct_hp(bool const is_ai, HP const original_hp, VisibleHP const visible_hp) -> HP::current_type {
+	auto const current_hp = original_hp.current();
+	auto const seen_hp = to_real_hp(is_ai, original_hp, visible_hp);
+	if (seen_hp.min > current_hp or seen_hp.max < current_hp) {
+		// TODO: Find a better way to sync this up with server messages. Find a
+		// better way to fail unit tests if this happens.
+		std::cerr << "HP out of sync with server messages. Expected " << current_hp << " but visible HP is between " << seen_hp.min << " and " << seen_hp.max << " (max of " << original_hp.max() << ")\n";
+	}
+	return seen_hp.value;
+}
+
+void Battle::validate_status(Statuses const original_status, Statuses const visible_status) {
+	auto const normalized_original_status = (original_status == Statuses::rest) ? Statuses::sleep : original_status;
+	if (normalized_original_status != visible_status) {
+		throw std::runtime_error(
+			"Status out of sync with server messages: expected " +
+			std::string(to_string(original_status)) +
+			" but received " +
+			std::string(to_string(visible_status))
+		);
+	}
 }
 
 } // namespace technicalmachine

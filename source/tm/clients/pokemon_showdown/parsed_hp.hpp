@@ -21,6 +21,8 @@
 
 #include <tm/stat/hp.hpp>
 
+#include <tm/visible_hp.hpp>
+
 #include <bounded/integer.hpp>
 #include <bounded/to_integer.hpp>
 
@@ -29,25 +31,15 @@
 namespace technicalmachine {
 namespace ps {
 
-struct ParsedHP {
-public:
-	constexpr explicit ParsedHP(std::string_view const str):
-		ParsedHP(split_view(str, '/'))
-	{
+constexpr auto parse_hp(std::string_view const str) {
+	auto const hp = split_view(str, '/');
+	auto const current = bounded::to_integer<HP::current_type>(hp.first);
+	auto const max = hp.second.empty() ? 100_bi : bounded::to_integer<HP::max_type>(hp.second);
+	if (current > max) {
+		throw std::runtime_error("Received a current HP greater than max HP");
 	}
-	
-	HP::current_type current;
-	HP::max_type max;
-private:
-	constexpr explicit ParsedHP(std::pair<std::string_view, std::string_view> const hp):
-		current(bounded::to_integer<HP::current_type>(hp.first)),
-		max(hp.second.empty() ? 100_bi : bounded::to_integer<HP::max_type>(hp.second))
-	{
-		if (current > max) {
-			throw std::runtime_error("Received a current HP greater than max HP");
-		}
-	}
-};
+	return VisibleHP{current, max};
+}
 
 }	// namespace ps
 }	// namespace technicalmachine

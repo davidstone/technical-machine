@@ -186,6 +186,7 @@ add_library(tm_common STATIC
 	source/tm/status.cpp
 	source/tm/team.cpp
 	source/tm/variable.cpp
+	source/tm/visible_hp.cpp
 	source/tm/weather.cpp
 	source/tm/wish.cpp
 )

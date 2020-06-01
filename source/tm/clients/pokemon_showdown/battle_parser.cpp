@@ -33,6 +33,8 @@
 #include <tm/string_conversions/status.hpp>
 #include <tm/string_conversions/team.hpp>
 
+#include <tm/visible_hp.hpp>
+
 #include <bounded/integer.hpp>
 #include <bounded/to_integer.hpp>
 #include <bounded/detail/overload.hpp>
@@ -89,7 +91,7 @@ constexpr auto parse_status(std::string_view const str) {
 
 constexpr auto parse_hp_and_status(std::string_view const hp_and_status) {
 	auto const [hp_fraction, status] = split_view(hp_and_status, ' ');
-	return HPAndStatus{ParsedHP(hp_fraction), parse_status(status)};
+	return HPAndStatus{parse_hp(hp_fraction), parse_status(status)};
 }
 
 struct FromMove{};
@@ -136,7 +138,7 @@ auto parse_from_source(InMessage message) {
 auto parse_hp_message(InMessage message) {
 	struct Message {
 		Party party;
-		ParsedHP hp;
+		VisibleHP hp;
 		Statuses status;
 		EffectSource source;
 	};
@@ -157,7 +159,7 @@ auto parse_set_hp_message(InMessage message) {
 	// to defer checking until some time later.
 	struct Message {
 		Party party;
-		ParsedHP hp;
+		VisibleHP hp;
 		Statuses status;
 		EffectSource source;
 	};
@@ -171,72 +173,6 @@ auto parse_set_hp_message(InMessage message) {
 		hp_and_status.status,
 		source
 	};
-}
-
-struct AllowedHP {
-	HP::current_type min;
-	HP::current_type value;
-	HP::current_type max;
-};
-
-auto to_real_hp(bool const is_ai, HP const actual_hp, ParsedHP const visible_hp) {
-	if (visible_hp.current == 0_bi) {
-		return AllowedHP{0_bi, 0_bi, 0_bi};
-	}
-	constexpr auto max_visible_foe_hp = 100_bi;
-	auto const max_hp = actual_hp.max();
-	auto const expected_max_visible_hp = BOUNDED_CONDITIONAL(is_ai, max_hp, max_visible_foe_hp);
-	if (expected_max_visible_hp != visible_hp.max) {
-		throw std::runtime_error("Received an invalid max HP. Expected: " + bounded::to_string(expected_max_visible_hp) + " but got " + bounded::to_string(visible_hp.max));
-	}
-	auto compute_value = [=](auto const visible_current) {
-		return HP::current_type(bounded::max(1_bi, max_hp * visible_current / visible_hp.max));
-	};
-	if (is_ai) {
-		auto const value = compute_value(visible_hp.current);
-		return AllowedHP{value, value, value};
-	} else {
-		// TODO: Put in correct bounds on this for the foe Pokemon
-		return AllowedHP{
-			compute_value(visible_hp.current - 1_bi),
-			compute_value(visible_hp.current),
-			compute_value(visible_hp.current + 1_bi)
-		};
-	}
-}
-
-auto correct_hp(HP const original_hp, bool const is_ai, ParsedHP const visible_hp) {
-	auto const current_hp = original_hp.current();
-	auto const seen_hp = to_real_hp(is_ai, original_hp, visible_hp);
-	if (seen_hp.min > current_hp or seen_hp.max < current_hp) {
-		// TODO: Find a better way to sync this up with server messages. Find a
-		// better way to fail unit tests if this happens.
-		std::cerr << "HP out of sync with server messages. Expected " << current_hp << " but visible HP is between " << seen_hp.min << " and " << seen_hp.max << " (max of " << original_hp.max() << ")\n";
-	}
-	return seen_hp.value;
-}
-
-void validate_status(Statuses const original_status, Statuses const visible_status) {
-	auto const normalized_original_status = (original_status == Statuses::rest) ? Statuses::sleep : original_status;
-	if (normalized_original_status != visible_status) {
-		throw std::runtime_error(
-			"Status out of sync with server messages: expected " +
-			std::string(to_string(original_status)) +
-			" but received " +
-			std::string(to_string(visible_status))
-		);
-	}
-}
-
-// TODO: What happens here if a Pokemon has a pinch item?
-void correct_hp_and_status(bool const is_ai, Pokemon & pokemon, HPAndStatus const hp_and_status) {
-	auto const [visible_hp, visible_status] = hp_and_status;
-	auto const original_hp = get_hp(pokemon);
-	pokemon.set_hp(correct_hp(original_hp, is_ai, visible_hp));
-	if (visible_hp.current == 0_bi) {
-		return;
-	}
-	validate_status(get_status(pokemon).name(), visible_status);
 }
 
 } // namespace
@@ -487,10 +423,11 @@ void BattleParser::handle_message(InMessage message) {
 
 		constexpr auto slot = 0;
 		auto const move = m_battle.find_or_add_pokemon(is_ai(parsed.party), slot, parsed.species, parsed.level, parsed.gender);
-		correct_hp_and_status(
+		m_battle.correct_hp_and_status(
 			is_ai(parsed.party),
-			m_battle.active_pokemon(is_ai(parsed.party), to_replacement(move)),
-			HPAndStatus{parsed.hp, parsed.status}
+			parsed.hp,
+			parsed.status,
+			to_replacement(move)
 		);
 		if (type == "drag") {
 			m_move_state.phaze_index(other(parsed.party), get_team(parsed.party), parsed.species);
@@ -712,17 +649,17 @@ void BattleParser::maybe_use_previous_move() {
 	m_battle.handle_use_move(is_ai(data.party), slot, data.move, data.clear_status, damage.value, other_move);
 
 	if (data.user_hp_and_status) {
-		correct_hp_and_status(
+		m_battle.correct_hp_and_status(
 			is_ai(data.party),
-			m_battle.active_pokemon(is_ai(data.party)),
-			*data.user_hp_and_status
+			data.user_hp_and_status->hp,
+			data.user_hp_and_status->status
 		);
 	}
 	if (data.other_hp_and_status) {
-		correct_hp_and_status(
+		m_battle.correct_hp_and_status(
 			!is_ai(data.party),
-			m_battle.active_pokemon(is_ai(other(data.party))),
-			*data.other_hp_and_status
+			data.other_hp_and_status->hp,
+			data.other_hp_and_status->status
 		);
 	}
 }
