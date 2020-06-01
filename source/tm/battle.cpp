@@ -36,9 +36,9 @@ namespace technicalmachine {
 
 enum class Moves : std::uint16_t;
 
-void Battle::handle_use_move(Party const party, uint8_t /*slot*/, UsedMove const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
-	auto & user = is_me(party) ? m_ai : m_foe;
-	auto & other = is_me(party) ? m_foe : m_ai;
+void Battle::handle_use_move(bool const is_ai, uint8_t /*slot*/, UsedMove const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
+	auto & user = is_ai ? m_ai : m_foe;
+	auto & other = is_ai ? m_foe : m_ai;
 
 	add_seen_move(all_moves(user.pokemon()), m_generation, move.selected);
 	// TODO: Add move.executed in some circumstances
@@ -64,8 +64,8 @@ auto index_of_seen(PokemonCollection const & collection, Species const species) 
 
 }	// namespace
 
-auto Battle::find_or_add_pokemon(Party const party, uint8_t /*slot*/, Species const species, Level const level, Gender const gender) -> Moves {
-	auto & switcher = get_team(party);
+auto Battle::find_or_add_pokemon(bool const is_ai, uint8_t /*slot*/, Species const species, Level const level, Gender const gender) -> Moves {
+	auto & switcher = is_ai ? m_ai : m_foe;
 	auto const index = index_of_seen(switcher.all_pokemon(), species);
 	if (index == switcher.number_of_seen_pokemon()) {
 		switcher.all_pokemon().add(m_generation, species, level, gender);

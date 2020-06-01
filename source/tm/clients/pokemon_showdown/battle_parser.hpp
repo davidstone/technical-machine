@@ -72,10 +72,10 @@ struct BattleParser {
 		m_evaluate(evaluate),
 		m_battle(
 			generation,
-			party,
 			std::move(ai),
 			std::move(foe)
 		),
+		m_ai_party(party),
 		m_depth(depth),
 		m_log_foe_teams(log_foe_teams)
 	{
@@ -90,6 +90,15 @@ struct BattleParser {
 		return m_completed;
 	}
 private:
+	auto compute_damage(Party const user_party, Moves const move, HPAndStatus const damage) const -> HP::current_type;
+
+	auto is_ai(Party const party) const {
+		return party == m_ai_party;
+	}
+	auto const & get_team(Party const party) const {
+		return is_ai(party) ? m_battle.ai() : m_battle.foe();
+	}
+
 	void handle_damage(InMessage message);
 	void maybe_use_previous_move();
 	Moves determine_action();
@@ -111,6 +120,7 @@ private:
 
 	Evaluate m_evaluate;
 	Battle m_battle;
+	Party m_ai_party;
 	unsigned m_depth;
 	MoveState m_move_state;
 	bool m_log_foe_teams;

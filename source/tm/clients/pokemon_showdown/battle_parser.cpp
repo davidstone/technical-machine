@@ -73,10 +73,6 @@ auto get_species_index(Team const & team, Species const species) {
 	return container_index(team.all_pokemon(), species, "Team does not have a ");
 }
 
-auto const & get_team(Battle const & battle, Party const party) {
-	return battle.is_me(party) ? battle.ai() : battle.foe();
-}
-
 constexpr auto parse_status(std::string_view const str) {
 	return
 		(str == "") ? Statuses::clear :
@@ -183,20 +179,20 @@ struct AllowedHP {
 	HP::current_type max;
 };
 
-auto to_real_hp(bool const is_me, HP const actual_hp, ParsedHP const visible_hp) {
+auto to_real_hp(bool const is_ai, HP const actual_hp, ParsedHP const visible_hp) {
 	if (visible_hp.current == 0_bi) {
 		return AllowedHP{0_bi, 0_bi, 0_bi};
 	}
 	constexpr auto max_visible_foe_hp = 100_bi;
 	auto const max_hp = actual_hp.max();
-	auto const expected_max_visible_hp = BOUNDED_CONDITIONAL(is_me, max_hp, max_visible_foe_hp);
+	auto const expected_max_visible_hp = BOUNDED_CONDITIONAL(is_ai, max_hp, max_visible_foe_hp);
 	if (expected_max_visible_hp != visible_hp.max) {
 		throw std::runtime_error("Received an invalid max HP. Expected: " + bounded::to_string(expected_max_visible_hp) + " but got " + bounded::to_string(visible_hp.max));
 	}
 	auto compute_value = [=](auto const visible_current) {
 		return HP::current_type(bounded::max(1_bi, max_hp * visible_current / visible_hp.max));
 	};
-	if (is_me) {
+	if (is_ai) {
 		auto const value = compute_value(visible_hp.current);
 		return AllowedHP{value, value, value};
 	} else {
@@ -209,9 +205,9 @@ auto to_real_hp(bool const is_me, HP const actual_hp, ParsedHP const visible_hp)
 	}
 }
 
-auto correct_hp(HP const original_hp, bool const is_me, ParsedHP const visible_hp) {
+auto correct_hp(HP const original_hp, bool const is_ai, ParsedHP const visible_hp) {
 	auto const current_hp = original_hp.current();
-	auto const seen_hp = to_real_hp(is_me, original_hp, visible_hp);
+	auto const seen_hp = to_real_hp(is_ai, original_hp, visible_hp);
 	if (seen_hp.min > current_hp or seen_hp.max < current_hp) {
 		// TODO: Find a better way to sync this up with server messages. Find a
 		// better way to fail unit tests if this happens.
@@ -233,10 +229,10 @@ void validate_status(Statuses const original_status, Statuses const visible_stat
 }
 
 // TODO: What happens here if a Pokemon has a pinch item?
-void correct_hp_and_status(bool const is_me, Pokemon & pokemon, HPAndStatus const hp_and_status) {
+void correct_hp_and_status(bool const is_ai, Pokemon & pokemon, HPAndStatus const hp_and_status) {
 	auto const [visible_hp, visible_status] = hp_and_status;
 	auto const original_hp = get_hp(pokemon);
-	pokemon.set_hp(correct_hp(original_hp, is_me, visible_hp));
+	pokemon.set_hp(correct_hp(original_hp, is_ai, visible_hp));
 	if (visible_hp.current == 0_bi) {
 		return;
 	}
@@ -266,7 +262,7 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-ability") {
 		auto const party = party_from_player_id(message.pop());
 		auto const ability = from_string<Ability>(message.pop());
-		m_battle.set_value_on_active(party, ability);
+		m_battle.set_value_on_active(is_ai(party), ability);
 	} else if (type == "-activate") {
 		auto const party = party_from_player_id(message.pop());
 		auto const what = message.pop();
@@ -300,7 +296,7 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "cant") {
 		// TODO: Figure out how to solve this in general...
 		auto const party = party_from_player_id(message.pop());
-		auto const & team = m_battle.is_me(party) ? m_battle.ai() : m_battle.foe();
+		auto const & team = get_team(party);
 		auto const reason = message.pop();
 		auto const move = reason == "recharge" ? team.pokemon().last_used_move().name() : Moves::Struggle;
 		m_move_state.use_move(party, move);
@@ -321,7 +317,7 @@ void BattleParser::handle_message(InMessage message) {
 			}
 			auto const source = parse_from_source(message);
 			bounded::visit(source, bounded::overload(
-				[&](Ability const ability) { m_battle.set_value_on_active(party, ability); },
+				[&](Ability const ability) { m_battle.set_value_on_active(is_ai(party), ability); },
 				[](auto) { }
 			));
 		}
@@ -352,7 +348,7 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-enditem") {
 		auto const party = party_from_player_id(message.pop());
 		auto const item = from_string<Item>(message.pop());
-		m_battle.set_value_on_active(party, item);
+		m_battle.set_value_on_active(is_ai(party), item);
 	} else if (type == "error") {
 		if (message.remainder() != "[Invalid choice] There's nothing to choose") {
 			send_random_move();
@@ -365,8 +361,8 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "faint") {
 		constexpr auto slot = 0;
 		auto const party = party_from_player_id(message.pop());
-		m_battle.handle_fainted(party, slot);
-		if (m_battle.is_me(party) and m_battle.ai().size() != 1_bi) {
+		m_battle.handle_fainted(is_ai(party), slot);
+		if (is_ai(party) and m_battle.ai().size() != 1_bi) {
 			m_replacing_fainted = true;
 			send_move(determine_action());
 		}
@@ -389,7 +385,7 @@ void BattleParser::handle_message(InMessage message) {
 			[](FromMiscellaneous) {},
 			[](FromMove) {},
 			[](FromRecoil) { throw std::runtime_error("Recoil cannot heal"); },
-			[&](auto const value) { m_battle.set_value_on_active(party, value); }
+			[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 		));
 	} else if (type == "-hint") {
 		// message.remainder() == MESSAGE
@@ -409,7 +405,7 @@ void BattleParser::handle_message(InMessage message) {
 			[](FromMiscellaneous) { throw std::runtime_error("Miscellaneous effects cannot cause immunity"); },
 			[](FromMove) { throw std::runtime_error("Moves cannot cause immunity"); },
 			[](FromRecoil) { throw std::runtime_error("Recoil cannot cause immunity"); },
-			[&](auto const value) { m_battle.set_value_on_active(party, value); }
+			[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 		));
 	} else if (type == "inactive") {
 		// message.remainder() == MESSAGE
@@ -420,7 +416,7 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "-item") {
 		auto const party = party_from_player_id(message.pop());
 		auto const item = from_string<Item>(message.pop());
-		m_battle.set_value_on_active(party, item);
+		m_battle.set_value_on_active(is_ai(party), item);
 	} else if (type == "-mega") {
 #if 0
 		auto const pokemon = message.pop();
@@ -441,7 +437,7 @@ void BattleParser::handle_message(InMessage message) {
 			maybe_use_previous_move();
 		}
 		m_move_state.use_move(party, move);
-		if (m_battle.is_me(party) and move == Moves::Baton_Pass and m_battle.ai().size() != 1_bi) {
+		if (is_ai(party) and move == Moves::Baton_Pass and m_battle.ai().size() != 1_bi) {
 			maybe_use_previous_move();
 			send_move(determine_action());
 		}
@@ -479,8 +475,7 @@ void BattleParser::handle_message(InMessage message) {
 	} else if (type == "switch" or type == "drag") {
 		auto const parsed = parse_switch(message);
 
-		auto const is_me = m_battle.is_me(parsed.party);
-		if (is_me) {
+		if (is_ai(parsed.party)) {
 			auto const index = get_species_index(m_battle.ai(), parsed.species);
 			if (m_replacing_fainted) {
 				m_slot_memory.replace_fainted(index);
@@ -491,14 +486,14 @@ void BattleParser::handle_message(InMessage message) {
 		}
 
 		constexpr auto slot = 0;
-		auto const move = m_battle.find_or_add_pokemon(parsed.party, slot, parsed.species, parsed.level, parsed.gender);
+		auto const move = m_battle.find_or_add_pokemon(is_ai(parsed.party), slot, parsed.species, parsed.level, parsed.gender);
 		correct_hp_and_status(
-			is_me,
-			m_battle.active_pokemon(parsed.party, to_replacement(move)),
+			is_ai(parsed.party),
+			m_battle.active_pokemon(is_ai(parsed.party), to_replacement(move)),
 			HPAndStatus{parsed.hp, parsed.status}
 		);
 		if (type == "drag") {
-			m_move_state.phaze_index(other(parsed.party), get_team(m_battle, parsed.party), parsed.species);
+			m_move_state.phaze_index(other(parsed.party), get_team(parsed.party), parsed.species);
 		} else {
 			m_move_state.use_move(parsed.party, move);
 		}
@@ -537,7 +532,7 @@ void BattleParser::handle_message(InMessage message) {
 			[](FromMiscellaneous) {},
 			[](FromMove) {},
 			[](FromRecoil) { throw std::runtime_error("Unexpected -start source FromRecoil"); },
-			[&](auto const value) { m_battle.set_value_on_active(party, value); }
+			[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 		));
 	} else if (type == "-status") {
 		auto const party = party_from_player_id(message.pop());
@@ -549,7 +544,7 @@ void BattleParser::handle_message(InMessage message) {
 			[&](FromMiscellaneous) { m_move_state.status(other(party), status); },
 			[&](FromMove) { m_move_state.status(party, status); },
 			[](FromRecoil) { throw std::runtime_error("Recoil cannot cause another status"); },
-			[&](auto const value) { m_battle.set_value_on_active(party, value); }
+			[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 		));
 	} else if (type == "swap") {
 #if 0
@@ -620,7 +615,7 @@ void BattleParser::handle_damage(InMessage message) {
 		[](FromMiscellaneous) {},
 		[](FromMove) {},
 		[&](FromRecoil) { m_move_state.recoil(party); },
-		[&](auto const value) { m_battle.set_value_on_active(party, value); }
+		[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 	));
 	m_move_state.hp_change(party, hp_and_status);
 }
@@ -641,15 +636,6 @@ auto const & select_pokemon(Team const & team, Moves const move) {
 	return is_switch(move) ? team.pokemon(to_replacement(move)) : team.pokemon();
 }
 
-auto compute_damage(Battle const & battle, Party const user_party, Moves const move, HPAndStatus const damage) {
-	auto const damaged_party = move == Moves::Hit_Self ? user_party : other(user_party);
-	auto const is_me = battle.is_me(damaged_party);
-	auto const & team = is_me ? battle.ai() : battle.foe();
-	auto const & pokemon = select_pokemon(team, move);
-	auto const new_hp = to_real_hp(is_me, get_hp(pokemon), damage.hp);
-	return hp_to_damage(pokemon, new_hp.value);
-}
-
 constexpr auto causes_recoil(Moves const move) {
 	switch (move) {
 		case Moves::Brave_Bird:
@@ -668,6 +654,13 @@ constexpr auto causes_recoil(Moves const move) {
 
 } // namespace
 
+auto BattleParser::compute_damage(Party const user_party, Moves const move, HPAndStatus const damage) const -> HP::current_type {
+	auto const damaged_party = move == Moves::Hit_Self ? user_party : other(user_party);
+	auto const & pokemon = select_pokemon(get_team(damaged_party), move);
+	auto const new_hp = to_real_hp(is_ai(damaged_party), get_hp(pokemon), damage.hp);
+	return hp_to_damage(pokemon, new_hp.value);
+}
+
 void BattleParser::maybe_use_previous_move() {
 	auto const maybe_data = m_move_state.complete();
 	if (!maybe_data) {
@@ -677,10 +670,10 @@ void BattleParser::maybe_use_previous_move() {
 	
 	if (causes_recoil(data.move.executed) and !data.recoil) {
 		// TODO: This could also be Magic Guard
-		m_battle.set_value_on_active(data.party, Ability::Rock_Head);
+		m_battle.set_value_on_active(is_ai(data.party), Ability::Rock_Head);
 	}
 	
-	auto const other_pokemon = get_team(m_battle, other(data.party)).pokemon();
+	auto const other_pokemon = get_team(other(data.party)).pokemon();
 
 	constexpr auto slot = 0;
 	struct LocalDamage {
@@ -692,7 +685,7 @@ void BattleParser::maybe_use_previous_move() {
 			return LocalDamage{ActualDamage::Known{0_bi}, false};
 		},
 		[&](HPAndStatus const hp_and_status) -> LocalDamage {
-			auto const value = compute_damage(m_battle, data.party, data.move.executed, hp_and_status);
+			auto const value = compute_damage(data.party, data.move.executed, hp_and_status);
 			return LocalDamage{
 				ActualDamage::Known{value},
 				value != 0_bi
@@ -716,20 +709,19 @@ void BattleParser::maybe_use_previous_move() {
 			data.move.executed == Moves::Sucker_Punch and damage.did_any_damage
 		});
 
-	m_battle.handle_use_move(data.party, slot, data.move, data.clear_status, damage.value, other_move);
+	m_battle.handle_use_move(is_ai(data.party), slot, data.move, data.clear_status, damage.value, other_move);
 
-	auto const user_is_me = m_battle.is_me(data.party);
 	if (data.user_hp_and_status) {
 		correct_hp_and_status(
-			user_is_me,
-			m_battle.active_pokemon(data.party),
+			is_ai(data.party),
+			m_battle.active_pokemon(is_ai(data.party)),
 			*data.user_hp_and_status
 		);
 	}
 	if (data.other_hp_and_status) {
 		correct_hp_and_status(
-			!user_is_me,
-			m_battle.active_pokemon(other(data.party)),
+			!is_ai(data.party),
+			m_battle.active_pokemon(is_ai(other(data.party))),
 			*data.other_hp_and_status
 		);
 	}
@@ -777,7 +769,7 @@ auto parse_switch(InMessage message) -> ParsedSwitch {
 }
 
 void BattleParser::handle_u_turn(Party const party) {
-	if (m_battle.is_me(party) and m_move_state.executed_move() == Moves::U_turn and get_hp(m_battle.foe().pokemon()).current() == 0_bi and m_battle.ai().size() != 1_bi) {
+	if (is_ai(party) and m_move_state.executed_move() == Moves::U_turn and get_hp(m_battle.foe().pokemon()).current() == 0_bi and m_battle.ai().size() != 1_bi) {
 		maybe_use_previous_move();
 		send_move(determine_action());
 	}

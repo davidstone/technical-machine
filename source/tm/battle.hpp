@@ -46,14 +46,12 @@ enum class Moves : std::uint16_t;
 struct Battle {
 	Battle(
 		Generation const generation,
-		Party const party,
 		Team ai_,
 		Team foe_
 	):
 		m_ai(std::move(ai_)),
 		m_foe(std::move(foe_)),
-		m_generation(generation),
-		m_ai_party(party)
+		m_generation(generation)
 	{
 		// TODO: Properly order this
 		m_ai.pokemon().switch_in(m_generation, m_weather);
@@ -73,10 +71,6 @@ struct Battle {
 		return m_weather;
 	}
 
-	bool is_me(Party const other_party) const {
-		return m_ai_party == other_party;
-	}
-
 	void handle_begin_turn() & {
 		m_ai.reset_start_of_turn();
 		m_foe.reset_start_of_turn();
@@ -90,40 +84,32 @@ struct Battle {
 	}
 
 	// maybe_index is either an index into a PokemonCollection or nothing
-	auto active_pokemon(Party const party, auto... maybe_index) -> Pokemon & {
-		return get_team(party).pokemon(maybe_index...);
+	auto active_pokemon(bool const is_ai, auto... maybe_index) -> Pokemon & {
+		return (is_ai ? m_ai : m_foe).pokemon(maybe_index...);
 	}
 
-	void handle_use_move(Party user, uint8_t slot, UsedMove move, bool clear_status, ActualDamage visible_damage, OtherMove other_move);
+	void handle_use_move(bool is_ai, uint8_t slot, UsedMove move, bool clear_status, ActualDamage visible_damage, OtherMove other_move);
 	// This assumes Species Clause is in effect. This does not perform any
 	// switching, it just adds them to the team.
-	auto find_or_add_pokemon(Party const party, uint8_t slot, Species species, Level level, Gender gender) -> Moves;
-	void handle_fainted(Party const fainter, uint8_t /*slot*/) {
-		active_pokemon(fainter).set_hp(0_bi);
+	auto find_or_add_pokemon(bool is_ai, uint8_t slot, Species species, Level level, Gender gender) -> Moves;
+	void handle_fainted(bool const is_ai, uint8_t /*slot*/) {
+		active_pokemon(is_ai).set_hp(0_bi);
 	}
 
-	void set_value_on_active(Party const party, Ability const ability) {
-		get_team(party).pokemon().set_base_ability(ability);
+	void set_value_on_active(bool const is_ai, Ability const ability) {
+		(is_ai ? m_ai : m_foe).pokemon().set_base_ability(ability);
 	}
 
-	void set_value_on_active(Party const party, Item const item) {
-		Pokemon & pokemon = get_team(party).pokemon();
+	void set_value_on_active(bool const is_ai, Item const item) {
+		Pokemon & pokemon = active_pokemon(is_ai);
 		pokemon.set_item(item);
 	}
 
 private:
-	auto get_team(Party const party) const -> Team const & {
-		return is_me(party) ? m_ai : m_foe;
-	}
-	auto get_team(Party const party) -> Team & {
-		return is_me(party) ? m_ai : m_foe;
-	}
-	
 	Team m_ai;
 	Team m_foe;
 	Weather m_weather;
 	Generation m_generation;
-	Party m_ai_party;
 };
 
 }	// namespace technicalmachine
