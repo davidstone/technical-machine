@@ -25,6 +25,7 @@
 #include <tm/stat/nature.hpp>
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
+#include <tm/string_conversions/generation.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/move.hpp>
@@ -41,19 +42,6 @@ namespace technicalmachine {
 namespace {
 
 using namespace bounded::literal;
-
-constexpr auto to_string(Generation const generation) -> std::string_view {
-	switch (generation) {
-		case Generation::one: return "1";
-		case Generation::two: return "2";
-		case Generation::three: return "3";
-		case Generation::four: return "4";
-		case Generation::five: return "5";
-		case Generation::six: return "6";
-		case Generation::seven: return "7";
-		case Generation::eight: return "8";
-	}
-}
 
 template<typename Range>
 auto add_dropdown_with_id(std::ostream & output, std::string const & type, std::string_view const id, Range range, std::string_view const default_value) {

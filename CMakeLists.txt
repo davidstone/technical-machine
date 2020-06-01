@@ -138,6 +138,7 @@ add_library(tm_common STATIC
 	source/tm/string_conversions/ability.cpp
 	source/tm/string_conversions/conversion.cpp
 	source/tm/string_conversions/gender.cpp
+	source/tm/string_conversions/generation.cpp
 	source/tm/string_conversions/invalid_string_conversion.cpp
 	source/tm/string_conversions/item.cpp
 	source/tm/string_conversions/lowercase_alphanumeric.cpp
