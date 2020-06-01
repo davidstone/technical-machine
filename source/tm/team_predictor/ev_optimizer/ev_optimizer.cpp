@@ -27,6 +27,8 @@
 #include <tm/pokemon/has_physical_or_special_move.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
+#include <tm/stat/stat_to_ev.hpp>
+
 #include <bounded/assert.hpp>
 
 #include <random>
@@ -95,24 +97,12 @@ auto optimize_evs(Generation const generation, CombinedStats combined, Species c
 
 }	// namespace
 
-auto pull_out_stats(Pokemon const & pokemon) -> CombinedStats {
-	return CombinedStats{
-		get_nature(pokemon),
-		get_hp(pokemon).ev(),
-		get_stat(pokemon, StatNames::ATK).ev(),
-		get_stat(pokemon, StatNames::DEF).ev(),
-		get_stat(pokemon, StatNames::SPA).ev(),
-		get_stat(pokemon, StatNames::SPD).ev(),
-		get_stat(pokemon, StatNames::SPE).ev()
-	};
-}
-
 void optimize_evs(Generation const generation, Pokemon & pokemon, std::mt19937 & random_engine) {
 	auto const species = get_species(pokemon);
 	auto const level = get_level(pokemon);
 	auto const include_attack = has_physical_move(generation, pokemon);
 	auto const include_special_attack = has_special_move(generation, pokemon);
-	auto const optimized = optimize_evs(generation, pull_out_stats(pokemon), species, level, include_attack, include_special_attack, random_engine);
+	auto const optimized = optimize_evs(generation, calculate_evs(generation, pokemon), species, level, include_attack, include_special_attack, random_engine);
 	set_stats(generation, pokemon, optimized);
 }
 

@@ -64,8 +64,17 @@ auto parse_team(boost::property_tree::ptree const & pt, Generation const generat
 		// TODO: If we disconnect in a battle when the HP is 0, we might not
 		// have a '/'
 		auto const hp = bounded::to_integer<HP::max_type>(split_view(condition, '/').first);
-		
-		auto const evs = calculate_evs(generation, details.species, details.level, parse_stats(hp, pokemon_data.second.get_child("stats")));
+
+		// TODO: Use the correct IVs if there is a Hidden Power
+		auto const iv = default_iv(generation);
+		auto const ivs = IVs{iv, iv, iv, iv, iv, iv};
+		auto const evs = calculate_evs(
+			generation,
+			details.species,
+			details.level,
+			parse_stats(hp, pokemon_data.second.get_child("stats")),
+			ivs
+		);
 
 		auto const ability = from_string<Ability>(get("baseAbility"));
 		

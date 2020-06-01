@@ -21,6 +21,7 @@
 #include <tm/move/moves.hpp>
 #include <tm/pokemon/species.hpp>
 #include <tm/stat/calculate.hpp>
+#include <tm/stat/stat_to_ev.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/team_predictor/ev_optimizer/defensive.hpp>
 #include <tm/team_predictor/ev_optimizer/ev_optimizer.hpp>
@@ -52,14 +53,14 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	set_stat_ev(pokemon, StatNames::SPE, EV(60_bi));
 	all_moves(pokemon).add(Move(generation, Moves::Meteor_Mash));
 
-	auto const stats = pull_out_stats(pokemon);
+	auto const stats = calculate_evs(generation, pokemon);
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
 	BOUNDED_ASSERT(minimize_evs(generation, stats, species, level, include_attack, include_special_attack) == stats);
 	BOUNDED_ASSERT(pad_random_evs(generation, stats, include_attack, include_special_attack, random_engine) == stats);
 	optimize_evs(generation, pokemon, random_engine);
-	BOUNDED_ASSERT(pull_out_stats(pokemon) == stats);
+	BOUNDED_ASSERT(calculate_evs(generation, pokemon) == stats);
 }
 
 void defensive_tests() {
@@ -68,15 +69,18 @@ void defensive_tests() {
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Celebi;
 	constexpr auto level = Level(100_bi);
-	auto const hp = HP(generation, species, level, EV(252_bi));
-	auto const defense = Stat(generation, species, StatNames::DEF, EV(252_bi));
-	auto const special_defense = Stat(generation, species, StatNames::SPD, EV(4_bi));
+	constexpr auto hp_ev = EV(252_bi);
+	constexpr auto defense_ev = EV(252_bi);
+	constexpr auto special_defense_ev = EV(4_bi);
+	auto const hp = HP(generation, species, level, hp_ev);
+	auto const defense = Stat(generation, species, StatNames::DEF, defense_ev);
+	auto const special_defense = Stat(generation, species, StatNames::SPD, special_defense_ev);
 	
 	auto defensive_evs = DefensiveEVs(generation, species, level, Nature::Bold, hp, defense, special_defense);
 	for (auto const & candidate : defensive_evs) {
-		BOUNDED_ASSERT(candidate.hp == hp.ev());
-		BOUNDED_ASSERT(candidate.defense == defense.ev());
-		BOUNDED_ASSERT(candidate.special_defense >= special_defense.ev());
+		BOUNDED_ASSERT(candidate.hp == hp_ev);
+		BOUNDED_ASSERT(candidate.defense == defense_ev);
+		BOUNDED_ASSERT(candidate.special_defense >= special_defense_ev);
 		BOUNDED_ASSERT(boosts_stat(candidate.nature, StatNames::DEF));
 	}
 }
@@ -114,7 +118,7 @@ void not_level_100(std::mt19937 & random_engine) {
 	constexpr auto level = Level(83_bi);
 	auto pokemon = Pokemon(generation, team_size, species, level, Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Modest);
 	set_hp_ev(generation, pokemon, EV(192_bi));
-	set_stat_ev(pokemon, StatNames::ATK, EV(0_bi));
+	set_stat_ev(pokemon, StatNames::ATK, EV(0_bi), IV(0_bi));
 	set_stat_ev(pokemon, StatNames::DEF, EV(8_bi));
 	set_stat_ev(pokemon, StatNames::SPA, EV(120_bi));
 	set_stat_ev(pokemon, StatNames::SPD, EV(60_bi));
@@ -141,14 +145,14 @@ void generation_two(std::mt19937 & random_engine) {
 	all_moves(pokemon).add(Move(generation, Moves::Tackle));
 	all_moves(pokemon).add(Move(generation, Moves::Psychic));
 
-	auto const stats = pull_out_stats(pokemon);
+	auto const stats = calculate_evs(generation, pokemon);
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = true;
 	BOUNDED_ASSERT(minimize_evs(generation, stats, species, level, include_attack, include_special_attack) == stats);
 	BOUNDED_ASSERT(pad_random_evs(generation, stats, include_attack, include_special_attack, random_engine) == stats);
 	optimize_evs(generation, pokemon, random_engine);
-	BOUNDED_ASSERT(pull_out_stats(pokemon) == stats);
+	BOUNDED_ASSERT(calculate_evs(generation, pokemon) == stats);
 }
 
 }	// namespace
