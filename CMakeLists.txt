@@ -58,7 +58,6 @@ add_library(tm_common STATIC
 	source/tm/clients/pokemon_showdown/parsed_hp.cpp
 	source/tm/clients/pokemon_showdown/slot_memory.cpp
 
-	source/tm/clients/battle.cpp
 	source/tm/clients/battle_result.cpp
 	source/tm/clients/invalid_team_file_format.cpp
 	source/tm/clients/log_foe_team.cpp
@@ -165,6 +164,7 @@ add_library(tm_common STATIC
 	source/tm/type/type.cpp
 
 	source/tm/ability.cpp
+	source/tm/battle.cpp
 	source/tm/block.cpp
 	source/tm/buffer_view.cpp
 	source/tm/end_of_turn.cpp
