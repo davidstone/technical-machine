@@ -33,13 +33,13 @@ struct Depth {
 	{
 	}
 	
-	constexpr auto depth_to_search() const {
+	constexpr auto initial() const {
 		return m_depth_to_search;
 	}
-	
-	constexpr auto is_final_iteration() const {
-		return m_depth_to_search - 1U == m_searched_so_far;
+	constexpr auto remaining() const {
+		return m_depth_to_search - m_searched_so_far;
 	}
+	
 	constexpr auto indentation() const -> bounded::optional<unsigned> {
 		if (m_searched_so_far >= m_max_print_depth) {
 			return bounded::none;
@@ -65,7 +65,7 @@ struct Depth {
 private:
 	constexpr auto next_depth_to_search() const -> unsigned {
 		BOUNDED_ASSERT(m_depth_to_search != m_searched_so_far);
-		return m_depth_to_search - m_searched_so_far - 1U;
+		return remaining() - 1U;
 	}
 
 	unsigned m_searched_so_far;
@@ -73,5 +73,9 @@ private:
 	unsigned m_max_print_depth;
 	unsigned m_indentation;
 };
+
+constexpr auto is_final_iteration(Depth const depth) {
+	return depth.remaining() == 1U;
+}
 
 }	// namespace technicalmachine

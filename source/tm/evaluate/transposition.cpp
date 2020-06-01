@@ -24,15 +24,15 @@ namespace {
 
 }	// namespace
 
-auto TranspositionTable::add_score(Team const & ai, Team const & foe, Weather weather, unsigned depth, double score) -> void {
+auto TranspositionTable::add_score(Team const & ai, Team const & foe, Weather weather, unsigned depth, BestMove best_move) -> void {
 	static_cast<void>(ai);
 	static_cast<void>(foe);
 	static_cast<void>(weather);
 	static_cast<void>(depth);
-	static_cast<void>(score);
+	static_cast<void>(best_move);
 }
 
-auto TranspositionTable::get_score(Team const & ai, Team const & foe, Weather weather, unsigned depth) const -> bounded::optional<double> {
+auto TranspositionTable::get_score(Team const & ai, Team const & foe, Weather weather, unsigned depth) const -> bounded::optional<BestMove> {
 	static_cast<void>(ai);
 	static_cast<void>(foe);
 	static_cast<void>(weather);

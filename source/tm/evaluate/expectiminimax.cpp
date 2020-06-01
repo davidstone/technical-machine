@@ -58,12 +58,6 @@
 namespace technicalmachine {
 namespace {
 
-struct BestMove {
-	Moves move;
-	double score;
-};
-
-
 void print_best_move(Team const & team, BestMove const best_move, std::ostream & log) {
 	if (is_switch(best_move.move)) {
 		log << "Switch to " << to_string(get_species(team.pokemon(to_replacement(best_move.move))));
@@ -292,12 +286,18 @@ struct Evaluator {
 	BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const weather, Depth const depth) {
 		BOUNDED_ASSERT(!team_is_empty(ai));
 		BOUNDED_ASSERT(!team_is_empty(foe));
+
+		if (auto const score = m_transposition_table.get_score(ai, foe, weather, depth.remaining())) {
+			return *score;
+		}
 		
 		auto const ai_selections = legal_selections(m_generation, ai, foe, weather);
 		auto const foe_selections = legal_selections(m_generation, foe, ai, weather);
-		return select_move_branch(ai, ai_selections, foe, foe_selections, weather, depth, [&](auto && ... args) {
+		auto const best_move = select_move_branch(ai, ai_selections, foe, foe_selections, weather, depth, [&](auto && ... args) {
 			return order_branch(OPERATORS_FORWARD(args)...);
 		}).move;
+		m_transposition_table.add_score(ai, foe, weather, depth.remaining(), best_move);
+		return best_move;
 	}
 
 private:
@@ -306,7 +306,7 @@ private:
 		// for move_scores because the algorithm works faster if you start with the
 		// correct result. The results from one less depth are used to estimate the
 		// correct result.
-		auto move_scores = !depth.is_final_iteration() ?
+		auto move_scores = !is_final_iteration(depth) ?
 			select_move_branch(ai, ai_selections, foe, foe_selections, weather, depth.iterative_deepening_value(), function).move_scores :
 			BothMoveScores{MoveScores(ai_selections), MoveScores(foe_selections)};
 		auto const ai_moves = move_scores.ai.ordered_moves(true);
@@ -388,11 +388,10 @@ private:
 	}
 
 	auto finish_end_of_turn(Team const & first, Team const & last, Weather const weather, Depth const depth) -> double {
-		// TODO: Use TranspositionTable here
 		auto const deordered = deorder(first, last);
 		auto const & ai = deordered.ai;
 		auto const & foe = deordered.foe;
-		if (depth.is_final_iteration()) {
+		if (is_final_iteration(depth)) {
 			return static_cast<double>(m_evaluate(m_generation, ai, foe, weather));
 		}
 		return select_type_of_move(ai, foe, weather, depth.one_level_deeper()).score;
@@ -569,6 +568,7 @@ private:
 	Generation const m_generation;
 	Evaluate const m_evaluate;
 	std::ostream & m_log;
+	TranspositionTable m_transposition_table;
 };
 
 }	// namespace
@@ -578,7 +578,7 @@ Moves expectiminimax(Generation const generation, Team const & ai, Team const & 
 		throw std::runtime_error("Tried to evaluate a position with an empty team");
 	}
 	auto evaluator = Evaluator(generation, evaluate, log);
-	log << "Evaluating to a depth of " << depth.depth_to_search() << "...\n";
+	log << "Evaluating to a depth of " << depth.initial() << "...\n";
 	boost::timer timer;
 	auto const best_move = evaluator.select_type_of_move(ai, foe, weather, depth);
 	if (best_move.move == Moves::Pass) {
