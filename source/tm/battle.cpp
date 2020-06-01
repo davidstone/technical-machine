@@ -38,7 +38,7 @@ namespace technicalmachine {
 
 enum class Moves : std::uint16_t;
 
-void Battle::handle_use_move(bool const is_ai, uint8_t /*slot*/, UsedMove const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
+void Battle::handle_use_move(bool const is_ai, UsedMove const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
 	auto & user = is_ai ? m_ai : m_foe;
 	auto & other = is_ai ? m_foe : m_ai;
 
@@ -66,7 +66,7 @@ auto index_of_seen(PokemonCollection const & collection, Species const species) 
 
 } // namespace
 
-auto Battle::find_or_add_pokemon(bool const is_ai, uint8_t /*slot*/, Species const species, Level const level, Gender const gender) -> Moves {
+auto Battle::find_or_add_pokemon(bool const is_ai, Species const species, Level const level, Gender const gender) -> Moves {
 	auto & switcher = is_ai ? m_ai : m_foe;
 	auto const index = index_of_seen(switcher.all_pokemon(), species);
 	if (index == switcher.number_of_seen_pokemon()) {

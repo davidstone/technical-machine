@@ -40,9 +40,6 @@ namespace technicalmachine {
 enum class Generation : std::uint8_t;
 enum class Moves : std::uint16_t;
 
-// In all of these functions, "slot" is useful only in NvN, which TM does not
-// yet support.
-
 struct Battle {
 	Battle(
 		Generation const generation,
@@ -83,11 +80,11 @@ struct Battle {
 		end_of_turn(m_generation, m_ai, ai_flags, m_foe, foe_flags, m_weather);
 	}
 
-	void handle_use_move(bool is_ai, uint8_t slot, UsedMove move, bool clear_status, ActualDamage visible_damage, OtherMove other_move);
+	void handle_use_move(bool is_ai, UsedMove move, bool clear_status, ActualDamage visible_damage, OtherMove other_move);
 	// This assumes Species Clause is in effect. This does not perform any
 	// switching, it just adds them to the team.
-	auto find_or_add_pokemon(bool is_ai, uint8_t slot, Species species, Level level, Gender gender) -> Moves;
-	void handle_fainted(bool const is_ai, uint8_t /*slot*/) {
+	auto find_or_add_pokemon(bool is_ai, Species species, Level level, Gender gender) -> Moves;
+	void handle_fainted(bool const is_ai) {
 		active_pokemon(is_ai).set_hp(0_bi);
 	}
 

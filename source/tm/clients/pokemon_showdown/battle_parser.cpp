@@ -295,9 +295,8 @@ void BattleParser::handle_message(InMessage message) {
 		// There can be more to this message, but nothing we care about
 #endif
 	} else if (type == "faint") {
-		constexpr auto slot = 0;
 		auto const party = party_from_player_id(message.pop());
-		m_battle.handle_fainted(is_ai(party), slot);
+		m_battle.handle_fainted(is_ai(party));
 		if (is_ai(party) and m_battle.ai().size() != 1_bi) {
 			m_replacing_fainted = true;
 			send_move(determine_action());
@@ -421,8 +420,7 @@ void BattleParser::handle_message(InMessage message) {
 			}
 		}
 
-		constexpr auto slot = 0;
-		auto const move = m_battle.find_or_add_pokemon(is_ai(parsed.party), slot, parsed.species, parsed.level, parsed.gender);
+		auto const move = m_battle.find_or_add_pokemon(is_ai(parsed.party), parsed.species, parsed.level, parsed.gender);
 		m_battle.correct_hp_and_status(
 			is_ai(parsed.party),
 			parsed.hp,
@@ -612,7 +610,6 @@ void BattleParser::maybe_use_previous_move() {
 	
 	auto const other_pokemon = get_team(other(data.party)).pokemon();
 
-	constexpr auto slot = 0;
 	struct LocalDamage {
 		ActualDamage value;
 		bool did_any_damage;
@@ -646,7 +643,7 @@ void BattleParser::maybe_use_previous_move() {
 			data.move.executed == Moves::Sucker_Punch and damage.did_any_damage
 		});
 
-	m_battle.handle_use_move(is_ai(data.party), slot, data.move, data.clear_status, damage.value, other_move);
+	m_battle.handle_use_move(is_ai(data.party), data.move, data.clear_status, damage.value, other_move);
 
 	if (data.user_hp_and_status) {
 		m_battle.correct_hp_and_status(
