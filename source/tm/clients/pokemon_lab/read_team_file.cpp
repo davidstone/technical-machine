@@ -68,12 +68,12 @@ auto lookup_stat(std::string_view const name) {
 
 auto load_stats(Pokemon & pokemon, boost::property_tree::ptree const & pt) {
 	auto const name = pt.get<std::string>("<xmlattr>.name");
-	IV const iv(pt.get<IV::value_type>("<xmlattr>.iv"));
-	EV const ev(pt.get<EV::value_type>("<xmlattr>.ev"));
+	auto const iv = IV(pt.get<IV::value_type>("<xmlattr>.iv"));
+	auto const ev = EV(pt.get<EV::value_type>("<xmlattr>.ev"));
 	if (name == "HP") {
-		set_hp_ev(generation, pokemon, ev, iv);
+		set_hp_ev(generation, pokemon, iv, ev);
 	} else {
-		set_stat_ev(pokemon, lookup_stat(name), ev, iv);
+		set_stat_ev(pokemon, lookup_stat(name), iv, ev);
 	}
 }
 

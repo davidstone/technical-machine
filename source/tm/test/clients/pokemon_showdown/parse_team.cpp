@@ -62,10 +62,10 @@ auto expected_generation_one_team() {
 	constexpr auto reduced_ev = EV(248_bi);
 	constexpr auto iv = IV(30_bi);
 	auto reduce_hp = [=](Pokemon & pokemon) {
-		set_hp_ev(generation, pokemon, reduced_ev, iv);
+		set_hp_ev(generation, pokemon, iv, reduced_ev);
 	};
 	auto reduce_stat = [=](Pokemon & pokemon, StatNames const stat) {
-		set_stat_ev(pokemon, stat, reduced_ev, iv);
+		set_stat_ev(pokemon, stat, iv, reduced_ev);
 	};
 
 	add_pokemon(Species::Koffing, 88_bi, Moves::Fire_Blast, Moves::Sludge, Moves::Explosion, Moves::Thunderbolt);

@@ -40,27 +40,27 @@ auto get_base(Generation const generation, Species const species, StatNames cons
 	}
 }
 
-}	// namespace
+} // namespace
 
-Stat::Stat(Generation const generation, Species const species, StatNames const stat_name, EV const ev_, IV const iv_) :
+Stat::Stat(Generation const generation, Species const species, StatNames const stat_name, IV const iv_, EV const ev_) :
 	m_base(get_base(generation, species, stat_name)),
-	m_ev(ev_),
-	m_iv(iv_)
-	{
+	m_iv(iv_),
+	m_ev(ev_)
+{
 }
 
 Stat::Stat(Stat const other, EV const ev_) :
 	m_base(other.base()),
-	m_ev(ev_),
-	m_iv(other.iv())
-	{
+	m_iv(other.iv()),
+	m_ev(ev_)
+{
 }
 
-Stat::Stat(Stat const other, EV const ev_, IV const iv_) :
+Stat::Stat(Stat const other, IV const iv_, EV const ev_) :
 	m_base(other.base()),
-	m_ev(ev_),
-	m_iv(iv_)
-	{
+	m_iv(iv_),
+	m_ev(ev_)
+{
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

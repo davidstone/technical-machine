@@ -117,12 +117,12 @@ void not_level_100(std::mt19937 & random_engine) {
 	constexpr auto species = Species::Masquerain;
 	constexpr auto level = Level(83_bi);
 	auto pokemon = Pokemon(generation, team_size, species, level, Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Modest);
-	set_hp_ev(generation, pokemon, EV(192_bi));
-	set_stat_ev(pokemon, StatNames::ATK, EV(0_bi), IV(0_bi));
-	set_stat_ev(pokemon, StatNames::DEF, EV(8_bi));
-	set_stat_ev(pokemon, StatNames::SPA, EV(120_bi));
-	set_stat_ev(pokemon, StatNames::SPD, EV(60_bi));
-	set_stat_ev(pokemon, StatNames::SPE, EV(128_bi));
+	set_hp_ev(generation, pokemon, IV(31_bi), EV(192_bi));
+	set_stat_ev(pokemon, StatNames::ATK, IV(0_bi), EV(0_bi));
+	set_stat_ev(pokemon, StatNames::DEF, IV(31_bi), EV(8_bi));
+	set_stat_ev(pokemon, StatNames::SPA, IV(31_bi), EV(120_bi));
+	set_stat_ev(pokemon, StatNames::SPD, IV(31_bi), EV(60_bi));
+	set_stat_ev(pokemon, StatNames::SPE, IV(31_bi), EV(128_bi));
 	for (auto const move : {Moves::Hydro_Pump, Moves::Bug_Buzz, Moves::Roost, Moves::Air_Slash}) {
 		all_moves(pokemon).add(Move(generation, move));
 	}

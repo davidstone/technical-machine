@@ -32,13 +32,13 @@ using namespace bounded::literal;
 struct Stat {
 	using base_type = bounded::checked_integer<5, 230>;
 
-	Stat(Generation generation, Species name, StatNames stat, EV ev, IV iv);
+	Stat(Generation generation, Species name, StatNames stat, IV iv, EV ev);
 	Stat(Generation generation, Species name, StatNames stat, EV ev):
-		Stat(generation, name, stat, ev, generation <= Generation::two ? IV(30_bi) : IV(31_bi))
+		Stat(generation, name, stat, generation <= Generation::two ? IV(30_bi) : IV(31_bi), ev)
 	{
 	}
 	Stat(Stat other, EV ev);
-	Stat(Stat other, EV ev, IV vi);
+	Stat(Stat other, IV iv, EV ev);
 	
 	auto base() const {
 		return m_base;
@@ -53,8 +53,8 @@ struct Stat {
 	friend auto operator==(Stat const &, Stat const &) -> bool = default;
 private:
 	base_type m_base;
-	EV m_ev;
 	IV m_iv;
+	EV m_ev;
 };
 
 }	// namespace technicalmachine

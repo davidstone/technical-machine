@@ -51,7 +51,7 @@ constexpr auto round_up_divide(auto const lhs, auto const rhs) {
 }
 
 inline auto hp_to_ev(Generation const generation, Species const species, Level const level, HP::max_type const stat, IV const iv) {
-	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(generation, species, level, ev, iv).max(); });
+	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(generation, species, level, iv, ev).max(); });
 	auto const it = containers::lower_bound(stat_range, stat);
 	if (it == end(stat_range)) {
 		throw std::runtime_error("No valid HP EV for a given stat value");

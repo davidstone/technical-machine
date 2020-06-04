@@ -23,7 +23,7 @@
 namespace technicalmachine {
 namespace {
 
-auto initial_hp(Generation const generation, Species const species, EV const ev, IV const iv, Level const level) {
+auto initial_hp(Generation const generation, Species const species, IV const iv, EV const ev, Level const level) {
 	auto const base = BaseStats(generation, species).hp();
 	auto const value = BOUNDED_CONDITIONAL((base > 1_bi),
 		(2_bi * base + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 10_bi + level(),
@@ -36,10 +36,10 @@ auto initial_hp(Generation const generation, Species const species, EV const ev,
 
 }	// namespace
 
-HP::HP(Generation const generation, Species const species, Level const level, EV const ev_, IV const iv_) :
-	m_ev(ev_),
+HP::HP(Generation const generation, Species const species, Level const level, IV const iv_, EV const ev_) :
 	m_iv(iv_),
-	m_max(initial_hp(generation, species, m_ev, m_iv, level)),
+	m_ev(ev_),
+	m_max(initial_hp(generation, species, m_iv, m_ev, level)),
 	m_current(m_max)
 	{
 }

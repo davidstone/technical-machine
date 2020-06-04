@@ -179,12 +179,12 @@ auto parse_pokemon(std::string_view const str, Generation const generation, Team
 	for (auto const move : moves) {
 		all_moves(pokemon).add(Move(generation, move));
 	}
-	set_hp_ev(generation, pokemon, evs.hp, ivs.hp);
-	set_stat_ev(pokemon, StatNames::ATK, evs.atk, ivs.atk);
-	set_stat_ev(pokemon, StatNames::DEF, evs.def, ivs.def);
-	set_stat_ev(pokemon, StatNames::SPA, evs.spa, ivs.spa);
-	set_stat_ev(pokemon, StatNames::SPD, evs.spd, ivs.spd);
-	set_stat_ev(pokemon, StatNames::SPE, evs.spe, ivs.spe);
+	set_hp_ev(generation, pokemon, ivs.hp, evs.hp);
+	set_stat_ev(pokemon, StatNames::ATK, ivs.atk, evs.atk);
+	set_stat_ev(pokemon, StatNames::DEF, ivs.def, evs.def);
+	set_stat_ev(pokemon, StatNames::SPA, ivs.spa, evs.spa);
+	set_stat_ev(pokemon, StatNames::SPD, ivs.spd, evs.spd);
+	set_stat_ev(pokemon, StatNames::SPE, ivs.spe, evs.spe);
 	return pokemon;
 }
 

@@ -83,7 +83,7 @@ Team max_damage_physical_defender() {
 	defender.add_pokemon(generation, Species::Combee, Level(1_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Hasty);
 	auto pokemon = defender.pokemon();
 	pokemon.switch_in(generation, Weather());
-	set_stat_ev(pokemon, StatNames::DEF, EV(0_bi), IV(0_bi));
+	set_stat_ev(pokemon, StatNames::DEF, IV(0_bi), EV(0_bi));
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		pokemon.stage()[StatNames::DEF] += -2_bi;
 	}
@@ -95,7 +95,7 @@ Team max_damage_special_defender() {
 	defender.add_pokemon(generation, Species::Paras, Level(1_bi), Gender::male, Item::None, Ability::Dry_Skin, Nature::Hardy);
 	auto d = defender.pokemon();
 	d.switch_in(generation, Weather());
-	set_stat_ev(d, StatNames::SPD, EV(0_bi), IV(0_bi));
+	set_stat_ev(d, StatNames::SPD, IV(0_bi), EV(0_bi));
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		d.stage()[StatNames::SPD] += -2_bi;
 	}

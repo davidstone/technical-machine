@@ -36,9 +36,9 @@ struct HP {
 	using max_type = bounded::integer<1, max_value>;
 	using current_type = bounded::integer<0, max_value>;
 	
-	HP(Generation generation, Species species, Level level, EV ev_, IV iv_);
+	HP(Generation generation, Species species, Level level, IV iv_, EV ev_);
 	HP(Generation generation, Species species, Level level, EV ev_):
-		HP(generation, species, level, ev_, default_iv(generation))
+		HP(generation, species, level, default_iv(generation), ev_)
 	{
 	}
 	auto & operator=(auto const & value) & {
@@ -64,8 +64,8 @@ struct HP {
 	friend auto operator==(HP const &, HP const &) -> bool = default;
 
 private:
-	EV m_ev;
 	IV m_iv;
+	EV m_ev;
 	max_type m_max;
 	bounded::clamped_integer<0, max_value> m_current;
 };

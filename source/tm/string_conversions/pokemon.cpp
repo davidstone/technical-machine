@@ -160,11 +160,11 @@ auto pokemon_from_string(std::string_view const str, Generation const generation
 
 	pokemon.set_status(status);
 
-	set_hp_ev(generation, pokemon, pop_ev(buffer, hp_atk), iv);
+	set_hp_ev(generation, pokemon, iv, pop_ev(buffer, hp_atk));
 	pokemon.set_hp(HP::current_type(static_cast<int>(static_cast<double>(get_hp(pokemon).max()) * hp_percent / 100.0)));
 
 	auto set_stat = [&](StatNames const stat, EV const ev) {
-		set_stat_ev(pokemon, stat, ev, iv);
+		set_stat_ev(pokemon, stat, iv, ev);
 	};
 	set_stat(StatNames::ATK, pop_ev(buffer, atk_def));
 	set_stat(StatNames::DEF, pop_ev(buffer, def_spa));
