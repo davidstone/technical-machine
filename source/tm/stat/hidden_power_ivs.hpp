@@ -25,6 +25,7 @@
 #include <tm/generation.hpp>
 
 #include <bounded/detail/conditional.hpp>
+#include <bounded/optional.hpp>
 
 #include <stdexcept>
 
@@ -35,12 +36,22 @@ namespace detail {
 // on particular Pokemon.
 
 // http://www.psypokes.com/gsc/dvguide.php
-constexpr auto hidden_power_dvs(Type const type, bool const has_physical_move) {
+constexpr auto hidden_power_dvs(bounded::optional<Type> const type, bool const has_physical_move) {
 	auto const odd_odd = DV(BOUNDED_CONDITIONAL(has_physical_move, 15_bi, 11_bi));
 	auto const odd_even = DV(BOUNDED_CONDITIONAL(has_physical_move, 14_bi, 10_bi));
 	auto const even_odd = DV(BOUNDED_CONDITIONAL(has_physical_move, 13_bi, 9_bi));
 	auto const even_even = DV(BOUNDED_CONDITIONAL(has_physical_move, 12_bi, 8_bi));
-	switch (type) {
+	if (!type) {
+		constexpr auto min_with_max_hp = DV(bounded::min_value<DV::value_type>);
+		constexpr auto max = DV(bounded::max_value<DV::value_type>);
+		return DVs{
+			has_physical_move ? max : min_with_max_hp, // Atk
+			max, // Def
+			max, // Spe
+			max, // Spc
+		};
+	}
+	switch (*type) {
 		case Type::Bug: return DVs{
 			even_odd, // Atk
 			DV(13_bi), // Def
@@ -144,14 +155,26 @@ constexpr auto hidden_power_dvs(Type const type, bool const has_physical_move) {
 }
 
 // https://www.smogon.com/forums/threads/hidden-power-iv-combinations.78083/
-constexpr auto hidden_power_ivs(Type const type, bool const has_physical_move) {
+constexpr auto hidden_power_ivs(bounded::optional<Type> const type, bool const has_physical_move) {
 	constexpr auto min_even = IV(2_bi);
 	constexpr auto max_even = IV(30_bi);
 	constexpr auto min_odd = IV(3_bi);
 	constexpr auto max_odd = IV(31_bi);
 	auto const even = has_physical_move ? max_even : min_even;
 	auto const odd = has_physical_move ? max_odd : min_odd;
-	switch (type) {
+	if (!type) {
+		constexpr auto min = IV(bounded::min_value<IV::value_type>);
+		constexpr auto max = IV(bounded::max_value<IV::value_type>);
+		return IVs{
+			max, // HP
+			has_physical_move ? max : min, // Atk
+			max, // Def
+			max, // SpA
+			max, // SpD
+			max, // Spe
+		};
+	}
+	switch (*type) {
 		case Type::Bug: return IVs{
 			IV(31_bi), // HP
 			even, // Atk
@@ -288,7 +311,7 @@ constexpr auto hidden_power_ivs(Type const type, bool const has_physical_move) {
 
 } // namespace detail
 
-constexpr auto hidden_power_ivs(Generation const generation, Type const type, bool const has_physical_move) {
+constexpr auto hidden_power_ivs(Generation const generation, bounded::optional<Type> const type, bool const has_physical_move) {
 	return generation <= Generation::two ?
 		IVs(detail::hidden_power_dvs(type, has_physical_move)) :
 		detail::hidden_power_ivs(type, has_physical_move);
