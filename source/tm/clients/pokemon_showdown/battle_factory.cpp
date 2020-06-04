@@ -176,11 +176,11 @@ BattleParser BattleFactory::make(AllUsageStats const & all_usage_stats, BattlePa
 }
 
 
-auto BattleFactory::parse_generation(std::string const & id) -> Generation {
+auto parse_generation(std::string_view const id) -> Generation {
 	// TODO: This won't work for generation 10
 	constexpr auto generation_index = std::char_traits<char>::length("battle-gen");
 	if (id.size() < generation_index) {
-		throw std::runtime_error("Invalid battle id. Expected something in the format of: \"battle-gen[generation_number]\", but got " + id);
+		throw std::runtime_error("Invalid battle id. Expected something in the format of: \"battle-gen[generation_number]\", but got " + std::string(id));
 	}
 	auto const generation_char = id[generation_index];
 	auto const generation = generation_char - '0';

@@ -28,6 +28,7 @@
 
 #include <random>
 #include <string>
+#include <string_view>
 #include <utility>
 
 namespace technicalmachine {
@@ -36,6 +37,8 @@ enum class Generation : std::uint8_t;
 struct AllUsageStats;
 
 namespace ps {
+
+auto parse_generation(std::string_view id) -> Generation;
 
 struct BattleFactory {
 	BattleFactory(
@@ -75,8 +78,6 @@ struct BattleFactory {
 
 private:
 	enum class Clause { };
-
-	static auto parse_generation(std::string const & id) -> Generation;
 
 	JSONParser m_parse_json;
 
