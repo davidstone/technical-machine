@@ -58,9 +58,8 @@ private:
 	auto end_of_attack(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather) & -> void;
 	auto end_of_turn(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather, bool uproar) & -> void;
 	// The discriminator is the status of the active Pokemon.
-	struct None {};
 	union {
-		None m_none{};
+		std::byte m_none{};
 		bool m_nightmare;
 		bounded::clamped_integer<1, 15> m_toxic_counter;
 	};
