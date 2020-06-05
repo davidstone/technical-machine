@@ -90,13 +90,21 @@ std::string_view to_simulator_string(Species const species) {
 	}
 }
 
+std::string_view to_simulator_string(Gender const gender) {
+	switch (gender) {
+		case Gender::female: return "Female";
+		case Gender::genderless: return "No Gender";
+		case Gender::male: return "Male";
+	}
+}
+
 void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & member = pt.add ("pokemon", "");
 	member.put("<xmlattr>.species", to_simulator_string(get_species(pokemon)));
 	// member.put ("nickname", pokemon.get_nickname());
 	member.put ("level", get_level(pokemon)());
 	member.put ("happiness", get_happiness(pokemon));
-	member.put ("gender", to_string(get_gender(pokemon)));
+	member.put ("gender", to_simulator_string(get_gender(pokemon)));
 	member.put ("nature", to_string(get_nature(pokemon)));
 	member.put ("item", to_string(pokemon.unmodified_item()));
 	member.put ("ability", to_string(pokemon.initial_ability()));
