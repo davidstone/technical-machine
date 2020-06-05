@@ -45,12 +45,13 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	constexpr auto species = Species::Metagross;
 	constexpr auto level = Level(100_bi);
 	auto pokemon = Pokemon(generation, team_size, species, level, Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Adamant);
-	set_hp_ev(generation, pokemon, EV(252_bi));
-	set_stat_ev(pokemon, StatNames::ATK, EV(96_bi));
-	set_stat_ev(pokemon, StatNames::DEF, EV(96_bi));
-	set_stat_ev(pokemon, StatNames::SPA, EV(0_bi));
-	set_stat_ev(pokemon, StatNames::SPD, EV(4_bi));
-	set_stat_ev(pokemon, StatNames::SPE, EV(60_bi));
+	constexpr auto iv = IV(31_bi);
+	set_hp_ev(generation, pokemon, iv, EV(252_bi));
+	set_stat_ev(pokemon, StatNames::ATK, iv, EV(96_bi));
+	set_stat_ev(pokemon, StatNames::DEF, iv, EV(96_bi));
+	set_stat_ev(pokemon, StatNames::SPA, iv, EV(0_bi));
+	set_stat_ev(pokemon, StatNames::SPD, iv, EV(4_bi));
+	set_stat_ev(pokemon, StatNames::SPE, iv, EV(60_bi));
 	all_moves(pokemon).add(Move(generation, Moves::Meteor_Mash));
 
 	auto const stats = calculate_evs(generation, pokemon);
@@ -138,12 +139,12 @@ void generation_two(std::mt19937 & random_engine) {
 	constexpr auto species = Species::Mew;
 	constexpr auto level = Level(100_bi);
 	auto pokemon = Pokemon(generation, team_size, species, level, Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Hardy);
-	set_hp_ev(generation, pokemon, EV(252_bi));
-	set_stat_ev(pokemon, StatNames::ATK, EV(252_bi));
-	set_stat_ev(pokemon, StatNames::DEF, EV(252_bi));
-	set_stat_ev(pokemon, StatNames::SPA, EV(252_bi));
-	set_stat_ev(pokemon, StatNames::SPD, EV(252_bi));
-	set_stat_ev(pokemon, StatNames::SPE, EV(252_bi));
+	set_hp_ev(generation, pokemon, IV(30_bi), EV(252_bi));
+	set_stat_ev(pokemon, StatNames::ATK, IV(30_bi), EV(252_bi));
+	set_stat_ev(pokemon, StatNames::DEF, IV(30_bi), EV(252_bi));
+	set_stat_ev(pokemon, StatNames::SPA, IV(30_bi), EV(252_bi));
+	set_stat_ev(pokemon, StatNames::SPD, IV(30_bi), EV(252_bi));
+	set_stat_ev(pokemon, StatNames::SPE, IV(30_bi), EV(252_bi));
 	all_moves(pokemon).add(Move(generation, Moves::Tackle));
 	all_moves(pokemon).add(Move(generation, Moves::Psychic));
 

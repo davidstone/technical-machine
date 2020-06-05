@@ -195,9 +195,6 @@ inline HP get_hp(Pokemon const pokemon) {
 inline auto set_hp_ev(Generation const generation, Pokemon & pokemon, IV const iv, EV const ev) -> void {
 	pokemon.stats.hp() = HP(generation, get_species(pokemon), get_level(pokemon), iv, ev);
 }
-inline auto set_hp_ev(Generation const generation, Pokemon & pokemon, EV const ev) -> void {
-	set_hp_ev(generation, pokemon, get_hp(pokemon).iv(), ev);
-}
 
 
 inline Stat get_stat(Pokemon const pokemon, StatNames const index_stat) {
@@ -206,9 +203,6 @@ inline Stat get_stat(Pokemon const pokemon, StatNames const index_stat) {
 inline auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, IV const iv, EV const ev) -> void {
 	auto & stat = pokemon.stats[stat_name];
 	stat = Stat(stat, iv, ev);
-}
-inline auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, EV const ev) -> void {
-	set_stat_ev(pokemon, stat_name, get_stat(pokemon, stat_name).iv(), ev);
 }
 
 

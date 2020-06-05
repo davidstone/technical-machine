@@ -41,15 +41,19 @@ auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats con
 	set_nature(pokemon, stats.nature);
 
 	auto const original_hp = get_hp(pokemon);
-	set_hp_ev(generation, pokemon, stats.hp);
+	set_hp_ev(generation, pokemon, original_hp.iv(), stats.hp);
 	auto const new_hp = get_hp(pokemon);
 	pokemon.set_hp(new_hp.max() * original_hp.current() / original_hp.max());
 
-	set_stat_ev(pokemon, StatNames::ATK, stats.attack);
-	set_stat_ev(pokemon, StatNames::DEF, stats.defense);
-	set_stat_ev(pokemon, StatNames::SPA, stats.special_attack);
-	set_stat_ev(pokemon, StatNames::SPD, stats.special_defense);
-	set_stat_ev(pokemon, StatNames::SPE, stats.speed);
+	auto set = [&](StatNames const name, EV const ev) {
+		set_stat_ev(pokemon, name, get_stat(pokemon, name).iv(), ev);
+	};
+
+	set(StatNames::ATK, stats.attack);
+	set(StatNames::DEF, stats.defense);
+	set(StatNames::SPA, stats.special_attack);
+	set(StatNames::SPD, stats.special_defense);
+	set(StatNames::SPE, stats.speed);
 }
 
 auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats {

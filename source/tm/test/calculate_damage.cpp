@@ -164,7 +164,7 @@ void physical_damage_test() {
 
 	auto a = attacker.pokemon();
 
-	set_stat_ev(a, StatNames::DEF, EV(EV::max));
+	set_stat_ev(a, StatNames::DEF, IV(31_bi), EV(EV::max));
 	a.activate_power_trick();
 	a.stage()[StatNames::ATK] += 6_bi;
 
@@ -195,7 +195,7 @@ void special_damage_test() {
 	auto const move = all_moves(a).add(Move(generation, Moves::Blast_Burn));
 	a.set_type(Type::Fire);
 
-	set_stat_ev(a, StatNames::SPA, EV(EV::max));
+	set_stat_ev(a, StatNames::SPA, IV(31_bi), EV(EV::max));
 	attacker.pokemon().stage()[StatNames::SPA] += 6_bi;
 	
 	for (auto const n [[maybe_unused]] : containers::integer_range(10_bi)) {

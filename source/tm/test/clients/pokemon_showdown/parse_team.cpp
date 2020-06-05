@@ -35,9 +35,9 @@ constexpr auto move_array(Generation const generation, auto... moves) {
 
 auto max_all_evs(Generation const generation, Pokemon & pokemon) {
 	constexpr auto ev = EV(252_bi);
-	set_hp_ev(generation, pokemon, ev);
+	set_hp_ev(generation, pokemon, IV(30_bi), ev);
 	for (auto const stat : containers::enum_range(StatNames::NORMAL_END)) {
-		set_stat_ev(pokemon, stat, ev);
+		set_stat_ev(pokemon, stat, IV(30_bi), ev);
 	}
 }
 

@@ -86,12 +86,12 @@ auto parse_team(boost::property_tree::ptree const & pt, Generation const generat
 			 add_seen_move(all_moves(pokemon), generation, from_string<Moves>(move.second.get<std::string>("")));
 		}
 
-		set_hp_ev(generation, pokemon, evs.hp);
-		set_stat_ev(pokemon, StatNames::ATK, evs.attack);
-		set_stat_ev(pokemon, StatNames::DEF, evs.defense);
-		set_stat_ev(pokemon, StatNames::SPA, evs.special_attack);
-		set_stat_ev(pokemon, StatNames::SPD, evs.special_defense);
-		set_stat_ev(pokemon, StatNames::SPE, evs.speed);
+		set_hp_ev(generation, pokemon, ivs.hp, evs.hp);
+		set_stat_ev(pokemon, StatNames::ATK, ivs.attack, evs.attack);
+		set_stat_ev(pokemon, StatNames::DEF, ivs.defense, evs.defense);
+		set_stat_ev(pokemon, StatNames::SPA, ivs.special_attack, evs.special_attack);
+		set_stat_ev(pokemon, StatNames::SPD, ivs.special_defense, evs.special_defense);
+		set_stat_ev(pokemon, StatNames::SPE, ivs.speed, evs.speed);
 	}
 	team.all_pokemon().reset_index();
 	return team;

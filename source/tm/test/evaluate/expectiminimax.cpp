@@ -68,7 +68,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		jolteon.switch_in(generation, weather);
 		containers::append(regular_moves(jolteon), shuffled(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball));
 		for (auto const stat : {StatNames::SPA, StatNames::SPE}) {
-			set_stat_ev(jolteon, stat, EV(252_bi));
+			set_stat_ev(jolteon, stat, IV(31_bi), EV(252_bi));
 		}
 		team1.reset_start_of_turn();
 	}
@@ -80,7 +80,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		gyarados.switch_in(generation, weather);
 		containers::append(regular_moves(gyarados), shuffled(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt));
 		for (auto const stat : {StatNames::ATK, StatNames::SPE}) {
-			set_stat_ev(gyarados, stat, EV(252_bi));
+			set_stat_ev(gyarados, stat, IV(31_bi), EV(252_bi));
 		}
 		team2.reset_start_of_turn();
 	}
@@ -94,7 +94,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		shedinja.switch_in(generation, weather);
 		containers::append(regular_moves(shedinja), shuffled(Moves::Swords_Dance, Moves::X_Scissor, Moves::Shadow_Sneak, Moves::Will_O_Wisp));
 		for (auto const stat : {StatNames::ATK, StatNames::SPE}) {
-			set_stat_ev(shedinja, stat, EV(252_bi));
+			set_stat_ev(shedinja, stat, IV(31_bi), EV(252_bi));
 		}
 		team3.reset_start_of_turn();
 	}
@@ -115,7 +115,7 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 		jolteon.switch_in(generation, weather);
 		containers::append(regular_moves(jolteon), shuffled(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball));
 		for (auto const stat : {StatNames::SPA, StatNames::SPE}) {
-			set_stat_ev(jolteon, stat, EV(252_bi));
+			set_stat_ev(jolteon, stat, IV(31_bi), EV(252_bi));
 		}
 		attacker.reset_start_of_turn();
 	}
@@ -126,8 +126,8 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 		auto swampert = defender.pokemon();
 		swampert.switch_in(generation, weather);
 		containers::append(regular_moves(swampert), shuffled(Moves::Surf, Moves::Ice_Beam));
-		set_hp_ev(generation, swampert, EV(252_bi));
-		set_stat_ev(swampert, StatNames::DEF, EV(252_bi));
+		set_hp_ev(generation, swampert, IV(31_bi), EV(252_bi));
+		set_stat_ev(swampert, StatNames::DEF, IV(31_bi), EV(252_bi));
 		defender.reset_start_of_turn();
 	}
 
@@ -146,7 +146,7 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 		charizard.switch_in(generation, weather);
 		containers::append(regular_moves(charizard), shuffled(Moves::Fire_Punch, Moves::Belly_Drum, Moves::Earthquake, Moves::Double_Edge));
 		for (auto const stat : {StatNames::ATK, StatNames::SPE}) {
-			set_stat_ev(charizard, stat, EV(252_bi));
+			set_stat_ev(charizard, stat, IV(31_bi), EV(252_bi));
 		}
 		attacker.reset_start_of_turn();
 	}
@@ -157,8 +157,8 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 		auto mew = defender.pokemon();
 		mew.switch_in(generation, weather);
 		containers::append(regular_moves(mew), shuffled(Moves::Soft_Boiled));
-		set_hp_ev(generation, mew, EV(252_bi));
-		set_stat_ev(mew, StatNames::SPD, EV(64_bi));
+		set_hp_ev(generation, mew, IV(31_bi), EV(252_bi));
+		set_stat_ev(mew, StatNames::SPD, IV(31_bi), EV(64_bi));
 		defender.reset_start_of_turn();
 	}
 
@@ -176,9 +176,8 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 		auto hippopotas = attacker.pokemon();
 		hippopotas.switch_in(generation, weather);
 		containers::append(regular_moves(hippopotas), shuffled(Moves::Curse, Moves::Crunch));
-		set_hp_ev(generation, hippopotas, EV(252_bi));
-		set_stat_ev(hippopotas, StatNames::ATK, EV(252_bi));
-		set_stat_ev(hippopotas, StatNames::SPE, EV(4_bi));
+		set_hp_ev(generation, hippopotas, IV(31_bi), EV(252_bi));
+		set_stat_ev(hippopotas, StatNames::ATK, IV(31_bi), EV(252_bi));
 		attacker.reset_start_of_turn();
 	}
 
@@ -188,9 +187,8 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 		auto wobbuffet = defender.pokemon();
 		wobbuffet.switch_in(generation, weather);
 		containers::append(regular_moves(wobbuffet), shuffled(Moves::Counter, Moves::Encore));
-		set_hp_ev(generation, wobbuffet, EV(252_bi));
-		set_stat_ev(wobbuffet, StatNames::DEF, EV(252_bi));
-		set_stat_ev(wobbuffet, StatNames::SPE, EV(4_bi));
+		set_hp_ev(generation, wobbuffet, IV(31_bi), EV(252_bi));
+		set_stat_ev(wobbuffet, StatNames::DEF, IV(31_bi), EV(252_bi));
 		defender.reset_start_of_turn();
 	}
 
@@ -214,7 +212,7 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	{
 		auto & alakazam = attacker.add_pokemon(generation, Species::Alakazam, Level(100_bi), Gender::male, Item::Lum_Berry, Ability::Synchronize, Nature::Jolly);
 		containers::append(regular_moves(alakazam), shuffled(Moves::Psycho_Cut, Moves::Recover));
-		set_stat_ev(alakazam, StatNames::ATK, EV(252_bi));
+		set_stat_ev(alakazam, StatNames::ATK, IV(31_bi), EV(252_bi));
 	}
 	attacker.reset_start_of_turn();
 
@@ -224,13 +222,13 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		auto gengar = defender.pokemon();
 		gengar.switch_in(generation, weather);
 		containers::append(regular_moves(gengar), shuffled(Moves::Shadow_Ball));
-		set_stat_ev(gengar, StatNames::SPA, EV(252_bi));
+		set_stat_ev(gengar, StatNames::SPA, IV(31_bi), EV(252_bi));
 	}
 
 	{
 		auto & misdreavus = defender.add_pokemon(generation, Species::Misdreavus, Level(100_bi), Gender::female, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
 		containers::append(regular_moves(misdreavus), shuffled(Moves::Shadow_Ball));
-		set_stat_ev(misdreavus, StatNames::SPA, EV(252_bi));
+		set_stat_ev(misdreavus, StatNames::SPA, IV(31_bi), EV(252_bi));
 	}
 	defender.reset_start_of_turn();
 
@@ -257,9 +255,8 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	{
 		auto & zapdos = attacker.add_pokemon(generation, Species::Zapdos, Level(100_bi), Gender::genderless, Item::Choice_Specs, Ability::Pressure, Nature::Modest);
 		all_moves(zapdos).add(Move(generation, Moves::Thunderbolt));
-		set_hp_ev(generation, zapdos, EV(4_bi));
 		for (auto const stat : { StatNames::SPA, StatNames::SPE }) {
-			set_stat_ev(zapdos, stat, EV(252_bi));
+			set_stat_ev(zapdos, stat, IV(31_bi), EV(252_bi));
 		}
 	}
 	attacker.reset_start_of_turn();
@@ -270,9 +267,8 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		auto suicune = defender.pokemon();
 		suicune.switch_in(generation, weather);
 		containers::append(regular_moves(suicune), shuffled(Moves::Calm_Mind, Moves::Surf, Moves::Ice_Beam));
-		set_hp_ev(generation, suicune, EV(252_bi));
-		set_stat_ev(suicune, StatNames::DEF, EV(252_bi));
-		set_stat_ev(suicune, StatNames::SPD, EV(4_bi));
+		set_hp_ev(generation, suicune, IV(31_bi), EV(252_bi));
+		set_stat_ev(suicune, StatNames::DEF, IV(31_bi), EV(252_bi));
 	}
 
 	call_move(
@@ -304,9 +300,9 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 		auto latias = attacker.pokemon();
 		latias.switch_in(generation, weather);
 		containers::append(regular_moves(latias), shuffled(Moves::Calm_Mind, Moves::Dragon_Pulse, Moves::Recover));
-		set_hp_ev(generation, latias, EV(252_bi));
-		set_stat_ev(latias, StatNames::SPA, EV(120_bi));
-		set_stat_ev(latias, StatNames::SPD, EV(136_bi));
+		set_hp_ev(generation, latias, IV(31_bi), EV(252_bi));
+		set_stat_ev(latias, StatNames::SPA, IV(31_bi), EV(120_bi));
+		set_stat_ev(latias, StatNames::SPD, IV(31_bi), EV(136_bi));
 		attacker.reset_start_of_turn();
 	}
 
@@ -316,9 +312,9 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 		auto suicune = defender.pokemon();
 		suicune.switch_in(generation, weather);
 		containers::append(regular_moves(suicune), shuffled(Moves::Ice_Beam, Moves::Rest));
-		set_hp_ev(generation, suicune, EV(252_bi));
-		set_stat_ev(suicune, StatNames::SPA, EV(120_bi));
-		set_stat_ev(suicune, StatNames::SPD, EV(136_bi));
+		set_hp_ev(generation, suicune, IV(31_bi), EV(252_bi));
+		set_stat_ev(suicune, StatNames::SPA, IV(31_bi), EV(120_bi));
+		set_stat_ev(suicune, StatNames::SPD, IV(31_bi), EV(136_bi));
 		defender.reset_start_of_turn();
 	}
 
@@ -337,9 +333,8 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		auto jolteon = attacker.pokemon();
 		jolteon.switch_in(generation, weather);
 		containers::append(regular_moves(jolteon), shuffled(Moves::Sleep_Talk, Moves::Thunderbolt));
-		set_hp_ev(generation, jolteon, EV(4_bi));
-		set_stat_ev(jolteon, StatNames::SPA, EV(252_bi));
-		set_stat_ev(jolteon, StatNames::SPE, EV(252_bi));
+		set_stat_ev(jolteon, StatNames::SPA, IV(31_bi), EV(252_bi));
+		set_stat_ev(jolteon, StatNames::SPE, IV(31_bi), EV(252_bi));
 		attacker.reset_start_of_turn();
 	}
 
@@ -349,9 +344,8 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		auto gyarados = defender.pokemon();
 		gyarados.switch_in(generation, weather);
 		containers::append(regular_moves(gyarados), shuffled(Moves::Earthquake));
-		set_hp_ev(generation, gyarados, EV(4_bi));
-		set_stat_ev(gyarados, StatNames::ATK, EV(252_bi));
-		set_stat_ev(gyarados, StatNames::SPE, EV(252_bi));
+		set_stat_ev(gyarados, StatNames::ATK, IV(31_bi), EV(252_bi));
+		set_stat_ev(gyarados, StatNames::SPE, IV(31_bi), EV(252_bi));
 		defender.reset_start_of_turn();
 	}
 	
@@ -406,9 +400,9 @@ void performance(Evaluate const & evaluate) {
 	auto add_pokemon = [&](Team & team, Species const species, auto... moves) {
 		auto & pokemon = team.add_pokemon(generation, species, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Pickup, Nature::Hardy);
 		containers::append(regular_moves(pokemon), containers::array{Move(generation, moves)...});
-		set_hp_ev(generation, pokemon, EV(252_bi));
-		set_stat_ev(pokemon, StatNames::DEF, EV(120_bi));
-		set_stat_ev(pokemon, StatNames::SPD, EV(136_bi));
+		set_hp_ev(generation, pokemon, IV(31_bi), EV(252_bi));
+		set_stat_ev(pokemon, StatNames::DEF, IV(31_bi), EV(120_bi));
+		set_stat_ev(pokemon, StatNames::SPD, IV(31_bi), EV(136_bi));
 	};
 	Team ai(6_bi, true);
 	Team foe(6_bi, false);
