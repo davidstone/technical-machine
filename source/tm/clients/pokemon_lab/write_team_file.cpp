@@ -101,7 +101,7 @@ std::string_view to_simulator_string(Gender const gender) {
 void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & member = pt.add ("pokemon", "");
 	member.put("<xmlattr>.species", to_simulator_string(get_species(pokemon)));
-	// member.put ("nickname", pokemon.get_nickname());
+	member.put ("nickname", "");
 	member.put ("level", get_level(pokemon)());
 	member.put ("happiness", get_happiness(pokemon));
 	member.put ("gender", to_simulator_string(get_gender(pokemon)));
