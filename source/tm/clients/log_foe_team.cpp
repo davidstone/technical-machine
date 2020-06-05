@@ -61,7 +61,7 @@ void log_foe_team(Generation const generation, UsageStats const & usage_stats, T
 	auto const team = predict_team(generation, usage_stats, use_lead_stats, foe_team, random_engine);
 	auto const path = generate_team_file_name(random_engine);
 	std::filesystem::create_directory(team_file_directory);
-	pl::write_team(team, path);
+	pl::write_team(generation, team, path);
 }
 
 } // namespace technicalmachine

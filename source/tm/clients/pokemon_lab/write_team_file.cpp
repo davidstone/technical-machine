@@ -116,7 +116,7 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 
 }	// namespace
 
-void write_team(Team const & team, std::filesystem::path const & file_name) {
+void write_team([[maybe_unused]] Generation const generation, Team const & team, std::filesystem::path const & file_name) {
 	boost::property_tree::ptree pt;
 	boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type> settings('\t', 1);
 	boost::property_tree::ptree & t = pt.add ("shoddybattle", "");
