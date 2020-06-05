@@ -71,7 +71,7 @@ private:
 	friend struct ActivePokemonImpl;
 	friend struct MutableActivePokemon;
 	
-	Ability ability;
+	Ability ability{};
 	Confusion confusion;
 	Disable disable;
 	EmbargoCounter embargo;
