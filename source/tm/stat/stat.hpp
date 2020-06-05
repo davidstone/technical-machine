@@ -33,11 +33,6 @@ struct Stat {
 	using base_type = bounded::checked_integer<5, 230>;
 
 	Stat(Generation generation, Species name, StatNames stat, IV iv, EV ev);
-	Stat(Generation generation, Species name, StatNames stat, EV ev):
-		Stat(generation, name, stat, generation <= Generation::two ? IV(30_bi) : IV(31_bi), ev)
-	{
-	}
-	Stat(Stat other, EV ev);
 	Stat(Stat other, IV iv, EV ev);
 	
 	auto base() const {

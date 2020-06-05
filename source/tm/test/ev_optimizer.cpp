@@ -69,12 +69,13 @@ void defensive_tests() {
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Celebi;
 	constexpr auto level = Level(100_bi);
+	constexpr auto iv = IV(31_bi);
 	constexpr auto hp_ev = EV(252_bi);
 	constexpr auto defense_ev = EV(252_bi);
 	constexpr auto special_defense_ev = EV(4_bi);
-	auto const hp = HP(generation, species, level, hp_ev);
-	auto const defense = Stat(generation, species, StatNames::DEF, defense_ev);
-	auto const special_defense = Stat(generation, species, StatNames::SPD, special_defense_ev);
+	auto const hp = HP(generation, species, level, iv, hp_ev);
+	auto const defense = Stat(generation, species, StatNames::DEF, iv, defense_ev);
+	auto const special_defense = Stat(generation, species, StatNames::SPD, iv, special_defense_ev);
 	
 	auto defensive_evs = DefensiveEVs(generation, species, level, Nature::Bold, hp, defense, special_defense);
 	for (auto const & candidate : defensive_evs) {
@@ -98,11 +99,12 @@ void speed_tests() {
 	constexpr auto species = Species::Snorlax;
 	constexpr auto level = Level(100_bi);
 	constexpr auto original_nature = Nature::Hardy;
-	auto const original_stat = Stat(generation, species, StatNames::SPE, EV(76_bi));
+	constexpr auto iv = IV(31_bi);
+	auto const original_stat = Stat(generation, species, StatNames::SPE, iv, EV(76_bi));
 	auto const speed_evs = SpeedEVs(original_nature, original_stat, level);
 	auto const original_value = initial_stat(StatNames::SPE, original_stat, level, original_nature);
 	for (auto const nature : containers::enum_range<Nature>()) {
-		auto const new_value = initial_stat(StatNames::SPE, Stat(generation, species, StatNames::SPE, find(speed_evs, nature)), level, nature);
+		auto const new_value = initial_stat(StatNames::SPE, Stat(generation, species, StatNames::SPE, iv, find(speed_evs, nature)), level, nature);
 		if (boosts_stat(nature, StatNames::SPE) and !boosts_stat(original_nature, StatNames::SPE)) {
 			BOUNDED_ASSERT(new_value == original_value or new_value == original_value + 1_bi);
 		} else {

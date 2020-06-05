@@ -50,11 +50,11 @@ using namespace bounded::literal;
 template<StatNames stat_name>
 auto find_least_stat(Generation const generation, Species const species, Level const level, Nature const nature, auto const initial) -> bounded::optional<EV::value_type> {
 	EV::value_type ev = 0_bi;
-	auto stat = Stat(generation, species, stat_name, EV(ev));
+	auto stat = Stat(generation, species, stat_name, default_iv(generation), EV(ev));
 	auto const test_stat = [&]() { return initial_stat(stat_name, stat, level, nature); };
 	while (test_stat() < initial) {
 		ev += 4_bi;
-		stat = Stat(stat, EV(ev));
+		stat = Stat(stat, default_iv(generation), EV(ev));
 		if (ev == EV::max) {
 			break;
 		}
@@ -65,7 +65,7 @@ auto find_least_stat(Generation const generation, Species const species, Level c
 auto ideal_attack_stat(Stat const original_stat, Level const level, Nature const original_nature, bool const is_physical) {
 	// All we care about on this nature is the boost to Attack
 	auto const nature = is_physical ? original_nature : Nature::Modest;
-	auto const stat = is_physical ? original_stat : Stat(original_stat, EV(0_bi));
+	auto const stat = is_physical ? original_stat : Stat(original_stat, original_stat.iv(), EV(0_bi));
 	return initial_stat(StatNames::ATK, stat, level, nature);
 }
 auto ideal_special_attack_stat(Stat const original_stat, Level const level, Nature const original_nature, bool const is_special, bool const is_physical) {
@@ -74,7 +74,7 @@ auto ideal_special_attack_stat(Stat const original_stat, Level const level, Natu
 		is_special ? original_nature :
 		is_physical ? Nature::Adamant :
 		Nature::Hardy;
-	auto const stat = is_special ? original_stat : Stat(original_stat, EV(0_bi));
+	auto const stat = is_special ? original_stat : Stat(original_stat, original_stat.iv(), EV(0_bi));
 	return initial_stat(StatNames::SPA, stat, level, nature);
 }
 

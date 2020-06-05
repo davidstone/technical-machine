@@ -54,12 +54,12 @@ DefensiveEVs::DefensiveEVs(Generation const generation, Species const species, L
 	auto const special_defense_product = initial_product(StatNames::SPD, special_defense);
 
 	auto defensive_product = [=](DataPoint const value) {
-		auto const hp = HP(generation, species, level, value.hp);
-		auto single_product = [=](StatNames const stat, EV const ev) {
-			return product(value.nature, hp, stat, Stat(generation, species, stat, ev));
+		auto const hp = HP(generation, species, level, original_hp.iv(), value.hp);
+		auto single_product = [=](StatNames const stat, IV const iv, EV const ev) {
+			return product(value.nature, hp, stat, Stat(generation, species, stat, iv, ev));
 		};
 
-		return single_product(StatNames::DEF, value.defense) * single_product(StatNames::SPD, value.special_defense);
+		return single_product(StatNames::DEF, defense.iv(), value.defense) * single_product(StatNames::SPD, special_defense.iv(), value.special_defense);
 	};
 
 	for (auto const nature : containers::enum_range<Nature>()) {

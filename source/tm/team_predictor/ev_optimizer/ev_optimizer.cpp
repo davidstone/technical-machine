@@ -118,13 +118,14 @@ auto minimize_evs(Generation const generation, CombinedStats const stats, Specie
 			stats.speed
 		};
 	}
+	auto const iv = default_iv(generation);
 	auto const nature = stats.nature;
-	auto const hp = HP(generation, species, level, stats.hp);
-	auto const attack = Stat(generation, species, StatNames::ATK, stats.attack);
-	auto const defense = Stat(generation, species, StatNames::DEF, stats.defense);
-	auto const special_attack = Stat(generation, species, StatNames::SPA, stats.special_attack);
-	auto const special_defense = Stat(generation, species, StatNames::SPD, stats.special_defense);
-	auto const speed = Stat(generation, species, StatNames::SPE, stats.speed);
+	auto const hp = HP(generation, species, level, iv, stats.hp);
+	auto const attack = Stat(generation, species, StatNames::ATK, iv, stats.attack);
+	auto const defense = Stat(generation, species, StatNames::DEF, iv, stats.defense);
+	auto const special_attack = Stat(generation, species, StatNames::SPA, iv, stats.special_attack);
+	auto const special_defense = Stat(generation, species, StatNames::SPD, iv, stats.special_defense);
+	auto const speed = Stat(generation, species, StatNames::SPE, iv, stats.speed);
 
 	return combine(
 		generation,

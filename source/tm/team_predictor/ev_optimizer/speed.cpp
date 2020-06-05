@@ -37,7 +37,7 @@ SpeedEVs::SpeedEVs(Nature const initial_nature, Stat const initial_speed_stat, L
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const evs = ev_range();
 		auto const it = std::partition_point(containers::legacy_iterator(begin(evs)), containers::legacy_iterator(end(evs)), [=](auto const ev) {
-			auto const stat = Stat(initial_speed_stat, ev);
+			auto const stat = Stat(initial_speed_stat, initial_speed_stat.iv(), ev);
 			return initial_stat(StatNames::SPE, stat, level, nature) < speed;
 		});
 		if (it.base() != end(evs)) {

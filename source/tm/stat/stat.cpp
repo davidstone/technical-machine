@@ -49,13 +49,6 @@ Stat::Stat(Generation const generation, Species const species, StatNames const s
 {
 }
 
-Stat::Stat(Stat const other, EV const ev_) :
-	m_base(other.base()),
-	m_iv(other.iv()),
-	m_ev(ev_)
-{
-}
-
 Stat::Stat(Stat const other, IV const iv_, EV const ev_) :
 	m_base(other.base()),
 	m_iv(iv_),

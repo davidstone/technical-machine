@@ -37,10 +37,7 @@ struct HP {
 	using current_type = bounded::integer<0, max_value>;
 	
 	HP(Generation generation, Species species, Level level, IV iv_, EV ev_);
-	HP(Generation generation, Species species, Level level, EV ev_):
-		HP(generation, species, level, default_iv(generation), ev_)
-	{
-	}
+
 	auto & operator=(auto const & value) & {
 		m_current = bounded::min(value, m_max);
 		return *this;

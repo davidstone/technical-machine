@@ -26,14 +26,15 @@ constexpr auto default_ev = EV(0_bi);
 } // namespace
 
 Stats::Stats(Generation const generation, Species const species, Level const level):
-	m_hp(generation, species, level, default_ev),
+	m_hp(generation, species, level, default_iv(generation), default_ev),
 	m_stats{
-		Stat(generation, species, StatNames::ATK, default_ev),
-		Stat(generation, species, StatNames::DEF, default_ev),
-		Stat(generation, species, StatNames::SPA, default_ev),
-		Stat(generation, species, StatNames::SPD, default_ev),
-		Stat(generation, species, StatNames::SPE, default_ev)
-	} {
+		Stat(generation, species, StatNames::ATK, default_iv(generation), default_ev),
+		Stat(generation, species, StatNames::DEF, default_iv(generation), default_ev),
+		Stat(generation, species, StatNames::SPA, default_iv(generation), default_ev),
+		Stat(generation, species, StatNames::SPD, default_iv(generation), default_ev),
+		Stat(generation, species, StatNames::SPE, default_iv(generation), default_ev)
+	}
+{
 }
 
 auto Stats::hp() const -> HP const & {
