@@ -138,13 +138,16 @@ void load_pokemon(ptree const & pt, Generation const generation, Team & team, Sp
 
 } // namespace
 
-Team load_team(std::filesystem::path const & team_file) {
+Team load_team(Generation const expected_generation, std::filesystem::path const & team_file) {
 	ptree pt;
 	read_xml(team_file.string(), pt);
 	
 	auto const all_pokemon = pt.get_child("Team");
 	using GenerationInteger = bounded::checked_integer<1, 7, InvalidTeamFile>;
 	auto const generation = static_cast<Generation>(all_pokemon.get<GenerationInteger>("<xmlattr>.gen"));
+	if (generation != expected_generation) {
+		throw std::runtime_error("Generation mismatch in team file vs. battle.");
+	}
 	constexpr bool is_me = true;
 	auto team = Team(number_of_pokemon(all_pokemon), is_me);
 	for (auto const & value : all_pokemon) {

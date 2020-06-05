@@ -121,7 +121,7 @@ void ClientImpl::run(DelimitedBufferView<std::string_view> messages) {
 
 void ClientImpl::handle_message(InMessage message) {
 	auto send_challenge = [&]{
-		send_team();
+		send_team(Generation::four);
 		m_send_message("|/challenge david stone,gen4randombattle");
 	};
 	if (m_battles.handle_message(m_all_usage_stats, message, m_send_message, send_challenge)) {
@@ -149,7 +149,7 @@ void ClientImpl::handle_message(InMessage message) {
 				m_evaluate,
 				m_depth,
 				std::mt19937(m_rd()),
-				generate_team()
+				generate_team(parse_generation(message.room()))
 			);
 		}
 	} else if (type == "nametaken") {
@@ -220,8 +220,8 @@ void ClientImpl::authenticate(std::string_view const challstr) {
 	m_send_message("|/trn " + m_settings.username + ",0," + json.get<std::string>("assertion"));
 }
 
-void ClientImpl::send_team() {
-	m_send_message("|/utm " + to_packed_format(generate_team()));
+void ClientImpl::send_team(Generation const generation) {
+	m_send_message("|/utm " + to_packed_format(generate_team(generation)));
 }
 
 void ClientImpl::join_channel(std::string const & channel) {

@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <tm/generation.hpp>
 #include <tm/team.hpp>
 
 #include <filesystem>
@@ -26,7 +27,7 @@ namespace technicalmachine {
 struct Team;
 namespace po {
 
-Team load_team(std::filesystem::path const & team_file);
+Team load_team(Generation, std::filesystem::path const & team_file);
 
 } // namespace po
 } // namespace technicalmachine

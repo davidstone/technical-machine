@@ -28,7 +28,7 @@
 
 namespace technicalmachine {
 
-auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) -> Team {
+auto load_team_from_file(Generation const generation, std::mt19937 & random_engine, std::filesystem::path const & path) -> Team {
 	auto const files = files_in_path(path);
 	if (empty(files)) {
 		throw std::runtime_error(path.string() + " does not contain any team files.");
@@ -39,9 +39,9 @@ auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path con
 
 	auto const extension = file.extension();
 	if (extension == ".tp") {
-		return po::load_team(file);
+		return po::load_team(generation, file);
 	} else if (extension == ".sbt") {
-		return pl::load_team(file);
+		return pl::load_team(generation, file);
 	} else {
 		throw InvalidTeamFileFormat(file);
 	}

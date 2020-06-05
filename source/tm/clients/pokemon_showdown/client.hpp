@@ -51,11 +51,11 @@ struct ClientImpl {
 	void run(DelimitedBufferView<std::string_view> messages);
 
 private:
-	Team generate_team() {
-		return load_team_from_file(m_random_engine, m_settings.team_file);
+	Team generate_team(Generation const generation) {
+		return load_team_from_file(generation, m_random_engine, m_settings.team_file);
 	}
 	
-	void send_team();
+	void send_team(Generation const generation);
 
 	void handle_message(InMessage message);
 	void send_channel_message(std::string const & channel, std::string const & message);

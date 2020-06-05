@@ -48,9 +48,6 @@ enum class Moves : std::uint16_t;
 namespace pl {
 namespace {
 
-// TODO
-constexpr auto generation = Generation::four;
-
 auto lookup_stat(std::string_view const name) {
 	using Storage = containers::array<containers::map_value_type<std::string_view, StatNames>, 5>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
@@ -66,7 +63,7 @@ auto lookup_stat(std::string_view const name) {
 	return converter.at(name);
 }
 
-auto load_stats(Pokemon & pokemon, boost::property_tree::ptree const & pt) {
+auto load_stats(Generation const generation, Pokemon & pokemon, boost::property_tree::ptree const & pt) {
 	auto const name = pt.get<std::string>("<xmlattr>.name");
 	auto const iv = IV(pt.get<IV::value_type>("<xmlattr>.iv"));
 	auto const ev = EV(pt.get<EV::value_type>("<xmlattr>.ev"));
@@ -104,7 +101,7 @@ auto from_simulator_string(std::string_view const str) {
 	return (it != end(converter)) ? it->mapped() : from_string<Species>(str);
 }
 
-auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
+auto load_pokemon(Generation const generation, boost::property_tree::ptree const & pt, Team & team) {
 	auto const species_str = pt.get <std::string>("<xmlattr>.species");
 	auto const species = from_simulator_string(species_str);
 	// auto const nickname_temp = pt.get <std::string>("nickname");
@@ -123,13 +120,13 @@ auto load_pokemon(boost::property_tree::ptree const & pt, Team & team) {
 		add_seen_move(all_moves(pokemon), generation, name, pp_ups);
 	}
 	for (auto const & value : pt.get_child("stats")) {
-		load_stats(pokemon, value.second);
+		load_stats(generation, pokemon, value.second);
 	}
 }
 
 }	// namespace
 
-Team load_team(std::filesystem::path const & team_file) {
+Team load_team(Generation const generation, std::filesystem::path const & team_file) {
 	boost::property_tree::ptree pt;
 	read_xml(team_file.string(), pt);
 	
@@ -137,7 +134,7 @@ Team load_team(std::filesystem::path const & team_file) {
 	constexpr bool is_me = true;
 	auto team = Team(static_cast<TeamSize>(all_pokemon.size()), is_me);
 	for (auto const & value : all_pokemon) {
-		load_pokemon(value.second, team);
+		load_pokemon(generation, value.second, team);
 	}
 	team.all_pokemon().reset_index();
 	return team;

@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/generation.hpp>
 #include <tm/team.hpp>
 
 #include <filesystem>
@@ -24,6 +25,6 @@
 
 namespace technicalmachine {
 
-auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) -> Team;
+auto load_team_from_file(Generation, std::mt19937 & random_engine, std::filesystem::path const & path) -> Team;
 
 }	// namespace technicalmachine

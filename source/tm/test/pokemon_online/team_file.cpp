@@ -28,10 +28,14 @@ namespace technicalmachine {
 namespace po {
 
 void test_team_file () {
+	constexpr auto generation = Generation::four;
 	std::cout << "\tRunning Pokemon Online team file tests.\n";
 	auto const directory = std::filesystem::path("test/teams");
-	write_team(load_team(directory / "test1.tp"), directory / "test2.tp");
-	std::filesystem::remove(directory / "test2.tp");
+	auto const new_file = directory / "test2.tp";
+	auto const team = load_team(generation, directory / "test1.tp");
+	write_team(team, new_file);
+	BOUNDED_ASSERT(team == load_team(generation, new_file));
+	std::filesystem::remove(new_file);
 }
 
 }	// namespace po
