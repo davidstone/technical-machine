@@ -21,6 +21,8 @@
 #include <tm/clients/pokemon_lab/read_team_file.hpp>
 #include <tm/clients/pokemon_lab/write_team_file.hpp>
 
+#include <bounded/assert.hpp>
+
 #include <filesystem>
 #include <iostream>
 
@@ -30,8 +32,11 @@ namespace pl {
 void test_team_file () {
 	std::cout << "\tRunning Pokemon Lab team file tests.\n";
 	auto const directory = std::filesystem::path("test/teams");
-	write_team(load_team(directory / "test1.sbt"), directory / "test2.sbt");
-	std::filesystem::remove(directory / "test2.sbt");
+	auto const new_file = directory / "test2.sbt";
+	auto const team = load_team(directory / "test1.sbt");
+	write_team(team, new_file);
+	BOUNDED_ASSERT(team == load_team(new_file));
+	std::filesystem::remove(new_file);
 }
 
 }	// namespace pl
