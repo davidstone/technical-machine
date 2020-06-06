@@ -24,19 +24,20 @@
 
 namespace technicalmachine {
 
+template<typename T>
 struct CombinedStats {
 	Nature nature;
-	EV hp;
-	EV attack;
-	EV defense;
-	EV special_attack;
-	EV special_defense;
-	EV speed;
+	T hp;
+	T attack;
+	T defense;
+	T special_attack;
+	T special_defense;
+	T speed;
 
 	friend auto operator==(CombinedStats const &, CombinedStats const &) -> bool = default;
 };
 
-constexpr auto ev_sum(CombinedStats const stats) {
+constexpr auto ev_sum(CombinedStats<EV> const stats) {
 	constexpr auto impl = [](auto... args) { return (... + args.value()); };
 	return impl(stats.hp, stats.attack, stats.defense, stats.special_attack, stats.special_defense, stats.speed);
 }

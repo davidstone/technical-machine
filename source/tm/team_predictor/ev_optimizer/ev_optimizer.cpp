@@ -37,7 +37,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats const stats) {
+auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats<EV> const stats) {
 	set_nature(pokemon, stats.nature);
 
 	auto const original_hp = get_hp(pokemon);
@@ -56,8 +56,8 @@ auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats con
 	set(StatNames::SPE, stats.speed);
 }
 
-auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats {
-	auto best = bounded::optional<CombinedStats>{};
+auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats<EV> {
+	auto best = bounded::optional<CombinedStats<EV>>{};
 	for (auto const & speed : speed_container) {
 		auto const offensive = o.find(speed.nature);
 		if (!offensive) {
@@ -67,7 +67,7 @@ auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs c
 		if (defensive == end(d)) {
 			continue;
 		}
-		auto candidate = CombinedStats{
+		auto candidate = CombinedStats<EV>{
 			speed.nature,
 			defensive->hp,
 			offensive->attack,
@@ -85,7 +85,7 @@ auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs c
 	return *best;
 }
 
-auto optimize_evs(Generation const generation, CombinedStats combined, Species const species, Level const level, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) {
+auto optimize_evs(Generation const generation, CombinedStats<EV> combined, Species const species, Level const level, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) {
 	while (true) {
 		auto const previous = combined;
 		combined = pad_random_evs(generation, combined, include_attack, include_special_attack, random_engine);
@@ -110,9 +110,9 @@ void optimize_evs(Generation const generation, Pokemon & pokemon, std::mt19937 &
 	set_stats(generation, pokemon, optimized);
 }
 
-auto minimize_evs(Generation const generation, CombinedStats const stats, Species const species, Level const level, bool const include_attack, bool const include_special_attack) -> CombinedStats {
+auto minimize_evs(Generation const generation, CombinedStats<EV> const stats, Species const species, Level const level, bool const include_attack, bool const include_special_attack) -> CombinedStats<EV> {
 	if (generation <= Generation::two) {
-		return CombinedStats{
+		return CombinedStats<EV>{
 			stats.nature,
 			stats.hp,
 			include_attack ? stats.attack : EV(0_bi),
@@ -139,7 +139,7 @@ auto minimize_evs(Generation const generation, CombinedStats const stats, Specie
 	);
 }
 
-auto pad_random_evs(Generation const generation, CombinedStats combined, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) -> CombinedStats {
+auto pad_random_evs(Generation const generation, CombinedStats<EV> combined, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) -> CombinedStats<EV> {
 	if (generation <= Generation::two) {
 		combined.hp = EV(EV::max);
 		combined.attack = include_attack ? EV(EV::max) : EV(0_bi);

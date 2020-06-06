@@ -51,7 +51,7 @@ constexpr auto stat_to_ev(auto const target, Nature const nature, StatNames cons
 }
 
 using StatValue = bounded::integer<4, 614>;
-auto calculate_evs(Generation, Species, Level, GenericStats<HP::max_type, StatValue>, IVs) -> CombinedStats;
-auto calculate_evs(Generation, Pokemon) -> CombinedStats;
+auto calculate_evs(Generation, Species, Level, GenericStats<HP::max_type, StatValue>, IVs) -> CombinedStats<EV>;
+auto calculate_evs(Generation, Pokemon) -> CombinedStats<EV>;
 
 } // namespace technicalmachine

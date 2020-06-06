@@ -60,7 +60,7 @@ auto calculate_evs(
 	GenericStats<HP::max_type, StatValue> const stats,
 	IVs const ivs,
 	auto const nature_range
-) -> CombinedStats {
+) -> CombinedStats<EV> {
 	// TODO: Give the correct IVs for the Hidden Power type
 	
 	auto const base = BaseStats(generation, species);
@@ -90,7 +90,7 @@ auto calculate_evs(
 			continue;
 		}
 
-		auto const combined = CombinedStats{
+		auto const combined = CombinedStats<EV>{
 			nature,
 			hp_ev,
 			to_ev(attack_ev),
@@ -127,7 +127,7 @@ auto calculate_evs(
 	Level const level,
 	GenericStats<HP::max_type, StatValue> const stats,
 	IVs const ivs
-) -> CombinedStats {
+) -> CombinedStats<EV> {
 	auto const nature_range = generation <= Generation::two ? 
 		containers::enum_range(Nature::Hardy, Nature::Hardy) :
 		containers::enum_range<Nature>();
@@ -142,7 +142,7 @@ auto calculate_evs(
 	);
 }
 
-auto calculate_evs(Generation const generation, Pokemon const pokemon) -> CombinedStats {
+auto calculate_evs(Generation const generation, Pokemon const pokemon) -> CombinedStats<EV> {
 	auto const nature = get_nature(pokemon);
 	auto calculate_stat = [=](StatNames const stat_name) {
 		return initial_stat(stat_name, get_stat(pokemon, stat_name), get_level(pokemon), nature);

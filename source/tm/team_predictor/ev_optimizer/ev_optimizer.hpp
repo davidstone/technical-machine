@@ -38,7 +38,7 @@ constexpr auto regular_stats() {
 }
 
 void optimize_evs(Generation, Pokemon & pokemon, std::mt19937 & random_engine);
-auto minimize_evs(Generation, CombinedStats stats, Species, Level, bool include_attack, bool include_special_attack) -> CombinedStats;
-auto pad_random_evs(Generation, CombinedStats combined, bool include_attack, bool include_special_attack, std::mt19937 & random_engine) -> CombinedStats;
+auto minimize_evs(Generation, CombinedStats<EV> stats, Species, Level, bool include_attack, bool include_special_attack) -> CombinedStats<EV>;
+auto pad_random_evs(Generation, CombinedStats<EV> combined, bool include_attack, bool include_special_attack, std::mt19937 & random_engine) -> CombinedStats<EV>;
 
 }	// namespace technicalmachine

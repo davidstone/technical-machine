@@ -58,7 +58,7 @@ auto from_statistics_string(std::string_view const str) {
 		return
 			str == "noability" ? Ability::Honey_Gather :
 			from_string<Ability>(str);
-	} else if constexpr (std::is_same_v<T, CombinedStats>) {
+	} else if constexpr (std::is_same_v<T, CombinedStats<EV>>) {
 		auto buffer = DelimitedBufferView(str, '/');
 		auto const nature = from_string<Nature>(buffer.pop(':'));
 		auto get_ev = [&]{
@@ -70,7 +70,7 @@ auto from_statistics_string(std::string_view const str) {
 		auto const spa = get_ev();
 		auto const spd = get_ev();
 		auto const spe = get_ev();
-		return CombinedStats{nature, hp, atk, def, spa, spd, spe};
+		return CombinedStats<EV>{nature, hp, atk, def, spa, spd, spe};
 	}
 }
 
@@ -233,7 +233,7 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 		per_pokemon.moves = per_pokemon_data<Moves>(pokemon.second.get_child("Moves"), max_moves_per_pokemon);
 		per_pokemon.ability = per_pokemon_datum<Ability>(pokemon.second.get_child("Abilities"));
 		per_pokemon.item = per_pokemon_datum<Item>(pokemon.second.get_child("Items"));
-		per_pokemon.stats = per_pokemon_datum<CombinedStats>(pokemon.second.get_child("Spreads"));
+		per_pokemon.stats = per_pokemon_datum<CombinedStats<EV>>(pokemon.second.get_child("Spreads"));
 	}
 
 	check_finite(m_total_weighted_usage);

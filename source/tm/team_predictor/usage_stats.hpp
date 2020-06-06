@@ -41,7 +41,7 @@ struct UsageStats {
 		containers::static_vector<Moves, max_moves_per_pokemon.value()> moves;
 		Ability ability = Ability::Honey_Gather;
 		Item item = Item::None;	
-		CombinedStats stats = {
+		CombinedStats<EV> stats = {
 			Nature::Hardy,
 			EV(EV::max),
 			EV(EV::max),
