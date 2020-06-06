@@ -21,8 +21,6 @@
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/move.hpp>
 
-#include <containers/static_vector/static_vector.hpp>
-
 #include <cstdint>
 
 namespace technicalmachine {
@@ -32,11 +30,6 @@ enum class Generation : std::uint8_t;
 struct MutableActivePokemon;
 struct Team;
 struct Weather;
-
-using StaticVectorMove = containers::static_vector<
-	Moves,
-	bounded::detail::builtin_max_value<MoveSize>
->;
 
 auto legal_selections(Generation, Team const & user, Team const & other, Weather) -> StaticVectorMove;
 auto can_attempt_move_execution(Generation, ActivePokemon user, Move move, ActivePokemon other, bool user_was_asleep) -> bool;

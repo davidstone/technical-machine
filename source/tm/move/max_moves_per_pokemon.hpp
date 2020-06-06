@@ -22,6 +22,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <containers/static_vector/static_vector.hpp>
+
 namespace technicalmachine {
 enum class Moves : std::uint16_t;
 using namespace bounded::literal;
@@ -41,5 +43,10 @@ using SharedMoveIndex = bounded::checked_integer<
 >;
 
 using MoveSize = decltype(std::declval<RegularMoveSize>() + std::declval<SharedMoveSize>());
+
+using StaticVectorMove = containers::static_vector<
+	Moves,
+	bounded::detail::builtin_max_value<MoveSize>
+>;
 
 }	// namespace technicalmachine

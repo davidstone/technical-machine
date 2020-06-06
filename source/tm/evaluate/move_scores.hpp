@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include <tm/block.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 
 #include <bounded/assert.hpp>
