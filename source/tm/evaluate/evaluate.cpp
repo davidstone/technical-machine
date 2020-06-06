@@ -107,7 +107,7 @@ auto score_move(Evaluate const & evaluate, Generation const generation, Move con
 auto score_moves(Evaluate const & evaluate, Generation const generation, Pokemon const & pokemon, LightScreen const other_light_screen, Reflect const other_reflect, Weather const) {
 	// TODO: alter the score of a move based on the weather
 	auto get_score = [&](Move const move) {
-		auto const move_type = get_type(generation, move.name(), get_hidden_power(pokemon).type());
+		auto const move_type = get_type(generation, move.name(), get_hidden_power_type(pokemon));
 		return score_move(evaluate, generation, move, move_type, other_light_screen, other_reflect);
 	};
 	return containers::accumulate(containers::transform(regular_moves(pokemon), get_score));

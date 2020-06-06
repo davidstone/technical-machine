@@ -29,7 +29,7 @@ auto any_move_matches(Generation const generation, Pokemon const pokemon, auto c
 	return containers::any(regular_moves(pokemon), [=](Move const move) {
 		return condition(
 			generation,
-			KnownMove{move.name(), get_type(generation, move.name(), get_hidden_power(pokemon).type())}
+			KnownMove{move.name(), get_type(generation, move.name(), get_hidden_power_type(pokemon))}
 		);
 	});
 }

@@ -155,7 +155,7 @@ auto calculate_evs(Generation const generation, Pokemon const pokemon) -> Combin
 		calculate_stat(StatNames::SPD),
 		calculate_stat(StatNames::SPE)
 	};
-	auto const ivs = hidden_power_ivs(generation, get_hidden_power(pokemon).type(), has_physical_move(generation, pokemon));
+	auto const ivs = hidden_power_ivs(generation, get_hidden_power_type(pokemon), has_physical_move(generation, pokemon));
 	// TODO: Use Hidden Power power to determine IVs, not just the type
 	return calculate_evs(
 		generation,

@@ -636,7 +636,7 @@ void BattleParser::maybe_use_previous_move() {
 	auto const other_move = other_pokemon.moved() ?
 		OtherMove([&]{
 			auto const move = other_pokemon.last_used_move().name();
-			auto const type = get_type(m_battle.generation(), move, get_hidden_power(other_pokemon).type());
+			auto const type = get_type(m_battle.generation(), move, get_hidden_power_type(other_pokemon));
 			return KnownMove{move, type};
 		}()) :
 		OtherMove(FutureMove{

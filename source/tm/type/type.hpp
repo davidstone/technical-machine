@@ -19,6 +19,7 @@
 #pragma once
 
 #include <bounded/integer.hpp>
+#include <bounded/optional.hpp>
 
 #include <cstdint>
 
@@ -60,7 +61,8 @@ inline constexpr auto max_value<technicalmachine::Type> = technicalmachine::Type
 }	// namespace bounded
 namespace technicalmachine {
 
-auto get_type(Generation generation, Moves move, Type hidden_power) -> Type;
+// If `move` is Hidden Power, type must not be `none`
+auto get_type(Generation generation, Moves move, bounded::optional<Type> hidden_power) -> Type;
 
 constexpr auto is_boosted_by_flash_fire(Type const type) {
 	return type == Type::Fire;

@@ -34,7 +34,8 @@ Pokemon::Pokemon(Generation const generation, TeamSize const my_team_size, Speci
 	m_level(level),
 
 	m_happiness(happiness),
-	
+
+	// TODO: Make this none if there is no way to call Hidden Power	
 	m_hidden_power([=]{
 		constexpr auto dv = DV(15_bi);
 		constexpr auto iv = IV(31_bi);

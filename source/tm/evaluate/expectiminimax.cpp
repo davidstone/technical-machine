@@ -161,7 +161,7 @@ auto selected_move_to_executed_move(Generation const generation, Moves const sel
 	using result = containers::static_vector<KnownMove, 3>;
 	auto const user_pokemon = user_team.pokemon();
 	auto type = [=](Moves const move) {
-		return get_type(generation, move, get_hidden_power(user_pokemon).type());
+		return get_type(generation, move, get_hidden_power_type(user_pokemon));
 	};
 	auto known = [=](Move const move) {
 		return KnownMove{move.name(), type(move.name())};
@@ -247,7 +247,7 @@ struct OriginalPokemon {
 		m_hp(get_hp(pokemon).current()),
 		m_other_move{
 			other_move,
-			get_type(generation, other_move, get_hidden_power(pokemon).type())
+			get_type(generation, other_move, get_hidden_power_type(pokemon))
 		}
 	{
 	}

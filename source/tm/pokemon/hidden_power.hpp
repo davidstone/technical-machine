@@ -25,6 +25,7 @@
 #include <tm/generation.hpp>
 
 #include <bounded/integer.hpp>
+#include <bounded/optional.hpp>
 #include <bounded/unreachable.hpp>
 
 namespace technicalmachine {
@@ -32,6 +33,8 @@ namespace technicalmachine {
 // TODO: Make this a template based on the generation so we don't need to store
 // the power?
 struct HiddenPower {
+	using Power = bounded::integer<30, 70>;
+
 	constexpr HiddenPower(Generation const generation, DVs const dvs):
 		m_power(calculate_power(dvs)),
 		m_type(calculate_type(dvs))
@@ -54,7 +57,13 @@ struct HiddenPower {
 	
 	friend auto operator==(HiddenPower const &, HiddenPower const &) -> bool = default;
 private:
-	using Power = bounded::integer<30, 70>;
+	friend bounded::tombstone_traits<HiddenPower>;
+
+	constexpr HiddenPower(bounded::none_t, auto const index):
+		m_power(bounded::tombstone_traits<Power>::make(index)),
+		m_type(Type::Typeless)
+	{
+	}
 	
 	static constexpr auto sum_stats(IVs const ivs, auto const transform) {
 		return
@@ -127,4 +136,20 @@ private:
 	Type m_type;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine
+namespace bounded {
+
+template<>
+struct tombstone_traits<technicalmachine::HiddenPower> {
+	using base = tombstone_traits<technicalmachine::HiddenPower::Power>;
+	static constexpr auto spare_representations = base::spare_representations;
+
+	static constexpr auto make(auto const index) noexcept {
+		return HiddenPower(bounded::none, index);
+	}
+	static constexpr auto index(technicalmachine::HiddenPower const value) {
+		return base::index(value.power());
+	}
+};
+
+} // namespace bounded

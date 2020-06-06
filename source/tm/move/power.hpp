@@ -29,8 +29,10 @@ enum class Moves : std::uint16_t;
 struct Team;
 
 // If a damaging move does not have power (for instance, OHKO moves and
-// fixed-damage moves), the behavior of this function is undefined.
+// fixed-damage moves), the behavior of this function is undefined. If
+// `executed.move.name` is Hidden Power, `get_hidden_power(attacker)` must not
+// be `none`.
 using MovePower = bounded::integer<1, 1440>;
-auto move_power(Generation const generation, Team const & attacker, ExecutedMove move, Team const & defender, Weather weather) -> MovePower;
+auto move_power(Generation const generation, Team const & attacker, ExecutedMove executed, Team const & defender, Weather weather) -> MovePower;
 
 }	// namespace technicalmachine

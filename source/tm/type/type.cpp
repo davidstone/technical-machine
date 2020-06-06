@@ -24,7 +24,7 @@
 
 namespace technicalmachine {
 
-auto get_type(Generation const generation, Moves const move, Type const hidden_power) -> Type {
+auto get_type(Generation const generation, Moves const move, bounded::optional<Type> const hidden_power) -> Type {
 	switch (move) {
 		case Moves::Pass: return Type::Typeless;
 		case Moves::Switch0: return Type::Typeless;
@@ -270,7 +270,7 @@ auto get_type(Generation const generation, Moves const move, Type const hidden_p
 		case Moves::Morning_Sun: return Type::Normal;
 		case Moves::Synthesis: return Type::Grass;
 		case Moves::Moonlight: return Type::Normal;
-		case Moves::Hidden_Power: return hidden_power;
+		case Moves::Hidden_Power: return *hidden_power;
 		case Moves::Cross_Chop: return Type::Fighting;
 		case Moves::Twister: return Type::Dragon;
 		case Moves::Rain_Dance: return Type::Water;

@@ -1613,7 +1613,7 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 
 	auto const known_move = KnownMove{
 		move.executed,
-		get_type(generation, move.executed, get_hidden_power(user_pokemon).type())
+		get_type(generation, move.executed, get_hidden_power_type(user_pokemon))
 	};
 	if (!handle_ability_blocks_move(generation, known_move, other_pokemon, weather)) {
 		auto const executed_move = ExecutedMove{

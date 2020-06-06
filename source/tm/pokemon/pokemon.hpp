@@ -53,7 +53,7 @@ struct Pokemon {
 	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
 	friend Gender get_gender(Pokemon pokemon);
 	friend Happiness get_happiness(Pokemon pokemon);
-	friend HiddenPower get_hidden_power(Pokemon pokemon);
+	friend auto get_hidden_power(Pokemon pokemon) -> bounded::optional<HiddenPower>;
 	friend Level get_level(Pokemon pokemon);
 	friend Nature get_nature(Pokemon pokemon);
 	friend Species get_species(Pokemon pokemon);
@@ -132,7 +132,7 @@ private:
 
 	Level m_level;
 	Happiness m_happiness;
-	HiddenPower m_hidden_power;
+	bounded::optional<HiddenPower> m_hidden_power;
 
 	bool m_has_been_seen : 1;
 	
@@ -218,8 +218,13 @@ inline Happiness get_happiness(Pokemon const pokemon) {
 	return pokemon.m_happiness;
 }
 
-inline HiddenPower get_hidden_power(Pokemon const pokemon) {
+inline auto get_hidden_power(Pokemon const pokemon) -> bounded::optional<HiddenPower> {
 	return pokemon.m_hidden_power;
+}
+
+inline auto get_hidden_power_type(Pokemon const pokemon) {
+	auto const hidden_power = get_hidden_power(pokemon);
+	return BOUNDED_CONDITIONAL(hidden_power, hidden_power->type(), bounded::none);
 }
 
 inline auto hp_ratio(Pokemon const pokemon) {
