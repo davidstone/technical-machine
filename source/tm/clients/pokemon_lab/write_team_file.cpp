@@ -49,23 +49,20 @@ void write_move (Move const move, boost::property_tree::ptree & pt) {
 	m.put ("<xmlattr>.pp-up", 3);
 }
 
-void write_stat(auto const & stat, std::string_view const str, boost::property_tree::ptree & pt) {
+void write_stat(std::string_view const name, IV const iv, EV const ev, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & s = pt.add("stats.stat", "");
-	s.put("<xmlattr>.name", str);
-	s.put("<xmlattr>.iv", stat.iv().value());
-	s.put("<xmlattr>.ev", stat.ev().value());
+	s.put("<xmlattr>.name", name);
+	s.put("<xmlattr>.iv", iv.value());
+	s.put("<xmlattr>.ev", ev.value());
 }
 
 void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
-	write_stat(get_hp(pokemon), "HP", pt);
-	auto write_regular_stat = [&](auto const stat, auto const str) {
-		write_stat(get_stat(pokemon, stat), str, pt);
-	};
-	write_regular_stat(StatNames::ATK, "Atk");
-	write_regular_stat(StatNames::DEF, "Def");
-	write_regular_stat(StatNames::SPE, "Spd");
-	write_regular_stat(StatNames::SPA, "SpAtk");
-	write_regular_stat(StatNames::SPD, "SpDef");
+	write_stat("HP", get_hp(pokemon).iv(), get_hp(pokemon).ev(), pt);
+	write_stat("Atk", get_stat(pokemon, StatNames::ATK).iv(), get_stat(pokemon, StatNames::ATK).ev(), pt);
+	write_stat("Def", get_stat(pokemon, StatNames::DEF).iv(), get_stat(pokemon, StatNames::DEF).ev(), pt);
+	write_stat("Spd", get_stat(pokemon, StatNames::SPE).iv(), get_stat(pokemon, StatNames::SPE).ev(), pt);
+	write_stat("SpAtk", get_stat(pokemon, StatNames::SPA).iv(), get_stat(pokemon, StatNames::SPA).ev(), pt);
+	write_stat("SpDef", get_stat(pokemon, StatNames::SPD).iv(), get_stat(pokemon, StatNames::SPD).ev(), pt);
 }
 
 std::string_view to_simulator_string(Species const species) {
