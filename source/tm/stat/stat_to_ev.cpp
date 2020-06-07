@@ -40,6 +40,10 @@ static_assert(round_up_divide(1_bi, 1_bi) == 1_bi);
 static_assert(round_up_divide(5_bi, 1_bi) == 5_bi);
 static_assert(round_up_divide(6_bi, 5_bi) == 2_bi);
 
+static_assert(stat_to_ev(614_bi, Nature::Impish, StatNames::DEF, 230_bi, IV(31_bi), Level(100_bi)) == EV(252_bi));
+static_assert(stat_to_ev(558_bi, Nature::Hardy, StatNames::DEF, 230_bi, IV(DV(15_bi)), Level(100_bi)) == EV(252_bi));
+static_assert(stat_to_ev(178_bi, Nature::Bold, StatNames::ATK, 125_bi, IV(19_bi), Level(63_bi)) == EV(152_bi));
+
 } // namespace
 
 auto hp_to_ev(Generation const generation, Species const species, Level const level, HP::max_type const stat, IV const iv) -> EV {
@@ -65,39 +69,38 @@ auto calculate_evs(
 	
 	auto const base = BaseStats(generation, species);
 	
-	auto to_ev = [](auto const integer) { return EV(EV::value_type(integer)); };
 	auto const hp_ev = hp_to_ev(generation, species, level, stats.hp, ivs.hp);
 
 	for (auto const nature : nature_range) {
 		auto const attack_ev = stat_to_ev(stats.attack, nature, StatNames::ATK, base.atk(), ivs.attack, level);
-		if (attack_ev > EV::max) {
+		if (!attack_ev) {
 			continue;
 		}
 		auto const defense_ev = stat_to_ev(stats.defense, nature, StatNames::DEF, base.def(), ivs.defense, level);
-		if (defense_ev > EV::max) {
+		if (!defense_ev) {
 			continue;
 		}
 		auto const special_attack_ev = stat_to_ev(stats.special_attack, nature, StatNames::SPA, base.spa(), ivs.special_attack, level);
-		if (special_attack_ev > EV::max) {
+		if (!special_attack_ev) {
 			continue;
 		}
 		auto const special_defense_ev = stat_to_ev(stats.special_defense, nature, StatNames::SPD, base.spd(), ivs.special_defense, level);
-		if (special_defense_ev > EV::max) {
+		if (!special_defense_ev) {
 			continue;
 		}
 		auto const speed_ev = stat_to_ev(stats.speed, nature, StatNames::SPE, base.spe(), ivs.speed, level);
-		if (speed_ev > EV::max) {
+		if (!speed_ev) {
 			continue;
 		}
 
 		auto const combined = CombinedStats<EV>{
 			nature,
 			hp_ev,
-			to_ev(attack_ev),
-			to_ev(defense_ev),
-			to_ev(special_attack_ev),
-			to_ev(special_defense_ev),
-			to_ev(speed_ev)
+			*attack_ev,
+			*defense_ev,
+			*special_attack_ev,
+			*special_defense_ev,
+			*speed_ev
 		};
 		if (ev_sum(combined) > max_total_evs(generation)) {
 			continue;
