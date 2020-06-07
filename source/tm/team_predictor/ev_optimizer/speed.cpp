@@ -20,12 +20,12 @@
 
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/stat_names.hpp>
+#include <tm/stat/stat_to_ev.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
 #include <containers/emplace_back.hpp>
-#include <containers/legacy_iterator.hpp>
 
 #include <algorithm>
 
@@ -34,14 +34,11 @@ using namespace bounded::literal;
 
 SpeedEVs::SpeedEVs(Nature const initial_nature, Stat const initial_speed_stat, Level const level) {
 	auto const speed = initial_stat(StatNames::SPE, initial_speed_stat, level, initial_nature);
+	auto const iv = initial_speed_stat.iv();
 	for (auto const nature : containers::enum_range<Nature>()) {
-		auto const evs = ev_range();
-		auto const it = std::partition_point(containers::legacy_iterator(begin(evs)), containers::legacy_iterator(end(evs)), [=](auto const ev) {
-			auto const stat = Stat(initial_speed_stat, initial_speed_stat.iv(), ev);
-			return initial_stat(StatNames::SPE, stat, level, nature) < speed;
-		});
-		if (it.base() != end(evs)) {
-			containers::emplace_back(m_container, nature, IVAndEV{initial_speed_stat.iv(), *it});
+		auto const ev = stat_to_ev(speed, nature, StatNames::SPE, initial_speed_stat.base(), iv, level);
+		if (ev) {
+			containers::emplace_back(m_container, nature, IVAndEV{iv, *ev});
 		}
 	}
 	BOUNDED_ASSERT(!empty(m_container));
