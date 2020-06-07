@@ -89,7 +89,7 @@ constexpr auto useful_natures(bool const is_physical, bool const is_special) {
 
 } // namespace
 
-OffensiveEVs::OffensiveEVs(Generation const generation, Species const species, Level const level, Nature const original_nature, Stat const attack, Stat const special_attack, bool const include_attack_evs, bool const include_special_attack_evs):
+OffensiveEVs::OffensiveEVs(Generation const generation, BaseStats const base_stats, Level const level, Nature const original_nature, Stat const attack, Stat const special_attack, bool const include_attack_evs, bool const include_special_attack_evs):
 	m_container(containers::transform(
 		useful_natures(include_attack_evs, include_special_attack_evs),
 		[](Nature const nature) { return OffensiveStats(nature); }
@@ -102,11 +102,10 @@ OffensiveEVs::OffensiveEVs(Generation const generation, Species const species, L
 		ideal_special_attack_stat(special_attack, level, original_nature, include_special_attack_evs, include_attack_evs)
 	};
 
-	equal_stats(generation, stats, species, level);
+	equal_stats(generation, base_stats, stats, level);
 }
 
-void OffensiveEVs::equal_stats(Generation const generation, OffensiveData const initial, Species const species, Level const level) {
-	auto const base_stats = BaseStats(generation, species);
+void OffensiveEVs::equal_stats(Generation const generation, BaseStats const base_stats, OffensiveData const initial, Level const level) {
 	for (auto it = begin(m_container); it != end(m_container);) {
 		auto const nature = it->nature;
 		auto const atk_ev = stat_to_ev(initial.atk, nature, StatNames::ATK, base_stats.atk(), default_iv(generation), level);

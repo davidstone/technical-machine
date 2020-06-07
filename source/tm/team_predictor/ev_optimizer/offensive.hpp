@@ -21,6 +21,7 @@
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
+#include <tm/stat/base_stats.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/nature.hpp>
 
@@ -46,12 +47,12 @@ struct OffensiveStats {
 };
 
 struct OffensiveEVs {
-	OffensiveEVs(Generation, Species, Level, Nature, Stat attack, Stat special_attack, bool include_attack_evs, bool include_special_attack_evs);
+	OffensiveEVs(Generation, BaseStats, Level, Nature, Stat attack, Stat special_attack, bool include_attack_evs, bool include_special_attack_evs);
 
 	auto find(Nature const nature) const -> OffensiveStats const *;
 private:
 	struct OffensiveData;
-	auto equal_stats(Generation, OffensiveData initial, Species species, Level level) -> void;
+	auto equal_stats(Generation, BaseStats, OffensiveData initial, Level level) -> void;
 	containers::static_vector<OffensiveStats, size(containers::enum_range<Nature>()).value()> m_container;
 };
 
