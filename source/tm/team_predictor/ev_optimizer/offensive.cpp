@@ -74,7 +74,8 @@ auto ideal_special_attack_stat(Stat const original_stat, Level const level, Natu
 auto is_useful_nature(bool const is_physical, bool const is_special) {
 	return [=](Nature const nature) {
 		if (!is_physical) {
-			return lowers_stat(nature, StatNames::ATK);
+			auto const lowers = lowers_stat(nature, StatNames::ATK);
+			return !is_special ? lowers and !boosts_stat(nature, StatNames::SPA) : lowers;
 		}
 		if (!is_special) {
 			return lowers_stat(nature, StatNames::SPA);
