@@ -19,9 +19,12 @@
 #include <tm/team_predictor/ev_optimizer/offensive.hpp>
 
 #include <tm/pokemon/pokemon.hpp>
+
+#include <tm/stat/base_stats.hpp>
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat.hpp>
+#include <tm/stat/stat_to_ev.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/optional.hpp>
@@ -47,21 +50,6 @@ public:
 namespace {
 
 using namespace bounded::literal;
-
-template<StatNames stat_name>
-auto find_least_stat(Generation const generation, Species const species, Level const level, Nature const nature, auto const initial) -> bounded::optional<EV::value_type> {
-	EV::value_type ev = 0_bi;
-	auto stat = Stat(generation, species, stat_name, default_iv(generation), EV(ev));
-	auto const test_stat = [&]() { return initial_stat(stat_name, stat, level, nature); };
-	while (test_stat() < initial) {
-		ev += 4_bi;
-		stat = Stat(stat, default_iv(generation), EV(ev));
-		if (ev == EV::max) {
-			break;
-		}
-	}
-	return (test_stat() < initial) ? bounded::none : bounded::optional<EV::value_type>(ev);
-}
 
 auto ideal_attack_stat(Stat const original_stat, Level const level, Nature const original_nature, bool const is_physical) {
 	// All we care about on this nature is the boost to Attack
@@ -114,10 +102,11 @@ OffensiveEVs::OffensiveEVs(Generation const generation, Species const species, L
 }
 
 void OffensiveEVs::equal_stats(Generation const generation, OffensiveData const initial, Species const species, Level const level) {
+	auto const base_stats = BaseStats(generation, species);
 	for (auto it = begin(m_container); it != end(m_container);) {
 		auto const nature = it->nature;
-		auto const atk_ev = find_least_stat<StatNames::ATK>(generation, species, level, nature, initial.atk);
-		auto const spa_ev = find_least_stat<StatNames::SPA>(generation, species, level, nature, initial.spa);
+		auto const atk_ev = stat_to_ev(initial.atk, nature, StatNames::ATK, base_stats.atk(), default_iv(generation), level);
+		auto const spa_ev = stat_to_ev(initial.spa, nature, StatNames::SPA, base_stats.spa(), default_iv(generation), level);
 		if (atk_ev and spa_ev) {
 			it->attack = EV(*atk_ev);
 			it->special_attack = EV(*spa_ev);
