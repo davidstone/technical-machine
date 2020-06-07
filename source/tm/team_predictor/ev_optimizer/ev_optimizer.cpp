@@ -74,7 +74,7 @@ auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs c
 			defensive->defense,
 			offensive->special_attack,
 			defensive->special_defense,
-			speed.ev
+			speed.stat.ev
 		};
 		if (!best or ev_sum(candidate) < ev_sum(*best)) {
 			insert(best, candidate);

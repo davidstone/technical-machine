@@ -1,4 +1,3 @@
-// Optimize Speed EVs and nature to remove waste
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
@@ -18,6 +17,7 @@
 
 #pragma once
 
+#include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat.hpp>
 #include <tm/pokemon/level.hpp>
@@ -39,7 +39,7 @@ public:
 private:
 	struct Mapped {
 		Nature nature;
-		EV ev;
+		IVAndEV stat;
 	};
 	containers::static_vector<Mapped, static_cast<int>(bounded::max_value<Nature>) + 1> m_container;
 };
