@@ -26,6 +26,7 @@
 #include <bounded/assert.hpp>
 #include <bounded/optional.hpp>
 
+#include <containers/algorithms/filter_iterator.hpp>
 #include <containers/algorithms/maybe_find.hpp>
 #include <containers/emplace_back.hpp>
 
@@ -78,32 +79,31 @@ auto ideal_special_attack_stat(Stat const original_stat, Level const level, Natu
 	return initial_stat(StatNames::SPA, stat, level, nature);
 }
 
-auto remove_inferior_natures(auto & container, bool const is_physical, bool const is_special) {
-	if (!is_physical) {
-		containers::erase_if(container, [](auto candidate) { return !lowers_stat(candidate.nature, StatNames::ATK); });
-	}
-	if (!is_special) {
-		if (is_physical) {
-			containers::erase_if(container, [](auto candidate) { return !lowers_stat(candidate.nature, StatNames::SPA); });
-		} else {
-			containers::erase_if(container, [](auto candidate) { return boosts_stat(candidate.nature, StatNames::SPA); });
+// If I don't have a physical move, prefer to lower that because it lowers
+// confusion damage. If I do have a physical move but no special move, prefer
+// to lower Special Attack because it is the only remaining stat guaranteed to
+// be unused. This allows me to maximize Speed and the defensive stats.
+auto is_useful_nature(bool const is_physical, bool const is_special) {
+	return [=](Nature const nature) {
+		if (!is_physical) {
+			return lowers_stat(nature, StatNames::ATK);
 		}
-	}
-	BOUNDED_ASSERT(!empty(container));
+		if (!is_special) {
+			return lowers_stat(nature, StatNames::SPA);
+		}
+		return true;
+	};
 }
 
-}	// namespace
+} // namespace
 
-OffensiveEVs::OffensiveEVs(Generation const generation, Species const species, Level const level, Nature const original_nature, Stat const attack, Stat const special_attack, bool const include_attack_evs, bool const include_special_attack_evs) {
-	for (auto const nature : containers::enum_range<Nature>()) {
-		containers::emplace_back(m_container, nature);
-	}
-	// If I don't have a physical move, prefer to lower that because it lowers
-	// confusion damage. If I do have a physical move but no special move,
-	// prefer to lower Special Attack because it is the only remaining stat
-	// guaranteed to be unused. This allows me to maximize Speed and the
-	// defensive stats.
-	remove_inferior_natures(m_container, include_attack_evs, include_special_attack_evs);
+OffensiveEVs::OffensiveEVs(Generation const generation, Species const species, Level const level, Nature const original_nature, Stat const attack, Stat const special_attack, bool const include_attack_evs, bool const include_special_attack_evs):
+	m_container(containers::transform(
+		containers::filter(containers::enum_range<Nature>(), is_useful_nature(include_attack_evs, include_special_attack_evs)),
+		[](Nature const nature) { return OffensiveStats(nature); }
+	))
+{
+	BOUNDED_ASSERT(!empty(m_container));
 
 	auto const stats = OffensiveData{
 		ideal_attack_stat(attack, level, original_nature, include_attack_evs),
