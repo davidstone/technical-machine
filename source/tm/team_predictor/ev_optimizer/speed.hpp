@@ -17,20 +17,20 @@
 
 #pragma once
 
+#include <tm/pokemon/level.hpp>
+
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/iv.hpp>
 #include <tm/stat/nature.hpp>
-#include <tm/stat/stat.hpp>
-#include <tm/pokemon/level.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
 
 struct SpeedEVs {
-	explicit SpeedEVs(initial_stat_type target, BaseStats, IV, Level);
+	SpeedEVs(BaseStats, Level, IV, initial_stat_type target);
 	friend auto begin(SpeedEVs const & evs) {
 		return begin(evs.m_container);
 	}
