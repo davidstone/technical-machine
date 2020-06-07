@@ -101,9 +101,10 @@ void speed_tests() {
 	constexpr auto level = Level(100_bi);
 	constexpr auto original_nature = Nature::Hardy;
 	constexpr auto iv = IV(31_bi);
+	auto const base_stats = BaseStats(generation, species);
 	auto const original_stat = Stat(generation, species, StatNames::SPE, iv, EV(76_bi));
-	auto const speed_evs = SpeedEVs(original_nature, original_stat, level);
 	auto const original_value = initial_stat(StatNames::SPE, original_stat, level, original_nature);
+	auto const speed_evs = SpeedEVs(original_value, base_stats, iv, level);
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const new_value = initial_stat(StatNames::SPE, Stat(generation, species, StatNames::SPE, iv, find(speed_evs, nature)), level, nature);
 		if (boosts_stat(nature, StatNames::SPE) and !boosts_stat(original_nature, StatNames::SPE)) {

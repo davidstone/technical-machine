@@ -46,6 +46,8 @@ inline auto initial_stat(StatNames const stat_name, Stat const stat, Level const
 	return pre_nature * boost(nature, stat_name);
 }
 
+using initial_stat_type = decltype(initial_stat(std::declval<StatNames>(), std::declval<Stat>(), std::declval<Level>(), std::declval<Nature>()));
+
 using attack_type = bounded::integer<1, 7368>;
 using special_attack_type = bounded::integer<1, 4536>;
 auto calculate_attack(Generation, ActivePokemon attacker, Type move_type, Ability other_ability, Weather, bool critical_hit) -> attack_type;

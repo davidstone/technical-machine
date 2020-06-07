@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include <tm/stat/base_stats.hpp>
+#include <tm/stat/calculate.hpp>
 #include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat.hpp>
@@ -27,9 +29,7 @@
 namespace technicalmachine {
 
 struct SpeedEVs {
-private:
-public:
-	explicit SpeedEVs(Nature nature, Stat stat, Level level);
+	explicit SpeedEVs(initial_stat_type target, BaseStats, IV, Level);
 	friend auto begin(SpeedEVs const & evs) {
 		return begin(evs.m_container);
 	}

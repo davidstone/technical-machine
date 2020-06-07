@@ -122,6 +122,7 @@ auto minimize_evs(Generation const generation, CombinedStats<EV> const stats, Sp
 			stats.speed
 		};
 	}
+	auto const base_stats = BaseStats(generation, species);
 	auto const iv = default_iv(generation);
 	auto const nature = stats.nature;
 	auto const hp = HP(generation, species, level, iv, stats.hp);
@@ -135,7 +136,7 @@ auto minimize_evs(Generation const generation, CombinedStats<EV> const stats, Sp
 		generation,
 		OffensiveEVs(generation, species, level, nature, attack, special_attack, include_attack, include_special_attack),
 		DefensiveEVs(generation, species, level, nature, hp, defense, special_defense),
-		SpeedEVs(nature, speed, level)
+		SpeedEVs(initial_stat(StatNames::SPE, speed, level, nature), base_stats, iv, level)
 	);
 }
 

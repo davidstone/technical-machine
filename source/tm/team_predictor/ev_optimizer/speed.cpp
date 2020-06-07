@@ -32,11 +32,9 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-SpeedEVs::SpeedEVs(Nature const initial_nature, Stat const initial_speed_stat, Level const level) {
-	auto const speed = initial_stat(StatNames::SPE, initial_speed_stat, level, initial_nature);
-	auto const iv = initial_speed_stat.iv();
+SpeedEVs::SpeedEVs(initial_stat_type const target, BaseStats const base, IV const iv, Level const level) {
 	for (auto const nature : containers::enum_range<Nature>()) {
-		auto const ev = stat_to_ev(speed, nature, StatNames::SPE, initial_speed_stat.base(), iv, level);
+		auto const ev = stat_to_ev(target, nature, StatNames::SPE, base.spe(), iv, level);
 		if (ev) {
 			containers::emplace_back(m_container, nature, IVAndEV{iv, *ev});
 		}
