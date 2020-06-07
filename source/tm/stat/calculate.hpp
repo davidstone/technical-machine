@@ -41,7 +41,7 @@ enum class Moves : std::uint16_t;
 struct Team;
 struct Weather;
 
-inline auto initial_stat(StatNames const stat_name, Stat const stat, Level const level, Nature const nature) {
+constexpr auto initial_stat(StatNames const stat_name, Stat const stat, Level const level, Nature const nature) {
 	auto const pre_nature = (2_bi * stat.base() + stat.iv().value() + stat.ev().value() / 4_bi) * level() / 100_bi + 5_bi;
 	return pre_nature * boost(nature, stat_name);
 }
