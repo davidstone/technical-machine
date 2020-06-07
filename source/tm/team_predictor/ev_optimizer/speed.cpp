@@ -36,7 +36,7 @@ SpeedEVs::SpeedEVs(initial_stat_type const target, BaseStats const base, IV cons
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const ev = stat_to_ev(target, nature, StatNames::SPE, base.spe(), iv, level);
 		if (ev) {
-			containers::emplace_back(m_container, nature, IVAndEV{iv, *ev});
+			containers::emplace_back(m_container, nature, *ev);
 		}
 	}
 	BOUNDED_ASSERT(!empty(m_container));
