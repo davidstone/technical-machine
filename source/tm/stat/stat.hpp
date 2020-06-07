@@ -27,21 +27,26 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
-using namespace bounded::literal;
 
 struct Stat {
 	using base_type = bounded::checked_integer<5, 230>;
 
+	constexpr Stat(base_type const base_, IV const iv_, EV const ev_):
+		m_base(base_),
+		m_iv(iv_),
+		m_ev(ev_)
+	{
+	}
+
 	Stat(Generation generation, Species name, StatNames stat, IV iv, EV ev);
-	Stat(Stat other, IV iv, EV ev);
 	
-	auto base() const {
+	constexpr auto base() const {
 		return m_base;
 	}
-	auto ev() const {
+	constexpr auto ev() const {
 		return m_ev;
 	}
-	auto iv() const {
+	constexpr auto iv() const {
 		return m_iv;
 	}
 

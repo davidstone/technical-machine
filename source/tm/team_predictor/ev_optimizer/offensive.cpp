@@ -54,7 +54,7 @@ using namespace bounded::literal;
 auto ideal_attack_stat(Stat const original_stat, Level const level, Nature const original_nature, bool const is_physical) {
 	// All we care about on this nature is the boost to Attack
 	auto const nature = is_physical ? original_nature : Nature::Modest;
-	auto const stat = is_physical ? original_stat : Stat(original_stat, original_stat.iv(), EV(0_bi));
+	auto const stat = is_physical ? original_stat : Stat(original_stat.base(), original_stat.iv(), EV(0_bi));
 	return initial_stat(StatNames::ATK, stat, level, nature);
 }
 auto ideal_special_attack_stat(Stat const original_stat, Level const level, Nature const original_nature, bool const is_special, bool const is_physical) {
@@ -63,7 +63,7 @@ auto ideal_special_attack_stat(Stat const original_stat, Level const level, Natu
 		is_special ? original_nature :
 		is_physical ? Nature::Adamant :
 		Nature::Hardy;
-	auto const stat = is_special ? original_stat : Stat(original_stat, original_stat.iv(), EV(0_bi));
+	auto const stat = is_special ? original_stat : Stat(original_stat.base(), original_stat.iv(), EV(0_bi));
 	return initial_stat(StatNames::SPA, stat, level, nature);
 }
 

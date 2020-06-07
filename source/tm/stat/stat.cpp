@@ -42,17 +42,8 @@ auto get_base(Generation const generation, Species const species, StatNames cons
 
 } // namespace
 
-Stat::Stat(Generation const generation, Species const species, StatNames const stat_name, IV const iv_, EV const ev_) :
-	m_base(get_base(generation, species, stat_name)),
-	m_iv(iv_),
-	m_ev(ev_)
-{
-}
-
-Stat::Stat(Stat const other, IV const iv_, EV const ev_) :
-	m_base(other.base()),
-	m_iv(iv_),
-	m_ev(ev_)
+Stat::Stat(Generation const generation, Species const species, StatNames const stat_name, IV const iv_, EV const ev_):
+	Stat(get_base(generation, species, stat_name), iv_, ev_)
 {
 }
 

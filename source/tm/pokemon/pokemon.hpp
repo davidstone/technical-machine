@@ -202,7 +202,7 @@ inline Stat get_stat(Pokemon const pokemon, StatNames const index_stat) {
 }
 inline auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, IV const iv, EV const ev) -> void {
 	auto & stat = pokemon.stats[stat_name];
-	stat = Stat(stat, iv, ev);
+	stat = Stat(stat.base(), iv, ev);
 }
 
 
