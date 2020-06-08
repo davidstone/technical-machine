@@ -46,8 +46,7 @@ static_assert(stat_to_ev(178_bi, Nature::Bold, StatNames::ATK, 125_bi, IV(19_bi)
 
 } // namespace
 
-auto hp_to_ev(Generation const generation, Species const species, Level const level, HP::max_type const stat, IV const iv) -> EV {
-	auto const base = BaseStats(generation, species);
+auto hp_to_ev(BaseStats const base, Level const level, HP::max_type const stat, IV const iv) -> EV {
 	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(base, level, iv, ev).max(); });
 	auto const it = containers::lower_bound(stat_range, stat);
 	if (it == end(stat_range)) {
@@ -70,7 +69,7 @@ auto calculate_evs(
 	
 	auto const base = BaseStats(generation, species);
 	
-	auto const hp_ev = hp_to_ev(generation, species, level, stats.hp, ivs.hp);
+	auto const hp_ev = hp_to_ev(base, level, stats.hp, ivs.hp);
 
 	for (auto const nature : nature_range) {
 		auto const attack_ev = stat_to_ev(stats.attack, nature, StatNames::ATK, base.atk(), ivs.attack, level);
