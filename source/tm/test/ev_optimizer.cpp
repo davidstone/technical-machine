@@ -69,15 +69,16 @@ void defensive_tests() {
 
 	auto const base_stats = BaseStats(Generation::four, Species::Celebi);
 	constexpr auto level = Level(100_bi);
+	constexpr auto nature = Nature::Bold;
 	constexpr auto iv = IV(31_bi);
 	constexpr auto hp_ev = EV(252_bi);
 	constexpr auto defense_ev = EV(252_bi);
 	constexpr auto special_defense_ev = EV(4_bi);
-	auto const hp = HP(base_stats, level, iv, hp_ev);
-	auto const defense = Stat(base_stats.def(), iv, defense_ev);
-	auto const special_defense = Stat(base_stats.spd(), iv, special_defense_ev);
+	auto const hp = HP(base_stats, level, iv, hp_ev).max();
+	auto const defense = initial_stat(StatNames::DEF, Stat(base_stats.def(), iv, defense_ev), level, nature);
+	auto const special_defense = initial_stat(StatNames::SPD, Stat(base_stats.spd(), iv, special_defense_ev), level, nature);
 	
-	auto defensive_evs = DefensiveEVs(base_stats, level, Nature::Bold, hp, defense, special_defense);
+	auto defensive_evs = DefensiveEVs(base_stats, level, DefensiveEVs::InputHP{iv, hp}, DefensiveEVs::InputStat{iv, defense}, DefensiveEVs::InputStat{iv, special_defense});
 	for (auto const & candidate : defensive_evs) {
 		BOUNDED_ASSERT(candidate.hp == hp_ev);
 		BOUNDED_ASSERT(candidate.defense == defense_ev);

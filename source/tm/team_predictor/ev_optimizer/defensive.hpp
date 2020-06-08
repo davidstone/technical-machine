@@ -23,6 +23,7 @@
 #include <tm/pokemon/level.hpp>
 
 #include <tm/stat/base_stats.hpp>
+#include <tm/stat/calculate.hpp>
 #include <tm/stat/hp.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat.hpp>
@@ -34,7 +35,15 @@
 namespace technicalmachine {
 
 struct DefensiveEVs {
-	DefensiveEVs(BaseStats, Level, Nature, HP, Stat defense, Stat special_defense);
+	struct InputHP {
+		IV iv;
+		HP::max_type stat;
+	};
+	struct InputStat {
+		IV iv;
+		initial_stat_type stat;
+	};
+	DefensiveEVs(BaseStats, Level, InputHP, InputStat defense, InputStat special_defense);
 	friend auto begin(DefensiveEVs const & defensive) {
 		return begin(defensive.m_container);
 	}

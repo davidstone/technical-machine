@@ -41,39 +41,33 @@ constexpr auto ev_sum(DataPoint const data) {
 
 }	// namespace
 
-DefensiveEVs::DefensiveEVs(BaseStats const base_stats, Level const level, Nature const original_nature, HP const original_hp, Stat const defense, Stat const special_defense) {
-	auto product = [=](Nature const nature, HP const hp, StatNames const name, Stat const stat) {
-		return hp.max() * initial_stat(name, stat, level, nature);
-	};
-	auto initial_product = [=](StatNames const name, Stat const stat) {
-		return product(original_nature, original_hp, name, stat);
-	};
-	auto const defense_product = initial_product(StatNames::DEF, defense);
-	auto const special_defense_product = initial_product(StatNames::SPD, special_defense);
+DefensiveEVs::DefensiveEVs(BaseStats const base_stats, Level const level, InputHP const original_hp, InputStat const def, InputStat const spd) {
+	auto const def_product = original_hp.stat * def.stat;
+	auto const spd_product = original_hp.stat * spd.stat;
 
 	auto defensive_product = [=](DataPoint const value) {
-		auto const hp = HP(base_stats, level, original_hp.iv(), value.hp);
-		auto single_product = [=](StatNames const stat, Stat::base_type const base_stat, IV const iv, EV const ev) {
-			return product(value.nature, hp, stat, Stat(base_stat, iv, ev));
+		auto const hp = HP(base_stats, level, original_hp.iv, value.hp).max();
+		auto single_product = [=](StatNames const name, Stat::base_type const base_stat, IV const iv, EV const ev) {
+			return hp * initial_stat(name, Stat(base_stat, iv, ev), level, value.nature);
 		};
 
-		return single_product(StatNames::DEF, base_stats.def(), defense.iv(), value.defense) * single_product(StatNames::SPD, base_stats.spd(), special_defense.iv(), value.special_defense);
+		return single_product(StatNames::DEF, base_stats.def(), def.iv, value.defense) * single_product(StatNames::SPD, base_stats.spd(), spd.iv, value.special_defense);
 	};
 
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto best_per_nature = bounded::optional<DataPoint>{};
 		for (auto const hp_ev : ev_range()) {
-			auto const hp = HP(base_stats, level, original_hp.iv(), hp_ev);
+			auto const hp = HP(base_stats, level, original_hp.iv, hp_ev);
 			auto find_minimum_matching = [=](StatNames const stat_name, auto const base, IV const iv, auto const original_product) {
 				auto const target_stat = round_up_divide(original_product, hp.max());
 				return stat_to_ev(target_stat, nature, stat_name, base, iv, level);
 			};
 
-			auto const defense_ev = find_minimum_matching(StatNames::DEF, base_stats.def(), defense.iv(), defense_product);
+			auto const defense_ev = find_minimum_matching(StatNames::DEF, base_stats.def(), def.iv, def_product);
 			if (!defense_ev) {
 				continue;
 			}
-			auto const special_defense_ev = find_minimum_matching(StatNames::SPD, base_stats.spd(), special_defense.iv(), special_defense_product);
+			auto const special_defense_ev = find_minimum_matching(StatNames::SPD, base_stats.spd(), spd.iv, spd_product);
 			if (!special_defense_ev) {
 				continue;
 			}
