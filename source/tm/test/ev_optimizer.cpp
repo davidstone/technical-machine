@@ -54,14 +54,14 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	set_stat_ev(pokemon, StatNames::SPE, iv, EV(60_bi));
 	all_moves(pokemon).add(Move(generation, Moves::Meteor_Mash));
 
-	auto const stats = calculate_evs(generation, pokemon);
+	auto const stats = calculate_ivs_and_evs(generation, pokemon);
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
 	BOUNDED_ASSERT(minimize_evs(generation, stats, species, level, include_attack, include_special_attack) == stats);
 	BOUNDED_ASSERT(pad_random_evs(generation, stats, include_attack, include_special_attack, random_engine) == stats);
 	optimize_evs(generation, pokemon, random_engine);
-	BOUNDED_ASSERT(calculate_evs(generation, pokemon) == stats);
+	BOUNDED_ASSERT(calculate_ivs_and_evs(generation, pokemon) == stats);
 }
 
 void defensive_tests() {
@@ -80,9 +80,9 @@ void defensive_tests() {
 	
 	auto defensive_evs = DefensiveEVs(base_stats, level, DefensiveEVs::InputHP{iv, hp}, DefensiveEVs::InputStat{iv, defense}, DefensiveEVs::InputStat{iv, special_defense});
 	for (auto const & candidate : defensive_evs) {
-		BOUNDED_ASSERT(candidate.hp == hp_ev);
-		BOUNDED_ASSERT(candidate.defense == defense_ev);
-		BOUNDED_ASSERT(candidate.special_defense >= special_defense_ev);
+		BOUNDED_ASSERT(candidate.hp.ev == hp_ev);
+		BOUNDED_ASSERT(candidate.defense.ev == defense_ev);
+		BOUNDED_ASSERT(candidate.special_defense.ev >= special_defense_ev);
 		BOUNDED_ASSERT(boosts_stat(candidate.nature, StatNames::DEF));
 	}
 }
@@ -90,7 +90,7 @@ void defensive_tests() {
 auto find(SpeedEVs const & container, Nature const nature) {
 	auto const it = containers::find_if(container, [=](auto const & value) { return value.nature == nature; });
 	BOUNDED_ASSERT(it != end(container));
-	return it->ev;
+	return it->stat.ev;
 }
 
 void speed_tests() {
@@ -148,14 +148,14 @@ void generation_two(std::mt19937 & random_engine) {
 	all_moves(pokemon).add(Move(generation, Moves::Tackle));
 	all_moves(pokemon).add(Move(generation, Moves::Psychic));
 
-	auto const stats = calculate_evs(generation, pokemon);
+	auto const stats = calculate_ivs_and_evs(generation, pokemon);
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = true;
 	BOUNDED_ASSERT(minimize_evs(generation, stats, species, level, include_attack, include_special_attack) == stats);
 	BOUNDED_ASSERT(pad_random_evs(generation, stats, include_attack, include_special_attack, random_engine) == stats);
 	optimize_evs(generation, pokemon, random_engine);
-	BOUNDED_ASSERT(calculate_evs(generation, pokemon) == stats);
+	BOUNDED_ASSERT(calculate_ivs_and_evs(generation, pokemon) == stats);
 }
 
 }	// namespace

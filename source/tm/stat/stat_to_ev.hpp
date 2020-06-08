@@ -22,6 +22,7 @@
 #include <tm/stat/generic_stats.hpp>
 #include <tm/stat/hp.hpp>
 #include <tm/stat/iv.hpp>
+#include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat.hpp>
 #include <tm/stat/stat_names.hpp>
@@ -58,7 +59,7 @@ constexpr auto stat_to_ev(auto const target, Nature const nature, StatNames cons
 }
 
 using StatValue = bounded::integer<4, 614>;
-auto calculate_evs(Generation, Species, Level, GenericStats<HP::max_type, StatValue>, IVs) -> CombinedStats<EV>;
-auto calculate_evs(Generation, Pokemon) -> CombinedStats<EV>;
+auto calculate_ivs_and_evs(Generation, Species, Level, GenericStats<HP::max_type, StatValue>, IVs) -> CombinedStats<IVAndEV>;
+auto calculate_ivs_and_evs(Generation, Pokemon) -> CombinedStats<IVAndEV>;
 
 } // namespace technicalmachine

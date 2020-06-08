@@ -21,8 +21,7 @@
 
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/calculate.hpp>
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
+#include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
@@ -40,7 +39,7 @@ struct SpeedEVs {
 private:
 	struct Mapped {
 		Nature nature;
-		EV ev;
+		IVAndEV stat;
 	};
 	containers::static_vector<Mapped, static_cast<int>(bounded::max_value<Nature>) + 1> m_container;
 };

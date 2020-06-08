@@ -67,31 +67,30 @@ auto parse_team(boost::property_tree::ptree const & pt, Generation const generat
 
 		// TODO: Use the correct IVs if there is a Hidden Power
 		auto const iv = default_iv(generation);
-		auto const ivs = IVs{iv, iv, iv, iv, iv, iv};
-		auto const evs = calculate_evs(
+		auto const stats = calculate_ivs_and_evs(
 			generation,
 			details.species,
 			details.level,
 			parse_stats(hp, pokemon_data.second.get_child("stats")),
-			ivs
+			IVs{iv, iv, iv, iv, iv, iv}
 		);
 
 		auto const ability = from_string<Ability>(get("baseAbility"));
 		
 		auto const item = from_string<Item>(get("item"));
 		
-		Pokemon & pokemon = team.add_pokemon(generation, details.species, details.level, details.gender, item, ability, evs.nature);
+		Pokemon & pokemon = team.add_pokemon(generation, details.species, details.level, details.gender, item, ability, stats.nature);
 		
 		for (auto const & move : pokemon_data.second.get_child("moves")) {
 			 add_seen_move(all_moves(pokemon), generation, from_string<Moves>(move.second.get<std::string>("")));
 		}
 
-		set_hp_ev(generation, pokemon, ivs.hp, evs.hp);
-		set_stat_ev(pokemon, StatNames::ATK, ivs.attack, evs.attack);
-		set_stat_ev(pokemon, StatNames::DEF, ivs.defense, evs.defense);
-		set_stat_ev(pokemon, StatNames::SPA, ivs.special_attack, evs.special_attack);
-		set_stat_ev(pokemon, StatNames::SPD, ivs.special_defense, evs.special_defense);
-		set_stat_ev(pokemon, StatNames::SPE, ivs.speed, evs.speed);
+		set_hp_ev(generation, pokemon, stats.hp.iv, stats.hp.ev);
+		set_stat_ev(pokemon, StatNames::ATK, stats.attack.iv, stats.attack.ev);
+		set_stat_ev(pokemon, StatNames::DEF, stats.defense.iv, stats.defense.ev);
+		set_stat_ev(pokemon, StatNames::SPA, stats.special_attack.iv, stats.special_attack.ev);
+		set_stat_ev(pokemon, StatNames::SPD, stats.special_defense.iv, stats.special_defense.ev);
+		set_stat_ev(pokemon, StatNames::SPE, stats.speed.iv, stats.speed.ev);
 	}
 	team.all_pokemon().reset_index();
 	return team;

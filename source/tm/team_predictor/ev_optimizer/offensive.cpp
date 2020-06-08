@@ -74,7 +74,7 @@ auto evs_for_nature(BaseStats const base, Level const level, OffensiveEVs::Input
 	return [=](Nature const nature) {
 		auto const atk_ev = stat_to_ev(target_atk, nature, StatNames::ATK, base.atk(), atk.iv, level);
 		auto const spa_ev = stat_to_ev(target_spa, nature, StatNames::SPA, base.spa(), spa.iv, level);
-		return BOUNDED_CONDITIONAL(atk_ev and spa_ev, (OffensiveStats{nature, *atk_ev, *spa_ev}), bounded::none);
+		return BOUNDED_CONDITIONAL(atk_ev and spa_ev, (OffensiveStats{nature, {atk.iv, *atk_ev}, {spa.iv, *spa_ev}}), bounded::none);
 	};
 }
 

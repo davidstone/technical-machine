@@ -42,14 +42,14 @@ static_assert(stat_to_ev(614_bi, Nature::Impish, StatNames::DEF, 230_bi, IV(31_b
 static_assert(stat_to_ev(558_bi, Nature::Hardy, StatNames::DEF, 230_bi, IV(DV(15_bi)), Level(100_bi)) == EV(252_bi));
 static_assert(stat_to_ev(178_bi, Nature::Bold, StatNames::ATK, 125_bi, IV(19_bi), Level(63_bi)) == EV(152_bi));
 
-auto calculate_evs(
+auto calculate_ivs_and_evs(
 	Generation const generation,
 	Species const species,
 	Level const level,
 	GenericStats<HP::max_type, StatValue> const stats,
 	IVs const ivs,
 	auto const nature_range
-) -> CombinedStats<EV> {
+) -> CombinedStats<IVAndEV> {
 	// TODO: Give the correct IVs for the Hidden Power type
 	
 	auto const base = BaseStats(generation, species);
@@ -78,14 +78,14 @@ auto calculate_evs(
 			continue;
 		}
 
-		auto const combined = CombinedStats<EV>{
+		auto const combined = CombinedStats<IVAndEV>{
 			nature,
-			hp_ev,
-			*attack_ev,
-			*defense_ev,
-			*special_attack_ev,
-			*special_defense_ev,
-			*speed_ev
+			{ivs.hp, hp_ev},
+			{ivs.attack, *attack_ev},
+			{ivs.defense, *defense_ev},
+			{ivs.special_attack, *special_attack_ev},
+			{ivs.special_defense, *special_defense_ev},
+			{ivs.speed, *speed_ev}
 		};
 		if (ev_sum(combined) > max_total_evs(generation)) {
 			continue;
@@ -109,18 +109,18 @@ auto calculate_evs(
 
 } // namespace
 
-auto calculate_evs(
+auto calculate_ivs_and_evs(
 	Generation const generation,
 	Species const species,
 	Level const level,
 	GenericStats<HP::max_type, StatValue> const stats,
 	IVs const ivs
-) -> CombinedStats<EV> {
+) -> CombinedStats<IVAndEV> {
 	auto const nature_range = generation <= Generation::two ? 
 		containers::enum_range(Nature::Hardy, Nature::Hardy) :
 		containers::enum_range<Nature>();
 
-	return calculate_evs(
+	return calculate_ivs_and_evs(
 		generation,
 		species,
 		level,
@@ -130,7 +130,7 @@ auto calculate_evs(
 	);
 }
 
-auto calculate_evs(Generation const generation, Pokemon const pokemon) -> CombinedStats<EV> {
+auto calculate_ivs_and_evs(Generation const generation, Pokemon const pokemon) -> CombinedStats<IVAndEV> {
 	auto const nature = get_nature(pokemon);
 	auto calculate_stat = [=](StatNames const stat_name) {
 		auto const stat = get_stat(pokemon, stat_name);
@@ -146,7 +146,7 @@ auto calculate_evs(Generation const generation, Pokemon const pokemon) -> Combin
 	};
 	auto const ivs = hidden_power_ivs(generation, get_hidden_power_type(pokemon), has_physical_move(generation, pokemon));
 	// TODO: Use Hidden Power power to determine IVs, not just the type
-	return calculate_evs(
+	return calculate_ivs_and_evs(
 		generation,
 		get_species(pokemon),
 		get_level(pokemon),

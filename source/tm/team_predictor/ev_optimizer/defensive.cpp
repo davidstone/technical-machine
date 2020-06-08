@@ -36,7 +36,7 @@ namespace technicalmachine {
 namespace {
 
 constexpr auto ev_sum(DataPoint const data) {
-	return data.hp.value() + data.defense.value() + data.special_defense.value();
+	return data.hp.ev.value() + data.defense.ev.value() + data.special_defense.ev.value();
 }
 
 }	// namespace
@@ -46,12 +46,12 @@ DefensiveEVs::DefensiveEVs(BaseStats const base_stats, Level const level, InputH
 	auto const spd_product = original_hp.stat * spd.stat;
 
 	auto defensive_product = [=](DataPoint const value) {
-		auto const hp = HP(base_stats, level, original_hp.iv, value.hp).max();
+		auto const hp = HP(base_stats, level, value.hp.iv, value.hp.ev).max();
 		auto single_product = [=](StatNames const name, Stat::base_type const base_stat, IV const iv, EV const ev) {
 			return hp * initial_stat(name, base_stat, iv, ev, level, value.nature);
 		};
 
-		return single_product(StatNames::DEF, base_stats.def(), def.iv, value.defense) * single_product(StatNames::SPD, base_stats.spd(), spd.iv, value.special_defense);
+		return single_product(StatNames::DEF, base_stats.def(), value.defense.iv, value.defense.ev) * single_product(StatNames::SPD, base_stats.spd(), value.special_defense.iv, value.special_defense.ev);
 	};
 
 	for (auto const nature : containers::enum_range<Nature>()) {
@@ -82,7 +82,7 @@ DefensiveEVs::DefensiveEVs(BaseStats const base_stats, Level const level, InputH
 				auto const current_product = defensive_product(current);
 				return candidate_product > current_product;
 			};
-			auto const candidate = DataPoint{nature, hp_ev, *defense_ev, *special_defense_ev};
+			auto const candidate = DataPoint{nature, {original_hp.iv, hp_ev}, {def.iv, *defense_ev}, {spd.iv, *special_defense_ev}};
 			if (!best_per_nature or is_better(candidate, *best_per_nature)) {
 				insert(best_per_nature, candidate);
 			}

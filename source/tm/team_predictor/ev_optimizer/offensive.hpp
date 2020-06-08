@@ -22,8 +22,7 @@
 
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/calculate.hpp>
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
+#include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 
 #include <bounded/integer.hpp>
@@ -35,8 +34,8 @@ using namespace bounded::literal;
 
 struct OffensiveStats {
 	Nature nature;
-	EV attack;
-	EV special_attack;
+	IVAndEV attack;
+	IVAndEV special_attack;
 };
 
 struct OffensiveEVs {

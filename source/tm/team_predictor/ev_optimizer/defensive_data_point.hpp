@@ -17,16 +17,16 @@
 
 #pragma once
 
-#include <tm/stat/ev.hpp>
+#include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 
 namespace technicalmachine {
 
 struct DataPoint {
 	Nature nature;
-	EV hp;
-	EV defense;
-	EV special_defense;
+	IVAndEV hp;
+	IVAndEV defense;
+	IVAndEV special_defense;
 };
 
 }	// namespace technicalmachine

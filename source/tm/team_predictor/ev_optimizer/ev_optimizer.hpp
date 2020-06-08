@@ -21,6 +21,7 @@
 #include <tm/pokemon/species_forward.hpp>
 
 #include <tm/stat/combined_stats.hpp>
+#include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/stat_names.hpp>
 
 #include <tm/operators.hpp>
@@ -38,7 +39,7 @@ constexpr auto regular_stats() {
 }
 
 void optimize_evs(Generation, Pokemon & pokemon, std::mt19937 & random_engine);
-auto minimize_evs(Generation, CombinedStats<EV> stats, Species, Level, bool include_attack, bool include_special_attack) -> CombinedStats<EV>;
-auto pad_random_evs(Generation, CombinedStats<EV> combined, bool include_attack, bool include_special_attack, std::mt19937 & random_engine) -> CombinedStats<EV>;
+auto minimize_evs(Generation, CombinedStats<IVAndEV> stats, Species, Level, bool include_attack, bool include_special_attack) -> CombinedStats<IVAndEV>;
+auto pad_random_evs(Generation, CombinedStats<IVAndEV> combined, bool include_attack, bool include_special_attack, std::mt19937 & random_engine) -> CombinedStats<IVAndEV>;
 
 }	// namespace technicalmachine

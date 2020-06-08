@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <tm/stat/ev.hpp>
+#include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 
 #include <tm/operators.hpp>
@@ -37,8 +37,8 @@ struct CombinedStats {
 	friend auto operator==(CombinedStats const &, CombinedStats const &) -> bool = default;
 };
 
-constexpr auto ev_sum(CombinedStats<EV> const stats) {
-	constexpr auto impl = [](auto... args) { return (... + args.value()); };
+constexpr auto ev_sum(CombinedStats<IVAndEV> const stats) {
+	constexpr auto impl = [](auto... args) { return (... + args.ev.value()); };
 	return impl(stats.hp, stats.attack, stats.defense, stats.special_attack, stats.special_defense, stats.speed);
 }
 
