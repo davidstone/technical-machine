@@ -29,17 +29,6 @@
 
 namespace technicalmachine {
 
-namespace {
-
-constexpr auto append(auto & output, auto && input) -> void {
-	auto const last = end(OPERATORS_FORWARD(input));
-	for (auto it = begin(OPERATORS_FORWARD(input)); it != last; ++it) {
-		lazy_push_back(output, [&] { return *it; });
-	}
-}
-
-}
-
 auto test_files_in_path() -> void {
 	auto const path = std::filesystem::temp_directory_path() / "tm_test_files_in_path";
 
