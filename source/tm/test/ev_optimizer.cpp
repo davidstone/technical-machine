@@ -69,6 +69,7 @@ void defensive_tests() {
 
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Celebi;
+	auto const base_stats = BaseStats(generation, species);
 	constexpr auto level = Level(100_bi);
 	constexpr auto iv = IV(31_bi);
 	constexpr auto hp_ev = EV(252_bi);
@@ -78,7 +79,7 @@ void defensive_tests() {
 	auto const defense = Stat(generation, species, StatNames::DEF, iv, defense_ev);
 	auto const special_defense = Stat(generation, species, StatNames::SPD, iv, special_defense_ev);
 	
-	auto defensive_evs = DefensiveEVs(generation, species, level, Nature::Bold, hp, defense, special_defense);
+	auto defensive_evs = DefensiveEVs(generation, base_stats, species, level, Nature::Bold, hp, defense, special_defense);
 	for (auto const & candidate : defensive_evs) {
 		BOUNDED_ASSERT(candidate.hp == hp_ev);
 		BOUNDED_ASSERT(candidate.defense == defense_ev);

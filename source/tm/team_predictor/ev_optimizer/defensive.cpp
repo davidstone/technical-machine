@@ -35,15 +35,13 @@
 namespace technicalmachine {
 namespace {
 
-using namespace bounded::literal;
-
 constexpr auto ev_sum(DataPoint const data) {
 	return data.hp.value() + data.defense.value() + data.special_defense.value();
 }
 
 }	// namespace
 
-DefensiveEVs::DefensiveEVs(Generation const generation, Species const species, Level const level, Nature const original_nature, HP const original_hp, Stat const defense, Stat const special_defense) {
+DefensiveEVs::DefensiveEVs(Generation const generation, BaseStats const base_stats, Species const species, Level const level, Nature const original_nature, HP const original_hp, Stat const defense, Stat const special_defense) {
 	auto product = [=](Nature const nature, HP const hp, StatNames const name, Stat const stat) {
 		return hp.max() * initial_stat(name, stat, level, nature);
 	};
@@ -66,16 +64,16 @@ DefensiveEVs::DefensiveEVs(Generation const generation, Species const species, L
 		auto best_per_nature = bounded::optional<DataPoint>{};
 		for (auto const hp_ev : ev_range()) {
 			auto const hp = HP(generation, species, level, original_hp.iv(), hp_ev);
-			auto find_minimum_matching = [=](StatNames const stat_name, Stat const stat, auto const original_product) {
+			auto find_minimum_matching = [=](StatNames const stat_name, auto const base, IV const iv, auto const original_product) {
 				auto const target_stat = round_up_divide(original_product, hp.max());
-				return stat_to_ev(target_stat, nature, stat_name, stat.base(), stat.iv(), level);
+				return stat_to_ev(target_stat, nature, stat_name, base, iv, level);
 			};
 
-			auto const defense_ev = find_minimum_matching(StatNames::DEF, defense, defense_product);
+			auto const defense_ev = find_minimum_matching(StatNames::DEF, base_stats.def(), defense.iv(), defense_product);
 			if (!defense_ev) {
 				continue;
 			}
-			auto const special_defense_ev = find_minimum_matching(StatNames::SPD, special_defense, special_defense_product);
+			auto const special_defense_ev = find_minimum_matching(StatNames::SPD, base_stats.spd(), special_defense.iv(), special_defense_product);
 			if (!special_defense_ev) {
 				continue;
 			}
