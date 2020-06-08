@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/stat/base_stats.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/iv.hpp>
 
@@ -27,8 +28,6 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
-enum class Generation : std::uint8_t;
-struct Level;
 using namespace bounded::literal;
 
 struct HP {
@@ -36,7 +35,7 @@ struct HP {
 	using max_type = bounded::integer<1, max_value>;
 	using current_type = bounded::integer<0, max_value>;
 	
-	HP(Generation generation, Species species, Level level, IV iv_, EV ev_);
+	HP(BaseStats, Level level, IV iv_, EV ev_);
 
 	auto & operator=(auto const & value) & {
 		m_current = bounded::min(value, m_max);

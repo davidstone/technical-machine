@@ -18,9 +18,9 @@
 
 #pragma once
 
+#include <tm/stat/base_stats.hpp>
 #include <tm/stat/hp.hpp>
 #include <tm/stat/stat.hpp>
-#include <tm/pokemon/species_forward.hpp>
 
 #include <containers/array/array.hpp>
 
@@ -29,7 +29,7 @@ enum class Generation : std::uint8_t;
 struct Level;
 
 struct Stats {
-	Stats(Generation, Species species, Level level);
+	Stats(Generation, BaseStats, Level);
 	auto hp() const -> HP const &;
 	auto hp() -> HP &;
 	auto operator[](StatNames stat) const -> Stat const &;

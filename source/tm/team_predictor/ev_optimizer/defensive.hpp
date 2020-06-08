@@ -21,7 +21,6 @@
 #include <tm/team_predictor/ev_optimizer/defensive_data_point.hpp>
 
 #include <tm/pokemon/level.hpp>
-#include <tm/pokemon/species_forward.hpp>
 
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/hp.hpp>
@@ -34,10 +33,8 @@
 
 namespace technicalmachine {
 
-enum class Generation : std::uint8_t;
-
 struct DefensiveEVs {
-	DefensiveEVs(Generation, BaseStats, Species, Level, Nature, HP, Stat defense, Stat special_defense);
+	DefensiveEVs(BaseStats, Level, Nature, HP, Stat defense, Stat special_defense);
 	friend auto begin(DefensiveEVs const & defensive) {
 		return begin(defensive.m_container);
 	}

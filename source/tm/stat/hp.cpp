@@ -17,31 +17,27 @@
 
 #include <tm/stat/hp.hpp>
 
-#include <tm/pokemon/level.hpp>
-#include <tm/stat/base_stats.hpp>
-
 namespace technicalmachine {
 namespace {
 
-auto initial_hp(Generation const generation, Species const species, IV const iv, EV const ev, Level const level) {
-	auto const base = BaseStats(generation, species).hp();
-	auto const value = BOUNDED_CONDITIONAL((base > 1_bi),
-		(2_bi * base + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 10_bi + level(),
+auto initial_hp(BaseStats const base, Level const level, IV const iv, EV const ev) {
+	auto const value = BOUNDED_CONDITIONAL((base.hp() > 1_bi),
+		(2_bi * base.hp() + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 10_bi + level(),
 		1_bi
 	);
-	static_assert(bounded::min_value<decltype(value)> == bounded::min_value<HP::max_type>, "Incorrect HP min.");
-	static_assert(bounded::max_value<decltype(value)> == bounded::max_value<HP::max_type>, "Incorrect HP max.");
+	static_assert(bounded::min_value<decltype(value)> == bounded::min_value<HP::max_type>);
+	static_assert(bounded::max_value<decltype(value)> == bounded::max_value<HP::max_type>);
 	return value;
 }
 
-}	// namespace
+} // namespace
 
-HP::HP(Generation const generation, Species const species, Level const level, IV const iv_, EV const ev_) :
+HP::HP(BaseStats const base, Level const level, IV const iv_, EV const ev_):
 	m_iv(iv_),
 	m_ev(ev_),
-	m_max(initial_hp(generation, species, m_iv, m_ev, level)),
+	m_max(initial_hp(base, level, m_iv, m_ev)),
 	m_current(m_max)
-	{
+{
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

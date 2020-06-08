@@ -41,7 +41,7 @@ constexpr auto ev_sum(DataPoint const data) {
 
 }	// namespace
 
-DefensiveEVs::DefensiveEVs(Generation const generation, BaseStats const base_stats, Species const species, Level const level, Nature const original_nature, HP const original_hp, Stat const defense, Stat const special_defense) {
+DefensiveEVs::DefensiveEVs(BaseStats const base_stats, Level const level, Nature const original_nature, HP const original_hp, Stat const defense, Stat const special_defense) {
 	auto product = [=](Nature const nature, HP const hp, StatNames const name, Stat const stat) {
 		return hp.max() * initial_stat(name, stat, level, nature);
 	};
@@ -52,18 +52,18 @@ DefensiveEVs::DefensiveEVs(Generation const generation, BaseStats const base_sta
 	auto const special_defense_product = initial_product(StatNames::SPD, special_defense);
 
 	auto defensive_product = [=](DataPoint const value) {
-		auto const hp = HP(generation, species, level, original_hp.iv(), value.hp);
-		auto single_product = [=](StatNames const stat, IV const iv, EV const ev) {
-			return product(value.nature, hp, stat, Stat(generation, species, stat, iv, ev));
+		auto const hp = HP(base_stats, level, original_hp.iv(), value.hp);
+		auto single_product = [=](StatNames const stat, Stat::base_type const base_stat, IV const iv, EV const ev) {
+			return product(value.nature, hp, stat, Stat(base_stat, iv, ev));
 		};
 
-		return single_product(StatNames::DEF, defense.iv(), value.defense) * single_product(StatNames::SPD, special_defense.iv(), value.special_defense);
+		return single_product(StatNames::DEF, base_stats.def(), defense.iv(), value.defense) * single_product(StatNames::SPD, base_stats.spd(), special_defense.iv(), value.special_defense);
 	};
 
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto best_per_nature = bounded::optional<DataPoint>{};
 		for (auto const hp_ev : ev_range()) {
-			auto const hp = HP(generation, species, level, original_hp.iv(), hp_ev);
+			auto const hp = HP(base_stats, level, original_hp.iv(), hp_ev);
 			auto find_minimum_matching = [=](StatNames const stat_name, auto const base, IV const iv, auto const original_product) {
 				auto const target_stat = round_up_divide(original_product, hp.max());
 				return stat_to_ev(target_stat, nature, stat_name, base, iv, level);

@@ -1,4 +1,3 @@
-// Stat data structure (Attack, Defense, Special Attack, Special Defense, Speed)
 // Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
@@ -17,34 +16,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/stat/stat.hpp>
-
-#include <tm/stat/base_stats.hpp>
-#include <tm/stat/stat_names.hpp>
-#include <tm/pokemon/species.hpp>
-
-#include <bounded/assert.hpp>
-#include <bounded/unreachable.hpp>
-
-namespace technicalmachine {
-namespace {
-
-auto get_base(Generation const generation, Species const species, StatNames const stat) -> Stat::base_type {
-	auto const base = BaseStats(generation, species);
-	switch (stat) {
-		case StatNames::ATK: return base.atk();
-		case StatNames::DEF: return base.def();
-		case StatNames::SPA: return base.spa();
-		case StatNames::SPD: return base.spd();
-		case StatNames::SPE: return base.spe();
-		default: bounded::assert_or_assume_unreachable();
-	}
-}
-
-} // namespace
-
-Stat::Stat(Generation const generation, Species const species, StatNames const stat_name, IV const iv_, EV const ev_):
-	Stat(get_base(generation, species, stat_name), iv_, ev_)
-{
-}
-
-} // namespace technicalmachine

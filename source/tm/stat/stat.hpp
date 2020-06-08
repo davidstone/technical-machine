@@ -1,4 +1,3 @@
-// Stat data structure (Attack, Defense, Special Attack, Special Defense, Speed)
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -20,9 +19,6 @@
 
 #include <tm/stat/ev.hpp>
 #include <tm/stat/iv.hpp>
-#include <tm/stat/stat_names.hpp>
-#include <tm/pokemon/species_forward.hpp>
-#include <tm/generation.hpp>
 
 #include <bounded/integer.hpp>
 
@@ -38,8 +34,6 @@ struct Stat {
 	{
 	}
 
-	Stat(Generation generation, Species name, StatNames stat, IV iv, EV ev);
-	
 	constexpr auto base() const {
 		return m_base;
 	}

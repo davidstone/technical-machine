@@ -193,7 +193,8 @@ inline HP get_hp(Pokemon const pokemon) {
 	return pokemon.stats.hp();
 }
 inline auto set_hp_ev(Generation const generation, Pokemon & pokemon, IV const iv, EV const ev) -> void {
-	pokemon.stats.hp() = HP(generation, get_species(pokemon), get_level(pokemon), iv, ev);
+	auto const base_stats = BaseStats(generation, get_species(pokemon));
+	pokemon.stats.hp() = HP(base_stats, get_level(pokemon), iv, ev);
 }
 
 

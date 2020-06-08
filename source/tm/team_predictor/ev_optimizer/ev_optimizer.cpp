@@ -125,17 +125,17 @@ auto minimize_evs(Generation const generation, CombinedStats<EV> const stats, Sp
 	auto const base_stats = BaseStats(generation, species);
 	auto const iv = default_iv(generation);
 	auto const nature = stats.nature;
-	auto const hp = HP(generation, species, level, iv, stats.hp);
-	auto const attack = initial_stat(StatNames::ATK, Stat(generation, species, StatNames::ATK, iv, stats.attack), level, nature);
-	auto const defense = Stat(generation, species, StatNames::DEF, iv, stats.defense);
-	auto const special_attack = initial_stat(StatNames::SPA, Stat(generation, species, StatNames::SPA, iv, stats.special_attack), level, nature);
-	auto const special_defense = Stat(generation, species, StatNames::SPD, iv, stats.special_defense);
-	auto const speed = initial_stat(StatNames::SPE, Stat(generation, species, StatNames::SPE, iv, stats.speed), level, nature);
+	auto const hp = HP(base_stats, level, iv, stats.hp);
+	auto const attack = initial_stat(StatNames::ATK, Stat(base_stats.atk(), iv, stats.attack), level, nature);
+	auto const defense = Stat(base_stats.def(), iv, stats.defense);
+	auto const special_attack = initial_stat(StatNames::SPA, Stat(base_stats.spa(), iv, stats.special_attack), level, nature);
+	auto const special_defense = Stat(base_stats.spd(), iv, stats.special_defense);
+	auto const speed = initial_stat(StatNames::SPE, Stat(base_stats.spe(), iv, stats.speed), level, nature);
 
 	return combine(
 		generation,
 		OffensiveEVs(base_stats, level, OffensiveEVs::Input{iv, attack, include_attack}, OffensiveEVs::Input{iv, special_attack, include_special_attack}),
-		DefensiveEVs(generation, base_stats, species, level, nature, hp, defense, special_defense),
+		DefensiveEVs(base_stats, level, nature, hp, defense, special_defense),
 		SpeedEVs(base_stats, level, iv, speed)
 	);
 }

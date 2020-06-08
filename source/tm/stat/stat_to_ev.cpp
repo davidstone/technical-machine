@@ -47,7 +47,8 @@ static_assert(stat_to_ev(178_bi, Nature::Bold, StatNames::ATK, 125_bi, IV(19_bi)
 } // namespace
 
 auto hp_to_ev(Generation const generation, Species const species, Level const level, HP::max_type const stat, IV const iv) -> EV {
-	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(generation, species, level, iv, ev).max(); });
+	auto const base = BaseStats(generation, species);
+	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(base, level, iv, ev).max(); });
 	auto const it = containers::lower_bound(stat_range, stat);
 	if (it == end(stat_range)) {
 		throw std::runtime_error("No valid HP EV for a given stat value");
