@@ -29,6 +29,7 @@
 #include <tm/pokemon/pokemon.hpp>
 
 #include <tm/stat/stat.hpp>
+#include <tm/stat/stat_to_ev.hpp>
 
 #include <tm/string_conversions/species.hpp>
 
@@ -54,15 +55,22 @@ void write_blank_move (ptree & pt) {
 	pt.add ("Move", 0);
 }
 
-void write_stats (Pokemon const & pokemon, ptree & pt) {
-	pt.add("DV", get_hp(pokemon).iv().value());
-	for (auto const stat : stat_order) {
-		pt.add("DV", get_stat(pokemon, stat).iv().value());
-	}
-	pt.add("EV", get_hp(pokemon).ev().value());
-	for (auto const stat : stat_order) {
-		pt.add("EV", get_stat(pokemon, stat).ev().value());
-	}
+void write_stats(Generation const generation, Pokemon const & pokemon, ptree & pt) {
+	auto const stats = calculate_ivs_and_evs(generation, pokemon);
+
+	pt.add("DV", stats.hp.iv.value());
+	pt.add("DV", stats.attack.iv.value());
+	pt.add("DV", stats.defense.iv.value());
+	pt.add("DV", stats.special_attack.iv.value());
+	pt.add("DV", stats.special_defense.iv.value());
+	pt.add("DV", stats.speed.iv.value());
+
+	pt.add("EV", stats.hp.ev.value());
+	pt.add("EV", stats.attack.ev.value());
+	pt.add("EV", stats.defense.ev.value());
+	pt.add("EV", stats.special_attack.ev.value());
+	pt.add("EV", stats.special_defense.ev.value());
+	pt.add("EV", stats.speed.ev.value());
 }
 
 void write_blank_stats (ptree & pt) {
@@ -72,7 +80,7 @@ void write_blank_stats (ptree & pt) {
 		pt.add ("EV", 0);
 }
 
-void write_pokemon (Pokemon const & pokemon, ptree & pt) {
+void write_pokemon(Generation const generation, Pokemon const & pokemon, ptree & pt) {
 	ptree & member = pt.add ("Pokemon", "");
 	member.put("<xmlattr>.Item", item_to_id(pokemon.unmodified_item()));
 	member.put("<xmlattr>.Ability", ability_to_id (pokemon.initial_ability()));
@@ -96,7 +104,7 @@ void write_pokemon (Pokemon const & pokemon, ptree & pt) {
 		write_blank_move(member);
 	}
 
-	write_stats(pokemon, member);
+	write_stats(generation, pokemon, member);
 }
 
 void write_blank_pokemon (ptree & pt) {
@@ -119,7 +127,7 @@ void write_blank_pokemon (ptree & pt) {
 	write_blank_stats (member);
 }
 
-}	// anonymous namespace
+} // namespace
 
 void write_team(Generation const generation, Team const & team, std::filesystem::path const & file_name) {
 	ptree pt;
@@ -134,7 +142,7 @@ void write_team(Generation const generation, Team const & team, std::filesystem:
 	trainer.put ("<xmlattr>.winMsg", "");
 	trainer.put ("<xmlattr>.infoMsg", "");
 	for (auto const & pokemon : team.all_pokemon()) {
-		write_pokemon (pokemon, t);
+		write_pokemon(generation, pokemon, t);
 	}
 	for (auto const unused [[maybe_unused]] : containers::integer_range(size(team.all_pokemon()), max_pokemon_per_team)) {
 		write_blank_pokemon(t);
