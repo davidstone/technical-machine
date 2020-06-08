@@ -344,11 +344,13 @@ constexpr auto other_physical_stat(StatNames const stat) {
 auto calculate_initial_stat(StatNames const name, ActivePokemon const pokemon) {
 	auto const level = get_level(pokemon);
 	auto const nature = get_nature(pokemon);
-	auto const stat = get_stat(pokemon, name);
-	auto const other = get_stat(pokemon, other_physical_stat(name));
+	auto get_initial_stat = [=](StatNames const stat_name) {
+		auto const stat = get_stat(pokemon, stat_name);
+		return initial_stat(stat_name, stat.base(), stat.iv(), stat.ev(), level, nature);
+	};
 	return !is_physical(name) or !pokemon.power_trick_is_active() ?
-		initial_stat(name, stat.base(), stat.iv(), stat.ev(), level, nature) :
-		initial_stat(other_physical_stat(name), other.base(), other.iv(), other.ev(), level, nature);
+		get_initial_stat(name) :
+		get_initial_stat(other_physical_stat(name));
 }
 
 template<StatNames stat>
