@@ -149,7 +149,8 @@ auto calculate_evs(
 auto calculate_evs(Generation const generation, Pokemon const pokemon) -> CombinedStats<EV> {
 	auto const nature = get_nature(pokemon);
 	auto calculate_stat = [=](StatNames const stat_name) {
-		return initial_stat(stat_name, get_stat(pokemon, stat_name), get_level(pokemon), nature);
+		auto const stat = get_stat(pokemon, stat_name);
+		return initial_stat(stat_name, stat.base(), stat.iv(), stat.ev(), get_level(pokemon), nature);
 	};
 	auto const stats = GenericStats<HP::max_type, StatValue>{
 		get_hp(pokemon).max(),

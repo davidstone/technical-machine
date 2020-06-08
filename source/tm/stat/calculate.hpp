@@ -41,12 +41,12 @@ enum class Moves : std::uint16_t;
 struct Team;
 struct Weather;
 
-constexpr auto initial_stat(StatNames const stat_name, Stat const stat, Level const level, Nature const nature) {
-	auto const pre_nature = (2_bi * stat.base() + stat.iv().value() + stat.ev().value() / 4_bi) * level() / 100_bi + 5_bi;
+constexpr auto initial_stat(StatNames const stat_name, Stat::base_type const base, IV const iv, EV const ev, Level const level, Nature const nature) {
+	auto const pre_nature = (2_bi * base + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 5_bi;
 	return pre_nature * boost(nature, stat_name);
 }
 
-using initial_stat_type = decltype(initial_stat(std::declval<StatNames>(), std::declval<Stat>(), std::declval<Level>(), std::declval<Nature>()));
+using initial_stat_type = decltype(initial_stat(std::declval<StatNames>(), std::declval<Stat::base_type>(), std::declval<IV>(), std::declval<EV>(), std::declval<Level>(), std::declval<Nature>()));
 
 using attack_type = bounded::integer<1, 7368>;
 using special_attack_type = bounded::integer<1, 4536>;

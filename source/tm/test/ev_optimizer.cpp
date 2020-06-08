@@ -75,8 +75,8 @@ void defensive_tests() {
 	constexpr auto defense_ev = EV(252_bi);
 	constexpr auto special_defense_ev = EV(4_bi);
 	auto const hp = HP(base_stats, level, iv, hp_ev).max();
-	auto const defense = initial_stat(StatNames::DEF, Stat(base_stats.def(), iv, defense_ev), level, nature);
-	auto const special_defense = initial_stat(StatNames::SPD, Stat(base_stats.spd(), iv, special_defense_ev), level, nature);
+	auto const defense = initial_stat(StatNames::DEF, base_stats.def(), iv, defense_ev, level, nature);
+	auto const special_defense = initial_stat(StatNames::SPD, base_stats.spd(), iv, special_defense_ev, level, nature);
 	
 	auto defensive_evs = DefensiveEVs(base_stats, level, DefensiveEVs::InputHP{iv, hp}, DefensiveEVs::InputStat{iv, defense}, DefensiveEVs::InputStat{iv, special_defense});
 	for (auto const & candidate : defensive_evs) {
@@ -102,11 +102,10 @@ void speed_tests() {
 	constexpr auto original_nature = Nature::Hardy;
 	constexpr auto iv = IV(31_bi);
 	auto const base_stats = BaseStats(generation, species);
-	auto const original_stat = Stat(base_stats.spe(), iv, EV(76_bi));
-	auto const original_value = initial_stat(StatNames::SPE, original_stat, level, original_nature);
+	auto const original_value = initial_stat(StatNames::SPE, base_stats.spe(), iv, EV(76_bi), level, original_nature);
 	auto const speed_evs = SpeedEVs(base_stats, level, iv, original_value);
 	for (auto const nature : containers::enum_range<Nature>()) {
-		auto const new_value = initial_stat(StatNames::SPE, Stat(base_stats.spe(), iv, find(speed_evs, nature)), level, nature);
+		auto const new_value = initial_stat(StatNames::SPE, base_stats.spe(), iv, find(speed_evs, nature), level, nature);
 		if (boosts_stat(nature, StatNames::SPE) and !boosts_stat(original_nature, StatNames::SPE)) {
 			BOUNDED_ASSERT(new_value == original_value or new_value == original_value + 1_bi);
 		} else {
