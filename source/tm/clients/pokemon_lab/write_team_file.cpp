@@ -26,6 +26,7 @@
 #include <tm/pokemon/species.hpp>
 
 #include <tm/stat/stat.hpp>
+#include <tm/stat/stat_to_ev.hpp>
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
@@ -56,13 +57,14 @@ void write_stat(std::string_view const name, IV const iv, EV const ev, boost::pr
 	s.put("<xmlattr>.ev", ev.value());
 }
 
-void write_stats (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
-	write_stat("HP", get_hp(pokemon).iv(), get_hp(pokemon).ev(), pt);
-	write_stat("Atk", get_stat(pokemon, StatNames::ATK).iv(), get_stat(pokemon, StatNames::ATK).ev(), pt);
-	write_stat("Def", get_stat(pokemon, StatNames::DEF).iv(), get_stat(pokemon, StatNames::DEF).ev(), pt);
-	write_stat("Spd", get_stat(pokemon, StatNames::SPE).iv(), get_stat(pokemon, StatNames::SPE).ev(), pt);
-	write_stat("SpAtk", get_stat(pokemon, StatNames::SPA).iv(), get_stat(pokemon, StatNames::SPA).ev(), pt);
-	write_stat("SpDef", get_stat(pokemon, StatNames::SPD).iv(), get_stat(pokemon, StatNames::SPD).ev(), pt);
+void write_stats(Generation const generation, Pokemon const & pokemon, boost::property_tree::ptree & pt) {
+	auto const stats = calculate_ivs_and_evs(generation, pokemon);
+	write_stat("HP", stats.hp.iv, stats.hp.ev, pt);
+	write_stat("Atk", stats.attack.iv, stats.attack.ev, pt);
+	write_stat("Def", stats.defense.iv, stats.defense.ev, pt);
+	write_stat("Spd", stats.speed.iv, stats.speed.ev, pt);
+	write_stat("SpAtk", stats.special_attack.iv, stats.special_attack.ev, pt);
+	write_stat("SpDef", stats.special_defense.iv, stats.special_defense.ev, pt);
 }
 
 std::string_view to_simulator_string(Species const species) {
@@ -95,7 +97,7 @@ std::string_view to_simulator_string(Gender const gender) {
 	}
 }
 
-void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
+void write_pokemon(Generation const generation, Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	boost::property_tree::ptree & member = pt.add ("pokemon", "");
 	member.put("<xmlattr>.species", to_simulator_string(get_species(pokemon)));
 	member.put ("nickname", "");
@@ -108,17 +110,17 @@ void write_pokemon (Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	for (auto const & move : regular_moves(pokemon)) {
 		write_move(move, member);
 	}
-	write_stats (pokemon, member);
+	write_stats(generation, pokemon, member);
 }
 
 }	// namespace
 
-void write_team([[maybe_unused]] Generation const generation, Team const & team, std::filesystem::path const & file_name) {
+void write_team(Generation const generation, Team const & team, std::filesystem::path const & file_name) {
 	boost::property_tree::ptree pt;
 	boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type> settings('\t', 1);
 	boost::property_tree::ptree & t = pt.add ("shoddybattle", "");
 	for (auto const & pokemon : team.all_pokemon()) {
-		write_pokemon (pokemon, t);
+		write_pokemon(generation, pokemon, t);
 	}
 	write_xml(file_name.string(), pt, std::locale (), settings);
 }

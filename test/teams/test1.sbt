@@ -34,10 +34,10 @@
 <item>Leftovers</item>
 <ability>Natural Cure</ability>
 <moveset>
-	<move pp-up="3">Calm Mind</move>
+	<move pp-up="3">Perish Song</move>
 	<move pp-up="3">Recover</move>
 	<move pp-up="3">Grass Knot</move>
-	<move pp-up="3">Psychic</move>
+	<move pp-up="3">U-turn</move>
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
@@ -65,7 +65,7 @@
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="0" />
-	<stat name="Atk" iv="31" ev="0" />
+	<stat name="Atk" iv="3" ev="0" />
 	<stat name="Def" iv="31" ev="252" />
 	<stat name="Spd" iv="31" ev="0" />
 	<stat name="SpAtk" iv="31" ev="80" />
@@ -84,7 +84,7 @@
 <moveset>
 	<move pp-up="3">Spikes</move>
 	<move pp-up="3">Roost</move>
-	<move pp-up="3">Drill Peck</move>
+	<move pp-up="3">Brave Bird</move>
 	<move pp-up="3">Whirlwind</move>
 </moveset>
 <stats>
@@ -137,7 +137,7 @@
 </moveset>
 <stats>
 	<stat name="HP" iv="31" ev="252" />
-	<stat name="Atk" iv="31" ev="0" />
+	<stat name="Atk" iv="3" ev="0" />
 	<stat name="Def" iv="31" ev="136" />
 	<stat name="Spd" iv="31" ev="0" />
 	<stat name="SpAtk" iv="31" ev="0" />
