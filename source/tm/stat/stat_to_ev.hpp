@@ -38,7 +38,13 @@ constexpr auto round_up_divide(auto const lhs, auto const rhs) {
 	return lhs / rhs + BOUNDED_CONDITIONAL(lhs % rhs == 0_bi, 0_bi, 1_bi);
 }
 
-auto hp_to_ev(BaseStats, Level, HP::max_type, IV) -> EV;
+inline auto hp_to_ev(BaseStats const base, Level const level, HP::max_type const stat, IV const iv) -> EV {
+	if (base.hp() == 1_bi) {
+		return EV(0_bi);
+	}
+	auto const computed = (round_up_divide((stat - level() - 10_bi) * 100_bi, level()) - iv.value() - 2_bi * base.hp()) * 4_bi;
+	return EV(EV::value_type(bounded::max(0_bi, computed)));
+}
 
 // `target` is not just bounded::integer<4, 614> because this function is also
 // used in the EV optimizer, where values outside the legal range are regularly

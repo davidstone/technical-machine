@@ -26,8 +26,6 @@
 #include <tm/string_conversions/generation.hpp>
 #include <tm/string_conversions/species.hpp>
 
-#include <containers/algorithms/binary_search.hpp>
-#include <containers/algorithms/transform.hpp>
 #include <containers/integer_range.hpp>
 
 #include <stdexcept>
@@ -43,19 +41,6 @@ static_assert(round_up_divide(6_bi, 5_bi) == 2_bi);
 static_assert(stat_to_ev(614_bi, Nature::Impish, StatNames::DEF, 230_bi, IV(31_bi), Level(100_bi)) == EV(252_bi));
 static_assert(stat_to_ev(558_bi, Nature::Hardy, StatNames::DEF, 230_bi, IV(DV(15_bi)), Level(100_bi)) == EV(252_bi));
 static_assert(stat_to_ev(178_bi, Nature::Bold, StatNames::ATK, 125_bi, IV(19_bi), Level(63_bi)) == EV(152_bi));
-
-} // namespace
-
-auto hp_to_ev(BaseStats const base, Level const level, HP::max_type const stat, IV const iv) -> EV {
-	auto const stat_range = containers::transform(ev_range(), [=](EV const ev) { return HP(base, level, iv, ev).max(); });
-	auto const it = containers::lower_bound(stat_range, stat);
-	if (it == end(stat_range)) {
-		throw std::runtime_error("No valid HP EV for a given stat value");
-	}
-	return *it.base();
-}
-
-namespace {
 
 auto calculate_evs(
 	Generation const generation,
