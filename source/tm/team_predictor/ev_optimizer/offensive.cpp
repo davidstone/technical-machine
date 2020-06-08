@@ -27,11 +27,12 @@
 #include <tm/stat/stat_to_ev.hpp>
 
 #include <bounded/assert.hpp>
+#include <bounded/integer.hpp>
 #include <bounded/optional.hpp>
 
 #include <containers/algorithms/filter_iterator.hpp>
 #include <containers/algorithms/maybe_find.hpp>
-#include <containers/emplace_back.hpp>
+#include <containers/algorithms/transform.hpp>
 
 namespace technicalmachine {
 
@@ -39,33 +40,9 @@ auto OffensiveEVs::find(Nature const nature) const -> OffensiveStats const * {
 	return containers::maybe_find_if(m_container, [=](auto const value) { return value.nature == nature; });
 }
 
-struct OffensiveEVs::OffensiveData {
-private:
-	using StatType = decltype(initial_stat(std::declval<StatNames>(), std::declval<Stat>(), std::declval<Level>(), std::declval<Nature>()));
-public:
-	StatType atk;
-	StatType spa;
-};
-
 namespace {
 
 using namespace bounded::literal;
-
-auto ideal_attack_stat(Stat const original_stat, Level const level, Nature const original_nature, bool const is_physical) {
-	// All we care about on this nature is the boost to Attack
-	auto const nature = is_physical ? original_nature : Nature::Modest;
-	auto const stat = is_physical ? original_stat : Stat(original_stat.base(), original_stat.iv(), EV(0_bi));
-	return initial_stat(StatNames::ATK, stat, level, nature);
-}
-auto ideal_special_attack_stat(Stat const original_stat, Level const level, Nature const original_nature, bool const is_special, bool const is_physical) {
-	// All we care about on this nature is the boost to Special Attack
-	auto const nature =
-		is_special ? original_nature :
-		is_physical ? Nature::Adamant :
-		Nature::Hardy;
-	auto const stat = is_special ? original_stat : Stat(original_stat.base(), original_stat.iv(), EV(0_bi));
-	return initial_stat(StatNames::SPA, stat, level, nature);
-}
 
 // If I don't have a physical move, prefer to lower that because it lowers
 // confusion damage. If I do have a physical move but no special move, prefer
@@ -87,38 +64,39 @@ constexpr auto useful_natures(bool const is_physical, bool const is_special) {
 	);
 }
 
+constexpr auto target_stat(StatNames const stat_name, auto const base_stat, Level const level, OffensiveEVs::Input const input, Nature const harmful_nature) {
+	return input.include_evs ? input.stat : initial_stat(stat_name, Stat(base_stat, input.iv, EV(0_bi)), level, harmful_nature);
+}
+
+auto evs_for_nature(BaseStats const base, Level const level, OffensiveEVs::Input const atk, OffensiveEVs::Input const spa) {
+	auto const target_atk = target_stat(StatNames::ATK, base.atk(), level, atk, Nature::Modest);
+	auto const target_spa = target_stat(StatNames::SPA, base.spa(), level, spa, Nature::Adamant);
+	return [=](Nature const nature) {
+		auto const atk_ev = stat_to_ev(target_atk, nature, StatNames::ATK, base.atk(), atk.iv, level);
+		auto const spa_ev = stat_to_ev(target_spa, nature, StatNames::SPA, base.spa(), spa.iv, level);
+		return BOUNDED_CONDITIONAL(atk_ev and spa_ev, (OffensiveStats{nature, *atk_ev, *spa_ev}), bounded::none);
+	};
+}
+
+constexpr auto cat_optionals(containers::range auto && input) {
+	return containers::transform(
+		containers::filter(input, [](auto const & value) { return static_cast<bool>(value); }),
+		[](auto && value) { return *OPERATORS_FORWARD(value); }
+	);
+}
+
 } // namespace
 
-OffensiveEVs::OffensiveEVs(Generation const generation, BaseStats const base_stats, Level const level, Nature const original_nature, Stat const attack, Stat const special_attack, bool const include_attack_evs, bool const include_special_attack_evs):
-	m_container(containers::transform(
-		useful_natures(include_attack_evs, include_special_attack_evs),
-		[](Nature const nature) { return OffensiveStats(nature); }
-	))
+OffensiveEVs::OffensiveEVs(BaseStats const base, Level const level, Input const atk, Input const spa):
+	m_container(
+		cat_optionals(
+			containers::transform(
+				useful_natures(atk.include_evs, spa.include_evs),
+				evs_for_nature(base, level, atk, spa)
+			)
+		)
+	)
 {
-	BOUNDED_ASSERT(!empty(m_container));
-
-	auto const stats = OffensiveData{
-		ideal_attack_stat(attack, level, original_nature, include_attack_evs),
-		ideal_special_attack_stat(special_attack, level, original_nature, include_special_attack_evs, include_attack_evs)
-	};
-
-	equal_stats(generation, base_stats, stats, level);
 }
 
-void OffensiveEVs::equal_stats(Generation const generation, BaseStats const base_stats, OffensiveData const initial, Level const level) {
-	for (auto it = begin(m_container); it != end(m_container);) {
-		auto const nature = it->nature;
-		auto const atk_ev = stat_to_ev(initial.atk, nature, StatNames::ATK, base_stats.atk(), default_iv(generation), level);
-		auto const spa_ev = stat_to_ev(initial.spa, nature, StatNames::SPA, base_stats.spa(), default_iv(generation), level);
-		if (atk_ev and spa_ev) {
-			it->attack = EV(*atk_ev);
-			it->special_attack = EV(*spa_ev);
-			++it;
-		} else {
-			it = erase(m_container, it);
-		}
-	}
-	BOUNDED_ASSERT(!empty(m_container));
-}
-
-}	// namespace technicalmachine
+} // namespace technicalmachine

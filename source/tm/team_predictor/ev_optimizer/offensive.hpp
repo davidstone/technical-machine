@@ -19,10 +19,11 @@
 #pragma once
 
 #include <tm/pokemon/level.hpp>
-#include <tm/pokemon/species_forward.hpp>
 
 #include <tm/stat/base_stats.hpp>
+#include <tm/stat/calculate.hpp>
 #include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
 #include <tm/stat/nature.hpp>
 
 #include <bounded/integer.hpp>
@@ -32,27 +33,22 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-enum class Generation : std::uint8_t;
-struct Stat;
-
 struct OffensiveStats {
-	constexpr explicit OffensiveStats(Nature const nature_):
-		nature(nature_)
-	{
-	}
-
 	Nature nature;
-	EV attack = EV(0_bi);
-	EV special_attack = EV(0_bi);
+	EV attack;
+	EV special_attack;
 };
 
 struct OffensiveEVs {
-	OffensiveEVs(Generation, BaseStats, Level, Nature, Stat attack, Stat special_attack, bool include_attack_evs, bool include_special_attack_evs);
+	struct Input {
+		IV iv;
+		initial_stat_type stat;
+		bool include_evs;
+	};
+	OffensiveEVs(BaseStats, Level, Input attack, Input special_attack);
 
 	auto find(Nature const nature) const -> OffensiveStats const *;
 private:
-	struct OffensiveData;
-	auto equal_stats(Generation, BaseStats, OffensiveData initial, Level level) -> void;
 	containers::static_vector<OffensiveStats, size(containers::enum_range<Nature>()).value()> m_container;
 };
 
