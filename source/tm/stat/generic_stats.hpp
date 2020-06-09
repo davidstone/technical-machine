@@ -33,26 +33,7 @@ struct GenericStats {
 	Stat special_defense;
 	Stat speed;
 	
-	constexpr auto operator[](StatNames const index) const -> Stat const & {
-		return operator_bracket(*this, index);
-	}
-	constexpr auto operator[](StatNames const index) -> Stat & {
-		return operator_bracket(*this, index);
-	}
-	
 	friend auto operator==(GenericStats const &, GenericStats const &) -> bool = default;
-
-private:
-	static constexpr auto && operator_bracket(auto && generic, StatNames const index) {
-		switch (index) {
-			case StatNames::ATK: return generic.attack;
-			case StatNames::DEF: return generic.defense;
-			case StatNames::SPA: return generic.special_attack;
-			case StatNames::SPD: return generic.special_defense;
-			case StatNames::SPE: return generic.speed;
-			default: bounded::assert_or_assume_unreachable();
-		}
-	}
 };
 
 template<typename HP, typename Stat>
