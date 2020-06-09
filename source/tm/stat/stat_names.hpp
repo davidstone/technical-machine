@@ -22,26 +22,7 @@
 
 namespace technicalmachine {
 
-// TODO: Just make a few different enums
-enum class StatNames {
-	ATK,
-	DEF,
-	SPA,
-	SPD,
-	SPE,
-	NORMAL_END = SPE,
-	ACC,
-	EVA
-};
-
-enum class RegularStat {
-	atk,
-	def,
-	spa,
-	spd,
-	spe,
-};
-
+// All three of these can convert to each other
 enum class BoostableStat {
 	atk,
 	def,
@@ -52,25 +33,42 @@ enum class BoostableStat {
 	eva,
 };
 
+enum class PermanentStat {
+	hp = -1,
+	atk,
+	def,
+	spa,
+	spd,
+	spe,
+};
+
+enum class RegularStat {
+	atk,
+	def,
+	spa,
+	spd,
+	spe,
+};
+
 }	// namespace technicalmachine
 namespace bounded {
-
-template<>
-inline constexpr auto min_value<technicalmachine::StatNames> = technicalmachine::StatNames();
-
-template<>
-inline constexpr auto max_value<technicalmachine::StatNames> = technicalmachine::StatNames::EVA;
-
-template<>
-inline constexpr auto min_value<technicalmachine::RegularStat> = technicalmachine::RegularStat::atk;
-
-template<>
-inline constexpr auto max_value<technicalmachine::RegularStat> = technicalmachine::RegularStat::spe;
 
 template<>
 inline constexpr auto min_value<technicalmachine::BoostableStat> = technicalmachine::BoostableStat::atk;
 
 template<>
 inline constexpr auto max_value<technicalmachine::BoostableStat> = technicalmachine::BoostableStat::eva;
+
+template<>
+inline constexpr auto min_value<technicalmachine::PermanentStat> = technicalmachine::PermanentStat::hp;
+
+template<>
+inline constexpr auto max_value<technicalmachine::PermanentStat> = technicalmachine::PermanentStat::spe;
+
+template<>
+inline constexpr auto min_value<technicalmachine::RegularStat> = technicalmachine::RegularStat::atk;
+
+template<>
+inline constexpr auto max_value<technicalmachine::RegularStat> = technicalmachine::RegularStat::spe;
 
 }	// namespace bounded
