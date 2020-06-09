@@ -129,11 +129,11 @@ void load_pokemon(ptree const & pt, Generation const generation, Team & team, Sp
 	auto ivs = load_stats<IV>("DV", it);
 	auto evs = load_stats<EV>("EV", ivs.it);
 	set_hp_ev(generation, pokemon, ivs.hp, evs.hp);
-	set_stat_ev(pokemon, StatNames::ATK, ivs.atk, evs.atk);
-	set_stat_ev(pokemon, StatNames::DEF, ivs.def, evs.def);
-	set_stat_ev(pokemon, StatNames::SPA, ivs.spa, evs.spa);
-	set_stat_ev(pokemon, StatNames::SPD, ivs.spd, evs.spd);
-	set_stat_ev(pokemon, StatNames::SPE, ivs.spe, evs.spe);
+	set_stat_ev(pokemon, RegularStat::atk, ivs.atk, evs.atk);
+	set_stat_ev(pokemon, RegularStat::def, ivs.def, evs.def);
+	set_stat_ev(pokemon, RegularStat::spa, ivs.spa, evs.spa);
+	set_stat_ev(pokemon, RegularStat::spd, ivs.spd, evs.spd);
+	set_stat_ev(pokemon, RegularStat::spe, ivs.spe, evs.spe);
 }
 
 } // namespace

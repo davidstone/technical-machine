@@ -152,11 +152,11 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 			add_seen_move(all_moves(pokemon), generation, move);
 		}
 		set_hp_ev(generation, pokemon, default_iv(generation), hp);
-		set_stat_ev(pokemon, StatNames::ATK, default_iv(generation), atk);
-		set_stat_ev(pokemon, StatNames::DEF, default_iv(generation), def);
-		set_stat_ev(pokemon, StatNames::SPA, default_iv(generation), spa);
-		set_stat_ev(pokemon, StatNames::SPD, default_iv(generation), spd);
-		set_stat_ev(pokemon, StatNames::SPE, default_iv(generation), spe);
+		set_stat_ev(pokemon, RegularStat::atk, default_iv(generation), atk);
+		set_stat_ev(pokemon, RegularStat::def, default_iv(generation), def);
+		set_stat_ev(pokemon, RegularStat::spa, default_iv(generation), spa);
+		set_stat_ev(pokemon, RegularStat::spd, default_iv(generation), spd);
+		set_stat_ev(pokemon, RegularStat::spe, default_iv(generation), spe);
 	}
 
 	return {generation, team};

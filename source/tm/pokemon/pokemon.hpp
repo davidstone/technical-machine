@@ -58,7 +58,7 @@ struct Pokemon {
 	friend Nature get_nature(Pokemon pokemon);
 	friend Species get_species(Pokemon pokemon);
 	friend HP get_hp(Pokemon pokemon);
-	friend Stat get_stat(Pokemon pokemon, StatNames index_stat);
+	friend Stat get_stat(Pokemon pokemon, RegularStat stat_name);
 	friend Status get_status(Pokemon pokemon);
 	void set_status(Statuses const status) & {
 		m_status = status;
@@ -115,7 +115,7 @@ struct Pokemon {
 	friend void set_nature(Pokemon & pokemon, Nature nature);
 	friend bool nature_is_known(Pokemon pokemon);
 	friend auto set_hp_ev(Generation, Pokemon &, IV, EV) -> void;
-	friend auto set_stat_ev(Pokemon &, StatNames, IV, EV) -> void;
+	friend auto set_stat_ev(Pokemon &, RegularStat, IV, EV) -> void;
 
 	friend auto operator==(Pokemon const &, Pokemon const &) -> bool = default;
 private:
@@ -192,16 +192,18 @@ inline Species get_species(Pokemon const pokemon) {
 inline HP get_hp(Pokemon const pokemon) {
 	return pokemon.stats.hp();
 }
+
 inline auto set_hp_ev(Generation const generation, Pokemon & pokemon, IV const iv, EV const ev) -> void {
 	auto const base_stats = BaseStats(generation, get_species(pokemon));
 	pokemon.stats.hp() = HP(base_stats, get_level(pokemon), iv, ev);
 }
 
 
-inline Stat get_stat(Pokemon const pokemon, StatNames const index_stat) {
-	return pokemon.stats[index_stat];
+inline Stat get_stat(Pokemon const pokemon, RegularStat const stat_name) {
+	return pokemon.stats[stat_name];
 }
-inline auto set_stat_ev(Pokemon & pokemon, StatNames const stat_name, IV const iv, EV const ev) -> void {
+
+inline auto set_stat_ev(Pokemon & pokemon, RegularStat const stat_name, IV const iv, EV const ev) -> void {
 	auto & stat = pokemon.stats[stat_name];
 	stat = Stat(stat.base(), iv, ev);
 }

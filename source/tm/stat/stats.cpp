@@ -44,18 +44,11 @@ auto Stats::hp() -> HP & {
 	return m_hp;
 }
 
-namespace {
-
-// TODO: Maybe have a NormalStatNames type?
-using stat_index = bounded::integer<0, 4>;
-
-} // namespace
-
-auto Stats::operator[](StatNames const stat) const -> Stat const & {
-	return m_stats[stat_index(stat)];
+auto Stats::operator[](RegularStat const stat) const -> Stat const & {
+	return containers::at(m_stats, stat);
 }
-auto Stats::operator[](StatNames const stat) -> Stat & {
-	return m_stats[stat_index(stat)];
+auto Stats::operator[](RegularStat const stat) -> Stat & {
+	return containers::at(m_stats, stat);
 }
 
 

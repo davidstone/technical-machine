@@ -32,8 +32,8 @@ struct Stats {
 	Stats(Generation, BaseStats, Level);
 	auto hp() const -> HP const &;
 	auto hp() -> HP &;
-	auto operator[](StatNames stat) const -> Stat const &;
-	auto operator[](StatNames stat) -> Stat &;
+	auto operator[](RegularStat) const -> Stat const &;
+	auto operator[](RegularStat) -> Stat &;
 
 	friend auto operator==(Stats const &, Stats const &) -> bool = default;
 private:

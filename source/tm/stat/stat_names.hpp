@@ -34,6 +34,14 @@ enum class StatNames {
 	EVA
 };
 
+enum class RegularStat {
+	atk,
+	def,
+	spa,
+	spd,
+	spe,
+};
+
 enum class BoostableStat {
 	atk,
 	def,
@@ -52,6 +60,12 @@ inline constexpr auto min_value<technicalmachine::StatNames> = technicalmachine:
 
 template<>
 inline constexpr auto max_value<technicalmachine::StatNames> = technicalmachine::StatNames::EVA;
+
+template<>
+inline constexpr auto min_value<technicalmachine::RegularStat> = technicalmachine::RegularStat::atk;
+
+template<>
+inline constexpr auto max_value<technicalmachine::RegularStat> = technicalmachine::RegularStat::spe;
 
 template<>
 inline constexpr auto min_value<technicalmachine::BoostableStat> = technicalmachine::BoostableStat::atk;

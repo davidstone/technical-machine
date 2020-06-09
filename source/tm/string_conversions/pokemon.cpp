@@ -75,7 +75,7 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 			containers::string("");
 	};
 	
-	auto stat_to_string = [&](StatNames const stat) {
+	auto stat_to_string = [&](RegularStat const stat) {
 		return bounded::to_string(get_stat(pokemon, stat).ev().value());
 	};
 	
@@ -102,11 +102,11 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 		status_to_string(),
 		status_nature, to_string(get_nature(pokemon)),
 		nature_hp, std::string_view(bounded::to_string(get_hp(pokemon).ev().value())),
-		hp_atk, stat_to_string(StatNames::ATK),
-		atk_def, stat_to_string(StatNames::DEF),
-		def_spa, stat_to_string(StatNames::SPA),
-		spa_spd, stat_to_string(StatNames::SPD),
-		spd_spe, stat_to_string(StatNames::SPE),
+		hp_atk, stat_to_string(RegularStat::atk),
+		atk_def, stat_to_string(RegularStat::def),
+		def_spa, stat_to_string(RegularStat::spa),
+		spa_spd, stat_to_string(RegularStat::spd),
+		spd_spe, stat_to_string(RegularStat::spe),
 		spe_moves, moves_to_string()
 	);
 }
@@ -163,14 +163,14 @@ auto pokemon_from_string(std::string_view const str, Generation const generation
 	set_hp_ev(generation, pokemon, iv, pop_ev(buffer, hp_atk));
 	pokemon.set_hp(HP::current_type(static_cast<int>(static_cast<double>(get_hp(pokemon).max()) * hp_percent / 100.0)));
 
-	auto set_stat = [&](StatNames const stat, EV const ev) {
+	auto set_stat = [&](RegularStat const stat, EV const ev) {
 		set_stat_ev(pokemon, stat, iv, ev);
 	};
-	set_stat(StatNames::ATK, pop_ev(buffer, atk_def));
-	set_stat(StatNames::DEF, pop_ev(buffer, def_spa));
-	set_stat(StatNames::SPA, pop_ev(buffer, spa_spd));
-	set_stat(StatNames::SPD, pop_ev(buffer, spd_spe));
-	set_stat(StatNames::SPE, pop_ev(buffer, spe_moves));
+	set_stat(RegularStat::atk, pop_ev(buffer, atk_def));
+	set_stat(RegularStat::def, pop_ev(buffer, def_spa));
+	set_stat(RegularStat::spa, pop_ev(buffer, spa_spd));
+	set_stat(RegularStat::spd, pop_ev(buffer, spd_spe));
+	set_stat(RegularStat::spe, pop_ev(buffer, spe_moves));
 
 	auto const should_be_empty = pop_to_delimiter(buffer, moves_separator);
 	if (!should_be_empty.empty()) {

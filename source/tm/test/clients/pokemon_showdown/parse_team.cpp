@@ -36,7 +36,7 @@ constexpr auto move_array(Generation const generation, auto... moves) {
 auto max_all_evs(Generation const generation, Pokemon & pokemon) {
 	constexpr auto ev = EV(252_bi);
 	set_hp_ev(generation, pokemon, IV(30_bi), ev);
-	for (auto const stat : containers::enum_range(StatNames::NORMAL_END)) {
+	for (auto const stat : containers::enum_range<RegularStat>()) {
 		set_stat_ev(pokemon, stat, IV(30_bi), ev);
 	}
 }
@@ -64,25 +64,25 @@ auto expected_generation_one_team() {
 	auto reduce_hp = [=](Pokemon & pokemon) {
 		set_hp_ev(generation, pokemon, iv, reduced_ev);
 	};
-	auto reduce_stat = [=](Pokemon & pokemon, StatNames const stat) {
-		set_stat_ev(pokemon, stat, iv, reduced_ev);
+	auto reduce_stat = [=](Pokemon & pokemon, RegularStat const stat_name) {
+		set_stat_ev(pokemon, stat_name, iv, reduced_ev);
 	};
 
 	add_pokemon(Species::Koffing, 88_bi, Moves::Fire_Blast, Moves::Sludge, Moves::Explosion, Moves::Thunderbolt);
 
 	auto & sandslash = add_pokemon(Species::Sandslash, 74_bi, Moves::Earthquake, Moves::Body_Slam, Moves::Rock_Slide, Moves::Swords_Dance);
 	reduce_hp(sandslash);
-	reduce_stat(sandslash, StatNames::ATK);
+	reduce_stat(sandslash, RegularStat::atk);
 
 	add_pokemon(Species::Ditto, 88_bi, Moves::Transform);
 
 	add_pokemon(Species::Pikachu, 88_bi, Moves::Agility, Moves::Thunderbolt, Moves::Surf, Moves::Thunder_Wave);
 
 	auto & jynx = add_pokemon(Species::Jynx, 68_bi, Moves::Seismic_Toss, Moves::Lovely_Kiss, Moves::Psychic, Moves::Blizzard);
-	reduce_stat(jynx, StatNames::DEF);
+	reduce_stat(jynx, RegularStat::def);
 
 	auto & slowbro = add_pokemon(Species::Slowbro, 68_bi, Moves::Psychic, Moves::Surf, Moves::Thunder_Wave, Moves::Amnesia);
-	reduce_stat(slowbro, StatNames::DEF);
+	reduce_stat(slowbro, RegularStat::def);
 
 	return team;
 }

@@ -34,7 +34,7 @@ using namespace bounded::literal;
 
 SpeedEVs::SpeedEVs(BaseStats const base, Level const level, IV const iv, initial_stat_type const target) {
 	for (auto const nature : containers::enum_range<Nature>()) {
-		auto const ev = stat_to_ev(target, nature, StatNames::SPE, base.spe(), iv, level);
+		auto const ev = stat_to_ev(target, nature, RegularStat::spe, base.spe(), iv, level);
 		if (ev) {
 			containers::emplace_back(m_container, nature, IVAndEV{iv, *ev});
 		}

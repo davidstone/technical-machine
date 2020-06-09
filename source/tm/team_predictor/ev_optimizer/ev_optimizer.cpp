@@ -45,15 +45,15 @@ auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats<IVA
 	auto const new_hp = get_hp(pokemon);
 	pokemon.set_hp(new_hp.max() * original_hp.current() / original_hp.max());
 
-	auto set = [&](StatNames const name, IVAndEV const stat) {
-		set_stat_ev(pokemon, name, stat.iv, stat.ev);
+	auto set = [&](RegularStat const stat_name, IVAndEV const stat) {
+		set_stat_ev(pokemon, stat_name, stat.iv, stat.ev);
 	};
 
-	set(StatNames::ATK, stats.attack);
-	set(StatNames::DEF, stats.defense);
-	set(StatNames::SPA, stats.special_attack);
-	set(StatNames::SPD, stats.special_defense);
-	set(StatNames::SPE, stats.speed);
+	set(RegularStat::atk, stats.attack);
+	set(RegularStat::def, stats.defense);
+	set(RegularStat::spa, stats.special_attack);
+	set(RegularStat::spd, stats.special_defense);
+	set(RegularStat::spe, stats.speed);
 }
 
 auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats<IVAndEV> {
@@ -125,11 +125,11 @@ auto minimize_evs(Generation const generation, CombinedStats<IVAndEV> const stat
 	auto const base_stats = BaseStats(generation, species);
 	auto const nature = stats.nature;
 	auto const hp = HP(base_stats, level, stats.hp.iv, stats.hp.ev).max();
-	auto const attack = initial_stat(StatNames::ATK, base_stats.atk(), stats.attack.iv, stats.attack.ev, level, nature);
-	auto const defense = initial_stat(StatNames::DEF, base_stats.def(), stats.defense.iv, stats.defense.ev, level, nature);
-	auto const special_attack = initial_stat(StatNames::SPA, base_stats.spa(), stats.special_attack.iv, stats.special_attack.ev, level, nature);
-	auto const special_defense = initial_stat(StatNames::SPD, base_stats.spd(), stats.special_defense.iv, stats.special_defense.ev, level, nature);
-	auto const speed = initial_stat(StatNames::SPE, base_stats.spe(), stats.speed.iv, stats.speed.ev, level, nature);
+	auto const attack = initial_stat(RegularStat::atk, base_stats.atk(), stats.attack.iv, stats.attack.ev, level, nature);
+	auto const defense = initial_stat(RegularStat::def, base_stats.def(), stats.defense.iv, stats.defense.ev, level, nature);
+	auto const special_attack = initial_stat(RegularStat::spa, base_stats.spa(), stats.special_attack.iv, stats.special_attack.ev, level, nature);
+	auto const special_defense = initial_stat(RegularStat::spd, base_stats.spd(), stats.special_defense.iv, stats.special_defense.ev, level, nature);
+	auto const speed = initial_stat(RegularStat::spe, base_stats.spe(), stats.speed.iv, stats.speed.ev, level, nature);
 
 	return combine(
 		generation,

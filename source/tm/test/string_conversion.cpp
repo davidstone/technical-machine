@@ -87,11 +87,11 @@ void test_pokemon() {
 
 	auto pokemon = Pokemon(generation, 6_bi, species, level, gender, item, ability, nature);
 	set_hp_ev(generation, pokemon, iv, hp);
-	set_stat_ev(pokemon, StatNames::ATK, iv, atk);
-	set_stat_ev(pokemon, StatNames::DEF, iv, def);
-	set_stat_ev(pokemon, StatNames::SPA, iv, spa);
-	set_stat_ev(pokemon, StatNames::SPD, iv, spd);
-	set_stat_ev(pokemon, StatNames::SPE, iv, spe);
+	set_stat_ev(pokemon, RegularStat::atk, iv, atk);
+	set_stat_ev(pokemon, RegularStat::def, iv, def);
+	set_stat_ev(pokemon, RegularStat::spa, iv, spa);
+	set_stat_ev(pokemon, RegularStat::spd, iv, spd);
+	set_stat_ev(pokemon, RegularStat::spe, iv, spe);
 
 	auto check = [&] {
 		auto const str = to_string(pokemon);

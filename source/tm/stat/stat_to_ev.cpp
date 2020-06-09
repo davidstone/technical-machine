@@ -38,9 +38,9 @@ static_assert(round_up_divide(1_bi, 1_bi) == 1_bi);
 static_assert(round_up_divide(5_bi, 1_bi) == 5_bi);
 static_assert(round_up_divide(6_bi, 5_bi) == 2_bi);
 
-static_assert(stat_to_ev(614_bi, Nature::Impish, StatNames::DEF, 230_bi, IV(31_bi), Level(100_bi)) == EV(252_bi));
-static_assert(stat_to_ev(558_bi, Nature::Hardy, StatNames::DEF, 230_bi, IV(DV(15_bi)), Level(100_bi)) == EV(252_bi));
-static_assert(stat_to_ev(178_bi, Nature::Bold, StatNames::ATK, 125_bi, IV(19_bi), Level(63_bi)) == EV(152_bi));
+static_assert(stat_to_ev(614_bi, Nature::Impish, RegularStat::def, 230_bi, IV(31_bi), Level(100_bi)) == EV(252_bi));
+static_assert(stat_to_ev(558_bi, Nature::Hardy, RegularStat::def, 230_bi, IV(DV(15_bi)), Level(100_bi)) == EV(252_bi));
+static_assert(stat_to_ev(178_bi, Nature::Bold, RegularStat::atk, 125_bi, IV(19_bi), Level(63_bi)) == EV(152_bi));
 
 auto calculate_ivs_and_evs(
 	Generation const generation,
@@ -57,23 +57,23 @@ auto calculate_ivs_and_evs(
 	auto const hp_ev = hp_to_ev(base, level, stats.hp, ivs.hp);
 
 	for (auto const nature : nature_range) {
-		auto const attack_ev = stat_to_ev(stats.attack, nature, StatNames::ATK, base.atk(), ivs.attack, level);
+		auto const attack_ev = stat_to_ev(stats.attack, nature, RegularStat::atk, base.atk(), ivs.attack, level);
 		if (!attack_ev) {
 			continue;
 		}
-		auto const defense_ev = stat_to_ev(stats.defense, nature, StatNames::DEF, base.def(), ivs.defense, level);
+		auto const defense_ev = stat_to_ev(stats.defense, nature, RegularStat::def, base.def(), ivs.defense, level);
 		if (!defense_ev) {
 			continue;
 		}
-		auto const special_attack_ev = stat_to_ev(stats.special_attack, nature, StatNames::SPA, base.spa(), ivs.special_attack, level);
+		auto const special_attack_ev = stat_to_ev(stats.special_attack, nature, RegularStat::spa, base.spa(), ivs.special_attack, level);
 		if (!special_attack_ev) {
 			continue;
 		}
-		auto const special_defense_ev = stat_to_ev(stats.special_defense, nature, StatNames::SPD, base.spd(), ivs.special_defense, level);
+		auto const special_defense_ev = stat_to_ev(stats.special_defense, nature, RegularStat::spd, base.spd(), ivs.special_defense, level);
 		if (!special_defense_ev) {
 			continue;
 		}
-		auto const speed_ev = stat_to_ev(stats.speed, nature, StatNames::SPE, base.spe(), ivs.speed, level);
+		auto const speed_ev = stat_to_ev(stats.speed, nature, RegularStat::spe, base.spe(), ivs.speed, level);
 		if (!speed_ev) {
 			continue;
 		}
@@ -132,17 +132,17 @@ auto calculate_ivs_and_evs(
 
 auto calculate_ivs_and_evs(Generation const generation, Pokemon const pokemon) -> CombinedStats<IVAndEV> {
 	auto const nature = get_nature(pokemon);
-	auto calculate_stat = [=](StatNames const stat_name) {
+	auto calculate_stat = [=](RegularStat const stat_name) {
 		auto const stat = get_stat(pokemon, stat_name);
 		return initial_stat(stat_name, stat.base(), stat.iv(), stat.ev(), get_level(pokemon), nature);
 	};
 	auto const stats = GenericStats<HP::max_type, StatValue>{
 		get_hp(pokemon).max(),
-		calculate_stat(StatNames::ATK),
-		calculate_stat(StatNames::DEF),
-		calculate_stat(StatNames::SPA),
-		calculate_stat(StatNames::SPD),
-		calculate_stat(StatNames::SPE)
+		calculate_stat(RegularStat::atk),
+		calculate_stat(RegularStat::def),
+		calculate_stat(RegularStat::spa),
+		calculate_stat(RegularStat::spd),
+		calculate_stat(RegularStat::spe)
 	};
 	auto const ivs = hidden_power_ivs(generation, get_hidden_power_type(pokemon), has_physical_move(generation, pokemon));
 	// TODO: Use Hidden Power power to determine IVs, not just the type

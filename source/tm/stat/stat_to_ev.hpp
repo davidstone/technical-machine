@@ -50,7 +50,7 @@ inline auto hp_to_ev(BaseStats const base, Level const level, HP::max_type const
 // `target` is not just bounded::integer<4, 614> because this function is also
 // used in the EV optimizer, where values outside the legal range are regularly
 // encountered as part of speculative computation.
-constexpr auto stat_to_ev(auto const target, Nature const nature, StatNames const stat_name, Stat::base_type const base, IV const iv, Level const level) -> bounded::optional<EV> {
+constexpr auto stat_to_ev(auto const target, Nature const nature, RegularStat const stat_name, Stat::base_type const base, IV const iv, Level const level) -> bounded::optional<EV> {
 	auto const computed = (round_up_divide((round_up_divide(target, boost(nature, stat_name)) - 5_bi) * 100_bi, level()) - 2_bi * base - iv.value()) * 4_bi;
 	if (computed > EV::max) {
 		return bounded::none;

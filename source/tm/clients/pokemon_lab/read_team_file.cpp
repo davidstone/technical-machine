@@ -49,15 +49,15 @@ namespace pl {
 namespace {
 
 auto lookup_stat(std::string_view const name) {
-	using Storage = containers::array<containers::map_value_type<std::string_view, StatNames>, 5>;
+	using Storage = containers::array<containers::map_value_type<std::string_view, RegularStat>, 5>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
-			{ "Atk", StatNames::ATK },
-			{ "Def", StatNames::DEF },
-			{ "SpAtk", StatNames::SPA },
-			{ "SpDef", StatNames::SPD },
-			{ "Spd", StatNames::SPE }
+			{ "Atk", RegularStat::atk },
+			{ "Def", RegularStat::def },
+			{ "SpAtk", RegularStat::spa },
+			{ "SpDef", RegularStat::spd },
+			{ "Spd", RegularStat::spe }
 		}}
 	);
 	return converter.at(name);

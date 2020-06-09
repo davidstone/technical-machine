@@ -50,7 +50,7 @@ void sleep_talk() {
 		auto jolteon = attacker.pokemon();
 		jolteon.switch_in(generation, weather);
 		containers::append(regular_moves(jolteon), move_array(generation, Moves::Sleep_Talk, Moves::Thunderbolt));
-		set_stat_ev(jolteon, StatNames::SPA, IV(31_bi), EV(252_bi));
+		set_stat_ev(jolteon, RegularStat::spa, IV(31_bi), EV(252_bi));
 		apply_status_to_self(generation, Statuses::sleep, jolteon, weather);
 	}
 
@@ -60,7 +60,7 @@ void sleep_talk() {
 		auto gyarados = defender.pokemon();
 		gyarados.switch_in(generation, weather);
 		push_back(regular_moves(gyarados), Move(generation, Moves::Earthquake));
-		set_stat_ev(gyarados, StatNames::ATK, IV(31_bi), EV(252_bi));
+		set_stat_ev(gyarados, RegularStat::atk, IV(31_bi), EV(252_bi));
 	}
 
 	call_move(

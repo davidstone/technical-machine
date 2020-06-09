@@ -53,27 +53,27 @@ constexpr auto useful_natures(bool const is_physical, bool const is_special) {
 		containers::enum_range<Nature>(),
 		[=](Nature const nature) {
 			if (!is_physical) {
-				auto const lowers = lowers_stat(nature, StatNames::ATK);
-				return !is_special ? lowers and !boosts_stat(nature, StatNames::SPA) : lowers;
+				auto const lowers = lowers_stat(nature, RegularStat::atk);
+				return !is_special ? lowers and !boosts_stat(nature, RegularStat::spa) : lowers;
 			}
 			if (!is_special) {
-				return lowers_stat(nature, StatNames::SPA);
+				return lowers_stat(nature, RegularStat::spa);
 			}
 			return true;
 		}
 	);
 }
 
-constexpr auto target_stat(StatNames const stat_name, auto const base_stat, Level const level, OffensiveEVs::Input const input, Nature const harmful_nature) {
+constexpr auto target_stat(RegularStat const stat_name, auto const base_stat, Level const level, OffensiveEVs::Input const input, Nature const harmful_nature) {
 	return input.include_evs ? input.stat : initial_stat(stat_name, base_stat, input.iv, EV(0_bi), level, harmful_nature);
 }
 
 auto evs_for_nature(BaseStats const base, Level const level, OffensiveEVs::Input const atk, OffensiveEVs::Input const spa) {
-	auto const target_atk = target_stat(StatNames::ATK, base.atk(), level, atk, Nature::Modest);
-	auto const target_spa = target_stat(StatNames::SPA, base.spa(), level, spa, Nature::Adamant);
+	auto const target_atk = target_stat(RegularStat::atk, base.atk(), level, atk, Nature::Modest);
+	auto const target_spa = target_stat(RegularStat::spa, base.spa(), level, spa, Nature::Adamant);
 	return [=](Nature const nature) {
-		auto const atk_ev = stat_to_ev(target_atk, nature, StatNames::ATK, base.atk(), atk.iv, level);
-		auto const spa_ev = stat_to_ev(target_spa, nature, StatNames::SPA, base.spa(), spa.iv, level);
+		auto const atk_ev = stat_to_ev(target_atk, nature, RegularStat::atk, base.atk(), atk.iv, level);
+		auto const spa_ev = stat_to_ev(target_spa, nature, RegularStat::spa, base.spa(), spa.iv, level);
 		return BOUNDED_CONDITIONAL(atk_ev and spa_ev, (OffensiveStats{nature, {atk.iv, *atk_ev}, {spa.iv, *spa_ev}}), bounded::none);
 	};
 }

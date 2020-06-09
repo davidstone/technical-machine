@@ -288,7 +288,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 		return true;
 	};
 
-	auto confusion_berry = [&](StatNames const stat) {
+	auto confusion_berry = [&](RegularStat const stat) {
 		auto const amount = get_hp(m_pokemon).max() / BOUNDED_CONDITIONAL(generation <= Generation::six, 8_bi, 2_bi);
 		auto const threshold = generation <= Generation::six ? rational(1_bi, 2_bi) : quarter_threshold();
 		auto const activated = healing_berry(threshold, amount);
@@ -307,7 +307,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 
 	switch (item(generation, weather)) {
 		case Item::Aguav_Berry:
-			confusion_berry(StatNames::SPD);
+			confusion_berry(RegularStat::spd);
 			break;
 		case Item::Apicot_Berry:
 			stat_boost_berry(BoostableStat::spd);
@@ -323,7 +323,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			consume();
 			break;
 		case Item::Figy_Berry:
-			confusion_berry(StatNames::ATK);
+			confusion_berry(RegularStat::atk);
 			break;
 		case Item::Ganlon_Berry:
 			stat_boost_berry(BoostableStat::def);
@@ -332,7 +332,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			healing_berry(rational(1_bi, 2_bi), 30_bi);
 			break;
 		case Item::Iapapa_Berry:
-			confusion_berry(StatNames::DEF);
+			confusion_berry(RegularStat::def);
 			break;
 		case Item::Lansat_Berry:
 			consume();
@@ -341,7 +341,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			stat_boost_berry(BoostableStat::atk);
 			break;
 		case Item::Mago_Berry:
-			confusion_berry(StatNames::SPE);
+			confusion_berry(RegularStat::spe);
 			break;
 		case Item::Micle_Berry:
 			consume();
@@ -363,7 +363,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			consume();
 			break;
 		case Item::Wiki_Berry:
-			confusion_berry(StatNames::SPA);
+			confusion_berry(RegularStat::spa);
 			break;
 		default:
 			break;

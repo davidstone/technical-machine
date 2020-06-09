@@ -22,21 +22,12 @@
 
 #include <tm/stat/combined_stats.hpp>
 #include <tm/stat/iv_and_ev.hpp>
-#include <tm/stat/stat_names.hpp>
-
-#include <tm/operators.hpp>
-
-#include <containers/array/array.hpp>
 
 #include <random>
 
 namespace technicalmachine {
 enum class Generation : std::uint8_t;
 struct Pokemon;
-
-constexpr auto regular_stats() {
-	return containers::array{StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE};
-}
 
 void optimize_evs(Generation, Pokemon & pokemon, std::mt19937 & random_engine);
 auto minimize_evs(Generation, CombinedStats<IVAndEV> stats, Species, Level, bool include_attack, bool include_special_attack) -> CombinedStats<IVAndEV>;
