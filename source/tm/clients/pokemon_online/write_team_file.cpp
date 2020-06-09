@@ -19,7 +19,6 @@
 #include <tm/clients/pokemon_online/write_team_file.hpp>
 
 #include <tm/clients/pokemon_online/conversion.hpp>
-#include <tm/clients/pokemon_online/stat_order.hpp>
 
 #include <tm/team.hpp>
 
