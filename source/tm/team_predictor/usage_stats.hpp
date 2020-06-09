@@ -59,7 +59,7 @@ struct UsageStats {
 	}
 
 	auto const & get(Species const species) const {
-		return at(m_all_per_pokemon, species);
+		return m_all_per_pokemon[bounded::integer(species)];
 	}
 private:
 	float m_total_weighted_usage = 0.0F;

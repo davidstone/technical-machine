@@ -182,14 +182,14 @@ void check_non_negative(float const value) {
 void turn_teammates_into_multiplier(containers::array<UsageStats::PerPokemon, number_of_species> & all_per_pokemon) {
 	constexpr auto all_species = containers::enum_range<Species>();
 	for (auto const species_outer : all_species) {
-		auto & per_pokemon = at(all_per_pokemon, species_outer);
+		auto & per_pokemon = all_per_pokemon[bounded::integer(species_outer)];
 		for (auto const species_inner : all_species) {
-			auto & multiplier = at(per_pokemon.teammates, species_inner);
+			auto & multiplier = per_pokemon.teammates[bounded::integer(species_inner)];
 			if (is_alternate_form(species_outer, species_inner)) {
 				multiplier = 0.0F;
 				continue;
 			}
-			auto const base_value = at(all_per_pokemon, species_inner).weighted_usage;
+			auto const base_value = all_per_pokemon[bounded::integer(species_inner)].weighted_usage;
 			if (base_value == 0.0F) {
 				multiplier = 1.0F;
 			} else {
@@ -228,7 +228,7 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 			}
 			auto const value = std::stof(teammate.second.get<std::string>(""));
 			check_finite(value);
-			at(per_pokemon.teammates, from_string<Species>(teammate.first)) = value;
+			per_pokemon.teammates[bounded::integer(from_string<Species>(teammate.first))] = value;
 		}
 		per_pokemon.moves = per_pokemon_data<Moves>(pokemon.second.get_child("Moves"), max_moves_per_pokemon);
 		per_pokemon.ability = per_pokemon_datum<Ability>(pokemon.second.get_child("Abilities"));

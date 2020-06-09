@@ -55,10 +55,10 @@ struct Stage {
 	}
 
 	auto operator[](BoostableStat index) const -> value_type const & {
-		return at(m_stages, index);
+		return m_stages[bounded::integer(index)];
 	}
 	auto operator[](BoostableStat index) -> value_type & {
-		return at(m_stages, index);
+		return m_stages[bounded::integer(index)];
 	}
 private:
 	container_type m_stages;

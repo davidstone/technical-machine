@@ -45,10 +45,10 @@ auto Stats::hp() -> HP & {
 }
 
 auto Stats::operator[](RegularStat const stat) const -> Stat const & {
-	return containers::at(m_stats, stat);
+	return m_stats[bounded::integer(stat)];
 }
 auto Stats::operator[](RegularStat const stat) -> Stat & {
-	return containers::at(m_stats, stat);
+	return m_stats[bounded::integer(stat)];
 }
 
 

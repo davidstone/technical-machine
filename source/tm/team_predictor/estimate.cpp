@@ -37,7 +37,7 @@ Estimate::Estimate(UsageStats const & usage_stats, LeadStats const lead_stats) {
 	auto const & lead = lead_stats.get(usage_stats);
 	auto const total = usage_stats.total_weighted_usage();
 	for (auto const species : containers::enum_range<Species>()) {
-		at(m_estimate, species) = at(lead, species) * usage_stats.get(species).weighted_usage / static_cast<value_type>(total);
+		m_estimate[bounded::integer(species)] = lead[bounded::integer(species)] * usage_stats.get(species).weighted_usage / static_cast<value_type>(total);
 	}
 }
 
@@ -49,7 +49,7 @@ void update_estimate(Estimate & estimate, UsageStats const & usage_stats, Team c
 
 void Estimate::update(UsageStats const & usage_stats, Species const seen) {
 	for (auto const predicted : containers::enum_range<Species>()) {
-		at(m_estimate, predicted) *= at(usage_stats.get(seen).teammates, predicted);
+		m_estimate[bounded::integer(predicted)] *= usage_stats.get(seen).teammates[bounded::integer(predicted)];
 	}
 }
 
