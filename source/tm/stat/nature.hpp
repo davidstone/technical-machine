@@ -31,11 +31,31 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 enum class Nature : std::uint8_t {
-	Adamant, Bashful, Bold, Brave, Calm,
-	Careful, Docile, Gentle, Hardy, Hasty,
-	Impish, Jolly, Lax, Lonely, Mild, Modest,
-	Naive, Naughty, Quiet, Quirky, Rash,
-	Relaxed, Sassy, Serious, Timid
+	Adamant,
+	Bashful,
+	Bold,
+	Brave,
+	Calm,
+	Careful,
+	Docile,
+	Gentle,
+	Hardy,
+	Hasty,
+	Impish,
+	Jolly,
+	Lax,
+	Lonely,
+	Mild,
+	Modest,
+	Naive,
+	Naughty,
+	Quiet,
+	Quirky,
+	Rash,
+	Relaxed,
+	Sassy,
+	Serious,
+	Timid,
 };
 
 constexpr auto boosts_stat(Nature const nature, StatNames const stat) -> bool {
