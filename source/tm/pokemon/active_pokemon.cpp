@@ -297,7 +297,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 		}
 	};
 
-	auto stat_boost_berry = [&](StatNames const stat) {
+	auto stat_boost_berry = [&](BoostableStat const stat) {
 		if (current_hp > quarter_threshold()) {
 			return;
 		}
@@ -310,7 +310,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			confusion_berry(StatNames::SPD);
 			break;
 		case Item::Apicot_Berry:
-			stat_boost_berry(StatNames::SPD);
+			stat_boost_berry(BoostableStat::spd);
 			break;
 		case Item::Berry:
 		case Item::Oran_Berry:
@@ -326,7 +326,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			confusion_berry(StatNames::ATK);
 			break;
 		case Item::Ganlon_Berry:
-			stat_boost_berry(StatNames::DEF);
+			stat_boost_berry(BoostableStat::def);
 			break;
 		case Item::Gold_Berry:
 			healing_berry(rational(1_bi, 2_bi), 30_bi);
@@ -338,7 +338,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			consume();
 			break;
 		case Item::Liechi_Berry:
-			stat_boost_berry(StatNames::ATK);
+			stat_boost_berry(BoostableStat::atk);
 			break;
 		case Item::Mago_Berry:
 			confusion_berry(StatNames::SPE);
@@ -347,10 +347,10 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			consume();
 			break;
 		case Item::Petaya_Berry:
-			stat_boost_berry(StatNames::SPA);
+			stat_boost_berry(BoostableStat::spa);
 			break;
 		case Item::Salac_Berry:
-			stat_boost_berry(StatNames::SPE);
+			stat_boost_berry(BoostableStat::spe);
 			break;
 		case Item::Sitrus_Berry:
 			healing_berry(

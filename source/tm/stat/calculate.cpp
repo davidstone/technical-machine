@@ -356,7 +356,7 @@ auto calculate_initial_stat(StatNames const name, ActivePokemon const pokemon) {
 template<StatNames stat>
 auto calculate_common_offensive_stat(Generation const generation, ActivePokemon const pokemon, Type const move_type, Ability const other_ability, Weather const weather, bool const critical_hit) {
 	auto const attack = calculate_initial_stat(stat, pokemon) *
-		modifier<stat>(pokemon.stage(), critical_hit) *
+		modifier<BoostableStat(stat)>(pokemon.stage(), critical_hit) *
 		offensive_ability_modifier<stat>(generation, pokemon, move_type, other_ability, weather) *
 		item_modifier<stat>(generation, pokemon, weather);
 	
@@ -395,7 +395,7 @@ constexpr auto is_self_KO(Moves const move) {
 auto calculate_defense(Generation const generation, ActivePokemon const defender, Moves const move, Weather const weather, bool const critical_hit) -> defense_type {
 	constexpr auto stat = StatNames::DEF;
 	auto const defense = calculate_initial_stat(stat, defender) *
-		modifier<stat>(defender.stage(), critical_hit) *
+		modifier<BoostableStat(stat)>(defender.stage(), critical_hit) *
 		defense_ability_modifier(defender) *
 		item_modifier<stat>(generation, defender, weather);
 	
@@ -417,7 +417,7 @@ auto special_defense_sandstorm_boost(Generation const generation, ActivePokemon 
 auto calculate_special_defense(Generation const generation, ActivePokemon const defender, Ability const attacker_ability, Weather const weather, bool const critical_hit) -> special_defense_type {
 	constexpr auto stat = StatNames::SPD;
 	auto const defense = calculate_initial_stat(stat, defender) *	
-		modifier<stat>(defender.stage(), critical_hit) *
+		modifier<BoostableStat(stat)>(defender.stage(), critical_hit) *
 		special_defense_ability_modifier(defender, attacker_ability, weather) *
 		item_modifier<stat>(generation, defender, weather) *
 		special_defense_sandstorm_boost(generation, defender, attacker_ability, weather);
@@ -447,7 +447,7 @@ auto calculate_speed(Generation const generation, Team const & team, Ability con
 	constexpr auto stat = StatNames::SPE;
 	auto const & pokemon = team.pokemon();
 	auto const speed = calculate_initial_stat(stat, pokemon) *
-		modifier<stat>(pokemon.stage()) *
+		modifier<BoostableStat(stat)>(pokemon.stage()) *
 		speed_ability_modifier(pokemon, other_ability, weather) *
 		item_modifier<stat>(generation, pokemon, weather) /
 		paralysis_speed_divisor (pokemon) *

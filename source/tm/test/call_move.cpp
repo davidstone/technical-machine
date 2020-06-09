@@ -86,7 +86,7 @@ void test_baton_pass() {
 		false,
 		damage
 	);
-	if (attacker.pokemon().stage()[StatNames::ATK] != 6_bi) {
+	if (attacker.pokemon().stage()[BoostableStat::atk] != 6_bi) {
 		std::cerr << "Belly Drum did not max out Attack\n";
 		std::terminate();
 	}
@@ -100,7 +100,7 @@ void test_baton_pass() {
 		false,
 		damage
 	);
-	if (attacker.pokemon().stage()[StatNames::ATK] != 6_bi) {
+	if (attacker.pokemon().stage()[BoostableStat::atk] != 6_bi) {
 		std::cerr << "Baton Pass immediately cleared stat boosts\n";
 		std::terminate();
 	}
@@ -114,7 +114,7 @@ void test_baton_pass() {
 		false,
 		damage
 	);
-	if (attacker.pokemon().stage()[StatNames::ATK] != 6_bi) {
+	if (attacker.pokemon().stage()[BoostableStat::atk] != 6_bi) {
 		std::cerr << "Baton Pass cleared stat boosts after switching\n";
 		std::terminate();
 	}

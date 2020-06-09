@@ -57,7 +57,7 @@ void attack_tests() {
 
 	set_stat_ev(pokemon, StatNames::DEF, IV(31_bi), EV(EV::max));
 	pokemon.activate_power_trick();
-	pokemon.stage()[StatNames::ATK] += 6_bi;
+	pokemon.stage()[BoostableStat::atk] += 6_bi;
 
 	check_equal(calculate_attack(generation, pokemon, Type::Normal, Ability::Honey_Gather, weather, critical_hit), max_attack);
 }
@@ -74,7 +74,7 @@ void special_attack_tests() {
 	pokemon.switch_in(generation, weather);
 
 	set_stat_ev(pokemon, StatNames::SPA, IV(31_bi), EV(EV::max));
-	pokemon.stage()[StatNames::SPA] += 6_bi;
+	pokemon.stage()[BoostableStat::spa] += 6_bi;
 
 	check_equal(calculate_special_attack(generation, pokemon, Type::Water, Ability::Honey_Gather, weather, critical_hit), max_special_attack);
 }
@@ -91,7 +91,7 @@ void max_defense_test() {
 	pokemon.switch_in(generation, weather);
 	set_stat_ev(pokemon, StatNames::DEF, IV(31_bi), EV(EV::max));
 
-	pokemon.stage()[StatNames::DEF] += 6_bi;
+	pokemon.stage()[BoostableStat::def] += 6_bi;
 
 	apply_status_to_self(generation, Statuses::burn, pokemon, weather);
 
@@ -112,7 +112,7 @@ void min_defense_test() {
 	set_stat_ev(pokemon, StatNames::DEF, IV(0_bi), EV(0_bi));
 
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
-		pokemon.stage()[StatNames::DEF] += -2_bi;
+		pokemon.stage()[BoostableStat::def] += -2_bi;
 	}
 
 	check_equal(calculate_defense(generation, pokemon, physical_move, weather), min_defense);
@@ -137,7 +137,7 @@ void special_defense_tests() {
 	pokemon.switch_in(generation, weather);
 	set_stat_ev(pokemon, StatNames::SPD, IV(31_bi), EV(EV::max));
 
-	pokemon.stage()[StatNames::SPD] += 6_bi;
+	pokemon.stage()[BoostableStat::spd] += 6_bi;
 
 	check_equal(calculate_special_defense(generation, pokemon, Ability::Honey_Gather, weather), max_special_defense);
 }
@@ -155,7 +155,7 @@ void speed_tests() {
 	pokemon.switch_in(generation, weather);
 	set_stat_ev(pokemon, StatNames::SPE, IV(31_bi), EV(EV::max));
 
-	pokemon.stage()[StatNames::SPE] += 6_bi;
+	pokemon.stage()[BoostableStat::spe] += 6_bi;
 
 	team.activate_tailwind();
 	

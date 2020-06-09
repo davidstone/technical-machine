@@ -113,7 +113,7 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 			// TODO: Should not take into account items, abilities, or Wonder Room
 			auto const defense = calculate_defense(generation, other, move, weather);
 			auto const special_defense = calculate_special_defense(generation, other, switcher_ability, weather);
-			switcher.stage()[defense >= special_defense ? StatNames::SPA : StatNames::ATK] += 1_bi;
+			switcher.stage()[defense >= special_defense ? BoostableStat::spa : BoostableStat::atk] += 1_bi;
 			break;
 		}
 		case Ability::Drizzle:
@@ -128,12 +128,12 @@ void activate_ability_on_switch(Generation const generation, MutableActivePokemo
 			if (blocks_intimidate(generation, other.ability())) {
 				break;
 			}
-			auto & attack = other.stage()[StatNames::ATK];
+			auto & attack = other.stage()[BoostableStat::atk];
 			if (attack == bounded::min_value<Stage::value_type>) {
 				break;
 			}
 			attack -= 1_bi;
-			auto & speed = other.stage()[StatNames::SPE];
+			auto & speed = other.stage()[BoostableStat::spe];
 			if (other.item(generation, weather) == Item::Adrenaline_Orb and speed != bounded::max_value<Stage::value_type>) {
 				speed += 1_bi;
 				other.remove_item();

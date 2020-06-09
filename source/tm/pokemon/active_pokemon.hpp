@@ -525,7 +525,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	}
 	auto minimize(Generation const generation) const {
 		m_flags.minimized = true;
-		stage()[StatNames::EVA] += BOUNDED_CONDITIONAL(generation <= Generation::four, 1_bi, 2_bi);
+		stage()[BoostableStat::eva] += BOUNDED_CONDITIONAL(generation <= Generation::four, 1_bi, 2_bi);
 	}
 	auto activate_mud_sport() const {
 		m_flags.mud_sport = true;
@@ -714,7 +714,7 @@ inline auto apply_status_to_self(Generation const generation, Statuses const sta
 
 
 inline auto activate_berserk_gene(Generation const generation, MutableActivePokemon pokemon, Weather const weather) -> void {
-	pokemon.stage()[StatNames::ATK] += 2_bi;
+	pokemon.stage()[BoostableStat::atk] += 2_bi;
 	// TODO: Berserk Gene causes 256-turn confusion, unless the Pokemon
 	// switching out was confused.
 	pokemon.confuse(generation, weather);

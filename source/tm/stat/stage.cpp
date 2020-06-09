@@ -23,49 +23,41 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 auto boost_regular(Stage & stage, Stage::boost_type const number_of_stages) -> void {
-	for (auto const stat : { StatNames::ATK, StatNames::DEF, StatNames::SPA, StatNames::SPD, StatNames::SPE }) {
+	for (auto const stat : containers::enum_range(BoostableStat::spe)) {
 		stage[stat] += number_of_stages;
 	}
 }
 
 auto boost_physical(Stage & stage, Stage::boost_type const number_of_stages) -> void {
-	for (auto const stat : { StatNames::ATK, StatNames::DEF }) {
+	for (auto const stat : {BoostableStat::atk, BoostableStat::def}) {
 		stage[stat] += number_of_stages;
 	}
 }
 auto boost_special(Stage & stage, Stage::boost_type const number_of_stages) -> void {
-	for (auto const stat : { StatNames::SPA, StatNames::SPD }) {
+	for (auto const stat : {BoostableStat::spa, BoostableStat::spd}) {
 		stage[stat] += number_of_stages;
 	}
 }
 auto boost_defensive(Stage & stage, Stage::boost_type const number_of_stages) -> void {
-	for (auto const stat : { StatNames::DEF, StatNames::SPD }) {
+	for (auto const stat : {BoostableStat::def, BoostableStat::spd}) {
 		stage[stat] += number_of_stages;
 	}
 }
 auto boost_offensive(Stage & stage, Stage::boost_type const number_of_stages) -> void {
-	for (auto const stat : { StatNames::ATK, StatNames::SPA }) {
+	for (auto const stat : {BoostableStat::atk, BoostableStat::spa}) {
 		stage[stat] += number_of_stages;
 	}
 }
 
-namespace {
-
-void swap_specified(Stage & lhs, Stage & rhs, std::initializer_list<StatNames> const & stats) {
-	using std::swap;
-	for (auto const stat : stats) {
-		swap(lhs[stat], rhs[stat]);
+auto swap_defensive(Stage & lhs, Stage & rhs) -> void {
+	for (auto const stat : {BoostableStat::def, BoostableStat::spd}) {
+		std::swap(lhs[stat], rhs[stat]);
 	}
 }
-
-}	// namespace
-
-auto swap_defensive(Stage & lhs, Stage & rhs) -> void {
-	swap_specified(lhs, rhs, { StatNames::DEF, StatNames::SPD });
-}
 auto swap_offensive(Stage & lhs, Stage & rhs) -> void {
-	swap_specified(lhs, rhs, { StatNames::ATK, StatNames::SPA });
+	for (auto const stat : {BoostableStat::atk, BoostableStat::spa}) {
+		std::swap(lhs[stat], rhs[stat]);
+	}
 }
-
 
 } // namespace technicalmachine

@@ -34,6 +34,16 @@ enum class StatNames {
 	EVA
 };
 
+enum class BoostableStat {
+	atk,
+	def,
+	spa,
+	spd,
+	spe,
+	acc,
+	eva,
+};
+
 }	// namespace technicalmachine
 namespace bounded {
 
@@ -42,5 +52,11 @@ inline constexpr auto min_value<technicalmachine::StatNames> = technicalmachine:
 
 template<>
 inline constexpr auto max_value<technicalmachine::StatNames> = technicalmachine::StatNames::EVA;
+
+template<>
+inline constexpr auto min_value<technicalmachine::BoostableStat> = technicalmachine::BoostableStat::atk;
+
+template<>
+inline constexpr auto max_value<technicalmachine::BoostableStat> = technicalmachine::BoostableStat::eva;
 
 }	// namespace bounded

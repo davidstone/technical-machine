@@ -42,7 +42,7 @@ struct Variable {
 	}
 	
 	constexpr auto acupressure_stat_boost() const {
-		return static_cast<StatNames>(m_value);
+		return BoostableStat(m_value);
 	}
 	
 	constexpr auto confuse() {
