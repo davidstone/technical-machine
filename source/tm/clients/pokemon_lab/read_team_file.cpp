@@ -48,7 +48,7 @@ enum class Moves : std::uint16_t;
 namespace pl {
 namespace {
 
-auto lookup_stat(std::string_view const name) {
+auto stat_from_simulator_string(std::string_view const str) {
 	using Storage = containers::array<containers::map_value_type<std::string_view, RegularStat>, 5>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
@@ -60,21 +60,21 @@ auto lookup_stat(std::string_view const name) {
 			{ "Spd", RegularStat::spe }
 		}}
 	);
-	return converter.at(name);
+	return converter.at(str);
 }
 
 auto load_stats(Generation const generation, Pokemon & pokemon, boost::property_tree::ptree const & pt) {
-	auto const name = pt.get<std::string>("<xmlattr>.name");
+	auto const stat_name = pt.get<std::string>("<xmlattr>.name");
 	auto const iv = IV(pt.get<IV::value_type>("<xmlattr>.iv"));
 	auto const ev = EV(pt.get<EV::value_type>("<xmlattr>.ev"));
-	if (name == "HP") {
+	if (stat_name == "HP") {
 		set_hp_ev(generation, pokemon, iv, ev);
 	} else {
-		set_stat_ev(pokemon, lookup_stat(name), iv, ev);
+		set_stat_ev(pokemon, stat_from_simulator_string(stat_name), iv, ev);
 	}
 }
 
-auto from_simulator_string(std::string_view const str) {
+auto species_from_simulator_string(std::string_view const str) {
 	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 16>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
@@ -103,7 +103,7 @@ auto from_simulator_string(std::string_view const str) {
 
 auto load_pokemon(Generation const generation, boost::property_tree::ptree const & pt, Team & team) {
 	auto const species_str = pt.get <std::string>("<xmlattr>.species");
-	auto const species = from_simulator_string(species_str);
+	auto const species = species_from_simulator_string(species_str);
 	// auto const nickname_temp = pt.get <std::string>("nickname");
 	// auto const nickname = !nickname_temp.empty() ? nickname_temp : species_str;
 	auto const level = Level(pt.get<Level::value_type>("level"));
