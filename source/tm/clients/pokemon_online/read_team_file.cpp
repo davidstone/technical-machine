@@ -34,6 +34,8 @@
 
 #include <containers/integer_range.hpp>
 
+#include <operators/arrow.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -44,6 +46,29 @@ enum class Moves : std::uint16_t;
 namespace po {
 namespace {
 using boost::property_tree::ptree;
+
+struct CheckedIterator : operators::arrow<CheckedIterator> {
+	explicit CheckedIterator(boost::property_tree::ptree const & pt):
+		m_it(pt.begin()),
+		m_last(pt.end())
+	{
+	}
+
+	auto const & advance(std::string_view const expected_key) & {
+		++m_it;
+		if (m_it == m_last) {
+			throw std::runtime_error("Incomplete PO team file\n");
+		}
+		auto const & value = *m_it;
+		if (value.first != expected_key) {
+			throw InvalidTeamFile(std::string(expected_key), value.first);
+		}
+		return value.second;
+	}
+private:
+	boost::property_tree::ptree::const_iterator m_it;
+	boost::property_tree::ptree::const_iterator m_last;
+};
 
 auto load_species(ptree const & pt) -> bounded::optional<SpeciesIDs::ID> {
 	// Pokemon Online gives Missingno. the ID 0, and uses that to represent the
@@ -64,28 +89,22 @@ TeamSize number_of_pokemon(ptree const & pt) {
 	return pokemon_count;
 }
 
-ptree::const_iterator load_moves(Generation const generation, Pokemon & pokemon, ptree::const_iterator it) {
+auto load_moves(Generation const generation, Pokemon & pokemon, CheckedIterator it) -> CheckedIterator {
 	for (auto const n [[maybe_unused]] : containers::integer_range(4_bi)) {
-		if (it->first != "Move") {
-			throw InvalidTeamFile("Move", it->first);
-		}
+		auto const & value = it.advance("Move");
 		// TODO: return optional
 		using ReadMoveID = bounded::checked_integer<0, static_cast<int>(bounded::max_value<MoveID>)>;
-		auto const move_id = it->second.get_value<ReadMoveID>();
+		auto const move_id = value.get_value<ReadMoveID>();
 		if (move_id != 0_bi) {
 			// TODO: Throw an exception if we attempt to add the same move twice
 			add_seen_move(all_moves(pokemon), generation, id_to_move(MoveID(move_id)));
 		}
-		++it;
 	}
 	return it;
 }
 
 template<typename Type>
-auto load_stats(std::string const & name, ptree::const_iterator it) {
-	if (it->first != name) {
-		throw InvalidTeamFile(name, it->first);
-	}
+auto load_stats(std::string_view const name, CheckedIterator it) {
 	struct Parsed {
 		Type hp;
 		Type atk;
@@ -93,12 +112,12 @@ auto load_stats(std::string const & name, ptree::const_iterator it) {
 		Type spa;
 		Type spd;
 		Type spe;
-		ptree::const_iterator it;
+
+		CheckedIterator it;
 	};
 	auto get_next = [&]{
-		auto const result = Type(it->second.get_value<typename Type::value_type>());
-		++it;
-		return result;
+		auto const & value = it.advance(name);
+		return Type(value.get_value<typename Type::value_type>());
 	};
 	return Parsed{
 		get_next(),
@@ -123,8 +142,7 @@ void load_pokemon(ptree const & pt, Generation const generation, Team & team, Sp
 
 	auto & pokemon = team.add_pokemon(generation, species, level, gender, item, ability, nature, happiness);
 
-	// Get past the xml attributes
-	auto it = ++pt.get_child("").begin();
+	auto it = CheckedIterator(pt.get_child(""));
 	it = load_moves(generation, pokemon, it);
 	auto ivs = load_stats<IV>("DV", it);
 	auto evs = load_stats<EV>("EV", ivs.it);
