@@ -46,6 +46,17 @@ auto parse_stats(HP::max_type const hp, boost::property_tree::ptree const & stat
 	return GenericStats{hp, attack, defense, special_attack, special_defense, speed};
 }
 
+auto parse_moves(boost::property_tree::ptree const & moves) {
+	if (moves.size() > StaticVectorMove::capacity()) {
+		throw std::runtime_error("Tried to add too many moves");
+	}
+	auto result = StaticVectorMove();
+	for (auto const & move : moves) {
+		containers::push_back(result, from_string<Moves>(move.second.get<std::string>("")));
+	}
+	return result;
+}
+
 } // namespace
 
 auto parse_team(boost::property_tree::ptree const & pt, Generation const generation) -> Team {
@@ -66,6 +77,7 @@ auto parse_team(boost::property_tree::ptree const & pt, Generation const generat
 		auto const hp = bounded::to_integer<HP::max_type>(split_view(condition, '/').first);
 
 		// TODO: Use the correct IVs if there is a Hidden Power
+		auto const moves = parse_moves(pokemon_data.second.get_child("moves"));
 		auto const iv = default_iv(generation);
 		auto const stats = calculate_ivs_and_evs(
 			generation,
@@ -81,8 +93,8 @@ auto parse_team(boost::property_tree::ptree const & pt, Generation const generat
 		
 		Pokemon & pokemon = team.add_pokemon(generation, details.species, details.level, details.gender, item, ability, stats.nature);
 		
-		for (auto const & move : pokemon_data.second.get_child("moves")) {
-			 add_seen_move(all_moves(pokemon), generation, from_string<Moves>(move.second.get<std::string>("")));
+		for (auto const move : moves) {
+			 add_seen_move(all_moves(pokemon), generation, move);
 		}
 
 		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
