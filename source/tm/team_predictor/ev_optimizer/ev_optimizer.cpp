@@ -39,21 +39,13 @@ using namespace bounded::literal;
 
 auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats<IVAndEV> const stats) {
 	set_nature(pokemon, stats.nature);
-
+	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
+		auto const stat = stats[stat_name];
+		set_ev(generation, pokemon, stat_name, stat.iv, stat.ev);
+	}
 	auto const original_hp = get_hp(pokemon);
-	set_hp_ev(generation, pokemon, stats.hp.iv, stats.hp.ev);
 	auto const new_hp = get_hp(pokemon);
 	pokemon.set_hp(new_hp.max() * original_hp.current() / original_hp.max());
-
-	auto set = [&](RegularStat const stat_name, IVAndEV const stat) {
-		set_stat_ev(pokemon, stat_name, stat.iv, stat.ev);
-	};
-
-	set(RegularStat::atk, stats.attack);
-	set(RegularStat::def, stats.defense);
-	set(RegularStat::spa, stats.special_attack);
-	set(RegularStat::spd, stats.special_defense);
-	set(RegularStat::spe, stats.speed);
 }
 
 auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats<IVAndEV> {
@@ -110,63 +102,53 @@ void optimize_evs(Generation const generation, Pokemon & pokemon, std::mt19937 &
 	set_stats(generation, pokemon, optimized);
 }
 
-auto minimize_evs(Generation const generation, CombinedStats<IVAndEV> const stats, Species const species, Level const level, bool const include_attack, bool const include_special_attack) -> CombinedStats<IVAndEV> {
+auto minimize_evs(Generation const generation, CombinedStats<IVAndEV> stats, Species const species, Level const level, bool const include_attack, bool const include_special_attack) -> CombinedStats<IVAndEV> {
 	if (generation <= Generation::two) {
-		return CombinedStats<IVAndEV>{
-			stats.nature,
-			stats.hp,
-			include_attack ? stats.attack : IVAndEV{stats.attack.iv, EV(0_bi)},
-			stats.defense,
-			stats.special_attack,
-			stats.special_defense,
-			stats.speed
-		};
+		if (!include_attack) {
+			stats.atk.ev = EV(0_bi);
+		}
+		return stats;
 	}
 	auto const base_stats = BaseStats(generation, species);
 	auto const nature = stats.nature;
 	auto const hp = HP(base_stats, level, stats.hp.iv, stats.hp.ev).max();
-	auto const attack = initial_stat(RegularStat::atk, base_stats.atk(), stats.attack.iv, stats.attack.ev, level, nature);
-	auto const defense = initial_stat(RegularStat::def, base_stats.def(), stats.defense.iv, stats.defense.ev, level, nature);
-	auto const special_attack = initial_stat(RegularStat::spa, base_stats.spa(), stats.special_attack.iv, stats.special_attack.ev, level, nature);
-	auto const special_defense = initial_stat(RegularStat::spd, base_stats.spd(), stats.special_defense.iv, stats.special_defense.ev, level, nature);
-	auto const speed = initial_stat(RegularStat::spe, base_stats.spe(), stats.speed.iv, stats.speed.ev, level, nature);
+	auto calculate_stat = [=](RegularStat const stat_name, auto const base_stat) {
+		return initial_stat(stat_name, base_stat, stats[PermanentStat(stat_name)].iv, stats[PermanentStat(stat_name)].ev, level, nature);
+	};
+	auto const attack = calculate_stat(RegularStat::atk, base_stats.atk());
+	auto const defense = calculate_stat(RegularStat::def, base_stats.def());
+	auto const special_attack = calculate_stat(RegularStat::spa, base_stats.spa());
+	auto const special_defense = calculate_stat(RegularStat::spd, base_stats.spd());
+	auto const speed = calculate_stat(RegularStat::spe, base_stats.spe());
 
 	return combine(
 		generation,
-		OffensiveEVs(base_stats, level, OffensiveEVs::Input{stats.attack.iv, attack, include_attack}, OffensiveEVs::Input{stats.special_attack.iv, special_attack, include_special_attack}),
-		DefensiveEVs(base_stats, level, DefensiveEVs::InputHP{stats.hp.iv, hp}, DefensiveEVs::InputStat{stats.defense.iv, defense}, DefensiveEVs::InputStat{stats.special_defense.iv, special_defense}),
-		SpeedEVs(base_stats, level, stats.speed.iv, speed)
+		OffensiveEVs(base_stats, level, OffensiveEVs::Input{stats.atk.iv, attack, include_attack}, OffensiveEVs::Input{stats.spa.iv, special_attack, include_special_attack}),
+		DefensiveEVs(base_stats, level, DefensiveEVs::InputHP{stats.hp.iv, hp}, DefensiveEVs::InputStat{stats.def.iv, defense}, DefensiveEVs::InputStat{stats.spd.iv, special_defense}),
+		SpeedEVs(base_stats, level, stats.spe.iv, speed)
 	);
 }
 
 auto pad_random_evs(Generation const generation, CombinedStats<IVAndEV> combined, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) -> CombinedStats<IVAndEV> {
 	if (generation <= Generation::two) {
-		combined.hp.ev = EV(EV::max);
-		combined.attack.ev = include_attack ? EV(EV::max) : EV(0_bi);
-		combined.defense.ev = EV(EV::max);
-		combined.special_attack.ev = EV(EV::max);
-		combined.special_defense.ev = EV(EV::max);
-		combined.speed.ev = EV(EV::max);
+		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
+			auto const minimize_stat = stat_name == PermanentStat::atk and !include_attack;
+			combined[stat_name].ev = minimize_stat ? EV(0_bi) : EV(EV::max);
+		}
 		return combined;
 	}
 	auto distribution = std::discrete_distribution{};
 	while (ev_sum(combined) < max_total_evs(generation)) {
 		distribution.param({
 			combined.hp.ev == EV::max ? 0.0 : 1.0,
-			(!include_attack or combined.attack.ev == EV::max) ? 0.0 : 1.0,
-			combined.defense.ev == EV::max ? 0.0 : 1.0,
-			(!include_special_attack or combined.special_attack.ev == EV::max) ? 0.0 : 1.0,
-			combined.special_defense.ev == EV::max ? 0.0 : 1.0,
-			combined.speed.ev == EV::max ? 0.0 : 1.0,
+			(!include_attack or combined.atk.ev == EV::max) ? 0.0 : 1.0,
+			combined.def.ev == EV::max ? 0.0 : 1.0,
+			(!include_special_attack or combined.spa.ev == EV::max) ? 0.0 : 1.0,
+			combined.spd.ev == EV::max ? 0.0 : 1.0,
+			combined.spe.ev == EV::max ? 0.0 : 1.0,
 		});
 		auto const index = distribution(random_engine);
-		auto & ev =
-			index == 0 ? combined.hp.ev :
-			index == 1 ? combined.attack.ev :
-			index == 2 ? combined.defense.ev :
-			index == 3 ? combined.special_attack.ev :
-			index == 4 ? combined.special_defense.ev :
-			combined.speed.ev;
+		auto & ev = combined[PermanentStat(index - 1)].ev;
 		ev = EV(EV::value_type(ev.value() + 4_bi));
 	}
 	return combined;

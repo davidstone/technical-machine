@@ -111,12 +111,14 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 		auto item = get(bounded::detail::types<Item>(), "item");
 		auto ability = get(bounded::detail::types<Ability>(), "ability");
 		auto nature = get(bounded::detail::types<Nature>(), "nature");
-		auto hp = get_ev("hp");
-		auto atk = get_ev("atk");
-		auto def = get_ev("def");
-		auto spa = get_ev("spa");
-		auto spd = get_ev("spd");
-		auto spe = get_ev("spe");
+		auto const stats = GenericStats<EV>{
+			get_ev("hp"),
+			get_ev("atk"),
+			get_ev("def"),
+			get_ev("spa"),
+			get_ev("spd"),
+			get_ev("spe"),
+		};
 
 		auto moves = containers::static_vector<Moves, max_moves_per_pokemon.value()>();
 		for (auto const move_index : containers::integer_range(max_moves_per_pokemon)) {
@@ -126,7 +128,7 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 			}
 		}
 
-		if (hp.value() + atk.value() + def.value() + spa.value() + spd.value() + spe.value() > max_total_evs(generation)) {
+		if (stats.hp.value() + stats.atk.value() + stats.def.value() + stats.spa.value() + stats.spd.value() + stats.spe.value() > max_total_evs(generation)) {
 			throw std::runtime_error("Too many EVs");
 		}
 
@@ -151,12 +153,9 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 		for (auto const move : moves) {
 			add_seen_move(all_moves(pokemon), generation, move);
 		}
-		set_hp_ev(generation, pokemon, default_iv(generation), hp);
-		set_stat_ev(pokemon, RegularStat::atk, default_iv(generation), atk);
-		set_stat_ev(pokemon, RegularStat::def, default_iv(generation), def);
-		set_stat_ev(pokemon, RegularStat::spa, default_iv(generation), spa);
-		set_stat_ev(pokemon, RegularStat::spd, default_iv(generation), spd);
-		set_stat_ev(pokemon, RegularStat::spe, default_iv(generation), spe);
+		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
+			set_ev(generation, pokemon, stat_name, default_iv(generation), stats[stat_name]);
+		}
 	}
 
 	return {generation, team};

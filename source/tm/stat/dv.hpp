@@ -45,29 +45,29 @@ private:
 };
 
 struct DVs {
-	DV attack;
-	DV defense;
-	DV speed;
-	DV special;
+	DV atk;
+	DV def;
+	DV spe;
+	DV spc;
 
 	constexpr explicit operator IVs() const {
 		return IVs{
 			IV(hp()),
-			IV(attack),
-			IV(defense),
-			IV(special),
-			IV(special),
-			IV(speed)
+			IV(atk),
+			IV(def),
+			IV(spc),
+			IV(spc),
+			IV(spe)
 		};
 	}
 
 private:
 	constexpr auto hp() const -> DV {
 		return DV(
-			((attack.value() % 2_bi) << 3_bi) +
-			((defense.value() % 2_bi) << 2_bi) +
-			((speed.value() % 2_bi) << 1_bi) +
-			((special.value() % 2_bi) << 0_bi)
+			((atk.value() % 2_bi) << 3_bi) +
+			((def.value() % 2_bi) << 2_bi) +
+			((spe.value() % 2_bi) << 1_bi) +
+			((spc.value() % 2_bi) << 0_bi)
 		);
 	}
 };

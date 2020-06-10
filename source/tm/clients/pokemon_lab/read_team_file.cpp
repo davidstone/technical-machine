@@ -49,29 +49,26 @@ namespace pl {
 namespace {
 
 auto stat_from_simulator_string(std::string_view const str) {
-	using Storage = containers::array<containers::map_value_type<std::string_view, RegularStat>, 5>;
+	using Storage = containers::array<containers::map_value_type<std::string_view, PermanentStat>, 6>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
-			{ "Atk", RegularStat::atk },
-			{ "Def", RegularStat::def },
-			{ "SpAtk", RegularStat::spa },
-			{ "SpDef", RegularStat::spd },
-			{ "Spd", RegularStat::spe }
+			{ "Atk", PermanentStat::atk },
+			{ "Def", PermanentStat::def },
+			{ "HP", PermanentStat::hp },
+			{ "SpAtk", PermanentStat::spa },
+			{ "SpDef", PermanentStat::spd },
+			{ "Spd", PermanentStat::spe },
 		}}
 	);
 	return converter.at(str);
 }
 
 auto load_stats(Generation const generation, Pokemon & pokemon, boost::property_tree::ptree const & pt) {
-	auto const stat_name = pt.get<std::string>("<xmlattr>.name");
+	auto const stat_name = stat_from_simulator_string(pt.get<std::string>("<xmlattr>.name"));
 	auto const iv = IV(pt.get<IV::value_type>("<xmlattr>.iv"));
 	auto const ev = EV(pt.get<EV::value_type>("<xmlattr>.ev"));
-	if (stat_name == "HP") {
-		set_hp_ev(generation, pokemon, iv, ev);
-	} else {
-		set_stat_ev(pokemon, stat_from_simulator_string(stat_name), iv, ev);
-	}
+	set_ev(generation, pokemon, stat_name, iv, ev);
 }
 
 auto species_from_simulator_string(std::string_view const str) {

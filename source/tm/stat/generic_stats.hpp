@@ -19,19 +19,23 @@
 
 #include <tm/stat/stat_names.hpp>
 
-#include <bounded/detail/tuple.hpp>
-#include <bounded/unreachable.hpp>
-
 namespace technicalmachine {
 
 template<typename HP, typename Stat = HP>
 struct GenericStats {
 	HP hp;
-	Stat attack;
-	Stat defense;
-	Stat special_attack;
-	Stat special_defense;
-	Stat speed;
+	Stat atk;
+	Stat def;
+	Stat spa;
+	Stat spd;
+	Stat spe;
+	
+	constexpr auto operator[](auto const index) const -> Stat const & {
+		return index_stat(*this, index);
+	}
+	constexpr auto operator[](auto const index) -> Stat & {
+		return index_stat(*this, index);
+	}
 	
 	friend auto operator==(GenericStats const &, GenericStats const &) -> bool = default;
 };

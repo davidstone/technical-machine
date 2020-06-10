@@ -68,22 +68,22 @@ private:
 	static constexpr auto sum_stats(IVs const ivs, auto const transform) {
 		return
 			transform(0_bi, ivs.hp) +
-			transform(1_bi, ivs.attack) +
-			transform(2_bi, ivs.defense) +
-			transform(3_bi, ivs.speed) +
-			transform(4_bi, ivs.special_attack) +
-			transform(5_bi, ivs.special_defense);
+			transform(1_bi, ivs.atk) +
+			transform(2_bi, ivs.def) +
+			transform(3_bi, ivs.spe) +
+			transform(4_bi, ivs.spa) +
+			transform(5_bi, ivs.spd);
 	}
 
 	// http://www.psypokes.com/gsc/dvguide.php
 	static constexpr auto calculate_power(DVs const dvs) -> Power {
 		auto const bit = [](DV const dv) { return BOUNDED_CONDITIONAL(dv.value() < 8_bi, 0_bi, 1_bi); };
 		auto const x =
-			(bit(dvs.attack) << 3_bi) +
-			(bit(dvs.defense) << 2_bi) +
-			(bit(dvs.speed) << 1_bi) +
-			(bit(dvs.special) << 0_bi);
-		auto const y = bounded::min(dvs.special.value(), 3_bi);
+			(bit(dvs.atk) << 3_bi) +
+			(bit(dvs.def) << 2_bi) +
+			(bit(dvs.spe) << 1_bi) +
+			(bit(dvs.spc) << 0_bi);
+		auto const y = bounded::min(dvs.spc.value(), 3_bi);
 		return (5_bi * x + y) / 2_bi + 31_bi;
 	}
 	
@@ -98,10 +98,10 @@ private:
 	static constexpr auto calculate_type(DVs const dvs) -> Type {
 		auto get_low_bit = [](auto const index, DV const dv) { return (dv.value() >> index) % 2_bi; };
 		return calculate_type_impl(
-			(get_low_bit(1_bi, dvs.attack) << 3_bi) +
-			(get_low_bit(0_bi, dvs.attack) << 2_bi) +
-			(get_low_bit(1_bi, dvs.defense) << 1_bi) +
-			(get_low_bit(0_bi, dvs.defense) << 0_bi)
+			(get_low_bit(1_bi, dvs.atk) << 3_bi) +
+			(get_low_bit(0_bi, dvs.atk) << 2_bi) +
+			(get_low_bit(1_bi, dvs.def) << 1_bi) +
+			(get_low_bit(0_bi, dvs.def) << 0_bi)
 		);
 	}
 

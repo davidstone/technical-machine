@@ -57,23 +57,26 @@ auto calculate_ivs_and_evs(
 	auto const hp_ev = hp_to_ev(base, level, stats.hp, ivs.hp);
 
 	for (auto const nature : nature_range) {
-		auto const attack_ev = stat_to_ev(stats.attack, nature, RegularStat::atk, base.atk(), ivs.attack, level);
+		auto compute_ev = [=](RegularStat const stat_name, auto const base_stat) {
+			return stat_to_ev(stats[stat_name], nature, stat_name, base_stat, ivs[stat_name], level);
+		};
+		auto const attack_ev = compute_ev(RegularStat::atk, base.atk());
 		if (!attack_ev) {
 			continue;
 		}
-		auto const defense_ev = stat_to_ev(stats.defense, nature, RegularStat::def, base.def(), ivs.defense, level);
+		auto const defense_ev = compute_ev(RegularStat::def, base.def());
 		if (!defense_ev) {
 			continue;
 		}
-		auto const special_attack_ev = stat_to_ev(stats.special_attack, nature, RegularStat::spa, base.spa(), ivs.special_attack, level);
+		auto const special_attack_ev = compute_ev(RegularStat::spa, base.spa());
 		if (!special_attack_ev) {
 			continue;
 		}
-		auto const special_defense_ev = stat_to_ev(stats.special_defense, nature, RegularStat::spd, base.spd(), ivs.special_defense, level);
+		auto const special_defense_ev = compute_ev(RegularStat::spd, base.spd());
 		if (!special_defense_ev) {
 			continue;
 		}
-		auto const speed_ev = stat_to_ev(stats.speed, nature, RegularStat::spe, base.spe(), ivs.speed, level);
+		auto const speed_ev = compute_ev(RegularStat::spe, base.spe());
 		if (!speed_ev) {
 			continue;
 		}
@@ -81,11 +84,11 @@ auto calculate_ivs_and_evs(
 		auto const combined = CombinedStats<IVAndEV>{
 			nature,
 			{ivs.hp, hp_ev},
-			{ivs.attack, *attack_ev},
-			{ivs.defense, *defense_ev},
-			{ivs.special_attack, *special_attack_ev},
-			{ivs.special_defense, *special_defense_ev},
-			{ivs.speed, *speed_ev}
+			{ivs.atk, *attack_ev},
+			{ivs.def, *defense_ev},
+			{ivs.spa, *special_attack_ev},
+			{ivs.spd, *special_defense_ev},
+			{ivs.spe, *speed_ev}
 		};
 		if (ev_sum(combined) > max_total_evs(generation)) {
 			continue;
@@ -99,11 +102,11 @@ auto calculate_ivs_and_evs(
 		": Species: " + std::string(to_string(species)) +
 		" Level: " + bounded::to_string(level()) +
 		" HP: " + bounded::to_string(stats.hp) +
-		" Attack: " + bounded::to_string(stats.attack) +
-		" Defense: " + bounded::to_string(stats.defense) +
-		" Special Attack: " + bounded::to_string(stats.special_attack) +
-		" Special Defense: " + bounded::to_string(stats.special_defense) +
-		" Speed: " + bounded::to_string(stats.speed)
+		" Attack: " + bounded::to_string(stats.atk) +
+		" Defense: " + bounded::to_string(stats.def) +
+		" Special Attack: " + bounded::to_string(stats.spa) +
+		" Special Defense: " + bounded::to_string(stats.spd) +
+		" Speed: " + bounded::to_string(stats.spe)
 	);
 }
 

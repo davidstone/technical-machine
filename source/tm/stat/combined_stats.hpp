@@ -19,6 +19,7 @@
 
 #include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
+#include <tm/stat/stat_names.hpp>
 
 #include <tm/operators.hpp>
 
@@ -28,18 +29,25 @@ template<typename T>
 struct CombinedStats {
 	Nature nature;
 	T hp;
-	T attack;
-	T defense;
-	T special_attack;
-	T special_defense;
-	T speed;
+	T atk;
+	T def;
+	T spa;
+	T spd;
+	T spe;
+
+	constexpr auto const & operator[](PermanentStat const name) const {
+		return index_stat(*this, name);
+	}
+	constexpr auto & operator[](PermanentStat const name) {
+		return index_stat(*this, name);
+	}
 
 	friend auto operator==(CombinedStats const &, CombinedStats const &) -> bool = default;
 };
 
 constexpr auto ev_sum(CombinedStats<IVAndEV> const stats) {
 	constexpr auto impl = [](auto... args) { return (... + args.ev.value()); };
-	return impl(stats.hp, stats.attack, stats.defense, stats.special_attack, stats.special_defense, stats.speed);
+	return impl(stats.hp, stats.atk, stats.def, stats.spa, stats.spd, stats.spe);
 }
 
 }	// namespace technicalmachine

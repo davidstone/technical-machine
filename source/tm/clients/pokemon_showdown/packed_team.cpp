@@ -129,6 +129,9 @@ auto parse_stat_components(std::string_view const str, T default_value) {
 		T spa;
 		T spd;
 		T spe;
+		constexpr auto operator[](PermanentStat const stat_name) const {
+			return index_stat(*this, stat_name);
+		}
 	};
 	// Order of evaluation is defined with {} init
 	return result{
@@ -179,12 +182,9 @@ auto parse_pokemon(std::string_view const str, Generation const generation, Team
 	for (auto const move : moves) {
 		all_moves(pokemon).add(Move(generation, move));
 	}
-	set_hp_ev(generation, pokemon, ivs.hp, evs.hp);
-	set_stat_ev(pokemon, RegularStat::atk, ivs.atk, evs.atk);
-	set_stat_ev(pokemon, RegularStat::def, ivs.def, evs.def);
-	set_stat_ev(pokemon, RegularStat::spa, ivs.spa, evs.spa);
-	set_stat_ev(pokemon, RegularStat::spd, ivs.spd, evs.spd);
-	set_stat_ev(pokemon, RegularStat::spe, ivs.spe, evs.spe);
+	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
+		set_ev(generation, pokemon, stat_name, ivs[stat_name], evs[stat_name]);
+	}
 	return pokemon;
 }
 

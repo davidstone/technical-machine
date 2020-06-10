@@ -56,27 +56,23 @@ void write_blank_move (ptree & pt) {
 
 void write_stats(Generation const generation, Pokemon const & pokemon, ptree & pt) {
 	auto const stats = calculate_ivs_and_evs(generation, pokemon);
-
-	pt.add("DV", stats.hp.iv.value());
-	pt.add("DV", stats.attack.iv.value());
-	pt.add("DV", stats.defense.iv.value());
-	pt.add("DV", stats.special_attack.iv.value());
-	pt.add("DV", stats.special_defense.iv.value());
-	pt.add("DV", stats.speed.iv.value());
-
-	pt.add("EV", stats.hp.ev.value());
-	pt.add("EV", stats.attack.ev.value());
-	pt.add("EV", stats.defense.ev.value());
-	pt.add("EV", stats.special_attack.ev.value());
-	pt.add("EV", stats.special_defense.ev.value());
-	pt.add("EV", stats.speed.ev.value());
+	auto const stat_names = containers::enum_range<PermanentStat>();
+	for (auto const stat : stat_names) {
+		pt.add("DV", stats[stat].iv.value());
+	}
+	for (auto const stat : stat_names) {
+		pt.add("EV", stats[stat].ev.value());
+	}
 }
 
 void write_blank_stats (ptree & pt) {
-	for (unsigned n = 0; n != max_pokemon_per_team; ++n)
+	auto const stat_names = containers::enum_range<PermanentStat>();
+	for ([[maybe_unused]] auto const stat : stat_names) {
 		pt.add ("DV", 31);
-	for (unsigned n = 0; n != max_pokemon_per_team; ++n)
+	}
+	for ([[maybe_unused]] auto const stat : stat_names) {
 		pt.add ("EV", 0);
+	}
 }
 
 void write_pokemon(Generation const generation, Pokemon const & pokemon, ptree & pt) {

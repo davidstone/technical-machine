@@ -50,6 +50,27 @@ enum class RegularStat {
 	spe,
 };
 
+constexpr auto && index_stat(auto && stats, PermanentStat const index) {
+	switch (index) {
+		case PermanentStat::hp: return OPERATORS_FORWARD(stats).hp;
+		case PermanentStat::atk: return OPERATORS_FORWARD(stats).atk;
+		case PermanentStat::def: return OPERATORS_FORWARD(stats).def;
+		case PermanentStat::spa: return OPERATORS_FORWARD(stats).spa;
+		case PermanentStat::spd: return OPERATORS_FORWARD(stats).spd;
+		case PermanentStat::spe: return OPERATORS_FORWARD(stats).spe;
+	}
+}
+
+constexpr auto && index_stat(auto && stats, RegularStat const index) {
+	switch (index) {
+		case RegularStat::atk: return OPERATORS_FORWARD(stats).atk;
+		case RegularStat::def: return OPERATORS_FORWARD(stats).def;
+		case RegularStat::spa: return OPERATORS_FORWARD(stats).spa;
+		case RegularStat::spd: return OPERATORS_FORWARD(stats).spd;
+		case RegularStat::spe: return OPERATORS_FORWARD(stats).spe;
+	}
+}
+
 }	// namespace technicalmachine
 namespace bounded {
 

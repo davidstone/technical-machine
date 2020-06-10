@@ -114,8 +114,7 @@ struct Pokemon {
 	friend bool item_is_known(Pokemon pokemon);
 	friend void set_nature(Pokemon & pokemon, Nature nature);
 	friend bool nature_is_known(Pokemon pokemon);
-	friend auto set_hp_ev(Generation, Pokemon &, IV, EV) -> void;
-	friend auto set_stat_ev(Pokemon &, RegularStat, IV, EV) -> void;
+	friend auto set_ev(Generation, Pokemon &, PermanentStat, IV, EV) -> void;
 
 	friend auto operator==(Pokemon const &, Pokemon const &) -> bool = default;
 private:
@@ -193,19 +192,18 @@ inline HP get_hp(Pokemon const pokemon) {
 	return pokemon.stats.hp();
 }
 
-inline auto set_hp_ev(Generation const generation, Pokemon & pokemon, IV const iv, EV const ev) -> void {
-	auto const base_stats = BaseStats(generation, get_species(pokemon));
-	pokemon.stats.hp() = HP(base_stats, get_level(pokemon), iv, ev);
-}
-
-
 inline Stat get_stat(Pokemon const pokemon, RegularStat const stat_name) {
 	return pokemon.stats[stat_name];
 }
 
-inline auto set_stat_ev(Pokemon & pokemon, RegularStat const stat_name, IV const iv, EV const ev) -> void {
-	auto & stat = pokemon.stats[stat_name];
-	stat = Stat(stat.base(), iv, ev);
+inline auto set_ev(Generation const generation, Pokemon & pokemon, PermanentStat const stat_name, IV const iv, EV const ev) -> void {
+	if (stat_name == PermanentStat::hp) {
+		auto const base_stats = BaseStats(generation, get_species(pokemon));
+		pokemon.stats.hp() = HP(base_stats, get_level(pokemon), iv, ev);
+	} else {
+		auto & stat = pokemon.stats[RegularStat(stat_name)];
+		stat = Stat(stat.base(), iv, ev);
+	}
 }
 
 

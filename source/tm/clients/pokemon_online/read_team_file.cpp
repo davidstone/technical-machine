@@ -106,6 +106,10 @@ auto load_moves(Generation const generation, Pokemon & pokemon, CheckedIterator 
 template<typename Type>
 auto load_stats(std::string_view const name, CheckedIterator it) {
 	struct Parsed {
+		constexpr auto operator[](PermanentStat const stat_name) const {
+			return index_stat(*this, stat_name);
+		}
+
 		Type hp;
 		Type atk;
 		Type def;
@@ -146,12 +150,11 @@ void load_pokemon(ptree const & pt, Generation const generation, Team & team, Sp
 	it = load_moves(generation, pokemon, it);
 	auto ivs = load_stats<IV>("DV", it);
 	auto evs = load_stats<EV>("EV", ivs.it);
-	set_hp_ev(generation, pokemon, ivs.hp, evs.hp);
-	set_stat_ev(pokemon, RegularStat::atk, ivs.atk, evs.atk);
-	set_stat_ev(pokemon, RegularStat::def, ivs.def, evs.def);
-	set_stat_ev(pokemon, RegularStat::spa, ivs.spa, evs.spa);
-	set_stat_ev(pokemon, RegularStat::spd, ivs.spd, evs.spd);
-	set_stat_ev(pokemon, RegularStat::spe, ivs.spe, evs.spe);
+	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
+		auto const iv = ivs[stat_name];
+		auto const ev = evs[stat_name];
+		set_ev(generation, pokemon, stat_name, iv, ev);
+	}
 }
 
 } // namespace

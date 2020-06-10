@@ -85,12 +85,10 @@ auto parse_team(boost::property_tree::ptree const & pt, Generation const generat
 			 add_seen_move(all_moves(pokemon), generation, from_string<Moves>(move.second.get<std::string>("")));
 		}
 
-		set_hp_ev(generation, pokemon, stats.hp.iv, stats.hp.ev);
-		set_stat_ev(pokemon, RegularStat::atk, stats.attack.iv, stats.attack.ev);
-		set_stat_ev(pokemon, RegularStat::def, stats.defense.iv, stats.defense.ev);
-		set_stat_ev(pokemon, RegularStat::spa, stats.special_attack.iv, stats.special_attack.ev);
-		set_stat_ev(pokemon, RegularStat::spd, stats.special_defense.iv, stats.special_defense.ev);
-		set_stat_ev(pokemon, RegularStat::spe, stats.speed.iv, stats.speed.ev);
+		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
+			auto const stat = stats[stat_name];
+			set_ev(generation, pokemon, stat_name, stat.iv, stat.ev);
+		}
 	}
 	team.all_pokemon().reset_index();
 	return team;

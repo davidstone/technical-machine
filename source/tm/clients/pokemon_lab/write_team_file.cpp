@@ -57,14 +57,23 @@ void write_stat(std::string_view const name, IV const iv, EV const ev, boost::pr
 	s.put("<xmlattr>.ev", ev.value());
 }
 
+constexpr auto to_simulator_string(PermanentStat const stat) -> std::string_view {
+	switch (stat) {
+		case PermanentStat::hp: return "HP";
+		case PermanentStat::atk: return "Atk";
+		case PermanentStat::def: return "Def";
+		case PermanentStat::spa: return "SpAtk";
+		case PermanentStat::spd: return "SpDef";
+		case PermanentStat::spe: return "Spd";
+	}
+}
+
 void write_stats(Generation const generation, Pokemon const & pokemon, boost::property_tree::ptree & pt) {
 	auto const stats = calculate_ivs_and_evs(generation, pokemon);
-	write_stat("HP", stats.hp.iv, stats.hp.ev, pt);
-	write_stat("Atk", stats.attack.iv, stats.attack.ev, pt);
-	write_stat("Def", stats.defense.iv, stats.defense.ev, pt);
-	write_stat("Spd", stats.speed.iv, stats.speed.ev, pt);
-	write_stat("SpAtk", stats.special_attack.iv, stats.special_attack.ev, pt);
-	write_stat("SpDef", stats.special_defense.iv, stats.special_defense.ev, pt);
+	for (auto const stat_name : {PermanentStat::hp, PermanentStat::atk, PermanentStat::def, PermanentStat::spe, PermanentStat::spa, PermanentStat::spd}) {
+		auto const stat = stats[stat_name];
+		write_stat(to_simulator_string(stat_name), stat.iv, stat.ev, pt);
+	}
 }
 
 std::string_view to_simulator_string(Species const species) {
