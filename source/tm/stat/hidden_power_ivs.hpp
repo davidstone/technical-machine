@@ -42,8 +42,8 @@ constexpr auto hidden_power_dvs(bounded::optional<Type> const type, bool const h
 	auto const even_odd = DV(BOUNDED_CONDITIONAL(has_physical_move, 13_bi, 9_bi));
 	auto const even_even = DV(BOUNDED_CONDITIONAL(has_physical_move, 12_bi, 8_bi));
 	if (!type) {
-		constexpr auto min_with_max_hp = DV(bounded::min_value<DV::value_type>);
-		constexpr auto max = DV(bounded::max_value<DV::value_type>);
+		constexpr auto min_with_max_hp = DV(1_bi);
+		constexpr auto max = DV(15_bi);
 		return DVs{
 			has_physical_move ? max : min_with_max_hp, // Atk
 			max, // Def
