@@ -43,20 +43,25 @@ constexpr auto hp_item = "% HP) @ "sv;
 constexpr auto item_ability = "\n\tAbility: "sv;
 constexpr auto ability_status = "\n\tStatus: "sv;
 constexpr auto status_nature = "\n\tNature: "sv;
-constexpr auto nature_hp = "\n\t"sv;
-constexpr auto hp_atk = " HP / "sv;
-constexpr auto atk_def = " Atk / "sv;
-constexpr auto def_spa = " Def / "sv;
-constexpr auto spa_spd = " SpA / "sv;
-constexpr auto spd_spe = " SpD / "sv;
-constexpr auto spe_moves = " Spe"sv;
+constexpr auto nature_hp_iv = "\n\tIVs: "sv;
+constexpr auto hp_iv_atk_iv = " HP / "sv;
+constexpr auto atk_iv_def_iv = " Atk / "sv;
+constexpr auto def_iv_spa_iv = " Def / "sv;
+constexpr auto spa_iv_spd_iv = " SpA / "sv;
+constexpr auto spd_iv_spe_iv = " SpD / "sv;
+constexpr auto spe_iv_hp_ev= " Spe\n\tEVs: "sv;
+constexpr auto hp_ev_atk_ev = " HP / "sv;
+constexpr auto atk_ev_def_ev = " Atk / "sv;
+constexpr auto def_ev_spa_ev = " Def / "sv;
+constexpr auto spa_ev_spd_ev = " SpA / "sv;
+constexpr auto spd_ev_spe_ev = " SpD / "sv;
+constexpr auto spe_ev_moves = " Spe"sv;
 constexpr auto moves_separator = "\n\t- "sv;
 
 } // namespace
 
 // TODO: Print level
 // TODO: Print gender
-// TODO: Print IVs if they are not the default
 // TODO: Make this compatible with Pokemon Showdown
 
 auto to_string(Pokemon const pokemon) -> containers::string {
@@ -75,7 +80,11 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 			containers::string("");
 	};
 	
-	auto stat_to_string = [&](RegularStat const stat) {
+	auto stat_to_iv_string = [&](RegularStat const stat) {
+		return bounded::to_string(get_stat(pokemon, stat).iv().value());
+	};
+	
+	auto stat_to_ev_string = [&](RegularStat const stat) {
 		return bounded::to_string(get_stat(pokemon, stat).ev().value());
 	};
 	
@@ -101,13 +110,19 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 		item_ability, to_string(pokemon.initial_ability()),
 		status_to_string(),
 		status_nature, to_string(get_nature(pokemon)),
-		nature_hp, std::string_view(bounded::to_string(get_hp(pokemon).ev().value())),
-		hp_atk, stat_to_string(RegularStat::atk),
-		atk_def, stat_to_string(RegularStat::def),
-		def_spa, stat_to_string(RegularStat::spa),
-		spa_spd, stat_to_string(RegularStat::spd),
-		spd_spe, stat_to_string(RegularStat::spe),
-		spe_moves, moves_to_string()
+		nature_hp_iv, std::string_view(bounded::to_string(get_hp(pokemon).iv().value())),
+		hp_iv_atk_iv, stat_to_iv_string(RegularStat::atk),
+		atk_iv_def_iv, stat_to_iv_string(RegularStat::def),
+		def_iv_spa_iv, stat_to_iv_string(RegularStat::spa),
+		spa_iv_spd_iv, stat_to_iv_string(RegularStat::spd),
+		spd_iv_spe_iv, stat_to_iv_string(RegularStat::spe),
+		spe_iv_hp_ev, std::string_view(bounded::to_string(get_hp(pokemon).ev().value())),
+		hp_ev_atk_ev, stat_to_ev_string(RegularStat::atk),
+		atk_ev_def_ev, stat_to_ev_string(RegularStat::def),
+		def_ev_spa_ev, stat_to_ev_string(RegularStat::spa),
+		spa_ev_spd_ev, stat_to_ev_string(RegularStat::spd),
+		spd_ev_spe_ev, stat_to_ev_string(RegularStat::spe),
+		spe_ev_moves, moves_to_string()
 	);
 }
 
@@ -140,8 +155,9 @@ constexpr auto pop_ability_and_status(BufferView<std::string_view> & buffer) {
 	};
 }
 
-constexpr auto pop_ev(BufferView<std::string_view> & buffer, std::string_view const delimiter) {
-	return EV(typed_pop<EV::value_type>(buffer, delimiter));
+template<typename T>
+constexpr auto pop_value_type(BufferView<std::string_view> & buffer, std::string_view const delimiter) {
+	return T(typed_pop<typename T::value_type>(buffer, delimiter));
 }
 
 } // namespace
@@ -152,24 +168,31 @@ auto pokemon_from_string(std::string_view const str, Generation const generation
 	auto const hp_percent = typed_pop<double>(buffer, hp_item);
 	auto const item = typed_pop<Item>(buffer, item_ability);
 	auto const [ability, status] = pop_ability_and_status(buffer);
-	auto const nature = typed_pop<Nature>(buffer, nature_hp);
-
-	auto const iv = IV(default_iv(generation));
+	auto const nature = typed_pop<Nature>(buffer, nature_hp_iv);
 
 	auto pokemon = Pokemon(generation, team_size, species, Level(100_bi), Gender::genderless, item, ability, nature);
 
 	pokemon.set_status(status);
 
-
-	auto set_stat = [&](PermanentStat const stat_name, EV const ev) {
-		set_ev(generation, pokemon, stat_name, iv, ev);
+	auto const ivs = IVs{
+		pop_value_type<IV>(buffer, hp_iv_atk_iv),
+		pop_value_type<IV>(buffer, atk_iv_def_iv),
+		pop_value_type<IV>(buffer, def_iv_spa_iv),
+		pop_value_type<IV>(buffer, spa_iv_spd_iv),
+		pop_value_type<IV>(buffer, spd_iv_spe_iv),
+		pop_value_type<IV>(buffer, spe_iv_hp_ev),
 	};
-	set_stat(PermanentStat::hp, pop_ev(buffer, hp_atk));
-	set_stat(PermanentStat::atk, pop_ev(buffer, atk_def));
-	set_stat(PermanentStat::def, pop_ev(buffer, def_spa));
-	set_stat(PermanentStat::spa, pop_ev(buffer, spa_spd));
-	set_stat(PermanentStat::spd, pop_ev(buffer, spd_spe));
-	set_stat(PermanentStat::spe, pop_ev(buffer, spe_moves));
+	auto const evs = GenericStats<EV>{
+		pop_value_type<EV>(buffer, hp_ev_atk_ev),
+		pop_value_type<EV>(buffer, atk_ev_def_ev),
+		pop_value_type<EV>(buffer, def_ev_spa_ev),
+		pop_value_type<EV>(buffer, spa_ev_spd_ev),
+		pop_value_type<EV>(buffer, spd_ev_spe_ev),
+		pop_value_type<EV>(buffer, spe_ev_moves),
+	};
+	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
+		set_ev(generation, pokemon, stat_name, ivs[stat_name], evs[stat_name]);
+	}
 	pokemon.set_hp(HP::current_type(static_cast<int>(static_cast<double>(get_hp(pokemon).max()) * hp_percent / 100.0)));
 
 	auto const should_be_empty = pop_to_delimiter(buffer, moves_separator);
