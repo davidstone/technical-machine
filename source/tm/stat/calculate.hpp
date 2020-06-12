@@ -18,6 +18,10 @@
 
 #pragma once
 
+#include <tm/stat/base_stats.hpp>
+#include <tm/stat/combined_stats.hpp>
+#include <tm/stat/generic_stats.hpp>
+#include <tm/stat/hp.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat.hpp>
 #include <tm/stat/stat_names.hpp>
@@ -47,6 +51,27 @@ constexpr auto initial_stat(RegularStat const stat_name, Stat::base_type const b
 }
 
 using initial_stat_type = decltype(initial_stat(std::declval<RegularStat>(), std::declval<Stat::base_type>(), std::declval<IV>(), std::declval<EV>(), std::declval<Level>(), std::declval<Nature>()));
+
+inline auto initial_stats(BaseStats const base_stats, Level const level, CombinedStats<IVAndEV> const stats) {
+	auto calculate_stat = [=](RegularStat const stat_name, auto const base_stat) {
+		return initial_stat(
+			stat_name,
+			base_stat,
+			stats[PermanentStat(stat_name)].iv,
+			stats[PermanentStat(stat_name)].ev,
+			level,
+			stats.nature
+		);
+	};
+	return GenericStats<HP::max_type, initial_stat_type>{
+		HP(base_stats, level, stats.hp.iv, stats.hp.ev).max(),
+		calculate_stat(RegularStat::atk, base_stats.atk()),
+		calculate_stat(RegularStat::def, base_stats.def()),
+		calculate_stat(RegularStat::spa, base_stats.spa()),
+		calculate_stat(RegularStat::spd, base_stats.spd()),
+		calculate_stat(RegularStat::spe, base_stats.spe()),
+	};
+}
 
 using attack_type = bounded::integer<1, 7368>;
 using special_attack_type = bounded::integer<1, 4536>;
