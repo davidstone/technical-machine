@@ -47,7 +47,7 @@ auto parse_stats(HP::max_type const hp, boost::property_tree::ptree const & stat
 }
 
 auto parse_moves(boost::property_tree::ptree const & moves) {
-	if (moves.size() > StaticVectorMove::capacity()) {
+	if (moves.size() > max_moves_per_pokemon) {
 		throw std::runtime_error("Tried to add too many moves");
 	}
 	auto result = StaticVectorMove();
