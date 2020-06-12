@@ -84,7 +84,7 @@ void test_pokemon() {
 	constexpr auto spa = EV(0_bi);
 	constexpr auto spd = EV(32_bi);
 	constexpr auto spe = EV(100_bi);
-	constexpr auto iv = default_iv(generation);
+	constexpr auto iv = IV(31_bi);
 
 	auto pokemon = Pokemon(generation, 6_bi, species, level, gender, item, ability, nature);
 	set_ev(generation, pokemon, PermanentStat::hp, iv, hp);
