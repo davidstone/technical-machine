@@ -29,7 +29,7 @@ enum class Generation : std::uint8_t;
 
 namespace ps {
 
-auto to_packed_format(Team const &) -> containers::string;
+auto to_packed_format(Generation, Team const &) -> containers::string;
 auto packed_format_to_team(std::string_view, Generation) -> Team;
 auto packed_format_to_team(std::string_view, Generation, TeamSize) -> Team;
 

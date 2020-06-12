@@ -221,7 +221,7 @@ void ClientImpl::authenticate(std::string_view const challstr) {
 }
 
 void ClientImpl::send_team(Generation const generation) {
-	m_send_message("|/utm " + to_packed_format(generate_team(generation)));
+	m_send_message("|/utm " + to_packed_format(generation, generate_team(generation)));
 }
 
 void ClientImpl::join_channel(std::string const & channel) {

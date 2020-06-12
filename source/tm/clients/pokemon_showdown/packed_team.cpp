@@ -20,6 +20,8 @@
 #include <tm/buffer_view.hpp>
 #include <tm/team.hpp>
 
+#include <tm/stat/stat_to_ev.hpp>
+
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
 #include <tm/string_conversions/item.hpp>
@@ -35,8 +37,7 @@
 namespace technicalmachine {
 namespace ps {
 
-// TODO: Write a PS-specific to_string and from_string
-auto to_packed_format(Team const & team) -> containers::string {
+auto to_packed_format(Generation const generation, Team const & team) -> containers::string {
 	auto result = containers::string{};
 	for (auto const & pokemon : team.all_pokemon()) {
 		if (!empty(result)) {
@@ -57,20 +58,28 @@ auto to_packed_format(Team const & team) -> containers::string {
 		}
 		result += '|';
 		result += to_string(get_nature(pokemon));
+
 		result += '|';
-		result += std::string_view(to_string(get_hp(pokemon).ev().value()));
-		for (auto const stat : containers::enum_range<RegularStat>()) {
-			result += ',';
-			result += std::string_view(to_string(get_stat(pokemon, stat).ev().value()));
+		auto const stats = calculate_ivs_and_evs(generation, pokemon);
+
+		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
+			if (stat_name != PermanentStat::hp) {
+				result += ',';
+			}
+			result += std::string_view(to_string(stats[stat_name].ev.value()));
 		}
+
 		result += '|';
 		result += to_string(get_gender(pokemon));
+
 		result += '|';
-		result += std::string_view(to_string(get_hp(pokemon).iv().value()));
-		for (auto const stat : containers::enum_range<RegularStat>()) {
-			result += ',';
-			result += std::string_view(to_string(get_stat(pokemon, stat).iv().value()));
+		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
+			if (stat_name != PermanentStat::hp) {
+				result += ',';
+			}
+			result += std::string_view(to_string(stats[stat_name].iv.value()));
 		}
+
 		result += '|';
 		// Assume non-shiny
 		result += '|';
