@@ -29,13 +29,14 @@
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
+#include <tm/string_conversions/invalid_string_conversion.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 #include <tm/string_conversions/species.hpp>
 #include <tm/string_conversions/status.hpp>
-#include <tm/string_conversions/invalid_string_conversion.hpp>
+#include <tm/string_conversions/type.hpp>
 
 #include <containers/integer_range.hpp>
 
@@ -123,6 +124,7 @@ void string_conversion_tests() {
 	test_generic<Nature>("nature");
 	test_generic<Species>("species");
 	test_generic<Statuses>("status");
+	test_generic<Type>("type");
 	test_pokemon();
 	std::cout << "String conversion tests passed.\n\n";
 }
