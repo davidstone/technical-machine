@@ -98,8 +98,6 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 
 	auto str = std::string();
 	auto out = containers::string();
-	auto it = containers::begin(std::move(str));
-	++it;
 	containers::uninitialized_copy(containers::begin(std::move(str)), containers::end(std::move(str)), begin(out));
 	containers::concatenate<containers::string>(std::string());
 
