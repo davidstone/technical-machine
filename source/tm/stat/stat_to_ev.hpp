@@ -31,6 +31,8 @@
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
+#include <bounded/optional.hpp>
+
 namespace technicalmachine {
 enum class Generation : std::uint8_t;
 using namespace bounded::literal;
@@ -59,7 +61,7 @@ constexpr auto stat_to_ev(auto const target, Nature const nature, RegularStat co
 }
 
 using StatValue = bounded::integer<4, 614>;
-auto calculate_ivs_and_evs(Generation, Species, Level, GenericStats<HP::max_type, StatValue>, IVs) -> CombinedStats<IVAndEV>;
+auto calculate_ivs_and_evs(Generation, Species, Level, GenericStats<HP::max_type, StatValue>, bounded::optional<Type> hidden_power_type, bool has_physical_move) -> CombinedStats<IVAndEV>;
 auto calculate_ivs_and_evs(Generation, Pokemon) -> CombinedStats<IVAndEV>;
 
 } // namespace technicalmachine

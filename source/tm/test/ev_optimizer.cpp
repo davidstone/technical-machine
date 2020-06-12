@@ -44,6 +44,7 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	constexpr auto team_size = 1_bi;
 	constexpr auto species = Species::Metagross;
 	constexpr auto level = Level(100_bi);
+	auto const base_stats = BaseStats(generation, species);
 	auto pokemon = Pokemon(generation, team_size, species, level, Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Adamant);
 	constexpr auto iv = IV(31_bi);
 	set_ev(generation, pokemon, PermanentStat::hp, iv, EV(252_bi));
@@ -54,14 +55,15 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	set_ev(generation, pokemon, PermanentStat::spe, iv, EV(60_bi));
 	all_moves(pokemon).add(Move(generation, Moves::Meteor_Mash));
 
-	auto const stats = calculate_ivs_and_evs(generation, pokemon);
+	auto const ivs_and_evs = calculate_ivs_and_evs(generation, pokemon);
+	auto const stats = initial_stats(base_stats, level, ivs_and_evs);
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
-	BOUNDED_ASSERT(minimize_evs(generation, stats, species, level, include_attack, include_special_attack) == stats);
-	BOUNDED_ASSERT(pad_random_evs(generation, stats, include_attack, include_special_attack, random_engine) == stats);
+	BOUNDED_ASSERT(compute_minimal_spread(generation, base_stats, stats, level, bounded::none, include_attack, include_special_attack) == ivs_and_evs);
+	BOUNDED_ASSERT(pad_random_evs(generation, ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
 	optimize_evs(generation, pokemon, random_engine);
-	BOUNDED_ASSERT(calculate_ivs_and_evs(generation, pokemon) == stats);
+	BOUNDED_ASSERT(calculate_ivs_and_evs(generation, pokemon) == ivs_and_evs);
 }
 
 void defensive_tests() {
@@ -139,6 +141,7 @@ void generation_two(std::mt19937 & random_engine) {
 	constexpr auto team_size = 1_bi;
 	constexpr auto species = Species::Mew;
 	constexpr auto level = Level(100_bi);
+	auto const base_stats = BaseStats(generation, species);
 	auto pokemon = Pokemon(generation, team_size, species, level, Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Hardy);
 	set_ev(generation, pokemon, PermanentStat::hp, IV(30_bi), EV(252_bi));
 	set_ev(generation, pokemon, PermanentStat::atk, IV(30_bi), EV(252_bi));
@@ -149,14 +152,15 @@ void generation_two(std::mt19937 & random_engine) {
 	all_moves(pokemon).add(Move(generation, Moves::Tackle));
 	all_moves(pokemon).add(Move(generation, Moves::Psychic));
 
-	auto const stats = calculate_ivs_and_evs(generation, pokemon);
+	auto const ivs_and_evs = calculate_ivs_and_evs(generation, pokemon);
+	auto const stats = initial_stats(base_stats, level, ivs_and_evs);
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = true;
-	BOUNDED_ASSERT(minimize_evs(generation, stats, species, level, include_attack, include_special_attack) == stats);
-	BOUNDED_ASSERT(pad_random_evs(generation, stats, include_attack, include_special_attack, random_engine) == stats);
+	BOUNDED_ASSERT(compute_minimal_spread(generation, base_stats, stats, level, bounded::none, include_attack, include_special_attack) == ivs_and_evs);
+	BOUNDED_ASSERT(pad_random_evs(generation, ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
 	optimize_evs(generation, pokemon, random_engine);
-	BOUNDED_ASSERT(calculate_ivs_and_evs(generation, pokemon) == stats);
+	BOUNDED_ASSERT(calculate_ivs_and_evs(generation, pokemon) == ivs_and_evs);
 }
 
 }	// namespace

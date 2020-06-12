@@ -47,54 +47,61 @@ auto calculate_ivs_and_evs(
 	Species const species,
 	Level const level,
 	GenericStats<HP::max_type, StatValue> const stats,
-	IVs const ivs,
-	auto const nature_range
+	bounded::optional<Type> const hidden_power_type,
+	bool has_physical_move,
+	decltype(containers::enum_range<Nature>()) const nature_range
 ) -> CombinedStats<IVAndEV> {
-	// TODO: Give the correct IVs for the Hidden Power type
-	
+	// TODO: Use Hidden Power power to determine IVs, not just the type
 	auto const base = BaseStats(generation, species);
 	
-	auto const hp_ev = hp_to_ev(base, level, stats.hp, ivs.hp);
+	while (true) {
+		auto const ivs = hidden_power_ivs(generation, hidden_power_type, has_physical_move);
+		auto const hp_ev = hp_to_ev(base, level, stats.hp, ivs.hp);
 
-	for (auto const nature : nature_range) {
-		auto compute_ev = [=](RegularStat const stat_name, auto const base_stat) {
-			return stat_to_ev(stats[stat_name], nature, stat_name, base_stat, ivs[stat_name], level);
-		};
-		auto const attack_ev = compute_ev(RegularStat::atk, base.atk());
-		if (!attack_ev) {
-			continue;
-		}
-		auto const defense_ev = compute_ev(RegularStat::def, base.def());
-		if (!defense_ev) {
-			continue;
-		}
-		auto const special_attack_ev = compute_ev(RegularStat::spa, base.spa());
-		if (!special_attack_ev) {
-			continue;
-		}
-		auto const special_defense_ev = compute_ev(RegularStat::spd, base.spd());
-		if (!special_defense_ev) {
-			continue;
-		}
-		auto const speed_ev = compute_ev(RegularStat::spe, base.spe());
-		if (!speed_ev) {
-			continue;
-		}
+		for (auto const nature : nature_range) {
+			auto compute_ev = [=](RegularStat const stat_name, auto const base_stat) {
+				return stat_to_ev(stats[stat_name], nature, stat_name, base_stat, ivs[stat_name], level);
+			};
+			auto const attack_ev = compute_ev(RegularStat::atk, base.atk());
+			if (!attack_ev) {
+				continue;
+			}
+			auto const defense_ev = compute_ev(RegularStat::def, base.def());
+			if (!defense_ev) {
+				continue;
+			}
+			auto const special_attack_ev = compute_ev(RegularStat::spa, base.spa());
+			if (!special_attack_ev) {
+				continue;
+			}
+			auto const special_defense_ev = compute_ev(RegularStat::spd, base.spd());
+			if (!special_defense_ev) {
+				continue;
+			}
+			auto const speed_ev = compute_ev(RegularStat::spe, base.spe());
+			if (!speed_ev) {
+				continue;
+			}
 
-		auto const combined = CombinedStats<IVAndEV>{
-			nature,
-			{ivs.hp, hp_ev},
-			{ivs.atk, *attack_ev},
-			{ivs.def, *defense_ev},
-			{ivs.spa, *special_attack_ev},
-			{ivs.spd, *special_defense_ev},
-			{ivs.spe, *speed_ev}
-		};
-		if (ev_sum(combined) > max_total_evs(generation)) {
-			continue;
+			auto const combined = CombinedStats<IVAndEV>{
+				nature,
+				{ivs.hp, hp_ev},
+				{ivs.atk, *attack_ev},
+				{ivs.def, *defense_ev},
+				{ivs.spa, *special_attack_ev},
+				{ivs.spd, *special_defense_ev},
+				{ivs.spe, *speed_ev}
+			};
+			if (ev_sum(combined) > max_total_evs(generation)) {
+				continue;
+			}
+			
+			return combined;
 		}
-		
-		return combined;
+		if (has_physical_move) {
+			break;
+		}
+		has_physical_move = true;
 	}
 	throw std::runtime_error(
 		"No Nature + EV combination combines to give the received stats in generation " +
@@ -117,7 +124,8 @@ auto calculate_ivs_and_evs(
 	Species const species,
 	Level const level,
 	GenericStats<HP::max_type, StatValue> const stats,
-	IVs const ivs
+	bounded::optional<Type> const hidden_power_type,
+	bool const has_physical_move
 ) -> CombinedStats<IVAndEV> {
 	auto const nature_range = generation <= Generation::two ? 
 		containers::enum_range(Nature::Hardy, Nature::Hardy) :
@@ -128,7 +136,8 @@ auto calculate_ivs_and_evs(
 		species,
 		level,
 		stats,
-		ivs,
+		hidden_power_type,
+		has_physical_move,
 		nature_range
 	);
 }
@@ -147,14 +156,13 @@ auto calculate_ivs_and_evs(Generation const generation, Pokemon const pokemon) -
 		calculate_stat(RegularStat::spd),
 		calculate_stat(RegularStat::spe)
 	};
-	auto const ivs = hidden_power_ivs(generation, get_hidden_power_type(pokemon), has_physical_move(generation, pokemon));
-	// TODO: Use Hidden Power power to determine IVs, not just the type
 	return calculate_ivs_and_evs(
 		generation,
 		get_species(pokemon),
 		get_level(pokemon),
 		stats,
-		ivs,
+		get_hidden_power_type(pokemon),
+		has_physical_move(generation, pokemon),
 		containers::enum_range(nature, nature)
 	);
 }

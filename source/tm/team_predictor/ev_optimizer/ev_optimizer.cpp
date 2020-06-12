@@ -27,6 +27,8 @@
 #include <tm/pokemon/has_physical_or_special_move.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
+#include <tm/stat/generic_stats.hpp>
+#include <tm/stat/hidden_power_ivs.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
 #include <bounded/assert.hpp>
@@ -82,14 +84,17 @@ auto optimize_evs(
 	CombinedStats<IVAndEV> combined,
 	Species const species,
 	Level const level,
+	bounded::optional<Type> const hidden_power_type,
 	bool const include_attack,
 	bool const include_special_attack,
 	std::mt19937 & random_engine
 ) {
+	auto const base_stats = BaseStats(generation, species);
 	while (true) {
 		auto const previous = combined;
 		combined = pad_random_evs(generation, combined, include_attack, include_special_attack, random_engine);
-		combined = minimize_evs(generation, combined, species, level, include_attack, include_special_attack);
+		auto const stats = initial_stats(base_stats, level, combined);
+		combined = compute_minimal_spread(generation, base_stats, stats, level, hidden_power_type, include_attack, include_special_attack);
 		// Technically this isn't correct based on how I pad: I could have some
 		// leftover EVs that could have done some good somewhere else, but were
 		// not enough to increase the stat they were randomly assigned to.
@@ -111,6 +116,7 @@ void optimize_evs(Generation const generation, Pokemon & pokemon, std::mt19937 &
 		calculate_ivs_and_evs(generation, pokemon),
 		species,
 		level,
+		get_hidden_power_type(pokemon),
 		include_attack,
 		include_special_attack,
 		random_engine
@@ -118,48 +124,45 @@ void optimize_evs(Generation const generation, Pokemon & pokemon, std::mt19937 &
 	set_stats(generation, pokemon, optimized);
 }
 
-auto minimize_evs(
+auto compute_minimal_spread(
 	Generation const generation,
-	CombinedStats<IVAndEV> stats,
-	Species const species,
+	BaseStats const base_stats,
+	GenericStats<HP::max_type, initial_stat_type> stats,
 	Level const level,
+	bounded::optional<Type> const hidden_power_type,
 	bool const include_attack,
 	bool const include_special_attack
 ) -> CombinedStats<IVAndEV> {
+	auto const ivs = hidden_power_ivs(generation, hidden_power_type, include_attack);
+
 	if (generation <= Generation::two) {
-		if (!include_attack) {
-			stats.atk.ev = EV(0_bi);
-		}
-		return stats;
+		return {
+			Nature::Hardy,
+			{ivs.hp, EV(EV::max)},
+			{ivs.atk, include_attack ? EV(EV::max) : EV(0_bi)},
+			{ivs.def, EV(EV::max)},
+			{ivs.spa, EV(EV::max)},
+			{ivs.spd, EV(EV::max)},
+			{ivs.spe, EV(EV::max)},
+		};
 	}
-	auto const base_stats = BaseStats(generation, species);
-	auto const nature = stats.nature;
-	auto const hp = HP(base_stats, level, stats.hp.iv, stats.hp.ev).max();
-	auto calculate_stat = [=](RegularStat const stat_name, auto const base_stat) {
-		return initial_stat(stat_name, base_stat, stats[PermanentStat(stat_name)].iv, stats[PermanentStat(stat_name)].ev, level, nature);
-	};
-	auto const attack = calculate_stat(RegularStat::atk, base_stats.atk());
-	auto const defense = calculate_stat(RegularStat::def, base_stats.def());
-	auto const special_attack = calculate_stat(RegularStat::spa, base_stats.spa());
-	auto const special_defense = calculate_stat(RegularStat::spd, base_stats.spd());
-	auto const speed = calculate_stat(RegularStat::spe, base_stats.spe());
 
 	return combine(
 		generation,
 		OffensiveEVs(
 			base_stats,
 			level,
-			OffensiveEVs::Input{stats.atk.iv, attack, include_attack},
-			OffensiveEVs::Input{stats.spa.iv, special_attack, include_special_attack}
+			OffensiveEVs::Input{ivs.atk, stats.atk, include_attack},
+			OffensiveEVs::Input{ivs.spa, stats.spa, include_special_attack}
 		),
 		DefensiveEVs(
 			base_stats,
 			level,
-			DefensiveEVs::InputHP{stats.hp.iv, hp},
-			DefensiveEVs::InputStat{stats.def.iv, defense},
-			DefensiveEVs::InputStat{stats.spd.iv, special_defense}
+			DefensiveEVs::InputHP{ivs.hp, stats.hp},
+			DefensiveEVs::InputStat{ivs.def, stats.def},
+			DefensiveEVs::InputStat{ivs.spd, stats.spd}
 		),
-		SpeedEVs(base_stats, level, stats.spe.iv, speed)
+		SpeedEVs(base_stats, level, ivs.spe, stats.spe)
 	);
 }
 

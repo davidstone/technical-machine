@@ -20,11 +20,14 @@
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
 #include <tm/clients/pokemon_showdown/json_parser.hpp>
 
+#include <tm/pokemon/has_physical_or_special_move.hpp>
+
 #include <tm/stat/stat_to_ev.hpp>
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/type.hpp>
 
 #include <iostream>
 
@@ -46,13 +49,30 @@ auto parse_stats(HP::max_type const hp, boost::property_tree::ptree const & stat
 	return GenericStats{hp, attack, defense, special_attack, special_defense, speed};
 }
 
+auto hidden_power_type(std::string_view const str) {
+	constexpr auto prefix = std::string_view("hiddenpower");
+	if (!str.starts_with(prefix)) {
+		throw std::runtime_error("Hidden Power doesn't start with \"hiddenpower\" in PS team string");
+	}
+	return from_string<Type>(str.substr(prefix.size()));
+}
+
 auto parse_moves(boost::property_tree::ptree const & moves) {
 	if (moves.size() > max_moves_per_pokemon) {
 		throw std::runtime_error("Tried to add too many moves");
 	}
-	auto result = StaticVectorMove();
+	struct Result {
+		containers::static_vector<Moves, max_moves_per_pokemon.value()> names;
+		bounded::optional<Type> hidden_power_type;
+	};
+	auto result = Result();
 	for (auto const & move : moves) {
-		containers::push_back(result, from_string<Moves>(move.second.get<std::string>("")));
+		auto const move_str = move.second.get<std::string>("");
+		auto const move_name = from_string<Moves>(move_str);
+		containers::push_back(result.names, move_name);
+		if (move_name == Moves::Hidden_Power) {
+			insert(result.hidden_power_type, hidden_power_type(move_str));
+		}
 	}
 	return result;
 }
@@ -76,15 +96,14 @@ auto parse_team(boost::property_tree::ptree const & pt, Generation const generat
 		// have a '/'
 		auto const hp = bounded::to_integer<HP::max_type>(split_view(condition, '/').first);
 
-		// TODO: Use the correct IVs if there is a Hidden Power
 		auto const moves = parse_moves(pokemon_data.second.get_child("moves"));
-		auto const iv = default_iv(generation);
 		auto const stats = calculate_ivs_and_evs(
 			generation,
 			details.species,
 			details.level,
 			parse_stats(hp, pokemon_data.second.get_child("stats")),
-			IVs{iv, iv, iv, iv, iv, iv}
+			moves.hidden_power_type,
+			has_physical_move(generation, moves.names, moves.hidden_power_type)
 		);
 
 		auto const ability = from_string<Ability>(get("baseAbility"));
@@ -92,8 +111,8 @@ auto parse_team(boost::property_tree::ptree const & pt, Generation const generat
 		auto const item = from_string<Item>(get("item"));
 		
 		Pokemon & pokemon = team.add_pokemon(generation, details.species, details.level, details.gender, item, ability, stats.nature);
-		
-		for (auto const move : moves) {
+
+		for (auto const move : moves.names) {
 			 add_seen_move(all_moves(pokemon), generation, move);
 		}
 

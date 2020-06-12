@@ -18,10 +18,18 @@
 #pragma once
 
 #include <tm/pokemon/level.hpp>
-#include <tm/pokemon/species_forward.hpp>
 
+#include <tm/stat/base_stats.hpp>
+#include <tm/stat/calculate.hpp>
 #include <tm/stat/combined_stats.hpp>
+#include <tm/stat/generic_stats.hpp>
+#include <tm/stat/hp.hpp>
 #include <tm/stat/iv_and_ev.hpp>
+#include <tm/stat/stat.hpp>
+
+#include <tm/type/type.hpp>
+
+#include <bounded/optional.hpp>
 
 #include <random>
 
@@ -30,7 +38,7 @@ enum class Generation : std::uint8_t;
 struct Pokemon;
 
 void optimize_evs(Generation, Pokemon & pokemon, std::mt19937 & random_engine);
-auto minimize_evs(Generation, CombinedStats<IVAndEV> stats, Species, Level, bool include_attack, bool include_special_attack) -> CombinedStats<IVAndEV>;
+auto compute_minimal_spread(Generation, BaseStats, GenericStats<HP::max_type, initial_stat_type> stats, Level, bounded::optional<Type> hidden_power_type, bool include_attack, bool include_special_attack) -> CombinedStats<IVAndEV>;
 auto pad_random_evs(Generation, CombinedStats<IVAndEV> combined, bool include_attack, bool include_special_attack, std::mt19937 & random_engine) -> CombinedStats<IVAndEV>;
 
 }	// namespace technicalmachine
