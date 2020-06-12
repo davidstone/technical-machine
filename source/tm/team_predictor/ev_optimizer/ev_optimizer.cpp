@@ -127,7 +127,7 @@ void optimize_evs(Generation const generation, Pokemon & pokemon, std::mt19937 &
 auto compute_minimal_spread(
 	Generation const generation,
 	BaseStats const base_stats,
-	GenericStats<HP::max_type, initial_stat_type> stats,
+	GenericStats<HP::max_type, InitialStat> stats,
 	Level const level,
 	bounded::optional<Type> const hidden_power_type,
 	bool const include_attack,

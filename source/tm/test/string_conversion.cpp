@@ -95,8 +95,8 @@ void test_pokemon() {
 	pokemon.set_ev(generation, PermanentStat::spe, iv, spe);
 
 	auto check = [&] {
-		auto const str = to_string(pokemon);
-		auto const result = pokemon_from_string(str, generation, team_size);
+		auto const str = to_string(generation, pokemon);
+		auto const result = pokemon_from_string(generation, str, team_size);
 
 		if (pokemon != result) {
 			throw std::runtime_error(std::string(std::string_view(str)));

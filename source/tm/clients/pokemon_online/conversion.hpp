@@ -27,7 +27,6 @@
 #include <tm/pokemon/species_forward.hpp>
 
 #include <tm/stat/nature.hpp>
-#include <tm/stat/stat.hpp>
 
 #include <bounded/integer.hpp>
 

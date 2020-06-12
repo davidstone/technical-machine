@@ -26,8 +26,8 @@
 
 namespace technicalmachine {
 
-auto to_string(Pokemon pokemon) -> containers::string;
+auto to_string(Generation, Pokemon pokemon) -> containers::string;
 
-auto pokemon_from_string(std::string_view str, Generation, TeamSize) -> Pokemon;
+auto pokemon_from_string(Generation, std::string_view str, TeamSize) -> Pokemon;
 
 } // namespace technicalmachine

@@ -27,7 +27,6 @@
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
-#include <tm/stat/stat.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
 #include <tm/string_conversions/species.hpp>

@@ -1,4 +1,4 @@
-// Copyright (C) 2016 David Stone
+// Copyright (C) 2020 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -15,4 +15,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tm/stat/stat.hpp>
+#include <tm/stat/initial_stat.hpp>

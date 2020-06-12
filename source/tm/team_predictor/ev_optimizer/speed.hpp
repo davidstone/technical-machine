@@ -21,6 +21,7 @@
 
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/calculate.hpp>
+#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 
@@ -29,7 +30,7 @@
 namespace technicalmachine {
 
 struct SpeedEVs {
-	SpeedEVs(BaseStats, Level, IV, initial_stat_type target);
+	SpeedEVs(BaseStats, Level, IV, InitialStat target);
 	friend auto begin(SpeedEVs const & evs) {
 		return begin(evs.m_container);
 	}

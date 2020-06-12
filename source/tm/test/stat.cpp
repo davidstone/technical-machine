@@ -27,7 +27,6 @@
 #include <tm/pokemon/species.hpp>
 
 #include <tm/stat/calculate.hpp>
-#include <tm/stat/stat.hpp>
 
 #include <containers/integer_range.hpp>
 

@@ -30,8 +30,6 @@
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
-#include <tm/stat/stat.hpp>
-
 #include <containers/integer_range.hpp>
 
 #include <operators/arrow.hpp>

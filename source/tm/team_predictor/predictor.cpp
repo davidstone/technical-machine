@@ -173,13 +173,17 @@ struct Data {
 			auto [generation, team] = parse_html_team(input_data);
 			auto const & usage_stats = m_all_usage_stats[generation];
 			random_team(generation, usage_stats, team, m_random_engine);
-			return to_string(predict_team(
+			return to_string(
 				generation,
-				usage_stats,
-				LeadStats(using_lead),
-				team,
-				m_random_engine
-			), false);
+				predict_team(
+					generation,
+					usage_stats,
+					LeadStats(using_lead),
+					team,
+					m_random_engine
+				),
+				false
+			);
 		} catch (std::exception const & ex) {
 			return containers::string(ex.what());
 		}

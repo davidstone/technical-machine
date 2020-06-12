@@ -42,12 +42,12 @@ constexpr auto ev_sum(DataPoint const data) {
 }	// namespace
 
 DefensiveEVs::DefensiveEVs(BaseStats const base_stats, Level const level, InputHP const original_hp, InputStat const def, InputStat const spd) {
-	auto const def_product = original_hp.stat * def.stat;
-	auto const spd_product = original_hp.stat * spd.stat;
+	bounded::bounded_integer auto const def_product = original_hp.stat * def.stat;
+	bounded::bounded_integer auto const spd_product = original_hp.stat * spd.stat;
 
 	auto defensive_product = [=](DataPoint const value) {
 		auto const hp = HP(base_stats, level, value.hp.iv, value.hp.ev).max();
-		auto single_product = [=](RegularStat const name, Stat::base_type const base_stat, IVAndEV const generated) {
+		auto single_product = [=](RegularStat const name, BaseStats::regular_value_type const base_stat, IVAndEV const generated) {
 			return hp * initial_stat(name, base_stat, generated.iv, generated.ev, level, value.nature);
 		};
 
@@ -58,7 +58,7 @@ DefensiveEVs::DefensiveEVs(BaseStats const base_stats, Level const level, InputH
 		auto best_per_nature = bounded::optional<DataPoint>{};
 		for (auto const hp_ev : ev_range()) {
 			auto const hp = HP(base_stats, level, original_hp.iv, hp_ev);
-			auto find_minimum_matching = [=](RegularStat const stat_name, auto const base, IV const iv, auto const original_product) {
+			auto find_minimum_matching = [=](RegularStat const stat_name, auto const base, IV const iv, bounded::bounded_integer auto const original_product) {
 				auto const target_stat = round_up_divide(original_product, hp.max());
 				return stat_to_ev(target_stat, nature, stat_name, base, iv, level);
 			};

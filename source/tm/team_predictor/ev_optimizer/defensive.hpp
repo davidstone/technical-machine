@@ -26,7 +26,7 @@
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/hp.hpp>
 #include <tm/stat/nature.hpp>
-#include <tm/stat/stat.hpp>
+#include <tm/stat/initial_stat.hpp>
 
 #include <containers/algorithms/find.hpp>
 #include <containers/integer_range.hpp>
@@ -41,7 +41,7 @@ struct DefensiveEVs {
 	};
 	struct InputStat {
 		IV iv;
-		initial_stat_type stat;
+		InitialStat stat;
 	};
 	DefensiveEVs(BaseStats, Level, InputHP, InputStat defense, InputStat special_defense);
 	friend auto begin(DefensiveEVs const & defensive) {

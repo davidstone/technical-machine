@@ -26,8 +26,6 @@
 
 #include <tm/pokemon/species.hpp>
 
-#include <tm/stat/stat.hpp>
-
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/species.hpp>
 

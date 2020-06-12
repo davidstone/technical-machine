@@ -17,12 +17,14 @@
 
 #pragma once
 
+#include <tm/generation.hpp>
+
 #include <containers/string.hpp>
 
 namespace technicalmachine {
 
 struct Team;
 
-auto to_string(Team const & team, bool include_owner = true) -> containers::string;
+auto to_string(Generation, Team const & team, bool include_owner = true) -> containers::string;
 
 }	// namespace technicalmachine

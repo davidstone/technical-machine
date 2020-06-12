@@ -341,19 +341,16 @@ constexpr auto other_physical_stat(RegularStat const stat) {
 	}
 }
 
-auto calculate_initial_stat(RegularStat const name, ActivePokemon const pokemon) {
-	auto get_initial_stat = [=](RegularStat const stat_name) {
-		auto const stat = pokemon.stat(stat_name);
-		return initial_stat(stat_name, stat.base(), stat.iv(), stat.ev(), pokemon.level(), pokemon.nature());
-	};
+auto determine_initial_stat(RegularStat const name, ActivePokemon const pokemon) {
 	return !is_physical(name) or !pokemon.power_trick_is_active() ?
-		get_initial_stat(name) :
-		get_initial_stat(other_physical_stat(name));
+		get_stat(pokemon, name) :
+		get_stat(pokemon, other_physical_stat(name));
 }
 
 template<RegularStat stat>
 auto calculate_common_offensive_stat(Generation const generation, ActivePokemon const pokemon, Type const move_type, Ability const other_ability, Weather const weather, bool const critical_hit) {
-	auto const attack = calculate_initial_stat(stat, pokemon) *
+	auto const attack =
+		determine_initial_stat(stat, pokemon) *
 		modifier<BoostableStat(stat)>(pokemon.stage(), critical_hit) *
 		offensive_ability_modifier<stat>(generation, pokemon, move_type, other_ability, weather) *
 		item_modifier<stat>(generation, pokemon, weather);
@@ -392,7 +389,8 @@ constexpr auto is_self_KO(Moves const move) {
 
 auto calculate_defense(Generation const generation, ActivePokemon const defender, Moves const move, Weather const weather, bool const critical_hit) -> defense_type {
 	constexpr auto stat = RegularStat::def;
-	auto const defense = calculate_initial_stat(stat, defender) *
+	auto const defense =
+		determine_initial_stat(stat, defender) *
 		modifier<BoostableStat(stat)>(defender.stage(), critical_hit) *
 		defense_ability_modifier(defender) *
 		item_modifier<stat>(generation, defender, weather);
@@ -414,7 +412,8 @@ auto special_defense_sandstorm_boost(Generation const generation, ActivePokemon 
 
 auto calculate_special_defense(Generation const generation, ActivePokemon const defender, Ability const attacker_ability, Weather const weather, bool const critical_hit) -> special_defense_type {
 	constexpr auto stat = RegularStat::spd;
-	auto const defense = calculate_initial_stat(stat, defender) *	
+	auto const defense =
+		get_stat(defender, stat) *	
 		modifier<BoostableStat(stat)>(defender.stage(), critical_hit) *
 		special_defense_ability_modifier(defender, attacker_ability, weather) *
 		item_modifier<stat>(generation, defender, weather) *
@@ -444,7 +443,8 @@ auto tailwind_speed_multiplier(Team const & team) {
 auto calculate_speed(Generation const generation, Team const & team, Ability const other_ability, Weather const weather) -> speed_type {
 	constexpr auto stat = RegularStat::spe;
 	auto const & pokemon = team.pokemon();
-	auto const speed = calculate_initial_stat(stat, pokemon) *
+	auto const speed =
+		get_stat(pokemon, stat) *
 		modifier<BoostableStat(stat)>(pokemon.stage()) *
 		speed_ability_modifier(pokemon, other_ability, weather) *
 		item_modifier<stat>(generation, pokemon, weather) /

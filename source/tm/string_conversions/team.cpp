@@ -23,7 +23,7 @@
 
 namespace technicalmachine {
 
-auto to_string(Team const & team, bool const include_owner) -> containers::string {
+auto to_string(Generation const generation, Team const & team, bool const include_owner) -> containers::string {
 	containers::string output;
 	if (include_owner) {
 		output = containers::concatenate<containers::string>(std::move(output), team.who(), std::string_view("'s team:\n"));
@@ -31,7 +31,7 @@ auto to_string(Team const & team, bool const include_owner) -> containers::strin
 	for (auto const & member : team.all_pokemon()) {
 		output = containers::concatenate<containers::string>(
 			std::move(output),
-			to_string(member),
+			to_string(generation, member),
 			containers::single_element_range('\n')
 		);
 	}

@@ -20,7 +20,7 @@
 
 #include <tm/move/moves.hpp>
 #include <tm/pokemon/species.hpp>
-#include <tm/stat/calculate.hpp>
+#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/team_predictor/ev_optimizer/defensive.hpp>

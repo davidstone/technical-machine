@@ -22,6 +22,7 @@
 
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/calculate.hpp>
+#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 
@@ -41,7 +42,7 @@ struct OffensiveStats {
 struct OffensiveEVs {
 	struct Input {
 		IV iv;
-		initial_stat_type stat;
+		InitialStat stat;
 		bool include_evs;
 	};
 	OffensiveEVs(BaseStats, Level, Input attack, Input special_attack);

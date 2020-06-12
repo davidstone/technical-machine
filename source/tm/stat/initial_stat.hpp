@@ -1,4 +1,4 @@
-// Copyright (C) 2015 David Stone
+// Copyright (C) 2020 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,38 +17,29 @@
 
 #pragma once
 
+#include <tm/pokemon/level.hpp>
+
+#include <tm/stat/base_stats.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/iv.hpp>
+#include <tm/stat/nature.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
 
-struct Stat {
-	using base_type = bounded::checked_integer<5, 230>;
+constexpr auto initial_stat(RegularStat const stat_name, auto const base, IV const iv, EV const ev, Level const level, Nature const nature) {
+	auto const pre_nature = (2_bi * base + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 5_bi;
+	return pre_nature * boost(nature, stat_name);
+}
 
-	constexpr Stat(base_type const base_, IV const iv_, EV const ev_):
-		m_base(base_),
-		m_iv(iv_),
-		m_ev(ev_)
-	{
-	}
+using InitialStat = decltype(initial_stat(
+	std::declval<RegularStat>(),
+	std::declval<BaseStats::regular_value_type>(),
+	std::declval<IV>(),
+	std::declval<EV>(),
+	std::declval<Level>(),
+	std::declval<Nature>()
+));
 
-	constexpr auto base() const {
-		return m_base;
-	}
-	constexpr auto ev() const {
-		return m_ev;
-	}
-	constexpr auto iv() const {
-		return m_iv;
-	}
-
-	friend auto operator==(Stat const &, Stat const &) -> bool = default;
-private:
-	base_type m_base;
-	IV m_iv;
-	EV m_ev;
-};
-
-}	// namespace technicalmachine
+} // namespace technicalmachine

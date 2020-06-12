@@ -35,7 +35,7 @@ struct HP {
 	using max_type = bounded::integer<1, max_value>;
 	using current_type = bounded::integer<0, max_value>;
 	
-	HP(BaseStats, Level level, IV iv_, EV ev_);
+	HP(BaseStats, Level level, IV iv, EV ev);
 
 	auto & operator=(auto const & value) & {
 		m_current = bounded::min(value, m_max);
@@ -49,19 +49,9 @@ struct HP {
 		return m_max;
 	}
 
-	auto ev() const -> EV {
-		return m_ev;
-	}
-
-	auto iv() const -> IV {
-		return m_iv;
-	}
-
 	friend auto operator==(HP const &, HP const &) -> bool = default;
 
 private:
-	IV m_iv;
-	EV m_ev;
 	max_type m_max;
 	bounded::clamped_integer<0, max_value> m_current;
 };

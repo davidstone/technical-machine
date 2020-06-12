@@ -1,4 +1,3 @@
-// All 'normal' stats that a Pokemon has
 // Copyright (C) 2015 David Stone
 //
 // This file is part of Technical Machine.
@@ -19,8 +18,11 @@
 #pragma once
 
 #include <tm/stat/base_stats.hpp>
+#include <tm/stat/combined_stats.hpp>
+#include <tm/stat/generic_stats.hpp>
 #include <tm/stat/hp.hpp>
-#include <tm/stat/stat.hpp>
+#include <tm/stat/nature.hpp>
+#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stat_names.hpp>
 
 #include <containers/array/array.hpp>
@@ -30,14 +32,14 @@ enum class Generation : std::uint8_t;
 struct Level;
 
 struct Stats {
-	Stats(Generation const generation, BaseStats const base, Level const level):
+	Stats(Generation const generation, BaseStats const base, Level const level, Nature const nature):
 		m_hp(base, level, default_iv(generation), EV(0_bi)),
 		m_stats{
-			Stat(base.atk(), default_iv(generation), EV(0_bi)),
-			Stat(base.def(), default_iv(generation), EV(0_bi)),
-			Stat(base.spa(), default_iv(generation), EV(0_bi)),
-			Stat(base.spd(), default_iv(generation), EV(0_bi)),
-			Stat(base.spe(), default_iv(generation), EV(0_bi))
+			initial_stat(RegularStat::atk, base.atk(), default_iv(generation), EV(0_bi), level, nature),
+			initial_stat(RegularStat::def, base.def(), default_iv(generation), EV(0_bi), level, nature),
+			initial_stat(RegularStat::spa, base.spa(), default_iv(generation), EV(0_bi), level, nature),
+			initial_stat(RegularStat::spd, base.spd(), default_iv(generation), EV(0_bi), level, nature),
+			initial_stat(RegularStat::spe, base.spe(), default_iv(generation), EV(0_bi), level, nature)
 		}
 	{
 	}
@@ -59,7 +61,29 @@ struct Stats {
 	friend auto operator==(Stats const &, Stats const &) -> bool = default;
 private:
 	HP m_hp;
-	containers::array<Stat, 5> m_stats;
+	containers::array<InitialStat, 5> m_stats;
 };
+
+inline auto initial_stats(BaseStats const base_stats, Level const level, CombinedStats<IVAndEV> const stats) {
+	auto calculate_stat = [=](RegularStat const stat_name) {
+		auto const iv_and_ev = stats[PermanentStat(stat_name)];
+		return initial_stat(
+			stat_name,
+			base_stats[stat_name],
+			iv_and_ev.iv,
+			iv_and_ev.ev,
+			level,
+			stats.nature
+		);
+	};
+	return GenericStats<HP::max_type, InitialStat>{
+		HP(base_stats, level, stats.hp.iv, stats.hp.ev).max(),
+		calculate_stat(RegularStat::atk),
+		calculate_stat(RegularStat::def),
+		calculate_stat(RegularStat::spa),
+		calculate_stat(RegularStat::spd),
+		calculate_stat(RegularStat::spe),
+	};
+}
 
 }	// namespace technicalmachine

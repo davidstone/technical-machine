@@ -32,6 +32,7 @@
 #include <tm/move/container.hpp>
 
 #include <tm/stat/nature.hpp>
+#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stats.hpp>
 
 #include <bounded/assert.hpp>
@@ -148,15 +149,15 @@ struct Pokemon {
 	}
 
 	auto set_ev(Generation const generation, PermanentStat const stat_name, IV const iv, EV const ev) -> void {
+		auto const base_stats = BaseStats(generation, species());
 		if (stat_name == PermanentStat::hp) {
-			auto const base_stats = BaseStats(generation, species());
 			stats.hp() = HP(base_stats, level(), iv, ev);
 		} else {
-			auto & stat = stats[RegularStat(stat_name)];
-			stat = Stat(stat.base(), iv, ev);
+			auto const regular = RegularStat(stat_name);
+			auto & stat = pokemon.stats[regular];
+			stat = initial_stat(regular, base_stats[regular], iv, ev, level(), nature());
 		}
 	}
-
 
 	friend auto operator==(Pokemon const &, Pokemon const &) -> bool = default;
 private:

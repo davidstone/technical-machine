@@ -23,7 +23,7 @@
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/nature.hpp>
-#include <tm/stat/stat.hpp>
+#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
 #include <bounded/assert.hpp>

@@ -24,6 +24,8 @@
 #include <tm/string_conversions/species.hpp>
 #include <tm/string_conversions/status.hpp>
 
+#include <tm/stat/stat_to_ev.hpp>
+
 #include <tm/buffer_view.hpp>
 
 #include <bounded/to_integer.hpp>
@@ -64,7 +66,7 @@ constexpr auto moves_separator = "\n\t- "sv;
 // TODO: Print gender
 // TODO: Make this compatible with Pokemon Showdown
 
-auto to_string(Pokemon const pokemon) -> containers::string {
+auto to_string(Generation const generation, Pokemon const pokemon) -> containers::string {
 	// Boost.Format fails to compile with C++20, so we have to do this instead
 	auto hp_to_string = [&] {
 		auto const buffer = std::to_string(100.0 * static_cast<double>(hp_ratio(pokemon)));
@@ -79,13 +81,15 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 			containers::concatenate<containers::string>(ability_status, to_string(pokemon.status().name())) :
 			containers::string("");
 	};
+
+	auto stats = calculate_ivs_and_evs(generation, pokemon);
 	
-	auto stat_to_iv_string = [&](RegularStat const stat) {
-		return bounded::to_string(pokemon.stat(stat).iv().value());
+	auto stat_to_iv_string = [&](PermanentStat const stat_name) {
+		return bounded::to_string(stats[stat_name].iv.value());
 	};
 	
-	auto stat_to_ev_string = [&](RegularStat const stat) {
-		return bounded::to_string(pokemon.stat(stat).ev().value());
+	auto stat_to_ev_string = [&](PermanentStat const stat_name) {
+		return bounded::to_string(stats[stat_name].ev.value());
 	};
 	
 	auto moves_to_string = [&]{
@@ -108,18 +112,18 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 		item_ability, to_string(pokemon.initial_ability()),
 		status_to_string(),
 		status_nature, to_string(pokemon.nature()),
-		nature_hp_iv, std::string_view(bounded::to_string(pokemon.hp().iv().value())),
-		hp_iv_atk_iv, stat_to_iv_string(RegularStat::atk),
-		atk_iv_def_iv, stat_to_iv_string(RegularStat::def),
-		def_iv_spa_iv, stat_to_iv_string(RegularStat::spa),
-		spa_iv_spd_iv, stat_to_iv_string(RegularStat::spd),
-		spd_iv_spe_iv, stat_to_iv_string(RegularStat::spe),
-		spe_iv_hp_ev, std::string_view(bounded::to_string(pokemon.hp().ev().value())),
-		hp_ev_atk_ev, stat_to_ev_string(RegularStat::atk),
-		atk_ev_def_ev, stat_to_ev_string(RegularStat::def),
-		def_ev_spa_ev, stat_to_ev_string(RegularStat::spa),
-		spa_ev_spd_ev, stat_to_ev_string(RegularStat::spd),
-		spd_ev_spe_ev, stat_to_ev_string(RegularStat::spe),
+		nature_hp_iv, stat_to_iv_string(PermanentStat::hp),
+		hp_iv_atk_iv, stat_to_iv_string(PermanentStat::atk),
+		atk_iv_def_iv, stat_to_iv_string(PermanentStat::def),
+		def_iv_spa_iv, stat_to_iv_string(PermanentStat::spa),
+		spa_iv_spd_iv, stat_to_iv_string(PermanentStat::spd),
+		spd_iv_spe_iv, stat_to_iv_string(PermanentStat::spe),
+		spe_iv_hp_ev, stat_to_ev_string(PermanentStat::hp),
+		hp_ev_atk_ev, stat_to_ev_string(PermanentStat::atk),
+		atk_ev_def_ev, stat_to_ev_string(PermanentStat::def),
+		def_ev_spa_ev, stat_to_ev_string(PermanentStat::spa),
+		spa_ev_spd_ev, stat_to_ev_string(PermanentStat::spd),
+		spd_ev_spe_ev, stat_to_ev_string(PermanentStat::spe),
 		spe_ev_moves, moves_to_string()
 	);
 }
@@ -160,7 +164,7 @@ constexpr auto pop_value_type(BufferView<std::string_view> & buffer, std::string
 
 } // namespace
 
-auto pokemon_from_string(std::string_view const str, Generation const generation, TeamSize const team_size) -> Pokemon {
+auto pokemon_from_string(Generation const generation, std::string_view const str, TeamSize const team_size) -> Pokemon {
 	auto buffer = BufferView(str);
 	auto const species = typed_pop<Species>(buffer, species_hp);
 	auto const hp_percent = typed_pop<double>(buffer, hp_item);

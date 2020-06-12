@@ -37,8 +37,6 @@
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
-#include <tm/stat/stat.hpp>
-
 #include <tm/type/effectiveness.hpp>
 #include <tm/type/type.hpp>
 

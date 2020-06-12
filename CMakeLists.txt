@@ -128,11 +128,11 @@ add_library(tm_common STATIC
 	source/tm/stat/ev.cpp
 	source/tm/stat/generic_stats.cpp
 	source/tm/stat/hp.cpp
+	source/tm/stat/initial_stat.cpp
 	source/tm/stat/iv.cpp
 	source/tm/stat/iv_and_ev.cpp
 	source/tm/stat/nature.cpp
 	source/tm/stat/stage.cpp
-	source/tm/stat/stat.cpp
 	source/tm/stat/stat_names.cpp
 	source/tm/stat/stat_to_ev.cpp
 	source/tm/stat/stats.cpp

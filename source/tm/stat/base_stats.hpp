@@ -19,6 +19,8 @@
 
 #include <tm/pokemon/species_forward.hpp>
 
+#include <tm/stat/stat_names.hpp>
+
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
@@ -34,6 +36,18 @@ struct BaseStats {
 	auto spa() const { return m_spa; }
 	auto spd() const { return m_spd; }
 	auto spe() const { return m_spe; }
+
+	using regular_value_type = bounded::checked_integer<5, 230>;
+
+	auto operator[](RegularStat const stat_name) const -> regular_value_type {
+		switch (stat_name) {
+			case RegularStat::atk: return m_atk;
+			case RegularStat::def: return m_def;
+			case RegularStat::spa: return m_spa;
+			case RegularStat::spd: return m_spd;
+			case RegularStat::spe: return m_spe;
+		}
+	}
 
 private:
 	using HP = bounded::integer<1, 255>;

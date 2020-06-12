@@ -46,7 +46,7 @@ auto calculate_ivs_and_evs(
 	Generation const generation,
 	Species const species,
 	Level const level,
-	GenericStats<HP::max_type, StatValue> const stats,
+	GenericStats<HP::max_type, InitialStat> const stats,
 	bounded::optional<Type> const hidden_power_type,
 	bool has_physical_move,
 	decltype(containers::enum_range<Nature>()) const nature_range
@@ -123,7 +123,7 @@ auto calculate_ivs_and_evs(
 	Generation const generation,
 	Species const species,
 	Level const level,
-	GenericStats<HP::max_type, StatValue> const stats,
+	GenericStats<HP::max_type, InitialStat> const stats,
 	bounded::optional<Type> const hidden_power_type,
 	bool const has_physical_move
 ) -> CombinedStats<IVAndEV> {
@@ -144,17 +144,13 @@ auto calculate_ivs_and_evs(
 
 auto calculate_ivs_and_evs(Generation const generation, Pokemon const pokemon) -> CombinedStats<IVAndEV> {
 	auto const nature = pokemon.nature();
-	auto calculate_stat = [=](RegularStat const stat_name) {
-		auto const stat = pokemon.stat(stat_name);
-		return initial_stat(stat_name, stat.base(), stat.iv(), stat.ev(), pokemon.level(), nature);
-	};
-	auto const stats = GenericStats<HP::max_type, StatValue>{
+	auto const stats = GenericStats<HP::max_type, InitialStat>{
 		pokemon.hp().max(),
-		calculate_stat(RegularStat::atk),
-		calculate_stat(RegularStat::def),
-		calculate_stat(RegularStat::spa),
-		calculate_stat(RegularStat::spd),
-		calculate_stat(RegularStat::spe)
+		pokemon.stat(RegularStat::atk),
+		pokemon.stat(RegularStat::def),
+		pokemon.stat(RegularStat::spa),
+		pokemon.stat(RegularStat::spd),
+		pokemon.stat(RegularStat::spe)
 	};
 	return calculate_ivs_and_evs(
 		generation,

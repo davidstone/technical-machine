@@ -24,7 +24,7 @@
 #include <tm/stat/iv.hpp>
 #include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
-#include <tm/stat/stat.hpp>
+#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stat_names.hpp>
 
 #include <tm/pokemon/level.hpp>
@@ -49,10 +49,10 @@ inline auto hp_to_ev(BaseStats const base, Level const level, HP::max_type const
 	return EV(EV::value_type(bounded::max(0_bi, computed)));
 }
 
-// `target` is not just bounded::integer<4, 614> because this function is also
-// used in the EV optimizer, where values outside the legal range are regularly
-// encountered as part of speculative computation.
-constexpr auto stat_to_ev(auto const target, Nature const nature, RegularStat const stat_name, Stat::base_type const base, IV const iv, Level const level) -> bounded::optional<EV> {
+// `target` is not just InitialStat because this function is also used in the EV
+// optimizer, where values outside the legal range are regularly encountered as
+// part of speculative computation.
+constexpr auto stat_to_ev(bounded::bounded_integer auto const target, Nature const nature, RegularStat const stat_name, BaseStats::regular_value_type const base, IV const iv, Level const level) -> bounded::optional<EV> {
 	auto const computed = (round_up_divide((round_up_divide(target, boost(nature, stat_name)) - 5_bi) * 100_bi, level()) - 2_bi * base - iv.value()) * 4_bi;
 	if (computed > EV::max) {
 		return bounded::none;
@@ -60,8 +60,7 @@ constexpr auto stat_to_ev(auto const target, Nature const nature, RegularStat co
 	return EV(EV::value_type(bounded::max(0_bi, computed), bounded::non_check));
 }
 
-using StatValue = bounded::integer<4, 614>;
-auto calculate_ivs_and_evs(Generation, Species, Level, GenericStats<HP::max_type, StatValue>, bounded::optional<Type> hidden_power_type, bool has_physical_move) -> CombinedStats<IVAndEV>;
+auto calculate_ivs_and_evs(Generation, Species, Level, GenericStats<HP::max_type, InitialStat>, bounded::optional<Type> hidden_power_type, bool has_physical_move) -> CombinedStats<IVAndEV>;
 auto calculate_ivs_and_evs(Generation, Pokemon) -> CombinedStats<IVAndEV>;
 
 } // namespace technicalmachine

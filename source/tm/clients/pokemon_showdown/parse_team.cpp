@@ -38,8 +38,8 @@ namespace {
 
 auto parse_stats(HP::max_type const hp, boost::property_tree::ptree const & stats) {
 	auto get = [&](char const * str) {
-		using CheckedStatValue = bounded::change_policy<StatValue, bounded::checked_integer>;
-		return StatValue(stats.get<CheckedStatValue>(str));
+		using CheckedInitialStat = bounded::change_policy<InitialStat, bounded::checked_integer>;
+		return InitialStat(stats.get<CheckedInitialStat>(str));
 	};
 	auto const attack = get("atk");
 	auto const defense = get("def");

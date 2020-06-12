@@ -32,10 +32,8 @@ auto initial_hp(BaseStats const base, Level const level, IV const iv, EV const e
 
 } // namespace
 
-HP::HP(BaseStats const base, Level const level, IV const iv_, EV const ev_):
-	m_iv(iv_),
-	m_ev(ev_),
-	m_max(initial_hp(base, level, m_iv, m_ev)),
+HP::HP(BaseStats const base, Level const level, IV const iv, EV const ev):
+	m_max(initial_hp(base, level, iv, ev)),
 	m_current(m_max)
 {
 }

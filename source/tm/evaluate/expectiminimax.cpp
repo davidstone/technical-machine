@@ -31,7 +31,6 @@
 
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/chance_to_hit.hpp>
-#include <tm/stat/stat.hpp>
 
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/species.hpp>
