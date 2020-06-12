@@ -99,8 +99,7 @@ void test_pokemon() {
 		auto const result = pokemon_from_string(str, generation, team_size);
 
 		if (pokemon != result) {
-			std::cerr << str << '\n';
-			throw std::exception();
+			throw std::runtime_error(std::string(std::string_view(str)));
 		}
 	};
 
