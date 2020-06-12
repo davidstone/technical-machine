@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/stat/generic_stats.hpp>
 #include <tm/stat/iv.hpp>
 
 #include <bounded/integer.hpp>

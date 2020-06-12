@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/stat/iv.hpp>
 #include <tm/stat/stat_names.hpp>
 
 namespace technicalmachine {
@@ -42,5 +43,7 @@ struct GenericStats {
 
 template<typename HP, typename Stat>
 GenericStats(HP, Stat, Stat, Stat, Stat, Stat) -> GenericStats<HP, Stat>;
+
+using IVs = GenericStats<IV>;
 
 }	// namespace technicalmachine

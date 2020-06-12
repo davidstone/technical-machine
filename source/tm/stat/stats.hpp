@@ -21,6 +21,7 @@
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/hp.hpp>
 #include <tm/stat/stat.hpp>
+#include <tm/stat/stat_names.hpp>
 
 #include <containers/array/array.hpp>
 
