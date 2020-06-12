@@ -77,7 +77,15 @@ auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs c
 	return *best;
 }
 
-auto optimize_evs(Generation const generation, CombinedStats<IVAndEV> combined, Species const species, Level const level, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) {
+auto optimize_evs(
+	Generation const generation,
+	CombinedStats<IVAndEV> combined,
+	Species const species,
+	Level const level,
+	bool const include_attack,
+	bool const include_special_attack,
+	std::mt19937 & random_engine
+) {
 	while (true) {
 		auto const previous = combined;
 		combined = pad_random_evs(generation, combined, include_attack, include_special_attack, random_engine);
@@ -98,11 +106,26 @@ void optimize_evs(Generation const generation, Pokemon & pokemon, std::mt19937 &
 	auto const level = get_level(pokemon);
 	auto const include_attack = has_physical_move(generation, pokemon);
 	auto const include_special_attack = has_special_move(generation, pokemon);
-	auto const optimized = optimize_evs(generation, calculate_ivs_and_evs(generation, pokemon), species, level, include_attack, include_special_attack, random_engine);
+	auto const optimized = optimize_evs(
+		generation,
+		calculate_ivs_and_evs(generation, pokemon),
+		species,
+		level,
+		include_attack,
+		include_special_attack,
+		random_engine
+	);
 	set_stats(generation, pokemon, optimized);
 }
 
-auto minimize_evs(Generation const generation, CombinedStats<IVAndEV> stats, Species const species, Level const level, bool const include_attack, bool const include_special_attack) -> CombinedStats<IVAndEV> {
+auto minimize_evs(
+	Generation const generation,
+	CombinedStats<IVAndEV> stats,
+	Species const species,
+	Level const level,
+	bool const include_attack,
+	bool const include_special_attack
+) -> CombinedStats<IVAndEV> {
 	if (generation <= Generation::two) {
 		if (!include_attack) {
 			stats.atk.ev = EV(0_bi);
@@ -123,8 +146,19 @@ auto minimize_evs(Generation const generation, CombinedStats<IVAndEV> stats, Spe
 
 	return combine(
 		generation,
-		OffensiveEVs(base_stats, level, OffensiveEVs::Input{stats.atk.iv, attack, include_attack}, OffensiveEVs::Input{stats.spa.iv, special_attack, include_special_attack}),
-		DefensiveEVs(base_stats, level, DefensiveEVs::InputHP{stats.hp.iv, hp}, DefensiveEVs::InputStat{stats.def.iv, defense}, DefensiveEVs::InputStat{stats.spd.iv, special_defense}),
+		OffensiveEVs(
+			base_stats,
+			level,
+			OffensiveEVs::Input{stats.atk.iv, attack, include_attack},
+			OffensiveEVs::Input{stats.spa.iv, special_attack, include_special_attack}
+		),
+		DefensiveEVs(
+			base_stats,
+			level,
+			DefensiveEVs::InputHP{stats.hp.iv, hp},
+			DefensiveEVs::InputStat{stats.def.iv, defense},
+			DefensiveEVs::InputStat{stats.spd.iv, special_defense}
+		),
 		SpeedEVs(base_stats, level, stats.spe.iv, speed)
 	);
 }
