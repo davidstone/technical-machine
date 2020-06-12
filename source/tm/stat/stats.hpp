@@ -30,11 +30,31 @@ enum class Generation : std::uint8_t;
 struct Level;
 
 struct Stats {
-	Stats(Generation, BaseStats, Level);
-	auto hp() const -> HP const &;
-	auto hp() -> HP &;
-	auto operator[](RegularStat) const -> Stat const &;
-	auto operator[](RegularStat) -> Stat &;
+	Stats(Generation const generation, BaseStats const base, Level const level):
+		m_hp(base, level, default_iv(generation), EV(0_bi)),
+		m_stats{
+			Stat(base.atk(), default_iv(generation), EV(0_bi)),
+			Stat(base.def(), default_iv(generation), EV(0_bi)),
+			Stat(base.spa(), default_iv(generation), EV(0_bi)),
+			Stat(base.spd(), default_iv(generation), EV(0_bi)),
+			Stat(base.spe(), default_iv(generation), EV(0_bi))
+		}
+	{
+	}
+
+	auto const & hp() const {
+		return m_hp;
+	}
+	auto & hp() {
+		return m_hp;
+	}
+
+	auto const & operator[](RegularStat const stat) const {
+		return m_stats[bounded::integer(stat)];
+	}
+	auto & operator[](RegularStat const stat) {
+		return m_stats[bounded::integer(stat)];
+	}
 
 	friend auto operator==(Stats const &, Stats const &) -> bool = default;
 private:

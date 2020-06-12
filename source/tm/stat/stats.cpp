@@ -17,39 +17,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/stat/stats.hpp>
-
-namespace technicalmachine {
-namespace {
-
-constexpr auto default_ev = EV(0_bi);
-
-} // namespace
-
-Stats::Stats(Generation const generation, BaseStats const base, Level const level):
-	m_hp(base, level, default_iv(generation), default_ev),
-	m_stats{
-		Stat(base.atk(), default_iv(generation), default_ev),
-		Stat(base.def(), default_iv(generation), default_ev),
-		Stat(base.spa(), default_iv(generation), default_ev),
-		Stat(base.spd(), default_iv(generation), default_ev),
-		Stat(base.spe(), default_iv(generation), default_ev)
-	}
-{
-}
-
-auto Stats::hp() const -> HP const & {
-	return m_hp;
-}
-auto Stats::hp() -> HP & {
-	return m_hp;
-}
-
-auto Stats::operator[](RegularStat const stat) const -> Stat const & {
-	return m_stats[bounded::integer(stat)];
-}
-auto Stats::operator[](RegularStat const stat) -> Stat & {
-	return m_stats[bounded::integer(stat)];
-}
-
-
-}	// namespace technicalmachine
