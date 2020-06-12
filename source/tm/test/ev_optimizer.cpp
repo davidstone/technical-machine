@@ -90,7 +90,7 @@ void defensive_tests() {
 auto find(SpeedEVs const & container, Nature const nature) {
 	auto const it = containers::find_if(container, [=](auto const & value) { return value.nature == nature; });
 	BOUNDED_ASSERT(it != end(container));
-	return it->stat.ev;
+	return it->stat;
 }
 
 void speed_tests() {
@@ -105,7 +105,8 @@ void speed_tests() {
 	auto const original_value = initial_stat(RegularStat::spe, base_stats.spe(), iv, EV(76_bi), level, original_nature);
 	auto const speed_evs = SpeedEVs(base_stats, level, iv, original_value);
 	for (auto const nature : containers::enum_range<Nature>()) {
-		auto const new_value = initial_stat(RegularStat::spe, base_stats.spe(), iv, find(speed_evs, nature), level, nature);
+		auto const found = find(speed_evs, nature);
+		auto const new_value = initial_stat(RegularStat::spe, base_stats.spe(), found.iv, found.ev, level, nature);
 		if (boosts_stat(nature, RegularStat::spe) and !boosts_stat(original_nature, RegularStat::spe)) {
 			BOUNDED_ASSERT(new_value == original_value or new_value == original_value + 1_bi);
 		} else {
