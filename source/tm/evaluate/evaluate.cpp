@@ -57,14 +57,9 @@ struct MaxTurns<EndOfTurnCounter<max_turns, operations...>> {
 auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const pokemon) {
 	using stage_type = decltype(Stage::number_of_stats * (std::declval<Stage::value_type>() * std::declval<Evaluate::value_type>()));
 	auto const substitute = pokemon.substitute();
-	auto const magnet_rise = pokemon.magnet_rise();
 	auto const & stage = pokemon.stage();
 	return
-		(pokemon.aqua_ring_is_active() ? evaluate.aqua_ring() : 0_bi) +
-		(pokemon.has_focused_energy() ? evaluate.focus_energy() : 0_bi) +
-		(pokemon.ingrained() ? evaluate.ingrain() : 0_bi) +
-		(magnet_rise.is_active() ? evaluate.magnet_rise() * (bounded::constant<MaxTurns<MagnetRise>::value> - *magnet_rise.turns_active()) : 0_bi) +
-		(substitute ? (evaluate.substitute() + evaluate.substitute_hp() * substitute.hp() / get_hp(pokemon).max()) : 0_bi) +
+		(substitute ? evaluate.substitute() : 0_bi) +
 		std::inner_product(containers::legacy_iterator(begin(stage)), containers::legacy_iterator(end(stage)), containers::legacy_iterator(begin(evaluate.stage())), static_cast<stage_type>(0_bi))
 	;
 }
@@ -89,88 +84,45 @@ auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> Evaluat
 	}
 }
 
-auto score_move(Evaluate const & evaluate, Generation const generation, Move const move, Type const move_type, LightScreen const other_light_screen, Reflect const other_reflect) {
-	auto const reflect_turns = other_reflect.turns_remaining();
-	auto const score_reflect = reflect_turns != 0_bi and is_physical(generation, {move.name(), move_type});
-	auto const light_screen_turns = other_light_screen.turns_remaining();
-	auto const score_light_screen = light_screen_turns != 0_bi and is_special(generation, {move.name(), move_type});
-	return
-		(
-			BOUNDED_CONDITIONAL(score_reflect, evaluate.reflect() * reflect_turns,
-			BOUNDED_CONDITIONAL(score_light_screen, evaluate.light_screen() * light_screen_turns,
-			0_bi))
-		) +
-		BOUNDED_CONDITIONAL(move.pp().is_empty(), evaluate.no_pp(), 0_bi)
-	;
-}
-
-auto score_moves(Evaluate const & evaluate, Generation const generation, Pokemon const & pokemon, LightScreen const other_light_screen, Reflect const other_reflect, Weather const) {
-	// TODO: alter the score of a move based on the weather
-	auto get_score = [&](Move const move) {
-		auto const move_type = get_type(generation, move.name(), get_hidden_power_type(pokemon));
-		return score_move(evaluate, generation, move, move_type, other_light_screen, other_reflect);
-	};
-	return containers::accumulate(containers::transform(regular_moves(pokemon), get_score));
-}
-
-
 auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon) {
 	auto const has_baton_pass = containers::any_equal(regular_moves(pokemon), Moves::Baton_Pass);
-	return
-		BOUNDED_CONDITIONAL(pokemon.is_cursed(), evaluate.curse(), 0_bi) +
-		BOUNDED_CONDITIONAL(pokemon.used_imprison(), evaluate.imprison(), 0_bi) +
-		BOUNDED_CONDITIONAL(pokemon.leech_seeded(), evaluate.leech_seed(), 0_bi) +
-		BOUNDED_CONDITIONAL(pokemon.is_loafing(), evaluate.loaf(), 0_bi) +
-		BOUNDED_CONDITIONAL(pokemon.fully_trapped(), evaluate.trapped(), 0_bi) +
-		BOUNDED_CONDITIONAL(pokemon.is_tormented(), evaluate.torment(), 0_bi) +
-		baton_passable_score(evaluate, pokemon) * BOUNDED_CONDITIONAL(has_baton_pass, 2_bi, 1_bi)
-	;
+	return baton_passable_score(evaluate, pokemon) * BOUNDED_CONDITIONAL(has_baton_pass, 2_bi, 1_bi);
 }
 
 
-auto score_pokemon(Evaluate const & evaluate, Generation const generation, Pokemon const & pokemon, EntryHazards const & entry_hazards, Team const & other, Weather const weather) {
+auto score_pokemon(Evaluate const & evaluate, Generation const generation, Pokemon const & pokemon, EntryHazards const & entry_hazards) {
 	auto const types = PokemonTypes(generation, get_species(pokemon));
 	auto const grounded =
 		containers::any_equal(types, Type::Flying) or
 		is_immune_to_ground(pokemon.initial_ability());
 	return
 		evaluate.members() +
-		hp_ratio(pokemon) * evaluate.hp() +
-		BOUNDED_CONDITIONAL(!pokemon.has_been_seen(), evaluate.hidden(), 0_bi) +
-		BOUNDED_CONDITIONAL(entry_hazards.stealth_rock(), Effectiveness(generation, Type::Rock, types) * evaluate.stealth_rock(), 0_bi) +
-		BOUNDED_CONDITIONAL(grounded, entry_hazards.spikes() * evaluate.spikes() + entry_hazards.toxic_spikes() * evaluate.toxic_spikes(), 0_bi) +
-		score_status(evaluate, pokemon) +
-		score_moves(evaluate, generation, pokemon, other.light_screen(), other.reflect(), weather)
+		Evaluate::value_type(hp_ratio(pokemon) * evaluate.hp()) +
+		(!pokemon.has_been_seen() ? evaluate.hidden() : 0_bi) +
+		(entry_hazards.stealth_rock() ? Effectiveness(generation, Type::Rock, types) * evaluate.stealth_rock() : 0_bi) +
+		(grounded ? entry_hazards.spikes() * evaluate.spikes() + entry_hazards.toxic_spikes() * evaluate.toxic_spikes() : 0_bi) +
+		score_status(evaluate, pokemon)
 	;
 }
 
-auto score_all_pokemon(Evaluate const & evaluate, Generation const generation, Team const & team, Team const & other, Weather const weather) {
+auto score_team(Evaluate const & evaluate, Generation const generation, Team const & team) {
 	auto has_hp = [](auto const & pokemon) { return get_hp(pokemon) != 0_bi; };
 	auto get_score = [&](auto const & pokemon) {
-		return score_pokemon(evaluate, generation, pokemon, team.entry_hazards(), other, weather);
+		return score_pokemon(evaluate, generation, pokemon, team.entry_hazards());
 	};
 	return
 		containers::accumulate(containers::transform(containers::filter(team.all_pokemon(), has_hp), get_score)) +
 		score_active_pokemon(evaluate, team.pokemon());
 }
 
-auto score_team(Evaluate const & evaluate, Generation const generation, Team const & team, Team const & other, Weather const weather) {
-	return
-		score_all_pokemon(evaluate, generation, team, other, weather) +
-		team.lucky_chant().turns_remaining() * evaluate.lucky_chant() +
-		team.mist().turns_remaining() * evaluate.mist() +
-		team.safeguard().turns_remaining() * evaluate.safeguard() +
-		team.tailwind().turns_remaining() * evaluate.tailwind() +
-		BOUNDED_CONDITIONAL(team.wish_is_active(), 1_bi, 0_bi) * evaluate.wish()
-	;
+auto score_teams(Evaluate const & evaluate, Generation const generation, Team const & ai, Team const & foe) {
+	return score_team(evaluate, generation, ai) - score_team(evaluate, generation, foe);
 }
 
-auto score_teams(Evaluate const & evaluate, Generation const generation, Team const & ai, Team const & foe, Weather const weather) {
-	return score_team(evaluate, generation, ai, foe, weather) - score_team(evaluate, generation, foe, ai, weather);
-}
+using ScoreTeam = decltype(score_teams(std::declval<Evaluate>(), std::declval<Generation>(), std::declval<Team>(), std::declval<Team>()));
+
 // Extra is here to allow for one-past-the-end on both sides
-constexpr bounded::integer<-1, 1> extra = 0_bi;
-using ScoreTeam = decltype(score_teams(std::declval<Evaluate>(), std::declval<Generation>(), std::declval<Team>(), std::declval<Team>(), std::declval<Weather>()));
+using ResultType = decltype(std::declval<ScoreTeam>() + std::declval<bounded::integer<-1, 1>>());
 
 template<typename LHS, typename RHS>
 struct TypeMismatchInEvaluateMessage;
@@ -184,13 +136,11 @@ struct TypeMismatchInEvaluate<T, T> {
 	static constexpr auto value = true;
 };
 
-using ResultType = decltype(std::declval<ScoreTeam>() + extra);
-
 }	// namespace
 
-auto Evaluate::operator()(Generation const generation, Team const & ai, Team const & foe, Weather const weather) const -> type {
+auto Evaluate::operator()(Generation const generation, Team const & ai, Team const & foe, [[maybe_unused]] Weather const weather) const -> type {
 	static_cast<void>(TypeMismatchInEvaluate<ResultType, Evaluate::type>::value);
-	return score_teams(*this, generation, ai, foe, weather);
+	return score_teams(*this, generation, ai, foe);
 }
 
 namespace {
@@ -242,30 +192,13 @@ Evaluate::Evaluate() {
 		static_cast<int>(bounded::max_value<value_type>)
 	>;
 
-	m_light_screen = pt.get<underlying_type>("light_screen", 0_bi);
-	m_lucky_chant = pt.get<underlying_type>("lucky_chant", 0_bi);
-	m_mist = pt.get<underlying_type>("mist", 0_bi);
-	m_reflect = pt.get<underlying_type>("reflect", 0_bi);
-	m_safeguard = pt.get<underlying_type>("safeguard", 0_bi);
-	m_tailwind = pt.get<underlying_type>("tailwind", 0_bi);
-	m_wish = pt.get<underlying_type>("wish", 0_bi);
 	m_spikes = pt.get<underlying_type>("spikes", 0_bi);
 	m_stealth_rock = pt.get<underlying_type>("stealth_rock", 0_bi);
 	m_toxic_spikes = pt.get<underlying_type>("toxic_spikes", 0_bi);
 	m_members = pt.get<underlying_type>("members", 0_bi);
 	m_hp = pt.get<underlying_type>("hp", 0_bi);
 	m_hidden = pt.get<underlying_type>("hidden", 0_bi);
-	m_aqua_ring = pt.get<underlying_type>("aqua_ring", 0_bi);
-	m_curse = pt.get<underlying_type>("curse", 0_bi);
-	m_imprison = pt.get<underlying_type>("imprison", 0_bi);
-	m_ingrain = pt.get<underlying_type>("ingrain", 0_bi);
-	m_leech_seed = pt.get<underlying_type>("leech_seed", 0_bi);
-	m_loaf = pt.get<underlying_type>("loaf", 0_bi);
-	m_magnet_rise = pt.get<underlying_type>("magnet_rise", 0_bi);
 	m_substitute = pt.get<underlying_type>("substitute", 0_bi);
-	m_substitute_hp = pt.get<underlying_type>("substitute_hp", 0_bi);
-	m_torment = pt.get<underlying_type>("torment", 0_bi);
-	m_trapped = pt.get<underlying_type>("trapped", 0_bi);
 	m_burn = pt.get<underlying_type>("burn", 0_bi);
 	m_freeze = pt.get<underlying_type>("freeze", 0_bi);
 	m_paralysis = pt.get<underlying_type>("paralysis", 0_bi);
@@ -277,11 +210,10 @@ Evaluate::Evaluate() {
 		pt.get<underlying_type>("defense_stage", 0_bi),
 		pt.get<underlying_type>("special_attack_stage", 0_bi),
 		pt.get<underlying_type>("special_defense_stage", 0_bi),
-		pt.get<underlying_type>("speed_stage", 0_bi)
+		pt.get<underlying_type>("speed_stage", 0_bi),
+		pt.get<underlying_type>("accuracy_stage", 0_bi),
+		pt.get<underlying_type>("evasion_stage", 0_bi),
 	};
-	m_focus_energy = pt.get<underlying_type>("focus_energy", 0_bi);
-	m_baton_pass = pt.get<underlying_type>("baton_pass", 0_bi);
-	m_no_pp = pt.get<underlying_type>("no_pp", 0_bi);
 }
 
 }	// namespace technicalmachine
