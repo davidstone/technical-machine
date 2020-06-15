@@ -35,22 +35,19 @@ MoveScores::MoveScores(StaticVectorMove const legal_selections):
 	// this works in all situations.
 	m_scores(
 		containers::transform(legal_selections, [](Moves const move) {
-			return value_type(move, static_cast<double>(victory + 1_bi));
+			return value_type{move, static_cast<double>(victory + 1_bi)};
 		})
 	)
 {
-	containers::sort(m_scores, [](value_type const lhs, value_type const rhs) {
-		return lhs.key() < rhs.key();
-	});
 }
 
 auto MoveScores::ordered_moves(bool const ai) const -> StaticVectorMove {
 	auto intermediate = containers::static_vector<value_type, static_cast<int>(bounded::max_value<MoveSize>)>(m_scores);
 	auto compare = [=](value_type const lhs, value_type const rhs) {
-		return ai ? lhs.mapped() > rhs.mapped() : lhs.mapped() < rhs.mapped();
+		return ai ? lhs.score > rhs.score : lhs.score < rhs.score;
 	};
-	std::sort(containers::legacy_iterator(begin(intermediate)), containers::legacy_iterator(end(intermediate)), compare);
-	return StaticVectorMove(containers::transform(intermediate, [](value_type const value) { return value.key(); }));
+	containers::sort(intermediate, compare);
+	return StaticVectorMove(containers::transform(intermediate, [](value_type const value) { return value.move_name; }));
 }
 
 } // namespace technicalmachine

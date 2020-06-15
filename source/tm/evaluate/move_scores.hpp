@@ -22,7 +22,7 @@
 
 #include <bounded/assert.hpp>
 
-#include <containers/flat_map.hpp>
+#include <containers/algorithms/find.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 #include <limits>
@@ -33,16 +33,19 @@ struct Pokemon;
 
 struct MoveScores {
 	explicit MoveScores(StaticVectorMove legal_selections);
-	void set(Moves const move, double const value) {
-		auto const it = containers::lower_bound(m_scores, move, [](value_type const lhs, Moves const rhs) {
-			return lhs.key() < rhs;
+	void set(Moves const move_name, double const score) {
+		auto const it = containers::find_if(m_scores, [=](value_type const value) {
+			return value.move_name == move_name;
 		});
 		BOUNDED_ASSERT(it != end(m_scores));
-		it->mapped() = value;
+		it->score = score;
 	}
 	auto ordered_moves(bool ai) const -> StaticVectorMove;
 private:
-	using value_type = containers::map_value_type<Moves, double>;
+	struct value_type {
+		Moves move_name;
+		double score;
+	};
 	containers::static_vector<
 		value_type,
 		static_cast<int>(bounded::max_value<MoveSize>)
