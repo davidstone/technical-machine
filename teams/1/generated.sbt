@@ -16,12 +16,12 @@
 	<move pp-up="3">Seismic Toss</move>
 </moveset>
 <stats>
-	<stat name="HP" iv="31" ev="252" />
-	<stat name="Atk" iv="31" ev="252" />
-	<stat name="Def" iv="31" ev="252" />
-	<stat name="Spd" iv="31" ev="252" />
-	<stat name="SpAtk" iv="31" ev="252" />
-	<stat name="SpDef" iv="31" ev="252" />
+	<stat name="HP" iv="30" ev="252" />
+	<stat name="Atk" iv="30" ev="0" />
+	<stat name="Def" iv="30" ev="252" />
+	<stat name="Spd" iv="30" ev="252" />
+	<stat name="SpAtk" iv="30" ev="252" />
+	<stat name="SpDef" iv="30" ev="252" />
 </stats>
 </pokemon>
 
@@ -41,12 +41,12 @@
 	<move pp-up="3">Rest</move>
 </moveset>
 <stats>
-	<stat name="HP" iv="31" ev="252" />
-	<stat name="Atk" iv="31" ev="252" />
-	<stat name="Def" iv="31" ev="252" />
-	<stat name="Spd" iv="31" ev="252" />
-	<stat name="SpAtk" iv="31" ev="252" />
-	<stat name="SpDef" iv="31" ev="252" />
+	<stat name="HP" iv="30" ev="252" />
+	<stat name="Atk" iv="30" ev="252" />
+	<stat name="Def" iv="30" ev="252" />
+	<stat name="Spd" iv="30" ev="252" />
+	<stat name="SpAtk" iv="30" ev="252" />
+	<stat name="SpDef" iv="30" ev="252" />
 </stats>
 </pokemon>
 
@@ -65,12 +65,12 @@
 	<move pp-up="3">Blizzard</move>
 </moveset>
 <stats>
-	<stat name="HP" iv="31" ev="252" />
-	<stat name="Atk" iv="31" ev="252" />
-	<stat name="Def" iv="31" ev="252" />
-	<stat name="Spd" iv="31" ev="252" />
-	<stat name="SpAtk" iv="31" ev="252" />
-	<stat name="SpDef" iv="31" ev="252" />
+	<stat name="HP" iv="30" ev="252" />
+	<stat name="Atk" iv="30" ev="252" />
+	<stat name="Def" iv="30" ev="252" />
+	<stat name="Spd" iv="30" ev="252" />
+	<stat name="SpAtk" iv="30" ev="252" />
+	<stat name="SpDef" iv="30" ev="252" />
 </stats>
 </pokemon>
 
@@ -89,12 +89,12 @@
 	<move pp-up="3">Stun Spore</move>
 </moveset>
 <stats>
-	<stat name="HP" iv="31" ev="252" />
-	<stat name="Atk" iv="31" ev="252" />
-	<stat name="Def" iv="31" ev="252" />
-	<stat name="Spd" iv="31" ev="252" />
-	<stat name="SpAtk" iv="31" ev="252" />
-	<stat name="SpDef" iv="31" ev="252" />
+	<stat name="HP" iv="30" ev="252" />
+	<stat name="Atk" iv="30" ev="252" />
+	<stat name="Def" iv="30" ev="252" />
+	<stat name="Spd" iv="30" ev="252" />
+	<stat name="SpAtk" iv="30" ev="252" />
+	<stat name="SpDef" iv="30" ev="252" />
 </stats>
 </pokemon>
 
@@ -113,12 +113,12 @@
 	<move pp-up="3">Hyper Beam</move>
 </moveset>
 <stats>
-	<stat name="HP" iv="31" ev="252" />
-	<stat name="Atk" iv="31" ev="252" />
-	<stat name="Def" iv="31" ev="252" />
-	<stat name="Spd" iv="31" ev="252" />
-	<stat name="SpAtk" iv="31" ev="252" />
-	<stat name="SpDef" iv="31" ev="252" />
+	<stat name="HP" iv="30" ev="252" />
+	<stat name="Atk" iv="30" ev="252" />
+	<stat name="Def" iv="30" ev="252" />
+	<stat name="Spd" iv="30" ev="252" />
+	<stat name="SpAtk" iv="30" ev="252" />
+	<stat name="SpDef" iv="30" ev="252" />
 </stats>
 </pokemon>
 
@@ -137,12 +137,12 @@
 	<move pp-up="3">Thunderbolt</move>
 </moveset>
 <stats>
-	<stat name="HP" iv="31" ev="252" />
-	<stat name="Atk" iv="31" ev="252" />
-	<stat name="Def" iv="31" ev="252" />
-	<stat name="Spd" iv="31" ev="252" />
-	<stat name="SpAtk" iv="31" ev="252" />
-	<stat name="SpDef" iv="31" ev="252" />
+	<stat name="HP" iv="30" ev="252" />
+	<stat name="Atk" iv="30" ev="252" />
+	<stat name="Def" iv="30" ev="252" />
+	<stat name="Spd" iv="30" ev="252" />
+	<stat name="SpAtk" iv="30" ev="252" />
+	<stat name="SpDef" iv="30" ev="252" />
 </stats>
 </pokemon>
 
