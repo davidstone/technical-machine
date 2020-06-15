@@ -380,32 +380,7 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	#endif
 }
 
-void performance(Evaluate const & evaluate) {
-	auto const weather = Weather{};
-	constexpr auto depth = Depth(2U, 0U);
-	auto add_pokemon = [&](Team & team, Species const species, auto... moves) {
-		auto & pokemon = team.add_pokemon(generation, species, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Pickup, Nature::Hardy);
-		containers::append(regular_moves(pokemon), containers::array{Move(generation, moves)...});
-		set_ev(generation, pokemon, PermanentStat::hp, IV(31_bi), EV(252_bi));
-		set_ev(generation, pokemon, PermanentStat::def, IV(31_bi), EV(120_bi));
-		set_ev(generation, pokemon, PermanentStat::spd, IV(31_bi), EV(136_bi));
-	};
-	Team ai(6_bi, true);
-	Team foe(6_bi, false);
-	for (auto const species : {Species::Latias, Species::Latios, Species::Tyranitar, Species::Hippowdon, Species::Salamence, Species::Slugma}) {
-		for (auto * team : {&ai, &foe}) {
-			add_pokemon(*team, species, Moves::Recover, Moves::Dragon_Claw, Moves::Earthquake, Moves::Dragon_Dance);
-		}
-	}
-	ai.pokemon().switch_in(generation, weather);
-	foe.pokemon().switch_in(generation, weather);
-	ai.reset_start_of_turn();
-	foe.reset_start_of_turn();
-
-	expectiminimax(generation, ai, foe, weather, evaluate, depth, std::cout);
-}
-
-}	// namespace
+} // namespace
 
 void expectiminimax_tests() {
 	std::cout << "Running expectiminimax tests.\n";
@@ -423,7 +398,6 @@ void expectiminimax_tests() {
 	replace_fainted(evaluate, random_engine);
 	latias_vs_suicune(evaluate, random_engine);
 	sleep_talk(evaluate, random_engine);
-	performance(evaluate);
 	
 	std::cout << "Evaluate tests passed.\n\n";
 }
