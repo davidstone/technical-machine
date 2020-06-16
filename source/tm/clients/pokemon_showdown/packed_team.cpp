@@ -83,7 +83,7 @@ auto to_packed_format(Generation const generation, Team const & team) -> contain
 		result += '|';
 		// Assume non-shiny
 		result += '|';
-		result += std::string_view(to_string(get_level(pokemon)()));
+		result += std::string_view(to_string(pokemon.level()()));
 		result += '|';
 		// Assume max happiness
 		// Assume regular Poke Ball

@@ -146,7 +146,7 @@ auto calculate_ivs_and_evs(Generation const generation, Pokemon const pokemon) -
 	auto const nature = get_nature(pokemon);
 	auto calculate_stat = [=](RegularStat const stat_name) {
 		auto const stat = get_stat(pokemon, stat_name);
-		return initial_stat(stat_name, stat.base(), stat.iv(), stat.ev(), get_level(pokemon), nature);
+		return initial_stat(stat_name, stat.base(), stat.iv(), stat.ev(), pokemon.level(), nature);
 	};
 	auto const stats = GenericStats<HP::max_type, StatValue>{
 		get_hp(pokemon).max(),
@@ -159,7 +159,7 @@ auto calculate_ivs_and_evs(Generation const generation, Pokemon const pokemon) -
 	return calculate_ivs_and_evs(
 		generation,
 		pokemon.species(),
-		get_level(pokemon),
+		pokemon.level(),
 		stats,
 		get_hidden_power_type(pokemon),
 		has_physical_move(generation, pokemon),

@@ -229,6 +229,10 @@ public:
 		return m_flags.leech_seeded;
 	}
 
+	auto level() const -> Level {
+		return m_pokemon.level();
+	}
+
 	auto is_loafing() const -> bool {
 		return ability() == Ability::Truant and m_flags.is_loafing_turn;
 	}

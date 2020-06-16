@@ -344,7 +344,7 @@ constexpr auto other_physical_stat(RegularStat const stat) {
 auto calculate_initial_stat(RegularStat const name, ActivePokemon const pokemon) {
 	auto get_initial_stat = [=](RegularStat const stat_name) {
 		auto const stat = get_stat(pokemon, stat_name);
-		return initial_stat(stat_name, stat.base(), stat.iv(), stat.ev(), get_level(pokemon), get_nature(pokemon));
+		return initial_stat(stat_name, stat.base(), stat.iv(), stat.ev(), pokemon.level(), get_nature(pokemon));
 	};
 	return !is_physical(name) or !pokemon.power_trick_is_active() ?
 		get_initial_stat(name) :

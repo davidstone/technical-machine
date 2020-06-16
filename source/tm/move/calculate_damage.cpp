@@ -134,8 +134,8 @@ auto calculate_expert_belt_modifier(Item const item, Effectiveness const & effec
 }
 
 
-auto level_multiplier(Pokemon const & attacker) -> decltype(get_level(attacker)() * 2_bi / 5_bi) {
-	return get_level(attacker)() * 2_bi / 5_bi;
+auto level_multiplier(Pokemon const & attacker) -> decltype(attacker.level()() * 2_bi / 5_bi) {
+	return attacker.level()() * 2_bi / 5_bi;
 }
 
 auto weakening_from_status(ActivePokemon const attacker) {
@@ -246,9 +246,9 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 			return defender_move.used_move_is_special(generation) ? attacker.direct_damage_received() * 2_bi : 0_bi;
 		case Moves::Night_Shade:
 		case Moves::Seismic_Toss:
-			return get_level(attacker)();
+			return attacker.level()();
 		case Moves::Psywave:
-			return executed.variable.psywave_damage(generation, get_level(attacker));
+			return executed.variable.psywave_damage(generation, attacker.level());
 		case Moves::Sonic_Boom:
 			return 20_bi;
 		case Moves::Super_Fang:

@@ -52,7 +52,6 @@ struct Pokemon {
 
 	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
 	friend auto get_hidden_power(Pokemon pokemon) -> bounded::optional<HiddenPower>;
-	friend Level get_level(Pokemon pokemon);
 	friend Nature get_nature(Pokemon pokemon);
 	friend HP get_hp(Pokemon pokemon);
 	friend Stat get_stat(Pokemon pokemon, RegularStat stat_name);
@@ -112,6 +111,10 @@ struct Pokemon {
 	auto set_item(Item const item) & -> void {
 		m_item = HeldItem(item);
 		m_item_is_known = true;
+	}
+
+	auto level() const -> Level {
+		return m_level;
 	}
 
 	auto species() const -> Species {
@@ -195,7 +198,7 @@ inline Stat get_stat(Pokemon const pokemon, RegularStat const stat_name) {
 inline auto set_ev(Generation const generation, Pokemon & pokemon, PermanentStat const stat_name, IV const iv, EV const ev) -> void {
 	if (stat_name == PermanentStat::hp) {
 		auto const base_stats = BaseStats(generation, pokemon.species());
-		pokemon.stats.hp() = HP(base_stats, get_level(pokemon), iv, ev);
+		pokemon.stats.hp() = HP(base_stats, pokemon.level(), iv, ev);
 	} else {
 		auto & stat = pokemon.stats[RegularStat(stat_name)];
 		stat = Stat(stat.base(), iv, ev);
@@ -205,10 +208,6 @@ inline auto set_ev(Generation const generation, Pokemon & pokemon, PermanentStat
 
 inline Status get_status(Pokemon const pokemon) {
 	return pokemon.m_status;
-}
-
-inline Level get_level(Pokemon const pokemon) {
-	return pokemon.m_level;
 }
 
 inline auto get_hidden_power(Pokemon const pokemon) -> bounded::optional<HiddenPower> {
