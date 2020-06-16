@@ -68,7 +68,7 @@ auto load_stats(Generation const generation, Pokemon & pokemon, boost::property_
 	auto const stat_name = stat_from_simulator_string(pt.get<std::string>("<xmlattr>.name"));
 	auto const iv = IV(pt.get<IV::value_type>("<xmlattr>.iv"));
 	auto const ev = EV(pt.get<EV::value_type>("<xmlattr>.ev"));
-	set_ev(generation, pokemon, stat_name, iv, ev);
+	pokemon.set_ev(generation, stat_name, iv, ev);
 }
 
 auto species_from_simulator_string(std::string_view const str) {

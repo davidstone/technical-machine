@@ -36,7 +36,7 @@ constexpr auto move_array(Generation const generation, auto... moves) {
 auto max_all_evs(Generation const generation, Pokemon & pokemon) {
 	constexpr auto ev = EV(252_bi);
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-		set_ev(generation, pokemon, stat_name, IV(30_bi), ev);
+		pokemon.set_ev(generation, stat_name, IV(30_bi), ev);
 	}
 }
 
@@ -61,7 +61,7 @@ auto expected_generation_one_team() {
 	auto reduce_stat = [=](Pokemon & pokemon, PermanentStat const stat_name) {
 		constexpr auto reduced_ev = EV(248_bi);
 		constexpr auto iv = IV(30_bi);
-		set_ev(generation, pokemon, stat_name, iv, reduced_ev);
+		pokemon.set_ev(generation, stat_name, iv, reduced_ev);
 	};
 
 	add_pokemon(Species::Koffing, 88_bi, Moves::Fire_Blast, Moves::Sludge, Moves::Explosion, Moves::Thunderbolt);

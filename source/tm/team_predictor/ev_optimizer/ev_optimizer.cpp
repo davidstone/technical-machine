@@ -44,7 +44,7 @@ auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats<IVA
 	pokemon.set_nature(stats.nature);
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 		auto const stat = stats[stat_name];
-		set_ev(generation, pokemon, stat_name, stat.iv, stat.ev);
+		pokemon.set_ev(generation, stat_name, stat.iv, stat.ev);
 	}
 	auto const new_hp = get_hp(pokemon);
 	pokemon.set_hp(new_hp.max() * original_hp.current() / original_hp.max());

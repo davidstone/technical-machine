@@ -143,7 +143,16 @@ struct Pokemon {
 		return m_nature_is_known;
 	}
 
-	friend auto set_ev(Generation, Pokemon &, PermanentStat, IV, EV) -> void;
+	auto set_ev(Generation const generation, PermanentStat const stat_name, IV const iv, EV const ev) -> void {
+		if (stat_name == PermanentStat::hp) {
+			auto const base_stats = BaseStats(generation, species());
+			stats.hp() = HP(base_stats, level(), iv, ev);
+		} else {
+			auto & stat = stats[RegularStat(stat_name)];
+			stat = Stat(stat.base(), iv, ev);
+		}
+	}
+
 
 	friend auto operator==(Pokemon const &, Pokemon const &) -> bool = default;
 private:
@@ -188,16 +197,6 @@ inline HP get_hp(Pokemon const pokemon) {
 
 inline Stat get_stat(Pokemon const pokemon, RegularStat const stat_name) {
 	return pokemon.stats[stat_name];
-}
-
-inline auto set_ev(Generation const generation, Pokemon & pokemon, PermanentStat const stat_name, IV const iv, EV const ev) -> void {
-	if (stat_name == PermanentStat::hp) {
-		auto const base_stats = BaseStats(generation, pokemon.species());
-		pokemon.stats.hp() = HP(base_stats, pokemon.level(), iv, ev);
-	} else {
-		auto & stat = pokemon.stats[RegularStat(stat_name)];
-		stat = Stat(stat.base(), iv, ev);
-	}
 }
 
 

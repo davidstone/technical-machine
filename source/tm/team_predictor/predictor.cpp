@@ -154,7 +154,7 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 			add_seen_move(all_moves(pokemon), generation, move);
 		}
 		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-			set_ev(generation, pokemon, stat_name, default_iv(generation), stats[stat_name]);
+			pokemon.set_ev(generation, stat_name, default_iv(generation), stats[stat_name]);
 		}
 	}
 

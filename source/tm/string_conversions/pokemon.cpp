@@ -189,7 +189,7 @@ auto pokemon_from_string(std::string_view const str, Generation const generation
 		pop_value_type<EV>(buffer, spe_ev_moves),
 	};
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-		set_ev(generation, pokemon, stat_name, ivs[stat_name], evs[stat_name]);
+		pokemon.set_ev(generation, stat_name, ivs[stat_name], evs[stat_name]);
 	}
 	pokemon.set_hp(HP::current_type(static_cast<int>(static_cast<double>(get_hp(pokemon).max()) * hp_percent / 100.0)));
 

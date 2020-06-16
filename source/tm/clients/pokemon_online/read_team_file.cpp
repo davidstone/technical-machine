@@ -153,7 +153,7 @@ void load_pokemon(ptree const & pt, Generation const generation, Team & team, Sp
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 		auto const iv = ivs[stat_name];
 		auto const ev = evs[stat_name];
-		set_ev(generation, pokemon, stat_name, iv, ev);
+		pokemon.set_ev(generation, stat_name, iv, ev);
 	}
 }
 

@@ -55,7 +55,7 @@ void attack_tests() {
 
 	pokemon.switch_in(generation, weather);
 
-	set_ev(generation, pokemon, PermanentStat::def, IV(31_bi), EV(EV::max));
+	pokemon.set_ev(generation, PermanentStat::def, IV(31_bi), EV(EV::max));
 	pokemon.activate_power_trick();
 	pokemon.stage()[BoostableStat::atk] += 6_bi;
 
@@ -73,7 +73,7 @@ void special_attack_tests() {
 	auto pokemon = attacker.pokemon();
 	pokemon.switch_in(generation, weather);
 
-	set_ev(generation, pokemon, PermanentStat::spa, IV(31_bi), EV(EV::max));
+	pokemon.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(EV::max));
 	pokemon.stage()[BoostableStat::spa] += 6_bi;
 
 	check_equal(calculate_special_attack(generation, pokemon, Type::Water, Ability::Honey_Gather, weather, critical_hit), max_special_attack);
@@ -89,7 +89,7 @@ void max_defense_test() {
 	defender.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::None, Ability::Marvel_Scale, Nature::Bold);
 	auto pokemon = defender.pokemon();
 	pokemon.switch_in(generation, weather);
-	set_ev(generation, pokemon, PermanentStat::def, IV(31_bi), EV(EV::max));
+	pokemon.set_ev(generation, PermanentStat::def, IV(31_bi), EV(EV::max));
 
 	pokemon.stage()[BoostableStat::def] += 6_bi;
 
@@ -109,7 +109,7 @@ void min_defense_test() {
 	defender.add_pokemon(generation, Species::Combee, Level(1_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Hasty);
 	auto pokemon = defender.pokemon();
 	pokemon.switch_in(generation, weather);
-	set_ev(generation, pokemon, PermanentStat::def, IV(0_bi), EV(0_bi));
+	pokemon.set_ev(generation, PermanentStat::def, IV(0_bi), EV(0_bi));
 
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		pokemon.stage()[BoostableStat::def] += -2_bi;
@@ -135,7 +135,7 @@ void special_defense_tests() {
 	defender.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Calm);
 	auto pokemon = defender.pokemon();
 	pokemon.switch_in(generation, weather);
-	set_ev(generation, pokemon, PermanentStat::spd, IV(31_bi), EV(EV::max));
+	pokemon.set_ev(generation, PermanentStat::spd, IV(31_bi), EV(EV::max));
 
 	pokemon.stage()[BoostableStat::spd] += 6_bi;
 
@@ -153,7 +153,7 @@ void speed_tests() {
 	team.add_pokemon(generation, Species::Deoxys_Speed, Level(100_bi), Gender::genderless, Item::Choice_Scarf, Ability::Swift_Swim, Nature::Timid);
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(generation, weather);
-	set_ev(generation, pokemon, PermanentStat::spe, IV(31_bi), EV(EV::max));
+	pokemon.set_ev(generation, PermanentStat::spe, IV(31_bi), EV(EV::max));
 
 	pokemon.stage()[BoostableStat::spe] += 6_bi;
 

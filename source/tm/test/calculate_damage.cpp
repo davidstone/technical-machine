@@ -83,7 +83,6 @@ Team max_damage_physical_defender() {
 	defender.add_pokemon(generation, Species::Combee, Level(1_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Hasty);
 	auto pokemon = defender.pokemon();
 	pokemon.switch_in(generation, Weather());
-	set_ev(generation, pokemon, PermanentStat::def, IV(0_bi), EV(0_bi));
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		pokemon.stage()[BoostableStat::def] += -2_bi;
 	}
@@ -95,7 +94,6 @@ Team max_damage_special_defender() {
 	defender.add_pokemon(generation, Species::Paras, Level(1_bi), Gender::male, Item::None, Ability::Dry_Skin, Nature::Hardy);
 	auto d = defender.pokemon();
 	d.switch_in(generation, Weather());
-	set_ev(generation, d, PermanentStat::spd, IV(0_bi), EV(0_bi));
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		d.stage()[BoostableStat::spd] += -2_bi;
 	}
@@ -164,7 +162,7 @@ void physical_damage_test() {
 
 	auto a = attacker.pokemon();
 
-	set_ev(generation, a, PermanentStat::def, IV(31_bi), EV(EV::max));
+	a.set_ev(generation, PermanentStat::def, IV(31_bi), EV(EV::max));
 	a.activate_power_trick();
 	a.stage()[BoostableStat::atk] += 6_bi;
 
@@ -195,7 +193,7 @@ void special_damage_test() {
 	auto const move = all_moves(a).add(Move(generation, Moves::Blast_Burn));
 	a.set_type(Type::Fire);
 
-	set_ev(generation, a, PermanentStat::spa, IV(31_bi), EV(EV::max));
+	a.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(EV::max));
 	attacker.pokemon().stage()[BoostableStat::spa] += 6_bi;
 	
 	for (auto const n [[maybe_unused]] : containers::integer_range(10_bi)) {

@@ -118,7 +118,7 @@ auto parse_team(boost::property_tree::ptree const & pt, Generation const generat
 
 		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 			auto const stat = stats[stat_name];
-			set_ev(generation, pokemon, stat_name, stat.iv, stat.ev);
+			pokemon.set_ev(generation, stat_name, stat.iv, stat.ev);
 		}
 	}
 	team.all_pokemon().reset_index();

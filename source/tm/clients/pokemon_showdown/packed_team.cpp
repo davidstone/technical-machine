@@ -192,7 +192,7 @@ auto parse_pokemon(std::string_view const str, Generation const generation, Team
 		all_moves(pokemon).add(Move(generation, move));
 	}
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-		set_ev(generation, pokemon, stat_name, ivs[stat_name], evs[stat_name]);
+		pokemon.set_ev(generation, stat_name, ivs[stat_name], evs[stat_name]);
 	}
 	return pokemon;
 }

@@ -56,7 +56,7 @@ void test_baton_pass() {
 		attacker.add_pokemon(generation, Species::Alakazam, Level(100_bi), Gender::male, Item::Lum_Berry, Ability::Synchronize, Nature::Jolly);
 		auto & alakazam = back(attacker.all_pokemon());
 		containers::append(regular_moves(alakazam), move_array(Moves::Psycho_Cut, Moves::Recover));
-		set_ev(generation, alakazam, PermanentStat::atk, IV(31_bi), EV(252_bi));
+		alakazam.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
 	}
 	attacker.pokemon().switch_in(generation, weather);
 
@@ -65,14 +65,14 @@ void test_baton_pass() {
 		defender.add_pokemon(generation, Species::Gengar, Level(100_bi), Gender::male, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
 		Pokemon & gengar = defender.pokemon();
 		containers::append(regular_moves(gengar), move_array(Moves::Shadow_Ball));
-		set_ev(generation, gengar, PermanentStat::spa, IV(31_bi), EV(252_bi));
+		gengar.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
 	}
 
 	{
 		defender.add_pokemon(generation, Species::Misdreavus, Level(100_bi), Gender::female, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
 		Pokemon & misdreavus = back(defender.all_pokemon());
 		containers::append(regular_moves(misdreavus), move_array(Moves::Shadow_Ball));
-		set_ev(generation, misdreavus, PermanentStat::spa, IV(31_bi), EV(252_bi));
+		misdreavus.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
 	}
 	defender.pokemon().switch_in(generation, weather);
 
