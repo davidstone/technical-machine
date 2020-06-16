@@ -82,7 +82,7 @@ void write_pokemon(Generation const generation, Pokemon const & pokemon, ptree &
 	auto const species = pokemon.species();
 	auto const po_species = species_to_id(species);
 	member.put("<xmlattr>.Num", po_species.id);
-	member.put("<xmlattr>.Nature", nature_to_id(get_nature(pokemon)));
+	member.put("<xmlattr>.Nature", nature_to_id(pokemon.nature()));
 	member.put("<xmlattr>.Shiny", 0);
 	member.put("<xmlattr>.Nickname", to_string(species));
 	member.put("<xmlattr>.Gen", 4);

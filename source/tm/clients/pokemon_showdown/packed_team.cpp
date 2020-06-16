@@ -57,7 +57,7 @@ auto to_packed_format(Generation const generation, Team const & team) -> contain
 			result += to_string(it->name());
 		}
 		result += '|';
-		result += to_string(get_nature(pokemon));
+		result += to_string(pokemon.nature());
 
 		result += '|';
 		auto const stats = calculate_ivs_and_evs(generation, pokemon);

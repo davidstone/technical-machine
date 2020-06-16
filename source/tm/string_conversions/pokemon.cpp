@@ -107,7 +107,7 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 		hp_item, to_string(pokemon.unmodified_item()),
 		item_ability, to_string(pokemon.initial_ability()),
 		status_to_string(),
-		status_nature, to_string(get_nature(pokemon)),
+		status_nature, to_string(pokemon.nature()),
 		nature_hp_iv, std::string_view(bounded::to_string(get_hp(pokemon).iv().value())),
 		hp_iv_atk_iv, stat_to_iv_string(RegularStat::atk),
 		atk_iv_def_iv, stat_to_iv_string(RegularStat::def),

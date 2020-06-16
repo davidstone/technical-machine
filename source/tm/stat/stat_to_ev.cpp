@@ -143,7 +143,7 @@ auto calculate_ivs_and_evs(
 }
 
 auto calculate_ivs_and_evs(Generation const generation, Pokemon const pokemon) -> CombinedStats<IVAndEV> {
-	auto const nature = get_nature(pokemon);
+	auto const nature = pokemon.nature();
 	auto calculate_stat = [=](RegularStat const stat_name) {
 		auto const stat = get_stat(pokemon, stat_name);
 		return initial_stat(stat_name, stat.base(), stat.iv(), stat.ev(), pokemon.level(), nature);

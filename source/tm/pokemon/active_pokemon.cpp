@@ -292,7 +292,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 		auto const amount = get_hp(m_pokemon).max() / BOUNDED_CONDITIONAL(generation <= Generation::six, 8_bi, 2_bi);
 		auto const threshold = generation <= Generation::six ? rational(1_bi, 2_bi) : quarter_threshold();
 		auto const activated = healing_berry(threshold, amount);
-		if (activated and lowers_stat(get_nature(m_pokemon), stat)) {
+		if (activated and lowers_stat(m_pokemon.nature(), stat)) {
 			confuse(generation, weather);
 		}
 	};

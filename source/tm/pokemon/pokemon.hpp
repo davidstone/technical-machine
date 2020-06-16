@@ -52,7 +52,6 @@ struct Pokemon {
 
 	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
 	friend auto get_hidden_power(Pokemon pokemon) -> bounded::optional<HiddenPower>;
-	friend Nature get_nature(Pokemon pokemon);
 	friend HP get_hp(Pokemon pokemon);
 	friend Stat get_stat(Pokemon pokemon, RegularStat stat_name);
 	friend Status get_status(Pokemon pokemon);
@@ -117,6 +116,9 @@ struct Pokemon {
 		return m_level;
 	}
 
+	auto nature() const -> Nature {
+		return m_nature;
+	}
 	auto species() const -> Species {
 		return m_species;
 	}
@@ -176,9 +178,6 @@ inline bool item_is_known(Pokemon const pokemon) {
 	return pokemon.m_item_is_known;
 }
 
-inline Nature get_nature(Pokemon const pokemon) {
-	return pokemon.m_nature;
-}
 inline void set_nature(Pokemon & pokemon, Nature const nature) {
 	pokemon.m_nature = nature;
 	pokemon.m_nature_is_known = true;
