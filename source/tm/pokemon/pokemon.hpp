@@ -154,7 +154,7 @@ struct Pokemon {
 			stats.hp() = HP(base_stats, level(), iv, ev);
 		} else {
 			auto const regular = RegularStat(stat_name);
-			auto & stat = pokemon.stats[regular];
+			auto & stat = stats[regular];
 			stat = initial_stat(regular, base_stats[regular], iv, ev, level(), nature());
 		}
 	}

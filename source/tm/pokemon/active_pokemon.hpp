@@ -272,10 +272,6 @@ public:
 		return m_flags.last_used_move.moved_this_turn();
 	}
 
-	auto nature() const -> Nature {
-		return m_pokemon.nature();
-	}
-
 	auto power_trick_is_active() const -> bool {
 		return m_flags.power_trick_is_active;
 	}
