@@ -198,6 +198,10 @@ public:
 		return m_flags.has_focused_energy;
 	}
 
+	auto gender() const -> Gender {
+		return m_pokemon.gender();
+	}
+
 	auto heal_block_is_active() const -> bool {
 		return m_flags.heal_block.is_active();
 	}

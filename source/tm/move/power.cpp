@@ -404,7 +404,7 @@ auto attacker_ability_power_modifier(Generation const generation, ActivePokemon 
 		case Ability::Reckless:
 			return rational(BOUNDED_CONDITIONAL(is_boosted_by_reckless(move.name), 6_bi, 5_bi), 5_bi);
 		case Ability::Rivalry:
-			return rational(4_bi + multiplier(get_gender(attacker), get_gender(defender)), 4_bi);
+			return rational(4_bi + multiplier(attacker.gender(), defender.gender()), 4_bi);
 		default:
 			return rational(1_bi, 1_bi);
 	}

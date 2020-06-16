@@ -70,7 +70,7 @@ auto to_packed_format(Generation const generation, Team const & team) -> contain
 		}
 
 		result += '|';
-		result += to_string(get_gender(pokemon));
+		result += to_string(pokemon.gender());
 
 		result += '|';
 		for (auto const stat_name : containers::enum_range<PermanentStat>()) {

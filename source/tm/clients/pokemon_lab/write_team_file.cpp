@@ -112,7 +112,7 @@ void write_pokemon(Generation const generation, Pokemon const & pokemon, boost::
 	member.put ("nickname", "");
 	member.put ("level", get_level(pokemon)());
 	member.put ("happiness", get_happiness(pokemon));
-	member.put ("gender", to_simulator_string(get_gender(pokemon)));
+	member.put ("gender", to_simulator_string(pokemon.gender()));
 	member.put ("nature", to_string(get_nature(pokemon)));
 	member.put ("item", to_string(pokemon.unmodified_item()));
 	member.put ("ability", to_string(pokemon.initial_ability()));

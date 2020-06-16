@@ -328,7 +328,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			cure_all_status(user_team, [](Pokemon const &) { return true; });
 			break;
 		case Moves::Attract:
-			if (multiplier(get_gender(user), get_gender(other.pokemon())) == -1_bi) {
+			if (multiplier(user.gender(), other.pokemon().gender()) == -1_bi) {
 				other.pokemon().attract(generation, user, weather);
 			}
 			break;
@@ -448,7 +448,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Camouflage:
 			break;
 		case Moves::Captivate:
-			if (multiplier(get_gender(user), get_gender(other.pokemon())) == -1_bi) {
+			if (multiplier(user.gender(), other.pokemon().gender()) == -1_bi) {
 				other.pokemon().stage()[BoostableStat::spd] -= 2_bi;
 			}
 			break;

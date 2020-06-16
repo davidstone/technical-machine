@@ -51,7 +51,6 @@ struct Pokemon {
 	// not found by lookup rules in that case.
 
 	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
-	friend Gender get_gender(Pokemon pokemon);
 	friend Happiness get_happiness(Pokemon pokemon);
 	friend auto get_hidden_power(Pokemon pokemon) -> bounded::optional<HiddenPower>;
 	friend Level get_level(Pokemon pokemon);
@@ -89,6 +88,10 @@ struct Pokemon {
 		m_ability_is_known = true;
 	}
 
+	auto gender() const {
+		return m_gender;
+	}
+
 	auto item(Generation const generation, bool const embargo, bool const magic_room) const -> Item {
 		return m_item.get(generation, embargo, magic_room);
 	}
@@ -110,7 +113,6 @@ struct Pokemon {
 	}
 
 	friend bool ability_is_known(Pokemon pokemon);
-	friend void set_gender(Pokemon & pokemon, Gender gender);
 	friend bool item_is_known(Pokemon pokemon);
 	friend void set_nature(Pokemon & pokemon, Nature nature);
 	friend bool nature_is_known(Pokemon pokemon);
@@ -159,13 +161,6 @@ inline decltype(auto) regular_moves(Pokemon & pokemon) {
 
 inline bool ability_is_known(Pokemon const pokemon) {
 	return pokemon.m_ability_is_known;
-}
-
-inline Gender get_gender(Pokemon const pokemon) {
-	return pokemon.m_gender;
-}
-inline void set_gender(Pokemon & pokemon, Gender const gender) {
-	pokemon.m_gender = gender;
 }
 
 inline bool item_is_known(Pokemon const pokemon) {
