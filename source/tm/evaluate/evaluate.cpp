@@ -106,7 +106,7 @@ auto score_pokemon(Evaluate const & evaluate, Generation const generation, Pokem
 }
 
 auto score_team(Evaluate const & evaluate, Generation const generation, Team const & team) {
-	auto has_hp = [](auto const & pokemon) { return get_hp(pokemon) != 0_bi; };
+	auto has_hp = [](auto const & pokemon) { return pokemon.hp() != 0_bi; };
 	auto get_score = [&](auto const & pokemon) {
 		return score_pokemon(evaluate, generation, pokemon, team.entry_hazards());
 	};
@@ -158,7 +158,7 @@ auto sleep_clause(Team const & team) -> Evaluate::type {
 
 auto single_team_win(Team const & team) -> Evaluate::type {
 	BOUNDED_ASSERT(team.size() != 0_bi);
-	if (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi) {
+	if (team.size() == 1_bi and team.pokemon().hp() == 0_bi) {
 		return BOUNDED_CONDITIONAL(team.is_me(), -victory, victory);
 	}
 	return 0_bi;

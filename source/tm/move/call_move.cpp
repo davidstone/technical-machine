@@ -54,7 +54,7 @@ namespace {
 auto item_can_be_lost(Generation const generation, ActivePokemon const pokemon) {
 	return
 		pokemon.ability() != Ability::Sticky_Hold or
-		(generation >= Generation::five and get_hp(pokemon).current() == 0_bi);
+		(generation >= Generation::five and pokemon.hp().current() == 0_bi);
 }
 
 // I could potentially treat this as negative recoil
@@ -78,7 +78,7 @@ auto cure_all_status(Team & user, auto const & predicate) -> void {
 
 
 auto belly_drum(Generation const generation, MutableActivePokemon user, Weather const weather) {
-	auto const hp = get_hp(user);
+	auto const hp = user.hp();
 	if (hp.current() > hp.max() / 2_bi and hp.current() > 1_bi) {
 		change_hp(generation, user, weather, -hp.max() / 2_bi);
 		user.stage()[BoostableStat::atk] += 12_bi;
@@ -94,7 +94,7 @@ auto can_confuse_with_chatter(Species const pokemon) {
 auto curse(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) {
 	if (is_type(user, Type::Ghost)) {
 		if (!target.is_cursed()) {
-			user.indirect_damage(generation, weather, get_hp(user).max() / 2_bi);
+			user.indirect_damage(generation, weather, user.hp().max() / 2_bi);
 			target.curse();
 		}
 	} else {
@@ -190,7 +190,7 @@ auto recoil_status(Generation const generation, MutableActivePokemon user, Mutab
 }
 
 auto recover_half(Generation const generation, MutableActivePokemon user, Weather const weather) {
-	if (generation == Generation::one and healing_move_fails_in_generation_1(get_hp(user))) {
+	if (generation == Generation::one and healing_move_fails_in_generation_1(user.hp())) {
 		return;
 	}
 	heal(generation, user, weather, rational(1_bi, 2_bi));
@@ -203,7 +203,7 @@ auto confusing_stat_boost(Generation const generation, MutableActivePokemon targ
 
 
 auto equalize_hp(Generation const generation, MutableActivePokemon lhs, MutableActivePokemon rhs, Weather const weather) {
-	auto const average = (get_hp(lhs).current() + get_hp(rhs).current()) / 2_bi;
+	auto const average = (lhs.hp().current() + rhs.hp().current()) / 2_bi;
 	lhs.set_hp(generation, weather, average);
 	rhs.set_hp(generation, weather, average);
 }
@@ -236,7 +236,7 @@ auto struggle(Generation const generation, MutableActivePokemon user, Weather co
 		case Generation::six:
 		case Generation::seven:
 		case Generation::eight:
-			change_hp(generation, user, weather, bounded::max(-get_hp(user).max() / 4_bi, 1_bi));
+			change_hp(generation, user, weather, bounded::max(-user.hp().max() / 4_bi, 1_bi));
 	}
 }
 
@@ -354,7 +354,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Hyper_Beam:
 		case Moves::Roar_of_Time:
 		case Moves::Rock_Wrecker:
-			if (generation >= Generation::two or get_hp(other.pokemon()).current() != 0_bi) {
+			if (generation >= Generation::two or other.pokemon().hp().current() != 0_bi) {
 				user.use_recharge_move();
 			}
 			break;
@@ -1604,7 +1604,7 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 
 	auto const unsuccessful =
 		move_fails(move.executed, user_pokemon.damaged(), other_ability, other_move) or
-		(get_hp(other_pokemon).current() == 0_bi and fails_against_fainted(target)) or
+		(other_pokemon.hp().current() == 0_bi and fails_against_fainted(target)) or
 		(other_pokemon.is_protecting() and blocked_by_protect(target, move.executed));
 	if (unsuccessful) {
 		unsuccessfully_use_move();

@@ -244,7 +244,7 @@ auto execute_move(Generation const generation, Team const & user, SelectedAndExe
 struct OriginalPokemon {
 	explicit OriginalPokemon(Generation const generation, Pokemon const & pokemon, Moves const other_move):
 		m_species(pokemon.species()),
-		m_hp(get_hp(pokemon).current()),
+		m_hp(pokemon.hp().current()),
 		m_other_move{
 			other_move,
 			get_type(generation, other_move, get_hidden_power_type(pokemon))
@@ -272,7 +272,7 @@ constexpr auto all_are_pass_or_switch [[maybe_unused]](StaticVectorMove const le
 }
 
 auto team_is_empty(Team const & team) {
-	return team.size() == 0_bi or (team.size() == 1_bi and get_hp(team.pokemon()) == 0_bi);
+	return team.size() == 0_bi or (team.size() == 1_bi and team.pokemon().hp() == 0_bi);
 };
 
 struct Evaluator {
@@ -418,7 +418,7 @@ private:
 		if (auto const won = Evaluate::win(first, last)) {
 			return *won;
 		}
-		if (get_hp(first.pokemon()) == 0_bi or get_hp(last.pokemon()) == 0_bi) {
+		if (first.pokemon().hp() == 0_bi or last.pokemon().hp() == 0_bi) {
 			auto const first_selections = legal_selections(m_generation, first, last, weather);
 			auto const last_selections = legal_selections(m_generation, last, first, weather);
 			return select_move_branch(first, first_selections, last, last_selections, weather, depth, [&](auto && ... args) {

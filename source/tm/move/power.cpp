@@ -153,7 +153,7 @@ auto doubling(Generation const generation, ActivePokemon const attacker, Moves c
 		case Moves::Body_Slam:
 			return generation >= Generation::six and defender.minimized();
 		case Moves::Brine:
-			return get_hp(defender).current() <= get_hp(defender).max() / 2_bi;
+			return defender.hp().current() <= defender.hp().max() / 2_bi;
 		case Moves::Facade:
 			return boosts_facade(attacker.status());
 		case Moves::Ice_Ball:

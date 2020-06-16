@@ -91,17 +91,17 @@ auto MutableActivePokemon::attract(Generation const generation, MutableActivePok
 namespace {
 
 auto can_use_substitute(Pokemon const & pokemon) -> bool {
-	auto const & hp = get_hp(pokemon);
+	auto const & hp = pokemon.hp();
 	return hp.current() > hp.max() / 4_bi;
 }
 
 }	// namespace
 
 auto MutableActivePokemon::use_substitute(Generation const generation, Weather const weather) const -> void {
-	if (!can_use_substitute(*this))
+	if (!can_use_substitute(*this)) {
 		return;
-	auto const max_hp = get_hp(*this).max();
-	indirect_damage(generation, weather, m_flags.substitute.create(max_hp));
+	}
+	indirect_damage(generation, weather, m_flags.substitute.create(hp().max()));
 }
 
 auto MutableActivePokemon::switch_out() const -> void {
@@ -171,7 +171,7 @@ auto handle_ko(Generation const generation, MutableActivePokemon defender, bool 
 	if (cannot_ko(move) or is_enduring) {
 		return true;
 	}
-	auto const hp = get_hp(defender);
+	auto const hp = defender.hp();
 	if (hp.current() != hp.max()) {
 		return false;
 	}
@@ -193,7 +193,7 @@ auto MutableActivePokemon::direct_damage(Generation const generation, Moves cons
 	if (m_flags.substitute and interaction == Substitute::absorbs) {
 		return m_flags.substitute.damage(damage);
 	}
-	auto const original_hp = get_hp(m_pokemon).current();
+	auto const original_hp = hp().current();
 	auto const block_ko = original_hp <= damage and handle_ko(generation, *this, m_flags.last_used_move.is_enduring(), move, weather);
 	auto const applied_damage = block_ko ?
 		static_cast<HP::current_type>(original_hp - 1_bi) :
@@ -261,11 +261,11 @@ auto MutableActivePokemon::rest(Generation const generation, Weather const weath
 	if (blocks_status(ability(), ability(), Statuses::rest, weather)) {
 		return;
 	}
-	auto const hp = get_hp(m_pokemon);
-	if (hp.current() == hp.max() or healing_move_fails_in_generation_1(hp)) {
+	auto const active_hp = hp();
+	if (active_hp.current() == active_hp.max() or healing_move_fails_in_generation_1(active_hp)) {
 		return;
 	}
-	m_pokemon.set_hp(hp.max());
+	m_pokemon.set_hp(active_hp.max());
 	set_status(generation, Statuses::rest, weather);
 }
 
@@ -284,12 +284,12 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 			return false;
 		}
 		consume();
-		m_pokemon.set_hp(get_hp(m_pokemon).current() + amount);
+		m_pokemon.set_hp(hp().current() + amount);
 		return true;
 	};
 
 	auto confusion_berry = [&](RegularStat const stat) {
-		auto const amount = get_hp(m_pokemon).max() / BOUNDED_CONDITIONAL(generation <= Generation::six, 8_bi, 2_bi);
+		auto const amount = hp().max() / BOUNDED_CONDITIONAL(generation <= Generation::six, 8_bi, 2_bi);
 		auto const threshold = generation <= Generation::six ? rational(1_bi, 2_bi) : quarter_threshold();
 		auto const activated = healing_berry(threshold, amount);
 		if (activated and lowers_stat(m_pokemon.nature(), stat)) {
@@ -355,7 +355,7 @@ auto MutableActivePokemon::activate_pinch_item(Generation const generation, Weat
 		case Item::Sitrus_Berry:
 			healing_berry(
 				rational(1_bi, 2_bi),
-				BOUNDED_CONDITIONAL(generation <= Generation::three, 30_bi, get_hp(m_pokemon).max() / 4_bi)
+				BOUNDED_CONDITIONAL(generation <= Generation::three, 30_bi, hp().max() / 4_bi)
 			);
 			break;
 		case Item::Starf_Berry:

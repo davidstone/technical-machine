@@ -73,7 +73,7 @@ void sleep_talk() {
 		false,
 		damage
 	);
-	BOUNDED_ASSERT(get_hp(defender.pokemon()).current() == 0_bi);
+	BOUNDED_ASSERT(defender.pokemon().hp().current() == 0_bi);
 }
 
 struct Sleeper {
@@ -119,7 +119,7 @@ struct Sleeper {
 	}
 
 	auto at_max_hp() const {
-		auto const hp = get_hp(m_sleeper.pokemon());
+		auto const hp = m_sleeper.pokemon().hp();
 		return hp.current() == hp.max();
 	}
 	auto asleep() const {

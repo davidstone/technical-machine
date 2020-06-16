@@ -100,7 +100,7 @@ struct Battle {
 	// TODO: What happens here if a Pokemon has a pinch item?
 	void correct_hp_and_status(bool const is_ai, VisibleHP const visible_hp, Statuses const visible_status, auto... maybe_index) {
 		auto & pokemon = active_pokemon(is_ai, maybe_index...);
-		auto const original_hp = get_hp(pokemon);
+		auto const original_hp = pokemon.hp();
 		pokemon.set_hp(correct_hp(is_ai, original_hp, visible_hp));
 		if (visible_hp.current == 0_bi) {
 			return;

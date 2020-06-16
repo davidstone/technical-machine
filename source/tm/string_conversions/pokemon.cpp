@@ -81,11 +81,11 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 	};
 	
 	auto stat_to_iv_string = [&](RegularStat const stat) {
-		return bounded::to_string(get_stat(pokemon, stat).iv().value());
+		return bounded::to_string(pokemon.stat(stat).iv().value());
 	};
 	
 	auto stat_to_ev_string = [&](RegularStat const stat) {
-		return bounded::to_string(get_stat(pokemon, stat).ev().value());
+		return bounded::to_string(pokemon.stat(stat).ev().value());
 	};
 	
 	auto moves_to_string = [&]{
@@ -108,13 +108,13 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 		item_ability, to_string(pokemon.initial_ability()),
 		status_to_string(),
 		status_nature, to_string(pokemon.nature()),
-		nature_hp_iv, std::string_view(bounded::to_string(get_hp(pokemon).iv().value())),
+		nature_hp_iv, std::string_view(bounded::to_string(pokemon.hp().iv().value())),
 		hp_iv_atk_iv, stat_to_iv_string(RegularStat::atk),
 		atk_iv_def_iv, stat_to_iv_string(RegularStat::def),
 		def_iv_spa_iv, stat_to_iv_string(RegularStat::spa),
 		spa_iv_spd_iv, stat_to_iv_string(RegularStat::spd),
 		spd_iv_spe_iv, stat_to_iv_string(RegularStat::spe),
-		spe_iv_hp_ev, std::string_view(bounded::to_string(get_hp(pokemon).ev().value())),
+		spe_iv_hp_ev, std::string_view(bounded::to_string(pokemon.hp().ev().value())),
 		hp_ev_atk_ev, stat_to_ev_string(RegularStat::atk),
 		atk_ev_def_ev, stat_to_ev_string(RegularStat::def),
 		def_ev_spa_ev, stat_to_ev_string(RegularStat::spa),
@@ -191,7 +191,7 @@ auto pokemon_from_string(std::string_view const str, Generation const generation
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 		pokemon.set_ev(generation, stat_name, ivs[stat_name], evs[stat_name]);
 	}
-	pokemon.set_hp(HP::current_type(static_cast<int>(static_cast<double>(get_hp(pokemon).max()) * hp_percent / 100.0)));
+	pokemon.set_hp(HP::current_type(static_cast<int>(static_cast<double>(pokemon.hp().max()) * hp_percent / 100.0)));
 
 	auto const should_be_empty = pop_to_delimiter(buffer, moves_separator);
 	if (!should_be_empty.empty()) {

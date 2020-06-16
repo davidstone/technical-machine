@@ -30,7 +30,7 @@ namespace technicalmachine {
 
 template<typename Numerator, typename Denominator>
 void heal(Generation const generation, MutableActivePokemon pokemon, Weather const weather, rational<Numerator, Denominator> const scale) {
-	auto const hp = get_hp(pokemon);
+	auto const hp = pokemon.hp();
 	if (hp == 0_bi) {
 		return;
 	}

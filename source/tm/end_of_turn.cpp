@@ -135,7 +135,7 @@ constexpr auto leftovers_healing() {
 }
 
 auto other_effects(Generation const generation, MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags const flags) -> void {
-	if (get_hp(pokemon) == 0_bi) {
+	if (pokemon.hp() == 0_bi) {
 		return;
 	}
 	if (pokemon.ingrained()) {

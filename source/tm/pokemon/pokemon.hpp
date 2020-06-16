@@ -46,12 +46,12 @@ struct Pokemon {
 	Pokemon(Generation, TeamSize my_team_size, Species species, Level level, Gender gender, Happiness happiness = Happiness{});
 	Pokemon(Generation, TeamSize my_team_size, Species species, Level level, Gender gender, Item item, Ability ability, Nature nature, Happiness happiness = Happiness{});
 	
-	// These cannot be defined in the class because because I rely on a
-	// conversion operator. Friend functions only declared in a class body are
-	// not found by lookup rules in that case.
-
-	friend HP get_hp(Pokemon pokemon);
-	friend Stat get_stat(Pokemon pokemon, RegularStat stat_name);
+	auto hp() const {
+		return stats.hp();
+	}
+	auto stat(RegularStat const stat_name) const {
+		return stats[stat_name];
+	}
 
 	auto advance_status_from_move(Ability const ability, bool const clear_status) & {
 		m_status.advance_from_move(ability, clear_status);
@@ -189,22 +189,13 @@ inline decltype(auto) regular_moves(Pokemon & pokemon) {
 	return pokemon.all_moves().regular();
 }
 
-inline HP get_hp(Pokemon const pokemon) {
-	return pokemon.stats.hp();
-}
-
-inline Stat get_stat(Pokemon const pokemon, RegularStat const stat_name) {
-	return pokemon.stats[stat_name];
-}
-
-
 inline auto get_hidden_power_type(Pokemon const pokemon) {
 	auto const hidden_power = pokemon.hidden_power();
 	return BOUNDED_CONDITIONAL(hidden_power, hidden_power->type(), bounded::none);
 }
 
 inline auto hp_ratio(Pokemon const pokemon) {
-	auto const hp = get_hp(pokemon);
+	auto const hp = pokemon.hp();
 	return rational(hp.current(), hp.max());
 }
 

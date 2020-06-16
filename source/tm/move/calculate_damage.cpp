@@ -232,14 +232,14 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 		case Moves::Dragon_Rage:
 			return 40_bi;
 		case Moves::Endeavor:
-			return bounded::max(get_hp(defender).current() - get_hp(attacker).current(), 0_bi);
+			return bounded::max(defender.hp().current() - attacker.hp().current(), 0_bi);
 		case Moves::Final_Gambit:
-			return get_hp(attacker).current();
+			return attacker.hp().current();
 		case Moves::Fissure:
 		case Moves::Guillotine:
 		case Moves::Horn_Drill:
 		case Moves::Sheer_Cold:
-			return BOUNDED_CONDITIONAL(defender.ability() == Ability::Sturdy, 0_bi, get_hp(defender).max());
+			return BOUNDED_CONDITIONAL(defender.ability() == Ability::Sturdy, 0_bi, defender.hp().max());
 		case Moves::Metal_Burst:
 			return attacker.direct_damage_received() * 3_bi / 2_bi;
 		case Moves::Mirror_Coat:
@@ -252,7 +252,7 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 		case Moves::Sonic_Boom:
 			return 20_bi;
 		case Moves::Super_Fang:
-			return get_hp(defender).current() / 2_bi;
+			return defender.hp().current() / 2_bi;
 		default:
 			return static_cast<damage_type>(regular_damage(
 				generation,

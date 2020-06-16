@@ -40,13 +40,13 @@ namespace {
 using namespace bounded::literal;
 
 auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats<IVAndEV> const stats) {
-	auto const original_hp = get_hp(pokemon);
+	auto const original_hp = pokemon.hp();
 	pokemon.set_nature(stats.nature);
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 		auto const stat = stats[stat_name];
 		pokemon.set_ev(generation, stat_name, stat.iv, stat.ev);
 	}
-	auto const new_hp = get_hp(pokemon);
+	auto const new_hp = pokemon.hp();
 	pokemon.set_hp(new_hp.max() * original_hp.current() / original_hp.max());
 }
 

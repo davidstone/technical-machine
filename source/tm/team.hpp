@@ -96,7 +96,7 @@ struct Team {
 			shatter_screens();
 		}
 
-		if (get_hp(original_pokemon) != 0_bi) {
+		if (original_pokemon.hp() != 0_bi) {
 			all_pokemon().set_index(replacement);
 		} else {
 			all_pokemon().remove_active(replacement);
@@ -109,7 +109,7 @@ struct Team {
 		auto const replacement_pokemon = pokemon();
 		replacement_pokemon.switch_in(generation, weather);
 		apply(generation, m_entry_hazards, replacement_pokemon, weather);
-		if (get_hp(replacement_pokemon) != 0_bi) {
+		if (replacement_pokemon.hp() != 0_bi) {
 			activate_ability_on_switch(generation, replacement_pokemon, other, weather);
 		}
 	}

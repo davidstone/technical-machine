@@ -138,7 +138,7 @@ void wonder_guard() {
 	auto shedinja = defender.pokemon();
 	shedinja.switch_in(generation, weather);
 
-	BOUNDED_ASSERT(get_hp(shedinja).current() == 1_bi);
+	BOUNDED_ASSERT(shedinja.hp().current() == 1_bi);
 
 	call_move(
 		generation,
@@ -150,7 +150,7 @@ void wonder_guard() {
 		false,
 		damage
 	);
-	BOUNDED_ASSERT(get_hp(shedinja).current() == 1_bi);
+	BOUNDED_ASSERT(shedinja.hp().current() == 1_bi);
 
 	call_move(
 		generation,
@@ -162,7 +162,7 @@ void wonder_guard() {
 		false,
 		damage
 	);
-	BOUNDED_ASSERT(get_hp(shedinja).current() == 0_bi);
+	BOUNDED_ASSERT(shedinja.hp().current() == 0_bi);
 }
 
 }	// namespace

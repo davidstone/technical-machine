@@ -215,7 +215,7 @@ auto can_attempt_move_execution(Generation const generation, ActivePokemon user,
 	if (is_switch(move.name())) {
 		return true;
 	}
-	if (get_hp(user) == 0_bi) {
+	if (user.hp() == 0_bi) {
 		return false;
 	}
 
@@ -231,7 +231,7 @@ auto can_execute_move(ActivePokemon user, Move const move, Weather const weather
 	constexpr auto is_fully_paralyzed = false;
 	auto const switching = is_switch(move.name());
 	if (switching or move.name() == Moves::Hit_Self) {
-		BOUNDED_ASSERT(!is_recharging or (switching and get_hp(user).current() == 0_bi));
+		BOUNDED_ASSERT(!is_recharging or (switching and user.hp().current() == 0_bi));
 		return true;
 	}
 	return !user.flinched() and !block2(user, move.name(), weather) and !is_fully_paralyzed and !is_recharging;

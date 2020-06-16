@@ -145,11 +145,11 @@ auto calculate_ivs_and_evs(
 auto calculate_ivs_and_evs(Generation const generation, Pokemon const pokemon) -> CombinedStats<IVAndEV> {
 	auto const nature = pokemon.nature();
 	auto calculate_stat = [=](RegularStat const stat_name) {
-		auto const stat = get_stat(pokemon, stat_name);
+		auto const stat = pokemon.stat(stat_name);
 		return initial_stat(stat_name, stat.base(), stat.iv(), stat.ev(), pokemon.level(), nature);
 	};
 	auto const stats = GenericStats<HP::max_type, StatValue>{
-		get_hp(pokemon).max(),
+		pokemon.hp().max(),
 		calculate_stat(RegularStat::atk),
 		calculate_stat(RegularStat::def),
 		calculate_stat(RegularStat::spa),

@@ -138,6 +138,13 @@ public:
 		return m_pokemon.all_moves();
 	}
 
+	auto hp() const {
+		return m_pokemon.hp();
+	}
+	auto stat(RegularStat const stat_name) const {
+		return m_pokemon.stat(stat_name);
+	}
+
 	auto last_used_move() const -> LastUsedMove {
 		return m_flags.last_used_move;
 	}
@@ -314,7 +321,7 @@ public:
 	}
 
 	auto switch_decision_required() const -> bool {
-		return get_hp(m_pokemon) == 0_bi or m_flags.last_used_move.switch_decision_required();
+		return m_pokemon.hp() == 0_bi or m_flags.last_used_move.switch_decision_required();
 	}
 	auto switched_in_this_turn() const -> bool {
 		return m_flags.last_used_move.switched_in_this_turn();
@@ -726,7 +733,7 @@ private:
 };
 
 inline auto change_hp(Generation const generation, MutableActivePokemon pokemon, Weather const weather, auto const change) {
-	pokemon.set_hp(generation, weather, get_hp(pokemon).current() + change);
+	pokemon.set_hp(generation, weather, pokemon.hp().current() + change);
 }
 
 inline auto shift_status(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {

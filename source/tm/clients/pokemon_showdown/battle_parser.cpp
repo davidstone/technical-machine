@@ -551,7 +551,7 @@ void BattleParser::handle_damage(InMessage message) {
 namespace {
 
 auto hp_to_damage(Pokemon const & pokemon, HP::current_type const new_hp) {
-	auto const old_hp = get_hp(pokemon).current();
+	auto const old_hp = pokemon.hp().current();
 	if (new_hp > old_hp) {
 		std::cerr << "Took negative damage\n";
 		return HP::current_type(0_bi);
@@ -585,7 +585,7 @@ constexpr auto causes_recoil(Moves const move) {
 auto BattleParser::compute_damage(Party const user_party, Moves const move, HPAndStatus const damage) const -> HP::current_type {
 	auto const damaged_party = move == Moves::Hit_Self ? user_party : other(user_party);
 	auto const & pokemon = select_pokemon(get_team(damaged_party), move);
-	auto const new_hp = to_real_hp(is_ai(damaged_party), get_hp(pokemon), damage.hp);
+	auto const new_hp = to_real_hp(is_ai(damaged_party), pokemon.hp(), damage.hp);
 	return hp_to_damage(pokemon, new_hp.value);
 }
 
@@ -619,7 +619,7 @@ void BattleParser::maybe_use_previous_move() {
 			};
 		},
 		[&](MoveState::SubstituteDamaged) -> LocalDamage {
-			return LocalDamage{ActualDamage::Capped{get_hp(other_pokemon).max() / 4_bi}, true};
+			return LocalDamage{ActualDamage::Capped{other_pokemon.hp().max() / 4_bi}, true};
 		},
 		[&](MoveState::SubstituteBroke) -> LocalDamage {
 			return LocalDamage{ActualDamage::Known{other_pokemon.substitute().hp()}, true};
@@ -696,7 +696,7 @@ auto parse_switch(InMessage message) -> ParsedSwitch {
 }
 
 void BattleParser::handle_u_turn(Party const party) {
-	if (is_ai(party) and m_move_state.executed_move() == Moves::U_turn and get_hp(m_battle.foe().pokemon()).current() == 0_bi and m_battle.ai().size() != 1_bi) {
+	if (is_ai(party) and m_move_state.executed_move() == Moves::U_turn and m_battle.foe().pokemon().hp().current() == 0_bi and m_battle.ai().size() != 1_bi) {
 		maybe_use_previous_move();
 		send_move(determine_action());
 	}

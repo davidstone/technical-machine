@@ -29,12 +29,12 @@ auto handle_leech_seed(Generation const generation, MutableActivePokemon pokemon
 	if (!pokemon.leech_seeded()) {
 		return;
 	}
-	auto const initial = get_hp(pokemon).current();
+	auto const initial = pokemon.hp().current();
 	heal(generation, pokemon, weather, rational(-1_bi, 8_bi));
-	if (get_hp(other) == 0_bi) {
+	if (other.hp() == 0_bi) {
 		return;
 	}
-	auto const hp_change = (initial - get_hp(pokemon).current()) * healing_multiplier(pokemon.item(generation, weather));
+	auto const hp_change = (initial - pokemon.hp().current()) * healing_multiplier(pokemon.item(generation, weather));
 	if (damages_leechers(pokemon.ability())) {
 		change_hp(generation, other, weather, -hp_change);
 	} else {
