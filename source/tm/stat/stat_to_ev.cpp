@@ -158,7 +158,7 @@ auto calculate_ivs_and_evs(Generation const generation, Pokemon const pokemon) -
 	};
 	return calculate_ivs_and_evs(
 		generation,
-		get_species(pokemon),
+		pokemon.species(),
 		get_level(pokemon),
 		stats,
 		get_hidden_power_type(pokemon),

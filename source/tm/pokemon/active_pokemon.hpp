@@ -273,6 +273,10 @@ public:
 		return m_flags.slow_start.is_active();
 	}
 
+	auto species() const -> Species {
+		return m_pokemon.species();
+	}
+
 	auto sport_is_active(Type const move_type) const -> bool {
 		switch (move_type) {
 			case Type::Electric: return m_flags.mud_sport;
@@ -613,7 +617,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.ability = m_pokemon.initial_ability();
 		// The exact switch is irrelevant
 		m_flags.last_used_move.successful_move(Moves::Switch0);
-		m_flags.types = PokemonTypes(generation, get_species(m_pokemon));
+		m_flags.types = PokemonTypes(generation, m_pokemon.species());
 		if (generation <= Generation::two and get_status(m_pokemon).name() == Statuses::toxic) {
 			m_pokemon.set_status(Statuses::poison);
 		}

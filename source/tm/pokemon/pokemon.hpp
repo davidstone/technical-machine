@@ -54,7 +54,6 @@ struct Pokemon {
 	friend auto get_hidden_power(Pokemon pokemon) -> bounded::optional<HiddenPower>;
 	friend Level get_level(Pokemon pokemon);
 	friend Nature get_nature(Pokemon pokemon);
-	friend Species get_species(Pokemon pokemon);
 	friend HP get_hp(Pokemon pokemon);
 	friend Stat get_stat(Pokemon pokemon, RegularStat stat_name);
 	friend Status get_status(Pokemon pokemon);
@@ -115,6 +114,10 @@ struct Pokemon {
 		m_item_is_known = true;
 	}
 
+	auto species() const -> Species {
+		return m_species;
+	}
+
 	friend bool ability_is_known(Pokemon pokemon);
 	friend bool item_is_known(Pokemon pokemon);
 	friend void set_nature(Pokemon & pokemon, Nature nature);
@@ -146,7 +149,7 @@ private:
 };
 
 inline auto operator==(Pokemon const lhs, Species const rhs) -> bool {
-	return get_species(lhs) == rhs;
+	return lhs.species() == rhs;
 }
 
 inline auto all_moves(Pokemon const & pokemon) -> MoveContainer const & {
@@ -181,11 +184,6 @@ inline bool nature_is_known(Pokemon const pokemon) {
 	return pokemon.m_nature_is_known;
 }
 
-inline Species get_species(Pokemon const pokemon) {
-	return pokemon.m_species;
-}
-
-
 inline HP get_hp(Pokemon const pokemon) {
 	return pokemon.stats.hp();
 }
@@ -196,7 +194,7 @@ inline Stat get_stat(Pokemon const pokemon, RegularStat const stat_name) {
 
 inline auto set_ev(Generation const generation, Pokemon & pokemon, PermanentStat const stat_name, IV const iv, EV const ev) -> void {
 	if (stat_name == PermanentStat::hp) {
-		auto const base_stats = BaseStats(generation, get_species(pokemon));
+		auto const base_stats = BaseStats(generation, pokemon.species());
 		pokemon.stats.hp() = HP(base_stats, get_level(pokemon), iv, ev);
 	} else {
 		auto & stat = pokemon.stats[RegularStat(stat_name)];

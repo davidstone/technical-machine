@@ -60,7 +60,7 @@ namespace {
 
 void print_best_move(Team const & team, BestMove const best_move, std::ostream & log) {
 	if (is_switch(best_move.move)) {
-		log << "Switch to " << to_string(get_species(team.pokemon(to_replacement(best_move.move))));
+		log << "Switch to " << to_string(team.pokemon(to_replacement(best_move.move)).species());
 	} else {
 		log << "Use " << to_string(best_move.move);
 	}
@@ -243,7 +243,7 @@ auto execute_move(Generation const generation, Team const & user, SelectedAndExe
 
 struct OriginalPokemon {
 	explicit OriginalPokemon(Generation const generation, Pokemon const & pokemon, Moves const other_move):
-		m_species(get_species(pokemon)),
+		m_species(pokemon.species()),
 		m_hp(get_hp(pokemon).current()),
 		m_other_move{
 			other_move,
@@ -253,7 +253,7 @@ struct OriginalPokemon {
 	}
 	
 	auto is_same_pokemon(Pokemon const & pokemon) const {
-		return get_species(pokemon) == m_species;
+		return pokemon.species() == m_species;
 	}
 	auto other_move() const {
 		return m_other_move;
@@ -559,7 +559,7 @@ private:
 		m_log << std::string(indentation, '\t') << "Evaluating " << team.who();
 		if (is_switch(move)) {
 			auto const replacement_index = to_replacement(move);
-			m_log << " switching to " << to_string(get_species(team.pokemon(replacement_index))) << '\n';
+			m_log << " switching to " << to_string(team.pokemon(replacement_index).species()) << '\n';
 		} else {
 			m_log << " using " << to_string(move) << '\n';
 		}

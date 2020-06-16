@@ -102,7 +102,7 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 	containers::concatenate<containers::string>(std::string());
 
 	return containers::concatenate<containers::string>(
-		to_string(get_species(pokemon)),
+		to_string(pokemon.species()),
 		species_hp, hp_to_string(),
 		hp_item, to_string(pokemon.unmodified_item()),
 		item_ability, to_string(pokemon.initial_ability()),

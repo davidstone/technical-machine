@@ -93,7 +93,7 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 			return attacker.last_used_move().fury_cutter_power();
 		case Moves::Grass_Knot:
 		case Moves::Low_Kick:
-			return BOUNDED_CONDITIONAL(generation <= Generation::two, 50_bi, power_of_mass_based_moves(get_species(defender)));
+			return BOUNDED_CONDITIONAL(generation <= Generation::two, 50_bi, power_of_mass_based_moves(defender.species()));
 		case Moves::Gyro_Ball: {
 			auto const defender_speed = calculate_speed(generation, defender_team, attacker.ability(), weather);
 			auto const attacker_speed = calculate_speed(generation, attacker_team, defender.ability(), weather);
@@ -302,25 +302,25 @@ auto item_modifier_numerator(Generation const generation, ActivePokemon const at
 			return type_boost(Type::Water);
 		case Item::Adamant_Orb:
 			return BOUNDED_CONDITIONAL(
-				is_boosted_by_adamant_orb(get_species(attacker), move.type),
+				is_boosted_by_adamant_orb(attacker.species(), move.type),
 				none * 12_bi / 10_bi,
 				none
 			);
 		case Item::Griseous_Orb:
 			return BOUNDED_CONDITIONAL(
-				is_boosted_by_griseous_orb(get_species(attacker), move.type),
+				is_boosted_by_griseous_orb(attacker.species(), move.type),
 				none * 12_bi / 10_bi,
 				none
 			);
 		case Item::Lustrous_Orb:
 			return BOUNDED_CONDITIONAL(
-				is_boosted_by_lustrous_orb(get_species(attacker), move.type),
+				is_boosted_by_lustrous_orb(attacker.species(), move.type),
 				none * 12_bi / 10_bi,
 				none
 			);
 		case Item::Soul_Dew:
 			return BOUNDED_CONDITIONAL(
-				is_boosted_by_soul_dew(generation, get_species(attacker), move.type),
+				is_boosted_by_soul_dew(generation, attacker.species(), move.type),
 				none * 12_bi / 10_bi,
 				none
 			);

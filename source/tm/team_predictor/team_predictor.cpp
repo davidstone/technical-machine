@@ -69,7 +69,7 @@ Team predict_team(Generation const generation, UsageStats const & usage_stats, L
 
 	predict_pokemon(generation, team, estimate, usage_stats);
 	for (auto & pokemon : team.all_pokemon()) {
-		auto const species = get_species(pokemon);
+		auto const species = pokemon.species();
 		auto const & detailed = usage_stats.get(species);
 		if (!ability_is_known(pokemon)) {
 			pokemon.set_initial_ability(detailed.ability);

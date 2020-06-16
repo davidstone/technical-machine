@@ -241,7 +241,7 @@ auto offensive_ability_modifier(Generation const generation, ActivePokemon const
 template<RegularStat stat>
 auto item_modifier(Generation const generation, ActivePokemon const pokemon, Weather const weather) {
 	constexpr auto denominator = 2_bi;
-	auto const species [[maybe_unused]] = get_species(pokemon);
+	auto const species [[maybe_unused]] = pokemon.species();
 	auto const item = pokemon.item(generation, weather);
 	auto const numerator = [&]{
 		if constexpr (stat == RegularStat::atk) {

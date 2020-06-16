@@ -43,7 +43,7 @@ Estimate::Estimate(UsageStats const & usage_stats, LeadStats const lead_stats) {
 
 void update_estimate(Estimate & estimate, UsageStats const & usage_stats, Team const & team) {
 	for (auto const & pokemon : team.all_pokemon()) {
-		estimate.update(usage_stats, get_species(pokemon));
+		estimate.update(usage_stats, pokemon.species());
 	}
 }
 

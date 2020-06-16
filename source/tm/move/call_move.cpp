@@ -466,7 +466,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().stage()[BoostableStat::atk] -= 2_bi;
 			break;
 		case Moves::Chatter:
-			if (can_confuse_with_chatter(get_species(user)) and executed.variable.effect_activates()) {
+			if (can_confuse_with_chatter(user.species()) and executed.variable.effect_activates()) {
 				other.pokemon().confuse(generation, weather);
 			}
 			break;

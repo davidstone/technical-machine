@@ -43,7 +43,7 @@ auto to_packed_format(Generation const generation, Team const & team) -> contain
 		if (!empty(result)) {
 			result += ']';
 		}
-		result += to_string(get_species(pokemon));
+		result += to_string(pokemon.species());
 		result += "||";
 		result += pokemon.unmodified_item() == Item::None ? "" : to_string(pokemon.unmodified_item());
 		result += '|';

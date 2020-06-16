@@ -107,7 +107,7 @@ auto optimize_evs(
 }	// namespace
 
 void optimize_evs(Generation const generation, Pokemon & pokemon, std::mt19937 & random_engine) {
-	auto const species = get_species(pokemon);
+	auto const species = pokemon.species();
 	auto const level = get_level(pokemon);
 	auto const include_attack = has_physical_move(generation, pokemon);
 	auto const include_special_attack = has_special_move(generation, pokemon);
