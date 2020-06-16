@@ -118,7 +118,7 @@ void test_baton_pass() {
 		std::cerr << "Baton Pass cleared stat boosts after switching\n";
 		std::terminate();
 	}
-	if (attacker.pokemon() != Species::Alakazam) {
+	if (attacker.pokemon().species() != Species::Alakazam) {
 		std::cerr << "Baton Pass did not bring out a new Pokemon\n";
 		std::terminate();
 	}

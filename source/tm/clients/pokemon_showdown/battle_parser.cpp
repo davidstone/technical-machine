@@ -59,20 +59,13 @@ constexpr auto party_from_player_id(std::string_view const player_id) {
 	return make_party(player_id.substr(0, 2));
 }
 
-template<typename Container>
-constexpr auto container_index(Container const & container, auto const value, std::string_view const text) {
-	auto const it = containers::find(container, value);
-	if (it == end(container)) {
-		throw std::runtime_error(std::string(text) + std::string(to_string(value)));
+auto get_move_index(Pokemon const & pokemon, Moves const move_name) {
+	auto const moves = all_moves(pokemon).regular();
+	auto const it = containers::find_if(moves, [=](Move const move) { return move.name() == move_name; });
+	if (it == end(moves)) {
+		throw std::runtime_error("Pokemon does not know " + std::string(to_string(move_name)));
 	}
-	return static_cast<containers::index_type<Container>>(it - begin(container));
-}
-
-auto get_move_index(Pokemon const & pokemon, Moves const move) {
-	return container_index(all_moves(pokemon).regular(), move, "Pokemon does not know ");
-}
-auto get_species_index(Team const & team, Species const species) {
-	return container_index(team.all_pokemon(), species, "Team does not have a ");
+	return static_cast<RegularMoveIndex>(it - begin(moves));
 }
 
 constexpr auto parse_status(std::string_view const str) {
@@ -411,7 +404,7 @@ void BattleParser::handle_message(InMessage message) {
 		auto const parsed = parse_switch(message);
 
 		if (is_ai(parsed.party)) {
-			auto const index = get_species_index(m_battle.ai(), parsed.species);
+			auto const index = find_present_index(m_battle.ai().all_pokemon(), parsed.species);
 			if (m_replacing_fainted) {
 				m_slot_memory.replace_fainted(index);
 				m_replacing_fainted = false;

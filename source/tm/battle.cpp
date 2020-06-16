@@ -57,18 +57,9 @@ void Battle::handle_use_move(bool const is_ai, UsedMove const move, bool const c
 	);
 }
 
-namespace {
-
-auto index_of_seen(PokemonCollection const & collection, Species const species) {
-	using index_type = containers::index_type<PokemonCollection>;
-	return static_cast<index_type>(containers::find(collection, species) - begin(collection));
-}
-
-} // namespace
-
 auto Battle::find_or_add_pokemon(bool const is_ai, Species const species, Level const level, Gender const gender) -> Moves {
 	auto & switcher = is_ai ? m_ai : m_foe;
-	auto const index = index_of_seen(switcher.all_pokemon(), species);
+	auto const index = find_index(switcher.all_pokemon(), species);
 	if (index == switcher.number_of_seen_pokemon()) {
 		switcher.all_pokemon().add(m_generation, species, level, gender);
 	}

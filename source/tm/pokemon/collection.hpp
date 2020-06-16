@@ -20,12 +20,14 @@
 
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/pokemon_not_found.hpp>
 
 #include <tm/operators.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
+#include <containers/algorithms/find.hpp>
 #include <containers/common_container_functions.hpp>
 #include <containers/index_type.hpp>
 #include <containers/static_vector/static_vector.hpp>
@@ -122,4 +124,17 @@ private:
 
 CONTAINERS_COMMON_USING_DECLARATIONS
 
-}	// namespace technicalmachine
+inline auto find_index(PokemonCollection const & collection, Species const species) {
+	using index_type = containers::index_type<PokemonCollection>;
+	return static_cast<index_type>(containers::find_if(collection, [=](Pokemon const pokemon) { return pokemon.species() == species; }) - begin(collection));
+}
+
+inline auto find_present_index(PokemonCollection const & collection, Species const species) {
+	auto const index = find_index(collection, species);
+	if (index == containers::size(collection)) {
+		throw PokemonNotFound(species);
+	}
+	return index;
+}
+
+} // namespace technicalmachine

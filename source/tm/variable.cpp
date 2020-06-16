@@ -35,19 +35,11 @@ using namespace bounded::literal;
 
 namespace {
 
-auto find_index(PokemonCollection const & collection, Species const species) {
-	auto const it = containers::find(collection, species);
-	if (it == end(collection)) {
-		throw PokemonNotFound(species);
-	}
-	return TeamIndex(it - begin(collection));
-}
-
 auto get_phaze_index(Team const & team, Species const species) {
 	BOUNDED_ASSERT(team.size() > 1_bi);
 	auto const & all = team.all_pokemon();
 	auto const pokemon_index = all.index();
-	auto const new_index = find_index(all, species);
+	auto const new_index = find_present_index(all, species);
 	if (new_index == pokemon_index) {
 		throw PhazingInSamePokemon(new_index);
 	}

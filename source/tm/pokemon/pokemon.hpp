@@ -159,10 +159,6 @@ private:
 	bool m_nature_is_known : 1;
 };
 
-inline auto operator==(Pokemon const lhs, Species const rhs) -> bool {
-	return lhs.species() == rhs;
-}
-
 inline auto all_moves(Pokemon const & pokemon) -> MoveContainer const & {
 	return pokemon.m_moves;
 }
