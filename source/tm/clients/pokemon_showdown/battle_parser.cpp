@@ -60,7 +60,7 @@ constexpr auto party_from_player_id(std::string_view const player_id) {
 }
 
 auto get_move_index(Pokemon const & pokemon, Moves const move_name) {
-	auto const moves = all_moves(pokemon).regular();
+	auto const moves = pokemon.all_moves().regular();
 	auto const it = containers::find_if(moves, [=](Move const move) { return move.name() == move_name; });
 	if (it == end(moves)) {
 		throw std::runtime_error("Pokemon does not know " + std::string(to_string(move_name)));

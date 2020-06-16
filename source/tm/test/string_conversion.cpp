@@ -105,7 +105,7 @@ void test_pokemon() {
 
 	check();
 	for (auto const move : {Moves::Psychic, Moves::Recover, Moves::Calm_Mind, Moves::Taunt}) {
-		all_moves(pokemon).add(Move(generation, move));
+		pokemon.all_moves().add(Move(generation, move));
 		check();
 	}
 	pokemon.set_status(Statuses::burn);

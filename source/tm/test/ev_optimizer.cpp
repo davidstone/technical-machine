@@ -53,7 +53,7 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	pokemon.set_ev(generation, PermanentStat::spa, iv, EV(0_bi));
 	pokemon.set_ev(generation, PermanentStat::spd, iv, EV(4_bi));
 	pokemon.set_ev(generation, PermanentStat::spe, iv, EV(60_bi));
-	all_moves(pokemon).add(Move(generation, Moves::Meteor_Mash));
+	pokemon.all_moves().add(Move(generation, Moves::Meteor_Mash));
 
 	auto const ivs_and_evs = calculate_ivs_and_evs(generation, pokemon);
 	auto const stats = initial_stats(base_stats, level, ivs_and_evs);
@@ -130,7 +130,7 @@ void not_level_100(std::mt19937 & random_engine) {
 	pokemon.set_ev(generation, PermanentStat::spd, IV(31_bi), EV(60_bi));
 	pokemon.set_ev(generation, PermanentStat::spe, IV(31_bi), EV(128_bi));
 	for (auto const move : {Moves::Hydro_Pump, Moves::Bug_Buzz, Moves::Roost, Moves::Air_Slash}) {
-		all_moves(pokemon).add(Move(generation, move));
+		pokemon.all_moves().add(Move(generation, move));
 	}
 
 	optimize_evs(generation, pokemon, random_engine);
@@ -149,8 +149,8 @@ void generation_two(std::mt19937 & random_engine) {
 	pokemon.set_ev(generation, PermanentStat::spa, IV(30_bi), EV(252_bi));
 	pokemon.set_ev(generation, PermanentStat::spd, IV(30_bi), EV(252_bi));
 	pokemon.set_ev(generation, PermanentStat::spe, IV(30_bi), EV(252_bi));
-	all_moves(pokemon).add(Move(generation, Moves::Tackle));
-	all_moves(pokemon).add(Move(generation, Moves::Psychic));
+	pokemon.all_moves().add(Move(generation, Moves::Tackle));
+	pokemon.all_moves().add(Move(generation, Moves::Psychic));
 
 	auto const ivs_and_evs = calculate_ivs_and_evs(generation, pokemon);
 	auto const stats = initial_stats(base_stats, level, ivs_and_evs);

@@ -42,7 +42,7 @@ void Battle::handle_use_move(bool const is_ai, UsedMove const move, bool const c
 	auto & user = is_ai ? m_ai : m_foe;
 	auto & other = is_ai ? m_foe : m_ai;
 
-	add_seen_move(all_moves(user.pokemon()), m_generation, move.selected);
+	add_seen_move(user.pokemon().all_moves(), m_generation, move.selected);
 	// TODO: Add move.executed in some circumstances
 
 	call_move(

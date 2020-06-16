@@ -1557,7 +1557,7 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 		user_pokemon.unsuccessfully_use_move(move.executed);
 	};
 
-	auto const found_move = find_move(all_moves(user_pokemon), move.selected);
+	auto const found_move = find_move(user_pokemon.all_moves(), move.selected);
 	auto other_pokemon = other.pokemon();
 	auto const was_asleep = is_sleeping(user_pokemon.status());
 	if (!is_switch(move.selected)) {
@@ -1583,7 +1583,7 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 	auto const other_ability = other_pokemon.ability();
 
 	if (is_regular(move.selected) and move.executed != Moves::Hit_Self and !user_pokemon.is_locked_in_by_move()) {
-		auto & move_ref = find_regular_move(all_moves(user_pokemon).regular(), move.selected);
+		auto & move_ref = find_regular_move(user_pokemon.all_moves().regular(), move.selected);
 		move_ref.decrement_pp(other_ability);
 		activate_pp_restore_berry(generation, move_ref, user_pokemon, weather);
 	}

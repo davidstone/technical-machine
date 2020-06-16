@@ -84,7 +84,7 @@ Team predict_team(Generation const generation, UsageStats const & usage_stats, L
 		if (!pokemon.nature_is_known()) {
 			pokemon.set_nature(detailed.stats.nature);
 		}
-		predict_move(all_moves(pokemon), generation, detailed.moves);
+		predict_move(pokemon.all_moves(), generation, detailed.moves);
 		optimize_evs(generation, pokemon, random_engine);
 	}
 	return team;

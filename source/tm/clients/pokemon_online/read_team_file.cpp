@@ -97,7 +97,7 @@ auto load_moves(Generation const generation, Pokemon & pokemon, CheckedIterator 
 		auto const move_id = value.get_value<ReadMoveID>();
 		if (move_id != 0_bi) {
 			// TODO: Throw an exception if we attempt to add the same move twice
-			add_seen_move(all_moves(pokemon), generation, id_to_move(MoveID(move_id)));
+			add_seen_move(pokemon.all_moves(), generation, id_to_move(MoveID(move_id)));
 		}
 	}
 	return it;

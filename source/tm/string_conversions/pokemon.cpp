@@ -198,7 +198,7 @@ auto pokemon_from_string(std::string_view const str, Generation const generation
 		throw std::runtime_error("Expected empty string while parsing Pokemon string, got " + std::string(should_be_empty));
 	}
 
-	auto & moves = all_moves(pokemon);
+	auto & moves = pokemon.all_moves();
 	while (!buffer.remainder().empty()) {
 		add_seen_move(moves, generation, typed_pop<Moves>(buffer, moves_separator));
 	}

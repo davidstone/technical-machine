@@ -170,11 +170,11 @@ auto is_legal_selection(Generation const generation, Team const & user, Move con
 
 auto legal_selections(Generation const generation, Team const & user, Team const & other, Weather const weather) -> StaticVectorMove {
 	// TODO: implement as
-	// auto result = filter(all_moves(user.pokemon()), [] { legal selection; });
+	// auto result = filter(user.pokemon().all_moves(), [] { legal selection; });
 	// BOUNDED_ASSERT(!empty);
 	// return result;
 	auto result = StaticVectorMove{};
-	for (auto const move : all_moves(user.pokemon())) {
+	for (auto const move : user.pokemon().all_moves()) {
 		bool const found_selectable_move = !empty(result);
 		if (is_legal_selection(generation, user, move, other, weather, found_selectable_move)) {
 			containers::push_back(result, move.name());

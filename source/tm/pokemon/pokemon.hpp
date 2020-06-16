@@ -50,7 +50,6 @@ struct Pokemon {
 	// conversion operator. Friend functions only declared in a class body are
 	// not found by lookup rules in that case.
 
-	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
 	friend HP get_hp(Pokemon pokemon);
 	friend Stat get_stat(Pokemon pokemon, RegularStat stat_name);
 
@@ -65,7 +64,12 @@ struct Pokemon {
 		m_has_been_seen = true;
 	}
 
-	friend auto all_moves(Pokemon & pokemon) -> MoveContainer &;
+	auto all_moves() const -> MoveContainer const & {
+		return m_moves;
+	}
+	auto all_moves() -> MoveContainer & {
+		return m_moves;
+	}
 
 	void set_hp(auto const hp) & {
 		stats.hp() = hp;
@@ -178,17 +182,11 @@ private:
 	bool m_nature_is_known : 1;
 };
 
-inline auto all_moves(Pokemon const & pokemon) -> MoveContainer const & {
-	return pokemon.m_moves;
-}
-inline auto all_moves(Pokemon & pokemon) -> MoveContainer & {
-	return pokemon.m_moves;
-}
 inline decltype(auto) regular_moves(Pokemon const & pokemon) {
-	return all_moves(pokemon).regular();
+	return pokemon.all_moves().regular();
 }
 inline decltype(auto) regular_moves(Pokemon & pokemon) {
-	return all_moves(pokemon).regular();
+	return pokemon.all_moves().regular();
 }
 
 inline HP get_hp(Pokemon const pokemon) {

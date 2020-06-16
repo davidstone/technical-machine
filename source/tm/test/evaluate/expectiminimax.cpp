@@ -247,7 +247,7 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 
 	{
 		auto & zapdos = attacker.add_pokemon(generation, Species::Zapdos, Level(100_bi), Gender::genderless, Item::Choice_Specs, Ability::Pressure, Nature::Modest);
-		all_moves(zapdos).add(Move(generation, Moves::Thunderbolt));
+		zapdos.all_moves().add(Move(generation, Moves::Thunderbolt));
 		zapdos.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
 	}
 	attacker.reset_start_of_turn();

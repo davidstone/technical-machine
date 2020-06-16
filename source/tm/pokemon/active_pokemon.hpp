@@ -134,6 +134,10 @@ public:
 	ActivePokemonImpl & operator=(ActivePokemonImpl const & other) = delete;
 	ActivePokemonImpl & operator=(ActivePokemonImpl && other) = delete;
 
+	auto all_moves() const -> MoveContainer const &{
+		return m_pokemon.all_moves();
+	}
+
 	auto last_used_move() const -> LastUsedMove {
 		return m_flags.last_used_move;
 	}
@@ -392,6 +396,10 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 	
 	operator ActivePokemon() const {
 		return ActivePokemon(m_pokemon, m_flags);
+	}
+
+	auto all_moves() const -> MoveContainer & {
+		return m_pokemon.all_moves();
 	}
 
 	auto stage() const -> Stage & {

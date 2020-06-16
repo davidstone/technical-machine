@@ -55,7 +55,7 @@ Team max_damage_physical_attacker(Item const item, Ability const ability, Nature
 	
 	attacker.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, item, ability, nature);
 	auto pokemon = attacker.pokemon();
-	all_moves(pokemon).add(Move(max_damage_physical_move));
+	pokemon.all_moves().add(Move(max_damage_physical_move));
 
 	pokemon.switch_in(generation, Weather());
 	
@@ -123,11 +123,11 @@ void special_power_test() {
 
 	auto attacker = max_damage_special_attacker(Item::Wave_Incense, Ability::Torrent, Nature::Hardy);
 	Pokemon & pokemon = attacker.pokemon();
-	auto const move = all_moves(pokemon).add(Move(generation, Moves::Surf));
+	auto const move = pokemon.all_moves().add(Move(generation, Moves::Surf));
 
 	Team defender = max_damage_special_defender();
 	auto defender_pokemon = defender.pokemon();
-	all_moves(defender_pokemon).add(Move(generation, Moves::Dive));
+	defender_pokemon.all_moves().add(Move(generation, Moves::Dive));
 	defender_pokemon.successfully_use_move(Moves::Dive);
 	defender_pokemon.use_vanish_move(generation, Weather());
 
@@ -190,7 +190,7 @@ void special_damage_test() {
 
 	auto attacker = max_damage_special_attacker(Item::Metronome, Ability::Blaze, Nature::Modest);
 	auto a = attacker.pokemon();
-	auto const move = all_moves(a).add(Move(generation, Moves::Blast_Burn));
+	auto const move = a.all_moves().add(Move(generation, Moves::Blast_Burn));
 	a.set_type(Type::Fire);
 
 	a.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(EV::max));

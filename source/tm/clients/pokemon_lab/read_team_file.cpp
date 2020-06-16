@@ -114,7 +114,7 @@ auto load_pokemon(Generation const generation, boost::property_tree::ptree const
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child("moveset")) {
 		auto const name = from_string<Moves>(value.second.get_value<std::string>());
 		auto const pp_ups = value.second.get<PP::pp_ups_type>("<xmlattr>.pp-up");
-		add_seen_move(all_moves(pokemon), generation, name, pp_ups);
+		add_seen_move(pokemon.all_moves(), generation, name, pp_ups);
 	}
 	for (auto const & value : pt.get_child("stats")) {
 		load_stats(generation, pokemon, value.second);

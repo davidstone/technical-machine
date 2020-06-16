@@ -32,7 +32,7 @@ void PokemonCollection::remove_active(containers::index_type<PokemonCollection> 
 		containers::index_type<PokemonCollection>(index_of_replacement - 1_bi, bounded::non_check)
 	);
 	for (auto & pokemon : m_container) {
-		all_moves(pokemon).remove_switch();
+		pokemon.all_moves().remove_switch();
 	}
 }
 

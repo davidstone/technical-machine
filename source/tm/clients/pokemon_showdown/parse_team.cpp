@@ -113,7 +113,7 @@ auto parse_team(boost::property_tree::ptree const & pt, Generation const generat
 		Pokemon & pokemon = team.add_pokemon(generation, details.species, details.level, details.gender, item, ability, stats.nature);
 
 		for (auto const move : moves.names) {
-			 add_seen_move(all_moves(pokemon), generation, move);
+			 add_seen_move(pokemon.all_moves(), generation, move);
 		}
 
 		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
