@@ -90,7 +90,6 @@ private:
 };
 
 
-// TODO: Support other generations
 struct SharedMoves {
 	using size_type = SharedMoveSize;
 	using const_iterator = SharedMovesIterator;
