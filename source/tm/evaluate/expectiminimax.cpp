@@ -170,7 +170,7 @@ auto selected_move_to_executed_move(Generation const generation, Moves const sel
 	using containers::transform;
 	switch (selected_move) {
 		case Moves::Sleep_Talk:
-			return is_sleeping(get_status(user_pokemon)) ?
+			return is_sleeping(user_pokemon.status()) ?
 				result(filter(transform(regular_moves(user_pokemon), known), can_be_selected_by_sleep_talk)) :
 				result{KnownMove{selected_move, type(selected_move)}};
 		default:
@@ -205,7 +205,7 @@ auto execute_move(Generation const generation, Team const & user, SelectedAndExe
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	auto const variables = all_probabilities(generation, move.executed.name, other.size());
-	auto const status = get_status(user_pokemon);
+	auto const status = user_pokemon.status();
 	auto const probability_of_clearing_status = status.probability_of_clearing(generation, user_pokemon.ability());
 	auto const specific_chance_to_hit = chance_to_hit(generation, user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());
 	auto const move_can_critical_hit = can_critical_hit(generation, move.executed.name, other.pokemon().ability());
@@ -445,7 +445,7 @@ private:
 			return score_executed_moves(last, last_move, first, first_used_move, weather, [&](Team const & updated_last, Team const & updated_first, Weather const updated_weather) {
 				auto shed_skin_probability = [&](bool const is_first) {
 					auto const pokemon = (is_first ? updated_first : updated_last).pokemon();
-					return can_clear_status(pokemon.ability(), get_status(pokemon)) ? 0.3 : 0.0;
+					return can_clear_status(pokemon.ability(), pokemon.status()) ? 0.3 : 0.0;
 				};
 				auto const teams = Faster(m_generation, updated_first, updated_last, updated_weather);
 				return generic_flag_branch(shed_skin_probability, [&](bool const team_shed_skin, bool const other_shed_skin) {

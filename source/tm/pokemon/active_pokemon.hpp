@@ -305,6 +305,10 @@ public:
 		return m_flags.stockpile.spit_up_power();
 	}
 
+	auto status() const -> Status {
+		return m_pokemon.status();
+	}
+
 	auto switch_decision_required() const -> bool {
 		return get_hp(m_pokemon) == 0_bi or m_flags.last_used_move.switch_decision_required();
 	}
@@ -555,7 +559,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.mud_sport = true;
 	}
 	auto try_to_give_nightmares() const {
-		if (is_sleeping(get_status(m_pokemon))) {
+		if (is_sleeping(status())) {
 			m_flags.status.give_nightmares();
 		}
 	}
@@ -601,9 +605,8 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.status.status_and_leech_seed_effects(generation, *this, other, weather, uproar);
 	}
 	auto clear_status() const -> void {
-		constexpr auto status = Statuses::clear;
-		m_pokemon.set_status(status);
-		m_flags.status.set(status);
+		m_pokemon.set_status(Statuses::clear);
+		m_flags.status.set(Statuses::clear);
 	}
 	auto advance_status_from_move(bool const clear_status) & {
 		m_pokemon.advance_status_from_move(ability(), clear_status);
@@ -630,10 +633,10 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		// The exact switch is irrelevant
 		m_flags.last_used_move.successful_move(Moves::Switch0);
 		m_flags.types = PokemonTypes(generation, m_pokemon.species());
-		if (generation <= Generation::two and get_status(m_pokemon).name() == Statuses::toxic) {
+		if (generation <= Generation::two and m_pokemon.status().name() == Statuses::toxic) {
 			m_pokemon.set_status(Statuses::poison);
 		}
-		m_flags.status.set(get_status(m_pokemon).name());
+		m_flags.status.set(m_pokemon.status().name());
 		if (item(generation, weather) == Item::Berserk_Gene) {
 			activate_berserk_gene(generation, *this, weather);
 		}
@@ -699,12 +702,12 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 private:
 	auto activate_pinch_item(Generation, Weather) const -> void;
 
-	auto set_status(Generation const generation, Statuses const status, Weather const weather) const -> void {
-		if (clears_status(item(generation, weather), status)) {
+	auto set_status(Generation const generation, Statuses const status_name, Weather const weather) const -> void {
+		if (clears_status(item(generation, weather), status_name)) {
 			remove_item();
 		} else {
-			m_pokemon.set_status(status);
-			m_flags.status.set(status);
+			m_pokemon.set_status(status_name);
+			m_flags.status.set(status_name);
 		}
 	}
 };
@@ -714,13 +717,13 @@ inline auto change_hp(Generation const generation, MutableActivePokemon pokemon,
 }
 
 inline auto shift_status(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) -> void {
-	auto const status = get_status(user).name();
-	switch (status) {
+	auto const status_name = user.status().name();
+	switch (status_name) {
 		case Statuses::burn:
 		case Statuses::paralysis:
 		case Statuses::poison:
 		case Statuses::toxic:
-			target.apply_status(generation, status, user, weather);
+			target.apply_status(generation, status_name, user, weather);
 			break;
 		case Statuses::sleep:
 		case Statuses::rest: // TODO: How does Rest shift?
@@ -732,8 +735,8 @@ inline auto shift_status(Generation const generation, MutableActivePokemon user,
 	user.clear_status();
 }
 
-inline auto apply_status_to_self(Generation const generation, Statuses const status, MutableActivePokemon target, Weather const weather, bool const uproar) -> void {
-	target.apply_status(generation, status, target, weather, uproar);
+inline auto apply_status_to_self(Generation const generation, Statuses const status_name, MutableActivePokemon target, Weather const weather, bool const uproar) -> void {
+	target.apply_status(generation, status_name, target, weather, uproar);
 }
 
 

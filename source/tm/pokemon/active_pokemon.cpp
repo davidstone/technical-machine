@@ -214,7 +214,7 @@ namespace {
 
 auto status_can_apply(Statuses const status, ActivePokemon const user, ActivePokemon const target, Weather const weather, bool const uproar) {
 	return
-		is_clear(get_status(target)) and
+		is_clear(target.status()) and
 		!blocks_status(target.ability(), user.ability(), status, weather) and
 		!containers::any(target.types(), [=](Type const type) { return blocks_status(type, status); }) and
 		(!uproar or (status != Statuses::sleep and status != Statuses::rest));
@@ -255,7 +255,7 @@ auto MutableActivePokemon::rest(Generation const generation, Weather const weath
 	if (other_is_uproaring) {
 		return;
 	}
-	if (generation >= Generation::three and is_sleeping(get_status(m_pokemon))) {
+	if (generation >= Generation::three and is_sleeping(m_pokemon.status())) {
 		return;
 	}
 	if (blocks_status(ability(), ability(), Statuses::rest, weather)) {

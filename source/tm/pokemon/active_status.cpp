@@ -78,7 +78,7 @@ auto handle_sleep_and_rest(Generation const generation, MutableActivePokemon pok
 
 // Generation 1-2
 auto ActiveStatus::end_of_attack(Generation const generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather const weather) & -> void {
-	auto const status = get_status(pokemon).name();
+	auto const status = pokemon.status().name();
 	switch (status) {
 		case Statuses::clear:
 		case Statuses::freeze:
@@ -119,7 +119,7 @@ auto ActiveStatus::end_of_attack(Generation const generation, MutableActivePokem
 auto ActiveStatus::end_of_turn(Generation const generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather const weather, bool uproar) & -> void {
 	handle_leech_seed(generation, pokemon, other, weather);
 
-	switch (get_status(pokemon).name()) {
+	switch (pokemon.status().name()) {
 		case Statuses::clear:
 		case Statuses::freeze:
 		case Statuses::paralysis:

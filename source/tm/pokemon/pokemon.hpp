@@ -53,10 +53,6 @@ struct Pokemon {
 	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
 	friend HP get_hp(Pokemon pokemon);
 	friend Stat get_stat(Pokemon pokemon, RegularStat stat_name);
-	friend Status get_status(Pokemon pokemon);
-	void set_status(Statuses const status) & {
-		m_status = status;
-	}
 
 	auto advance_status_from_move(Ability const ability, bool const clear_status) & {
 		m_status.advance_from_move(ability, clear_status);
@@ -124,6 +120,13 @@ struct Pokemon {
 	}
 	auto species() const -> Species {
 		return m_species;
+	}
+
+	auto status() const -> Status {
+		return m_status;
+	}
+	void set_status(Statuses const status) & {
+		m_status = status;
 	}
 
 	friend bool ability_is_known(Pokemon pokemon);
@@ -207,10 +210,6 @@ inline auto set_ev(Generation const generation, Pokemon & pokemon, PermanentStat
 	}
 }
 
-
-inline Status get_status(Pokemon const pokemon) {
-	return pokemon.m_status;
-}
 
 inline auto get_hidden_power_type(Pokemon const pokemon) {
 	auto const hidden_power = pokemon.hidden_power();

@@ -65,7 +65,7 @@ auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const pokemon
 }
 
 auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> Evaluate::value_type {
-	switch (get_status(pokemon).name()) {
+	switch (pokemon.status().name()) {
 		case Statuses::burn:
 			return evaluate.burn();
 		case Statuses::freeze:
@@ -147,7 +147,7 @@ namespace {
 
 auto sleep_clause(Team const & team) -> Evaluate::type {
 	auto const sleepers = [](Pokemon const & pokemon) {
-		return is_sleeping_due_to_other(get_status(pokemon));
+		return is_sleeping_due_to_other(pokemon.status());
 	};
 	auto const sleeper_count = containers::count_if(team.all_pokemon(), sleepers);
 	if (sleeper_count > 1_bi) {

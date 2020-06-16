@@ -86,7 +86,7 @@ struct Sleeper {
 
 	void use_move(Moves const selected, auto... executed) {
 		auto pokemon = m_sleeper.pokemon();
-		auto const probability_of_awakening = get_status(pokemon).probability_of_clearing(m_generation, pokemon.ability());
+		auto const probability_of_awakening = pokemon.status().probability_of_clearing(m_generation, pokemon.ability());
 		BOUNDED_ASSERT(probability_of_awakening == 0.0 or probability_of_awakening == 1.0);
 		call_move(
 			m_generation,
@@ -123,7 +123,7 @@ struct Sleeper {
 		return hp.current() == hp.max();
 	}
 	auto asleep() const {
-		return get_status(m_sleeper.pokemon()).name() == Statuses::rest;
+		return m_sleeper.pokemon().status().name() == Statuses::rest;
 	}
 	auto wished() const {
 		return m_sleeper.wish_is_active();

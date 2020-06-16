@@ -105,7 +105,7 @@ struct Battle {
 		if (visible_hp.current == 0_bi) {
 			return;
 		}
-		validate_status(get_status(pokemon).name(), visible_status);
+		validate_status(pokemon.status().name(), visible_status);
 	}
 
 private:

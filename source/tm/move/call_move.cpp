@@ -578,7 +578,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.stage()[BoostableStat::spe] += 1_bi;
 			break;
 		case Moves::Dream_Eater:
-			if (is_sleeping(get_status(other.pokemon()))) {
+			if (is_sleeping(other.pokemon().status())) {
 				absorb_hp(generation, user, other.pokemon(), weather, damage);
 			}
 			break;
@@ -902,7 +902,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		case Moves::Psycho_Shift:
-			if (is_clear(get_status(other.pokemon()))) {
+			if (is_clear(other.pokemon().status())) {
 				shift_status(generation, user, other.pokemon(), weather);
 			}
 			break;
@@ -1010,8 +1010,8 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			grass_status(generation, user, other.pokemon(), weather, Statuses::sleep);
 			break;
 		case Moves::Smelling_Salts:
-			if (boosts_smellingsalt(get_status(other.pokemon()))) {
-				get_status(other.pokemon()) = Status{};
+			if (boosts_smellingsalt(other.pokemon().status())) {
+				other.pokemon().status() = Status{};
 			}
 			break;
 		case Moves::Snarl:
@@ -1134,8 +1134,8 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			recoil_status(generation, user, other.pokemon(), weather, damage, executed.variable, Statuses::paralysis);
 			break;
 		case Moves::Wake_Up_Slap:
-			if (is_sleeping(get_status(other.pokemon()))) {
-				get_status(other.pokemon()) = Status{};
+			if (is_sleeping(other.pokemon().status())) {
+				other.pokemon().status() = Status{};
 			}
 			break;
 		case Moves::Water_Sport:
@@ -1167,7 +1167,7 @@ auto do_effects_before_moving(Moves const move, MutableActivePokemon user, Team 
 	if (breaks_screens(move)) {
 		other.shatter_screens();
 	} else if (is_usable_while_frozen(move)) {
-		if (is_frozen(get_status(user))) {
+		if (is_frozen(user.status())) {
 			user.clear_status();
 		}
 	}
@@ -1482,7 +1482,7 @@ auto absorb_ability_activates(Generation const generation, KnownMove const move,
 }
 
 auto flash_fire_activates(Generation const generation, KnownMove const move, ActivePokemon const target) -> bool {
-	if (generation <= Generation::four and get_status(target).name() == Statuses::freeze) {
+	if (generation <= Generation::four and target.status().name() == Statuses::freeze) {
 		return false;
 	}
 	return
@@ -1559,7 +1559,7 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 
 	auto const found_move = find_move(all_moves(user_pokemon), move.selected);
 	auto other_pokemon = other.pokemon();
-	auto const was_asleep = is_sleeping(get_status(user_pokemon));
+	auto const was_asleep = is_sleeping(user_pokemon.status());
 	if (!is_switch(move.selected)) {
 		user_pokemon.advance_status_from_move(clear_status);
 	}

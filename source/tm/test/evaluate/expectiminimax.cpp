@@ -358,30 +358,30 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	
 	// TODO: Validate score, too
 
-	BOUNDED_ASSERT(get_status(jolteon).name() == Statuses::clear);
+	BOUNDED_ASSERT(jolteon.status().name() == Statuses::clear);
 	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
 
 	call_move(generation, attacker, sleep_talk, defender, other_move, weather, keep_status, unknown_damage);
 	apply_status_to_self(generation, Statuses::sleep, jolteon, weather);
 	next_turn();
-	BOUNDED_ASSERT(get_status(jolteon).name() == Statuses::sleep);
+	BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
 	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cerr) == Moves::Sleep_Talk);
 
 	call_move(generation, attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 	next_turn();
-	BOUNDED_ASSERT(get_status(jolteon).name() == Statuses::sleep);
+	BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
 	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Sleep_Talk);
 
 	call_move(generation, attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 	next_turn();
-	BOUNDED_ASSERT(get_status(jolteon).name() == Statuses::sleep);
+	BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
 	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Sleep_Talk);
 
 	#if 0
 		// Same probability of either move
 		call_move(generation, attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 		next_turn();
-		BOUNDED_ASSERT(get_status(jolteon).name() == Statuses::sleep);
+		BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
 		BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == ?);
 	#endif
 }

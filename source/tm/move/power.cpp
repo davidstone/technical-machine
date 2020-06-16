@@ -155,14 +155,14 @@ auto doubling(Generation const generation, ActivePokemon const attacker, Moves c
 		case Moves::Brine:
 			return get_hp(defender).current() <= get_hp(defender).max() / 2_bi;
 		case Moves::Facade:
-			return boosts_facade(get_status(attacker));
+			return boosts_facade(attacker.status());
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
 			return attacker.defense_curled();
 		case Moves::Payback:
 			return defender.moved();
 		case Moves::Smelling_Salts:
-			return boosts_smellingsalt(get_status(defender));
+			return boosts_smellingsalt(defender.status());
 		case Moves::Solar_Beam: {
 			auto const blocks_weather = weather_is_blocked_by_ability(attacker.ability(), defender.ability());
 			switch (generation) {
@@ -183,7 +183,7 @@ auto doubling(Generation const generation, ActivePokemon const attacker, Moves c
 		case Moves::Stomp:
 			return defender.minimized();
 		case Moves::Wake_Up_Slap:
-			return is_sleeping(get_status(defender));
+			return is_sleeping(defender.status());
 		case Moves::Weather_Ball: {
 			auto const blocks_weather = weather_is_blocked_by_ability(attacker.ability(), defender.ability());
 			return weather.hail(blocks_weather) or weather.rain(blocks_weather) or weather.sand(blocks_weather) or weather.sun(blocks_weather);

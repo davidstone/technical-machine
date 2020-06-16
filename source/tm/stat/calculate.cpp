@@ -142,7 +142,7 @@ auto attack_ability_modifier(Generation const generation, ActivePokemon const po
 				denominator
 			);
 			case Ability::Guts: return BOUNDED_CONDITIONAL(
-				is_boosted_by_guts(generation, get_status(pokemon).name()),
+				is_boosted_by_guts(generation, pokemon.status().name()),
 				3_bi,
 				denominator
 			);
@@ -164,7 +164,7 @@ auto attack_ability_modifier(Generation const generation, ActivePokemon const po
 auto defense_ability_modifier(ActivePokemon const pokemon) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = BOUNDED_CONDITIONAL(
-		boosts_defense(pokemon.ability(), get_status(pokemon)),
+		boosts_defense(pokemon.ability(), pokemon.status()),
 		denominator * 3_bi / 2_bi,
 		denominator
 	);
@@ -212,7 +212,7 @@ auto speed_ability_modifier(ActivePokemon const pokemon, Ability const other_abi
 				denominator
 			);
 			case Ability::Quick_Feet: return BOUNDED_CONDITIONAL(
-				!is_clear(get_status(pokemon)),
+				!is_clear(pokemon.status()),
 				denominator * 3_bi / 2_bi,
 				denominator
 			);
@@ -432,7 +432,7 @@ auto calculate_special_defense(Generation const generation, ActivePokemon const 
 namespace {
 
 auto paralysis_speed_divisor(ActivePokemon const pokemon) {
-	return BOUNDED_CONDITIONAL(lowers_speed(get_status(pokemon), pokemon.ability()), 4_bi, 1_bi);
+	return BOUNDED_CONDITIONAL(lowers_speed(pokemon.status(), pokemon.ability()), 4_bi, 1_bi);
 }
 
 auto tailwind_speed_multiplier(Team const & team) {

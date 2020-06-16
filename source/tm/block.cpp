@@ -188,7 +188,7 @@ auto legal_selections(Generation const generation, Team const & user, Team const
 namespace {
 
 bool is_blocked_by_freeze(Pokemon const & user, Moves const move) {
-	return is_frozen(get_status(user)) and !is_usable_while_frozen(move);
+	return is_frozen(user.status()) and !is_usable_while_frozen(move);
 }
 
 constexpr bool usable_while_sleeping(Moves const move) {
@@ -202,7 +202,7 @@ constexpr bool usable_while_sleeping(Moves const move) {
 }
 
 bool is_blocked_by_sleep(Generation const generation, Pokemon const & user, Moves const move, bool const user_was_asleep) {
-	return generation == Generation::one ? user_was_asleep : usable_while_sleeping(move) != is_sleeping(get_status(user));
+	return generation == Generation::one ? user_was_asleep : usable_while_sleeping(move) != is_sleeping(user.status());
 }
 
 auto is_blocked_due_to_status(Generation const generation, Pokemon const & user, Moves const move, bool const user_was_asleep) {

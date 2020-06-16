@@ -74,9 +74,9 @@ auto to_string(Pokemon const pokemon) -> containers::string {
 	};
 
 	auto status_to_string = [&] {
-		auto const output_status = !is_clear(get_status(pokemon));
+		auto const output_status = !is_clear(pokemon.status());
 		return output_status ?
-			containers::concatenate<containers::string>(ability_status, to_string(get_status(pokemon).name())) :
+			containers::concatenate<containers::string>(ability_status, to_string(pokemon.status().name())) :
 			containers::string("");
 	};
 	
