@@ -308,7 +308,7 @@ private:
 		// correct result.
 		auto move_scores = !is_final_iteration(depth) ?
 			select_move_branch(ai, ai_selections, foe, foe_selections, weather, depth.iterative_deepening_value(), function).move_scores :
-			BothMoveScores{MoveScores(ai_selections), MoveScores(foe_selections)};
+			BothMoveScores{MoveScores(ai_selections, true), MoveScores(foe_selections, false)};
 		auto const ai_moves = move_scores.ai.ordered_moves(true);
 		auto const foe_moves = move_scores.foe.ordered_moves(false);
 

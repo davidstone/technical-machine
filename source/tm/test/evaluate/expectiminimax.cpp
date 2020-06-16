@@ -44,9 +44,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-constexpr auto generation = Generation::four;
-
-auto make_shuffled_array(auto & random_engine, auto... ts) {
+auto make_shuffled_array(Generation const generation, auto & random_engine, auto... ts) {
 	// Random order to prevent ordering effects from accidentally arriving at
 	// the correct move each time
 	auto array = containers::array{Move(generation, ts)...};
@@ -56,8 +54,9 @@ auto make_shuffled_array(auto & random_engine, auto... ts) {
 }
 
 void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
+	constexpr auto generation = Generation::four;
 	auto const shuffled = [&](auto... args) {
-		return make_shuffled_array(random_engine, args...);
+		return make_shuffled_array(generation, random_engine, args...);
 	};
 	constexpr auto depth = Depth(1U, 0U);
 
@@ -97,8 +96,9 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 }
 
 void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
+	constexpr auto generation = Generation::four;
 	auto const shuffled = [&](auto... args) {
-		return make_shuffled_array(random_engine, args...);
+		return make_shuffled_array(generation, random_engine, args...);
 	};
 	constexpr auto depth = Depth(1U, 0U);
 	
@@ -127,8 +127,9 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 }
 
 void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
+	constexpr auto generation = Generation::four;
 	auto const shuffled = [&](auto... args) {
-		return make_shuffled_array(random_engine, args...);
+		return make_shuffled_array(generation, random_engine, args...);
 	};
 	constexpr auto depth = Depth(2U, 0U);
 	Team attacker(1_bi, true);
@@ -155,8 +156,9 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 }
 
 void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
+	constexpr auto generation = Generation::four;
 	auto const shuffled = [&](auto... args) {
-		return make_shuffled_array(random_engine, args...);
+		return make_shuffled_array(generation, random_engine, args...);
 	};
 	constexpr auto depth = Depth(7U, 0U);
 	Team attacker(1_bi, true);
@@ -186,8 +188,9 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 
 
 void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
+	constexpr auto generation = Generation::four;
 	auto const shuffled = [&](auto... args) {
-		return make_shuffled_array(random_engine, args...);
+		return make_shuffled_array(generation, random_engine, args...);
 	};
 	constexpr auto depth = Depth(4U, 0U);
 	Team attacker(2_bi, true);
@@ -227,8 +230,9 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 
 void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	auto weather = Weather{};
+	constexpr auto generation = Generation::four;
 	auto const shuffled = [&](auto... args) {
-		return make_shuffled_array(random_engine, args...);
+		return make_shuffled_array(generation, random_engine, args...);
 	};
 	constexpr auto depth = Depth(2U, 0U);
 	Team attacker(3_bi, true);
@@ -277,8 +281,9 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 
 void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	auto const weather = Weather{};
+	constexpr auto generation = Generation::four;
 	auto const shuffled = [&](auto... args) {
-		return make_shuffled_array(random_engine, args...);
+		return make_shuffled_array(generation, random_engine, args...);
 	};
 	constexpr auto depth = Depth(3U, 0U);
 	Team attacker(1_bi, true);
@@ -310,8 +315,9 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 
 void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	auto weather = Weather{};
+	constexpr auto generation = Generation::four;
 	auto const shuffled = [&](auto... args) {
-		return make_shuffled_array(random_engine, args...);
+		return make_shuffled_array(generation, random_engine, args...);
 	};
 	constexpr auto depth = Depth(1U, 0U);
 	auto attacker = Team(1_bi, true);
@@ -380,6 +386,34 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	#endif
 }
 
+void generation_one_frozen_last_pokemon(Evaluate const & evaluate) {
+	constexpr auto generation = Generation::one;
+	auto weather = Weather();
+	auto moves = [](auto const ... name) {
+		return containers::array{Move(generation, name)...};
+	};
+
+	auto attacker = Team(1_bi, true);
+	attacker.add_pokemon(generation, Species::Alakazam, Level(100_bi), Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Hardy);
+	auto alakazam = attacker.pokemon();
+	alakazam.switch_in(generation, weather);
+	containers::append(regular_moves(alakazam), moves(Moves::Psychic, Moves::Recover, Moves::Thunder_Wave, Moves::Seismic_Toss));
+
+	auto defender = Team(1_bi);
+	defender.add_pokemon(generation, Species::Gengar, Level(100_bi), Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Hardy);
+	auto gengar = defender.pokemon();
+	gengar.switch_in(generation, weather);
+	containers::append(regular_moves(gengar), moves(Moves::Explosion, Moves::Hypnosis, Moves::Thunderbolt, Moves::Night_Shade));
+	gengar.apply_status(generation, Statuses::freeze, alakazam, weather);
+	gengar.set_hp(generation, weather, 12_bi);
+	
+	attacker.reset_start_of_turn();
+	defender.reset_start_of_turn();
+
+	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, Depth(1U, 1U), std::cout) == Moves::Psychic);
+	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, Depth(2U, 2U), std::cout) == Moves::Psychic);
+}
+
 } // namespace
 
 void expectiminimax_tests() {
@@ -398,6 +432,7 @@ void expectiminimax_tests() {
 	replace_fainted(evaluate, random_engine);
 	latias_vs_suicune(evaluate, random_engine);
 	sleep_talk(evaluate, random_engine);
+	generation_one_frozen_last_pokemon(evaluate);
 	
 	std::cout << "Evaluate tests passed.\n\n";
 }

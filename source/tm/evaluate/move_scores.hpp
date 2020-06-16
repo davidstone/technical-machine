@@ -32,7 +32,7 @@ enum class Moves : std::uint16_t;
 struct Pokemon;
 
 struct MoveScores {
-	explicit MoveScores(StaticVectorMove legal_selections);
+	explicit MoveScores(StaticVectorMove legal_selections, bool ai);
 	void set(Moves const move_name, double const score) {
 		auto const it = containers::find_if(m_scores, [=](value_type const value) {
 			return value.move_name == move_name;
@@ -46,10 +46,7 @@ private:
 		Moves move_name;
 		double score;
 	};
-	containers::static_vector<
-		value_type,
-		static_cast<int>(bounded::max_value<MoveSize>)
-	> m_scores;
+	containers::static_vector<value_type, bounded::detail::builtin_max_value<MoveSize>> m_scores;
 };
 
 }	// namespace technicalmachine
