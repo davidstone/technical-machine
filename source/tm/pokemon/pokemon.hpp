@@ -51,7 +51,6 @@ struct Pokemon {
 	// not found by lookup rules in that case.
 
 	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
-	friend Happiness get_happiness(Pokemon pokemon);
 	friend auto get_hidden_power(Pokemon pokemon) -> bounded::optional<HiddenPower>;
 	friend Level get_level(Pokemon pokemon);
 	friend Nature get_nature(Pokemon pokemon);
@@ -90,6 +89,10 @@ struct Pokemon {
 
 	auto gender() const {
 		return m_gender;
+	}
+
+	auto happiness() const -> Happiness {
+		return m_happiness;
 	}
 
 	auto item(Generation const generation, bool const embargo, bool const magic_room) const -> Item {
@@ -208,10 +211,6 @@ inline Status get_status(Pokemon const pokemon) {
 
 inline Level get_level(Pokemon const pokemon) {
 	return pokemon.m_level;
-}
-
-inline Happiness get_happiness(Pokemon const pokemon) {
-	return pokemon.m_happiness;
 }
 
 inline auto get_hidden_power(Pokemon const pokemon) -> bounded::optional<HiddenPower> {

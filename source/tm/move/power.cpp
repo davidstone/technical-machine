@@ -88,7 +88,7 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Fling:
 			return fling_power(attacker.item(generation, weather));
 		case Moves::Frustration:
-			return frustration_power(get_happiness(attacker));
+			return frustration_power(attacker.happiness());
 		case Moves::Fury_Cutter:
 			return attacker.last_used_move().fury_cutter_power();
 		case Moves::Grass_Knot:
@@ -120,7 +120,7 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 			return bounded::min(uncapped_power, 200_bi);
 		}
 		case Moves::Return:
-			return return_power(get_happiness(attacker));
+			return return_power(attacker.happiness());
 		case Moves::Spit_Up:
 			return attacker.spit_up_power();
 		case Moves::Triple_Kick:

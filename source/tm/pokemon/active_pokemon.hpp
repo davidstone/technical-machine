@@ -202,6 +202,10 @@ public:
 		return m_pokemon.gender();
 	}
 
+	auto happiness() const -> Happiness {
+		return m_pokemon.happiness();
+	}
+
 	auto heal_block_is_active() const -> bool {
 		return m_flags.heal_block.is_active();
 	}
