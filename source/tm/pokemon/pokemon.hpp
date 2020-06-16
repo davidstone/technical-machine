@@ -51,7 +51,6 @@ struct Pokemon {
 	// not found by lookup rules in that case.
 
 	friend auto all_moves(Pokemon const & pokemon) -> MoveContainer const &;
-	friend auto get_hidden_power(Pokemon pokemon) -> bounded::optional<HiddenPower>;
 	friend HP get_hp(Pokemon pokemon);
 	friend Stat get_stat(Pokemon pokemon, RegularStat stat_name);
 	friend Status get_status(Pokemon pokemon);
@@ -90,6 +89,10 @@ struct Pokemon {
 
 	auto happiness() const -> Happiness {
 		return m_happiness;
+	}
+
+	auto hidden_power() const -> bounded::optional<HiddenPower> {
+		return m_hidden_power;
 	}
 
 	auto item(Generation const generation, bool const embargo, bool const magic_room) const -> Item {
@@ -209,12 +212,8 @@ inline Status get_status(Pokemon const pokemon) {
 	return pokemon.m_status;
 }
 
-inline auto get_hidden_power(Pokemon const pokemon) -> bounded::optional<HiddenPower> {
-	return pokemon.m_hidden_power;
-}
-
 inline auto get_hidden_power_type(Pokemon const pokemon) {
-	auto const hidden_power = get_hidden_power(pokemon);
+	auto const hidden_power = pokemon.hidden_power();
 	return BOUNDED_CONDITIONAL(hidden_power, hidden_power->type(), bounded::none);
 }
 

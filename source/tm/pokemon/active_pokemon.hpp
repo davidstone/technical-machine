@@ -210,6 +210,10 @@ public:
 		return m_flags.heal_block.is_active();
 	}
 
+	auto hidden_power() const -> bounded::optional<HiddenPower> {
+		return m_pokemon.hidden_power();
+	}
+
 	auto used_imprison() const -> bool {
 		return m_flags.used_imprison;
 	}

@@ -107,7 +107,7 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 		case Moves::Rollout:
 			return attacker.last_used_move().momentum_move_power();
 		case Moves::Hidden_Power:
-			return get_hidden_power(attacker)->power();
+			return attacker.hidden_power()->power();
 		case Moves::Magnitude:
 			return executed.variable.magnitude_power();
 		case Moves::Natural_Gift:
