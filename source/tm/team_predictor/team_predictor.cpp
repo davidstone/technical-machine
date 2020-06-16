@@ -71,18 +71,18 @@ Team predict_team(Generation const generation, UsageStats const & usage_stats, L
 	for (auto & pokemon : team.all_pokemon()) {
 		auto const species = pokemon.species();
 		auto const & detailed = usage_stats.get(species);
-		if (!ability_is_known(pokemon)) {
+		if (!pokemon.ability_is_known()) {
 			pokemon.set_initial_ability(detailed.ability);
 			auto active_pokemon = team.pokemon();
 			if (std::addressof(pokemon) == std::addressof(static_cast<Pokemon const &>(active_pokemon))) {
 				active_pokemon.set_ability_to_base_ability();
 			}
 		}
-		if (!item_is_known(pokemon)) {
+		if (!pokemon.item_is_known()) {
 			pokemon.set_item(detailed.item);
 		}
-		if (!nature_is_known(pokemon)) {
-			set_nature(pokemon, detailed.stats.nature);
+		if (!pokemon.nature_is_known()) {
+			pokemon.set_nature(detailed.stats.nature);
 		}
 		predict_move(all_moves(pokemon), generation, detailed.moves);
 		optimize_evs(generation, pokemon, random_engine);

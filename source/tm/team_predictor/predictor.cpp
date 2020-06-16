@@ -148,7 +148,7 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 			pokemon.set_initial_ability(*ability);
 		}
 		if (nature) {
-			set_nature(pokemon, *nature);
+			pokemon.set_nature(*nature);
 		}
 		for (auto const move : moves) {
 			add_seen_move(all_moves(pokemon), generation, move);

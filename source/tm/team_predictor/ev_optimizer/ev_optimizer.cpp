@@ -41,7 +41,7 @@ using namespace bounded::literal;
 
 auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats<IVAndEV> const stats) {
 	auto const original_hp = get_hp(pokemon);
-	set_nature(pokemon, stats.nature);
+	pokemon.set_nature(stats.nature);
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 		auto const stat = stats[stat_name];
 		set_ev(generation, pokemon, stat_name, stat.iv, stat.ev);

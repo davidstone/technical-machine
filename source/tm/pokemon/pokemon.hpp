@@ -129,10 +129,20 @@ struct Pokemon {
 		m_status = status;
 	}
 
-	friend bool ability_is_known(Pokemon pokemon);
-	friend bool item_is_known(Pokemon pokemon);
-	friend void set_nature(Pokemon & pokemon, Nature nature);
-	friend bool nature_is_known(Pokemon pokemon);
+	auto ability_is_known() const -> bool {
+		return m_ability_is_known;
+	}
+	auto item_is_known() const -> bool {
+		return m_item_is_known;
+	}
+	auto set_nature(Nature const nature) -> void {
+		m_nature = nature;
+		m_nature_is_known = true;
+	}
+	auto nature_is_known() const -> bool {
+		return m_nature_is_known;
+	}
+
 	friend auto set_ev(Generation, Pokemon &, PermanentStat, IV, EV) -> void;
 
 	friend auto operator==(Pokemon const &, Pokemon const &) -> bool = default;
@@ -170,22 +180,6 @@ inline decltype(auto) regular_moves(Pokemon const & pokemon) {
 }
 inline decltype(auto) regular_moves(Pokemon & pokemon) {
 	return all_moves(pokemon).regular();
-}
-
-inline bool ability_is_known(Pokemon const pokemon) {
-	return pokemon.m_ability_is_known;
-}
-
-inline bool item_is_known(Pokemon const pokemon) {
-	return pokemon.m_item_is_known;
-}
-
-inline void set_nature(Pokemon & pokemon, Nature const nature) {
-	pokemon.m_nature = nature;
-	pokemon.m_nature_is_known = true;
-}
-inline bool nature_is_known(Pokemon const pokemon) {
-	return pokemon.m_nature_is_known;
 }
 
 inline HP get_hp(Pokemon const pokemon) {
