@@ -134,7 +134,7 @@ auto calculate_expert_belt_modifier(Item const item, Effectiveness const & effec
 }
 
 
-auto level_multiplier(Pokemon const & attacker) -> decltype(attacker.level()() * 2_bi / 5_bi) {
+auto level_multiplier(ActivePokemon const attacker) {
 	return attacker.level()() * 2_bi / 5_bi;
 }
 

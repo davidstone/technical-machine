@@ -561,7 +561,7 @@ auto hp_to_damage(Pokemon const & pokemon, HP::current_type const new_hp) {
 }
 
 auto const & select_pokemon(Team const & team, Moves const move) {
-	return is_switch(move) ? team.pokemon(to_replacement(move)) : team.pokemon();
+	return is_switch(move) ? team.pokemon(to_replacement(move)) : team.all_pokemon()();
 }
 
 constexpr auto causes_recoil(Moves const move) {
@@ -672,7 +672,7 @@ void BattleParser::send_move(Moves const move) {
 	// moves
 	using std::to_string;
 	auto switch_move = [&]{ return to_string(m_slot_memory[to_replacement(move)]); };
-	auto move_index = [&]{ return to_string(get_move_index(m_battle.ai().pokemon(), move) + 1_bi); };
+	auto move_index = [&]{ return to_string(get_move_index(m_battle.ai().all_pokemon()(), move) + 1_bi); };
 	m_send_message(m_id + (is_switch(move) ? "|/switch " + switch_move() : "|/move " + move_index()));
 }
 

@@ -699,7 +699,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Heal_Bell:
 			cure_all_status(user_team, [=](Pokemon const & pokemon) {
 				auto ability = [&]{
-					auto const is_active = std::addressof(pokemon) == std::addressof(static_cast<Pokemon const &>(user));
+					auto const is_active = std::addressof(pokemon) == std::addressof(user_team.all_pokemon()());
 					return is_active ? user.ability() : pokemon.initial_ability();
 				};
 				return generation == Generation::five or !blocks_sound_moves(ability());

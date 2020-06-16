@@ -122,7 +122,7 @@ void special_power_test() {
 	constexpr auto max_power = 342_bi;
 
 	auto attacker = max_damage_special_attacker(Item::Wave_Incense, Ability::Torrent, Nature::Hardy);
-	Pokemon & pokemon = attacker.pokemon();
+	auto pokemon = attacker.pokemon();
 	auto const move = pokemon.all_moves().add(Move(generation, Moves::Surf));
 
 	Team defender = max_damage_special_defender();

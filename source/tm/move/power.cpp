@@ -384,7 +384,7 @@ bool is_boosted_by_reckless(Moves const move) {
 	}
 }
 
-auto attacker_ability_power_modifier(Generation const generation, ActivePokemon const attacker, KnownMove const move, Pokemon const & defender, VariableAdjustedBasePower const base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
+auto attacker_ability_power_modifier(Generation const generation, ActivePokemon const attacker, KnownMove const move, ActivePokemon const defender, VariableAdjustedBasePower const base_power) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
 	auto pinch_ability_activates = [&](Type const type) {
 		return generation <= Generation::four and move.type == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
 	};

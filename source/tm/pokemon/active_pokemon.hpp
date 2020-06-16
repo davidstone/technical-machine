@@ -359,10 +359,6 @@ public:
 		return m_flags.last_used_move.vanish_doubles_power(generation, move_name);
 	}
 
-	operator PokemonRef() const {
-		return m_pokemon;
-	}
-
 protected:
 	PokemonRef m_pokemon;
 	FlagsRef m_flags;
@@ -790,4 +786,4 @@ inline auto apply_own_white_herb(Generation const generation, MutableActivePokem
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

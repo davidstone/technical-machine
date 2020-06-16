@@ -242,7 +242,7 @@ auto execute_move(Generation const generation, Team const & user, SelectedAndExe
 }
 
 struct OriginalPokemon {
-	explicit OriginalPokemon(Generation const generation, Pokemon const & pokemon, Moves const other_move):
+	explicit OriginalPokemon(Generation const generation, ActivePokemon const pokemon, Moves const other_move):
 		m_species(pokemon.species()),
 		m_hp(pokemon.hp().current()),
 		m_other_move{
@@ -252,8 +252,8 @@ struct OriginalPokemon {
 	{
 	}
 	
-	auto is_same_pokemon(Pokemon const & pokemon) const {
-		return pokemon.species() == m_species;
+	auto is_same_pokemon(Species const species) const {
+		return species == m_species;
 	}
 	auto other_move() const {
 		return m_other_move;
@@ -472,7 +472,7 @@ private:
 	auto use_move_branch_outer(OriginalPokemon const original_last_pokemon, Moves const last_move) {
 		return [=, this](Team const & first, Moves const first_move, Team const & last, Moves, Weather const weather, Depth const depth) {
 			return score_executed_moves(first, first_move, last, FutureMove{is_damaging(last_move)}, weather, [&](Team const & pre_updated_first, Team const & pre_updated_last, Weather const pre_updated_weather) {
-				auto const is_same_pokemon = original_last_pokemon.is_same_pokemon(last.pokemon());
+				auto const is_same_pokemon = original_last_pokemon.is_same_pokemon(last.pokemon().species());
 				auto const actual_last_move = is_same_pokemon ? last_move : Moves::Pass;
 				auto const first_used_move = original_last_pokemon.other_move();
 				return score_executed_moves(pre_updated_last, actual_last_move, pre_updated_first, first_used_move, pre_updated_weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {

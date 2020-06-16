@@ -98,7 +98,7 @@ auto can_use_substitute(Pokemon const & pokemon) -> bool {
 }	// namespace
 
 auto MutableActivePokemon::use_substitute(Generation const generation, Weather const weather) const -> void {
-	if (!can_use_substitute(*this)) {
+	if (!can_use_substitute(m_pokemon)) {
 		return;
 	}
 	indirect_damage(generation, weather, m_flags.substitute.create(hp().max()));

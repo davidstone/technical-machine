@@ -111,7 +111,7 @@ struct Battle {
 private:
 	// maybe_index is either an index into a PokemonCollection or nothing
 	auto active_pokemon(bool const is_ai, auto... maybe_index) -> Pokemon & {
-		return (is_ai ? m_ai : m_foe).pokemon(maybe_index...);
+		return (is_ai ? m_ai : m_foe).all_pokemon()(maybe_index...);
 	}
 	auto correct_hp(bool is_ai, HP, VisibleHP) -> HP::current_type;
 	void validate_status(Statuses const original_status, Statuses const visible_status);

@@ -63,7 +63,7 @@ void test_baton_pass() {
 	Team defender(2_bi);
 	{
 		defender.add_pokemon(generation, Species::Gengar, Level(100_bi), Gender::male, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
-		Pokemon & gengar = defender.pokemon();
+		Pokemon & gengar = back(defender.all_pokemon());
 		containers::append(regular_moves(gengar), move_array(Moves::Shadow_Ball));
 		gengar.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
 	}

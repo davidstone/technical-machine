@@ -182,19 +182,16 @@ private:
 	bool m_nature_is_known : 1;
 };
 
-inline decltype(auto) regular_moves(Pokemon const & pokemon) {
-	return pokemon.all_moves().regular();
-}
-inline decltype(auto) regular_moves(Pokemon & pokemon) {
+decltype(auto) regular_moves(auto && pokemon) {
 	return pokemon.all_moves().regular();
 }
 
-inline auto get_hidden_power_type(Pokemon const pokemon) {
+auto get_hidden_power_type(auto const pokemon) {
 	auto const hidden_power = pokemon.hidden_power();
 	return BOUNDED_CONDITIONAL(hidden_power, hidden_power->type(), bounded::none);
 }
 
-inline auto hp_ratio(Pokemon const pokemon) {
+auto hp_ratio(auto const pokemon) {
 	auto const hp = pokemon.hp();
 	return rational(hp.current(), hp.max());
 }

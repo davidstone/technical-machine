@@ -73,10 +73,6 @@ Team predict_team(Generation const generation, UsageStats const & usage_stats, L
 		auto const & detailed = usage_stats.get(species);
 		if (!pokemon.ability_is_known()) {
 			pokemon.set_initial_ability(detailed.ability);
-			auto active_pokemon = team.pokemon();
-			if (std::addressof(pokemon) == std::addressof(static_cast<Pokemon const &>(active_pokemon))) {
-				active_pokemon.set_ability_to_base_ability();
-			}
 		}
 		if (!pokemon.item_is_known()) {
 			pokemon.set_item(detailed.item);
@@ -87,6 +83,8 @@ Team predict_team(Generation const generation, UsageStats const & usage_stats, L
 		predict_move(pokemon.all_moves(), generation, detailed.moves);
 		optimize_evs(generation, pokemon, random_engine);
 	}
+	// TODO: This isn't right
+	team.pokemon().set_ability_to_base_ability();
 	return team;
 }
 
