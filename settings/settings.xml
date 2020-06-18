@@ -11,7 +11,6 @@
 
 		Relative paths are relative to your executable, not this settings file.
 	-->
-	<team>teams/1/</team>
 	<host>sim.smogon.com</host>
 	<port>8000</port>
 	<resource>/showdown/websocket</resource>

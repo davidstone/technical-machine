@@ -25,6 +25,11 @@
 #include <tm/clients/pokemon_showdown/packed_team.hpp>
 
 #include <tm/clients/random_string.hpp>
+
+#include <tm/team_predictor/lead_stats.hpp>
+#include <tm/team_predictor/team_predictor.hpp>
+
+#include <tm/load_team_from_file.hpp>
 #include <tm/settings_file.hpp>
 #include <tm/team.hpp>
 
@@ -119,10 +124,23 @@ void ClientImpl::run(DelimitedBufferView<std::string_view> messages) {
 	}
 }
 
+auto ClientImpl::generate_team(Generation const generation) -> Team {
+	return m_settings.team_file ?
+		load_team_from_file(generation, m_random_engine, *m_settings.team_file) :
+		::technicalmachine::generate_team(
+			generation,
+			m_all_usage_stats[generation],
+			use_lead_stats,
+			m_random_engine
+		);
+}
+
 void ClientImpl::handle_message(InMessage message) {
 	auto send_challenge = [&]{
-		send_team(Generation::four);
-		m_send_message("|/challenge david stone,gen4randombattle");
+		send_team(Generation::one);
+		// m_send_message("|/search gen1ou");
+		m_send_message("|/challenge davidstone,gen1ou");
+		std::cout << "Sent challenge\n" << std::flush;
 	};
 	if (m_battles.handle_message(m_all_usage_stats, message, m_send_message, send_challenge)) {
 		return;

@@ -24,20 +24,18 @@
 
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
-#include <tm/load_team_from_file.hpp>
 #include <tm/settings_file.hpp>
-
-#include <containers/vector.hpp>
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
 
-#include <cstdint>
+#include <functional>
 #include <unordered_set>
 #include <random>
 #include <string>
+#include <string_view>
 
 namespace technicalmachine {
 namespace ps {
@@ -51,9 +49,7 @@ struct ClientImpl {
 	void run(DelimitedBufferView<std::string_view> messages);
 
 private:
-	Team generate_team(Generation const generation) {
-		return load_team_from_file(generation, m_random_engine, m_settings.team_file);
-	}
+	auto generate_team(Generation const generation) -> Team;
 	
 	void send_team(Generation const generation);
 

@@ -19,6 +19,8 @@
 #include <tm/clients/pokemon_showdown/chat.hpp>
 #include <tm/clients/pokemon_showdown/parse_team.hpp>
 
+#include <tm/clients/pokemon_lab/write_team_file.hpp>
+
 #include <tm/stat/combined_stats.hpp>
 #include <tm/stat/generic_stats.hpp>
 
@@ -157,6 +159,9 @@ BattleParser BattleFactory::make(AllUsageStats const & all_usage_stats, BattlePa
 		team.add_pokemon(m_generation, pokemon.species, pokemon.level, pokemon.gender);
 		return team;
 	};
+
+	pl::write_team(m_generation, m_team, m_log_directory / "team.sbt");
+
 	return BattleParser(
 		std::move(send_message),
 		std::move(m_battle_logger),

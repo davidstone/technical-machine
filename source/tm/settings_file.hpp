@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include <bounded/optional.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 
 #include <filesystem>
@@ -26,7 +28,7 @@
 namespace technicalmachine {
 
 struct SettingsFile {
-	std::filesystem::path team_file;
+	bounded::optional<std::filesystem::path> team_file;
 	std::string host;
 	std::string port;
 	std::string username;

@@ -33,8 +33,9 @@ auto load_settings_file(std::filesystem::path const & path) -> SettingsFile {
 	if (username.empty()) {
 		throw std::runtime_error("Missing username and password in settings file");
 	}
+	auto team_file = server.get_optional<std::filesystem::path>("team");
 	return SettingsFile{
-		server.get<std::filesystem::path>("team"),
+		BOUNDED_CONDITIONAL(team_file, std::move(*team_file), bounded::none),
 		server.get<std::string>("host"),
 		server.get<std::string>("port"),
 		std::move(username),
