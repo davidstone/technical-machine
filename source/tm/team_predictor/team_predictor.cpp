@@ -35,10 +35,10 @@ namespace technicalmachine {
 enum class Moves : std::uint16_t;
 namespace {
 
-void predict_pokemon(Generation const generation, Team & team, Estimate estimate, UsageStats const & usage_stats) {
+void predict_pokemon(Generation const generation, Team & team, Estimate estimate, UsageStats const & usage_stats, std::mt19937 & random_engine, bool const use_most_likely) {
 	auto const index = team.all_pokemon().index();
 	while (team.number_of_seen_pokemon() < team.size()) {
-		Species const name = estimate.most_likely();
+		Species const name = use_most_likely ? estimate.most_likely() : estimate.random(random_engine);
 		Level const level(100_bi);
 		team.add_pokemon(generation, name, level, Gender::genderless);
 		if (team.number_of_seen_pokemon() == team.size())
@@ -61,13 +61,11 @@ void predict_move(MoveContainer & moves, Generation const generation, containers
 	}
 }
 
-}	// namespace
-
-Team predict_team(Generation const generation, UsageStats const & usage_stats, LeadStats const lead_stats, Team team, std::mt19937 & random_engine) {
+auto predict_team_impl(Generation const generation, UsageStats const & usage_stats, LeadStats const lead_stats, Team team, std::mt19937 & random_engine, bool const use_most_likely) -> Team {
 	auto estimate = Estimate(usage_stats, lead_stats);
 	update_estimate(estimate, usage_stats, team);
 
-	predict_pokemon(generation, team, estimate, usage_stats);
+	predict_pokemon(generation, team, estimate, usage_stats, random_engine, use_most_likely);
 	for (auto & pokemon : team.all_pokemon()) {
 		auto const species = pokemon.species();
 		auto const & detailed = usage_stats.get(species);
@@ -88,4 +86,14 @@ Team predict_team(Generation const generation, UsageStats const & usage_stats, L
 	return team;
 }
 
-}	// namespace technicalmachine
+}	// namespace
+
+auto predict_team(Generation const generation, UsageStats const & usage_stats, LeadStats const lead_stats, Team team, std::mt19937 & random_engine) -> Team {
+	return predict_team_impl(generation, usage_stats, lead_stats, team, random_engine, true);
+}
+
+auto generate_team(Generation generation, UsageStats const & usage_stats, LeadStats lead_stats, std::mt19937 & random_engine) -> Team {
+	return predict_team_impl(generation, usage_stats, lead_stats, Team(max_pokemon_per_team, true), random_engine, false);
+}
+
+} // namespace technicalmachine

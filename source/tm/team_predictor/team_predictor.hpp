@@ -29,6 +29,8 @@ namespace technicalmachine {
 enum class Generation : std::uint8_t;
 struct UsageStats;
 
-Team predict_team(Generation generation, UsageStats const & usage_stats, LeadStats lead_stats, Team team, std::mt19937 & random_engine);
+auto predict_team(Generation, UsageStats const &, LeadStats, Team, std::mt19937 &) -> Team;
+
+auto generate_team(Generation, UsageStats const &, LeadStats, std::mt19937 &) -> Team;
 
 }	// namespace technicalmachine
