@@ -737,7 +737,7 @@ inline auto shift_status(Generation const generation, MutableActivePokemon user,
 		case Statuses::toxic:
 			target.apply_status(generation, status_name, user, weather);
 			break;
-		case Statuses::sleep:
+		case Statuses::sleep: // TODO: Sleep Clause
 		case Statuses::rest: // TODO: How does Rest shift?
 			target.apply_status(generation, Statuses::sleep, user, weather);
 			break;

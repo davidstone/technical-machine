@@ -112,22 +112,22 @@ constexpr bool uproar_does_not_apply(Statuses const status) {
 	}
 }
 
-auto fang_side_effects(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather, Statuses const status, Variable const variable) {
+auto fang_side_effects(Generation const generation, MutableActivePokemon user, Team & target, Weather const weather, Statuses const status, Variable const variable) {
 	auto const effect = variable.fang_side_effects();
 	if (effect.status) {
-		target.apply_status(generation, status, user, weather);
+		apply_status(generation, status, target, user, weather);
 	}
 	if (effect.flinch) {
-		target.flinch();
+		target.pokemon().flinch();
 	}
 }
 
 
-auto fling_side_effects(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather) {
+auto fling_side_effects(Generation const generation, MutableActivePokemon user, Team & target, Weather const weather) {
 	// TODO: Activate berry
 	auto apply_status = [&](Statuses const status) {
 		BOUNDED_ASSERT(uproar_does_not_apply(status));
-		target.apply_status(generation, status, user, weather);
+		technicalmachine::apply_status(generation, status, target, user, weather);
 	};
 	switch (user.item(generation, weather)) {
 		case Item::Flame_Orb:
@@ -135,13 +135,13 @@ auto fling_side_effects(Generation const generation, MutableActivePokemon user, 
 			break;
 		case Item::Kings_Rock:
 		case Item::Razor_Fang:
-			target.flinch();
+			target.pokemon().flinch();
 			break;
 		case Item::Light_Ball:
 			apply_status(Statuses::paralysis);
 			break;
 		case Item::Mental_Herb:
-			apply_mental_herb(generation, target);
+			apply_mental_herb(generation, target.pokemon());
 			break;
 		case Item::Poison_Barb:
 			apply_status(Statuses::poison);
@@ -150,7 +150,7 @@ auto fling_side_effects(Generation const generation, MutableActivePokemon user, 
 			apply_status(Statuses::toxic);
 			break;
 		case Item::White_Herb:
-			apply_white_herb(target);
+			apply_white_herb(target.pokemon());
 			break;
 		default:
 			break;
@@ -159,9 +159,9 @@ auto fling_side_effects(Generation const generation, MutableActivePokemon user, 
 }
 
 
-auto grass_status(Generation const generation, MutableActivePokemon const user, MutableActivePokemon const target, Weather const weather, Statuses const status) {
-	if (generation <= Generation::five or !is_type(target, Type::Grass)) {
-		target.apply_status(generation, status, user, weather);
+auto grass_status(Generation const generation, MutableActivePokemon const user, Team & target, Weather const weather, Statuses const status) {
+	if (generation <= Generation::five or !is_type(target.pokemon(), Type::Grass)) {
+		apply_status(generation, status, target, user, weather);
 	}
 }
 
@@ -179,11 +179,11 @@ void recoil(Generation const generation, MutableActivePokemon user, Weather cons
 	}
 }
 
-auto recoil_status(Generation const generation, MutableActivePokemon user, MutableActivePokemon target, Weather const weather, HP::current_type const damage, Variable const variable, Statuses const status) {
+auto recoil_status(Generation const generation, MutableActivePokemon user, Team & target, Weather const weather, HP::current_type const damage, Variable const variable, Statuses const status) {
 	BOUNDED_ASSERT(uproar_does_not_apply(status));
 	recoil(generation, user, weather, damage, 3_bi);
 	if (variable.effect_activates()) {
-		target.apply_status(generation, status, user, weather);
+		apply_status(generation, status, target, user, weather);
 	}
 }
 
@@ -376,7 +376,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Ice_Punch:
 		case Moves::Powder_Snow:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().apply_status(generation, Statuses::freeze, user, weather);
+				apply_status(generation, Statuses::freeze, other, user, weather);
 			}
 			break;
 		case Moves::Block:
@@ -537,7 +537,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Hypnosis:
 		case Moves::Lovely_Kiss:
 		case Moves::Sing:
-			other.pokemon().apply_status(generation, Statuses::sleep, user, weather, user.is_uproaring() or other.pokemon().is_uproaring());
+			apply_status(generation, Statuses::sleep, other, user, weather, user.is_uproaring() or other.pokemon().is_uproaring());
 			break;
 		case Moves::Defense_Curl:
 			user.stage()[BoostableStat::def] += 1_bi;
@@ -603,10 +603,10 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().break_protect();
 			break;
 		case Moves::Fire_Fang:
-			fang_side_effects(generation, user, other.pokemon(), weather, Statuses::burn, executed.variable);
+			fang_side_effects(generation, user, other, weather, Statuses::burn, executed.variable);
 			break;
 		case Moves::Flare_Blitz:
-			recoil_status(generation, user, other.pokemon(), weather, damage, executed.variable, Statuses::burn);
+			recoil_status(generation, user, other, weather, damage, executed.variable, Statuses::burn);
 			break;
 		case Moves::Flash:
 		case Moves::Kinesis:
@@ -619,7 +619,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			confusing_stat_boost(generation, other.pokemon(), weather, BoostableStat::spa, 1_bi);
 			break;
 		case Moves::Fling:
-			fling_side_effects(generation, user, other.pokemon(), weather);
+			fling_side_effects(generation, user, other, weather);
 			break;
 		case Moves::Focus_Energy:
 			user.focus_energy();
@@ -733,7 +733,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Rollout:
 			break;
 		case Moves::Ice_Fang:
-			fang_side_effects(generation, user, other.pokemon(), weather, Statuses::freeze, executed.variable);
+			fang_side_effects(generation, user, other, weather, Statuses::freeze, executed.variable);
 			break;
 		case Moves::Icy_Wind:
 		case Moves::Low_Sweep:
@@ -875,7 +875,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Poison_Gas:
 		case Moves::Poison_Powder:
-			grass_status(generation, user, other.pokemon(), weather, Statuses::poison);
+			grass_status(generation, user, other, weather, Statuses::poison);
 			break;
 		case Moves::Power_Swap:
 			swap_offensive(user.stage(), other.pokemon().stage());
@@ -1005,7 +1005,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			break;
 		case Moves::Sleep_Powder:
 		case Moves::Spore:
-			grass_status(generation, user, other.pokemon(), weather, Statuses::sleep);
+			grass_status(generation, user, other, weather, Statuses::sleep);
 			break;
 		case Moves::Smelling_Salts:
 			if (boosts_smellingsalt(other.pokemon().status())) {
@@ -1038,7 +1038,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			user.increment_stockpile();
 			break;
 		case Moves::Stun_Spore:
-			grass_status(generation, user, other.pokemon(), weather, Statuses::paralysis);
+			grass_status(generation, user, other, weather, Statuses::paralysis);
 			break;
 		case Moves::String_Shot:
 			other.pokemon().stage()[BoostableStat::spe] -= BOUNDED_CONDITIONAL(generation <= Generation::five, 1_bi, 2_bi);
@@ -1094,7 +1094,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			other.pokemon().taunt(generation, weather);
 			break;
 		case Moves::Thunder_Fang:
-			fang_side_effects(generation, user, other.pokemon(), weather, Statuses::paralysis, executed.variable);
+			fang_side_effects(generation, user, other, weather, Statuses::paralysis, executed.variable);
 			break;
 		case Moves::Tickle:
 			boost_physical(other.pokemon().stage(), -1_bi);
@@ -1114,7 +1114,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 		case Moves::Tri_Attack:
 			if (auto const status = executed.variable.tri_attack_status(); status != Statuses::clear) {
 				BOUNDED_ASSERT(uproar_does_not_apply(status));
-				other.pokemon().apply_status(generation, status, user, weather);
+				apply_status(generation, status, other, user, weather);
 			}
 			break;
 		case Moves::Trick_Room:
@@ -1129,7 +1129,7 @@ auto do_side_effects(Generation const generation, Team & user_team, ExecutedMove
 			}
 			break;
 		case Moves::Volt_Tackle:
-			recoil_status(generation, user, other.pokemon(), weather, damage, executed.variable, Statuses::paralysis);
+			recoil_status(generation, user, other, weather, damage, executed.variable, Statuses::paralysis);
 			break;
 		case Moves::Wake_Up_Slap:
 			if (is_sleeping(other.pokemon().status())) {

@@ -145,17 +145,6 @@ auto Evaluate::operator()(Generation const generation, Team const & ai, Team con
 
 namespace {
 
-auto sleep_clause(Team const & team) -> Evaluate::type {
-	auto const sleepers = [](Pokemon const & pokemon) {
-		return is_sleeping_due_to_other(pokemon.status());
-	};
-	auto const sleeper_count = containers::count_if(team.all_pokemon(), sleepers);
-	if (sleeper_count > 1_bi) {
-		return BOUNDED_CONDITIONAL(team.is_me(), victory, -victory);
-	}
-	return 0_bi;
-}
-
 auto single_team_win(Team const & team) -> Evaluate::type {
 	BOUNDED_ASSERT(team.size() != 0_bi);
 	if (team.size() == 1_bi and team.pokemon().hp() == 0_bi) {
@@ -167,11 +156,6 @@ auto single_team_win(Team const & team) -> Evaluate::type {
 } // namespace
 
 auto Evaluate::win(Team const & team1, Team const & team2) -> bounded::optional<double> {
-	auto const sleep_clause1 = sleep_clause(team1);
-	auto const sleep_clause2 = sleep_clause(team2);
-	if (sleep_clause1 != 0_bi or sleep_clause2 != 0_bi) {
-		return static_cast<double>(sleep_clause1 + sleep_clause2);
-	}
 	auto const win1 = single_team_win(team1);
 	auto const win2 = single_team_win(team2);
 	if (win1 != 0_bi or win2 != 0_bi) {

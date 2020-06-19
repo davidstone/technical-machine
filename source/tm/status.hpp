@@ -141,9 +141,6 @@ constexpr auto is_sleeping(Status const status) {
 			return false;
 	}
 }
-constexpr auto is_sleeping_due_to_other(Status const status) {
-	return status.name() == Statuses::sleep;
-}
 constexpr auto weakens_physical_attacks(Status const status) {
 	return status.name() == Statuses::burn;
 }

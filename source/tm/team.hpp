@@ -191,4 +191,7 @@ private:
 	bool me;
 };
 
-}	// namespace technicalmachine
+// Checks for Freeze Clause and Sleep Clause and does nothing if they activate
+auto apply_status(Generation, Statuses, Team & target, MutableActivePokemon user, Weather, bool uproar = false) -> void;
+
+} // namespace technicalmachine
