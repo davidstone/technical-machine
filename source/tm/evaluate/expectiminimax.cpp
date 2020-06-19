@@ -37,6 +37,7 @@
 
 #include <tm/ability.hpp>
 #include <tm/block.hpp>
+#include <tm/critical_hit.hpp>
 #include <tm/end_of_turn.hpp>
 #include <tm/team.hpp>
 #include <tm/variable.hpp>
@@ -65,19 +66,6 @@ void print_best_move(Team const & team, BestMove const best_move, std::ostream &
 	}
 	log << " for a minimum expected score of " << static_cast<std::int64_t>(best_move.score) << '\n';
 }
-
-bool can_critical_hit(Generation const generation, Moves const move, Ability const defender_ability) {
-	switch (defender_ability) {
-		case Ability::Battle_Armor:
-		case Ability::Shell_Armor:
-			return false;
-		default: {
-			auto const power = base_power(generation, move);
-			return power and *power != 0_bi;
-		}
-	}
-}
-
 
 double generic_flag_branch(auto const & basic_probability, auto const & next_branch) {
 	auto const probability = [=](bool const is_first, bool const flag) {
@@ -207,13 +195,13 @@ auto execute_move(Generation const generation, Team const & user, SelectedAndExe
 	auto const status = user_pokemon.status();
 	auto const probability_of_clearing_status = status.probability_of_clearing(generation, user_pokemon.ability());
 	auto const specific_chance_to_hit = chance_to_hit(generation, user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());
-	auto const move_can_critical_hit = can_critical_hit(generation, move.executed.name, other.pokemon().ability());
+	auto const ch_probability = critical_hit_probability(generation, user_pokemon, move.executed.name, other.pokemon().ability(), weather);
 	return generic_flag_branch(probability_of_clearing_status, [&](bool const clear_status) {
 		return generic_flag_branch(specific_chance_to_hit, [&](bool const hits) {
 			auto score = 0.0;
 			for (auto const & variable : variables) {
 				score += variable.probability * generic_flag_branch(
-					hits and move_can_critical_hit ? (1.0 / 16.0) : 0.0,
+					hits ? ch_probability : 0.0,
 					[&](bool const critical_hit) {
 						auto user_copy = user;
 						auto other_copy = other;

@@ -171,6 +171,7 @@ add_library(tm_common STATIC
 	source/tm/battle.cpp
 	source/tm/block.cpp
 	source/tm/buffer_view.cpp
+	source/tm/critical_hit.cpp
 	source/tm/end_of_turn.cpp
 	source/tm/entry_hazards.cpp
 	source/tm/files_in_path.cpp
@@ -251,6 +252,7 @@ add_executable(tm_test
 	source/tm/test/block.cpp
 	source/tm/test/calculate_damage.cpp
 	source/tm/test/call_move.cpp
+	source/tm/test/critical_hit.cpp
 	source/tm/test/ev_optimizer.cpp
 	source/tm/test/files_in_path.cpp
 	source/tm/test/incorrect_calculation.cpp

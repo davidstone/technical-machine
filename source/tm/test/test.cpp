@@ -23,6 +23,7 @@
 #include <tm/test/block.hpp>
 #include <tm/test/calculate_damage.hpp>
 #include <tm/test/call_move.hpp>
+#include <tm/test/critical_hit.hpp>
 #include <tm/test/ev_optimizer.hpp>
 #include <tm/test/files_in_path.hpp>
 #include <tm/test/sleep.hpp>
@@ -46,6 +47,7 @@ int main() {
 	string_conversion_tests();
 	status_tests();
 	stat_tests();
+	critical_hit_tests();
 	damage_tests();
 	collection_tests();
 	call_move_tests();
