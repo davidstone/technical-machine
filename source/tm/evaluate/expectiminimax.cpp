@@ -270,7 +270,7 @@ struct Evaluator {
 	{
 	}
 
-	BestMove select_type_of_move(Team const & ai, Team const & foe, Weather const weather, Depth const depth) {
+	auto select_type_of_move(Team const & ai, Team const & foe, Weather const weather, Depth const depth) -> BestMove {
 		BOUNDED_ASSERT(!team_is_empty(ai));
 		BOUNDED_ASSERT(!team_is_empty(foe));
 
@@ -288,7 +288,7 @@ struct Evaluator {
 	}
 
 private:
-	SelectMoveResult select_move_branch(Team const & ai, StaticVectorMove const ai_selections, Team const & foe, StaticVectorMove const foe_selections, Weather const weather, Depth const depth, auto const function) {
+	auto select_move_branch(Team const & ai, StaticVectorMove const ai_selections, Team const & foe, StaticVectorMove const foe_selections, Weather const weather, Depth const depth, auto const function) -> SelectMoveResult {
 		// This calls itself at one lower depth in order to get an initial estimate
 		// for move_scores because the algorithm works faster if you start with the
 		// correct result. The results from one less depth are used to estimate the
@@ -374,56 +374,11 @@ private:
 		};
 	}
 
-	auto finish_end_of_turn(Team const & first, Team const & last, Weather const weather, Depth const depth) -> double {
-		auto const deordered = deorder(first, last);
-		auto const & ai = deordered.ai;
-		auto const & foe = deordered.foe;
-		if (is_final_iteration(depth)) {
-			return static_cast<double>(m_evaluate(m_generation, ai, foe, weather));
-		}
-		return select_type_of_move(ai, foe, weather, depth.one_level_deeper()).score;
-	}
-
-	auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last, Moves const last_move, Weather weather, Depth const depth) -> double {
-		if (first_move != Moves::Pass) {
-			first.switch_pokemon(m_generation, last.pokemon(), weather, to_replacement(first_move));
-		}
-		if (last_move != Moves::Pass) {
-			last.switch_pokemon(m_generation, first.pokemon(), weather, to_replacement(last_move));
-		}
-		if (auto const won = Evaluate::win(first, last)) {
-			return *won;
-		}
-		first.reset_start_of_turn();
-		last.reset_start_of_turn();
-		return finish_end_of_turn(first, last, weather, depth);
-	}
-
-
-	double end_of_turn_branch(Team first, Team last, Weather weather, Depth const depth, EndOfTurnFlags const first_flag, EndOfTurnFlags const last_flag) {
-		end_of_turn(m_generation, first, first_flag, last, last_flag, weather);
-		if (auto const won = Evaluate::win(first, last)) {
-			return *won;
-		}
-		if (first.pokemon().hp() == 0_bi or last.pokemon().hp() == 0_bi) {
-			auto const first_selections = legal_selections(m_generation, first, last, weather);
-			auto const last_selections = legal_selections(m_generation, last, first, weather);
-			return select_move_branch(first, first_selections, last, last_selections, weather, depth, [&](auto && ... args) {
-				return handle_end_of_turn_replacing(OPERATORS_FORWARD(args)...);
-			}).move.score;
-		}
-		first.reset_start_of_turn();
-		last.reset_start_of_turn();
-		return finish_end_of_turn(first, last, weather, depth);
-	}
-
-	double end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Depth const depth, EndOfTurnFlags const team_flag, EndOfTurnFlags const other_flag) {
-		auto get_flag = [&](Team const & match) {
-			return std::addressof(match) == std::addressof(team) ? team_flag : other_flag;
-		};
-		return !faster ?
-			(end_of_turn_branch(team, other, weather, depth, team_flag, other_flag) + end_of_turn_branch(other, team, weather, depth, other_flag, team_flag)) / 2.0 :
-			end_of_turn_branch(faster->first, faster->second, weather, depth, get_flag(faster->first), get_flag(faster->second));
+	auto order_branch(Team const & ai, Moves const ai_move, Team const & foe, Moves const foe_move, Weather const weather, Depth const depth) -> double {
+		auto ordered = Order(m_generation, ai, ai_move, foe, foe_move, weather);
+		return !ordered ?
+			(use_move_branch(ai, ai_move, foe, foe_move, weather, depth) + use_move_branch(foe, foe_move, ai, ai_move, weather, depth)) / 2.0 :
+			use_move_branch(ordered->first.team, ordered->first.move, ordered->second.team, ordered->second.move, weather, depth);
 	}
 
 	auto use_move_branch_inner(KnownMove const first_used_move) {
@@ -472,8 +427,7 @@ private:
 		};
 	}
 
-
-	double use_move_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Depth const depth) {
+	auto use_move_branch(Team const & first, Moves const first_move, Team const & last, Moves const last_move, Weather const weather, Depth const depth) -> double {
 		// This complicated section of code is designed to handle U-turn and Baton
 		// Pass: The user of the move needs to go again before the other Pokemon
 		// moves and make a new selection. During that selection, the opponent
@@ -500,12 +454,57 @@ private:
 		});
 	}
 
-	double order_branch(Team const & ai, Moves const ai_move, Team const & foe, Moves const foe_move, Weather const weather, Depth const depth) {
-		auto ordered = Order(m_generation, ai, ai_move, foe, foe_move, weather);
-		return !ordered ?
-			(use_move_branch(ai, ai_move, foe, foe_move, weather, depth) + use_move_branch(foe, foe_move, ai, ai_move, weather, depth)) / 2.0 :
-			use_move_branch(ordered->first.team, ordered->first.move, ordered->second.team, ordered->second.move, weather, depth);
+	auto end_of_turn_order_branch(Team const & team, Team const & other, Faster const faster, Weather const weather, Depth const depth, EndOfTurnFlags const team_flag, EndOfTurnFlags const other_flag) -> double {
+		auto get_flag = [&](Team const & match) {
+			return std::addressof(match) == std::addressof(team) ? team_flag : other_flag;
+		};
+		return !faster ?
+			(end_of_turn_branch(team, other, weather, depth, team_flag, other_flag) + end_of_turn_branch(other, team, weather, depth, other_flag, team_flag)) / 2.0 :
+			end_of_turn_branch(faster->first, faster->second, weather, depth, get_flag(faster->first), get_flag(faster->second));
 	}
+
+	auto end_of_turn_branch(Team first, Team last, Weather weather, Depth const depth, EndOfTurnFlags const first_flag, EndOfTurnFlags const last_flag) -> double {
+		end_of_turn(m_generation, first, first_flag, last, last_flag, weather);
+		if (auto const won = Evaluate::win(first, last)) {
+			return *won;
+		}
+		if (first.pokemon().hp() == 0_bi or last.pokemon().hp() == 0_bi) {
+			auto const first_selections = legal_selections(m_generation, first, last, weather);
+			auto const last_selections = legal_selections(m_generation, last, first, weather);
+			return select_move_branch(first, first_selections, last, last_selections, weather, depth, [&](auto && ... args) {
+				return handle_end_of_turn_replacing(OPERATORS_FORWARD(args)...);
+			}).move.score;
+		}
+		first.reset_start_of_turn();
+		last.reset_start_of_turn();
+		return finish_end_of_turn(first, last, weather, depth);
+	}
+
+	auto handle_end_of_turn_replacing(Team first, Moves const first_move, Team last, Moves const last_move, Weather weather, Depth const depth) -> double {
+		if (first_move != Moves::Pass) {
+			first.switch_pokemon(m_generation, last.pokemon(), weather, to_replacement(first_move));
+		}
+		if (last_move != Moves::Pass) {
+			last.switch_pokemon(m_generation, first.pokemon(), weather, to_replacement(last_move));
+		}
+		if (auto const won = Evaluate::win(first, last)) {
+			return *won;
+		}
+		first.reset_start_of_turn();
+		last.reset_start_of_turn();
+		return finish_end_of_turn(first, last, weather, depth);
+	}
+
+	auto finish_end_of_turn(Team const & first, Team const & last, Weather const weather, Depth const depth) -> double {
+		auto const deordered = deorder(first, last);
+		auto const & ai = deordered.ai;
+		auto const & foe = deordered.foe;
+		if (is_final_iteration(depth)) {
+			return static_cast<double>(m_evaluate(m_generation, ai, foe, weather));
+		}
+		return select_type_of_move(ai, foe, weather, depth.one_level_deeper()).score;
+	}
+
 
 	auto score_executed_moves(Team const & user, Moves const selected_move, Team const & other, OtherMove const other_move, Weather const weather, auto const continuation) const -> double {
 		auto const score_move = [&](KnownMove const executed_move) {
