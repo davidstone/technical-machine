@@ -708,7 +708,7 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		m_flags.last_used_move.successful_move(move);
 	}
 	auto unsuccessfully_use_move(Moves const move) const {
-		m_flags.last_used_move.unsucessful_move(move);
+		m_flags.last_used_move.unsuccessful_move(move);
 	}
 
 private:

@@ -45,7 +45,7 @@ struct LastUsedMove {
 	
 	auto reset_start_of_turn() & -> void;
 
-	constexpr auto unsucessful_move(Moves const move) & {
+	constexpr auto unsuccessful_move(Moves const move) & {
 		m_move = move;
 		m_consecutive_successes = 0_bi;
 		m_moved_this_turn = true;
