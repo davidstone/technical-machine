@@ -32,6 +32,7 @@ void print_debug_statements() {
 	std::cout << "sizeof(Team): " << sizeof(technicalmachine::Team) << '\n';
 	std::cout << "sizeof(Pokemon): " << sizeof(technicalmachine::Pokemon) << '\n';
 	std::cout << "sizeof(Move): " << sizeof(technicalmachine::Move) << '\n';
+	std::cout << "sizeof(Weather): " << sizeof(technicalmachine::Weather) << '\n';
 }
 
 }	// namespace
