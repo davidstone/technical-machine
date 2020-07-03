@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/move.hpp>
@@ -49,7 +50,9 @@ struct Disable {
 	}
 
 	friend auto operator==(Disable const &, Disable const &) -> bool = default;
-
+	friend constexpr auto compress(Disable const value) {
+		return compress_combine(value.m_disabled_move, value.m_turns_disabled);
+	}
 private:
 	// TODO: Use an optional struct?
 	bounded::optional<Moves> m_disabled_move = bounded::none;

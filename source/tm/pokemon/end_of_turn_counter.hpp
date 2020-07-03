@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 
 #include <bounded/optional.hpp>
@@ -56,7 +57,9 @@ struct EndOfTurnCounter {
 		}
 	}
 	friend auto operator==(EndOfTurnCounter const &, EndOfTurnCounter const &) -> bool = default;
-	
+	friend constexpr auto compress(EndOfTurnCounter const value) {
+		return compress(value.m_turns_active);
+	}
 private:
 	using Counter = bounded::optional<bounded::integer<0, max_turns>>;
 	Counter m_turns_active = bounded::none;

@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 #include <tm/stat/hp.hpp>
 
@@ -63,7 +64,9 @@ public:
 	}
 
 	friend auto operator==(Substitute const &, Substitute const &) -> bool = default;
-
+	friend constexpr auto compress(Substitute const value) {
+		return value.m_hp;
+	}
 private:
 	// TODO: Use change_policy
 	bounded::clamped_integer<

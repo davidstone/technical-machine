@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
@@ -51,6 +52,9 @@ struct Confusion {
 	}
 
 	friend auto operator==(Confusion const &, Confusion const &) -> bool = default;
+	friend constexpr auto compress(Confusion const value) {
+		return compress(value.m_turns_spent_confused);
+	}
 
 private:
 	friend struct Evaluate;

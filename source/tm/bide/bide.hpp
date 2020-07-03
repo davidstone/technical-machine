@@ -21,6 +21,7 @@
 #include <tm/bide/damage.hpp>
 #include <tm/bide/duration.hpp>
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 #include <tm/stat/hp.hpp>
 
@@ -37,7 +38,9 @@ struct Bide {
 	}
 
 	friend auto operator==(Bide const &, Bide const &) -> bool = default;
-
+	friend constexpr auto compress(Bide const value) {
+		return compress_combine(value.m_damage, value.m_duration);
+	}
 private:
 	BideDamage m_damage;
 	BideDuration m_duration;

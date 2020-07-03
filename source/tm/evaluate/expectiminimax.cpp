@@ -59,10 +59,10 @@ namespace technicalmachine {
 namespace {
 
 void print_best_move(Team const & team, BestMove const best_move, std::ostream & log) {
-	if (is_switch(best_move.move)) {
-		log << "Switch to " << to_string(team.pokemon(to_replacement(best_move.move)).species());
+	if (is_switch(best_move.name)) {
+		log << "Switch to " << to_string(team.pokemon(to_replacement(best_move.name)).species());
 	} else {
-		log << "Use " << to_string(best_move.move);
+		log << "Use " << to_string(best_move.name);
 	}
 	log << " for a minimum expected score of " << static_cast<std::int64_t>(best_move.score) << '\n';
 }
@@ -563,17 +563,20 @@ Moves expectiminimax(Generation const generation, Team const & ai, Team const & 
 	if (team_is_empty(ai) or team_is_empty(foe)) {
 		throw std::runtime_error("Tried to evaluate a position with an empty team");
 	}
-	auto evaluator = Evaluator(generation, evaluate, log);
+	// The two best hash table sizes are 8 bit and 13 bit. Not using a dynamic
+	// allocation here speeds up every hash table size except for those two,
+	// which are faster with a dynamic allocation.
+	auto evaluator = std::make_unique<Evaluator>(generation, evaluate, log);
 	log << "Evaluating to a depth of " << depth.initial() << "...\n";
 	boost::timer timer;
-	auto const best_move = evaluator.select_type_of_move(ai, foe, weather, depth);
-	if (best_move.move == Moves::Pass) {
+	auto const best_move = evaluator->select_type_of_move(ai, foe, weather, depth);
+	if (best_move.name == Moves::Pass) {
 		throw std::runtime_error("Should never evaluate a position in which it is legal to use Pass.");
 	}
 	log << "Determined best move in " << timer.elapsed() << " seconds: ";
 	print_best_move(ai, best_move, log);
 	log << std::flush;
-	return best_move.move;
+	return best_move.name;
 }
 
 }	// namespace technicalmachine

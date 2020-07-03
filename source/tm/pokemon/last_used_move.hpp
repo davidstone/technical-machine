@@ -25,6 +25,7 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/is_switch.hpp>
 
+#include <tm/compress.hpp>
 #include <tm/generation.hpp>
 #include <tm/rational.hpp>
 #include <tm/weather.hpp>
@@ -148,6 +149,14 @@ struct LastUsedMove {
 	auto use_vanish_move(Item) & -> VanishOutcome;
 
 	friend auto operator==(LastUsedMove const &, LastUsedMove const &) -> bool = default;
+	friend constexpr auto compress(LastUsedMove const value) {
+		return compress_combine(
+			value.m_move,
+			value.m_consecutive_successes,
+			value.m_moved_this_turn,
+			value.m_effects
+		);
+	}
 private:
 	constexpr auto successful_last_move(Moves const move) const -> bool {
 		return m_move == move and m_consecutive_successes >= 1_bi;
@@ -162,18 +171,33 @@ private:
 
 	struct Empty {
 		friend auto operator==(Empty const &, Empty const &) -> bool = default;
+		friend constexpr auto compress(Empty) -> bounded::constant_t<0> {
+			return 0_bi;
+		}
 	};
 	struct ChargingUp {
 		friend auto operator==(ChargingUp const &, ChargingUp const &) -> bool = default;
+		friend constexpr auto compress(ChargingUp) -> bounded::constant_t<0> {
+			return 0_bi;
+		}
 	};
 	struct Protecting {
 		friend auto operator==(Protecting const &, Protecting const &) -> bool = default;
+		friend constexpr auto compress(Protecting) -> bounded::constant_t<0> {
+			return 0_bi;
+		}
 	};
 	struct Recharging {
 		friend auto operator==(Recharging const &, Recharging const &) -> bool = default;
+		friend constexpr auto compress(Recharging) -> bounded::constant_t<0> {
+			return 0_bi;
+		}
 	};
 	struct Vanishing {
 		friend auto operator==(Vanishing const &, Vanishing const &) -> bool = default;
+		friend constexpr auto compress(Vanishing) -> bounded::constant_t<0> {
+			return 0_bi;
+		}
 	};
 
 	bounded::variant<

@@ -1,5 +1,4 @@
-// Cache scores in case we re-evaluate the same position
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2020 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -18,6 +17,9 @@
 
 #pragma once
 
+#include <tm/move/moves.hpp>
+
+#include <tm/compress.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/optional.hpp>
@@ -29,13 +31,38 @@ namespace technicalmachine {
 struct Team;
 
 struct BestMove {
-	Moves move;
+	Moves name;
 	double score;
 };
 
 struct TranspositionTable {
 	auto add_score(Team const & ai, Team const & foe, Weather, unsigned depth, BestMove) -> void;
 	auto get_score(Team const & ai, Team const & foe, Weather, unsigned depth) const -> bounded::optional<BestMove>;
+private:
+	using CompressedBattle = bounded::tuple<
+		bounded::integer<0, bounded::detail::normalize<(17476366957422410805543616810844159999_bi).value()>>,
+		bounded::integer<0, bounded::detail::normalize<(18297444554530391011428210604769279999_bi).value()>>,
+		bounded::integer<0, bounded::detail::normalize<(1179924466646960606084156227583999999_bi).value()>>,
+		bounded::integer<0, bounded::detail::normalize<(95341770858580775465420294432143441919_bi).value()>>,
+		bounded::integer<0, bounded::detail::normalize<(17476366957422410805543616810844159999_bi).value()>>,
+		bounded::integer<0, bounded::detail::normalize<(18297444554530391011428210604769279999_bi).value()>>,
+		bounded::integer<0, bounded::detail::normalize<(109252265430274130192977428479999_bi).value()>>,
+		bounded::integer<0, bounded::detail::normalize<(95341770858580775465420294432143441919_bi).value()>>
+	>;
+
+	struct Value {
+		CompressedBattle compressed_battle = {0_bi, 0_bi, 0_bi, 0_bi, 0_bi, 0_bi, 0_bi, 0_bi};
+		unsigned depth = 0;
+		Moves move = {};
+		double score = 0.0;
+	};
+	static constexpr auto size = bounded::constant<1 << 13>;
+	using Data = containers::array<Value, size.value()>;
+	using Index = containers::index_type<Data>;
+
+	static auto index(CompressedBattle const & compressed_battle) -> Index;
+
+	Data m_data;
 };
 
 }	// namespace technicalmachine

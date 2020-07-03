@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/pokemon/end_of_turn_counter.hpp>
 #include <tm/operators.hpp>
 
@@ -39,6 +40,9 @@ struct PartialTrap {
 	auto damage(Generation, MutableActivePokemon, Weather) -> void;
 
 	friend auto operator==(PartialTrap const &, PartialTrap const &) -> bool = default;
+	friend constexpr auto compress(PartialTrap const value) {
+		return compress(value.m_base);
+	}
 private:
 	EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::activate, CounterOperations::advance_one_turn_variable> m_base;
 };

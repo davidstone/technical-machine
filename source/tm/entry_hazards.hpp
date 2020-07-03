@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
@@ -60,6 +61,10 @@ private:
 	bounded::clamped_integer<0, 2> m_toxic_spikes = 0_bi;
 	bool m_stealth_rock = false;
 };
+
+constexpr auto compress(EntryHazards const value) {
+	return compress_combine(value.spikes(), value.stealth_rock(), value.toxic_spikes());
+}
 
 auto apply(Generation, EntryHazards &, MutableActivePokemon switcher, Weather) -> void;
 

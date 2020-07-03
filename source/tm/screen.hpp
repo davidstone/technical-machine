@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
@@ -43,7 +44,9 @@ struct Screen {
 	}
 	
 	friend auto operator==(Screen const &, Screen const &) -> bool = default;
-
+	friend constexpr auto compress(Screen const value) {
+		return compress(value.m_turns_remaining);
+	}
 private:
 	constexpr auto activate(std::true_type) & -> void {
 		set(bounded::constant<normal_duration>);

@@ -20,6 +20,7 @@
 #include <tm/move/moves.hpp>
 
 #include <tm/ability.hpp>
+#include <tm/compress.hpp>
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
 
@@ -79,6 +80,12 @@ struct PP {
 	// Pokemon
 	friend constexpr auto operator==(PP const lhs, PP const rhs) -> bool {
 		return lhs.m_current == rhs.m_current;
+	}
+
+	// Assumes max PP is the same because it assumes the same Move on the same
+	// Pokemon
+	friend constexpr auto compress(PP const value) {
+		return compress(value.m_current);
 	}
 
 private:

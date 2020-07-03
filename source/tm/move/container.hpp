@@ -22,6 +22,7 @@
 #include <tm/move/move.hpp>
 #include <tm/move/shared.hpp>
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 
 #include <containers/algorithms/concatenate_view.hpp>
@@ -83,6 +84,10 @@ public:
 
 	auto remove_switch() {
 		m_shared.remove_switch();
+	}
+
+	friend auto compress(MoveContainer const value) {
+		return compress_combine(value.m_regular, value.m_shared);
 	}
 	
 private:

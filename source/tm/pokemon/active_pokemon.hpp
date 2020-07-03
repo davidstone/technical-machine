@@ -42,6 +42,7 @@
 
 #include <tm/type/pokemon_types.hpp>
 
+#include <tm/compress.hpp>
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
@@ -66,6 +67,53 @@ struct ActivePokemonFlags {
 	}
 
 	friend auto operator==(ActivePokemonFlags const &, ActivePokemonFlags const &) -> bool = default;
+	friend auto compress(ActivePokemonFlags const value) {
+		return bounded::tuple(
+			compress_combine(
+				value.ability,
+				value.confusion,
+				value.disable
+			),
+			compress_combine(
+				value.embargo,
+				value.encore,
+				value.heal_block,
+				value.last_used_move,
+				value.magnet_rise,
+				value.substitute,
+				value.partial_trap,
+				value.perish_song,
+				value.stage,
+				value.status,
+				value.slow_start,
+				value.stockpile,
+				value.taunt,
+				value.types,
+				value.yawn,
+				value.direct_damage_received,
+				value.aqua_ring,
+				value.attracted,
+				value.charged,
+				value.is_cursed,
+				value.defense_curled,
+				value.flash_fire,
+				value.has_focused_energy,
+				value.fully_trapped,
+				value.gastro_acid,
+				value.identified,
+				value.used_imprison,
+				value.ingrained,
+				value.leech_seeded,
+				value.is_loafing_turn,
+				value.minimized,
+				value.mud_sport,
+				value.power_trick_is_active,
+				value.is_tormented,
+				value.unburdened,
+				value.water_sport
+			)
+		);
+	}
 private:
 	template<bool>
 	friend struct ActivePokemonImpl;

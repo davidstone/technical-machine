@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
@@ -34,7 +35,9 @@ struct Level {
 	}
 
 	friend auto operator==(Level const &, Level const &) -> bool = default;
-
+	friend constexpr auto compress(Level const value) {
+		return compress(value.m_value);
+	}
 private:
 	value_type m_value;
 };

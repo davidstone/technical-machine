@@ -19,6 +19,7 @@
 
 #include <tm/move/pp.hpp>
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
@@ -52,7 +53,11 @@ struct Move {
 	}
 
 	friend auto operator==(Move const &, Move const &) -> bool = default;
-
+	// Pokemon don't change their moves throughout a battle, so we don't need
+	// to include move name
+	friend constexpr auto compress(Move const value) {
+		return compress(value.m_pp);
+	}
 private:
 	Moves m_name;
 	PP m_pp;

@@ -19,6 +19,7 @@
 
 #include <tm/type/type.hpp>
 #include <tm/ability.hpp>
+#include <tm/compress.hpp>
 #include <tm/generation.hpp>
 #include <tm/item.hpp>
 #include <tm/operators.hpp>
@@ -62,29 +63,53 @@ struct Status {
 private:
 	struct Clear {
 		friend auto operator==(Clear const &, Clear const &) -> bool = default;
+		friend constexpr auto compress(Clear) {
+			return 0_bi;
+		}
 	};
 	struct Burn {
 		friend auto operator==(Burn const &, Burn const &) -> bool = default;
+		friend constexpr auto compress(Burn) {
+			return 0_bi;
+		}
 	};
 	struct Freeze {
 		friend auto operator==(Freeze const &, Freeze const &) -> bool = default;
+		friend constexpr auto compress(Freeze) {
+			return 0_bi;
+		}
 	};
 	struct Paralysis {
 		friend auto operator==(Paralysis const &, Paralysis const &) -> bool = default;
+		friend constexpr auto compress(Paralysis) {
+			return 0_bi;
+		}
 	};
 	struct Poison {
 		friend auto operator==(Poison const &, Poison const &) -> bool = default;
+		friend constexpr auto compress(Poison) {
+			return 0_bi;
+		}
 	};
 	struct Toxic {
 		friend auto operator==(Toxic const &, Toxic const &) -> bool = default;
+		friend constexpr auto compress(Toxic) {
+			return 0_bi;
+		}
 	};
 	struct Sleep {
 		bounded::clamped_integer<0, 4> turns_slept = 0_bi;
 		friend auto operator==(Sleep const &, Sleep const &) -> bool = default;
+		friend constexpr auto compress(Sleep const value) {
+			return compress(value.turns_slept);
+		}
 	};
 	struct Rest {
 		bounded::clamped_integer<0, 2> turns_slept = 0_bi;
 		friend auto operator==(Rest const &, Rest const &) -> bool = default;
+		friend constexpr auto compress(Rest const value) {
+			return compress(value.turns_slept);
+		}
 	};
 
 public:
@@ -110,7 +135,9 @@ public:
 	auto probability_of_clearing(Generation, Ability) const -> double;
 
 	friend auto operator==(Status const &, Status const &) -> bool = default;
-
+	friend constexpr auto compress(Status const value) {
+		return compress(value.m_state);
+	}
 private:
 	using State = bounded::variant<
 		Clear,

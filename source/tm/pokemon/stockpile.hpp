@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
 
@@ -48,6 +49,9 @@ struct Stockpile {
 	}
 
 	friend auto operator==(Stockpile const &, Stockpile const &) -> bool = default;
+	friend constexpr auto compress(Stockpile const value) {
+		return compress(value.m_level);
+	}
 
 private:
 	friend struct Evaluate;

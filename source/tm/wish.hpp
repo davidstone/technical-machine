@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 
 #include <bounded/optional.hpp>
@@ -46,5 +47,9 @@ private:
 	using counter_type = bounded::checked_integer<0, 1>;
 	bounded::optional<counter_type> m_turns_until_activation = bounded::none;
 };
+
+constexpr auto compress(Wish const value) {
+	return compress(value.is_active());
+}
 
 }	// namespace technicalmachine

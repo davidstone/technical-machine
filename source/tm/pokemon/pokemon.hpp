@@ -20,9 +20,10 @@
 #include <tm/pokemon/happiness.hpp>
 #include <tm/pokemon/hidden_power.hpp>
 #include <tm/pokemon/level.hpp>
-#include <tm/pokemon/species_forward.hpp>
+#include <tm/pokemon/species.hpp>
 
 #include <tm/ability.hpp>
+#include <tm/compress.hpp>
 #include <tm/gender.hpp>
 #include <tm/held_item.hpp>
 #include <tm/operators.hpp>
@@ -160,6 +161,15 @@ struct Pokemon {
 	}
 
 	friend auto operator==(Pokemon const &, Pokemon const &) -> bool = default;
+	friend auto compress(Pokemon const value) {
+		return compress_combine(
+			value.m_moves.regular(),
+			value.stats.hp().current(),
+			value.m_item,
+			value.m_status,
+			value.m_has_been_seen
+		);
+	}
 private:
 	MoveContainer m_moves;
 	

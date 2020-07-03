@@ -171,6 +171,7 @@ add_library(tm_common STATIC
 	source/tm/battle.cpp
 	source/tm/block.cpp
 	source/tm/buffer_view.cpp
+	source/tm/compress.cpp
 	source/tm/critical_hit.cpp
 	source/tm/end_of_turn.cpp
 	source/tm/entry_hazards.cpp

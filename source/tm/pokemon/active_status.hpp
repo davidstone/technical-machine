@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/generation.hpp>
 #include <tm/status.hpp>
 
@@ -53,6 +54,11 @@ struct ActiveStatus {
 	friend auto operator==(ActiveStatus const & lhs, ActiveStatus const & rhs) -> bool {
 		// TODO: std::bit_cast
 		return reinterpret_cast<std::byte const &>(lhs) == reinterpret_cast<std::byte const &>(rhs);
+	}
+	friend auto compress(ActiveStatus const value) {
+		// TODO: std::bit_cast
+		auto const byte = reinterpret_cast<std::byte const &>(value);
+		return compress(bounded::integer<0, 15>(static_cast<std::uint8_t>(byte)));
 	}
 private:
 	auto end_of_attack(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather) & -> void;

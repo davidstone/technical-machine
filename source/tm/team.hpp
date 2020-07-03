@@ -27,6 +27,8 @@
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
+#include <tm/compress.hpp>
+
 #include <operators/forward.hpp>
 
 #include <string_view>
@@ -181,6 +183,28 @@ struct Team {
 	}
 
 	friend auto operator==(Team const &, Team const &) -> bool = default;
+
+	friend auto compress(Team const & team) {
+		auto const compressed_pokemon = compress(team.m_all_pokemon);
+		static_assert(bounded::tuple_size<decltype(compressed_pokemon)> == 3_bi);
+		auto const compressed_flags = compress(team.m_flags);
+		static_assert(bounded::tuple_size<decltype(compressed_flags)> == 2_bi);
+		return bounded::tuple(
+			compress_combine(
+				compressed_pokemon[0_bi],
+				team.m_screens,
+				team.m_entry_hazards,
+				team.m_wish,
+				team.me
+			),
+			compress_combine(
+				compressed_pokemon[1_bi],
+				compressed_flags[0_bi]
+			),
+			compressed_pokemon[2_bi],
+			compressed_flags[1_bi]
+		);
+	}
 
 private:
 	PokemonCollection m_all_pokemon;

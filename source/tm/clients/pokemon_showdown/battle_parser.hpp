@@ -79,6 +79,7 @@ struct BattleParser {
 		m_depth(depth),
 		m_log_foe_teams(log_foe_teams)
 	{
+		m_send_message(m_id + "|/timer on");
 	}
 	
 	void handle_message(InMessage message);

@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 #include <tm/screen.hpp>
 
@@ -81,6 +82,16 @@ struct Screens {
 	}
 
 	friend auto operator==(Screens const &, Screens const &) -> bool = default;
+	friend constexpr auto compress(Screens const value) {
+		return compress_combine(
+			value.light_screen(),
+			value.reflect(),
+			value.lucky_chant(),
+			value.mist(),
+			value.safeguard(),
+			value.tailwind()
+		);
+	}
 	
 private:
 	LightScreen m_light_screen;
@@ -91,4 +102,4 @@ private:
 	Tailwind m_tailwind;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

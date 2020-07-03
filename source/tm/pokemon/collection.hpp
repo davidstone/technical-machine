@@ -22,6 +22,7 @@
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/pokemon_not_found.hpp>
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 
 #include <bounded/assert.hpp>
@@ -106,6 +107,20 @@ struct PokemonCollection {
 	void remove_active(containers::index_type<PokemonCollection> index_of_replacement);
 
 	friend auto operator==(PokemonCollection const &, PokemonCollection const &) -> bool = default;
+	friend auto compress(PokemonCollection const & value) {
+		static_assert(bounded::max_value<decltype(size(value.m_container))> == 6_bi);
+		auto const p0 = size(value.m_container) >= 1_bi ? compress(value.m_container[0_bi]) : 0_bi;
+		auto const p1 = size(value.m_container) >= 2_bi ? compress(value.m_container[1_bi]) : 0_bi;
+		auto const p2 = size(value.m_container) >= 3_bi ? compress(value.m_container[2_bi]) : 0_bi;
+		auto const p3 = size(value.m_container) >= 4_bi ? compress(value.m_container[3_bi]) : 0_bi;
+		auto const p4 = size(value.m_container) >= 5_bi ? compress(value.m_container[4_bi]) : 0_bi;
+		auto const p5 = size(value.m_container) >= 6_bi ? compress(value.m_container[5_bi]) : 0_bi;
+		return bounded::tuple(
+			compress_combine(p0, p1),
+			compress_combine(p2, p3),
+			compress_combine(p4, p5, value.m_index, value.m_real_size)
+		);
+	}
 private:
 	void check_not_full() {
 		if (size(m_container) == m_real_size) {

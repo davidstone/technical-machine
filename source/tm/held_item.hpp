@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/generation.hpp>
 #include <tm/item.hpp>
 
@@ -66,7 +67,9 @@ struct HeldItem {
 	}
 
 	friend auto operator==(HeldItem const &, HeldItem const &) -> bool = default;
-
+	friend constexpr auto compress(HeldItem const value) {
+		return compress_combine(value.m_item, value.m_active);
+	}
 private:
 	constexpr auto affected_by_embargo(Generation const generation) const -> bool {
 		// Iron_Ball is disabled in Generation 4 for the Speed check but not for

@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/stat/hp.hpp>
 #include <tm/operators.hpp>
 
@@ -37,7 +38,9 @@ struct BideDamage {
 	}
 
 	friend auto operator==(BideDamage const &, BideDamage const &) -> bool = default;
-	
+	friend constexpr auto compress(BideDamage const value) {
+		return compress(value.m_damage);
+	}
 private:
 	// This is the greatest range that matters since anything more is overkill
 	bounded::clamped_integer<0, (HP::max_value + 1) / 2> m_damage = 0_bi;

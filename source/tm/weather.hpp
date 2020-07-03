@@ -18,6 +18,7 @@
 #pragma once
 
 #include <tm/ability.hpp>
+#include <tm/compress.hpp>
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/status.hpp>
@@ -43,9 +44,28 @@ constexpr auto weather_is_blocked_by_ability(Ability const ability1, Ability con
 	return weather_is_blocked_by_ability(ability1) or weather_is_blocked_by_ability(ability2);
 }
 
+enum class NormalWeather : std::uint8_t {
+	clear,
+	hail,
+	sand,
+	sun,
+	rain
+};
+
+} // namespace technicalmachine
+namespace bounded {
+
+template<>
+inline constexpr auto min_value<technicalmachine::NormalWeather> = technicalmachine::NormalWeather::clear;
+
+template<>
+inline constexpr auto max_value<technicalmachine::NormalWeather> = technicalmachine::NormalWeather::rain;
+
+} // namespace bounded
+namespace technicalmachine {
+
 struct Weather {
 private:
-	enum class NormalWeather : std::uint8_t { clear, hail, sand, sun, rain };
 	static constexpr auto standard = 5_bi;
 	static constexpr auto extended = 8_bi;
 	static constexpr auto permanent = -1_bi;
@@ -163,6 +183,16 @@ public:
 	}
 
 	friend auto operator==(Weather const &, Weather const &) -> bool = default;
+
+	friend constexpr auto compress(Weather const weather) {
+		return compress_combine(
+			weather.m_trick_room_turns_remaining,
+			weather.m_gravity_turns_remaining,
+			weather.m_magic_room_turns_remaining,
+			weather.m_active,
+			weather.m_turns_remaining
+		);
+	}
 };
 
 }	// namespace technicalmachine

@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
 #include <tm/operators.hpp>
 
 #include <utility>
@@ -36,7 +37,9 @@ struct BideDuration {
 	}
 
 	friend auto operator==(BideDuration const &, BideDuration const &) -> bool = default;
-
+	friend constexpr auto compress(BideDuration const value) {
+		return compress(value.m_charged_up);
+	}
 private:
 	bool m_charged_up = false;
 };
