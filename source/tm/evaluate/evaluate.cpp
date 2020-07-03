@@ -111,7 +111,7 @@ auto score_team(Evaluate const & evaluate, Generation const generation, Team con
 		return score_pokemon(evaluate, generation, pokemon, team.entry_hazards());
 	};
 	return
-		containers::accumulate(containers::transform(containers::filter(team.all_pokemon(), has_hp), get_score)) +
+		containers::sum(containers::transform(containers::filter(team.all_pokemon(), has_hp), get_score)) +
 		score_active_pokemon(evaluate, team.pokemon());
 }
 

@@ -116,7 +116,7 @@ auto variable_adjusted_base_power(Generation const generation, Team const & atta
 			return executed.variable.present_power();
 		case Moves::Punishment: {
 			auto is_positive = [](auto const value) { return value > 0_bi; };
-			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::accumulate(containers::filter(defender.stage(), is_positive)));
+			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::sum(containers::filter(defender.stage(), is_positive)));
 			return bounded::min(uncapped_power, 200_bi);
 		}
 		case Moves::Return:

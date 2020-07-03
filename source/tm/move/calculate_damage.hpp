@@ -27,7 +27,7 @@ struct OtherMove;
 struct Team;
 struct Weather;
 
-using damage_type = bounded::checked_integer<0, 4294967295>;
+using damage_type = bounded::checked_integer<0, 1'000'000'000>;
 
 auto calculate_damage(Generation, Team const & attacker, ExecutedMove, bool move_weakened_from_item, Team const & defender, OtherMove defender_move, Weather) -> damage_type;
 

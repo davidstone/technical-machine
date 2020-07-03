@@ -167,7 +167,7 @@ auto selected_move_to_executed_move(Generation const generation, Moves const sel
 
 constexpr auto average_transformed_sum(auto && range, auto transformation) {
 	auto const range_size = size(range);
-	return containers::accumulate(containers::transform(OPERATORS_FORWARD(range), std::move(transformation))) / static_cast<double>(range_size);
+	return containers::sum(containers::transform(OPERATORS_FORWARD(range), std::move(transformation))) / static_cast<double>(range_size);
 }
 
 double generic_flag_branch(double const basic_probability, auto const & next_branch) {
