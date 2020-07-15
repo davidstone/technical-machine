@@ -558,7 +558,7 @@ private:
 
 }	// namespace
 
-Moves expectiminimax(Generation const generation, Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) {
+auto expectiminimax(Generation const generation, Team const & ai, Team const & foe, Weather const weather, Evaluate const evaluate, Depth const depth, std::ostream & log) -> BestMove {
 	if (team_is_empty(ai) or team_is_empty(foe)) {
 		throw std::runtime_error("Tried to evaluate a position with an empty team");
 	}
@@ -575,7 +575,7 @@ Moves expectiminimax(Generation const generation, Team const & ai, Team const & 
 	log << "Determined best move in " << timer.elapsed() << " seconds: ";
 	print_best_move(ai, best_move, log);
 	log << std::flush;
-	return best_move.name;
+	return best_move;
 }
 
 }	// namespace technicalmachine

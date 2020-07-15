@@ -80,7 +80,11 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		team2.reset_start_of_turn();
 	}
 
-	BOUNDED_ASSERT(expectiminimax(generation, team1, team2, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
+	{
+		auto const best_move = expectiminimax(generation, team1, team2, weather, evaluate, depth, std::cout);
+		BOUNDED_ASSERT(best_move.name == Moves::Thunderbolt);
+		BOUNDED_ASSERT(best_move.score == double(victory));
+	}
 	
 	Team team3(1_bi);
 	{
@@ -92,7 +96,11 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		team3.reset_start_of_turn();
 	}
 	
-	BOUNDED_ASSERT(expectiminimax(generation, team1, team3, weather, evaluate, depth, std::cout) == Moves::Shadow_Ball);
+	{
+		auto const best_move = expectiminimax(generation, team1, team3, weather, evaluate, depth, std::cout);
+		BOUNDED_ASSERT(best_move.name == Moves::Shadow_Ball);
+		BOUNDED_ASSERT(best_move.score == double(victory));
+}
 }
 
 void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
@@ -123,7 +131,8 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 		defender.reset_start_of_turn();
 	}
 
-	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Shadow_Ball);
+	auto const best_move = expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout);
+	BOUNDED_ASSERT(best_move.name == Moves::Shadow_Ball);
 }
 
 void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
@@ -152,7 +161,9 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 		defender.reset_start_of_turn();
 	}
 
-	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Belly_Drum);
+	auto const best_move = expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout);
+	BOUNDED_ASSERT(best_move.name == Moves::Belly_Drum);
+	BOUNDED_ASSERT(best_move.score == double(victory));
 }
 
 void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
@@ -166,24 +177,27 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 		attacker.add_pokemon(generation, Species::Hippopotas, Level(100_bi), Gender::male, Item::Leftovers, Ability::Sand_Stream, Nature::Adamant);
 		auto hippopotas = attacker.pokemon();
 		hippopotas.switch_in(generation, weather);
-		containers::append(regular_moves(hippopotas), shuffled(Moves::Curse, Moves::Crunch));
-		hippopotas.set_ev(generation, PermanentStat::hp, IV(31_bi), EV(252_bi));
+		containers::append(regular_moves(hippopotas), containers::array{Move(generation, Moves::Curse, 0_bi), Move(generation, Moves::Crunch, 0_bi)});
 		hippopotas.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
 		attacker.reset_start_of_turn();
 	}
 
+	// TODO: Implement Encore's effect ending when PP runs out, then Wobbuffet
+	// can have Encore
+
 	Team defender(1_bi);
 	{
-		defender.add_pokemon(generation, Species::Wobbuffet, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Shadow_Tag, Nature::Bold);
+		defender.add_pokemon(generation, Species::Wobbuffet, Level(100_bi), Gender::genderless, Item::Leftovers, Ability::Shadow_Tag, Nature::Calm);
 		auto wobbuffet = defender.pokemon();
 		wobbuffet.switch_in(generation, weather);
-		containers::append(regular_moves(wobbuffet), shuffled(Moves::Counter, Moves::Encore));
-		wobbuffet.set_ev(generation, PermanentStat::hp, IV(31_bi), EV(252_bi));
+		containers::append(regular_moves(wobbuffet), shuffled(Moves::Counter));
 		wobbuffet.set_ev(generation, PermanentStat::def, IV(31_bi), EV(252_bi));
 		defender.reset_start_of_turn();
 	}
 
-	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Curse);
+	auto const best_move = expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout);
+	BOUNDED_ASSERT(best_move.name == Moves::Curse);
+	BOUNDED_ASSERT(best_move.score == double(victory));
 }
 
 
@@ -224,7 +238,9 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	}
 	defender.reset_start_of_turn();
 
-	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Belly_Drum);
+	auto const best_move = expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cerr);
+	BOUNDED_ASSERT(best_move.name == Moves::Belly_Drum);
+	BOUNDED_ASSERT(best_move.score == double(victory));
 }
 
 
@@ -262,6 +278,8 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		suicune.set_ev(generation, PermanentStat::def, IV(31_bi), EV(252_bi));
 	}
 
+	defender.reset_start_of_turn();
+
 	call_move(
 		generation,
 		defender,
@@ -273,9 +291,8 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		ActualDamage::Unknown{}
 	);
 	
-	defender.reset_start_of_turn();
-
-	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Switch2);
+	auto const best_move = expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout);
+	BOUNDED_ASSERT(best_move.name == Moves::Switch2);
 }
 
 
@@ -310,7 +327,8 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 		defender.reset_start_of_turn();
 	}
 
-	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Calm_Mind);
+	auto const best_move = expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout);
+	BOUNDED_ASSERT(best_move.name == Moves::Calm_Mind);
 }
 
 void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
@@ -359,30 +377,30 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	// TODO: Validate score, too
 
 	BOUNDED_ASSERT(jolteon.status().name() == Statuses::clear);
-	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Thunderbolt);
+	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout).name == Moves::Thunderbolt);
 
 	call_move(generation, attacker, sleep_talk, defender, other_move, weather, keep_status, unknown_damage);
 	apply_status_to_self(generation, Statuses::sleep, jolteon, weather);
 	next_turn();
 	BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
-	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cerr) == Moves::Sleep_Talk);
+	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cerr).name == Moves::Sleep_Talk);
 
 	call_move(generation, attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 	next_turn();
 	BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
-	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Sleep_Talk);
+	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout).name == Moves::Sleep_Talk);
 
 	call_move(generation, attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 	next_turn();
 	BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
-	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == Moves::Sleep_Talk);
+	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout).name == Moves::Sleep_Talk);
 
 	#if 0
 		// Same probability of either move
 		call_move(generation, attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 		next_turn();
 		BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
-		BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout) == ?);
+		BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout).name == ?);
 	#endif
 }
 
@@ -410,8 +428,8 @@ void generation_one_frozen_last_pokemon(Evaluate const & evaluate) {
 	attacker.reset_start_of_turn();
 	defender.reset_start_of_turn();
 
-	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, Depth(1U, 1U), std::cout) == Moves::Psychic);
-	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, Depth(2U, 2U), std::cout) == Moves::Psychic);
+	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, make_depth(1U), std::cout).name == Moves::Psychic);
+	BOUNDED_ASSERT(expectiminimax(generation, attacker, defender, weather, evaluate, make_depth(2U), std::cout).name == Moves::Psychic);
 }
 
 } // namespace

@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/evaluate/best_move.hpp>
 #include <tm/evaluate/depth.hpp>
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/weather.hpp>
@@ -27,11 +28,10 @@
 namespace technicalmachine {
 
 enum class Generation : std::uint8_t;
-enum class Moves : std::uint16_t;
 struct Evaluate;
 struct Team;
 struct Weather;
 
-Moves expectiminimax(Generation, Team const & ai, Team const & foe, Weather, Evaluate, Depth, std::ostream & log);
+auto expectiminimax(Generation, Team const & ai, Team const & foe, Weather, Evaluate, Depth, std::ostream & log) -> BestMove;
 
 }	// namespace technicalmachine
