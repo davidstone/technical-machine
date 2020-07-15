@@ -40,7 +40,7 @@ enum class Moves : std::uint16_t;
 namespace po {
 namespace {
 
-void test_enum(std::string const & name, auto && to_id, auto && from_id, auto max) {
+void test_enum(std::string_view const name, auto && to_id, auto && from_id, auto max) {
 	std::cout << "\t\tVerifying correct " << name << ".\n";
 	for (auto const original : containers::enum_range(max)) {
 		auto const id = to_id(original);
