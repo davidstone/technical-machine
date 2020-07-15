@@ -417,10 +417,9 @@ private:
 				auto const is_same_pokemon = original_last_pokemon.is_same_pokemon(last.pokemon().species());
 				auto const actual_last_move = is_same_pokemon ? last_move : Moves::Pass;
 				auto const first_used_move = original_last_pokemon.other_move();
-				return score_executed_moves(pre_updated_last, actual_last_move, pre_updated_first, first_used_move, pre_updated_weather, [&](Team const & updated_first, Team const & updated_last, Weather const updated_weather) {
+				return score_executed_moves(pre_updated_last, actual_last_move, pre_updated_first, first_used_move, pre_updated_weather, [&](Team const & updated_last, Team const & updated_first, Weather const updated_weather) {
 					auto const first_selections = StaticVectorMove({Moves::Pass});
 					auto const last_selections = legal_selections(m_generation, updated_last, updated_first, weather);
-					BOUNDED_ASSERT(all_are_pass_or_switch(last_selections));
 					return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, depth, use_move_branch_inner(first_used_move)).move.score;
 				});
 			});
