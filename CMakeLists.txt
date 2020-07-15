@@ -315,7 +315,6 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		pthread
 	)
 	target_compile_options(tm_common PUBLIC
-		"-Wno-exit-time-destructors"
 		"-O3"
 		"-flto=thin"
 	)
