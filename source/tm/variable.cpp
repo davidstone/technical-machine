@@ -703,8 +703,8 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 				{Variable{120_bi}, 0.25}
 			};
 		case Moves::Psywave: {
-			auto compute = [](auto const max_value) {
-				auto const range = containers::inclusive_integer_range(max_value);
+			auto compute = [](auto const min_value, auto const max_value) {
+				auto const range = containers::inclusive_integer_range(min_value, max_value);
 				Probabilities probabilities;
 				for (auto const n : range) {
 					containers::emplace_back(probabilities, Variable{n}, 1.0 / static_cast<double>(size(range)));
@@ -713,17 +713,21 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 			};
 			switch (generation) {
 				case Generation::one:
-				case Generation::two:
 					// Close enough
-					return compute(150_bi);
+				case Generation::two:
+					// Technically, every vallue from 1 to 150 is possible. To
+					// save time and space, pretend like it's a multiple of 10
+					return compute(1_bi, 15_bi);
 				case Generation::three:
 				case Generation::four:
-					return compute(10_bi);
+					return compute(5_bi, 15_bi);
 				case Generation::five:
 				case Generation::six:
 				case Generation::seven:
 				case Generation::eight:
-					return compute(100_bi);
+					// Technically, every vallue from 1 to 100 is possible. To
+					// save time and space, pretend like it's a multiple of 10
+					return compute(5_bi, 15_bi);
 			}
 		}
 		case Moves::Rock_Slide:
