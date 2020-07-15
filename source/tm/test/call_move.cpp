@@ -24,6 +24,7 @@
 
 #include <tm/pokemon/species.hpp>
 
+#include <tm/block.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
@@ -75,6 +76,12 @@ void test_baton_pass() {
 		misdreavus.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
 	}
 	defender.pokemon().switch_in(generation, weather);
+	attacker.reset_start_of_turn();
+
+	BOUNDED_ASSERT(
+		legal_selections(generation, attacker, defender, weather) ==
+		StaticVectorMove({Moves::Baton_Pass, Moves::Belly_Drum, Moves::Switch1})
+	);
 
 	call_move(
 		generation,
@@ -86,10 +93,20 @@ void test_baton_pass() {
 		false,
 		damage
 	);
-	if (attacker.pokemon().stage()[BoostableStat::atk] != 6_bi) {
-		std::cerr << "Belly Drum did not max out Attack\n";
-		std::terminate();
-	}
+	BOUNDED_ASSERT(attacker.pokemon().stage()[BoostableStat::atk] == 6_bi);
+	BOUNDED_ASSERT(!attacker.pokemon().switch_decision_required());
+	BOUNDED_ASSERT(
+		legal_selections(generation, attacker, defender, weather) ==
+		StaticVectorMove({Moves::Pass})
+	);
+
+	attacker.reset_start_of_turn();
+
+	BOUNDED_ASSERT(
+		legal_selections(generation, attacker, defender, weather) ==
+		StaticVectorMove({Moves::Baton_Pass, Moves::Belly_Drum, Moves::Switch1})
+	);
+
 	call_move(
 		generation,
 		attacker,
@@ -100,10 +117,13 @@ void test_baton_pass() {
 		false,
 		damage
 	);
-	if (attacker.pokemon().stage()[BoostableStat::atk] != 6_bi) {
-		std::cerr << "Baton Pass immediately cleared stat boosts\n";
-		std::terminate();
-	}
+	BOUNDED_ASSERT(attacker.pokemon().stage()[BoostableStat::atk] == 6_bi);
+	BOUNDED_ASSERT(attacker.pokemon().switch_decision_required());
+	BOUNDED_ASSERT(
+		legal_selections(generation, attacker, defender, weather) ==
+		StaticVectorMove({Moves::Switch1})
+	);
+
 	call_move(
 		generation,
 		attacker,
@@ -114,14 +134,13 @@ void test_baton_pass() {
 		false,
 		damage
 	);
-	if (attacker.pokemon().stage()[BoostableStat::atk] != 6_bi) {
-		std::cerr << "Baton Pass cleared stat boosts after switching\n";
-		std::terminate();
-	}
-	if (attacker.pokemon().species() != Species::Alakazam) {
-		std::cerr << "Baton Pass did not bring out a new Pokemon\n";
-		std::terminate();
-	}
+	BOUNDED_ASSERT(attacker.pokemon().stage()[BoostableStat::atk] == 6_bi);
+	BOUNDED_ASSERT(attacker.pokemon().species() == Species::Alakazam);
+	BOUNDED_ASSERT(!attacker.pokemon().switch_decision_required());
+	BOUNDED_ASSERT(
+		legal_selections(generation, attacker, defender, weather) ==
+		StaticVectorMove({Moves::Pass})
+	);
 }
 
 void wonder_guard() {
