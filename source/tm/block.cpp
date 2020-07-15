@@ -143,10 +143,10 @@ auto is_blocked_due_to_lock_in(Generation const generation, ActivePokemon const 
 auto is_legal_selection(Generation const generation, Team const & user, Move const move, Team const & other, Weather const weather, bool const found_selectable_move) {
 	BOUNDED_ASSERT(move != Moves::Hit_Self);
 	auto const pokemon = user.pokemon();
-	auto const other_pokemon = other.pokemon();
 	if (user.size() > 1_bi and pokemon.switch_decision_required()) {
 		return is_switch(move.name()) and !would_switch_to_same_pokemon(user.all_pokemon(), move.name());
 	}
+	auto const other_pokemon = other.pokemon();
 	auto const is_pass = move == Moves::Pass;
 	if (other.size() > 1_bi and other_pokemon.switch_decision_required()) {
 		return is_pass;
