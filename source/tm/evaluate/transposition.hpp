@@ -18,6 +18,7 @@
 #pragma once
 
 #include <tm/evaluate/best_move.hpp>
+#include <tm/evaluate/depth.hpp>
 
 #include <tm/move/moves.hpp>
 
@@ -33,8 +34,8 @@ namespace technicalmachine {
 struct Team;
 
 struct TranspositionTable {
-	auto add_score(Team const & ai, Team const & foe, Weather, unsigned depth, BestMove) -> void;
-	auto get_score(Team const & ai, Team const & foe, Weather, unsigned depth) const -> bounded::optional<BestMove>;
+	auto add_score(Team const & ai, Team const & foe, Weather, DepthValues, BestMove) -> void;
+	auto get_score(Team const & ai, Team const & foe, Weather, DepthValues) const -> bounded::optional<BestMove>;
 private:
 	using CompressedBattle = bounded::tuple<
 		bounded::integer<0, bounded::detail::normalize<(17476366957422410805543616810844159999_bi).value()>>,
@@ -49,7 +50,7 @@ private:
 
 	struct Value {
 		CompressedBattle compressed_battle = {0_bi, 0_bi, 0_bi, 0_bi, 0_bi, 0_bi, 0_bi, 0_bi};
-		unsigned depth = 0;
+		DepthValues depth = {};
 		Moves move = {};
 		double score = 0.0;
 	};

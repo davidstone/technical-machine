@@ -39,7 +39,7 @@ struct Team;
 struct Weather;
 
 // 100% chance to win
-constexpr auto victory = 1343488_bi;
+constexpr auto victory = 540672_bi;
 
 struct Evaluate {
 	// +1 gives me room to create a value that will always be overwritten
@@ -56,36 +56,16 @@ struct Evaluate {
 	auto spikes() const { return m_spikes; }
 	auto stealth_rock() const { return m_stealth_rock; }
 	auto toxic_spikes() const { return m_toxic_spikes; }
-	auto members() const { return m_members; }
 	auto hp() const { return m_hp; }
 	auto hidden() const { return m_hidden; }
-	auto substitute() const { return m_substitute; }
-	auto burn() const { return m_burn; }
-	auto freeze() const { return m_freeze; }
-	auto paralysis() const { return m_paralysis; }
-	auto poison() const { return m_poison; }
-	auto sleep() const { return m_sleep; }
-	auto toxic() const { return m_toxic; }
-	auto stage() const { return m_stage; }
 
 private:
 	value_type m_spikes;
 	value_type m_stealth_rock;
 	value_type m_toxic_spikes;
 
-	value_type m_members;
 	value_type m_hp;
 	value_type m_hidden;
-	value_type m_substitute;
-
-	value_type m_burn;
-	value_type m_freeze;
-	value_type m_paralysis;
-	value_type m_poison;
-	value_type m_sleep;
-	value_type m_toxic;
-	
-	containers::array<value_type, Stage::number_of_stats.value()> m_stage;
 };
 
 } // namespace technicalmachine

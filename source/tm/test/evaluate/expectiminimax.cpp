@@ -44,6 +44,10 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
+constexpr auto make_depth(unsigned const depth) {
+	return Depth(DepthValues{depth, 0U}, 0U);
+}
+
 auto make_shuffled_array(Generation const generation, auto & random_engine, auto... ts) {
 	// Random order to prevent ordering effects from accidentally arriving at
 	// the correct move each time
@@ -58,7 +62,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(generation, random_engine, args...);
 	};
-	constexpr auto depth = Depth(1U, 0U);
+	constexpr auto depth = make_depth(1U);
 
 	Team team1(1_bi, true);
 	{
@@ -100,7 +104,7 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		auto const best_move = expectiminimax(generation, team1, team3, weather, evaluate, depth, std::cout);
 		BOUNDED_ASSERT(best_move.name == Moves::Shadow_Ball);
 		BOUNDED_ASSERT(best_move.score == double(victory));
-}
+	}
 }
 
 void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 & random_engine) {
@@ -108,7 +112,7 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(generation, random_engine, args...);
 	};
-	constexpr auto depth = Depth(1U, 0U);
+	constexpr auto depth = make_depth(1U);
 	
 	Team attacker(1_bi, true);
 	{
@@ -140,7 +144,7 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(generation, random_engine, args...);
 	};
-	constexpr auto depth = Depth(2U, 0U);
+	constexpr auto depth = make_depth(2U);
 	Team attacker(1_bi, true);
 	{
 		attacker.add_pokemon(generation, Species::Charizard, Level(100_bi), Gender::male, Item::Salac_Berry, Ability::Blaze, Nature::Adamant);
@@ -171,7 +175,7 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(generation, random_engine, args...);
 	};
-	constexpr auto depth = Depth(7U, 0U);
+	constexpr auto depth = make_depth(11U);
 	Team attacker(1_bi, true);
 	{
 		attacker.add_pokemon(generation, Species::Hippopotas, Level(100_bi), Gender::male, Item::Leftovers, Ability::Sand_Stream, Nature::Adamant);
@@ -206,7 +210,7 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(generation, random_engine, args...);
 	};
-	constexpr auto depth = Depth(4U, 0U);
+	constexpr auto depth = Depth(DepthValues{4U, 0U}, 0U);
 	Team attacker(2_bi, true);
 	{
 		attacker.add_pokemon(generation, Species::Smeargle, Level(100_bi), Gender::male, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly);
@@ -250,7 +254,7 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(generation, random_engine, args...);
 	};
-	constexpr auto depth = Depth(2U, 0U);
+	constexpr auto depth = make_depth(2U);
 	Team attacker(3_bi, true);
 
 	attacker.add_pokemon(generation, Species::Magikarp, Level(5_bi), Gender::male, Item::Leftovers, Ability::Swift_Swim, Nature::Jolly);
@@ -302,7 +306,7 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(generation, random_engine, args...);
 	};
-	constexpr auto depth = Depth(3U, 0U);
+	constexpr auto depth = make_depth(3U);
 	Team attacker(1_bi, true);
 	{
 		attacker.add_pokemon(generation, Species::Latias, Level(100_bi), Gender::female, Item::Leftovers, Ability::Levitate, Nature::Calm);
@@ -337,7 +341,7 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	auto const shuffled = [&](auto... args) {
 		return make_shuffled_array(generation, random_engine, args...);
 	};
-	constexpr auto depth = Depth(1U, 0U);
+	constexpr auto depth = make_depth(1U);
 	auto attacker = Team(1_bi, true);
 	{
 		attacker.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::female, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);

@@ -45,7 +45,7 @@ struct ClientImpl {
 	using AuthenticationFunction = std::function<
 		http::response<http::string_body>(std::string_view, std::string_view, http::request<http::string_body> const &)
 	>;
-	ClientImpl(SettingsFile settings, unsigned depth, BattleParser::SendMessageFunction send_message, AuthenticationFunction authenticate);
+	ClientImpl(SettingsFile, DepthValues, BattleParser::SendMessageFunction, AuthenticationFunction);
 	void run(DelimitedBufferView<std::string_view> messages);
 
 private:
@@ -74,7 +74,7 @@ private:
 	JSONParser m_parse_json;
 	
 	std::unordered_set<std::string> m_trusted_users;
-	unsigned m_depth;
+	DepthValues m_depth;
 	
 	Battles m_battles;
 	
@@ -83,7 +83,7 @@ private:
 };
 
 struct Client {
-	Client(SettingsFile settings, unsigned depth);
+	Client(SettingsFile settings, DepthValues);
 	[[noreturn]] void run();
 private:
 	struct Sockets {

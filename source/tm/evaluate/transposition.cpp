@@ -70,7 +70,7 @@ auto TranspositionTable::index(CompressedBattle const & compressed_battle) -> In
 	);
 }
 
-auto TranspositionTable::add_score(Team const & ai, Team const & foe, Weather weather, unsigned depth, BestMove best_move) -> void {
+auto TranspositionTable::add_score(Team const & ai, Team const & foe, Weather weather, DepthValues const depth, BestMove best_move) -> void {
 	auto const compressed_battle = compress_battle(ai, foe, weather);
 	auto & value = m_data[index(compressed_battle)];
 	value.compressed_battle = compressed_battle;
@@ -79,7 +79,7 @@ auto TranspositionTable::add_score(Team const & ai, Team const & foe, Weather we
 	value.score = best_move.score;
 }
 
-auto TranspositionTable::get_score(Team const & ai, Team const & foe, Weather weather, unsigned depth) const -> bounded::optional<BestMove> {
+auto TranspositionTable::get_score(Team const & ai, Team const & foe, Weather weather, DepthValues const depth) const -> bounded::optional<BestMove> {
 	auto const compressed_battle = compress_battle(ai, foe, weather);
 	auto const & value = m_data[index(compressed_battle)];
 	if (value.depth >= depth and value.compressed_battle == compressed_battle) {

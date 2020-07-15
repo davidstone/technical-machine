@@ -47,7 +47,7 @@ struct BattleFactory {
 		std::string id_,
 		std::string username,
 		Evaluate evaluate,
-		unsigned depth,
+		DepthValues depth,
 		std::mt19937 random_engine,
 		Team team
 	):
@@ -86,7 +86,7 @@ private:
 	BattleLogger m_battle_logger;
 	std::string m_username;
 	Evaluate m_evaluate;
-	unsigned m_depth;
+	DepthValues m_depth;
 	std::mt19937 m_random_engine;
 	Generation m_generation;
 	Team m_team;

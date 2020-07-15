@@ -102,7 +102,7 @@ auto Client::Sockets::authenticate(std::string_view const host, std::string_view
 }
 
 
-ClientImpl::ClientImpl(SettingsFile settings, unsigned depth, BattleParser::SendMessageFunction send_message, AuthenticationFunction authenticate):
+ClientImpl::ClientImpl(SettingsFile settings, DepthValues const depth, BattleParser::SendMessageFunction send_message, AuthenticationFunction authenticate):
 	m_random_engine(m_rd()),
 	m_settings(std::move(settings)),
 	m_trusted_users(load_lines_from_file("settings/trusted_users.txt")),
@@ -250,7 +250,7 @@ void ClientImpl::send_channel_message(std::string const & channel, std::string c
 	m_send_message(channel + "|/msg " + message);
 }
 
-Client::Client(SettingsFile settings, unsigned const depth):
+Client::Client(SettingsFile settings, DepthValues const depth):
 	m_sockets(settings.host, settings.port, settings.resource),
 	m_impl(
 		std::move(settings),

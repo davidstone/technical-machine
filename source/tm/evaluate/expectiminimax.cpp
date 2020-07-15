@@ -165,11 +165,6 @@ auto selected_move_to_executed_move(Generation const generation, Moves const sel
 	}
 }
 
-constexpr auto average_transformed_sum(auto && range, auto transformation) {
-	auto const range_size = size(range);
-	return containers::sum(containers::transform(OPERATORS_FORWARD(range), std::move(transformation))) / static_cast<double>(range_size);
-}
-
 double generic_flag_branch(double const basic_probability, auto const & next_branch) {
 	BOUNDED_ASSERT_OR_ASSUME(0.0 <= basic_probability and basic_probability <= 1.0);
 	double average_score = 0.0;
@@ -293,8 +288,9 @@ private:
 		// for move_scores because the algorithm works faster if you start with the
 		// correct result. The results from one less depth are used to estimate the
 		// correct result.
-		auto move_scores = !is_final_iteration(depth) ?
-			select_move_branch(ai, ai_selections, foe, foe_selections, weather, depth.iterative_deepening_value(), function).move_scores :
+		auto const iterative_deepening = iterative_deepening_value(depth);
+		auto move_scores = iterative_deepening ?
+			select_move_branch(ai, ai_selections, foe, foe_selections, weather, *iterative_deepening, function).move_scores :
 			BothMoveScores{MoveScores(ai_selections, true), MoveScores(foe_selections, false)};
 		auto const ai_moves = move_scores.ai.ordered_moves(true);
 		auto const foe_moves = move_scores.foe.ordered_moves(false);
@@ -498,18 +494,60 @@ private:
 		auto const deordered = deorder(first, last);
 		auto const & ai = deordered.ai;
 		auto const & foe = deordered.foe;
-		if (is_final_iteration(depth)) {
-			return static_cast<double>(m_evaluate(m_generation, ai, foe, weather));
+		return bounded::visit(depth.one_level_deeper(), bounded::overload(
+			[&](Depth const new_depth) { return select_type_of_move(ai, foe, weather, new_depth).score; },
+			[&](SingleOnlyDepth const new_depth) { return generate_single_matchups(ai, foe, weather, new_depth.value); },
+			[&](FinishedSearching) { return static_cast<double>(m_evaluate(m_generation, ai, foe, weather)); }
+		));
+	}
+
+	auto generate_single_matchups(Team const & ai, Team const & foe, Weather const weather, Depth const depth) -> double {
+		auto score = 0.0;
+		for (auto const ai_index : containers::integer_range(ai.size())) {
+			for (auto const foe_index : containers::integer_range(foe.size())) {
+				score += evaluate_single_matchup(ai, ai_index, foe, foe_index, weather, depth);
+			}
 		}
-		return select_type_of_move(ai, foe, weather, depth.one_level_deeper()).score;
+		auto const difference = ai.size() - foe.size();
+		score += static_cast<double>(difference * victory);
+		auto const max_size = bounded::max(ai.size(), foe.size());
+		score /= static_cast<double>(max_size * max_size);
+		return score;
+	}
+
+	auto evaluate_single_matchup(Team ai, TeamIndex const ai_index, Team foe, TeamIndex const foe_index, Weather weather, Depth const depth) -> double {
+		// TODO: Something involving switch order
+		auto remove_all_but_index = [&](Team & team, TeamIndex const index, Team & other) {
+			if (index != team.all_pokemon().index()) {
+				team.switch_pokemon(m_generation, other.pokemon(), weather, index);
+			}
+			auto replaced = PokemonCollection(1_bi);
+			auto pokemon = team.pokemon(index);
+			for (auto const entry : containers::integer_range(team.size())) {
+				if (entry == 0_bi) {
+					continue;
+				}
+				pokemon.all_moves().remove_switch();
+			}
+			replaced.add(pokemon);
+			team.all_pokemon() = replaced;
+		};
+		remove_all_but_index(ai, ai_index, foe);
+		remove_all_but_index(foe, foe_index, ai);
+		if (auto const won = Evaluate::win(ai, foe)) {
+			return *won;
+		}
+		return select_type_of_move(ai, foe, weather, depth).score;
 	}
 
 
 	auto score_executed_moves(Team const & user, Moves const selected_move, Team const & other, OtherMove const other_move, Weather const weather, auto const continuation) const -> double {
-		auto const score_move = [&](KnownMove const executed_move) {
-			return execute_move(m_generation, user, SelectedAndExecuted{selected_move, executed_move}, other, other_move, weather, continuation);
-		};
-		return average_transformed_sum(selected_move_to_executed_move(m_generation, selected_move, user), score_move);
+		double score = 0.0;
+		auto const executed_moves = selected_move_to_executed_move(m_generation, selected_move, user);
+		for (auto const executed_move : executed_moves) {
+			score += execute_move(m_generation, user, SelectedAndExecuted{selected_move, executed_move}, other, other_move, weather, continuation);
+		}
+		return score / static_cast<double>(size(executed_moves));
 	}
 
 	void update_best_move(Moves & best_move, double & alpha, double const beta, Moves const new_move, bounded::optional<unsigned> const indentation) const {
@@ -566,7 +604,7 @@ auto expectiminimax(Generation const generation, Team const & ai, Team const & f
 	// allocation here speeds up every hash table size except for those two,
 	// which are faster with a dynamic allocation.
 	auto evaluator = std::make_unique<Evaluator>(generation, evaluate, log);
-	log << "Evaluating to a depth of " << depth.initial() << "...\n";
+	log << "Evaluating to a depth of " << depth.general_initial() << ", " << depth.single_initial() << "...\n";
 	boost::timer timer;
 	auto const best_move = evaluator->select_type_of_move(ai, foe, weather, depth);
 	if (best_move.name == Moves::Pass) {

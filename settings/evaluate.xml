@@ -5,23 +5,6 @@
 	<stealth_rock>-200</stealth_rock>
 	<toxic_spikes>-100</toxic_spikes>
 
-	<members>200</members>
 	<hp>1024</hp>
 	<hidden>80</hidden>
-	<substitute>150</substitute>
-
-	<burn>-100</burn>
-	<freeze>-400</freeze>
-	<paralysis>-200</paralysis>
-	<poison>-100</poison>
-	<sleep>-250</sleep>
-	<toxic>-100</toxic>
-
-	<attack_stage>50</attack_stage>
-	<defense_stage>50</defense_stage>
-	<special_attack_stage>50</special_attack_stage>
-	<special_defense_stage>50</special_defense_stage>
-	<speed_stage>60</speed_stage>
-	<accuracy_stage>50</accuracy_stage>
-	<evasion_stage>50</evasion_stage>
 </score>

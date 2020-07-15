@@ -23,6 +23,7 @@
 #include <tm/clients/pokemon_showdown/move_state.hpp>
 #include <tm/clients/pokemon_showdown/slot_memory.hpp>
 
+#include <tm/evaluate/depth.hpp>
 #include <tm/evaluate/evaluate.hpp>
 
 #include <tm/string_conversions/species.hpp>
@@ -55,7 +56,7 @@ struct BattleParser {
 		UsageStats const & usage_stats,
 		Evaluate evaluate,
 		Party party,
-		unsigned const depth,
+		DepthValues const depth,
 		std::mt19937 random_engine,
 		Team ai,
 		Team foe,
@@ -122,7 +123,7 @@ private:
 	Evaluate m_evaluate;
 	Battle m_battle;
 	Party m_ai_party;
-	unsigned m_depth;
+	DepthValues m_depth;
 	MoveState m_move_state;
 	bool m_log_foe_teams;
 	bool m_completed = false;

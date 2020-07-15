@@ -54,55 +54,16 @@ struct MaxTurns<EndOfTurnCounter<max_turns, operations...>> {
 	static constexpr auto value = max_turns;
 };
 
-auto baton_passable_score(Evaluate const & evaluate, ActivePokemon const pokemon) {
-	using stage_type = decltype(Stage::number_of_stats * (std::declval<Stage::value_type>() * std::declval<Evaluate::value_type>()));
-	auto const substitute = pokemon.substitute();
-	auto const & stage = pokemon.stage();
-	return
-		(substitute ? evaluate.substitute() : 0_bi) +
-		std::inner_product(containers::legacy_iterator(begin(stage)), containers::legacy_iterator(end(stage)), containers::legacy_iterator(begin(evaluate.stage())), static_cast<stage_type>(0_bi))
-	;
-}
-
-auto score_status(Evaluate const & evaluate, Pokemon const & pokemon) -> Evaluate::value_type {
-	switch (pokemon.status().name()) {
-		case Statuses::burn:
-			return evaluate.burn();
-		case Statuses::freeze:
-			return evaluate.freeze();
-		case Statuses::paralysis:
-			return evaluate.paralysis();
-		case Statuses::poison:
-			return evaluate.poison();
-		case Statuses::toxic:
-			return evaluate.toxic();
-		case Statuses::rest:
-		case Statuses::sleep:
-			return evaluate.sleep();
-		default:
-			return 0_bi;
-	}
-}
-
-auto score_active_pokemon(Evaluate const & evaluate, ActivePokemon const pokemon) {
-	auto const has_baton_pass = containers::any_equal(regular_moves(pokemon), Moves::Baton_Pass);
-	return baton_passable_score(evaluate, pokemon) * BOUNDED_CONDITIONAL(has_baton_pass, 2_bi, 1_bi);
-}
-
-
 auto score_pokemon(Evaluate const & evaluate, Generation const generation, Pokemon const & pokemon, EntryHazards const & entry_hazards) {
 	auto const types = PokemonTypes(generation, pokemon.species());
 	auto const grounded =
 		containers::any_equal(types, Type::Flying) or
 		is_immune_to_ground(pokemon.initial_ability());
 	return
-		evaluate.members() +
 		Evaluate::value_type(hp_ratio(pokemon) * evaluate.hp()) +
 		(!pokemon.has_been_seen() ? evaluate.hidden() : 0_bi) +
 		(entry_hazards.stealth_rock() ? Effectiveness(generation, Type::Rock, types) * evaluate.stealth_rock() : 0_bi) +
-		(grounded ? entry_hazards.spikes() * evaluate.spikes() + entry_hazards.toxic_spikes() * evaluate.toxic_spikes() : 0_bi) +
-		score_status(evaluate, pokemon)
-	;
+		(grounded ? entry_hazards.spikes() * evaluate.spikes() + entry_hazards.toxic_spikes() * evaluate.toxic_spikes() : 0_bi);
 }
 
 auto score_team(Evaluate const & evaluate, Generation const generation, Team const & team) {
@@ -110,9 +71,7 @@ auto score_team(Evaluate const & evaluate, Generation const generation, Team con
 	auto get_score = [&](auto const & pokemon) {
 		return score_pokemon(evaluate, generation, pokemon, team.entry_hazards());
 	};
-	return
-		containers::sum(containers::transform(containers::filter(team.all_pokemon(), has_hp), get_score)) +
-		score_active_pokemon(evaluate, team.pokemon());
+	return containers::sum(containers::transform(containers::filter(team.all_pokemon(), has_hp), get_score));
 }
 
 auto score_teams(Evaluate const & evaluate, Generation const generation, Team const & ai, Team const & foe) {
@@ -179,25 +138,8 @@ Evaluate::Evaluate() {
 	m_spikes = pt.get<underlying_type>("spikes", 0_bi);
 	m_stealth_rock = pt.get<underlying_type>("stealth_rock", 0_bi);
 	m_toxic_spikes = pt.get<underlying_type>("toxic_spikes", 0_bi);
-	m_members = pt.get<underlying_type>("members", 0_bi);
 	m_hp = pt.get<underlying_type>("hp", 0_bi);
 	m_hidden = pt.get<underlying_type>("hidden", 0_bi);
-	m_substitute = pt.get<underlying_type>("substitute", 0_bi);
-	m_burn = pt.get<underlying_type>("burn", 0_bi);
-	m_freeze = pt.get<underlying_type>("freeze", 0_bi);
-	m_paralysis = pt.get<underlying_type>("paralysis", 0_bi);
-	m_poison = pt.get<underlying_type>("poison", 0_bi);
-	m_sleep = pt.get<underlying_type>("sleep", 0_bi);
-	m_toxic = pt.get<underlying_type>("toxic", 0_bi);
-	m_stage = {
-		pt.get<underlying_type>("attack_stage", 0_bi),
-		pt.get<underlying_type>("defense_stage", 0_bi),
-		pt.get<underlying_type>("special_attack_stage", 0_bi),
-		pt.get<underlying_type>("special_defense_stage", 0_bi),
-		pt.get<underlying_type>("speed_stage", 0_bi),
-		pt.get<underlying_type>("accuracy_stage", 0_bi),
-		pt.get<underlying_type>("evasion_stage", 0_bi),
-	};
 }
 
 }	// namespace technicalmachine

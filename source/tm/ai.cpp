@@ -17,7 +17,7 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/clients/pokemon_showdown/client.hpp>
-
+#include <tm/evaluate/depth.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 
@@ -39,7 +39,10 @@ void print_debug_statements() {
 
 int main(int argc, char * * argv) {
 	print_debug_statements();
-	unsigned const depth = (argc == 1) ? 2 : boost::lexical_cast<unsigned>(argv[1]);
+
+	auto const general_depth = (argc <= 1) ? 2U : boost::lexical_cast<unsigned>(argv[1]);
+	auto const single_depth = (argc <= 2) ? 0U : boost::lexical_cast<unsigned>(argv[2]);
+	auto const depth = technicalmachine::DepthValues{general_depth, single_depth};
 
 	auto const settings = technicalmachine::load_settings_file("settings/settings.xml");
 

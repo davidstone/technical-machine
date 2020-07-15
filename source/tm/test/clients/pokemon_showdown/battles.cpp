@@ -47,7 +47,7 @@ void regression_tests() {
 	auto const evaluate = Evaluate{};
 	// Too large to fit on the stack
 	auto const all_usage_stats = std::make_unique<AllUsageStats>();
-	constexpr auto depth = 1;
+	constexpr auto depth = DepthValues{2U, 0U};
 
 	auto const battle_output_directory = std::filesystem::path("test/temp-battles");
 	auto const remove_temporary_files = [&]{ std::filesystem::remove_all(battle_output_directory); };
