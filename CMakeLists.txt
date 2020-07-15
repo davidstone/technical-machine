@@ -64,6 +64,7 @@ add_library(tm_common STATIC
 	source/tm/clients/party.cpp
 	source/tm/clients/timestamp.cpp
 
+	source/tm/evaluate/best_move.cpp
 	source/tm/evaluate/depth.cpp
 	source/tm/evaluate/evaluate.cpp
 	source/tm/evaluate/expectiminimax.cpp

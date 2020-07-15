@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include <tm/evaluate/best_move.hpp>
+
 #include <tm/move/moves.hpp>
 
 #include <tm/compress.hpp>
@@ -29,11 +31,6 @@
 namespace technicalmachine {
 
 struct Team;
-
-struct BestMove {
-	Moves name;
-	double score;
-};
 
 struct TranspositionTable {
 	auto add_score(Team const & ai, Team const & foe, Weather, unsigned depth, BestMove) -> void;
