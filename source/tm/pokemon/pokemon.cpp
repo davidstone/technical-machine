@@ -52,8 +52,8 @@ Pokemon::Pokemon(Generation const generation, Species const species, Level const
 {
 }
 
-Pokemon::Pokemon(Generation const generation, Species const species, Level const level, Gender const gender, Happiness const happiness) : 
-	Pokemon::Pokemon(generation, species, level, gender, Item::None, Ability::Honey_Gather, Nature::Hardy, happiness)
+Pokemon::Pokemon(Generation const generation, Species const species, Level const level, Gender const gender) : 
+	Pokemon::Pokemon(generation, species, level, gender, Item::None, Ability::Honey_Gather, Nature::Hardy, Happiness())
 {
 	m_ability_is_known = false;
 	m_item_is_known = false;

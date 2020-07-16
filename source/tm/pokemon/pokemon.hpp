@@ -45,8 +45,8 @@ namespace technicalmachine {
 enum class Generation : std::uint8_t;
 
 struct Pokemon {
-	Pokemon(Generation, Species species, Level level, Gender gender, Happiness happiness = Happiness{});
-	Pokemon(Generation, Species species, Level level, Gender gender, Item item, Ability ability, Nature nature, Happiness happiness = Happiness{});
+	Pokemon(Generation, Species species, Level level, Gender gender);
+	Pokemon(Generation, Species species, Level level, Gender gender, Item item, Ability ability, Nature nature, Happiness happiness = Happiness());
 	
 	auto hp() const {
 		return stats.hp();
