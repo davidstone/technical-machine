@@ -21,7 +21,7 @@
 
 namespace technicalmachine {
 
-auto has_physical_move(Generation, containers::static_vector<Moves, max_moves_per_pokemon.value()>, bounded::optional<Type> hidden_power_type) -> bool;
+auto has_physical_move(Generation, RegularMoves, bounded::optional<Type> hidden_power_type) -> bool;
 auto has_physical_move(Generation, Pokemon) -> bool;
 auto has_special_move(Generation, Pokemon) -> bool;
 

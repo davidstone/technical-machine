@@ -26,13 +26,15 @@
 #include <tm/compress.hpp>
 #include <tm/operators.hpp>
 
+#include <bounded/copy.hpp>
+
 #include <containers/algorithms/concatenate_view.hpp>
 #include <containers/algorithms/transform.hpp>
 
 namespace technicalmachine {
 
 constexpr auto move_container_transform(auto const & range) {
-	auto const transformed = containers::transform(range, [](auto value) { return value; });
+	auto const transformed = containers::transform(range, bounded::copy);
 	return containers::range_view(transformed);
 }
 

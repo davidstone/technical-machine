@@ -29,9 +29,20 @@ namespace technicalmachine {
 
 struct RegularMoves {
 	using value_type = Move;
-	using size_type = bounded::integer<1, bounded::detail::normalize<max_moves_per_pokemon.value()>>;
+	// TODO: Give this a minimum size of 1 when foe Pokemon are handled better
+	using size_type = bounded::integer<0, bounded::detail::normalize<max_moves_per_pokemon.value()>>;
 
 	RegularMoves() = default;
+	RegularMoves(auto const moves) {
+		for (auto const move : moves) {
+			push_back(move);
+		}
+	}
+	RegularMoves(std::initializer_list<Move> moves) {
+		for (auto const move : moves) {
+			push_back(move);
+		}
+	}
 
 	friend auto begin(RegularMoves const & container) {
 		return begin(container.m_moves);
@@ -57,6 +68,5 @@ private:
 };
 
 auto add_seen_move(RegularMoves &, Generation, Moves) -> void;
-auto add_seen_move(RegularMoves &, Generation, Moves, PP::pp_ups_type) -> void;
 
 } // namespace technicalmachine

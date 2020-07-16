@@ -49,17 +49,29 @@ void evaluate_tests() {
 	auto const item = Item::Leftovers;
 	auto const ability = Ability::Natural_Cure;
 	auto const nature = Nature::Bold;
+	auto pokemon = Pokemon(
+		generation,
+		species,
+		level,
+		gender,
+		item,
+		ability,
+		nature,
+		RegularMoves({Move(generation, Moves::Tackle)})
+	);
 
 	auto weather = Weather();
 
-	Team team1(1_bi);
-	team1.add_pokemon(Pokemon(generation, species, level, gender, item, ability, nature));
+	auto team1 = Team(1_bi);
+	team1.add_pokemon(pokemon);
 	team1.pokemon().switch_in(generation, weather);
-	Team team2(1_bi);
+
+	auto team2 = Team(1_bi);
+	team2.add_pokemon(pokemon);
 	team2.pokemon().switch_in(generation, weather);
-	team2.add_pokemon(Pokemon(generation, species, level, gender, item, ability, nature));
 	change_hp(generation, team1.pokemon(), weather, -50_bi);
-	Evaluate const evaluate;
+
+	auto const evaluate = Evaluate();
 	assert_lower_score(evaluate, team1, team2);
 
 	std::cout << "Evaluate tests passed.\n\n";

@@ -39,40 +39,65 @@ using namespace bounded::literal;
 constexpr auto generation = Generation::four;
 constexpr auto damage = ActualDamage::Unknown{};	
 
-constexpr auto move_array(auto... moves) {
-	return containers::array{Move(generation, moves)...};
+constexpr auto regular_moves(auto... moves) {
+	return RegularMoves{Move(generation, moves)...};
 }
 
 void test_baton_pass() {
 	auto weather = Weather();
 
-	Team attacker(2_bi, true);
-	{
-		attacker.add_pokemon(Pokemon(generation, Species::Smeargle, Level(100_bi), Gender::male, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly));
-		auto & smeargle = back(attacker.all_pokemon());
-		containers::append(smeargle.regular_moves(), move_array(Moves::Baton_Pass, Moves::Belly_Drum));
-	}
+	auto attacker = Team(2_bi, true);
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Smeargle,
+		Level(100_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Own_Tempo,
+		Nature::Jolly,
+		regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
+	));
 
 	{
-		attacker.add_pokemon(Pokemon(generation, Species::Alakazam, Level(100_bi), Gender::male, Item::Lum_Berry, Ability::Synchronize, Nature::Jolly));
-		auto & alakazam = back(attacker.all_pokemon());
-		containers::append(alakazam.regular_moves(), move_array(Moves::Psycho_Cut, Moves::Recover));
+		auto & alakazam = attacker.add_pokemon(Pokemon(
+			generation,
+			Species::Alakazam,
+			Level(100_bi),
+			Gender::male,
+			Item::Lum_Berry,
+			Ability::Synchronize,
+			Nature::Jolly,
+			regular_moves(Moves::Psycho_Cut, Moves::Recover)
+		));
 		alakazam.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
 	}
 	attacker.pokemon().switch_in(generation, weather);
 
-	Team defender(2_bi);
+	auto defender = Team(2_bi);
 	{
-		defender.add_pokemon(Pokemon(generation, Species::Gengar, Level(100_bi), Gender::male, Item::Choice_Specs, Ability::Levitate, Nature::Modest));
-		Pokemon & gengar = back(defender.all_pokemon());
-		containers::append(gengar.regular_moves(), move_array(Moves::Shadow_Ball));
+		auto & gengar = defender.add_pokemon(Pokemon(
+			generation,
+			Species::Gengar,
+			Level(100_bi),
+			Gender::male,
+			Item::Choice_Specs,
+			Ability::Levitate,
+			Nature::Modest,
+			regular_moves(Moves::Shadow_Ball)
+		));
 		gengar.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
 	}
-
 	{
-		defender.add_pokemon(Pokemon(generation, Species::Misdreavus, Level(100_bi), Gender::female, Item::Choice_Specs, Ability::Levitate, Nature::Modest));
-		Pokemon & misdreavus = back(defender.all_pokemon());
-		containers::append(misdreavus.regular_moves(), move_array(Moves::Shadow_Ball));
+		auto & misdreavus = defender.add_pokemon(Pokemon(
+			generation,
+			Species::Misdreavus,
+			Level(100_bi),
+			Gender::female,
+			Item::Choice_Specs,
+			Ability::Levitate,
+			Nature::Modest,
+			regular_moves(Moves::Shadow_Ball)
+		));
 		misdreavus.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
 	}
 	defender.pokemon().switch_in(generation, weather);
@@ -147,12 +172,29 @@ void wonder_guard() {
 	auto weather = Weather();
 
 	auto attacker = Team(1_bi, true);
-	auto & jolteon = attacker.add_pokemon(Pokemon(generation, Species::Jolteon, Level(100_bi), Gender::female, Item::None, Ability::Volt_Absorb, Nature::Timid));
-	containers::append(jolteon.regular_moves(), move_array(Moves::Shadow_Ball, Moves::Thunderbolt));
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Jolteon,
+		Level(100_bi),
+		Gender::female,
+		Item::None,
+		Ability::Volt_Absorb,
+		Nature::Timid,
+		regular_moves(Moves::Shadow_Ball, Moves::Thunderbolt)
+	));
 	attacker.pokemon().switch_in(generation, weather);
 
 	auto defender = Team(1_bi);
-	defender.add_pokemon(Pokemon(generation, Species::Shedinja, Level(100_bi), Gender::male, Item::None, Ability::Wonder_Guard, Nature::Adamant));
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Shedinja,
+		Level(100_bi),
+		Gender::male,
+		Item::None,
+		Ability::Wonder_Guard,
+		Nature::Adamant,
+		RegularMoves({Move(generation, Moves::Tackle)})
+	));
 	auto shedinja = defender.pokemon();
 	shedinja.switch_in(generation, weather);
 

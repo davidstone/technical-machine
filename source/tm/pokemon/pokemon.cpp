@@ -21,8 +21,8 @@ namespace technicalmachine {
 
 // TODO: Setting IVs requires modifying the Pokemon after construction, which
 // will not update Hidden Power
-Pokemon::Pokemon(Generation const generation, Species const species, Level const level, Gender const gender, Item const item, Ability const ability, Nature const nature, Happiness const happiness):
-	m_regular_moves(),
+Pokemon::Pokemon(Generation const generation, Species const species, Level const level, Gender const gender, Item const item, Ability const ability, Nature const nature, RegularMoves regular_moves_, Happiness const happiness):
+	m_regular_moves(regular_moves_),
 	stats(generation, BaseStats(generation, species), level, nature),
 
 	m_species(species),
@@ -53,7 +53,7 @@ Pokemon::Pokemon(Generation const generation, Species const species, Level const
 }
 
 Pokemon::Pokemon(Generation const generation, Species const species, Level const level, Gender const gender) : 
-	Pokemon::Pokemon(generation, species, level, gender, Item::None, Ability::Honey_Gather, Nature::Hardy, Happiness())
+	Pokemon::Pokemon(generation, species, level, gender, Item::None, Ability::Honey_Gather, Nature::Hardy, RegularMoves(), Happiness())
 {
 	m_ability_is_known = false;
 	m_item_is_known = false;

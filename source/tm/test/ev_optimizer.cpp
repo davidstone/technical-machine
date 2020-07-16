@@ -39,12 +39,25 @@
 namespace technicalmachine {
 namespace {
 
+auto regular_moves(Generation const generation, auto... move_names) {
+	return RegularMoves({Move(generation, move_names)...});
+}
+
 void optimize_already_optimized(std::mt19937 & random_engine) {
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Metagross;
 	constexpr auto level = Level(100_bi);
 	auto const base_stats = BaseStats(generation, species);
-	auto pokemon = Pokemon(generation, species, level, Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Adamant);
+	auto pokemon = Pokemon(
+		generation,
+		species,
+		level,
+		Gender::genderless,
+		Item::None,
+		Ability::Honey_Gather,
+		Nature::Adamant,
+		regular_moves(generation, Moves::Meteor_Mash)
+	);
 	constexpr auto iv = IV(31_bi);
 	pokemon.set_ev(generation, PermanentStat::hp, iv, EV(252_bi));
 	pokemon.set_ev(generation, PermanentStat::atk, iv, EV(96_bi));
@@ -52,7 +65,6 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	pokemon.set_ev(generation, PermanentStat::spa, iv, EV(0_bi));
 	pokemon.set_ev(generation, PermanentStat::spd, iv, EV(4_bi));
 	pokemon.set_ev(generation, PermanentStat::spe, iv, EV(60_bi));
-	pokemon.regular_moves().push_back(Move(generation, Moves::Meteor_Mash));
 
 	auto const ivs_and_evs = calculate_ivs_and_evs(generation, pokemon);
 	auto const stats = initial_stats(base_stats, level, ivs_and_evs);
@@ -120,16 +132,22 @@ void not_level_100(std::mt19937 & random_engine) {
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Masquerain;
 	constexpr auto level = Level(83_bi);
-	auto pokemon = Pokemon(generation, species, level, Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Modest);
+	auto pokemon = Pokemon(
+		generation,
+		species,
+		level,
+		Gender::genderless,
+		Item::None,
+		Ability::Honey_Gather,
+		Nature::Modest,
+		regular_moves(generation, Moves::Hydro_Pump, Moves::Bug_Buzz, Moves::Roost, Moves::Air_Slash)
+	);
 	pokemon.set_ev(generation, PermanentStat::hp, IV(31_bi), EV(192_bi));
 	pokemon.set_ev(generation, PermanentStat::atk, IV(0_bi), EV(0_bi));
 	pokemon.set_ev(generation, PermanentStat::def, IV(31_bi), EV(8_bi));
 	pokemon.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(120_bi));
 	pokemon.set_ev(generation, PermanentStat::spd, IV(31_bi), EV(60_bi));
 	pokemon.set_ev(generation, PermanentStat::spe, IV(31_bi), EV(128_bi));
-	for (auto const move : {Moves::Hydro_Pump, Moves::Bug_Buzz, Moves::Roost, Moves::Air_Slash}) {
-		pokemon.regular_moves().push_back(Move(generation, move));
-	}
 
 	optimize_evs(generation, pokemon, random_engine);
 }
@@ -139,15 +157,22 @@ void generation_two(std::mt19937 & random_engine) {
 	constexpr auto species = Species::Mew;
 	constexpr auto level = Level(100_bi);
 	auto const base_stats = BaseStats(generation, species);
-	auto pokemon = Pokemon(generation, species, level, Gender::genderless, Item::None, Ability::Honey_Gather, Nature::Hardy);
+	auto pokemon = Pokemon(
+		generation,
+		species,
+		level,
+		Gender::genderless,
+		Item::None,
+		Ability::Honey_Gather,
+		Nature::Hardy,
+		regular_moves(generation, Moves::Tackle, Moves::Psychic)
+	);
 	pokemon.set_ev(generation, PermanentStat::hp, IV(30_bi), EV(252_bi));
 	pokemon.set_ev(generation, PermanentStat::atk, IV(30_bi), EV(252_bi));
 	pokemon.set_ev(generation, PermanentStat::def, IV(30_bi), EV(252_bi));
 	pokemon.set_ev(generation, PermanentStat::spa, IV(30_bi), EV(252_bi));
 	pokemon.set_ev(generation, PermanentStat::spd, IV(30_bi), EV(252_bi));
 	pokemon.set_ev(generation, PermanentStat::spe, IV(30_bi), EV(252_bi));
-	pokemon.regular_moves().push_back(Move(generation, Moves::Tackle));
-	pokemon.regular_moves().push_back(Move(generation, Moves::Psychic));
 
 	auto const ivs_and_evs = calculate_ivs_and_evs(generation, pokemon);
 	auto const stats = initial_stats(base_stats, level, ivs_and_evs);

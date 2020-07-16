@@ -108,14 +108,11 @@ auto parse_ability(std::string_view const ability_str, Species const species [[m
 		from_string<Ability>(ability_str);
 }
 
-auto parse_moves(std::string_view const str) {
-	auto moves = containers::static_vector<Moves, max_moves_per_pokemon.value()>();
+auto parse_moves(std::string_view const str, Generation const generation) {
 	auto buffer = DelimitedBufferView(str, ',');
+	auto moves = RegularMoves();
 	while (!buffer.remainder().empty()) {
-		if (size(moves) == moves.capacity()) {
-			throw std::runtime_error("Too many moves: " + std::string(str));
-		}
-		push_back(moves, from_string<Moves>(buffer.pop()));
+		moves.push_back(Move(generation, from_string<Moves>(buffer.pop())));
 	}
 	return moves;
 }
@@ -176,7 +173,7 @@ auto parse_pokemon(std::string_view const str, Generation const generation) {
 	auto const species = parse_species(buffer.pop(), nickname);
 	auto const item = from_string<Item>(buffer.pop());
 	auto const ability = parse_ability(buffer.pop(), species);
-	auto const moves = parse_moves(buffer.pop());
+	auto const moves = parse_moves(buffer.pop(), generation);
 	auto const nature = parse_nature(buffer.pop());
 	auto const evs = parse_stat_components(buffer.pop(), EV(0_bi));
 	auto const gender = parse_gender(buffer.pop());
@@ -187,10 +184,17 @@ auto parse_pokemon(std::string_view const str, Generation const generation) {
 	auto const pokeball [[maybe_unused]] = buffer.pop(',');
 	// TODO: Support Hyper Training
 	auto const hidden_power_type [[maybe_unused]] = buffer.remainder();
-	auto pokemon = Pokemon(generation, species, level, gender, item, ability, nature, happiness);
-	for (auto const move : moves) {
-		pokemon.regular_moves().push_back(Move(generation, move));
-	}
+	auto pokemon = Pokemon(
+		generation,
+		species,
+		level,
+		gender,
+		item,
+		ability,
+		nature,
+		moves,
+		happiness
+	);
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 		pokemon.set_ev(generation, stat_name, ivs[stat_name], evs[stat_name]);
 	}

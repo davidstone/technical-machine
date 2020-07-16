@@ -57,19 +57,16 @@ auto hidden_power_type(std::string_view const str) {
 	return from_string<Type>(str.substr(prefix.size()));
 }
 
-auto parse_moves(boost::property_tree::ptree const & moves) {
-	if (moves.size() > max_moves_per_pokemon) {
-		throw std::runtime_error("Tried to add too many moves");
-	}
+auto parse_moves(boost::property_tree::ptree const & moves, Generation const generation) {
 	struct Result {
-		containers::static_vector<Moves, max_moves_per_pokemon.value()> names;
+		RegularMoves moves;
 		bounded::optional<Type> hidden_power_type;
 	};
 	auto result = Result();
 	for (auto const & move : moves) {
 		auto const move_str = move.second.get<std::string>("");
 		auto const move_name = from_string<Moves>(move_str);
-		containers::push_back(result.names, move_name);
+		result.moves.push_back(Move(generation, move_name));
 		if (move_name == Moves::Hidden_Power) {
 			insert(result.hidden_power_type, hidden_power_type(move_str));
 		}
@@ -90,25 +87,30 @@ auto parse_pokemon(boost::property_tree::ptree const & pokemon_data, Generation 
 	// have a '/'
 	auto const hp = bounded::to_integer<HP::max_type>(split_view(condition, '/').first);
 
-	auto const moves = parse_moves(pokemon_data.get_child("moves"));
+	auto const move_data = parse_moves(pokemon_data.get_child("moves"), generation);
 	auto const stats = calculate_ivs_and_evs(
 		generation,
 		details.species,
 		details.level,
 		parse_stats(hp, pokemon_data.get_child("stats")),
-		moves.hidden_power_type,
-		has_physical_move(generation, moves.names, moves.hidden_power_type)
+		move_data.hidden_power_type,
+		has_physical_move(generation, move_data.moves, move_data.hidden_power_type)
 	);
 
 	auto const ability = from_string<Ability>(get("baseAbility"));
 	
 	auto const item = from_string<Item>(get("item"));
-	
-	auto pokemon = Pokemon(generation, details.species, details.level, details.gender, item, ability, stats.nature);
 
-	for (auto const move : moves.names) {
-		add_seen_move(pokemon.regular_moves(), generation, move);
-	}
+	auto pokemon = Pokemon(
+		generation,
+		details.species,
+		details.level,
+		details.gender,
+		item,
+		ability,
+		stats.nature,
+		move_data.moves
+	);
 
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 		auto const stat = stats[stat_name];

@@ -53,8 +53,16 @@ constexpr auto max_damage_executed_physical_move = ExecutedMove{
 Team max_damage_physical_attacker(Item const item, Ability const ability, Nature const nature) {
 	auto attacker = Team(max_pokemon_per_team);
 	
-	auto & shuckle = attacker.add_pokemon(Pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, item, ability, nature));
-	shuckle.regular_moves().push_back(Move(max_damage_physical_move));
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Shuckle,
+		Level(100_bi),
+		Gender::male,
+		item,
+		ability,
+		nature,
+		RegularMoves({Move(max_damage_physical_move)})
+	));
 
 	auto pokemon = attacker.pokemon();
 	pokemon.switch_in(generation, Weather());
@@ -69,7 +77,16 @@ Team max_damage_physical_attacker(Item const item, Ability const ability, Nature
 
 Team max_damage_physical_defender() {
 	auto defender = Team(max_pokemon_per_team);
-	defender.add_pokemon(Pokemon(generation, Species::Combee, Level(1_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Hasty));
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Combee,
+		Level(1_bi),
+		Gender::male,
+		Item::None,
+		Ability::Honey_Gather,
+		Nature::Hasty,
+		RegularMoves({Move(generation, Moves::Tackle)})
+	));
 	auto pokemon = defender.pokemon();
 	pokemon.switch_in(generation, Weather());
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
@@ -101,16 +118,33 @@ void special_power_test() {
 	auto attacker = Team(max_pokemon_per_team);
 	auto weather = Weather();
 
-	auto & deoxys = attacker.add_pokemon(Pokemon(generation, Species::Deoxys_Attack, Level(100_bi), Gender::genderless, Item::Wave_Incense, Ability::Torrent, Nature::Hardy));
-	auto const move = deoxys.regular_moves().push_back(Move(generation, Moves::Surf));
+	auto const move = Move(generation, Moves::Surf);
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Deoxys_Attack,
+		Level(100_bi),
+		Gender::genderless,
+		Item::Wave_Incense,
+		Ability::Torrent,
+		Nature::Hardy,
+		RegularMoves({move})
+	));
 	auto pokemon = attacker.pokemon();
 	pokemon.switch_in(generation, weather);
 	pokemon.set_hp(generation, weather, 1_bi);
 	
 
 	auto defender = Team(max_pokemon_per_team);
-	auto & paras = defender.add_pokemon(Pokemon(generation, Species::Paras, Level(1_bi), Gender::male, Item::None, Ability::Dry_Skin, Nature::Hardy));
-	paras.regular_moves().push_back(Move(generation, Moves::Dive));
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Paras,
+		Level(1_bi),
+		Gender::male,
+		Item::None,
+		Ability::Dry_Skin,
+		Nature::Hardy,
+		RegularMoves({Move(generation, Moves::Dive)})
+	));
 
 	auto defender_pokemon = defender.pokemon();
 	defender_pokemon.switch_in(generation, weather);
@@ -179,8 +213,17 @@ void special_damage_test() {
 
 	auto attacker = Team(max_pokemon_per_team);
 
-	auto & deoxys = attacker.add_pokemon(Pokemon(generation, Species::Deoxys_Attack, Level(100_bi), Gender::genderless, Item::Metronome, Ability::Blaze, Nature::Modest));
-	auto const move = deoxys.regular_moves().push_back(Move(generation, Moves::Blast_Burn));
+	auto const move = Move(generation, Moves::Blast_Burn);
+	auto & deoxys = attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Deoxys_Attack,
+		Level(100_bi),
+		Gender::genderless,
+		Item::Metronome,
+		Ability::Blaze,
+		Nature::Modest,
+		RegularMoves({move})
+	));
 	deoxys.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(EV::max));
 
 	auto attacker_pokemon = attacker.pokemon();
@@ -198,7 +241,16 @@ void special_damage_test() {
 	attacker_pokemon.activate_flash_fire();
 
 	auto defender = Team(max_pokemon_per_team);
-	defender.add_pokemon(Pokemon(generation, Species::Paras, Level(1_bi), Gender::male, Item::None, Ability::Dry_Skin, Nature::Hardy));
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Paras,
+		Level(1_bi),
+		Gender::male,
+		Item::None,
+		Ability::Dry_Skin,
+		Nature::Hardy,
+		RegularMoves({Move(generation, Moves::Tackle)})
+	));
 	auto defender_pokemon = defender.pokemon();
 	defender_pokemon.switch_in(generation, weather);
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {

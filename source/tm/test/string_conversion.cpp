@@ -85,7 +85,7 @@ void test_pokemon() {
 	constexpr auto spe = EV(100_bi);
 	constexpr auto iv = IV(31_bi);
 
-	auto pokemon = Pokemon(generation, species, level, gender, item, ability, nature);
+	auto pokemon = Pokemon(generation, species, level, gender, item, ability, nature, RegularMoves({Move(generation, Moves::Psychic})));
 	pokemon.set_ev(generation, PermanentStat::hp, iv, hp);
 	pokemon.set_ev(generation, PermanentStat::atk, iv, atk);
 	pokemon.set_ev(generation, PermanentStat::def, iv, def);
@@ -103,7 +103,7 @@ void test_pokemon() {
 	};
 
 	check();
-	for (auto const move : {Moves::Psychic, Moves::Recover, Moves::Calm_Mind, Moves::Taunt}) {
+	for (auto const move : {Moves::Recover, Moves::Calm_Mind, Moves::Taunt}) {
 		pokemon.regular_moves().push_back(Move(generation, move));
 		check();
 	}

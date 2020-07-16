@@ -96,24 +96,33 @@ auto species_from_simulator_string(std::string_view const str) {
 	return (it != end(converter)) ? it->mapped() : from_string<Species>(str);
 }
 
-auto load_pokemon(Generation const generation, boost::property_tree::ptree const & pt) {
-	auto const species_str = pt.get <std::string>("<xmlattr>.species");
-	auto const species = species_from_simulator_string(species_str);
-	// auto const nickname_temp = pt.get <std::string>("nickname");
-	// auto const nickname = !nickname_temp.empty() ? nickname_temp : species_str;
-	auto const level = Level(pt.get<Level::value_type>("level"));
-	auto const gender = Gender(from_string<Gender>(pt.get<std::string>("gender")));
-	auto const happiness = Happiness(pt.get<Happiness::value_type>("happiness"));
-	auto const nature = from_string<Nature>(pt.get<std::string>("nature"));
-	auto const item = from_string<Item>(pt.get<std::string>("item"));
-	auto const ability = Ability(from_string<Ability>(pt.get<std::string>("ability")));
-	auto pokemon = Pokemon(generation, species, level, gender, item, ability, nature, happiness);
-	
-	for (boost::property_tree::ptree::value_type const & value : pt.get_child("moveset")) {
+auto load_moves(Generation const generation, boost::property_tree::ptree const & pt) {
+	auto moves = RegularMoves();
+	for (boost::property_tree::ptree::value_type const & value : pt) {
 		auto const name = from_string<Moves>(value.second.get_value<std::string>());
 		auto const pp_ups = value.second.get<PP::pp_ups_type>("<xmlattr>.pp-up");
-		add_seen_move(pokemon.regular_moves(), generation, name, pp_ups);
+		moves.push_back(Move(generation, name, pp_ups));
 	}
+	return moves;
+}
+
+auto load_pokemon(Generation const generation, boost::property_tree::ptree const & pt) {
+	auto const species_str = pt.get <std::string>("<xmlattr>.species");
+	// auto const given_nickname = pt.get<std::string>("nickname");
+	// auto const nickname = nickname_temp.empty() ? species_str : given_nickname;
+
+	auto pokemon = Pokemon(
+		generation,
+		species_from_simulator_string(species_str),
+		Level(pt.get<Level::value_type>("level")),
+		Gender(from_string<Gender>(pt.get<std::string>("gender"))),
+		from_string<Item>(pt.get<std::string>("item")),
+		Ability(from_string<Ability>(pt.get<std::string>("ability"))),
+		from_string<Nature>(pt.get<std::string>("nature")),
+		load_moves(generation, pt.get_child("moveset")),
+		Happiness(pt.get<Happiness::value_type>("happiness"))
+	);
+	
 	for (auto const & value : pt.get_child("stats")) {
 		load_stats(generation, pokemon, value.second);
 	}

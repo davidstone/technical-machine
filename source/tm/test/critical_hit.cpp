@@ -30,14 +30,24 @@ namespace {
 auto individual_test(Generation const generation, Species const species, Moves const move_name, Item const item, bool const focus_energy, double const rate) {
 	auto weather = Weather();
 	auto attacker = Team(1_bi);
-	attacker.add_pokemon(Pokemon(generation, species, Level(100_bi), Gender::genderless, item, Ability::Honey_Gather, Nature::Hardy));
+	constexpr auto ability = Ability::Honey_Gather;
+	attacker.add_pokemon(Pokemon(
+		generation,
+		species,
+		Level(100_bi),
+		Gender::genderless,
+		item,
+		ability,
+		Nature::Hardy,
+		RegularMoves({Move(generation, Moves::Tackle)})
+	));
 	attacker.pokemon().switch_in(generation, weather);
 	if (focus_energy) {
 		attacker.pokemon().focus_energy();
 	}
 	attacker.reset_start_of_turn();
 
-	auto const ch_rate = critical_hit_probability(generation, attacker.pokemon(), move_name, Ability::Honey_Gather, weather);
+	auto const ch_rate = critical_hit_probability(generation, attacker.pokemon(), move_name, ability, weather);
 	BOUNDED_ASSERT(ch_rate == rate);
 }
 

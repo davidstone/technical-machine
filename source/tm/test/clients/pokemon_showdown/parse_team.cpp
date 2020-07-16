@@ -29,10 +29,6 @@ namespace technicalmachine {
 namespace ps {
 namespace {
 
-constexpr auto move_array(Generation const generation, auto... moves) {
-	return containers::array{Move(generation, moves)...};
-}
-
 auto max_all_evs(Generation const generation, Pokemon & pokemon) {
 	constexpr auto ev = EV(252_bi);
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
@@ -51,9 +47,9 @@ auto expected_generation_one_team() {
 			Gender::genderless,
 			Item::None,
 			Ability::Honey_Gather,
-			Nature::Hardy
+			Nature::Hardy,
+			RegularMoves({Move(generation, moves)...})
 		));
-		containers::append(pokemon.regular_moves(), move_array(generation, moves...));
 		max_all_evs(generation, pokemon);
 		return pokemon;
 	};

@@ -27,51 +27,30 @@
 namespace technicalmachine {
 
 auto RegularMoves::push_back(Move const move) -> Move & {
-	BOUNDED_ASSERT(containers::none_equal(m_moves, move.name()));
-	return containers::push_back(m_moves, move);
-}
-
-namespace {
-
-auto add_seen_move_impl(RegularMoves & moves, Generation const generation, Moves const move_name, auto... maybe_pp) {
-	switch (move_name) {
-		case Moves::Pass:
-		case Moves::Struggle:
-		case Moves::Hit_Self:
-		case Moves::Switch0:
-		case Moves::Switch1:
-		case Moves::Switch2:
-		case Moves::Switch3:
-		case Moves::Switch4:
-		case Moves::Switch5:
-			return;
-		default:
-			break;
+	if (!is_regular(move.name())) {
+		throw std::runtime_error(std::string("Tried to add an irregular move ") + std::string(to_string(move.name())));
 	}
-	if (containers::any_equal(moves, move_name)) {
-		return;
+	if (containers::any_equal(m_moves, move.name())) {
+		throw std::runtime_error("Tried to add " + std::string(to_string(move.name())) + "twice");
 	}
-	if (containers::size(moves) == max_moves_per_pokemon) {
+	if (containers::size(m_moves) == max_moves_per_pokemon) {
 		auto message = std::string("Tried to add too many moves. Already have: ");
-		for (auto const existing_move : moves) {
+		for (auto const existing_move : m_moves) {
 			message += to_string(existing_move.name());
 			message += ", ";
 		}
 		message += "-- Tried to add ";
-		message += to_string(move_name);
+		message += to_string(move.name());
 		throw std::runtime_error(message);
 	}
-	moves.push_back(Move(generation, move_name, maybe_pp...));
+	return containers::push_back(m_moves, move);
 }
-
-} // namespace
 
 auto add_seen_move(RegularMoves & moves, Generation const generation, Moves const move_name) -> void {
-	add_seen_move_impl(moves, generation, move_name);
-}
-
-auto add_seen_move(RegularMoves & moves, Generation const generation, Moves const move_name, PP::pp_ups_type pp_ups) -> void {
-	add_seen_move_impl(moves, generation, move_name, pp_ups);
+	if (containers::any_equal(moves, move_name) or !is_regular(move_name)) {
+		return;
+	}
+	moves.push_back(Move(generation, move_name));
 }
 
 } // namespace technicalmachine

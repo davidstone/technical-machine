@@ -26,33 +26,25 @@
 namespace technicalmachine {
 namespace {
 
-auto any_move_matches(Generation const generation, containers::static_vector<Moves, max_moves_per_pokemon.value()> const moves, bounded::optional<Type> const hidden_power_type, auto const condition) -> bool {
-	return containers::any(moves, [=](Moves const move) {
+auto any_move_matches(Generation const generation, RegularMoves const moves, bounded::optional<Type> const hidden_power_type, auto const condition) -> bool {
+	return containers::any(moves, [=](Move const move) {
 		return condition(
 			generation,
-			KnownMove{move, get_type(generation, move, hidden_power_type)}
+			KnownMove{move.name(), get_type(generation, move.name(), hidden_power_type)}
 		);
 	});
 }
 
-auto get_move_names(Pokemon const pokemon) {
-	return containers::static_vector<Moves, max_moves_per_pokemon.value()>(
-		containers::transform(pokemon.regular_moves(), [](Move const move) {
-			return move.name();
-		})
-	);
-}
-
 } // namespace
 
-auto has_physical_move(Generation const generation, containers::static_vector<Moves, max_moves_per_pokemon.value()> const moves, bounded::optional<Type> const hidden_power_type) -> bool {
+auto has_physical_move(Generation const generation, RegularMoves const moves, bounded::optional<Type> const hidden_power_type) -> bool {
 	return any_move_matches(generation, moves, hidden_power_type, is_physical);
 }
 
 auto has_physical_move(Generation const generation, Pokemon const pokemon) -> bool {
 	return any_move_matches(
 		generation,
-		get_move_names(pokemon),
+		pokemon.regular_moves(),
 		get_hidden_power_type(pokemon),
 		is_physical
 	);
@@ -61,7 +53,7 @@ auto has_physical_move(Generation const generation, Pokemon const pokemon) -> bo
 auto has_special_move(Generation const generation, Pokemon const pokemon) -> bool {
 	return any_move_matches(
 		generation,
-		get_move_names(pokemon),
+		pokemon.regular_moves(),
 		get_hidden_power_type(pokemon),
 		is_special
 	);

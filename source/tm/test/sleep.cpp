@@ -37,8 +37,8 @@ using namespace bounded::literal;
 
 constexpr auto damage = ActualDamage::Unknown{};	
 
-constexpr auto move_array(Generation const generation, auto... moves) {
-	return containers::array{Move(generation, moves)...};
+constexpr auto regular_moves(Generation const generation, auto... moves) {
+	return RegularMoves{Move(generation, moves)...};
 }
 
 void sleep_talk() {
@@ -46,8 +46,16 @@ void sleep_talk() {
 	auto weather = Weather{};
 	auto attacker = Team(1_bi, true);
 	{
-		auto jolteon = Pokemon(generation, Species::Jolteon, Level(100_bi), Gender::female, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
-		containers::append(jolteon.regular_moves(), move_array(generation, Moves::Sleep_Talk, Moves::Thunderbolt));
+		auto jolteon = Pokemon(
+			generation,
+			Species::Jolteon,
+			Level(100_bi),
+			Gender::female,
+			Item::Leftovers,
+			Ability::Volt_Absorb,
+			Nature::Timid,
+			regular_moves(generation, Moves::Sleep_Talk, Moves::Thunderbolt)
+		);
 		jolteon.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
 		jolteon.set_status(Statuses::sleep);
 		
@@ -57,8 +65,16 @@ void sleep_talk() {
 
 	auto defender = Team(1_bi);
 	{
-		auto gyarados = Pokemon(generation, Species::Gyarados, Level(100_bi), Gender::male, Item::Life_Orb, Ability::Intimidate, Nature::Adamant);
-		push_back(gyarados.regular_moves(), Move(generation, Moves::Earthquake));
+		auto gyarados = Pokemon(
+			generation,
+			Species::Gyarados,
+			Level(100_bi),
+			Gender::male,
+			Item::Life_Orb,
+			Ability::Intimidate,
+			Nature::Adamant,
+			RegularMoves({Move(generation, Moves::Earthquake)})
+		);
 		gyarados.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
 
 		defender.add_pokemon(gyarados);
@@ -134,18 +150,32 @@ struct Sleeper {
 private:
 	static auto make_sleeper_team(Generation const generation, Weather & weather) -> Team {
 		auto sleeper = Team(1_bi, true);
-		auto blissey = Pokemon(generation, Species::Blissey, Level(100_bi), Gender::female, Item::None, Ability::Natural_Cure, Nature::Hardy);
-		containers::append(blissey.regular_moves(), move_array(generation, Moves::Rest, Moves::Sleep_Talk, Moves::Wish));
-		sleeper.add_pokemon(blissey);
+		sleeper.add_pokemon(Pokemon(
+			generation,
+			Species::Blissey,
+			Level(100_bi),
+			Gender::female,
+			Item::None,
+			Ability::Natural_Cure,
+			Nature::Hardy,
+			regular_moves(generation, Moves::Rest, Moves::Sleep_Talk, Moves::Wish)
+		));
 		sleeper.pokemon().switch_in(generation, weather);
 		return sleeper;
 	}
 
 	static auto make_other_team(Generation const generation, Weather & weather) -> Team {
 		auto other = Team(1_bi);
-		auto blissey = Pokemon(generation, Species::Blissey, Level(100_bi), Gender::female, Item::None, Ability::Natural_Cure, Nature::Hardy);
-		containers::append(blissey.regular_moves(), move_array(generation, Moves::Seismic_Toss));
-		other.add_pokemon(blissey);
+		other.add_pokemon(Pokemon(
+			generation,
+			Species::Blissey,
+			Level(100_bi),
+			Gender::female,
+			Item::None,
+			Ability::Natural_Cure,
+			Nature::Hardy,
+			regular_moves(generation, Moves::Seismic_Toss)
+		));
 		other.pokemon().switch_in(generation, weather);
 		return other;
 	}

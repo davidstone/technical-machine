@@ -87,18 +87,22 @@ TeamSize number_of_pokemon(ptree const & pt) {
 	return pokemon_count;
 }
 
-auto load_moves(Generation const generation, Pokemon & pokemon, CheckedIterator it) -> CheckedIterator {
+auto load_moves(Generation const generation, CheckedIterator it) {
+	struct Parsed {
+		RegularMoves moves;
+		CheckedIterator it;
+	};
+	auto moves = RegularMoves();
 	for (auto const n [[maybe_unused]] : containers::integer_range(4_bi)) {
 		auto const & value = it.advance("Move");
 		// TODO: return optional
 		using ReadMoveID = bounded::checked_integer<0, static_cast<int>(bounded::max_value<MoveID>)>;
 		auto const move_id = value.get_value<ReadMoveID>();
 		if (move_id != 0_bi) {
-			// TODO: Throw an exception if we attempt to add the same move twice
-			add_seen_move(pokemon.regular_moves(), generation, id_to_move(MoveID(move_id)));
+			moves.push_back(Move(generation, id_to_move(MoveID(move_id))));
 		}
 	}
-	return it;
+	return Parsed{moves, it};
 }
 
 template<typename Type>
@@ -142,12 +146,22 @@ auto load_pokemon(ptree const & pt, Generation const generation, SpeciesIDs::ID)
 	auto const ability = id_to_ability(pt.get<AbilityID>("<xmlattr>.Ability"));
 	auto const nature = id_to_nature(pt.get<NatureID>("<xmlattr>.Nature"));
 
-	auto pokemon = Pokemon(generation, species, level, gender, item, ability, nature, happiness);
-
-	auto it = CheckedIterator(pt.get_child(""));
-	it = load_moves(generation, pokemon, it);
-	auto ivs = load_stats<IV>("DV", it);
+	auto const it = CheckedIterator(pt.get_child(""));
+	auto const parsed_moves = load_moves(generation, it);
+	auto ivs = load_stats<IV>("DV", parsed_moves.it);
 	auto evs = load_stats<EV>("EV", ivs.it);
+
+	auto pokemon = Pokemon(
+		generation,
+		species,
+		level,
+		gender,
+		item,
+		ability,
+		nature,
+		parsed_moves.moves,
+		happiness
+	);
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 		auto const iv = ivs[stat_name];
 		auto const ev = evs[stat_name];

@@ -30,6 +30,7 @@
 
 #include <bounded/to_integer.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/algorithms/find.hpp>
 #include <containers/array/array.hpp>
@@ -172,10 +173,6 @@ auto pokemon_from_string(Generation const generation, std::string_view const str
 	auto const [ability, status] = pop_ability_and_status(buffer);
 	auto const nature = typed_pop<Nature>(buffer, nature_hp_iv);
 
-	auto pokemon = Pokemon(generation, species, Level(100_bi), Gender::genderless, item, ability, nature);
-
-	pokemon.set_status(status);
-
 	auto const ivs = IVs{
 		pop_value_type<IV>(buffer, hp_iv_atk_iv),
 		pop_value_type<IV>(buffer, atk_iv_def_iv),
@@ -192,19 +189,33 @@ auto pokemon_from_string(Generation const generation, std::string_view const str
 		pop_value_type<EV>(buffer, spd_ev_spe_ev),
 		pop_value_type<EV>(buffer, spe_ev_moves),
 	};
-	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-		pokemon.set_ev(generation, stat_name, ivs[stat_name], evs[stat_name]);
-	}
-	pokemon.set_hp(HP::current_type(static_cast<int>(static_cast<double>(pokemon.hp().max()) * hp_percent / 100.0)));
 
 	auto const should_be_empty = pop_to_delimiter(buffer, moves_separator);
 	if (!should_be_empty.empty()) {
 		throw std::runtime_error("Expected empty string while parsing Pokemon string, got " + std::string(should_be_empty));
 	}
 
+	auto moves = RegularMoves();
 	while (!buffer.remainder().empty()) {
-		add_seen_move(pokemon.regular_moves(), generation, typed_pop<Moves>(buffer, moves_separator));
+		auto const move_name = typed_pop<Moves>(buffer, moves_separator);
+		containers::push_back(moves, Move(generation, move_name));
 	}
+
+	auto pokemon = Pokemon(
+		generation,
+		species,
+		Level(100_bi),
+		Gender::genderless,
+		item,
+		ability,
+		nature,
+		moves
+	);
+	pokemon.set_status(status);
+	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
+		pokemon.set_ev(generation, stat_name, ivs[stat_name], evs[stat_name]);
+	}
+	pokemon.set_hp(HP::current_type(static_cast<int>(static_cast<double>(pokemon.hp().max()) * hp_percent / 100.0)));
 
 	return pokemon;
 }
