@@ -48,31 +48,31 @@ void test_baton_pass() {
 
 	Team attacker(2_bi, true);
 	{
-		attacker.add_pokemon(generation, Species::Smeargle, Level(100_bi), Gender::male, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly);
+		attacker.add_pokemon(Pokemon(generation, Species::Smeargle, Level(100_bi), Gender::male, Item::Leftovers, Ability::Own_Tempo, Nature::Jolly));
 		auto & smeargle = back(attacker.all_pokemon());
-		containers::append(regular_moves(smeargle), move_array(Moves::Baton_Pass, Moves::Belly_Drum));
+		containers::append(smeargle.regular_moves(), move_array(Moves::Baton_Pass, Moves::Belly_Drum));
 	}
 
 	{
-		attacker.add_pokemon(generation, Species::Alakazam, Level(100_bi), Gender::male, Item::Lum_Berry, Ability::Synchronize, Nature::Jolly);
+		attacker.add_pokemon(Pokemon(generation, Species::Alakazam, Level(100_bi), Gender::male, Item::Lum_Berry, Ability::Synchronize, Nature::Jolly));
 		auto & alakazam = back(attacker.all_pokemon());
-		containers::append(regular_moves(alakazam), move_array(Moves::Psycho_Cut, Moves::Recover));
+		containers::append(alakazam.regular_moves(), move_array(Moves::Psycho_Cut, Moves::Recover));
 		alakazam.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
 	}
 	attacker.pokemon().switch_in(generation, weather);
 
 	Team defender(2_bi);
 	{
-		defender.add_pokemon(generation, Species::Gengar, Level(100_bi), Gender::male, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
+		defender.add_pokemon(Pokemon(generation, Species::Gengar, Level(100_bi), Gender::male, Item::Choice_Specs, Ability::Levitate, Nature::Modest));
 		Pokemon & gengar = back(defender.all_pokemon());
-		containers::append(regular_moves(gengar), move_array(Moves::Shadow_Ball));
+		containers::append(gengar.regular_moves(), move_array(Moves::Shadow_Ball));
 		gengar.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
 	}
 
 	{
-		defender.add_pokemon(generation, Species::Misdreavus, Level(100_bi), Gender::female, Item::Choice_Specs, Ability::Levitate, Nature::Modest);
+		defender.add_pokemon(Pokemon(generation, Species::Misdreavus, Level(100_bi), Gender::female, Item::Choice_Specs, Ability::Levitate, Nature::Modest));
 		Pokemon & misdreavus = back(defender.all_pokemon());
-		containers::append(regular_moves(misdreavus), move_array(Moves::Shadow_Ball));
+		containers::append(misdreavus.regular_moves(), move_array(Moves::Shadow_Ball));
 		misdreavus.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
 	}
 	defender.pokemon().switch_in(generation, weather);
@@ -147,13 +147,12 @@ void wonder_guard() {
 	auto weather = Weather();
 
 	auto attacker = Team(1_bi, true);
-	attacker.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::female, Item::None, Ability::Volt_Absorb, Nature::Timid);
-	auto jolteon = attacker.pokemon();
-	jolteon.switch_in(generation, weather);
-	containers::append(regular_moves(jolteon), move_array(Moves::Shadow_Ball, Moves::Thunderbolt));
+	auto & jolteon = attacker.add_pokemon(Pokemon(generation, Species::Jolteon, Level(100_bi), Gender::female, Item::None, Ability::Volt_Absorb, Nature::Timid));
+	containers::append(jolteon.regular_moves(), move_array(Moves::Shadow_Ball, Moves::Thunderbolt));
+	attacker.pokemon().switch_in(generation, weather);
 
 	auto defender = Team(1_bi);
-	defender.add_pokemon(generation, Species::Shedinja, Level(100_bi), Gender::male, Item::None, Ability::Wonder_Guard, Nature::Adamant);
+	defender.add_pokemon(Pokemon(generation, Species::Shedinja, Level(100_bi), Gender::male, Item::None, Ability::Wonder_Guard, Nature::Adamant));
 	auto shedinja = defender.pokemon();
 	shedinja.switch_in(generation, weather);
 

@@ -135,7 +135,7 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 		if (!species) {
 			continue;
 		}
-		auto & pokemon = team.add_pokemon(
+		auto pokemon = Pokemon(
 			generation,
 			*species,
 			level,
@@ -151,11 +151,12 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 			pokemon.set_nature(*nature);
 		}
 		for (auto const move : moves) {
-			add_seen_move(pokemon.all_moves(), generation, move);
+			add_seen_move(pokemon.regular_moves(), generation, move);
 		}
 		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 			pokemon.set_ev(generation, stat_name, default_iv(generation), stats[stat_name]);
 		}
+		team.add_pokemon(pokemon);
 	}
 
 	return {generation, team};

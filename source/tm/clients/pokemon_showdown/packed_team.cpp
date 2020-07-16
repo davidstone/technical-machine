@@ -49,7 +49,7 @@ auto to_packed_format(Generation const generation, Team const & team) -> contain
 		result += '|';
 		result += to_string(pokemon.initial_ability());
 		result += '|';
-		auto const moves = regular_moves(pokemon);
+		auto const moves = pokemon.regular_moves();
 		for (auto it = begin(moves); it != end(moves); ++it) {
 			if (it != begin(moves)) {
 				result += ',';
@@ -170,7 +170,7 @@ auto parse_integer_wrapper(std::string_view const str) {
 	return T(str.empty() ? bounded::max_value<integer> : bounded::to_integer<integer>(str));
 }
 
-auto parse_pokemon(std::string_view const str, Generation const generation, TeamSize const team_size) {
+auto parse_pokemon(std::string_view const str, Generation const generation) {
 	auto buffer = DelimitedBufferView(str, '|');
 	auto const nickname = buffer.pop();
 	auto const species = parse_species(buffer.pop(), nickname);
@@ -187,9 +187,9 @@ auto parse_pokemon(std::string_view const str, Generation const generation, Team
 	auto const pokeball [[maybe_unused]] = buffer.pop(',');
 	// TODO: Support Hyper Training
 	auto const hidden_power_type [[maybe_unused]] = buffer.remainder();
-	auto pokemon = Pokemon(generation, team_size, species, level, gender, item, ability, nature, happiness);
+	auto pokemon = Pokemon(generation, species, level, gender, item, ability, nature, happiness);
 	for (auto const move : moves) {
-		pokemon.all_moves().add(Move(generation, move));
+		pokemon.regular_moves().push_back(Move(generation, move));
 	}
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 		pokemon.set_ev(generation, stat_name, ivs[stat_name], evs[stat_name]);
@@ -208,7 +208,7 @@ auto packed_format_to_team(std::string_view const str, Generation const generati
 	auto team = Team(team_size, is_me);
 
 	while (!buffer.remainder().empty()) {
-		team.add_pokemon(parse_pokemon(buffer.pop(), generation, team_size));
+		team.add_pokemon(parse_pokemon(buffer.pop(), generation));
 	}
 	return team;
 }

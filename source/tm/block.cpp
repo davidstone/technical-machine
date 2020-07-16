@@ -77,7 +77,7 @@ auto is_healing(Moves const name) {
 }
 
 auto imprison(Moves const move, ActivePokemon const other) {
-	return other.used_imprison() and containers::any_equal(regular_moves(other), move);
+	return other.used_imprison() and containers::any_equal(other.regular_moves(), move);
 }
 
 // Things that both block selection and block execution in between sleep and confusion
@@ -169,12 +169,8 @@ auto is_legal_selection(Generation const generation, Team const & user, Move con
 }	// namespace
 
 auto legal_selections(Generation const generation, Team const & user, Team const & other, Weather const weather) -> StaticVectorMove {
-	// TODO: implement as
-	// auto result = filter(user.pokemon().all_moves(), [] { legal selection; });
-	// BOUNDED_ASSERT(!empty);
-	// return result;
 	auto result = StaticVectorMove{};
-	for (auto const move : user.pokemon().all_moves()) {
+	for (auto const move : all_moves(generation, user.pokemon(), user.size())) {
 		bool const found_selectable_move = !empty(result);
 		if (is_legal_selection(generation, user, move, other, weather, found_selectable_move)) {
 			containers::push_back(result, move.name());

@@ -20,6 +20,7 @@
 
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/move.hpp>
+#include <tm/move/regular_moves.hpp>
 #include <tm/move/shared.hpp>
 
 #include <tm/compress.hpp>
@@ -27,11 +28,8 @@
 
 #include <containers/algorithms/concatenate_view.hpp>
 #include <containers/algorithms/transform.hpp>
-#include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
-
-using RegularMoveContainer = containers::static_vector<Move, max_moves_per_pokemon.value()>;
 
 constexpr auto move_container_transform(auto const & range) {
 	auto const transformed = containers::transform(range, [](auto value) { return value; });
@@ -46,27 +44,18 @@ public:
 	using value_type = Move;
 	using size_type = MoveSize;
 	using const_iterator = containers::concatenate_view_iterator<
-		Transformed<RegularMoveContainer>,
+		Transformed<RegularMoves>,
 		Transformed<SharedMoves>
 	>;
 	using iterator = const_iterator;
-	using const_regular_iterator = RegularMoveContainer::const_iterator;
-	using regular_iterator = RegularMoveContainer::iterator;
 	
-	explicit MoveContainer(Generation const generation, TeamSize const my_team_size):
+	explicit MoveContainer(Generation const generation, RegularMoves const & regular, TeamSize const my_team_size):
+		m_regular(regular),
 		m_shared(generation, my_team_size)
 	{
 	}
 
-	auto number_of_regular_moves() const {
-		return static_cast<RegularMoveSize>(size(m_regular));
-	}
-
-	// Skips moves for which is_regular(move) is false
 	auto const & regular() const {
-		return m_regular;
-	}
-	auto & regular() {
 		return m_regular;
 	}
 	
@@ -80,25 +69,13 @@ public:
 		return containers::concatenate_view_sentinel();
 	}
 
-	auto add(Move const move) -> Move &;
-
 	auto remove_switch() {
 		m_shared.remove_switch();
 	}
 
-	friend auto compress(MoveContainer const value) {
-		return compress_combine(value.m_regular, value.m_shared);
-	}
-	
 private:
-	RegularMoveContainer m_regular;
+	RegularMoves const & m_regular;
 	SharedMoves m_shared;
 };
-
-using ::containers::detail::common::operator<=>;
-using ::containers::detail::common::operator==;
-
-auto add_seen_move(MoveContainer &, Generation, Moves) -> void;
-auto add_seen_move(MoveContainer &, Generation, Moves, PP::pp_ups_type) -> void;
 
 }	// namespace technicalmachine

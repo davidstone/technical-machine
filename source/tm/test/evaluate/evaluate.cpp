@@ -53,11 +53,11 @@ void evaluate_tests() {
 	auto weather = Weather();
 
 	Team team1(1_bi);
-	team1.add_pokemon(generation, species, level, gender, item, ability, nature);
+	team1.add_pokemon(Pokemon(generation, species, level, gender, item, ability, nature));
 	team1.pokemon().switch_in(generation, weather);
 	Team team2(1_bi);
 	team2.pokemon().switch_in(generation, weather);
-	team2.add_pokemon(generation, species, level, gender, item, ability, nature);
+	team2.add_pokemon(Pokemon(generation, species, level, gender, item, ability, nature));
 	change_hp(generation, team1.pokemon(), weather, -50_bi);
 	Evaluate const evaluate;
 	assert_lower_score(evaluate, team1, team2);

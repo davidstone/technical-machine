@@ -40,7 +40,7 @@ void predict_pokemon(Generation const generation, Team & team, Estimate estimate
 	while (team.number_of_seen_pokemon() < team.size()) {
 		Species const name = use_most_likely ? estimate.most_likely() : estimate.random(random_engine);
 		Level const level(100_bi);
-		team.add_pokemon(generation, name, level, Gender::genderless);
+		team.add_pokemon(Pokemon(generation, name, level, Gender::genderless));
 		if (team.number_of_seen_pokemon() == team.size())
 			break;
 		estimate.update(usage_stats, name);
@@ -48,16 +48,15 @@ void predict_pokemon(Generation const generation, Team & team, Estimate estimate
 	team.all_pokemon().set_index(index);
 }
 
-void predict_move(MoveContainer & moves, Generation const generation, containers::static_vector<Moves, max_moves_per_pokemon.value()> const detailed) {
-	for (Moves const move : detailed) {
-		auto const regular = moves.regular();
-		if (size(regular) == max_moves_per_pokemon) {
+void predict_move(RegularMoves & regular, Generation const generation, containers::static_vector<Moves, max_moves_per_pokemon.value()> const detailed) {
+	for (Moves const move_name : detailed) {
+		if (containers::size(regular) == max_moves_per_pokemon) {
 			break;
 		}
-		if (containers::any_equal(regular, move)) {
+		if (containers::any_equal(regular, move_name)) {
 			continue;
 		}
-		moves.add(Move(generation, move));
+		regular.push_back(Move(generation, move_name));
 	}
 }
 
@@ -78,7 +77,7 @@ auto predict_team_impl(Generation const generation, UsageStats const & usage_sta
 		if (!pokemon.nature_is_known()) {
 			pokemon.set_nature(detailed.stats.nature);
 		}
-		predict_move(pokemon.all_moves(), generation, detailed.moves);
+		predict_move(pokemon.regular_moves(), generation, detailed.moves);
 		optimize_evs(generation, pokemon, random_engine);
 	}
 	// TODO: This isn't right

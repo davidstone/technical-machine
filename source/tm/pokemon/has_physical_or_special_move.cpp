@@ -37,7 +37,7 @@ auto any_move_matches(Generation const generation, containers::static_vector<Mov
 
 auto get_move_names(Pokemon const pokemon) {
 	return containers::static_vector<Moves, max_moves_per_pokemon.value()>(
-		containers::transform(regular_moves(pokemon), [](Move const move) {
+		containers::transform(pokemon.regular_moves(), [](Move const move) {
 			return move.name();
 		})
 	);

@@ -96,7 +96,7 @@ auto species_from_simulator_string(std::string_view const str) {
 	return (it != end(converter)) ? it->mapped() : from_string<Species>(str);
 }
 
-auto load_pokemon(Generation const generation, boost::property_tree::ptree const & pt, Team & team) {
+auto load_pokemon(Generation const generation, boost::property_tree::ptree const & pt) {
 	auto const species_str = pt.get <std::string>("<xmlattr>.species");
 	auto const species = species_from_simulator_string(species_str);
 	// auto const nickname_temp = pt.get <std::string>("nickname");
@@ -107,16 +107,17 @@ auto load_pokemon(Generation const generation, boost::property_tree::ptree const
 	auto const nature = from_string<Nature>(pt.get<std::string>("nature"));
 	auto const item = from_string<Item>(pt.get<std::string>("item"));
 	auto const ability = Ability(from_string<Ability>(pt.get<std::string>("ability")));
-	auto & pokemon = team.add_pokemon(generation, species, level, gender, item, ability, nature, happiness);
+	auto pokemon = Pokemon(generation, species, level, gender, item, ability, nature, happiness);
 	
 	for (boost::property_tree::ptree::value_type const & value : pt.get_child("moveset")) {
 		auto const name = from_string<Moves>(value.second.get_value<std::string>());
 		auto const pp_ups = value.second.get<PP::pp_ups_type>("<xmlattr>.pp-up");
-		add_seen_move(pokemon.all_moves(), generation, name, pp_ups);
+		add_seen_move(pokemon.regular_moves(), generation, name, pp_ups);
 	}
 	for (auto const & value : pt.get_child("stats")) {
 		load_stats(generation, pokemon, value.second);
 	}
+	return pokemon;
 }
 
 }	// namespace
@@ -129,7 +130,7 @@ Team load_team(Generation const generation, std::filesystem::path const & team_f
 	constexpr bool is_me = true;
 	auto team = Team(static_cast<TeamSize>(all_pokemon.size()), is_me);
 	for (auto const & value : all_pokemon) {
-		load_pokemon(generation, value.second, team);
+		team.add_pokemon(load_pokemon(generation, value.second));
 	}
 	team.all_pokemon().reset_index();
 	return team;

@@ -156,7 +156,7 @@ BattleParser BattleFactory::make(AllUsageStats const & all_usage_stats, BattlePa
 	auto make_foe_team = [&]{
 		auto team = Team(*m_foe_team_size, false);
 		auto const pokemon = *m_foe_starter;
-		team.add_pokemon(m_generation, pokemon.species, pokemon.level, pokemon.gender);
+		team.add_pokemon(Pokemon(m_generation, pokemon.species, pokemon.level, pokemon.gender));
 		return team;
 	};
 

@@ -42,7 +42,7 @@ void Battle::handle_use_move(bool const is_ai, UsedMove const move, bool const c
 	auto & user = is_ai ? m_ai : m_foe;
 	auto & other = is_ai ? m_foe : m_ai;
 
-	add_seen_move(user.pokemon().all_moves(), m_generation, move.selected);
+	add_seen_move(user.pokemon().regular_moves(), m_generation, move.selected);
 	// TODO: Add move.executed in some circumstances
 
 	call_move(
@@ -61,7 +61,7 @@ auto Battle::find_or_add_pokemon(bool const is_ai, Species const species, Level 
 	auto & switcher = is_ai ? m_ai : m_foe;
 	auto const index = find_index(switcher.all_pokemon(), species);
 	if (index == switcher.number_of_seen_pokemon()) {
-		switcher.all_pokemon().add(m_generation, species, level, gender);
+		switcher.all_pokemon().add(Pokemon(m_generation, species, level, gender));
 	}
 	return to_switch(index);
 }

@@ -94,7 +94,7 @@ auto to_string(Generation const generation, Pokemon const pokemon) -> containers
 	
 	auto moves_to_string = [&]{
 		containers::string output;
-		for (auto const & move : regular_moves(pokemon)) {
+		for (auto const & move : pokemon.regular_moves()) {
 			output = containers::concatenate<containers::string>(std::move(output), moves_separator, to_string(move.name()));
 		}
 		return output;
@@ -164,7 +164,7 @@ constexpr auto pop_value_type(BufferView<std::string_view> & buffer, std::string
 
 } // namespace
 
-auto pokemon_from_string(Generation const generation, std::string_view const str, TeamSize const team_size) -> Pokemon {
+auto pokemon_from_string(Generation const generation, std::string_view const str) -> Pokemon {
 	auto buffer = BufferView(str);
 	auto const species = typed_pop<Species>(buffer, species_hp);
 	auto const hp_percent = typed_pop<double>(buffer, hp_item);
@@ -172,7 +172,7 @@ auto pokemon_from_string(Generation const generation, std::string_view const str
 	auto const [ability, status] = pop_ability_and_status(buffer);
 	auto const nature = typed_pop<Nature>(buffer, nature_hp_iv);
 
-	auto pokemon = Pokemon(generation, team_size, species, Level(100_bi), Gender::genderless, item, ability, nature);
+	auto pokemon = Pokemon(generation, species, Level(100_bi), Gender::genderless, item, ability, nature);
 
 	pokemon.set_status(status);
 
@@ -202,9 +202,8 @@ auto pokemon_from_string(Generation const generation, std::string_view const str
 		throw std::runtime_error("Expected empty string while parsing Pokemon string, got " + std::string(should_be_empty));
 	}
 
-	auto & moves = pokemon.all_moves();
 	while (!buffer.remainder().empty()) {
-		add_seen_move(moves, generation, typed_pop<Moves>(buffer, moves_separator));
+		add_seen_move(pokemon.regular_moves(), generation, typed_pop<Moves>(buffer, moves_separator));
 	}
 
 	return pokemon;

@@ -95,7 +95,7 @@ auto load_moves(Generation const generation, Pokemon & pokemon, CheckedIterator 
 		auto const move_id = value.get_value<ReadMoveID>();
 		if (move_id != 0_bi) {
 			// TODO: Throw an exception if we attempt to add the same move twice
-			add_seen_move(pokemon.all_moves(), generation, id_to_move(MoveID(move_id)));
+			add_seen_move(pokemon.regular_moves(), generation, id_to_move(MoveID(move_id)));
 		}
 	}
 	return it;
@@ -132,7 +132,7 @@ auto load_stats(std::string_view const name, CheckedIterator it) {
 	};
 }
 
-void load_pokemon(ptree const & pt, Generation const generation, Team & team, SpeciesIDs::ID) {
+auto load_pokemon(ptree const & pt, Generation const generation, SpeciesIDs::ID) -> Pokemon {
 	auto const species = id_to_species({ pt.get<SpeciesIDs::ID>("<xmlattr>.Num"), pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")} );
 	// auto const nickname = pt.get<std::string>("<xmlattr>.Nickname");
 	auto const gender = Gender(id_to_gender(pt.get<GenderID>("<xmlattr>.Gender")));
@@ -142,7 +142,7 @@ void load_pokemon(ptree const & pt, Generation const generation, Team & team, Sp
 	auto const ability = id_to_ability(pt.get<AbilityID>("<xmlattr>.Ability"));
 	auto const nature = id_to_nature(pt.get<NatureID>("<xmlattr>.Nature"));
 
-	auto & pokemon = team.add_pokemon(generation, species, level, gender, item, ability, nature, happiness);
+	auto pokemon = Pokemon(generation, species, level, gender, item, ability, nature, happiness);
 
 	auto it = CheckedIterator(pt.get_child(""));
 	it = load_moves(generation, pokemon, it);
@@ -153,6 +153,8 @@ void load_pokemon(ptree const & pt, Generation const generation, Team & team, Sp
 		auto const ev = evs[stat_name];
 		pokemon.set_ev(generation, stat_name, iv, ev);
 	}
+
+	return pokemon;
 }
 
 } // namespace
@@ -170,10 +172,11 @@ Team load_team(Generation const expected_generation, std::filesystem::path const
 	constexpr bool is_me = true;
 	auto team = Team(number_of_pokemon(all_pokemon), is_me);
 	for (auto const & value : all_pokemon) {
-		if (value.first == "Pokemon") {
-			if (auto const species = load_species(value.second)) {
-				load_pokemon(value.second, generation, team, *species);
-			}
+		if (value.first != "Pokemon") {
+			continue;
+		}
+		if (auto const species = load_species(value.second)) {
+			team.add_pokemon(load_pokemon(value.second, generation, *species));
 		}
 	}
 	team.all_pokemon().reset_index();

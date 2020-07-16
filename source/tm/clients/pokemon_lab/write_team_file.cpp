@@ -115,7 +115,7 @@ void write_pokemon(Generation const generation, Pokemon const & pokemon, boost::
 	member.put ("nature", to_string(pokemon.nature()));
 	member.put ("item", to_string(pokemon.unmodified_item()));
 	member.put ("ability", to_string(pokemon.initial_ability()));
-	for (auto const & move : regular_moves(pokemon)) {
+	for (auto const & move : pokemon.regular_moves()) {
 		write_move(move, member);
 	}
 	write_stats(generation, pokemon, member);

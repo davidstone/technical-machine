@@ -30,7 +30,7 @@ namespace {
 auto individual_test(Generation const generation, Species const species, Moves const move_name, Item const item, bool const focus_energy, double const rate) {
 	auto weather = Weather();
 	auto attacker = Team(1_bi);
-	attacker.add_pokemon(generation, species, Level(100_bi), Gender::genderless, item, Ability::Honey_Gather, Nature::Hardy);
+	attacker.add_pokemon(Pokemon(generation, species, Level(100_bi), Gender::genderless, item, Ability::Honey_Gather, Nature::Hardy));
 	attacker.pokemon().switch_in(generation, weather);
 	if (focus_energy) {
 		attacker.pokemon().focus_energy();

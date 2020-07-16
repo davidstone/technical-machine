@@ -93,12 +93,6 @@ struct PokemonCollection {
 		return m_real_size;
 	}
 
-	Pokemon & add(Generation const generation, auto && ... args) {
-		check_not_full();
-		return containers::lazy_push_back(m_container, [&] {
-			return Pokemon(generation, m_real_size, OPERATORS_FORWARD(args)...);
-		});
-	}
 	Pokemon & add(Pokemon pokemon) {
 		check_not_full();
 		return containers::push_back(m_container, std::move(pokemon));

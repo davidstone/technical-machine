@@ -87,6 +87,7 @@ add_library(tm_common STATIC
 	source/tm/move/power.cpp
 	source/tm/move/pp.cpp
 	source/tm/move/priority.cpp
+	source/tm/move/regular_moves.cpp
 	source/tm/move/shared.cpp
 	source/tm/move/target.cpp
 	source/tm/move/used_move.cpp

@@ -53,10 +53,10 @@ constexpr auto max_damage_executed_physical_move = ExecutedMove{
 Team max_damage_physical_attacker(Item const item, Ability const ability, Nature const nature) {
 	auto attacker = Team(max_pokemon_per_team);
 	
-	attacker.add_pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, item, ability, nature);
-	auto pokemon = attacker.pokemon();
-	pokemon.all_moves().add(Move(max_damage_physical_move));
+	auto & shuckle = attacker.add_pokemon(Pokemon(generation, Species::Shuckle, Level(100_bi), Gender::male, item, ability, nature));
+	shuckle.regular_moves().push_back(Move(max_damage_physical_move));
 
+	auto pokemon = attacker.pokemon();
 	pokemon.switch_in(generation, Weather());
 	
 	pokemon.defense_curl();
@@ -67,37 +67,14 @@ Team max_damage_physical_attacker(Item const item, Ability const ability, Nature
 	return attacker;
 }
 
-Team max_damage_special_attacker(Item const item, Ability const ability, Nature const nature) {
-	auto attacker = Team(max_pokemon_per_team);
-	auto weather = Weather();
-
-	attacker.add_pokemon(generation, Species::Deoxys_Attack, Level(100_bi), Gender::genderless, item, ability, nature);
-	attacker.pokemon().switch_in(generation, weather);
-	attacker.pokemon().set_hp(generation, weather, 1_bi);
-	
-	return attacker;
-}
-
 Team max_damage_physical_defender() {
 	auto defender = Team(max_pokemon_per_team);
-	defender.add_pokemon(generation, Species::Combee, Level(1_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Hasty);
+	defender.add_pokemon(Pokemon(generation, Species::Combee, Level(1_bi), Gender::male, Item::None, Ability::Honey_Gather, Nature::Hasty));
 	auto pokemon = defender.pokemon();
 	pokemon.switch_in(generation, Weather());
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		pokemon.stage()[BoostableStat::def] += -2_bi;
 	}
-	return defender;
-}
-
-Team max_damage_special_defender() {
-	auto defender = Team(max_pokemon_per_team);
-	defender.add_pokemon(generation, Species::Paras, Level(1_bi), Gender::male, Item::None, Ability::Dry_Skin, Nature::Hardy);
-	auto d = defender.pokemon();
-	d.switch_in(generation, Weather());
-	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
-		d.stage()[BoostableStat::spd] += -2_bi;
-	}
-
 	return defender;
 }
 
@@ -121,15 +98,27 @@ void special_power_test() {
 	std::cout << "\t\tRunning special power tests.\n";
 	constexpr auto max_power = 342_bi;
 
-	auto attacker = max_damage_special_attacker(Item::Wave_Incense, Ability::Torrent, Nature::Hardy);
-	auto pokemon = attacker.pokemon();
-	auto const move = pokemon.all_moves().add(Move(generation, Moves::Surf));
+	auto attacker = Team(max_pokemon_per_team);
+	auto weather = Weather();
 
-	Team defender = max_damage_special_defender();
+	auto & deoxys = attacker.add_pokemon(Pokemon(generation, Species::Deoxys_Attack, Level(100_bi), Gender::genderless, Item::Wave_Incense, Ability::Torrent, Nature::Hardy));
+	auto const move = deoxys.regular_moves().push_back(Move(generation, Moves::Surf));
+	auto pokemon = attacker.pokemon();
+	pokemon.switch_in(generation, weather);
+	pokemon.set_hp(generation, weather, 1_bi);
+	
+
+	auto defender = Team(max_pokemon_per_team);
+	auto & paras = defender.add_pokemon(Pokemon(generation, Species::Paras, Level(1_bi), Gender::male, Item::None, Ability::Dry_Skin, Nature::Hardy));
+	paras.regular_moves().push_back(Move(generation, Moves::Dive));
+
 	auto defender_pokemon = defender.pokemon();
-	defender_pokemon.all_moves().add(Move(generation, Moves::Dive));
+	defender_pokemon.switch_in(generation, weather);
+	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
+		defender_pokemon.stage()[BoostableStat::spd] += -2_bi;
+	}
 	defender_pokemon.successfully_use_move(Moves::Dive);
-	defender_pokemon.use_vanish_move(generation, Weather());
+	defender_pokemon.use_vanish_move(generation, weather);
 
 	auto const power = move_power(
 		generation,
@@ -141,7 +130,7 @@ void special_power_test() {
 			critical_hit
 		},
 		defender,
-		Weather{}
+		weather
 	);
 	check_equal(power, max_power);
 }
@@ -160,11 +149,11 @@ void physical_damage_test() {
 
 	auto attacker = max_damage_physical_attacker(Item::Metronome, Ability::Pure_Power, Nature::Impish);
 
-	auto a = attacker.pokemon();
+	auto attacker_pokemon = attacker.pokemon();
 
-	a.set_ev(generation, PermanentStat::def, IV(31_bi), EV(EV::max));
-	a.activate_power_trick();
-	a.stage()[BoostableStat::atk] += 6_bi;
+	attacker_pokemon.set_ev(generation, PermanentStat::def, IV(31_bi), EV(EV::max));
+	attacker_pokemon.activate_power_trick();
+	attacker_pokemon.stage()[BoostableStat::atk] += 6_bi;
 
 	auto const defender = max_damage_physical_defender();
 	
@@ -185,24 +174,36 @@ void physical_damage_test() {
 void special_damage_test() {
 	std::cout << "\t\tRunning max special damage tests.\n";
 	constexpr auto max_damage = 25696272_bi;
-	Weather weather;
+	auto weather = Weather();
 	weather.activate_sun_from_move(false);
 
-	auto attacker = max_damage_special_attacker(Item::Metronome, Ability::Blaze, Nature::Modest);
-	auto a = attacker.pokemon();
-	auto const move = a.all_moves().add(Move(generation, Moves::Blast_Burn));
-	a.set_type(Type::Fire);
+	auto attacker = Team(max_pokemon_per_team);
 
-	a.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(EV::max));
-	attacker.pokemon().stage()[BoostableStat::spa] += 6_bi;
+	auto & deoxys = attacker.add_pokemon(Pokemon(generation, Species::Deoxys_Attack, Level(100_bi), Gender::genderless, Item::Metronome, Ability::Blaze, Nature::Modest));
+	auto const move = deoxys.regular_moves().push_back(Move(generation, Moves::Blast_Burn));
+	deoxys.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(EV::max));
+
+	auto attacker_pokemon = attacker.pokemon();
+	attacker_pokemon.switch_in(generation, weather);
+	attacker_pokemon.set_hp(generation, weather, 1_bi);
+	
+	attacker_pokemon.set_type(Type::Fire);
+
+	attacker_pokemon.stage()[BoostableStat::spa] += 6_bi;
 	
 	for (auto const n [[maybe_unused]] : containers::integer_range(10_bi)) {
-		attacker.pokemon().successfully_use_move(move.name());
+		attacker_pokemon.successfully_use_move(move.name());
 	}
 
-	attacker.pokemon().activate_flash_fire();
+	attacker_pokemon.activate_flash_fire();
 
-	Team defender = max_damage_special_defender();
+	auto defender = Team(max_pokemon_per_team);
+	defender.add_pokemon(Pokemon(generation, Species::Paras, Level(1_bi), Gender::male, Item::None, Ability::Dry_Skin, Nature::Hardy));
+	auto defender_pokemon = defender.pokemon();
+	defender_pokemon.switch_in(generation, weather);
+	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
+		defender_pokemon.stage()[BoostableStat::spd] += -2_bi;
+	}
 
 	check_equal(
 		calculate_damage(

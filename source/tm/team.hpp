@@ -64,8 +64,8 @@ struct Team {
 		return all_pokemon()(index);
 	}
 
-	Pokemon & add_pokemon(auto && ... args) {
-		return all_pokemon().add(OPERATORS_FORWARD(args)...);
+	Pokemon & add_pokemon(Pokemon pokemon) {
+		return all_pokemon().add(std::move(pokemon));
 	}
 
 	TeamSize number_of_seen_pokemon() const {

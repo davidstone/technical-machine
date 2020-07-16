@@ -182,8 +182,8 @@ public:
 	ActivePokemonImpl & operator=(ActivePokemonImpl const & other) = delete;
 	ActivePokemonImpl & operator=(ActivePokemonImpl && other) = delete;
 
-	auto all_moves() const -> MoveContainer const &{
-		return m_pokemon.all_moves();
+	auto regular_moves() const -> RegularMoves const & {
+		return m_pokemon.regular_moves();
 	}
 
 	auto hp() const {
@@ -445,8 +445,8 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		return ActivePokemon(m_pokemon, m_flags);
 	}
 
-	auto all_moves() const -> MoveContainer & {
-		return m_pokemon.all_moves();
+	auto regular_moves() const -> RegularMoves & {
+		return m_pokemon.regular_moves();
 	}
 
 	auto stage() const -> Stage & {
@@ -771,6 +771,11 @@ private:
 		}
 	}
 };
+
+inline auto all_moves(Generation const generation, ActivePokemon const pokemon, TeamSize const team_size) -> MoveContainer {
+	return MoveContainer(generation, pokemon.regular_moves(), team_size);
+}
+
 
 inline auto change_hp(Generation const generation, MutableActivePokemon pokemon, Weather const weather, auto const change) {
 	pokemon.set_hp(generation, weather, pokemon.hp().current() + change);

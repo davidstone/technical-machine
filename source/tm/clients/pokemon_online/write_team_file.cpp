@@ -90,7 +90,7 @@ void write_pokemon(Generation const generation, Pokemon const & pokemon, ptree &
 	member.put("<xmlattr>.Lvl", pokemon.level()());
 	member.put("<xmlattr>.Gender", gender_to_id (pokemon.gender()));
 
-	auto const & moves = regular_moves(pokemon);
+	auto const & moves = pokemon.regular_moves();
 	for (auto const & move : moves) {
 		write_move(move, member);
 	}

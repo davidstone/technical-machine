@@ -40,9 +40,9 @@ void basic() {
 	};
 	auto user = Team(1_bi, true);
 	{
-		auto & jolteon = user.add_pokemon(generation, Species::Jolteon, Level(100_bi), Gender::male, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid);
+		auto & jolteon = user.add_pokemon(Pokemon(generation, Species::Jolteon, Level(100_bi), Gender::male, Item::Leftovers, Ability::Volt_Absorb, Nature::Timid));
 		containers::append(
-			regular_moves(jolteon),
+			jolteon.regular_moves(),
 			expected
 		);
 	}
@@ -51,9 +51,9 @@ void basic() {
 
 	auto other = Team(1_bi, false);
 	{
-		auto & gyarados = other.add_pokemon(generation, Species::Gyarados, Level(100_bi), Gender::male, Item::Leftovers, Ability::Intimidate, Nature::Adamant);
+		auto & gyarados = other.add_pokemon(Pokemon(generation, Species::Gyarados, Level(100_bi), Gender::male, Item::Leftovers, Ability::Intimidate, Nature::Adamant));
 		containers::append(
-			regular_moves(gyarados),
+			gyarados.regular_moves(),
 			containers::array{
 				Move(generation, Moves::Dragon_Dance),
 				Move(generation, Moves::Waterfall),
@@ -77,7 +77,7 @@ void basic() {
 
 void test_two_moves_with_one_out_of_pp() {
 	auto user = Team(1_bi, true);
-	auto & pokemon = user.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
+	auto & pokemon = user.add_pokemon(Pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female));
 	auto empty_pp = [](Move & move) {
 		while (!move.pp().is_empty()) {
 			move.decrement_pp(Ability::Static);
@@ -85,12 +85,12 @@ void test_two_moves_with_one_out_of_pp() {
 	};
 	auto weather = Weather();
 	user.pokemon().switch_in(generation, weather);
-	auto & thunder = pokemon.all_moves().add(Move(generation, Moves::Thunder, 0_bi));
+	auto & thunder = pokemon.regular_moves().push_back(Move(generation, Moves::Thunder, 0_bi));
 	empty_pp(thunder);
-	pokemon.all_moves().add(Move(generation, Moves::Thunderbolt, 0_bi));
+	pokemon.regular_moves().push_back(Move(generation, Moves::Thunderbolt, 0_bi));
 
 	auto other = Team(1_bi, false);
-	other.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
+	other.add_pokemon(Pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female));
 	other.pokemon().switch_in(generation, weather);
 	
 	user.reset_start_of_turn();
@@ -106,7 +106,7 @@ void test_two_moves_with_one_out_of_pp() {
 
 void test_two_moves_with_both_out_of_pp() {
 	auto user = Team(1_bi, true);
-	auto & pokemon = user.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
+	auto & pokemon = user.add_pokemon(Pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female));
 	auto empty_pp = [](Move & move) {
 		while (!move.pp().is_empty()) {
 			move.decrement_pp(Ability::Static);
@@ -114,13 +114,13 @@ void test_two_moves_with_both_out_of_pp() {
 	};
 	auto weather = Weather();
 	user.pokemon().switch_in(generation, weather);
-	auto & thunder = pokemon.all_moves().add(Move(generation, Moves::Thunder, 0_bi));
+	auto & thunder = pokemon.regular_moves().push_back(Move(generation, Moves::Thunder, 0_bi));
 	empty_pp(thunder);
-	auto & thunderbolt = pokemon.all_moves().add(Move(generation, Moves::Thunderbolt, 0_bi));
+	auto & thunderbolt = pokemon.regular_moves().push_back(Move(generation, Moves::Thunderbolt, 0_bi));
 	empty_pp(thunderbolt);
 
 	auto other = Team(1_bi, false);
-	other.add_pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female);
+	other.add_pokemon(Pokemon(generation, Species::Pikachu, Level(100_bi), Gender::female));
 	other.pokemon().switch_in(generation, weather);
 	
 	user.reset_start_of_turn();

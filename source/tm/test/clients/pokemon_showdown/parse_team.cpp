@@ -44,7 +44,7 @@ auto expected_generation_one_team() {
 	auto team = Team(6_bi, true);
 	constexpr auto generation = Generation::one;
 	auto add_pokemon = [&](Species const species, auto const level, auto const ... moves) -> Pokemon & {
-		Pokemon & pokemon = team.add_pokemon(
+		Pokemon & pokemon = team.add_pokemon(Pokemon(
 			generation,
 			species,
 			Level(level),
@@ -52,8 +52,8 @@ auto expected_generation_one_team() {
 			Item::None,
 			Ability::Honey_Gather,
 			Nature::Hardy
-		);
-		containers::append(regular_moves(pokemon), move_array(generation, moves...));
+		));
+		containers::append(pokemon.regular_moves(), move_array(generation, moves...));
 		max_all_evs(generation, pokemon);
 		return pokemon;
 	};

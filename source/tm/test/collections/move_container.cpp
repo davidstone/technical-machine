@@ -63,7 +63,8 @@ void move_container_tests() {
 	std::cout << "\tRunning MoveContainer tests.\n";
 	constexpr auto team_size = TeamSize(4_bi);
 	constexpr auto shared_moves_size = team_size + number_of_weird_moves;
-	auto c = MoveContainer(generation, team_size);
+	auto regular = RegularMoves();
+	auto c = MoveContainer(generation, regular, team_size);
 	if (size(c) != shared_moves_size) {
 		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + bounded::to_string(shared_moves_size) + " but got " + bounded::to_string(size(c)));
 	}
@@ -71,8 +72,8 @@ void move_container_tests() {
 		Moves::Absorb, Moves::Tackle, Moves::Quick_Attack, Moves::Body_Slam
 	};
 	for (auto const n : containers::integer_range(size(moves))) {
-		c.add(Move(generation, moves[n]));
-		if (size(c) != shared_moves_size + n + 1_bi or size(c) != static_cast<bounded::checked_integer<0, 100>>(c.number_of_regular_moves()) + shared_moves_size) {
+		regular.push_back(Move(generation, moves[n]));
+		if (size(c) != shared_moves_size + n + 1_bi or size(c) != static_cast<bounded::checked_integer<0, 100>>(containers::size(c.regular()) + shared_moves_size)) {
 			throw InvalidCollection("MoveContainer has the wrong number of moves during addition of moves.");
 		}
 	}

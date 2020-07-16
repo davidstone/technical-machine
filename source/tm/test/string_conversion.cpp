@@ -70,7 +70,6 @@ void test_generic(std::string_view const thing) {
 
 void test_pokemon() {
 	constexpr auto generation = Generation::three;
-	constexpr auto team_size = 6_bi;
 	constexpr auto species = Species::Mewtwo;
 	constexpr auto level = Level(100_bi);
 	constexpr auto gender = Gender::genderless;
@@ -86,7 +85,7 @@ void test_pokemon() {
 	constexpr auto spe = EV(100_bi);
 	constexpr auto iv = IV(31_bi);
 
-	auto pokemon = Pokemon(generation, 6_bi, species, level, gender, item, ability, nature);
+	auto pokemon = Pokemon(generation, species, level, gender, item, ability, nature);
 	pokemon.set_ev(generation, PermanentStat::hp, iv, hp);
 	pokemon.set_ev(generation, PermanentStat::atk, iv, atk);
 	pokemon.set_ev(generation, PermanentStat::def, iv, def);
@@ -96,7 +95,7 @@ void test_pokemon() {
 
 	auto check = [&] {
 		auto const str = to_string(generation, pokemon);
-		auto const result = pokemon_from_string(generation, str, team_size);
+		auto const result = pokemon_from_string(generation, str);
 
 		if (pokemon != result) {
 			throw std::runtime_error(std::string(std::string_view(str)));
@@ -105,7 +104,7 @@ void test_pokemon() {
 
 	check();
 	for (auto const move : {Moves::Psychic, Moves::Recover, Moves::Calm_Mind, Moves::Taunt}) {
-		pokemon.all_moves().add(Move(generation, move));
+		pokemon.regular_moves().push_back(Move(generation, move));
 		check();
 	}
 	pokemon.set_status(Statuses::burn);

@@ -36,7 +36,7 @@ void random_team(Generation const generation, UsageStats const & usage_stats, Te
 	for (auto const n [[maybe_unused]] : containers::integer_range(max_pokemon_per_team - size(team.all_pokemon()))) {
 		auto const species = estimate.random(random_engine);
 		estimate.update(usage_stats, species);
-		team.add_pokemon(generation, species, Level(100_bi), Gender::genderless);
+		team.add_pokemon(Pokemon(generation, species, Level(100_bi), Gender::genderless));
 	}
 }
 

@@ -77,6 +77,47 @@ auto parse_moves(boost::property_tree::ptree const & moves) {
 	return result;
 }
 
+auto parse_pokemon(boost::property_tree::ptree const & pokemon_data, Generation const generation) {
+	auto get = [&](auto const & key) { return pokemon_data.get<std::string>(key); };
+
+	auto const details = parse_details(get("details"));
+	
+	auto const condition = get("condition");
+	// current_hp/max_hp
+	// Presumably also gives me status information? Should be useful for
+	// rejoining battles
+	// TODO: If we disconnect in a battle when the HP is 0, we might not
+	// have a '/'
+	auto const hp = bounded::to_integer<HP::max_type>(split_view(condition, '/').first);
+
+	auto const moves = parse_moves(pokemon_data.get_child("moves"));
+	auto const stats = calculate_ivs_and_evs(
+		generation,
+		details.species,
+		details.level,
+		parse_stats(hp, pokemon_data.get_child("stats")),
+		moves.hidden_power_type,
+		has_physical_move(generation, moves.names, moves.hidden_power_type)
+	);
+
+	auto const ability = from_string<Ability>(get("baseAbility"));
+	
+	auto const item = from_string<Item>(get("item"));
+	
+	auto pokemon = Pokemon(generation, details.species, details.level, details.gender, item, ability, stats.nature);
+
+	for (auto const move : moves.names) {
+		add_seen_move(pokemon.regular_moves(), generation, move);
+	}
+
+	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
+		auto const stat = stats[stat_name];
+		pokemon.set_ev(generation, stat_name, stat.iv, stat.ev);
+	}
+
+	return pokemon;
+}
+
 } // namespace
 
 auto parse_team(boost::property_tree::ptree const & pt, Generation const generation) -> Team {
@@ -84,42 +125,7 @@ auto parse_team(boost::property_tree::ptree const & pt, Generation const generat
 	constexpr bool is_me = true;
 	auto team = Team(TeamSize(containers::distance(begin(team_data), end(team_data))), is_me);
 	for (auto const & pokemon_data : team_data) {
-		auto get = [&](auto const & key) { return pokemon_data.second.get<std::string>(key); };
-
-		auto const details = parse_details(get("details"));
-		
-		auto const condition = get("condition");
-		// current_hp/max_hp
-		// Presumably also gives me status information? Should be useful for
-		// rejoining battles
-		// TODO: If we disconnect in a battle when the HP is 0, we might not
-		// have a '/'
-		auto const hp = bounded::to_integer<HP::max_type>(split_view(condition, '/').first);
-
-		auto const moves = parse_moves(pokemon_data.second.get_child("moves"));
-		auto const stats = calculate_ivs_and_evs(
-			generation,
-			details.species,
-			details.level,
-			parse_stats(hp, pokemon_data.second.get_child("stats")),
-			moves.hidden_power_type,
-			has_physical_move(generation, moves.names, moves.hidden_power_type)
-		);
-
-		auto const ability = from_string<Ability>(get("baseAbility"));
-		
-		auto const item = from_string<Item>(get("item"));
-		
-		Pokemon & pokemon = team.add_pokemon(generation, details.species, details.level, details.gender, item, ability, stats.nature);
-
-		for (auto const move : moves.names) {
-			 add_seen_move(pokemon.all_moves(), generation, move);
-		}
-
-		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-			auto const stat = stats[stat_name];
-			pokemon.set_ev(generation, stat_name, stat.iv, stat.ev);
-		}
+		team.add_pokemon(parse_pokemon(pokemon_data.second, generation));
 	}
 	team.all_pokemon().reset_index();
 	return team;

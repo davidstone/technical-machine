@@ -1394,8 +1394,8 @@ auto find_move(MoveContainer const container, Moves const move_name) -> Move {
 	return *maybe_move;
 }
 
-auto find_regular_move(RegularMoveContainer & container, Moves const move_name) -> Move & {
-	auto const move_ptr = containers::maybe_find(container, move_name);
+auto find_regular_move(RegularMoves & moves, Moves const move_name) -> Move & {
+	auto const move_ptr = containers::maybe_find(moves, move_name);
 	BOUNDED_ASSERT_OR_ASSUME(move_ptr);
 	return *move_ptr;
 }
@@ -1555,7 +1555,7 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 		user_pokemon.unsuccessfully_use_move(move.executed);
 	};
 
-	auto const found_move = find_move(user_pokemon.all_moves(), move.selected);
+	auto const found_move = find_move(all_moves(generation, user_pokemon, user.size()), move.selected);
 	auto other_pokemon = other.pokemon();
 	auto const was_asleep = is_sleeping(user_pokemon.status());
 	if (!is_switch(move.selected)) {
@@ -1581,7 +1581,7 @@ auto try_use_move(Generation const generation, Team & user, UsedMove const move,
 	auto const other_ability = other_pokemon.ability();
 
 	if (is_regular(move.selected) and move.executed != Moves::Hit_Self and !user_pokemon.is_locked_in_by_move()) {
-		auto & move_ref = find_regular_move(user_pokemon.all_moves().regular(), move.selected);
+		auto & move_ref = find_regular_move(user_pokemon.regular_moves(), move.selected);
 		move_ref.decrement_pp(other_ability);
 		activate_pp_restore_berry(generation, move_ref, user_pokemon, weather);
 	}

@@ -158,7 +158,7 @@ auto selected_move_to_executed_move(Generation const generation, Moves const sel
 	switch (selected_move) {
 		case Moves::Sleep_Talk:
 			return is_sleeping(user_pokemon.status()) ?
-				result(filter(transform(regular_moves(user_pokemon), known), can_be_selected_by_sleep_talk)) :
+				result(filter(transform(user_pokemon.regular_moves(), known), can_be_selected_by_sleep_talk)) :
 				result{KnownMove{selected_move, type(selected_move)}};
 		default:
 			return result{KnownMove{selected_move, type(selected_move)}};
@@ -522,14 +522,7 @@ private:
 				team.switch_pokemon(m_generation, other.pokemon(), weather, index);
 			}
 			auto replaced = PokemonCollection(1_bi);
-			auto pokemon = team.pokemon(index);
-			for (auto const entry : containers::integer_range(team.size())) {
-				if (entry == 0_bi) {
-					continue;
-				}
-				pokemon.all_moves().remove_switch();
-			}
-			replaced.add(pokemon);
+			replaced.add(team.pokemon(index));
 			team.all_pokemon() = replaced;
 		};
 		remove_all_but_index(ai, ai_index, foe);

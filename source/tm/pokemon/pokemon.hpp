@@ -45,8 +45,8 @@ namespace technicalmachine {
 enum class Generation : std::uint8_t;
 
 struct Pokemon {
-	Pokemon(Generation, TeamSize my_team_size, Species species, Level level, Gender gender, Happiness happiness = Happiness{});
-	Pokemon(Generation, TeamSize my_team_size, Species species, Level level, Gender gender, Item item, Ability ability, Nature nature, Happiness happiness = Happiness{});
+	Pokemon(Generation, Species species, Level level, Gender gender, Happiness happiness = Happiness{});
+	Pokemon(Generation, Species species, Level level, Gender gender, Item item, Ability ability, Nature nature, Happiness happiness = Happiness{});
 	
 	auto hp() const {
 		return stats.hp();
@@ -66,11 +66,11 @@ struct Pokemon {
 		m_has_been_seen = true;
 	}
 
-	auto all_moves() const -> MoveContainer const & {
-		return m_moves;
+	auto regular_moves() const -> RegularMoves const & {
+		return m_regular_moves;
 	}
-	auto all_moves() -> MoveContainer & {
-		return m_moves;
+	auto regular_moves() -> RegularMoves & {
+		return m_regular_moves;
 	}
 
 	void set_hp(auto const hp) & {
@@ -163,7 +163,7 @@ struct Pokemon {
 	friend auto operator==(Pokemon const &, Pokemon const &) -> bool = default;
 	friend auto compress(Pokemon const value) {
 		return compress_combine(
-			value.m_moves.regular(),
+			value.m_regular_moves,
 			value.stats.hp().current(),
 			value.m_item,
 			value.m_status,
@@ -171,7 +171,7 @@ struct Pokemon {
 		);
 	}
 private:
-	MoveContainer m_moves;
+	RegularMoves m_regular_moves;
 	
 	Stats stats;
 
@@ -192,10 +192,6 @@ private:
 	bool m_item_is_known : 1;
 	bool m_nature_is_known : 1;
 };
-
-decltype(auto) regular_moves(auto && pokemon) {
-	return pokemon.all_moves().regular();
-}
 
 auto get_hidden_power_type(auto const pokemon) {
 	auto const hidden_power = pokemon.hidden_power();
