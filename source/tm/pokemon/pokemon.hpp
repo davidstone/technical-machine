@@ -46,8 +46,63 @@ namespace technicalmachine {
 enum class Generation : std::uint8_t;
 
 struct Pokemon {
-	Pokemon(Generation, Species species, Level level, Gender gender);
-	Pokemon(Generation, Species species, Level level, Gender gender, Item item, Ability ability, CombinedStats<IVAndEV> stats, RegularMoves regular_moves, Happiness happiness = Happiness());
+	Pokemon(Generation const generation, Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats<IVAndEV> stats, RegularMoves regular_moves_, Happiness const happiness = Happiness()):
+		m_regular_moves(regular_moves_),
+		m_stats(BaseStats(generation, species), stats, level),
+
+		m_species(species),
+		m_item(item),
+		m_ability(ability),
+		m_gender(gender),
+		m_nature(stats.nature),
+
+		m_level(level),
+
+		m_happiness(happiness),
+
+		// TODO: Make this none if there is no way to call Hidden Power
+		// TODO: Use the IVs provided
+		m_hidden_power([=]{
+			constexpr auto dv = DV(15_bi);
+			constexpr auto iv = IV(31_bi);
+			return generation <= Generation::two ?
+				HiddenPower(generation, DVs{dv, dv, dv, dv}) :
+				HiddenPower(generation, IVs{iv, iv, iv, iv, iv, iv});
+		}()),
+		
+		m_has_been_seen(false),
+
+		m_ability_is_known(true),
+		m_item_is_known(true),
+		m_nature_is_known(true)
+	{
+	}
+
+	Pokemon(Generation const generation, Species const species, Level const level, Gender const gender) : 
+		Pokemon::Pokemon(
+			generation,
+			species,
+			level,
+			gender,
+			Item::None,
+			Ability::Honey_Gather,
+			CombinedStats<IVAndEV>{
+				Nature::Hardy,
+				{default_iv(generation), EV(0_bi)},
+				{default_iv(generation), EV(0_bi)},
+				{default_iv(generation), EV(0_bi)},
+				{default_iv(generation), EV(0_bi)},
+				{default_iv(generation), EV(0_bi)},
+				{default_iv(generation), EV(0_bi)},
+			},
+			RegularMoves(),
+			Happiness()
+		)
+	{
+		m_ability_is_known = false;
+		m_item_is_known = false;
+		m_nature_is_known = false;
+	}
 	
 	auto hp() const {
 		return m_stats.hp();
