@@ -21,21 +21,22 @@ namespace technicalmachine {
 
 // TODO: Setting IVs requires modifying the Pokemon after construction, which
 // will not update Hidden Power
-Pokemon::Pokemon(Generation const generation, Species const species, Level const level, Gender const gender, Item const item, Ability const ability, Nature const nature, RegularMoves regular_moves_, Happiness const happiness):
+Pokemon::Pokemon(Generation const generation, Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats<IVAndEV> stats, RegularMoves regular_moves_, Happiness const happiness):
 	m_regular_moves(regular_moves_),
-	stats(generation, BaseStats(generation, species), level, nature),
+	m_stats(BaseStats(generation, species), stats, level),
 
 	m_species(species),
 	m_item(item),
 	m_ability(ability),
 	m_gender(gender),
-	m_nature(nature),
+	m_nature(stats.nature),
 
 	m_level(level),
 
 	m_happiness(happiness),
 
-	// TODO: Make this none if there is no way to call Hidden Power	
+	// TODO: Make this none if there is no way to call Hidden Power
+	// TODO: Use the IVs provided
 	m_hidden_power([=]{
 		constexpr auto dv = DV(15_bi);
 		constexpr auto iv = IV(31_bi);
@@ -53,7 +54,25 @@ Pokemon::Pokemon(Generation const generation, Species const species, Level const
 }
 
 Pokemon::Pokemon(Generation const generation, Species const species, Level const level, Gender const gender) : 
-	Pokemon::Pokemon(generation, species, level, gender, Item::None, Ability::Honey_Gather, Nature::Hardy, RegularMoves(), Happiness())
+	Pokemon::Pokemon(
+		generation,
+		species,
+		level,
+		gender,
+		Item::None,
+		Ability::Honey_Gather,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{default_iv(generation), EV(0_bi)},
+			{default_iv(generation), EV(0_bi)},
+			{default_iv(generation), EV(0_bi)},
+			{default_iv(generation), EV(0_bi)},
+			{default_iv(generation), EV(0_bi)},
+			{default_iv(generation), EV(0_bi)},
+		},
+		RegularMoves(),
+		Happiness()
+	)
 {
 	m_ability_is_known = false;
 	m_item_is_known = false;

@@ -44,7 +44,15 @@ void basic() {
 		Gender::male,
 		Item::Leftovers,
 		Ability::Volt_Absorb,
-		Nature::Timid,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		expected
 	));
 	auto weather = Weather();
@@ -58,7 +66,15 @@ void basic() {
 		Gender::male,
 		Item::Leftovers,
 		Ability::Intimidate,
-		Nature::Adamant,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
 	));
 	other.pokemon().switch_in(generation, weather);
@@ -91,7 +107,15 @@ void test_two_moves_with_one_out_of_pp() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
-		Nature::Adamant,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
 	empty_pp(containers::front(pokemon.regular_moves()));
@@ -105,7 +129,15 @@ void test_two_moves_with_one_out_of_pp() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
-		Nature::Adamant,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
 	other.pokemon().switch_in(generation, weather);
@@ -132,7 +164,15 @@ void test_two_moves_with_both_out_of_pp() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
-		Nature::Adamant,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
 	user.pokemon().switch_in(generation, weather);
@@ -148,7 +188,15 @@ void test_two_moves_with_both_out_of_pp() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
-		Nature::Adamant,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
 	other.pokemon().switch_in(generation, weather);

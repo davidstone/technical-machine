@@ -53,10 +53,17 @@ void sleep_talk() {
 			Gender::female,
 			Item::Leftovers,
 			Ability::Volt_Absorb,
-			Nature::Timid,
+			CombinedStats<IVAndEV>{
+				Nature::Hardy,
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(252_bi)},
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+			},
 			regular_moves(generation, Moves::Sleep_Talk, Moves::Thunderbolt)
 		);
-		jolteon.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
 		jolteon.set_status(Statuses::sleep);
 		
 		attacker.add_pokemon(jolteon);
@@ -64,22 +71,25 @@ void sleep_talk() {
 	}
 
 	auto defender = Team(1_bi);
-	{
-		auto gyarados = Pokemon(
-			generation,
-			Species::Gyarados,
-			Level(100_bi),
-			Gender::male,
-			Item::Life_Orb,
-			Ability::Intimidate,
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Gyarados,
+		Level(100_bi),
+		Gender::male,
+		Item::Life_Orb,
+		Ability::Intimidate,
+		CombinedStats<IVAndEV>{
 			Nature::Adamant,
-			RegularMoves({Move(generation, Moves::Earthquake)})
-		);
-		gyarados.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
-
-		defender.add_pokemon(gyarados);
-		defender.pokemon().switch_in(generation, weather);
-	}
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		RegularMoves({Move(generation, Moves::Earthquake)})
+	));
+	defender.pokemon().switch_in(generation, weather);
 
 	call_move(
 		generation,
@@ -148,8 +158,8 @@ struct Sleeper {
 	}
 
 private:
-	static auto make_sleeper_team(Generation const generation, Weather & weather) -> Team {
-		auto sleeper = Team(1_bi, true);
+	static auto make_team(Generation const generation, bool const is_me, RegularMoves const moves, Weather & weather) {
+		auto sleeper = Team(1_bi, is_me);
 		sleeper.add_pokemon(Pokemon(
 			generation,
 			Species::Blissey,
@@ -157,27 +167,25 @@ private:
 			Gender::female,
 			Item::None,
 			Ability::Natural_Cure,
-			Nature::Hardy,
-			regular_moves(generation, Moves::Rest, Moves::Sleep_Talk, Moves::Wish)
+			CombinedStats<IVAndEV>{
+				Nature::Hardy,
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+			},
+			moves
 		));
 		sleeper.pokemon().switch_in(generation, weather);
 		return sleeper;
 	}
-
+	static auto make_sleeper_team(Generation const generation, Weather & weather) -> Team {
+		return make_team(generation, true, regular_moves(generation, Moves::Rest, Moves::Sleep_Talk, Moves::Wish), weather);
+	}
 	static auto make_other_team(Generation const generation, Weather & weather) -> Team {
-		auto other = Team(1_bi);
-		other.add_pokemon(Pokemon(
-			generation,
-			Species::Blissey,
-			Level(100_bi),
-			Gender::female,
-			Item::None,
-			Ability::Natural_Cure,
-			Nature::Hardy,
-			regular_moves(generation, Moves::Seismic_Toss)
-		));
-		other.pokemon().switch_in(generation, weather);
-		return other;
+		return make_team(generation, false, regular_moves(generation, Moves::Seismic_Toss), weather);
 	}
 
 	Generation m_generation;

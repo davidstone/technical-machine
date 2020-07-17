@@ -50,7 +50,7 @@ constexpr auto max_damage_executed_physical_move = ExecutedMove{
 	critical_hit
 };
 
-Team max_damage_physical_attacker(Item const item, Ability const ability, Nature const nature) {
+Team max_damage_physical_attacker(Item const item, Ability const ability) {
 	auto attacker = Team(max_pokemon_per_team);
 	
 	attacker.add_pokemon(Pokemon(
@@ -60,7 +60,15 @@ Team max_damage_physical_attacker(Item const item, Ability const ability, Nature
 		Gender::male,
 		item,
 		ability,
-		nature,
+		CombinedStats<IVAndEV>{
+			Nature::Impish,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({Move(max_damage_physical_move)})
 	));
 
@@ -84,7 +92,15 @@ Team max_damage_physical_defender() {
 		Gender::male,
 		Item::None,
 		Ability::Honey_Gather,
-		Nature::Hasty,
+		CombinedStats<IVAndEV>{
+			Nature::Hasty,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(0_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto pokemon = defender.pokemon();
@@ -99,7 +115,7 @@ void physical_power_test() {
 	std::cout << "\t\tRunning physical power tests.\n";
 	constexpr auto max_power = 1440_bi;
 
-	auto const attacker = max_damage_physical_attacker(Item::Rock_Incense, Ability::Rivalry, Nature::Hardy);
+	auto const attacker = max_damage_physical_attacker(Item::Rock_Incense, Ability::Rivalry);
 
 	auto const power = move_power(
 		generation,
@@ -126,7 +142,15 @@ void special_power_test() {
 		Gender::genderless,
 		Item::Wave_Incense,
 		Ability::Torrent,
-		Nature::Hardy,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({move})
 	));
 	auto pokemon = attacker.pokemon();
@@ -142,7 +166,15 @@ void special_power_test() {
 		Gender::male,
 		Item::None,
 		Ability::Dry_Skin,
-		Nature::Hardy,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({Move(generation, Moves::Dive)})
 	));
 
@@ -181,11 +213,10 @@ void physical_damage_test() {
 	std::cout << "\t\tRunning max physical damage tests.\n";
 	constexpr auto max_damage = 95064912_bi;
 
-	auto attacker = max_damage_physical_attacker(Item::Metronome, Ability::Pure_Power, Nature::Impish);
+	auto attacker = max_damage_physical_attacker(Item::Metronome, Ability::Pure_Power);
 
 	auto attacker_pokemon = attacker.pokemon();
 
-	attacker_pokemon.set_ev(generation, PermanentStat::def, IV(31_bi), EV(EV::max));
 	attacker_pokemon.activate_power_trick();
 	attacker_pokemon.stage()[BoostableStat::atk] += 6_bi;
 
@@ -214,17 +245,24 @@ void special_damage_test() {
 	auto attacker = Team(max_pokemon_per_team);
 
 	auto const move = Move(generation, Moves::Blast_Burn);
-	auto & deoxys = attacker.add_pokemon(Pokemon(
+	attacker.add_pokemon(Pokemon(
 		generation,
 		Species::Deoxys_Attack,
 		Level(100_bi),
 		Gender::genderless,
 		Item::Metronome,
 		Ability::Blaze,
-		Nature::Modest,
+		CombinedStats<IVAndEV>{
+			Nature::Modest,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(EV::max)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({move})
 	));
-	deoxys.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(EV::max));
 
 	auto attacker_pokemon = attacker.pokemon();
 	attacker_pokemon.switch_in(generation, weather);
@@ -248,7 +286,15 @@ void special_damage_test() {
 		Gender::male,
 		Item::None,
 		Ability::Dry_Skin,
-		Nature::Hardy,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(0_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto defender_pokemon = defender.pokemon();

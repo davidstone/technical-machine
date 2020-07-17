@@ -108,17 +108,7 @@ auto load_moves(Generation const generation, CheckedIterator it) {
 template<typename Type>
 auto load_stats(std::string_view const name, CheckedIterator it) {
 	struct Parsed {
-		constexpr auto operator[](PermanentStat const stat_name) const {
-			return index_stat(*this, stat_name);
-		}
-
-		Type hp;
-		Type atk;
-		Type def;
-		Type spa;
-		Type spd;
-		Type spe;
-
+		GenericStats<Type> stats;
 		CheckedIterator it;
 	};
 	auto get_next = [&]{
@@ -126,12 +116,14 @@ auto load_stats(std::string_view const name, CheckedIterator it) {
 		return Type(value.get_value<typename Type::value_type>());
 	};
 	return Parsed{
-		get_next(),
-		get_next(),
-		get_next(),
-		get_next(),
-		get_next(),
-		get_next(),
+		{
+			get_next(),
+			get_next(),
+			get_next(),
+			get_next(),
+			get_next(),
+			get_next(),
+		},
 		it
 	};
 }
@@ -158,15 +150,10 @@ auto load_pokemon(ptree const & pt, Generation const generation, SpeciesIDs::ID)
 		gender,
 		item,
 		ability,
-		nature,
+		combine(nature, ivs.stats, evs.stats),
 		parsed_moves.moves,
 		happiness
 	);
-	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-		auto const iv = ivs[stat_name];
-		auto const ev = evs[stat_name];
-		pokemon.set_ev(generation, stat_name, iv, ev);
-	}
 
 	return pokemon;
 }

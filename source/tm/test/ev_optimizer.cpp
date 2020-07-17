@@ -55,16 +55,17 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		Nature::Adamant,
+		CombinedStats<IVAndEV>{
+			Nature::Adamant,
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(96_bi)},
+			{IV(31_bi), EV(96_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(4_bi)},
+			{IV(31_bi), EV(60_bi)},
+		},
 		regular_moves(generation, Moves::Meteor_Mash)
 	);
-	constexpr auto iv = IV(31_bi);
-	pokemon.set_ev(generation, PermanentStat::hp, iv, EV(252_bi));
-	pokemon.set_ev(generation, PermanentStat::atk, iv, EV(96_bi));
-	pokemon.set_ev(generation, PermanentStat::def, iv, EV(96_bi));
-	pokemon.set_ev(generation, PermanentStat::spa, iv, EV(0_bi));
-	pokemon.set_ev(generation, PermanentStat::spd, iv, EV(4_bi));
-	pokemon.set_ev(generation, PermanentStat::spe, iv, EV(60_bi));
 
 	auto const ivs_and_evs = calculate_ivs_and_evs(generation, pokemon);
 	auto const stats = initial_stats(base_stats, level, ivs_and_evs);
@@ -88,8 +89,8 @@ void defensive_tests() {
 	constexpr auto defense_ev = EV(252_bi);
 	constexpr auto special_defense_ev = EV(4_bi);
 	auto const hp = HP(base_stats, level, iv, hp_ev).max();
-	auto const defense = initial_stat(RegularStat::def, base_stats.def(), iv, defense_ev, level, nature);
-	auto const special_defense = initial_stat(RegularStat::spd, base_stats.spd(), iv, special_defense_ev, level, nature);
+	auto const defense = initial_stat(RegularStat::def, base_stats.def(), nature, iv, defense_ev, level);
+	auto const special_defense = initial_stat(RegularStat::spd, base_stats.spd(), nature, iv, special_defense_ev, level);
 	
 	auto defensive_evs = DefensiveEVs(base_stats, level, DefensiveEVs::InputHP{iv, hp}, DefensiveEVs::InputStat{iv, defense}, DefensiveEVs::InputStat{iv, special_defense});
 	for (auto const & candidate : defensive_evs) {
@@ -115,11 +116,11 @@ void speed_tests() {
 	constexpr auto original_nature = Nature::Hardy;
 	constexpr auto iv = IV(31_bi);
 	auto const base_stats = BaseStats(generation, species);
-	auto const original_value = initial_stat(RegularStat::spe, base_stats.spe(), iv, EV(76_bi), level, original_nature);
+	auto const original_value = initial_stat(RegularStat::spe, base_stats.spe(), original_nature, iv, EV(76_bi), level);
 	auto const speed_evs = SpeedEVs(base_stats, level, iv, original_value);
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const found = find(speed_evs, nature);
-		auto const new_value = initial_stat(RegularStat::spe, base_stats.spe(), found.iv, found.ev, level, nature);
+		auto const new_value = initial_stat(RegularStat::spe, base_stats.spe(), nature, found.iv, found.ev, level);
 		if (boosts_stat(nature, RegularStat::spe) and !boosts_stat(original_nature, RegularStat::spe)) {
 			BOUNDED_ASSERT(new_value == original_value or new_value == original_value + 1_bi);
 		} else {
@@ -139,15 +140,17 @@ void not_level_100(std::mt19937 & random_engine) {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		Nature::Modest,
+		CombinedStats<IVAndEV>{
+			Nature::Modest,
+			{IV(31_bi), EV(192_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(8_bi)},
+			{IV(31_bi), EV(120_bi)},
+			{IV(31_bi), EV(60_bi)},
+			{IV(31_bi), EV(128_bi)},
+		},
 		regular_moves(generation, Moves::Hydro_Pump, Moves::Bug_Buzz, Moves::Roost, Moves::Air_Slash)
 	);
-	pokemon.set_ev(generation, PermanentStat::hp, IV(31_bi), EV(192_bi));
-	pokemon.set_ev(generation, PermanentStat::atk, IV(0_bi), EV(0_bi));
-	pokemon.set_ev(generation, PermanentStat::def, IV(31_bi), EV(8_bi));
-	pokemon.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(120_bi));
-	pokemon.set_ev(generation, PermanentStat::spd, IV(31_bi), EV(60_bi));
-	pokemon.set_ev(generation, PermanentStat::spe, IV(31_bi), EV(128_bi));
 
 	optimize_evs(generation, pokemon, random_engine);
 }
@@ -164,15 +167,17 @@ void generation_two(std::mt19937 & random_engine) {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		Nature::Hardy,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+		},
 		regular_moves(generation, Moves::Tackle, Moves::Psychic)
 	);
-	pokemon.set_ev(generation, PermanentStat::hp, IV(30_bi), EV(252_bi));
-	pokemon.set_ev(generation, PermanentStat::atk, IV(30_bi), EV(252_bi));
-	pokemon.set_ev(generation, PermanentStat::def, IV(30_bi), EV(252_bi));
-	pokemon.set_ev(generation, PermanentStat::spa, IV(30_bi), EV(252_bi));
-	pokemon.set_ev(generation, PermanentStat::spd, IV(30_bi), EV(252_bi));
-	pokemon.set_ev(generation, PermanentStat::spe, IV(30_bi), EV(252_bi));
 
 	auto const ivs_and_evs = calculate_ivs_and_evs(generation, pokemon);
 	auto const stats = initial_stats(base_stats, level, ivs_and_evs);

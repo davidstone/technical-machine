@@ -128,19 +128,8 @@ auto parse_stat_components(std::string_view const str, T default_value) {
 		auto maybe = buffer.pop();
 		return maybe.empty() ? default_value : T(bounded::to_integer<typename T::value_type>(maybe));
 	};
-	struct result {
-		T hp;
-		T atk;
-		T def;
-		T spa;
-		T spd;
-		T spe;
-		constexpr auto operator[](PermanentStat const stat_name) const {
-			return index_stat(*this, stat_name);
-		}
-	};
 	// Order of evaluation is defined with {} init
-	return result{
+	return GenericStats<T>{
 		next(),
 		next(),
 		next(),
@@ -191,13 +180,10 @@ auto parse_pokemon(std::string_view const str, Generation const generation) {
 		gender,
 		item,
 		ability,
-		nature,
+		combine(nature, ivs, evs),
 		moves,
 		happiness
 	);
-	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-		pokemon.set_ev(generation, stat_name, ivs[stat_name], evs[stat_name]);
-	}
 	return pokemon;
 }
 

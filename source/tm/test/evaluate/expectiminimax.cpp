@@ -64,43 +64,49 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 	};
 	constexpr auto depth = make_depth(1U);
 
-	Team team1(1_bi, true);
-	{
-		auto jolteon = Pokemon(
-			generation,
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Volt_Absorb,
-			Nature::Timid,
-			regular_moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
-		);
-		jolteon.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
-		
-		team1.add_pokemon(jolteon);
-		team1.pokemon().switch_in(generation, weather);
-		team1.reset_start_of_turn();
-	}
+	auto team1 = Team(1_bi, true);
+	team1.add_pokemon(Pokemon(
+		generation,
+		Species::Jolteon,
+		Level(100_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Volt_Absorb,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
+	));
+	team1.pokemon().switch_in(generation, weather);
+	team1.reset_start_of_turn();
 
-	Team team2(1_bi);
-	{
-		auto gyarados = Pokemon(
-			generation,
-			Species::Gyarados,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Intimidate,
-			Nature::Adamant,
-			regular_moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
-		);
-		gyarados.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
-
-		team2.add_pokemon(gyarados);
-		team2.pokemon().switch_in(generation, weather);
-		team2.reset_start_of_turn();
-	}
+	auto team2 = Team(1_bi);
+	team2.add_pokemon(Pokemon(
+		generation,
+		Species::Gyarados,
+		Level(100_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Intimidate,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
+	));
+	team2.pokemon().switch_in(generation, weather);
+	team2.reset_start_of_turn();
 
 	{
 		auto const best_move = expectiminimax(generation, team1, team2, weather, evaluate, depth, std::cout);
@@ -108,24 +114,27 @@ void ohko_tests(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		BOUNDED_ASSERT(best_move.score == double(victory));
 	}
 	
-	Team team3(1_bi);
-	{
-		auto shedinja = Pokemon(
-			generation,
-			Species::Shedinja,
-			Level(100_bi),
-			Gender::male,
-			Item::Lum_Berry,
-			Ability::Wonder_Guard,
-			Nature::Adamant,
-			regular_moves(Moves::Swords_Dance, Moves::X_Scissor, Moves::Shadow_Sneak, Moves::Will_O_Wisp)
-		);
-		shedinja.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
-
-		team3.add_pokemon(shedinja);
-		team3.pokemon().switch_in(generation, weather);
-		team3.reset_start_of_turn();
-	}
+	auto team3 = Team(1_bi);
+	team3.add_pokemon(Pokemon(
+		generation,
+		Species::Shedinja,
+		Level(100_bi),
+		Gender::male,
+		Item::Lum_Berry,
+		Ability::Wonder_Guard,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Swords_Dance, Moves::X_Scissor, Moves::Shadow_Sneak, Moves::Will_O_Wisp)
+	));
+	team3.pokemon().switch_in(generation, weather);
+	team3.reset_start_of_turn();
 	
 	{
 		auto const best_move = expectiminimax(generation, team1, team3, weather, evaluate, depth, std::cout);
@@ -141,44 +150,49 @@ void one_turn_damage_tests(Evaluate const & evaluate, Weather const weather, std
 	};
 	constexpr auto depth = make_depth(1U);
 	
-	Team attacker(1_bi, true);
-	{
-		auto jolteon = Pokemon(
-			generation,
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Volt_Absorb,
-			Nature::Timid,
-			regular_moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
-		);
-		jolteon.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
+	auto attacker = Team(1_bi, true);
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Jolteon,
+		Level(100_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Volt_Absorb,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
+	));
+	attacker.pokemon().switch_in(generation, weather);
+	attacker.reset_start_of_turn();
 
-		attacker.add_pokemon(jolteon);
-		attacker.pokemon().switch_in(generation, weather);
-		attacker.reset_start_of_turn();
-	}
-
-	Team defender(1_bi);
-	{
-		auto swampert = Pokemon(
-			generation,
-			Species::Swampert,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Torrent,
-			Nature::Bold,
-			regular_moves(Moves::Surf, Moves::Ice_Beam)
-		);
-		swampert.set_ev(generation, PermanentStat::hp, IV(31_bi), EV(252_bi));
-		swampert.set_ev(generation, PermanentStat::def, IV(31_bi), EV(252_bi));
-
-		defender.add_pokemon(swampert);
-		defender.pokemon().switch_in(generation, weather);
-		defender.reset_start_of_turn();
-	}
+	auto defender = Team(1_bi);
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Swampert,
+		Level(100_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Torrent,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Surf, Moves::Ice_Beam)
+	));
+	defender.pokemon().switch_in(generation, weather);
+	defender.reset_start_of_turn();
 
 	auto const best_move = expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout);
 	BOUNDED_ASSERT(best_move.name == Moves::Shadow_Ball);
@@ -190,43 +204,50 @@ void bellyzard_vs_defensive(Evaluate const & evaluate, Weather const weather, st
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
 	constexpr auto depth = make_depth(2U);
-	Team attacker(1_bi, true);
-	{
-		auto charizard = Pokemon(
-			generation,
-			Species::Charizard,
-			Level(100_bi),
-			Gender::male,
-			Item::Salac_Berry,
-			Ability::Blaze,
-			Nature::Adamant,
-			regular_moves(Moves::Fire_Punch, Moves::Belly_Drum, Moves::Earthquake, Moves::Double_Edge)
-		);
-		charizard.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
 
-		attacker.add_pokemon(charizard);
-		attacker.pokemon().switch_in(generation, weather);
-		attacker.reset_start_of_turn();
-	}
+	auto attacker = Team(1_bi, true);
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Charizard,
+		Level(100_bi),
+		Gender::male,
+		Item::Salac_Berry,
+		Ability::Blaze,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Fire_Punch, Moves::Belly_Drum, Moves::Earthquake, Moves::Double_Edge)
+	));
+	attacker.pokemon().switch_in(generation, weather);
+	attacker.reset_start_of_turn();
 
-	Team defender(1_bi);
-	{
-		auto mew = Pokemon(
-			generation,
-			Species::Mew,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Synchronize,
-			Nature::Impish,
-			regular_moves(Moves::Soft_Boiled)
-		);
-		mew.set_ev(generation, PermanentStat::hp, IV(31_bi), EV(252_bi));
-		
-		defender.add_pokemon(mew);
-		defender.pokemon().switch_in(generation, weather);
-		defender.reset_start_of_turn();
-	}
+	auto defender = Team(1_bi);
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Mew,
+		Level(100_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Synchronize,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Soft_Boiled)
+	));
+	defender.pokemon().switch_in(generation, weather);
+	defender.reset_start_of_turn();
 
 	auto const best_move = expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout);
 	BOUNDED_ASSERT(best_move.name == Moves::Belly_Drum);
@@ -239,46 +260,52 @@ void hippopotas_vs_wobbuffet(Evaluate const & evaluate, Weather const weather, s
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
 	constexpr auto depth = make_depth(11U);
-	Team attacker(1_bi, true);
-	{
-		auto hippopotas = Pokemon(
-			generation,
-			Species::Hippopotas,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Sand_Stream,
+	auto attacker = Team(1_bi, true);
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Hippopotas,
+		Level(100_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Sand_Stream,
+		CombinedStats<IVAndEV>{
 			Nature::Adamant,
-			regular_moves(Moves::Curse, Moves::Crunch)
-		);
-		hippopotas.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
-		
-		attacker.add_pokemon(hippopotas);
-		attacker.pokemon().switch_in(generation, weather);
-		attacker.reset_start_of_turn();
-	}
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Curse, Moves::Crunch)
+	));
+	attacker.pokemon().switch_in(generation, weather);
+	attacker.reset_start_of_turn();
 
 	// TODO: Implement Encore's effect ending when PP runs out, then Wobbuffet
 	// can have Encore
 
-	Team defender(1_bi);
-	{
-		auto wobbuffet = Pokemon(
-			generation,
-			Species::Wobbuffet,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Shadow_Tag,
-			Nature::Calm,
-			regular_moves(Moves::Counter)
-		);
-		wobbuffet.set_ev(generation, PermanentStat::def, IV(31_bi), EV(252_bi));
-
-		defender.add_pokemon(wobbuffet);
-		defender.pokemon().switch_in(generation, weather);
-		defender.reset_start_of_turn();
-	}
+	auto defender = Team(1_bi);
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Wobbuffet,
+		Level(100_bi),
+		Gender::genderless,
+		Item::Leftovers,
+		Ability::Shadow_Tag,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Counter)
+	));
+	defender.pokemon().switch_in(generation, weather);
+	defender.reset_start_of_turn();
 
 	auto const best_move = expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout);
 	BOUNDED_ASSERT(best_move.name == Moves::Curse);
@@ -292,73 +319,86 @@ void baton_pass(Evaluate const & evaluate, Weather const weather, std::mt19937 &
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
 	constexpr auto depth = Depth(DepthValues{4U, 0U}, 0U);
-	Team attacker(2_bi, true);
-	{
-		auto smeargle = Pokemon(
-			generation,
-			Species::Smeargle,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Own_Tempo,
-			Nature::Jolly,
-			regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
-		);
-
-		attacker.add_pokemon(smeargle);
-		attacker.pokemon().switch_in(generation, weather);
-	}
-
-	{
-		auto alakazam = Pokemon(
-			generation,
-			Species::Alakazam,
-			Level(100_bi),
-			Gender::male,
-			Item::Lum_Berry,
-			Ability::Synchronize,
-			Nature::Jolly,
-			regular_moves(Moves::Psycho_Cut, Moves::Recover)
-		);
-		alakazam.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
-		
-		attacker.add_pokemon(alakazam);
-	}
+	auto attacker = Team(2_bi, true);
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Smeargle,
+		Level(100_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Own_Tempo,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
+	));
+	attacker.pokemon().switch_in(generation, weather);
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Alakazam,
+		Level(100_bi),
+		Gender::male,
+		Item::Lum_Berry,
+		Ability::Synchronize,
+		CombinedStats<IVAndEV>{
+			Nature::Adamant,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Psycho_Cut, Moves::Recover)
+	));
 	attacker.reset_start_of_turn();
 
-	Team defender(2_bi);
-	{
-		auto gengar = Pokemon(
-			generation,
-			Species::Gengar,
-			Level(100_bi),
-			Gender::male,
-			Item::Choice_Specs,
-			Ability::Levitate,
+	auto defender = Team(2_bi);
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Gengar,
+		Level(100_bi),
+		Gender::male,
+		Item::Choice_Specs,
+		Ability::Levitate,
+		CombinedStats<IVAndEV>{
 			Nature::Modest,
-			regular_moves(Moves::Shadow_Ball)
-		);
-		gengar.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Shadow_Ball)
+	));
+	defender.pokemon().switch_in(generation, weather);
 
-		defender.add_pokemon(gengar);
-		defender.pokemon().switch_in(generation, weather);
-	}
-
-	{
-		auto misdreavus = Pokemon(
-			generation,
-			Species::Misdreavus,
-			Level(100_bi),
-			Gender::female,
-			Item::Choice_Specs,
-			Ability::Levitate,
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Misdreavus,
+		Level(100_bi),
+		Gender::female,
+		Item::Choice_Specs,
+		Ability::Levitate,
+		CombinedStats<IVAndEV>{
 			Nature::Modest,
-			regular_moves(Moves::Shadow_Ball)
-		);
-		misdreavus.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Shadow_Ball)
+	));
 
-		defender.add_pokemon(misdreavus);
-	}
 	defender.reset_start_of_turn();
 
 	auto const best_move = expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cerr);
@@ -383,7 +423,15 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		Gender::male,
 		Item::Leftovers,
 		Ability::Swift_Swim,
-		Nature::Jolly,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		regular_moves(Moves::Tackle)
 	));
 	attacker.pokemon().switch_in(generation, weather);
@@ -395,43 +443,59 @@ void replace_fainted(Evaluate const & evaluate, std::mt19937 & random_engine) {
 		Gender::male,
 		Item::Choice_Specs,
 		Ability::Magma_Armor,
-		Nature::Jolly,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		regular_moves(Moves::Flamethrower, Moves::Earth_Power)
 	));
-	{
-		auto zapdos = Pokemon(
-			generation,
-			Species::Zapdos,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Choice_Specs,
-			Ability::Pressure,
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Zapdos,
+		Level(100_bi),
+		Gender::genderless,
+		Item::Choice_Specs,
+		Ability::Pressure,
+		CombinedStats<IVAndEV>{
 			Nature::Modest,
-			regular_moves(Moves::Thunderbolt)
-		);
-		zapdos.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
-		attacker.add_pokemon(zapdos);
-	}
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Thunderbolt)
+	));
+
 	attacker.reset_start_of_turn();
 
 	auto defender = Team(1_bi);
-	{
-		auto suicune = Pokemon(
-			generation,
-			Species::Suicune,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Pressure,
-			Nature::Bold,
-			regular_moves(Moves::Calm_Mind, Moves::Surf, Moves::Ice_Beam)
-		);
-		suicune.set_ev(generation, PermanentStat::hp, IV(31_bi), EV(252_bi));
-		suicune.set_ev(generation, PermanentStat::def, IV(31_bi), EV(252_bi));
-		
-		defender.add_pokemon(suicune);
-		defender.pokemon().switch_in(generation, weather);
-	}
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Suicune,
+		Level(100_bi),
+		Gender::genderless,
+		Item::Leftovers,
+		Ability::Pressure,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Calm_Mind, Moves::Surf, Moves::Ice_Beam)
+	));
+	defender.pokemon().switch_in(generation, weather);
+
 	defender.reset_start_of_turn();
 
 	call_move(
@@ -458,45 +522,49 @@ void latias_vs_suicune(Evaluate const & evaluate, std::mt19937 & random_engine) 
 	};
 	constexpr auto depth = make_depth(3U);
 	auto attacker = Team(1_bi, true);
-	{
-		auto latias = Pokemon(
-			generation,
-			Species::Latias,
-			Level(100_bi),
-			Gender::female,
-			Item::Leftovers,
-			Ability::Levitate,
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Latias,
+		Level(100_bi),
+		Gender::female,
+		Item::Leftovers,
+		Ability::Levitate,
+		CombinedStats<IVAndEV>{
 			Nature::Calm,
-			regular_moves(Moves::Calm_Mind, Moves::Dragon_Pulse, Moves::Recover)
-		);
-		latias.set_ev(generation, PermanentStat::hp, IV(31_bi), EV(252_bi));
-		latias.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(120_bi));
-		latias.set_ev(generation, PermanentStat::spd, IV(31_bi), EV(136_bi));
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(120_bi)},
+			{IV(31_bi), EV(136_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Calm_Mind, Moves::Dragon_Pulse, Moves::Recover)
+	));
+	attacker.pokemon().switch_in(generation, weather);
 
-		attacker.add_pokemon(latias);
-		attacker.pokemon().switch_in(generation, weather);
-	}
 	attacker.reset_start_of_turn();
 
 	auto defender = Team(1_bi);
-	{
-		auto suicune = Pokemon(
-			generation,
-			Species::Suicune,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Pressure,
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Suicune,
+		Level(100_bi),
+		Gender::genderless,
+		Item::Leftovers,
+		Ability::Pressure,
+		CombinedStats<IVAndEV>{
 			Nature::Calm,
-			regular_moves(Moves::Ice_Beam, Moves::Rest)
-		);
-		suicune.set_ev(generation, PermanentStat::hp, IV(31_bi), EV(252_bi));
-		suicune.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(120_bi));
-		suicune.set_ev(generation, PermanentStat::spd, IV(31_bi), EV(136_bi));
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(120_bi)},
+			{IV(31_bi), EV(136_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Ice_Beam, Moves::Rest)
+	));
+	defender.pokemon().switch_in(generation, weather);
 
-		defender.add_pokemon(suicune);
-		defender.pokemon().switch_in(generation, weather);
-	}
 	defender.reset_start_of_turn();
 
 	auto const best_move = expectiminimax(generation, attacker, defender, weather, evaluate, depth, std::cout);
@@ -511,42 +579,49 @@ void sleep_talk(Evaluate const & evaluate, std::mt19937 & random_engine) {
 	};
 	constexpr auto depth = make_depth(1U);
 	auto attacker = Team(1_bi, true);
-	{
-		auto jolteon = Pokemon(
-			generation,
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::female,
-			Item::Leftovers,
-			Ability::Volt_Absorb,
-			Nature::Timid,
-			regular_moves(Moves::Sleep_Talk, Moves::Thunderbolt)
-		);
-		jolteon.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
-		jolteon.set_ev(generation, PermanentStat::spe, IV(31_bi), EV(252_bi));
 
-		attacker.add_pokemon(jolteon);
-		attacker.pokemon().switch_in(generation, weather);
-		attacker.reset_start_of_turn();
-	}
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Jolteon,
+		Level(100_bi),
+		Gender::female,
+		Item::Leftovers,
+		Ability::Volt_Absorb,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Sleep_Talk, Moves::Thunderbolt)
+	));
+	attacker.pokemon().switch_in(generation, weather);
+	attacker.reset_start_of_turn();
 
 	auto defender = Team(1_bi);
-	{
-		auto gyarados = Pokemon(
-			generation,
-			Species::Gyarados,
-			Level(100_bi),
-			Gender::male,
-			Item::Life_Orb,
-			Ability::Intimidate,
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Gyarados,
+		Level(100_bi),
+		Gender::male,
+		Item::Life_Orb,
+		Ability::Intimidate,
+		CombinedStats<IVAndEV>{
 			Nature::Adamant,
-			regular_moves(Moves::Earthquake)
-		);
-		gyarados.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
-		
-		defender.add_pokemon(gyarados);
-		defender.pokemon().switch_in(generation, weather);
-	}
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Earthquake)
+	));
+	defender.pokemon().switch_in(generation, weather);
+
 	defender.reset_start_of_turn();
 	
 	constexpr auto keep_status = false;
@@ -609,7 +684,15 @@ void generation_one_frozen_last_pokemon(Evaluate const & evaluate) {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		Nature::Hardy,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		regular_moves(Moves::Psychic, Moves::Recover, Moves::Thunder_Wave, Moves::Seismic_Toss)
 	));
 	attacker.pokemon().switch_in(generation, weather);
@@ -623,7 +706,15 @@ void generation_one_frozen_last_pokemon(Evaluate const & evaluate) {
 			Gender::genderless,
 			Item::None,
 			Ability::Honey_Gather,
-			Nature::Hardy,
+			CombinedStats<IVAndEV>{
+				Nature::Hardy,
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+				{IV(31_bi), EV(0_bi)},
+			},
 			regular_moves(Moves::Explosion, Moves::Hypnosis, Moves::Thunderbolt, Moves::Night_Shade)
 		);
 		gengar.set_status(Statuses::freeze);

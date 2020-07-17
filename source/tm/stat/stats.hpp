@@ -32,14 +32,14 @@ enum class Generation : std::uint8_t;
 struct Level;
 
 struct Stats {
-	Stats(Generation const generation, BaseStats const base, Level const level, Nature const nature):
-		m_hp(base, level, default_iv(generation), EV(0_bi)),
+	Stats(BaseStats const base, CombinedStats<IVAndEV> const inputs, Level const level):
+		m_hp(base, level, inputs.hp.iv, inputs.hp.ev),
 		m_stats{
-			initial_stat(RegularStat::atk, base.atk(), default_iv(generation), EV(0_bi), level, nature),
-			initial_stat(RegularStat::def, base.def(), default_iv(generation), EV(0_bi), level, nature),
-			initial_stat(RegularStat::spa, base.spa(), default_iv(generation), EV(0_bi), level, nature),
-			initial_stat(RegularStat::spd, base.spd(), default_iv(generation), EV(0_bi), level, nature),
-			initial_stat(RegularStat::spe, base.spe(), default_iv(generation), EV(0_bi), level, nature)
+			initial_stat(RegularStat::atk, base, inputs, level),
+			initial_stat(RegularStat::def, base, inputs, level),
+			initial_stat(RegularStat::spa, base, inputs, level),
+			initial_stat(RegularStat::spd, base, inputs, level),
+			initial_stat(RegularStat::spe, base, inputs, level)
 		}
 	{
 	}
@@ -66,15 +66,7 @@ private:
 
 inline auto initial_stats(BaseStats const base_stats, Level const level, CombinedStats<IVAndEV> const stats) {
 	auto calculate_stat = [=](RegularStat const stat_name) {
-		auto const iv_and_ev = stats[PermanentStat(stat_name)];
-		return initial_stat(
-			stat_name,
-			base_stats[stat_name],
-			iv_and_ev.iv,
-			iv_and_ev.ev,
-			level,
-			stats.nature
-		);
+		return initial_stat(stat_name, base_stats, stats, level);
 	};
 	return GenericStats<HP::max_type, InitialStat>{
 		HP(base_stats, level, stats.hp.iv, stats.hp.ev).max(),

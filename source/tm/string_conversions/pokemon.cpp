@@ -208,14 +208,11 @@ auto pokemon_from_string(Generation const generation, std::string_view const str
 		Gender::genderless,
 		item,
 		ability,
-		nature,
+		combine(nature, ivs, evs),
 		moves
 	);
-	pokemon.set_status(status);
-	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-		pokemon.set_ev(generation, stat_name, ivs[stat_name], evs[stat_name]);
-	}
 	pokemon.set_hp(HP::current_type(static_cast<int>(static_cast<double>(pokemon.hp().max()) * hp_percent / 100.0)));
+	pokemon.set_status(status);
 
 	return pokemon;
 }

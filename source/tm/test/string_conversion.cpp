@@ -70,28 +70,25 @@ void test_generic(std::string_view const thing) {
 
 void test_pokemon() {
 	constexpr auto generation = Generation::three;
-	constexpr auto species = Species::Mewtwo;
-	constexpr auto level = Level(100_bi);
-	constexpr auto gender = Gender::genderless;
-	constexpr auto item = Item::Leftovers;
-	constexpr auto ability = Ability::Pressure;
-	constexpr auto nature = Nature::Modest;
-
-	constexpr auto hp = EV(4_bi);
-	constexpr auto atk = EV(12_bi);
-	constexpr auto def = EV(24_bi);
-	constexpr auto spa = EV(0_bi);
-	constexpr auto spd = EV(32_bi);
-	constexpr auto spe = EV(100_bi);
-	constexpr auto iv = IV(31_bi);
-
-	auto pokemon = Pokemon(generation, species, level, gender, item, ability, nature, RegularMoves({Move(generation, Moves::Psychic})));
-	pokemon.set_ev(generation, PermanentStat::hp, iv, hp);
-	pokemon.set_ev(generation, PermanentStat::atk, iv, atk);
-	pokemon.set_ev(generation, PermanentStat::def, iv, def);
-	pokemon.set_ev(generation, PermanentStat::spa, iv, spa);
-	pokemon.set_ev(generation, PermanentStat::spd, iv, spd);
-	pokemon.set_ev(generation, PermanentStat::spe, iv, spe);
+	
+	auto pokemon = Pokemon(
+		generation,
+		Species::Mewtwo,
+		Level(100_bi),
+		Gender::genderless,
+		Item::Leftovers,
+		Ability::Pressure,
+		CombinedStats<IVAndEV>{
+			Nature::Modest,
+			{IV(31_bi), EV(4_bi)},
+			{IV(31_bi), EV(12_bi)},
+			{IV(31_bi), EV(24_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(32_bi)},
+			{IV(31_bi), EV(100_bi)},
+		},
+		RegularMoves({Move(generation, Moves::Psychic)})
+	);
 
 	auto check = [&] {
 		auto const str = to_string(generation, pokemon);

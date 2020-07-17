@@ -38,7 +38,15 @@ auto individual_test(Generation const generation, Species const species, Moves c
 		Gender::genderless,
 		item,
 		ability,
-		Nature::Hardy,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	attacker.pokemon().switch_in(generation, weather);

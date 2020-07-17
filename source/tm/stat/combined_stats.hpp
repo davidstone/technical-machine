@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/stat/generic_stats.hpp>
 #include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat_names.hpp>
@@ -44,6 +45,18 @@ struct CombinedStats {
 
 	friend auto operator==(CombinedStats const &, CombinedStats const &) -> bool = default;
 };
+
+constexpr auto combine(Nature const nature, GenericStats<IV> const ivs, GenericStats<EV> const evs) {
+	return CombinedStats<IVAndEV>{
+		nature,
+		{ivs.hp, evs.hp},
+		{ivs.atk, evs.atk},
+		{ivs.def, evs.def},
+		{ivs.spa, evs.spa},
+		{ivs.spd, evs.spd},
+		{ivs.spe, evs.spe},
+	};
+}
 
 constexpr auto ev_sum(CombinedStats<IVAndEV> const stats) {
 	constexpr auto impl = [](auto... args) { return (... + args.ev.value()); };

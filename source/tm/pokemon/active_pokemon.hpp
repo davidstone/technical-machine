@@ -453,11 +453,6 @@ struct MutableActivePokemon : ActivePokemonImpl<false> {
 		return m_flags.stage;
 	}
 
-	auto set_ev(Generation const generation, PermanentStat const stat_name, IV const iv, EV const ev) const -> void {
-		m_pokemon.set_ev(generation, stat_name, iv, ev);
-	}
-
-
 	auto clear_field() const {
 		m_flags.leech_seeded = false;
 		m_flags.partial_trap = {};

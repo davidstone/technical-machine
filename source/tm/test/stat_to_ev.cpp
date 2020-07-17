@@ -48,7 +48,7 @@ void test_attack() {
 	constexpr auto ev = EV(176_bi);
 	constexpr auto nature = Nature::Adamant;
 	constexpr auto stat_name = RegularStat::atk;
-	auto const stat_value = initial_stat(stat_name, base_stats.atk(), iv, ev, level, nature);
+	auto const stat_value = initial_stat(stat_name, base_stats.atk(), nature, iv, ev, level);
 	auto const computed_ev = stat_to_ev(stat_value, nature, stat_name, base_stats.atk(), iv, level);
 	BOUNDED_ASSERT(computed_ev == ev);
 }

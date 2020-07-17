@@ -32,6 +32,7 @@
 
 #include <tm/move/container.hpp>
 
+#include <tm/stat/combined_stats.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stats.hpp>
@@ -46,13 +47,13 @@ enum class Generation : std::uint8_t;
 
 struct Pokemon {
 	Pokemon(Generation, Species species, Level level, Gender gender);
-	Pokemon(Generation, Species species, Level level, Gender gender, Item item, Ability ability, Nature nature, RegularMoves regular_moves, Happiness happiness = Happiness());
+	Pokemon(Generation, Species species, Level level, Gender gender, Item item, Ability ability, CombinedStats<IVAndEV> stats, RegularMoves regular_moves, Happiness happiness = Happiness());
 	
 	auto hp() const {
-		return stats.hp();
+		return m_stats.hp();
 	}
 	auto stat(RegularStat const stat_name) const {
-		return stats[stat_name];
+		return m_stats[stat_name];
 	}
 
 	auto advance_status_from_move(Ability const ability, bool const clear_status) & {
@@ -74,7 +75,7 @@ struct Pokemon {
 	}
 
 	void set_hp(auto const hp) & {
-		stats.hp() = hp;
+		m_stats.hp() = hp;
 	}
 
 	auto initial_ability() const {
@@ -152,11 +153,11 @@ struct Pokemon {
 	auto set_ev(Generation const generation, PermanentStat const stat_name, IV const iv, EV const ev) -> void {
 		auto const base_stats = BaseStats(generation, species());
 		if (stat_name == PermanentStat::hp) {
-			stats.hp() = HP(base_stats, level(), iv, ev);
+			m_stats.hp() = HP(base_stats, level(), iv, ev);
 		} else {
 			auto const regular = RegularStat(stat_name);
-			auto & stat = stats[regular];
-			stat = initial_stat(regular, base_stats[regular], iv, ev, level(), nature());
+			auto & stat = m_stats[regular];
+			stat = initial_stat(regular, base_stats[regular], nature(), iv, ev, level());
 		}
 	}
 
@@ -164,7 +165,7 @@ struct Pokemon {
 	friend auto compress(Pokemon const value) {
 		return compress_combine(
 			value.m_regular_moves,
-			value.stats.hp().current(),
+			value.m_stats.hp().current(),
 			value.m_item,
 			value.m_status,
 			value.m_has_been_seen
@@ -173,7 +174,7 @@ struct Pokemon {
 private:
 	RegularMoves m_regular_moves;
 	
-	Stats stats;
+	Stats m_stats;
 
 	Species m_species;
 	HeldItem m_item;

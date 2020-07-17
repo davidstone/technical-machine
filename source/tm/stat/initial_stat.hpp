@@ -20,15 +20,15 @@
 #include <tm/pokemon/level.hpp>
 
 #include <tm/stat/base_stats.hpp>
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
+#include <tm/stat/combined_stats.hpp>
+#include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
 
-constexpr auto initial_stat(RegularStat const stat_name, auto const base, IV const iv, EV const ev, Level const level, Nature const nature) {
+constexpr auto initial_stat(RegularStat const stat_name, auto const base, Nature const nature, IV const iv, EV const ev, Level const level) {
 	auto const pre_nature = (2_bi * base + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 5_bi;
 	return pre_nature * boost(nature, stat_name);
 }
@@ -36,10 +36,15 @@ constexpr auto initial_stat(RegularStat const stat_name, auto const base, IV con
 using InitialStat = decltype(initial_stat(
 	std::declval<RegularStat>(),
 	std::declval<BaseStats::regular_value_type>(),
+	std::declval<Nature>(),
 	std::declval<IV>(),
 	std::declval<EV>(),
-	std::declval<Level>(),
-	std::declval<Nature>()
+	std::declval<Level>()
 ));
+
+inline auto initial_stat(RegularStat const stat_name, BaseStats const base_stats, CombinedStats<IVAndEV> inputs, Level const level) {
+	auto const iv_and_ev = inputs[PermanentStat(stat_name)];
+	return initial_stat(stat_name, base_stats[stat_name], inputs.nature, iv_and_ev.iv, iv_and_ev.ev, level);
+}
 
 } // namespace technicalmachine

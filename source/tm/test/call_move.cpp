@@ -54,53 +54,76 @@ void test_baton_pass() {
 		Gender::male,
 		Item::Leftovers,
 		Ability::Own_Tempo,
-		Nature::Jolly,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
 	));
-
-	{
-		auto & alakazam = attacker.add_pokemon(Pokemon(
-			generation,
-			Species::Alakazam,
-			Level(100_bi),
-			Gender::male,
-			Item::Lum_Berry,
-			Ability::Synchronize,
-			Nature::Jolly,
-			regular_moves(Moves::Psycho_Cut, Moves::Recover)
-		));
-		alakazam.set_ev(generation, PermanentStat::atk, IV(31_bi), EV(252_bi));
-	}
+	attacker.add_pokemon(Pokemon(
+		generation,
+		Species::Alakazam,
+		Level(100_bi),
+		Gender::male,
+		Item::Lum_Berry,
+		Ability::Synchronize,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Psycho_Cut, Moves::Recover)
+	));
 	attacker.pokemon().switch_in(generation, weather);
 
 	auto defender = Team(2_bi);
-	{
-		auto & gengar = defender.add_pokemon(Pokemon(
-			generation,
-			Species::Gengar,
-			Level(100_bi),
-			Gender::male,
-			Item::Choice_Specs,
-			Ability::Levitate,
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Gengar,
+		Level(100_bi),
+		Gender::male,
+		Item::Choice_Specs,
+		Ability::Levitate,
+		CombinedStats<IVAndEV>{
 			Nature::Modest,
-			regular_moves(Moves::Shadow_Ball)
-		));
-		gengar.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
-	}
-	{
-		auto & misdreavus = defender.add_pokemon(Pokemon(
-			generation,
-			Species::Misdreavus,
-			Level(100_bi),
-			Gender::female,
-			Item::Choice_Specs,
-			Ability::Levitate,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Shadow_Ball)
+	));
+	defender.add_pokemon(Pokemon(
+		generation,
+		Species::Misdreavus,
+		Level(100_bi),
+		Gender::female,
+		Item::Choice_Specs,
+		Ability::Levitate,
+		CombinedStats<IVAndEV>{
 			Nature::Modest,
-			regular_moves(Moves::Shadow_Ball)
-		));
-		misdreavus.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(252_bi));
-	}
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Shadow_Ball)
+	));
 	defender.pokemon().switch_in(generation, weather);
+
 	attacker.reset_start_of_turn();
 
 	BOUNDED_ASSERT(
@@ -179,7 +202,15 @@ void wonder_guard() {
 		Gender::female,
 		Item::None,
 		Ability::Volt_Absorb,
-		Nature::Timid,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		regular_moves(Moves::Shadow_Ball, Moves::Thunderbolt)
 	));
 	attacker.pokemon().switch_in(generation, weather);
@@ -192,7 +223,15 @@ void wonder_guard() {
 		Gender::male,
 		Item::None,
 		Ability::Wonder_Guard,
-		Nature::Adamant,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto shedinja = defender.pokemon();

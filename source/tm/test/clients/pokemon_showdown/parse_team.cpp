@@ -29,52 +29,127 @@ namespace technicalmachine {
 namespace ps {
 namespace {
 
-auto max_all_evs(Generation const generation, Pokemon & pokemon) {
-	constexpr auto ev = EV(252_bi);
-	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-		pokemon.set_ev(generation, stat_name, IV(30_bi), ev);
-	}
-}
-
 auto expected_generation_one_team() {
 	auto team = Team(6_bi, true);
 	constexpr auto generation = Generation::one;
-	auto add_pokemon = [&](Species const species, auto const level, auto const ... moves) -> Pokemon & {
-		Pokemon & pokemon = team.add_pokemon(Pokemon(
-			generation,
-			species,
-			Level(level),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
+
+	auto moves = [](auto... move_names) {
+		return RegularMoves({Move(generation, move_names)...});
+	};
+
+	team.add_pokemon(Pokemon(
+		generation,
+		Species::Koffing,
+		Level(88_bi),
+		Gender::genderless,
+		Item::None,
+		Ability::Honey_Gather,
+		CombinedStats<IVAndEV>{
 			Nature::Hardy,
-			RegularMoves({Move(generation, moves)...})
-		));
-		max_all_evs(generation, pokemon);
-		return pokemon;
-	};
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+		},
+		moves(Moves::Fire_Blast, Moves::Sludge, Moves::Explosion, Moves::Thunderbolt)
+	));
 
-	auto reduce_stat = [=](Pokemon & pokemon, PermanentStat const stat_name) {
-		constexpr auto reduced_ev = EV(248_bi);
-		constexpr auto iv = IV(30_bi);
-		pokemon.set_ev(generation, stat_name, iv, reduced_ev);
-	};
+	team.add_pokemon(Pokemon(
+		generation,
+		Species::Sandslash,
+		Level(74_bi),
+		Gender::genderless,
+		Item::None,
+		Ability::Honey_Gather,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(30_bi), EV(248_bi)},
+			{IV(30_bi), EV(248_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+		},
+		moves(Moves::Earthquake, Moves::Body_Slam, Moves::Rock_Slide, Moves::Swords_Dance)
+	));
 
-	add_pokemon(Species::Koffing, 88_bi, Moves::Fire_Blast, Moves::Sludge, Moves::Explosion, Moves::Thunderbolt);
+	team.add_pokemon(Pokemon(
+		generation,
+		Species::Ditto,
+		Level(88_bi),
+		Gender::genderless,
+		Item::None,
+		Ability::Honey_Gather,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+		},
+		moves(Moves::Transform)
+	));
 
-	auto & sandslash = add_pokemon(Species::Sandslash, 74_bi, Moves::Earthquake, Moves::Body_Slam, Moves::Rock_Slide, Moves::Swords_Dance);
-	reduce_stat(sandslash, PermanentStat::hp);
-	reduce_stat(sandslash, PermanentStat::atk);
+	team.add_pokemon(Pokemon(
+		generation,
+		Species::Pikachu,
+		Level(88_bi),
+		Gender::genderless,
+		Item::None,
+		Ability::Honey_Gather,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+		},
+		moves(Moves::Agility, Moves::Thunderbolt, Moves::Surf, Moves::Thunder_Wave)
+	));
 
-	add_pokemon(Species::Ditto, 88_bi, Moves::Transform);
-
-	add_pokemon(Species::Pikachu, 88_bi, Moves::Agility, Moves::Thunderbolt, Moves::Surf, Moves::Thunder_Wave);
-
-	auto & jynx = add_pokemon(Species::Jynx, 68_bi, Moves::Seismic_Toss, Moves::Lovely_Kiss, Moves::Psychic, Moves::Blizzard);
-	reduce_stat(jynx, PermanentStat::def);
-
-	auto & slowbro = add_pokemon(Species::Slowbro, 68_bi, Moves::Psychic, Moves::Surf, Moves::Thunder_Wave, Moves::Amnesia);
-	reduce_stat(slowbro, PermanentStat::def);
+	team.add_pokemon(Pokemon(
+		generation,
+		Species::Jynx,
+		Level(68_bi),
+		Gender::genderless,
+		Item::None,
+		Ability::Honey_Gather,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(248_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+		},
+		moves(Moves::Seismic_Toss, Moves::Lovely_Kiss, Moves::Psychic, Moves::Blizzard)
+	));
+	
+	team.add_pokemon(Pokemon(
+		generation,
+		Species::Slowbro,
+		Level(68_bi),
+		Gender::genderless,
+		Item::None,
+		Ability::Honey_Gather,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(248_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+			{IV(30_bi), EV(252_bi)},
+		},
+		moves(Moves::Psychic, Moves::Surf, Moves::Thunder_Wave, Moves::Amnesia)
+	));
 
 	return team;
 }

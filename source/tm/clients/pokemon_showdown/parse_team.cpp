@@ -101,23 +101,16 @@ auto parse_pokemon(boost::property_tree::ptree const & pokemon_data, Generation 
 	
 	auto const item = from_string<Item>(get("item"));
 
-	auto pokemon = Pokemon(
+	return Pokemon(
 		generation,
 		details.species,
 		details.level,
 		details.gender,
 		item,
 		ability,
-		stats.nature,
+		stats,
 		move_data.moves
 	);
-
-	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-		auto const stat = stats[stat_name];
-		pokemon.set_ev(generation, stat_name, stat.iv, stat.ev);
-	}
-
-	return pokemon;
 }
 
 } // namespace

@@ -43,20 +43,22 @@ void assert_lower_score(Evaluate const & evaluate, Team const & lesser, Team con
 void evaluate_tests() {
 	std::cout << "Running evaluate tests.\n";
 
-	auto const species = Species::Blissey;
-	Level const level(100_bi);
-	auto const gender = Gender::female;
-	auto const item = Item::Leftovers;
-	auto const ability = Ability::Natural_Cure;
-	auto const nature = Nature::Bold;
 	auto pokemon = Pokemon(
 		generation,
-		species,
-		level,
-		gender,
-		item,
-		ability,
-		nature,
+		Species::Blissey,
+		Level(100_bi),
+		Gender::female,
+		Item::Leftovers,
+		Ability::Natural_Cure,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	);
 

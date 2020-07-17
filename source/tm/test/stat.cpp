@@ -57,11 +57,18 @@ void attack_tests() {
 		Gender::male,
 		Item::Choice_Band,
 		Ability::Pure_Power,
-		Nature::Impish,
+		CombinedStats<IVAndEV>{
+			Nature::Impish,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto pokemon = attacker.pokemon();
-	pokemon.set_ev(generation, PermanentStat::def, IV(31_bi), EV(EV::max));
 
 	pokemon.switch_in(generation, weather);
 
@@ -85,11 +92,18 @@ void special_attack_tests() {
 		Gender::genderless,
 		Item::Choice_Specs,
 		Ability::Solar_Power,
-		Nature::Modest,
+		CombinedStats<IVAndEV>{
+			Nature::Modest,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({Move(generation, Moves::Psychic)})
 	));
 	auto pokemon = attacker.pokemon();
-	pokemon.set_ev(generation, PermanentStat::spa, IV(31_bi), EV(EV::max));
 
 	pokemon.switch_in(generation, weather);
 
@@ -113,11 +127,18 @@ void max_defense_test() {
 		Gender::male,
 		Item::None,
 		Ability::Marvel_Scale,
-		Nature::Bold,
+		CombinedStats<IVAndEV>{
+			Nature::Bold,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto pokemon = defender.pokemon();
-	pokemon.set_ev(generation, PermanentStat::def, IV(31_bi), EV(EV::max));
 
 	pokemon.switch_in(generation, weather);
 
@@ -143,11 +164,18 @@ void min_defense_test() {
 		Gender::male,
 		Item::None,
 		Ability::Honey_Gather,
-		Nature::Hasty,
+		CombinedStats<IVAndEV>{
+			Nature::Hasty,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(0_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto pokemon = defender.pokemon();
-	pokemon.set_ev(generation, PermanentStat::def, IV(0_bi), EV(0_bi));
 
 	pokemon.switch_in(generation, weather);
 
@@ -180,11 +208,18 @@ void special_defense_tests() {
 		Gender::male,
 		Item::None,
 		Ability::Honey_Gather,
-		Nature::Calm,
+		CombinedStats<IVAndEV>{
+			Nature::Calm,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto pokemon = defender.pokemon();
-	pokemon.set_ev(generation, PermanentStat::spd, IV(31_bi), EV(EV::max));
 
 	pokemon.switch_in(generation, weather);
 
@@ -208,11 +243,18 @@ void speed_tests() {
 		Gender::genderless,
 		Item::Choice_Scarf,
 		Ability::Swift_Swim,
-		Nature::Timid,
+		CombinedStats<IVAndEV>{
+			Nature::Timid,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto pokemon = team.pokemon();
-	pokemon.set_ev(generation, PermanentStat::spe, IV(31_bi), EV(EV::max));
 
 	pokemon.switch_in(generation, weather);
 
