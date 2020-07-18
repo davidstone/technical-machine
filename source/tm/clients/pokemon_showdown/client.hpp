@@ -21,9 +21,14 @@
 #include <tm/clients/pokemon_showdown/battles.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 #include <tm/clients/pokemon_showdown/json_parser.hpp>
+#include <tm/clients/pokemon_showdown/packed_team.hpp>
 
 #include <tm/evaluate/evaluate.hpp>
+
+#include <tm/team_predictor/team_predictor.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
+
+#include <tm/load_team_from_file.hpp>
 #include <tm/settings_file.hpp>
 
 #include <boost/asio/io_service.hpp>
@@ -45,13 +50,27 @@ struct ClientImpl {
 	using AuthenticationFunction = std::function<
 		http::response<http::string_body>(std::string_view, std::string_view, http::request<http::string_body> const &)
 	>;
-	ClientImpl(SettingsFile, DepthValues, BattleParser::SendMessageFunction, AuthenticationFunction);
+	ClientImpl(SettingsFile, DepthValues, SendMessageFunction, AuthenticationFunction);
 	void run(DelimitedBufferView<std::string_view> messages);
 
 private:
-	auto generate_team(Generation const generation) -> Team;
+	template<Generation generation>
+	auto generate_team() -> Team<generation> {
+		return m_settings.team_file ?
+			load_team_from_file<generation>(m_random_engine, *m_settings.team_file) :
+			::technicalmachine::generate_team<generation>(
+				m_all_usage_stats[generation],
+				use_lead_stats,
+				m_random_engine
+			);
+	}
+
 	
-	void send_team(Generation const generation);
+	template<Generation generation>
+	void send_team() {
+		m_send_message("|/utm " + to_packed_format(generate_team<generation>()));
+	}
+
 
 	void handle_message(InMessage message);
 	void send_channel_message(std::string const & channel, std::string const & message);
@@ -67,7 +86,7 @@ private:
 	std::mt19937 m_random_engine;
 
 	AllUsageStats m_all_usage_stats;
-	Evaluate m_evaluate;
+	AllEvaluate m_evaluate;
 
 	SettingsFile m_settings;
 	
@@ -78,7 +97,7 @@ private:
 	
 	Battles m_battles;
 	
-	BattleParser::SendMessageFunction m_send_message;
+	SendMessageFunction m_send_message;
 	AuthenticationFunction m_authenticate;
 };
 

@@ -18,15 +18,18 @@
 
 #pragma once
 
-#include <tm/compress.hpp>
 #include <tm/pokemon/end_of_turn_counter.hpp>
+
+#include <tm/compress.hpp>
+#include <tm/heal.hpp>
 #include <tm/operators.hpp>
+#include <tm/rational.hpp>
+#include <tm/weather.hpp>
 
 namespace technicalmachine {
 
-enum class Generation : std::uint8_t;
+template<Generation>
 struct MutableActivePokemon;
-struct Weather;
 
 // This handles the number of turns remaining on Bind, Clamp, Fire Spin,
 // Magma Storm, Sand Tomb, Whirlpool, and Wrap
@@ -37,7 +40,13 @@ struct PartialTrap {
 	constexpr auto activate() {
 		m_base.activate();
 	}
-	auto damage(Generation, MutableActivePokemon, Weather) -> void;
+	template<Generation generation>
+	constexpr auto damage(MutableActivePokemon<generation> pokemon, Weather const weather) -> void {
+		if (is_active()) {
+			heal(pokemon, weather, rational(-1_bi, 16_bi));
+			m_base.advance_one_turn();
+		}
+	}
 
 	friend auto operator==(PartialTrap const &, PartialTrap const &) -> bool = default;
 	friend constexpr auto compress(PartialTrap const value) {

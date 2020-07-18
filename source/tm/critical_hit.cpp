@@ -810,7 +810,8 @@ constexpr auto generation_one_move_critical_hit_multiplier(MoveCriticalHit const
 	}
 }
 
-auto gen_one_critical_hit(ActivePokemon const attacker, MoveCriticalHit const move_adjustment) {
+template<Generation generation>
+auto gen_one_critical_hit(ActivePokemon<generation> const attacker, MoveCriticalHit const move_adjustment) {
 	auto const initial = BaseStats(Generation::one, attacker.species()).spe() / 2_bi;
 	auto const focused = BOUNDED_CONDITIONAL(attacker.has_focused_energy(), initial / 2_bi, initial * 2_bi);
 	auto const final = bounded::min(255_bi, focused * generation_one_move_critical_hit_multiplier(move_adjustment));
@@ -846,7 +847,8 @@ constexpr auto ability_stage(Ability const ability) {
 	return BOUNDED_CONDITIONAL(ability == Ability::Super_Luck, 1_bi, 0_bi);
 }
 
-auto boosted_stage(Generation const generation, ActivePokemon const attacker) {
+template<Generation generation>
+auto boosted_stage(ActivePokemon<generation> const attacker) {
 	auto const boosted_value = BOUNDED_CONDITIONAL(generation == Generation::two, 1_bi, 2_bi);
 	return BOUNDED_CONDITIONAL(attacker.has_focused_energy(), boosted_value, 0_bi);
 }
@@ -884,7 +886,8 @@ constexpr auto critical_hit_rate_from_stage(Generation const generation, bounded
 	}
 }
 
-auto new_gen_critical_hit(Generation const generation, ActivePokemon const attacker, MoveCriticalHit const move_adjustment, Weather const weather) {
+template<Generation generation>
+auto new_gen_critical_hit(ActivePokemon<generation> const attacker, MoveCriticalHit const move_adjustment, Weather const weather) {
 	switch (move_adjustment) {
 		case MoveCriticalHit::never:
 			return 0.0;
@@ -895,9 +898,9 @@ auto new_gen_critical_hit(Generation const generation, ActivePokemon const attac
 				generation,
 				(
 					move_stage(generation, move_adjustment) +
-					item_stage(attacker.item(generation, weather), attacker.species()) +
+					item_stage(attacker.item(weather), attacker.species()) +
 					ability_stage(attacker.ability()) +
-					boosted_stage(generation, attacker)
+					boosted_stage(attacker)
 				)
 			);
 		case MoveCriticalHit::always:
@@ -905,7 +908,8 @@ auto new_gen_critical_hit(Generation const generation, ActivePokemon const attac
 	}
 }
 
-auto base_critical_hit_probability(Generation const generation, ActivePokemon const attacker, Moves const move_name, Weather const weather) {
+template<Generation generation>
+auto base_critical_hit_probability(ActivePokemon<generation> const attacker, Moves const move_name, Weather const weather) {
 	auto const move_adjustment = move_critical_hit(generation, move_name);
 	switch (generation) {
 		case Generation::one:
@@ -917,21 +921,34 @@ auto base_critical_hit_probability(Generation const generation, ActivePokemon co
 		case Generation::six:
 		case Generation::seven:
 		case Generation::eight:
-			return new_gen_critical_hit(generation, attacker, move_adjustment, weather);
+			return new_gen_critical_hit(attacker, move_adjustment, weather);
 	}
 }
 
 } // namespace
 
-auto critical_hit_probability(Generation const generation, ActivePokemon const attacker, Moves const move, Ability const defender_ability, Weather const weather) -> double {
+template<Generation generation>
+auto critical_hit_probability(ActivePokemon<generation> const attacker, Moves const move, Ability const defender_ability, Weather const weather) -> double {
 	switch (defender_ability) {
 		case Ability::Battle_Armor:
 		case Ability::Shell_Armor:
 			return 0.0;
 		default: {
-			return base_critical_hit_probability(generation, attacker, move, weather);
+			return base_critical_hit_probability(attacker, move, weather);
 		}
 	}
 }
+
+#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
+	template auto critical_hit_probability<generation>(ActivePokemon<generation> const attacker, Moves const move, Ability const defender_ability, Weather const weather) -> double
+
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::three);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::four);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::five);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
 
 } // namespace technicalmachine

@@ -16,24 +16,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/pokemon/partial_trap.hpp>
-
-#include <tm/pokemon/active_pokemon.hpp>
-
-#include <tm/heal.hpp>
-#include <tm/rational.hpp>
-
-namespace technicalmachine {
-namespace {
-using namespace bounded::literal;
-// constexpr auto normal_duration = 5_bi;
-// constexpr auto extended_duration = 8_bi;
-}	// namespace
-
-auto PartialTrap::damage(Generation const generation, MutableActivePokemon pokemon, Weather const weather) -> void {
-	if (is_active()) {
-		heal(generation, pokemon, weather, rational(-1_bi, 16_bi));
-		m_base.advance_one_turn();
-	}
-}
-
-}	// namespace technicalmachine

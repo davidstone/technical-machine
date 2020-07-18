@@ -20,6 +20,8 @@
 #include <tm/evaluate/depth.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/pokemon/max_pokemon_per_team.hpp>
+#include <tm/generation.hpp>
+#include <tm/string_conversions/generation.hpp>
 
 #include <boost/lexical_cast.hpp>
 
@@ -28,9 +30,27 @@
 
 namespace {
 
+template<technicalmachine::Generation generation>
+void print_team_size() {
+	std::cout << to_string(generation) << ": " << sizeof(technicalmachine::Team<generation>);
+}
+
+template<technicalmachine::Generation generation>
+void print_pokemon_size() {
+	std::cout << to_string(generation) << ": " << sizeof(technicalmachine::Pokemon<generation>);
+}
+
 void print_debug_statements() {
-	std::cout << "sizeof(Team): " << sizeof(technicalmachine::Team) << '\n';
-	std::cout << "sizeof(Pokemon): " << sizeof(technicalmachine::Pokemon) << '\n';
+	std::cout << "sizeof(Team): ";
+	print_team_size<technicalmachine::Generation::one>();
+	std::cout << ", ";
+	print_team_size<technicalmachine::Generation::four>();
+	std::cout << '\n';
+	std::cout << "sizeof(Pokemon): ";
+	print_pokemon_size<technicalmachine::Generation::one>();
+	std::cout << ", ";
+	print_pokemon_size<technicalmachine::Generation::four>();
+	std::cout << '\n';
 	std::cout << "sizeof(Move): " << sizeof(technicalmachine::Move) << '\n';
 	std::cout << "sizeof(Weather): " << sizeof(technicalmachine::Weather) << '\n';
 }

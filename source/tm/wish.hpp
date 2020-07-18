@@ -18,16 +18,18 @@
 #pragma once
 
 #include <tm/compress.hpp>
+#include <tm/heal.hpp>
 #include <tm/operators.hpp>
+#include <tm/rational.hpp>
+#include <tm/weather.hpp>
 
 #include <bounded/optional.hpp>
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
-enum class Generation : std::uint8_t;
+
+template<Generation>
 struct MutableActivePokemon;
-struct Pokemon;
-struct Weather;
 
 struct Wish {
 	constexpr auto is_active() const {
@@ -40,7 +42,19 @@ struct Wish {
 		}
 	}
 
-	auto decrement(Generation, MutableActivePokemon, Weather) & -> void;
+	template<Generation generation>
+	auto decrement(MutableActivePokemon<generation> pokemon, Weather const weather) & -> void {
+		if (!m_turns_until_activation) {
+			return;
+		}
+		if (*m_turns_until_activation == 0_bi) {
+			m_turns_until_activation = bounded::none;
+			heal(pokemon, weather, rational(1_bi, 2_bi));
+		} else {
+			--*m_turns_until_activation;
+		}
+	}
+
 	friend auto operator==(Wish const &, Wish const &) -> bool = default;
 	
 private:

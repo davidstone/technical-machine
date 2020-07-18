@@ -81,17 +81,22 @@ auto get_expected_integer_wrapper(std::string_view const input, std::string_view
 	return T(bounded::to_integer<typename T::value_type>(get_expected_base(input, key)));
 }
 
-struct HTMLTeam {
-	Generation generation;
-	Team team;
-};
-auto parse_html_team(std::string_view str) -> HTMLTeam {
-	auto buffer = DelimitedBufferView(str, '&');
+using GenericTeam = bounded::variant<
+	Team<Generation::one>,
+	Team<Generation::two>,
+	Team<Generation::three>,
+	Team<Generation::four>,
+	Team<Generation::five>,
+	Team<Generation::six>,
+	Team<Generation::seven>,
+	Team<Generation::eight>
+>;
 
+template<Generation generation>
+auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 	constexpr auto is_me = true;
-	auto team = Team(max_pokemon_per_team, is_me);
 
-	auto const generation = Generation(bounded::to_integer<1, 8>(get_expected_base(buffer.pop(), "generation")));
+	auto team = Team<generation>(max_pokemon_per_team, is_me);
 
 	for (auto const index : containers::integer_range(max_pokemon_per_team)) {
 		auto const index_str = bounded::to_string(index);
@@ -135,8 +140,7 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 		if (!species) {
 			continue;
 		}
-		auto pokemon = Pokemon(
-			generation,
+		auto pokemon = Pokemon<generation>(
 			*species,
 			level,
 			gender ? *gender : Gender::genderless
@@ -154,12 +158,27 @@ auto parse_html_team(std::string_view str) -> HTMLTeam {
 			add_seen_move(pokemon.regular_moves(), generation, move);
 		}
 		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-			pokemon.set_ev(generation, stat_name, default_iv(generation), stats[stat_name]);
+			pokemon.set_ev(stat_name, default_iv(generation), stats[stat_name]);
 		}
 		team.add_pokemon(pokemon);
 	}
 
-	return {generation, team};
+	return team;
+}
+
+auto parse_html_team(std::string_view str) -> GenericTeam {
+	auto buffer = DelimitedBufferView(str, '&');
+	auto const generation = Generation(bounded::to_integer<1, 8>(get_expected_base(buffer.pop(), "generation")));
+	switch (generation) {
+		case Generation::one: return GenericTeam(parse_html_team<Generation::one>(buffer));
+		case Generation::two: return GenericTeam(parse_html_team<Generation::two>(buffer));
+		case Generation::three: return GenericTeam(parse_html_team<Generation::three>(buffer));
+		case Generation::four: return GenericTeam(parse_html_team<Generation::four>(buffer));
+		case Generation::five: return GenericTeam(parse_html_team<Generation::five>(buffer));
+		case Generation::six: return GenericTeam(parse_html_team<Generation::six>(buffer));
+		case Generation::seven: return GenericTeam(parse_html_team<Generation::seven>(buffer));
+		case Generation::eight: return GenericTeam(parse_html_team<Generation::eight>(buffer));
+	}
 }
 
 struct Data {
@@ -169,22 +188,22 @@ struct Data {
 	}
 
 	auto team_string(std::string_view const input_data) -> containers::string {
-		constexpr auto using_lead = false;
 		try {
-			auto [generation, team] = parse_html_team(input_data);
-			auto const & usage_stats = m_all_usage_stats[generation];
-			random_team(generation, usage_stats, team, m_random_engine);
-			return to_string(
-				generation,
-				predict_team(
-					generation,
-					usage_stats,
-					LeadStats(using_lead),
-					team,
-					m_random_engine
-				),
-				false
-			);
+			auto generic_team = parse_html_team(input_data);
+			return bounded::visit(generic_team, [&]<Generation generation>(Team<generation> & team) {
+				constexpr auto using_lead = false;
+				auto const & usage_stats = m_all_usage_stats[generation];
+				random_team(usage_stats, team, m_random_engine);
+				return to_string(
+					predict_team(
+						usage_stats,
+						LeadStats(using_lead),
+						team,
+						m_random_engine
+					),
+					false
+				);
+			});
 		} catch (std::exception const & ex) {
 			return containers::string(ex.what());
 		}

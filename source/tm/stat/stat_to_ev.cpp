@@ -42,6 +42,8 @@ static_assert(stat_to_ev(614_bi, Nature::Impish, RegularStat::def, 230_bi, IV(31
 static_assert(stat_to_ev(558_bi, Nature::Hardy, RegularStat::def, 230_bi, IV(DV(15_bi)), Level(100_bi)) == EV(252_bi));
 static_assert(stat_to_ev(178_bi, Nature::Bold, RegularStat::atk, 125_bi, IV(19_bi), Level(63_bi)) == EV(152_bi));
 
+} // namespace
+
 auto calculate_ivs_and_evs(
 	Generation const generation,
 	Species const species,
@@ -114,52 +116,6 @@ auto calculate_ivs_and_evs(
 		" Special Attack: " + bounded::to_string(stats.spa) +
 		" Special Defense: " + bounded::to_string(stats.spd) +
 		" Speed: " + bounded::to_string(stats.spe)
-	);
-}
-
-} // namespace
-
-auto calculate_ivs_and_evs(
-	Generation const generation,
-	Species const species,
-	Level const level,
-	GenericStats<HP::max_type, InitialStat> const stats,
-	bounded::optional<Type> const hidden_power_type,
-	bool const has_physical_move
-) -> CombinedStats<IVAndEV> {
-	auto const nature_range = generation <= Generation::two ? 
-		containers::enum_range(Nature::Hardy, Nature::Hardy) :
-		containers::enum_range<Nature>();
-
-	return calculate_ivs_and_evs(
-		generation,
-		species,
-		level,
-		stats,
-		hidden_power_type,
-		has_physical_move,
-		nature_range
-	);
-}
-
-auto calculate_ivs_and_evs(Generation const generation, Pokemon const pokemon) -> CombinedStats<IVAndEV> {
-	auto const nature = pokemon.nature();
-	auto const stats = GenericStats<HP::max_type, InitialStat>{
-		pokemon.hp().max(),
-		pokemon.stat(RegularStat::atk),
-		pokemon.stat(RegularStat::def),
-		pokemon.stat(RegularStat::spa),
-		pokemon.stat(RegularStat::spd),
-		pokemon.stat(RegularStat::spe)
-	};
-	return calculate_ivs_and_evs(
-		generation,
-		pokemon.species(),
-		pokemon.level(),
-		stats,
-		get_hidden_power_type(pokemon),
-		has_physical_move(generation, pokemon),
-		containers::enum_range(nature, nature)
 	);
 }
 

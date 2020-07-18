@@ -34,9 +34,9 @@ void test_team_file () {
 	std::cout << "\tRunning Pokemon Lab team file tests.\n";
 	auto const directory = std::filesystem::path("test/teams");
 	auto const new_file = directory / "test2.sbt";
-	auto const team = load_team(generation, directory / "test1.sbt");
-	write_team(generation, team, new_file);
-	BOUNDED_ASSERT(team == load_team(generation, new_file));
+	auto const team = load_team<generation>(directory / "test1.sbt");
+	write_team(team, new_file);
+	BOUNDED_ASSERT(team == load_team<generation>(new_file));
 	std::filesystem::remove(new_file);
 }
 

@@ -27,7 +27,6 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
-struct Pokemon;
 
 template<typename Numerator, typename Denominator>
 struct rational;

@@ -19,12 +19,6 @@
 
 #include <tm/clients/random_string.hpp>
 
-#include <tm/clients/pokemon_lab/write_team_file.hpp>
-
-#include <tm/team_predictor/team_predictor.hpp>
-
-#include <filesystem>
-#include <random>
 #include <string>
 
 namespace technicalmachine {
@@ -35,7 +29,7 @@ std::string get_extension() {
 	return ".sbt";
 }
 
-constexpr auto team_file_directory = "teams/foe";
+}	// namespace
 
 std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 	// Randomly generates a file name in 8.3 format. It then checks to see if
@@ -49,19 +43,10 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 	constexpr unsigned file_name_length = 8;
 	std::filesystem::path foe_team_file;
 	do {
-		foe_team_file = team_file_directory;
+		foe_team_file = team_file_directory();
 		foe_team_file /= random_string(random_engine, file_name_length) + get_extension();
 	} while (std::filesystem::exists(foe_team_file));
 	return foe_team_file;
-}
-
-}	// namespace
-
-void log_foe_team(Generation const generation, UsageStats const & usage_stats, Team const & foe_team, std::mt19937 & random_engine) {
-	auto const team = predict_team(generation, usage_stats, use_lead_stats, foe_team, random_engine);
-	auto const path = generate_team_file_name(random_engine);
-	std::filesystem::create_directory(team_file_directory);
-	pl::write_team(generation, team, path);
 }
 
 } // namespace technicalmachine

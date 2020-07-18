@@ -54,7 +54,6 @@ struct Stockpile {
 	}
 
 private:
-	friend struct Evaluate;
 	bounded::clamped_integer<0, max> m_level = 0_bi;
 };
 

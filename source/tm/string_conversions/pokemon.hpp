@@ -26,8 +26,25 @@
 
 namespace technicalmachine {
 
-auto to_string(Generation, Pokemon pokemon) -> containers::string;
+template<Generation generation>
+auto to_string(Pokemon<generation> pokemon) -> containers::string;
 
-auto pokemon_from_string(Generation, std::string_view str) -> Pokemon;
+template<Generation generation>
+auto pokemon_from_string(std::string_view str) -> Pokemon<generation>;
+
+#define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
+	extern template auto to_string<generation>(Pokemon<generation> pokemon) -> containers::string; \
+	extern template auto pokemon_from_string<generation>(std::string_view str) -> Pokemon<generation>
+
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::three);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::four);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::five);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::six);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::seven);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
+
+#undef TECHNICALMACHINE_EXTERN_INSTANTIATION
 
 } // namespace technicalmachine

@@ -1,4 +1,3 @@
-// Load Pokemon Lab teams
 // Copyright (C) 2018 David Stone
 //
 // This file is part of Technical Machine.
@@ -23,30 +22,17 @@
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
-#include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/gender.hpp>
-#include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 
-#include <tm/generation.hpp>
-
 #include <containers/array/array.hpp>
 #include <containers/flat_map.hpp>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
-#include <string>
-#include <string_view>
-
 namespace technicalmachine {
-enum class Moves : std::uint16_t;
 namespace pl {
-namespace {
 
-auto stat_from_simulator_string(std::string_view const str) {
+auto stat_from_simulator_string(std::string_view const str) -> PermanentStat {
 	using Storage = containers::array<containers::map_value_type<std::string_view, PermanentStat>, 6>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
@@ -62,7 +48,7 @@ auto stat_from_simulator_string(std::string_view const str) {
 	return converter.at(str);
 }
 
-auto load_stats(boost::property_tree::ptree const & pt) {
+auto load_stats(boost::property_tree::ptree const & pt) -> CombinedStats<IVAndEV> {
 	auto result = CombinedStats<IVAndEV>{
 		from_string<Nature>(pt.get<std::string>("nature")),
 		{IV(0_bi), EV(0_bi)},
@@ -82,7 +68,7 @@ auto load_stats(boost::property_tree::ptree const & pt) {
 	return result;
 }
 
-auto species_from_simulator_string(std::string_view const str) {
+auto species_from_simulator_string(std::string_view const str) -> Species {
 	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 16>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
@@ -109,7 +95,7 @@ auto species_from_simulator_string(std::string_view const str) {
 	return (it != end(converter)) ? it->mapped() : from_string<Species>(str);
 }
 
-auto load_moves(Generation const generation, boost::property_tree::ptree const & pt) {
+auto load_moves(Generation const generation, boost::property_tree::ptree const & pt) -> RegularMoves {
 	auto moves = RegularMoves();
 	for (boost::property_tree::ptree::value_type const & value : pt) {
 		auto const name = from_string<Moves>(value.second.get_value<std::string>());
@@ -117,38 +103,6 @@ auto load_moves(Generation const generation, boost::property_tree::ptree const &
 		moves.push_back(Move(generation, name, pp_ups));
 	}
 	return moves;
-}
-
-auto load_pokemon(Generation const generation, boost::property_tree::ptree const & pt) {
-	// auto const given_nickname = pt.get<std::string>("nickname");
-	// auto const nickname = nickname_temp.empty() ? species_str : given_nickname;
-	return Pokemon(
-		generation,
-		species_from_simulator_string(pt.get<std::string>("<xmlattr>.species")),
-		Level(pt.get<Level::value_type>("level")),
-		Gender(from_string<Gender>(pt.get<std::string>("gender"))),
-		from_string<Item>(pt.get<std::string>("item")),
-		Ability(from_string<Ability>(pt.get<std::string>("ability"))),
-		load_stats(pt),
-		load_moves(generation, pt.get_child("moveset")),
-		Happiness(pt.get<Happiness::value_type>("happiness"))
-	);
-}
-
-} // namespace
-
-Team load_team(Generation const generation, std::filesystem::path const & team_file) {
-	boost::property_tree::ptree pt;
-	read_xml(team_file.string(), pt);
-	
-	auto const all_pokemon = pt.get_child("shoddybattle");
-	constexpr bool is_me = true;
-	auto team = Team(static_cast<TeamSize>(all_pokemon.size()), is_me);
-	for (auto const & value : all_pokemon) {
-		team.add_pokemon(load_pokemon(generation, value.second));
-	}
-	team.all_pokemon().reset_index();
-	return team;
 }
 
 } // namespace pl

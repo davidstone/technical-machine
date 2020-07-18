@@ -28,7 +28,6 @@
 #include <stdexcept>
 
 namespace technicalmachine {
-struct Pokemon;
 
 struct InvalidSimulatorConversion : std::logic_error {
 	InvalidSimulatorConversion(auto original, auto result):

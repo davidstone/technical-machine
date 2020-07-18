@@ -52,130 +52,137 @@ auto is_immune_to_sandstorm(PokemonTypes const types) -> bool {
 	});
 }
 
-void hail_effect(Generation const generation, MutableActivePokemon pokemon, Weather const weather) {
+template<Generation generation>
+void hail_effect(MutableActivePokemon<generation> pokemon, Weather const weather) {
 	switch (pokemon.ability()) {
 		case Ability::Ice_Body:
-			heal(generation, pokemon, weather, rational(1_bi, 16_bi));
+			heal(pokemon, weather, rational(1_bi, 16_bi));
 			break;
 		case Ability::Snow_Cloak:
 			break;
 		default:
 			if (!is_immune_to_hail(pokemon.types())) {
-				heal(generation, pokemon, weather, rational(-1_bi, 16_bi));
+				heal(pokemon, weather, rational(-1_bi, 16_bi));
 			}
 			break;
 	}
 }
 
-void rain_effect(Generation const generation, MutableActivePokemon pokemon, Weather const weather) {
+template<Generation generation>
+void rain_effect(MutableActivePokemon<generation> pokemon, Weather const weather) {
 	switch (pokemon.ability()) {
 		case Ability::Dry_Skin:
-			heal(generation, pokemon, weather, rational(1_bi, 8_bi));
+			heal(pokemon, weather, rational(1_bi, 8_bi));
 			break;
 		case Ability::Hydration:
 			pokemon.clear_status();
 			break;
 		case Ability::Rain_Dish:
-			heal(generation, pokemon, weather, rational(1_bi, 16_bi));
+			heal(pokemon, weather, rational(1_bi, 16_bi));
 			break;
 		default:
 			break;
 	}
 }
 
-void sand_effect(Generation const generation, MutableActivePokemon pokemon, Weather const weather) {
+template<Generation generation>
+void sand_effect(MutableActivePokemon<generation> pokemon, Weather const weather) {
 	switch (pokemon.ability()) {
 		case Ability::Sand_Veil:
 			break;
 		default:
 			if (!is_immune_to_sandstorm(pokemon.types())) {
-				heal(generation, pokemon, weather, rational(-1_bi, 16_bi));
+				heal(pokemon, weather, rational(-1_bi, 16_bi));
 			}
 	}
 }
 
-void sun_effect(Generation const generation, MutableActivePokemon pokemon, Weather const weather) {
+template<Generation generation>
+void sun_effect(MutableActivePokemon<generation> pokemon, Weather const weather) {
 	switch (pokemon.ability()) {
 		case Ability::Dry_Skin:
-			heal(generation, pokemon, weather, rational(1_bi, 8_bi));
+			heal(pokemon, weather, rational(1_bi, 8_bi));
 			break;
 		case Ability::Solar_Power:
-			heal(generation, pokemon, weather, rational(-1_bi, 8_bi));
+			heal(pokemon, weather, rational(-1_bi, 8_bi));
 			break;
 		default:
 			break;
 	}
 }
 
-void weather_effects(Generation const generation, MutableActivePokemon first, MutableActivePokemon last, Weather & weather) {
+template<Generation generation>
+void weather_effects(MutableActivePokemon<generation> first, MutableActivePokemon<generation> last, Weather & weather) {
 	weather.advance_one_turn();
 	auto const ability_blocks_weather = weather_is_blocked_by_ability(first.ability(), last.ability());
 	for (auto const pokemon : {first, last}) {
 		if (weather.hail(ability_blocks_weather)) {
-			hail_effect(generation, pokemon, weather);
+			hail_effect(pokemon, weather);
 		} else if (weather.rain(ability_blocks_weather)) {
-			rain_effect(generation, pokemon, weather);
+			rain_effect(pokemon, weather);
 		} else if (weather.sand(ability_blocks_weather)) {
-			sand_effect(generation, pokemon, weather);
+			sand_effect(pokemon, weather);
 		} else if (weather.sun(ability_blocks_weather)) {
-			sun_effect(generation, pokemon, weather);
+			sun_effect(pokemon, weather);
 		}
 	}
 }
 
-auto handle_curse(Generation const generation, MutableActivePokemon pokemon, Weather const weather) -> void {
+template<Generation generation>
+auto handle_curse(MutableActivePokemon<generation> pokemon, Weather const weather) -> void {
 	if (!pokemon.is_cursed()) {
 		return;
 	}
-	heal(generation, pokemon, weather, rational(-1_bi, 4_bi));
+	heal(pokemon, weather, rational(-1_bi, 4_bi));
 }
 
 constexpr auto leftovers_healing() {
 	return rational(1_bi, 16_bi);
 }
 
-auto other_effects(Generation const generation, MutableActivePokemon pokemon, MutableActivePokemon foe, Weather & weather, EndOfTurnFlags const flags) -> void {
+template<Generation generation>
+auto other_effects(MutableActivePokemon<generation> pokemon, MutableActivePokemon<generation> foe, Weather & weather, EndOfTurnFlags const flags) -> void {
 	if (pokemon.hp() == 0_bi) {
 		return;
 	}
 	if (pokemon.ingrained()) {
-		heal(generation, pokemon, weather, rational(1_bi, 16_bi) * healing_multiplier(pokemon.item(generation, weather)));
+		heal(pokemon, weather, rational(1_bi, 16_bi) * healing_multiplier(pokemon.item(weather)));
 	}
 	if (pokemon.aqua_ring_is_active()) {
-		heal(generation, pokemon, weather, rational(1_bi, 16_bi) * healing_multiplier(pokemon.item(generation, weather)));
+		heal(pokemon, weather, rational(1_bi, 16_bi) * healing_multiplier(pokemon.item(weather)));
 	}
 	if (!pokemon.switched_in_this_turn() and boosts_speed(pokemon.ability())) {
 		pokemon.stage()[BoostableStat::spe] += 1_bi;
 	} else if (flags.shed_skin) {
 		pokemon.clear_status();
 	}
-	switch (pokemon.item(generation, weather)) {
+	switch (pokemon.item(weather)) {
 		case Item::Leftovers:
-			heal(generation, pokemon, weather, leftovers_healing());
+			heal(pokemon, weather, leftovers_healing());
 			break;
 		case Item::Black_Sludge:
-			heal(generation, pokemon, weather, BOUNDED_CONDITIONAL(is_type(pokemon, Type::Poison), rational(1_bi, 16_bi), rational(-1_bi, 8_bi)));
+			heal(pokemon, weather, BOUNDED_CONDITIONAL(is_type(as_const(pokemon), Type::Poison), rational(1_bi, 16_bi), rational(-1_bi, 8_bi)));
 			break;
 		default:
 			break;
 	}
 	// TODO: Not sure if this check for Uproar is in the correct place
 	auto const uproar = pokemon.is_uproaring() or foe.is_uproaring();
-	pokemon.status_and_leech_seed_effects(generation, foe, weather, uproar);
-	switch (pokemon.item(generation, weather)) {
+	pokemon.status_and_leech_seed_effects(foe, weather, uproar);
+	switch (pokemon.item(weather)) {
 		case Item::Flame_Orb:
-			apply_status_to_self(generation, Statuses::burn, pokemon, weather);
+			apply_status_to_self(Statuses::burn, pokemon, weather);
 			break;
 		case Item::Toxic_Orb:
-			apply_status_to_self(generation, Statuses::toxic, pokemon, weather);
+			apply_status_to_self(Statuses::toxic, pokemon, weather);
 			break;
 		default:
 			break;
 	}
-	handle_curse(generation, pokemon, weather);
-	pokemon.partial_trap_damage(generation, weather);
+	handle_curse(pokemon, weather);
+	pokemon.partial_trap_damage(weather);
 	
-	pokemon.advance_lock_in(generation, flags.lock_in_ends, weather);
+	pokemon.advance_lock_in(flags.lock_in_ends, weather);
 	
 	pokemon.advance_disable();
 	pokemon.advance_encore();
@@ -183,19 +190,13 @@ auto other_effects(Generation const generation, MutableActivePokemon pokemon, Mu
 	pokemon.advance_magnet_rise();
 	pokemon.advance_heal_block();
 	pokemon.advance_embargo();
-	pokemon.try_to_activate_yawn(generation, weather, uproar);
-	if (pokemon.item(generation, weather) == Item::Sticky_Barb) {
-		heal(generation, pokemon, weather, rational(-1_bi, 8_bi));
+	pokemon.try_to_activate_yawn(weather, uproar);
+	if (pokemon.item(weather) == Item::Sticky_Barb) {
+		heal(pokemon, weather, rational(-1_bi, 8_bi));
 	}
 }
 
-void generation_2_end_of_attack(Team & user, Team & other, Weather const weather) {
-	auto const user_pokemon = user.pokemon();
-	user_pokemon.status_and_leech_seed_effects(Generation::two, other.pokemon(), weather);
-	handle_curse(Generation::two, user_pokemon, weather);
-}
-
-void generation_2_end_of_turn(Team & first_team, Team & last_team, Weather & weather) {
+void generation_2_end_of_turn(Team<Generation::two> & first_team, Team<Generation::two> & last_team, Weather & weather) {
 	auto const first = first_team.pokemon();
 	auto const last = last_team.pokemon();
 
@@ -204,7 +205,7 @@ void generation_2_end_of_turn(Team & first_team, Team & last_team, Weather & wea
 	weather.advance_one_turn();
 	for (auto const pokemon : {first, last}) {
 		if (weather.sand() and !is_immune_to_sandstorm(pokemon.types())) {
-			heal(Generation::two, pokemon, weather, rational(-1_bi, 8_bi));
+			heal(pokemon, weather, rational(-1_bi, 8_bi));
 		}
 	}
 
@@ -214,8 +215,8 @@ void generation_2_end_of_turn(Team & first_team, Team & last_team, Weather & wea
 	last.perish_song_turn();
 
 	for (auto const pokemon : {first, last}) {
-		if (pokemon.item(Generation::two, weather) == Item::Leftovers) {
-			heal(Generation::two, pokemon, weather, leftovers_healing());
+		if (pokemon.item(weather) == Item::Leftovers) {
+			heal(pokemon, weather, leftovers_healing());
 		}
 	}
 
@@ -230,20 +231,21 @@ void generation_2_end_of_turn(Team & first_team, Team & last_team, Weather & wea
 	last.advance_encore();
 }
 
-void generation_3_plus_end_of_turn(Generation const generation, Team & first_team, EndOfTurnFlags const first_flags, Team & last_team, EndOfTurnFlags const last_flags, Weather & weather) {
+template<Generation generation>
+void generation_3_plus_end_of_turn(Team<generation> & first_team, EndOfTurnFlags const first_flags, Team<generation> & last_team, EndOfTurnFlags const last_flags, Weather & weather) {
 	first_team.decrement_screens();
 	last_team.decrement_screens();
 
-	first_team.decrement_wish(generation, weather);
-	last_team.decrement_wish(generation, weather);
+	first_team.decrement_wish(weather);
+	last_team.decrement_wish(weather);
 
 	auto const first = first_team.pokemon();
 	auto const last = last_team.pokemon();
 
-	weather_effects(generation, first, last, weather);
+	weather_effects(first, last, weather);
 
-	other_effects(generation, first, last, weather, first_flags);
-	other_effects(generation, last, first, weather, last_flags);
+	other_effects(first, last, weather, first_flags);
+	other_effects(last, first, weather, last_flags);
 
 	// TODO: Doom Desire / Future Sight
 
@@ -253,20 +255,32 @@ void generation_3_plus_end_of_turn(Generation const generation, Team & first_tea
 
 } // namespace
 
-void end_of_attack(Generation const generation, Team & user, Team & other, Weather const weather) {
-	switch (generation) {
-		case Generation::one: return;
-		case Generation::two: return generation_2_end_of_attack(user, other, weather);
-		default: return;
+void end_of_attack(Team<Generation::two> & user, Team<Generation::two> & other, Weather const weather) {
+	auto const user_pokemon = user.pokemon();
+	user_pokemon.status_and_leech_seed_effects(other.pokemon(), weather);
+	handle_curse(user_pokemon, weather);
+}
+
+template<Generation generation>
+void end_of_turn(Team<generation> & first, EndOfTurnFlags const first_flags, Team<generation> & last, EndOfTurnFlags const last_flags, Weather & weather) {
+	if constexpr (generation == Generation::one) {
+	} else if constexpr (generation == Generation::two) {
+		generation_2_end_of_turn(first, last, weather);
+	} else {
+		generation_3_plus_end_of_turn(first, first_flags, last, last_flags, weather);
 	}
 }
 
-void end_of_turn(Generation const generation, Team & first, EndOfTurnFlags const first_flags, Team & last, EndOfTurnFlags const last_flags, Weather & weather) {
-	switch (generation) {
-		case Generation::one: return;
-		case Generation::two: return generation_2_end_of_turn(first, last, weather);
-		default: return generation_3_plus_end_of_turn(generation, first, first_flags, last, last_flags, weather);
-	}
-}
+#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
+	template void end_of_turn<generation>(Team<generation> & first, EndOfTurnFlags const first_flags, Team<generation> & last, EndOfTurnFlags const last_flags, Weather & weather)
+
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::three);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::four);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::five);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
 
 } // namespace technicalmachine

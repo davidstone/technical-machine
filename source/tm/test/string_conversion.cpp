@@ -71,8 +71,7 @@ void test_generic(std::string_view const thing) {
 void test_pokemon() {
 	constexpr auto generation = Generation::three;
 	
-	auto pokemon = Pokemon(
-		generation,
+	auto pokemon = Pokemon<generation>(
 		Species::Mewtwo,
 		Level(100_bi),
 		Gender::genderless,
@@ -91,8 +90,8 @@ void test_pokemon() {
 	);
 
 	auto check = [&] {
-		auto const str = to_string(generation, pokemon);
-		auto const result = pokemon_from_string(generation, str);
+		auto const str = to_string(pokemon);
+		auto const result = pokemon_from_string<generation>(str);
 
 		if (pokemon != result) {
 			throw std::runtime_error(std::string(std::string_view(str)));

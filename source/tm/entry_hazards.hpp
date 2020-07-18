@@ -18,16 +18,11 @@
 #pragma once
 
 #include <tm/compress.hpp>
-#include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
-enum class Generation : std::uint8_t;
-struct MutableActivePokemon;
-struct Team;
-struct Weather;
 
 // Using an entry hazard puts them down on the opponent's side of the field.
 
@@ -66,6 +61,4 @@ constexpr auto compress(EntryHazards const value) {
 	return compress_combine(value.spikes(), value.stealth_rock(), value.toxic_spikes());
 }
 
-auto apply(Generation, EntryHazards &, MutableActivePokemon switcher, Weather) -> void;
-
-}	// namespace technicalmachine
+} // namespace technicalmachine

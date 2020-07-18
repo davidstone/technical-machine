@@ -24,12 +24,8 @@
 
 #include <tm/move/category.hpp>
 
-#include <tm/pokemon/has_physical_or_special_move.hpp>
-#include <tm/pokemon/pokemon.hpp>
-
 #include <tm/stat/generic_stats.hpp>
 #include <tm/stat/hidden_power_ivs.hpp>
-#include <tm/stat/stat_to_ev.hpp>
 
 #include <bounded/assert.hpp>
 
@@ -38,17 +34,6 @@
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
-
-auto set_stats(Generation const generation, Pokemon & pokemon, CombinedStats<IVAndEV> const stats) {
-	auto const original_hp = pokemon.hp();
-	pokemon.set_nature(stats.nature);
-	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-		auto const stat = stats[stat_name];
-		pokemon.set_ev(generation, stat_name, stat.iv, stat.ev);
-	}
-	auto const new_hp = pokemon.hp();
-	pokemon.set_hp(new_hp.max() * original_hp.current() / original_hp.max());
-}
 
 auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats<IVAndEV> {
 	auto best = bounded::optional<CombinedStats<IVAndEV>>{};
@@ -79,6 +64,8 @@ auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs c
 	return *best;
 }
 
+} // namespace
+
 auto optimize_evs(
 	Generation const generation,
 	CombinedStats<IVAndEV> combined,
@@ -88,7 +75,7 @@ auto optimize_evs(
 	bool const include_attack,
 	bool const include_special_attack,
 	std::mt19937 & random_engine
-) {
+) -> CombinedStats<IVAndEV> {
 	auto const base_stats = BaseStats(generation, species);
 	while (true) {
 		auto const previous = combined;
@@ -102,26 +89,6 @@ auto optimize_evs(
 			return combined;
 		}
 	}
-}
-
-}	// namespace
-
-void optimize_evs(Generation const generation, Pokemon & pokemon, std::mt19937 & random_engine) {
-	auto const species = pokemon.species();
-	auto const level = pokemon.level();
-	auto const include_attack = has_physical_move(generation, pokemon);
-	auto const include_special_attack = has_special_move(generation, pokemon);
-	auto const optimized = optimize_evs(
-		generation,
-		calculate_ivs_and_evs(generation, pokemon),
-		species,
-		level,
-		get_hidden_power_type(pokemon),
-		include_attack,
-		include_special_attack,
-		random_engine
-	);
-	set_stats(generation, pokemon, optimized);
 }
 
 auto compute_minimal_spread(

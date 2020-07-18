@@ -1,4 +1,3 @@
-// Collection of Pokemon with index indicating current Pokemon
 // Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
@@ -37,13 +36,13 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
-enum class Generation : std::uint8_t;
 
+template<Generation generation>
 struct PokemonCollection {
-	using Container = containers::static_vector<Pokemon, max_pokemon_per_team.value()>;
-	using value_type = Container::value_type;
-	using size_type = Container::size_type;
-	using const_iterator = Container::const_iterator;
+	using Container = containers::static_vector<Pokemon<generation>, max_pokemon_per_team.value()>;
+	using value_type = typename Container::value_type;
+	using size_type = typename Container::size_type;
+	using const_iterator = typename Container::const_iterator;
 
 	explicit PokemonCollection(TeamSize const initial_size):
 		m_real_size(initial_size)
@@ -63,7 +62,7 @@ struct PokemonCollection {
 		return end(collection.m_container);
 	}
 	
-	void set_index(containers::index_type<PokemonCollection> const new_index) {
+	void set_index(TeamIndex const new_index) {
 		check_range(new_index);
 		m_index = new_index;
 	}
@@ -74,11 +73,11 @@ struct PokemonCollection {
 		return m_index;
 	}
 
-	constexpr decltype(auto) operator()(containers::index_type<PokemonCollection> const specified_index) const {
+	constexpr decltype(auto) operator()(TeamIndex const specified_index) const {
 		check_range(specified_index);
 		return m_container[specified_index];
 	}
-	constexpr decltype(auto) operator()(containers::index_type<PokemonCollection> const specified_index) {
+	constexpr decltype(auto) operator()(TeamIndex const specified_index) {
 		check_range(specified_index);
 		return m_container[specified_index];
 	}
@@ -93,12 +92,21 @@ struct PokemonCollection {
 		return m_real_size;
 	}
 
-	Pokemon & add(Pokemon pokemon) {
+	Pokemon<generation> & add(Pokemon<generation> pokemon) {
 		check_not_full();
 		return containers::push_back(m_container, std::move(pokemon));
 	}
 
-	void remove_active(containers::index_type<PokemonCollection> index_of_replacement);
+	void remove_active(TeamIndex const index_of_replacement) {
+		auto const original_index = index();
+		BOUNDED_ASSERT(original_index != index_of_replacement);
+		containers::erase(m_container, begin(m_container) + original_index);
+		--m_real_size;
+		set_index((index_of_replacement < original_index) ?
+			index_of_replacement :
+			TeamIndex(index_of_replacement - 1_bi, bounded::non_check)
+		);
+	}
 
 	friend auto operator==(PokemonCollection const &, PokemonCollection const &) -> bool = default;
 	friend auto compress(PokemonCollection const & value) {
@@ -121,24 +129,26 @@ private:
 			throw std::runtime_error("Tried to add too many Pokemon");
 		}
 	}
-	constexpr void check_range(containers::index_type<PokemonCollection> const new_index [[maybe_unused]]) const {
+	constexpr void check_range(TeamIndex const new_index [[maybe_unused]]) const {
 		BOUNDED_ASSERT(new_index < containers::size(m_container));
 	}
 
 	Container m_container;
-	containers::index_type<PokemonCollection> m_index = 0_bi;
+	TeamIndex m_index = 0_bi;
 	// The actual size of the foe's team, not just the Pokemon I've seen
 	TeamSize m_real_size;
 };
 
 CONTAINERS_COMMON_USING_DECLARATIONS
 
-inline auto find_index(PokemonCollection const & collection, Species const species) {
-	using index_type = containers::index_type<PokemonCollection>;
-	return static_cast<index_type>(containers::find_if(collection, [=](Pokemon const pokemon) { return pokemon.species() == species; }) - begin(collection));
+template<Generation generation>
+inline auto find_index(PokemonCollection<generation> const & collection, Species const species) {
+	using index_type = TeamIndex;
+	return static_cast<index_type>(containers::find_if(collection, [=](Pokemon<generation> const pokemon) { return pokemon.species() == species; }) - begin(collection));
 }
 
-inline auto find_present_index(PokemonCollection const & collection, Species const species) {
+template<Generation generation>
+inline auto find_present_index(PokemonCollection<generation> const & collection, Species const species) {
 	auto const index = find_index(collection, species);
 	if (index == containers::size(collection)) {
 		throw PokemonNotFound(species);

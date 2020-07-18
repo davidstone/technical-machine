@@ -50,11 +50,10 @@ constexpr auto max_damage_executed_physical_move = ExecutedMove{
 	critical_hit
 };
 
-Team max_damage_physical_attacker(Item const item, Ability const ability) {
-	auto attacker = Team(max_pokemon_per_team);
+auto max_damage_physical_attacker(Item const item, Ability const ability) {
+	auto attacker = Team<generation>(max_pokemon_per_team);
 	
-	attacker.add_pokemon(Pokemon(
-		generation,
+	attacker.add_pokemon(Pokemon<generation>(
 		Species::Shuckle,
 		Level(100_bi),
 		Gender::male,
@@ -73,7 +72,7 @@ Team max_damage_physical_attacker(Item const item, Ability const ability) {
 	));
 
 	auto pokemon = attacker.pokemon();
-	pokemon.switch_in(generation, Weather());
+	pokemon.switch_in(Weather());
 	
 	pokemon.defense_curl();
 	for (unsigned n = 0; n != 10; ++n) {
@@ -83,10 +82,9 @@ Team max_damage_physical_attacker(Item const item, Ability const ability) {
 	return attacker;
 }
 
-Team max_damage_physical_defender() {
-	auto defender = Team(max_pokemon_per_team);
-	defender.add_pokemon(Pokemon(
-		generation,
+auto max_damage_physical_defender() {
+	auto defender = Team<generation>(max_pokemon_per_team);
+	defender.add_pokemon(Pokemon<generation>(
 		Species::Combee,
 		Level(1_bi),
 		Gender::male,
@@ -104,7 +102,7 @@ Team max_damage_physical_defender() {
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto pokemon = defender.pokemon();
-	pokemon.switch_in(generation, Weather());
+	pokemon.switch_in(Weather());
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		pokemon.stage()[BoostableStat::def] += -2_bi;
 	}
@@ -118,7 +116,6 @@ void physical_power_test() {
 	auto const attacker = max_damage_physical_attacker(Item::Rock_Incense, Ability::Rivalry);
 
 	auto const power = move_power(
-		generation,
 		attacker,
 		max_damage_executed_physical_move,
 		max_damage_physical_defender(),
@@ -131,12 +128,11 @@ void special_power_test() {
 	std::cout << "\t\tRunning special power tests.\n";
 	constexpr auto max_power = 342_bi;
 
-	auto attacker = Team(max_pokemon_per_team);
+	auto attacker = Team<generation>(max_pokemon_per_team);
 	auto weather = Weather();
 
 	auto const move = Move(generation, Moves::Surf);
-	attacker.add_pokemon(Pokemon(
-		generation,
+	attacker.add_pokemon(Pokemon<generation>(
 		Species::Deoxys_Attack,
 		Level(100_bi),
 		Gender::genderless,
@@ -154,13 +150,12 @@ void special_power_test() {
 		RegularMoves({move})
 	));
 	auto pokemon = attacker.pokemon();
-	pokemon.switch_in(generation, weather);
-	pokemon.set_hp(generation, weather, 1_bi);
+	pokemon.switch_in(weather);
+	pokemon.set_hp(weather, 1_bi);
 	
 
-	auto defender = Team(max_pokemon_per_team);
-	defender.add_pokemon(Pokemon(
-		generation,
+	auto defender = Team<generation>(max_pokemon_per_team);
+	defender.add_pokemon(Pokemon<generation>(
 		Species::Paras,
 		Level(1_bi),
 		Gender::male,
@@ -179,15 +174,14 @@ void special_power_test() {
 	));
 
 	auto defender_pokemon = defender.pokemon();
-	defender_pokemon.switch_in(generation, weather);
+	defender_pokemon.switch_in(weather);
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		defender_pokemon.stage()[BoostableStat::spd] += -2_bi;
 	}
 	defender_pokemon.successfully_use_move(Moves::Dive);
-	defender_pokemon.use_vanish_move(generation, weather);
+	defender_pokemon.use_vanish_move(weather);
 
 	auto const power = move_power(
-		generation,
 		attacker,
 		ExecutedMove{
 			{move.name(), Type::Water},
@@ -224,7 +218,6 @@ void physical_damage_test() {
 	
 	check_equal(
 		calculate_damage(
-			generation,
 			attacker,
 			max_damage_executed_physical_move,
 			resistance_berry_activated,
@@ -242,11 +235,10 @@ void special_damage_test() {
 	auto weather = Weather();
 	weather.activate_sun_from_move(false);
 
-	auto attacker = Team(max_pokemon_per_team);
+	auto attacker = Team<generation>(max_pokemon_per_team);
 
 	auto const move = Move(generation, Moves::Blast_Burn);
-	attacker.add_pokemon(Pokemon(
-		generation,
+	attacker.add_pokemon(Pokemon<generation>(
 		Species::Deoxys_Attack,
 		Level(100_bi),
 		Gender::genderless,
@@ -265,8 +257,8 @@ void special_damage_test() {
 	));
 
 	auto attacker_pokemon = attacker.pokemon();
-	attacker_pokemon.switch_in(generation, weather);
-	attacker_pokemon.set_hp(generation, weather, 1_bi);
+	attacker_pokemon.switch_in(weather);
+	attacker_pokemon.set_hp(weather, 1_bi);
 	
 	attacker_pokemon.set_type(Type::Fire);
 
@@ -278,9 +270,8 @@ void special_damage_test() {
 
 	attacker_pokemon.activate_flash_fire();
 
-	auto defender = Team(max_pokemon_per_team);
-	defender.add_pokemon(Pokemon(
-		generation,
+	auto defender = Team<generation>(max_pokemon_per_team);
+	defender.add_pokemon(Pokemon<generation>(
 		Species::Paras,
 		Level(1_bi),
 		Gender::male,
@@ -298,14 +289,13 @@ void special_damage_test() {
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto defender_pokemon = defender.pokemon();
-	defender_pokemon.switch_in(generation, weather);
+	defender_pokemon.switch_in(weather);
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		defender_pokemon.stage()[BoostableStat::spd] += -2_bi;
 	}
 
 	check_equal(
 		calculate_damage(
-			generation,
 			attacker,
 			ExecutedMove{{move.name(), Type::Fire}, move.pp(), Variable{}, critical_hit},
 			resistance_berry_activated,

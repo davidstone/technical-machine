@@ -48,10 +48,9 @@ void attack_tests() {
 
 	auto weather = Weather();
 
-	auto attacker = Team(max_pokemon_per_team);
+	auto attacker = Team<generation>(max_pokemon_per_team);
 
-	attacker.add_pokemon(Pokemon(
-		generation,
+	attacker.add_pokemon(Pokemon<generation>(
 		Species::Shuckle,
 		Level(100_bi),
 		Gender::male,
@@ -70,12 +69,12 @@ void attack_tests() {
 	));
 	auto pokemon = attacker.pokemon();
 
-	pokemon.switch_in(generation, weather);
+	pokemon.switch_in(weather);
 
 	pokemon.activate_power_trick();
 	pokemon.stage()[BoostableStat::atk] += 6_bi;
 
-	check_equal(calculate_attack(generation, pokemon, Type::Normal, Ability::Honey_Gather, weather, critical_hit), max_attack);
+	check_equal(calculate_attack(std::as_const(attacker).pokemon(), Type::Normal, Ability::Honey_Gather, weather, critical_hit), max_attack);
 }
 
 void special_attack_tests() {
@@ -83,10 +82,9 @@ void special_attack_tests() {
 	constexpr auto max_special_attack = 4536_bi;
 	auto weather = Weather();
 	weather.activate_sun_from_move(false);
-	auto attacker = Team(max_pokemon_per_team);
+	auto attacker = Team<generation>(max_pokemon_per_team);
 
-	attacker.add_pokemon(Pokemon(
-		generation,
+	attacker.add_pokemon(Pokemon<generation>(
 		Species::Deoxys_Attack,
 		Level(100_bi),
 		Gender::genderless,
@@ -105,11 +103,11 @@ void special_attack_tests() {
 	));
 	auto pokemon = attacker.pokemon();
 
-	pokemon.switch_in(generation, weather);
+	pokemon.switch_in(weather);
 
 	pokemon.stage()[BoostableStat::spa] += 6_bi;
 
-	check_equal(calculate_special_attack(generation, pokemon, Type::Water, Ability::Honey_Gather, weather, critical_hit), max_special_attack);
+	check_equal(calculate_special_attack(std::as_const(attacker).pokemon(), Type::Water, Ability::Honey_Gather, weather, critical_hit), max_special_attack);
 }
 
 void max_defense_test() {
@@ -118,10 +116,9 @@ void max_defense_test() {
 
 	constexpr auto weather = Weather();
 
-	auto defender = Team(max_pokemon_per_team);
+	auto defender = Team<generation>(max_pokemon_per_team);
 
-	defender.add_pokemon(Pokemon(
-		generation,
+	defender.add_pokemon(Pokemon<generation>(
 		Species::Shuckle,
 		Level(100_bi),
 		Gender::male,
@@ -138,15 +135,14 @@ void max_defense_test() {
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
-	auto pokemon = defender.pokemon();
+	defender.pokemon().switch_in(weather);
 
-	pokemon.switch_in(generation, weather);
+	defender.pokemon().stage()[BoostableStat::def] += 6_bi;
 
-	pokemon.stage()[BoostableStat::def] += 6_bi;
+	constexpr auto uproar = false;
+	apply_status_to_self(Statuses::burn, defender.pokemon(), weather, uproar);
 
-	apply_status_to_self(generation, Statuses::burn, pokemon, weather);
-
-	check_equal(calculate_defense(generation, pokemon, physical_move, weather), max_defense);
+	check_equal(calculate_defense(std::as_const(defender).pokemon(), physical_move, weather, false), max_defense);
 }
 
 void min_defense_test() {
@@ -155,10 +151,9 @@ void min_defense_test() {
 
 	auto weather = Weather();
 
-	auto defender = Team(max_pokemon_per_team);
+	auto defender = Team<generation>(max_pokemon_per_team);
 
-	defender.add_pokemon(Pokemon(
-		generation,
+	defender.add_pokemon(Pokemon<generation>(
 		Species::Combee,
 		Level(1_bi),
 		Gender::male,
@@ -177,13 +172,13 @@ void min_defense_test() {
 	));
 	auto pokemon = defender.pokemon();
 
-	pokemon.switch_in(generation, weather);
+	pokemon.switch_in(weather);
 
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		pokemon.stage()[BoostableStat::def] += -2_bi;
 	}
 
-	check_equal(calculate_defense(generation, pokemon, physical_move, weather), min_defense);
+	check_equal(calculate_defense(std::as_const(defender).pokemon(), physical_move, weather, false), min_defense);
 }
 
 void defense_tests() {
@@ -199,10 +194,9 @@ void special_defense_tests() {
 	auto weather = Weather();
 	weather.activate_sand_from_move(false);
 
-	auto defender = Team(max_pokemon_per_team);
+	auto defender = Team<generation>(max_pokemon_per_team);
 
-	defender.add_pokemon(Pokemon(
-		generation,
+	defender.add_pokemon(Pokemon<generation>(
 		Species::Shuckle,
 		Level(100_bi),
 		Gender::male,
@@ -221,11 +215,11 @@ void special_defense_tests() {
 	));
 	auto pokemon = defender.pokemon();
 
-	pokemon.switch_in(generation, weather);
+	pokemon.switch_in(weather);
 
 	pokemon.stage()[BoostableStat::spd] += 6_bi;
 
-	check_equal(calculate_special_defense(generation, pokemon, Ability::Honey_Gather, weather), max_special_defense);
+	check_equal(calculate_special_defense(std::as_const(defender).pokemon(), Ability::Honey_Gather, weather, false), max_special_defense);
 }
 
 void speed_tests() {
@@ -234,10 +228,9 @@ void speed_tests() {
 	auto weather = Weather();
 	weather.activate_rain_from_move(false);
 
-	auto team = Team(max_pokemon_per_team);
+	auto team = Team<generation>(max_pokemon_per_team);
 
-	team.add_pokemon(Pokemon(
-		generation,
+	team.add_pokemon(Pokemon<generation>(
 		Species::Deoxys_Speed,
 		Level(100_bi),
 		Gender::genderless,
@@ -256,13 +249,13 @@ void speed_tests() {
 	));
 	auto pokemon = team.pokemon();
 
-	pokemon.switch_in(generation, weather);
+	pokemon.switch_in(weather);
 
 	pokemon.stage()[BoostableStat::spe] += 6_bi;
 
 	team.activate_tailwind();
 	
-	check_equal(calculate_speed(generation, team, Ability::Honey_Gather, weather), max_speed);
+	check_equal(calculate_speed(team, Ability::Honey_Gather, weather), max_speed);
 }
 
 }	// namespace

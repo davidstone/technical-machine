@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <tm/apply_entry_hazards.hpp>
 #include <tm/entry_hazards.hpp>
 #include <tm/operators.hpp>
 #include <tm/screens.hpp>
@@ -29,6 +30,8 @@
 
 #include <tm/compress.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
+
 #include <operators/forward.hpp>
 
 #include <string_view>
@@ -37,6 +40,7 @@ namespace technicalmachine {
 enum class Generation : std::uint8_t;
 struct Weather;
 
+template<Generation generation>
 struct Team {
 	explicit Team(TeamSize const initial_size, bool team_is_me = false) :
 		m_all_pokemon(initial_size),
@@ -52,19 +56,19 @@ struct Team {
 	}
 
 	auto pokemon() const {
-		return ActivePokemon(all_pokemon()(), m_flags);
+		return ActivePokemon<generation>(all_pokemon()(), m_flags);
 	}
 	auto pokemon() {
-		return MutableActivePokemon(all_pokemon()(), m_flags);
+		return MutableActivePokemon<generation>(all_pokemon()(), m_flags);
 	}
-	Pokemon const & pokemon(containers::index_type<PokemonCollection> const index) const {
+	Pokemon<generation> const & pokemon(TeamIndex const index) const {
 		return all_pokemon()(index);
 	}
-	Pokemon & pokemon(containers::index_type<PokemonCollection> const index) {
+	Pokemon<generation> & pokemon(TeamIndex const index) {
 		return all_pokemon()(index);
 	}
 
-	Pokemon & add_pokemon(Pokemon pokemon) {
+	Pokemon<generation> & add_pokemon(Pokemon<generation> pokemon) {
 		return all_pokemon().add(std::move(pokemon));
 	}
 
@@ -91,10 +95,10 @@ struct Team {
 		m_entry_hazards = EntryHazards{};
 	}
 
-	auto switch_pokemon(Generation const generation, MutableActivePokemon other, Weather & weather, TeamIndex const replacement) -> void {
+	auto switch_pokemon(MutableActivePokemon<generation> other, Weather & weather, TeamIndex const replacement) -> void {
 		auto original_pokemon = pokemon();
 		original_pokemon.switch_out();
-		if (generation == Generation::one) {
+		if constexpr (generation == Generation::one) {
 			shatter_screens();
 		}
 
@@ -109,10 +113,10 @@ struct Team {
 		}
 
 		auto const replacement_pokemon = pokemon();
-		replacement_pokemon.switch_in(generation, weather);
-		apply(generation, m_entry_hazards, replacement_pokemon, weather);
+		replacement_pokemon.switch_in(weather);
+		apply(m_entry_hazards, replacement_pokemon, weather);
 		if (replacement_pokemon.hp() != 0_bi) {
-			activate_ability_on_switch(generation, replacement_pokemon, other, weather);
+			activate_ability_on_switch(replacement_pokemon, other, weather);
 		}
 	}
 
@@ -137,11 +141,11 @@ struct Team {
 	auto tailwind() const {
 		return m_screens.tailwind();
 	}
-	auto activate_light_screen(Generation const generation, Weather const weather) & {
-		m_screens.activate_light_screen(extends_light_screen(pokemon().item(generation, weather)));
+	auto activate_light_screen(Weather const weather) & {
+		m_screens.activate_light_screen(extends_light_screen(pokemon().item(weather)));
 	}
-	auto activate_reflect(Generation const generation, Weather const weather) & {
-		m_screens.activate_reflect(extends_reflect(pokemon().item(generation, weather)));
+	auto activate_reflect(Weather const weather) & {
+		m_screens.activate_reflect(extends_reflect(pokemon().item(weather)));
 	}
 	auto activate_lucky_chant() & {
 		m_screens.activate_lucky_chant();
@@ -165,8 +169,8 @@ struct Team {
 	auto activate_wish() & -> void {
 		m_wish.activate();
 	}
-	auto decrement_wish(Generation const generation, Weather const weather) & -> void {
-		m_wish.decrement(generation, pokemon(), weather);
+	auto decrement_wish(Weather const weather) & -> void {
+		m_wish.decrement(pokemon(), weather);
 	}
 
 	auto entry_hazards() const {
@@ -207,15 +211,35 @@ struct Team {
 	}
 
 private:
-	PokemonCollection m_all_pokemon;
-	ActivePokemonFlags m_flags;
+	PokemonCollection<generation> m_all_pokemon;
+	ActivePokemonFlags<generation> m_flags;
 	Screens m_screens;
 	Wish m_wish;
 	EntryHazards m_entry_hazards;
 	bool me;
 };
 
+template<Generation generation>
+auto status_clause_applies(Team<generation> const & target, Statuses const status) {
+	switch (status) {
+		case Statuses::freeze:
+		case Statuses::sleep:
+			return containers::any(target.all_pokemon(), [=](auto const & pokemon) {
+				return pokemon.status().name() == status;
+			});
+		default:
+			return false;
+	}
+}
+
 // Checks for Freeze Clause and Sleep Clause and does nothing if they activate
-auto apply_status(Generation, Statuses, Team & target, MutableActivePokemon user, Weather, bool uproar = false) -> void;
+template<Generation generation>
+auto apply_status(Statuses const status, Team<generation> & target, MutableActivePokemon<generation> user, Weather const weather, bool uproar = false) -> void {
+	if (status_clause_applies(target, status)) {
+		return;
+	}
+	target.pokemon().apply_status(status, user, weather, uproar);
+}
+
 
 } // namespace technicalmachine

@@ -33,34 +33,34 @@ struct RegularMoves {
 	using size_type = bounded::integer<0, bounded::detail::normalize<max_moves_per_pokemon.value()>>;
 
 	RegularMoves() = default;
-	RegularMoves(auto const moves) {
+	constexpr RegularMoves(auto const moves) {
 		for (auto const move : moves) {
 			push_back(move);
 		}
 	}
-	RegularMoves(std::initializer_list<Move> moves) {
+	constexpr RegularMoves(std::initializer_list<Move> moves) {
 		for (auto const move : moves) {
 			push_back(move);
 		}
 	}
 
-	friend auto begin(RegularMoves const & container) {
+	friend constexpr auto begin(RegularMoves const & container) {
 		return begin(container.m_moves);
 	}
-	friend auto begin(RegularMoves & container) {
+	friend constexpr auto begin(RegularMoves & container) {
 		return begin(container.m_moves);
 	}
-	friend auto end(RegularMoves const & container) {
+	friend constexpr auto end(RegularMoves const & container) {
 		return end(container.m_moves);
 	}
-	friend auto end(RegularMoves & container) {
+	friend constexpr auto end(RegularMoves & container) {
 		return end(container.m_moves);
 	}
 
 	auto push_back(Move const move) -> Move &;
 
 	friend auto operator==(RegularMoves const &, RegularMoves const &) -> bool = default;
-	friend auto compress(RegularMoves const value) {
+	friend constexpr auto compress(RegularMoves const value) {
 		return compress(value.m_moves);
 	}
 private:

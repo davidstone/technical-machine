@@ -46,9 +46,8 @@ constexpr auto regular_moves(auto... moves) {
 void test_baton_pass() {
 	auto weather = Weather();
 
-	auto attacker = Team(2_bi, true);
-	attacker.add_pokemon(Pokemon(
-		generation,
+	auto attacker = Team<generation>(2_bi, true);
+	attacker.add_pokemon(Pokemon<generation>(
 		Species::Smeargle,
 		Level(100_bi),
 		Gender::male,
@@ -65,8 +64,7 @@ void test_baton_pass() {
 		},
 		regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
 	));
-	attacker.add_pokemon(Pokemon(
-		generation,
+	attacker.add_pokemon(Pokemon<generation>(
 		Species::Alakazam,
 		Level(100_bi),
 		Gender::male,
@@ -83,11 +81,10 @@ void test_baton_pass() {
 		},
 		regular_moves(Moves::Psycho_Cut, Moves::Recover)
 	));
-	attacker.pokemon().switch_in(generation, weather);
+	attacker.pokemon().switch_in(weather);
 
-	auto defender = Team(2_bi);
-	defender.add_pokemon(Pokemon(
-		generation,
+	auto defender = Team<generation>(2_bi);
+	defender.add_pokemon(Pokemon<generation>(
 		Species::Gengar,
 		Level(100_bi),
 		Gender::male,
@@ -104,8 +101,7 @@ void test_baton_pass() {
 		},
 		regular_moves(Moves::Shadow_Ball)
 	));
-	defender.add_pokemon(Pokemon(
-		generation,
+	defender.add_pokemon(Pokemon<generation>(
 		Species::Misdreavus,
 		Level(100_bi),
 		Gender::female,
@@ -122,17 +118,16 @@ void test_baton_pass() {
 		},
 		regular_moves(Moves::Shadow_Ball)
 	));
-	defender.pokemon().switch_in(generation, weather);
+	defender.pokemon().switch_in(weather);
 
 	attacker.reset_start_of_turn();
 
 	BOUNDED_ASSERT(
-		legal_selections(generation, attacker, defender, weather) ==
+		legal_selections(attacker, defender, weather) ==
 		StaticVectorMove({Moves::Baton_Pass, Moves::Belly_Drum, Moves::Switch1})
 	);
 
 	call_move(
-		generation,
 		attacker,
 		UsedMove{Moves::Belly_Drum},
 		defender,
@@ -144,19 +139,18 @@ void test_baton_pass() {
 	BOUNDED_ASSERT(attacker.pokemon().stage()[BoostableStat::atk] == 6_bi);
 	BOUNDED_ASSERT(!attacker.pokemon().switch_decision_required());
 	BOUNDED_ASSERT(
-		legal_selections(generation, attacker, defender, weather) ==
+		legal_selections(attacker, defender, weather) ==
 		StaticVectorMove({Moves::Pass})
 	);
 
 	attacker.reset_start_of_turn();
 
 	BOUNDED_ASSERT(
-		legal_selections(generation, attacker, defender, weather) ==
+		legal_selections(attacker, defender, weather) ==
 		StaticVectorMove({Moves::Baton_Pass, Moves::Belly_Drum, Moves::Switch1})
 	);
 
 	call_move(
-		generation,
 		attacker,
 		UsedMove{Moves::Baton_Pass},
 		defender,
@@ -168,12 +162,11 @@ void test_baton_pass() {
 	BOUNDED_ASSERT(attacker.pokemon().stage()[BoostableStat::atk] == 6_bi);
 	BOUNDED_ASSERT(attacker.pokemon().switch_decision_required());
 	BOUNDED_ASSERT(
-		legal_selections(generation, attacker, defender, weather) ==
+		legal_selections(attacker, defender, weather) ==
 		StaticVectorMove({Moves::Switch1})
 	);
 
 	call_move(
-		generation,
 		attacker,
 		UsedMove{Moves::Switch1},
 		defender,
@@ -186,7 +179,7 @@ void test_baton_pass() {
 	BOUNDED_ASSERT(attacker.pokemon().species() == Species::Alakazam);
 	BOUNDED_ASSERT(!attacker.pokemon().switch_decision_required());
 	BOUNDED_ASSERT(
-		legal_selections(generation, attacker, defender, weather) ==
+		legal_selections(attacker, defender, weather) ==
 		StaticVectorMove({Moves::Pass})
 	);
 }
@@ -194,9 +187,8 @@ void test_baton_pass() {
 void wonder_guard() {
 	auto weather = Weather();
 
-	auto attacker = Team(1_bi, true);
-	attacker.add_pokemon(Pokemon(
-		generation,
+	auto attacker = Team<generation>(1_bi, true);
+	attacker.add_pokemon(Pokemon<generation>(
 		Species::Jolteon,
 		Level(100_bi),
 		Gender::female,
@@ -213,11 +205,10 @@ void wonder_guard() {
 		},
 		regular_moves(Moves::Shadow_Ball, Moves::Thunderbolt)
 	));
-	attacker.pokemon().switch_in(generation, weather);
+	attacker.pokemon().switch_in(weather);
 
-	auto defender = Team(1_bi);
-	defender.add_pokemon(Pokemon(
-		generation,
+	auto defender = Team<generation>(1_bi);
+	defender.add_pokemon(Pokemon<generation>(
 		Species::Shedinja,
 		Level(100_bi),
 		Gender::male,
@@ -235,12 +226,11 @@ void wonder_guard() {
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto shedinja = defender.pokemon();
-	shedinja.switch_in(generation, weather);
+	shedinja.switch_in(weather);
 
 	BOUNDED_ASSERT(shedinja.hp().current() == 1_bi);
 
 	call_move(
-		generation,
 		attacker,
 		UsedMove{Moves::Thunderbolt},
 		defender,
@@ -252,7 +242,6 @@ void wonder_guard() {
 	BOUNDED_ASSERT(shedinja.hp().current() == 1_bi);
 
 	call_move(
-		generation,
 		attacker,
 		UsedMove{Moves::Shadow_Ball},
 		defender,

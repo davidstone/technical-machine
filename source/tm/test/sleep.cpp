@@ -44,10 +44,9 @@ constexpr auto regular_moves(Generation const generation, auto... moves) {
 void sleep_talk() {
 	constexpr auto generation = Generation::four;
 	auto weather = Weather{};
-	auto attacker = Team(1_bi, true);
+	auto attacker = Team<generation>(1_bi, true);
 	{
-		auto jolteon = Pokemon(
-			generation,
+		auto jolteon = Pokemon<generation>(
 			Species::Jolteon,
 			Level(100_bi),
 			Gender::female,
@@ -67,12 +66,11 @@ void sleep_talk() {
 		jolteon.set_status(Statuses::sleep);
 		
 		attacker.add_pokemon(jolteon);
-		attacker.pokemon().switch_in(generation, weather);
+		attacker.pokemon().switch_in(weather);
 	}
 
-	auto defender = Team(1_bi);
-	defender.add_pokemon(Pokemon(
-		generation,
+	auto defender = Team<generation>(1_bi);
+	defender.add_pokemon(Pokemon<generation>(
 		Species::Gyarados,
 		Level(100_bi),
 		Gender::male,
@@ -89,10 +87,9 @@ void sleep_talk() {
 		},
 		RegularMoves({Move(generation, Moves::Earthquake)})
 	));
-	defender.pokemon().switch_in(generation, weather);
+	defender.pokemon().switch_in(weather);
 
 	call_move(
-		generation,
 		attacker,
 		UsedMove{Moves::Sleep_Talk, Moves::Thunderbolt},
 		defender,
@@ -104,20 +101,19 @@ void sleep_talk() {
 	BOUNDED_ASSERT(defender.pokemon().hp().current() == 0_bi);
 }
 
+template<Generation generation>
 struct Sleeper {
-	explicit Sleeper(Generation const generation):
-		m_generation(generation),
-		m_sleeper(make_sleeper_team(m_generation, m_weather)),
-		m_other(make_other_team(m_generation, m_weather))
+	Sleeper():
+		m_sleeper(make_sleeper_team(m_weather)),
+		m_other(make_other_team(m_weather))
 	{
 	}
 
 	void use_move(Moves const selected, auto... executed) {
 		auto pokemon = m_sleeper.pokemon();
-		auto const probability_of_awakening = pokemon.status().probability_of_clearing(m_generation, pokemon.ability());
+		auto const probability_of_awakening = pokemon.status().probability_of_clearing(generation, pokemon.ability());
 		BOUNDED_ASSERT(probability_of_awakening == 0.0 or probability_of_awakening == 1.0);
 		call_move(
-			m_generation,
 			m_sleeper,
 			UsedMove{selected, executed...},
 			m_other,
@@ -130,7 +126,6 @@ struct Sleeper {
 
 	void get_attacked() {
 		call_move(
-			m_generation,
 			m_other,
 			UsedMove{Moves::Seismic_Toss},
 			m_sleeper,
@@ -158,10 +153,9 @@ struct Sleeper {
 	}
 
 private:
-	static auto make_team(Generation const generation, bool const is_me, RegularMoves const moves, Weather & weather) {
-		auto sleeper = Team(1_bi, is_me);
-		sleeper.add_pokemon(Pokemon(
-			generation,
+	static auto make_team(bool const is_me, RegularMoves const moves, Weather & weather) {
+		auto sleeper = Team<generation>(1_bi, is_me);
+		sleeper.add_pokemon(Pokemon<generation>(
 			Species::Blissey,
 			Level(100_bi),
 			Gender::female,
@@ -178,24 +172,23 @@ private:
 			},
 			moves
 		));
-		sleeper.pokemon().switch_in(generation, weather);
+		sleeper.pokemon().switch_in(weather);
 		return sleeper;
 	}
-	static auto make_sleeper_team(Generation const generation, Weather & weather) -> Team {
-		return make_team(generation, true, regular_moves(generation, Moves::Rest, Moves::Sleep_Talk, Moves::Wish), weather);
+	static auto make_sleeper_team(Weather & weather) -> Team<generation> {
+		return make_team(true, regular_moves(generation, Moves::Rest, Moves::Sleep_Talk, Moves::Wish), weather);
 	}
-	static auto make_other_team(Generation const generation, Weather & weather) -> Team {
-		return make_team(generation, false, regular_moves(generation, Moves::Seismic_Toss), weather);
+	static auto make_other_team(Weather & weather) -> Team<generation> {
+		return make_team(false, regular_moves(generation, Moves::Seismic_Toss), weather);
 	}
 
-	Generation m_generation;
 	Weather m_weather;
-	Team m_sleeper;
-	Team m_other;
+	Team<generation> m_sleeper;
+	Team<generation> m_other;
 };
 
 void rest() {
-	auto sleeper = Sleeper(Generation::three);
+	auto sleeper = Sleeper<Generation::three>();
 	BOUNDED_ASSERT(!sleeper.asleep());
 	BOUNDED_ASSERT(sleeper.at_max_hp());
 	BOUNDED_ASSERT(!sleeper.wished());
@@ -256,7 +249,7 @@ void rest() {
 }
 
 void sleep_talk_rest_generation_3() {
-	auto sleeper = Sleeper(Generation::three);
+	auto sleeper = Sleeper<Generation::three>();
 	BOUNDED_ASSERT(!sleeper.asleep());
 	BOUNDED_ASSERT(sleeper.at_max_hp());
 	BOUNDED_ASSERT(!sleeper.wished());

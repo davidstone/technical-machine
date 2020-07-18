@@ -1,4 +1,3 @@
-// Function to change a Pokemon's HP by a fractional multiplier
 // Copyright (C) 2014 David Stone
 //
 // This file is part of Technical Machine.
@@ -21,24 +20,26 @@
 #include <tm/ability.hpp>
 #include <tm/item.hpp>
 #include <tm/rational.hpp>
-
-#include <tm/pokemon/active_pokemon.hpp>
+#include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
 
-template<typename Numerator, typename Denominator>
-void heal(Generation const generation, MutableActivePokemon pokemon, Weather const weather, rational<Numerator, Denominator> const scale) {
+template<Generation>
+struct MutableActivePokemon;
+
+template<Generation generation, typename Numerator, typename Denominator>
+void heal(MutableActivePokemon<generation> pokemon, Weather const weather, rational<Numerator, Denominator> const scale) {
 	auto const hp = pokemon.hp();
 	if (hp == 0_bi) {
 		return;
 	}
 	auto const hp_healed = hp.max() * scale;
 	if (scale > 0_bi) {
-		change_hp(generation, pokemon, weather, bounded::max(hp_healed, 1_bi));
+		change_hp(pokemon, weather, bounded::max(hp_healed, 1_bi));
 	} else if (!blocks_secondary_damage(pokemon.ability())) {
-		change_hp(generation, pokemon, weather, bounded::min(hp_healed, -1_bi));
+		change_hp(pokemon, weather, bounded::min(hp_healed, -1_bi));
 	}
 }
 

@@ -25,6 +25,7 @@
 #include <tm/ability.hpp>
 #include <tm/compress.hpp>
 #include <tm/gender.hpp>
+#include <tm/generation.hpp>
 #include <tm/held_item.hpp>
 #include <tm/operators.hpp>
 #include <tm/status.hpp>
@@ -43,10 +44,9 @@
 
 namespace technicalmachine {
 
-enum class Generation : std::uint8_t;
-
+template<Generation generation>
 struct Pokemon {
-	Pokemon(Generation const generation, Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats<IVAndEV> stats, RegularMoves regular_moves_, Happiness const happiness = Happiness()):
+	Pokemon(Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats<IVAndEV> stats, RegularMoves regular_moves_, Happiness const happiness = Happiness()):
 		m_regular_moves(regular_moves_),
 		m_stats(BaseStats(generation, species), stats, level),
 
@@ -78,9 +78,8 @@ struct Pokemon {
 	{
 	}
 
-	Pokemon(Generation const generation, Species const species, Level const level, Gender const gender) : 
+	Pokemon(Species const species, Level const level, Gender const gender) : 
 		Pokemon::Pokemon(
-			generation,
 			species,
 			level,
 			gender,
@@ -153,11 +152,11 @@ struct Pokemon {
 		return m_hidden_power;
 	}
 
-	auto item(Generation const generation, bool const embargo, bool const magic_room) const -> Item {
+	auto item(bool const embargo, bool const magic_room) const -> Item {
 		return m_item.get(generation, embargo, magic_room);
 	}
 	auto unmodified_item() const -> Item {
-		return m_item.get(Generation::eight, false, false);
+		return m_item.get(generation, false, false);
 	}
 	auto remove_item() & {
 		return m_item.remove();
@@ -205,7 +204,7 @@ struct Pokemon {
 		return m_nature_is_known;
 	}
 
-	auto set_ev(Generation const generation, PermanentStat const stat_name, IV const iv, EV const ev) -> void {
+	auto set_ev(PermanentStat const stat_name, IV const iv, EV const ev) -> void {
 		auto const base_stats = BaseStats(generation, species());
 		if (stat_name == PermanentStat::hp) {
 			m_stats.hp() = HP(base_stats, level(), iv, ev);

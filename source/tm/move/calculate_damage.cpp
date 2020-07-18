@@ -45,16 +45,19 @@ using namespace bounded::literal;
 
 namespace {
 
-auto reflect_is_active(Generation const generation, KnownMove const move, Team const & defender) {
+template<Generation generation>
+auto reflect_is_active(KnownMove const move, Team<generation> const & defender) {
 	return defender.reflect() and is_physical(generation, move);
 }
 
-auto light_screen_is_active(Generation const generation, KnownMove const move, Team const & defender) {
+template<Generation generation>
+auto light_screen_is_active(KnownMove const move, Team<generation> const & defender) {
 	return defender.light_screen() and is_special(generation, move);
 }
 
-auto screen_is_active(Generation const generation, ExecutedMove const executed, Team const & defender) {
-	return !executed.critical_hit and (reflect_is_active(generation, executed.move, defender) or light_screen_is_active(generation, executed.move, defender));
+template<Generation generation>
+auto screen_is_active(ExecutedMove const executed, Team<generation> const & defender) {
+	return !executed.critical_hit and (reflect_is_active(executed.move, defender) or light_screen_is_active(executed.move, defender));
 }
 
 constexpr auto is_strengthened_by_weather(Type const type, Weather const weather, bool const ability_blocks_weather) -> bool {
@@ -78,7 +81,8 @@ auto calculate_weather_modifier(Type const type, Weather const weather, bool con
 	));
 }
 
-auto calculate_flash_fire_modifier(ActivePokemon const attacker, Type const move_type) {
+template<Generation generation>
+auto calculate_flash_fire_modifier(ActivePokemon<generation> const attacker, Type const move_type) {
 	return BOUNDED_CONDITIONAL(attacker.flash_fire_is_active() and is_boosted_by_flash_fire(move_type),
 		rational(3_bi, 2_bi),
 		rational(1_bi, 1_bi)
@@ -86,8 +90,9 @@ auto calculate_flash_fire_modifier(ActivePokemon const attacker, Type const move
 }
 
 using ItemModifier = rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
-auto calculate_item_modifier(Generation const generation, ActivePokemon const attacker, Weather const weather) -> ItemModifier {
-	switch (attacker.item(generation, weather)) {
+template<Generation generation>
+auto calculate_item_modifier(ActivePokemon<generation> const attacker, Weather const weather) -> ItemModifier {
+	switch (attacker.item(weather)) {
 		case Item::Life_Orb:
 			return rational(13_bi, 10_bi);
 		case Item::Metronome:
@@ -97,7 +102,8 @@ auto calculate_item_modifier(Generation const generation, ActivePokemon const at
 	}
 }
 
-auto calculate_me_first_modifier(ActivePokemon const attacker) {
+template<Generation generation>
+auto calculate_me_first_modifier(ActivePokemon<generation> const attacker) {
 	return BOUNDED_CONDITIONAL(attacker.me_first_is_active(),
 		rational(3_bi, 2_bi),
 		rational(1_bi, 1_bi)
@@ -112,7 +118,8 @@ auto calculate_stab_boost(Ability const ability) {
 	);
 }
 
-auto calculate_stab_modifier(ActivePokemon const attacker, Type const move_type) {
+template<Generation generation>
+auto calculate_stab_modifier(ActivePokemon<generation> const attacker, Type const move_type) {
 	return BOUNDED_CONDITIONAL(is_type(attacker, move_type) and move_type != Type::Typeless,
 		calculate_stab_boost(attacker.ability()),
 		rational(1_bi, 1_bi)
@@ -134,11 +141,13 @@ auto calculate_expert_belt_modifier(Item const item, Effectiveness const & effec
 }
 
 
-auto level_multiplier(ActivePokemon const attacker) {
+template<Generation generation>
+auto level_multiplier(ActivePokemon<generation> const attacker) {
 	return attacker.level()() * 2_bi / 5_bi;
 }
 
-auto weakening_from_status(ActivePokemon const attacker) {
+template<Generation generation>
+auto weakening_from_status(ActivePokemon<generation> const attacker) {
 	return BOUNDED_CONDITIONAL(
 		weakens_physical_attacks(attacker.status()) and blocks_burn_damage_penalty(attacker.ability()),
 		2_bi,
@@ -146,7 +155,8 @@ auto weakening_from_status(ActivePokemon const attacker) {
 	);
 }
 
-auto physical_vs_special_modifier(Generation const generation, ActivePokemon const attacker, ExecutedMove const executed, ActivePokemon const defender, Weather const weather) {
+template<Generation generation>
+auto physical_vs_special_modifier(ActivePokemon<generation> const attacker, ExecutedMove const executed, ActivePokemon<generation> const defender, Weather const weather) {
 	auto const attacker_ability = attacker.ability();
 	auto const defender_ability = defender.ability();
 	// For all integers a, b, and c:
@@ -154,18 +164,19 @@ auto physical_vs_special_modifier(Generation const generation, ActivePokemon con
 	// See: http://math.stackexchange.com/questions/147771/rewriting-repeated-integer-division-with-multiplication
 	return BOUNDED_CONDITIONAL(is_physical(generation, executed.move),
 		rational(
-			calculate_attack(generation, attacker, executed.move.type, defender_ability, weather, executed.critical_hit),
-			50_bi * calculate_defense(generation, defender, executed.move.name, weather, executed.critical_hit) * weakening_from_status(attacker)
+			calculate_attack(attacker, executed.move.type, defender_ability, weather, executed.critical_hit),
+			50_bi * calculate_defense(defender, executed.move.name, weather, executed.critical_hit) * weakening_from_status(attacker)
 		),
 		rational(
-			calculate_special_attack(generation, attacker, executed.move.type, defender_ability, weather, executed.critical_hit),
-			50_bi * calculate_special_defense(generation, defender, attacker_ability, weather, executed.critical_hit)
+			calculate_special_attack(attacker, executed.move.type, defender_ability, weather, executed.critical_hit),
+			50_bi * calculate_special_defense(defender, attacker_ability, weather, executed.critical_hit)
 		)
 	);
 }
 
-auto screen_divisor(Generation const generation, ExecutedMove const move, Team const & defender) {
-	return BOUNDED_CONDITIONAL(screen_is_active(generation, move, defender), 2_bi, 1_bi);
+template<Generation generation>
+auto screen_divisor(ExecutedMove const move, Team<generation> const & defender) {
+	return BOUNDED_CONDITIONAL(screen_is_active(move, defender), 2_bi, 1_bi);
 }
 
 auto critical_hit_multiplier(Generation const generation, Ability const ability, bool const critical_hit) {
@@ -191,7 +202,8 @@ auto resistance_berry_divisor(bool const move_weakened_from_item) {
 	return BOUNDED_CONDITIONAL(move_weakened_from_item, 2_bi, 1_bi);
 }
 
-auto regular_damage(Generation const generation, Team const & attacker_team, ExecutedMove const executed, bool const move_weakened_from_item, Team const & defender_team, Weather const weather) {
+template<Generation generation>
+auto regular_damage(Team<generation> const & attacker_team, ExecutedMove const executed, bool const move_weakened_from_item, Team<generation> const & defender_team, Weather const weather) {
 	auto const attacker = attacker_team.pokemon();
 	auto const attacker_ability = attacker.ability();
 	auto const defender = defender_team.pokemon();
@@ -199,28 +211,29 @@ auto regular_damage(Generation const generation, Team const & attacker_team, Exe
 
 	auto const temp =
 		(level_multiplier(attacker) + 2_bi) *
-		move_power(generation, attacker_team, executed, defender_team, weather) *
-		physical_vs_special_modifier(generation, attacker, executed, defender, weather) /
-		screen_divisor(generation, executed, defender_team) *
+		move_power(attacker_team, executed, defender_team, weather) *
+		physical_vs_special_modifier(attacker, executed, defender, weather) /
+		screen_divisor(executed, defender_team) *
 		calculate_weather_modifier(executed.move.type, weather, weather_is_blocked_by_ability(attacker_ability, defender.ability())) *
 		calculate_flash_fire_modifier(attacker, executed.move.type) +
 		2_bi;
 
 	return bounded::max(1_bi, temp *
 		critical_hit_multiplier(generation, attacker_ability, executed.critical_hit) *
-		calculate_item_modifier(generation, attacker, weather) *
+		calculate_item_modifier(attacker, weather) *
 		calculate_me_first_modifier(attacker) *
 		RandomDamage()() *
 		calculate_stab_modifier(attacker, executed.move.type) *
 		effectiveness *
 		calculate_ability_effectiveness_modifier(defender.ability(), effectiveness) *
-		calculate_expert_belt_modifier(attacker.item(generation, weather), effectiveness) *
+		calculate_expert_belt_modifier(attacker.item(weather), effectiveness) *
 		tinted_lens_multiplier(attacker_ability, effectiveness) /
 		resistance_berry_divisor(move_weakened_from_item)
 	);
 }
 
-auto raw_damage(Generation const generation, Team const & attacker_team, ExecutedMove const executed, bool const move_weakened_from_item, Team const & defender_team, OtherMove const defender_move, Weather const weather) -> damage_type {
+template<Generation generation>
+auto raw_damage(Team<generation> const & attacker_team, ExecutedMove const executed, bool const move_weakened_from_item, Team<generation> const & defender_team, OtherMove const defender_move, Weather const weather) -> damage_type {
 	auto const attacker = attacker_team.pokemon();
 	auto const defender = defender_team.pokemon();
 	switch (executed.move.name) {
@@ -255,7 +268,6 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 			return defender.hp().current() / 2_bi;
 		default:
 			return static_cast<damage_type>(regular_damage(
-				generation,
 				attacker_team,
 				executed,
 				move_weakened_from_item,
@@ -267,11 +279,23 @@ auto raw_damage(Generation const generation, Team const & attacker_team, Execute
 
 }	// namespace
 
-
-auto calculate_damage(Generation const generation, Team const & attacker, ExecutedMove const executed, bool const move_weakened_from_item, Team const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
-	return affects_target(generation, executed.move, defender.pokemon(), weather) ?
-		raw_damage(generation, attacker, executed, move_weakened_from_item, defender, defender_move, weather) :
+template<Generation generation>
+auto calculate_damage(Team<generation> const & attacker, ExecutedMove const executed, bool const move_weakened_from_item, Team<generation> const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
+	return affects_target(executed.move, defender.pokemon(), weather) ?
+		raw_damage(attacker, executed, move_weakened_from_item, defender, defender_move, weather) :
 		static_cast<damage_type>(0_bi);
 }
+
+#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
+	template auto calculate_damage<generation>(Team<generation> const & attacker, ExecutedMove const executed, bool const move_weakened_from_item, Team<generation> const & defender, OtherMove const defender_move, Weather const weather) -> damage_type
+
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::three);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::four);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::five);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
 
 }	// namespace technicalmachine

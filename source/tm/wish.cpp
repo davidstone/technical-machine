@@ -16,25 +16,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/wish.hpp>
-
-#include <tm/pokemon/active_pokemon.hpp>
-
-#include <tm/heal.hpp>
-#include <tm/rational.hpp>
-
-namespace technicalmachine {
-using namespace bounded::literal;
-
-auto Wish::decrement(Generation const generation, MutableActivePokemon pokemon, Weather const weather) & -> void {
-	if (!m_turns_until_activation) {
-		return;
-	}
-	if (*m_turns_until_activation == 0_bi) {
-		m_turns_until_activation = bounded::none;
-		heal(generation, pokemon, weather, rational(1_bi, 2_bi));
-	} else {
-		--*m_turns_until_activation;
-	}
-}
-
-}	// namespace technicalmachine

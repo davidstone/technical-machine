@@ -18,45 +18,25 @@
 
 #include <tm/clients/pokemon_lab/write_team_file.hpp>
 
-#include <tm/team.hpp>
-
-#include <tm/move/move.hpp>
-
-#include <tm/pokemon/pokemon.hpp>
-#include <tm/pokemon/species.hpp>
-
-#include <tm/stat/stat_to_ev.hpp>
-
-#include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/gender.hpp>
-#include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
-#include <tm/string_conversions/nature.hpp>
-#include <tm/string_conversions/species.hpp>
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
-#include <string>
 
 namespace technicalmachine {
 namespace pl {
-namespace {
 
-void write_move (Move const move, boost::property_tree::ptree & pt) {
+auto write_move(Move const move, boost::property_tree::ptree & pt) -> void {
 	boost::property_tree::ptree & m = pt.add("moveset.move", to_string(move.name()));
 	// TODO: replace with real PP ups logic
 	m.put ("<xmlattr>.pp-up", 3);
 }
 
-void write_stat(std::string_view const name, IV const iv, EV const ev, boost::property_tree::ptree & pt) {
+auto write_stat(std::string_view const name, IV const iv, EV const ev, boost::property_tree::ptree & pt) -> void {
 	boost::property_tree::ptree & s = pt.add("stats.stat", "");
 	s.put("<xmlattr>.name", name);
 	s.put("<xmlattr>.iv", iv.value());
 	s.put("<xmlattr>.ev", ev.value());
 }
 
-constexpr auto to_simulator_string(PermanentStat const stat) -> std::string_view {
+auto to_simulator_string(PermanentStat const stat) -> std::string_view {
 	switch (stat) {
 		case PermanentStat::hp: return "HP";
 		case PermanentStat::atk: return "Atk";
@@ -67,15 +47,7 @@ constexpr auto to_simulator_string(PermanentStat const stat) -> std::string_view
 	}
 }
 
-void write_stats(Generation const generation, Pokemon const & pokemon, boost::property_tree::ptree & pt) {
-	auto const stats = calculate_ivs_and_evs(generation, pokemon);
-	for (auto const stat_name : {PermanentStat::hp, PermanentStat::atk, PermanentStat::def, PermanentStat::spe, PermanentStat::spa, PermanentStat::spd}) {
-		auto const stat = stats[stat_name];
-		write_stat(to_simulator_string(stat_name), stat.iv, stat.ev, pt);
-	}
-}
-
-std::string_view to_simulator_string(Species const species) {
+auto to_simulator_string(Species const species) -> std::string_view {
 	switch (species) {
 		case Species::Deoxys_Normal: return "Deoxys";
 		case Species::Deoxys_Attack: return "Deoxys-f";
@@ -97,7 +69,7 @@ std::string_view to_simulator_string(Species const species) {
 	}
 }
 
-std::string_view to_simulator_string(Gender const gender) {
+auto to_simulator_string(Gender const gender) -> std::string_view {
 	switch (gender) {
 		case Gender::female: return "Female";
 		case Gender::genderless: return "No Gender";
@@ -105,33 +77,5 @@ std::string_view to_simulator_string(Gender const gender) {
 	}
 }
 
-void write_pokemon(Generation const generation, Pokemon const & pokemon, boost::property_tree::ptree & pt) {
-	boost::property_tree::ptree & member = pt.add ("pokemon", "");
-	member.put("<xmlattr>.species", to_simulator_string(pokemon.species()));
-	member.put ("nickname", "");
-	member.put ("level", pokemon.level()());
-	member.put ("happiness", pokemon.happiness());
-	member.put ("gender", to_simulator_string(pokemon.gender()));
-	member.put ("nature", to_string(pokemon.nature()));
-	member.put ("item", to_string(pokemon.unmodified_item()));
-	member.put ("ability", to_string(pokemon.initial_ability()));
-	for (auto const & move : pokemon.regular_moves()) {
-		write_move(move, member);
-	}
-	write_stats(generation, pokemon, member);
-}
-
-}	// namespace
-
-void write_team(Generation const generation, Team const & team, std::filesystem::path const & file_name) {
-	boost::property_tree::ptree pt;
-	boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type> settings('\t', 1);
-	boost::property_tree::ptree & t = pt.add ("shoddybattle", "");
-	for (auto const & pokemon : team.all_pokemon()) {
-		write_pokemon(generation, pokemon, t);
-	}
-	write_xml(file_name.string(), pt, std::locale (), settings);
-}
-
-}	// namespace pl
-}	// namespace technicalmachine
+} // namespace pl
+} // namespace technicalmachine

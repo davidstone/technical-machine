@@ -17,14 +17,38 @@
 
 #pragma once
 
+#include <tm/clients/invalid_team_file_format.hpp>
+#include <tm/clients/pokemon_lab/read_team_file.hpp>
+#include <tm/clients/pokemon_online/read_team_file.hpp>
+
+#include <tm/files_in_path.hpp>
 #include <tm/generation.hpp>
 #include <tm/team.hpp>
 
 #include <filesystem>
 #include <random>
+#include <stdexcept>
 
 namespace technicalmachine {
 
-auto load_team_from_file(Generation, std::mt19937 & random_engine, std::filesystem::path const & path) -> Team;
+template<Generation generation>
+auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) -> Team<generation> {
+	auto const files = files_in_path(path);
+	if (empty(files)) {
+		throw std::runtime_error(path.string() + " does not contain any team files.");
+	}
+	auto const max = (size(files) - 1_bi).value();
+	auto distribution = std::uniform_int_distribution(static_cast<decltype(max)>(0), max);
+	auto const file = files[containers::index_type<decltype(files)>(distribution(random_engine))];
+
+	auto const extension = file.extension();
+	if (extension == ".tp") {
+		return po::load_team<generation>(file);
+	} else if (extension == ".sbt") {
+		return pl::load_team<generation>(file);
+	} else {
+		throw InvalidTeamFileFormat(file);
+	}
+}
 
 }	// namespace technicalmachine

@@ -32,8 +32,6 @@
 
 namespace technicalmachine {
 
-struct MutableActivePokemon;
-struct Pokemon;
 struct Weather;
 
 enum class Statuses : uint8_t {

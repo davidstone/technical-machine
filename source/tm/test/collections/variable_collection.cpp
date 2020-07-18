@@ -43,13 +43,13 @@ using bounded::to_string;
 
 constexpr auto generation = Generation::four;
 
-void add_pokemon(Team & team, Species const species) {
+void add_pokemon(Team<generation> & team, Species const species) {
 	auto const level = Level(100_bi);
-	team.add_pokemon(Pokemon(generation, species, level, Gender::male));
+	team.add_pokemon(Pokemon<generation>(species, level, Gender::male));
 	team.pokemon().set_ability_to_base_ability();
 }
 
-void phaze_in_same_pokemon(Team const & team) {
+void phaze_in_same_pokemon(Team<generation> const & team) {
 	try {
 		auto variable = Variable{};
 		variable.set_phaze_index(team, team.pokemon().species());
@@ -59,7 +59,7 @@ void phaze_in_same_pokemon(Team const & team) {
 	}
 }
 
-void phaze_in_different_pokemon(Team const & team, containers::index_type<PokemonCollection> const new_index, containers::index_type<PokemonCollection> const current_index, TeamSize foe_size) {
+void phaze_in_different_pokemon(Team<generation> const & team, TeamIndex const new_index, TeamIndex const current_index, TeamSize foe_size) {
 	static constexpr auto expected_index = containers::make_explicit_array<6, 6>(
 		bounded::none, 1_bi, 2_bi, 3_bi, 4_bi, 5_bi,
 		0_bi, bounded::none, 2_bi, 3_bi, 4_bi, 5_bi,
@@ -81,7 +81,7 @@ void phaze_in_different_pokemon(Team const & team, containers::index_type<Pokemo
 	}
 }
 
-void test_combinations(Team team) {
+void test_combinations(Team<generation> team) {
 	for (auto const foe_size : containers::integer_range(2_bi, max_pokemon_per_team)) {
 		add_pokemon(team, static_cast<Species>(foe_size));
 		auto collection = all_probabilities(generation, Moves::Whirlwind, foe_size);
@@ -106,7 +106,7 @@ void test_combinations(Team team) {
 
 void variable_collection_tests() {
 	std::cout << "\tRunning variable collection tests.\n";
-	Team team(max_pokemon_per_team);
+	auto team = Team<generation>(max_pokemon_per_team);
 	add_pokemon(team, static_cast<Species>(1));
 	test_combinations(std::move(team));
 }

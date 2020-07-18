@@ -31,11 +31,29 @@
 
 namespace technicalmachine {
 
+template<Generation>
 struct Team;
 
+template<Generation generation>
 struct TranspositionTable {
-	auto add_score(Team const & ai, Team const & foe, Weather, DepthValues, BestMove) -> void;
-	auto get_score(Team const & ai, Team const & foe, Weather, DepthValues) const -> bounded::optional<BestMove>;
+	auto add_score(Team<generation> const & ai, Team<generation> const & foe, Weather weather, DepthValues const depth, BestMove best_move) -> void {
+		auto const compressed_battle = compress_battle(ai, foe, weather);
+		auto & value = m_data[index(compressed_battle)];
+		value.compressed_battle = compressed_battle;
+		value.depth = depth;
+		value.move = best_move.name;
+		value.score = best_move.score;
+	}
+
+	auto get_score(Team<generation> const & ai, Team<generation> const & foe, Weather weather, DepthValues const depth) const -> bounded::optional<BestMove> {
+		auto const compressed_battle = compress_battle(ai, foe, weather);
+		auto const & value = m_data[index(compressed_battle)];
+		if (value.depth >= depth and value.compressed_battle == compressed_battle) {
+			return BestMove{value.move, value.score};
+		}
+		return bounded::none;
+	}
+
 private:
 	using CompressedBattle = bounded::tuple<
 		bounded::integer<0, bounded::detail::normalize<(17476366957422410805543616810844159999_bi).value()>>,
@@ -58,7 +76,49 @@ private:
 	using Data = containers::array<Value, size.value()>;
 	using Index = containers::index_type<Data>;
 
-	static auto index(CompressedBattle const & compressed_battle) -> Index;
+	template<bounded::bounded_integer Output>
+	static constexpr auto update_hash(Output & output, bounded::bounded_integer auto input) {
+		while (input != 0_bi) {
+			auto const temp = input % size;
+			input /= size;
+			output = Output(output.value() xor temp.value());
+		}
+	}
+
+	template<std::size_t... indexes>
+	static constexpr auto hash(CompressedBattle const & compressed_battle, std::index_sequence<indexes...>) {
+		static_assert(bounded::pow(2_bi, bounded::log(size, 2_bi)) == size, "Size must be a power of 2");
+		auto result = bounded::integer<0, bounded::detail::normalize<(size - 1_bi).value()>>(0_bi);
+		(..., update_hash(result, compressed_battle[bounded::constant<indexes>]));
+		return result;
+	}
+
+	static auto compress_battle(Team<generation> const & ai, Team<generation> const & foe, Weather const weather) {
+		auto const compressed_ai = compress(ai);
+		auto const compressed_foe = compress(foe);
+		static_assert(bounded::tuple_size<decltype(compressed_ai)> == 4_bi);
+		static_assert(bounded::tuple_size<decltype(compressed_foe)> == 4_bi);
+		return bounded::tuple(
+			compressed_ai[0_bi],
+			compressed_ai[1_bi],
+			compress_combine(
+				compressed_ai[2_bi],
+				weather
+			),
+			compressed_ai[3_bi],
+			compressed_foe[0_bi],
+			compressed_foe[1_bi],
+			compressed_foe[2_bi],
+			compressed_foe[3_bi]
+		);
+	}
+
+	static auto index(CompressedBattle const & compressed_battle) -> Index {
+		return hash(
+			compressed_battle,
+			bounded::make_index_sequence(bounded::tuple_size<CompressedBattle>)
+		);
+	}
 
 	Data m_data;
 };

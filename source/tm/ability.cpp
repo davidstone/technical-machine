@@ -25,8 +25,6 @@
 
 #include <tm/pokemon/active_pokemon.hpp>
 
-#include <tm/stat/calculate.hpp>
-
 #include <tm/type/type.hpp>
 
 #include <tm/heal.hpp>
@@ -37,25 +35,7 @@
 
 namespace technicalmachine {
 
-bool blocks_switching(Generation const generation, Ability const ability, ActivePokemon const switcher, Weather const weather) {
-	auto ghost_immunity = [&]{
-		return generation >= Generation::six and is_type(switcher, Type::Ghost);
-	};
-	switch (ability) {
-		case Ability::Shadow_Tag:
-			return (generation <= Generation::three or switcher.ability() != Ability::Shadow_Tag) and !ghost_immunity();
-		case Ability::Arena_Trap:
-			return grounded(generation, switcher, weather) and !ghost_immunity();
-		case Ability::Magnet_Pull:
-			return is_type(switcher, Type::Steel) and !ghost_immunity();
-		default:
-			return false;
-	}
-}
-
-namespace {
-
-constexpr auto blocks_intimidate(Generation const generation, Ability const ability) -> bool {
+auto blocks_intimidate(Generation const generation, Ability const ability) -> bool {
 	if (generation <= Generation::eight) {
 		return false;
 	}
@@ -70,7 +50,7 @@ constexpr auto blocks_intimidate(Generation const generation, Ability const abil
 	}
 }
 
-constexpr auto traceable(Generation const generation, Ability const ability) {
+auto traceable(Generation const generation, Ability const ability) -> bool {
 	switch (ability) {
 		case Ability::Multitype:
 		case Ability::Illusion:
@@ -99,62 +79,6 @@ constexpr auto traceable(Generation const generation, Ability const ability) {
 			return generation <= Generation::four;
 		default:
 			return true;
-	}
-}
-
-} // namespace
-
-void activate_ability_on_switch(Generation const generation, MutableActivePokemon switcher, MutableActivePokemon other, Weather & weather) {
-	auto const switcher_ability = switcher.ability();
-	switch (switcher_ability) {
-		case Ability::Download: {
-			// Move is irrelevant here
-			constexpr auto move = Moves::Switch0;
-			// TODO: Should not take into account items, abilities, or Wonder Room
-			auto const defense = calculate_defense(generation, other, move, weather);
-			auto const special_defense = calculate_special_defense(generation, other, switcher_ability, weather);
-			switcher.stage()[defense >= special_defense ? BoostableStat::spa : BoostableStat::atk] += 1_bi;
-			break;
-		}
-		case Ability::Drizzle:
-			weather.activate_rain_from_ability(generation, extends_rain(switcher.item(generation, weather)));
-			break;
-		case Ability::Drought:
-			weather.activate_sun_from_ability(generation, extends_sun(switcher.item(generation, weather)));
-			break;
-		case Ability::Forecast:
-			break;
-		case Ability::Intimidate: {
-			if (blocks_intimidate(generation, other.ability())) {
-				break;
-			}
-			auto & attack = other.stage()[BoostableStat::atk];
-			if (attack == bounded::min_value<Stage::value_type>) {
-				break;
-			}
-			attack -= 1_bi;
-			auto & speed = other.stage()[BoostableStat::spe];
-			if (other.item(generation, weather) == Item::Adrenaline_Orb and speed != bounded::max_value<Stage::value_type>) {
-				speed += 1_bi;
-				other.remove_item();
-			}
-			break;
-		}
-		case Ability::Sand_Stream:
-			weather.activate_sand_from_ability(generation, extends_sand(switcher.item(generation, weather)));
-			break;
-		case Ability::Snow_Warning:
-			weather.activate_hail_from_ability(generation, extends_hail(switcher.item(generation, weather)));
-			break;
-		case Ability::Trace: {
-			auto const other_ability = other.ability();
-			if (traceable(generation, other_ability)) {
-				switcher.set_ability(other_ability);
-			}
-			break;
-		}
-		default:
-			break;
 	}
 }
 

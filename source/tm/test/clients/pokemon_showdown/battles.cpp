@@ -44,7 +44,7 @@ auto parse_room(std::string_view const line, std::filesystem::path const & path)
 }
 
 void regression_tests() {
-	auto const evaluate = Evaluate{};
+	auto const evaluate = AllEvaluate{};
 	// Too large to fit on the stack
 	auto const all_usage_stats = std::make_unique<AllUsageStats>();
 	constexpr auto depth = DepthValues{1U, 0U};
@@ -73,8 +73,7 @@ void regression_tests() {
 					"Technical Machine",
 					evaluate,
 					depth,
-					std::mt19937(std::random_device{}()),
-					Team(1_bi, true)
+					std::mt19937(std::random_device{}())
 				);
 
 				auto print_file_on_exception = containers::scope_guard([&] { std::cerr << "Error in " << path.path() << '\n'; });

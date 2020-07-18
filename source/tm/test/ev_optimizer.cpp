@@ -48,8 +48,7 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	constexpr auto species = Species::Metagross;
 	constexpr auto level = Level(100_bi);
 	auto const base_stats = BaseStats(generation, species);
-	auto pokemon = Pokemon(
-		generation,
+	auto pokemon = Pokemon<generation>(
 		species,
 		level,
 		Gender::genderless,
@@ -67,15 +66,15 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 		regular_moves(generation, Moves::Meteor_Mash)
 	);
 
-	auto const ivs_and_evs = calculate_ivs_and_evs(generation, pokemon);
+	auto const ivs_and_evs = calculate_ivs_and_evs(pokemon);
 	auto const stats = initial_stats(base_stats, level, ivs_and_evs);
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
 	BOUNDED_ASSERT(compute_minimal_spread(generation, base_stats, stats, level, bounded::none, include_attack, include_special_attack) == ivs_and_evs);
 	BOUNDED_ASSERT(pad_random_evs(generation, ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
-	optimize_evs(generation, pokemon, random_engine);
-	BOUNDED_ASSERT(calculate_ivs_and_evs(generation, pokemon) == ivs_and_evs);
+	optimize_evs(pokemon, random_engine);
+	BOUNDED_ASSERT(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
 }
 
 void defensive_tests() {
@@ -133,8 +132,7 @@ void not_level_100(std::mt19937 & random_engine) {
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Masquerain;
 	constexpr auto level = Level(83_bi);
-	auto pokemon = Pokemon(
-		generation,
+	auto pokemon = Pokemon<generation>(
 		species,
 		level,
 		Gender::genderless,
@@ -152,7 +150,7 @@ void not_level_100(std::mt19937 & random_engine) {
 		regular_moves(generation, Moves::Hydro_Pump, Moves::Bug_Buzz, Moves::Roost, Moves::Air_Slash)
 	);
 
-	optimize_evs(generation, pokemon, random_engine);
+	optimize_evs(pokemon, random_engine);
 }
 
 void generation_two(std::mt19937 & random_engine) {
@@ -160,8 +158,7 @@ void generation_two(std::mt19937 & random_engine) {
 	constexpr auto species = Species::Mew;
 	constexpr auto level = Level(100_bi);
 	auto const base_stats = BaseStats(generation, species);
-	auto pokemon = Pokemon(
-		generation,
+	auto pokemon = Pokemon<generation>(
 		species,
 		level,
 		Gender::genderless,
@@ -179,15 +176,15 @@ void generation_two(std::mt19937 & random_engine) {
 		regular_moves(generation, Moves::Tackle, Moves::Psychic)
 	);
 
-	auto const ivs_and_evs = calculate_ivs_and_evs(generation, pokemon);
+	auto const ivs_and_evs = calculate_ivs_and_evs(pokemon);
 	auto const stats = initial_stats(base_stats, level, ivs_and_evs);
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = true;
 	BOUNDED_ASSERT(compute_minimal_spread(generation, base_stats, stats, level, bounded::none, include_attack, include_special_attack) == ivs_and_evs);
 	BOUNDED_ASSERT(pad_random_evs(generation, ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
-	optimize_evs(generation, pokemon, random_engine);
-	BOUNDED_ASSERT(calculate_ivs_and_evs(generation, pokemon) == ivs_and_evs);
+	optimize_evs(pokemon, random_engine);
+	BOUNDED_ASSERT(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
 }
 
 }	// namespace

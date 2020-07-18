@@ -27,9 +27,7 @@
 #include <tm/clients/random_string.hpp>
 
 #include <tm/team_predictor/lead_stats.hpp>
-#include <tm/team_predictor/team_predictor.hpp>
 
-#include <tm/load_team_from_file.hpp>
 #include <tm/settings_file.hpp>
 #include <tm/team.hpp>
 
@@ -102,7 +100,7 @@ auto Client::Sockets::authenticate(std::string_view const host, std::string_view
 }
 
 
-ClientImpl::ClientImpl(SettingsFile settings, DepthValues const depth, BattleParser::SendMessageFunction send_message, AuthenticationFunction authenticate):
+ClientImpl::ClientImpl(SettingsFile settings, DepthValues const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
 	m_random_engine(m_rd()),
 	m_settings(std::move(settings)),
 	m_trusted_users(load_lines_from_file("settings/trusted_users.txt")),
@@ -124,20 +122,9 @@ void ClientImpl::run(DelimitedBufferView<std::string_view> messages) {
 	}
 }
 
-auto ClientImpl::generate_team(Generation const generation) -> Team {
-	return m_settings.team_file ?
-		load_team_from_file(generation, m_random_engine, *m_settings.team_file) :
-		::technicalmachine::generate_team(
-			generation,
-			m_all_usage_stats[generation],
-			use_lead_stats,
-			m_random_engine
-		);
-}
-
 void ClientImpl::handle_message(InMessage message) {
 	auto send_challenge = [&]{
-		send_team(Generation::one);
+		send_team<Generation::one>();
 		// m_send_message("|/search gen1ou");
 		m_send_message("|/challenge davidstone,gen1ou");
 		std::cout << "Sent challenge\n" << std::flush;
@@ -166,8 +153,7 @@ void ClientImpl::handle_message(InMessage message) {
 				m_settings.username,
 				m_evaluate,
 				m_depth,
-				std::mt19937(m_rd()),
-				generate_team(parse_generation(message.room()))
+				std::mt19937(m_rd())
 			);
 		}
 	} else if (type == "nametaken") {
@@ -236,10 +222,6 @@ void ClientImpl::authenticate(std::string_view const challstr) {
 	response.body().erase(0U, 1U);
 	auto const json = m_parse_json(response.body());
 	m_send_message("|/trn " + m_settings.username + ",0," + json.get<std::string>("assertion"));
-}
-
-void ClientImpl::send_team(Generation const generation) {
-	m_send_message("|/utm " + to_packed_format(generation, generate_team(generation)));
 }
 
 void ClientImpl::join_channel(std::string const & channel) {

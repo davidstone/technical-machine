@@ -22,16 +22,27 @@
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/weather.hpp>
 
-#include <cstdint>
+#include <tm/generation.hpp>
+
 #include <ostream>
 
 namespace technicalmachine {
 
-enum class Generation : std::uint8_t;
-struct Evaluate;
-struct Team;
-struct Weather;
+template<Generation generation>
+auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather, Evaluate<generation>, Depth, std::ostream & log) -> BestMove;
 
-auto expectiminimax(Generation, Team const & ai, Team const & foe, Weather, Evaluate, Depth, std::ostream & log) -> BestMove;
+#define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
+	extern template auto expectiminimax<generation>(Team<generation> const & ai, Team<generation> const & foe, Weather, Evaluate<generation>, Depth, std::ostream & log) -> BestMove
+
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::three);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::four);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::five);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::six);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::seven);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
+
+#undef TECHNICALMACHINE_EXTERN_INSTANTIATION
 
 }	// namespace technicalmachine

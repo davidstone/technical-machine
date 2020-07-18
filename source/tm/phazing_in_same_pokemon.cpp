@@ -20,7 +20,7 @@
 
 namespace technicalmachine {
 
-PhazingInSamePokemon::PhazingInSamePokemon(containers::index_type<PokemonCollection> const index):
+PhazingInSamePokemon::PhazingInSamePokemon(TeamIndex const index):
 	std::logic_error("Attempted to phaze in the currently active Pokemon at index " + bounded::to_string(index) + ".")
 	{
 }

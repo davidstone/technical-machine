@@ -1,4 +1,3 @@
-// Collection of Pokemon with index indicating current Pokemon
 // Copyright (C) 2016 David Stone
 //
 // This file is part of Technical Machine.
@@ -17,20 +16,3 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/pokemon/collection.hpp>
-
-#include <bounded/assert.hpp>
-
-namespace technicalmachine {
-
-void PokemonCollection::remove_active(containers::index_type<PokemonCollection> const index_of_replacement) {
-	auto const original_index = index();
-	BOUNDED_ASSERT(original_index != index_of_replacement);
-	containers::erase(m_container, begin(m_container) + original_index);
-	--m_real_size;
-	set_index((index_of_replacement < original_index) ?
-		index_of_replacement :
-		containers::index_type<PokemonCollection>(index_of_replacement - 1_bi, bounded::non_check)
-	);
-}
-
-}	// namespace technicalmachine

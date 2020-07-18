@@ -18,14 +18,19 @@
 #pragma once
 
 #include <tm/compress.hpp>
+#include <tm/end_of_turn.hpp>
 #include <tm/generation.hpp>
+#include <tm/heal.hpp>
 #include <tm/status.hpp>
+#include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
 
+template<Generation>
 struct ActivePokemon;
+template<Generation>
 struct MutableActivePokemon;
 struct Weather;
 
@@ -48,7 +53,14 @@ struct ActiveStatus {
 		m_nightmare = true;
 	}
 
-	auto status_and_leech_seed_effects(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather, bool uproar) & -> void;
+	template<Generation generation>
+	constexpr auto status_and_leech_seed_effects(MutableActivePokemon<generation> pokemon, MutableActivePokemon<generation> const other, Weather const weather, bool const uproar) & -> void {
+		if constexpr (generation <= Generation::two) {
+			end_of_attack(pokemon, other, weather);
+		} else {
+			end_of_turn(pokemon, other, weather, uproar);
+		}
+	}
 
 	// TODO: ???
 	friend auto operator==(ActiveStatus const & lhs, ActiveStatus const & rhs) -> bool {
@@ -61,8 +73,128 @@ struct ActiveStatus {
 		return compress(bounded::integer<0, 15>(static_cast<std::uint8_t>(byte)));
 	}
 private:
-	auto end_of_attack(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather) & -> void;
-	auto end_of_turn(Generation, MutableActivePokemon pokemon, MutableActivePokemon const other, Weather, bool uproar) & -> void;
+	template<Generation generation>
+	static constexpr auto handle_leech_seed(MutableActivePokemon<generation> pokemon, MutableActivePokemon<generation> other, Weather const weather) -> void {
+		if (!pokemon.leech_seeded()) {
+			return;
+		}
+		auto const initial = pokemon.hp().current();
+		heal(pokemon, weather, rational(-1_bi, 8_bi));
+		if (other.hp() == 0_bi) {
+			return;
+		}
+		auto const hp_change = (initial - pokemon.hp().current()) * healing_multiplier(pokemon.item(weather));
+		if (damages_leechers(pokemon.ability())) {
+			change_hp(other, weather, -hp_change);
+		} else {
+			change_hp(other, weather, hp_change);
+		}
+	}
+
+	template<Generation generation>
+	static constexpr auto handle_burn(MutableActivePokemon<generation> pokemon, Weather const weather) -> void {
+		auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(pokemon.ability()), 16_bi, 8_bi);
+		heal(pokemon, weather, rational(-1_bi, denominator));
+	}
+
+	template<Generation generation>
+	static constexpr auto handle_poison(MutableActivePokemon<generation> pokemon, Weather const weather) -> void {
+		auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(pokemon.ability()), 1_bi, -1_bi);
+		heal(pokemon, weather, rational(numerator, 8_bi));
+	}
+
+	template<Generation generation>
+	static constexpr auto handle_toxic(MutableActivePokemon<generation> pokemon, Weather const weather, bounded::clamped_integer<1, 15> & toxic_counter) -> void {
+		if (absorbs_poison_damage(pokemon.ability())) {
+			heal(pokemon, weather, rational(1_bi, 8_bi));
+		} else {
+			heal(pokemon, weather, rational(-toxic_counter, 16_bi));
+		}
+		++toxic_counter;
+	}
+
+	template<Generation generation>
+	static constexpr auto handle_sleep_and_rest(MutableActivePokemon<generation> pokemon, ActivePokemon<generation> other, Weather const weather, bool const nightmare, bool const uproar = false) -> void {
+		if (uproar) {
+			pokemon.clear_status();
+			return;
+		}
+		if (nightmare) {
+			heal(pokemon, weather, rational(-1_bi, 4_bi));
+		}
+		if (harms_sleepers(other.ability())) {
+			heal(pokemon, weather, rational(-1_bi, 8_bi));
+		}
+	}
+
+	// Generation 1-2
+	template<Generation generation>
+	constexpr auto end_of_attack(MutableActivePokemon<generation> pokemon, MutableActivePokemon<generation> const other, Weather const weather) & -> void {
+		auto const status = pokemon.status().name();
+		switch (status) {
+			case Statuses::clear:
+			case Statuses::freeze:
+			case Statuses::paralysis:
+				break;
+			case Statuses::burn:
+				handle_burn(pokemon, weather);
+				break;
+			case Statuses::poison:
+				handle_poison(pokemon, weather);
+				break;
+			case Statuses::toxic:
+				handle_toxic(pokemon, weather, m_toxic_counter);
+				break;
+			case Statuses::sleep:
+			case Statuses::rest:
+				break;
+		}
+
+		handle_leech_seed(pokemon, other, weather);
+
+		constexpr auto uproar = false;
+
+		switch (status) {
+			case Statuses::clear:
+			case Statuses::freeze:
+			case Statuses::paralysis:
+			case Statuses::burn:
+			case Statuses::poison:
+			case Statuses::toxic:
+				break;
+			case Statuses::sleep:
+			case Statuses::rest:
+				handle_sleep_and_rest(pokemon, as_const(other), weather, m_nightmare, uproar);
+				break;
+		}
+	}
+
+	// Generation 3+
+	template<Generation generation>
+	constexpr auto end_of_turn(MutableActivePokemon<generation> pokemon, MutableActivePokemon<generation> const other, Weather const weather, bool uproar) & -> void {
+		handle_leech_seed(pokemon, other, weather);
+
+		switch (pokemon.status().name()) {
+			case Statuses::clear:
+			case Statuses::freeze:
+			case Statuses::paralysis:
+				break;
+			case Statuses::burn:
+				handle_burn(pokemon, weather);
+				break;
+			case Statuses::poison:
+				handle_poison(pokemon, weather);
+				break;
+			case Statuses::toxic:
+				handle_toxic(pokemon, weather, m_toxic_counter);
+				break;
+			case Statuses::sleep:
+			case Statuses::rest:
+				handle_sleep_and_rest(pokemon, as_const(other), weather, m_nightmare, uproar);
+				break;
+		}
+	}
+
 	// The discriminator is the status of the active Pokemon.
 	union {
 		std::byte m_none{};

@@ -24,6 +24,7 @@
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/species_forward.hpp>
 #include <tm/stat/stat_names.hpp>
+#include <tm/phazing_in_same_pokemon.hpp>
 #include <tm/status.hpp>
 
 #include <bounded/integer.hpp>
@@ -32,7 +33,21 @@
 #include <containers/static_vector/static_vector.hpp>
 
 namespace technicalmachine {
+
+template<Generation>
 struct Team;
+
+template<Generation generation>
+constexpr auto get_phaze_index(Team<generation> const & team, Species const species) {
+	BOUNDED_ASSERT(team.size() > 1_bi);
+	auto const & all = team.all_pokemon();
+	auto const pokemon_index = all.index();
+	auto const new_index = find_present_index(all, species);
+	if (new_index == pokemon_index) {
+		throw PhazingInSamePokemon(new_index);
+	}
+	return new_index;
+}
 
 struct Variable {
 	using value_type = bounded::integer<0, 150>;
@@ -84,8 +99,13 @@ struct Variable {
 	constexpr auto phaze_index() const {
 		return static_cast<TeamIndex>(m_value);
 	}
+
 	// Team is the Team that was phazed, not the team that used the phazing move
-	auto set_phaze_index(Team const & team, Species species) -> void;
+	template<Generation generation>
+	auto set_phaze_index(Team<generation> const & team, Species const species) -> void {
+		m_value = get_phaze_index(team, species);
+	}
+
 
 	constexpr auto psywave_damage(Generation, Level const level) const {
 		return level() * (bounded::integer<1, 15>(m_value) * 10_bi) / 100_bi;

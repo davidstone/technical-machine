@@ -20,7 +20,6 @@
 #include <tm/type/pokemon_types.hpp>
 
 #include <tm/move/known_move.hpp>
-#include <tm/pokemon/active_pokemon.hpp>
 
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
@@ -30,6 +29,11 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
+
+template<Generation>
+struct ActivePokemon;
+template<Generation>
+struct MutableActivePokemon;
 
 struct Effectiveness {
 	Effectiveness(Generation generation, Type attacking, PokemonTypes defending);
@@ -55,7 +59,8 @@ auto operator*(auto const lhs, Effectiveness const rhs) {
 	return rhs * lhs;
 }
 
-inline auto affects_target(Generation const generation, KnownMove const move, ActivePokemon const target, Weather const weather) -> bool {
+template<Generation generation>
+auto affects_target(KnownMove const move, ActivePokemon<generation> const target, Weather const weather) -> bool {
 	auto const effectiveness = Effectiveness(generation, move.type, target.types());
 	auto generation_1_fixed_damage_move = [=] {
 		switch (move.name) {
@@ -71,7 +76,7 @@ inline auto affects_target(Generation const generation, KnownMove const move, Ac
 	if (generation == Generation::one and generation_1_fixed_damage_move()) {
 		return true;
 	}
-	return !effectiveness.has_no_effect() and (move.type != Type::Ground or grounded(generation, target, weather));
+	return !effectiveness.has_no_effect() and (move.type != Type::Ground or grounded(target, weather));
 }
 
 }	// namespace technicalmachine

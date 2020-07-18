@@ -36,9 +36,8 @@ constexpr auto moves(auto... move_names) {
 
 void basic() {
 	auto const expected = moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball);
-	auto user = Team(1_bi, true);
-	user.add_pokemon(Pokemon(
-		generation,
+	auto user = Team<generation>(1_bi, true);
+	user.add_pokemon(Pokemon<generation>(
 		Species::Jolteon,
 		Level(100_bi),
 		Gender::male,
@@ -56,11 +55,10 @@ void basic() {
 		expected
 	));
 	auto weather = Weather();
-	user.pokemon().switch_in(generation, weather);
+	user.pokemon().switch_in(weather);
 
-	auto other = Team(1_bi, false);
-	other.add_pokemon(Pokemon(
-		generation,
+	auto other = Team<generation>(1_bi, false);
+	other.add_pokemon(Pokemon<generation>(
 		Species::Gyarados,
 		Level(100_bi),
 		Gender::male,
@@ -77,11 +75,11 @@ void basic() {
 		},
 		moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
 	));
-	other.pokemon().switch_in(generation, weather);
+	other.pokemon().switch_in(weather);
 
 	user.reset_start_of_turn();
 
-	auto const selections = legal_selections(generation, user, other, weather);
+	auto const selections = legal_selections(user, other, weather);
 	if (!containers::equal(selections, expected)) {
 		for (auto const & move : selections) {
 			std::cerr << to_string(move) << '\n';
@@ -99,9 +97,8 @@ auto empty_pp(Move & move) {
 void test_two_moves_with_one_out_of_pp() {
 	auto weather = Weather();
 
-	auto user = Team(1_bi, true);
-	auto & pokemon = user.add_pokemon(Pokemon(
-		generation,
+	auto user = Team<generation>(1_bi, true);
+	auto & pokemon = user.add_pokemon(Pokemon<generation>(
 		Species::Pikachu,
 		Level(100_bi),
 		Gender::female,
@@ -119,11 +116,10 @@ void test_two_moves_with_one_out_of_pp() {
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
 	empty_pp(containers::front(pokemon.regular_moves()));
-	user.pokemon().switch_in(generation, weather);
+	user.pokemon().switch_in(weather);
 
-	auto other = Team(1_bi, false);
-	other.add_pokemon(Pokemon(
-		generation,
+	auto other = Team<generation>(1_bi, false);
+	other.add_pokemon(Pokemon<generation>(
 		Species::Pikachu,
 		Level(100_bi),
 		Gender::female,
@@ -140,11 +136,11 @@ void test_two_moves_with_one_out_of_pp() {
 		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
-	other.pokemon().switch_in(generation, weather);
+	other.pokemon().switch_in(weather);
 	
 	user.reset_start_of_turn();
 
-	auto const selections = legal_selections(generation, user, other, weather);
+	auto const selections = legal_selections(user, other, weather);
 	if (size(selections) != 1_bi) {
 		throw std::runtime_error("Incorrect number of selections with one of two moves out of PP. Expected 1, got " + to_string(size(selections)));
 	}
@@ -156,9 +152,8 @@ void test_two_moves_with_one_out_of_pp() {
 void test_two_moves_with_both_out_of_pp() {
 	auto weather = Weather();
 
-	auto user = Team(1_bi, true);
-	auto & pokemon = user.add_pokemon(Pokemon(
-		generation,
+	auto user = Team<generation>(1_bi, true);
+	auto & pokemon = user.add_pokemon(Pokemon<generation>(
 		Species::Pikachu,
 		Level(100_bi),
 		Gender::female,
@@ -175,14 +170,13 @@ void test_two_moves_with_both_out_of_pp() {
 		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
-	user.pokemon().switch_in(generation, weather);
+	user.pokemon().switch_in(weather);
 	for (auto & move : pokemon.regular_moves()) {
 		empty_pp(move);
 	}
 
-	auto other = Team(1_bi, false);
-	other.add_pokemon(Pokemon(
-		generation,
+	auto other = Team<generation>(1_bi, false);
+	other.add_pokemon(Pokemon<generation>(
 		Species::Pikachu,
 		Level(100_bi),
 		Gender::female,
@@ -199,11 +193,11 @@ void test_two_moves_with_both_out_of_pp() {
 		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
-	other.pokemon().switch_in(generation, weather);
+	other.pokemon().switch_in(weather);
 	
 	user.reset_start_of_turn();
 
-	auto const selections = legal_selections(generation, user, other, weather);
+	auto const selections = legal_selections(user, other, weather);
 	if (size(selections) != 1_bi) {
 		throw std::runtime_error("Incorrect number of selections with two of two moves out of PP. Expected 1, got " + to_string(size(selections)));
 	}

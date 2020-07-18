@@ -27,7 +27,6 @@
 
 namespace technicalmachine {
 
-struct Team;
 struct UsageStats;
 
 struct Estimate {
@@ -39,7 +38,5 @@ private:
 	using value_type = float;
 	containers::array<value_type, number_of_species> m_estimate;
 };
-
-void update_estimate(Estimate & estimate, UsageStats const & usage_stats, Team const & team);
 
 }	// namespace technicalmachine

@@ -24,11 +24,7 @@
 #include <containers/is_range.hpp>
 #include <tm/generation.hpp>
 
-#include <iostream>
-
 namespace technicalmachine {
-
-struct Pokemon;
 
 using namespace bounded::literal;
 
@@ -66,14 +62,6 @@ constexpr auto compress(containers::range auto const & range) {
 	using result_t = bounded::integer<0, bounded::detail::normalize<max.value()>>;
 	auto result = result_t(0_bi);
 	for (auto const & value : range) {
-		auto const foo = result.value() * base.value();
-		if constexpr (std::is_same_v<decltype(front(range)), Pokemon const &>) {
-			if (foo > max) {
-				for (auto const p : range) {
-					std::cerr << to_string(Generation::two, p) << '\n';
-				}
-			}
-		}
 		result = result_t(result.value() * base.value());
 		result += compress(value);
 	}

@@ -35,25 +35,6 @@ using namespace bounded::literal;
 
 namespace {
 
-auto get_phaze_index(Team const & team, Species const species) {
-	BOUNDED_ASSERT(team.size() > 1_bi);
-	auto const & all = team.all_pokemon();
-	auto const pokemon_index = all.index();
-	auto const new_index = find_present_index(all, species);
-	if (new_index == pokemon_index) {
-		throw PhazingInSamePokemon(new_index);
-	}
-	return new_index;
-}
-
-}	// namespace
-
-auto Variable::set_phaze_index(Team const & team, Species const species) -> void {
-	m_value = get_phaze_index(team, species);
-}
-
-namespace {
-
 constexpr auto get_magnitude(Variable::Magnitude const magnitude) -> bounded::integer<10, 150> {
 	switch (magnitude.value()) {
 		case 4: return 10_bi;

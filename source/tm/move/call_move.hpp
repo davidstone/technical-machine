@@ -25,10 +25,26 @@
 
 namespace technicalmachine {
 
-enum class Generation : std::uint8_t;
+template<Generation>
 struct Team;
+
 struct Weather;
 
-auto call_move(Generation generation, Team & user, UsedMove move, Team & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void;
+template<Generation generation>
+auto call_move(Team<generation> & user, UsedMove move, Team<generation> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void;
+
+#define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
+	extern template auto call_move<generation>(Team<generation> & user, UsedMove move, Team<generation> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void
+
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::three);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::four);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::five);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::six);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::seven);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
+
+#undef TECHNICALMACHINE_EXTERN_INSTANTIATION
 
 }	// namespace technicalmachine

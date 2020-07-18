@@ -57,7 +57,6 @@ struct Confusion {
 	}
 
 private:
-	friend struct Evaluate;
 	static constexpr auto max_duration = 4;
 	bounded::optional<bounded::integer<0, max_duration>> m_turns_spent_confused = bounded::none;
 };
