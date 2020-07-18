@@ -38,6 +38,7 @@ constexpr auto move_container_transform(auto const & range) {
 	return containers::range_view(transformed);
 }
 
+template<Generation generation>
 struct MoveContainer {
 private:
 	template<typename Range>
@@ -47,13 +48,13 @@ public:
 	using size_type = MoveSize;
 	using const_iterator = containers::concatenate_view_iterator<
 		Transformed<RegularMoves>,
-		Transformed<SharedMoves>
+		Transformed<SharedMoves<generation>>
 	>;
 	using iterator = const_iterator;
 	
-	explicit MoveContainer(Generation const generation, RegularMoves const & regular, TeamSize const my_team_size):
+	MoveContainer(RegularMoves const & regular, TeamSize const my_team_size):
 		m_regular(regular),
-		m_shared(generation, my_team_size)
+		m_shared(my_team_size)
 	{
 	}
 
@@ -77,7 +78,7 @@ public:
 
 private:
 	RegularMoves const & m_regular;
-	SharedMoves m_shared;
+	SharedMoves<generation> m_shared;
 };
 
 }	// namespace technicalmachine

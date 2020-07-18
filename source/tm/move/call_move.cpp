@@ -1409,7 +1409,8 @@ auto use_move(Team<generation> & user, ExecutedMove const executed, Target const
 	}
 }
 
-auto find_move(MoveContainer const container, Moves const move_name) -> Move {
+template<Generation generation>
+auto find_move(MoveContainer<generation> const container, Moves const move_name) -> Move {
 	auto const maybe_move = containers::maybe_find(container, move_name);
 	BOUNDED_ASSERT(maybe_move);
 	return *maybe_move;

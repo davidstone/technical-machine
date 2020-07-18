@@ -1104,8 +1104,8 @@ private:
 };
 
 template<Generation generation>
-auto all_moves(ActivePokemon<generation> const pokemon, TeamSize const team_size) -> MoveContainer {
-	return MoveContainer(generation, pokemon.regular_moves(), team_size);
+auto all_moves(ActivePokemon<generation> const pokemon, TeamSize const team_size) {
+	return MoveContainer<generation>(pokemon.regular_moves(), team_size);
 }
 
 template<Generation generation>

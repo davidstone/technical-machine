@@ -64,7 +64,7 @@ void move_container_tests() {
 	constexpr auto team_size = TeamSize(4_bi);
 	constexpr auto shared_moves_size = team_size + number_of_weird_moves;
 	auto regular = RegularMoves();
-	auto c = MoveContainer(generation, regular, team_size);
+	auto c = MoveContainer<generation>(regular, team_size);
 	if (size(c) != shared_moves_size) {
 		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + bounded::to_string(shared_moves_size) + " but got " + bounded::to_string(size(c)));
 	}
