@@ -19,9 +19,16 @@
 #pragma once
 
 #include <tm/pokemon/end_of_turn_counter.hpp>
+#include <tm/generation.hpp>
 
 namespace technicalmachine {
 
-using DelayedAttack = EndOfTurnCounter<2, CounterOperations::activate, CounterOperations::advance_one_turn_fixed>;
+template<Generation generation>
+using DelayedAttack = EndOfTurnCounter<
+	generation >= Generation::two,
+	2,
+	CounterOperations::activate,
+	CounterOperations::advance_one_turn_fixed
+>;
 
 }	// namespace technicalmachine

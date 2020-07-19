@@ -63,7 +63,7 @@ void write_pokemon(Pokemon<generation> const & pokemon, boost::property_tree::pt
 	member.put("happiness", pokemon.happiness());
 	member.put("gender", to_simulator_string(pokemon.gender()));
 	member.put("nature", to_string(pokemon.nature()));
-	member.put("item", to_string(pokemon.unmodified_item()));
+	member.put("item", to_string(pokemon.item(false, false)));
 	member.put("ability", to_string(pokemon.initial_ability()));
 	for (auto const & move : pokemon.regular_moves()) {
 		write_move(move, member);

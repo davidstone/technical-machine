@@ -77,7 +77,7 @@ struct ActivePokemonFlags {
 
 	friend auto operator==(ActivePokemonFlags const &, ActivePokemonFlags const &) -> bool = default;
 	friend auto compress(ActivePokemonFlags const value) {
-		return bounded::tuple(
+		auto const result = bounded::tuple(
 			compress_combine(
 				value.ability,
 				value.confusion,
@@ -122,6 +122,11 @@ struct ActivePokemonFlags {
 				value.water_sport
 			)
 		);
+		if constexpr (generation == Generation::one) {
+			return bounded::tuple(compress_combine(result[0_bi], result[1_bi]));
+		} else {
+			return result;
+		}
 	}
 private:
 	template<Generation, bool>
@@ -129,49 +134,49 @@ private:
 	template<Generation>
 	friend struct MutableActivePokemon;
 	
-	Ability ability{};
+	[[no_unique_address]] ExistsIf<Ability, generation >= Generation::three> ability{};
 	Confusion confusion;
 	Disable disable;
-	EmbargoCounter embargo;
-	EncoreCounter encore;
-	HealBlock heal_block;
+	[[no_unique_address]] EmbargoCounter<generation> embargo;
+	[[no_unique_address]] EncoreCounter<generation> encore;
+	[[no_unique_address]] HealBlock<generation> heal_block;
 	LastUsedMove last_used_move;
-	MagnetRise magnet_rise;
+	[[no_unique_address]] MagnetRise<generation> magnet_rise;
 	Substitute substitute;
 	PartialTrap partial_trap;
-	PerishSong perish_song;
+	[[no_unique_address]] PerishSong<generation> perish_song;
 	Stage stage;
 	ActiveStatus status;
-	SlowStart slow_start;
-	Stockpile stockpile;
-	TauntCounter taunt;
+	[[no_unique_address]] SlowStart<generation> slow_start;
+	[[no_unique_address]] Stockpile<generation> stockpile;
+	[[no_unique_address]] TauntCounter<generation> taunt;
 	PokemonTypes types{Type::Typeless};
-	YawnCounter yawn;
+	[[no_unique_address]] YawnCounter<generation> yawn;
 	HP::current_type direct_damage_received = 0_bi;
-	bool aqua_ring = false;
-	bool attracted = false;
-	bool charged = false;
-	bool is_cursed = false;
+	[[no_unique_address]] BoolIf<generation >= Generation::four, __LINE__> aqua_ring{};
+	[[no_unique_address]] BoolIf<generation >= Generation::two, __LINE__> attracted{};
+	[[no_unique_address]] BoolIf<generation >= Generation::three, __LINE__> charged{};
+	[[no_unique_address]] BoolIf<generation >= Generation::two, __LINE__> is_cursed{};
 	bool damaged = false;
-	bool defense_curled = false;
-	bool flash_fire = false;
+	[[no_unique_address]] BoolIf<generation >= Generation::two, __LINE__> defense_curled{};
+	[[no_unique_address]] BoolIf<generation >= Generation::three, __LINE__> flash_fire{};
 	bool flinched = false;
 	bool has_focused_energy = false;
 	// Block, Mean Look, Spider Web
-	bool fully_trapped = false;
-	bool gastro_acid = false;
-	bool identified = false;
-	bool used_imprison = false;
-	bool ingrained = false;
+	[[no_unique_address]] BoolIf<generation >= Generation::two, __LINE__> fully_trapped{};
+	[[no_unique_address]] BoolIf<generation >= Generation::four, __LINE__> gastro_acid{};
+	[[no_unique_address]] BoolIf<generation >= Generation::two, __LINE__> identified{};
+	[[no_unique_address]] BoolIf<generation >= Generation::three, __LINE__> used_imprison{};
+	[[no_unique_address]] BoolIf<generation >= Generation::three, __LINE__> ingrained{};
 	bool leech_seeded = false;
-	bool is_loafing_turn = false;
-	bool me_first_is_active = false;
-	bool minimized = false;
-	bool mud_sport = false;
-	bool power_trick_is_active = false;
-	bool is_tormented = false;
-	bool unburdened = false;
-	bool water_sport = false;
+	[[no_unique_address]] BoolIf<generation >= Generation::three, __LINE__> is_loafing_turn{};
+	[[no_unique_address]] BoolIf<generation >= Generation::four, __LINE__> me_first_is_active{};
+	[[no_unique_address]] BoolIf<generation >= Generation::two, __LINE__> minimized{};
+	[[no_unique_address]] BoolIf<generation >= Generation::three, __LINE__> mud_sport{};
+	[[no_unique_address]] BoolIf<generation >= Generation::four, __LINE__> power_trick_is_active{};
+	[[no_unique_address]] BoolIf<generation >= Generation::three, __LINE__> is_tormented{};
+	[[no_unique_address]] BoolIf<generation >= Generation::four, __LINE__> unburdened{};
+	[[no_unique_address]] BoolIf<generation >= Generation::three, __LINE__> water_sport{};
 };
 
 // TODO: Implement both ActivePokemon and MutableActivePokemon as typedefs once
@@ -210,8 +215,12 @@ public:
 		return m_flags.substitute;
 	}
 
-	auto ability() const {
-		return m_flags.ability;
+	auto ability() const -> Ability {
+		if constexpr (exists<decltype(m_flags.ability)>) {
+			return m_flags.ability;
+		} else {
+			return Ability::Honey_Gather;
+		}
 	}
 
 	auto aqua_ring_is_active() const -> bool {
@@ -314,7 +323,7 @@ public:
 		return m_flags.last_used_move.locked_on();
 	}
 
-	auto magnet_rise() const -> MagnetRise const & {
+	auto magnet_rise() const {
 		return m_flags.magnet_rise;
 	}
 
@@ -401,7 +410,7 @@ public:
 		return m_flags.types;
 	}
 
-	auto is_unburdened() const {
+	auto is_unburdened() const -> bool {
 		return m_flags.unburdened;
 	}
 
@@ -568,7 +577,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 			}
 		};
 		auto const ability_cures_attract = this->ability() == Ability::Oblivious;
-		if (generation <= Generation::four) {
+		if constexpr (generation <= Generation::four) {
 			if (!ability_cures_attract) {
 				this->m_flags.attracted = true;
 				handle_item();
@@ -812,7 +821,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 			boost_defensive(stage(), 1_bi);
 		}
 	}
-	auto release_stockpile() const -> bounded::integer<0, Stockpile::max> {
+	auto release_stockpile() const {
 		auto const stages = this->m_flags.stockpile.release();
 		boost_defensive(stage(), -stages);
 		return stages;
@@ -829,6 +838,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 	auto switch_in(Weather const weather) const {
 		this->m_pokemon.mark_as_seen();
 		this->m_flags.ability = this->m_pokemon.initial_ability();
+
 		// The exact switch is irrelevant
 		this->m_flags.last_used_move.successful_move(Moves::Switch0);
 		this->m_flags.types = PokemonTypes(generation, this->m_pokemon.species());

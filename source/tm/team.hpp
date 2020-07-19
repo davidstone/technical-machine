@@ -92,7 +92,7 @@ struct Team {
 	}
 	void clear_field() {
 		pokemon().clear_field();
-		m_entry_hazards = EntryHazards{};
+		m_entry_hazards = {};
 	}
 
 	auto switch_pokemon(MutableActivePokemon<generation> other, Weather & weather, TeamIndex const replacement) -> void {
@@ -163,9 +163,6 @@ struct Team {
 		m_screens.shatter();
 	}
 
-	auto wish_is_active() const -> bool {
-		return m_wish.is_active();
-	}
 	auto activate_wish() & -> void {
 		m_wish.activate();
 	}
@@ -190,32 +187,50 @@ struct Team {
 
 	friend auto compress(Team const & team) {
 		auto const compressed_pokemon = compress(team.m_all_pokemon);
-		static_assert(bounded::tuple_size<decltype(compressed_pokemon)> == 3_bi);
 		auto const compressed_flags = compress(team.m_flags);
-		static_assert(bounded::tuple_size<decltype(compressed_flags)> == 2_bi);
-		return bounded::tuple(
-			compress_combine(
-				compressed_pokemon[0_bi],
-				team.m_screens,
-				team.m_entry_hazards,
-				team.m_wish,
-				team.me
-			),
-			compress_combine(
+		if constexpr (generation == Generation::one) {
+			static_assert(bounded::tuple_size<decltype(compressed_pokemon)> == 2_bi);
+			static_assert(bounded::tuple_size<decltype(compressed_flags)> == 1_bi);
+			return bounded::tuple(
+				compress_combine(
+					compressed_pokemon[0_bi],
+					team.m_entry_hazards,
+					team.m_wish,
+					team.me
+				),
 				compressed_pokemon[1_bi],
-				compressed_flags[0_bi]
-			),
-			compressed_pokemon[2_bi],
-			compressed_flags[1_bi]
-		);
+				compress_combine(
+					compressed_flags[0_bi],
+					team.m_screens
+				)
+			);
+		} else {
+			static_assert(bounded::tuple_size<decltype(compressed_pokemon)> == 3_bi);
+			static_assert(bounded::tuple_size<decltype(compressed_flags)> == 2_bi);
+			return bounded::tuple(
+				compress_combine(
+					compressed_pokemon[0_bi],
+					team.m_screens,
+					team.m_entry_hazards,
+					team.m_wish,
+					team.me
+				),
+				compress_combine(
+					compressed_pokemon[1_bi],
+					compressed_flags[0_bi]
+				),
+				compressed_pokemon[2_bi],
+				compressed_flags[1_bi]
+			);
+		}
 	}
 
 private:
 	PokemonCollection<generation> m_all_pokemon;
 	ActivePokemonFlags<generation> m_flags;
-	Screens m_screens;
-	Wish m_wish;
-	EntryHazards m_entry_hazards;
+	Screens<generation> m_screens;
+	[[no_unique_address]] Wish<generation> m_wish;
+	[[no_unique_address]] EntryHazards<generation> m_entry_hazards;
 	bool me;
 };
 

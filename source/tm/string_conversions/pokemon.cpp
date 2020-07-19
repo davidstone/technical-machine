@@ -109,7 +109,7 @@ auto to_string(Pokemon<generation> const pokemon) -> containers::string {
 		species_hp,
 		hp_to_string(),
 		hp_item,
-		to_string(pokemon.unmodified_item()),
+		to_string(pokemon.item(false, false)),
 		item_ability,
 		to_string(pokemon.initial_ability()),
 		status_to_string(),

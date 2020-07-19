@@ -18,6 +18,8 @@
 #pragma once
 
 #include <tm/compress.hpp>
+#include <tm/exists_if.hpp>
+#include <tm/generation.hpp>
 #include <tm/operators.hpp>
 
 #include <bounded/integer.hpp>
@@ -26,7 +28,7 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-template<int normal_duration, int max_duration = normal_duration>
+template<bool exists, int normal_duration, int max_duration = normal_duration>
 struct Screen {
 	static_assert(normal_duration <= max_duration, "Max duration cannot be less than normal duration.");
 
@@ -36,11 +38,19 @@ struct Screen {
 	constexpr auto turns_remaining() const {
 		return m_turns_remaining;
 	}
-	constexpr auto activate(auto && ... args) & -> void {
-		activate(std::integral_constant<bool, normal_duration == max_duration>{}, OPERATORS_FORWARD(args)...);
+	constexpr auto activate() & -> void requires(normal_duration == max_duration) {
+		set(bounded::constant<normal_duration>);
+	}
+	constexpr auto activate(bool const is_extended) & -> void requires(normal_duration != max_duration) {
+		set(BOUNDED_CONDITIONAL(is_extended,
+			bounded::constant<max_duration>,
+			bounded::constant<normal_duration>
+		));
 	}
 	constexpr auto decrement() & -> void {
-		--m_turns_remaining;
+		if constexpr (exists) {
+			--m_turns_remaining;
+		}
 	}
 	
 	friend auto operator==(Screen const &, Screen const &) -> bool = default;
@@ -48,29 +58,30 @@ struct Screen {
 		return compress(value.m_turns_remaining);
 	}
 private:
-	constexpr auto activate(std::true_type) & -> void {
-		set(bounded::constant<normal_duration>);
-	}
-	constexpr auto activate(std::false_type, bool const is_extended) & -> void {
-		set(BOUNDED_CONDITIONAL(is_extended,
-			bounded::constant<max_duration>,
-			bounded::constant<normal_duration>
-		));
-	}
 	using duration_type = bounded::clamped_integer<0, max_duration>;
 	constexpr auto set(duration_type const duration) & -> void {
-		if (m_turns_remaining == 0_bi) {
-			m_turns_remaining = duration;
+		if constexpr (exists) {
+			if (m_turns_remaining == 0_bi) {
+				m_turns_remaining = duration;
+			}
 		}
 	}
-	duration_type m_turns_remaining = duration_type(0_bi);
+	[[no_unique_address]] IntegerIf<duration_type, exists> m_turns_remaining = 0_bi;
 };
 
-using LuckyChant = Screen<5>;
-using Mist = Screen<5>;
-using Safeguard = Screen<5>;
-using Reflect = Screen<5, 8>;
-using LightScreen = Screen<5, 8>;
-using Tailwind = Screen<3>;
+template<Generation generation>
+using LuckyChant = Screen<generation >= Generation::four, 5>;
+
+using Mist = Screen<true, 5>;
+
+template<Generation generation>
+using Safeguard = Screen<generation >= Generation::two, 5>;
+
+using Reflect = Screen<true, 5, 8>;
+
+using LightScreen = Screen<true, 5, 8>;
+
+template<Generation generation>
+using Tailwind = Screen<generation >= Generation::four, 3>;
 
 }	// namespace technicalmachine

@@ -18,9 +18,17 @@
 #pragma once
 
 #include <tm/pokemon/end_of_turn_counter.hpp>
+#include <tm/generation.hpp>
 
 namespace technicalmachine {
 
-using PerishSong = EndOfTurnCounter<2, CounterOperations::is_active, CounterOperations::advance_one_turn_fixed, CounterOperations::activate>;
+template<Generation generation>
+using PerishSong = EndOfTurnCounter<
+	generation >= Generation::two,
+	2,
+	CounterOperations::is_active,
+	CounterOperations::advance_one_turn_fixed,
+	CounterOperations::activate
+>;
 
 }	// namespace technicalmachine

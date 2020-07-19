@@ -18,9 +18,17 @@
 #pragma once
 
 #include <tm/pokemon/end_of_turn_counter.hpp>
+#include <tm/generation.hpp>
 
 namespace technicalmachine {
 
-using TauntCounter = EndOfTurnCounter<2, CounterOperations::is_active, CounterOperations::advance_one_turn_variable, CounterOperations::activate>;
+template<Generation generation>
+using TauntCounter = EndOfTurnCounter<
+	generation >= Generation::three,
+	2,
+	CounterOperations::is_active,
+	CounterOperations::advance_one_turn_variable,
+	CounterOperations::activate
+>;
 
 }	// namespace technicalmachine

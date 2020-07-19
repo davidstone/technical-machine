@@ -18,9 +18,16 @@
 #pragma once
 
 #include <tm/pokemon/end_of_turn_counter.hpp>
+#include <tm/generation.hpp>
 
 namespace technicalmachine {
 
-using SlowStart = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::advance_one_turn_fixed>;
+template<Generation generation>
+using SlowStart = EndOfTurnCounter<
+	generation >= Generation::four,
+	4,
+	CounterOperations::is_active,
+	CounterOperations::advance_one_turn_fixed
+>;
 
 }	// namespace technicalmachine

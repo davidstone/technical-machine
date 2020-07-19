@@ -91,7 +91,7 @@ inline auto write_blank_pokemon(boost::property_tree::ptree & pt) -> void {
 template<Generation generation>
 void write_pokemon(Pokemon<generation> const & pokemon, boost::property_tree::ptree & pt) {
 	auto & member = pt.add("Pokemon", "");
-	member.put("<xmlattr>.Item", item_to_id(pokemon.unmodified_item()));
+	member.put("<xmlattr>.Item", item_to_id(pokemon.item(false, false)));
 	member.put("<xmlattr>.Ability", ability_to_id (pokemon.initial_ability()));
 	auto const species = pokemon.species();
 	auto const po_species = species_to_id(species);

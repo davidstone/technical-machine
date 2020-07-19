@@ -117,11 +117,18 @@ struct PokemonCollection {
 		auto const p3 = size(value.m_container) >= 4_bi ? compress(value.m_container[3_bi]) : 0_bi;
 		auto const p4 = size(value.m_container) >= 5_bi ? compress(value.m_container[4_bi]) : 0_bi;
 		auto const p5 = size(value.m_container) >= 6_bi ? compress(value.m_container[5_bi]) : 0_bi;
-		return bounded::tuple(
-			compress_combine(p0, p1),
-			compress_combine(p2, p3),
-			compress_combine(p4, p5, value.m_index, value.m_real_size)
-		);
+		if constexpr (generation == Generation::one) {
+			return bounded::tuple(
+				compress_combine(p0, p1, p2, value.m_index),
+				compress_combine(p3, p4, p5, value.m_real_size)
+			);
+		} else {
+			return bounded::tuple(
+				compress_combine(p0, p1),
+				compress_combine(p2, p3),
+				compress_combine(p4, p5, value.m_index, value.m_real_size)
+			);
+		}
 	}
 private:
 	void check_not_full() {

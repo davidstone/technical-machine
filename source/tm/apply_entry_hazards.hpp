@@ -42,13 +42,13 @@ constexpr auto removes_toxic_spikes(ActivePokemon<generation> const switcher) {
 }
 
 template<Generation generation>
-constexpr auto apply_toxic_spikes(EntryHazards const & hazards, MutableActivePokemon<generation> switcher, Weather const weather) {
+constexpr auto apply_toxic_spikes(EntryHazards<generation> const & hazards, MutableActivePokemon<generation> switcher, Weather const weather) {
 	auto const status = hazards.toxic_spikes() == 1_bi ? Statuses::poison : Statuses::toxic;
 	apply_status_to_self(status, switcher, weather);
 }
 
 template<Generation generation>
-constexpr auto apply(EntryHazards & hazards, MutableActivePokemon<generation> switcher, Weather const weather) -> void {
+constexpr auto apply(EntryHazards<generation> & hazards, MutableActivePokemon<generation> switcher, Weather const weather) -> void {
 	if (switcher.item(weather) == Item::Heavy_Duty_Boots) {
 		return;
 	}

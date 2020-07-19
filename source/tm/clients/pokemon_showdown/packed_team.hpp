@@ -51,7 +51,8 @@ auto to_packed_format(Team<generation> const & team) -> containers::string {
 		}
 		result += to_string(pokemon.species());
 		result += "||";
-		result += pokemon.unmodified_item() == Item::None ? "" : to_string(pokemon.unmodified_item());
+		auto const item = pokemon.item(false, false);
+		result += item == Item::None ? "" : to_string(item);
 		result += '|';
 		result += to_string(pokemon.initial_ability());
 		result += '|';

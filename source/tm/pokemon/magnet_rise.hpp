@@ -18,9 +18,18 @@
 #pragma once
 
 #include <tm/pokemon/end_of_turn_counter.hpp>
+#include <tm/generation.hpp>
 
 namespace technicalmachine {
 
-using MagnetRise = EndOfTurnCounter<4, CounterOperations::is_active, CounterOperations::turns_active, CounterOperations::advance_one_turn_fixed, CounterOperations::activate>;
+template<Generation generation>
+using MagnetRise = EndOfTurnCounter<
+	generation >= Generation::four,
+	4,
+	CounterOperations::is_active,
+	CounterOperations::turns_active,
+	CounterOperations::advance_one_turn_fixed,
+	CounterOperations::activate
+>;
  
 }	// namespace technicalmachine

@@ -261,7 +261,7 @@ auto use_swallow(MutableActivePokemon<generation> user, Weather const weather) {
 	if (stockpiles == 0_bi) {
 		return;
 	}
-	heal(user, weather, swallow_healing(bounded::integer<1, Stockpile::max>(stockpiles)));
+	heal(user, weather, swallow_healing(stockpiles));
 }
 
 

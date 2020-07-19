@@ -1,4 +1,4 @@
-// Copyright (C) 2014 David Stone
+// Copyright (C) 2020 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -15,20 +15,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-
-#include <tm/pokemon/end_of_turn_counter.hpp>
-#include <tm/generation.hpp>
-
-namespace technicalmachine {
-
-template<Generation generation>
-using HealBlock = EndOfTurnCounter<
-	generation >= Generation::four,
-	5,
-	CounterOperations::is_active,
-	CounterOperations::advance_one_turn_fixed,
-	CounterOperations::activate
->;
-
-}	// namespace technicalmachine
+#include <tm/evaluate/compressed_battle.hpp>

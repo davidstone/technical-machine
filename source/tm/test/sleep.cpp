@@ -148,9 +148,6 @@ struct Sleeper {
 	auto asleep() const {
 		return m_sleeper.pokemon().status().name() == Statuses::rest;
 	}
-	auto wished() const {
-		return m_sleeper.wish_is_active();
-	}
 
 private:
 	static auto make_team(bool const is_me, RegularMoves const moves, Weather & weather) {
@@ -191,122 +188,100 @@ void rest() {
 	auto sleeper = Sleeper<Generation::three>();
 	BOUNDED_ASSERT(!sleeper.asleep());
 	BOUNDED_ASSERT(sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 
 	sleeper.get_attacked();
 	BOUNDED_ASSERT(!sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 	sleeper.use_move(Moves::Rest);
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 	sleeper.end_turn();
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 
 	sleeper.use_move(Moves::Wish);
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 	sleeper.get_attacked();
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 	sleeper.end_turn();
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 
 	sleeper.use_move(Moves::Wish);
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 	sleeper.get_attacked();
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 	sleeper.end_turn();
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 
 	sleeper.use_move(Moves::Wish);
 	BOUNDED_ASSERT(!sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(sleeper.wished());
 }
 
 void sleep_talk_rest_generation_3() {
 	auto sleeper = Sleeper<Generation::three>();
 	BOUNDED_ASSERT(!sleeper.asleep());
 	BOUNDED_ASSERT(sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 
 	sleeper.get_attacked();
 	BOUNDED_ASSERT(!sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 	sleeper.use_move(Moves::Rest);
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 	sleeper.end_turn();
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 
 	sleeper.use_move(Moves::Sleep_Talk, Moves::Rest);
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 	sleeper.get_attacked();
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 	sleeper.end_turn();
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 
 	sleeper.use_move(Moves::Sleep_Talk, Moves::Rest);
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 	sleeper.get_attacked();
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 	sleeper.end_turn();
 	BOUNDED_ASSERT(sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(!sleeper.wished());
 
 
 	sleeper.use_move(Moves::Wish);
 	BOUNDED_ASSERT(!sleeper.asleep());
 	BOUNDED_ASSERT(!sleeper.at_max_hp());
-	BOUNDED_ASSERT(sleeper.wished());
 }
 
 }	// namespace

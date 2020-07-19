@@ -18,6 +18,7 @@
 #pragma once
 
 #include <tm/compress.hpp>
+#include <tm/exists_if.hpp>
 
 #include <bounded/integer.hpp>
 
@@ -26,21 +27,26 @@ using namespace bounded::literal;
 
 // Using an entry hazard puts them down on the opponent's side of the field.
 
+template<Generation generation>
 struct EntryHazards {
 	constexpr auto spikes() const {
 		return m_spikes;
 	}
-	constexpr auto stealth_rock() const {
+	constexpr auto stealth_rock() const -> bool {
 		return m_stealth_rock;
 	}
 	constexpr auto toxic_spikes() const {
 		return m_toxic_spikes;
 	}
 	constexpr auto add_spikes() & {
-		++m_spikes;
+		if constexpr (spikes_exist) {
+			++m_spikes;
+		}
 	}
 	constexpr auto add_toxic_spikes() & {
-		++m_toxic_spikes;
+		if constexpr (toxic_spikes_exist) {
+			++m_toxic_spikes;
+		}
 	}
 	constexpr auto clear_toxic_spikes() & {
 		m_toxic_spikes = 0_bi;
@@ -52,12 +58,17 @@ struct EntryHazards {
 	friend auto operator==(EntryHazards const &, EntryHazards const &) -> bool = default;
 	
 private:
-	bounded::clamped_integer<0, 3> m_spikes = 0_bi;
-	bounded::clamped_integer<0, 2> m_toxic_spikes = 0_bi;
-	bool m_stealth_rock = false;
+	static constexpr bool spikes_exist = generation >= Generation::two;
+	static constexpr auto max_spikes = generation == Generation::two ? 1 : 3;
+	static constexpr bool toxic_spikes_exist = generation >= Generation::four;
+	static constexpr bool stealth_rock_exists = generation >= Generation::four;
+	[[no_unique_address]] IntegerIf<bounded::clamped_integer<0, max_spikes>, spikes_exist> m_spikes = 0_bi;
+	[[no_unique_address]] IntegerIf<bounded::clamped_integer<0, 2>, toxic_spikes_exist> m_toxic_spikes = 0_bi;
+	[[no_unique_address]] BoolIf<stealth_rock_exists> m_stealth_rock;
 };
 
-constexpr auto compress(EntryHazards const value) {
+template<Generation generation>
+constexpr auto compress(EntryHazards<generation> const value) {
 	return compress_combine(value.spikes(), value.stealth_rock(), value.toxic_spikes());
 }
 

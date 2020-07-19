@@ -21,6 +21,7 @@
 #include <tm/pokemon/end_of_turn_counter.hpp>
 
 #include <tm/compress.hpp>
+#include <tm/generation.hpp>
 #include <tm/heal.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
@@ -53,7 +54,7 @@ struct PartialTrap {
 		return compress(value.m_base);
 	}
 private:
-	EndOfTurnCounter<7, CounterOperations::is_active, CounterOperations::activate, CounterOperations::advance_one_turn_variable> m_base;
+	EndOfTurnCounter<true, 7, CounterOperations::is_active, CounterOperations::activate, CounterOperations::advance_one_turn_variable> m_base;
 };
 
 }	// namespace technicalmachine

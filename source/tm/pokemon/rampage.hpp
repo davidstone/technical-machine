@@ -19,9 +19,17 @@
 #pragma once
 
 #include <tm/pokemon/end_of_turn_counter.hpp>
+#include <tm/generation.hpp>
 
 namespace technicalmachine {
 
-using Rampage = EndOfTurnCounter<3, CounterOperations::is_active, CounterOperations::advance_one_turn_variable, CounterOperations::activate>;
+// TODO: Change the duration in different generations
+using Rampage = EndOfTurnCounter<
+	true,
+	3,
+	CounterOperations::is_active,
+	CounterOperations::advance_one_turn_variable,
+	CounterOperations::activate
+>;
 
 }	// namespace technicalmachine

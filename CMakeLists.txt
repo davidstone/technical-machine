@@ -65,6 +65,7 @@ add_library(tm_common STATIC
 	source/tm/clients/timestamp.cpp
 
 	source/tm/evaluate/best_move.cpp
+	source/tm/evaluate/compressed_battle.cpp
 	source/tm/evaluate/depth.cpp
 	source/tm/evaluate/evaluate.cpp
 	source/tm/evaluate/expectiminimax.cpp
@@ -178,6 +179,7 @@ add_library(tm_common STATIC
 	source/tm/critical_hit.cpp
 	source/tm/end_of_turn.cpp
 	source/tm/entry_hazards.cpp
+	source/tm/exists_if.cpp
 	source/tm/files_in_path.cpp
 	source/tm/gender.cpp
 	source/tm/generation.cpp

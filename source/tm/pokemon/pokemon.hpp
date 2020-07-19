@@ -24,6 +24,7 @@
 
 #include <tm/ability.hpp>
 #include <tm/compress.hpp>
+#include <tm/exists_if.hpp>
 #include <tm/gender.hpp>
 #include <tm/generation.hpp>
 #include <tm/held_item.hpp>
@@ -133,43 +134,74 @@ struct Pokemon {
 	}
 
 	auto initial_ability() const {
-		return m_ability;
+		if constexpr (exists<decltype(m_ability)>) {
+			return m_ability;
+		} else {
+			return Ability::Honey_Gather;
+		}
 	}
 	void set_initial_ability(Ability const ability) & {
-		m_ability = ability;
-		m_ability_is_known = true;
+		if constexpr (exists<decltype(m_ability)>) {
+			m_ability = ability;
+			m_ability_is_known = true;
+		}
 	}
 
 	auto gender() const {
-		return m_gender;
+		if constexpr (exists<decltype(m_gender)>) {
+			return m_gender;
+		} else {
+			return Gender::genderless;
+		}
 	}
 
 	auto happiness() const -> Happiness {
-		return m_happiness;
+		if constexpr (exists<decltype(m_happiness)>) {
+			return m_happiness;
+		} else {
+			return Happiness();
+		}
 	}
 
 	auto hidden_power() const -> bounded::optional<HiddenPower> {
-		return m_hidden_power;
+		if constexpr (exists<decltype(m_hidden_power)>) {
+			return m_hidden_power;
+		} else {
+			return bounded::none;
+		}
 	}
 
 	auto item(bool const embargo, bool const magic_room) const -> Item {
-		return m_item.get(generation, embargo, magic_room);
+		if constexpr (exists<decltype(m_item)>) {
+			return m_item.get(generation, embargo, magic_room);
+		} else {
+			return Item::None;
+		}
 	}
-	auto unmodified_item() const -> Item {
-		return m_item.get(generation, false, false);
+	auto remove_item() & -> bounded::optional<Item> {
+		if constexpr (exists<decltype(m_item)>) {
+			return m_item.remove();
+		} else {
+			return bounded::none;
+		}
 	}
-	auto remove_item() & {
-		return m_item.remove();
-	}
-	auto destroy_item() & {
-		return m_item.destroy();
+	auto destroy_item() & -> bool {
+		if constexpr (exists<decltype(m_item)>) {
+			return m_item.destroy();
+		} else {
+			return false;
+		}
 	}
 	auto recycle_item() & -> void {
-		m_item.recycle();
+		if constexpr (exists<decltype(m_item)>) {
+			m_item.recycle();
+		}
 	}
 	auto set_item(Item const item) & -> void {
-		m_item = HeldItem(item);
-		m_item_is_known = true;
+		if constexpr (exists<decltype(m_item)>) {
+			m_item = HeldItem(item);
+			m_item_is_known = true;
+		}
 	}
 
 	auto level() const -> Level {
@@ -177,7 +209,11 @@ struct Pokemon {
 	}
 
 	auto nature() const -> Nature {
-		return m_nature;
+		if constexpr (exists<decltype(m_nature)>) {
+			return m_nature;
+		} else {
+			return Nature::Hardy;
+		}
 	}
 	auto species() const -> Species {
 		return m_species;
@@ -197,8 +233,10 @@ struct Pokemon {
 		return m_item_is_known;
 	}
 	auto set_nature(Nature const nature) -> void {
-		m_nature = nature;
-		m_nature_is_known = true;
+		if constexpr (exists<decltype(m_nature)>) {
+			m_nature = nature;
+			m_nature_is_known = true;
+		}
 	}
 	auto nature_is_known() const -> bool {
 		return m_nature_is_known;
@@ -231,15 +269,15 @@ private:
 	Stats m_stats;
 
 	Species m_species;
-	HeldItem m_item;
-	Ability m_ability;
-	Gender m_gender;
+	[[no_unique_address]] ExistsIf<HeldItem, generation >= Generation::two> m_item;
+	[[no_unique_address]] ExistsIf<Ability, generation >= Generation::three> m_ability;
+	[[no_unique_address]] ExistsIf<Gender, generation >= Generation::two> m_gender;
 	Status m_status;
-	Nature m_nature;
+	[[no_unique_address]] ExistsIf<Nature, generation >= Generation::three> m_nature;
 
 	Level m_level;
-	Happiness m_happiness;
-	bounded::optional<HiddenPower> m_hidden_power;
+	[[no_unique_address]] ExistsIf<Happiness, generation >= Generation::two> m_happiness;
+	[[no_unique_address]] ExistsIf<bounded::optional<HiddenPower>, generation >= Generation::two> m_hidden_power;
 
 	bool m_has_been_seen : 1;
 	

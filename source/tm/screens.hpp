@@ -23,6 +23,7 @@
 
 namespace technicalmachine {
 
+template<Generation generation>
 struct Screens {
 	constexpr auto decrement() & {
 		m_light_screen.decrement();
@@ -82,7 +83,7 @@ struct Screens {
 	}
 
 	friend auto operator==(Screens const &, Screens const &) -> bool = default;
-	friend constexpr auto compress(Screens const value) {
+	friend constexpr auto compress(Screens<generation> const value) {
 		return compress_combine(
 			value.light_screen(),
 			value.reflect(),
@@ -96,10 +97,10 @@ struct Screens {
 private:
 	LightScreen m_light_screen;
 	Reflect m_reflect;
-	LuckyChant m_lucky_chant;
+	[[no_unique_address]] LuckyChant<generation> m_lucky_chant;
 	Mist m_mist;
-	Safeguard m_safeguard;
-	Tailwind m_tailwind;
+	[[no_unique_address]] Safeguard<generation> m_safeguard;
+	[[no_unique_address]] Tailwind<generation> m_tailwind;
 };
 
 } // namespace technicalmachine

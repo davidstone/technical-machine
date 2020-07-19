@@ -22,6 +22,7 @@
 
 #include <tm/type/effectiveness.hpp>
 
+#include <tm/exists_if.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
@@ -53,11 +54,19 @@ struct Evaluate {
 			static_cast<int>(bounded::max_value<value_type>)
 		>;
 
-		m_spikes = pt.get<underlying_type>("spikes", 0_bi);
-		m_stealth_rock = pt.get<underlying_type>("stealth_rock", 0_bi);
-		m_toxic_spikes = pt.get<underlying_type>("toxic_spikes", 0_bi);
 		m_hp = pt.get<underlying_type>("hp", 0_bi);
-		m_hidden = pt.get<underlying_type>("hidden", 0_bi);
+		if constexpr (exists<decltype(m_hidden)>) {
+			m_hidden = pt.get<underlying_type>("hidden", 0_bi);
+		}
+		if constexpr (exists<decltype(m_spikes)>) {
+			m_spikes = pt.get<underlying_type>("spikes", 0_bi);
+		}
+		if constexpr (exists<decltype(m_stealth_rock)>) {
+			m_stealth_rock = pt.get<underlying_type>("stealth_rock", 0_bi);
+		}
+		if constexpr (exists<decltype(m_toxic_spikes)>) {
+			m_toxic_spikes = pt.get<underlying_type>("toxic_spikes", 0_bi);
+		}
 	}
 
 	auto operator()(Team<generation> const & ai, Team<generation> const & foe) const {
@@ -68,16 +77,53 @@ private:
 	// Arbitrary values
 	using value_type = bounded::integer<-4096, 4096>;
 
-	auto score_pokemon(Pokemon<generation> const & pokemon, EntryHazards const & entry_hazards) const {
+	auto hp(Pokemon<generation> const & pokemon) const {
+		return value_type(hp_ratio(pokemon) * m_hp);
+	}
+
+	auto hidden(Pokemon<generation> const & pokemon) const {
+		if constexpr (exists<decltype(m_hidden)>) {
+			return !pokemon.has_been_seen() ? m_hidden : 0_bi;
+		} else {
+			return 0_bi;
+		}
+	}
+
+	auto spikes(EntryHazards<generation> const entry_hazards, bool const grounded) const {
+		if constexpr (exists<decltype(m_spikes)>) {
+			return grounded ? entry_hazards.spikes() * m_spikes : 0_bi;
+		} else {
+			return 0_bi;
+		}
+	}
+
+	auto stealth_rock(EntryHazards<generation> const entry_hazards, PokemonTypes const types) const {
+		if constexpr (exists<decltype(m_stealth_rock)>) {
+			return entry_hazards.stealth_rock() ? Effectiveness(generation, Type::Rock, types) * m_stealth_rock : 0_bi;
+		} else {
+			return 0_bi;
+		}
+	}
+
+	auto toxic_spikes(EntryHazards<generation> const entry_hazards, bool const grounded) const {
+		if constexpr (exists<decltype(m_toxic_spikes)>) {
+			return grounded ? entry_hazards.toxic_spikes() * m_toxic_spikes : 0_bi;
+		} else {
+			return 0_bi;
+		}
+	}
+
+	auto score_pokemon(Pokemon<generation> const & pokemon, EntryHazards<generation> const entry_hazards) const {
 		auto const types = PokemonTypes(generation, pokemon.species());
 		auto const grounded =
 			containers::any_equal(types, Type::Flying) or
 			is_immune_to_ground(pokemon.initial_ability());
 		return
-			value_type(hp_ratio(pokemon) * m_hp) +
-			(!pokemon.has_been_seen() ? m_hidden : 0_bi) +
-			(entry_hazards.stealth_rock() ? Effectiveness(generation, Type::Rock, types) * m_stealth_rock : 0_bi) +
-			(grounded ? entry_hazards.spikes() * m_spikes + entry_hazards.toxic_spikes() * m_toxic_spikes : 0_bi);
+			hp(pokemon) +
+			hidden(pokemon) +
+			spikes(entry_hazards, grounded) +
+			stealth_rock(entry_hazards, types) +
+			toxic_spikes(entry_hazards, grounded);
 	}
 
 	auto score_team(Team<generation> const & team) const {
@@ -88,12 +134,11 @@ private:
 		return containers::sum(containers::transform(containers::filter(team.all_pokemon(), has_hp), get_score));
 	}
 
-	value_type m_spikes;
-	value_type m_stealth_rock;
-	value_type m_toxic_spikes;
-
 	value_type m_hp;
-	value_type m_hidden;
+	[[no_unique_address]] ExistsIf<value_type, generation <= Generation::four, __LINE__> m_hidden;
+	[[no_unique_address]] ExistsIf<value_type, generation >= Generation::two, __LINE__> m_spikes;
+	[[no_unique_address]] ExistsIf<value_type, generation >= Generation::four, __LINE__> m_stealth_rock;
+	[[no_unique_address]] ExistsIf<value_type, generation >= Generation::four, __LINE__> m_toxic_spikes;
 };
 
 struct AllEvaluate {

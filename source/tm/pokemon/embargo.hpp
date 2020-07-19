@@ -18,9 +18,17 @@
 #pragma once
 
 #include <tm/pokemon/end_of_turn_counter.hpp>
+#include <tm/generation.hpp>
 
 namespace technicalmachine {
 
-using EmbargoCounter = EndOfTurnCounter<5, CounterOperations::is_active, CounterOperations::advance_one_turn_fixed, CounterOperations::activate>;
+template<Generation generation>
+using EmbargoCounter = EndOfTurnCounter<
+	generation >= Generation::four,
+	5,
+	CounterOperations::is_active,
+	CounterOperations::advance_one_turn_fixed,
+	CounterOperations::activate
+>;
 
 }	// namespace technicalmachine

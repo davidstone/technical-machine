@@ -145,7 +145,7 @@ struct tombstone_traits<technicalmachine::HiddenPower> {
 	static constexpr auto spare_representations = base::spare_representations;
 
 	static constexpr auto make(auto const index) noexcept {
-		return HiddenPower(bounded::none, index);
+		return technicalmachine::HiddenPower(bounded::none, index);
 	}
 	static constexpr auto index(technicalmachine::HiddenPower const value) {
 		return base::index(value.power());
