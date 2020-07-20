@@ -81,10 +81,13 @@ void phaze_in_different_pokemon(Team<generation> const & team, TeamIndex const n
 	}
 }
 
-void test_combinations(Team<generation> team) {
+void test_combinations() {
 	for (auto const foe_size : containers::integer_range(2_bi, max_pokemon_per_team)) {
-		add_pokemon(team, static_cast<Species>(foe_size));
-		auto collection = all_probabilities(generation, Moves::Whirlwind, foe_size);
+		auto team = Team<generation>(foe_size);
+		for (auto const species : containers::integer_range(foe_size)) {
+			add_pokemon(team, static_cast<Species>(species));
+		}
+		auto collection = all_probabilities(Moves::Whirlwind, team);
 		auto const expected = foe_size - 1_bi;
 		if (size(collection) != expected) {
 			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected) + " but got " + to_string(size(collection)));
@@ -106,9 +109,7 @@ void test_combinations(Team<generation> team) {
 
 void variable_collection_tests() {
 	std::cout << "\tRunning variable collection tests.\n";
-	auto team = Team<generation>(max_pokemon_per_team);
-	add_pokemon(team, static_cast<Species>(1));
-	test_combinations(std::move(team));
+	test_combinations();
 }
 
 }	// namespace technicalmachine

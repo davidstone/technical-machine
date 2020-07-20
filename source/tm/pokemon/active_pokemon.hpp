@@ -445,10 +445,11 @@ struct ActivePokemon : ActivePokemonImpl<generation, true> {
 };
 
 template<Generation generation>
-inline auto is_type(ActivePokemon<generation> const pokemon, Type const type) -> bool {
-	return
-		(type != Type::Flying or !pokemon.is_roosting()) and
-		containers::any_equal(pokemon.types(), type);
+auto is_type(ActivePokemon<generation> const pokemon, auto const... types) -> bool requires(sizeof...(types) > 0) {
+	return (... or (
+		(types != Type::Flying or !pokemon.is_roosting()) and
+		containers::any_equal(pokemon.types(), types)
+	));
 }
 
 template<Generation generation>

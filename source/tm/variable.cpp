@@ -57,6 +57,7 @@ namespace {
 
 template<std::size_t... indexes>
 constexpr auto generic_probability(std::index_sequence<indexes...>, auto... probabilities) {
+	BOUNDED_ASSERT((... and (probabilities != 0.0)));
 	return Probabilities{{Variable{bounded::constant<indexes>}, probabilities}...};
 }
 
@@ -65,7 +66,10 @@ constexpr auto generic_probability(auto... probabilities) {
 }
 
 constexpr auto single_probability(double const probability) {
-	return generic_probability(1.0 - probability, probability);
+	return
+		probability == 1.0 ? Probabilities{{Variable{bounded::constant<1>}, 1.0}} :
+		probability == 0.0 ? generic_probability(1.0) :
+		generic_probability(1.0 - probability, probability);
 }
 
 constexpr auto constant_probability(auto const count) {
@@ -76,19 +80,87 @@ constexpr auto constant_probability(auto const count) {
 	return probabilities;
 }
 
-auto phaze_probability(TeamSize const foe_size) {
-	switch(foe_size.value()) {
+auto phaze_probability(TeamSize const target_size) {
+	switch(target_size.value()) {
 		case 1:
 		case 2:
 			return generic_probability(1.0);
 		default:
-			return constant_probability(bounded::integer<3, bounded::detail::builtin_max_value<TeamSize>>(foe_size) - 1_bi);
+			return constant_probability(bounded::integer<3, bounded::detail::builtin_max_value<TeamSize>>(target_size) - 1_bi);
 	}
+}
+
+template<Generation generation>
+constexpr auto generation_one_status_side_effect(double const probability, Team<generation> const & target, Type const immune_type, Type const move_type) {
+	return
+		(generation == Generation::one and is_type(target.pokemon(), move_type)) ? generic_probability(1.0) :
+		is_type(target.pokemon(), immune_type) ? generic_probability(1.0) :
+		single_probability(probability);
+}
+
+template<Generation generation>
+constexpr auto status_side_effect(double const probability, Team<generation> const & target, auto const... immune_types) {
+	return
+		is_type(target.pokemon(), immune_types...) ? generic_probability(1.0) :
+		single_probability(probability);
+}
+
+template<Generation generation>
+constexpr auto tri_attack_probabilities(Team<generation> const & target) {
+	constexpr auto no_status = Variable{0_bi};
+	auto status = [](auto const index) {
+		return VariableProbability{Variable{index}, 1.0 / 15.0};
+	};
+	constexpr auto burn = status(1_bi);
+	constexpr auto freeze = status(2_bi);
+	constexpr auto paralysis = status(3_bi);
+	constexpr auto common = Probabilities{{no_status, 12.0 / 15.0}, burn, freeze, paralysis};
+	switch (generation) {
+		case Generation::one:
+			return single_probability(0.0);
+		case Generation::two:
+			// TODO: Can thaw 1/3 of the time
+			return common;
+		case Generation::three:
+		case Generation::four:
+		case Generation::five: {
+			auto is = [&](Type const type) {
+				return is_type(target.pokemon(), type);
+			};
+			return
+				is(Type::Fire) ? Probabilities{{no_status, 13.0 / 15.0}, freeze, paralysis} :
+				is(Type::Ice) ? Probabilities{{no_status, 13.0 / 15.0}, burn, paralysis} :
+				common;
+		}
+		case Generation::six:
+		case Generation::seven:
+		case Generation::eight: {
+			auto const is_fire = is_type(target.pokemon(), Type::Fire);
+			auto const is_ice = is_type(target.pokemon(), Type::Ice);
+			auto const is_electric = is_type(target.pokemon(), Type::Electric);
+			return
+				is_fire and is_ice ? Probabilities{{no_status, 14.0 / 15.0}, paralysis} :
+				is_fire and is_electric ? Probabilities{{no_status, 14.0 / 15.0}, freeze} :
+				is_ice and is_electric ? Probabilities{{no_status, 14.0 / 15.0}, burn} :
+				is_fire ? Probabilities{{no_status, 13.0 / 15.0}, freeze, paralysis} :
+				is_ice ? Probabilities{{no_status, 13.0 / 15.0}, burn, paralysis} :
+				is_electric ? Probabilities{{no_status, 13.0 / 15.0}, burn, freeze} :
+				common;
+		}
+	}
+}
+
+template<Generation generation>
+constexpr auto fang_side_effect(Team<generation> const & target, Type const immune_type) {
+	return is_type(target.pokemon(), immune_type) ?
+		Probabilities{{Variable{bounded::constant<0>}, 0.9}, {Variable{bounded::constant<2>}, 0.1}} :
+		generic_probability(0.81, 0.09, 0.09, 0.01);
 }
 
 }	// namespace
 
-auto all_probabilities(Generation const generation, Moves const move, TeamSize const foe_size) -> Probabilities {
+template<Generation generation>
+auto all_probabilities(Moves const move, Team<generation> const & target) -> Probabilities {
 	switch (move) {
 		case Moves::Absorb:
 		case Moves::Acid_Armor:
@@ -160,7 +232,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Crush_Grip:
 		case Moves::Curse:
 		case Moves::Cut:
-		case Moves::Dark_Void:
 		case Moves::Defend_Order:
 		case Moves::Defense_Curl:
 		case Moves::Defog:
@@ -237,10 +308,8 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Giga_Drain:
 		case Moves::Giga_Impact:
 		case Moves::Glaciate:
-		case Moves::Glare:
 		case Moves::Grass_Knot:
 		case Moves::Grass_Pledge:
-		case Moves::Grass_Whistle:
 		case Moves::Gravity:
 		case Moves::Growl:
 		case Moves::Growth:
@@ -278,7 +347,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Hydro_Pump:
 		case Moves::Hyper_Beam:
 		case Moves::Hyper_Voice:
-		case Moves::Hypnosis:
 		case Moves::Ice_Ball:
 		case Moves::Ice_Shard:
 		case Moves::Icicle_Spear:
@@ -300,7 +368,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Leer:
 		case Moves::Light_Screen:
 		case Moves::Lock_On:
-		case Moves::Lovely_Kiss:
 		case Moves::Low_Sweep:
 		case Moves::Lucky_Chant:
 		case Moves::Lunar_Dance:
@@ -354,8 +421,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Petal_Dance:
 		case Moves::Pin_Missile:
 		case Moves::Pluck:
-		case Moves::Poison_Gas:
-		case Moves::Poison_Powder:
 		case Moves::Pound:
 		case Moves::Power_Gem:
 		case Moves::Power_Split:
@@ -423,7 +488,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Shift_Gear:
 		case Moves::Shock_Wave:
 		case Moves::Simple_Beam:
-		case Moves::Sing:
 		case Moves::Sketch:
 		case Moves::Skill_Swap:
 		case Moves::Skull_Bash:
@@ -432,7 +496,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Slack_Off:
 		case Moves::Slam:
 		case Moves::Slash:
-		case Moves::Sleep_Powder:
 		case Moves::Sleep_Talk:
 		case Moves::Smack_Down:
 		case Moves::Smelling_Salts:
@@ -450,7 +513,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Spite:
 		case Moves::Spit_Up:
 		case Moves::Splash:
-		case Moves::Spore:
 		case Moves::Stealth_Rock:
 		case Moves::Stockpile:
 		case Moves::Stone_Edge:
@@ -460,7 +522,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::String_Shot:
 		case Moves::Struggle:
 		case Moves::Struggle_Bug:
-		case Moves::Stun_Spore:
 		case Moves::Submission:
 		case Moves::Substitute:
 		case Moves::Sucker_Punch:
@@ -497,10 +558,8 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Teleport:
 		case Moves::Thief:
 		case Moves::Thrash:
-		case Moves::Thunder_Wave:
 		case Moves::Tickle:
 		case Moves::Torment:
-		case Moves::Toxic:
 		case Moves::Toxic_Spikes:
 		case Moves::Transform:
 		case Moves::Trick:
@@ -525,7 +584,6 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Whirlpool:
 		case Moves::Wide_Guard:
 		case Moves::Wild_Charge:
-		case Moves::Will_O_Wisp:
 		case Moves::Wing_Attack:
 		case Moves::Wish:
 		case Moves::Withdraw:
@@ -539,43 +597,25 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Yawn:
 			return generic_probability(1.0);
 		case Moves::Ancient_Power:
-		case Moves::Blaze_Kick:
-		case Moves::Blizzard:
 		case Moves::Bone_Club:
 		case Moves::Bug_Buzz:
 		case Moves::Confusion:
-		case Moves::Cross_Poison:
 		case Moves::Earth_Power:
-		case Moves::Ember:
 		case Moves::Energy_Ball:
 		case Moves::Extrasensory:
-		case Moves::Fire_Punch:
-		case Moves::Flamethrower:
-		case Moves::Flame_Wheel:
-		case Moves::Flare_Blitz:
 		case Moves::Flash_Cannon:
 		case Moves::Focus_Blast:
 		case Moves::Headbutt:
-		case Moves::Heat_Wave:
 		case Moves::Hyper_Fang:
-		case Moves::Ice_Beam:
-		case Moves::Ice_Punch:
 		case Moves::Iron_Tail:
 		case Moves::Metal_Claw:
 		case Moves::Ominous_Wind:
-		case Moves::Poison_Tail:
-		case Moves::Powder_Snow:
 		case Moves::Psybeam:
 		case Moves::Relic_Song:
 		case Moves::Signal_Beam:
 		case Moves::Silver_Wind:
-		case Moves::Sludge_Wave:
 		case Moves::Steel_Wing:
 		case Moves::Stomp:
-		case Moves::Thunderbolt:
-		case Moves::Thunder_Punch:
-		case Moves::Thunder_Shock:
-		case Moves::Volt_Tackle:
 			return single_probability(0.1);
 		case Moves::Blue_Flare:
 		case Moves::Bolt_Strike:
@@ -585,60 +625,153 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Meteor_Mash:
 		case Moves::Rock_Climb:
 		case Moves::Shadow_Ball:
-		case Moves::Twineedle:
 		case Moves::Twister:
 		case Moves::Water_Pulse:
 		case Moves::Zen_Headbutt:
 			return single_probability(0.2);
 		case Moves::Air_Slash:
 		case Moves::Astonish:
-		case Moves::Body_Slam:
 		case Moves::Bounce:
-		case Moves::Discharge:
 		case Moves::Dragon_Breath:
-		case Moves::Force_Palm:
 		case Moves::Freeze_Shock:
-		case Moves::Gunk_Shot:
 		case Moves::Heart_Stamp:
 		case Moves::Hurricane:
 		case Moves::Ice_Burn:
 		case Moves::Icicle_Crash:
 		case Moves::Iron_Head:
-		case Moves::Lava_Plume:
 		case Moves::Leaf_Tornado:
-		case Moves::Lick:
 		case Moves::Mirror_Shot:
 		case Moves::Mud_Bomb:
 		case Moves::Muddy_Water:
 		case Moves::Needle_Arm:
-		case Moves::Poison_Fang:
-		case Moves::Poison_Jab:
 		case Moves::Rolling_Kick:
-		case Moves::Scald:
-		case Moves::Searing_Shot:
-		case Moves::Secret_Power:
-		case Moves::Sludge_Bomb:
 		case Moves::Snore:
-		case Moves::Spark:
 		case Moves::Steamroller:
 			return single_probability(0.3);
 		case Moves::Night_Daze:
 		case Moves::Seed_Flare:
-		case Moves::Smog:
 			return single_probability(0.4);
 		case Moves::Crush_Claw:
 		case Moves::Mist_Ball:
 		case Moves::Octazooka:
 		case Moves::Razor_Shell:
 		case Moves::Rock_Smash:
-		case Moves::Sacred_Fire:
 			return single_probability(0.5);
 		case Moves::Charge_Beam:
 			return single_probability(0.7);
 		case Moves::Dynamic_Punch:
+			return generic_probability(1.0);
+		case Moves::Blizzard:
+		case Moves::Ice_Beam:
+		case Moves::Ice_Punch:
+		case Moves::Powder_Snow:
+			return status_side_effect(0.1, target, Type::Ice);
+		case Moves::Blaze_Kick:
+		case Moves::Ember:
+		case Moves::Fire_Punch:
+		case Moves::Flame_Wheel:
+		case Moves::Flamethrower:
+		case Moves::Flare_Blitz:
+		case Moves::Heat_Wave:
+			return status_side_effect(0.1, target, Type::Fire);
+		case Moves::Lava_Plume:
+		case Moves::Scald:
+		case Moves::Searing_Shot:
+			return status_side_effect(0.3, target, Type::Fire);
+		case Moves::Sacred_Fire:
+			return status_side_effect(0.5, target, Type::Fire);
 		case Moves::Inferno:
-		case Moves::Zap_Cannon:
+		case Moves::Will_O_Wisp:
+			return status_side_effect(1.0, target, Type::Fire);
+		case Moves::Cross_Poison:
+		case Moves::Poison_Tail:
+		case Moves::Sludge_Wave:
+			return status_side_effect(0.1, target, Type::Poison, Type::Steel);
+		case Moves::Gunk_Shot:
+		case Moves::Poison_Fang:
+		case Moves::Poison_Jab:
+		case Moves::Sludge_Bomb:
+			return status_side_effect(0.3, target, Type::Poison, Type::Steel);
+		case Moves::Poison_Sting:
+			return status_side_effect(
+				generation == Generation::one ? 0.2 : 0.3,
+				target,
+				Type::Poison,
+				Type::Steel
+			);
+		case Moves::Sludge:
+			return status_side_effect(
+				generation == Generation::one ? 0.4 : 0.3,
+				target,
+				Type::Poison,
+				Type::Steel
+			);
+		case Moves::Smog:
+			return status_side_effect(0.4, target, Type::Poison, Type::Steel);
+		case Moves::Twineedle:
+			return generation == Generation::two ?
+				status_side_effect(0.2, target, Type::Poison) :
+				status_side_effect(0.2, target, Type::Poison, Type::Steel);
+		case Moves::Toxic:
+			return status_side_effect(1.0, target, Type::Poison, Type::Steel);
+		case Moves::Poison_Gas:
+		case Moves::Poison_Powder:
+			return generation <= Generation::five ?
+				status_side_effect(1.0, target, Type::Poison, Type::Steel) :
+				status_side_effect(1.0, target, Type::Grass, Type::Poison, Type::Steel);
+		case Moves::Dark_Void:
+		case Moves::Grass_Whistle:
+		case Moves::Hypnosis:
+		case Moves::Lovely_Kiss:
+		case Moves::Sing:
 			return single_probability(1.0);
+		case Moves::Sleep_Powder:
+		case Moves::Spore:
+		case Moves::Stun_Spore:
+			return generation <= Generation::five ?
+				single_probability(1.0) :
+				status_side_effect(1.0, target, Type::Grass);
+		case Moves::Body_Slam:
+			return generation_one_status_side_effect(0.3, target, Type::Ghost, Type::Normal);
+		case Moves::Force_Palm:
+		case Moves::Secret_Power:
+			return status_side_effect(0.3, target, Type::Ghost);
+		case Moves::Lick:
+			return generation_one_status_side_effect(0.3, target, Type::Normal, Type::Ghost);
+		case Moves::Thunder:
+			return generation_one_status_side_effect(
+				generation == Generation::one ? 0.1 : 0.3,
+				target,
+				Type::Ground,
+				Type::Electric
+			);
+		case Moves::Thunderbolt:
+		case Moves::Thunder_Punch:
+		case Moves::Thunder_Shock:
+			return generation_one_status_side_effect(0.1, target, Type::Ground, Type::Electric);
+		case Moves::Volt_Tackle:
+			return status_side_effect(0.1, target, Type::Ground);
+		case Moves::Discharge:
+		case Moves::Spark:
+			return status_side_effect(0.3, target, Type::Ground);
+		case Moves::Thunder_Wave:
+		case Moves::Zap_Cannon:
+			return status_side_effect(1.0, target, Type::Ground);
+		case Moves::Glare:
+			switch (generation) {
+				case Generation::one:
+					return single_probability(1.0);
+				case Generation::two:
+				case Generation::three:
+					return status_side_effect(1.0, target, Type::Ghost);
+				case Generation::four:
+				case Generation::five:
+					return single_probability(1.0);
+				case Generation::six:
+				case Generation::seven:
+				case Generation::eight:
+					return status_side_effect(1.0, target, Type::Electric);
+			}
 		case Moves::Acid:
 		case Moves::Aurora_Beam:
 		case Moves::Bubble:
@@ -647,23 +780,23 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Psychic:
 			return generation <= Generation::one ? single_probability(0.332) : single_probability(0.1);
 		case Moves::Bite:
-		case Moves::Poison_Sting:
-		case Moves::Thunder:
 			return generation <= Generation::one ? single_probability(0.1) : single_probability(0.3);
 		case Moves::Dizzy_Punch:
 			return generation <= Generation::one ? generic_probability(1.0) : single_probability(0.2);
 		case Moves::Fire_Blast:
-			return generation <= Generation::one ? single_probability(0.3) : single_probability(0.1);
+			return generation <= Generation::one ?
+				status_side_effect(0.3, target, Type::Fire) :
+				status_side_effect(0.1, target, Type::Fire);
 		case Moves::Fire_Fang:
+			return fang_side_effect(target, Type::Fire);
 		case Moves::Ice_Fang:
+			return fang_side_effect(target, Type::Ice);
 		case Moves::Thunder_Fang:
-			return generic_probability(0.79, 0.10, 0.10, 0.01);
+			return fang_side_effect(target, Type::Ground);
 		case Moves::Low_Kick:
 			return generation <= Generation::two ? single_probability(0.3) : generic_probability(1.0);
-		case Moves::Sludge:
-			return generation <= Generation::one ? single_probability(0.4) : single_probability(0.3);
 		case Moves::Tri_Attack:
-			return generic_probability(12.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0, 1.0 / 15.0);
+			return tri_attack_probabilities(target);
 		case Moves::Waterfall:
 			return generation <= Generation::three ? generic_probability(1.0) : single_probability(0.2);
 		case Moves::Magnitude:
@@ -720,7 +853,7 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 			return constant_probability(7_bi);
 		case Moves::Roar:
 		case Moves::Whirlwind:
-			return phaze_probability(foe_size);
+			return phaze_probability(target.size());
 		case Moves::Flying_Press:
 		case Moves::Mat_Block:
 		case Moves::Belch:
@@ -886,7 +1019,20 @@ auto all_probabilities(Generation const generation, Moves const move, TeamSize c
 		case Moves::Sparkly_Swirl:
 		case Moves::Veevee_Volley:
 		case Moves::Double_Iron_Bash:
-			return single_probability(0.0);
+			return generic_probability(1.0);
 	}
 }
-}	// namespace technicalmachine
+
+#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
+	template auto all_probabilities<generation>(Moves, Team<generation> const & other) -> Probabilities
+
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::three);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::four);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::five);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
+TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
+
+} // namespace technicalmachine

@@ -135,9 +135,14 @@ auto fling_side_effects(MutableActivePokemon<generation> user, Team<generation> 
 		BOUNDED_ASSERT(uproar_does_not_apply(status));
 		technicalmachine::apply_status(status, target, user, weather);
 	};
+	auto target_is_type = [&](auto const... types) {
+		return is_type(as_const(target.pokemon()), types...);
+	};
 	switch (user.item(weather)) {
 		case Item::Flame_Orb:
-			apply_status(Statuses::burn);
+			if (!target_is_type(Type::Fire)) {
+				apply_status(Statuses::burn);
+			}
 			break;
 		case Item::Kings_Rock:
 		case Item::Razor_Fang:
@@ -150,10 +155,14 @@ auto fling_side_effects(MutableActivePokemon<generation> user, Team<generation> 
 			apply_mental_herb(target.pokemon());
 			break;
 		case Item::Poison_Barb:
-			apply_status(Statuses::poison);
+			if (!target_is_type(Type::Poison, Type::Steel)) {
+				apply_status(Statuses::poison);
+			}
 			break;
 		case Item::Toxic_Orb:
-			apply_status(Statuses::toxic);
+			if (!target_is_type(Type::Poison, Type::Steel)) {
+				apply_status(Statuses::toxic);
+			}
 			break;
 		case Item::White_Herb:
 			apply_white_herb(target.pokemon());
@@ -162,14 +171,6 @@ auto fling_side_effects(MutableActivePokemon<generation> user, Team<generation> 
 			break;
 	}
 	user.remove_item();
-}
-
-
-template<Generation generation>
-auto grass_status(MutableActivePokemon<generation> const user, Team<generation> & target, Weather const weather, Statuses const status) {
-	if (generation <= Generation::five or !is_type(as_const(target.pokemon()), Type::Grass)) {
-		apply_status(status, target, user, weather);
-	}
 }
 
 
@@ -381,10 +382,12 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 		case Moves::Flame_Wheel:
 		case Moves::Flamethrower:
 		case Moves::Heat_Wave:
+		case Moves::Inferno:
 		case Moves::Lava_Plume:
 		case Moves::Sacred_Fire:
 		case Moves::Scald:
 		case Moves::Searing_Shot:
+		case Moves::Will_O_Wisp:
 			if (executed.variable.effect_activates()) {
 				other.pokemon().apply_status(Statuses::burn, user, weather);
 			}
@@ -406,16 +409,17 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 		case Moves::Discharge:
 		case Moves::Dragon_Breath:
 		case Moves::Force_Palm:
+		case Moves::Glare:
 		case Moves::Lick:
 		case Moves::Secret_Power:
 		case Moves::Spark:
+		case Moves::Stun_Spore:
 		case Moves::Thunder:
 		case Moves::Thunderbolt:
 		case Moves::Thunder_Punch:
 		case Moves::Thunder_Shock:
-			if (generation == Generation::one and is_type(as_const(other.pokemon()), executed.move.type)) {
-				break;
-			}
+		case Moves::Thunder_Wave:
+		case Moves::Zap_Cannon:
 			if (executed.variable.effect_activates()) {
 				other.pokemon().apply_status(Statuses::paralysis, user, weather);
 			}
@@ -535,7 +539,9 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 			break;
 		case Moves::Cross_Poison:
 		case Moves::Gunk_Shot:
+		case Moves::Poison_Gas:
 		case Moves::Poison_Jab:
+		case Moves::Poison_Powder:
 		case Moves::Poison_Sting:
 		case Moves::Poison_Tail:
 		case Moves::Sludge:
@@ -555,7 +561,11 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 		case Moves::Hypnosis:
 		case Moves::Lovely_Kiss:
 		case Moves::Sing:
-			apply_status(Statuses::sleep, other, user, weather, user.is_uproaring() or other.pokemon().is_uproaring());
+		case Moves::Sleep_Powder:
+		case Moves::Spore:
+			if (executed.variable.effect_activates()) {
+				apply_status(Statuses::sleep, other, user, weather, user.is_uproaring() or other.pokemon().is_uproaring());
+			}
 			break;
 		case Moves::Defense_Curl:
 			user.stage()[BoostableStat::def] += 1_bi;
@@ -649,11 +659,6 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 			other.pokemon().identify();
 			break;
 		case Moves::Gastro_Acid:
-			break;
-		case Moves::Glare:
-		case Moves::Thunder_Wave:
-		case Moves::Zap_Cannon:
-			other.pokemon().apply_status(Statuses::paralysis, user, weather);
 			break;
 		case Moves::Gravity:
 			weather.activate_gravity();
@@ -769,9 +774,6 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 			}
 			break;
 		}
-		case Moves::Inferno:
-			other.pokemon().apply_status(Statuses::burn, user, weather);
-			break;
 		case Moves::Ingrain:
 			user.ingrain();
 			break;
@@ -803,7 +805,7 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 			user_team.activate_light_screen(weather);
 			break;
 		case Moves::Low_Kick:
-			if (generation <= Generation::two and executed.variable.effect_activates()) {
+			if (executed.variable.effect_activates()) {
 				other.pokemon().flinch();
 			}
 			break;
@@ -887,13 +889,10 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 			other.pokemon().try_activate_perish_song();
 			break;
 		case Moves::Poison_Fang:
+		case Moves::Toxic:
 			if (executed.variable.effect_activates()) {
 				other.pokemon().apply_status(Statuses::toxic, user, weather);
 			}
-			break;
-		case Moves::Poison_Gas:
-		case Moves::Poison_Powder:
-			grass_status(user, other, weather, Statuses::poison);
 			break;
 		case Moves::Power_Swap:
 			swap_offensive(user.stage(), other.pokemon().stage());
@@ -1021,10 +1020,6 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 				other.pokemon().flinch();
 			}
 			break;
-		case Moves::Sleep_Powder:
-		case Moves::Spore:
-			grass_status(user, other, weather, Statuses::sleep);
-			break;
 		case Moves::Smelling_Salts:
 			if (boosts_smellingsalt(other.pokemon().status())) {
 				other.pokemon().status() = Status{};
@@ -1054,9 +1049,6 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 			break;
 		case Moves::Stockpile:
 			user.increment_stockpile();
-			break;
-		case Moves::Stun_Spore:
-			grass_status(user, other, weather, Statuses::paralysis);
 			break;
 		case Moves::String_Shot:
 			other.pokemon().stage()[BoostableStat::spe] -= BOUNDED_CONDITIONAL(generation <= Generation::five, 1_bi, 2_bi);
@@ -1120,10 +1112,6 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 		case Moves::Torment:
 			other.pokemon().torment(weather);
 			break;
-		case Moves::Toxic: {
-			other.pokemon().apply_status(Statuses::toxic, user, weather);
-			break;
-		}
 		case Moves::Toxic_Spikes:
 			other.add_toxic_spikes();
 			break;
@@ -1157,10 +1145,6 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 		case Moves::Water_Sport:
 			user.activate_water_sport();
 			break;
-		case Moves::Will_O_Wisp: {
-			other.pokemon().apply_status(Statuses::burn, user, weather);
-			break;
-		}
 		case Moves::Wish:
 			user_team.activate_wish();
 			break;
