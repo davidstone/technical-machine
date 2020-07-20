@@ -552,6 +552,8 @@ struct BattleParserImpl : BattleParser {
 			auto const position = message.pop();
 			// position here is "0", "1", or "2"
 #endif
+		} else if (type == "t:") {
+			// message.remainder() == Seconds since 1970
 		} else if (type == "tie") {
 			m_completed = true;
 		} else if (type == "-transform") {
