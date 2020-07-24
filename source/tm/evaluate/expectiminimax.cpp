@@ -513,8 +513,7 @@ private:
 		}
 		auto const difference = ai.size() - foe.size();
 		score += static_cast<double>(difference * victory<generation>);
-		auto const max_size = bounded::max(ai.size(), foe.size());
-		score /= static_cast<double>(max_size * max_size);
+		score /= static_cast<double>(max_pokemon_per_team * max_pokemon_per_team);
 		return score;
 	}
 
