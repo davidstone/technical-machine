@@ -922,9 +922,9 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 	auto hit_with_yawn() const {
 		this->m_flags.yawn.activate();
 	}
-	auto try_to_activate_yawn(Weather const weather, bool const either_is_uproaring) const -> void {
+	auto try_to_activate_yawn(Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) const -> void {
 		bool const put_to_sleep = this->m_flags.yawn.advance_one_turn();
-		if (put_to_sleep) {
+		if (put_to_sleep and !sleep_clause_activates) {
 			apply_status_to_self(Statuses::sleep, *this, weather, either_is_uproaring);
 		}
 	}
@@ -1122,26 +1122,6 @@ auto all_moves(ActivePokemon<generation> const pokemon, TeamSize const team_size
 template<Generation generation>
 auto change_hp(MutableActivePokemon<generation> pokemon, Weather const weather, auto const change) {
 	pokemon.set_hp(weather, pokemon.hp().current() + change);
-}
-
-template<Generation generation>
-auto shift_status(MutableActivePokemon<generation> user, MutableActivePokemon<generation> target, Weather const weather) -> void {
-	auto const status_name = user.status().name();
-	switch (status_name) {
-		case Statuses::burn:
-		case Statuses::paralysis:
-		case Statuses::poison:
-		case Statuses::toxic:
-			target.apply_status(status_name, user, weather);
-			break;
-		case Statuses::sleep: // TODO: Sleep Clause
-		case Statuses::rest: // TODO: How does Rest shift?
-			target.apply_status(Statuses::sleep, user, weather);
-			break;
-		default:
-			break;
-	}
-	user.clear_status();
 }
 
 template<Generation generation>

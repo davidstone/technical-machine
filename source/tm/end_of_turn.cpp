@@ -141,7 +141,8 @@ constexpr auto leftovers_healing() {
 }
 
 template<Generation generation>
-auto other_effects(MutableActivePokemon<generation> pokemon, MutableActivePokemon<generation> foe, Weather & weather, EndOfTurnFlags const flags) -> void {
+auto other_effects(Team<generation> & team, MutableActivePokemon<generation> foe, Weather & weather, EndOfTurnFlags const flags) -> void {
+	auto pokemon = team.pokemon();
 	if (pokemon.hp() == 0_bi) {
 		return;
 	}
@@ -190,7 +191,7 @@ auto other_effects(MutableActivePokemon<generation> pokemon, MutableActivePokemo
 	pokemon.advance_magnet_rise();
 	pokemon.advance_heal_block();
 	pokemon.advance_embargo();
-	pokemon.try_to_activate_yawn(weather, uproar);
+	pokemon.try_to_activate_yawn(weather, uproar, team_has_status(team, Statuses::sleep));
 	if (pokemon.item(weather) == Item::Sticky_Barb) {
 		heal(pokemon, weather, rational(-1_bi, 8_bi));
 	}
@@ -244,8 +245,8 @@ void generation_3_plus_end_of_turn(Team<generation> & first_team, EndOfTurnFlags
 
 	weather_effects(first, last, weather);
 
-	other_effects(first, last, weather, first_flags);
-	other_effects(last, first, weather, last_flags);
+	other_effects(first_team, last, weather, first_flags);
+	other_effects(last_team, first, weather, last_flags);
 
 	// TODO: Doom Desire / Future Sight
 

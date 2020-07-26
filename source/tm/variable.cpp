@@ -106,21 +106,42 @@ constexpr auto status_side_effect(double const probability, Team<generation> con
 }
 
 template<Generation generation>
+constexpr auto freeze_probability(Team<generation> const & target) {
+	auto const freeze_claused = team_has_status(target, Statuses::freeze);
+	return freeze_claused ? single_probability(0.0) : status_side_effect(0.1, target, Type::Ice);
+}
+
+template<Generation generation>
 constexpr auto tri_attack_probabilities(Team<generation> const & target) {
 	constexpr auto no_status = Variable{0_bi};
 	auto status = [](auto const index) {
 		return VariableProbability{Variable{index}, 1.0 / 15.0};
 	};
+
 	constexpr auto burn = status(1_bi);
 	constexpr auto freeze = status(2_bi);
 	constexpr auto paralysis = status(3_bi);
-	constexpr auto common = Probabilities{{no_status, 12.0 / 15.0}, burn, freeze, paralysis};
+
+	constexpr auto burn_freeze_paralysis_probabilities = Probabilities{{no_status, 12.0 / 15.0}, burn, freeze, paralysis};
+	constexpr auto burn_freeze_probabilities = Probabilities{{no_status, 13.0 / 15.0}, burn, freeze};
+	constexpr auto burn_paralysis_probabilities = Probabilities{{no_status, 13.0 / 15.0}, burn, paralysis};
+	constexpr auto freeze_paralysis_probabilities = Probabilities{{no_status, 13.0 / 15.0}, freeze, paralysis};
+	constexpr auto burn_probabilities = Probabilities{{no_status, 14.0 / 15.0}, burn};
+	constexpr auto freeze_probabilities = Probabilities{{no_status, 14.0 / 15.0}, freeze};
+	constexpr auto paralysis_probabilities = Probabilities{{no_status, 14.0 / 15.0}, paralysis};
+	constexpr auto none_probabilities = Probabilities{{no_status, 14.0 / 15.0}};
+
+	auto const freeze_claused = team_has_status(target, Statuses::freeze);
+
+	constexpr auto ice_probabilities = burn_paralysis_probabilities;
+	auto const other_probabilities = freeze_claused ? burn_paralysis_probabilities : burn_freeze_paralysis_probabilities;
+
 	switch (generation) {
 		case Generation::one:
 			return single_probability(0.0);
 		case Generation::two:
 			// TODO: Can thaw 1/3 of the time
-			return common;
+			return other_probabilities;
 		case Generation::three:
 		case Generation::four:
 		case Generation::five: {
@@ -128,9 +149,9 @@ constexpr auto tri_attack_probabilities(Team<generation> const & target) {
 				return is_type(target.pokemon(), type);
 			};
 			return
-				is(Type::Fire) ? Probabilities{{no_status, 13.0 / 15.0}, freeze, paralysis} :
-				is(Type::Ice) ? Probabilities{{no_status, 13.0 / 15.0}, burn, paralysis} :
-				common;
+				is(Type::Fire) ? (freeze_claused ? paralysis_probabilities : freeze_paralysis_probabilities) :
+				is(Type::Ice) ? ice_probabilities :
+				other_probabilities;
 		}
 		case Generation::six:
 		case Generation::seven:
@@ -138,21 +159,22 @@ constexpr auto tri_attack_probabilities(Team<generation> const & target) {
 			auto const is_fire = is_type(target.pokemon(), Type::Fire);
 			auto const is_ice = is_type(target.pokemon(), Type::Ice);
 			auto const is_electric = is_type(target.pokemon(), Type::Electric);
+
 			return
-				is_fire and is_ice ? Probabilities{{no_status, 14.0 / 15.0}, paralysis} :
-				is_fire and is_electric ? Probabilities{{no_status, 14.0 / 15.0}, freeze} :
-				is_ice and is_electric ? Probabilities{{no_status, 14.0 / 15.0}, burn} :
-				is_fire ? Probabilities{{no_status, 13.0 / 15.0}, freeze, paralysis} :
-				is_ice ? Probabilities{{no_status, 13.0 / 15.0}, burn, paralysis} :
-				is_electric ? Probabilities{{no_status, 13.0 / 15.0}, burn, freeze} :
-				common;
+				is_fire and is_ice ? paralysis_probabilities :
+				is_fire and is_electric ? (freeze_claused ? none_probabilities : freeze_probabilities) :
+				is_ice and is_electric ? burn_probabilities :
+				is_fire ? (freeze_claused ? paralysis_probabilities : freeze_paralysis_probabilities) :
+				is_ice ? ice_probabilities :
+				is_electric ? (freeze_claused ? burn_probabilities : burn_freeze_probabilities) :
+				other_probabilities;
 		}
 	}
 }
 
 template<Generation generation>
-constexpr auto fang_side_effect(Team<generation> const & target, Type const immune_type) {
-	return is_type(target.pokemon(), immune_type) ?
+constexpr auto fang_side_effect(Team<generation> const & target, Type const immune_type, bool status_claused = false) {
+	return is_type(target.pokemon(), immune_type) or status_claused ?
 		Probabilities{{Variable{bounded::constant<0>}, 0.9}, {Variable{bounded::constant<2>}, 0.1}} :
 		generic_probability(0.81, 0.09, 0.09, 0.01);
 }
@@ -665,7 +687,7 @@ auto all_probabilities(Moves const move, Team<generation> const & target) -> Pro
 		case Moves::Ice_Beam:
 		case Moves::Ice_Punch:
 		case Moves::Powder_Snow:
-			return status_side_effect(0.1, target, Type::Ice);
+			return freeze_probability(target);
 		case Moves::Blaze_Kick:
 		case Moves::Ember:
 		case Moves::Fire_Punch:
@@ -790,7 +812,7 @@ auto all_probabilities(Moves const move, Team<generation> const & target) -> Pro
 		case Moves::Fire_Fang:
 			return fang_side_effect(target, Type::Fire);
 		case Moves::Ice_Fang:
-			return fang_side_effect(target, Type::Ice);
+			return fang_side_effect(target, Type::Ice, team_has_status(target, Statuses::freeze));
 		case Moves::Thunder_Fang:
 			return fang_side_effect(target, Type::Ground);
 		case Moves::Low_Kick:

@@ -235,26 +235,10 @@ private:
 };
 
 template<Generation generation>
-auto status_clause_applies(Team<generation> const & target, Statuses const status) {
-	switch (status) {
-		case Statuses::freeze:
-		case Statuses::sleep:
-			return containers::any(target.all_pokemon(), [=](auto const & pokemon) {
+constexpr auto team_has_status(Team<generation> const & target, Statuses const status) {
+	return containers::any(target.all_pokemon(), [=](Pokemon<generation> const & pokemon) {
 				return pokemon.status().name() == status;
 			});
-		default:
-			return false;
 	}
-}
-
-// Checks for Freeze Clause and Sleep Clause and does nothing if they activate
-template<Generation generation>
-auto apply_status(Statuses const status, Team<generation> & target, MutableActivePokemon<generation> user, Weather const weather, bool uproar = false) -> void {
-	if (status_clause_applies(target, status)) {
-		return;
-	}
-	target.pokemon().apply_status(status, user, weather, uproar);
-}
-
 
 } // namespace technicalmachine
