@@ -170,17 +170,17 @@ auto other_effects(Team<generation> & team, MutableActivePokemon<generation> foe
 	// TODO: Not sure if this check for Uproar is in the correct place
 	auto const uproar = pokemon.is_uproaring() or foe.is_uproaring();
 	pokemon.status_and_leech_seed_effects(foe, weather, uproar);
-	auto apply_status = [&](Statuses const status) {
+	auto set_status = [&](Statuses const status) {
 		if (non_sleep_status_can_apply(status, as_const(pokemon), as_const(pokemon), weather)) {
-			apply_status_to_self(status, pokemon, weather);
+			pokemon.set_status(status, weather);
 		}
 	};
 	switch (pokemon.item(weather)) {
 		case Item::Flame_Orb:
-			apply_status(Statuses::burn);
+			set_status(Statuses::burn);
 			break;
 		case Item::Toxic_Orb:
-			apply_status(Statuses::toxic);
+			set_status(Statuses::toxic);
 			break;
 		default:
 			break;

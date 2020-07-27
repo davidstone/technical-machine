@@ -45,7 +45,7 @@ template<Generation generation>
 constexpr auto apply_toxic_spikes(EntryHazards<generation> const & hazards, MutableActivePokemon<generation> switcher, Weather const weather) {
 	auto const status = hazards.toxic_spikes() == 1_bi ? Statuses::poison : Statuses::toxic;
 	if (non_sleep_status_can_apply(status, as_const(switcher), as_const(switcher), weather)) {
-		apply_status_to_self(status, switcher, weather);
+		switcher.set_status(status, weather);
 	}
 }
 

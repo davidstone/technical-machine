@@ -623,7 +623,7 @@ void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & rand
 	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout).name == Moves::Thunderbolt);
 
 	call_move(attacker, sleep_talk, defender, other_move, weather, keep_status, unknown_damage);
-	apply_status_to_self(Statuses::sleep, jolteon, weather);
+	jolteon.set_status(Statuses::sleep, weather);
 	next_turn();
 	BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
 	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cerr).name == Moves::Sleep_Talk);

@@ -106,11 +106,39 @@ auto curse(MutableActivePokemon<generation> user, MutableActivePokemon<generatio
 	}
 }
 
+constexpr auto reflected_status(Generation const generation, Statuses const status) -> Statuses {
+	switch (status) {
+		case Statuses::burn:
+		case Statuses::paralysis:
+		case Statuses::poison:
+			return status;
+		case Statuses::toxic:
+			return generation <= Generation::four ? Statuses::poison : Statuses::toxic;
+		case Statuses::clear:
+		case Statuses::freeze:
+		case Statuses::sleep:
+		case Statuses::rest:
+			bounded::unreachable();
+	}
+}
+
+template<Generation generation>
+auto set_reflectable_status(MutableActivePokemon<generation> const user, MutableActivePokemon<generation> const target, Weather const weather, Statuses const status) -> void {
+	target.set_status(status, weather);
+	if (reflects_status(target.ability())) {
+		user.set_status(reflected_status(generation, status), weather);
+	}
+}
+
 template<Generation generation>
 auto fang_side_effects(MutableActivePokemon<generation> user, MutableActivePokemon<generation> target, Weather const weather, Statuses const status, Variable const variable) {
 	auto const effect = variable.fang_side_effects();
 	if (effect.status) {
-		target.apply_status(status, user, weather);
+		if (status == Statuses::freeze) {
+			target.set_status(Statuses::freeze, weather);
+		} else {
+			set_reflectable_status(user, target, weather, status);
+		}
 	}
 	if (effect.flinch) {
 		target.flinch();
@@ -122,18 +150,22 @@ template<Generation generation>
 auto try_apply_status(Statuses const status, MutableActivePokemon<generation> const user, MutableActivePokemon<generation> const target, Weather const weather) -> void {
 	switch (status) {
 		case Statuses::burn:
-		case Statuses::freeze:
 		case Statuses::paralysis:
 		case Statuses::poison:
 		case Statuses::toxic:
 			if (non_sleep_status_can_apply(status, as_const(user), as_const(target), weather)) {
-				target.apply_status(status, user, weather);
+				set_reflectable_status(user, target, weather, status);
+			}
+			return;
+		case Statuses::freeze:
+			if (non_sleep_status_can_apply(status, as_const(user), as_const(target), weather)) {
+				target.set_status(status, weather);
 			}
 			return;
 		case Statuses::sleep:
 			// TODO: Sleep clause?
 			if (sleep_can_apply(as_const(user), as_const(target), weather, user.is_uproaring() or target.is_uproaring(), false)) {
-				target.apply_status(status, user, weather);
+				target.set_status(status, weather);
 			}
 			return;
 		case Statuses::clear:
@@ -195,7 +227,7 @@ template<Generation generation>
 auto recoil_status(MutableActivePokemon<generation> user, MutableActivePokemon<generation> target, Weather const weather, HP::current_type const damage, Variable const variable, Statuses const status) {
 	recoil(user, weather, damage, 3_bi);
 	if (variable.effect_activates()) {
-		target.apply_status(status, user, weather);
+		set_reflectable_status(user, target, weather, status);
 	}
 }
 
@@ -412,7 +444,7 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 		case Moves::Searing_Shot:
 		case Moves::Will_O_Wisp:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().apply_status(Statuses::burn, user, weather);
+				set_reflectable_status(user, other.pokemon(), weather, Statuses::burn);
 			}
 			break;
 		case Moves::Blizzard:
@@ -420,7 +452,7 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 		case Moves::Ice_Punch:
 		case Moves::Powder_Snow:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().apply_status(Statuses::freeze, user, weather);
+				other.pokemon().set_status(Statuses::freeze, weather);
 			}
 			break;
 		case Moves::Block:
@@ -444,12 +476,12 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 		case Moves::Thunder_Wave:
 		case Moves::Zap_Cannon:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().apply_status(Statuses::paralysis, user, weather);
+				set_reflectable_status(user, other.pokemon(), weather, Statuses::paralysis);
 			}
 			break;
 		case Moves::Bounce:
 			if (user.use_vanish_move(weather) and executed.variable.effect_activates()) {
-				other.pokemon().apply_status(Statuses::paralysis, user, weather);
+				set_reflectable_status(user, other.pokemon(), weather, Statuses::paralysis);
 			}
 			break;
 		case Moves::Brave_Bird:
@@ -573,7 +605,7 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 		case Moves::Smog:
 		case Moves::Twineedle:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().apply_status(Statuses::poison, user, weather);
+				set_reflectable_status(user, other.pokemon(), weather, Statuses::poison);
 			}
 			break;
 		case Moves::Curse:
@@ -587,7 +619,7 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 		case Moves::Sleep_Powder:
 		case Moves::Spore:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().apply_status(Statuses::sleep, user, weather);
+				other.pokemon().set_status(Statuses::sleep, weather);
 			}
 			break;
 		case Moves::Defense_Curl:
@@ -914,7 +946,7 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 		case Moves::Poison_Fang:
 		case Moves::Toxic:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().apply_status(Statuses::toxic, user, weather);
+				set_reflectable_status(user, other.pokemon(), weather, Statuses::toxic);
 			}
 			break;
 		case Moves::Power_Swap:
@@ -1142,7 +1174,11 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 			break;
 		case Moves::Tri_Attack:
 			if (auto const status = executed.variable.tri_attack_status(); status != Statuses::clear) {
-				other.pokemon().apply_status(status, user, weather);
+				if (status == Statuses::freeze) {
+					other.pokemon().set_status(status, weather);
+				} else {
+					set_reflectable_status(user, other.pokemon(), weather, status);
+				}
 			}
 			break;
 		case Moves::Trick_Room:

@@ -474,33 +474,12 @@ auto grounded(ActivePokemon<generation> const pokemon, Weather const weather) ->
 }
 
 template<Generation generation>
-auto apply_status_to_self(Statuses const status_name, MutableActivePokemon<generation> target, Weather const weather) -> void {
-	target.apply_status(status_name, target, weather);
-}
-
-template<Generation generation>
 auto activate_berserk_gene(MutableActivePokemon<generation> pokemon, Weather const weather) -> void {
 	pokemon.stage()[BoostableStat::atk] += 2_bi;
 	// TODO: Berserk Gene causes 256-turn confusion, unless the Pokemon
 	// switching out was confused.
 	pokemon.confuse(weather);
 	pokemon.remove_item();
-}
-
-constexpr auto reflected_status(Generation const generation, Statuses const status) -> bounded::optional<Statuses> {
-	switch (status) {
-		case Statuses::burn:
-		case Statuses::paralysis:
-		case Statuses::poison:
-			return status;
-		case Statuses::toxic:
-			return generation <= Generation::four ? Statuses::poison : Statuses::toxic;
-		case Statuses::clear:
-		case Statuses::freeze:
-		case Statuses::sleep:
-		case Statuses::rest:
-			return bounded::none;
-	}
 }
 
 constexpr bool cannot_ko(Moves const move) {
@@ -781,14 +760,10 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		this->m_flags.last_used_move.use_recharge_move();
 	}
 
-	auto apply_status(Statuses const status, MutableActivePokemon<generation> user, Weather const weather) const -> void {
-		BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
-		BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
-		set_status(status, weather);
-		auto const reflected = reflected_status(generation, status);
-		if (reflected and reflects_status(this->ability())) {
-			user.apply_status(*reflected, *this, weather);
-		}
+	auto set_status(Statuses const status_name, Weather const weather) const -> void {
+		BOUNDED_ASSERT_OR_ASSUME(status_name != Statuses::clear);
+		BOUNDED_ASSERT_OR_ASSUME(status_name != Statuses::rest);
+		set_status_impl(status_name, weather);
 	}
 
 	auto rest(Weather const weather, bool const other_is_uproaring) const -> void {
@@ -806,7 +781,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 			return;
 		}
 		this->m_pokemon.set_hp(active_hp.max());
-		set_status(Statuses::rest, weather);
+		set_status_impl(Statuses::rest, weather);
 	}
 
 	auto status_and_leech_seed_effects(MutableActivePokemon<generation> const other, Weather const weather, bool const uproar = false) const {
@@ -934,7 +909,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 			return;
 		}
 		if (sleep_can_apply(as_const(*this), as_const(*this), weather, either_is_uproaring, sleep_clause_activates)) {
-			apply_status_to_self(Statuses::sleep, *this, weather);
+			set_status(Statuses::sleep, weather);
 		}
 	}
 
@@ -1113,7 +1088,7 @@ private:
 		}
 	}
 
-	auto set_status(Statuses const status_name, Weather const weather) const -> void {
+	auto set_status_impl(Statuses const status_name, Weather const weather) const -> void {
 		if (clears_status(this->item(weather), status_name)) {
 			remove_item();
 		} else {
