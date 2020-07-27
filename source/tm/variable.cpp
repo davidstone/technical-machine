@@ -746,9 +746,15 @@ auto all_probabilities(Moves const move, Team<generation> const & target) -> Pro
 		case Moves::Hypnosis:
 		case Moves::Lovely_Kiss:
 		case Moves::Sing:
-			return single_probability(1.0);
+			return team_has_status(target, Statuses::sleep) ? single_probability(0.0) : single_probability(1.0);
 		case Moves::Sleep_Powder:
 		case Moves::Spore:
+			if (team_has_status(target, Statuses::sleep)) {
+				return single_probability(0.0);
+			}
+			return generation <= Generation::five ?
+				single_probability(1.0) :
+				status_side_effect(1.0, target, Type::Grass);
 		case Moves::Stun_Spore:
 			return generation <= Generation::five ?
 				single_probability(1.0) :
