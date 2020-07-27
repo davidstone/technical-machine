@@ -87,7 +87,7 @@ void test_combinations() {
 		for (auto const species : containers::integer_range(foe_size)) {
 			add_pokemon(team, static_cast<Species>(species));
 		}
-		auto collection = all_probabilities(Moves::Whirlwind, team);
+		auto collection = all_probabilities(Moves::Whirlwind, as_const(team.pokemon()), team);
 		auto const expected = foe_size - 1_bi;
 		if (size(collection) != expected) {
 			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected) + " but got " + to_string(size(collection)));

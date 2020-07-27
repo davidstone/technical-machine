@@ -106,16 +106,6 @@ auto curse(MutableActivePokemon<generation> user, MutableActivePokemon<generatio
 	}
 }
 
-constexpr bool uproar_does_not_apply(Statuses const status) {
-	switch (status) {
-		case Statuses::rest:
-		case Statuses::sleep:
-			return false;
-		default:
-			return true;
-	}
-}
-
 template<Generation generation>
 auto fang_side_effects(MutableActivePokemon<generation> user, MutableActivePokemon<generation> target, Weather const weather, Statuses const status, Variable const variable) {
 	auto const effect = variable.fang_side_effects();
@@ -130,10 +120,25 @@ auto fang_side_effects(MutableActivePokemon<generation> user, MutableActivePokem
 
 template<Generation generation>
 auto try_apply_status(Statuses const status, MutableActivePokemon<generation> const user, MutableActivePokemon<generation> const target, Weather const weather) -> void {
-	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
-	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
-	if (status_can_apply(status, as_const(user), as_const(target), weather)) {
-		target.apply_status(status, user, weather);
+	switch (status) {
+		case Statuses::burn:
+		case Statuses::freeze:
+		case Statuses::paralysis:
+		case Statuses::poison:
+		case Statuses::toxic:
+			if (non_sleep_status_can_apply(status, as_const(user), as_const(target), weather)) {
+				target.apply_status(status, user, weather);
+			}
+			return;
+		case Statuses::sleep:
+			// TODO: Sleep clause?
+			if (sleep_can_apply(as_const(user), as_const(target), weather, user.is_uproaring() or target.is_uproaring(), false)) {
+				target.apply_status(status, user, weather);
+			}
+			return;
+		case Statuses::clear:
+		case Statuses::rest:
+			bounded::unreachable();
 	}
 }
 
@@ -188,7 +193,6 @@ void recoil(MutableActivePokemon<generation> user, Weather const weather, HP::cu
 
 template<Generation generation>
 auto recoil_status(MutableActivePokemon<generation> user, MutableActivePokemon<generation> target, Weather const weather, HP::current_type const damage, Variable const variable, Statuses const status) {
-	BOUNDED_ASSERT(uproar_does_not_apply(status));
 	recoil(user, weather, damage, 3_bi);
 	if (variable.effect_activates()) {
 		target.apply_status(status, user, weather);
@@ -583,7 +587,7 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 		case Moves::Sleep_Powder:
 		case Moves::Spore:
 			if (executed.variable.effect_activates()) {
-				other.pokemon().apply_status(Statuses::sleep, user, weather, user.is_uproaring() or other.pokemon().is_uproaring());
+				other.pokemon().apply_status(Statuses::sleep, user, weather);
 			}
 			break;
 		case Moves::Defense_Curl:
@@ -1138,7 +1142,6 @@ auto do_side_effects(Team<generation> & user_team, ExecutedMove const executed, 
 			break;
 		case Moves::Tri_Attack:
 			if (auto const status = executed.variable.tri_attack_status(); status != Statuses::clear) {
-				BOUNDED_ASSERT(uproar_does_not_apply(status));
 				other.pokemon().apply_status(status, user, weather);
 			}
 			break;

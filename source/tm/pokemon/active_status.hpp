@@ -152,8 +152,6 @@ private:
 
 		handle_leech_seed(pokemon, other, weather);
 
-		constexpr auto uproar = false;
-
 		switch (status) {
 			case Statuses::clear:
 			case Statuses::freeze:
@@ -164,7 +162,7 @@ private:
 				break;
 			case Statuses::sleep:
 			case Statuses::rest:
-				handle_sleep_and_rest(pokemon, as_const(other), weather, m_nightmare, uproar);
+				handle_sleep_and_rest(pokemon, as_const(other), weather, m_nightmare);
 				break;
 		}
 	}

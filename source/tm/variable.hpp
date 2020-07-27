@@ -35,6 +35,8 @@
 namespace technicalmachine {
 
 template<Generation>
+struct ActivePokemon;
+template<Generation>
 struct Team;
 
 template<Generation generation>
@@ -153,10 +155,10 @@ struct VariableProbability {
 using Probabilities = containers::static_vector<VariableProbability, 15>;
 
 template<Generation generation>
-auto all_probabilities(Moves, Team<generation> const & other) -> Probabilities;
+auto all_probabilities(Moves, ActivePokemon<generation> const user, Team<generation> const & other) -> Probabilities;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto all_probabilities<generation>(Moves, Team<generation> const & other) -> Probabilities
+	extern template auto all_probabilities<generation>(Moves, ActivePokemon<generation> const user, Team<generation> const & other) -> Probabilities
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

@@ -474,8 +474,8 @@ auto grounded(ActivePokemon<generation> const pokemon, Weather const weather) ->
 }
 
 template<Generation generation>
-auto apply_status_to_self(Statuses const status_name, MutableActivePokemon<generation> target, Weather const weather, bool const uproar = false) -> void {
-	target.apply_status(status_name, target, weather, uproar);
+auto apply_status_to_self(Statuses const status_name, MutableActivePokemon<generation> target, Weather const weather) -> void {
+	target.apply_status(status_name, target, weather);
 }
 
 template<Generation generation>
@@ -508,12 +508,20 @@ constexpr bool cannot_ko(Moves const move) {
 }
 
 template<Generation generation>
-auto status_can_apply(Statuses const status, ActivePokemon<generation> const user, ActivePokemon<generation> const target, Weather const weather, bool const uproar = false) {
+auto non_sleep_status_can_apply(Statuses const status, ActivePokemon<generation> const user, ActivePokemon<generation> const target, Weather const weather) {
 	return
 		is_clear(target.status()) and
 		!blocks_status(target.ability(), user.ability(), status, weather) and
-		!containers::any(target.types(), [=](Type const type) { return blocks_status(type, status); }) and
-		(!uproar or (status != Statuses::sleep and status != Statuses::rest));
+		!containers::any(target.types(), [=](Type const type) { return blocks_status(type, status); });
+}
+
+template<Generation generation>
+auto sleep_can_apply(ActivePokemon<generation> const user, ActivePokemon<generation> const target, Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) {
+	return
+		!sleep_clause_activates and
+		!either_is_uproaring and
+		is_clear(target.status()) and
+		!blocks_status(target.ability(), user.ability(), Statuses::sleep, weather);
 }
 
 template<Generation>
@@ -773,13 +781,13 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		this->m_flags.last_used_move.use_recharge_move();
 	}
 
-	auto apply_status(Statuses const status, MutableActivePokemon<generation> user, Weather const weather, bool const uproar = false) const -> void {
+	auto apply_status(Statuses const status, MutableActivePokemon<generation> user, Weather const weather) const -> void {
 		BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
 		BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
 		set_status(status, weather);
 		auto const reflected = reflected_status(generation, status);
 		if (reflected and reflects_status(this->ability())) {
-			user.apply_status(*reflected, *this, weather, uproar);
+			user.apply_status(*reflected, *this, weather);
 		}
 	}
 
@@ -920,10 +928,13 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		this->m_flags.yawn.activate();
 	}
 	auto try_to_activate_yawn(Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) const -> void {
-		bool const put_to_sleep = this->m_flags.yawn.advance_one_turn();
+		bool const attempt_sleep = this->m_flags.yawn.advance_one_turn();
 		// TODO: There are a lot of edge cases in different generations
-		if (put_to_sleep and !sleep_clause_activates and status_can_apply(Statuses::sleep, as_const(*this), as_const(*this), weather, either_is_uproaring)) {
-			apply_status_to_self(Statuses::sleep, *this, weather, either_is_uproaring);
+		if (!attempt_sleep) {
+			return;
+		}
+		if (sleep_can_apply(as_const(*this), as_const(*this), weather, either_is_uproaring, sleep_clause_activates)) {
+			apply_status_to_self(Statuses::sleep, *this, weather);
 		}
 	}
 

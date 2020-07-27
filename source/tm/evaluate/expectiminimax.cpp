@@ -190,7 +190,7 @@ template<Generation generation>
 auto execute_move(Team<generation> const & user, SelectedAndExecuted const move, Team<generation> const & other, OtherMove const other_move, Weather const weather, auto const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
-	auto const variables = all_probabilities(move.executed.name, other);
+	auto const variables = all_probabilities(move.executed.name, user_pokemon, other);
 	auto const status = user_pokemon.status();
 	auto const probability_of_clearing_status = status.probability_of_clearing(generation, user_pokemon.ability());
 	auto const specific_chance_to_hit = chance_to_hit(user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());

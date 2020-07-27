@@ -179,10 +179,15 @@ constexpr auto fang_side_effect(Team<generation> const & target, Type const immu
 		generic_probability(0.81, 0.09, 0.09, 0.01);
 }
 
-}	// namespace
+template<Generation generation>
+constexpr auto sleep_can_apply(ActivePokemon<generation> const user, Team<generation> const & target) {
+	return !(user.is_uproaring() or target.pokemon().is_uproaring() or team_has_status(target, Statuses::sleep));
+}
+
+} // namespace
 
 template<Generation generation>
-auto all_probabilities(Moves const move, Team<generation> const & target) -> Probabilities {
+auto all_probabilities(Moves const move, ActivePokemon<generation> const user, Team<generation> const & target) -> Probabilities {
 	switch (move) {
 		case Moves::Absorb:
 		case Moves::Acid_Armor:
@@ -746,10 +751,10 @@ auto all_probabilities(Moves const move, Team<generation> const & target) -> Pro
 		case Moves::Hypnosis:
 		case Moves::Lovely_Kiss:
 		case Moves::Sing:
-			return team_has_status(target, Statuses::sleep) ? single_probability(0.0) : single_probability(1.0);
+			return sleep_can_apply(user, target) ? single_probability(0.0) : single_probability(1.0);
 		case Moves::Sleep_Powder:
 		case Moves::Spore:
-			if (team_has_status(target, Statuses::sleep)) {
+			if (sleep_can_apply(user, target)) {
 				return single_probability(0.0);
 			}
 			return generation <= Generation::five ?
@@ -1052,7 +1057,7 @@ auto all_probabilities(Moves const move, Team<generation> const & target) -> Pro
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto all_probabilities<generation>(Moves, Team<generation> const & other) -> Probabilities
+	template auto all_probabilities<generation>(Moves, ActivePokemon<generation> const user, Team<generation> const & other) -> Probabilities
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
