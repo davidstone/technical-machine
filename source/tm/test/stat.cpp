@@ -139,8 +139,7 @@ void max_defense_test() {
 
 	defender.pokemon().stage()[BoostableStat::def] += 6_bi;
 
-	constexpr auto uproar = false;
-	apply_status_to_self(Statuses::burn, defender.pokemon(), weather, uproar);
+	apply_status_to_self(Statuses::burn, defender.pokemon(), weather);
 
 	check_equal(calculate_defense(std::as_const(defender).pokemon(), physical_move, weather, false), max_defense);
 }

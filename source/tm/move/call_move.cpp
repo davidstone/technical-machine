@@ -129,40 +129,37 @@ auto fang_side_effects(MutableActivePokemon<generation> user, MutableActivePokem
 
 
 template<Generation generation>
+auto try_apply_status(Statuses const status, MutableActivePokemon<generation> const user, MutableActivePokemon<generation> const target, Weather const weather) -> void {
+	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
+	BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
+	if (status_can_apply(status, as_const(user), as_const(target), weather)) {
+		target.apply_status(status, user, weather);
+	}
+}
+
+
+template<Generation generation>
 auto fling_side_effects(MutableActivePokemon<generation> user, MutableActivePokemon<generation> target, Weather const weather) {
 	// TODO: Activate berry
-	auto apply_status = [&](Statuses const status) {
-		BOUNDED_ASSERT(uproar_does_not_apply(status));
-		target.apply_status(status, user, weather);
-	};
-	auto target_is_type = [&](auto const... types) {
-		return is_type(as_const(target), types...);
-	};
 	switch (user.item(weather)) {
 		case Item::Flame_Orb:
-			if (!target_is_type(Type::Fire)) {
-				apply_status(Statuses::burn);
-			}
+			try_apply_status(Statuses::burn, user, target, weather);
 			break;
 		case Item::Kings_Rock:
 		case Item::Razor_Fang:
 			target.flinch();
 			break;
 		case Item::Light_Ball:
-			apply_status(Statuses::paralysis);
+			try_apply_status(Statuses::paralysis, user, target, weather);
 			break;
 		case Item::Mental_Herb:
 			apply_mental_herb(target);
 			break;
 		case Item::Poison_Barb:
-			if (!target_is_type(Type::Poison, Type::Steel)) {
-				apply_status(Statuses::poison);
-			}
+			try_apply_status(Statuses::poison, user, target, weather);
 			break;
 		case Item::Toxic_Orb:
-			if (!target_is_type(Type::Poison, Type::Steel)) {
-				apply_status(Statuses::toxic);
-			}
+			try_apply_status(Statuses::toxic, user, target, weather);
 			break;
 		case Item::White_Herb:
 			apply_white_herb(target);
@@ -244,13 +241,14 @@ auto shift_status(MutableActivePokemon<generation> user, MutableActivePokemon<ge
 		case Statuses::paralysis:
 		case Statuses::poison:
 		case Statuses::toxic:
-			target.apply_status(status_name, user, weather);
+			try_apply_status(status_name, user, target, weather);
 			break;
 		case Statuses::sleep: // TODO: Sleep Clause
 		case Statuses::rest: // TODO: How does Rest shift?
-			target.apply_status(Statuses::sleep, user, weather);
+			try_apply_status(Statuses::sleep, user, target, weather);
 			break;
-		default:
+		case Statuses::clear:
+		case Statuses::freeze:
 			break;
 	}
 	user.clear_status();

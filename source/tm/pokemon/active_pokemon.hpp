@@ -489,17 +489,17 @@ auto activate_berserk_gene(MutableActivePokemon<generation> pokemon, Weather con
 
 constexpr auto reflected_status(Generation const generation, Statuses const status) -> bounded::optional<Statuses> {
 	switch (status) {
-	case Statuses::burn:
-	case Statuses::paralysis:
-	case Statuses::poison:
-		return status;
-	case Statuses::toxic:
-		return generation <= Generation::four ? Statuses::poison : Statuses::toxic;
-	case Statuses::clear:
-	case Statuses::freeze:
-	case Statuses::sleep:
-	case Statuses::rest:
-		return bounded::none;
+		case Statuses::burn:
+		case Statuses::paralysis:
+		case Statuses::poison:
+			return status;
+		case Statuses::toxic:
+			return generation <= Generation::four ? Statuses::poison : Statuses::toxic;
+		case Statuses::clear:
+		case Statuses::freeze:
+		case Statuses::sleep:
+		case Statuses::rest:
+			return bounded::none;
 	}
 }
 
@@ -508,7 +508,7 @@ constexpr bool cannot_ko(Moves const move) {
 }
 
 template<Generation generation>
-auto status_can_apply(Statuses const status, ActivePokemon<generation> const user, ActivePokemon<generation> const target, Weather const weather, bool const uproar) {
+auto status_can_apply(Statuses const status, ActivePokemon<generation> const user, ActivePokemon<generation> const target, Weather const weather, bool const uproar = false) {
 	return
 		is_clear(target.status()) and
 		!blocks_status(target.ability(), user.ability(), status, weather) and
@@ -776,9 +776,6 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 	auto apply_status(Statuses const status, MutableActivePokemon<generation> user, Weather const weather, bool const uproar = false) const -> void {
 		BOUNDED_ASSERT_OR_ASSUME(status != Statuses::clear);
 		BOUNDED_ASSERT_OR_ASSUME(status != Statuses::rest);
-		if (!status_can_apply(status, as_const(user), as_const(*this), weather, uproar)) {
-			return;
-		}
 		set_status(status, weather);
 		auto const reflected = reflected_status(generation, status);
 		if (reflected and reflects_status(this->ability())) {
@@ -924,7 +921,8 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 	}
 	auto try_to_activate_yawn(Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) const -> void {
 		bool const put_to_sleep = this->m_flags.yawn.advance_one_turn();
-		if (put_to_sleep and !sleep_clause_activates) {
+		// TODO: There are a lot of edge cases in different generations
+		if (put_to_sleep and !sleep_clause_activates and status_can_apply(Statuses::sleep, as_const(*this), as_const(*this), weather, either_is_uproaring)) {
 			apply_status_to_self(Statuses::sleep, *this, weather, either_is_uproaring);
 		}
 	}

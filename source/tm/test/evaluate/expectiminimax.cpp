@@ -619,13 +619,11 @@ void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & rand
 	
 	// TODO: Validate score, too
 
-	constexpr auto uproar = false;
-
 	BOUNDED_ASSERT(jolteon.status().name() == Statuses::clear);
 	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout).name == Moves::Thunderbolt);
 
 	call_move(attacker, sleep_talk, defender, other_move, weather, keep_status, unknown_damage);
-	apply_status_to_self(Statuses::sleep, jolteon, weather, uproar);
+	apply_status_to_self(Statuses::sleep, jolteon, weather);
 	next_turn();
 	BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
 	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cerr).name == Moves::Sleep_Talk);
