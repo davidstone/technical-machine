@@ -1400,6 +1400,9 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Rapid_Spin:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
 				user.clear_field();
+				if constexpr (generation >= Generation::eight) {
+					user.pokemon().stage()[BoostableStat::spe] += 1_bi;
+				}
 			});
 		case Moves::Recycle:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
