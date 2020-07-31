@@ -268,7 +268,7 @@ private:
 			case Moves::Dream_Eater: return 15_bi;
 			case Moves::Poison_Gas: return 40_bi;
 			case Moves::Barrage: return 20_bi;
-			case Moves::Leech_Life: return BOUNDED_CONDITIONAL(generation <= Generation::five, 15_bi, 10_bi);
+			case Moves::Leech_Life: return BOUNDED_CONDITIONAL(generation <= Generation::six, 15_bi, 10_bi);
 			case Moves::Lovely_Kiss: return 10_bi;
 			case Moves::Sky_Attack: return 5_bi;
 			case Moves::Transform: return 10_bi;
