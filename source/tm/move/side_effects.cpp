@@ -920,8 +920,9 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Dynamic_Punch:
 			return confusion_effect(1.0, original_other.pokemon(), Type::Ghost);
 		case Moves::Dizzy_Punch:
-			return confusion_effect(generation == Generation::one ? 1.0 : 0.2, original_other.pokemon(), Type::Ghost);
-		case Moves::Chatter:
+			return generation == Generation::one ?
+				no_effect<generation> :
+				confusion_effect(0.2, original_other.pokemon(), Type::Ghost);
 			return can_confuse_with_chatter(original_user.species()) ?
 				confusion_effect(0.31, original_other.pokemon(), Type::Ghost) :
 				no_effect<generation>;
