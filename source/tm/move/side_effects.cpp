@@ -473,9 +473,12 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Agility:
 		case Moves::Rock_Polish:
 			return guaranteed_effect<generation>(boost_user_stat(BoostableStat::spe, 2_bi));
-		case Moves::Cotton_Spore:
 		case Moves::Scary_Face:
 			return guaranteed_effect<generation>(boost_target_stat(BoostableStat::spe, -2_bi));
+		case Moves::Cotton_Spore:
+			return (generation <= Generation::five or !is_type(original_other.pokemon(), Type::Grass)) ?
+				guaranteed_effect<generation>(boost_target_stat(BoostableStat::spe, -2_bi)) :
+				no_effect<generation>;
 		case Moves::Bubble:
 		case Moves::Bubble_Beam:
 		case Moves::Constrict:
