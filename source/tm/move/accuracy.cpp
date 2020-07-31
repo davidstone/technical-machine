@@ -282,7 +282,7 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 		case Moves::Thief: return 100_bi;
 		case Moves::Spider_Web: return none;
 		case Moves::Mind_Reader: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::three, 100_bi, none));
-		case Moves::Nightmare: return 100_bi;
+		case Moves::Nightmare: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::three, none, 100_bi));
 		case Moves::Flame_Wheel: return 100_bi;
 		case Moves::Snore: return 100_bi;
 		case Moves::Curse: return none;
@@ -373,7 +373,7 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 		case Moves::Torment: return 100_bi;
 		case Moves::Flatter: return 100_bi;
 		case Moves::Will_O_Wisp: return BOUNDED_CONDITIONAL(generation <= Generation::five, 75_bi, 85_bi);
-		case Moves::Memento: return 100_bi;
+		case Moves::Memento: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::three, none, 100_bi));
 		case Moves::Facade: return 100_bi;
 		case Moves::Focus_Punch: return 100_bi;
 		case Moves::Smelling_Salts: return 100_bi;
