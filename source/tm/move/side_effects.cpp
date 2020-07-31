@@ -1244,6 +1244,12 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 					}
 				} else {
 					auto & stat_stage = user_pokemon.stage();
+					if constexpr (generation == Generation::two) {
+						constexpr auto max = bounded::max_value<Stage::value_type>;
+						if (stat_stage[BoostableStat::atk] == max and stat_stage[BoostableStat::def] == max) {
+							return;
+						}
+					}
 					stat_stage[BoostableStat::atk] += 1_bi;
 					stat_stage[BoostableStat::def] += 1_bi;
 					stat_stage[BoostableStat::spe] -= 1_bi;
