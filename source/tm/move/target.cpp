@@ -36,7 +36,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Poison_Gas:
 			return BOUNDED_CONDITIONAL(generation <= Generation::four, Target::any, Target::all_adjacent_foes);
 		case Moves::Cotton_Spore:
-			return BOUNDED_CONDITIONAL(generation <= Generation::five, Target::adjacent, Target::all_adjacent);
+			return BOUNDED_CONDITIONAL(generation <= Generation::five, Target::adjacent, Target::all_adjacent_foes);
 		case Moves::Nature_Power:
 			return BOUNDED_CONDITIONAL(generation <= Generation::five, Target::user, Target::adjacent);
 		case Moves::Aromatherapy:
