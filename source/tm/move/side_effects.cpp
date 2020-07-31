@@ -923,9 +923,12 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return generation == Generation::one ?
 				no_effect<generation> :
 				confusion_effect(0.2, original_other.pokemon(), Type::Ghost);
+		case Moves::Chatter: {
+			constexpr auto probability = generation <= Generation::five ? 0.31 : 1.0;
 			return can_confuse_with_chatter(original_user.species()) ?
-				confusion_effect(0.31, original_other.pokemon(), Type::Ghost) :
+				confusion_effect(probability, original_other.pokemon(), Type::Ghost) :
 				no_effect<generation>;
+		}
 
 		case Moves::Rest:
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
