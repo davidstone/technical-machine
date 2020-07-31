@@ -482,7 +482,6 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 		case Moves::Boomburst:
 		case Moves::Steam_Eruption:
 		case Moves::Hyperspace_Hole:
-		case Moves::Water_Shuriken:
 		case Moves::Mystical_Fire:
 		case Moves::Dazzling_Gleam:
 		case Moves::Infestation:
@@ -771,6 +770,8 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 		case Moves::Tearful_Look:
 			return MoveCategory::other;
 		// TODO, can be either
+		case Moves::Water_Shuriken:
+			return generation <= Generation::six ? MoveCategory::physical : MoveCategory::special;
 		case Moves::Breakneck_Blitz:
 		case Moves::All_Out_Pummeling:
 		case Moves::Supersonic_Skystrike:
