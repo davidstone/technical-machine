@@ -331,7 +331,7 @@ auto base_power(Generation const generation, Moves const move) -> bounded::optio
 		case Moves::Baton_Pass: return 0_bi;
 		case Moves::Encore: return 0_bi;
 		case Moves::Pursuit: return 40_bi;
-		case Moves::Rapid_Spin: return 20_bi;
+		case Moves::Rapid_Spin: return BOUNDED_CONDITIONAL(generation <= Generation::seven, 20_bi, 50_bi);
 		case Moves::Sweet_Scent: return 0_bi;
 		case Moves::Iron_Tail: return 100_bi;
 		case Moves::Metal_Claw: return 50_bi;
@@ -815,7 +815,7 @@ auto base_power(Generation const generation, Moves const move) -> bounded::optio
 		case Moves::Tearful_Look: return 0_bi;
 		case Moves::Zing_Zap: return 80_bi;
 		case Moves::Natures_Madness: return 0_bi;
-		case Moves::Multi_Attack: return 90_bi;
+		case Moves::Multi_Attack: return BOUNDED_CONDITIONAL(generation <= Generation::seven, 90_bi, 120_bi);
 		case Moves::m10000000_Volt_Thunderbolt: return 195_bi;
 		case Moves::Mind_Blown: return 150_bi;
 		case Moves::Plasma_Fists: return 100_bi;
