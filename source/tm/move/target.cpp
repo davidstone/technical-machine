@@ -39,6 +39,8 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 			return BOUNDED_CONDITIONAL(generation <= Generation::five, Target::adjacent, Target::all_adjacent_foes);
 		case Moves::Nature_Power:
 			return BOUNDED_CONDITIONAL(generation <= Generation::five, Target::user, Target::adjacent);
+		case Moves::Howl:
+			return BOUNDED_CONDITIONAL(generation <= Generation::seven, Target::user, Target::all_allies);
 		case Moves::Aromatherapy:
 		case Moves::Heal_Bell:
 			return Target::user_team;
@@ -223,7 +225,6 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Healing_Wish:
 		case Moves::Hit_Self:
 		case Moves::Hone_Claws:
-		case Moves::Howl:
 		case Moves::Imprison:
 		case Moves::Ingrain:
 		case Moves::Iron_Defense:
