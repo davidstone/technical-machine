@@ -890,7 +890,9 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Flare_Blitz:
 			return recoil_status<Statuses::burn>(original_user, original_other, original_weather, Type::Fire);
 		case Moves::Volt_Tackle:
-			return recoil_status<Statuses::paralysis>(original_user, original_other, original_weather, Type::Ground);
+			return generation <= Generation::three ?
+				guaranteed_effect<generation>(recoil_effect(3_bi)) :
+				recoil_status<Statuses::paralysis>(original_user, original_other, original_weather, Type::Ground);
 
 		case Moves::Fire_Fang:
 			return fang_effects<Statuses::burn>(original_user, original_other, original_weather, Type::Fire);
