@@ -381,7 +381,7 @@ private:
 			case Moves::Beat_Up: return 10_bi;
 			case Moves::Fake_Out: return 10_bi;
 			case Moves::Uproar: return 10_bi;
-			case Moves::Stockpile: return BOUNDED_CONDITIONAL(generation <= Generation::three, 20_bi, 10_bi);
+			case Moves::Stockpile: return BOUNDED_CONDITIONAL(generation <= Generation::three, 10_bi, 20_bi);
 			case Moves::Spit_Up: return 10_bi;
 			case Moves::Swallow: return 10_bi;
 			case Moves::Heat_Wave: return 10_bi;
