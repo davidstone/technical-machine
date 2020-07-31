@@ -26,21 +26,21 @@ namespace technicalmachine {
 auto move_target(Generation const generation, Moves const move) -> Target {
 	switch (move) {
 		case Moves::Mist:
-			return BOUNDED_CONDITIONAL(generation <= Generation::two, Target::user, Target::user_field);
+			return generation <= Generation::two ? Target::user : Target::user_field;
 		case Moves::Helping_Hand:
-			return BOUNDED_CONDITIONAL(generation <= Generation::three, Target::user, Target::adjacent_ally);
+			return generation <= Generation::three ? Target::user : Target::adjacent_ally;
 		case Moves::Surf:
-			return BOUNDED_CONDITIONAL(generation <= Generation::three, Target::all_adjacent_foes, Target::all_adjacent);
+			return generation <= Generation::three ? Target::all_adjacent_foes : Target::all_adjacent;
 		case Moves::Conversion_2:
-			return BOUNDED_CONDITIONAL(generation <= Generation::four, Target::user, Target::adjacent);
+			return generation <= Generation::four ? Target::user : Target::adjacent;
 		case Moves::Poison_Gas:
-			return BOUNDED_CONDITIONAL(generation <= Generation::four, Target::any, Target::all_adjacent_foes);
+			return generation <= Generation::four ? Target::any : Target::all_adjacent_foes;
 		case Moves::Cotton_Spore:
-			return BOUNDED_CONDITIONAL(generation <= Generation::five, Target::adjacent, Target::all_adjacent_foes);
+			return generation <= Generation::five ? Target::adjacent : Target::all_adjacent_foes;
 		case Moves::Nature_Power:
-			return BOUNDED_CONDITIONAL(generation <= Generation::five, Target::user, Target::adjacent);
+			return generation <= Generation::five ? Target::user : Target::adjacent;
 		case Moves::Howl:
-			return BOUNDED_CONDITIONAL(generation <= Generation::seven, Target::user, Target::all_allies);
+			return generation <= Generation::seven ? Target::user : Target::all_allies;
 		case Moves::Aromatherapy:
 		case Moves::Heal_Bell:
 			return Target::user_team;
