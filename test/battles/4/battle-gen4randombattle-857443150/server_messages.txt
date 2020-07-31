@@ -215,9 +215,8 @@
 |move|p1a: Regice|Thunder Wave|p2a: Suicune
 |-fail|p2a: Suicune|par
 |move|p2a: Suicune|Rest|p2a: Suicune
-|-status|p2a: Suicune|slp
-|-heal|p2a: Suicune|100/100 slp|[silent]
 |-status|p2a: Suicune|slp|[from] move: Rest
+|-heal|p2a: Suicune|100/100 slp|[silent]
 ||
 |-heal|p1a: Regice|159/268 psn|[from] item: Leftovers
 |-damage|p1a: Regice|126/268 psn|[from] psn
@@ -282,9 +281,8 @@
 |request|{"active":[{"moves":[{"move":"Waterfall","id":"waterfall","pp":23,"maxpp":24,"target":"normal","disabled":true},{"move":"Return 102","id":"return","pp":32,"maxpp":32,"target":"normal","disabled":true},{"move":"Aqua Jet","id":"aquajet","pp":32,"maxpp":32,"target":"normal","disabled":true},{"move":"Superpower","id":"superpower","pp":4,"maxpp":8,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Azumarill","details":"Azumarill, L79, M","condition":"7/288 psn","active":true,"stats":{"atk":125,"def":172,"spa":125,"spd":172,"spe":125},"moves":["waterfall","return","aquajet","superpower"],"baseAbility":"hugepower","item":"choiceband","pokeball":"pokeball"},{"ident":"p1: Venusaur","details":"Venusaur, L79, F","condition":"0 fnt","active":false,"stats":{"atk":136,"def":177,"spa":204,"spd":204,"spe":172},"moves":["leechseed","hiddenpowerice","leafstorm","sludgebomb"],"baseAbility":"overgrow","item":"blacksludge","pokeball":"pokeball"},{"ident":"p1: Garchomp","details":"Garchomp, L71, M","condition":"271/271 slp","active":false,"stats":{"atk":226,"def":176,"spa":155,"spd":162,"spe":186},"moves":["dragonclaw","swordsdance","earthquake","stoneedge"],"baseAbility":"sandveil","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Scyther","details":"Scyther, L79, M","condition":"239/239","active":false,"stats":{"atk":219,"def":172,"spa":132,"spd":172,"spe":211},"moves":["roost","quickattack","swordsdance","bugbite"],"baseAbility":"technician","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Staraptor","details":"Staraptor, L77, M","condition":"257/257","active":false,"stats":{"atk":229,"def":152,"spa":122,"spd":122,"spe":199},"moves":["roost","return","quickattack","bravebird"],"baseAbility":"intimidate","item":"lifeorb","pokeball":"pokeball"},{"ident":"p1: Regice","details":"Regice, L83","condition":"0 fnt","active":false,"stats":{"atk":88,"def":214,"spa":214,"spd":380,"spe":131},"moves":["thunderwave","icebeam","sleeptalk","rest"],"baseAbility":"clearbody","item":"leftovers","pokeball":"pokeball"}]},"rqid":54}
 ||
 |move|p2a: Suicune|Rest|p2a: Suicune
-|-status|p2a: Suicune|slp
-|-heal|p2a: Suicune|100/100 slp|[silent]
 |-status|p2a: Suicune|slp|[from] move: Rest
+|-heal|p2a: Suicune|100/100 slp|[silent]
 |move|p1a: Azumarill|Superpower|p2a: Suicune
 |-damage|p2a: Suicune|70/100 slp
 |-unboost|p1a: Azumarill|atk|1

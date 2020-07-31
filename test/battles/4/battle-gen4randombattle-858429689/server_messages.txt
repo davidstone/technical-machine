@@ -57,9 +57,8 @@
 ||
 |switch|p1a: Venusaur|Venusaur, L79, F|256/256
 |move|p2a: Shaymin|Rest|p2a: Shaymin
-|-status|p2a: Shaymin|slp
-|-heal|p2a: Shaymin|100/100 slp|[silent]
 |-status|p2a: Shaymin|slp|[from] move: Rest
+|-heal|p2a: Shaymin|100/100 slp|[silent]
 ||
 |upkeep|
 |turn|5

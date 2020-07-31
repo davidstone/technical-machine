@@ -159,9 +159,8 @@
 |-supereffective|p1a: Shaymin
 |-damage|p1a: Shaymin|13/274
 |move|p1a: Shaymin|Rest|p1a: Shaymin
-|-status|p1a: Shaymin|slp
-|-heal|p1a: Shaymin|274/274 slp|[silent]
 |-status|p1a: Shaymin|slp|[from] move: Rest
+|-heal|p1a: Shaymin|274/274 slp|[silent]
 ||
 |upkeep|
 |turn|13

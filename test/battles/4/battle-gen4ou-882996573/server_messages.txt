@@ -71,9 +71,8 @@
 |-supereffective|p2a: Registeel
 |-damage|p2a: Registeel|19/100
 |move|p2a: Registeel|Rest|p2a: Registeel
-|-status|p2a: Registeel|slp
-|-heal|p2a: Registeel|100/100 slp|[silent]
 |-status|p2a: Registeel|slp|[from] move: Rest
+|-heal|p2a: Registeel|100/100 slp|[silent]
 ||
 |-weather|Sandstorm|[upkeep]
 |upkeep|

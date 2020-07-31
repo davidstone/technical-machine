@@ -117,9 +117,8 @@
 |move|p1a: Cresselia|Psychic|p2a: Bibarel
 |-damage|p2a: Bibarel|3/100
 |move|p2a: Bibarel|Rest|p2a: Bibarel
-|-status|p2a: Bibarel|slp
-|-heal|p2a: Bibarel|100/100 slp|[silent]
 |-status|p2a: Bibarel|slp|[from] move: Rest
+|-heal|p2a: Bibarel|100/100 slp|[silent]
 |-enditem|p2a: Bibarel|Chesto Berry|[eat]
 |-curestatus|p2a: Bibarel|slp|[msg]
 ||
@@ -143,9 +142,8 @@
 |move|p1a: Cresselia|Psychic|p2a: Bibarel
 |-damage|p2a: Bibarel|36/100
 |move|p2a: Bibarel|Rest|p2a: Bibarel
-|-status|p2a: Bibarel|slp
-|-heal|p2a: Bibarel|100/100 slp|[silent]
 |-status|p2a: Bibarel|slp|[from] move: Rest
+|-heal|p2a: Bibarel|100/100 slp|[silent]
 ||
 |upkeep|
 |turn|12
