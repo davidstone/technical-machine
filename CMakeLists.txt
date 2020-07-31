@@ -90,6 +90,7 @@ add_library(tm_common STATIC
 	source/tm/move/priority.cpp
 	source/tm/move/regular_moves.cpp
 	source/tm/move/shared.cpp
+	source/tm/move/side_effects.cpp
 	source/tm/move/target.cpp
 	source/tm/move/used_move.cpp
 	source/tm/move/will_be_recharge_turn.cpp
@@ -196,7 +197,6 @@ add_library(tm_common STATIC
 	source/tm/settings_file.cpp
 	source/tm/status.cpp
 	source/tm/team.cpp
-	source/tm/variable.cpp
 	source/tm/visible_hp.cpp
 	source/tm/weather.cpp
 	source/tm/wish.cpp

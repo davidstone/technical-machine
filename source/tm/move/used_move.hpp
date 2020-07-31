@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <tm/variable.hpp>
+#include <tm/move/side_effects.hpp>
 
 #include <cstdint>
 
@@ -25,12 +25,37 @@ namespace technicalmachine {
 
 enum class Moves : std::uint16_t;
 
+template<Generation generation>
 struct UsedMove {
+	constexpr UsedMove(
+		Moves const selected_,
+		Moves const executed_,
+		bool const critical_hit_,
+		bool const miss_,
+		typename SideEffect<generation>::Function const side_effect_
+	):
+		side_effect(side_effect_),
+		selected(selected_),
+		executed(executed_),
+		critical_hit(critical_hit_),
+		miss(miss_)
+	{
+	}
+
+	constexpr UsedMove(Moves const selected_, typename SideEffect<generation>::Function const side_effect_):
+		side_effect(side_effect_),
+		selected(selected_),
+		executed(selected),
+		critical_hit(false),
+		miss(false)
+	{
+	}
+
+	typename SideEffect<generation>::Function side_effect;
 	Moves selected;
-	Moves executed = selected;
-	Variable variable{0_bi};
-	bool critical_hit = false;
-	bool miss = false;
+	Moves executed;
+	bool critical_hit;
+	bool miss;
 };
 
 }	// namespace technicalmachine

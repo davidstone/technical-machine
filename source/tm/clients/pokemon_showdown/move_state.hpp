@@ -27,6 +27,10 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/used_move.hpp>
 
+#include <tm/pokemon/pokemon_not_found.hpp>
+
+#include <tm/phazing_in_same_pokemon.hpp>
+
 #include <bounded/detail/variant/variant.hpp>
 #include <bounded/optional.hpp>
 
@@ -35,14 +39,16 @@
 namespace technicalmachine {
 namespace ps {
 
+struct NoDamage {};
+struct SubstituteDamaged {};
+struct SubstituteBroke {};
+
 struct MoveState {
-	struct NoDamage {};
-	struct SubstituteDamaged {};
-	struct SubstituteBroke {};
 	using Damage = bounded::variant<NoDamage, HPAndStatus, SubstituteDamaged, SubstituteBroke>;
+	template<Generation generation>
 	struct Result {
 		Party party;
-		UsedMove move;
+		UsedMove<generation> move;
 		Damage damage;
 		bounded::optional<HPAndStatus> user_hp_and_status;
 		bounded::optional<HPAndStatus> other_hp_and_status;
@@ -69,7 +75,7 @@ struct MoveState {
 		if (m_move) {
 			m_move->executed = move;
 		} else {
-			insert(m_move, UsedMove{move});
+			insert(m_move, UsedMoveBuilder{move});
 		}
 	}
 	
@@ -117,16 +123,24 @@ struct MoveState {
 		if (!m_party or !m_move) {
 			throw_error();
 		}
-		m_move->variable.confuse();
+		if (m_move->confuse) {
+			throw std::runtime_error("Tried to confuse a Pokemon twice");
+		}
+		m_move->confuse = true;
 	}
 	void critical_hit(Party const party) {
 		validate(party);
+		if (m_move->critical_hit) {
+			throw std::runtime_error("Tried to critical hit a Pokemon twice");
+		}
 		m_move->critical_hit = true;
 	}
 	void flinch(Party const party) {
 		validate(party);
-		// TODO: Validate that the used move can cause a flinch
-		m_move->variable.set_flinch(true);
+		if (m_move->flinch) {
+			throw std::runtime_error("Tried to flinch a Pokemon twice");
+		}
+		m_move->flinch = true;
 	}
 	void hp_change(Party const party, HPAndStatus const hp_and_status) {
 		if (!m_party) {
@@ -138,6 +152,9 @@ struct MoveState {
 	}
 	void miss(Party const party) {
 		validate(party);
+		if (m_move->miss) {
+			throw std::runtime_error("Tried to miss a Pokemon twice");
+		}
 		m_move->miss = true;
 	}
 	template<Generation generation>
@@ -146,16 +163,31 @@ struct MoveState {
 		if (!is_phaze(m_move->executed)) {
 			throw std::runtime_error("We did not use a phazing move, but we were given phazing data");
 		}
-		m_move->variable.set_phaze_index(phazed_team, species);
+		if (m_move->phaze_index) {
+			throw std::runtime_error("Tried to phaze a Pokemon twice");
+		}
+		auto const & all = phazed_team.all_pokemon();
+		auto const pokemon_index = all.index();
+		auto const new_index = find_present_index(all, species);
+		if (new_index == pokemon_index) {
+			throw PhazingInSamePokemon(new_index);
+		}
+		m_move->phaze_index = new_index;
 	}
 	void recoil(Party const party) {
 		validate(party);
+		if (m_recoil) {
+			throw std::runtime_error("Tried to recoil a Pokemon twice");
+		}
 		m_recoil = true;
 	}
 	void status(Party const party, Statuses const status) {
 		if (m_move and is_switch(m_move->executed)) {
 			// Don't need to do anything for Toxic Spikes
 			return;
+		}
+		if (m_move->status) {
+			throw std::runtime_error("Tried to status a Pokemon twice");
 		}
 		auto update_status = [=](bounded::optional<HPAndStatus> & old_hp_and_status) {
 			// TODO: Should update status even if we didn't get HP in the past
@@ -172,17 +204,55 @@ struct MoveState {
 			validate(other(party));
 			update_status(m_other_hp_and_status);
 		}
-		m_move->variable.apply_status(m_move->executed, status);
+		m_move->status = status;
 	}
 
-	auto complete() -> bounded::optional<Result> {
+	template<Generation generation>
+	auto complete() -> bounded::optional<Result<generation>> {
 		if (!m_move) {
 			*this = {};
 			return bounded::none;
 		}
-		auto const result = Result{
+		auto side_effect = [
+			executed = m_move->executed,
+			confuse = m_move->confuse,
+			flinch = m_move->flinch,
+			phaze_index = m_move->phaze_index,
+			status = m_move->status
+		](auto & user, auto & other, auto & weather, auto const damage) {
+			auto const side_effects = possible_side_effects(executed, as_const(user.pokemon()), other, weather);
+
+			if (size(side_effects) == 1_bi) {
+				front(side_effects).function(user, other, weather, damage);
+				return;
+			}
+
+			if (phaze_index) {
+				if (confuse or flinch or status) {
+					throw std::runtime_error("Tried to phaze and do other side effects.");
+				}
+				auto const target_index = other.all_pokemon().index();
+				using PhazeIndex = bounded::checked_integer<0, static_cast<int>(max_pokemon_per_team - 2_bi)>;
+				auto const effect_index = (*phaze_index < target_index) ? PhazeIndex(*phaze_index) : PhazeIndex(*phaze_index - 1_bi);
+				side_effects[effect_index].function(user, other, weather, damage);
+				return;
+			}
+
+			// TODO: Handle multi-effect situations
+			if (confuse or flinch or status) {
+				side_effects[1_bi].function(user, other, weather, damage);
+			}
+		};
+
+		auto const result = Result<generation>{
 			*m_party,
-			*m_move,
+			UsedMove<generation>(
+				m_move->selected,
+				m_move->executed,
+				m_move->critical_hit,
+				m_move->miss,
+				side_effect
+			),
 			m_damage,
 			m_user_hp_and_status,
 			m_other_hp_and_status,
@@ -202,8 +272,21 @@ private:
 	[[noreturn]] void throw_error() const {
 		throw std::runtime_error("Received battle messages out of order");
 	}
+
+	struct UsedMoveBuilder {
+		Moves selected;
+		Moves executed = selected;
+		bool critical_hit = false;
+		bool miss = false;
+		bool confuse = false;
+		bool flinch = false;
+		bounded::optional<TeamIndex> phaze_index = bounded::none;
+		bounded::optional<Statuses> status = bounded::none;
+	};
+
+
 	bounded::optional<Party> m_party;
-	bounded::optional<UsedMove> m_move;
+	bounded::optional<UsedMoveBuilder> m_move;
 	Damage m_damage{NoDamage()};
 	bounded::optional<HPAndStatus> m_user_hp_and_status;
 	bounded::optional<HPAndStatus> m_other_hp_and_status;

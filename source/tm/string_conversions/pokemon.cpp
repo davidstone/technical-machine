@@ -36,8 +36,6 @@
 #include <containers/array/array.hpp>
 #include <containers/range_view.hpp>
 
-#include <iostream>
-
 namespace technicalmachine {
 namespace {
 

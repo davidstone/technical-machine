@@ -171,7 +171,7 @@ auto other_effects(Team<generation> & team, MutableActivePokemon<generation> foe
 	auto const uproar = pokemon.is_uproaring() or foe.is_uproaring();
 	pokemon.status_and_leech_seed_effects(foe, weather, uproar);
 	auto set_status = [&](Statuses const status) {
-		if (non_sleep_status_can_apply(status, as_const(pokemon), as_const(pokemon), weather)) {
+		if (indirect_status_can_apply(status, as_const(pokemon), weather)) {
 			pokemon.set_status(status, weather);
 		}
 	};

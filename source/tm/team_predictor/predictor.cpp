@@ -47,8 +47,6 @@
 #include <unordered_map>
 #include <utility>
 
-#include <iostream>
-
 namespace {
 
 namespace beast = boost::beast;

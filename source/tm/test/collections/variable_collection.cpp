@@ -20,15 +20,15 @@
 
 #include <tm/test/collections/invalid_collection.hpp>
 
-#include <tm/empty_team.hpp>
-#include <tm/phazing_in_same_pokemon.hpp>
-#include <tm/team.hpp>
-#include <tm/variable.hpp>
-
 #include <tm/move/moves.hpp>
+#include <tm/move/side_effects.hpp>
 
 #include <tm/pokemon/collection.hpp>
 #include <tm/pokemon/max_pokemon_per_team.hpp>
+
+#include <tm/empty_team.hpp>
+#include <tm/phazing_in_same_pokemon.hpp>
+#include <tm/team.hpp>
 
 #include <bounded/assert.hpp>
 
@@ -49,57 +49,49 @@ void add_pokemon(Team<generation> & team, Species const species) {
 	team.pokemon().set_ability_to_base_ability();
 }
 
-void phaze_in_same_pokemon(Team<generation> const & team) {
-	try {
-		auto variable = Variable{};
-		variable.set_phaze_index(team, team.pokemon().species());
-		throw InvalidCollection("Can phaze in the same Pokemon.");
-	} catch (PhazingInSamePokemon const &) {
-		// Do nothing; the above operation should throw.
-	}
-}
-
-void phaze_in_different_pokemon(Team<generation> const & team, TeamIndex const new_index, TeamIndex const current_index, TeamSize foe_size) {
-	static constexpr auto expected_index = containers::make_explicit_array<6, 6>(
-		bounded::none, 1_bi, 2_bi, 3_bi, 4_bi, 5_bi,
-		0_bi, bounded::none, 2_bi, 3_bi, 4_bi, 5_bi,
-		0_bi, 1_bi, bounded::none, 3_bi, 4_bi, 5_bi,
-		0_bi, 1_bi, 2_bi, bounded::none, 4_bi, 5_bi,
-		0_bi, 1_bi, 2_bi, 3_bi, bounded::none, 5_bi,
-		0_bi, 1_bi, 2_bi, 3_bi, 4_bi, bounded::none
+using EffectIndex = bounded::checked_integer<0, 4>;
+template<Generation generation>
+void validate(Team<generation> const & team, EffectIndex const effect_index, TeamIndex const current_index) {
+	static constexpr auto expected_index = containers::make_explicit_array<6, 5>(
+		1_bi, 2_bi, 3_bi, 4_bi, 5_bi,
+		0_bi, 2_bi, 3_bi, 4_bi, 5_bi,
+		0_bi, 1_bi, 3_bi, 4_bi, 5_bi,
+		0_bi, 1_bi, 2_bi, 4_bi, 5_bi,
+		0_bi, 1_bi, 2_bi, 3_bi, 5_bi,
+		0_bi, 1_bi, 2_bi, 3_bi, 4_bi
 	);
-	auto variable = Variable{};
-	variable.set_phaze_index(team, team.pokemon(new_index).species());
-	auto const expected = expected_index[current_index][new_index];
-	BOUNDED_ASSERT(expected);
-	auto const calculated = variable.phaze_index();
-	if (calculated != *expected) {
-		throw InvalidCollection("Offsets for phazing are incorrect. Expected " + to_string(*expected) + " but got a result of " + to_string(calculated) + ".");
-	}
-	if (new_index == foe_size) {
-		throw InvalidCollection("Phazing supports too many elements when the foe's size is " + to_string(foe_size) + ".");
+
+	auto const expected = expected_index[current_index][effect_index];
+	auto const calculated = team.all_pokemon().index();
+	if (expected != calculated) {
+		throw InvalidCollection("Offsets for phazing are incorrect. Expected " + to_string(expected) + " but got a result of " + to_string(calculated) + ".");
 	}
 }
 
 void test_combinations() {
+	auto user = Team<generation>(1_bi);
+	add_pokemon(user, Species::Lugia);
+	auto weather = Weather();
 	for (auto const foe_size : containers::integer_range(2_bi, max_pokemon_per_team)) {
 		auto team = Team<generation>(foe_size);
 		for (auto const species : containers::integer_range(foe_size)) {
 			add_pokemon(team, static_cast<Species>(species));
 		}
-		auto collection = all_probabilities(Moves::Whirlwind, as_const(team.pokemon()), team);
-		auto const expected = foe_size - 1_bi;
-		if (size(collection) != expected) {
-			throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected) + " but got " + to_string(size(collection)));
-		}
 		for (auto const current_index : containers::integer_range(foe_size)) {
 			team.all_pokemon().set_index(current_index);
-			for (auto const new_index : containers::integer_range(foe_size)) {
-				if (current_index == new_index) {
-					phaze_in_same_pokemon(team);
-				} else {
-					phaze_in_different_pokemon(team, new_index, current_index, foe_size);
+			auto const side_effects = possible_side_effects(Moves::Whirlwind, as_const(user.pokemon()), team, weather);
+			auto const expected_size = foe_size - 1_bi;
+			if (size(side_effects) != expected_size) {
+				throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected_size) + " but got " + to_string(size(side_effects)));
+			}
+			for (auto const effect_index : containers::integer_range(expected_size)) {
+				auto const & side_effect = side_effects[effect_index];
+				if (side_effect.probability != 1.0 / double(foe_size - 1_bi)) {
+					throw std::runtime_error("");
 				}
+				team.all_pokemon().set_index(current_index);
+				side_effect.function(user, team, weather, 0_bi);
+				validate(team, EffectIndex(effect_index), current_index);
 			}
 		}
 	}

@@ -23,12 +23,12 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/other_move.hpp>
 #include <tm/move/power.hpp>
+#include <tm/move/side_effects.hpp>
 
 #include <tm/pokemon/species.hpp>
 
 #include <tm/generation.hpp>
 #include <tm/team.hpp>
-#include <tm/variable.hpp>
 #include <tm/weather.hpp>
 
 #include <containers/integer_range.hpp>
@@ -43,10 +43,10 @@ constexpr auto generation = Generation::four;
 constexpr auto critical_hit = true;
 constexpr auto max_damage_physical_move = Move(generation, Moves::Rollout);
 constexpr auto max_damage_physical_move_type = Type::Rock;
-constexpr auto max_damage_executed_physical_move = ExecutedMove{
+constexpr auto max_damage_executed_physical_move = ExecutedMove<generation>{
 	{max_damage_physical_move.name(), max_damage_physical_move_type},
 	max_damage_physical_move.pp(),
-	Variable{},
+	no_effect_function,
 	critical_hit
 };
 
@@ -183,10 +183,10 @@ void special_power_test() {
 
 	auto const power = move_power(
 		attacker,
-		ExecutedMove{
+		ExecutedMove<generation>{
 			{move.name(), Type::Water},
 			move.pp(),
-			Variable{},
+			no_effect_function,
 			critical_hit
 		},
 		defender,
@@ -297,7 +297,7 @@ void special_damage_test() {
 	check_equal(
 		calculate_damage(
 			attacker,
-			ExecutedMove{{move.name(), Type::Fire}, move.pp(), Variable{}, critical_hit},
+			ExecutedMove<generation>{{move.name(), Type::Fire}, move.pp(), no_effect_function, critical_hit},
 			resistance_berry_activated,
 			defender,
 			FutureMove{false},

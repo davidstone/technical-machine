@@ -645,7 +645,7 @@ private:
 	}
 
 	void maybe_use_previous_move() {
-		auto const maybe_data = m_move_state.complete();
+		auto const maybe_data = m_move_state.complete<generation>();
 		if (!maybe_data) {
 			return;
 		}
@@ -663,7 +663,7 @@ private:
 			bool did_any_damage;
 		};
 		auto const damage = bounded::visit(data.damage, bounded::overload(
-			[](MoveState::NoDamage) {
+			[](NoDamage) {
 				return LocalDamage{ActualDamage::Known{0_bi}, false};
 			},
 			[&](HPAndStatus const hp_and_status) -> LocalDamage {
@@ -673,10 +673,10 @@ private:
 					value != 0_bi
 				};
 			},
-			[&](MoveState::SubstituteDamaged) -> LocalDamage {
+			[&](SubstituteDamaged) -> LocalDamage {
 				return LocalDamage{ActualDamage::Capped{other_pokemon.hp().max() / 4_bi}, true};
 			},
-			[&](MoveState::SubstituteBroke) -> LocalDamage {
+			[&](SubstituteBroke) -> LocalDamage {
 				return LocalDamage{ActualDamage::Known{other_pokemon.substitute().hp()}, true};
 			}
 		));

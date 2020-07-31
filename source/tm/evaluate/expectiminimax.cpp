@@ -28,6 +28,7 @@
 #include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
+#include <tm/move/side_effects.hpp>
 
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/chance_to_hit.hpp>
@@ -40,7 +41,6 @@
 #include <tm/critical_hit.hpp>
 #include <tm/end_of_turn.hpp>
 #include <tm/team.hpp>
-#include <tm/variable.hpp>
 
 #include <bounded/assert.hpp>
 
@@ -190,7 +190,7 @@ template<Generation generation>
 auto execute_move(Team<generation> const & user, SelectedAndExecuted const move, Team<generation> const & other, OtherMove const other_move, Weather const weather, auto const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
-	auto const variables = all_probabilities(move.executed.name, user_pokemon, other);
+	auto const side_effects = possible_side_effects(move.executed.name, user_pokemon, other, weather);
 	auto const status = user_pokemon.status();
 	auto const probability_of_clearing_status = status.probability_of_clearing(generation, user_pokemon.ability());
 	auto const specific_chance_to_hit = chance_to_hit(user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());
@@ -198,8 +198,8 @@ auto execute_move(Team<generation> const & user, SelectedAndExecuted const move,
 	return generic_flag_branch(probability_of_clearing_status, [&](bool const clear_status) {
 		return generic_flag_branch(specific_chance_to_hit, [&](bool const hits) {
 			auto score = 0.0;
-			for (auto const & variable : variables) {
-				score += variable.probability * generic_flag_branch(
+			for (auto const & side_effect : side_effects) {
+				score += side_effect.probability * generic_flag_branch(
 					hits ? ch_probability : 0.0,
 					[&](bool const critical_hit) {
 						auto user_copy = user;
@@ -207,7 +207,13 @@ auto execute_move(Team<generation> const & user, SelectedAndExecuted const move,
 						auto weather_copy = weather;
 						call_move(
 							user_copy,
-							UsedMove{move.selected, move.executed.name, variable.variable, critical_hit, !hits},
+							UsedMove<generation>(
+								move.selected,
+								move.executed.name,
+								critical_hit,
+								!hits,
+								side_effect.function
+							),
 							other_copy,
 							other_move,
 							weather_copy,

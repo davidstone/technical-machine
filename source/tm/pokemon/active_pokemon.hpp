@@ -487,20 +487,19 @@ constexpr bool cannot_ko(Moves const move) {
 }
 
 template<Generation generation>
-auto non_sleep_status_can_apply(Statuses const status, ActivePokemon<generation> const user, ActivePokemon<generation> const target, Weather const weather) {
+auto indirect_status_can_apply(Statuses const status, ActivePokemon<generation> const target, Weather const weather) {
 	return
 		is_clear(target.status()) and
-		!blocks_status(target.ability(), user.ability(), status, weather) and
+		!blocks_status(target.ability(), Ability::Honey_Gather, status, weather) and
 		!containers::any(target.types(), [=](Type const type) { return blocks_status(type, status); });
 }
 
 template<Generation generation>
-auto sleep_can_apply(ActivePokemon<generation> const user, ActivePokemon<generation> const target, Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) {
+auto yawn_can_apply(ActivePokemon<generation> const target, Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) {
 	return
 		!sleep_clause_activates and
 		!either_is_uproaring and
-		is_clear(target.status()) and
-		!blocks_status(target.ability(), user.ability(), Statuses::sleep, weather);
+		indirect_status_can_apply(Statuses::sleep, target, weather);
 }
 
 template<Generation>
@@ -908,7 +907,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		if (!attempt_sleep) {
 			return;
 		}
-		if (sleep_can_apply(as_const(*this), as_const(*this), weather, either_is_uproaring, sleep_clause_activates)) {
+		if (yawn_can_apply(as_const(*this), weather, either_is_uproaring, sleep_clause_activates)) {
 			set_status(Statuses::sleep, weather);
 		}
 	}

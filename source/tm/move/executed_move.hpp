@@ -18,19 +18,15 @@
 #pragma once
 
 #include <tm/move/known_move.hpp>
-
-#include <tm/type/type.hpp>
-
-#include <tm/variable.hpp>
-
-#include <cstdint>
+#include <tm/move/side_effects.hpp>
 
 namespace technicalmachine {
 
+template<Generation generation>
 struct ExecutedMove {
 	KnownMove move;
 	PP pp;
-	Variable variable;
+	typename SideEffect<generation>::Function side_effect;
 	bool critical_hit;
 };
 

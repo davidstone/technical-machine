@@ -78,7 +78,7 @@ struct Battle {
 		end_of_turn(m_ai, ai_flags, m_foe, foe_flags, m_weather);
 	}
 
-	void handle_use_move(bool const is_ai, UsedMove const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
+	void handle_use_move(bool const is_ai, UsedMove<generation> const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
 		auto & user = is_ai ? m_ai : m_foe;
 		auto & other = is_ai ? m_foe : m_ai;
 

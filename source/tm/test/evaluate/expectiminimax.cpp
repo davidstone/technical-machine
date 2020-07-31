@@ -23,12 +23,12 @@
 
 #include <tm/move/call_move.hpp>
 #include <tm/move/moves.hpp>
+#include <tm/move/side_effects.hpp>
 
 #include <tm/pokemon/species.hpp>
 
 #include <tm/end_of_turn.hpp>
 #include <tm/team.hpp>
-#include <tm/variable.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/assert.hpp>
@@ -481,15 +481,24 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 
 	defender.reset_start_of_turn();
 
-	call_move(
-		defender,
-		UsedMove{Moves::Surf},
-		attacker,
-		FutureMove{false},
-		weather,
-		false,
-		ActualDamage::Unknown{}
-	);
+	{
+		constexpr auto move_name = Moves::Surf;
+		auto const side_effects = possible_side_effects(move_name, as_const(defender.pokemon()), attacker, weather);
+		BOUNDED_ASSERT(size(side_effects) == 1_bi);
+		auto const & side_effect = front(side_effects);
+		call_move(
+			defender,
+			UsedMove<generation>(
+				move_name,
+				side_effect.function
+			),
+			attacker,
+			FutureMove{false},
+			weather,
+			false,
+			ActualDamage::Unknown{}
+		);
+	}
 	
 	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth, std::cout);
 	BOUNDED_ASSERT(best_move.name == Moves::Switch2);
@@ -604,8 +613,14 @@ void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & rand
 	
 	constexpr auto keep_status = false;
 	constexpr auto unknown_damage = ActualDamage::Unknown{};
-	constexpr auto sleep_talk = UsedMove{Moves::Sleep_Talk};
-	constexpr auto thunderbolt = UsedMove{Moves::Thunderbolt};
+	constexpr auto sleep_talk = UsedMove<generation>(
+		Moves::Sleep_Talk,
+		no_effect_function
+	);
+	constexpr auto thunderbolt = UsedMove<generation>(
+		Moves::Thunderbolt,
+		no_effect_function
+	);
 	constexpr auto other_move = FutureMove{false};
 	
 	auto next_turn = [&]{

@@ -44,7 +44,7 @@ constexpr auto removes_toxic_spikes(ActivePokemon<generation> const switcher) {
 template<Generation generation>
 constexpr auto apply_toxic_spikes(EntryHazards<generation> const & hazards, MutableActivePokemon<generation> switcher, Weather const weather) {
 	auto const status = hazards.toxic_spikes() == 1_bi ? Statuses::poison : Statuses::toxic;
-	if (non_sleep_status_can_apply(status, as_const(switcher), as_const(switcher), weather)) {
+	if (indirect_status_can_apply(status, as_const(switcher), weather)) {
 		switcher.set_status(status, weather);
 	}
 }

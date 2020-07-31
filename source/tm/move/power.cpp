@@ -54,7 +54,7 @@ using namespace bounded::literal;
 auto power_of_mass_based_moves(Species species) -> bounded::integer<20, 120>;
 
 template<Generation generation>
-auto variable_adjusted_base_power(Team<generation> const & attacker_team, ExecutedMove const executed, Team<generation> const & defender_team, Weather const weather) -> VariableAdjustedBasePower {
+auto variable_adjusted_base_power(Team<generation> const & attacker_team, ExecutedMove<generation> const executed, Team<generation> const & defender_team, Weather const weather) -> VariableAdjustedBasePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	switch (executed.move.name) {
@@ -110,11 +110,11 @@ auto variable_adjusted_base_power(Team<generation> const & attacker_team, Execut
 		case Moves::Hidden_Power:
 			return attacker.hidden_power()->power();
 		case Moves::Magnitude:
-			return executed.variable.magnitude_power();
+			return 70_bi;
 		case Moves::Natural_Gift:
 			return berry_power(attacker.item(weather));
 		case Moves::Present:
-			return executed.variable.present_power();
+			return 80_bi;
 		case Moves::Punishment: {
 			auto is_positive = [](auto const value) { return value > 0_bi; };
 			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::sum(containers::filter(defender.stage(), is_positive)));
@@ -427,7 +427,7 @@ auto defender_ability_modifier(Type const move_type, Ability const ability) -> r
 }	// namespace
 
 template<Generation generation>
-auto move_power(Team<generation> const & attacker_team, ExecutedMove const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower {
+auto move_power(Team<generation> const & attacker_team, ExecutedMove<generation> const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	auto const base_power = variable_adjusted_base_power(attacker_team, executed, defender_team, weather);
@@ -443,7 +443,7 @@ auto move_power(Team<generation> const & attacker_team, ExecutedMove const execu
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto move_power<generation>(Team<generation> const & attacker_team, ExecutedMove const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower
+	template auto move_power<generation>(Team<generation> const & attacker_team, ExecutedMove<generation> const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

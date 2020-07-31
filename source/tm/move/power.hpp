@@ -35,10 +35,10 @@ struct Team;
 // must not be `none`.
 using MovePower = bounded::integer<1, 1440>;
 template<Generation generation>
-auto move_power(Team<generation> const & attacker, ExecutedMove executed, Team<generation> const & defender, Weather weather) -> MovePower;
+auto move_power(Team<generation> const & attacker, ExecutedMove<generation> executed, Team<generation> const & defender, Weather weather) -> MovePower;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto move_power<generation>(Team<generation> const & attacker_team, ExecutedMove const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower
+	extern template auto move_power<generation>(Team<generation> const & attacker_team, ExecutedMove<generation> const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

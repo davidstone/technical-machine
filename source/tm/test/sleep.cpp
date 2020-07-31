@@ -91,7 +91,13 @@ void sleep_talk() {
 
 	call_move(
 		attacker,
-		UsedMove{Moves::Sleep_Talk, Moves::Thunderbolt},
+		UsedMove<generation>(
+			Moves::Sleep_Talk,
+			Moves::Thunderbolt,
+			false,
+			false,
+			no_effect_function
+		),
 		defender,
 		FutureMove{false},
 		weather,
@@ -109,13 +115,21 @@ struct Sleeper {
 	{
 	}
 
-	void use_move(Moves const selected, auto... executed) {
+	void use_move(Moves const selected, Moves const executed) {
 		auto pokemon = m_sleeper.pokemon();
 		auto const probability_of_awakening = pokemon.status().probability_of_clearing(generation, pokemon.ability());
 		BOUNDED_ASSERT(probability_of_awakening == 0.0 or probability_of_awakening == 1.0);
+		auto const side_effects = possible_side_effects(executed, as_const(pokemon), m_other, m_weather);
+		auto const & side_effect = front(side_effects);
 		call_move(
 			m_sleeper,
-			UsedMove{selected, executed...},
+			UsedMove<generation>(
+				selected,
+				executed,
+				false,
+				false,
+				side_effect.function
+			),
 			m_other,
 			FutureMove{false},
 			m_weather,
@@ -123,11 +137,17 @@ struct Sleeper {
 			ActualDamage::Unknown()
 		);
 	}
+	void use_move(Moves const selected) {
+		use_move(selected, selected);
+	}
 
 	void get_attacked() {
 		call_move(
 			m_other,
-			UsedMove{Moves::Seismic_Toss},
+			UsedMove<generation>(
+				Moves::Seismic_Toss,
+				no_effect_function
+			),
 			m_sleeper,
 			FutureMove{false},
 			m_weather,

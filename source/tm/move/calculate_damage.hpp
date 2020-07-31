@@ -23,6 +23,7 @@
 
 namespace technicalmachine {
 
+template<Generation generation>
 struct ExecutedMove;
 struct OtherMove;
 template<Generation>
@@ -32,10 +33,10 @@ struct Weather;
 using damage_type = bounded::checked_integer<0, 1'000'000'000>;
 
 template<Generation generation>
-auto calculate_damage(Team<generation> const & attacker, ExecutedMove, bool move_weakened_from_item, Team<generation> const & defender, OtherMove defender_move, Weather) -> damage_type;
+auto calculate_damage(Team<generation> const & attacker, ExecutedMove<generation>, bool move_weakened_from_item, Team<generation> const & defender, OtherMove defender_move, Weather) -> damage_type;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto calculate_damage<generation>(Team<generation> const & attacker, ExecutedMove, bool move_weakened_from_item, Team<generation> const & defender, OtherMove defender_move, Weather) -> damage_type
+	extern template auto calculate_damage<generation>(Team<generation> const & attacker, ExecutedMove<generation>, bool move_weakened_from_item, Team<generation> const & defender, OtherMove defender_move, Weather) -> damage_type
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

@@ -127,15 +127,22 @@ void test_baton_pass() {
 		StaticVectorMove({Moves::Baton_Pass, Moves::Belly_Drum, Moves::Switch1})
 	);
 
-	call_move(
-		attacker,
-		UsedMove{Moves::Belly_Drum},
-		defender,
-		FutureMove{false},
-		weather,
-		false,
-		damage
-	);
+	{
+		auto const side_effects = possible_side_effects(Moves::Belly_Drum, as_const(attacker.pokemon()), defender, weather);
+		BOUNDED_ASSERT(size(side_effects) == 1_bi);
+		auto const & side_effect = front(side_effects);
+		BOUNDED_ASSERT(side_effect.probability == 1.0);
+
+		call_move(
+			attacker,
+			UsedMove<generation>(Moves::Belly_Drum, side_effect.function),
+			defender,
+			FutureMove{false},
+			weather,
+			false,
+			damage
+		);
+	}
 	BOUNDED_ASSERT(attacker.pokemon().stage()[BoostableStat::atk] == 6_bi);
 	BOUNDED_ASSERT(!attacker.pokemon().switch_decision_required());
 	BOUNDED_ASSERT(
@@ -152,7 +159,7 @@ void test_baton_pass() {
 
 	call_move(
 		attacker,
-		UsedMove{Moves::Baton_Pass},
+		UsedMove<generation>(Moves::Baton_Pass, no_effect_function),
 		defender,
 		FutureMove{false},
 		weather,
@@ -166,15 +173,21 @@ void test_baton_pass() {
 		StaticVectorMove({Moves::Switch1})
 	);
 
-	call_move(
-		attacker,
-		UsedMove{Moves::Switch1},
-		defender,
-		FutureMove{false},
-		weather,
-		false,
-		damage
-	);
+	{
+		auto const side_effects = possible_side_effects(Moves::Switch1, as_const(attacker.pokemon()), defender, weather);
+		BOUNDED_ASSERT(size(side_effects) == 1_bi);
+		auto const & side_effect = front(side_effects);
+		BOUNDED_ASSERT(side_effect.probability == 1.0);
+		call_move(
+			attacker,
+			UsedMove<generation>(Moves::Switch1, side_effect.function),
+			defender,
+			FutureMove{false},
+			weather,
+			false,
+			damage
+		);
+	}
 	BOUNDED_ASSERT(attacker.pokemon().stage()[BoostableStat::atk] == 6_bi);
 	BOUNDED_ASSERT(attacker.pokemon().species() == Species::Alakazam);
 	BOUNDED_ASSERT(!attacker.pokemon().switch_decision_required());
@@ -232,7 +245,7 @@ void wonder_guard() {
 
 	call_move(
 		attacker,
-		UsedMove{Moves::Thunderbolt},
+		UsedMove<generation>(Moves::Thunderbolt, no_effect_function),
 		defender,
 		FutureMove{false},
 		weather,
@@ -243,7 +256,7 @@ void wonder_guard() {
 
 	call_move(
 		attacker,
-		UsedMove{Moves::Shadow_Ball},
+		UsedMove<generation>(Moves::Shadow_Ball, no_effect_function),
 		defender,
 		FutureMove{false},
 		weather,
