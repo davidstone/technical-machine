@@ -841,8 +841,11 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 			this->m_flags.confusion = {};
 			this->m_flags.is_cursed = false;
 			this->m_flags.embargo = {};
-			this->m_flags.has_focused_energy = false;
+			if constexpr (generation <= Generation::four) {
+				this->m_flags.fully_trapped = false;
+			}
 			this->m_flags.gastro_acid = false;
+			this->m_flags.has_focused_energy = false;
 			this->m_flags.ingrained = false;
 			this->m_flags.leech_seeded = false;
 			this->m_flags.magnet_rise = {};
@@ -858,7 +861,9 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		this->m_flags.encore = {};
 		this->m_flags.flash_fire = false;
 		this->m_flags.flinched = false;
-		this->m_flags.fully_trapped = false;
+		if constexpr (generation >= Generation::five) {
+			this->m_flags.fully_trapped = false;
+		}
 		this->m_flags.heal_block = {};
 		this->m_flags.identified = false;
 		this->m_flags.used_imprison = false;
