@@ -420,8 +420,10 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return guaranteed_effect<generation>(boost_target_stat(BoostableStat::def, -2_bi));
 		case Moves::Iron_Tail:
 			return basic_probability<generation>(0.1, boost_target_stat(BoostableStat::def, -1_bi));
-		case Moves::Crunch:
-			return basic_probability<generation>(0.2, boost_target_stat(BoostableStat::def, -1_bi));
+		case Moves::Crunch: {
+			constexpr auto stat = generation <= Generation::three ? BoostableStat::spd : BoostableStat::def;
+			return basic_probability<generation>(0.2, boost_target_stat(stat, -1_bi));
+		}
 		case Moves::Crush_Claw:
 		case Moves::Razor_Shell:
 		case Moves::Rock_Smash:
