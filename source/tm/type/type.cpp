@@ -35,7 +35,7 @@ auto get_type(Generation const generation, Moves const move, bounded::optional<T
 		case Moves::Switch5: return Type::Typeless;
 		case Moves::Hit_Self: return Type::Typeless;
 		case Moves::Pound: return Type::Normal;
-		case Moves::Karate_Chop: return BOUNDED_CONDITIONAL(generation == Generation::one, Type::Normal, Type::Fighting);
+		case Moves::Karate_Chop: return generation == Generation::one ? Type::Normal : Type::Fighting;
 		case Moves::Double_Slap: return Type::Normal;
 		case Moves::Comet_Punch: return Type::Normal;
 		case Moves::Mega_Punch: return Type::Normal;
@@ -49,7 +49,7 @@ auto get_type(Generation const generation, Moves const move, bounded::optional<T
 		case Moves::Razor_Wind: return Type::Normal;
 		case Moves::Swords_Dance: return Type::Normal;
 		case Moves::Cut: return Type::Normal;
-		case Moves::Gust: return BOUNDED_CONDITIONAL(generation == Generation::one, Type::Normal, Type::Flying);
+		case Moves::Gust: return generation == Generation::one ? Type::Normal : Type::Flying;
 		case Moves::Wing_Attack: return Type::Flying;
 		case Moves::Whirlwind: return Type::Normal;
 		case Moves::Fly: return Type::Flying;
@@ -61,7 +61,7 @@ auto get_type(Generation const generation, Moves const move, bounded::optional<T
 		case Moves::Mega_Kick: return Type::Normal;
 		case Moves::Jump_Kick: return Type::Fighting;
 		case Moves::Rolling_Kick: return Type::Fighting;
-		case Moves::Sand_Attack: return BOUNDED_CONDITIONAL(generation == Generation::one, Type::Normal, Type::Ground);
+		case Moves::Sand_Attack: return generation == Generation::one ? Type::Normal : Type::Ground;
 		case Moves::Headbutt: return Type::Normal;
 		case Moves::Horn_Attack: return Type::Normal;
 		case Moves::Fury_Attack: return Type::Normal;
@@ -77,7 +77,7 @@ auto get_type(Generation const generation, Moves const move, bounded::optional<T
 		case Moves::Twineedle: return Type::Bug;
 		case Moves::Pin_Missile: return Type::Bug;
 		case Moves::Leer: return Type::Normal;
-		case Moves::Bite: return BOUNDED_CONDITIONAL(generation == Generation::one, Type::Normal, Type::Dark);
+		case Moves::Bite: return generation == Generation::one ? Type::Normal : Type::Dark;
 		case Moves::Growl: return Type::Normal;
 		case Moves::Roar: return Type::Normal;
 		case Moves::Sing: return Type::Normal;
@@ -198,7 +198,7 @@ auto get_type(Generation const generation, Moves const move, bounded::optional<T
 		case Moves::Super_Fang: return Type::Normal;
 		case Moves::Slash: return Type::Normal;
 		case Moves::Substitute: return Type::Normal;
-		case Moves::Struggle: return BOUNDED_CONDITIONAL(generation == Generation::one, Type::Normal, Type::Typeless);
+		case Moves::Struggle: return generation == Generation::one ? Type::Normal : Type::Typeless;
 		case Moves::Sketch: return Type::Normal;
 		case Moves::Triple_Kick: return Type::Fighting;
 		case Moves::Thief: return Type::Dark;
@@ -207,7 +207,7 @@ auto get_type(Generation const generation, Moves const move, bounded::optional<T
 		case Moves::Nightmare: return Type::Ghost;
 		case Moves::Flame_Wheel: return Type::Fire;
 		case Moves::Snore: return Type::Normal;
-		case Moves::Curse: return Type::Ghost;
+		case Moves::Curse: return generation <= Generation::four ? Type::Typeless : Type::Ghost;
 		case Moves::Flail: return Type::Normal;
 		case Moves::Conversion_2: return Type::Normal;
 		case Moves::Aeroblast: return Type::Flying;
@@ -219,7 +219,7 @@ auto get_type(Generation const generation, Moves const move, bounded::optional<T
 		case Moves::Mach_Punch: return Type::Fighting;
 		case Moves::Scary_Face: return Type::Normal;
 		case Moves::Feint_Attack: return Type::Dark;
-		case Moves::Sweet_Kiss: return Type::Normal;
+		case Moves::Sweet_Kiss: return generation <= Generation::five ? Type::Normal : Type::Fairy;
 		case Moves::Belly_Drum: return Type::Normal;
 		case Moves::Sludge_Bomb: return Type::Poison;
 		case Moves::Mud_Slap: return Type::Ground;
@@ -237,7 +237,7 @@ auto get_type(Generation const generation, Moves const move, bounded::optional<T
 		case Moves::Sandstorm: return Type::Rock;
 		case Moves::Giga_Drain: return Type::Grass;
 		case Moves::Endure: return Type::Normal;
-		case Moves::Charm: return Type::Normal;
+		case Moves::Charm: return generation <= Generation::five ? Type::Normal : Type::Fairy;
 		case Moves::Rollout: return Type::Rock;
 		case Moves::False_Swipe: return Type::Normal;
 		case Moves::Swagger: return Type::Normal;
@@ -269,7 +269,7 @@ auto get_type(Generation const generation, Moves const move, bounded::optional<T
 		case Moves::Vital_Throw: return Type::Fighting;
 		case Moves::Morning_Sun: return Type::Normal;
 		case Moves::Synthesis: return Type::Grass;
-		case Moves::Moonlight: return Type::Normal;
+		case Moves::Moonlight: return generation <= Generation::five ? Type::Normal : Type::Fairy;
 		case Moves::Hidden_Power: return *hidden_power;
 		case Moves::Cross_Chop: return Type::Fighting;
 		case Moves::Twister: return Type::Dragon;
