@@ -538,7 +538,9 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				auto const hp = user_pokemon.hp();
 				if (hp.current() > hp.max() / 2_bi and hp.current() > 1_bi) {
 					change_hp(user_pokemon, weather, -hp.max() / 2_bi);
-					user_pokemon.stage()[BoostableStat::atk] += 12_bi;
+					user_pokemon.stage()[BoostableStat::atk] = 6_bi;
+				} else if constexpr (generation == Generation::two) {
+					user_pokemon.stage()[BoostableStat::atk] += 2_bi;
 				}
 			});
 		case Moves::Close_Combat:
