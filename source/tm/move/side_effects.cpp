@@ -864,8 +864,10 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				status_effect<Statuses::poison>(0.2, original_user, original_other, original_weather, Type::Poison) :
 				status_effect<Statuses::poison>(0.2, original_user, original_other, original_weather, Type::Poison, Type::Steel);
 
-		case Moves::Poison_Fang:
-			return status_effect<Statuses::toxic>(0.3, original_user, original_other, original_weather, Type::Poison, Type::Steel);
+		case Moves::Poison_Fang: {
+			constexpr auto probability = generation <= Generation::five ? 0.3 : 0.5;
+			return status_effect<Statuses::toxic>(probability, original_user, original_other, original_weather, Type::Poison, Type::Steel);
+		}
 		case Moves::Toxic:
 			return status_effect<Statuses::toxic>(1.0, original_user, original_other, original_weather, Type::Poison, Type::Steel);
 
