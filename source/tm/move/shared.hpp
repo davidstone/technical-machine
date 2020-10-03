@@ -78,7 +78,6 @@ public:
 
 	friend constexpr auto operator<=>(SharedMovesIterator const &, SharedMovesIterator const &) = default;
 
-	OPERATORS_BRACKET_ITERATOR_DEFINITIONS
 private:
 	underlying_index_type m_index;
 };
