@@ -28,7 +28,7 @@ target_include_directories(boost SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
 
 enable_testing()
 
-add_subdirectory(bounded_integer)
+add_subdirectory(bounded-integer)
 
 # TODO: This should be an object library, but they do not really work yet.
 add_library(tm_common STATIC
