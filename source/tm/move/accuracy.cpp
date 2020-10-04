@@ -23,8 +23,6 @@
 #include <tm/generation.hpp>
 #include <tm/weather.hpp>
 
-#include <cassert>
-
 namespace technicalmachine {
 using namespace bounded::literal;
 

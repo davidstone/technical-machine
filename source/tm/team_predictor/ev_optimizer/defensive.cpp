@@ -30,8 +30,6 @@
 #include <containers/algorithms/transform.hpp>
 #include <containers/integer_range.hpp>
 
-#include <cassert>
-
 namespace technicalmachine {
 namespace {
 

@@ -21,8 +21,6 @@
 
 #include <tm/generation.hpp>
 
-#include <cassert>
-
 namespace technicalmachine {
 using namespace bounded::literal;
 

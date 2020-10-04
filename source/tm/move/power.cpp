@@ -44,7 +44,6 @@
 #include <containers/array/array.hpp>
 
 #include <algorithm>
-#include <cassert>
 #include <numeric>
 
 namespace technicalmachine {
