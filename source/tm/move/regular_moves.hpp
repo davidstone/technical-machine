@@ -44,17 +44,17 @@ struct RegularMoves {
 		}
 	}
 
-	friend constexpr auto begin(RegularMoves const & container) {
-		return begin(container.m_moves);
+	constexpr auto begin() const & {
+		return containers::begin(m_moves);
 	}
-	friend constexpr auto begin(RegularMoves & container) {
-		return begin(container.m_moves);
+	constexpr auto begin() & {
+		return containers::begin(m_moves);
 	}
-	friend constexpr auto end(RegularMoves const & container) {
-		return end(container.m_moves);
+	constexpr auto end() const & {
+		return containers::end(m_moves);
 	}
-	friend constexpr auto end(RegularMoves & container) {
-		return end(container.m_moves);
+	constexpr auto end() & {
+		return containers::end(m_moves);
 	}
 
 	auto push_back(Move const move) -> Move &;

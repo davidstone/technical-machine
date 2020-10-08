@@ -31,11 +31,11 @@ namespace technicalmachine {
 
 struct SpeedEVs {
 	SpeedEVs(BaseStats, Level, IV, InitialStat target);
-	friend auto begin(SpeedEVs const & evs) {
-		return begin(evs.m_container);
+	auto begin() const {
+		return containers::begin(m_container);
 	}
-	friend auto end(SpeedEVs const & evs) {
-		return end(evs.m_container);
+	auto end() const {
+		return containers::end(m_container);
 	}
 private:
 	struct Mapped {

@@ -49,17 +49,17 @@ struct PokemonCollection {
 	{
 	}
 
-	friend auto begin(PokemonCollection const & collection) {
-		return begin(collection.m_container);
+	auto begin() const & {
+		return containers::begin(m_container);
 	}
-	friend auto begin(PokemonCollection & collection) {
-		return begin(collection.m_container);
+	auto begin() & {
+		return containers::begin(m_container);
 	}
-	friend auto end(PokemonCollection const & collection) {
-		return end(collection.m_container);
+	auto end() const & {
+		return containers::end(m_container);
 	}
-	friend auto end(PokemonCollection & collection) {
-		return end(collection.m_container);
+	auto end() & {
+		return containers::end(m_container);
 	}
 	
 	void set_index(TeamIndex const new_index) {
@@ -100,7 +100,7 @@ struct PokemonCollection {
 	void remove_active(TeamIndex const index_of_replacement) {
 		auto const original_index = index();
 		BOUNDED_ASSERT(original_index != index_of_replacement);
-		containers::erase(m_container, begin(m_container) + original_index);
+		containers::erase(m_container, begin() + original_index);
 		--m_real_size;
 		set_index((index_of_replacement < original_index) ?
 			index_of_replacement :
@@ -151,7 +151,7 @@ CONTAINERS_COMMON_USING_DECLARATIONS
 template<Generation generation>
 inline auto find_index(PokemonCollection<generation> const & collection, Species const species) {
 	using index_type = TeamIndex;
-	return static_cast<index_type>(containers::find_if(collection, [=](Pokemon<generation> const pokemon) { return pokemon.species() == species; }) - begin(collection));
+	return static_cast<index_type>(containers::find_if(collection, [=](Pokemon<generation> const pokemon) { return pokemon.species() == species; }) - collection.begin());
 }
 
 template<Generation generation>

@@ -92,11 +92,11 @@ struct SharedMoves {
 	{
 	}
 
-	friend constexpr auto begin(SharedMoves) {
+	static constexpr auto begin() {
 		return const_iterator(0_bi);
 	}
-	friend constexpr auto end(SharedMoves const container) {
-		return const_iterator(container.m_number_of_switches + number_of_weird_moves);
+	constexpr auto end() const {
+		return const_iterator(m_number_of_switches + number_of_weird_moves);
 	}
 
 	constexpr void remove_switch() {

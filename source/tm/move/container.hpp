@@ -62,13 +62,13 @@ public:
 		return m_regular;
 	}
 	
-	friend auto begin(MoveContainer const & container) {
+	auto begin() const {
 		return const_iterator(
-			move_container_transform(container.m_regular),
-			move_container_transform(container.m_shared)
+			move_container_transform(m_regular),
+			move_container_transform(m_shared)
 		);
 	}
-	friend auto end(MoveContainer) {
+	static constexpr auto end() {
 		return containers::concatenate_view_sentinel();
 	}
 

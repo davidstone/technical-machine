@@ -44,11 +44,11 @@ struct DefensiveEVs {
 		InitialStat stat;
 	};
 	DefensiveEVs(BaseStats, Level, InputHP, InputStat defense, InputStat special_defense);
-	friend auto begin(DefensiveEVs const & defensive) {
-		return begin(defensive.m_container);
+	auto begin() const {
+		return containers::begin(m_container);
 	}
-	friend auto end(DefensiveEVs const & defensive) {
-		return end(defensive.m_container);
+	auto end() const {
+		return containers::end(m_container);
 	}
 	auto find(Nature const nature) const {
 		return containers::find_if(m_container, [=](auto const value) { return value.nature == nature; });

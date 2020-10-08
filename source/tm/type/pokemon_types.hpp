@@ -39,11 +39,11 @@ struct PokemonTypes {
 	{
 	}
 
-	friend constexpr auto begin(PokemonTypes const & types) {
-		return begin(types.m_types);
+	constexpr auto begin() const {
+		return containers::begin(m_types);
 	}
-	friend constexpr auto end(PokemonTypes const & types) {
-		return begin(types) + BOUNDED_CONDITIONAL(types.m_types[1_bi] == Type::Typeless, 1_bi, 2_bi);
+	constexpr auto end() const {
+		return begin() + BOUNDED_CONDITIONAL(m_types[1_bi] == Type::Typeless, 1_bi, 2_bi);
 	}
 
 private:

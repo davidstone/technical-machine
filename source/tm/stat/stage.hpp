@@ -41,17 +41,17 @@ struct Stage {
 	{
 	}
 
-	friend constexpr auto begin(Stage const & stage) {
-		return begin(stage.m_stages);
+	constexpr auto begin() const & {
+		return containers::begin(m_stages);
 	}
-	friend constexpr auto begin(Stage & stage) {
-		return begin(stage.m_stages);
+	constexpr auto begin() & {
+		return containers::begin(m_stages);
 	}
-	friend constexpr auto end(Stage const & stage) {
-		return end(stage.m_stages);
+	constexpr auto end() const & {
+		return containers::end(m_stages);
 	}
-	friend constexpr auto end(Stage & stage) {
-		return end(stage.m_stages);
+	constexpr auto end() & {
+		return containers::end(m_stages);
 	}
 
 	auto operator[](BoostableStat index) const -> value_type const & {
