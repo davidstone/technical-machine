@@ -118,7 +118,7 @@ public:
 		return static_cast<Statuses>(m_state.index());
 	}
 	
-	constexpr Status & operator=(Statuses const status) & {
+	Status & operator=(Statuses const status) & {
 		*this = Status(status);
 		return *this;
 	}
