@@ -31,7 +31,7 @@ using namespace bounded::literal;
 
 struct Stage {
 	using value_type = bounded::clamped_integer<-6, 6>;
-	using boost_type = bounded::checked_integer<-3, 12>;
+	using boost_type = bounded::integer<-3, 12>;
 	static constexpr auto number_of_stats = bounded::max_value<decltype(containers::size(containers::enum_range<BoostableStat>()))>;
 	using size_type = std::remove_const_t<decltype(number_of_stats)>;
 	using container_type = containers::array<value_type, number_of_stats.value()>;

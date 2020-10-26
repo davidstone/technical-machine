@@ -49,7 +49,7 @@ void add_pokemon(Team<generation> & team, Species const species) {
 	team.pokemon().set_ability_to_base_ability();
 }
 
-using EffectIndex = bounded::checked_integer<0, 4>;
+using EffectIndex = bounded::integer<0, 4>;
 template<Generation generation>
 void validate(Team<generation> const & team, EffectIndex const effect_index, TeamIndex const current_index) {
 	static constexpr auto expected_index = containers::make_explicit_array<6, 5>(

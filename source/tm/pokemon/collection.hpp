@@ -150,8 +150,7 @@ CONTAINERS_COMMON_USING_DECLARATIONS
 
 template<Generation generation>
 inline auto find_index(PokemonCollection<generation> const & collection, Species const species) {
-	using index_type = TeamIndex;
-	return static_cast<index_type>(containers::find_if(collection, [=](Pokemon<generation> const pokemon) { return pokemon.species() == species; }) - collection.begin());
+	return static_cast<TeamIndex>(containers::find_if(collection, [=](Pokemon<generation> const pokemon) { return pokemon.species() == species; }) - collection.begin());
 }
 
 template<Generation generation>

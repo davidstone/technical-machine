@@ -71,7 +71,7 @@ auto get_move_index(Pokemon<generation> const & pokemon, Moves const move_name) 
 	if (it == end(moves)) {
 		throw std::runtime_error("Pokemon does not know " + std::string(to_string(move_name)));
 	}
-	return static_cast<RegularMoveIndex>(it - begin(moves));
+	return containers::index_type<RegularMoves>(it - begin(moves));
 }
 
 constexpr auto parse_status(std::string_view const str) {

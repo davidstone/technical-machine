@@ -30,17 +30,9 @@ using namespace bounded::literal;
 
 constexpr auto max_moves_per_pokemon = 4_bi;
 using RegularMoveSize = bounded::integer<1, static_cast<int>(max_moves_per_pokemon)>;
-using RegularMoveIndex = bounded::checked_integer<
-	0,
-	static_cast<int>(bounded::max_value<RegularMoveSize> - 1_bi)
->;
 
 constexpr auto number_of_weird_moves = 2_bi; // Pass, Struggle
 using SharedMoveSize = decltype(std::declval<TeamSize>() + number_of_weird_moves);
-using SharedMoveIndex = bounded::checked_integer<
-	0,
-	static_cast<int>(bounded::max_value<SharedMoveSize> - 1_bi)
->;
 
 using MoveSize = decltype(std::declval<RegularMoveSize>() + std::declval<SharedMoveSize>());
 

@@ -30,7 +30,7 @@ template<Generation>
 struct Team;
 struct Weather;
 
-using damage_type = bounded::checked_integer<0, 1'000'000'000>;
+using damage_type = bounded::integer<0, 1'000'000'000>;
 
 template<Generation generation>
 auto calculate_damage(Team<generation> const & attacker, ExecutedMove<generation>, bool move_weakened_from_item, Team<generation> const & defender, OtherMove defender_move, Weather) -> damage_type;

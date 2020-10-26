@@ -27,7 +27,7 @@ using TeamSize = bounded::checked_integer<
 	0,
 	static_cast<int>(max_pokemon_per_team)
 >;
-using TeamIndex = bounded::checked_integer<
+using TeamIndex = bounded::integer<
 	0,
 	static_cast<int>(max_pokemon_per_team - 1_bi)
 >;

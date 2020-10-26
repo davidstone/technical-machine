@@ -37,7 +37,7 @@ struct BaseStats {
 	auto spd() const { return m_spd; }
 	auto spe() const { return m_spe; }
 
-	using regular_value_type = bounded::checked_integer<5, 230>;
+	using regular_value_type = bounded::integer<5, 230>;
 
 	auto operator[](RegularStat const stat_name) const -> regular_value_type {
 		switch (stat_name) {

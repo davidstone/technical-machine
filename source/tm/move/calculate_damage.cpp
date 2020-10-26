@@ -267,7 +267,7 @@ auto raw_damage(Team<generation> const & attacker_team, ExecutedMove<generation>
 		case Moves::Super_Fang:
 			return defender.hp().current() / 2_bi;
 		default:
-			return static_cast<damage_type>(regular_damage(
+			return damage_type(regular_damage(
 				attacker_team,
 				executed,
 				move_weakened_from_item,
@@ -283,7 +283,7 @@ template<Generation generation>
 auto calculate_damage(Team<generation> const & attacker, ExecutedMove<generation> const executed, bool const move_weakened_from_item, Team<generation> const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
 	return affects_target(executed.move, defender.pokemon(), weather) ?
 		raw_damage(attacker, executed, move_weakened_from_item, defender, defender_move, weather) :
-		static_cast<damage_type>(0_bi);
+		0_bi;
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
