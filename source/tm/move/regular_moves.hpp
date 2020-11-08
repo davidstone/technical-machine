@@ -33,12 +33,12 @@ struct RegularMoves {
 	using size_type = bounded::integer<0, bounded::detail::normalize<max_moves_per_pokemon.value()>>;
 
 	RegularMoves() = default;
-	constexpr RegularMoves(auto const moves) {
+	RegularMoves(auto const moves) {
 		for (auto const move : moves) {
 			push_back(move);
 		}
 	}
-	constexpr RegularMoves(std::initializer_list<Move> moves) {
+	RegularMoves(std::initializer_list<Move> moves) {
 		for (auto const move : moves) {
 			push_back(move);
 		}

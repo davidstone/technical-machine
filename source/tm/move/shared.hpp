@@ -56,7 +56,7 @@ public:
 	{
 	}
 
-	constexpr auto operator*() const -> value_type {
+	auto operator*() const -> value_type {
 		using switch_index_type = bounded::integer<
 			static_cast<int>(number_of_weird_moves),
 			static_cast<int>(bounded::max_value<SharedMoveSize>) - 1

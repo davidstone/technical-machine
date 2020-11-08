@@ -30,32 +30,32 @@ enum class Moves : std::uint16_t;
 using namespace bounded::literal;
 
 struct Move {
-	constexpr explicit Move(Generation const generation, Moves const move, PP::pp_ups_type const pp_ups = 3_bi) :
+	explicit Move(Generation const generation, Moves const move, PP::pp_ups_type const pp_ups = 3_bi) :
 		m_name(move),
 		m_pp(generation, move, pp_ups)
 	{
 	}
 
-	constexpr auto name() const {
+	auto name() const {
 		return m_name;
 	}
 
-	constexpr auto pp() const {
+	auto pp() const {
 		return m_pp;
 	}
 
-	constexpr auto decrement_pp(Ability const target) & {
+	auto decrement_pp(Ability const target) & {
 		m_pp.decrement(target);
 	}
 
-	constexpr auto restore_pp(auto const value) & {
+	auto restore_pp(auto const value) & {
 		m_pp.restore(value);
 	}
 
 	friend auto operator==(Move const &, Move const &) -> bool = default;
 	// Pokemon don't change their moves throughout a battle, so we don't need
 	// to include move name
-	friend constexpr auto compress(Move const value) {
+	friend auto compress(Move const value) {
 		return compress(value.m_pp);
 	}
 private:
@@ -63,7 +63,7 @@ private:
 	PP m_pp;
 };
 
-constexpr auto operator==(Move const lhs, Moves const rhs) -> bool {
+inline auto operator==(Move const lhs, Moves const rhs) -> bool {
 	return lhs.name() == rhs;
 }
 

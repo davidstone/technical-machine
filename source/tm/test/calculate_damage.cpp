@@ -41,14 +41,18 @@ using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
 constexpr auto critical_hit = true;
-constexpr auto max_damage_physical_move = Move(generation, Moves::Rollout);
+auto max_damage_physical_move() {
+	return Move(generation, Moves::Rollout);
+}
 constexpr auto max_damage_physical_move_type = Type::Rock;
-constexpr auto max_damage_executed_physical_move = ExecutedMove<generation>{
-	{max_damage_physical_move.name(), max_damage_physical_move_type},
-	max_damage_physical_move.pp(),
-	no_effect_function,
-	critical_hit
-};
+auto max_damage_executed_physical_move() {
+	return ExecutedMove<generation>{
+		{max_damage_physical_move().name(), max_damage_physical_move_type},
+		max_damage_physical_move().pp(),
+		no_effect_function,
+		critical_hit
+	};
+}
 
 auto max_damage_physical_attacker(Item const item, Ability const ability) {
 	auto attacker = Team<generation>(max_pokemon_per_team);
@@ -68,7 +72,7 @@ auto max_damage_physical_attacker(Item const item, Ability const ability) {
 			{IV(31_bi), EV(0_bi)},
 			{IV(31_bi), EV(0_bi)},
 		},
-		RegularMoves({Move(max_damage_physical_move)})
+		RegularMoves({Move(max_damage_physical_move())})
 	));
 
 	auto pokemon = attacker.pokemon();
@@ -76,7 +80,7 @@ auto max_damage_physical_attacker(Item const item, Ability const ability) {
 	
 	pokemon.defense_curl();
 	for (unsigned n = 0; n != 10; ++n) {
-		pokemon.successfully_use_move(max_damage_physical_move.name());
+		pokemon.successfully_use_move(max_damage_physical_move().name());
 	}
 
 	return attacker;
@@ -117,7 +121,7 @@ void physical_power_test() {
 
 	auto const power = move_power(
 		attacker,
-		max_damage_executed_physical_move,
+		max_damage_executed_physical_move(),
 		max_damage_physical_defender(),
 		Weather()
 	);
@@ -219,7 +223,7 @@ void physical_damage_test() {
 	check_equal(
 		calculate_damage(
 			attacker,
-			max_damage_executed_physical_move,
+			max_damage_executed_physical_move(),
 			resistance_berry_activated,
 			defender,
 			FutureMove{false},

@@ -90,7 +90,7 @@ constexpr auto imprison(Moves const move, ActivePokemon<generation> const other)
 
 // Things that both block selection and block execution in between sleep and confusion
 template<Generation generation>
-constexpr auto block1(ActivePokemon<generation> const user, Move const move, ActivePokemon<generation> const other) {
+auto block1(ActivePokemon<generation> const user, Move const move, ActivePokemon<generation> const other) {
 	if (!is_regular(move.name())) {
 		return false;
 	}
@@ -155,7 +155,7 @@ constexpr auto is_blocked_due_to_lock_in(ActivePokemon<generation> const user, M
 }
 
 template<Generation generation>
-constexpr auto is_legal_selection(Team<generation> const & user, Move const move, Team<generation> const & other, Weather const weather, bool const found_selectable_move) {
+auto is_legal_selection(Team<generation> const & user, Move const move, Team<generation> const & other, Weather const weather, bool const found_selectable_move) {
 	BOUNDED_ASSERT(move != Moves::Hit_Self);
 	auto const pokemon = user.pokemon();
 	if (user.size() > 1_bi and pokemon.switch_decision_required()) {
@@ -221,7 +221,7 @@ constexpr auto is_blocked_due_to_status(ActivePokemon<generation> const user, Mo
 }
 
 template<Generation generation>
-constexpr auto can_attempt_move_execution(ActivePokemon<generation> user, Move const move, ActivePokemon<generation> const other, bool const user_was_asleep) -> bool {
+auto can_attempt_move_execution(ActivePokemon<generation> user, Move const move, ActivePokemon<generation> const other, bool const user_was_asleep) -> bool {
 	if (is_switch(move.name())) {
 		return true;
 	}
@@ -237,7 +237,7 @@ constexpr auto can_attempt_move_execution(ActivePokemon<generation> user, Move c
 }
 
 template<Generation generation>
-constexpr auto can_execute_move(ActivePokemon<generation> user, Move const move, Weather const weather, bool const is_recharging) -> bool {
+auto can_execute_move(ActivePokemon<generation> user, Move const move, Weather const weather, bool const is_recharging) -> bool {
 	// TODO: handle is_fully_paralyzed
 	constexpr auto is_fully_paralyzed = false;
 	auto const switching = is_switch(move.name());
