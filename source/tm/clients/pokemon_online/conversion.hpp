@@ -38,33 +38,33 @@ namespace technicalmachine {
 namespace po {
 
 struct SpeciesIDs {
-	using ID = bounded::checked_integer<1, 493>;
-	using Forme = bounded::checked_integer<0, 5>;
+	using ID = bounded::integer<1, 493>;
+	using Forme = bounded::integer<0, 5>;
 	ID id;
 	Forme forme;	
 };
 Species id_to_species(SpeciesIDs species);
 SpeciesIDs species_to_id(Species species);
 
-using AbilityID = bounded::checked_integer<1, 123>;
+using AbilityID = bounded::integer<1, 123>;
 Ability id_to_ability(AbilityID id);
 AbilityID ability_to_id(Ability ability);
 Ability battle_id_to_ability(uint16_t id, uint8_t part);
 
-using GenderID = bounded::checked_integer<0, 2>;
+using GenderID = bounded::integer<0, 2>;
 Gender id_to_gender(GenderID id);
 GenderID gender_to_id(Gender gender);
 
-using ItemID = bounded::checked_integer<0, 226>;
+using ItemID = bounded::integer<0, 226>;
 Item id_to_item(ItemID id);
 ItemID item_to_id(Item item);
 Item battle_id_to_item(uint16_t id, uint8_t part);
 
-using MoveID = bounded::checked_integer<1, static_cast<int>(bounded::constant<bounded::max_value<Moves>> - bounded::integer(Moves::Regular_Begin) + 1_bi)>;
+using MoveID = bounded::integer<1, static_cast<int>(bounded::constant<bounded::max_value<Moves>> - bounded::integer(Moves::Regular_Begin) + 1_bi)>;
 Moves id_to_move(MoveID id);
 MoveID move_to_id(Moves move);
 
-using NatureID = bounded::checked_integer<0, 24>;
+using NatureID = bounded::integer<0, 24>;
 Nature id_to_nature(NatureID id);
 NatureID nature_to_id(Nature nature);
 

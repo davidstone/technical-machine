@@ -209,7 +209,7 @@ auto packed_format_to_team(std::string_view const str, TeamSize const team_size)
 
 template<Generation generation>
 auto packed_format_to_team(std::string_view const str) -> Team<generation> {
-	auto const team_size = TeamSize(std::count(str.begin(), str.end(), pokemon_delimiter) + 1);
+	auto const team_size = bounded::check_in_range<TeamSize>(bounded::integer(std::count(str.begin(), str.end(), pokemon_delimiter) + 1));
 	return packed_format_to_team<generation>(str, team_size);
 }
 

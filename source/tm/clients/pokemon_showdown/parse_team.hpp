@@ -31,6 +31,7 @@
 
 #include <tm/team.hpp>
 
+#include <bounded/check_in_range.hpp>
 #include <bounded/to_integer.hpp>
 
 #include <boost/property_tree/ptree.hpp>
@@ -45,8 +46,7 @@ namespace ps {
 
 inline auto parse_stats(HP::max_type const hp, boost::property_tree::ptree const & stats) {
 	auto get = [&](char const * str) {
-		using CheckedInitialStat = bounded::change_policy<InitialStat, bounded::checked_integer>;
-		return InitialStat(stats.get<CheckedInitialStat>(str));
+		return stats.get<InitialStat>(str);
 	};
 	auto const attack = get("atk");
 	auto const defense = get("def");
@@ -124,7 +124,8 @@ template<Generation generation>
 auto parse_team(boost::property_tree::ptree const & pt) -> Team<generation> {
 	auto const team_data = containers::range_view(pt.get_child("side").get_child("pokemon").equal_range(""));
 	constexpr bool is_me = true;
-	auto team = Team<generation>(TeamSize(containers::distance(begin(team_data), end(team_data))), is_me);
+	auto const team_size = bounded::check_in_range<TeamSize>(bounded::integer(containers::distance(begin(team_data), end(team_data))));
+	auto team = Team<generation>(team_size, is_me);
 	for (auto const & pokemon_data : team_data) {
 		team.add_pokemon(parse_pokemon<generation>(pokemon_data.second));
 	}

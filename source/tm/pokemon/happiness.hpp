@@ -24,7 +24,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct Happiness {
-	using value_type = bounded::checked_integer<0, 255>;
+	using value_type = bounded::integer<0, 255>;
 	explicit Happiness(value_type value = 255_bi);
 	// Needed to send out to simulators
 	value_type operator()() const;

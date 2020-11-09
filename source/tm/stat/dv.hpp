@@ -28,11 +28,11 @@ using namespace bounded::literal;
 
 struct DV {
 	static constexpr auto max = 15;
-	using value_type = bounded::checked_integer<0, max>;
+	using value_type = bounded::integer<0, max>;
 	constexpr explicit DV(value_type const iv):
 		m_value(iv) {
 	}
-	constexpr auto value() const -> bounded::integer<0, max> {
+	constexpr auto value() const -> value_type {
 		return m_value;
 	}
 

@@ -24,8 +24,10 @@
 
 namespace technicalmachine {
 
+using namespace bounded::literal;
+
 struct Party {
-	using value_type = bounded::checked_integer<0, 1>;
+	using value_type = bounded::integer<0, 1>;
 	constexpr explicit Party(value_type const initial):
 		m_party(initial)
 	{
@@ -42,7 +44,6 @@ private:
 };
 
 constexpr auto other(Party const party) -> Party {
-	using namespace bounded::literal;
 	return Party(1_bi - party.value());
 }
 

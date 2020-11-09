@@ -32,19 +32,19 @@ using namespace bounded::literal;
 
 struct EV {
 	static constexpr auto max = 252_bi;
-	using value_type = bounded::checked_integer<0, static_cast<int>(max)>;
+	using value_type = bounded::integer<0, static_cast<int>(max)>;
 
 	constexpr explicit EV(value_type evs):
 		m_value(evs) {
 	}
-	constexpr auto value() const -> bounded::integer<0, static_cast<int>(max)> {
+	constexpr auto value() const -> value_type {
 		return m_value;
 	}
 
 	friend auto operator<=>(EV const &, EV const &) = default;
 
 private:
-	bounded::integer<0, static_cast<int>(max)> m_value;
+	value_type m_value;
 };
 
 constexpr auto operator<=>(EV const lhs, EV::value_type const rhs) {

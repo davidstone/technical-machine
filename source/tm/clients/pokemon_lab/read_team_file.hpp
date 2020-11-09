@@ -62,7 +62,8 @@ auto load_team(std::filesystem::path const & team_file) {
 	
 	auto const all_pokemon = pt.get_child("shoddybattle");
 	constexpr bool is_me = true;
-	auto team = Team<generation>(static_cast<TeamSize>(all_pokemon.size()), is_me);
+	auto const team_size = bounded::check_in_range<TeamSize>(bounded::integer(all_pokemon.size()));
+	auto team = Team<generation>(team_size, is_me);
 	for (auto const & value : all_pokemon) {
 		team.add_pokemon(load_pokemon<generation>(value.second));
 	}

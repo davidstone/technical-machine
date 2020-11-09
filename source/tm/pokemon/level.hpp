@@ -25,12 +25,12 @@
 namespace technicalmachine {
 
 struct Level {
-	using value_type = bounded::checked_integer<1, 100>;
+	using value_type = bounded::integer<1, 100>;
 	constexpr explicit Level(value_type const level) :
 		m_value(level)
 	{
 	}
-	constexpr auto operator()() const -> bounded::change_policy<value_type, bounded::integer> {
+	constexpr auto operator()() const -> value_type {
 		return m_value;
 	}
 

@@ -25,6 +25,8 @@
 #include <tm/generation.hpp>
 #include <tm/team.hpp>
 
+#include <containers/at.hpp>
+
 #include <filesystem>
 #include <random>
 #include <stdexcept>
@@ -39,7 +41,7 @@ auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path con
 	}
 	auto const max = (size(files) - 1_bi).value();
 	auto distribution = std::uniform_int_distribution(static_cast<decltype(max)>(0), max);
-	auto const file = files[containers::index_type<decltype(files)>(distribution(random_engine))];
+	auto const file = containers::at(files, distribution(random_engine), bounded::non_check);
 
 	auto const extension = file.extension();
 	if (extension == ".tp") {

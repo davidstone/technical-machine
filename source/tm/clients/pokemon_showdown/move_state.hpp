@@ -232,7 +232,8 @@ struct MoveState {
 					throw std::runtime_error("Tried to phaze and do other side effects.");
 				}
 				auto const target_index = other.all_pokemon().index();
-				using PhazeIndex = bounded::checked_integer<0, static_cast<int>(max_pokemon_per_team - 2_bi)>;
+				using PhazeIndex = bounded::integer<0, static_cast<int>(max_pokemon_per_team - 2_bi)>;
+				BOUNDED_ASSERT(phaze_index != target_index);
 				auto const effect_index = (*phaze_index < target_index) ? PhazeIndex(*phaze_index) : PhazeIndex(*phaze_index - 1_bi);
 				side_effects[effect_index].function(user, other, weather, damage);
 				return;

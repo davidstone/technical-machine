@@ -48,24 +48,18 @@ struct Evaluate {
 		read_xml("settings/evaluate.xml", file);
 		auto const pt = file.get_child("score");
 
-		// TODO: Use change_policy
-		using underlying_type = bounded::checked_integer<
-			static_cast<int>(bounded::min_value<value_type>),
-			static_cast<int>(bounded::max_value<value_type>)
-		>;
-
-		m_hp = pt.get<underlying_type>("hp", 0_bi);
+		m_hp = pt.get<value_type>("hp", 0_bi);
 		if constexpr (exists<decltype(m_hidden)>) {
-			m_hidden = pt.get<underlying_type>("hidden", 0_bi);
+			m_hidden = pt.get<value_type>("hidden", 0_bi);
 		}
 		if constexpr (exists<decltype(m_spikes)>) {
-			m_spikes = pt.get<underlying_type>("spikes", 0_bi);
+			m_spikes = pt.get<value_type>("spikes", 0_bi);
 		}
 		if constexpr (exists<decltype(m_stealth_rock)>) {
-			m_stealth_rock = pt.get<underlying_type>("stealth_rock", 0_bi);
+			m_stealth_rock = pt.get<value_type>("stealth_rock", 0_bi);
 		}
 		if constexpr (exists<decltype(m_toxic_spikes)>) {
-			m_toxic_spikes = pt.get<underlying_type>("toxic_spikes", 0_bi);
+			m_toxic_spikes = pt.get<value_type>("toxic_spikes", 0_bi);
 		}
 	}
 

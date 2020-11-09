@@ -36,7 +36,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct PP {
-	using pp_ups_type = bounded::checked_integer<0, 3>;
+	using pp_ups_type = bounded::integer<0, 3>;
 
 	PP(Generation const generation, Moves const move, pp_ups_type const pp_ups):
 		m_max(calculate_max(base_pp(generation, move), pp_ups)),

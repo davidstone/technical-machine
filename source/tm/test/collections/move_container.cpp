@@ -73,7 +73,7 @@ void move_container_tests() {
 	};
 	for (auto const n : containers::integer_range(size(moves))) {
 		regular.push_back(Move(generation, moves[n]));
-		if (size(c) != shared_moves_size + n + 1_bi or size(c) != static_cast<bounded::checked_integer<0, 100>>(containers::size(c.regular()) + shared_moves_size)) {
+		if (size(c) != shared_moves_size + n + 1_bi or size(c) != static_cast<bounded::integer<0, 100>>(containers::size(c.regular()) + shared_moves_size)) {
 			throw InvalidCollection("MoveContainer has the wrong number of moves during addition of moves.");
 		}
 	}

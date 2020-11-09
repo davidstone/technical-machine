@@ -29,7 +29,6 @@
 
 #include <containers/algorithms/find.hpp>
 #include <containers/common_container_functions.hpp>
-#include <containers/index_type.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
 #include <stdexcept>

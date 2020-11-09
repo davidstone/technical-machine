@@ -69,10 +69,14 @@ inline auto load_species(boost::property_tree::ptree const & pt) -> bounded::opt
 }
 
 inline auto number_of_pokemon(boost::property_tree::ptree const & pt) -> TeamSize {
-	TeamSize pokemon_count = 0_bi;
+	auto pokemon_count = TeamSize(0_bi);
 	for (auto const & value : pt) {
-		if (value.first == "Pokemon" and load_species(value.second))
+		if (value.first == "Pokemon" and load_species(value.second)) {
+			if (pokemon_count == bounded::max_value<TeamSize>) {
+				throw std::runtime_error("Attempted to add too many Pokemon");
+			}
 			++pokemon_count;
+		}
 	}
 	return pokemon_count;
 }
@@ -86,7 +90,7 @@ inline auto load_moves(Generation const generation, CheckedIterator it) {
 	for (auto const n [[maybe_unused]] : containers::integer_range(4_bi)) {
 		auto const & value = it.advance("Move");
 		// TODO: return optional
-		using ReadMoveID = bounded::checked_integer<0, static_cast<int>(bounded::max_value<MoveID>)>;
+		using ReadMoveID = bounded::integer<0, static_cast<int>(bounded::max_value<MoveID>)>;
 		auto const move_id = value.get_value<ReadMoveID>();
 		if (move_id != 0_bi) {
 			moves.push_back(Move(generation, id_to_move(MoveID(move_id))));
@@ -122,7 +126,7 @@ template<Generation generation>
 auto load_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID species_id) {
 	auto const species = id_to_species({ species_id, pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")} );
 	// auto const nickname = pt.get<std::string>("<xmlattr>.Nickname");
-	auto const gender = Gender(id_to_gender(pt.get<GenderID>("<xmlattr>.Gender")));
+	auto const gender = id_to_gender(pt.get<GenderID>("<xmlattr>.Gender"));
 	auto const level = Level(pt.get<Level::value_type>("<xmlattr>.Lvl"));
 	auto const happiness = Happiness(pt.get<Happiness::value_type>("<xmlattr>.Happiness"));
 	auto const item = id_to_item(pt.get<ItemID>("<xmlattr>.Item"));
@@ -152,7 +156,7 @@ auto load_team(std::filesystem::path const & team_file) {
 	read_xml(team_file.string(), pt);
 	
 	auto const all_pokemon = pt.get_child("Team");
-	using GenerationInteger = bounded::checked_integer<1, 7, InvalidTeamFile>;
+	using GenerationInteger = bounded::integer<1, 7>;
 	auto const parsed_generation = static_cast<Generation>(all_pokemon.get<GenerationInteger>("<xmlattr>.gen"));
 	if (parsed_generation != generation) {
 		throw std::runtime_error("Generation mismatch in team file vs. battle.");
