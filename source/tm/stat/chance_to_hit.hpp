@@ -119,8 +119,8 @@ auto chance_to_hit(ActivePokemon<generation> const user, KnownMove const move, A
 		gravity_multiplier
 	;
 	
-	auto const max = 100;
-	return static_cast<double>(bounded::clamped_integer<0, max>(calculated_accuracy)) / static_cast<double>(max);
+	constexpr auto max = 100_bi;
+	return static_cast<double>(bounded::clamp(calculated_accuracy, 0_bi, max)) / static_cast<double>(max);
 }
 
 } // namespace technicalmachine

@@ -30,7 +30,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct Stage {
-	using value_type = bounded::clamped_integer<-6, 6>;
+	using value_type = bounded::integer<-6, 6>;
 	using boost_type = bounded::integer<-3, 12>;
 	static constexpr auto number_of_stats = bounded::max_value<decltype(containers::size(containers::enum_range<BoostableStat>()))>;
 	using size_type = std::remove_const_t<decltype(number_of_stats)>;
@@ -54,10 +54,10 @@ struct Stage {
 		return containers::end(m_stages);
 	}
 
-	auto operator[](BoostableStat index) const -> value_type const & {
+	constexpr auto operator[](BoostableStat const index) const -> value_type const & {
 		return m_stages[bounded::integer(index)];
 	}
-	auto operator[](BoostableStat index) -> value_type & {
+	constexpr auto operator[](BoostableStat index) -> value_type & {
 		return m_stages[bounded::integer(index)];
 	}
 private:
@@ -81,7 +81,7 @@ constexpr auto base_stat_boost() {
 }	// namespace detail
 
 template<BoostableStat stat> requires(stat == BoostableStat::atk or stat == BoostableStat::spa)
-auto modifier(Stage const & stage, bool const ch) {
+constexpr auto modifier(Stage const & stage, bool const ch) {
 	constexpr auto base = detail::base_stat_boost<stat>();
 	return BOUNDED_CONDITIONAL((stage[stat] >= 0_bi),
 		rational(base + bounded::abs(stage[stat]), base),
@@ -90,7 +90,7 @@ auto modifier(Stage const & stage, bool const ch) {
 }
 
 template<BoostableStat stat> requires(stat == BoostableStat::def or stat == BoostableStat::spd)
-auto modifier(Stage const & stage, bool const ch) {
+constexpr auto modifier(Stage const & stage, bool const ch) {
 	constexpr auto base = detail::base_stat_boost<stat>();
 	return BOUNDED_CONDITIONAL((stage[stat] <= 0_bi),
 		rational(base, base + bounded::abs(stage[stat])),
@@ -99,7 +99,7 @@ auto modifier(Stage const & stage, bool const ch) {
 }
 
 template<BoostableStat stat> requires(stat == BoostableStat::spe or stat == BoostableStat::acc or stat == BoostableStat::eva)
-auto modifier(Stage const & stage) {
+constexpr auto modifier(Stage const & stage) {
 	constexpr auto base = detail::base_stat_boost<stat>();
 	return BOUNDED_CONDITIONAL((stage[stat] >= 0_bi),
 		rational(base + bounded::abs(stage[stat]), base),

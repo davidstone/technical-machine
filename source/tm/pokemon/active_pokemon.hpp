@@ -475,7 +475,7 @@ auto grounded(ActivePokemon<generation> const pokemon, Weather const weather) ->
 
 template<Generation generation>
 auto activate_berserk_gene(MutableActivePokemon<generation> pokemon, Weather const weather) -> void {
-	pokemon.stage()[BoostableStat::atk] += 2_bi;
+	saturating_add(pokemon.stage()[BoostableStat::atk], 2_bi);
 	// TODO: Berserk Gene causes 256-turn confusion, unless the Pokemon
 	// switching out was confused.
 	pokemon.confuse(weather);
@@ -713,7 +713,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 	}
 	auto minimize() const {
 		this->m_flags.minimized = true;
-		stage()[BoostableStat::eva] += BOUNDED_CONDITIONAL(generation <= Generation::four, 1_bi, 2_bi);
+		saturating_add(stage()[BoostableStat::eva], BOUNDED_CONDITIONAL(generation <= Generation::four, 1_bi, 2_bi));
 	}
 	auto activate_mud_sport() const {
 		this->m_flags.mud_sport = true;
@@ -1024,7 +1024,7 @@ private:
 				return;
 			}
 			consume();
-			stage()[stat] += 1_bi;
+			saturating_add(stage()[stat], 1_bi);
 		};
 
 		switch (this->item(weather)) {
@@ -1156,7 +1156,8 @@ void activate_ability_on_switch(MutableActivePokemon<generation> switcher, Mutab
 			// TODO: Should not take into account items, abilities, or Wonder Room
 			auto const defense = calculate_defense(as_const(other), move, weather);
 			auto const special_defense = calculate_special_defense(as_const(other), switcher_ability, weather);
-			switcher.stage()[defense >= special_defense ? BoostableStat::spa : BoostableStat::atk] += 1_bi;
+			auto const boosted_stat = defense >= special_defense ? BoostableStat::spa : BoostableStat::atk;
+			saturating_add(switcher.stage()[boosted_stat], 1_bi);
 			break;
 		}
 		case Ability::Drizzle:
@@ -1175,10 +1176,10 @@ void activate_ability_on_switch(MutableActivePokemon<generation> switcher, Mutab
 			if (attack == bounded::min_value<Stage::value_type>) {
 				break;
 			}
-			attack -= 1_bi;
+			saturating_add(attack, -1_bi);
 			auto & speed = other.stage()[BoostableStat::spe];
 			if (other.item(weather) == Item::Adrenaline_Orb and speed != bounded::max_value<Stage::value_type>) {
-				speed += 1_bi;
+				saturating_add(speed, 1_bi);
 				other.remove_item();
 			}
 			break;

@@ -23,6 +23,7 @@
 #include <tm/compress.hpp>
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
+#include <tm/saturating_add.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
@@ -63,7 +64,7 @@ struct PP {
 		}
 		// I think it is always an error to try to decrement a move without PP.
 		BOUNDED_ASSERT(*m_current != 0_bi);
-		*m_current -= BOUNDED_CONDITIONAL(uses_extra_pp(foe_ability), 2_bi, 1_bi);
+		saturating_add(*m_current, -BOUNDED_CONDITIONAL(uses_extra_pp(foe_ability), 2_bi, 1_bi));
 	}
 
 	auto trump_card_power() const -> bounded::integer<40, 200> {
@@ -100,8 +101,7 @@ private:
 		return base ? bounded::optional(*base * (pp_ups + 5_bi) / 5_bi) : bounded::none;
 	}
 
-	// clamped_integer simplifies situations like Pressure and Leppa
-	using current_type = bounded::clamped_integer<0, static_cast<int>(bounded::max_value<max_type>)>;
+	using current_type = bounded::integer<0, static_cast<int>(bounded::max_value<max_type>)>;
 	// TODO: Use optional<pair> instead of pair<optional>
 	bounded::optional<max_type> m_max;
 	bounded::optional<current_type> m_current;

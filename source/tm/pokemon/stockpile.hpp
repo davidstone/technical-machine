@@ -21,6 +21,7 @@
 #include <tm/exists_if.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
+#include <tm/saturating_add.hpp>
 
 #include <bounded/integer.hpp>
 
@@ -35,7 +36,7 @@ struct Stockpile {
 	constexpr auto increment() & {
 		if constexpr (exists) {
 			auto const initial = m_level;
-			++m_level;
+			saturating_increment(m_level);
 			return m_level == initial;
 		} else {
 			return false;
@@ -59,7 +60,7 @@ struct Stockpile {
 
 private:
 	static constexpr auto exists = generation >= Generation::three;
-	[[no_unique_address]] IntegerIf<bounded::clamped_integer<0, max>, exists> m_level = 0_bi;
+	[[no_unique_address]] IntegerIf<bounded::integer<0, max>, exists> m_level = 0_bi;
 };
 
 constexpr auto swallow_healing(bounded::bounded_integer auto const stockpiles) {

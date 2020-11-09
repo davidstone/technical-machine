@@ -22,6 +22,7 @@
 #include <tm/generation.hpp>
 #include <tm/heal.hpp>
 #include <tm/status.hpp>
+#include <tm/saturating_add.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>
@@ -104,13 +105,13 @@ private:
 	}
 
 	template<Generation generation>
-	static constexpr auto handle_toxic(MutableActivePokemon<generation> pokemon, Weather const weather, bounded::clamped_integer<1, 15> & toxic_counter) -> void {
+	static constexpr auto handle_toxic(MutableActivePokemon<generation> pokemon, Weather const weather, bounded::integer<1, 15> & toxic_counter) -> void {
 		if (absorbs_poison_damage(pokemon.ability())) {
 			heal(pokemon, weather, rational(1_bi, 8_bi));
 		} else {
 			heal(pokemon, weather, rational(-toxic_counter, 16_bi));
 		}
-		++toxic_counter;
+		saturating_increment(toxic_counter);
 	}
 
 	template<Generation generation>
@@ -197,7 +198,7 @@ private:
 	union {
 		std::byte m_none{};
 		bool m_nightmare;
-		bounded::clamped_integer<1, 15> m_toxic_counter;
+		bounded::integer<1, 15> m_toxic_counter;
 	};
 };
 

@@ -21,6 +21,7 @@
 #include <tm/exists_if.hpp>
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
+#include <tm/saturating_add.hpp>
 
 #include <bounded/integer.hpp>
 #include <cstdint>
@@ -49,7 +50,7 @@ struct Screen {
 	}
 	constexpr auto decrement() & -> void {
 		if constexpr (exists) {
-			--m_turns_remaining;
+			saturating_decrement(m_turns_remaining);
 		}
 	}
 	
@@ -58,7 +59,7 @@ struct Screen {
 		return compress(value.m_turns_remaining);
 	}
 private:
-	using duration_type = bounded::clamped_integer<0, max_duration>;
+	using duration_type = bounded::integer<0, max_duration>;
 	constexpr auto set(duration_type const duration) & -> void {
 		if constexpr (exists) {
 			if (m_turns_remaining == 0_bi) {

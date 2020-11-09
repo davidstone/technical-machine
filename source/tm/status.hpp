@@ -96,14 +96,14 @@ private:
 		}
 	};
 	struct Sleep {
-		bounded::clamped_integer<0, 4> turns_slept = 0_bi;
+		bounded::integer<0, 4> turns_slept = 0_bi;
 		friend auto operator==(Sleep const &, Sleep const &) -> bool = default;
 		friend constexpr auto compress(Sleep const value) {
 			return compress(value.turns_slept);
 		}
 	};
 	struct Rest {
-		bounded::clamped_integer<0, 2> turns_slept = 0_bi;
+		bounded::integer<0, 2> turns_slept = 0_bi;
 		friend auto operator==(Rest const &, Rest const &) -> bool = default;
 		friend constexpr auto compress(Rest const value) {
 			return compress(value.turns_slept);

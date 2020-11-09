@@ -18,34 +18,35 @@
 #include <tm/stat/stage.hpp>
 
 #include <tm/rational.hpp>
+#include <tm/saturating_add.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
 auto boost_regular(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : containers::enum_range(BoostableStat::spe)) {
-		stage[stat] += number_of_stages;
+		saturating_add(stage[stat], number_of_stages);
 	}
 }
 
 auto boost_physical(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : {BoostableStat::atk, BoostableStat::def}) {
-		stage[stat] += number_of_stages;
+		saturating_add(stage[stat], number_of_stages);
 	}
 }
 auto boost_special(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : {BoostableStat::spa, BoostableStat::spd}) {
-		stage[stat] += number_of_stages;
+		saturating_add(stage[stat], number_of_stages);
 	}
 }
 auto boost_defensive(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : {BoostableStat::def, BoostableStat::spd}) {
-		stage[stat] += number_of_stages;
+		saturating_add(stage[stat], number_of_stages);
 	}
 }
 auto boost_offensive(Stage & stage, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : {BoostableStat::atk, BoostableStat::spa}) {
-		stage[stat] += number_of_stages;
+		saturating_add(stage[stat], number_of_stages);
 	}
 }
 

@@ -19,6 +19,7 @@
 
 #include <tm/compress.hpp>
 #include <tm/exists_if.hpp>
+#include <tm/saturating_add.hpp>
 
 #include <bounded/integer.hpp>
 
@@ -39,14 +40,10 @@ struct EntryHazards {
 		return m_toxic_spikes;
 	}
 	constexpr auto add_spikes() & {
-		if constexpr (spikes_exist) {
-			++m_spikes;
-		}
+		saturating_increment(m_spikes);
 	}
 	constexpr auto add_toxic_spikes() & {
-		if constexpr (toxic_spikes_exist) {
-			++m_toxic_spikes;
-		}
+		saturating_increment(m_toxic_spikes);
 	}
 	constexpr auto clear_toxic_spikes() & {
 		m_toxic_spikes = 0_bi;
@@ -62,8 +59,8 @@ private:
 	static constexpr auto max_spikes = generation == Generation::two ? 1 : 3;
 	static constexpr bool toxic_spikes_exist = generation >= Generation::four;
 	static constexpr bool stealth_rock_exists = generation >= Generation::four;
-	[[no_unique_address]] IntegerIf<bounded::clamped_integer<0, max_spikes>, spikes_exist> m_spikes = 0_bi;
-	[[no_unique_address]] IntegerIf<bounded::clamped_integer<0, 2>, toxic_spikes_exist> m_toxic_spikes = 0_bi;
+	[[no_unique_address]] IntegerIf<bounded::integer<0, max_spikes>, spikes_exist> m_spikes = 0_bi;
+	[[no_unique_address]] IntegerIf<bounded::integer<0, 2>, toxic_spikes_exist> m_toxic_spikes = 0_bi;
 	[[no_unique_address]] BoolIf<stealth_rock_exists> m_stealth_rock;
 };
 

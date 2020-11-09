@@ -28,6 +28,7 @@
 #include <tm/compress.hpp>
 #include <tm/generation.hpp>
 #include <tm/rational.hpp>
+#include <tm/saturating_add.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>
@@ -54,7 +55,7 @@ struct LastUsedMove {
 
 	constexpr auto successful_move(Moves const move) & {
 		if (m_move == move) {
-			++m_consecutive_successes;
+			saturating_increment(m_consecutive_successes);
 		} else {
 			m_move = move;
 			m_consecutive_successes = 1_bi;
@@ -166,7 +167,7 @@ private:
 	}
 
 	Moves m_move = Moves::Switch0;
-	bounded::clamped_integer<0, 10> m_consecutive_successes = 0_bi;
+	bounded::integer<0, 10> m_consecutive_successes = 0_bi;
 	bool m_moved_this_turn = false;
 
 	struct Empty {

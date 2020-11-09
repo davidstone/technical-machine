@@ -1,4 +1,4 @@
-// Copyright (C) 2018 David Stone
+// Copyright (C) 2020 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -17,34 +17,23 @@
 
 #pragma once
 
-#include <tm/compress.hpp>
-#include <tm/stat/hp.hpp>
-#include <tm/operators.hpp>
-#include <tm/saturating_add.hpp>
-
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
+
 using namespace bounded::literal;
 
-struct BideDamage {
-	constexpr auto add(HP::current_type const damage) -> void {
-		saturating_add(m_damage, damage);
-	}
+template<bounded::bounded_integer Integer>
+constexpr auto saturating_add(Integer & x, bounded::bounded_integer auto other) {
+	x = bounded::clamp(x + other, bounded::min_value<Integer>, bounded::max_value<Integer>);
+}
 
-	constexpr auto release() {
-		auto const output_damage = m_damage * 2_bi;
-		m_damage = 0_bi;
-		return output_damage;
-	}
+constexpr auto saturating_increment(bounded::bounded_integer auto & x) {
+	saturating_add(x, 1_bi);
+}
 
-	friend auto operator==(BideDamage const &, BideDamage const &) -> bool = default;
-	friend constexpr auto compress(BideDamage const value) {
-		return compress(value.m_damage);
-	}
-private:
-	// This is the greatest range that matters since anything more is overkill
-	bounded::integer<0, (HP::max_value + 1) / 2> m_damage = 0_bi;
-};
+constexpr auto saturating_decrement(bounded::bounded_integer auto & x) {
+	saturating_add(x, -1_bi);
+}
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -50,8 +50,9 @@ public:
 	}
 
 	constexpr auto damage(auto const damage_done) {
+		BOUNDED_ASSERT(damage_done >= 0_bi);
 		auto const original_hp = m_hp;
-		m_hp -= damage_done;
+		m_hp = bounded::max(m_hp - damage_done, 0_bi);
 		return HP::current_type(original_hp - m_hp);
 	}
 
@@ -68,11 +69,7 @@ public:
 		return value.m_hp;
 	}
 private:
-	// TODO: Use change_policy
-	bounded::clamped_integer<
-		static_cast<int>(bounded::min_value<hp_type>),
-		static_cast<int>(bounded::max_value<hp_type>)
-	> m_hp = 0_bi;
+	hp_type m_hp = 0_bi;
 };
 
 auto substitute_interaction(Generation, Moves) -> Substitute::Interaction;

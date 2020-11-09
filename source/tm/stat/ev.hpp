@@ -44,7 +44,7 @@ struct EV {
 	friend auto operator<=>(EV const &, EV const &) = default;
 
 private:
-	bounded::clamped_integer<0, static_cast<int>(max)> m_value;
+	bounded::integer<0, static_cast<int>(max)> m_value;
 };
 
 constexpr auto operator<=>(EV const lhs, EV::value_type const rhs) {

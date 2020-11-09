@@ -19,6 +19,7 @@
 
 #include <tm/ability.hpp>
 #include <tm/heal.hpp>
+#include <tm/saturating_add.hpp>
 
 #include <tm/pokemon/pokemon.hpp>
 
@@ -67,7 +68,7 @@ auto Status::advance_from_move(Ability const ability, bool const clear) & -> voi
 		m_state = Clear{};
 	} else {
 		auto advance_sleep = [&](auto & sleep) {
-			sleep.turns_slept += BOUNDED_CONDITIONAL(wakes_up_early(ability), 2_bi, 1_bi);
+			saturating_add(sleep.turns_slept, BOUNDED_CONDITIONAL(wakes_up_early(ability), 2_bi, 1_bi));
 		};
 		bounded::visit(m_state, bounded::overload(
 			[=](Sleep & sleep) { advance_sleep(sleep); },
