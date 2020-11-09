@@ -48,8 +48,9 @@ struct PP {
 	}
 
 	auto restore(auto const value) & {
+		static_assert(value >= 0_bi);
 		BOUNDED_ASSERT(*m_current == 0_bi);
-		*m_current = value;
+		*m_current = bounded::min(value, *m_max);
 	}
 
 	auto has_unlimited_pp() const {
