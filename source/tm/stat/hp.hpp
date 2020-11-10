@@ -25,6 +25,7 @@
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
+#include <bounded/clamp.hpp>
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {

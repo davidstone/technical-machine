@@ -30,6 +30,9 @@
 #include <tm/rational.hpp>
 #include <tm/weather.hpp>
 
+#include <bounded/clamp.hpp>
+#include <bounded/integer.hpp>
+
 namespace technicalmachine {
 
 template<Generation>

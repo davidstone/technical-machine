@@ -18,6 +18,7 @@
 #pragma once
 
 #include <bounded/integer.hpp>
+#include <bounded/clamp.hpp>
 
 namespace technicalmachine {
 
