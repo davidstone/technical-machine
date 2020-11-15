@@ -50,11 +50,8 @@ struct RegularMoves {
 	constexpr auto begin() & {
 		return containers::begin(m_moves);
 	}
-	constexpr auto end() const & {
-		return containers::end(m_moves);
-	}
-	constexpr auto end() & {
-		return containers::end(m_moves);
+	constexpr auto size() const {
+		return containers::size(m_moves);
 	}
 
 	auto push_back(Move const move) -> Move &;

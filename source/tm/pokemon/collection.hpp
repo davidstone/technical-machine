@@ -54,11 +54,8 @@ struct PokemonCollection {
 	auto begin() & {
 		return containers::begin(m_container);
 	}
-	auto end() const & {
-		return containers::end(m_container);
-	}
-	auto end() & {
-		return containers::end(m_container);
+	auto size() const {
+		return containers::size(m_container);
 	}
 	
 	void set_index(TeamIndex const new_index) {
@@ -109,6 +106,7 @@ struct PokemonCollection {
 
 	friend auto operator==(PokemonCollection const &, PokemonCollection const &) -> bool = default;
 	friend auto compress(PokemonCollection const & value) {
+		using containers::size;
 		static_assert(bounded::max_value<decltype(size(value.m_container))> == 6_bi);
 		auto const p0 = size(value.m_container) >= 1_bi ? compress(value.m_container[0_bi]) : 0_bi;
 		auto const p1 = size(value.m_container) >= 2_bi ? compress(value.m_container[1_bi]) : 0_bi;
@@ -131,12 +129,12 @@ struct PokemonCollection {
 	}
 private:
 	void check_not_full() {
-		if (size(m_container) == m_real_size) {
+		if (size() == m_real_size) {
 			throw std::runtime_error("Tried to add too many Pokemon");
 		}
 	}
 	constexpr void check_range(TeamIndex const new_index [[maybe_unused]]) const {
-		BOUNDED_ASSERT(new_index < containers::size(m_container));
+		BOUNDED_ASSERT(new_index < size());
 	}
 
 	Container m_container;

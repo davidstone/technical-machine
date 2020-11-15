@@ -47,11 +47,8 @@ struct Stage {
 	constexpr auto begin() & {
 		return containers::begin(m_stages);
 	}
-	constexpr auto end() const & {
-		return containers::end(m_stages);
-	}
-	constexpr auto end() & {
-		return containers::end(m_stages);
+	constexpr auto size() const {
+		return containers::size(m_stages);
 	}
 
 	constexpr auto operator[](BoostableStat const index) const -> value_type const & {

@@ -42,8 +42,8 @@ struct PokemonTypes {
 	constexpr auto begin() const {
 		return containers::begin(m_types);
 	}
-	constexpr auto end() const {
-		return begin() + BOUNDED_CONDITIONAL(m_types[1_bi] == Type::Typeless, 1_bi, 2_bi);
+	constexpr auto size() const {
+		return BOUNDED_CONDITIONAL(m_types[1_bi] == Type::Typeless, 1_bi, 2_bi);
 	}
 
 private:
