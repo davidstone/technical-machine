@@ -25,6 +25,7 @@
 #include <containers/algorithms/find.hpp>
 #include <containers/static_vector/static_vector.hpp>
 #include <containers/at.hpp>
+#include <containers/erase.hpp>
 #include <containers/integer_range.hpp>
 
 #include <stdexcept>

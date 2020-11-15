@@ -28,8 +28,9 @@
 #include <bounded/integer.hpp>
 
 #include <containers/algorithms/find.hpp>
-#include <containers/common_container_functions.hpp>
 #include <containers/static_vector/static_vector.hpp>
+#include <containers/common_container_functions.hpp>
+#include <containers/erase.hpp>
 
 #include <stdexcept>
 
