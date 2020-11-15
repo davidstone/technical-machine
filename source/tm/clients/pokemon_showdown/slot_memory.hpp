@@ -27,6 +27,7 @@
 #include <containers/at.hpp>
 #include <containers/erase.hpp>
 #include <containers/integer_range.hpp>
+#include <containers/push_back.hpp>
 
 #include <stdexcept>
 #include <utility>
@@ -42,7 +43,7 @@ struct SlotMemory {
 			throw std::runtime_error("Pokemon Showdown told us to construct an empty team.");
 		}
 		for (auto const index : containers::integer_range(size)) {
-			push_back(m_container, index + 1_bi);
+			containers::push_back(m_container, index + 1_bi);
 		}
 	}
 	

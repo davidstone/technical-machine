@@ -23,6 +23,7 @@
 
 #include <containers/emplace_back.hpp>
 #include <containers/erase.hpp>
+#include <containers/push_back.hpp>
 #include <containers/vector.hpp>
 
 #include <algorithm>

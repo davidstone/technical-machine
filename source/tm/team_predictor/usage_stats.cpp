@@ -32,6 +32,7 @@
 #include <bounded/to_integer.hpp>
 
 #include <containers/algorithms/ska_sort.hpp>
+#include <containers/push_back.hpp>
 #include <containers/take.hpp>
 #include <containers/vector.hpp>
 

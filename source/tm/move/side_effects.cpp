@@ -29,6 +29,7 @@
 #include <containers/algorithms/filter_iterator.hpp>
 #include <containers/emplace_back.hpp>
 #include <containers/integer_range.hpp>
+#include <containers/push_back.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
