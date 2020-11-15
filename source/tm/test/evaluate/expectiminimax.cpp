@@ -35,7 +35,6 @@
 #include <bounded/integer.hpp>
 
 #include <containers/array/array.hpp>
-#include <containers/append.hpp>
 #include <containers/legacy_iterator.hpp>
 
 #include <iostream>
