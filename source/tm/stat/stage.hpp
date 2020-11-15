@@ -58,12 +58,11 @@ struct Stage {
 	constexpr auto operator[](BoostableStat index) -> value_type & {
 		return m_stages[bounded::integer(index)];
 	}
+
+	friend auto operator==(Stage const &, Stage const &) -> bool = default;
 private:
 	container_type m_stages;
 };
-
-using ::containers::detail::common::operator<=>;
-using ::containers::detail::common::operator==;
 
 namespace detail {
 

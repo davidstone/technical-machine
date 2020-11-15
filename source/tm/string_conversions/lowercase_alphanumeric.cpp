@@ -21,7 +21,7 @@ namespace technicalmachine {
 namespace {
 
 constexpr auto compare = [](auto const lhs, auto const rhs) {
-	return lowercase_alphanumeric(lhs) < lowercase_alphanumeric(rhs);
+	return containers::lexicographical_compare_3way(lowercase_alphanumeric(lhs), lowercase_alphanumeric(rhs)) < 0;
 };
 
 constexpr auto a = std::string_view("adaptability");
