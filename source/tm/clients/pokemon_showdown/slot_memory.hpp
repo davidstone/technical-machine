@@ -54,7 +54,7 @@ struct SlotMemory {
 		swap_to_front(index);
 	}
 	void replace_fainted(TeamIndex const index) {
-		if (at(m_container, index) == 1_bi) {
+		if (containers::at(m_container, index) == 1_bi) {
 			throw std::runtime_error("Pokemon Showdown told us to switch to currently active Pokemon.");
 		}
 		auto const it = swap_to_front(index);
