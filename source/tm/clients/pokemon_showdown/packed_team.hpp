@@ -32,6 +32,7 @@
 #include <bounded/to_integer.hpp>
 
 #include <containers/integer_range.hpp>
+#include <containers/is_empty.hpp>
 #include <containers/string.hpp>
 
 #include <string_view>
@@ -46,7 +47,7 @@ template<Generation generation>
 auto to_packed_format(Team<generation> const & team) -> containers::string {
 	auto result = containers::string();
 	for (auto const & pokemon : team.all_pokemon()) {
-		if (!empty(result)) {
+		if (!containers::is_empty(result)) {
 			result += ']';
 		}
 		result += to_string(pokemon.species());

@@ -26,6 +26,7 @@
 #include <bounded/integer.hpp>
 
 #include <containers/emplace_back.hpp>
+#include <containers/is_empty.hpp>
 
 #include <algorithm>
 
@@ -39,7 +40,7 @@ SpeedEVs::SpeedEVs(BaseStats const base, Level const level, IV const iv, Initial
 			containers::emplace_back(m_container, nature, IVAndEV{iv, *ev});
 		}
 	}
-	BOUNDED_ASSERT(!empty(m_container));
+	BOUNDED_ASSERT(!containers::is_empty(m_container));
 }
 
 }	// namespace technicalmachine

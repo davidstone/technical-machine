@@ -26,6 +26,7 @@
 #include <tm/team.hpp>
 
 #include <containers/at.hpp>
+#include <containers/is_empty.hpp>
 
 #include <filesystem>
 #include <random>
@@ -36,7 +37,7 @@ namespace technicalmachine {
 template<Generation generation>
 auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) -> Team<generation> {
 	auto const files = files_in_path(path);
-	if (empty(files)) {
+	if (containers::is_empty(files)) {
 		throw std::runtime_error(path.string() + " does not contain any team files.");
 	}
 	auto const max = (size(files) - 1_bi).value();

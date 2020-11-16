@@ -31,6 +31,7 @@
 #include <bounded/assert.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
+#include <containers/is_empty.hpp>
 #include <containers/push_back.hpp>
 
 namespace technicalmachine {
@@ -186,12 +187,12 @@ template<Generation generation>
 constexpr auto legal_selections(Team<generation> const & user, Team<generation> const & other, Weather const weather) -> StaticVectorMove {
 	auto result = StaticVectorMove{};
 	for (auto const move : all_moves(user.pokemon(), user.size())) {
-		bool const found_selectable_move = !empty(result);
+		bool const found_selectable_move = !containers::is_empty(result);
 		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
 			containers::push_back(result, move.name());
 		}
 	}
-	BOUNDED_ASSERT(!empty(result));
+	BOUNDED_ASSERT(!containers::is_empty(result));
 	return result;
 }
 

@@ -96,7 +96,7 @@ auto per_pokemon_data(boost::property_tree::ptree const & pt, auto const max) {
 template<typename T>
 auto per_pokemon_datum(boost::property_tree::ptree const & pt) {
 	auto all = per_pokemon_data<T>(pt, 1_bi);
-	if (containers::empty(all)) {
+	if (containers::is_empty(all)) {
 		throw std::runtime_error("Bad statistics file");
 	}
 	return containers::front(all);

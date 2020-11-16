@@ -31,6 +31,7 @@
 #include <tm/compress.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
+#include <containers/is_empty.hpp>
 
 #include <operators/forward.hpp>
 
@@ -107,7 +108,7 @@ struct Team {
 		} else {
 			all_pokemon().remove_active(replacement);
 			// If the last Pokemon is fainted; there is nothing left to do.
-			if (empty(all_pokemon())) {
+			if (containers::is_empty(all_pokemon())) {
 				return;
 			}
 		}

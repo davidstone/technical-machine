@@ -29,6 +29,7 @@
 
 #include <containers/algorithms/transform.hpp>
 #include <containers/integer_range.hpp>
+#include <containers/is_empty.hpp>
 #include <containers/push_back.hpp>
 
 namespace technicalmachine {
@@ -90,7 +91,7 @@ DefensiveEVs::DefensiveEVs(BaseStats const base_stats, Level const level, InputH
 			containers::push_back(m_container, *best_per_nature);
 		}
 	}
-	BOUNDED_ASSERT(!empty(m_container));
+	BOUNDED_ASSERT(!containers::is_empty(m_container));
 }
 
 }	// namespace technicalmachine
