@@ -17,19 +17,19 @@
 
 #pragma once
 
-#include <containers/common_container_functions.hpp>
+#include <containers/non_modifying_common_container_functions.hpp>
 
 namespace technicalmachine {
 
 using namespace bounded::literal;
 
-CONTAINERS_COMMON_USING_DECLARATIONS
+CONTAINERS_NON_MODIFYING_COMMON_USING_DECLARATIONS
 
 namespace detail {
 
 using namespace bounded::literal;
 
-CONTAINERS_COMMON_USING_DECLARATIONS
+CONTAINERS_NON_MODIFYING_COMMON_USING_DECLARATIONS
 
 }	// namespace detail
 }	// namespace technicalmachine

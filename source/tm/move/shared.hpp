@@ -27,7 +27,6 @@
 
 #include <bounded/integer.hpp>
 
-#include <containers/common_container_functions.hpp>
 #include <containers/size.hpp>
 
 #include <operators/operators.hpp>

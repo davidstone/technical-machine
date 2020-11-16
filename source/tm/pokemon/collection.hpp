@@ -29,8 +29,8 @@
 
 #include <containers/algorithms/find.hpp>
 #include <containers/static_vector/static_vector.hpp>
-#include <containers/common_container_functions.hpp>
 #include <containers/erase.hpp>
+#include <containers/non_modifying_common_container_functions.hpp>
 #include <containers/push_back.hpp>
 
 #include <stdexcept>
@@ -145,7 +145,7 @@ private:
 	TeamSize m_real_size;
 };
 
-CONTAINERS_COMMON_USING_DECLARATIONS
+CONTAINERS_NON_MODIFYING_COMMON_USING_DECLARATIONS
 
 template<Generation generation>
 inline auto find_index(PokemonCollection<generation> const & collection, Species const species) {
