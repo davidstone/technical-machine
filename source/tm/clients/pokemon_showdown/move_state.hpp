@@ -34,6 +34,8 @@
 #include <bounded/detail/variant/variant.hpp>
 #include <bounded/optional.hpp>
 
+#include <containers/front_back.hpp>
+
 #include <stdexcept>
 
 namespace technicalmachine {
@@ -223,7 +225,7 @@ struct MoveState {
 			auto const side_effects = possible_side_effects(executed, as_const(user.pokemon()), other, weather);
 
 			if (size(side_effects) == 1_bi) {
-				front(side_effects).function(user, other, weather, damage);
+				containers::front(side_effects).function(user, other, weather, damage);
 				return;
 			}
 

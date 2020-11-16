@@ -35,6 +35,7 @@
 #include <bounded/integer.hpp>
 
 #include <containers/array/array.hpp>
+#include <containers/front_back.hpp>
 #include <containers/legacy_iterator.hpp>
 
 #include <iostream>
@@ -484,7 +485,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		constexpr auto move_name = Moves::Surf;
 		auto const side_effects = possible_side_effects(move_name, as_const(defender.pokemon()), attacker, weather);
 		BOUNDED_ASSERT(size(side_effects) == 1_bi);
-		auto const & side_effect = front(side_effects);
+		auto const & side_effect = containers::front(side_effects);
 		call_move(
 			defender,
 			UsedMove<generation>(

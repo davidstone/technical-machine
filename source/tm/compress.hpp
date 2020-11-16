@@ -21,6 +21,7 @@
 #include <bounded/optional.hpp>
 #include <bounded/detail/tuple.hpp>
 #include <bounded/detail/variant/variant.hpp>
+#include <containers/front_back.hpp>
 #include <containers/is_range.hpp>
 #include <tm/generation.hpp>
 
@@ -55,7 +56,7 @@ constexpr auto compress(bounded::variant<Ts...> const & variant) {
 }
 
 constexpr auto compress(containers::range auto const & range) {
-	using single_value = decltype(compress(front(range)));
+	using single_value = decltype(compress(containers::front(range)));
 	static_assert(bounded::min_value<single_value> == 0_bi);
 	constexpr auto base = bounded::max_value<single_value> + 1_bi;
 	constexpr auto max = bounded::pow(base, bounded::max_value<decltype(size(range))>) - 1_bi;

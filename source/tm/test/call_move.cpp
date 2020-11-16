@@ -30,6 +30,8 @@
 
 #include <bounded/assert.hpp>
 
+#include <containers/front_back.hpp>
+
 #include <iostream>
 
 namespace technicalmachine {
@@ -130,7 +132,7 @@ void test_baton_pass() {
 	{
 		auto const side_effects = possible_side_effects(Moves::Belly_Drum, as_const(attacker.pokemon()), defender, weather);
 		BOUNDED_ASSERT(size(side_effects) == 1_bi);
-		auto const & side_effect = front(side_effects);
+		auto const & side_effect = containers::front(side_effects);
 		BOUNDED_ASSERT(side_effect.probability == 1.0);
 
 		call_move(
@@ -176,7 +178,7 @@ void test_baton_pass() {
 	{
 		auto const side_effects = possible_side_effects(Moves::Switch1, as_const(attacker.pokemon()), defender, weather);
 		BOUNDED_ASSERT(size(side_effects) == 1_bi);
-		auto const & side_effect = front(side_effects);
+		auto const & side_effect = containers::front(side_effects);
 		BOUNDED_ASSERT(side_effect.probability == 1.0);
 		call_move(
 			attacker,

@@ -20,6 +20,8 @@
 
 #include <tm/generation.hpp>
 
+#include <containers/front_back.hpp>
+
 namespace technicalmachine {
 namespace {
 
@@ -435,10 +437,10 @@ constexpr auto lookup_effectiveness(Generation const generation, Type const atta
 }	// namespace
 
 Effectiveness::Effectiveness(Generation const generation, Type const attacking, PokemonTypes const defending):
-	m_first(lookup_effectiveness(generation, attacking, front(defending))),
+	m_first(lookup_effectiveness(generation, attacking, containers::front(defending))),
 	m_second(containers::size(defending) == 1_bi ?
 		SingleType(1_bi, 1_bi) :
-		lookup_effectiveness(generation, attacking, back(defending))
+		lookup_effectiveness(generation, attacking, containers::back(defending))
 	)
 {
 }

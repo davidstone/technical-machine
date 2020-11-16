@@ -47,6 +47,7 @@
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/filter_iterator.hpp>
+#include <containers/front_back.hpp>
 
 #include <boost/timer.hpp>
 
@@ -257,7 +258,7 @@ private:
 
 constexpr auto all_are_pass_or_switch [[maybe_unused]](StaticVectorMove const legal_selections) {
 	return
-		(size(legal_selections) == 1_bi and front(legal_selections) == Moves::Pass) or
+		(size(legal_selections) == 1_bi and containers::front(legal_selections) == Moves::Pass) or
 		containers::all(legal_selections, is_switch);
 }
 
