@@ -322,7 +322,6 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	)
 	target_compile_options(tm_common PUBLIC
 		"-O3"
-		"-flto=thin"
 	)
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
