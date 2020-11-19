@@ -18,7 +18,8 @@
 #pragma once
 
 #include <containers/begin_end.hpp>
-#include <containers/non_modifying_common_container_functions.hpp>
+
+#include <bounded/integer.hpp>
 
 namespace technicalmachine {
 
