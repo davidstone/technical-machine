@@ -48,6 +48,7 @@
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/filter_iterator.hpp>
 #include <containers/front_back.hpp>
+#include <containers/size.hpp>
 
 #include <boost/timer.hpp>
 
@@ -258,7 +259,7 @@ private:
 
 constexpr auto all_are_pass_or_switch [[maybe_unused]](StaticVectorMove const legal_selections) {
 	return
-		(size(legal_selections) == 1_bi and containers::front(legal_selections) == Moves::Pass) or
+		(containers::size(legal_selections) == 1_bi and containers::front(legal_selections) == Moves::Pass) or
 		containers::all(legal_selections, is_switch);
 }
 
@@ -549,7 +550,7 @@ private:
 		for (auto const executed_move : executed_moves) {
 			score += execute_move(user, SelectedAndExecuted{selected_move, executed_move}, other, other_move, weather, continuation);
 		}
-		return score / static_cast<double>(size(executed_moves));
+		return score / static_cast<double>(containers::size(executed_moves));
 	}
 
 	void update_best_move(Moves & best_move, double & alpha, double const beta, Moves const new_move, bounded::optional<unsigned> const indentation) const {

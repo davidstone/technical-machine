@@ -22,6 +22,7 @@
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/push_back.hpp>
+#include <containers/size.hpp>
 
 #include <bounded/assert.hpp>
 

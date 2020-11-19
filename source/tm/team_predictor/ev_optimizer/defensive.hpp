@@ -29,8 +29,9 @@
 #include <tm/stat/initial_stat.hpp>
 
 #include <containers/algorithms/find.hpp>
-#include <containers/integer_range.hpp>
 #include <containers/static_vector/static_vector.hpp>
+#include <containers/integer_range.hpp>
+#include <containers/size.hpp>
 
 namespace technicalmachine {
 
@@ -54,7 +55,7 @@ struct DefensiveEVs {
 		return containers::find_if(m_container, [=](auto const value) { return value.nature == nature; });
 	}
 private:
-	static constexpr auto number_of_natures = size(containers::enum_range<Nature>());
+	static constexpr auto number_of_natures = containers::size(containers::enum_range<Nature>());
 	containers::static_vector<DataPoint, number_of_natures.value()> m_container;
 };
 

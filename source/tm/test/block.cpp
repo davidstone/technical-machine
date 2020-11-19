@@ -25,6 +25,7 @@
 #include <tm/weather.hpp>
 
 #include <containers/front_back.hpp>
+#include <containers/size.hpp>
 
 #include <iostream>
 
@@ -143,8 +144,8 @@ void test_two_moves_with_one_out_of_pp() {
 	user.reset_start_of_turn();
 
 	auto const selections = legal_selections(user, other, weather);
-	if (size(selections) != 1_bi) {
-		throw std::runtime_error("Incorrect number of selections with one of two moves out of PP. Expected 1, got " + to_string(size(selections)));
+	if (containers::size(selections) != 1_bi) {
+		throw std::runtime_error("Incorrect number of selections with one of two moves out of PP. Expected 1, got " + to_string(containers::size(selections)));
 	}
 	if (containers::front(selections) != Moves::Thunderbolt) {
 		throw std::runtime_error("Incorrect legal selection with one of two moves out of PP. Expected Thunderbolt, got " + std::string(to_string(containers::front(selections))));
@@ -200,8 +201,8 @@ void test_two_moves_with_both_out_of_pp() {
 	user.reset_start_of_turn();
 
 	auto const selections = legal_selections(user, other, weather);
-	if (size(selections) != 1_bi) {
-		throw std::runtime_error("Incorrect number of selections with two of two moves out of PP. Expected 1, got " + to_string(size(selections)));
+	if (containers::size(selections) != 1_bi) {
+		throw std::runtime_error("Incorrect number of selections with two of two moves out of PP. Expected 1, got " + to_string(containers::size(selections)));
 	}
 	if (containers::front(selections) != Moves::Struggle) {
 		throw std::runtime_error("Incorrect legal selection with two of two moves out of PP. Expected Struggle, got " + std::string(to_string(containers::front(selections))));

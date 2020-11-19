@@ -27,8 +27,6 @@
 
 #include <bounded/integer.hpp>
 
-#include <containers/size.hpp>
-
 #include <operators/operators.hpp>
 
 namespace technicalmachine {

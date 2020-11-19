@@ -29,6 +29,7 @@
 #include <bounded/integer.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
+#include <containers/size.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -49,7 +50,7 @@ struct OffensiveEVs {
 
 	auto find(Nature const nature) const -> OffensiveStats const *;
 private:
-	containers::static_vector<OffensiveStats, size(containers::enum_range<Nature>()).value()> m_container;
+	containers::static_vector<OffensiveStats, containers::size(containers::enum_range<Nature>()).value()> m_container;
 };
 
 }	// namespace technicalmachine

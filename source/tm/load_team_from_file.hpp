@@ -27,6 +27,7 @@
 
 #include <containers/at.hpp>
 #include <containers/is_empty.hpp>
+#include <containers/size.hpp>
 
 #include <filesystem>
 #include <random>
@@ -40,7 +41,7 @@ auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path con
 	if (containers::is_empty(files)) {
 		throw std::runtime_error(path.string() + " does not contain any team files.");
 	}
-	auto const max = (size(files) - 1_bi).value();
+	auto const max = (containers::size(files) - 1_bi).value();
 	auto distribution = std::uniform_int_distribution(static_cast<decltype(max)>(0), max);
 	auto const file = containers::at(files, distribution(random_engine), bounded::non_check);
 

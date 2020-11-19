@@ -32,6 +32,7 @@
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/is_empty.hpp>
+#include <containers/size.hpp>
 
 #include <operators/forward.hpp>
 

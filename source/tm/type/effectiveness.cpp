@@ -21,6 +21,7 @@
 #include <tm/generation.hpp>
 
 #include <containers/front_back.hpp>
+#include <containers/size.hpp>
 
 namespace technicalmachine {
 namespace {

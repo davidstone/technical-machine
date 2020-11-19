@@ -30,6 +30,7 @@
 #include <containers/emplace_back.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/push_back.hpp>
+#include <containers/size.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -306,7 +307,7 @@ constexpr auto recover_half = [](auto & user, auto &, auto & weather, auto) {
 
 template<Generation generation>
 constexpr auto active_pokemon_can_be_phazed(Team<generation> const & team) {
-	return !team.pokemon().ingrained() and !blocks_phazing(team.pokemon().ability()) and size(team.all_pokemon()) > 1_bi;
+	return !team.pokemon().ingrained() and !blocks_phazing(team.pokemon().ability()) and containers::size(team.all_pokemon()) > 1_bi;
 }
 
 constexpr auto phaze = [](auto const index) {
@@ -1120,7 +1121,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				auto const range = containers::inclusive_integer_range(min_value, max_value);
 				Probabilities probabilities;
 				for (auto const n : range) {
-					containers::emplace_back(probabilities, Variable{n}, 1.0 / static_cast<double>(size(range)));
+					containers::emplace_back(probabilities, Variable{n}, 1.0 / static_cast<double>(containers::size(range)));
 				}
 				return probabilities;
 			};

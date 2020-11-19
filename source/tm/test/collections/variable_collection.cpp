@@ -33,6 +33,7 @@
 #include <bounded/assert.hpp>
 
 #include <containers/integer_range.hpp>
+#include <containers/size.hpp>
 
 #include <iostream>
 
@@ -81,8 +82,8 @@ void test_combinations() {
 			team.all_pokemon().set_index(current_index);
 			auto const side_effects = possible_side_effects(Moves::Whirlwind, as_const(user.pokemon()), team, weather);
 			auto const expected_size = foe_size - 1_bi;
-			if (size(side_effects) != expected_size) {
-				throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected_size) + " but got " + to_string(size(side_effects)));
+			if (containers::size(side_effects) != expected_size) {
+				throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected_size) + " but got " + to_string(containers::size(side_effects)));
 			}
 			for (auto const effect_index : containers::integer_range(expected_size)) {
 				auto const & side_effect = side_effects[effect_index];

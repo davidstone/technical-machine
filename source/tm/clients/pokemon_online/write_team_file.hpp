@@ -24,6 +24,7 @@
 #include <tm/string_conversions/species.hpp>
 
 #include <containers/integer_range.hpp>
+#include <containers/size.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -109,7 +110,7 @@ void write_pokemon(Pokemon<generation> const & pokemon, boost::property_tree::pt
 	for (auto const & move : moves) {
 		write_move(move, member);
 	}
-	for (auto const n [[maybe_unused]] : containers::integer_range(size(moves), max_moves_per_pokemon)) {
+	for (auto const n [[maybe_unused]] : containers::integer_range(containers::size(moves), max_moves_per_pokemon)) {
 		write_blank_move(member);
 	}
 
@@ -132,7 +133,7 @@ void write_team(Team<generation> const & team, std::filesystem::path const & fil
 	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon(pokemon, t);
 	}
-	for (auto const unused [[maybe_unused]] : containers::integer_range(size(team.all_pokemon()), max_pokemon_per_team)) {
+	for (auto const unused [[maybe_unused]] : containers::integer_range(containers::size(team.all_pokemon()), max_pokemon_per_team)) {
 		write_blank_pokemon(t);
 	}
 	write_xml(file_name.string(), pt, std::locale(), settings);

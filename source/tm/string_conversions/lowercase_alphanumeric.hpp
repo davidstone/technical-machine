@@ -22,6 +22,7 @@
 #include <containers/algorithms/transform.hpp>
 #include <containers/static_vector/static_vector.hpp>
 #include <containers/data.hpp>
+#include <containers/size.hpp>
 #include <containers/take.hpp>
 
 #include <string_view>
@@ -65,7 +66,7 @@ struct fixed_capacity_lowercase_and_digit_string {
 	{
 	}
 	constexpr operator std::string_view() const {
-		return std::string_view(containers::data(m_data), size(m_data).value());
+		return std::string_view(containers::data(m_data), containers::size(m_data).value());
 	}
 
 private:

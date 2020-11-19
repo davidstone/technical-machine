@@ -35,6 +35,7 @@
 #include <bounded/optional.hpp>
 
 #include <containers/front_back.hpp>
+#include <containers/size.hpp>
 
 #include <stdexcept>
 
@@ -224,7 +225,7 @@ struct MoveState {
 		](auto & user, auto & other, auto & weather, auto const damage) {
 			auto const side_effects = possible_side_effects(executed, as_const(user.pokemon()), other, weather);
 
-			if (size(side_effects) == 1_bi) {
+			if (containers::size(side_effects) == 1_bi) {
 				containers::front(side_effects).function(user, other, weather, damage);
 				return;
 			}

@@ -35,6 +35,7 @@
 #include <containers/static_vector/static_vector.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/push_back.hpp>
+#include <containers/size.hpp>
 
 #include <iostream>
 #include <string>
@@ -66,15 +67,15 @@ void move_container_tests() {
 	constexpr auto shared_moves_size = team_size + number_of_weird_moves;
 	auto regular = RegularMoves();
 	auto c = MoveContainer<generation>(regular, team_size);
-	if (size(c) != shared_moves_size) {
-		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + bounded::to_string(shared_moves_size) + " but got " + bounded::to_string(size(c)));
+	if (containers::size(c) != shared_moves_size) {
+		throw InvalidCollection("MoveContainer has the wrong number of shared moves. Expecting " + bounded::to_string(shared_moves_size) + " but got " + bounded::to_string(containers::size(c)));
 	}
 	constexpr auto moves = containers::array{
 		Moves::Absorb, Moves::Tackle, Moves::Quick_Attack, Moves::Body_Slam
 	};
-	for (auto const n : containers::integer_range(size(moves))) {
+	for (auto const n : containers::integer_range(containers::size(moves))) {
 		regular.push_back(Move(generation, moves[n]));
-		if (size(c) != shared_moves_size + n + 1_bi or size(c) != static_cast<bounded::integer<0, 100>>(containers::size(c.regular()) + shared_moves_size)) {
+		if (containers::size(c) != shared_moves_size + n + 1_bi or containers::size(c) != static_cast<bounded::integer<0, 100>>(containers::size(c.regular()) + shared_moves_size)) {
 			throw InvalidCollection("MoveContainer has the wrong number of moves during addition of moves.");
 		}
 	}

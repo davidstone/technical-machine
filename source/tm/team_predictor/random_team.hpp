@@ -26,6 +26,7 @@
 #include <tm/generation.hpp>
 
 #include <containers/integer_range.hpp>
+#include <containers/size.hpp>
 
 #include <random>
 
@@ -49,7 +50,7 @@ template<Generation generation>
 void random_team(UsageStats const & usage_stats, Team<generation> & team, std::mt19937 & random_engine) {
 	auto estimate = Estimate(usage_stats, do_not_use_lead_stats);
 	update_estimate(estimate, usage_stats, team);
-	for (auto const n [[maybe_unused]] : containers::integer_range(max_pokemon_per_team - size(team.all_pokemon()))) {
+	for (auto const n [[maybe_unused]] : containers::integer_range(max_pokemon_per_team - containers::size(team.all_pokemon()))) {
 		auto const species = estimate.random(random_engine);
 		estimate.update(usage_stats, species);
 		team.add_pokemon(Pokemon<generation>(species, Level(100_bi), Gender::genderless));

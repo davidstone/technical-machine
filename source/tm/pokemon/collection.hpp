@@ -32,6 +32,7 @@
 #include <containers/erase.hpp>
 #include <containers/non_modifying_common_container_functions.hpp>
 #include <containers/push_back.hpp>
+#include <containers/size.hpp>
 
 #include <stdexcept>
 
@@ -109,13 +110,13 @@ struct PokemonCollection {
 	friend auto operator==(PokemonCollection const &, PokemonCollection const &) -> bool = default;
 	friend auto compress(PokemonCollection const & value) {
 		using containers::size;
-		static_assert(bounded::max_value<decltype(size(value.m_container))> == 6_bi);
-		auto const p0 = size(value.m_container) >= 1_bi ? compress(value.m_container[0_bi]) : 0_bi;
-		auto const p1 = size(value.m_container) >= 2_bi ? compress(value.m_container[1_bi]) : 0_bi;
-		auto const p2 = size(value.m_container) >= 3_bi ? compress(value.m_container[2_bi]) : 0_bi;
-		auto const p3 = size(value.m_container) >= 4_bi ? compress(value.m_container[3_bi]) : 0_bi;
-		auto const p4 = size(value.m_container) >= 5_bi ? compress(value.m_container[4_bi]) : 0_bi;
-		auto const p5 = size(value.m_container) >= 6_bi ? compress(value.m_container[5_bi]) : 0_bi;
+		static_assert(bounded::max_value<decltype(containers::size(value.m_container))> == 6_bi);
+		auto const p0 = containers::size(value.m_container) >= 1_bi ? compress(value.m_container[0_bi]) : 0_bi;
+		auto const p1 = containers::size(value.m_container) >= 2_bi ? compress(value.m_container[1_bi]) : 0_bi;
+		auto const p2 = containers::size(value.m_container) >= 3_bi ? compress(value.m_container[2_bi]) : 0_bi;
+		auto const p3 = containers::size(value.m_container) >= 4_bi ? compress(value.m_container[3_bi]) : 0_bi;
+		auto const p4 = containers::size(value.m_container) >= 5_bi ? compress(value.m_container[4_bi]) : 0_bi;
+		auto const p5 = containers::size(value.m_container) >= 6_bi ? compress(value.m_container[5_bi]) : 0_bi;
 		if constexpr (generation == Generation::one) {
 			return bounded::tuple(
 				compress_combine(p0, p1, p2, value.m_index),
