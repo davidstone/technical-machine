@@ -44,6 +44,7 @@
 
 #include <containers/algorithms/find.hpp>
 #include <containers/algorithms/maybe_find.hpp>
+#include <containers/begin_end.hpp>
 #include <containers/index_type.hpp>
 
 #include <iostream>
@@ -68,10 +69,10 @@ template<Generation generation>
 auto get_move_index(Pokemon<generation> const & pokemon, Moves const move_name) {
 	auto const moves = pokemon.regular_moves();
 	auto const it = containers::find_if(moves, [=](Move const move) { return move.name() == move_name; });
-	if (it == end(moves)) {
+	if (it == containers::end(moves)) {
 		throw std::runtime_error("Pokemon does not know " + std::string(to_string(move_name)));
 	}
-	return containers::index_type<RegularMoves>(it - begin(moves));
+	return containers::index_type<RegularMoves>(it - containers::begin(moves));
 }
 
 constexpr auto parse_status(std::string_view const str) {

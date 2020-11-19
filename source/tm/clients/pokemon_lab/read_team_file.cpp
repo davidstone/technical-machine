@@ -27,6 +27,7 @@
 #include <tm/string_conversions/species.hpp>
 
 #include <containers/array/array.hpp>
+#include <containers/begin_end.hpp>
 #include <containers/flat_map.hpp>
 
 namespace technicalmachine {
@@ -92,7 +93,7 @@ auto species_from_simulator_string(std::string_view const str) -> Species {
 		}}
 	);
 	auto const it = converter.find(str);
-	return (it != end(converter)) ? it->mapped() : from_string<Species>(str);
+	return (it != containers::end(converter)) ? it->mapped() : from_string<Species>(str);
 }
 
 auto load_moves(Generation const generation, boost::property_tree::ptree const & pt) -> RegularMoves {

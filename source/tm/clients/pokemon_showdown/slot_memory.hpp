@@ -25,6 +25,7 @@
 #include <containers/algorithms/find.hpp>
 #include <containers/static_vector/static_vector.hpp>
 #include <containers/at.hpp>
+#include <containers/begin_end.hpp>
 #include <containers/erase.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/push_back.hpp>
@@ -64,7 +65,7 @@ private:
 	using Container = containers::static_vector<Index, max_pokemon_per_team.value()>;
 	auto swap_to_front(TeamIndex const index) -> Container::iterator {
 		auto const it = containers::find(m_container, 1_bi);
-		BOUNDED_ASSERT(it != end(m_container));
+		BOUNDED_ASSERT(it != containers::end(m_container));
 		std::swap(*it, containers::at(m_container, index));
 		return it;
 	}

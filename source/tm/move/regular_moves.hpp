@@ -19,11 +19,13 @@
 
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/move.hpp>
+#include <tm/operators.hpp>
 #include <tm/move/pp.hpp>
 
 #include <tm/compress.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
+#include <containers/begin_end.hpp>
 #include <containers/size.hpp>
 
 namespace technicalmachine {

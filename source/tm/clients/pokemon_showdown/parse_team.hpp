@@ -34,6 +34,8 @@
 #include <bounded/check_in_range.hpp>
 #include <bounded/to_integer.hpp>
 
+#include <containers/size.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 
 #include <stdexcept>
@@ -124,7 +126,7 @@ template<Generation generation>
 auto parse_team(boost::property_tree::ptree const & pt) -> Team<generation> {
 	auto const team_data = containers::range_view(pt.get_child("side").get_child("pokemon").equal_range(""));
 	constexpr bool is_me = true;
-	auto const team_size = bounded::check_in_range<TeamSize>(bounded::integer(containers::distance(begin(team_data), end(team_data))));
+	auto const team_size = bounded::check_in_range<TeamSize>(bounded::integer(containers::detail::linear_size(team_data)));
 	auto team = Team<generation>(team_size, is_me);
 	for (auto const & pokemon_data : team_data) {
 		team.add_pokemon(parse_pokemon<generation>(pokemon_data.second));

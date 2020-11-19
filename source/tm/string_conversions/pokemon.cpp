@@ -34,6 +34,7 @@
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/algorithms/find.hpp>
 #include <containers/array/array.hpp>
+#include <containers/begin_end.hpp>
 #include <containers/push_back.hpp>
 #include <containers/range_view.hpp>
 
@@ -74,8 +75,8 @@ auto to_string(Pokemon<generation> const pokemon) -> containers::string {
 	auto hp_to_string = [&] {
 		auto const buffer = std::to_string(100.0 * static_cast<double>(hp_ratio(pokemon)));
 		auto const it = containers::find(buffer, '.');
-		auto const last = (end(buffer) - it <= 2) ? end(buffer) : it + 2;
-		return containers::string(containers::range_view(begin(buffer), last));
+		auto const last = (containers::end(buffer) - it <= 2) ? containers::end(buffer) : it + 2;
+		return containers::string(containers::range_view(containers::begin(buffer), last));
 	};
 
 	auto status_to_string = [&] {

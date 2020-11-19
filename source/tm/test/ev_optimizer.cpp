@@ -31,6 +31,7 @@
 
 #include <bounded/assert.hpp>
 
+#include <containers/begin_end.hpp>
 #include <containers/integer_range.hpp>
 
 #include <iostream>
@@ -102,7 +103,7 @@ void defensive_tests() {
 
 auto find(SpeedEVs const & container, Nature const nature) {
 	auto const it = containers::find_if(container, [=](auto const & value) { return value.nature == nature; });
-	BOUNDED_ASSERT(it != end(container));
+	BOUNDED_ASSERT(it != containers::end(container));
 	return it->stat;
 }
 

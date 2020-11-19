@@ -35,6 +35,7 @@
 #include <bounded/integer.hpp>
 
 #include <containers/array/array.hpp>
+#include <containers/begin_end.hpp>
 #include <containers/front_back.hpp>
 #include <containers/legacy_iterator.hpp>
 #include <containers/size.hpp>
@@ -54,7 +55,7 @@ auto shuffled_regular_moves(Generation const generation, auto & random_engine, a
 	// Random order to prevent ordering effects from accidentally arriving at
 	// the correct move each time
 	auto moves = RegularMoves{Move(generation, ts)...};
-	std::shuffle(containers::legacy_iterator(begin(moves)), containers::legacy_iterator(end(moves)), random_engine);
+	std::shuffle(containers::legacy_iterator(containers::begin(moves)), containers::legacy_iterator(containers::end(moves)), random_engine);
 	return moves;
 }
 

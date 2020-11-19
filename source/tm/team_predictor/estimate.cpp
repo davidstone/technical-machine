@@ -25,6 +25,7 @@
 
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/find.hpp>
+#include <containers/begin_end.hpp>
 #include <containers/integer_range.hpp>
 
 #include <algorithm>
@@ -48,10 +49,10 @@ void Estimate::update(UsageStats const & usage_stats, Species const seen) {
 }
 
 Species Estimate::most_likely() const {
-	auto const it = std::max_element(begin(m_estimate), end(m_estimate));
+	auto const it = std::max_element(containers::begin(m_estimate), containers::end(m_estimate));
 	// Estimate is indexed by Species ID. The Species ID is therefore the
 	// distance between the found element and the beginning.
-	return static_cast<Species>(it - begin(m_estimate));
+	return static_cast<Species>(it - containers::begin(m_estimate));
 }
 
 Species Estimate::random(std::mt19937 & random_engine) const {
@@ -62,8 +63,8 @@ Species Estimate::random(std::mt19937 & random_engine) const {
 		usage_threshold -= value;
 		return usage_threshold <= 0.0F;
 	});
-	BOUNDED_ASSERT(it != end(m_estimate));
-	return static_cast<Species>(it - begin(m_estimate));
+	BOUNDED_ASSERT(it != containers::end(m_estimate));
+	return static_cast<Species>(it - containers::begin(m_estimate));
 }
 
 }	// namespace technicalmachine

@@ -24,7 +24,7 @@
 
 #include <bounded/assert.hpp>
 
-#include <containers/algorithms/find.hpp>
+#include <containers/algorithms/maybe_find.hpp>
 #include <containers/algorithms/sort.hpp>
 #include <containers/algorithms/transform.hpp>
 #include <containers/static_vector/static_vector.hpp>
@@ -44,11 +44,11 @@ struct MoveScores {
 	{
 	}
 	void set(Moves const move_name, double const score) {
-		auto const it = containers::find_if(m_scores, [=](value_type const value) {
+		auto const ptr = containers::maybe_find_if(m_scores, [=](value_type const value) {
 			return value.move_name == move_name;
 		});
-		BOUNDED_ASSERT(it != end(m_scores));
-		it->score = score;
+		BOUNDED_ASSERT(ptr);
+		ptr->score = score;
 	}
 	auto ordered_moves(bool const ai) const -> StaticVectorMove {
 		auto intermediate = containers::static_vector<value_type, static_cast<int>(bounded::max_value<MoveSize>)>(m_scores);

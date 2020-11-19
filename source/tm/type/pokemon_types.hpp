@@ -22,6 +22,7 @@
 #include <tm/pokemon/species_forward.hpp>
 
 #include <containers/array/array.hpp>
+#include <containers/begin_end.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;

@@ -21,6 +21,7 @@
 #include <tm/clients/pokemon_showdown/battle_factory.hpp>
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
 
+#include <containers/begin_end.hpp>
 #include <containers/emplace_back.hpp>
 #include <containers/erase.hpp>
 #include <containers/push_back.hpp>
@@ -75,7 +76,7 @@ private:
 	static bool handle_message_impl(auto & container, InMessage message, auto if_completed) {
 		auto const function = [=](auto const & battle) { return battle->id() == message.room(); };
 		auto const it = containers::find_if(container, function);
-		if (it == end(container)) {
+		if (it == containers::end(container)) {
 			return false;
 		}
 		(*it)->handle_message(message);

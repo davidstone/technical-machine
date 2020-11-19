@@ -29,6 +29,8 @@
 
 #include <bounded/assert.hpp>
 
+#include <containers/begin_end.hpp>
+
 #include <random>
 
 namespace technicalmachine {
@@ -43,7 +45,7 @@ auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs c
 			continue;
 		}
 		auto const defensive = d.find(speed.nature);
-		if (defensive == end(d)) {
+		if (defensive == containers::end(d)) {
 			continue;
 		}
 		auto candidate = CombinedStats<IVAndEV>{

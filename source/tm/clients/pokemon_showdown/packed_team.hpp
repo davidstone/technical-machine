@@ -31,6 +31,7 @@
 
 #include <bounded/to_integer.hpp>
 
+#include <containers/begin_end.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/is_empty.hpp>
 #include <containers/string.hpp>
@@ -58,8 +59,8 @@ auto to_packed_format(Team<generation> const & team) -> containers::string {
 		result += to_string(pokemon.initial_ability());
 		result += '|';
 		auto const moves = pokemon.regular_moves();
-		for (auto it = begin(moves); it != end(moves); ++it) {
-			if (it != begin(moves)) {
+		for (auto it = containers::begin(moves); it != containers::end(moves); ++it) {
+			if (it != containers::begin(moves)) {
 				result += ',';
 			}
 			result += to_string(it->name());

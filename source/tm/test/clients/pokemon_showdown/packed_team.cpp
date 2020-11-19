@@ -19,6 +19,8 @@
 
 #include <tm/clients/pokemon_showdown/packed_team.hpp>
 
+#include <containers/begin_end.hpp>
+
 #include <iostream>
 #include <string_view>
 
@@ -34,7 +36,7 @@ void test_packed_team() {
 	auto const team = packed_format_to_team<generation>(initial);
 	auto const output = to_packed_format(team);
 	if (output != initial) {
-		throw std::runtime_error("Expected:\n\n" + std::string(initial) + " but got\n\n" + std::string(begin(output), end(output)));
+		throw std::runtime_error("Expected:\n\n" + std::string(initial) + " but got\n\n" + std::string(containers::begin(output), containers::end(output)));
 	}
 }
 

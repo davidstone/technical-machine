@@ -30,6 +30,7 @@
 
 #include <containers/algorithms/find.hpp>
 #include <containers/static_vector/static_vector.hpp>
+#include <containers/begin_end.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/size.hpp>
 

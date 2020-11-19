@@ -25,6 +25,7 @@
 #include <tm/gender.hpp>
 
 #include <containers/array/array.hpp>
+#include <containers/begin_end.hpp>
 #include <containers/flat_map.hpp>
 
 namespace technicalmachine {
@@ -52,7 +53,7 @@ auto from_string(std::string_view const str) -> Gender {
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<10>(str);
 	auto const it = converter.find(converted);
-	if (it != end(converter)) {
+	if (it != containers::end(converter)) {
 		return it->mapped();
 	} else {
 		throw InvalidFromStringConversion("Gender", str);

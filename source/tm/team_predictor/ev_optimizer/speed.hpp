@@ -26,6 +26,7 @@
 #include <tm/stat/nature.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
+#include <containers/begin_end.hpp>
 
 namespace technicalmachine {
 
