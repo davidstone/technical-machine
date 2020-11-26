@@ -44,7 +44,7 @@ auto test_files_in_path() -> void {
 
 	auto files = files_in_path(path);
 	containers::sort(files);
-	BOUNDED_ASSERT(files == containers::vector{path / "a", path / "b", path / "c/d"});
+	BOUNDED_ASSERT(files == containers::vector({path / "a", path / "b", path / "c/d"}));
 }
 
 } // namespace technicalmachine

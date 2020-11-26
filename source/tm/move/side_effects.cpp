@@ -39,12 +39,12 @@ namespace {
 
 template<Generation generation>
 constexpr auto guaranteed_effect(auto function) {
-	return SideEffects<generation>{
+	return SideEffects<generation>({
 		SideEffect<generation>{
 			1.0,
 			function
 		}
-	};
+	});
 }
 
 template<Generation generation>
@@ -54,10 +54,10 @@ template<Generation generation>
 constexpr auto basic_probability(double const probability, auto function) {
 	return probability == 1.0 ?
 		guaranteed_effect<generation>(function) :
-		SideEffects<generation>{
+		SideEffects<generation>({
 			SideEffect<generation>{1.0 - probability, no_effect_function},
 			SideEffect<generation>{probability, function},
-		};
+		});
 }
 
 // Use when each element of the range is equally likely
@@ -172,12 +172,12 @@ constexpr auto fang_effects(ActivePokemon<generation> const original_user, Team<
 		flinch(user, target, weather, damage);
 	};
 	return status_can_apply(status, original_user, original_target, original_weather, immune_type) ?
-		SideEffects<generation>{
+		SideEffects<generation>({
 			{0.81, no_effect_function},
 			{0.09, set_status_function<status>},
 			{0.09, flinch},
 			{0.01, status_and_flinch_function}
-		} :
+		}) :
 		basic_probability<generation>(0.1, flinch);
 }
 
@@ -188,10 +188,10 @@ auto recoil_status(ActivePokemon<generation> const original_user, Team<generatio
 		recoil_effect(3_bi)(user, target, weather, damage);
 	};
 	return status_can_apply(status, original_user, original_target, original_weather, immune_type) ?
-		SideEffects<generation>{
+		SideEffects<generation>({
 			{0.9, recoil_effect(3_bi)},
 			{0.1, recoil_and_status}
-		} :
+		}) :
 		guaranteed_effect<generation>(recoil_effect(3_bi));
 }
 
@@ -208,17 +208,17 @@ constexpr auto tri_attack_effect(ActivePokemon<generation> const original_user, 
 	if (is_type(original_target.pokemon(), Type::Ghost)) {
 		return no_effect<generation>;
 	}
-	constexpr auto burn = SideEffect<generation>{1.0 / 15.0, set_status_function<Statuses::burn>};
-	constexpr auto freeze = SideEffect<generation>{1.0 / 15.0, set_status_function<Statuses::freeze>};
-	constexpr auto paralysis = SideEffect<generation>{1.0 / 15.0, set_status_function<Statuses::paralysis>};
+	constexpr auto burn = SideEffect<generation>({1.0 / 15.0, set_status_function<Statuses::burn>});
+	constexpr auto freeze = SideEffect<generation>({1.0 / 15.0, set_status_function<Statuses::freeze>});
+	constexpr auto paralysis = SideEffect<generation>({1.0 / 15.0, set_status_function<Statuses::paralysis>});
 
-	constexpr auto burn_freeze_paralysis_probabilities = SideEffects<generation>{{12.0 / 15.0, no_effect_function}, burn, freeze, paralysis};
-	constexpr auto burn_freeze_probabilities = SideEffects<generation>{{13.0 / 15.0, no_effect_function}, burn, freeze};
-	constexpr auto burn_paralysis_probabilities = SideEffects<generation>{{13.0 / 15.0, no_effect_function}, burn, paralysis};
-	constexpr auto freeze_paralysis_probabilities = SideEffects<generation>{{13.0 / 15.0, no_effect_function}, freeze, paralysis};
-	constexpr auto burn_probabilities = SideEffects<generation>{{14.0 / 15.0, no_effect_function}, burn};
-	constexpr auto freeze_probabilities = SideEffects<generation>{{14.0 / 15.0, no_effect_function}, freeze};
-	constexpr auto paralysis_probabilities = SideEffects<generation>{{14.0 / 15.0, no_effect_function}, paralysis};
+	constexpr auto burn_freeze_paralysis_probabilities = SideEffects<generation>({{12.0 / 15.0, no_effect_function}, burn, freeze, paralysis});
+	constexpr auto burn_freeze_probabilities = SideEffects<generation>({{13.0 / 15.0, no_effect_function}, burn, freeze});
+	constexpr auto burn_paralysis_probabilities = SideEffects<generation>({{13.0 / 15.0, no_effect_function}, burn, paralysis});
+	constexpr auto freeze_paralysis_probabilities = SideEffects<generation>({{13.0 / 15.0, no_effect_function}, freeze, paralysis});
+	constexpr auto burn_probabilities = SideEffects<generation>({{14.0 / 15.0, no_effect_function}, burn});
+	constexpr auto freeze_probabilities = SideEffects<generation>({{14.0 / 15.0, no_effect_function}, freeze});
+	constexpr auto paralysis_probabilities = SideEffects<generation>({{14.0 / 15.0, no_effect_function}, paralysis});
 
 	switch (generation) {
 		case Generation::one:
@@ -234,7 +234,7 @@ constexpr auto tri_attack_effect(ActivePokemon<generation> const original_user, 
 						burn_paralysis_probabilities :
 						burn_freeze_paralysis_probabilities;
 				case Statuses::freeze:
-					return SideEffects<generation>{{10.0 / 15.0, no_effect_function}, thaw, burn};
+					return SideEffects<generation>({{10.0 / 15.0, no_effect_function}, thaw, burn});
 				default:
 					return no_effect<generation>;
 			}
@@ -991,10 +991,10 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				original_user,
 				original_other.pokemon(),
 				original_weather,
-				SideEffects<generation>{
+				SideEffects<generation>({
 					SideEffect<generation>{0.7, no_effect_function},
 					SideEffect<generation>{0.3, flinch}
-				}
+				})
 			);
 
 		case Moves::Gravity:

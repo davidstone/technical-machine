@@ -164,9 +164,9 @@ auto selected_move_to_executed_move(Moves const selected_move, Team<generation> 
 		case Moves::Sleep_Talk:
 			return is_sleeping(user_pokemon.status()) ?
 				result(filter(transform(user_pokemon.regular_moves(), known), can_be_selected_by_sleep_talk)) :
-				result{KnownMove{selected_move, type(selected_move)}};
+				result({KnownMove{selected_move, type(selected_move)}});
 		default:
-			return result{KnownMove{selected_move, type(selected_move)}};
+			return result({KnownMove{selected_move, type(selected_move)}});
 	}
 }
 
