@@ -21,7 +21,7 @@
 #include <tm/clients/pokemon_showdown/battles.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 #include <tm/clients/pokemon_showdown/json_parser.hpp>
-#include <tm/clients/pokemon_showdown/packed_team.hpp>
+#include <tm/clients/pokemon_showdown/to_packed_format.hpp>
 
 #include <tm/evaluate/evaluate.hpp>
 

@@ -17,7 +17,8 @@
 
 #include <tm/test/clients/pokemon_showdown/packed_team.hpp>
 
-#include <tm/clients/pokemon_showdown/packed_team.hpp>
+#include <tm/clients/pokemon_showdown/packed_format_to_team.hpp>
+#include <tm/clients/pokemon_showdown/to_packed_format.hpp>
 
 #include <containers/begin_end.hpp>
 

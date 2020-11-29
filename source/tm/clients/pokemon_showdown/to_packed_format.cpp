@@ -15,4 +15,4 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-#include <tm/clients/pokemon_showdown/packed_team.hpp>
+#include <tm/clients/pokemon_showdown/to_packed_format.hpp>

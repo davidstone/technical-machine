@@ -22,7 +22,6 @@
 #include <tm/clients/pokemon_showdown/chat.hpp>
 #include <tm/clients/pokemon_showdown/client.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
-#include <tm/clients/pokemon_showdown/packed_team.hpp>
 
 #include <tm/clients/random_string.hpp>
 
