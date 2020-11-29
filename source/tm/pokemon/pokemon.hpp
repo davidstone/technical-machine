@@ -286,6 +286,15 @@ private:
 	bool m_nature_is_known : 1;
 };
 
+extern template struct Pokemon<Generation::one>;
+extern template struct Pokemon<Generation::two>;
+extern template struct Pokemon<Generation::three>;
+extern template struct Pokemon<Generation::four>;
+extern template struct Pokemon<Generation::five>;
+extern template struct Pokemon<Generation::six>;
+extern template struct Pokemon<Generation::seven>;
+extern template struct Pokemon<Generation::eight>;
+
 auto get_hidden_power_type(auto const pokemon) {
 	auto const hidden_power = pokemon.hidden_power();
 	return BOUNDED_CONDITIONAL(hidden_power, hidden_power->type(), bounded::none);

@@ -16,3 +16,16 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/pokemon/pokemon.hpp>
+
+namespace technicalmachine {
+
+template struct Pokemon<Generation::one>;
+template struct Pokemon<Generation::two>;
+template struct Pokemon<Generation::three>;
+template struct Pokemon<Generation::four>;
+template struct Pokemon<Generation::five>;
+template struct Pokemon<Generation::six>;
+template struct Pokemon<Generation::seven>;
+template struct Pokemon<Generation::eight>;
+
+} // namespace technicalmachine
