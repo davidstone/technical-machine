@@ -24,9 +24,6 @@
 #include <bounded/detail/construct_destroy.hpp>
 #include <bounded/integer.hpp>
 
-#include <containers/algorithms/transform.hpp>
-#include <containers/integer_range.hpp>
-
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -52,14 +49,6 @@ constexpr auto operator<=>(EV const lhs, EV::value_type const rhs) {
 }
 constexpr auto operator==(EV const lhs, EV::value_type const rhs) -> bool {
 	return lhs.value() == rhs;
-}
-
-constexpr auto ev_range(auto const max) {
-	return containers::transform(containers::inclusive_integer_range(0_bi, max, 4_bi), bounded::construct_return<EV>);
-}
-
-constexpr auto ev_range() {
-	return ev_range(EV::max);
 }
 
 constexpr auto max_total_evs(Generation const generation) {

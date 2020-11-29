@@ -39,6 +39,10 @@ constexpr auto ev_sum(DataPoint const data) {
 	return data.hp.ev.value() + data.defense.ev.value() + data.special_defense.ev.value();
 }
 
+constexpr auto ev_range() {
+	return containers::transform(containers::inclusive_integer_range(0_bi, EV::max, 4_bi), bounded::construct_return<EV>);
+}
+
 }	// namespace
 
 DefensiveEVs::DefensiveEVs(BaseStats const base_stats, Level const level, InputHP const original_hp, InputStat const def, InputStat const spd) {
