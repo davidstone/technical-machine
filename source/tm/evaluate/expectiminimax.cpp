@@ -20,6 +20,7 @@
 
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/evaluate/move_scores.hpp>
+#include <tm/evaluate/possible_executed_moves.hpp>
 #include <tm/evaluate/transposition.hpp>
 
 #include <tm/move/base_power.hpp>
@@ -44,10 +45,9 @@
 
 #include <bounded/assert.hpp>
 
-#include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/all_any_none.hpp>
-#include <containers/algorithms/filter_iterator.hpp>
 #include <containers/front_back.hpp>
+#include <containers/integer_range.hpp>
 #include <containers/size.hpp>
 
 #include <boost/timer.hpp>
@@ -120,55 +120,6 @@ struct SelectMoveResult {
 	BestMove move;
 	BothMoveScores<generation> move_scores;
 };
-
-
-constexpr auto can_be_selected_by_sleep_talk(KnownMove const move) {
-	switch (move.name) {
-		case Moves::Assist:
-		case Moves::Bide:
-		case Moves::Chatter:
-		case Moves::Copycat:
-		case Moves::Focus_Punch:
-		case Moves::Me_First:
-		case Moves::Metronome:
-		case Moves::Mirror_Move:
-		case Moves::Sleep_Talk:
-		case Moves::Uproar:
-		case Moves::Blast_Burn:
-		case Moves::Frenzy_Plant:
-		case Moves::Giga_Impact:
-		case Moves::Hydro_Cannon:
-		case Moves::Hyper_Beam:
-		case Moves::Roar_of_Time:
-		case Moves::Rock_Wrecker:
-		case Moves::Solar_Beam:
-			return false;
-		default:
-			return true;
-	}
-}
-
-template<Generation generation>
-auto selected_move_to_executed_move(Moves const selected_move, Team<generation> const & user_team) {
-	using result = containers::static_vector<KnownMove, 3>;
-	auto const user_pokemon = user_team.pokemon();
-	auto type = [=](Moves const move) {
-		return get_type(generation, move, get_hidden_power_type(user_pokemon));
-	};
-	auto known = [=](Move const move) {
-		return KnownMove{move.name(), type(move.name())};
-	};
-	using containers::filter;
-	using containers::transform;
-	switch (selected_move) {
-		case Moves::Sleep_Talk:
-			return is_sleeping(user_pokemon.status()) ?
-				result(filter(transform(user_pokemon.regular_moves(), known), can_be_selected_by_sleep_talk)) :
-				result({KnownMove{selected_move, type(selected_move)}});
-		default:
-			return result({KnownMove{selected_move, type(selected_move)}});
-	}
-}
 
 double generic_flag_branch(double const basic_probability, auto const & next_branch) {
 	BOUNDED_ASSERT_OR_ASSUME(0.0 <= basic_probability and basic_probability <= 1.0);
@@ -546,7 +497,7 @@ private:
 
 	auto score_executed_moves(Team<generation> const & user, Moves const selected_move, Team<generation> const & other, OtherMove const other_move, Weather const weather, auto const continuation) const -> double {
 		double score = 0.0;
-		auto const executed_moves = selected_move_to_executed_move(selected_move, user);
+		auto const executed_moves = possible_executed_moves(selected_move, user);
 		for (auto const executed_move : executed_moves) {
 			score += execute_move(user, SelectedAndExecuted{selected_move, executed_move}, other, other_move, weather, continuation);
 		}
