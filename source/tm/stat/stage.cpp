@@ -20,6 +20,8 @@
 #include <tm/rational.hpp>
 #include <tm/saturating_add.hpp>
 
+#include <containers/integer_range.hpp>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
