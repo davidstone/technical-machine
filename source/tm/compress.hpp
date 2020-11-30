@@ -72,17 +72,19 @@ constexpr auto compress(containers::range auto const & range) {
 	return result;
 }
 
-constexpr auto compress_combine(auto const & value, auto const & ... values) {
-	auto const lhs = compress(value);
-	static_assert(bounded::bounded_integer<decltype(lhs)>);
-	static_assert(bounded::min_value<decltype(lhs)> == 0_bi);
-	if constexpr (sizeof...(values) == 0) {
-		return lhs;
-	} else {
-		auto const rhs = compress_combine(values...);
-		static_assert(bounded::min_value<decltype(rhs)> == 0_bi);
-		return lhs * (bounded::max_value<decltype(rhs)> + 1_bi) + rhs;
-	}
+namespace compress_detail {
+
+constexpr auto operator->*(auto const & lhs, auto const & rhs) {
+	auto const compressed_lhs = compress(lhs);
+	auto const compressed_rhs = compress(rhs);
+	return compressed_lhs * (bounded::max_value<decltype(compressed_rhs)> + 1_bi) + compressed_rhs;
+}
+
+} // namespace compress_detail
+
+constexpr auto compress_combine(auto const & ... values) {
+	using compress_detail::operator->*;
+	return (values ->* ... ->* 0_bi);
 }
 
 } // namespace technicalmachine
