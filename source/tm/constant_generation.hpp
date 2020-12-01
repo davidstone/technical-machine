@@ -1,5 +1,4 @@
-// Handles challenges / current battles
-// Copyright (C) 2019 David Stone
+// Copyright (C) 2020 David Stone
 //
 // This file is part of Technical Machine.
 //
@@ -23,7 +22,6 @@
 #include <type_traits>
 
 namespace technicalmachine {
-namespace ps {
 
 template<Generation generation>
 inline constexpr auto constant_gen = std::integral_constant<Generation, generation>();
@@ -41,5 +39,4 @@ constexpr auto constant_generation(Generation const generation, auto && make) {
 	}
 }
 
-} // namespace ps
 } // namespace technicalmachine

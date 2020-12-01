@@ -50,7 +50,6 @@ add_library(tm_common STATIC
 	source/tm/clients/pokemon_showdown/battles.cpp
 	source/tm/clients/pokemon_showdown/chat.cpp
 	source/tm/clients/pokemon_showdown/client.cpp
-	source/tm/clients/pokemon_showdown/constant_generation.cpp
 	source/tm/clients/pokemon_showdown/inmessage.cpp
 	source/tm/clients/pokemon_showdown/json_parser.cpp
 	source/tm/clients/pokemon_showdown/move_state.cpp
@@ -181,6 +180,7 @@ add_library(tm_common STATIC
 	source/tm/block.cpp
 	source/tm/buffer_view.cpp
 	source/tm/compress.cpp
+	source/tm/constant_generation.cpp
 	source/tm/critical_hit.cpp
 	source/tm/end_of_turn.cpp
 	source/tm/entry_hazards.cpp

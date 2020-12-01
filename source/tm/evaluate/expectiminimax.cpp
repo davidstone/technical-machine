@@ -109,16 +109,14 @@ auto deorder(Team<generation> const & first, Team<generation> const & last) {
 	};
 }
 
-template<Generation generation>
 struct BothMoveScores {
-	MoveScores<generation> ai;
-	MoveScores<generation> foe;
+	MoveScores ai;
+	MoveScores foe;
 };
 
-template<Generation generation>
 struct SelectMoveResult {
 	BestMove move;
-	BothMoveScores<generation> move_scores;
+	BothMoveScores move_scores;
 };
 
 double generic_flag_branch(double const basic_probability, auto const & next_branch) {
@@ -274,7 +272,7 @@ struct Evaluator {
 	}
 
 private:
-	auto select_move_branch(Team<generation> const & ai, StaticVectorMove const ai_selections, Team<generation> const & foe, StaticVectorMove const foe_selections, Weather const weather, Depth const depth, auto const function) -> SelectMoveResult<generation> {
+	auto select_move_branch(Team<generation> const & ai, StaticVectorMove const ai_selections, Team<generation> const & foe, StaticVectorMove const foe_selections, Weather const weather, Depth const depth, auto const function) -> SelectMoveResult {
 		// This calls itself at one lower depth in order to get an initial estimate
 		// for move_scores because the algorithm works faster if you start with the
 		// correct result. The results from one less depth are used to estimate the
@@ -282,7 +280,10 @@ private:
 		auto const iterative_deepening = iterative_deepening_value(depth);
 		auto move_scores = iterative_deepening ?
 			select_move_branch(ai, ai_selections, foe, foe_selections, weather, *iterative_deepening, function).move_scores :
-			BothMoveScores<generation>{MoveScores<generation>(ai_selections, true), MoveScores<generation>(foe_selections, false)};
+			BothMoveScores{
+				MoveScores(generation, ai_selections, true),
+				MoveScores(generation, foe_selections, false)
+			};
 		auto const ai_moves = move_scores.ai.ordered_moves(true);
 		auto const foe_moves = move_scores.foe.ordered_moves(false);
 
@@ -355,7 +356,7 @@ private:
 				break;
 			}
 		}
-		return SelectMoveResult<generation>{
+		return SelectMoveResult{
 			BestMove{best_move, alpha},
 			std::move(move_scores)
 		};
@@ -544,7 +545,7 @@ private:
 		}
 	}
 
-	void update_foe_best_move(Moves const move, MoveScores<generation> & foe_scores, double & beta, double const max_score, bounded::optional<unsigned> const indentation) const {
+	void update_foe_best_move(Moves const move, MoveScores & foe_scores, double & beta, double const max_score, bounded::optional<unsigned> const indentation) const {
 		if (beta > max_score) {
 			beta = max_score;
 			foe_scores.set(move, beta);

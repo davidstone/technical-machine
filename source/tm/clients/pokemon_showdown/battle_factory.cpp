@@ -19,7 +19,6 @@
 
 #include <tm/clients/pokemon_showdown/battle_logger.hpp>
 #include <tm/clients/pokemon_showdown/chat.hpp>
-#include <tm/clients/pokemon_showdown/constant_generation.hpp>
 #include <tm/clients/pokemon_showdown/json_parser.hpp>
 #include <tm/clients/pokemon_showdown/parse_team.hpp>
 
@@ -29,6 +28,8 @@
 #include <tm/stat/generic_stats.hpp>
 
 #include <tm/team_predictor/usage_stats.hpp>
+
+#include <tm/constant_generation.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>

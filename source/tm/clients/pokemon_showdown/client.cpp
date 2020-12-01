@@ -21,11 +21,11 @@
 #include <tm/clients/pokemon_showdown/client.hpp>
 
 #include <tm/clients/pokemon_showdown/chat.hpp>
-#include <tm/clients/pokemon_showdown/constant_generation.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 
 #include <tm/team_predictor/lead_stats.hpp>
 
+#include <tm/constant_generation.hpp>
 #include <tm/settings_file.hpp>
 #include <tm/team.hpp>
 
