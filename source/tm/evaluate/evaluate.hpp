@@ -155,7 +155,7 @@ private:
 
 // 100% chance to win
 template<Generation generation>
-inline constexpr auto victory = bounded::max_value<decltype(std::declval<Evaluate<generation>>()(std::declval<Team<generation>>(), std::declval<Team<generation>>()))> + 1_bi;
+inline constexpr auto victory = double(bounded::max_value<decltype(std::declval<Evaluate<generation>>()(std::declval<Team<generation>>(), std::declval<Team<generation>>()))> + 1_bi);
 
 // Returns victory if the battle is won. Returns -victory if the battle is
 // lost. Returns 0 otherwise.
@@ -163,16 +163,14 @@ template<Generation generation>
 constexpr auto win(Team<generation> const & team1, Team<generation> const & team2) -> bounded::optional<double> {
 	auto single_team_win = [](Team<generation> const & team) {
 		BOUNDED_ASSERT(team.size() != 0_bi);
-		return BOUNDED_CONDITIONAL(
-			team.size() == 1_bi and team.pokemon().hp() == 0_bi,
-			BOUNDED_CONDITIONAL(team.is_me(), -victory<generation>, victory<generation>),
-			0_bi
-		);
+		return	team.size() == 1_bi and team.pokemon().hp() == 0_bi ?
+			team.is_me() ? -victory<generation> : victory<generation> :
+			0.0;
 	};
 	auto const win1 = single_team_win(team1);
 	auto const win2 = single_team_win(team2);
-	if (win1 != 0_bi or win2 != 0_bi) {
-		return static_cast<double>(win1 + win2);
+	if (win1 != 0.0 or win2 != 0.0) {
+		return win1 + win2;
 	}
 	return bounded::none;
 }

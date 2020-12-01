@@ -111,7 +111,7 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 	{
 		auto const best_move = expectiminimax(team1, team2, weather, evaluate, depth, std::cout);
 		BOUNDED_ASSERT(best_move.name == Moves::Thunderbolt);
-		BOUNDED_ASSERT(best_move.score == double(victory<generation>));
+		BOUNDED_ASSERT(best_move.score == victory<generation>);
 	}
 	
 	auto team3 = Team<generation>(1_bi);
@@ -138,7 +138,7 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 	{
 		auto const best_move = expectiminimax(team1, team3, weather, evaluate, depth, std::cout);
 		BOUNDED_ASSERT(best_move.name == Moves::Shadow_Ball);
-		BOUNDED_ASSERT(best_move.score == double(victory<generation>));
+		BOUNDED_ASSERT(best_move.score == victory<generation>);
 	}
 }
 
@@ -246,7 +246,7 @@ void bellyzard_vs_defensive(Evaluate<Generation::four> const & evaluate, Weather
 
 	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth, std::cout);
 	BOUNDED_ASSERT(best_move.name == Moves::Belly_Drum);
-	BOUNDED_ASSERT(best_move.score == double(victory<generation>));
+	BOUNDED_ASSERT(best_move.score == victory<generation>);
 }
 
 void hippopotas_vs_wobbuffet(Evaluate<Generation::four> const & evaluate, Weather const weather, std::mt19937 & random_engine) {
@@ -302,7 +302,7 @@ void hippopotas_vs_wobbuffet(Evaluate<Generation::four> const & evaluate, Weathe
 
 	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth, std::cout);
 	BOUNDED_ASSERT(best_move.name == Moves::Curse);
-	BOUNDED_ASSERT(best_move.score == double(victory<generation>));
+	BOUNDED_ASSERT(best_move.score == victory<generation>);
 }
 
 
@@ -392,7 +392,7 @@ void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weath
 
 	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth, std::cerr);
 	BOUNDED_ASSERT(best_move.name == Moves::Belly_Drum);
-	BOUNDED_ASSERT(best_move.score == double(victory<generation>));
+	BOUNDED_ASSERT(best_move.score == victory<generation>);
 }
 
 

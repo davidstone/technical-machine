@@ -33,7 +33,7 @@ MoveScores::MoveScores(Generation const generation, StaticVectorMove const legal
 	m_scores(
 		containers::transform(legal_selections, [=](Moves const move) {
 			auto cg = []<Generation g>(std::integral_constant<Generation, g>) {
-				return static_cast<double>(victory<g>);
+				return victory<g>;
 			};
 			auto const v = constant_generation(generation, cg);
 			return value_type{

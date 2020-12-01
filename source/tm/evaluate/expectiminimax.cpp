@@ -350,12 +350,12 @@ private:
 		// into best_move without any additional logic, such as pre-filling it with
 		// some result.
 
-		auto alpha = static_cast<double>(-victory<generation> - 1_bi);
+		auto alpha = -victory<generation> - 1.0;
 		auto best_move = Moves{};
 		auto const ai_indentation = depth.indentation();
 		for (auto const & ai_move : ai_moves) {
 			m_best_move_printer.print_action(ai, ai_move, ai_indentation);
-			auto beta = static_cast<double>(victory<generation> + 1_bi);
+			auto beta = victory<generation> + 1.0;
 			auto const foe_depth = depth.increased_indentation(ai_move);
 			auto const foe_indentation = foe_depth.indentation();
 			for (auto const & foe_move : foe_moves) {
@@ -371,7 +371,7 @@ private:
 			move_scores.ai.set(ai_move, beta);
 			m_best_move_printer.update_best_move(best_move, alpha, beta, ai_move, ai_indentation);
 			// The AI cannot have a better move than a guaranteed win
-			if (alpha == static_cast<double>(victory<generation>)) {
+			if (alpha == victory<generation>) {
 				break;
 			}
 		}
@@ -520,7 +520,7 @@ private:
 			}
 		}
 		auto const difference = ai.size() - foe.size();
-		score += static_cast<double>(difference * victory<generation>);
+		score += static_cast<double>(difference) * victory<generation>;
 		score /= static_cast<double>(max_pokemon_per_team * max_pokemon_per_team);
 		return score;
 	}
