@@ -217,18 +217,40 @@ auto team_is_empty(Team<generation> const & team) {
 	return team.size() == 0_bi or (team.size() == 1_bi and team.pokemon().hp() == 0_bi);
 };
 
-struct Printer {
-	explicit Printer(std::ostream & log):
+struct BestMovePrinter {
+	explicit BestMovePrinter(std::ostream & log):
 		m_log(log)
 	{
 	}
 
+	void update_best_move(Moves & best_move, double & alpha, double const beta, Moves const new_move, bounded::optional<unsigned> const indentation) const {
+		// If their best response isn't as good as their previous best
+		// response, then this new move must be better than the
+		// previous AI's best move
+		if (beta > alpha) {
+			alpha = beta;
+			best_move = new_move;
+			print_estimated_score(alpha, new_move, indentation);
+		}
+	}
+
+	void update_foe_best_move(Moves const move, MoveScores & foe_scores, double & beta, double const max_score, bounded::optional<unsigned> const indentation) const {
+		if (beta > max_score) {
+			beta = max_score;
+			foe_scores.set(move, beta);
+		}
+		print_estimated_score(max_score, move, indentation);
+	}
+
 	template<Generation generation>
-	void print_action(Team<generation> const & team, Moves const move, unsigned const indentation) const {
+	void print_action(Team<generation> const & team, Moves const move, bounded::optional<unsigned> const indentation) const {
+		if (!indentation) {
+			return;
+		}
 		if (move == Moves::Pass) {
 			return;
 		}
-		m_log << std::string(indentation, '\t') << "Evaluating " << team.who();
+		m_log << std::string(*indentation, '\t') << "Evaluating " << team.who();
 		if (is_switch(move)) {
 			auto const replacement_index = to_replacement(move);
 			m_log << " switching to " << to_string(team.pokemon(replacement_index).species()) << '\n';
@@ -237,12 +259,13 @@ struct Printer {
 		}
 	}
 
+private:
 	void print_estimated_score(double const estimate, Moves const move, bounded::optional<unsigned> const indentation) const {
 		if (indentation and move != Moves::Pass) {
 			m_log << std::string(*indentation, '\t') << "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
 		}
 	}
-private:
+
 	std::ostream & m_log;
 };
 
@@ -250,7 +273,7 @@ template<Generation generation>
 struct Evaluator {
 	Evaluator(Evaluate<generation> const evaluate, std::ostream & log):
 		m_evaluate(evaluate),
-		m_printer(log)
+		m_best_move_printer(log)
 	{
 	}
 
@@ -331,26 +354,22 @@ private:
 		auto best_move = Moves{};
 		auto const ai_indentation = depth.indentation();
 		for (auto const & ai_move : ai_moves) {
-			if (ai_indentation) {
-				m_printer.print_action(ai, ai_move, *ai_indentation);
-			}
+			m_best_move_printer.print_action(ai, ai_move, ai_indentation);
 			auto beta = static_cast<double>(victory<generation> + 1_bi);
 			auto const foe_depth = depth.increased_indentation(ai_move);
 			auto const foe_indentation = foe_depth.indentation();
 			for (auto const & foe_move : foe_moves) {
-				if (foe_indentation) {
-					m_printer.print_action(foe, foe_move, *foe_indentation);
-				}
+				m_best_move_printer.print_action(foe, foe_move, foe_indentation);
 				auto const next_depth = foe_depth.increased_indentation(foe_move);
 				auto const max_score = function(ai, ai_move, foe, foe_move, weather, next_depth);
-				update_foe_best_move(foe_move, move_scores.foe, beta, max_score, foe_indentation);
+				m_best_move_printer.update_foe_best_move(foe_move, move_scores.foe, beta, max_score, foe_indentation);
 				// Alpha-Beta pruning
 				if (beta <= alpha) {
 					break;
 				}
 			}
 			move_scores.ai.set(ai_move, beta);
-			update_best_move(best_move, alpha, beta, ai_move, ai_indentation);
+			m_best_move_printer.update_best_move(best_move, alpha, beta, ai_move, ai_indentation);
 			// The AI cannot have a better move than a guaranteed win
 			if (alpha == static_cast<double>(victory<generation>)) {
 				break;
@@ -534,27 +553,8 @@ private:
 		return score / static_cast<double>(containers::size(executed_moves));
 	}
 
-	void update_best_move(Moves & best_move, double & alpha, double const beta, Moves const new_move, bounded::optional<unsigned> const indentation) const {
-		// If their best response isn't as good as their previous best
-		// response, then this new move must be better than the
-		// previous AI's best move
-		if (beta > alpha) {
-			alpha = beta;
-			best_move = new_move;
-			m_printer.print_estimated_score(alpha, new_move, indentation);
-		}
-	}
-
-	void update_foe_best_move(Moves const move, MoveScores & foe_scores, double & beta, double const max_score, bounded::optional<unsigned> const indentation) const {
-		if (beta > max_score) {
-			beta = max_score;
-			foe_scores.set(move, beta);
-		}
-		m_printer.print_estimated_score(max_score, move, indentation);
-	}
-
 	Evaluate<generation> const m_evaluate;
-	Printer m_printer;
+	BestMovePrinter m_best_move_printer;
 	TranspositionTable<generation> m_transposition_table;
 };
 
