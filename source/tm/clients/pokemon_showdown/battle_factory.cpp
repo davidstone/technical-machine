@@ -19,6 +19,7 @@
 
 #include <tm/clients/pokemon_showdown/battle_logger.hpp>
 #include <tm/clients/pokemon_showdown/chat.hpp>
+#include <tm/clients/pokemon_showdown/constant_generation.hpp>
 #include <tm/clients/pokemon_showdown/json_parser.hpp>
 #include <tm/clients/pokemon_showdown/parse_team.hpp>
 
@@ -251,9 +252,6 @@ private:
 	bool m_log_foe_teams;
 };
 
-template<Generation generation>
-constexpr auto constant_gen = std::integral_constant<Generation, generation>();
-
 } // namespace
 
 auto make_battle_factory(
@@ -266,7 +264,7 @@ auto make_battle_factory(
 	std::mt19937 random_engine
 ) -> std::unique_ptr<BattleFactory> {
 	auto const parsed_generation = parse_generation(id);
-	auto make = [&]<Generation generation>(std::integral_constant<Generation, generation>) {
+	auto make = [&]<Generation generation>(std::integral_constant<Generation, generation>) -> std::unique_ptr<BattleFactory> {
 		return std::make_unique<BattleFactoryImpl<generation>>(
 			base_log_directory,
 			log_foe_teams,
@@ -277,16 +275,7 @@ auto make_battle_factory(
 			random_engine
 		);
 	};
-	switch (parsed_generation) {
-		case Generation::one: return make(constant_gen<Generation::one>);
-		case Generation::two: return make(constant_gen<Generation::two>);
-		case Generation::three: return make(constant_gen<Generation::three>);
-		case Generation::four: return make(constant_gen<Generation::four>);
-		case Generation::five: return make(constant_gen<Generation::five>);
-		case Generation::six: return make(constant_gen<Generation::six>);
-		case Generation::seven: return make(constant_gen<Generation::seven>);
-		case Generation::eight: return make(constant_gen<Generation::eight>);
-	}
+	return constant_generation(parsed_generation, make);
 }
 
 } // namespace ps

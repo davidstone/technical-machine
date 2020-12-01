@@ -21,6 +21,7 @@
 
 #include <tm/clients/pokemon_showdown/chat.hpp>
 #include <tm/clients/pokemon_showdown/client.hpp>
+#include <tm/clients/pokemon_showdown/constant_generation.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 
 #include <tm/clients/random_string.hpp>
@@ -52,6 +53,21 @@ auto load_lines_from_file(std::filesystem::path const & file_name) {
 			container.insert(std::move(line));
 	}
 	return container;
+}
+
+constexpr auto parse_generation(std::string_view const id) -> Generation {
+	// TODO: This won't work for generation 10
+	// Expected format: genXou
+	constexpr auto generation_index = std::string_view("gen").size();
+	if (id.size() < generation_index) {
+		throw std::runtime_error("Invalid format string. Expected something in the format of: \"gen[generation_number]ou\", but got " + std::string(id));
+	}
+	auto const generation_char = id[generation_index];
+	auto const generation = generation_char - '0';
+	if (generation < 1 or 8 < generation) {
+		throw std::runtime_error("Invalid generation. Expected a value between 1 and 8, but got " + std::string(1, generation_char));
+	}
+	return static_cast<Generation>(generation);
 }
 
 }	// namespace
@@ -121,11 +137,20 @@ void ClientImpl::run(DelimitedBufferView<std::string_view> messages) {
 	}
 }
 
+void ClientImpl::send_team(Generation const runtime_generation) {
+	auto make_packed = [&]<Generation generation>(std::integral_constant<Generation, generation>) {
+		return to_packed_format(generate_team<generation>());
+	};
+	m_send_message("|/utm " + constant_generation(runtime_generation, make_packed));
+}
+
+
 void ClientImpl::handle_message(InMessage message) {
 	auto send_challenge = [&]{
-		send_team<Generation::one>();
+		auto const format = containers::string("gen1ou");
+		send_team(parse_generation(format));
 		// m_send_message("|/search gen1ou");
-		m_send_message("|/challenge davidstone,gen1ou");
+		m_send_message("|/challenge davidstone," + format);
 		std::cout << "Sent challenge\n" << std::flush;
 	};
 	if (m_battles.handle_message(m_all_usage_stats, message, m_send_message, send_challenge)) {
@@ -172,8 +197,12 @@ void ClientImpl::handle_message(InMessage message) {
 		auto const json = m_parse_json(message.remainder());
 		for (auto const & challenge : json.get_child("challengesFrom")) {
 			auto const is_trusted = m_trusted_users.find(challenge.first) != m_trusted_users.end();
-			auto const command = is_trusted ? "|/accept " : "|/reject ";
-			m_send_message(command + challenge.first);
+			if (is_trusted) {
+				send_team(parse_generation(challenge.second.get<std::string>("")));
+				m_send_message("|/accept " + challenge.first);
+			} else {
+				m_send_message("|/reject " + challenge.first);
+			}
 		}
 		// "cancelchallenge" is the command to stop challenging someone
 	} else if (type == "updateuser") {

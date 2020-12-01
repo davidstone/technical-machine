@@ -50,6 +50,7 @@ add_library(tm_common STATIC
 	source/tm/clients/pokemon_showdown/battles.cpp
 	source/tm/clients/pokemon_showdown/chat.cpp
 	source/tm/clients/pokemon_showdown/client.cpp
+	source/tm/clients/pokemon_showdown/constant_generation.cpp
 	source/tm/clients/pokemon_showdown/inmessage.cpp
 	source/tm/clients/pokemon_showdown/json_parser.cpp
 	source/tm/clients/pokemon_showdown/move_state.cpp

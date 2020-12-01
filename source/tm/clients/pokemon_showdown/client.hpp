@@ -66,11 +66,7 @@ private:
 	}
 
 	
-	template<Generation generation>
-	void send_team() {
-		m_send_message("|/utm " + to_packed_format(generate_team<generation>()));
-	}
-
+	void send_team(Generation);
 
 	void handle_message(InMessage message);
 	void send_channel_message(std::string const & channel, std::string const & message);
