@@ -1,4 +1,3 @@
-// Connect to Pokemon Showdown
 // Copyright (C) 2019 David Stone
 //
 // This file is part of Technical Machine.
@@ -21,6 +20,7 @@
 #include <tm/clients/pokemon_showdown/battles.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 #include <tm/clients/pokemon_showdown/json_parser.hpp>
+#include <tm/clients/pokemon_showdown/sockets.hpp>
 #include <tm/clients/pokemon_showdown/to_packed_format.hpp>
 
 #include <tm/evaluate/evaluate.hpp>
@@ -33,11 +33,6 @@
 
 #include <containers/trivial_inplace_function.hpp>
 
-#include <boost/asio/io_service.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-
 #include <unordered_set>
 #include <random>
 #include <string>
@@ -45,7 +40,6 @@
 
 namespace technicalmachine {
 namespace ps {
-namespace http = boost::beast::http;
 
 struct ClientImpl {
 	using AuthenticationSignature = http::response<http::string_body>(
@@ -108,24 +102,6 @@ struct Client {
 	Client(SettingsFile settings, DepthValues);
 	[[noreturn]] void run();
 private:
-	struct Sockets {
-		using tcp = boost::asio::ip::tcp;
-
-		Sockets(std::string_view host, std::string_view port, std::string_view resource);
-		Sockets(Sockets &&) = delete;
-
-		auto read_message() -> DelimitedBufferView<std::string_view>;
-		void write_message(std::string_view message);
-		auto authenticate(std::string_view host, std::string_view port, http::request<http::string_body> const & request) -> http::response<http::string_body>;
-	
-	private:
-		auto make_connected_socket(std::string_view host, std::string_view port) -> tcp::socket;
-		boost::beast::flat_buffer m_buffer;
-		boost::asio::io_service m_io;
-		tcp::socket m_socket;
-		boost::beast::websocket::stream<tcp::socket &> m_websocket;
-	};
-	
 	Sockets m_sockets;
 	ClientImpl m_impl;
 };
