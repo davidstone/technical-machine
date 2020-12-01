@@ -31,12 +31,13 @@
 #include <tm/load_team_from_file.hpp>
 #include <tm/settings_file.hpp>
 
+#include <containers/trivial_inplace_function.hpp>
+
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
 
-#include <functional>
 #include <unordered_set>
 #include <random>
 #include <string>
@@ -47,8 +48,14 @@ namespace ps {
 namespace http = boost::beast::http;
 
 struct ClientImpl {
-	using AuthenticationFunction = std::function<
-		http::response<http::string_body>(std::string_view, std::string_view, http::request<http::string_body> const &)
+	using AuthenticationSignature = http::response<http::string_body>(
+		std::string_view,
+		std::string_view,
+		http::request<http::string_body> const &
+	);
+	using AuthenticationFunction = containers::trivial_inplace_function<
+		AuthenticationSignature,
+		sizeof(void *)
 	>;
 	ClientImpl(SettingsFile, DepthValues, SendMessageFunction, AuthenticationFunction);
 	void run(DelimitedBufferView<std::string_view> messages);

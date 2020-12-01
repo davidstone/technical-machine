@@ -30,7 +30,8 @@
 #include <bounded/integer.hpp>
 #include <bounded/detail/variant/variant.hpp>
 
-#include <functional>
+#include <containers/trivial_inplace_function.hpp>
+
 #include <fstream>
 #include <memory>
 #include <random>
@@ -45,7 +46,7 @@ struct AllUsageStats;
 
 namespace ps {
 
-using SendMessageFunction = std::function<void(std::string_view)>;
+using SendMessageFunction = containers::trivial_inplace_function<void(std::string_view), sizeof(void *)>;
 
 template<Generation generation>
 struct Teams {
