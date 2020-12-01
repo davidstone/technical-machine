@@ -46,7 +46,7 @@ struct ClientImpl {
 		std::string_view,
 		std::string_view,
 		http::request<http::string_body> const &
-	);
+	) const;
 	using AuthenticationFunction = containers::trivial_inplace_function<
 		AuthenticationSignature,
 		sizeof(void *)

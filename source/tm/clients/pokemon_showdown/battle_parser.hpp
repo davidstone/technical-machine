@@ -46,7 +46,7 @@ struct AllUsageStats;
 
 namespace ps {
 
-using SendMessageFunction = containers::trivial_inplace_function<void(std::string_view), sizeof(void *)>;
+using SendMessageFunction = containers::trivial_inplace_function<void(std::string_view) const, sizeof(void *)>;
 
 template<Generation generation>
 struct Teams {
