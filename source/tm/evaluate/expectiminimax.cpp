@@ -219,11 +219,40 @@ auto team_is_empty(Team<generation> const & team) {
 	return team.size() == 0_bi or (team.size() == 1_bi and team.pokemon().hp() == 0_bi);
 };
 
+struct Printer {
+	explicit Printer(std::ostream & log):
+		m_log(log)
+	{
+	}
+
+	template<Generation generation>
+	void print_action(Team<generation> const & team, Moves const move, unsigned const indentation) const {
+		if (move == Moves::Pass) {
+			return;
+		}
+		m_log << std::string(indentation, '\t') << "Evaluating " << team.who();
+		if (is_switch(move)) {
+			auto const replacement_index = to_replacement(move);
+			m_log << " switching to " << to_string(team.pokemon(replacement_index).species()) << '\n';
+		} else {
+			m_log << " using " << to_string(move) << '\n';
+		}
+	}
+
+	void print_estimated_score(double const estimate, Moves const move, bounded::optional<unsigned> const indentation) const {
+		if (indentation and move != Moves::Pass) {
+			m_log << std::string(*indentation, '\t') << "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
+		}
+	}
+private:
+	std::ostream & m_log;
+};
+
 template<Generation generation>
 struct Evaluator {
 	Evaluator(Evaluate<generation> const evaluate, std::ostream & log):
 		m_evaluate(evaluate),
-		m_log(log)
+		m_printer(log)
 	{
 	}
 
@@ -302,14 +331,14 @@ private:
 		auto const ai_indentation = depth.indentation();
 		for (auto const & ai_move : ai_moves) {
 			if (ai_indentation) {
-				print_action(ai, ai_move, *ai_indentation);
+				m_printer.print_action(ai, ai_move, *ai_indentation);
 			}
 			auto beta = static_cast<double>(victory<generation> + 1_bi);
 			auto const foe_depth = depth.increased_indentation(ai_move);
 			auto const foe_indentation = foe_depth.indentation();
 			for (auto const & foe_move : foe_moves) {
 				if (foe_indentation) {
-					print_action(foe, foe_move, *foe_indentation);
+					m_printer.print_action(foe, foe_move, *foe_indentation);
 				}
 				auto const next_depth = foe_depth.increased_indentation(foe_move);
 				auto const max_score = function(ai, ai_move, foe, foe_move, weather, next_depth);
@@ -511,7 +540,7 @@ private:
 		if (beta > alpha) {
 			alpha = beta;
 			best_move = new_move;
-			print_estimated_score(alpha, new_move, indentation);
+			m_printer.print_estimated_score(alpha, new_move, indentation);
 		}
 	}
 
@@ -520,30 +549,11 @@ private:
 			beta = max_score;
 			foe_scores.set(move, beta);
 		}
-		print_estimated_score(max_score, move, indentation);
-	}
-
-	void print_estimated_score(double const estimate, Moves const move, bounded::optional<unsigned> const indentation) const {
-		if (indentation and move != Moves::Pass) {
-			m_log << std::string(*indentation, '\t') << "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
-		}
-	}
-
-	void print_action(Team<generation> const & team, Moves const move, unsigned const indentation) const {
-		if (move == Moves::Pass) {
-			return;
-		}
-		m_log << std::string(indentation, '\t') << "Evaluating " << team.who();
-		if (is_switch(move)) {
-			auto const replacement_index = to_replacement(move);
-			m_log << " switching to " << to_string(team.pokemon(replacement_index).species()) << '\n';
-		} else {
-			m_log << " using " << to_string(move) << '\n';
-		}
+		m_printer.print_estimated_score(max_score, move, indentation);
 	}
 
 	Evaluate<generation> const m_evaluate;
-	std::ostream & m_log;
+	Printer m_printer;
 	TranspositionTable<generation> m_transposition_table;
 };
 
