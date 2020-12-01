@@ -16,3 +16,16 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <tm/evaluate/transposition.hpp>
+
+namespace technicalmachine {
+
+template struct TranspositionTable<Generation::one>;
+template struct TranspositionTable<Generation::two>;
+template struct TranspositionTable<Generation::three>;
+template struct TranspositionTable<Generation::four>;
+template struct TranspositionTable<Generation::five>;
+template struct TranspositionTable<Generation::six>;
+template struct TranspositionTable<Generation::seven>;
+template struct TranspositionTable<Generation::eight>;
+
+} // namespace technicalmachine

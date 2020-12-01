@@ -94,4 +94,13 @@ private:
 	Data m_data;
 };
 
-}	// namespace technicalmachine
+extern template struct TranspositionTable<Generation::one>;
+extern template struct TranspositionTable<Generation::two>;
+extern template struct TranspositionTable<Generation::three>;
+extern template struct TranspositionTable<Generation::four>;
+extern template struct TranspositionTable<Generation::five>;
+extern template struct TranspositionTable<Generation::six>;
+extern template struct TranspositionTable<Generation::seven>;
+extern template struct TranspositionTable<Generation::eight>;
+
+} // namespace technicalmachine
