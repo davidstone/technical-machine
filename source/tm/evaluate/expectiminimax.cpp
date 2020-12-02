@@ -50,8 +50,7 @@
 #include <containers/integer_range.hpp>
 #include <containers/size.hpp>
 
-#include <boost/timer.hpp>
-
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <random>
@@ -570,12 +569,13 @@ auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, W
 	// which are faster with a dynamic allocation.
 	auto evaluator = std::make_unique<Evaluator<generation>>(evaluate, log);
 	log << "Evaluating to a depth of " << depth.general_initial() << ", " << depth.single_initial() << "...\n";
-	boost::timer timer;
+	auto const start = std::chrono::steady_clock::now();
 	auto const best_move = evaluator->select_type_of_move(ai, foe, weather, depth);
 	if (best_move.name == Moves::Pass) {
 		throw std::runtime_error("Should never evaluate a position in which it is legal to use Pass.");
 	}
-	log << "Determined best move in " << timer.elapsed() << " seconds: ";
+	auto const finish = std::chrono::steady_clock::now();
+	log << "Determined best move in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
 	print_best_move(ai, best_move, log);
 	log << std::flush;
 	return best_move;
