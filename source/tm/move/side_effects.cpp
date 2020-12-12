@@ -83,14 +83,27 @@ constexpr auto absorb_effect = guaranteed_effect<generation>([](auto & user, aut
 	}
 });
 
-constexpr auto recoil_effect(auto const denominator) {
-	return [=](auto & user, auto &, auto & weather, auto const damage) {
+template<typename Denominator>
+struct RecoilEffect {
+	static_assert(bounded::min_value<Denominator> == bounded::max_value<Denominator>);
+
+	RecoilEffect() = default;
+	constexpr explicit RecoilEffect(Denominator denominator):
+		m_denominator(denominator)
+	{
+	}
+
+	template<Generation generation>
+	constexpr auto operator()(Team<generation> & user, Team<generation> &, Weather & weather, auto const damage) const {
 		auto const user_pokemon = user.pokemon();
 		if (!blocks_recoil(user_pokemon.ability())) {
-			change_hp(user_pokemon, weather, -bounded::max(damage / denominator, 1_bi));
+			change_hp(user_pokemon, weather, -bounded::max(damage / m_denominator, 1_bi));
 		}
-	};
-}
+	}
+
+private:
+	[[no_unique_address]] Denominator m_denominator;
+};
 
 template<Generation generation>
 constexpr auto confusion_effect(double const probability, ActivePokemon<generation> const original_target, auto const... maybe_immune_type) {
@@ -185,14 +198,14 @@ template<Statuses status, Generation generation>
 auto recoil_status(ActivePokemon<generation> const original_user, Team<generation> const & original_target, Weather const original_weather, Type const immune_type) {
 	constexpr auto recoil_and_status = [](auto & user, auto & target, auto & weather, auto const damage) {
 		set_status_function<status>(user, target, weather, damage);
-		recoil_effect(3_bi)(user, target, weather, damage);
+		RecoilEffect(3_bi)(user, target, weather, damage);
 	};
 	return status_can_apply(status, original_user, original_target, original_weather, immune_type) ?
 		SideEffects<generation>({
-			{0.9, recoil_effect(3_bi)},
+			{0.9, RecoilEffect(3_bi)},
 			{0.1, recoil_and_status}
 		}) :
-		guaranteed_effect<generation>(recoil_effect(3_bi));
+		guaranteed_effect<generation>(RecoilEffect(3_bi));
 }
 
 template<Statuses const status>
@@ -384,12 +397,14 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Brave_Bird:
 		case Moves::Double_Edge:
 		case Moves::Wood_Hammer:
-			return guaranteed_effect<generation>(recoil_effect(BOUNDED_CONDITIONAL(generation <= Generation::two, 4_bi, 3_bi)));
+			return generation <= Generation::two ?
+				guaranteed_effect<generation>(RecoilEffect(4_bi)) :
+				guaranteed_effect<generation>(RecoilEffect(3_bi));
 		case Moves::Head_Smash:
-			return guaranteed_effect<generation>(recoil_effect(2_bi));
+			return guaranteed_effect<generation>(RecoilEffect(2_bi));
 		case Moves::Submission:
 		case Moves::Take_Down:
-			return guaranteed_effect<generation>(recoil_effect(4_bi));
+			return guaranteed_effect<generation>(RecoilEffect(4_bi));
 
 		case Moves::Metal_Claw:
 			return basic_probability<generation>(0.1, boost_user_stat(BoostableStat::atk, 1_bi));
@@ -896,7 +911,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return recoil_status<Statuses::burn>(original_user, original_other, original_weather, Type::Fire);
 		case Moves::Volt_Tackle:
 			return generation <= Generation::three ?
-				guaranteed_effect<generation>(recoil_effect(3_bi)) :
+				guaranteed_effect<generation>(RecoilEffect(3_bi)) :
 				recoil_status<Statuses::paralysis>(original_user, original_other, original_weather, Type::Ground);
 
 		case Moves::Fire_Fang:
