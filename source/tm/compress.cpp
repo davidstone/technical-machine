@@ -68,7 +68,7 @@ static_assert(equal(
 		integer<0, 255>(255),
 		integer<0, 255>(255)
 	),
-	integer<0, bounded::detail::normalize<bounded::max_value<std::uint64_t>>>(bounded::max_value<std::uint64_t>)
+	integer<0, bounded::normalize<bounded::max_value<std::uint64_t>>>(bounded::max_value<std::uint64_t>)
 ));
 
 static_assert(equal(

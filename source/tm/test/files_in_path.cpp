@@ -22,7 +22,7 @@
 #include <bounded/assert.hpp>
 
 #include <containers/algorithms/sort.hpp>
-#include <containers/scope_guard.hpp>
+#include <bounded/scope_guard.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -35,7 +35,7 @@ auto test_files_in_path() -> void {
 	auto remove_temp_directory = [&]{ std::filesystem::remove_all(path); };
 	remove_temp_directory();
 	std::filesystem::create_directory(path);
-	auto const guard = containers::scope_guard(remove_temp_directory);
+	auto const guard = bounded::scope_guard(remove_temp_directory);
 
 	std::filesystem::create_directory(path / "c");
 	std::ofstream(path / "a");

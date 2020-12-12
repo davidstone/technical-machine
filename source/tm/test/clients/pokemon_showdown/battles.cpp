@@ -22,7 +22,7 @@
 
 #include <bounded/integer.hpp>
 
-#include <containers/scope_guard.hpp>
+#include <bounded/scope_guard.hpp>
 #include <containers/string.hpp>
 
 #include <iostream>
@@ -76,10 +76,10 @@ void regression_tests() {
 					std::mt19937(std::random_device{}())
 				);
 
-				auto print_file_on_exception = containers::scope_guard([&] { std::cerr << "Error in " << path.path() << '\n'; });
+				auto print_file_on_exception = bounded::scope_guard([&] { std::cerr << "Error in " << path.path() << '\n'; });
 				while (!messages.remainder().empty()) {
 					auto const next = messages.pop();
-					auto print_message_on_exception = containers::scope_guard([=] { std::cerr << next << '\n'; });
+					auto print_message_on_exception = bounded::scope_guard([=] { std::cerr << next << '\n'; });
 					battles.handle_message(
 						*all_usage_stats,
 						InMessage(room, next),

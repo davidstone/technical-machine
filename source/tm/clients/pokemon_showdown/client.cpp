@@ -29,7 +29,7 @@
 #include <tm/settings_file.hpp>
 #include <tm/team.hpp>
 
-#include <containers/scope_guard.hpp>
+#include <bounded/scope_guard.hpp>
 
 #include <boost/beast/http.hpp>
 
@@ -85,7 +85,7 @@ void ClientImpl::run(DelimitedBufferView<std::string_view> messages) {
 	auto const room = has_room ? messages.pop().substr(1) : std::string_view{};
 	while (!messages.remainder().empty()) {
 		auto const next = messages.pop();
-		auto print_on_exception = containers::scope_guard([=]{ std::cerr << next << '\n'; });
+		auto print_on_exception = bounded::scope_guard([=]{ std::cerr << next << '\n'; });
 		handle_message(InMessage(room, next));
 		print_on_exception.dismiss();
 	}
