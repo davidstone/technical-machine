@@ -650,7 +650,7 @@ private:
 	}
 
 	void maybe_use_previous_move() {
-		auto const maybe_data = m_move_state.complete<generation>();
+		auto const maybe_data = m_move_state.complete<generation>(m_ai_party, m_battle.ai(), m_battle.foe(), m_battle.weather());
 		if (!maybe_data) {
 			return;
 		}

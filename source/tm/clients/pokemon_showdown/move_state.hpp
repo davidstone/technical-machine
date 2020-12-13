@@ -30,6 +30,7 @@
 #include <tm/pokemon/pokemon_not_found.hpp>
 
 #include <tm/phazing_in_same_pokemon.hpp>
+#include <tm/weather.hpp>
 
 #include <bounded/detail/variant/variant.hpp>
 #include <bounded/optional.hpp>
@@ -40,6 +41,10 @@
 #include <stdexcept>
 
 namespace technicalmachine {
+
+template<Generation>
+struct Team;
+
 namespace ps {
 
 struct NoDamage {};
@@ -67,39 +72,9 @@ struct MoveState {
 		return m_move->executed;
 	}
 
-	void use_move(Party const party, Moves const move) {
-		if (m_party) {
-			if (*m_party != party) {
-				throw std::runtime_error("Early move state messages do not match party of user");
-			}
-		} else {
-			insert(m_party, party);
-		}
-		if (m_move) {
-			m_move->executed = move;
-		} else {
-			insert(m_move, UsedMoveBuilder{move});
-		}
-	}
+	void use_move(Party const party, Moves const move);
 	
-	bool move_damages_self(Party const party) const {
-		if (!m_party or !m_move) {
-			throw_error();
-		}
-		auto const result = [&]{
-			switch (m_move->executed) {
-				case Moves::Belly_Drum:
-				case Moves::Substitute:
-					return true;
-				default:
-					return false;
-			}
-		}();
-		if (result and *m_party != party) {
-			throw_error();
-		}
-		return result;
-	}
+	bool move_damages_self(Party const party) const;
 
 	void damage(Party const party, HPAndStatus const hp_and_status) {
 		validate(party);
@@ -184,88 +159,10 @@ struct MoveState {
 		}
 		m_recoil = true;
 	}
-	void status(Party const party, Statuses const status) {
-		if (m_move and is_switch(m_move->executed)) {
-			// Don't need to do anything for Toxic Spikes
-			return;
-		}
-		if (m_move->status) {
-			throw std::runtime_error("Tried to status a Pokemon twice");
-		}
-		auto update_status = [=](bounded::optional<HPAndStatus> & old_hp_and_status) {
-			// TODO: Should update status even if we didn't get HP in the past
-			if (old_hp_and_status) {
-				old_hp_and_status->status = status;
-			}
-		};
-		if (m_move and m_move->executed == Moves::Rest) {
-			if (party != *m_party) {
-				throw_error();
-			}
-			update_status(m_user_hp_and_status);
-		} else {
-			validate(other(party));
-			update_status(m_other_hp_and_status);
-		}
-		m_move->status = status;
-	}
+	void status(Party const party, Statuses const status);
 
 	template<Generation generation>
-	auto complete() -> bounded::optional<Result<generation>> {
-		if (!m_move) {
-			*this = {};
-			return bounded::none;
-		}
-		auto side_effect = [
-			executed = m_move->executed,
-			confuse = m_move->confuse,
-			flinch = m_move->flinch,
-			phaze_index = m_move->phaze_index,
-			status = m_move->status
-		](auto & user, auto & other, auto & weather, auto const damage) {
-			auto const side_effects = possible_side_effects(executed, as_const(user.pokemon()), other, weather);
-
-			if (containers::size(side_effects) == 1_bi) {
-				containers::front(side_effects).function(user, other, weather, damage);
-				return;
-			}
-
-			if (phaze_index) {
-				if (confuse or flinch or status) {
-					throw std::runtime_error("Tried to phaze and do other side effects.");
-				}
-				auto const target_index = other.all_pokemon().index();
-				using PhazeIndex = bounded::integer<0, static_cast<int>(max_pokemon_per_team - 2_bi)>;
-				BOUNDED_ASSERT(phaze_index != target_index);
-				auto const effect_index = (*phaze_index < target_index) ? PhazeIndex(*phaze_index) : PhazeIndex(*phaze_index - 1_bi);
-				side_effects[effect_index].function(user, other, weather, damage);
-				return;
-			}
-
-			// TODO: Handle multi-effect situations
-			if (confuse or flinch or status) {
-				side_effects[1_bi].function(user, other, weather, damage);
-			}
-		};
-
-		auto const result = Result<generation>{
-			*m_party,
-			UsedMove<generation>(
-				m_move->selected,
-				m_move->executed,
-				m_move->critical_hit,
-				m_move->miss,
-				side_effect
-			),
-			m_damage,
-			m_user_hp_and_status,
-			m_other_hp_and_status,
-			m_clear_status,
-			m_recoil
-		};
-		*this = {};
-		return result;
-	}
+	auto complete(Party ai_party, Team<generation> const & ai, Team<generation> const & foe, Weather const weather) -> bounded::optional<Result<generation>>;
 private:
 	void validate(Party const party) const {
 		if (m_party != party or !m_move) {
@@ -297,6 +194,25 @@ private:
 	bool m_clear_status = false;
 	bool m_recoil = false;
 };
+
+#define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
+	extern template auto MoveState::complete<generation>( \
+		Party, \
+		Team<generation> const &, \
+		Team<generation> const &, \
+		Weather \
+	) -> bounded::optional<Result<generation>>
+
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::three);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::four);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::five);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::six);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::seven);
+TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
+
+#undef TECHNICALMACHINE_EXTERN_INSTANTIATION
 
 }	// namespace ps
 }	// namespace technicalmachine

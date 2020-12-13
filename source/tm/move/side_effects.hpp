@@ -39,7 +39,7 @@ struct Team;
 
 template<Generation generation>
 struct SideEffect {
-	using Function = containers::trivial_inplace_function<void(Team<generation> & user, Team<generation> & other, Weather &, HP::current_type) const, 8>;
+	using Function = containers::trivial_inplace_function<void(Team<generation> & user, Team<generation> & other, Weather &, HP::current_type) const, 0>;
 	double probability;
 	Function function;
 };
