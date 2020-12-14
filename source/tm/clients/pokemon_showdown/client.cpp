@@ -19,6 +19,8 @@
 
 #include <bounded/scope_guard.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
+
 #include <boost/beast/http.hpp>
 
 #include <fstream>
@@ -30,14 +32,13 @@ namespace ps {
 namespace {
 
 auto load_lines_from_file(std::filesystem::path const & file_name) {
-	auto container = std::unordered_set<std::string>{};
+	auto result = containers::vector<std::string>();
 	auto file = std::ifstream(file_name);
-	auto line = std::string{};
-	while (getline(file, line)) {
-		if (!line.empty())
-			container.insert(std::move(line));
+	auto line = std::string();
+	while (std::getline(file, line)) {
+		containers::push_back(result, std::move(line));
 	}
-	return container;
+	return result;
 }
 
 constexpr auto parse_generation(std::string_view const id) -> Generation {
@@ -138,7 +139,7 @@ void ClientImpl::handle_message(InMessage message) {
 	} else if (type == "updatechallenges") {
 		auto const json = m_parse_json(message.remainder());
 		for (auto const & challenge : json.get_child("challengesFrom")) {
-			auto const is_trusted = m_trusted_users.find(challenge.first) != m_trusted_users.end();
+			auto const is_trusted = containers::any_equal(m_trusted_users, challenge.first);
 			if (is_trusted) {
 				send_team(parse_generation(challenge.second.get<std::string>("")));
 				m_send_message("|/accept " + challenge.first);

@@ -20,8 +20,8 @@
 #include <tm/settings_file.hpp>
 
 #include <containers/trivial_inplace_function.hpp>
+#include <containers/vector.hpp>
 
-#include <unordered_set>
 #include <random>
 #include <string>
 #include <string_view>
@@ -77,7 +77,7 @@ private:
 	
 	JSONParser m_parse_json;
 	
-	std::unordered_set<std::string> m_trusted_users;
+	containers::vector<std::string> m_trusted_users;
 	DepthValues m_depth;
 	
 	Battles m_battles;
