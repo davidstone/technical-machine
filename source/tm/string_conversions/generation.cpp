@@ -14,6 +14,7 @@
 #include <containers/array/array.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/flat_map.hpp>
+#include <containers/lookup.hpp>
 
 namespace technicalmachine {
 
@@ -46,12 +47,11 @@ auto from_string(std::string_view const str) -> Generation {
 			{ "8", Generation::eight },
 		}}
 	);
-	auto const it = converter.find(str);
-	if (it != containers::end(converter)) {
-		return it->mapped();
-	} else {
+	auto const result = containers::lookup(converter, str);
+	if (!result) {
 		throw InvalidFromStringConversion("Generation", str);
 	}
+	return *result;
 }
 
 }	// namespace technicalmachine

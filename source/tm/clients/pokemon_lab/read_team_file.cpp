@@ -17,6 +17,7 @@
 #include <containers/array/array.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/flat_map.hpp>
+#include <containers/lookup.hpp>
 
 namespace technicalmachine {
 namespace pl {
@@ -34,7 +35,11 @@ auto stat_from_simulator_string(std::string_view const str) -> PermanentStat {
 			{ "Spd", PermanentStat::spe },
 		}}
 	);
-	return converter.at(str);
+	auto result = containers::lookup(converter, str);
+	if (!result) {
+		throw std::runtime_error("Invalid stat name " + std::string(str));
+	}
+	return *result;
 }
 
 auto load_stats(boost::property_tree::ptree const & pt) -> CombinedStats<IVAndEV> {
@@ -80,8 +85,8 @@ auto species_from_simulator_string(std::string_view const str) -> Species {
 			{ "Wormadam-s", Species::Wormadam_Trash }
 		}}
 	);
-	auto const it = converter.find(str);
-	return (it != containers::end(converter)) ? it->mapped() : from_string<Species>(str);
+	auto const result = containers::lookup(converter, str);
+	return result ? *result : from_string<Species>(str);
 }
 
 auto load_moves(Generation const generation, boost::property_tree::ptree const & pt) -> RegularMoves {

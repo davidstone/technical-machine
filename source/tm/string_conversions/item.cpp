@@ -14,6 +14,7 @@
 #include <containers/array/array.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/flat_map.hpp>
+#include <containers/lookup.hpp>
 
 namespace technicalmachine {
 
@@ -1535,12 +1536,11 @@ auto from_string(std::string_view const str) -> Item {
 		}}
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<15>(str);
-	auto const it = converter.find(converted);
-	if (it != containers::end(converter)) {
-		return it->mapped();
-	} else {
+	auto const result = containers::lookup(converter, converted);
+	if (!result) {
 		throw InvalidFromStringConversion("Item", str);
 	}
+	return *result;
 }
 
 }	// namespace technicalmachine
