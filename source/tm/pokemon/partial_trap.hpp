@@ -37,7 +37,7 @@ struct PartialTrap {
 		}
 	}
 
-	friend auto operator==(PartialTrap const &, PartialTrap const &) -> bool = default;
+	friend auto operator==(PartialTrap, PartialTrap) -> bool = default;
 	friend constexpr auto compress(PartialTrap const value) {
 		return compress(value.m_base);
 	}

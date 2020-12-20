@@ -63,7 +63,7 @@ public:
 		return lhs.m_index - rhs.m_index;
 	}
 
-	friend constexpr auto operator<=>(SharedMovesIterator const &, SharedMovesIterator const &) = default;
+	friend constexpr auto operator<=>(SharedMovesIterator, SharedMovesIterator) = default;
 
 private:
 	underlying_index_type m_index;
@@ -95,7 +95,7 @@ struct SharedMoves {
 
 	OPERATORS_BRACKET_SEQUENCE_RANGE_DEFINITIONS
 
-	friend auto operator==(SharedMoves const &, SharedMoves const &) -> bool = default;
+	friend auto operator==(SharedMoves, SharedMoves) -> bool = default;
 private:
 	TeamSize m_number_of_switches;
 };

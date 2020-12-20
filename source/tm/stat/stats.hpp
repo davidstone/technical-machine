@@ -46,7 +46,7 @@ struct Stats {
 		return m_stats[bounded::integer(stat)];
 	}
 
-	friend auto operator==(Stats const &, Stats const &) -> bool = default;
+	friend auto operator==(Stats, Stats) -> bool = default;
 private:
 	HP m_hp;
 	containers::array<InitialStat, 5> m_stats;

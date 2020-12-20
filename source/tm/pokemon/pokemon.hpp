@@ -241,7 +241,7 @@ struct Pokemon {
 		}
 	}
 
-	friend auto operator==(Pokemon const &, Pokemon const &) -> bool = default;
+	friend auto operator==(Pokemon, Pokemon) -> bool = default;
 	friend auto compress(Pokemon const value) {
 		return compress_combine(
 			value.m_regular_moves,

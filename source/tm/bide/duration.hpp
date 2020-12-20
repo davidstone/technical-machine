@@ -24,7 +24,7 @@ struct BideDuration {
 		}
 	}
 
-	friend auto operator==(BideDuration const &, BideDuration const &) -> bool = default;
+	friend auto operator==(BideDuration, BideDuration) -> bool = default;
 	friend constexpr auto compress(BideDuration const value) {
 		return compress(value.m_charged_up);
 	}

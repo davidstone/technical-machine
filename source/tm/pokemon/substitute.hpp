@@ -52,7 +52,7 @@ public:
 		return hp() != 0_bi;
 	}
 
-	friend auto operator==(Substitute const &, Substitute const &) -> bool = default;
+	friend auto operator==(Substitute, Substitute) -> bool = default;
 	friend constexpr auto compress(Substitute const value) {
 		return value.m_hp;
 	}

@@ -170,7 +170,7 @@ public:
 		activate_weather_from_ability(generation, NormalWeather::rain, is_extended);
 	}
 
-	friend auto operator==(Weather const &, Weather const &) -> bool = default;
+	friend auto operator==(Weather, Weather) -> bool = default;
 
 	friend constexpr auto compress(Weather const weather) {
 		return compress_combine(

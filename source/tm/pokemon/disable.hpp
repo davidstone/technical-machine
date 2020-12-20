@@ -37,7 +37,7 @@ struct Disable {
 		}
 	}
 
-	friend auto operator==(Disable const &, Disable const &) -> bool = default;
+	friend auto operator==(Disable, Disable) -> bool = default;
 	friend constexpr auto compress(Disable const value) {
 		return compress_combine(value.m_disabled_move, value.m_turns_disabled);
 	}

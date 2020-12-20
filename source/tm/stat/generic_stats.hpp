@@ -26,7 +26,7 @@ struct GenericStats {
 		return index_stat(*this, index);
 	}
 	
-	friend auto operator==(GenericStats const &, GenericStats const &) -> bool = default;
+	friend auto operator==(GenericStats, GenericStats) -> bool = default;
 };
 
 template<typename HP, typename Stat>

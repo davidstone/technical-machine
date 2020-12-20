@@ -45,7 +45,7 @@ struct Wish {
 		}
 	}
 
-	friend auto operator==(Wish const &, Wish const &) -> bool = default;
+	friend auto operator==(Wish, Wish) -> bool = default;
 	friend constexpr auto compress(Wish<generation> const value) {
 		if constexpr (exists) {
 			return compress(value.m_turns_until_activation);

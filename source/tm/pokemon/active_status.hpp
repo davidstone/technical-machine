@@ -52,7 +52,7 @@ struct ActiveStatus {
 	}
 
 	// TODO: ???
-	friend auto operator==(ActiveStatus const & lhs, ActiveStatus const & rhs) -> bool {
+	friend auto operator==(ActiveStatus const lhs, ActiveStatus const rhs) -> bool {
 		// TODO: std::bit_cast
 		return reinterpret_cast<std::byte const &>(lhs) == reinterpret_cast<std::byte const &>(rhs);
 	}

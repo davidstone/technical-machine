@@ -25,7 +25,7 @@ struct Bide {
 		return BOUNDED_CONDITIONAL(m_duration.advance_one_turn(), m_damage.release(), bounded::none);
 	}
 
-	friend auto operator==(Bide const &, Bide const &) -> bool = default;
+	friend auto operator==(Bide, Bide) -> bool = default;
 	friend constexpr auto compress(Bide const value) {
 		return compress_combine(value.m_damage, value.m_duration);
 	}

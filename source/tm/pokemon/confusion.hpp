@@ -39,7 +39,7 @@ struct Confusion {
 		}
 	}
 
-	friend auto operator==(Confusion const &, Confusion const &) -> bool = default;
+	friend auto operator==(Confusion, Confusion) -> bool = default;
 	friend constexpr auto compress(Confusion const value) {
 		return compress(value.m_turns_spent_confused);
 	}

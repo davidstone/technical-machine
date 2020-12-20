@@ -43,7 +43,7 @@ struct HiddenPower {
 		return m_type;
 	}
 	
-	friend auto operator==(HiddenPower const &, HiddenPower const &) -> bool = default;
+	friend auto operator==(HiddenPower, HiddenPower) -> bool = default;
 private:
 	friend bounded::tombstone_traits<HiddenPower>;
 

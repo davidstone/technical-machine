@@ -26,7 +26,7 @@ struct EV {
 		return m_value;
 	}
 
-	friend auto operator<=>(EV const &, EV const &) = default;
+	friend auto operator<=>(EV, EV) = default;
 
 private:
 	value_type m_value;

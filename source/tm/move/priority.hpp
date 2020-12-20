@@ -15,7 +15,7 @@ enum class Moves : std::uint16_t;
 
 struct Priority {
 	explicit Priority(Generation generation, Moves move);
-	friend auto operator<=>(Priority const &, Priority const &) = default;
+	friend auto operator<=>(Priority, Priority) = default;
 private:
 	bounded::integer<-6, 6> priority;
 };

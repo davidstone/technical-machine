@@ -25,7 +25,7 @@ struct Party {
 		return m_party;
 	}
 
-	friend auto operator==(Party const &, Party const &) -> bool = default;
+	friend auto operator==(Party, Party) -> bool = default;
 
 private:
 	value_type m_party;

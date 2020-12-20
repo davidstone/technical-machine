@@ -48,51 +48,51 @@ namespace technicalmachine {
 struct Status {
 private:
 	struct Clear {
-		friend auto operator==(Clear const &, Clear const &) -> bool = default;
+		friend auto operator==(Clear, Clear) -> bool = default;
 		friend constexpr auto compress(Clear) {
 			return 0_bi;
 		}
 	};
 	struct Burn {
-		friend auto operator==(Burn const &, Burn const &) -> bool = default;
+		friend auto operator==(Burn, Burn) -> bool = default;
 		friend constexpr auto compress(Burn) {
 			return 0_bi;
 		}
 	};
 	struct Freeze {
-		friend auto operator==(Freeze const &, Freeze const &) -> bool = default;
+		friend auto operator==(Freeze, Freeze) -> bool = default;
 		friend constexpr auto compress(Freeze) {
 			return 0_bi;
 		}
 	};
 	struct Paralysis {
-		friend auto operator==(Paralysis const &, Paralysis const &) -> bool = default;
+		friend auto operator==(Paralysis, Paralysis) -> bool = default;
 		friend constexpr auto compress(Paralysis) {
 			return 0_bi;
 		}
 	};
 	struct Poison {
-		friend auto operator==(Poison const &, Poison const &) -> bool = default;
+		friend auto operator==(Poison, Poison) -> bool = default;
 		friend constexpr auto compress(Poison) {
 			return 0_bi;
 		}
 	};
 	struct Toxic {
-		friend auto operator==(Toxic const &, Toxic const &) -> bool = default;
+		friend auto operator==(Toxic, Toxic) -> bool = default;
 		friend constexpr auto compress(Toxic) {
 			return 0_bi;
 		}
 	};
 	struct Sleep {
 		bounded::integer<0, 4> turns_slept = 0_bi;
-		friend auto operator==(Sleep const &, Sleep const &) -> bool = default;
+		friend auto operator==(Sleep, Sleep) -> bool = default;
 		friend constexpr auto compress(Sleep const value) {
 			return compress(value.turns_slept);
 		}
 	};
 	struct Rest {
 		bounded::integer<0, 2> turns_slept = 0_bi;
-		friend auto operator==(Rest const &, Rest const &) -> bool = default;
+		friend auto operator==(Rest, Rest) -> bool = default;
 		friend constexpr auto compress(Rest const value) {
 			return compress(value.turns_slept);
 		}
@@ -120,7 +120,7 @@ public:
 	// will definitely not awaken.
 	auto probability_of_clearing(Generation, Ability) const -> double;
 
-	friend auto operator==(Status const &, Status const &) -> bool = default;
+	friend auto operator==(Status, Status) -> bool = default;
 	friend constexpr auto compress(Status const value) {
 		return compress(value.m_state);
 	}

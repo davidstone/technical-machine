@@ -26,7 +26,7 @@ struct BideDamage {
 		return output_damage;
 	}
 
-	friend auto operator==(BideDamage const &, BideDamage const &) -> bool = default;
+	friend auto operator==(BideDamage, BideDamage) -> bool = default;
 	friend constexpr auto compress(BideDamage const value) {
 		return compress(value.m_damage);
 	}

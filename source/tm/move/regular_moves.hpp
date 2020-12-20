@@ -47,7 +47,7 @@ struct RegularMoves {
 
 	auto push_back(Move const move) -> Move &;
 
-	friend auto operator==(RegularMoves const &, RegularMoves const &) -> bool = default;
+	friend auto operator==(RegularMoves, RegularMoves) -> bool = default;
 	friend constexpr auto compress(RegularMoves const value) {
 		return compress(value.m_moves);
 	}

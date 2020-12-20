@@ -35,7 +35,7 @@ struct PokemonTypes {
 		return BOUNDED_CONDITIONAL(m_types[1_bi] == Type::Typeless, 1_bi, 2_bi);
 	}
 
-	friend auto operator==(PokemonTypes const &, PokemonTypes const &) -> bool = default;
+	friend auto operator==(PokemonTypes, PokemonTypes) -> bool = default;
 
 private:
 	constexpr explicit PokemonTypes(Type const type1, Type const type2):

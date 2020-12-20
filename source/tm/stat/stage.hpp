@@ -49,7 +49,7 @@ struct Stage {
 		return m_stages[bounded::integer(index)];
 	}
 
-	friend auto operator==(Stage const &, Stage const &) -> bool = default;
+	friend auto operator==(Stage, Stage) -> bool = default;
 private:
 	container_type m_stages;
 };

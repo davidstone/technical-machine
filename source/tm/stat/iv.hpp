@@ -23,7 +23,7 @@ struct IV {
 		return m_value;
 	}
 
-	friend auto operator==(IV const &, IV const &) -> bool = default;
+	friend auto operator==(IV, IV) -> bool = default;
 private:
 	value_type m_value;
 };

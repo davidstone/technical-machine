@@ -70,7 +70,7 @@ struct Screens {
 		m_reflect = Reflect();
 	}
 
-	friend auto operator==(Screens const &, Screens const &) -> bool = default;
+	friend auto operator==(Screens, Screens) -> bool = default;
 	friend constexpr auto compress(Screens<generation> const value) {
 		return compress_combine(
 			value.light_screen(),

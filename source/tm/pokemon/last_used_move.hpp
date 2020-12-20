@@ -137,7 +137,7 @@ struct LastUsedMove {
 
 	auto use_vanish_move(Item) & -> VanishOutcome;
 
-	friend auto operator==(LastUsedMove const &, LastUsedMove const &) -> bool = default;
+	friend auto operator==(LastUsedMove, LastUsedMove) -> bool = default;
 	friend constexpr auto compress(LastUsedMove const value) {
 		return compress_combine(
 			value.m_move,
@@ -159,31 +159,31 @@ private:
 	bool m_moved_this_turn = false;
 
 	struct Empty {
-		friend auto operator==(Empty const &, Empty const &) -> bool = default;
+		friend auto operator==(Empty, Empty) -> bool = default;
 		friend constexpr auto compress(Empty) -> bounded::constant_t<0> {
 			return 0_bi;
 		}
 	};
 	struct ChargingUp {
-		friend auto operator==(ChargingUp const &, ChargingUp const &) -> bool = default;
+		friend auto operator==(ChargingUp, ChargingUp) -> bool = default;
 		friend constexpr auto compress(ChargingUp) -> bounded::constant_t<0> {
 			return 0_bi;
 		}
 	};
 	struct Protecting {
-		friend auto operator==(Protecting const &, Protecting const &) -> bool = default;
+		friend auto operator==(Protecting, Protecting) -> bool = default;
 		friend constexpr auto compress(Protecting) -> bounded::constant_t<0> {
 			return 0_bi;
 		}
 	};
 	struct Recharging {
-		friend auto operator==(Recharging const &, Recharging const &) -> bool = default;
+		friend auto operator==(Recharging, Recharging) -> bool = default;
 		friend constexpr auto compress(Recharging) -> bounded::constant_t<0> {
 			return 0_bi;
 		}
 	};
 	struct Vanishing {
-		friend auto operator==(Vanishing const &, Vanishing const &) -> bool = default;
+		friend auto operator==(Vanishing, Vanishing) -> bool = default;
 		friend constexpr auto compress(Vanishing) -> bounded::constant_t<0> {
 			return 0_bi;
 		}

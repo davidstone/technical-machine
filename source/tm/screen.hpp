@@ -42,7 +42,7 @@ struct Screen {
 		}
 	}
 	
-	friend auto operator==(Screen const &, Screen const &) -> bool = default;
+	friend auto operator==(Screen, Screen) -> bool = default;
 	friend constexpr auto compress(Screen const value) {
 		return compress(value.m_turns_remaining);
 	}

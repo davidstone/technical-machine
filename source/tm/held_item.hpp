@@ -54,7 +54,7 @@ struct HeldItem {
 		m_active = true;
 	}
 
-	friend auto operator==(HeldItem const &, HeldItem const &) -> bool = default;
+	friend auto operator==(HeldItem, HeldItem) -> bool = default;
 	friend constexpr auto compress(HeldItem const value) {
 		return compress_combine(value.m_item, value.m_active);
 	}

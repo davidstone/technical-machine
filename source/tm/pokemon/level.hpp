@@ -22,7 +22,7 @@ struct Level {
 		return m_value;
 	}
 
-	friend auto operator==(Level const &, Level const &) -> bool = default;
+	friend auto operator==(Level, Level) -> bool = default;
 	friend constexpr auto compress(Level const value) {
 		return compress(value.m_value);
 	}

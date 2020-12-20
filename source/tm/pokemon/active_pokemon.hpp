@@ -63,7 +63,7 @@ struct ActivePokemonFlags {
 		is_loafing_turn = !is_loafing_turn;
 	}
 
-	friend auto operator==(ActivePokemonFlags const &, ActivePokemonFlags const &) -> bool = default;
+	friend auto operator==(ActivePokemonFlags, ActivePokemonFlags) -> bool = default;
 	friend auto compress(ActivePokemonFlags const value) {
 		auto const result = bounded::tuple(
 			compress_combine(

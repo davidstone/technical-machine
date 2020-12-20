@@ -14,7 +14,7 @@ struct IVAndEV {
 	IV iv;
 	EV ev;
 
-	friend auto operator==(IVAndEV const &, IVAndEV const &) -> bool = default;
+	friend auto operator==(IVAndEV, IVAndEV) -> bool = default;
 };
 
 } // namespace technicalmachine

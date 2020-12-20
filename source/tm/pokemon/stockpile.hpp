@@ -41,7 +41,7 @@ struct Stockpile {
 		return m_level * 100_bi;
 	}
 
-	friend auto operator==(Stockpile const &, Stockpile const &) -> bool = default;
+	friend auto operator==(Stockpile, Stockpile) -> bool = default;
 	friend constexpr auto compress(Stockpile const value) {
 		return compress(value.m_level);
 	}

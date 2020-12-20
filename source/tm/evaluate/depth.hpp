@@ -18,7 +18,7 @@ namespace technicalmachine {
 struct DepthValues {
 	unsigned general;
 	unsigned single;
-	friend constexpr auto operator<=>(DepthValues const &, DepthValues const &) = default;
+	friend constexpr auto operator<=>(DepthValues, DepthValues) = default;
 };
 
 struct Depth {

@@ -21,7 +21,7 @@ struct Empty {
 	constexpr Empty & operator=(auto const &) & {
 		return *this;
 	}
-	friend auto operator<=>(Empty const &, Empty const &) = default;
+	friend auto operator<=>(Empty, Empty) = default;
 	friend constexpr auto compress(Empty) {
 		return 0_bi;
 	}

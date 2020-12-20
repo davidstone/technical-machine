@@ -40,7 +40,7 @@ struct EntryHazards {
 		m_stealth_rock = true;
 	}
 
-	friend auto operator==(EntryHazards const &, EntryHazards const &) -> bool = default;
+	friend auto operator==(EntryHazards, EntryHazards) -> bool = default;
 	
 private:
 	static constexpr bool spikes_exist = generation >= Generation::two;

@@ -55,7 +55,7 @@ struct EndOfTurnCounter {
 			return static_cast<bool>(m_turns_active);
 		}
 	}
-	friend auto operator==(EndOfTurnCounter const &, EndOfTurnCounter const &) -> bool = default;
+	friend auto operator==(EndOfTurnCounter, EndOfTurnCounter) -> bool = default;
 	friend constexpr auto compress(EndOfTurnCounter const value) {
 		return compress(value.m_turns_active);
 	}

@@ -17,7 +17,7 @@ struct Happiness {
 	// Needed to send out to simulators
 	value_type operator()() const;
 	friend bounded::integer<0, 102> return_power(Happiness happiness);
-	friend auto operator==(Happiness const &, Happiness const &) -> bool = default;
+	friend auto operator==(Happiness, Happiness) -> bool = default;
 private:
 	value_type m_value;	
 };

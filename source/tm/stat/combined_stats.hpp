@@ -31,7 +31,7 @@ struct CombinedStats {
 		return index_stat(*this, name);
 	}
 
-	friend auto operator==(CombinedStats const &, CombinedStats const &) -> bool = default;
+	friend auto operator==(CombinedStats, CombinedStats) -> bool = default;
 };
 
 constexpr auto combine(Nature const nature, GenericStats<IV> const ivs, GenericStats<EV> const evs) {

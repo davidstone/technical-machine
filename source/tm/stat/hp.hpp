@@ -38,7 +38,7 @@ struct HP {
 		return m_max;
 	}
 
-	friend auto operator==(HP const &, HP const &) -> bool = default;
+	friend auto operator==(HP, HP) -> bool = default;
 
 private:
 	max_type m_max;

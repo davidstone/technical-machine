@@ -40,7 +40,7 @@ struct Move {
 		m_pp.restore(value);
 	}
 
-	friend auto operator==(Move const &, Move const &) -> bool = default;
+	friend auto operator==(Move, Move) -> bool = default;
 	// Pokemon don't change their moves throughout a battle, so we don't need
 	// to include move name
 	friend auto compress(Move const value) {
