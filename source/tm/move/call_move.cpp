@@ -44,7 +44,7 @@ template<Generation generation>
 auto do_effects_before_moving(Moves const move, MutableActivePokemon<generation> user, Team<generation> & other) {
 	if (breaks_screens(move)) {
 		other.shatter_screens();
-	} else if (is_usable_while_frozen(move)) {
+	} else if (thaws_user(move)) {
 		if (is_frozen(user.status())) {
 			user.clear_status();
 		}

@@ -59,6 +59,6 @@ auto is_regular(Moves move) -> bool;
 
 auto is_phaze(Moves name) -> bool;
 
-auto is_usable_while_frozen(Moves move) -> bool;
+auto thaws_user(Moves move) -> bool;
 
 }	// namespace technicalmachine

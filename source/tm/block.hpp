@@ -187,7 +187,7 @@ constexpr auto legal_selections(Team<generation> const & user, Team<generation> 
 
 template<Generation generation>
 constexpr bool is_blocked_by_freeze(ActivePokemon<generation> const user, Moves const move) {
-	return is_frozen(user.status()) and !is_usable_while_frozen(move);
+	return is_frozen(user.status()) and !thaws_user(move);
 }
 
 constexpr bool usable_while_sleeping(Moves const move) {

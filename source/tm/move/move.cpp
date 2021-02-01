@@ -22,7 +22,7 @@ auto is_phaze(Moves const move) -> bool {
 	}
 }
 
-auto is_usable_while_frozen(Moves const move) -> bool {
+auto thaws_user(Moves const move) -> bool {
 	switch (move) {
 		case Moves::Flame_Wheel:
 		case Moves::Sacred_Fire:
