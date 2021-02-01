@@ -5,9 +5,6 @@
 
 #include <tm/move/move.hpp>
 
-#include <cstdint>
-
-#include <tm/move/base_power.hpp>
 #include <tm/move/is_switch.hpp>
 #include <tm/move/moves.hpp>
 

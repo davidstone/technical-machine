@@ -73,12 +73,14 @@ struct LastUsedMove {
 		return moved_this_turn() and successful_last_move(Moves::Endure);
 	}
 
-	constexpr auto fury_cutter_power() const {
-		// 10 * 2 ^ n
-		auto const result = 10_bi << bounded::min(m_consecutive_successes, 4_bi);
-		static_assert(bounded::min_value<decltype(result)> == 10_bi);
-		static_assert(bounded::max_value<decltype(result)> == 160_bi);
-		return result;
+	constexpr auto fury_cutter_power(Generation const generation) const {
+		auto const base =
+			BOUNDED_CONDITIONAL(generation <= Generation::four, 10_bi,
+			BOUNDED_CONDITIONAL(generation <= Generation::five, 20_bi,
+			40_bi
+		));
+		// base * 2 ^ n
+		return bounded::min(base << m_consecutive_successes, 160_bi);
 	}
 
 	auto is_locked_in_by_move() const -> bool;

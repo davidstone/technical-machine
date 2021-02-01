@@ -11,7 +11,6 @@
 #include <tm/evaluate/possible_executed_moves.hpp>
 #include <tm/evaluate/transposition.hpp>
 
-#include <tm/move/base_power.hpp>
 #include <tm/move/call_move.hpp>
 #include <tm/move/category.hpp>
 #include <tm/move/is_switch.hpp>
