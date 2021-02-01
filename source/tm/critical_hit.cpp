@@ -218,11 +218,11 @@ constexpr auto move_critical_hit(Generation const generation, Moves const move_n
 		case Moves::Flame_Wheel: return MoveCriticalHit::normal;
 		case Moves::Snore: return MoveCriticalHit::normal;
 		case Moves::Curse: return MoveCriticalHit::never;
-		case Moves::Flail: return MoveCriticalHit::normal;
+		case Moves::Flail: return generation <= Generation::two ? MoveCriticalHit::never : MoveCriticalHit::normal;
 		case Moves::Conversion_2: return MoveCriticalHit::never;
 		case Moves::Aeroblast: return MoveCriticalHit::high;
 		case Moves::Cotton_Spore: return MoveCriticalHit::never;
-		case Moves::Reversal: return MoveCriticalHit::normal;
+		case Moves::Reversal: return generation <= Generation::two ? MoveCriticalHit::never : MoveCriticalHit::normal;
 		case Moves::Spite: return MoveCriticalHit::never;
 		case Moves::Powder_Snow: return MoveCriticalHit::normal;
 		case Moves::Protect: return MoveCriticalHit::never;
