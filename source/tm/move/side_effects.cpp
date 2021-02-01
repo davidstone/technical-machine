@@ -962,7 +962,11 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Teeter_Dance:
 			return confusion_effect(1.0, original_other.pokemon());
 		case Moves::Dynamic_Punch:
-			return confusion_effect(1.0, original_other.pokemon(), Type::Ghost);
+			if constexpr (generation <= Generation::two) {
+				return confusion_effect(0.996, original_other.pokemon(), Type::Ghost);
+			} else {
+				return confusion_effect(1.0, original_other.pokemon(), Type::Ghost);
+			}
 		case Moves::Dizzy_Punch:
 			return generation == Generation::one ?
 				no_effect<generation> :
