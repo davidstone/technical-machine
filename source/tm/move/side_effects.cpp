@@ -576,10 +576,13 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return basic_probability<generation>(0.5, boost_target_stat<BoostableStat::acc, -1>);
 		case Moves::Flash:
 		case Moves::Kinesis:
-		case Moves::Mud_Slap:
 		case Moves::Sand_Attack:
 		case Moves::Smokescreen:
 			return guaranteed_effect<generation>(boost_target_stat<BoostableStat::acc, -1>);
+		case Moves::Mud_Slap:
+			return generation <= Generation::two ?
+				basic_probability<generation>(0.996, boost_target_stat<BoostableStat::acc, -1>) :
+				guaranteed_effect<generation>(boost_target_stat<BoostableStat::acc, -1>);
 
 		case Moves::Double_Team:
 			return guaranteed_effect<generation>(boost_user_stat<BoostableStat::eva, 1>);
