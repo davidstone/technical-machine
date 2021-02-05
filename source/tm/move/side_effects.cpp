@@ -121,15 +121,22 @@ constexpr auto status_is_clausable(Statuses const status) {
 	}
 }
 
+
 template<Generation generation>
-constexpr auto status_can_apply(Statuses const status, ActivePokemon<generation> const user, Team<generation> const & target, Weather const weather, auto const... immune_types) {
+constexpr auto status_can_apply_ignoring_current_status(Statuses const status, ActivePokemon<generation> const user, Team<generation> const & target, Weather const weather, auto const... immune_types) {
 	auto const target_pokemon = target.pokemon();
 	return
-		is_clear(target_pokemon.status()) and
 		!blocks_status(target_pokemon.ability(), user.ability(), status, weather) and
 		(... and !is_type(target_pokemon, immune_types)) and
 		(!status_is_clausable(status) or !team_has_status(target, status)) and
 		(status != Statuses::sleep or (!user.is_uproaring() and !target_pokemon.is_uproaring()));
+}
+
+template<Generation generation>
+constexpr auto status_can_apply(Statuses const status, ActivePokemon<generation> const user, Team<generation> const & target, Weather const weather, auto const... immune_types) {
+	return
+		is_clear(target.pokemon().status()) and
+		status_can_apply_ignoring_current_status(status, user, target, weather, immune_types...);
 }
 
 
@@ -138,12 +145,37 @@ constexpr auto set_status_function = []<Generation generation>(Team<generation> 
 	apply_status(status, user.pokemon(), target.pokemon(), weather);
 };
 
+constexpr auto clear_status_function = []<Generation generation>(Team<generation> &, Team<generation> & target, auto &, auto) {
+	target.pokemon().clear_status();
+};
+
 template<Statuses status, Generation generation>
 constexpr auto status_effect(double const probability, ActivePokemon<generation> const original_user, Team<generation> const & original_target, Weather const original_weather, auto const... immune_types) {
 	return status_can_apply(status, original_user, original_target, original_weather, immune_types...) ?
 		basic_probability<generation>(probability, set_status_function<status>) :
 		no_effect<generation>;
 }
+
+
+template<Generation generation>
+constexpr auto thaw_and_burn_effect(double const probability, ActivePokemon<generation> const original_user, Team<generation> const & original_target, Weather const original_weather) {
+	auto const target_status = original_target.pokemon().status().name();
+	auto const will_thaw = target_status == Statuses::freeze;
+	auto const can_burn =
+		(target_status == Statuses::clear or will_thaw) and
+		status_can_apply_ignoring_current_status(Statuses::burn, original_user, original_target, original_weather, Type::Fire);
+
+	return
+		can_burn and probability == 1.0 ? guaranteed_effect<generation>(set_status_function<Statuses::burn>) :
+		can_burn and will_thaw ? SideEffects<generation>({
+			SideEffect<generation>{1.0 - probability, clear_status_function},
+			SideEffect<generation>{probability, set_status_function<Statuses::burn>},
+		}) :
+		can_burn ? basic_probability<generation>(probability, set_status_function<Statuses::burn>) :
+		will_thaw ? guaranteed_effect<generation>(clear_status_function) :
+		no_effect<generation>;
+}
+
 
 template<Generation generation, BoostableStat stat, int stages>
 constexpr auto confusing_stat_boost = guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
@@ -816,18 +848,18 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Flame_Wheel:
 		case Moves::Flamethrower:
 		case Moves::Heat_Wave:
-			return status_effect<Statuses::burn>(0.1, original_user, original_other, original_weather, Type::Fire);
+			return thaw_and_burn_effect(0.1, original_user, original_other, original_weather);
 		case Moves::Lava_Plume:
 		case Moves::Scald:
 		case Moves::Searing_Shot:
-			return status_effect<Statuses::burn>(0.3, original_user, original_other, original_weather, Type::Fire);
+			return thaw_and_burn_effect(0.3, original_user, original_other, original_weather);
 		case Moves::Sacred_Fire:
-			return status_effect<Statuses::burn>(0.5, original_user, original_other, original_weather, Type::Fire);
+			return thaw_and_burn_effect(0.5, original_user, original_other, original_weather);
 		case Moves::Inferno:
 		case Moves::Will_O_Wisp:
-			return status_effect<Statuses::burn>(1.0, original_user, original_other, original_weather, Type::Fire);
+			return thaw_and_burn_effect(1.0, original_user, original_other, original_weather);
 		case Moves::Fire_Blast:
-			return status_effect<Statuses::burn>(generation == Generation::one ? 0.3 : 0.1, original_user, original_other, original_weather, Type::Fire);
+			return thaw_and_burn_effect(generation == Generation::one ? 0.3 : 0.1, original_user, original_other, original_weather);
 
 		case Moves::Blizzard:
 		case Moves::Ice_Beam:
@@ -1231,13 +1263,20 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			});
 		case Moves::Bind:
 		case Moves::Clamp:
-		case Moves::Fire_Spin:
-		case Moves::Magma_Storm:
 		case Moves::Sand_Tomb:
 		case Moves::Whirlpool:
 		case Moves::Wrap:
 			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().partially_trap();
+			});
+		case Moves::Fire_Spin:
+		case Moves::Magma_Storm:
+			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+				auto other_pokemon = other.pokemon();
+				if (other_pokemon.status().name() == Statuses::freeze) {
+					other_pokemon.clear_status();
+				}
+				other_pokemon.partially_trap();
 			});
 		case Moves::Block:
 		case Moves::Mean_Look:

@@ -9,6 +9,7 @@
 
 #include <tm/move/call_move.hpp>
 #include <tm/move/moves.hpp>
+#include <tm/move/side_effects.hpp>
 
 #include <tm/pokemon/species.hpp>
 
@@ -257,12 +258,94 @@ void wonder_guard() {
 	BOUNDED_ASSERT(shedinja.hp().current() == 0_bi);
 }
 
-}	// namespace
+void fire_move_thaws_target() {
+	auto weather = Weather();
+
+	auto attacker = Team<generation>(1_bi, true);
+	attacker.add_pokemon(Pokemon<generation>(
+		Species::Charmander,
+		Level(100_bi),
+		Gender::female,
+		Item::None,
+		Ability::Blaze,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		regular_moves(Moves::Ember)
+	));
+	attacker.pokemon().switch_in(weather);
+
+	auto defender = Team<generation>(1_bi);
+	defender.add_pokemon(Pokemon<generation>(
+		Species::Vaporeon,
+		Level(100_bi),
+		Gender::male,
+		Item::None,
+		Ability::Water_Absorb,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		RegularMoves({Move(generation, Moves::Tackle)})
+	));
+	auto vaporeon = defender.pokemon();
+	vaporeon.switch_in(weather);
+	vaporeon.set_status(Statuses::freeze, weather);
+
+	BOUNDED_ASSERT(vaporeon.status().name() == Statuses::freeze);
+
+	constexpr auto move_name = Moves::Ember;
+	auto const side_effects = possible_side_effects(move_name, std::as_const(attacker).pokemon(), defender, weather);
+	BOUNDED_ASSERT(containers::size(side_effects) == 2_bi);
+
+	{
+		auto attacker_copy = attacker;
+		auto defender_copy = defender;
+
+		call_move(
+			attacker_copy,
+			UsedMove<generation>(move_name, side_effects[0_bi].function),
+			defender_copy,
+			FutureMove{false},
+			weather,
+			false,
+			damage
+		);
+
+		BOUNDED_ASSERT(defender_copy.pokemon().status().name() == Statuses::clear);
+	}
+
+	call_move(
+		attacker,
+		UsedMove<generation>(move_name, side_effects[1_bi].function),
+		defender,
+		FutureMove{false},
+		weather,
+		false,
+		damage
+	);
+
+	BOUNDED_ASSERT(vaporeon.status().name() == Statuses::burn);
+}
+
+} // namespace
 
 void call_move_tests() {
 	std::cout << "Running call_move tests.\n";
 	test_baton_pass();
 	wonder_guard();
+	fire_move_thaws_target();
 	std::cout << "Use move tests passed.\n\n";
 }
 
