@@ -229,7 +229,7 @@ auto raw_damage(Team<generation> const & attacker_team, ExecutedMove<generation>
 			// TODO: Determine the damage here
 			return 0_bi;
 		case Moves::Counter:
-			return defender_move.used_move_is_physical(generation) ? attacker.direct_damage_received() * 2_bi : 0_bi;
+			return defender_move.is_counterable(generation) ? attacker.direct_damage_received() * 2_bi : 0_bi;
 		case Moves::Dragon_Rage:
 			return 40_bi;
 		case Moves::Endeavor:
@@ -244,7 +244,7 @@ auto raw_damage(Team<generation> const & attacker_team, ExecutedMove<generation>
 		case Moves::Metal_Burst:
 			return attacker.direct_damage_received() * 3_bi / 2_bi;
 		case Moves::Mirror_Coat:
-			return defender_move.used_move_is_special(generation) ? attacker.direct_damage_received() * 2_bi : 0_bi;
+			return defender_move.is_mirror_coatable(generation) ? attacker.direct_damage_received() * 2_bi : 0_bi;
 		case Moves::Night_Shade:
 		case Moves::Seismic_Toss:
 			return attacker.level()();

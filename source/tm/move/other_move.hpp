@@ -32,15 +32,19 @@ struct OtherMove {
 	{
 	}
 
-	constexpr auto used_move_is_physical(Generation const generation) const {
+	constexpr auto is_counterable(Generation const generation) const {
 		return bounded::visit(m_move, bounded::overload(
-			[=](KnownMove const move) { return is_physical(generation, move); },
+			[=](KnownMove const move) {
+				return generation <= Generation::three and move.name == Moves::Hidden_Power ? true : is_physical(generation, move);
+			},
 			[](FutureMove) { return false; }
 		));
 	}
-	constexpr auto used_move_is_special(Generation const generation) const {
+	constexpr auto is_mirror_coatable(Generation const generation) const {
 		return bounded::visit(m_move, bounded::overload(
-			[=](KnownMove const move) { return is_special(generation, move); },
+			[=](KnownMove const move) {
+				return generation <= Generation::three and move.name == Moves::Hidden_Power ? false : is_special(generation, move);
+			},
 			[](FutureMove) { return false; }
 		));
 	}
