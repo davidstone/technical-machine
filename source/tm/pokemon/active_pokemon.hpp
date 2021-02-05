@@ -717,10 +717,8 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 	auto partial_trap_damage(Weather const weather) const {
 		this->m_flags.partial_trap.damage(*this, weather);
 	}
-	auto try_activate_perish_song() const {
-		if (!blocks_sound_moves(this->ability())) {
-			this->m_flags.perish_song.activate();
-		}
+	auto activate_perish_song() const {
+		this->m_flags.perish_song.activate();
 	}
 	auto perish_song_turn() const -> void {
 		bool const faints_this_turn = this->m_flags.perish_song.advance_one_turn();

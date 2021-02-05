@@ -1490,8 +1490,14 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return guaranteed_effect<generation>(equalize_hp);
 		case Moves::Perish_Song:
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
-				user.pokemon().try_activate_perish_song();
-				other.pokemon().try_activate_perish_song();
+				auto const user_pokemon = user.pokemon();
+				if (generation >= Generation::eight or !blocks_sound_moves(user_pokemon.ability())) {
+					user_pokemon.activate_perish_song();
+				}
+				auto const other_pokemon = other.pokemon();
+				if (!blocks_sound_moves(other_pokemon.ability())) {
+					other_pokemon.activate_perish_song();
+				}
 			});
 		case Moves::Power_Trick:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
