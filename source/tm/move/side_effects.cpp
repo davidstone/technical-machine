@@ -14,6 +14,7 @@
 
 #include <bounded/assert.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/count.hpp>
 #include <containers/algorithms/filter_iterator.hpp>
 #include <containers/emplace_back.hpp>
@@ -738,9 +739,11 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				swap_offensive(user.pokemon().stage(), other.pokemon().stage());
 			});
 		case Moves::Psych_Up:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
-				user.pokemon().stage() = other.pokemon().stage();
-			});
+			return generation >= Generation::three or containers::any(original_other.pokemon().stage(), [](Stage::value_type const stage) { return stage != 0_bi; }) ?
+				guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
+					user.pokemon().stage() = other.pokemon().stage();
+				}) :
+				no_effect<generation>;
 
 		case Moves::Charge:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
