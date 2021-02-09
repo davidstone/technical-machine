@@ -418,7 +418,7 @@ protected:
 template<Generation generation>
 auto apply_own_mental_herb(MutableActivePokemon<generation> const pokemon, Weather const weather) -> void {
 	if (pokemon.item(weather) == Item::Mental_Herb) {
-		apply_mental_herb(pokemon);
+		pokemon.apply_mental_herb();
 		pokemon.remove_item();
 	}
 }
@@ -690,13 +690,13 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 	auto advance_magnet_rise() const {
 		this->m_flags.magnet_rise.advance_one_turn();
 	}
-	friend auto apply_mental_herb(MutableActivePokemon<generation> const pokemon) {
-		pokemon.m_flags.attracted = false;
+	auto apply_mental_herb() const {
+		this->m_flags.attracted = false;
 		if (generation >= Generation::five) {
-			pokemon.m_flags.disable = {};
-			pokemon.m_flags.encore = {};
-			pokemon.m_flags.taunt = {};
-			pokemon.m_flags.is_tormented = false;
+			this->m_flags.disable = {};
+			this->m_flags.encore = {};
+			this->m_flags.taunt = {};
+			this->m_flags.is_tormented = false;
 		}
 	}
 	auto minimize() const {

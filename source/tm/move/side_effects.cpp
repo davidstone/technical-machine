@@ -304,7 +304,7 @@ constexpr auto fling_effects = [](auto & user_team, auto & target_team, auto & w
 			try_apply_status<Statuses::paralysis>(user_team, target_team, weather, damage);
 			break;
 		case Item::Mental_Herb:
-			apply_mental_herb(target);
+			target.apply_mental_herb();
 			break;
 		case Item::Poison_Barb:
 			try_apply_status<Statuses::poison>(user_team, target_team, weather, damage, Type::Poison, Type::Steel);
