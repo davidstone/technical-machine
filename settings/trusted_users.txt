@@ -1,2 +1,1 @@
-// Enter each user name on a new line. These users can send commands to the bot, such as who to challenge.
-// You'll get slightly faster start-up time if you sort this, but it's probably irrelevant.
+davidstone
