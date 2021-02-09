@@ -152,7 +152,7 @@ struct AbilityAndStatus {
 	Statuses status;
 };
 
-constexpr auto pop_ability_and_status(BufferView<std::string_view> & buffer) {
+auto pop_ability_and_status(BufferView<std::string_view> & buffer) {
 	auto const ability_and_status_str = pop_to_delimiter(buffer, status_nature);
 	auto const [ability_str, status_str] = split_view(ability_and_status_str, ability_status);
 	return AbilityAndStatus{
