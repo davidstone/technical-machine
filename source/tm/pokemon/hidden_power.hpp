@@ -77,10 +77,7 @@ private:
 	
 	static constexpr auto calculate_power(Generation const generation, IVs const ivs) -> Power {
 		auto transform = [](auto const index, IV const iv) { return ((iv.value() / 2_bi) % 2_bi) << index; };
-		return BOUNDED_CONDITIONAL(generation >= Generation::six,
-			60_bi,
-			sum_stats(ivs, transform) * 40_bi / 63_bi + 30_bi
-		);
+		return generation >= Generation::six ? 60_bi : sum_stats(ivs, transform) * 40_bi / 63_bi + 30_bi;
 	}
 	
 	static constexpr auto calculate_type(DVs const dvs) -> Type {
