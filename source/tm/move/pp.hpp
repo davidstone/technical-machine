@@ -81,12 +81,15 @@ struct PP {
 private:
 	using base_type = bounded::integer<1, 40>;
 	
-	// It is not allowed to use a static function with deduced return type to
-	// define a typedef in the same class
-	using max_type = decltype(std::declval<base_type>() * (std::declval<pp_ups_type>() + 5_bi) / 5_bi);
+	using max_type = bounded::integer<1, 64>;
 
 	static constexpr auto calculate_max(bounded::optional<base_type> const base, pp_ups_type const pp_ups) -> bounded::optional<max_type> {
-		return base ? bounded::optional(*base * (pp_ups + 5_bi) / 5_bi) : bounded::none;
+		if (!base) {
+			return bounded::none;
+		}
+		auto const result = *base * (pp_ups + 5_bi) / 5_bi;
+		static_assert(std::is_same_v<decltype(result), max_type const>);
+		return result;
 	}
 
 	using current_type = bounded::integer<0, static_cast<int>(bounded::max_value<max_type>)>;
