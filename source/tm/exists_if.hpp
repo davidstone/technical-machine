@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <tm/compress.hpp>
+
 #include <bounded/integer.hpp>
 
 #include <compare>
