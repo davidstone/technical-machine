@@ -213,7 +213,7 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 		check_non_negative(per_pokemon.weighted_usage);
 		m_total_weighted_usage += per_pokemon.weighted_usage;
 
-		for (auto const teammate : pokemon.second.get_child("Teammates")) {
+		for (auto const & teammate : pokemon.second.get_child("Teammates")) {
 			if (teammate.first == "empty") {
 				continue;
 			}
