@@ -9,10 +9,11 @@ namespace technicalmachine {
 namespace {
 
 auto initial_hp(BaseStats const base, Level const level, IV const iv, EV const ev) {
-	auto const value = BOUNDED_CONDITIONAL((base.hp() > 1_bi),
-		(2_bi * base.hp() + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 10_bi + level(),
-		1_bi
-	);
+	// Work around https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99016
+	auto typical = [=] {
+		return (2_bi * base.hp() + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 10_bi + level();
+	};
+	auto const value = BOUNDED_CONDITIONAL(base.hp() > 1_bi, typical(), 1_bi);
 	static_assert(bounded::min_value<decltype(value)> == bounded::min_value<HP::max_type>);
 	static_assert(bounded::max_value<decltype(value)> == bounded::max_value<HP::max_type>);
 	return value;
