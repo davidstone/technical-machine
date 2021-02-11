@@ -38,6 +38,17 @@ constexpr auto apply_toxic_spikes(EntryHazards<generation> const & hazards, Muta
 }
 
 template<Generation generation>
+constexpr auto spikes_damage(EntryHazards<generation> const hazards) -> rational<bounded::constant_t<-1>, bounded::integer<4, 8>> {
+	switch (hazards.spikes().value()) {
+		case 0: bounded::unreachable();
+		case 1: return rational(-1_bi, 8_bi);
+		case 2: return rational(-1_bi, 6_bi);
+		case 3: return rational(-1_bi, 4_bi);
+		default: bounded::unreachable();
+	}
+}
+
+template<Generation generation>
 constexpr auto apply(EntryHazards<generation> & hazards, MutableActivePokemon<generation> switcher, Weather const weather) -> void {
 	if (switcher.item(weather) == Item::Heavy_Duty_Boots) {
 		return;
@@ -52,7 +63,7 @@ constexpr auto apply(EntryHazards<generation> & hazards, MutableActivePokemon<ge
 			}
 		}
 		if (hazards.spikes() != 0_bi) {
-			heal(switcher, weather, rational(-hazards.spikes() - 1_bi, 16_bi));
+			heal(switcher, weather, spikes_damage(hazards));
 		}
 	}
 	if (hazards.stealth_rock()) {
