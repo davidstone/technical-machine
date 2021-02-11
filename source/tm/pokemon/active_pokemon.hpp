@@ -371,9 +371,6 @@ public:
 		return m_pokemon.status();
 	}
 
-	auto switch_decision_required() const -> bool {
-		return m_pokemon.hp() == 0_bi or m_flags.last_used_move.switch_decision_required();
-	}
 	auto switched_in_this_turn() const -> bool {
 		return m_flags.last_used_move.switched_in_this_turn();
 	}

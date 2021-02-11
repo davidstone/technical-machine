@@ -227,8 +227,17 @@ private:
 template<Generation generation>
 constexpr auto team_has_status(Team<generation> const & target, Statuses const status) {
 	return containers::any(target.all_pokemon(), [=](Pokemon<generation> const & pokemon) {
-				return pokemon.status().name() == status;
-			});
+		return pokemon.status().name() == status;
+	});
+}
+
+template<Generation generation>
+auto switch_decision_required(Team<generation> const & team) {
+	if (team.size() == 0_bi) {
+		return false;
 	}
+	auto const pokemon = team.pokemon();
+	return pokemon.hp() == 0_bi or pokemon.last_used_move().switch_decision_required();
+}
 
 } // namespace technicalmachine
