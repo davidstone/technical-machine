@@ -37,7 +37,7 @@ auto move_can_miss(ActivePokemon<generation> const user, Moves const move, BaseA
 		!cannot_miss(user.ability()) and
 		!cannot_miss(target.ability()) and
 		!(move == Moves::Body_Slam and target.minimized()) and
-		!user.locked_on();
+		!user.last_used_move().locked_on();
 }
 
 inline auto accuracy_item_modifier(Item const item, bool target_moved) {

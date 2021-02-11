@@ -125,7 +125,7 @@ constexpr auto blocked_by_torment(ActivePokemon<generation> const user, Moves co
 
 template<Generation generation>
 constexpr auto is_locked_in(ActivePokemon<generation> const user, Weather const weather) {
-	return user.is_encored() or user.is_locked_in_by_move() or is_choice_item(user.item(weather));
+	return user.is_encored() or user.last_used_move().is_locked_in_by_move() or is_choice_item(user.item(weather));
 }
 
 template<Generation generation>
@@ -140,7 +140,7 @@ constexpr auto is_locked_in_to_different_move(ActivePokemon<generation> const us
 template<Generation generation>
 constexpr auto is_blocked_due_to_lock_in(ActivePokemon<generation> const user, Moves const move, Weather const weather) {
 	return !is_regular(move) ?
-		user.is_locked_in_by_move() :
+		user.last_used_move().is_locked_in_by_move() :
 		is_locked_in_to_different_move(user, move, weather);
 }
 

@@ -130,7 +130,7 @@ auto execute_move(Team<generation> const & user, SelectedAndExecuted const move,
 	auto const side_effects = possible_side_effects(move.executed.name, user_pokemon, other, weather);
 	auto const status = user_pokemon.status();
 	auto const probability_of_clearing_status = status.probability_of_clearing(generation, user_pokemon.ability());
-	auto const specific_chance_to_hit = chance_to_hit(user_pokemon, move.executed, other_pokemon, weather, other_pokemon.moved());
+	auto const specific_chance_to_hit = chance_to_hit(user_pokemon, move.executed, other_pokemon, weather, other_pokemon.last_used_move().moved_this_turn());
 	auto const ch_probability = critical_hit_probability(user_pokemon, move.executed.name, other.pokemon().ability(), weather);
 	return generic_flag_branch(probability_of_clearing_status, [&](bool const clear_status) {
 		return generic_flag_branch(specific_chance_to_hit, [&](bool const hits) {

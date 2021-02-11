@@ -219,10 +219,6 @@ public:
 		return m_flags.charged and move_type == Type::Electric;
 	}
 
-	auto is_charging_up() const -> bool {
-		return m_flags.last_used_move.is_charging_up();
-	}
-
 	auto is_confused() const -> bool {
 		return m_flags.confusion.is_active();
 	}
@@ -307,10 +303,6 @@ public:
 		return ability() == Ability::Truant and m_flags.is_loafing_turn;
 	}
 
-	auto locked_on() const -> bool {
-		return m_flags.last_used_move.locked_on();
-	}
-
 	auto magnet_rise() const {
 		return m_flags.magnet_rise;
 	}
@@ -323,26 +315,10 @@ public:
 		return m_flags.minimized;
 	}
 
-	auto moved() const -> bool {
-		return m_flags.last_used_move.moved_this_turn();
-	}
-
 	auto power_trick_is_active() const -> bool {
 		return m_flags.power_trick_is_active;
 	}
 	
-	auto is_protecting() const {
-		return m_flags.last_used_move.is_protecting();
-	}
-
-	auto is_locked_in_by_move() const -> bool {
-		return m_flags.last_used_move.is_locked_in_by_move();
-	}
-
-	auto is_roosting() const -> bool {
-		return m_flags.last_used_move.is_roosting();
-	}
-
 	auto slow_start_is_active() const -> bool {
 		return m_flags.slow_start.is_active();
 	}
@@ -371,10 +347,6 @@ public:
 		return m_pokemon.status();
 	}
 
-	auto switched_in_this_turn() const -> bool {
-		return m_flags.last_used_move.switched_in_this_turn();
-	}
-
 	auto fully_trapped() const -> bool {
 		return m_flags.fully_trapped;
 	}
@@ -397,14 +369,6 @@ public:
 
 	auto is_unburdened() const -> bool {
 		return m_flags.unburdened;
-	}
-
-	auto is_uproaring() const -> bool {
-		return m_flags.last_used_move.is_uproaring();
-	}
-
-	auto vanish_doubles_power(Moves const move_name) const -> bool {
-		return m_flags.last_used_move.vanish_doubles_power(generation, move_name);
 	}
 
 protected:
@@ -432,7 +396,7 @@ struct ActivePokemon : ActivePokemonImpl<generation, true> {
 template<Generation generation>
 auto is_type(ActivePokemon<generation> const pokemon, auto const... types) -> bool requires(sizeof...(types) > 0) {
 	return (... or (
-		(types != Type::Flying or !pokemon.is_roosting()) and
+		(types != Type::Flying or !pokemon.last_used_move().is_roosting()) and
 		containers::any_equal(pokemon.types(), types)
 	));
 }
@@ -812,7 +776,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 			clear_status();
 		}
 		// TODO: remove some of these when the foe switches, too
-		if (!this->m_flags.last_used_move.is_baton_passing()) {
+		if (!this->last_used_move().is_baton_passing()) {
 			this->m_flags.aqua_ring = false;
 			this->m_flags.confusion = {};
 			this->m_flags.is_cursed = false;
@@ -935,7 +899,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		this->m_flags.last_used_move.direct_damage(applied_damage);
 
 		// TODO: Resolve ties properly
-		if (this->m_flags.last_used_move.is_destiny_bonded() and applied_damage == original_hp) {
+		if (this->last_used_move().is_destiny_bonded() and applied_damage == original_hp) {
 			user.set_hp(weather, 0_bi);
 		}
 		return applied_damage;
@@ -950,7 +914,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 
 private:
 	auto handle_ko(Moves const move, Weather const weather) const {
-		if (cannot_ko(move) or this->m_flags.last_used_move.is_enduring()) {
+		if (cannot_ko(move) or this->last_used_move().is_enduring()) {
 			return true;
 		}
 		auto const hp = this->hp();

@@ -674,7 +674,7 @@ private:
 			}
 		));
 		
-		auto const other_move = other_pokemon.moved() ?
+		auto const other_move = other_pokemon.last_used_move().moved_this_turn() ?
 			OtherMove([&]{
 				auto const move = other_pokemon.last_used_move().name();
 				auto const type = get_type(generation, move, get_hidden_power_type(other_pokemon));

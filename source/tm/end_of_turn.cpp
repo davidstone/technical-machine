@@ -140,7 +140,7 @@ auto other_effects(Team<generation> & team, MutableActivePokemon<generation> foe
 	if (pokemon.aqua_ring_is_active()) {
 		heal(pokemon, weather, rational(1_bi, 16_bi) * healing_multiplier(pokemon.item(weather)));
 	}
-	if (!pokemon.switched_in_this_turn() and boosts_speed(pokemon.ability())) {
+	if (!pokemon.last_used_move().switched_in_this_turn() and boosts_speed(pokemon.ability())) {
 		pokemon.stage()[BoostableStat::spe] += 1_bi;
 	} else if (flags.shed_skin) {
 		pokemon.clear_status();
@@ -156,7 +156,7 @@ auto other_effects(Team<generation> & team, MutableActivePokemon<generation> foe
 			break;
 	}
 	// TODO: Not sure if this check for Uproar is in the correct place
-	auto const uproar = pokemon.is_uproaring() or foe.is_uproaring();
+	auto const uproar = pokemon.last_used_move().is_uproaring() or foe.last_used_move().is_uproaring();
 	pokemon.status_and_leech_seed_effects(foe, weather, uproar);
 	auto set_status = [&](Statuses const status) {
 		if (indirect_status_can_apply(status, pokemon.as_const(), weather)) {

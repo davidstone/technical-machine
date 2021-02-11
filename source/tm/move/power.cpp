@@ -42,7 +42,7 @@ auto doubling(ActivePokemon<generation> const attacker, Moves const move, Active
 	// attacker nor target is genderless. This will cause the base power to be
 	// 1 less than it should be.
 
-	if (defender.vanish_doubles_power(move))
+	if (defender.last_used_move().vanish_doubles_power(generation, move))
 		return true;
 	switch (move) {
 		case Moves::Assurance:
@@ -60,7 +60,7 @@ auto doubling(ActivePokemon<generation> const attacker, Moves const move, Active
 		case Moves::Rollout:
 			return attacker.defense_curled();
 		case Moves::Payback:
-			return defender.moved();
+			return defender.last_used_move().moved_this_turn();
 		case Moves::Smelling_Salts:
 			return boosts_smellingsalt(defender.status());
 		case Moves::Solar_Beam: {

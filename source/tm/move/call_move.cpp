@@ -466,7 +466,7 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 	
 	auto const other_ability = other_pokemon.ability();
 
-	if (is_regular(move.selected) and move.executed != Moves::Hit_Self and !user_pokemon.is_locked_in_by_move()) {
+	if (is_regular(move.selected) and move.executed != Moves::Hit_Self and !user_pokemon.last_used_move().is_locked_in_by_move()) {
 		auto & move_ref = find_regular_move(user_pokemon.regular_moves(), move.selected);
 		move_ref.decrement_pp(other_ability);
 		activate_pp_restore_berry(move_ref, user_pokemon, weather);
@@ -489,7 +489,7 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 	auto const unsuccessful =
 		move_fails(move.executed, user_pokemon.damaged(), other_ability, other_move) or
 		(other_pokemon.hp().current() == 0_bi and fails_against_fainted(target)) or
-		(other_pokemon.is_protecting() and blocked_by_protect(target, move.executed));
+		(other_pokemon.last_used_move().is_protecting() and blocked_by_protect(target, move.executed));
 	if (unsuccessful) {
 		unsuccessfully_use_move();
 		return;

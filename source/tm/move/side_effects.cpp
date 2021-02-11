@@ -130,7 +130,7 @@ constexpr auto status_can_apply_ignoring_current_status(Statuses const status, A
 		!blocks_status(target_pokemon.ability(), user.ability(), status, weather) and
 		(... and !is_type(target_pokemon, immune_types)) and
 		(!status_is_clausable(status) or !team_has_status(target, status)) and
-		(status != Statuses::sleep or (!user.is_uproaring() and !target_pokemon.is_uproaring()));
+		(status != Statuses::sleep or (!user.last_used_move().is_uproaring() and !target_pokemon.last_used_move().is_uproaring()));
 }
 
 template<Generation generation>
@@ -1018,7 +1018,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 
 		case Moves::Rest:
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
-				user.pokemon().rest(weather, other.pokemon().is_uproaring());
+				user.pokemon().rest(weather, other.pokemon().last_used_move().is_uproaring());
 			});
 
 		case Moves::Smelling_Salts:
@@ -1525,7 +1525,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				case Generation::one:
 					return no_effect<generation>;
 				case Generation::two:
-					return original_other.pokemon().moved() ? phaze_effect<generation>(original_other) : no_effect<generation>;
+					return original_other.pokemon().last_used_move().moved_this_turn() ? phaze_effect<generation>(original_other) : no_effect<generation>;
 				default:
 					return phaze_effect<generation>(original_other);
 			}
@@ -1538,6 +1538,16 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Snatch:
 			return no_effect<generation>;
 		case Moves::Spite:
+			switch (generation) {
+				case Generation::one:
+				case Generation::two:
+				case Generation::three:
+				case Generation::four:
+				default:
+					return guaranteed_effect<generation>([](auto &, auto & target, auto &, auto) {
+						static_cast<void>(target);
+					});
+			}
 			return no_effect<generation>;
 		case Moves::Struggle:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto const damage) {
