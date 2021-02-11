@@ -7,7 +7,6 @@
 
 #include <tm/move/moves.hpp>
 
-#include <tm/ability.hpp>
 #include <tm/compress.hpp>
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
@@ -46,13 +45,12 @@ struct PP {
 		return !m_max;
 	}
 
-	auto decrement(Ability const foe_ability) & {
+	auto reduce(auto const value) & {
+		static_assert(bounded::min_value<decltype(value)> >= 0_bi);
 		if (has_unlimited_pp()) {
 			return;
 		}
-		// I think it is always an error to try to decrement a move without PP.
-		BOUNDED_ASSERT(*m_current != 0_bi);
-		saturating_add(*m_current, -BOUNDED_CONDITIONAL(uses_extra_pp(foe_ability), 2_bi, 1_bi));
+		saturating_add(*m_current, -value);
 	}
 
 	auto trump_card_power() const -> bounded::integer<40, 200> {

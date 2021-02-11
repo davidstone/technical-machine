@@ -81,7 +81,8 @@ void basic() {
 
 auto empty_pp(Move & move) {
 	while (!move.pp().is_empty()) {
-		move.decrement_pp(Ability::Static);
+		constexpr auto use_extra_pp = false;
+		move.decrement_pp(use_extra_pp);
 	}
 };
 

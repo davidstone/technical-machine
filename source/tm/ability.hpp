@@ -381,10 +381,6 @@ constexpr bool strengthens_nve_attacks(Ability const ability) {
 	return ability == Ability::Tinted_Lens;
 }
 
-constexpr bool uses_extra_pp(Ability const ability) {
-	return ability == Ability::Pressure;
-}
-
 constexpr bool boosts_speed(Ability const ability) {
 	return ability == Ability::Speed_Boost;
 }

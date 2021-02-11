@@ -468,7 +468,8 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 
 	if (is_regular(move.selected) and move.executed != Moves::Hit_Self and !user_pokemon.last_used_move().is_locked_in_by_move()) {
 		auto & move_ref = find_regular_move(user_pokemon.regular_moves(), move.selected);
-		move_ref.decrement_pp(other_ability);
+		auto const uses_extra_pp = other_ability == Ability::Pressure;
+		move_ref.decrement_pp(uses_extra_pp);
 		activate_pp_restore_berry(move_ref, user_pokemon, weather);
 	}
 	
