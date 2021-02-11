@@ -929,7 +929,9 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return status_effect<Statuses::paralysis>(0.3, original_user, original_other, original_weather, Type::Ground);
 		case Moves::Thunder_Wave:
 		case Moves::Zap_Cannon:
-			return status_effect<Statuses::paralysis>(1.0, original_user, original_other, original_weather, Type::Ground);
+			return generation <= Generation::two ?
+				status_effect<Statuses::paralysis>(0.996, original_user, original_other, original_weather, Type::Ground) :
+				status_effect<Statuses::paralysis>(1.0, original_user, original_other, original_weather, Type::Ground);
 		case Moves::Body_Slam:
 			return generation == Generation::one ?
 				status_effect<Statuses::paralysis>(0.3, original_user, original_other, original_weather, Type::Ghost, Type::Normal) :
