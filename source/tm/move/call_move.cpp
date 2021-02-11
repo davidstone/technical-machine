@@ -230,7 +230,7 @@ auto use_move(Team<generation> & user, ExecutedMove<generation> const executed, 
 	auto const other_pokemon = other.pokemon();
 	do_effects_before_moving(executed.move.name, user_pokemon, other);
 
-	if (targets_foe_specifically(target) and !affects_target(executed.move, as_const(other_pokemon), weather)) {
+	if (targets_foe_specifically(target) and !affects_target(executed.move, other_pokemon.as_const(), weather)) {
 		return;
 	}
 
@@ -386,7 +386,7 @@ template<Generation generation>
 auto handle_ability_blocks_move(KnownMove const move, MutableActivePokemon<generation> const target, Weather const weather) {
 	switch (target.ability()) {
 		case Ability::Flash_Fire:
-			if (!flash_fire_activates(move, as_const(target))) {
+			if (!flash_fire_activates(move, target.as_const())) {
 				return false;
 			}
 			target.activate_flash_fire();
@@ -441,7 +441,7 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 		user_pokemon.unsuccessfully_use_move(move.executed);
 	};
 
-	auto const found_move = find_move(all_moves(as_const(user_pokemon), user.size()), move.selected);
+	auto const found_move = find_move(all_moves(user_pokemon.as_const(), user.size()), move.selected);
 	auto other_pokemon = other.pokemon();
 	auto const was_asleep = is_sleeping(user_pokemon.status());
 	if (!is_switch(move.selected)) {
@@ -449,7 +449,7 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 	}
 	// Need the side-effect from recharge
 	auto const is_recharging = user_pokemon.recharge();
-	if (!can_attempt_move_execution(as_const(user_pokemon), found_move, as_const(other_pokemon), was_asleep)) {
+	if (!can_attempt_move_execution(user_pokemon.as_const(), found_move, other_pokemon.as_const(), was_asleep)) {
 		unsuccessfully_use_move();
 		return;
 	}
@@ -459,7 +459,7 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 			user_pokemon.stage()[BoostableStat::spe] += 1_bi;
 		}
 	}
-	if (!can_execute_move(as_const(user_pokemon), found_move, weather, is_recharging)) {
+	if (!can_execute_move(user_pokemon.as_const(), found_move, weather, is_recharging)) {
 		unsuccessfully_use_move();
 		return;
 	}

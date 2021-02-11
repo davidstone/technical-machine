@@ -150,7 +150,7 @@ auto other_effects(Team<generation> & team, MutableActivePokemon<generation> foe
 			heal(pokemon, weather, leftovers_healing());
 			break;
 		case Item::Black_Sludge:
-			heal(pokemon, weather, BOUNDED_CONDITIONAL(is_type(as_const(pokemon), Type::Poison), rational(1_bi, 16_bi), rational(-1_bi, 8_bi)));
+			heal(pokemon, weather, BOUNDED_CONDITIONAL(is_type(pokemon.as_const(), Type::Poison), rational(1_bi, 16_bi), rational(-1_bi, 8_bi)));
 			break;
 		default:
 			break;
@@ -159,7 +159,7 @@ auto other_effects(Team<generation> & team, MutableActivePokemon<generation> foe
 	auto const uproar = pokemon.is_uproaring() or foe.is_uproaring();
 	pokemon.status_and_leech_seed_effects(foe, weather, uproar);
 	auto set_status = [&](Statuses const status) {
-		if (indirect_status_can_apply(status, as_const(pokemon), weather)) {
+		if (indirect_status_can_apply(status, pokemon.as_const(), weather)) {
 			pokemon.set_status(status, weather);
 		}
 	};

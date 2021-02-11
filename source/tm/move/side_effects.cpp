@@ -217,7 +217,7 @@ auto recoil_status(ActivePokemon<generation> const original_user, Team<generatio
 
 template<Statuses const status>
 auto try_apply_status(auto & user, auto & target, auto & weather, auto const damage, auto const... immune_types) {
-	if (status_can_apply(status, as_const(user.pokemon()), target, weather, immune_types...)) {
+	if (status_can_apply(status, user.pokemon().as_const(), target, weather, immune_types...)) {
 		set_status_function<status>(user, target, weather, damage);
 	}
 }
@@ -1307,7 +1307,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
 				static_cast<void>(user);
 				auto const other_pokemon = other.pokemon();
-				if (item_can_be_lost(as_const(other_pokemon))) {
+				if (item_can_be_lost(other_pokemon.as_const())) {
 				}
 			});
 		case Moves::Camouflage:
@@ -1319,14 +1319,14 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Covet:
 		case Moves::Thief:
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
-				if (item_can_be_lost(as_const(other.pokemon()))) {
+				if (item_can_be_lost(other.pokemon().as_const())) {
 					user.pokemon().steal_item(other.pokemon());
 				}
 			});
 		case Moves::Curse:
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
 				auto const user_pokemon = user.pokemon();
-				if (is_type(as_const(user_pokemon), Type::Ghost)) {
+				if (is_type(user_pokemon.as_const(), Type::Ghost)) {
 					auto const other_pokemon = other.pokemon();
 					if (!other_pokemon.is_cursed()) {
 						user_pokemon.indirect_damage(weather, user_pokemon.hp().max() / 2_bi);
@@ -1433,7 +1433,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Incinerate:
 			return guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
 				auto other_pokemon = other.pokemon();
-				if (item_can_be_incinerated(as_const(other_pokemon), weather)) {
+				if (item_can_be_incinerated(other_pokemon.as_const(), weather)) {
 					other_pokemon.destroy_item();
 				}
 			});
@@ -1444,7 +1444,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Knock_Off:
 			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
 				auto const other_pokemon = other.pokemon();
-				if (item_can_be_lost(as_const(other_pokemon))) {
+				if (item_can_be_lost(other_pokemon.as_const())) {
 					other_pokemon.remove_item();
 				}
 			});
@@ -1577,7 +1577,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Trick:
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
 				auto const other_pokemon = other.pokemon();
-				if (item_can_be_lost(as_const(other_pokemon))) {
+				if (item_can_be_lost(other_pokemon.as_const())) {
 					swap_items(user.pokemon(), other.pokemon());
 				}
 			});

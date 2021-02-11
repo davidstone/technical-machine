@@ -151,7 +151,7 @@ private:
 				break;
 			case Statuses::sleep:
 			case Statuses::rest:
-				handle_sleep_and_rest(pokemon, as_const(other), weather, m_nightmare);
+				handle_sleep_and_rest(pokemon, other.as_const(), weather, m_nightmare);
 				break;
 		}
 	}
@@ -177,7 +177,7 @@ private:
 				break;
 			case Statuses::sleep:
 			case Statuses::rest:
-				handle_sleep_and_rest(pokemon, as_const(other), weather, m_nightmare, uproar);
+				handle_sleep_and_rest(pokemon, other.as_const(), weather, m_nightmare, uproar);
 				break;
 		}
 	}

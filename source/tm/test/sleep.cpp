@@ -109,7 +109,7 @@ struct Sleeper {
 		auto pokemon = m_sleeper.pokemon();
 		auto const probability_of_awakening = pokemon.status().probability_of_clearing(generation, pokemon.ability());
 		BOUNDED_ASSERT(probability_of_awakening == 0.0 or probability_of_awakening == 1.0);
-		auto const side_effects = possible_side_effects(executed, as_const(pokemon), m_other, m_weather);
+		auto const side_effects = possible_side_effects(executed, pokemon.as_const(), m_other, m_weather);
 		auto const & side_effect = containers::front(side_effects);
 		call_move(
 			m_sleeper,

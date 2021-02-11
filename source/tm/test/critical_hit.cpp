@@ -43,7 +43,7 @@ auto individual_test(Species const species, Moves const move_name, Item const it
 	}
 	attacker.reset_start_of_turn();
 
-	auto const ch_rate = critical_hit_probability(std::as_const(attacker).pokemon(), move_name, ability, weather);
+	auto const ch_rate = critical_hit_probability(attacker.pokemon().as_const(), move_name, ability, weather);
 	BOUNDED_ASSERT(ch_rate == rate);
 }
 

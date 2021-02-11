@@ -120,7 +120,7 @@ void test_baton_pass() {
 	);
 
 	{
-		auto const side_effects = possible_side_effects(Moves::Belly_Drum, as_const(attacker.pokemon()), defender, weather);
+		auto const side_effects = possible_side_effects(Moves::Belly_Drum, attacker.pokemon().as_const(), defender, weather);
 		BOUNDED_ASSERT(containers::size(side_effects) == 1_bi);
 		auto const & side_effect = containers::front(side_effects);
 		BOUNDED_ASSERT(side_effect.probability == 1.0);
@@ -166,7 +166,7 @@ void test_baton_pass() {
 	);
 
 	{
-		auto const side_effects = possible_side_effects(Moves::Switch1, as_const(attacker.pokemon()), defender, weather);
+		auto const side_effects = possible_side_effects(Moves::Switch1, attacker.pokemon().as_const(), defender, weather);
 		BOUNDED_ASSERT(containers::size(side_effects) == 1_bi);
 		auto const & side_effect = containers::front(side_effects);
 		BOUNDED_ASSERT(side_effect.probability == 1.0);
@@ -306,7 +306,7 @@ void fire_move_thaws_target() {
 	BOUNDED_ASSERT(vaporeon.status().name() == Statuses::freeze);
 
 	constexpr auto move_name = Moves::Ember;
-	auto const side_effects = possible_side_effects(move_name, std::as_const(attacker).pokemon(), defender, weather);
+	auto const side_effects = possible_side_effects(move_name, attacker.pokemon().as_const(), defender, weather);
 	BOUNDED_ASSERT(containers::size(side_effects) == 2_bi);
 
 	{

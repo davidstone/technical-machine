@@ -490,14 +490,6 @@ auto yawn_can_apply(ActivePokemon<generation> const target, Weather const weathe
 		indirect_status_can_apply(Statuses::sleep, target, weather);
 }
 
-template<Generation>
-struct MutableActivePokemon;
-
-template<Generation generation>
-auto as_const(MutableActivePokemon<generation> pokemon) {
-	return ActivePokemon<generation>(pokemon);
-}
-
 // A mutable reference to the currently active Pokemon
 template<Generation generation>
 struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
@@ -506,7 +498,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 	{
 	}
 	
-	operator ActivePokemon<generation>() const {
+	auto as_const() const {
 		return ActivePokemon<generation>(this->m_pokemon, this->m_flags);
 	}
 
@@ -899,7 +891,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		if (!attempt_sleep) {
 			return;
 		}
-		if (yawn_can_apply(as_const(*this), weather, either_is_uproaring, sleep_clause_activates)) {
+		if (yawn_can_apply(as_const(), weather, either_is_uproaring, sleep_clause_activates)) {
 			set_status(Statuses::sleep, weather);
 		}
 	}
@@ -1141,8 +1133,8 @@ void activate_ability_on_switch(MutableActivePokemon<generation> switcher, Mutab
 			// Move is irrelevant here
 			constexpr auto move = Moves::Switch0;
 			// TODO: Should not take into account items, abilities, or Wonder Room
-			auto const defense = calculate_defense(as_const(other), move, weather);
-			auto const special_defense = calculate_special_defense(as_const(other), switcher_ability, weather);
+			auto const defense = calculate_defense(other.as_const(), move, weather);
+			auto const special_defense = calculate_special_defense(other.as_const(), switcher_ability, weather);
 			auto const boosted_stat = defense >= special_defense ? BoostableStat::spa : BoostableStat::atk;
 			saturating_add(switcher.stage()[boosted_stat], 1_bi);
 			break;

@@ -473,7 +473,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 
 	{
 		constexpr auto move_name = Moves::Surf;
-		auto const side_effects = possible_side_effects(move_name, as_const(defender.pokemon()), attacker, weather);
+		auto const side_effects = possible_side_effects(move_name, defender.pokemon().as_const(), attacker, weather);
 		BOUNDED_ASSERT(containers::size(side_effects) == 1_bi);
 		auto const & side_effect = containers::front(side_effects);
 		call_move(

@@ -68,7 +68,7 @@ void test_combinations() {
 		}
 		for (auto const current_index : containers::integer_range(foe_size)) {
 			team.all_pokemon().set_index(current_index);
-			auto const side_effects = possible_side_effects(Moves::Whirlwind, as_const(user.pokemon()), team, weather);
+			auto const side_effects = possible_side_effects(Moves::Whirlwind, user.pokemon().as_const(), team, weather);
 			auto const expected_size = foe_size - 1_bi;
 			if (containers::size(side_effects) != expected_size) {
 				throw InvalidCollection("Phazing size is incorrect. Expected: " + to_string(expected_size) + " but got " + to_string(containers::size(side_effects)));
