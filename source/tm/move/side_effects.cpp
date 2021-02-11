@@ -632,7 +632,9 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Double_Team:
 			return guaranteed_effect<generation>(boost_user_stat<BoostableStat::eva, 1>);
 		case Moves::Sweet_Scent:
-			return guaranteed_effect<generation>(boost_target_stat<BoostableStat::eva, -1>);
+			return generation <= Generation::five ?
+				guaranteed_effect<generation>(boost_target_stat<BoostableStat::eva, -1>) :
+				guaranteed_effect<generation>(boost_target_stat<BoostableStat::eva, -2>);
 
 		case Moves::Acid: {
 			constexpr auto probability = generation == Generation::one ? 0.332 : 0.1;
