@@ -608,7 +608,9 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Low_Sweep:
 		case Moves::Mud_Shot:
 		case Moves::Rock_Tomb:
-			return guaranteed_effect<generation>(boost_target_stat<BoostableStat::spe, -1>);
+			return generation <= Generation::two ?
+				basic_probability<generation>(0.996, boost_target_stat<BoostableStat::spe, -1>) :
+				guaranteed_effect<generation>(boost_target_stat<BoostableStat::spe, -1>);
 
 		case Moves::Leaf_Tornado:
 		case Moves::Mirror_Shot:
