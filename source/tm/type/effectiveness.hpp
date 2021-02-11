@@ -47,21 +47,41 @@ auto operator*(auto const lhs, Effectiveness const rhs) {
 	return rhs * lhs;
 }
 
+constexpr auto always_affects_target(Generation const generation, Moves const move) {
+	switch (generation) {
+		case Generation::one:
+			switch (move) {
+				case Moves::Night_Shade:
+				case Moves::Seismic_Toss:
+				case Moves::Sonic_Boom:
+				case Moves::Super_Fang:
+					return true;
+				default:
+					return false;
+			}
+		case Generation::two:
+		case Generation::three:
+		case Generation::four:
+		case Generation::five:
+			switch (move) {
+				case Moves::Block:
+				case Moves::Mean_Look:
+				case Moves::Spider_Web:
+					return true;
+				default:
+					return false;
+			}
+		case Generation::six:
+		case Generation::seven:
+		case Generation::eight:
+			return false;
+	}
+}
+
 template<Generation generation>
 auto affects_target(KnownMove const move, ActivePokemon<generation> const target, Weather const weather) -> bool {
 	auto const effectiveness = Effectiveness(generation, move.type, target.types());
-	auto generation_1_fixed_damage_move = [=] {
-		switch (move.name) {
-			case Moves::Night_Shade:
-			case Moves::Seismic_Toss:
-			case Moves::Sonic_Boom:
-			case Moves::Super_Fang:
-				return true;
-			default:
-				return false;
-		}
-	};
-	if (generation == Generation::one and generation_1_fixed_damage_move()) {
+	if (always_affects_target(generation, move.name)) {
 		return true;
 	}
 	return !effectiveness.has_no_effect() and (move.type != Type::Ground or grounded(target, weather));
