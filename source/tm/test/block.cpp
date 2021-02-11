@@ -80,9 +80,9 @@ void basic() {
 }
 
 auto empty_pp(Move & move) {
-	while (!move.pp().is_empty()) {
-		constexpr auto use_extra_pp = false;
-		move.decrement_pp(use_extra_pp);
+	auto remaining_pp = move.pp().remaining();
+	if (remaining_pp) {
+		move.reduce_pp(*remaining_pp);
 	}
 };
 

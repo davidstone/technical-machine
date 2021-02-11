@@ -17,6 +17,7 @@
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/count.hpp>
 #include <containers/algorithms/filter_iterator.hpp>
+#include <containers/algorithms/maybe_find.hpp>
 #include <containers/emplace_back.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/push_back.hpp>
@@ -392,6 +393,45 @@ constexpr auto phaze_effect(Team<generation> const & target) {
 	add_all(std::make_index_sequence<bounded::max_value<TeamSize>.value()>());
 	return result;
 }
+
+auto last_move_if_regular(auto pokemon) {
+	return containers::maybe_find(pokemon.regular_moves(), pokemon.last_used_move().name());
+}
+
+template<Generation generation, int reduction>
+constexpr auto spite = [](Team<generation> & user, Team<generation> &, Weather &, auto) {
+	auto const regular_move = last_move_if_regular(user.pokemon());
+	// We can't get here if Spite won't apply
+	BOUNDED_ASSERT(regular_move);
+	regular_move->reduce_pp(bounded::constant<reduction>);
+};
+
+template<int, typename>
+struct increase_by;
+
+template<int minimum, int... values>
+struct increase_by<minimum, std::integer_sequence<int, values...>> {
+	using type = std::integer_sequence<int, (values + minimum)...>;
+};
+
+template<int minimum, int maximum>
+using make_integer_sequence = typename increase_by<minimum, std::make_integer_sequence<int, maximum - minimum + 1>>::type;
+
+template<Generation generation>
+constexpr auto random_spite = []{
+	constexpr auto min_reduction = 2;
+	constexpr auto max_reduction = 5;
+	constexpr auto probability = 1.0 / double(max_reduction - min_reduction + 1);
+	auto result = SideEffects<generation>();
+	auto add_one = [&](auto const index) {
+		containers::push_back(result, SideEffect<generation>{probability, spite<generation, index.value()>});
+	};
+	auto add_all = [&]<int... indexes>(std::integer_sequence<int, indexes...>) {
+		(..., add_one(bounded::constant<indexes>));
+	};
+	add_all(make_integer_sequence<min_reduction, max_reduction>());
+	return result;
+}();
 
 template<Generation generation, int index>
 constexpr auto switch_effect = guaranteed_effect<generation>([](Team<generation> & user, Team<generation> & other, Weather & weather, auto) {
@@ -1537,18 +1577,27 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return no_effect<generation>;
 		case Moves::Snatch:
 			return no_effect<generation>;
-		case Moves::Spite:
-			switch (generation) {
-				case Generation::one:
-				case Generation::two:
-				case Generation::three:
-				case Generation::four:
-				default:
-					return guaranteed_effect<generation>([](auto &, auto & target, auto &, auto) {
-						static_cast<void>(target);
-					});
+		case Moves::Spite: {
+			auto const regular_move = last_move_if_regular(original_user);
+			if (!regular_move) {
+				return no_effect<generation>;
 			}
-			return no_effect<generation>;
+			auto const remaining_pp = regular_move->pp().remaining();
+			if (!remaining_pp or *remaining_pp == 0_bi) {
+				return no_effect<generation>;
+			}
+			switch (generation) {
+				case Generation::two:
+					return random_spite<generation>;
+				case Generation::three:
+					if (*remaining_pp == 1_bi) {
+						return no_effect<generation>;
+					}
+					return random_spite<generation>;
+				default:
+					return guaranteed_effect<generation>(spite<generation, 4>);
+			}
+		}
 		case Moves::Struggle:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto const damage) {
 				switch (generation) {

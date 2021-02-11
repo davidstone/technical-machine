@@ -32,8 +32,8 @@ struct Move {
 		return m_pp;
 	}
 
-	auto decrement_pp(bool const uses_extra_pp) & {
-		m_pp.reduce(BOUNDED_CONDITIONAL(uses_extra_pp, 2_bi, 1_bi));
+	auto reduce_pp(auto const value) & {
+		m_pp.reduce(value);
 	}
 
 	auto restore_pp(auto const value) & {

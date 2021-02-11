@@ -276,12 +276,6 @@ auto find_move(MoveContainer<generation> const container, Moves const move_name)
 	return *maybe_move;
 }
 
-auto find_regular_move(RegularMoves & moves, Moves const move_name) -> Move & {
-	auto const move_ptr = containers::maybe_find(moves, move_name);
-	BOUNDED_ASSERT_OR_ASSUME(move_ptr);
-	return *move_ptr;
-}
-
 constexpr auto blocked_by_protect(Target const target, Moves const move) {
 	switch (target) {
 		case Target::user:
@@ -336,7 +330,7 @@ constexpr auto fails_against_fainted(Target const target) {
 
 template<Generation generation>
 auto activate_pp_restore_berry(Move & move, MutableActivePokemon<generation> pokemon, Weather const weather) {
-	if (move.pp().is_empty()) {
+	if (no_pp(move.pp())) {
 		switch (pokemon.item(weather)) {
 			case Item::Leppa_Berry:
 				move.restore_pp(10_bi);
@@ -466,11 +460,11 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 	
 	auto const other_ability = other_pokemon.ability();
 
-	if (is_regular(move.selected) and move.executed != Moves::Hit_Self and !user_pokemon.last_used_move().is_locked_in_by_move()) {
-		auto & move_ref = find_regular_move(user_pokemon.regular_moves(), move.selected);
+	auto const regular_move = containers::maybe_find(user_pokemon.regular_moves(), move.selected);
+	if (regular_move and move.executed != Moves::Hit_Self and !user_pokemon.last_used_move().is_locked_in_by_move()) {
 		auto const uses_extra_pp = other_ability == Ability::Pressure;
-		move_ref.decrement_pp(uses_extra_pp);
-		activate_pp_restore_berry(move_ref, user_pokemon, weather);
+		regular_move->reduce_pp(BOUNDED_CONDITIONAL(uses_extra_pp, 2_bi, 1_bi));
+		activate_pp_restore_berry(*regular_move, user_pokemon, weather);
 	}
 	
 	// TODO: What happens if we Sleep Talk Trump Card?

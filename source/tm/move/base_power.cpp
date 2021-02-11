@@ -1391,7 +1391,15 @@ auto base_power(Team<generation> const & attacker_team, ExecutedMove<generation>
 		case Moves::Embargo: return 0_bi;
 		case Moves::Fling: return fling_power(attacker.item(weather));
 		case Moves::Psycho_Shift: return 0_bi;
-		case Moves::Trump_Card: return executed.pp.trump_card_power();
+		case Moves::Trump_Card:
+			// Safe to dereference because we know Trump Card is not unlimited
+			switch (executed.pp.remaining()->value()) {
+				case 0: return 200_bi;
+				case 1: return 80_bi;
+				case 2: return 60_bi;
+				case 3: return 50_bi;
+				default: return 40_bi;
+			}
 		case Moves::Heal_Block: return 0_bi;
 		case Moves::Power_Trick: return 0_bi;
 		case Moves::Gastro_Acid: return 0_bi;

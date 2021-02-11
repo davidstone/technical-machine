@@ -31,8 +31,8 @@ struct PP {
 	{
 	}
 
-	auto is_empty() const {
-		return m_current and *m_current == 0_bi;
+	auto remaining() const {
+		return m_current;
 	}
 
 	auto restore(auto const value) & {
@@ -41,27 +41,12 @@ struct PP {
 		*m_current = bounded::min(value, *m_max);
 	}
 
-	auto has_unlimited_pp() const {
-		return !m_max;
-	}
-
 	auto reduce(auto const value) & {
 		static_assert(bounded::min_value<decltype(value)> >= 0_bi);
-		if (has_unlimited_pp()) {
+		if (!m_current) {
 			return;
 		}
 		saturating_add(*m_current, -value);
-	}
-
-	auto trump_card_power() const -> bounded::integer<40, 200> {
-		// Should be safe because we assume we are using Trump Card
-		switch (m_current->value()) {
-			case 0: return 200_bi;
-			case 1: return 80_bi;
-			case 2: return 60_bi;
-			case 3: return 50_bi;
-			default: return 40_bi;
-		}
 	}
 
 	// Assumes max PP is the same because it assumes the same Move on the same
@@ -78,7 +63,6 @@ struct PP {
 
 private:
 	using base_type = bounded::integer<1, 40>;
-	
 	using max_type = bounded::integer<1, 64>;
 
 	static constexpr auto calculate_max(bounded::optional<base_type> const base, pp_ups_type const pp_ups) -> bounded::optional<max_type> {
@@ -98,4 +82,4 @@ private:
 	static auto base_pp(Generation const generation, Moves const move) -> bounded::optional<base_type>;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine
