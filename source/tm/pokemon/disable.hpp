@@ -17,9 +17,11 @@ using namespace bounded::literal;
 
 struct Disable {
 	auto activate(Moves const move) {
-		if (is_regular(move)) {
-			insert(m_disabled_move, move);
+		if (!is_regular(move)) {
+			return false;
 		}
+		insert(m_disabled_move, move);
+		return true;
 	}
 	constexpr auto move_is_disabled(Moves const move) const {
 		return m_disabled_move == move;

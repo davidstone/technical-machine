@@ -592,8 +592,9 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		this->m_flags.defense_curled = true;
 	}
 	auto disable(Moves const move, Weather const weather) const {
-		this->m_flags.disable.activate(move);
-		apply_own_mental_herb(*this, weather);
+		if (this->m_flags.disable.activate(move)) {
+			apply_own_mental_herb(*this, weather);
+		}
 	}
 	auto advance_disable() const {
 		this->m_flags.disable.advance_one_turn();
