@@ -182,6 +182,10 @@ constexpr auto thaw_and_burn_effect(double const probability, ActivePokemon<gene
 template<Generation generation, BoostableStat stat, int stages>
 constexpr auto confusing_stat_boost = guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
 	auto target = other.pokemon();
+	auto & stage = target.stage()[stat];
+	if (generation <= Generation::two and stage == bounded::max_value<Stage::value_type>) {
+		return;
+	}
 	target.stage()[stat] += bounded::constant<stages>;
 	target.confuse(weather);
 });
