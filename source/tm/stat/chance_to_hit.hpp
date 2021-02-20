@@ -9,6 +9,7 @@
 #include <tm/move/accuracy.hpp>
 #include <tm/move/category.hpp>
 #include <tm/move/known_move.hpp>
+#include <tm/move/moves.hpp>
 
 #include <tm/stat/stage.hpp>
 #include <tm/stat/stat_names.hpp>

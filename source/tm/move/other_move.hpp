@@ -8,6 +8,7 @@
 #include <tm/move/category.hpp>
 #include <tm/move/known_move.hpp>
 #include <tm/move/move.hpp>
+#include <tm/move/moves.hpp>
 #include <tm/type/type.hpp>
 
 #include <bounded/detail/variant/variant.hpp>

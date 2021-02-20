@@ -5,9 +5,25 @@
 
 #include <tm/move/pp.hpp>
 
-namespace technicalmachine {
+#include <tm/move/moves.hpp>
 
-auto PP::base_pp(Generation const generation, Moves const move) -> bounded::optional<base_type> {
+#include <type_traits>
+
+namespace technicalmachine {
+namespace {
+
+using base_type = bounded::integer<1, 40>;
+
+constexpr auto calculate_max(bounded::optional<base_type> const base, PP::pp_ups_type const pp_ups) -> bounded::optional<PP::max_type> {
+	if (!base) {
+		return bounded::none;
+	}
+	auto const result = *base * (pp_ups + 5_bi) / 5_bi;
+	static_assert(std::is_same_v<decltype(result), PP::max_type const>);
+	return result;
+}
+
+constexpr auto base_pp(Generation const generation, Moves const move) -> bounded::optional<base_type> {
 	using bounded::none;
 	switch (move) {
 		case Moves::Pass: return none;
@@ -756,5 +772,14 @@ auto PP::base_pp(Generation const generation, Moves const move) -> bounded::opti
 		case Moves::Double_Iron_Bash: return 5_bi;
 	}
 }
+
+} // namespace
+
+PP::PP(Generation const generation, Moves const move, pp_ups_type const pp_ups):
+	m_max(calculate_max(base_pp(generation, move), pp_ups)),
+	m_current(m_max ? bounded::optional<current_type>(*m_max) : bounded::none)
+{
+}
+
 
 } // namespace technicalmachine

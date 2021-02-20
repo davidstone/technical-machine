@@ -5,31 +5,26 @@
 
 #pragma once
 
-#include <tm/move/moves.hpp>
-
 #include <tm/compress.hpp>
 #include <tm/generation.hpp>
-#include <tm/operators.hpp>
 #include <tm/saturating_add.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 #include <bounded/optional.hpp>
 
-#include <utility>
+#include <cstdint>
 
 namespace technicalmachine {
+
+enum class Moves : std::uint16_t;
 
 using namespace bounded::literal;
 
 struct PP {
 	using pp_ups_type = bounded::integer<0, 3>;
 
-	PP(Generation const generation, Moves const move, pp_ups_type const pp_ups):
-		m_max(calculate_max(base_pp(generation, move), pp_ups)),
-		m_current(m_max ? bounded::optional<current_type>(*m_max) : bounded::none)
-	{
-	}
+	PP(Generation, Moves, pp_ups_type);
 
 	auto remaining() const {
 		return m_current;
@@ -61,25 +56,13 @@ struct PP {
 		return compress(value.m_current);
 	}
 
-private:
-	using base_type = bounded::integer<1, 40>;
 	using max_type = bounded::integer<1, 64>;
 
-	static constexpr auto calculate_max(bounded::optional<base_type> const base, pp_ups_type const pp_ups) -> bounded::optional<max_type> {
-		if (!base) {
-			return bounded::none;
-		}
-		auto const result = *base * (pp_ups + 5_bi) / 5_bi;
-		static_assert(std::is_same_v<decltype(result), max_type const>);
-		return result;
-	}
-
+private:
 	using current_type = bounded::integer<0, static_cast<int>(bounded::max_value<max_type>)>;
 	// TODO: Use optional<pair> instead of pair<optional>
 	bounded::optional<max_type> m_max;
 	bounded::optional<current_type> m_current;
-	
-	static auto base_pp(Generation const generation, Moves const move) -> bounded::optional<base_type>;
 };
 
 } // namespace technicalmachine

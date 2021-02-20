@@ -8,6 +8,7 @@
 #include <tm/type/pokemon_types.hpp>
 
 #include <tm/move/known_move.hpp>
+#include <tm/move/moves.hpp>
 
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>

@@ -9,6 +9,7 @@
 #include <tm/operators.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/move.hpp>
+#include <tm/move/moves.hpp>
 
 #include <bounded/optional.hpp>
 
