@@ -33,14 +33,14 @@ auto Sockets::make_connected_socket(std::string_view const host, std::string_vie
 	return socket;
 }
 
-auto Sockets::read_message() -> DelimitedBufferView<std::string_view> {
+auto Sockets::read_message() -> std::string_view {
 	m_buffer.consume(static_cast<std::size_t>(-1));
 	m_websocket.read(m_buffer);
 
 	auto const asio_buffer = m_buffer.data();
 	auto const sv = std::string_view(static_cast<char const *>(asio_buffer.data()), asio_buffer.size());
 
-	return {sv, '\n'};
+	return sv;
 }
 
 void Sockets::write_message(std::string_view const message) {

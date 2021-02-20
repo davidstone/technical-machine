@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include <tm/buffer_view.hpp>
-
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core.hpp>
@@ -24,7 +22,7 @@ struct Sockets {
 	Sockets(std::string_view host, std::string_view port, std::string_view resource);
 	Sockets(Sockets &&) = delete;
 
-	auto read_message() -> DelimitedBufferView<std::string_view>;
+	auto read_message() -> std::string_view;
 	void write_message(std::string_view message);
 	auto authenticate(std::string_view host, std::string_view port, http::request<http::string_body> const & request) -> http::response<http::string_body>;
 

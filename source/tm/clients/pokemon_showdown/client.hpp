@@ -16,6 +16,7 @@
 #include <tm/team_predictor/team_predictor.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
 
+#include <tm/buffer_view.hpp>
 #include <tm/load_team_from_file.hpp>
 #include <tm/settings_file.hpp>
 

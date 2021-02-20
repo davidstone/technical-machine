@@ -216,7 +216,7 @@ Client::Client(SettingsFile settings, DepthValues const depth):
 
 void Client::run() {
 	while (true) {
-		m_impl.run(m_sockets.read_message());
+		m_impl.run(DelimitedBufferView<std::string_view>(m_sockets.read_message(), '\n'));
 	}
 }
 
