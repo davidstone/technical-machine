@@ -16,7 +16,6 @@
 #include <tm/gender.hpp>
 #include <tm/generation.hpp>
 #include <tm/held_item.hpp>
-#include <tm/operators.hpp>
 #include <tm/status.hpp>
 #include <tm/weather.hpp>
 
@@ -24,7 +23,6 @@
 
 #include <tm/stat/combined_stats.hpp>
 #include <tm/stat/nature.hpp>
-#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stats.hpp>
 
 #include <bounded/assert.hpp>
@@ -35,62 +33,8 @@ namespace technicalmachine {
 
 template<Generation generation>
 struct Pokemon {
-	Pokemon(Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats<IVAndEV> stats, RegularMoves regular_moves_, Happiness const happiness = Happiness()):
-		m_regular_moves(regular_moves_),
-		m_stats(BaseStats(generation, species), stats, level),
-
-		m_species(species),
-		m_item(item),
-		m_ability(ability),
-		m_gender(gender),
-		m_nature(stats.nature),
-
-		m_level(level),
-
-		m_happiness(happiness),
-
-		// TODO: Make this none if there is no way to call Hidden Power
-		// TODO: Use the IVs provided
-		m_hidden_power([=]{
-			constexpr auto dv = DV(15_bi);
-			constexpr auto iv = IV(31_bi);
-			return generation <= Generation::two ?
-				HiddenPower(generation, DVs{dv, dv, dv, dv}) :
-				HiddenPower(generation, IVs{iv, iv, iv, iv, iv, iv});
-		}()),
-		
-		m_has_been_seen(false),
-
-		m_ability_is_known(true),
-		m_item_is_known(true),
-		m_nature_is_known(true)
-	{
-	}
-
-	Pokemon(Species const species, Level const level, Gender const gender) : 
-		Pokemon::Pokemon(
-			species,
-			level,
-			gender,
-			Item::None,
-			Ability::Honey_Gather,
-			CombinedStats<IVAndEV>{
-				Nature::Hardy,
-				{default_iv(generation), EV(0_bi)},
-				{default_iv(generation), EV(0_bi)},
-				{default_iv(generation), EV(0_bi)},
-				{default_iv(generation), EV(0_bi)},
-				{default_iv(generation), EV(0_bi)},
-				{default_iv(generation), EV(0_bi)},
-			},
-			RegularMoves(),
-			Happiness()
-		)
-	{
-		m_ability_is_known = false;
-		m_item_is_known = false;
-		m_nature_is_known = false;
-	}
+	Pokemon(Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats<IVAndEV> stats, RegularMoves regular_moves_, Happiness const happiness = Happiness());
+	Pokemon(Species const species, Level const level, Gender const gender);
 	
 	auto hp() const {
 		return m_stats.hp();
@@ -230,16 +174,7 @@ struct Pokemon {
 		return m_nature_is_known;
 	}
 
-	auto set_ev(PermanentStat const stat_name, IV const iv, EV const ev) -> void {
-		auto const base_stats = BaseStats(generation, species());
-		if (stat_name == PermanentStat::hp) {
-			m_stats.hp() = HP(base_stats, level(), iv, ev);
-		} else {
-			auto const regular = RegularStat(stat_name);
-			auto & stat = m_stats[regular];
-			stat = initial_stat(regular, base_stats[regular], nature(), iv, ev, level());
-		}
-	}
+	auto set_ev(PermanentStat const stat_name, IV const iv, EV const ev) -> void;
 
 	friend auto operator==(Pokemon, Pokemon) -> bool = default;
 	friend auto compress(Pokemon const value) {
