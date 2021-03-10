@@ -233,7 +233,7 @@ constexpr auto team_has_status(Team<generation> const & target, Statuses const s
 
 template<Generation generation>
 auto switch_decision_required(Team<generation> const & team) {
-	if (team.size() == 0_bi) {
+	if (team.size() == 1_bi) {
 		return false;
 	}
 	auto const pokemon = team.pokemon();
