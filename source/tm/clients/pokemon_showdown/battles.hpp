@@ -9,9 +9,9 @@
 #include <tm/clients/pokemon_showdown/battle_factory.hpp>
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
 
+#include <containers/algorithms/erase.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/emplace_back.hpp>
-#include <containers/erase.hpp>
 #include <containers/push_back.hpp>
 #include <containers/vector.hpp>
 

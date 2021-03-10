@@ -15,10 +15,10 @@
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
+#include <containers/algorithms/erase.hpp>
 #include <containers/algorithms/find.hpp>
 #include <containers/static_vector/static_vector.hpp>
 #include <containers/begin_end.hpp>
-#include <containers/erase.hpp>
 #include <containers/push_back.hpp>
 #include <containers/size.hpp>
 
