@@ -60,7 +60,7 @@ auto max_damage_physical_attacker(Item const item, Ability const ability) {
 			{IV(31_bi), EV(0_bi)},
 			{IV(31_bi), EV(0_bi)},
 		},
-		RegularMoves({Move(max_damage_physical_move())})
+		RegularMoves({max_damage_physical_move()})
 	));
 
 	auto pokemon = attacker.pokemon();
