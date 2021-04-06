@@ -21,6 +21,7 @@
 #include <containers/emplace_back.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/push_back.hpp>
+#include <containers/range_value_t.hpp>
 #include <containers/size.hpp>
 
 namespace technicalmachine {
@@ -183,7 +184,7 @@ template<Generation generation, BoostableStat stat, int stages>
 constexpr auto confusing_stat_boost = guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
 	auto target = other.pokemon();
 	auto & stage = target.stage()[stat];
-	if (generation <= Generation::two and stage == bounded::max_value<Stage::value_type>) {
+	if (generation <= Generation::two and stage == bounded::max_value<containers::range_value_t<Stage>>) {
 		return;
 	}
 	target.stage()[stat] += bounded::constant<stages>;
@@ -330,8 +331,8 @@ constexpr auto recover_half = [](auto & user, auto &, auto & weather, auto) {
 	heal(user.pokemon(), weather, rational(1_bi, 2_bi));
 };
 
-constexpr auto stat_can_boost = [](Stage::value_type const stage) {
-	return stage != bounded::max_value<Stage::value_type>;
+constexpr auto stat_can_boost = [](containers::range_value_t<Stage> const stage) {
+	return stage != bounded::max_value<containers::range_value_t<Stage>>;
 };
 
 template<auto...>
@@ -787,7 +788,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				swap_offensive(user.pokemon().stage(), other.pokemon().stage());
 			});
 		case Moves::Psych_Up:
-			return generation >= Generation::three or containers::any(original_other.pokemon().stage(), [](Stage::value_type const stage) { return stage != 0_bi; }) ?
+			return generation >= Generation::three or containers::any(original_other.pokemon().stage(), [](containers::range_value_t<Stage> const stage) { return stage != 0_bi; }) ?
 				guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
 					user.pokemon().stage() = other.pokemon().stage();
 				}) :
@@ -1385,7 +1386,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				} else {
 					auto & stat_stage = user_pokemon.stage();
 					if constexpr (generation == Generation::two) {
-						constexpr auto max = bounded::max_value<Stage::value_type>;
+						constexpr auto max = bounded::max_value<containers::range_value_t<Stage>>;
 						if (stat_stage[BoostableStat::atk] == max and stat_stage[BoostableStat::def] == max) {
 							return;
 						}

@@ -30,6 +30,7 @@
 #include <bounded/assert.hpp>
 
 #include <containers/algorithms/maybe_find.hpp>
+#include <containers/range_value_t.hpp>
 
 #include <utility>
 
@@ -111,7 +112,7 @@ auto activate_when_hit_item(KnownMove const move, MutableActivePokemon<generatio
 		}
 		return resistance_berry(resisted);
 	};
-	constexpr auto max_stage = bounded::max_value<Stage::value_type>;
+	constexpr auto max_stage = bounded::max_value<containers::range_value_t<Stage>>;
 	auto stat_boost = [&](BoostableStat const stat) {
 		auto & stage = defender.stage()[stat];
 		if (stage != max_stage and !substitute()) {

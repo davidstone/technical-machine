@@ -20,6 +20,7 @@
 #include <containers/static_vector/static_vector.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/push_back.hpp>
+#include <containers/range_value_t.hpp>
 #include <containers/size.hpp>
 
 #include <stdexcept>
@@ -30,7 +31,7 @@ using namespace bounded::literal;
 template<Generation generation>
 struct PokemonCollection {
 	using Container = containers::static_vector<Pokemon<generation>, max_pokemon_per_team.value()>;
-	using value_type = typename Container::value_type;
+	using value_type = containers::range_value_t<Container>;
 	using size_type = typename Container::size_type;
 	using const_iterator = typename Container::const_iterator;
 

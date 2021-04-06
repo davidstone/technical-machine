@@ -44,6 +44,7 @@
 #include <bounded/optional.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
+#include <containers/range_value_t.hpp>
 
 namespace technicalmachine {
 template<Generation generation>
@@ -1113,12 +1114,12 @@ void activate_ability_on_switch(MutableActivePokemon<generation> switcher, Mutab
 				break;
 			}
 			auto & attack = other.stage()[BoostableStat::atk];
-			if (attack == bounded::min_value<Stage::value_type>) {
+			if (attack == bounded::min_value<containers::range_value_t<Stage>>) {
 				break;
 			}
 			saturating_add(attack, -1_bi);
 			auto & speed = other.stage()[BoostableStat::spe];
-			if (other.item(weather) == Item::Adrenaline_Orb and speed != bounded::max_value<Stage::value_type>) {
+			if (other.item(weather) == Item::Adrenaline_Orb and speed != bounded::max_value<containers::range_value_t<Stage>>) {
 				saturating_add(speed, 1_bi);
 				other.remove_item();
 			}

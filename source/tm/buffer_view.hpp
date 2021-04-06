@@ -6,6 +6,7 @@
 #pragma once
 
 #include <containers/algorithms/find.hpp>
+#include <containers/range_value_t.hpp>
 
 #include <algorithm>
 #include <cstddef>
@@ -17,13 +18,13 @@ namespace detail {
 
 struct split_offsets {
 	template<typename View>
-	constexpr split_offsets(View const buffer, typename View::value_type const delimiter):
+	constexpr split_offsets(View const buffer, containers::range_value_t<View> const delimiter):
 		first(static_cast<std::size_t>(containers::find(buffer, delimiter) - buffer.begin())),
 		discard(1U)
 	{
 	}
 
-	template<typename View, typename Delimiter> requires std::is_same_v<typename View::value_type, typename Delimiter::value_type>
+	template<typename View, typename Delimiter> requires std::is_same_v<containers::range_value_t<View>, containers::range_value_t<Delimiter>>
 	constexpr split_offsets(View const buffer, Delimiter const delimiter):
 		first(static_cast<std::size_t>(std::search(buffer.begin(), buffer.end(), delimiter.begin(), delimiter.end()) - buffer.begin())),
 		discard(delimiter.size())
@@ -88,7 +89,7 @@ constexpr auto pop_to_delimiter(BufferView<View> & buffer_view, auto const delim
 	return result;
 }
 
-template<typename View, typename Delimiter = typename View::value_type>
+template<typename View, typename Delimiter = containers::range_value_t<View>>
 struct DelimitedBufferView {
 	static_assert(std::is_nothrow_copy_constructible_v<View>);
 
