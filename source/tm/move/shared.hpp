@@ -33,7 +33,7 @@ private:
 	>;
 public:
 	using value_type = Move const;
-	using difference_type = containers::basic_difference_type<SharedMoveSize>;
+	using difference_type = std::common_type_t<decltype(-std::declval<SharedMoveSize>()), SharedMoveSize>;
 	using pointer = value_type *;
 	using reference = value_type;
 	using iterator_category = std::random_access_iterator_tag;
