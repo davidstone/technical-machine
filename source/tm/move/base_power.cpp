@@ -1296,7 +1296,7 @@ auto base_power(Team<generation> const & attacker_team, ExecutedMove<generation>
 		case Moves::Endeavor: bounded::unreachable();
 		case Moves::Eruption:
 		case Moves::Water_Spout:
-			return bounded::integer<1, 150>(bounded::max(150_bi * hp_ratio(attacker), 1_bi), bounded::non_check);
+			return bounded::integer<1, 150>(bounded::max(150_bi * hp_ratio(attacker), 1_bi));
 		case Moves::Skill_Swap: return 0_bi;
 		case Moves::Imprison: return 0_bi;
 		case Moves::Refresh: return 0_bi;
@@ -1489,7 +1489,7 @@ auto base_power(Team<generation> const & attacker_team, ExecutedMove<generation>
 		case Moves::Lunar_Dance: return 0_bi;
 		case Moves::Crush_Grip:
 		case Moves::Wring_Out:
-			return bounded::integer<1, 121>(120_bi * hp_ratio(defender) + 1_bi, bounded::non_check);
+			return bounded::integer<1, 121>(120_bi * hp_ratio(defender) + 1_bi);
 		case Moves::Magma_Storm: return BOUNDED_CONDITIONAL(generation <= Generation::five, 120_bi, 100_bi);
 		case Moves::Dark_Void: return 0_bi;
 		case Moves::Seed_Flare: return 120_bi;

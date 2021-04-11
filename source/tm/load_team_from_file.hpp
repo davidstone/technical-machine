@@ -31,7 +31,7 @@ auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path con
 	}
 	auto const max = (containers::size(files) - 1_bi).value();
 	auto distribution = std::uniform_int_distribution(static_cast<decltype(max)>(0), max);
-	auto const file = containers::at(files, distribution(random_engine), bounded::non_check);
+	auto const file = containers::at(files, distribution(random_engine));
 
 	auto const extension = file.extension();
 	if (extension == ".tp") {
