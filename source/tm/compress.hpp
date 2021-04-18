@@ -52,7 +52,7 @@ constexpr auto compress(containers::range auto const & range) {
 	static_assert(bounded::min_value<single_value> == 0_bi);
 	constexpr auto base = bounded::max_value<single_value> + 1_bi;
 	constexpr auto max = bounded::pow(base, bounded::max_value<decltype(containers::size(range))>) - 1_bi;
-	using result_t = bounded::integer<0, bounded::normalize<max.value()>>;
+	using result_t = bounded::integer<0, bounded::normalize<max>>;
 	auto result = result_t(0_bi);
 	for (auto const & value : range) {
 		result = result_t(result.value() * base.value());

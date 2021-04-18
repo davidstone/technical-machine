@@ -26,7 +26,7 @@ using MoveSize = decltype(std::declval<RegularMoveSize>() + std::declval<SharedM
 
 using StaticVectorMove = containers::static_vector<
 	Moves,
-	bounded::detail::builtin_max_value<MoveSize>
+	bounded::builtin_max_value<MoveSize>
 >;
 
 }	// namespace technicalmachine

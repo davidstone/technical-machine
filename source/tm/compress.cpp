@@ -56,7 +56,7 @@ static_assert(equal(
 		integer<0, 255>(255),
 		integer<0, 255>(255)
 	),
-	integer<0, bounded::normalize<bounded::max_value<std::uint64_t>>>(bounded::max_value<std::uint64_t>)
+	integer(bounded::max_value<std::uint64_t>)
 ));
 
 static_assert(equal(
@@ -78,7 +78,7 @@ static_assert(equal(
 		integer<0, 255>(255),
 		integer<0, 255>(255)
 	),
-	integer<0, bounded::max_value<uint128_t>>(bounded::max_value<uint128_t>)
+	integer(bounded::max_value<uint128_t>)
 ));
 
 enum class Foo {

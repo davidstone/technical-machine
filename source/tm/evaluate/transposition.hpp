@@ -67,7 +67,7 @@ private:
 	template<std::size_t... indexes>
 	static constexpr auto hash(CompressedBattle<generation> const & compressed_battle, std::index_sequence<indexes...>) {
 		static_assert(bounded::pow(2_bi, bounded::log(size, 2_bi)) == size, "Size must be a power of 2");
-		auto result = bounded::integer<0, bounded::normalize<(size - 1_bi).value()>>(0_bi);
+		auto result = bounded::integer<0, bounded::normalize<size - 1_bi>>(0_bi);
 		(..., update_hash(result, compressed_battle[bounded::constant<indexes>]));
 		return result;
 	}
