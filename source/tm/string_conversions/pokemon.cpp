@@ -60,11 +60,12 @@ constexpr auto moves_separator = "\n\t- "sv;
 template<Generation generation>
 auto to_string(Pokemon<generation> const pokemon) -> containers::string {
 	// Boost.Format fails to compile with C++20, so we have to do this instead
+	auto const hp_str_full = std::to_string(100.0 * static_cast<double>(hp_ratio(pokemon)));
 	auto hp_to_string = [&] {
-		auto const buffer = std::to_string(100.0 * static_cast<double>(hp_ratio(pokemon)));
-		auto const it = containers::find(buffer, '.');
-		auto const last = (containers::end(buffer) - it <= 2) ? containers::end(buffer) : it + 2;
-		return containers::string(containers::range_view(containers::begin(buffer), last));
+		auto const pos = hp_str_full.find('.');
+		constexpr auto after_decimal = 2;
+		auto const size = (pos != std::string::npos and hp_str_full.size() - pos > after_decimal) ? pos + after_decimal : hp_str_full.size();
+		return std::string_view(hp_str_full.data(), size);
 	};
 
 	auto status_to_string = [&] {
