@@ -12,7 +12,6 @@
 #include <bounded/integer.hpp>
 
 #include <cstdint>
-#include <functional>
 #include <type_traits>
 
 namespace technicalmachine {
@@ -153,15 +152,3 @@ template<>
 inline constexpr auto max_value<technicalmachine::Nature> = technicalmachine::Nature::Timid;
 
 }	// namespace bounded
-namespace std {
-
-template<>
-struct hash<technicalmachine::Nature> {
-	auto operator()(technicalmachine::Nature const e) const {
-		using T = std::underlying_type_t<technicalmachine::Nature>;
-		return std::hash<T>{}(static_cast<T>(e));
-	}
-};
-
-}	// namespace std
-
