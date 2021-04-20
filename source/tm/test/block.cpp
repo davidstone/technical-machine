@@ -198,6 +198,82 @@ void test_two_moves_with_both_out_of_pp() {
 	}
 }
 
+void replace_fainted() {
+	auto weather = Weather{};
+	auto team = Team<generation>(2_bi, true);
+
+	team.add_pokemon(Pokemon<generation>(
+		Species::Slugma,
+		Level(100_bi),
+		Gender::male,
+		Item::Choice_Specs,
+		Ability::Magma_Armor,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		moves(Moves::Flamethrower)
+	));
+	team.pokemon().switch_in(weather);
+	team.add_pokemon(Pokemon<generation>(
+		Species::Zapdos,
+		Level(100_bi),
+		Gender::genderless,
+		Item::Choice_Specs,
+		Ability::Pressure,
+		CombinedStats<IVAndEV>{
+			Nature::Modest,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(252_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		moves(Moves::Thunderbolt)
+	));
+
+	team.reset_start_of_turn();
+
+	auto other = Team<generation>(1_bi);
+	other.add_pokemon(Pokemon<generation>(
+		Species::Suicune,
+		Level(100_bi),
+		Gender::genderless,
+		Item::Leftovers,
+		Ability::Pressure,
+		CombinedStats<IVAndEV>{
+			Nature::Hardy,
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+			{IV(31_bi), EV(0_bi)},
+		},
+		moves(Moves::Surf)
+	));
+	other.pokemon().switch_in(weather);
+
+	other.reset_start_of_turn();
+
+	team.pokemon().set_hp(weather, 0_bi);
+	
+	auto const expected = StaticVectorMove({Moves::Switch1});
+	auto const selections = legal_selections(team, other, weather);
+	if (!containers::equal(selections, expected)) {
+		for (auto const & move : selections) {
+			std::cerr << to_string(move) << '\n';
+		}
+		throw std::runtime_error("Invalid legal selections");
+	}
+}
+
 }	// namespace
 
 void block_tests() {
@@ -205,6 +281,7 @@ void block_tests() {
 	basic();
 	test_two_moves_with_one_out_of_pp();
 	test_two_moves_with_both_out_of_pp();
+	replace_fainted();
 }
 
 }	// namespace technicalmachine
