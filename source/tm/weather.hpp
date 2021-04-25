@@ -14,6 +14,8 @@
 #include <bounded/integer.hpp>
 #include <bounded/detail/variant/variant.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -41,7 +43,7 @@ enum class NormalWeather : std::uint8_t {
 };
 
 } // namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 inline constexpr auto min_value<technicalmachine::NormalWeather> = technicalmachine::NormalWeather::clear;
@@ -49,7 +51,7 @@ inline constexpr auto min_value<technicalmachine::NormalWeather> = technicalmach
 template<>
 inline constexpr auto max_value<technicalmachine::NormalWeather> = technicalmachine::NormalWeather::rain;
 
-} // namespace bounded
+} // namespace numeric_traits
 namespace technicalmachine {
 
 struct Weather {

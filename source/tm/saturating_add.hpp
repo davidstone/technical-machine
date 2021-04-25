@@ -8,13 +8,15 @@
 #include <bounded/integer.hpp>
 #include <bounded/clamp.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 namespace technicalmachine {
 
 using namespace bounded::literal;
 
 template<bounded::bounded_integer Integer>
 constexpr auto saturating_add(Integer & x, bounded::bounded_integer auto other) {
-	x = bounded::clamp(x + other, bounded::min_value<Integer>, bounded::max_value<Integer>);
+	x = bounded::clamp(x + other, numeric_traits::min_value<Integer>, numeric_traits::max_value<Integer>);
 }
 
 constexpr auto saturating_increment(bounded::bounded_integer auto & x) {

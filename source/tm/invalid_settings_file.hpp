@@ -7,6 +7,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <filesystem>
 #include <stdexcept>
 
@@ -23,7 +25,7 @@ struct InvalidSettingsFile : std::runtime_error {
 };
 
 }	// namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 inline constexpr auto min_value<technicalmachine::InvalidSettingsFile::Problem> = technicalmachine::InvalidSettingsFile::Problem();
@@ -31,4 +33,4 @@ inline constexpr auto min_value<technicalmachine::InvalidSettingsFile::Problem> 
 template<>
 inline constexpr auto max_value<technicalmachine::InvalidSettingsFile::Problem> = technicalmachine::InvalidSettingsFile::Problem::invalid_data;
 
-}	// namespace bounded
+}	// namespace numeric_traits

@@ -9,6 +9,8 @@
 #include <bounded/integer.hpp>
 #include <bounded/optional.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -38,7 +40,7 @@ enum class Type : std::uint8_t {
 };
 
 } // namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 inline constexpr auto min_value<technicalmachine::Type> = technicalmachine::Type();
@@ -46,7 +48,7 @@ inline constexpr auto min_value<technicalmachine::Type> = technicalmachine::Type
 template<>
 inline constexpr auto max_value<technicalmachine::Type> = technicalmachine::Type::Typeless;
 
-}	// namespace bounded
+}	// namespace numeric_traits
 namespace technicalmachine {
 
 // If `move` is Hidden Power, type must not be `none`

@@ -10,10 +10,13 @@
 #include <tm/rational.hpp>
 
 #include <bounded/integer.hpp>
+
 #include <containers/array/array.hpp>
 #include <containers/array/make_array.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/size.hpp>
+
+#include <numeric_traits/min_max_value.hpp>
 
 namespace technicalmachine {
 
@@ -23,7 +26,7 @@ struct Stage {
 	using value_type = bounded::integer<-6, 6>;
 	using boost_type = bounded::integer<-3, 12>;
 	static constexpr auto number_of_stats =
-		bounded::constant<static_cast<int>(bounded::max_value<BoostableStat>) - static_cast<int>(bounded::min_value<BoostableStat>) + 1>;
+		bounded::constant<static_cast<int>(numeric_traits::max_value<BoostableStat>) - static_cast<int>(numeric_traits::min_value<BoostableStat>) + 1>;
 	using size_type = std::remove_const_t<decltype(number_of_stats)>;
 	using container_type = containers::array<value_type, number_of_stats.value()>;
 

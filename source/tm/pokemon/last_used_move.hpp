@@ -22,6 +22,8 @@
 #include <bounded/integer.hpp>
 #include <bounded/detail/variant/variant.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 namespace technicalmachine {
 
 using namespace bounded::literal;
@@ -103,8 +105,8 @@ struct LastUsedMove {
 
 	constexpr auto momentum_move_power() const {
 		auto const result = 30_bi << bounded::min(m_consecutive_successes, 4_bi);
-		static_assert(bounded::min_value<decltype(result)> == 30_bi);
-		static_assert(bounded::max_value<decltype(result)> == 480_bi);
+		static_assert(numeric_traits::min_value<decltype(result)> == 30_bi);
+		static_assert(numeric_traits::max_value<decltype(result)> == 480_bi);
 		return result;
 	}
 
@@ -128,8 +130,8 @@ struct LastUsedMove {
 
 	constexpr auto triple_kick_power() const {
 		auto const result = 10_bi * bounded::min(m_consecutive_successes + 1_bi, 3_bi);
-		static_assert(bounded::min_value<decltype(result)> == 10_bi);
-		static_assert(bounded::max_value<decltype(result)> == 30_bi);
+		static_assert(numeric_traits::min_value<decltype(result)> == 10_bi);
+		static_assert(numeric_traits::max_value<decltype(result)> == 30_bi);
 		return result;
 	}
 

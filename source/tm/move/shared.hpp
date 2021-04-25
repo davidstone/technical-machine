@@ -17,6 +17,8 @@
 
 #include <containers/begin_end.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <operators/operators.hpp>
 
 namespace technicalmachine {
@@ -29,7 +31,7 @@ struct SharedMovesIterator {
 private:
 	using underlying_index_type = bounded::integer<
 		0,
-		static_cast<int>(bounded::max_value<SharedMoveSize>)
+		static_cast<int>(numeric_traits::max_value<SharedMoveSize>)
 	>;
 public:
 	using value_type = Move const;
@@ -46,7 +48,7 @@ public:
 	auto operator*() const -> value_type {
 		using switch_index_type = bounded::integer<
 			static_cast<int>(number_of_weird_moves),
-			static_cast<int>(bounded::max_value<SharedMoveSize>) - 1
+			static_cast<int>(numeric_traits::max_value<SharedMoveSize>) - 1
 		>;
 		static_assert(number_of_weird_moves == 2_bi, "Add the extra 'weird' move here.");
 		auto const move_name = 

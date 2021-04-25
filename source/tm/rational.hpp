@@ -10,6 +10,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <limits>
 #include <string>
 
@@ -39,10 +41,10 @@ public:
 	}
 	
 	template<typename N, typename D> requires(
-		bounded::min_value<N> >= bounded::min_value<Numerator> and
-		bounded::max_value<N> <= bounded::max_value<Numerator> and
-		bounded::min_value<D> >= bounded::min_value<Denominator> and
-		bounded::max_value<D> <= bounded::max_value<Denominator>
+		numeric_traits::min_value<N> >= numeric_traits::min_value<Numerator> and
+		numeric_traits::max_value<N> <= numeric_traits::max_value<Numerator> and
+		numeric_traits::min_value<D> >= numeric_traits::min_value<Denominator> and
+		numeric_traits::max_value<D> <= numeric_traits::max_value<Denominator>
 	)
 	constexpr rational(rational<N, D> const other):
 		m_numerator(other.numerator()),

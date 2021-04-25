@@ -35,6 +35,8 @@
 #include <containers/begin_end.hpp>
 #include <containers/index_type.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <iostream>
 #include <limits>
 #include <random>
@@ -552,7 +554,7 @@ struct BattleParserImpl : BattleParser {
 		} else if (type == "-transform") {
 			// message.remainder() == POKEMON|SPECIES
 		} else if (type == "turn") {
-			auto const turn = bounded::to_integer<0, bounded::max_value<std::uint32_t>>(message.pop());
+			auto const turn = bounded::to_integer<0, numeric_traits::max_value<std::uint32_t>>(message.pop());
 			m_analysis_logger << std::string(20, '=') << "\nBegin turn " << turn << '\n';
 			m_battle.handle_begin_turn();
 			send_move(determine_action());

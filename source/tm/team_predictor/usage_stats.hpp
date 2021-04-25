@@ -17,6 +17,8 @@
 #include <containers/legacy_iterator.hpp>
 #include <containers/static_vector/static_vector.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <algorithm>
 #include <filesystem>
 
@@ -63,7 +65,7 @@ struct AllUsageStats {
 		return m_all_stats[bounded::integer(generation) - 1_bi];
 	}
 private:
-	// static_cast<unsigned>(bounded::max_value<Generation>)
+	// static_cast<unsigned>(numeric_traits::max_value<Generation>)
 	containers::array<UsageStats, 7> m_all_stats;
 };
 

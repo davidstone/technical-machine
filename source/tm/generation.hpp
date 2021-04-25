@@ -7,6 +7,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -23,7 +25,7 @@ enum class Generation : std::uint8_t {
 };
 
 } // namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 inline constexpr auto min_value<technicalmachine::Generation> = technicalmachine::Generation::one;
@@ -31,4 +33,4 @@ inline constexpr auto min_value<technicalmachine::Generation> = technicalmachine
 template<>
 inline constexpr auto max_value<technicalmachine::Generation> = technicalmachine::Generation::eight;
 
-}	// namespace bounded
+}	// namespace numeric_traits

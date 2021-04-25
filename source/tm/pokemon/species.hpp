@@ -9,6 +9,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -893,7 +895,7 @@ enum class Species : uint16_t {
 constexpr auto number_of_species = static_cast<unsigned>(Species::Marowak_Alolan) + 1;
 
 }	// namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 inline constexpr auto min_value<technicalmachine::Species> = technicalmachine::Species();
@@ -901,4 +903,4 @@ inline constexpr auto min_value<technicalmachine::Species> = technicalmachine::S
 template<>
 inline constexpr auto max_value<technicalmachine::Species> = technicalmachine::Species::Marowak_Alolan;
 
-} // namespace bounded
+} // namespace numeric_traits

@@ -17,6 +17,8 @@
 
 #include <bounded/to_integer.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <string_view>
 
 namespace technicalmachine {
@@ -86,7 +88,7 @@ constexpr auto parse_shiny(std::string_view const str) {
 template<typename T>
 auto parse_integer_wrapper(std::string_view const str) {
 	using integer = typename T::value_type;
-	return T(str.empty() ? bounded::max_value<integer> : bounded::to_integer<integer>(str));
+	return T(str.empty() ? numeric_traits::max_value<integer> : bounded::to_integer<integer>(str));
 }
 
 template<Generation generation>

@@ -7,6 +7,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -774,7 +776,7 @@ enum class Item : std::uint16_t {
 };
 
 } // namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 inline constexpr auto min_value<technicalmachine::Item> = technicalmachine::Item();
@@ -782,7 +784,7 @@ inline constexpr auto min_value<technicalmachine::Item> = technicalmachine::Item
 template<>
 inline constexpr auto max_value<technicalmachine::Item> = technicalmachine::Item::Utility_Umbrella;
 
-}	// namespace bounded
+}	// namespace numeric_traits
 namespace technicalmachine {
 
 constexpr bool allows_switching(Item const item) {

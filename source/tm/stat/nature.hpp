@@ -11,6 +11,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <cstdint>
 #include <type_traits>
 
@@ -143,7 +145,7 @@ constexpr auto boost(Nature const nature, RegularStat const stat) {
 }
 
 }	// namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 inline constexpr auto min_value<technicalmachine::Nature> = technicalmachine::Nature();
@@ -151,4 +153,4 @@ inline constexpr auto min_value<technicalmachine::Nature> = technicalmachine::Na
 template<>
 inline constexpr auto max_value<technicalmachine::Nature> = technicalmachine::Nature::Timid;
 
-}	// namespace bounded
+}	// namespace numeric_traits

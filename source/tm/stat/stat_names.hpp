@@ -8,6 +8,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 namespace technicalmachine {
 
 // All three of these can convert to each other
@@ -60,7 +62,7 @@ constexpr auto && index_stat(auto && stats, RegularStat const index) {
 }
 
 }	// namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 inline constexpr auto min_value<technicalmachine::BoostableStat> = technicalmachine::BoostableStat::atk;
@@ -80,4 +82,4 @@ inline constexpr auto min_value<technicalmachine::RegularStat> = technicalmachin
 template<>
 inline constexpr auto max_value<technicalmachine::RegularStat> = technicalmachine::RegularStat::spe;
 
-}	// namespace bounded
+}	// namespace numeric_traits

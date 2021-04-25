@@ -7,6 +7,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -286,7 +288,7 @@ enum class Ability : std::uint16_t {
 };
 
 } // namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 inline constexpr auto min_value<technicalmachine::Ability> = technicalmachine::Ability();
@@ -294,7 +296,7 @@ inline constexpr auto min_value<technicalmachine::Ability> = technicalmachine::A
 template<>
 inline constexpr auto max_value<technicalmachine::Ability> = technicalmachine::Ability::Hunger_Switch;
 
-}	// namespace bounded
+}	// namespace numeric_traits
 namespace technicalmachine {
 
 constexpr bool blocks_confusion(Ability const ability) {

@@ -14,6 +14,8 @@
 #include <bounded/assert.hpp>
 #include <bounded/detail/overload.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -88,7 +90,7 @@ constexpr auto non_early_bird_probability(Generation const generation, SleepCoun
 	auto const adjusted_turns = BOUNDED_CONDITIONAL(generation == Generation::one, turns_slept - 1_bi, turns_slept);
 	return (adjusted_turns == 0_bi) ?
 		0.0 :
-		1.0 / static_cast<double>(bounded::max_value<SleepCounter> + 1_bi - adjusted_turns);
+		1.0 / static_cast<double>(numeric_traits::max_value<SleepCounter> + 1_bi - adjusted_turns);
 }
 
 constexpr auto awaken_probability(Generation const generation, SleepCounter const turns_slept, Ability const ability) {
@@ -100,7 +102,7 @@ constexpr auto awaken_probability(Generation const generation, SleepCounter cons
 
 // TODO: Make sure this is accurate with Early Bird
 constexpr auto rest_awaken_probability(Generation const generation, bounded::integer<0, 2> const turns_slept) {
-	auto const max_duration = BOUNDED_CONDITIONAL(generation == Generation::one, 1_bi, bounded::max_value<decltype(turns_slept)>);
+	auto const max_duration = BOUNDED_CONDITIONAL(generation == Generation::one, 1_bi, numeric_traits::max_value<decltype(turns_slept)>);
 	return turns_slept == max_duration ? 1.0 : 0.0;
 }
 

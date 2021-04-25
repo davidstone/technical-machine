@@ -10,6 +10,8 @@
 #include <containers/front_back.hpp>
 #include <containers/integer_range.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <initializer_list>
 #include <iostream>
 #include <random>
@@ -19,7 +21,7 @@ namespace ps {
 namespace {
 
 void validate_indexes(SlotMemory const & slot_memory, std::initializer_list<SlotMemory::Index> test) {
-	auto integer = bounded::integer<0, static_cast<int>(bounded::max_value<TeamIndex> + 1_bi)>(0_bi);
+	auto integer = bounded::integer<0, static_cast<int>(numeric_traits::max_value<TeamIndex> + 1_bi)>(0_bi);
 	for (auto const & expected : test) {
 		if (slot_memory[TeamIndex(integer)] != expected) {
 			std::terminate();
@@ -35,7 +37,7 @@ void validate_indexes(SlotMemory const & slot_memory, std::initializer_list<Slot
 
 template<typename T>
 auto make_distribution() {
-	return std::uniform_int_distribution<int>(bounded::min_value<T>.value(), bounded::max_value<T>.value());
+	return std::uniform_int_distribution<int>(numeric_traits::min_value<T>.value(), numeric_traits::max_value<T>.value());
 }
 
 void fuzz(auto const iterations) {

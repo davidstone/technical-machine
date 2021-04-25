@@ -17,20 +17,19 @@
 #include <containers/is_range.hpp>
 #include <containers/size.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 namespace technicalmachine {
 
 using namespace bounded::literal;
 
 template<typename T>
-concept explicitly_convertible_to_integer = requires {
-	requires !std::is_same_v<decltype(bounded::min_value<T>), bounded::detail::incomplete>;
-	requires !std::is_same_v<decltype(bounded::max_value<T>), bounded::detail::incomplete>;
-};
+concept explicitly_convertible_to_integer = numeric_traits::has_min_value<T> and numeric_traits::has_max_value<T>;
 
 // Returns an integer with a min value of 0.
 constexpr auto compress(explicitly_convertible_to_integer auto const value) {
 	auto const temp = bounded::integer(value);
-	return temp - bounded::min_value<decltype(temp)>;
+	return temp - numeric_traits::min_value<decltype(temp)>;
 }
 
 template<typename T>
@@ -43,15 +42,15 @@ constexpr auto compress(bounded::variant<Ts...> const & variant) {
 	using common = std::common_type_t<decltype(compress(std::declval<Ts>()))...>;
 	auto const index = variant.index();
 	return bounded::visit(variant, [=](auto const & value) {
-		return index + (bounded::max_value<decltype(index)> + 1_bi) * common(compress(value));
+		return index + (numeric_traits::max_value<decltype(index)> + 1_bi) * common(compress(value));
 	});
 }
 
 constexpr auto compress(containers::range auto const & range) {
 	using single_value = decltype(compress(containers::front(range)));
-	static_assert(bounded::min_value<single_value> == 0_bi);
-	constexpr auto base = bounded::max_value<single_value> + 1_bi;
-	constexpr auto max = bounded::pow(base, bounded::max_value<decltype(containers::size(range))>) - 1_bi;
+	static_assert(numeric_traits::min_value<single_value> == 0_bi);
+	constexpr auto base = numeric_traits::max_value<single_value> + 1_bi;
+	constexpr auto max = bounded::pow(base, numeric_traits::max_value<decltype(containers::size(range))>) - 1_bi;
 	using result_t = bounded::integer<0, bounded::normalize<max>>;
 	auto result = result_t(0_bi);
 	for (auto const & value : range) {
@@ -66,7 +65,7 @@ namespace compress_detail {
 constexpr auto operator->*(auto const & lhs, auto const & rhs) {
 	auto const compressed_lhs = compress(lhs);
 	auto const compressed_rhs = compress(rhs);
-	return compressed_lhs * (bounded::max_value<decltype(compressed_rhs)> + 1_bi) + compressed_rhs;
+	return compressed_lhs * (numeric_traits::max_value<decltype(compressed_rhs)> + 1_bi) + compressed_rhs;
 }
 
 } // namespace compress_detail

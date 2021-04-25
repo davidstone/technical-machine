@@ -13,6 +13,8 @@
 
 #include <bounded/optional.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -33,7 +35,7 @@ struct Disable {
 			return;
 		}
 		// TODO: update with proper probability actions
-		if (m_turns_disabled < bounded::max_value<TurnCount>) {
+		if (m_turns_disabled < numeric_traits::max_value<TurnCount>) {
 			++m_turns_disabled;
 		} else {
 			*this = Disable{};

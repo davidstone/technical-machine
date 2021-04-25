@@ -18,6 +18,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <cstdint>
 #include <string>
 #include <utility>
@@ -48,7 +50,7 @@ Item id_to_item(ItemID id);
 ItemID item_to_id(Item item);
 Item battle_id_to_item(uint16_t id, uint8_t part);
 
-using MoveID = bounded::integer<1, static_cast<int>(bounded::constant<bounded::max_value<Moves>> - bounded::integer(Moves::Regular_Begin) + 1_bi)>;
+using MoveID = bounded::integer<1, static_cast<int>(bounded::constant<numeric_traits::max_value<Moves>> - bounded::integer(Moves::Regular_Begin) + 1_bi)>;
 Moves id_to_move(MoveID id);
 MoveID move_to_id(Moves move);
 

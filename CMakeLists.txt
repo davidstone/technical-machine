@@ -28,7 +28,13 @@ target_include_directories(boost SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
 
 enable_testing()
 
-add_subdirectory(bounded-integer)
+get_directory_property(has_parent PARENT_DIRECTORY)
+if (NOT has_parent)
+	add_subdirectory(cmake_strict_defaults)
+	add_subdirectory(numeric-traits)
+	add_subdirectory(operators)
+	add_subdirectory(bounded-integer)
+endif()
 
 # TODO: This should be an object library, but they do not really work yet.
 add_library(tm_common STATIC

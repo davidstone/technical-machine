@@ -25,6 +25,8 @@
 #include <containers/take.hpp>
 #include <containers/vector.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <boost/lexical_cast.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -252,7 +254,7 @@ AllUsageStats::AllUsageStats():
 		// stats_for_generation(Generation::eight)
 	}
 {
-	static_assert(bounded::max_value<Generation> == Generation::eight);
+	static_assert(numeric_traits::max_value<Generation> == Generation::eight);
 }
 
 } // namespace technicalmachine

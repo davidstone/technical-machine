@@ -23,6 +23,8 @@
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/string.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <cstdint>
 #include <stdexcept>
 #include <string>
@@ -550,7 +552,7 @@ Species id_to_species(SpeciesIDs const species) {
 		case 477: return Species::Dusknoir;
 		case 478: return Species::Froslass;
 		case 479:
-			static_assert(bounded::max_value<decltype(species.forme)> <= 5_bi);
+			static_assert(numeric_traits::max_value<decltype(species.forme)> <= 5_bi);
 			switch (species.forme.value()) {
 				case 0: return Species::Rotom;
 				case 1: return Species::Rotom_Mow;
@@ -586,7 +588,7 @@ Species id_to_species(SpeciesIDs const species) {
 		case 493: return Species::Arceus;
 		
 		default: {
-			static_assert(bounded::max_value<decltype(species.id)> == 493);
+			static_assert(numeric_traits::max_value<decltype(species.id)> == 493);
 			bounded::unreachable();
 		}
 	}
@@ -1261,7 +1263,7 @@ Ability id_to_ability(AbilityID const id) {
 		case 122: return Ability::Flower_Gift;
 		case 123: return Ability::Bad_Dreams;
 		default: {
-			static_assert(bounded::max_value<decltype(id)> == 123);
+			static_assert(numeric_traits::max_value<decltype(id)> == 123);
 			bounded::unreachable();
 		}
 	}
@@ -1464,7 +1466,7 @@ Gender id_to_gender(GenderID const id) {
 		case 1: return Gender::male;
 		case 2: return Gender::female;
 		default: {
-			static_assert(bounded::max_value<decltype(id)> == 2);
+			static_assert(numeric_traits::max_value<decltype(id)> == 2);
 			bounded::unreachable();
 		}
 	}
@@ -1708,7 +1710,7 @@ Item id_to_item(ItemID const id) {
 		case 225: return Item::Steel_Mail;
 		case 226: return Item::Tunnel_Mail;
 		default: {
-			static_assert(bounded::max_value<decltype(id)> == 226);
+			static_assert(numeric_traits::max_value<decltype(id)> == 226);
 			bounded::unreachable();
 		}
 	}
@@ -2004,7 +2006,7 @@ Nature id_to_nature(NatureID const id) {
 		case 23: return Nature::Careful;
 		case 24: return Nature::Quirky;
 		default: {
-			static_assert(bounded::max_value<decltype(id)> == 24);
+			static_assert(numeric_traits::max_value<decltype(id)> == 24);
 			bounded::unreachable();
 		}
 	}

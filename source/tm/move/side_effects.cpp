@@ -24,6 +24,8 @@
 #include <containers/range_value_t.hpp>
 #include <containers/size.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -66,7 +68,7 @@ constexpr auto absorb_effect = guaranteed_effect<generation>([](auto & user, aut
 
 template<typename Denominator>
 struct RecoilEffect {
-	static_assert(bounded::min_value<Denominator> == bounded::max_value<Denominator>);
+	static_assert(numeric_traits::min_value<Denominator> == numeric_traits::max_value<Denominator>);
 
 	RecoilEffect() = default;
 	constexpr explicit RecoilEffect(Denominator denominator):
@@ -184,7 +186,7 @@ template<Generation generation, BoostableStat stat, int stages>
 constexpr auto confusing_stat_boost = guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
 	auto target = other.pokemon();
 	auto & stage = target.stage()[stat];
-	if (generation <= Generation::two and stage == bounded::max_value<containers::range_value_t<Stage>>) {
+	if (generation <= Generation::two and stage == numeric_traits::max_value<containers::range_value_t<Stage>>) {
 		return;
 	}
 	target.stage()[stat] += bounded::constant<stages>;
@@ -332,7 +334,7 @@ constexpr auto recover_half = [](auto & user, auto &, auto & weather, auto) {
 };
 
 constexpr auto stat_can_boost = [](containers::range_value_t<Stage> const stage) {
-	return stage != bounded::max_value<containers::range_value_t<Stage>>;
+	return stage != numeric_traits::max_value<containers::range_value_t<Stage>>;
 };
 
 template<auto...>
@@ -395,7 +397,7 @@ constexpr auto phaze_effect(Team<generation> const & target) {
 	auto add_all = [&]<std::size_t... indexes>(std::index_sequence<indexes...>) {
 		(..., add_one(bounded::constant<indexes>));
 	};
-	add_all(std::make_index_sequence<bounded::max_value<TeamSize>.value()>());
+	add_all(std::make_index_sequence<numeric_traits::max_value<TeamSize>.value()>());
 	return result;
 }
 
@@ -1386,7 +1388,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				} else {
 					auto & stat_stage = user_pokemon.stage();
 					if constexpr (generation == Generation::two) {
-						constexpr auto max = bounded::max_value<containers::range_value_t<Stage>>;
+						constexpr auto max = numeric_traits::max_value<containers::range_value_t<Stage>>;
 						if (stat_stage[BoostableStat::atk] == max and stat_stage[BoostableStat::def] == max) {
 							return;
 						}

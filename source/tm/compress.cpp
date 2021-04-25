@@ -7,6 +7,8 @@
 
 #include <containers/array/array.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 namespace technicalmachine {
 namespace {
 
@@ -56,7 +58,7 @@ static_assert(equal(
 		integer<0, 255>(255),
 		integer<0, 255>(255)
 	),
-	integer(bounded::max_value<std::uint64_t>)
+	integer(numeric_traits::max_value<std::uint64_t>)
 ));
 
 static_assert(equal(
@@ -78,7 +80,7 @@ static_assert(equal(
 		integer<0, 255>(255),
 		integer<0, 255>(255)
 	),
-	integer(bounded::max_value<uint128_t>)
+	integer(numeric_traits::max_value<uint128_t>)
 ));
 
 enum class Foo {
@@ -88,14 +90,14 @@ enum class Foo {
 
 } // namespace
 } // namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 constexpr auto min_value<technicalmachine::Foo> = technicalmachine::Foo::a;
 template<>
 constexpr auto max_value<technicalmachine::Foo> = technicalmachine::Foo::b;
 
-} // namespace bounded
+} // namespace numeric_traits
 namespace technicalmachine {
 namespace {
 

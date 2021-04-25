@@ -23,6 +23,8 @@
 #include <containers/algorithms/filter_iterator.hpp>
 #include <containers/algorithms/transform.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -143,7 +145,7 @@ private:
 
 // 100% chance to win
 template<Generation generation>
-inline constexpr auto victory = double(bounded::max_value<decltype(std::declval<Evaluate<generation>>()(std::declval<Team<generation>>(), std::declval<Team<generation>>()))> + 1_bi);
+inline constexpr auto victory = double(numeric_traits::max_value<decltype(std::declval<Evaluate<generation>>()(std::declval<Team<generation>>(), std::declval<Team<generation>>()))> + 1_bi);
 
 // Returns victory if the battle is won. Returns -victory if the battle is
 // lost. Returns 0 otherwise.

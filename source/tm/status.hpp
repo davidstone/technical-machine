@@ -16,6 +16,8 @@
 #include <bounded/integer.hpp>
 #include <bounded/detail/variant/variant.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -34,7 +36,7 @@ enum class Statuses : uint8_t {
 };
 
 }	// namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 inline constexpr auto min_value<technicalmachine::Statuses> = technicalmachine::Statuses();
@@ -42,7 +44,7 @@ inline constexpr auto min_value<technicalmachine::Statuses> = technicalmachine::
 template<>
 inline constexpr auto max_value<technicalmachine::Statuses> = technicalmachine::Statuses::rest;
 
-}	// namespace bounded
+}	// namespace numeric_traits
 namespace technicalmachine {
 
 struct Status {

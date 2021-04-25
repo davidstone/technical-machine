@@ -8,6 +8,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -15,7 +17,7 @@ namespace technicalmachine {
 enum class Gender : uint8_t { female, genderless, male };
 
 } // namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 inline constexpr auto min_value<technicalmachine::Gender> = technicalmachine::Gender();
@@ -23,7 +25,7 @@ inline constexpr auto min_value<technicalmachine::Gender> = technicalmachine::Ge
 template<>
 inline constexpr auto max_value<technicalmachine::Gender> = technicalmachine::Gender::male;
 
-}	// namespace bounded
+}	// namespace numeric_traits
 namespace technicalmachine {
 
 using namespace bounded::literal;

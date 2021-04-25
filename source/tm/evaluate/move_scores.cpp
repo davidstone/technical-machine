@@ -15,6 +15,8 @@
 #include <containers/algorithms/sort.hpp>
 #include <containers/algorithms/transform.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 namespace technicalmachine {
 
 MoveScores::MoveScores(Generation const generation, StaticVectorMove const legal_selections, bool const ai):
@@ -42,7 +44,7 @@ void MoveScores::set(Moves const move_name, double const score) {
 }
 
 auto MoveScores::ordered_moves(bool const ai) const -> StaticVectorMove {
-	auto intermediate = containers::static_vector<value_type, static_cast<int>(bounded::max_value<MoveSize>)>(m_scores);
+	auto intermediate = containers::static_vector<value_type, static_cast<int>(numeric_traits::max_value<MoveSize>)>(m_scores);
 	auto compare = [=](value_type const lhs, value_type const rhs) {
 		return ai ? lhs.score > rhs.score : lhs.score < rhs.score;
 	};

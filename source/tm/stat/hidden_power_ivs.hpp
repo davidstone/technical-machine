@@ -15,6 +15,8 @@
 #include <bounded/detail/conditional.hpp>
 #include <bounded/optional.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <stdexcept>
 
 namespace technicalmachine {
@@ -151,8 +153,8 @@ constexpr auto hidden_power_ivs(bounded::optional<Type> const type, bool const h
 	auto const even = has_physical_move ? max_even : min_even;
 	auto const odd = has_physical_move ? max_odd : min_odd;
 	if (!type) {
-		constexpr auto min = IV(bounded::min_value<IV::value_type>);
-		constexpr auto max = IV(bounded::max_value<IV::value_type>);
+		constexpr auto min = IV(numeric_traits::min_value<IV::value_type>);
+		constexpr auto max = IV(numeric_traits::max_value<IV::value_type>);
 		return IVs{
 			max, // HP
 			has_physical_move ? max : min, // Atk

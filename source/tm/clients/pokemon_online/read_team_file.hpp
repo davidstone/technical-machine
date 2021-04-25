@@ -13,6 +13,8 @@
 
 #include <containers/integer_range.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <operators/arrow.hpp>
 
 #include <boost/property_tree/ptree.hpp>
@@ -60,7 +62,7 @@ inline auto number_of_pokemon(boost::property_tree::ptree const & pt) -> TeamSiz
 	auto pokemon_count = TeamSize(0_bi);
 	for (auto const & value : pt) {
 		if (value.first == "Pokemon" and load_species(value.second)) {
-			if (pokemon_count == bounded::max_value<TeamSize>) {
+			if (pokemon_count == numeric_traits::max_value<TeamSize>) {
 				throw std::runtime_error("Attempted to add too many Pokemon");
 			}
 			++pokemon_count;
@@ -78,7 +80,7 @@ inline auto load_moves(Generation const generation, CheckedIterator it) {
 	for (auto const n [[maybe_unused]] : containers::integer_range(4_bi)) {
 		auto const & value = it.advance("Move");
 		// TODO: return optional
-		using ReadMoveID = bounded::integer<0, static_cast<int>(bounded::max_value<MoveID>)>;
+		using ReadMoveID = bounded::integer<0, static_cast<int>(numeric_traits::max_value<MoveID>)>;
 		auto const move_id = value.get_value<ReadMoveID>();
 		if (move_id != 0_bi) {
 			moves.push_back(Move(generation, id_to_move(MoveID(move_id))));

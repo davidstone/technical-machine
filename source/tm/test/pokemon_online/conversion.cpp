@@ -21,6 +21,8 @@
 
 #include <containers/integer_range.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <iostream>
 
 namespace technicalmachine {
@@ -68,10 +70,10 @@ void test_move() {
 void test_conversions () {
 	std::cout << "\tRunning Pokemon Online conversion tests.\n";
 	test_enum("Ability", ability_to_id, id_to_ability, Ability::Bad_Dreams);
-	test_enum("Gender", gender_to_id, id_to_gender, bounded::max_value<Gender>);
+	test_enum("Gender", gender_to_id, id_to_gender, numeric_traits::max_value<Gender>);
 	test_item();
 	test_move();
-	test_enum("Nature", nature_to_id, id_to_nature, bounded::max_value<Nature>);
+	test_enum("Nature", nature_to_id, id_to_nature, numeric_traits::max_value<Nature>);
 	test_enum("Species", species_to_id, id_to_species, Species::Arceus);
 }
 

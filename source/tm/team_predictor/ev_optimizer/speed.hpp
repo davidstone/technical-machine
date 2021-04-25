@@ -16,6 +16,8 @@
 #include <containers/static_vector/static_vector.hpp>
 #include <containers/begin_end.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 namespace technicalmachine {
 
 struct SpeedEVs {
@@ -31,7 +33,7 @@ private:
 		Nature nature;
 		IVAndEV stat;
 	};
-	containers::static_vector<Mapped, static_cast<int>(bounded::max_value<Nature>) + 1> m_container;
+	containers::static_vector<Mapped, static_cast<int>(numeric_traits::max_value<Nature>) + 1> m_container;
 };
 
 }	// namespace technicalmachine

@@ -8,6 +8,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -764,7 +766,7 @@ enum class Moves : uint16_t {
 };
 
 }	// namespace technicalmachine
-namespace bounded {
+namespace numeric_traits {
 
 template<>
 inline constexpr auto min_value<technicalmachine::Moves> = technicalmachine::Moves();
@@ -772,4 +774,4 @@ inline constexpr auto min_value<technicalmachine::Moves> = technicalmachine::Mov
 template<>
 inline constexpr auto max_value<technicalmachine::Moves> = technicalmachine::Moves::Fusion_Bolt;
 
-}	// namespace bounded
+}	// namespace numeric_traits

@@ -23,6 +23,8 @@
 #include <containers/range_value_t.hpp>
 #include <containers/size.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 #include <stdexcept>
 
 namespace technicalmachine {
@@ -99,7 +101,7 @@ struct PokemonCollection {
 	friend auto operator==(PokemonCollection const &, PokemonCollection const &) -> bool = default;
 	friend auto compress(PokemonCollection const & value) {
 		using containers::size;
-		static_assert(bounded::max_value<decltype(containers::size(value.m_container))> == 6_bi);
+		static_assert(numeric_traits::max_value<decltype(containers::size(value.m_container))> == 6_bi);
 		auto const p0 = containers::size(value.m_container) >= 1_bi ? compress(value.m_container[0_bi]) : 0_bi;
 		auto const p1 = containers::size(value.m_container) >= 2_bi ? compress(value.m_container[1_bi]) : 0_bi;
 		auto const p2 = containers::size(value.m_container) >= 3_bi ? compress(value.m_container[2_bi]) : 0_bi;

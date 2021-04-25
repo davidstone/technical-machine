@@ -5,6 +5,8 @@
 
 #include <tm/stat/hp.hpp>
 
+#include <numeric_traits/min_max_value.hpp>
+
 namespace technicalmachine {
 namespace {
 
@@ -14,8 +16,8 @@ auto initial_hp(BaseStats const base, Level const level, IV const iv, EV const e
 		return (2_bi * base.hp() + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 10_bi + level();
 	};
 	auto const value = BOUNDED_CONDITIONAL(base.hp() > 1_bi, typical(), 1_bi);
-	static_assert(bounded::min_value<decltype(value)> == bounded::min_value<HP::max_type>);
-	static_assert(bounded::max_value<decltype(value)> == bounded::max_value<HP::max_type>);
+	static_assert(numeric_traits::min_value<decltype(value)> == numeric_traits::min_value<HP::max_type>);
+	static_assert(numeric_traits::max_value<decltype(value)> == numeric_traits::max_value<HP::max_type>);
 	return value;
 }
 
