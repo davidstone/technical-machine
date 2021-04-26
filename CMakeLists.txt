@@ -70,7 +70,6 @@ add_library(tm_common STATIC
 	source/tm/clients/invalid_team_file_format.cpp
 	source/tm/clients/log_foe_team.cpp
 	source/tm/clients/party.cpp
-	source/tm/clients/timestamp.cpp
 
 	source/tm/evaluate/best_move.cpp
 	source/tm/evaluate/compressed_battle.cpp
