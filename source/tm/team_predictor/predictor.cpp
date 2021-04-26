@@ -23,6 +23,7 @@
 #include <bounded/optional.hpp>
 #include <bounded/to_integer.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/push_back.hpp>
 
@@ -33,6 +34,7 @@
 
 #include <random>
 #include <string>
+#include <string_view>
 #include <utility>
 
 namespace {
@@ -47,19 +49,20 @@ namespace technicalmachine {
 namespace {
 
 using namespace bounded::literal;
+using namespace std::string_view_literals;
 
 auto get_expected_base(std::string_view const input, std::string_view const expected_key) {
 	auto [key, value] = split_view(input, '=');
 	if (key != expected_key) {
-		throw std::runtime_error("Expected " + std::string(expected_key) + " but got " + std::string(key));
+		throw std::runtime_error(containers::concatenate<std::string>("Expected "sv, expected_key, " but got "sv, key));
 	}
 	return value;
 }
 
 template<typename T>
-auto get_expected(std::string_view const input, std::string const & key, std::string const & index) {
-	auto const value = get_expected_base(input, key + index);
-	return BOUNDED_CONDITIONAL(value == "Select+" + key, bounded::none, from_string<T>(value));
+auto get_expected(std::string_view const input, std::string_view const key, std::string_view const index) {
+	auto const value = get_expected_base(input, containers::concatenate<containers::string>(key, index));
+	return BOUNDED_CONDITIONAL(value == containers::concatenate<containers::string>("Select+"sv, key), bounded::none, from_string<T>(value));
 }
 
 template<typename T>
@@ -86,13 +89,13 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 
 	for (auto const index : containers::integer_range(max_pokemon_per_team)) {
 		auto const index_str = bounded::to_string(index);
-		auto get_integer_wrapper = [&]<typename T>(bounded::detail::types<T>, std::string const & key) {
-			return get_expected_integer_wrapper<T>(buffer.pop(), key + index_str);
+		auto get_integer_wrapper = [&]<typename T>(bounded::detail::types<T>, std::string_view const key) {
+			return get_expected_integer_wrapper<T>(buffer.pop(), containers::concatenate<containers::string>(key, index_str));
 		};
-		auto get = [&]<typename T>(bounded::detail::types<T>, std::string const & key) {
+		auto get = [&]<typename T>(bounded::detail::types<T>, std::string_view const key) {
 			return get_expected<T>(buffer.pop(), key, index_str);
 		};
-		auto get_ev = [&](std::string const & key) {
+		auto get_ev = [&](std::string_view const key) {
 			return get_integer_wrapper(bounded::detail::types<EV>(), key);
 		};
 

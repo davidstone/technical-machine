@@ -24,6 +24,9 @@
 #include <bounded/optional.hpp>
 #include <bounded/to_integer.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
+#include <containers/single_element_range.hpp>
+
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -37,10 +40,12 @@ BattleFactory::~BattleFactory() = default;
 
 namespace {
 
+using namespace std::string_view_literals;
+
 void validate_generation(std::string_view const received, Generation const expected) {
 	auto const parsed = static_cast<Generation>(bounded::to_integer<1, 8>(received));
 	if (parsed != expected) {
-		throw std::runtime_error("Received wrong generation. Expected " + std::to_string(static_cast<int>(expected)) + "but got " + std::string(received));
+		throw std::runtime_error(containers::concatenate<std::string>("Received wrong generation. Expected "sv, std::to_string(static_cast<int>(expected)), "but got "sv, received));
 	}
 }
 
@@ -48,12 +53,12 @@ auto parse_generation(std::string_view const id) -> Generation {
 	// TODO: This won't work for generation 10
 	constexpr auto generation_index = std::char_traits<char>::length("battle-gen");
 	if (id.size() < generation_index) {
-		throw std::runtime_error("Invalid battle id. Expected something in the format of: \"battle-gen[generation_number]\", but got " + std::string(id));
+		throw std::runtime_error(containers::concatenate<std::string>("Invalid battle id. Expected something in the format of: \"battle-gen[generation_number]\", but got "sv, id));
 	}
 	auto const generation_char = id[generation_index];
 	auto const generation = generation_char - '0';
 	if (generation < 1 or 8 < generation) {
-		throw std::runtime_error("Invalid generation. Expected a value between 1 and 8, but got " + std::string(1, generation_char));
+		throw std::runtime_error(containers::concatenate<std::string>("Invalid generation. Expected a value between 1 and 8, but got "sv, containers::single_element_range(generation_char)));
 	}
 	return static_cast<Generation>(generation);
 }
@@ -63,14 +68,14 @@ struct BattleFactoryImpl : BattleFactory {
 	BattleFactoryImpl(
 		std::filesystem::path const & base_log_directory,
 		bool const log_foe_teams,
-		std::string id_,
-		std::string username,
+		containers::string id_,
+		containers::string username,
 		AllEvaluate evaluate,
 		DepthValues depth,
 		std::mt19937 random_engine
 	):
 		m_id(std::move(id_)),
-		m_log_directory(base_log_directory / m_id),
+		m_log_directory(base_log_directory / std::string_view(m_id)),
 		m_battle_logger(m_log_directory, m_id),
 		m_username(std::move(username)),
 		m_evaluate(evaluate),
@@ -194,7 +199,7 @@ struct BattleFactoryImpl : BattleFactory {
 			throw std::runtime_error("Did not receive foe's starting species");
 		}
 		if (*m_type != "singles") {
-			throw std::runtime_error("Unsupported format " + *m_type);
+			throw std::runtime_error(containers::concatenate<std::string>("Unsupported format "sv, *m_type));
 		}
 		auto make_foe_team = [&]{
 			auto team = Team<generation>(*m_foe_team_size, false);
@@ -224,17 +229,17 @@ struct BattleFactoryImpl : BattleFactory {
 private:
 	JSONParser m_parse_json;
 
-	std::string m_id;
+	containers::string m_id;
 	std::filesystem::path m_log_directory;
 	BattleLogger m_battle_logger;
-	std::string m_username;
+	containers::string m_username;
 	AllEvaluate m_evaluate;
 	DepthValues m_depth;
 	std::mt19937 m_random_engine;
 	bounded::optional<Team<generation>> m_team;
 	bounded::optional<Party> m_party;
-	bounded::optional<std::string> m_type;	// singles, doubles, triples
-	bounded::optional<std::string> m_tier;
+	bounded::optional<containers::string> m_type;	// singles, doubles, triples
+	bounded::optional<containers::string> m_tier;
 	bounded::optional<TeamSize> m_foe_team_size;
 	bounded::optional<ParsedSwitch> m_foe_starter;
 	bool m_ai_switched_in = false;
@@ -246,8 +251,8 @@ private:
 auto make_battle_factory(
 	std::filesystem::path const & base_log_directory,
 	bool const log_foe_teams,
-	std::string id,
-	std::string username,
+	containers::string id,
+	containers::string username,
 	AllEvaluate evaluate,
 	DepthValues depth,
 	std::mt19937 random_engine

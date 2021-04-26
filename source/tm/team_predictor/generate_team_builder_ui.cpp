@@ -23,22 +23,25 @@
 #include <tm/gender.hpp>
 #include <tm/item.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/algorithms/filter_iterator.hpp>
 #include <containers/integer_range.hpp>
+#include <containers/string.hpp>
 
 namespace technicalmachine {
 namespace {
 
 using namespace bounded::literal;
+using namespace std::string_view_literals;
 
 template<typename Range>
-auto add_dropdown_with_id(std::ostream & output, std::string const & type, std::string_view const id, Range range, std::string_view const default_value) {
+auto add_dropdown_with_id(std::ostream & output, std::string_view const type, std::string_view const id, Range range, std::string_view const default_value) {
 	output <<
 		"<select name=\"" << id << "\" id=\"" << id << "\">";
 	auto add_option = [&](std::string_view const value) {
 		output << "<option" << (value == default_value ? " selected" : "") << ">" << value << "</option>";
 	};
-	add_option("Select " + type);
+	add_option(containers::concatenate<containers::string>("Select "sv, type));
 	for (auto const value : range) {
 		add_option(to_string(value));
 	}
@@ -46,12 +49,12 @@ auto add_dropdown_with_id(std::ostream & output, std::string const & type, std::
 }
 
 template<typename Range>
-auto add_dropdown(std::ostream & output, std::string const & type, std::string const & index, Range range, std::string_view const default_value) {
-	add_dropdown_with_id(output, type, type + index, std::move(range), default_value);
+auto add_dropdown(std::ostream & output, std::string_view const type, std::string_view const index, Range range, std::string_view const default_value) {
+	add_dropdown_with_id(output, type, containers::concatenate<containers::string>(type, index), std::move(range), default_value);
 }
 
 template<typename Enum>
-auto add_dropdown(std::ostream & output, std::string const & type, std::string const & index, std::string_view const default_value) {
+auto add_dropdown(std::ostream & output, std::string_view const type, std::string_view const index, std::string_view const default_value) {
 	add_dropdown(output, type, index, containers::enum_range<Enum>(), default_value);
 }
 

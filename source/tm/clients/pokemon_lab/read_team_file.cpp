@@ -14,10 +14,14 @@
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/array/array.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/flat_map.hpp>
 #include <containers/lookup.hpp>
+
+#include <stdexcept>
+#include <string>
 
 namespace technicalmachine {
 namespace pl {
@@ -37,7 +41,7 @@ auto stat_from_simulator_string(std::string_view const str) -> PermanentStat {
 	);
 	auto result = containers::lookup(converter, str);
 	if (!result) {
-		throw std::runtime_error("Invalid stat name " + std::string(str));
+		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Invalid stat name "), str));
 	}
 	return *result;
 }

@@ -30,6 +30,7 @@
 #include <bounded/to_integer.hpp>
 #include <bounded/detail/overload.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/algorithms/find.hpp>
 #include <containers/algorithms/maybe_find.hpp>
 #include <containers/begin_end.hpp>
@@ -60,7 +61,7 @@ auto get_move_index(Pokemon<generation> const & pokemon, Moves const move_name) 
 	auto const moves = pokemon.regular_moves();
 	auto const it = containers::find_if(moves, [=](Move const move) { return move.name() == move_name; });
 	if (it == containers::end(moves)) {
-		throw std::runtime_error("Pokemon does not know " + std::string(to_string(move_name)));
+		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Pokemon does not know "), to_string(move_name)));
 	}
 	return containers::index_type<RegularMoves>(it - containers::begin(moves));
 }
@@ -119,7 +120,7 @@ constexpr auto parse_effect_source(std::string_view const type, std::string_view
 			type == "Sandstorm" or
 			type == "Substitute"
 		) ? EffectSource(FromMiscellaneous{}) :
-		throw std::runtime_error("Unhandled effect source type: " + std::string(type));
+		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Unhandled effect source type: "), type));
 }
 
 auto parse_from_source(InMessage message) {
@@ -207,8 +208,8 @@ struct BattleParserImpl : BattleParser {
 		SendMessageFunction send_message,
 		BattleLogger battle_logger,
 		std::ofstream analysis_logger,
-		std::string id_,
-		std::string username,
+		containers::string id_,
+		containers::string username,
 		UsageStats const & usage_stats,
 		Evaluate<generation> evaluate,
 		Party party,
@@ -555,7 +556,7 @@ struct BattleParserImpl : BattleParser {
 			// message.remainder() == POKEMON|SPECIES
 		} else if (type == "turn") {
 			auto const turn = bounded::to_integer<0, numeric_traits::max_value<std::uint32_t>>(message.pop());
-			m_analysis_logger << std::string(20, '=') << "\nBegin turn " << turn << '\n';
+			m_analysis_logger << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn << '\n';
 			m_battle.handle_begin_turn();
 			send_move(determine_action());
 		} else if (type == "-unboost") {
@@ -750,8 +751,8 @@ private:
 	SendMessageFunction m_send_message;
 	BattleLogger m_battle_logger;
 	std::ofstream m_analysis_logger;
-	std::string m_id;
-	std::string m_username;
+	containers::string m_id;
+	containers::string m_username;
 	std::mt19937 m_random_engine;
 
 	SlotMemory m_slot_memory;
@@ -772,8 +773,8 @@ auto make_battle_parser(
 	SendMessageFunction send_message,
 	BattleLogger battle_logger,
 	std::ofstream analysis_logger,
-	std::string id,
-	std::string username,
+	containers::string id,
+	containers::string username,
 	AllUsageStats const & usage_stats,
 	AllEvaluate evaluate,
 	Party party,
@@ -827,7 +828,7 @@ auto parse_details(std::string_view details) -> ParsedDetails {
 		auto const gender_str = parser.pop();
 		auto const gender = try_parse_gender(gender_str);
 		if (!gender) {
-			throw std::runtime_error("Invalid gender string " + std::string(gender_str));
+			throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Invalid gender string "), gender_str));
 		}
 		return *gender;
 	};

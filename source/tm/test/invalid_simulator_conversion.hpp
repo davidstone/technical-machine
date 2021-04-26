@@ -13,13 +13,18 @@
 #include <tm/string_conversions/species.hpp>
 #include <tm/string_conversions/status.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
+
 #include <stdexcept>
+#include <string>
+#include <string_view>
 
 namespace technicalmachine {
 
 struct InvalidSimulatorConversion : std::logic_error {
 	InvalidSimulatorConversion(auto original, auto result):
-		std::logic_error(std::string(to_string(original)) + " is seen as " + std::string(to_string(result))) {
+		std::logic_error(containers::concatenate<std::string>(to_string(original), std::string_view(" is seen as "), to_string(result)))
+	{
 	}
 };
 

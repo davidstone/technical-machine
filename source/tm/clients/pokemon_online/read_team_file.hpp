@@ -39,7 +39,7 @@ struct CheckedIterator : operators::arrow<CheckedIterator> {
 		}
 		auto const & value = *m_it;
 		if (value.first != expected_key) {
-			throw InvalidTeamFile(std::string(expected_key), value.first);
+			throw InvalidTeamFile(expected_key, value.first);
 		}
 		return value.second;
 	}

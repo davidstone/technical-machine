@@ -6,14 +6,15 @@
 
 #include <tm/invalid_settings_file.hpp>
 
-#include <containers/string.hpp>
+#include <containers/algorithms/concatenate.hpp>
 
 #include <string>
+#include <string_view>
 
 namespace technicalmachine {
 namespace {
 
-std::string to_string(InvalidSettingsFile::Problem const problem) {
+constexpr auto to_string(InvalidSettingsFile::Problem const problem) -> std::string_view {
 	switch (problem) {
 		case InvalidSettingsFile::Problem::does_not_exist: return " does not exist.";
 		case InvalidSettingsFile::Problem::too_long: return " is too long.";
@@ -24,7 +25,7 @@ std::string to_string(InvalidSettingsFile::Problem const problem) {
 }	// namespace
 
 InvalidSettingsFile::InvalidSettingsFile(std::filesystem::path const & file_name, Problem const problem):
-	std::runtime_error(file_name.string() + to_string(problem)) {
+	std::runtime_error(containers::concatenate<std::string>(file_name.string(), to_string(problem))) {
 }
 
 }	// namespace technicalmachine

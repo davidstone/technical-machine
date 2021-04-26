@@ -197,7 +197,7 @@ auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 
 	auto const should_be_empty = pop_to_delimiter(buffer, moves_separator);
 	if (!should_be_empty.empty()) {
-		throw std::runtime_error("Expected empty string while parsing Pokemon string, got " + std::string(should_be_empty));
+		throw std::runtime_error(containers::concatenate<std::string>("Expected empty string while parsing Pokemon string, got "sv, should_be_empty));
 	}
 
 	auto moves = RegularMoves();

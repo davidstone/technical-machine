@@ -7,12 +7,18 @@
 #include <tm/pokemon/pokemon_not_found.hpp>
 #include <tm/string_conversions/species.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
+
 #include <string>
+#include <string_view>
 
 namespace technicalmachine {
 
+using namespace std::string_view_literals;
+
 PokemonNotFound::PokemonNotFound(Species const species):
-	std::logic_error("Unable to find " + std::string(to_string(species))) {
+	std::logic_error(containers::concatenate<std::string>("Unable to find "sv, to_string(species)))
+{
 }
 
 }	// namespace technicalmachine

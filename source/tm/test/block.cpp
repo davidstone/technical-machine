@@ -12,6 +12,7 @@
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/front_back.hpp>
 #include <containers/size.hpp>
 
@@ -19,6 +20,8 @@
 
 namespace technicalmachine {
 namespace {
+
+using namespace std::string_view_literals;
 
 constexpr auto generation = Generation::four;
 constexpr auto moves(auto... move_names) {
@@ -134,10 +137,10 @@ void test_two_moves_with_one_out_of_pp() {
 
 	auto const selections = legal_selections(user, other, weather);
 	if (containers::size(selections) != 1_bi) {
-		throw std::runtime_error("Incorrect number of selections with one of two moves out of PP. Expected 1, got " + to_string(containers::size(selections)));
+		throw std::runtime_error(containers::concatenate<std::string>("Incorrect number of selections with one of two moves out of PP. Expected 1, got "sv, to_string(containers::size(selections))));
 	}
 	if (containers::front(selections) != Moves::Thunderbolt) {
-		throw std::runtime_error("Incorrect legal selection with one of two moves out of PP. Expected Thunderbolt, got " + std::string(to_string(containers::front(selections))));
+		throw std::runtime_error(containers::concatenate<std::string>("Incorrect legal selection with one of two moves out of PP. Expected Thunderbolt, got "sv, to_string(containers::front(selections))));
 	}
 }
 
@@ -191,10 +194,10 @@ void test_two_moves_with_both_out_of_pp() {
 
 	auto const selections = legal_selections(user, other, weather);
 	if (containers::size(selections) != 1_bi) {
-		throw std::runtime_error("Incorrect number of selections with two of two moves out of PP. Expected 1, got " + to_string(containers::size(selections)));
+		throw std::runtime_error(containers::concatenate<std::string>("Incorrect number of selections with two of two moves out of PP. Expected 1, got "sv, to_string(containers::size(selections))));
 	}
 	if (containers::front(selections) != Moves::Struggle) {
-		throw std::runtime_error("Incorrect legal selection with two of two moves out of PP. Expected Struggle, got " + std::string(to_string(containers::front(selections))));
+		throw std::runtime_error(containers::concatenate<std::string>("Incorrect legal selection with two of two moves out of PP. Expected Struggle, got "sv, to_string(containers::front(selections))));
 	}
 }
 

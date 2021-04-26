@@ -20,6 +20,8 @@
 #include <bounded/scope_guard.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
+#include <containers/algorithms/concatenate.hpp>
+#include <containers/single_element_range.hpp>
 
 #include <boost/beast/http.hpp>
 
@@ -31,12 +33,15 @@ namespace technicalmachine {
 namespace ps {
 namespace {
 
+using namespace std::string_view_literals;
+
+// Ideally this would return a lazy range
 auto load_lines_from_file(std::filesystem::path const & file_name) {
-	auto result = containers::vector<std::string>();
+	auto result = containers::vector<containers::string>();
 	auto file = std::ifstream(file_name);
 	auto line = std::string();
 	while (std::getline(file, line)) {
-		containers::push_back(result, std::move(line));
+		containers::push_back(result, containers::string(line));
 	}
 	return result;
 }
@@ -46,12 +51,12 @@ constexpr auto parse_generation(std::string_view const id) -> Generation {
 	// Expected format: genXou
 	constexpr auto generation_index = std::string_view("gen").size();
 	if (id.size() < generation_index) {
-		throw std::runtime_error("Invalid format string. Expected something in the format of: \"gen[generation_number]ou\", but got " + std::string(id));
+		throw std::runtime_error(containers::concatenate<std::string>("Invalid format string. Expected something in the format of: \"gen[generation_number]ou\", but got "sv, id));
 	}
 	auto const generation_char = id[generation_index];
 	auto const generation = generation_char - '0';
 	if (generation < 1 or 8 < generation) {
-		throw std::runtime_error("Invalid generation. Expected a value between 1 and 8, but got " + std::string(1, generation_char));
+		throw std::runtime_error(containers::concatenate<std::string>("Invalid generation. Expected a value between 1 and 8, but got "sv, containers::single_element_range(generation_char)));
 	}
 	return static_cast<Generation>(generation);
 }
@@ -116,7 +121,7 @@ void ClientImpl::handle_message(InMessage message) {
 	} else if (type == "init") {
 		if (message.pop() == "battle") {
 			m_battles.add_pending(
-				std::string(message.room()),
+				containers::string(message.room()),
 				m_settings.username,
 				m_evaluate,
 				m_depth,
@@ -174,7 +179,7 @@ void ClientImpl::authenticate(std::string_view const challstr) {
 		http::verb::post,
 		"/action.php",
 		version,
-		("act=login&name=" + m_settings.username + "&pass=" + m_settings.password + "&challstr=").append(challstr)
+		containers::concatenate<containers::string>("act=login&name="sv, m_settings.username, "&pass="sv, m_settings.password, "&challstr="sv, challstr)
 	};
 	request.set(http::field::host, host);
 	request.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
@@ -192,15 +197,15 @@ void ClientImpl::authenticate(std::string_view const challstr) {
 	// Response begins with ']' followed by JSON object.
 	response.body().erase(0U, 1U);
 	auto const json = m_parse_json(response.body());
-	m_send_message("|/trn " + m_settings.username + ",0," + json.get<std::string>("assertion"));
+	m_send_message(containers::concatenate<containers::string>("|/trn "sv, m_settings.username, ",0,"sv, json.get<std::string>("assertion")));
 }
 
-void ClientImpl::join_channel(std::string const & channel) {
-	m_send_message("|/join " + channel);
+void ClientImpl::join_channel(std::string_view const channel) {
+	m_send_message(containers::concatenate<containers::string>("|/join "sv, channel));
 }
 
-void ClientImpl::send_channel_message(std::string const & channel, std::string const & message) {
-	m_send_message(channel + "|/msg " + message);
+void ClientImpl::send_channel_message(std::string_view const channel, std::string_view const message) {
+	m_send_message(containers::concatenate<containers::string>(channel, "|/msg "sv, message));
 }
 
 Client::Client(SettingsFile settings, DepthValues const depth):

@@ -18,6 +18,7 @@
 #include <bounded/integer.hpp>
 #include <bounded/detail/variant/variant.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/trivial_inplace_function.hpp>
 
 #include <fstream>
@@ -63,8 +64,8 @@ auto make_battle_parser(
 	SendMessageFunction send_message,
 	BattleLogger battle_logger,
 	std::ofstream analysis_logger,
-	std::string id,
-	std::string username,
+	containers::string id,
+	containers::string username,
 	AllUsageStats const & usage_stats,
 	AllEvaluate evaluate,
 	Party party,
@@ -81,7 +82,7 @@ constexpr auto make_party(std::string_view const player_id) {
 	} else if (player_id == "p2") {
 		return Party(1_bi);
 	} else {
-		throw std::runtime_error("Invalid player id: " + std::string(player_id));
+		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Invalid player id: "), player_id));
 	}
 }
 

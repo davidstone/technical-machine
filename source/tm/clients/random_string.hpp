@@ -6,24 +6,35 @@
 
 #pragma once
 
-#include <algorithm>
+#include <containers/algorithms/generate.hpp>
+#include <containers/string.hpp>
+
+#include <cstddef>
 #include <random>
-#include <string>
+#include <string_view>
 
 namespace technicalmachine {
 
-char random_character(auto & random_engine) {
-	static constexpr char legal_characters[] = "abcdefghijklmnopqrstuvwxyz0123456789";
-	static constexpr auto number_of_characters = sizeof(legal_characters) - 1;
-	std::uniform_int_distribution<size_t> distribution(0, number_of_characters - 1);
-	return legal_characters[distribution(random_engine)];
+template<typename Engine>
+struct random_character {
+	constexpr explicit random_character(Engine & random_engine):
+		m_random_engine(random_engine),
+		m_distribution(0, legal_characters.size() - 1)
+	{
+	}
+
+	constexpr auto operator()() -> char {
+		return legal_characters[m_distribution(m_random_engine)];
+	}
+
+private:
+	static constexpr auto legal_characters = std::string_view("abcdefghijklmnopqrstuvwxyz0123456789");
+	Engine & m_random_engine;
+	std::uniform_int_distribution<std::size_t> m_distribution;
+};
+
+constexpr auto random_string(auto & random_engine, auto const size) {
+	return containers::string(containers::generate_n(size, random_character(random_engine)));
 }
 
-std::string random_string(auto & random_engine, size_t const size) {
-	std::string str;
-	str.resize(size);
-	std::generate(std::begin(str), std::end(str), [&]() { return random_character(random_engine); });
-	return str;
-}
-
-}	// namespace technicalmachine
+} // namespace technicalmachine

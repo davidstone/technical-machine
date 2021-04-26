@@ -7,12 +7,12 @@
 #pragma once
 
 #include <stdexcept>
-#include <string>
+#include <string_view>
 
 namespace technicalmachine {
 
 struct InvalidCollection : std::logic_error {
-	explicit InvalidCollection(std::string const & str);
+	explicit InvalidCollection(std::string_view str);
 };
 
 }	// namespace technicalmachine

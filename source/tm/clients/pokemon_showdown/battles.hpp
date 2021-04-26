@@ -9,15 +9,18 @@
 #include <tm/clients/pokemon_showdown/battle_factory.hpp>
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/algorithms/erase.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/emplace_back.hpp>
 #include <containers/push_back.hpp>
+#include <containers/string.hpp>
 #include <containers/vector.hpp>
 
-#include <algorithm>
 #include <filesystem>
-#include <string>
+#include <memory>
+#include <string_view>
+#include <utility>
 
 namespace technicalmachine {
 
@@ -43,7 +46,7 @@ struct Battles {
 	bool handle_message(AllUsageStats const & usage_stats, InMessage message, auto send_message, auto challenge) {
 		auto complete_active_battle = [&](Active::const_iterator const it) {
 			containers::erase(m_active, it);
-			send_message("|/leave " + std::string(message.room()));
+			send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), message.room()));
 			challenge();
 		};
 		if (handle_message_impl(m_active, message, complete_active_battle)) {

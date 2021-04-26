@@ -35,14 +35,13 @@ struct split_offsets {
 	std::size_t discard;
 };
 
-template<typename View>
-constexpr auto split_impl(View const buffer, split_offsets const offsets) {
+constexpr auto split_impl(std::string_view const buffer, split_offsets const offsets) {
 	if (offsets.first == buffer.size()) {
-		return std::pair(buffer, View());
+		return std::pair(buffer, std::string_view());
 	}
 	return std::pair(
-		View(buffer.data(), offsets.first),
-		View(buffer.data() + offsets.first + offsets.discard, buffer.size() - offsets.discard - offsets.first)
+		std::string_view(buffer.data(), offsets.first),
+		std::string_view(buffer.data() + offsets.first + offsets.discard, buffer.size() - offsets.discard - offsets.first)
 	);
 }
 
@@ -74,7 +73,7 @@ private:
 	View m_buffer;
 };
 
-constexpr auto split_view(auto const buffer, auto const delimiter) {
+constexpr auto split_view(std::string_view const buffer, auto const delimiter) {
 	return detail::split_impl(buffer, detail::split_offsets(buffer, delimiter));
 }
 

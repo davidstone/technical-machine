@@ -6,10 +6,13 @@
 
 #include <tm/test/collections/invalid_collection.hpp>
 
+#include <string>
+
 namespace technicalmachine {
 
-InvalidCollection::InvalidCollection(std::string const & str) :
-	std::logic_error(str) {
+InvalidCollection::InvalidCollection(std::string_view const str) :
+	std::logic_error(std::string(str))
+{
 }
 
 }	// namespace technicalmachine

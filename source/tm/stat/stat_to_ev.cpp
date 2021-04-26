@@ -14,12 +14,17 @@
 #include <tm/string_conversions/generation.hpp>
 #include <tm/string_conversions/species.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>
 
 #include <stdexcept>
+#include <string>
+#include <string_view>
 
 namespace technicalmachine {
 namespace {
+
+using namespace std::string_view_literals;
 
 static_assert(round_up_divide(1_bi, 2_bi) == 1_bi);
 static_assert(round_up_divide(1_bi, 1_bi) == 1_bi);
@@ -93,18 +98,18 @@ auto calculate_ivs_and_evs(
 		}
 		has_physical_move = true;
 	}
-	throw std::runtime_error(
-		"No Nature + EV combination combines to give the received stats in generation " +
-		std::string(to_string(generation)) +
-		": Species: " + std::string(to_string(species)) +
-		" Level: " + bounded::to_string(level()) +
-		" HP: " + bounded::to_string(stats.hp) +
-		" Attack: " + bounded::to_string(stats.atk) +
-		" Defense: " + bounded::to_string(stats.def) +
-		" Special Attack: " + bounded::to_string(stats.spa) +
-		" Special Defense: " + bounded::to_string(stats.spd) +
-		" Speed: " + bounded::to_string(stats.spe)
-	);
+	throw std::runtime_error(containers::concatenate<std::string>(
+		"No Nature + EV combination combines to give the received stats in generation "sv,
+		to_string(generation),
+		": Species: "sv, to_string(species),
+		" Level: "sv, bounded::to_string(level()),
+		" HP: "sv, bounded::to_string(stats.hp),
+		" Attack: "sv, bounded::to_string(stats.atk),
+		" Defense: "sv, bounded::to_string(stats.def),
+		" Special Attack: "sv, bounded::to_string(stats.spa),
+		" Special Defense: "sv, bounded::to_string(stats.spd),
+		" Speed: "sv, bounded::to_string(stats.spe)
+	));
 }
 
 } // namespace technicalmachine

@@ -57,7 +57,7 @@ void regression_tests() {
 				auto messages = DelimitedBufferView(std::string_view(data), '\n');
 				auto const room = parse_room(messages.pop(), path);
 				battles.add_pending(
-					std::string(room),
+					containers::string(room),
 					"Technical Machine",
 					evaluate,
 					depth,

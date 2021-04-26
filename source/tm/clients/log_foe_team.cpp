@@ -7,12 +7,15 @@
 
 #include <tm/clients/random_string.hpp>
 
-#include <string>
+#include <containers/algorithms/concatenate.hpp>
+#include <containers/string.hpp>
+
+#include <string_view>
 
 namespace technicalmachine {
 namespace {
 
-std::string get_extension() {
+constexpr auto get_extension() -> std::string_view {
 	// TODO: add support for other formats
 	return ".sbt";
 }
@@ -32,7 +35,7 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 	std::filesystem::path foe_team_file;
 	do {
 		foe_team_file = team_file_directory();
-		foe_team_file /= random_string(random_engine, file_name_length) + get_extension();
+		foe_team_file /= std::string_view(containers::concatenate<containers::string>(random_string(random_engine, file_name_length), get_extension()));
 	} while (std::filesystem::exists(foe_team_file));
 	return foe_team_file;
 }

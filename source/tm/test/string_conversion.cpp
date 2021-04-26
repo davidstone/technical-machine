@@ -26,6 +26,7 @@
 #include <tm/string_conversions/status.hpp>
 #include <tm/string_conversions/type.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>
 
 #include <iostream>
@@ -34,13 +35,16 @@
 namespace technicalmachine {
 namespace {
 
+using namespace std::string_view_literals;
+
 // I make the ToString conversion a logic error because I only convert to a
 // string from an internal data structure, so I know the input is only invalid
 // if there is a logic error in my program.
 
 struct InvalidToStringConversion : std::logic_error {
 	InvalidToStringConversion(auto original, auto result, std::string_view const intermediate):
-		std::logic_error(to_string(bounded::integer(original)) + " is seen as " + to_string(bounded::integer(result)) + " with an intermediate string of " + std::string(intermediate) + ".\n") {
+		std::logic_error(containers::concatenate<std::string>(to_string(bounded::integer(original)), " is seen as "sv, to_string(bounded::integer(result)), " with an intermediate string of "sv, intermediate, ".\n"sv))
+	{
 	}
 };
 
@@ -82,7 +86,7 @@ void test_pokemon() {
 		auto const result = pokemon_from_string<generation>(str);
 
 		if (pokemon != result) {
-			throw std::runtime_error(std::string(std::string_view(str)));
+			throw std::runtime_error(std::string(str));
 		}
 	};
 

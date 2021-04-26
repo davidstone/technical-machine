@@ -10,10 +10,12 @@
 
 #include <bounded/integer.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
+#include <containers/string.hpp>
+
 #include <numeric_traits/min_max_value.hpp>
 
-#include <limits>
-#include <string>
+#include <string_view>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -59,9 +61,9 @@ public:
 		return m_denominator;
 	}
 
-	friend std::string to_string(rational const r) {
+	friend constexpr auto to_string(rational const r) {
 		using bounded::to_string;
-		return to_string(r.numerator()) + " / " + to_string(r.denominator());
+		return containers::concatenate<containers::string>(to_string(r.numerator()), std::string_view(" / "), to_string(r.denominator()));
 	}
 	
 	// Convert allows narrowing conversions, constructor does not

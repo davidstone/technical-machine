@@ -35,13 +35,14 @@
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/front_back.hpp>
 #include <containers/integer_range.hpp>
+#include <containers/repeat_n.hpp>
 #include <containers/size.hpp>
+#include <containers/string.hpp>
 
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <random>
-#include <string>
 
 namespace technicalmachine {
 namespace {
@@ -236,7 +237,7 @@ struct BestMovePrinter {
 		if (move == Moves::Pass) {
 			return;
 		}
-		m_log << std::string(*indentation, '\t') << "Evaluating " << team.who();
+		m_log << containers::string(containers::repeat_n(*indentation, '\t')) << "Evaluating " << team.who();
 		if (is_switch(move)) {
 			auto const replacement_index = to_replacement(move);
 			m_log << " switching to " << to_string(team.pokemon(replacement_index).species()) << '\n';
@@ -248,7 +249,7 @@ struct BestMovePrinter {
 private:
 	void print_estimated_score(double const estimate, Moves const move, bounded::optional<unsigned> const indentation) const {
 		if (indentation and move != Moves::Pass) {
-			m_log << std::string(*indentation, '\t') << "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
+			m_log << containers::string(containers::repeat_n(*indentation, '\t')) << "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
 		}
 	}
 

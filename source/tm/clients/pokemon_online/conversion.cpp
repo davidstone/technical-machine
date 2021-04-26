@@ -35,16 +35,18 @@ namespace po {
 
 namespace {
 
+using namespace std::string_view_literals;
+
 struct InvalidFormeID : std::runtime_error {
-	InvalidFormeID(std::string const & species, SpeciesIDs::Forme const forme):
-		std::runtime_error("Invalid forme ID " + to_string(forme) + " for " + species)
+	InvalidFormeID(std::string_view const species, SpeciesIDs::Forme const forme):
+		std::runtime_error(containers::concatenate<std::string>("Invalid forme ID "sv, to_string(forme), " for "sv, species))
 	{
 	}
 };
 
 struct UnsupportedSpecies : std::runtime_error {
 	explicit UnsupportedSpecies(Species const species):
-		std::runtime_error(std::string(to_string(species)) + " not supported in Pokemon Online.")
+		std::runtime_error(containers::concatenate<std::string>(to_string(species), " not supported in Pokemon Online."sv))
 	{
 	}
 };
@@ -1394,13 +1396,13 @@ AbilityID ability_to_id(Ability const ability) {
 		case Ability::Water_Veil: return 41_bi;
 		case Ability::White_Smoke: return 73_bi;
 		case Ability::Wonder_Guard: return 25_bi;
-		default: throw std::runtime_error(std::string(to_string(ability)) + " not supported in Pokemon Online");
+		default: throw std::runtime_error(containers::concatenate<std::string>(to_string(ability), " not supported in Pokemon Online"sv));
 	}
 }
 
 struct InvalidPart : std::runtime_error {
-	InvalidPart(std::string const & type, uint16_t id, uint8_t part):
-		std::runtime_error("Invalid conversion to " + type + " ID: " + std::to_string(static_cast<unsigned>(id)) + " with part ID: " + std::to_string(static_cast <unsigned>(part)) + ".\n") {
+	InvalidPart(std::string_view const type, std::uint16_t id, std::uint8_t part):
+		std::runtime_error(containers::concatenate<std::string>("Invalid conversion to "sv, type, " ID: "sv, std::to_string(static_cast<unsigned>(id)), " with part ID: "sv, std::to_string(static_cast <unsigned>(part)), ".\n"sv)) {
 	}
 };
 

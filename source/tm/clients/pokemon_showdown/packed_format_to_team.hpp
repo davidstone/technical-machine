@@ -17,6 +17,8 @@
 
 #include <bounded/to_integer.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
+
 #include <numeric_traits/min_max_value.hpp>
 
 #include <string_view>
@@ -82,7 +84,7 @@ constexpr auto parse_shiny(std::string_view const str) {
 	return
 		str == "S" ? true :
 		str == "" ? false :
-		throw std::runtime_error("Invalid shiny string: " + std::string(str));
+		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Invalid shiny string: "), str));
 }
 
 template<typename T>

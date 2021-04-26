@@ -6,6 +6,8 @@
 
 #include <tm/clients/pokemon_online/invalid_team_file.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
+
 namespace technicalmachine {
 namespace po {
 
@@ -14,8 +16,8 @@ InvalidTeamFile::InvalidTeamFile(std::string const & message):
 {
 }
 
-InvalidTeamFile::InvalidTeamFile(std::string const & expected, std::string const & received):
-	InvalidTeamFile("Expected a field labeled " + expected + " but got " + received)
+InvalidTeamFile::InvalidTeamFile(std::string_view const expected, std::string_view const received):
+	InvalidTeamFile(containers::concatenate<std::string>(std::string_view("Expected a field labeled "), expected, std::string_view(" but got "), received))
 {
 }
 

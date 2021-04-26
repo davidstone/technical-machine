@@ -35,8 +35,8 @@ struct BattleFactory {
 auto make_battle_factory(
 	std::filesystem::path const & base_log_directory,
 	bool const log_foe_teams,
-	std::string id,
-	std::string username,
+	containers::string id,
+	containers::string username,
 	AllEvaluate evaluate,
 	DepthValues depth,
 	std::mt19937 random_engine

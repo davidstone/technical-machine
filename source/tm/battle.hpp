@@ -23,6 +23,8 @@
 #include <tm/visible_hp.hpp>
 #include <tm/weather.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
+
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
@@ -134,12 +136,12 @@ private:
 	void validate_status(Statuses const original_status, Statuses const visible_status) {
 		auto const normalized_original_status = (original_status == Statuses::rest) ? Statuses::sleep : original_status;
 		if (normalized_original_status != visible_status) {
-			throw std::runtime_error(
-				"Status out of sync with server messages: expected " +
-				std::string(to_string(original_status)) +
-				" but received " +
-				std::string(to_string(visible_status))
-			);
+			throw std::runtime_error(containers::concatenate<std::string>(
+				std::string_view("Status out of sync with server messages: expected "),
+				to_string(original_status),
+				std::string_view(" but received "),
+				to_string(visible_status)
+			));
 		}
 	}
 

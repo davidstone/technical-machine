@@ -5,13 +5,18 @@
 
 #include <tm/string_conversions/invalid_string_conversion.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
+
 #include <string>
+#include <string_view>
 
 namespace technicalmachine {
 
+using namespace std::string_view_literals;
+
 InvalidFromStringConversion::InvalidFromStringConversion(std::string_view const target, std::string_view const requested):
-	std::runtime_error("Invalid conversion from " + std::string(requested) + " to type " + std::string(target))
+	std::runtime_error(containers::concatenate<std::string>("Invalid conversion from "sv, requested, " to type "sv, target))
 {
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

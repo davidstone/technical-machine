@@ -21,10 +21,10 @@
 #include <tm/settings_file.hpp>
 
 #include <containers/trivial_inplace_function.hpp>
+#include <containers/string.hpp>
 #include <containers/vector.hpp>
 
 #include <random>
-#include <string>
 #include <string_view>
 
 namespace technicalmachine {
@@ -59,10 +59,9 @@ private:
 	void send_team(Generation);
 
 	void handle_message(InMessage message);
-	void send_channel_message(std::string const & channel, std::string const & message);
-	void send_private_message(std::string const & user, std::string const & message);
+	void send_channel_message(std::string_view channel, std::string_view message);
 
-	void join_channel(std::string const & channel);
+	void join_channel(std::string_view channel);
 	
 	void authenticate(std::string_view challstr);
 	
@@ -78,7 +77,7 @@ private:
 	
 	JSONParser m_parse_json;
 	
-	containers::vector<std::string> m_trusted_users;
+	containers::vector<containers::string> m_trusted_users;
 	DepthValues m_depth;
 	
 	Battles m_battles;

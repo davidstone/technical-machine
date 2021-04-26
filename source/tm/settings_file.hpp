@@ -8,20 +8,19 @@
 
 #include <bounded/optional.hpp>
 
-#include <boost/property_tree/ptree.hpp>
+#include <containers/string.hpp>
 
 #include <filesystem>
-#include <string>
 
 namespace technicalmachine {
 
 struct SettingsFile {
 	bounded::optional<std::filesystem::path> team_file;
-	std::string host;
-	std::string port;
-	std::string username;
-	std::string password;
-	std::string resource;
+	containers::string host;
+	containers::string port;
+	containers::string username;
+	containers::string password;
+	containers::string resource;
 };
 
 auto load_settings_file(std::filesystem::path const & path) -> SettingsFile;
