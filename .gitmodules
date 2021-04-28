@@ -10,3 +10,6 @@
 [submodule "operators"]
 	path = operators
 	url = https://github.com/davidstone/operators
+[submodule "json"]
+	path = json
+	url = https://github.com/nlohmann/json.git
