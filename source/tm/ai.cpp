@@ -52,7 +52,7 @@ int main(int argc, char * * argv) {
 	auto const single_depth = (argc <= 2) ? 0U : boost::lexical_cast<unsigned>(argv[2]);
 	auto const depth = technicalmachine::DepthValues{general_depth, single_depth};
 
-	auto const settings = technicalmachine::load_settings_file("settings/settings.xml");
+	auto const settings = technicalmachine::load_settings_file("settings/settings.json");
 
 	while (true) {
 		try {

@@ -1,0 +1,10 @@
+{
+	"settings": {
+		"team": "",
+		"host": "sim.smogon.com",
+		"port": "8000",
+		"resource": "/showdown/websocket",
+		"username": "",
+		"password": ""
+	}
+}

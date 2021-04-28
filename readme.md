@@ -53,8 +53,12 @@ For a full overview of the program, see http://doublewise.net/pokemon/
 * `cmake .. -G"Ninja" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release` (you can use `-G"Unix Makefiles"` instead if you do not install ninja)
 * `ninja`
 * `cd ..`
-* Fill in server information for the server you want to connect to, as found in "build/settings/settings.xml".
+* Fill in server information for the server you want to connect to, as found in "build/settings/settings.json".
 * Run the program with `./build/ai [depth]`, where depth is an optional value that tells Technical Machine how many turns ahead to look (defaults to 2).
+
+## settings.json
+
+If the "team" setting is left blank, Technical Machine will generate a team of its own for every battle. If a team file is specified, Technical Machine will use that file. If a directory is specified, Technical Machine will randomly use a file inside that directory, recursively. For instance, if you have team files in folders based on tiers, then to use any OU team you would put "teams/ou/", but to use your stall team you would put "teams/ou/stall.sbt". For directories, the terminating '/' is optional. Relative paths are relative to your executable, not this settings file.
 
 ### Build targets
 
