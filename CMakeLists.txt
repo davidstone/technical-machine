@@ -28,6 +28,9 @@ target_include_directories(boost SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
 
 enable_testing()
 
+add_library(nlohmann_json INTERFACE IMPORTED)
+target_include_directories(nlohmann_json SYSTEM INTERFACE "json/single_include")
+
 get_directory_property(has_parent PARENT_DIRECTORY)
 if (NOT has_parent)
 	add_subdirectory(cmake_strict_defaults)
@@ -215,6 +218,7 @@ target_link_libraries(tm_common
 	boost
 	bounded
 	containers
+	nlohmann_json
 	strict_defaults
 )
 

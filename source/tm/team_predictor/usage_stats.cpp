@@ -27,9 +27,7 @@
 
 #include <numeric_traits/min_max_value.hpp>
 
-#include <boost/lexical_cast.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include <nlohmann/json.hpp>
 
 #include <cmath>
 #include <fstream>
@@ -68,25 +66,25 @@ auto from_statistics_string(std::string_view const str) {
 }
 
 template<typename T>
-auto per_pokemon_data(boost::property_tree::ptree const & pt, auto const max) {
-	auto full = containers::vector<std::pair<std::string_view, double>>();
-	for (auto const & p : pt) {
-		auto datum_str = std::string_view(p.first);
-		if (datum_str == "") {
+auto per_pokemon_data(nlohmann::json const & json, auto const max) {
+	// TODO: Use push_heap and pop_heap?
+	auto full = containers::vector<nlohmann::json::const_iterator>();
+	for (auto it = json.begin(); it != json.end(); ++it) {
+		if (it.key() == "") {
 			continue;
 		}
-		containers::push_back(full, std::pair(datum_str, p.second.template get<double>("")));
+		containers::push_back(full, it);
 	}
-	containers::ska_sort(full, [](auto const & value) { return -value.second; });
+	containers::ska_sort(full, [](nlohmann::json::const_iterator const & it) { return -it.value().get<double>(); });
 	return containers::static_vector<T, max.value()>(containers::transform(
 		containers::take(full, max),
-		[](auto const & pair) { return from_statistics_string<T>(pair.first); }
+		[](nlohmann::json::const_iterator const & it) { return from_statistics_string<T>(it.key()); }
 	));
 }
 
 template<typename T>
-auto per_pokemon_datum(boost::property_tree::ptree const & pt) {
-	auto all = per_pokemon_data<T>(pt, 1_bi);
+auto per_pokemon_datum(nlohmann::json const & json) {
+	auto all = per_pokemon_data<T>(json, 1_bi);
 	if (containers::is_empty(all)) {
 		throw std::runtime_error("Bad statistics file");
 	}
@@ -202,31 +200,33 @@ void turn_teammates_into_multiplier(containers::array<UsageStats::PerPokemon, nu
 
 UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 	auto const path = usage_stats_directory / "usage.json";
-	auto pt = boost::property_tree::ptree();
-	read_json(path.string(), pt);
+	auto file = std::ifstream(path);
+	auto json = nlohmann::json();
+	file >> json;
 
-	auto const & data = pt.get_child("data");
-	for (auto const & pokemon : data) {
-		auto const species = from_string<Species>(pokemon.first);
+	auto const & data = json.at("data");
+	for (auto pokemon = data.begin(); pokemon != data.end(); ++pokemon) {
+		auto const species = from_string<Species>(pokemon.key());
 		auto & per_pokemon = m_all_per_pokemon[bounded::integer(species)];
 
-		per_pokemon.weighted_usage = pokemon.second.get<float>("usage");
+		per_pokemon.weighted_usage = pokemon.value().at("usage").get<float>();
 		check_finite(per_pokemon.weighted_usage);
 		check_non_negative(per_pokemon.weighted_usage);
 		m_total_weighted_usage += per_pokemon.weighted_usage;
 
-		for (auto const & teammate : pokemon.second.get_child("Teammates")) {
-			if (teammate.first == "empty") {
+		auto const & teammates = pokemon.value().at("Teammates");
+		for (auto teammate = teammates.begin(); teammate != teammates.end(); ++teammate) {
+			if (teammate.key() == "empty") {
 				continue;
 			}
-			auto const value = std::stof(teammate.second.get<std::string>(""));
+			auto const value = teammate.value().get<float>();
 			check_finite(value);
-			per_pokemon.teammates[bounded::integer(from_string<Species>(teammate.first))] = value;
+			per_pokemon.teammates[bounded::integer(from_string<Species>(teammate.key()))] = value;
 		}
-		per_pokemon.moves = per_pokemon_data<Moves>(pokemon.second.get_child("Moves"), max_moves_per_pokemon);
-		per_pokemon.ability = per_pokemon_datum<Ability>(pokemon.second.get_child("Abilities"));
-		per_pokemon.item = per_pokemon_datum<Item>(pokemon.second.get_child("Items"));
-		per_pokemon.stats = per_pokemon_datum<CombinedStats<EV>>(pokemon.second.get_child("Spreads"));
+		per_pokemon.moves = per_pokemon_data<Moves>(pokemon.value().at("Moves"), max_moves_per_pokemon);
+		per_pokemon.ability = per_pokemon_datum<Ability>(pokemon.value().at("Abilities"));
+		per_pokemon.item = per_pokemon_datum<Item>(pokemon.value().at("Items"));
+		per_pokemon.stats = per_pokemon_datum<CombinedStats<EV>>(pokemon.value().at("Spreads"));
 	}
 
 	check_finite(m_total_weighted_usage);
