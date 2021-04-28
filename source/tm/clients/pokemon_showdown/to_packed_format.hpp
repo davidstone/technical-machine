@@ -19,6 +19,7 @@
 #include <containers/begin_end.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/is_empty.hpp>
+#include <containers/single_element_range.hpp>
 #include <containers/string.hpp>
 
 #include <string_view>
@@ -26,62 +27,78 @@
 namespace technicalmachine {
 
 enum class Generation : std::uint8_t;
+using namespace std::string_view_literals;
 
 namespace ps {
 
 template<Generation generation>
 auto to_packed_format(Team<generation> const & team) -> containers::string {
+	static constexpr auto separator = '|';
+	constexpr auto separator_range = containers::single_element_range(separator);
 	auto result = containers::string();
 	for (auto const & pokemon : team.all_pokemon()) {
-		if (!containers::is_empty(result)) {
-			result += ']';
-		}
-		result += to_string(pokemon.species());
-		result += "||";
+		auto const is_first = containers::is_empty(result);
 		auto const item = pokemon.item(false, false);
-		result += item == Item::None ? "" : to_string(item);
-		result += '|';
-		result += to_string(pokemon.initial_ability());
-		result += '|';
+		result = containers::concatenate<containers::string>(
+			std::move(result),
+			is_first ? ""sv : "]"sv,
+			to_string(pokemon.species()),
+			separator_range,
+			separator_range,
+			item == Item::None ? ""sv : to_string(item),
+			separator_range,
+			to_string(pokemon.initial_ability()),
+			separator_range
+		);
+
 		auto const moves = pokemon.regular_moves();
 		for (auto it = containers::begin(moves); it != containers::end(moves); ++it) {
 			if (it != containers::begin(moves)) {
-				result += ',';
+				containers::push_back(result, ',');
 			}
-			result += to_string(it->name());
+			containers::append(result, to_string(it->name()));
 		}
-		result += '|';
-		result += to_string(pokemon.nature());
 
-		result += '|';
+		result = containers::concatenate<containers::string>(
+			std::move(result),
+			separator_range,
+			to_string(pokemon.nature()),
+			separator_range
+		);
+
 		auto const stats = calculate_ivs_and_evs(pokemon);
+		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
+			if (stat_name != PermanentStat::hp) {
+				containers::push_back(result, ',');
+			}
+			containers::append(result, to_string(stats[stat_name].ev.value()));
+		}
+
+		result = containers::concatenate<containers::string>(
+			std::move(result),
+			separator_range,
+			to_string(pokemon.gender()),
+			separator_range
+		);
 
 		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 			if (stat_name != PermanentStat::hp) {
-				result += ',';
+				containers::push_back(result, ',');
 			}
-			result += std::string_view(to_string(stats[stat_name].ev.value()));
+			containers::append(result, to_string(stats[stat_name].iv.value()));
 		}
 
-		result += '|';
-		result += to_string(pokemon.gender());
-
-		result += '|';
-		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-			if (stat_name != PermanentStat::hp) {
-				result += ',';
-			}
-			result += std::string_view(to_string(stats[stat_name].iv.value()));
-		}
-
-		result += '|';
-		// Assume non-shiny
-		result += '|';
-		result += std::string_view(to_string(pokemon.level()()));
-		result += '|';
-		// Assume max happiness
-		// Assume regular Poke Ball
-		// Generations with Hyper Training are not yet supported
+		result = containers::concatenate<containers::string>(
+			std::move(result),
+			separator_range,
+			// Assume non-shiny
+			separator_range,
+			to_string(pokemon.level()()),
+			separator_range
+			// Assume max happiness
+			// Assume regular Poke Ball
+			// Generations with Hyper Training are not yet supported
+		);
 	}
 	return result;
 }

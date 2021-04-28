@@ -9,6 +9,7 @@
 
 #include <tm/generation.hpp>
 
+#include <containers/single_element_range.hpp>
 #include <containers/string.hpp>
 
 namespace technicalmachine {

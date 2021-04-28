@@ -31,6 +31,7 @@
 #include <bounded/detail/overload.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
+#include <containers/algorithms/concatenate_view.hpp>
 #include <containers/algorithms/find.hpp>
 #include <containers/algorithms/maybe_find.hpp>
 #include <containers/begin_end.hpp>
@@ -47,6 +48,8 @@
 
 namespace technicalmachine {
 namespace ps {
+
+using namespace std::string_view_literals;
 
 BattleParser::~BattleParser() = default;
 
@@ -236,7 +239,7 @@ struct BattleParserImpl : BattleParser {
 		m_depth(depth),
 		m_log_foe_teams(log_foe_teams)
 	{
-		m_send_message(m_id + "|/timer on");
+		m_send_message(containers::concatenate<containers::string>(m_id, "|/timer on"sv));
 	}
 	
 	void handle_message(InMessage message) final {
@@ -718,13 +721,17 @@ private:
 		return expectiminimax(m_battle.ai(), predicted, m_battle.weather(), m_evaluate, Depth(m_depth, 1U), m_analysis_logger).name;
 	}
 
+	void send_move_impl(bool const is_switch, auto const switch_move, auto const move_index) {
+		using std::to_string;
+		m_send_message(containers::concatenate<containers::string>(m_id, (is_switch ? containers::concatenate_view("|/switch "sv, to_string(switch_move())) : containers::concatenate_view("|/move "sv, to_string(move_index())))));
+	}
+
 	void send_move(Moves const move) {
 		// In doubles / triples we need to specify " TARGET" at the end for regular
 		// moves
-		using std::to_string;
-		auto switch_move = [&]{ return to_string(m_slot_memory[to_replacement(move)]); };
-		auto move_index = [&]{ return to_string(get_move_index(m_battle.ai().all_pokemon()(), move) + 1_bi); };
-		m_send_message(m_id + (is_switch(move) ? "|/switch " + switch_move() : "|/move " + move_index()));
+		auto switch_move = [&]{ return m_slot_memory[to_replacement(move)]; };
+		auto move_index = [&]{ return get_move_index(m_battle.ai().all_pokemon()(), move) + 1_bi; };
+		send_move_impl(is_switch(move), switch_move, move_index);
 	}
 
 	void send_random_move() {
@@ -733,10 +740,10 @@ private:
 		auto distribution = std::uniform_int_distribution(1, static_cast<int>(max_moves_per_pokemon + max_pokemon_per_team));
 		auto const result = distribution(m_random_engine);
 
-		auto switch_move = [=]{ return std::to_string(result - max_moves_per_pokemon); };
-		auto move_index = [=]{ return std::to_string(result); };
+		auto switch_move = [=]{ return result - max_moves_per_pokemon; };
+		auto move_index = [=]{ return result; };
 		auto const is_switch = result > max_moves_per_pokemon;
-		m_send_message(m_id + (is_switch ? "|/switch " + switch_move() : "|/move " + move_index()));
+		send_move_impl(is_switch, switch_move, move_index);
 	}
 
 	void handle_u_turn(Party const party) {

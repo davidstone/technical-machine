@@ -89,16 +89,16 @@ void ClientImpl::send_team(Generation const runtime_generation) {
 	auto make_packed = [&]<Generation generation>(std::integral_constant<Generation, generation>) {
 		return to_packed_format(generate_team<generation>());
 	};
-	m_send_message("|/utm " + constant_generation(runtime_generation, make_packed));
+	m_send_message(containers::concatenate<containers::string>("|/utm "sv, constant_generation(runtime_generation, make_packed)));
 }
 
 
 void ClientImpl::handle_message(InMessage message) {
 	auto send_challenge = [&]{
-		auto const format = containers::string("gen1ou");
+		constexpr auto format = "gen1ou"sv;
 		send_team(parse_generation(format));
 		// m_send_message("|/search gen1ou");
-		m_send_message("|/challenge davidstone," + format);
+		m_send_message(containers::concatenate<containers::string>("|/challenge davidstone,"sv, format));
 		std::cout << "Sent challenge\n" << std::flush;
 	};
 	if (m_battles.handle_message(m_all_usage_stats, message, m_send_message, send_challenge)) {
