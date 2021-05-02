@@ -25,8 +25,9 @@
 
 #include <numeric_traits/min_max_value.hpp>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
+#include <nlohmann/json.hpp>
+
+#include <fstream>
 
 namespace technicalmachine {
 using namespace bounded::literal;
@@ -34,22 +35,27 @@ using namespace bounded::literal;
 template<Generation generation>
 struct Evaluate {
 	Evaluate() {
-		auto file = boost::property_tree::ptree();
-		read_xml("settings/evaluate.xml", file);
-		auto const pt = file.get_child("score");
+		auto file = std::ifstream("settings/evaluate.json");
+		auto json = nlohmann::json();
+		file >> json;
 
-		m_hp = pt.get<value_type>("hp", 0_bi);
+		auto const config = json.at("score");
+
+		auto get = [&](char const * field) {
+			return bounded::check_in_range<value_type>(bounded::integer(config.value(field, 0)));
+		};
+		m_hp = get("hp");
 		if constexpr (exists<decltype(m_hidden)>) {
-			m_hidden = pt.get<value_type>("hidden", 0_bi);
+			m_hidden = get("hidden");
 		}
 		if constexpr (exists<decltype(m_spikes)>) {
-			m_spikes = pt.get<value_type>("spikes", 0_bi);
+			m_spikes = get("spikes");
 		}
 		if constexpr (exists<decltype(m_stealth_rock)>) {
-			m_stealth_rock = pt.get<value_type>("stealth_rock", 0_bi);
+			m_stealth_rock = get("stealth rock");
 		}
 		if constexpr (exists<decltype(m_toxic_spikes)>) {
-			m_toxic_spikes = pt.get<value_type>("toxic_spikes", 0_bi);
+			m_toxic_spikes = get("toxic spikes");
 		}
 	}
 
