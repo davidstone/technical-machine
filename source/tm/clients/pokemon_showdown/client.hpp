@@ -7,7 +7,6 @@
 
 #include <tm/clients/pokemon_showdown/battles.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
-#include <tm/clients/pokemon_showdown/json_parser.hpp>
 #include <tm/clients/pokemon_showdown/sockets.hpp>
 #include <tm/clients/pokemon_showdown/to_packed_format.hpp>
 
@@ -74,8 +73,6 @@ private:
 	AllEvaluate m_evaluate;
 
 	SettingsFile m_settings;
-	
-	JSONParser m_parse_json;
 	
 	containers::vector<containers::string> m_trusted_users;
 	DepthValues m_depth;

@@ -25,6 +25,8 @@
 
 #include <boost/beast/http.hpp>
 
+#include <nlohmann/json.hpp>
+
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -142,14 +144,14 @@ void ClientImpl::handle_message(InMessage message) {
 	} else if (type == "uhtml" or type == "uhtmlchange") {
 		// message.remainder() == NAME|HTML
 	} else if (type == "updatechallenges") {
-		auto const json = m_parse_json(message.remainder());
-		for (auto const & challenge : json.get_child("challengesFrom")) {
-			auto const is_trusted = containers::any_equal(m_trusted_users, challenge.first);
+		auto const json = nlohmann::json::parse(message.remainder());
+		for (auto const & challenge : json.at("challengesFrom").items()) {
+			auto const is_trusted = containers::any_equal(m_trusted_users, challenge.key());
 			if (is_trusted) {
-				send_team(parse_generation(challenge.second.get<std::string>("")));
-				m_send_message("|/accept " + challenge.first);
+				send_team(parse_generation(challenge.value().get<std::string_view>()));
+				m_send_message(containers::concatenate<containers::string>("|/accept "sv, challenge.key()));
 			} else {
-				m_send_message("|/reject " + challenge.first);
+				m_send_message(containers::concatenate<containers::string>("|/reject "sv, challenge.key()));
 			}
 		}
 		// "cancelchallenge" is the command to stop challenging someone
@@ -186,18 +188,12 @@ void ClientImpl::authenticate(std::string_view const challstr) {
 	request.set(http::field::content_type, "application/x-www-form-urlencoded");
 	request.prepare_payload();
 
-	auto response = m_authenticate(host, "80", request);
+	auto const response = m_authenticate(host, "80", request);
 	
-	// Sadly, it does not look like it is possible to use
-	// boost::property_tree to directly parse JSON from some arbitrary
-	// range. I could create my own custom stream class that lets me do this
-	// without all of the copying and memory allocation, but it doesn't seem
-	// worth it considering how rare this will be.
-	//
 	// Response begins with ']' followed by JSON object.
-	response.body().erase(0U, 1U);
-	auto const json = m_parse_json(response.body());
-	m_send_message(containers::concatenate<containers::string>("|/trn "sv, m_settings.username, ",0,"sv, json.get<std::string>("assertion")));
+	auto const body = std::string_view(response.body()).substr(1);
+	auto const json = nlohmann::json::parse(body);
+	m_send_message(containers::concatenate<containers::string>("|/trn "sv, m_settings.username, ",0,"sv, json.at("assertion").get<std::string_view>()));
 }
 
 void ClientImpl::join_channel(std::string_view const channel) {

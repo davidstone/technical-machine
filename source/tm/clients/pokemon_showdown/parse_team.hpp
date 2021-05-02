@@ -6,7 +6,6 @@
 #pragma once
 
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
-#include <tm/clients/pokemon_showdown/json_parser.hpp>
 
 #include <tm/pokemon/has_physical_or_special_move.hpp>
 
@@ -24,7 +23,7 @@
 
 #include <containers/size.hpp>
 
-#include <boost/property_tree/ptree.hpp>
+#include <nlohmann/json.hpp>
 
 #include <stdexcept>
 #include <string>
@@ -34,9 +33,9 @@ namespace technicalmachine {
 
 namespace ps {
 
-inline auto parse_stats(HP::max_type const hp, boost::property_tree::ptree const & stats) {
-	auto get = [&](char const * str) {
-		return stats.get<InitialStat>(str);
+inline auto parse_stats(HP::max_type const hp, nlohmann::json const & stats) {
+	auto get = [&](char const * const str) {
+		return InitialStat(stats.at(str).get<nlohmann::json::number_integer_t>());
 	};
 	auto const attack = get("atk");
 	auto const defense = get("def");
@@ -54,14 +53,14 @@ inline auto hidden_power_type(std::string_view const str) {
 	return from_string<Type>(str.substr(prefix.size()));
 }
 
-inline auto parse_moves(boost::property_tree::ptree const & moves, Generation const generation) {
+inline auto parse_moves(nlohmann::json const & moves, Generation const generation) {
 	struct Result {
 		RegularMoves moves;
 		bounded::optional<Type> hidden_power_type;
 	};
 	auto result = Result();
 	for (auto const & move : moves) {
-		auto const move_str = move.second.get<std::string>("");
+		auto const move_str = move.get<std::string_view>();
 		auto const move_name = from_string<Moves>(move_str);
 		result.moves.push_back(Move(generation, move_name));
 		if (move_name == Moves::Hidden_Power) {
@@ -72,8 +71,8 @@ inline auto parse_moves(boost::property_tree::ptree const & moves, Generation co
 }
 
 template<Generation generation>
-auto parse_pokemon(boost::property_tree::ptree const & pokemon_data) {
-	auto get = [&](auto const & key) { return pokemon_data.get<std::string>(key); };
+auto parse_pokemon(nlohmann::json const & pokemon_data) {
+	auto get = [&](char const * key) { return pokemon_data.at(key).get<std::string_view>(); };
 
 	auto const details = parse_details(get("details"));
 	
@@ -85,12 +84,12 @@ auto parse_pokemon(boost::property_tree::ptree const & pokemon_data) {
 	// have a '/'
 	auto const hp = bounded::to_integer<HP::max_type>(split_view(condition, '/').first);
 
-	auto const move_data = parse_moves(pokemon_data.get_child("moves"), generation);
+	auto const move_data = parse_moves(pokemon_data.at("moves"), generation);
 	auto const stats = calculate_ivs_and_evs(
 		generation,
 		details.species,
 		details.level,
-		parse_stats(hp, pokemon_data.get_child("stats")),
+		parse_stats(hp, pokemon_data.at("stats")),
 		move_data.hidden_power_type,
 		has_physical_move(generation, move_data.moves, move_data.hidden_power_type)
 	);
@@ -111,21 +110,17 @@ auto parse_pokemon(boost::property_tree::ptree const & pokemon_data) {
 }
 
 template<Generation generation>
-auto parse_team(boost::property_tree::ptree const & pt) -> Team<generation> {
-	auto const team_data = containers::range_view(pt.get_child("side").get_child("pokemon").equal_range(""));
+auto parse_team(std::string_view const str) -> Team<generation> {
+	auto const json = nlohmann::json::parse(str);
+	auto const team_data = json.at("side").at("pokemon");
 	constexpr bool is_me = true;
 	auto const team_size = bounded::check_in_range<TeamSize>(bounded::integer(containers::detail::linear_size(team_data)));
 	auto team = Team<generation>(team_size, is_me);
-	for (auto const & pokemon_data : team_data) {
-		team.add_pokemon(parse_pokemon<generation>(pokemon_data.second));
+	for (auto const & pokemon_data : team_data.items()) {
+		team.add_pokemon(parse_pokemon<generation>(pokemon_data.value()));
 	}
 	team.all_pokemon().reset_index();
 	return team;
-}
-
-template<Generation generation>
-auto parse_team(std::string_view const str) -> Team<generation> {
-	return parse_team<generation>(JSONParser()(str));
 }
 
 }	// namespace ps

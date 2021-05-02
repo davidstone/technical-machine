@@ -7,7 +7,6 @@
 
 #include <tm/clients/pokemon_showdown/battle_logger.hpp>
 #include <tm/clients/pokemon_showdown/chat.hpp>
-#include <tm/clients/pokemon_showdown/json_parser.hpp>
 #include <tm/clients/pokemon_showdown/parse_team.hpp>
 
 #include <tm/clients/pokemon_lab/write_team_file.hpp>
@@ -128,7 +127,7 @@ struct BattleFactoryImpl : BattleFactory {
 			// team is otherwise?
 			auto const json_data = message.remainder();
 			if (!json_data.empty()) {
-				bounded::insert(m_team, parse_team<generation>(m_parse_json(json_data)));
+				bounded::insert(m_team, parse_team<generation>(json_data));
 			}
 		} else if (type == "rule") {
 			// message.remainder() == RULE: DESCRIPTION
@@ -227,8 +226,6 @@ struct BattleFactoryImpl : BattleFactory {
 	}
 
 private:
-	JSONParser m_parse_json;
-
 	containers::string m_id;
 	std::filesystem::path m_log_directory;
 	BattleLogger m_battle_logger;
