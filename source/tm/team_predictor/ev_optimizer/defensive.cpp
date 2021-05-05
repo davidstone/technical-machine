@@ -28,7 +28,7 @@ constexpr auto ev_sum(DataPoint const data) {
 }
 
 constexpr auto ev_range() {
-	return containers::transform(containers::inclusive_integer_range(0_bi, EV::max, 4_bi), bounded::construct_return<EV>);
+	return containers::transform(containers::inclusive_integer_range(0_bi, EV::useful_max, 4_bi), bounded::construct_return<EV>);
 }
 
 }	// namespace

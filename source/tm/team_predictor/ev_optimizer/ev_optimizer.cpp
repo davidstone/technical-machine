@@ -95,12 +95,12 @@ auto compute_minimal_spread(
 	if (generation <= Generation::two) {
 		return {
 			Nature::Hardy,
-			{ivs.hp, EV(EV::max)},
-			{ivs.atk, include_attack ? EV(EV::max) : EV(0_bi)},
-			{ivs.def, EV(EV::max)},
-			{ivs.spa, EV(EV::max)},
-			{ivs.spd, EV(EV::max)},
-			{ivs.spe, EV(EV::max)},
+			{ivs.hp, EV(EV::useful_max)},
+			{ivs.atk, include_attack ? EV(EV::useful_max) : EV(0_bi)},
+			{ivs.def, EV(EV::useful_max)},
+			{ivs.spa, EV(EV::useful_max)},
+			{ivs.spd, EV(EV::useful_max)},
+			{ivs.spe, EV(EV::useful_max)},
 		};
 	}
 
@@ -127,23 +127,24 @@ auto pad_random_evs(Generation const generation, CombinedStats<IVAndEV> combined
 	if (generation <= Generation::two) {
 		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 			auto const minimize_stat = stat_name == PermanentStat::atk and !include_attack;
-			combined[stat_name].ev = minimize_stat ? EV(0_bi) : EV(EV::max);
+			combined[stat_name].ev = minimize_stat ? EV(0_bi) : EV(EV::useful_max);
 		}
 		return combined;
 	}
 	auto distribution = std::discrete_distribution{};
-	while (ev_sum(combined) < max_total_evs(generation)) {
+	constexpr auto minimal_increment = 4_bi;
+	while (ev_sum(combined) + minimal_increment <= max_total_evs(generation)) {
 		distribution.param({
-			combined.hp.ev == EV::max ? 0.0 : 1.0,
-			(!include_attack or combined.atk.ev == EV::max) ? 0.0 : 1.0,
-			combined.def.ev == EV::max ? 0.0 : 1.0,
-			(!include_special_attack or combined.spa.ev == EV::max) ? 0.0 : 1.0,
-			combined.spd.ev == EV::max ? 0.0 : 1.0,
-			combined.spe.ev == EV::max ? 0.0 : 1.0,
+			combined.hp.ev == EV::useful_max ? 0.0 : 1.0,
+			(!include_attack or combined.atk.ev == EV::useful_max) ? 0.0 : 1.0,
+			combined.def.ev == EV::useful_max ? 0.0 : 1.0,
+			(!include_special_attack or combined.spa.ev == EV::useful_max) ? 0.0 : 1.0,
+			combined.spd.ev == EV::useful_max ? 0.0 : 1.0,
+			combined.spe.ev == EV::useful_max ? 0.0 : 1.0,
 		});
 		auto const index = distribution(random_engine);
 		auto & ev = combined[PermanentStat(index - 1)].ev;
-		ev = EV(EV::value_type(ev.value() + 4_bi));
+		ev = EV(EV::value_type(ev.value() + minimal_increment));
 	}
 	return combined;
 }

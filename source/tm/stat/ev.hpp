@@ -16,7 +16,8 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct EV {
-	static constexpr auto max = 252_bi;
+	static constexpr auto max = 255_bi;
+	static constexpr auto useful_max = 252_bi;
 	using value_type = bounded::integer<0, static_cast<int>(max)>;
 
 	constexpr explicit EV(value_type evs):
