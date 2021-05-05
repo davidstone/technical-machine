@@ -186,6 +186,7 @@ add_library(tm_common STATIC
 	source/tm/ability.cpp
 	source/tm/apply_entry_hazards.cpp
 	source/tm/battle.cpp
+	source/tm/bit_view.cpp
 	source/tm/block.cpp
 	source/tm/buffer_view.cpp
 	source/tm/compress.cpp
