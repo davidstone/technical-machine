@@ -105,7 +105,7 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 		auto item = get(bounded::detail::types<Item>(), "item");
 		auto ability = get(bounded::detail::types<Ability>(), "ability");
 		auto nature = get(bounded::detail::types<Nature>(), "nature");
-		auto const stats = GenericStats<EV>{
+		auto const stats = EVs{
 			get_ev("hp"),
 			get_ev("atk"),
 			get_ev("def"),

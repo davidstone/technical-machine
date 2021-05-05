@@ -34,7 +34,7 @@ struct CombinedStats {
 	friend auto operator==(CombinedStats, CombinedStats) -> bool = default;
 };
 
-constexpr auto combine(Nature const nature, GenericStats<IV> const ivs, GenericStats<EV> const evs) {
+constexpr auto combine(Nature const nature, IVs const ivs, EVs const evs) {
 	return CombinedStats<IVAndEV>{
 		nature,
 		{ivs.hp, evs.hp},

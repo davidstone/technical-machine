@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <tm/stat/ev.hpp>
 #include <tm/stat/iv.hpp>
 #include <tm/stat/stat_names.hpp>
 
@@ -33,5 +34,6 @@ template<typename HP, typename Stat>
 GenericStats(HP, Stat, Stat, Stat, Stat, Stat) -> GenericStats<HP, Stat>;
 
 using IVs = GenericStats<IV>;
+using EVs = GenericStats<EV>;
 
 }	// namespace technicalmachine

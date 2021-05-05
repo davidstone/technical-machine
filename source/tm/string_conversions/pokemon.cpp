@@ -186,7 +186,7 @@ auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 		pop_value_type<IV>(buffer, spd_iv_spe_iv),
 		pop_value_type<IV>(buffer, spe_iv_hp_ev),
 	};
-	auto const evs = GenericStats<EV>{
+	auto const evs = EVs{
 		pop_value_type<EV>(buffer, hp_ev_atk_ev),
 		pop_value_type<EV>(buffer, atk_ev_def_ev),
 		pop_value_type<EV>(buffer, def_ev_spa_ev),
