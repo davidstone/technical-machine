@@ -118,6 +118,7 @@ add_library(tm_common STATIC
 	source/tm/pokemon/has_physical_or_special_move.cpp
 	source/tm/pokemon/heal_block.cpp
 	source/tm/pokemon/hidden_power.cpp
+	source/tm/pokemon/is_genderless.cpp
 	source/tm/pokemon/last_used_move.cpp
 	source/tm/pokemon/level.cpp
 	source/tm/pokemon/magnet_rise.cpp
