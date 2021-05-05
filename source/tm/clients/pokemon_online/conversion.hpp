@@ -54,9 +54,5 @@ using MoveID = bounded::integer<1, static_cast<int>(bounded::constant<numeric_tr
 Moves id_to_move(MoveID id);
 MoveID move_to_id(Moves move);
 
-using NatureID = bounded::integer<0, 24>;
-Nature id_to_nature(NatureID id);
-NatureID nature_to_id(Nature nature);
-
 } // namespace po
 } // namespace technicalmachine

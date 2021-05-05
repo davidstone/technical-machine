@@ -15,8 +15,6 @@
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
-#include <tm/stat/nature.hpp>
-
 #include <tm/clients/pokemon_online/conversion.hpp>
 
 #include <containers/integer_range.hpp>
@@ -73,7 +71,6 @@ void test_conversions () {
 	test_enum("Gender", gender_to_id, id_to_gender, numeric_traits::max_value<Gender>);
 	test_item();
 	test_move();
-	test_enum("Nature", nature_to_id, id_to_nature, numeric_traits::max_value<Nature>);
 	test_enum("Species", species_to_id, id_to_species, Species::Arceus);
 }
 

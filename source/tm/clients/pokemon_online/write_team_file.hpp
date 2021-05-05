@@ -7,6 +7,7 @@
 
 #include <tm/clients/pokemon_online/conversion.hpp>
 
+#include <tm/stat/ingame_id_to_nature.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
 #include <tm/string_conversions/species.hpp>
@@ -85,7 +86,7 @@ void write_pokemon(Pokemon<generation> const & pokemon, boost::property_tree::pt
 	auto const species = pokemon.species();
 	auto const po_species = species_to_id(species);
 	member.put("<xmlattr>.Num", po_species.id);
-	member.put("<xmlattr>.Nature", nature_to_id(pokemon.nature()));
+	member.put("<xmlattr>.Nature", ingame_nature_to_id(pokemon.nature()));
 	member.put("<xmlattr>.Shiny", 0);
 	member.put("<xmlattr>.Nickname", to_string(species));
 	member.put("<xmlattr>.Gen", 4);

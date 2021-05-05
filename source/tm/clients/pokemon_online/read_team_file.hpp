@@ -8,6 +8,8 @@
 #include <tm/clients/pokemon_online/conversion.hpp>
 #include <tm/clients/pokemon_online/invalid_team_file.hpp>
 
+#include <tm/stat/ingame_id_to_nature.hpp>
+
 #include <tm/generation.hpp>
 #include <tm/team.hpp>
 
@@ -121,7 +123,7 @@ auto load_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID species
 	auto const happiness = Happiness(pt.get<Happiness::value_type>("<xmlattr>.Happiness"));
 	auto const item = id_to_item(pt.get<ItemID>("<xmlattr>.Item"));
 	auto const ability = id_to_ability(pt.get<AbilityID>("<xmlattr>.Ability"));
-	auto const nature = id_to_nature(pt.get<NatureID>("<xmlattr>.Nature"));
+	auto const nature = ingame_id_to_nature(pt.get<IngameNatureID>("<xmlattr>.Nature"));
 
 	auto const it = CheckedIterator(pt.get_child(""));
 	auto const parsed_moves = load_moves(generation, it);

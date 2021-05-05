@@ -144,6 +144,7 @@ add_library(tm_common STATIC
 	source/tm/stat/generic_stats.cpp
 	source/tm/stat/hp.cpp
 	source/tm/stat/initial_stat.cpp
+	source/tm/stat/ingame_id_to_nature.cpp
 	source/tm/stat/iv.cpp
 	source/tm/stat/iv_and_ev.cpp
 	source/tm/stat/nature.cpp
