@@ -88,7 +88,7 @@ void ClientImpl::run(DelimitedBufferView<std::string_view> messages) {
 }
 
 void ClientImpl::send_team(Generation const runtime_generation) {
-	auto make_packed = [&]<Generation generation>(std::integral_constant<Generation, generation>) {
+	auto make_packed = [&]<Generation generation>(constant_gen_t<generation>) {
 		return to_packed_format(generate_team<generation>());
 	};
 	m_send_message(containers::concatenate<containers::string>("|/utm "sv, constant_generation(runtime_generation, make_packed)));

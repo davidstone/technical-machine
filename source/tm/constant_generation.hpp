@@ -12,7 +12,10 @@
 namespace technicalmachine {
 
 template<Generation generation>
-inline constexpr auto constant_gen = std::integral_constant<Generation, generation>();
+using constant_gen_t = std::integral_constant<Generation, generation>;
+
+template<Generation generation>
+inline constexpr auto constant_gen = constant_gen_t<generation>();
 
 constexpr auto constant_generation(Generation const generation, auto && make) {
 	switch (generation) {

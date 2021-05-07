@@ -255,7 +255,7 @@ auto make_battle_factory(
 	std::mt19937 random_engine
 ) -> std::unique_ptr<BattleFactory> {
 	auto const parsed_generation = parse_generation(id);
-	auto make = [&]<Generation generation>(std::integral_constant<Generation, generation>) -> std::unique_ptr<BattleFactory> {
+	auto make = [&]<Generation generation>(constant_gen_t<generation>) -> std::unique_ptr<BattleFactory> {
 		return std::make_unique<BattleFactoryImpl<generation>>(
 			base_log_directory,
 			log_foe_teams,
