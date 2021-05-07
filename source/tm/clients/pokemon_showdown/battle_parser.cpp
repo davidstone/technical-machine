@@ -24,11 +24,13 @@
 #include <tm/string_conversions/team.hpp>
 
 #include <tm/battle.hpp>
+#include <tm/generation_generic.hpp>
 #include <tm/visible_hp.hpp>
 
 #include <bounded/integer.hpp>
 #include <bounded/to_integer.hpp>
 #include <bounded/detail/overload.hpp>
+#include <bounded/detail/variant/variant.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/algorithms/concatenate_view.hpp>
@@ -787,7 +789,7 @@ auto make_battle_parser(
 	Party party,
 	DepthValues const depth,
 	std::mt19937 random_engine,
-	GenericTeams const & generic_teams,
+	GenerationGeneric<Teams> const & generic_teams,
 	bool log_foe_teams
 ) -> std::unique_ptr<BattleParser> {
 	return bounded::visit(generic_teams, [&]<Generation generation>(Teams<generation> const & teams) -> std::unique_ptr<BattleParser> {

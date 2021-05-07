@@ -198,6 +198,7 @@ add_library(tm_common STATIC
 	source/tm/files_in_path.cpp
 	source/tm/gender.cpp
 	source/tm/generation.cpp
+	source/tm/generation_generic.cpp
 	source/tm/heal.cpp
 	source/tm/held_item.cpp
 	source/tm/invalid_settings_file.cpp

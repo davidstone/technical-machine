@@ -12,7 +12,6 @@
 #include <tm/status.hpp>
 
 #include <bounded/integer.hpp>
-#include <bounded/detail/variant/variant.hpp>
 
 #include <numeric_traits/min_max_value.hpp>
 

@@ -18,6 +18,7 @@
 
 #include <tm/buffer_view.hpp>
 #include <tm/generation.hpp>
+#include <tm/generation_generic.hpp>
 #include <tm/team.hpp>
 
 #include <bounded/optional.hpp>
@@ -69,17 +70,6 @@ template<typename T>
 auto get_expected_integer_wrapper(std::string_view const input, std::string_view const key) {
 	return T(bounded::to_integer<typename T::value_type>(get_expected_base(input, key)));
 }
-
-using GenericTeam = bounded::variant<
-	Team<Generation::one>,
-	Team<Generation::two>,
-	Team<Generation::three>,
-	Team<Generation::four>,
-	Team<Generation::five>,
-	Team<Generation::six>,
-	Team<Generation::seven>,
-	Team<Generation::eight>
->;
 
 template<Generation generation>
 auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
@@ -155,18 +145,18 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 	return team;
 }
 
-auto parse_html_team(std::string_view str) -> GenericTeam {
+auto parse_html_team(std::string_view str) -> GenerationGeneric<Team> {
 	auto buffer = DelimitedBufferView(str, '&');
 	auto const generation = Generation(bounded::to_integer<1, 8>(get_expected_base(buffer.pop(), "generation")));
 	switch (generation) {
-		case Generation::one: return GenericTeam(parse_html_team<Generation::one>(buffer));
-		case Generation::two: return GenericTeam(parse_html_team<Generation::two>(buffer));
-		case Generation::three: return GenericTeam(parse_html_team<Generation::three>(buffer));
-		case Generation::four: return GenericTeam(parse_html_team<Generation::four>(buffer));
-		case Generation::five: return GenericTeam(parse_html_team<Generation::five>(buffer));
-		case Generation::six: return GenericTeam(parse_html_team<Generation::six>(buffer));
-		case Generation::seven: return GenericTeam(parse_html_team<Generation::seven>(buffer));
-		case Generation::eight: return GenericTeam(parse_html_team<Generation::eight>(buffer));
+		case Generation::one: return GenerationGeneric<Team>(parse_html_team<Generation::one>(buffer));
+		case Generation::two: return GenerationGeneric<Team>(parse_html_team<Generation::two>(buffer));
+		case Generation::three: return GenerationGeneric<Team>(parse_html_team<Generation::three>(buffer));
+		case Generation::four: return GenerationGeneric<Team>(parse_html_team<Generation::four>(buffer));
+		case Generation::five: return GenerationGeneric<Team>(parse_html_team<Generation::five>(buffer));
+		case Generation::six: return GenerationGeneric<Team>(parse_html_team<Generation::six>(buffer));
+		case Generation::seven: return GenerationGeneric<Team>(parse_html_team<Generation::seven>(buffer));
+		case Generation::eight: return GenerationGeneric<Team>(parse_html_team<Generation::eight>(buffer));
 	}
 }
 

@@ -13,10 +13,10 @@
 #include <tm/evaluate/depth.hpp>
 #include <tm/evaluate/evaluate.hpp>
 
+#include <tm/generation_generic.hpp>
 #include <tm/visible_hp.hpp>
 
 #include <bounded/integer.hpp>
-#include <bounded/detail/variant/variant.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/trivial_inplace_function.hpp>
@@ -42,16 +42,6 @@ struct Teams {
 	Team<generation> ai;
 	Team<generation> foe;
 };
-using GenericTeams = bounded::variant<
-	Teams<Generation::one>,
-	Teams<Generation::two>,
-	Teams<Generation::three>,
-	Teams<Generation::four>,
-	Teams<Generation::five>,
-	Teams<Generation::six>,
-	Teams<Generation::seven>,
-	Teams<Generation::eight>
->;
 
 struct BattleParser {
 	virtual auto handle_message(InMessage message) -> void = 0;
@@ -71,7 +61,7 @@ auto make_battle_parser(
 	Party party,
 	DepthValues const depth,
 	std::mt19937 random_engine,
-	GenericTeams const & teams,
+	GenerationGeneric<Teams> const & teams,
 	bool log_foe_teams
 ) -> std::unique_ptr<BattleParser>;
 

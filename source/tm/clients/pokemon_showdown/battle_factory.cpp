@@ -220,7 +220,7 @@ struct BattleFactoryImpl : BattleFactory {
 			*m_party,
 			m_depth,
 			m_random_engine,
-			GenericTeams(Teams<generation>{*m_team, make_foe_team()}),
+			GenerationGeneric<Teams>(Teams<generation>{*m_team, make_foe_team()}),
 			m_log_foe_teams
 		);
 	}
