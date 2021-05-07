@@ -81,12 +81,10 @@ private:
 	}
 	
 	static constexpr auto calculate_type(DVs const dvs) -> Type {
-		auto get_low_bit = [](auto const index, DV const dv) { return (dv.value() >> index) % 2_bi; };
+		constexpr auto get_base_four_digit = [](DV const dv) { return dv.value() % 4_bi; };
 		return calculate_type_impl(
-			(get_low_bit(1_bi, dvs.atk) << 3_bi) +
-			(get_low_bit(0_bi, dvs.atk) << 2_bi) +
-			(get_low_bit(1_bi, dvs.def) << 1_bi) +
-			(get_low_bit(0_bi, dvs.def) << 0_bi)
+			(get_base_four_digit(dvs.atk) * 4_bi) +
+			(get_base_four_digit(dvs.def) * 1_bi)
 		);
 	}
 
