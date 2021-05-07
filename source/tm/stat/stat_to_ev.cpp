@@ -102,13 +102,13 @@ auto calculate_ivs_and_evs(
 		"No Nature + EV combination combines to give the received stats in generation "sv,
 		to_string(generation),
 		": Species: "sv, to_string(species),
-		" Level: "sv, bounded::to_string(level()),
-		" HP: "sv, bounded::to_string(stats.hp),
-		" Attack: "sv, bounded::to_string(stats.atk),
-		" Defense: "sv, bounded::to_string(stats.def),
-		" Special Attack: "sv, bounded::to_string(stats.spa),
-		" Special Defense: "sv, bounded::to_string(stats.spd),
-		" Speed: "sv, bounded::to_string(stats.spe)
+		", Level: "sv, bounded::to_string(level()),
+		", HP: "sv, bounded::to_string(stats.hp),
+		", Attack: "sv, bounded::to_string(stats.atk),
+		", Defense: "sv, bounded::to_string(stats.def),
+		", Special Attack: "sv, bounded::to_string(stats.spa),
+		", Special Defense: "sv, bounded::to_string(stats.spd),
+		", Speed: "sv, bounded::to_string(stats.spe)
 	));
 }
 
