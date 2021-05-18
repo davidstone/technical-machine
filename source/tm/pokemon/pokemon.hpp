@@ -95,7 +95,7 @@ struct Pokemon {
 		}
 	}
 
-	auto hidden_power() const -> bounded::optional<HiddenPower> {
+	auto hidden_power() const -> bounded::optional<HiddenPower<generation>> {
 		if constexpr (exists<decltype(m_hidden_power)>) {
 			return m_hidden_power;
 		} else {
@@ -200,7 +200,7 @@ private:
 
 	Level m_level;
 	[[no_unique_address]] ExistsIf<Happiness, generation >= Generation::two> m_happiness;
-	[[no_unique_address]] ExistsIf<bounded::optional<HiddenPower>, generation >= Generation::two> m_hidden_power;
+	[[no_unique_address]] ExistsIf<bounded::optional<HiddenPower<generation>>, generation >= Generation::two> m_hidden_power;
 
 	bool m_has_been_seen : 1;
 	

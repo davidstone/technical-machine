@@ -18,22 +18,24 @@
 
 namespace technicalmachine {
 
-// TODO: Make this a template based on the generation so we don't need to store
-// the power?
+template<Generation generation>
 struct HiddenPower {
-	using Power = bounded::integer<30, 70>;
+	using Power =
+		std::conditional_t<generation <= Generation::one, bounded::constant_t<0>,
+		std::conditional_t<generation <= Generation::two, bounded::integer<31, 70>,
+		std::conditional_t<generation <= Generation::five, bounded::integer<30, 70>,
+		bounded::constant_t<60>
+	>>>;
 
-	constexpr HiddenPower(Generation const generation, DVs const dvs):
+	constexpr HiddenPower(DVs const dvs) requires(generation == Generation::two):
 		m_power(calculate_power(dvs)),
 		m_type(calculate_type(dvs))
 	{
-		BOUNDED_ASSERT_OR_ASSUME(generation <= Generation::two);
 	}
-	constexpr HiddenPower(Generation const generation, IVs const ivs):
-		m_power(calculate_power(generation, ivs)),
+	constexpr HiddenPower(IVs const ivs) requires(generation >= Generation::three):
+		m_power(calculate_power(ivs)),
 		m_type(calculate_type(ivs))
 	{
-		BOUNDED_ASSERT_OR_ASSUME(generation >= Generation::three);
 	}
 	
 	constexpr auto power() const {
@@ -75,9 +77,13 @@ private:
 		return (5_bi * x + y) / 2_bi + 31_bi;
 	}
 	
-	static constexpr auto calculate_power(Generation const generation, IVs const ivs) -> Power {
-		auto transform = [](auto const index, IV const iv) { return ((iv.value() / 2_bi) % 2_bi) << index; };
-		return generation >= Generation::six ? 60_bi : sum_stats(ivs, transform) * 40_bi / 63_bi + 30_bi;
+	static constexpr auto calculate_power(IVs const ivs) -> Power {
+		if constexpr (generation <= Generation::five) {
+			auto transform = [](auto const index, IV const iv) { return ((iv.value() / 2_bi) % 2_bi) << index; };
+			return sum_stats(ivs, transform) * 40_bi / 63_bi + 30_bi;
+		} else {
+			return 60_bi;
+		}
 	}
 	
 	static constexpr auto calculate_type(DVs const dvs) -> Type {
@@ -115,22 +121,22 @@ private:
 		}
 	}
 
-	Power m_power;
+	[[no_unique_address]] Power m_power;
 	Type m_type;
 };
 
 } // namespace technicalmachine
 namespace bounded {
 
-template<>
-struct tombstone_traits<technicalmachine::HiddenPower> {
-	using base = tombstone_traits<technicalmachine::HiddenPower::Power>;
+template<technicalmachine::Generation generation>
+struct tombstone_traits<technicalmachine::HiddenPower<generation>> {
+	using base = tombstone_traits<typename technicalmachine::HiddenPower<generation>::Power>;
 	static constexpr auto spare_representations = base::spare_representations;
 
 	static constexpr auto make(auto const index) noexcept {
-		return technicalmachine::HiddenPower(bounded::none, index);
+		return technicalmachine::HiddenPower<generation>(bounded::none, index);
 	}
-	static constexpr auto index(technicalmachine::HiddenPower const value) {
+	static constexpr auto index(technicalmachine::HiddenPower<generation> const value) {
 		return base::index(value.power());
 	}
 };

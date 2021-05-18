@@ -27,11 +27,15 @@ Pokemon<generation>::Pokemon(Species const species, Level const level, Gender co
     // TODO: Make this none if there is no way to call Hidden Power
     // TODO: Use the IVs provided
     m_hidden_power([=]{
-        constexpr auto dv = DV(15_bi);
-        constexpr auto iv = IV(31_bi);
-        return generation <= Generation::two ?
-            HiddenPower(generation, DVs{dv, dv, dv, dv}) :
-            HiddenPower(generation, IVs{iv, iv, iv, iv, iv, iv});
+        if constexpr (generation == Generation::one) {
+            return bounded::none;
+        } else if constexpr (generation == Generation::two) {
+            constexpr auto dv = DV(15_bi);
+            return HiddenPower<generation>(DVs{dv, dv, dv, dv});
+        } else {
+            constexpr auto iv = IV(31_bi);
+            return HiddenPower<generation>(IVs{iv, iv, iv, iv, iv, iv});
+        }
     }()),
     
     m_has_been_seen(false),

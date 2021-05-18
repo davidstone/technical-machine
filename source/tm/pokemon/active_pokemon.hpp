@@ -275,7 +275,7 @@ public:
 		return m_flags.heal_block.is_active();
 	}
 
-	auto hidden_power() const -> bounded::optional<HiddenPower> {
+	auto hidden_power() const -> bounded::optional<HiddenPower<generation>> {
 		return m_pokemon.hidden_power();
 	}
 

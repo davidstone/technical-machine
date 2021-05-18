@@ -30,7 +30,7 @@ constexpr void test_impl() {
 					return detail::hidden_power_ivs(type, has_physical_move);
 				}
 			}();
-			auto const hp = HiddenPower(generation, ivs);
+			auto const hp = HiddenPower<generation>(ivs);
 			BOUNDED_ASSERT(hp.power() == 70_bi);
 			BOUNDED_ASSERT(hp.type() == type);
 		}
@@ -39,7 +39,7 @@ constexpr void test_impl() {
 
 constexpr bool test() {
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(30_bi),
 			IV(30_bi),
@@ -52,7 +52,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
@@ -65,7 +65,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
@@ -78,7 +78,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
@@ -91,7 +91,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
@@ -104,7 +104,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
@@ -117,7 +117,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(30_bi),
 			IV(30_bi),
 			IV(30_bi),
@@ -130,7 +130,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
@@ -143,7 +143,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
@@ -156,7 +156,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
@@ -169,7 +169,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(30_bi),
 			IV(30_bi),
@@ -182,7 +182,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(31_bi),
 			IV(30_bi),
@@ -195,7 +195,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
@@ -208,7 +208,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(31_bi),
 			IV(30_bi),
@@ -221,7 +221,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
@@ -234,7 +234,7 @@ constexpr bool test() {
 	}
 
 	{
-		constexpr auto hp = HiddenPower(Generation::three, IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs{
 			IV(31_bi),
 			IV(30_bi),
 			IV(30_bi),
