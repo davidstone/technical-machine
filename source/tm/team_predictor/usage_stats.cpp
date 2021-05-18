@@ -37,6 +37,11 @@ namespace technicalmachine {
 
 namespace {
 
+struct NatureAndEVs {
+	Nature nature;
+	EVs evs;
+};
+
 template<typename T>
 auto from_statistics_string(std::string_view const str) {
 	if constexpr (std::is_same_v<T, Moves>) {
@@ -49,7 +54,7 @@ auto from_statistics_string(std::string_view const str) {
 		return
 			str == "noability" ? Ability::Honey_Gather :
 			from_string<Ability>(str);
-	} else if constexpr (std::is_same_v<T, CombinedStats<EV>>) {
+	} else if constexpr (std::is_same_v<T, NatureAndEVs>) {
 		auto buffer = DelimitedBufferView(str, '/');
 		auto const nature = from_string<Nature>(buffer.pop(':'));
 		auto get_ev = [&]{
@@ -61,7 +66,7 @@ auto from_statistics_string(std::string_view const str) {
 		auto const spa = get_ev();
 		auto const spd = get_ev();
 		auto const spe = get_ev();
-		return CombinedStats<EV>{nature, hp, atk, def, spa, spd, spe};
+		return NatureAndEVs{nature, EVs{hp, atk, def, spa, spd, spe}};
 	}
 }
 
@@ -226,7 +231,9 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 		per_pokemon.moves = per_pokemon_data<Moves>(pokemon.value().at("Moves"), max_moves_per_pokemon);
 		per_pokemon.ability = per_pokemon_datum<Ability>(pokemon.value().at("Abilities"));
 		per_pokemon.item = per_pokemon_datum<Item>(pokemon.value().at("Items"));
-		per_pokemon.stats = per_pokemon_datum<CombinedStats<EV>>(pokemon.value().at("Spreads"));
+		auto const stats = per_pokemon_datum<NatureAndEVs>(pokemon.value().at("Spreads"));
+		per_pokemon.nature = stats.nature;
+		per_pokemon.evs = stats.evs;
 	}
 
 	check_finite(m_total_weighted_usage);

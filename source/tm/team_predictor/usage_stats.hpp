@@ -6,8 +6,11 @@
 #pragma once
 
 #include <tm/move/max_moves_per_pokemon.hpp>
+
 #include <tm/pokemon/species.hpp>
-#include <tm/stat/combined_stats.hpp>
+
+#include <tm/stat/generic_stats.hpp>
+#include <tm/stat/nature.hpp>
 
 #include <tm/ability.hpp>
 #include <tm/generation.hpp>
@@ -19,8 +22,8 @@
 
 #include <numeric_traits/min_max_value.hpp>
 
-#include <algorithm>
 #include <filesystem>
+#include <stdexcept>
 
 namespace technicalmachine {
 
@@ -30,9 +33,9 @@ struct UsageStats {
 		containers::array<float, number_of_species> teammates = {};
 		containers::static_vector<Moves, max_moves_per_pokemon.value()> moves;
 		Ability ability = Ability::Honey_Gather;
-		Item item = Item::None;	
-		CombinedStats<EV> stats = {
-			Nature::Hardy,
+		Item item = Item::None;
+		Nature nature = Nature::Hardy;
+		EVs evs = {
 			EV(EV::max),
 			EV(EV::max),
 			EV(EV::max),
