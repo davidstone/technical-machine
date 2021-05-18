@@ -33,7 +33,42 @@ namespace technicalmachine {
 
 template<Generation generation>
 struct Pokemon {
-	Pokemon(Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats<IVAndEV> stats, RegularMoves regular_moves_, Happiness const happiness = Happiness());
+	Pokemon(Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats<IVAndEV> stats, RegularMoves regular_moves_, Happiness const happiness = Happiness()):
+		m_regular_moves(regular_moves_),
+		m_stats(BaseStats(generation, species), stats, level),
+
+		m_species(species),
+		m_item(item),
+		m_ability(ability),
+		m_gender(gender),
+		m_nature(stats.nature),
+
+		m_level(level),
+
+		m_happiness(happiness),
+
+		// TODO: Make this none if there is no way to call Hidden Power
+		// TODO: Use the IVs provided
+		m_hidden_power([=]{
+			if constexpr (generation == Generation::one) {
+				return bounded::none;
+			} else if constexpr (generation == Generation::two) {
+				constexpr auto dv = DV(15_bi);
+				return HiddenPower<generation>(DVs{dv, dv, dv, dv});
+			} else {
+				constexpr auto iv = IV(31_bi);
+				return HiddenPower<generation>(IVs{iv, iv, iv, iv, iv, iv});
+			}
+		}()),
+		
+		m_has_been_seen(false),
+
+		m_ability_is_known(true),
+		m_item_is_known(true),
+		m_nature_is_known(true)
+	{
+	}
+
 	Pokemon(Species const species, Level const level, Gender const gender);
 	
 	auto hp() const {
