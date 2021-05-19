@@ -11,7 +11,6 @@
 #include <tm/pokemon/species.hpp>
 
 #include <tm/string_conversions/move.hpp>
-#include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
@@ -44,36 +43,6 @@ auto stat_from_simulator_string(std::string_view const str) -> PermanentStat {
 		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Invalid stat name "), str));
 	}
 	return *result;
-}
-
-auto load_stats(boost::property_tree::ptree const & pt) -> CombinedStats {
-	auto evs = EVs{
-		EV(0_bi),
-		EV(0_bi),
-		EV(0_bi),
-		EV(0_bi),
-		EV(0_bi),
-		EV(0_bi),
-	};
-	auto ivs = IVs{
-		IV(0_bi),
-		IV(0_bi),
-		IV(0_bi),
-		IV(0_bi),
-		IV(0_bi),
-		IV(0_bi),
-	};
-	for (auto const & value : pt.get_child("stats")) {
-		auto const & stats = value.second;
-		auto const stat_name = stat_from_simulator_string(stats.get<std::string>("<xmlattr>.name"));
-		ivs[stat_name] = IV(stats.get<IV::value_type>("<xmlattr>.iv"));
-		evs[stat_name] = EV(stats.get<EV::value_type>("<xmlattr>.ev"));
-	}
-	return CombinedStats{
-		from_string<Nature>(pt.get<std::string>("nature")),
-		ivs,
-		evs
-	};
 }
 
 auto species_from_simulator_string(std::string_view const str) -> Species {
