@@ -139,7 +139,6 @@ add_library(tm_common STATIC
 	source/tm/stat/calculate.cpp
 	source/tm/stat/chance_to_hit.cpp
 	source/tm/stat/combined_stats.cpp
-	source/tm/stat/dv.cpp
 	source/tm/stat/ev.cpp
 	source/tm/stat/generic_stats.cpp
 	source/tm/stat/hp.cpp

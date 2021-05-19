@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include <tm/stat/dv.hpp>
 #include <tm/stat/iv.hpp>
 
 #include <tm/type/type.hpp>
