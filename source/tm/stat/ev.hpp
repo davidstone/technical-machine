@@ -28,17 +28,18 @@ struct EV {
 	}
 
 	friend auto operator<=>(EV, EV) = default;
+	friend auto operator==(EV, EV) -> bool = default;
+	friend constexpr auto operator<=>(EV const lhs, EV::value_type const rhs) {
+		return lhs.value() <=> rhs;
+	}
+	friend constexpr auto operator==(EV const lhs, EV::value_type const rhs) -> bool {
+		return lhs.value() == rhs;
+	}
 
 private:
 	value_type m_value;
 };
 
-constexpr auto operator<=>(EV const lhs, EV::value_type const rhs) {
-	return lhs.value() <=> rhs;
-}
-constexpr auto operator==(EV const lhs, EV::value_type const rhs) -> bool {
-	return lhs.value() == rhs;
-}
 
 constexpr auto max_total_evs(Generation const generation) {
 	return
