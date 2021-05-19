@@ -7,10 +7,14 @@
 #include <tm/test/evaluate/evaluate.hpp>
 
 #include <tm/evaluate/evaluate.hpp>
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
 
 #include <tm/pokemon/species.hpp>
+
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
+
+#include <tm/team.hpp>
+#include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>
 

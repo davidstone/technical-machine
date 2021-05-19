@@ -9,7 +9,8 @@
 
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/combined_stats.hpp>
-#include <tm/stat/iv_and_ev.hpp>
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
 #include <tm/stat/nature.hpp>
 
 #include <bounded/integer.hpp>

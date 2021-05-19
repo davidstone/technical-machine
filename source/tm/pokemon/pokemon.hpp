@@ -10,6 +10,14 @@
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species.hpp>
 
+#include <tm/move/container.hpp>
+
+#include <tm/stat/combined_stats.hpp>
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
+#include <tm/stat/nature.hpp>
+#include <tm/stat/stats.hpp>
+
 #include <tm/ability.hpp>
 #include <tm/compress.hpp>
 #include <tm/exists_if.hpp>
@@ -18,12 +26,6 @@
 #include <tm/held_item.hpp>
 #include <tm/status.hpp>
 #include <tm/weather.hpp>
-
-#include <tm/move/container.hpp>
-
-#include <tm/stat/combined_stats.hpp>
-#include <tm/stat/nature.hpp>
-#include <tm/stat/stats.hpp>
 
 #include <bounded/assert.hpp>
 

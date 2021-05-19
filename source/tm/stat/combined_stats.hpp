@@ -5,7 +5,8 @@
 
 #pragma once
 
-#include <tm/stat/generic_stats.hpp>
+#include <tm/stat/iv.hpp>
+#include <tm/stat/ev.hpp>
 #include <tm/stat/nature.hpp>
 
 namespace technicalmachine {

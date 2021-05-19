@@ -9,7 +9,7 @@
 
 #include <tm/pokemon/species.hpp>
 
-#include <tm/stat/generic_stats.hpp>
+#include <tm/stat/ev.hpp>
 #include <tm/stat/nature.hpp>
 
 #include <tm/ability.hpp>

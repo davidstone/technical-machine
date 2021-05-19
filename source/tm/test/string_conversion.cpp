@@ -5,14 +5,10 @@
 
 #include <tm/test/string_conversion.hpp>
 
-#include <tm/ability.hpp>
-#include <tm/gender.hpp>
-#include <tm/item.hpp>
-#include <tm/move/moves.hpp>
-#include <tm/status.hpp>
-
 #include <tm/pokemon/species.hpp>
 
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
 #include <tm/stat/nature.hpp>
 
 #include <tm/string_conversions/ability.hpp>
@@ -25,6 +21,12 @@
 #include <tm/string_conversions/species.hpp>
 #include <tm/string_conversions/status.hpp>
 #include <tm/string_conversions/type.hpp>
+
+#include <tm/ability.hpp>
+#include <tm/gender.hpp>
+#include <tm/item.hpp>
+#include <tm/move/moves.hpp>
+#include <tm/status.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>

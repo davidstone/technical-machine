@@ -8,13 +8,15 @@
 
 #include <tm/test/incorrect_calculation.hpp>
 
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
-
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/species.hpp>
 
 #include <tm/stat/calculate.hpp>
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
+
+#include <tm/team.hpp>
+#include <tm/weather.hpp>
 
 #include <containers/integer_range.hpp>
 

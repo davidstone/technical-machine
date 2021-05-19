@@ -18,10 +18,11 @@
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/combined_stats.hpp>
+#include <tm/stat/ev.hpp>
 #include <tm/stat/generic_stats.hpp>
 #include <tm/stat/hidden_power_ivs.hpp>
 #include <tm/stat/hp.hpp>
-#include <tm/stat/iv_and_ev.hpp>
+#include <tm/stat/iv.hpp>
 #include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 #include <tm/type/type.hpp>

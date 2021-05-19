@@ -9,7 +9,9 @@
 
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/calculate.hpp>
+#include <tm/stat/ev.hpp>
 #include <tm/stat/hp.hpp>
+#include <tm/stat/iv.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
 #include <bounded/assert.hpp>

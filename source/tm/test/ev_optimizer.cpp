@@ -7,14 +7,21 @@
 #include <tm/test/ev_optimizer.hpp>
 
 #include <tm/move/moves.hpp>
+
 #include <tm/pokemon/species.hpp>
+
+#include <tm/stat/ev.hpp>
 #include <tm/stat/initial_stat.hpp>
+#include <tm/stat/iv.hpp>
 #include <tm/stat/stat_to_ev.hpp>
+
 #include <tm/string_conversions/nature.hpp>
+
 #include <tm/team_predictor/ev_optimizer/defensive.hpp>
 #include <tm/team_predictor/ev_optimizer/ev_optimizer.hpp>
 #include <tm/team_predictor/ev_optimizer/offensive.hpp>
 #include <tm/team_predictor/ev_optimizer/speed.hpp>
+
 #include <tm/team.hpp>
 
 #include <bounded/assert.hpp>

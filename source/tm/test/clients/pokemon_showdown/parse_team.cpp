@@ -8,6 +8,10 @@
 #include <tm/clients/pokemon_showdown/parse_team.hpp>
 
 #include <tm/pokemon/species.hpp>
+
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
+
 #include <tm/string_conversions/team.hpp>
 
 #include <containers/algorithms/concatenate.hpp>

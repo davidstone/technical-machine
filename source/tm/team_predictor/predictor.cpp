@@ -8,6 +8,8 @@
 #include <tm/team_predictor/team_predictor.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
 
+#include <tm/stat/ev.hpp>
+
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
 #include <tm/string_conversions/item.hpp>

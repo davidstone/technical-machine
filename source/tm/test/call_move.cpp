@@ -13,6 +13,9 @@
 
 #include <tm/pokemon/species.hpp>
 
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
+
 #include <tm/block.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>

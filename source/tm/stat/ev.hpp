@@ -1,10 +1,11 @@
-// EVs
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #pragma once
+
+#include <tm/stat/generic_stats.hpp>
 
 #include <tm/generation.hpp>
 
@@ -40,6 +41,7 @@ private:
 	value_type m_value;
 };
 
+using EVs = GenericStats<EV>;
 
 constexpr auto max_total_evs(Generation const generation) {
 	return
@@ -48,4 +50,8 @@ constexpr auto max_total_evs(Generation const generation) {
 	);
 }
 
-}	// namespace technicalmachine
+constexpr auto ev_sum(EVs const evs) {
+	return evs.hp.value() + evs.atk.value() + evs.def.value() + evs.spa.value() + evs.spd.value() + evs.spe.value();
+}
+
+} // namespace technicalmachine

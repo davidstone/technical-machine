@@ -11,6 +11,7 @@
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/initial_stat.hpp>
+#include <tm/stat/iv.hpp>
 #include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 

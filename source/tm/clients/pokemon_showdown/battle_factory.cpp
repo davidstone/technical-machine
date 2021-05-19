@@ -12,7 +12,6 @@
 #include <tm/clients/pokemon_lab/write_team_file.hpp>
 
 #include <tm/stat/combined_stats.hpp>
-#include <tm/stat/generic_stats.hpp>
 
 #include <tm/team_predictor/usage_stats.hpp>
 

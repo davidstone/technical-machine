@@ -9,6 +9,7 @@
 
 #include <tm/pokemon/has_physical_or_special_move.hpp>
 
+#include <tm/stat/generic_stats.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
 #include <tm/string_conversions/ability.hpp>

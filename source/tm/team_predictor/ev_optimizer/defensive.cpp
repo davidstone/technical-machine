@@ -9,6 +9,7 @@
 #include <tm/pokemon/pokemon.hpp>
 
 #include <tm/stat/calculate.hpp>
+#include <tm/stat/ev.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat_names.hpp>
 #include <tm/stat/stat_to_ev.hpp>

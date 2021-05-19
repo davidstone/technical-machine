@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <tm/stat/generic_stats.hpp>
+
 #include <tm/generation.hpp>
 
 #include <bounded/integer.hpp>
@@ -32,4 +34,6 @@ constexpr auto default_iv(Generation const generation) {
 	return generation <= Generation::two ? IV(30_bi) : IV(31_bi);
 }
 
-}	// namespace technicalmachine
+using IVs = GenericStats<IV>;
+
+} // namespace technicalmachine

@@ -13,6 +13,7 @@
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/hp.hpp>
+#include <tm/stat/iv.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/initial_stat.hpp>
 

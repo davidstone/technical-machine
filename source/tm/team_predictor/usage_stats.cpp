@@ -11,6 +11,8 @@
 
 #include <tm/pokemon/species.hpp>
 
+#include <tm/stat/ev.hpp>
+
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>

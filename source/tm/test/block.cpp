@@ -6,8 +6,14 @@
 #include <tm/test/block.hpp>
 
 #include <tm/move/moves.hpp>
+
 #include <tm/pokemon/species.hpp>
+
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
+
 #include <tm/string_conversions/move.hpp>
+
 #include <tm/block.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>

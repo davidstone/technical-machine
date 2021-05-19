@@ -5,6 +5,9 @@
 
 #pragma once
 
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
+
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
 #include <tm/string_conversions/item.hpp>
