@@ -26,14 +26,46 @@ struct HiddenPower {
 		bounded::constant_t<60>
 	>>>;
 
+	static constexpr auto is_valid_type(Type const type) {
+		switch(type) {
+			case Type::Bug:
+			case Type::Dark:
+			case Type::Dragon:
+			case Type::Electric:
+			case Type::Fighting:
+			case Type::Fire:
+			case Type::Flying:
+			case Type::Ghost:
+			case Type::Grass:
+			case Type::Ground:
+			case Type::Ice:
+			case Type::Poison:
+			case Type::Psychic:
+			case Type::Rock:
+			case Type::Steel:
+			case Type::Water:
+				return true;
+			case Type::Normal:
+			case Type::Fairy:
+			case Type::Typeless:
+				return false;
+		}
+	}
+	static constexpr auto is_valid_power(Power const power) {
+		if constexpr (generation <= Generation::two) {
+			auto const remainder = power % 5_bi;
+			return remainder != 3_bi and remainder != 4_bi;
+		} else {
+			return true;
+		}
+	}
+
 	constexpr HiddenPower(DVs const dvs) requires(generation == Generation::two):
-		m_power(calculate_power(dvs)),
-		m_type(calculate_type(dvs))
+		HiddenPower(calculate_power(dvs), calculate_type(dvs))
 	{
 	}
 	constexpr HiddenPower(IVs const ivs) requires(generation >= Generation::three):
-		m_power(calculate_power(ivs)),
-		m_type(calculate_type(ivs))
+		HiddenPower(calculate_power(ivs), calculate_type(ivs))
 	{
 	}
 	
@@ -46,6 +78,14 @@ struct HiddenPower {
 	
 	friend auto operator==(HiddenPower, HiddenPower) -> bool = default;
 private:
+	constexpr HiddenPower(Power const power, Type const type):
+		m_power(power),
+		m_type(type)
+	{
+		BOUNDED_ASSERT_OR_ASSUME(is_valid_type(type));
+		BOUNDED_ASSERT_OR_ASSUME(is_valid_power(power));
+	}
+
 	friend bounded::tombstone_traits<HiddenPower>;
 
 	constexpr HiddenPower(bounded::none_t, auto const index):
