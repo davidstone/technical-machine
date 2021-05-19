@@ -154,146 +154,146 @@ constexpr auto hidden_power_ivs(bounded::optional<Type> const type, bool const h
 	if (!type) {
 		constexpr auto min = IV(numeric_traits::min_value<IV::value_type>);
 		constexpr auto max = IV(numeric_traits::max_value<IV::value_type>);
-		return IVs{
+		return IVs(
 			max, // HP
 			has_physical_move ? max : min, // Atk
 			max, // Def
 			max, // SpA
 			max, // SpD
-			max, // Spe
-		};
+			max // Spe
+		);
 	}
 	switch (*type) {
-		case Type::Bug: return IVs{
+		case Type::Bug: return IVs(
 			IV(31_bi), // HP
 			even, // Atk
 			IV(30_bi), // Def
 			IV(31_bi), // SpA
 			IV(30_bi), // SpD
-			IV(31_bi), // Spe
-		};
-		case Type::Dark: return IVs{
+			IV(31_bi) // Spe
+		);
+		case Type::Dark: return IVs(
 			IV(31_bi), // HP
 			odd, // Atk
 			IV(31_bi), // Def
 			IV(31_bi), // SpA
 			IV(31_bi), // SpD
-			IV(31_bi), // Spe
-		};
-		case Type::Dragon: return IVs{
+			IV(31_bi) // Spe
+		);
+		case Type::Dragon: return IVs(
 			IV(31_bi), // HP
 			even, // Atk
 			IV(31_bi), // Def
 			IV(31_bi), // SpA
 			IV(31_bi), // SpD
-			IV(31_bi), // Spe
-		};
-		case Type::Electric: return IVs{
+			IV(31_bi) // Spe
+		);
+		case Type::Electric: return IVs(
 			IV(31_bi), // HP
 			odd, // Atk
 			IV(31_bi), // Def
 			IV(30_bi), // SpA
 			IV(31_bi), // SpD
-			IV(31_bi), // Spe
-		};
+			IV(31_bi) // Spe
+		);
 		case Type::Fairy: throw std::runtime_error("No Hidden Power Fairy");
-		case Type::Fighting: return IVs{
+		case Type::Fighting: return IVs(
 			IV(31_bi), // HP
 			odd, // Atk
 			IV(30_bi), // Def
 			IV(30_bi), // SpA
 			IV(30_bi), // SpD
-			IV(30_bi), // Spe
-		};
-		case Type::Fire: return IVs{
+			IV(30_bi) // Spe
+		);
+		case Type::Fire: return IVs(
 			IV(31_bi), // HP
 			even, // Atk
 			IV(31_bi), // Def
 			IV(30_bi), // SpA
 			IV(31_bi), // SpD
-			IV(30_bi), // Spe
-		};
-		case Type::Flying: return IVs{
+			IV(30_bi) // Spe
+		);
+		case Type::Flying: return IVs(
 			IV(30_bi), // HP
 			even, // Atk
 			IV(30_bi), // Def
 			IV(30_bi), // SpA
 			IV(30_bi), // SpD
-			IV(31_bi), // Spe
-		};
-		case Type::Ghost: return IVs{
+			IV(31_bi) // Spe
+		);
+		case Type::Ghost: return IVs(
 			IV(31_bi), // HP
 			even, // Atk
 			IV(31_bi), // Def
 			IV(31_bi), // SpA
 			IV(30_bi), // SpD
-			IV(31_bi), // Spe
-		};
-		case Type::Grass: return IVs{
+			IV(31_bi) // Spe
+		);
+		case Type::Grass: return IVs(
 			IV(31_bi), // HP
 			even, // Atk
 			IV(31_bi), // Def
 			IV(30_bi), // SpA
 			IV(31_bi), // SpD
-			IV(31_bi), // Spe
-		};
-		case Type::Ground: return IVs{
+			IV(31_bi) // Spe
+		);
+		case Type::Ground: return IVs(
 			IV(31_bi), // HP
 			BOUNDED_CONDITIONAL(has_physical_move, max_odd, min_even), // Atk
 			IV(31_bi), // Def
 			IV(30_bi), // SpA
 			IV(30_bi), // SpD
-			IV(31_bi), // Spe
-		};
-		case Type::Ice: return IVs{
+			IV(31_bi) // Spe
+		);
+		case Type::Ice: return IVs(
 			IV(31_bi), // HP
 			even, // Atk
 			IV(30_bi), // Def
 			IV(31_bi), // SpA
 			IV(31_bi), // SpD
-			IV(31_bi), // Spe
-		};
+			IV(31_bi) // Spe
+		);
 		case Type::Normal: throw std::runtime_error("No Hidden Power Normal");
-		case Type::Poison: return IVs{
+		case Type::Poison: return IVs(
 			IV(31_bi), // HP
 			odd, // Atk
 			IV(30_bi), // Def
 			IV(30_bi), // SpA
 			IV(30_bi), // SpD
-			IV(31_bi), // Spe
-		};
-		case Type::Psychic: return IVs{
+			IV(31_bi) // Spe
+		);
+		case Type::Psychic: return IVs(
 			IV(31_bi), // HP
 			even, // Atk
 			IV(31_bi), // Def
 			IV(31_bi), // SpA
 			IV(31_bi), // SpD
-			IV(30_bi), // Spe
-		};
-		case Type::Rock: return IVs{
+			IV(30_bi) // Spe
+		);
+		case Type::Rock: return IVs(
 			IV(31_bi), // HP
 			BOUNDED_CONDITIONAL(has_physical_move, max_odd, min_even), // Atk
 			IV(30_bi), // Def
 			IV(31_bi), // SpA
 			IV(30_bi), // SpD
-			IV(30_bi), // Spe
-		};
-		case Type::Steel: return IVs{
+			IV(30_bi) // Spe
+		);
+		case Type::Steel: return IVs(
 			IV(31_bi), // HP
 			odd, // Atk
 			IV(31_bi), // Def
 			IV(31_bi), // SpA
 			IV(30_bi), // SpD
-			IV(31_bi), // Spe
-		};
-		case Type::Water: return IVs{
+			IV(31_bi) // Spe
+		);
+		case Type::Water: return IVs(
 			IV(31_bi), // HP
 			even, // Atk
 			IV(30_bi), // Def
 			IV(30_bi), // SpA
 			IV(31_bi), // SpD
-			IV(31_bi), // Spe
-		};
+			IV(31_bi) // Spe
+		);
 		case Type::Typeless: throw std::runtime_error("No Hidden Power Typeless");
 	}
 }

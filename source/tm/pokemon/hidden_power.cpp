@@ -39,209 +39,209 @@ constexpr void test_impl() {
 
 constexpr bool test() {
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(30_bi),
 			IV(30_bi),
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Bug);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Dark);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Dark);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Dragon);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Electric);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
 			IV(30_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Fire);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(30_bi),
 			IV(30_bi),
 			IV(30_bi),
 			IV(30_bi),
 			IV(30_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Flying);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Ghost);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Grass);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(30_bi),
 			IV(30_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Ground);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(30_bi),
 			IV(30_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Ice);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(31_bi),
 			IV(30_bi),
 			IV(30_bi),
 			IV(30_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Poison);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(30_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Psychic);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi),
 			IV(30_bi),
 			IV(30_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Rock);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(31_bi),
 			IV(30_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Steel);
 	}
 
 	{
-		constexpr auto hp = HiddenPower<Generation::three>(IVs{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(30_bi),
 			IV(30_bi),
 			IV(30_bi),
 			IV(31_bi),
 			IV(31_bi)
-		});
+		));
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Water);
 	}

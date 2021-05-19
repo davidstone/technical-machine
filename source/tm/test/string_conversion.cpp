@@ -73,22 +73,22 @@ void test_pokemon() {
 		Ability::Pressure,
 		CombinedStats{
 			Nature::Modest,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(4_bi),
 				EV(12_bi),
 				EV(24_bi),
 				EV(0_bi),
 				EV(32_bi),
-				EV(100_bi),
-			}
+				EV(100_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Psychic)})
 	);

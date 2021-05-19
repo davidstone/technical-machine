@@ -51,7 +51,7 @@ auto calculate_ivs_and_evs(
 	
 	while (true) {
 		auto const ivs = hidden_power_ivs(generation, hidden_power_type, has_physical_move);
-		auto const hp_ev = hp_to_ev(base, level, stats.hp, ivs.hp);
+		auto const hp_ev = hp_to_ev(base, level, stats.hp(), ivs.hp());
 
 		for (auto const nature : nature_range) {
 			auto compute_ev = [=](RegularStat const stat_name, auto const base_stat) {
@@ -81,14 +81,14 @@ auto calculate_ivs_and_evs(
 			auto const combined = CombinedStats{
 				nature,
 				ivs,
-				EVs{
+				EVs(
 					hp_ev,
 					*attack_ev,
 					*defense_ev,
 					*special_attack_ev,
 					*special_defense_ev,
 					*speed_ev
-				}
+				)
 			};
 			if (ev_sum(combined.evs) > max_total_evs(generation)) {
 				continue;
@@ -106,12 +106,12 @@ auto calculate_ivs_and_evs(
 		to_string(generation),
 		": Species: "sv, to_string(species),
 		", Level: "sv, bounded::to_string(level()),
-		", HP: "sv, bounded::to_string(stats.hp),
-		", Attack: "sv, bounded::to_string(stats.atk),
-		", Defense: "sv, bounded::to_string(stats.def),
-		", Special Attack: "sv, bounded::to_string(stats.spa),
-		", Special Defense: "sv, bounded::to_string(stats.spd),
-		", Speed: "sv, bounded::to_string(stats.spe)
+		", HP: "sv, bounded::to_string(stats.hp()),
+		", Attack: "sv, bounded::to_string(stats.atk()),
+		", Defense: "sv, bounded::to_string(stats.def()),
+		", Special Attack: "sv, bounded::to_string(stats.spa()),
+		", Special Defense: "sv, bounded::to_string(stats.spd()),
+		", Speed: "sv, bounded::to_string(stats.spe())
 	));
 }
 

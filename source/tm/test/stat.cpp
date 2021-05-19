@@ -48,22 +48,22 @@ void attack_tests() {
 		Ability::Pure_Power,
 		CombinedStats{
 			Nature::Impish,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -92,22 +92,22 @@ void special_attack_tests() {
 		Ability::Solar_Power,
 		CombinedStats{
 			Nature::Modest,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Psychic)})
 	));
@@ -136,22 +136,22 @@ void max_defense_test() {
 		Ability::Marvel_Scale,
 		CombinedStats{
 			Nature::Bold,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -180,22 +180,22 @@ void min_defense_test() {
 		Ability::Honey_Gather,
 		CombinedStats{
 			Nature::Hasty,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(0_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -233,22 +233,22 @@ void special_defense_tests() {
 		Ability::Honey_Gather,
 		CombinedStats{
 			Nature::Calm,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -277,22 +277,22 @@ void speed_tests() {
 		Ability::Swift_Swim,
 		CombinedStats{
 			Nature::Timid,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(252_bi),
-			}
+				EV(252_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));

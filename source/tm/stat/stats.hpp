@@ -21,7 +21,7 @@ struct Level;
 
 struct Stats {
 	Stats(BaseStats const base, CombinedStats const inputs, Level const level):
-		m_hp(base, level, inputs.dvs_or_ivs.hp, inputs.evs.hp),
+		m_hp(base, level, inputs.dvs_or_ivs.hp(), inputs.evs.hp()),
 		m_stats{
 			initial_stat(RegularStat::atk, base, inputs, level),
 			initial_stat(RegularStat::def, base, inputs, level),
@@ -57,7 +57,7 @@ inline auto initial_stats(BaseStats const base_stats, Level const level, Combine
 		return initial_stat(stat_name, base_stats, stats, level);
 	};
 	return GenericStats<HP::max_type, InitialStat>{
-		HP(base_stats, level, stats.dvs_or_ivs.hp, stats.evs.hp).max(),
+		HP(base_stats, level, stats.dvs_or_ivs.hp(), stats.evs.hp()).max(),
 		calculate_stat(RegularStat::atk),
 		calculate_stat(RegularStat::def),
 		calculate_stat(RegularStat::spa),

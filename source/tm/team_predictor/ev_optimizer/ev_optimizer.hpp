@@ -52,22 +52,22 @@ inline auto combine(Generation const generation, OffensiveEVs const & o, Defensi
 		}
 		auto candidate = CombinedStats{
 			speed.nature,
-			IVs{
+			IVs(
 				defensive->hp.iv,
 				offensive->attack.iv,
 				defensive->defense.iv,
 				offensive->special_attack.iv,
 				defensive->special_defense.iv,
 				speed.stat.iv
-			},
-			EVs{
+			),
+			EVs(
 				defensive->hp.ev,
 				offensive->attack.ev,
 				defensive->defense.ev,
 				offensive->special_attack.ev,
 				defensive->special_defense.ev,
 				speed.stat.ev
-			}
+			)
 		};
 		if (!best or ev_sum(candidate.evs) < ev_sum(best->evs)) {
 			insert(best, candidate);
@@ -95,14 +95,14 @@ inline auto compute_minimal_spread(
 		return CombinedStats{
 			Nature::Hardy,
 			ivs,
-			EVs{
+			EVs(
 				EV(EV::useful_max),
 				include_attack ? EV(EV::useful_max) : EV(0_bi),
 				EV(EV::useful_max),
 				EV(EV::useful_max),
 				EV(EV::useful_max),
-				EV(EV::useful_max),
-			}
+				EV(EV::useful_max)
+			)
 		};
 	}
 
@@ -111,17 +111,17 @@ inline auto compute_minimal_spread(
 		OffensiveEVs(
 			base_stats,
 			level,
-			OffensiveEVs::Input{ivs.atk, stats.atk, include_attack},
-			OffensiveEVs::Input{ivs.spa, stats.spa, include_special_attack}
+			OffensiveEVs::Input{ivs.atk(), stats.atk(), include_attack},
+			OffensiveEVs::Input{ivs.spa(), stats.spa(), include_special_attack}
 		),
 		DefensiveEVs(
 			base_stats,
 			level,
-			DefensiveEVs::InputHP{ivs.hp, stats.hp},
-			DefensiveEVs::InputStat{ivs.def, stats.def},
-			DefensiveEVs::InputStat{ivs.spd, stats.spd}
+			DefensiveEVs::InputHP{ivs.hp(), stats.hp()},
+			DefensiveEVs::InputStat{ivs.def(), stats.def()},
+			DefensiveEVs::InputStat{ivs.spd(), stats.spd()}
 		),
-		SpeedEVs(base_stats, level, ivs.spe, stats.spe)
+		SpeedEVs(base_stats, level, ivs.spe(), stats.spe())
 	);
 }
 
@@ -148,12 +148,12 @@ inline auto pad_random_evs(Generation const generation, CombinedStats combined, 
 	constexpr auto minimal_increment = 4_bi;
 	while (ev_sum(combined.evs) + minimal_increment <= max_total_evs(generation)) {
 		distribution.param({
-			combined.evs.hp == EV::useful_max ? 0.0 : 1.0,
-			(!include_attack or combined.evs.atk == EV::useful_max) ? 0.0 : 1.0,
-			combined.evs.def == EV::useful_max ? 0.0 : 1.0,
-			(!include_special_attack or combined.evs.spa == EV::useful_max) ? 0.0 : 1.0,
-			combined.evs.spd == EV::useful_max ? 0.0 : 1.0,
-			combined.evs.spe == EV::useful_max ? 0.0 : 1.0,
+			combined.evs.hp() == EV::useful_max ? 0.0 : 1.0,
+			(!include_attack or combined.evs.atk() == EV::useful_max) ? 0.0 : 1.0,
+			combined.evs.def() == EV::useful_max ? 0.0 : 1.0,
+			(!include_special_attack or combined.evs.spa() == EV::useful_max) ? 0.0 : 1.0,
+			combined.evs.spd() == EV::useful_max ? 0.0 : 1.0,
+			combined.evs.spe() == EV::useful_max ? 0.0 : 1.0,
 		});
 		auto const index = distribution(random_engine);
 		auto & ev = combined.evs[PermanentStat(index - 1)];

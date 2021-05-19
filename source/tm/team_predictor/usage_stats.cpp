@@ -68,7 +68,7 @@ auto from_statistics_string(std::string_view const str) {
 		auto const spa = get_ev();
 		auto const spd = get_ev();
 		auto const spe = get_ev();
-		return NatureAndEVs{nature, EVs{hp, atk, def, spa, spd, spe}};
+		return NatureAndEVs{nature, EVs(hp, atk, def, spa, spd, spe)};
 	}
 }
 

@@ -35,14 +35,14 @@ struct UsageStats {
 		Ability ability = Ability::Honey_Gather;
 		Item item = Item::None;
 		Nature nature = Nature::Hardy;
-		EVs evs = {
+		EVs evs = EVs(
 			EV(EV::max),
 			EV(EV::max),
 			EV(EV::max),
 			EV(EV::max),
 			EV(EV::max),
 			EV(EV::max)
-		};
+		);
 	};
 
 	explicit UsageStats(std::filesystem::path const & usage_stats_directory);

@@ -40,22 +40,22 @@ auto expected_generation_one_team() {
 		Ability::Honey_Gather,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
-				IV(30_bi),
-			},
-			EVs{
+				IV(30_bi)
+			),
+			EVs(
 				EV(252_bi),
 				EV(252_bi),
 				EV(252_bi),
 				EV(252_bi),
 				EV(252_bi),
-				EV(252_bi),
-			}
+				EV(252_bi)
+			)
 		},
 		moves(Moves::Fire_Blast, Moves::Sludge, Moves::Explosion, Moves::Thunderbolt)
 	));
@@ -68,22 +68,22 @@ auto expected_generation_one_team() {
 		Ability::Honey_Gather,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
-				IV(30_bi),
-			},
-			EVs{
+				IV(30_bi)
+			),
+			EVs(
 				EV(248_bi),
 				EV(248_bi),
 				EV(252_bi),
 				EV(252_bi),
 				EV(252_bi),
-				EV(252_bi),
-			}
+				EV(252_bi)
+			)
 		},
 		moves(Moves::Earthquake, Moves::Body_Slam, Moves::Rock_Slide, Moves::Swords_Dance)
 	));
@@ -96,22 +96,22 @@ auto expected_generation_one_team() {
 		Ability::Honey_Gather,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
-				IV(30_bi),
-			},
-			EVs{
+				IV(30_bi)
+			),
+			EVs(
 				EV(252_bi),
 				EV(252_bi),
 				EV(252_bi),
 				EV(252_bi),
 				EV(252_bi),
-				EV(252_bi),
-			}
+				EV(252_bi)
+			)
 		},
 		moves(Moves::Transform)
 	));
@@ -124,22 +124,22 @@ auto expected_generation_one_team() {
 		Ability::Honey_Gather,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
-				IV(30_bi),
-			},
-			EVs{
+				IV(30_bi)
+			),
+			EVs(
 				EV(252_bi),
 				EV(252_bi),
 				EV(252_bi),
 				EV(252_bi),
 				EV(252_bi),
-				EV(252_bi),
-			}
+				EV(252_bi)
+			)
 		},
 		moves(Moves::Agility, Moves::Thunderbolt, Moves::Surf, Moves::Thunder_Wave)
 	));
@@ -152,22 +152,22 @@ auto expected_generation_one_team() {
 		Ability::Honey_Gather,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
-				IV(30_bi),
-			},
-			EVs{
+				IV(30_bi)
+			),
+			EVs(
 				EV(252_bi),
 				EV(252_bi),
 				EV(248_bi),
 				EV(252_bi),
 				EV(252_bi),
-				EV(252_bi),
-			}
+				EV(252_bi)
+			)
 		},
 		moves(Moves::Seismic_Toss, Moves::Lovely_Kiss, Moves::Psychic, Moves::Blizzard)
 	));
@@ -180,22 +180,22 @@ auto expected_generation_one_team() {
 		Ability::Honey_Gather,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
 				IV(30_bi),
-				IV(30_bi),
-			},
-			EVs{
+				IV(30_bi)
+			),
+			EVs(
 				EV(252_bi),
 				EV(252_bi),
 				EV(248_bi),
 				EV(252_bi),
 				EV(252_bi),
-				EV(252_bi),
-			}
+				EV(252_bi)
+			)
 		},
 		moves(Moves::Psychic, Moves::Surf, Moves::Thunder_Wave, Moves::Amnesia)
 	));

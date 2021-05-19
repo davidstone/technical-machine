@@ -92,14 +92,14 @@ struct DVs {
 	}
 
 	constexpr explicit operator IVs() const {
-		return IVs{
+		return IVs(
 			IV(hp()),
 			IV(atk()),
 			IV(def()),
 			IV(spc()),
 			IV(spc()),
 			IV(spe())
-		};
+		);
 	}
 
 	constexpr auto operator[](auto const index) const {

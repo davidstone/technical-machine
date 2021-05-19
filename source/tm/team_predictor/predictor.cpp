@@ -97,14 +97,14 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 		auto item = get(bounded::detail::types<Item>(), "item");
 		auto ability = get(bounded::detail::types<Ability>(), "ability");
 		auto nature = get(bounded::detail::types<Nature>(), "nature");
-		auto const stats = EVs{
+		auto const stats = EVs(
 			get_ev("hp"),
 			get_ev("atk"),
 			get_ev("def"),
 			get_ev("spa"),
 			get_ev("spd"),
-			get_ev("spe"),
-		};
+			get_ev("spe")
+		);
 
 		auto moves = containers::static_vector<Moves, max_moves_per_pokemon.value()>();
 		for (auto const move_index : containers::integer_range(max_moves_per_pokemon)) {
@@ -114,7 +114,7 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 			}
 		}
 
-		if (stats.hp.value() + stats.atk.value() + stats.def.value() + stats.spa.value() + stats.spd.value() + stats.spe.value() > max_total_evs(generation)) {
+		if (stats.hp().value() + stats.atk().value() + stats.def().value() + stats.spa().value() + stats.spd().value() + stats.spe().value() > max_total_evs(generation)) {
 			throw std::runtime_error("Too many EVs");
 		}
 

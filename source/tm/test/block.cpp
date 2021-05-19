@@ -45,22 +45,22 @@ void basic() {
 		Ability::Volt_Absorb,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		expected
 	));
@@ -76,22 +76,22 @@ void basic() {
 		Ability::Intimidate,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
 	));
@@ -127,22 +127,22 @@ void test_two_moves_with_one_out_of_pp() {
 		Ability::Intimidate,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
@@ -158,22 +158,22 @@ void test_two_moves_with_one_out_of_pp() {
 		Ability::Intimidate,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
@@ -202,22 +202,22 @@ void test_two_moves_with_both_out_of_pp() {
 		Ability::Intimidate,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
@@ -235,22 +235,22 @@ void test_two_moves_with_both_out_of_pp() {
 		Ability::Intimidate,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
@@ -279,22 +279,22 @@ void replace_fainted() {
 		Ability::Magma_Armor,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		moves(Moves::Flamethrower)
 	));
@@ -307,22 +307,22 @@ void replace_fainted() {
 		Ability::Pressure,
 		CombinedStats{
 			Nature::Modest,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		moves(Moves::Thunderbolt)
 	));
@@ -338,22 +338,22 @@ void replace_fainted() {
 		Ability::Pressure,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		moves(Moves::Surf)
 	));

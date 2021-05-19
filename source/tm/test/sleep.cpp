@@ -47,22 +47,22 @@ void sleep_talk() {
 			Ability::Volt_Absorb,
 			CombinedStats{
 				Nature::Hardy,
-				IVs{
+				IVs(
 					IV(31_bi),
 					IV(31_bi),
 					IV(31_bi),
 					IV(31_bi),
 					IV(31_bi),
-					IV(31_bi),
-				},
-				EVs{
+					IV(31_bi)
+				),
+				EVs(
 					EV(0_bi),
 					EV(0_bi),
 					EV(0_bi),
 					EV(252_bi),
 					EV(0_bi),
-					EV(0_bi),
-				}
+					EV(0_bi)
+				)
 			},
 			regular_moves(generation, Moves::Sleep_Talk, Moves::Thunderbolt)
 		);
@@ -81,22 +81,22 @@ void sleep_talk() {
 		Ability::Intimidate,
 		CombinedStats{
 			Nature::Adamant,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Earthquake)})
 	));
@@ -193,22 +193,22 @@ private:
 			Ability::Natural_Cure,
 			CombinedStats{
 				Nature::Hardy,
-				IVs{
+				IVs(
 					IV(31_bi),
 					IV(31_bi),
 					IV(31_bi),
 					IV(31_bi),
 					IV(31_bi),
-					IV(31_bi),
-				},
-				EVs{
+					IV(31_bi)
+				),
+				EVs(
 					EV(0_bi),
 					EV(0_bi),
 					EV(0_bi),
 					EV(0_bi),
 					EV(0_bi),
-					EV(0_bi),
-				}
+					EV(0_bi)
+				)
 			},
 			moves
 		));

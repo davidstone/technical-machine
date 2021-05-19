@@ -56,12 +56,12 @@ private:
 	
 	static constexpr auto sum_stats(IVs const ivs, auto const transform) {
 		return
-			transform(0_bi, ivs.hp) +
-			transform(1_bi, ivs.atk) +
-			transform(2_bi, ivs.def) +
-			transform(3_bi, ivs.spe) +
-			transform(4_bi, ivs.spa) +
-			transform(5_bi, ivs.spd);
+			transform(0_bi, ivs.hp()) +
+			transform(1_bi, ivs.atk()) +
+			transform(2_bi, ivs.def()) +
+			transform(3_bi, ivs.spe()) +
+			transform(4_bi, ivs.spa()) +
+			transform(5_bi, ivs.spd());
 	}
 
 	// http://www.psypokes.com/gsc/dvguide.php

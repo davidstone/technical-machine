@@ -11,24 +11,69 @@ namespace technicalmachine {
 
 template<typename HP, typename Stat = HP>
 struct GenericStats {
-	HP hp;
-	Stat atk;
-	Stat def;
-	Stat spa;
-	Stat spd;
-	Stat spe;
-	
-	constexpr auto operator[](auto const index) const -> Stat const & {
+	constexpr GenericStats(HP const hp_, Stat const atk_, Stat const def_, Stat const spa_, Stat const spd_, Stat const spe_):
+		m_hp(hp_),
+		m_atk(atk_),
+		m_def(def_),
+		m_spa(spa_),
+		m_spd(spd_),
+		m_spe(spe_)
+	{
+	}
+
+	constexpr auto && hp() const {
+		return m_hp;
+	}
+	constexpr auto && atk() const {
+		return m_atk;
+	}
+	constexpr auto && def() const {
+		return m_def;
+	}
+	constexpr auto && spa() const {
+		return m_spa;
+	}
+	constexpr auto && spd() const {
+		return m_spd;
+	}
+	constexpr auto && spe() const {
+		return m_spe;
+	}
+	constexpr auto && hp() {
+		return m_hp;
+	}
+	constexpr auto && atk() {
+		return m_atk;
+	}
+	constexpr auto && def() {
+		return m_def;
+	}
+	constexpr auto && spa() {
+		return m_spa;
+	}
+	constexpr auto && spd() {
+		return m_spd;
+	}
+	constexpr auto && spe() {
+		return m_spe;
+	}
+
+	constexpr auto && operator[](auto const index) const {
 		return index_stat(*this, index);
 	}
-	constexpr auto operator[](auto const index) -> Stat & {
+	constexpr auto && operator[](auto const index) {
 		return index_stat(*this, index);
 	}
 	
 	friend auto operator==(GenericStats, GenericStats) -> bool = default;
+
+private:
+	HP m_hp;
+	Stat m_atk;
+	Stat m_def;
+	Stat m_spa;
+	Stat m_spd;
+	Stat m_spe;
 };
 
-template<typename HP, typename Stat>
-GenericStats(HP, Stat, Stat, Stat, Stat, Stat) -> GenericStats<HP, Stat>;
-
-}	// namespace technicalmachine
+} // namespace technicalmachine

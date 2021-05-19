@@ -59,7 +59,7 @@ struct Pokemon {
 				return HiddenPower<generation>(DVs(dv, dv, dv, dv));
 			} else {
 				constexpr auto iv = IV(31_bi);
-				return HiddenPower<generation>(IVs{iv, iv, iv, iv, iv, iv});
+				return HiddenPower<generation>(IVs(iv, iv, iv, iv, iv, iv));
 			}
 		}()),
 		

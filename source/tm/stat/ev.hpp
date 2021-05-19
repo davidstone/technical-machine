@@ -51,7 +51,7 @@ constexpr auto max_total_evs(Generation const generation) {
 }
 
 constexpr auto ev_sum(EVs const evs) {
-	return evs.hp.value() + evs.atk.value() + evs.def.value() + evs.spa.value() + evs.spd.value() + evs.spe.value();
+	return evs.hp().value() + evs.atk().value() + evs.def().value() + evs.spa().value() + evs.spd().value() + evs.spe().value();
 }
 
 } // namespace technicalmachine

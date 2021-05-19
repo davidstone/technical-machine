@@ -31,22 +31,22 @@ auto species_from_simulator_string(std::string_view) -> Species;
 auto load_moves(Generation, boost::property_tree::ptree const &) -> RegularMoves;
 
 inline auto load_stats(boost::property_tree::ptree const & pt) -> CombinedStats {
-	auto evs = EVs{
+	auto evs = EVs(
 		EV(0_bi),
 		EV(0_bi),
 		EV(0_bi),
 		EV(0_bi),
 		EV(0_bi),
-		EV(0_bi),
-	};
-	auto ivs = IVs{
+		EV(0_bi)
+	);
+	auto ivs = IVs(
 		IV(0_bi),
 		IV(0_bi),
 		IV(0_bi),
 		IV(0_bi),
 		IV(0_bi),
-		IV(0_bi),
-	};
+		IV(0_bi)
+	);
 	for (auto const & value : pt.get_child("stats")) {
 		auto const & stats = value.second;
 		auto const stat_name = stat_from_simulator_string(stats.get<std::string>("<xmlattr>.name"));

@@ -66,22 +66,22 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Ability::Volt_Absorb,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
 	));
@@ -97,22 +97,22 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Ability::Intimidate,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
 	));
@@ -134,22 +134,22 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Ability::Wonder_Guard,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Swords_Dance, Moves::X_Scissor, Moves::Shadow_Sneak, Moves::Will_O_Wisp)
 	));
@@ -179,22 +179,22 @@ void one_turn_damage_tests(Evaluate<Generation::four> const & evaluate, Weather 
 		Ability::Volt_Absorb,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
 	));
@@ -210,22 +210,22 @@ void one_turn_damage_tests(Evaluate<Generation::four> const & evaluate, Weather 
 		Ability::Torrent,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Surf, Moves::Ice_Beam)
 	));
@@ -252,22 +252,22 @@ void bellyzard_vs_defensive(Evaluate<Generation::four> const & evaluate, Weather
 		Ability::Blaze,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Fire_Punch, Moves::Belly_Drum, Moves::Earthquake, Moves::Double_Edge)
 	));
@@ -283,22 +283,22 @@ void bellyzard_vs_defensive(Evaluate<Generation::four> const & evaluate, Weather
 		Ability::Synchronize,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(252_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Soft_Boiled)
 	));
@@ -325,22 +325,22 @@ void hippopotas_vs_wobbuffet(Evaluate<Generation::four> const & evaluate, Weathe
 		Ability::Sand_Stream,
 		CombinedStats{
 			Nature::Adamant,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Curse, Moves::Crunch)
 	));
@@ -359,22 +359,22 @@ void hippopotas_vs_wobbuffet(Evaluate<Generation::four> const & evaluate, Weathe
 		Ability::Shadow_Tag,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Counter)
 	));
@@ -402,22 +402,22 @@ void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Ability::Own_Tempo,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
 	));
@@ -430,22 +430,22 @@ void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Ability::Synchronize,
 		CombinedStats{
 			Nature::Adamant,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Psycho_Cut, Moves::Recover)
 	));
@@ -460,22 +460,22 @@ void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Ability::Levitate,
 		CombinedStats{
 			Nature::Modest,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Shadow_Ball)
 	));
@@ -489,22 +489,22 @@ void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Ability::Levitate,
 		CombinedStats{
 			Nature::Modest,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Shadow_Ball)
 	));
@@ -534,22 +534,22 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		Ability::Swift_Swim,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Tackle)
 	));
@@ -563,22 +563,22 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		Ability::Magma_Armor,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Flamethrower, Moves::Earth_Power)
 	));
@@ -590,22 +590,22 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		Ability::Pressure,
 		CombinedStats{
 			Nature::Modest,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Thunderbolt)
 	));
@@ -621,22 +621,22 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		Ability::Pressure,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Calm_Mind, Moves::Surf, Moves::Ice_Beam)
 	));
@@ -684,22 +684,22 @@ void latias_vs_suicune(Evaluate<Generation::four> const & evaluate, std::mt19937
 		Ability::Levitate,
 		CombinedStats{
 			Nature::Calm,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(120_bi),
 				EV(136_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Calm_Mind, Moves::Dragon_Pulse, Moves::Recover)
 	));
@@ -716,22 +716,22 @@ void latias_vs_suicune(Evaluate<Generation::four> const & evaluate, std::mt19937
 		Ability::Pressure,
 		CombinedStats{
 			Nature::Calm,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(120_bi),
 				EV(136_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Ice_Beam, Moves::Rest)
 	));
@@ -760,22 +760,22 @@ void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & rand
 		Ability::Volt_Absorb,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Sleep_Talk, Moves::Thunderbolt)
 	));
@@ -791,22 +791,22 @@ void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & rand
 		Ability::Intimidate,
 		CombinedStats{
 			Nature::Adamant,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Earthquake)
 	));
@@ -881,22 +881,22 @@ void generation_one_frozen_last_pokemon(Evaluate<Generation::one> const & evalua
 		Ability::Honey_Gather,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Psychic, Moves::Recover, Moves::Thunder_Wave, Moves::Seismic_Toss)
 	));
@@ -912,22 +912,22 @@ void generation_one_frozen_last_pokemon(Evaluate<Generation::one> const & evalua
 			Ability::Honey_Gather,
 			CombinedStats{
 				Nature::Hardy,
-				IVs{
+				IVs(
 					IV(31_bi),
 					IV(31_bi),
 					IV(31_bi),
 					IV(31_bi),
 					IV(31_bi),
-					IV(31_bi),
-				},
-				EVs{
+					IV(31_bi)
+				),
+				EVs(
 					EV(0_bi),
 					EV(0_bi),
 					EV(0_bi),
 					EV(0_bi),
 					EV(0_bi),
-					EV(0_bi),
-				}
+					EV(0_bi)
+				)
 			},
 			regular_moves(Moves::Explosion, Moves::Hypnosis, Moves::Thunderbolt, Moves::Night_Shade)
 		);

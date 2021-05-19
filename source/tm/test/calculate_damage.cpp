@@ -56,22 +56,22 @@ auto max_damage_physical_attacker(Item const item, Ability const ability) {
 		ability,
 		CombinedStats{
 			Nature::Impish,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({max_damage_physical_move()})
 	));
@@ -97,22 +97,22 @@ auto max_damage_physical_defender() {
 		Ability::Honey_Gather,
 		CombinedStats{
 			Nature::Hasty,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(0_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -155,22 +155,22 @@ void special_power_test() {
 		Ability::Torrent,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({move})
 	));
@@ -188,22 +188,22 @@ void special_power_test() {
 		Ability::Dry_Skin,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Dive)})
 	));
@@ -281,22 +281,22 @@ void special_damage_test() {
 		Ability::Blaze,
 		CombinedStats{
 			Nature::Modest,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(EV::max),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({move})
 	));
@@ -324,22 +324,22 @@ void special_damage_test() {
 		Ability::Dry_Skin,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(0_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));

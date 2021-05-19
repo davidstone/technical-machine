@@ -50,22 +50,22 @@ void test_baton_pass() {
 		Ability::Own_Tempo,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
 	));
@@ -77,22 +77,22 @@ void test_baton_pass() {
 		Ability::Synchronize,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Psycho_Cut, Moves::Recover)
 	));
@@ -107,22 +107,22 @@ void test_baton_pass() {
 		Ability::Levitate,
 		CombinedStats{
 			Nature::Modest,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Shadow_Ball)
 	));
@@ -134,22 +134,22 @@ void test_baton_pass() {
 		Ability::Levitate,
 		CombinedStats{
 			Nature::Modest,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(252_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Shadow_Ball)
 	));
@@ -244,22 +244,22 @@ void wonder_guard() {
 		Ability::Volt_Absorb,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Shadow_Ball, Moves::Thunderbolt)
 	));
@@ -274,22 +274,22 @@ void wonder_guard() {
 		Ability::Wonder_Guard,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -333,22 +333,22 @@ void fire_move_thaws_target() {
 		Ability::Blaze,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		regular_moves(Moves::Ember)
 	));
@@ -363,22 +363,22 @@ void fire_move_thaws_target() {
 		Ability::Water_Absorb,
 		CombinedStats{
 			Nature::Hardy,
-			IVs{
+			IVs(
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
 				IV(31_bi),
-				IV(31_bi),
-			},
-			EVs{
+				IV(31_bi)
+			),
+			EVs(
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
 				EV(0_bi),
-				EV(0_bi),
-			}
+				EV(0_bi)
+			)
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
