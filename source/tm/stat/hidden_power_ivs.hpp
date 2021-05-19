@@ -33,112 +33,112 @@ constexpr auto hidden_power_dvs(bounded::optional<Type> const type, bool const h
 	if (!type) {
 		constexpr auto min_with_max_hp = DV(1_bi);
 		constexpr auto max = DV(15_bi);
-		return DVs{
+		return DVs(
 			has_physical_move ? max : min_with_max_hp, // Atk
 			max, // Def
 			max, // Spe
-			max, // Spc
-		};
+			max // Spc
+		);
 	}
 	switch (*type) {
-		case Type::Bug: return DVs{
+		case Type::Bug: return DVs(
 			even_odd, // Atk
 			DV(13_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Dark: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Dark: return DVs(
 			odd_odd, // Atk
 			DV(15_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Dragon: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Dragon: return DVs(
 			odd_odd, // Atk
 			DV(14_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Electric: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Electric: return DVs(
 			odd_even, // Atk
 			DV(15_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
+			DV(15_bi) // Spc
+		);
 		case Type::Fairy: throw std::runtime_error("No Hidden Power Fairy");
-		case Type::Fighting: return DVs{
+		case Type::Fighting: return DVs(
 			even_even, // Atk
 			DV(12_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Fire: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Fire: return DVs(
 			odd_even, // Atk
 			DV(12_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Flying: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Flying: return DVs(
 			even_even, // Atk
 			DV(13_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Ghost: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Ghost: return DVs(
 			even_odd, // Atk
 			DV(14_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Grass: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Grass: return DVs(
 			odd_even, // Atk
 			DV(14_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Ground: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Ground: return DVs(
 			even_even, // Atk
 			DV(15_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Ice: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Ice: return DVs(
 			odd_odd, // Atk
 			DV(13_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
+			DV(15_bi) // Spc
+		);
 		case Type::Normal: throw std::runtime_error("No Hidden Power Normal");
-		case Type::Poison: return DVs{
+		case Type::Poison: return DVs(
 			even_even, // Atk
 			DV(14_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Psychic: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Psychic: return DVs(
 			odd_odd, // Atk
 			DV(12_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Rock: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Rock: return DVs(
 			even_odd, // Atk
 			DV(12_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Steel: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Steel: return DVs(
 			even_odd, // Atk
 			DV(15_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
-		case Type::Water: return DVs{
+			DV(15_bi) // Spc
+		);
+		case Type::Water: return DVs(
 			odd_even, // Atk
 			DV(13_bi), // Def
 			DV(15_bi), // Spe
-			DV(15_bi), // Spc
-		};
+			DV(15_bi) // Spc
+		);
 		case Type::Typeless: throw std::runtime_error("No Hidden Power Typeless");
 	}
 }

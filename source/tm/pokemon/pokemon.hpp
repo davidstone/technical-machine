@@ -56,7 +56,7 @@ struct Pokemon {
 				return bounded::none;
 			} else if constexpr (generation == Generation::two) {
 				constexpr auto dv = DV(15_bi);
-				return HiddenPower<generation>(DVs{dv, dv, dv, dv});
+				return HiddenPower<generation>(DVs(dv, dv, dv, dv));
 			} else {
 				constexpr auto iv = IV(31_bi);
 				return HiddenPower<generation>(IVs{iv, iv, iv, iv, iv, iv});

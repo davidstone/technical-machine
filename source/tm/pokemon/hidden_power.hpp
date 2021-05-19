@@ -68,11 +68,11 @@ private:
 	static constexpr auto calculate_power(DVs const dvs) -> Power {
 		auto const bit = [](DV const dv) { return BOUNDED_CONDITIONAL(dv.value() < 8_bi, 0_bi, 1_bi); };
 		auto const x =
-			(bit(dvs.atk) << 3_bi) +
-			(bit(dvs.def) << 2_bi) +
-			(bit(dvs.spe) << 1_bi) +
-			(bit(dvs.spc) << 0_bi);
-		auto const y = bounded::min(dvs.spc.value(), 3_bi);
+			(bit(dvs.atk()) << 3_bi) +
+			(bit(dvs.def()) << 2_bi) +
+			(bit(dvs.spe()) << 1_bi) +
+			(bit(dvs.spc()) << 0_bi);
+		auto const y = bounded::min(dvs.spc().value(), 3_bi);
 		return (5_bi * x + y) / 2_bi + 31_bi;
 	}
 	
@@ -88,8 +88,8 @@ private:
 	static constexpr auto calculate_type(DVs const dvs) -> Type {
 		constexpr auto get_base_four_digit = [](DV const dv) { return dv.value() % 4_bi; };
 		return calculate_type_impl(
-			(get_base_four_digit(dvs.atk) * 4_bi) +
-			(get_base_four_digit(dvs.def) * 1_bi)
+			(get_base_four_digit(dvs.atk()) * 4_bi) +
+			(get_base_four_digit(dvs.def()) * 1_bi)
 		);
 	}
 

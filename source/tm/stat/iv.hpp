@@ -56,31 +56,62 @@ private:
 };
 
 struct DVs {
-	DV atk;
-	DV def;
-	DV spe;
-	DV spc;
+	constexpr DVs(DV const atk_, DV const def_, DV const spe_, DV const spc_):
+		m_atk(atk_),
+		m_def(def_),
+		m_spe(spe_),
+		m_spc(spc_)
+	{
+	}
+
+	constexpr auto atk() const {
+		return m_atk;
+	}
+	constexpr auto def() const {
+		return m_def;
+	}
+	constexpr auto spe() const {
+		return m_spe;
+	}
+	constexpr auto spc() const {
+		return m_spc;
+	}
+	constexpr auto spa() const {
+		return m_spc;
+	}
+	constexpr auto spd() const {
+		return m_spc;
+	}
+	constexpr auto hp() const {
+		return DV(
+			((atk().value() % 2_bi) << 3_bi) +
+			((def().value() % 2_bi) << 2_bi) +
+			((spe().value() % 2_bi) << 1_bi) +
+			((spc().value() % 2_bi) << 0_bi)
+		);
+	}
 
 	constexpr explicit operator IVs() const {
 		return IVs{
 			IV(hp()),
-			IV(atk),
-			IV(def),
-			IV(spc),
-			IV(spc),
-			IV(spe)
+			IV(atk()),
+			IV(def()),
+			IV(spc()),
+			IV(spc()),
+			IV(spe())
 		};
 	}
 
-private:
-	constexpr auto hp() const -> DV {
-		return DV(
-			((atk.value() % 2_bi) << 3_bi) +
-			((def.value() % 2_bi) << 2_bi) +
-			((spe.value() % 2_bi) << 1_bi) +
-			((spc.value() % 2_bi) << 0_bi)
-		);
+	constexpr auto operator[](auto const index) const {
+		return index_stat(*this, index);
 	}
+	friend auto operator==(DVs, DVs) -> bool = default;
+
+private:
+	DV m_atk;
+	DV m_def;
+	DV m_spe;
+	DV m_spc;
 };
 
 } // namespace technicalmachine
