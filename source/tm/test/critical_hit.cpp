@@ -26,14 +26,24 @@ auto individual_test(Species const species, Moves const move_name, Item const it
 		Gender::genderless,
 		item,
 		ability,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Hardy,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));

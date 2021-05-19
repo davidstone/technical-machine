@@ -69,14 +69,24 @@ void test_pokemon() {
 		Gender::genderless,
 		Item::Leftovers,
 		Ability::Pressure,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Modest,
-			{IV(31_bi), EV(4_bi)},
-			{IV(31_bi), EV(12_bi)},
-			{IV(31_bi), EV(24_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(32_bi)},
-			{IV(31_bi), EV(100_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(4_bi),
+				EV(12_bi),
+				EV(24_bi),
+				EV(0_bi),
+				EV(32_bi),
+				EV(100_bi),
+			}
 		},
 		RegularMoves({Move(generation, Moves::Psychic)})
 	);

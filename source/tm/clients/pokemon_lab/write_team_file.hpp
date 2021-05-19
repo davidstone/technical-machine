@@ -37,8 +37,7 @@ template<Generation generation>
 void write_stats(Pokemon<generation> const & pokemon, boost::property_tree::ptree & pt) {
 	auto const stats = calculate_ivs_and_evs(pokemon);
 	for (auto const stat_name : {PermanentStat::hp, PermanentStat::atk, PermanentStat::def, PermanentStat::spe, PermanentStat::spa, PermanentStat::spd}) {
-		auto const stat = stats[stat_name];
-		write_stat(to_simulator_string(stat_name), stat.iv, stat.ev, pt);
+		write_stat(to_simulator_string(stat_name), stats.dvs_or_ivs[stat_name], stats.evs[stat_name], pt);
 	}
 }
 

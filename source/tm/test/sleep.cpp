@@ -42,14 +42,24 @@ void sleep_talk() {
 			Gender::female,
 			Item::Leftovers,
 			Ability::Volt_Absorb,
-			CombinedStats<IVAndEV>{
+			CombinedStats{
 				Nature::Hardy,
-				{IV(31_bi), EV(0_bi)},
-				{IV(31_bi), EV(0_bi)},
-				{IV(31_bi), EV(0_bi)},
-				{IV(31_bi), EV(252_bi)},
-				{IV(31_bi), EV(0_bi)},
-				{IV(31_bi), EV(0_bi)},
+				IVs{
+					IV(31_bi),
+					IV(31_bi),
+					IV(31_bi),
+					IV(31_bi),
+					IV(31_bi),
+					IV(31_bi),
+				},
+				EVs{
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+				}
 			},
 			regular_moves(generation, Moves::Sleep_Talk, Moves::Thunderbolt)
 		);
@@ -66,14 +76,24 @@ void sleep_talk() {
 		Gender::male,
 		Item::Life_Orb,
 		Ability::Intimidate,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Adamant,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(252_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({Move(generation, Moves::Earthquake)})
 	));
@@ -168,14 +188,24 @@ private:
 			Gender::female,
 			Item::None,
 			Ability::Natural_Cure,
-			CombinedStats<IVAndEV>{
+			CombinedStats{
 				Nature::Hardy,
-				{IV(31_bi), EV(0_bi)},
-				{IV(31_bi), EV(0_bi)},
-				{IV(31_bi), EV(0_bi)},
-				{IV(31_bi), EV(0_bi)},
-				{IV(31_bi), EV(0_bi)},
-				{IV(31_bi), EV(0_bi)},
+				IVs{
+					IV(31_bi),
+					IV(31_bi),
+					IV(31_bi),
+					IV(31_bi),
+					IV(31_bi),
+					IV(31_bi),
+				},
+				EVs{
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+				}
 			},
 			moves
 		));

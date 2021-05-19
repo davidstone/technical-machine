@@ -23,7 +23,7 @@ namespace technicalmachine {
 namespace pl {
 
 auto stat_from_simulator_string(std::string_view) -> PermanentStat;
-auto load_stats(boost::property_tree::ptree const &) -> CombinedStats<IVAndEV>;
+auto load_stats(boost::property_tree::ptree const &) -> CombinedStats;
 auto species_from_simulator_string(std::string_view) -> Species;
 auto load_moves(Generation, boost::property_tree::ptree const &) -> RegularMoves;
 

@@ -51,14 +51,24 @@ auto max_damage_physical_attacker(Item const item, Ability const ability) {
 		Gender::male,
 		item,
 		ability,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Impish,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(252_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({max_damage_physical_move()})
 	));
@@ -82,14 +92,24 @@ auto max_damage_physical_defender() {
 		Gender::male,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Hasty,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(0_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(0_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -130,14 +150,24 @@ void special_power_test() {
 		Gender::genderless,
 		Item::Wave_Incense,
 		Ability::Torrent,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Hardy,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({move})
 	));
@@ -153,14 +183,24 @@ void special_power_test() {
 		Gender::male,
 		Item::None,
 		Ability::Dry_Skin,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Hardy,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({Move(generation, Moves::Dive)})
 	));
@@ -236,14 +276,24 @@ void special_damage_test() {
 		Gender::genderless,
 		Item::Metronome,
 		Ability::Blaze,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Modest,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(EV::max)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(EV::max),
+				EV(0_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({move})
 	));
@@ -269,14 +319,24 @@ void special_damage_test() {
 		Gender::male,
 		Item::None,
 		Ability::Dry_Skin,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Hardy,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(0_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(0_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));

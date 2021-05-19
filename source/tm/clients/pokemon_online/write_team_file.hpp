@@ -42,10 +42,10 @@ void write_stats(Pokemon<generation> const & pokemon, boost::property_tree::ptre
 	auto const stats = calculate_ivs_and_evs(pokemon);
 	auto const stat_names = containers::enum_range<PermanentStat>();
 	for (auto const stat : stat_names) {
-		pt.add("DV", stats[stat].iv.value());
+		pt.add("DV", stats.dvs_or_ivs[stat].value());
 	}
 	for (auto const stat : stat_names) {
-		pt.add("EV", stats[stat].ev.value());
+		pt.add("EV", stats.evs[stat].value());
 	}
 }
 

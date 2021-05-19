@@ -43,14 +43,24 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Adamant,
-			{IV(31_bi), EV(252_bi)},
-			{IV(31_bi), EV(96_bi)},
-			{IV(31_bi), EV(96_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(4_bi)},
-			{IV(31_bi), EV(60_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(252_bi),
+				EV(96_bi),
+				EV(96_bi),
+				EV(0_bi),
+				EV(4_bi),
+				EV(60_bi),
+			}
 		},
 		regular_moves(generation, Moves::Meteor_Mash)
 	);
@@ -127,14 +137,24 @@ void not_level_100(std::mt19937 & random_engine) {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Modest,
-			{IV(31_bi), EV(192_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(8_bi)},
-			{IV(31_bi), EV(120_bi)},
-			{IV(31_bi), EV(60_bi)},
-			{IV(31_bi), EV(128_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(192_bi),
+				EV(0_bi),
+				EV(8_bi),
+				EV(120_bi),
+				EV(60_bi),
+				EV(128_bi),
+			}
 		},
 		regular_moves(generation, Moves::Hydro_Pump, Moves::Bug_Buzz, Moves::Roost, Moves::Air_Slash)
 	);
@@ -153,14 +173,24 @@ void generation_two(std::mt19937 & random_engine) {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Hardy,
-			{IV(30_bi), EV(252_bi)},
-			{IV(30_bi), EV(252_bi)},
-			{IV(30_bi), EV(252_bi)},
-			{IV(30_bi), EV(252_bi)},
-			{IV(30_bi), EV(252_bi)},
-			{IV(30_bi), EV(252_bi)},
+			IVs{
+				IV(30_bi),
+				IV(30_bi),
+				IV(30_bi),
+				IV(30_bi),
+				IV(30_bi),
+				IV(30_bi),
+			},
+			EVs{
+				EV(252_bi),
+				EV(252_bi),
+				EV(252_bi),
+				EV(252_bi),
+				EV(252_bi),
+				EV(252_bi),
+			}
 		},
 		regular_moves(generation, Moves::Tackle, Moves::Psychic)
 	);

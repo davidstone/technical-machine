@@ -33,7 +33,7 @@ namespace technicalmachine {
 
 template<Generation generation>
 struct Pokemon {
-	Pokemon(Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats<IVAndEV> stats, RegularMoves regular_moves_, Happiness const happiness = Happiness()):
+	Pokemon(Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats stats, RegularMoves regular_moves_, Happiness const happiness = Happiness()):
 		m_regular_moves(regular_moves_),
 		m_stats(BaseStats(generation, species), stats, level),
 

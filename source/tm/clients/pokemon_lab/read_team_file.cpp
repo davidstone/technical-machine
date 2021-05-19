@@ -46,24 +46,34 @@ auto stat_from_simulator_string(std::string_view const str) -> PermanentStat {
 	return *result;
 }
 
-auto load_stats(boost::property_tree::ptree const & pt) -> CombinedStats<IVAndEV> {
-	auto result = CombinedStats<IVAndEV>{
-		from_string<Nature>(pt.get<std::string>("nature")),
-		{IV(0_bi), EV(0_bi)},
-		{IV(0_bi), EV(0_bi)},
-		{IV(0_bi), EV(0_bi)},
-		{IV(0_bi), EV(0_bi)},
-		{IV(0_bi), EV(0_bi)},
-		{IV(0_bi), EV(0_bi)},
+auto load_stats(boost::property_tree::ptree const & pt) -> CombinedStats {
+	auto evs = EVs{
+		EV(0_bi),
+		EV(0_bi),
+		EV(0_bi),
+		EV(0_bi),
+		EV(0_bi),
+		EV(0_bi),
+	};
+	auto ivs = IVs{
+		IV(0_bi),
+		IV(0_bi),
+		IV(0_bi),
+		IV(0_bi),
+		IV(0_bi),
+		IV(0_bi),
 	};
 	for (auto const & value : pt.get_child("stats")) {
 		auto const & stats = value.second;
 		auto const stat_name = stat_from_simulator_string(stats.get<std::string>("<xmlattr>.name"));
-		auto const iv = IV(stats.get<IV::value_type>("<xmlattr>.iv"));
-		auto const ev = EV(stats.get<EV::value_type>("<xmlattr>.ev"));
-		result[stat_name] = {iv, ev};
+		ivs[stat_name] = IV(stats.get<IV::value_type>("<xmlattr>.iv"));
+		evs[stat_name] = EV(stats.get<EV::value_type>("<xmlattr>.ev"));
 	}
-	return result;
+	return CombinedStats{
+		from_string<Nature>(pt.get<std::string>("nature")),
+		ivs,
+		evs
+	};
 }
 
 auto species_from_simulator_string(std::string_view const str) -> Species {

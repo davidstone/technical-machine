@@ -44,14 +44,24 @@ void attack_tests() {
 		Gender::male,
 		Item::Choice_Band,
 		Ability::Pure_Power,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Impish,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(252_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -78,14 +88,24 @@ void special_attack_tests() {
 		Gender::genderless,
 		Item::Choice_Specs,
 		Ability::Solar_Power,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Modest,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(252_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({Move(generation, Moves::Psychic)})
 	));
@@ -112,14 +132,24 @@ void max_defense_test() {
 		Gender::male,
 		Item::None,
 		Ability::Marvel_Scale,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Bold,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(252_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -146,14 +176,24 @@ void min_defense_test() {
 		Gender::male,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Hasty,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(0_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(0_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -189,14 +229,24 @@ void special_defense_tests() {
 		Gender::male,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Calm,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(252_bi)},
-			{IV(31_bi), EV(0_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+			}
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -223,14 +273,24 @@ void speed_tests() {
 		Gender::genderless,
 		Item::Choice_Scarf,
 		Ability::Swift_Swim,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Timid,
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(0_bi)},
-			{IV(31_bi), EV(252_bi)},
+			IVs{
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+				IV(31_bi),
+			},
+			EVs{
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+			}
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));

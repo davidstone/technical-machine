@@ -30,9 +30,8 @@ using InitialStat = decltype(initial_stat(
 	std::declval<Level>()
 ));
 
-inline auto initial_stat(RegularStat const stat_name, BaseStats const base_stats, CombinedStats<IVAndEV> inputs, Level const level) {
-	auto const iv_and_ev = inputs[PermanentStat(stat_name)];
-	return initial_stat(stat_name, base_stats[stat_name], inputs.nature, iv_and_ev.iv, iv_and_ev.ev, level);
+inline auto initial_stat(RegularStat const stat_name, BaseStats const base_stats, CombinedStats inputs, Level const level) {
+	return initial_stat(stat_name, base_stats[stat_name], inputs.nature, inputs.dvs_or_ivs[PermanentStat(stat_name)], inputs.evs[PermanentStat(stat_name)], level);
 }
 
 } // namespace technicalmachine

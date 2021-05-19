@@ -78,11 +78,11 @@ auto to_string(Pokemon<generation> const pokemon) -> containers::string {
 	auto stats = calculate_ivs_and_evs(pokemon);
 	
 	auto stat_to_iv_string = [&](PermanentStat const stat_name) {
-		return bounded::to_string(stats[stat_name].iv.value());
+		return bounded::to_string(stats.dvs_or_ivs[stat_name].value());
 	};
 	
 	auto stat_to_ev_string = [&](PermanentStat const stat_name) {
-		return bounded::to_string(stats[stat_name].ev.value());
+		return bounded::to_string(stats.evs[stat_name].value());
 	};
 	
 	auto moves_to_string = [&]{
@@ -212,7 +212,7 @@ auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 		Gender::genderless,
 		item,
 		ability,
-		combine(nature, ivs, evs),
+		CombinedStats{nature, ivs, evs},
 		moves
 	);
 	pokemon.set_hp(HP::current_type(static_cast<int>(static_cast<double>(pokemon.hp().max()) * hp_percent / 100.0)));

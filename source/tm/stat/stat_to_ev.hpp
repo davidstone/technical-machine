@@ -56,7 +56,7 @@ auto calculate_ivs_and_evs(
 	bounded::optional<Type> const hidden_power_type,
 	bool has_physical_move,
 	decltype(containers::enum_range<Nature>()) const nature_range
-) -> CombinedStats<IVAndEV>;
+) -> CombinedStats;
 
 inline auto calculate_ivs_and_evs(
 	Generation const generation,
@@ -65,7 +65,7 @@ inline auto calculate_ivs_and_evs(
 	GenericStats<HP::max_type, InitialStat> const stats,
 	bounded::optional<Type> const hidden_power_type,
 	bool const has_physical_move
-) -> CombinedStats<IVAndEV> {
+) -> CombinedStats {
 	auto const nature_range = generation <= Generation::two ? 
 		containers::enum_range(Nature::Hardy, Nature::Hardy) :
 		containers::enum_range<Nature>();
@@ -82,7 +82,7 @@ inline auto calculate_ivs_and_evs(
 }
 
 template<Generation generation>
-auto calculate_ivs_and_evs(Pokemon<generation> const pokemon) -> CombinedStats<IVAndEV> {
+auto calculate_ivs_and_evs(Pokemon<generation> const pokemon) -> CombinedStats {
 	auto const nature = pokemon.nature();
 	auto const stats = GenericStats<HP::max_type, InitialStat>{
 		pokemon.hp().max(),

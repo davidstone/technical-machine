@@ -117,7 +117,7 @@ auto parse_pokemon(std::string_view const str) {
 		gender,
 		item,
 		ability,
-		combine(nature, ivs, evs),
+		CombinedStats{nature, ivs, evs},
 		moves,
 		happiness
 	);

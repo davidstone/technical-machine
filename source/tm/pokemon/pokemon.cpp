@@ -17,14 +17,24 @@ Pokemon<generation>::Pokemon(Species const species, Level const level, Gender co
 		gender,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<IVAndEV>{
+		CombinedStats{
 			Nature::Hardy,
-			{default_iv(generation), EV(0_bi)},
-			{default_iv(generation), EV(0_bi)},
-			{default_iv(generation), EV(0_bi)},
-			{default_iv(generation), EV(0_bi)},
-			{default_iv(generation), EV(0_bi)},
-			{default_iv(generation), EV(0_bi)},
+            IVs{
+                default_iv(generation),
+                default_iv(generation),
+                default_iv(generation),
+                default_iv(generation),
+                default_iv(generation),
+                default_iv(generation),
+            },
+            EVs{
+                EV(0_bi),
+                EV(0_bi),
+                EV(0_bi),
+                EV(0_bi),
+                EV(0_bi),
+                EV(0_bi),
+            }
 		},
 		RegularMoves(),
 		Happiness()

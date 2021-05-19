@@ -36,4 +36,7 @@ GenericStats(HP, Stat, Stat, Stat, Stat, Stat) -> GenericStats<HP, Stat>;
 using IVs = GenericStats<IV>;
 using EVs = GenericStats<EV>;
 
+constexpr auto ev_sum(EVs const evs) {
+	return evs.hp.value() + evs.atk.value() + evs.def.value() + evs.spa.value() + evs.spd.value() + evs.spe.value();
+}
 }	// namespace technicalmachine

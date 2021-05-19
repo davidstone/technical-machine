@@ -38,8 +38,8 @@ using namespace bounded::literal;
 
 namespace detail {
 
-inline auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats<IVAndEV> {
-	auto best = bounded::optional<CombinedStats<IVAndEV>>{};
+inline auto combine(Generation const generation, OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats {
+	auto best = bounded::optional<CombinedStats>{};
 	for (auto const & speed : speed_container) {
 		auto const offensive = o.find(speed.nature);
 		if (!offensive) {
@@ -49,21 +49,31 @@ inline auto combine(Generation const generation, OffensiveEVs const & o, Defensi
 		if (defensive == containers::end(d)) {
 			continue;
 		}
-		auto candidate = CombinedStats<IVAndEV>{
+		auto candidate = CombinedStats{
 			speed.nature,
-			defensive->hp,
-			offensive->attack,
-			defensive->defense,
-			offensive->special_attack,
-			defensive->special_defense,
-			speed.stat
+			IVs{
+				defensive->hp.iv,
+				offensive->attack.iv,
+				defensive->defense.iv,
+				offensive->special_attack.iv,
+				defensive->special_defense.iv,
+				speed.stat.iv
+			},
+			EVs{
+				defensive->hp.ev,
+				offensive->attack.ev,
+				defensive->defense.ev,
+				offensive->special_attack.ev,
+				defensive->special_defense.ev,
+				speed.stat.ev
+			}
 		};
-		if (!best or ev_sum(candidate) < ev_sum(*best)) {
+		if (!best or ev_sum(candidate.evs) < ev_sum(best->evs)) {
 			insert(best, candidate);
 		}
 	}
 	BOUNDED_ASSERT(best);
-	BOUNDED_ASSERT(ev_sum(*best) <= max_total_evs(generation));
+	BOUNDED_ASSERT(ev_sum(best->evs) <= max_total_evs(generation));
 	return *best;
 }
 
@@ -77,18 +87,21 @@ inline auto compute_minimal_spread(
 	bounded::optional<Type> const hidden_power_type,
 	bool const include_attack,
 	bool const include_special_attack
-) -> CombinedStats<IVAndEV> {
+) -> CombinedStats {
 	auto const ivs = hidden_power_ivs(generation, hidden_power_type, include_attack);
 
 	if (generation <= Generation::two) {
-		return {
+		return CombinedStats{
 			Nature::Hardy,
-			{ivs.hp, EV(EV::useful_max)},
-			{ivs.atk, include_attack ? EV(EV::useful_max) : EV(0_bi)},
-			{ivs.def, EV(EV::useful_max)},
-			{ivs.spa, EV(EV::useful_max)},
-			{ivs.spd, EV(EV::useful_max)},
-			{ivs.spe, EV(EV::useful_max)},
+			ivs,
+			EVs{
+				EV(EV::useful_max),
+				include_attack ? EV(EV::useful_max) : EV(0_bi),
+				EV(EV::useful_max),
+				EV(EV::useful_max),
+				EV(EV::useful_max),
+				EV(EV::useful_max),
+			}
 		};
 	}
 
@@ -112,38 +125,37 @@ inline auto compute_minimal_spread(
 }
 
 template<Generation generation>
-auto set_stats(Pokemon<generation> & pokemon, CombinedStats<IVAndEV> const stats) {
+auto set_stats(Pokemon<generation> & pokemon, CombinedStats const stats) {
 	auto const original_hp = pokemon.hp();
 	pokemon.set_nature(stats.nature);
 	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-		auto const stat = stats[stat_name];
-		pokemon.set_ev(stat_name, stat.iv, stat.ev);
+		pokemon.set_ev(stat_name, stats.dvs_or_ivs[stat_name], stats.evs[stat_name]);
 	}
 	auto const new_hp = pokemon.hp();
 	pokemon.set_hp(new_hp.max() * original_hp.current() / original_hp.max());
 }
 
-inline auto pad_random_evs(Generation const generation, CombinedStats<IVAndEV> combined, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) -> CombinedStats<IVAndEV> {
+inline auto pad_random_evs(Generation const generation, CombinedStats combined, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) -> CombinedStats {
 	if (generation <= Generation::two) {
 		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
 			auto const minimize_stat = stat_name == PermanentStat::atk and !include_attack;
-			combined[stat_name].ev = minimize_stat ? EV(0_bi) : EV(EV::useful_max);
+			combined.evs[stat_name] = minimize_stat ? EV(0_bi) : EV(EV::useful_max);
 		}
 		return combined;
 	}
 	auto distribution = std::discrete_distribution{};
 	constexpr auto minimal_increment = 4_bi;
-	while (ev_sum(combined) + minimal_increment <= max_total_evs(generation)) {
+	while (ev_sum(combined.evs) + minimal_increment <= max_total_evs(generation)) {
 		distribution.param({
-			combined.hp.ev == EV::useful_max ? 0.0 : 1.0,
-			(!include_attack or combined.atk.ev == EV::useful_max) ? 0.0 : 1.0,
-			combined.def.ev == EV::useful_max ? 0.0 : 1.0,
-			(!include_special_attack or combined.spa.ev == EV::useful_max) ? 0.0 : 1.0,
-			combined.spd.ev == EV::useful_max ? 0.0 : 1.0,
-			combined.spe.ev == EV::useful_max ? 0.0 : 1.0,
+			combined.evs.hp == EV::useful_max ? 0.0 : 1.0,
+			(!include_attack or combined.evs.atk == EV::useful_max) ? 0.0 : 1.0,
+			combined.evs.def == EV::useful_max ? 0.0 : 1.0,
+			(!include_special_attack or combined.evs.spa == EV::useful_max) ? 0.0 : 1.0,
+			combined.evs.spd == EV::useful_max ? 0.0 : 1.0,
+			combined.evs.spe == EV::useful_max ? 0.0 : 1.0,
 		});
 		auto const index = distribution(random_engine);
-		auto & ev = combined[PermanentStat(index - 1)].ev;
+		auto & ev = combined.evs[PermanentStat(index - 1)];
 		ev = EV(EV::value_type(ev.value() + minimal_increment));
 	}
 	return combined;
@@ -151,14 +163,14 @@ inline auto pad_random_evs(Generation const generation, CombinedStats<IVAndEV> c
 
 inline auto optimize_evs(
 	Generation const generation,
-	CombinedStats<IVAndEV> combined,
+	CombinedStats combined,
 	Species const species,
 	Level const level,
 	bounded::optional<Type> const hidden_power_type,
 	bool const include_attack,
 	bool const include_special_attack,
 	std::mt19937 & random_engine
-) -> CombinedStats<IVAndEV> {
+) -> CombinedStats {
 	auto const base_stats = BaseStats(generation, species);
 	while (true) {
 		auto const previous = combined;

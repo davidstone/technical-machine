@@ -71,7 +71,7 @@ auto to_packed_format(Team<generation> const & team) -> containers::string {
 			if (stat_name != PermanentStat::hp) {
 				containers::push_back(result, ',');
 			}
-			containers::append(result, to_string(stats[stat_name].ev.value()));
+			containers::append(result, to_string(stats.evs[stat_name].value()));
 		}
 
 		result = containers::concatenate<containers::string>(
@@ -85,7 +85,7 @@ auto to_packed_format(Team<generation> const & team) -> containers::string {
 			if (stat_name != PermanentStat::hp) {
 				containers::push_back(result, ',');
 			}
-			containers::append(result, to_string(stats[stat_name].iv.value()));
+			containers::append(result, to_string(stats.dvs_or_ivs[stat_name].value()));
 		}
 
 		result = containers::concatenate<containers::string>(

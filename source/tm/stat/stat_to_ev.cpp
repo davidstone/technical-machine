@@ -45,7 +45,7 @@ auto calculate_ivs_and_evs(
 	bounded::optional<Type> const hidden_power_type,
 	bool has_physical_move,
 	decltype(containers::enum_range<Nature>()) const nature_range
-) -> CombinedStats<IVAndEV> {
+) -> CombinedStats {
 	// TODO: Use Hidden Power power to determine IVs, not just the type
 	auto const base = BaseStats(generation, species);
 	
@@ -78,16 +78,19 @@ auto calculate_ivs_and_evs(
 				continue;
 			}
 
-			auto const combined = CombinedStats<IVAndEV>{
+			auto const combined = CombinedStats{
 				nature,
-				{ivs.hp, hp_ev},
-				{ivs.atk, *attack_ev},
-				{ivs.def, *defense_ev},
-				{ivs.spa, *special_attack_ev},
-				{ivs.spd, *special_defense_ev},
-				{ivs.spe, *speed_ev}
+				ivs,
+				EVs{
+					hp_ev,
+					*attack_ev,
+					*defense_ev,
+					*special_attack_ev,
+					*special_defense_ev,
+					*speed_ev
+				}
 			};
-			if (ev_sum(combined) > max_total_evs(generation)) {
+			if (ev_sum(combined.evs) > max_total_evs(generation)) {
 				continue;
 			}
 			
