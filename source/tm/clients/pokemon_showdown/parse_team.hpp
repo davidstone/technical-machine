@@ -35,7 +35,7 @@ namespace ps {
 
 inline auto parse_stats(HP::max_type const hp, nlohmann::json const & stats) {
 	auto get = [&](char const * const str) {
-		return InitialStat(stats.at(str).get<nlohmann::json::number_integer_t>());
+		return bounded::check_in_range<InitialStat>(bounded::integer(stats.at(str).get<nlohmann::json::number_integer_t>()));
 	};
 	auto const attack = get("atk");
 	auto const defense = get("def");
