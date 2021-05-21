@@ -131,26 +131,4 @@ auto with_new_ivs_and_evs(HP const original_hp, BaseStats const base_stats, Leve
 	return result;
 }
 
-template<Generation generation>
-auto initial_stats(BaseStats const base_stats, Level const level, CombinedStats<generation> const stats) {
-	auto calculate_stat = [=](RegularStat const stat_name) {
-		return initial_stat(
-			stat_name,
-			base_stats[stat_name],
-			stats.nature,
-			IV(stats.dvs_or_ivs[stat_name]),
-			stats.evs[stat_name],
-			level
-		);
-	};
-	return GenericStats<HP::max_type, InitialStat>{
-		HP(base_stats, level, stats.dvs_or_ivs.hp(), stats.evs.hp()).max(),
-		calculate_stat(RegularStat::atk),
-		calculate_stat(RegularStat::def),
-		calculate_stat(RegularStat::spa),
-		calculate_stat(RegularStat::spd),
-		calculate_stat(RegularStat::spe),
-	};
-}
-
-}	// namespace technicalmachine
+} // namespace technicalmachine

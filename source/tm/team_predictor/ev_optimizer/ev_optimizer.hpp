@@ -84,7 +84,7 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 template<Generation generation>
 auto compute_minimal_spread(
 	BaseStats const base_stats,
-	GenericStats<HP::max_type, InitialStat> stats,
+	Stats<generation> stats,
 	Level const level,
 	bounded::optional<Type> const hidden_power_type,
 	bool const include_attack,
@@ -116,7 +116,7 @@ auto compute_minimal_spread(
 			DefensiveEVs(
 				base_stats,
 				level,
-				DefensiveEVs::InputHP{ivs.hp(), stats.hp()},
+				DefensiveEVs::InputHP{ivs.hp(), stats.hp().max()},
 				DefensiveEVs::InputStat{ivs.def(), stats.def()},
 				DefensiveEVs::InputStat{ivs.spd(), stats.spd()}
 			),
@@ -166,8 +166,8 @@ auto optimize_evs(
 	while (true) {
 		auto const previous = combined;
 		combined = pad_random_evs<generation>(combined, include_attack, include_special_attack, random_engine);
-		auto const stats = initial_stats(base_stats, level, combined);
-		combined = compute_minimal_spread<generation>(base_stats, stats, level, hidden_power_type, include_attack, include_special_attack);
+		auto const stats = Stats<generation>(base_stats, level, combined);
+		combined = compute_minimal_spread(base_stats, stats, level, hidden_power_type, include_attack, include_special_attack);
 		// Technically this isn't correct based on how I pad: I could have some
 		// leftover EVs that could have done some good somewhere else, but were
 		// not enough to increase the stat they were randomly assigned to.
