@@ -65,6 +65,8 @@ void write_team(Team<generation> const & team, std::filesystem::path const & fil
 	auto pt = boost::property_tree::ptree();
 	auto settings = boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type>('\t', 1);
 	auto & t = pt.add("shoddybattle", "");
+	// The original format did not include a generation.
+	t.put("<xmlattr>.generation", static_cast<int>(generation));
 	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon(pokemon, t);
 	}

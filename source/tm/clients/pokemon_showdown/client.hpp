@@ -45,13 +45,21 @@ struct ClientImpl {
 private:
 	template<Generation generation>
 	auto generate_team() -> Team<generation> {
-		return m_settings.team_file ?
-			load_team_from_file<generation>(m_random_engine, *m_settings.team_file) :
-			::technicalmachine::generate_team<generation>(
+		if (!m_settings.team_file) {
+			return ::technicalmachine::generate_team<generation>(
 				m_all_usage_stats[generation],
 				use_lead_stats,
 				m_random_engine
 			);
+		}
+		auto parsed = load_team_from_file(m_random_engine, *m_settings.team_file);
+		return bounded::visit(parsed, []<Generation parsed_generation>(Team<parsed_generation> const & team) -> Team<generation> {
+			if constexpr (generation == parsed_generation) {
+				return team;
+			} else {
+				throw std::runtime_error("Generation mismatch in team file vs. battle.");
+			}
+		});
 	}
 
 	

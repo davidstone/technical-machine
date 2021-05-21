@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<shoddybattle>
+<shoddybattle generation="4">
 
 <pokemon species="Jirachi">
 <nickname></nickname>

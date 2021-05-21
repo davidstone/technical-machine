@@ -23,23 +23,22 @@
 
 namespace technicalmachine {
 
-template<Generation generation>
-auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) -> Team<generation> {
+inline auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) {
 	auto const files = files_in_path(path);
 	if (containers::is_empty(files)) {
 		throw std::runtime_error(path.string() + " does not contain any team files.");
 	}
 	auto const max = (containers::size(files) - 1_bi).value();
 	auto distribution = std::uniform_int_distribution(static_cast<decltype(max)>(0), max);
-	auto const file = containers::at(files, distribution(random_engine));
+	auto const file_name = containers::at(files, distribution(random_engine));
 
-	auto const extension = file.extension();
+	auto const extension = file_name.extension();
 	if (extension == ".tp") {
-		return po::load_team<generation>(file);
+		return po::read_team_file(file_name);
 	} else if (extension == ".sbt") {
-		return pl::load_team<generation>(file);
+		return pl::read_team_file(file_name);
 	} else {
-		throw InvalidTeamFileFormat(file);
+		throw InvalidTeamFileFormat(file_name);
 	}
 }
 

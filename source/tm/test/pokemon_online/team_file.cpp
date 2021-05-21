@@ -12,20 +12,19 @@
 #include <filesystem>
 #include <iostream>
 
-namespace technicalmachine {
-namespace po {
+namespace technicalmachine::po {
 
 void test_team_file () {
-	constexpr auto generation = Generation::four;
 	std::cout << "\tRunning Pokemon Online team file tests.\n";
 	auto const directory = std::filesystem::path("test/teams");
 	auto const new_file = directory / "test2.tp";
-	auto const team = load_team<generation>(directory / "test1.tp");
-	write_team(team, new_file);
-	auto const new_team = load_team<generation>(new_file);
-	BOUNDED_ASSERT(team == new_team);
+	auto const original_team = read_team_file(directory / "test1.tp");
+	bounded::visit(original_team, [&](auto const & team) {
+		write_team(team, new_file);
+	});
+	auto const new_team = read_team_file(new_file);
+	BOUNDED_ASSERT(original_team == new_team);
 	std::filesystem::remove(new_file);
 }
 
-}	// namespace po
-}	// namespace technicalmachine
+} // namespace technicalmachine::po

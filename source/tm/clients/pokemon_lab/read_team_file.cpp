@@ -10,22 +10,38 @@
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
+
+#include <tm/string_conversions/ability.hpp>
+#include <tm/string_conversions/gender.hpp>
+#include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
+
+#include <tm/constant_generation.hpp>
+#include <tm/generation.hpp>
+#include <tm/team.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/array/array.hpp>
-#include <containers/begin_end.hpp>
 #include <containers/flat_map.hpp>
 #include <containers/lookup.hpp>
 
-#include <stdexcept>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
+#include <filesystem>
 #include <string>
+#include <string_view>
+#include <stdexcept>
 
-namespace technicalmachine {
-namespace pl {
+namespace technicalmachine::pl {
+namespace {
+using namespace std::string_view_literals;
 
-auto stat_from_simulator_string(std::string_view const str) -> PermanentStat {
+constexpr auto parse_stat_name(std::string_view const str) {
 	using Storage = containers::array<containers::map_value_type<std::string_view, PermanentStat>, 6>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
@@ -45,7 +61,7 @@ auto stat_from_simulator_string(std::string_view const str) -> PermanentStat {
 	return *result;
 }
 
-auto species_from_simulator_string(std::string_view const str) -> Species {
+constexpr auto parse_species(std::string_view const str) {
 	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 16>;
 	constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
@@ -72,7 +88,7 @@ auto species_from_simulator_string(std::string_view const str) -> Species {
 	return result ? *result : from_string<Species>(str);
 }
 
-auto load_moves(Generation const generation, boost::property_tree::ptree const & pt) -> RegularMoves {
+auto parse_moves(Generation const generation, boost::property_tree::ptree const & pt) {
 	auto moves = RegularMoves();
 	for (boost::property_tree::ptree::value_type const & value : pt) {
 		auto const name = from_string<Moves>(value.second.get_value<std::string>());
@@ -82,5 +98,98 @@ auto load_moves(Generation const generation, boost::property_tree::ptree const &
 	return moves;
 }
 
-} // namespace pl
-} // namespace technicalmachine
+template<Generation generation>
+auto parse_stats(boost::property_tree::ptree const & pt) {
+	auto evs = EVs(
+		EV(0_bi),
+		EV(0_bi),
+		EV(0_bi),
+		EV(0_bi),
+		EV(0_bi),
+		EV(0_bi)
+	);
+	auto ivs = IVs(
+		IV(0_bi),
+		IV(0_bi),
+		IV(0_bi),
+		IV(0_bi),
+		IV(0_bi),
+		IV(0_bi)
+	);
+	for (auto const & value : pt.get_child("stats")) {
+		auto const & stats = value.second;
+		auto const stat_name = parse_stat_name(stats.get<std::string>("<xmlattr>.name"));
+		ivs[stat_name] = IV(stats.get<IV::value_type>("<xmlattr>.iv"));
+		evs[stat_name] = EV(stats.get<EV::value_type>("<xmlattr>.ev"));
+	}
+	return CombinedStats<generation>{
+		from_string<Nature>(pt.get<std::string>("nature")),
+		ivs,
+		evs
+	};
+}
+
+template<Generation generation>
+auto parse_pokemon(boost::property_tree::ptree const & pt) {
+	// auto const given_nickname = pt.get<std::string>("nickname");
+	// auto const nickname = nickname_temp.empty() ? species_str : given_nickname;
+	return Pokemon<generation>(
+		parse_species(pt.get<std::string>("<xmlattr>.species")),
+		Level(pt.get<Level::value_type>("level")),
+		Gender(from_string<Gender>(pt.get<std::string>("gender"))),
+		from_string<Item>(pt.get<std::string>("item")),
+		Ability(from_string<Ability>(pt.get<std::string>("ability"))),
+		parse_stats<generation>(pt),
+		parse_moves(generation, pt.get_child("moveset")),
+		Happiness(pt.get<Happiness::value_type>("happiness"))
+	);
+}
+
+auto number_of_pokemon(boost::property_tree::ptree const & pt) -> TeamSize {
+	auto pokemon_count = TeamSize(0_bi);
+	for (auto const & value : pt) {
+		if (value.first == "pokemon") {
+			if (pokemon_count == numeric_traits::max_value<TeamSize>) {
+				throw std::runtime_error("Attempted to add too many Pokemon");
+			}
+			++pokemon_count;
+		}
+	}
+	return pokemon_count;
+}
+
+template<Generation generation>
+auto parse_team(boost::property_tree::ptree const & all_pokemon) {
+	constexpr bool is_me = true;
+	auto const team_size = number_of_pokemon(all_pokemon);
+	auto team = Team<generation>(team_size, is_me);
+	for (auto const & value : all_pokemon) {
+		if (value.first == "pokemon") {
+			team.add_pokemon(parse_pokemon<generation>(value.second));
+		}
+	}
+	team.all_pokemon().reset_index();
+	return team;
+}
+
+} // namespace
+
+auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<Team> {
+	try {
+		boost::property_tree::ptree pt;
+		read_xml(team_file.string(), pt);
+		
+		auto const all_pokemon = pt.get_child("shoddybattle");
+		using GenerationInteger = bounded::integer<1, 7>;
+		// The original format did not include a generation. Require users to add
+		// this field.
+		auto const parsed_generation = static_cast<Generation>(all_pokemon.get<GenerationInteger>("<xmlattr>.generation"));
+		return constant_generation(parsed_generation, [&]<Generation generation>(constant_gen_t<generation>) {
+			return GenerationGeneric<Team>(parse_team<generation>(all_pokemon));
+		});
+	} catch (std::exception const & ex) {
+		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse Pokemon Lab team file \""sv, team_file.string(), "\" -- "sv, std::string_view(ex.what())));
+	}
+}
+
+} // namespace technicalmachine::pl
