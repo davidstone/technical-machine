@@ -8,21 +8,34 @@
 #include <tm/pokemon/level.hpp>
 
 #include <tm/stat/base_stats.hpp>
-#include <tm/stat/calculate.hpp>
 #include <tm/stat/initial_stat.hpp>
 #include <tm/stat/iv.hpp>
 #include <tm/stat/iv_and_ev.hpp>
+#include <tm/stat/stat_to_ev.hpp>
 #include <tm/stat/nature.hpp>
+
+#include <bounded/assert.hpp>
 
 #include <containers/static_vector/static_vector.hpp>
 #include <containers/begin_end.hpp>
+#include <containers/emplace_back.hpp>
+#include <containers/is_empty.hpp>
 
 #include <numeric_traits/min_max_value.hpp>
 
 namespace technicalmachine {
 
 struct SpeedEVs {
-	SpeedEVs(BaseStats, Level, IV, InitialStat target);
+	SpeedEVs(BaseStats const base, Level const level, IV const iv, InitialStat const target) {
+		for (auto const nature : containers::enum_range<Nature>()) {
+			auto const ev = stat_to_ev(target, nature, RegularStat::spe, base.spe(), iv, level);
+			if (ev) {
+				containers::emplace_back(m_container, nature, IVAndEV{iv, *ev});
+			}
+		}
+		BOUNDED_ASSERT(!containers::is_empty(m_container));
+	}
+
 	auto begin() const {
 		return containers::begin(m_container);
 	}
