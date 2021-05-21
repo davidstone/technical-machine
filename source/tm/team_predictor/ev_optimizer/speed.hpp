@@ -33,7 +33,7 @@ struct SpeedEVs {
 	template<Generation generation>
 	SpeedEVs(BaseStats const base, Level const level, IV const iv, Input<generation> const target) {
 		for (auto const nature : containers::enum_range<Nature>()) {
-			auto const ev = stat_to_ev(target.stat, nature, RegularStat::spe, base.spe(), iv, level);
+			auto const ev = stat_to_ev(target.stat, RegularStat::spe, base.spe(), level, nature, iv);
 			if (ev) {
 				containers::emplace_back(m_container, nature, IVAndEV{iv, *ev});
 			}

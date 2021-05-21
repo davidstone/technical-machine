@@ -69,7 +69,7 @@ struct DefensiveEVs {
 				auto const hp = HP(base_stats, level, original_hp.iv, hp_ev);
 				auto find_minimum_matching = [=](RegularStat const stat_name, auto const base, IV const iv, bounded::bounded_integer auto const original_product) {
 					auto const target_stat = round_up_divide(original_product, hp.max());
-					return stat_to_ev(target_stat, nature, stat_name, base, iv, level);
+					return stat_to_ev(target_stat, stat_name, base, level, nature, iv);
 				};
 
 				auto const defense_ev = find_minimum_matching(RegularStat::def, base_stats.def(), def.iv, def_product);

@@ -73,8 +73,8 @@ auto evs_for_nature(BaseStats const base, Level const level, OffensiveEVInputs<g
 	auto const target_atk = target_stat(RegularStat::atk, base.atk(), level, atk, Nature::Modest);
 	auto const target_spa = target_stat(RegularStat::spa, base.spa(), level, spa, Nature::Adamant);
 	return [=](Nature const nature) {
-		auto const atk_ev = stat_to_ev(target_atk, nature, RegularStat::atk, base.atk(), atk.iv, level);
-		auto const spa_ev = stat_to_ev(target_spa, nature, RegularStat::spa, base.spa(), spa.iv, level);
+		auto const atk_ev = stat_to_ev(target_atk, RegularStat::atk, base.atk(), level, nature, atk.iv);
+		auto const spa_ev = stat_to_ev(target_spa, RegularStat::spa, base.spa(), level, nature, spa.iv);
 		return BOUNDED_CONDITIONAL(atk_ev and spa_ev, (OffensiveStats{nature, {atk.iv, *atk_ev}, {spa.iv, *spa_ev}}), bounded::none);
 	};
 }

@@ -55,7 +55,7 @@ inline auto hp_to_ev(BaseStats const base, Level const level, HP::max_type const
 // `target` is not just InitialStat because this function is also used in the EV
 // optimizer, where values outside the legal range are regularly encountered as
 // part of speculative computation.
-constexpr auto stat_to_ev(bounded::bounded_integer auto const target, Nature const nature, RegularStat const stat_name, BaseStats::regular_value_type const base, IV const iv, Level const level) -> bounded::optional<EV> {
+constexpr auto stat_to_ev(bounded::bounded_integer auto const target, RegularStat const stat_name, BaseStats::regular_value_type const base, Level const level, Nature const nature, IV const iv) -> bounded::optional<EV> {
 	auto const computed = (round_up_divide((round_up_divide(target, boost(nature, stat_name)) - 5_bi) * 100_bi, level()) - 2_bi * base - iv.value()) * 4_bi;
 	if (computed > EV::max) {
 		return bounded::none;
@@ -81,7 +81,7 @@ inline auto calculate_ivs_and_evs(
 
 		for (auto const nature : nature_range) {
 			auto compute_ev = [=](RegularStat const stat_name, auto const base_stat) {
-				return stat_to_ev(stats[stat_name], nature, stat_name, base_stat, ivs[stat_name], level);
+				return stat_to_ev(stats[stat_name], stat_name, base_stat, level, nature, ivs[stat_name]);
 			};
 			auto const attack_ev = compute_ev(RegularStat::atk, base.atk());
 			if (!attack_ev) {
