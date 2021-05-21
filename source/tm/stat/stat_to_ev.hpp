@@ -64,7 +64,7 @@ constexpr auto stat_to_ev(bounded::bounded_integer auto const target, RegularSta
 }
 
 template<Generation generation>
-inline auto calculate_ivs_and_evs(
+auto calculate_ivs_and_evs(
 	Species const species,
 	Level const level,
 	GenericStats<HP::max_type, InitialStat<generation>> const stats,
@@ -104,23 +104,23 @@ inline auto calculate_ivs_and_evs(
 				continue;
 			}
 
-			auto const combined = CombinedStats<generation>{
-				nature,
-				ivs,
-				EVs(
-					hp_ev,
-					*attack_ev,
-					*defense_ev,
-					*special_attack_ev,
-					*special_defense_ev,
-					*speed_ev
-				)
-			};
-			if (ev_sum(combined.evs) > max_total_evs(generation)) {
+			auto const evs = EVs(
+				hp_ev,
+				*attack_ev,
+				*defense_ev,
+				*special_attack_ev,
+				*special_defense_ev,
+				*speed_ev
+			);
+			if (ev_sum(evs) > max_total_evs(generation)) {
 				continue;
 			}
 			
-			return combined;
+			return CombinedStats<generation>{
+				nature,
+				ivs,
+				evs
+			};
 		}
 		if (has_physical_move) {
 			break;
