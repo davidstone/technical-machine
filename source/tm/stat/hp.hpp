@@ -23,39 +23,44 @@ struct HP {
 	static constexpr auto max_value = 714;
 	using max_type = bounded::integer<1, max_value>;
 	using current_type = bounded::integer<0, max_value>;
+
+	constexpr explicit HP(max_type max_):
+		m_max(max_),
+		m_current(max_)
+	{
+	}
 	
 	HP(BaseStats, Level level, IV iv, EV ev);
 
-	auto & operator=(auto const & value) & {
+	constexpr auto & operator=(auto const & value) & {
 		m_current = bounded::clamp(value, 0_bi, m_max);
 		return *this;
 	}
-	auto current() const -> current_type {
+	constexpr auto current() const -> current_type {
 		return m_current;
 	}
 
-	auto max() const -> max_type {
+	constexpr auto max() const -> max_type {
 		return m_max;
 	}
 
 	friend auto operator==(HP, HP) -> bool = default;
+
+	friend constexpr auto operator<=>(HP const lhs, bounded::bounded_integer auto const rhs) {
+		return lhs.current() <=> rhs;
+	}
+	friend constexpr auto operator==(HP const lhs, bounded::bounded_integer auto const rhs) -> bool {
+		return lhs.current() == rhs;
+	}
 
 private:
 	max_type m_max;
 	current_type m_current;
 };
 
-auto operator<=>(HP const lhs, bounded::bounded_integer auto const rhs) {
-	return lhs.current() <=> rhs;
-}
-
-auto operator==(HP const lhs, bounded::bounded_integer auto const rhs) -> bool {
-	return lhs.current() == rhs;
-}
-
-inline auto healing_move_fails_in_generation_1(HP const hp) {
+constexpr auto healing_move_fails_in_generation_1(HP const hp) {
 	auto const difference = hp.max() - hp.current();
 	return difference % 256_bi == 255_bi;
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine
