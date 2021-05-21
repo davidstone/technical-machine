@@ -40,7 +40,7 @@ enum class RegularStat {
 	spe,
 };
 
-constexpr auto && index_stat(auto && stats, PermanentStat const index) {
+constexpr decltype(auto) index_stat(auto && stats, PermanentStat const index) {
 	switch (index) {
 		case PermanentStat::hp: return OPERATORS_FORWARD(stats).hp();
 		case PermanentStat::atk: return OPERATORS_FORWARD(stats).atk();
@@ -51,7 +51,7 @@ constexpr auto && index_stat(auto && stats, PermanentStat const index) {
 	}
 }
 
-constexpr auto && index_stat(auto && stats, RegularStat const index) {
+constexpr decltype(auto) index_stat(auto && stats, RegularStat const index) {
 	switch (index) {
 		case RegularStat::atk: return OPERATORS_FORWARD(stats).atk();
 		case RegularStat::def: return OPERATORS_FORWARD(stats).def();

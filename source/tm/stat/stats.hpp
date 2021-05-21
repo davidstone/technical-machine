@@ -63,48 +63,26 @@ public:
 	constexpr auto & hp() {
 		return m_hp;
 	}
-	constexpr auto && atk() const {
+	constexpr auto atk() const {
 		return m_atk;
 	}
-	constexpr auto && atk(){
-		return m_atk;
-	}
-	constexpr auto && def() const {
+	constexpr auto def() const {
 		return m_def;
 	}
-	constexpr auto && def() {
-		return m_def;
-	}
-	constexpr auto && spa() const {
+	constexpr auto spa() const {
 		return m_spa;
 	}
-	constexpr auto && spa() {
-		return m_spa;
-	}
-	constexpr auto && spd() const {
+	constexpr auto spd() const {
 		if constexpr (generation == Generation::one) {
 			return m_spa;
 		} else {
 			return m_spd;
 		}
 	}
-	constexpr auto && spd() {
-		if constexpr (generation == Generation::one) {
-			return m_spa;
-		} else {
-			return m_spd;
-		}
-	}
-	constexpr auto && spe() const {
+	constexpr auto spe() const {
 		return m_spe;
 	}
-	constexpr auto && spe() {
-		return m_spe;
-	}
-	constexpr auto const & operator[](RegularStat const stat_name) const {
-		return index_stat(*this, stat_name);
-	}
-	constexpr auto & operator[](RegularStat const stat_name) {
+	constexpr auto operator[](RegularStat const stat_name) const {
 		return index_stat(*this, stat_name);
 	}
 
