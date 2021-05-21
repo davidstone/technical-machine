@@ -44,10 +44,10 @@ struct Stats {
 				return initial_stat(
 					stat_name,
 					base[stat_name],
+					level,
 					inputs.nature,
 					IV(inputs.dvs_or_ivs[stat_name]),
-					inputs.evs[stat_name],
-					level
+					inputs.evs[stat_name]
 				);
 			}
 		)

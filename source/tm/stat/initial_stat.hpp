@@ -17,7 +17,7 @@
 
 namespace technicalmachine {
 
-constexpr auto initial_stat(RegularStat const stat_name, auto const base, Nature const nature, IV const iv, EV const ev, Level const level) {
+constexpr auto initial_stat(RegularStat const stat_name, auto const base, Level const level, Nature const nature, IV const iv, EV const ev) {
 	auto const pre_nature = (2_bi * base + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 5_bi;
 	return pre_nature * boost(nature, stat_name);
 }
@@ -25,10 +25,10 @@ constexpr auto initial_stat(RegularStat const stat_name, auto const base, Nature
 using InitialStat = decltype(initial_stat(
 	std::declval<RegularStat>(),
 	std::declval<BaseStats::regular_value_type>(),
+	std::declval<Level>(),
 	std::declval<Nature>(),
 	std::declval<IV>(),
-	std::declval<EV>(),
-	std::declval<Level>()
+	std::declval<EV>()
 ));
 
 } // namespace technicalmachine

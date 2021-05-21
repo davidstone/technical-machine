@@ -41,7 +41,7 @@ DefensiveEVs::DefensiveEVs(BaseStats const base_stats, Level const level, InputH
 	auto defensive_product = [=](DataPoint const value) {
 		auto const hp = HP(base_stats, level, value.hp.iv, value.hp.ev).max();
 		auto single_product = [=](RegularStat const name, BaseStats::regular_value_type const base_stat, IVAndEV const generated) {
-			return hp * initial_stat(name, base_stat, value.nature, generated.iv, generated.ev, level);
+			return hp * initial_stat(name, base_stat, level, value.nature, generated.iv, generated.ev);
 		};
 
 		return single_product(RegularStat::def, base_stats.def(), value.defense) * single_product(RegularStat::spd, base_stats.spd(), value.special_defense);

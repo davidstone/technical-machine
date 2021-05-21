@@ -54,7 +54,7 @@ constexpr auto useful_natures(bool const is_physical, bool const is_special) {
 }
 
 constexpr auto target_stat(RegularStat const stat_name, auto const base_stat, Level const level, OffensiveEVs::Input const input, Nature const harmful_nature) {
-	return input.include_evs ? input.stat : initial_stat(stat_name, base_stat, harmful_nature, input.iv, EV(0_bi), level);
+	return input.include_evs ? input.stat : initial_stat(stat_name, base_stat, level, harmful_nature, input.iv, EV(0_bi));
 }
 
 auto evs_for_nature(BaseStats const base, Level const level, OffensiveEVs::Input const atk, OffensiveEVs::Input const spa) {
