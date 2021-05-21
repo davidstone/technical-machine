@@ -110,8 +110,8 @@ auto compute_minimal_spread(
 			OffensiveEVs(
 				base_stats,
 				level,
-				OffensiveEVs::Input{ivs.atk(), stats.atk(), include_attack},
-				OffensiveEVs::Input{ivs.spa(), stats.spa(), include_special_attack}
+				OffensiveEVInputs{ivs.atk(), stats.atk(), include_attack},
+				OffensiveEVInputs{ivs.spa(), stats.spa(), include_special_attack}
 			),
 			DefensiveEVs(
 				base_stats,
