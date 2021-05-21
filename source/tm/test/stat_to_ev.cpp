@@ -11,6 +11,7 @@
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/hp.hpp>
+#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/iv.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
@@ -32,13 +33,14 @@ void test_hp() {
 }
 
 void test_attack() {
-	auto const base_stats = BaseStats(Generation::four, Species::Charizard);
+	constexpr auto generation = Generation::four;
+	auto const base_stats = BaseStats(generation, Species::Charizard);
 	constexpr auto level = Level(37_bi);
 	constexpr auto iv = IV(13_bi);
 	constexpr auto ev = EV(176_bi);
 	constexpr auto nature = Nature::Adamant;
 	constexpr auto stat_name = RegularStat::atk;
-	auto const stat_value = initial_stat(stat_name, base_stats.atk(), level, nature, iv, ev);
+	auto const stat_value = initial_stat<generation>(stat_name, base_stats.atk(), level, nature, iv, ev);
 	auto const computed_ev = stat_to_ev(stat_value, nature, stat_name, base_stats.atk(), iv, level);
 	BOUNDED_ASSERT(computed_ev == ev);
 }

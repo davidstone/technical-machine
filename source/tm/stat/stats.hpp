@@ -25,7 +25,10 @@ struct Level;
 
 template<Generation generation>
 struct Stats {
-	constexpr Stats(HP const hp_, InitialStat const atk_, InitialStat const def_, InitialStat const spa_, InitialStat const spd_, InitialStat const spe_):
+private:
+	using Stat = InitialStat<generation>;
+public:
+	constexpr Stats(HP const hp_, Stat const atk_, Stat const def_, Stat const spa_, Stat const spd_, Stat const spe_):
 		m_hp(hp_),
 		m_atk(atk_),
 		m_def(def_),
@@ -41,7 +44,7 @@ struct Stats {
 			IV(inputs.dvs_or_ivs.hp()),
 			inputs.evs.hp(),
 			[=](RegularStat const stat_name) {
-				return initial_stat(
+				return initial_stat<generation>(
 					stat_name,
 					base[stat_name],
 					level,
@@ -117,11 +120,11 @@ private:
 	{
 	}
 	HP m_hp;
-	InitialStat m_atk;
-	InitialStat m_def;
-	InitialStat m_spa;
-	[[no_unique_address]] ExistsIf<InitialStat, generation >= Generation::two> m_spd;
-	InitialStat m_spe;
+	Stat m_atk;
+	Stat m_def;
+	Stat m_spa;
+	[[no_unique_address]] ExistsIf<Stat, generation >= Generation::two> m_spd;
+	Stat m_spe;
 };
 
 template<Generation generation>

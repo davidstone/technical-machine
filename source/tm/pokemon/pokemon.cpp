@@ -5,8 +5,6 @@
 
 #include <tm/pokemon/pokemon.hpp>
 
-#include <tm/stat/initial_stat.hpp>
-
 namespace technicalmachine {
 
 template<Generation generation>

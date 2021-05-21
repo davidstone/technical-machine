@@ -85,8 +85,8 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 
 void defensive_tests() {
 	std::cout << "\tRunning defensive tests.\n";
-
-	auto const base_stats = BaseStats(Generation::four, Species::Celebi);
+	constexpr auto generation = Generation::four;
+	auto const base_stats = BaseStats(generation, Species::Celebi);
 	constexpr auto level = Level(100_bi);
 	constexpr auto nature = Nature::Bold;
 	constexpr auto iv = IV(31_bi);
@@ -94,10 +94,10 @@ void defensive_tests() {
 	constexpr auto defense_ev = EV(252_bi);
 	constexpr auto special_defense_ev = EV(4_bi);
 	auto const hp = HP(base_stats, level, iv, hp_ev).max();
-	auto const defense = initial_stat(RegularStat::def, base_stats.def(), level, nature, iv, defense_ev);
-	auto const special_defense = initial_stat(RegularStat::spd, base_stats.spd(), level, nature, iv, special_defense_ev);
+	auto const defense = initial_stat<generation>(RegularStat::def, base_stats.def(), level, nature, iv, defense_ev);
+	auto const special_defense = initial_stat<generation>(RegularStat::spd, base_stats.spd(), level, nature, iv, special_defense_ev);
 	
-	auto defensive_evs = DefensiveEVs(base_stats, level, DefensiveEVs::InputHP{iv, hp}, DefensiveEVs::InputStat{iv, defense}, DefensiveEVs::InputStat{iv, special_defense});
+	auto defensive_evs = DefensiveEVs(base_stats, level, DefensiveEVs::InputHP{iv, hp}, DefensiveEVs::InputStat<generation>{iv, defense}, DefensiveEVs::InputStat<generation>{iv, special_defense});
 	for (auto const & candidate : defensive_evs) {
 		BOUNDED_ASSERT(candidate.hp.ev == hp_ev);
 		BOUNDED_ASSERT(candidate.defense.ev == defense_ev);
@@ -121,11 +121,11 @@ void speed_tests() {
 	constexpr auto original_nature = Nature::Hardy;
 	constexpr auto iv = IV(31_bi);
 	auto const base_stats = BaseStats(generation, species);
-	auto const original_value = initial_stat(RegularStat::spe, base_stats.spe(), level, original_nature, iv, EV(76_bi));
-	auto const speed_evs = SpeedEVs(base_stats, level, iv, original_value);
+	auto const original_value = initial_stat<generation>(RegularStat::spe, base_stats.spe(), level, original_nature, iv, EV(76_bi));
+	auto const speed_evs = SpeedEVs(base_stats, level, iv, SpeedEVs::Input<generation>{original_value});
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const found = find(speed_evs, nature);
-		auto const new_value = initial_stat(RegularStat::spe, base_stats.spe(), level, nature, found.iv, found.ev);
+		auto const new_value = initial_stat<generation>(RegularStat::spe, base_stats.spe(), level, nature, found.iv, found.ev);
 		if (boosts_stat(nature, RegularStat::spe) and !boosts_stat(original_nature, RegularStat::spe)) {
 			BOUNDED_ASSERT(new_value == original_value or new_value == original_value + 1_bi);
 		} else {

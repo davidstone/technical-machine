@@ -43,19 +43,21 @@ struct DefensiveEVs {
 		IV iv;
 		HP::max_type stat;
 	};
+	template<Generation generation>
 	struct InputStat {
 		IV iv;
-		InitialStat stat;
+		InitialStat<generation> stat;
 	};
 	
-	DefensiveEVs(BaseStats const base_stats, Level const level, InputHP const original_hp, InputStat const def, InputStat const spd) {
+	template<Generation generation>
+	DefensiveEVs(BaseStats const base_stats, Level const level, InputHP const original_hp, InputStat<generation> const def, InputStat<generation> const spd) {
 		bounded::bounded_integer auto const def_product = original_hp.stat * def.stat;
 		bounded::bounded_integer auto const spd_product = original_hp.stat * spd.stat;
 
 		auto defensive_product = [=](DataPoint const value) {
 			auto const hp = HP(base_stats, level, value.hp.iv, value.hp.ev).max();
 			auto single_product = [=](RegularStat const name, BaseStats::regular_value_type const base_stat, IVAndEV const generated) {
-				return hp * initial_stat(name, base_stat, level, value.nature, generated.iv, generated.ev);
+				return hp * initial_stat<generation>(name, base_stat, level, value.nature, generated.iv, generated.ev);
 			};
 
 			return single_product(RegularStat::def, base_stats.def(), value.defense) * single_product(RegularStat::spd, base_stats.spd(), value.special_defense);

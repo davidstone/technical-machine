@@ -23,7 +23,6 @@
 #include <tm/stat/hidden_power_ivs.hpp>
 #include <tm/stat/hp.hpp>
 #include <tm/stat/iv.hpp>
-#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 #include <tm/type/type.hpp>
 
@@ -110,17 +109,17 @@ auto compute_minimal_spread(
 			OffensiveEVs(
 				base_stats,
 				level,
-				OffensiveEVInputs{ivs.atk(), stats.atk(), include_attack},
-				OffensiveEVInputs{ivs.spa(), stats.spa(), include_special_attack}
+				OffensiveEVInputs<generation>{ivs.atk(), stats.atk(), include_attack},
+				OffensiveEVInputs<generation>{ivs.spa(), stats.spa(), include_special_attack}
 			),
 			DefensiveEVs(
 				base_stats,
 				level,
 				DefensiveEVs::InputHP{ivs.hp(), stats.hp().max()},
-				DefensiveEVs::InputStat{ivs.def(), stats.def()},
-				DefensiveEVs::InputStat{ivs.spd(), stats.spd()}
+				DefensiveEVs::InputStat<generation>{ivs.def(), stats.def()},
+				DefensiveEVs::InputStat<generation>{ivs.spd(), stats.spd()}
 			),
-			SpeedEVs(base_stats, level, ivs.spe(), stats.spe())
+			SpeedEVs(base_stats, level, ivs.spe(), SpeedEVs::Input<generation>{stats.spe()})
 		);
 	}
 }

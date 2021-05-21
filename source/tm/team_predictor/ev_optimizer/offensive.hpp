@@ -28,9 +28,10 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
+template<Generation generation>
 struct OffensiveEVInputs {
 	IV iv;
-	InitialStat stat;
+	InitialStat<generation> stat;
 	bool include_evs;
 };
 
@@ -62,11 +63,13 @@ constexpr auto useful_natures(bool const is_physical, bool const is_special) {
 	);
 }
 
-constexpr auto target_stat(RegularStat const stat_name, auto const base_stat, Level const level, OffensiveEVInputs const input, Nature const harmful_nature) {
-	return input.include_evs ? input.stat : initial_stat(stat_name, base_stat, level, harmful_nature, input.iv, EV(0_bi));
+template<Generation generation>
+constexpr auto target_stat(RegularStat const stat_name, auto const base_stat, Level const level, OffensiveEVInputs<generation> const input, Nature const harmful_nature) {
+	return input.include_evs ? input.stat : initial_stat<generation>(stat_name, base_stat, level, harmful_nature, input.iv, EV(0_bi));
 }
 
-inline auto evs_for_nature(BaseStats const base, Level const level, OffensiveEVInputs const atk, OffensiveEVInputs const spa) {
+template<Generation generation>
+auto evs_for_nature(BaseStats const base, Level const level, OffensiveEVInputs<generation> const atk, OffensiveEVInputs<generation> const spa) {
 	auto const target_atk = target_stat(RegularStat::atk, base.atk(), level, atk, Nature::Modest);
 	auto const target_spa = target_stat(RegularStat::spa, base.spa(), level, spa, Nature::Adamant);
 	return [=](Nature const nature) {
@@ -86,7 +89,8 @@ constexpr auto cat_optionals(containers::range auto && input) {
 } // namespace detail
 
 struct OffensiveEVs {
-	OffensiveEVs(BaseStats const base, Level const level, OffensiveEVInputs const atk, OffensiveEVInputs const spa):
+	template<Generation generation>
+	OffensiveEVs(BaseStats const base, Level const level, OffensiveEVInputs<generation> const atk, OffensiveEVInputs<generation> const spa):
 		m_container(
 			detail::cat_optionals(
 				containers::transform(

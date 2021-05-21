@@ -12,6 +12,7 @@
 #include <tm/stat/generic_stats.hpp>
 #include <tm/stat/hidden_power_ivs.hpp>
 #include <tm/stat/hp.hpp>
+#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/iv.hpp>
 #include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
@@ -66,7 +67,7 @@ template<Generation generation>
 inline auto calculate_ivs_and_evs(
 	Species const species,
 	Level const level,
-	GenericStats<HP::max_type, InitialStat> const stats,
+	GenericStats<HP::max_type, InitialStat<generation>> const stats,
 	bounded::optional<Type> const hidden_power_type,
 	bool has_physical_move,
 	decltype(containers::enum_range<Nature>()) const nature_range
@@ -144,7 +145,7 @@ template<Generation generation>
 auto calculate_ivs_and_evs(
 	Species const species,
 	Level const level,
-	GenericStats<HP::max_type, InitialStat> const stats,
+	GenericStats<HP::max_type, InitialStat<generation>> const stats,
 	bounded::optional<Type> const hidden_power_type,
 	bool const has_physical_move
 ) {
@@ -165,7 +166,7 @@ auto calculate_ivs_and_evs(
 template<Generation generation>
 auto calculate_ivs_and_evs(Pokemon<generation> const pokemon) {
 	auto const nature = pokemon.nature();
-	auto const stats = GenericStats<HP::max_type, InitialStat>{
+	auto const stats = GenericStats<HP::max_type, InitialStat<generation>>{
 		pokemon.hp().max(),
 		pokemon.stat(RegularStat::atk),
 		pokemon.stat(RegularStat::def),

@@ -10,6 +10,7 @@
 #include <tm/pokemon/has_physical_or_special_move.hpp>
 
 #include <tm/stat/generic_stats.hpp>
+#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
 #include <tm/string_conversions/ability.hpp>
@@ -34,9 +35,10 @@ namespace technicalmachine {
 
 namespace ps {
 
-inline auto parse_stats(HP::max_type const hp, nlohmann::json const & stats) {
+template<Generation generation>
+auto parse_stats(HP::max_type const hp, nlohmann::json const & stats) {
 	auto get = [&](char const * const str) {
-		return bounded::check_in_range<InitialStat>(bounded::integer(stats.at(str).get<nlohmann::json::number_integer_t>()));
+		return bounded::check_in_range<InitialStat<generation>>(bounded::integer(stats.at(str).get<nlohmann::json::number_integer_t>()));
 	};
 	auto const attack = get("atk");
 	auto const defense = get("def");
@@ -89,7 +91,7 @@ auto parse_pokemon(nlohmann::json const & pokemon_data) {
 	auto const stats = calculate_ivs_and_evs<generation>(
 		details.species,
 		details.level,
-		parse_stats(hp, pokemon_data.at("stats")),
+		parse_stats<generation>(hp, pokemon_data.at("stats")),
 		move_data.hidden_power_type,
 		has_physical_move(generation, move_data.moves, move_data.hidden_power_type)
 	);
