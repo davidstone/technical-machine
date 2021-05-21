@@ -38,7 +38,7 @@ auto expected_generation_one_team() {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(30_bi),
@@ -66,7 +66,7 @@ auto expected_generation_one_team() {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(30_bi),
@@ -94,7 +94,7 @@ auto expected_generation_one_team() {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(30_bi),
@@ -122,7 +122,7 @@ auto expected_generation_one_team() {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(30_bi),
@@ -150,7 +150,7 @@ auto expected_generation_one_team() {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(30_bi),
@@ -178,7 +178,7 @@ auto expected_generation_one_team() {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(30_bi),

@@ -48,7 +48,7 @@ void test_baton_pass() {
 		Gender::male,
 		Item::Leftovers,
 		Ability::Own_Tempo,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -75,7 +75,7 @@ void test_baton_pass() {
 		Gender::male,
 		Item::Lum_Berry,
 		Ability::Synchronize,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -105,7 +105,7 @@ void test_baton_pass() {
 		Gender::male,
 		Item::Choice_Specs,
 		Ability::Levitate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Modest,
 			IVs(
 				IV(31_bi),
@@ -132,7 +132,7 @@ void test_baton_pass() {
 		Gender::female,
 		Item::Choice_Specs,
 		Ability::Levitate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Modest,
 			IVs(
 				IV(31_bi),
@@ -242,7 +242,7 @@ void wonder_guard() {
 		Gender::female,
 		Item::None,
 		Ability::Volt_Absorb,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -272,7 +272,7 @@ void wonder_guard() {
 		Gender::male,
 		Item::None,
 		Ability::Wonder_Guard,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -331,7 +331,7 @@ void fire_move_thaws_target() {
 		Gender::female,
 		Item::None,
 		Ability::Blaze,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -361,7 +361,7 @@ void fire_move_thaws_target() {
 		Gender::male,
 		Item::None,
 		Ability::Water_Absorb,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),

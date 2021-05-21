@@ -50,7 +50,7 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Adamant,
 			IVs(
 				IV(31_bi),
@@ -77,8 +77,8 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
-	BOUNDED_ASSERT(compute_minimal_spread(generation, base_stats, stats, level, bounded::none, include_attack, include_special_attack) == ivs_and_evs);
-	BOUNDED_ASSERT(pad_random_evs(generation, ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
+	BOUNDED_ASSERT(compute_minimal_spread<generation>(base_stats, stats, level, bounded::none, include_attack, include_special_attack) == ivs_and_evs);
+	BOUNDED_ASSERT(pad_random_evs<generation>(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
 	optimize_evs(pokemon, random_engine);
 	BOUNDED_ASSERT(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
 }
@@ -144,7 +144,7 @@ void not_level_100(std::mt19937 & random_engine) {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Modest,
 			IVs(
 				IV(31_bi),
@@ -180,7 +180,7 @@ void generation_two(std::mt19937 & random_engine) {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(30_bi),
@@ -207,8 +207,8 @@ void generation_two(std::mt19937 & random_engine) {
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = true;
-	BOUNDED_ASSERT(compute_minimal_spread(generation, base_stats, stats, level, bounded::none, include_attack, include_special_attack) == ivs_and_evs);
-	BOUNDED_ASSERT(pad_random_evs(generation, ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
+	BOUNDED_ASSERT(compute_minimal_spread<generation>(base_stats, stats, level, bounded::none, include_attack, include_special_attack) == ivs_and_evs);
+	BOUNDED_ASSERT(pad_random_evs<generation>(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
 	optimize_evs(pokemon, random_engine);
 	BOUNDED_ASSERT(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
 }

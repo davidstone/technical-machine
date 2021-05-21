@@ -86,8 +86,7 @@ auto parse_pokemon(nlohmann::json const & pokemon_data) {
 	auto const hp = bounded::to_integer<HP::max_type>(split_view(condition, '/').first);
 
 	auto const move_data = parse_moves(pokemon_data.at("moves"), generation);
-	auto const stats = calculate_ivs_and_evs(
-		generation,
+	auto const stats = calculate_ivs_and_evs<generation>(
 		details.species,
 		details.level,
 		parse_stats(hp, pokemon_data.at("stats")),

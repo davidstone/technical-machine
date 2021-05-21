@@ -11,6 +11,7 @@
 
 namespace technicalmachine {
 
+template<Generation generation>
 struct CombinedStats {
 	Nature nature;
 	IVs dvs_or_ivs;

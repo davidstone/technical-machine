@@ -17,7 +17,7 @@ Pokemon<generation>::Pokemon(Species const species, Level const level, Gender co
 		gender,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
             IVs(
                 default_iv(generation),

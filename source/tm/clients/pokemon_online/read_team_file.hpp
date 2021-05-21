@@ -139,7 +139,7 @@ auto load_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID species
 		gender,
 		item,
 		ability,
-		CombinedStats{nature, ivs.stats, evs.stats},
+		CombinedStats<generation>{nature, ivs.stats, evs.stats},
 		parsed_moves.moves,
 		happiness
 	);

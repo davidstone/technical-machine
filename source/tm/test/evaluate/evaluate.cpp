@@ -41,7 +41,7 @@ void evaluate_tests() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Natural_Cure,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),

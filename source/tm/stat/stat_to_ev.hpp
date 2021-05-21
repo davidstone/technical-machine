@@ -62,15 +62,15 @@ constexpr auto stat_to_ev(bounded::bounded_integer auto const target, Nature con
 	return EV(EV::value_type(bounded::max(0_bi, computed), bounded::non_check));
 }
 
+template<Generation generation>
 inline auto calculate_ivs_and_evs(
-	Generation const generation,
 	Species const species,
 	Level const level,
 	GenericStats<HP::max_type, InitialStat> const stats,
 	bounded::optional<Type> const hidden_power_type,
 	bool has_physical_move,
 	decltype(containers::enum_range<Nature>()) const nature_range
-) -> CombinedStats {
+) -> CombinedStats<generation> {
 	// TODO: Use Hidden Power power to determine IVs, not just the type
 	auto const base = BaseStats(generation, species);
 	
@@ -103,7 +103,7 @@ inline auto calculate_ivs_and_evs(
 				continue;
 			}
 
-			auto const combined = CombinedStats{
+			auto const combined = CombinedStats<generation>{
 				nature,
 				ivs,
 				EVs(
@@ -140,20 +140,19 @@ inline auto calculate_ivs_and_evs(
 	));
 }
 
-inline auto calculate_ivs_and_evs(
-	Generation const generation,
+template<Generation generation>
+auto calculate_ivs_and_evs(
 	Species const species,
 	Level const level,
 	GenericStats<HP::max_type, InitialStat> const stats,
 	bounded::optional<Type> const hidden_power_type,
 	bool const has_physical_move
-) -> CombinedStats {
-	auto const nature_range = generation <= Generation::two ? 
+) {
+	constexpr auto nature_range = generation <= Generation::two ? 
 		containers::enum_range(Nature::Hardy, Nature::Hardy) :
 		containers::enum_range<Nature>();
 
-	return calculate_ivs_and_evs(
-		generation,
+	return calculate_ivs_and_evs<generation>(
 		species,
 		level,
 		stats,
@@ -164,7 +163,7 @@ inline auto calculate_ivs_and_evs(
 }
 
 template<Generation generation>
-auto calculate_ivs_and_evs(Pokemon<generation> const pokemon) -> CombinedStats {
+auto calculate_ivs_and_evs(Pokemon<generation> const pokemon) {
 	auto const nature = pokemon.nature();
 	auto const stats = GenericStats<HP::max_type, InitialStat>{
 		pokemon.hp().max(),
@@ -174,8 +173,7 @@ auto calculate_ivs_and_evs(Pokemon<generation> const pokemon) -> CombinedStats {
 		pokemon.stat(RegularStat::spd),
 		pokemon.stat(RegularStat::spe)
 	};
-	return calculate_ivs_and_evs(
-		generation,
+	return calculate_ivs_and_evs<generation>(
 		pokemon.species(),
 		pokemon.level(),
 		stats,

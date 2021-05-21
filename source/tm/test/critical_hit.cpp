@@ -29,7 +29,7 @@ auto individual_test(Species const species, Moves const move_name, Item const it
 		Gender::genderless,
 		item,
 		ability,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),

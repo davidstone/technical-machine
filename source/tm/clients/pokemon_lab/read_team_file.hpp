@@ -30,7 +30,8 @@ auto stat_from_simulator_string(std::string_view) -> PermanentStat;
 auto species_from_simulator_string(std::string_view) -> Species;
 auto load_moves(Generation, boost::property_tree::ptree const &) -> RegularMoves;
 
-inline auto load_stats(boost::property_tree::ptree const & pt) -> CombinedStats {
+template<Generation generation>
+auto load_stats(boost::property_tree::ptree const & pt) {
 	auto evs = EVs(
 		EV(0_bi),
 		EV(0_bi),
@@ -53,7 +54,7 @@ inline auto load_stats(boost::property_tree::ptree const & pt) -> CombinedStats 
 		ivs[stat_name] = IV(stats.get<IV::value_type>("<xmlattr>.iv"));
 		evs[stat_name] = EV(stats.get<EV::value_type>("<xmlattr>.ev"));
 	}
-	return CombinedStats{
+	return CombinedStats<generation>{
 		from_string<Nature>(pt.get<std::string>("nature")),
 		ivs,
 		evs
@@ -70,7 +71,7 @@ auto load_pokemon(boost::property_tree::ptree const & pt) {
 		Gender(from_string<Gender>(pt.get<std::string>("gender"))),
 		from_string<Item>(pt.get<std::string>("item")),
 		Ability(from_string<Ability>(pt.get<std::string>("ability"))),
-		load_stats(pt),
+		load_stats<generation>(pt),
 		load_moves(generation, pt.get_child("moveset")),
 		Happiness(pt.get<Happiness::value_type>("happiness"))
 	);

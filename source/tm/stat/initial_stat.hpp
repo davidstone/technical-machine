@@ -31,7 +31,8 @@ using InitialStat = decltype(initial_stat(
 	std::declval<Level>()
 ));
 
-inline auto initial_stat(RegularStat const stat_name, BaseStats const base_stats, CombinedStats inputs, Level const level) {
+template<Generation generation>
+auto initial_stat(RegularStat const stat_name, BaseStats const base_stats, CombinedStats<generation> inputs, Level const level) {
 	return initial_stat(stat_name, base_stats[stat_name], inputs.nature, inputs.dvs_or_ivs[PermanentStat(stat_name)], inputs.evs[PermanentStat(stat_name)], level);
 }
 

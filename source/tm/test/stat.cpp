@@ -46,7 +46,7 @@ void attack_tests() {
 		Gender::male,
 		Item::Choice_Band,
 		Ability::Pure_Power,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Impish,
 			IVs(
 				IV(31_bi),
@@ -90,7 +90,7 @@ void special_attack_tests() {
 		Gender::genderless,
 		Item::Choice_Specs,
 		Ability::Solar_Power,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Modest,
 			IVs(
 				IV(31_bi),
@@ -134,7 +134,7 @@ void max_defense_test() {
 		Gender::male,
 		Item::None,
 		Ability::Marvel_Scale,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Bold,
 			IVs(
 				IV(31_bi),
@@ -178,7 +178,7 @@ void min_defense_test() {
 		Gender::male,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hasty,
 			IVs(
 				IV(31_bi),
@@ -231,7 +231,7 @@ void special_defense_tests() {
 		Gender::male,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Calm,
 			IVs(
 				IV(31_bi),
@@ -275,7 +275,7 @@ void speed_tests() {
 		Gender::genderless,
 		Item::Choice_Scarf,
 		Ability::Swift_Swim,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Timid,
 			IVs(
 				IV(31_bi),

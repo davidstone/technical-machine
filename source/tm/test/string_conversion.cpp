@@ -71,7 +71,7 @@ void test_pokemon() {
 		Gender::genderless,
 		Item::Leftovers,
 		Ability::Pressure,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Modest,
 			IVs(
 				IV(31_bi),

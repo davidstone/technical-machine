@@ -45,7 +45,7 @@ void sleep_talk() {
 			Gender::female,
 			Item::Leftovers,
 			Ability::Volt_Absorb,
-			CombinedStats{
+			CombinedStats<generation>{
 				Nature::Hardy,
 				IVs(
 					IV(31_bi),
@@ -79,7 +79,7 @@ void sleep_talk() {
 		Gender::male,
 		Item::Life_Orb,
 		Ability::Intimidate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Adamant,
 			IVs(
 				IV(31_bi),
@@ -191,7 +191,7 @@ private:
 			Gender::female,
 			Item::None,
 			Ability::Natural_Cure,
-			CombinedStats{
+			CombinedStats<generation>{
 				Nature::Hardy,
 				IVs(
 					IV(31_bi),

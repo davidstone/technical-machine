@@ -214,7 +214,7 @@ auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 		Gender::genderless,
 		item,
 		ability,
-		CombinedStats{nature, ivs, evs},
+		CombinedStats<generation>{nature, ivs, evs},
 		moves
 	);
 	pokemon.set_hp(HP::current_type(static_cast<int>(static_cast<double>(pokemon.hp().max()) * hp_percent / 100.0)));

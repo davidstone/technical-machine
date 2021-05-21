@@ -43,7 +43,7 @@ void basic() {
 		Gender::male,
 		Item::Leftovers,
 		Ability::Volt_Absorb,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -74,7 +74,7 @@ void basic() {
 		Gender::male,
 		Item::Leftovers,
 		Ability::Intimidate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -125,7 +125,7 @@ void test_two_moves_with_one_out_of_pp() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -156,7 +156,7 @@ void test_two_moves_with_one_out_of_pp() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -200,7 +200,7 @@ void test_two_moves_with_both_out_of_pp() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -233,7 +233,7 @@ void test_two_moves_with_both_out_of_pp() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -277,7 +277,7 @@ void replace_fainted() {
 		Gender::male,
 		Item::Choice_Specs,
 		Ability::Magma_Armor,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -305,7 +305,7 @@ void replace_fainted() {
 		Gender::genderless,
 		Item::Choice_Specs,
 		Ability::Pressure,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Modest,
 			IVs(
 				IV(31_bi),
@@ -336,7 +336,7 @@ void replace_fainted() {
 		Gender::genderless,
 		Item::Leftovers,
 		Ability::Pressure,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),

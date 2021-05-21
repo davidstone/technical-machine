@@ -20,7 +20,8 @@ enum class Generation : std::uint8_t;
 struct Level;
 
 struct Stats {
-	Stats(BaseStats const base, CombinedStats const inputs, Level const level):
+	template<Generation generation>
+	Stats(BaseStats const base, CombinedStats<generation> const inputs, Level const level):
 		m_hp(base, level, inputs.dvs_or_ivs.hp(), inputs.evs.hp()),
 		m_stats{
 			initial_stat(RegularStat::atk, base, inputs, level),
@@ -52,7 +53,8 @@ private:
 	containers::array<InitialStat, 5> m_stats;
 };
 
-inline auto initial_stats(BaseStats const base_stats, Level const level, CombinedStats const stats) {
+template<Generation generation>
+auto initial_stats(BaseStats const base_stats, Level const level, CombinedStats<generation> const stats) {
 	auto calculate_stat = [=](RegularStat const stat_name) {
 		return initial_stat(stat_name, base_stats, stats, level);
 	};

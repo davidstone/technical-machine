@@ -54,7 +54,7 @@ auto max_damage_physical_attacker(Item const item, Ability const ability) {
 		Gender::male,
 		item,
 		ability,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Impish,
 			IVs(
 				IV(31_bi),
@@ -95,7 +95,7 @@ auto max_damage_physical_defender() {
 		Gender::male,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hasty,
 			IVs(
 				IV(31_bi),
@@ -153,7 +153,7 @@ void special_power_test() {
 		Gender::genderless,
 		Item::Wave_Incense,
 		Ability::Torrent,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -186,7 +186,7 @@ void special_power_test() {
 		Gender::male,
 		Item::None,
 		Ability::Dry_Skin,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -279,7 +279,7 @@ void special_damage_test() {
 		Gender::genderless,
 		Item::Metronome,
 		Ability::Blaze,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Modest,
 			IVs(
 				IV(31_bi),
@@ -322,7 +322,7 @@ void special_damage_test() {
 		Gender::male,
 		Item::None,
 		Ability::Dry_Skin,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),

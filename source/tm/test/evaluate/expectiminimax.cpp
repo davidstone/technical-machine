@@ -64,7 +64,7 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Gender::male,
 		Item::Leftovers,
 		Ability::Volt_Absorb,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -95,7 +95,7 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Gender::male,
 		Item::Leftovers,
 		Ability::Intimidate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -132,7 +132,7 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Gender::male,
 		Item::Lum_Berry,
 		Ability::Wonder_Guard,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -177,7 +177,7 @@ void one_turn_damage_tests(Evaluate<Generation::four> const & evaluate, Weather 
 		Gender::male,
 		Item::Leftovers,
 		Ability::Volt_Absorb,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -208,7 +208,7 @@ void one_turn_damage_tests(Evaluate<Generation::four> const & evaluate, Weather 
 		Gender::male,
 		Item::Leftovers,
 		Ability::Torrent,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -250,7 +250,7 @@ void bellyzard_vs_defensive(Evaluate<Generation::four> const & evaluate, Weather
 		Gender::male,
 		Item::Salac_Berry,
 		Ability::Blaze,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -281,7 +281,7 @@ void bellyzard_vs_defensive(Evaluate<Generation::four> const & evaluate, Weather
 		Gender::male,
 		Item::Leftovers,
 		Ability::Synchronize,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -323,7 +323,7 @@ void hippopotas_vs_wobbuffet(Evaluate<Generation::four> const & evaluate, Weathe
 		Gender::male,
 		Item::Leftovers,
 		Ability::Sand_Stream,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Adamant,
 			IVs(
 				IV(31_bi),
@@ -357,7 +357,7 @@ void hippopotas_vs_wobbuffet(Evaluate<Generation::four> const & evaluate, Weathe
 		Gender::genderless,
 		Item::Leftovers,
 		Ability::Shadow_Tag,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -400,7 +400,7 @@ void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Gender::male,
 		Item::Leftovers,
 		Ability::Own_Tempo,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -428,7 +428,7 @@ void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Gender::male,
 		Item::Lum_Berry,
 		Ability::Synchronize,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Adamant,
 			IVs(
 				IV(31_bi),
@@ -458,7 +458,7 @@ void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Gender::male,
 		Item::Choice_Specs,
 		Ability::Levitate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Modest,
 			IVs(
 				IV(31_bi),
@@ -487,7 +487,7 @@ void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Gender::female,
 		Item::Choice_Specs,
 		Ability::Levitate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Modest,
 			IVs(
 				IV(31_bi),
@@ -532,7 +532,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		Gender::male,
 		Item::Leftovers,
 		Ability::Swift_Swim,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -561,7 +561,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		Gender::male,
 		Item::Choice_Specs,
 		Ability::Magma_Armor,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -588,7 +588,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		Gender::genderless,
 		Item::Choice_Specs,
 		Ability::Pressure,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Modest,
 			IVs(
 				IV(31_bi),
@@ -619,7 +619,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		Gender::genderless,
 		Item::Leftovers,
 		Ability::Pressure,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -682,7 +682,7 @@ void latias_vs_suicune(Evaluate<Generation::four> const & evaluate, std::mt19937
 		Gender::female,
 		Item::Leftovers,
 		Ability::Levitate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Calm,
 			IVs(
 				IV(31_bi),
@@ -714,7 +714,7 @@ void latias_vs_suicune(Evaluate<Generation::four> const & evaluate, std::mt19937
 		Gender::genderless,
 		Item::Leftovers,
 		Ability::Pressure,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Calm,
 			IVs(
 				IV(31_bi),
@@ -758,7 +758,7 @@ void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & rand
 		Gender::female,
 		Item::Leftovers,
 		Ability::Volt_Absorb,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -789,7 +789,7 @@ void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & rand
 		Gender::male,
 		Item::Life_Orb,
 		Ability::Intimidate,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Adamant,
 			IVs(
 				IV(31_bi),
@@ -879,7 +879,7 @@ void generation_one_frozen_last_pokemon(Evaluate<Generation::one> const & evalua
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats{
+		CombinedStats<generation>{
 			Nature::Hardy,
 			IVs(
 				IV(31_bi),
@@ -910,7 +910,7 @@ void generation_one_frozen_last_pokemon(Evaluate<Generation::one> const & evalua
 			Gender::genderless,
 			Item::None,
 			Ability::Honey_Gather,
-			CombinedStats{
+			CombinedStats<generation>{
 				Nature::Hardy,
 				IVs(
 					IV(31_bi),
