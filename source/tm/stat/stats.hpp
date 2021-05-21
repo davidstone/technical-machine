@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <tm/pokemon/level.hpp>
+
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/combined_stats.hpp>
 #include <tm/stat/generic_stats.hpp>
@@ -13,50 +15,126 @@
 #include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stat_names.hpp>
 
+#include <tm/exists_if.hpp>
+
 #include <containers/array/array.hpp>
 
 namespace technicalmachine {
 enum class Generation : std::uint8_t;
 struct Level;
 
+template<Generation generation>
 struct Stats {
-	template<Generation generation>
-	Stats(BaseStats const base, CombinedStats<generation> const inputs, Level const level):
-		m_hp(base, level, inputs.dvs_or_ivs.hp(), inputs.evs.hp()),
-		m_stats{
-			initial_stat(RegularStat::atk, base, inputs, level),
-			initial_stat(RegularStat::def, base, inputs, level),
-			initial_stat(RegularStat::spa, base, inputs, level),
-			initial_stat(RegularStat::spd, base, inputs, level),
-			initial_stat(RegularStat::spe, base, inputs, level)
-		}
+	constexpr Stats(HP const hp_, InitialStat const atk_, InitialStat const def_, InitialStat const spa_, InitialStat const spd_, InitialStat const spe_):
+		m_hp(hp_),
+		m_atk(atk_),
+		m_def(def_),
+		m_spa(spa_),
+		m_spd(spd_),
+		m_spe(spe_)
+	{
+	}
+	Stats(BaseStats const base, Level const level, CombinedStats<generation> const inputs):
+		Stats(
+			base,
+			level,
+			IV(inputs.dvs_or_ivs.hp()),
+			inputs.evs.hp(),
+			[=](RegularStat const stat_name) {
+				return initial_stat(
+					stat_name,
+					base[stat_name],
+					inputs.nature,
+					IV(inputs.dvs_or_ivs[stat_name]),
+					inputs.evs[stat_name],
+					level
+				);
+			}
+		)
 	{
 	}
 
-	auto const & hp() const {
+	constexpr auto const & hp() const {
 		return m_hp;
 	}
-	auto & hp() {
+	constexpr auto & hp() {
 		return m_hp;
 	}
-
-	auto const & operator[](RegularStat const stat) const {
-		return m_stats[bounded::integer(stat)];
+	constexpr auto && atk() const {
+		return m_atk;
 	}
-	auto & operator[](RegularStat const stat) {
-		return m_stats[bounded::integer(stat)];
+	constexpr auto && atk(){
+		return m_atk;
+	}
+	constexpr auto && def() const {
+		return m_def;
+	}
+	constexpr auto && def() {
+		return m_def;
+	}
+	constexpr auto && spa() const {
+		return m_spa;
+	}
+	constexpr auto && spa() {
+		return m_spa;
+	}
+	constexpr auto && spd() const {
+		if constexpr (generation == Generation::one) {
+			return m_spa;
+		} else {
+			return m_spd;
+		}
+	}
+	constexpr auto && spd() {
+		if constexpr (generation == Generation::one) {
+			return m_spa;
+		} else {
+			return m_spd;
+		}
+	}
+	constexpr auto && spe() const {
+		return m_spe;
+	}
+	constexpr auto && spe() {
+		return m_spe;
+	}
+	constexpr auto const & operator[](RegularStat const stat_name) const {
+		return index_stat(*this, stat_name);
+	}
+	constexpr auto & operator[](RegularStat const stat_name) {
+		return index_stat(*this, stat_name);
 	}
 
 	friend auto operator==(Stats, Stats) -> bool = default;
 private:
+	Stats(BaseStats const base, Level const level, IV const hp_iv, EV const hp_ev, auto make) :
+		m_hp(base, level, hp_iv, hp_ev),
+		m_atk(make(RegularStat::atk)),
+		m_def(make(RegularStat::def)),
+		m_spa(make(RegularStat::spa)),
+		m_spd(make(RegularStat::spd)),
+		m_spe(make(RegularStat::spe))
+	{
+	}
 	HP m_hp;
-	containers::array<InitialStat, 5> m_stats;
+	InitialStat m_atk;
+	InitialStat m_def;
+	InitialStat m_spa;
+	[[no_unique_address]] ExistsIf<InitialStat, generation >= Generation::two> m_spd;
+	InitialStat m_spe;
 };
 
 template<Generation generation>
 auto initial_stats(BaseStats const base_stats, Level const level, CombinedStats<generation> const stats) {
 	auto calculate_stat = [=](RegularStat const stat_name) {
-		return initial_stat(stat_name, base_stats, stats, level);
+		return initial_stat(
+			stat_name,
+			base_stats[stat_name],
+			stats.nature,
+			IV(stats.dvs_or_ivs[stat_name]),
+			stats.evs[stat_name],
+			level
+		);
 	};
 	return GenericStats<HP::max_type, InitialStat>{
 		HP(base_stats, level, stats.dvs_or_ivs.hp(), stats.evs.hp()).max(),
