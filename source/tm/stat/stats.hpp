@@ -125,6 +125,13 @@ private:
 };
 
 template<Generation generation>
+auto with_new_ivs_and_evs(HP const original_hp, BaseStats const base_stats, Level const level, CombinedStats<generation> const stats) {
+	auto result = Stats<generation>(base_stats, level, stats);
+	result.hp() = result.hp().max() * original_hp.current() / original_hp.max();
+	return result;
+}
+
+template<Generation generation>
 auto initial_stats(BaseStats const base_stats, Level const level, CombinedStats<generation> const stats) {
 	auto calculate_stat = [=](RegularStat const stat_name) {
 		return initial_stat(

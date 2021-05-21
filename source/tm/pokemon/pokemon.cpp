@@ -45,18 +45,6 @@ Pokemon<generation>::Pokemon(Species const species, Level const level, Gender co
 	m_nature_is_known = false;
 }
 
-template<Generation generation>
-auto Pokemon<generation>::set_ev(PermanentStat const stat_name, IV const iv, EV const ev) -> void {
-	auto const base_stats = BaseStats(generation, species());
-	if (stat_name == PermanentStat::hp) {
-		m_stats.hp() = HP(base_stats, level(), iv, ev);
-	} else {
-		auto const regular = RegularStat(stat_name);
-		auto & stat = m_stats[regular];
-		stat = initial_stat(regular, base_stats[regular], nature(), iv, ev, level());
-	}
-}
-
 template struct Pokemon<Generation::one>;
 template struct Pokemon<Generation::two>;
 template struct Pokemon<Generation::three>;

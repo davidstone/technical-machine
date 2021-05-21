@@ -126,17 +126,6 @@ auto compute_minimal_spread(
 }
 
 template<Generation generation>
-auto set_stats(Pokemon<generation> & pokemon, CombinedStats<generation> const stats) {
-	auto const original_hp = pokemon.hp();
-	pokemon.set_nature(stats.nature);
-	for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-		pokemon.set_ev(stat_name, stats.dvs_or_ivs[stat_name], stats.evs[stat_name]);
-	}
-	auto const new_hp = pokemon.hp();
-	pokemon.set_hp(new_hp.max() * original_hp.current() / original_hp.max());
-}
-
-template<Generation generation>
 auto pad_random_evs(CombinedStats<generation> combined, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) -> CombinedStats<generation> {
 	if constexpr (generation <= Generation::two) {
 		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
@@ -203,7 +192,7 @@ void optimize_evs(Pokemon<generation> & pokemon, std::mt19937 & random_engine) {
 		include_special_attack,
 		random_engine
 	);
-	set_stats(pokemon, optimized);
+	pokemon.set_ivs_and_evs(optimized);
 }
 
 } // namespace technicalmachine

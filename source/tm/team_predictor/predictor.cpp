@@ -97,7 +97,7 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 		auto item = get(bounded::detail::types<Item>(), "item");
 		auto ability = get(bounded::detail::types<Ability>(), "ability");
 		auto nature = get(bounded::detail::types<Nature>(), "nature");
-		auto const stats = EVs(
+		auto const evs = EVs(
 			get_ev("hp"),
 			get_ev("atk"),
 			get_ev("def"),
@@ -114,7 +114,7 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 			}
 		}
 
-		if (stats.hp().value() + stats.atk().value() + stats.def().value() + stats.spa().value() + stats.spd().value() + stats.spe().value() > max_total_evs(generation)) {
+		if (ev_sum(evs) > max_total_evs(generation)) {
 			throw std::runtime_error("Too many EVs");
 		}
 
@@ -138,9 +138,11 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 		for (auto const move : moves) {
 			add_seen_move(pokemon.regular_moves(), generation, move);
 		}
-		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-			pokemon.set_ev(stat_name, default_iv(generation), stats[stat_name]);
-		}
+		pokemon.set_ivs_and_evs(CombinedStats<generation>{
+			nature ? *nature : Nature::Hardy,
+			IVs(default_iv(generation), default_iv(generation), default_iv(generation), default_iv(generation), default_iv(generation), default_iv(generation)),
+			evs
+		});
 		team.add_pokemon(pokemon);
 	}
 

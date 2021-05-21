@@ -211,7 +211,10 @@ struct Pokemon {
 		return m_nature_is_known;
 	}
 
-	auto set_ev(PermanentStat const stat_name, IV const iv, EV const ev) -> void;
+	auto set_ivs_and_evs(CombinedStats<generation> const stat_inputs) -> void {
+		set_nature(stat_inputs.nature);
+		m_stats = with_new_ivs_and_evs(hp(), BaseStats(generation, species()), level(), stat_inputs);
+	}
 
 	friend auto operator==(Pokemon, Pokemon) -> bool = default;
 	friend auto compress(Pokemon const value) {
