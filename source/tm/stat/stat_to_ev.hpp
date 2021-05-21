@@ -5,14 +5,16 @@
 
 #pragma once
 
+#include <tm/stat/base_stats.hpp>
+#include <tm/stat/calculate.hpp>
 #include <tm/stat/combined_stats.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/generic_stats.hpp>
+#include <tm/stat/hidden_power_ivs.hpp>
 #include <tm/stat/hp.hpp>
 #include <tm/stat/iv.hpp>
 #include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
-#include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stat_names.hpp>
 
 #include <tm/pokemon/has_physical_or_special_move.hpp>
@@ -20,9 +22,21 @@
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
+#include <tm/string_conversions/generation.hpp>
+#include <tm/string_conversions/species.hpp>
+
 #include <bounded/optional.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
+#include <containers/integer_range.hpp>
+
+#include <stdexcept>
+#include <string>
+#include <string_view>
+
 namespace technicalmachine {
+
+using namespace std::string_view_literals;
 using namespace bounded::literal;
 
 constexpr auto round_up_divide(auto const lhs, auto const rhs) {
@@ -48,7 +62,7 @@ constexpr auto stat_to_ev(bounded::bounded_integer auto const target, Nature con
 	return EV(EV::value_type(bounded::max(0_bi, computed), bounded::non_check));
 }
 
-auto calculate_ivs_and_evs(
+inline auto calculate_ivs_and_evs(
 	Generation const generation,
 	Species const species,
 	Level const level,
@@ -56,7 +70,75 @@ auto calculate_ivs_and_evs(
 	bounded::optional<Type> const hidden_power_type,
 	bool has_physical_move,
 	decltype(containers::enum_range<Nature>()) const nature_range
-) -> CombinedStats;
+) -> CombinedStats {
+	// TODO: Use Hidden Power power to determine IVs, not just the type
+	auto const base = BaseStats(generation, species);
+	
+	while (true) {
+		auto const ivs = hidden_power_ivs(generation, hidden_power_type, has_physical_move);
+		auto const hp_ev = hp_to_ev(base, level, stats.hp(), ivs.hp());
+
+		for (auto const nature : nature_range) {
+			auto compute_ev = [=](RegularStat const stat_name, auto const base_stat) {
+				return stat_to_ev(stats[stat_name], nature, stat_name, base_stat, ivs[stat_name], level);
+			};
+			auto const attack_ev = compute_ev(RegularStat::atk, base.atk());
+			if (!attack_ev) {
+				continue;
+			}
+			auto const defense_ev = compute_ev(RegularStat::def, base.def());
+			if (!defense_ev) {
+				continue;
+			}
+			auto const special_attack_ev = compute_ev(RegularStat::spa, base.spa());
+			if (!special_attack_ev) {
+				continue;
+			}
+			auto const special_defense_ev = compute_ev(RegularStat::spd, base.spd());
+			if (!special_defense_ev) {
+				continue;
+			}
+			auto const speed_ev = compute_ev(RegularStat::spe, base.spe());
+			if (!speed_ev) {
+				continue;
+			}
+
+			auto const combined = CombinedStats{
+				nature,
+				ivs,
+				EVs(
+					hp_ev,
+					*attack_ev,
+					*defense_ev,
+					*special_attack_ev,
+					*special_defense_ev,
+					*speed_ev
+				)
+			};
+			if (ev_sum(combined.evs) > max_total_evs(generation)) {
+				continue;
+			}
+			
+			return combined;
+		}
+		if (has_physical_move) {
+			break;
+		}
+		has_physical_move = true;
+	}
+	throw std::runtime_error(containers::concatenate<std::string>(
+		"No Nature + EV combination combines to give the received stats in generation "sv,
+		to_string(generation),
+		": Species: "sv, to_string(species),
+		", Level: "sv, bounded::to_string(level()),
+		", HP: "sv, bounded::to_string(stats.hp()),
+		", Attack: "sv, bounded::to_string(stats.atk()),
+		", Defense: "sv, bounded::to_string(stats.def()),
+		", Special Attack: "sv, bounded::to_string(stats.spa()),
+		", Special Defense: "sv, bounded::to_string(stats.spd()),
+		", Speed: "sv, bounded::to_string(stats.spe())
+	));
+}
 
 inline auto calculate_ivs_and_evs(
 	Generation const generation,
