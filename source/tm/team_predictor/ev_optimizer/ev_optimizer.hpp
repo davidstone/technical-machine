@@ -164,7 +164,7 @@ auto optimize_evs(
 	auto const base_stats = BaseStats(generation, species);
 	while (true) {
 		auto const previous = combined;
-		combined = pad_random_evs<generation>(combined, include_attack, include_special_attack, random_engine);
+		combined = pad_random_evs(combined, include_attack, include_special_attack, random_engine);
 		auto const stats = Stats<generation>(base_stats, level, combined);
 		combined = compute_minimal_spread(base_stats, stats, level, hidden_power_type, include_attack, include_special_attack);
 		// Technically this isn't correct based on how I pad: I could have some

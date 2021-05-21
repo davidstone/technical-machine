@@ -78,7 +78,7 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
 	BOUNDED_ASSERT(compute_minimal_spread(base_stats, stats, level, bounded::none, include_attack, include_special_attack) == ivs_and_evs);
-	BOUNDED_ASSERT(pad_random_evs<generation>(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
+	BOUNDED_ASSERT(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
 	optimize_evs(pokemon, random_engine);
 	BOUNDED_ASSERT(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
 }
@@ -208,7 +208,7 @@ void generation_two(std::mt19937 & random_engine) {
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = true;
 	BOUNDED_ASSERT(compute_minimal_spread(base_stats, stats, level, bounded::none, include_attack, include_special_attack) == ivs_and_evs);
-	BOUNDED_ASSERT(pad_random_evs<generation>(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
+	BOUNDED_ASSERT(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
 	optimize_evs(pokemon, random_engine);
 	BOUNDED_ASSERT(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
 }
