@@ -54,17 +54,4 @@ constexpr auto ev_sum(EVs const evs) {
 	return evs.hp().value() + evs.atk().value() + evs.def().value() + evs.spa().value() + evs.spd().value() + evs.spe().value();
 }
 
-template<Generation generation>
-inline constexpr auto empty_evs = [] {
-	constexpr auto value = EV(0_bi);
-	return EVs(
-		value,
-		value,
-		value,
-		value,
-		value,
-		value
-	);
-}();
-
 } // namespace technicalmachine

@@ -166,18 +166,7 @@ void generation_two(std::mt19937 & random_engine) {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi)
-			)
-		},
+		default_combined_stats<generation>,
 		regular_moves(generation, Moves::Tackle, Moves::Psychic)
 	);
 

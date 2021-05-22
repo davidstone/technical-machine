@@ -409,14 +409,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		CombinedStats<generation>{
 			Nature::Modest,
 			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			default_evs<generation>
 		},
 		regular_moves(Moves::Thunderbolt)
 	));

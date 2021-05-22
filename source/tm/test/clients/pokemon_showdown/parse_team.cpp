@@ -38,18 +38,7 @@ auto expected_generation_one_team() {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi)
-			)
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Fire_Blast, Moves::Sludge, Moves::Explosion, Moves::Thunderbolt)
 	));
 
@@ -59,18 +48,7 @@ auto expected_generation_one_team() {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(248_bi),
-				EV(248_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi)
-			)
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Earthquake, Moves::Body_Slam, Moves::Rock_Slide, Moves::Swords_Dance)
 	));
 
@@ -80,18 +58,7 @@ auto expected_generation_one_team() {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi)
-			)
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Transform)
 	));
 
@@ -101,18 +68,7 @@ auto expected_generation_one_team() {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi)
-			)
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Agility, Moves::Thunderbolt, Moves::Surf, Moves::Thunder_Wave)
 	));
 
@@ -122,18 +78,7 @@ auto expected_generation_one_team() {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(252_bi),
-				EV(252_bi),
-				EV(248_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi)
-			)
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Seismic_Toss, Moves::Lovely_Kiss, Moves::Psychic, Moves::Blizzard)
 	));
 	
@@ -143,18 +88,7 @@ auto expected_generation_one_team() {
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(252_bi),
-				EV(252_bi),
-				EV(248_bi),
-				EV(252_bi),
-				EV(252_bi),
-				EV(252_bi)
-			)
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Psychic, Moves::Surf, Moves::Thunder_Wave, Moves::Amnesia)
 	));
 
