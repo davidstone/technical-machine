@@ -43,11 +43,7 @@ void basic() {
 		Gender::male,
 		Item::Leftovers,
 		Ability::Volt_Absorb,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		expected
 	));
 	auto weather = Weather();
@@ -60,11 +56,7 @@ void basic() {
 		Gender::male,
 		Item::Leftovers,
 		Ability::Intimidate,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
 	));
 	other.pokemon().switch_in(weather);
@@ -97,11 +89,7 @@ void test_two_moves_with_one_out_of_pp() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
 	empty_pp(containers::front(pokemon.regular_moves()));
@@ -114,11 +102,7 @@ void test_two_moves_with_one_out_of_pp() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
 	other.pokemon().switch_in(weather);
@@ -144,11 +128,7 @@ void test_two_moves_with_both_out_of_pp() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
 	user.pokemon().switch_in(weather);
@@ -163,11 +143,7 @@ void test_two_moves_with_both_out_of_pp() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
 	other.pokemon().switch_in(weather);
@@ -193,11 +169,7 @@ void replace_fainted() {
 		Gender::male,
 		Item::Choice_Specs,
 		Ability::Magma_Armor,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Flamethrower)
 	));
 	team.pokemon().switch_in(weather);
@@ -207,11 +179,7 @@ void replace_fainted() {
 		Gender::genderless,
 		Item::Choice_Specs,
 		Ability::Pressure,
-		CombinedStats<generation>{
-			Nature::Modest,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Thunderbolt)
 	));
 
@@ -224,11 +192,7 @@ void replace_fainted() {
 		Gender::genderless,
 		Item::Leftovers,
 		Ability::Pressure,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		moves(Moves::Surf)
 	));
 	other.pokemon().switch_in(weather);

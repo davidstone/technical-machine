@@ -64,11 +64,7 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Gender::male,
 		Item::Leftovers,
 		Ability::Volt_Absorb,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
 	));
 	team1.pokemon().switch_in(weather);
@@ -81,11 +77,7 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Gender::male,
 		Item::Leftovers,
 		Ability::Intimidate,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
 	));
 	team2.pokemon().switch_in(weather);
@@ -104,11 +96,7 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Gender::male,
 		Item::Lum_Berry,
 		Ability::Wonder_Guard,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Swords_Dance, Moves::X_Scissor, Moves::Shadow_Sneak, Moves::Will_O_Wisp)
 	));
 	team3.pokemon().switch_in(weather);
@@ -159,11 +147,7 @@ void one_turn_damage_tests(Evaluate<Generation::four> const & evaluate, Weather 
 		Gender::male,
 		Item::Leftovers,
 		Ability::Torrent,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Surf, Moves::Ice_Beam)
 	));
 	defender.pokemon().switch_in(weather);
@@ -309,11 +293,7 @@ void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weath
 		Gender::male,
 		Item::Leftovers,
 		Ability::Own_Tempo,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
 	));
 	attacker.pokemon().switch_in(weather);
@@ -406,11 +386,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		Gender::male,
 		Item::Leftovers,
 		Ability::Swift_Swim,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Tackle)
 	));
 	attacker.pokemon().switch_in(weather);
@@ -421,11 +397,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		Gender::male,
 		Item::Choice_Specs,
 		Ability::Magma_Armor,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Flamethrower, Moves::Earth_Power)
 	));
 	attacker.add_pokemon(Pokemon<generation>(
@@ -458,11 +430,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		Gender::genderless,
 		Item::Leftovers,
 		Ability::Pressure,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Calm_Mind, Moves::Surf, Moves::Ice_Beam)
 	));
 	defender.pokemon().switch_in(weather);
@@ -569,11 +537,7 @@ void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & rand
 		Gender::female,
 		Item::Leftovers,
 		Ability::Volt_Absorb,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Sleep_Talk, Moves::Thunderbolt)
 	));
 	attacker.pokemon().switch_in(weather);
@@ -586,11 +550,7 @@ void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & rand
 		Gender::male,
 		Item::Life_Orb,
 		Ability::Intimidate,
-		CombinedStats<generation>{
-			Nature::Adamant,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Earthquake)
 	));
 	defender.pokemon().switch_in(weather);
@@ -662,11 +622,7 @@ void generation_one_frozen_last_pokemon(Evaluate<Generation::one> const & evalua
 		Gender::genderless,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Psychic, Moves::Recover, Moves::Thunder_Wave, Moves::Seismic_Toss)
 	));
 	attacker.pokemon().switch_in(weather);
@@ -679,11 +635,7 @@ void generation_one_frozen_last_pokemon(Evaluate<Generation::one> const & evalua
 			Gender::genderless,
 			Item::None,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
-				Nature::Hardy,
-				max_dvs_or_ivs<generation>,
-				empty_evs<generation>
-			},
+			default_combined_stats<generation>,
 			regular_moves(Moves::Explosion, Moves::Hypnosis, Moves::Thunderbolt, Moves::Night_Shade)
 		);
 		gengar.set_status(Statuses::freeze);

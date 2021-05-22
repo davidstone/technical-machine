@@ -177,11 +177,7 @@ private:
 			Gender::female,
 			Item::None,
 			Ability::Natural_Cure,
-			CombinedStats<generation>{
-				Nature::Hardy,
-				max_dvs_or_ivs<generation>,
-				empty_evs<generation>
-			},
+			default_combined_stats<generation>,
 			moves
 		));
 		sleeper.pokemon().switch_in(weather);

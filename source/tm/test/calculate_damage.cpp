@@ -139,11 +139,7 @@ void special_power_test() {
 		Gender::genderless,
 		Item::Wave_Incense,
 		Ability::Torrent,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		RegularMoves({move})
 	));
 	auto pokemon = attacker.pokemon();
@@ -158,11 +154,7 @@ void special_power_test() {
 		Gender::male,
 		Item::None,
 		Ability::Dry_Skin,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		RegularMoves({Move(generation, Moves::Dive)})
 	));
 

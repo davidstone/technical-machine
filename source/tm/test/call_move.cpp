@@ -48,11 +48,7 @@ void test_baton_pass() {
 		Gender::male,
 		Item::Leftovers,
 		Ability::Own_Tempo,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
 	));
 	attacker.add_pokemon(Pokemon<generation>(
@@ -207,11 +203,7 @@ void wonder_guard() {
 		Gender::female,
 		Item::None,
 		Ability::Volt_Absorb,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Shadow_Ball, Moves::Thunderbolt)
 	));
 	attacker.pokemon().switch_in(weather);
@@ -223,11 +215,7 @@ void wonder_guard() {
 		Gender::male,
 		Item::None,
 		Ability::Wonder_Guard,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto shedinja = defender.pokemon();
@@ -268,11 +256,7 @@ void fire_move_thaws_target() {
 		Gender::female,
 		Item::None,
 		Ability::Blaze,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		regular_moves(Moves::Ember)
 	));
 	attacker.pokemon().switch_in(weather);
@@ -284,11 +268,7 @@ void fire_move_thaws_target() {
 		Gender::male,
 		Item::None,
 		Ability::Water_Absorb,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto vaporeon = defender.pokemon();

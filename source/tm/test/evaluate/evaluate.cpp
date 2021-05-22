@@ -41,11 +41,7 @@ void evaluate_tests() {
 		Gender::female,
 		Item::Leftovers,
 		Ability::Natural_Cure,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		RegularMoves({Move(generation, Moves::Tackle)})
 	);
 

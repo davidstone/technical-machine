@@ -29,11 +29,7 @@ auto individual_test(Species const species, Moves const move_name, Item const it
 		Gender::genderless,
 		item,
 		ability,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	attacker.pokemon().switch_in(weather);

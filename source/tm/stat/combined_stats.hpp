@@ -20,4 +20,12 @@ struct CombinedStats {
 	friend auto operator==(CombinedStats, CombinedStats) -> bool = default;
 };
 
+// Simplifies unit tests
+template<Generation generation>
+inline constexpr auto default_combined_stats = CombinedStats<generation>{
+	Nature::Hardy,
+	max_dvs_or_ivs<generation>,
+	empty_evs<generation>
+};
+
 } // namespace technicalmachine
