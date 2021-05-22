@@ -81,18 +81,20 @@ auto parse_moves(Generation const generation, boost::property_tree::ptree const 
 
 template<Generation generation>
 auto parse_stats(boost::property_tree::ptree const & pt) {
-	auto hp = bounded::optional<IVAndEV>();
-	auto atk = bounded::optional<IVAndEV>();
-	auto def = bounded::optional<IVAndEV>();
-	auto spa = bounded::optional<IVAndEV>();
-	auto spd = bounded::optional<IVAndEV>();
-	auto spe = bounded::optional<IVAndEV>();
+	using StatType = std::conditional_t<generation <= Generation::two, DVAndEV, IVAndEV>;
+	auto hp = bounded::optional<StatType>();
+	auto atk = bounded::optional<StatType>();
+	auto def = bounded::optional<StatType>();
+	auto spa = bounded::optional<StatType>();
+	auto spd = bounded::optional<StatType>();
+	auto spe = bounded::optional<StatType>();
 
 	for (auto const & value : pt.get_child("stats")) {
 		auto const & stats = value.second;
 		auto const & stat_name = stats.get<std::string>("<xmlattr>.name");
-		auto const iv_and_ev = IVAndEV{
-			IV(stats.get<IV::value_type>("<xmlattr>.iv")),
+		using IVType = std::conditional_t<generation <= Generation::two, DV, IV>;
+		auto const iv_and_ev = StatType{
+			IVType(stats.get<typename IVType::value_type>("<xmlattr>.iv")),
 			EV(stats.get<EV::value_type>("<xmlattr>.ev"))
 		};
 		if (stat_name == "HP") {
@@ -114,11 +116,29 @@ auto parse_stats(boost::property_tree::ptree const & pt) {
 	if (!hp or !atk or !def or !spa or !spd or !spe) {
 		throw std::runtime_error("IV or EV is missing");
 	}
-	return CombinedStats<generation>{
-		from_string<Nature>(pt.get<std::string>("nature")),
-		IVs(hp->iv, atk->iv, def->iv, spa->iv, spd->iv, spe->iv),
-		EVs(hp->ev, atk->ev, def->ev, spa->ev, spd->ev, spe->ev)
-	};
+
+	if constexpr (generation <= Generation::two) {
+		// I'm not sure if Pokemon Lab ever supported older generations, but if
+		// it did this is probably what the file would look like?
+		if (*spa != *spd) {
+			throw std::runtime_error("Mismatched Special DV / EV");
+		}
+		auto const dvs = DVs(atk->dv, def->dv, spe->dv, spa->dv);
+		if (dvs.hp() != hp->dv) {
+			throw std::runtime_error("Invalid HP DV");
+		}
+		return CombinedStats<generation>{
+			Nature::Hardy,
+			IVs(IV(hp->dv), IV(atk->dv), IV(def->dv), IV(spa->dv), IV(spd->dv), IV(spe->dv)),
+			EVs(hp->ev, atk->ev, def->ev, spa->ev, spd->ev, spe->ev)
+		};
+	} else {
+		return CombinedStats<generation>{
+			from_string<Nature>(pt.get<std::string>("nature")),
+			IVs(hp->iv, atk->iv, def->iv, spa->iv, spd->iv, spe->iv),
+			EVs(hp->ev, atk->ev, def->ev, spa->ev, spd->ev, spe->ev)
+		};
+	}
 }
 
 template<Generation generation>

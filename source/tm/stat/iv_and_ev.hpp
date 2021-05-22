@@ -17,4 +17,11 @@ struct IVAndEV {
 	friend auto operator==(IVAndEV, IVAndEV) -> bool = default;
 };
 
+struct DVAndEV {
+	DV dv;
+	EV ev;
+
+	friend auto operator==(DVAndEV, DVAndEV) -> bool = default;
+};
+
 } // namespace technicalmachine

@@ -17,13 +17,6 @@ auto write_move(Move const move, boost::property_tree::ptree & pt) -> void {
 	m.put ("<xmlattr>.pp-up", 3);
 }
 
-auto write_stat(std::string_view const name, IV const iv, EV const ev, boost::property_tree::ptree & pt) -> void {
-	boost::property_tree::ptree & s = pt.add("stats.stat", "");
-	s.put("<xmlattr>.name", name);
-	s.put("<xmlattr>.iv", iv.value());
-	s.put("<xmlattr>.ev", ev.value());
-}
-
 auto to_simulator_string(PermanentStat const stat) -> std::string_view {
 	switch (stat) {
 		case PermanentStat::hp: return "HP";

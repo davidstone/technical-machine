@@ -30,16 +30,29 @@ struct Team;
 namespace pl {
 
 auto write_move(Move, boost::property_tree::ptree &) -> void;
-auto write_stat(std::string_view, IV, EV, boost::property_tree::ptree &) -> void;
 auto to_simulator_string(PermanentStat) -> std::string_view;
 auto to_simulator_string(Species) -> std::string_view;
 auto to_simulator_string(Gender) -> std::string_view;
+
+auto write_stat(std::string_view const name, auto const dv_or_iv, EV const ev, boost::property_tree::ptree & pt) -> void {
+	boost::property_tree::ptree & s = pt.add("stats.stat", "");
+	s.put("<xmlattr>.name", name);
+	s.put("<xmlattr>.iv", dv_or_iv.value());
+	s.put("<xmlattr>.ev", ev.value());
+}
 
 template<Generation generation>
 void write_stats(Pokemon<generation> const & pokemon, boost::property_tree::ptree & pt) {
 	auto const stats = calculate_ivs_and_evs(pokemon);
 	for (auto const stat_name : {PermanentStat::hp, PermanentStat::atk, PermanentStat::def, PermanentStat::spe, PermanentStat::spa, PermanentStat::spd}) {
-		write_stat(to_simulator_string(stat_name), stats.dvs_or_ivs[stat_name], stats.evs[stat_name], pt);
+		auto const dv_or_iv = [&] {
+			if constexpr (generation <= Generation::two) {
+				return DV(stats.dvs_or_ivs[stat_name].value() / 2_bi);
+			} else {
+				return stats.dvs_or_ivs[stat_name];
+			}
+		}();
+		write_stat(to_simulator_string(stat_name), dv_or_iv, stats.evs[stat_name], pt);
 	}
 }
 
