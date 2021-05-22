@@ -180,22 +180,21 @@ auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 	auto const [ability, status] = pop_ability_and_status(buffer);
 	auto const nature = typed_pop<Nature>(buffer, nature_hp_iv);
 
-	auto const ivs = IVs(
-		pop_value_type<IV>(buffer, hp_iv_atk_iv),
-		pop_value_type<IV>(buffer, atk_iv_def_iv),
-		pop_value_type<IV>(buffer, def_iv_spa_iv),
-		pop_value_type<IV>(buffer, spa_iv_spd_iv),
-		pop_value_type<IV>(buffer, spd_iv_spe_iv),
-		pop_value_type<IV>(buffer, spe_iv_hp_ev)
-	);
-	auto const evs = EVs(
-		pop_value_type<EV>(buffer, hp_ev_atk_ev),
-		pop_value_type<EV>(buffer, atk_ev_def_ev),
-		pop_value_type<EV>(buffer, def_ev_spa_ev),
-		pop_value_type<EV>(buffer, spa_ev_spd_ev),
-		pop_value_type<EV>(buffer, spd_ev_spe_ev),
-		pop_value_type<EV>(buffer, spe_ev_moves)
-	);
+	auto const hp_iv = pop_value_type<IV>(buffer, hp_iv_atk_iv);
+	auto const atk_iv = pop_value_type<IV>(buffer, atk_iv_def_iv);
+	auto const def_iv = pop_value_type<IV>(buffer, def_iv_spa_iv);
+	auto const spa_iv = pop_value_type<IV>(buffer, spa_iv_spd_iv);
+	auto const spd_iv = pop_value_type<IV>(buffer, spd_iv_spe_iv);
+	auto const spe_iv = pop_value_type<IV>(buffer, spe_iv_hp_ev);
+	auto const ivs = IVs(hp_iv, atk_iv, def_iv, spa_iv, spd_iv, spe_iv);
+
+	auto const hp_ev = pop_value_type<EV>(buffer, hp_ev_atk_ev);
+	auto const atk_ev = pop_value_type<EV>(buffer, atk_ev_def_ev);
+	auto const def_ev = pop_value_type<EV>(buffer, def_ev_spa_ev);
+	auto const spa_ev = pop_value_type<EV>(buffer, spa_ev_spd_ev);
+	auto const spd_ev = pop_value_type<EV>(buffer, spd_ev_spe_ev);
+	auto const spe_ev = pop_value_type<EV>(buffer, spe_ev_moves);
+	auto const evs = EVs(hp_ev, atk_ev, def_ev, spa_ev, spd_ev, spe_ev);
 
 	auto const should_be_empty = pop_to_delimiter(buffer, moves_separator);
 	if (!should_be_empty.empty()) {

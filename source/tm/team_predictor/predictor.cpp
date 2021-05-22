@@ -97,14 +97,13 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 		auto item = get(bounded::detail::types<Item>(), "item");
 		auto ability = get(bounded::detail::types<Ability>(), "ability");
 		auto nature = get(bounded::detail::types<Nature>(), "nature");
-		auto const evs = EVs(
-			get_ev("hp"),
-			get_ev("atk"),
-			get_ev("def"),
-			get_ev("spa"),
-			get_ev("spd"),
-			get_ev("spe")
-		);
+		auto const hp_ev = get_ev("hp");
+		auto const atk_ev = get_ev("atk");
+		auto const def_ev = get_ev("def");
+		auto const spa_ev = get_ev("spa");
+		auto const spd_ev = get_ev("spd");
+		auto const spe_ev = get_ev("spe");
+		auto const evs = EVs(hp_ev, atk_ev, def_ev, spa_ev, spd_ev, spe_ev);
 
 		auto moves = containers::static_vector<Moves, max_moves_per_pokemon.value()>();
 		for (auto const move_index : containers::integer_range(max_moves_per_pokemon)) {
