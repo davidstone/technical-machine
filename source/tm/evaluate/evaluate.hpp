@@ -117,7 +117,7 @@ private:
 	}
 
 	auto score_team(Team<generation> const & team) const {
-		auto has_hp = [](Pokemon<generation> const & pokemon) { return pokemon.hp() != 0_bi; };
+		auto has_hp = [](Pokemon<generation> const & pokemon) { return pokemon.hp().current() != 0_bi; };
 		auto get_score = [&](Pokemon<generation> const & pokemon) {
 			return score_pokemon(pokemon, team.entry_hazards());
 		};
@@ -159,7 +159,7 @@ template<Generation generation>
 constexpr auto win(Team<generation> const & team1, Team<generation> const & team2) -> bounded::optional<double> {
 	auto single_team_win = [](Team<generation> const & team) {
 		BOUNDED_ASSERT(team.size() != 0_bi);
-		return	team.size() == 1_bi and team.pokemon().hp() == 0_bi ?
+		return	team.size() == 1_bi and team.pokemon().hp().current() == 0_bi ?
 			team.is_me() ? -victory<generation> : victory<generation> :
 			0.0;
 	};

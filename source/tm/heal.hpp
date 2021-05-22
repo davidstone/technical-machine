@@ -20,7 +20,7 @@ struct MutableActivePokemon;
 template<Generation generation, typename Numerator, typename Denominator>
 void heal(MutableActivePokemon<generation> pokemon, Weather const weather, rational<Numerator, Denominator> const scale) {
 	auto const hp = pokemon.hp();
-	if (hp == 0_bi) {
+	if (hp.current() == 0_bi) {
 		return;
 	}
 	auto const hp_healed = hp.max() * scale;

@@ -131,7 +131,7 @@ constexpr auto leftovers_healing() {
 template<Generation generation>
 auto other_effects(Team<generation> & team, MutableActivePokemon<generation> foe, Weather & weather, EndOfTurnFlags const flags) -> void {
 	auto pokemon = team.pokemon();
-	if (pokemon.hp() == 0_bi) {
+	if (pokemon.hp().current() == 0_bi) {
 		return;
 	}
 	if (pokemon.ingrained()) {

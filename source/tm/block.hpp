@@ -220,7 +220,7 @@ auto can_attempt_move_execution(ActivePokemon<generation> user, Move const move,
 	if (is_switch(move.name())) {
 		return true;
 	}
-	if (user.hp() == 0_bi) {
+	if (user.hp().current() == 0_bi) {
 		return false;
 	}
 

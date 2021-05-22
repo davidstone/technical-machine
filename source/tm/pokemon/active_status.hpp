@@ -69,7 +69,7 @@ private:
 		}
 		auto const initial = pokemon.hp().current();
 		heal(pokemon, weather, rational(-1_bi, 8_bi));
-		if (other.hp() == 0_bi) {
+		if (other.hp().current() == 0_bi) {
 			return;
 		}
 		auto const hp_change = (initial - pokemon.hp().current()) * healing_multiplier(pokemon.item(weather));

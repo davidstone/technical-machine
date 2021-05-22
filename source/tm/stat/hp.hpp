@@ -45,14 +45,6 @@ struct HP {
 	}
 
 	friend auto operator==(HP, HP) -> bool = default;
-
-	friend constexpr auto operator<=>(HP const lhs, bounded::bounded_integer auto const rhs) {
-		return lhs.current() <=> rhs;
-	}
-	friend constexpr auto operator==(HP const lhs, bounded::bounded_integer auto const rhs) -> bool {
-		return lhs.current() == rhs;
-	}
-
 private:
 	max_type m_max;
 	current_type m_current;

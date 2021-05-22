@@ -201,7 +201,7 @@ constexpr auto all_are_pass_or_switch [[maybe_unused]](StaticVectorMove const le
 
 template<Generation generation>
 auto team_is_empty(Team<generation> const & team) {
-	return team.size() == 0_bi or (team.size() == 1_bi and team.pokemon().hp() == 0_bi);
+	return team.size() == 0_bi or (team.size() == 1_bi and team.pokemon().hp().current() == 0_bi);
 };
 
 struct BestMovePrinter {
@@ -461,7 +461,7 @@ private:
 		if (auto const won = win(first, last)) {
 			return *won;
 		}
-		if (first.pokemon().hp() == 0_bi or last.pokemon().hp() == 0_bi) {
+		if (first.pokemon().hp().current() == 0_bi or last.pokemon().hp().current() == 0_bi) {
 			auto const first_selections = legal_selections(first, last, weather);
 			auto const last_selections = legal_selections(last, first, weather);
 			return select_move_branch(first, first_selections, last, last_selections, weather, depth, [&](auto && ... args) {

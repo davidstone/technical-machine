@@ -92,7 +92,7 @@ struct Team {
 			shatter_screens();
 		}
 
-		if (original_pokemon.hp() != 0_bi) {
+		if (original_pokemon.hp().current() != 0_bi) {
 			all_pokemon().set_index(replacement);
 		} else {
 			all_pokemon().remove_active(replacement);
@@ -105,7 +105,7 @@ struct Team {
 		auto const replacement_pokemon = pokemon();
 		replacement_pokemon.switch_in(weather);
 		apply(m_entry_hazards, replacement_pokemon, weather);
-		if (replacement_pokemon.hp() != 0_bi) {
+		if (replacement_pokemon.hp().current() != 0_bi) {
 			activate_ability_on_switch(replacement_pokemon, other, weather);
 		}
 	}
@@ -237,7 +237,7 @@ auto switch_decision_required(Team<generation> const & team) {
 		return false;
 	}
 	auto const pokemon = team.pokemon();
-	return pokemon.hp() == 0_bi or pokemon.last_used_move().switch_decision_required();
+	return pokemon.hp().current() == 0_bi or pokemon.last_used_move().switch_decision_required();
 }
 
 } // namespace technicalmachine
