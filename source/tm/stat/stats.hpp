@@ -57,10 +57,10 @@ public:
 	{
 	}
 
-	constexpr auto const & hp() const {
+	constexpr auto const & hp() const & {
 		return m_hp;
 	}
-	constexpr auto & hp() {
+	constexpr auto & hp() & {
 		return m_hp;
 	}
 	constexpr auto atk() const {
