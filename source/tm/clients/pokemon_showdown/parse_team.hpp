@@ -9,7 +9,6 @@
 
 #include <tm/pokemon/has_physical_or_special_move.hpp>
 
-#include <tm/stat/generic_stats.hpp>
 #include <tm/stat/initial_stat.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
@@ -45,7 +44,7 @@ auto parse_stats(HP::max_type const hp, nlohmann::json const & stats) {
 	auto const special_attack = get("spa");
 	auto const special_defense = get("spd");
 	auto const speed = get("spe");
-	return GenericStats{hp, attack, defense, special_attack, special_defense, speed};
+	return Stats<generation>(HP(hp), attack, defense, special_attack, special_defense, speed);
 }
 
 inline auto hidden_power_type(std::string_view const str) {
@@ -88,7 +87,7 @@ auto parse_pokemon(nlohmann::json const & pokemon_data) {
 	auto const hp = bounded::to_integer<HP::max_type>(split_view(condition, '/').first);
 
 	auto const move_data = parse_moves(pokemon_data.at("moves"), generation);
-	auto const stats = calculate_ivs_and_evs<generation>(
+	auto const stats = calculate_ivs_and_evs(
 		details.species,
 		details.level,
 		parse_stats<generation>(hp, pokemon_data.at("stats")),
