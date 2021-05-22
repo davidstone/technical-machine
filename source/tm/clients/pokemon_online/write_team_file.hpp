@@ -28,10 +28,11 @@ struct Team;
 
 namespace po {
 
-inline void write_blank_stats(boost::property_tree::ptree & pt) {
-	auto const stat_names = containers::enum_range<PermanentStat>();
+inline void write_blank_stats(Generation const generation, boost::property_tree::ptree & pt) {
+	constexpr auto stat_names = containers::enum_range<PermanentStat>();
 	for ([[maybe_unused]] auto const stat : stat_names) {
-		pt.add("DV", 31);
+		auto const dv = generation <= Generation::two ? 15 : 31;
+		pt.add("DV", dv);
 	}
 	for ([[maybe_unused]] auto const stat : stat_names) {
 		pt.add("EV", 0);
@@ -41,7 +42,10 @@ inline void write_blank_stats(boost::property_tree::ptree & pt) {
 template<Generation generation>
 void write_stats(Pokemon<generation> const & pokemon, boost::property_tree::ptree & pt) {
 	auto const stats = calculate_ivs_and_evs(pokemon);
-	auto const stat_names = containers::enum_range<PermanentStat>();
+	constexpr auto stat_names = containers::enum_range<PermanentStat>();
+	// In older generations, Spc is written into the SpA slot. The SpD slot is
+	// written as a 15 but unused in the official client, but here we instead
+	// just write Spc into both.
 	for (auto const stat : stat_names) {
 		pt.add("DV", stats.dvs_or_ivs[stat].value());
 	}
@@ -58,7 +62,7 @@ inline void write_move(Move const move, boost::property_tree::ptree & pt) {
 	pt.add("Move", move_to_id(move.name()));
 }
 
-inline auto write_blank_pokemon(boost::property_tree::ptree & pt) -> void {
+inline auto write_blank_pokemon(Generation const generation, boost::property_tree::ptree & pt) -> void {
 	auto & member = pt.add("Pokemon", "");
 	member.put("<xmlattr>.Item", 0);
 	member.put("<xmlattr>.Ability", 0);
@@ -76,7 +80,7 @@ inline auto write_blank_pokemon(boost::property_tree::ptree & pt) -> void {
 		write_blank_move(member);
 	}
 
-	write_blank_stats(member);
+	write_blank_stats(generation, member);
 }
 
 template<Generation generation>
@@ -124,7 +128,7 @@ void write_team(Team<generation> const & team, std::filesystem::path const & fil
 		write_pokemon(pokemon, t);
 	}
 	for (auto const unused [[maybe_unused]] : containers::integer_range(containers::size(team.all_pokemon()), max_pokemon_per_team)) {
-		write_blank_pokemon(t);
+		write_blank_pokemon(generation, t);
 	}
 	write_xml(file_name.string(), pt, std::locale(), settings);
 }
