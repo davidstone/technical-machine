@@ -175,7 +175,7 @@ auto expected_generation_two_team() {
 		Ability::Honey_Gather,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(DVs(DV(15_bi), DV(13_bi), DV(15_bi), DV(15_bi))),
+			DVs(DV(15_bi), DV(13_bi), DV(15_bi), DV(15_bi)),
 			default_evs<generation>
 		},
 		moves(Moves::Growth, Moves::Giga_Drain, Moves::Synthesis, Moves::Hidden_Power)

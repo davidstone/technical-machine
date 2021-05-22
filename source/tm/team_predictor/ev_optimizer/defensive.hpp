@@ -43,40 +43,40 @@ struct DefensiveEVs {
 		IV iv;
 		HP::max_type stat;
 	};
-	template<Generation generation>
+	template<Generation generation> requires (generation >= Generation::three)
 	struct InputStat {
 		IV iv;
 		InitialStat<generation> stat;
 	};
-	
-	template<Generation generation>
+
+	template<Generation generation> requires (generation >= Generation::three)
 	DefensiveEVs(BaseStats const base_stats, Level const level, InputHP const original_hp, InputStat<generation> const def, InputStat<generation> const spd) {
 		bounded::bounded_integer auto const def_product = original_hp.stat * def.stat;
 		bounded::bounded_integer auto const spd_product = original_hp.stat * spd.stat;
 
 		auto defensive_product = [=](DataPoint const value) {
 			auto const hp = HP(base_stats, level, value.hp.iv, value.hp.ev).max();
-			auto single_product = [=](RegularStat const name, BaseStats::regular_value_type const base_stat, IVAndEV const generated) {
+			auto single_product = [=](SplitSpecialRegularStat const name, BaseStats::regular_value_type const base_stat, IVAndEV const generated) {
 				return hp * initial_stat<generation>(name, base_stat, level, value.nature, generated.iv, generated.ev);
 			};
 
-			return single_product(RegularStat::def, base_stats.def(), value.defense) * single_product(RegularStat::spd, base_stats.spd(), value.special_defense);
+			return single_product(SplitSpecialRegularStat::def, base_stats.def(), value.defense) * single_product(SplitSpecialRegularStat::spd, base_stats.spd(), value.special_defense);
 		};
 
 		for (auto const nature : containers::enum_range<Nature>()) {
 			auto best_per_nature = bounded::optional<DataPoint>{};
 			for (auto const hp_ev : ev_range()) {
 				auto const hp = HP(base_stats, level, original_hp.iv, hp_ev);
-				auto find_minimum_matching = [=](RegularStat const stat_name, auto const base, IV const iv, bounded::bounded_integer auto const original_product) {
+				auto find_minimum_matching = [=](SplitSpecialRegularStat const stat_name, auto const base, IV const iv, bounded::bounded_integer auto const original_product) {
 					auto const target_stat = round_up_divide(original_product, hp.max());
 					return stat_to_ev(target_stat, stat_name, base, level, nature, iv);
 				};
 
-				auto const defense_ev = find_minimum_matching(RegularStat::def, base_stats.def(), def.iv, def_product);
+				auto const defense_ev = find_minimum_matching(SplitSpecialRegularStat::def, base_stats.def(), def.iv, def_product);
 				if (!defense_ev) {
 					continue;
 				}
-				auto const special_defense_ev = find_minimum_matching(RegularStat::spd, base_stats.spd(), spd.iv, spd_product);
+				auto const special_defense_ev = find_minimum_matching(SplitSpecialRegularStat::spd, base_stats.spd(), spd.iv, spd_product);
 				if (!special_defense_ev) {
 					continue;
 				}

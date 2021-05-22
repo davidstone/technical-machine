@@ -232,23 +232,23 @@ auto speed_ability_modifier(ActivePokemon<generation> const pokemon, Ability con
 	return rational(numerator, denominator);
 }
 
-template<RegularStat stat, Generation generation>
+template<SplitSpecialRegularStat stat, Generation generation>
 auto offensive_ability_modifier(ActivePokemon<generation> const pokemon, Type const move_type, Ability const other_ability, Weather const weather) {
-	if constexpr (stat == RegularStat::atk) {
+	if constexpr (stat == SplitSpecialRegularStat::atk) {
 		return attack_ability_modifier(pokemon, move_type, other_ability, weather);
 	} else {
-		static_assert(stat == RegularStat::spa);
+		static_assert(stat == SplitSpecialRegularStat::spa);
 		return special_attack_ability_modifier(pokemon, move_type, other_ability, weather);
 	}
 }
 
-template<RegularStat stat, Generation generation>
+template<SplitSpecialRegularStat stat, Generation generation>
 auto item_modifier(ActivePokemon<generation> const pokemon, Weather const weather) {
 	constexpr auto denominator = 2_bi;
 	auto const species [[maybe_unused]] = pokemon.species();
 	auto const item = pokemon.item(weather);
 	auto const numerator = [&]{
-		if constexpr (stat == RegularStat::atk) {
+		if constexpr (stat == SplitSpecialRegularStat::atk) {
 			return [&]() -> bounded::integer<2, 4> {
 				switch (item) {
 				case Item::Choice_Band:
@@ -264,7 +264,7 @@ auto item_modifier(ActivePokemon<generation> const pokemon, Weather const weathe
 					return denominator;
 				}
 			}();
-		} else if constexpr (stat == RegularStat::def) {
+		} else if constexpr (stat == SplitSpecialRegularStat::def) {
 			auto const boosted = item == Item::Metal_Powder and is_boosted_by_metal_powder(species);
 			return [&]() -> bounded::integer<2, 4> {
 				// TODO: Boost in Generation 3+ only if not transformed
@@ -273,7 +273,7 @@ auto item_modifier(ActivePokemon<generation> const pokemon, Weather const weathe
 				}
 				return BOUNDED_CONDITIONAL(generation <= Generation::two, 3_bi, 4_bi);
 			}();
-		} else if constexpr (stat == RegularStat::spa) {
+		} else if constexpr (stat == SplitSpecialRegularStat::spa) {
 			return [&]() -> bounded::integer<2, 4> {
 				switch (item) {
 				case Item::Soul_Dew:
@@ -288,7 +288,7 @@ auto item_modifier(ActivePokemon<generation> const pokemon, Weather const weathe
 					return denominator;
 				}
 			}();
-		} else if constexpr (stat == RegularStat::spd) {
+		} else if constexpr (stat == SplitSpecialRegularStat::spd) {
 			return [&]() -> bounded::integer<2, 4> {
 				switch (item) {
 				case Item::Deep_Sea_Scale:
@@ -301,7 +301,7 @@ auto item_modifier(ActivePokemon<generation> const pokemon, Weather const weathe
 					return denominator;
 				}
 			}();
-		} else if constexpr (stat == RegularStat::spe) {
+		} else if constexpr (stat == SplitSpecialRegularStat::spe) {
 			return [&]() -> bounded::integer<1, 4> {
 				switch (item) {
 				case Item::Quick_Powder:
@@ -326,32 +326,32 @@ auto item_modifier(ActivePokemon<generation> const pokemon, Weather const weathe
 	return rational(numerator, denominator);
 }
 
-constexpr auto is_physical(RegularStat const stat) {
+constexpr auto is_physical(SplitSpecialRegularStat const stat) {
 	switch (stat) {
-	case RegularStat::atk:
-	case RegularStat::def:
+	case SplitSpecialRegularStat::atk:
+	case SplitSpecialRegularStat::def:
 		return true;
 	default:
 		return false;
 	}
 }
 
-constexpr auto other_physical_stat(RegularStat const stat) {
+constexpr auto other_physical_stat(SplitSpecialRegularStat const stat) {
 	switch (stat) {
-		case RegularStat::atk: return RegularStat::def;
-		case RegularStat::def: return RegularStat::atk;
+		case SplitSpecialRegularStat::atk: return SplitSpecialRegularStat::def;
+		case SplitSpecialRegularStat::def: return SplitSpecialRegularStat::atk;
 		default: bounded::unreachable();
 	}
 }
 
 template<Generation generation>
-auto determine_initial_stat(RegularStat const name, ActivePokemon<generation> const pokemon) {
+auto determine_initial_stat(SplitSpecialRegularStat const name, ActivePokemon<generation> const pokemon) {
 	return !is_physical(name) or !pokemon.power_trick_is_active() ?
 		pokemon.stat(name) :
 		pokemon.stat(other_physical_stat(name));
 }
 
-template<RegularStat stat, Generation generation>
+template<SplitSpecialRegularStat stat, Generation generation>
 auto calculate_common_offensive_stat(ActivePokemon<generation> const pokemon, Type const move_type, Ability const other_ability, Weather const weather, bool const critical_hit) {
 	auto const attack =
 		determine_initial_stat(stat, pokemon) *
@@ -367,7 +367,7 @@ auto calculate_attack(ActivePokemon<generation> const attacker, Type const move_
 	// static_cast here because it looks as though the strongest attacker would
 	// hold a Light Ball, but because of the restriction on the attacker being
 	// Pikachu, it is better to use a Power Trick Shuckle with a Choice Band.
-	return static_cast<bounded::integer<1, 7368>>(calculate_common_offensive_stat<RegularStat::atk>(attacker, move_type, other_ability, weather, critical_hit));
+	return static_cast<bounded::integer<1, 7368>>(calculate_common_offensive_stat<SplitSpecialRegularStat::atk>(attacker, move_type, other_ability, weather, critical_hit));
 }
 
 
@@ -375,7 +375,7 @@ template<Generation generation>
 auto calculate_special_attack(ActivePokemon<generation> const attacker, Type const move_type, Ability const other_ability, Weather const weather, bool const critical_hit = false) {
 	// see above comment about Light Ball, except the strongest Special Attack
 	// Pokemon is actually a Choice Specs Deoxys-Attack.
-	return static_cast<bounded::integer<1, 4536>>(calculate_common_offensive_stat<RegularStat::spa>(attacker, move_type, other_ability, weather, critical_hit));
+	return static_cast<bounded::integer<1, 4536>>(calculate_common_offensive_stat<SplitSpecialRegularStat::spa>(attacker, move_type, other_ability, weather, critical_hit));
 }
 
 
@@ -391,7 +391,7 @@ constexpr auto is_self_KO(Moves const move) {
 
 template<Generation generation>
 auto calculate_defense(ActivePokemon<generation> const defender, Moves const move, Weather const weather, bool const critical_hit = false) {
-	constexpr auto stat = RegularStat::def;
+	constexpr auto stat = SplitSpecialRegularStat::def;
 	auto const defense =
 		determine_initial_stat(stat, defender) *
 		modifier<BoostableStat(stat)>(defender.stage(), critical_hit) *
@@ -413,7 +413,7 @@ auto special_defense_sandstorm_boost(ActivePokemon<generation> const defender, A
 
 template<Generation generation>
 auto calculate_special_defense(ActivePokemon<generation> const defender, Ability const attacker_ability, Weather const weather, bool const critical_hit = false) {
-	constexpr auto stat = RegularStat::spd;
+	constexpr auto stat = SplitSpecialRegularStat::spd;
 	auto const defense =
 		defender.stat(stat) *	
 		modifier<BoostableStat(stat)>(defender.stage(), critical_hit) *
@@ -433,7 +433,7 @@ auto calculate_special_defense(ActivePokemon<generation> const defender, Ability
 
 template<Generation generation>
 auto calculate_speed(Team<generation> const & team, Ability const other_ability, Weather const weather) {
-	constexpr auto stat = RegularStat::spe;
+	constexpr auto stat = SplitSpecialRegularStat::spe;
 	auto const & pokemon = team.pokemon();
 	auto const paralysis_divisor = BOUNDED_CONDITIONAL(lowers_speed(pokemon.status(), pokemon.ability()), 4_bi, 1_bi);
 	auto const tailwind_multiplier = BOUNDED_CONDITIONAL(team.tailwind(), 2_bi, 1_bi);

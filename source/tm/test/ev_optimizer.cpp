@@ -87,15 +87,15 @@ void defensive_tests() {
 	constexpr auto defense_ev = EV(252_bi);
 	constexpr auto special_defense_ev = EV(4_bi);
 	auto const hp = HP(base_stats, level, iv, hp_ev).max();
-	auto const defense = initial_stat<generation>(RegularStat::def, base_stats.def(), level, nature, iv, defense_ev);
-	auto const special_defense = initial_stat<generation>(RegularStat::spd, base_stats.spd(), level, nature, iv, special_defense_ev);
+	auto const defense = initial_stat<generation>(SplitSpecialRegularStat::def, base_stats.def(), level, nature, iv, defense_ev);
+	auto const special_defense = initial_stat<generation>(SplitSpecialRegularStat::spd, base_stats.spd(), level, nature, iv, special_defense_ev);
 	
 	auto defensive_evs = DefensiveEVs(base_stats, level, DefensiveEVs::InputHP{iv, hp}, DefensiveEVs::InputStat<generation>{iv, defense}, DefensiveEVs::InputStat<generation>{iv, special_defense});
 	for (auto const & candidate : defensive_evs) {
 		BOUNDED_ASSERT(candidate.hp.ev == hp_ev);
 		BOUNDED_ASSERT(candidate.defense.ev == defense_ev);
 		BOUNDED_ASSERT(candidate.special_defense.ev >= special_defense_ev);
-		BOUNDED_ASSERT(boosts_stat(candidate.nature, RegularStat::def));
+		BOUNDED_ASSERT(boosts_stat(candidate.nature, SplitSpecialRegularStat::def));
 	}
 }
 
@@ -114,12 +114,12 @@ void speed_tests() {
 	constexpr auto original_nature = Nature::Hardy;
 	constexpr auto iv = IV(31_bi);
 	auto const base_stats = BaseStats(generation, species);
-	auto const original_value = initial_stat<generation>(RegularStat::spe, base_stats.spe(), level, original_nature, iv, EV(76_bi));
+	auto const original_value = initial_stat<generation>(SplitSpecialRegularStat::spe, base_stats.spe(), level, original_nature, iv, EV(76_bi));
 	auto const speed_evs = SpeedEVs(base_stats, level, iv, SpeedEVs::Input<generation>{original_value});
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const found = find(speed_evs, nature);
-		auto const new_value = initial_stat<generation>(RegularStat::spe, base_stats.spe(), level, nature, found.iv, found.ev);
-		if (boosts_stat(nature, RegularStat::spe) and !boosts_stat(original_nature, RegularStat::spe)) {
+		auto const new_value = initial_stat<generation>(SplitSpecialRegularStat::spe, base_stats.spe(), level, nature, found.iv, found.ev);
+		if (boosts_stat(nature, SplitSpecialRegularStat::spe) and !boosts_stat(original_nature, SplitSpecialRegularStat::spe)) {
 			BOUNDED_ASSERT(new_value == original_value or new_value == original_value + 1_bi);
 		} else {
 			BOUNDED_ASSERT(new_value == original_value);

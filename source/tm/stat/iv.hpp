@@ -39,6 +39,8 @@ using IVs = GenericStats<IV>;
 struct DV {
 	static constexpr auto max = 15;
 	using value_type = bounded::integer<0, max>;
+	// So it can be stored in a constexpr static_vector
+	constexpr DV() = default;
 	constexpr explicit DV(value_type const iv):
 		m_value(iv) {
 	}
@@ -115,16 +117,26 @@ private:
 };
 
 template<Generation generation>
-inline constexpr auto max_dvs_or_ivs = []{
-	constexpr auto value = generation <= Generation::two ? IV(30_bi) : IV(31_bi);
-	return IVs(
-		value,
-		value,
-		value,
-		value,
-		value,
-		value
-	);
+inline constexpr auto max_dvs_or_ivs = [] {
+	if constexpr (generation <= Generation::two) {
+		constexpr auto value = DV(15_bi);
+		return DVs(
+			value,
+			value,
+			value,
+			value
+		);
+	} else {
+		constexpr auto value = IV(31_bi);
+		return IVs(
+			value,
+			value,
+			value,
+			value,
+			value,
+			value
+		);
+	}
 }();
 
 } // namespace technicalmachine

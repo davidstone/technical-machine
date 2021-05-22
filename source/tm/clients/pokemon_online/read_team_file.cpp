@@ -120,6 +120,59 @@ auto parse_stats(std::string_view const name, CheckedIterator it) {
 }
 
 template<Generation generation>
+auto parse_dvs_or_ivs(CheckedIterator it) {
+	constexpr auto name = std::string_view("DV");
+	if constexpr (generation <= Generation::two) {
+		struct Parsed {
+			DVs stats;
+			CheckedIterator it;
+		};
+		auto get_next = [&]{
+			auto const & value = it.advance(name);
+			return DV(value.get_value<DV::value_type>());
+		};
+		auto const hp = get_next();
+		auto const atk = get_next();
+		auto const def = get_next();
+		auto const spc = get_next();
+		get_next();
+		auto const spe = get_next();
+		auto const dvs = DVs(atk, def, spe, spc);
+		if (dvs.hp() != hp) {
+			throw std::runtime_error("Stored HP DV does not match calculated HP DV.");
+		}
+		return Parsed{dvs, it};
+	} else {
+		return parse_stats<IV>(name, it);
+	}
+}
+
+template<Generation generation>
+auto parse_evs(CheckedIterator it) {
+	constexpr auto name = std::string_view("EV");
+	if constexpr (generation <= Generation::two) {
+		struct Parsed {
+			OldGenEVs stats;
+			CheckedIterator it;
+		};
+		auto get_next = [&]{
+			auto const & value = it.advance(name);
+			return EV(value.get_value<EV::value_type>());
+		};
+		auto const hp = get_next();
+		auto const atk = get_next();
+		auto const def = get_next();
+		auto const spc = get_next();
+		get_next();
+		auto const spe = get_next();
+		auto const evs = OldGenEVs(hp, atk, def, spe, spc);
+		return Parsed{evs, it};
+	} else {
+		return parse_stats<EV>(name, it);
+	}
+}
+
+template<Generation generation>
 auto parse_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID species_id) {
 	auto const species = id_to_species({ species_id, pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")} );
 	// auto const nickname = pt.get<std::string>("<xmlattr>.Nickname");
@@ -132,8 +185,9 @@ auto parse_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID specie
 
 	auto const it = CheckedIterator(pt.get_child(""));
 	auto const parsed_moves = parse_moves(generation, it);
-	auto ivs = parse_stats<IV>("DV", parsed_moves.it);
-	auto evs = parse_stats<EV>("EV", ivs.it);
+
+	auto const dvs_or_ivs = parse_dvs_or_ivs<generation>(parsed_moves.it);
+	auto const evs = parse_evs<generation>(dvs_or_ivs.it);
 
 	return Pokemon<generation>(
 		species,
@@ -141,7 +195,7 @@ auto parse_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID specie
 		gender,
 		item,
 		ability,
-		CombinedStats<generation>{nature, ivs.stats, evs.stats},
+		CombinedStats<generation>{nature, dvs_or_ivs.stats, evs.stats},
 		parsed_moves.moves,
 		happiness
 	);

@@ -26,14 +26,14 @@
 namespace technicalmachine {
 
 struct SpeedEVs {
-	template<Generation generation>
+	template<Generation generation> requires (generation >= Generation::three)
 	struct Input {
 		InitialStat<generation> stat;
 	};
-	template<Generation generation>
+	template<Generation generation> requires (generation >= Generation::three)
 	SpeedEVs(BaseStats const base, Level const level, IV const iv, Input<generation> const target) {
 		for (auto const nature : containers::enum_range<Nature>()) {
-			auto const ev = stat_to_ev(target.stat, RegularStat::spe, base.spe(), level, nature, iv);
+			auto const ev = stat_to_ev(target.stat, SplitSpecialRegularStat::spe, base.spe(), level, nature, iv);
 			if (ev) {
 				containers::emplace_back(m_container, nature, IVAndEV{iv, *ev});
 			}
@@ -55,4 +55,4 @@ private:
 	containers::static_vector<Mapped, static_cast<int>(numeric_traits::max_value<Nature>) + 1> m_container;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

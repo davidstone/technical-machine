@@ -23,16 +23,9 @@ constexpr void test_impl() {
 				break;
 		}
 		for (auto const has_physical_move : { false, true }) {
-			auto const ivs = [=] {
-				if constexpr (generation <= Generation::two) {
-					return detail::hidden_power_dvs(type, has_physical_move);
-				} else {
-					return detail::hidden_power_ivs(type, has_physical_move);
-				}
-			}();
-			auto const hp = HiddenPower<generation>(ivs);
-			BOUNDED_ASSERT(hp.power() == 70_bi);
-			BOUNDED_ASSERT(hp.type() == type);
+			auto const hidden_power = HiddenPower<generation>(hidden_power_ivs<generation>(type, has_physical_move));
+			BOUNDED_ASSERT(hidden_power.power() == 70_bi);
+			BOUNDED_ASSERT(hidden_power.type() == type);
 		}
 	}
 }

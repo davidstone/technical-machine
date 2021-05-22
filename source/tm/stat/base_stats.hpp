@@ -27,13 +27,13 @@ struct BaseStats {
 
 	using regular_value_type = bounded::integer<5, 230>;
 
-	auto operator[](RegularStat const stat_name) const -> regular_value_type {
+	auto operator[](SplitSpecialRegularStat const stat_name) const -> regular_value_type {
 		switch (stat_name) {
-			case RegularStat::atk: return atk();
-			case RegularStat::def: return def();
-			case RegularStat::spa: return spa();
-			case RegularStat::spd: return spd();
-			case RegularStat::spe: return spe();
+			case SplitSpecialRegularStat::atk: return atk();
+			case SplitSpecialRegularStat::def: return def();
+			case SplitSpecialRegularStat::spa: return spa();
+			case SplitSpecialRegularStat::spd: return spd();
+			case SplitSpecialRegularStat::spe: return spe();
 		}
 	}
 

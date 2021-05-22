@@ -29,7 +29,7 @@ struct Team;
 namespace po {
 
 inline void write_blank_stats(Generation const generation, boost::property_tree::ptree & pt) {
-	constexpr auto stat_names = containers::enum_range<PermanentStat>();
+	constexpr auto stat_names = containers::enum_range<SplitSpecialPermanentStat>();
 	for ([[maybe_unused]] auto const stat : stat_names) {
 		auto const dv = generation <= Generation::two ? 15 : 31;
 		pt.add("DV", dv);
@@ -42,7 +42,7 @@ inline void write_blank_stats(Generation const generation, boost::property_tree:
 template<Generation generation>
 void write_stats(Pokemon<generation> const & pokemon, boost::property_tree::ptree & pt) {
 	auto const stats = calculate_ivs_and_evs(pokemon);
-	constexpr auto stat_names = containers::enum_range<PermanentStat>();
+	constexpr auto stat_names = containers::enum_range<SplitSpecialPermanentStat>();
 	// In older generations, Spc is written into the SpA slot. The SpD slot is
 	// written as a 15 but unused in the official client, but here we instead
 	// just write Spc into both.

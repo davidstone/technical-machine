@@ -39,6 +39,7 @@ namespace technicalmachine {
 
 using namespace std::string_view_literals;
 using namespace bounded::literal;
+using namespace std::string_view_literals;
 
 constexpr auto round_up_divide(auto const lhs, auto const rhs) {
 	return lhs / rhs + BOUNDED_CONDITIONAL(lhs % rhs == 0_bi, 0_bi, 1_bi);
@@ -55,7 +56,7 @@ inline auto hp_to_ev(BaseStats const base, Level const level, HP::max_type const
 // `target` is not just InitialStat because this function is also used in the EV
 // optimizer, where values outside the legal range are regularly encountered as
 // part of speculative computation.
-constexpr auto stat_to_ev(bounded::bounded_integer auto const target, RegularStat const stat_name, BaseStats::regular_value_type const base, Level const level, Nature const nature, IV const iv) -> bounded::optional<EV> {
+constexpr auto stat_to_ev(bounded::bounded_integer auto const target, SplitSpecialRegularStat const stat_name, BaseStats::regular_value_type const base, Level const level, Nature const nature, IV const iv) -> bounded::optional<EV> {
 	auto const computed = (round_up_divide((round_up_divide(target, boost(nature, stat_name)) - 5_bi) * 100_bi, level()) - 2_bi * base - iv.value()) * 4_bi;
 	if (computed > EV::max) {
 		return bounded::none;
@@ -74,48 +75,64 @@ auto calculate_ivs_and_evs(
 ) -> CombinedStats<generation> {
 	// TODO: Use Hidden Power power to determine IVs, not just the type
 	auto const base = BaseStats(generation, species);
-	
 	while (true) {
-		auto const ivs = hidden_power_ivs(generation, hidden_power_type, has_physical_move);
-		auto const hp_ev = hp_to_ev(base, level, stats.hp().max(), ivs.hp());
+		auto const ivs = hidden_power_ivs<generation>(hidden_power_type, has_physical_move);
+		auto const hp_ev = hp_to_ev(base, level, stats.hp().max(), IV(ivs.hp()));
 
 		for (auto const nature : nature_range) {
-			auto compute_ev = [=](RegularStat const stat_name, auto const base_stat) {
-				return stat_to_ev(stats[stat_name], stat_name, base_stat, level, nature, ivs[stat_name]);
+			auto compute_ev = [=](SplitSpecialRegularStat const stat_name, auto const base_stat) {
+				return stat_to_ev(stats[stat_name], stat_name, base_stat, level, nature, IV(ivs[stat_name]));
 			};
-			auto const attack_ev = compute_ev(RegularStat::atk, base.atk());
+			auto const attack_ev = compute_ev(SplitSpecialRegularStat::atk, base.atk());
 			if (!attack_ev) {
 				continue;
 			}
-			auto const defense_ev = compute_ev(RegularStat::def, base.def());
+			auto const defense_ev = compute_ev(SplitSpecialRegularStat::def, base.def());
 			if (!defense_ev) {
 				continue;
 			}
-			auto const special_attack_ev = compute_ev(RegularStat::spa, base.spa());
+			auto special_attack_ev = compute_ev(SplitSpecialRegularStat::spa, base.spa());
 			if (!special_attack_ev) {
 				continue;
 			}
-			auto const special_defense_ev = compute_ev(RegularStat::spd, base.spd());
+			auto special_defense_ev = compute_ev(SplitSpecialRegularStat::spd, base.spd());
 			if (!special_defense_ev) {
 				continue;
 			}
-			auto const speed_ev = compute_ev(RegularStat::spe, base.spe());
+			if constexpr (generation <= Generation::two) {
+				auto const special_ev = bounded::max(*special_attack_ev, *special_defense_ev);
+				*special_attack_ev = special_ev;
+				*special_defense_ev = special_ev;
+			}
+			auto const speed_ev = compute_ev(SplitSpecialRegularStat::spe, base.spe());
 			if (!speed_ev) {
 				continue;
 			}
 
-			auto const evs = EVs(
-				hp_ev,
-				*attack_ev,
-				*defense_ev,
-				*special_attack_ev,
-				*special_defense_ev,
-				*speed_ev
-			);
+			auto const evs = [=] {
+				if constexpr (generation <= Generation::two) {
+					return OldGenEVs(
+						hp_ev,
+						*attack_ev,
+						*defense_ev,
+						*speed_ev,
+						*special_attack_ev
+					);
+				} else {
+					return EVs(
+						hp_ev,
+						*attack_ev,
+						*defense_ev,
+						*special_attack_ev,
+						*special_defense_ev,
+						*speed_ev
+					);
+				}
+			}();
 			if (ev_sum(evs) > max_total_evs(generation)) {
 				continue;
 			}
-			
+
 			return CombinedStats<generation>{
 				nature,
 				ivs,
@@ -166,14 +183,14 @@ auto calculate_ivs_and_evs(
 template<Generation generation>
 auto calculate_ivs_and_evs(Pokemon<generation> const pokemon) {
 	auto const nature = pokemon.nature();
-	auto const stats = Stats<generation>(
+	auto const stats = Stats<generation>{
 		pokemon.hp(),
-		pokemon.stat(RegularStat::atk),
-		pokemon.stat(RegularStat::def),
-		pokemon.stat(RegularStat::spa),
-		pokemon.stat(RegularStat::spd),
-		pokemon.stat(RegularStat::spe)
-	);
+		pokemon.stat(SplitSpecialRegularStat::atk),
+		pokemon.stat(SplitSpecialRegularStat::def),
+		pokemon.stat(SplitSpecialRegularStat::spa),
+		pokemon.stat(SplitSpecialRegularStat::spd),
+		pokemon.stat(SplitSpecialRegularStat::spe)
+	};
 	return calculate_ivs_and_evs(
 		pokemon.species(),
 		pokemon.level(),

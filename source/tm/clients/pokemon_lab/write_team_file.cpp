@@ -17,14 +17,14 @@ auto write_move(Move const move, boost::property_tree::ptree & pt) -> void {
 	m.put ("<xmlattr>.pp-up", 3);
 }
 
-auto to_simulator_string(PermanentStat const stat) -> std::string_view {
+auto to_simulator_string(SplitSpecialPermanentStat const stat) -> std::string_view {
 	switch (stat) {
-		case PermanentStat::hp: return "HP";
-		case PermanentStat::atk: return "Atk";
-		case PermanentStat::def: return "Def";
-		case PermanentStat::spa: return "SpAtk";
-		case PermanentStat::spd: return "SpDef";
-		case PermanentStat::spe: return "Spd";
+		case SplitSpecialPermanentStat::hp: return "HP";
+		case SplitSpecialPermanentStat::atk: return "Atk";
+		case SplitSpecialPermanentStat::def: return "Def";
+		case SplitSpecialPermanentStat::spa: return "SpAtk";
+		case SplitSpecialPermanentStat::spd: return "SpDef";
+		case SplitSpecialPermanentStat::spe: return "Spd";
 	}
 }
 

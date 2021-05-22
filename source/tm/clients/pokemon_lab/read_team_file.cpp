@@ -129,8 +129,8 @@ auto parse_stats(boost::property_tree::ptree const & pt) {
 		}
 		return CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(IV(hp->dv), IV(atk->dv), IV(def->dv), IV(spa->dv), IV(spd->dv), IV(spe->dv)),
-			EVs(hp->ev, atk->ev, def->ev, spa->ev, spd->ev, spe->ev)
+			dvs,
+			OldGenEVs(hp->ev, atk->ev, def->ev, spe->ev, spa->ev)
 		};
 	} else {
 		return CombinedStats<generation>{

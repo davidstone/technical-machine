@@ -67,8 +67,9 @@ auto to_packed_format(Team<generation> const & team) -> containers::string {
 		);
 
 		auto const stats = calculate_ivs_and_evs(pokemon);
-		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-			if (stat_name != PermanentStat::hp) {
+		// Spc goes in SpA. SpD is ignored.
+		for (auto const stat_name : containers::enum_range<SplitSpecialPermanentStat>()) {
+			if (stat_name != SplitSpecialPermanentStat::hp) {
 				containers::push_back(result, ',');
 			}
 			containers::append(result, to_string(stats.evs[stat_name].value()));
@@ -81,8 +82,9 @@ auto to_packed_format(Team<generation> const & team) -> containers::string {
 			separator_range
 		);
 
-		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-			if (stat_name != PermanentStat::hp) {
+		// Spc goes in SpA. SpD is ignored.
+		for (auto const stat_name : containers::enum_range<SplitSpecialPermanentStat>()) {
+			if (stat_name != SplitSpecialPermanentStat::hp) {
 				containers::push_back(result, ',');
 			}
 			containers::append(result, to_string(stats.dvs_or_ivs[stat_name].value()));

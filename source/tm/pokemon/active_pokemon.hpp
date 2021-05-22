@@ -195,7 +195,7 @@ public:
 	auto hp() const {
 		return m_pokemon.hp();
 	}
-	auto stat(RegularStat const stat_name) const {
+	auto stat(SplitSpecialRegularStat const stat_name) const {
 		return m_pokemon.stat(stat_name);
 	}
 
@@ -953,7 +953,7 @@ private:
 			return true;
 		};
 
-		auto confusion_berry = [&](RegularStat const stat) {
+		auto confusion_berry = [&](SplitSpecialRegularStat const stat) {
 			auto const amount = this->hp().max() / BOUNDED_CONDITIONAL(generation <= Generation::six, 8_bi, 2_bi);
 			auto const threshold = generation <= Generation::six ? rational(1_bi, 2_bi) : quarter_threshold();
 			auto const activated = healing_berry(threshold, amount);
@@ -972,7 +972,7 @@ private:
 
 		switch (this->item(weather)) {
 			case Item::Aguav_Berry:
-				confusion_berry(RegularStat::spd);
+				confusion_berry(SplitSpecialRegularStat::spd);
 				break;
 			case Item::Apicot_Berry:
 				stat_boost_berry(BoostableStat::spd);
@@ -988,7 +988,7 @@ private:
 				consume();
 				break;
 			case Item::Figy_Berry:
-				confusion_berry(RegularStat::atk);
+				confusion_berry(SplitSpecialRegularStat::atk);
 				break;
 			case Item::Ganlon_Berry:
 				stat_boost_berry(BoostableStat::def);
@@ -997,7 +997,7 @@ private:
 				healing_berry(rational(1_bi, 2_bi), 30_bi);
 				break;
 			case Item::Iapapa_Berry:
-				confusion_berry(RegularStat::def);
+				confusion_berry(SplitSpecialRegularStat::def);
 				break;
 			case Item::Lansat_Berry:
 				consume();
@@ -1006,7 +1006,7 @@ private:
 				stat_boost_berry(BoostableStat::atk);
 				break;
 			case Item::Mago_Berry:
-				confusion_berry(RegularStat::spe);
+				confusion_berry(SplitSpecialRegularStat::spe);
 				break;
 			case Item::Micle_Berry:
 				consume();
@@ -1028,7 +1028,7 @@ private:
 				consume();
 				break;
 			case Item::Wiki_Berry:
-				confusion_berry(RegularStat::spa);
+				confusion_berry(SplitSpecialRegularStat::spa);
 				break;
 			default:
 				break;

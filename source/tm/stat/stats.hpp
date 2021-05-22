@@ -20,8 +20,6 @@
 #include <containers/array/array.hpp>
 
 namespace technicalmachine {
-enum class Generation : std::uint8_t;
-struct Level;
 
 template<Generation generation>
 struct Stats {
@@ -43,7 +41,7 @@ public:
 			level,
 			IV(inputs.dvs_or_ivs.hp()),
 			inputs.evs.hp(),
-			[=](RegularStat const stat_name) {
+			[=](SplitSpecialRegularStat const stat_name) {
 				return initial_stat<generation>(
 					stat_name,
 					base[stat_name],
@@ -82,7 +80,7 @@ public:
 	constexpr auto spe() const {
 		return m_spe;
 	}
-	constexpr auto operator[](RegularStat const stat_name) const {
+	constexpr auto operator[](SplitSpecialRegularStat const stat_name) const {
 		return index_stat(*this, stat_name);
 	}
 
@@ -90,11 +88,11 @@ public:
 private:
 	Stats(BaseStats const base, Level const level, IV const hp_iv, EV const hp_ev, auto make) :
 		m_hp(base, level, hp_iv, hp_ev),
-		m_atk(make(RegularStat::atk)),
-		m_def(make(RegularStat::def)),
-		m_spa(make(RegularStat::spa)),
-		m_spd(make(RegularStat::spd)),
-		m_spe(make(RegularStat::spe))
+		m_atk(make(SplitSpecialRegularStat::atk)),
+		m_def(make(SplitSpecialRegularStat::def)),
+		m_spa(make(SplitSpecialRegularStat::spa)),
+		m_spd(make(SplitSpecialRegularStat::spd)),
+		m_spe(make(SplitSpecialRegularStat::spe))
 	{
 	}
 	HP m_hp;

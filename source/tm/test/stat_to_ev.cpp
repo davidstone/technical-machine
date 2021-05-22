@@ -12,7 +12,6 @@
 #include <tm/stat/ev.hpp>
 #include <tm/stat/hp.hpp>
 #include <tm/stat/initial_stat.hpp>
-#include <tm/stat/iv.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 
 #include <bounded/assert.hpp>
@@ -39,7 +38,7 @@ void test_attack() {
 	constexpr auto iv = IV(13_bi);
 	constexpr auto ev = EV(176_bi);
 	constexpr auto nature = Nature::Adamant;
-	constexpr auto stat_name = RegularStat::atk;
+	constexpr auto stat_name = SplitSpecialRegularStat::atk;
 	auto const stat_value = initial_stat<generation>(stat_name, base_stats.atk(), level, nature, iv, ev);
 	auto const computed_ev = stat_to_ev(stat_value, stat_name, base_stats.atk(), level, nature, iv);
 	BOUNDED_ASSERT(computed_ev == ev);

@@ -35,7 +35,7 @@ namespace technicalmachine {
 
 template<Generation generation>
 struct Pokemon {
-	Pokemon(Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats<generation> stat_inputs, RegularMoves regular_moves_, Happiness const happiness = Happiness()):
+	Pokemon(Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats<generation> const stat_inputs, RegularMoves regular_moves_, Happiness const happiness = Happiness()):
 		m_regular_moves(regular_moves_),
 		m_stats(BaseStats(generation, species), level, stat_inputs),
 
@@ -50,16 +50,11 @@ struct Pokemon {
 		m_happiness(happiness),
 
 		// TODO: Make this none if there is no way to call Hidden Power
-		// TODO: Use the IVs provided
-		m_hidden_power([=]{
+		m_hidden_power([=] {
 			if constexpr (generation == Generation::one) {
 				return bounded::none;
-			} else if constexpr (generation == Generation::two) {
-				constexpr auto dv = DV(15_bi);
-				return HiddenPower<generation>(DVs(dv, dv, dv, dv));
 			} else {
-				constexpr auto iv = IV(31_bi);
-				return HiddenPower<generation>(IVs(iv, iv, iv, iv, iv, iv));
+				return HiddenPower<generation>(stat_inputs.dvs_or_ivs);
 			}
 		}()),
 		
@@ -76,7 +71,7 @@ struct Pokemon {
 	auto hp() const {
 		return m_stats.hp();
 	}
-	auto stat(RegularStat const stat_name) const {
+	auto stat(SplitSpecialRegularStat const stat_name) const {
 		return m_stats[stat_name];
 	}
 

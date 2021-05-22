@@ -47,33 +47,33 @@ enum class Nature : std::uint8_t {
 	Timid,
 };
 
-constexpr auto boosts_stat(Nature const nature, RegularStat const stat) -> bool {
+constexpr auto boosts_stat(Nature const nature, SplitSpecialRegularStat const stat) -> bool {
 	switch (nature) {
 		case Nature::Adamant:
 		case Nature::Brave:
 		case Nature::Lonely:
 		case Nature::Naughty:
-			return stat == RegularStat::atk;
+			return stat == SplitSpecialRegularStat::atk;
 		case Nature::Bold:
 		case Nature::Impish:
 		case Nature::Lax:
 		case Nature::Relaxed:
-			return stat == RegularStat::def;
+			return stat == SplitSpecialRegularStat::def;
 		case Nature::Mild:
 		case Nature::Modest:
 		case Nature::Quiet:
 		case Nature::Rash:
-			return stat == RegularStat::spa;
+			return stat == SplitSpecialRegularStat::spa;
 		case Nature::Calm:
 		case Nature::Careful:
 		case Nature::Gentle:
 		case Nature::Sassy:
-			return stat == RegularStat::spd;
+			return stat == SplitSpecialRegularStat::spd;
 		case Nature::Hasty:
 		case Nature::Jolly:
 		case Nature::Naive:
 		case Nature::Timid:
-			return stat == RegularStat::spe;
+			return stat == SplitSpecialRegularStat::spe;
 		case Nature::Bashful:
 		case Nature::Docile:
 		case Nature::Hardy:
@@ -83,33 +83,33 @@ constexpr auto boosts_stat(Nature const nature, RegularStat const stat) -> bool 
 	}
 }
 
-constexpr auto lowers_stat(Nature const nature, RegularStat const stat) -> bool {
+constexpr auto lowers_stat(Nature const nature, SplitSpecialRegularStat const stat) -> bool {
 	switch (nature) {
 		case Nature::Bold:
 		case Nature::Calm:
 		case Nature::Modest:
 		case Nature::Timid:
-			return stat == RegularStat::atk;
+			return stat == SplitSpecialRegularStat::atk;
 		case Nature::Gentle:
 		case Nature::Hasty:
 		case Nature::Lonely:
 		case Nature::Mild:
-			return stat == RegularStat::def;
+			return stat == SplitSpecialRegularStat::def;
 		case Nature::Adamant:
 		case Nature::Careful:
 		case Nature::Impish:
 		case Nature::Jolly:
-			return stat == RegularStat::spa;
+			return stat == SplitSpecialRegularStat::spa;
 		case Nature::Lax:
 		case Nature::Naive:
 		case Nature::Naughty:
 		case Nature::Rash:
-			return stat == RegularStat::spd;
+			return stat == SplitSpecialRegularStat::spd;
 		case Nature::Brave:
 		case Nature::Quiet:
 		case Nature::Relaxed:
 		case Nature::Sassy:
-			return stat == RegularStat::spe;
+			return stat == SplitSpecialRegularStat::spe;
 		case Nature::Bashful:
 		case Nature::Docile:
 		case Nature::Hardy:
@@ -120,22 +120,22 @@ constexpr auto lowers_stat(Nature const nature, RegularStat const stat) -> bool 
 }
 
 constexpr auto boosts_attacking_stat(Nature const nature) -> bool {
-	return boosts_stat(nature, RegularStat::atk) or boosts_stat(nature, RegularStat::spa);
+	return boosts_stat(nature, SplitSpecialRegularStat::atk) or boosts_stat(nature, SplitSpecialRegularStat::spa);
 }
 
 constexpr auto boosts_defending_stat(Nature const nature) -> bool {
-	return boosts_stat(nature, RegularStat::def) or boosts_stat(nature, RegularStat::spd);
+	return boosts_stat(nature, SplitSpecialRegularStat::def) or boosts_stat(nature, SplitSpecialRegularStat::spd);
 }
 
 constexpr auto lowers_attacking_stat(Nature const nature) -> bool {
-	return lowers_stat(nature, RegularStat::atk) or lowers_stat(nature, RegularStat::spa);
+	return lowers_stat(nature, SplitSpecialRegularStat::atk) or lowers_stat(nature, SplitSpecialRegularStat::spa);
 }
 
 constexpr auto lowers_defending_stat(Nature const nature) -> bool {
-	return lowers_stat(nature, RegularStat::def) or lowers_stat(nature, RegularStat::spd);
+	return lowers_stat(nature, SplitSpecialRegularStat::def) or lowers_stat(nature, SplitSpecialRegularStat::spd);
 }
 
-constexpr auto boost(Nature const nature, RegularStat const stat) {
+constexpr auto boost(Nature const nature, SplitSpecialRegularStat const stat) {
 	auto const numerator =
 		BOUNDED_CONDITIONAL(boosts_stat(nature, stat), 11_bi,
 		BOUNDED_CONDITIONAL(lowers_stat(nature, stat), 9_bi,

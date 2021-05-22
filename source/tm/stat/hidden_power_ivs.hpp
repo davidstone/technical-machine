@@ -300,10 +300,13 @@ constexpr auto hidden_power_ivs(bounded::optional<Type> const type, bool const h
 
 } // namespace detail
 
-constexpr auto hidden_power_ivs(Generation const generation, bounded::optional<Type> const type, bool const has_physical_move) {
-	return generation <= Generation::two ?
-		IVs(detail::hidden_power_dvs(type, has_physical_move)) :
-		detail::hidden_power_ivs(type, has_physical_move);
+template<Generation generation>
+constexpr auto hidden_power_ivs(bounded::optional<Type> const type, bool const has_physical_move) {
+	if constexpr (generation <= Generation::two) {
+		return detail::hidden_power_dvs(type, has_physical_move);
+	} else {
+		return detail::hidden_power_ivs(type, has_physical_move);
+	}
 }
 
 }	// namespace technicalmachine

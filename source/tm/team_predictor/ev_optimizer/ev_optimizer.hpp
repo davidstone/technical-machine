@@ -22,8 +22,9 @@
 #include <tm/stat/generic_stats.hpp>
 #include <tm/stat/hidden_power_ivs.hpp>
 #include <tm/stat/hp.hpp>
-#include <tm/stat/iv.hpp>
+#include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/stat_to_ev.hpp>
+
 #include <tm/type/type.hpp>
 
 #include <bounded/assert.hpp>
@@ -40,7 +41,7 @@ namespace detail {
 
 template<Generation generation>
 auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats<generation> {
-	auto best = bounded::optional<CombinedStats<generation>>{};
+	auto best = bounded::optional<CombinedStats<generation>>();
 	for (auto const & speed : speed_container) {
 		auto const offensive = o.find(speed.nature);
 		if (!offensive) {
@@ -89,16 +90,15 @@ auto compute_minimal_spread(
 	bool const include_attack,
 	bool const include_special_attack
 ) -> CombinedStats<generation> {
-	auto const ivs = hidden_power_ivs(generation, hidden_power_type, include_attack);
+	auto const ivs = hidden_power_ivs<generation>(hidden_power_type, include_attack);
 
 	if constexpr (generation <= Generation::two) {
 		return CombinedStats<generation>{
 			Nature::Hardy,
 			ivs,
-			EVs(
+			OldGenEVs(
 				EV(EV::useful_max),
 				include_attack ? EV(EV::useful_max) : EV(0_bi),
-				EV(EV::useful_max),
 				EV(EV::useful_max),
 				EV(EV::useful_max),
 				EV(EV::useful_max)
@@ -127,8 +127,8 @@ auto compute_minimal_spread(
 template<Generation generation>
 auto pad_random_evs(CombinedStats<generation> combined, bool const include_attack, bool const include_special_attack, std::mt19937 & random_engine) -> CombinedStats<generation> {
 	if constexpr (generation <= Generation::two) {
-		for (auto const stat_name : containers::enum_range<PermanentStat>()) {
-			auto const minimize_stat = stat_name == PermanentStat::atk and !include_attack;
+		for (auto const stat_name : containers::enum_range<SpecialPermanentStat>()) {
+			auto const minimize_stat = stat_name == SpecialPermanentStat::atk and !include_attack;
 			combined.evs[stat_name] = minimize_stat ? EV(0_bi) : EV(EV::useful_max);
 		}
 	} else {
@@ -144,7 +144,7 @@ auto pad_random_evs(CombinedStats<generation> combined, bool const include_attac
 				combined.evs.spe() >= EV::useful_max ? 0.0 : 1.0,
 			});
 			auto const index = distribution(random_engine);
-			auto & ev = combined.evs[PermanentStat(index - 1)];
+			auto & ev = combined.evs[SplitSpecialPermanentStat(index - 1)];
 			ev = EV(EV::value_type(ev.value() + minimal_increment));
 		}
 	}

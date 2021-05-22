@@ -14,9 +14,8 @@ namespace technicalmachine {
 template<Generation generation>
 struct CombinedStats {
 	Nature nature;
-	IVs dvs_or_ivs;
-	EVs evs;
-
+	std::conditional_t<generation <= Generation::two, DVs, IVs> dvs_or_ivs;
+	std::conditional_t<generation <= Generation::two, OldGenEVs, EVs> evs;
 	friend auto operator==(CombinedStats, CombinedStats) -> bool = default;
 };
 
@@ -25,7 +24,7 @@ template<Generation generation>
 inline constexpr auto default_evs = [] {
 	if constexpr (generation <= Generation::two) {
 		constexpr auto ev = EV(252_bi);
-		return EVs(ev, ev, ev, ev, ev, ev);
+		return OldGenEVs(ev, ev, ev, ev, ev);
 	} else {
 		constexpr auto ev = EV(0_bi);
 		return EVs(ev, ev, ev, ev, ev, ev);
