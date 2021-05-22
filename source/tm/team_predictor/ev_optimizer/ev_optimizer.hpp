@@ -136,12 +136,12 @@ auto pad_random_evs(CombinedStats<generation> combined, bool const include_attac
 		constexpr auto minimal_increment = 4_bi;
 		while (ev_sum(combined.evs) + minimal_increment <= max_total_evs(generation)) {
 			distribution.param({
-				combined.evs.hp() == EV::useful_max ? 0.0 : 1.0,
-				(!include_attack or combined.evs.atk() == EV::useful_max) ? 0.0 : 1.0,
-				combined.evs.def() == EV::useful_max ? 0.0 : 1.0,
-				(!include_special_attack or combined.evs.spa() == EV::useful_max) ? 0.0 : 1.0,
-				combined.evs.spd() == EV::useful_max ? 0.0 : 1.0,
-				combined.evs.spe() == EV::useful_max ? 0.0 : 1.0,
+				combined.evs.hp() >= EV::useful_max ? 0.0 : 1.0,
+				(!include_attack or combined.evs.atk() >= EV::useful_max) ? 0.0 : 1.0,
+				combined.evs.def() >= EV::useful_max ? 0.0 : 1.0,
+				(!include_special_attack or combined.evs.spa() >= EV::useful_max) ? 0.0 : 1.0,
+				combined.evs.spd() >= EV::useful_max ? 0.0 : 1.0,
+				combined.evs.spe() >= EV::useful_max ? 0.0 : 1.0,
 			});
 			auto const index = distribution(random_engine);
 			auto & ev = combined.evs[PermanentStat(index - 1)];
