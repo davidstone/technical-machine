@@ -53,14 +53,7 @@ void basic() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		expected
 	));
@@ -84,14 +77,7 @@ void basic() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
 	));
@@ -135,14 +121,7 @@ void test_two_moves_with_one_out_of_pp() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
@@ -166,14 +145,7 @@ void test_two_moves_with_one_out_of_pp() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
@@ -210,14 +182,7 @@ void test_two_moves_with_both_out_of_pp() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
@@ -243,14 +208,7 @@ void test_two_moves_with_both_out_of_pp() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		moves(Moves::Thunder, Moves::Thunderbolt)
 	));
@@ -287,14 +245,7 @@ void replace_fainted() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		moves(Moves::Flamethrower)
 	));
@@ -315,14 +266,7 @@ void replace_fainted() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		moves(Moves::Thunderbolt)
 	));
@@ -346,14 +290,7 @@ void replace_fainted() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		moves(Moves::Surf)
 	));

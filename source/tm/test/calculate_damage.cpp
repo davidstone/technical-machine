@@ -105,14 +105,7 @@ auto max_damage_physical_defender() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -163,14 +156,7 @@ void special_power_test() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		RegularMoves({move})
 	));
@@ -196,14 +182,7 @@ void special_power_test() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		RegularMoves({Move(generation, Moves::Dive)})
 	));
@@ -332,14 +311,7 @@ void special_damage_test() {
 				IV(0_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));

@@ -58,14 +58,7 @@ void test_baton_pass() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
 	));
@@ -252,14 +245,7 @@ void wonder_guard() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Shadow_Ball, Moves::Thunderbolt)
 	));
@@ -282,14 +268,7 @@ void wonder_guard() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
@@ -341,14 +320,7 @@ void fire_move_thaws_target() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Ember)
 	));
@@ -371,14 +343,7 @@ void fire_move_thaws_target() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));

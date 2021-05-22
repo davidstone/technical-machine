@@ -188,14 +188,7 @@ void min_defense_test() {
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));

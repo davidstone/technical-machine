@@ -25,14 +25,7 @@ Pokemon<generation>::Pokemon(Species const species, Level const level, Gender co
                 default_iv(generation),
                 default_iv(generation)
 			),
-            EVs(
-                EV(0_bi),
-                EV(0_bi),
-                EV(0_bi),
-                EV(0_bi),
-                EV(0_bi),
-                EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		RegularMoves(),
 		Happiness()

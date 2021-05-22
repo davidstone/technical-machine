@@ -100,14 +100,7 @@ auto parse_moves(Generation const generation, boost::property_tree::ptree const 
 
 template<Generation generation>
 auto parse_stats(boost::property_tree::ptree const & pt) {
-	auto evs = EVs(
-		EV(0_bi),
-		EV(0_bi),
-		EV(0_bi),
-		EV(0_bi),
-		EV(0_bi),
-		EV(0_bi)
-	);
+	auto evs = empty_evs<generation>;
 	auto ivs = IVs(
 		IV(0_bi),
 		IV(0_bi),

@@ -201,14 +201,7 @@ private:
 					IV(31_bi),
 					IV(31_bi)
 				),
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
+				empty_evs<generation>
 			},
 			moves
 		));

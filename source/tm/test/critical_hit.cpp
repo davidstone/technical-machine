@@ -39,14 +39,7 @@ auto individual_test(Species const species, Moves const move_name, Item const it
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));

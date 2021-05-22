@@ -74,14 +74,7 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
 	));
@@ -105,14 +98,7 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
 	));
@@ -142,14 +128,7 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Swords_Dance, Moves::X_Scissor, Moves::Shadow_Sneak, Moves::Will_O_Wisp)
 	));
@@ -218,14 +197,7 @@ void one_turn_damage_tests(Evaluate<Generation::four> const & evaluate, Weather 
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Surf, Moves::Ice_Beam)
 	));
@@ -410,14 +382,7 @@ void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weath
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
 	));
@@ -542,14 +507,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Tackle)
 	));
@@ -571,14 +529,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Flamethrower, Moves::Earth_Power)
 	));
@@ -629,14 +580,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Calm_Mind, Moves::Surf, Moves::Ice_Beam)
 	));
@@ -768,14 +712,7 @@ void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & rand
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Sleep_Talk, Moves::Thunderbolt)
 	));
@@ -799,14 +736,7 @@ void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & rand
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Earthquake)
 	));
@@ -889,14 +819,7 @@ void generation_one_frozen_last_pokemon(Evaluate<Generation::one> const & evalua
 				IV(31_bi),
 				IV(31_bi)
 			),
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
+			empty_evs<generation>
 		},
 		regular_moves(Moves::Psychic, Moves::Recover, Moves::Thunder_Wave, Moves::Seismic_Toss)
 	));
@@ -920,14 +843,7 @@ void generation_one_frozen_last_pokemon(Evaluate<Generation::one> const & evalua
 					IV(31_bi),
 					IV(31_bi)
 				),
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
+				empty_evs<generation>
 			},
 			regular_moves(Moves::Explosion, Moves::Hypnosis, Moves::Thunderbolt, Moves::Night_Shade)
 		);
