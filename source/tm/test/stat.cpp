@@ -48,14 +48,7 @@ void attack_tests() {
 		Ability::Pure_Power,
 		CombinedStats<generation>{
 			Nature::Impish,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(0_bi),
 				EV(0_bi),
@@ -92,14 +85,7 @@ void special_attack_tests() {
 		Ability::Solar_Power,
 		CombinedStats<generation>{
 			Nature::Modest,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(0_bi),
 				EV(0_bi),
@@ -136,14 +122,7 @@ void max_defense_test() {
 		Ability::Marvel_Scale,
 		CombinedStats<generation>{
 			Nature::Bold,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(0_bi),
 				EV(0_bi),
@@ -226,14 +205,7 @@ void special_defense_tests() {
 		Ability::Honey_Gather,
 		CombinedStats<generation>{
 			Nature::Calm,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(0_bi),
 				EV(0_bi),
@@ -270,14 +242,7 @@ void speed_tests() {
 		Ability::Swift_Swim,
 		CombinedStats<generation>{
 			Nature::Timid,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(0_bi),
 				EV(0_bi),

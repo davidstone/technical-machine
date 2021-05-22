@@ -73,14 +73,7 @@ void test_pokemon() {
 		Ability::Pressure,
 		CombinedStats<generation>{
 			Nature::Modest,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(4_bi),
 				EV(12_bi),

@@ -40,14 +40,7 @@ auto expected_generation_one_team() {
 		Ability::Honey_Gather,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(252_bi),
 				EV(252_bi),
@@ -68,14 +61,7 @@ auto expected_generation_one_team() {
 		Ability::Honey_Gather,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(248_bi),
 				EV(248_bi),
@@ -96,14 +82,7 @@ auto expected_generation_one_team() {
 		Ability::Honey_Gather,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(252_bi),
 				EV(252_bi),
@@ -124,14 +103,7 @@ auto expected_generation_one_team() {
 		Ability::Honey_Gather,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(252_bi),
 				EV(252_bi),
@@ -152,14 +124,7 @@ auto expected_generation_one_team() {
 		Ability::Honey_Gather,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(252_bi),
 				EV(252_bi),
@@ -180,14 +145,7 @@ auto expected_generation_one_team() {
 		Ability::Honey_Gather,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(252_bi),
 				EV(252_bi),

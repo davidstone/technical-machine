@@ -47,14 +47,7 @@ void sleep_talk() {
 			Ability::Volt_Absorb,
 			CombinedStats<generation>{
 				Nature::Hardy,
-				IVs(
-					IV(31_bi),
-					IV(31_bi),
-					IV(31_bi),
-					IV(31_bi),
-					IV(31_bi),
-					IV(31_bi)
-				),
+				max_dvs_or_ivs<generation>,
 				EVs(
 					EV(0_bi),
 					EV(0_bi),
@@ -81,14 +74,7 @@ void sleep_talk() {
 		Ability::Intimidate,
 		CombinedStats<generation>{
 			Nature::Adamant,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(0_bi),
 				EV(252_bi),
@@ -193,14 +179,7 @@ private:
 			Ability::Natural_Cure,
 			CombinedStats<generation>{
 				Nature::Hardy,
-				IVs(
-					IV(31_bi),
-					IV(31_bi),
-					IV(31_bi),
-					IV(31_bi),
-					IV(31_bi),
-					IV(31_bi)
-				),
+				max_dvs_or_ivs<generation>,
 				empty_evs<generation>
 			},
 			moves

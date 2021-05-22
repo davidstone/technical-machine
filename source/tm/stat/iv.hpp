@@ -114,4 +114,17 @@ private:
 	DV m_spc;
 };
 
+template<Generation generation>
+inline constexpr auto max_dvs_or_ivs = []{
+	constexpr auto value = generation <= Generation::two ? IV(30_bi) : IV(31_bi);
+	return IVs(
+		value,
+		value,
+		value,
+		value,
+		value,
+		value
+	);
+}();
+
 } // namespace technicalmachine

@@ -43,14 +43,7 @@ void evaluate_tests() {
 		Ability::Natural_Cure,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			empty_evs<generation>
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})

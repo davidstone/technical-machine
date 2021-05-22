@@ -56,14 +56,7 @@ auto max_damage_physical_attacker(Item const item, Ability const ability) {
 		ability,
 		CombinedStats<generation>{
 			Nature::Impish,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(0_bi),
 				EV(0_bi),
@@ -148,14 +141,7 @@ void special_power_test() {
 		Ability::Torrent,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			empty_evs<generation>
 		},
 		RegularMoves({move})
@@ -174,14 +160,7 @@ void special_power_test() {
 		Ability::Dry_Skin,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			empty_evs<generation>
 		},
 		RegularMoves({Move(generation, Moves::Dive)})
@@ -260,14 +239,7 @@ void special_damage_test() {
 		Ability::Blaze,
 		CombinedStats<generation>{
 			Nature::Modest,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(0_bi),
 				EV(0_bi),

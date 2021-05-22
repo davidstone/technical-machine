@@ -139,7 +139,7 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 		}
 		pokemon.set_ivs_and_evs(CombinedStats<generation>{
 			nature ? *nature : Nature::Hardy,
-			IVs(default_iv(generation), default_iv(generation), default_iv(generation), default_iv(generation), default_iv(generation), default_iv(generation)),
+			max_dvs_or_ivs<generation>,
 			evs
 		});
 		team.add_pokemon(pokemon);

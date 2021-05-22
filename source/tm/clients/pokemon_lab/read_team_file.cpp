@@ -101,14 +101,7 @@ auto parse_moves(Generation const generation, boost::property_tree::ptree const 
 template<Generation generation>
 auto parse_stats(boost::property_tree::ptree const & pt) {
 	auto evs = empty_evs<generation>;
-	auto ivs = IVs(
-		IV(0_bi),
-		IV(0_bi),
-		IV(0_bi),
-		IV(0_bi),
-		IV(0_bi),
-		IV(0_bi)
-	);
+	auto ivs = max_dvs_or_ivs<generation>;
 	for (auto const & value : pt.get_child("stats")) {
 		auto const & stats = value.second;
 		auto const stat_name = parse_stat_name(stats.get<std::string>("<xmlattr>.name"));

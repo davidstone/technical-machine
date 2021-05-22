@@ -50,14 +50,7 @@ void test_baton_pass() {
 		Ability::Own_Tempo,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			empty_evs<generation>
 		},
 		regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
@@ -70,14 +63,7 @@ void test_baton_pass() {
 		Ability::Synchronize,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(0_bi),
 				EV(252_bi),
@@ -100,14 +86,7 @@ void test_baton_pass() {
 		Ability::Levitate,
 		CombinedStats<generation>{
 			Nature::Modest,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(0_bi),
 				EV(0_bi),
@@ -127,14 +106,7 @@ void test_baton_pass() {
 		Ability::Levitate,
 		CombinedStats<generation>{
 			Nature::Modest,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(0_bi),
 				EV(0_bi),
@@ -237,14 +209,7 @@ void wonder_guard() {
 		Ability::Volt_Absorb,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			empty_evs<generation>
 		},
 		regular_moves(Moves::Shadow_Ball, Moves::Thunderbolt)
@@ -260,14 +225,7 @@ void wonder_guard() {
 		Ability::Wonder_Guard,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			empty_evs<generation>
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})
@@ -312,14 +270,7 @@ void fire_move_thaws_target() {
 		Ability::Blaze,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			empty_evs<generation>
 		},
 		regular_moves(Moves::Ember)
@@ -335,14 +286,7 @@ void fire_move_thaws_target() {
 		Ability::Water_Absorb,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			empty_evs<generation>
 		},
 		RegularMoves({Move(generation, Moves::Tackle)})

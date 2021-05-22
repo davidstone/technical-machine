@@ -52,14 +52,7 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 		Ability::Honey_Gather,
 		CombinedStats<generation>{
 			Nature::Adamant,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(252_bi),
 				EV(96_bi),
@@ -146,14 +139,7 @@ void not_level_100(std::mt19937 & random_engine) {
 		Ability::Honey_Gather,
 		CombinedStats<generation>{
 			Nature::Modest,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(192_bi),
 				EV(0_bi),
@@ -182,14 +168,7 @@ void generation_two(std::mt19937 & random_engine) {
 		Ability::Honey_Gather,
 		CombinedStats<generation>{
 			Nature::Hardy,
-			IVs(
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi),
-				IV(30_bi)
-			),
+			max_dvs_or_ivs<generation>,
 			EVs(
 				EV(252_bi),
 				EV(252_bi),
