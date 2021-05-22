@@ -29,11 +29,11 @@ struct BaseStats {
 
 	auto operator[](RegularStat const stat_name) const -> regular_value_type {
 		switch (stat_name) {
-			case RegularStat::atk: return m_atk;
-			case RegularStat::def: return m_def;
-			case RegularStat::spa: return m_spa;
-			case RegularStat::spd: return m_spd;
-			case RegularStat::spe: return m_spe;
+			case RegularStat::atk: return atk();
+			case RegularStat::def: return def();
+			case RegularStat::spa: return spa();
+			case RegularStat::spd: return spd();
+			case RegularStat::spe: return spe();
 		}
 	}
 
