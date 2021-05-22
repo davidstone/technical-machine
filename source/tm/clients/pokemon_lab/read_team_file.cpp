@@ -12,6 +12,7 @@
 
 #include <tm/stat/ev.hpp>
 #include <tm/stat/iv.hpp>
+#include <tm/stat/iv_and_ev.hpp>
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
@@ -40,26 +41,6 @@
 namespace technicalmachine::pl {
 namespace {
 using namespace std::string_view_literals;
-
-constexpr auto parse_stat_name(std::string_view const str) {
-	using Storage = containers::array<containers::map_value_type<std::string_view, PermanentStat>, 6>;
-	constexpr auto converter = containers::basic_flat_map<Storage>(
-		containers::assume_sorted_unique,
-		Storage{{
-			{ "Atk", PermanentStat::atk },
-			{ "Def", PermanentStat::def },
-			{ "HP", PermanentStat::hp },
-			{ "SpAtk", PermanentStat::spa },
-			{ "SpDef", PermanentStat::spd },
-			{ "Spd", PermanentStat::spe },
-		}}
-	);
-	auto result = containers::lookup(converter, str);
-	if (!result) {
-		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Invalid stat name "), str));
-	}
-	return *result;
-}
 
 constexpr auto parse_species(std::string_view const str) {
 	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 16>;
@@ -100,18 +81,43 @@ auto parse_moves(Generation const generation, boost::property_tree::ptree const 
 
 template<Generation generation>
 auto parse_stats(boost::property_tree::ptree const & pt) {
-	auto evs = empty_evs<generation>;
-	auto ivs = max_dvs_or_ivs<generation>;
+	auto hp = bounded::optional<IVAndEV>();
+	auto atk = bounded::optional<IVAndEV>();
+	auto def = bounded::optional<IVAndEV>();
+	auto spa = bounded::optional<IVAndEV>();
+	auto spd = bounded::optional<IVAndEV>();
+	auto spe = bounded::optional<IVAndEV>();
+
 	for (auto const & value : pt.get_child("stats")) {
 		auto const & stats = value.second;
-		auto const stat_name = parse_stat_name(stats.get<std::string>("<xmlattr>.name"));
-		ivs[stat_name] = IV(stats.get<IV::value_type>("<xmlattr>.iv"));
-		evs[stat_name] = EV(stats.get<EV::value_type>("<xmlattr>.ev"));
+		auto const & stat_name = stats.get<std::string>("<xmlattr>.name");
+		auto const iv_and_ev = IVAndEV{
+			IV(stats.get<IV::value_type>("<xmlattr>.iv")),
+			EV(stats.get<EV::value_type>("<xmlattr>.ev"))
+		};
+		if (stat_name == "HP") {
+			hp = iv_and_ev;
+		} else if (stat_name == "Atk") {
+			atk = iv_and_ev;
+		} else if (stat_name == "Def") {
+			def = iv_and_ev;
+		} else if (stat_name == "SpAtk") {
+			spa = iv_and_ev;
+		} else if (stat_name == "SpDef") {
+			spd = iv_and_ev;
+		} else if (stat_name == "Spd") {
+			spe = iv_and_ev;
+		} else {
+			throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Invalid stat name "), stat_name));
+		}
+	}
+	if (!hp or !atk or !def or !spa or !spd or !spe) {
+		throw std::runtime_error("IV or EV is missing");
 	}
 	return CombinedStats<generation>{
 		from_string<Nature>(pt.get<std::string>("nature")),
-		ivs,
-		evs
+		IVs(hp->iv, atk->iv, def->iv, spa->iv, spd->iv, spe->iv),
+		EVs(hp->ev, atk->ev, def->ev, spa->ev, spd->ev, spe->ev)
 	};
 }
 
