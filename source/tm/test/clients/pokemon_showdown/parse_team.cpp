@@ -109,11 +109,102 @@ void test_generation_one() {
 	}
 }
 
+auto expected_generation_two_team() {
+	constexpr auto generation = Generation::two;
+	auto team = Team<generation>(6_bi, true);
+
+	auto moves = [](auto... move_names) {
+		return RegularMoves({Move(generation, move_names)...});
+	};
+
+	team.add_pokemon(Pokemon<generation>(
+		Species::Noctowl,
+		Level(80_bi),
+		Gender::male,
+		Item::None,
+		Ability::Honey_Gather,
+		default_combined_stats<generation>,
+		moves(Moves::Thief, Moves::Hypnosis, Moves::Night_Shade, Moves::Return)
+	));
+
+	team.add_pokemon(Pokemon<generation>(
+		Species::Qwilfish,
+		Level(74_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Honey_Gather,
+		default_combined_stats<generation>,
+		moves(Moves::Spikes, Moves::Sludge_Bomb, Moves::Surf, Moves::Curse)
+	));
+
+	team.add_pokemon(Pokemon<generation>(
+		Species::Hypno,
+		Level(74_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Honey_Gather,
+		default_combined_stats<generation>,
+		moves(Moves::Curse, Moves::Body_Slam, Moves::Psychic, Moves::Rest)
+	));
+
+	team.add_pokemon(Pokemon<generation>(
+		Species::Misdreavus,
+		Level(68_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Honey_Gather,
+		default_combined_stats<generation>,
+		moves(Moves::Thunderbolt, Moves::Shadow_Ball, Moves::Hypnosis, Moves::Pain_Split)
+	));
+
+	team.add_pokemon(Pokemon<generation>(
+		Species::Machamp,
+		Level(68_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Honey_Gather,
+		default_combined_stats<generation>,
+		moves(Moves::Rest, Moves::Sleep_Talk, Moves::Cross_Chop, Moves::Curse)
+	));
+	
+	team.add_pokemon(Pokemon<generation>(
+		Species::Sunflora,
+		Level(80_bi),
+		Gender::male,
+		Item::Leftovers,
+		Ability::Honey_Gather,
+		CombinedStats<generation>{
+			Nature::Hardy,
+			IVs(DVs(DV(15_bi), DV(13_bi), DV(15_bi), DV(15_bi))),
+			default_evs<generation>
+		},
+		moves(Moves::Growth, Moves::Giga_Drain, Moves::Synthesis, Moves::Hidden_Power)
+	));
+
+	return team;
+}
+
+void test_generation_two() {
+	using namespace std::string_view_literals;
+	constexpr auto initial =
+		R"#({"active":[{"moves":[{"move":"Thief","id":"thief","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Hypnosis","id":"hypnosis","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Night Shade","id":"nightshade","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Return 102","id":"return","pp":32,"maxpp":32,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Noctowl","details":"Noctowl, L80, M","condition":"324/324","active":true,"stats":{"atk":159,"def":159,"spa":201,"spd":233,"spe":191},"moves":["thief","hypnosis","nightshade","return102"],"baseAbility":"none","item":"","pokeball":"pokeball"},{"ident":"p1: Qwilfish","details":"Qwilfish, L74, M","condition":"249/249","active":false,"stats":{"atk":214,"def":184,"spa":155,"spd":155,"spe":199},"moves":["spikes","sludgebomb","surf","curse"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Hypno","details":"Hypno, L74, M","condition":"278/278","active":false,"stats":{"atk":181,"def":177,"spa":181,"spd":244,"spe":172},"moves":["curse","bodyslam","psychic","rest"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Misdreavus","details":"Misdreavus, L68, M","condition":"222/222","active":false,"stats":{"atk":149,"def":149,"spa":183,"spd":183,"spe":183},"moves":["thunderbolt","shadowball","hypnosis","painsplit"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, L68, M","condition":"263/263","active":false,"stats":{"atk":245,"def":177,"spa":156,"spd":183,"spe":143},"moves":["rest","sleeptalk","crosschop","curse"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Sunflora","details":"Sunflora, L80, M","condition":"284/284","active":false,"stats":{"atk":199,"def":164,"spa":247,"spd":215,"spe":127},"moves":["growth","gigadrain","synthesis","hiddenpowerice"],"baseAbility":"none","item":"leftovers","pokeball":"pokeball"}]},"rqid":2})#"sv;
+	constexpr auto generation = Generation::two;
+
+	auto const parsed = parse_team<generation>(initial);
+	auto const expected = expected_generation_two_team();
+	auto const parsed_str = to_string(parsed);
+	auto const expected_str = to_string(expected);
+	if (parsed_str != expected_str) {
+		throw std::runtime_error(containers::concatenate<std::string>("Expected:\n\n"sv, expected_str, "\n\nbut got\n\n"sv, parsed_str));
+	}
+}
+
 } // namespace
 
 void test_parse_team() {
 	std::cout << "Testing ps::parse_team\n";
 	test_generation_one();
+	test_generation_two();
 }
 
 } // namespace ps
