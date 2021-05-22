@@ -88,18 +88,7 @@ auto max_damage_physical_defender() {
 		Gender::male,
 		Item::None,
 		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Hasty,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(0_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi)
-			),
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto pokemon = defender.pokemon();
@@ -265,18 +254,7 @@ void special_damage_test() {
 		Gender::male,
 		Item::None,
 		Ability::Dry_Skin,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			IVs(
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(31_bi),
-				IV(0_bi),
-				IV(31_bi)
-			),
-			empty_evs<generation>
-		},
+		default_combined_stats<generation>,
 		RegularMoves({Move(generation, Moves::Tackle)})
 	));
 	auto defender_pokemon = defender.pokemon();
