@@ -115,8 +115,8 @@ private:
 
 constexpr auto max_total_evs(Generation const generation) {
 	return
-		BOUNDED_CONDITIONAL(generation <= Generation::two, 252_bi * 6_bi,
-		508_bi
+		BOUNDED_CONDITIONAL(generation <= Generation::two, EV::max * 5_bi,
+		510_bi
 	);
 }
 
