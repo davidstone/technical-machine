@@ -125,10 +125,10 @@ private:
 	}
 
 	value_type m_hp;
-	[[no_unique_address]] ExistsIf<value_type, generation <= Generation::four, __LINE__> m_hidden;
-	[[no_unique_address]] ExistsIf<value_type, generation >= Generation::two, __LINE__> m_spikes;
-	[[no_unique_address]] ExistsIf<value_type, generation >= Generation::four, __LINE__> m_stealth_rock;
-	[[no_unique_address]] ExistsIf<value_type, generation >= Generation::four, __LINE__> m_toxic_spikes;
+	[[no_unique_address]] ExistsIf<value_type, generation <= Generation::four> m_hidden;
+	[[no_unique_address]] ExistsIf<value_type, generation >= Generation::two> m_spikes;
+	[[no_unique_address]] ExistsIf<value_type, generation >= Generation::four> m_stealth_rock;
+	[[no_unique_address]] ExistsIf<value_type, generation >= Generation::four> m_toxic_spikes;
 };
 
 struct AllEvaluate {

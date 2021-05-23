@@ -15,11 +15,11 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-// The size_t parameter is used to make this type unique if there are multiple
-// conditional variables in a row with the same type
-template<typename, std::size_t>
+// The template parameter is used to make this type unique if there are multiple
+// conditional variables in a row
+template<auto = +[]{}>
 struct Empty {
-	constexpr Empty(auto const & ...) {}
+	constexpr explicit Empty(auto const & ...) {}
 	constexpr Empty & operator=(auto const &) & {
 		return *this;
 	}
@@ -29,14 +29,14 @@ struct Empty {
 	}
 };
 
-template<typename T, bool condition, std::size_t index = 0>
-using ExistsIf = std::conditional_t<condition, T, Empty<T, index>>;
+template<typename T, bool condition>
+using ExistsIf = std::conditional_t<condition, T, Empty<>>;
 
 template<typename T>
 inline constexpr auto exists = true;
 
-template<typename T, std::size_t index>
-inline constexpr auto exists<Empty<T, index>> = false;
+template<auto unique>
+inline constexpr auto exists<Empty<unique>> = false;
 
 template<typename T>
 inline constexpr auto exists<T const> = exists<T>;
@@ -47,7 +47,7 @@ inline constexpr auto exists<T &> = exists<T>;
 template<typename T>
 inline constexpr auto exists<T &&> = exists<T>;
 
-template<bool condition, std::size_t index = 0>
+template<bool condition, auto = +[]{}>
 struct BoolIf {
 	constexpr auto operator=(bool const value) & -> BoolIf & {
 		m_value = value;
@@ -64,8 +64,8 @@ private:
 	bool m_value = false;
 };
 
-template<std::size_t index>
-struct BoolIf<false, index> {
+template<auto unique>
+struct BoolIf<false, unique> {
 	constexpr auto operator=(bool) & -> BoolIf & {
 		// TODO: Assert? Throw? Require the value to be false?
 		return *this;
