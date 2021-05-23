@@ -102,7 +102,7 @@ void defensive_tests() {
 auto find(SpeedEVs const & container, Nature const nature) {
 	auto const it = containers::find_if(container, [=](auto const & value) { return value.nature == nature; });
 	BOUNDED_ASSERT(it != containers::end(container));
-	return it->stat;
+	return *it;
 }
 
 void speed_tests() {

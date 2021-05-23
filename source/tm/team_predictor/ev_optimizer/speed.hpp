@@ -8,9 +8,9 @@
 #include <tm/pokemon/level.hpp>
 
 #include <tm/stat/base_stats.hpp>
+#include <tm/stat/ev.hpp>
 #include <tm/stat/initial_stat.hpp>
 #include <tm/stat/iv.hpp>
-#include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/stat_to_ev.hpp>
 #include <tm/stat/nature.hpp>
 
@@ -35,7 +35,7 @@ struct SpeedEVs {
 		for (auto const nature : containers::enum_range<Nature>()) {
 			auto const ev = stat_to_ev(target.stat, SplitSpecialRegularStat::spe, base.spe(), level, nature, iv);
 			if (ev) {
-				containers::emplace_back(m_container, nature, IVAndEV{iv, *ev});
+				containers::emplace_back(m_container, nature, iv, *ev);
 			}
 		}
 		BOUNDED_ASSERT(!containers::is_empty(m_container));
@@ -50,7 +50,8 @@ struct SpeedEVs {
 private:
 	struct Mapped {
 		Nature nature;
-		IVAndEV stat;
+		IV iv;
+		EV ev;
 	};
 	containers::static_vector<Mapped, static_cast<int>(numeric_traits::max_value<Nature>) + 1> m_container;
 };

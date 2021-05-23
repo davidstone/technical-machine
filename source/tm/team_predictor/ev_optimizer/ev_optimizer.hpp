@@ -59,7 +59,7 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 				defensive->defense.iv,
 				offensive->special_attack.iv,
 				defensive->special_defense.iv,
-				speed.stat.iv
+				speed.iv
 			),
 			EVs(
 				defensive->hp.ev,
@@ -67,7 +67,7 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 				defensive->defense.ev,
 				offensive->special_attack.ev,
 				defensive->special_defense.ev,
-				speed.stat.ev
+				speed.ev
 			)
 		};
 		if (!best or ev_sum(candidate.evs) < ev_sum(best->evs)) {
