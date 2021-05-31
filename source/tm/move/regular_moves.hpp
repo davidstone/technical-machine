@@ -20,8 +20,6 @@ namespace technicalmachine {
 
 struct RegularMoves {
 	using value_type = Move;
-	// TODO: Give this a minimum size of 1 when foe Pokemon are handled better
-	using size_type = bounded::integer<0, bounded::normalize<max_moves_per_pokemon>>;
 
 	RegularMoves() = default;
 	RegularMoves(auto const moves) {

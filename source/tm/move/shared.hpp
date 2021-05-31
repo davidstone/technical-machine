@@ -73,7 +73,6 @@ private:
 
 template<Generation generation>
 struct SharedMoves {
-	using size_type = SharedMoveSize;
 	using const_iterator = SharedMovesIterator<generation>;
 
 	constexpr explicit SharedMoves(TeamSize const team_size):

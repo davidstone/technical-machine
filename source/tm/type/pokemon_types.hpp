@@ -18,9 +18,6 @@ using namespace bounded::literal;
 enum class Generation : std::uint8_t;
 
 struct PokemonTypes {
-	// Can a Pokemon ever have 0 types?
-	using size_type = bounded::integer<1, 2>;
-
 	PokemonTypes(Generation, Species);
 
 	constexpr explicit PokemonTypes(Type const type):

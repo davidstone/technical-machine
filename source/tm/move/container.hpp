@@ -33,7 +33,6 @@ private:
 	using Transformed = decltype(move_container_transform(std::declval<Range>()));
 public:
 	using value_type = Move;
-	using size_type = MoveSize;
 	using const_iterator = containers::concatenate_view_iterator<
 		Transformed<RegularMoves>,
 		Transformed<SharedMoves<generation>>

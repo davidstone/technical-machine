@@ -724,7 +724,6 @@ private:
 	}
 
 	void send_move_impl(bool const is_switch, auto const switch_move, auto const move_index) {
-		using std::to_string;
 		m_send_message(containers::concatenate<containers::string>(m_id, (is_switch ? containers::concatenate_view("|/switch "sv, to_string(switch_move())) : containers::concatenate_view("|/move "sv, to_string(move_index())))));
 	}
 
@@ -742,8 +741,8 @@ private:
 		auto distribution = std::uniform_int_distribution(1, static_cast<int>(max_moves_per_pokemon + max_pokemon_per_team));
 		auto const result = distribution(m_random_engine);
 
-		auto switch_move = [=]{ return result - max_moves_per_pokemon; };
-		auto move_index = [=]{ return result; };
+		auto switch_move = [=]{ return static_cast<TeamIndex>(result - max_moves_per_pokemon); };
+		auto move_index = [=]{ return static_cast<containers::index_type<RegularMoves>>(result); };
 		auto const is_switch = result > max_moves_per_pokemon;
 		send_move_impl(is_switch, switch_move, move_index);
 	}

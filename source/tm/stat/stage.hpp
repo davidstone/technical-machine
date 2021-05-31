@@ -27,7 +27,6 @@ struct Stage {
 	using boost_type = bounded::integer<-3, 12>;
 	static constexpr auto number_of_stats =
 		bounded::constant<static_cast<int>(numeric_traits::max_value<BoostableStat>) - static_cast<int>(numeric_traits::min_value<BoostableStat>) + 1>;
-	using size_type = std::remove_const_t<decltype(number_of_stats)>;
 	using container_type = containers::array<value_type, number_of_stats.value()>;
 
 	constexpr Stage():
