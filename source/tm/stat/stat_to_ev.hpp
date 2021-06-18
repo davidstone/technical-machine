@@ -88,29 +88,29 @@ auto calculate_ivs_and_evs(
 			auto compute_ev = [=](SplitSpecialRegularStat const stat_name) {
 				return stat_to_ev(stats[stat_name], stat_name, base[stat_name], level, nature, IV(ivs[stat_name]));
 			};
-			auto const attack_ev = compute_ev(SplitSpecialRegularStat::atk);
-			if (!attack_ev) {
+			auto const atk_ev = compute_ev(SplitSpecialRegularStat::atk);
+			if (!atk_ev) {
 				continue;
 			}
-			auto const defense_ev = compute_ev(SplitSpecialRegularStat::def);
-			if (!defense_ev) {
+			auto const def_ev = compute_ev(SplitSpecialRegularStat::def);
+			if (!def_ev) {
 				continue;
 			}
-			auto special_attack_ev = compute_ev(SplitSpecialRegularStat::spa);
-			if (!special_attack_ev) {
+			auto spa_ev = compute_ev(SplitSpecialRegularStat::spa);
+			if (!spa_ev) {
 				continue;
 			}
-			auto special_defense_ev = compute_ev(SplitSpecialRegularStat::spd);
-			if (!special_defense_ev) {
+			auto spd_ev = compute_ev(SplitSpecialRegularStat::spd);
+			if (!spd_ev) {
 				continue;
 			}
 			if constexpr (generation <= Generation::two) {
-				auto const special_ev = bounded::max(*special_attack_ev, *special_defense_ev);
-				*special_attack_ev = special_ev;
-				*special_defense_ev = special_ev;
+				auto const spc_ev = bounded::max(*spa_ev, *spd_ev);
+				*spa_ev = spc_ev;
+				*spd_ev = spc_ev;
 			}
-			auto const speed_ev = compute_ev(SplitSpecialRegularStat::spe);
-			if (!speed_ev) {
+			auto const spe_ev = compute_ev(SplitSpecialRegularStat::spe);
+			if (!spe_ev) {
 				continue;
 			}
 
@@ -118,31 +118,26 @@ auto calculate_ivs_and_evs(
 				if constexpr (generation <= Generation::two) {
 					return OldGenEVs(
 						hp_ev,
-						*attack_ev,
-						*defense_ev,
-						*speed_ev,
-						*special_attack_ev
+						*atk_ev,
+						*def_ev,
+						*spe_ev,
+						*spa_ev
 					);
 				} else {
 					return EVs(
 						hp_ev,
-						*attack_ev,
-						*defense_ev,
-						*special_attack_ev,
-						*special_defense_ev,
-						*speed_ev
+						*atk_ev,
+						*def_ev,
+						*spa_ev,
+						*spd_ev,
+						*spe_ev
 					);
 				}
 			}();
 			if (ev_sum(evs) > max_total_evs(generation)) {
 				continue;
 			}
-
-			return CombinedStats<generation>{
-				nature,
-				ivs,
-				evs
-			};
+			return CombinedStats<generation>{nature, ivs, evs};
 		}
 		if (has_physical_move) {
 			break;
