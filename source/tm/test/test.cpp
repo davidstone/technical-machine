@@ -17,7 +17,6 @@
 #include <tm/test/sleep.hpp>
 #include <tm/test/stat.hpp>
 #include <tm/test/status.hpp>
-#include <tm/test/stat_to_ev.hpp>
 #include <tm/test/string_conversion.hpp>
 #include <tm/test/evaluate/evaluate.hpp>
 #include <tm/test/evaluate/expectiminimax.hpp>
@@ -41,7 +40,6 @@ int main() {
 	call_move_tests();
 	sleep_tests();
 
-	stat_to_ev_tests();
 	ev_optimizer_tests();
 	
 	evaluate_tests();
