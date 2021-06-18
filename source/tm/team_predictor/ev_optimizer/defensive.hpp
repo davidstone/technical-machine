@@ -30,6 +30,24 @@
 
 namespace technicalmachine {
 
+struct DefensiveEVHP {
+	BaseStats::HP base;
+	IV iv;
+	HP::max_type stat;
+};
+template<Generation generation, typename Base> requires (generation >= Generation::three)
+struct DefensiveEVStat {
+	Base base;
+	IV iv;
+	InitialStat<generation> stat;
+};
+
+template<Generation generation>
+using DefensiveEVDef = DefensiveEVStat<generation, BaseStats::Def>;
+
+template<Generation generation>
+using DefensiveEVSpD = DefensiveEVStat<generation, BaseStats::SpD>;
+
 constexpr auto ev_sum(DataPoint const data) {
 	return data.hp.ev.value() + data.defense.ev.value() + data.special_defense.ev.value();
 }
@@ -39,44 +57,34 @@ constexpr auto ev_range() {
 }
 
 struct DefensiveEVs {
-	struct InputHP {
-		IV iv;
-		HP::max_type stat;
-	};
 	template<Generation generation> requires (generation >= Generation::three)
-	struct InputStat {
-		IV iv;
-		InitialStat<generation> stat;
-	};
-
-	template<Generation generation> requires (generation >= Generation::three)
-	DefensiveEVs(BaseStats const base_stats, Level const level, InputHP const original_hp, InputStat<generation> const def, InputStat<generation> const spd) {
+	constexpr DefensiveEVs(Level const level, DefensiveEVHP const original_hp, DefensiveEVDef<generation> const def, DefensiveEVSpD<generation> const spd) {
 		bounded::bounded_integer auto const def_product = original_hp.stat * def.stat;
 		bounded::bounded_integer auto const spd_product = original_hp.stat * spd.stat;
 
 		auto defensive_product = [=](DataPoint const value) {
-			auto const hp = HP(base_stats, level, value.hp.iv, value.hp.ev).max();
-			auto single_product = [=](SplitSpecialRegularStat const name, BaseStats::regular_value_type const base_stat, IVAndEV const generated) {
+			auto const hp = HP(original_hp.base, level, value.hp.iv, value.hp.ev).max();
+			auto single_product = [=](SplitSpecialRegularStat const name, auto const base_stat, IVAndEV const generated) {
 				return hp * initial_stat<generation>(name, base_stat, level, value.nature, generated.iv, generated.ev);
 			};
 
-			return single_product(SplitSpecialRegularStat::def, base_stats.def(), value.defense) * single_product(SplitSpecialRegularStat::spd, base_stats.spd(), value.special_defense);
+			return single_product(SplitSpecialRegularStat::def, def.base, value.defense) * single_product(SplitSpecialRegularStat::spd, spd.base, value.special_defense);
 		};
 
 		for (auto const nature : containers::enum_range<Nature>()) {
 			auto best_per_nature = bounded::optional<DataPoint>{};
 			for (auto const hp_ev : ev_range()) {
-				auto const hp = HP(base_stats, level, original_hp.iv, hp_ev);
+				auto const hp = HP(original_hp.base, level, original_hp.iv, hp_ev);
 				auto find_minimum_matching = [=](SplitSpecialRegularStat const stat_name, auto const base, IV const iv, bounded::bounded_integer auto const original_product) {
 					auto const target_stat = round_up_divide(original_product, hp.max());
 					return stat_to_ev(target_stat, stat_name, base, level, nature, iv);
 				};
 
-				auto const defense_ev = find_minimum_matching(SplitSpecialRegularStat::def, base_stats.def(), def.iv, def_product);
+				auto const defense_ev = find_minimum_matching(SplitSpecialRegularStat::def, def.base, def.iv, def_product);
 				if (!defense_ev) {
 					continue;
 				}
-				auto const special_defense_ev = find_minimum_matching(SplitSpecialRegularStat::spd, base_stats.spd(), spd.iv, spd_product);
+				auto const special_defense_ev = find_minimum_matching(SplitSpecialRegularStat::spd, spd.base, spd.iv, spd_product);
 				if (!special_defense_ev) {
 					continue;
 				}
@@ -103,13 +111,13 @@ struct DefensiveEVs {
 		BOUNDED_ASSERT(!containers::is_empty(m_container));
 	}
 
-	auto begin() const {
+	constexpr auto begin() const {
 		return containers::begin(m_container);
 	}
-	auto end() const {
+	constexpr auto end() const {
 		return containers::end(m_container);
 	}
-	auto find(Nature const nature) const {
+	constexpr auto find(Nature const nature) const {
 		return containers::find_if(m_container, [=](auto const value) { return value.nature == nature; });
 	}
 private:

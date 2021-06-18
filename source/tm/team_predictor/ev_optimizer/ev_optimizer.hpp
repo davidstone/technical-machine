@@ -40,7 +40,7 @@ using namespace bounded::literal;
 namespace detail {
 
 template<Generation generation>
-auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats<generation> {
+constexpr auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & speed_container) -> CombinedStats<generation> {
 	auto best = bounded::optional<CombinedStats<generation>>();
 	for (auto const & speed : speed_container) {
 		auto const offensive = o.find(speed.nature);
@@ -82,7 +82,7 @@ auto combine(OffensiveEVs const & o, DefensiveEVs const & d, SpeedEVs const & sp
 } // namespace detail
 
 template<Generation generation>
-auto compute_minimal_spread(
+constexpr auto compute_minimal_spread(
 	BaseStats const base_stats,
 	Stats<generation> stats,
 	Level const level,
@@ -107,19 +107,17 @@ auto compute_minimal_spread(
 	} else {
 		return detail::combine<generation>(
 			OffensiveEVs(
-				base_stats,
 				level,
-				OffensiveEVInputs<generation>{ivs.atk(), stats.atk(), include_attack},
-				OffensiveEVInputs<generation>{ivs.spa(), stats.spa(), include_special_attack}
+				OffensiveEVAtk<generation>{base_stats.atk(), ivs.atk(), stats.atk(), include_attack},
+				OffensiveEVSpA<generation>{base_stats.spa(), ivs.spa(), stats.spa(), include_special_attack}
 			),
 			DefensiveEVs(
-				base_stats,
 				level,
-				DefensiveEVs::InputHP{ivs.hp(), stats.hp().max()},
-				DefensiveEVs::InputStat<generation>{ivs.def(), stats.def()},
-				DefensiveEVs::InputStat<generation>{ivs.spd(), stats.spd()}
+				DefensiveEVHP{base_stats.hp(), ivs.hp(), stats.hp().max()},
+				DefensiveEVDef<generation>{base_stats.def(), ivs.def(), stats.def()},
+				DefensiveEVSpD<generation>{base_stats.spd(), ivs.spd(), stats.spd()}
 			),
-			SpeedEVs(base_stats, level, ivs.spe(), SpeedEVs::Input<generation>{stats.spe()})
+			SpeedEVs(base_stats.spe(), level, ivs.spe(), SpeedEVs::Input<generation>{stats.spe()})
 		);
 	}
 }

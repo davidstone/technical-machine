@@ -28,12 +28,19 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-template<Generation generation> requires (generation >= Generation::three)
+template<Generation generation, typename Base> requires (generation >= Generation::three)
 struct OffensiveEVInputs {
+	Base base;
 	IV iv;
 	InitialStat<generation> stat;
 	bool include_evs;
 };
+
+template<Generation generation>
+using OffensiveEVAtk = OffensiveEVInputs<generation, BaseStats::Atk>;
+
+template<Generation generation>
+using OffensiveEVSpA = OffensiveEVInputs<generation, BaseStats::SpA>;
 
 struct OffensiveStats {
 	Nature nature;
@@ -63,18 +70,18 @@ constexpr auto useful_natures(bool const is_physical, bool const is_special) {
 	);
 }
 
-template<Generation generation>
-constexpr auto target_stat(SplitSpecialRegularStat const stat_name, auto const base_stat, Level const level, OffensiveEVInputs<generation> const input, Nature const harmful_nature) {
-	return input.include_evs ? input.stat : initial_stat<generation>(stat_name, base_stat, level, harmful_nature, input.iv, EV(0_bi));
+template<Generation generation, typename Base>
+constexpr auto target_stat(SplitSpecialRegularStat const stat_name, Level const level, OffensiveEVInputs<generation, Base> const input, Nature const harmful_nature) {
+	return input.include_evs ? input.stat : initial_stat<generation>(stat_name, input.base, level, harmful_nature, input.iv, EV(0_bi));
 }
 
 template<Generation generation>
-auto evs_for_nature(BaseStats const base, Level const level, OffensiveEVInputs<generation> const atk, OffensiveEVInputs<generation> const spa) {
-	auto const target_atk = target_stat(SplitSpecialRegularStat::atk, base.atk(), level, atk, Nature::Modest);
-	auto const target_spa = target_stat(SplitSpecialRegularStat::spa, base.spa(), level, spa, Nature::Adamant);
+constexpr auto evs_for_nature(Level const level, OffensiveEVAtk<generation> const atk, OffensiveEVSpA<generation> const spa) {
+	auto const target_atk = target_stat(SplitSpecialRegularStat::atk, level, atk, Nature::Modest);
+	auto const target_spa = target_stat(SplitSpecialRegularStat::spa, level, spa, Nature::Adamant);
 	return [=](Nature const nature) {
-		auto const atk_ev = stat_to_ev(target_atk, SplitSpecialRegularStat::atk, base.atk(), level, nature, atk.iv);
-		auto const spa_ev = stat_to_ev(target_spa, SplitSpecialRegularStat::spa, base.spa(), level, nature, spa.iv);
+		auto const atk_ev = stat_to_ev(target_atk, SplitSpecialRegularStat::atk, atk.base, level, nature, atk.iv);
+		auto const spa_ev = stat_to_ev(target_spa, SplitSpecialRegularStat::spa, spa.base, level, nature, spa.iv);
 		return BOUNDED_CONDITIONAL(atk_ev and spa_ev, (OffensiveStats{nature, {atk.iv, *atk_ev}, {spa.iv, *spa_ev}}), bounded::none);
 	};
 }
@@ -90,19 +97,19 @@ constexpr auto cat_optionals(containers::range auto && input) {
 
 struct OffensiveEVs {
 	template<Generation generation> requires (generation >= Generation::three)
-	OffensiveEVs(BaseStats const base, Level const level, OffensiveEVInputs<generation> const atk, OffensiveEVInputs<generation> const spa):
+	constexpr OffensiveEVs(Level const level, OffensiveEVAtk<generation> const atk, OffensiveEVSpA<generation> const spa):
 		m_container(
 			detail::cat_optionals(
 				containers::transform(
 					detail::useful_natures(atk.include_evs, spa.include_evs),
-					detail::evs_for_nature(base, level, atk, spa)
+					detail::evs_for_nature(level, atk, spa)
 				)
 			)
 		)
 	{
 	}
 
-	auto find(Nature const nature) const -> OffensiveStats const * {
+	constexpr auto find(Nature const nature) const -> OffensiveStats const * {
 		return containers::maybe_find_if(m_container, [=](auto const value) { return value.nature == nature; });
 	}
 

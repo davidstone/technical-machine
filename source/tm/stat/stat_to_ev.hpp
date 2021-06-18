@@ -41,22 +41,27 @@ using namespace std::string_view_literals;
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-constexpr auto round_up_divide(auto const lhs, auto const rhs) {
-	return lhs / rhs + BOUNDED_CONDITIONAL(lhs % rhs == 0_bi, 0_bi, 1_bi);
+template<typename RHS>
+constexpr auto round_up_divide(bounded::bounded_integer auto const lhs, RHS const rhs) {
+	if constexpr (bounded::bounded_integer<RHS>) {
+		return (lhs + rhs - 1_bi) / rhs;
+	} else {
+		return round_up_divide(lhs * rhs.denominator(), rhs.numerator());
+	}
 }
 
-inline auto hp_to_ev(BaseStats const base, Level const level, HP::max_type const stat, IV const iv) -> EV {
-	if (base.hp() == 1_bi) {
+constexpr auto hp_to_ev(BaseStats::HP const base, Level const level, HP::max_type const stat, IV const iv) -> EV {
+	if (base == 1_bi) {
 		return EV(0_bi);
 	}
-	auto const computed = (round_up_divide((stat - level() - 10_bi) * 100_bi, level()) - iv.value() - 2_bi * base.hp()) * 4_bi;
+	auto const computed = (round_up_divide((stat - level() - 10_bi) * 100_bi, level()) - iv.value() - 2_bi * base) * 4_bi;
 	return EV(EV::value_type(bounded::max(0_bi, computed)));
 }
 
 // `target` is not just InitialStat because this function is also used in the EV
 // optimizer, where values outside the legal range are regularly encountered as
 // part of speculative computation.
-constexpr auto stat_to_ev(bounded::bounded_integer auto const target, SplitSpecialRegularStat const stat_name, BaseStats::regular_value_type const base, Level const level, Nature const nature, IV const iv) -> bounded::optional<EV> {
+constexpr auto stat_to_ev(bounded::bounded_integer auto const target, SplitSpecialRegularStat const stat_name, bounded::bounded_integer auto const base, Level const level, Nature const nature, IV const iv) -> bounded::optional<EV> {
 	auto const computed = (round_up_divide((round_up_divide(target, boost(nature, stat_name)) - 5_bi) * 100_bi, level()) - 2_bi * base - iv.value()) * 4_bi;
 	if (computed > EV::max) {
 		return bounded::none;
@@ -77,25 +82,25 @@ auto calculate_ivs_and_evs(
 	auto const base = BaseStats(generation, species);
 	while (true) {
 		auto const ivs = hidden_power_ivs<generation>(hidden_power_type, has_physical_move);
-		auto const hp_ev = hp_to_ev(base, level, stats.hp().max(), IV(ivs.hp()));
+		auto const hp_ev = hp_to_ev(base.hp(), level, stats.hp().max(), IV(ivs.hp()));
 
 		for (auto const nature : nature_range) {
-			auto compute_ev = [=](SplitSpecialRegularStat const stat_name, auto const base_stat) {
-				return stat_to_ev(stats[stat_name], stat_name, base_stat, level, nature, IV(ivs[stat_name]));
+			auto compute_ev = [=](SplitSpecialRegularStat const stat_name) {
+				return stat_to_ev(stats[stat_name], stat_name, base[stat_name], level, nature, IV(ivs[stat_name]));
 			};
-			auto const attack_ev = compute_ev(SplitSpecialRegularStat::atk, base.atk());
+			auto const attack_ev = compute_ev(SplitSpecialRegularStat::atk);
 			if (!attack_ev) {
 				continue;
 			}
-			auto const defense_ev = compute_ev(SplitSpecialRegularStat::def, base.def());
+			auto const defense_ev = compute_ev(SplitSpecialRegularStat::def);
 			if (!defense_ev) {
 				continue;
 			}
-			auto special_attack_ev = compute_ev(SplitSpecialRegularStat::spa, base.spa());
+			auto special_attack_ev = compute_ev(SplitSpecialRegularStat::spa);
 			if (!special_attack_ev) {
 				continue;
 			}
-			auto special_defense_ev = compute_ev(SplitSpecialRegularStat::spd, base.spd());
+			auto special_defense_ev = compute_ev(SplitSpecialRegularStat::spd);
 			if (!special_defense_ev) {
 				continue;
 			}
@@ -104,7 +109,7 @@ auto calculate_ivs_and_evs(
 				*special_attack_ev = special_ev;
 				*special_defense_ev = special_ev;
 			}
-			auto const speed_ev = compute_ev(SplitSpecialRegularStat::spe, base.spe());
+			auto const speed_ev = compute_ev(SplitSpecialRegularStat::spe);
 			if (!speed_ev) {
 				continue;
 			}

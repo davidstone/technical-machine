@@ -77,20 +77,24 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 }
 
 void defensive_tests() {
-	std::cout << "\tRunning defensive tests.\n";
 	constexpr auto generation = Generation::four;
-	auto const base_stats = BaseStats(generation, Species::Celebi);
+	constexpr auto base_hp = 100_bi;
+	constexpr auto base_def = 100_bi;
+	constexpr auto base_spd = 100_bi;
 	constexpr auto level = Level(100_bi);
 	constexpr auto nature = Nature::Bold;
 	constexpr auto iv = IV(31_bi);
 	constexpr auto hp_ev = EV(252_bi);
 	constexpr auto defense_ev = EV(252_bi);
 	constexpr auto special_defense_ev = EV(4_bi);
-	auto const hp = HP(base_stats, level, iv, hp_ev).max();
-	auto const defense = initial_stat<generation>(SplitSpecialRegularStat::def, base_stats.def(), level, nature, iv, defense_ev);
-	auto const special_defense = initial_stat<generation>(SplitSpecialRegularStat::spd, base_stats.spd(), level, nature, iv, special_defense_ev);
-	
-	auto defensive_evs = DefensiveEVs(base_stats, level, DefensiveEVs::InputHP{iv, hp}, DefensiveEVs::InputStat<generation>{iv, defense}, DefensiveEVs::InputStat<generation>{iv, special_defense});
+	constexpr auto hp = HP(base_hp, level, iv, hp_ev).max();
+	constexpr auto defense = initial_stat<generation>(SplitSpecialRegularStat::def, base_def, level, nature, iv, defense_ev);
+	constexpr auto special_defense = initial_stat<generation>(SplitSpecialRegularStat::spd, base_spd, level, nature, iv, special_defense_ev);
+	constexpr auto input_hp = DefensiveEVHP{base_hp, iv, hp};
+	constexpr auto input_def = DefensiveEVDef<generation>{base_def, iv, defense};
+	constexpr auto input_spd = DefensiveEVSpD<generation>{base_spd, iv, special_defense};
+	// Too many steps to constant evaluate
+	auto const defensive_evs = DefensiveEVs(level, input_hp, input_def, input_spd);
 	for (auto const & candidate : defensive_evs) {
 		BOUNDED_ASSERT(candidate.hp.ev == hp_ev);
 		BOUNDED_ASSERT(candidate.defense.ev == defense_ev);
@@ -99,33 +103,31 @@ void defensive_tests() {
 	}
 }
 
-auto find(SpeedEVs const & container, Nature const nature) {
+constexpr auto find(SpeedEVs const & container, Nature const nature) {
 	auto const it = containers::find_if(container, [=](auto const & value) { return value.nature == nature; });
 	BOUNDED_ASSERT(it != containers::end(container));
 	return *it;
 }
 
-void speed_tests() {
-	std::cout << "\tRunning speed tests.\n";
-	
+static_assert([] {
 	constexpr auto generation = Generation::four;
-	constexpr auto species = Species::Snorlax;
 	constexpr auto level = Level(100_bi);
 	constexpr auto original_nature = Nature::Hardy;
 	constexpr auto iv = IV(31_bi);
-	auto const base_stats = BaseStats(generation, species);
-	auto const original_value = initial_stat<generation>(SplitSpecialRegularStat::spe, base_stats.spe(), level, original_nature, iv, EV(76_bi));
-	auto const speed_evs = SpeedEVs(base_stats, level, iv, SpeedEVs::Input<generation>{original_value});
+	constexpr auto base_spe = 30_bi;
+	constexpr auto original_value = initial_stat<generation>(SplitSpecialRegularStat::spe, base_spe, level, original_nature, iv, EV(76_bi));
+	constexpr auto speed_evs = SpeedEVs(base_spe, level, iv, SpeedEVs::Input<generation>{original_value});
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const found = find(speed_evs, nature);
-		auto const new_value = initial_stat<generation>(SplitSpecialRegularStat::spe, base_stats.spe(), level, nature, found.iv, found.ev);
+		auto const new_value = initial_stat<generation>(SplitSpecialRegularStat::spe, base_spe, level, nature, found.iv, found.ev);
 		if (boosts_stat(nature, SplitSpecialRegularStat::spe) and !boosts_stat(original_nature, SplitSpecialRegularStat::spe)) {
 			BOUNDED_ASSERT(new_value == original_value or new_value == original_value + 1_bi);
 		} else {
 			BOUNDED_ASSERT(new_value == original_value);
 		}
 	}
-}
+	return true;
+}());
 
 void not_level_100(std::mt19937 & random_engine) {
 	constexpr auto generation = Generation::four;
@@ -187,7 +189,6 @@ void ev_optimizer_tests() {
 	std::cout << "Running EV optimizer tests.\n";
 	
 	defensive_tests();
-	speed_tests();
 
 	std::random_device rd;
 	std::mt19937 random_engine(rd());

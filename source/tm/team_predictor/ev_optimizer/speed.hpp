@@ -31,9 +31,9 @@ struct SpeedEVs {
 		InitialStat<generation> stat;
 	};
 	template<Generation generation> requires (generation >= Generation::three)
-	SpeedEVs(BaseStats const base, Level const level, IV const iv, Input<generation> const target) {
+	constexpr SpeedEVs(BaseStats::Spe const base, Level const level, IV const iv, Input<generation> const target) {
 		for (auto const nature : containers::enum_range<Nature>()) {
-			auto const ev = stat_to_ev(target.stat, SplitSpecialRegularStat::spe, base.spe(), level, nature, iv);
+			auto const ev = stat_to_ev(target.stat, SplitSpecialRegularStat::spe, base, level, nature, iv);
 			if (ev) {
 				containers::emplace_back(m_container, nature, iv, *ev);
 			}
@@ -41,10 +41,10 @@ struct SpeedEVs {
 		BOUNDED_ASSERT(!containers::is_empty(m_container));
 	}
 
-	auto begin() const {
+	constexpr auto begin() const {
 		return containers::begin(m_container);
 	}
-	auto end() const {
+	constexpr auto end() const {
 		return containers::end(m_container);
 	}
 private:
