@@ -16,18 +16,25 @@ namespace technicalmachine {
 enum class Generation : std::uint8_t;
 
 struct BaseStats {
-	explicit BaseStats(Generation generation, Species species);
-
-	auto hp() const { return m_hp; }
-	auto atk() const { return m_atk; }
-	auto def() const { return m_def; }
-	auto spa() const { return m_spa; }
-	auto spd() const { return m_spd; }
-	auto spe() const { return m_spe; }
+	using HP = bounded::integer<1, 255>;
+	using Atk = bounded::integer<5, 190>;
+	using Def = bounded::integer<5, 230>;
+	using SpA = bounded::integer<10, 194>;
+	using SpD = bounded::integer<20, 230>;
+	using Spe = bounded::integer<5, 180>;
 
 	using regular_value_type = bounded::integer<5, 230>;
 
-	auto operator[](SplitSpecialRegularStat const stat_name) const -> regular_value_type {
+	explicit BaseStats(Generation generation, Species species);
+
+	constexpr auto hp() const { return m_hp; }
+	constexpr auto atk() const { return m_atk; }
+	constexpr auto def() const { return m_def; }
+	constexpr auto spa() const { return m_spa; }
+	constexpr auto spd() const { return m_spd; }
+	constexpr auto spe() const { return m_spe; }
+
+	constexpr auto operator[](SplitSpecialRegularStat const stat_name) const -> regular_value_type {
 		switch (stat_name) {
 			case SplitSpecialRegularStat::atk: return atk();
 			case SplitSpecialRegularStat::def: return def();
@@ -38,14 +45,7 @@ struct BaseStats {
 	}
 
 private:
-	using HP = bounded::integer<1, 255>;
-	using Atk = bounded::integer<5, 190>;
-	using Def = bounded::integer<5, 230>;
-	using SpA = bounded::integer<10, 194>;
-	using SpD = bounded::integer<20, 230>;
-	using Spe = bounded::integer<5, 180>;
-
-	BaseStats(HP hp_, Atk atk_, Def def_, SpA spa_, SpD spd_, Spe spe_):
+	constexpr BaseStats(HP hp_, Atk atk_, Def def_, SpA spa_, SpD spd_, Spe spe_):
 		m_hp(hp_),
 		m_atk(atk_),
 		m_def(def_),
