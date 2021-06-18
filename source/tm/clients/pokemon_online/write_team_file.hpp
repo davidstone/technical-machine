@@ -7,9 +7,9 @@
 
 #include <tm/clients/pokemon_online/conversion.hpp>
 
+#include <tm/stat/calculate_ivs_and_evs.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/ingame_id_to_nature.hpp>
-#include <tm/stat/stat_to_ev.hpp>
 
 #include <tm/string_conversions/species.hpp>
 

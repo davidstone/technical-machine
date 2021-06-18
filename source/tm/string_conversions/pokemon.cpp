@@ -12,9 +12,9 @@
 #include <tm/string_conversions/species.hpp>
 #include <tm/string_conversions/status.hpp>
 
+#include <tm/stat/calculate_ivs_and_evs.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/iv.hpp>
-#include <tm/stat/stat_to_ev.hpp>
 
 #include <tm/buffer_view.hpp>
 

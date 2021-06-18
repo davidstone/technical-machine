@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/stat/stat_to_ev.hpp>
+#include <tm/stat/calculate_ivs_and_evs.hpp>
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
