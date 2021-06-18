@@ -18,6 +18,10 @@ using namespace bounded::literal;
 struct IV {
 	static constexpr auto max = 31;
 	using value_type = bounded::integer<0, max>;
+
+	// So it can be stored in a constexpr static_vector
+	IV() = default;
+
 	constexpr explicit IV(value_type const iv):
 		m_value(iv) {
 	}
@@ -39,8 +43,10 @@ using IVs = GenericStats<IV>;
 struct DV {
 	static constexpr auto max = 15;
 	using value_type = bounded::integer<0, max>;
+
 	// So it can be stored in a constexpr static_vector
-	constexpr DV() = default;
+	DV() = default;
+
 	constexpr explicit DV(value_type const iv):
 		m_value(iv) {
 	}

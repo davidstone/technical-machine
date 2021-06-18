@@ -21,6 +21,9 @@ struct EV {
 	static constexpr auto useful_max = 252_bi;
 	using value_type = bounded::integer<0, static_cast<int>(max)>;
 
+	// So it can be stored in a constexpr static_vector
+	EV() = default;
+
 	constexpr explicit EV(value_type evs):
 		m_value(evs) {
 	}

@@ -35,9 +35,9 @@ public:
 		m_spe(spe_)
 	{
 	}
-	Stats(BaseStats const base, Level const level, CombinedStats<generation> const inputs):
+	constexpr Stats(BaseStats const base, Level const level, CombinedStats<generation> const inputs):
 		Stats(
-			base,
+			base.hp(),
 			level,
 			IV(inputs.dvs_or_ivs.hp()),
 			inputs.evs.hp(),
@@ -86,8 +86,8 @@ public:
 
 	friend auto operator==(Stats, Stats) -> bool = default;
 private:
-	Stats(BaseStats const base, Level const level, IV const hp_iv, EV const hp_ev, auto make) :
-		m_hp(base, level, hp_iv, hp_ev),
+	constexpr Stats(BaseStats::HP const base_hp, Level const level, IV const hp_iv, EV const hp_ev, auto make) :
+		m_hp(base_hp, level, hp_iv, hp_ev),
 		m_atk(make(SplitSpecialRegularStat::atk)),
 		m_def(make(SplitSpecialRegularStat::def)),
 		m_spa(make(SplitSpecialRegularStat::spa)),
@@ -104,7 +104,7 @@ private:
 };
 
 template<Generation generation>
-auto with_new_ivs_and_evs(HP const original_hp, BaseStats const base_stats, Level const level, CombinedStats<generation> const stats) {
+constexpr auto with_new_ivs_and_evs(HP const original_hp, BaseStats const base_stats, Level const level, CombinedStats<generation> const stats) {
 	auto result = Stats<generation>(base_stats, level, stats);
 	result.hp() = result.hp().max() * original_hp.current() / original_hp.max();
 	return result;
