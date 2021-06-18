@@ -68,15 +68,13 @@ constexpr auto parse_stat_components(std::string_view const str, T default_value
 		auto maybe = buffer.pop();
 		return maybe.empty() ? default_value : T(bounded::to_integer<typename T::value_type>(maybe));
 	};
-	// Order of evaluation is defined with {} init
-	return GenericStats<T>{
-		next(),
-		next(),
-		next(),
-		next(),
-		next(),
-		next()
-	};
+	auto const hp = next();
+	auto const atk = next();
+	auto const def = next();
+	auto const spa = next();
+	auto const spd = next();
+	auto const spe = next();
+	return GenericStats<T>(hp, atk, def, spa, spd, spe);
 }
 
 inline auto parse_gender(std::string_view const str) {
