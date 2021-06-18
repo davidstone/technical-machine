@@ -29,7 +29,7 @@ struct IV {
 		return m_value;
 	}
 
-	friend auto operator==(IV, IV) -> bool = default;
+	friend auto operator<=>(IV, IV) = default;
 private:
 	value_type m_value;
 };
@@ -58,7 +58,7 @@ struct DV {
 		return IV(2_bi * value());
 	}
 
-	friend auto operator==(DV, DV) -> bool = default;
+	friend auto operator<=>(DV, DV) = default;
 private:
 	value_type m_value;
 };
