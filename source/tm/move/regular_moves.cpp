@@ -43,11 +43,4 @@ auto RegularMoves::push_back(Move const move) -> Move & {
 	return containers::push_back(m_moves, move);
 }
 
-auto add_seen_move(RegularMoves & moves, Generation const generation, Moves const move_name) -> void {
-	if (containers::any_equal(moves, move_name) or !is_regular(move_name)) {
-		return;
-	}
-	moves.push_back(Move(generation, move_name));
-}
-
 } // namespace technicalmachine

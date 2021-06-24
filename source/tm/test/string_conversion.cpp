@@ -97,7 +97,7 @@ void test_pokemon() {
 
 	check();
 	for (auto const move : {Moves::Recover, Moves::Calm_Mind, Moves::Taunt}) {
-		pokemon.regular_moves().push_back(Move(generation, move));
+		pokemon.add_move(Move(generation, move));
 		check();
 	}
 	pokemon.set_status(Statuses::burn);

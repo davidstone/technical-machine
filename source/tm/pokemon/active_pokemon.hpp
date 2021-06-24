@@ -466,8 +466,11 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		return ActivePokemon<generation>(this->m_pokemon, this->m_flags);
 	}
 
-	auto regular_moves() const -> RegularMoves & {
-		return this->m_pokemon.regular_moves();
+	auto add_move(Move const move) const -> void {
+		return this->m_pokemon.add_move(move);
+	}
+	auto reduce_pp(Moves const move_name, Weather const weather, bounded::bounded_integer auto const amount) const -> void {
+		this->m_pokemon.reduce_pp(move_name, this->m_flags.embargo.is_active(), weather.magic_room(), amount);
 	}
 
 	auto stage() const -> Stage & {

@@ -72,7 +72,7 @@ struct Battle {
 		auto & user = is_ai ? m_ai : m_foe;
 		auto & other = is_ai ? m_foe : m_ai;
 
-		add_seen_move(user.pokemon().regular_moves(), generation, move.selected);
+		user.pokemon().add_move(Move(generation, move.selected));
 		// TODO: Add move.executed in some circumstances
 
 		call_move(

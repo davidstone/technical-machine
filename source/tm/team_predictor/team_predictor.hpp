@@ -37,15 +37,16 @@ void predict_pokemon(Team<generation> & team, Estimate estimate, UsageStats cons
 	team.all_pokemon().set_index(index);
 }
 
-inline void predict_move(RegularMoves & regular, Generation const generation, containers::static_vector<Moves, max_moves_per_pokemon.value()> const detailed) {
+template<Generation generation>
+void predict_move(Pokemon<generation> & pokemon, containers::static_vector<Moves, max_moves_per_pokemon.value()> const detailed) {
 	for (Moves const move_name : detailed) {
-		if (containers::size(regular) == max_moves_per_pokemon) {
+		if (containers::size(pokemon.regular_moves()) == max_moves_per_pokemon) {
 			break;
 		}
-		if (containers::any_equal(regular, move_name)) {
+		if (containers::any_equal(pokemon.regular_moves(), move_name)) {
 			continue;
 		}
-		regular.push_back(Move(generation, move_name));
+		pokemon.add_move(Move(generation, move_name));
 	}
 }
 
@@ -67,7 +68,7 @@ auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stat
 		if (!pokemon.nature_is_known()) {
 			pokemon.set_nature(detailed.nature);
 		}
-		predict_move(pokemon.regular_moves(), generation, detailed.moves);
+		predict_move(pokemon, detailed.moves);
 		optimize_evs(pokemon, random_engine);
 	}
 	// TODO: This isn't right

@@ -53,6 +53,4 @@ private:
 	containers::static_vector<Move, max_moves_per_pokemon.value()> m_moves;
 };
 
-auto add_seen_move(RegularMoves &, Generation, Moves) -> void;
-
 } // namespace technicalmachine

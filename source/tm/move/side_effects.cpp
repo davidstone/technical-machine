@@ -401,16 +401,10 @@ constexpr auto phaze_effect(Team<generation> const & target) {
 	return result;
 }
 
-auto last_move_if_regular(auto pokemon) {
-	return containers::maybe_find(pokemon.regular_moves(), pokemon.last_used_move().name());
-}
-
 template<Generation generation, int reduction>
-constexpr auto spite = [](Team<generation> & user, Team<generation> &, Weather &, auto) {
-	auto const regular_move = last_move_if_regular(user.pokemon());
-	// We can't get here if Spite won't apply
-	BOUNDED_ASSERT(regular_move);
-	regular_move->reduce_pp(bounded::constant<reduction>);
+constexpr auto spite = [](Team<generation> & user, Team<generation> &, Weather & weather, auto) {
+	auto const pokemon = user.pokemon();
+	pokemon.reduce_pp(pokemon.last_used_move().name(), weather, bounded::constant<reduction>);
 };
 
 template<int, typename>
@@ -1591,7 +1585,8 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Snatch:
 			return no_effect<generation>;
 		case Moves::Spite: {
-			auto const regular_move = last_move_if_regular(original_user);
+			// TODO: Spite fails if the last used move has no PP
+			auto const regular_move = containers::maybe_find(original_user.regular_moves(), original_user.last_used_move().name());
 			if (!regular_move) {
 				return no_effect<generation>;
 			}

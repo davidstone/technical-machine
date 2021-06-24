@@ -83,16 +83,17 @@ void test_two_moves_with_one_out_of_pp() {
 	auto weather = Weather();
 
 	auto user = Team<generation>(1_bi, true);
-	auto & pokemon = user.add_pokemon(Pokemon<generation>(
+	auto user_moves = moves(Moves::Thunder, Moves::Thunderbolt);
+	empty_pp(containers::front(user_moves));
+	user.add_pokemon(Pokemon<generation>(
 		Species::Pikachu,
 		Level(100_bi),
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
 		default_combined_stats<generation>,
-		moves(Moves::Thunder, Moves::Thunderbolt)
+		user_moves
 	));
-	empty_pp(containers::front(pokemon.regular_moves()));
 	user.pokemon().switch_in(weather);
 
 	auto other = Team<generation>(1_bi, false);
@@ -122,19 +123,20 @@ void test_two_moves_with_both_out_of_pp() {
 	auto weather = Weather();
 
 	auto user = Team<generation>(1_bi, true);
-	auto & pokemon = user.add_pokemon(Pokemon<generation>(
+	auto user_moves = moves(Moves::Thunder, Moves::Thunderbolt);
+	for (auto & move : user_moves) {
+		empty_pp(move);
+	}
+	user.add_pokemon(Pokemon<generation>(
 		Species::Pikachu,
 		Level(100_bi),
 		Gender::female,
 		Item::Leftovers,
 		Ability::Intimidate,
 		default_combined_stats<generation>,
-		moves(Moves::Thunder, Moves::Thunderbolt)
+		user_moves
 	));
 	user.pokemon().switch_in(weather);
-	for (auto & move : pokemon.regular_moves()) {
-		empty_pp(move);
-	}
 
 	auto other = Team<generation>(1_bi, false);
 	other.add_pokemon(Pokemon<generation>(

@@ -142,7 +142,7 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 			pokemon.set_nature(*nature);
 		}
 		for (auto const move : moves) {
-			add_seen_move(pokemon.regular_moves(), generation, move);
+			pokemon.add_move(Move(generation, move));
 		}
 		pokemon.set_ivs_and_evs(CombinedStats<generation>{
 			nature ? *nature : Nature::Hardy,

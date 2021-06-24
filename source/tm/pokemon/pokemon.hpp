@@ -29,6 +29,9 @@
 
 #include <bounded/assert.hpp>
 
+#include <containers/algorithms/all_any_none.hpp>
+#include <containers/algorithms/maybe_find.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -82,7 +85,7 @@ struct Pokemon {
 		m_item_is_known = false;
 		m_nature_is_known = false;
 	}
-	
+
 	auto hp() const {
 		return m_stats.hp();
 	}
@@ -104,8 +107,21 @@ struct Pokemon {
 	auto regular_moves() const -> RegularMoves const & {
 		return m_regular_moves;
 	}
-	auto regular_moves() -> RegularMoves & {
-		return m_regular_moves;
+	auto add_move(Move const move) & -> void {
+		if (containers::any_equal(regular_moves(), move.name()) or !is_regular(move.name())) {
+			return;
+		}
+		m_regular_moves.push_back(move);
+	}
+
+	void reduce_pp(Moves const move_name, bool const embargo, bool const magic_room, bounded::bounded_integer auto const amount) & {
+		auto const maybe_move = containers::maybe_find(m_regular_moves, move_name);
+		if (!maybe_move) {
+			return;
+		}
+		auto & move = *maybe_move;
+		move.reduce_pp(amount);
+		activate_pp_restore_berry(move, embargo, magic_room);
 	}
 
 	void set_hp(auto const hp) & {
@@ -237,6 +253,23 @@ struct Pokemon {
 		);
 	}
 private:
+	auto activate_pp_restore_berry(Move & move, bool const embargo, bool const magic_room) & -> void {
+		if (no_pp(move.pp())) {
+			switch (item(embargo, magic_room)) {
+				case Item::Leppa_Berry:
+					move.restore_pp(10_bi);
+					remove_item();
+					break;
+				case Item::MysteryBerry:
+					move.restore_pp(5_bi);
+					remove_item();
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
 	RegularMoves m_regular_moves;
 	
 	Stats<generation> m_stats;
@@ -278,4 +311,4 @@ auto hp_ratio(auto const pokemon) {
 	return rational(hp.current(), hp.max());
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

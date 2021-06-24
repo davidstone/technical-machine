@@ -331,24 +331,6 @@ constexpr auto fails_against_fainted(Target const target) {
 	}
 }
 
-template<Generation generation>
-auto activate_pp_restore_berry(Move & move, MutableActivePokemon<generation> pokemon, Weather const weather) {
-	if (no_pp(move.pp())) {
-		switch (pokemon.item(weather)) {
-			case Item::Leppa_Berry:
-				move.restore_pp(10_bi);
-				pokemon.remove_item();
-				break;
-			case Item::MysteryBerry:
-				move.restore_pp(5_bi);
-				pokemon.remove_item();
-				break;
-			default:
-				break;
-		}
-	}
-}
-
 auto absorb_ability_activates(Generation const generation, KnownMove const move, Type const absorbed_type) -> bool {
 	if (!move_targets_foe(generation, move.name)) {
 		return false;
@@ -463,11 +445,9 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 	
 	auto const other_ability = other_pokemon.ability();
 
-	auto const regular_move = containers::maybe_find(user_pokemon.regular_moves(), move.selected);
-	if (regular_move and move.executed != Moves::Hit_Self and !user_pokemon.last_used_move().is_locked_in_by_move()) {
+	if (move.executed != Moves::Hit_Self and !user_pokemon.last_used_move().is_locked_in_by_move()) {
 		auto const uses_extra_pp = other_ability == Ability::Pressure;
-		regular_move->reduce_pp(BOUNDED_CONDITIONAL(uses_extra_pp, 2_bi, 1_bi));
-		activate_pp_restore_berry(*regular_move, user_pokemon, weather);
+		user_pokemon.reduce_pp(move.selected, weather, BOUNDED_CONDITIONAL(uses_extra_pp, 2_bi, 1_bi));
 	}
 	
 	// TODO: What happens if we Sleep Talk Trump Card?
