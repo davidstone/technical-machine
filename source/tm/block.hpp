@@ -78,11 +78,6 @@ constexpr auto imprison(Moves const move, ActivePokemon<generation> const other)
 	return other.used_imprison() and containers::any_equal(other.regular_moves(), move);
 }
 
-inline auto no_pp(PP const pp) {
-	auto const remaining = pp.remaining();
-	return remaining and *remaining == 0_bi;
-}
-
 // Things that both block selection and block execution in between sleep and confusion
 template<Generation generation>
 auto block1(ActivePokemon<generation> const user, Move const move, ActivePokemon<generation> const other) {

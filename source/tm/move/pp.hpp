@@ -67,4 +67,9 @@ private:
 	bounded::optional<current_type> m_current;
 };
 
+inline auto no_pp(PP const pp) {
+	auto const remaining = pp.remaining();
+	return remaining and *remaining == 0_bi;
+}
+
 } // namespace technicalmachine
