@@ -21,6 +21,7 @@
 #include <bounded/to_integer.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
+#include <containers/algorithms/count.hpp>
 
 #include <numeric_traits/min_max_value.hpp>
 
@@ -140,7 +141,7 @@ auto packed_format_to_team(std::string_view const str, TeamSize const team_size)
 
 template<Generation generation>
 auto packed_format_to_team(std::string_view const str) -> Team<generation> {
-	auto const team_size = bounded::check_in_range<TeamSize>(bounded::integer(std::count(str.begin(), str.end(), pokemon_delimiter) + 1));
+	auto const team_size = bounded::check_in_range<TeamSize>(bounded::integer(containers::count(str, pokemon_delimiter)) + 1_bi);
 	return packed_format_to_team<generation>(str, team_size);
 }
 
