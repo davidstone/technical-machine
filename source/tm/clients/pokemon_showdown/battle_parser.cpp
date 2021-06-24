@@ -738,12 +738,12 @@ private:
 	void send_random_move() {
 		// In doubles / triples we need to specify " TARGET" at the end for regular
 		// moves
-		auto distribution = std::uniform_int_distribution(1, static_cast<int>(max_moves_per_pokemon + max_pokemon_per_team));
+		auto distribution = std::uniform_int_distribution(0, static_cast<int>(max_moves_per_pokemon + max_pokemon_per_team - 1_bi));
 		auto const result = distribution(m_random_engine);
 
 		auto switch_move = [=]{ return static_cast<TeamIndex>(result - max_moves_per_pokemon); };
 		auto move_index = [=]{ return static_cast<containers::index_type<RegularMoves>>(result); };
-		auto const is_switch = result > max_moves_per_pokemon;
+		auto const is_switch = result >= max_moves_per_pokemon;
 		send_move_impl(is_switch, switch_move, move_index);
 	}
 
