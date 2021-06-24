@@ -172,11 +172,11 @@ auto execute_move(Team<generation> const & user, SelectedAndExecuted const move,
 
 struct OriginalPokemon {
 	template<Generation generation>
-	OriginalPokemon(ActivePokemon<generation> const pokemon, Moves const other_move):
+	OriginalPokemon(ActivePokemon<generation> const pokemon, ActivePokemon<generation> const other_pokemon, Moves const other_move):
 		m_species(pokemon.species()),
 		m_other_move{
 			other_move,
-			get_type(generation, other_move, get_hidden_power_type(pokemon))
+			get_type(generation, other_move, get_hidden_power_type(other_pokemon))
 		}
 	{
 	}
@@ -435,8 +435,11 @@ private:
 		// move). To detect this case, we see if the Pokemon is the same before and
 		// after the move, and if so, the second Pokemon can only execute Pass.
 
+		auto const first_pokemon = first.pokemon();
 		auto const last_pokemon = last.pokemon();
-		auto const original_last_pokemon = OriginalPokemon(last_pokemon, first_move);
+		BOUNDED_ASSERT(containers::maybe_find(all_moves(first_pokemon, first.size()), first_move));
+		BOUNDED_ASSERT(containers::maybe_find(all_moves(last_pokemon, last.size()), last_move));
+		auto const original_last_pokemon = OriginalPokemon(last_pokemon, first_pokemon, first_move);
 
 		return score_executed_moves(first, first_move, last, FutureMove{is_damaging(last_move)}, weather, [&](Team<generation> const & updated_first, Team<generation> const & updated_last, Weather const updated_weather) {
 			auto const first_selections = legal_selections(updated_first, updated_last, weather);
