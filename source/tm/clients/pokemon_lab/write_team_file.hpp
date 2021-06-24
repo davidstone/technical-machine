@@ -16,6 +16,7 @@
 #include <tm/string_conversions/species.hpp>
 
 #include <tm/generation.hpp>
+#include <tm/team.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>

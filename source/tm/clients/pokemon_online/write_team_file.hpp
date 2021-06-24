@@ -13,6 +13,8 @@
 
 #include <tm/string_conversions/species.hpp>
 
+#include <tm/team.hpp>
+
 #include <containers/integer_range.hpp>
 #include <containers/size.hpp>
 
@@ -22,9 +24,6 @@
 #include <filesystem>
 
 namespace technicalmachine {
-
-template<Generation>
-struct Team;
 
 namespace po {
 
