@@ -724,14 +724,14 @@ private:
 	}
 
 	void send_move_impl(bool const is_switch, auto const switch_move, auto const move_index) {
-		m_send_message(containers::concatenate<containers::string>(m_id, (is_switch ? containers::concatenate_view("|/switch "sv, to_string(switch_move())) : containers::concatenate_view("|/move "sv, to_string(move_index())))));
+		m_send_message(containers::concatenate<containers::string>(m_id, (is_switch ? containers::concatenate_view("|/switch "sv, to_string(switch_move())) : containers::concatenate_view("|/move "sv, to_string(move_index() + 1_bi)))));
 	}
 
 	void send_move(Moves const move) {
 		// In doubles / triples we need to specify " TARGET" at the end for regular
 		// moves
 		auto switch_move = [&]{ return m_slot_memory[to_replacement(move)]; };
-		auto move_index = [&]{ return get_move_index(m_battle.ai().all_pokemon()(), move) + 1_bi; };
+		auto move_index = [&]{ return get_move_index(m_battle.ai().all_pokemon()(), move); };
 		send_move_impl(is_switch(move), switch_move, move_index);
 	}
 
