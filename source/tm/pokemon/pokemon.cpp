@@ -7,24 +7,6 @@
 
 namespace technicalmachine {
 
-template<Generation generation>
-Pokemon<generation>::Pokemon(Species const species, Level const level, Gender const gender) : 
-	Pokemon::Pokemon(
-		species,
-		level,
-		gender,
-		Item::None,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		RegularMoves(),
-		Happiness()
-	)
-{
-	m_ability_is_known = false;
-	m_item_is_known = false;
-	m_nature_is_known = false;
-}
-
 template struct Pokemon<Generation::one>;
 template struct Pokemon<Generation::two>;
 template struct Pokemon<Generation::three>;

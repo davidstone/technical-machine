@@ -66,7 +66,22 @@ struct Pokemon {
 	{
 	}
 
-	Pokemon(Species const species, Level const level, Gender const gender);
+	Pokemon(Species const species, Level const level, Gender const gender):
+		Pokemon(
+			species,
+			level,
+			gender,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			RegularMoves(),
+			Happiness()
+		)
+	{
+		m_ability_is_known = false;
+		m_item_is_known = false;
+		m_nature_is_known = false;
+	}
 	
 	auto hp() const {
 		return m_stats.hp();
