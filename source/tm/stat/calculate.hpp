@@ -326,7 +326,7 @@ auto item_modifier(ActivePokemon<generation> const pokemon, Weather const weathe
 	return rational(numerator, denominator);
 }
 
-constexpr auto is_physical(SplitSpecialRegularStat const stat) {
+constexpr auto applies_to_physical(SplitSpecialRegularStat const stat) {
 	switch (stat) {
 	case SplitSpecialRegularStat::atk:
 	case SplitSpecialRegularStat::def:
@@ -346,7 +346,7 @@ constexpr auto other_physical_stat(SplitSpecialRegularStat const stat) {
 
 template<Generation generation>
 auto determine_initial_stat(SplitSpecialRegularStat const name, ActivePokemon<generation> const pokemon) {
-	return !is_physical(name) or !pokemon.power_trick_is_active() ?
+	return !applies_to_physical(name) or !pokemon.power_trick_is_active() ?
 		pokemon.stat(name) :
 		pokemon.stat(other_physical_stat(name));
 }
