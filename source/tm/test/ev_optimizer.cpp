@@ -70,7 +70,7 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
-	BOUNDED_ASSERT(compute_minimal_spread(base_stats, stats, level, bounded::none, include_attack, include_special_attack) == ivs_and_evs);
+	BOUNDED_ASSERT(compute_minimal_spread(base_stats, stats, level, bounded::optional<HiddenPower<generation>>(), include_attack, include_special_attack) == ivs_and_evs);
 	BOUNDED_ASSERT(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
 	optimize_evs(pokemon, random_engine);
 	BOUNDED_ASSERT(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
@@ -83,16 +83,16 @@ void defensive_tests() {
 	constexpr auto base_spd = 100_bi;
 	constexpr auto level = Level(100_bi);
 	constexpr auto nature = Nature::Bold;
-	constexpr auto iv = IV(31_bi);
+	constexpr auto possible_ivs = possible_dvs_or_ivs(bounded::optional<HiddenPower<generation>>());
 	constexpr auto hp_ev = EV(252_bi);
 	constexpr auto defense_ev = EV(252_bi);
 	constexpr auto special_defense_ev = EV(4_bi);
-	constexpr auto hp = HP(base_hp, level, iv, hp_ev).max();
-	constexpr auto defense = initial_stat<generation>(SplitSpecialRegularStat::def, base_def, level, nature, iv, defense_ev);
-	constexpr auto special_defense = initial_stat<generation>(SplitSpecialRegularStat::spd, base_spd, level, nature, iv, special_defense_ev);
-	constexpr auto input_hp = DefensiveEVHP{base_hp, iv, hp};
-	constexpr auto input_def = DefensiveEVDef<generation>{base_def, iv, defense};
-	constexpr auto input_spd = DefensiveEVSpD<generation>{base_spd, iv, special_defense};
+	constexpr auto hp = HP(base_hp, level, IV(31_bi), hp_ev).max();
+	constexpr auto defense = initial_stat<generation>(SplitSpecialRegularStat::def, base_def, level, nature, IV(31_bi), defense_ev);
+	constexpr auto special_defense = initial_stat<generation>(SplitSpecialRegularStat::spd, base_spd, level, nature, IV(31_bi), special_defense_ev);
+	constexpr auto input_hp = DefensiveEVHP{base_hp, possible_optimized_ivs(possible_ivs.hp()), hp};
+	constexpr auto input_def = DefensiveEVDef<generation>{base_def, possible_optimized_ivs(possible_ivs.def()), defense};
+	constexpr auto input_spd = DefensiveEVSpD<generation>{base_spd, possible_optimized_ivs(possible_ivs.spd()), special_defense};
 	// Too many steps to constant evaluate
 	auto const defensive_evs = DefensiveEVs(level, input_hp, input_def, input_spd);
 	for (auto const & candidate : defensive_evs) {
@@ -113,10 +113,10 @@ static_assert([] {
 	constexpr auto generation = Generation::four;
 	constexpr auto level = Level(100_bi);
 	constexpr auto original_nature = Nature::Hardy;
-	constexpr auto iv = IV(31_bi);
 	constexpr auto base_spe = 30_bi;
-	constexpr auto original_value = initial_stat<generation>(SplitSpecialRegularStat::spe, base_spe, level, original_nature, iv, EV(76_bi));
-	constexpr auto speed_evs = SpeedEVs(base_spe, level, iv, SpeedEVs::Input<generation>{original_value});
+	constexpr auto original_value = initial_stat<generation>(SplitSpecialRegularStat::spe, base_spe, level, original_nature, IV(31_bi), EV(76_bi));
+	constexpr auto possible_ivs = possible_optimized_ivs(possible_dvs_or_ivs(bounded::optional<HiddenPower<generation>>()).spe());
+	constexpr auto speed_evs = SpeedEVs(base_spe, level, possible_ivs, SpeedEVs::Input<generation>{original_value});
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const found = find(speed_evs, nature);
 		auto const new_value = initial_stat<generation>(SplitSpecialRegularStat::spe, base_spe, level, nature, found.iv, found.ev);
@@ -177,7 +177,7 @@ void generation_two(std::mt19937 & random_engine) {
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = true;
-	BOUNDED_ASSERT(compute_minimal_spread(base_stats, stats, level, bounded::none, include_attack, include_special_attack) == ivs_and_evs);
+	BOUNDED_ASSERT(compute_minimal_spread(base_stats, stats, level, bounded::optional<HiddenPower<generation>>(), include_attack, include_special_attack) == ivs_and_evs);
 	BOUNDED_ASSERT(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
 	optimize_evs(pokemon, random_engine);
 	BOUNDED_ASSERT(calculate_ivs_and_evs(pokemon) == ivs_and_evs);

@@ -4,31 +4,11 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <tm/pokemon/hidden_power.hpp>
-#include <tm/stat/hidden_power_ivs.hpp>
 
 #include <containers/integer_range.hpp>
 
 namespace technicalmachine {
 namespace {
-
-template<Generation generation>
-constexpr void test_impl() {
-	for (auto const type : containers::enum_range<Type>()) {
-		switch (type) {
-			case Type::Fairy:
-			case Type::Normal:
-			case Type::Typeless:
-				continue;
-			default:
-				break;
-		}
-		for (auto const has_physical_move : { false, true }) {
-			auto const hidden_power = HiddenPower<generation>(hidden_power_ivs<generation>(type, has_physical_move));
-			BOUNDED_ASSERT(hidden_power.power() == 70_bi);
-			BOUNDED_ASSERT(hidden_power.type() == type);
-		}
-	}
-}
 
 constexpr bool test() {
 	{
@@ -264,9 +244,6 @@ constexpr bool test() {
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Dark);
 	}
-
-	test_impl<Generation::two>();
-	test_impl<Generation::three>();
 
 	return true;
 }

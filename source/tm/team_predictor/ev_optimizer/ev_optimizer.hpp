@@ -21,7 +21,7 @@
 #include <tm/stat/combined_stats.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/generic_stats.hpp>
-#include <tm/stat/hidden_power_ivs.hpp>
+#include <tm/stat/possible_dvs_or_ivs.hpp>
 #include <tm/stat/hp.hpp>
 #include <tm/stat/iv_and_ev.hpp>
 
@@ -31,6 +31,7 @@
 #include <bounded/optional.hpp>
 
 #include <containers/begin_end.hpp>
+#include <containers/take.hpp>
 
 #include <random>
 
@@ -86,16 +87,21 @@ constexpr auto compute_minimal_spread(
 	BaseStats const base_stats,
 	Stats<generation> stats,
 	Level const level,
-	bounded::optional<Type> const hidden_power_type,
+	bounded::optional<HiddenPower<generation>> const hidden_power,
 	bool const include_attack,
 	bool const include_special_attack
 ) -> CombinedStats<generation> {
-	auto const ivs = hidden_power_ivs<generation>(hidden_power_type, include_attack);
+	auto const dvs_or_ivs = possible_dvs_or_ivs(hidden_power);
 
 	if constexpr (generation <= Generation::two) {
 		return CombinedStats<generation>{
 			Nature::Hardy,
-			ivs,
+			DVs(
+				include_attack ? containers::back(dvs_or_ivs.atk()) : containers::front(dvs_or_ivs.atk()),
+				containers::back(dvs_or_ivs.def()),
+				containers::back(dvs_or_ivs.spe()),
+				containers::back(dvs_or_ivs.spc())
+			),
 			OldGenEVs(
 				EV(EV::useful_max),
 				include_attack ? EV(EV::useful_max) : EV(0_bi),
@@ -108,16 +114,16 @@ constexpr auto compute_minimal_spread(
 		return detail::combine<generation>(
 			OffensiveEVs(
 				level,
-				OffensiveEVAtk<generation>{base_stats.atk(), ivs.atk(), stats.atk(), include_attack},
-				OffensiveEVSpA<generation>{base_stats.spa(), ivs.spa(), stats.spa(), include_special_attack}
+				OffensiveEVAtk<generation>{base_stats.atk(), include_attack ? possible_optimized_ivs(dvs_or_ivs.atk()) : possible_optimized_ivs(containers::reversed(dvs_or_ivs.atk())), stats.atk(), include_attack},
+				OffensiveEVSpA<generation>{base_stats.spa(), possible_optimized_ivs(dvs_or_ivs.spa()), stats.spa(), include_special_attack}
 			),
 			DefensiveEVs(
 				level,
-				DefensiveEVHP{base_stats.hp(), ivs.hp(), stats.hp().max()},
-				DefensiveEVDef<generation>{base_stats.def(), ivs.def(), stats.def()},
-				DefensiveEVSpD<generation>{base_stats.spd(), ivs.spd(), stats.spd()}
+				DefensiveEVHP{base_stats.hp(), possible_optimized_ivs(dvs_or_ivs.hp()), stats.hp().max()},
+				DefensiveEVDef<generation>{base_stats.def(), possible_optimized_ivs(dvs_or_ivs.def()), stats.def()},
+				DefensiveEVSpD<generation>{base_stats.spd(), possible_optimized_ivs(dvs_or_ivs.spd()), stats.spd()}
 			),
-			SpeedEVs(base_stats.spe(), level, ivs.spe(), SpeedEVs::Input<generation>{stats.spe()})
+			SpeedEVs(base_stats.spe(), level, possible_optimized_ivs(dvs_or_ivs.spe()), SpeedEVs::Input<generation>{stats.spe()})
 		);
 	}
 }
@@ -154,7 +160,7 @@ auto optimize_evs(
 	CombinedStats<generation> combined,
 	Species const species,
 	Level const level,
-	bounded::optional<Type> const hidden_power_type,
+	bounded::optional<HiddenPower<generation>> const hidden_power,
 	bool const include_attack,
 	bool const include_special_attack,
 	std::mt19937 & random_engine
@@ -164,7 +170,7 @@ auto optimize_evs(
 		auto const previous = combined;
 		combined = pad_random_evs(combined, include_attack, include_special_attack, random_engine);
 		auto const stats = Stats<generation>(base_stats, level, combined);
-		combined = compute_minimal_spread(base_stats, stats, level, hidden_power_type, include_attack, include_special_attack);
+		combined = compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack);
 		// Technically this isn't correct based on how I pad: I could have some
 		// leftover EVs that could have done some good somewhere else, but were
 		// not enough to increase the stat they were randomly assigned to.
@@ -184,7 +190,7 @@ void optimize_evs(Pokemon<generation> & pokemon, std::mt19937 & random_engine) {
 		calculate_ivs_and_evs(pokemon),
 		species,
 		level,
-		get_hidden_power_type(pokemon),
+		pokemon.hidden_power(),
 		include_attack,
 		include_special_attack,
 		random_engine

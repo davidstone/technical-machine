@@ -6,7 +6,6 @@
 #pragma once
 
 #include <tm/pokemon/happiness.hpp>
-#include <tm/pokemon/has_physical_or_special_move.hpp>
 #include <tm/pokemon/hidden_power.hpp>
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species.hpp>
@@ -54,12 +53,13 @@ struct Pokemon {
 
 		m_happiness(happiness),
 
-		// TODO: Make this none if there is no way to call Hidden Power
-		m_hidden_power([=] {
+		m_hidden_power([&]() -> bounded::optional<HiddenPower<generation>> {
 			if constexpr (generation == Generation::one) {
 				return bounded::none;
-			} else {
+			} else if (containers::any(m_regular_moves, [](Move const move) { return move.name() == Moves::Hidden_Power; })) {
 				return HiddenPower<generation>(stat_inputs.dvs_or_ivs);
+			} else {
+				return bounded::none;
 			}
 		}()),
 		
@@ -67,7 +67,7 @@ struct Pokemon {
 
 		m_ability_is_known(true),
 		m_item_is_known(true),
-		m_nature_is_known(true)
+		m_stats_are_known(true)
 	{
 	}
 
@@ -85,7 +85,7 @@ struct Pokemon {
 	{
 		m_ability_is_known = false;
 		m_item_is_known = false;
-		m_nature_is_known = false;
+		m_stats_are_known = false;
 	}
 
 	auto hp() const {
@@ -114,6 +114,18 @@ struct Pokemon {
 			return;
 		}
 		m_regular_moves.push_back(move);
+		if constexpr (generation != Generation::one) {
+			if (move.name() == Moves::Hidden_Power) {
+				if (!m_stats_are_known) {
+					// TODO: Don't just give them Hidden Power Dark
+					set_ivs_and_evs(default_combined_stats<generation>);
+					m_stats_are_known = false;
+					m_hidden_power = HiddenPower<generation>(default_combined_stats<generation>.dvs_or_ivs);
+				} else {
+					m_hidden_power = HiddenPower<generation>(calculate_ivs_and_evs(*this).dvs_or_ivs);
+				}
+			}
+		}
 	}
 
 	void reduce_pp(Moves const move_name, bool const embargo, bool const magic_room, bounded::bounded_integer auto const amount) & {
@@ -233,7 +245,7 @@ struct Pokemon {
 	auto set_ivs_and_evs(CombinedStats<generation> const stat_inputs) -> void {
 		if constexpr (exists<decltype(m_nature)>) {
 			m_nature = stat_inputs.nature;
-			m_nature_is_known = true;
+			m_stats_are_known = true;
 		}
 		m_stats = with_new_ivs_and_evs(hp(), BaseStats(generation, species()), level(), stat_inputs);
 	}
@@ -285,7 +297,7 @@ private:
 	
 	bool m_ability_is_known : 1;
 	bool m_item_is_known : 1;
-	bool m_nature_is_known : 1;
+	bool m_stats_are_known : 1;
 };
 
 template<Generation generation>
@@ -303,8 +315,7 @@ auto calculate_ivs_and_evs(Pokemon<generation> const pokemon) {
 		pokemon.species(),
 		pokemon.level(),
 		stats,
-		get_hidden_power_type(pokemon),
-		has_physical_move(pokemon),
+		pokemon.hidden_power(),
 		containers::enum_range(nature, nature)
 	);
 }

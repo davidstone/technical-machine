@@ -10,6 +10,7 @@
 #include <tm/test/collections/collection.hpp>
 #include <tm/test/block.hpp>
 #include <tm/test/calculate_damage.hpp>
+#include <tm/test/calculate_ivs_and_evs.hpp>
 #include <tm/test/call_move.hpp>
 #include <tm/test/critical_hit.hpp>
 #include <tm/test/ev_optimizer.hpp>
@@ -40,6 +41,7 @@ int main() {
 	call_move_tests();
 	sleep_tests();
 
+	calculate_ivs_and_evs_tests();
 	ev_optimizer_tests();
 	
 	evaluate_tests();

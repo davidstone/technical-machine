@@ -76,4 +76,55 @@ private:
 	Stat m_spe;
 };
 
+template<typename Stat>
+struct GenericDVStats {
+	constexpr GenericDVStats(Stat const atk_, Stat const def_, Stat const spe_, Stat const spc_):
+		m_atk(atk_),
+		m_def(def_),
+		m_spe(spe_),
+		m_spc(spc_)
+	{
+	}
+
+	constexpr auto && atk() const {
+		return m_atk;
+	}
+	constexpr auto && def() const {
+		return m_def;
+	}
+	constexpr auto && spe() const {
+		return m_spe;
+	}
+	constexpr auto && spc() const {
+		return m_spc;
+	}
+	constexpr auto && atk() {
+		return m_atk;
+	}
+	constexpr auto && def() {
+		return m_def;
+	}
+	constexpr auto && spe() {
+		return m_spe;
+	}
+	constexpr auto && spc() {
+		return m_spc;
+	}
+
+	constexpr auto && operator[](auto const index) const {
+		return index_stat(*this, index);
+	}
+	constexpr auto && operator[](auto const index) {
+		return index_stat(*this, index);
+	}
+	
+	friend auto operator==(GenericDVStats, GenericDVStats) -> bool = default;
+
+private:
+	Stat m_atk;
+	Stat m_def;
+	Stat m_spe;
+	Stat m_spc;
+};
+
 } // namespace technicalmachine

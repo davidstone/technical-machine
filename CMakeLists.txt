@@ -142,6 +142,7 @@ add_library(tm_common STATIC
 	source/tm/stat/combined_stats.cpp
 	source/tm/stat/ev.cpp
 	source/tm/stat/generic_stats.cpp
+	source/tm/stat/possible_dvs_or_ivs.cpp
 	source/tm/stat/hp.cpp
 	source/tm/stat/initial_stat.cpp
 	source/tm/stat/ingame_id_to_nature.cpp
@@ -172,6 +173,7 @@ add_library(tm_common STATIC
 	source/tm/team_predictor/ev_optimizer/defensive_data_point.cpp
 	source/tm/team_predictor/ev_optimizer/ev_optimizer.cpp
 	source/tm/team_predictor/ev_optimizer/offensive.cpp
+	source/tm/team_predictor/ev_optimizer/possible_optimized_ivs.cpp
 	source/tm/team_predictor/ev_optimizer/speed.cpp
 
 	source/tm/team_predictor/estimate.cpp
@@ -274,6 +276,7 @@ add_executable(tm_test
 
 	source/tm/test/block.cpp
 	source/tm/test/calculate_damage.cpp
+	source/tm/test/calculate_ivs_and_evs.cpp
 	source/tm/test/call_move.cpp
 	source/tm/test/critical_hit.cpp
 	source/tm/test/ev_optimizer.cpp

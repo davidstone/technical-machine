@@ -7,8 +7,6 @@
 
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
 
-#include <tm/pokemon/has_physical_or_special_move.hpp>
-
 #include <tm/stat/calculate_ivs_and_evs.hpp>
 #include <tm/stat/initial_stat.hpp>
 
@@ -47,18 +45,29 @@ auto parse_stats(HP::max_type const hp, nlohmann::json const & stats) {
 	return Stats<generation>(HP(hp), attack, defense, special_attack, special_defense, speed);
 }
 
-inline auto hidden_power_type(std::string_view const str) {
+template<Generation generation>
+constexpr auto parse_hidden_power(std::string_view const str) {
 	constexpr auto prefix = std::string_view("hiddenpower");
 	if (!str.starts_with(prefix)) {
 		throw std::runtime_error("Hidden Power doesn't start with \"hiddenpower\" in PS team string");
 	}
-	return from_string<Type>(str.substr(prefix.size()));
+	// TODO: ???
+	constexpr auto const power = [] {
+		if constexpr (generation <= Generation::five) {
+			return 70_bi;
+		} else {
+			return 60_bi;
+		}
+	}();
+	auto const type = from_string<Type>(str.substr(prefix.size()));
+	return HiddenPower<generation>(power, type);
 }
 
-inline auto parse_moves(nlohmann::json const & moves, Generation const generation) {
+template<Generation generation>
+auto parse_moves(nlohmann::json const & moves) {
 	struct Result {
 		RegularMoves moves;
-		bounded::optional<Type> hidden_power_type;
+		bounded::optional<HiddenPower<generation>> hidden_power;
 	};
 	auto result = Result();
 	for (auto const & move : moves) {
@@ -66,7 +75,11 @@ inline auto parse_moves(nlohmann::json const & moves, Generation const generatio
 		auto const move_name = from_string<Moves>(move_str);
 		result.moves.push_back(Move(generation, move_name));
 		if (move_name == Moves::Hidden_Power) {
-			insert(result.hidden_power_type, hidden_power_type(move_str));
+			if constexpr (generation == Generation::one) {
+				throw std::runtime_error("Generation 1 does not have Hidden Power");
+			} else {
+				insert(result.hidden_power, parse_hidden_power<generation>(move_str));
+			}
 		}
 	}
 	return result;
@@ -86,13 +99,12 @@ auto parse_pokemon(nlohmann::json const & pokemon_data) {
 	// have a '/'
 	auto const hp = bounded::to_integer<HP::max_type>(split_view(condition, '/').first);
 
-	auto const move_data = parse_moves(pokemon_data.at("moves"), generation);
+	auto const move_data = parse_moves<generation>(pokemon_data.at("moves"));
 	auto const stats = calculate_ivs_and_evs(
 		details.species,
 		details.level,
 		parse_stats<generation>(hp, pokemon_data.at("stats")),
-		move_data.hidden_power_type,
-		has_physical_move(generation, move_data.moves, move_data.hidden_power_type)
+		move_data.hidden_power
 	);
 
 	auto const ability = from_string<Ability>(get("baseAbility"));

@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <tm/team_predictor/ev_optimizer/possible_optimized_ivs.hpp>
+
 #include <tm/pokemon/level.hpp>
 
 #include <tm/stat/base_stats.hpp>
@@ -31,11 +33,13 @@ struct SpeedEVs {
 		InitialStat<generation> stat;
 	};
 	template<Generation generation> requires (generation >= Generation::three)
-	constexpr SpeedEVs(BaseStats::Spe const base, Level const level, IV const iv, Input<generation> const target) {
+	constexpr SpeedEVs(BaseStats::Spe const base, Level const level, PossibleOptimizedIVs const ivs, Input<generation> const target) {
 		for (auto const nature : containers::enum_range<Nature>()) {
-			auto const ev = stat_to_ev(target.stat, SplitSpecialRegularStat::spe, base, level, nature, iv);
-			if (ev) {
-				containers::emplace_back(m_container, nature, iv, *ev);
+			for (auto const iv : ivs) {
+				auto const ev = stat_to_ev_at_least(target.stat, SplitSpecialRegularStat::spe, base, level, nature, iv);
+				if (ev) {
+					containers::emplace_back(m_container, nature, iv, *ev);
+				}
 			}
 		}
 		BOUNDED_ASSERT(!containers::is_empty(m_container));
@@ -53,7 +57,8 @@ private:
 		IV iv;
 		EV ev;
 	};
-	containers::static_vector<Mapped, static_cast<int>(numeric_traits::max_value<Nature>) + 1> m_container;
+	static constexpr auto maximum_natures = bounded::integer(numeric_traits::max_value<Nature>) + 1_bi;
+	containers::static_vector<Mapped, static_cast<std::size_t>(maximum_natures * max_possible_optimized_ivs)> m_container;
 };
 
 } // namespace technicalmachine
