@@ -17,12 +17,15 @@
 
 namespace technicalmachine {
 
+using HiddenPowerDVPower = bounded::integer<31, 70>;
+using HiddenPowerIVPower = bounded::integer<30, 70>;
+
 template<Generation generation>
 struct HiddenPower {
 	using Power =
 		std::conditional_t<generation <= Generation::one, bounded::constant_t<0>,
-		std::conditional_t<generation <= Generation::two, bounded::integer<31, 70>,
-		std::conditional_t<generation <= Generation::five, bounded::integer<30, 70>,
+		std::conditional_t<generation <= Generation::two, HiddenPowerDVPower,
+		std::conditional_t<generation <= Generation::five, HiddenPowerIVPower,
 		bounded::constant_t<60>
 	>>>;
 
