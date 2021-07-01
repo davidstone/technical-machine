@@ -227,18 +227,12 @@ struct Pokemon {
 	auto item_is_known() const -> bool {
 		return m_item_is_known;
 	}
-	auto set_nature(Nature const nature) -> void {
-		if constexpr (exists<decltype(m_nature)>) {
-			m_nature = nature;
-			m_nature_is_known = true;
-		}
-	}
-	auto nature_is_known() const -> bool {
-		return m_nature_is_known;
-	}
 
 	auto set_ivs_and_evs(CombinedStats<generation> const stat_inputs) -> void {
-		set_nature(stat_inputs.nature);
+		if constexpr (exists<decltype(m_nature)>) {
+			m_nature = stat_inputs.nature;
+			m_nature_is_known = true;
+		}
 		m_stats = with_new_ivs_and_evs(hp(), BaseStats(generation, species()), level(), stat_inputs);
 	}
 

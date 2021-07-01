@@ -65,9 +65,6 @@ auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stat
 		if (!pokemon.item_is_known()) {
 			pokemon.set_item(detailed.item);
 		}
-		if (!pokemon.nature_is_known()) {
-			pokemon.set_nature(detailed.nature);
-		}
 		predict_move(pokemon, detailed.moves);
 		optimize_evs(pokemon, random_engine);
 	}
