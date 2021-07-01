@@ -5,53 +5,33 @@
 
 #pragma once
 
-//#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/pokemon.hpp>
 
 #include <tm/move/category.hpp>
 #include <tm/move/known_move.hpp>
-#include <tm/move/regular_moves.hpp>
-
-#include <tm/generation.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
-#include <containers/algorithms/transform.hpp>
 
 namespace technicalmachine {
 
-template<Generation>
-struct Pokemon;
-
-auto any_move_matches(Generation const generation, RegularMoves const moves, bounded::optional<Type> const hidden_power_type, auto const condition) -> bool {
-	return containers::any(moves, [=](Move const move) {
+template<Generation generation>
+auto any_move_matches(Pokemon<generation> const pokemon, auto const condition) -> bool {
+	return containers::any(pokemon.regular_moves(), [=](Move const move) {
 		return condition(
 			generation,
-			KnownMove{move.name(), get_type(generation, move.name(), hidden_power_type)}
+			KnownMove{move.name(), get_type(generation, move.name(), get_hidden_power_type(pokemon))}
 		);
 	});
 }
 
-inline auto has_physical_move(Generation const generation, RegularMoves const moves, bounded::optional<Type> const hidden_power_type) -> bool {
-	return any_move_matches(generation, moves, hidden_power_type, [](auto... args) { return is_physical(args...); });
-}
-
 template<Generation generation>
 auto has_physical_move(Pokemon<generation> const pokemon) -> bool {
-	return any_move_matches(
-		generation,
-		pokemon.regular_moves(),
-		get_hidden_power_type(pokemon),
-		[](auto... args) { return is_physical(args...); }
-	);
+	return any_move_matches(pokemon, is_physical);
 }
 
 template<Generation generation>
 auto has_special_move(Pokemon<generation> const pokemon) -> bool {
-	return any_move_matches(
-		generation,
-		pokemon.regular_moves(),
-		get_hidden_power_type(pokemon),
-		[](auto... args) { return is_special(args...); }
-	);
+	return any_move_matches(pokemon, is_special);
 }
 
 } // namespace technicalmachine
