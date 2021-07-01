@@ -25,6 +25,7 @@
 #include <tm/string_conversions/generation.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
+#include <tm/string_conversions/type.hpp>
 
 #include <bounded/optional.hpp>
 
@@ -123,6 +124,11 @@ auto calculate_ivs_and_evs(
 		}
 		return containers::concatenate<containers::string>(std::move(result), to_string(containers::back(nature_range)), "}"sv);
 	}();
+	auto const hidden_power_string = hidden_power_type ?
+		containers::concatenate<containers::string>(
+			"Type: "sv, to_string(*hidden_power_type)
+		) :
+		containers::string("none");
 	throw std::runtime_error(containers::concatenate<std::string>(
 		"No Nature, IV, and EV combination gives the received stats in generation "sv,
 		to_string(generation),
@@ -134,7 +140,8 @@ auto calculate_ivs_and_evs(
 		", Defense: "sv, bounded::to_string(stats.def()),
 		", Special Attack: "sv, bounded::to_string(stats.spa()),
 		", Special Defense: "sv, bounded::to_string(stats.spd()),
-		", Speed: "sv, bounded::to_string(stats.spe())
+		", Speed: "sv, bounded::to_string(stats.spe()),
+		", Hidden Power: "sv, hidden_power_string
 	));
 }
 
