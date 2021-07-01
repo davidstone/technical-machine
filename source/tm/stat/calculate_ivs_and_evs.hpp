@@ -23,12 +23,14 @@
 #include <tm/pokemon/species_forward.hpp>
 
 #include <tm/string_conversions/generation.hpp>
+#include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 
 #include <bounded/optional.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>
+#include <containers/take.hpp>
 
 #include <stdexcept>
 #include <string>
@@ -112,11 +114,19 @@ auto calculate_ivs_and_evs(
 		}
 		has_physical_move = true;
 	}
+	auto const nature_string = [=] {
+		auto result = containers::string("{"sv);
+		for (auto const nature : containers::take(nature_range, bounded::increase_min<0>(containers::size(nature_range) - 1_bi))) {
+			result = containers::concatenate<containers::string>(std::move(result), to_string(nature), ", "sv);
+		}
+		return containers::concatenate<containers::string>(std::move(result), to_string(containers::back(nature_range)), "}"sv);
+	}();
 	throw std::runtime_error(containers::concatenate<std::string>(
-		"No Nature + EV combination combines to give the received stats in generation "sv,
+		"No Nature, IV, and EV combination gives the received stats in generation "sv,
 		to_string(generation),
 		": Species: "sv, to_string(species),
 		", Level: "sv, bounded::to_string(level()),
+		", Possible Natures: "sv, nature_string,
 		", HP: "sv, bounded::to_string(stats.hp().max()),
 		", Attack: "sv, bounded::to_string(stats.atk()),
 		", Defense: "sv, bounded::to_string(stats.def()),
