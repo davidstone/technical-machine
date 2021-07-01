@@ -18,9 +18,6 @@
 namespace technicalmachine {
 
 template<Generation generation>
-using RegularStat = std::conditional_t<generation <= Generation::one, SpecialRegularStat, SplitSpecialRegularStat>;
-
-template<Generation generation>
 constexpr auto initial_stat(SplitSpecialRegularStat const stat_name, auto const base, Level const level, Nature const nature, IV const iv, EV const ev) {
 	auto const pre_nature = (2_bi * base + iv.value() + ev.value() / 4_bi) * level() / 100_bi + 5_bi;
 	if constexpr (generation <= Generation::two) {
