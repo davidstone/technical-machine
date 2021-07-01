@@ -30,6 +30,7 @@
 
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>
+#include <containers/is_empty.hpp>
 #include <containers/take.hpp>
 
 #include <stdexcept>
@@ -47,6 +48,7 @@ auto calculate_ivs_and_evs(
 	bool has_physical_move,
 	decltype(containers::enum_range<Nature>()) const nature_range
 ) -> CombinedStats<generation> {
+	BOUNDED_ASSERT(!containers::is_empty(nature_range));
 	using namespace std::string_view_literals;
 	// TODO: Use Hidden Power power to determine IVs, not just the type
 	auto const base = BaseStats(generation, species);
