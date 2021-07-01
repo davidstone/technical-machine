@@ -63,6 +63,13 @@ struct HiddenPower {
 		}
 	}
 
+	constexpr HiddenPower(Power const power, Type const type):
+		m_power(power),
+		m_type(type)
+	{
+		BOUNDED_ASSERT_OR_ASSUME(is_valid_type(type));
+		BOUNDED_ASSERT_OR_ASSUME(is_valid_power(power));
+	}
 	constexpr HiddenPower(DVs const dvs) requires(generation == Generation::two):
 		HiddenPower(calculate_power(dvs), calculate_type(dvs))
 	{
@@ -81,14 +88,6 @@ struct HiddenPower {
 	
 	friend auto operator==(HiddenPower, HiddenPower) -> bool = default;
 private:
-	constexpr HiddenPower(Power const power, Type const type):
-		m_power(power),
-		m_type(type)
-	{
-		BOUNDED_ASSERT_OR_ASSUME(is_valid_type(type));
-		BOUNDED_ASSERT_OR_ASSUME(is_valid_power(power));
-	}
-
 	friend bounded::tombstone_traits<HiddenPower>;
 
 	constexpr HiddenPower(bounded::none_t, auto const index):
