@@ -5,10 +5,11 @@
 
 #pragma once
 
-#include <tm/pokemon/pokemon.hpp>
+//#include <tm/pokemon/pokemon.hpp>
 
 #include <tm/move/category.hpp>
 #include <tm/move/known_move.hpp>
+#include <tm/move/regular_moves.hpp>
 
 #include <tm/generation.hpp>
 
@@ -16,6 +17,9 @@
 #include <containers/algorithms/transform.hpp>
 
 namespace technicalmachine {
+
+template<Generation>
+struct Pokemon;
 
 auto any_move_matches(Generation const generation, RegularMoves const moves, bounded::optional<Type> const hidden_power_type, auto const condition) -> bool {
 	return containers::any(moves, [=](Move const move) {

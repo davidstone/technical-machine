@@ -6,12 +6,14 @@
 #pragma once
 
 #include <tm/pokemon/happiness.hpp>
+#include <tm/pokemon/has_physical_or_special_move.hpp>
 #include <tm/pokemon/hidden_power.hpp>
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/species.hpp>
 
 #include <tm/move/container.hpp>
 
+#include <tm/stat/calculate_ivs_and_evs.hpp>
 #include <tm/stat/combined_stats.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/iv.hpp>
@@ -285,6 +287,27 @@ private:
 	bool m_item_is_known : 1;
 	bool m_nature_is_known : 1;
 };
+
+template<Generation generation>
+auto calculate_ivs_and_evs(Pokemon<generation> const pokemon) {
+	auto const nature = pokemon.nature();
+	auto const stats = Stats<generation>{
+		pokemon.hp(),
+		pokemon.stat(SplitSpecialRegularStat::atk),
+		pokemon.stat(SplitSpecialRegularStat::def),
+		pokemon.stat(SplitSpecialRegularStat::spa),
+		pokemon.stat(SplitSpecialRegularStat::spd),
+		pokemon.stat(SplitSpecialRegularStat::spe)
+	};
+	return calculate_ivs_and_evs(
+		pokemon.species(),
+		pokemon.level(),
+		stats,
+		get_hidden_power_type(pokemon),
+		has_physical_move(pokemon),
+		containers::enum_range(nature, nature)
+	);
+}
 
 extern template struct Pokemon<Generation::one>;
 extern template struct Pokemon<Generation::two>;

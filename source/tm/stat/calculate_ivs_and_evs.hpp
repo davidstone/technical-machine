@@ -6,7 +6,6 @@
 #pragma once
 
 #include <tm/stat/base_stats.hpp>
-#include <tm/stat/calculate.hpp>
 #include <tm/stat/combined_stats.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/generic_stats.hpp>
@@ -18,10 +17,9 @@
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat_names.hpp>
 #include <tm/stat/stat_to_ev.hpp>
+#include <tm/stat/stats.hpp>
 
-#include <tm/pokemon/has_physical_or_special_move.hpp>
 #include <tm/pokemon/level.hpp>
-#include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
 #include <tm/string_conversions/generation.hpp>
@@ -147,27 +145,6 @@ auto calculate_ivs_and_evs(
 		hidden_power_type,
 		has_physical_move,
 		nature_range
-	);
-}
-
-template<Generation generation>
-auto calculate_ivs_and_evs(Pokemon<generation> const pokemon) {
-	auto const nature = pokemon.nature();
-	auto const stats = Stats<generation>{
-		pokemon.hp(),
-		pokemon.stat(SplitSpecialRegularStat::atk),
-		pokemon.stat(SplitSpecialRegularStat::def),
-		pokemon.stat(SplitSpecialRegularStat::spa),
-		pokemon.stat(SplitSpecialRegularStat::spd),
-		pokemon.stat(SplitSpecialRegularStat::spe)
-	};
-	return calculate_ivs_and_evs(
-		pokemon.species(),
-		pokemon.level(),
-		stats,
-		get_hidden_power_type(pokemon),
-		has_physical_move(pokemon),
-		containers::enum_range(nature, nature)
 	);
 }
 
