@@ -13,32 +13,20 @@ static_assert(round_up_divide(1_bi, 1_bi) == 1_bi);
 static_assert(round_up_divide(5_bi, 1_bi) == 5_bi);
 static_assert(round_up_divide(6_bi, 5_bi) == 2_bi);
 
+static_assert(stat_to_ev(133_bi, SplitSpecialRegularStat::atk, 70_bi, Level(100_bi), Nature::Calm, IV(3_bi)) == EV(0_bi));
+static_assert(stat_to_ev(177_bi, SplitSpecialRegularStat::def, 65_bi, Level(100_bi), Nature::Calm, IV(31_bi)) == EV(44_bi));
+static_assert(stat_to_ev(196_bi, SplitSpecialRegularStat::spa, 80_bi, Level(100_bi), Nature::Calm, IV(31_bi)) == EV(0_bi));
+static_assert(stat_to_ev(352_bi, SplitSpecialRegularStat::spd, 120_bi, Level(100_bi), Nature::Calm, IV(31_bi)) == EV(176_bi));
+static_assert(stat_to_ev(245_bi, SplitSpecialRegularStat::spe, 100_bi, Level(100_bi), Nature::Calm, IV(31_bi)) == EV(36_bi));
 static_assert(stat_to_ev(614_bi, SplitSpecialRegularStat::def, 230_bi, Level(100_bi), Nature::Impish, IV(31_bi)) == EV(252_bi));
 static_assert(stat_to_ev(558_bi, SplitSpecialRegularStat::def, 230_bi, Level(100_bi), Nature::Hardy, IV(DV(15_bi))) == EV(252_bi));
 static_assert(stat_to_ev(178_bi, SplitSpecialRegularStat::atk, 125_bi, Level(63_bi), Nature::Bold, IV(19_bi)) == EV(152_bi));
+static_assert(stat_to_ev(96_bi, SplitSpecialRegularStat::atk, 84_bi, Level(37_bi), Nature::Adamant, IV(13_bi)) == EV(176_bi));
+static_assert(stat_to_ev(100_bi, SplitSpecialRegularStat::atk, 70_bi, Level(75_bi), Nature::Modest, IV(3_bi)) == EV(0_bi));
+static_assert(stat_to_ev(236_bi, SplitSpecialRegularStat::spa, 125_bi, Level(75_bi), Nature::Modest, IV(31_bi)) == EV(0_bi));
 
-static_assert([] {
-	constexpr auto const base_hp = 78_bi;
-	constexpr auto level = Level(78_bi);
-	constexpr auto iv = IV(29_bi);
-	constexpr auto ev = EV(128_bi);
-	constexpr auto hp = HP(base_hp, level, iv, ev).max();
-	constexpr auto computed_ev = hp_to_ev(base_hp, level, hp, iv);
-	return computed_ev == ev;
-}());
-
-static_assert([] {
-	constexpr auto generation = Generation::four;
-	constexpr auto base_atk = 84_bi;
-	constexpr auto level = Level(37_bi);
-	constexpr auto iv = IV(13_bi);
-	constexpr auto ev = EV(176_bi);
-	constexpr auto nature = Nature::Adamant;
-	constexpr auto stat_name = SplitSpecialRegularStat::atk;
-	constexpr auto stat_value = initial_stat<generation>(stat_name, base_atk, level, nature, iv, ev);
-	constexpr auto computed_ev = stat_to_ev(stat_value, stat_name, base_atk, level, nature, iv);
-	return computed_ev == ev;
-}());
+static_assert(hp_to_ev(80_bi, Level(100_bi), 364_bi, IV(31_bi)) == EV(252_bi));
+static_assert(hp_to_ev(78_bi, Level(78_bi), 257_bi, IV(29_bi)) == EV(128_bi));
 
 } // namespace
 } // namespace technicalmachine
