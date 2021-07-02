@@ -90,7 +90,6 @@ void generate_team_builder_ui(std::ostream & output, std::string_view const quer
 		auto const index_str = bounded::to_string(pokemon_index);
 		add_dropdown<Species>(output, "species", index_str, next_default());
 		add_level(output, "level" + index_str, next_default());
-		output << "<br>";
 		add_dropdown<Gender>(output, "gender", index_str, next_default());
 		add_dropdown<Item>(output, "item", index_str, next_default());
 		add_dropdown<Ability>(output, "ability", index_str, next_default());
