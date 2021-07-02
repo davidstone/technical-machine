@@ -253,12 +253,11 @@ private:
 int main() {
 	auto const all_usage_stats = std::make_unique<technicalmachine::AllUsageStats>();
 
-	auto const address = boost::asio::ip::make_address("127.0.0.1");
 	auto const port = static_cast<unsigned short>(46923);
 
 	auto ioc = boost::asio::io_context();
 
-	auto acceptor = tcp::acceptor(ioc, {address, port});
+	auto acceptor = tcp::acceptor(ioc, tcp::endpoint(tcp::v4(), port));
 	while (true) {
 		auto socket = tcp::socket(ioc);
 		acceptor.accept(socket);
