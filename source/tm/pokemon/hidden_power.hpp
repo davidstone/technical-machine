@@ -67,8 +67,8 @@ struct HiddenPower {
 		m_power(power),
 		m_type(type)
 	{
-		BOUNDED_ASSERT_OR_ASSUME(is_valid_type(type));
-		BOUNDED_ASSERT_OR_ASSUME(is_valid_power(power));
+		BOUNDED_ASSERT(is_valid_type(type));
+		BOUNDED_ASSERT(is_valid_power(power));
 	}
 	constexpr HiddenPower(DVs const dvs) requires(generation == Generation::two):
 		HiddenPower(calculate_power(dvs), calculate_type(dvs))
