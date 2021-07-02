@@ -16,13 +16,7 @@ project(technical_machine LANGUAGES CXX)
 find_package(Boost REQUIRED)
 add_library(boost INTERFACE IMPORTED)
 target_compile_definitions(boost INTERFACE
-	BOOST_ALL_NO_LIB
 	BOOST_ASIO_HAS_STD_INVOKE_RESULT
-	BOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
-	BOOST_CHRONO_DONT_PROVIDES_DEPRECATED_IO_SINCE_V2_0_0
-	BOOST_CHRONO_HEADER_ONLY
-	BOOST_ERROR_CODE_HEADER_ONLY
-	BOOST_SYSTEM_NO_DEPRECATED
 )
 target_include_directories(boost SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
 
@@ -44,6 +38,8 @@ add_library(tm_common STATIC
 	source/tm/bide/bide.cpp
 	source/tm/bide/damage.cpp
 	source/tm/bide/duration.cpp
+
+	source/tm/clients/netbattle/read_team_file.cpp
 
 	source/tm/clients/pokemon_lab/read_team_file.cpp
 	source/tm/clients/pokemon_lab/write_team_file.cpp
@@ -244,6 +240,14 @@ target_link_libraries(ai
 )
 
 
+add_executable(file_converter
+	source/tm/file_converter/main.cpp
+)
+target_link_libraries(file_converter
+	tm_common
+)
+
+
 add_executable(predict
 	source/tm/team_predictor/generate_team_builder_ui.cpp
 	source/tm/team_predictor/predictor.cpp
@@ -254,6 +258,8 @@ target_link_libraries(predict
 )
 
 add_executable(tm_test
+	source/tm/test/clients/netbattle/read_team_file.cpp
+
 	source/tm/test/clients/pokemon_showdown/battles.cpp
 	source/tm/test/clients/pokemon_showdown/packed_team.cpp
 	source/tm/test/clients/pokemon_showdown/parse_team.cpp
@@ -335,6 +341,9 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	target_link_libraries(ai
 		pthread
 	)
+	target_link_libraries(file_converter
+		pthread
+	)
 	target_link_libraries(predict
 		pthread
 	)
@@ -347,6 +356,9 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		stdc++fs
 	)
 	target_link_libraries(ai
+		pthread
+	)
+	target_link_libraries(file_converter
 		pthread
 	)
 	target_link_libraries(predict
