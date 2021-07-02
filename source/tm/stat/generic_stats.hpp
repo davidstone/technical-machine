@@ -98,6 +98,12 @@ struct GenericDVStats {
 	constexpr auto && spc() const {
 		return m_spc;
 	}
+	constexpr auto && spa() const {
+		return m_spc;
+	}
+	constexpr auto && spd() const {
+		return m_spc;
+	}
 	constexpr auto && atk() {
 		return m_atk;
 	}

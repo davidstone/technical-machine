@@ -32,6 +32,7 @@
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/is_empty.hpp>
+#include <containers/static_vector/make_static_vector.hpp>
 #include <containers/take.hpp>
 
 #include <stdexcept>
@@ -51,32 +52,54 @@ auto calculate_ivs_and_evs(
 	BOUNDED_ASSERT(!containers::is_empty(nature_range));
 	auto const base = BaseStats(generation, species);
 	auto const dvs_or_ivs = possible_dvs_or_ivs(hidden_power);
+	auto compute_ev = [=](SplitSpecialRegularStat const stat_name, Nature const nature, auto const dv_or_iv) {
+		return stat_to_ev<generation>(stats[stat_name], stat_name, base[stat_name], level, nature, IV(dv_or_iv));
+	};
+	auto const dv_or_iv_ev_range = [=]<typename DVOrIV>(auto const possible, bounded::detail::types<DVOrIV>, auto const to_ev) {
+		struct WithOptionalEV {
+			DVOrIV dv_or_iv;
+			bounded::optional<EV> ev;
+		};
+		using WithEV = std::conditional_t<std::is_same_v<DVOrIV, DV>, DVAndEV, IVAndEV>;
+		return containers::make_static_vector(
+			containers::transform(
+				containers::filter(
+					containers::transform(
+						containers::reversed(possible),
+						[=](DVOrIV const dv_or_iv) {
+							return WithOptionalEV{
+								dv_or_iv,
+								to_ev(dv_or_iv)
+							};
+						}
+					),
+					[](WithOptionalEV const value) { return static_cast<bool>(value.ev); }
+				),
+				[](WithOptionalEV const value) { return WithEV{value.dv_or_iv, *value.ev}; }
+			)
+		);
+	};
 	if constexpr (generation <= Generation::two) {
 		constexpr auto nature = Nature::Hardy;
-		auto compute_ev = [=](SplitSpecialRegularStat const stat_name, DV const dv) {
-			return stat_to_ev<generation>(stats[stat_name], stat_name, base[stat_name], level, nature, IV(dv));
+		auto const dv_ev_range = [=](SplitSpecialRegularStat const stat_name) {
+			return dv_or_iv_ev_range(
+				dvs_or_ivs[stat_name],
+				bounded::detail::types<DV>(),
+				[=](DV const dv) { return compute_ev(stat_name, nature, dv); }
+			);
 		};
-		for (auto const atk_dv : containers::reversed(dvs_or_ivs.atk())) {
-			auto const atk_ev = compute_ev(SplitSpecialRegularStat::atk, atk_dv);
-			if (!atk_ev) {
-				continue;
-			}
-			for (auto const def_dv : containers::reversed(dvs_or_ivs.def())) {
-				auto const def_ev = compute_ev(SplitSpecialRegularStat::def, def_dv);
-				if (!def_ev) {
-					continue;
-				}
-				for (auto const spe_dv : containers::reversed(dvs_or_ivs.spe())) {
-					auto const spe_ev = compute_ev(SplitSpecialRegularStat::spe, spe_dv);
-					if (!spe_ev) {
-						continue;
-					}
+		auto const atk_range = dv_ev_range(SplitSpecialRegularStat::atk);
+		auto const def_range = dv_ev_range(SplitSpecialRegularStat::def);
+		auto const spe_range = dv_ev_range(SplitSpecialRegularStat::spe);
+		for (auto const atk : atk_range) {
+			for (auto const def : def_range) {
+				for (auto const spe : spe_range) {
 					for (auto const spc_dv : containers::reversed(dvs_or_ivs.spc())) {
-						auto const spa_ev = compute_ev(SplitSpecialRegularStat::spa, spc_dv);
+						auto const spa_ev = compute_ev(SplitSpecialRegularStat::spa, nature, spc_dv);
 						if (!spa_ev) {
 							continue;
 						}
-						auto const spd_ev = compute_ev(SplitSpecialRegularStat::spd, spc_dv);
+						auto const spd_ev = compute_ev(SplitSpecialRegularStat::spd, nature, spc_dv);
 						if (!spd_ev) {
 							continue;
 						}
@@ -86,7 +109,7 @@ auto calculate_ivs_and_evs(
 						// increase SpD to the correct value.
 						auto const spc_ev = bounded::max(*spa_ev, *spd_ev);
 
-						auto const dvs = DVs(atk_dv, def_dv, spc_dv, spe_dv);
+						auto const dvs = DVs(atk.dv, def.dv, spc_dv, spe.dv);
 						auto const hp_ev = hp_to_ev(base.hp(), level, stats.hp().max(), IV(dvs.hp()));
 						if (!hp_ev) {
 							continue;
@@ -100,9 +123,9 @@ auto calculate_ivs_and_evs(
 
 						auto const evs = OldGenEVs(
 							*hp_ev,
-							*atk_ev,
-							*def_ev,
-							*spe_ev,
+							atk.ev,
+							def.ev,
+							spe.ev,
 							spc_ev
 						);
 						return CombinedStats<generation>{nature, dvs, evs};
@@ -114,68 +137,55 @@ auto calculate_ivs_and_evs(
 		auto partial_ev_sum_is_valid = [](auto... evs) {
 			return (... + evs.value()) <= max_total_evs(generation);
 		};
-		for (auto const hp_iv : containers::reversed(dvs_or_ivs.hp())) {
-			auto const hp_ev = hp_to_ev(base.hp(), level, stats.hp().max(), hp_iv);
-			if (!hp_ev) {
-				continue;
-			}
+		auto const hp_range = dv_or_iv_ev_range(
+			dvs_or_ivs.hp(),
+			bounded::detail::types<IV>(),
+			[=](IV const iv) { return hp_to_ev(base.hp(), level, stats.hp().max(), iv); }
+		);
+		for (auto const hp : hp_range) {
 			for (auto const nature : nature_range) {
-				auto compute_ev = [=](SplitSpecialRegularStat const stat_name, IV const iv) {
-					return stat_to_ev<generation>(stats[stat_name], stat_name, base[stat_name], level, nature, iv);
+				auto const iv_ev_range = [=](SplitSpecialRegularStat const stat_name) {
+					return dv_or_iv_ev_range(
+						dvs_or_ivs[stat_name],
+						bounded::detail::types<IV>(),
+						[=](IV const iv) { return compute_ev(stat_name, nature, iv); }
+					);
 				};
-				for (auto const atk_iv : containers::reversed(dvs_or_ivs.atk())) {
-					auto const atk_ev = compute_ev(SplitSpecialRegularStat::atk, atk_iv);
-					if (!atk_ev) {
-						continue;
-					}
-					for (auto const def_iv : containers::reversed(dvs_or_ivs.def())) {
-						auto const def_ev = compute_ev(SplitSpecialRegularStat::def, def_iv);
-						if (!def_ev) {
-							continue;
+				auto const atk_range = iv_ev_range(SplitSpecialRegularStat::atk);
+				auto const def_range = iv_ev_range(SplitSpecialRegularStat::def);
+				auto const spa_range = iv_ev_range(SplitSpecialRegularStat::spa);
+				auto const spd_range = iv_ev_range(SplitSpecialRegularStat::spd);
+				auto const spe_range = iv_ev_range(SplitSpecialRegularStat::spe);
+				for (auto const atk : atk_range) {
+					for (auto const def : def_range) {
+						if (!partial_ev_sum_is_valid(hp.ev, atk.ev, def.ev)) {
+							break;
 						}
-						if (!partial_ev_sum_is_valid(*hp_ev, *atk_ev, *def_ev)) {
-							continue;
-						}
-						for (auto const spa_iv : containers::reversed(dvs_or_ivs.spa())) {
-							auto spa_ev = compute_ev(SplitSpecialRegularStat::spa, spa_iv);
-							if (!spa_ev) {
-								continue;
+						for (auto const spa : spa_range) {
+							if (!partial_ev_sum_is_valid(hp.ev, atk.ev, def.ev, spa.ev)) {
+								break;
 							}
-							if (!partial_ev_sum_is_valid(*hp_ev, *atk_ev, *def_ev, *spa_ev)) {
-								continue;
-							}
-							for (auto const spd_iv : containers::reversed(dvs_or_ivs.spd())) {
-								auto spd_ev = compute_ev(SplitSpecialRegularStat::spd, spd_iv);
-								if (!spd_ev) {
-									continue;
+							for (auto const spd : spd_range) {
+								if (!partial_ev_sum_is_valid(hp.ev, atk.ev, def.ev, spa.ev, spd.ev)) {
+									break;
 								}
-								if (!partial_ev_sum_is_valid(*hp_ev, *atk_ev, *def_ev, *spa_ev, *spd_ev)) {
-									continue;
-								}
-								for (auto const spe_iv : containers::reversed(dvs_or_ivs.spe())) {
-									auto const spe_ev = compute_ev(SplitSpecialRegularStat::spe, spe_iv);
-									if (!spe_ev) {
-										continue;
+								for (auto const spe : spe_range) {
+									if (!partial_ev_sum_is_valid(hp.ev, atk.ev, def.ev, spa.ev, spd.ev, spe.ev)) {
+										break;
 									}
-									if (!partial_ev_sum_is_valid(*hp_ev, *atk_ev, *def_ev, *spa_ev, *spd_ev, *spe_ev)) {
-										continue;
-									}
-									auto const ivs = IVs(hp_iv, atk_iv, def_iv, spa_iv, spd_iv, spe_iv);
+									auto const ivs = IVs(hp.iv, atk.iv, def.iv, spa.iv, spd.iv, spe.iv);
 									if (hidden_power and HiddenPower<generation>(ivs) != *hidden_power) {
 										continue;
 									}
 
 									auto const evs = EVs(
-										*hp_ev,
-										*atk_ev,
-										*def_ev,
-										*spa_ev,
-										*spd_ev,
-										*spe_ev
+										hp.ev,
+										atk.ev,
+										def.ev,
+										spa.ev,
+										spd.ev,
+										spe.ev
 									);
-									if (ev_sum(evs) > max_total_evs(generation)) {
-										continue;
-									}
 									return CombinedStats<generation>{nature, ivs, evs};
 								}
 							}
