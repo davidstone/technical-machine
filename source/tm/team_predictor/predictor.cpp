@@ -35,6 +35,7 @@
 #include <boost/beast/version.hpp>
 #include <boost/asio.hpp>
 
+#include <iostream>
 #include <random>
 #include <string>
 #include <string_view>
@@ -213,8 +214,13 @@ struct Connection {
 		http::read(m_socket, buffer, request);
 		auto const & body = request.body();
 		auto const query_string = body.empty() ? default_query_string : std::string_view(body);
-		auto response = create_response(request.version(), query_string);
-		http::write(m_socket, response);
+		try {
+			auto response = create_response(request.version(), query_string);
+			http::write(m_socket, response);
+		} catch (std::exception const & ex) {
+			std::cerr << "Failure: " << ex.what() << '\n';
+			std::cerr << "While processing: " << query_string << '\n';
+		}
 	}
 
 private:
