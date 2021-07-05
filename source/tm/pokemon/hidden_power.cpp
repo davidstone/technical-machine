@@ -114,6 +114,18 @@ constexpr bool test() {
 		static_assert(hp.power() == 70_bi);
 		static_assert(hp.type() == Type::Ghost);
 	}
+	{
+		constexpr auto hp = HiddenPower<Generation::three>(IVs(
+			IV(31_bi),
+			IV(31_bi),
+			IV(30_bi),
+			IV(31_bi),
+			IV(30_bi),
+			IV(31_bi)
+		));
+		static_assert(hp.power() == 70_bi);
+		static_assert(hp.type() == Type::Ghost);
+	}
 
 	{
 		constexpr auto hp = HiddenPower<Generation::three>(IVs(
