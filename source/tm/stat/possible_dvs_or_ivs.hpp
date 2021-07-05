@@ -204,7 +204,7 @@ constexpr auto possible_atk_ivs_type(Type const hidden_power_type) {
 		case Type::Ground: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Rock: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Bug: return possible_ivs_type_impl(AllowedIVs::any);
-		case Type::Ghost: return possible_ivs_type_impl(AllowedIVs::even);
+		case Type::Ghost: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Steel: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Fire: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Water: return possible_ivs_type_impl(AllowedIVs::any);
