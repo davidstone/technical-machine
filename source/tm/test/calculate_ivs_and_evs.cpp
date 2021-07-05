@@ -95,6 +95,47 @@ void test_generation_two_with_hidden_power() {
 	}
 }
 
+void test_level_one() {
+	constexpr auto generation = Generation::three;
+	constexpr auto species = Species::Gengar;
+	constexpr auto level = Level(1_bi);
+	constexpr auto stats = Stats<generation>(
+		HP(12_bi),
+		6_bi,
+		7_bi,
+		8_bi,
+		7_bi,
+		8_bi
+	);
+	constexpr auto hidden_power = bounded::optional<HiddenPower<generation>>(bounded::none);
+	constexpr auto nature = Nature::Hardy;
+
+	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(nature, nature));
+	
+	constexpr auto expected = CombinedStats<generation>{
+		nature,
+		IVs(
+			IV(31_bi),
+			IV(31_bi),
+			IV(31_bi),
+			IV(31_bi),
+			IV(31_bi),
+			IV(31_bi)
+		),
+		EVs(
+			EV(0_bi),
+			EV(0_bi),
+			EV(196_bi),
+			EV(36_bi),
+			EV(76_bi),
+			EV(196_bi)
+		)
+	};
+	if (calculated != expected) {
+		throw std::runtime_error("Incorrect");
+	}
+}
+
 void test_generation_four_with_hidden_power() {
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Roserade;
@@ -141,6 +182,7 @@ void calculate_ivs_and_evs_tests() {
 	std::cout << "Running calculate_ivs_and_evs tests\n";
 	test_low_attack();
 	test_generation_two_with_hidden_power();
+	test_level_one();
 	test_generation_four_with_hidden_power();
 }
 
