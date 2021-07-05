@@ -30,5 +30,12 @@ static_assert(stat_to_ev<generation>(96_bi, SplitSpecialRegularStat::atk, 84_bi,
 static_assert(stat_to_ev<generation>(100_bi, SplitSpecialRegularStat::atk, 70_bi, Level(75_bi), Nature::Modest, IV(3_bi)) == EV(0_bi));
 static_assert(stat_to_ev<generation>(236_bi, SplitSpecialRegularStat::spa, 125_bi, Level(75_bi), Nature::Modest, IV(31_bi)) == EV(0_bi));
 
+static_assert(hp_to_ev(12_bi, 60_bi, Level(1_bi), IV(31_bi)) == EV(0_bi));
+static_assert(stat_to_ev<generation>(6_bi, SplitSpecialRegularStat::atk, 65_bi, Level(1_bi), Nature::Hardy, IV(31_bi)) == EV(0_bi));
+static_assert(stat_to_ev<generation>(7_bi, SplitSpecialRegularStat::def, 60_bi, Level(1_bi), Nature::Hardy, IV(31_bi)) == EV(196_bi));
+static_assert(stat_to_ev<generation>(8_bi, SplitSpecialRegularStat::spa, 130_bi, Level(1_bi), Nature::Hardy, IV(31_bi)) == EV(36_bi));
+static_assert(stat_to_ev<generation>(7_bi, SplitSpecialRegularStat::spd, 75_bi, Level(1_bi), Nature::Hardy, IV(31_bi)) == EV(76_bi));
+static_assert(stat_to_ev<generation>(8_bi, SplitSpecialRegularStat::spe, 110_bi, Level(1_bi), Nature::Hardy, IV(31_bi)) == EV(196_bi));
+
 } // namespace
 } // namespace technicalmachine
