@@ -237,7 +237,6 @@ auto to_string(Item const item) -> std::string_view {
 		case Item::Bluk_Berry: return "Bluk Berry";
 		case Item::Cheri_Berry: return "Cheri Berry";
 		case Item::Chesto_Berry: return "Chesto Berry";
-		case Item::Chilan_Berry: return "Chilan Berry";
 		case Item::Choice_Band: return "Choice Band";
 		case Item::Claw_Fossil: return "Claw Fossil";
 		case Item::Cornn_Berry: return "Cornn Berry";
@@ -348,6 +347,7 @@ auto to_string(Item const item) -> std::string_view {
 		case Item::Bubble_Mail: return "Bubble Mail";
 		case Item::Charti_Berry: return "Charti Berry";
 		case Item::Cherish_Ball: return "Cherish Ball";
+		case Item::Chilan_Berry: return "Chilan Berry";
 		case Item::Choice_Scarf: return "Choice Scarf";
 		case Item::Choice_Specs: return "Choice Specs";
 		case Item::Chople_Berry: return "Chople Berry";
