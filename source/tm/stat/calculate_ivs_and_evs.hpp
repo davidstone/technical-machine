@@ -44,7 +44,7 @@ namespace technicalmachine {
 using namespace std::string_view_literals;
 
 template<Generation generation>
-auto calculate_ivs_and_evs(
+constexpr auto calculate_ivs_and_evs(
 	Species const species,
 	Level const level,
 	Stats<generation> const stats,
@@ -227,7 +227,7 @@ auto calculate_ivs_and_evs(
 }
 
 template<Generation generation>
-auto calculate_ivs_and_evs(
+constexpr auto calculate_ivs_and_evs(
 	Species const species,
 	Level const level,
 	Stats<generation> const stats,
