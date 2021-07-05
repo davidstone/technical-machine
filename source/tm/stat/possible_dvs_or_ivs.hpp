@@ -244,7 +244,7 @@ constexpr auto possible_spe_ivs_type(Type const hidden_power_type) {
 	switch (hidden_power_type) {
 		case Type::Fighting: return possible_ivs_type_impl(AllowedIVs::even);
 		case Type::Flying: return possible_ivs_type_impl(AllowedIVs::any);
-		case Type::Poison: return possible_ivs_type_impl(AllowedIVs::even);
+		case Type::Poison: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Ground: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Rock: return possible_ivs_type_impl(AllowedIVs::even);
 		case Type::Bug: return possible_ivs_type_impl(AllowedIVs::any);
