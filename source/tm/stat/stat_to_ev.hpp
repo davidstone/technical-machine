@@ -27,15 +27,9 @@
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>
 
-#include <stdexcept>
-#include <string>
-#include <string_view>
-
 namespace technicalmachine {
 
-using namespace std::string_view_literals;
 using namespace bounded::literal;
-using namespace std::string_view_literals;
 
 template<typename RHS>
 constexpr auto round_up_divide(bounded::bounded_integer auto const lhs, RHS const rhs) {
