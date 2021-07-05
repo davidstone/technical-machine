@@ -54,7 +54,7 @@ constexpr auto maybe_ev(auto const value) -> bounded::optional<EV> {
 
 } // namespace detail
 
-constexpr auto hp_to_ev(BaseStats::HP const base, Level const level, HP::max_type const stat, IV const iv) -> bounded::optional<EV> {
+constexpr auto hp_to_ev(HP::max_type const target, BaseStats::HP const base, Level const level, IV const iv) -> bounded::optional<EV> {
 	if (base == 1_bi) {
 		return EV(0_bi);
 	}

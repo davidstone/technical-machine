@@ -112,7 +112,7 @@ auto calculate_ivs_and_evs(
 						auto const spc_ev = bounded::max(*spa_ev, *spd_ev);
 
 						auto const dvs = DVs(atk.dv, def.dv, spc_dv, spe.dv);
-						auto const hp_ev = hp_to_ev(base.hp(), level, stats.hp().max(), IV(dvs.hp()));
+						auto const hp_ev = hp_to_ev(stats.hp().max(), base.hp(), level, IV(dvs.hp()));
 						if (!hp_ev) {
 							continue;
 						}
@@ -142,7 +142,7 @@ auto calculate_ivs_and_evs(
 		auto const hp_range = dv_or_iv_ev_range(
 			dvs_or_ivs.hp(),
 			bounded::detail::types<IV>(),
-			[=](IV const iv) { return hp_to_ev(base.hp(), level, stats.hp().max(), iv); }
+			[=](IV const iv) { return hp_to_ev(stats.hp().max(), base.hp(), level, iv); }
 		);
 		for (auto const hp : hp_range) {
 			for (auto const nature : nature_range) {

@@ -14,6 +14,10 @@ static_assert(round_up_divide(5_bi, 1_bi) == 5_bi);
 static_assert(round_up_divide(6_bi, 5_bi) == 2_bi);
 
 constexpr auto generation = Generation::four;
+
+static_assert(hp_to_ev(364_bi, 80_bi, Level(100_bi), IV(31_bi)) == EV(252_bi));
+static_assert(hp_to_ev(257_bi, 78_bi, Level(78_bi), IV(29_bi)) == EV(128_bi));
+
 static_assert(stat_to_ev<generation>(133_bi, SplitSpecialRegularStat::atk, 70_bi, Level(100_bi), Nature::Calm, IV(3_bi)) == EV(0_bi));
 static_assert(stat_to_ev<generation>(177_bi, SplitSpecialRegularStat::def, 65_bi, Level(100_bi), Nature::Calm, IV(31_bi)) == EV(44_bi));
 static_assert(stat_to_ev<generation>(196_bi, SplitSpecialRegularStat::spa, 80_bi, Level(100_bi), Nature::Calm, IV(31_bi)) == EV(0_bi));
@@ -25,9 +29,6 @@ static_assert(stat_to_ev<generation>(178_bi, SplitSpecialRegularStat::atk, 125_b
 static_assert(stat_to_ev<generation>(96_bi, SplitSpecialRegularStat::atk, 84_bi, Level(37_bi), Nature::Adamant, IV(13_bi)) == EV(176_bi));
 static_assert(stat_to_ev<generation>(100_bi, SplitSpecialRegularStat::atk, 70_bi, Level(75_bi), Nature::Modest, IV(3_bi)) == EV(0_bi));
 static_assert(stat_to_ev<generation>(236_bi, SplitSpecialRegularStat::spa, 125_bi, Level(75_bi), Nature::Modest, IV(31_bi)) == EV(0_bi));
-
-static_assert(hp_to_ev(80_bi, Level(100_bi), 364_bi, IV(31_bi)) == EV(252_bi));
-static_assert(hp_to_ev(78_bi, Level(78_bi), 257_bi, IV(29_bi)) == EV(128_bi));
 
 } // namespace
 } // namespace technicalmachine
