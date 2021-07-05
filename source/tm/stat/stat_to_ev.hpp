@@ -6,21 +6,15 @@
 #pragma once
 
 #include <tm/stat/base_stats.hpp>
-#include <tm/stat/combined_stats.hpp>
 #include <tm/stat/ev.hpp>
-#include <tm/stat/generic_stats.hpp>
 #include <tm/stat/hp.hpp>
 #include <tm/stat/initial_stat.hpp>
 #include <tm/stat/iv.hpp>
-#include <tm/stat/iv_and_ev.hpp>
 #include <tm/stat/nature.hpp>
 #include <tm/stat/stat_names.hpp>
 
 #include <tm/pokemon/level.hpp>
-#include <tm/pokemon/species_forward.hpp>
 
-#include <tm/string_conversions/generation.hpp>
-#include <tm/string_conversions/species.hpp>
 
 #include <bounded/optional.hpp>
 
