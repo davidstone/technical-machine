@@ -30,6 +30,13 @@ static_assert(stat_to_ev<generation>(96_bi, SplitSpecialRegularStat::atk, 84_bi,
 static_assert(stat_to_ev<generation>(100_bi, SplitSpecialRegularStat::atk, 70_bi, Level(75_bi), Nature::Modest, IV(3_bi)) == EV(0_bi));
 static_assert(stat_to_ev<generation>(236_bi, SplitSpecialRegularStat::spa, 125_bi, Level(75_bi), Nature::Modest, IV(31_bi)) == EV(0_bi));
 
+static_assert(hp_to_ev(251_bi, 55_bi, Level(100_bi), IV(31_bi)) == EV(0_bi));
+static_assert(stat_to_ev<generation>(359_bi, SplitSpecialRegularStat::atk, 130_bi, Level(100_bi), Nature::Jolly, IV(31_bi)) == EV(252_bi));
+static_assert(stat_to_ev<generation>(265_bi, SplitSpecialRegularStat::def, 115_bi, Level(100_bi), Nature::Jolly, IV(30_bi)) == EV(0_bi));
+static_assert(stat_to_ev<generation>(122_bi, SplitSpecialRegularStat::spa, 50_bi, Level(100_bi), Nature::Jolly, IV(31_bi)) == EV(0_bi));
+static_assert(stat_to_ev<generation>(136_bi, SplitSpecialRegularStat::spd, 50_bi, Level(100_bi), Nature::Jolly, IV(30_bi)) == EV(4_bi));
+static_assert(stat_to_ev<generation>(273_bi, SplitSpecialRegularStat::spe, 75_bi, Level(100_bi), Nature::Jolly, IV(31_bi)) == EV(252_bi));
+
 static_assert(hp_to_ev(12_bi, 60_bi, Level(1_bi), IV(31_bi)) == EV(0_bi));
 static_assert(stat_to_ev<generation>(6_bi, SplitSpecialRegularStat::atk, 65_bi, Level(1_bi), Nature::Hardy, IV(31_bi)) == EV(0_bi));
 static_assert(stat_to_ev<generation>(7_bi, SplitSpecialRegularStat::def, 60_bi, Level(1_bi), Nature::Hardy, IV(31_bi)) == EV(196_bi));
