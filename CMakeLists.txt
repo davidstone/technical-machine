@@ -239,6 +239,12 @@ target_link_libraries(ai
 	tm_common
 )
 
+add_executable(file_converter
+	source/tm/file_converter/main.cpp
+)
+target_link_libraries(file_converter
+	tm_common
+)
 
 add_executable(file_converter
 	source/tm/file_converter/main.cpp
