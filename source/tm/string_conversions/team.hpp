@@ -5,24 +5,28 @@
 
 #pragma once
 
+#include <tm/string_conversions/generation.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 
 #include <tm/generation.hpp>
+#include <tm/team.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/single_element_range.hpp>
 #include <containers/string.hpp>
 
 namespace technicalmachine {
 
-template<Generation>
-struct Team;
+using namespace std::string_view_literals;
 
 template<Generation generation>
 auto to_string(Team<generation> const & team, bool const include_owner = true) -> containers::string {
-	containers::string output;
-	if (include_owner) {
-		output = containers::concatenate<containers::string>(std::move(output), team.who(), std::string_view("'s team:\n"));
-	}
+	auto output = containers::concatenate<containers::string>(
+		include_owner ? containers::concatenate<containers::string>(team.who(), "'s "sv) : containers::string(),
+		"Generation "sv,
+		to_string(generation),
+		" team:\n"sv
+	);
 	for (auto const & member : team.all_pokemon()) {
 		output = containers::concatenate<containers::string>(
 			std::move(output),
