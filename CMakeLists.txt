@@ -338,32 +338,13 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 			"-Wno-unused-private-field"
 		)
 	endif()
-	target_link_libraries(ai
-		pthread
-	)
-	target_link_libraries(file_converter
-		pthread
-	)
-	target_link_libraries(predict
-		pthread
-	)
 	target_compile_options(tm_common PUBLIC
 		"-O3"
 	)
+	target_link_libraries(ai pthread)
+	target_link_libraries(predict pthread)
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-	target_link_libraries(tm_common
-		stdc++fs
-	)
-	target_link_libraries(ai
-		pthread
-	)
-	target_link_libraries(file_converter
-		pthread
-	)
-	target_link_libraries(predict
-		pthread
-	)
 	target_compile_options(tm_common PUBLIC
 		"-O3"
 		# gcc does not understand switching over an enum where only explicitly
