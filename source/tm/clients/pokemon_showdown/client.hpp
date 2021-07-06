@@ -52,7 +52,7 @@ private:
 				m_random_engine
 			);
 		}
-		auto parsed = load_team_from_file(m_random_engine, *m_settings.team_file);
+		auto parsed = load_random_team_from_directory(m_random_engine, *m_settings.team_file);
 		return bounded::visit(parsed, []<Generation parsed_generation>(Team<parsed_generation> const & team) -> Team<generation> {
 			if constexpr (generation == parsed_generation) {
 				return team;

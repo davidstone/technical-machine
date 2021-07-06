@@ -23,15 +23,7 @@
 
 namespace technicalmachine {
 
-inline auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::path const & path) {
-	auto const files = files_in_path(path);
-	if (containers::is_empty(files)) {
-		throw std::runtime_error(path.string() + " does not contain any team files.");
-	}
-	auto const max = (containers::size(files) - 1_bi).value();
-	auto distribution = std::uniform_int_distribution(static_cast<decltype(max)>(0), max);
-	auto const file_name = containers::at(files, distribution(random_engine));
-
+inline auto load_team_from_file(std::filesystem::path const & file_name) {
 	auto const extension = file_name.extension();
 	if (extension == ".tp") {
 		return po::read_team_file(file_name);
@@ -42,4 +34,15 @@ inline auto load_team_from_file(std::mt19937 & random_engine, std::filesystem::p
 	}
 }
 
-}	// namespace technicalmachine
+inline auto load_random_team_from_directory(std::mt19937 & random_engine, std::filesystem::path const & path) {
+	auto const files = files_in_path(path);
+	if (containers::is_empty(files)) {
+		throw std::runtime_error(path.string() + " does not contain any team files.");
+	}
+	auto const max = (containers::size(files) - 1_bi).value();
+	auto distribution = std::uniform_int_distribution(static_cast<decltype(max)>(0), max);
+	auto const file_name = containers::at(files, distribution(random_engine));
+	return load_team_from_file(file_name);
+}
+
+} // namespace technicalmachine
