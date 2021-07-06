@@ -3,6 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#include <tm/test/clients/netbattle/read_team_file.hpp>
 #include <tm/test/clients/pokemon_showdown/battles.hpp>
 #include <tm/test/clients/pokemon_showdown/packed_team.hpp>
 #include <tm/test/clients/pokemon_showdown/parse_team.hpp>
@@ -47,6 +48,7 @@ int main() {
 	evaluate_tests();
 	expectiminimax_tests();
 
+	nb::test_team_file();
 	pl::test ();
 	po::test ();
 	ps::test_parse_team();
