@@ -151,6 +151,8 @@ struct BattleFactoryImpl : BattleFactory {
 				}
 				insert(m_foe_starter, parsed);
 			}
+		} else if (type == "t:") {
+			// message.remainder() == time_t
 		} else if (type == "teampreview") {
 			// This appears to mean nothing
 		} else if (type == "teamsize") {
