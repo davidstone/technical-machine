@@ -99,7 +99,7 @@ void ClientImpl::handle_message(InMessage message) {
 	auto send_challenge = [&]{
 		constexpr auto format = "gen1ou"sv;
 		send_team(parse_generation(format));
-		// m_send_message("|/search gen1ou");
+		// m_send_message(containers::concatenate<containers::string>("|/search "sv, format));
 		m_send_message(containers::concatenate<containers::string>("|/challenge davidstone,"sv, format));
 		std::cout << "Sent challenge\n" << std::flush;
 	};
