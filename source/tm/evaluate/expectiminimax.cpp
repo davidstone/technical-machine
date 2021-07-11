@@ -522,7 +522,7 @@ private:
 				team.switch_pokemon(other.pokemon(), weather, index);
 			}
 			auto replaced = PokemonCollection<generation>(1_bi);
-			replaced.add(team.pokemon(index));
+			replaced.add(team.all_pokemon()(team.all_pokemon().index()));
 			team.all_pokemon() = replaced;
 		};
 		remove_all_but_index(ai, ai_index, foe);
