@@ -87,7 +87,7 @@ auto to_packed_format(Team<generation> const & team) -> containers::string {
 			if (stat_name != SplitSpecialPermanentStat::hp) {
 				containers::push_back(result, ',');
 			}
-			containers::append(result, to_string(stats.dvs_or_ivs[stat_name].value()));
+			containers::append(result, to_string(IV(stats.dvs_or_ivs[stat_name]).value()));
 		}
 
 		result = containers::concatenate<containers::string>(
