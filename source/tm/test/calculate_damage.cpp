@@ -94,7 +94,7 @@ auto max_damage_physical_defender() {
 	auto pokemon = defender.pokemon();
 	pokemon.switch_in(Weather());
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
-		pokemon.stage()[BoostableStat::def] += -2_bi;
+		pokemon.stages()[BoostableStat::def] -= 2_bi;
 	}
 	return defender;
 }
@@ -150,7 +150,7 @@ void special_power_test() {
 	auto defender_pokemon = defender.pokemon();
 	defender_pokemon.switch_in(weather);
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
-		defender_pokemon.stage()[BoostableStat::spd] += -2_bi;
+		defender_pokemon.stages()[BoostableStat::spd] -= 2_bi;
 	}
 	defender_pokemon.successfully_use_move(Moves::Dive);
 	defender_pokemon.use_vanish_move(weather);
@@ -186,7 +186,7 @@ void physical_damage_test() {
 	auto attacker_pokemon = attacker.pokemon();
 
 	attacker_pokemon.activate_power_trick();
-	attacker_pokemon.stage()[BoostableStat::atk] += 6_bi;
+	attacker_pokemon.stages()[BoostableStat::atk] += 6_bi;
 
 	auto const defender = max_damage_physical_defender();
 	
@@ -239,7 +239,7 @@ void special_damage_test() {
 	
 	attacker_pokemon.set_type(Type::Fire);
 
-	attacker_pokemon.stage()[BoostableStat::spa] += 6_bi;
+	attacker_pokemon.stages()[BoostableStat::spa] += 6_bi;
 	
 	for (auto const n [[maybe_unused]] : containers::integer_range(10_bi)) {
 		attacker_pokemon.successfully_use_move(move.name());
@@ -260,7 +260,7 @@ void special_damage_test() {
 	auto defender_pokemon = defender.pokemon();
 	defender_pokemon.switch_in(weather);
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
-		defender_pokemon.stage()[BoostableStat::spd] += -2_bi;
+		defender_pokemon.stages()[BoostableStat::spd] -= 2_bi;
 	}
 
 	check_equal(

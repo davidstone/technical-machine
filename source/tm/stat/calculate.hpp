@@ -355,7 +355,7 @@ template<SplitSpecialRegularStat stat, Generation generation>
 auto calculate_common_offensive_stat(ActivePokemon<generation> const pokemon, Type const move_type, Ability const other_ability, Weather const weather, bool const critical_hit) {
 	auto const attack =
 		determine_initial_stat(stat, pokemon) *
-		modifier<BoostableStat(stat)>(pokemon.stage(), critical_hit) *
+		modifier<BoostableStat(stat)>(pokemon.stages(), critical_hit) *
 		offensive_ability_modifier<stat>(pokemon, move_type, other_ability, weather) *
 		item_modifier<stat>(pokemon, weather);
 	
@@ -394,7 +394,7 @@ auto calculate_defense(ActivePokemon<generation> const defender, Moves const mov
 	constexpr auto stat = SplitSpecialRegularStat::def;
 	auto const defense =
 		determine_initial_stat(stat, defender) *
-		modifier<BoostableStat(stat)>(defender.stage(), critical_hit) *
+		modifier<BoostableStat(stat)>(defender.stages(), critical_hit) *
 		defense_ability_modifier(defender) *
 		item_modifier<stat>(defender, weather);
 	
@@ -416,7 +416,7 @@ auto calculate_special_defense(ActivePokemon<generation> const defender, Ability
 	constexpr auto stat = SplitSpecialRegularStat::spd;
 	auto const defense =
 		defender.stat(stat) *	
-		modifier<BoostableStat(stat)>(defender.stage(), critical_hit) *
+		modifier<BoostableStat(stat)>(defender.stages(), critical_hit) *
 		special_defense_ability_modifier(defender, attacker_ability, weather) *
 		item_modifier<stat>(defender, weather) *
 		special_defense_sandstorm_boost(defender, attacker_ability, weather);
@@ -439,7 +439,7 @@ auto calculate_speed(Team<generation> const & team, Ability const other_ability,
 	auto const tailwind_multiplier = BOUNDED_CONDITIONAL(team.tailwind(), 2_bi, 1_bi);
 	auto const speed =
 		pokemon.stat(stat) *
-		modifier<BoostableStat(stat)>(pokemon.stage()) *
+		modifier<BoostableStat(stat)>(pokemon.stages()) *
 		speed_ability_modifier(pokemon, other_ability, weather) *
 		item_modifier<stat>(pokemon, weather) /
 		paralysis_divisor *

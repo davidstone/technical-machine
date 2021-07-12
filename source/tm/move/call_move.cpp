@@ -114,9 +114,9 @@ auto activate_when_hit_item(KnownMove const move, MutableActivePokemon<generatio
 		}
 		return resistance_berry(resisted);
 	};
-	constexpr auto max_stage = numeric_traits::max_value<containers::range_value_t<Stage>>;
+	constexpr auto max_stage = numeric_traits::max_value<Stage::value_type>;
 	auto stat_boost = [&](BoostableStat const stat) {
-		auto & stage = defender.stage()[stat];
+		auto & stage = defender.stages()[stat];
 		if (stage != max_stage and !substitute()) {
 			stage += 1_bi;
 			defender.remove_item();
@@ -192,9 +192,9 @@ auto activate_when_hit_item(KnownMove const move, MutableActivePokemon<generatio
 			return se_resistance_berry(Type::Electric);
 		case Item::Weakness_Policy:
 			if (effectiveness.is_super_effective() and !substitute()) {
-				auto & stage = defender.stage();
-				if (stage[BoostableStat::atk] != max_stage and stage[BoostableStat::spa] != max_stage) {
-					boost_offensive(stage, 2_bi);
+				auto & stages = defender.stages();
+				if (stages[BoostableStat::atk] != max_stage and stages[BoostableStat::spa] != max_stage) {
+					boost_offensive(stages, 2_bi);
 					defender.remove_item();
 				}
 			}
@@ -405,7 +405,7 @@ auto handle_ability_blocks_move(KnownMove const move, MutableActivePokemon<gener
 			if (!absorb_ability_activates(generation, move, Type::Electric)) {
 				return false;
 			}
-			target.stage()[BoostableStat::spe] += 1_bi;
+			target.stages()[BoostableStat::spe] += 1_bi;
 			return true;
 		default:
 			return false;
@@ -435,7 +435,7 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 	user_pokemon.handle_confusion();
 	if (move.executed != Moves::Hit_Self and user_pokemon.flinched()) {
 		if (boosts_speed_when_flinched(user_pokemon.ability())) {
-			user_pokemon.stage()[BoostableStat::spe] += 1_bi;
+			user_pokemon.stages()[BoostableStat::spe] += 1_bi;
 		}
 	}
 	if (!can_execute_move(user_pokemon.as_const(), found_move, weather, is_recharging)) {
@@ -456,7 +456,7 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 	if (move.miss) {
 		unsuccessfully_use_move();
 		if (user_pokemon.item(weather) == Item::Blunder_Policy) {
-			user_pokemon.stage()[BoostableStat::spe] += 2_bi;
+			user_pokemon.stages()[BoostableStat::spe] += 2_bi;
 			user_pokemon.remove_item();
 		}
 		return;

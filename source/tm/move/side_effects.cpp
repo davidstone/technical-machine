@@ -103,12 +103,12 @@ constexpr auto flinch = [](auto &, auto & target, auto &, auto) {
 
 template<BoostableStat stat, int stages>
 constexpr auto boost_user_stat = [](auto & user, auto &, auto &, auto) {
-	user.pokemon().stage()[stat] += bounded::constant<stages>;
+	user.pokemon().stages()[stat] += bounded::constant<stages>;
 };
 
 template<BoostableStat stat, int stages>
 constexpr auto boost_target_stat = [](auto &, auto & target, auto &, auto) {
-	target.pokemon().stage()[stat] += bounded::constant<stages>;
+	target.pokemon().stages()[stat] += bounded::constant<stages>;
 };
 
 constexpr auto status_is_clausable(Statuses const status) {
@@ -185,11 +185,11 @@ constexpr auto thaw_and_burn_effect(double const probability, ActivePokemon<gene
 template<Generation generation, BoostableStat stat, int stages>
 constexpr auto confusing_stat_boost = guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
 	auto target = other.pokemon();
-	auto & stage = target.stage()[stat];
-	if (generation <= Generation::two and stage == numeric_traits::max_value<containers::range_value_t<Stage>>) {
+	auto & stage = target.stages()[stat];
+	if (generation <= Generation::two and stage == numeric_traits::max_value<Stage::value_type>) {
 		return;
 	}
-	target.stage()[stat] += bounded::constant<stages>;
+	stage += bounded::constant<stages>;
 	target.confuse(weather);
 });
 
@@ -333,8 +333,8 @@ constexpr auto recover_half = [](auto & user, auto &, auto & weather, auto) {
 	heal(user.pokemon(), weather, rational(1_bi, 2_bi));
 };
 
-constexpr auto stat_can_boost = [](containers::range_value_t<Stage> const stage) {
-	return stage != numeric_traits::max_value<containers::range_value_t<Stage>>;
+constexpr auto stat_can_boost = [](Stage const stage) {
+	return stage.value() != numeric_traits::max_value<Stage::value_type>;
 };
 
 template<auto...>
@@ -343,11 +343,11 @@ struct sequence {};
 template<Generation generation>
 constexpr auto acupressure_effect(ActivePokemon<generation> const target) {
 	auto result = SideEffects<generation>();
-	auto const stage = target.stage();
-	auto const probability = 1.0 / double(containers::count_if(stage, stat_can_boost));
+	auto const stages = target.stages();
+	auto const probability = 1.0 / double(containers::count_if(stages, stat_can_boost));
 
 	auto add_stat = [&]<BoostableStat stat>(std::integral_constant<BoostableStat, stat>) {
-		if (stat_can_boost(stage[stat])) {
+		if (stat_can_boost(stages[stat])) {
 			containers::push_back(result, SideEffect<generation>{probability, boost_user_stat<stat, 2>});
 		}
 	};
@@ -646,16 +646,16 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Amnesia:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
 				auto pokemon = user.pokemon();
-				pokemon.stage()[BoostableStat::spd] += 2_bi;
+				pokemon.stages()[BoostableStat::spd] += 2_bi;
 				if (generation == Generation::one) {
-					pokemon.stage()[BoostableStat::spa] += 2_bi;
+					pokemon.stages()[BoostableStat::spa] += 2_bi;
 				}
 			});
 		case Moves::Ancient_Power:
 		case Moves::Ominous_Wind:
 		case Moves::Silver_Wind:
 			return basic_probability<generation>(0.1, [](auto & user, auto &, auto &, auto) {
-				boost_regular(user.pokemon().stage(), 1_bi);
+				boost_regular(user.pokemon().stages(), 1_bi);
 			});
 		case Moves::Belly_Drum:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto) {
@@ -663,48 +663,48 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				auto const hp = user_pokemon.hp();
 				if (hp.current() > hp.max() / 2_bi and hp.current() > 1_bi) {
 					change_hp(user_pokemon, weather, -hp.max() / 2_bi);
-					user_pokemon.stage()[BoostableStat::atk] = 6_bi;
+					user_pokemon.stages()[BoostableStat::atk] = Stage(6_bi);
 				} else if constexpr (generation == Generation::two) {
-					user_pokemon.stage()[BoostableStat::atk] += 2_bi;
+					user_pokemon.stages()[BoostableStat::atk] += 2_bi;
 				}
 			});
 		case Moves::Close_Combat:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
-				boost_physical(user.pokemon().stage(), -1_bi);
+				boost_physical(user.pokemon().stages(), -1_bi);
 			});
 		case Moves::Bulk_Up:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
-				boost_physical(user.pokemon().stage(), 1_bi);
+				boost_physical(user.pokemon().stages(), 1_bi);
 			});
 		case Moves::Calm_Mind:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
-				boost_special(user.pokemon().stage(), 1_bi);
+				boost_special(user.pokemon().stages(), 1_bi);
 			});
 		case Moves::Cosmic_Power:
 		case Moves::Defend_Order:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
-				boost_defensive(user.pokemon().stage(), 1_bi);
+				boost_defensive(user.pokemon().stages(), 1_bi);
 			});
 		case Moves::Dragon_Dance:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
-				auto & stage = user.pokemon().stage();
-				stage[BoostableStat::atk] += 1_bi;
-				stage[BoostableStat::spe] += 1_bi;
+				auto & stages = user.pokemon().stages();
+				stages[BoostableStat::atk] += 1_bi;
+				stages[BoostableStat::spe] += 1_bi;
 			});
 		case Moves::Growth:
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
 				auto const user_pokemon = user.pokemon();
-				auto & stage = user_pokemon.stage();
+				auto & stages = user_pokemon.stages();
 				switch (generation) {
 					case Generation::one:
 						for (auto const stat : {BoostableStat::spa, BoostableStat::spd}) {
-							stage[stat] += 1_bi;
+							stages[stat] += 1_bi;
 						}
 						break;
 					case Generation::two:
 					case Generation::three:
 					case Generation::four:
-						stage[BoostableStat::spa] += 1_bi;
+						stages[BoostableStat::spa] += 1_bi;
 						break;
 					default: {
 						auto const boost = BOUNDED_CONDITIONAL(
@@ -713,7 +713,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 							1_bi
 						);
 						for (auto const stat : {BoostableStat::atk, BoostableStat::spa}) {
-							stage[stat] += boost;
+							stages[stat] += boost;
 						}
 						break;
 					}
@@ -722,33 +722,33 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Psychic:
 			return generation == Generation::one ?
 				basic_probability<generation>(0.332, [](auto &, auto & other, auto &, auto) {
-					auto & stage = other.pokemon().stage();
-					stage[BoostableStat::spa] -= 1_bi;
-					stage[BoostableStat::spd] -= 1_bi;
+					auto & stages = other.pokemon().stages();
+					stages[BoostableStat::spa] -= 1_bi;
+					stages[BoostableStat::spd] -= 1_bi;
 				}) :
 				basic_probability<generation>(0.1, boost_target_stat<BoostableStat::spd, -1>);
 		case Moves::Quiver_Dance:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
-				auto & stage = user.pokemon().stage();
+				auto & stages = user.pokemon().stages();
 				for (auto const stat : {BoostableStat::spa, BoostableStat::spd, BoostableStat::spe}) {
-					stage[stat] += 1_bi;
+					stages[stat] += 1_bi;
 				}
 			});
 		case Moves::Shell_Smash:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
-				auto & stage = user.pokemon().stage();
+				auto & stages = user.pokemon().stages();
 				for (auto const stat : {BoostableStat::def, BoostableStat::spd}) {
-					stage[stat] -= 1_bi;
+					stages[stat] -= 1_bi;
 				}
 				for (auto const stat : {BoostableStat::atk, BoostableStat::spa, BoostableStat::spe}) {
-					stage[stat] += 2_bi;
+					stages[stat] += 2_bi;
 				}
 			});
 		case Moves::Shift_Gear:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
-				auto & stage = user.pokemon().stage();
-				stage[BoostableStat::atk] += 1_bi;
-				stage[BoostableStat::spe] += 2_bi;
+				auto & stages = user.pokemon().stages();
+				stages[BoostableStat::atk] += 1_bi;
+				stages[BoostableStat::spe] += 2_bi;
 			});
 		case Moves::String_Shot:
 			return generation <= Generation::five ?
@@ -756,24 +756,24 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				guaranteed_effect<generation>(boost_target_stat<BoostableStat::spe, -2>);
 		case Moves::Superpower:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
-				boost_physical(user.pokemon().stage(), -1_bi);
+				boost_physical(user.pokemon().stages(), -1_bi);
 			});
 		case Moves::Tickle:
 			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
-				boost_physical(other.pokemon().stage(), -1_bi);
+				boost_physical(other.pokemon().stages(), -1_bi);
 			});
 		case Moves::V_create:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
-				auto & stage = user.pokemon().stage();
+				auto & stages = user.pokemon().stages();
 				for (auto const stat : {BoostableStat::def, BoostableStat::spd, BoostableStat::spe}) {
-					stage[stat] -= 1_bi;
+					stages[stat] -= 1_bi;
 				}
 			});
 
 		case Moves::Haze:
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
-				user.pokemon().stage() = Stage{};
-				other.pokemon().stage() = Stage{};
+				user.pokemon().stages() = Stages();
+				other.pokemon().stages() = Stages();
 				if (generation == Generation::one) {
 					user.shatter_screens();
 					other.shatter_screens();
@@ -781,12 +781,12 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			});
 		case Moves::Power_Swap:
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
-				swap_offensive(user.pokemon().stage(), other.pokemon().stage());
+				swap_offensive(user.pokemon().stages(), other.pokemon().stages());
 			});
 		case Moves::Psych_Up:
-			return generation >= Generation::three or containers::any(original_other.pokemon().stage(), [](containers::range_value_t<Stage> const stage) { return stage != 0_bi; }) ?
+			return generation >= Generation::three or containers::any(original_other.pokemon().stages(), [](Stage const stage) { return stage != 0_bi; }) ?
 				guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
-					user.pokemon().stage() = other.pokemon().stage();
+					user.pokemon().stages() = other.pokemon().stages();
 				}) :
 				no_effect<generation>;
 
@@ -794,12 +794,12 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
 				auto const pokemon = user.pokemon();
 				pokemon.charge();
-				pokemon.stage()[BoostableStat::spd] += 1_bi;
+				pokemon.stages()[BoostableStat::spd] += 1_bi;
 			});
 		case Moves::Defense_Curl:
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
 				auto const pokemon = user.pokemon();
-				pokemon.stage()[BoostableStat::def] += 1_bi;
+				pokemon.stages()[BoostableStat::def] += 1_bi;
 				pokemon.defense_curl();
 			});
 
@@ -1380,22 +1380,22 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 						other_pokemon.curse();
 					}
 				} else {
-					auto & stat_stage = user_pokemon.stage();
+					auto & stages = user_pokemon.stages();
 					if constexpr (generation == Generation::two) {
-						constexpr auto max = numeric_traits::max_value<containers::range_value_t<Stage>>;
-						if (stat_stage[BoostableStat::atk] == max and stat_stage[BoostableStat::def] == max) {
+						constexpr auto max = numeric_traits::max_value<Stage::value_type>;
+						if (stages[BoostableStat::atk] == max and stages[BoostableStat::def] == max) {
 							return;
 						}
 					}
-					stat_stage[BoostableStat::atk] += 1_bi;
-					stat_stage[BoostableStat::def] += 1_bi;
-					stat_stage[BoostableStat::spe] -= 1_bi;
+					stages[BoostableStat::atk] += 1_bi;
+					stages[BoostableStat::def] += 1_bi;
+					stages[BoostableStat::spe] -= 1_bi;
 				}
 			});
 		case Moves::Defog:
 			return guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
 				weather.deactivate_fog();
-				other.pokemon().stage()[BoostableStat::eva] -= 1_bi;
+				other.pokemon().stages()[BoostableStat::eva] -= 1_bi;
 			});
 		case Moves::Detect:
 		case Moves::Protect:
@@ -1455,7 +1455,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return no_effect<generation>;
 		case Moves::Guard_Swap:
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
-				swap_defensive(user.pokemon().stage(), other.pokemon().stage());
+				swap_defensive(user.pokemon().stages(), other.pokemon().stages());
 			});
 		case Moves::Heal_Block:
 			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
@@ -1465,7 +1465,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return no_effect<generation>;
 		case Moves::Heart_Swap:
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
-				std::swap(user.pokemon().stage(), other.pokemon().stage());
+				std::swap(user.pokemon().stages(), other.pokemon().stages());
 			});
 		case Moves::High_Jump_Kick:
 		case Moves::Jump_Kick:
@@ -1515,7 +1515,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return no_effect<generation>;
 		case Moves::Memento:
 			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
-				boost_offensive(other.pokemon().stage(), -2_bi);
+				boost_offensive(other.pokemon().stages(), -2_bi);
 				user.pokemon().set_hp(weather, 0_bi);
 			});
 		case Moves::Mimic:
@@ -1559,7 +1559,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
 				user.clear_field();
 				if constexpr (generation >= Generation::eight) {
-					user.pokemon().stage()[BoostableStat::spe] += 1_bi;
+					user.pokemon().stages()[BoostableStat::spe] += 1_bi;
 				}
 			});
 		case Moves::Recycle:

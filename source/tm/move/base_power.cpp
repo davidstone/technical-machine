@@ -1410,7 +1410,7 @@ auto base_power(Team<generation> const & attacker_team, ExecutedMove<generation>
 		case Moves::Guard_Swap: return 0_bi;
 		case Moves::Punishment: {
 			auto is_positive = [](auto const value) { return value > 0_bi; };
-			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::sum(containers::filter(defender.stage(), is_positive)));
+			auto const uncapped_power = 60_bi + 20_bi * bounded::increase_min<0>(containers::sum(containers::transform(containers::filter(defender.stages(), is_positive), &Stage::value)));
 			return bounded::min(uncapped_power, 200_bi);
 		}
 		case Moves::Last_Resort: return BOUNDED_CONDITIONAL(generation <= Generation::four, 130_bi, 140_bi);

@@ -13,42 +13,65 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-auto boost_regular(Stage & stage, Stage::boost_type const number_of_stages) -> void {
+auto boost_regular(Stages & stages, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : containers::enum_range(BoostableStat::spe)) {
-		saturating_add(stage[stat], number_of_stages);
+		stages[stat] += number_of_stages;
 	}
 }
 
-auto boost_physical(Stage & stage, Stage::boost_type const number_of_stages) -> void {
+auto boost_physical(Stages & stages, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : {BoostableStat::atk, BoostableStat::def}) {
-		saturating_add(stage[stat], number_of_stages);
+		stages[stat] += number_of_stages;
 	}
 }
-auto boost_special(Stage & stage, Stage::boost_type const number_of_stages) -> void {
+auto boost_special(Stages & stages, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : {BoostableStat::spa, BoostableStat::spd}) {
-		saturating_add(stage[stat], number_of_stages);
+		stages[stat] += number_of_stages;
 	}
 }
-auto boost_defensive(Stage & stage, Stage::boost_type const number_of_stages) -> void {
+auto boost_defensive(Stages & stages, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : {BoostableStat::def, BoostableStat::spd}) {
-		saturating_add(stage[stat], number_of_stages);
+		stages[stat] += number_of_stages;
 	}
 }
-auto boost_offensive(Stage & stage, Stage::boost_type const number_of_stages) -> void {
+auto boost_offensive(Stages & stages, Stage::boost_type const number_of_stages) -> void {
 	for (auto const stat : {BoostableStat::atk, BoostableStat::spa}) {
-		saturating_add(stage[stat], number_of_stages);
+		stages[stat] += number_of_stages;
 	}
 }
 
-auto swap_defensive(Stage & lhs, Stage & rhs) -> void {
+auto swap_defensive(Stages & lhs, Stages & rhs) -> void {
 	for (auto const stat : {BoostableStat::def, BoostableStat::spd}) {
 		std::swap(lhs[stat], rhs[stat]);
 	}
 }
-auto swap_offensive(Stage & lhs, Stage & rhs) -> void {
+auto swap_offensive(Stages & lhs, Stages & rhs) -> void {
 	for (auto const stat : {BoostableStat::atk, BoostableStat::spa}) {
 		std::swap(lhs[stat], rhs[stat]);
 	}
 }
+
+namespace {
+
+static_assert([]{
+	auto stage = Stage();
+	BOUNDED_ASSERT(stage == 0_bi);
+
+	stage += 2_bi;
+	BOUNDED_ASSERT(stage == 2_bi);
+
+	stage += 2_bi;
+	BOUNDED_ASSERT(stage == 4_bi);
+
+	stage += 2_bi;
+	BOUNDED_ASSERT(stage == 6_bi);
+
+	stage += 2_bi;
+	BOUNDED_ASSERT(stage == 6_bi);
+
+	return true;
+}());
+
+} // namespace
 
 } // namespace technicalmachine

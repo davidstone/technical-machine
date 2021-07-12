@@ -65,7 +65,7 @@ void attack_tests() {
 	pokemon.switch_in(weather);
 
 	pokemon.activate_power_trick();
-	pokemon.stage()[BoostableStat::atk] += 6_bi;
+	pokemon.stages()[BoostableStat::atk] += 6_bi;
 
 	check_equal(calculate_attack(attacker.pokemon().as_const(), Type::Normal, Ability::Honey_Gather, weather, critical_hit), max_attack);
 }
@@ -101,7 +101,7 @@ void special_attack_tests() {
 
 	pokemon.switch_in(weather);
 
-	pokemon.stage()[BoostableStat::spa] += 6_bi;
+	pokemon.stages()[BoostableStat::spa] += 6_bi;
 
 	check_equal(calculate_special_attack(attacker.pokemon().as_const(), Type::Water, Ability::Honey_Gather, weather, critical_hit), max_special_attack);
 }
@@ -136,7 +136,7 @@ void max_defense_test() {
 	));
 	defender.pokemon().switch_in(weather);
 
-	defender.pokemon().stage()[BoostableStat::def] += 6_bi;
+	defender.pokemon().stages()[BoostableStat::def] += 6_bi;
 
 	defender.pokemon().set_status(Statuses::burn, weather);
 
@@ -165,7 +165,7 @@ void min_defense_test() {
 	pokemon.switch_in(weather);
 
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
-		pokemon.stage()[BoostableStat::def] += -2_bi;
+		pokemon.stages()[BoostableStat::def] -= 2_bi;
 	}
 
 	check_equal(calculate_defense(defender.pokemon().as_const(), physical_move, weather, false), min_defense);
@@ -210,7 +210,7 @@ void special_defense_tests() {
 
 	pokemon.switch_in(weather);
 
-	pokemon.stage()[BoostableStat::spd] += 6_bi;
+	pokemon.stages()[BoostableStat::spd] += 6_bi;
 
 	check_equal(calculate_special_defense(defender.pokemon().as_const(), Ability::Honey_Gather, weather, false), max_special_defense);
 }
@@ -247,7 +247,7 @@ void speed_tests() {
 
 	pokemon.switch_in(weather);
 
-	pokemon.stage()[BoostableStat::spe] += 6_bi;
+	pokemon.stages()[BoostableStat::spe] += 6_bi;
 
 	team.activate_tailwind();
 	

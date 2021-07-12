@@ -83,7 +83,7 @@ struct ActivePokemonFlags {
 				value.substitute,
 				value.partial_trap,
 				value.perish_song,
-				value.stage,
+				value.stages,
 				value.status,
 				value.slow_start,
 				value.stockpile,
@@ -136,7 +136,7 @@ private:
 	Substitute substitute;
 	PartialTrap partial_trap;
 	[[no_unique_address]] PerishSong<generation> perish_song;
-	Stage stage;
+	Stages stages;
 	ActiveStatus status;
 	[[no_unique_address]] SlowStart<generation> slow_start;
 	[[no_unique_address]] Stockpile<generation> stockpile;
@@ -338,8 +338,8 @@ public:
 		}
 	}
 
-	auto stage() const -> Stage const & {
-		return m_flags.stage;
+	auto stages() const -> Stages const & {
+		return m_flags.stages;
 	}
 
 	auto spit_up_power() const {
@@ -427,7 +427,7 @@ auto grounded(ActivePokemon<generation> const pokemon, Weather const weather) ->
 
 template<Generation generation>
 auto activate_berserk_gene(MutableActivePokemon<generation> pokemon, Weather const weather) -> void {
-	saturating_add(pokemon.stage()[BoostableStat::atk], 2_bi);
+	pokemon.stages()[BoostableStat::atk] += 2_bi;
 	// TODO: Berserk Gene causes 256-turn confusion, unless the Pokemon
 	// switching out was confused.
 	pokemon.confuse(weather);
@@ -473,8 +473,8 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		this->m_pokemon.reduce_pp(move_name, this->m_flags.embargo.is_active(), weather.magic_room(), amount);
 	}
 
-	auto stage() const -> Stage & {
-		return this->m_flags.stage;
+	auto stages() const -> Stages & {
+		return this->m_flags.stages;
 	}
 
 	auto clear_field() const {
@@ -661,7 +661,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 	}
 	auto minimize() const {
 		this->m_flags.minimized = true;
-		saturating_add(stage()[BoostableStat::eva], BOUNDED_CONDITIONAL(generation <= Generation::four, 1_bi, 2_bi));
+		stages()[BoostableStat::eva] += BOUNDED_CONDITIONAL(generation <= Generation::four, 1_bi, 2_bi);
 	}
 	auto activate_mud_sport() const {
 		this->m_flags.mud_sport = true;
@@ -744,13 +744,13 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 	auto increment_stockpile() const -> void {
 		bool const increased = this->m_flags.stockpile.increment();
 		if (increased) {
-			boost_defensive(stage(), 1_bi);
+			boost_defensive(stages(), 1_bi);
 		}
 	}
 	auto release_stockpile() const {
-		auto const stages = this->m_flags.stockpile.release();
-		boost_defensive(stage(), -stages);
-		return stages;
+		auto const stockpiled_stages = this->m_flags.stockpile.release();
+		boost_defensive(stages(), -stockpiled_stages);
+		return stockpiled_stages;
 	}
 
 	auto use_substitute(Weather const weather) const -> void {
@@ -797,7 +797,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 			this->m_flags.magnet_rise = {};
 			this->m_flags.perish_song = {};
 			this->m_flags.power_trick_is_active = false;
-			this->m_flags.stage = {};
+			this->m_flags.stages = {};
 			this->m_flags.substitute = {};
 		}
 		this->m_flags.attracted = false;
@@ -970,7 +970,7 @@ private:
 				return;
 			}
 			consume();
-			saturating_add(stage()[stat], 1_bi);
+			stages()[stat] += 1_bi;
 		};
 
 		switch (this->item(weather)) {
@@ -1060,9 +1060,9 @@ auto change_hp(MutableActivePokemon<generation> pokemon, Weather const weather, 
 
 template<Generation generation>
 auto apply_white_herb(MutableActivePokemon<generation> const pokemon) {
-	for (auto & stage : pokemon.stage()) {
+	for (auto & stage : pokemon.stages()) {
 		if (stage < 0_bi) {
-			stage = 0_bi;
+			stage = Stage(0_bi);
 		}
 	}
 }
@@ -1103,7 +1103,7 @@ void activate_ability_on_switch(MutableActivePokemon<generation> switcher, Mutab
 			auto const defense = calculate_defense(other.as_const(), move, weather);
 			auto const special_defense = calculate_special_defense(other.as_const(), switcher_ability, weather);
 			auto const boosted_stat = defense >= special_defense ? BoostableStat::spa : BoostableStat::atk;
-			saturating_add(switcher.stage()[boosted_stat], 1_bi);
+			switcher.stages()[boosted_stat] += 1_bi;
 			break;
 		}
 		case Ability::Drizzle:
@@ -1118,14 +1118,14 @@ void activate_ability_on_switch(MutableActivePokemon<generation> switcher, Mutab
 			if (blocks_intimidate(generation, other.ability())) {
 				break;
 			}
-			auto & attack = other.stage()[BoostableStat::atk];
-			if (attack == numeric_traits::min_value<containers::range_value_t<Stage>>) {
+			auto & attack = other.stages()[BoostableStat::atk];
+			if (attack == numeric_traits::min_value<Stage::value_type>) {
 				break;
 			}
-			saturating_add(attack, -1_bi);
-			auto & speed = other.stage()[BoostableStat::spe];
-			if (other.item(weather) == Item::Adrenaline_Orb and speed != numeric_traits::max_value<containers::range_value_t<Stage>>) {
-				saturating_add(speed, 1_bi);
+			attack -= 1_bi;
+			auto & speed = other.stages()[BoostableStat::spe];
+			if (other.item(weather) == Item::Adrenaline_Orb and speed != numeric_traits::max_value<Stage::value_type>) {
+				speed += 1_bi;
 				other.remove_item();
 			}
 			break;

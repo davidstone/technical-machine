@@ -141,7 +141,7 @@ auto other_effects(Team<generation> & team, MutableActivePokemon<generation> foe
 		heal(pokemon, weather, rational(1_bi, 16_bi) * healing_multiplier(pokemon.item(weather)));
 	}
 	if (!pokemon.last_used_move().switched_in_this_turn() and boosts_speed(pokemon.ability())) {
-		pokemon.stage()[BoostableStat::spe] += 1_bi;
+		pokemon.stages()[BoostableStat::spe] += 1_bi;
 	} else if (flags.shed_skin) {
 		pokemon.clear_status();
 	}

@@ -139,7 +139,7 @@ void test_baton_pass() {
 			damage
 		);
 	}
-	BOUNDED_ASSERT(attacker.pokemon().stage()[BoostableStat::atk] == 6_bi);
+	BOUNDED_ASSERT(attacker.pokemon().stages()[BoostableStat::atk] == 6_bi);
 	BOUNDED_ASSERT(!switch_decision_required(attacker));
 	BOUNDED_ASSERT(
 		legal_selections(attacker, defender, weather) ==
@@ -162,7 +162,7 @@ void test_baton_pass() {
 		false,
 		damage
 	);
-	BOUNDED_ASSERT(attacker.pokemon().stage()[BoostableStat::atk] == 6_bi);
+	BOUNDED_ASSERT(attacker.pokemon().stages()[BoostableStat::atk] == 6_bi);
 	BOUNDED_ASSERT(switch_decision_required(attacker));
 	BOUNDED_ASSERT(
 		legal_selections(attacker, defender, weather) ==
@@ -184,7 +184,7 @@ void test_baton_pass() {
 			damage
 		);
 	}
-	BOUNDED_ASSERT(attacker.pokemon().stage()[BoostableStat::atk] == 6_bi);
+	BOUNDED_ASSERT(attacker.pokemon().stages()[BoostableStat::atk] == 6_bi);
 	BOUNDED_ASSERT(attacker.pokemon().species() == Species::Alakazam);
 	BOUNDED_ASSERT(!switch_decision_required(attacker));
 	BOUNDED_ASSERT(

@@ -102,8 +102,8 @@ auto chance_to_hit(ActivePokemon<generation> const user, KnownMove const move, A
 	auto const gravity_numerator = BOUNDED_CONDITIONAL(weather.gravity(), 5_bi, gravity_denominator);
 	auto const gravity_multiplier = rational(gravity_numerator, gravity_denominator);
 	auto const calculated_accuracy = *base_accuracy *
-		modifier<BoostableStat::acc>(user.stage()) *
-		modifier<BoostableStat::eva>(generation >= Generation::six and target_ability == Ability::Keen_Eye ? Stage() : target.stage()) *
+		modifier<BoostableStat::acc>(user.stages()) *
+		modifier<BoostableStat::eva>(generation >= Generation::six and target_ability == Ability::Keen_Eye ? Stages() : target.stages()) *
 		accuracy_item_modifier(user.item(weather), target_moved) *
 		ability_accuracy_modifier(generation, user_ability, move) *
 		evasion_item_modifier(generation, target.item(weather)) *
