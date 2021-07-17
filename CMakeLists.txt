@@ -187,6 +187,7 @@ add_library(tm_common STATIC
 	source/tm/bit_view.cpp
 	source/tm/block.cpp
 	source/tm/buffer_view.cpp
+	source/tm/bytes_in_file.cpp
 	source/tm/compress.cpp
 	source/tm/constant_generation.cpp
 	source/tm/critical_hit.cpp

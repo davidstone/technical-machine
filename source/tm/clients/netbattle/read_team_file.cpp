@@ -17,6 +17,7 @@
 #include <tm/string_conversions/species.hpp>
 
 #include <tm/bit_view.hpp>
+#include <tm/bytes_in_file.hpp>
 #include <tm/constant_generation.hpp>
 #include <tm/generation.hpp>
 
@@ -36,14 +37,6 @@ namespace technicalmachine::nb {
 namespace {
 
 using namespace std::string_view_literals;
-
-auto bytes_in_file(std::ifstream file) -> containers::vector<std::byte> {
-	file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
-	return containers::vector(containers::transform(
-		containers::range_view(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()),
-		[](char const c) { return static_cast<std::byte>(c); }
-	));
-}
 
 enum class FileVersion { four_zero, four_one, five_zero };
 
