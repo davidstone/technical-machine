@@ -21,8 +21,8 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct BitView {
-	explicit constexpr BitView(auto const & buffer):
-		m_view(containers::data(buffer), static_cast<std::size_t>(containers::size(buffer)))
+	explicit constexpr BitView(std::span<std::byte const> const view):
+		m_view(view)
 	{
 	}
 	
