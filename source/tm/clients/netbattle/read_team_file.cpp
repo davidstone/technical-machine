@@ -1798,7 +1798,7 @@ constexpr auto game_version_to_generation(GameVersion const game_version) {
 
 auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<Team> {
 	try {
-		auto const bytes = bytes_in_file(std::ifstream(team_file));
+		auto const bytes = bytes_in_file(std::ifstream(team_file, std::ios_base::binary));
 		auto parser = Parser(bytes);
 		[[maybe_unused]] auto const username = parser.pop_sized_string();
 		[[maybe_unused]] auto const extra_info = parser.pop_sized_string();
