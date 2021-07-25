@@ -247,13 +247,6 @@ target_link_libraries(file_converter
 	tm_common
 )
 
-add_executable(file_converter
-	source/tm/file_converter/main.cpp
-)
-target_link_libraries(file_converter
-	tm_common
-)
-
 
 add_executable(predict
 	source/tm/team_predictor/generate_team_builder_ui.cpp
