@@ -898,7 +898,7 @@ auto to_string(Species const species) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Species {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 979>;
+	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 989>;
 	static constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
@@ -1090,6 +1090,9 @@ auto from_string(std::string_view const str) -> Species {
 			{ "deoxys", Species::Deoxys_Normal },
 			{ "deoxysattack", Species::Deoxys_Attack },
 			{ "deoxysdefense", Species::Deoxys_Defense },
+			{ "deoxyse", Species::Deoxys_Speed },
+			{ "deoxysf", Species::Deoxys_Attack },
+			{ "deoxysl", Species::Deoxys_Defense },
 			{ "deoxysnormal", Species::Deoxys_Normal },
 			{ "deoxysspeed", Species::Deoxys_Speed },
 			{ "dewgong", Species::Dewgong },
@@ -1595,10 +1598,15 @@ auto from_string(std::string_view const str) -> Species {
 			{ "roselia", Species::Roselia },
 			{ "roserade", Species::Roserade },
 			{ "rotom", Species::Rotom },
+			{ "rotomc", Species::Rotom_Mow },
+			{ "rotomf", Species::Rotom_Frost },
 			{ "rotomfan", Species::Rotom_Fan },
 			{ "rotomfrost", Species::Rotom_Frost },
+			{ "rotomh", Species::Rotom_Heat },
 			{ "rotomheat", Species::Rotom_Heat },
 			{ "rotommow", Species::Rotom_Mow },
+			{ "rotoms", Species::Rotom_Fan },
+			{ "rotomw", Species::Rotom_Wash },
 			{ "rotomwash", Species::Rotom_Wash },
 			{ "rowlet", Species::Rowlet },
 			{ "rufflet", Species::Rufflet },
@@ -1855,7 +1863,9 @@ auto from_string(std::string_view const str) -> Species {
 			{ "woobat", Species::Woobat },
 			{ "wooper", Species::Wooper },
 			{ "wormadam", Species::Wormadam_Plant },
+			{ "wormadamg", Species::Wormadam_Sandy },
 			{ "wormadamplant", Species::Wormadam_Plant },
+			{ "wormadams", Species::Wormadam_Trash },
 			{ "wormadamsandy", Species::Wormadam_Sandy },
 			{ "wormadamtrash", Species::Wormadam_Trash },
 			{ "wurmple", Species::Wurmple },
