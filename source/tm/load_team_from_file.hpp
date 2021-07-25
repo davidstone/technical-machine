@@ -9,6 +9,7 @@
 #include <tm/clients/netbattle/read_team_file.hpp>
 #include <tm/clients/pokemon_lab/read_team_file.hpp>
 #include <tm/clients/pokemon_online/read_team_file.hpp>
+#include <tm/clients/shoddy_battle/read_team_file.hpp>
 
 #include <tm/files_in_path.hpp>
 #include <tm/generation.hpp>
@@ -30,6 +31,8 @@ inline auto load_team_from_file(std::filesystem::path const & file_name) {
 		return po::read_team_file(file_name);
 	} else if (extension == ".sbt") {
 		return pl::read_team_file(file_name);
+	} else if (extension == "") {
+		return sb::read_team_file(file_name);
 	} else if (extension == ".pnb" or extension == ".dpnb") {
 		return nb::read_team_file(file_name);
 	} else {

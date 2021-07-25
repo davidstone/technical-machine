@@ -64,6 +64,8 @@ add_library(tm_common STATIC
 	source/tm/clients/pokemon_showdown/sockets.cpp
 	source/tm/clients/pokemon_showdown/to_packed_format.cpp
 
+	source/tm/clients/shoddy_battle/read_team_file.cpp
+
 	source/tm/clients/battle_result.cpp
 	source/tm/clients/invalid_team_file_format.cpp
 	source/tm/clients/log_foe_team.cpp
