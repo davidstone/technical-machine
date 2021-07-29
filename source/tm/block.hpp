@@ -14,6 +14,7 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/is_switch.hpp>
 
+#include <tm/pokemon/collection.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
 #include <bounded/assert.hpp>
@@ -28,8 +29,6 @@ template<Generation>
 struct ActivePokemon;
 template<Generation>
 struct MutableActivePokemon;
-template<Generation>
-struct PokemonCollection;
 template<Generation>
 struct Team;
 
