@@ -132,7 +132,7 @@ auto parse_team(std::string_view const str) -> Team<generation> {
 	for (auto const & pokemon_data : team_data.items()) {
 		team.add_pokemon(parse_pokemon<generation>(pokemon_data.value()));
 	}
-	team.all_pokemon().reset_index();
+	team.all_pokemon().set_index(0_bi);
 	return team;
 }
 

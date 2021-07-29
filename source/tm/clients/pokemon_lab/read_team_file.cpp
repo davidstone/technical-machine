@@ -180,7 +180,7 @@ auto parse_team(boost::property_tree::ptree const & all_pokemon) {
 			team.add_pokemon(parse_pokemon<generation>(value.second));
 		}
 	}
-	team.all_pokemon().reset_index();
+	team.all_pokemon().set_index(0_bi);
 	return team;
 }
 

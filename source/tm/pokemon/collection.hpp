@@ -55,9 +55,6 @@ struct PokemonCollection {
 		check_range(new_index);
 		m_index = new_index;
 	}
-	void reset_index() {
-		m_index = 0_bi;
-	}
 	constexpr auto index() const {
 		return m_index;
 	}
