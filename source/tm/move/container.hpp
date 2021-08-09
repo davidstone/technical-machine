@@ -33,11 +33,6 @@ private:
 	using Transformed = decltype(move_container_transform(std::declval<Range>()));
 public:
 	using value_type = Move;
-	using const_iterator = containers::concatenate_view_iterator<
-		Transformed<RegularMoves>,
-		Transformed<SharedMoves<generation>>
-	>;
-	using iterator = const_iterator;
 	
 	MoveContainer(RegularMoves const & regular, TeamSize const my_team_size):
 		m_regular(regular),
@@ -50,7 +45,11 @@ public:
 	}
 	
 	auto begin() const {
-		return const_iterator(
+		using iterator = containers::concatenate_view_iterator<
+			Transformed<RegularMoves>,
+			Transformed<SharedMoves<generation>>
+		>;
+		return iterator(
 			move_container_transform(m_regular),
 			move_container_transform(m_shared)
 		);

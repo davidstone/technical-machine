@@ -44,7 +44,7 @@ struct Battles {
 	}
 	
 	bool handle_message(AllUsageStats const & usage_stats, InMessage message, auto send_message, auto challenge) {
-		auto complete_active_battle = [&](Active::const_iterator const it) {
+		auto complete_active_battle = [&](containers::iterator_t<Active const &> const it) {
 			containers::erase(m_active, it);
 			send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), message.room()));
 			challenge();
@@ -77,7 +77,7 @@ private:
 		return true;
 	}
 	
-	void move_to_active(AllUsageStats const & usage_stats, Pending::iterator it, auto send_message) {
+	void move_to_active(AllUsageStats const & usage_stats, containers::iterator_t<Pending &> it, auto send_message) {
 		containers::push_back(m_active, std::move(**it).make(usage_stats, std::move(send_message)));
 		containers::erase(m_pending, it);
 	}

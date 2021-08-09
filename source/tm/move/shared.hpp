@@ -73,18 +73,16 @@ private:
 
 template<Generation generation>
 struct SharedMoves {
-	using const_iterator = SharedMovesIterator<generation>;
-
 	constexpr explicit SharedMoves(TeamSize const team_size):
 		m_number_of_switches(BOUNDED_CONDITIONAL(team_size > 1_bi, team_size, 0_bi))
 	{
 	}
 
 	static constexpr auto begin() {
-		return const_iterator(0_bi);
+		return SharedMovesIterator<generation>(0_bi);
 	}
 	constexpr auto end() const {
-		return const_iterator(m_number_of_switches + number_of_weird_moves);
+		return SharedMovesIterator<generation>(m_number_of_switches + number_of_weird_moves);
 	}
 
 	constexpr void remove_switch() {

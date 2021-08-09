@@ -34,7 +34,6 @@ template<Generation generation>
 struct PokemonCollection {
 	using Container = containers::static_vector<Pokemon<generation>, max_pokemon_per_team.value()>;
 	using value_type = containers::range_value_t<Container>;
-	using const_iterator = typename Container::const_iterator;
 
 	explicit PokemonCollection(TeamSize const initial_size):
 		m_real_size(initial_size)

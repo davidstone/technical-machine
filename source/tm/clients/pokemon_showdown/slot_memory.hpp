@@ -51,7 +51,7 @@ struct SlotMemory {
 	}
 private:
 	using Container = containers::static_vector<Index, max_pokemon_per_team.value()>;
-	auto swap_to_front(TeamIndex const index) -> Container::iterator {
+	auto swap_to_front(TeamIndex const index) -> containers::iterator_t<Container &> {
 		auto const it = containers::find(m_container, 1_bi);
 		BOUNDED_ASSERT(it != containers::end(m_container));
 		std::swap(*it, containers::at(m_container, index));
