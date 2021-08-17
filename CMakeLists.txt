@@ -27,6 +27,7 @@ target_include_directories(nlohmann_json SYSTEM INTERFACE "json/single_include")
 
 get_directory_property(has_parent PARENT_DIRECTORY)
 if (NOT has_parent)
+	add_subdirectory(Catch2)
 	add_subdirectory(cmake_strict_defaults)
 	add_subdirectory(numeric-traits)
 	add_subdirectory(operators)
