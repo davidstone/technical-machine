@@ -13,7 +13,7 @@
 #include <tm/status.hpp>
 #include <tm/weather.hpp>
 
-#include <containers/static_vector/static_vector.hpp>
+#include <containers/static_vector.hpp>
 #include <containers/trivial_inplace_function.hpp>
 
 namespace technicalmachine {

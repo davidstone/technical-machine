@@ -7,7 +7,7 @@
 
 #include <tm/move/max_moves_per_pokemon.hpp>
 
-#include <containers/static_vector/static_vector.hpp>
+#include <containers/static_vector.hpp>
 
 #include <tm/generation.hpp>
 

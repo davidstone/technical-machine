@@ -12,7 +12,7 @@
 
 #include <tm/compress.hpp>
 
-#include <containers/static_vector/static_vector.hpp>
+#include <containers/static_vector.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/size.hpp>
 

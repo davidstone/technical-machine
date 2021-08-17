@@ -12,11 +12,11 @@
 
 #include <containers/algorithms/erase.hpp>
 #include <containers/algorithms/find.hpp>
-#include <containers/static_vector/static_vector.hpp>
 #include <containers/at.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/push_back.hpp>
+#include <containers/static_vector.hpp>
 
 #include <stdexcept>
 #include <utility>

@@ -10,7 +10,7 @@
 #include <bounded/integer.hpp>
 
 #include <containers/algorithms/reverse_iterator.hpp>
-#include <containers/static_vector/static_vector.hpp>
+#include <containers/static_vector.hpp>
 #include <containers/take.hpp>
 
 namespace technicalmachine {

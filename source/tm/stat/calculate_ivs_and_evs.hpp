@@ -32,7 +32,7 @@
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/is_empty.hpp>
-#include <containers/static_vector/make_static_vector.hpp>
+#include <containers/static_vector.hpp>
 #include <containers/take.hpp>
 
 #include <stdexcept>

@@ -18,7 +18,7 @@
 
 #include <containers/array/array.hpp>
 #include <containers/legacy_iterator.hpp>
-#include <containers/static_vector/static_vector.hpp>
+#include <containers/static_vector.hpp>
 
 #include <numeric_traits/min_max_value.hpp>
 

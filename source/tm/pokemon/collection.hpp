@@ -17,11 +17,11 @@
 
 #include <containers/algorithms/erase.hpp>
 #include <containers/algorithms/find.hpp>
-#include <containers/static_vector/static_vector.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/push_back.hpp>
 #include <containers/range_value_t.hpp>
 #include <containers/size.hpp>
+#include <containers/static_vector.hpp>
 
 #include <numeric_traits/min_max_value.hpp>
 

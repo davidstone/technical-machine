@@ -24,8 +24,8 @@
 #include <containers/algorithms/filter_iterator.hpp>
 #include <containers/algorithms/maybe_find.hpp>
 #include <containers/algorithms/transform.hpp>
-#include <containers/static_vector/static_vector.hpp>
 #include <containers/size.hpp>
+#include <containers/static_vector.hpp>
 
 namespace technicalmachine {
 using namespace bounded::literal;

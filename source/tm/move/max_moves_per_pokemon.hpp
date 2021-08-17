@@ -10,7 +10,7 @@
 
 #include <bounded/integer.hpp>
 
-#include <containers/static_vector/static_vector.hpp>
+#include <containers/static_vector.hpp>
 
 namespace technicalmachine {
 enum class Moves : std::uint16_t;

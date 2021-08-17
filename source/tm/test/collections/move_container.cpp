@@ -20,10 +20,10 @@
 #include <containers/algorithms/concatenate_view.hpp>
 #include <containers/algorithms/transform.hpp>
 #include <containers/array/array.hpp>
-#include <containers/static_vector/static_vector.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/push_back.hpp>
 #include <containers/size.hpp>
+#include <containers/static_vector.hpp>
 
 #include <numeric_traits/min_max_value.hpp>
 

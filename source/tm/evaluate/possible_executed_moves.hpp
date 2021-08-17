@@ -9,7 +9,7 @@
 #include <tm/generation.hpp>
 #include <tm/team.hpp>
 
-#include <containers/static_vector/static_vector.hpp>
+#include <containers/static_vector.hpp>
 
 namespace technicalmachine {
 

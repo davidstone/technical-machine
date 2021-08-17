@@ -25,7 +25,7 @@
 #include <containers/single_element_range.hpp>
 #include <containers/size.hpp>
 #include <containers/stable_vector.hpp>
-#include <containers/static_vector/static_vector.hpp>
+#include <containers/static_vector.hpp>
 #include <containers/vector.hpp>
 
 #include <cstddef>

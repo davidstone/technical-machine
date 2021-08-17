@@ -19,7 +19,7 @@
 #include <containers/algorithms/filter_iterator.hpp>
 #include <containers/algorithms/set.hpp>
 #include <containers/emplace_back.hpp>
-#include <containers/static_vector/static_vector.hpp>
+#include <containers/static_vector.hpp>
 
 #include <numeric_traits/min_max_value.hpp>
 

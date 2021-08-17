@@ -22,12 +22,12 @@
 
 #include <containers/algorithms/find.hpp>
 #include <containers/algorithms/transform.hpp>
-#include <containers/static_vector/static_vector.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/is_empty.hpp>
 #include <containers/push_back.hpp>
 #include <containers/size.hpp>
+#include <containers/static_vector.hpp>
 
 namespace technicalmachine {
 
