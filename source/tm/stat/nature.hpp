@@ -145,12 +145,9 @@ constexpr auto boost(Nature const nature, SplitSpecialRegularStat const stat) {
 }
 
 }	// namespace technicalmachine
-namespace numeric_traits {
 
 template<>
-inline constexpr auto min_value<technicalmachine::Nature> = technicalmachine::Nature();
+inline constexpr auto numeric_traits::min_value<technicalmachine::Nature> = technicalmachine::Nature();
 
 template<>
-inline constexpr auto max_value<technicalmachine::Nature> = technicalmachine::Nature::Timid;
-
-}	// namespace numeric_traits
+inline constexpr auto numeric_traits::max_value<technicalmachine::Nature> = technicalmachine::Nature::Timid;

@@ -96,36 +96,33 @@ constexpr decltype(auto) index_stat(auto && stats, SplitSpecialRegularStat const
 }
 
 }	// namespace technicalmachine
-namespace numeric_traits {
 
 template<>
-inline constexpr auto min_value<technicalmachine::BoostableStat> = technicalmachine::BoostableStat::atk;
+inline constexpr auto numeric_traits::min_value<technicalmachine::BoostableStat> = technicalmachine::BoostableStat::atk;
 
 template<>
-inline constexpr auto max_value<technicalmachine::BoostableStat> = technicalmachine::BoostableStat::eva;
+inline constexpr auto numeric_traits::max_value<technicalmachine::BoostableStat> = technicalmachine::BoostableStat::eva;
 
 template<>
-inline constexpr auto min_value<technicalmachine::SpecialPermanentStat> = technicalmachine::SpecialPermanentStat::hp;
+inline constexpr auto numeric_traits::min_value<technicalmachine::SpecialPermanentStat> = technicalmachine::SpecialPermanentStat::hp;
 
 template<>
-inline constexpr auto max_value<technicalmachine::SpecialPermanentStat> = technicalmachine::SpecialPermanentStat::spc;
+inline constexpr auto numeric_traits::max_value<technicalmachine::SpecialPermanentStat> = technicalmachine::SpecialPermanentStat::spc;
 
 template<>
-inline constexpr auto min_value<technicalmachine::SplitSpecialPermanentStat> = technicalmachine::SplitSpecialPermanentStat::hp;
+inline constexpr auto numeric_traits::min_value<technicalmachine::SplitSpecialPermanentStat> = technicalmachine::SplitSpecialPermanentStat::hp;
 
 template<>
-inline constexpr auto max_value<technicalmachine::SplitSpecialPermanentStat> = technicalmachine::SplitSpecialPermanentStat::spe;
+inline constexpr auto numeric_traits::max_value<technicalmachine::SplitSpecialPermanentStat> = technicalmachine::SplitSpecialPermanentStat::spe;
 
 template<>
-inline constexpr auto min_value<technicalmachine::SpecialRegularStat> = technicalmachine::SpecialRegularStat::atk;
+inline constexpr auto numeric_traits::min_value<technicalmachine::SpecialRegularStat> = technicalmachine::SpecialRegularStat::atk;
 
 template<>
-inline constexpr auto max_value<technicalmachine::SpecialRegularStat> = technicalmachine::SpecialRegularStat::spc;
+inline constexpr auto numeric_traits::max_value<technicalmachine::SpecialRegularStat> = technicalmachine::SpecialRegularStat::spc;
 
 template<>
-inline constexpr auto min_value<technicalmachine::SplitSpecialRegularStat> = technicalmachine::SplitSpecialRegularStat::atk;
+inline constexpr auto numeric_traits::min_value<technicalmachine::SplitSpecialRegularStat> = technicalmachine::SplitSpecialRegularStat::atk;
 
 template<>
-inline constexpr auto max_value<technicalmachine::SplitSpecialRegularStat> = technicalmachine::SplitSpecialRegularStat::spe;
-
-}	// namespace numeric_traits
+inline constexpr auto numeric_traits::max_value<technicalmachine::SplitSpecialRegularStat> = technicalmachine::SplitSpecialRegularStat::spe;

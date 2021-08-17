@@ -90,14 +90,12 @@ enum class Foo {
 
 } // namespace
 } // namespace technicalmachine
-namespace numeric_traits {
 
 template<>
-constexpr auto min_value<technicalmachine::Foo> = technicalmachine::Foo::a;
+constexpr auto numeric_traits::min_value<technicalmachine::Foo> = technicalmachine::Foo::a;
 template<>
-constexpr auto max_value<technicalmachine::Foo> = technicalmachine::Foo::b;
+constexpr auto numeric_traits::max_value<technicalmachine::Foo> = technicalmachine::Foo::b;
 
-} // namespace numeric_traits
 namespace technicalmachine {
 namespace {
 

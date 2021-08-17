@@ -895,12 +895,9 @@ enum class Species : uint16_t {
 constexpr auto number_of_species = static_cast<unsigned>(Species::Marowak_Alolan) + 1;
 
 }	// namespace technicalmachine
-namespace numeric_traits {
 
 template<>
-inline constexpr auto min_value<technicalmachine::Species> = technicalmachine::Species();
+inline constexpr auto numeric_traits::min_value<technicalmachine::Species> = technicalmachine::Species();
 
 template<>
-inline constexpr auto max_value<technicalmachine::Species> = technicalmachine::Species::Marowak_Alolan;
-
-} // namespace numeric_traits
+inline constexpr auto numeric_traits::max_value<technicalmachine::Species> = technicalmachine::Species::Marowak_Alolan;

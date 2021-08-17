@@ -36,15 +36,13 @@ enum class Statuses : uint8_t {
 };
 
 }	// namespace technicalmachine
-namespace numeric_traits {
 
 template<>
-inline constexpr auto min_value<technicalmachine::Statuses> = technicalmachine::Statuses();
+inline constexpr auto numeric_traits::min_value<technicalmachine::Statuses> = technicalmachine::Statuses();
 
 template<>
-inline constexpr auto max_value<technicalmachine::Statuses> = technicalmachine::Statuses::rest;
+inline constexpr auto numeric_traits::max_value<technicalmachine::Statuses> = technicalmachine::Statuses::rest;
 
-}	// namespace numeric_traits
 namespace technicalmachine {
 
 struct Status {

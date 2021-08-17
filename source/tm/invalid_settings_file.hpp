@@ -25,12 +25,9 @@ struct InvalidSettingsFile : std::runtime_error {
 };
 
 }	// namespace technicalmachine
-namespace numeric_traits {
 
 template<>
-inline constexpr auto min_value<technicalmachine::InvalidSettingsFile::Problem> = technicalmachine::InvalidSettingsFile::Problem();
+inline constexpr auto numeric_traits::min_value<technicalmachine::InvalidSettingsFile::Problem> = technicalmachine::InvalidSettingsFile::Problem();
 
 template<>
-inline constexpr auto max_value<technicalmachine::InvalidSettingsFile::Problem> = technicalmachine::InvalidSettingsFile::Problem::invalid_data;
-
-}	// namespace numeric_traits
+inline constexpr auto numeric_traits::max_value<technicalmachine::InvalidSettingsFile::Problem> = technicalmachine::InvalidSettingsFile::Problem::invalid_data;

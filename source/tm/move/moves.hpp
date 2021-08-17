@@ -766,12 +766,9 @@ enum class Moves : uint16_t {
 };
 
 }	// namespace technicalmachine
-namespace numeric_traits {
 
 template<>
-inline constexpr auto min_value<technicalmachine::Moves> = technicalmachine::Moves();
+inline constexpr auto numeric_traits::min_value<technicalmachine::Moves> = technicalmachine::Moves();
 
 template<>
-inline constexpr auto max_value<technicalmachine::Moves> = technicalmachine::Moves::Fusion_Bolt;
-
-}	// namespace numeric_traits
+inline constexpr auto numeric_traits::max_value<technicalmachine::Moves> = technicalmachine::Moves::Fusion_Bolt;

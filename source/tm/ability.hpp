@@ -288,15 +288,13 @@ enum class Ability : std::uint16_t {
 };
 
 } // namespace technicalmachine
-namespace numeric_traits {
 
 template<>
-inline constexpr auto min_value<technicalmachine::Ability> = technicalmachine::Ability();
+inline constexpr auto numeric_traits::min_value<technicalmachine::Ability> = technicalmachine::Ability();
 
 template<>
-inline constexpr auto max_value<technicalmachine::Ability> = technicalmachine::Ability::Hunger_Switch;
+inline constexpr auto numeric_traits::max_value<technicalmachine::Ability> = technicalmachine::Ability::Hunger_Switch;
 
-}	// namespace numeric_traits
 namespace technicalmachine {
 
 constexpr bool blocks_confusion(Ability const ability) {

@@ -17,15 +17,13 @@ namespace technicalmachine {
 enum class Gender : uint8_t { female, genderless, male };
 
 } // namespace technicalmachine
-namespace numeric_traits {
 
 template<>
-inline constexpr auto min_value<technicalmachine::Gender> = technicalmachine::Gender();
+inline constexpr auto numeric_traits::min_value<technicalmachine::Gender> = technicalmachine::Gender();
 
 template<>
-inline constexpr auto max_value<technicalmachine::Gender> = technicalmachine::Gender::male;
+inline constexpr auto numeric_traits::max_value<technicalmachine::Gender> = technicalmachine::Gender::male;
 
-}	// namespace numeric_traits
 namespace technicalmachine {
 
 using namespace bounded::literal;

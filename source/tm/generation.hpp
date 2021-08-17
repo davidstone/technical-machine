@@ -25,12 +25,9 @@ enum class Generation : std::uint8_t {
 };
 
 } // namespace technicalmachine
-namespace numeric_traits {
 
 template<>
-inline constexpr auto min_value<technicalmachine::Generation> = technicalmachine::Generation::one;
+inline constexpr auto numeric_traits::min_value<technicalmachine::Generation> = technicalmachine::Generation::one;
 
 template<>
-inline constexpr auto max_value<technicalmachine::Generation> = technicalmachine::Generation::eight;
-
-}	// namespace numeric_traits
+inline constexpr auto numeric_traits::max_value<technicalmachine::Generation> = technicalmachine::Generation::eight;

@@ -42,15 +42,13 @@ enum class NormalWeather : std::uint8_t {
 };
 
 } // namespace technicalmachine
-namespace numeric_traits {
 
 template<>
-inline constexpr auto min_value<technicalmachine::NormalWeather> = technicalmachine::NormalWeather::clear;
+inline constexpr auto numeric_traits::min_value<technicalmachine::NormalWeather> = technicalmachine::NormalWeather::clear;
 
 template<>
-inline constexpr auto max_value<technicalmachine::NormalWeather> = technicalmachine::NormalWeather::rain;
+inline constexpr auto numeric_traits::max_value<technicalmachine::NormalWeather> = technicalmachine::NormalWeather::rain;
 
-} // namespace numeric_traits
 namespace technicalmachine {
 
 struct Weather {

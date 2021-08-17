@@ -776,15 +776,13 @@ enum class Item : std::uint16_t {
 };
 
 } // namespace technicalmachine
-namespace numeric_traits {
 
 template<>
-inline constexpr auto min_value<technicalmachine::Item> = technicalmachine::Item();
+inline constexpr auto numeric_traits::min_value<technicalmachine::Item> = technicalmachine::Item();
 
 template<>
-inline constexpr auto max_value<technicalmachine::Item> = technicalmachine::Item::Utility_Umbrella;
+inline constexpr auto numeric_traits::max_value<technicalmachine::Item> = technicalmachine::Item::Utility_Umbrella;
 
-}	// namespace numeric_traits
 namespace technicalmachine {
 
 constexpr bool allows_switching(Item const item) {
