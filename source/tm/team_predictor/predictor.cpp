@@ -153,21 +153,6 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 	return team;
 }
 
-auto parse_html_team(std::string_view str) -> GenerationGeneric<Team> {
-	auto buffer = DelimitedBufferView(str, '&');
-	auto const generation = Generation(bounded::to_integer<1, 8>(get_expected_base(buffer.pop(), "generation")));
-	switch (generation) {
-		case Generation::one: return GenerationGeneric<Team>(parse_html_team<Generation::one>(buffer));
-		case Generation::two: return GenerationGeneric<Team>(parse_html_team<Generation::two>(buffer));
-		case Generation::three: return GenerationGeneric<Team>(parse_html_team<Generation::three>(buffer));
-		case Generation::four: return GenerationGeneric<Team>(parse_html_team<Generation::four>(buffer));
-		case Generation::five: return GenerationGeneric<Team>(parse_html_team<Generation::five>(buffer));
-		case Generation::six: return GenerationGeneric<Team>(parse_html_team<Generation::six>(buffer));
-		case Generation::seven: return GenerationGeneric<Team>(parse_html_team<Generation::seven>(buffer));
-		case Generation::eight: return GenerationGeneric<Team>(parse_html_team<Generation::eight>(buffer));
-	}
-}
-
 struct Data {
 	Data(AllUsageStats const & all_usage_stats):
 		m_all_usage_stats(all_usage_stats)
@@ -176,8 +161,7 @@ struct Data {
 
 	auto team_string(std::string_view const input_data) -> containers::string {
 		try {
-			auto generic_team = parse_html_team(input_data);
-			return bounded::visit(generic_team, [&]<Generation generation>(Team<generation> & team) {
+			auto impl = [&]<Generation generation>(Team<generation> team) {
 				constexpr auto using_lead = false;
 				auto const & usage_stats = m_all_usage_stats[generation];
 				random_team(usage_stats, team, m_random_engine);
@@ -190,7 +174,19 @@ struct Data {
 					),
 					false
 				);
-			});
+			};
+			auto buffer = DelimitedBufferView(input_data, '&');
+			auto const generation = Generation(bounded::to_integer<1, 8>(get_expected_base(buffer.pop(), "generation")));
+			switch (generation) {
+				case Generation::one: return impl(parse_html_team<Generation::one>(buffer));
+				case Generation::two: return impl(parse_html_team<Generation::two>(buffer));
+				case Generation::three: return impl(parse_html_team<Generation::three>(buffer));
+				case Generation::four: return impl(parse_html_team<Generation::four>(buffer));
+				case Generation::five: return impl(parse_html_team<Generation::five>(buffer));
+				case Generation::six: return impl(parse_html_team<Generation::six>(buffer));
+				case Generation::seven: return impl(parse_html_team<Generation::seven>(buffer));
+				case Generation::eight: return impl(parse_html_team<Generation::eight>(buffer));
+			}
 		} catch (std::exception const & ex) {
 			return containers::string(ex.what());
 		}
