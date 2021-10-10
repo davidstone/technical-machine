@@ -33,10 +33,10 @@ struct RegularMoves {
 		}
 	}
 
-	constexpr auto begin() const & {
+	constexpr auto begin() const {
 		return containers::begin(m_moves);
 	}
-	constexpr auto begin() & {
+	constexpr auto begin() {
 		return containers::begin(m_moves);
 	}
 	constexpr auto size() const {

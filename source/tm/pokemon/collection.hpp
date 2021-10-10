@@ -40,10 +40,10 @@ struct PokemonCollection {
 	{
 	}
 
-	auto begin() const & {
+	auto begin() const {
 		return containers::begin(m_container);
 	}
-	auto begin() & {
+	auto begin() {
 		return containers::begin(m_container);
 	}
 	auto size() const {

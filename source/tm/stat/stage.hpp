@@ -63,10 +63,10 @@ private:
 struct Stages {
 	Stages() = default;
 
-	constexpr auto begin() const & {
+	constexpr auto begin() const {
 		return containers::begin(m_stages);
 	}
-	constexpr auto begin() & {
+	constexpr auto begin() {
 		return containers::begin(m_stages);
 	}
 	constexpr auto size() const {

@@ -30,8 +30,9 @@
 #include <bounded/assert.hpp>
 #include <bounded/optional.hpp>
 
+#include <containers/algorithms/reverse_iterator.hpp>
 #include <containers/begin_end.hpp>
-#include <containers/take.hpp>
+#include <containers/front_back.hpp>
 
 #include <random>
 
