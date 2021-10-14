@@ -13,16 +13,26 @@ using namespace bounded::literal;
 
 struct Happiness {
 	using value_type = bounded::integer<0, 255>;
-	explicit Happiness(value_type value = 255_bi);
-	// Needed to send out to simulators
-	value_type operator()() const;
-	friend bounded::integer<0, 102> return_power(Happiness happiness);
+	constexpr explicit Happiness(value_type const value = 255_bi):
+		m_value(value)
+	{
+	}
+
+	constexpr auto operator()() const -> value_type {
+		return m_value;
+	}
+
 	friend auto operator==(Happiness, Happiness) -> bool = default;
 private:
 	value_type m_value;	
 };
 
-bounded::integer<0, 102> frustration_power(Happiness happiness);
+constexpr auto return_power(Happiness const happiness) -> bounded::integer<0, 102> {
+	return happiness() * 2_bi / 5_bi;
+}
+constexpr auto frustration_power(Happiness const happiness) -> bounded::integer<0, 102> {
+	return 102_bi - return_power(happiness);
+}
 
 template<typename CharT, typename Traits>
 std::basic_ostream<CharT, Traits> & operator<<(std::basic_ostream<CharT, Traits> & out, Happiness const happiness) {
