@@ -10,7 +10,6 @@
 
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 
-#include <tm/empty_team.hpp>
 #include <tm/phazing_in_same_pokemon.hpp>
 #include <tm/team.hpp>
 
