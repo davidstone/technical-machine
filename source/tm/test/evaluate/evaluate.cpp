@@ -1,10 +1,7 @@
-// Test damage-related functions
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-
-#include <tm/test/evaluate/evaluate.hpp>
 
 #include <tm/evaluate/evaluate.hpp>
 
@@ -18,7 +15,7 @@
 
 #include <bounded/integer.hpp>
 
-#include <iostream>
+#include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
 namespace {
@@ -26,15 +23,7 @@ using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
 
-void assert_lower_score(Evaluate<generation> const & evaluate, Team<generation> const & lesser, Team<generation> const & greater) {
-	BOUNDED_ASSERT(evaluate(lesser, greater) < 0_bi);
-}
-
-}	// namespace
-
-void evaluate_tests() {
-	std::cout << "Running evaluate tests.\n";
-
+TEST_CASE("Evaluate", "[Evaluate]") {
 	auto pokemon = Pokemon<generation>(
 		Species::Blissey,
 		Level(100_bi),
@@ -57,9 +46,8 @@ void evaluate_tests() {
 	change_hp(team1.pokemon(), weather, -50_bi);
 
 	auto const evaluate = Evaluate<generation>();
-	assert_lower_score(evaluate, team1, team2);
-
-	std::cout << "Evaluate tests passed.\n\n";
+	CHECK(evaluate(team1, team2) < 0_bi);
 }
 
-}	// namespace technicalmachine
+} // namespace
+} // namespace technicalmachine

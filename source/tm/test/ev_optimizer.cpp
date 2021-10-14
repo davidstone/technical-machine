@@ -1,10 +1,7 @@
-// Test EV optimizer
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-
-#include <tm/test/ev_optimizer.hpp>
 
 #include <tm/move/moves.hpp>
 
@@ -24,13 +21,12 @@
 
 #include <tm/team.hpp>
 
-#include <bounded/assert.hpp>
-
 #include <containers/begin_end.hpp>
 #include <containers/integer_range.hpp>
 
-#include <iostream>
 #include <random>
+
+#include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
 namespace {
@@ -39,7 +35,9 @@ auto regular_moves(Generation const generation, auto... move_names) {
 	return RegularMoves({Move(generation, move_names)...});
 }
 
-void optimize_already_optimized(std::mt19937 & random_engine) {
+TEST_CASE("Optimize already optimized EVs", "[EV Optimizer]") {
+	auto rd = std::random_device();
+	auto random_engine = std::mt19937(rd());
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Metagross;
 	constexpr auto level = Level(100_bi);
@@ -70,13 +68,13 @@ void optimize_already_optimized(std::mt19937 & random_engine) {
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
-	BOUNDED_ASSERT(compute_minimal_spread(base_stats, stats, level, bounded::optional<HiddenPower<generation>>(), include_attack, include_special_attack) == ivs_and_evs);
-	BOUNDED_ASSERT(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
+	CHECK(compute_minimal_spread(base_stats, stats, level, bounded::optional<HiddenPower<generation>>(), include_attack, include_special_attack) == ivs_and_evs);
+	CHECK(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
 	optimize_evs(pokemon, random_engine);
-	BOUNDED_ASSERT(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
+	CHECK(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
 }
 
-void defensive_tests() {
+TEST_CASE("Optimize defensive EVs", "[EV Optimizer]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto base_hp = 100_bi;
 	constexpr auto base_def = 100_bi;
@@ -96,10 +94,10 @@ void defensive_tests() {
 	// Too many steps to constant evaluate
 	auto const defensive_evs = DefensiveEVs(level, input_hp, input_def, input_spd);
 	for (auto const & candidate : defensive_evs) {
-		BOUNDED_ASSERT(candidate.hp.ev == hp_ev);
-		BOUNDED_ASSERT(candidate.defense.ev == defense_ev);
-		BOUNDED_ASSERT(candidate.special_defense.ev >= special_defense_ev);
-		BOUNDED_ASSERT(boosts_stat(candidate.nature, SplitSpecialRegularStat::def));
+		CHECK(candidate.hp.ev == hp_ev);
+		CHECK(candidate.defense.ev == defense_ev);
+		CHECK(candidate.special_defense.ev >= special_defense_ev);
+		CHECK(boosts_stat(candidate.nature, SplitSpecialRegularStat::def));
 	}
 }
 
@@ -129,7 +127,9 @@ static_assert([] {
 	return true;
 }());
 
-void not_level_100(std::mt19937 & random_engine) {
+TEST_CASE("Optimize EVs below level 100", "[EV Optimizer]") {
+	auto rd = std::random_device();
+	auto random_engine = std::mt19937(rd());
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Masquerain;
 	constexpr auto level = Level(83_bi);
@@ -157,7 +157,9 @@ void not_level_100(std::mt19937 & random_engine) {
 	optimize_evs(pokemon, random_engine);
 }
 
-void generation_two(std::mt19937 & random_engine) {
+TEST_CASE("Optimize generation 2 EVs", "[EV Optimizer]") {
+	auto rd = std::random_device();
+	auto random_engine = std::mt19937(rd());
 	constexpr auto generation = Generation::two;
 	constexpr auto species = Species::Mew;
 	constexpr auto level = Level(100_bi);
@@ -177,28 +179,11 @@ void generation_two(std::mt19937 & random_engine) {
 	
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = true;
-	BOUNDED_ASSERT(compute_minimal_spread(base_stats, stats, level, bounded::optional<HiddenPower<generation>>(), include_attack, include_special_attack) == ivs_and_evs);
-	BOUNDED_ASSERT(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
+	CHECK(compute_minimal_spread(base_stats, stats, level, bounded::optional<HiddenPower<generation>>(), include_attack, include_special_attack) == ivs_and_evs);
+	CHECK(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
 	optimize_evs(pokemon, random_engine);
-	BOUNDED_ASSERT(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
+	CHECK(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
 }
 
-}	// namespace
-
-void ev_optimizer_tests() {
-	std::cout << "Running EV optimizer tests.\n";
-	
-	defensive_tests();
-
-	std::random_device rd;
-	std::mt19937 random_engine(rd());
-	optimize_already_optimized(random_engine);
-
-	not_level_100(random_engine);
-
-	generation_two(random_engine);
-
-	std::cout << "EV optimizer tests passed.\n\n";
-}
-
-}	// namespace technicalmachine
+} // namespace
+} // namespace technicalmachine

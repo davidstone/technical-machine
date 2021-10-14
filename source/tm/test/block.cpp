@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/test/block.hpp>
+#include <tm/block.hpp>
 
 #include <tm/move/moves.hpp>
 
@@ -14,7 +14,6 @@
 
 #include <tm/string_conversions/move.hpp>
 
-#include <tm/block.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
@@ -22,7 +21,7 @@
 #include <containers/front_back.hpp>
 #include <containers/size.hpp>
 
-#include <iostream>
+#include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
 namespace {
@@ -34,8 +33,7 @@ constexpr auto moves(auto... move_names) {
 	return RegularMoves({Move(generation, move_names, 0_bi)...});
 }
 
-void basic() {
-	auto const expected = moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball);
+TEST_CASE("block with all legal moves", "[block]") {
 	auto user = Team<generation>(1_bi, true);
 	user.add_pokemon(Pokemon<generation>(
 		Species::Jolteon,
@@ -44,7 +42,7 @@ void basic() {
 		Item::Leftovers,
 		Ability::Volt_Absorb,
 		default_combined_stats<generation>,
-		expected
+		moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
 	));
 	auto weather = Weather();
 	user.pokemon().switch_in(weather);
@@ -64,12 +62,7 @@ void basic() {
 	user.reset_start_of_turn();
 
 	auto const selections = legal_selections(user, other, weather);
-	if (!containers::equal(selections, expected)) {
-		for (auto const & move : selections) {
-			std::cerr << to_string(move) << '\n';
-		}
-		throw std::runtime_error("Invalid legal selections");
-	}
+	CHECK(selections == StaticVectorMove({Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball}));
 }
 
 auto empty_pp(Move & move) {
@@ -79,7 +72,7 @@ auto empty_pp(Move & move) {
 	}
 };
 
-void test_two_moves_with_one_out_of_pp() {
+TEST_CASE("Two moves with one out of pp", "[block]") {
 	auto weather = Weather();
 
 	auto user = Team<generation>(1_bi, true);
@@ -111,15 +104,10 @@ void test_two_moves_with_one_out_of_pp() {
 	user.reset_start_of_turn();
 
 	auto const selections = legal_selections(user, other, weather);
-	if (containers::size(selections) != 1_bi) {
-		throw std::runtime_error(containers::concatenate<std::string>("Incorrect number of selections with one of two moves out of PP. Expected 1, got "sv, to_string(containers::size(selections))));
-	}
-	if (containers::front(selections) != Moves::Thunderbolt) {
-		throw std::runtime_error(containers::concatenate<std::string>("Incorrect legal selection with one of two moves out of PP. Expected Thunderbolt, got "sv, to_string(containers::front(selections))));
-	}
+	CHECK(selections == StaticVectorMove({Moves::Thunderbolt}));
 }
 
-void test_two_moves_with_both_out_of_pp() {
+TEST_CASE("Two moves with both out of pp", "[block]") {
 	auto weather = Weather();
 
 	auto user = Team<generation>(1_bi, true);
@@ -153,15 +141,10 @@ void test_two_moves_with_both_out_of_pp() {
 	user.reset_start_of_turn();
 
 	auto const selections = legal_selections(user, other, weather);
-	if (containers::size(selections) != 1_bi) {
-		throw std::runtime_error(containers::concatenate<std::string>("Incorrect number of selections with two of two moves out of PP. Expected 1, got "sv, to_string(containers::size(selections))));
-	}
-	if (containers::front(selections) != Moves::Struggle) {
-		throw std::runtime_error(containers::concatenate<std::string>("Incorrect legal selection with two of two moves out of PP. Expected Struggle, got "sv, to_string(containers::front(selections))));
-	}
+	CHECK(selections == StaticVectorMove({Moves::Struggle}));
 }
 
-void replace_fainted() {
+TEST_CASE("Replace fainted", "[block]") {
 	auto weather = Weather{};
 	auto team = Team<generation>(2_bi, true);
 
@@ -205,22 +188,8 @@ void replace_fainted() {
 	
 	auto const expected = StaticVectorMove({Moves::Switch1});
 	auto const selections = legal_selections(team, other, weather);
-	if (!containers::equal(selections, expected)) {
-		for (auto const & move : selections) {
-			std::cerr << to_string(move) << '\n';
-		}
-		throw std::runtime_error("Invalid legal selections");
-	}
+	CHECK(selections == expected);
 }
 
-}	// namespace
-
-void block_tests() {
-	std::cout << "Running block tests.\n";
-	basic();
-	test_two_moves_with_one_out_of_pp();
-	test_two_moves_with_both_out_of_pp();
-	replace_fainted();
-}
-
-}	// namespace technicalmachine
+} // namespace
+} // namespace technicalmachine

@@ -1,78 +1,70 @@
-// Test PO conversions
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/test/pokemon_online/conversion.hpp>
+#include <tm/clients/pokemon_online/conversion.hpp>
 
-#include <tm/test/invalid_simulator_conversion.hpp>
-
-#include <tm/ability.hpp>
-
-#include <tm/move/is_switch.hpp>
+#include <tm/string_conversions/ability.hpp>
+#include <tm/string_conversions/gender.hpp>
+#include <tm/string_conversions/item.hpp>
+#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/nature.hpp>
+#include <tm/string_conversions/species.hpp>
+#include <tm/string_conversions/status.hpp>
 
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
-#include <tm/clients/pokemon_online/conversion.hpp>
+#include <tm/ability.hpp>
 
 #include <containers/integer_range.hpp>
 
 #include <numeric_traits/min_max_value.hpp>
 
-#include <iostream>
+#include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
 enum class Moves : std::uint16_t;
-namespace po {
 namespace {
 
-void test_enum(std::string_view const name, auto && to_id, auto && from_id, auto max) {
-	std::cout << "\t\tVerifying correct " << name << ".\n";
+void test_enum(auto && to_id, auto && from_id, auto max) {
 	for (auto const original : containers::enum_range(max)) {
 		auto const id = to_id(original);
 		auto const result = from_id(id);
-		if (original != result) {
-			throw InvalidSimulatorConversion(original, result);
-		}
+		CHECK(original == result);
 	}
 }
 
-void test_item() {
-	std::cout << "\t\tVerifying correct item.\n";
+TEST_CASE("ability conversion", "[pokemon online]") {
+	test_enum(po::ability_to_id, po::id_to_ability, Ability::Bad_Dreams);
+}
+
+TEST_CASE("gender conversion", "[pokemon online]") {
+	test_enum(po::gender_to_id, po::id_to_gender, numeric_traits::max_value<Gender>);
+}
+
+TEST_CASE("species conversion", "[pokemon online]") {
+	test_enum(po::species_to_id, po::id_to_species, Species::Arceus);
+}
+
+TEST_CASE("item conversion", "[pokemon online]") {
 	for (auto const original : containers::enum_range<Item>()) {
-		auto const id = item_to_id(original);
-		auto const result = id_to_item(id);
-		if (original != result and id != 0) {
-			throw InvalidSimulatorConversion(original, result);
-		}
+		auto const id = po::item_to_id(original);
+		auto const result = po::id_to_item(id);
+		CHECK((original == result or id == 0));
 	}
 }
 
-void test_move() {
-	std::cout << "\t\tVerifying correct move.\n";
+TEST_CASE("move conversion", "[pokemon online]") {
 	for(auto const original : containers::enum_range<Moves>()) {
 		if (is_regular(original)) {
-			auto const id = move_to_id(original);
-			auto const result = id_to_move(id);
-			if (original != result) {
-				throw InvalidSimulatorConversion(original, result);
-			}
+			auto const id = po::move_to_id(original);
+			auto const result = po::id_to_move(id);
+			CHECK(original == result);
 		}
 	}
 }
 
-}	// namespace
-
-void test_conversions () {
-	std::cout << "\tRunning Pokemon Online conversion tests.\n";
-	test_enum("Ability", ability_to_id, id_to_ability, Ability::Bad_Dreams);
-	test_enum("Gender", gender_to_id, id_to_gender, numeric_traits::max_value<Gender>);
-	test_item();
-	test_move();
-	test_enum("Species", species_to_id, id_to_species, Species::Arceus);
-}
-
-}	// namespace po
-}	// namespace technicalmachine
+} // namespace
+} // namespace technicalmachine

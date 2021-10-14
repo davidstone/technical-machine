@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/test/calculate_damage.hpp>
-
-#include <tm/test/incorrect_calculation.hpp>
-
 #include <tm/move/calculate_damage.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/other_move.hpp>
@@ -24,7 +20,7 @@
 
 #include <containers/integer_range.hpp>
 
-#include <iostream>
+#include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
 namespace {
@@ -99,8 +95,7 @@ auto max_damage_physical_defender() {
 	return defender;
 }
 
-void physical_power_test() {
-	std::cout << "\t\tRunning physical power tests.\n";
+TEST_CASE("Max physical power", "[Power]") {
 	constexpr auto max_power = 1440_bi;
 
 	auto const attacker = max_damage_physical_attacker(Item::Rock_Incense, Ability::Rivalry);
@@ -111,11 +106,10 @@ void physical_power_test() {
 		max_damage_physical_defender(),
 		Weather()
 	);
-	check_equal(power, max_power);
+	CHECK(power == max_power);
 }
 
-void special_power_test() {
-	std::cout << "\t\tRunning special power tests.\n";
+TEST_CASE("Max special power", "[Power]") {
 	constexpr auto max_power = 342_bi;
 
 	auto attacker = Team<generation>(max_pokemon_per_team);
@@ -166,19 +160,12 @@ void special_power_test() {
 		defender,
 		weather
 	);
-	check_equal(power, max_power);
-}
-
-void power_test() {
-	std::cout << "\tRunning power tests.\n";
-	physical_power_test();
-	special_power_test();
+	CHECK(power == max_power);
 }
 
 constexpr auto resistance_berry_activated = false;
 
-void physical_damage_test() {
-	std::cout << "\t\tRunning max physical damage tests.\n";
+TEST_CASE("Max physical damage", "[Damage]") {
 	constexpr auto max_damage = 95064912_bi;
 
 	auto attacker = max_damage_physical_attacker(Item::Metronome, Ability::Pure_Power);
@@ -190,21 +177,18 @@ void physical_damage_test() {
 
 	auto const defender = max_damage_physical_defender();
 	
-	check_equal(
-		calculate_damage(
-			attacker,
-			max_damage_executed_physical_move(),
-			resistance_berry_activated,
-			defender,
-			FutureMove{false},
-			Weather()
-		),
-		max_damage
+	auto const calculated_damage = calculate_damage(
+		attacker,
+		max_damage_executed_physical_move(),
+		resistance_berry_activated,
+		defender,
+		FutureMove{false},
+		Weather()
 	);
+	CHECK(calculated_damage == max_damage);
 }
 
-void special_damage_test() {
-	std::cout << "\t\tRunning max special damage tests.\n";
+TEST_CASE("Max special damage", "[Damage]") {
 	constexpr auto max_damage = 25696272_bi;
 	auto weather = Weather();
 	weather.activate_sun_from_move(false);
@@ -263,32 +247,16 @@ void special_damage_test() {
 		defender_pokemon.stages()[BoostableStat::spd] -= 2_bi;
 	}
 
-	check_equal(
-		calculate_damage(
-			attacker,
-			ExecutedMove<generation>{{move.name(), Type::Fire}, move.pp(), no_effect_function, critical_hit},
-			resistance_berry_activated,
-			defender,
-			FutureMove{false},
-			weather
-		),
-		max_damage
+	auto const calculated_damage = calculate_damage(
+		attacker,
+		ExecutedMove<generation>{{move.name(), Type::Fire}, move.pp(), no_effect_function, critical_hit},
+		resistance_berry_activated,
+		defender,
+		FutureMove{false},
+		weather
 	);
+	CHECK(calculated_damage == max_damage);
 }
 
-void damage_test() {
-	std::cout << "\tRunning max damage tests.\n";
-	physical_damage_test();
-	special_damage_test();
-}
-
-}	// namespace
-
-void damage_tests() {
-	std::cout << "Running damage tests.\n";
-	power_test();
-	damage_test();
-	std::cout << "Damage tests passed.\n\n";
-}
-
-}	// namespace technicalmachine
+} // namespace
+} // namespace technicalmachine

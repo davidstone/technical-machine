@@ -3,16 +3,15 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/test/clients/netbattle/read_team_file.hpp>
-
 #include <tm/clients/netbattle/read_team_file.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 #include <tm/string_conversions/team.hpp>
 
 #include <filesystem>
-#include <iostream>
 
-namespace technicalmachine::nb {
+#include <catch2/catch_test_macros.hpp>
+
+namespace technicalmachine {
 namespace {
 
 auto expected_netbattle_team() -> Team<Generation::three> {
@@ -243,23 +242,25 @@ auto expected_netbattle_supremacy_team() -> Team<Generation::two> {
 	return team;
 }
 
-} // namespace
-
-void test_team_file() {
-	bounded::visit(read_team_file("test/teams/netbattle.pnb"), []<Generation generation>(Team<generation> const & team) {
+TEST_CASE("Netbattle team", "[Netbattle]") {
+	bounded::visit(nb::read_team_file("test/teams/netbattle.pnb"), []<Generation generation>(Team<generation> const & team) {
 		if constexpr (generation == Generation::three) {
-			BOUNDED_ASSERT(team == expected_netbattle_team());
+			CHECK(team == expected_netbattle_team());
 		} else {
-			BOUNDED_ASSERT(false);
-		}
-	});
-	bounded::visit(read_team_file("test/teams/netbattle-supremacy.dpnb"), []<Generation generation>(Team<generation> const & team) {
-		if constexpr (generation == Generation::two) {
-			BOUNDED_ASSERT(team == expected_netbattle_supremacy_team());
-		} else {
-			BOUNDED_ASSERT(false);
+			CHECK(false);
 		}
 	});
 }
 
-} // namespace technicalmachine::nb
+TEST_CASE("Netbattle Supremacy team", "[Netbattle]") {
+	bounded::visit(nb::read_team_file("test/teams/netbattle-supremacy.dpnb"), []<Generation generation>(Team<generation> const & team) {
+		if constexpr (generation == Generation::two) {
+			CHECK(team == expected_netbattle_supremacy_team());
+		} else {
+			CHECK(false);
+		}
+	});
+}
+
+} // namespace
+} // namespace technicalmachine

@@ -3,29 +3,27 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/test/pokemon_lab/team_file.hpp>
-
 #include <tm/clients/pokemon_lab/read_team_file.hpp>
 #include <tm/clients/pokemon_lab/write_team_file.hpp>
 
-#include <bounded/assert.hpp>
-
 #include <filesystem>
-#include <iostream>
 
-namespace technicalmachine::pl {
+#include <catch2/catch_test_macros.hpp>
 
-void test_team_file () {
-	std::cout << "\tRunning Pokemon Lab team file tests.\n";
+namespace technicalmachine {
+namespace {
+
+TEST_CASE("Pokemon Lab team file", "[Pokemon Lab]") {
 	auto const directory = std::filesystem::path("test/teams");
 	auto const new_file = directory / "test2.sbt";
-	auto const original_team = read_team_file(directory / "test1.sbt");
+	auto const original_team = pl::read_team_file(directory / "test1.sbt");
 	bounded::visit(original_team, [&](auto const & team) {
-		write_team(team, new_file);
+		pl::write_team(team, new_file);
 	});
-	auto const new_team = read_team_file(new_file);
-	BOUNDED_ASSERT(original_team == new_team);
+	auto const new_team = pl::read_team_file(new_file);
+	CHECK(original_team == new_team);
 	std::filesystem::remove(new_file);
 }
 
-} // namespace technicalmachine::pl
+} // namespace
+} // namespace technicalmachine

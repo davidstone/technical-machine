@@ -4,10 +4,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/test/stat.hpp>
-
-#include <tm/test/incorrect_calculation.hpp>
-
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/species.hpp>
 
@@ -20,8 +16,7 @@
 
 #include <containers/integer_range.hpp>
 
-#include <iostream>
-#include <string>
+#include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
 namespace {
@@ -32,8 +27,7 @@ constexpr auto generation = Generation::four;
 constexpr auto critical_hit = false;
 constexpr auto physical_move = Moves::Tackle;
 
-void attack_tests() {
-	std::cout << "\tRunning Attack tests.\n";
+TEST_CASE("Calculate max Attack", "[calculate stat]") {
 	constexpr auto max_attack = 7368_bi;
 
 	auto weather = Weather();
@@ -67,11 +61,10 @@ void attack_tests() {
 	pokemon.activate_power_trick();
 	pokemon.stages()[BoostableStat::atk] += 6_bi;
 
-	check_equal(calculate_attack(attacker.pokemon().as_const(), Type::Normal, Ability::Honey_Gather, weather, critical_hit), max_attack);
+	CHECK(calculate_attack(attacker.pokemon().as_const(), Type::Normal, Ability::Honey_Gather, weather, critical_hit) == max_attack);
 }
 
-void special_attack_tests() {
-	std::cout << "\tRunning Special Attack tests.\n";
+TEST_CASE("Calculate max Special Attack", "[calculate stat]") {
 	constexpr auto max_special_attack = 4536_bi;
 	auto weather = Weather();
 	weather.activate_sun_from_move(false);
@@ -103,11 +96,10 @@ void special_attack_tests() {
 
 	pokemon.stages()[BoostableStat::spa] += 6_bi;
 
-	check_equal(calculate_special_attack(attacker.pokemon().as_const(), Type::Water, Ability::Honey_Gather, weather, critical_hit), max_special_attack);
+	CHECK(calculate_special_attack(attacker.pokemon().as_const(), Type::Water, Ability::Honey_Gather, weather, critical_hit) == max_special_attack);
 }
 
-void max_defense_test() {
-	std::cout << "\t\tRunning max Defense test.\n";
+TEST_CASE("Calculate max Defense", "[calculate stat]") {
 	constexpr auto max_defense = 3684_bi;
 
 	constexpr auto weather = Weather();
@@ -140,11 +132,10 @@ void max_defense_test() {
 
 	defender.pokemon().set_status(Statuses::burn, weather);
 
-	check_equal(calculate_defense(defender.pokemon().as_const(), physical_move, weather, false), max_defense);
+	CHECK(calculate_defense(defender.pokemon().as_const(), physical_move, weather, false) == max_defense);
 }
 
-void min_defense_test() {
-	std::cout << "\t\tRunning min Defense test.\n";
+TEST_CASE("Calculate min Defense", "[calculate stat]") {
 	constexpr auto min_defense = 1_bi;
 
 	auto weather = Weather();
@@ -168,17 +159,10 @@ void min_defense_test() {
 		pokemon.stages()[BoostableStat::def] -= 2_bi;
 	}
 
-	check_equal(calculate_defense(defender.pokemon().as_const(), physical_move, weather, false), min_defense);
+	CHECK(calculate_defense(defender.pokemon().as_const(), physical_move, weather, false) == min_defense);
 }
 
-void defense_tests() {
-	std::cout << "\tRunning Defense tests.\n";
-	max_defense_test();
-	min_defense_test();
-}
-
-void special_defense_tests() {
-	std::cout << "\tRunning Special Defense tests.\n";
+TEST_CASE("Calculate max Special Defense", "[calculate stat]") {
 	constexpr auto max_special_defense = 3684_bi;
 
 	auto weather = Weather();
@@ -212,11 +196,10 @@ void special_defense_tests() {
 
 	pokemon.stages()[BoostableStat::spd] += 6_bi;
 
-	check_equal(calculate_special_defense(defender.pokemon().as_const(), Ability::Honey_Gather, weather, false), max_special_defense);
+	CHECK(calculate_special_defense(defender.pokemon().as_const(), Ability::Honey_Gather, weather, false) == max_special_defense);
 }
 
-void speed_tests() {
-	std::cout << "\tRunning Speed tests.\n";
+TEST_CASE("Calculate max Speed", "[calculate stat]") {
 	constexpr auto max_speed = 12096_bi;
 	auto weather = Weather();
 	weather.activate_rain_from_move(false);
@@ -251,19 +234,8 @@ void speed_tests() {
 
 	team.activate_tailwind();
 	
-	check_equal(calculate_speed(team, Ability::Honey_Gather, weather), max_speed);
+	CHECK(calculate_speed(team, Ability::Honey_Gather, weather) == max_speed);
 }
 
-}	// namespace
-
-void stat_tests() {
-	std::cout << "Running stat tests.\n";
-	attack_tests();
-	special_attack_tests();
-	defense_tests();
-	special_defense_tests();
-	speed_tests();
-	std::cout << "Stat tests passed.\n\n";
-}
-
-}	// namespace technicalmachine
+} // namespace
+} // namespace technicalmachine

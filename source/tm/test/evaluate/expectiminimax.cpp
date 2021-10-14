@@ -1,10 +1,7 @@
-// Test function that determines the score functions
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-
-#include <tm/test/evaluate/expectiminimax.hpp>
 
 #include <tm/evaluate/evaluate.hpp>
 #include <tm/evaluate/expectiminimax.hpp>
@@ -31,12 +28,32 @@
 #include <containers/legacy_iterator.hpp>
 #include <containers/size.hpp>
 
-#include <iostream>
+#include <boost/iostreams/stream.hpp>
+
 #include <random>
+
+#include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
+
+struct log_out {
+	using char_type = char;
+	using category = boost::iostreams::sink_tag;
+
+	auto write(char const * const ptr, std::streamsize const size) -> std::streamsize {
+		INFO(std::string_view(ptr, static_cast<std::size_t>(size)));
+		return size;
+	}
+};
+
+template<Generation generation>
+auto test_expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth) -> BestMove {
+	auto log_buffer = log_out();
+	auto log = boost::iostreams::stream<log_out>(log_buffer);
+	return expectiminimax(ai, foe, weather, evaluate, depth, log);
+}
 
 constexpr auto make_depth(unsigned const depth) {
 	return Depth(DepthValues{depth, 0U}, 0U);
@@ -50,8 +67,11 @@ auto shuffled_regular_moves(Generation const generation, auto & random_engine, a
 	return moves;
 }
 
-void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weather, std::mt19937 & random_engine) {
+TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
@@ -84,9 +104,9 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 	team2.reset_start_of_turn();
 
 	{
-		auto const best_move = expectiminimax(team1, team2, weather, evaluate, depth, std::cout);
-		BOUNDED_ASSERT(best_move.name == Moves::Thunderbolt);
-		BOUNDED_ASSERT(best_move.score == victory<generation>);
+		auto const best_move = test_expectiminimax(team1, team2, weather, evaluate, depth);
+		CHECK(best_move.name == Moves::Thunderbolt);
+		CHECK(best_move.score == victory<generation>);
 	}
 	
 	auto team3 = Team<generation>(1_bi);
@@ -103,14 +123,17 @@ void ohko_tests(Evaluate<Generation::four> const & evaluate, Weather const weath
 	team3.reset_start_of_turn();
 	
 	{
-		auto const best_move = expectiminimax(team1, team3, weather, evaluate, depth, std::cout);
-		BOUNDED_ASSERT(best_move.name == Moves::Shadow_Ball);
-		BOUNDED_ASSERT(best_move.score == victory<generation>);
+		auto const best_move = test_expectiminimax(team1, team3, weather, evaluate, depth);
+		CHECK(best_move.name == Moves::Shadow_Ball);
+		CHECK(best_move.score == victory<generation>);
 	}
 }
 
-void one_turn_damage_tests(Evaluate<Generation::four> const & evaluate, Weather const weather, std::mt19937 & random_engine) {
+TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
@@ -153,12 +176,15 @@ void one_turn_damage_tests(Evaluate<Generation::four> const & evaluate, Weather 
 	defender.pokemon().switch_in(weather);
 	defender.reset_start_of_turn();
 
-	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth, std::cout);
-	BOUNDED_ASSERT(best_move.name == Moves::Shadow_Ball);
+	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == Moves::Shadow_Ball);
 }
 
-void bellyzard_vs_defensive(Evaluate<Generation::four> const & evaluate, Weather const weather, std::mt19937 & random_engine) {
+TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
@@ -212,17 +238,21 @@ void bellyzard_vs_defensive(Evaluate<Generation::four> const & evaluate, Weather
 	defender.pokemon().switch_in(weather);
 	defender.reset_start_of_turn();
 
-	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth, std::cout);
-	BOUNDED_ASSERT(best_move.name == Moves::Belly_Drum);
-	BOUNDED_ASSERT(best_move.score == victory<generation>);
+	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == Moves::Belly_Drum);
+	CHECK(best_move.score == victory<generation>);
 }
 
-void hippopotas_vs_wobbuffet(Evaluate<Generation::four> const & evaluate, Weather const weather, std::mt19937 & random_engine) {
+TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
 	constexpr auto depth = make_depth(11U);
+
 	auto attacker = Team<generation>(1_bi, true);
 	attacker.add_pokemon(Pokemon<generation>(
 		Species::Hippopotas,
@@ -274,18 +304,22 @@ void hippopotas_vs_wobbuffet(Evaluate<Generation::four> const & evaluate, Weathe
 	defender.pokemon().switch_in(weather);
 	defender.reset_start_of_turn();
 
-	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth, std::cout);
-	BOUNDED_ASSERT(best_move.name == Moves::Curse);
-	BOUNDED_ASSERT(best_move.score == victory<generation>);
+	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == Moves::Curse);
+	CHECK(best_move.score == victory<generation>);
 }
 
 
-void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weather, std::mt19937 & random_engine) {
+TEST_CASE("expectiminimax Baton Pass", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
 	constexpr auto depth = Depth(DepthValues{4U, 0U}, 0U);
+
 	auto attacker = Team<generation>(2_bi, true);
 	attacker.add_pokemon(Pokemon<generation>(
 		Species::Smeargle,
@@ -365,19 +399,22 @@ void baton_pass(Evaluate<Generation::four> const & evaluate, Weather const weath
 
 	defender.reset_start_of_turn();
 
-	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth, std::cerr);
-	BOUNDED_ASSERT(best_move.name == Moves::Belly_Drum);
-	BOUNDED_ASSERT(best_move.score == victory<generation>);
+	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == Moves::Belly_Drum);
+	CHECK(best_move.score == victory<generation>);
 }
 
 
-void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 & random_engine) {
-	auto weather = Weather{};
+TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
 	constexpr auto depth = make_depth(2U);
+
 	auto attacker = Team<generation>(3_bi, true);
 
 	attacker.add_pokemon(Pokemon<generation>(
@@ -433,7 +470,7 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 	{
 		constexpr auto move_name = Moves::Surf;
 		auto const side_effects = possible_side_effects(move_name, defender.pokemon().as_const(), attacker, weather);
-		BOUNDED_ASSERT(containers::size(side_effects) == 1_bi);
+		REQUIRE(containers::size(side_effects) == 1_bi);
 		auto const & side_effect = containers::front(side_effects);
 		call_move(
 			defender,
@@ -449,18 +486,21 @@ void replace_fainted(Evaluate<Generation::four> const & evaluate, std::mt19937 &
 		);
 	}
 	
-	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth, std::cout);
-	BOUNDED_ASSERT(best_move.name == Moves::Switch2);
+	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == Moves::Switch2);
 }
 
 
-void latias_vs_suicune(Evaluate<Generation::four> const & evaluate, std::mt19937 & random_engine) {
-	auto const weather = Weather{};
+TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
 	constexpr auto depth = make_depth(3U);
+
 	auto attacker = Team<generation>(1_bi, true);
 	attacker.add_pokemon(Pokemon<generation>(
 		Species::Latias,
@@ -511,17 +551,20 @@ void latias_vs_suicune(Evaluate<Generation::four> const & evaluate, std::mt19937
 
 	defender.reset_start_of_turn();
 
-	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth, std::cout);
-	BOUNDED_ASSERT(best_move.name == Moves::Calm_Mind);
+	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == Moves::Calm_Mind);
 }
 
-void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & random_engine) {
-	auto weather = Weather();
+TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
 	constexpr auto depth = make_depth(1U);
+
 	auto attacker = Team<generation>(1_bi, true);
 
 	attacker.add_pokemon(Pokemon<generation>(
@@ -573,36 +616,37 @@ void sleep_talk(Evaluate<Generation::four> const & evaluate, std::mt19937 & rand
 	
 	// TODO: Validate score, too
 
-	BOUNDED_ASSERT(jolteon.status().name() == Statuses::clear);
-	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout).name == Moves::Thunderbolt);
+	CHECK(jolteon.status().name() == Statuses::clear);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == Moves::Thunderbolt);
 
 	call_move(attacker, sleep_talk, defender, other_move, weather, keep_status, unknown_damage);
 	jolteon.set_status(Statuses::sleep, weather);
 	next_turn();
-	BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
-	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cerr).name == Moves::Sleep_Talk);
+	CHECK(jolteon.status().name() == Statuses::sleep);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == Moves::Sleep_Talk);
 
 	call_move(attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 	next_turn();
-	BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
-	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout).name == Moves::Sleep_Talk);
+	CHECK(jolteon.status().name() == Statuses::sleep);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == Moves::Sleep_Talk);
 
 	call_move(attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 	next_turn();
-	BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
-	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout).name == Moves::Sleep_Talk);
+	CHECK(jolteon.status().name() == Statuses::sleep);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == Moves::Sleep_Talk);
 
 	#if 0
 		// Same probability of either move
 		call_move(attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 		next_turn();
-		BOUNDED_ASSERT(jolteon.status().name() == Statuses::sleep);
-		BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, depth, std::cout).name == ?);
+		CHECK(jolteon.status().name() == Statuses::sleep);
+		CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == ?);
 	#endif
 }
 
-void generation_one_frozen_last_pokemon(Evaluate<Generation::one> const & evaluate) {
+TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	constexpr auto generation = Generation::one;
+	auto const evaluate = Evaluate<generation>();
 	auto weather = Weather();
 	auto regular_moves = [](auto const ... name) {
 		return RegularMoves{Move(generation, name)...};
@@ -641,30 +685,9 @@ void generation_one_frozen_last_pokemon(Evaluate<Generation::one> const & evalua
 	attacker.reset_start_of_turn();
 	defender.reset_start_of_turn();
 
-	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, make_depth(1U), std::cout).name == Moves::Psychic);
-	BOUNDED_ASSERT(expectiminimax(attacker, defender, weather, evaluate, make_depth(2U), std::cout).name == Moves::Psychic);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, make_depth(1U)).name == Moves::Psychic);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, make_depth(2U)).name == Moves::Psychic);
 }
 
 } // namespace
-
-void expectiminimax_tests() {
-	std::cout << "Running expectiminimax tests.\n";
-
-	auto const evaluate = Evaluate<Generation::four>();
-	auto const weather = Weather();
-	auto random_engine = std::mt19937(std::random_device()());
-
-	ohko_tests(evaluate, weather, random_engine);
-	one_turn_damage_tests(evaluate, weather, random_engine);
-	bellyzard_vs_defensive(evaluate, weather, random_engine);
-	hippopotas_vs_wobbuffet(evaluate, weather, random_engine);
-	baton_pass(evaluate, weather, random_engine);
-	replace_fainted(evaluate, random_engine);
-	latias_vs_suicune(evaluate, random_engine);
-	sleep_talk(evaluate, random_engine);
-	generation_one_frozen_last_pokemon(Evaluate<Generation::one>());
-	
-	std::cout << "Evaluate tests passed.\n\n";
-}
-
-}	// namespace technicalmachine
+} // namespace technicalmachine

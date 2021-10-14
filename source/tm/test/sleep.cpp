@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/test/sleep.hpp>
-
-#include <tm/test/incorrect_calculation.hpp>
-
 #include <tm/move/call_move.hpp>
 #include <tm/move/moves.hpp>
 
@@ -22,7 +18,7 @@
 
 #include <containers/front_back.hpp>
 
-#include <iostream>
+#include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
 namespace {
@@ -34,7 +30,7 @@ constexpr auto regular_moves(Generation const generation, auto... moves) {
 	return RegularMoves{Move(generation, moves)...};
 }
 
-void sleep_talk() {
+TEST_CASE("Sleep Talk", "[Sleep]") {
 	constexpr auto generation = Generation::four;
 	auto weather = Weather{};
 	auto attacker = Team<generation>(1_bi, true);
@@ -103,7 +99,7 @@ void sleep_talk() {
 		false,
 		damage
 	);
-	BOUNDED_ASSERT(defender.pokemon().hp().current() == 0_bi);
+	CHECK(defender.pokemon().hp().current() == 0_bi);
 }
 
 template<Generation generation>
@@ -117,7 +113,7 @@ struct Sleeper {
 	void use_move(Moves const selected, Moves const executed) {
 		auto pokemon = m_sleeper.pokemon();
 		auto const probability_of_awakening = pokemon.status().probability_of_clearing(generation, pokemon.ability());
-		BOUNDED_ASSERT(probability_of_awakening == 0.0 or probability_of_awakening == 1.0);
+		CHECK((probability_of_awakening == 0.0 or probability_of_awakening == 1.0));
 		auto const side_effects = possible_side_effects(executed, pokemon.as_const(), m_other, m_weather);
 		auto const & side_effect = containers::front(side_effects);
 		call_move(
@@ -195,114 +191,105 @@ private:
 	Team<generation> m_other;
 };
 
-void rest() {
+TEST_CASE("Rest", "[Sleep]") {
 	auto sleeper = Sleeper<Generation::three>();
-	BOUNDED_ASSERT(!sleeper.asleep());
-	BOUNDED_ASSERT(sleeper.at_max_hp());
+	CHECK(!sleeper.asleep());
+	CHECK(sleeper.at_max_hp());
 
 
 	sleeper.get_attacked();
-	BOUNDED_ASSERT(!sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(!sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 
 	sleeper.use_move(Moves::Rest);
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(sleeper.at_max_hp());
 
 	sleeper.end_turn();
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(sleeper.at_max_hp());
 
 
 	sleeper.use_move(Moves::Wish);
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(sleeper.at_max_hp());
 
 	sleeper.get_attacked();
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 
 	sleeper.end_turn();
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 
 
 	sleeper.use_move(Moves::Wish);
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 
 	sleeper.get_attacked();
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 
 	sleeper.end_turn();
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 
 
 	sleeper.use_move(Moves::Wish);
-	BOUNDED_ASSERT(!sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(!sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 }
 
-void sleep_talk_rest_generation_3() {
+TEST_CASE("Sleep Talk Rest generation 3", "[Sleep]") {
 	auto sleeper = Sleeper<Generation::three>();
-	BOUNDED_ASSERT(!sleeper.asleep());
-	BOUNDED_ASSERT(sleeper.at_max_hp());
+	CHECK(!sleeper.asleep());
+	CHECK(sleeper.at_max_hp());
 
 
 	sleeper.get_attacked();
-	BOUNDED_ASSERT(!sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(!sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 
 	sleeper.use_move(Moves::Rest);
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(sleeper.at_max_hp());
 
 	sleeper.end_turn();
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(sleeper.at_max_hp());
 
 
 	sleeper.use_move(Moves::Sleep_Talk, Moves::Rest);
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(sleeper.at_max_hp());
 
 	sleeper.get_attacked();
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 
 	sleeper.end_turn();
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 
 
 	sleeper.use_move(Moves::Sleep_Talk, Moves::Rest);
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 
 	sleeper.get_attacked();
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 
 	sleeper.end_turn();
-	BOUNDED_ASSERT(sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 
 
 	sleeper.use_move(Moves::Wish);
-	BOUNDED_ASSERT(!sleeper.asleep());
-	BOUNDED_ASSERT(!sleeper.at_max_hp());
+	CHECK(!sleeper.asleep());
+	CHECK(!sleeper.at_max_hp());
 }
 
-}	// namespace
-
-void sleep_tests() {
-	std::cout << "Running sleep tests.\n";
-	sleep_talk();
-	rest();
-	sleep_talk_rest_generation_3();
-	std::cout << "Sleep tests passed.\n\n";
-}
-
-}	// namespace technicalmachine
+} // namespace
+} // namespace technicalmachine

@@ -3,20 +3,16 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/test/clients/pokemon_showdown/battles.hpp>
-
 #include <tm/clients/pokemon_showdown/battles.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
 
 #include <bounded/integer.hpp>
 
-#include <bounded/scope_guard.hpp>
 #include <containers/string.hpp>
 
-#include <iostream>
+#include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
-namespace ps {
 namespace {
 
 auto load_lines_from_file(std::filesystem::path const & file_name) {
@@ -26,12 +22,12 @@ auto load_lines_from_file(std::filesystem::path const & file_name) {
 
 auto parse_room(std::string_view const line, std::filesystem::path const & path) {
 	if (line.empty() or line.front() != '>') {
-		throw std::runtime_error("File does not start with >: " + path.string());
+		FAIL("File does not start with >: " + path.string());
 	}
 	return line.substr(1);
 }
 
-void regression_tests() {
+TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 	auto const evaluate = AllEvaluate{};
 	// Too large to fit on the stack
 	auto const all_usage_stats = std::make_unique<AllUsageStats>();
@@ -42,7 +38,7 @@ void regression_tests() {
 	remove_temporary_files();
 	constexpr auto log_foe_teams = false;
 	{
-		auto battles = Battles(battle_output_directory, log_foe_teams);
+		auto battles = ps::Battles(battle_output_directory, log_foe_teams);
 
 		auto paths_in_directory = [](std::filesystem::path const & path) {
 			return containers::range_view(
@@ -64,19 +60,17 @@ void regression_tests() {
 					std::mt19937(std::random_device{}())
 				);
 
-				auto print_file_on_exception = bounded::scope_guard([&] { std::cerr << "Error in " << path.path() << '\n'; });
+				INFO(path.path());
 				while (!messages.remainder().empty()) {
 					auto const next = messages.pop();
-					auto print_message_on_exception = bounded::scope_guard([=] { std::cerr << next << '\n'; });
+					INFO(next);
 					battles.handle_message(
 						*all_usage_stats,
-						InMessage(room, next),
+						ps::InMessage(room, next),
 						[](std::string_view) {},
 						[] {}
 					);
-					print_message_on_exception.dismiss();
 				}
-				print_file_on_exception.dismiss();
 			}
 		}
 	}
@@ -84,15 +78,4 @@ void regression_tests() {
 }
 
 } // namespace
-
-void test_battles() {
-	std::cout << "Testing ps::Battles\n";
-	try {
-		regression_tests();
-	} catch (std::exception const & ex [[maybe_unused]]) {
-		throw;
-	}
-}
-
-} // namespace ps
 } // namespace technicalmachine

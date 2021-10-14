@@ -3,14 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/test/string_conversion.hpp>
-
-#include <tm/pokemon/species.hpp>
-
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
-#include <tm/stat/nature.hpp>
-
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
 #include <tm/string_conversions/invalid_string_conversion.hpp>
@@ -22,6 +14,12 @@
 #include <tm/string_conversions/status.hpp>
 #include <tm/string_conversions/type.hpp>
 
+#include <tm/pokemon/species.hpp>
+
+#include <tm/stat/ev.hpp>
+#include <tm/stat/iv.hpp>
+#include <tm/stat/nature.hpp>
+
 #include <tm/ability.hpp>
 #include <tm/gender.hpp>
 #include <tm/item.hpp>
@@ -31,38 +29,48 @@
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>
 
-#include <iostream>
-#include <string>
+#include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
 namespace {
 
 using namespace std::string_view_literals;
 
-// I make the ToString conversion a logic error because I only convert to a
-// string from an internal data structure, so I know the input is only invalid
-// if there is a logic error in my program.
-
-struct InvalidToStringConversion : std::logic_error {
-	InvalidToStringConversion(auto original, auto result, std::string_view const intermediate):
-		std::logic_error(containers::concatenate<std::string>(to_string(bounded::integer(original)), " is seen as "sv, to_string(bounded::integer(result)), " with an intermediate string of "sv, intermediate, ".\n"sv))
-	{
-	}
-};
-
 template<typename Enum>
-void test_generic(std::string_view const thing) {
-	std::cout << "\tVerifying correct " << thing << ".\n";
+void test_generic() {
 	for (auto const original : containers::enum_range<Enum>()) {
 		auto const str = to_string(original);
 		auto const result = from_string<Enum>(str);
-		if (original != result) {
-			throw InvalidToStringConversion(original, result, str);
-		}
+		CHECK(original == result);
 	}
 }
 
-void test_pokemon() {
+TEST_CASE("ability", "[string_conversion]") {
+	test_generic<Ability>();
+}
+TEST_CASE("gender", "[string_conversion]") {
+	test_generic<Gender>();
+}
+TEST_CASE("item", "[string_conversion]") {
+	test_generic<Item>();
+}
+TEST_CASE("move", "[string_conversion]") {
+	test_generic<Moves>();
+}
+TEST_CASE("nature", "[string_conversion]") {
+	test_generic<Nature>();
+}
+TEST_CASE("species", "[string_conversion]") {
+	test_generic<Species>();
+}
+TEST_CASE("status", "[string_conversion]") {
+	test_generic<Statuses>();
+}
+TEST_CASE("type", "[string_conversion]") {
+	test_generic<Type>();
+}
+
+TEST_CASE("pokemon", "[string_conversion]") {
 	constexpr auto generation = Generation::three;
 	
 	auto pokemon = Pokemon<generation>(
@@ -90,9 +98,7 @@ void test_pokemon() {
 		auto const str = to_string(pokemon);
 		auto const result = pokemon_from_string<generation>(str);
 
-		if (pokemon != result) {
-			throw std::runtime_error(std::string(str));
-		}
+		CHECK(pokemon == result);
 	};
 
 	check();
@@ -105,19 +111,4 @@ void test_pokemon() {
 }
 
 } // namespace
-
-void string_conversion_tests() {
-	std::cout << "Running string conversion tests.\n";
-	test_generic<Ability>("ability");
-	test_generic<Gender>("gender");
-	test_generic<Item>("item");
-	test_generic<Moves>("move");
-	test_generic<Nature>("nature");
-	test_generic<Species>("species");
-	test_generic<Statuses>("status");
-	test_generic<Type>("type");
-	test_pokemon();
-	std::cout << "String conversion tests passed.\n\n";
-}
-
 } // namespace technicalmachine

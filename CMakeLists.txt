@@ -5,6 +5,10 @@
 
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED On)
+set(CMAKE_CXX_EXTENSIONS Off)
+
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
@@ -268,8 +272,6 @@ add_executable(tm_test
 	source/tm/test/clients/pokemon_showdown/parse_team.cpp
 	source/tm/test/clients/pokemon_showdown/slot_memory.cpp
 
-	source/tm/test/collections/collection.cpp
-	source/tm/test/collections/invalid_collection.cpp
 	source/tm/test/collections/move_container.cpp
 	source/tm/test/collections/variable_collection.cpp
 
@@ -277,11 +279,9 @@ add_executable(tm_test
 	source/tm/test/evaluate/expectiminimax.cpp
 
 	source/tm/test/pokemon_lab/team_file.cpp
-	source/tm/test/pokemon_lab/test.cpp
 
 	source/tm/test/pokemon_online/conversion.cpp
 	source/tm/test/pokemon_online/team_file.cpp
-	source/tm/test/pokemon_online/test.cpp
 
 	source/tm/test/block.cpp
 	source/tm/test/calculate_damage.cpp
@@ -290,15 +290,14 @@ add_executable(tm_test
 	source/tm/test/critical_hit.cpp
 	source/tm/test/ev_optimizer.cpp
 	source/tm/test/files_in_path.cpp
-	source/tm/test/incorrect_calculation.cpp
 	source/tm/test/sleep.cpp
 	source/tm/test/stat.cpp
 	source/tm/test/status.cpp
 	source/tm/test/string_conversion.cpp
-	source/tm/test/test.cpp
 )
 target_link_libraries(tm_test
 	tm_common
+	Catch2::Catch2WithMain
 )
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
