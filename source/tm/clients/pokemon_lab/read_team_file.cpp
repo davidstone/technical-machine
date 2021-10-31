@@ -26,7 +26,7 @@
 #include <tm/team.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
-#include <containers/array/array.hpp>
+#include <containers/array.hpp>
 #include <containers/flat_map.hpp>
 #include <containers/lookup.hpp>
 

@@ -12,7 +12,7 @@
 
 #include <tm/gender.hpp>
 
-#include <containers/array/array.hpp>
+#include <containers/array.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/flat_map.hpp>
 #include <containers/lookup.hpp>

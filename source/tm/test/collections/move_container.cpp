@@ -15,7 +15,7 @@
 
 #include <containers/algorithms/compare.hpp>
 #include <containers/algorithms/transform.hpp>
-#include <containers/array/array.hpp>
+#include <containers/array.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/push_back.hpp>
 #include <containers/size.hpp>

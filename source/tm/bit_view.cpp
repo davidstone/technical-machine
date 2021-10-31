@@ -5,7 +5,7 @@
 
 #include <tm/bit_view.hpp>
 
-#include <containers/array/array.hpp>
+#include <containers/array.hpp>
 #include <containers/integer_range.hpp>
 
 namespace technicalmachine {

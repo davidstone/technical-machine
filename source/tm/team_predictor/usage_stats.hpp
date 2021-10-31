@@ -16,7 +16,7 @@
 #include <tm/generation.hpp>
 #include <tm/item.hpp>
 
-#include <containers/array/array.hpp>
+#include <containers/array.hpp>
 #include <containers/legacy_iterator.hpp>
 #include <containers/static_vector.hpp>
 

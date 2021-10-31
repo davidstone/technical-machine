@@ -22,7 +22,7 @@
 #include <bounded/assert.hpp>
 #include <bounded/integer.hpp>
 
-#include <containers/array/array.hpp>
+#include <containers/array.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/front_back.hpp>
 #include <containers/legacy_iterator.hpp>

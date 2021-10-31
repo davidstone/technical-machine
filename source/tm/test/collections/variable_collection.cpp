@@ -15,7 +15,7 @@
 
 #include <bounded/assert.hpp>
 
-#include <containers/array/make_array.hpp>
+#include <containers/array.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/size.hpp>
 

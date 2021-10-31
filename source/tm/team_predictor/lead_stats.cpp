@@ -5,7 +5,7 @@
 
 #include <tm/team_predictor/lead_stats.hpp>
 
-#include <containers/array/make_array.hpp>
+#include <containers/array.hpp>
 
 namespace technicalmachine {
 

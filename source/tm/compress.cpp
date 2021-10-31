@@ -5,7 +5,7 @@
 
 #include <tm/compress.hpp>
 
-#include <containers/array/array.hpp>
+#include <containers/array.hpp>
 
 #include <numeric_traits/min_max_value.hpp>
 

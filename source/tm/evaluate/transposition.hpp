@@ -16,7 +16,7 @@
 
 #include <bounded/optional.hpp>
 
-#include <containers/array/array.hpp>
+#include <containers/array.hpp>
 #include <containers/index_type.hpp>
 
 namespace technicalmachine {

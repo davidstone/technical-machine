@@ -23,7 +23,7 @@
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/algorithms/find.hpp>
-#include <containers/array/array.hpp>
+#include <containers/array.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/push_back.hpp>
 #include <containers/range_view.hpp>

@@ -9,7 +9,7 @@
 #include <tm/type/type.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
-#include <containers/array/array.hpp>
+#include <containers/array.hpp>
 #include <containers/begin_end.hpp>
 
 namespace technicalmachine {

@@ -7,7 +7,7 @@
 
 #include <tm/pokemon/species.hpp>
 
-#include <containers/array/array.hpp>
+#include <containers/array.hpp>
 
 namespace technicalmachine {
 

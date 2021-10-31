@@ -9,7 +9,7 @@
 
 #include <tm/pokemon/species_forward.hpp>
 
-#include <containers/array/array.hpp>
+#include <containers/array.hpp>
 
 #include <random>
 
