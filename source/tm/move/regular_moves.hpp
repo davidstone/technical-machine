@@ -22,7 +22,7 @@ struct RegularMoves {
 	using value_type = Move;
 
 	RegularMoves() = default;
-	RegularMoves(auto const moves) {
+	explicit RegularMoves(auto const moves) {
 		for (auto const move : moves) {
 			push_back(move);
 		}

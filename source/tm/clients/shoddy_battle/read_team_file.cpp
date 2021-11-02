@@ -432,9 +432,9 @@ private:
 				*ivs,
 				*evs
 			},
-			containers::transform(containers::integer_range(containers::size(*moves)), [=](auto const index) {
+			RegularMoves(containers::transform(containers::integer_range(containers::size(*moves)), [=](auto const index) {
 				return Move(generation, (*moves)[index], (*pp_ups)[index]);
-			})
+			}))
 		));
 	}
 
