@@ -73,41 +73,45 @@ TEST_CASE("type", "[string_conversion]") {
 TEST_CASE("pokemon", "[string_conversion]") {
 	constexpr auto generation = Generation::three;
 	
-	auto pokemon = Pokemon<generation>(
-		Species::Mewtwo,
-		Level(100_bi),
-		Gender::genderless,
-		Item::Leftovers,
-		Ability::Pressure,
-		CombinedStats<generation>{
-			Nature::Modest,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(4_bi),
-				EV(12_bi),
-				EV(24_bi),
-				EV(0_bi),
-				EV(32_bi),
-				EV(100_bi)
-			)
-		},
-		RegularMoves({Move(generation, Moves::Psychic)})
-	);
+	auto make_pokemon = [](RegularMoves const moves, Statuses const status = Statuses::clear) {
+		auto pokemon = Pokemon<generation>(
+			Species::Mewtwo,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Leftovers,
+			Ability::Pressure,
+			CombinedStats<generation>{
+				Nature::Modest,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(4_bi),
+					EV(12_bi),
+					EV(24_bi),
+					EV(0_bi),
+					EV(32_bi),
+					EV(100_bi)
+				)
+			},
+			moves
+		);
+		pokemon.set_status(status);
+		return pokemon;
+	};
 
-	auto check = [&] {
+	auto check = [](Pokemon<generation> const pokemon) {
 		auto const str = to_string(pokemon);
 		auto const result = pokemon_from_string<generation>(str);
 
 		CHECK(pokemon == result);
 	};
 
-	check();
+	auto moves = RegularMoves({Move(generation, Moves::Psychic)});
+	check(make_pokemon(moves));
 	for (auto const move : {Moves::Recover, Moves::Calm_Mind, Moves::Taunt}) {
-		pokemon.add_move(Move(generation, move));
-		check();
+		moves.push_back(Move(generation, move));
+		check(make_pokemon(moves));
 	}
-	pokemon.set_status(Statuses::burn);
-	check();
+	check(make_pokemon(moves, Statuses::burn));
 }
 
 } // namespace
