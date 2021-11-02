@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <tm/pokemon/active_pokemon_forward.hpp>
+
 #include <tm/compress.hpp>
 #include <tm/end_of_turn.hpp>
 #include <tm/generation.hpp>
@@ -17,10 +19,6 @@
 
 namespace technicalmachine {
 
-template<Generation>
-struct ActivePokemon;
-template<Generation>
-struct MutableActivePokemon;
 struct Weather;
 
 struct ActiveStatus {

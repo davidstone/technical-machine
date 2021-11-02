@@ -14,6 +14,7 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/is_switch.hpp>
 
+#include <tm/pokemon/active_pokemon_forward.hpp>
 #include <tm/pokemon/collection.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
@@ -25,10 +26,6 @@
 
 namespace technicalmachine {
 
-template<Generation>
-struct ActivePokemon;
-template<Generation>
-struct MutableActivePokemon;
 template<Generation>
 struct Team;
 

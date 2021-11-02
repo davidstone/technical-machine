@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <tm/pokemon/active_pokemon_forward.hpp>
 #include <tm/pokemon/active_status.hpp>
 #include <tm/pokemon/confusion.hpp>
 #include <tm/pokemon/disable.hpp>
@@ -49,11 +50,6 @@
 #include <numeric_traits/min_max_value.hpp>
 
 namespace technicalmachine {
-template<Generation generation>
-struct ActivePokemon;
-
-template<Generation generation>
-struct MutableActivePokemon;
 
 template<Generation generation>
 struct ActivePokemonFlags {

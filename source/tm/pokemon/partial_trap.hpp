@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <tm/pokemon/active_pokemon_forward.hpp>
 #include <tm/pokemon/end_of_turn_counter.hpp>
 
 #include <tm/compress.hpp>
@@ -16,9 +17,6 @@
 #include <tm/weather.hpp>
 
 namespace technicalmachine {
-
-template<Generation>
-struct MutableActivePokemon;
 
 // This handles the number of turns remaining on Bind, Clamp, Fire Spin,
 // Magma Storm, Sand Tomb, Whirlpool, and Wrap

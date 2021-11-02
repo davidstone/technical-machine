@@ -12,6 +12,7 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/priority.hpp>
 
+#include <tm/pokemon/active_pokemon_forward.hpp>
 #include <tm/pokemon/level.hpp>
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
@@ -35,10 +36,6 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-template<Generation>
-struct ActivePokemon;
-template<Generation>
-struct MutableActivePokemon;
 template<Generation>
 struct Team;
 

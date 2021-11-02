@@ -10,6 +10,8 @@
 #include <tm/move/known_move.hpp>
 #include <tm/move/moves.hpp>
 
+#include <tm/pokemon/active_pokemon_forward.hpp>
+
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
@@ -18,11 +20,6 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
-
-template<Generation>
-struct ActivePokemon;
-template<Generation>
-struct MutableActivePokemon;
 
 struct Effectiveness {
 	Effectiveness(Generation generation, Type attacking, PokemonTypes defending);

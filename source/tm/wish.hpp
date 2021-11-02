@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <tm/pokemon/active_pokemon_forward.hpp>
+
 #include <tm/compress.hpp>
 #include <tm/exists_if.hpp>
 #include <tm/heal.hpp>
@@ -16,9 +18,6 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
-
-template<Generation>
-struct MutableActivePokemon;
 
 template<Generation generation>
 struct Wish {

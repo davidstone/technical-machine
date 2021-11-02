@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <tm/pokemon/active_pokemon_forward.hpp>
+
 #include <tm/ability.hpp>
 #include <tm/item.hpp>
 #include <tm/rational.hpp>
@@ -13,9 +15,6 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
-
-template<Generation>
-struct MutableActivePokemon;
 
 template<Generation generation, typename Numerator, typename Denominator>
 void heal(MutableActivePokemon<generation> pokemon, Weather const weather, rational<Numerator, Denominator> const scale) {

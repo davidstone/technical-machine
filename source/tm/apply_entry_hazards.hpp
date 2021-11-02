@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <tm/pokemon/active_pokemon_forward.hpp>
+
 #include <tm/type/effectiveness.hpp>
 
 #include <tm/compress.hpp>
@@ -18,11 +20,6 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
-
-template<Generation>
-struct ActivePokemon;
-template<Generation>
-struct MutableActivePokemon;
 
 template<Generation generation>
 constexpr auto removes_toxic_spikes(ActivePokemon<generation> const switcher) {

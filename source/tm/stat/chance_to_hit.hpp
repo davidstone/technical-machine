@@ -11,6 +11,8 @@
 #include <tm/move/known_move.hpp>
 #include <tm/move/moves.hpp>
 
+#include <tm/pokemon/active_pokemon_forward.hpp>
+
 #include <tm/stat/stage.hpp>
 #include <tm/stat/stat_names.hpp>
 
@@ -23,11 +25,6 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
-
-template<Generation>
-struct ActivePokemon;
-template<Generation>
-struct MutableActivePokemon;
 
 using ChanceToHit = double;
 
