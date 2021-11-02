@@ -558,7 +558,6 @@ auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneri
 			throw std::runtime_error("Expected team to be an array");
 		}
 		auto const & all_pokemon = parsed_all_pokemon.state[array_index];
-		auto team = Team<generation>(containers::size(all_pokemon), true);
 		auto transformed = containers::transform(all_pokemon, [](ParsedData const & pokemon) {
 			constexpr auto pokemon_index = bounded::detail::types<Pokemon<generation>>();
 			if (!bounded::holds_alternative(pokemon.state, pokemon_index)) {
@@ -566,10 +565,7 @@ auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneri
 			}
 			return pokemon.state[pokemon_index];
 		});
-		for (auto const & pokemon : transformed) {
-			team.add_pokemon(pokemon);
-		}
-		return GenerationGeneric<Team>(team);
+		return GenerationGeneric<Team>(Team<generation>(PokemonContainer<generation>(transformed)));
 	} catch (std::exception const & ex) {
 		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse Shoddy Battle team file \""sv, team_file.string(), "\" -- "sv, std::string_view(ex.what())));
 	}

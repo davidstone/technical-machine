@@ -42,28 +42,28 @@ auto max_damage_executed_physical_move() {
 }
 
 auto max_damage_physical_attacker(Item const item, Ability const ability) {
-	auto attacker = Team<generation>(max_pokemon_per_team);
-	
-	attacker.add_pokemon(Pokemon<generation>(
-		Species::Shuckle,
-		Level(100_bi),
-		Gender::male,
-		item,
-		ability,
-		CombinedStats<generation>{
-			Nature::Impish,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
-		},
-		RegularMoves({max_damage_physical_move()})
-	));
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Shuckle,
+			Level(100_bi),
+			Gender::male,
+			item,
+			ability,
+			CombinedStats<generation>{
+				Nature::Impish,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			RegularMoves({max_damage_physical_move()})
+		)
+	});
 
 	auto pokemon = attacker.pokemon();
 	pokemon.switch_in(Weather());
@@ -77,16 +77,17 @@ auto max_damage_physical_attacker(Item const item, Ability const ability) {
 }
 
 auto max_damage_physical_defender() {
-	auto defender = Team<generation>(max_pokemon_per_team);
-	defender.add_pokemon(Pokemon<generation>(
-		Species::Combee,
-		Level(1_bi),
-		Gender::male,
-		Item::None,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		RegularMoves({Move(generation, Moves::Tackle)})
-	));
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Combee,
+			Level(1_bi),
+			Gender::male,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, Moves::Tackle)})
+		)
+	});
 	auto pokemon = defender.pokemon();
 	pokemon.switch_in(Weather());
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
@@ -112,34 +113,36 @@ TEST_CASE("Max physical power", "[Power]") {
 TEST_CASE("Max special power", "[Power]") {
 	constexpr auto max_power = 342_bi;
 
-	auto attacker = Team<generation>(max_pokemon_per_team);
 	auto weather = Weather();
 
 	auto const move = Move(generation, Moves::Surf);
-	attacker.add_pokemon(Pokemon<generation>(
-		Species::Deoxys_Attack,
-		Level(100_bi),
-		Gender::genderless,
-		Item::Wave_Incense,
-		Ability::Torrent,
-		default_combined_stats<generation>,
-		RegularMoves({move})
-	));
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Deoxys_Attack,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Wave_Incense,
+			Ability::Torrent,
+			default_combined_stats<generation>,
+			RegularMoves({move})
+		)
+	});
 	auto pokemon = attacker.pokemon();
 	pokemon.switch_in(weather);
 	pokemon.set_hp(weather, 1_bi);
 	
 
-	auto defender = Team<generation>(max_pokemon_per_team);
-	defender.add_pokemon(Pokemon<generation>(
-		Species::Paras,
-		Level(1_bi),
-		Gender::male,
-		Item::None,
-		Ability::Dry_Skin,
-		default_combined_stats<generation>,
-		RegularMoves({Move(generation, Moves::Dive)})
-	));
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Paras,
+			Level(1_bi),
+			Gender::male,
+			Item::None,
+			Ability::Dry_Skin,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, Moves::Dive)})
+		)
+	});
 
 	auto defender_pokemon = defender.pokemon();
 	defender_pokemon.switch_in(weather);
@@ -193,29 +196,30 @@ TEST_CASE("Max special damage", "[Damage]") {
 	auto weather = Weather();
 	weather.activate_sun_from_move(false);
 
-	auto attacker = Team<generation>(max_pokemon_per_team);
-
 	auto const move = Move(generation, Moves::Blast_Burn);
-	attacker.add_pokemon(Pokemon<generation>(
-		Species::Deoxys_Attack,
-		Level(100_bi),
-		Gender::genderless,
-		Item::Metronome,
-		Ability::Blaze,
-		CombinedStats<generation>{
-			Nature::Modest,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(EV::max),
-				EV(0_bi),
-				EV(0_bi)
-			)
-		},
-		RegularMoves({move})
-	));
+
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Deoxys_Attack,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Metronome,
+			Ability::Blaze,
+			CombinedStats<generation>{
+				Nature::Modest,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(EV::max),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			RegularMoves({move})
+		)
+	});
 
 	auto attacker_pokemon = attacker.pokemon();
 	attacker_pokemon.switch_in(weather);
@@ -231,16 +235,17 @@ TEST_CASE("Max special damage", "[Damage]") {
 
 	attacker_pokemon.activate_flash_fire();
 
-	auto defender = Team<generation>(max_pokemon_per_team);
-	defender.add_pokemon(Pokemon<generation>(
-		Species::Paras,
-		Level(1_bi),
-		Gender::male,
-		Item::None,
-		Ability::Dry_Skin,
-		default_combined_stats<generation>,
-		RegularMoves({Move(generation, Moves::Tackle)})
-	));
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Paras,
+			Level(1_bi),
+			Gender::male,
+			Item::None,
+			Ability::Dry_Skin,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, Moves::Tackle)})
+		)
+	});
 	auto defender_pokemon = defender.pokemon();
 	defender_pokemon.switch_in(weather);
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {

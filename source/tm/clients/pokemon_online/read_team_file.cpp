@@ -65,19 +65,6 @@ auto parse_species(boost::property_tree::ptree const & pt) -> bounded::optional<
 	}
 }
 
-auto number_of_pokemon(boost::property_tree::ptree const & pt) -> TeamSize {
-	auto pokemon_count = TeamSize(0_bi);
-	for (auto const & value : pt) {
-		if (value.first == "Pokemon" and parse_species(value.second)) {
-			if (pokemon_count == numeric_traits::max_value<TeamSize>) {
-				throw std::runtime_error("Attempted to add too many Pokemon");
-			}
-			++pokemon_count;
-		}
-	}
-	return pokemon_count;
-}
-
 auto parse_moves(Generation const generation, CheckedIterator it) {
 	struct Parsed {
 		RegularMoves moves;
@@ -204,17 +191,19 @@ auto parse_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID specie
 template<Generation generation>
 auto parse_team(boost::property_tree::ptree const & pt) {
 	constexpr bool is_me = true;
-	auto team = Team<generation>(number_of_pokemon(pt), is_me);
+	auto all_pokemon = PokemonContainer<generation>();
 	for (auto const & value : pt) {
 		if (value.first != "Pokemon") {
 			continue;
 		}
 		if (auto const species = parse_species(value.second)) {
-			team.add_pokemon(parse_pokemon<generation>(value.second, *species));
+			if (containers::size(all_pokemon) == numeric_traits::max_value<TeamSize>) {
+				throw std::runtime_error("Tried to add too many Pokemon");
+			}
+			containers::push_back(all_pokemon, parse_pokemon<generation>(value.second, *species));
 		}
 	}
-	team.all_pokemon().set_index(0_bi);
-	return team;
+	return Team<generation>(all_pokemon, is_me);
 }
 
 } // namespace

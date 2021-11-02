@@ -36,12 +36,10 @@ TEST_CASE("Evaluate", "[Evaluate]") {
 
 	auto weather = Weather();
 
-	auto team1 = Team<generation>(1_bi);
-	team1.add_pokemon(pokemon);
+	auto team1 = Team<generation>({pokemon});
 	team1.pokemon().switch_in(weather);
 
-	auto team2 = Team<generation>(1_bi);
-	team2.add_pokemon(pokemon);
+	auto team2 = Team<generation>({pokemon});
 	team2.pokemon().switch_in(weather);
 	change_hp(team1.pokemon(), weather, -50_bi);
 

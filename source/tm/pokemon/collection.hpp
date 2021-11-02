@@ -31,12 +31,20 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<Generation generation>
+using PokemonContainer = containers::static_vector<Pokemon<generation>, max_pokemon_per_team.value()>;
+
+template<Generation generation>
 struct PokemonCollection {
-	using Container = containers::static_vector<Pokemon<generation>, max_pokemon_per_team.value()>;
+	using Container = PokemonContainer<generation>;
 	using value_type = containers::range_value_t<Container>;
 
 	explicit PokemonCollection(TeamSize const initial_size):
 		m_real_size(initial_size)
+	{
+	}
+	constexpr explicit PokemonCollection(Container all_pokemon):
+		m_container(all_pokemon),
+		m_real_size(containers::size(m_container))
 	{
 	}
 

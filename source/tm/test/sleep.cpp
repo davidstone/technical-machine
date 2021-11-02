@@ -33,9 +33,8 @@ constexpr auto regular_moves(Generation const generation, auto... moves) {
 TEST_CASE("Sleep Talk", "[Sleep]") {
 	constexpr auto generation = Generation::four;
 	auto weather = Weather{};
-	auto attacker = Team<generation>(1_bi, true);
-	{
-		auto jolteon = Pokemon<generation>(
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
 			Species::Jolteon,
 			Level(100_bi),
 			Gender::female,
@@ -54,34 +53,33 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 				)
 			},
 			regular_moves(generation, Moves::Sleep_Talk, Moves::Thunderbolt)
-		);
-		jolteon.set_status(Statuses::sleep);
-		
-		attacker.add_pokemon(jolteon);
-		attacker.pokemon().switch_in(weather);
-	}
+		)
+	});
+	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().set_status(Statuses::sleep, weather);
 
-	auto defender = Team<generation>(1_bi);
-	defender.add_pokemon(Pokemon<generation>(
-		Species::Gyarados,
-		Level(100_bi),
-		Gender::male,
-		Item::Life_Orb,
-		Ability::Intimidate,
-		CombinedStats<generation>{
-			Nature::Adamant,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
-		},
-		RegularMoves({Move(generation, Moves::Earthquake)})
-	));
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Gyarados,
+			Level(100_bi),
+			Gender::male,
+			Item::Life_Orb,
+			Ability::Intimidate,
+			CombinedStats<generation>{
+				Nature::Adamant,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			RegularMoves({Move(generation, Moves::Earthquake)})
+		)
+	});
 	defender.pokemon().switch_in(weather);
 
 	call_move(
@@ -165,25 +163,26 @@ struct Sleeper {
 	}
 
 private:
-	static auto make_team(bool const is_me, RegularMoves const moves, Weather & weather) {
-		auto sleeper = Team<generation>(1_bi, is_me);
-		sleeper.add_pokemon(Pokemon<generation>(
-			Species::Blissey,
-			Level(100_bi),
-			Gender::female,
-			Item::None,
-			Ability::Natural_Cure,
-			default_combined_stats<generation>,
-			moves
-		));
+	static auto make_team(RegularMoves const moves, Weather & weather) {
+		auto sleeper = Team<generation>({
+			Pokemon<generation>(
+				Species::Blissey,
+				Level(100_bi),
+				Gender::female,
+				Item::None,
+				Ability::Natural_Cure,
+				default_combined_stats<generation>,
+				moves
+			)
+		});
 		sleeper.pokemon().switch_in(weather);
 		return sleeper;
 	}
 	static auto make_sleeper_team(Weather & weather) -> Team<generation> {
-		return make_team(true, regular_moves(generation, Moves::Rest, Moves::Sleep_Talk, Moves::Wish), weather);
+		return make_team(regular_moves(generation, Moves::Rest, Moves::Sleep_Talk, Moves::Wish), weather);
 	}
 	static auto make_other_team(Weather & weather) -> Team<generation> {
-		return make_team(false, regular_moves(generation, Moves::Seismic_Toss), weather);
+		return make_team(regular_moves(generation, Moves::Seismic_Toss), weather);
 	}
 
 	Weather m_weather;

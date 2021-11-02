@@ -34,29 +34,31 @@ constexpr auto moves(auto... move_names) {
 }
 
 TEST_CASE("block with all legal moves", "[block]") {
-	auto user = Team<generation>(1_bi, true);
-	user.add_pokemon(Pokemon<generation>(
-		Species::Jolteon,
-		Level(100_bi),
-		Gender::male,
-		Item::Leftovers,
-		Ability::Volt_Absorb,
-		default_combined_stats<generation>,
-		moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
-	));
+	auto user = Team<generation>({
+		Pokemon<generation>(
+			Species::Jolteon,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Volt_Absorb,
+			default_combined_stats<generation>,
+			moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
+		)
+	});
 	auto weather = Weather();
 	user.pokemon().switch_in(weather);
 
-	auto other = Team<generation>(1_bi, false);
-	other.add_pokemon(Pokemon<generation>(
-		Species::Gyarados,
-		Level(100_bi),
-		Gender::male,
-		Item::Leftovers,
-		Ability::Intimidate,
-		default_combined_stats<generation>,
-		moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
-	));
+	auto other = Team<generation>({
+		Pokemon<generation>(
+			Species::Gyarados,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Intimidate,
+			default_combined_stats<generation>,
+			moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
+		)
+	});
 	other.pokemon().switch_in(weather);
 
 	user.reset_start_of_turn();
@@ -75,30 +77,32 @@ auto empty_pp(Move & move) {
 TEST_CASE("Two moves with one out of pp", "[block]") {
 	auto weather = Weather();
 
-	auto user = Team<generation>(1_bi, true);
 	auto user_moves = moves(Moves::Thunder, Moves::Thunderbolt);
 	empty_pp(containers::front(user_moves));
-	user.add_pokemon(Pokemon<generation>(
-		Species::Pikachu,
-		Level(100_bi),
-		Gender::female,
-		Item::Leftovers,
-		Ability::Intimidate,
-		default_combined_stats<generation>,
-		user_moves
-	));
+	auto user = Team<generation>({
+		Pokemon<generation>(
+			Species::Pikachu,
+			Level(100_bi),
+			Gender::female,
+			Item::Leftovers,
+			Ability::Intimidate,
+			default_combined_stats<generation>,
+			user_moves
+		)
+	});
 	user.pokemon().switch_in(weather);
 
-	auto other = Team<generation>(1_bi, false);
-	other.add_pokemon(Pokemon<generation>(
-		Species::Pikachu,
-		Level(100_bi),
-		Gender::female,
-		Item::Leftovers,
-		Ability::Intimidate,
-		default_combined_stats<generation>,
-		moves(Moves::Thunder, Moves::Thunderbolt)
-	));
+	auto other = Team<generation>({
+		Pokemon<generation>(
+			Species::Pikachu,
+			Level(100_bi),
+			Gender::female,
+			Item::Leftovers,
+			Ability::Intimidate,
+			default_combined_stats<generation>,
+			moves(Moves::Thunder, Moves::Thunderbolt)
+		)
+	});
 	other.pokemon().switch_in(weather);
 	
 	user.reset_start_of_turn();
@@ -110,32 +114,34 @@ TEST_CASE("Two moves with one out of pp", "[block]") {
 TEST_CASE("Two moves with both out of pp", "[block]") {
 	auto weather = Weather();
 
-	auto user = Team<generation>(1_bi, true);
 	auto user_moves = moves(Moves::Thunder, Moves::Thunderbolt);
 	for (auto & move : user_moves) {
 		empty_pp(move);
 	}
-	user.add_pokemon(Pokemon<generation>(
-		Species::Pikachu,
-		Level(100_bi),
-		Gender::female,
-		Item::Leftovers,
-		Ability::Intimidate,
-		default_combined_stats<generation>,
-		user_moves
-	));
+	auto user = Team<generation>({
+		Pokemon<generation>(
+			Species::Pikachu,
+			Level(100_bi),
+			Gender::female,
+			Item::Leftovers,
+			Ability::Intimidate,
+			default_combined_stats<generation>,
+			user_moves
+		)
+	});
 	user.pokemon().switch_in(weather);
 
-	auto other = Team<generation>(1_bi, false);
-	other.add_pokemon(Pokemon<generation>(
-		Species::Pikachu,
-		Level(100_bi),
-		Gender::female,
-		Item::Leftovers,
-		Ability::Intimidate,
-		default_combined_stats<generation>,
-		moves(Moves::Thunder, Moves::Thunderbolt)
-	));
+	auto other = Team<generation>({
+		Pokemon<generation>(
+			Species::Pikachu,
+			Level(100_bi),
+			Gender::female,
+			Item::Leftovers,
+			Ability::Intimidate,
+			default_combined_stats<generation>,
+			moves(Moves::Thunder, Moves::Thunderbolt)
+		)
+	});
 	other.pokemon().switch_in(weather);
 	
 	user.reset_start_of_turn();
@@ -146,40 +152,41 @@ TEST_CASE("Two moves with both out of pp", "[block]") {
 
 TEST_CASE("Replace fainted", "[block]") {
 	auto weather = Weather{};
-	auto team = Team<generation>(2_bi, true);
 
-	team.add_pokemon(Pokemon<generation>(
-		Species::Slugma,
-		Level(100_bi),
-		Gender::male,
-		Item::Choice_Specs,
-		Ability::Magma_Armor,
-		default_combined_stats<generation>,
-		moves(Moves::Flamethrower)
-	));
+	auto team = Team<generation>({
+		Pokemon<generation>(
+			Species::Slugma,
+			Level(100_bi),
+			Gender::male,
+			Item::Choice_Specs,
+			Ability::Magma_Armor,
+			default_combined_stats<generation>,
+			moves(Moves::Flamethrower)
+		),
+		Pokemon<generation>(
+			Species::Zapdos,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Choice_Specs,
+			Ability::Pressure,
+			default_combined_stats<generation>,
+			moves(Moves::Thunderbolt)
+		)
+	});
 	team.pokemon().switch_in(weather);
-	team.add_pokemon(Pokemon<generation>(
-		Species::Zapdos,
-		Level(100_bi),
-		Gender::genderless,
-		Item::Choice_Specs,
-		Ability::Pressure,
-		default_combined_stats<generation>,
-		moves(Moves::Thunderbolt)
-	));
-
 	team.reset_start_of_turn();
 
-	auto other = Team<generation>(1_bi);
-	other.add_pokemon(Pokemon<generation>(
-		Species::Suicune,
-		Level(100_bi),
-		Gender::genderless,
-		Item::Leftovers,
-		Ability::Pressure,
-		default_combined_stats<generation>,
-		moves(Moves::Surf)
-	));
+	auto other = Team<generation>({
+		Pokemon<generation>(
+			Species::Suicune,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Leftovers,
+			Ability::Pressure,
+			default_combined_stats<generation>,
+			moves(Moves::Surf)
+		)
+	});
 	other.pokemon().switch_in(weather);
 
 	other.reset_start_of_turn();

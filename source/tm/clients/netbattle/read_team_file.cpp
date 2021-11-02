@@ -1771,11 +1771,7 @@ auto parse_team(Parser & parser) -> Team<generation> {
 			containers::push_back(all_pokemon, *pokemon);
 		}
 	}
-	auto team = Team<generation>(containers::size(all_pokemon), true);
-	for (auto const & pokemon : all_pokemon) {
-		team.add_pokemon(pokemon);
-	}
-	return team;
+	return Team<generation>(all_pokemon, true);
 }
 
 using GameVersion = bounded::integer<0, 8>;

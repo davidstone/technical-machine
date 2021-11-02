@@ -32,28 +32,28 @@ TEST_CASE("Calculate max Attack", "[calculate stat]") {
 
 	auto weather = Weather();
 
-	auto attacker = Team<generation>(max_pokemon_per_team);
-
-	attacker.add_pokemon(Pokemon<generation>(
-		Species::Shuckle,
-		Level(100_bi),
-		Gender::male,
-		Item::Choice_Band,
-		Ability::Pure_Power,
-		CombinedStats<generation>{
-			Nature::Impish,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
-		},
-		RegularMoves({Move(generation, Moves::Tackle)})
-	));
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Shuckle,
+			Level(100_bi),
+			Gender::male,
+			Item::Choice_Band,
+			Ability::Pure_Power,
+			CombinedStats<generation>{
+				Nature::Impish,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			RegularMoves({Move(generation, Moves::Tackle)})
+		)
+	});
 	auto pokemon = attacker.pokemon();
 
 	pokemon.switch_in(weather);
@@ -68,28 +68,28 @@ TEST_CASE("Calculate max Special Attack", "[calculate stat]") {
 	constexpr auto max_special_attack = 4536_bi;
 	auto weather = Weather();
 	weather.activate_sun_from_move(false);
-	auto attacker = Team<generation>(max_pokemon_per_team);
-
-	attacker.add_pokemon(Pokemon<generation>(
-		Species::Deoxys_Attack,
-		Level(100_bi),
-		Gender::genderless,
-		Item::Choice_Specs,
-		Ability::Solar_Power,
-		CombinedStats<generation>{
-			Nature::Modest,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
-		},
-		RegularMoves({Move(generation, Moves::Psychic)})
-	));
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Deoxys_Attack,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Choice_Specs,
+			Ability::Solar_Power,
+			CombinedStats<generation>{
+				Nature::Modest,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			RegularMoves({Move(generation, Moves::Psychic)})
+		)
+	});
 	auto pokemon = attacker.pokemon();
 
 	pokemon.switch_in(weather);
@@ -104,28 +104,28 @@ TEST_CASE("Calculate max Defense", "[calculate stat]") {
 
 	constexpr auto weather = Weather();
 
-	auto defender = Team<generation>(max_pokemon_per_team);
-
-	defender.add_pokemon(Pokemon<generation>(
-		Species::Shuckle,
-		Level(100_bi),
-		Gender::male,
-		Item::None,
-		Ability::Marvel_Scale,
-		CombinedStats<generation>{
-			Nature::Bold,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
-		},
-		RegularMoves({Move(generation, Moves::Tackle)})
-	));
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Shuckle,
+			Level(100_bi),
+			Gender::male,
+			Item::None,
+			Ability::Marvel_Scale,
+			CombinedStats<generation>{
+				Nature::Bold,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			RegularMoves({Move(generation, Moves::Tackle)})
+		)
+	});
 	defender.pokemon().switch_in(weather);
 
 	defender.pokemon().stages()[BoostableStat::def] += 6_bi;
@@ -140,17 +140,17 @@ TEST_CASE("Calculate min Defense", "[calculate stat]") {
 
 	auto weather = Weather();
 
-	auto defender = Team<generation>(max_pokemon_per_team);
-
-	defender.add_pokemon(Pokemon<generation>(
-		Species::Combee,
-		Level(1_bi),
-		Gender::male,
-		Item::None,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		RegularMoves({Move(generation, Moves::Tackle)})
-	));
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Combee,
+			Level(1_bi),
+			Gender::male,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, Moves::Tackle)})
+		)
+	});
 	auto pokemon = defender.pokemon();
 
 	pokemon.switch_in(weather);
@@ -168,28 +168,28 @@ TEST_CASE("Calculate max Special Defense", "[calculate stat]") {
 	auto weather = Weather();
 	weather.activate_sand_from_move(false);
 
-	auto defender = Team<generation>(max_pokemon_per_team);
-
-	defender.add_pokemon(Pokemon<generation>(
-		Species::Shuckle,
-		Level(100_bi),
-		Gender::male,
-		Item::None,
-		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Calm,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi)
-			)
-		},
-		RegularMoves({Move(generation, Moves::Tackle)})
-	));
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Shuckle,
+			Level(100_bi),
+			Gender::male,
+			Item::None,
+			Ability::Honey_Gather,
+			CombinedStats<generation>{
+				Nature::Calm,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi)
+				)
+			},
+			RegularMoves({Move(generation, Moves::Tackle)})
+		)
+	});
 	auto pokemon = defender.pokemon();
 
 	pokemon.switch_in(weather);
@@ -204,28 +204,28 @@ TEST_CASE("Calculate max Speed", "[calculate stat]") {
 	auto weather = Weather();
 	weather.activate_rain_from_move(false);
 
-	auto team = Team<generation>(max_pokemon_per_team);
-
-	team.add_pokemon(Pokemon<generation>(
-		Species::Deoxys_Speed,
-		Level(100_bi),
-		Gender::genderless,
-		Item::Choice_Scarf,
-		Ability::Swift_Swim,
-		CombinedStats<generation>{
-			Nature::Timid,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi)
-			)
-		},
-		RegularMoves({Move(generation, Moves::Tackle)})
-	));
+	auto team = Team<generation>({
+		Pokemon<generation>(
+			Species::Deoxys_Speed,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Choice_Scarf,
+			Ability::Swift_Swim,
+			CombinedStats<generation>{
+				Nature::Timid,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi)
+				)
+			},
+			RegularMoves({Move(generation, Moves::Tackle)})
+		)
+	});
 	auto pokemon = team.pokemon();
 
 	pokemon.switch_in(weather);

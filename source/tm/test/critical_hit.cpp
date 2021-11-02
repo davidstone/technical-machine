@@ -20,17 +20,18 @@ namespace {
 template<Generation generation>
 auto individual_test(Species const species, Moves const move_name, Item const item, bool const focus_energy, double const rate) {
 	auto weather = Weather();
-	auto attacker = Team<generation>(1_bi);
 	constexpr auto ability = Ability::Honey_Gather;
-	attacker.add_pokemon(Pokemon<generation>(
-		species,
-		Level(100_bi),
-		Gender::genderless,
-		item,
-		ability,
-		default_combined_stats<generation>,
-		RegularMoves({Move(generation, Moves::Tackle)})
-	));
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			species,
+			Level(100_bi),
+			Gender::genderless,
+			item,
+			ability,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, Moves::Tackle)})
+		)
+	});
 	attacker.pokemon().switch_in(weather);
 	if (focus_energy) {
 		attacker.pokemon().focus_energy();

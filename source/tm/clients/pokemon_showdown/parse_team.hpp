@@ -127,13 +127,14 @@ auto parse_team(std::string_view const str) -> Team<generation> {
 	auto const json = nlohmann::json::parse(str);
 	auto const team_data = json.at("side").at("pokemon");
 	constexpr bool is_me = true;
-	auto const team_size = bounded::check_in_range<TeamSize>(bounded::integer(containers::detail::linear_size(team_data)));
-	auto team = Team<generation>(team_size, is_me);
+	auto all_pokemon = PokemonContainer<generation>();
 	for (auto const & pokemon_data : team_data.items()) {
-		team.add_pokemon(parse_pokemon<generation>(pokemon_data.value()));
+		if (containers::size(all_pokemon) == numeric_traits::max_value<TeamSize>) {
+			throw std::runtime_error("Tried to add too many Pokemon");
+		}
+		containers::push_back(all_pokemon, parse_pokemon<generation>(pokemon_data.value()));
 	}
-	team.all_pokemon().set_index(0_bi);
-	return team;
+	return Team<generation>(all_pokemon, is_me);
 }
 
 }	// namespace ps

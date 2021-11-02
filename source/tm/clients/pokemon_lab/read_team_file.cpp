@@ -157,31 +157,19 @@ auto parse_pokemon(boost::property_tree::ptree const & pt) {
 	);
 }
 
-auto number_of_pokemon(boost::property_tree::ptree const & pt) -> TeamSize {
-	auto pokemon_count = TeamSize(0_bi);
-	for (auto const & value : pt) {
-		if (value.first == "pokemon") {
-			if (pokemon_count == numeric_traits::max_value<TeamSize>) {
-				throw std::runtime_error("Attempted to add too many Pokemon");
-			}
-			++pokemon_count;
-		}
-	}
-	return pokemon_count;
-}
-
 template<Generation generation>
-auto parse_team(boost::property_tree::ptree const & all_pokemon) {
+auto parse_team(boost::property_tree::ptree const & ptree) {
 	constexpr bool is_me = true;
-	auto const team_size = number_of_pokemon(all_pokemon);
-	auto team = Team<generation>(team_size, is_me);
-	for (auto const & value : all_pokemon) {
+	auto all_pokemon = PokemonContainer<generation>();
+	for (auto const & value : ptree) {
 		if (value.first == "pokemon") {
-			team.add_pokemon(parse_pokemon<generation>(value.second));
+			if (containers::size(all_pokemon) == numeric_traits::max_value<TeamSize>) {
+				throw std::runtime_error("Tried to add too many Pokemon");
+			}
+			containers::push_back(all_pokemon, parse_pokemon<generation>(value.second));
 		}
 	}
-	team.all_pokemon().set_index(0_bi);
-	return team;
+	return Team<generation>(all_pokemon, is_me);
 }
 
 } // namespace

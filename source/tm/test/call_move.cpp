@@ -35,79 +35,81 @@ constexpr auto regular_moves(auto... moves) {
 TEST_CASE("Baton Pass", "[call_move]") {
 	auto weather = Weather();
 
-	auto attacker = Team<generation>(2_bi, true);
-	attacker.add_pokemon(Pokemon<generation>(
-		Species::Smeargle,
-		Level(100_bi),
-		Gender::male,
-		Item::Leftovers,
-		Ability::Own_Tempo,
-		default_combined_stats<generation>,
-		regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
-	));
-	attacker.add_pokemon(Pokemon<generation>(
-		Species::Alakazam,
-		Level(100_bi),
-		Gender::male,
-		Item::Lum_Berry,
-		Ability::Synchronize,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
-		},
-		regular_moves(Moves::Psycho_Cut, Moves::Recover)
-	));
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Smeargle,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Own_Tempo,
+			default_combined_stats<generation>,
+			regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
+		),
+		Pokemon<generation>(
+			Species::Alakazam,
+			Level(100_bi),
+			Gender::male,
+			Item::Lum_Berry,
+			Ability::Synchronize,
+			CombinedStats<generation>{
+				Nature::Hardy,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(Moves::Psycho_Cut, Moves::Recover)
+		)
+	});
 	attacker.pokemon().switch_in(weather);
 
-	auto defender = Team<generation>(2_bi);
-	defender.add_pokemon(Pokemon<generation>(
-		Species::Gengar,
-		Level(100_bi),
-		Gender::male,
-		Item::Choice_Specs,
-		Ability::Levitate,
-		CombinedStats<generation>{
-			Nature::Modest,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
-		},
-		regular_moves(Moves::Shadow_Ball)
-	));
-	defender.add_pokemon(Pokemon<generation>(
-		Species::Misdreavus,
-		Level(100_bi),
-		Gender::female,
-		Item::Choice_Specs,
-		Ability::Levitate,
-		CombinedStats<generation>{
-			Nature::Modest,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
-		},
-		regular_moves(Moves::Shadow_Ball)
-	));
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Gengar,
+			Level(100_bi),
+			Gender::male,
+			Item::Choice_Specs,
+			Ability::Levitate,
+			CombinedStats<generation>{
+				Nature::Modest,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(Moves::Shadow_Ball)
+		),
+		Pokemon<generation>(
+			Species::Misdreavus,
+			Level(100_bi),
+			Gender::female,
+			Item::Choice_Specs,
+			Ability::Levitate,
+			CombinedStats<generation>{
+				Nature::Modest,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(Moves::Shadow_Ball)
+		)
+	});
 	defender.pokemon().switch_in(weather);
 
 	attacker.reset_start_of_turn();
@@ -190,28 +192,30 @@ TEST_CASE("Baton Pass", "[call_move]") {
 TEST_CASE("Wonder Guard", "[call_move]") {
 	auto weather = Weather();
 
-	auto attacker = Team<generation>(1_bi, true);
-	attacker.add_pokemon(Pokemon<generation>(
-		Species::Jolteon,
-		Level(100_bi),
-		Gender::female,
-		Item::None,
-		Ability::Volt_Absorb,
-		default_combined_stats<generation>,
-		regular_moves(Moves::Shadow_Ball, Moves::Thunderbolt)
-	));
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Jolteon,
+			Level(100_bi),
+			Gender::female,
+			Item::None,
+			Ability::Volt_Absorb,
+			default_combined_stats<generation>,
+			regular_moves(Moves::Shadow_Ball, Moves::Thunderbolt)
+		)
+	});
 	attacker.pokemon().switch_in(weather);
 
-	auto defender = Team<generation>(1_bi);
-	defender.add_pokemon(Pokemon<generation>(
-		Species::Shedinja,
-		Level(100_bi),
-		Gender::male,
-		Item::None,
-		Ability::Wonder_Guard,
-		default_combined_stats<generation>,
-		RegularMoves({Move(generation, Moves::Tackle)})
-	));
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Shedinja,
+			Level(100_bi),
+			Gender::male,
+			Item::None,
+			Ability::Wonder_Guard,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, Moves::Tackle)})
+		)
+	});
 	auto shedinja = defender.pokemon();
 	shedinja.switch_in(weather);
 
@@ -243,28 +247,30 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 TEST_CASE("Fire move thaws target", "[call_move]") {
 	auto weather = Weather();
 
-	auto attacker = Team<generation>(1_bi, true);
-	attacker.add_pokemon(Pokemon<generation>(
-		Species::Charmander,
-		Level(100_bi),
-		Gender::female,
-		Item::None,
-		Ability::Blaze,
-		default_combined_stats<generation>,
-		regular_moves(Moves::Ember)
-	));
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Charmander,
+			Level(100_bi),
+			Gender::female,
+			Item::None,
+			Ability::Blaze,
+			default_combined_stats<generation>,
+			regular_moves(Moves::Ember)
+		)
+	});
 	attacker.pokemon().switch_in(weather);
 
-	auto defender = Team<generation>(1_bi);
-	defender.add_pokemon(Pokemon<generation>(
-		Species::Vaporeon,
-		Level(100_bi),
-		Gender::male,
-		Item::None,
-		Ability::Water_Absorb,
-		default_combined_stats<generation>,
-		RegularMoves({Move(generation, Moves::Tackle)})
-	));
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Vaporeon,
+			Level(100_bi),
+			Gender::male,
+			Item::None,
+			Ability::Water_Absorb,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, Moves::Tackle)})
+		)
+	});
 	auto vaporeon = defender.pokemon();
 	vaporeon.switch_in(weather);
 	vaporeon.set_status(Statuses::freeze, weather);

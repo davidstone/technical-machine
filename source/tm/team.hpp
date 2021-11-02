@@ -5,18 +5,17 @@
 
 #pragma once
 
-#include <tm/apply_entry_hazards.hpp>
-#include <tm/entry_hazards.hpp>
-#include <tm/operators.hpp>
-#include <tm/screens.hpp>
-#include <tm/wish.hpp>
-
 #include <tm/pokemon/active_pokemon.hpp>
 #include <tm/pokemon/collection.hpp>
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/species_forward.hpp>
 
+#include <tm/apply_entry_hazards.hpp>
 #include <tm/compress.hpp>
+#include <tm/entry_hazards.hpp>
+#include <tm/operators.hpp>
+#include <tm/screens.hpp>
+#include <tm/wish.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/is_empty.hpp>
@@ -35,6 +34,16 @@ struct Team {
 	explicit Team(TeamSize const initial_size, bool team_is_me = false) :
 		m_all_pokemon(initial_size),
 		me(team_is_me)
+	{
+	}
+	explicit Team(PokemonContainer<generation> all_pokemon_, bool team_is_me = false) :
+		m_all_pokemon(all_pokemon_),
+		me(team_is_me)
+	{
+	}
+	template<std::size_t size>
+	explicit Team(containers::c_array<Pokemon<generation>, size> && all_pokemon_, bool team_is_me = false):
+		Team(PokemonContainer<generation>(std::move(all_pokemon_)), team_is_me)
 	{
 	}
 

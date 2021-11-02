@@ -127,22 +127,17 @@ auto parse_pokemon(std::string_view const str) {
 }
 
 template<Generation generation>
-auto packed_format_to_team(std::string_view const str, TeamSize const team_size) -> Team<generation> {
-	auto buffer = DelimitedBufferView(str, pokemon_delimiter);
-
-	constexpr auto is_me = true;
-	auto team = Team<generation>(team_size, is_me);
-
-	while (!buffer.remainder().empty()) {
-		team.add_pokemon(parse_pokemon<generation>(buffer.pop()));
-	}
-	return team;
-}
-
-template<Generation generation>
 auto packed_format_to_team(std::string_view const str) -> Team<generation> {
-	auto const team_size = bounded::check_in_range<TeamSize>(bounded::integer(containers::count(str, pokemon_delimiter)) + 1_bi);
-	return packed_format_to_team<generation>(str, team_size);
+	auto buffer = DelimitedBufferView(str, pokemon_delimiter);
+	auto all_pokemon = PokemonContainer<generation>();
+	while (!buffer.remainder().empty()) {
+		if (containers::size(all_pokemon) == max_pokemon_per_team) {
+			throw std::runtime_error("Tried to add too many Pokemon from PS packed format");
+		}
+		containers::push_back(all_pokemon, parse_pokemon<generation>(buffer.pop()));
+	}
+	constexpr auto is_me = true;
+	return Team<generation>(all_pokemon, is_me);
 }
 
 } // namespace ps

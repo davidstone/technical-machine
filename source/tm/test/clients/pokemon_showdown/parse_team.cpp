@@ -23,73 +23,67 @@ namespace {
 
 auto expected_generation_one_team() {
 	constexpr auto generation = Generation::one;
-	auto team = Team<generation>(6_bi, true);
 
 	auto moves = [](auto... move_names) {
 		return RegularMoves({Move(generation, move_names)...});
 	};
 
-	team.add_pokemon(Pokemon<generation>(
-		Species::Koffing,
-		Level(88_bi),
-		Gender::genderless,
-		Item::None,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		moves(Moves::Fire_Blast, Moves::Sludge, Moves::Explosion, Moves::Thunderbolt)
-	));
-
-	team.add_pokemon(Pokemon<generation>(
-		Species::Sandslash,
-		Level(74_bi),
-		Gender::genderless,
-		Item::None,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		moves(Moves::Earthquake, Moves::Body_Slam, Moves::Rock_Slide, Moves::Swords_Dance)
-	));
-
-	team.add_pokemon(Pokemon<generation>(
-		Species::Ditto,
-		Level(88_bi),
-		Gender::genderless,
-		Item::None,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		moves(Moves::Transform)
-	));
-
-	team.add_pokemon(Pokemon<generation>(
-		Species::Pikachu,
-		Level(88_bi),
-		Gender::genderless,
-		Item::None,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		moves(Moves::Agility, Moves::Thunderbolt, Moves::Surf, Moves::Thunder_Wave)
-	));
-
-	team.add_pokemon(Pokemon<generation>(
-		Species::Jynx,
-		Level(68_bi),
-		Gender::genderless,
-		Item::None,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		moves(Moves::Seismic_Toss, Moves::Lovely_Kiss, Moves::Psychic, Moves::Blizzard)
-	));
-	
-	team.add_pokemon(Pokemon<generation>(
-		Species::Slowbro,
-		Level(68_bi),
-		Gender::genderless,
-		Item::None,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		moves(Moves::Psychic, Moves::Surf, Moves::Thunder_Wave, Moves::Amnesia)
-	));
-
-	return team;
+	return Team<generation>({
+		Pokemon<generation>(
+			Species::Koffing,
+			Level(88_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			moves(Moves::Fire_Blast, Moves::Sludge, Moves::Explosion, Moves::Thunderbolt)
+		),
+		Pokemon<generation>(
+			Species::Sandslash,
+			Level(74_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			moves(Moves::Earthquake, Moves::Body_Slam, Moves::Rock_Slide, Moves::Swords_Dance)
+		),
+		Pokemon<generation>(
+			Species::Ditto,
+			Level(88_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			moves(Moves::Transform)
+		),
+		Pokemon<generation>(
+			Species::Pikachu,
+			Level(88_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			moves(Moves::Agility, Moves::Thunderbolt, Moves::Surf, Moves::Thunder_Wave)
+		),
+		Pokemon<generation>(
+			Species::Jynx,
+			Level(68_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			moves(Moves::Seismic_Toss, Moves::Lovely_Kiss, Moves::Psychic, Moves::Blizzard)
+		),
+		Pokemon<generation>(
+			Species::Slowbro,
+			Level(68_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			moves(Moves::Psychic, Moves::Surf, Moves::Thunder_Wave, Moves::Amnesia)
+		)
+	}, true);
 }
 
 TEST_CASE("Parse Pokemon Showdown generation 1 team", "[pokemon showdown]") {
@@ -106,77 +100,71 @@ TEST_CASE("Parse Pokemon Showdown generation 1 team", "[pokemon showdown]") {
 
 auto expected_generation_two_team() {
 	constexpr auto generation = Generation::two;
-	auto team = Team<generation>(6_bi, true);
 
 	auto moves = [](auto... move_names) {
 		return RegularMoves({Move(generation, move_names)...});
 	};
 
-	team.add_pokemon(Pokemon<generation>(
-		Species::Noctowl,
-		Level(80_bi),
-		Gender::male,
-		Item::None,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		moves(Moves::Thief, Moves::Hypnosis, Moves::Night_Shade, Moves::Return)
-	));
-
-	team.add_pokemon(Pokemon<generation>(
-		Species::Qwilfish,
-		Level(74_bi),
-		Gender::male,
-		Item::Leftovers,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		moves(Moves::Spikes, Moves::Sludge_Bomb, Moves::Surf, Moves::Curse)
-	));
-
-	team.add_pokemon(Pokemon<generation>(
-		Species::Hypno,
-		Level(74_bi),
-		Gender::male,
-		Item::Leftovers,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		moves(Moves::Curse, Moves::Body_Slam, Moves::Psychic, Moves::Rest)
-	));
-
-	team.add_pokemon(Pokemon<generation>(
-		Species::Misdreavus,
-		Level(68_bi),
-		Gender::male,
-		Item::Leftovers,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		moves(Moves::Thunderbolt, Moves::Shadow_Ball, Moves::Hypnosis, Moves::Pain_Split)
-	));
-
-	team.add_pokemon(Pokemon<generation>(
-		Species::Machamp,
-		Level(68_bi),
-		Gender::male,
-		Item::Leftovers,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		moves(Moves::Rest, Moves::Sleep_Talk, Moves::Cross_Chop, Moves::Curse)
-	));
-	
-	team.add_pokemon(Pokemon<generation>(
-		Species::Sunflora,
-		Level(80_bi),
-		Gender::male,
-		Item::Leftovers,
-		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Hardy,
-			DVs(DV(15_bi), DV(13_bi), DV(15_bi), DV(15_bi)),
-			default_evs<generation>
-		},
-		moves(Moves::Growth, Moves::Giga_Drain, Moves::Synthesis, Moves::Hidden_Power)
-	));
-
-	return team;
+	return Team<generation>({
+		Pokemon<generation>(
+			Species::Noctowl,
+			Level(80_bi),
+			Gender::male,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			moves(Moves::Thief, Moves::Hypnosis, Moves::Night_Shade, Moves::Return)
+		),
+		Pokemon<generation>(
+			Species::Qwilfish,
+			Level(74_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			moves(Moves::Spikes, Moves::Sludge_Bomb, Moves::Surf, Moves::Curse)
+		),
+		Pokemon<generation>(
+			Species::Hypno,
+			Level(74_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			moves(Moves::Curse, Moves::Body_Slam, Moves::Psychic, Moves::Rest)
+		),
+		Pokemon<generation>(
+			Species::Misdreavus,
+			Level(68_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			moves(Moves::Thunderbolt, Moves::Shadow_Ball, Moves::Hypnosis, Moves::Pain_Split)
+		),
+		Pokemon<generation>(
+			Species::Machamp,
+			Level(68_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			moves(Moves::Rest, Moves::Sleep_Talk, Moves::Cross_Chop, Moves::Curse)
+		),
+		Pokemon<generation>(
+			Species::Sunflora,
+			Level(80_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Honey_Gather,
+			CombinedStats<generation>{
+				Nature::Hardy,
+				DVs(DV(15_bi), DV(13_bi), DV(15_bi), DV(15_bi)),
+				default_evs<generation>
+			},
+			moves(Moves::Growth, Moves::Giga_Drain, Moves::Synthesis, Moves::Hidden_Power)
+		)
+	}, true);
 }
 
 TEST_CASE("Parse Pokemon Showdown generation 2 team", "[pokemon showdown]") {
