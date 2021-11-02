@@ -19,8 +19,6 @@
 #include <tm/team_predictor/ev_optimizer/offensive.hpp>
 #include <tm/team_predictor/ev_optimizer/speed.hpp>
 
-#include <tm/team.hpp>
-
 #include <containers/begin_end.hpp>
 #include <containers/integer_range.hpp>
 
@@ -31,47 +29,33 @@
 namespace technicalmachine {
 namespace {
 
-auto regular_moves(Generation const generation, auto... move_names) {
-	return RegularMoves({Move(generation, move_names)...});
-}
-
 TEST_CASE("Optimize already optimized EVs", "[EV Optimizer]") {
-	auto rd = std::random_device();
-	auto random_engine = std::mt19937(rd());
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Metagross;
 	constexpr auto level = Level(100_bi);
-	auto const base_stats = BaseStats(generation, species);
-	auto pokemon = Pokemon<generation>(
-		species,
-		level,
-		Gender::genderless,
-		Item::None,
-		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Adamant,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(252_bi),
-				EV(96_bi),
-				EV(96_bi),
-				EV(0_bi),
-				EV(4_bi),
-				EV(60_bi)
-			)
-		},
-		regular_moves(generation, Moves::Meteor_Mash)
-	);
-
-	auto const ivs_and_evs = calculate_ivs_and_evs(pokemon);
-	auto const stats = Stats<generation>(base_stats, level, ivs_and_evs);
-	
+	constexpr auto hidden_power = bounded::optional<HiddenPower<generation>>();
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
-	CHECK(compute_minimal_spread(base_stats, stats, level, bounded::optional<HiddenPower<generation>>(), include_attack, include_special_attack) == ivs_and_evs);
+	constexpr auto ivs_and_evs = CombinedStats<generation>{
+		Nature::Adamant,
+		max_dvs_or_ivs<generation>,
+		EVs(
+			EV(252_bi),
+			EV(96_bi),
+			EV(96_bi),
+			EV(0_bi),
+			EV(4_bi),
+			EV(60_bi)
+		)
+	};
+	auto const base_stats = BaseStats(generation, species);
+	auto const stats = Stats<generation>(base_stats, level, ivs_and_evs);
+	auto random_engine = std::mt19937(std::random_device()());
+	
+	CHECK(compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack) == ivs_and_evs);
 	CHECK(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
-	optimize_evs(pokemon, random_engine);
-	CHECK(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
+	auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack, random_engine);
+	CHECK(optimized == ivs_and_evs);
 }
 
 TEST_CASE("Optimize defensive EVs", "[EV Optimizer]") {
@@ -128,61 +112,43 @@ static_assert([] {
 }());
 
 TEST_CASE("Optimize EVs below level 100", "[EV Optimizer]") {
-	auto rd = std::random_device();
-	auto random_engine = std::mt19937(rd());
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Masquerain;
 	constexpr auto level = Level(83_bi);
-	auto pokemon = Pokemon<generation>(
-		species,
-		level,
-		Gender::genderless,
-		Item::None,
-		Ability::Honey_Gather,
-		CombinedStats<generation>{
-			Nature::Modest,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(192_bi),
-				EV(0_bi),
-				EV(8_bi),
-				EV(120_bi),
-				EV(60_bi),
-				EV(128_bi)
-			)
-		},
-		regular_moves(generation, Moves::Hydro_Pump, Moves::Bug_Buzz, Moves::Roost, Moves::Air_Slash)
-	);
-
-	optimize_evs(pokemon, random_engine);
+	constexpr auto hidden_power = bounded::optional<HiddenPower<generation>>();
+	constexpr auto include_attack = false;
+	constexpr auto include_special_attack = true;
+	constexpr auto ivs_and_evs = CombinedStats<generation>{
+		Nature::Modest,
+		max_dvs_or_ivs<generation>,
+		EVs(
+			EV(192_bi),
+			EV(0_bi),
+			EV(8_bi),
+			EV(120_bi),
+			EV(60_bi),
+			EV(128_bi)
+		)
+	};
+	auto random_engine = std::mt19937(std::random_device()());
+	[[maybe_unused]] auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack, random_engine);
 }
 
 TEST_CASE("Optimize generation 2 EVs", "[EV Optimizer]") {
-	auto rd = std::random_device();
-	auto random_engine = std::mt19937(rd());
 	constexpr auto generation = Generation::two;
 	constexpr auto species = Species::Mew;
 	constexpr auto level = Level(100_bi);
-	auto const base_stats = BaseStats(generation, species);
-	auto pokemon = Pokemon<generation>(
-		species,
-		level,
-		Gender::genderless,
-		Item::None,
-		Ability::Honey_Gather,
-		default_combined_stats<generation>,
-		regular_moves(generation, Moves::Tackle, Moves::Psychic)
-	);
-
-	auto const ivs_and_evs = calculate_ivs_and_evs(pokemon);
-	auto const stats = Stats<generation>(base_stats, level, ivs_and_evs);
-	
+	constexpr auto hidden_power = bounded::optional<HiddenPower<generation>>();
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = true;
-	CHECK(compute_minimal_spread(base_stats, stats, level, bounded::optional<HiddenPower<generation>>(), include_attack, include_special_attack) == ivs_and_evs);
+	constexpr auto ivs_and_evs = default_combined_stats<generation>;
+	auto const base_stats = BaseStats(generation, species);
+	auto const stats = Stats<generation>(base_stats, level, ivs_and_evs);
+	auto random_engine = std::mt19937(std::random_device()());
+	CHECK(compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack) == ivs_and_evs);
 	CHECK(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
-	optimize_evs(pokemon, random_engine);
-	CHECK(calculate_ivs_and_evs(pokemon) == ivs_and_evs);
+	auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack, random_engine);
+	CHECK(optimized == ivs_and_evs);
 }
 
 } // namespace

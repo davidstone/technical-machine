@@ -20,25 +20,25 @@
 
 namespace technicalmachine {
 
-enum class Generation : std::uint8_t;
 struct UsageStats;
 
 template<Generation generation>
 void predict_pokemon(Team<generation> & team, Estimate estimate, UsageStats const & usage_stats, std::mt19937 & random_engine, bool const use_most_likely) {
 	auto const index = team.all_pokemon().index();
 	while (team.number_of_seen_pokemon() < team.size()) {
-		Species const name = use_most_likely ? estimate.most_likely() : estimate.random(random_engine);
-		Level const level(100_bi);
-		team.add_pokemon(Pokemon<generation>(name, level, Gender::genderless));
-		if (team.number_of_seen_pokemon() == team.size())
+		auto const species = use_most_likely ? estimate.most_likely() : estimate.random(random_engine);
+		auto const level = Level(100_bi);
+		team.add_pokemon(Pokemon<generation>(species, level, Gender::genderless));
+		if (team.number_of_seen_pokemon() == team.size()) {
 			break;
-		estimate.update(usage_stats, name);
+		}
+		estimate.update(usage_stats, species);
 	}
 	team.all_pokemon().set_index(index);
 }
 
 template<Generation generation>
-void predict_move(Pokemon<generation> & pokemon, containers::static_vector<Moves, max_moves_per_pokemon.value()> const detailed) {
+void predict_moves(Pokemon<generation> & pokemon, containers::static_vector<Moves, max_moves_per_pokemon.value()> const detailed) {
 	for (Moves const move_name : detailed) {
 		if (containers::size(pokemon.regular_moves()) == max_moves_per_pokemon) {
 			break;
@@ -51,7 +51,25 @@ void predict_move(Pokemon<generation> & pokemon, containers::static_vector<Moves
 }
 
 template<Generation generation>
-auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stats, Team<generation> team, std::mt19937 & random_engine, bool const use_most_likely) {
+void optimize_pokemon_evs(Pokemon<generation> & pokemon, std::mt19937 & random_engine) {
+	auto const species = pokemon.species();
+	auto const level = pokemon.level();
+	auto const include_attack = has_physical_move(pokemon);
+	auto const include_special_attack = has_special_move(pokemon);
+	auto const optimized = optimize_evs(
+		calculate_ivs_and_evs(pokemon),
+		species,
+		level,
+		pokemon.hidden_power(),
+		include_attack,
+		include_special_attack,
+		random_engine
+	);
+	pokemon.set_ivs_and_evs(optimized);
+}
+
+template<Generation generation>
+auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stats, Team<generation> team, std::mt19937 & random_engine, bool const use_most_likely) -> Team<generation> {
 	auto estimate = Estimate(usage_stats, lead_stats);
 	update_estimate(estimate, usage_stats, team);
 
@@ -65,8 +83,8 @@ auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stat
 		if (!pokemon.item_is_known()) {
 			pokemon.set_item(detailed.item);
 		}
-		predict_move(pokemon, detailed.moves);
-		optimize_evs(pokemon, random_engine);
+		predict_moves(pokemon, detailed.moves);
+		optimize_pokemon_evs(pokemon, random_engine);
 	}
 	// TODO: This isn't right
 	team.pokemon().set_ability_to_base_ability();
@@ -74,14 +92,13 @@ auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stat
 }
 
 template<Generation generation>
-auto predict_team(UsageStats const & usage_stats, LeadStats const lead_stats, Team<generation> team, std::mt19937 & random_engine) {
+auto predict_team(UsageStats const & usage_stats, LeadStats const lead_stats, Team<generation> team, std::mt19937 & random_engine) -> Team<generation> {
 	return predict_team_impl(usage_stats, lead_stats, team, random_engine, true);
 }
 
 template<Generation generation>
-auto generate_team(UsageStats const & usage_stats, LeadStats lead_stats, std::mt19937 & random_engine) {
+auto generate_team(UsageStats const & usage_stats, LeadStats lead_stats, std::mt19937 & random_engine) -> Team<generation> {
 	return predict_team_impl(usage_stats, lead_stats, Team<generation>(max_pokemon_per_team, true), random_engine, false);
 }
 
-
-}	// namespace technicalmachine
+} // namespace technicalmachine

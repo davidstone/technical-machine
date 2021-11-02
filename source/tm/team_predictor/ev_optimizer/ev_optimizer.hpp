@@ -13,7 +13,6 @@
 
 #include <tm/pokemon/has_physical_or_special_move.hpp>
 #include <tm/pokemon/level.hpp>
-#include <tm/pokemon/pokemon.hpp>
 
 #include <tm/stat/base_stats.hpp>
 #include <tm/stat/calculate.hpp>
@@ -179,24 +178,6 @@ auto optimize_evs(
 			return combined;
 		}
 	}
-}
-
-template<Generation generation>
-void optimize_evs(Pokemon<generation> & pokemon, std::mt19937 & random_engine) {
-	auto const species = pokemon.species();
-	auto const level = pokemon.level();
-	auto const include_attack = has_physical_move(pokemon);
-	auto const include_special_attack = has_special_move(pokemon);
-	auto const optimized = optimize_evs(
-		calculate_ivs_and_evs(pokemon),
-		species,
-		level,
-		pokemon.hidden_power(),
-		include_attack,
-		include_special_attack,
-		random_engine
-	);
-	pokemon.set_ivs_and_evs(optimized);
 }
 
 } // namespace technicalmachine
