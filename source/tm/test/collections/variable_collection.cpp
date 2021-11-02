@@ -28,10 +28,18 @@ using bounded::to_string;
 
 constexpr auto generation = Generation::four;
 
-void add_pokemon(Team<generation> & team, Species const species) {
-	auto const level = Level(100_bi);
-	team.add_pokemon(Pokemon<generation>(species, level, Gender::male));
-	team.pokemon().set_ability_to_base_ability();
+auto make_team(auto const... species) {
+	return Team<generation>({
+		Pokemon<generation>(
+			species,
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, Moves::Tackle)})
+		)...
+	});
 }
 
 using EffectIndex = bounded::integer<0, 4>;
@@ -51,29 +59,52 @@ void validate(Team<generation> const & team, EffectIndex const effect_index, Tea
 	CHECK(expected == calculated);
 }
 
-TEST_CASE("Side effects", "[side effects]") {
-	auto user = Team<generation>(1_bi);
-	add_pokemon(user, Species::Lugia);
+auto test_phaze(Team<generation> user, Team<generation> team) {
 	auto weather = Weather();
-	for (auto const foe_size : containers::integer_range(2_bi, max_pokemon_per_team)) {
-		auto team = Team<generation>(foe_size);
-		for (auto const species : containers::integer_range(foe_size)) {
-			add_pokemon(team, static_cast<Species>(species));
-		}
-		for (auto const current_index : containers::integer_range(foe_size)) {
+	for (auto const current_index : containers::integer_range(team.size())) {
+		team.all_pokemon().set_index(current_index);
+		auto const side_effects = possible_side_effects(Moves::Whirlwind, user.pokemon().as_const(), team, weather);
+		auto const expected_size = bounded::increase_min<0>(team.size() - 1_bi);
+		CHECK(containers::size(side_effects) == expected_size);
+		for (auto const effect_index : containers::integer_range(expected_size)) {
+			auto const & side_effect = side_effects[effect_index];
+			CHECK(side_effect.probability == 1.0 / double(team.size() - 1_bi));
 			team.all_pokemon().set_index(current_index);
-			auto const side_effects = possible_side_effects(Moves::Whirlwind, user.pokemon().as_const(), team, weather);
-			auto const expected_size = foe_size - 1_bi;
-			CHECK(containers::size(side_effects) == expected_size);
-			for (auto const effect_index : containers::integer_range(expected_size)) {
-				auto const & side_effect = side_effects[effect_index];
-				CHECK(side_effect.probability == 1.0 / double(foe_size - 1_bi));
-				team.all_pokemon().set_index(current_index);
-				side_effect.function(user, team, weather, 0_bi);
-				validate(team, EffectIndex(effect_index), current_index);
-			}
+			side_effect.function(user, team, weather, 0_bi);
+			validate(team, EffectIndex(effect_index), current_index);
 		}
 	}
+}
+
+TEST_CASE("Phaze 2 Pokemon", "[side effects]") {
+	test_phaze(
+		make_team(Species::Lugia),
+		make_team(Species::Bulbasaur, Species::Ivysaur)
+	);
+}
+TEST_CASE("Phaze 3 Pokemon", "[side effects]") {
+	test_phaze(
+		make_team(Species::Lugia),
+		make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur)
+	);
+}
+TEST_CASE("Phaze 4 Pokemon", "[side effects]") {
+	test_phaze(
+		make_team(Species::Lugia),
+		make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur, Species::Charmander)
+	);
+}
+TEST_CASE("Phaze 5 Pokemon", "[side effects]") {
+	test_phaze(
+		make_team(Species::Lugia),
+		make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur, Species::Charmander, Species::Charmeleon)
+	);
+}
+TEST_CASE("Phaze 6 Pokemon", "[side effects]") {
+	test_phaze(
+		make_team(Species::Lugia),
+		make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur, Species::Charmander, Species::Charmeleon, Species::Charizard)
+	);
 }
 
 } // namespace
