@@ -600,7 +600,7 @@ private:
 	auto compute_damage(Party const user_party, Moves const move, HPAndStatus const damage) const -> HP::current_type {
 		auto const damaged_party = move == Moves::Hit_Self ? user_party : other(user_party);
 		auto const & pokemon = select_pokemon(get_team(damaged_party), move);
-		auto const new_hp = to_real_hp(is_ai(damaged_party), pokemon.hp(), damage.hp);
+		auto const new_hp = to_real_hp(is_ai(damaged_party), pokemon.hp().max(), damage.hp);
 		return hp_to_damage(pokemon, new_hp.value);
 	}
 

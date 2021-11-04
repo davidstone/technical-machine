@@ -22,6 +22,6 @@ struct AllowedHP {
 	HP::current_type max;
 };
 
-auto to_real_hp(bool is_ai, HP, VisibleHP) -> AllowedHP;
+auto to_real_hp(bool is_ai, HP::max_type, VisibleHP) -> AllowedHP;
 
 } // namespace technicalmachine

@@ -12,12 +12,11 @@
 
 namespace technicalmachine {
 
-auto to_real_hp(bool const is_ai, HP const actual_hp, VisibleHP const visible_hp) -> AllowedHP {
+auto to_real_hp(bool const is_ai, HP::max_type const max_hp, VisibleHP const visible_hp) -> AllowedHP {
 	if (visible_hp.current == 0_bi) {
 		return AllowedHP{0_bi, 0_bi, 0_bi};
 	}
 	constexpr auto max_visible_foe_hp = 100_bi;
-	auto const max_hp = actual_hp.max();
 	auto const expected_max_visible_hp = BOUNDED_CONDITIONAL(is_ai, max_hp, max_visible_foe_hp);
 	if (expected_max_visible_hp != visible_hp.max) {
 		throw std::runtime_error("Received an invalid max HP. Expected: " + bounded::to_string(expected_max_visible_hp) + " but got " + bounded::to_string(visible_hp.max));
