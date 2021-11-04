@@ -54,7 +54,7 @@ constexpr auto compress(containers::range auto const & range) {
 	using result_t = bounded::integer<0, bounded::normalize<max>>;
 	auto result = result_t(0_bi);
 	for (auto const & value : range) {
-		result = result_t(result.value() * base.value());
+		result = ::bounded::assume_in_range<result_t>(result.value() * base.value());
 		result += compress(value);
 	}
 	return result;

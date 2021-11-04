@@ -255,7 +255,7 @@ auto raw_damage(Team<generation> const & attacker_team, ExecutedMove<generation>
 		case Moves::Super_Fang:
 			return defender.hp().current() / 2_bi;
 		default:
-			return damage_type(regular_damage(
+			return bounded::assume_in_range<damage_type>(regular_damage(
 				attacker_team,
 				executed,
 				move_weakened_from_item,

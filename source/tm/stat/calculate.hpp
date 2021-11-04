@@ -361,10 +361,14 @@ auto calculate_common_offensive_stat(ActivePokemon<generation> const pokemon, Ty
 
 template<Generation generation>
 auto calculate_attack(ActivePokemon<generation> const attacker, Type const move_type, Ability const other_ability, Weather const weather, bool const critical_hit = false) {
-	// static_cast here because it looks as though the strongest attacker would
-	// hold a Light Ball, but because of the restriction on the attacker being
-	// Pikachu, it is better to use a Power Trick Shuckle with a Choice Band.
-	return static_cast<bounded::integer<1, 7368>>(calculate_common_offensive_stat<SplitSpecialRegularStat::atk>(attacker, move_type, other_ability, weather, critical_hit));
+	// Cast here because it looks as though the strongest attacker would hold a
+	// Light Ball, but because of the restriction on the attacker being Pikachu,
+	// it is better to use a Power Trick Shuckle with a Choice Band.
+	return bounded::assume_in_range(
+		calculate_common_offensive_stat<SplitSpecialRegularStat::atk>(attacker, move_type, other_ability, weather, critical_hit),
+		1_bi,
+		7368_bi
+	);
 }
 
 
@@ -372,7 +376,11 @@ template<Generation generation>
 auto calculate_special_attack(ActivePokemon<generation> const attacker, Type const move_type, Ability const other_ability, Weather const weather, bool const critical_hit = false) {
 	// see above comment about Light Ball, except the strongest Special Attack
 	// Pokemon is actually a Choice Specs Deoxys-Attack.
-	return static_cast<bounded::integer<1, 4536>>(calculate_common_offensive_stat<SplitSpecialRegularStat::spa>(attacker, move_type, other_ability, weather, critical_hit));
+	return bounded::assume_in_range(
+		calculate_common_offensive_stat<SplitSpecialRegularStat::spa>(attacker, move_type, other_ability, weather, critical_hit),
+		1_bi,
+		4536_bi
+	);
 }
 
 
@@ -395,10 +403,14 @@ auto calculate_defense(ActivePokemon<generation> const defender, Moves const mov
 		defense_ability_modifier(defender) *
 		item_modifier<stat>(defender, weather);
 	
-	// static_cast here because it looks as though the strongest defender would
-	// hold Metal Powder, but because of the restriction on the attacker being
-	// Ditto, it is better to use a Shuckle with no boosting item available.
-	return static_cast<bounded::integer<1, 3684>>(bounded::max(BOUNDED_CONDITIONAL(is_self_KO(move), defense / 2_bi, defense), 1_bi));
+	// Cast here because it looks as though the strongest defender would hold
+	// Metal Powder, but because of the restriction on the attacker being Ditto,
+	// it is better to use a Shuckle with no boosting item available.
+	return bounded::assume_in_range(
+		bounded::max(BOUNDED_CONDITIONAL(is_self_KO(move), defense / 2_bi, defense), 1_bi),
+		1_bi,
+		3684_bi
+	);
 }
 
 
@@ -418,13 +430,17 @@ auto calculate_special_defense(ActivePokemon<generation> const defender, Ability
 		item_modifier<stat>(defender, weather) *
 		special_defense_sandstorm_boost(defender, attacker_ability, weather);
 	
-	// static_cast here because it looks as though the strongest defender would
-	// hold Deep Sea Scale, but because of the restriction on the defender being
+	// Cast here because it looks as though the strongest defender would hold
+	// Deep Sea Scale, but because of the restriction on the defender being
 	// Clamperl, it is better to use a Shuckle with no boosting item available.
 	// This also gives more Special Defense than Latias with Soul Dew. It also
 	// looks like the best ability would be Flower Gift in the Sun, but this is
 	// just as good as Sandstorm's Special Defense boost.
-	return static_cast<bounded::integer<1, 3684>>(bounded::max(defense, 1_bi));
+	return bounded::assume_in_range(
+		bounded::max(defense, 1_bi),
+		1_bi,
+		3684_bi
+	);
 }
 
 
@@ -442,10 +458,14 @@ auto calculate_speed(Team<generation> const & team, Ability const other_ability,
 		paralysis_divisor *
 		tailwind_multiplier;
 
-	// static_cast here because it looks as though the fastest Pokemon would
-	// hold Quick Powder, but because of the restriction on the Pokemon being
-	// Ditto, it is better to use a Deoxys-Speed with Choice Scarf.
-	return static_cast<bounded::integer<1, 12096>>(bounded::max(speed, 1_bi));
+	// Cast here because it looks as though the fastest Pokemon would hold Quick
+	// Powder, but because of the restriction on the Pokemon being Ditto, it is
+	// better to use a Deoxys-Speed with Choice Scarf.
+	return bounded::assume_in_range(
+		bounded::max(speed, 1_bi),
+		1_bi,
+		12096_bi
+	);
 }
 
 

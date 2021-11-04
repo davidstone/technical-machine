@@ -1977,7 +1977,7 @@ Moves id_to_move(MoveID const id) {
 MoveID move_to_id(Moves const move) {
 	auto const move_id = bounded::integer(move) - bounded::integer(Moves::Regular_Begin) + 1_bi;
 	BOUNDED_ASSERT(move_id > 0_bi);
-	return MoveID(move_id);
+	return ::bounded::assume_in_range<MoveID>(move_id);
 }
 
 } // namespace po

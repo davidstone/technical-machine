@@ -23,7 +23,7 @@ auto to_real_hp(bool const is_ai, HP const actual_hp, VisibleHP const visible_hp
 		throw std::runtime_error("Received an invalid max HP. Expected: " + bounded::to_string(expected_max_visible_hp) + " but got " + bounded::to_string(visible_hp.max));
 	}
 	auto compute_value = [=](auto const visible_current) {
-		return HP::current_type(bounded::max(1_bi, max_hp * visible_current / visible_hp.max));
+		return ::bounded::assume_in_range<HP::current_type>(bounded::max(1_bi, max_hp * visible_current / visible_hp.max));
 	};
 	if (is_ai) {
 		auto const value = compute_value(visible_hp.current);

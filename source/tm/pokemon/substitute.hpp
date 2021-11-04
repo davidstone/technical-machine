@@ -41,7 +41,7 @@ public:
 		BOUNDED_ASSERT(damage_done >= 0_bi);
 		auto const original_hp = m_hp;
 		m_hp = bounded::max(m_hp - damage_done, 0_bi);
-		return HP::current_type(original_hp - m_hp);
+		return bounded::assume_in_range<HP::current_type>(original_hp - m_hp);
 	}
 
 	constexpr auto hp() const -> hp_type {

@@ -60,7 +60,7 @@ private:
 		while (input != 0_bi) {
 			auto const temp = input % size;
 			input /= size;
-			output = Output(output.value() xor temp.value());
+			output = bounded::assume_in_range<Output>(output.value() xor temp.value());
 		}
 	}
 

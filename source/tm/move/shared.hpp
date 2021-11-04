@@ -54,12 +54,12 @@ public:
 		auto const move_name = 
 			(m_index == 0_bi) ? Moves::Pass :
 			(m_index == 1_bi) ? Moves::Struggle :
-			to_switch(static_cast<switch_index_type>(m_index) - number_of_weird_moves);
+			to_switch(::bounded::assume_in_range<switch_index_type>(m_index) - number_of_weird_moves);
 		return Move(generation, move_name);
 	}
 
 	friend constexpr auto operator+(SharedMovesIterator const lhs, difference_type const rhs) {
-		return SharedMovesIterator(static_cast<underlying_index_type>(lhs.m_index + rhs));
+		return SharedMovesIterator(::bounded::assume_in_range<underlying_index_type>(lhs.m_index + rhs));
 	}
 	friend constexpr auto operator-(SharedMovesIterator const lhs, SharedMovesIterator const rhs) {
 		return lhs.m_index - rhs.m_index;

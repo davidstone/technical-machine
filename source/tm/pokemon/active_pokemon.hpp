@@ -893,7 +893,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		auto const original_hp = this->hp().current();
 		auto const block_ko = original_hp <= damage and handle_ko(move, weather);
 		auto const applied_damage = block_ko ?
-			static_cast<HP::current_type>(original_hp - 1_bi) :
+			bounded::assume_in_range<HP::current_type>(original_hp - 1_bi) :
 			bounded::min(damage, original_hp);
 
 		indirect_damage(weather, applied_damage);

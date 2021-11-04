@@ -68,7 +68,7 @@ private:
 	using value_type = bounded::integer<-4096, 4096>;
 
 	auto hp(Pokemon<generation> const & pokemon) const {
-		return value_type(hp_ratio(pokemon) * m_hp);
+		return bounded::assume_in_range<value_type>(hp_ratio(pokemon) * m_hp);
 	}
 
 	auto hidden(Pokemon<generation> const & pokemon) const {

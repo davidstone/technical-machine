@@ -32,7 +32,7 @@ auto to_switch(TeamIndex const replacement) -> Moves {
 
 auto to_replacement(Moves const move) -> TeamIndex {
 	BOUNDED_ASSERT(is_switch(move));
-	return static_cast<TeamIndex>(bounded::integer(move) - bounded::constant<static_cast<int>(Moves::Switch0)>);
+	return bounded::assume_in_range<TeamIndex>(bounded::integer(move) - bounded::constant<static_cast<int>(Moves::Switch0)>);
 }
 
 }	// namespace technicalmachine

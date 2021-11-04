@@ -320,7 +320,7 @@ constexpr auto possible_power_sums(HiddenPowerIVPower const power) -> PossiblePo
 
 	auto const max_possible_value = min_possible_value + 1_bi;
 	if (max_possible_value * scalar <= max_intermediate and max_possible_value <= bounded::constant<max_value>) {
-		containers::emplace_back(result, max_possible_value);
+		containers::push_back(result, bounded::assume_in_range<containers::range_value_t<PossiblePowerSums>>(max_possible_value));
 	}
 	return result;
 }

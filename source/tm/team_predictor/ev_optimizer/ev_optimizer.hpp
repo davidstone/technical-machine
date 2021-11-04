@@ -149,7 +149,7 @@ auto pad_random_evs(CombinedStats<generation> combined, bool const include_attac
 			});
 			auto const index = distribution(random_engine);
 			auto & ev = combined.evs[SplitSpecialPermanentStat(index - 1)];
-			ev = EV(EV::value_type(ev.value() + minimal_increment));
+			ev = EV(::bounded::assume_in_range<EV::value_type>(ev.value() + minimal_increment));
 		}
 	}
 	return combined;

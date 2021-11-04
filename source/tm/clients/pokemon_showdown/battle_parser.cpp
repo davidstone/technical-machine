@@ -68,7 +68,7 @@ auto get_move_index(Pokemon<generation> const & pokemon, Moves const move_name) 
 	if (it == containers::end(moves)) {
 		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Pokemon does not know "), to_string(move_name)));
 	}
-	return containers::index_type<RegularMoves>(it - containers::begin(moves));
+	return bounded::assume_in_range<containers::index_type<RegularMoves>>(it - containers::begin(moves));
 }
 
 constexpr auto parse_status(std::string_view const str) {
@@ -183,7 +183,7 @@ auto hp_to_damage(Pokemon<generation> const & pokemon, HP::current_type const ne
 		return HP::current_type(0_bi);
 		// throw std::runtime_error("Took negative damage");
 	}
-	return HP::current_type(old_hp - new_hp);
+	return bounded::assume_in_range<HP::current_type>(old_hp - new_hp);
 }
 
 template<Generation generation>
@@ -741,8 +741,8 @@ private:
 		auto distribution = std::uniform_int_distribution(0, static_cast<int>(max_moves_per_pokemon + max_pokemon_per_team - 1_bi));
 		auto const result = distribution(m_random_engine);
 
-		auto switch_move = [=]{ return static_cast<TeamIndex>(result - max_moves_per_pokemon); };
-		auto move_index = [=]{ return static_cast<containers::index_type<RegularMoves>>(result); };
+		auto switch_move = [=]{ return bounded::assume_in_range<TeamIndex>(result - max_moves_per_pokemon); };
+		auto move_index = [=]{ return bounded::assume_in_range<containers::index_type<RegularMoves>>(result); };
 		auto const is_switch = result >= max_moves_per_pokemon;
 		send_move_impl(is_switch, switch_move, move_index);
 	}

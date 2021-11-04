@@ -144,7 +144,7 @@ BOUNDED_COMMON_ARITHMETIC
 
 template<Generation generation>
 inline auto find_index(PokemonCollection<generation> const & collection, Species const species) {
-	return static_cast<TeamIndex>(containers::find_if(collection, [=](Pokemon<generation> const pokemon) { return pokemon.species() == species; }) - collection.begin());
+	return bounded::assume_in_range<TeamIndex>(containers::find_if(collection, [=](Pokemon<generation> const pokemon) { return pokemon.species() == species; }) - collection.begin());
 }
 
 template<Generation generation>

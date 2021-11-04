@@ -86,7 +86,9 @@ auto get_side_effect(auto const move, ActivePokemon<generation> const user, Team
 		auto const target_index = other.all_pokemon().index();
 		using PhazeIndex = bounded::integer<0, static_cast<int>(max_pokemon_per_team - 2_bi)>;
 		BOUNDED_ASSERT(move.phaze_index != target_index);
-		auto const effect_index = (*move.phaze_index < target_index) ? PhazeIndex(*move.phaze_index) : PhazeIndex(*move.phaze_index - 1_bi);
+		auto const effect_index = (*move.phaze_index < target_index) ?
+			bounded::assume_in_range<PhazeIndex>(*move.phaze_index) :
+			bounded::assume_in_range<PhazeIndex>(*move.phaze_index - 1_bi);
 		return side_effects[effect_index].function;
 	}
 

@@ -57,7 +57,7 @@ struct ActiveStatus {
 	friend auto compress(ActiveStatus const value) {
 		// TODO: std::bit_cast
 		auto const byte = reinterpret_cast<std::byte const &>(value);
-		return compress(bounded::integer<0, 15>(static_cast<std::uint8_t>(byte)));
+		return compress(bounded::assume_in_range(static_cast<std::uint8_t>(byte), 0_bi, 15_bi));
 	}
 private:
 	template<Generation generation>

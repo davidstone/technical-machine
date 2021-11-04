@@ -21,10 +21,10 @@ namespace {
 void validate_indexes(ps::SlotMemory const & slot_memory, std::initializer_list<ps::SlotMemory::Index> test) {
 	auto integer = bounded::integer<0, static_cast<int>(numeric_traits::max_value<TeamIndex> + 1_bi)>(0_bi);
 	for (auto const & expected : test) {
-		REQUIRE(slot_memory[TeamIndex(integer)] == expected);
+		REQUIRE(slot_memory[::bounded::assume_in_range<TeamIndex>(integer)] == expected);
 		++integer;
 	}
-	REQUIRE_THROWS(slot_memory[TeamIndex(integer)]);
+	REQUIRE_THROWS(slot_memory[::bounded::assume_in_range<TeamIndex>(integer)]);
 }
 
 template<typename T>
@@ -70,10 +70,10 @@ TEST_CASE("Pokemon Showdown Slot Memory Fuzz", "[Pokemon Showdown]") {
 	auto random_engine = std::mt19937(std::random_device{}());
 	auto action_distribution = std::uniform_int_distribution<int>(0, 3);
 	auto random_size = [&, distribution = make_distribution<TeamSize>()]() mutable {
-		return TeamSize(distribution(random_engine));
+		return ::bounded::assume_in_range<TeamSize>(distribution(random_engine));
 	};
 	auto random_index = [&, distribution = make_distribution<TeamIndex>()]() mutable {
-		return TeamIndex(distribution(random_engine));
+		return ::bounded::assume_in_range<TeamIndex>(distribution(random_engine));
 	};
 
 	auto slot_memory = ps::SlotMemory(6_bi);

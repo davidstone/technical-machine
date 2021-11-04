@@ -21,64 +21,64 @@ constexpr bool equal(T const lhs, T const rhs) {
 	return lhs == rhs;
 }
 
-static_assert(equal(compress(false), integer<0, 1>(0)));
-static_assert(equal(compress(true), integer<0, 1>(1)));
+static_assert(equal(compress(false), integer<0, 1>(0_bi)));
+static_assert(equal(compress(true), integer<0, 1>(1_bi)));
 
-static_assert(equal(compress_combine(false, false), integer<0, 3>(0)));
-static_assert(equal(compress_combine(false, true), integer<0, 3>(1)));
-static_assert(equal(compress_combine(true, false), integer<0, 3>(2)));
-static_assert(equal(compress_combine(true, true), integer<0, 3>(3)));
+static_assert(equal(compress_combine(false, false), integer<0, 3>(0_bi)));
+static_assert(equal(compress_combine(false, true), integer<0, 3>(1_bi)));
+static_assert(equal(compress_combine(true, false), integer<0, 3>(2_bi)));
+static_assert(equal(compress_combine(true, true), integer<0, 3>(3_bi)));
 
-static_assert(equal(compress_combine(integer<0, 9>(4), integer<0, 9>(6)), integer<0, 99>(46)));
+static_assert(equal(compress_combine(integer<0, 9>(4_bi), integer<0, 9>(6_bi)), integer<0, 99>(46_bi)));
 
 static_assert(equal(
 	compress_combine(
-		integer<0, 9>(1),
-		integer<0, 99>(29)
+		integer<0, 9>(1_bi),
+		integer<0, 99>(29_bi)
 	),
-	integer<0, 999>(129)
+	integer<0, 999>(129_bi)
 ));
 
 static_assert(equal(
 	compress_combine(
-		integer<0, 4>(1),
-		integer<0, 1>(1)
+		integer<0, 4>(1_bi),
+		integer<0, 1>(1_bi)
 	),
-	integer<0, 9>(3)
+	integer<0, 9>(3_bi)
 ));
 
 static_assert(equal(
 	compress_combine(
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255)
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi)
 	),
 	integer(numeric_traits::max_value<std::uint64_t>)
 ));
 
 static_assert(equal(
 	compress_combine(
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255),
-		integer<0, 255>(255)
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi),
+		integer<0, 255>(255_bi)
 	),
 	integer(numeric_traits::max_value<uint128_t>)
 ));
@@ -101,7 +101,7 @@ namespace {
 
 static_assert(equal(
 	compress(Foo::a),
-	integer<0, 999>(0)
+	integer<0, 999>(0_bi)
 ));
 
 static_assert(equal(
@@ -116,12 +116,12 @@ static_assert(equal(
 		Foo::a,
 		Foo::a
 	),
-	integer<0, int128_t(1'000'000'000) * int128_t(1'000'000'000) * int128_t(1'000'000'000) - int128_t(1)>(0)
+	integer<0, int128_t(1'000'000'000) * int128_t(1'000'000'000) * int128_t(1'000'000'000) - int128_t(1)>(0_bi)
 ));
 
 static_assert(equal(
-	compress(containers::array{integer<0, 9>(9), integer<0, 9>(9), integer<0, 9>(9)}),
-	integer<0, 999>(999)
+	compress(containers::array{integer<0, 9>(9_bi), integer<0, 9>(9_bi), integer<0, 9>(9_bi)}),
+	integer<0, 999>(999_bi)
 ));
 
 } // namespace
