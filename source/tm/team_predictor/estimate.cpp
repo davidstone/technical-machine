@@ -26,7 +26,7 @@ Estimate::Estimate(UsageStats const & usage_stats, LeadStats const lead_stats) {
 	auto const & lead = lead_stats.get(usage_stats);
 	auto const total = usage_stats.total_weighted_usage();
 	for (auto const species : containers::enum_range<Species>()) {
-		m_estimate[bounded::integer(species)] = lead[bounded::integer(species)] * usage_stats.get(species).weighted_usage / static_cast<value_type>(total);
+		m_estimate[bounded::integer(species)] = lead[bounded::integer(species)] * usage_stats.get(species).weighted_usage / static_cast<float>(total);
 	}
 }
 

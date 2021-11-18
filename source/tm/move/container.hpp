@@ -32,8 +32,6 @@ private:
 	template<typename Range>
 	using Transformed = decltype(move_container_transform(std::declval<Range>()));
 public:
-	using value_type = Move;
-	
 	MoveContainer(RegularMoves const & regular, TeamSize const my_team_size):
 		m_regular(regular),
 		m_shared(my_team_size)

@@ -19,8 +19,6 @@
 namespace technicalmachine {
 
 struct RegularMoves {
-	using value_type = Move;
-
 	RegularMoves() = default;
 	explicit RegularMoves(auto const moves) {
 		for (auto const move : moves) {

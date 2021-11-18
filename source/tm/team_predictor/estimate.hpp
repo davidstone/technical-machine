@@ -23,8 +23,7 @@ struct Estimate {
 	Species most_likely() const;
 	Species random(std::mt19937 & random_engine) const;
 private:
-	using value_type = float;
-	containers::array<value_type, number_of_species> m_estimate;
+	containers::array<float, number_of_species> m_estimate;
 };
 
 }	// namespace technicalmachine

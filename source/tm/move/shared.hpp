@@ -34,7 +34,7 @@ private:
 		static_cast<int>(numeric_traits::max_value<SharedMoveSize>)
 	>;
 public:
-	using value_type = Move const;
+	using value_type = Move;
 	using difference_type = std::common_type_t<decltype(-std::declval<SharedMoveSize>()), SharedMoveSize>;
 	using pointer = value_type *;
 	using reference = value_type;
