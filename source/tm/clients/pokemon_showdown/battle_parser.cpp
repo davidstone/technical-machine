@@ -23,6 +23,7 @@
 #include <tm/string_conversions/status.hpp>
 #include <tm/string_conversions/team.hpp>
 
+#include <tm/ability_blocks_move.hpp>
 #include <tm/battle.hpp>
 #include <tm/generation_generic.hpp>
 #include <tm/visible_hp.hpp>
@@ -651,14 +652,31 @@ private:
 			return;
 		}
 		auto const data = *maybe_data;
-		
-		if (causes_recoil(data.move.executed) and !data.recoil) {
+
+		auto const user_pokemon = get_team(data.party).pokemon();
+		auto const other_pokemon = get_team(other(data.party)).pokemon();
+
+		auto const known_move = [&] {
+			return KnownMove{
+				data.move.executed,
+				get_type(generation, data.move.executed, get_hidden_power_type(user_pokemon))
+			};
+		};
+		auto const ability_blocks_recoil =
+			causes_recoil(data.move.executed) and
+			!data.recoil and
+			!ability_blocks_move(
+				generation,
+				other_pokemon.ability(),
+				known_move(),
+				other_pokemon.status().name(),
+				other_pokemon.types()
+			);
+		if (ability_blocks_recoil) {
 			// TODO: This could also be Magic Guard
 			m_battle.set_value_on_active(is_ai(data.party), Ability::Rock_Head);
 		}
 		
-		auto const other_pokemon = get_team(other(data.party)).pokemon();
-
 		struct LocalDamage {
 			ActualDamage value;
 			bool did_any_damage;

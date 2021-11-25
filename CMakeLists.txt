@@ -190,6 +190,7 @@ add_library(tm_common STATIC
 	source/tm/type/type.cpp
 
 	source/tm/ability.cpp
+	source/tm/ability_blocks_move.cpp
 	source/tm/apply_entry_hazards.cpp
 	source/tm/battle.cpp
 	source/tm/bit_view.cpp

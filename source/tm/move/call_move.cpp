@@ -12,6 +12,7 @@
 #include <tm/move/target.hpp>
 
 #include <tm/ability.hpp>
+#include <tm/ability_blocks_move.hpp>
 #include <tm/block.hpp>
 #include <tm/end_of_turn.hpp>
 #include <tm/heal.hpp>
@@ -331,84 +332,24 @@ constexpr auto fails_against_fainted(Target const target) {
 	}
 }
 
-auto absorb_ability_activates(Generation const generation, KnownMove const move, Type const absorbed_type) -> bool {
-	if (!move_targets_foe(generation, move.name)) {
-		return false;
-	}
-	if (move.type != absorbed_type) {
-		return false;
-	}
-	return true;
-}
-
 template<Generation generation>
-auto flash_fire_activates(KnownMove const move, ActivePokemon<generation> const target) -> bool {
-	if (generation <= Generation::four and target.status().name() == Statuses::freeze) {
-		return false;
-	}
-	return
-		absorb_ability_activates(generation, move, Type::Fire) and
-		(generation >= Generation::four or move.name != Moves::Will_O_Wisp);
-}
-
-auto volt_absorb_activates(Generation const generation, KnownMove const move) -> bool {
-	return
-		absorb_ability_activates(generation, move, Type::Electric) and
-		(generation >= Generation::four or move.name != Moves::Thunder_Wave);
-}
-
-auto water_absorb_activates(Generation const generation, KnownMove const move) -> bool {
-	return absorb_ability_activates(generation, move, Type::Water);
-}
-
-template<Generation generation>
-auto handle_ability_blocks_move(KnownMove const move, MutableActivePokemon<generation> const target, Weather const weather) {
+auto handle_ability_blocks_move(MutableActivePokemon<generation> const target, Weather const weather) {
 	switch (target.ability()) {
 		case Ability::Flash_Fire:
-			if (!flash_fire_activates(move, target.as_const())) {
-				return false;
-			}
 			target.activate_flash_fire();
-			return true;
+			break;
 		case Ability::Volt_Absorb:
-			if (!volt_absorb_activates(generation, move)) {
-				return false;
-			}
 			heal(target, weather, rational(1_bi, 4_bi));
-			return true;
+			break;
 		case Ability::Water_Absorb:
 		case Ability::Dry_Skin:
-			if (!water_absorb_activates(generation, move)) {
-				return false;
-			}
 			heal(target, weather, rational(1_bi, 4_bi));
-			return true;
-		case Ability::Wonder_Guard:
-			if (!is_damaging(move.name)) {
-				return false;
-			}
-			if (Effectiveness(generation, move.type, target.types()).is_super_effective()) {
-				return false;
-			}
-			switch (move.name) {
-				case Moves::Beat_Up:
-					return generation >= Generation::five;
-				case Moves::Fire_Fang:
-					return generation != Generation::four;
-				case Moves::Hit_Self:
-				case Moves::Struggle:
-					return false;
-				default:
-					return true;
-			}
+			break;
 		case Ability::Motor_Drive:
-			if (!absorb_ability_activates(generation, move, Type::Electric)) {
-				return false;
-			}
 			target.stages()[BoostableStat::spe] += 1_bi;
-			return true;
+			break;
 		default:
-			return false;
+			break;
 	}
 }
 
@@ -477,7 +418,9 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 		move.executed,
 		get_type(generation, move.executed, get_hidden_power_type(user_pokemon))
 	};
-	if (!handle_ability_blocks_move(known_move, other_pokemon, weather)) {
+	if (ability_blocks_move(generation, other_pokemon.ability(), known_move, other_pokemon.status().name(), other_pokemon.types())) {
+		handle_ability_blocks_move(other_pokemon, weather);
+	} else {
 		auto const executed_move = ExecutedMove<generation>{
 			known_move,
 			found_move.pp(),
