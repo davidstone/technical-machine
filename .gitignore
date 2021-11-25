@@ -5,3 +5,4 @@ teams/foe
 test/temp-battles/
 battles/*
 compile_commands.json
+CMakeUserPresets.json
