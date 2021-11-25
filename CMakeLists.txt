@@ -291,6 +291,7 @@ add_executable(tm_test
 	source/tm/test/critical_hit.cpp
 	source/tm/test/ev_optimizer.cpp
 	source/tm/test/files_in_path.cpp
+	source/tm/test/get_directory.cpp
 	source/tm/test/sleep.cpp
 	source/tm/test/stat.cpp
 	source/tm/test/status.cpp

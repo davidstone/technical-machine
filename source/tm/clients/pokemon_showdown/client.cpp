@@ -14,6 +14,7 @@
 #include <tm/team_predictor/lead_stats.hpp>
 
 #include <tm/constant_generation.hpp>
+#include <tm/get_directory.hpp>
 #include <tm/settings_file.hpp>
 #include <tm/team.hpp>
 
@@ -68,7 +69,7 @@ constexpr auto parse_generation(std::string_view const id) -> Generation {
 ClientImpl::ClientImpl(SettingsFile settings, DepthValues const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
 	m_random_engine(m_rd()),
 	m_settings(std::move(settings)),
-	m_trusted_users(load_lines_from_file("settings/trusted_users.txt")),
+	m_trusted_users(load_lines_from_file(get_settings_directory() / "trusted_users.txt")),
 	m_depth(depth),
 	m_battles("battles", true),
 	m_send_message(std::move(send_message)),

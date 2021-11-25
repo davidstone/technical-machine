@@ -6,6 +6,8 @@
 #include <tm/clients/pokemon_online/read_team_file.hpp>
 #include <tm/clients/pokemon_online/write_team_file.hpp>
 
+#include <tm/get_directory.hpp>
+
 #include <filesystem>
 
 #include <catch2/catch_test_macros.hpp>
@@ -14,7 +16,7 @@ namespace technicalmachine {
 namespace {
 
 TEST_CASE("Pokemon Online team file", "[Pokemon Online]") {
-	auto const directory = std::filesystem::path("test/teams");
+	auto const directory = get_test_directory() / "teams";
 	auto const new_file = directory / "test2.tp";
 	auto const original_team = po::read_team_file(directory / "test1.tp");
 	bounded::visit(original_team, [&](auto const & team) {

@@ -6,6 +6,8 @@
 #include <tm/clients/pokemon_lab/read_team_file.hpp>
 #include <tm/clients/pokemon_lab/write_team_file.hpp>
 
+#include <tm/get_directory.hpp>
+
 #include <filesystem>
 
 #include <catch2/catch_test_macros.hpp>
@@ -14,7 +16,7 @@ namespace technicalmachine {
 namespace {
 
 TEST_CASE("Pokemon Lab team file", "[Pokemon Lab]") {
-	auto const directory = std::filesystem::path("test/teams");
+	auto const directory = get_test_directory() / "teams";
 	auto const new_file = directory / "test2.sbt";
 	auto const original_team = pl::read_team_file(directory / "test1.sbt");
 	bounded::visit(original_team, [&](auto const & team) {

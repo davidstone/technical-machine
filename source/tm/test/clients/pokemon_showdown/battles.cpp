@@ -4,7 +4,10 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <tm/clients/pokemon_showdown/battles.hpp>
+
 #include <tm/team_predictor/usage_stats.hpp>
+
+#include <tm/get_directory.hpp>
 
 #include <bounded/integer.hpp>
 
@@ -33,7 +36,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 	auto const all_usage_stats = std::make_unique<AllUsageStats>();
 	constexpr auto depth = DepthValues{1U, 0U};
 
-	auto const battle_output_directory = std::filesystem::path("test/temp-battles");
+	auto const battle_output_directory = get_test_directory() / "temp-battles";
 	auto const remove_temporary_files = [&]{ std::filesystem::remove_all(battle_output_directory); };
 	remove_temporary_files();
 	constexpr auto log_foe_teams = false;
@@ -47,7 +50,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 			);
 		};
 
-		for (auto const & generation : paths_in_directory("test/battles")) {
+		for (auto const & generation : paths_in_directory(get_test_directory() / "battles")) {
 			for (auto const & path : paths_in_directory(generation)) {
 				auto const data = load_lines_from_file(path.path() / "server_messages.txt");
 				auto messages = DelimitedBufferView(std::string_view(data), '\n');

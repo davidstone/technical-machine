@@ -11,6 +11,7 @@
 #include <tm/type/effectiveness.hpp>
 
 #include <tm/exists_if.hpp>
+#include <tm/get_directory.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
@@ -35,7 +36,7 @@ using namespace bounded::literal;
 template<Generation generation>
 struct Evaluate {
 	Evaluate() {
-		auto file = std::ifstream("settings/evaluate.json");
+		auto file = std::ifstream(get_settings_directory() / "evaluate.json");
 		auto json = nlohmann::json();
 		file >> json;
 

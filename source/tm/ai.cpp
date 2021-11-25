@@ -5,11 +5,17 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <tm/clients/pokemon_showdown/client.hpp>
+
 #include <tm/evaluate/depth.hpp>
+
 #include <tm/move/max_moves_per_pokemon.hpp>
+
 #include <tm/pokemon/max_pokemon_per_team.hpp>
-#include <tm/generation.hpp>
+
 #include <tm/string_conversions/generation.hpp>
+
+#include <tm/generation.hpp>
+#include <tm/get_directory.hpp>
 
 #include <boost/lexical_cast.hpp>
 
@@ -52,7 +58,7 @@ int main(int argc, char * * argv) {
 	auto const single_depth = (argc <= 2) ? 0U : boost::lexical_cast<unsigned>(argv[2]);
 	auto const depth = technicalmachine::DepthValues{general_depth, single_depth};
 
-	auto const settings = technicalmachine::load_settings_file("settings/settings.json");
+	auto const settings = technicalmachine::load_settings_file(technicalmachine::get_settings_directory() / "settings.json");
 
 	while (true) {
 		try {
