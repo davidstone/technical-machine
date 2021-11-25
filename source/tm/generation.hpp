@@ -7,6 +7,7 @@
 
 #include <bounded/integer.hpp>
 
+#include <numeric_traits/incomplete.hpp>
 #include <numeric_traits/min_max_value.hpp>
 
 #include <cstdint>
@@ -23,6 +24,15 @@ enum class Generation : std::uint8_t {
 	seven = 7,
 	eight = 8,
 };
+
+template<typename T>
+extern numeric_traits::incomplete generation_from;
+
+template<typename T>
+inline constexpr auto generation_from<T const> = generation_from<T>;
+
+template<template<Generation> typename T, Generation generation>
+inline constexpr auto generation_from<T<generation>> = generation;
 
 } // namespace technicalmachine
 
