@@ -23,9 +23,9 @@ namespace technicalmachine {
 template<Generation>
 struct Team;
 
-template<Generation generation>
+template<typename UserTeam>
 struct SideEffect {
-	using Function = containers::trivial_inplace_function<void(Team<generation> & user, Team<generation> & other, Weather &, HP::current_type) const, 0>;
+	using Function = containers::trivial_inplace_function<void(UserTeam & user, UserTeam & other, Weather &, HP::current_type) const, 0>;
 	double probability;
 	Function function;
 };
@@ -58,14 +58,14 @@ auto apply_status(Statuses const status, MutableActivePokemon<generation> const 
 	}
 }
 
-template<Generation generation>
-using SideEffects = containers::static_vector<SideEffect<generation>, 15>;
+template<typename UserTeam>
+using SideEffects = containers::static_vector<SideEffect<UserTeam>, 15>;
 
 template<Generation generation>
-auto possible_side_effects(Moves, ActivePokemon<generation> user, Team<generation> const & other, Weather) -> SideEffects<generation>;
+auto possible_side_effects(Moves, ActivePokemon<generation> user, Team<generation> const & other, Weather) -> SideEffects<Team<generation>>;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto possible_side_effects<generation>(Moves, ActivePokemon<generation>, Team<generation> const &, Weather) -> SideEffects<generation>
+	extern template auto possible_side_effects<generation>(Moves, ActivePokemon<generation>, Team<generation> const &, Weather) -> SideEffects<Team<generation>>
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

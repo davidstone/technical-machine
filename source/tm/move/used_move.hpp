@@ -20,7 +20,7 @@ struct UsedMove {
 		Moves const executed_,
 		bool const critical_hit_,
 		bool const miss_,
-		typename SideEffect<generation>::Function const side_effect_
+		typename SideEffect<Team<generation>>::Function const side_effect_
 	):
 		side_effect(side_effect_),
 		selected(selected_),
@@ -30,7 +30,7 @@ struct UsedMove {
 	{
 	}
 
-	constexpr UsedMove(Moves const selected_, typename SideEffect<generation>::Function const side_effect_):
+	constexpr UsedMove(Moves const selected_, typename SideEffect<Team<generation>>::Function const side_effect_):
 		side_effect(side_effect_),
 		selected(selected_),
 		executed(selected),
@@ -39,7 +39,7 @@ struct UsedMove {
 	{
 	}
 
-	typename SideEffect<generation>::Function side_effect;
+	typename SideEffect<Team<generation>>::Function side_effect;
 	Moves selected;
 	Moves executed;
 	bool critical_hit;

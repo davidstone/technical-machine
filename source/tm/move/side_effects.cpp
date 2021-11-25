@@ -10,6 +10,7 @@
 #include <tm/move/is_switch.hpp>
 #include <tm/move/will_be_recharge_turn.hpp>
 
+#include <tm/any_team.hpp>
 #include <tm/team.hpp>
 
 #include <bounded/assert.hpp>
@@ -31,31 +32,31 @@ using namespace bounded::literal;
 
 namespace {
 
-template<Generation generation>
+template<any_team UserTeam>
 constexpr auto guaranteed_effect(auto function) {
-	return SideEffects<generation>({
-		SideEffect<generation>{
+	return SideEffects<UserTeam>({
+		SideEffect<UserTeam>{
 			1.0,
 			function
 		}
 	});
 }
 
-template<Generation generation>
-constexpr auto no_effect = guaranteed_effect<generation>(no_effect_function);
+template<any_team UserTeam>
+constexpr auto no_effect = guaranteed_effect<UserTeam>(no_effect_function);
 
-template<Generation generation>
+template<any_team UserTeam>
 constexpr auto basic_probability(double const probability, auto function) {
 	return probability == 1.0 ?
-		guaranteed_effect<generation>(function) :
-		SideEffects<generation>({
-			SideEffect<generation>{1.0 - probability, no_effect_function},
-			SideEffect<generation>{probability, function},
+		guaranteed_effect<UserTeam>(function) :
+		SideEffects<UserTeam>({
+			SideEffect<UserTeam>{1.0 - probability, no_effect_function},
+			SideEffect<UserTeam>{probability, function},
 		});
 }
 
-template<Generation generation>
-constexpr auto absorb_effect = guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto const damage) {
+template<any_team UserTeam>
+constexpr auto absorb_effect = guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto const damage) {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	auto const absorbed = bounded::max(damage / 2_bi * healing_multiplier(user_pokemon.item(weather)), 1_bi);
@@ -76,8 +77,7 @@ struct RecoilEffect {
 	{
 	}
 
-	template<Generation generation>
-	constexpr auto operator()(Team<generation> & user, Team<generation> &, Weather & weather, auto const damage) const {
+	constexpr auto operator()(any_team auto & user, any_team auto &, Weather & weather, auto const damage) const {
 		auto const user_pokemon = user.pokemon();
 		if (!blocks_recoil(user_pokemon.ability())) {
 			change_hp(user_pokemon, weather, -bounded::max(damage / m_denominator, 1_bi));
@@ -91,8 +91,8 @@ private:
 template<Generation generation>
 constexpr auto confusion_effect(double const probability, ActivePokemon<generation> const original_target, auto const... maybe_immune_type) {
 	return (... or is_type(original_target, maybe_immune_type)) ?
-		no_effect<generation> :
-		basic_probability<generation>(probability, [](auto &, auto & target, auto & weather, auto) {
+		no_effect<Team<generation>> :
+		basic_probability<Team<generation>>(probability, [](auto &, auto & target, auto & weather, auto) {
 			target.pokemon().confuse(weather);
 		});
 }
@@ -127,8 +127,7 @@ constexpr auto status_is_clausable(Statuses const status) {
 }
 
 
-template<Generation generation>
-constexpr auto status_can_apply_ignoring_current_status(Statuses const status, ActivePokemon<generation> const user, Team<generation> const & target, Weather const weather, auto const... immune_types) {
+constexpr auto status_can_apply_ignoring_current_status(Statuses const status, auto const user, auto const & target, Weather const weather, auto const... immune_types) {
 	auto const target_pokemon = target.pokemon();
 	return
 		!blocks_status(target_pokemon.ability(), user.ability(), status, weather) and
@@ -146,7 +145,7 @@ constexpr auto status_can_apply(Statuses const status, ActivePokemon<generation>
 
 
 template<Statuses status>
-constexpr auto set_status_function = []<Generation generation>(Team<generation> & user, Team<generation> & target, auto & weather, auto) {
+constexpr auto set_status_function = [](any_team auto & user, any_team auto & target, auto & weather, auto) {
 	apply_status(status, user.pokemon(), target.pokemon(), weather);
 };
 
@@ -157,8 +156,8 @@ constexpr auto clear_status_function = []<Generation generation>(Team<generation
 template<Statuses status, Generation generation>
 constexpr auto status_effect(double const probability, ActivePokemon<generation> const original_user, Team<generation> const & original_target, Weather const original_weather, auto const... immune_types) {
 	return status_can_apply(status, original_user, original_target, original_weather, immune_types...) ?
-		basic_probability<generation>(probability, set_status_function<status>) :
-		no_effect<generation>;
+		basic_probability<Team<generation>>(probability, set_status_function<status>) :
+		no_effect<Team<generation>>;
 }
 
 
@@ -171,19 +170,19 @@ constexpr auto thaw_and_burn_effect(double const probability, ActivePokemon<gene
 		status_can_apply_ignoring_current_status(Statuses::burn, original_user, original_target, original_weather, Type::Fire);
 
 	return
-		can_burn and probability == 1.0 ? guaranteed_effect<generation>(set_status_function<Statuses::burn>) :
-		can_burn and will_thaw ? SideEffects<generation>({
-			SideEffect<generation>{1.0 - probability, clear_status_function},
-			SideEffect<generation>{probability, set_status_function<Statuses::burn>},
+		can_burn and probability == 1.0 ? guaranteed_effect<Team<generation>>(set_status_function<Statuses::burn>) :
+		can_burn and will_thaw ? SideEffects<Team<generation>>({
+			SideEffect<Team<generation>>{1.0 - probability, clear_status_function},
+			SideEffect<Team<generation>>{probability, set_status_function<Statuses::burn>},
 		}) :
-		can_burn ? basic_probability<generation>(probability, set_status_function<Statuses::burn>) :
-		will_thaw ? guaranteed_effect<generation>(clear_status_function) :
-		no_effect<generation>;
+		can_burn ? basic_probability<Team<generation>>(probability, set_status_function<Statuses::burn>) :
+		will_thaw ? guaranteed_effect<Team<generation>>(clear_status_function) :
+		no_effect<Team<generation>>;
 }
 
 
 template<Generation generation, BoostableStat stat, int stages>
-constexpr auto confusing_stat_boost = guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
+constexpr auto confusing_stat_boost = guaranteed_effect<Team<generation>>([](auto &, auto & other, auto & weather, auto) {
 	auto target = other.pokemon();
 	auto & stage = target.stages()[stat];
 	if (generation <= Generation::two and stage == numeric_traits::max_value<Stage::value_type>) {
@@ -200,13 +199,13 @@ constexpr auto fang_effects(ActivePokemon<generation> const original_user, Team<
 		flinch(user, target, weather, damage);
 	};
 	return status_can_apply(status, original_user, original_target, original_weather, immune_type) ?
-		SideEffects<generation>({
+		SideEffects<Team<generation>>({
 			{0.81, no_effect_function},
 			{0.09, set_status_function<status>},
 			{0.09, flinch},
 			{0.01, status_and_flinch_function}
 		}) :
-		basic_probability<generation>(0.1, flinch);
+		basic_probability<Team<generation>>(0.1, flinch);
 }
 
 template<Statuses status, Generation generation>
@@ -216,11 +215,11 @@ auto recoil_status(ActivePokemon<generation> const original_user, Team<generatio
 		RecoilEffect(3_bi)(user, target, weather, damage);
 	};
 	return status_can_apply(status, original_user, original_target, original_weather, immune_type) ?
-		SideEffects<generation>({
+		SideEffects<Team<generation>>({
 			{0.9, RecoilEffect(3_bi)},
 			{0.1, recoil_and_status}
 		}) :
-		guaranteed_effect<generation>(RecoilEffect(3_bi));
+		guaranteed_effect<Team<generation>>(RecoilEffect(3_bi));
 }
 
 template<Statuses const status>
@@ -234,25 +233,25 @@ template<Generation generation>
 constexpr auto tri_attack_effect(ActivePokemon<generation> const original_user, Team<generation> const & original_target, Weather const original_weather) {
 	// TODO: Foresight, Wonder Guard, Scrappy
 	if (is_type(original_target.pokemon(), Type::Ghost)) {
-		return no_effect<generation>;
+		return no_effect<Team<generation>>;
 	}
-	constexpr auto burn = SideEffect<generation>({1.0 / 15.0, set_status_function<Statuses::burn>});
-	constexpr auto freeze = SideEffect<generation>({1.0 / 15.0, set_status_function<Statuses::freeze>});
-	constexpr auto paralysis = SideEffect<generation>({1.0 / 15.0, set_status_function<Statuses::paralysis>});
+	constexpr auto burn = SideEffect<Team<generation>>({1.0 / 15.0, set_status_function<Statuses::burn>});
+	constexpr auto freeze = SideEffect<Team<generation>>({1.0 / 15.0, set_status_function<Statuses::freeze>});
+	constexpr auto paralysis = SideEffect<Team<generation>>({1.0 / 15.0, set_status_function<Statuses::paralysis>});
 
-	constexpr auto burn_freeze_paralysis_probabilities = SideEffects<generation>({{12.0 / 15.0, no_effect_function}, burn, freeze, paralysis});
-	constexpr auto burn_freeze_probabilities = SideEffects<generation>({{13.0 / 15.0, no_effect_function}, burn, freeze});
-	constexpr auto burn_paralysis_probabilities = SideEffects<generation>({{13.0 / 15.0, no_effect_function}, burn, paralysis});
-	constexpr auto freeze_paralysis_probabilities = SideEffects<generation>({{13.0 / 15.0, no_effect_function}, freeze, paralysis});
-	constexpr auto burn_probabilities = SideEffects<generation>({{14.0 / 15.0, no_effect_function}, burn});
-	constexpr auto freeze_probabilities = SideEffects<generation>({{14.0 / 15.0, no_effect_function}, freeze});
-	constexpr auto paralysis_probabilities = SideEffects<generation>({{14.0 / 15.0, no_effect_function}, paralysis});
+	constexpr auto burn_freeze_paralysis_probabilities = SideEffects<Team<generation>>({{12.0 / 15.0, no_effect_function}, burn, freeze, paralysis});
+	constexpr auto burn_freeze_probabilities = SideEffects<Team<generation>>({{13.0 / 15.0, no_effect_function}, burn, freeze});
+	constexpr auto burn_paralysis_probabilities = SideEffects<Team<generation>>({{13.0 / 15.0, no_effect_function}, burn, paralysis});
+	constexpr auto freeze_paralysis_probabilities = SideEffects<Team<generation>>({{13.0 / 15.0, no_effect_function}, freeze, paralysis});
+	constexpr auto burn_probabilities = SideEffects<Team<generation>>({{14.0 / 15.0, no_effect_function}, burn});
+	constexpr auto freeze_probabilities = SideEffects<Team<generation>>({{14.0 / 15.0, no_effect_function}, freeze});
+	constexpr auto paralysis_probabilities = SideEffects<Team<generation>>({{14.0 / 15.0, no_effect_function}, paralysis});
 
 	switch (generation) {
 		case Generation::one:
-			return no_effect<generation>;
+			return no_effect<Team<generation>>;
 		case Generation::two: {
-			constexpr auto thaw = SideEffect<generation>{4.0 / 15.0, [](auto &, auto & target, auto &, auto) {
+			constexpr auto thaw = SideEffect<Team<generation>>{4.0 / 15.0, [](auto &, auto & target, auto &, auto) {
 				target.pokemon().clear_status();
 			}};
 			auto const freeze_claused = team_has_status(original_target, Statuses::freeze);
@@ -262,9 +261,9 @@ constexpr auto tri_attack_effect(ActivePokemon<generation> const original_user, 
 						burn_paralysis_probabilities :
 						burn_freeze_paralysis_probabilities;
 				case Statuses::freeze:
-					return SideEffects<generation>({{10.0 / 15.0, no_effect_function}, thaw, burn});
+					return SideEffects<Team<generation>>({{10.0 / 15.0, no_effect_function}, thaw, burn});
 				default:
-					return no_effect<generation>;
+					return no_effect<Team<generation>>;
 			}
 		}
 		default: {
@@ -282,7 +281,7 @@ constexpr auto tri_attack_effect(ActivePokemon<generation> const original_user, 
 				can_burn ? burn_probabilities :
 				can_freeze ? freeze_probabilities :
 				can_paralyze ? paralysis_probabilities :
-				no_effect<generation>;
+				no_effect<Team<generation>>;
 		}
 	}
 }
@@ -342,13 +341,13 @@ struct sequence {};
 
 template<Generation generation>
 constexpr auto acupressure_effect(ActivePokemon<generation> const target) {
-	auto result = SideEffects<generation>();
+	auto result = SideEffects<Team<generation>>();
 	auto const stages = target.stages();
 	auto const probability = 1.0 / double(containers::count_if(stages, stat_can_boost));
 
 	auto add_stat = [&]<BoostableStat stat>(std::integral_constant<BoostableStat, stat>) {
 		if (stat_can_boost(stages[stat])) {
-			containers::push_back(result, SideEffect<generation>{probability, boost_user_stat<stat, 2>});
+			containers::push_back(result, SideEffect<Team<generation>>{probability, boost_user_stat<stat, 2>});
 		}
 	};
 	auto add_stats = [&]<BoostableStat... stats>(sequence<stats...>) {
@@ -379,7 +378,7 @@ constexpr auto phaze = [](Team<generation> & user, Team<generation> & target, We
 template<Generation generation>
 constexpr auto phaze_effect(Team<generation> const & target) {
 	if (!active_pokemon_can_be_phazed(target)) {
-		return no_effect<generation>;
+		return no_effect<Team<generation>>;
 	}
 	// TODO: Phazing activates Synchronize if Toxic Spikes cause status before
 	// generation 5
@@ -388,10 +387,10 @@ constexpr auto phaze_effect(Team<generation> const & target) {
 	};
 
 	auto const probability = 1.0 / double(target.size() - 1_bi);
-	auto result = SideEffects<generation>();
+	auto result = SideEffects<Team<generation>>();
 	auto add_one = [&](auto const index) {
 		if (is_not_active(index) and index < target.size()) {
-			containers::push_back(result, SideEffect<generation>{probability, phaze<generation, index.value()>});
+			containers::push_back(result, SideEffect<Team<generation>>{probability, phaze<generation, index.value()>});
 		}
 	};
 	auto add_all = [&]<std::size_t... indexes>(std::index_sequence<indexes...>) {
@@ -423,9 +422,9 @@ constexpr auto random_spite = []{
 	constexpr auto min_reduction = 2;
 	constexpr auto max_reduction = 5;
 	constexpr auto probability = 1.0 / double(max_reduction - min_reduction + 1);
-	auto result = SideEffects<generation>();
+	auto result = SideEffects<Team<generation>>();
 	auto add_one = [&](auto const index) {
-		containers::push_back(result, SideEffect<generation>{probability, spite<generation, index.value()>});
+		containers::push_back(result, SideEffect<Team<generation>>{probability, spite<generation, index.value()>});
 	};
 	auto add_all = [&]<int... indexes>(std::integer_sequence<int, indexes...>) {
 		(..., add_one(bounded::constant<indexes>));
@@ -435,7 +434,7 @@ constexpr auto random_spite = []{
 }();
 
 template<Generation generation, int index>
-constexpr auto switch_effect = guaranteed_effect<generation>([](Team<generation> & user, Team<generation> & other, Weather & weather, auto) {
+constexpr auto switch_effect = guaranteed_effect<Team<generation>>([](Team<generation> & user, Team<generation> & other, Weather & weather, auto) {
 	user.switch_pokemon(other.pokemon(), weather, bounded::constant<index>);
 });
 
@@ -445,10 +444,10 @@ constexpr auto charge_up_move(
 	ActivePokemon<generation> const original_user,
 	ActivePokemon<generation> const original_other,
 	Weather const original_weather,
-	SideEffects<generation> when_used
+	SideEffects<Team<generation>> when_used
 ) {
 	return will_be_recharge_turn(original_user, move_name, original_other.ability(), original_weather) ?
-		guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+		guaranteed_effect<Team<generation>>([](auto & user, auto &, auto &, auto) {
 			user.pokemon().use_charge_up_move();
 		}) :
 		std::move(when_used);
@@ -482,122 +481,123 @@ constexpr auto can_confuse_with_chatter(Species const pokemon) {
 } // namespace
 
 template<Generation generation>
-auto possible_side_effects(Moves const move, ActivePokemon<generation> const original_user, Team<generation> const & original_other, Weather const original_weather) -> SideEffects<generation> {
+auto possible_side_effects(Moves const move, ActivePokemon<generation> const original_user, Team<generation> const & original_other, Weather const original_weather) -> SideEffects<Team<generation>> {
+	using UserTeam = Team<generation>;
 	switch (move) {
 		case Moves::Absorb:
 		case Moves::Drain_Punch:
 		case Moves::Giga_Drain:
 		case Moves::Leech_Life:
 		case Moves::Mega_Drain:
-			return absorb_effect<generation>;
+			return absorb_effect<UserTeam>;
 		case Moves::Dream_Eater:
-			return is_sleeping(original_other.pokemon().status()) ? absorb_effect<generation> : no_effect<generation>;
+			return is_sleeping(original_other.pokemon().status()) ? absorb_effect<UserTeam> : no_effect<UserTeam>;
 		case Moves::Brave_Bird:
 		case Moves::Double_Edge:
 		case Moves::Wood_Hammer:
 			return generation <= Generation::two ?
-				guaranteed_effect<generation>(RecoilEffect(4_bi)) :
-				guaranteed_effect<generation>(RecoilEffect(3_bi));
+				guaranteed_effect<UserTeam>(RecoilEffect(4_bi)) :
+				guaranteed_effect<UserTeam>(RecoilEffect(3_bi));
 		case Moves::Head_Smash:
-			return guaranteed_effect<generation>(RecoilEffect(2_bi));
+			return guaranteed_effect<UserTeam>(RecoilEffect(2_bi));
 		case Moves::Submission:
 		case Moves::Take_Down:
-			return guaranteed_effect<generation>(RecoilEffect(4_bi));
+			return guaranteed_effect<UserTeam>(RecoilEffect(4_bi));
 
 		case Moves::Metal_Claw:
-			return basic_probability<generation>(0.1, boost_user_stat<BoostableStat::atk, 1>);
+			return basic_probability<UserTeam>(0.1, boost_user_stat<BoostableStat::atk, 1>);
 		case Moves::Meteor_Mash:
-			return basic_probability<generation>(0.2, boost_user_stat<BoostableStat::atk, 1>);
+			return basic_probability<UserTeam>(0.2, boost_user_stat<BoostableStat::atk, 1>);
 		case Moves::Howl:
 		case Moves::Meditate:
 		case Moves::Sharpen:
-			return guaranteed_effect<generation>(boost_user_stat<BoostableStat::atk, 1>);
+			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::atk, 1>);
 		case Moves::Swords_Dance:
-			return guaranteed_effect<generation>(boost_user_stat<BoostableStat::atk, 2>);
+			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::atk, 2>);
 		case Moves::Charm:
 		case Moves::Feather_Dance:
-			return guaranteed_effect<generation>(boost_target_stat<BoostableStat::atk, -2>);
+			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::atk, -2>);
 		case Moves::Aurora_Beam:
-			return basic_probability<generation>(generation == Generation::one ? 0.332 : 0.1, boost_target_stat<BoostableStat::atk, -1>);
+			return basic_probability<UserTeam>(generation == Generation::one ? 0.332 : 0.1, boost_target_stat<BoostableStat::atk, -1>);
 		case Moves::Growl:
-			return guaranteed_effect<generation>(boost_target_stat<BoostableStat::atk, -1>);
+			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::atk, -1>);
 
 		case Moves::Steel_Wing:
-			return basic_probability<generation>(0.1, boost_user_stat<BoostableStat::def, 1>);
+			return basic_probability<UserTeam>(0.1, boost_user_stat<BoostableStat::def, 1>);
 		case Moves::Harden:
 		case Moves::Withdraw:
-			return guaranteed_effect<generation>(boost_user_stat<BoostableStat::def, 1>);
+			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::def, 1>);
 		case Moves::Acid_Armor:
 		case Moves::Barrier:
 		case Moves::Iron_Defense:
-			return guaranteed_effect<generation>(boost_user_stat<BoostableStat::def, 2>);
+			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::def, 2>);
 		case Moves::Screech:
-			return guaranteed_effect<generation>(boost_target_stat<BoostableStat::def, -2>);
+			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::def, -2>);
 		case Moves::Iron_Tail:
-			return basic_probability<generation>(0.3, boost_target_stat<BoostableStat::def, -1>);
+			return basic_probability<UserTeam>(0.3, boost_target_stat<BoostableStat::def, -1>);
 		case Moves::Crunch: {
 			constexpr auto stat = generation <= Generation::three ? BoostableStat::spd : BoostableStat::def;
-			return basic_probability<generation>(0.2, boost_target_stat<stat, -1>);
+			return basic_probability<UserTeam>(0.2, boost_target_stat<stat, -1>);
 		}
 		case Moves::Crush_Claw:
 		case Moves::Razor_Shell:
 		case Moves::Rock_Smash:
-			return basic_probability<generation>(0.5, boost_target_stat<BoostableStat::def, -1>);
+			return basic_probability<UserTeam>(0.5, boost_target_stat<BoostableStat::def, -1>);
 		case Moves::Leer:
 		case Moves::Tail_Whip:
-			return guaranteed_effect<generation>(boost_target_stat<BoostableStat::def, -1>);
+			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::def, -1>);
 
 		case Moves::Draco_Meteor:
 		case Moves::Leaf_Storm:
 		case Moves::Overheat:
 		case Moves::Psycho_Boost:
-			return guaranteed_effect<generation>(boost_user_stat<BoostableStat::spa, -2>);
+			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::spa, -2>);
 		case Moves::Mist_Ball:
-			return basic_probability<generation>(0.5, boost_user_stat<BoostableStat::spa, 1>);
+			return basic_probability<UserTeam>(0.5, boost_user_stat<BoostableStat::spa, 1>);
 		case Moves::Charge_Beam:
-			return basic_probability<generation>(0.7, boost_user_stat<BoostableStat::spa, 1>);
+			return basic_probability<UserTeam>(0.7, boost_user_stat<BoostableStat::spa, 1>);
 		case Moves::Nasty_Plot:
 		case Moves::Tail_Glow:
-			return guaranteed_effect<generation>(boost_user_stat<BoostableStat::spa, 2>);
+			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::spa, 2>);
 		case Moves::Snarl:
 		case Moves::Struggle_Bug:
-			return guaranteed_effect<generation>(boost_target_stat<BoostableStat::spa, -1>);
+			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spa, -1>);
 
 		case Moves::Seed_Flare:
-			return basic_probability<generation>(0.4, boost_target_stat<BoostableStat::spd, -2>);
+			return basic_probability<UserTeam>(0.4, boost_target_stat<BoostableStat::spd, -2>);
 		case Moves::Fake_Tears:
 		case Moves::Metal_Sound:
-			return guaranteed_effect<generation>(boost_target_stat<BoostableStat::spd, -2>);
+			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spd, -2>);
 		case Moves::Captivate:
 			return multiplier(original_user.gender(), original_other.pokemon().gender()) == -1_bi ?
-				guaranteed_effect<generation>(boost_target_stat<BoostableStat::spd, -2>) :
-				no_effect<generation>;
+				guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spd, -2>) :
+				no_effect<UserTeam>;
 		case Moves::Bug_Buzz:
 		case Moves::Earth_Power:
 		case Moves::Energy_Ball:
 		case Moves::Flash_Cannon:
 		case Moves::Focus_Blast:
-			return basic_probability<generation>(0.1, boost_target_stat<BoostableStat::spd, -1>);
+			return basic_probability<UserTeam>(0.1, boost_target_stat<BoostableStat::spd, -1>);
 		case Moves::Shadow_Ball:
-			return basic_probability<generation>(0.2, boost_target_stat<BoostableStat::spd, -1>);
+			return basic_probability<UserTeam>(0.2, boost_target_stat<BoostableStat::spd, -1>);
 		case Moves::Luster_Purge:
-			return guaranteed_effect<generation>(boost_target_stat<BoostableStat::spd, -1>);
+			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spd, -1>);
 
 		case Moves::Hammer_Arm:
-			return guaranteed_effect<generation>(boost_user_stat<BoostableStat::spe, -1>);
+			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::spe, -1>);
 		case Moves::Agility:
 		case Moves::Rock_Polish:
-			return guaranteed_effect<generation>(boost_user_stat<BoostableStat::spe, 2>);
+			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::spe, 2>);
 		case Moves::Scary_Face:
-			return guaranteed_effect<generation>(boost_target_stat<BoostableStat::spe, -2>);
+			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spe, -2>);
 		case Moves::Cotton_Spore:
 			return (generation <= Generation::five or !is_type(original_other.pokemon(), Type::Grass)) ?
-				guaranteed_effect<generation>(boost_target_stat<BoostableStat::spe, -2>) :
-				no_effect<generation>;
+				guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spe, -2>) :
+				no_effect<UserTeam>;
 		case Moves::Bubble:
 		case Moves::Bubble_Beam:
 		case Moves::Constrict:
-			return basic_probability<generation>(
+			return basic_probability<UserTeam>(
 				generation == Generation::one ? 0.332 : 0.1,
 				boost_target_stat<BoostableStat::spe, -1>
 			);
@@ -606,45 +606,45 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Mud_Shot:
 		case Moves::Rock_Tomb:
 			return generation <= Generation::two ?
-				basic_probability<generation>(0.996, boost_target_stat<BoostableStat::spe, -1>) :
-				guaranteed_effect<generation>(boost_target_stat<BoostableStat::spe, -1>);
+				basic_probability<UserTeam>(0.996, boost_target_stat<BoostableStat::spe, -1>) :
+				guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spe, -1>);
 
 		case Moves::Leaf_Tornado:
 		case Moves::Mirror_Shot:
 		case Moves::Mud_Bomb:
 		case Moves::Muddy_Water:
-			return basic_probability<generation>(0.3, boost_target_stat<BoostableStat::acc, -1>);
+			return basic_probability<UserTeam>(0.3, boost_target_stat<BoostableStat::acc, -1>);
 		case Moves::Night_Daze:
-			return basic_probability<generation>(0.4, boost_target_stat<BoostableStat::acc, -1>);
+			return basic_probability<UserTeam>(0.4, boost_target_stat<BoostableStat::acc, -1>);
 		case Moves::Octazooka:
-			return basic_probability<generation>(0.5, boost_target_stat<BoostableStat::acc, -1>);
+			return basic_probability<UserTeam>(0.5, boost_target_stat<BoostableStat::acc, -1>);
 		case Moves::Flash:
 		case Moves::Kinesis:
 		case Moves::Sand_Attack:
 		case Moves::Smokescreen:
-			return guaranteed_effect<generation>(boost_target_stat<BoostableStat::acc, -1>);
+			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::acc, -1>);
 		case Moves::Mud_Slap:
 			return generation <= Generation::two ?
-				basic_probability<generation>(0.996, boost_target_stat<BoostableStat::acc, -1>) :
-				guaranteed_effect<generation>(boost_target_stat<BoostableStat::acc, -1>);
+				basic_probability<UserTeam>(0.996, boost_target_stat<BoostableStat::acc, -1>) :
+				guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::acc, -1>);
 
 		case Moves::Double_Team:
-			return guaranteed_effect<generation>(boost_user_stat<BoostableStat::eva, 1>);
+			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::eva, 1>);
 		case Moves::Sweet_Scent:
 			return generation <= Generation::five ?
-				guaranteed_effect<generation>(boost_target_stat<BoostableStat::eva, -1>) :
-				guaranteed_effect<generation>(boost_target_stat<BoostableStat::eva, -2>);
+				guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::eva, -1>) :
+				guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::eva, -2>);
 
 		case Moves::Acid: {
 			constexpr auto probability = generation == Generation::one ? 0.332 : 0.1;
 			constexpr auto stat = generation <= Generation::three ? BoostableStat::def : BoostableStat::spd;
-			return basic_probability<generation>(probability, boost_target_stat<stat, -1>);
+			return basic_probability<UserTeam>(probability, boost_target_stat<stat, -1>);
 		}
 		case Moves::Acupressure:
 			// TODO: Probability not correct due to the maxing out behavior
 			return acupressure_effect<generation>(original_user);
 		case Moves::Amnesia:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				auto pokemon = user.pokemon();
 				pokemon.stages()[BoostableStat::spd] += 2_bi;
 				if (generation == Generation::one) {
@@ -654,11 +654,11 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Ancient_Power:
 		case Moves::Ominous_Wind:
 		case Moves::Silver_Wind:
-			return basic_probability<generation>(0.1, [](auto & user, auto &, auto &, auto) {
+			return basic_probability<UserTeam>(0.1, [](auto & user, auto &, auto &, auto) {
 				boost_regular(user.pokemon().stages(), 1_bi);
 			});
 		case Moves::Belly_Drum:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
 				auto const user_pokemon = user.pokemon();
 				auto const hp = user_pokemon.hp();
 				if (hp.current() > hp.max() / 2_bi and hp.current() > 1_bi) {
@@ -669,30 +669,30 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				}
 			});
 		case Moves::Close_Combat:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				boost_physical(user.pokemon().stages(), -1_bi);
 			});
 		case Moves::Bulk_Up:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				boost_physical(user.pokemon().stages(), 1_bi);
 			});
 		case Moves::Calm_Mind:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				boost_special(user.pokemon().stages(), 1_bi);
 			});
 		case Moves::Cosmic_Power:
 		case Moves::Defend_Order:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				boost_defensive(user.pokemon().stages(), 1_bi);
 			});
 		case Moves::Dragon_Dance:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				auto & stages = user.pokemon().stages();
 				stages[BoostableStat::atk] += 1_bi;
 				stages[BoostableStat::spe] += 1_bi;
 			});
 		case Moves::Growth:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto) {
 				auto const user_pokemon = user.pokemon();
 				auto & stages = user_pokemon.stages();
 				switch (generation) {
@@ -721,21 +721,21 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			});
 		case Moves::Psychic:
 			return generation == Generation::one ?
-				basic_probability<generation>(0.332, [](auto &, auto & other, auto &, auto) {
+				basic_probability<UserTeam>(0.332, [](auto &, auto & other, auto &, auto) {
 					auto & stages = other.pokemon().stages();
 					stages[BoostableStat::spa] -= 1_bi;
 					stages[BoostableStat::spd] -= 1_bi;
 				}) :
-				basic_probability<generation>(0.1, boost_target_stat<BoostableStat::spd, -1>);
+				basic_probability<UserTeam>(0.1, boost_target_stat<BoostableStat::spd, -1>);
 		case Moves::Quiver_Dance:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				auto & stages = user.pokemon().stages();
 				for (auto const stat : {BoostableStat::spa, BoostableStat::spd, BoostableStat::spe}) {
 					stages[stat] += 1_bi;
 				}
 			});
 		case Moves::Shell_Smash:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				auto & stages = user.pokemon().stages();
 				for (auto const stat : {BoostableStat::def, BoostableStat::spd}) {
 					stages[stat] -= 1_bi;
@@ -745,25 +745,25 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				}
 			});
 		case Moves::Shift_Gear:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				auto & stages = user.pokemon().stages();
 				stages[BoostableStat::atk] += 1_bi;
 				stages[BoostableStat::spe] += 2_bi;
 			});
 		case Moves::String_Shot:
 			return generation <= Generation::five ?
-				guaranteed_effect<generation>(boost_target_stat<BoostableStat::spe, -1>) :
-				guaranteed_effect<generation>(boost_target_stat<BoostableStat::spe, -2>);
+				guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spe, -1>) :
+				guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spe, -2>);
 		case Moves::Superpower:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				boost_physical(user.pokemon().stages(), -1_bi);
 			});
 		case Moves::Tickle:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				boost_physical(other.pokemon().stages(), -1_bi);
 			});
 		case Moves::V_create:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				auto & stages = user.pokemon().stages();
 				for (auto const stat : {BoostableStat::def, BoostableStat::spd, BoostableStat::spe}) {
 					stages[stat] -= 1_bi;
@@ -771,7 +771,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			});
 
 		case Moves::Haze:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 				user.pokemon().stages() = Stages();
 				other.pokemon().stages() = Stages();
 				if (generation == Generation::one) {
@@ -780,24 +780,24 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				}
 			});
 		case Moves::Power_Swap:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 				swap_offensive(user.pokemon().stages(), other.pokemon().stages());
 			});
 		case Moves::Psych_Up:
 			return generation >= Generation::three or containers::any(original_other.pokemon().stages(), [](Stage const stage) { return stage != 0_bi; }) ?
-				guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
+				guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 					user.pokemon().stages() = other.pokemon().stages();
 				}) :
-				no_effect<generation>;
+				no_effect<UserTeam>;
 
 		case Moves::Charge:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				auto const pokemon = user.pokemon();
 				pokemon.charge();
 				pokemon.stages()[BoostableStat::spd] += 1_bi;
 			});
 		case Moves::Defense_Curl:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				auto const pokemon = user.pokemon();
 				pokemon.stages()[BoostableStat::def] += 1_bi;
 				pokemon.defense_curl();
@@ -808,12 +808,12 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Headbutt:
 		case Moves::Hyper_Fang:
 		case Moves::Stomp:
-			return basic_probability<generation>(0.1, flinch);
+			return basic_probability<UserTeam>(0.1, flinch);
 		case Moves::Dark_Pulse:
 		case Moves::Dragon_Rush:
 		case Moves::Twister:
 		case Moves::Zen_Headbutt:
-			return basic_probability<generation>(0.2, flinch);
+			return basic_probability<UserTeam>(0.2, flinch);
 		case Moves::Air_Slash:
 		case Moves::Astonish:
 		case Moves::Icicle_Crash:
@@ -822,24 +822,24 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Snore:
 		case Moves::Steamroller:
 		case Moves::Needle_Arm:
-			return basic_probability<generation>(0.3, flinch);
+			return basic_probability<UserTeam>(0.3, flinch);
 		case Moves::Fake_Out:
-			return guaranteed_effect<generation>(flinch);
+			return guaranteed_effect<UserTeam>(flinch);
 		case Moves::Bite:
-			return basic_probability<generation>(generation <= Generation::one ? 0.1 : 0.3, flinch);
+			return basic_probability<UserTeam>(generation <= Generation::one ? 0.1 : 0.3, flinch);
 		case Moves::Rock_Slide:
-			return generation == Generation::one ? no_effect<generation> : basic_probability<generation>(0.3, flinch);
+			return generation == Generation::one ? no_effect<UserTeam> : basic_probability<UserTeam>(0.3, flinch);
 		case Moves::Waterfall:
-			return generation <= Generation::three ? no_effect<generation> : basic_probability<generation>(0.2, flinch);
+			return generation <= Generation::three ? no_effect<UserTeam> : basic_probability<UserTeam>(0.2, flinch);
 		case Moves::Low_Kick:
-			return generation <= Generation::two ? basic_probability<generation>(0.3, flinch) : no_effect<generation>;
+			return generation <= Generation::two ? basic_probability<UserTeam>(0.3, flinch) : no_effect<UserTeam>;
 
 		case Moves::Aromatherapy:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				cure_all_status(user, [](Pokemon<generation> const &) { return true; });
 			});
 		case Moves::Heal_Bell:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				cure_all_status(user, [=](Pokemon<generation> const & pokemon) {
 					if constexpr (generation == Generation::five) {
 						return true;
@@ -851,7 +851,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				});
 			});
 		case Moves::Psycho_Shift:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto const damage) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto const damage) {
 				auto const other_pokemon = other.pokemon();
 				if (!is_clear(other_pokemon.status())) {
 					return;
@@ -882,11 +882,11 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				user_pokemon.clear_status();
 			});
 		case Moves::Refresh:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().clear_status();
 			});
 		case Moves::Wake_Up_Slap:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				auto const pokemon = other.pokemon();
 				if (is_sleeping(pokemon.status())) {
 					pokemon.clear_status();
@@ -1012,7 +1012,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				status_effect<Statuses::sleep>(1.0, original_user, original_other, original_weather) :
 				status_effect<Statuses::sleep>(1.0, original_user, original_other, original_weather, Type::Grass);
 		case Moves::Yawn:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().hit_with_yawn();
 			});
 
@@ -1020,7 +1020,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return recoil_status<Statuses::burn>(original_user, original_other, original_weather, Type::Fire);
 		case Moves::Volt_Tackle:
 			return generation <= Generation::three ?
-				guaranteed_effect<generation>(RecoilEffect(3_bi)) :
+				guaranteed_effect<UserTeam>(RecoilEffect(3_bi)) :
 				recoil_status<Statuses::paralysis>(original_user, original_other, original_weather, Type::Ground);
 
 		case Moves::Fire_Fang:
@@ -1054,26 +1054,26 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			}
 		case Moves::Dizzy_Punch:
 			return generation == Generation::one ?
-				no_effect<generation> :
+				no_effect<UserTeam> :
 				confusion_effect(0.2, original_other.pokemon(), Type::Ghost);
 		case Moves::Chatter: {
 			constexpr auto probability = generation <= Generation::five ? 0.31 : 1.0;
 			return can_confuse_with_chatter(original_user.species()) ?
 				confusion_effect(probability, original_other.pokemon(), Type::Ghost) :
-				no_effect<generation>;
+				no_effect<UserTeam>;
 		}
 
 		case Moves::Rest:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto) {
 				user.pokemon().rest(weather, other.pokemon().last_used_move().is_uproaring());
 			});
 
 		case Moves::Smelling_Salts:
 			return boosts_smellingsalt(original_other.pokemon().status()) ?
-				guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+				guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 					other.pokemon().status() = Status{};
 				}) :
-				no_effect<generation>;
+				no_effect<UserTeam>;
 
 		case Moves::Flatter:
 			return confusing_stat_boost<generation, BoostableStat::spa, 1>;
@@ -1085,11 +1085,11 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Dig:
 		case Moves::Dive:
 		case Moves::Fly:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
 				user.pokemon().use_vanish_move(weather);
 			});
 		case Moves::Shadow_Force:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto) {
 				auto const hit = user.pokemon().use_vanish_move(weather);
 				if (hit) {
 					other.pokemon().break_protect();
@@ -1103,7 +1103,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				original_user,
 				original_other.pokemon(),
 				original_weather,
-				no_effect<generation>
+				no_effect<UserTeam>
 			);
 		case Moves::Skull_Bash:
 			return charge_up_move(
@@ -1111,7 +1111,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				original_user,
 				original_other.pokemon(),
 				original_weather,
-				generation >= Generation::two ? guaranteed_effect<generation>(boost_user_stat<BoostableStat::def, 1>) : no_effect<generation>
+				generation >= Generation::two ? guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::def, 1>) : no_effect<UserTeam>
 			);
 		case Moves::Sky_Attack:
 			return charge_up_move(
@@ -1119,59 +1119,59 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				original_user,
 				original_other.pokemon(),
 				original_weather,
-				SideEffects<generation>({
-					SideEffect<generation>{0.7, no_effect_function},
-					SideEffect<generation>{0.3, flinch}
+				SideEffects<UserTeam>({
+					SideEffect<UserTeam>{0.7, no_effect_function},
+					SideEffect<UserTeam>{0.3, flinch}
 				})
 			);
 
 		case Moves::Gravity:
-			return guaranteed_effect<generation>([](auto &, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto &, auto & weather, auto) {
 				weather.activate_gravity();
 			});
 		case Moves::Hail:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
 				weather.activate_hail_from_move(extends_hail(user.pokemon().item(weather)));
 			});
 		case Moves::Rain_Dance:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
 				weather.activate_rain_from_move(extends_rain(user.pokemon().item(weather)));
 			});
 		case Moves::Sandstorm:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
 				weather.activate_sand_from_move(extends_sand(user.pokemon().item(weather)));
 			});
 		case Moves::Sunny_Day:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
 				weather.activate_sun_from_move(extends_sun(user.pokemon().item(weather)));
 			});
 		case Moves::Trick_Room:
-			return guaranteed_effect<generation>([](auto &, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto &, auto & weather, auto) {
 				weather.activate_trick_room();
 			});
 	
 		case Moves::Light_Screen:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
 				user.activate_light_screen(weather);
 			});
 		case Moves::Lucky_Chant:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.activate_lucky_chant();
 			});
 		case Moves::Mist:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.activate_mist();
 			});
 		case Moves::Reflect:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
 				user.activate_reflect(weather);
 			});
 		case Moves::Safeguard:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.activate_safeguard();
 			});
 		case Moves::Tailwind:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.activate_tailwind();
 			});
 
@@ -1182,12 +1182,12 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Slack_Off:
 		case Moves::Soft_Boiled:
 			return generation == Generation::one and healing_move_fails_in_generation_1(original_user.hp()) ?
-				no_effect<generation> :
-				guaranteed_effect<generation>(recover_half);
+				no_effect<UserTeam> :
+				guaranteed_effect<UserTeam>(recover_half);
 		case Moves::Moonlight:
 		case Moves::Morning_Sun:
 		case Moves::Synthesis:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto) {
 				auto const amount = [&]() {
 					using Numerator = bounded::integer<1, 2>;
 					using Denominator = bounded::integer<2, 4>;
@@ -1205,25 +1205,25 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				heal(user.pokemon(), weather, amount);
 			});
 		case Moves::Wish:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.activate_wish();
 			});
 
 		case Moves::Spikes:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.add_spikes();
 			});
 		case Moves::Stealth_Rock:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.add_stealth_rock();
 			});
 		case Moves::Toxic_Spikes:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.add_toxic_spikes();
 			});
 
 		case Moves::Magnitude:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 #if 0
 			return Probabilities{
 				{10_bi, 0.05}, // Magnitude 4
@@ -1241,9 +1241,9 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			// 40 power: 0.25
 			// 80 power: 0.25
 			// 120 power: 0.25
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Psywave:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 #if 0
 			auto compute = [](auto const min_value, auto const max_value) {
 				auto const range = containers::inclusive_integer_range(min_value, max_value);
@@ -1274,15 +1274,15 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 #endif
 
 		case Moves::Spit_Up:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().release_stockpile();
 			});
 		case Moves::Stockpile:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().increment_stockpile();
 			});
 		case Moves::Swallow:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
 				auto const pokemon = user.pokemon();
 				auto const stockpiles = pokemon.release_stockpile();
 				if (stockpiles == 0_bi) {
@@ -1292,26 +1292,26 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			});
 
 		case Moves::Mud_Sport:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().activate_mud_sport();
 			});
 		case Moves::Water_Sport:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().activate_water_sport();
 			});
 
 		case Moves::Aqua_Ring:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().activate_aqua_ring();
 			});
 		case Moves::Attract:
 			return multiplier(original_user.gender(), original_other.pokemon().gender()) == -1_bi ?
-				guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
+				guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto) {
 					other.pokemon().attract(user.pokemon(), weather);
 				}) :
-				no_effect<generation>;
+				no_effect<UserTeam>;
 		case Moves::Bide:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto) {
 				user.pokemon().use_bide(other.pokemon(), weather);
 			});
 		case Moves::Bind:
@@ -1319,12 +1319,12 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Sand_Tomb:
 		case Moves::Whirlpool:
 		case Moves::Wrap:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().partially_trap();
 			});
 		case Moves::Fire_Spin:
 		case Moves::Magma_Storm:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				auto other_pokemon = other.pokemon();
 				if (other_pokemon.status().name() == Statuses::freeze) {
 					other_pokemon.clear_status();
@@ -1334,7 +1334,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Block:
 		case Moves::Mean_Look:
 		case Moves::Spider_Web:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().fully_trap();
 			});
 		case Moves::Blast_Burn:
@@ -1344,34 +1344,34 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Hyper_Beam:
 		case Moves::Roar_of_Time:
 		case Moves::Rock_Wrecker:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 				if (generation >= Generation::two or other.pokemon().hp().current() != 0_bi) {
 					user.pokemon().use_recharge_move();
 				}
 			});
 		case Moves::Bug_Bite:
 		case Moves::Pluck:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 				static_cast<void>(user);
 				auto const other_pokemon = other.pokemon();
 				if (item_can_be_lost(other_pokemon.as_const())) {
 				}
 			});
 		case Moves::Camouflage:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Conversion:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Conversion_2:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Covet:
 		case Moves::Thief:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 				if (item_can_be_lost(other.pokemon().as_const())) {
 					user.pokemon().steal_item(other.pokemon());
 				}
 			});
 		case Moves::Curse:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto) {
 				auto const user_pokemon = user.pokemon();
 				if (is_type(user_pokemon.as_const(), Type::Ghost)) {
 					auto const other_pokemon = other.pokemon();
@@ -1393,153 +1393,153 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				}
 			});
 		case Moves::Defog:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto & weather, auto) {
 				weather.deactivate_fog();
 				other.pokemon().stages()[BoostableStat::eva] -= 1_bi;
 			});
 		case Moves::Detect:
 		case Moves::Protect:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().protect();
 			});
 		case Moves::Disable:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto & weather, auto) {
 				auto pokemon = other.pokemon();
 				pokemon.disable(pokemon.last_used_move().name(), weather);
 			});
 		case Moves::Doom_Desire:
 		case Moves::Future_Sight:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Embargo:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().activate_embargo();
 			});
 		case Moves::Encore:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto & weather, auto) {
 				other.pokemon().activate_encore(weather);
 			});
 		case Moves::Explosion:
 		case Moves::Self_Destruct:
 			return (generation == Generation::one and original_other.pokemon().substitute()) ?
-				guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
+				guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto) {
 					if (other.pokemon().substitute()) {
 						user.pokemon().set_hp(weather, 0_bi);
 					}
 				}) :
-				guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto) {
+				guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
 					user.pokemon().set_hp(weather, 0_bi);
 				});
 		case Moves::Feint:
 		case Moves::Hyperspace_Fury:
 		case Moves::Hyperspace_Hole:
 		case Moves::Phantom_Force:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().break_protect();
 			});
 		case Moves::Fling:
-			return guaranteed_effect<generation>(fling_effects);
+			return guaranteed_effect<UserTeam>(fling_effects);
 		case Moves::Focus_Energy:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().focus_energy();
 			});
 		case Moves::Follow_Me:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Foresight:
 		case Moves::Odor_Sleuth:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().identify();
 			});
 		case Moves::Gastro_Acid:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Grudge:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Guard_Swap:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 				swap_defensive(user.pokemon().stages(), other.pokemon().stages());
 			});
 		case Moves::Heal_Block:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().activate_heal_block();
 			});
 		case Moves::Healing_Wish:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Heart_Swap:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 				std::swap(user.pokemon().stages(), other.pokemon().stages());
 			});
 		case Moves::High_Jump_Kick:
 		case Moves::Jump_Kick:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Ice_Ball:
 		case Moves::Rollout:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Imprison:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().use_imprison();
 			});
 		case Moves::Incinerate:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto & weather, auto) {
 				auto other_pokemon = other.pokemon();
 				if (item_can_be_incinerated(other_pokemon.as_const(), weather)) {
 					other_pokemon.destroy_item();
 				}
 			});
 		case Moves::Ingrain:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().ingrain();
 			});
 		case Moves::Knock_Off:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				auto const other_pokemon = other.pokemon();
 				if (item_can_be_lost(other_pokemon.as_const())) {
 					other_pokemon.remove_item();
 				}
 			});
 		case Moves::Leech_Seed:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().hit_with_leech_seed();
 			});
 		case Moves::Lunar_Dance:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Magic_Coat:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Magic_Room:
-			return guaranteed_effect<generation>([](auto &, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto &, auto & weather, auto) {
 				weather.activate_magic_room();
 			});
 		case Moves::Magnet_Rise:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().activate_magnet_rise();
 			});
 		case Moves::Me_First:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Memento:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto) {
 				boost_offensive(other.pokemon().stages(), -2_bi);
 				user.pokemon().set_hp(weather, 0_bi);
 			});
 		case Moves::Mimic:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Minimize:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().minimize();
 			});
 		case Moves::Miracle_Eye:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Nightmare:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().try_to_give_nightmares();
 			});
 		case Moves::Outrage:
 		case Moves::Petal_Dance:
 		case Moves::Thrash:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().activate_rampage();
 			});
 		case Moves::Pain_Split:
-			return guaranteed_effect<generation>(equalize_hp);
+			return guaranteed_effect<UserTeam>(equalize_hp);
 		case Moves::Perish_Song:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 				auto const user_pokemon = user.pokemon();
 				if (generation >= Generation::eight or !blocks_sound_moves(user_pokemon.ability())) {
 					user_pokemon.activate_perish_song();
@@ -1550,64 +1550,64 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				}
 			});
 		case Moves::Power_Trick:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().activate_power_trick();
 			});
 		case Moves::Rage:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Rapid_Spin:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.clear_field();
 				if constexpr (generation >= Generation::eight) {
 					user.pokemon().stages()[BoostableStat::spe] += 1_bi;
 				}
 			});
 		case Moves::Recycle:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().recycle_item();
 			});
 		case Moves::Roar:
 		case Moves::Whirlwind:
 			switch (generation) {
 				case Generation::one:
-					return no_effect<generation>;
+					return no_effect<UserTeam>;
 				case Generation::two:
-					return original_other.pokemon().last_used_move().moved_this_turn() ? phaze_effect<generation>(original_other) : no_effect<generation>;
+					return original_other.pokemon().last_used_move().moved_this_turn() ? phaze_effect<generation>(original_other) : no_effect<UserTeam>;
 				default:
 					return phaze_effect<generation>(original_other);
 			}
 		case Moves::Role_Play:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Sketch:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Skill_Swap:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Snatch:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Spite: {
 			// TODO: Spite fails if the last used move has no PP
 			auto const regular_move = containers::maybe_find(original_user.regular_moves(), original_user.last_used_move().name());
 			if (!regular_move) {
-				return no_effect<generation>;
+				return no_effect<UserTeam>;
 			}
 			auto const remaining_pp = regular_move->pp().remaining();
 			if (!remaining_pp or *remaining_pp == 0_bi) {
-				return no_effect<generation>;
+				return no_effect<UserTeam>;
 			}
 			switch (generation) {
 				case Generation::two:
 					return random_spite<generation>;
 				case Generation::three:
 					if (*remaining_pp == 1_bi) {
-						return no_effect<generation>;
+						return no_effect<UserTeam>;
 					}
 					return random_spite<generation>;
 				default:
-					return guaranteed_effect<generation>(spite<generation, 4>);
+					return guaranteed_effect<UserTeam>(spite<generation, 4>);
 			}
 		}
 		case Moves::Struggle:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto const damage) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto const damage) {
 				switch (generation) {
 					case Generation::one:
 						change_hp(user.pokemon(), weather, -bounded::max(damage / 2_bi, 1_bi));
@@ -1625,7 +1625,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				}
 			});
 		case Moves::Substitute:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
 				user.pokemon().use_substitute(weather);
 			});
 		case Moves::Switch0:
@@ -1642,28 +1642,28 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			return switch_effect<generation, 5>;
 		case Moves::Switcheroo:
 		case Moves::Trick:
-			return guaranteed_effect<generation>([](auto & user, auto & other, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 				auto const other_pokemon = other.pokemon();
 				if (item_can_be_lost(other_pokemon.as_const())) {
 					swap_items(user.pokemon(), other.pokemon());
 				}
 			});
 		case Moves::Taunt:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto & weather, auto) {
 				other.pokemon().taunt(weather);
 			});
 		case Moves::Torment:
-			return guaranteed_effect<generation>([](auto &, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto & weather, auto) {
 				other.pokemon().torment(weather);
 			});
 		case Moves::Transform:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 		case Moves::Uproar:
-			return guaranteed_effect<generation>([](auto & user, auto &, auto &, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().use_uproar();
 			});
 		case Moves::Worry_Seed:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 
 		case Moves::Acid_Spray:
 		case Moves::Acrobatics:
@@ -1871,7 +1871,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Work_Up:
 		case Moves::Wring_Out:
 		case Moves::X_Scissor:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 
 		case Moves::Blue_Flare:
 		case Moves::Bolt_Strike:
@@ -2042,12 +2042,12 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Sparkly_Swirl:
 		case Moves::Veevee_Volley:
 		case Moves::Double_Iron_Bash:
-			return no_effect<generation>;
+			return no_effect<UserTeam>;
 	}
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto possible_side_effects<generation>(Moves, ActivePokemon<generation> const user, Team<generation> const & other, Weather) -> SideEffects<generation>
+	template auto possible_side_effects<generation>(Moves, ActivePokemon<generation> const user, Team<generation> const & other, Weather) -> SideEffects<Team<generation>>
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

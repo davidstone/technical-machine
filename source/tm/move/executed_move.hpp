@@ -14,7 +14,7 @@ template<Generation generation>
 struct ExecutedMove {
 	KnownMove move;
 	PP pp;
-	typename SideEffect<generation>::Function side_effect;
+	typename SideEffect<Team<generation>>::Function side_effect;
 	bool critical_hit;
 };
 
