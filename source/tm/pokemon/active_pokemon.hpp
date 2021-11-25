@@ -184,7 +184,7 @@ public:
 	ActivePokemonImpl & operator=(ActivePokemonImpl const & other) = delete;
 	ActivePokemonImpl & operator=(ActivePokemonImpl && other) = delete;
 
-	auto regular_moves() const -> RegularMoves const & {
+	auto regular_moves() const -> RegularMoves {
 		return m_pokemon.regular_moves();
 	}
 

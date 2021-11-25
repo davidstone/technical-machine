@@ -106,7 +106,7 @@ struct Pokemon {
 		m_has_been_seen = true;
 	}
 
-	auto regular_moves() const -> RegularMoves const & {
+	auto regular_moves() const -> RegularMoves {
 		return m_regular_moves;
 	}
 	auto add_move(Move const move) & -> void {

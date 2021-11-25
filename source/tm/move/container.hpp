@@ -22,8 +22,7 @@
 namespace technicalmachine {
 
 constexpr auto move_container_transform(auto const & range) {
-	auto const transformed = containers::transform(range, bounded::copy);
-	return containers::range_view(transformed);
+	return containers::range_view(containers::transform(range, bounded::copy));
 }
 
 template<Generation generation>
@@ -32,7 +31,7 @@ private:
 	template<typename Range>
 	using Transformed = decltype(move_container_transform(std::declval<Range>()));
 public:
-	MoveContainer(RegularMoves const & regular, TeamSize const my_team_size):
+	MoveContainer(RegularMoves regular, TeamSize const my_team_size):
 		m_regular(regular),
 		m_shared(my_team_size)
 	{
@@ -61,7 +60,7 @@ public:
 	}
 
 private:
-	RegularMoves const & m_regular;
+	RegularMoves m_regular;
 	SharedMoves<generation> m_shared;
 };
 
