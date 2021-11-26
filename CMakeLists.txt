@@ -111,6 +111,7 @@ add_library(tm_common STATIC
 	source/tm/pokemon/active_pokemon.cpp
 	source/tm/pokemon/active_pokemon_forward.cpp
 	source/tm/pokemon/active_status.cpp
+	source/tm/pokemon/any_pokemon.cpp
 	source/tm/pokemon/collection.cpp
 	source/tm/pokemon/confusion.cpp
 	source/tm/pokemon/delayed_attack.cpp
