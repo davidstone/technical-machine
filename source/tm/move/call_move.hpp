@@ -19,10 +19,10 @@ struct Team;
 struct Weather;
 
 template<Generation generation>
-auto call_move(Team<generation> & user, UsedMove<generation> move, Team<generation> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void;
+auto call_move(Team<generation> & user, UsedMove<Team<generation>> move, Team<generation> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto call_move<generation>(Team<generation> & user, UsedMove<generation> move, Team<generation> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void
+	extern template auto call_move<generation>(Team<generation> & user, UsedMove<Team<generation>> move, Team<generation> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

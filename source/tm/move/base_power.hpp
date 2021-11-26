@@ -23,10 +23,10 @@ using BasePower = bounded::integer<0, 480>;
 // It is undefined behavior to get the base power of a move without a base power
 // (Dragon Range, Guillotine, etc.).
 template<Generation generation>
-auto base_power(Team<generation> const & attacker_team, ExecutedMove<generation>, Team<generation> const & defender_team, Weather) -> BasePower;
+auto base_power(Team<generation> const & attacker_team, ExecutedMove<Team<generation>>, Team<generation> const & defender_team, Weather) -> BasePower;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto base_power(Team<generation> const &, ExecutedMove<generation>, Team<generation> const &, Weather) -> BasePower
+	extern template auto base_power(Team<generation> const &, ExecutedMove<Team<generation>>, Team<generation> const &, Weather) -> BasePower
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

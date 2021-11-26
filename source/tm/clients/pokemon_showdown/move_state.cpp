@@ -118,7 +118,7 @@ auto MoveState::complete(Party const ai_party, Team<generation> const & ai, Team
 		Affected{foe.pokemon(), ai};
 	auto const result = Result<generation>{
 		*m_party,
-		UsedMove<generation>(
+		UsedMove<Team<generation>>(
 			move.selected,
 			move.executed,
 			move.critical_hit,

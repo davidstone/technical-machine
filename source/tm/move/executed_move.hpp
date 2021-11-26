@@ -10,11 +10,11 @@
 
 namespace technicalmachine {
 
-template<Generation generation>
+template<typename UserTeam>
 struct ExecutedMove {
 	KnownMove move;
 	PP pp;
-	typename SideEffect<Team<generation>>::Function side_effect;
+	typename SideEffect<UserTeam>::Function side_effect;
 	bool critical_hit;
 };
 

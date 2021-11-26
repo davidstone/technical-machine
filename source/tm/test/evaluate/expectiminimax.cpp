@@ -484,7 +484,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 		auto const & side_effect = containers::front(side_effects);
 		call_move(
 			defender,
-			UsedMove<generation>(
+			UsedMove<Team<generation>>(
 				move_name,
 				side_effect.function
 			),
@@ -608,11 +608,11 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	
 	constexpr auto keep_status = false;
 	constexpr auto unknown_damage = ActualDamage::Unknown{};
-	constexpr auto sleep_talk = UsedMove<generation>(
+	constexpr auto sleep_talk = UsedMove<Team<generation>>(
 		Moves::Sleep_Talk,
 		no_effect_function
 	);
-	constexpr auto thunderbolt = UsedMove<generation>(
+	constexpr auto thunderbolt = UsedMove<Team<generation>>(
 		Moves::Thunderbolt,
 		no_effect_function
 	);

@@ -33,7 +33,7 @@ auto max_damage_physical_move() {
 }
 constexpr auto max_damage_physical_move_type = Type::Rock;
 auto max_damage_executed_physical_move() {
-	return ExecutedMove<generation>{
+	return ExecutedMove<Team<generation>>{
 		{max_damage_physical_move().name(), max_damage_physical_move_type},
 		max_damage_physical_move().pp(),
 		no_effect_function,
@@ -154,7 +154,7 @@ TEST_CASE("Max special power", "[Power]") {
 
 	auto const power = move_power(
 		attacker,
-		ExecutedMove<generation>{
+		ExecutedMove<Team<generation>>{
 			{move.name(), Type::Water},
 			move.pp(),
 			no_effect_function,
@@ -254,7 +254,7 @@ TEST_CASE("Max special damage", "[Damage]") {
 
 	auto const calculated_damage = calculate_damage(
 		attacker,
-		ExecutedMove<generation>{{move.name(), Type::Fire}, move.pp(), no_effect_function, critical_hit},
+		ExecutedMove<Team<generation>>{{move.name(), Type::Fire}, move.pp(), no_effect_function, critical_hit},
 		resistance_berry_activated,
 		defender,
 		FutureMove{false},

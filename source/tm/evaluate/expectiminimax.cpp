@@ -147,7 +147,7 @@ auto execute_move(Team<generation> const & user, SelectedAndExecuted const move,
 						auto weather_copy = weather;
 						call_move(
 							user_copy,
-							UsedMove<generation>(
+							UsedMove<Team<generation>>(
 								move.selected,
 								move.executed.name,
 								critical_hit,

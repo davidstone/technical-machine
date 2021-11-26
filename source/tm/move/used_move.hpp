@@ -13,14 +13,14 @@ namespace technicalmachine {
 
 enum class Moves : std::uint16_t;
 
-template<Generation generation>
+template<typename UserTeam>
 struct UsedMove {
 	constexpr UsedMove(
 		Moves const selected_,
 		Moves const executed_,
 		bool const critical_hit_,
 		bool const miss_,
-		typename SideEffect<Team<generation>>::Function const side_effect_
+		typename SideEffect<UserTeam>::Function const side_effect_
 	):
 		side_effect(side_effect_),
 		selected(selected_),
@@ -30,7 +30,7 @@ struct UsedMove {
 	{
 	}
 
-	constexpr UsedMove(Moves const selected_, typename SideEffect<Team<generation>>::Function const side_effect_):
+	constexpr UsedMove(Moves const selected_, typename SideEffect<UserTeam>::Function const side_effect_):
 		side_effect(side_effect_),
 		selected(selected_),
 		executed(selected),
@@ -39,7 +39,7 @@ struct UsedMove {
 	{
 	}
 
-	typename SideEffect<Team<generation>>::Function side_effect;
+	typename SideEffect<UserTeam>::Function side_effect;
 	Moves selected;
 	Moves executed;
 	bool critical_hit;

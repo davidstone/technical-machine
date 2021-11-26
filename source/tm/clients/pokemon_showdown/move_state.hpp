@@ -44,7 +44,7 @@ struct MoveState {
 	template<Generation generation>
 	struct Result {
 		Party party;
-		UsedMove<generation> move;
+		UsedMove<Team<generation>> move;
 		Damage damage;
 		bounded::optional<HPAndStatus> user_hp_and_status;
 		bounded::optional<HPAndStatus> other_hp_and_status;

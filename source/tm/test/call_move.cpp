@@ -127,7 +127,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 
 		call_move(
 			attacker,
-			UsedMove<generation>(Moves::Belly_Drum, side_effect.function),
+			UsedMove<Team<generation>>(Moves::Belly_Drum, side_effect.function),
 			defender,
 			FutureMove{false},
 			weather,
@@ -151,7 +151,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 
 	call_move(
 		attacker,
-		UsedMove<generation>(Moves::Baton_Pass, no_effect_function),
+		UsedMove<Team<generation>>(Moves::Baton_Pass, no_effect_function),
 		defender,
 		FutureMove{false},
 		weather,
@@ -172,7 +172,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 		CHECK(side_effect.probability == 1.0);
 		call_move(
 			attacker,
-			UsedMove<generation>(Moves::Switch1, side_effect.function),
+			UsedMove<Team<generation>>(Moves::Switch1, side_effect.function),
 			defender,
 			FutureMove{false},
 			weather,
@@ -223,7 +223,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 
 	call_move(
 		attacker,
-		UsedMove<generation>(Moves::Thunderbolt, no_effect_function),
+		UsedMove<Team<generation>>(Moves::Thunderbolt, no_effect_function),
 		defender,
 		FutureMove{false},
 		weather,
@@ -234,7 +234,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 
 	call_move(
 		attacker,
-		UsedMove<generation>(Moves::Shadow_Ball, no_effect_function),
+		UsedMove<Team<generation>>(Moves::Shadow_Ball, no_effect_function),
 		defender,
 		FutureMove{false},
 		weather,
@@ -287,7 +287,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 
 		call_move(
 			attacker_copy,
-			UsedMove<generation>(move_name, side_effects[0_bi].function),
+			UsedMove<Team<generation>>(move_name, side_effects[0_bi].function),
 			defender_copy,
 			FutureMove{false},
 			weather,
@@ -300,7 +300,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 
 	call_move(
 		attacker,
-		UsedMove<generation>(move_name, side_effects[1_bi].function),
+		UsedMove<Team<generation>>(move_name, side_effects[1_bi].function),
 		defender,
 		FutureMove{false},
 		weather,

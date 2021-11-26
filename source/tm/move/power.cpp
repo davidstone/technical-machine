@@ -326,7 +326,7 @@ auto defender_ability_modifier(Type const move_type, Ability const ability) -> r
 }	// namespace
 
 template<Generation generation>
-auto move_power(Team<generation> const & attacker_team, ExecutedMove<generation> const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower {
+auto move_power(Team<generation> const & attacker_team, ExecutedMove<Team<generation>> const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	auto const base = base_power(attacker_team, executed, defender_team, weather);
@@ -342,7 +342,7 @@ auto move_power(Team<generation> const & attacker_team, ExecutedMove<generation>
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto move_power<generation>(Team<generation> const & attacker_team, ExecutedMove<generation> const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower
+	template auto move_power<generation>(Team<generation> const & attacker_team, ExecutedMove<Team<generation>> const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

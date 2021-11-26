@@ -921,7 +921,7 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 } // namespace
 
 template<Generation generation>
-auto base_power(Team<generation> const & attacker_team, ExecutedMove<generation> const executed, Team<generation> const & defender_team, Weather const weather) -> BasePower {
+auto base_power(Team<generation> const & attacker_team, ExecutedMove<Team<generation>> const executed, Team<generation> const & defender_team, Weather const weather) -> BasePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	switch (executed.move.name) {
@@ -1769,7 +1769,7 @@ auto base_power(Team<generation> const & attacker_team, ExecutedMove<generation>
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto base_power(Team<generation> const &, ExecutedMove<generation>, Team<generation> const &, Weather) -> BasePower
+	template auto base_power(Team<generation> const &, ExecutedMove<Team<generation>>, Team<generation> const &, Weather) -> BasePower
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

@@ -48,7 +48,7 @@ struct ActualDamage {
 	}
 
 	template<Generation generation>	
-	auto value(Team<generation> const & user, ExecutedMove<generation> const executed, bool const move_weakened_from_item, Team<generation> const & other, OtherMove const other_move, Weather const weather) const -> damage_type {
+	auto value(Team<generation> const & user, ExecutedMove<Team<generation>> const executed, bool const move_weakened_from_item, Team<generation> const & other, OtherMove const other_move, Weather const weather) const -> damage_type {
 		auto calculate = [&]{
 			auto const substitute = substitute_interaction(generation, executed.move.name);
 			auto const no_damage =

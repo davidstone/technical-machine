@@ -84,7 +84,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 
 	call_move(
 		attacker,
-		UsedMove<generation>(
+		UsedMove<Team<generation>>(
 			Moves::Sleep_Talk,
 			Moves::Thunderbolt,
 			false,
@@ -116,7 +116,7 @@ struct Sleeper {
 		auto const & side_effect = containers::front(side_effects);
 		call_move(
 			m_sleeper,
-			UsedMove<generation>(
+			UsedMove<Team<generation>>(
 				selected,
 				executed,
 				false,
@@ -137,7 +137,7 @@ struct Sleeper {
 	void get_attacked() {
 		call_move(
 			m_other,
-			UsedMove<generation>(
+			UsedMove<Team<generation>>(
 				Moves::Seismic_Toss,
 				no_effect_function
 			),

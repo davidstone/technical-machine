@@ -231,7 +231,7 @@ constexpr auto targets_foe_specifically(Target const target) {
 }
 
 template<Generation generation>
-auto use_move(Team<generation> & user, ExecutedMove<generation> const executed, Target const target, Team<generation> & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
+auto use_move(Team<generation> & user, ExecutedMove<Team<generation>> const executed, Target const target, Team<generation> & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	do_effects_before_moving(executed.move.name, user_pokemon, other);
@@ -355,7 +355,7 @@ auto handle_ability_blocks_move(any_mutable_active_pokemon auto const target, We
 }
 
 template<Generation generation>
-auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team<generation> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
+auto try_use_move(Team<generation> & user, UsedMove<Team<generation>> const move, Team<generation> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
 	auto user_pokemon = user.pokemon();
 
 	auto unsuccessfully_use_move = [&] {
@@ -422,7 +422,7 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 	if (ability_blocks_move(generation, other_pokemon.ability(), known_move, other_pokemon.status().name(), other_pokemon.types())) {
 		handle_ability_blocks_move(other_pokemon, weather);
 	} else {
-		auto const executed_move = ExecutedMove<generation>{
+		auto const executed_move = ExecutedMove<Team<generation>>{
 			known_move,
 			found_move.pp(),
 			move.side_effect,
@@ -440,7 +440,7 @@ auto try_use_move(Team<generation> & user, UsedMove<generation> const move, Team
 } // namespace
 
 template<Generation generation>
-auto call_move(Team<generation> & user, UsedMove<generation> const move, Team<generation> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
+auto call_move(Team<generation> & user, UsedMove<Team<generation>> const move, Team<generation> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
 	if (move.selected == Moves::Pass) {
 		return;
 	}
@@ -449,7 +449,7 @@ auto call_move(Team<generation> & user, UsedMove<generation> const move, Team<ge
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto call_move<generation>(Team<generation> & user, UsedMove<generation> const move, Team<generation> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void
+	template auto call_move<generation>(Team<generation> & user, UsedMove<Team<generation>> const move, Team<generation> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
