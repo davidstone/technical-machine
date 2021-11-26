@@ -11,7 +11,7 @@
 #include <tm/move/known_move.hpp>
 #include <tm/move/moves.hpp>
 
-#include <tm/pokemon/active_pokemon_forward.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 
 #include <tm/stat/stage.hpp>
 #include <tm/stat/stat_names.hpp>
@@ -28,8 +28,8 @@ namespace technicalmachine {
 
 using ChanceToHit = double;
 
-template<Generation generation>
-auto move_can_miss(ActivePokemon<generation> const user, Moves const move, BaseAccuracy const base_accuracy, ActivePokemon<generation> const target) -> bool {
+template<any_active_pokemon ActivePokemonType>
+auto move_can_miss(ActivePokemonType const user, Moves const move, BaseAccuracy const base_accuracy, ActivePokemonType const target) -> bool {
 	return
 		static_cast<bool>(base_accuracy) and
 		!cannot_miss(user.ability()) and
@@ -71,8 +71,7 @@ inline auto evasion_item_modifier(Generation const generation, Item const item) 
 	}
 }
 
-template<Generation generation>
-auto ability_evasion_modifier(ActivePokemon<generation> const target, Weather const weather, bool const blocks_weather) {
+auto ability_evasion_modifier(any_active_pokemon auto const target, Weather const weather, bool const blocks_weather) {
 	using Modifier = rational<
 		bounded::integer<1, 4>,
 		bounded::integer<1, 5>
@@ -86,8 +85,9 @@ auto ability_evasion_modifier(ActivePokemon<generation> const target, Weather co
 	}
 }
 
-template<Generation generation>
-auto chance_to_hit(ActivePokemon<generation> const user, KnownMove const move, ActivePokemon<generation> const target, Weather const weather, bool target_moved) -> ChanceToHit {
+template<any_active_pokemon ActivePokemonType>
+auto chance_to_hit(ActivePokemonType const user, KnownMove const move, ActivePokemonType const target, Weather const weather, bool target_moved) -> ChanceToHit {
+	constexpr auto generation = generation_from<ActivePokemonType>;
 	auto const user_ability = user.ability();
 	auto const target_ability = target.ability();
 	auto const blocks_weather = weather_is_blocked_by_ability(target_ability, user_ability);

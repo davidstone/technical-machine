@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/pokemon/active_pokemon_forward.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 
 #include <tm/type/effectiveness.hpp>
 
@@ -21,13 +21,12 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-template<Generation generation>
-constexpr auto removes_toxic_spikes(ActivePokemon<generation> const switcher) {
+constexpr auto removes_toxic_spikes(any_active_pokemon auto const switcher) {
 	return is_type(switcher, Type::Poison);
 }
 
-template<Generation generation>
-constexpr auto apply_toxic_spikes(EntryHazards<generation> const & hazards, MutableActivePokemon<generation> switcher, Weather const weather) {
+template<any_mutable_active_pokemon PokemonType>
+constexpr auto apply_toxic_spikes(EntryHazards<generation_from<PokemonType>> const & hazards, PokemonType const switcher, Weather const weather) {
 	auto const status = hazards.toxic_spikes() == 1_bi ? Statuses::poison : Statuses::toxic;
 	if (indirect_status_can_apply(status, switcher.as_const(), weather)) {
 		switcher.set_status(status, weather);
@@ -45,8 +44,9 @@ constexpr auto spikes_damage(EntryHazards<generation> const hazards) -> rational
 	}
 }
 
-template<Generation generation>
-constexpr auto apply(EntryHazards<generation> & hazards, MutableActivePokemon<generation> switcher, Weather const weather) -> void {
+template<any_mutable_active_pokemon PokemonType>
+constexpr auto apply(EntryHazards<generation_from<PokemonType>> & hazards, PokemonType const switcher, Weather const weather) -> void {
+	constexpr auto generation = generation_from<PokemonType>;
 	if (switcher.item(weather) == Item::Heavy_Duty_Boots) {
 		return;
 	}

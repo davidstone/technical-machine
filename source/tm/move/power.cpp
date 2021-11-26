@@ -14,6 +14,7 @@
 #include <tm/stat/calculate.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/happiness.hpp>
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
@@ -31,8 +32,8 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-template<Generation generation>
-auto doubling(ActivePokemon<generation> const attacker, Moves const move, ActivePokemon<generation> const defender, Weather const weather) -> bool {
+template<any_active_pokemon ActivePokemonType>
+auto doubling(ActivePokemonType const attacker, Moves const move, ActivePokemonType const defender, Weather const weather) -> bool {
 	// I account for the doubling of the base power for Pursuit in the
 	// switching function by simply multiplying the final base power by 2.
 	// Regardless of the combination of modifiers, this does not change the
@@ -41,7 +42,7 @@ auto doubling(ActivePokemon<generation> const attacker, Moves const move, Active
 	// slower Pokemon that has Rivalry and a Muscle Band and neither the
 	// attacker nor target is genderless. This will cause the base power to be
 	// 1 less than it should be.
-
+	constexpr auto generation = generation_from<ActivePokemonType>;
 	if (defender.last_used_move().vanish_doubles_power(generation, move))
 		return true;
 	switch (move) {
@@ -122,8 +123,9 @@ constexpr auto is_boosted_by_soul_dew(Generation const generation, Species const
 
 constexpr auto item_modifier_denominator = 20_bi;
 using ItemModifierNumerator = bounded::integer<20, 24>;
-template<Generation generation>
-auto item_modifier_numerator(ActivePokemon<generation> const attacker, KnownMove const move, Weather const weather) -> ItemModifierNumerator {
+template<any_active_pokemon ActivePokemonType>
+auto item_modifier_numerator(ActivePokemonType const attacker, KnownMove const move, Weather const weather) -> ItemModifierNumerator {
+	constexpr auto generation = generation_from<ActivePokemonType>;
 	constexpr auto none = item_modifier_denominator;
 	auto type_boost = [=](Type const type) -> ItemModifierNumerator {
 		if (move.type != type) {
@@ -230,8 +232,7 @@ auto item_modifier_numerator(ActivePokemon<generation> const attacker, KnownMove
 	}
 }
 
-template<Generation generation>
-auto item_modifier(ActivePokemon<generation> const attacker, KnownMove const move, Weather const weather) {
+auto item_modifier(any_active_pokemon auto const attacker, KnownMove const move, Weather const weather) {
 	return rational(
 		item_modifier_numerator(attacker, move, weather),
 		item_modifier_denominator
@@ -286,10 +287,10 @@ bool is_boosted_by_reckless(Moves const move) {
 	}
 }
 
-template<Generation generation>
-auto attacker_ability_power_modifier(ActivePokemon<generation> const attacker, KnownMove const move, ActivePokemon<generation> const defender, BasePower const base) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
+template<any_active_pokemon ActivePokemonType>
+auto attacker_ability_power_modifier(ActivePokemonType const attacker, KnownMove const move, ActivePokemonType const defender, BasePower const base) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
 	auto pinch_ability_activates = [&](Type const type) {
-		return generation <= Generation::four and move.type == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
+		return generation_from<ActivePokemonType> <= Generation::four and move.type == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
 	};
 	switch (attacker.ability()) {
 		case Ability::Technician:

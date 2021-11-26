@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/pokemon/active_pokemon_forward.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 
 #include <tm/compress.hpp>
 #include <tm/exists_if.hpp>

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/pokemon/active_pokemon_forward.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 
 #include <tm/compress.hpp>
 #include <tm/end_of_turn.hpp>
@@ -40,9 +40,9 @@ struct ActiveStatus {
 		m_nightmare = true;
 	}
 
-	template<Generation generation>
-	constexpr auto status_and_leech_seed_effects(MutableActivePokemon<generation> pokemon, MutableActivePokemon<generation> const other, Weather const weather, bool const uproar) & -> void {
-		if constexpr (generation <= Generation::two) {
+	template<any_mutable_active_pokemon MutableActivePokemonType>
+	constexpr auto status_and_leech_seed_effects(MutableActivePokemonType const pokemon, MutableActivePokemonType const other, Weather const weather, bool const uproar) & -> void {
+		if constexpr (generation_from<MutableActivePokemonType> <= Generation::two) {
 			end_of_attack(pokemon, other, weather);
 		} else {
 			end_of_turn(pokemon, other, weather, uproar);
@@ -60,8 +60,8 @@ struct ActiveStatus {
 		return compress(bounded::assume_in_range(static_cast<std::uint8_t>(byte), 0_bi, 15_bi));
 	}
 private:
-	template<Generation generation>
-	static constexpr auto handle_leech_seed(MutableActivePokemon<generation> pokemon, MutableActivePokemon<generation> other, Weather const weather) -> void {
+	template<any_mutable_active_pokemon MutableActivePokemonType>
+	static constexpr auto handle_leech_seed(MutableActivePokemonType const pokemon, MutableActivePokemonType const other, Weather const weather) -> void {
 		if (!pokemon.leech_seeded()) {
 			return;
 		}
@@ -78,20 +78,17 @@ private:
 		}
 	}
 
-	template<Generation generation>
-	static constexpr auto handle_burn(MutableActivePokemon<generation> pokemon, Weather const weather) -> void {
+	static constexpr auto handle_burn(any_mutable_active_pokemon auto const pokemon, Weather const weather) -> void {
 		auto const denominator = BOUNDED_CONDITIONAL(weakens_burn(pokemon.ability()), 16_bi, 8_bi);
 		heal(pokemon, weather, rational(-1_bi, denominator));
 	}
 
-	template<Generation generation>
-	static constexpr auto handle_poison(MutableActivePokemon<generation> pokemon, Weather const weather) -> void {
+	static constexpr auto handle_poison(any_mutable_active_pokemon auto const pokemon, Weather const weather) -> void {
 		auto const numerator = BOUNDED_CONDITIONAL(absorbs_poison_damage(pokemon.ability()), 1_bi, -1_bi);
 		heal(pokemon, weather, rational(numerator, 8_bi));
 	}
 
-	template<Generation generation>
-	static constexpr auto handle_toxic(MutableActivePokemon<generation> pokemon, Weather const weather, bounded::integer<1, 15> & toxic_counter) -> void {
+	static constexpr auto handle_toxic(any_mutable_active_pokemon auto const pokemon, Weather const weather, bounded::integer<1, 15> & toxic_counter) -> void {
 		if (absorbs_poison_damage(pokemon.ability())) {
 			heal(pokemon, weather, rational(1_bi, 8_bi));
 		} else {
@@ -115,8 +112,8 @@ private:
 	}
 
 	// Generation 1-2
-	template<Generation generation>
-	constexpr auto end_of_attack(MutableActivePokemon<generation> pokemon, MutableActivePokemon<generation> const other, Weather const weather) & -> void {
+	template<any_mutable_active_pokemon MutableActivePokemonType>
+	constexpr auto end_of_attack(MutableActivePokemonType const pokemon, MutableActivePokemonType const other, Weather const weather) & -> void {
 		auto const status = pokemon.status().name();
 		switch (status) {
 			case Statuses::clear:
@@ -155,8 +152,8 @@ private:
 	}
 
 	// Generation 3+
-	template<Generation generation>
-	constexpr auto end_of_turn(MutableActivePokemon<generation> pokemon, MutableActivePokemon<generation> const other, Weather const weather, bool uproar) & -> void {
+	template<any_mutable_active_pokemon MutableActivePokemonType>
+	constexpr auto end_of_turn(MutableActivePokemonType pokemon, MutableActivePokemonType const other, Weather const weather, bool uproar) & -> void {
 		handle_leech_seed(pokemon, other, weather);
 
 		switch (pokemon.status().name()) {

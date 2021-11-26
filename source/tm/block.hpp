@@ -14,7 +14,7 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/is_switch.hpp>
 
-#include <tm/pokemon/active_pokemon_forward.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/collection.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
@@ -34,8 +34,8 @@ constexpr auto would_switch_to_same_pokemon(PokemonCollection<generation> const 
 	return to_replacement(move) == collection.index();
 }
 
-template<Generation generation>
-constexpr auto is_blocked_from_switching(ActivePokemon<generation> const user, ActivePokemon<generation> const other, Weather const weather) {
+template<any_active_pokemon ActivePokemonType>
+constexpr auto is_blocked_from_switching(ActivePokemonType const user, ActivePokemonType const other, Weather const weather) {
 	auto const block_attempted = blocks_switching(other.ability(), user, weather) or user.trapped();
 	auto const result = block_attempted and !allows_switching(user.item(weather));
 	return result;
@@ -69,14 +69,13 @@ constexpr auto is_healing(Moves const name) {
 	}
 }
 
-template<Generation generation>
-constexpr auto imprison(Moves const move, ActivePokemon<generation> const other) {
+constexpr auto imprison(Moves const move, any_active_pokemon auto const other) {
 	return other.used_imprison() and containers::any_equal(other.regular_moves(), move);
 }
 
 // Things that both block selection and block execution in between sleep and confusion
-template<Generation generation>
-auto block1(ActivePokemon<generation> const user, Move const move, ActivePokemon<generation> const other) {
+template<any_active_pokemon ActivePokemonType>
+auto block1(ActivePokemonType const user, Move const move, ActivePokemonType const other) {
 	if (!is_regular(move.name())) {
 		return false;
 	}
@@ -106,26 +105,22 @@ constexpr auto is_blocked_by_gravity(Moves const move) {
 }
 
 // Things that both block selection and block execution after flinching
-template<Generation generation>
-constexpr auto block2(ActivePokemon<generation> const user, Moves const move, Weather const weather) {
+constexpr auto block2(any_active_pokemon auto const user, Moves const move, Weather const weather) {
 	return !is_switch(move) and (
 		(user.is_taunted() and is_blocked_by_taunt(move)) or
 		(weather.gravity() and is_blocked_by_gravity(move))
 	);
 }
 
-template<Generation generation>
-constexpr auto blocked_by_torment(ActivePokemon<generation> const user, Moves const move) {
+constexpr auto blocked_by_torment(any_active_pokemon auto const user, Moves const move) {
 	return user.is_tormented() and user.last_used_move().name() == move and not is_switch(move) and move != Moves::Struggle;
 }
 
-template<Generation generation>
-constexpr auto is_locked_in(ActivePokemon<generation> const user, Weather const weather) {
+constexpr auto is_locked_in(any_active_pokemon auto const user, Weather const weather) {
 	return user.is_encored() or user.last_used_move().is_locked_in_by_move() or is_choice_item(user.item(weather));
 }
 
-template<Generation generation>
-constexpr auto is_locked_in_to_different_move(ActivePokemon<generation> const user, Moves const move, Weather const weather) {
+constexpr auto is_locked_in_to_different_move(any_active_pokemon auto const user, Moves const move, Weather const weather) {
 	if (not is_locked_in(user, weather)) {
 		return false;
 	}
@@ -133,8 +128,7 @@ constexpr auto is_locked_in_to_different_move(ActivePokemon<generation> const us
 	return not is_switch(last_move) and last_move != move;
 }
 
-template<Generation generation>
-constexpr auto is_blocked_due_to_lock_in(ActivePokemon<generation> const user, Moves const move, Weather const weather) {
+constexpr auto is_blocked_due_to_lock_in(any_active_pokemon auto const user, Moves const move, Weather const weather) {
 	return !is_regular(move) ?
 		user.last_used_move().is_locked_in_by_move() :
 		is_locked_in_to_different_move(user, move, weather);
@@ -181,8 +175,7 @@ constexpr auto legal_selections(Team<generation> const & user, Team<generation> 
 }
 
 
-template<Generation generation>
-constexpr bool is_blocked_by_freeze(ActivePokemon<generation> const user, Moves const move) {
+constexpr bool is_blocked_by_freeze(any_active_pokemon auto const user, Moves const move) {
 	return is_frozen(user.status()) and !thaws_user(move);
 }
 
@@ -196,18 +189,17 @@ constexpr bool usable_while_sleeping(Moves const move) {
 	}
 }
 
-template<Generation generation>
-constexpr bool is_blocked_by_sleep(ActivePokemon<generation> const user, Moves const move, bool const user_was_asleep) {
-	return generation == Generation::one ? user_was_asleep : usable_while_sleeping(move) != is_sleeping(user.status());
+template<any_active_pokemon UserPokemon>
+constexpr bool is_blocked_by_sleep(UserPokemon const user, Moves const move, bool const user_was_asleep) {
+	return generation_from<UserPokemon> == Generation::one ? user_was_asleep : usable_while_sleeping(move) != is_sleeping(user.status());
 }
 
-template<Generation generation>
-constexpr auto is_blocked_due_to_status(ActivePokemon<generation> const user, Moves const move, bool const user_was_asleep) {
+constexpr auto is_blocked_due_to_status(any_active_pokemon auto const user, Moves const move, bool const user_was_asleep) {
 	return is_blocked_by_freeze(user, move) or is_blocked_by_sleep(user, move, user_was_asleep);
 }
 
-template<Generation generation>
-auto can_attempt_move_execution(ActivePokemon<generation> user, Move const move, ActivePokemon<generation> const other, bool const user_was_asleep) -> bool {
+template<any_active_pokemon ActivePokemonType>
+auto can_attempt_move_execution(ActivePokemonType user, Move const move, ActivePokemonType const other, bool const user_was_asleep) -> bool {
 	if (is_switch(move.name())) {
 		return true;
 	}
@@ -222,8 +214,7 @@ auto can_attempt_move_execution(ActivePokemon<generation> user, Move const move,
 	return true;
 }
 
-template<Generation generation>
-auto can_execute_move(ActivePokemon<generation> user, Move const move, Weather const weather, bool const is_recharging) -> bool {
+auto can_execute_move(any_active_pokemon auto const user, Move const move, Weather const weather, bool const is_recharging) -> bool {
 	// TODO: handle is_fully_paralyzed
 	constexpr auto is_fully_paralyzed = false;
 	auto const switching = is_switch(move.name());

@@ -22,6 +22,7 @@
 #include <tm/weather.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
@@ -97,8 +98,9 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 }
 
 // Returns whether the attack is weakened by the item
-template<Generation generation>
-auto activate_when_hit_item(KnownMove const move, MutableActivePokemon<generation> defender, Weather const weather, Effectiveness const effectiveness) -> bool {
+template<any_mutable_active_pokemon MutableActivePokemonType>
+auto activate_when_hit_item(KnownMove const move, MutableActivePokemonType const defender, Weather const weather, Effectiveness const effectiveness) -> bool {
+	constexpr auto generation = generation_from<MutableActivePokemonType>;
 	auto substitute = [&] {
 		return defender.substitute() and substitute_interaction(generation, move.name) != Substitute::bypassed;
 	};
@@ -332,8 +334,7 @@ constexpr auto fails_against_fainted(Target const target) {
 	}
 }
 
-template<Generation generation>
-auto handle_ability_blocks_move(MutableActivePokemon<generation> const target, Weather const weather) {
+auto handle_ability_blocks_move(any_mutable_active_pokemon auto const target, Weather const weather) {
 	switch (target.ability()) {
 		case Ability::Flash_Fire:
 			target.activate_flash_fire();

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/pokemon/active_pokemon_forward.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 
 #include <tm/ability.hpp>
 #include <tm/item.hpp>
@@ -16,8 +16,8 @@
 
 namespace technicalmachine {
 
-template<Generation generation, typename Numerator, typename Denominator>
-void heal(MutableActivePokemon<generation> pokemon, Weather const weather, rational<Numerator, Denominator> const scale) {
+template<typename Numerator, typename Denominator>
+void heal(any_mutable_active_pokemon auto const pokemon, Weather const weather, rational<Numerator, Denominator> const scale) {
 	auto const hp = pokemon.hp();
 	if (hp.current() == 0_bi) {
 		return;

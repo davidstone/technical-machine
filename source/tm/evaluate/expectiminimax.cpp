@@ -18,6 +18,8 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/side_effects.hpp>
 
+#include <tm/pokemon/any_pokemon.hpp>
+
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/chance_to_hit.hpp>
 
@@ -171,12 +173,12 @@ auto execute_move(Team<generation> const & user, SelectedAndExecuted const move,
 }
 
 struct OriginalPokemon {
-	template<Generation generation>
-	OriginalPokemon(ActivePokemon<generation> const pokemon, ActivePokemon<generation> const other_pokemon, Moves const other_move):
+	template<any_active_pokemon ActivePokemonType>
+	OriginalPokemon(ActivePokemonType const pokemon, ActivePokemonType const other_pokemon, Moves const other_move):
 		m_species(pokemon.species()),
 		m_other_move{
 			other_move,
-			get_type(generation, other_move, get_hidden_power_type(other_pokemon))
+			get_type(generation_from<ActivePokemonType>, other_move, get_hidden_power_type(other_pokemon))
 		}
 	{
 	}

@@ -10,6 +10,8 @@
 #include <tm/move/is_switch.hpp>
 #include <tm/move/will_be_recharge_turn.hpp>
 
+#include <tm/pokemon/any_pokemon.hpp>
+
 #include <tm/any_team.hpp>
 #include <tm/team.hpp>
 
@@ -88,11 +90,12 @@ private:
 	[[no_unique_address]] Denominator m_denominator;
 };
 
-template<Generation generation>
-constexpr auto confusion_effect(double const probability, ActivePokemon<generation> const original_target, auto const... maybe_immune_type) {
+template<any_active_pokemon TargetType>
+constexpr auto confusion_effect(double const probability, TargetType const original_target, auto const... maybe_immune_type) {
+	using TeamType = Team<generation_from<TargetType>>;
 	return (... or is_type(original_target, maybe_immune_type)) ?
-		no_effect<Team<generation>> :
-		basic_probability<Team<generation>>(probability, [](auto &, auto & target, auto & weather, auto) {
+		no_effect<TeamType> :
+		basic_probability<TeamType>(probability, [](auto &, auto & target, auto & weather, auto) {
 			target.pokemon().confuse(weather);
 		});
 }
@@ -339,15 +342,16 @@ constexpr auto stat_can_boost = [](Stage const stage) {
 template<auto...>
 struct sequence {};
 
-template<Generation generation>
-constexpr auto acupressure_effect(ActivePokemon<generation> const target) {
-	auto result = SideEffects<Team<generation>>();
+template<any_active_pokemon ActivePokemonType>
+constexpr auto acupressure_effect(ActivePokemonType const target) {
+	using TeamType = Team<generation_from<ActivePokemonType>>;
+	auto result = SideEffects<TeamType>();
 	auto const stages = target.stages();
 	auto const probability = 1.0 / double(containers::count_if(stages, stat_can_boost));
 
 	auto add_stat = [&]<BoostableStat stat>(std::integral_constant<BoostableStat, stat>) {
 		if (stat_can_boost(stages[stat])) {
-			containers::push_back(result, SideEffect<Team<generation>>{probability, boost_user_stat<stat, 2>});
+			containers::push_back(result, SideEffect<TeamType>{probability, boost_user_stat<stat, 2>});
 		}
 	};
 	auto add_stats = [&]<BoostableStat... stats>(sequence<stats...>) {
@@ -453,15 +457,14 @@ constexpr auto charge_up_move(
 		std::move(when_used);
 }
 
-template<Generation generation>
-auto item_can_be_lost(ActivePokemon<generation> const pokemon) {
+template<any_active_pokemon ActivePokemonType>
+auto item_can_be_lost(ActivePokemonType const pokemon) {
 	return
 		pokemon.ability() != Ability::Sticky_Hold or
-		(generation >= Generation::five and pokemon.hp().current() == 0_bi);
+		(generation_from<ActivePokemonType> >= Generation::five and pokemon.hp().current() == 0_bi);
 }
 
-template<Generation generation>
-auto item_can_be_incinerated(ActivePokemon<generation> const target, Weather const weather) -> bool {
+auto item_can_be_incinerated(any_active_pokemon auto const target, Weather const weather) -> bool {
 	// TODO: Destroy gems
 	return item_can_be_lost(target) and berry_power(target.item(weather)) != 0_bi;
 }
@@ -642,7 +645,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		}
 		case Moves::Acupressure:
 			// TODO: Probability not correct due to the maxing out behavior
-			return acupressure_effect<generation>(original_user);
+			return acupressure_effect(original_user);
 		case Moves::Amnesia:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				auto pokemon = user.pokemon();

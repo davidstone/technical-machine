@@ -10,7 +10,7 @@
 #include <tm/move/known_move.hpp>
 #include <tm/move/moves.hpp>
 
-#include <tm/pokemon/active_pokemon_forward.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
@@ -76,8 +76,9 @@ constexpr auto always_affects_target(Generation const generation, Moves const mo
 	}
 }
 
-template<Generation generation>
-auto affects_target(KnownMove const move, ActivePokemon<generation> const target, Weather const weather) -> bool {
+template<any_active_pokemon TargetPokemon>
+auto affects_target(KnownMove const move, TargetPokemon const target, Weather const weather) -> bool {
+	constexpr auto generation = generation_from<TargetPokemon>;
 	auto const effectiveness = Effectiveness(generation, move.type, target.types());
 	if (always_affects_target(generation, move.name)) {
 		return true;

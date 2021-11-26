@@ -14,6 +14,7 @@
 #include <tm/weather.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
@@ -40,8 +41,7 @@ auto is_immune_to_sandstorm(PokemonTypes const types) -> bool {
 	});
 }
 
-template<Generation generation>
-void hail_effect(MutableActivePokemon<generation> pokemon, Weather const weather) {
+void hail_effect(any_mutable_active_pokemon auto const pokemon, Weather const weather) {
 	switch (pokemon.ability()) {
 		case Ability::Ice_Body:
 			heal(pokemon, weather, rational(1_bi, 16_bi));
@@ -56,8 +56,7 @@ void hail_effect(MutableActivePokemon<generation> pokemon, Weather const weather
 	}
 }
 
-template<Generation generation>
-void rain_effect(MutableActivePokemon<generation> pokemon, Weather const weather) {
+void rain_effect(any_mutable_active_pokemon auto const pokemon, Weather const weather) {
 	switch (pokemon.ability()) {
 		case Ability::Dry_Skin:
 			heal(pokemon, weather, rational(1_bi, 8_bi));
@@ -73,8 +72,7 @@ void rain_effect(MutableActivePokemon<generation> pokemon, Weather const weather
 	}
 }
 
-template<Generation generation>
-void sand_effect(MutableActivePokemon<generation> pokemon, Weather const weather) {
+void sand_effect(any_mutable_active_pokemon auto const pokemon, Weather const weather) {
 	switch (pokemon.ability()) {
 		case Ability::Sand_Veil:
 			break;
@@ -85,8 +83,7 @@ void sand_effect(MutableActivePokemon<generation> pokemon, Weather const weather
 	}
 }
 
-template<Generation generation>
-void sun_effect(MutableActivePokemon<generation> pokemon, Weather const weather) {
+void sun_effect(any_mutable_active_pokemon auto const pokemon, Weather const weather) {
 	switch (pokemon.ability()) {
 		case Ability::Dry_Skin:
 			heal(pokemon, weather, rational(1_bi, 8_bi));
@@ -99,8 +96,8 @@ void sun_effect(MutableActivePokemon<generation> pokemon, Weather const weather)
 	}
 }
 
-template<Generation generation>
-void weather_effects(MutableActivePokemon<generation> first, MutableActivePokemon<generation> last, Weather & weather) {
+template<any_mutable_active_pokemon MutableActivePokemonType>
+void weather_effects(MutableActivePokemonType const first, MutableActivePokemonType const last, Weather & weather) {
 	weather.advance_one_turn();
 	auto const ability_blocks_weather = weather_is_blocked_by_ability(first.ability(), last.ability());
 	for (auto const pokemon : {first, last}) {
@@ -116,8 +113,7 @@ void weather_effects(MutableActivePokemon<generation> first, MutableActivePokemo
 	}
 }
 
-template<Generation generation>
-auto handle_curse(MutableActivePokemon<generation> pokemon, Weather const weather) -> void {
+auto handle_curse(any_mutable_active_pokemon auto const pokemon, Weather const weather) -> void {
 	if (!pokemon.is_cursed()) {
 		return;
 	}

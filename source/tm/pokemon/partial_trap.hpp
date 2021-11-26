@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <tm/pokemon/active_pokemon_forward.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/end_of_turn_counter.hpp>
 
 #include <tm/compress.hpp>
@@ -27,8 +27,7 @@ struct PartialTrap {
 	constexpr auto activate() {
 		m_base.activate();
 	}
-	template<Generation generation>
-	constexpr auto damage(MutableActivePokemon<generation> pokemon, Weather const weather) -> void {
+	constexpr auto damage(any_mutable_active_pokemon auto const pokemon, Weather const weather) -> void {
 		if (is_active()) {
 			heal(pokemon, weather, rational(-1_bi, 16_bi));
 			m_base.advance_one_turn();

@@ -5,6 +5,7 @@
 
 #include <tm/critical_hit.hpp>
 
+#include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
 namespace technicalmachine {
@@ -798,8 +799,7 @@ constexpr auto generation_one_move_critical_hit_multiplier(MoveCriticalHit const
 	}
 }
 
-template<Generation generation>
-auto gen_one_critical_hit(ActivePokemon<generation> const attacker, MoveCriticalHit const move_adjustment) {
+auto gen_one_critical_hit(any_active_pokemon auto const attacker, MoveCriticalHit const move_adjustment) {
 	auto const initial = BaseStats(Generation::one, attacker.species()).spe() / 2_bi;
 	auto const focused = BOUNDED_CONDITIONAL(attacker.has_focused_energy(), initial / 2_bi, initial * 2_bi);
 	auto const final = bounded::min(255_bi, focused * generation_one_move_critical_hit_multiplier(move_adjustment));
@@ -835,9 +835,9 @@ constexpr auto ability_stage(Ability const ability) {
 	return BOUNDED_CONDITIONAL(ability == Ability::Super_Luck, 1_bi, 0_bi);
 }
 
-template<Generation generation>
-auto boosted_stage(ActivePokemon<generation> const attacker) {
-	auto const boosted_value = BOUNDED_CONDITIONAL(generation == Generation::two, 1_bi, 2_bi);
+template<any_active_pokemon ActivePokemonType>
+auto boosted_stage(ActivePokemonType const attacker) {
+	auto const boosted_value = BOUNDED_CONDITIONAL(generation_from<ActivePokemonType> == Generation::two, 1_bi, 2_bi);
 	return BOUNDED_CONDITIONAL(attacker.has_focused_energy(), boosted_value, 0_bi);
 }
 
@@ -874,8 +874,9 @@ constexpr auto critical_hit_rate_from_stage(Generation const generation, bounded
 	}
 }
 
-template<Generation generation>
-auto new_gen_critical_hit(ActivePokemon<generation> const attacker, MoveCriticalHit const move_adjustment, Weather const weather) {
+template<any_active_pokemon ActivePokemonType>
+auto new_gen_critical_hit(ActivePokemonType const attacker, MoveCriticalHit const move_adjustment, Weather const weather) {
+	constexpr auto generation = generation_from<ActivePokemonType>;
 	switch (move_adjustment) {
 		case MoveCriticalHit::never:
 			return 0.0;
@@ -896,8 +897,9 @@ auto new_gen_critical_hit(ActivePokemon<generation> const attacker, MoveCritical
 	}
 }
 
-template<Generation generation>
-auto base_critical_hit_probability(ActivePokemon<generation> const attacker, Moves const move_name, Weather const weather) {
+template<any_active_pokemon ActivePokemonType>
+auto base_critical_hit_probability(ActivePokemonType const attacker, Moves const move_name, Weather const weather) {
+	constexpr auto generation = generation_from<ActivePokemonType>;
 	auto const move_adjustment = move_critical_hit(generation, move_name);
 	switch (generation) {
 		case Generation::one:
@@ -915,20 +917,18 @@ auto base_critical_hit_probability(ActivePokemon<generation> const attacker, Mov
 
 } // namespace
 
-template<Generation generation>
-auto critical_hit_probability(ActivePokemon<generation> const attacker, Moves const move, Ability const defender_ability, Weather const weather) -> double {
+auto critical_hit_probability(any_active_pokemon auto const attacker, Moves const move, Ability const defender_ability, Weather const weather) -> double {
 	switch (defender_ability) {
 		case Ability::Battle_Armor:
 		case Ability::Shell_Armor:
 			return 0.0;
-		default: {
+		default:
 			return base_critical_hit_probability(attacker, move, weather);
-		}
 	}
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto critical_hit_probability<generation>(ActivePokemon<generation> const attacker, Moves const move, Ability const defender_ability, Weather const weather) -> double
+	template auto critical_hit_probability<ActivePokemon<generation>>(ActivePokemon<generation> const attacker, Moves const move, Ability const defender_ability, Weather const weather) -> double
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

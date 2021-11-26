@@ -7,7 +7,7 @@
 
 #include <tm/move/moves.hpp>
 
-#include <tm/pokemon/active_pokemon_forward.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 
 #include <tm/stat/hp.hpp>
 
@@ -49,10 +49,10 @@ constexpr auto reflected_status(Generation const generation, Statuses const stat
 	}
 }
 
-template<Generation generation>
-auto apply_status(Statuses const status, MutableActivePokemon<generation> const user, MutableActivePokemon<generation> const target, Weather const weather) {
+template<any_mutable_active_pokemon MutableActivePokemonType>
+auto apply_status(Statuses const status, MutableActivePokemonType const user, MutableActivePokemonType const target, Weather const weather) {
 	target.set_status(status, weather);
-	auto const reflected = reflected_status(generation, status);
+	auto const reflected = reflected_status(generation_from<MutableActivePokemonType>, status);
 	if (reflected and reflects_status(target.ability())) {
 		user.set_status(*reflected, weather);
 	}

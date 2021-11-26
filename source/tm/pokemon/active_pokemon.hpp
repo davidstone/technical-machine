@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include <tm/pokemon/active_pokemon_forward.hpp>
 #include <tm/pokemon/active_status.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/confusion.hpp>
 #include <tm/pokemon/disable.hpp>
 #include <tm/pokemon/embargo.hpp>
@@ -375,8 +375,7 @@ protected:
 	FlagsRef m_flags;
 };
 
-template<Generation generation>
-auto apply_own_mental_herb(MutableActivePokemon<generation> const pokemon, Weather const weather) -> void {
+auto apply_own_mental_herb(any_mutable_active_pokemon auto const pokemon, Weather const weather) -> void {
 	if (pokemon.item(weather) == Item::Mental_Herb) {
 		pokemon.apply_mental_herb();
 		pokemon.remove_item();
@@ -392,18 +391,17 @@ struct ActivePokemon : ActivePokemonImpl<generation, true> {
 	}
 };
 
-template<Generation generation>
-auto is_type(ActivePokemon<generation> const pokemon, auto const... types) -> bool requires(sizeof...(types) > 0) {
+auto is_type(any_active_pokemon auto const pokemon, auto const... types) -> bool requires(sizeof...(types) > 0) {
 	return (... or (
 		(types != Type::Flying or !pokemon.last_used_move().is_roosting()) and
 		containers::any_equal(pokemon.types(), types)
 	));
 }
 
-template<Generation generation>
-auto grounded(ActivePokemon<generation> const pokemon, Weather const weather) -> bool {
+template<any_active_pokemon ActivePokemonType>
+auto grounded(ActivePokemonType const pokemon, Weather const weather) -> bool {
 	auto item_grounds = [=] {
-		auto const item = generation <= Generation::four ?
+		auto const item = generation_from<ActivePokemonType> <= Generation::four ?
 			pokemon.unrestricted_item() :
 			pokemon.item(weather);
 		return item == Item::Iron_Ball;
@@ -421,8 +419,7 @@ auto grounded(ActivePokemon<generation> const pokemon, Weather const weather) ->
 		pokemon.ingrained();
 }
 
-template<Generation generation>
-auto activate_berserk_gene(MutableActivePokemon<generation> pokemon, Weather const weather) -> void {
+auto activate_berserk_gene(any_mutable_active_pokemon auto pokemon, Weather const weather) -> void {
 	pokemon.stages()[BoostableStat::atk] += 2_bi;
 	// TODO: Berserk Gene causes 256-turn confusion, unless the Pokemon
 	// switching out was confused.
@@ -434,16 +431,14 @@ constexpr bool cannot_ko(Moves const move) {
 	return move == Moves::False_Swipe;
 }
 
-template<Generation generation>
-auto indirect_status_can_apply(Statuses const status, ActivePokemon<generation> const target, Weather const weather) {
+auto indirect_status_can_apply(Statuses const status, any_active_pokemon auto const target, Weather const weather) {
 	return
 		is_clear(target.status()) and
 		!blocks_status(target.ability(), Ability::Honey_Gather, status, weather) and
 		!containers::any(target.types(), [=](Type const type) { return blocks_status(type, status); });
 }
 
-template<Generation generation>
-auto yawn_can_apply(ActivePokemon<generation> const target, Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) {
+auto yawn_can_apply(any_active_pokemon auto const target, Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) {
 	return
 		!sleep_clause_activates and
 		!either_is_uproaring and
@@ -1044,18 +1039,16 @@ private:
 	}
 };
 
-template<Generation generation>
-auto all_moves(ActivePokemon<generation> const pokemon, TeamSize const team_size) {
-	return MoveContainer<generation>(pokemon.regular_moves(), team_size);
+template<any_active_pokemon ActivePokemonType>
+auto all_moves(ActivePokemonType const pokemon, TeamSize const team_size) {
+	return MoveContainer<generation_from<ActivePokemonType>>(pokemon.regular_moves(), team_size);
 }
 
-template<Generation generation>
-auto change_hp(MutableActivePokemon<generation> pokemon, Weather const weather, auto const change) {
+auto change_hp(any_mutable_active_pokemon auto const pokemon, Weather const weather, auto const change) {
 	pokemon.set_hp(weather, pokemon.hp().current() + change);
 }
 
-template<Generation generation>
-auto apply_white_herb(MutableActivePokemon<generation> const pokemon) {
+auto apply_white_herb(any_mutable_active_pokemon auto const pokemon) {
 	for (auto & stage : pokemon.stages()) {
 		if (stage < 0_bi) {
 			stage = Stage(0_bi);
@@ -1063,16 +1056,16 @@ auto apply_white_herb(MutableActivePokemon<generation> const pokemon) {
 	}
 }
 
-template<Generation generation>
-auto apply_own_white_herb(MutableActivePokemon<generation> const pokemon, Weather const weather) {
+auto apply_own_white_herb(any_mutable_active_pokemon auto const pokemon, Weather const weather) {
 	if (pokemon.item(weather) == Item::White_Herb) {
 		apply_white_herb(pokemon);
 		pokemon.remove_item();
 	}
 }
 
-template<Generation generation>
-bool blocks_switching(Ability const ability, ActivePokemon<generation> const switcher, Weather const weather) {
+template<any_active_pokemon ActivePokemonType>
+bool blocks_switching(Ability const ability, ActivePokemonType const switcher, Weather const weather) {
+	constexpr auto generation = generation_from<ActivePokemonType>;
 	auto ghost_immunity = [&]{
 		return generation >= Generation::six and is_type(switcher, Type::Ghost);
 	};
@@ -1088,8 +1081,9 @@ bool blocks_switching(Ability const ability, ActivePokemon<generation> const swi
 	}
 }
 
-template<Generation generation>
-void activate_ability_on_switch(MutableActivePokemon<generation> switcher, MutableActivePokemon<generation> other, Weather & weather) {
+template<any_mutable_active_pokemon MutableActivePokemonType>
+void activate_ability_on_switch(MutableActivePokemonType const switcher, MutableActivePokemonType const other, Weather & weather) {
+	constexpr auto generation = generation_from<MutableActivePokemonType>;
 	auto const switcher_ability = switcher.ability();
 	switch (switcher_ability) {
 		case Ability::Download: {

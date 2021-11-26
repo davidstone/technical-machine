@@ -21,6 +21,7 @@
 #include <tm/move/other_move.hpp>
 #include <tm/move/power.hpp>
 
+#include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/pokemon.hpp>
 
 #include <tm/stat/calculate.hpp>
@@ -69,8 +70,7 @@ auto calculate_weather_modifier(Type const type, Weather const weather, bool con
 	));
 }
 
-template<Generation generation>
-auto calculate_flash_fire_modifier(ActivePokemon<generation> const attacker, Type const move_type) {
+auto calculate_flash_fire_modifier(any_active_pokemon auto const attacker, Type const move_type) {
 	return BOUNDED_CONDITIONAL(attacker.flash_fire_is_active() and is_boosted_by_flash_fire(move_type),
 		rational(3_bi, 2_bi),
 		rational(1_bi, 1_bi)
@@ -78,20 +78,19 @@ auto calculate_flash_fire_modifier(ActivePokemon<generation> const attacker, Typ
 }
 
 using ItemModifier = rational<bounded::integer<10, 20>, bounded::integer<10, 10>>;
-template<Generation generation>
-auto calculate_item_modifier(ActivePokemon<generation> const attacker, Weather const weather) -> ItemModifier {
+template<any_active_pokemon PokemonType>
+auto calculate_item_modifier(PokemonType const attacker, Weather const weather) -> ItemModifier {
 	switch (attacker.item(weather)) {
 		case Item::Life_Orb:
 			return rational(13_bi, 10_bi);
 		case Item::Metronome:
-			return attacker.last_used_move().metronome_boost(generation);
+			return attacker.last_used_move().metronome_boost(generation_from<PokemonType>);
 		default:
 			return rational(10_bi, 10_bi);
 	}
 }
 
-template<Generation generation>
-auto calculate_me_first_modifier(ActivePokemon<generation> const attacker) {
+auto calculate_me_first_modifier(any_active_pokemon auto const attacker) {
 	return BOUNDED_CONDITIONAL(attacker.me_first_is_active(),
 		rational(3_bi, 2_bi),
 		rational(1_bi, 1_bi)
@@ -106,8 +105,7 @@ auto calculate_stab_boost(Ability const ability) {
 	);
 }
 
-template<Generation generation>
-auto calculate_stab_modifier(ActivePokemon<generation> const attacker, Type const move_type) {
+auto calculate_stab_modifier(any_active_pokemon auto const attacker, Type const move_type) {
 	return BOUNDED_CONDITIONAL(is_type(attacker, move_type) and move_type != Type::Typeless,
 		calculate_stab_boost(attacker.ability()),
 		rational(1_bi, 1_bi)
@@ -129,13 +127,11 @@ auto calculate_expert_belt_modifier(Item const item, Effectiveness const & effec
 }
 
 
-template<Generation generation>
-auto level_multiplier(ActivePokemon<generation> const attacker) {
+auto level_multiplier(any_active_pokemon auto const attacker) {
 	return attacker.level()() * 2_bi / 5_bi;
 }
 
-template<Generation generation>
-auto weakening_from_status(ActivePokemon<generation> const attacker) {
+auto weakening_from_status(any_active_pokemon auto const attacker) {
 	return BOUNDED_CONDITIONAL(
 		weakens_physical_attacks(attacker.status()) and blocks_burn_damage_penalty(attacker.ability()),
 		2_bi,
