@@ -674,7 +674,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 	auto perish_song_turn() const -> void {
 		bool const faints_this_turn = this->m_flags.perish_song.advance_one_turn();
 		if (faints_this_turn) {
-			this->m_pokemon.set_hp(0_bi);
+			faint(this->m_pokemon);
 		}
 	}
 	auto activate_power_trick() const {
@@ -897,7 +897,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 
 		// TODO: Resolve ties properly
 		if (this->last_used_move().is_destiny_bonded() and applied_damage == original_hp) {
-			user.set_hp(weather, 0_bi);
+			faint(user);
 		}
 		return applied_damage;
 	}
@@ -1136,6 +1136,10 @@ void activate_ability_on_switch(MutableActivePokemonType const switcher, Mutable
 		default:
 			break;
 	}
+}
+
+constexpr auto faint(any_mutable_active_pokemon auto const pokemon) -> void {
+	pokemon.set_hp(Weather(), 0_bi);
 }
 
 } // namespace technicalmachine

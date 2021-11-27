@@ -112,7 +112,7 @@ struct Battle {
 		}
 	}
 	void handle_fainted(bool const is_ai) {
-		active_pokemon(is_ai).set_hp(0_bi);
+		faint(active_pokemon(is_ai));
 	}
 
 	void set_value_on_active(bool const is_ai, Ability const ability) {

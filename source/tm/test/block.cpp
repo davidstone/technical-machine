@@ -191,7 +191,7 @@ TEST_CASE("Replace fainted", "[block]") {
 
 	other.reset_start_of_turn();
 
-	team.pokemon().set_hp(weather, 0_bi);
+	faint(team.pokemon());
 	
 	auto const expected = StaticVectorMove({Moves::Switch1});
 	auto const selections = legal_selections(team, other, weather);

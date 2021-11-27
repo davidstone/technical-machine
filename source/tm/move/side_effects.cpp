@@ -1425,13 +1425,13 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Explosion:
 		case Moves::Self_Destruct:
 			return (generation == Generation::one and original_other.pokemon().substitute()) ?
-				guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto) {
+				guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 					if (other.pokemon().substitute()) {
-						user.pokemon().set_hp(weather, 0_bi);
+						faint(user.pokemon());
 					}
 				}) :
-				guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
-					user.pokemon().set_hp(weather, 0_bi);
+				guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
+					faint(user.pokemon());
 				});
 		case Moves::Feint:
 		case Moves::Hyperspace_Fury:
@@ -1518,9 +1518,9 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 		case Moves::Me_First:
 			return no_effect<UserTeam>;
 		case Moves::Memento:
-			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto) {
+			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
 				boost_offensive(other.pokemon().stages(), -2_bi);
-				user.pokemon().set_hp(weather, 0_bi);
+				faint(user.pokemon());
 			});
 		case Moves::Mimic:
 			return no_effect<UserTeam>;

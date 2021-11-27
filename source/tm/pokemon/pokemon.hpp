@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/happiness.hpp>
 #include <tm/pokemon/hidden_power.hpp>
 #include <tm/pokemon/level.hpp>
@@ -328,6 +329,10 @@ extern template struct Pokemon<Generation::five>;
 extern template struct Pokemon<Generation::six>;
 extern template struct Pokemon<Generation::seven>;
 extern template struct Pokemon<Generation::eight>;
+
+constexpr auto faint(any_pokemon auto & pokemon) -> void {
+	pokemon.set_hp(0_bi);
+}
 
 auto get_hidden_power_type(auto const pokemon) {
 	auto const hidden_power = pokemon.hidden_power();
