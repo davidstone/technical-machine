@@ -294,8 +294,8 @@ struct BattleParserImpl : BattleParser {
 			auto const amount = message.pop();
 #endif
 		} else if (type == "callback") {
-			// Looks like it's just another form of "cant", but it is probably used
-			// for more things than just that
+			// It looks like this is always followed by "error", so this is
+			// redundant
 		} else if (type == "cant") {
 			// TODO: Figure out how to solve this in general...
 			auto const party = party_from_player_id(message.pop());
