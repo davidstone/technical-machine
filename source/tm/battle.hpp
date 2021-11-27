@@ -123,7 +123,7 @@ private:
 	auto active_pokemon(bool const is_ai, auto... maybe_index) -> Pokemon<generation> & {
 		return (is_ai ? m_ai : m_foe).all_pokemon()(maybe_index...);
 	}
-	auto correct_hp(bool const is_ai, HP const original_hp, VisibleHP const visible_hp) -> HP::current_type {
+	static auto correct_hp(bool const is_ai, HP const original_hp, VisibleHP const visible_hp) -> HP::current_type {
 		auto const current_hp = original_hp.current();
 		auto const seen_hp = to_real_hp(is_ai, original_hp.max(), visible_hp);
 		if (seen_hp.min > current_hp or seen_hp.max < current_hp) {
@@ -133,7 +133,7 @@ private:
 		}
 		return seen_hp.value;
 	}
-	void validate_status(Statuses const original_status, Statuses const visible_status) {
+	static void validate_status(Statuses const original_status, Statuses const visible_status) {
 		auto const normalized_original_status = (original_status == Statuses::rest) ? Statuses::sleep : original_status;
 		if (normalized_original_status != visible_status) {
 			throw std::runtime_error(containers::concatenate<std::string>(
