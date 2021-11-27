@@ -101,12 +101,15 @@ struct Battle {
 	// This assumes Species Clause is in effect. This does not perform any
 	// switching, it just adds them to the team.
 	auto find_or_add_pokemon(bool const is_ai, Species const species, Level const level, Gender const gender) -> Moves {
-		auto & switcher = is_ai ? m_ai : m_foe;
-		auto const index = find_index(switcher.all_pokemon(), species);
-		if (index == switcher.number_of_seen_pokemon()) {
-			switcher.all_pokemon().add(Pokemon<generation>(species, level, gender));
+		if (is_ai) {
+			return to_switch(find_required_index(m_ai.all_pokemon(), species));
+		} else {
+			auto const index = find_index(m_foe.all_pokemon(), species);
+			if (index == m_foe.number_of_seen_pokemon()) {
+				m_foe.all_pokemon().add({species, level, gender});
+			}
+			return to_switch(index);
 		}
-		return to_switch(index);
 	}
 	void handle_fainted(bool const is_ai) {
 		active_pokemon(is_ai).set_hp(0_bi);
