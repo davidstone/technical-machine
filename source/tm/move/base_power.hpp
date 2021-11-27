@@ -19,12 +19,19 @@ namespace technicalmachine {
 using BasePower = bounded::integer<0, 480>;
 
 // It is undefined behavior to get the base power of a move without a base power
-// (Dragon Range, Guillotine, etc.).
-template<any_team UserTeam>
-auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam>, UserTeam const & defender_team, Weather) -> BasePower;
+// (Dragon Rage, Guillotine, etc.).
+template<any_team UserTeam, any_team DefenderTeam>
+auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam>, DefenderTeam const & defender_team, Weather) -> BasePower;
+
+#define TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(UserTeam, DefenderTeam) \
+	extern template auto base_power(UserTeam const &, ExecutedMove<UserTeam>, DefenderTeam const &, Weather) -> BasePower
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto base_power(Team<generation> const &, ExecutedMove<Team<generation>>, Team<generation> const &, Weather) -> BasePower
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(Team<generation>, Team<generation>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(KnownTeam<generation>, KnownTeam<generation>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(KnownTeam<generation>, SeenTeam<generation>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(SeenTeam<generation>, KnownTeam<generation>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(SeenTeam<generation>, SeenTeam<generation>)
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
@@ -36,5 +43,6 @@ TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::seven);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
 
 #undef TECHNICALMACHINE_EXTERN_INSTANTIATION
+#undef TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL
 
 } // namespace technicalmachine

@@ -92,7 +92,7 @@ void write_pokemon(any_pokemon auto const & pokemon, boost::property_tree::ptree
 	member.put("<xmlattr>.Num", po_species.id);
 	member.put("<xmlattr>.Nature", ingame_nature_to_id(pokemon.nature()));
 	member.put("<xmlattr>.Shiny", 0);
-	member.put("<xmlattr>.Nickname", to_string(species));
+	member.put("<xmlattr>.Nickname", pokemon.nickname());
 	member.put("<xmlattr>.Gen", 4);
 	member.put("<xmlattr>.Forme", po_species.forme);
 	member.put("<xmlattr>.Happiness", pokemon.happiness());

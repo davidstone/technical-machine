@@ -44,7 +44,7 @@ struct ClientImpl {
 
 private:
 	template<Generation generation>
-	auto generate_team() -> Team<generation> {
+	auto generate_team() -> KnownTeam<generation> {
 		if (!m_settings.team_file) {
 			return ::technicalmachine::generate_team<generation>(
 				m_all_usage_stats[generation],
@@ -53,7 +53,7 @@ private:
 			);
 		}
 		auto parsed = load_random_team_from_directory(m_random_engine, *m_settings.team_file);
-		return bounded::visit(parsed, []<any_team TeamType>(TeamType const & team) -> Team<generation> {
+		return bounded::visit(parsed, []<any_known_team TeamType>(TeamType const & team) -> KnownTeam<generation> {
 			if constexpr (generation == generation_from<TeamType>) {
 				return team;
 			} else {

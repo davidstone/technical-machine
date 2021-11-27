@@ -9,6 +9,7 @@
 #include <tm/pokemon/happiness.hpp>
 #include <tm/pokemon/hidden_power.hpp>
 #include <tm/pokemon/level.hpp>
+#include <tm/pokemon/seen_pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
 #include <tm/move/container.hpp>
@@ -56,29 +57,31 @@ struct Pokemon {
 
 		m_hidden_power(calculate_hidden_power<generation>(stat_inputs.dvs_or_ivs, m_regular_moves)),
 		
-		m_has_been_seen(false),
-
-		m_ability_is_known(true),
-		m_item_is_known(true),
-		m_stats_are_known(true)
+		m_has_been_seen(false)
 	{
 	}
 
-	Pokemon(Species const species, Level const level, Gender const gender):
-		Pokemon(
-			species,
-			level,
-			gender,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			RegularMoves(),
-			Happiness()
-		)
+	explicit Pokemon(SeenPokemon<generation> const & other):
+		m_regular_moves(other.regular_moves()),
+		m_stats(
+			other.hp(),
+			other.stat(SplitSpecialRegularStat::atk),
+			other.stat(SplitSpecialRegularStat::def),
+			other.stat(SplitSpecialRegularStat::spa),
+			other.stat(SplitSpecialRegularStat::spd),
+			other.stat(SplitSpecialRegularStat::spe)
+		),
+		m_species(other.species()),
+		m_item(other.actual_item()),
+		m_ability(other.initial_ability()),
+		m_gender(other.gender()),
+		m_status(other.status()),
+		m_nature(other.nature()),
+		m_level(other.level()),
+		m_happiness(252_bi),
+		m_hidden_power(other.hidden_power()),
+		m_has_been_seen(true)
 	{
-		m_ability_is_known = false;
-		m_item_is_known = false;
-		m_stats_are_known = false;
 	}
 
 	auto hp() const {
@@ -102,24 +105,6 @@ struct Pokemon {
 	auto regular_moves() const -> RegularMoves {
 		return m_regular_moves;
 	}
-	auto add_move(Move const move) & -> void {
-		if (containers::any_equal(regular_moves(), move.name()) or !is_regular(move.name())) {
-			return;
-		}
-		m_regular_moves.push_back(move);
-		if constexpr (generation != Generation::one) {
-			if (move.name() == Moves::Hidden_Power) {
-				if (!m_stats_are_known) {
-					// TODO: Don't just give them Hidden Power Dark
-					set_ivs_and_evs(default_combined_stats<generation>);
-					m_stats_are_known = false;
-					m_hidden_power = HiddenPower<generation>(default_combined_stats<generation>.dvs_or_ivs);
-				} else {
-					m_hidden_power = HiddenPower<generation>(calculate_ivs_and_evs(*this).dvs_or_ivs);
-				}
-			}
-		}
-	}
 
 	void reduce_pp(Moves const move_name, bool const embargo, bool const magic_room, bounded::bounded_integer auto const amount) & {
 		auto const maybe_move = containers::maybe_find(m_regular_moves, move_name);
@@ -131,7 +116,7 @@ struct Pokemon {
 		activate_pp_restore_berry(move, embargo, magic_room);
 	}
 
-	void set_hp(auto const hp) & {
+	void set_hp(bounded::bounded_integer auto const hp) & {
 		m_stats.hp() = hp;
 	}
 
@@ -140,12 +125,6 @@ struct Pokemon {
 			return m_ability;
 		} else {
 			return Ability::Honey_Gather;
-		}
-	}
-	void set_initial_ability(Ability const ability) & {
-		if constexpr (exists<decltype(m_ability)>) {
-			m_ability = ability;
-			m_ability_is_known = true;
 		}
 	}
 
@@ -202,7 +181,6 @@ struct Pokemon {
 	auto set_item(Item const item) & -> void {
 		if constexpr (exists<decltype(m_item)>) {
 			m_item = HeldItem(item);
-			m_item_is_known = true;
 		}
 	}
 
@@ -226,21 +204,6 @@ struct Pokemon {
 	}
 	void set_status(Statuses const status) & {
 		m_status = status;
-	}
-
-	auto ability_is_known() const -> bool {
-		return m_ability_is_known;
-	}
-	auto item_is_known() const -> bool {
-		return m_item_is_known;
-	}
-
-	auto set_ivs_and_evs(CombinedStats<generation> const stat_inputs) -> void {
-		if constexpr (exists<decltype(m_nature)>) {
-			m_nature = stat_inputs.nature;
-			m_stats_are_known = true;
-		}
-		m_stats = with_new_ivs_and_evs(hp(), BaseStats(generation, species()), level(), stat_inputs);
 	}
 
 	friend auto operator==(Pokemon, Pokemon) -> bool = default;
@@ -286,11 +249,7 @@ private:
 	[[no_unique_address]] ExistsIf<Happiness, generation >= Generation::two> m_happiness;
 	[[no_unique_address]] ExistsIf<bounded::optional<HiddenPower<generation>>, generation >= Generation::two> m_hidden_power;
 
-	bool m_has_been_seen : 1;
-	
-	bool m_ability_is_known : 1;
-	bool m_item_is_known : 1;
-	bool m_stats_are_known : 1;
+	bool m_has_been_seen;
 };
 
 template<any_pokemon PokemonType>

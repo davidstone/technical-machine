@@ -6,6 +6,7 @@
 #pragma once
 
 #include <tm/move/actual_damage.hpp>
+#include <tm/any_team.hpp>
 #include <tm/move/other_move.hpp>
 #include <tm/move/used_move.hpp>
 
@@ -18,10 +19,15 @@ namespace technicalmachine {
 struct Weather;
 
 template<any_team UserTeam>
-auto call_move(UserTeam & user, UsedMove<UserTeam> move, UserTeam & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void;
+auto call_move(UserTeam & user, UsedMove<UserTeam> move, OtherTeam<UserTeam> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void;
+
+#define TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(UserTeam) \
+	extern template auto call_move(UserTeam & user, UsedMove<UserTeam> move, OtherTeam<UserTeam> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto call_move(Team<generation> & user, UsedMove<Team<generation>> move, Team<generation> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(Team<generation>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(SeenTeam<generation>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(KnownTeam<generation>)
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
@@ -33,5 +39,6 @@ TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::seven);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
 
 #undef TECHNICALMACHINE_EXTERN_INSTANTIATION
+#undef TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

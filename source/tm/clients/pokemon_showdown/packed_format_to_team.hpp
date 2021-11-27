@@ -16,7 +16,7 @@
 #include <tm/string_conversions/species.hpp>
 
 #include <tm/buffer_view.hpp>
-#include <tm/team.hpp>
+#include <tm/known_team.hpp>
 
 #include <bounded/to_integer.hpp>
 
@@ -113,8 +113,9 @@ auto parse_pokemon(std::string_view const str) {
 	auto const pokeball [[maybe_unused]] = buffer.pop(',');
 	// TODO: Support Hyper Training
 	auto const hidden_power_type [[maybe_unused]] = buffer.remainder();
-	auto pokemon = Pokemon<generation>(
+	auto pokemon = KnownPokemon<generation>(
 		species,
+		containers::string(nickname),
 		level,
 		gender,
 		item,
@@ -127,17 +128,16 @@ auto parse_pokemon(std::string_view const str) {
 }
 
 template<Generation generation>
-auto packed_format_to_team(std::string_view const str) -> Team<generation> {
+auto packed_format_to_team(std::string_view const str) -> KnownTeam<generation> {
 	auto buffer = DelimitedBufferView(str, pokemon_delimiter);
-	auto all_pokemon = PokemonContainer<generation>();
+	auto all_pokemon = typename KnownPokemonCollection<generation>::Container();
 	while (!buffer.remainder().empty()) {
 		if (containers::size(all_pokemon) == max_pokemon_per_team) {
 			throw std::runtime_error("Tried to add too many Pokemon from PS packed format");
 		}
 		containers::push_back(all_pokemon, parse_pokemon<generation>(buffer.pop()));
 	}
-	constexpr auto is_me = true;
-	return Team<generation>(all_pokemon, is_me);
+	return KnownTeam<generation>(std::move(all_pokemon));
 }
 
 } // namespace ps

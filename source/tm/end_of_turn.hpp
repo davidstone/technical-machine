@@ -10,6 +10,7 @@
 #include <tm/any_team.hpp>
 #include <tm/generation.hpp>
 #include <tm/heal.hpp>
+#include <tm/other_team.hpp>
 #include <tm/weather.hpp>
 
 #include <cstdint>
@@ -34,10 +35,15 @@ constexpr auto handle_curse(any_mutable_active_pokemon auto const pokemon, Weath
 }
 
 template<any_team TeamType>
-void end_of_turn(TeamType & first, EndOfTurnFlags first_flags, TeamType & last, EndOfTurnFlags last_flags, Weather &);
+void end_of_turn(TeamType & first, EndOfTurnFlags first_flags, OtherTeam<TeamType> & last, EndOfTurnFlags last_flags, Weather &);
+
+#define TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(TeamType) \
+	extern template void end_of_turn(TeamType & first, EndOfTurnFlags first_flags, OtherTeam<TeamType> & last, EndOfTurnFlags last_flags, Weather &)
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template void end_of_turn(Team<generation> & first, EndOfTurnFlags first_flags, Team<generation> & last, EndOfTurnFlags last_flags, Weather &)
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(Team<generation>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(KnownTeam<generation>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(SeenTeam<generation>)
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
@@ -49,5 +55,6 @@ TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::seven);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
 
 #undef TECHNICALMACHINE_EXTERN_INSTANTIATION
+#undef TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL
 
 }	// namespace technicalmachine

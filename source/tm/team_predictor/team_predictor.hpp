@@ -11,7 +11,7 @@
 #include <tm/team_predictor/random_team.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
 
-#include <tm/team.hpp>
+#include <tm/seen_team.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/size.hpp>
@@ -22,8 +22,7 @@ namespace technicalmachine {
 
 struct UsageStats;
 
-template<any_team TeamType>
-void predict_pokemon(TeamType & team, Estimate estimate, UsageStats const & usage_stats, std::mt19937 & random_engine, bool const use_most_likely) {
+void predict_pokemon(any_seen_team auto & team, Estimate estimate, UsageStats const & usage_stats, std::mt19937 & random_engine, bool const use_most_likely) {
 	auto const index = team.all_pokemon().index();
 	while (team.number_of_seen_pokemon() < team.size()) {
 		auto const species = use_most_likely ? estimate.most_likely() : estimate.random(random_engine);
@@ -37,7 +36,7 @@ void predict_pokemon(TeamType & team, Estimate estimate, UsageStats const & usag
 	team.all_pokemon().set_index(index);
 }
 
-template<any_pokemon PokemonType>
+template<any_seen_pokemon PokemonType>
 void predict_moves(PokemonType & pokemon, containers::static_vector<Moves, max_moves_per_pokemon.value()> const detailed) {
 	for (Moves const move_name : detailed) {
 		if (containers::size(pokemon.regular_moves()) == max_moves_per_pokemon) {
@@ -50,7 +49,7 @@ void predict_moves(PokemonType & pokemon, containers::static_vector<Moves, max_m
 	}
 }
 
-void optimize_pokemon_evs(any_pokemon auto & pokemon, std::mt19937 & random_engine) {
+void optimize_pokemon_evs(any_seen_pokemon auto & pokemon, std::mt19937 & random_engine) {
 	auto const species = pokemon.species();
 	auto const level = pokemon.level();
 	auto const include_attack = has_physical_move(pokemon);
@@ -67,8 +66,8 @@ void optimize_pokemon_evs(any_pokemon auto & pokemon, std::mt19937 & random_engi
 	pokemon.set_ivs_and_evs(optimized);
 }
 
-template<any_team TeamType>
-auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stats, TeamType team, std::mt19937 & random_engine, bool const use_most_likely) -> TeamType {
+template<Generation generation>
+auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stats, SeenTeam<generation> team, std::mt19937 & random_engine, bool const use_most_likely) -> Team<generation> {
 	auto estimate = Estimate(usage_stats, lead_stats);
 	update_estimate(estimate, usage_stats, team);
 
@@ -87,17 +86,17 @@ auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stat
 	}
 	// TODO: This isn't right
 	team.pokemon().set_ability_to_base_ability();
-	return team;
+	return Team<generation>(team);
 }
 
-template<any_team TeamType>
-auto predict_team(UsageStats const & usage_stats, LeadStats const lead_stats, TeamType team, std::mt19937 & random_engine) -> TeamType {
+template<Generation generation>
+auto predict_team(UsageStats const & usage_stats, LeadStats const lead_stats, SeenTeam<generation> team, std::mt19937 & random_engine) -> Team<generation> {
 	return predict_team_impl(usage_stats, lead_stats, team, random_engine, true);
 }
 
 template<Generation generation>
-auto generate_team(UsageStats const & usage_stats, LeadStats lead_stats, std::mt19937 & random_engine) -> Team<generation> {
-	return predict_team_impl(usage_stats, lead_stats, Team<generation>(max_pokemon_per_team, true), random_engine, false);
+auto generate_team(UsageStats const & usage_stats, LeadStats lead_stats, std::mt19937 & random_engine) -> KnownTeam<generation> {
+	return KnownTeam<generation>(predict_team_impl(usage_stats, lead_stats, SeenTeam<generation>(max_pokemon_per_team), random_engine, false));
 }
 
 } // namespace technicalmachine

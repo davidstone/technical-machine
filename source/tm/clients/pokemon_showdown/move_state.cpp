@@ -79,8 +79,8 @@ void MoveState::status_from_move(Party const party, Statuses const status) {
 
 namespace {
 
-template<Generation generation>
-auto get_side_effect(auto const move, ActivePokemon<generation> const user, Team<generation> const & other, Weather const weather) {
+template<any_active_pokemon UserPokemon>
+auto get_side_effect(auto const move, UserPokemon const user, OtherTeam<UserPokemon> const & other, Weather const weather) {
 	auto const side_effects = possible_side_effects(move.executed, user, other, weather);
 
 	if (containers::size(side_effects) == 1_bi) {
@@ -111,10 +111,10 @@ auto get_side_effect(auto const move, ActivePokemon<generation> const user, Team
 } // namespace
 
 template<Generation generation>
-auto MoveState::complete(Party const ai_party, Team<generation> const & ai, Team<generation> const & foe, Weather const weather) -> bounded::optional<Result<Team<generation>>> {
+auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai, SeenTeam<generation> const & foe, Weather const weather) -> CompleteResult<generation> {
 	if (!m_move and !m_still_asleep) {
 		*this = {};
-		return bounded::none;
+		return CompleteResult<generation>(NoResult());
 	}
 	if (!m_move) {
 		BOUNDED_ASSUME(m_still_asleep);
@@ -122,39 +122,39 @@ auto MoveState::complete(Party const ai_party, Team<generation> const & ai, Team
 		insert(m_move, UsedMoveBuilder{Moves::Struggle});
 	}
 	auto const move = *m_move;
-	struct Affected {
-		ActivePokemon<generation> user;
-		Team<generation> const & other;
+	auto execute = [&]<any_active_pokemon UserPokemon>(UserPokemon const user, OtherTeam<UserPokemon> const & other) {
+		using UserTeam = AssociatedTeam<UserPokemon>;
+		auto const result = Result<UserTeam>{
+			UsedMove<UserTeam>(
+				move.selected,
+				move.executed,
+				move.critical_hit,
+				move.miss,
+				get_side_effect(move, user, other, weather)
+			),
+			m_damage,
+			m_user,
+			m_other,
+			m_clear_status,
+			m_recoil
+		};
+		*this = {};
+		return CompleteResult<generation>(result);
 	};
-	auto const affected = *m_party == ai_party ?
-		Affected{ai.pokemon(), foe} :
-		Affected{foe.pokemon(), ai};
-	auto const result = Result<Team<generation>>{
-		*m_party,
-		UsedMove<Team<generation>>(
-			move.selected,
-			move.executed,
-			move.critical_hit,
-			move.miss,
-			get_side_effect(move, affected.user, affected.other, weather)
-		),
-		m_damage,
-		m_user,
-		m_other,
-		m_clear_status,
-		m_recoil
-	};
-	*this = {};
-	return result;
+	if (*m_party == ai_party) {
+		return execute(ai.pokemon(), foe);
+	} else {
+		return execute(foe.pokemon(), ai);
+	}
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
 	template auto MoveState::complete( \
 		Party, \
-		Team<generation> const &, \
-		Team<generation> const &, \
+		KnownTeam<generation> const &, \
+		SeenTeam<generation> const &, \
 		Weather \
-	) -> bounded::optional<Result<Team<generation>>>
+	) -> CompleteResult<generation>
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

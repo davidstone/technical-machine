@@ -29,7 +29,6 @@
 #include <string_view>
 
 namespace technicalmachine {
-
 namespace ps {
 
 template<Generation generation>
@@ -89,6 +88,7 @@ template<Generation generation>
 auto parse_pokemon(nlohmann::json const & pokemon_data) {
 	auto get = [&](char const * key) { return pokemon_data.at(key).get<std::string_view>(); };
 
+	auto const nickname = parse_identity(get("ident")).nickname;
 	auto const details = parse_details(get("details"));
 	
 	auto const condition = get("condition");
@@ -111,8 +111,9 @@ auto parse_pokemon(nlohmann::json const & pokemon_data) {
 	
 	auto const item = from_string<Item>(get("item"));
 
-	return Pokemon<generation>(
+	return KnownPokemon<generation>(
 		details.species,
+		containers::string(nickname),
 		details.level,
 		details.gender,
 		item,
@@ -123,18 +124,17 @@ auto parse_pokemon(nlohmann::json const & pokemon_data) {
 }
 
 template<Generation generation>
-auto parse_team(std::string_view const str) -> Team<generation> {
+auto parse_team(std::string_view const str) -> KnownTeam<generation> {
 	auto const json = nlohmann::json::parse(str);
 	auto const team_data = json.at("side").at("pokemon");
-	constexpr bool is_me = true;
-	auto all_pokemon = PokemonContainer<generation>();
+	auto all_pokemon = typename KnownPokemonCollection<generation>::Container();
 	for (auto const & pokemon_data : team_data.items()) {
 		if (containers::size(all_pokemon) == numeric_traits::max_value<TeamSize>) {
 			throw std::runtime_error("Tried to add too many Pokemon");
 		}
 		containers::push_back(all_pokemon, parse_pokemon<generation>(pokemon_data.value()));
 	}
-	return Team<generation>(all_pokemon, is_me);
+	return KnownTeam<generation>(std::move(all_pokemon));
 }
 
 }	// namespace ps

@@ -11,6 +11,7 @@
 #include <tm/end_of_turn.hpp>
 #include <tm/generation.hpp>
 #include <tm/heal.hpp>
+#include <tm/other_team.hpp>
 #include <tm/status.hpp>
 #include <tm/saturating_add.hpp>
 #include <tm/weather.hpp>
@@ -18,8 +19,6 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
-
-struct Weather;
 
 struct ActiveStatus {
 	constexpr auto set(Statuses const status) & -> void {
@@ -40,9 +39,9 @@ struct ActiveStatus {
 		m_nightmare = true;
 	}
 
-	template<any_mutable_active_pokemon MutableActivePokemonType>
-	constexpr auto status_and_leech_seed_effects(MutableActivePokemonType const pokemon, MutableActivePokemonType const other, Weather const weather, bool const uproar) & -> void {
-		if constexpr (generation_from<MutableActivePokemonType> <= Generation::two) {
+	template<any_mutable_active_pokemon PokemonType>
+	constexpr auto status_and_leech_seed_effects(PokemonType const pokemon, OtherMutableActivePokemon<PokemonType> const other, Weather const weather, bool const uproar) & -> void {
+		if constexpr (generation_from<PokemonType> <= Generation::two) {
 			end_of_attack(pokemon, other, weather);
 		} else {
 			end_of_turn(pokemon, other, weather, uproar);
@@ -60,8 +59,8 @@ struct ActiveStatus {
 		return compress(bounded::assume_in_range(static_cast<std::uint8_t>(byte), 0_bi, 15_bi));
 	}
 private:
-	template<any_mutable_active_pokemon MutableActivePokemonType>
-	static constexpr auto handle_leech_seed(MutableActivePokemonType const pokemon, MutableActivePokemonType const other, Weather const weather) -> void {
+	template<any_mutable_active_pokemon PokemonType>
+	static constexpr auto handle_leech_seed(PokemonType const pokemon, OtherMutableActivePokemon<PokemonType> other, Weather const weather) -> void {
 		if (!pokemon.leech_seeded()) {
 			return;
 		}
@@ -97,8 +96,8 @@ private:
 		saturating_increment(toxic_counter);
 	}
 
-	template<Generation generation>
-	static constexpr auto handle_sleep_and_rest(MutableActivePokemon<generation> pokemon, ActivePokemon<generation> other, Weather const weather, bool const nightmare, bool const uproar = false) -> void {
+	template<any_mutable_active_pokemon PokemonType>
+	static constexpr auto handle_sleep_and_rest(PokemonType const pokemon, OtherActivePokemon<PokemonType> const other, Weather const weather, bool const nightmare, bool const uproar = false) -> void {
 		if (uproar) {
 			pokemon.clear_status();
 			return;
@@ -112,8 +111,8 @@ private:
 	}
 
 	// Generation 1-2
-	template<any_mutable_active_pokemon MutableActivePokemonType>
-	constexpr auto end_of_attack(MutableActivePokemonType const pokemon, MutableActivePokemonType const other, Weather const weather) & -> void {
+	template<any_mutable_active_pokemon PokemonType>
+	constexpr auto end_of_attack(PokemonType const pokemon, OtherMutableActivePokemon<PokemonType> const other, Weather const weather) & -> void {
 		auto const status = pokemon.status().name();
 		switch (status) {
 			case Statuses::clear:
@@ -152,8 +151,8 @@ private:
 	}
 
 	// Generation 3+
-	template<any_mutable_active_pokemon MutableActivePokemonType>
-	constexpr auto end_of_turn(MutableActivePokemonType pokemon, MutableActivePokemonType const other, Weather const weather, bool uproar) & -> void {
+	template<any_mutable_active_pokemon PokemonType>
+	constexpr auto end_of_turn(PokemonType const pokemon, OtherMutableActivePokemon<PokemonType> const other, Weather const weather, bool uproar) & -> void {
 		handle_leech_seed(pokemon, other, weather);
 
 		switch (pokemon.status().name()) {

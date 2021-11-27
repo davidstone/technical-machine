@@ -18,8 +18,10 @@
 
 #include <tm/string_conversions/status.hpp>
 
+#include <tm/any_team.hpp>
 #include <tm/end_of_turn.hpp>
-#include <tm/team.hpp>
+#include <tm/known_team.hpp>
+#include <tm/seen_team.hpp>
 #include <tm/visible_hp.hpp>
 #include <tm/weather.hpp>
 
@@ -37,7 +39,7 @@ enum class Moves : std::uint16_t;
 
 template<Generation generation>
 struct Battle {
-	Battle(Team<generation> ai_, Team<generation> foe_):
+	Battle(KnownTeam<generation> ai_, SeenTeam<generation> foe_):
 		m_ai(std::move(ai_)),
 		m_foe(std::move(foe_))
 	{
@@ -67,32 +69,35 @@ struct Battle {
 		m_foe.reset_start_of_turn();
 	}
 	void handle_end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & {
-		auto & first = ai_went_first ? m_ai : m_foe;
-		auto & last = ai_went_first ? m_foe : m_ai;
-		end_of_turn(first, first_flags, last, last_flags, m_weather);
+		apply_to_teams(ai_went_first, [&](auto & first, auto & last) {
+			end_of_turn(first, first_flags, last, last_flags, m_weather);
+		});
 	}
 
 	void add_move(bool const is_ai, Moves const move_name) {
-		auto & team = is_ai ? m_ai : m_foe;
-		team.pokemon().add_move(Move(generation, move_name));
+		apply_to_teams(is_ai, [=](auto & team, auto const &) {
+			team.pokemon().add_move(Move(generation, move_name));
+		});
 	}
-	void handle_use_move(bool const is_ai, UsedMove<Team<generation>> const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
-		struct Teams {
-			Team<generation> & user;
-			Team<generation> & other;
-		};
-		auto const teams = [&] {
-			if (is_ai) {
-				return Teams{m_ai, m_foe};
-			} else {
-				return Teams{m_foe, m_ai};
-			}
-		}();
+	template<any_team UserTeam>
+	void handle_use_move(UsedMove<UserTeam> const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
+		constexpr auto is_ai = std::is_same_v<UserTeam, KnownTeam<generation_from<UserTeam>>>;
 		add_move(is_ai, move.selected);
 		if (move.selected == Moves::Sleep_Talk) {
 			add_move(is_ai, move.executed);
 		}
 
+		auto const teams = [&] {
+			struct Teams {
+				UserTeam & user;
+				OtherTeam<UserTeam> & other;
+			};
+			if constexpr (is_ai) {
+				return Teams{m_ai, m_foe};
+			} else {
+				return Teams{m_foe, m_ai};
+			}
+		}();
 		call_move(
 			teams.user,
 			move,
@@ -105,30 +110,38 @@ struct Battle {
 	}
 	// This assumes Species Clause is in effect. This does not perform any
 	// switching, it just adds them to the team.
-	auto find_or_add_pokemon(bool const is_ai, Species const species, Level const level, Gender const gender) -> Moves {
+	auto find_or_add_pokemon(bool const is_ai, Species const species, containers::string nickname, Level const level, Gender const gender) -> Moves {
 		if (is_ai) {
 			return to_switch(find_required_index(m_ai.all_pokemon(), species));
 		} else {
 			auto const index = find_index(m_foe.all_pokemon(), species);
 			if (index == m_foe.number_of_seen_pokemon()) {
-				m_foe.all_pokemon().add({species, level, gender});
+				m_foe.all_pokemon().add({species, std::move(nickname), level, gender});
 			}
 			return to_switch(index);
 		}
 	}
 	void handle_fainted(bool const is_ai) {
-		faint(active_pokemon(is_ai));
+		apply_to_teams(is_ai, [](auto & team, auto const &) {
+			faint(team.pokemon());
+		});
 	}
 
 	void set_value_on_active(bool const is_ai, Ability const ability) {
-		(is_ai ? m_ai : m_foe).pokemon().set_base_ability(ability);
+		apply_to_teams(is_ai, [=](auto & team, auto const &) {
+			team.pokemon().set_base_ability(ability);
+		});
 	}
 	void set_value_on_index(bool const is_ai, TeamIndex const index, Ability const ability) {
-		(is_ai ? m_ai : m_foe).pokemon(index).set_initial_ability(ability);
+		apply_to_teams(is_ai, [=](auto & team, auto const &) {
+			team.pokemon(index).set_initial_ability(ability);
+		});
 	}
 
 	void set_value_on_active(bool const is_ai, Item const item) {
-		active_pokemon(is_ai).set_item(item);
+		apply_to_teams(is_ai, [=](auto & team, auto const &) {
+			team.all_pokemon()().set_item(item);
+		});
 	}
 	void set_value_on_index(bool const is_ai, TeamIndex const index, Item const item) {
 		apply_to_teams(is_ai, [=](auto & team, auto const &) {
@@ -138,39 +151,52 @@ struct Battle {
 
 	// TODO: What happens here if a Pokemon has a pinch item?
 	void correct_hp(bool const is_ai, VisibleHP const visible_hp, auto... maybe_index) {
-		auto & pokemon = active_pokemon(is_ai, maybe_index...);
-		auto const original_hp = pokemon.hp();
-		auto const current_hp = original_hp.current();
-		auto const seen_hp = is_ai ? AllowedHP(visible_hp.current.value()) : to_real_hp(original_hp.max(), visible_hp);
-		if (seen_hp.min > current_hp or seen_hp.max < current_hp) {
-			// TODO: Find a better way to sync this up with server messages. Find a
-			// better way to fail unit tests if this happens.
-			std::cerr << "HP out of sync with server messages. Expected " << current_hp << " but visible HP is between " << seen_hp.min << " and " << seen_hp.max << " (max of " << original_hp.max() << ")\n";
-		}
-		pokemon.set_hp(seen_hp.value);
+		apply_to_teams(is_ai, [=]<any_team TeamType>(TeamType & team, auto const &) {
+			auto & pokemon = team.all_pokemon()(maybe_index...);
+			if constexpr (any_seen_team<TeamType>) {
+				auto const original_hp = pokemon.visible_hp();
+				auto const current_hp = original_hp.current;
+				auto const hp_acceptable = current_hp.value() - 1_bi <= visible_hp.current.value() and visible_hp.current.value() <= current_hp.value() + 1_bi;
+				if (!hp_acceptable) {
+					std::cerr << "Seen HP out of sync with server messages. Expected " << current_hp.value() << " but received " << visible_hp.current.value() << '\n';
+				}
+				pokemon.set_hp(visible_hp.current);
+			} else {
+				static_assert(any_known_team<TeamType>);
+				if (pokemon.hp().current() != visible_hp.current.value()) {
+					std::cerr << "Known HP out of sync with server messages. Expected " << pokemon.hp().current().value() << " but received " << visible_hp.current.value() << " (max of " << pokemon.hp().max().value() << ")\n";
+				}
+				pokemon.set_hp(visible_hp.current.value());
+			}
+		});
 	}
+
 	void correct_status(bool const is_ai, Statuses const visible_status, auto... maybe_index) {
-		auto & pokemon = active_pokemon(is_ai, maybe_index...);
-		auto const original_status = pokemon.status().name();
-		auto const normalized_original_status = (original_status == Statuses::rest) ? Statuses::sleep : original_status;
-		if (normalized_original_status != visible_status) {
-			throw std::runtime_error(containers::concatenate<std::string>(
-				"Status out of sync with server messages: expected "sv,
-				to_string(original_status),
-				" but received "sv,
-				to_string(visible_status)
-			));
-		}
+		apply_to_teams(is_ai, [=](auto const & team, auto &) {
+			auto const original_status = team.all_pokemon()(maybe_index...).status().name();
+			auto const normalized_original_status = (original_status == Statuses::rest) ? Statuses::sleep : original_status;
+			if (normalized_original_status != visible_status) {
+				throw std::runtime_error(containers::concatenate<std::string>(
+					"Status out of sync with server messages: expected "sv,
+					to_string(original_status),
+					" but received "sv,
+					to_string(visible_status)
+				));
+			}
+		});
 	}
 
 private:
-	// maybe_index is either an index into a PokemonCollection or nothing
-	auto active_pokemon(bool const is_ai, auto... maybe_index) -> Pokemon<generation> & {
-		return (is_ai ? m_ai : m_foe).all_pokemon()(maybe_index...);
+	decltype(auto) apply_to_teams(bool const is_ai, auto function) {
+		if (is_ai) {
+			return function(m_ai, m_foe);
+		 } else {
+			 return function(m_foe, m_ai);
+		 }
 	}
 
-	Team<generation> m_ai;
-	Team<generation> m_foe;
+	KnownTeam<generation> m_ai;
+	SeenTeam<generation> m_foe;
 	Weather m_weather;
 };
 

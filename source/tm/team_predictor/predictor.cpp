@@ -75,11 +75,8 @@ auto get_expected_integer_wrapper(std::string_view const input, std::string_view
 }
 
 template<Generation generation>
-auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
-	constexpr auto is_me = true;
-
-	auto team = Team<generation>(max_pokemon_per_team, is_me);
-
+auto parse_html_team(DelimitedBufferView<std::string_view> buffer) -> SeenTeam<generation> {
+	auto all_pokemon = containers::static_vector<SeenPokemon<generation>, max_pokemon_per_team.value()>();
 	for (auto const index : containers::integer_range(max_pokemon_per_team)) {
 		auto const index_str = bounded::to_string(index);
 		auto get_integer_wrapper = [&]<typename T>(bounded::detail::types<T>, std::string_view const key) {
@@ -128,7 +125,7 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 		if (!species) {
 			continue;
 		}
-		auto pokemon = Pokemon<generation>(
+		auto pokemon = SeenPokemon<generation>(
 			*species,
 			level,
 			gender ? *gender : Gender::genderless
@@ -147,9 +144,13 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) {
 			max_dvs_or_ivs<generation>,
 			evs
 		});
-		team.add_pokemon(pokemon);
+		containers::push_back(all_pokemon, std::move(pokemon));
 	}
 
+	auto team = SeenTeam<generation>(containers::size(all_pokemon));
+	for (auto && pokemon : all_pokemon) {
+		team.add_pokemon(std::move(pokemon));
+	}
 	return team;
 }
 
@@ -161,7 +162,7 @@ struct Data {
 
 	auto team_string(std::string_view const input_data) -> containers::string {
 		try {
-			auto impl = [&]<Generation generation>(Team<generation> team) -> containers::string {
+			auto impl = [&]<Generation generation>(SeenTeam<generation> team) -> containers::string {
 				constexpr auto using_lead = false;
 				auto const & usage_stats = m_all_usage_stats[generation];
 				random_team(usage_stats, team, m_random_engine);

@@ -7,13 +7,15 @@
 
 #include <tm/move/side_effects.hpp>
 
+#include <tm/any_team.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
 
 enum class Moves : std::uint16_t;
 
-template<typename UserTeam>
+template<any_team UserTeam>
 struct UsedMove {
 	constexpr UsedMove(
 		Moves const selected_,

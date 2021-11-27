@@ -72,8 +72,7 @@ constexpr auto imprison(Moves const move, any_active_pokemon auto const other) {
 }
 
 // Things that both block selection and block execution in between sleep and confusion
-template<any_active_pokemon ActivePokemonType>
-auto block1(ActivePokemonType const user, Move const move, ActivePokemonType const other) {
+auto block1(any_active_pokemon auto const user, Move const move, any_active_pokemon auto const other) {
 	if (!is_regular(move.name())) {
 		return false;
 	}
@@ -196,8 +195,7 @@ constexpr auto is_blocked_due_to_status(any_active_pokemon auto const user, Move
 	return is_blocked_by_freeze(user, move) or is_blocked_by_sleep(user, move, user_was_asleep);
 }
 
-template<any_active_pokemon ActivePokemonType>
-auto can_attempt_move_execution(ActivePokemonType user, Move const move, ActivePokemonType const other, bool const user_was_asleep) -> bool {
+auto can_attempt_move_execution(any_active_pokemon auto const user, Move const move, any_active_pokemon auto const other, bool const user_was_asleep) -> bool {
 	if (is_switch(move.name())) {
 		return true;
 	}

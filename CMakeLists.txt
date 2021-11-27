@@ -125,6 +125,8 @@ add_library(tm_common STATIC
 	source/tm/pokemon/heal_block.cpp
 	source/tm/pokemon/hidden_power.cpp
 	source/tm/pokemon/is_genderless.cpp
+	source/tm/pokemon/known_pokemon.cpp
+	source/tm/pokemon/known_pokemon_collection.cpp
 	source/tm/pokemon/last_used_move.cpp
 	source/tm/pokemon/level.cpp
 	source/tm/pokemon/magnet_rise.cpp
@@ -134,6 +136,8 @@ add_library(tm_common STATIC
 	source/tm/pokemon/pokemon.cpp
 	source/tm/pokemon/pokemon_not_found.cpp
 	source/tm/pokemon/rampage.cpp
+	source/tm/pokemon/seen_pokemon.cpp
+	source/tm/pokemon/seen_pokemon_collection.cpp
 	source/tm/pokemon/slow_start.cpp
 	source/tm/pokemon/stockpile.cpp
 	source/tm/pokemon/substitute.cpp
@@ -215,6 +219,7 @@ add_library(tm_common STATIC
 	source/tm/held_item.cpp
 	source/tm/invalid_settings_file.cpp
 	source/tm/item.cpp
+	source/tm/known_team.cpp
 	source/tm/load_team_from_file.cpp
 	source/tm/operators.cpp
 	source/tm/other_team.cpp
@@ -223,6 +228,7 @@ add_library(tm_common STATIC
 	source/tm/saturating_add.cpp
 	source/tm/screen.cpp
 	source/tm/screens.cpp
+	source/tm/seen_team.cpp
 	source/tm/settings_file.cpp
 	source/tm/status.cpp
 	source/tm/team.cpp

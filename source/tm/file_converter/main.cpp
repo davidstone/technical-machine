@@ -53,7 +53,7 @@ constexpr auto parse_output_type(std::string_view const str) -> OutputType {
 }
 
 struct AsStringPrinted {
-	auto operator()(any_team auto const & team, std::filesystem::path const &) const -> void {
+	auto operator()(any_known_team auto const & team, std::filesystem::path const &) const -> void {
 		std::cout << to_string(team) << '\n';
 	}
 };
@@ -63,7 +63,7 @@ struct AsStringFile {
 		m_base_path(std::move(base_path))
 	{
 	}
-	auto operator()(any_team auto const & team, std::filesystem::path const & trailing_path) const -> void {
+	auto operator()(any_known_team auto const & team, std::filesystem::path const & trailing_path) const -> void {
 		auto path = m_base_path / trailing_path;
 		std::filesystem::create_directories(path.parent_path());
 		path.replace_extension("txt");
@@ -82,7 +82,7 @@ struct AsPL {
 	{
 	}
 
-	auto operator()(any_team auto const & team, std::filesystem::path const & trailing_path) const -> void {
+	auto operator()(any_known_team auto const & team, std::filesystem::path const & trailing_path) const -> void {
 		auto path = m_base_path / trailing_path;
 		std::filesystem::create_directories(path.parent_path());
 		path.replace_extension("sbt");
@@ -99,7 +99,7 @@ struct AsPO {
 	{
 	}
 
-	auto operator()(any_team auto const & team, std::filesystem::path const & trailing_path) const -> void {
+	auto operator()(any_known_team auto const & team, std::filesystem::path const & trailing_path) const -> void {
 		auto path = m_base_path / trailing_path;
 		std::filesystem::create_directories(path.parent_path());
 		path.replace_extension("tp");

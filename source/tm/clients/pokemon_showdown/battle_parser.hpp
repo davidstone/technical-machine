@@ -14,6 +14,8 @@
 #include <tm/evaluate/evaluate.hpp>
 
 #include <tm/generation_generic.hpp>
+#include <tm/known_team.hpp>
+#include <tm/seen_team.hpp>
 #include <tm/visible_hp.hpp>
 
 #include <bounded/integer.hpp>
@@ -31,6 +33,8 @@
 
 namespace technicalmachine {
 
+using namespace std::string_view_literals;
+
 struct AllUsageStats;
 
 namespace ps {
@@ -39,8 +43,8 @@ using SendMessageFunction = containers::trivial_inplace_function<void(std::strin
 
 template<Generation generation>
 struct Teams {
-	Team<generation> ai;
-	Team<generation> foe;
+	KnownTeam<generation> ai;
+	SeenTeam<generation> foe;
 };
 
 struct BattleParser {
@@ -97,6 +101,7 @@ auto parse_details(std::string_view details) -> ParsedDetails;
 struct ParsedSwitch {
 	Party party;
 	Species species;
+	containers::string nickname;
 	Level level;
 	Gender gender;
 	VisibleHP hp;

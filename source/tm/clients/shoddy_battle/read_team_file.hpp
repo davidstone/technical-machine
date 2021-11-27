@@ -6,12 +6,12 @@
 #pragma once
 
 #include <tm/generation_generic.hpp>
-#include <tm/team.hpp>
+#include <tm/known_team.hpp>
 
 #include <filesystem>
 
 namespace technicalmachine::sb {
 
-auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<Team>;
+auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam>;
 
 } // namespace technicalmachine::sb

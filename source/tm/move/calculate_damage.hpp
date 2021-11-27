@@ -6,24 +6,31 @@
 #pragma once
 
 #include <tm/move/damage_type.hpp>
+#include <tm/move/other_move.hpp>
 
 #include <tm/any_team.hpp>
 #include <tm/generation.hpp>
+#include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
 
-template<typename TeamType>
-struct ExecutedMove;
-struct OtherMove;
-struct Weather;
-
 template<any_team UserTeam>
-auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam>, bool move_weakened_from_item, UserTeam const & defender, OtherMove defender_move, Weather) -> damage_type;
+struct ExecutedMove;
+
+template<any_team UserTeam, any_team OtherTeamType>
+auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam>, bool move_weakened_from_item, OtherTeamType const & defender, OtherMove defender_move, Weather) -> damage_type;
+
+#define TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(UserTeam, OtherTeamType) \
+	extern template auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam>, bool move_weakened_from_item, OtherTeamType const & defender, OtherMove defender_move, Weather) -> damage_type
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto calculate_damage(Team<generation> const & attacker, ExecutedMove<Team<generation>>, bool move_weakened_from_item, Team<generation> const & defender, OtherMove defender_move, Weather) -> damage_type
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(Team<generation>, Team<generation>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(KnownTeam<generation>, KnownTeam<generation>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(KnownTeam<generation>, SeenTeam<generation>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(SeenTeam<generation>, KnownTeam<generation>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(SeenTeam<generation>, SeenTeam<generation>)
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
@@ -35,5 +42,6 @@ TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::seven);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
 
 #undef TECHNICALMACHINE_EXTERN_INSTANTIATION
+#undef TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL
 
 }	// namespace technicalmachine

@@ -13,7 +13,9 @@
 #include <tm/pokemon/any_pokemon.hpp>
 
 #include <tm/any_team.hpp>
-#include <tm/other_team.hpp>
+#include <tm/generation.hpp>
+#include <tm/known_team.hpp>
+#include <tm/seen_team.hpp>
 #include <tm/team.hpp>
 
 #include <bounded/assert.hpp>
@@ -91,12 +93,12 @@ private:
 	[[no_unique_address]] Denominator m_denominator;
 };
 
-template<any_active_pokemon TargetType>
-constexpr auto confusion_effect(double const probability, TargetType const original_target, auto const... maybe_immune_type) {
-	using TeamType = AssociatedTeam<TargetType>;
+template<any_active_pokemon TargetPokemon>
+constexpr auto confusion_effect(double const probability, TargetPokemon const original_target, auto const... maybe_immune_type) {
+	using UserTeam = OtherTeam<TargetPokemon>;
 	return (... or is_type(original_target, maybe_immune_type)) ?
-		no_effect<TeamType> :
-		basic_probability<TeamType>(probability, [](auto &, auto & target, auto & weather, auto) {
+		no_effect<UserTeam> :
+		basic_probability<UserTeam>(probability, [](auto &, auto & target, auto & weather, auto) {
 			target.pokemon().confuse(weather);
 		});
 }
@@ -131,7 +133,7 @@ constexpr auto status_is_clausable(Statuses const status) {
 }
 
 
-constexpr auto status_can_apply_ignoring_current_status(Statuses const status, auto const user, auto const & target, Weather const weather, auto const... immune_types) {
+constexpr auto status_can_apply_ignoring_current_status(Statuses const status, any_active_pokemon auto const user, any_team auto const & target, Weather const weather, auto const... immune_types) {
 	auto const target_pokemon = target.pokemon();
 	return
 		!blocks_status(target_pokemon.ability(), user.ability(), status, weather) and
@@ -140,8 +142,7 @@ constexpr auto status_can_apply_ignoring_current_status(Statuses const status, a
 		(status != Statuses::sleep or (!user.last_used_move().is_uproaring() and !target_pokemon.last_used_move().is_uproaring()));
 }
 
-template<Generation generation>
-constexpr auto status_can_apply(Statuses const status, ActivePokemon<generation> const user, Team<generation> const & target, Weather const weather, auto const... immune_types) {
+constexpr auto status_can_apply(Statuses const status, any_active_pokemon auto const user, any_team auto const & target, Weather const weather, auto const... immune_types) {
 	return
 		is_clear(target.pokemon().status()) and
 		status_can_apply_ignoring_current_status(status, user, target, weather, immune_types...);
@@ -157,33 +158,34 @@ constexpr auto clear_status_function = [](any_team auto &, any_team auto & targe
 	target.pokemon().clear_status();
 };
 
-template<Statuses status, Generation generation>
-constexpr auto status_effect(double const probability, ActivePokemon<generation> const original_user, Team<generation> const & original_target, Weather const original_weather, auto const... immune_types) {
+template<Statuses status, any_active_pokemon UserPokemon>
+constexpr auto status_effect(double const probability, UserPokemon const original_user, OtherTeam<UserPokemon> const & original_target, Weather const original_weather, auto const... immune_types) {
+	using UserTeam = AssociatedTeam<UserPokemon>;
 	return status_can_apply(status, original_user, original_target, original_weather, immune_types...) ?
-		basic_probability<Team<generation>>(probability, set_status_function<status>) :
-		no_effect<Team<generation>>;
+		basic_probability<UserTeam>(probability, set_status_function<status>) :
+		no_effect<UserTeam>;
 }
 
 
-template<Generation generation>
-constexpr auto thaw_and_burn_effect(double const probability, ActivePokemon<generation> const original_user, Team<generation> const & original_target, Weather const original_weather) {
+template<any_active_pokemon UserPokemon>
+constexpr auto thaw_and_burn_effect(double const probability, UserPokemon const original_user, OtherTeam<UserPokemon> const & original_target, Weather const original_weather) {
 	auto const target_status = original_target.pokemon().status().name();
 	auto const will_thaw = target_status == Statuses::freeze;
 	auto const can_burn =
 		(target_status == Statuses::clear or will_thaw) and
 		status_can_apply_ignoring_current_status(Statuses::burn, original_user, original_target, original_weather, Type::Fire);
 
+	using UserTeam = AssociatedTeam<UserPokemon>;
 	return
-		can_burn and probability == 1.0 ? guaranteed_effect<Team<generation>>(set_status_function<Statuses::burn>) :
-		can_burn and will_thaw ? SideEffects<Team<generation>>({
-			SideEffect<Team<generation>>{1.0 - probability, clear_status_function},
-			SideEffect<Team<generation>>{probability, set_status_function<Statuses::burn>},
+		can_burn and probability == 1.0 ? guaranteed_effect<UserTeam>(set_status_function<Statuses::burn>) :
+		can_burn and will_thaw ? SideEffects<UserTeam>({
+			SideEffect<UserTeam>{1.0 - probability, clear_status_function},
+			SideEffect<UserTeam>{probability, set_status_function<Statuses::burn>},
 		}) :
-		can_burn ? basic_probability<Team<generation>>(probability, set_status_function<Statuses::burn>) :
-		will_thaw ? guaranteed_effect<Team<generation>>(clear_status_function) :
-		no_effect<Team<generation>>;
+		can_burn ? basic_probability<UserTeam>(probability, set_status_function<Statuses::burn>) :
+		will_thaw ? guaranteed_effect<UserTeam>(clear_status_function) :
+		no_effect<UserTeam>;
 }
-
 
 template<any_team UserTeam, BoostableStat stat, int stages>
 constexpr auto confusing_stat_boost = guaranteed_effect<UserTeam>([](auto &, auto & other, auto & weather, auto) {
@@ -196,34 +198,36 @@ constexpr auto confusing_stat_boost = guaranteed_effect<UserTeam>([](auto &, aut
 	target.confuse(weather);
 });
 
-template<Statuses status, Generation generation>
-constexpr auto fang_effects(ActivePokemon<generation> const original_user, Team<generation> const & original_target, Weather const original_weather, Type const immune_type) {
+template<Statuses status, any_active_pokemon UserPokemon>
+constexpr auto fang_effects(UserPokemon const original_user, OtherTeam<UserPokemon> const & original_target, Weather const original_weather, Type const immune_type) {
+	using UserTeam = AssociatedTeam<UserPokemon>;
 	constexpr auto status_and_flinch_function = [](auto & user, auto & target, auto & weather, auto const damage) {
 		set_status_function<status>(user, target, weather, damage);
 		flinch(user, target, weather, damage);
 	};
 	return status_can_apply(status, original_user, original_target, original_weather, immune_type) ?
-		SideEffects<Team<generation>>({
+		SideEffects<UserTeam>({
 			{0.81, no_effect_function},
 			{0.09, set_status_function<status>},
 			{0.09, flinch},
 			{0.01, status_and_flinch_function}
 		}) :
-		basic_probability<Team<generation>>(0.1, flinch);
+		basic_probability<UserTeam>(0.1, flinch);
 }
 
-template<Statuses status, Generation generation>
-auto recoil_status(ActivePokemon<generation> const original_user, Team<generation> const & original_target, Weather const original_weather, Type const immune_type) {
+template<Statuses status, any_active_pokemon UserPokemon>
+auto recoil_status(UserPokemon const original_user, OtherTeam<UserPokemon> const & original_target, Weather const original_weather, Type const immune_type) {
+	using UserTeam = AssociatedTeam<UserPokemon>;
 	constexpr auto recoil_and_status = [](auto & user, auto & target, auto & weather, auto const damage) {
 		set_status_function<status>(user, target, weather, damage);
 		RecoilEffect(3_bi)(user, target, weather, damage);
 	};
 	return status_can_apply(status, original_user, original_target, original_weather, immune_type) ?
-		SideEffects<Team<generation>>({
+		SideEffects<UserTeam>({
 			{0.9, RecoilEffect(3_bi)},
 			{0.1, recoil_and_status}
 		}) :
-		guaranteed_effect<Team<generation>>(RecoilEffect(3_bi));
+		guaranteed_effect<UserTeam>(RecoilEffect(3_bi));
 }
 
 template<Statuses const status>
@@ -233,13 +237,14 @@ auto try_apply_status(auto & user, auto & target, auto & weather, auto const dam
 	}
 }
 
-template<Generation generation>
-constexpr auto tri_attack_effect(ActivePokemon<generation> const original_user, Team<generation> const & original_target, Weather const original_weather) {
-	using UserTeam = Team<generation>;
+template<any_active_pokemon UserPokemon>
+constexpr auto tri_attack_effect(UserPokemon const original_user, OtherTeam<UserPokemon> const & original_target, Weather const original_weather) {
+	using UserTeam = AssociatedTeam<UserPokemon>;
 	// TODO: Foresight, Wonder Guard, Scrappy
 	if (is_type(original_target.pokemon(), Type::Ghost)) {
 		return no_effect<UserTeam>;
 	}
+	constexpr auto generation = generation_from<UserPokemon>;
 	constexpr auto burn = SideEffect<UserTeam>({1.0 / 15.0, set_status_function<Statuses::burn>});
 	constexpr auto freeze = SideEffect<UserTeam>({1.0 / 15.0, set_status_function<Statuses::freeze>});
 	constexpr auto paralysis = SideEffect<UserTeam>({1.0 / 15.0, set_status_function<Statuses::paralysis>});
@@ -343,16 +348,16 @@ constexpr auto stat_can_boost = [](Stage const stage) {
 template<auto...>
 struct sequence {};
 
-template<any_active_pokemon ActivePokemonType>
-constexpr auto acupressure_effect(ActivePokemonType const target) {
-	using TeamType = AssociatedTeam<ActivePokemonType>;
-	auto result = SideEffects<TeamType>();
+template<any_active_pokemon TargetPokemon>
+constexpr auto acupressure_effect(TargetPokemon const target) {
+	using UserTeam = AssociatedTeam<TargetPokemon>;
+	auto result = SideEffects<UserTeam>();
 	auto const stages = target.stages();
 	auto const probability = 1.0 / double(containers::count_if(stages, stat_can_boost));
 
 	auto add_stat = [&]<BoostableStat stat>(std::integral_constant<BoostableStat, stat>) {
 		if (stat_can_boost(stages[stat])) {
-			containers::push_back(result, SideEffect<TeamType>{probability, boost_user_stat<stat, 2>});
+			containers::push_back(result, SideEffect<UserTeam>{probability, boost_user_stat<stat, 2>});
 		}
 	};
 	auto add_stats = [&]<BoostableStat... stats>(sequence<stats...>) {
@@ -371,7 +376,7 @@ constexpr auto acupressure_effect(ActivePokemonType const target) {
 }
 
 constexpr auto active_pokemon_can_be_phazed(any_team auto const & team) {
-	return !team.pokemon().ingrained() and !blocks_phazing(team.pokemon().ability()) and containers::size(team.all_pokemon()) > 1_bi;
+	return !team.pokemon().ingrained() and !blocks_phazing(team.pokemon().ability()) and team.size() > 1_bi;
 }
 
 template<int index>
@@ -381,7 +386,7 @@ constexpr auto phaze = [](any_team auto & user, any_team auto & target, Weather 
 
 template<any_team TargetTeam>
 constexpr auto phaze_effect(TargetTeam const & target) {
-	using UserTeam = TargetTeam;
+	using UserTeam = OtherTeam<TargetTeam>;
 	if (!active_pokemon_can_be_phazed(target)) {
 		return no_effect<UserTeam>;
 	}
@@ -439,30 +444,30 @@ constexpr auto random_spite = []{
 }();
 
 template<any_team UserTeam, int index>
-constexpr auto switch_effect = guaranteed_effect<UserTeam>([](UserTeam & user, UserTeam & other, Weather & weather, auto) {
+constexpr auto switch_effect = guaranteed_effect<UserTeam>([](UserTeam & user, OtherTeam<UserTeam> & other, Weather & weather, auto) {
 	user.switch_pokemon(other.pokemon(), weather, bounded::constant<index>);
 });
 
-template<Generation generation>
+template<any_active_pokemon UserPokemon>
 constexpr auto charge_up_move(
 	Moves const move_name,
-	ActivePokemon<generation> const original_user,
-	ActivePokemon<generation> const original_other,
+	UserPokemon const original_user,
+	OtherActivePokemon<UserPokemon> const original_other,
 	Weather const original_weather,
-	SideEffects<Team<generation>> when_used
+	SideEffects<AssociatedTeam<UserPokemon>> when_used
 ) {
 	return will_be_recharge_turn(original_user, move_name, original_other.ability(), original_weather) ?
-		guaranteed_effect<Team<generation>>([](auto & user, auto &, auto &, auto) {
+		guaranteed_effect<AssociatedTeam<UserPokemon>>([](auto & user, auto &, auto &, auto) {
 			user.pokemon().use_charge_up_move();
 		}) :
 		std::move(when_used);
 }
 
-template<any_active_pokemon ActivePokemonType>
-auto item_can_be_lost(ActivePokemonType const pokemon) {
+template<any_active_pokemon PokemonType>
+auto item_can_be_lost(PokemonType const pokemon) {
 	return
 		pokemon.ability() != Ability::Sticky_Hold or
-		(generation_from<ActivePokemonType> >= Generation::five and pokemon.hp().current() == 0_bi);
+		(generation_from<PokemonType> >= Generation::five and pokemon.hp().current() == 0_bi);
 }
 
 auto item_can_be_incinerated(any_active_pokemon auto const target, Weather const weather) -> bool {
@@ -484,9 +489,10 @@ constexpr auto can_confuse_with_chatter(Species const pokemon) {
 
 } // namespace
 
-template<Generation generation>
-auto possible_side_effects(Moves const move, ActivePokemon<generation> const original_user, Team<generation> const & original_other, Weather const original_weather) -> SideEffects<Team<generation>> {
-	using UserTeam = Team<generation>;
+template<any_active_pokemon UserPokemon>
+auto possible_side_effects(Moves const move, UserPokemon const original_user, OtherTeam<UserPokemon> const & original_other, Weather const original_weather) -> SideEffects<AssociatedTeam<UserPokemon>> {
+	using UserTeam = AssociatedTeam<UserPokemon>;
+	constexpr auto generation = generation_from<UserPokemon>;
 	switch (move) {
 		case Moves::Absorb:
 		case Moves::Drain_Punch:
@@ -840,11 +846,11 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 
 		case Moves::Aromatherapy:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
-				cure_all_status(user, [](Pokemon<generation> const &) { return true; });
+				cure_all_status(user, [](any_pokemon auto const &) { return true; });
 			});
 		case Moves::Heal_Bell:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
-				cure_all_status(user, [=](Pokemon<generation> const & pokemon) {
+				cure_all_status(user, [=](any_pokemon auto const & pokemon) {
 					if constexpr (generation == Generation::five) {
 						return true;
 					} else {
@@ -1576,9 +1582,9 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				case Generation::one:
 					return no_effect<UserTeam>;
 				case Generation::two:
-					return original_other.pokemon().last_used_move().moved_this_turn() ? phaze_effect<UserTeam>(original_other) : no_effect<UserTeam>;
+					return original_other.pokemon().last_used_move().moved_this_turn() ? phaze_effect(original_other) : no_effect<UserTeam>;
 				default:
-					return phaze_effect<UserTeam>(original_other);
+					return phaze_effect(original_other);
 			}
 		case Moves::Role_Play:
 			return no_effect<UserTeam>;
@@ -2050,8 +2056,13 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 	}
 }
 
+#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserPokemon) \
+	template auto possible_side_effects(Moves, UserPokemon, OtherTeam<UserPokemon> const &, Weather) -> SideEffects<AssociatedTeam<UserPokemon>>
+
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto possible_side_effects(Moves, ActivePokemon<generation> const user, Team<generation> const & other, Weather) -> SideEffects<Team<generation>>
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(AnyActivePokemon<Pokemon<generation>>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(AnyActivePokemon<SeenPokemon<generation>>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(AnyActivePokemon<KnownPokemon<generation>>)
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

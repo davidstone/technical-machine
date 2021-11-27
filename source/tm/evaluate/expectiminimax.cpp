@@ -520,9 +520,7 @@ private:
 			if (index != team.all_pokemon().index()) {
 				team.switch_pokemon(other.pokemon(), weather, index);
 			}
-			auto replaced = PokemonCollection<generation>(1_bi);
-			replaced.add(team.all_pokemon()(team.all_pokemon().index()));
-			team.all_pokemon() = replaced;
+			team.all_pokemon() = PokemonCollection<generation>(PokemonContainer<generation>({team.all_pokemon()(team.all_pokemon().index())}));
 		};
 		remove_all_but_index(ai, ai_index, foe);
 		remove_all_but_index(foe, foe_index, ai);

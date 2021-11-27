@@ -30,7 +30,7 @@ struct Wish {
 		}
 	}
 
-	auto decrement(MutableActivePokemon<generation> pokemon, Weather const weather) & -> void {
+	auto decrement(any_mutable_active_pokemon auto const pokemon, Weather const weather) & -> void {
 		if constexpr (exists) {
 			if (!m_turns_until_activation) {
 				return;

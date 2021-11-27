@@ -11,16 +11,6 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/target.hpp>
 
-#include <tm/ability.hpp>
-#include <tm/ability_blocks_move.hpp>
-#include <tm/block.hpp>
-#include <tm/end_of_turn.hpp>
-#include <tm/heal.hpp>
-#include <tm/rational.hpp>
-#include <tm/status.hpp>
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
-
 #include <tm/pokemon/active_pokemon.hpp>
 #include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/pokemon.hpp>
@@ -28,6 +18,20 @@
 
 #include <tm/type/effectiveness.hpp>
 #include <tm/type/type.hpp>
+
+#include <tm/ability.hpp>
+#include <tm/ability_blocks_move.hpp>
+#include <tm/any_team.hpp>
+#include <tm/block.hpp>
+#include <tm/end_of_turn.hpp>
+#include <tm/generation.hpp>
+#include <tm/heal.hpp>
+#include <tm/known_team.hpp>
+#include <tm/rational.hpp>
+#include <tm/seen_team.hpp>
+#include <tm/status.hpp>
+#include <tm/team.hpp>
+#include <tm/weather.hpp>
 
 #include <bounded/assert.hpp>
 
@@ -45,8 +49,7 @@ constexpr auto breaks_screens(Moves const move) {
 	return move == Moves::Brick_Break;
 }
 
-template<Generation generation>
-auto do_effects_before_moving(Moves const move, MutableActivePokemon<generation> user, Team<generation> & other) {
+auto do_effects_before_moving(Moves const move, any_mutable_active_pokemon auto user, any_team auto & other) {
 	if (breaks_screens(move)) {
 		other.shatter_screens();
 	} else if (thaws_user(move)) {
@@ -98,9 +101,9 @@ constexpr auto move_fails(Moves const move, bool const user_damaged, Ability con
 }
 
 // Returns whether the attack is weakened by the item
-template<any_mutable_active_pokemon MutableActivePokemonType>
-auto activate_when_hit_item(KnownMove const move, MutableActivePokemonType const defender, Weather const weather, Effectiveness const effectiveness) -> bool {
-	constexpr auto generation = generation_from<MutableActivePokemonType>;
+template<any_mutable_active_pokemon DefenderPokemon>
+auto activate_when_hit_item(KnownMove const move, DefenderPokemon const defender, Weather const weather, Effectiveness const effectiveness) -> bool {
+	constexpr auto generation = generation_from<DefenderPokemon>;
 	auto substitute = [&] {
 		return defender.substitute() and substitute_interaction(generation, move.name) != Substitute::bypassed;
 	};
@@ -230,8 +233,8 @@ constexpr auto targets_foe_specifically(Target const target) {
 	}
 }
 
-template<any_team UserTeam>
-auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target const target, UserTeam & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
+template<any_team UserTeam, any_team OtherTeamType>
+auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target const target, OtherTeamType & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
@@ -263,7 +266,11 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 	if (effects == Substitute::absorbs) {
 		return;
 	}
-	executed.side_effect(user, other, weather, damage_done);
+	if constexpr (std::same_as<UserTeam, OtherTeamType> and !std::same_as<UserTeam, Team<generation_from<UserTeam>>>) {
+		BOUNDED_ASSERT(executed.move.name == Moves::Hit_Self);
+	} else {
+		executed.side_effect(user, other, weather, damage_done);
+	}
 	// Should this check if we did any damage or if the move is damaging?
 	if (damage_done != 0_bi) {
 		auto const item = user_pokemon.item(weather);
@@ -356,7 +363,7 @@ auto handle_ability_blocks_move(any_mutable_active_pokemon auto const target, We
 }
 
 template<any_team UserTeam>
-auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, UserTeam & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
+auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto user_pokemon = user.pokemon();
 
@@ -440,7 +447,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, UserTeam & oth
 }
 
 template<any_mutable_active_pokemon UserPokemon>
-void end_of_attack(UserPokemon const user_pokemon, UserPokemon const other_pokemon, Weather const weather) {
+void end_of_attack(UserPokemon const user_pokemon, OtherMutableActivePokemon<UserPokemon> const other_pokemon, Weather const weather) {
 	if constexpr (generation_from<UserPokemon> == Generation::two) {
 		user_pokemon.status_and_leech_seed_effects(other_pokemon, weather);
 		handle_curse(user_pokemon, weather);
@@ -450,7 +457,7 @@ void end_of_attack(UserPokemon const user_pokemon, UserPokemon const other_pokem
 } // namespace
 
 template<any_team UserTeam>
-auto call_move(UserTeam & user, UsedMove<UserTeam> const move, UserTeam & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
+auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
 	if (move.selected == Moves::Pass) {
 		return;
 	}
@@ -458,8 +465,13 @@ auto call_move(UserTeam & user, UsedMove<UserTeam> const move, UserTeam & other,
 	end_of_attack(user.pokemon(), other.pokemon(), weather);
 }
 
+#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam) \
+	template auto call_move(UserTeam & user, UsedMove<UserTeam> move, OtherTeam<UserTeam> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void
+
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto call_move(Team<generation> & user, UsedMove<Team<generation>> const move, Team<generation> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>)
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

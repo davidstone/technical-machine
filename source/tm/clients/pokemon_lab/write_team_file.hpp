@@ -52,7 +52,14 @@ void write_stats(any_pokemon auto const & pokemon, boost::property_tree::ptree &
 void write_pokemon(any_pokemon auto const & pokemon, boost::property_tree::ptree & pt) {
 	auto & member = pt.add("pokemon", "");
 	member.put("<xmlattr>.species", to_simulator_string(pokemon.species()));
-	member.put("nickname", "");
+	auto get_nickname = [&]() -> std::string_view {
+		if constexpr (requires { pokemon.nickname(); }) {
+			return pokemon.nickname();
+		} else {
+			return ""sv;
+		}
+	};
+	member.put("nickname", get_nickname());
 	member.put("level", pokemon.level()());
 	member.put("happiness", pokemon.happiness());
 	member.put("gender", to_simulator_string(pokemon.gender()));

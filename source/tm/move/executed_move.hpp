@@ -8,9 +8,11 @@
 #include <tm/move/known_move.hpp>
 #include <tm/move/side_effects.hpp>
 
+#include <tm/any_team.hpp>
+
 namespace technicalmachine {
 
-template<typename UserTeam>
+template<any_team UserTeam>
 struct ExecutedMove {
 	KnownMove move;
 	PP pp;

@@ -20,10 +20,13 @@
 #include <tm/pokemon/species.hpp>
 
 #include <tm/ability.hpp>
+#include <tm/any_team.hpp>
 #include <tm/gender.hpp>
 #include <tm/generation.hpp>
 #include <tm/item.hpp>
+#include <tm/known_team.hpp>
 #include <tm/rational.hpp>
+#include <tm/seen_team.hpp>
 #include <tm/status.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
@@ -32,8 +35,8 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-template<any_active_pokemon ActivePokemonType>
-auto doubling(ActivePokemonType const attacker, Moves const move, ActivePokemonType const defender, Weather const weather) -> bool {
+template<any_active_pokemon AttackerPokemon>
+auto doubling(AttackerPokemon const attacker, Moves const move, any_active_pokemon auto const defender, Weather const weather) -> bool {
 	// I account for the doubling of the base power for Pursuit in the
 	// switching function by simply multiplying the final base power by 2.
 	// Regardless of the combination of modifiers, this does not change the
@@ -42,7 +45,7 @@ auto doubling(ActivePokemonType const attacker, Moves const move, ActivePokemonT
 	// slower Pokemon that has Rivalry and a Muscle Band and neither the
 	// attacker nor target is genderless. This will cause the base power to be
 	// 1 less than it should be.
-	constexpr auto generation = generation_from<ActivePokemonType>;
+	constexpr auto generation = generation_from<AttackerPokemon>;
 	if (defender.last_used_move().vanish_doubles_power(generation, move))
 		return true;
 	switch (move) {
@@ -123,9 +126,9 @@ constexpr auto is_boosted_by_soul_dew(Generation const generation, Species const
 
 constexpr auto item_modifier_denominator = 20_bi;
 using ItemModifierNumerator = bounded::integer<20, 24>;
-template<any_active_pokemon ActivePokemonType>
-auto item_modifier_numerator(ActivePokemonType const attacker, KnownMove const move, Weather const weather) -> ItemModifierNumerator {
-	constexpr auto generation = generation_from<ActivePokemonType>;
+template<any_active_pokemon AttackerPokemon>
+auto item_modifier_numerator(AttackerPokemon const attacker, KnownMove const move, Weather const weather) -> ItemModifierNumerator {
+	constexpr auto generation = generation_from<AttackerPokemon>;
 	constexpr auto none = item_modifier_denominator;
 	auto type_boost = [=](Type const type) -> ItemModifierNumerator {
 		if (move.type != type) {
@@ -287,10 +290,10 @@ bool is_boosted_by_reckless(Moves const move) {
 	}
 }
 
-template<any_active_pokemon ActivePokemonType>
-auto attacker_ability_power_modifier(ActivePokemonType const attacker, KnownMove const move, ActivePokemonType const defender, BasePower const base) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
+template<any_active_pokemon AttackerPokemon>
+auto attacker_ability_power_modifier(AttackerPokemon const attacker, KnownMove const move, any_active_pokemon auto const defender, BasePower const base) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
 	auto pinch_ability_activates = [&](Type const type) {
-		return generation_from<ActivePokemonType> <= Generation::four and move.type == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
+		return generation_from<AttackerPokemon> <= Generation::four and move.type == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
 	};
 	switch (attacker.ability()) {
 		case Ability::Technician:
@@ -325,8 +328,8 @@ auto defender_ability_modifier(Type const move_type, Ability const ability) -> r
 
 }	// namespace
 
-template<any_team UserTeam>
-auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, UserTeam const & defender_team, Weather const weather) -> MovePower {
+template<any_team UserTeam, any_team DefenderTeam>
+auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Weather const weather) -> MovePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	auto const base = base_power(attacker_team, executed, defender_team, weather);
@@ -341,8 +344,15 @@ auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 	));
 }
 
+#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam, DefenderTeam) \
+	template auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Weather const weather) -> MovePower
+
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto move_power(Team<generation> const & attacker_team, ExecutedMove<Team<generation>> const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>, Team<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>, KnownTeam<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>, SeenTeam<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>, KnownTeam<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>, SeenTeam<generation>)
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

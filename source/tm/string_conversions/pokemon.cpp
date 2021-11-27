@@ -5,7 +5,9 @@
 
 #include <tm/string_conversions/pokemon.hpp>
 
+#include <tm/pokemon/known_pokemon.hpp>
 #include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/seen_pokemon.hpp>
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
@@ -70,6 +72,7 @@ constexpr auto moves_separator = "\n\t- "sv;
 
 } // namespace
 
+// TODO: Print nickname
 // TODO: Print level
 // TODO: Print gender
 // TODO: Make this compatible with Pokemon Showdown
@@ -293,8 +296,13 @@ auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 	return pokemon;
 }
 
+#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(PokemonType) \
+	template auto to_string(PokemonType const & pokemon) -> containers::string
+
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto to_string(Pokemon<generation> const & pokemon) -> containers::string; \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Pokemon<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownPokemon<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenPokemon<generation>); \
 	template auto pokemon_from_string<generation>(std::string_view const str) -> Pokemon<generation>
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);

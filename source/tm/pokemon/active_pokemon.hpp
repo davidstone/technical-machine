@@ -38,6 +38,7 @@
 #include <tm/heal.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
+#include <tm/other_team.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/assert.hpp>
@@ -116,10 +117,10 @@ struct ActivePokemonFlags {
 		}
 	}
 private:
-	template<Generation, bool>
+	template<typename>
 	friend struct ActivePokemonImpl;
-	template<Generation>
-	friend struct MutableActivePokemon;
+	template<typename>
+	friend struct AnyMutableActivePokemon;
 	
 	[[no_unique_address]] ExistsIf<Ability, generation >= Generation::three> ability{};
 	Confusion confusion;
@@ -166,15 +167,13 @@ private:
 	[[no_unique_address]] BoolIf<generation >= Generation::three> water_sport{};
 };
 
-// TODO: Implement both ActivePokemon and MutableActivePokemon as typedefs once
-// we get requires clauses.
-template<Generation generation, bool is_const>
+template<typename PokemonType>
 struct ActivePokemonImpl {
 private:
-	using PokemonRef = std::conditional_t<is_const, Pokemon<generation> const &, Pokemon<generation> &>;
-	using FlagsRef = std::conditional_t<is_const, ActivePokemonFlags<generation> const &, ActivePokemonFlags<generation> &>;
+	static constexpr auto generation = generation_from<PokemonType>;
+	using FlagsRef = std::conditional_t<std::is_const_v<PokemonType>, ActivePokemonFlags<generation> const &, ActivePokemonFlags<generation> &>;
 public:
-	ActivePokemonImpl(PokemonRef pokemon, FlagsRef flags):
+	ActivePokemonImpl(PokemonType & pokemon, FlagsRef flags):
 		m_pokemon(pokemon),
 		m_flags(flags)
 	{
@@ -371,7 +370,7 @@ public:
 	}
 
 protected:
-	PokemonRef m_pokemon;
+	PokemonType & m_pokemon;
 	FlagsRef m_flags;
 };
 
@@ -383,10 +382,10 @@ auto apply_own_mental_herb(any_mutable_active_pokemon auto const pokemon, Weathe
 }
 
 // A reference to the currently active Pokemon
-template<Generation generation>
-struct ActivePokemon : ActivePokemonImpl<generation, true> {
-	ActivePokemon(Pokemon<generation> const & pokemon, ActivePokemonFlags<generation> const & flags):
-		ActivePokemonImpl<generation, true>(pokemon, flags)
+template<typename PokemonType>
+struct AnyActivePokemon : ActivePokemonImpl<PokemonType const> {
+	AnyActivePokemon(PokemonType const & pokemon, ActivePokemonFlags<generation_from<PokemonType>> const & flags):
+		ActivePokemonImpl<PokemonType const>(pokemon, flags)
 	{
 	}
 };
@@ -398,10 +397,10 @@ auto is_type(any_active_pokemon auto const pokemon, auto const... types) -> bool
 	));
 }
 
-template<any_active_pokemon ActivePokemonType>
-auto grounded(ActivePokemonType const pokemon, Weather const weather) -> bool {
+template<any_active_pokemon PokemonType>
+auto grounded(PokemonType const pokemon, Weather const weather) -> bool {
 	auto item_grounds = [=] {
-		auto const item = generation_from<ActivePokemonType> <= Generation::four ?
+		auto const item = generation_from<PokemonType> <= Generation::four ?
 			pokemon.unrestricted_item() :
 			pokemon.item(weather);
 		return item == Item::Iron_Ball;
@@ -446,15 +445,18 @@ auto yawn_can_apply(any_active_pokemon auto const target, Weather const weather,
 }
 
 // A mutable reference to the currently active Pokemon
-template<Generation generation>
-struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
-	MutableActivePokemon(Pokemon<generation> & pokemon, ActivePokemonFlags<generation> & flags):
-		ActivePokemonImpl<generation, false>(pokemon, flags)
+template<typename PokemonType>
+struct AnyMutableActivePokemon : ActivePokemonImpl<PokemonType> {
+private:
+	static constexpr auto generation = generation_from<PokemonType>;
+public:
+	AnyMutableActivePokemon(PokemonType & pokemon, ActivePokemonFlags<generation_from<PokemonType>> & flags):
+		ActivePokemonImpl<PokemonType>(pokemon, flags)
 	{
 	}
 	
 	auto as_const() const {
-		return ActivePokemon<generation>(this->m_pokemon, this->m_flags);
+		return AnyActivePokemon<PokemonType>(this->m_pokemon, this->m_flags);
 	}
 
 	auto add_move(Move const move) const -> void {
@@ -473,21 +475,21 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		this->m_flags.partial_trap = {};
 	}
 
-	auto set_ability(Ability const ability) const {
+	auto set_ability(Ability const ability) const -> void {
 		this->m_flags.ability = ability;
 	}
-	auto set_base_ability(Ability const ability) const {
+	auto set_base_ability(Ability const ability) const -> void requires requires(PokemonType & pokemon) { pokemon.set_initial_ability(ability); } {
 		this->m_pokemon.set_initial_ability(ability);
 		set_ability(ability);
 	}
-	auto set_ability_to_base_ability() const {
+	auto set_ability_to_base_ability() const -> void {
 		set_ability(this->m_pokemon.initial_ability());
 	}
 
 	auto activate_aqua_ring() const {
 		this->m_flags.aqua_ring = true;
 	}
-	auto attract(MutableActivePokemon<generation> other, Weather const weather) const -> void {
+	auto attract(OtherMutableActivePokemon<PokemonType> other, Weather const weather) const -> void {
 		auto handle_item = [&] {
 			switch (this->item(weather)) {
 				case Item::Mental_Herb:
@@ -607,7 +609,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 	auto recycle_item() const -> void {
 		this->m_pokemon.recycle_item();
 	}
-	auto steal_item(MutableActivePokemon<generation> other) const -> void {
+	auto steal_item(OtherMutableActivePokemon<PokemonType> other) const -> void {
 		if (this->unrestricted_item() != Item::None) {
 			return;
 		}
@@ -615,7 +617,8 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 			this->m_pokemon.set_item(*other_item);
 		}
 	}
-	friend auto swap_items(MutableActivePokemon<generation> user, MutableActivePokemon<generation> other) -> void {
+	friend auto swap_items(AnyMutableActivePokemon<OtherPokemon<PokemonType>> user, AnyMutableActivePokemon<PokemonType> other) -> void;
+	friend auto swap_items(AnyMutableActivePokemon<PokemonType> user, AnyMutableActivePokemon<OtherPokemon<PokemonType>> other) -> void {
 		auto const user_item = user.unrestricted_item();
 		auto const other_item = other.unrestricted_item();
 		if (!cannot_be_lost(user_item) and !cannot_be_lost(other_item)) {
@@ -720,7 +723,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		set_status_impl(Statuses::rest, weather);
 	}
 
-	auto status_and_leech_seed_effects(MutableActivePokemon<generation> const other, Weather const weather, bool const uproar = false) const {
+	auto status_and_leech_seed_effects(OtherMutableActivePokemon<PokemonType> const other, Weather const weather, bool const uproar = false) const {
 		this->m_flags.status.status_and_leech_seed_effects(*this, other, weather, uproar);
 	}
 	auto clear_status() const -> void {
@@ -864,7 +867,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		}
 	}
 
-	auto use_bide(MutableActivePokemon<generation> target, Weather const weather) const -> void {
+	auto use_bide(OtherMutableActivePokemon<PokemonType> target, Weather const weather) const -> void {
 		if (auto const damage = this->m_flags.last_used_move.use_bide()) {
 			change_hp(target, weather, -*damage * 2_bi);
 		}
@@ -881,7 +884,7 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		this->m_flags.damaged = true;
 	}
 
-	auto direct_damage(Moves const move, MutableActivePokemon<generation> user, Weather const weather, damage_type const damage) const -> HP::current_type {
+	auto direct_damage(Moves const move, any_mutable_active_pokemon auto user, Weather const weather, damage_type const damage) const -> HP::current_type {
 		auto const interaction = substitute_interaction(generation, move);
 		BOUNDED_ASSERT(!this->m_flags.substitute or interaction != Substitute::causes_failure);
 		if (this->m_flags.substitute and interaction == Substitute::absorbs) {
@@ -1041,12 +1044,12 @@ private:
 	}
 };
 
-template<any_active_pokemon ActivePokemonType>
-auto all_moves(ActivePokemonType const pokemon, TeamSize const team_size) {
-	return MoveContainer<generation_from<ActivePokemonType>>(pokemon.regular_moves(), team_size);
+template<any_active_pokemon PokemonType>
+auto all_moves(PokemonType const pokemon, TeamSize const team_size) {
+	return MoveContainer<generation_from<PokemonType>>(pokemon.regular_moves(), team_size);
 }
 
-auto change_hp(any_mutable_active_pokemon auto const pokemon, Weather const weather, auto const change) {
+auto change_hp(any_mutable_active_pokemon auto const pokemon, Weather const weather, bounded::bounded_integer auto const change) {
 	pokemon.set_hp(weather, pokemon.hp().current() + change);
 }
 
@@ -1083,9 +1086,9 @@ bool blocks_switching(Ability const ability, ActivePokemonType const switcher, W
 	}
 }
 
-template<any_mutable_active_pokemon MutableActivePokemonType>
-void activate_ability_on_switch(MutableActivePokemonType const switcher, MutableActivePokemonType const other, Weather & weather) {
-	constexpr auto generation = generation_from<MutableActivePokemonType>;
+template<any_mutable_active_pokemon PokemonType>
+void activate_ability_on_switch(PokemonType const switcher, OtherMutableActivePokemon<PokemonType> const other, Weather & weather) {
+	constexpr auto generation = generation_from<PokemonType>;
 	auto const switcher_ability = switcher.ability();
 	switch (switcher_ability) {
 		case Ability::Download: {

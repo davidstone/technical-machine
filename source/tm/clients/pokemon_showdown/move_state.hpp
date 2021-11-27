@@ -23,6 +23,7 @@
 
 #include <bounded/detail/variant/variant.hpp>
 #include <bounded/optional.hpp>
+#include <bounded/detail/variant/variant.hpp>
 
 #include <containers/front_back.hpp>
 #include <containers/size.hpp>
@@ -45,7 +46,6 @@ struct MoveState {
 	using Damage = bounded::variant<NoDamage, HPAndStatus, SubstituteDamaged, SubstituteBroke>;
 	template<any_team UserTeam>
 	struct Result {
-		Party party;
 		UsedMove<UserTeam> move;
 		Damage damage;
 		OptionalHPAndStatus user;
@@ -53,6 +53,13 @@ struct MoveState {
 		bool clear_status;
 		bool recoil;
 	};
+	struct NoResult {};
+	template<Generation generation>
+	using AIResult = Result<KnownTeam<generation>>;
+	template<Generation generation>
+	using FoeResult = Result<SeenTeam<generation>>;
+	template<Generation generation>
+	using CompleteResult = bounded::variant<NoResult, AIResult<generation>, FoeResult<generation>>;
 	
 	auto party() const -> bounded::optional<Party> {
 		return m_party;
@@ -179,7 +186,7 @@ struct MoveState {
 	}
 
 	template<Generation generation>
-	auto complete(Party ai_party, Team<generation> const & ai, Team<generation> const & foe, Weather const weather) -> bounded::optional<Result<Team<generation>>>;
+	auto complete(Party ai_party, KnownTeam<generation> const & ai, SeenTeam<generation> const & foe, Weather const weather) -> CompleteResult<generation>;
 private:
 	void validate(Party const party) const {
 		if (m_party != party or !m_move) {
@@ -217,10 +224,10 @@ private:
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
 	extern template auto MoveState::complete( \
 		Party, \
-		Team<generation> const &, \
-		Team<generation> const &, \
+		KnownTeam<generation> const &, \
+		SeenTeam<generation> const &, \
 		Weather \
-	) -> bounded::optional<Result<Team<generation>>>
+	) -> CompleteResult<generation>
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

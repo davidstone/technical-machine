@@ -5,9 +5,11 @@
 
 #pragma once
 
+#include <tm/pokemon/known_pokemon_collection.hpp>
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/pokemon_not_found.hpp>
+#include <tm/pokemon/seen_pokemon_collection.hpp>
 
 #include <tm/compress.hpp>
 #include <tm/operators.hpp>
@@ -37,27 +39,33 @@ template<Generation generation>
 struct PokemonCollection {
 	using Container = PokemonContainer<generation>;
 
-	explicit PokemonCollection(TeamSize const initial_size):
-		m_real_size(initial_size)
-	{
-	}
 	constexpr explicit PokemonCollection(Container all_pokemon):
-		m_container(all_pokemon),
-		m_real_size(containers::size(m_container))
+		m_container(all_pokemon)
 	{
 	}
 
-	auto begin() const {
+	constexpr explicit PokemonCollection(KnownPokemonCollection<generation> const & other):
+		m_container(containers::transform(other, [](KnownPokemon<generation> const & pokemon) { return Pokemon<generation>(pokemon); })),
+		m_index(other.index())
+	{
+	}
+	constexpr explicit PokemonCollection(SeenPokemonCollection<generation> const & other):
+		m_container(containers::transform(other, [](SeenPokemon<generation> const & pokemon) { return Pokemon<generation>(pokemon); })),
+		m_index(other.index())
+	{
+	}
+
+	constexpr auto begin() const {
 		return containers::begin(m_container);
 	}
-	auto begin() {
+	constexpr auto begin() {
 		return containers::begin(m_container);
 	}
-	auto size() const {
+	constexpr auto size() const {
 		return containers::size(m_container);
 	}
 	
-	void set_index(TeamIndex const new_index) {
+	constexpr void set_index(TeamIndex const new_index) {
 		check_range(new_index);
 		m_index = new_index;
 	}
@@ -80,20 +88,10 @@ struct PokemonCollection {
 		return m_container[index()];
 	}
 
-	auto real_size() const {
-		return m_real_size;
-	}
-
-	Pokemon<generation> & add(Pokemon<generation> pokemon) {
-		check_not_full();
-		return containers::push_back(m_container, std::move(pokemon));
-	}
-
-	void remove_active(TeamIndex const index_of_replacement) {
+	constexpr void remove_active(TeamIndex const index_of_replacement) {
 		auto const original_index = index();
 		BOUNDED_ASSERT(original_index != index_of_replacement);
 		containers::erase(m_container, begin() + original_index);
-		--m_real_size;
 		set_index((index_of_replacement < original_index) ?
 			index_of_replacement :
 			TeamIndex(index_of_replacement - 1_bi, bounded::non_check)
@@ -113,30 +111,23 @@ struct PokemonCollection {
 		if constexpr (generation == Generation::one) {
 			return bounded::tuple(
 				compress_combine(p0, p1, p2, value.m_index),
-				compress_combine(p3, p4, p5, value.m_real_size)
+				compress_combine(p3, p4, p5)
 			);
 		} else {
 			return bounded::tuple(
 				compress_combine(p0, p1),
 				compress_combine(p2, p3),
-				compress_combine(p4, p5, value.m_index, value.m_real_size)
+				compress_combine(p4, p5, value.m_index)
 			);
 		}
 	}
 private:
-	void check_not_full() {
-		if (size() == m_real_size) {
-			throw std::runtime_error("Tried to add too many Pokemon");
-		}
-	}
 	constexpr void check_range(TeamIndex const new_index [[maybe_unused]]) const {
 		BOUNDED_ASSERT(new_index < size());
 	}
 
 	Container m_container;
 	TeamIndex m_index = 0_bi;
-	// The actual size of the foe's team, not just the Pokemon I've seen
-	TeamSize m_real_size;
 };
 
 BOUNDED_COMMON_ARITHMETIC
@@ -146,10 +137,9 @@ inline auto find_index(PokemonCollection<generation> const & collection, Species
 	return bounded::assume_in_range<TeamIndex>(containers::find_if(collection, [=](Pokemon<generation> const pokemon) { return pokemon.species() == species; }) - collection.begin());
 }
 
-template<Generation generation>
-auto find_required_index(PokemonCollection<generation> const & collection, Species const species) {
-	auto const index = find_index(collection, species);
-	if (index == containers::size(collection)) {
+auto find_required_index(auto const & pokemon_collection, Species const species) {
+	auto const index = find_index(pokemon_collection, species);
+	if (index == containers::size(pokemon_collection)) {
 		throw PokemonNotFound(species);
 	}
 	return index;

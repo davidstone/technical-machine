@@ -8,7 +8,9 @@
 
 #include <tm/ability.hpp>
 #include <tm/heal.hpp>
+#include <tm/known_team.hpp>
 #include <tm/rational.hpp>
+#include <tm/seen_team.hpp>
 #include <tm/status.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
@@ -96,11 +98,11 @@ void sun_effect(any_mutable_active_pokemon auto const pokemon, Weather const wea
 	}
 }
 
-template<any_mutable_active_pokemon MutableActivePokemonType>
-void weather_effects(MutableActivePokemonType const first, MutableActivePokemonType const last, Weather & weather) {
+template<any_mutable_active_pokemon PokemonType>
+void weather_effects(PokemonType const first, OtherMutableActivePokemon<PokemonType> const last, Weather & weather) {
 	weather.advance_one_turn();
 	auto const ability_blocks_weather = weather_is_blocked_by_ability(first.ability(), last.ability());
-	for (auto const pokemon : {first, last}) {
+	auto apply_weather = [&](auto const pokemon) {
 		if (weather.hail(ability_blocks_weather)) {
 			hail_effect(pokemon, weather);
 		} else if (weather.rain(ability_blocks_weather)) {
@@ -110,15 +112,17 @@ void weather_effects(MutableActivePokemonType const first, MutableActivePokemonT
 		} else if (weather.sun(ability_blocks_weather)) {
 			sun_effect(pokemon, weather);
 		}
-	}
+	};
+	apply_weather(first);
+	apply_weather(last);
 }
 
 constexpr auto leftovers_healing() {
 	return rational(1_bi, 16_bi);
 }
 
-template<Generation generation>
-auto other_effects(Team<generation> & team, MutableActivePokemon<generation> foe, Weather & weather, EndOfTurnFlags const flags) -> void {
+template<any_team TeamType>
+auto other_effects(TeamType & team, OtherMutableActivePokemon<TeamType> const foe, Weather & weather, EndOfTurnFlags const flags) -> void {
 	auto pokemon = team.pokemon();
 	if (pokemon.hp().current() == 0_bi) {
 		return;
@@ -179,29 +183,34 @@ auto other_effects(Team<generation> & team, MutableActivePokemon<generation> foe
 	}
 }
 
-void generation_2_end_of_turn(Team<Generation::two> & first_team, Team<Generation::two> & last_team, Weather & weather) {
+template<any_team TeamType> requires(generation_from<TeamType> == Generation::two)
+void generation_2_end_of_turn(TeamType & first_team, OtherTeam<TeamType> & last_team, Weather & weather) {
 	auto const first = first_team.pokemon();
 	auto const last = last_team.pokemon();
 
 	// TODO: Future Sight in reverse speed order
 
 	weather.advance_one_turn();
-	for (auto const pokemon : {first, last}) {
+	auto apply_weather = [&](auto const pokemon) {
 		if (weather.sand() and !is_immune_to_sandstorm(pokemon.types())) {
 			heal(pokemon, weather, rational(-1_bi, 8_bi));
 		}
-	}
+	};
+	apply_weather(first);
+	apply_weather(last);
 
 	// TODO: multi-turn attacks
 
 	first.perish_song_turn();
 	last.perish_song_turn();
 
-	for (auto const pokemon : {first, last}) {
+	auto apply_leftovers = [&](auto const pokemon) {
 		if (pokemon.item(weather) == Item::Leftovers) {
 			heal(pokemon, weather, leftovers_healing());
 		}
-	}
+	};
+	apply_leftovers(first);
+	apply_leftovers(last);
 
 	// TODO: Defrost
 
@@ -215,7 +224,7 @@ void generation_2_end_of_turn(Team<Generation::two> & first_team, Team<Generatio
 }
 
 template<any_team TeamType>
-void generation_3_plus_end_of_turn(TeamType & first_team, EndOfTurnFlags const first_flags, TeamType & last_team, EndOfTurnFlags const last_flags, Weather & weather) {
+void generation_3_plus_end_of_turn(TeamType & first_team, EndOfTurnFlags const first_flags, OtherTeam<TeamType> & last_team, EndOfTurnFlags const last_flags, Weather & weather) {
 	first_team.decrement_screens();
 	last_team.decrement_screens();
 
@@ -239,7 +248,7 @@ void generation_3_plus_end_of_turn(TeamType & first_team, EndOfTurnFlags const f
 } // namespace
 
 template<any_team TeamType>
-void end_of_turn(TeamType & first, EndOfTurnFlags const first_flags, TeamType & last, EndOfTurnFlags const last_flags, Weather & weather) {
+void end_of_turn(TeamType & first, EndOfTurnFlags const first_flags, OtherTeam<TeamType> & last, EndOfTurnFlags const last_flags, Weather & weather) {
 	constexpr auto generation = generation_from<TeamType>;
 	if constexpr (generation == Generation::one) {
 	} else if constexpr (generation == Generation::two) {
@@ -249,8 +258,13 @@ void end_of_turn(TeamType & first, EndOfTurnFlags const first_flags, TeamType & 
 	}
 }
 
+#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(TeamType) \
+	template void end_of_turn(TeamType & first, EndOfTurnFlags first_flags, OtherTeam<TeamType> & last, EndOfTurnFlags last_flags, Weather &)
+
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template void end_of_turn(Team<generation> & first, EndOfTurnFlags const first_flags, Team<generation> & last, EndOfTurnFlags const last_flags, Weather & weather)
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>)
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

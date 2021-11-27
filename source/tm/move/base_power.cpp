@@ -7,6 +7,8 @@
 
 #include <tm/move/moves.hpp>
 
+#include <tm/known_team.hpp>
+#include <tm/seen_team.hpp>
 #include <tm/team.hpp>
 
 #include <bounded/unreachable.hpp>
@@ -920,8 +922,8 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 
 } // namespace
 
-template<any_team UserTeam>
-auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, UserTeam const & defender_team, Weather const weather) -> BasePower {
+template<any_team UserTeam, any_team DefenderTeam>
+auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Weather const weather) -> BasePower {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
@@ -1769,8 +1771,15 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 	}
 }
 
+#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam, DefenderTeam) \
+	template auto base_power(UserTeam const &, ExecutedMove<UserTeam>, DefenderTeam const &, Weather) -> BasePower
+
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto base_power(Team<generation> const &, ExecutedMove<Team<generation>>, Team<generation> const &, Weather) -> BasePower
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>, Team<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>, KnownTeam<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>, SeenTeam<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>, KnownTeam<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>, SeenTeam<generation>)
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

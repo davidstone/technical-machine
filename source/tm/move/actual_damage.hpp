@@ -16,6 +16,7 @@
 #include <tm/stat/hp.hpp>
 
 #include <tm/any_team.hpp>
+#include <tm/generation.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/detail/overload.hpp>
@@ -46,7 +47,7 @@ struct ActualDamage {
 	}
 
 	template<any_team UserTeam>	
-	auto value(UserTeam const & user, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, UserTeam const & other, OtherMove const other_move, Weather const weather) const -> damage_type {
+	auto value(UserTeam const & user, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, any_team auto const & other, OtherMove const other_move, Weather const weather) const -> damage_type {
 		auto calculate = [&]{
 			auto const substitute = substitute_interaction(generation_from<UserTeam>, executed.move.name);
 			auto const no_damage =

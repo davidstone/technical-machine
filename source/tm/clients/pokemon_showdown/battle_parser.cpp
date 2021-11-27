@@ -15,6 +15,8 @@
 
 #include <tm/move/moves.hpp>
 
+#include <tm/pokemon/any_pokemon.hpp>
+
 #include <tm/team_predictor/team_predictor.hpp>
 
 #include <tm/string_conversions/ability.hpp>
@@ -259,8 +261,8 @@ struct BattleParserImpl : BattleParser {
 		Party party,
 		DepthValues const depth,
 		std::mt19937 random_engine,
-		Team<generation> ai,
-		Team<generation> foe,
+		KnownTeam<generation> ai,
+		SeenTeam<generation> foe,
 		bool log_foe_teams
 	):
 		m_usage_stats(usage_stats),
@@ -376,7 +378,9 @@ struct BattleParserImpl : BattleParser {
 			} else if (reason == "slp") {
 				m_move_state.still_asleep(party);
 			} else if (reason == "recharge") {
-				use_move(get_team(party).pokemon().last_used_move().name());
+				apply_to_team(is_ai(party), [&](auto const & team) {
+					use_move(team.pokemon().last_used_move().name());
+				});
 			} else {
 				std::cerr << "Received unknown \"cant\" reason: " << reason;
 				if (!message.remainder().empty()) {
@@ -402,13 +406,15 @@ struct BattleParserImpl : BattleParser {
 					if (!move_name) {
 						return true;
 					}
-					auto const pokemon = get_team(party).pokemon();
-					return !cures_target_status(
-						generation,
-						*move_name,
-						get_hidden_power_type(pokemon),
-						pokemon.status().name()
-					);
+					return apply_to_team(is_ai(party), [&](auto & team) {
+						auto const pokemon = team.pokemon();
+						return !cures_target_status(
+							generation,
+							*move_name,
+							get_hidden_power_type(pokemon),
+							pokemon.status().name()
+						);
+					});
 				};
 				if (try_use_previous_move()) {
 					maybe_use_previous_move();
@@ -589,7 +595,9 @@ struct BattleParserImpl : BattleParser {
 			bounded::insert(switch_, Switch{parsed.move, parsed.hp, parsed.status});
 		} else if (type == "drag") {
 			auto const parsed = handle_switch_or_drag(message);
-			m_move_state.phaze_index(other(parsed.party), get_team(parsed.party).all_pokemon(), parsed.species);
+			apply_to_team(is_ai(parsed.party), [&](auto & team) {
+				m_move_state.phaze_index(other(parsed.party), team.all_pokemon(), parsed.species);
+			});
 			m_move_state.set_expected(parsed.party, parsed.hp);
 			m_move_state.set_expected(parsed.party, parsed.status);
 		} else if (type == "replace") {
@@ -717,19 +725,25 @@ struct BattleParserImpl : BattleParser {
 	}
 
 private:
-	auto compute_damage(Party const user_party, Moves const move, HPAndStatus const damage) const -> HP::current_type {
-		auto const damaged_party = move == Moves::Hit_Self ? user_party : other(user_party);
-		auto const & pokemon = select_pokemon(get_team(damaged_party), move);
-		auto const new_hp = is_ai(damaged_party) ?
-			damage.hp.current.value() :
-			to_real_hp(pokemon.hp().max(), damage.hp).value;
-		return hp_to_damage(pokemon, new_hp);
+	auto compute_damage(bool const user_is_ai, Moves const move, HPAndStatus const hp_and_status) -> const HP::current_type {
+		auto const ai_damaged = !user_is_ai xor (move == Moves::Hit_Self);
+		return apply_to_team(ai_damaged, [&](auto const & team) {
+			auto const & pokemon = select_pokemon(team, move);
+			auto const new_hp = ai_damaged ?
+				hp_and_status.hp.current.value() :
+				to_real_hp(pokemon.hp().max(), hp_and_status.hp).value;
+			return hp_to_damage(pokemon, new_hp);
+		});
 	}
 	auto is_ai(Party const party) const {
 		return party == m_ai_party;
 	}
-	auto const & get_team(Party const party) const {
-		return is_ai(party) ? m_battle.ai() : m_battle.foe();
+	decltype(auto) apply_to_team(bool const is_ai_, auto function) const {
+		if (is_ai_) {
+			return function(m_battle.ai());
+		 } else {
+			 return function(m_battle.foe());
+		 }
 	}
 
 	void handle_damage(InMessage message) {
@@ -769,7 +783,7 @@ private:
 	}
 
 	auto handle_switch_or_drag(InMessage message) {
-		auto const parsed = parse_switch(message);
+		auto parsed = parse_switch(message);
 		auto const data_is_for_ai = is_ai(parsed.party);
 		if (data_is_for_ai) {
 			auto const index = find_required_index(m_battle.ai().all_pokemon(), parsed.species);
@@ -781,11 +795,21 @@ private:
 			}
 		}
 
-		auto const move = m_battle.find_or_add_pokemon(data_is_for_ai, parsed.species, parsed.level, parsed.gender);
-		struct ParsedSwitchAndMove : ParsedSwitch {
+		auto const move = m_battle.find_or_add_pokemon(
+			data_is_for_ai,
+			parsed.species,
+			std::move(parsed).nickname,
+			parsed.level,
+			parsed.gender
+		);
+		struct Result {
+			Party party;
+			Species species;
 			Moves move;
+			VisibleHP hp;
+			Statuses status;
 		};
-		return ParsedSwitchAndMove{parsed, move};
+		return Result{parsed.party, parsed.species, move, parsed.hp, parsed.status};
 	}
 
 	void set_value_on_pokemon(Party const party, auto const value) {
@@ -829,78 +853,90 @@ private:
 		maybe_use_previous_move_impl();
 	}
 	void maybe_use_previous_move_impl() {
-		auto const maybe_data = m_move_state.complete<generation>(m_ai_party, m_battle.ai(), m_battle.foe(), m_battle.weather());
-		if (!maybe_data) {
-			return;
-		}
-		auto const data = *maybe_data;
-
-		auto const data_is_for_ai = is_ai(data.party);
-
-		auto const user_pokemon = get_team(data.party).pokemon();
-		auto const other_pokemon = get_team(other(data.party)).pokemon();
-
-		auto const known_move = [&] {
-			return KnownMove{
-				data.move.executed,
-				get_type(generation, data.move.executed, get_hidden_power_type(user_pokemon))
-			};
-		};
-		auto const ability_blocks_recoil =
-			causes_recoil(data.move.executed) and
-			!data.recoil and
-			!ability_blocks_move(
-				generation,
-				other_pokemon.ability(),
-				known_move(),
-				other_pokemon.status().name(),
-				other_pokemon.types()
-			);
-		if (ability_blocks_recoil) {
-			// TODO: This could also be Magic Guard
-			m_battle.set_value_on_active(data_is_for_ai, Ability::Rock_Head);
-		}
-		
 		struct LocalDamage {
 			ActualDamage value;
 			bool did_any_damage;
 		};
-		auto const damage = bounded::visit(data.damage, bounded::overload(
-			[](NoDamage) {
-				return LocalDamage{ActualDamage::Known{0_bi}, false};
-			},
-			[&](HPAndStatus const hp_and_status) -> LocalDamage {
-				auto const value = compute_damage(data.party, data.move.executed, hp_and_status);
-				return LocalDamage{
-					ActualDamage::Known{value},
-					value != 0_bi
+		auto const maybe_data = m_move_state.complete<generation>(m_ai_party, m_battle.ai(), m_battle.foe(), m_battle.weather());
+
+		bounded::visit(maybe_data, [&]<typename Data>(Data const data) {
+			if constexpr (std::is_same_v<Data, MoveState::NoResult>) {
+				return;
+			} else {
+				constexpr auto data_is_for_ai = std::is_same_v<Data, MoveState::AIResult<generation>>;
+				auto const user_pokemon = [&] {
+					if constexpr (data_is_for_ai) {
+						return m_battle.ai().pokemon();
+					} else {
+						return m_battle.foe().pokemon();
+					}
+				}();
+				auto const other_pokemon = [&] {
+					if constexpr (data_is_for_ai) {
+						return m_battle.foe().pokemon();
+					} else {
+						return m_battle.ai().pokemon();
+					}
+				}();
+				auto const known_move = [&] {
+					return KnownMove{
+						data.move.executed,
+						get_type(generation, data.move.executed, get_hidden_power_type(user_pokemon))
+					};
 				};
-			},
-			[&](SubstituteDamaged) -> LocalDamage {
-				if (!other_pokemon.substitute()) {
-					throw std::runtime_error("Tried to damage a Substitute when the target does not have a Substitute");
+				auto const ability_blocks_recoil =
+					causes_recoil(data.move.executed) and
+					!data.recoil and
+					!ability_blocks_move(
+						generation,
+						other_pokemon.ability(),
+						known_move(),
+						other_pokemon.status().name(),
+						other_pokemon.types()
+					);
+				if (ability_blocks_recoil) {
+					// TODO: This could also be Magic Guard
+					m_battle.set_value_on_active(data_is_for_ai, Ability::Rock_Head);
 				}
-				return LocalDamage{ActualDamage::Capped{bounded::increase_min<0>(other_pokemon.substitute().hp() - 1_bi)}, true};
-			},
-			[&](SubstituteBroke) -> LocalDamage {
-				return LocalDamage{ActualDamage::Known{other_pokemon.substitute().hp()}, true};
+				
+				auto const damage = bounded::visit(data.damage, bounded::overload(
+					[](NoDamage) {
+						return LocalDamage{ActualDamage::Known{0_bi}, false};
+					},
+					[&](HPAndStatus const hp_and_status) -> LocalDamage {
+						auto const value = compute_damage(data_is_for_ai, data.move.executed, hp_and_status);
+						return LocalDamage{
+							ActualDamage::Known{value},
+							value != 0_bi
+						};
+					},
+					[&](SubstituteDamaged) -> LocalDamage {
+						if (!other_pokemon.substitute()) {
+							throw std::runtime_error("Tried to damage a Substitute when the target does not have a Substitute");
+						}
+						return LocalDamage{ActualDamage::Capped{bounded::increase_min<0>(other_pokemon.substitute().hp() - 1_bi)}, true};
+					},
+					[&](SubstituteBroke) -> LocalDamage {
+						return LocalDamage{ActualDamage::Known{other_pokemon.substitute().hp()}, true};
+					}
+				));
+				
+				auto const other_move = other_pokemon.last_used_move().moved_this_turn() ?
+					OtherMove([&]{
+						auto const move = other_pokemon.last_used_move().name();
+						auto const type = get_type(generation, move, get_hidden_power_type(other_pokemon));
+						return KnownMove{move, type};
+					}()) :
+					OtherMove(FutureMove{
+						data.move.executed == Moves::Sucker_Punch and damage.did_any_damage
+					});
+
+				m_battle.handle_use_move(data.move, data.clear_status, damage.value, other_move);
+
+				try_correct_hp_and_status(data_is_for_ai, data.user.hp, data.user.status);
+				try_correct_hp_and_status(!data_is_for_ai, data.other.hp, data.other.status);
 			}
-		));
-		
-		auto const other_move = other_pokemon.last_used_move().moved_this_turn() ?
-			OtherMove([&]{
-				auto const move = other_pokemon.last_used_move().name();
-				auto const type = get_type(generation, move, get_hidden_power_type(other_pokemon));
-				return KnownMove{move, type};
-			}()) :
-			OtherMove(FutureMove{
-				data.move.executed == Moves::Sucker_Punch and damage.did_any_damage
-			});
-
-		m_battle.handle_use_move(data_is_for_ai, data.move, data.clear_status, damage.value, other_move);
-
-		try_correct_hp_and_status(data_is_for_ai, data.user.hp, data.user.status);
-		try_correct_hp_and_status(!data_is_for_ai, data.other.hp, data.other.status);
+		});
 	}
 
 	void try_correct_hp_and_status(bool const is_ai, bounded::optional<VisibleHP> const hp, bounded::optional<Statuses> const status, auto... maybe_index) {
@@ -931,7 +967,14 @@ private:
 		auto predicted = predict_team(m_usage_stats, use_lead_stats, m_battle.foe(), m_random_engine);
 		m_analysis_logger << "Predicted " << to_string(predicted) << '\n' << std::flush;
 
-		return expectiminimax(m_battle.ai(), predicted, m_battle.weather(), m_evaluate, Depth(m_depth, 1U), m_analysis_logger).name;
+		return expectiminimax(
+			Team<generation>(m_battle.ai()),
+			predicted,
+			m_battle.weather(),
+			m_evaluate,
+			Depth(m_depth, 1U),
+			m_analysis_logger
+		).name;
 	}
 
 	void send_move_impl(bool const is_switch, auto const switch_move, auto const move_index) {
@@ -1030,7 +1073,7 @@ auto make_battle_parser(
 }
 
 
-auto parse_details(std::string_view details) -> ParsedDetails {
+auto parse_details(std::string_view const details) -> ParsedDetails {
 	auto parser = DelimitedBufferView(details, std::string_view(", "));
 	auto const species = from_string<Species>(parser.pop());
 
@@ -1062,10 +1105,10 @@ auto parse_details(std::string_view details) -> ParsedDetails {
 }
 
 auto parse_switch(InMessage message) -> ParsedSwitch {
-	auto const party = party_from_player_id(message.pop());
+	auto const identity = parse_identity(message.pop());
 	auto const details = parse_details(message.pop());
 	auto const [visible_hp, status] = parse_hp_and_status(message.pop());
-	return ParsedSwitch{party, details.species, details.level, details.gender, visible_hp, status};
+	return ParsedSwitch{identity.party, details.species, identity.nickname, details.level, details.gender, visible_hp, status};
 }
 
 } // namespace ps

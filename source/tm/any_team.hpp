@@ -12,15 +12,40 @@
 namespace technicalmachine {
 
 template<Generation generation>
+struct KnownTeam;
+template<Generation generation>
+struct SeenTeam;
+template<Generation generation>
 struct Team;
 
 template<typename T>
-inline constexpr auto is_team_impl = false;
+inline constexpr auto is_known_team_impl = false;
 
 template<Generation generation>
-inline constexpr auto is_team_impl<Team<generation>> = true;
+inline constexpr auto is_known_team_impl<KnownTeam<generation>> = true;
 
 template<typename T>
-concept any_team = is_team_impl<std::remove_cvref_t<T>>;
+concept any_known_team = is_known_team_impl<std::remove_cvref_t<T>>;
+
+template<typename T>
+inline constexpr auto is_seen_team_impl = false;
+
+template<Generation generation>
+inline constexpr auto is_seen_team_impl<SeenTeam<generation>> = true;
+
+template<typename T>
+concept any_seen_team = is_seen_team_impl<std::remove_cvref_t<T>>;
+
+template<typename T>
+inline constexpr auto is_real_team_impl = false;
+
+template<Generation generation>
+inline constexpr auto is_real_team_impl<Team<generation>> = true;
+
+template<typename T>
+concept any_real_team = is_real_team_impl<std::remove_cvref_t<T>>;
+
+template<typename T>
+concept any_team = any_known_team<T> or any_seen_team<T> or any_real_team<T>;
 
 } // namespace technicalmachine

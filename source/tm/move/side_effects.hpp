@@ -13,6 +13,7 @@
 
 #include <tm/any_team.hpp>
 #include <tm/generation.hpp>
+#include <tm/other_team.hpp>
 #include <tm/status.hpp>
 #include <tm/weather.hpp>
 
@@ -21,9 +22,9 @@
 
 namespace technicalmachine {
 
-template<typename UserTeam>
+template<any_team UserTeam>
 struct SideEffect {
-	using Function = containers::trivial_inplace_function<void(UserTeam & user, UserTeam & other, Weather &, HP::current_type) const, 0>;
+	using Function = containers::trivial_inplace_function<void(UserTeam & user, OtherTeam<UserTeam> & other, Weather &, HP::current_type) const, 0>;
 	double probability;
 	Function function;
 };
@@ -47,23 +48,28 @@ constexpr auto reflected_status(Generation const generation, Statuses const stat
 	}
 }
 
-template<any_mutable_active_pokemon MutableActivePokemonType>
-auto apply_status(Statuses const status, MutableActivePokemonType const user, MutableActivePokemonType const target, Weather const weather) {
+template<any_mutable_active_pokemon UserPokemon>
+auto apply_status(Statuses const status, UserPokemon const user, OtherMutableActivePokemon<UserPokemon> const target, Weather const weather) {
 	target.set_status(status, weather);
-	auto const reflected = reflected_status(generation_from<MutableActivePokemonType>, status);
+	auto const reflected = reflected_status(generation_from<UserPokemon>, status);
 	if (reflected and reflects_status(target.ability())) {
 		user.set_status(*reflected, weather);
 	}
 }
 
-template<typename UserTeam>
+template<any_team UserTeam>
 using SideEffects = containers::static_vector<SideEffect<UserTeam>, 15>;
 
-template<Generation generation>
-auto possible_side_effects(Moves, ActivePokemon<generation> user, Team<generation> const & other, Weather) -> SideEffects<Team<generation>>;
+template<any_active_pokemon UserPokemon>
+auto possible_side_effects(Moves, UserPokemon, OtherTeam<UserPokemon> const &, Weather) -> SideEffects<AssociatedTeam<UserPokemon>>;
+
+#define TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(UserPokemon) \
+	extern template auto possible_side_effects(Moves, UserPokemon, OtherTeam<UserPokemon> const &, Weather) -> SideEffects<AssociatedTeam<UserPokemon>>
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto possible_side_effects(Moves, ActivePokemon<generation>, Team<generation> const &, Weather) -> SideEffects<Team<generation>>
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(AnyActivePokemon<Pokemon<generation>>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(AnyActivePokemon<SeenPokemon<generation>>); \
+	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(AnyActivePokemon<KnownPokemon<generation>>)
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
@@ -75,5 +81,6 @@ TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::seven);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
 
 #undef TECHNICALMACHINE_EXTERN_INSTANTIATION
+#undef TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL
 
 } // namespace technicalmachine

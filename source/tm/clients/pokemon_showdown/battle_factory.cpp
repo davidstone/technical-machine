@@ -139,7 +139,7 @@ struct BattleFactoryImpl : BattleFactory {
 			if (!m_party) {
 				throw std::runtime_error("Received a switch message before receiving a party");
 			}
-			auto const parsed = parse_switch(message);
+			auto parsed = parse_switch(message);
 			if (*m_party == parsed.party) {
 				if (m_ai_switched_in) {
 					throw std::runtime_error("AI switched in twice");
@@ -149,7 +149,7 @@ struct BattleFactoryImpl : BattleFactory {
 				if (m_foe_starter) {
 					throw std::runtime_error("Foe switched in twice");
 				}
-				insert(m_foe_starter, parsed);
+				insert(m_foe_starter, std::move(parsed));
 			}
 		} else if (type == "t:") {
 			// message.remainder() == time_t
@@ -202,9 +202,14 @@ struct BattleFactoryImpl : BattleFactory {
 			throw std::runtime_error(containers::concatenate<std::string>("Unsupported format "sv, *m_type));
 		}
 		auto make_foe_team = [&]{
-			auto team = Team<generation>(*m_foe_team_size, false);
-			auto const pokemon = *m_foe_starter;
-			team.add_pokemon({pokemon.species, pokemon.level, pokemon.gender});
+			auto team = SeenTeam<generation>(*m_foe_team_size);
+			auto & pokemon = *m_foe_starter;
+			team.add_pokemon({
+				pokemon.species,
+				std::move(pokemon).nickname,
+				pokemon.level,
+				pokemon.gender
+			});
 			return team;
 		};
 
@@ -234,7 +239,7 @@ private:
 	AllEvaluate m_evaluate;
 	DepthValues m_depth;
 	std::mt19937 m_random_engine;
-	bounded::optional<Team<generation>> m_team;
+	bounded::optional<KnownTeam<generation>> m_team;
 	bounded::optional<Party> m_party;
 	bounded::optional<containers::string> m_type;	// singles, doubles, triples
 	bounded::optional<containers::string> m_tier;

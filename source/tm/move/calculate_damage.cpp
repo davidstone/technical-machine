@@ -5,15 +5,6 @@
 
 #include <tm/move/calculate_damage.hpp>
 
-#include <tm/ability.hpp>
-#include <tm/generation.hpp>
-#include <tm/item.hpp>
-#include <tm/status.hpp>
-#include <tm/random_damage.hpp>
-#include <tm/rational.hpp>
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
-
 #include <tm/move/category.hpp>
 #include <tm/move/executed_move.hpp>
 #include <tm/move/move.hpp>
@@ -28,24 +19,36 @@
 
 #include <tm/type/effectiveness.hpp>
 
+#include <tm/ability.hpp>
+#include <tm/any_team.hpp>
+#include <tm/generation.hpp>
+#include <tm/item.hpp>
+#include <tm/known_team.hpp>
+#include <tm/status.hpp>
+#include <tm/random_damage.hpp>
+#include <tm/rational.hpp>
+#include <tm/seen_team.hpp>
+#include <tm/team.hpp>
+#include <tm/weather.hpp>
+
 namespace technicalmachine {
 
 using namespace bounded::literal;
 
 namespace {
 
-template<any_team UserTeam>
-auto reflect_is_active(KnownMove const move, UserTeam const & defender) {
-	return defender.reflect() and is_physical(generation_from<UserTeam>, move);
+template<any_team DefenderTeam>
+auto reflect_is_active(KnownMove const move, DefenderTeam const & defender) {
+	return defender.reflect() and is_physical(generation_from<DefenderTeam>, move);
 }
 
-template<any_team UserTeam>
-auto light_screen_is_active(KnownMove const move, UserTeam const & defender) {
-	return defender.light_screen() and is_special(generation_from<UserTeam>, move);
+template<any_team DefenderTeam>
+auto light_screen_is_active(KnownMove const move, DefenderTeam const & defender) {
+	return defender.light_screen() and is_special(generation_from<DefenderTeam>, move);
 }
 
-template<Generation generation>
-auto screen_is_active(ExecutedMove<Team<generation>> const executed, Team<generation> const & defender) {
+template<any_team AttackerTeam, any_team DefenderTeam>
+auto screen_is_active(ExecutedMove<AttackerTeam> const executed, DefenderTeam const & defender) {
 	return !executed.critical_hit and (reflect_is_active(executed.move, defender) or light_screen_is_active(executed.move, defender));
 }
 
@@ -139,8 +142,9 @@ auto weakening_from_status(any_active_pokemon auto const attacker) {
 	);
 }
 
-template<Generation generation>
-auto physical_vs_special_modifier(ActivePokemon<generation> const attacker, ExecutedMove<Team<generation>> const executed, ActivePokemon<generation> const defender, Weather const weather) {
+template<any_active_pokemon UserPokemon>
+auto physical_vs_special_modifier(UserPokemon const attacker, ExecutedMove<AssociatedTeam<UserPokemon>> const executed, any_active_pokemon auto const defender, Weather const weather) {
+	constexpr auto generation = generation_from<UserPokemon>;
 	auto const attacker_ability = attacker.ability();
 	auto const defender_ability = defender.ability();
 	// For all integers a, b, and c:
@@ -158,8 +162,8 @@ auto physical_vs_special_modifier(ActivePokemon<generation> const attacker, Exec
 	);
 }
 
-template<Generation generation>
-auto screen_divisor(ExecutedMove<Team<generation>> const move, Team<generation> const & defender) {
+template<any_team AttackerTeam, any_team DefenderTeam>
+auto screen_divisor(ExecutedMove<AttackerTeam> const move, DefenderTeam const & defender) {
 	return BOUNDED_CONDITIONAL(screen_is_active(move, defender), 2_bi, 1_bi);
 }
 
@@ -186,8 +190,8 @@ auto resistance_berry_divisor(bool const move_weakened_from_item) {
 	return BOUNDED_CONDITIONAL(move_weakened_from_item, 2_bi, 1_bi);
 }
 
-template<any_team UserTeam>
-auto regular_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, UserTeam const & defender_team, Weather const weather) {
+template<any_team UserTeam, any_team DefenderTeam>
+auto regular_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, DefenderTeam const & defender_team, Weather const weather) {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto const attacker = attacker_team.pokemon();
 	auto const attacker_ability = attacker.ability();
@@ -217,8 +221,8 @@ auto regular_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const
 	);
 }
 
-template<any_team UserTeam>
-auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, UserTeam const & defender_team, OtherMove const defender_move, Weather const weather) -> damage_type {
+template<any_team UserTeam, any_team OtherTeamType>
+auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, OtherTeamType const & defender_team, OtherMove const defender_move, Weather const weather) -> damage_type {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto const attacker = attacker_team.pokemon();
 	auto const defender = defender_team.pokemon();
@@ -265,15 +269,22 @@ auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 
 }	// namespace
 
-template<any_team UserTeam>
-auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, UserTeam const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
+template<any_team UserTeam, any_team OtherTeamType>
+auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, OtherTeamType const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
 	return affects_target(executed.move, defender.pokemon(), weather) ?
 		raw_damage(attacker, executed, move_weakened_from_item, defender, defender_move, weather) :
 		0_bi;
 }
 
+#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam, OtherTeamType) \
+	template auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam>, bool move_weakened_from_item, OtherTeamType const & defender, OtherMove defender_move, Weather) -> damage_type
+
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto calculate_damage(Team<generation> const & attacker, ExecutedMove<Team<generation>> const executed, bool const move_weakened_from_item, Team<generation> const & defender, OtherMove const defender_move, Weather const weather) -> damage_type
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>, Team<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>, KnownTeam<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>, SeenTeam<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>, KnownTeam<generation>); \
+	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>, SeenTeam<generation>)
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

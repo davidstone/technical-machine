@@ -162,7 +162,7 @@ auto parse_evs(CheckedIterator it) {
 template<Generation generation>
 auto parse_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID species_id) {
 	auto const species = id_to_species({ species_id, pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")} );
-	// auto const nickname = pt.get<std::string>("<xmlattr>.Nickname");
+	auto const nickname = pt.get<std::string>("<xmlattr>.Nickname");
 	auto const gender = id_to_gender(pt.get<GenderID>("<xmlattr>.Gender"));
 	auto const level = Level(pt.get<Level::value_type>("<xmlattr>.Lvl"));
 	auto const happiness = Happiness(pt.get<Happiness::value_type>("<xmlattr>.Happiness"));
@@ -176,8 +176,9 @@ auto parse_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID specie
 	auto const dvs_or_ivs = parse_dvs_or_ivs<generation>(parsed_moves.it);
 	auto const evs = parse_evs<generation>(dvs_or_ivs.it);
 
-	return Pokemon<generation>(
+	return KnownPokemon<generation>(
 		species,
+		containers::string(nickname),
 		level,
 		gender,
 		item,
@@ -190,8 +191,7 @@ auto parse_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID specie
 
 template<Generation generation>
 auto parse_team(boost::property_tree::ptree const & pt) {
-	constexpr bool is_me = true;
-	auto all_pokemon = PokemonContainer<generation>();
+	auto all_pokemon = typename KnownPokemonCollection<generation>::Container();
 	for (auto const & value : pt) {
 		if (value.first != "Pokemon") {
 			continue;
@@ -203,12 +203,12 @@ auto parse_team(boost::property_tree::ptree const & pt) {
 			containers::push_back(all_pokemon, parse_pokemon<generation>(value.second, *species));
 		}
 	}
-	return Team<generation>(all_pokemon, is_me);
+	return KnownTeam<generation>(std::move(all_pokemon));
 }
 
 } // namespace
 
-auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<Team> {
+auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
 	try {
 		auto pt = boost::property_tree::ptree();
 		read_xml(team_file.string(), pt);
@@ -217,7 +217,7 @@ auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneri
 		using GenerationInteger = bounded::integer<1, 7>;
 		auto const parsed_generation = static_cast<Generation>(all_pokemon.get<GenerationInteger>("<xmlattr>.gen"));
 		return constant_generation(parsed_generation, [&]<Generation generation>(constant_gen_t<generation>) {
-			return GenerationGeneric<Team>(parse_team<generation>(all_pokemon));
+			return GenerationGeneric<KnownTeam>(parse_team<generation>(all_pokemon));
 		});
 	} catch (std::exception const & ex) {
 		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse Pokemon Online team file \""sv, team_file.string(), "\" -- "sv, std::string_view(ex.what())));

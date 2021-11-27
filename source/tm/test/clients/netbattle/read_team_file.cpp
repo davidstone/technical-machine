@@ -17,11 +17,12 @@
 namespace technicalmachine {
 namespace {
 
-auto expected_netbattle_team() -> Team<Generation::three> {
+auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 	constexpr auto generation = Generation::three;
-	return Team<generation>({
-		Pokemon<generation>(
+	return KnownTeam<generation>({
+		KnownPokemon<generation>(
 			Species::Forretress,
+			"Alcatraz",
 			Level(100_bi),
 			Gender::male,
 			Item::Leftovers,
@@ -38,8 +39,9 @@ auto expected_netbattle_team() -> Team<Generation::three> {
 				Move(generation, Moves::Spikes)
 			})
 		),
-		Pokemon<generation>(
+		KnownPokemon<generation>(
 			Species::Houndoom,
+			"Crunch Time",
 			Level(100_bi),
 			Gender::male,
 			Item::Salac_Berry,
@@ -56,8 +58,9 @@ auto expected_netbattle_team() -> Team<Generation::three> {
 				Move(generation, Moves::Reversal)
 			})
 		),
-		Pokemon<generation>(
+		KnownPokemon<generation>(
 			Species::Gengar,
+			"Clyde",
 			Level(100_bi),
 			Gender::male,
 			Item::Leftovers,
@@ -74,8 +77,9 @@ auto expected_netbattle_team() -> Team<Generation::three> {
 				Move(generation, Moves::Nightmare)
 			})
 		),
-		Pokemon<generation>(
+		KnownPokemon<generation>(
 			Species::Heracross,
+			"Blinky",
 			Level(100_bi),
 			Gender::male,
 			Item::Salac_Berry,
@@ -92,8 +96,9 @@ auto expected_netbattle_team() -> Team<Generation::three> {
 				Move(generation, Moves::Reversal)
 			})
 		),
-		Pokemon<generation>(
+		KnownPokemon<generation>(
 			Species::Mew,
+			"Houdini",
 			Level(100_bi),
 			Gender::genderless,
 			Item::Leftovers,
@@ -110,8 +115,9 @@ auto expected_netbattle_team() -> Team<Generation::three> {
 				Move(generation, Moves::Soft_Boiled)
 			})
 		),
-		Pokemon<generation>(
+		KnownPokemon<generation>(
 			Species::Zapdos,
+			"Sparky",
 			Level(100_bi),
 			Gender::genderless,
 			Item::Leftovers,
@@ -128,14 +134,15 @@ auto expected_netbattle_team() -> Team<Generation::three> {
 				Move(generation, Moves::Thunder)
 			})
 		)
-	}, true);
+	});
 }
 
-auto expected_netbattle_supremacy_team() -> Team<Generation::two> {
+auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 	constexpr auto generation = Generation::two;
-	return Team<generation>({
-		Pokemon<generation>(
+	return KnownTeam<generation>({
+		KnownPokemon<generation>(
 			Species::Raikou,
+			"Aaron Carter",
 			Level(100_bi),
 			Gender::genderless,
 			Item::Leftovers,
@@ -152,8 +159,9 @@ auto expected_netbattle_supremacy_team() -> Team<Generation::two> {
 				Move(generation, Moves::Thunderbolt)
 			})
 		),
-		Pokemon<generation>(
+		KnownPokemon<generation>(
 			Species::Alakazam,
+			"Jackie Chan",
 			Level(100_bi),
 			Gender::male,
 			Item::Leftovers,
@@ -170,8 +178,9 @@ auto expected_netbattle_supremacy_team() -> Team<Generation::two> {
 				Move(generation, Moves::Thunder_Punch)
 			})
 		),
-		Pokemon<generation>(
+		KnownPokemon<generation>(
 			Species::Exeggutor,
+			"Old Godzilla",
 			Level(100_bi),
 			Gender::male,
 			Item::None,
@@ -188,8 +197,9 @@ auto expected_netbattle_supremacy_team() -> Team<Generation::two> {
 				Move(generation, Moves::Thief)
 			})
 		),
-		Pokemon<generation>(
+		KnownPokemon<generation>(
 			Species::Snorlax,
+			"Shaq Fu",
 			Level(100_bi),
 			Gender::male,
 			Item::Leftovers,
@@ -206,8 +216,9 @@ auto expected_netbattle_supremacy_team() -> Team<Generation::two> {
 				Move(generation, Moves::Self_Destruct)
 			})
 		),
-		Pokemon<generation>(
+		KnownPokemon<generation>(
 			Species::Machamp,
+			"Chuck Norris",
 			Level(100_bi),
 			Gender::male,
 			Item::Leftovers,
@@ -224,8 +235,9 @@ auto expected_netbattle_supremacy_team() -> Team<Generation::two> {
 				Move(generation, Moves::Hidden_Power)
 			})
 		),
-		Pokemon<generation>(
+		KnownPokemon<generation>(
 			Species::Gengar,
+			"Abe Lincoln",
 			Level(100_bi),
 			Gender::male,
 			Item::Leftovers,
@@ -242,12 +254,12 @@ auto expected_netbattle_supremacy_team() -> Team<Generation::two> {
 				Move(generation, Moves::Thunderbolt)
 			})
 		)
-	}, true);
+	});
 }
 
 TEST_CASE("Netbattle team", "[Netbattle]") {
 	auto const file_name = get_test_directory() / "teams/netbattle.pnb";
-	bounded::visit(nb::read_team_file(file_name), []<any_team TeamType>(TeamType const & team) {
+	bounded::visit(nb::read_team_file(file_name), []<any_known_team TeamType>(TeamType const & team) {
 		if constexpr (generation_from<TeamType> == Generation::three) {
 			CHECK(team == expected_netbattle_team());
 		} else {
@@ -258,7 +270,7 @@ TEST_CASE("Netbattle team", "[Netbattle]") {
 
 TEST_CASE("Netbattle Supremacy team", "[Netbattle]") {
 	auto const file_name = get_test_directory() / "teams/netbattle-supremacy.dpnb";
-	bounded::visit(nb::read_team_file(file_name), []<any_team TeamType>(TeamType const & team) {
+	bounded::visit(nb::read_team_file(file_name), []<any_known_team TeamType>(TeamType const & team) {
 		if constexpr (generation_from<TeamType> == Generation::two) {
 			CHECK(team == expected_netbattle_supremacy_team());
 		} else {

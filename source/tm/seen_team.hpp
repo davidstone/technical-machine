@@ -1,24 +1,21 @@
-// Copyright David Stone 2020.
+// Copyright David Stone 2021.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #pragma once
 
-#include <tm/pokemon/active_pokemon.hpp>
-#include <tm/pokemon/collection.hpp>
-#include <tm/pokemon/max_pokemon_per_team.hpp>
-#include <tm/pokemon/species_forward.hpp>
-
 #include <tm/apply_entry_hazards.hpp>
-#include <tm/any_team.hpp>
-#include <tm/compress.hpp>
 #include <tm/entry_hazards.hpp>
-#include <tm/known_team.hpp>
 #include <tm/operators.hpp>
 #include <tm/screens.hpp>
-#include <tm/seen_team.hpp>
 #include <tm/wish.hpp>
+
+#include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/known_pokemon.hpp>
+#include <tm/pokemon/seen_pokemon_collection.hpp>
+#include <tm/pokemon/max_pokemon_per_team.hpp>
+#include <tm/pokemon/species_forward.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/is_empty.hpp>
@@ -32,34 +29,9 @@ namespace technicalmachine {
 struct Weather;
 
 template<Generation generation>
-struct Team {
-	explicit Team(PokemonContainer<generation> all_pokemon_, bool team_is_me = false) :
-		m_all_pokemon(all_pokemon_),
-		me(team_is_me)
-	{
-	}
-	template<std::size_t size>
-	explicit Team(containers::c_array<Pokemon<generation>, size> && all_pokemon_, bool team_is_me = false):
-		Team(PokemonContainer<generation>(std::move(all_pokemon_)), team_is_me)
-	{
-	}
-
-	explicit Team(KnownTeam<generation> const & other):
-		m_all_pokemon(other.all_pokemon()),
-		m_flags(other.flags()),
-		m_screens(other.screens()),
-		m_wish(other.wish()),
-		m_entry_hazards(other.entry_hazards()),
-		me(true)
-	{
-	}
-	explicit Team(SeenTeam<generation> const & other):
-		m_all_pokemon(other.all_pokemon()),
-		m_flags(other.flags()),
-		m_screens(other.screens()),
-		m_wish(other.wish()),
-		m_entry_hazards(other.entry_hazards()),
-		me(false)
+struct SeenTeam {
+	explicit SeenTeam(TeamSize const initial_size) :
+		m_all_pokemon(initial_size)
 	{
 	}
 
@@ -79,31 +51,30 @@ struct Team {
 		return m_wish;
 	}
 
-	auto pokemon() const {
-		return ActivePokemon<generation>(all_pokemon()(), m_flags);
+	auto pokemon() const -> AnyActivePokemon<SeenPokemon<generation>> {
+		return AnyActivePokemon(all_pokemon()(), m_flags);
 	}
-	auto pokemon() {
-		return MutableActivePokemon<generation>(all_pokemon()(), m_flags);
+	auto pokemon() -> AnyMutableActivePokemon<SeenPokemon<generation>> {
+		return AnyMutableActivePokemon(all_pokemon()(), m_flags);
 	}
-	Pokemon<generation> const & pokemon(TeamIndex const index) const {
+	auto pokemon(TeamIndex const index) const -> SeenPokemon<generation> const & {
 		return all_pokemon()(index);
 	}
-	Pokemon<generation> & pokemon(TeamIndex const index) {
+	auto pokemon(TeamIndex const index) -> SeenPokemon<generation> & {
 		return all_pokemon()(index);
 	}
 
-	TeamSize size() const {
+	auto add_pokemon(SeenPokemon<generation> pokemon) -> SeenPokemon<generation> & {
+		return all_pokemon().add(std::move(pokemon));
+	}
+
+	auto number_of_seen_pokemon() const -> TeamSize {
 		return containers::size(all_pokemon());
 	}
+	auto size() const -> TeamSize {
+		return all_pokemon().real_size();
+	}
 	
-	bool is_me() const {
-		return me;
-	}
-
-	std::string_view who() const {
-		return is_me() ? "AI" : "Foe";
-	}
-
 	auto reset_start_of_turn() -> void {
 		m_flags.reset_start_of_turn();
 	}
@@ -112,7 +83,7 @@ struct Team {
 		m_entry_hazards = {};
 	}
 
-	auto switch_pokemon(MutableActivePokemon<generation> other, Weather & weather, TeamIndex const replacement) -> void {
+	auto switch_pokemon(AnyMutableActivePokemon<KnownPokemon<generation>> other, Weather & weather, TeamIndex const replacement) -> void {
 		auto original_pokemon = pokemon();
 		original_pokemon.switch_out();
 		if constexpr (generation == Generation::one) {
@@ -200,64 +171,25 @@ struct Team {
 		m_entry_hazards.add_toxic_spikes();
 	}
 
-	friend auto operator==(Team const &, Team const &) -> bool = default;
-
-	friend auto compress(Team const & team) {
-		auto const compressed_pokemon = compress(team.m_all_pokemon);
-		auto const compressed_flags = compress(team.m_flags);
-		if constexpr (generation == Generation::one) {
-			static_assert(bounded::tuple_size<decltype(compressed_pokemon)> == 2_bi);
-			static_assert(bounded::tuple_size<decltype(compressed_flags)> == 1_bi);
-			return bounded::tuple(
-				compress_combine(
-					compressed_pokemon[0_bi],
-					team.m_entry_hazards,
-					team.m_wish,
-					team.me
-				),
-				compressed_pokemon[1_bi],
-				compress_combine(
-					compressed_flags[0_bi],
-					team.m_screens
-				)
-			);
-		} else {
-			static_assert(bounded::tuple_size<decltype(compressed_pokemon)> == 3_bi);
-			static_assert(bounded::tuple_size<decltype(compressed_flags)> == 2_bi);
-			return bounded::tuple(
-				compress_combine(
-					compressed_pokemon[0_bi],
-					team.m_screens,
-					team.m_entry_hazards,
-					team.m_wish,
-					team.me
-				),
-				compress_combine(
-					compressed_pokemon[1_bi],
-					compressed_flags[0_bi]
-				),
-				compressed_pokemon[2_bi],
-				compressed_flags[1_bi]
-			);
-		}
-	}
+	friend auto operator==(SeenTeam const &, SeenTeam const &) -> bool = default;
 
 private:
-	PokemonCollection<generation> m_all_pokemon;
+	SeenPokemonCollection<generation> m_all_pokemon;
 	ActivePokemonFlags<generation> m_flags;
 	Screens<generation> m_screens;
 	[[no_unique_address]] Wish<generation> m_wish;
 	[[no_unique_address]] EntryHazards<generation> m_entry_hazards;
-	bool me;
 };
 
-constexpr auto team_has_status(any_team auto const & target, Statuses const status) {
-	return containers::any(target.all_pokemon(), [=](auto const & pokemon) {
+template<Generation generation>
+constexpr auto team_has_status(SeenTeam<generation> const & target, Statuses const status) {
+	return containers::any(target.all_pokemon(), [=](SeenPokemon<generation> const & pokemon) {
 		return pokemon.status().name() == status;
 	});
 }
 
-auto switch_decision_required(any_team auto const & team) {
+template<Generation generation>
+auto switch_decision_required(SeenTeam<generation> const & team) {
 	if (team.size() == 1_bi) {
 		return false;
 	}

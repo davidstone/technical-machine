@@ -1720,9 +1720,13 @@ constexpr auto parse_evs(Parser & parser) {
 }
 
 template<Generation generation>
-auto parse_pokemon(Parser & parser) -> bounded::optional<Pokemon<generation>> {
+auto parse_pokemon(Parser & parser) -> bounded::optional<KnownPokemon<generation>> {
 	constexpr auto nickname_bytes = 15_bi;
-	[[maybe_unused]] auto const nickname = parser.pop_string(nickname_bytes);
+	auto const padded_nickname = parser.pop_string(nickname_bytes);
+	auto const nickname = std::string_view(
+		padded_nickname.begin(),
+		containers::find_if_not(containers::reversed(padded_nickname), bounded::equal_to(' ')).base()
+	);
 	constexpr auto species_bits = 9_bi;
 	auto const species_id = parser.pop_integer<SpeciesID>(species_bits);
 	if (species_id == 0_bi) {
@@ -1751,8 +1755,9 @@ auto parse_pokemon(Parser & parser) -> bounded::optional<Pokemon<generation>> {
 	auto const prefer_generation_4_item = parser.pop_integer(1_bi) == 1_bi ? true : false;
 	auto const item = id_to_item(item_id, prefer_generation_4_item);
 
-	return Pokemon<generation>(
+	return KnownPokemon<generation>(
 		species,
+		containers::string(nickname),
 		level,
 		gender,
 		item,
@@ -1763,15 +1768,15 @@ auto parse_pokemon(Parser & parser) -> bounded::optional<Pokemon<generation>> {
 }
 
 template<Generation generation>
-auto parse_team(Parser & parser) -> Team<generation> {
-	auto all_pokemon = containers::static_vector<Pokemon<generation>, static_cast<std::size_t>(max_pokemon_per_team)>();
+auto parse_team(Parser & parser) -> KnownTeam<generation> {
+	auto all_pokemon = typename KnownPokemonCollection<generation>::Container();
 	for ([[maybe_unused]] auto const pokemon_index : containers::integer_range(max_pokemon_per_team)) {
 		auto const pokemon = parse_pokemon<generation>(parser);
 		if (pokemon) {
 			containers::push_back(all_pokemon, *pokemon);
 		}
 	}
-	return Team<generation>(all_pokemon, true);
+	return KnownTeam<generation>(std::move(all_pokemon));
 }
 
 using GameVersion = bounded::integer<0, 8>;
@@ -1792,7 +1797,7 @@ constexpr auto game_version_to_generation(GameVersion const game_version) {
 
 } // namespace
 
-auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<Team> {
+auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
 	try {
 		auto const bytes = bytes_in_file(std::ifstream(team_file, std::ios_base::binary));
 		auto parser = Parser(bytes);
@@ -1807,7 +1812,7 @@ auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneri
 		[[maybe_unused]] auto const avatar = parser.pop_integer(8_bi);
 		[[maybe_unused]] auto const sprite_type = parser.pop_integer(8_bi);
 		return constant_generation(generation, [&]<Generation g>(constant_gen_t<g>) {
-			return GenerationGeneric<Team>(parse_team<g>(parser));
+			return GenerationGeneric<KnownTeam>(parse_team<g>(parser));
 		});
 	} catch (std::exception const & ex) {
 		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse NetBattle team file \""sv, team_file.string(), "\" -- "sv, std::string_view(ex.what())));

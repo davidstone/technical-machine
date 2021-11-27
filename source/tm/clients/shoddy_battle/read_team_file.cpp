@@ -132,7 +132,7 @@ struct ParsedData {
 		ClassDescription,
 		std::string_view,
 		Nature,
-		Pokemon<generation>,
+		KnownPokemon<generation>,
 		std::monostate
 	>;
 
@@ -421,8 +421,9 @@ private:
 		if (!pp_ups) {
 			throw std::runtime_error("Did not receive pp_ups");
 		}
-		return ParsedData(Pokemon<generation>(
+		return ParsedData(KnownPokemon<generation>(
 			*species,
+			containers::string(*nickname),
 			*level,
 			*gender,
 			*item,
@@ -544,7 +545,7 @@ private:
 
 } // namespace
 
-auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<Team> {
+auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
 	try {
 		auto const bytes = bytes_in_file(std::ifstream(team_file, std::ios_base::binary));
 		auto parser = Parser(bytes);
@@ -559,13 +560,13 @@ auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneri
 		}
 		auto const & all_pokemon = parsed_all_pokemon.state[array_index];
 		auto transformed = containers::transform(all_pokemon, [](ParsedData const & pokemon) {
-			constexpr auto pokemon_index = bounded::detail::types<Pokemon<generation>>();
+			constexpr auto pokemon_index = bounded::detail::types<KnownPokemon<generation>>();
 			if (!bounded::holds_alternative(pokemon.state, pokemon_index)) {
 				throw std::runtime_error("Expected team to be an array of Pokemon");
 			}
 			return pokemon.state[pokemon_index];
 		});
-		return GenerationGeneric<Team>(Team<generation>(PokemonContainer<generation>(transformed)));
+		return GenerationGeneric<KnownTeam>(KnownTeam<generation>(typename KnownPokemonCollection<generation>::Container(transformed)));
 	} catch (std::exception const & ex) {
 		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse Shoddy Battle team file \""sv, team_file.string(), "\" -- "sv, std::string_view(ex.what())));
 	}

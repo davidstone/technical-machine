@@ -14,7 +14,7 @@
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 
-#include <tm/team.hpp>
+#include <tm/any_team.hpp>
 
 #include <containers/begin_end.hpp>
 #include <containers/integer_range.hpp>
@@ -31,18 +31,20 @@ using namespace std::string_view_literals;
 
 namespace ps {
 
-auto to_packed_format(any_team auto const & team) -> containers::string {
+auto to_packed_format(any_known_team auto const & team) -> containers::string {
 	static constexpr auto separator = '|';
 	constexpr auto separator_range = containers::single_element_range(separator);
 	auto result = containers::string();
 	for (auto const & pokemon : team.all_pokemon()) {
 		auto const is_first = containers::is_empty(result);
 		auto const item = pokemon.item(false, false);
+		auto const species_str = to_string(pokemon.species());
 		result = containers::concatenate<containers::string>(
 			std::move(result),
 			is_first ? ""sv : "]"sv,
-			to_string(pokemon.species()),
+			pokemon.nickname(),
 			separator_range,
+			species_str == pokemon.nickname() ? ""sv : species_str,
 			separator_range,
 			item == Item::None ? ""sv : to_string(item),
 			separator_range,

@@ -103,11 +103,4 @@ private:
 	Stat m_spe;
 };
 
-template<Generation generation>
-constexpr auto with_new_ivs_and_evs(HP const original_hp, BaseStats const base_stats, Level const level, CombinedStats<generation> const stats) {
-	auto result = Stats<generation>(base_stats, level, stats);
-	result.hp() = result.hp().max() * original_hp.current() / original_hp.max();
-	return result;
-}
-
 } // namespace technicalmachine

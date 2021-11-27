@@ -12,8 +12,8 @@
 #include <tm/clients/shoddy_battle/read_team_file.hpp>
 
 #include <tm/files_in_path.hpp>
+#include <tm/known_team.hpp>
 #include <tm/generation.hpp>
-#include <tm/team.hpp>
 
 #include <containers/at.hpp>
 #include <containers/is_empty.hpp>
@@ -25,7 +25,7 @@
 
 namespace technicalmachine {
 
-inline auto load_team_from_file(std::filesystem::path const & file_name) {
+inline auto load_team_from_file(std::filesystem::path const & file_name) -> GenerationGeneric<KnownTeam> {
 	auto const extension = file_name.extension();
 	if (extension == ".tp") {
 		return po::read_team_file(file_name);
@@ -40,7 +40,7 @@ inline auto load_team_from_file(std::filesystem::path const & file_name) {
 	}
 }
 
-inline auto load_random_team_from_directory(std::mt19937 & random_engine, std::filesystem::path const & path) {
+inline auto load_random_team_from_directory(std::mt19937 & random_engine, std::filesystem::path const & path) -> GenerationGeneric<KnownTeam> {
 	auto const files = files_in_path(path);
 	if (containers::is_empty(files)) {
 		throw std::runtime_error(path.string() + " does not contain any team files.");

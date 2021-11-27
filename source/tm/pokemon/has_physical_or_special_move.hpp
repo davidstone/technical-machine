@@ -14,7 +14,7 @@
 
 namespace technicalmachine {
 
-template<any_pokemon PokemonType>
+template<any_seen_pokemon PokemonType>
 auto any_move_matches(PokemonType const pokemon, auto const condition) -> bool {
 	return containers::any(pokemon.regular_moves(), [=](Move const move) {
 		constexpr auto generation = generation_from<PokemonType>;
@@ -25,11 +25,11 @@ auto any_move_matches(PokemonType const pokemon, auto const condition) -> bool {
 	});
 }
 
-auto has_physical_move(any_pokemon auto const pokemon) -> bool {
+auto has_physical_move(any_seen_pokemon auto const pokemon) -> bool {
 	return any_move_matches(pokemon, is_physical);
 }
 
-auto has_special_move(any_pokemon auto const pokemon) -> bool {
+auto has_special_move(any_seen_pokemon auto const pokemon) -> bool {
 	return any_move_matches(pokemon, is_special);
 }
 
