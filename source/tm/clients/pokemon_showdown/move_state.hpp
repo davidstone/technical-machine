@@ -17,6 +17,7 @@
 
 #include <tm/pokemon/pokemon_not_found.hpp>
 
+#include <tm/any_team.hpp>
 #include <tm/phazing_in_same_pokemon.hpp>
 #include <tm/weather.hpp>
 
@@ -29,9 +30,6 @@
 #include <stdexcept>
 
 namespace technicalmachine {
-
-template<Generation>
-struct Team;
 
 namespace ps {
 
@@ -123,8 +121,7 @@ struct MoveState {
 		}
 		m_move->miss = true;
 	}
-	template<Generation generation>
-	void phaze_index(Party const party, Team<generation> const & phazed_team, Species const species) {
+	void phaze_index(Party const party, any_team auto const & phazed_team, Species const species) {
 		validate(party);
 		if (!is_phaze(m_move->executed)) {
 			throw std::runtime_error("We did not use a phazing move, but we were given phazing data");

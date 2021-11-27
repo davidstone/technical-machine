@@ -22,13 +22,13 @@ namespace technicalmachine {
 
 struct UsageStats;
 
-template<Generation generation>
-void predict_pokemon(Team<generation> & team, Estimate estimate, UsageStats const & usage_stats, std::mt19937 & random_engine, bool const use_most_likely) {
+template<any_team TeamType>
+void predict_pokemon(TeamType & team, Estimate estimate, UsageStats const & usage_stats, std::mt19937 & random_engine, bool const use_most_likely) {
 	auto const index = team.all_pokemon().index();
 	while (team.number_of_seen_pokemon() < team.size()) {
 		auto const species = use_most_likely ? estimate.most_likely() : estimate.random(random_engine);
 		auto const level = Level(100_bi);
-		team.add_pokemon(Pokemon<generation>(species, level, Gender::genderless));
+		team.add_pokemon({species, level, Gender::genderless});
 		if (team.number_of_seen_pokemon() == team.size()) {
 			break;
 		}
@@ -68,8 +68,8 @@ void optimize_pokemon_evs(Pokemon<generation> & pokemon, std::mt19937 & random_e
 	pokemon.set_ivs_and_evs(optimized);
 }
 
-template<Generation generation>
-auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stats, Team<generation> team, std::mt19937 & random_engine, bool const use_most_likely) -> Team<generation> {
+template<any_team TeamType>
+auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stats, TeamType team, std::mt19937 & random_engine, bool const use_most_likely) -> TeamType {
 	auto estimate = Estimate(usage_stats, lead_stats);
 	update_estimate(estimate, usage_stats, team);
 
@@ -91,8 +91,8 @@ auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stat
 	return team;
 }
 
-template<Generation generation>
-auto predict_team(UsageStats const & usage_stats, LeadStats const lead_stats, Team<generation> team, std::mt19937 & random_engine) -> Team<generation> {
+template<any_team TeamType>
+auto predict_team(UsageStats const & usage_stats, LeadStats const lead_stats, TeamType team, std::mt19937 & random_engine) -> TeamType {
 	return predict_team_impl(usage_stats, lead_stats, team, random_engine, true);
 }
 

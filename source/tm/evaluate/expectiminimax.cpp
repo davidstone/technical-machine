@@ -49,8 +49,7 @@
 namespace technicalmachine {
 namespace {
 
-template<Generation generation>
-void print_best_move(Team<generation> const & team, BestMove const best_move, std::ostream & log) {
+void print_best_move(any_team auto const & team, BestMove const best_move, std::ostream & log) {
 	if (is_switch(best_move.name)) {
 		log << "Switch to " << to_string(team.pokemon(to_replacement(best_move.name)).species());
 	} else {
@@ -85,12 +84,12 @@ double generic_flag_branch(auto const & basic_probability, auto const & next_bra
 }
 
 
-template<Generation generation>
-auto deorder(Team<generation> const & first, Team<generation> const & last) {
+template<any_team TeamType>
+auto deorder(TeamType const & first, TeamType const & last) {
 	BOUNDED_ASSERT(first.is_me() or last.is_me());
 	struct Deorder {
-		Team<generation> const & ai;
-		Team<generation> const & foe;
+		TeamType const & ai;
+		TeamType const & foe;
 	};
 	return Deorder{
 		(first.is_me()) ? first : last,
@@ -126,13 +125,13 @@ struct SelectedAndExecuted {
 	KnownMove executed;
 };
 
-template<Generation generation>
-auto execute_move(Team<generation> const & user, SelectedAndExecuted const move, Team<generation> const & other, OtherMove const other_move, Weather const weather, auto const continuation) -> double {
+template<any_team TeamType>
+auto execute_move(TeamType const & user, SelectedAndExecuted const move, TeamType const & other, OtherMove const other_move, Weather const weather, auto const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	auto const side_effects = possible_side_effects(move.executed.name, user_pokemon, other, weather);
 	auto const status = user_pokemon.status();
-	auto const probability_of_clearing_status = status.probability_of_clearing(generation, user_pokemon.ability());
+	auto const probability_of_clearing_status = status.probability_of_clearing(generation_from<TeamType>, user_pokemon.ability());
 	auto const specific_chance_to_hit = chance_to_hit(user_pokemon, move.executed, other_pokemon, weather, other_pokemon.last_used_move().moved_this_turn());
 	auto const ch_probability = critical_hit_probability(user_pokemon, move.executed.name, other.pokemon().ability(), weather);
 	return generic_flag_branch(probability_of_clearing_status, [&](bool const clear_status) {
@@ -147,7 +146,7 @@ auto execute_move(Team<generation> const & user, SelectedAndExecuted const move,
 						auto weather_copy = weather;
 						call_move(
 							user_copy,
-							UsedMove<Team<generation>>(
+							UsedMove<TeamType>(
 								move.selected,
 								move.executed.name,
 								critical_hit,
@@ -201,8 +200,7 @@ constexpr auto all_are_pass_or_switch [[maybe_unused]](StaticVectorMove const le
 		containers::all(legal_selections, is_switch);
 }
 
-template<Generation generation>
-auto team_is_empty(Team<generation> const & team) {
+auto team_is_empty(any_team auto const & team) {
 	return team.size() == 0_bi or (team.size() == 1_bi and team.pokemon().hp().current() == 0_bi);
 };
 
@@ -231,8 +229,7 @@ struct BestMovePrinter {
 		print_estimated_score(max_score, move, indentation);
 	}
 
-	template<Generation generation>
-	void print_action(Team<generation> const & team, Moves const move, bounded::optional<unsigned> const indentation) const {
+	void print_action(any_team auto const & team, Moves const move, bounded::optional<unsigned> const indentation) const {
 		if (!indentation) {
 			return;
 		}
@@ -575,7 +572,7 @@ auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, W
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto expectiminimax<generation>(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::ostream & log) -> BestMove
+	template auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::ostream & log) -> BestMove
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

@@ -187,8 +187,7 @@ auto hp_to_damage(Pokemon<generation> const & pokemon, HP::current_type const ne
 	return bounded::assume_in_range<HP::current_type>(old_hp - new_hp);
 }
 
-template<Generation generation>
-auto const & select_pokemon(Team<generation> const & team, Moves const move) {
+auto const & select_pokemon(any_team auto const & team, Moves const move) {
 	return is_switch(move) ? team.pokemon(to_replacement(move)) : team.all_pokemon()();
 }
 

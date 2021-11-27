@@ -13,6 +13,7 @@
 #include <tm/pokemon/any_pokemon.hpp>
 
 #include <tm/any_team.hpp>
+#include <tm/other_team.hpp>
 #include <tm/team.hpp>
 
 #include <bounded/assert.hpp>
@@ -92,7 +93,7 @@ private:
 
 template<any_active_pokemon TargetType>
 constexpr auto confusion_effect(double const probability, TargetType const original_target, auto const... maybe_immune_type) {
-	using TeamType = Team<generation_from<TargetType>>;
+	using TeamType = AssociatedTeam<TargetType>;
 	return (... or is_type(original_target, maybe_immune_type)) ?
 		no_effect<TeamType> :
 		basic_probability<TeamType>(probability, [](auto &, auto & target, auto & weather, auto) {
@@ -152,7 +153,7 @@ constexpr auto set_status_function = [](any_team auto & user, any_team auto & ta
 	apply_status(status, user.pokemon(), target.pokemon(), weather);
 };
 
-constexpr auto clear_status_function = []<Generation generation>(Team<generation> &, Team<generation> & target, auto &, auto) {
+constexpr auto clear_status_function = [](any_team auto &, any_team auto & target, auto &, auto) {
 	target.pokemon().clear_status();
 };
 
@@ -184,11 +185,11 @@ constexpr auto thaw_and_burn_effect(double const probability, ActivePokemon<gene
 }
 
 
-template<Generation generation, BoostableStat stat, int stages>
-constexpr auto confusing_stat_boost = guaranteed_effect<Team<generation>>([](auto &, auto & other, auto & weather, auto) {
+template<any_team UserTeam, BoostableStat stat, int stages>
+constexpr auto confusing_stat_boost = guaranteed_effect<UserTeam>([](auto &, auto & other, auto & weather, auto) {
 	auto target = other.pokemon();
 	auto & stage = target.stages()[stat];
-	if (generation <= Generation::two and stage == numeric_traits::max_value<Stage::value_type>) {
+	if (generation_from<UserTeam> <= Generation::two and stage == numeric_traits::max_value<Stage::value_type>) {
 		return;
 	}
 	stage += bounded::constant<stages>;
@@ -234,27 +235,28 @@ auto try_apply_status(auto & user, auto & target, auto & weather, auto const dam
 
 template<Generation generation>
 constexpr auto tri_attack_effect(ActivePokemon<generation> const original_user, Team<generation> const & original_target, Weather const original_weather) {
+	using UserTeam = Team<generation>;
 	// TODO: Foresight, Wonder Guard, Scrappy
 	if (is_type(original_target.pokemon(), Type::Ghost)) {
-		return no_effect<Team<generation>>;
+		return no_effect<UserTeam>;
 	}
-	constexpr auto burn = SideEffect<Team<generation>>({1.0 / 15.0, set_status_function<Statuses::burn>});
-	constexpr auto freeze = SideEffect<Team<generation>>({1.0 / 15.0, set_status_function<Statuses::freeze>});
-	constexpr auto paralysis = SideEffect<Team<generation>>({1.0 / 15.0, set_status_function<Statuses::paralysis>});
+	constexpr auto burn = SideEffect<UserTeam>({1.0 / 15.0, set_status_function<Statuses::burn>});
+	constexpr auto freeze = SideEffect<UserTeam>({1.0 / 15.0, set_status_function<Statuses::freeze>});
+	constexpr auto paralysis = SideEffect<UserTeam>({1.0 / 15.0, set_status_function<Statuses::paralysis>});
 
-	constexpr auto burn_freeze_paralysis_probabilities = SideEffects<Team<generation>>({{12.0 / 15.0, no_effect_function}, burn, freeze, paralysis});
-	constexpr auto burn_freeze_probabilities = SideEffects<Team<generation>>({{13.0 / 15.0, no_effect_function}, burn, freeze});
-	constexpr auto burn_paralysis_probabilities = SideEffects<Team<generation>>({{13.0 / 15.0, no_effect_function}, burn, paralysis});
-	constexpr auto freeze_paralysis_probabilities = SideEffects<Team<generation>>({{13.0 / 15.0, no_effect_function}, freeze, paralysis});
-	constexpr auto burn_probabilities = SideEffects<Team<generation>>({{14.0 / 15.0, no_effect_function}, burn});
-	constexpr auto freeze_probabilities = SideEffects<Team<generation>>({{14.0 / 15.0, no_effect_function}, freeze});
-	constexpr auto paralysis_probabilities = SideEffects<Team<generation>>({{14.0 / 15.0, no_effect_function}, paralysis});
+	constexpr auto burn_freeze_paralysis_probabilities = SideEffects<UserTeam>({{12.0 / 15.0, no_effect_function}, burn, freeze, paralysis});
+	constexpr auto burn_freeze_probabilities = SideEffects<UserTeam>({{13.0 / 15.0, no_effect_function}, burn, freeze});
+	constexpr auto burn_paralysis_probabilities = SideEffects<UserTeam>({{13.0 / 15.0, no_effect_function}, burn, paralysis});
+	constexpr auto freeze_paralysis_probabilities = SideEffects<UserTeam>({{13.0 / 15.0, no_effect_function}, freeze, paralysis});
+	constexpr auto burn_probabilities = SideEffects<UserTeam>({{14.0 / 15.0, no_effect_function}, burn});
+	constexpr auto freeze_probabilities = SideEffects<UserTeam>({{14.0 / 15.0, no_effect_function}, freeze});
+	constexpr auto paralysis_probabilities = SideEffects<UserTeam>({{14.0 / 15.0, no_effect_function}, paralysis});
 
 	switch (generation) {
 		case Generation::one:
-			return no_effect<Team<generation>>;
+			return no_effect<UserTeam>;
 		case Generation::two: {
-			constexpr auto thaw = SideEffect<Team<generation>>{4.0 / 15.0, [](auto &, auto & target, auto &, auto) {
+			constexpr auto thaw = SideEffect<UserTeam>{4.0 / 15.0, [](auto &, auto & target, auto &, auto) {
 				target.pokemon().clear_status();
 			}};
 			auto const freeze_claused = team_has_status(original_target, Statuses::freeze);
@@ -264,9 +266,9 @@ constexpr auto tri_attack_effect(ActivePokemon<generation> const original_user, 
 						burn_paralysis_probabilities :
 						burn_freeze_paralysis_probabilities;
 				case Statuses::freeze:
-					return SideEffects<Team<generation>>({{10.0 / 15.0, no_effect_function}, thaw, burn});
+					return SideEffects<UserTeam>({{10.0 / 15.0, no_effect_function}, thaw, burn});
 				default:
-					return no_effect<Team<generation>>;
+					return no_effect<UserTeam>;
 			}
 		}
 		default: {
@@ -284,13 +286,12 @@ constexpr auto tri_attack_effect(ActivePokemon<generation> const original_user, 
 				can_burn ? burn_probabilities :
 				can_freeze ? freeze_probabilities :
 				can_paralyze ? paralysis_probabilities :
-				no_effect<Team<generation>>;
+				no_effect<UserTeam>;
 		}
 	}
 }
 
-template<Generation generation>
-auto cure_all_status(Team<generation> & user, auto const & predicate) -> void {
+auto cure_all_status(any_team auto & user, auto const & predicate) -> void {
 	for (auto & pokemon : user.all_pokemon()) {
 		if (predicate(pokemon)) {
 			pokemon.set_status(Statuses::clear);
@@ -344,7 +345,7 @@ struct sequence {};
 
 template<any_active_pokemon ActivePokemonType>
 constexpr auto acupressure_effect(ActivePokemonType const target) {
-	using TeamType = Team<generation_from<ActivePokemonType>>;
+	using TeamType = AssociatedTeam<ActivePokemonType>;
 	auto result = SideEffects<TeamType>();
 	auto const stages = target.stages();
 	auto const probability = 1.0 / double(containers::count_if(stages, stat_can_boost));
@@ -369,20 +370,20 @@ constexpr auto acupressure_effect(ActivePokemonType const target) {
 	return result;
 }
 
-template<Generation generation>
-constexpr auto active_pokemon_can_be_phazed(Team<generation> const & team) {
+constexpr auto active_pokemon_can_be_phazed(any_team auto const & team) {
 	return !team.pokemon().ingrained() and !blocks_phazing(team.pokemon().ability()) and containers::size(team.all_pokemon()) > 1_bi;
 }
 
-template<Generation generation, int index>
-constexpr auto phaze = [](Team<generation> & user, Team<generation> & target, Weather & weather, auto) {
+template<int index>
+constexpr auto phaze = [](any_team auto & user, any_team auto & target, Weather & weather, auto) {
 	target.switch_pokemon(user.pokemon(), weather, bounded::constant<index>);
 };
 
-template<Generation generation>
-constexpr auto phaze_effect(Team<generation> const & target) {
+template<any_team TargetTeam>
+constexpr auto phaze_effect(TargetTeam const & target) {
+	using UserTeam = TargetTeam;
 	if (!active_pokemon_can_be_phazed(target)) {
-		return no_effect<Team<generation>>;
+		return no_effect<UserTeam>;
 	}
 	// TODO: Phazing activates Synchronize if Toxic Spikes cause status before
 	// generation 5
@@ -391,10 +392,10 @@ constexpr auto phaze_effect(Team<generation> const & target) {
 	};
 
 	auto const probability = 1.0 / double(target.size() - 1_bi);
-	auto result = SideEffects<Team<generation>>();
+	auto result = SideEffects<UserTeam>();
 	auto add_one = [&](auto const index) {
 		if (is_not_active(index) and index < target.size()) {
-			containers::push_back(result, SideEffect<Team<generation>>{probability, phaze<generation, index.value()>});
+			containers::push_back(result, SideEffect<UserTeam>{probability, phaze<index.value()>});
 		}
 	};
 	auto add_all = [&]<std::size_t... indexes>(std::index_sequence<indexes...>) {
@@ -404,8 +405,8 @@ constexpr auto phaze_effect(Team<generation> const & target) {
 	return result;
 }
 
-template<Generation generation, int reduction>
-constexpr auto spite = [](Team<generation> & user, Team<generation> &, Weather & weather, auto) {
+template<int reduction>
+constexpr auto spite = [](any_team auto & user, any_team auto &, Weather & weather, auto) {
 	auto const pokemon = user.pokemon();
 	pokemon.reduce_pp(pokemon.last_used_move().name(), weather, bounded::constant<reduction>);
 };
@@ -421,14 +422,14 @@ struct increase_by<minimum, std::integer_sequence<int, values...>> {
 template<int minimum, int maximum>
 using make_integer_sequence = typename increase_by<minimum, std::make_integer_sequence<int, maximum - minimum + 1>>::type;
 
-template<Generation generation>
+template<any_team UserTeam>
 constexpr auto random_spite = []{
 	constexpr auto min_reduction = 2;
 	constexpr auto max_reduction = 5;
 	constexpr auto probability = 1.0 / double(max_reduction - min_reduction + 1);
-	auto result = SideEffects<Team<generation>>();
+	auto result = SideEffects<UserTeam>();
 	auto add_one = [&](auto const index) {
-		containers::push_back(result, SideEffect<Team<generation>>{probability, spite<generation, index.value()>});
+		containers::push_back(result, SideEffect<UserTeam>{probability, spite<index.value()>});
 	};
 	auto add_all = [&]<int... indexes>(std::integer_sequence<int, indexes...>) {
 		(..., add_one(bounded::constant<indexes>));
@@ -437,8 +438,8 @@ constexpr auto random_spite = []{
 	return result;
 }();
 
-template<Generation generation, int index>
-constexpr auto switch_effect = guaranteed_effect<Team<generation>>([](Team<generation> & user, Team<generation> & other, Weather & weather, auto) {
+template<any_team UserTeam, int index>
+constexpr auto switch_effect = guaranteed_effect<UserTeam>([](UserTeam & user, UserTeam & other, Weather & weather, auto) {
 	user.switch_pokemon(other.pokemon(), weather, bounded::constant<index>);
 });
 
@@ -1079,9 +1080,9 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				no_effect<UserTeam>;
 
 		case Moves::Flatter:
-			return confusing_stat_boost<generation, BoostableStat::spa, 1>;
+			return confusing_stat_boost<UserTeam, BoostableStat::spa, 1>;
 		case Moves::Swagger:
-			return confusing_stat_boost<generation, BoostableStat::atk, 2>;
+			return confusing_stat_boost<UserTeam, BoostableStat::atk, 2>;
 
 		case Moves::Bounce:
 			// TODO: Paralysis
@@ -1575,9 +1576,9 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				case Generation::one:
 					return no_effect<UserTeam>;
 				case Generation::two:
-					return original_other.pokemon().last_used_move().moved_this_turn() ? phaze_effect<generation>(original_other) : no_effect<UserTeam>;
+					return original_other.pokemon().last_used_move().moved_this_turn() ? phaze_effect<UserTeam>(original_other) : no_effect<UserTeam>;
 				default:
-					return phaze_effect<generation>(original_other);
+					return phaze_effect<UserTeam>(original_other);
 			}
 		case Moves::Role_Play:
 			return no_effect<UserTeam>;
@@ -1599,14 +1600,14 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 			}
 			switch (generation) {
 				case Generation::two:
-					return random_spite<generation>;
+					return random_spite<UserTeam>;
 				case Generation::three:
 					if (*remaining_pp == 1_bi) {
 						return no_effect<UserTeam>;
 					}
-					return random_spite<generation>;
+					return random_spite<UserTeam>;
 				default:
-					return guaranteed_effect<UserTeam>(spite<generation, 4>);
+					return guaranteed_effect<UserTeam>(spite<4>);
 			}
 		}
 		case Moves::Struggle:
@@ -1632,17 +1633,17 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 				user.pokemon().use_substitute(weather);
 			});
 		case Moves::Switch0:
-			return switch_effect<generation, 0>;
+			return switch_effect<UserTeam, 0>;
 		case Moves::Switch1:
-			return switch_effect<generation, 1>;
+			return switch_effect<UserTeam, 1>;
 		case Moves::Switch2:
-			return switch_effect<generation, 2>;
+			return switch_effect<UserTeam, 2>;
 		case Moves::Switch3:
-			return switch_effect<generation, 3>;
+			return switch_effect<UserTeam, 3>;
 		case Moves::Switch4:
-			return switch_effect<generation, 4>;
+			return switch_effect<UserTeam, 4>;
 		case Moves::Switch5:
-			return switch_effect<generation, 5>;
+			return switch_effect<UserTeam, 5>;
 		case Moves::Switcheroo:
 		case Moves::Trick:
 			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
@@ -2050,7 +2051,7 @@ auto possible_side_effects(Moves const move, ActivePokemon<generation> const ori
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto possible_side_effects<generation>(Moves, ActivePokemon<generation> const user, Team<generation> const & other, Weather) -> SideEffects<Team<generation>>
+	template auto possible_side_effects(Moves, ActivePokemon<generation> const user, Team<generation> const & other, Weather) -> SideEffects<Team<generation>>
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

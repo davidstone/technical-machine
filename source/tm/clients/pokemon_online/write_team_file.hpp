@@ -110,8 +110,9 @@ void write_pokemon(Pokemon<generation> const & pokemon, boost::property_tree::pt
 	write_stats(pokemon, member);
 }
 
-template<Generation generation>
-void write_team(Team<generation> const & team, std::filesystem::path const & file_name) {
+template<any_team TeamType>
+void write_team(TeamType const & team, std::filesystem::path const & file_name) {
+	constexpr auto generation = generation_from<TeamType>;
 	auto pt = boost::property_tree::ptree();
 	auto settings = boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type>('\t', 1);
 	auto & t = pt.add("Team", "");

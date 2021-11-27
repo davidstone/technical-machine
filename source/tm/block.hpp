@@ -6,6 +6,7 @@
 #pragma once
 
 #include <tm/ability.hpp>
+#include <tm/any_team.hpp>
 #include <tm/weather.hpp>
 
 #include <tm/move/category.hpp>
@@ -25,9 +26,6 @@
 #include <containers/push_back.hpp>
 
 namespace technicalmachine {
-
-template<Generation>
-struct Team;
 
 template<Generation generation>
 constexpr auto would_switch_to_same_pokemon(PokemonCollection<generation> const & collection, Moves const move) {
@@ -134,8 +132,8 @@ constexpr auto is_blocked_due_to_lock_in(any_active_pokemon auto const user, Mov
 		is_locked_in_to_different_move(user, move, weather);
 }
 
-template<Generation generation>
-auto is_legal_selection(Team<generation> const & user, Move const move, Team<generation> const & other, Weather const weather, bool const found_selectable_move) {
+template<any_team TeamType>
+auto is_legal_selection(TeamType const & user, Move const move, TeamType const & other, Weather const weather, bool const found_selectable_move) {
 	BOUNDED_ASSERT(move != Moves::Hit_Self);
 	if (switch_decision_required(user)) {
 		return is_switch(move.name()) and !would_switch_to_same_pokemon(user.all_pokemon(), move.name());
@@ -161,8 +159,8 @@ auto is_legal_selection(Team<generation> const & user, Move const move, Team<gen
 		!blocked_by_torment(user_pokemon, move.name());
 }
 
-template<Generation generation>
-constexpr auto legal_selections(Team<generation> const & user, Team<generation> const & other, Weather const weather) -> StaticVectorMove {
+template<any_team TeamType>
+constexpr auto legal_selections(TeamType const & user, TeamType const & other, Weather const weather) -> StaticVectorMove {
 	auto result = StaticVectorMove{};
 	for (auto const move : all_moves(user.pokemon(), user.size())) {
 		bool const found_selectable_move = !containers::is_empty(result);

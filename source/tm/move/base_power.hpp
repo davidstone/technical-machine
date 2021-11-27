@@ -7,6 +7,7 @@
 
 #include <tm/move/executed_move.hpp>
 
+#include <tm/any_team.hpp>
 #include <tm/generation.hpp>
 #include <tm/weather.hpp>
 
@@ -14,16 +15,13 @@
 
 namespace technicalmachine {
 
-template<Generation>
-struct Team;
-
 // Fling gives 0, Rollout gives 480
 using BasePower = bounded::integer<0, 480>;
 
 // It is undefined behavior to get the base power of a move without a base power
 // (Dragon Range, Guillotine, etc.).
-template<Generation generation>
-auto base_power(Team<generation> const & attacker_team, ExecutedMove<Team<generation>>, Team<generation> const & defender_team, Weather) -> BasePower;
+template<any_team UserTeam>
+auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam>, UserTeam const & defender_team, Weather) -> BasePower;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
 	extern template auto base_power(Team<generation> const &, ExecutedMove<Team<generation>>, Team<generation> const &, Weather) -> BasePower

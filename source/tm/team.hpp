@@ -11,6 +11,7 @@
 #include <tm/pokemon/species_forward.hpp>
 
 #include <tm/apply_entry_hazards.hpp>
+#include <tm/any_team.hpp>
 #include <tm/compress.hpp>
 #include <tm/entry_hazards.hpp>
 #include <tm/operators.hpp>
@@ -26,7 +27,6 @@
 #include <string_view>
 
 namespace technicalmachine {
-enum class Generation : std::uint8_t;
 struct Weather;
 
 template<Generation generation>
@@ -233,15 +233,13 @@ private:
 	bool me;
 };
 
-template<Generation generation>
-constexpr auto team_has_status(Team<generation> const & target, Statuses const status) {
-	return containers::any(target.all_pokemon(), [=](Pokemon<generation> const & pokemon) {
+constexpr auto team_has_status(any_team auto const & target, Statuses const status) {
+	return containers::any(target.all_pokemon(), [=](auto const & pokemon) {
 		return pokemon.status().name() == status;
 	});
 }
 
-template<Generation generation>
-auto switch_decision_required(Team<generation> const & team) {
+auto switch_decision_required(any_team auto const & team) {
 	if (team.size() == 1_bi) {
 		return false;
 	}

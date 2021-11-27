@@ -53,8 +53,8 @@ private:
 			);
 		}
 		auto parsed = load_random_team_from_directory(m_random_engine, *m_settings.team_file);
-		return bounded::visit(parsed, []<Generation parsed_generation>(Team<parsed_generation> const & team) -> Team<generation> {
-			if constexpr (generation == parsed_generation) {
+		return bounded::visit(parsed, []<any_team TeamType>(TeamType const & team) -> Team<generation> {
+			if constexpr (generation == generation_from<TeamType>) {
 				return team;
 			} else {
 				throw std::runtime_error("Generation mismatch in team file vs. battle.");

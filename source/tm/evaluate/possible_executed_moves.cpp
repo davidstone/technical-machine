@@ -39,11 +39,11 @@ constexpr auto can_be_selected_by_sleep_talk(KnownMove const move) {
 
 }	// namespace
 
-template<Generation generation>
-auto possible_executed_moves(Moves const selected_move, Team<generation> const & user_team) -> PossibleExecutedMoves {
+template<any_team UserTeam>
+auto possible_executed_moves(Moves const selected_move, UserTeam const & user_team) -> PossibleExecutedMoves {
 	auto const user_pokemon = user_team.pokemon();
 	auto type = [=](Moves const move) {
-		return get_type(generation, move, get_hidden_power_type(user_pokemon));
+		return get_type(generation_from<UserTeam>, move, get_hidden_power_type(user_pokemon));
 	};
 	auto known = [=](Move const move) {
 		return KnownMove{move.name(), type(move.name())};
@@ -61,7 +61,7 @@ auto possible_executed_moves(Moves const selected_move, Team<generation> const &
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto possible_executed_moves<generation>(Moves const selected_move, Team<generation> const & user_team) -> PossibleExecutedMoves
+	template auto possible_executed_moves(Moves const selected_move, Team<generation> const & user_team) -> PossibleExecutedMoves
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

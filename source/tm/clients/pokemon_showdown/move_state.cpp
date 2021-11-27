@@ -136,7 +136,7 @@ auto MoveState::complete(Party const ai_party, Team<generation> const & ai, Team
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto MoveState::complete<generation>( \
+	template auto MoveState::complete( \
 		Party, \
 		Team<generation> const &, \
 		Team<generation> const &, \

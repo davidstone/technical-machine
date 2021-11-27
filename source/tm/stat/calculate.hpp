@@ -20,6 +20,7 @@
 #include <tm/type/type.hpp>
 
 #include <tm/ability.hpp>
+#include <tm/any_team.hpp>
 #include <tm/item.hpp>
 #include <tm/rational.hpp>
 #include <tm/status.hpp>
@@ -35,9 +36,6 @@
 
 namespace technicalmachine {
 using namespace bounded::literal;
-
-template<Generation>
-struct Team;
 
 constexpr auto is_boosted_by_deep_sea_scale(Species const species) {
 	return species == Species::Clamperl;
@@ -435,8 +433,7 @@ auto calculate_special_defense(any_active_pokemon auto const defender, Ability c
 }
 
 
-template<Generation generation>
-auto calculate_speed(Team<generation> const & team, Ability const other_ability, Weather const weather) {
+auto calculate_speed(any_team auto const & team, Ability const other_ability, Weather const weather) {
 	constexpr auto stat = SplitSpecialRegularStat::spe;
 	auto const & pokemon = team.pokemon();
 	auto const paralysis_divisor = BOUNDED_CONDITIONAL(lowers_speed(pokemon.status(), pokemon.ability()), 4_bi, 1_bi);

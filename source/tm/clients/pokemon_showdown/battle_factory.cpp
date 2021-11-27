@@ -204,7 +204,7 @@ struct BattleFactoryImpl : BattleFactory {
 		auto make_foe_team = [&]{
 			auto team = Team<generation>(*m_foe_team_size, false);
 			auto const pokemon = *m_foe_starter;
-			team.add_pokemon(Pokemon<generation>(pokemon.species, pokemon.level, pokemon.gender));
+			team.add_pokemon({pokemon.species, pokemon.level, pokemon.gender});
 			return team;
 		};
 

@@ -920,8 +920,9 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 
 } // namespace
 
-template<Generation generation>
-auto base_power(Team<generation> const & attacker_team, ExecutedMove<Team<generation>> const executed, Team<generation> const & defender_team, Weather const weather) -> BasePower {
+template<any_team UserTeam>
+auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, UserTeam const & defender_team, Weather const weather) -> BasePower {
+	constexpr auto generation = generation_from<UserTeam>;
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	switch (executed.move.name) {

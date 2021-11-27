@@ -247,8 +247,8 @@ auto expected_netbattle_supremacy_team() -> Team<Generation::two> {
 
 TEST_CASE("Netbattle team", "[Netbattle]") {
 	auto const file_name = get_test_directory() / "teams/netbattle.pnb";
-	bounded::visit(nb::read_team_file(file_name), []<Generation generation>(Team<generation> const & team) {
-		if constexpr (generation == Generation::three) {
+	bounded::visit(nb::read_team_file(file_name), []<any_team TeamType>(TeamType const & team) {
+		if constexpr (generation_from<TeamType> == Generation::three) {
 			CHECK(team == expected_netbattle_team());
 		} else {
 			CHECK(false);
@@ -258,8 +258,8 @@ TEST_CASE("Netbattle team", "[Netbattle]") {
 
 TEST_CASE("Netbattle Supremacy team", "[Netbattle]") {
 	auto const file_name = get_test_directory() / "teams/netbattle-supremacy.dpnb";
-	bounded::visit(nb::read_team_file(file_name), []<Generation generation>(Team<generation> const & team) {
-		if constexpr (generation == Generation::two) {
+	bounded::visit(nb::read_team_file(file_name), []<any_team TeamType>(TeamType const & team) {
+		if constexpr (generation_from<TeamType> == Generation::two) {
 			CHECK(team == expected_netbattle_supremacy_team());
 		} else {
 			CHECK(false);

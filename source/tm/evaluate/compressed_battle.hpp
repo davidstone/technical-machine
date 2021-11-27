@@ -12,11 +12,11 @@
 
 namespace technicalmachine {
 
-template<Generation generation>
-constexpr auto compress_battle(Team<generation> const & ai, Team<generation> const & foe, Weather const weather) {
+template<any_team TeamType>
+constexpr auto compress_battle(TeamType const & ai, TeamType const & foe, Weather const weather) {
 	auto const compressed_ai = compress(ai);
 	auto const compressed_foe = compress(foe);
-	if constexpr (generation == Generation::one) {
+	if constexpr (generation_from<TeamType> == Generation::one) {
 		static_assert(bounded::tuple_size<decltype(compressed_ai)> == 3_bi);
 		static_assert(std::is_same_v<decltype(compressed_ai), decltype(compressed_foe)>);
 		return bounded::tuple(

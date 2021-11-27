@@ -34,14 +34,14 @@ using namespace bounded::literal;
 
 namespace {
 
-template<Generation generation>
-auto reflect_is_active(KnownMove const move, Team<generation> const & defender) {
-	return defender.reflect() and is_physical(generation, move);
+template<any_team UserTeam>
+auto reflect_is_active(KnownMove const move, UserTeam const & defender) {
+	return defender.reflect() and is_physical(generation_from<UserTeam>, move);
 }
 
-template<Generation generation>
-auto light_screen_is_active(KnownMove const move, Team<generation> const & defender) {
-	return defender.light_screen() and is_special(generation, move);
+template<any_team UserTeam>
+auto light_screen_is_active(KnownMove const move, UserTeam const & defender) {
+	return defender.light_screen() and is_special(generation_from<UserTeam>, move);
 }
 
 template<Generation generation>
@@ -186,8 +186,9 @@ auto resistance_berry_divisor(bool const move_weakened_from_item) {
 	return BOUNDED_CONDITIONAL(move_weakened_from_item, 2_bi, 1_bi);
 }
 
-template<Generation generation>
-auto regular_damage(Team<generation> const & attacker_team, ExecutedMove<Team<generation>> const executed, bool const move_weakened_from_item, Team<generation> const & defender_team, Weather const weather) {
+template<any_team UserTeam>
+auto regular_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, UserTeam const & defender_team, Weather const weather) {
+	constexpr auto generation = generation_from<UserTeam>;
 	auto const attacker = attacker_team.pokemon();
 	auto const attacker_ability = attacker.ability();
 	auto const defender = defender_team.pokemon();
@@ -216,8 +217,9 @@ auto regular_damage(Team<generation> const & attacker_team, ExecutedMove<Team<ge
 	);
 }
 
-template<Generation generation>
-auto raw_damage(Team<generation> const & attacker_team, ExecutedMove<Team<generation>> const executed, bool const move_weakened_from_item, Team<generation> const & defender_team, OtherMove const defender_move, Weather const weather) -> damage_type {
+template<any_team UserTeam>
+auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, UserTeam const & defender_team, OtherMove const defender_move, Weather const weather) -> damage_type {
+	constexpr auto generation = generation_from<UserTeam>;
 	auto const attacker = attacker_team.pokemon();
 	auto const defender = defender_team.pokemon();
 	switch (executed.move.name) {
@@ -263,15 +265,15 @@ auto raw_damage(Team<generation> const & attacker_team, ExecutedMove<Team<genera
 
 }	// namespace
 
-template<Generation generation>
-auto calculate_damage(Team<generation> const & attacker, ExecutedMove<Team<generation>> const executed, bool const move_weakened_from_item, Team<generation> const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
+template<any_team UserTeam>
+auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, UserTeam const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
 	return affects_target(executed.move, defender.pokemon(), weather) ?
 		raw_damage(attacker, executed, move_weakened_from_item, defender, defender_move, weather) :
 		0_bi;
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto calculate_damage<generation>(Team<generation> const & attacker, ExecutedMove<Team<generation>> const executed, bool const move_weakened_from_item, Team<generation> const & defender, OtherMove const defender_move, Weather const weather) -> damage_type
+	template auto calculate_damage(Team<generation> const & attacker, ExecutedMove<Team<generation>> const executed, bool const move_weakened_from_item, Team<generation> const & defender, OtherMove const defender_move, Weather const weather) -> damage_type
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

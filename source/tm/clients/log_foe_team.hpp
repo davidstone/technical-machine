@@ -9,13 +9,12 @@
 
 #include <tm/team_predictor/team_predictor.hpp>
 
+#include <tm/any_team.hpp>
+
 #include <filesystem>
 #include <random>
 
 namespace technicalmachine {
-
-template<Generation>
-struct Team;
 
 struct UsageStats;
 
@@ -25,8 +24,7 @@ inline auto team_file_directory() {
 
 std::filesystem::path generate_team_file_name(std::mt19937 & random_engine);
 
-template<Generation generation>
-void log_foe_team(UsageStats const & usage_stats, Team<generation> const & foe_team, std::mt19937 & random_engine) {
+void log_foe_team(UsageStats const & usage_stats, any_team auto const & foe_team, std::mt19937 & random_engine) {
 	auto const team = predict_team(usage_stats, use_lead_stats, foe_team, random_engine);
 	auto const path = generate_team_file_name(random_engine);
 	std::filesystem::create_directory(team_file_directory());

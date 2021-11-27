@@ -15,6 +15,7 @@
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 
+#include <tm/any_team.hpp>
 #include <tm/generation.hpp>
 #include <tm/team.hpp>
 
@@ -24,9 +25,6 @@
 #include <filesystem>
 
 namespace technicalmachine {
-
-template<Generation>
-struct Team;
 
 namespace pl {
 
@@ -67,13 +65,13 @@ void write_pokemon(Pokemon<generation> const & pokemon, boost::property_tree::pt
 	write_stats(pokemon, member);
 }
 
-template<Generation generation>
-void write_team(Team<generation> const & team, std::filesystem::path const & file_name) {
+template<any_team TeamType>
+void write_team(TeamType const & team, std::filesystem::path const & file_name) {
 	auto pt = boost::property_tree::ptree();
 	auto settings = boost::property_tree::xml_writer_settings<boost::property_tree::ptree::key_type>('\t', 1);
 	auto & t = pt.add("shoddybattle", "");
 	// The original format did not include a generation.
-	t.put("<xmlattr>.generation", static_cast<int>(generation));
+	t.put("<xmlattr>.generation", static_cast<int>(generation_from<TeamType>));
 	for (auto const & pokemon : team.all_pokemon()) {
 		write_pokemon(pokemon, t);
 	}

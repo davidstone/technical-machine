@@ -7,6 +7,7 @@
 
 #include <tm/move/executed_move.hpp>
 
+#include <tm/any_team.hpp>
 #include <tm/generation.hpp>
 #include <tm/weather.hpp>
 
@@ -14,19 +15,17 @@
 
 namespace technicalmachine {
 enum class Moves : std::uint16_t;
-template<Generation>
-struct Team;
 
 // If a damaging move does not have power (for instance, OHKO moves and
 // fixed-damage moves), the behavior of this function is undefined. If
 // `executed.move.name` is Hidden Power, `attacker.pokemon().hidden_power()`
 // must not be `none`.
 using MovePower = bounded::integer<1, 1440>;
-template<Generation generation>
-auto move_power(Team<generation> const & attacker, ExecutedMove<Team<generation>> executed, Team<generation> const & defender, Weather weather) -> MovePower;
+template<any_team UserTeam>
+auto move_power(UserTeam const & attacker, ExecutedMove<UserTeam> executed, UserTeam const & defender, Weather weather) -> MovePower;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto move_power<generation>(Team<generation> const & attacker_team, ExecutedMove<Team<generation>> const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower
+	extern template auto move_power(Team<generation> const & attacker_team, ExecutedMove<Team<generation>> const executed, Team<generation> const & defender_team, Weather const weather) -> MovePower
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

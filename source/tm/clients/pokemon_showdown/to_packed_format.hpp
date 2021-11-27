@@ -31,8 +31,7 @@ using namespace std::string_view_literals;
 
 namespace ps {
 
-template<Generation generation>
-auto to_packed_format(Team<generation> const & team) -> containers::string {
+auto to_packed_format(any_team auto const & team) -> containers::string {
 	static constexpr auto separator = '|';
 	constexpr auto separator_range = containers::single_element_range(separator);
 	auto result = containers::string();

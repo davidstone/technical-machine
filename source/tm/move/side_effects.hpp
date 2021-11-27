@@ -11,6 +11,7 @@
 
 #include <tm/stat/hp.hpp>
 
+#include <tm/any_team.hpp>
 #include <tm/generation.hpp>
 #include <tm/status.hpp>
 #include <tm/weather.hpp>
@@ -19,9 +20,6 @@
 #include <containers/trivial_inplace_function.hpp>
 
 namespace technicalmachine {
-
-template<Generation>
-struct Team;
 
 template<typename UserTeam>
 struct SideEffect {
@@ -65,7 +63,7 @@ template<Generation generation>
 auto possible_side_effects(Moves, ActivePokemon<generation> user, Team<generation> const & other, Weather) -> SideEffects<Team<generation>>;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto possible_side_effects<generation>(Moves, ActivePokemon<generation>, Team<generation> const &, Weather) -> SideEffects<Team<generation>>
+	extern template auto possible_side_effects(Moves, ActivePokemon<generation>, Team<generation> const &, Weather) -> SideEffects<Team<generation>>
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

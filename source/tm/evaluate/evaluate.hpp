@@ -156,9 +156,10 @@ inline constexpr auto victory = double(numeric_traits::max_value<decltype(std::d
 
 // Returns victory if the battle is won. Returns -victory if the battle is
 // lost. Returns 0 otherwise.
-template<Generation generation>
-constexpr auto win(Team<generation> const & team1, Team<generation> const & team2) -> bounded::optional<double> {
-	auto single_team_win = [](Team<generation> const & team) {
+template<any_team TeamType>
+constexpr auto win(TeamType const & team1, TeamType const & team2) -> bounded::optional<double> {
+	constexpr auto generation = generation_from<TeamType>;
+	auto single_team_win = [](TeamType const & team) {
 		BOUNDED_ASSERT(team.size() != 0_bi);
 		return	team.size() == 1_bi and team.pokemon().hp().current() == 0_bi ?
 			team.is_me() ? -victory<generation> : victory<generation> :

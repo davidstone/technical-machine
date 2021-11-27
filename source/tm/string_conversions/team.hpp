@@ -19,12 +19,12 @@ namespace technicalmachine {
 
 using namespace std::string_view_literals;
 
-template<Generation generation>
-auto to_string(Team<generation> const & team, bool const include_owner = true) -> containers::string {
+template<any_team TeamType>
+auto to_string(TeamType const & team, bool const include_owner = true) -> containers::string {
 	auto output = containers::concatenate<containers::string>(
 		include_owner ? containers::concatenate<containers::string>(team.who(), "'s "sv) : containers::string(),
 		"Generation "sv,
-		to_string(generation),
+		to_string(generation_from<TeamType>),
 		" team:\n"sv
 	);
 	for (auto const & member : team.all_pokemon()) {

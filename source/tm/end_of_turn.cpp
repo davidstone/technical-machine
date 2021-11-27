@@ -221,8 +221,8 @@ void generation_2_end_of_turn(Team<Generation::two> & first_team, Team<Generatio
 	last.advance_encore();
 }
 
-template<Generation generation>
-void generation_3_plus_end_of_turn(Team<generation> & first_team, EndOfTurnFlags const first_flags, Team<generation> & last_team, EndOfTurnFlags const last_flags, Weather & weather) {
+template<any_team TeamType>
+void generation_3_plus_end_of_turn(TeamType & first_team, EndOfTurnFlags const first_flags, TeamType & last_team, EndOfTurnFlags const last_flags, Weather & weather) {
 	first_team.decrement_screens();
 	last_team.decrement_screens();
 
@@ -251,8 +251,9 @@ void end_of_attack(Team<Generation::two> & user, Team<Generation::two> & other, 
 	handle_curse(user_pokemon, weather);
 }
 
-template<Generation generation>
-void end_of_turn(Team<generation> & first, EndOfTurnFlags const first_flags, Team<generation> & last, EndOfTurnFlags const last_flags, Weather & weather) {
+template<any_team TeamType>
+void end_of_turn(TeamType & first, EndOfTurnFlags const first_flags, TeamType & last, EndOfTurnFlags const last_flags, Weather & weather) {
+	constexpr auto generation = generation_from<TeamType>;
 	if constexpr (generation == Generation::one) {
 	} else if constexpr (generation == Generation::two) {
 		generation_2_end_of_turn(first, last, weather);
@@ -262,7 +263,7 @@ void end_of_turn(Team<generation> & first, EndOfTurnFlags const first_flags, Tea
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template void end_of_turn<generation>(Team<generation> & first, EndOfTurnFlags const first_flags, Team<generation> & last, EndOfTurnFlags const last_flags, Weather & weather)
+	template void end_of_turn(Team<generation> & first, EndOfTurnFlags const first_flags, Team<generation> & last, EndOfTurnFlags const last_flags, Weather & weather)
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

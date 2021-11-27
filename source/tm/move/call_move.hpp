@@ -9,20 +9,19 @@
 #include <tm/move/other_move.hpp>
 #include <tm/move/used_move.hpp>
 
+#include <tm/any_team.hpp>
+
 #include <bounded/optional.hpp>
 
 namespace technicalmachine {
 
-template<Generation>
-struct Team;
-
 struct Weather;
 
-template<Generation generation>
-auto call_move(Team<generation> & user, UsedMove<Team<generation>> move, Team<generation> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void;
+template<any_team UserTeam>
+auto call_move(UserTeam & user, UsedMove<UserTeam> move, UserTeam & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto call_move<generation>(Team<generation> & user, UsedMove<Team<generation>> move, Team<generation> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void
+	extern template auto call_move(Team<generation> & user, UsedMove<Team<generation>> move, Team<generation> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

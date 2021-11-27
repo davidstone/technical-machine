@@ -11,6 +11,7 @@
 
 #include <tm/move/moves.hpp>
 
+#include <tm/any_team.hpp>
 #include <tm/compress.hpp>
 #include <tm/weather.hpp>
 
@@ -20,9 +21,6 @@
 #include <containers/index_type.hpp>
 
 namespace technicalmachine {
-
-template<Generation>
-struct Team;
 
 template<Generation generation>
 struct TranspositionTable {

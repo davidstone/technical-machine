@@ -15,15 +15,13 @@
 
 #include <tm/stat/hp.hpp>
 
+#include <tm/any_team.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/detail/overload.hpp>
 #include <bounded/detail/variant/variant.hpp>
 
 namespace technicalmachine {
-
-template<Generation>
-struct Team;
 
 struct ActualDamage {
 	struct Unknown {};
@@ -47,10 +45,10 @@ struct ActualDamage {
 	{
 	}
 
-	template<Generation generation>	
-	auto value(Team<generation> const & user, ExecutedMove<Team<generation>> const executed, bool const move_weakened_from_item, Team<generation> const & other, OtherMove const other_move, Weather const weather) const -> damage_type {
+	template<any_team UserTeam>	
+	auto value(UserTeam const & user, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, UserTeam const & other, OtherMove const other_move, Weather const weather) const -> damage_type {
 		auto calculate = [&]{
-			auto const substitute = substitute_interaction(generation, executed.move.name);
+			auto const substitute = substitute_interaction(generation_from<UserTeam>, executed.move.name);
 			auto const no_damage =
 				!is_damaging(executed.move.name) or
 				(other.pokemon().substitute() and substitute != Substitute::bypassed) or

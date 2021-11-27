@@ -161,7 +161,7 @@ struct Data {
 
 	auto team_string(std::string_view const input_data) -> containers::string {
 		try {
-			auto impl = [&]<Generation generation>(Team<generation> team) {
+			auto impl = [&]<Generation generation>(Team<generation> team) -> containers::string {
 				constexpr auto using_lead = false;
 				auto const & usage_stats = m_all_usage_stats[generation];
 				random_team(usage_stats, team, m_random_engine);

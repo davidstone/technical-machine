@@ -5,15 +5,13 @@
 
 #pragma once
 
+#include <tm/any_team.hpp>
 #include <tm/generation.hpp>
 #include <tm/weather.hpp>
 
 #include <cstdint>
 
 namespace technicalmachine {
-
-template<Generation generation>
-struct Team;
 
 struct EndOfTurnFlags {
 	constexpr EndOfTurnFlags(bool const shed_skin_, bool const lock_in_ends_):
@@ -25,17 +23,17 @@ struct EndOfTurnFlags {
 	bool lock_in_ends;
 };
 
-template<Generation generation>
-void end_of_attack(Team<generation> &, Team<generation> &, Weather) {
+template<any_team TeamType>
+void end_of_attack(TeamType &, TeamType &, Weather) {
 }
 
 void end_of_attack(Team<Generation::two> & user, Team<Generation::two> & other, Weather);
 
-template<Generation generation>
-void end_of_turn(Team<generation> & first, EndOfTurnFlags first_flags, Team<generation> & last, EndOfTurnFlags last_flags, Weather &);
+template<any_team TeamType>
+void end_of_turn(TeamType & first, EndOfTurnFlags first_flags, TeamType & last, EndOfTurnFlags last_flags, Weather &);
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template void end_of_turn<generation>(Team<generation> & first, EndOfTurnFlags first_flags, Team<generation> & last, EndOfTurnFlags last_flags, Weather &)
+	extern template void end_of_turn(Team<generation> & first, EndOfTurnFlags first_flags, Team<generation> & last, EndOfTurnFlags last_flags, Weather &)
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
