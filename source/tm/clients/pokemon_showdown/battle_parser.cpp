@@ -174,8 +174,7 @@ auto parse_set_hp_message(InMessage message) {
 	};
 }
 
-template<Generation generation>
-auto hp_to_damage(Pokemon<generation> const & pokemon, HP::current_type const new_hp) {
+auto hp_to_damage(any_pokemon auto const & pokemon, HP::current_type const new_hp) {
 	auto const old_hp = pokemon.hp().current();
 	if (new_hp > old_hp) {
 		std::cerr << "Took negative damage\n";

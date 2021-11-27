@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/pokemon/pokemon.hpp>
+#include <tm/pokemon/any_pokemon.hpp>
 
 #include <tm/move/category.hpp>
 #include <tm/move/known_move.hpp>
@@ -14,9 +14,10 @@
 
 namespace technicalmachine {
 
-template<Generation generation>
-auto any_move_matches(Pokemon<generation> const pokemon, auto const condition) -> bool {
+template<any_pokemon PokemonType>
+auto any_move_matches(PokemonType const pokemon, auto const condition) -> bool {
 	return containers::any(pokemon.regular_moves(), [=](Move const move) {
+		constexpr auto generation = generation_from<PokemonType>;
 		return condition(
 			generation,
 			KnownMove{move.name(), get_type(generation, move.name(), get_hidden_power_type(pokemon))}
@@ -24,13 +25,11 @@ auto any_move_matches(Pokemon<generation> const pokemon, auto const condition) -
 	});
 }
 
-template<Generation generation>
-auto has_physical_move(Pokemon<generation> const pokemon) -> bool {
+auto has_physical_move(any_pokemon auto const pokemon) -> bool {
 	return any_move_matches(pokemon, is_physical);
 }
 
-template<Generation generation>
-auto has_special_move(Pokemon<generation> const pokemon) -> bool {
+auto has_special_move(any_pokemon auto const pokemon) -> bool {
 	return any_move_matches(pokemon, is_special);
 }
 

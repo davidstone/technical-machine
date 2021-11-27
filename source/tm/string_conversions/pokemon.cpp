@@ -5,6 +5,8 @@
 
 #include <tm/string_conversions/pokemon.hpp>
 
+#include <tm/pokemon/pokemon.hpp>
+
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
@@ -72,8 +74,9 @@ constexpr auto moves_separator = "\n\t- "sv;
 // TODO: Print gender
 // TODO: Make this compatible with Pokemon Showdown
 
-template<Generation generation>
-auto to_string(Pokemon<generation> const pokemon) -> containers::string {
+template<any_pokemon PokemonType>
+auto to_string(PokemonType const & pokemon) -> containers::string {
+	constexpr auto generation = generation_from<PokemonType>;
 	// Boost.Format fails to compile with C++20, so we have to do this instead
 	auto const hp_str_full = std::to_string(100.0 * static_cast<double>(hp_ratio(pokemon)));
 	auto hp_to_string = [&] {
@@ -291,7 +294,7 @@ auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto to_string<generation>(Pokemon<generation> const pokemon) -> containers::string; \
+	template auto to_string(Pokemon<generation> const & pokemon) -> containers::string; \
 	template auto pokemon_from_string<generation>(std::string_view const str) -> Pokemon<generation>
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);

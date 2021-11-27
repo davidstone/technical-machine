@@ -5,6 +5,9 @@
 
 #pragma once
 
+#include <tm/pokemon/any_pokemon.hpp>
+#include <tm/pokemon/species_forward.hpp>
+
 #include <tm/stat/calculate_ivs_and_evs.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/iv.hpp>
@@ -17,7 +20,6 @@
 
 #include <tm/any_team.hpp>
 #include <tm/generation.hpp>
-#include <tm/team.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -40,16 +42,14 @@ auto write_stat(std::string_view const name, auto const dv_or_iv, EV const ev, b
 	s.put("<xmlattr>.ev", ev.value());
 }
 
-template<Generation generation>
-void write_stats(Pokemon<generation> const & pokemon, boost::property_tree::ptree & pt) {
+void write_stats(any_pokemon auto const & pokemon, boost::property_tree::ptree & pt) {
 	auto const stats = calculate_ivs_and_evs(pokemon);
 	for (auto const stat_name : {SplitSpecialPermanentStat::hp, SplitSpecialPermanentStat::atk, SplitSpecialPermanentStat::def, SplitSpecialPermanentStat::spe, SplitSpecialPermanentStat::spa, SplitSpecialPermanentStat::spd}) {
 		write_stat(to_simulator_string(stat_name), stats.dvs_or_ivs[stat_name], stats.evs[stat_name], pt);
 	}
 }
 
-template<Generation generation>
-void write_pokemon(Pokemon<generation> const & pokemon, boost::property_tree::ptree & pt) {
+void write_pokemon(any_pokemon auto const & pokemon, boost::property_tree::ptree & pt) {
 	auto & member = pt.add("pokemon", "");
 	member.put("<xmlattr>.species", to_simulator_string(pokemon.species()));
 	member.put("nickname", "");

@@ -14,14 +14,14 @@
 
 namespace technicalmachine {
 
-template<Generation generation>
-auto to_string(Pokemon<generation> pokemon) -> containers::string;
+template<any_pokemon PokemonType>
+auto to_string(PokemonType const & pokemon) -> containers::string;
 
 template<Generation generation>
 auto pokemon_from_string(std::string_view str) -> Pokemon<generation>;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto to_string<generation>(Pokemon<generation> pokemon) -> containers::string; \
+	extern template auto to_string(Pokemon<generation> const & pokemon) -> containers::string; \
 	extern template auto pokemon_from_string<generation>(std::string_view str) -> Pokemon<generation>
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);

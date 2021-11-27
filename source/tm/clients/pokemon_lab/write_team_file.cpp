@@ -6,6 +6,8 @@
 
 #include <tm/clients/pokemon_lab/write_team_file.hpp>
 
+#include <tm/pokemon/species.hpp>
+
 #include <tm/string_conversions/move.hpp>
 
 namespace technicalmachine {

@@ -293,10 +293,10 @@ private:
 	bool m_stats_are_known : 1;
 };
 
-template<Generation generation>
-auto calculate_ivs_and_evs(Pokemon<generation> const pokemon) {
+template<any_pokemon PokemonType>
+auto calculate_ivs_and_evs(PokemonType const & pokemon) {
 	auto const nature = pokemon.nature();
-	auto const stats = Stats<generation>{
+	auto const stats = Stats<generation_from<PokemonType>>{
 		pokemon.hp(),
 		pokemon.stat(SplitSpecialRegularStat::atk),
 		pokemon.stat(SplitSpecialRegularStat::def),

@@ -7,13 +7,15 @@
 
 #include <tm/clients/pokemon_online/conversion.hpp>
 
+#include <tm/pokemon/any_pokemon.hpp>
+
 #include <tm/stat/calculate_ivs_and_evs.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/ingame_id_to_nature.hpp>
 
 #include <tm/string_conversions/species.hpp>
 
-#include <tm/team.hpp>
+#include <tm/any_team.hpp>
 
 #include <containers/integer_range.hpp>
 #include <containers/size.hpp>
@@ -38,8 +40,7 @@ inline void write_blank_stats(Generation const generation, boost::property_tree:
 	}
 }
 
-template<Generation generation>
-void write_stats(Pokemon<generation> const & pokemon, boost::property_tree::ptree & pt) {
+void write_stats(any_pokemon auto const & pokemon, boost::property_tree::ptree & pt) {
 	auto const stats = calculate_ivs_and_evs(pokemon);
 	constexpr auto stat_names = containers::enum_range<SplitSpecialPermanentStat>();
 	// In older generations, Spc is written into the SpA slot. The SpD slot is
@@ -82,8 +83,7 @@ inline auto write_blank_pokemon(Generation const generation, boost::property_tre
 	write_blank_stats(generation, member);
 }
 
-template<Generation generation>
-void write_pokemon(Pokemon<generation> const & pokemon, boost::property_tree::ptree & pt) {
+void write_pokemon(any_pokemon auto const & pokemon, boost::property_tree::ptree & pt) {
 	auto & member = pt.add("Pokemon", "");
 	member.put("<xmlattr>.Item", item_to_id(pokemon.item(false, false)));
 	member.put("<xmlattr>.Ability", ability_to_id (pokemon.initial_ability()));

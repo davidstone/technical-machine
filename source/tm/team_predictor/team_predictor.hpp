@@ -37,8 +37,8 @@ void predict_pokemon(TeamType & team, Estimate estimate, UsageStats const & usag
 	team.all_pokemon().set_index(index);
 }
 
-template<Generation generation>
-void predict_moves(Pokemon<generation> & pokemon, containers::static_vector<Moves, max_moves_per_pokemon.value()> const detailed) {
+template<any_pokemon PokemonType>
+void predict_moves(PokemonType & pokemon, containers::static_vector<Moves, max_moves_per_pokemon.value()> const detailed) {
 	for (Moves const move_name : detailed) {
 		if (containers::size(pokemon.regular_moves()) == max_moves_per_pokemon) {
 			break;
@@ -46,12 +46,11 @@ void predict_moves(Pokemon<generation> & pokemon, containers::static_vector<Move
 		if (containers::any_equal(pokemon.regular_moves(), move_name)) {
 			continue;
 		}
-		pokemon.add_move(Move(generation, move_name));
+		pokemon.add_move(Move(generation_from<PokemonType>, move_name));
 	}
 }
 
-template<Generation generation>
-void optimize_pokemon_evs(Pokemon<generation> & pokemon, std::mt19937 & random_engine) {
+void optimize_pokemon_evs(any_pokemon auto & pokemon, std::mt19937 & random_engine) {
 	auto const species = pokemon.species();
 	auto const level = pokemon.level();
 	auto const include_attack = has_physical_move(pokemon);
