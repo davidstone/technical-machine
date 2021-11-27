@@ -17,6 +17,16 @@ struct VisibleHP {
 };
 
 struct AllowedHP {
+	constexpr AllowedHP(HP::current_type const min_, HP::current_type const value_, HP::current_type const max_):
+		min(min_),
+		value(value_),
+		max(max_)
+	{
+	}
+	constexpr explicit AllowedHP(HP::current_type const value_):
+		AllowedHP(value_, value_, value_)
+	{
+	}
 	HP::current_type min;
 	HP::current_type value;
 	HP::current_type max;

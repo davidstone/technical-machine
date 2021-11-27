@@ -14,7 +14,7 @@ namespace technicalmachine {
 
 auto to_real_hp(bool const is_ai, HP::max_type const max_hp, VisibleHP const visible_hp) -> AllowedHP {
 	if (visible_hp.current == 0_bi) {
-		return AllowedHP{0_bi, 0_bi, 0_bi};
+		return AllowedHP(0_bi);
 	}
 	constexpr auto max_visible_foe_hp = 100_bi;
 	auto const expected_max_visible_hp = BOUNDED_CONDITIONAL(is_ai, max_hp, max_visible_foe_hp);
@@ -26,14 +26,14 @@ auto to_real_hp(bool const is_ai, HP::max_type const max_hp, VisibleHP const vis
 	};
 	if (is_ai) {
 		auto const value = compute_value(visible_hp.current);
-		return AllowedHP{value, value, value};
+		return AllowedHP(value);
 	} else {
 		// TODO: Put in correct bounds on this for the foe Pokemon
-		return AllowedHP{
+		return AllowedHP(
 			compute_value(visible_hp.current - 1_bi),
 			compute_value(visible_hp.current),
 			compute_value(visible_hp.current + 1_bi)
-		};
+		);
 	}
 }
 
