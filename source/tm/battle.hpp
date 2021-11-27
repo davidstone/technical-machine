@@ -128,7 +128,7 @@ struct Battle {
 		auto & pokemon = active_pokemon(is_ai, maybe_index...);
 		auto const original_hp = pokemon.hp();
 		pokemon.set_hp(correct_hp(is_ai, original_hp, visible_hp));
-		if (visible_hp.current == 0_bi) {
+		if (visible_hp.current == CurrentVisibleHP(0_bi)) {
 			return;
 		}
 		validate_status(pokemon.status().name(), visible_status);
@@ -141,7 +141,7 @@ private:
 	}
 	static auto correct_hp(bool const is_ai, HP const original_hp, VisibleHP const visible_hp) -> HP::current_type {
 		auto const current_hp = original_hp.current();
-		auto const seen_hp = is_ai ? AllowedHP(visible_hp.current) : to_real_hp(original_hp.max(), visible_hp);
+		auto const seen_hp = is_ai ? AllowedHP(visible_hp.current.value()) : to_real_hp(original_hp.max(), visible_hp);
 		if (seen_hp.min > current_hp or seen_hp.max < current_hp) {
 			// TODO: Find a better way to sync this up with server messages. Find a
 			// better way to fail unit tests if this happens.

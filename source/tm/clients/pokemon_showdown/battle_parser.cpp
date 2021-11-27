@@ -601,7 +601,7 @@ private:
 		auto const damaged_party = move == Moves::Hit_Self ? user_party : other(user_party);
 		auto const & pokemon = select_pokemon(get_team(damaged_party), move);
 		auto const new_hp = is_ai(damaged_party) ?
-			damage.hp.current :
+			damage.hp.current.value() :
 			to_real_hp(pokemon.hp().max(), damage.hp).value;
 		return hp_to_damage(pokemon, new_hp);
 	}

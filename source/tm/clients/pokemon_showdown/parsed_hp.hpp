@@ -21,8 +21,8 @@ namespace ps {
 
 constexpr auto parse_hp(std::string_view const str) {
 	auto const hp = split_view(str, '/');
-	auto const current = bounded::to_integer<HP::current_type>(hp.first);
-	auto const max = hp.second.empty() ? 100_bi : bounded::to_integer<HP::max_type>(hp.second);
+	auto const current = CurrentVisibleHP(bounded::to_integer<HP::current_type>(hp.first));
+	auto const max = MaxVisibleHP(hp.second.empty() ? 100_bi : bounded::to_integer<HP::max_type>(hp.second));
 	if (current > max) {
 		throw std::runtime_error("Received a current HP greater than max HP");
 	}
