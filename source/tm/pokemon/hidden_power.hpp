@@ -5,6 +5,9 @@
 
 #pragma once
 
+#include <tm/move/moves.hpp>
+#include <tm/move/regular_moves.hpp>
+
 #include <tm/stat/iv.hpp>
 
 #include <tm/type/type.hpp>
@@ -14,6 +17,8 @@
 #include <bounded/integer.hpp>
 #include <bounded/optional.hpp>
 #include <bounded/unreachable.hpp>
+
+#include <containers/algorithms/all_any_none.hpp>
 
 namespace technicalmachine {
 
@@ -166,6 +171,17 @@ private:
 	Type m_type;
 };
 
+template<Generation generation>
+constexpr auto calculate_hidden_power(DVsOrIVs<generation> dvs_or_ivs, RegularMoves const moves) -> bounded::optional<HiddenPower<generation>> {
+	if constexpr (generation == Generation::one) {
+		return bounded::none;
+	} else if (containers::any(moves, [](Move const move) { return move.name() == Moves::Hidden_Power; })) {
+		return HiddenPower<generation>(dvs_or_ivs);
+	} else {
+		return bounded::none;
+	}
+}
+		
 } // namespace technicalmachine
 namespace bounded {
 

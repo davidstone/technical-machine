@@ -14,7 +14,7 @@ namespace technicalmachine {
 template<Generation generation>
 struct CombinedStats {
 	Nature nature;
-	std::conditional_t<generation <= Generation::two, DVs, IVs> dvs_or_ivs;
+	DVsOrIVs<generation> dvs_or_ivs;
 	std::conditional_t<generation <= Generation::two, OldGenEVs, EVs> evs;
 	friend auto operator==(CombinedStats, CombinedStats) -> bool = default;
 };

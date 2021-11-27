@@ -31,8 +31,8 @@
 
 #include <bounded/assert.hpp>
 
-#include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/maybe_find.hpp>
+#include <containers/integer_range.hpp>
 
 #include <cstdint>
 
@@ -54,15 +54,7 @@ struct Pokemon {
 
 		m_happiness(happiness),
 
-		m_hidden_power([&]() -> bounded::optional<HiddenPower<generation>> {
-			if constexpr (generation == Generation::one) {
-				return bounded::none;
-			} else if (containers::any(m_regular_moves, [](Move const move) { return move.name() == Moves::Hidden_Power; })) {
-				return HiddenPower<generation>(stat_inputs.dvs_or_ivs);
-			} else {
-				return bounded::none;
-			}
-		}()),
+		m_hidden_power(calculate_hidden_power<generation>(stat_inputs.dvs_or_ivs, m_regular_moves)),
 		
 		m_has_been_seen(false),
 

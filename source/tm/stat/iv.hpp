@@ -145,4 +145,7 @@ inline constexpr auto max_dvs_or_ivs = [] {
 	}
 }();
 
+template<Generation generation>
+using DVsOrIVs = std::conditional_t<generation <= Generation::two, DVs, IVs>;
+
 } // namespace technicalmachine
