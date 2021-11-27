@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <tm/move/damage_type.hpp>
+
 #include <tm/any_team.hpp>
 #include <tm/generation.hpp>
 
@@ -16,8 +18,6 @@ template<typename TeamType>
 struct ExecutedMove;
 struct OtherMove;
 struct Weather;
-
-using damage_type = bounded::integer<0, 1'000'000'000>;
 
 template<any_team UserTeam>
 auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam>, bool move_weakened_from_item, UserTeam const & defender, OtherMove defender_move, Weather) -> damage_type;

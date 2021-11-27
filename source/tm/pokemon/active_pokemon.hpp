@@ -23,7 +23,7 @@
 #include <tm/pokemon/taunt.hpp>
 #include <tm/pokemon/yawn.hpp>
 
-#include <tm/move/calculate_damage.hpp>
+#include <tm/move/damage_type.hpp>
 #include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/is_switch.hpp>
