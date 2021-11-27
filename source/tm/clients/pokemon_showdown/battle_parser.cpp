@@ -62,12 +62,10 @@ constexpr auto party_from_player_id(std::string_view const player_id) {
 	return make_party(player_id.substr(0, 2));
 }
 
-template<Generation generation>
-auto get_move_index(Pokemon<generation> const & pokemon, Moves const move_name) {
-	auto const moves = pokemon.regular_moves();
+auto get_move_index(RegularMoves const moves, Moves const move_name) {
 	auto const it = containers::find_if(moves, [=](Move const move) { return move.name() == move_name; });
 	if (it == containers::end(moves)) {
-		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Pokemon does not know "), to_string(move_name)));
+		throw std::runtime_error(containers::concatenate<std::string>("Pokemon does not know "sv, to_string(move_name)));
 	}
 	return bounded::assume_in_range<containers::index_type<RegularMoves>>(it - containers::begin(moves));
 }
@@ -749,7 +747,7 @@ private:
 		// In doubles / triples we need to specify " TARGET" at the end for regular
 		// moves
 		auto switch_move = [&]{ return m_slot_memory[to_replacement(move)]; };
-		auto move_index = [&]{ return get_move_index(m_battle.ai().all_pokemon()(), move); };
+		auto move_index = [&]{ return get_move_index(m_battle.ai().pokemon().regular_moves(), move); };
 		send_move_impl(is_switch(move), switch_move, move_index);
 	}
 
