@@ -147,7 +147,7 @@ inline auto find_index(PokemonCollection<generation> const & collection, Species
 }
 
 template<Generation generation>
-inline auto find_present_index(PokemonCollection<generation> const & collection, Species const species) {
+auto find_required_index(PokemonCollection<generation> const & collection, Species const species) {
 	auto const index = find_index(collection, species);
 	if (index == containers::size(collection)) {
 		throw PokemonNotFound(species);

@@ -131,7 +131,7 @@ struct MoveState {
 		}
 		auto const & all = phazed_team.all_pokemon();
 		auto const pokemon_index = all.index();
-		auto const new_index = find_present_index(all, species);
+		auto const new_index = find_required_index(all, species);
 		if (new_index == pokemon_index) {
 			throw PhazingInSamePokemon(new_index);
 		}

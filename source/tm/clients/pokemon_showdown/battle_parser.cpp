@@ -477,7 +477,7 @@ struct BattleParserImpl : BattleParser {
 			auto const parsed = parse_switch(message);
 
 			if (is_ai(parsed.party)) {
-				auto const index = find_present_index(m_battle.ai().all_pokemon(), parsed.species);
+				auto const index = find_required_index(m_battle.ai().all_pokemon(), parsed.species);
 				if (m_replacing_fainted) {
 					m_slot_memory.replace_fainted(index);
 					m_replacing_fainted = false;
