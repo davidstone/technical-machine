@@ -66,14 +66,23 @@ auto make_battle_parser(
 ) -> std::unique_ptr<BattleParser>;
 
 
-constexpr auto make_party(std::string_view const player_id) {
-	if (player_id == "p1") {
+constexpr auto make_party(std::string_view const party_str) {
+	if (party_str == "p1") {
 		return Party(0_bi);
-	} else if (player_id == "p2") {
+	} else if (party_str == "p2") {
 		return Party(1_bi);
 	} else {
-		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Invalid player id: "), player_id));
+		throw std::runtime_error(containers::concatenate<std::string>("Invalid player id: "sv, party_str));
 	}
+}
+
+constexpr auto parse_identity(std::string_view const str) {
+	struct result {
+		Party party;
+		std::string_view nickname;
+	};
+	auto const [party_str, nickname] = split_view(str, ": "sv);
+	return result{make_party(party_str.substr(0, 2)), nickname};
 }
 
 // This adds additional string scanning, but I don't think the performance

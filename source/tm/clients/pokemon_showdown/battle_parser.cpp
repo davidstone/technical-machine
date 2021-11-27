@@ -59,7 +59,7 @@ BattleParser::~BattleParser() = default;
 namespace {
 
 constexpr auto party_from_player_id(std::string_view const player_id) {
-	return make_party(player_id.substr(0, 2));
+	return parse_identity(player_id).party;
 }
 
 auto get_move_index(RegularMoves const moves, Moves const move_name) {
