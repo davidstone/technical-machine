@@ -439,6 +439,14 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, UserTeam & oth
 	user_pokemon.successfully_use_move(move.executed);
 }
 
+template<any_mutable_active_pokemon UserPokemon>
+void end_of_attack(UserPokemon const user_pokemon, UserPokemon const other_pokemon, Weather const weather) {
+	if constexpr (generation_from<UserPokemon> == Generation::two) {
+		user_pokemon.status_and_leech_seed_effects(other_pokemon, weather);
+		handle_curse(user_pokemon, weather);
+	}
+}
+
 } // namespace
 
 template<any_team UserTeam>
@@ -447,7 +455,7 @@ auto call_move(UserTeam & user, UsedMove<UserTeam> const move, UserTeam & other,
 		return;
 	}
 	try_use_move(user, move, other, other_move, weather, clear_status, actual_damage);
-	end_of_attack(user, other, weather);
+	end_of_attack(user.pokemon(), other.pokemon(), weather);
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \

@@ -113,13 +113,6 @@ void weather_effects(MutableActivePokemonType const first, MutableActivePokemonT
 	}
 }
 
-auto handle_curse(any_mutable_active_pokemon auto const pokemon, Weather const weather) -> void {
-	if (!pokemon.is_cursed()) {
-		return;
-	}
-	heal(pokemon, weather, rational(-1_bi, 4_bi));
-}
-
 constexpr auto leftovers_healing() {
 	return rational(1_bi, 16_bi);
 }
@@ -244,12 +237,6 @@ void generation_3_plus_end_of_turn(TeamType & first_team, EndOfTurnFlags const f
 }
 
 } // namespace
-
-void end_of_attack(Team<Generation::two> & user, Team<Generation::two> & other, Weather const weather) {
-	auto const user_pokemon = user.pokemon();
-	user_pokemon.status_and_leech_seed_effects(other.pokemon(), weather);
-	handle_curse(user_pokemon, weather);
-}
 
 template<any_team TeamType>
 void end_of_turn(TeamType & first, EndOfTurnFlags const first_flags, TeamType & last, EndOfTurnFlags const last_flags, Weather & weather) {

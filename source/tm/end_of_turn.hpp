@@ -5,8 +5,11 @@
 
 #pragma once
 
+#include <tm/pokemon/any_pokemon.hpp>
+
 #include <tm/any_team.hpp>
 #include <tm/generation.hpp>
+#include <tm/heal.hpp>
 #include <tm/weather.hpp>
 
 #include <cstdint>
@@ -23,11 +26,12 @@ struct EndOfTurnFlags {
 	bool lock_in_ends;
 };
 
-template<any_team TeamType>
-void end_of_attack(TeamType &, TeamType &, Weather) {
+constexpr auto handle_curse(any_mutable_active_pokemon auto const pokemon, Weather const weather) -> void {
+	if (!pokemon.is_cursed()) {
+		return;
+	}
+	heal(pokemon, weather, rational(-1_bi, 4_bi));
 }
-
-void end_of_attack(Team<Generation::two> & user, Team<Generation::two> & other, Weather);
 
 template<any_team TeamType>
 void end_of_turn(TeamType & first, EndOfTurnFlags first_flags, TeamType & last, EndOfTurnFlags last_flags, Weather &);
