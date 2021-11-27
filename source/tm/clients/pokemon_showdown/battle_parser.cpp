@@ -299,10 +299,36 @@ struct BattleParserImpl : BattleParser {
 		} else if (type == "cant") {
 			// TODO: Figure out how to solve this in general...
 			auto const party = party_from_player_id(message.pop());
-			auto const & team = get_team(party);
 			auto const reason = message.pop();
-			auto const move = reason == "recharge" ? team.pokemon().last_used_move().name() : Moves::Struggle;
-			m_move_state.use_move(party, move);
+			auto use_move = [&](Moves const move_name) {
+				m_move_state.use_move(party, move_name);
+			};
+			if (reason == "flinch") {
+				// Technically incorrect with things like Sucker Punch and
+				// priority
+				use_move(Moves::Struggle);
+				m_move_state.flinch(party);
+			} else if (reason == "frz") {
+				// Using a move like Flame Wheel does not send "cant"
+				// Technically incorrect with things like Sucker Punch and
+				// priority
+				use_move(Moves::Struggle);
+			} else if (reason == "par") {
+				// Technically incorrect with things like Sucker Punch and
+				// priority
+				use_move(Moves::Struggle);
+				m_move_state.fully_paralyze(party);
+			} else if (reason == "slp") {
+				m_move_state.still_asleep(party);
+			} else if (reason == "recharge") {
+				use_move(get_team(party).pokemon().last_used_move().name());
+			} else {
+				std::cerr << "Received unknown \"cant\" reason: " << reason;
+				if (!message.remainder().empty()) {
+					std::cerr << '|' << message.remainder();
+				}
+				std::cerr << '\n';
+			}
 		} else if (type == "-center") {
 		} else if (type == "-clearallboost") {
 			// We already know what Haze does

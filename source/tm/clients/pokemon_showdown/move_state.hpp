@@ -106,6 +106,13 @@ struct MoveState {
 		}
 		m_move->flinch = true;
 	}
+	void fully_paralyze(Party const party) {
+		validate(party);
+		if (m_move->fully_paralyze) {
+			throw std::runtime_error("Tried to fully paralyze a Pokemon twice");
+		}
+		m_move->fully_paralyze = true;
+	}
 	void hp_change(Party const party, HPAndStatus const hp_and_status) {
 		if (!m_party) {
 			// TODO: Handle end-of-turn damage
@@ -145,6 +152,13 @@ struct MoveState {
 		m_recoil = true;
 	}
 	void status(Party const party, Statuses const status);
+	void still_asleep(Party const party) {
+		if (m_party) {
+			throw_error();
+		}
+		insert(m_party, party);
+		m_still_asleep = true;
+	}
 	auto switch_index() const -> bounded::optional<TeamIndex> {
 		if (!m_move) {
 			return bounded::none;
@@ -175,6 +189,7 @@ private:
 		bool miss = false;
 		bool confuse = false;
 		bool flinch = false;
+		bool fully_paralyze = false;
 		bounded::optional<TeamIndex> phaze_index = bounded::none;
 		bounded::optional<Statuses> status = bounded::none;
 	};
@@ -187,6 +202,7 @@ private:
 	bounded::optional<HPAndStatus> m_other_hp_and_status;
 	bool m_clear_status = false;
 	bool m_recoil = false;
+	bool m_still_asleep = false;
 };
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \

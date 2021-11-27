@@ -5,9 +5,19 @@
 
 #include <tm/clients/pokemon_showdown/move_state.hpp>
 
+#include <tm/string_conversions/move.hpp>
+
+#include <tm/block.hpp>
 #include <tm/team.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
+
+#include <string>
+#include <string_view>
+
 namespace technicalmachine::ps {
+
+using namespace std::string_view_literals;
 
 void MoveState::use_move(Party const party, Moves const move) {
 	if (m_party) {
@@ -20,6 +30,9 @@ void MoveState::use_move(Party const party, Moves const move) {
 	if (m_move) {
 		m_move->executed = move;
 	} else {
+		if (m_still_asleep and !usable_while_sleeping(move)) {
+			throw std::runtime_error(containers::concatenate<std::string>("Tried to use "sv, to_string(move), " while asleep"sv));
+		}
 		insert(m_move, UsedMoveBuilder{move});
 	}
 }
@@ -104,9 +117,14 @@ auto get_side_effect(auto const move, ActivePokemon<generation> const user, Team
 
 template<Generation generation>
 auto MoveState::complete(Party const ai_party, Team<generation> const & ai, Team<generation> const & foe, Weather const weather) -> bounded::optional<Result<generation>> {
-	if (!m_move) {
+	if (!m_move and !m_still_asleep) {
 		*this = {};
 		return bounded::none;
+	}
+	if (!m_move) {
+		BOUNDED_ASSUME(m_still_asleep);
+		// Technically incorrect with things like Sucker Punch and priority
+		insert(m_move, UsedMoveBuilder{Moves::Struggle});
 	}
 	auto const move = *m_move;
 	struct Affected {
