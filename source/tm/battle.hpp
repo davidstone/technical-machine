@@ -69,16 +69,25 @@ struct Battle {
 	}
 
 	void handle_use_move(bool const is_ai, UsedMove<Team<generation>> const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
-		auto & user = is_ai ? m_ai : m_foe;
-		auto & other = is_ai ? m_foe : m_ai;
+		struct Teams {
+			Team<generation> & user;
+			Team<generation> & other;
+		};
+		auto const teams = [&] {
+			if (is_ai) {
+				return Teams{m_ai, m_foe};
+			} else {
+				return Teams{m_foe, m_ai};
+			}
+		}();
 
-		user.pokemon().add_move(Move(generation, move.selected));
+		teams.user.pokemon().add_move(Move(generation, move.selected));
 		// TODO: Add move.executed in some circumstances
 
 		call_move(
-			user,
+			teams.user,
 			move,
-			other,
+			teams.other,
 			other_move,
 			m_weather,
 			clear_status,
