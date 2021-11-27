@@ -80,9 +80,13 @@ struct Battle {
 				return Teams{m_foe, m_ai};
 			}
 		}();
-
-		teams.user.pokemon().add_move(Move(generation, move.selected));
-		// TODO: Add move.executed in some circumstances
+		auto add_move = [&](Moves const move_name) {
+			teams.user.pokemon().add_move(Move(generation, move_name));
+		};
+		add_move(move.selected);
+		if (move.selected == Moves::Sleep_Talk) {
+			add_move(move.executed);
+		}
 
 		call_move(
 			teams.user,
