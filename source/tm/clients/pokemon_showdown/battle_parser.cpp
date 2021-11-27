@@ -262,7 +262,11 @@ struct BattleParserImpl : BattleParser {
 		} else if (type == "-ability") {
 			auto const party = party_from_player_id(message.pop());
 			auto const ability = from_string<Ability>(message.pop());
-			m_battle.set_value_on_active(is_ai(party), ability);
+			if (auto const switch_index = m_move_state.switch_index()) {
+				m_battle.set_value_on_index(is_ai(party), *switch_index, ability);
+			} else {
+				m_battle.set_value_on_active(is_ai(party), ability);
+			}
 		} else if (type == "-activate") {
 			auto const party = party_from_player_id(message.pop());
 			auto const what = message.pop();

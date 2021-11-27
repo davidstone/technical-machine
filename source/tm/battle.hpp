@@ -118,6 +118,9 @@ struct Battle {
 	void set_value_on_active(bool const is_ai, Ability const ability) {
 		(is_ai ? m_ai : m_foe).pokemon().set_base_ability(ability);
 	}
+	void set_value_on_index(bool const is_ai, TeamIndex const index, Ability const ability) {
+		(is_ai ? m_ai : m_foe).pokemon(index).set_initial_ability(ability);
+	}
 
 	void set_value_on_active(bool const is_ai, Item const item) {
 		active_pokemon(is_ai).set_item(item);

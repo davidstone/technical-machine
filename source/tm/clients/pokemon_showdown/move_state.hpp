@@ -145,6 +145,15 @@ struct MoveState {
 		m_recoil = true;
 	}
 	void status(Party const party, Statuses const status);
+	auto switch_index() const -> bounded::optional<TeamIndex> {
+		if (!m_move) {
+			return bounded::none;
+		}
+		return
+			is_switch(m_move->executed) ? to_replacement(m_move->executed) :
+			m_move->phaze_index ? m_move->phaze_index :
+			bounded::none;
+	}
 
 	template<Generation generation>
 	auto complete(Party ai_party, Team<generation> const & ai, Team<generation> const & foe, Weather const weather) -> bounded::optional<Result<generation>>;
