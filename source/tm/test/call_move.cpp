@@ -311,5 +311,53 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 	CHECK(vaporeon.status().name() == Statuses::burn);
 }
 
+TEST_CASE("Sleep Talk Substitute", "[call_move]") {
+	auto weather = Weather();
+
+	auto user = Team<generation>({
+		Pokemon<generation>(
+			Species::Registeel,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Leftovers,
+			Ability::Clear_Body,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, Moves::Sleep_Talk), Move(generation, Moves::Substitute)})
+		)
+	});
+	user.pokemon().switch_in(weather);
+	user.pokemon().set_hp(weather, 5_bi);
+	user.pokemon().rest(weather, false);
+
+	auto other = Team<generation>({
+		Pokemon<generation>(
+			Species::Tyranitar,
+			Level(100_bi),
+			Gender::male,
+			Item::Choice_Band,
+			Ability::Sand_Stream,
+			default_combined_stats<generation>,
+			regular_moves(Moves::Rock_Slide)
+		)
+	});
+	other.pokemon().switch_in(weather);
+
+	CHECK(user.pokemon().substitute().hp() == 0_bi);
+
+	auto const side_effects = possible_side_effects(Moves::Substitute, user.pokemon().as_const(), other, weather);
+	CHECK(containers::size(side_effects) == 1_bi);
+	call_move(
+		user,
+		UsedMove<Team<generation>>(Moves::Sleep_Talk, Moves::Substitute, false, false, containers::front(side_effects).function),
+		other,
+		FutureMove{false},
+		weather,
+		false,
+		damage
+	);
+
+	CHECK(user.pokemon().substitute().hp() == user.pokemon().hp().max() / 4_bi);
+}
+
 } // namespace
 } // namespace technicalmachine
