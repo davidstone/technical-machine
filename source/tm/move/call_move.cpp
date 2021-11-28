@@ -256,7 +256,7 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 
 	// Should this check if we did any damage or if the move is damaging?
 	auto const damage_done = damage != 0_bi ?
-		other_pokemon.direct_damage(executed.move.name, other.pokemon(), weather, damage) :
+		other_pokemon.direct_damage(executed.move.name, user_pokemon, weather, damage) :
 		0_bi;
 
 	// TODO: When are side-effects on the user blocked?
