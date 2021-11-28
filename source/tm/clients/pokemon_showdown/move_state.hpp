@@ -39,10 +39,10 @@ struct SubstituteBroke {};
 
 struct MoveState {
 	using Damage = bounded::variant<NoDamage, HPAndStatus, SubstituteDamaged, SubstituteBroke>;
-	template<Generation generation>
+	template<any_team UserTeam>
 	struct Result {
 		Party party;
-		UsedMove<Team<generation>> move;
+		UsedMove<UserTeam> move;
 		Damage damage;
 		bounded::optional<HPAndStatus> user_hp_and_status;
 		bounded::optional<HPAndStatus> other_hp_and_status;
@@ -170,7 +170,7 @@ struct MoveState {
 	}
 
 	template<Generation generation>
-	auto complete(Party ai_party, Team<generation> const & ai, Team<generation> const & foe, Weather const weather) -> bounded::optional<Result<generation>>;
+	auto complete(Party ai_party, Team<generation> const & ai, Team<generation> const & foe, Weather const weather) -> bounded::optional<Result<Team<generation>>>;
 private:
 	void validate(Party const party) const {
 		if (m_party != party or !m_move) {
@@ -206,12 +206,12 @@ private:
 };
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto MoveState::complete<generation>( \
+	extern template auto MoveState::complete( \
 		Party, \
 		Team<generation> const &, \
 		Team<generation> const &, \
 		Weather \
-	) -> bounded::optional<Result<generation>>
+	) -> bounded::optional<Result<Team<generation>>>
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

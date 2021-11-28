@@ -116,7 +116,7 @@ auto get_side_effect(auto const move, ActivePokemon<generation> const user, Team
 } // namespace
 
 template<Generation generation>
-auto MoveState::complete(Party const ai_party, Team<generation> const & ai, Team<generation> const & foe, Weather const weather) -> bounded::optional<Result<generation>> {
+auto MoveState::complete(Party const ai_party, Team<generation> const & ai, Team<generation> const & foe, Weather const weather) -> bounded::optional<Result<Team<generation>>> {
 	if (!m_move and !m_still_asleep) {
 		*this = {};
 		return bounded::none;
@@ -134,7 +134,7 @@ auto MoveState::complete(Party const ai_party, Team<generation> const & ai, Team
 	auto const affected = *m_party == ai_party ?
 		Affected{ai.pokemon(), foe} :
 		Affected{foe.pokemon(), ai};
-	auto const result = Result<generation>{
+	auto const result = Result<Team<generation>>{
 		*m_party,
 		UsedMove<Team<generation>>(
 			move.selected,
@@ -159,7 +159,7 @@ auto MoveState::complete(Party const ai_party, Team<generation> const & ai, Team
 		Team<generation> const &, \
 		Team<generation> const &, \
 		Weather \
-	) -> bounded::optional<Result<generation>>
+	) -> bounded::optional<Result<Team<generation>>>
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
