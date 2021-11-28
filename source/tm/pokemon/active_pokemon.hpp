@@ -870,11 +870,13 @@ struct MutableActivePokemon : ActivePokemonImpl<generation, false> {
 		}
 	}
 
-	auto set_hp(Weather const weather, auto const hp) const -> void {
-		this->m_pokemon.set_hp(hp);
-		activate_pinch_item(weather);
+	auto set_hp(Weather const weather, auto const new_hp) const -> void {
+		this->m_pokemon.set_hp(new_hp);
+		if (new_hp != 0_bi) {
+			activate_pinch_item(weather);
+		}
 	}
-	auto indirect_damage(Weather const weather, HP::current_type const damage) const -> void {
+	auto indirect_damage(Weather const weather, auto const damage) const -> void {
 		change_hp(*this, weather, -damage);
 		this->m_flags.damaged = true;
 	}
