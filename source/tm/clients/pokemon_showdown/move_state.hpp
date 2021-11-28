@@ -128,7 +128,7 @@ struct MoveState {
 		}
 		m_move->miss = true;
 	}
-	void phaze_index(Party const party, any_team auto const & phazed_team, Species const species) {
+	void phaze_index(Party const party, auto const & phazed_pokemon_collection, Species const species) {
 		validate(party);
 		if (!is_phaze(m_move->executed)) {
 			throw std::runtime_error("We did not use a phazing move, but we were given phazing data");
@@ -136,9 +136,8 @@ struct MoveState {
 		if (m_move->phaze_index) {
 			throw std::runtime_error("Tried to phaze a Pokemon twice");
 		}
-		auto const & all = phazed_team.all_pokemon();
-		auto const pokemon_index = all.index();
-		auto const new_index = find_required_index(all, species);
+		auto const pokemon_index = phazed_pokemon_collection.index();
+		auto const new_index = find_required_index(phazed_pokemon_collection, species);
 		if (new_index == pokemon_index) {
 			throw PhazingInSamePokemon(new_index);
 		}

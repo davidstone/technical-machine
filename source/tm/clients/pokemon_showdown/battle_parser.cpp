@@ -521,7 +521,7 @@ struct BattleParserImpl : BattleParser {
 				to_replacement(move)
 			);
 			if (type == "drag") {
-				m_move_state.phaze_index(other(parsed.party), get_team(parsed.party), parsed.species);
+				m_move_state.phaze_index(other(parsed.party), get_team(parsed.party).all_pokemon(), parsed.species);
 			} else {
 				m_move_state.use_move(parsed.party, move);
 			}
