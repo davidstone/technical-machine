@@ -862,33 +862,31 @@ auto make_battle_parser(
 auto parse_details(std::string_view details) -> ParsedDetails {
 	auto parser = DelimitedBufferView(details, std::string_view(", "));
 	auto const species = from_string<Species>(parser.pop());
+
 	auto const level_or_gender_or_shiny_str = parser.pop();
-	auto try_parse_gender = [](auto const str) {
-		return
-			BOUNDED_CONDITIONAL(str == "F", Gender::female,
-			BOUNDED_CONDITIONAL(str == "M", Gender::male,
-			BOUNDED_CONDITIONAL(str == "", Gender::genderless,
-			bounded::none
-		)));
-	};
-	auto const maybe_gender = try_parse_gender(level_or_gender_or_shiny_str);
-	auto const is_shiny = level_or_gender_or_shiny_str == "shiny";
-	auto const level = Level(maybe_gender or is_shiny ?
-		100_bi :
-		bounded::to_integer<Level::value_type>(level_or_gender_or_shiny_str.substr(1))
+	auto const has_level = !level_or_gender_or_shiny_str.empty() and level_or_gender_or_shiny_str.front() == 'L';
+	auto const level = Level(has_level ?
+		bounded::to_integer<Level::value_type>(level_or_gender_or_shiny_str.substr(1)) :
+		100_bi
 	);
-	auto parse_gender = [&]{
-		if (maybe_gender) {
-			return *maybe_gender;
-		}
-		auto const gender_str = parser.pop();
-		auto const gender = try_parse_gender(gender_str);
-		if (!gender) {
-			throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Invalid gender string "), gender_str));
-		}
-		return *gender;
+
+	auto const gender_or_shiny_str = has_level ? parser.pop() : level_or_gender_or_shiny_str;
+	auto const gender = 
+		BOUNDED_CONDITIONAL(gender_or_shiny_str == "F", Gender::female,
+		BOUNDED_CONDITIONAL(gender_or_shiny_str == "M", Gender::male,
+		Gender::genderless
+	));
+
+	auto const shiny_str = gender != Gender::genderless ? parser.pop() : gender_or_shiny_str;
+	auto throw_exception = [&] {
+		throw std::runtime_error(containers::concatenate<std::string>("Invalid PS details string: "sv, details));
 	};
-	auto const gender = parse_gender();
+	if (shiny_str != "shiny" and shiny_str != "") {
+		throw_exception();
+	}
+	if (!parser.remainder().empty()) {
+		throw_exception();
+	}
 	return ParsedDetails{species, level, gender};
 }
 
