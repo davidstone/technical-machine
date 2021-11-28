@@ -720,7 +720,10 @@ private:
 				};
 			},
 			[&](SubstituteDamaged) -> LocalDamage {
-				return LocalDamage{ActualDamage::Capped{other_pokemon.hp().max() / 4_bi}, true};
+				if (!other_pokemon.substitute()) {
+					throw std::runtime_error("Tried to damage a Substitute when the target does not have a Substitute");
+				}
+				return LocalDamage{ActualDamage::Capped{bounded::increase_min<0>(other_pokemon.substitute().hp() - 1_bi)}, true};
 			},
 			[&](SubstituteBroke) -> LocalDamage {
 				return LocalDamage{ActualDamage::Known{other_pokemon.substitute().hp()}, true};
