@@ -42,8 +42,14 @@ struct Battle {
 		m_foe(std::move(foe_))
 	{
 		// TODO: Properly order this
-		m_ai.pokemon().switch_in(m_weather);
-		m_foe.pokemon().switch_in(m_weather);
+		auto const ai_pokemon = m_ai.pokemon();
+		auto const foe_pokemon = m_foe.pokemon();
+		auto do_switch = [&](auto const switcher, auto const other) {
+			switcher.switch_in(m_weather);
+			activate_ability_on_switch(switcher, other, m_weather);
+		};
+		do_switch(ai_pokemon, foe_pokemon);
+		do_switch(foe_pokemon, ai_pokemon);
 	}
 	
 	auto const & ai() const {
