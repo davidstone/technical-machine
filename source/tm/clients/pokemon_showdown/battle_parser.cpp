@@ -5,6 +5,7 @@
 
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
 #include <tm/clients/pokemon_showdown/chat.hpp>
+#include <tm/clients/pokemon_showdown/end_of_turn_state.hpp>
 #include <tm/clients/pokemon_showdown/move_state.hpp>
 #include <tm/clients/pokemon_showdown/slot_memory.hpp>
 
@@ -69,6 +70,20 @@ auto get_move_index(RegularMoves const moves, Moves const move_name) {
 		throw std::runtime_error(containers::concatenate<std::string>("Pokemon does not know "sv, to_string(move_name)));
 	}
 	return bounded::assume_in_range<containers::index_type<RegularMoves>>(it - containers::begin(moves));
+}
+
+constexpr auto to_normal_weather(Weather const weather) {
+	if (weather.hail()) {
+		return NormalWeather::hail;
+	} else if (weather.sand()) {
+		return NormalWeather::sand;
+	} else if (weather.sun()) {
+		return NormalWeather::sun;
+	} else if (weather.rain()) {
+		return NormalWeather::rain;
+	} else {
+		return NormalWeather::clear;
+	}
 }
 
 constexpr auto parse_status(std::string_view const str) {
@@ -553,7 +568,7 @@ struct BattleParserImpl : BattleParser {
 				[&](FromConfusion) {
 					auto const how = message.pop();
 					if (how == "[fatigue]") {
-						// TODO
+						m_end_of_turn_state.lock_in_ends(party);
 					} else {
 						m_move_state.confuse();
 					}
@@ -599,9 +614,15 @@ struct BattleParserImpl : BattleParser {
 			auto const amount = message.pop();
 #endif
 		} else if (type == "upkeep") {
-			m_battle.handle_end_turn();
+			auto const end_of_turn_state = m_end_of_turn_state.complete();
+			bool const ai_went_first = end_of_turn_state.first_party == m_ai_party;
+			m_battle.handle_end_turn(ai_went_first, end_of_turn_state.first.flags, end_of_turn_state.last.flags);
+			validate_weather(end_of_turn_state.weather);
+			try_correct_hp_and_status(ai_went_first, end_of_turn_state.first.hp_and_status);
+			try_correct_hp_and_status(!ai_went_first, end_of_turn_state.last.hp_and_status);
 		} else if (type == "-weather") {
-			[[maybe_unused]] auto const weather = from_string<NormalWeather>(message.pop());
+			auto const weather = from_string<NormalWeather>(message.pop());
+			m_end_of_turn_state.active_weather(weather);
 			[[maybe_unused]] auto const from_or_upkeep_or_nothing = message.pop(' ');
 			auto const category = message.pop(": "sv);
 			auto const source = message.pop();
@@ -769,6 +790,12 @@ private:
 		);
 	}
 
+	void validate_weather(NormalWeather const weather) const {
+		if (weather != m_battle.weather()) {
+			std::cerr << "Inconsistent weather. Received "sv << to_string(weather) << " but expected "sv << to_string(to_normal_weather(m_battle.weather())) << '\n';
+		}
+	}
+
 	Moves determine_action() {
 		if (m_battle.ai().size() == 0_bi or m_battle.foe().size() == 0_bi) {
 			throw std::runtime_error("Tried to determine an action with an empty team.");
@@ -829,6 +856,7 @@ private:
 	Party m_ai_party;
 	DepthValues m_depth;
 	MoveState m_move_state;
+	EndOfTurnState m_end_of_turn_state;
 	bool m_log_foe_teams;
 	bool m_completed = false;
 	bool m_replacing_fainted = false;

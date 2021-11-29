@@ -115,7 +115,6 @@ struct MoveState {
 	}
 	void hp_change(Party const party, HPAndStatus const hp_and_status) {
 		if (!m_party) {
-			// TODO: Handle end-of-turn damage
 			return;
 		}
 		auto & target_hp_and_status = (*m_party == party) ? m_user_hp_and_status : m_other_hp_and_status;

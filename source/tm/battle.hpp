@@ -66,12 +66,10 @@ struct Battle {
 		m_ai.reset_start_of_turn();
 		m_foe.reset_start_of_turn();
 	}
-	// TODO: require users to specify which team went first and whether Shed
-	// Skin activated
-	void handle_end_turn() & {
-		constexpr auto ai_flags = EndOfTurnFlags{false, false};
-		constexpr auto foe_flags = EndOfTurnFlags{false, false};
-		end_of_turn(m_ai, ai_flags, m_foe, foe_flags, m_weather);
+	void handle_end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & {
+		auto & first = ai_went_first ? m_ai : m_foe;
+		auto & last = ai_went_first ? m_foe : m_ai;
+		end_of_turn(first, first_flags, last, last_flags, m_weather);
 	}
 
 	void handle_use_move(bool const is_ai, UsedMove<Team<generation>> const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
