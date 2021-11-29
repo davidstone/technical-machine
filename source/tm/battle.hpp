@@ -72,6 +72,10 @@ struct Battle {
 		end_of_turn(first, first_flags, last, last_flags, m_weather);
 	}
 
+	void add_move(bool const is_ai, Moves const move_name) {
+		auto & team = is_ai ? m_ai : m_foe;
+		team.pokemon().add_move(Move(generation, move_name));
+	}
 	void handle_use_move(bool const is_ai, UsedMove<Team<generation>> const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
 		struct Teams {
 			Team<generation> & user;
@@ -84,12 +88,9 @@ struct Battle {
 				return Teams{m_foe, m_ai};
 			}
 		}();
-		auto add_move = [&](Moves const move_name) {
-			teams.user.pokemon().add_move(Move(generation, move_name));
-		};
-		add_move(move.selected);
+		add_move(is_ai, move.selected);
 		if (move.selected == Moves::Sleep_Talk) {
-			add_move(move.executed);
+			add_move(is_ai, move.executed);
 		}
 
 		call_move(
