@@ -110,8 +110,9 @@ struct MainEffect{};
 struct FromConfusion{};
 struct FromMiscellaneous{};
 struct FromRecoil{};
+struct FromSubstitute{};
 
-using EffectSource = bounded::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromMiscellaneous, FromRecoil>;
+using EffectSource = bounded::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromMiscellaneous, FromRecoil, FromSubstitute>;
 
 constexpr auto parse_effect_source(std::string_view const type, std::string_view const source) {
 	return
@@ -121,6 +122,7 @@ constexpr auto parse_effect_source(std::string_view const type, std::string_view
 		(type == "move") ? EffectSource(FromMove{}) :
 		(type == "confusion") ? EffectSource(FromConfusion{}) :
 		(type == "Recoil") ? EffectSource(FromRecoil{}) :
+		(type == "Substitute") ? EffectSource(FromSubstitute{}) :
 		(
 			type == "brn" or
 			type == "psn" or
@@ -130,15 +132,16 @@ constexpr auto parse_effect_source(std::string_view const type, std::string_view
 			type == "perish2" or
 			type == "perish1" or
 			type == "perish0" or
+			type == "trapped" or
 			type == "Encore" or
 			type == "Hail" or
 			type == "Leech Seed" or
 			type == "Light Screen" or
+			type == "Protect" or // Includes Detect
 			type == "Spikes" or
 			type == "Stealth Rock" or
 			type == "Reflect" or
-			type == "Sandstorm" or
-			type == "Substitute"
+			type == "Sandstorm"
 		) ? EffectSource(FromMiscellaneous{}) :
 		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Unhandled effect source type: "), type));
 }
@@ -284,18 +287,37 @@ struct BattleParserImpl : BattleParser {
 			}
 		} else if (type == "-activate") {
 			auto const party = party_from_player_id(message.pop());
-			auto const what = message.pop();
+			auto const [category, source] = split_view(message.pop(), ": "sv);
 			auto const details = message.pop();
-			if (what == "Substitute") {
-				if (details == "[damage]") {
-					m_move_state.damage_substitute(other(party));
-					handle_u_turn(other(party));
-				}
-			} else {
-				// what = ability: Forewarn
-				// details = Earthquake
-				// remainder() = [of] p1a: Excadrill
-			}
+			bounded::visit(parse_effect_source(category, source), bounded::overload(
+				[](MainEffect) { throw std::runtime_error("Unexpected -activate source MainEffect"); },
+				[](FromConfusion) {},
+				[](FromMiscellaneous) {},
+				[](FromMove) {},
+				[](FromRecoil) { throw std::runtime_error("Unexpected -activate source FromRecoil"); },
+				[&](FromSubstitute) {
+					if (details == "[damage]") {
+						m_move_state.damage_substitute(other(party));
+						// TODO: Why
+						handle_u_turn(other(party));
+					}
+				},
+				[&](Ability const ability) {
+					auto const ability_is_for_ai = is_ai(party);
+					m_battle.set_value_on_active(ability_is_for_ai, ability);
+					switch (ability) {
+						case Ability::Forewarn:
+							m_battle.add_move(!ability_is_for_ai, from_string<Moves>(details));
+							break;
+						case Ability::Shed_Skin:
+							m_end_of_turn_state.shed_skin(party);
+							break;
+						default:
+							break;
+					}
+				},
+				[&](Item const item) { m_battle.set_value_on_active(is_ai(party), item); }
+			));
 		} else if (type == "-anim") {
 #if 0
 			auto const party = party_from_player_id(message.pop());
@@ -429,6 +451,7 @@ struct BattleParserImpl : BattleParser {
 				[](FromMiscellaneous) {},
 				[](FromMove) {},
 				[](FromRecoil) { throw std::runtime_error("Recoil cannot heal"); },
+				[](FromSubstitute) { throw std::runtime_error("Substitute cannot heal"); },
 				[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 			));
 		} else if (type == "-hint") {
@@ -449,6 +472,7 @@ struct BattleParserImpl : BattleParser {
 				[](FromMiscellaneous) { throw std::runtime_error("Miscellaneous effects cannot cause immunity"); },
 				[](FromMove) { throw std::runtime_error("Moves cannot cause immunity"); },
 				[](FromRecoil) { throw std::runtime_error("Recoil cannot cause immunity"); },
+				[](FromSubstitute) { throw std::runtime_error("Substitute cannot cause immunity"); },
 				[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 			));
 		} else if (type == "inactive") {
@@ -576,6 +600,7 @@ struct BattleParserImpl : BattleParser {
 				[](FromMiscellaneous) {},
 				[](FromMove) {},
 				[](FromRecoil) { throw std::runtime_error("Unexpected -start source FromRecoil"); },
+				[](FromSubstitute) {},
 				[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 			));
 		} else if (type == "-status") {
@@ -588,6 +613,7 @@ struct BattleParserImpl : BattleParser {
 				[&](FromMiscellaneous) { m_move_state.status(other(party), status); },
 				[&](FromMove) { m_move_state.status(party, status); },
 				[](FromRecoil) { throw std::runtime_error("Recoil cannot cause another status"); },
+				[](FromSubstitute) { throw std::runtime_error("Substitute cannot cause another status"); },
 				[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 			));
 		} else if (type == "swap") {
@@ -699,6 +725,7 @@ private:
 			[](FromMiscellaneous) {},
 			[](FromMove) {},
 			[&](FromRecoil) { m_move_state.recoil(party); },
+			[](FromSubstitute) {},
 			[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 		));
 		m_move_state.hp_change(party, hp_and_status);
