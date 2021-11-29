@@ -173,6 +173,7 @@ add_library(tm_common STATIC
 	source/tm/string_conversions/status.cpp
 	source/tm/string_conversions/team.cpp
 	source/tm/string_conversions/type.cpp
+	source/tm/string_conversions/weather.cpp
 
 	source/tm/team_predictor/ev_optimizer/defensive.cpp
 	source/tm/team_predictor/ev_optimizer/defensive_data_point.cpp

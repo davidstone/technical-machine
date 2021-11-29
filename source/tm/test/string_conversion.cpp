@@ -13,6 +13,7 @@
 #include <tm/string_conversions/species.hpp>
 #include <tm/string_conversions/status.hpp>
 #include <tm/string_conversions/type.hpp>
+#include <tm/string_conversions/weather.hpp>
 
 #include <tm/pokemon/species.hpp>
 
@@ -68,6 +69,9 @@ TEST_CASE("status", "[string_conversion]") {
 }
 TEST_CASE("type", "[string_conversion]") {
 	test_generic<Type>();
+}
+TEST_CASE("weather", "[string_conversion]") {
+	test_generic<NormalWeather>();
 }
 
 TEST_CASE("pokemon", "[string_conversion]") {
