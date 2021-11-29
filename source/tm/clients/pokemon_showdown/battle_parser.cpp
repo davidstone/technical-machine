@@ -22,6 +22,7 @@
 #include <tm/string_conversions/species.hpp>
 #include <tm/string_conversions/status.hpp>
 #include <tm/string_conversions/team.hpp>
+#include <tm/string_conversions/weather.hpp>
 
 #include <tm/ability_blocks_move.hpp>
 #include <tm/battle.hpp>
@@ -600,9 +601,18 @@ struct BattleParserImpl : BattleParser {
 		} else if (type == "upkeep") {
 			m_battle.handle_end_turn();
 		} else if (type == "-weather") {
-#if 0
-			auto const weather = message.pop();
-#endif
+			[[maybe_unused]] auto const weather = from_string<NormalWeather>(message.pop());
+			[[maybe_unused]] auto const from_or_upkeep_or_nothing = message.pop(' ');
+			auto const category = message.pop(": "sv);
+			auto const source = message.pop();
+			bounded::visit(parse_effect_source(category, source), bounded::overload(
+				[&](Ability const ability) {
+					[[maybe_unused]] auto const of = message.pop(' ');
+					auto const party = party_from_player_id(message.pop());
+					m_battle.set_value_on_active(is_ai(party), ability);
+				},
+				[](auto) { }
+			));
 		} else if (type == "win") {
 			if (m_log_foe_teams) {
 				auto const won = m_username == message.pop();
