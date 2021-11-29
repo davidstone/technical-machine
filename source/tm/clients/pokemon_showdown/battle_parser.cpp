@@ -680,6 +680,8 @@ private:
 		}
 		auto const data = *maybe_data;
 
+		auto const data_is_for_ai = is_ai(data.party);
+
 		auto const user_pokemon = get_team(data.party).pokemon();
 		auto const other_pokemon = get_team(other(data.party)).pokemon();
 
@@ -701,7 +703,7 @@ private:
 			);
 		if (ability_blocks_recoil) {
 			// TODO: This could also be Magic Guard
-			m_battle.set_value_on_active(is_ai(data.party), Ability::Rock_Head);
+			m_battle.set_value_on_active(data_is_for_ai, Ability::Rock_Head);
 		}
 		
 		struct LocalDamage {
@@ -740,22 +742,21 @@ private:
 				data.move.executed == Moves::Sucker_Punch and damage.did_any_damage
 			});
 
-		m_battle.handle_use_move(is_ai(data.party), data.move, data.clear_status, damage.value, other_move);
+		m_battle.handle_use_move(data_is_for_ai, data.move, data.clear_status, damage.value, other_move);
 
-		if (data.user_hp_and_status) {
-			m_battle.correct_hp_and_status(
-				is_ai(data.party),
-				data.user_hp_and_status->hp,
-				data.user_hp_and_status->status
-			);
+		try_correct_hp_and_status(data_is_for_ai, data.user_hp_and_status);
+		try_correct_hp_and_status(!data_is_for_ai, data.other_hp_and_status);
+	}
+
+	void try_correct_hp_and_status(bool const is_ai, bounded::optional<HPAndStatus> const hp_and_status) {
+		if (!hp_and_status) {
+			return;
 		}
-		if (data.other_hp_and_status) {
-			m_battle.correct_hp_and_status(
-				!is_ai(data.party),
-				data.other_hp_and_status->hp,
-				data.other_hp_and_status->status
-			);
-		}
+		m_battle.correct_hp_and_status(
+			is_ai,
+			hp_and_status->hp,
+			hp_and_status->status
+		);
 	}
 
 	Moves determine_action() {
