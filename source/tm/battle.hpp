@@ -132,22 +132,9 @@ struct Battle {
 	}
 
 	// TODO: What happens here if a Pokemon has a pinch item?
-	void correct_hp_and_status(bool const is_ai, VisibleHP const visible_hp, Statuses const visible_status, auto... maybe_index) {
+	void correct_hp(bool const is_ai, VisibleHP const visible_hp, auto... maybe_index) {
 		auto & pokemon = active_pokemon(is_ai, maybe_index...);
 		auto const original_hp = pokemon.hp();
-		pokemon.set_hp(correct_hp(is_ai, original_hp, visible_hp));
-		if (visible_hp.current == CurrentVisibleHP(0_bi)) {
-			return;
-		}
-		validate_status(pokemon.status().name(), visible_status);
-	}
-
-private:
-	// maybe_index is either an index into a PokemonCollection or nothing
-	auto active_pokemon(bool const is_ai, auto... maybe_index) -> Pokemon<generation> & {
-		return (is_ai ? m_ai : m_foe).all_pokemon()(maybe_index...);
-	}
-	static auto correct_hp(bool const is_ai, HP const original_hp, VisibleHP const visible_hp) -> HP::current_type {
 		auto const current_hp = original_hp.current();
 		auto const seen_hp = is_ai ? AllowedHP(visible_hp.current.value()) : to_real_hp(original_hp.max(), visible_hp);
 		if (seen_hp.min > current_hp or seen_hp.max < current_hp) {
@@ -155,18 +142,26 @@ private:
 			// better way to fail unit tests if this happens.
 			std::cerr << "HP out of sync with server messages. Expected " << current_hp << " but visible HP is between " << seen_hp.min << " and " << seen_hp.max << " (max of " << original_hp.max() << ")\n";
 		}
-		return seen_hp.value;
+		pokemon.set_hp(seen_hp.value);
 	}
-	static void validate_status(Statuses const original_status, Statuses const visible_status) {
+	void correct_status(bool const is_ai, Statuses const visible_status, auto... maybe_index) {
+		auto & pokemon = active_pokemon(is_ai, maybe_index...);
+		auto const original_status = pokemon.status().name();
 		auto const normalized_original_status = (original_status == Statuses::rest) ? Statuses::sleep : original_status;
 		if (normalized_original_status != visible_status) {
 			throw std::runtime_error(containers::concatenate<std::string>(
-				std::string_view("Status out of sync with server messages: expected "),
+				"Status out of sync with server messages: expected "sv,
 				to_string(original_status),
-				std::string_view(" but received "),
+				" but received "sv,
 				to_string(visible_status)
 			));
 		}
+	}
+
+private:
+	// maybe_index is either an index into a PokemonCollection or nothing
+	auto active_pokemon(bool const is_ai, auto... maybe_index) -> Pokemon<generation> & {
+		return (is_ai ? m_ai : m_foe).all_pokemon()(maybe_index...);
 	}
 
 	Team<generation> m_ai;

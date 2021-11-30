@@ -56,30 +56,25 @@ bool MoveState::move_damages_self(Party const party) const {
 	return result;
 }
 
-void MoveState::status(Party const party, Statuses const status) {
-	if (m_move and is_switch(m_move->executed)) {
-		// Don't need to do anything for Toxic Spikes
-		return;
+void MoveState::status_from_move(Party const party, Statuses const status) {
+	if (!m_move) {
+		throw std::runtime_error("Tried to status without an active move");
 	}
 	if (m_move->status) {
 		throw std::runtime_error("Tried to status a Pokemon twice");
 	}
-	auto update_status = [=](bounded::optional<HPAndStatus> & old_hp_and_status) {
-		// TODO: Should update status even if we didn't get HP in the past
-		if (old_hp_and_status) {
-			old_hp_and_status->status = status;
-		}
-	};
-	if (m_move and m_move->executed == Moves::Rest) {
+	if (is_switch(m_move->executed) or m_move->executed == Moves::Rest) {
 		if (party != *m_party) {
 			throw_error();
 		}
-		update_status(m_user_hp_and_status);
+		bounded::insert(m_user.status, status);
 	} else {
-		validate(other(party));
-		update_status(m_other_hp_and_status);
+		if (party == *m_party) {
+			throw_error();
+		}
+		bounded::insert(m_other.status, status);
+		m_move->status = status;
 	}
-	m_move->status = status;
 }
 
 namespace {
@@ -144,8 +139,8 @@ auto MoveState::complete(Party const ai_party, Team<generation> const & ai, Team
 			get_side_effect(move, affected.user, affected.other, weather)
 		),
 		m_damage,
-		m_user_hp_and_status,
-		m_other_hp_and_status,
+		m_user,
+		m_other,
 		m_clear_status,
 		m_recoil
 	};

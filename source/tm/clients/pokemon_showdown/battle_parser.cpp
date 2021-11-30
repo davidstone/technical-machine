@@ -222,6 +222,30 @@ constexpr auto causes_recoil(Moves const move) {
 	}
 }
 
+constexpr auto cures_target_status(Generation const generation, Moves const move_name, bounded::optional<Type> const hidden_power_type, Statuses const status) {
+	switch (status) {
+		case Statuses::freeze:
+			return
+				get_type(generation, move_name, hidden_power_type) == Type::Fire or
+				(generation == Generation::two and move_name == Moves::Tri_Attack);
+		case Statuses::paralysis:
+			return move_name == Moves::Smelling_Salts;
+		case Statuses::rest:
+		case Statuses::sleep:
+			return move_name == Moves::Wake_Up_Slap;
+		case Statuses::clear:
+		case Statuses::burn:
+		case Statuses::poison:
+		case Statuses::toxic:
+			return false;
+	}
+}
+
+constexpr auto moved(any_team auto const & team) -> bool {
+	auto const pokemon = team.pokemon();
+	return pokemon.last_used_move().moved_this_turn() or pokemon.hp().current() == 0_bi;
+};
+
 template<Generation generation>
 struct BattleParserImpl : BattleParser {
 	BattleParserImpl(
@@ -373,19 +397,39 @@ struct BattleParserImpl : BattleParser {
 			m_move_state.critical_hit(user);
 		} else if (type == "-curestatus") {
 			auto const party = party_from_player_id(message.pop());
-			if (m_move_state.party() != party) {
-				maybe_use_previous_move();
+			if (moved(m_battle.ai()) and moved(m_battle.foe())) {
+				m_end_of_turn_state.set_expected(party, Statuses::clear);
+			} else if (!m_move_state.party() or *m_move_state.party() == party) {
+				m_move_state.clear_status(party);
+			} else {
+				auto try_use_previous_move = [&] {
+					auto const move_name = m_move_state.executed_move();
+					if (!move_name) {
+						return true;
+					}
+					auto const pokemon = get_team(party).pokemon();
+					return !cures_target_status(
+						generation,
+						*move_name,
+						get_hidden_power_type(pokemon),
+						pokemon.status().name()
+					);
+				};
+				if (try_use_previous_move()) {
+					maybe_use_previous_move();
+				}
 				m_move_state.clear_status(party);
 				if constexpr (generation == Generation::one) {
 					// TODO: Try to do something smarter here
 					m_move_state.use_move(party, Moves::Struggle);
 				}
-				auto const source = parse_from_source(message);
-				bounded::visit(source, bounded::overload(
-					[&](Ability const ability) { m_battle.set_value_on_active(is_ai(party), ability); },
-					[](auto) { }
-				));
 			}
+			auto const source = parse_from_source(message);
+			// TODO: Might not always apply to active Pokemon
+			bounded::visit(source, bounded::overload(
+				[&](Ability const ability) { m_battle.set_value_on_active(is_ai(party), ability); },
+				[](auto) { }
+			));
 		} else if (type == "-cureteam") {
 #if 0
 			auto const pokemon = message.pop();
@@ -451,6 +495,13 @@ struct BattleParserImpl : BattleParser {
 				[](FromSubstitute) { throw std::runtime_error("Substitute cannot heal"); },
 				[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 			));
+			if (moved(m_battle.ai()) and moved(m_battle.foe())) {
+				m_end_of_turn_state.hp_change(party, parsed.hp);
+				m_end_of_turn_state.status_change(party, parsed.status);
+			} else {
+				m_move_state.hp_change(party, parsed.hp);
+				m_move_state.expected_status(party, parsed.status);
+			}
 		} else if (type == "-hint") {
 			// message.remainder() == MESSAGE
 		} else if (type == "-hitcount") {
@@ -550,7 +601,8 @@ struct BattleParserImpl : BattleParser {
 		} else if (type == "drag") {
 			auto const parsed = handle_switch_or_drag(message);
 			m_move_state.phaze_index(other(parsed.party), get_team(parsed.party).all_pokemon(), parsed.species);
-			m_move_state.hp_change(parsed.party, {parsed.hp, parsed.status});
+			m_move_state.set_expected(parsed.party, parsed.hp);
+			m_move_state.set_expected(parsed.party, parsed.status);
 		} else if (type == "replace") {
 #if 0
 			// Illusion ended
@@ -595,13 +647,16 @@ struct BattleParserImpl : BattleParser {
 			auto const source = parse_from_source(message);
 			maybe_commit_switch(party);
 			bounded::visit(source, bounded::overload(
-				[&](MainEffect) { m_move_state.status(party, status); },
+				[&](MainEffect) { m_move_state.status_from_move(party, status); },
 				[](FromConfusion) { throw std::runtime_error("Confusion cannot cause another status"); },
-				[&](FromMiscellaneous) { m_move_state.status(other(party), status); },
-				[&](FromMove) { m_move_state.status(party, status); },
+				[&](FromMiscellaneous) { m_move_state.status_from_move(other(party), status); },
+				[&](FromMove) { m_move_state.status_from_move(party, status); },
 				[](FromRecoil) { throw std::runtime_error("Recoil cannot cause another status"); },
 				[](FromSubstitute) { throw std::runtime_error("Substitute cannot cause another status"); },
-				[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
+				[&](auto const value) {
+					m_battle.set_value_on_active(is_ai(party), value);
+					m_move_state.set_expected(party, status);
+				}
 			));
 		} else if (type == "swap") {
 #if 0
@@ -631,8 +686,8 @@ struct BattleParserImpl : BattleParser {
 			bool const ai_went_first = end_of_turn_state.first_party == m_ai_party;
 			m_battle.handle_end_turn(ai_went_first, end_of_turn_state.first.flags, end_of_turn_state.last.flags);
 			validate_weather(end_of_turn_state.weather);
-			try_correct_hp_and_status(ai_went_first, end_of_turn_state.first.hp_and_status);
-			try_correct_hp_and_status(!ai_went_first, end_of_turn_state.last.hp_and_status);
+			try_correct_hp_and_status(ai_went_first, end_of_turn_state.first.hp, end_of_turn_state.first.status);
+			try_correct_hp_and_status(!ai_went_first, end_of_turn_state.last.hp, end_of_turn_state.last.status);
 			if (generation >= Generation::four and m_battle.ai().pokemon().hp().current() == 0_bi) {
 				m_replacing_fainted = true;
 				send_move(determine_action());
@@ -690,9 +745,8 @@ private:
 
 	void handle_damage(InMessage message) {
 		auto const parsed = parse_hp_message(message);
-		auto const hp_and_status = HPAndStatus{parsed.hp, parsed.status};
 		auto move_damage = [&](Party const party) {
-			m_move_state.damage(party, hp_and_status);
+			m_move_state.damage(party, {parsed.hp, parsed.status});
 		};
 		auto const party = parsed.party;
 		maybe_commit_switch(party);
@@ -722,7 +776,8 @@ private:
 			[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 		));
 		if (m_move_state.party()) {
-			m_move_state.hp_change(party, hp_and_status);
+			m_move_state.set_expected(party, parsed.hp);
+			m_move_state.set_expected(party, parsed.status);
 		}
 	}
 
@@ -761,7 +816,8 @@ private:
 			maybe_use_previous_move_impl();
 		}
 		m_move_state.use_move(party, switch_->move);
-		m_move_state.hp_change(party, {switch_->hp, switch_->status});
+		m_move_state.set_expected(party, switch_->hp);
+		m_move_state.set_expected(party, switch_->status);
 		switch_ = bounded::none;
 	}
 	void maybe_use_previous_move() {
@@ -841,19 +897,20 @@ private:
 
 		m_battle.handle_use_move(data_is_for_ai, data.move, data.clear_status, damage.value, other_move);
 
-		try_correct_hp_and_status(data_is_for_ai, data.user_hp_and_status);
-		try_correct_hp_and_status(!data_is_for_ai, data.other_hp_and_status);
+		try_correct_hp_and_status(data_is_for_ai, data.user.hp, data.user.status);
+		try_correct_hp_and_status(!data_is_for_ai, data.other.hp, data.other.status);
 	}
 
-	void try_correct_hp_and_status(bool const is_ai, bounded::optional<HPAndStatus> const hp_and_status) {
-		if (!hp_and_status) {
-			return;
+	void try_correct_hp_and_status(bool const is_ai, bounded::optional<VisibleHP> const hp, bounded::optional<Statuses> const status, auto... maybe_index) {
+		if (hp) {
+			m_battle.correct_hp(is_ai, *hp, maybe_index...);
+			if (hp->current == CurrentVisibleHP(0_bi)) {
+				return;
+			}
 		}
-		m_battle.correct_hp_and_status(
-			is_ai,
-			hp_and_status->hp,
-			hp_and_status->status
-		);
+		if (status) {
+			m_battle.correct_status(is_ai, *status, maybe_index...);
+		}
 	}
 
 	void validate_weather(NormalWeather const weather) const {

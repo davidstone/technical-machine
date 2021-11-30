@@ -38,14 +38,18 @@ struct SubstituteDamaged {};
 struct SubstituteBroke {};
 
 struct MoveState {
+	struct OptionalHPAndStatus {
+		bounded::optional<VisibleHP> hp;
+		bounded::optional<Statuses> status;
+	};
 	using Damage = bounded::variant<NoDamage, HPAndStatus, SubstituteDamaged, SubstituteBroke>;
 	template<any_team UserTeam>
 	struct Result {
 		Party party;
 		UsedMove<UserTeam> move;
 		Damage damage;
-		bounded::optional<HPAndStatus> user_hp_and_status;
-		bounded::optional<HPAndStatus> other_hp_and_status;
+		OptionalHPAndStatus user;
+		OptionalHPAndStatus other;
 		bool clear_status;
 		bool recoil;
 	};
@@ -80,6 +84,7 @@ struct MoveState {
 		} else {
 			insert(m_party, party);
 		}
+		bounded::insert(party == *m_party ? m_user.status : m_other.status, Statuses::clear);
 		m_clear_status = true;
 	}
 	void confuse() {
@@ -112,12 +117,12 @@ struct MoveState {
 		}
 		m_move->fully_paralyze = true;
 	}
-	void hp_change(Party const party, HPAndStatus const hp_and_status) {
+	void set_expected(Party const party, VisibleHP const hp) {
 		if (!m_party) {
 			return;
 		}
-		auto & target_hp_and_status = (*m_party == party) ? m_user_hp_and_status : m_other_hp_and_status;
-		insert(target_hp_and_status, hp_and_status);
+		auto & target = (*m_party == party) ? m_user : m_other;
+		insert(target.hp, hp);
 	}
 	void miss(Party const party) {
 		validate(party);
@@ -148,7 +153,14 @@ struct MoveState {
 		}
 		m_recoil = true;
 	}
-	void status(Party const party, Statuses const status);
+	void status_from_move(Party const party, Statuses const status);
+	void set_expected(Party const party, Statuses const status) {
+		if (!m_party) {
+			return;
+		}
+		auto & target = (*m_party == party) ? m_user : m_other;
+		bounded::insert(target.status, status);
+	}
 	void still_asleep(Party const party) {
 		if (m_party) {
 			throw_error();
@@ -195,8 +207,8 @@ private:
 	bounded::optional<Party> m_party;
 	bounded::optional<UsedMoveBuilder> m_move;
 	Damage m_damage{NoDamage()};
-	bounded::optional<HPAndStatus> m_user_hp_and_status;
-	bounded::optional<HPAndStatus> m_other_hp_and_status;
+	OptionalHPAndStatus m_user;
+	OptionalHPAndStatus m_other;
 	bool m_clear_status = false;
 	bool m_recoil = false;
 	bool m_still_asleep = false;

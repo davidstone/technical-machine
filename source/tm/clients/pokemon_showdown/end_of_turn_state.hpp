@@ -5,11 +5,11 @@
 
 #pragma once
 
-#include <tm/clients/pokemon_showdown/hp_and_status.hpp>
-
 #include <tm/clients/party.hpp>
 
 #include <tm/end_of_turn.hpp>
+#include <tm/status.hpp>
+#include <tm/visible_hp.hpp>
 
 #include <bounded/optional.hpp>
 
@@ -20,7 +20,8 @@ namespace technicalmachine::ps {
 struct EndOfTurnState {
 	struct Result {
 		struct Individual {
-			bounded::optional<HPAndStatus> hp_and_status;
+			bounded::optional<VisibleHP> hp;
+			bounded::optional<Statuses> status;
 			EndOfTurnFlags flags = EndOfTurnFlags(false, false);
 		};
 		bounded::optional<Party> first_party;
@@ -29,9 +30,11 @@ struct EndOfTurnState {
 		Individual last;
 	};
 
-	constexpr auto hp_change(Party const party, HPAndStatus const hp_and_status) & -> void {
-		// Keep overwriting this value -- only the latest matters
-		bounded::insert(individual(party).hp_and_status, hp_and_status);
+	constexpr auto set_expected(Party const party, VisibleHP const hp) & -> void {
+		bounded::insert(individual(party).hp, hp);
+	}
+	constexpr auto set_expected(Party const party, Statuses const status) & -> void {
+		bounded::insert(individual(party).status, status);
 	}
 
 	constexpr auto lock_in_ends(Party const party) & -> void {
@@ -39,6 +42,7 @@ struct EndOfTurnState {
 	}
 	constexpr auto shed_skin(Party const party) & -> void {
 		individual(party).flags.shed_skin = true;
+		set_expected(party, Statuses::clear);
 	}
 
 	constexpr auto active_weather(NormalWeather const weather) & -> void {
