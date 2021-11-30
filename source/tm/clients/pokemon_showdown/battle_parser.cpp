@@ -424,8 +424,7 @@ struct BattleParserImpl : BattleParser {
 #endif
 		} else if (type == "faint") {
 			auto const party = party_from_player_id(message.pop());
-			m_battle.handle_fainted(is_ai(party));
-			if (is_ai(party) and m_battle.ai().size() != 1_bi) {
+			if (generation <= Generation::three and is_ai(party) and m_battle.ai().size() != 1_bi) {
 				m_replacing_fainted = true;
 				send_move(determine_action());
 			}
@@ -643,6 +642,10 @@ struct BattleParserImpl : BattleParser {
 			validate_weather(end_of_turn_state.weather);
 			try_correct_hp_and_status(ai_went_first, end_of_turn_state.first.hp_and_status);
 			try_correct_hp_and_status(!ai_went_first, end_of_turn_state.last.hp_and_status);
+			if (generation >= Generation::four and m_battle.ai().pokemon().hp().current() == 0_bi) {
+				m_replacing_fainted = true;
+				send_move(determine_action());
+			}
 		} else if (type == "-weather") {
 			auto const weather = from_string<NormalWeather>(message.pop());
 			m_end_of_turn_state.active_weather(weather);
