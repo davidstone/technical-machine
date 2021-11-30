@@ -495,13 +495,8 @@ struct BattleParserImpl : BattleParser {
 				[](FromSubstitute) { throw std::runtime_error("Substitute cannot heal"); },
 				[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 			));
-			if (moved(m_battle.ai()) and moved(m_battle.foe())) {
-				m_end_of_turn_state.hp_change(party, parsed.hp);
-				m_end_of_turn_state.status_change(party, parsed.status);
-			} else {
-				m_move_state.hp_change(party, parsed.hp);
-				m_move_state.expected_status(party, parsed.status);
-			}
+			queue_hp_or_status_checks(party, parsed.hp);
+			queue_hp_or_status_checks(party, parsed.status);
 		} else if (type == "-hint") {
 			// message.remainder() == MESSAGE
 		} else if (type == "-hitcount") {
@@ -775,15 +770,12 @@ private:
 			[](FromSubstitute) {},
 			[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 		));
-		if (m_move_state.party()) {
-			m_move_state.set_expected(party, parsed.hp);
-			m_move_state.set_expected(party, parsed.status);
-		}
+		queue_hp_or_status_checks(party, parsed.hp);
+		queue_hp_or_status_checks(party, parsed.status);
 	}
 
 	auto handle_switch_or_drag(InMessage message) {
 		auto const parsed = parse_switch(message);
-
 		auto const data_is_for_ai = is_ai(parsed.party);
 		if (data_is_for_ai) {
 			auto const index = find_required_index(m_battle.ai().all_pokemon(), parsed.species);
@@ -800,6 +792,14 @@ private:
 			Moves move;
 		};
 		return ParsedSwitchAndMove{parsed, move};
+	}
+
+	void queue_hp_or_status_checks(Party const party, auto const value) {
+		if (m_move_state.party()) {
+			m_move_state.set_expected(party, value);
+		} else {
+			m_end_of_turn_state.set_expected(party, value);
+		}
 	}
 
 	auto & get_switch(Party const party) {
