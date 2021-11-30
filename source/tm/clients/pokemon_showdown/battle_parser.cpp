@@ -331,9 +331,6 @@ struct BattleParserImpl : BattleParser {
 			auto const stat = message.pop();
 			auto const amount = message.pop();
 #endif
-		} else if (type == "callback") {
-			// It looks like this is always followed by "error", so this is
-			// redundant
 		} else if (type == "cant") {
 			// TODO: Figure out how to solve this in general...
 			auto const party = party_from_player_id(message.pop());
