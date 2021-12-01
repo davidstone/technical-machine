@@ -147,8 +147,7 @@ constexpr auto parse_effect_source(std::string_view const type, std::string_view
 }
 
 auto parse_from_source(InMessage message) {
-	// "[from]" or nothing
-	auto const from [[maybe_unused]] = message.pop(' ');
+	[[maybe_unused]] auto const from_or_silent_or_nothing = message.pop(' ');
 	auto const [type, source] = split_view(message.pop(), ':');
 	return parse_effect_source(type, source);
 }
