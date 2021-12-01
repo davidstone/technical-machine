@@ -112,12 +112,14 @@ auto get_side_effect(auto const move, UserPokemon const user, OtherTeam<UserPoke
 
 template<Generation generation>
 auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai, SeenTeam<generation> const & foe, Weather const weather) -> CompleteResult<generation> {
-	if (!m_move and !m_still_asleep) {
+	auto generation_one_awaken = [&] {
+		return generation == Generation::one and m_clear_status;
+	};
+	if (!m_move and !m_still_asleep and !generation_one_awaken()) {
 		*this = {};
 		return CompleteResult<generation>(NoResult());
 	}
 	if (!m_move) {
-		BOUNDED_ASSUME(m_still_asleep);
 		// Technically incorrect with things like Sucker Punch and priority
 		insert(m_move, UsedMoveBuilder{Moves::Struggle});
 	}
