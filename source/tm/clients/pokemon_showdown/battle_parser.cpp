@@ -267,7 +267,7 @@ struct BattleParserImpl : BattleParser {
 		}
 
 		auto const type = message.type();
-		if (type.empty() or (type.front() != '-' and type != "drag" and type != "move")) {
+		if (type.empty() or (type.front() != '-' and type != "drag" and type != "move" and type != "switch")) {
 			maybe_use_previous_move();
 		}
 
@@ -279,6 +279,7 @@ struct BattleParserImpl : BattleParser {
 		} else if (type == "-ability") {
 			auto const party = party_from_player_id(message.pop());
 			auto const ability = from_string<Ability>(message.pop());
+			maybe_commit_switch(party);
 			if (auto const switch_index = m_move_state.switch_index()) {
 				m_battle.set_value_on_index(is_ai(party), *switch_index, ability);
 			} else {
@@ -288,6 +289,7 @@ struct BattleParserImpl : BattleParser {
 			auto const party = party_from_player_id(message.pop());
 			auto const [category, source] = split_view(message.pop(), ": "sv);
 			auto const details = message.pop();
+			maybe_commit_switch(party);
 			bounded::visit(parse_effect_source(category, source), bounded::overload(
 				[](MainEffect) { throw std::runtime_error("Unexpected -activate source MainEffect"); },
 				[](FromConfusion) {},
@@ -535,31 +537,20 @@ struct BattleParserImpl : BattleParser {
 #endif
 		} else if (type == "-supereffective") {
 			// message.remainder() == POKEMON
-		} else if (type == "switch" or type == "drag") {
-			auto const parsed = parse_switch(message);
-
-			if (is_ai(parsed.party)) {
-				auto const index = find_required_index(m_battle.ai().all_pokemon(), parsed.species);
-				if (m_replacing_fainted) {
-					m_slot_memory.replace_fainted(index);
-					m_replacing_fainted = false;
-				} else {
-					m_slot_memory.switch_to(index);
-				}
+		} else if (type == "switch") {
+			if (!m_ai_switch and !m_foe_switch) {
+				maybe_use_previous_move();
 			}
-
-			auto const move = m_battle.find_or_add_pokemon(is_ai(parsed.party), parsed.species, parsed.level, parsed.gender);
-			m_battle.correct_hp_and_status(
-				is_ai(parsed.party),
-				parsed.hp,
-				parsed.status,
-				to_replacement(move)
-			);
-			if (type == "drag") {
-				m_move_state.phaze_index(other(parsed.party), get_team(parsed.party).all_pokemon(), parsed.species);
-			} else {
-				m_move_state.use_move(parsed.party, move);
+			auto const parsed = handle_switch_or_drag(message);
+			auto & switch_ = get_switch(parsed.party);
+			if (switch_) {
+				throw std::runtime_error("Tried to switch in the same Pokemon twice");
 			}
+			bounded::insert(switch_, Switch{parsed.move, parsed.hp, parsed.status});
+		} else if (type == "drag") {
+			auto const parsed = handle_switch_or_drag(message);
+			m_move_state.phaze_index(other(parsed.party), get_team(parsed.party).all_pokemon(), parsed.species);
+			m_move_state.hp_change(parsed.party, {parsed.hp, parsed.status});
 		} else if (type == "replace") {
 #if 0
 			// Illusion ended
@@ -602,6 +593,7 @@ struct BattleParserImpl : BattleParser {
 			auto const party = party_from_player_id(message.pop());
 			auto const status = parse_status(message.pop());
 			auto const source = parse_from_source(message);
+			maybe_commit_switch(party);
 			bounded::visit(source, bounded::overload(
 				[&](MainEffect) { m_move_state.status(party, status); },
 				[](FromConfusion) { throw std::runtime_error("Confusion cannot cause another status"); },
@@ -655,6 +647,7 @@ struct BattleParserImpl : BattleParser {
 				[&](Ability const ability) {
 					[[maybe_unused]] auto const of = message.pop(' ');
 					auto const party = party_from_player_id(message.pop());
+					maybe_commit_switch(party);
 					m_battle.set_value_on_active(is_ai(party), ability);
 				},
 				[](auto) { }
@@ -702,6 +695,7 @@ private:
 			m_move_state.damage(party, hp_and_status);
 		};
 		auto const party = parsed.party;
+		maybe_commit_switch(party);
 		bounded::visit(parsed.source, bounded::overload(
 			[&](MainEffect) {
 				if (m_move_state.move_damages_self(party)) {
@@ -727,10 +721,56 @@ private:
 			[](FromSubstitute) {},
 			[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
 		));
-		m_move_state.hp_change(party, hp_and_status);
+		if (m_move_state.party()) {
+			m_move_state.hp_change(party, hp_and_status);
+		}
 	}
 
+	auto handle_switch_or_drag(InMessage message) {
+		auto const parsed = parse_switch(message);
+
+		auto const data_is_for_ai = is_ai(parsed.party);
+		if (data_is_for_ai) {
+			auto const index = find_required_index(m_battle.ai().all_pokemon(), parsed.species);
+			if (m_replacing_fainted) {
+				m_slot_memory.replace_fainted(index);
+				m_replacing_fainted = false;
+			} else {
+				m_slot_memory.switch_to(index);
+			}
+		}
+
+		auto const move = m_battle.find_or_add_pokemon(data_is_for_ai, parsed.species, parsed.level, parsed.gender);
+		struct ParsedSwitchAndMove : ParsedSwitch {
+			Moves move;
+		};
+		return ParsedSwitchAndMove{parsed, move};
+	}
+
+	auto & get_switch(Party const party) {
+		return is_ai(party) ? m_ai_switch : m_foe_switch;
+	}
+
+	void maybe_commit_switch(Party const party) {
+		auto & switch_ = get_switch(party);
+		if (!switch_) {
+			return;
+		}
+		auto const move_party = m_move_state.party();
+		if (move_party and *move_party != party) {
+			maybe_use_previous_move_impl();
+		}
+		m_move_state.use_move(party, switch_->move);
+		m_move_state.hp_change(party, {switch_->hp, switch_->status});
+		switch_ = bounded::none;
+	}
 	void maybe_use_previous_move() {
+		maybe_use_previous_move_impl();
+		maybe_commit_switch(m_ai_party);
+		maybe_commit_switch(other(m_ai_party));
+		maybe_use_previous_move_impl();
+	}
+	void maybe_use_previous_move_impl() {
 		auto const maybe_data = m_move_state.complete<generation>(m_ai_party, m_battle.ai(), m_battle.foe(), m_battle.weather());
 		if (!maybe_data) {
 			return;
@@ -883,6 +923,13 @@ private:
 	DepthValues m_depth;
 	MoveState m_move_state;
 	EndOfTurnState m_end_of_turn_state;
+	struct Switch {
+		Moves move;
+		VisibleHP hp;
+		Statuses status;
+	};
+	bounded::optional<Switch> m_ai_switch;
+	bounded::optional<Switch> m_foe_switch;
 	bool m_log_foe_teams;
 	bool m_completed = false;
 	bool m_replacing_fainted = false;
