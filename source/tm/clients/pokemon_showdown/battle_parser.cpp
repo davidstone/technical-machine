@@ -304,11 +304,7 @@ struct BattleParserImpl : BattleParser {
 			auto const party = party_from_player_id(message.pop());
 			auto const ability = from_string<Ability>(message.pop());
 			maybe_commit_switch(party);
-			if (auto const switch_index = m_move_state.switch_index()) {
-				m_battle.set_value_on_index(is_ai(party), *switch_index, ability);
-			} else {
-				m_battle.set_value_on_active(is_ai(party), ability);
-			}
+			set_value_on_pokemon(party, ability);
 		} else if (type == "-activate") {
 			auto const party = party_from_player_id(message.pop());
 			auto const [category, source] = split_view(message.pop(), ": "sv);
@@ -328,11 +324,10 @@ struct BattleParserImpl : BattleParser {
 					}
 				},
 				[&](Ability const ability) {
-					auto const ability_is_for_ai = is_ai(party);
-					m_battle.set_value_on_active(ability_is_for_ai, ability);
+					set_value_on_pokemon(party, ability);
 					switch (ability) {
 						case Ability::Forewarn:
-							m_battle.add_move(!ability_is_for_ai, from_string<Moves>(details));
+							m_battle.add_move(!is_ai(party), from_string<Moves>(details));
 							break;
 						case Ability::Shed_Skin:
 							m_end_of_turn_state.shed_skin(party);
@@ -341,7 +336,7 @@ struct BattleParserImpl : BattleParser {
 							break;
 					}
 				},
-				[&](Item const item) { m_battle.set_value_on_active(is_ai(party), item); }
+				[&](Item const item) { set_value_on_pokemon(party, item); }
 			));
 		} else if (type == "-anim") {
 #if 0
@@ -425,9 +420,8 @@ struct BattleParserImpl : BattleParser {
 				}
 			}
 			auto const source = parse_from_source(message);
-			// TODO: Might not always apply to active Pokemon
 			bounded::visit(source, bounded::overload(
-				[&](Ability const ability) { m_battle.set_value_on_active(is_ai(party), ability); },
+				[&](Ability const ability) { set_value_on_pokemon(party, ability); },
 				[](auto) { }
 			));
 		} else if (type == "-cureteam") {
@@ -457,7 +451,7 @@ struct BattleParserImpl : BattleParser {
 		} else if (type == "-enditem") {
 			auto const party = party_from_player_id(message.pop());
 			auto const item = from_string<Item>(message.pop());
-			m_battle.set_value_on_active(is_ai(party), item);
+			set_value_on_pokemon(party, item);
 		} else if (type == "error") {
 			if (message.remainder() != "[Invalid choice] There's nothing to choose") {
 				send_random_move();
@@ -493,7 +487,7 @@ struct BattleParserImpl : BattleParser {
 				[](FromMove) {},
 				[](FromRecoil) { throw std::runtime_error("Recoil cannot heal"); },
 				[](FromSubstitute) { throw std::runtime_error("Substitute cannot heal"); },
-				[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
+				[&](auto const value) { set_value_on_pokemon(party, value); }
 			));
 			queue_hp_or_status_checks(party, parsed.hp);
 			queue_hp_or_status_checks(party, parsed.status);
@@ -516,7 +510,7 @@ struct BattleParserImpl : BattleParser {
 				[](FromMove) { throw std::runtime_error("Moves cannot cause immunity"); },
 				[](FromRecoil) { throw std::runtime_error("Recoil cannot cause immunity"); },
 				[](FromSubstitute) { throw std::runtime_error("Substitute cannot cause immunity"); },
-				[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
+				[&](auto const value) { set_value_on_pokemon(party, value); }
 			));
 		} else if (type == "inactive") {
 			// message.remainder() == MESSAGE
@@ -527,7 +521,7 @@ struct BattleParserImpl : BattleParser {
 		} else if (type == "-item") {
 			auto const party = party_from_player_id(message.pop());
 			auto const item = from_string<Item>(message.pop());
-			m_battle.set_value_on_active(is_ai(party), item);
+			set_value_on_pokemon(party, item);
 		} else if (type == "-mega") {
 #if 0
 			auto const pokemon = message.pop();
@@ -634,7 +628,7 @@ struct BattleParserImpl : BattleParser {
 				[](FromMove) {},
 				[](FromRecoil) { throw std::runtime_error("Unexpected -start source FromRecoil"); },
 				[](FromSubstitute) {},
-				[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
+				[&](auto const value) { set_value_on_pokemon(party, value); }
 			));
 		} else if (type == "-status") {
 			auto const party = party_from_player_id(message.pop());
@@ -649,7 +643,7 @@ struct BattleParserImpl : BattleParser {
 				[](FromRecoil) { throw std::runtime_error("Recoil cannot cause another status"); },
 				[](FromSubstitute) { throw std::runtime_error("Substitute cannot cause another status"); },
 				[&](auto const value) {
-					m_battle.set_value_on_active(is_ai(party), value);
+					set_value_on_pokemon(party, value);
 					m_move_state.set_expected(party, status);
 				}
 			));
@@ -698,7 +692,7 @@ struct BattleParserImpl : BattleParser {
 					[[maybe_unused]] auto const of = message.pop(' ');
 					auto const party = party_from_player_id(message.pop());
 					maybe_commit_switch(party);
-					m_battle.set_value_on_active(is_ai(party), ability);
+					set_value_on_pokemon(party, ability);
 				},
 				[](auto) { }
 			));
@@ -768,7 +762,7 @@ private:
 			[](FromMove) {},
 			[&](FromRecoil) { m_move_state.recoil(party); },
 			[](FromSubstitute) {},
-			[&](auto const value) { m_battle.set_value_on_active(is_ai(party), value); }
+			[&](auto const value) { set_value_on_pokemon(party, value); }
 		));
 		queue_hp_or_status_checks(party, parsed.hp);
 		queue_hp_or_status_checks(party, parsed.status);
@@ -792,6 +786,14 @@ private:
 			Moves move;
 		};
 		return ParsedSwitchAndMove{parsed, move};
+	}
+
+	void set_value_on_pokemon(Party const party, auto const value) {
+		if (auto const switch_index = m_move_state.switch_index()) {
+			m_battle.set_value_on_index(is_ai(party), *switch_index, value);
+		} else {
+			m_battle.set_value_on_active(is_ai(party), value);
+		}
 	}
 
 	void queue_hp_or_status_checks(Party const party, auto const value) {

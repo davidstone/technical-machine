@@ -130,6 +130,11 @@ struct Battle {
 	void set_value_on_active(bool const is_ai, Item const item) {
 		active_pokemon(is_ai).set_item(item);
 	}
+	void set_value_on_index(bool const is_ai, TeamIndex const index, Item const item) {
+		apply_to_teams(is_ai, [=](auto & team, auto const &) {
+			team.pokemon(index).set_item(item);
+		});
+	}
 
 	// TODO: What happens here if a Pokemon has a pinch item?
 	void correct_hp(bool const is_ai, VisibleHP const visible_hp, auto... maybe_index) {
