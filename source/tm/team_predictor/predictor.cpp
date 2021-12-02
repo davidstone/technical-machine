@@ -147,7 +147,7 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) -> SeenTeam<g
 		containers::push_back(all_pokemon, std::move(pokemon));
 	}
 
-	auto team = SeenTeam<generation>(containers::size(all_pokemon));
+	auto team = SeenTeam<generation>(max_pokemon_per_team);
 	for (auto && pokemon : all_pokemon) {
 		team.add_pokemon(std::move(pokemon));
 	}
