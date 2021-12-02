@@ -894,6 +894,7 @@ private:
 				auto const ability_blocks_recoil =
 					causes_recoil(data.move.executed) and
 					!data.recoil and
+					!Effectiveness(generation, move_type, other_pokemon.types()).has_no_effect() and
 					!ability_blocks_move(
 						generation,
 						other_pokemon.ability(),
