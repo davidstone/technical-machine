@@ -22,12 +22,14 @@ struct KnownPokemon {
 		m_pokemon(species_, level_, gender_, item_, ability_, stat_inputs, regular_moves_, happiness_),
 		m_nickname(std::move(nickname_))
 	{
+		check_no_generation_one_hidden_power();
 	}
 
 	explicit KnownPokemon(Pokemon<generation> pokemon):
 		m_pokemon(pokemon),
 		m_nickname(to_string(m_pokemon.species()))
 	{
+		check_no_generation_one_hidden_power();
 	}
 
 	constexpr explicit operator Pokemon<generation>() const {
@@ -131,6 +133,12 @@ struct KnownPokemon {
 
 	friend auto operator==(KnownPokemon const &, KnownPokemon const &) -> bool = default;
 private:
+	constexpr auto check_no_generation_one_hidden_power() const {
+		// TODO: More general check that they don't have later generation moves
+		if (generation == Generation::one and has_hidden_power(*this)) {
+			throw std::runtime_error("Generation 1 Pokemon cannot have Hidden Power");
+		}
+	}
 
 	Pokemon<generation> m_pokemon;
 	containers::string m_nickname;

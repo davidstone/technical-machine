@@ -864,6 +864,10 @@ private:
 				return;
 			} else {
 				constexpr auto data_is_for_ai = std::is_same_v<Data, MoveState::AIResult<generation>>;
+				m_battle.add_move(data_is_for_ai, data.move.selected);
+				if (data.move.selected == Moves::Sleep_Talk) {
+					m_battle.add_move(data_is_for_ai, data.move.executed);
+				}
 				auto const user_pokemon = [&] {
 					if constexpr (data_is_for_ai) {
 						return m_battle.ai().pokemon();
@@ -878,10 +882,11 @@ private:
 						return m_battle.ai().pokemon();
 					}
 				}();
+				auto const move_type = get_type(generation, data.move.executed, get_hidden_power_type(user_pokemon));
 				auto const known_move = [&] {
 					return KnownMove{
 						data.move.executed,
-						get_type(generation, data.move.executed, get_hidden_power_type(user_pokemon))
+						move_type
 					};
 				};
 				auto const ability_blocks_recoil =

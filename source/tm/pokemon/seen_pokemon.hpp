@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/happiness.hpp>
 #include <tm/pokemon/hidden_power.hpp>
 #include <tm/pokemon/level.hpp>
@@ -40,6 +41,13 @@
 #include <cstdint>
 
 namespace technicalmachine {
+
+auto has_hidden_power(any_pokemon auto const & pokemon) -> bool {
+	return containers::maybe_find_if(pokemon.regular_moves(), [](Move const move) {
+		return move.name() == Moves::Hidden_Power;
+	});
+}
+
 
 template<Generation generation>
 struct SeenPokemon {
@@ -240,10 +248,7 @@ struct SeenPokemon {
 
 	auto hidden_power() const -> bounded::optional<HiddenPower<generation>> {
 		// TODO: ???
-		auto const has_hidden_power = containers::maybe_find_if(m_regular_moves, [](Move const move) {
-			return move.name() == Moves::Hidden_Power;
-		});
-		return has_hidden_power ?
+		return has_hidden_power(*this) ?
 			HiddenPower<generation>(numeric_traits::max_value<typename HiddenPower<generation>::Power>, Type::Dark) :
 			bounded::optional<HiddenPower<generation>>();
 	}

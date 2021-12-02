@@ -82,10 +82,6 @@ struct Battle {
 	template<any_team UserTeam>
 	void handle_use_move(UsedMove<UserTeam> const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
 		constexpr auto is_ai = std::is_same_v<UserTeam, KnownTeam<generation_from<UserTeam>>>;
-		add_move(is_ai, move.selected);
-		if (move.selected == Moves::Sleep_Talk) {
-			add_move(is_ai, move.executed);
-		}
 
 		auto const teams = [&] {
 			struct Teams {
