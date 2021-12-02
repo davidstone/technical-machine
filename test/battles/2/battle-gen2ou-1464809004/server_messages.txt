@@ -1,0 +1,244 @@
+>battle-gen2ou-1464809004
+|title|david stone vs. Technical Machine
+|j|☆david stone
+|j|☆Technical Machine
+|request|
+|t:|1638405994
+|gametype|singles
+|player|p1|david stone|colress|
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Lovely Kiss","id":"lovelykiss","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Psychic","id":"psychic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Jynx","details":"Jynx, F","condition":"317/317","active":true,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":false,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":3}
+|player|p2|Technical Machine|170|
+|teamsize|p1|6
+|teamsize|p2|6
+|gen|2
+|tier|[Gen 2] OU
+|rule|Sleep Clause Mod: Limit one foe put to sleep
+|rule|Freeze Clause Mod: Limit one foe frozen
+|rule|Species Clause: Limit one of each Pokémon
+|rule|OHKO Clause: OHKO moves are banned
+|rule|Evasion Moves Clause: Evasion moves are banned
+|rule|Endless Battle Clause: Forcing endless battles is banned
+|rule|HP Percentage Mod: HP is shown in percentages
+||
+|t:|1638405994
+|start|
+|switch|p1a: Raikou|Raikou|100/100
+|switch|p2a: Jynx|Jynx, F|317/317
+|turn|1
+|inactive|Battle timer is ON: inactive players will automatically lose when time's up. (requested by Technical Machine)
+|inactive|Time left: 300 sec this turn | 300 sec total | 60 sec grace
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Lovely Kiss","id":"lovelykiss","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Psychic","id":"psychic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Jynx","details":"Jynx, F","condition":"219/317","active":true,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":false,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":5}
+||
+|t:|1638406001
+|move|p1a: Raikou|Thunderbolt|p2a: Jynx
+|-damage|p2a: Jynx|200/317
+|move|p2a: Jynx|Lovely Kiss|p1a: Raikou|[miss]
+|-miss|p2a: Jynx
+||
+|-heal|p2a: Jynx|219/317|[from] item: Leftovers
+|upkeep|
+|turn|2
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Ice Beam","id":"icebeam","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Thunder","id":"thunder","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Lovely Kiss","id":"lovelykiss","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":true,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":false,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"219/317","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":7}
+||
+|t:|1638406008
+|switch|p1a: Suicune|Suicune|100/100
+|switch|p2a: Nidoking|Nidoking, M|365/365
+||
+|upkeep|
+|turn|3
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Charm","id":"charm","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Baton Pass","id":"batonpass","pp":61,"maxpp":61,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Moonlight","id":"moonlight","pp":8,"maxpp":8,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"314/377","active":true,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"219/317","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":9}
+||
+|t:|1638406011
+|switch|p2a: Umbreon|Umbreon, F|377/377
+|move|p1a: Suicune|Surf|p2a: Umbreon
+|-damage|p2a: Umbreon|291/377
+||
+|-heal|p2a: Umbreon|314/377|[from] item: Leftovers
+|upkeep|
+|turn|4
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Charm","id":"charm","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Baton Pass","id":"batonpass","pp":61,"maxpp":61,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Moonlight","id":"moonlight","pp":7,"maxpp":8,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":true,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"219/317","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":11}
+||
+|t:|1638406017
+|switch|p1a: Skarmory|Skarmory, M|100/100
+|move|p2a: Umbreon|Moonlight|p2a: Umbreon
+|-heal|p2a: Umbreon|377/377
+||
+|upkeep|
+|turn|5
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Spikes","id":"spikes","pp":32,"maxpp":32,"target":"foeSide","disabled":false},{"move":"Surf","id":"surf","pp":24,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Explosion","id":"explosion","pp":8,"maxpp":8,"target":"allAdjacent","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":true,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":false,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"219/317","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":13}
+||
+|t:|1638406024
+|move|p2a: Umbreon|Charm|p1a: Skarmory
+|-unboost|p1a: Skarmory|atk|2
+|move|p1a: Skarmory|Whirlwind|p2a: Umbreon
+|drag|p2a: Cloyster|Cloyster, M|303/303
+||
+|upkeep|
+|turn|6
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Spikes","id":"spikes","pp":31,"maxpp":32,"target":"foeSide","disabled":false},{"move":"Surf","id":"surf","pp":24,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Explosion","id":"explosion","pp":8,"maxpp":8,"target":"allAdjacent","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":true,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":false,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"219/317","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":15}
+||
+|t:|1638406030
+|switch|p1a: Forretress|Forretress, M|100/100
+|move|p2a: Cloyster|Spikes|p1a: Forretress
+|-sidestart|p1: david stone|Spikes
+||
+|upkeep|
+|turn|7
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Spikes","id":"spikes","pp":31,"maxpp":32,"target":"foeSide","disabled":false},{"move":"Surf","id":"surf","pp":23,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Explosion","id":"explosion","pp":8,"maxpp":8,"target":"allAdjacent","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":true,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":false,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"219/317","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":17}
+||
+|t:|1638406031
+|move|p2a: Cloyster|Surf|p1a: Forretress
+|-damage|p1a: Forretress|57/100
+|move|p1a: Forretress|Spikes|p2a: Cloyster
+|-sidestart|p2: Technical Machine|Spikes
+||
+|-heal|p1a: Forretress|63/100|[from] item: Leftovers
+|upkeep|
+|turn|8
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Spikes","id":"spikes","pp":31,"maxpp":32,"target":"foeSide","disabled":false},{"move":"Surf","id":"surf","pp":22,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Explosion","id":"explosion","pp":8,"maxpp":8,"target":"allAdjacent","disabled":false},{"move":"Toxic","id":"toxic","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":true,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":false,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"219/317","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":19}
+||
+|t:|1638406033
+|switch|p1a: Misdreavus|Misdreavus, F|100/100
+|-damage|p1a: Misdreavus|88/100|[from] Spikes
+|move|p2a: Cloyster|Surf|p1a: Misdreavus
+|-damage|p1a: Misdreavus|56/100
+||
+|-heal|p1a: Misdreavus|62/100|[from] item: Leftovers
+|upkeep|
+|turn|9
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Lovely Kiss","id":"lovelykiss","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Psychic","id":"psychic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Jynx","details":"Jynx, F","condition":"199/317 tox","active":true,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":false,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":21}
+||
+|t:|1638406036
+|switch|p2a: Jynx|Jynx, F|219/317
+|-damage|p2a: Jynx|180/317|[from] Spikes
+|move|p1a: Misdreavus|Toxic|p2a: Jynx
+|-status|p2a: Jynx|tox
+||
+|-heal|p2a: Jynx|199/317 tox|[from] item: Leftovers
+|-heal|p1a: Misdreavus|68/100|[from] item: Leftovers
+|upkeep|
+|turn|10
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Lovely Kiss","id":"lovelykiss","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Psychic","id":"psychic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Jynx","details":"Jynx, F","condition":"199/317 tox","active":true,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":false,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":23}
+||
+|t:|1638406040
+|switch|p1a: Suicune|Suicune|100/100
+|-damage|p1a: Suicune|88/100|[from] Spikes
+|move|p2a: Jynx|Ice Beam|p1a: Suicune
+|-resisted|p1a: Suicune
+|-damage|p1a: Suicune|73/100
+|-damage|p2a: Jynx|180/317 tox|[from] psn
+||
+|-heal|p2a: Jynx|199/317 tox|[from] item: Leftovers
+|-heal|p1a: Suicune|80/100|[from] item: Leftovers
+|upkeep|
+|turn|11
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Charm","id":"charm","pp":31,"maxpp":32,"target":"normal","disabled":false},{"move":"Baton Pass","id":"batonpass","pp":61,"maxpp":61,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Moonlight","id":"moonlight","pp":7,"maxpp":8,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"264/377","active":true,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"199/317 tox","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":25}
+||
+|t:|1638406044
+|switch|p2a: Umbreon|Umbreon, F|377/377
+|-damage|p2a: Umbreon|330/377|[from] Spikes
+|move|p1a: Suicune|Surf|p2a: Umbreon
+|-damage|p2a: Umbreon|241/377
+||
+|-heal|p1a: Suicune|86/100|[from] item: Leftovers
+|-heal|p2a: Umbreon|264/377|[from] item: Leftovers
+|upkeep|
+|turn|12
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Charm","id":"charm","pp":31,"maxpp":32,"target":"normal","disabled":false},{"move":"Baton Pass","id":"batonpass","pp":61,"maxpp":61,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Moonlight","id":"moonlight","pp":6,"maxpp":8,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":true,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"199/317 tox","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":27}
+||
+|t:|1638406052
+|switch|p1a: Forretress|Forretress, M|63/100
+|-damage|p1a: Forretress|51/100|[from] Spikes
+|move|p2a: Umbreon|Moonlight|p2a: Umbreon
+|-heal|p2a: Umbreon|377/377
+||
+|-heal|p1a: Forretress|57/100|[from] item: Leftovers
+|upkeep|
+|turn|13
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Charm","id":"charm","pp":30,"maxpp":32,"target":"normal","disabled":false},{"move":"Baton Pass","id":"batonpass","pp":61,"maxpp":61,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Moonlight","id":"moonlight","pp":6,"maxpp":8,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":true,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"199/317 tox","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":29}
+||
+|t:|1638406055
+|move|p2a: Umbreon|Charm|p1a: Forretress
+|-unboost|p1a: Forretress|atk|2
+|move|p1a: Forretress|Rapid Spin|p2a: Umbreon
+|-damage|p2a: Umbreon|369/377
+|-sideend|p1: david stone|Spikes|[from] move: Rapid Spin|[of] p1a: Forretress
+||
+|-heal|p2a: Umbreon|377/377|[from] item: Leftovers
+|-heal|p1a: Forretress|63/100|[from] item: Leftovers
+|upkeep|
+|turn|14
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Charm","id":"charm","pp":29,"maxpp":32,"target":"normal","disabled":false},{"move":"Baton Pass","id":"batonpass","pp":61,"maxpp":61,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Moonlight","id":"moonlight","pp":6,"maxpp":8,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":true,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"199/317 tox","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":31}
+||
+|t:|1638406058
+|switch|p1a: Skarmory|Skarmory, M|100/100
+|move|p2a: Umbreon|Charm|p1a: Skarmory
+|-unboost|p1a: Skarmory|atk|2
+||
+|upkeep|
+|turn|15
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Charm","id":"charm","pp":28,"maxpp":32,"target":"normal","disabled":false},{"move":"Baton Pass","id":"batonpass","pp":61,"maxpp":61,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Moonlight","id":"moonlight","pp":6,"maxpp":8,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":true,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"199/317 tox","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":33}
+||
+|t:|1638406064
+|switch|p1a: Raikou|Raikou|100/100
+|move|p2a: Umbreon|Charm|p1a: Raikou
+|-unboost|p1a: Raikou|atk|2
+||
+|upkeep|
+|turn|16
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Charm","id":"charm","pp":28,"maxpp":32,"target":"normal","disabled":false},{"move":"Baton Pass","id":"batonpass","pp":61,"maxpp":61,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Moonlight","id":"moonlight","pp":6,"maxpp":8,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":true,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"199/317 tox","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":35}
+||
+|t:|1638406067
+|switch|p1a: Skarmory|Skarmory, M|100/100
+|move|p2a: Umbreon|Rest|p2a: Umbreon
+|-fail|p2a: Umbreon
+||
+|upkeep|
+|turn|17
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Charm","id":"charm","pp":28,"maxpp":32,"target":"normal","disabled":false},{"move":"Baton Pass","id":"batonpass","pp":61,"maxpp":61,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Moonlight","id":"moonlight","pp":6,"maxpp":8,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":true,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"199/317 tox","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":37}
+||
+|t:|1638406074
+|switch|p1a: Raikou|Raikou|100/100
+|move|p2a: Umbreon|Rest|p2a: Umbreon
+|-fail|p2a: Umbreon
+||
+|upkeep|
+|turn|18
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Charm","id":"charm","pp":28,"maxpp":32,"target":"normal","disabled":false},{"move":"Baton Pass","id":"batonpass","pp":61,"maxpp":61,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":13,"maxpp":16,"target":"self","disabled":false},{"move":"Moonlight","id":"moonlight","pp":6,"maxpp":8,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":true,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Jynx","details":"Jynx, F","condition":"199/317 tox","active":false,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":39}
+||
+|t:|1638406077
+|move|p1a: Raikou|Reflect|p1a: Raikou
+|-sidestart|p1: david stone|Reflect
+|move|p2a: Umbreon|Rest|p2a: Umbreon
+|-fail|p2a: Umbreon
+||
+|upkeep|
+|turn|19
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Ice Beam","id":"icebeam","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Lovely Kiss","id":"lovelykiss","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Psychic","id":"psychic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Substitute","id":"substitute","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p2","pokemon":[{"ident":"p2: Jynx","details":"Jynx, F","condition":"179/317 psn","active":true,"stats":{"atk":105,"def":168,"spa":328,"spd":288,"spe":288},"moves":["icebeam","lovelykiss","psychic","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Nidoking","details":"Nidoking, M","condition":"365/365","active":false,"stats":{"atk":282,"def":252,"spa":268,"spd":248,"spe":268},"moves":["earthquake","icebeam","thunder","lovelykiss"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Umbreon","details":"Umbreon, F","condition":"377/377","active":false,"stats":{"atk":135,"def":318,"spa":218,"spd":358,"spe":228},"moves":["charm","batonpass","rest","moonlight"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Tentacruel","details":"Tentacruel, M","condition":"363/363","active":false,"stats":{"atk":238,"def":228,"spa":258,"spd":338,"spe":298},"moves":["sludgebomb","surf","swordsdance","substitute"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p2: Cloyster","details":"Cloyster, M","condition":"303/303","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":188,"spe":238},"moves":["spikes","surf","explosion","toxic"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":41}
+||
+|t:|1638406079
+|move|p2a: Umbreon|Rest|p2a: Umbreon
+|-fail|p2a: Umbreon
+|move|p1a: Raikou|Roar|p2a: Umbreon
+|drag|p2a: Jynx|Jynx, F|199/317 tox
+|-status|p2a: Jynx|psn|[silent]
+|-damage|p2a: Jynx|160/317 psn|[from] Spikes
+||

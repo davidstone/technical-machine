@@ -68,6 +68,11 @@ void MoveState::status_from_move(Party const party, Statuses const status) {
 			throw_error();
 		}
 		bounded::insert(m_user.status, status);
+	} else if (is_phaze(m_move->executed)) {
+		if (party != other(*m_party)) {
+			throw_error();
+		}
+		bounded::insert(m_other.status, status);
 	} else {
 		if (party == *m_party) {
 			throw_error();
