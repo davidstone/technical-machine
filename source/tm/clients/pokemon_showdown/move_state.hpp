@@ -91,7 +91,7 @@ struct MoveState {
 		} else {
 			insert(m_party, party);
 		}
-		bounded::insert(party == *m_party ? m_user.status : m_other.status, Statuses::clear);
+		set_expected(party, Statuses::clear);
 		m_clear_status = true;
 	}
 	void confuse() {
