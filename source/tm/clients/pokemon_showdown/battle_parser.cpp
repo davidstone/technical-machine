@@ -566,6 +566,8 @@ struct BattleParserImpl : BattleParser {
 #endif
 		} else if (type == "-resisted") {
 			// message.remainder() == POKEMON
+		} else if (type == "-setboost") {
+			// Belly Drum
 		} else if (type == "-sethp") {
 			auto const parsed = parse_set_hp_message(message);
 			static_cast<void>(parsed);
