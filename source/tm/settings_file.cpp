@@ -1,4 +1,3 @@
-// Read and write settings files
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -6,33 +5,79 @@
 
 #include <tm/settings_file.hpp>
 
-#include <containers/string.hpp>
+#include <containers/algorithms/concatenate.hpp>
 
 #include <nlohmann/json.hpp>
 
 #include <fstream>
 
 namespace technicalmachine {
+namespace {
+
+using namespace std::string_view_literals;
+
+auto get_string(nlohmann::json const & json, char const * const key) {
+	return containers::string(json.at(key).get<std::string_view>());
+};
+
+auto parse_team(nlohmann::json const & json) {
+	auto const it = json.find("team");
+	if (it == json.end()) {
+		return SettingsFile::Team(SettingsFile::NoTeam());
+	}
+	auto const team = it->get<std::string_view>();
+	return containers::is_empty(team) ?
+		SettingsFile::Team(SettingsFile::GenerateTeam()) :
+		SettingsFile::Team(std::filesystem::path(team));
+}
+
+auto parse_style(nlohmann::json const & json) {
+	auto get = [&](char const * const str) {
+		return get_string(json, str);
+	};
+	auto const mode = get("mode");
+	if (mode == "ladder") {
+		return SettingsFile::Style(SettingsFile::Ladder{
+			get("format")
+		});
+	} else if (mode == "challenge") {
+		return SettingsFile::Style(SettingsFile::Challenge{
+			get("user"),
+			get("format")
+		});
+	} else if (mode == "accept") {
+		return SettingsFile::Style(SettingsFile::Accept{
+			containers::vector<containers::string>(json.at("users").get<std::vector<std::string_view>>())
+		});
+	} else {
+		throw std::runtime_error(containers::concatenate<std::string>("Invalid mode "sv, mode));
+	}
+}
+
+} // namespace
 
 auto load_settings_file(std::filesystem::path const & path) -> SettingsFile {
 	auto file = std::ifstream(path);
 	auto json = nlohmann::json();
 	file >> json;
-	auto const & server = json.at("settings");
-	auto username = containers::string(server.at("username").get<std::string_view>());
+	auto const & settings = json.at("settings");
+	auto get = [&](char const * const str) {
+		return get_string(settings, str);
+	};
+	auto username = get("username");
 	if (containers::is_empty(username)) {
 		throw std::runtime_error("Missing username and password in settings file");
 	}
-	auto team_file = server.at("team").get<std::string_view>();
 
 	return SettingsFile{
-		BOUNDED_CONDITIONAL(!containers::is_empty(team_file), std::filesystem::path(team_file), bounded::none),
-		containers::string(server.at("host").get<std::string_view>()),
-		containers::string(server.at("port").get<std::string_view>()),
+		get("host"),
+		get("port"),
+		get("resource"),
 		std::move(username),
-		containers::string(server.at("password").get<std::string_view>()),
-		containers::string(server.at("resource").get<std::string_view>())
+		get("password"),
+		parse_team(settings),
+		parse_style(settings.at("style"))
 	};
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

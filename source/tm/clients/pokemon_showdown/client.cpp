@@ -10,12 +10,14 @@
 
 #include <tm/clients/pokemon_showdown/chat.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
+#include <tm/clients/pokemon_showdown/to_packed_format.hpp>
 
 #include <tm/team_predictor/lead_stats.hpp>
+#include <tm/team_predictor/team_predictor.hpp>
 
 #include <tm/constant_generation.hpp>
 #include <tm/get_directory.hpp>
-#include <tm/settings_file.hpp>
+#include <tm/load_team_from_file.hpp>
 #include <tm/team.hpp>
 
 #include <bounded/scope_guard.hpp>
@@ -23,6 +25,7 @@
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/single_element_range.hpp>
+#include <containers/string.hpp>
 
 #include <boost/beast/http.hpp>
 
@@ -31,23 +34,13 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 namespace technicalmachine {
 namespace ps {
 namespace {
 
 using namespace std::string_view_literals;
-
-// Ideally this would return a lazy range
-auto load_lines_from_file(std::filesystem::path const & file_name) {
-	auto result = containers::vector<containers::string>();
-	auto file = std::ifstream(file_name);
-	auto line = std::string();
-	while (std::getline(file, line)) {
-		containers::push_back(result, containers::string(line));
-	}
-	return result;
-}
 
 constexpr auto parse_generation(std::string_view const id) -> Generation {
 	// TODO: This won't work for generation 10
@@ -69,7 +62,6 @@ constexpr auto parse_generation(std::string_view const id) -> Generation {
 ClientImpl::ClientImpl(SettingsFile settings, DepthValues const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
 	m_random_engine(m_rd()),
 	m_settings(std::move(settings)),
-	m_trusted_users(load_lines_from_file(get_settings_directory() / "trusted_users.txt")),
 	m_depth(depth),
 	m_battles("battles", true),
 	m_send_message(std::move(send_message)),
@@ -89,20 +81,67 @@ void ClientImpl::run(DelimitedBufferView<std::string_view> messages) {
 }
 
 void ClientImpl::send_team(Generation const runtime_generation) {
-	auto make_packed = [&]<Generation generation>(constant_gen_t<generation>) {
-		return to_packed_format(generate_team<generation>());
+	auto send_team = [&](std::string_view const team_str) {
+		m_send_message(containers::concatenate<containers::string>("|/utm "sv, team_str));
 	};
-	m_send_message(containers::concatenate<containers::string>("|/utm "sv, constant_generation(runtime_generation, make_packed)));
+	auto send_real_team = [&](auto make_team_str) {
+		send_team(constant_generation(runtime_generation, make_team_str));
+	};
+	return bounded::visit(m_settings.team, bounded::overload(
+		[&](SettingsFile::NoTeam) { send_team("null"); },
+		[&](SettingsFile::GenerateTeam) {
+			send_real_team([&]<Generation generation>(constant_gen_t<generation>) {
+				return to_packed_format(generate_team<generation>(
+					m_all_usage_stats[generation],
+					use_lead_stats,
+					m_random_engine
+				));
+			});
+		},
+		[&](std::filesystem::path const & path) {
+			send_real_team([&]<Generation generation>(constant_gen_t<generation>) {
+				auto const team = load_random_team_from_directory(m_random_engine, path);
+				constexpr auto expected_type = bounded::detail::types<KnownTeam<generation>>();
+				if (!holds_alternative(team, expected_type)) {
+					throw std::runtime_error("Generation mismatch in team file vs. battle.");
+				}
+				return to_packed_format(team[expected_type]);
+			});
+		}
+	));
 }
 
+namespace {
+
+struct no_spaces_string_view {
+	constexpr explicit no_spaces_string_view(std::string_view const str):
+		m_str(str)
+	{
+	}
+
+	friend constexpr auto operator==(no_spaces_string_view const lhs, std::string_view const rhs) -> bool {
+		return containers::equal(containers::filter(lhs.m_str, [](char const c) { return c != ' '; }), rhs);
+	}
+	
+private:
+	std::string_view m_str;
+};
+
+} // namespace
 
 void ClientImpl::handle_message(InMessage message) {
 	auto send_challenge = [&]{
-		constexpr auto format = "gen1ou"sv;
-		send_team(parse_generation(format));
-		// m_send_message(containers::concatenate<containers::string>("|/search "sv, format));
-		m_send_message(containers::concatenate<containers::string>("|/challenge davidstone,"sv, format));
-		std::cout << "Sent challenge\n" << std::flush;
+		bounded::visit(m_settings.style, bounded::overload(
+			[&](SettingsFile::Ladder const & ladder) {
+				send_team(parse_generation(ladder.format));
+				m_send_message(containers::concatenate<containers::string>("|/search "sv, ladder.format));
+			},
+			[&](SettingsFile::Challenge const & challenge) {
+				send_team(parse_generation(challenge.format));
+				m_send_message(containers::concatenate<containers::string>("|/challenge "sv, challenge.user, ","sv, challenge.format));
+			},
+			[](SettingsFile::Accept const &) {}
+		));
 	};
 	if (m_battles.handle_message(m_all_usage_stats, message, m_send_message, send_challenge)) {
 		return;
@@ -139,23 +178,36 @@ void ClientImpl::handle_message(InMessage message) {
 	} else if (type == "pm") {
 		auto const from = message.pop();
 		auto const to = message.pop();
-		std::cout << "PM from " << from << " to " << to << ": " << message.remainder() << '\n';
+		auto const initial_message = message.pop();
+		if (initial_message.starts_with("/challenge")) {
+			auto const format = message.pop();
+			if (containers::is_empty(format)) {
+				return;
+			}
+			bounded::visit(m_settings.style, bounded::overload(
+				[](SettingsFile::Ladder const &) {},
+				[](SettingsFile::Challenge const &) {},
+				[&](SettingsFile::Accept const & accept) {
+					auto const should_accept = containers::any_equal(accept.users, no_spaces_string_view(from));
+					if (should_accept) {
+						send_team(parse_generation(format));
+						m_send_message(containers::concatenate<containers::string>("|/accept "sv, from));
+					} else {
+						m_send_message(containers::concatenate<containers::string>("|/reject "sv, from));
+					}
+				}
+			));
+		} else {
+			std::cout << "PM from " << from << " to " << to << ": " << initial_message;
+			if (!containers::is_empty(message.remainder())) {
+				std::cout << '|' << message.remainder();
+			}
+			std::cout << '\n';
+		}
 	} else if (type == "queryresponse") {
 		// message.remainder() == QUERYTYPE|JSON
 	} else if (type == "uhtml" or type == "uhtmlchange") {
 		// message.remainder() == NAME|HTML
-	} else if (type == "updatechallenges") {
-		auto const json = nlohmann::json::parse(message.remainder());
-		for (auto const & challenge : json.at("challengesFrom").items()) {
-			auto const is_trusted = containers::any_equal(m_trusted_users, challenge.key());
-			if (is_trusted) {
-				send_team(parse_generation(challenge.value().get<std::string_view>()));
-				m_send_message(containers::concatenate<containers::string>("|/accept "sv, challenge.key()));
-			} else {
-				m_send_message(containers::concatenate<containers::string>("|/reject "sv, challenge.key()));
-			}
-		}
-		// "cancelchallenge" is the command to stop challenging someone
 	} else if (type == "updateuser") {
 		// message.remainder() == username|guest ? 0 : 1|AVATAR
 	} else if (type == "updatesearch") {

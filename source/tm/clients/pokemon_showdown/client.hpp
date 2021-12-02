@@ -8,20 +8,15 @@
 #include <tm/clients/pokemon_showdown/battles.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 #include <tm/clients/pokemon_showdown/sockets.hpp>
-#include <tm/clients/pokemon_showdown/to_packed_format.hpp>
 
 #include <tm/evaluate/evaluate.hpp>
 
-#include <tm/team_predictor/team_predictor.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
 
 #include <tm/buffer_view.hpp>
-#include <tm/load_team_from_file.hpp>
 #include <tm/settings_file.hpp>
 
 #include <containers/trivial_inplace_function.hpp>
-#include <containers/string.hpp>
-#include <containers/vector.hpp>
 
 #include <random>
 #include <string_view>
@@ -43,26 +38,6 @@ struct ClientImpl {
 	void run(DelimitedBufferView<std::string_view> messages);
 
 private:
-	template<Generation generation>
-	auto generate_team() -> KnownTeam<generation> {
-		if (!m_settings.team_file) {
-			return ::technicalmachine::generate_team<generation>(
-				m_all_usage_stats[generation],
-				use_lead_stats,
-				m_random_engine
-			);
-		}
-		auto parsed = load_random_team_from_directory(m_random_engine, *m_settings.team_file);
-		return bounded::visit(parsed, []<any_known_team TeamType>(TeamType const & team) -> KnownTeam<generation> {
-			if constexpr (generation == generation_from<TeamType>) {
-				return team;
-			} else {
-				throw std::runtime_error("Generation mismatch in team file vs. battle.");
-			}
-		});
-	}
-
-	
 	void send_team(Generation);
 
 	void handle_message(InMessage message);
@@ -82,7 +57,6 @@ private:
 
 	SettingsFile m_settings;
 	
-	containers::vector<containers::string> m_trusted_users;
 	DepthValues m_depth;
 	
 	Battles m_battles;
