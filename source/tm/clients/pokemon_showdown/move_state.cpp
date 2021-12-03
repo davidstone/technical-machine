@@ -118,9 +118,9 @@ auto get_side_effect(auto const move, UserPokemon const user, OtherTeam<UserPoke
 template<Generation generation>
 auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai, SeenTeam<generation> const & foe, Weather const weather) -> CompleteResult<generation> {
 	auto generation_one_awaken = [&] {
-		return generation == Generation::one and m_clear_status;
+		return generation == Generation::one and m_status_change == StatusChange::thaw_or_awaken;
 	};
-	if (!m_move and !m_still_asleep and !generation_one_awaken()) {
+	if (!m_move and m_status_change != StatusChange::still_asleep and !generation_one_awaken()) {
 		*this = {};
 		return CompleteResult<generation>(NoResult());
 	}
@@ -142,7 +142,7 @@ auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai,
 			m_damage,
 			m_user,
 			m_other,
-			m_clear_status,
+			m_status_change == StatusChange::thaw_or_awaken,
 			m_recoil
 		};
 		*this = {};

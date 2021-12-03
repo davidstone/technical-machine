@@ -149,7 +149,8 @@ constexpr auto parse_effect_source(std::string_view const type, std::string_view
 }
 
 auto parse_from_source(InMessage message) {
-	[[maybe_unused]] auto const from_or_silent_or_nothing = message.pop(' ');
+	// [from], [msg], [silent]
+	[[maybe_unused]] auto const bracketed_text_or_nothing = message.pop(' ');
 	auto const [type, source] = split_view(message.pop(), ':');
 	return parse_effect_source(type, source);
 }
@@ -395,40 +396,66 @@ struct BattleParserImpl : BattleParser {
 			auto const user = other(party_from_player_id(message.pop()));
 			m_move_state.critical_hit(user);
 		} else if (type == "-curestatus") {
-			auto const party = party_from_player_id(message.pop());
-			if (moved(m_battle.ai()) and moved(m_battle.foe())) {
-				m_end_of_turn_state.set_expected(party, Statuses::clear);
-			} else if (!m_move_state.party() or *m_move_state.party() == party) {
-				m_move_state.clear_status(party);
-			} else {
-				auto try_use_previous_move = [&] {
-					auto const move_name = m_move_state.executed_move();
-					if (!move_name) {
-						return true;
-					}
-					return apply_to_team(is_ai(party), [&](auto & team) {
-						auto const pokemon = team.pokemon();
-						return !cures_target_status(
-							generation,
-							*move_name,
-							get_hidden_power_type(pokemon),
-							pokemon.status().name()
-						);
-					});
-				};
-				if (try_use_previous_move()) {
-					maybe_use_previous_move();
-				}
-				m_move_state.clear_status(party);
-				if constexpr (generation == Generation::one) {
-					// TODO: Try to do something smarter here
-					m_move_state.use_move(party, Moves::Struggle);
-				}
+			if (m_ignore_next_cure_status) {
+				m_ignore_next_cure_status = false;
+				return;
 			}
+			auto const party = party_from_player_id(message.pop());
+			auto const status = parse_status(message.pop());
 			auto const source = parse_from_source(message);
 			bounded::visit(source, bounded::overload(
-				[&](Ability const ability) { set_value_on_pokemon(party, ability); },
-				[](auto) { }
+				[&](MainEffect) {
+					auto const move_name = m_move_state.executed_move();
+					auto move_cured_status = [&] {
+						if (!move_name) {
+							return false;
+						}
+						if (m_move_state.party() == party) {
+							return true;
+						}
+						return apply_to_team(is_ai(party), [&](auto const & target) {
+							auto const pokemon = target.pokemon();
+							return cures_target_status(
+								generation,
+								*move_name,
+								get_hidden_power_type(pokemon),
+								pokemon.status().name()
+							);
+						});
+					};
+					if (move_cured_status()) {
+						m_move_state.status_from_move(party, Statuses::clear);
+					} else if (moved(m_battle.ai()) and moved(m_battle.foe())) {
+						m_end_of_turn_state.set_expected(party, Statuses::clear);
+					} else {
+						if (status != Statuses::freeze and status != Statuses::sleep) {
+							throw std::runtime_error("Spontaneously recovered from status");
+						}
+						maybe_use_previous_move();
+						m_move_state.thaw_or_awaken(party);
+						if constexpr (generation == Generation::one) {
+							// TODO: Try to do something smarter here
+							m_move_state.use_move(party, Moves::Struggle);
+						}
+					}
+				},
+				[&](Ability const ability) {
+					set_value_on_pokemon(party, ability);
+					switch (ability) {
+						case Ability::Natural_Cure:
+							if (m_next_switch_cures_status) {
+								throw std::runtime_error("Tried to apply Natural Cure twice");
+							}
+							bounded::insert(m_next_switch_cures_status, party);
+							break;
+						case Ability::Shed_Skin:
+							m_end_of_turn_state.set_expected(party, Statuses::clear);
+							break;
+						default:
+							throw std::runtime_error("Unexpected ability cured status");
+					}
+				},
+				[](auto) { throw std::runtime_error("Unexpected -curestatus source"); }
 			));
 		} else if (type == "-cureteam") {
 #if 0
@@ -458,6 +485,13 @@ struct BattleParserImpl : BattleParser {
 			auto const party = party_from_player_id(message.pop());
 			auto const item = from_string<Item>(message.pop());
 			set_value_on_pokemon(party, item);
+			for (auto const status : containers::enum_range<Statuses>()) {
+				if (clears_status(item, status)) {
+					m_ignore_next_cure_status = true;
+					queue_hp_or_status_checks(party, Statuses::clear);
+					break;
+				}
+			}
 		} else if (type == "error") {
 			if (message.remainder() != "[Invalid choice] There's nothing to choose") {
 				send_random_move();
@@ -1033,6 +1067,8 @@ private:
 	DepthValues m_depth;
 	MoveState m_move_state;
 	EndOfTurnState m_end_of_turn_state;
+
+	bounded::optional<Party> m_next_switch_cures_status;
 	struct Switch {
 		Moves move;
 		VisibleHP hp;
@@ -1040,7 +1076,9 @@ private:
 	};
 	bounded::optional<Switch> m_ai_switch;
 	bounded::optional<Switch> m_foe_switch;
+
 	bool m_log_foe_teams;
+	bool m_ignore_next_cure_status = false;
 	bool m_completed = false;
 	bool m_replacing_fainted = false;
 };

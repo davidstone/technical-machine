@@ -85,14 +85,17 @@ struct MoveState {
 		m_damage = SubstituteBroke{};
 	}
 
-	void clear_status(Party const party) {
+	void thaw_or_awaken(Party const party) {
 		if (m_party) {
 			validate(party);
 		} else {
 			insert(m_party, party);
 		}
+		if (m_status_change != StatusChange::nothing_relevant) {
+			throw std::runtime_error("Tried to thaw or awaken at a weird time");
+		}
 		set_expected(party, Statuses::clear);
-		m_clear_status = true;
+		m_status_change = StatusChange::thaw_or_awaken;
 	}
 	void confuse() {
 		if (!m_party or !m_move) {
@@ -172,8 +175,11 @@ struct MoveState {
 		if (m_party) {
 			throw_error();
 		}
+		if (m_status_change != StatusChange::nothing_relevant) {
+			throw std::runtime_error("Cannot be still asleep at this point");
+		}
 		insert(m_party, party);
-		m_still_asleep = true;
+		m_status_change = StatusChange::still_asleep;
 	}
 	auto switch_index() const -> bounded::optional<TeamIndex> {
 		if (!m_move) {
@@ -210,13 +216,16 @@ private:
 		bounded::optional<Statuses> status = bounded::none;
 	};
 
+	enum class StatusChange {
+		nothing_relevant, still_asleep, thaw_or_awaken
+	};
 
 	bounded::optional<Party> m_party;
 	bounded::optional<UsedMoveBuilder> m_move;
 	Damage m_damage{NoDamage()};
 	OptionalHPAndStatus m_user;
 	OptionalHPAndStatus m_other;
-	bool m_clear_status = false;
+	StatusChange m_status_change = StatusChange::nothing_relevant;
 	bool m_recoil = false;
 	bool m_still_asleep = false;
 };

@@ -1,0 +1,429 @@
+>battle-gen2ou-1465417279
+|title|Technical Machine vs. david stone
+|j|☆Technical Machine
+|request|
+|j|☆david stone
+|t:|1638483081
+|gametype|singles
+|player|p1|Technical Machine|2|
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Fire Punch","id":"firepunch","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Recover","id":"recover","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Dynamic Punch","id":"dynamicpunch","pp":8,"maxpp":8,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"313/313","active":true,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"383/383","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":2}
+|player|p2|david stone|colress|
+|teamsize|p1|6
+|teamsize|p2|6
+|gen|2
+|tier|[Gen 2] OU
+|rule|Sleep Clause Mod: Limit one foe put to sleep
+|rule|Freeze Clause Mod: Limit one foe frozen
+|rule|Species Clause: Limit one of each Pokémon
+|rule|OHKO Clause: OHKO moves are banned
+|rule|Evasion Moves Clause: Evasion moves are banned
+|rule|Endless Battle Clause: Forcing endless battles is banned
+|rule|HP Percentage Mod: HP is shown in percentages
+||
+|t:|1638483081
+|start|
+|switch|p1a: Alakazam|Alakazam, M|313/313
+|switch|p2a: Golem|Golem, M|100/100
+|turn|1
+|inactive|Battle timer is ON: inactive players will automatically lose when time's up. (requested by Technical Machine)
+|inactive|Time left: 300 sec this turn | 300 sec total | 60 sec grace
+|request|{"active":[{"moves":[{"move":"Psychic","id":"psychic","pp":15,"maxpp":16,"target":"normal","disabled":false},{"move":"Fire Punch","id":"firepunch","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Recover","id":"recover","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Dynamic Punch","id":"dynamicpunch","pp":8,"maxpp":8,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"148/313","active":true,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"383/383","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":4}
+||
+|t:|1638483091
+|move|p1a: Alakazam|Psychic|p2a: Golem
+|-damage|p2a: Golem|53/100
+|move|p2a: Golem|Earthquake|p1a: Alakazam
+|-damage|p1a: Alakazam|129/313
+||
+|-heal|p1a: Alakazam|148/313|[from] item: Leftovers
+|-heal|p2a: Golem|59/100|[from] item: Leftovers
+|upkeep|
+|turn|2
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"forceSwitch":[true],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":true,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"383/383","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"noCancel":true,"rqid":6}
+||
+|t:|1638483097
+|move|p1a: Alakazam|Psychic|p2a: Golem
+|-damage|p2a: Golem|13/100
+|move|p2a: Golem|Earthquake|p1a: Alakazam
+|-damage|p1a: Alakazam|0 fnt
+|faint|p1a: Alakazam
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Thunder","id":"thunder","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Zapdos","details":"Zapdos","condition":"383/383","active":true,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":8}
+||
+|t:|1638483097
+|switch|p1a: Zapdos|Zapdos|383/383
+||
+|-heal|p2a: Golem|19/100|[from] item: Leftovers
+|upkeep|
+|turn|3
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Thunder","id":"thunder","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Zapdos","details":"Zapdos","condition":"383/383","active":true,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":10}
+||
+|t:|1638483102
+|switch|p2a: Snorlax|Snorlax, M|100/100
+|move|p1a: Zapdos|Hidden Power|p2a: Snorlax
+|-damage|p2a: Snorlax|88/100
+||
+|-heal|p2a: Snorlax|94/100|[from] item: Leftovers
+|upkeep|
+|turn|4
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Hidden Power Dark 70","id":"hiddenpower","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Sleep Talk","id":"sleeptalk","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Thunder","id":"thunder","pp":15,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Zapdos","details":"Zapdos","condition":"243/383","active":true,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":12}
+||
+|t:|1638483109
+|move|p1a: Zapdos|Thunder|p2a: Snorlax
+|-damage|p2a: Snorlax|62/100
+|move|p2a: Snorlax|Double-Edge|p1a: Zapdos
+|-damage|p1a: Zapdos|220/383
+|-damage|p2a: Snorlax|55/100|[from] Recoil|[of] p1a: Zapdos
+||
+|-heal|p1a: Zapdos|243/383|[from] item: Leftovers
+|-heal|p2a: Snorlax|61/100|[from] item: Leftovers
+|upkeep|
+|turn|5
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"forceSwitch":[true],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":true,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":14}
+||
+|t:|1638483114
+|move|p1a: Zapdos|Thunder|p2a: Snorlax|[miss]
+|-miss|p1a: Zapdos
+|move|p2a: Snorlax|Self-Destruct|p1a: Zapdos
+|-damage|p1a: Zapdos|0 fnt
+|faint|p2a: Snorlax
+|faint|p1a: Zapdos
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":16,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":16}
+||
+|t:|1638483119
+|switch|p1a: Machamp|Machamp, M|383/383
+|switch|p2a: Golem|Golem, M|19/100
+||
+|-heal|p2a: Golem|25/100|[from] item: Leftovers
+|upkeep|
+|turn|6
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":16,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":18}
+||
+|t:|1638483128
+|switch|p2a: Heracross|Heracross, M|100/100
+|move|p1a: Machamp|Earthquake|p2a: Heracross
+|-resisted|p2a: Heracross
+|-damage|p2a: Heracross|86/100
+||
+|-heal|p2a: Heracross|92/100|[from] item: Leftovers
+|upkeep|
+|turn|7
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":16,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":20}
+||
+|t:|1638483132
+|move|p2a: Heracross|Curse|p2a: Heracross
+|-unboost|p2a: Heracross|spe|1
+|-boost|p2a: Heracross|atk|1
+|-boost|p2a: Heracross|def|1
+|move|p1a: Machamp|Cross Chop|p2a: Heracross
+|-crit|p2a: Heracross
+|-resisted|p2a: Heracross
+|-damage|p2a: Heracross|43/100
+||
+|-heal|p2a: Heracross|50/100|[from] item: Leftovers
+|upkeep|
+|turn|8
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":6,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":16,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":22}
+||
+|t:|1638483137
+|move|p1a: Machamp|Cross Chop|p2a: Heracross
+|-resisted|p2a: Heracross
+|-damage|p2a: Heracross|34/100
+|move|p2a: Heracross|Rest|p2a: Heracross
+|-status|p2a: Heracross|slp|[from] move: Rest
+|-heal|p2a: Heracross|100/100 slp|[silent]
+||
+|upkeep|
+|turn|9
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":5,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":16,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"262/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":24}
+||
+|t:|1638483142
+|move|p1a: Machamp|Cross Chop|p2a: Heracross
+|-resisted|p2a: Heracross
+|-damage|p2a: Heracross|85/100 slp
+|cant|p2a: Heracross|slp
+|move|p2a: Heracross|Sleep Talk|p2a: Heracross
+|move|p2a: Heracross|Megahorn|p1a: Machamp|[from]Sleep Talk
+|-resisted|p1a: Machamp
+|-damage|p1a: Machamp|239/383
+||
+|-heal|p1a: Machamp|262/383|[from] item: Leftovers
+|-heal|p2a: Heracross|91/100 slp|[from] item: Leftovers
+|upkeep|
+|turn|10
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":5,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":15,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"285/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":26}
+||
+|t:|1638483145
+|move|p1a: Machamp|Rock Slide|p2a: Heracross
+|-damage|p2a: Heracross|75/100 slp
+|cant|p2a: Heracross|slp
+|move|p2a: Heracross|Sleep Talk|p2a: Heracross
+|move|p2a: Heracross|Rest|p2a: Heracross|[from]Sleep Talk
+|-status|p2a: Heracross|slp|[from] move: Rest
+|-heal|p2a: Heracross|100/100 slp|[silent]
+||
+|-heal|p1a: Machamp|285/383|[from] item: Leftovers
+|upkeep|
+|turn|11
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":5,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":14,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"308/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":28}
+||
+|t:|1638483148
+|move|p1a: Machamp|Rock Slide|p2a: Heracross|[miss]
+|-miss|p1a: Machamp
+|cant|p2a: Heracross|slp
+|move|p2a: Heracross|Sleep Talk|p2a: Heracross
+|move|p2a: Heracross|Curse|p2a: Heracross|[from]Sleep Talk
+|-unboost|p2a: Heracross|spe|1
+|-boost|p2a: Heracross|atk|1
+|-boost|p2a: Heracross|def|1
+||
+|-heal|p1a: Machamp|308/383|[from] item: Leftovers
+|upkeep|
+|turn|12
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":5,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":13,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"331/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":30}
+||
+|t:|1638483149
+|move|p1a: Machamp|Rock Slide|p2a: Heracross
+|-damage|p2a: Heracross|88/100 slp
+|cant|p2a: Heracross|slp
+|move|p2a: Heracross|Sleep Talk|p2a: Heracross
+|move|p2a: Heracross|Rest|p2a: Heracross|[from]Sleep Talk
+|-status|p2a: Heracross|slp|[from] move: Rest
+|-heal|p2a: Heracross|100/100 slp|[silent]
+||
+|-heal|p1a: Machamp|331/383|[from] item: Leftovers
+|upkeep|
+|turn|13
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":5,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":12,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"354/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":32}
+||
+|t:|1638483152
+|move|p1a: Machamp|Rock Slide|p2a: Heracross
+|-damage|p2a: Heracross|88/100 slp
+|cant|p2a: Heracross|slp
+|move|p2a: Heracross|Sleep Talk|p2a: Heracross
+|move|p2a: Heracross|Curse|p2a: Heracross|[from]Sleep Talk
+|-unboost|p2a: Heracross|spe|1
+|-boost|p2a: Heracross|atk|1
+|-boost|p2a: Heracross|def|1
+||
+|-heal|p1a: Machamp|354/383|[from] item: Leftovers
+|-heal|p2a: Heracross|94/100 slp|[from] item: Leftovers
+|upkeep|
+|turn|14
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":5,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":12,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":15,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"377/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":34}
+||
+|t:|1638483154
+|move|p1a: Machamp|Curse|p1a: Machamp
+|-unboost|p1a: Machamp|spe|1
+|-boost|p1a: Machamp|atk|1
+|-boost|p1a: Machamp|def|1
+|cant|p2a: Heracross|slp
+|move|p2a: Heracross|Sleep Talk|p2a: Heracross
+|move|p2a: Heracross|Rest|p2a: Heracross|[from]Sleep Talk
+|-status|p2a: Heracross|slp|[from] move: Rest
+|-heal|p2a: Heracross|100/100 slp|[silent]
+||
+|-heal|p1a: Machamp|377/383|[from] item: Leftovers
+|upkeep|
+|turn|15
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":5,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":12,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":36}
+||
+|t:|1638483156
+|move|p1a: Machamp|Curse|p1a: Machamp
+|-unboost|p1a: Machamp|spe|1
+|-boost|p1a: Machamp|atk|1
+|-boost|p1a: Machamp|def|1
+|cant|p2a: Heracross|slp
+|move|p2a: Heracross|Sleep Talk|p2a: Heracross
+|move|p2a: Heracross|Curse|p2a: Heracross|[from]Sleep Talk
+|-unboost|p2a: Heracross|spe|1
+|-boost|p2a: Heracross|atk|1
+|-boost|p2a: Heracross|def|1
+||
+|-heal|p1a: Machamp|383/383|[from] item: Leftovers
+|upkeep|
+|turn|16
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":4,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":12,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"383/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":38}
+||
+|t:|1638483159
+|move|p1a: Machamp|Cross Chop|p2a: Heracross
+|-resisted|p2a: Heracross
+|-damage|p2a: Heracross|84/100 slp
+|cant|p2a: Heracross|slp
+|move|p2a: Heracross|Sleep Talk|p2a: Heracross
+|move|p2a: Heracross|Curse|p2a: Heracross|[from]Sleep Talk
+|-unboost|p2a: Heracross|spe|1
+|-boost|p2a: Heracross|atk|0
+|-boost|p2a: Heracross|def|1
+||
+|-heal|p2a: Heracross|90/100 slp|[from] item: Leftovers
+|upkeep|
+|turn|17
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":3,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":12,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"276/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":40}
+||
+|t:|1638483163
+|move|p1a: Machamp|Cross Chop|p2a: Heracross
+|-resisted|p2a: Heracross
+|-damage|p2a: Heracross|76/100 slp
+|-curestatus|p2a: Heracross|slp|[msg]
+|move|p2a: Heracross|Megahorn|p1a: Machamp
+|-resisted|p1a: Machamp
+|-damage|p1a: Machamp|253/383
+||
+|-heal|p1a: Machamp|276/383|[from] item: Leftovers
+|-heal|p2a: Heracross|82/100|[from] item: Leftovers
+|upkeep|
+|turn|18
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":2,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":12,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"160/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":42}
+||
+|t:|1638483165
+|move|p1a: Machamp|Cross Chop|p2a: Heracross
+|-resisted|p2a: Heracross
+|-damage|p2a: Heracross|68/100
+|move|p2a: Heracross|Megahorn|p1a: Machamp
+|-resisted|p1a: Machamp
+|-damage|p1a: Machamp|137/383
+||
+|-heal|p1a: Machamp|160/383|[from] item: Leftovers
+|-heal|p2a: Heracross|74/100|[from] item: Leftovers
+|upkeep|
+|turn|19
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Cross Chop","id":"crosschop","pp":2,"maxpp":8,"target":"normal","disabled":false},{"move":"Rock Slide","id":"rockslide","pp":12,"maxpp":16,"target":"allAdjacentFoes","disabled":false},{"move":"Curse","id":"curse","pp":13,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"66/383","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":44}
+||
+|t:|1638483170
+|move|p1a: Machamp|Curse|p1a: Machamp
+|-unboost|p1a: Machamp|spe|1
+|-boost|p1a: Machamp|atk|1
+|-boost|p1a: Machamp|def|1
+|move|p2a: Heracross|Megahorn|p1a: Machamp
+|-resisted|p1a: Machamp
+|-damage|p1a: Machamp|43/383
+||
+|-heal|p1a: Machamp|66/383|[from] item: Leftovers
+|-heal|p2a: Heracross|80/100|[from] item: Leftovers
+|upkeep|
+|turn|20
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"forceSwitch":[true],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Machamp","details":"Machamp, M","condition":"0 fnt","active":true,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"noCancel":true,"rqid":46}
+||
+|t:|1638483172
+|move|p1a: Machamp|Cross Chop|p2a: Heracross|[miss]
+|-miss|p1a: Machamp
+|move|p2a: Heracross|Megahorn|p1a: Machamp
+|-resisted|p1a: Machamp
+|-damage|p1a: Machamp|0 fnt
+|faint|p1a: Machamp
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Drill Peck","id":"drillpeck","pp":32,"maxpp":32,"target":"any","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Whirlwind","id":"whirlwind","pp":32,"maxpp":32,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"333/333","active":true,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"0 fnt","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":48}
+||
+|t:|1638483172
+|switch|p1a: Skarmory|Skarmory, M|333/333
+||
+|-heal|p2a: Heracross|86/100|[from] item: Leftovers
+|upkeep|
+|turn|21
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Drill Peck","id":"drillpeck","pp":31,"maxpp":32,"target":"any","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Whirlwind","id":"whirlwind","pp":32,"maxpp":32,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"260/333","active":true,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"0 fnt","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":50}
+||
+|t:|1638483177
+|move|p1a: Skarmory|Drill Peck|p2a: Heracross
+|-supereffective|p2a: Heracross
+|-damage|p2a: Heracross|57/100
+|move|p2a: Heracross|Megahorn|p1a: Skarmory
+|-resisted|p1a: Skarmory
+|-damage|p1a: Skarmory|240/333
+||
+|-heal|p1a: Skarmory|260/333|[from] item: Leftovers
+|-heal|p2a: Heracross|63/100|[from] item: Leftovers
+|upkeep|
+|turn|22
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Drill Peck","id":"drillpeck","pp":30,"maxpp":32,"target":"any","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Whirlwind","id":"whirlwind","pp":32,"maxpp":32,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"280/333","active":true,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"0 fnt","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":52}
+||
+|t:|1638483191
+|switch|p2a: Electabuzz|Electabuzz, M|100/100
+|move|p1a: Skarmory|Drill Peck|p2a: Electabuzz
+|-crit|p2a: Electabuzz
+|-resisted|p2a: Electabuzz
+|-damage|p2a: Electabuzz|65/100
+||
+|-heal|p2a: Electabuzz|71/100|[from] item: Leftovers
+|-heal|p1a: Skarmory|280/333|[from] item: Leftovers
+|upkeep|
+|turn|23
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Double-Edge","id":"doubleedge","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"459/523","active":true,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"0 fnt","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"280/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":54}
+||
+|t:|1638483195
+|switch|p1a: Snorlax|Snorlax, M|523/523
+|move|p2a: Electabuzz|Thunderbolt|p1a: Snorlax
+|-damage|p1a: Snorlax|427/523
+||
+|-heal|p2a: Electabuzz|77/100|[from] item: Leftovers
+|-heal|p1a: Snorlax|459/523|[from] item: Leftovers
+|upkeep|
+|turn|24
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Double-Edge","id":"doubleedge","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":15,"maxpp":16,"target":"allAdjacent","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"491/523","active":true,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"0 fnt","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"280/333","active":false,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":56}
+||
+|t:|1638483199
+|switch|p2a: Exeggutor|Exeggutor, M|100/100
+|move|p1a: Snorlax|Earthquake|p2a: Exeggutor
+|-resisted|p2a: Exeggutor
+|-damage|p2a: Exeggutor|89/100
+||
+|-heal|p2a: Exeggutor|95/100|[from] item: Leftovers
+|-heal|p1a: Snorlax|491/523|[from] item: Leftovers
+|upkeep|
+|turn|25
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Drill Peck","id":"drillpeck","pp":30,"maxpp":32,"target":"any","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Whirlwind","id":"whirlwind","pp":32,"maxpp":32,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"300/333 slp","active":true,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"0 fnt","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"491/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":58}
+||
+|t:|1638483201
+|switch|p1a: Skarmory|Skarmory, M|280/333
+|move|p2a: Exeggutor|Sleep Powder|p1a: Skarmory
+|-status|p1a: Skarmory|slp|[from] move: Sleep Powder
+||
+|-heal|p1a: Skarmory|300/333 slp|[from] item: Leftovers
+|-heal|p2a: Exeggutor|100/100|[from] item: Leftovers
+|upkeep|
+|turn|26
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Drill Peck","id":"drillpeck","pp":30,"maxpp":32,"target":"any","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Whirlwind","id":"whirlwind","pp":32,"maxpp":32,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"247/333 slp","active":true,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"0 fnt","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"491/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":60}
+||
+|t:|1638483204
+|cant|p1a: Skarmory|slp
+|move|p2a: Exeggutor|Psychic|p1a: Skarmory
+|-resisted|p1a: Skarmory
+|-damage|p1a: Skarmory|227/333 slp
+||
+|-heal|p1a: Skarmory|247/333 slp|[from] item: Leftovers
+|upkeep|
+|turn|27
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Drill Peck","id":"drillpeck","pp":30,"maxpp":32,"target":"any","disabled":false},{"move":"Curse","id":"curse","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Whirlwind","id":"whirlwind","pp":31,"maxpp":32,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Skarmory","details":"Skarmory, M","condition":"267/333","active":true,"stats":{"atk":258,"def":378,"spa":178,"spd":238,"spe":238},"moves":["rest","drillpeck","curse","whirlwind"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Machamp","details":"Machamp, M","condition":"0 fnt","active":false,"stats":{"atk":358,"def":258,"spa":228,"spd":268,"spe":208},"moves":["crosschop","rockslide","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Zapdos","details":"Zapdos","condition":"0 fnt","active":false,"stats":{"atk":207,"def":268,"spa":348,"spd":278,"spe":298},"moves":["rest","hiddenpowerdark","sleeptalk","thunder"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax, M","condition":"491/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":318,"spe":158},"moves":["doubleedge","rest","curse","earthquake"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam, M","condition":"0 fnt","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":268,"spe":338},"moves":["psychic","firepunch","recover","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"},{"ident":"p1: Gengar","details":"Gengar, M","condition":"323/323","active":false,"stats":{"atk":228,"def":218,"spa":358,"spd":248,"spe":318},"moves":["icepunch","explosion","thunderbolt","dynamicpunch"],"baseAbility":"noability","item":"leftovers","pokeball":"pokeball"}]},"rqid":62}
+||
+|t:|1638483206
+|switch|p2a: Electabuzz|Electabuzz, M|77/100
+|-curestatus|p1a: Skarmory|slp|[msg]
+|move|p1a: Skarmory|Whirlwind|p2a: Electabuzz
+|drag|p2a: Exeggutor|Exeggutor, M|100/100
