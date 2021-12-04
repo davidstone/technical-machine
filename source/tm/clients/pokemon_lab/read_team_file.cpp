@@ -70,13 +70,11 @@ constexpr auto parse_species(std::string_view const str) {
 }
 
 auto parse_moves(Generation const generation, boost::property_tree::ptree const & pt) {
-	auto moves = RegularMoves();
-	for (boost::property_tree::ptree::value_type const & value : pt) {
+	return RegularMoves(containers::transform(pt, [=](boost::property_tree::ptree::value_type const & value) {
 		auto const name = from_string<Moves>(value.second.get_value<std::string>());
 		auto const pp_ups = value.second.get<PP::pp_ups_type>("<xmlattr>.pp-up");
-		moves.push_back(Move(generation, name, pp_ups));
-	}
-	return moves;
+		return Move(generation, name, pp_ups);
+	}));
 }
 
 template<Generation generation>
@@ -160,16 +158,15 @@ auto parse_pokemon(boost::property_tree::ptree const & pt) {
 
 template<Generation generation>
 auto parse_team(boost::property_tree::ptree const & ptree) {
-	auto all_pokemon = typename KnownPokemonCollection<generation>::Container();
-	for (auto const & value : ptree) {
-		if (value.first == "pokemon") {
-			if (containers::size(all_pokemon) == numeric_traits::max_value<TeamSize>) {
-				throw std::runtime_error("Tried to add too many Pokemon");
-			}
-			containers::push_back(all_pokemon, parse_pokemon<generation>(value.second));
-		}
-	}
-	return KnownTeam<generation>(std::move(all_pokemon));
+	return KnownTeam<generation>(
+		containers::transform(
+			containers::check_size_not_greater_than(
+				containers::filter(ptree, [](auto const & value) { return value.first == "pokemon"; }),
+				numeric_traits::max_value<TeamSize>
+			),
+			[](auto const & value) { return parse_pokemon<generation>(value.second); }
+		)
+	);
 }
 
 } // namespace

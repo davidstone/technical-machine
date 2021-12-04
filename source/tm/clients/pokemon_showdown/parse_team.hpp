@@ -20,7 +20,9 @@
 #include <bounded/check_in_range.hpp>
 #include <bounded/to_integer.hpp>
 
+#include <containers/algorithms/transform.hpp>
 #include <containers/size.hpp>
+#include <containers/take.hpp>
 
 #include <nlohmann/json.hpp>
 
@@ -125,16 +127,13 @@ auto parse_pokemon(nlohmann::json const & pokemon_data) {
 
 template<Generation generation>
 auto parse_team(std::string_view const str) -> KnownTeam<generation> {
-	auto const json = nlohmann::json::parse(str);
-	auto const team_data = json.at("side").at("pokemon");
-	auto all_pokemon = typename KnownPokemonCollection<generation>::Container();
-	for (auto const & pokemon_data : team_data.items()) {
-		if (containers::size(all_pokemon) == numeric_traits::max_value<TeamSize>) {
-			throw std::runtime_error("Tried to add too many Pokemon");
-		}
-		containers::push_back(all_pokemon, parse_pokemon<generation>(pokemon_data.value()));
-	}
-	return KnownTeam<generation>(std::move(all_pokemon));
+	auto const json = nlohmann::json::parse(str).at("side").at("pokemon");
+	return KnownTeam<generation>(
+		containers::transform(
+			containers::check_size_not_greater_than(json, numeric_traits::max_value<TeamSize>),
+			parse_pokemon<generation>
+		)
+	);
 }
 
 }	// namespace ps

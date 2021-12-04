@@ -196,12 +196,14 @@ auto parse_team(boost::property_tree::ptree const & pt) {
 		if (value.first != "Pokemon") {
 			continue;
 		}
-		if (auto const species = parse_species(value.second)) {
-			if (containers::size(all_pokemon) == numeric_traits::max_value<TeamSize>) {
-				throw std::runtime_error("Tried to add too many Pokemon");
-			}
-			containers::push_back(all_pokemon, parse_pokemon<generation>(value.second, *species));
+		auto const species = parse_species(value.second);
+		if (!species) {
+			continue;
 		}
+		if (containers::size(all_pokemon) == numeric_traits::max_value<TeamSize>) {
+			throw std::runtime_error("Tried to add too many Pokemon");
+		}
+		containers::push_back(all_pokemon, parse_pokemon<generation>(value.second, *species));
 	}
 	return KnownTeam<generation>(std::move(all_pokemon));
 }

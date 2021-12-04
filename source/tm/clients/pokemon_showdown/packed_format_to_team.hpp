@@ -129,6 +129,7 @@ auto parse_pokemon(std::string_view const str) {
 
 template<Generation generation>
 auto packed_format_to_team(std::string_view const str) -> KnownTeam<generation> {
+	// TODO: Update this when DelimitedBufferView is a range
 	auto buffer = DelimitedBufferView(str, pokemon_delimiter);
 	auto all_pokemon = typename KnownPokemonCollection<generation>::Container();
 	while (!buffer.remainder().empty()) {
