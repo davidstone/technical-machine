@@ -64,6 +64,7 @@ add_library(tm_common STATIC
 	source/tm/clients/pokemon_showdown/inmessage.cpp
 	source/tm/clients/pokemon_showdown/move_state.cpp
 	source/tm/clients/pokemon_showdown/packed_format_to_team.cpp
+	source/tm/clients/pokemon_showdown/parse_generation_from_format.cpp
 	source/tm/clients/pokemon_showdown/parse_team.cpp
 	source/tm/clients/pokemon_showdown/parsed_hp.cpp
 	source/tm/clients/pokemon_showdown/slot_memory.cpp

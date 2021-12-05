@@ -10,6 +10,7 @@
 
 #include <tm/clients/pokemon_showdown/chat.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
+#include <tm/clients/pokemon_showdown/parse_generation_from_format.hpp>
 #include <tm/clients/pokemon_showdown/to_packed_format.hpp>
 
 #include <tm/team_predictor/lead_stats.hpp>
@@ -38,26 +39,6 @@
 
 namespace technicalmachine {
 namespace ps {
-namespace {
-
-using namespace std::string_view_literals;
-
-constexpr auto parse_generation(std::string_view const id) -> Generation {
-	// TODO: This won't work for generation 10
-	// Expected format: genXou
-	constexpr auto generation_index = std::string_view("gen").size();
-	if (id.size() < generation_index) {
-		throw std::runtime_error(containers::concatenate<std::string>("Invalid format string. Expected something in the format of: \"gen[generation_number]ou\", but got "sv, id));
-	}
-	auto const generation_char = id[generation_index];
-	auto const generation = generation_char - '0';
-	if (generation < 1 or 8 < generation) {
-		throw std::runtime_error(containers::concatenate<std::string>("Invalid generation. Expected a value between 1 and 8, but got "sv, containers::single_element_range(generation_char)));
-	}
-	return static_cast<Generation>(generation);
-}
-
-}	// namespace
 
 ClientImpl::ClientImpl(SettingsFile settings, DepthValues const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
 	m_random_engine(m_rd()),
@@ -133,11 +114,11 @@ void ClientImpl::handle_message(InMessage message) {
 	auto send_challenge = [&]{
 		bounded::visit(m_settings.style, bounded::overload(
 			[&](SettingsFile::Ladder const & ladder) {
-				send_team(parse_generation(ladder.format));
+				send_team(parse_generation_from_format(ladder.format));
 				m_send_message(containers::concatenate<containers::string>("|/search "sv, ladder.format));
 			},
 			[&](SettingsFile::Challenge const & challenge) {
-				send_team(parse_generation(challenge.format));
+				send_team(parse_generation_from_format(challenge.format));
 				m_send_message(containers::concatenate<containers::string>("|/challenge "sv, challenge.user, ","sv, challenge.format));
 			},
 			[](SettingsFile::Accept const &) {}
@@ -190,7 +171,7 @@ void ClientImpl::handle_message(InMessage message) {
 				[&](SettingsFile::Accept const & accept) {
 					auto const should_accept = containers::any_equal(accept.users, no_spaces_string_view(from));
 					if (should_accept) {
-						send_team(parse_generation(format));
+						send_team(parse_generation_from_format(format));
 						m_send_message(containers::concatenate<containers::string>("|/accept "sv, from));
 					} else {
 						m_send_message(containers::concatenate<containers::string>("|/reject "sv, from));
