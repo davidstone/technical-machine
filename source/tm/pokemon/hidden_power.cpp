@@ -12,6 +12,17 @@ namespace {
 
 constexpr bool test() {
 	{
+		constexpr auto hp = HiddenPower<Generation::two>(DVs(
+			DV(10_bi),
+			DV(13_bi),
+			DV(15_bi),
+			DV(15_bi)
+		));
+		static_assert(hp.power() == 70_bi);
+		static_assert(hp.type() == Type::Water);
+	}
+
+	{
 		constexpr auto hp = HiddenPower<Generation::three>(IVs(
 			IV(31_bi),
 			IV(30_bi),
