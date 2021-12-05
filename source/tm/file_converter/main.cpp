@@ -25,16 +25,11 @@ namespace {
 using namespace technicalmachine;
 using namespace std::string_view_literals;
 
-constexpr auto valid_output_types_message = "Valid output types are: print, text, pl, po";
-
-auto invalid_args_message() -> std::string {
-	return containers::concatenate<std::string>(
-		"Usage is file_converter output_type output_location files...\n"sv,
-		std::string_view(valid_output_types_message), "\n"sv,
-		"If output_type is \"print\", there is no \"output_location\"\n"sv,
-		"If \"files...\" includes a directory, all files in that directory will be parsed.\n"sv
-	);
-}
+constexpr auto invalid_args_message =
+	"Usage is file_converter output_type output_location files...\n"
+	"Valid output types are: print, text, pl, po\n"
+	"If output_type is \"print\", there is no \"output_location\"\n"
+	"If \"files...\" includes a directory, all files in that directory will be parsed.";
 
 enum class OutputType { print, text, pl, po };
 
@@ -48,7 +43,7 @@ constexpr auto parse_output_type(std::string_view const str) -> OutputType {
 	} else if (str == "po") {
 		return OutputType::po;
 	} else {
-		throw std::runtime_error(valid_output_types_message);
+		throw std::runtime_error(invalid_args_message);
 	}
 }
 
@@ -118,11 +113,11 @@ struct ParsedArgs {
 
 auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	if (argc < 2) {
-		throw std::runtime_error(invalid_args_message());
+		throw std::runtime_error(invalid_args_message);
 	}
 	auto const output_type = parse_output_type(argv[1]);
 	if (output_type != OutputType::print and argc < 3) {
-		throw std::runtime_error(invalid_args_message());
+		throw std::runtime_error(invalid_args_message);
 	}
 	auto output_location = [=] {
 		auto result = std::filesystem::path(argv[2]);
@@ -160,7 +155,7 @@ auto unique_path_component(std::filesystem::path const & base_path, std::filesys
 auto main(int argc, char ** argv) -> int {
 	auto const args = parse_args(argc, argv);
 	auto error_count = bounded::integer<0, bounded::normalize<numeric_traits::max_value<std::uint64_t>>>(0_bi);
-	for (auto const source : args.paths) {
+	for (auto const & source : args.paths) {
 		for (auto const & path : files_in_path(source)) {
 			try {
 				auto const visitor = [&](auto const & team, auto const & function) {
