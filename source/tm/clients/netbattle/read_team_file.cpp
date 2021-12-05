@@ -1687,19 +1687,14 @@ constexpr auto parse_ivs_or_evs(Parser & parser, auto const bits) {
 	auto const speed = pop();
 	auto const special_attack = pop();
 	auto const special_defense = pop();
-	return GenericStats{hp, attack, defense, special_attack, special_defense, speed};
+	return GenericStats(hp, attack, defense, special_attack, special_defense, speed);
 }
 
 template<Generation generation>
 constexpr auto parse_ivs(Parser & parser) {
 	constexpr auto bits = 5_bi;
 	if constexpr (generation <= Generation::two) {
-		auto const stored = parse_ivs_or_evs<DV>(parser, bits);
-		auto const result = DVs{stored.atk(), stored.def(), stored.spe(), stored.spa()};
-		if (result.hp() != stored.hp()) {
-			throw std::runtime_error(containers::concatenate<std::string>("Invalid DVs. Calculated HP DV of "sv, to_string(result.hp().value()), " but received "sv, to_string(stored.hp().value())));
-		}
-		return result;
+		return to_dvs_using_spa_as_spc(parse_ivs_or_evs<DV>(parser, bits));
 	} else {
 		return parse_ivs_or_evs<IV>(parser, bits);
 	}

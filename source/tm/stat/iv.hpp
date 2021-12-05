@@ -11,9 +11,15 @@
 
 #include <bounded/integer.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
+
+#include <stdexcept>
+#include <string>
+
 namespace technicalmachine {
 
 using namespace bounded::literal;
+using namespace std::string_view_literals;
 
 struct IV {
 	static constexpr auto max = 31;
@@ -47,8 +53,12 @@ struct DV {
 	// So it can be stored in a constexpr static_vector
 	DV() = default;
 
-	constexpr explicit DV(value_type const iv):
-		m_value(iv) {
+	constexpr explicit DV(value_type const value):
+		m_value(value) {
+	}
+	constexpr explicit DV(IV const iv):
+		m_value(iv.value() / 2_bi)
+	{
 	}
 	constexpr auto value() const -> value_type {
 		return m_value;
@@ -121,6 +131,26 @@ private:
 	DV m_spe;
 	DV m_spc;
 };
+
+constexpr auto to_dvs_using_spa_as_spc(GenericStats<DV> const stats) -> DVs {
+	auto const result = DVs(stats.atk(), stats.def(), stats.spe(), stats.spa());
+	if (result.hp() != stats.hp()) {
+		throw std::runtime_error(containers::concatenate<std::string>(
+			"Invalid DVs. Calculated HP DV of "sv,
+			to_string(result.hp().value()),
+			" but received "sv,
+			to_string(stats.hp().value())
+		));
+	}
+	return result;
+}
+
+constexpr auto to_dvs(GenericStats<DV> const stats) -> DVs {
+	if (stats.spa() != stats.spd()) {
+		throw std::runtime_error("Mismatched SpA and SpD DVs in old generation");
+	}
+	return to_dvs_using_spa_as_spc(stats);
+}
 
 template<Generation generation>
 inline constexpr auto max_dvs_or_ivs = [] {

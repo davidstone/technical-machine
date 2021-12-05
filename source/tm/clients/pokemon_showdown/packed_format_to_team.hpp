@@ -27,6 +27,8 @@
 
 #include <string_view>
 
+// https://github.com/smogon/pokemon-showdown/blob/master/sim/TEAMS.md#packed-format
+
 namespace technicalmachine {
 
 enum class Generation : std::uint8_t;
@@ -62,12 +64,10 @@ constexpr auto parse_nature(std::string_view const str) {
 	return str.empty() ? Nature::Serious : from_string<Nature>(str);
 }
 
-template<typename T>
-constexpr auto parse_stat_components(std::string_view const str, T default_value) {
+constexpr auto parse_stat_components(std::string_view const str, auto parse_value) {
 	auto buffer = DelimitedBufferView(str, ',');
 	auto next = [&] {
-		auto maybe = buffer.pop();
-		return maybe.empty() ? default_value : T(bounded::to_integer<typename T::value_type>(maybe));
+		return parse_value(buffer.pop());
 	};
 	auto const hp = next();
 	auto const atk = next();
@@ -75,7 +75,7 @@ constexpr auto parse_stat_components(std::string_view const str, T default_value
 	auto const spa = next();
 	auto const spd = next();
 	auto const spe = next();
-	return GenericStats<T>(hp, atk, def, spa, spd, spe);
+	return GenericStats(hp, atk, def, spa, spd, spe);
 }
 
 inline auto parse_gender(std::string_view const str) {
@@ -90,9 +90,46 @@ constexpr auto parse_shiny(std::string_view const str) {
 }
 
 template<typename T>
-auto parse_integer_wrapper(std::string_view const str) {
+constexpr auto parse_integer_wrapper(std::string_view const str) {
 	using integer = typename T::value_type;
 	return T(str.empty() ? numeric_traits::max_value<integer> : bounded::to_integer<integer>(str));
+}
+
+template<typename T>
+constexpr auto parse_ev_or_iv(T const default_value) {
+	return [=](std::string_view const maybe) {
+		return maybe.empty() ? default_value : T(bounded::to_integer<typename T::value_type>(maybe));
+	};
+}
+
+template<Generation generation>
+constexpr auto parse_evs(std::string_view const str) {
+	auto const evs = parse_stat_components(str, parse_ev_or_iv(EV(0_bi)));
+	if constexpr (generation <= Generation::two) {
+		return to_old_gen_evs(evs);
+	} else {
+		return evs;
+	}
+}
+
+template<Generation generation>
+inline constexpr auto parse_dv_or_iv = [](std::string_view const maybe) {
+	auto const iv = parse_ev_or_iv(IV(31_bi))(maybe);
+	if constexpr (generation <= Generation::two) {
+		return DV(iv);
+	} else {
+		return iv;
+	}
+};
+
+template<Generation generation>
+constexpr auto parse_dvs_or_ivs(std::string_view const str) {
+	auto const stats = parse_stat_components(str, parse_dv_or_iv<generation>);
+	if constexpr (generation <= Generation::two) {
+		return to_dvs(stats);
+	} else {
+		return stats;
+	}
 }
 
 template<Generation generation>
@@ -104,9 +141,9 @@ auto parse_pokemon(std::string_view const str) {
 	auto const ability = parse_ability(buffer.pop(), species);
 	auto const moves = parse_moves(buffer.pop(), generation);
 	auto const nature = parse_nature(buffer.pop());
-	auto const evs = parse_stat_components(buffer.pop(), EV(0_bi));
+	auto const evs = parse_evs<generation>(buffer.pop());
 	auto const gender = parse_gender(buffer.pop());
-	auto const ivs = parse_stat_components(buffer.pop(), default_iv(generation));
+	auto const dvs_or_ivs = parse_dvs_or_ivs<generation>(buffer.pop());
 	auto const shiny [[maybe_unused]] = parse_shiny(buffer.pop());
 	auto const level = parse_integer_wrapper<Level>(buffer.pop());
 	auto const happiness = parse_integer_wrapper<Happiness>(buffer.pop(','));
@@ -120,7 +157,7 @@ auto parse_pokemon(std::string_view const str) {
 		gender,
 		item,
 		ability,
-		CombinedStats<generation>{nature, ivs, evs},
+		CombinedStats<generation>{nature, dvs_or_ivs, evs},
 		moves,
 		happiness
 	);

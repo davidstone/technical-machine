@@ -24,6 +24,8 @@
 
 #include <string_view>
 
+// https://github.com/smogon/pokemon-showdown/blob/master/sim/TEAMS.md#packed-format
+
 namespace technicalmachine {
 
 enum class Generation : std::uint8_t;

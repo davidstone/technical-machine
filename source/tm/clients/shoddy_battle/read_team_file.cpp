@@ -201,7 +201,7 @@ constexpr auto add_stat(bounded::optional<GenericStats<T>> & optional, auto cons
 		throw std::runtime_error("Incorrect number of stats");
 	}
 	auto values = containers::transform(raw, check_value_type<T>);
-	emplace_once(optional, GenericStats<T>{values[0_bi], values[1_bi], values[2_bi], values[4_bi], values[5_bi], values[3_bi]});
+	emplace_once(optional, GenericStats(values[0_bi], values[1_bi], values[2_bi], values[4_bi], values[5_bi], values[3_bi]));
 }
 
 // TODO: Decide where this functionality should exist

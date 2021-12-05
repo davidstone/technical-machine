@@ -13,6 +13,8 @@
 #include <bounded/detail/construct_destroy.hpp>
 #include <bounded/integer.hpp>
 
+#include <stdexcept>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -115,6 +117,13 @@ private:
 	EV m_spe;
 	EV m_spc;
 };
+
+constexpr auto to_old_gen_evs(EVs const evs) -> OldGenEVs {
+	if (evs.spa() != evs.spd()) {
+		throw std::runtime_error("Mismatched SpA and SpD EVs in old generation");
+	}
+	return OldGenEVs(evs.hp(), evs.atk(), evs.def(), evs.spe(), evs.spa());
+}
 
 constexpr auto max_total_evs(Generation const generation) {
 	return
