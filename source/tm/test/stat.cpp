@@ -200,7 +200,6 @@ TEST_CASE("Calculate max Special Defense", "[calculate stat]") {
 }
 
 TEST_CASE("Calculate max Speed", "[calculate stat]") {
-	constexpr auto max_speed = 12096_bi;
 	auto weather = Weather();
 	weather.activate_rain_from_move(false);
 

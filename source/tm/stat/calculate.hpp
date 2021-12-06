@@ -432,7 +432,7 @@ auto calculate_special_defense(any_active_pokemon auto const defender, Ability c
 	);
 }
 
-
+inline constexpr auto max_speed = 12096_bi;
 auto calculate_speed(any_team auto const & team, Ability const other_ability, Weather const weather) {
 	constexpr auto stat = SplitSpecialRegularStat::spe;
 	auto const & pokemon = team.pokemon();
@@ -452,7 +452,7 @@ auto calculate_speed(any_team auto const & team, Ability const other_ability, We
 	return bounded::assume_in_range(
 		bounded::max(speed, 1_bi),
 		1_bi,
-		12096_bi
+		max_speed
 	);
 }
 
