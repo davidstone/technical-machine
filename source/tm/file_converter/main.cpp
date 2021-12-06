@@ -154,7 +154,7 @@ auto unique_path_component(std::filesystem::path const & base_path, std::filesys
 
 auto main(int argc, char ** argv) -> int {
 	auto const args = parse_args(argc, argv);
-	auto error_count = bounded::integer<0, bounded::normalize<numeric_traits::max_value<std::uint64_t>>>(0_bi);
+	auto error_count = bounded::integer<0, bounded::builtin_max_value<std::uint64_t>>(0_bi);
 	for (auto const & source : args.paths) {
 		for (auto const & path : files_in_path(source)) {
 			try {
