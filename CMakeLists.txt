@@ -268,6 +268,17 @@ target_link_libraries(file_converter
 	tm_common
 )
 
+add_executable(ps_usage_stats
+	source/tm/ps_usage_stats/main.cpp
+	source/tm/ps_usage_stats/parse_log.cpp
+	source/tm/ps_usage_stats/rating.cpp
+	source/tm/ps_usage_stats/serialize.cpp
+	source/tm/ps_usage_stats/usage_stats.cpp
+)
+target_link_libraries(ps_usage_stats
+	tm_common
+)
+
 
 add_executable(predict
 	source/tm/team_predictor/generate_team_builder_ui.cpp
