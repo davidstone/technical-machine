@@ -898,7 +898,7 @@ auto to_string(Species const species) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Species {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 989>;
+	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 995>;
 	static constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
@@ -1195,7 +1195,13 @@ auto from_string(std::string_view const str) -> Species {
 			{ "gardevoirmega", Species::Gardevoir },
 			{ "gastly", Species::Gastly },
 			{ "gastrodon", Species::Gastrodon },
+			{ "gastrodoneast", Species::Gastrodon },
+			{ "gastrodonwest", Species::Gastrodon },
 			{ "genesect", Species::Genesect },
+			{ "genesectburn", Species::Genesect },
+			{ "genesectchill", Species::Genesect },
+			{ "genesectdouse", Species::Genesect },
+			{ "genesectshock", Species::Genesect },
 			{ "gengar", Species::Gengar },
 			{ "geodude", Species::Geodude },
 			{ "geodudealola", Species::Geodude_Alolan },
