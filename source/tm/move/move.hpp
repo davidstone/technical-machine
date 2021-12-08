@@ -55,10 +55,9 @@ inline auto operator==(Move const lhs, Moves const rhs) -> bool {
 	return lhs.name() == rhs;
 }
 
+auto is_delayed_switch(Moves name) -> bool;
 auto is_regular(Moves move) -> bool;
-
 auto is_phaze(Moves name) -> bool;
-
 auto thaws_user(Moves move) -> bool;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

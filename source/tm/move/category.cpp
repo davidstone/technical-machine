@@ -48,7 +48,7 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 		case Moves::Ice_Punch:
 		case Moves::Thunder_Punch:
 		case Moves::Scratch:
-		case Moves::Vice_Grip:
+		case Moves::Vise_Grip:
 		case Moves::Guillotine:
 		case Moves::Cut:
 		case Moves::Wing_Attack:
@@ -308,12 +308,37 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 		case Moves::Plasma_Fists:
 		case Moves::Lets_Snuggle_Forever:
 		case Moves::Splintered_Stormshards:
-		case Moves::Zippy_Zap:
-		case Moves::Floaty_Fall:
-		case Moves::Sizzly_Slide:
-		case Moves::Sappy_Seed:
-		case Moves::Veevee_Volley:
 		case Moves::Double_Iron_Bash:
+		case Moves::Jaw_Lock:
+		case Moves::Dragon_Darts:
+		case Moves::Bolt_Beak:
+		case Moves::Fishious_Rend:
+		case Moves::Body_Press:
+		case Moves::Drum_Beating:
+		case Moves::Snap_Trap:
+		case Moves::Pyro_Ball:
+		case Moves::Behemoth_Blade:
+		case Moves::Behemoth_Bash:
+		case Moves::Aura_Wheel:
+		case Moves::Breaking_Swipe:
+		case Moves::Branch_Poke:
+		case Moves::Grav_Apple:
+		case Moves::Spirit_Break:
+		case Moves::False_Surrender:
+		case Moves::Meteor_Assault:
+		case Moves::Steel_Roller:
+		case Moves::Scale_Shot:
+		case Moves::Grassy_Glide:
+		case Moves::Skitter_Smack:
+		case Moves::Lash_Out:
+		case Moves::Poltergeist:
+		case Moves::Flip_Turn:
+		case Moves::Triple_Axel:
+		case Moves::Dual_Wingbeat:
+		case Moves::Wicked_Blow:
+		case Moves::Surging_Strikes:
+		case Moves::Thunderous_Kick:
+		case Moves::Glacial_Lance:
 			return generation <= Generation::three ?
 				type_based_category(move.type) :
 				MoveCategory::physical;
@@ -498,14 +523,27 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 		case Moves::Searing_Sunraze_Smash:
 		case Moves::Menacing_Moonraze_Maelstrom:
 		case Moves::Clangorous_Soulblaze:
-		case Moves::Splishy_Splash:
-		case Moves::Pika_Papow:
-		case Moves::Bouncy_Bubble:
-		case Moves::Buzzy_Buzz:
-		case Moves::Glitzy_Glow:
-		case Moves::Baddy_Bad:
-		case Moves::Freezy_Frost:
-		case Moves::Sparkly_Swirl:
+		case Moves::Dynamax_Cannon:
+		case Moves::Snipe_Shot:
+		case Moves::Overdrive:
+		case Moves::Apple_Acid:
+		case Moves::Strange_Steam:
+		case Moves::Eternabeam:
+		case Moves::Steel_Beam:
+		case Moves::Expanding_Force:
+		case Moves::Meteor_Beam:
+		case Moves::Shell_Side_Arm:
+		case Moves::Misty_Explosion:
+		case Moves::Rising_Voltage:
+		case Moves::Terrain_Pulse:
+		case Moves::Burning_Jealousy:
+		case Moves::Scorching_Sands:
+		case Moves::Thunder_Cage:
+		case Moves::Dragon_Energy:
+		case Moves::Freezing_Glare:
+		case Moves::Fiery_Wrath:
+		case Moves::Astral_Barrage:
+		case Moves::Eerie_Spell:
 			return generation <= Generation::three ?
 				type_based_category(move.type) :
 				MoveCategory::special;
@@ -756,6 +794,21 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 		case Moves::Aurora_Veil:
 		case Moves::Extreme_Evoboost:
 		case Moves::Tearful_Look:
+		case Moves::Max_Guard:
+		case Moves::Stuff_Cheeks:
+		case Moves::No_Retreat:
+		case Moves::Tar_Shot:
+		case Moves::Magic_Powder:
+		case Moves::Teatime:
+		case Moves::Octolock:
+		case Moves::Court_Change:
+		case Moves::Clangorous_Soul:
+		case Moves::Decorate:
+		case Moves::Life_Dew:
+		case Moves::Obstruct:
+		case Moves::Corrosive_Gas:
+		case Moves::Coaching:
+		case Moves::Jungle_Healing:
 			return MoveCategory::other;
 		// TODO, can be either
 		case Moves::Water_Shuriken:
@@ -778,6 +831,24 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 		case Moves::Devastating_Drake:
 		case Moves::Black_Hole_Eclipse:
 		case Moves::Twinkle_Tackle:
+		case Moves::Max_Flare:
+		case Moves::Max_Flutterby:
+		case Moves::Max_Lightning:
+		case Moves::Max_Strike:
+		case Moves::Max_Knuckle:
+		case Moves::Max_Phantasm:
+		case Moves::Max_Hailstorm:
+		case Moves::Max_Ooze:
+		case Moves::Max_Geyser:
+		case Moves::Max_Airstream:
+		case Moves::Max_Starfall:
+		case Moves::Max_Wyrmwind:
+		case Moves::Max_Mindstorm:
+		case Moves::Max_Rockfall:
+		case Moves::Max_Quake:
+		case Moves::Max_Darkness:
+		case Moves::Max_Overgrowth:
+		case Moves::Max_Steelspike:
 			return MoveCategory::other;
 	}
 }

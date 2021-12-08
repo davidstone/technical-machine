@@ -259,8 +259,8 @@ AllUsageStats::AllUsageStats():
 		stats_for_generation(Generation::four),
 		stats_for_generation(Generation::five),
 		stats_for_generation(Generation::six),
-		stats_for_generation(Generation::seven)
-		// stats_for_generation(Generation::eight)
+		stats_for_generation(Generation::seven),
+		stats_for_generation(Generation::eight)
 	}
 {
 	static_assert(numeric_traits::max_value<Generation> == Generation::eight);

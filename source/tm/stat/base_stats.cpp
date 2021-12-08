@@ -19,7 +19,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Bulbasaur: return {45_bi, 49_bi, 49_bi, 65_bi, 65_bi, 45_bi};
 			case Species::Ivysaur: return {60_bi, 62_bi, 63_bi, 80_bi, 80_bi, 60_bi};
 			case Species::Venusaur: return {80_bi, 82_bi, 83_bi, 100_bi, 100_bi, 80_bi};
-			// case Species::Venusaur_Mega: return {80_bi, 100_bi, 123_bi, 122_bi, 120_bi, 80_bi};
+			// case Species::Mega_Venusaur: return {80_bi, 100_bi, 123_bi, 122_bi, 120_bi, 80_bi};
 			case Species::Charmander: return {
 				39_bi,
 				52_bi,
@@ -44,8 +44,8 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				85_bi,
 				100_bi
 			};
-			// case Species::Charizard_Mega_X: return {78_bi, 130_bi, 111_bi, 130_bi, 85_bi, 100_bi};
-			// case Species::Charizard_Mega_Y: return {78_bi, 104_bi, 78_bi, 159_bi, 115_bi, 100_bi};
+			// case Species::Mega_Charizard_X: return {78_bi, 130_bi, 111_bi, 130_bi, 85_bi, 100_bi};
+			// case Species::Mega_Charizard_Y: return {78_bi, 104_bi, 78_bi, 159_bi, 115_bi, 100_bi};
 			case Species::Squirtle: return {
 				44_bi,
 				48_bi,
@@ -70,7 +70,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::one, 85_bi, 105_bi),
 				78_bi
 			};
-			// case Species::Blastoise_Mega: return {79_bi, 103_bi, 120_bi, 135_bi, 115_bi, 78_bi};
+			// case Species::Mega_Blastoise: return {79_bi, 103_bi, 120_bi, 135_bi, 115_bi, 78_bi};
 			case Species::Caterpie: return {45_bi, 30_bi, 35_bi, 20_bi, 20_bi, 45_bi};
 			case Species::Metapod: return {50_bi, 20_bi, 55_bi, 25_bi, 25_bi, 30_bi};
 			case Species::Butterfree: return {
@@ -91,7 +91,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::one, 45_bi, 80_bi),
 				75_bi
 			};
-			// case Species::Beedrill_Mega: return {65_bi, 150_bi, 40_bi, 15_bi, 80_bi, 145_bi};
+			// case Species::Mega_Beedrill: return {65_bi, 150_bi, 40_bi, 15_bi, 80_bi, 145_bi};
 			case Species::Pidgey: return {40_bi, 45_bi, 40_bi, 35_bi, 35_bi, 56_bi};
 			case Species::Pidgeotto: return {63_bi, 60_bi, 55_bi, 50_bi, 50_bi, 71_bi};
 			case Species::Pidgeot: return {
@@ -102,7 +102,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				70_bi,
 				BOUNDED_CONDITIONAL(generation <= Generation::five, 91_bi, 101_bi)
 			};
-			// case Species::Pidgeot_Mega: return {83_bi, 80_bi, 80_bi, 135_bi, 80_bi, 121_bi};
+			// case Species::Mega_Pidgeot: return {83_bi, 80_bi, 80_bi, 135_bi, 80_bi, 121_bi};
 			case Species::Rattata: return {
 				30_bi,
 				56_bi,
@@ -421,7 +421,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				120_bi
 			};
 			#if 0
-			case Species::Alakazam_Mega: return {
+			case Species::Mega_Alakazam: return {
 				55_bi,
 				50_bi,
 				65_bi,
@@ -511,7 +511,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				80_bi,
 				30_bi
 			};
-			// case Species::Slowbro_Mega: return {95_bi, 75_bi, 180_bi, 130_bi, 80_bi, 30_bi};
+			// case Species::Mega_Slowbro: return {95_bi, 75_bi, 180_bi, 130_bi, 80_bi, 30_bi};
 			case Species::Magnemite: return {
 				25_bi,
 				35_bi,
@@ -619,7 +619,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::one, 130_bi, 75_bi),
 				110_bi
 			};
-			// case Species::Gengar_Mega: return {60_bi, 65_bi, 80_bi, 170_bi, 95_bi, 130_bi};
+			// case Species::Mega_Gengar: return {60_bi, 65_bi, 80_bi, 170_bi, 95_bi, 130_bi};
 			case Species::Onix: return {
 				35_bi,
 				45_bi,
@@ -755,7 +755,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::one, 40_bi, 80_bi),
 				90_bi
 			};
-			// case Species::Kangaskhan_Mega: return {105_bi, 125_bi, 100_bi, 60_bi, 100_bi, 100_bi};
+			// case Species::Mega_Kangaskhan: return {105_bi, 125_bi, 100_bi, 60_bi, 100_bi, 100_bi};
 			case Species::Horsea: return {
 				30_bi,
 				40_bi,
@@ -852,7 +852,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::one, 55_bi, 70_bi),
 				85_bi
 			};
-			// case Species::Pinsir_Mega: return {65_bi, 155_bi, 120_bi, 65_bi, 90_bi, 105_bi};
+			// case Species::Mega_Pinsir: return {65_bi, 155_bi, 120_bi, 65_bi, 90_bi, 105_bi};
 			case Species::Tauros: return {
 				75_bi,
 				100_bi,
@@ -877,7 +877,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				100_bi,
 				81_bi
 			};
-			// case Species::Gyarados_Mega: return {95_bi, 155_bi, 109_bi, 70_bi, 130_bi, 81_bi};
+			// case Species::Mega_Gyarados: return {95_bi, 155_bi, 109_bi, 70_bi, 130_bi, 81_bi};
 			case Species::Lapras: return {
 				130_bi,
 				85_bi,
@@ -967,7 +967,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::one, 60_bi, 75_bi),
 				130_bi
 			};
-			// case Species::Aerodactyl_Mega: return {80_bi, 135_bi, 85_bi, 70_bi, 95_bi, 150_bi};
+			// case Species::Mega_Aerodactyl: return {80_bi, 135_bi, 85_bi, 70_bi, 95_bi, 150_bi};
 			case Species::Snorlax: return {
 				160_bi,
 				110_bi,
@@ -1011,8 +1011,8 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::one, 154_bi, 90_bi),
 				130_bi
 			};
-			// case Species::Mewtwo_Mega_X: return {106_bi, 190_bi, 100_bi, 154_bi, 100_bi, 130_bi};
-			// case Species::Mewtwo_Mega_Y: return {106_bi, 150_bi, 70_bi, 194_bi, 120_bi, 140_bi};
+			// case Species::Mega_Mewtwo_X: return {106_bi, 190_bi, 100_bi, 154_bi, 100_bi, 130_bi};
+			// case Species::Mega_Mewtwo_Y: return {106_bi, 150_bi, 70_bi, 194_bi, 120_bi, 140_bi};
 			case Species::Mew: return {100_bi, 100_bi, 100_bi, 100_bi, 100_bi, 100_bi};
 			case Species::Chikorita: return {45_bi, 49_bi, 65_bi, 49_bi, 65_bi, 45_bi};
 			case Species::Bayleef: return {60_bi, 62_bi, 80_bi, 63_bi, 80_bi, 60_bi};
@@ -1058,7 +1058,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Mareep: return {55_bi, 40_bi, 40_bi, 65_bi, 45_bi, 35_bi};
 			case Species::Flaaffy: return {70_bi, 55_bi, 55_bi, 80_bi, 60_bi, 45_bi};
 			case Species::Ampharos: return {90_bi, 75_bi, 85_bi, 115_bi, 90_bi, 55_bi};
-			// case Species::Ampharos_Mega: return {90_bi, 95_bi, 105_bi, 165_bi, 110_bi, 45_bi};
+			// case Species::Mega_Ampharos: return {90_bi, 95_bi, 105_bi, 165_bi, 110_bi, 45_bi};
 			case Species::Bellossom: return {
 				75_bi,
 				80_bi,
@@ -1100,7 +1100,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Dunsparce: return {100_bi, 70_bi, 70_bi, 65_bi, 65_bi, 45_bi};
 			case Species::Gligar: return {65_bi, 75_bi, 105_bi, 35_bi, 65_bi, 85_bi};
 			case Species::Steelix: return {75_bi, 85_bi, 200_bi, 55_bi, 65_bi, 30_bi};
-			// case Species::Steelix_Mega: return {75_bi, 125_bi, 230_bi, 55_bi, 95_bi, 30_bi};
+			// case Species::Mega_Steelix: return {75_bi, 125_bi, 230_bi, 55_bi, 95_bi, 30_bi};
 			case Species::Snubbull: return {60_bi, 80_bi, 50_bi, 40_bi, 40_bi, 30_bi};
 			case Species::Granbull: return {90_bi, 120_bi, 75_bi, 60_bi, 60_bi, 45_bi};
 			case Species::Qwilfish: return {
@@ -1112,10 +1112,10 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				85_bi
 			};
 			case Species::Scizor: return {70_bi, 130_bi, 100_bi, 55_bi, 80_bi, 65_bi};
-			// case Species::Scizor_Mega: return {70_bi, 150_bi, 140_bi, 65_bi, 100_bi, 75_bi};
+			// case Species::Mega_Scizor: return {70_bi, 150_bi, 140_bi, 65_bi, 100_bi, 75_bi};
 			case Species::Shuckle: return {20_bi, 10_bi, 230_bi, 10_bi, 230_bi, 5_bi};
 			case Species::Heracross: return {80_bi, 125_bi, 75_bi, 40_bi, 95_bi, 85_bi};
-			// case Species::Heracross_Mega: return {80_bi, 185_bi, 115_bi, 40_bi, 105_bi, 75_bi};
+			// case Species::Mega_Heracross: return {80_bi, 185_bi, 115_bi, 40_bi, 105_bi, 75_bi};
 			case Species::Sneasel: return {55_bi, 95_bi, 55_bi, 35_bi, 75_bi, 115_bi};
 			case Species::Teddiursa: return {60_bi, 80_bi, 50_bi, 50_bi, 50_bi, 40_bi};
 			case Species::Ursaring: return {90_bi, 130_bi, 75_bi, 75_bi, 75_bi, 55_bi};
@@ -1152,7 +1152,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Skarmory: return {65_bi, 80_bi, 140_bi, 40_bi, 70_bi, 70_bi};
 			case Species::Houndour: return {45_bi, 60_bi, 30_bi, 80_bi, 50_bi, 65_bi};
 			case Species::Houndoom: return {75_bi, 90_bi, 50_bi, 110_bi, 80_bi, 95_bi};
-			// case Species::Houndoom_Mega: return {75_bi, 90_bi, 90_bi, 140_bi, 90_bi, 115_bi};
+			// case Species::Mega_Houndoom: return {75_bi, 90_bi, 90_bi, 140_bi, 90_bi, 115_bi};
 			case Species::Kingdra: return {75_bi, 95_bi, 95_bi, 95_bi, 95_bi, 85_bi};
 			case Species::Phanpy: return {90_bi, 60_bi, 60_bi, 40_bi, 40_bi, 40_bi};
 			case Species::Donphan: return {90_bi, 120_bi, 120_bi, 60_bi, 60_bi, 50_bi};
@@ -1172,22 +1172,22 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Larvitar: return {50_bi, 64_bi, 50_bi, 45_bi, 50_bi, 41_bi};
 			case Species::Pupitar: return {70_bi, 84_bi, 70_bi, 65_bi, 70_bi, 51_bi};
 			case Species::Tyranitar: return {100_bi, 134_bi, 110_bi, 95_bi, 100_bi, 61_bi};
-			// case Species::Tyranitar_Mega: return {100_bi, 164_bi, 150_bi, 95_bi, 120_bi, 71_bi};
+			// case Species::Mega_Tyranitar: return {100_bi, 164_bi, 150_bi, 95_bi, 120_bi, 71_bi};
 			case Species::Lugia: return {106_bi, 90_bi, 130_bi, 90_bi, 154_bi, 110_bi};
 			case Species::Ho_Oh: return {106_bi, 130_bi, 90_bi, 110_bi, 154_bi, 90_bi};
 			case Species::Celebi: return {100_bi, 100_bi, 100_bi, 100_bi, 100_bi, 100_bi};
 			case Species::Treecko: return {40_bi, 45_bi, 35_bi, 65_bi, 55_bi, 70_bi};
 			case Species::Grovyle: return {50_bi, 65_bi, 45_bi, 85_bi, 65_bi, 95_bi};
 			case Species::Sceptile: return {70_bi, 85_bi, 65_bi, 105_bi, 85_bi, 120_bi};
-			// case Species::Sceptile_Mega: return {70_bi, 110_bi, 75_bi, 145_bi, 85_bi, 145_bi};
+			// case Species::Mega_Sceptile: return {70_bi, 110_bi, 75_bi, 145_bi, 85_bi, 145_bi};
 			case Species::Torchic: return {45_bi, 60_bi, 40_bi, 70_bi, 50_bi, 45_bi};
 			case Species::Combusken: return {60_bi, 85_bi, 60_bi, 85_bi, 60_bi, 55_bi};
 			case Species::Blaziken: return {80_bi, 120_bi, 70_bi, 110_bi, 70_bi, 80_bi};
-			// case Species::Blaziken_Mega: return {80_bi, 160_bi, 80_bi, 130_bi, 80_bi, 100_bi};
+			// case Species::Mega_Blaziken: return {80_bi, 160_bi, 80_bi, 130_bi, 80_bi, 100_bi};
 			case Species::Mudkip: return {50_bi, 70_bi, 50_bi, 50_bi, 50_bi, 40_bi};
 			case Species::Marshtomp: return {70_bi, 85_bi, 70_bi, 60_bi, 70_bi, 50_bi};
 			case Species::Swampert: return {100_bi, 110_bi, 90_bi, 85_bi, 90_bi, 60_bi};
-			// case Species::Swampert_Mega: return {100_bi, 150_bi, 110_bi, 95_bi, 110_bi, 70_bi};
+			// case Species::Mega_Swampert: return {100_bi, 150_bi, 110_bi, 95_bi, 110_bi, 70_bi};
 			case Species::Poochyena: return {35_bi, 55_bi, 35_bi, 30_bi, 30_bi, 35_bi};
 			case Species::Mightyena: return {70_bi, 90_bi, 70_bi, 60_bi, 60_bi, 70_bi};
 			case Species::Zigzagoon: return {38_bi, 30_bi, 41_bi, 30_bi, 41_bi, 60_bi};
@@ -1231,7 +1231,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Ralts: return {28_bi, 25_bi, 25_bi, 45_bi, 35_bi, 40_bi};
 			case Species::Kirlia: return {38_bi, 35_bi, 35_bi, 65_bi, 55_bi, 50_bi};
 			case Species::Gardevoir: return {68_bi, 65_bi, 65_bi, 125_bi, 115_bi, 80_bi};
-			// case Species::Gardevoir_Mega: return {68_bi, 85_bi, 65_bi, 165_bi, 135_bi, 100_bi};
+			// case Species::Mega_Gardevoir: return {68_bi, 85_bi, 65_bi, 165_bi, 135_bi, 100_bi};
 			case Species::Surskit: return {40_bi, 30_bi, 32_bi, 50_bi, 52_bi, 65_bi};
 			case Species::Masquerain: return {
 				70_bi,
@@ -1273,19 +1273,19 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				BOUNDED_CONDITIONAL(generation <= Generation::six, 70_bi, 90_bi),
 			};
 			case Species::Sableye: return {50_bi, 75_bi, 75_bi, 65_bi, 65_bi, 50_bi};
-			// case Species::Sableye_Mega: return {50_bi, 85_bi, 125_bi, 85_bi, 115_bi, 20_bi};
+			// case Species::Mega_Sableye: return {50_bi, 85_bi, 125_bi, 85_bi, 115_bi, 20_bi};
 			case Species::Mawile: return {50_bi, 85_bi, 85_bi, 55_bi, 55_bi, 50_bi};
-			// case Species::Mawile_Mega: return {50_bi, 105_bi, 125_bi, 55_bi, 95_bi, 50_bi};
+			// case Species::Mega_Mawile: return {50_bi, 105_bi, 125_bi, 55_bi, 95_bi, 50_bi};
 			case Species::Aron: return {50_bi, 70_bi, 100_bi, 40_bi, 40_bi, 30_bi};
 			case Species::Lairon: return {60_bi, 90_bi, 140_bi, 50_bi, 50_bi, 40_bi};
 			case Species::Aggron: return {70_bi, 110_bi, 180_bi, 60_bi, 60_bi, 50_bi};
-			// case Species::Aggron_Mega: return {70_bi, 140_bi, 230_bi, 60_bi, 80_bi, 50_bi};
+			// case Species::Mega_Aggron: return {70_bi, 140_bi, 230_bi, 60_bi, 80_bi, 50_bi};
 			case Species::Meditite: return {30_bi, 40_bi, 55_bi, 40_bi, 55_bi, 60_bi};
 			case Species::Medicham: return {60_bi, 60_bi, 75_bi, 60_bi, 75_bi, 80_bi};
-			// case Species::Medicham_Mega: return {60_bi, 100_bi, 85_bi, 80_bi, 85_bi, 100_bi};
+			// case Species::Mega_Medicham: return {60_bi, 100_bi, 85_bi, 80_bi, 85_bi, 100_bi};
 			case Species::Electrike: return {40_bi, 45_bi, 40_bi, 65_bi, 40_bi, 65_bi};
 			case Species::Manectric: return {70_bi, 75_bi, 60_bi, 105_bi, 60_bi, 105_bi};
-			// case Species::Manectric_Mega: return {70_bi, 75_bi, 80_bi, 135_bi, 80_bi, 135_bi};
+			// case Species::Mega_Manectric: return {70_bi, 75_bi, 80_bi, 135_bi, 80_bi, 135_bi};
 			case Species::Plusle: return {60_bi, 50_bi, 40_bi, 85_bi, 75_bi, 95_bi};
 			case Species::Minun: return {60_bi, 40_bi, 50_bi, 75_bi, 85_bi, 95_bi};
 			case Species::Volbeat: return {
@@ -1309,12 +1309,12 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Swalot: return {100_bi, 73_bi, 83_bi, 73_bi, 83_bi, 55_bi};
 			case Species::Carvanha: return {45_bi, 90_bi, 20_bi, 65_bi, 20_bi, 65_bi};
 			case Species::Sharpedo: return {70_bi, 120_bi, 40_bi, 95_bi, 40_bi, 95_bi};
-			// case Species::Sharpedo_Mega: return {70_bi, 140_bi, 70_bi, 110_bi, 65_bi, 105_bi};
+			// case Species::Mega_Sharpedo: return {70_bi, 140_bi, 70_bi, 110_bi, 65_bi, 105_bi};
 			case Species::Wailmer: return {130_bi, 70_bi, 35_bi, 70_bi, 35_bi, 60_bi};
 			case Species::Wailord: return {170_bi, 90_bi, 45_bi, 90_bi, 45_bi, 60_bi};
 			case Species::Numel: return {60_bi, 60_bi, 40_bi, 65_bi, 45_bi, 35_bi};
 			case Species::Camerupt: return {70_bi, 100_bi, 70_bi, 105_bi, 75_bi, 40_bi};
-			// case Species::Camerupt_Mega: return {70_bi, 120_bi, 100_bi, 145_bi, 105_bi, 20_bi};
+			// case Species::Mega_Camerupt: return {70_bi, 120_bi, 100_bi, 145_bi, 105_bi, 20_bi};
 			case Species::Torkoal: return {70_bi, 85_bi, 140_bi, 85_bi, 70_bi, 20_bi};
 			case Species::Spoink: return {60_bi, 25_bi, 35_bi, 70_bi, 80_bi, 60_bi};
 			case Species::Grumpig: return {80_bi, 45_bi, 65_bi, 90_bi, 110_bi, 80_bi};
@@ -1326,7 +1326,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Cacturne: return {70_bi, 115_bi, 60_bi, 115_bi, 60_bi, 55_bi};
 			case Species::Swablu: return {45_bi, 40_bi, 60_bi, 40_bi, 75_bi, 50_bi};
 			case Species::Altaria: return {75_bi, 70_bi, 90_bi, 70_bi, 105_bi, 80_bi};
-			// case Species::Altaria_Mega: return {75_bi, 110_bi, 110_bi, 110_bi, 105_bi, 80_bi};
+			// case Species::Mega_Altaria: return {75_bi, 110_bi, 110_bi, 110_bi, 105_bi, 80_bi};
 			case Species::Zangoose: return {73_bi, 115_bi, 60_bi, 60_bi, 60_bi, 90_bi};
 			case Species::Seviper: return {73_bi, 100_bi, 60_bi, 100_bi, 60_bi, 65_bi};
 			case Species::Lunatone: return {
@@ -1361,7 +1361,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Kecleon: return {60_bi, 90_bi, 70_bi, 60_bi, 120_bi, 40_bi};
 			case Species::Shuppet: return {44_bi, 75_bi, 35_bi, 63_bi, 33_bi, 45_bi};
 			case Species::Banette: return {64_bi, 115_bi, 65_bi, 83_bi, 63_bi, 65_bi};
-			// case Species::Banette_Mega: return {64_bi, 165_bi, 75_bi, 93_bi, 83_bi, 75_bi};
+			// case Species::Mega_Banette: return {64_bi, 165_bi, 75_bi, 93_bi, 83_bi, 75_bi};
 			case Species::Duskull: return {20_bi, 40_bi, 90_bi, 30_bi, 90_bi, 25_bi};
 			case Species::Dusclops: return {40_bi, 70_bi, 130_bi, 60_bi, 130_bi, 25_bi};
 			case Species::Tropius: return {99_bi, 68_bi, 83_bi, 72_bi, 87_bi, 51_bi};
@@ -1374,11 +1374,11 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 				65_bi
 			};
 			case Species::Absol: return {65_bi, 130_bi, 60_bi, 75_bi, 60_bi, 75_bi};
-			// case Species::Absol_Mega: return {65_bi, 150_bi, 60_bi, 115_bi, 60_bi, 115_bi};
+			// case Species::Mega_Absol: return {65_bi, 150_bi, 60_bi, 115_bi, 60_bi, 115_bi};
 			case Species::Wynaut: return {95_bi, 23_bi, 48_bi, 23_bi, 48_bi, 23_bi};
 			case Species::Snorunt: return {50_bi, 50_bi, 50_bi, 50_bi, 50_bi, 50_bi};
 			case Species::Glalie: return {80_bi, 80_bi, 80_bi, 80_bi, 80_bi, 80_bi};
-			// case Species::Glalie_Mega: return {80_bi, 120_bi, 80_bi, 120_bi, 80_bi, 100_bi};
+			// case Species::Mega_Glalie: return {80_bi, 120_bi, 80_bi, 120_bi, 80_bi, 100_bi};
 			case Species::Spheal: return {70_bi, 40_bi, 50_bi, 55_bi, 50_bi, 25_bi};
 			case Species::Sealeo: return {90_bi, 60_bi, 70_bi, 75_bi, 70_bi, 45_bi};
 			case Species::Walrein: return {110_bi, 80_bi, 90_bi, 95_bi, 90_bi, 65_bi};
@@ -1390,24 +1390,24 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Bagon: return {45_bi, 75_bi, 60_bi, 40_bi, 30_bi, 50_bi};
 			case Species::Shelgon: return {65_bi, 95_bi, 100_bi, 60_bi, 50_bi, 50_bi};
 			case Species::Salamence: return {95_bi, 135_bi, 80_bi, 110_bi, 80_bi, 100_bi};
-			// case Species::Salamence_Mega: return {95_bi, 145_bi, 130_bi, 120_bi, 90_bi, 120_bi};
+			// case Species::Mega_Salamence: return {95_bi, 145_bi, 130_bi, 120_bi, 90_bi, 120_bi};
 			case Species::Beldum: return {40_bi, 55_bi, 80_bi, 35_bi, 60_bi, 30_bi};
 			case Species::Metang: return {60_bi, 75_bi, 100_bi, 55_bi, 80_bi, 50_bi};
 			case Species::Metagross: return {80_bi, 135_bi, 130_bi, 95_bi, 90_bi, 70_bi};
-			// case Species::Metagross_Mega: return {80_bi, 145_bi, 150_bi, 105_bi, 110_bi, 110_bi};
+			// case Species::Mega_Metagross: return {80_bi, 145_bi, 150_bi, 105_bi, 110_bi, 110_bi};
 			case Species::Regirock: return {80_bi, 100_bi, 200_bi, 50_bi, 100_bi, 50_bi};
 			case Species::Regice: return {80_bi, 50_bi, 100_bi, 100_bi, 200_bi, 50_bi};
 			case Species::Registeel: return {80_bi, 75_bi, 150_bi, 75_bi, 150_bi, 50_bi};
 			case Species::Latias: return {80_bi, 80_bi, 90_bi, 110_bi, 130_bi, 110_bi};
-			// case Species::Latias_Mega: return {80_bi, 100_bi, 120_bi, 140_bi, 150_bi, 110_bi};
+			// case Species::Mega_Latias: return {80_bi, 100_bi, 120_bi, 140_bi, 150_bi, 110_bi};
 			case Species::Latios: return {80_bi, 90_bi, 80_bi, 130_bi, 110_bi, 110_bi};
-			// case Species::Latios_Mega: return {80_bi, 130_bi, 100_bi, 160_bi, 120_bi, 110_bi};
+			// case Species::Mega_Latios: return {80_bi, 130_bi, 100_bi, 160_bi, 120_bi, 110_bi};
 			case Species::Kyogre: return {100_bi, 100_bi, 90_bi, 150_bi, 140_bi, 90_bi};
 			// case Species::Kyogre_Primal: return {100_bi, 150_bi, 90_bi, 180_bi, 160_bi, 90_bi};
 			case Species::Groudon: return {100_bi, 150_bi, 140_bi, 100_bi, 90_bi, 90_bi};
 			// case Species::Groudon_Primal: return {100_bi, 180_bi, 160_bi, 150_bi, 90_bi, 90_bi};
 			case Species::Rayquaza: return {105_bi, 150_bi, 90_bi, 150_bi, 90_bi, 95_bi};
-			// case Species::Rayquaza_Mega: return {105_bi, 180_bi, 100_bi, 180_bi, 100_bi, 115_bi};
+			// case Species::Mega_Rayquaza: return {105_bi, 180_bi, 100_bi, 180_bi, 100_bi, 115_bi};
 			case Species::Jirachi: return {100_bi, 100_bi, 100_bi, 100_bi, 100_bi, 100_bi};
 			case Species::Deoxys_Normal: return {50_bi, 150_bi, 50_bi, 150_bi, 50_bi, 150_bi};
 			case Species::Deoxys_Attack: return {50_bi, 180_bi, 20_bi, 180_bi, 20_bi, 150_bi};
@@ -1471,7 +1471,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Drifblim: return {150_bi, 80_bi, 44_bi, 90_bi, 54_bi, 80_bi};
 			case Species::Buneary: return {55_bi, 66_bi, 44_bi, 44_bi, 56_bi, 85_bi};
 			case Species::Lopunny: return {65_bi, 76_bi, 84_bi, 54_bi, 96_bi, 105_bi};
-			// case Species::Lopunny_Mega: return {65_bi, 136_bi, 94_bi, 54_bi, 96_bi, 135_bi};
+			// case Species::Mega_Lopunny: return {65_bi, 136_bi, 94_bi, 54_bi, 96_bi, 135_bi};
 			case Species::Mismagius: return {60_bi, 60_bi, 60_bi, 105_bi, 105_bi, 105_bi};
 			case Species::Honchkrow: return {100_bi, 125_bi, 52_bi, 105_bi, 52_bi, 71_bi};
 			case Species::Glameow: return {49_bi, 55_bi, 42_bi, 42_bi, 37_bi, 85_bi};
@@ -1489,11 +1489,11 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Gible: return {58_bi, 70_bi, 45_bi, 40_bi, 45_bi, 42_bi};
 			case Species::Gabite: return {68_bi, 90_bi, 65_bi, 50_bi, 55_bi, 82_bi};
 			case Species::Garchomp: return {108_bi, 130_bi, 95_bi, 80_bi, 85_bi, 102_bi};
-			// case Species::Garchomp_Mega: return {108_bi, 170_bi, 115_bi, 120_bi, 95_bi, 92_bi};
+			// case Species::Mega_Garchomp: return {108_bi, 170_bi, 115_bi, 120_bi, 95_bi, 92_bi};
 			case Species::Munchlax: return {135_bi, 85_bi, 40_bi, 40_bi, 85_bi, 5_bi};
 			case Species::Riolu: return {40_bi, 70_bi, 40_bi, 35_bi, 40_bi, 60_bi};
 			case Species::Lucario: return {70_bi, 110_bi, 70_bi, 115_bi, 70_bi, 90_bi};
-			// case Species::Lucario_Mega: return {70_bi, 145_bi, 88_bi, 140_bi, 70_bi, 112_bi};
+			// case Species::Mega_Lucario: return {70_bi, 145_bi, 88_bi, 140_bi, 70_bi, 112_bi};
 			case Species::Hippopotas: return {68_bi, 72_bi, 78_bi, 38_bi, 42_bi, 32_bi};
 			case Species::Hippowdon: return {108_bi, 112_bi, 118_bi, 68_bi, 72_bi, 47_bi};
 			case Species::Skorupi: return {40_bi, 50_bi, 90_bi, 30_bi, 55_bi, 65_bi};
@@ -1506,7 +1506,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Mantyke: return {45_bi, 20_bi, 50_bi, 60_bi, 120_bi, 50_bi};
 			case Species::Snover: return {60_bi, 62_bi, 50_bi, 62_bi, 60_bi, 40_bi};
 			case Species::Abomasnow: return {90_bi, 92_bi, 75_bi, 92_bi, 85_bi, 60_bi};
-			// case Species::Abomasnow_Mega: return {90_bi, 132_bi, 105_bi, 132_bi, 105_bi, 30_bi};
+			// case Species::Mega_Abomasnow: return {90_bi, 132_bi, 105_bi, 132_bi, 105_bi, 30_bi};
 			case Species::Weavile: return {70_bi, 120_bi, 65_bi, 45_bi, 85_bi, 125_bi};
 			case Species::Magnezone: return {70_bi, 70_bi, 115_bi, 130_bi, 90_bi, 60_bi};
 			case Species::Lickilicky: return {110_bi, 85_bi, 95_bi, 80_bi, 95_bi, 50_bi};
@@ -1522,7 +1522,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Mamoswine: return {110_bi, 130_bi, 80_bi, 70_bi, 60_bi, 80_bi};
 			case Species::Porygon_Z: return {85_bi, 80_bi, 70_bi, 135_bi, 75_bi, 90_bi};
 			case Species::Gallade: return {68_bi, 125_bi, 65_bi, 65_bi, 115_bi, 80_bi};
-			// case Species::Gallade_Mega: return {68_bi, 165_bi, 95_bi, 65_bi, 115_bi, 110_bi};
+			// case Species::Mega_Gallade: return {68_bi, 165_bi, 95_bi, 65_bi, 115_bi, 110_bi};
 			case Species::Probopass: return {60_bi, 55_bi, 145_bi, 75_bi, 150_bi, 40_bi};
 			case Species::Dusknoir: return {45_bi, 100_bi, 135_bi, 65_bi, 135_bi, 45_bi};
 			case Species::Froslass: return {70_bi, 80_bi, 70_bi, 80_bi, 70_bi, 110_bi};
@@ -1614,7 +1614,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Drilbur: return {60_bi, 85_bi, 40_bi, 30_bi, 45_bi, 68_bi};
 			case Species::Excadrill: return {110_bi, 135_bi, 60_bi, 50_bi, 65_bi, 88_bi};
 			case Species::Audino: return {103_bi, 60_bi, 86_bi, 60_bi, 86_bi, 50_bi};
-			// case Species::Audino_Mega: return {103_bi, 60_bi, 126_bi, 80_bi, 126_bi, 50_bi};
+			// case Species::Mega_Audino: return {103_bi, 60_bi, 126_bi, 80_bi, 126_bi, 50_bi};
 			case Species::Timburr: return {75_bi, 80_bi, 55_bi, 25_bi, 35_bi, 35_bi};
 			case Species::Gurdurr: return {85_bi, 105_bi, 85_bi, 40_bi, 50_bi, 40_bi};
 			case Species::Conkeldurr: return {105_bi, 140_bi, 95_bi, 55_bi, 65_bi, 45_bi};
@@ -1890,7 +1890,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Zygarde_10: return {54_bi, 100_bi, 71_bi, 61_bi, 85_bi, 115_bi};
 			case Species::Zygarde_Complete: return {216_bi, 100_bi, 121_bi, 91_bi, 95_bi, 85_bi};
 			case Species::Diancie: return {50_bi, 100_bi, 150_bi, 100_bi, 150_bi, 50_bi};
-			// case Species::Diancie_Mega: return {50_bi, 160_bi, 110_bi, 160_bi, 110_bi, 110_bi};
+			// case Species::Mega_Diancie: return {50_bi, 160_bi, 110_bi, 160_bi, 110_bi, 110_bi};
 			case Species::Hoopa_Confined: return {80_bi, 110_bi, 60_bi, 150_bi, 130_bi, 70_bi};
 			case Species::Hoopa_Unbound: return {80_bi, 160_bi, 60_bi, 170_bi, 130_bi, 80_bi};
 			case Species::Volcanion: return {80_bi, 110_bi, 120_bi, 130_bi, 90_bi, 70_bi};
@@ -1992,6 +1992,124 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Zeraora: return {88_bi, 112_bi, 75_bi, 102_bi, 80_bi, 143_bi};
 			case Species::Meltan: return {46_bi, 65_bi, 65_bi, 55_bi, 35_bi, 34_bi};
 			case Species::Melmetal: return {135_bi, 143_bi, 143_bi, 80_bi, 65_bi, 34_bi};
+
+			case Species::Grookey: return {50_bi, 65_bi, 50_bi, 40_bi, 40_bi, 65_bi};
+			case Species::Thwackey: return {70_bi, 85_bi, 70_bi, 55_bi, 60_bi, 80_bi};
+			case Species::Rillaboom: return {100_bi, 125_bi, 90_bi, 60_bi, 70_bi, 85_bi};
+			case Species::Scorbunny: return {50_bi, 71_bi, 40_bi, 40_bi, 40_bi, 69_bi};
+			case Species::Raboot: return {65_bi, 86_bi, 60_bi, 55_bi, 60_bi, 94_bi};
+			case Species::Cinderace: return {80_bi, 116_bi, 75_bi, 65_bi, 75_bi, 119_bi};
+			case Species::Sobble: return {50_bi, 40_bi, 40_bi, 70_bi, 40_bi, 70_bi};
+			case Species::Drizzile: return {65_bi, 60_bi, 55_bi, 95_bi, 55_bi, 90_bi};
+			case Species::Inteleon: return {70_bi, 85_bi, 65_bi, 125_bi, 65_bi, 120_bi};
+			case Species::Skwovet: return {70_bi, 55_bi, 55_bi, 35_bi, 35_bi, 25_bi};
+			case Species::Greedent: return {120_bi, 95_bi, 95_bi, 55_bi, 75_bi, 20_bi};
+			case Species::Rookidee: return {38_bi, 47_bi, 35_bi, 33_bi, 35_bi, 57_bi};
+			case Species::Corvisquire: return {68_bi, 67_bi, 55_bi, 43_bi, 55_bi, 77_bi};
+			case Species::Corviknight: return {98_bi, 87_bi, 105_bi, 53_bi, 85_bi, 67_bi};
+			case Species::Blipbug: return {25_bi, 20_bi, 20_bi, 25_bi, 45_bi, 45_bi};
+			case Species::Dottler: return {50_bi, 35_bi, 80_bi, 50_bi, 90_bi, 30_bi};
+			case Species::Orbeetle: return {60_bi, 45_bi, 110_bi, 80_bi, 120_bi, 90_bi};
+			case Species::Nickit: return {40_bi, 28_bi, 28_bi, 47_bi, 52_bi, 50_bi};
+			case Species::Thievul: return {70_bi, 58_bi, 58_bi, 87_bi, 92_bi, 90_bi};
+			case Species::Gossifleur: return {40_bi, 40_bi, 60_bi, 40_bi, 60_bi, 10_bi};
+			case Species::Eldegoss: return {60_bi, 50_bi, 90_bi, 80_bi, 120_bi, 60_bi};
+			case Species::Wooloo: return {42_bi, 40_bi, 55_bi, 40_bi, 45_bi, 48_bi};
+			case Species::Dubwool: return {72_bi, 80_bi, 100_bi, 60_bi, 90_bi, 88_bi};
+			case Species::Chewtle: return {50_bi, 64_bi, 50_bi, 38_bi, 38_bi, 44_bi};
+			case Species::Drednaw: return {90_bi, 115_bi, 90_bi, 48_bi, 68_bi, 74_bi};
+			case Species::Yamper: return {59_bi, 45_bi, 50_bi, 40_bi, 50_bi, 26_bi};
+			case Species::Boltund: return {69_bi, 90_bi, 60_bi, 90_bi, 60_bi, 121_bi};
+			case Species::Rolycoly: return {30_bi, 40_bi, 50_bi, 40_bi, 50_bi, 30_bi};
+			case Species::Carkol: return {80_bi, 60_bi, 90_bi, 60_bi, 70_bi, 50_bi};
+			case Species::Coalossal: return {110_bi, 80_bi, 120_bi, 80_bi, 90_bi, 30_bi};
+			case Species::Applin: return {40_bi, 40_bi, 80_bi, 40_bi, 40_bi, 20_bi};
+			case Species::Flapple: return {70_bi, 110_bi, 80_bi, 95_bi, 60_bi, 70_bi};
+			case Species::Appletun: return {110_bi, 85_bi, 80_bi, 100_bi, 80_bi, 30_bi};
+			case Species::Silicobra: return {52_bi, 57_bi, 75_bi, 35_bi, 50_bi, 46_bi};
+			case Species::Sandaconda: return {72_bi, 107_bi, 125_bi, 65_bi, 70_bi, 71_bi};
+			case Species::Cramorant: return {70_bi, 85_bi, 55_bi, 85_bi, 95_bi, 85_bi};
+			case Species::Arrokuda: return {41_bi, 63_bi, 40_bi, 40_bi, 30_bi, 66_bi};
+			case Species::Barraskewda: return {61_bi, 123_bi, 60_bi, 60_bi, 50_bi, 136_bi};
+			case Species::Toxel: return {40_bi, 38_bi, 35_bi, 54_bi, 35_bi, 40_bi};
+			case Species::Toxtricity_Amped: return {75_bi, 98_bi, 70_bi, 114_bi, 70_bi, 75_bi};
+			case Species::Toxtricity_Low_Key: return {75_bi, 98_bi, 70_bi, 114_bi, 70_bi, 75_bi};
+			case Species::Sizzlipede: return {50_bi, 65_bi, 45_bi, 50_bi, 50_bi, 45_bi};
+			case Species::Centiskorch: return {100_bi, 115_bi, 65_bi, 90_bi, 90_bi, 65_bi};
+			case Species::Clobbopus: return {50_bi, 68_bi, 60_bi, 50_bi, 50_bi, 32_bi};
+			case Species::Grapploct: return {80_bi, 118_bi, 90_bi, 70_bi, 80_bi, 42_bi};
+			case Species::Sinistea: return {40_bi, 45_bi, 45_bi, 74_bi, 54_bi, 50_bi};
+			case Species::Polteageist: return {60_bi, 65_bi, 65_bi, 134_bi, 114_bi, 70_bi};
+			case Species::Hatenna: return {42_bi, 30_bi, 45_bi, 56_bi, 53_bi, 39_bi};
+			case Species::Hattrem: return {57_bi, 40_bi, 65_bi, 86_bi, 73_bi, 49_bi};
+			case Species::Hatterene: return {57_bi, 90_bi, 95_bi, 136_bi, 103_bi, 29_bi};
+			case Species::Impidimp: return {45_bi, 45_bi, 30_bi, 55_bi, 40_bi, 50_bi};
+			case Species::Morgrem: return {65_bi, 60_bi, 45_bi, 75_bi, 55_bi, 70_bi};
+			case Species::Grimmsnarl: return {95_bi, 120_bi, 65_bi, 95_bi, 75_bi, 60_bi};
+			case Species::Obstagoon: return {93_bi, 90_bi, 101_bi, 60_bi, 81_bi, 95_bi};
+			case Species::Perrserker: return {70_bi, 110_bi, 100_bi, 50_bi, 60_bi, 50_bi};
+			case Species::Cursola: return {60_bi, 95_bi, 50_bi, 145_bi, 130_bi, 30_bi};
+			case Species::Sirfetchd: return {62_bi, 135_bi, 95_bi, 68_bi, 82_bi, 65_bi};
+			case Species::Mr_Rime: return {80_bi, 85_bi, 75_bi, 110_bi, 100_bi, 70_bi};
+			case Species::Runerigus: return {58_bi, 95_bi, 145_bi, 50_bi, 105_bi, 30_bi};
+			case Species::Milcery: return {45_bi, 40_bi, 40_bi, 50_bi, 61_bi, 34_bi};
+			case Species::Alcremie: return {65_bi, 60_bi, 75_bi, 110_bi, 121_bi, 64_bi};
+			case Species::Falinks: return {65_bi, 100_bi, 100_bi, 70_bi, 60_bi, 75_bi};
+			case Species::Pincurchin: return {48_bi, 101_bi, 95_bi, 91_bi, 85_bi, 15_bi};
+			case Species::Snom: return {30_bi, 25_bi, 35_bi, 45_bi, 30_bi, 20_bi};
+			case Species::Frosmoth: return {70_bi, 65_bi, 60_bi, 125_bi, 90_bi, 65_bi};
+			case Species::Stonjourner: return {100_bi, 125_bi, 135_bi, 20_bi, 20_bi, 70_bi};
+			case Species::Eiscue: return {75_bi, 80_bi, 110_bi, 65_bi, 90_bi, 50_bi};
+			// case Species::Eiscue_Noice_Face: return {75_bi, 80_bi, 70_bi, 65_bi, 50_bi, 130_bi};
+			case Species::Indeedee_F: return {70_bi, 55_bi, 65_bi, 95_bi, 105_bi, 85_bi};
+			case Species::Indeedee_M: return {60_bi, 65_bi, 55_bi, 105_bi, 95_bi, 95_bi};
+			case Species::Morpeko: return {58_bi, 95_bi, 58_bi, 70_bi, 58_bi, 97_bi};
+			case Species::Cufant: return {72_bi, 80_bi, 49_bi, 40_bi, 49_bi, 40_bi};
+			case Species::Copperajah: return {122_bi, 130_bi, 69_bi, 80_bi, 69_bi, 30_bi};
+			case Species::Dracozolt: return {90_bi, 100_bi, 90_bi, 80_bi, 70_bi, 75_bi};
+			case Species::Arctozolt: return {90_bi, 100_bi, 90_bi, 90_bi, 80_bi, 55_bi};
+			case Species::Dracovish: return {90_bi, 90_bi, 100_bi, 70_bi, 80_bi, 75_bi};
+			case Species::Arctovish: return {90_bi, 90_bi, 100_bi, 80_bi, 90_bi, 55_bi};
+			case Species::Duraludon: return {70_bi, 95_bi, 115_bi, 120_bi, 50_bi, 85_bi};
+			case Species::Dreepy: return {28_bi, 60_bi, 30_bi, 40_bi, 30_bi, 82_bi};
+			case Species::Drakloak: return {68_bi, 80_bi, 50_bi, 60_bi, 50_bi, 102_bi};
+			case Species::Dragapult: return {88_bi, 120_bi, 75_bi, 100_bi, 75_bi, 142_bi};
+			case Species::Zacian: return {92_bi, 130_bi, 115_bi, 80_bi, 115_bi, 138_bi};
+			case Species::Zacian_Crowned_Sword: return {92_bi, 170_bi, 115_bi, 80_bi, 115_bi, 148_bi};
+			case Species::Zamazenta: return {92_bi, 130_bi, 115_bi, 80_bi, 115_bi, 138_bi};
+			case Species::Zamazenta_Crowned_Shield: return {92_bi, 130_bi, 145_bi, 80_bi, 145_bi, 128_bi};
+			case Species::Eternatus: return {140_bi, 85_bi, 95_bi, 145_bi, 95_bi, 130_bi};
+			case Species::Kubfu: return {60_bi, 90_bi, 60_bi, 53_bi, 50_bi, 72_bi};
+			case Species::Urshifu_Single_Strike: return {100_bi, 130_bi, 100_bi, 63_bi, 60_bi, 97_bi};
+			case Species::Urshifu_Rapid_Strike: return {100_bi, 130_bi, 100_bi, 63_bi, 60_bi, 97_bi};
+			case Species::Zarude: return {105_bi, 120_bi, 105_bi, 70_bi, 95_bi, 105_bi};
+			case Species::Regieleki: return {80_bi, 100_bi, 50_bi, 100_bi, 50_bi, 200_bi};
+			case Species::Regidrago: return {200_bi, 100_bi, 50_bi, 100_bi, 50_bi, 80_bi};
+			case Species::Glastrier: return {100_bi, 145_bi, 130_bi, 65_bi, 110_bi, 30_bi};
+			case Species::Spectrier: return {100_bi, 65_bi, 60_bi, 145_bi, 80_bi, 130_bi};
+			case Species::Calyrex: return {100_bi, 80_bi, 80_bi, 80_bi, 80_bi, 80_bi};
+			case Species::Calyrex_Ice_Rider: return {100_bi, 165_bi, 150_bi, 85_bi, 130_bi, 50_bi};
+			case Species::Calyrex_Shadow_Rider: return {100_bi, 85_bi, 80_bi, 165_bi, 100_bi, 150_bi};
+			case Species::Meowth_Galarian: return {50_bi, 65_bi, 55_bi, 40_bi, 40_bi, 40_bi};
+			case Species::Ponyta_Galarian: return {50_bi, 85_bi, 55_bi, 65_bi, 65_bi, 90_bi};
+			case Species::Rapidash_Galarian: return {65_bi, 100_bi, 70_bi, 80_bi, 80_bi, 105_bi};
+			case Species::Farfetchd_Galarian: return {52_bi, 95_bi, 55_bi, 58_bi, 62_bi, 55_bi};
+			case Species::Weezing_Galarian: return {65_bi, 90_bi, 120_bi, 85_bi, 70_bi, 60_bi};
+			case Species::Mr_Mime_Galarian: return {50_bi, 65_bi, 65_bi, 90_bi, 90_bi, 100_bi};
+			case Species::Corsola_Galarian: return {60_bi, 55_bi, 100_bi, 65_bi, 100_bi, 30_bi};
+			case Species::Zigzagoon_Galarian: return {38_bi, 30_bi, 41_bi, 30_bi, 41_bi, 60_bi};
+			case Species::Linoone_Galarian: return {78_bi, 70_bi, 61_bi, 50_bi, 61_bi, 100_bi};
+			case Species::Darumaka_Galarian: return {70_bi, 90_bi, 45_bi, 15_bi, 45_bi, 50_bi};
+			case Species::Darmanitan_Galarian: return {105_bi, 140_bi, 55_bi, 30_bi, 55_bi, 95_bi};
+			// case Species::Darmanitan_Galarian_Zen: return {105_bi, 160_bi, 55_bi, 30_bi, 55_bi, 135_bi};
+			case Species::Yamask_Galarian: return {38_bi, 55_bi, 85_bi, 30_bi, 65_bi, 30_bi};
+			case Species::Stunfisk_Galarian: return {109_bi, 81_bi, 99_bi, 66_bi, 84_bi, 32_bi};
+			case Species::Slowpoke_Galarian: return {90_bi, 65_bi, 65_bi, 40_bi, 40_bi, 15_bi};
+			case Species::Slowbro_Galarian: return {95_bi, 100_bi, 95_bi, 100_bi, 70_bi, 30_bi};
+			case Species::Articuno_Galarian: return {90_bi, 85_bi, 85_bi, 125_bi, 100_bi, 95_bi};
+			case Species::Zapdos_Galarian: return {90_bi, 125_bi, 90_bi, 85_bi, 90_bi, 100_bi};
+			case Species::Moltres_Galarian: return {90_bi, 85_bi, 90_bi, 100_bi, 125_bi, 90_bi};
+			case Species::Slowking_Galarian: return {95_bi, 65_bi, 80_bi, 110_bi, 110_bi, 30_bi};
 		}
 	}())
 {

@@ -222,6 +222,7 @@ constexpr auto targets_foe_specifically(Target const target) {
 		case Target::adjacent_ally:
 		case Target::user_or_adjacent_ally:
 		case Target::all_allies:
+		case Target::user_and_all_allies:
 		case Target::user_team:
 		case Target::user_field:
 		case Target::foe_field:
@@ -294,6 +295,7 @@ constexpr auto blocked_by_protect(Target const target, Moves const move) {
 	switch (target) {
 		case Target::user:
 		case Target::all_allies:
+		case Target::user_and_all_allies:
 		case Target::all:
 		case Target::field:
 		case Target::user_team:
@@ -325,6 +327,7 @@ constexpr auto fails_against_fainted(Target const target) {
 	switch (target) {
 		case Target::user:
 		case Target::all_allies:
+		case Target::user_and_all_allies:
 		case Target::all:
 		case Target::field:
 		case Target::user_team:

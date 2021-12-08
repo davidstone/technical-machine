@@ -323,7 +323,7 @@ struct BattleParserImpl : BattleParser {
 					if (details == "[damage]") {
 						m_move_state.damage_substitute(other(party));
 						// TODO: Why
-						handle_u_turn(other(party));
+						handle_delayed_switch(other(party));
 					}
 				},
 				[&](Ability const ability) {
@@ -474,7 +474,7 @@ struct BattleParserImpl : BattleParser {
 			auto const source = message.pop();
 			if (source == "Substitute") {
 				m_move_state.break_substitute(other(party));
-				handle_u_turn(other(party));
+				handle_delayed_switch(other(party));
 			}
 		} else if (type == "-endability") {
 #if 0
@@ -795,7 +795,7 @@ private:
 					return;
 				}
 				move_damage(other(party));
-				handle_u_turn(other(party));
+				handle_delayed_switch(other(party));
 			},
 			[&](FromConfusion) {
 				// TODO: Technically you cannot select Hit Self, you just execute
@@ -1043,8 +1043,15 @@ private:
 		send_move_impl(is_switch, switch_move, move_index);
 	}
 
-	void handle_u_turn(Party const party) {
-		if (is_ai(party) and m_move_state.executed_move() == Moves::U_turn and m_battle.foe().pokemon().hp().current() == 0_bi and m_battle.ai().size() != 1_bi) {
+	void handle_delayed_switch(Party const party) {
+		if (!is_ai(party)) {
+			return;
+		}
+		auto const executed_move = m_move_state.executed_move();
+		if (!executed_move) {
+			return;
+		}
+		if (is_delayed_switch(*executed_move) and m_battle.foe().pokemon().hp().current() == 0_bi and m_battle.ai().size() != 1_bi) {
 			maybe_use_previous_move();
 			send_move(determine_action());
 		}

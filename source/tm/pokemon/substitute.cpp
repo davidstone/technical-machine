@@ -17,6 +17,7 @@ auto target_based(Generation const generation, Moves const move) {
 	switch (move_target(generation, move)) {
 		case Target::user:
 		case Target::all_allies:
+		case Target::user_and_all_allies:
 		case Target::adjacent_ally:
 		case Target::user_team:
 		case Target::user_field:

@@ -10,6 +10,7 @@
 
 #include <tm/bide/bide.hpp>
 
+#include <tm/move/move.hpp>
 #include <tm/move/moves.hpp>
 #include <tm/move/is_switch.hpp>
 
@@ -125,7 +126,7 @@ struct LastUsedMove {
 		return moved_this_turn() and m_consecutive_successes != 0_bi and is_switch(m_move);
 	}
 	constexpr auto switch_decision_required() const -> bool {
-		return is_baton_passing() or is_u_turning();
+		return is_baton_passing() or is_delayed_switching();
 	}
 
 	constexpr auto triple_kick_power() const {
@@ -154,8 +155,8 @@ private:
 	constexpr auto successful_last_move(Moves const move) const -> bool {
 		return m_move == move and m_consecutive_successes >= 1_bi;
 	}
-	constexpr auto is_u_turning() const -> bool {
-		return moved_this_turn() and successful_last_move(Moves::U_turn);
+	constexpr auto is_delayed_switching() const -> bool {
+		return moved_this_turn() and is_delayed_switch(m_move) and m_consecutive_successes >= 1_bi;
 	}
 
 	Moves m_move = Moves::Switch0;

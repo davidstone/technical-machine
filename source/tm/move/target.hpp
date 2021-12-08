@@ -17,6 +17,7 @@ enum class Target {
 	adjacent_ally,
 	user_or_adjacent_ally,
 	all_allies,
+	user_and_all_allies,
 	user_team,
 	user_field,
 	adjacent_foe,
@@ -37,6 +38,7 @@ inline auto move_targets_foe(Generation const generation, Moves const move) {
 		case Target::adjacent_ally:
 		case Target::user_or_adjacent_ally:
 		case Target::all_allies:
+		case Target::user_and_all_allies:
 		case Target::user_team:
 		case Target::user_field:
 		case Target::foe_field:

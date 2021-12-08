@@ -411,7 +411,7 @@ constexpr auto phaze_effect(TargetTeam const & target) {
 }
 
 template<int reduction>
-constexpr auto spite = [](any_team auto & user, any_team auto &, Weather & weather, auto) {
+constexpr auto reduce_pp = [](any_team auto & user, any_team auto &, Weather & weather, auto) {
 	auto const pokemon = user.pokemon();
 	pokemon.reduce_pp(pokemon.last_used_move().name(), weather, bounded::constant<reduction>);
 };
@@ -434,7 +434,7 @@ constexpr auto random_spite = []{
 	constexpr auto probability = 1.0 / double(max_reduction - min_reduction + 1);
 	auto result = SideEffects<UserTeam>();
 	auto add_one = [&](auto const index) {
-		containers::push_back(result, SideEffect<UserTeam>{probability, spite<index.value()>});
+		containers::push_back(result, SideEffect<UserTeam>{probability, reduce_pp<index.value()>});
 	};
 	auto add_all = [&]<int... indexes>(std::integer_sequence<int, indexes...>) {
 		(..., add_one(bounded::constant<indexes>));
@@ -529,6 +529,7 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::atk, -2>);
 		case Moves::Aurora_Beam:
 			return basic_probability<UserTeam>(generation == Generation::one ? 0.332 : 0.1, boost_target_stat<BoostableStat::atk, -1>);
+		case Moves::Breaking_Swipe:
 		case Moves::Growl:
 			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::atk, -1>);
 
@@ -553,8 +554,10 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Razor_Shell:
 		case Moves::Rock_Smash:
 			return basic_probability<UserTeam>(0.5, boost_target_stat<BoostableStat::def, -1>);
+		case Moves::Grav_Apple:
 		case Moves::Leer:
 		case Moves::Tail_Whip:
+		case Moves::Thunderous_Kick:
 			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::def, -1>);
 
 		case Moves::Draco_Meteor:
@@ -569,7 +572,9 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Nasty_Plot:
 		case Moves::Tail_Glow:
 			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::spa, 2>);
+		case Moves::Skitter_Smack:
 		case Moves::Snarl:
+		case Moves::Spirit_Break:
 		case Moves::Struggle_Bug:
 			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spa, -1>);
 
@@ -590,9 +595,12 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 			return basic_probability<UserTeam>(0.1, boost_target_stat<BoostableStat::spd, -1>);
 		case Moves::Shadow_Ball:
 			return basic_probability<UserTeam>(0.2, boost_target_stat<BoostableStat::spd, -1>);
+		case Moves::Apple_Acid:
 		case Moves::Luster_Purge:
 			return guaranteed_effect<UserTeam>(boost_target_stat<BoostableStat::spd, -1>);
 
+		case Moves::Aura_Wheel:
+			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::spe, 1>);
 		case Moves::Hammer_Arm:
 			return guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::spe, -1>);
 		case Moves::Agility:
@@ -611,6 +619,7 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 				generation == Generation::one ? 0.332 : 0.1,
 				boost_target_stat<BoostableStat::spe, -1>
 			);
+		case Moves::Drum_Beating:
 		case Moves::Icy_Wind:
 		case Moves::Low_Sweep:
 		case Moves::Mud_Shot:
@@ -678,6 +687,15 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 					user_pokemon.stages()[BoostableStat::atk] += 2_bi;
 				}
 			});
+		case Moves::Clangorous_Soul:
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
+				auto const user_pokemon = user.pokemon();
+				auto const hp = user_pokemon.hp();
+				if (hp.current() > hp.max() / 3_bi and hp.current() > 1_bi) {
+					change_hp(user_pokemon, weather, -hp.max() / 3_bi);
+					boost_regular(user.pokemon().stages(), 1_bi);
+				}
+			});
 		case Moves::Close_Combat:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				boost_physical(user.pokemon().stages(), -1_bi);
@@ -694,6 +712,10 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Defend_Order:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				boost_defensive(user.pokemon().stages(), 1_bi);
+			});
+		case Moves::Decorate:
+			return guaranteed_effect<UserTeam>([](auto &, auto & target, auto &, auto) {
+				boost_offensive(target.pokemon().stages(), 2_bi);
 			});
 		case Moves::Dragon_Dance:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
@@ -743,6 +765,12 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 				for (auto const stat : {BoostableStat::spa, BoostableStat::spd, BoostableStat::spe}) {
 					stages[stat] += 1_bi;
 				}
+			});
+		case Moves::Scale_Shot:
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
+				auto & stages = user.pokemon().stages();
+				stages[BoostableStat::def] -= 1_bi;
+				stages[BoostableStat::spe] += 1_bi;
 			});
 		case Moves::Shell_Smash:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
@@ -821,6 +849,7 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 			return basic_probability<UserTeam>(0.1, flinch);
 		case Moves::Dark_Pulse:
 		case Moves::Dragon_Rush:
+		case Moves::Fiery_Wrath:
 		case Moves::Twister:
 		case Moves::Zen_Headbutt:
 			return basic_probability<UserTeam>(0.2, flinch);
@@ -895,6 +924,12 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().clear_status();
 			});
+		case Moves::Jungle_Healing:
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
+				auto const pokemon = user.pokemon();
+				heal(pokemon, weather, rational(1_bi, 4_bi));
+				pokemon.clear_status();
+			});
 		case Moves::Wake_Up_Slap:
 			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				auto const pokemon = other.pokemon();
@@ -909,9 +944,11 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Flame_Wheel:
 		case Moves::Flamethrower:
 		case Moves::Heat_Wave:
+		case Moves::Pyro_Ball:
 			return thaw_and_burn_effect(0.1, original_user, original_other, original_weather);
 		case Moves::Lava_Plume:
 		case Moves::Scald:
+		case Moves::Scorching_Sands:
 		case Moves::Searing_Shot:
 			return thaw_and_burn_effect(0.3, original_user, original_other, original_weather);
 		case Moves::Sacred_Fire:
@@ -923,6 +960,7 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 			return thaw_and_burn_effect(generation == Generation::one ? 0.3 : 0.1, original_user, original_other, original_weather);
 
 		case Moves::Blizzard:
+		case Moves::Freezing_Glare:
 		case Moves::Ice_Beam:
 		case Moves::Ice_Punch:
 		case Moves::Powder_Snow:
@@ -983,6 +1021,8 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Poison_Tail:
 		case Moves::Sludge_Wave:
 			return status_effect<Statuses::poison>(0.1, original_user, original_other, original_weather, Type::Poison, Type::Steel);
+		case Moves::Shell_Side_Arm:
+			return status_effect<Statuses::poison>(0.2, original_user, original_other, original_weather, Type::Poison, Type::Steel);
 		case Moves::Gunk_Shot:
 		case Moves::Poison_Jab:
 		case Moves::Sludge_Bomb:
@@ -1049,6 +1089,7 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Psybeam:
 			return confusion_effect(0.1, original_other.pokemon(), Type::Dark);
 		case Moves::Rock_Climb:
+		case Moves::Strange_Steam:
 		case Moves::Water_Pulse:
 			return confusion_effect(0.2, original_other.pokemon());
 		case Moves::Confuse_Ray:
@@ -1114,6 +1155,14 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 				original_other.pokemon(),
 				original_weather,
 				no_effect<UserTeam>
+			);
+		case Moves::Meteor_Beam:
+			return charge_up_move(
+				move,
+				original_user,
+				original_other.pokemon(),
+				original_weather,
+				guaranteed_effect<UserTeam>(boost_user_stat<BoostableStat::spa, 1>)
 			);
 		case Moves::Skull_Bash:
 			return charge_up_move(
@@ -1213,6 +1262,10 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 					}
 				}();
 				heal(user.pokemon(), weather, amount);
+			});
+		case Moves::Life_Dew:
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
+				heal(user.pokemon(), weather, rational(1_bi, 4_bi));
 			});
 		case Moves::Wish:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
@@ -1327,6 +1380,8 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Bind:
 		case Moves::Clamp:
 		case Moves::Sand_Tomb:
+		case Moves::Snap_Trap:
+		case Moves::Thunder_Cage:
 		case Moves::Whirlpool:
 		case Moves::Wrap:
 			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
@@ -1347,11 +1402,29 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				other.pokemon().fully_trap();
 			});
+		case Moves::Jaw_Lock:
+			return original_user.fully_trapped() or original_other.pokemon().fully_trapped() ?
+				no_effect<UserTeam> :
+				guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
+					user.pokemon().fully_trap();
+					other.pokemon().fully_trap();
+				});
+		case Moves::No_Retreat:
+			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
+				user.pokemon().fully_trap();
+				boost_regular(user.pokemon().stages(), 1_bi);
+			});
+		case Moves::Octolock:
+			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
+				other.pokemon().fully_trap();
+			});
 		case Moves::Blast_Burn:
+		case Moves::Eternabeam:
 		case Moves::Frenzy_Plant:
 		case Moves::Giga_Impact:
 		case Moves::Hydro_Cannon:
 		case Moves::Hyper_Beam:
+		case Moves::Meteor_Assault:
 		case Moves::Roar_of_Time:
 		case Moves::Rock_Wrecker:
 			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
@@ -1429,6 +1502,7 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 				other.pokemon().activate_encore(weather);
 			});
 		case Moves::Explosion:
+		case Moves::Misty_Explosion:
 		case Moves::Self_Destruct:
 			return (generation == Generation::one and original_other.pokemon().substitute()) ?
 				guaranteed_effect<UserTeam>([](auto & user, auto & other, auto &, auto) {
@@ -1498,6 +1572,7 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
 				user.pokemon().ingrain();
 			});
+		case Moves::Corrosive_Gas:
 		case Moves::Knock_Off:
 			return guaranteed_effect<UserTeam>([](auto &, auto & other, auto &, auto) {
 				auto const other_pokemon = other.pokemon();
@@ -1613,9 +1688,11 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 					}
 					return random_spite<UserTeam>;
 				default:
-					return guaranteed_effect<UserTeam>(spite<4>);
+					return guaranteed_effect<UserTeam>(reduce_pp<4>);
 			}
 		}
+		case Moves::Eerie_Spell:
+			return guaranteed_effect<UserTeam>(reduce_pp<3>);
 		case Moves::Struggle:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto const damage) {
 				switch (generation) {
@@ -1687,6 +1764,7 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Arm_Thrust:
 		case Moves::Assist:
 		case Moves::Assurance:
+		case Moves::Astral_Barrage:
 		case Moves::Attack_Order:
 		case Moves::Aura_Sphere:
 		case Moves::Autotomize:
@@ -1694,22 +1772,30 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Barrage:
 		case Moves::Baton_Pass:
 		case Moves::Beat_Up:
+		case Moves::Behemoth_Bash:
+		case Moves::Behemoth_Blade:
 		case Moves::Bestow:
-		case Moves::Bonemerang:
+		case Moves::Body_Press:
+		case Moves::Bolt_Beak:
 		case Moves::Bone_Rush:
+		case Moves::Bonemerang:
+		case Moves::Branch_Poke:
 		case Moves::Brick_Break:
 		case Moves::Brine:
 		case Moves::Bulldoze:
 		case Moves::Bullet_Punch:
 		case Moves::Bullet_Seed:
+		case Moves::Burning_Jealousy:
 		case Moves::Chip_Away:
 		case Moves::Circle_Throw:
 		case Moves::Clear_Smog:
+		case Moves::Coaching:
 		case Moves::Coil:
 		case Moves::Comet_Punch:
 		case Moves::Copycat:
 		case Moves::Cotton_Guard:
 		case Moves::Counter:
+		case Moves::Court_Change:
 		case Moves::Crabhammer:
 		case Moves::Cross_Chop:
 		case Moves::Crush_Grip:
@@ -1719,12 +1805,16 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Double_Kick:
 		case Moves::Double_Slap:
 		case Moves::Dragon_Claw:
+		case Moves::Dragon_Darts:
+		case Moves::Dragon_Energy:
 		case Moves::Dragon_Pulse:
 		case Moves::Dragon_Rage:
 		case Moves::Dragon_Tail:
 		case Moves::Drill_Peck:
 		case Moves::Drill_Run:
 		case Moves::Dual_Chop:
+		case Moves::Dual_Wingbeat:
+		case Moves::Dynamax_Cannon:
 		case Moves::Earthquake:
 		case Moves::Echoed_Voice:
 		case Moves::Egg_Bomb:
@@ -1734,17 +1824,21 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Endure:
 		case Moves::Entrainment:
 		case Moves::Eruption:
+		case Moves::Expanding_Force:
 		case Moves::Extreme_Speed:
 		case Moves::Facade:
-		case Moves::Feint_Attack:
+		case Moves::False_Surrender:
 		case Moves::False_Swipe:
+		case Moves::Feint_Attack:
 		case Moves::Fiery_Dance:
 		case Moves::Final_Gambit:
 		case Moves::Fire_Pledge:
+		case Moves::Fishious_Rend:
 		case Moves::Fissure:
 		case Moves::Flail:
 		case Moves::Flame_Burst:
 		case Moves::Flame_Charge:
+		case Moves::Flip_Turn:
 		case Moves::Focus_Punch:
 		case Moves::Foul_Play:
 		case Moves::Frost_Breath:
@@ -1755,9 +1849,11 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Fusion_Bolt:
 		case Moves::Fusion_Flare:
 		case Moves::Gear_Grind:
+		case Moves::Glacial_Lance:
 		case Moves::Glaciate:
 		case Moves::Grass_Knot:
 		case Moves::Grass_Pledge:
+		case Moves::Grassy_Glide:
 		case Moves::Guard_Split:
 		case Moves::Guillotine:
 		case Moves::Gust:
@@ -1780,15 +1876,36 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Icicle_Spear:
 		case Moves::Judgment:
 		case Moves::Karate_Chop:
+		case Moves::Lash_Out:
 		case Moves::Last_Resort:
 		case Moves::Leaf_Blade:
 		case Moves::Lock_On:
 		case Moves::Mach_Punch:
+		case Moves::Magic_Powder:
 		case Moves::Magical_Leaf:
 		case Moves::Magnet_Bomb:
-		case Moves::Megahorn:
+		case Moves::Max_Airstream:
+		case Moves::Max_Darkness:
+		case Moves::Max_Flare:
+		case Moves::Max_Flutterby:
+		case Moves::Max_Geyser:
+		case Moves::Max_Guard:
+		case Moves::Max_Hailstorm:
+		case Moves::Max_Knuckle:
+		case Moves::Max_Lightning:
+		case Moves::Max_Mindstorm:
+		case Moves::Max_Ooze:
+		case Moves::Max_Overgrowth:
+		case Moves::Max_Phantasm:
+		case Moves::Max_Quake:
+		case Moves::Max_Rockfall:
+		case Moves::Max_Starfall:
+		case Moves::Max_Steelspike:
+		case Moves::Max_Strike:
+		case Moves::Max_Wyrmwind:
 		case Moves::Mega_Kick:
 		case Moves::Mega_Punch:
+		case Moves::Megahorn:
 		case Moves::Metal_Burst:
 		case Moves::Metronome:
 		case Moves::Mind_Reader:
@@ -1798,11 +1915,14 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Nature_Power:
 		case Moves::Night_Shade:
 		case Moves::Night_Slash:
+		case Moves::Obstruct:
+		case Moves::Overdrive:
 		case Moves::Pass:
-		case Moves::Payback:
 		case Moves::Pay_Day:
+		case Moves::Payback:
 		case Moves::Peck:
 		case Moves::Pin_Missile:
+		case Moves::Poltergeist:
 		case Moves::Pound:
 		case Moves::Power_Gem:
 		case Moves::Power_Split:
@@ -1822,6 +1942,7 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Return:
 		case Moves::Revenge:
 		case Moves::Reversal:
+		case Moves::Rising_Voltage:
 		case Moves::Rock_Blast:
 		case Moves::Rock_Throw:
 		case Moves::Round:
@@ -1842,38 +1963,48 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Slash:
 		case Moves::Sleep_Talk:
 		case Moves::Smack_Down:
+		case Moves::Snipe_Shot:
 		case Moves::Soak:
 		case Moves::Sonic_Boom:
 		case Moves::Spacial_Rend:
 		case Moves::Spike_Cannon:
 		case Moves::Splash:
+		case Moves::Steel_Beam:
+		case Moves::Steel_Roller:
 		case Moves::Stone_Edge:
 		case Moves::Stored_Power:
 		case Moves::Storm_Throw:
 		case Moves::Strength:
+		case Moves::Stuff_Cheeks:
 		case Moves::Sucker_Punch:
 		case Moves::Super_Fang:
 		case Moves::Surf:
+		case Moves::Surging_Strikes:
 		case Moves::Swift:
 		case Moves::Synchronoise:
 		case Moves::Tackle:
 		case Moves::Tail_Slap:
+		case Moves::Tar_Shot:
+		case Moves::Teatime:
 		case Moves::Techno_Blast:
 		case Moves::Telekinesis:
 		case Moves::Teleport:
+		case Moves::Terrain_Pulse:
+		case Moves::Triple_Axel:
 		case Moves::Triple_Kick:
 		case Moves::Trump_Card:
 		case Moves::U_turn:
 		case Moves::Vacuum_Wave:
 		case Moves::Venoshock:
-		case Moves::Vice_Grip:
 		case Moves::Vine_Whip:
+		case Moves::Vise_Grip:
 		case Moves::Vital_Throw:
 		case Moves::Volt_Switch:
 		case Moves::Water_Gun:
 		case Moves::Water_Pledge:
 		case Moves::Water_Spout:
 		case Moves::Weather_Ball:
+		case Moves::Wicked_Blow:
 		case Moves::Wide_Guard:
 		case Moves::Wild_Charge:
 		case Moves::Wing_Attack:
@@ -2038,19 +2169,6 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 		case Moves::Lets_Snuggle_Forever:
 		case Moves::Splintered_Stormshards:
 		case Moves::Clangorous_Soulblaze:
-		case Moves::Zippy_Zap:
-		case Moves::Splishy_Splash:
-		case Moves::Floaty_Fall:
-		case Moves::Pika_Papow:
-		case Moves::Bouncy_Bubble:
-		case Moves::Buzzy_Buzz:
-		case Moves::Sizzly_Slide:
-		case Moves::Glitzy_Glow:
-		case Moves::Baddy_Bad:
-		case Moves::Sappy_Seed:
-		case Moves::Freezy_Frost:
-		case Moves::Sparkly_Swirl:
-		case Moves::Veevee_Volley:
 		case Moves::Double_Iron_Bash:
 			return no_effect<UserTeam>;
 	}

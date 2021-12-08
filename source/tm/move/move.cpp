@@ -10,23 +10,10 @@
 
 namespace technicalmachine {
 
-auto is_phaze(Moves const move) -> bool {
+auto is_delayed_switch(Moves const move) -> bool {
 	switch (move) {
-		case Moves::Circle_Throw:
-		case Moves::Dragon_Tail:
-		case Moves::Roar:
-		case Moves::Whirlwind:
-			return true;
-		default:
-			return false;
-	}
-}
-
-auto thaws_user(Moves const move) -> bool {
-	switch (move) {
-		case Moves::Flame_Wheel:
-		case Moves::Sacred_Fire:
-		case Moves::Scald:
+		case Moves::Flip_Turn:
+		case Moves::U_turn:
 			return true;
 		default:
 			return false;
@@ -44,4 +31,29 @@ auto is_regular(Moves const move) -> bool {
 	}
 }
 
-}	// namespace technicalmachine
+auto is_phaze(Moves const move) -> bool {
+	switch (move) {
+		case Moves::Circle_Throw:
+		case Moves::Dragon_Tail:
+		case Moves::Roar:
+		case Moves::Whirlwind:
+			return true;
+		default:
+			return false;
+	}
+}
+
+auto thaws_user(Moves const move) -> bool {
+	switch (move) {
+		case Moves::Flame_Wheel:
+		case Moves::Pyro_Ball:
+		case Moves::Sacred_Fire:
+		case Moves::Scald:
+		case Moves::Scorching_Sands:
+			return true;
+		default:
+			return false;
+	}
+}
+
+} // namespace technicalmachine

@@ -21,7 +21,7 @@ struct BaseStats {
 	using Def = bounded::integer<5, 230>;
 	using SpA = bounded::integer<10, 194>;
 	using SpD = bounded::integer<20, 230>;
-	using Spe = bounded::integer<5, 180>;
+	using Spe = bounded::integer<5, 200>;
 
 	using regular_value_type = bounded::integer<5, 230>;
 

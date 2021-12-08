@@ -28,13 +28,17 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Nature_Power:
 			return generation <= Generation::five ? Target::user : Target::adjacent;
 		case Moves::Howl:
-			return generation <= Generation::seven ? Target::user : Target::all_allies;
+			return generation <= Generation::seven ? Target::user : Target::user_and_all_allies;
 		case Moves::Aromatherapy:
 		case Moves::Heal_Bell:
 			return Target::user_team;
-		case Moves::Gear_Up:
-		case Moves::Magnetic_Flux:
+		case Moves::Coaching:
 			return Target::all_allies;
+		case Moves::Gear_Up:
+		case Moves::Jungle_Healing:
+		case Moves::Life_Dew:
+		case Moves::Magnetic_Flux:
+			return Target::user_and_all_allies;
 		case Moves::Aurora_Veil:
 		case Moves::Crafty_Shield:
 		case Moves::Happy_Hour:
@@ -47,6 +51,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Tailwind:
 		case Moves::Wide_Guard:
 			return Target::user_field;
+		case Moves::Court_Change:
 		case Moves::Electric_Terrain:
 		case Moves::Fairy_Lock:
 		case Moves::Grassy_Terrain:
@@ -67,6 +72,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Mud_Sport:
 		case Moves::Perish_Song:
 		case Moves::Rototiller:
+		case Moves::Teatime:
 		case Moves::Water_Sport:
 			return Target::all;
 		case Moves::Acrobatics:
@@ -78,7 +84,6 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Brave_Bird:
 		case Moves::Chatter:
 		case Moves::Dark_Pulse:
-		case Moves::Dragon_Ascent:
 		case Moves::Dragon_Pulse:
 		case Moves::Drill_Peck:
 		case Moves::Fly:
@@ -107,12 +112,14 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Boomburst:
 		case Moves::Brutal_Swing:
 		case Moves::Bulldoze:
+		case Moves::Corrosive_Gas:
 		case Moves::Discharge:
 		case Moves::Earthquake:
 		case Moves::Explosion:
 		case Moves::Lava_Plume:
 		case Moves::Magnitude:
 		case Moves::Mind_Blown:
+		case Moves::Misty_Explosion:
 		case Moves::Parabolic_Charge:
 		case Moves::Petal_Blizzard:
 		case Moves::Searing_Shot:
@@ -124,9 +131,11 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 			return Target::all_adjacent;
 		case Moves::Acid:
 		case Moves::Air_Cutter:
+		case Moves::Astral_Barrage:
 		case Moves::Blizzard:
-		case Moves::Bouncy_Bubble:
+		case Moves::Breaking_Swipe:
 		case Moves::Bubble:
+		case Moves::Burning_Jealousy:
 		case Moves::Captivate:
 		case Moves::Clanging_Scales:
 		case Moves::Clangorous_Soulblaze:
@@ -135,8 +144,11 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Dazzling_Gleam:
 		case Moves::Diamond_Storm:
 		case Moves::Disarming_Voice:
+		case Moves::Dragon_Energy:
 		case Moves::Electroweb:
 		case Moves::Eruption:
+		case Moves::Fiery_Wrath:
+		case Moves::Glacial_Lance:
 		case Moves::Glaciate:
 		case Moves::Growl:
 		case Moves::Heal_Block:
@@ -148,6 +160,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Leer:
 		case Moves::Muddy_Water:
 		case Moves::Origin_Pulse:
+		case Moves::Overdrive:
 		case Moves::Powder_Snow:
 		case Moves::Precipice_Blades:
 		case Moves::Razor_Leaf:
@@ -156,7 +169,6 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Rock_Slide:
 		case Moves::Shell_Trap:
 		case Moves::Snarl:
-		case Moves::Splishy_Splash:
 		case Moves::String_Shot:
 		case Moves::Struggle_Bug:
 		case Moves::Sweet_Scent:
@@ -168,6 +180,24 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Venom_Drench:
 		case Moves::Water_Spout:
 			return Target::all_adjacent_foes;
+		case Moves::Max_Airstream:
+		case Moves::Max_Darkness:
+		case Moves::Max_Flare:
+		case Moves::Max_Flutterby:
+		case Moves::Max_Geyser:
+		case Moves::Max_Hailstorm:
+		case Moves::Max_Knuckle:
+		case Moves::Max_Lightning:
+		case Moves::Max_Mindstorm:
+		case Moves::Max_Ooze:
+		case Moves::Max_Overgrowth:
+		case Moves::Max_Phantasm:
+		case Moves::Max_Quake:
+		case Moves::Max_Rockfall:
+		case Moves::Max_Starfall:
+		case Moves::Max_Steelspike:
+		case Moves::Max_Strike:
+		case Moves::Max_Wyrmwind:
 		case Moves::Me_First:
 		case Moves::Struggle:
 			return Target::adjacent_foe;
@@ -188,6 +218,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Camouflage:
 		case Moves::Celebrate:
 		case Moves::Charge:
+		case Moves::Clangorous_Soul:
 		case Moves::Coil:
 		case Moves::Conversion:
 		case Moves::Copycat:
@@ -221,6 +252,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Lunar_Dance:
 		case Moves::Magic_Coat:
 		case Moves::Magnet_Rise:
+		case Moves::Max_Guard:
 		case Moves::Meditate:
 		case Moves::Metal_Burst:
 		case Moves::Metronome:
@@ -230,6 +262,8 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Moonlight:
 		case Moves::Morning_Sun:
 		case Moves::Nasty_Plot:
+		case Moves::No_Retreat:
+		case Moves::Obstruct:
 		case Moves::Outrage:
 		case Moves::Pass:
 		case Moves::Petal_Dance:
@@ -254,6 +288,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Spiky_Shield:
 		case Moves::Splash:
 		case Moves::Stockpile:
+		case Moves::Stuff_Cheeks:
 		case Moves::Substitute:
 		case Moves::Swallow:
 		case Moves::Switch0:
@@ -281,6 +316,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::All_Out_Pummeling:
 		case Moves::Anchor_Shot:
 		case Moves::Ancient_Power:
+		case Moves::Apple_Acid:
 		case Moves::Aqua_Jet:
 		case Moves::Aqua_Tail:
 		case Moves::Arm_Thrust:
@@ -288,13 +324,15 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Astonish:
 		case Moves::Attack_Order:
 		case Moves::Attract:
+		case Moves::Aura_Wheel:
 		case Moves::Aurora_Beam:
 		case Moves::Avalanche:
 		case Moves::Baby_Doll_Eyes:
-		case Moves::Baddy_Bad:
 		case Moves::Barrage:
 		case Moves::Beak_Blast:
 		case Moves::Beat_Up:
+		case Moves::Behemoth_Bash:
+		case Moves::Behemoth_Blade:
 		case Moves::Belch:
 		case Moves::Bestow:
 		case Moves::Bind:
@@ -305,11 +343,14 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Block:
 		case Moves::Bloom_Doom:
 		case Moves::Blue_Flare:
+		case Moves::Body_Press:
 		case Moves::Body_Slam:
+		case Moves::Bolt_Beak:
 		case Moves::Bolt_Strike:
 		case Moves::Bone_Club:
 		case Moves::Bone_Rush:
 		case Moves::Bonemerang:
+		case Moves::Branch_Poke:
 		case Moves::Breakneck_Blitz:
 		case Moves::Brick_Break:
 		case Moves::Brine:
@@ -319,7 +360,6 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Bullet_Punch:
 		case Moves::Bullet_Seed:
 		case Moves::Burn_Up:
-		case Moves::Buzzy_Buzz:
 		case Moves::Catastropika:
 		case Moves::Charge_Beam:
 		case Moves::Charm:
@@ -344,6 +384,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Crush_Grip:
 		case Moves::Cut:
 		case Moves::Darkest_Lariat:
+		case Moves::Decorate:
 		case Moves::Defog:
 		case Moves::Devastating_Drake:
 		case Moves::Dig:
@@ -357,8 +398,10 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Double_Slap:
 		case Moves::Double_Edge:
 		case Moves::Draco_Meteor:
+		case Moves::Dragon_Ascent:
 		case Moves::Dragon_Breath:
 		case Moves::Dragon_Claw:
+		case Moves::Dragon_Darts:
 		case Moves::Dragon_Hammer:
 		case Moves::Dragon_Rage:
 		case Moves::Dragon_Rush:
@@ -367,11 +410,15 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Draining_Kiss:
 		case Moves::Dream_Eater:
 		case Moves::Drill_Run:
+		case Moves::Drum_Beating:
 		case Moves::Dual_Chop:
+		case Moves::Dual_Wingbeat:
+		case Moves::Dynamax_Cannon:
 		case Moves::Dynamic_Punch:
 		case Moves::Earth_Power:
 		case Moves::Echoed_Voice:
 		case Moves::Eerie_Impulse:
+		case Moves::Eerie_Spell:
 		case Moves::Egg_Bomb:
 		case Moves::Electrify:
 		case Moves::Electro_Ball:
@@ -381,12 +428,15 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Endeavor:
 		case Moves::Energy_Ball:
 		case Moves::Entrainment:
+		case Moves::Eternabeam:
+		case Moves::Expanding_Force:
 		case Moves::Extrasensory:
 		case Moves::Extreme_Speed:
 		case Moves::Facade:
 		case Moves::Fairy_Wind:
 		case Moves::Fake_Out:
 		case Moves::Fake_Tears:
+		case Moves::False_Surrender:
 		case Moves::False_Swipe:
 		case Moves::Feather_Dance:
 		case Moves::Feint:
@@ -401,6 +451,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Fire_Punch:
 		case Moves::Fire_Spin:
 		case Moves::First_Impression:
+		case Moves::Fishious_Rend:
 		case Moves::Fissure:
 		case Moves::Flail:
 		case Moves::Flame_Burst:
@@ -413,7 +464,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Flatter:
 		case Moves::Fleur_Cannon:
 		case Moves::Fling:
-		case Moves::Floaty_Fall:
+		case Moves::Flip_Turn:
 		case Moves::Floral_Healing:
 		case Moves::Focus_Blast:
 		case Moves::Focus_Punch:
@@ -423,7 +474,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Foul_Play:
 		case Moves::Freeze_Shock:
 		case Moves::Freeze_Dry:
-		case Moves::Freezy_Frost:
+		case Moves::Freezing_Glare:
 		case Moves::Frenzy_Plant:
 		case Moves::Frost_Breath:
 		case Moves::Frustration:
@@ -440,10 +491,11 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Giga_Impact:
 		case Moves::Gigavolt_Havoc:
 		case Moves::Glare:
-		case Moves::Glitzy_Glow:
 		case Moves::Grass_Knot:
 		case Moves::Grass_Pledge:
 		case Moves::Grass_Whistle:
+		case Moves::Grav_Apple:
+		case Moves::Grassy_Glide:
 		case Moves::Guard_Split:
 		case Moves::Guard_Swap:
 		case Moves::Guardian_of_Alola:
@@ -489,11 +541,13 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Instruct:
 		case Moves::Iron_Head:
 		case Moves::Iron_Tail:
+		case Moves::Jaw_Lock:
 		case Moves::Judgment:
 		case Moves::Jump_Kick:
 		case Moves::Karate_Chop:
 		case Moves::Kinesis:
 		case Moves::Knock_Off:
+		case Moves::Lash_Out:
 		case Moves::Last_Resort:
 		case Moves::Leaf_Blade:
 		case Moves::Leaf_Storm:
@@ -513,6 +567,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Lunge:
 		case Moves::Luster_Purge:
 		case Moves::Mach_Punch:
+		case Moves::Magic_Powder:
 		case Moves::Magical_Leaf:
 		case Moves::Magma_Storm:
 		case Moves::Magnet_Bomb:
@@ -526,6 +581,8 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Menacing_Moonraze_Maelstrom:
 		case Moves::Metal_Claw:
 		case Moves::Metal_Sound:
+		case Moves::Meteor_Assault:
+		case Moves::Meteor_Beam:
 		case Moves::Meteor_Mash:
 		case Moves::Mimic:
 		case Moves::Mind_Reader:
@@ -552,6 +609,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Nuzzle:
 		case Moves::Oceanic_Operetta:
 		case Moves::Octazooka:
+		case Moves::Octolock:
 		case Moves::Odor_Sleuth:
 		case Moves::Ominous_Wind:
 		case Moves::Overheat:
@@ -561,7 +619,6 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Payback:
 		case Moves::Phantom_Force:
 		case Moves::Photon_Geyser:
-		case Moves::Pika_Papow:
 		case Moves::Pin_Missile:
 		case Moves::Plasma_Fists:
 		case Moves::Play_Nice:
@@ -572,6 +629,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Poison_Sting:
 		case Moves::Poison_Tail:
 		case Moves::Pollen_Puff:
+		case Moves::Poltergeist:
 		case Moves::Pound:
 		case Moves::Powder:
 		case Moves::Power_Gem:
@@ -596,6 +654,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Punishment:
 		case Moves::Purify:
 		case Moves::Pursuit:
+		case Moves::Pyro_Ball:
 		case Moves::Quash:
 		case Moves::Quick_Attack:
 		case Moves::Rage:
@@ -607,6 +666,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Revelation_Dance:
 		case Moves::Revenge:
 		case Moves::Reversal:
+		case Moves::Rising_Voltage:
 		case Moves::Roar:
 		case Moves::Roar_of_Time:
 		case Moves::Rock_Blast:
@@ -623,10 +683,11 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Sacred_Sword:
 		case Moves::Sand_Attack:
 		case Moves::Sand_Tomb:
-		case Moves::Sappy_Seed:
 		case Moves::Savage_Spin_Out:
 		case Moves::Scald:
+		case Moves::Scale_Shot:
 		case Moves::Scary_Face:
+		case Moves::Scorching_Sands:
 		case Moves::Scratch:
 		case Moves::Screech:
 		case Moves::Searing_Sunraze_Smash:
@@ -643,15 +704,16 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Shadow_Sneak:
 		case Moves::Shattered_Psyche:
 		case Moves::Sheer_Cold:
+		case Moves::Shell_Side_Arm:
 		case Moves::Shock_Wave:
 		case Moves::Signal_Beam:
 		case Moves::Silver_Wind:
 		case Moves::Simple_Beam:
 		case Moves::Sing:
 		case Moves::Sinister_Arrow_Raid:
-		case Moves::Sizzly_Slide:
 		case Moves::Sketch:
 		case Moves::Skill_Swap:
+		case Moves::Skitter_Smack:
 		case Moves::Skull_Bash:
 		case Moves::Sky_Uppercut:
 		case Moves::Slam:
@@ -664,6 +726,8 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Smelling_Salts:
 		case Moves::Smog:
 		case Moves::Smokescreen:
+		case Moves::Snap_Trap:
+		case Moves::Snipe_Shot:
 		case Moves::Snore:
 		case Moves::Soak:
 		case Moves::Solar_Beam:
@@ -672,11 +736,11 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Soul_Stealing_7_Star_Strike:
 		case Moves::Spacial_Rend:
 		case Moves::Spark:
-		case Moves::Sparkly_Swirl:
 		case Moves::Spectral_Thief:
 		case Moves::Speed_Swap:
 		case Moves::Spider_Web:
 		case Moves::Spike_Cannon:
+		case Moves::Spirit_Break:
 		case Moves::Spirit_Shackle:
 		case Moves::Spit_Up:
 		case Moves::Spite:
@@ -685,6 +749,8 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Spotlight:
 		case Moves::Steam_Eruption:
 		case Moves::Steamroller:
+		case Moves::Steel_Beam:
+		case Moves::Steel_Roller:
 		case Moves::Steel_Wing:
 		case Moves::Stoked_Sparksurfer:
 		case Moves::Stomp:
@@ -692,6 +758,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Stone_Edge:
 		case Moves::Stored_Power:
 		case Moves::Storm_Throw:
+		case Moves::Strange_Steam:
 		case Moves::Strength:
 		case Moves::Strength_Sap:
 		case Moves::Stun_Spore:
@@ -703,25 +770,30 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Superpower:
 		case Moves::Supersonic:
 		case Moves::Supersonic_Skystrike:
+		case Moves::Surging_Strikes:
 		case Moves::Swagger:
 		case Moves::Sweet_Kiss:
 		case Moves::Switcheroo:
 		case Moves::Tackle:
 		case Moves::Tail_Slap:
 		case Moves::Take_Down:
+		case Moves::Tar_Shot:
 		case Moves::Taunt:
 		case Moves::Tearful_Look:
 		case Moves::Techno_Blast:
 		case Moves::Tectonic_Rage:
 		case Moves::Telekinesis:
+		case Moves::Terrain_Pulse:
 		case Moves::Thief:
 		case Moves::Throat_Chop:
 		case Moves::Thunder:
+		case Moves::Thunder_Cage:
 		case Moves::Thunder_Fang:
 		case Moves::Thunder_Punch:
 		case Moves::Thunder_Shock:
 		case Moves::Thunder_Wave:
 		case Moves::Thunderbolt:
+		case Moves::Thunderous_Kick:
 		case Moves::Tickle:
 		case Moves::Topsy_Turvy:
 		case Moves::Torment:
@@ -731,6 +803,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Tri_Attack:
 		case Moves::Trick:
 		case Moves::Trick_or_Treat:
+		case Moves::Triple_Axel:
 		case Moves::Triple_Kick:
 		case Moves::Trop_Kick:
 		case Moves::Trump_Card:
@@ -739,9 +812,8 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::U_turn:
 		case Moves::V_create:
 		case Moves::Vacuum_Wave:
-		case Moves::Veevee_Volley:
 		case Moves::Venoshock:
-		case Moves::Vice_Grip:
+		case Moves::Vise_Grip:
 		case Moves::Vine_Whip:
 		case Moves::Vital_Throw:
 		case Moves::Volt_Switch:
@@ -754,6 +826,7 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Weather_Ball:
 		case Moves::Whirlpool:
 		case Moves::Whirlwind:
+		case Moves::Wicked_Blow:
 		case Moves::Wild_Charge:
 		case Moves::Will_O_Wisp:
 		case Moves::Wood_Hammer:
@@ -765,7 +838,6 @@ auto move_target(Generation const generation, Moves const move) -> Target {
 		case Moves::Zap_Cannon:
 		case Moves::Zen_Headbutt:
 		case Moves::Zing_Zap:
-		case Moves::Zippy_Zap:
 			return Target::adjacent;
 	}
 }

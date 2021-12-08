@@ -54,8 +54,17 @@ auto doubling(AttackerPokemon const attacker, Moves const move, any_active_pokem
 		case Moves::Avalanche: 
 		case Moves::Revenge:
 			return attacker.damaged();
+		case Moves::Behemoth_Bash:
+		case Moves::Behemoth_Blade:
+		case Moves::Dynamax_Cannon:
+			return false;
 		case Moves::Body_Slam:
 			return generation >= Generation::six and defender.minimized();
+		case Moves::Bolt_Beak:
+		case Moves::Fishious_Rend: {
+			auto const moved = defender.last_used_move();
+			return !moved.moved_this_turn() or moved.switched_in_this_turn();
+		}
 		case Moves::Brine:
 			return defender.hp().current() <= defender.hp().max() / 2_bi;
 		case Moves::Facade:
@@ -248,7 +257,6 @@ bool is_boosted_by_iron_fist(Moves const move) {
 		case Moves::Comet_Punch:
 		case Moves::Dizzy_Punch:
 		case Moves::Drain_Punch:
-		case Moves::Double_Iron_Bash:
 		case Moves::Dynamic_Punch:
 		case Moves::Fire_Punch:
 		case Moves::Focus_Punch:

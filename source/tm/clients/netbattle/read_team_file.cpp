@@ -1375,7 +1375,7 @@ constexpr auto id_to_move(MoveID const id) -> bounded::optional<Moves> {
 		case 238: return Moves::Triple_Kick;
 		case 239: return Moves::Twineedle;
 		case 240: return Moves::Twister;
-		case 241: return Moves::Vice_Grip;
+		case 241: return Moves::Vise_Grip;
 		case 242: return Moves::Vine_Whip;
 		case 243: return Moves::Vital_Throw;
 		case 244: return Moves::Water_Gun;

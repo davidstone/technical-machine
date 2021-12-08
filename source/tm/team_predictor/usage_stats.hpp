@@ -68,8 +68,7 @@ struct AllUsageStats {
 		return m_all_stats[bounded::integer(generation) - 1_bi];
 	}
 private:
-	// static_cast<unsigned>(numeric_traits::max_value<Generation>)
-	containers::array<UsageStats, 7> m_all_stats;
+	containers::array<UsageStats, static_cast<unsigned>(numeric_traits::max_value<Generation>)> m_all_stats;
 };
 
 }	// namespace technicalmachine

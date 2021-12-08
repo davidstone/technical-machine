@@ -44,6 +44,7 @@ bool MoveState::move_damages_self(Party const party) const {
 	auto const result = [&]{
 		switch (m_move->executed) {
 			case Moves::Belly_Drum:
+			case Moves::Clangorous_Soul:
 			case Moves::Substitute:
 				return true;
 			default:
