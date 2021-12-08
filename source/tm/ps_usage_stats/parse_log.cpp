@@ -78,7 +78,7 @@ auto parse_team(nlohmann::json const & team_array) -> Team<generation> {
 		auto const gender = [&] {
 			auto const gender_str = pokemon.value("gender", "");
 			return
-				gender_str == "" ? Gender::genderless :
+				gender_str == "" or gender_str == "N" ? Gender::genderless :
 				gender_str == "F" ? Gender::female :
 				gender_str == "M" ? Gender::male :
 				throw std::runtime_error("Invalid Gender string");
