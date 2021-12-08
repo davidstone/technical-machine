@@ -1990,6 +1990,8 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Stakataka: return {61_bi, 131_bi, 211_bi, 53_bi, 101_bi, 13_bi};
 			case Species::Blacephalon: return {53_bi, 127_bi, 53_bi, 151_bi, 79_bi, 107_bi};
 			case Species::Zeraora: return {88_bi, 112_bi, 75_bi, 102_bi, 80_bi, 143_bi};
+			case Species::Meltan: return {46_bi, 65_bi, 65_bi, 55_bi, 35_bi, 34_bi};
+			case Species::Melmetal: return {135_bi, 143_bi, 143_bi, 80_bi, 65_bi, 34_bi};
 		}
 	}())
 {

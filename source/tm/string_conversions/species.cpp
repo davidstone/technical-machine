@@ -875,6 +875,8 @@ auto to_string(Species const species) -> std::string_view {
 		case Species::Stakataka: return "Stakataka";
 		case Species::Blacephalon: return "Blacephalon";
 		case Species::Zeraora: return "Zeraora";
+		case Species::Meltan: return "Meltan";
+		case Species::Melmetal: return "Melmetal";
 		case Species::Rattata_Alolan: return "Rattata Alolan";
 		case Species::Raticate_Alolan: return "Raticate Alolan";
 		case Species::Raichu_Alolan: return "Raichu Alolan";
@@ -898,7 +900,7 @@ auto to_string(Species const species) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Species {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 996>;
+	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 998>;
 	static constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
@@ -1425,7 +1427,9 @@ auto from_string(std::string_view const str) -> Species {
 			{ "medichammega", Species::Medicham },
 			{ "meditite", Species::Meditite },
 			{ "meganium", Species::Meganium },
+			{ "melmetal", Species::Melmetal },
 			{ "meloetta", Species::Meloetta },
+			{ "meltan", Species::Meltan },
 			{ "meowstic", Species::Meowstic },
 			{ "meowth", Species::Meowth },
 			{ "meowthalola", Species::Meowth_Alolan },

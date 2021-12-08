@@ -875,6 +875,8 @@ PokemonTypes::PokemonTypes(Generation const generation, Species const species):
 		case Species::Stakataka: return PokemonTypes(Type::Rock, Type::Steel);
 		case Species::Blacephalon: return PokemonTypes(Type::Fire, Type::Ghost);
 		case Species::Zeraora: return PokemonTypes(Type::Electric);
+		case Species::Meltan: return PokemonTypes(Type::Steel);
+		case Species::Melmetal: return PokemonTypes(Type::Steel);
 		case Species::Rattata_Alolan: return PokemonTypes(Type::Dark, Type::Normal);
 		case Species::Raticate_Alolan: return PokemonTypes(Type::Dark, Type::Normal);
 		case Species::Raichu_Alolan: return PokemonTypes(Type::Electric, Type::Psychic);

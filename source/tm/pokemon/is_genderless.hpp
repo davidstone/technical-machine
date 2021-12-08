@@ -867,6 +867,8 @@ constexpr auto is_genderless(Species const species) {
 		case Species::Stakataka: return true;
 		case Species::Blacephalon: return true;
 		case Species::Zeraora: return true;
+		case Species::Meltan: return true;
+		case Species::Melmetal: return true;
 		case Species::Rattata_Alolan: return false;
 		case Species::Raticate_Alolan: return false;
 		case Species::Raichu_Alolan: return false;

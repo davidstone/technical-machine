@@ -878,6 +878,8 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Stakataka: return 120_bi;
 		case Species::Blacephalon: return 40_bi;
 		case Species::Zeraora: return 60_bi;
+		case Species::Meltan: return 20_bi;
+		case Species::Melmetal: return 120_bi;
 		case Species::Rattata_Alolan: return 20_bi;
 		case Species::Raticate_Alolan: return 60_bi;
 		case Species::Raichu_Alolan: return 40_bi;

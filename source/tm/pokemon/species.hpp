@@ -872,6 +872,8 @@ enum class Species : uint16_t {
 	Stakataka,
 	Blacephalon,
 	Zeraora,
+	Meltan,
+	Melmetal,
 	Rattata_Alolan,
 	Raticate_Alolan,
 	Raichu_Alolan,
