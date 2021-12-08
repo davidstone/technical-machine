@@ -771,4 +771,4 @@ template<>
 inline constexpr auto numeric_traits::min_value<technicalmachine::Moves> = technicalmachine::Moves();
 
 template<>
-inline constexpr auto numeric_traits::max_value<technicalmachine::Moves> = technicalmachine::Moves::Fusion_Bolt;
+inline constexpr auto numeric_traits::max_value<technicalmachine::Moves> = technicalmachine::Moves::Double_Iron_Bash;
