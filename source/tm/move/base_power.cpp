@@ -25,27 +25,22 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		// Generation 1
 		case Species::Bulbasaur: return 20_bi;
 		case Species::Ivysaur: return 40_bi;
-		case Species::Venusaur: return 80_bi;
-		// case Species::Venusaur_Mega: return 100_bi;
+		case Species::Venusaur: return 100_bi;
 		case Species::Charmander: return 20_bi;
 		case Species::Charmeleon: return 40_bi;
 		case Species::Charizard: return 80_bi;
-		// case Species::Charizard_Mega_X: return 100_bi;
-		// case Species::Charizard_Mega_Y: return 100_bi;
 		case Species::Squirtle: return 20_bi;
 		case Species::Wartortle: return 40_bi;
 		case Species::Blastoise: return 80_bi;
-		// case Species::Blastoise_Mega: return 100_bi;
 		case Species::Caterpie: return 20_bi;
 		case Species::Metapod: return 20_bi;
 		case Species::Butterfree: return 60_bi;
 		case Species::Weedle: return 20_bi;
-		case Species::Kakuna: return 20_bi;
+		case Species::Kakuna: return 40_bi;
 		case Species::Beedrill: return 60_bi;
 		case Species::Pidgey: return 20_bi;
 		case Species::Pidgeotto: return 60_bi;
 		case Species::Pidgeot: return 60_bi;
-		// case Species::Pidgeot_Mega: return 80_bi;
 		case Species::Rattata: return 20_bi;
 		case Species::Raticate: return 40_bi;
 		case Species::Spearow: return 20_bi;
@@ -93,7 +88,6 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Abra: return 40_bi;
 		case Species::Kadabra: return 80_bi;
 		case Species::Alakazam: return 60_bi;
-		// TODO: Alakazam_Mega?
 		case Species::Machop: return 40_bi;
 		case Species::Machoke: return 80_bi;
 		case Species::Machamp: return 100_bi;
@@ -109,7 +103,6 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Rapidash: return 80_bi;
 		case Species::Slowpoke: return 60_bi;
 		case Species::Slowbro: return 80_bi;
-		// case Species::Slowbro_Mega: return 100_bi;
 		case Species::Magnemite: return 20_bi;
 		case Species::Magneton: return 80_bi;
 		case Species::Farfetchd: return 40_bi;
@@ -124,7 +117,6 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Gastly: return 20_bi;
 		case Species::Haunter: return 20_bi;
 		case Species::Gengar: return 60_bi;
-		// TODO: Gengar_Mega?
 		case Species::Onix: return 120_bi;
 		case Species::Drowzee: return 60_bi;
 		case Species::Hypno: return 80_bi;
@@ -146,9 +138,8 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Chansey: return 60_bi;
 		case Species::Tangela: return 60_bi;
 		case Species::Kangaskhan: return 80_bi;
-		// case Species::Kangaskhan_Mega: return 100_bi;
 		case Species::Horsea: return 20_bi;
-		case Species::Seadra: return 40_bi;
+		case Species::Seadra: return 60_bi;
 		case Species::Goldeen: return 40_bi;
 		case Species::Seaking: return 60_bi;
 		case Species::Staryu: return 60_bi;
@@ -160,14 +151,14 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Magmar: return 60_bi;
 		case Species::Pinsir: return 80_bi;
 		case Species::Tauros: return 80_bi;
-		case Species::Magikarp: return 20_bi;
+		case Species::Magikarp: return 40_bi;
 		case Species::Gyarados: return 120_bi;
 		case Species::Lapras: return 120_bi;
 		case Species::Ditto: return 20_bi;
 		case Species::Eevee: return 20_bi;
 		case Species::Vaporeon: return 60_bi;
 		case Species::Jolteon: return 40_bi;
-		case Species::Flareon: return 40_bi;
+		case Species::Flareon: return 60_bi;
 		case Species::Porygon: return 60_bi;
 		case Species::Omanyte: return 20_bi;
 		case Species::Omastar: return 60_bi;
@@ -182,8 +173,6 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Dragonair: return 40_bi;
 		case Species::Dragonite: return 120_bi;
 		case Species::Mewtwo: return 100_bi;
-		// case Species::Mewtwo_Mega_X: return 100_bi;
-		// case Species::Mewtwo_Mega_Y: return 60_bi;
 		case Species::Mew: return 20_bi;
 
 		// Generation 2
@@ -194,7 +183,7 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Quilava: return 40_bi;
 		case Species::Typhlosion: return 80_bi;
 		case Species::Totodile: return 20_bi;
-		case Species::Croconaw: return 40_bi;
+		case Species::Croconaw: return 60_bi;
 		case Species::Feraligatr: return 80_bi;
 		case Species::Sentret: return 20_bi;
 		case Species::Furret: return 60_bi;
@@ -217,7 +206,6 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Mareep: return 20_bi;
 		case Species::Flaaffy: return 40_bi;
 		case Species::Ampharos: return 80_bi;
-		// TODO: Ampharos_Mega?
 		case Species::Bellossom: return 20_bi;
 		case Species::Marill: return 20_bi;
 		case Species::Azumarill: return 60_bi;
@@ -296,17 +284,15 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Torchic: return 20_bi;
 		case Species::Combusken: return 40_bi;
 		case Species::Blaziken: return 80_bi;
-		// TODO: Blaziken_Mega?
 		case Species::Mudkip: return 20_bi;
 		case Species::Marshtomp: return 60_bi;
 		case Species::Swampert: return 80_bi;
-		// case Species::Swampert_Mega: return 100_bi;
 		case Species::Poochyena: return 40_bi;
 		case Species::Mightyena: return 60_bi;
 		case Species::Zigzagoon: return 40_bi;
 		case Species::Linoone: return 60_bi;
 		case Species::Wurmple: return 20_bi;
-		case Species::Silcoon: return 20_bi;
+		case Species::Silcoon: return 40_bi;
 		case Species::Beautifly: return 60_bi;
 		case Species::Cascoon: return 40_bi;
 		case Species::Dustox: return 60_bi;
@@ -323,7 +309,6 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Ralts: return 20_bi;
 		case Species::Kirlia: return 40_bi;
 		case Species::Gardevoir: return 60_bi;
-		// TODO: Gardevoir_Mega?
 		case Species::Surskit: return 20_bi;
 		case Species::Masquerain: return 20_bi;
 		case Species::Shroomish: return 20_bi;
@@ -344,14 +329,12 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Skitty: return 40_bi;
 		case Species::Delcatty: return 60_bi;
 		case Species::Sableye: return 40_bi;
-		// case Species::Sableye_Mega: return 100_bi;
 		case Species::Mawile: return 40_bi;
 		case Species::Aron: return 80_bi;
 		case Species::Lairon: return 100_bi;
 		case Species::Aggron: return 120_bi;
 		case Species::Meditite: return 40_bi;
 		case Species::Medicham: return 60_bi;
-		// TODO: Medicham_Mega?
 		case Species::Electrike: return 40_bi;
 		case Species::Manectric: return 60_bi;
 		case Species::Plusle: return 20_bi;
@@ -363,7 +346,6 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Swalot: return 80_bi;
 		case Species::Carvanha: return 40_bi;
 		case Species::Sharpedo: return 80_bi;
-		// case Species::Sharpedo_Mega: return 100_bi;
 		case Species::Wailmer: return 100_bi;
 		case Species::Wailord: return 120_bi;
 		case Species::Numel: return 40_bi;
@@ -401,7 +383,7 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Banette: return 40_bi;
 		case Species::Duskull: return 40_bi;
 		case Species::Dusclops: return 60_bi;
-		case Species::Tropius: return 80_bi;
+		case Species::Tropius: return 100_bi;
 		case Species::Chimecho: return 20_bi;
 		case Species::Absol: return 60_bi;
 		case Species::Wynaut: return 40_bi;
@@ -425,7 +407,6 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Regice: return 100_bi;
 		case Species::Registeel: return 120_bi;
 		case Species::Latias: return 60_bi;
-		// case Species::Latias_Mega: return 80_bi;
 		case Species::Latios: return 80_bi;
 		case Species::Kyogre: return 120_bi;
 		case Species::Groudon: return 120_bi;
@@ -498,7 +479,6 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Gible: return 40_bi;
 		case Species::Gabite: return 80_bi;
 		case Species::Garchomp: return 80_bi;
-		// TODO: Garchomp_Mega?
 		case Species::Munchlax: return 100_bi;
 		case Species::Riolu: return 40_bi;
 		case Species::Lucario: return 80_bi;
@@ -620,7 +600,7 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Darmanitan: return 80_bi;
 		case Species::Maractus: return 60_bi;
 		case Species::Dwebble: return 40_bi;
-		case Species::Crustle: return 100_bi;
+		case Species::Crustle: return 120_bi;
 		case Species::Scraggy: return 40_bi;
 		case Species::Scrafty: return 60_bi;
 		case Species::Sigilyph: return 40_bi;
@@ -696,13 +676,13 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Heatmor: return 80_bi;
 		case Species::Durant: return 60_bi;
 		case Species::Deino: return 40_bi;
-		case Species::Zweilous: return 60_bi;
+		case Species::Zweilous: return 80_bi;
 		case Species::Hydreigon: return 100_bi;
 		case Species::Larvesta: return 60_bi;
 		case Species::Volcarona: return 60_bi;
 		case Species::Cobalion: return 120_bi;
 		case Species::Terrakion: return 120_bi;
-		case Species::Virizion: return 100_bi;
+		case Species::Virizion: return 120_bi;
 		case Species::Tornadus_Incarnate: return 80_bi;
 		case Species::Tornadus_Therian: return 80_bi;
 		case Species::Thundurus_Incarnate: return 80_bi;
@@ -797,11 +777,10 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Zygarde_10: return 60_bi;
 		case Species::Zygarde_Complete: return 120_bi;
 		case Species::Diancie: return 20_bi;
-		// case Species::Diancie_Mega: return 60_bi;
 		case Species::Hoopa_Confined: return 20_bi;
 		case Species::Hoopa_Unbound: return 120_bi;
 		case Species::Volcanion: return 100_bi;
-		
+
 		// Generation 7
 		case Species::Rowlet: return 20_bi;
 		case Species::Dartrix: return 40_bi;
@@ -917,6 +896,54 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Muk_Alolan: return 80_bi;
 		case Species::Exeggutor_Alolan: return 120_bi;
 		case Species::Marowak_Alolan: return 60_bi;
+		// case Species::Basculegion: return 100_bi;
+		// case Species::Greninja_Ash: return 60_bi;
+		// case Species::Kleavor: return 80_bi;
+		// case Species::Mega_Abomasnow: return 100_bi;
+		// case Species::Mega_Absol: return 60_bi;
+		// case Species::Mega_Aerodactyl: return 80_bi;
+		// case Species::Mega_Aggron: return 120_bi;
+		// case Species::Mega_Altaria: return 40_bi;
+		// case Species::Mega_Audino: return 60_bi;
+		// case Species::Mega_Banette: return 40_bi;
+		// case Species::Mega_Beedrill: return 60_bi;
+		// case Species::Mega_Blastoise: return 100_bi;
+		// case Species::Mega_Camerupt: return 120_bi;
+		// case Species::Mega_Charizard_X: return 100_bi;
+		// case Species::Mega_Charizard_Y: return 100_bi;
+		// case Species::Mega_Diancie: return 60_bi;
+		// case Species::Mega_Gallade: return 80_bi;
+		// case Species::Mega_Glalie: return 120_bi;
+		// case Species::Mega_Gyarados: return 120_bi;
+		// case Species::Mega_Heracross: return 80_bi;
+		// case Species::Mega_Houndoom: return 60_bi;
+		// case Species::Mega_Kangaskhan: return 100_bi;
+		// case Species::Mega_Latias: return 80_bi;
+		// case Species::Mega_Latios: return 80_bi;
+		// case Species::Mega_Lopunny: return 60_bi;
+		// case Species::Mega_Lucario: return 80_bi;
+		// case Species::Mega_Manectric: return 60_bi;
+		// case Species::Mega_Mawile: return 40_bi;
+		// case Species::Mega_Metagross: return 120_bi;
+		// case Species::Mega_Mewtwo_X: return 100_bi;
+		// case Species::Mega_Mewtwo_Y: return 60_bi;
+		// case Species::Mega_Pidgeot: return 80_bi;
+		// case Species::Mega_Pinsir: return 80_bi;
+		// case Species::Mega_Rayquaza: return 120_bi;
+		// case Species::Mega_Sableye: return 100_bi;
+		// case Species::Mega_Salamence: return 100_bi;
+		// case Species::Mega_Sceptile: return 80_bi;
+		// case Species::Mega_Scizor: return 100_bi;
+		// case Species::Mega_Sharpedo: return 100_bi;
+		// case Species::Mega_Slowbro: return 100_bi;
+		// case Species::Mega_Steelix: return 120_bi;
+		// case Species::Mega_Swampert: return 100_bi;
+		// case Species::Mega_Tyranitar: return 120_bi;
+		// case Species::Mega_Venusaur: return 100_bi;
+		// case Species::Meloetta_Pirouette: return 20_bi;
+		// case Species::Primal_Groudon: return 120_bi;
+		// case Species::Primal_Kyogre: return 120_bi;
+		// case Species::Wyrdeer: return 80_bi;
 	}
 }
 
