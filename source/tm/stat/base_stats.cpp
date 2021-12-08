@@ -1913,7 +1913,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Vikavolt: return {77_bi, 70_bi, 90_bi, 145_bi, 75_bi, 43_bi};
 			case Species::Crabrawler: return {47_bi, 82_bi, 57_bi, 42_bi, 47_bi, 63_bi};
 			case Species::Crabominable: return {97_bi, 132_bi, 77_bi, 62_bi, 67_bi, 43_bi};
-			case Species::Oricorio: return {75_bi, 70_bi, 70_bi, 98_bi, 70_bi, 93_bi};
+			case Species::Oricorio_Baile: return {75_bi, 70_bi, 70_bi, 98_bi, 70_bi, 93_bi};
 			case Species::Oricorio_Pau: return {75_bi, 70_bi, 70_bi, 98_bi, 70_bi, 93_bi};
 			case Species::Oricorio_Pom_Pom: return {75_bi, 70_bi, 70_bi, 98_bi, 70_bi, 93_bi};
 			case Species::Oricorio_Sensu: return {75_bi, 70_bi, 70_bi, 98_bi, 70_bi, 93_bi};

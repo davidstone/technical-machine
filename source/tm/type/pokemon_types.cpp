@@ -798,7 +798,7 @@ PokemonTypes::PokemonTypes(Generation const generation, Species const species):
 		case Species::Vikavolt: return PokemonTypes(Type::Bug, Type::Electric);
 		case Species::Crabrawler: return PokemonTypes(Type::Fighting);
 		case Species::Crabominable: return PokemonTypes(Type::Fighting, Type::Ice);
-		case Species::Oricorio: return PokemonTypes(Type::Fire, Type::Flying);
+		case Species::Oricorio_Baile: return PokemonTypes(Type::Fire, Type::Flying);
 		case Species::Oricorio_Pau: return PokemonTypes(Type::Electric, Type::Flying);
 		case Species::Oricorio_Pom_Pom: return PokemonTypes(Type::Psychic, Type::Flying);
 		case Species::Oricorio_Sensu: return PokemonTypes(Type::Ghost, Type::Flying);

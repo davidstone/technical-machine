@@ -795,7 +795,7 @@ enum class Species : uint16_t {
 	Vikavolt,
 	Crabrawler,
 	Crabominable,
-	Oricorio,
+	Oricorio_Baile,
 	Oricorio_Pau,
 	Oricorio_Pom_Pom,
 	Oricorio_Sensu,

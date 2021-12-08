@@ -798,7 +798,7 @@ auto to_string(Species const species) -> std::string_view {
 		case Species::Vikavolt: return "Vikavolt";
 		case Species::Crabrawler: return "Crabrawler";
 		case Species::Crabominable: return "Crabominable";
-		case Species::Oricorio: return "Oricorio";
+		case Species::Oricorio_Baile: return "Oricorio-Baile";
 		case Species::Oricorio_Pau: return "Oricorio-Pa'u";
 		case Species::Oricorio_Pom_Pom: return "Oricorio-Pom-Pom";
 		case Species::Oricorio_Sensu: return "Oricorio-Sensu";
@@ -898,7 +898,7 @@ auto to_string(Species const species) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Species {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 995>;
+	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 996>;
 	static constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
@@ -1497,7 +1497,8 @@ auto from_string(std::string_view const str) -> Species {
 			{ "omastar", Species::Omastar },
 			{ "onix", Species::Onix },
 			{ "oranguru", Species::Oranguru },
-			{ "oricorio", Species::Oricorio },
+			{ "oricorio", Species::Oricorio_Baile },
+			{ "oricoriobaile", Species::Oricorio_Baile },
 			{ "oricoriopau", Species::Oricorio_Pau },
 			{ "oricoriopompom", Species::Oricorio_Pom_Pom },
 			{ "oricoriosensu", Species::Oricorio_Sensu },

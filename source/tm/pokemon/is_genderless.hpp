@@ -790,7 +790,7 @@ constexpr auto is_genderless(Species const species) {
 		case Species::Vikavolt: return false;
 		case Species::Crabrawler: return false;
 		case Species::Crabominable: return false;
-		case Species::Oricorio: return false;
+		case Species::Oricorio_Baile: return false;
 		case Species::Oricorio_Pau: return false;
 		case Species::Oricorio_Pom_Pom: return false;
 		case Species::Oricorio_Sensu: return false;

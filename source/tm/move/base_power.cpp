@@ -801,7 +801,7 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Vikavolt: return 60_bi;
 		case Species::Crabrawler: return 20_bi;
 		case Species::Crabominable: return 100_bi;
-		case Species::Oricorio: return 20_bi;
+		case Species::Oricorio_Baile: return 20_bi;
 		case Species::Oricorio_Pau: return 20_bi;
 		case Species::Oricorio_Pom_Pom: return 20_bi;
 		case Species::Oricorio_Sensu: return 20_bi;
