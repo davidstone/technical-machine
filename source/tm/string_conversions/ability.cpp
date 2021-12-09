@@ -293,10 +293,9 @@ auto to_string(Ability const ability) -> std::string_view {
 
 template<>
 auto from_string<Ability>(std::string_view const str) -> Ability {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Ability>, 260>;
-	constexpr auto converter = containers::basic_flat_map<Storage>(
+	constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		Storage{{
+		containers::to_array<containers::map_value_type<std::string_view, Ability>>({
 			{"adaptability", Ability::Adaptability},
 			{"aerilate", Ability::Aerilate},
 			{"aftermath", Ability::Aftermath},
@@ -557,7 +556,7 @@ auto from_string<Ability>(std::string_view const str) -> Ability {
 			{"wonderguard", Ability::Wonder_Guard},
 			{"wonderskin", Ability::Wonder_Skin},
 			{"zenmode", Ability::Zen_Mode},
-		}}
+		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<15>(str);
 	auto const result = containers::lookup(converter, converted);

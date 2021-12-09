@@ -29,16 +29,15 @@ auto to_string(Gender const gender) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Gender {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Gender>, 5>;
-	constexpr auto converter = containers::basic_flat_map<Storage>(
+	constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		Storage{{
+		containers::to_array<containers::map_value_type<std::string_view, Gender>>({
 			{ "female", Gender::female },
 			{ "genderless", Gender::genderless },
 			{ "male", Gender::male },
 			{ "nogender", Gender::genderless },
 			{ "none", Gender::genderless },
-		}}
+		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<10>(str);
 	auto const result = containers::lookup(converter, converted);

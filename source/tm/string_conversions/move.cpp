@@ -830,10 +830,9 @@ auto to_string(Moves const move) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Moves {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Moves>, 824>;
-	constexpr auto converter = containers::basic_flat_map<Storage>(
+	constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		Storage{{
+		containers::to_array<containers::map_value_type<std::string_view, Moves>>({
 			{ "10000000voltthunderbolt", Moves::m10000000_Volt_Thunderbolt },
 			{ "absorb", Moves::Absorb },
 			{ "accelerock", Moves::Accelerock },
@@ -1658,7 +1657,7 @@ auto from_string(std::string_view const str) -> Moves {
 			{ "zapcannon", Moves::Zap_Cannon },
 			{ "zenheadbutt", Moves::Zen_Headbutt },
 			{ "zingzap", Moves::Zing_Zap },
-		}}
+		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<25>(str);
 	auto const result = containers::lookup(converter, converted);

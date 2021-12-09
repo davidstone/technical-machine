@@ -28,10 +28,9 @@ auto to_string(NormalWeather const weather) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> NormalWeather {
-	using Storage = containers::array<containers::map_value_type<std::string_view, NormalWeather>, 9>;
-	constexpr auto converter = containers::basic_flat_map<Storage>(
+	constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		Storage{{
+		containers::to_array<containers::map_value_type<std::string_view, NormalWeather>>({
 			{ "clear", NormalWeather::clear },
 			{ "hail", NormalWeather::hail },
 			{ "none", NormalWeather::clear },
@@ -41,7 +40,7 @@ auto from_string(std::string_view const str) -> NormalWeather {
 			{ "sandstorm", NormalWeather::sand },
 			{ "sun", NormalWeather::sun },
 			{ "sunnyday", NormalWeather::sun },
-		}}
+		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<9>(str);
 	auto const result = containers::lookup(converter, converted);

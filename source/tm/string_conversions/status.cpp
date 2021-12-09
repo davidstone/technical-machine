@@ -32,10 +32,9 @@ auto to_string(Statuses const status) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Statuses {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Statuses>, 8>;
-	static constexpr auto converter = containers::basic_flat_map<Storage>(
+	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		Storage{{
+		containers::to_array<containers::map_value_type<std::string_view, Statuses>>({
 			{ "burn", Statuses::burn },
 			{ "freeze", Statuses::freeze },
 			{ "nostatus", Statuses::clear },
@@ -44,7 +43,7 @@ auto from_string(std::string_view const str) -> Statuses {
 			{ "rest", Statuses::rest },
 			{ "sleep", Statuses::sleep },
 			{ "toxic", Statuses::toxic },
-		}}
+		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<9>(str);
 	auto const result = containers::lookup(converter, converted);

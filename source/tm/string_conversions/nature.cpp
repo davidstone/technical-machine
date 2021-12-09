@@ -50,10 +50,9 @@ auto to_string(Nature const nature) -> std::string_view {
 
 template<>
 auto from_string<Nature>(std::string_view const str) -> Nature {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Nature>, 25>;
-	static constexpr auto converter = containers::basic_flat_map<Storage>(
+	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		Storage{{
+		containers::to_array<containers::map_value_type<std::string_view, Nature>>({
 			{ "adamant", Nature::Adamant },
 			{ "bashful", Nature::Bashful },
 			{ "bold", Nature::Bold },
@@ -79,7 +78,7 @@ auto from_string<Nature>(std::string_view const str) -> Nature {
 			{ "sassy", Nature::Sassy },
 			{ "serious", Nature::Serious },
 			{ "timid", Nature::Timid }
-		}}
+		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<7>(str);
 	auto const result = containers::lookup(converter, converted);

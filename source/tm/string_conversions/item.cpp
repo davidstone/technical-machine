@@ -784,10 +784,9 @@ auto to_string(Item const item) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Item {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Item>, 745>;
-	constexpr auto converter = containers::basic_flat_map<Storage>(
+	constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		Storage{{
+		containers::to_array<containers::map_value_type<std::string_view, Item>>({
 			{"", Item::None},
 			{"abilitycapsule", Item::Ability_Capsule},
 			{"abomasite", Item::Abomasite},
@@ -1533,7 +1532,7 @@ auto from_string(std::string_view const str) -> Item {
 			{"zapplate", Item::Zap_Plate},
 			{"zinc", Item::Zinc},
 			{"zoomlens", Item::Zoom_Lens},
-		}}
+		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<15>(str);
 	auto const result = containers::lookup(converter, converted);

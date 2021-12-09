@@ -1019,10 +1019,9 @@ auto to_string(Species const species) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Species {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 1137>;
-	static constexpr auto converter = containers::basic_flat_map<Storage>(
+	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		Storage{{
+		containers::to_array<containers::map_value_type<std::string_view, Species>>({
 			{ "abomasnow", Species::Abomasnow },
 			{ "abomasnowmega", Species::Abomasnow },
 			{ "abra", Species::Abra },
@@ -2160,7 +2159,7 @@ auto from_string(std::string_view const str) -> Species {
 			{ "zygarde10", Species::Zygarde_10 },
 			{ "zygarde50", Species::Zygarde_50 },
 			{ "zygardecomplete", Species::Zygarde_Complete },
-		}}
+		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<22>(str);
 	auto const result = containers::lookup(converter, converted);

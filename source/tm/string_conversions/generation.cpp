@@ -33,10 +33,9 @@ auto to_string(Generation const generation) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Generation {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Generation>, 8>;
-	constexpr auto converter = containers::basic_flat_map<Storage>(
+	constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		Storage{{
+		containers::to_array<containers::map_value_type<std::string_view, Generation>>({
 			{ "1", Generation::one },
 			{ "2", Generation::two },
 			{ "3", Generation::three },
@@ -45,7 +44,7 @@ auto from_string(std::string_view const str) -> Generation {
 			{ "6", Generation::six },
 			{ "7", Generation::seven },
 			{ "8", Generation::eight },
-		}}
+		})
 	);
 	auto const result = containers::lookup(converter, str);
 	if (!result) {

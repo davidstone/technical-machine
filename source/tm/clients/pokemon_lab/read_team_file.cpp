@@ -43,10 +43,9 @@ namespace {
 using namespace std::string_view_literals;
 
 constexpr auto parse_species(std::string_view const str) {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 16>;
-	constexpr auto converter = containers::basic_flat_map<Storage>(
+	constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		Storage{{
+		containers::to_array<containers::map_value_type<std::string_view, Species>>({
 			{ "Deoxys", Species::Deoxys_Normal },
 			{ "Deoxys-e", Species::Deoxys_Speed },
 			{ "Deoxys-f", Species::Deoxys_Attack },
@@ -63,7 +62,7 @@ constexpr auto parse_species(std::string_view const str) {
 			{ "Wormadam", Species::Wormadam_Plant },
 			{ "Wormadam-g", Species::Wormadam_Sandy },
 			{ "Wormadam-s", Species::Wormadam_Trash }
-		}}
+		})
 	);
 	auto const result = containers::lookup(converter, str);
 	return result ? *result : from_string<Species>(str);
