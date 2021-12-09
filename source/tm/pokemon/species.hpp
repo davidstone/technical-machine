@@ -689,6 +689,7 @@ enum class Species : uint16_t {
 	Kyurem_Black,
 	Kyurem_White,
 	Keldeo,
+	Keldeo_Resolute,
 	Meloetta,
 	Genesect,
 

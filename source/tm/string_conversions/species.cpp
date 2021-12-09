@@ -692,6 +692,7 @@ auto to_string(Species const species) -> std::string_view {
 		case Species::Kyurem_Black: return "Kyurem-Black";
 		case Species::Kyurem_White: return "Kyurem-White";
 		case Species::Keldeo: return "Keldeo";
+		case Species::Keldeo_Resolute: return "Keldeo-Resolute";
 		case Species::Meloetta: return "Meloetta";
 		case Species::Genesect: return "Genesect";
 
@@ -1017,7 +1018,7 @@ auto to_string(Species const species) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Species {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 1134>;
+	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 1135>;
 	static constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
@@ -1501,6 +1502,7 @@ auto from_string(std::string_view const str) -> Species {
 			{ "kartana", Species::Kartana },
 			{ "kecleon", Species::Kecleon },
 			{ "keldeo", Species::Keldeo },
+			{ "keldeoresolute", Species::Keldeo_Resolute },
 			{ "kingdra", Species::Kingdra },
 			{ "kingler", Species::Kingler },
 			{ "kirlia", Species::Kirlia },

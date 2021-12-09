@@ -684,6 +684,7 @@ constexpr auto is_genderless(Species const species) {
 		case Species::Kyurem_Black: return true;
 		case Species::Kyurem_White: return true;
 		case Species::Keldeo: return true;
+		case Species::Keldeo_Resolute: return true;
 		case Species::Meloetta: return true;
 		case Species::Genesect: return true;
 

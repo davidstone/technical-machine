@@ -691,6 +691,7 @@ PokemonTypes::PokemonTypes(Generation const generation, Species const species):
 		case Species::Kyurem_Black: return PokemonTypes(Type::Dragon, Type::Ice);
 		case Species::Kyurem_White: return PokemonTypes(Type::Dragon, Type::Ice);
 		case Species::Keldeo: return PokemonTypes(Type::Water, Type::Fighting);
+		case Species::Keldeo_Resolute: return PokemonTypes(Type::Water, Type::Fighting);
 		case Species::Meloetta: return PokemonTypes(Type::Normal, Type::Psychic);
 		// case Species::Meloetta_Pirouette: return PokemonTypes(Type::Normal, Type::Fighting);
 		case Species::Genesect: return PokemonTypes(Type::Bug, Type::Steel);

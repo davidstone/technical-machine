@@ -1787,6 +1787,7 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Kyurem_Black: return {125_bi, 170_bi, 100_bi, 120_bi, 90_bi, 95_bi};
 			case Species::Kyurem_White: return {125_bi, 120_bi, 90_bi, 170_bi, 100_bi, 95_bi};
 			case Species::Keldeo: return {91_bi, 72_bi, 90_bi, 129_bi, 90_bi, 108_bi};
+			case Species::Keldeo_Resolute: return {91_bi, 72_bi, 90_bi, 129_bi, 90_bi, 108_bi};
 			case Species::Meloetta: return {100_bi, 77_bi, 77_bi, 128_bi, 128_bi, 90_bi};
 			// Changes if Meloetta successfully uses Relic Song
 			// case Species::Meloetta_Pirouette: return {100_bi, 128_bi, 90_bi, 77_bi, 77_bi, 128_bi};
