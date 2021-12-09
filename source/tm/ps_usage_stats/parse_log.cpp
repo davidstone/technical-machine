@@ -88,7 +88,9 @@ auto parse_team(nlohmann::json const & team_array) -> Team<generation> {
 			[](nlohmann::json const & move) { return Move(generation, from_string<Moves>(move.get<std::string_view>())); }
 		));
 		auto const level = Level(bounded::check_in_range<Level::value_type>(pokemon.at("level").get<nlohmann::json::number_integer_t>()));
-		auto const nature = from_string<Nature>(pokemon.at("nature").get<std::string_view>());
+		auto const nature_str = pokemon.at("nature").get<std::string_view>();
+		// A bug in the PS stats causes it to sometimes emit an empty nature
+		auto const nature = nature_str == "" ? Nature::Hardy : from_string<Nature>(nature_str);
 		auto const evs = parse_evs<generation>(pokemon.at("evs"));
 		auto const dvs_or_ivs = parse_dvs_or_ivs<generation>(pokemon.at("ivs"));
 		auto const happiness = Happiness(bounded::check_in_range<Happiness::value_type>(pokemon.value("happiness", 255)));
