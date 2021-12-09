@@ -762,6 +762,8 @@ enum class Item : std::uint16_t {
 	Rash_Mint,
 	Relaxed_Mint,
 	Ribbon_Sweet,
+	Rusted_Shield,
+	Rusted_Sword,
 	Room_Service,
 	Salad_Mix,
 	Sassy_Mint,

@@ -769,6 +769,8 @@ auto to_string(Item const item) -> std::string_view {
 		case Item::Relaxed_Mint: return "Relaxed Mint";
 		case Item::Ribbon_Sweet: return "Ribbon Sweet";
 		case Item::Room_Service: return "Room Service";
+		case Item::Rusted_Shield: return "Rusted Shield";
+		case Item::Rusted_Sword: return "Rusted Sword";
 		case Item::Salad_Mix: return "Salad Mix";
 		case Item::Sassy_Mint: return "Sassy Mint";
 		case Item::Sausages: return "Sausages";
@@ -1408,6 +1410,8 @@ auto from_string(std::string_view const str) -> Item {
 			{"roseliberry", Item::Roseli_Berry},
 			{"rowapberry", Item::Rowap_Berry},
 			{"rsvpmail", Item::RSVP_Mail},
+			{"rustedshield", Item::Rusted_Shield},
+			{"rustedsword", Item::Rusted_Sword},
 			{"sablenite", Item::Sablenite},
 			{"sachet", Item::Sachet},
 			{"sacredash", Item::Sacred_Ash},

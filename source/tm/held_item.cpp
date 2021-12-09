@@ -170,6 +170,8 @@ using namespace bounded::literal;
 	case Item::Rock_Gem: \
 	case Item::Rockium_Z: \
 	case Item::RSVP_Mail: \
+	case Item::Rusted_Shield: \
+	case Item::Rusted_Sword: \
 	case Item::Sablenite: \
 	case Item::Safari_Ball: \
 	case Item::Salamencite: \
