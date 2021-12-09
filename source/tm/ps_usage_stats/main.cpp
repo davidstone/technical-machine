@@ -97,12 +97,23 @@ constexpr auto do_pass(Mode const mode, BattleResult const & result, auto functi
 		case Mode::unweighted:
 		case Mode::simple_weighted:
 		case Mode::inverse_weighted:
-			function(result.winner.team, weight(mode, result.winner.rating));
-			function(result.loser.team, weight(mode, result.loser.rating));
+			function(result.side1.team, weight(mode, result.side1.rating));
+			function(result.side1.team, weight(mode, result.side1.rating));
 			break;
 		case Mode::simple_weighted_winner:
 		case Mode::inverse_weighted_winner:
-			function(result.winner.team, weight(mode, result.loser.rating));
+			switch (result.winner) {
+				case BattleResult::Winner::side1:
+					function(result.side1.team, weight(mode, result.side2.rating));
+					break;
+				case BattleResult::Winner::side2:
+					function(result.side2.team, weight(mode, result.side1.rating));
+					break;
+				case BattleResult::Winner::tie:
+					function(result.side1.team, weight(mode, result.side2.rating) / 2.0);
+					function(result.side2.team, weight(mode, result.side1.rating) / 2.0);
+					break;
+			}
 			break;
 	}
 }

@@ -21,8 +21,12 @@ struct BattleResult {
 		GenerationGeneric<Team> team;
 		bounded::optional<Rating> rating;
 	};
-	Side winner;
-	Side loser;
+	enum class Winner {
+		side1, side2, tie
+	};
+	Side side1;
+	Side side2;
+	Winner winner;
 };
 
 auto parse_log(std::filesystem::path const & path) -> BattleResult;

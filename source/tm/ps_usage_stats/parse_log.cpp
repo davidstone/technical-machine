@@ -132,11 +132,12 @@ auto parse_log(std::filesystem::path const & path) -> BattleResult {
 	auto const generation = ps::parse_generation_from_format(format);
 	auto const p1 = json.at("p1").get<std::string_view>();
 	auto const p2 = json.at("p2").get<std::string_view>();
-	auto const winner = json.at("winner").get<std::string_view>();
-	auto const side1_won =
-		winner == p1 ? true :
-		winner == p2 ? false :
-		throw std::runtime_error("Invalid winner string");
+	auto const winner_str = json.at("winner").get<std::string_view>();
+	// Anonymized logs send you a bogus team for a tie
+	auto const winner =
+		winner_str == p1 ? BattleResult::Winner::side1 :
+		winner_str == p2 ? BattleResult::Winner::side2 :
+		BattleResult::Winner::tie;
 
 	auto get_team = [&](char const * const key) {
 		return constant_generation(generation, [&]<Generation g>(constant_gen_t<g>) {
@@ -153,8 +154,9 @@ auto parse_log(std::filesystem::path const & path) -> BattleResult {
 		parse_rating(json, "p2rating")
 	};
 	return BattleResult{
-		side1_won ? side1 : side2,
-		side1_won ? side2 : side1
+		side1,
+		side2,
+		winner
 	};
 }
 
