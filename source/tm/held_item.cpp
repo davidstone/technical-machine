@@ -314,11 +314,17 @@ auto cannot_be_lost(Item const item) -> bool {
 auto fling_power(Item const item) -> bounded::integer<0, 130> {
 	switch (item) {
 		case Item::Iron_Ball:
+		case Item::TR43:
+		case Item::TR71:
 			return 130_bi;
 		case Item::Armor_Fossil:
 		case Item::Claw_Fossil:
 		case Item::Cover_Fossil:
 		case Item::Dome_Fossil:
+		case Item::Fossilized_Bird:
+		case Item::Fossilized_Dino:
+		case Item::Fossilized_Drake:
+		case Item::Fossilized_Fish:
 		case Item::Hard_Stone:
 		case Item::Helix_Fossil:
 		case Item::Jaw_Fossil:
@@ -766,6 +772,104 @@ auto fling_power(Item const item) -> bounded::integer<0, 130> {
 		case Item::Timid_Mint:
 		case Item::Topo_Berry:
 		case Item::Touga_Berry:
+		case Item::TR00:
+		case Item::TR01:
+		case Item::TR02:
+		case Item::TR03:
+		case Item::TR04:
+		case Item::TR05:
+		case Item::TR06:
+		case Item::TR07:
+		case Item::TR08:
+		case Item::TR09:
+		case Item::TR10:
+		case Item::TR11:
+		case Item::TR12:
+		case Item::TR13:
+		case Item::TR14:
+		case Item::TR15:
+		case Item::TR16:
+		case Item::TR17:
+		case Item::TR18:
+		case Item::TR19:
+		case Item::TR20:
+		case Item::TR21:
+		case Item::TR22:
+		case Item::TR23:
+		case Item::TR24:
+		case Item::TR25:
+		case Item::TR26:
+		case Item::TR27:
+		case Item::TR28:
+		case Item::TR29:
+		case Item::TR30:
+		case Item::TR31:
+		case Item::TR32:
+		case Item::TR33:
+		case Item::TR34:
+		case Item::TR35:
+		case Item::TR36:
+		case Item::TR37:
+		case Item::TR38:
+		case Item::TR39:
+		case Item::TR40:
+		case Item::TR41:
+		case Item::TR42:
+		case Item::TR44:
+		case Item::TR45:
+		case Item::TR46:
+		case Item::TR47:
+		case Item::TR48:
+		case Item::TR49:
+		case Item::TR50:
+		case Item::TR51:
+		case Item::TR52:
+		case Item::TR53:
+		case Item::TR54:
+		case Item::TR55:
+		case Item::TR56:
+		case Item::TR57:
+		case Item::TR58:
+		case Item::TR59:
+		case Item::TR60:
+		case Item::TR61:
+		case Item::TR62:
+		case Item::TR63:
+		case Item::TR64:
+		case Item::TR65:
+		case Item::TR66:
+		case Item::TR67:
+		case Item::TR68:
+		case Item::TR69:
+		case Item::TR70:
+		case Item::TR72:
+		case Item::TR73:
+		case Item::TR74:
+		case Item::TR75:
+		case Item::TR76:
+		case Item::TR77:
+		case Item::TR78:
+		case Item::TR79:
+		case Item::TR80:
+		case Item::TR81:
+		case Item::TR82:
+		case Item::TR83:
+		case Item::TR84:
+		case Item::TR85:
+		case Item::TR86:
+		case Item::TR87:
+		case Item::TR88:
+		case Item::TR89:
+		case Item::TR90:
+		case Item::TR91:
+		case Item::TR92:
+		case Item::TR93:
+		case Item::TR94:
+		case Item::TR95:
+		case Item::TR96:
+		case Item::TR97:
+		case Item::TR98:
+		case Item::TR99:
 		case Item::Wacan_Berry:
 		case Item::Watmel_Berry:
 		case Item::Wave_Incense:

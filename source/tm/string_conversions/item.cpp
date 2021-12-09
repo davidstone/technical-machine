@@ -735,6 +735,10 @@ auto to_string(Item const item) -> std::string_view {
 		case Item::Fancy_Apple: return "Fancy Apple";
 		case Item::Flower_Sweet: return "Flower Sweet";
 		case Item::Fresh_Cream: return "Fresh Cream";
+		case Item::Fossilized_Bird: return "Fossilized Bird";
+		case Item::Fossilized_Dino: return "Fossilized Dino";
+		case Item::Fossilized_Drake: return "Fossilized Drake";
+		case Item::Fossilized_Fish: return "Fossilized Fish";
 		case Item::Fried_Food: return "Fried Food";
 		case Item::Fruit_Bunch: return "Fruit Bunch";
 		case Item::Gentle_Mint: return "Gentle Mint";
@@ -778,6 +782,106 @@ auto to_string(Item const item) -> std::string_view {
 		case Item::Throat_Spray: return "Throat Spray";
 		case Item::Timid_Mint: return "Timid Mint";
 		case Item::Tin_of_Beans: return "Tin of Beans";
+		case Item::TR00: return "TR00";
+		case Item::TR01: return "TR01";
+		case Item::TR02: return "TR02";
+		case Item::TR03: return "TR03";
+		case Item::TR04: return "TR04";
+		case Item::TR05: return "TR05";
+		case Item::TR06: return "TR06";
+		case Item::TR07: return "TR07";
+		case Item::TR08: return "TR08";
+		case Item::TR09: return "TR09";
+		case Item::TR10: return "TR10";
+		case Item::TR11: return "TR11";
+		case Item::TR12: return "TR12";
+		case Item::TR13: return "TR13";
+		case Item::TR14: return "TR14";
+		case Item::TR15: return "TR15";
+		case Item::TR16: return "TR16";
+		case Item::TR17: return "TR17";
+		case Item::TR18: return "TR18";
+		case Item::TR19: return "TR19";
+		case Item::TR20: return "TR20";
+		case Item::TR21: return "TR21";
+		case Item::TR22: return "TR22";
+		case Item::TR23: return "TR23";
+		case Item::TR24: return "TR24";
+		case Item::TR25: return "TR25";
+		case Item::TR26: return "TR26";
+		case Item::TR27: return "TR27";
+		case Item::TR28: return "TR28";
+		case Item::TR29: return "TR29";
+		case Item::TR30: return "TR30";
+		case Item::TR31: return "TR31";
+		case Item::TR32: return "TR32";
+		case Item::TR33: return "TR33";
+		case Item::TR34: return "TR34";
+		case Item::TR35: return "TR35";
+		case Item::TR36: return "TR36";
+		case Item::TR37: return "TR37";
+		case Item::TR38: return "TR38";
+		case Item::TR39: return "TR39";
+		case Item::TR40: return "TR40";
+		case Item::TR41: return "TR41";
+		case Item::TR42: return "TR42";
+		case Item::TR43: return "TR43";
+		case Item::TR44: return "TR44";
+		case Item::TR45: return "TR45";
+		case Item::TR46: return "TR46";
+		case Item::TR47: return "TR47";
+		case Item::TR48: return "TR48";
+		case Item::TR49: return "TR49";
+		case Item::TR50: return "TR50";
+		case Item::TR51: return "TR51";
+		case Item::TR52: return "TR52";
+		case Item::TR53: return "TR53";
+		case Item::TR54: return "TR54";
+		case Item::TR55: return "TR55";
+		case Item::TR56: return "TR56";
+		case Item::TR57: return "TR57";
+		case Item::TR58: return "TR58";
+		case Item::TR59: return "TR59";
+		case Item::TR60: return "TR60";
+		case Item::TR61: return "TR61";
+		case Item::TR62: return "TR62";
+		case Item::TR63: return "TR63";
+		case Item::TR64: return "TR64";
+		case Item::TR65: return "TR65";
+		case Item::TR66: return "TR66";
+		case Item::TR67: return "TR67";
+		case Item::TR68: return "TR68";
+		case Item::TR69: return "TR69";
+		case Item::TR70: return "TR70";
+		case Item::TR71: return "TR71";
+		case Item::TR72: return "TR72";
+		case Item::TR73: return "TR73";
+		case Item::TR74: return "TR74";
+		case Item::TR75: return "TR75";
+		case Item::TR76: return "TR76";
+		case Item::TR77: return "TR77";
+		case Item::TR78: return "TR78";
+		case Item::TR79: return "TR79";
+		case Item::TR80: return "TR80";
+		case Item::TR81: return "TR81";
+		case Item::TR82: return "TR82";
+		case Item::TR83: return "TR83";
+		case Item::TR84: return "TR84";
+		case Item::TR85: return "TR85";
+		case Item::TR86: return "TR86";
+		case Item::TR87: return "TR87";
+		case Item::TR88: return "TR88";
+		case Item::TR89: return "TR89";
+		case Item::TR90: return "TR90";
+		case Item::TR91: return "TR91";
+		case Item::TR92: return "TR92";
+		case Item::TR93: return "TR93";
+		case Item::TR94: return "TR94";
+		case Item::TR95: return "TR95";
+		case Item::TR96: return "TR96";
+		case Item::TR97: return "TR97";
+		case Item::TR98: return "TR98";
+		case Item::TR99: return "TR99";
 		case Item::Utility_Umbrella: return "Utility Umbrella";
 	}
 }
@@ -984,6 +1088,10 @@ auto from_string(std::string_view const str) -> Item {
 			{"flyiniumz", Item::Flyinium_Z},
 			{"focusband", Item::Focus_Band},
 			{"focussash", Item::Focus_Sash},
+			{"fossilizedbird", Item::Fossilized_Bird},
+			{"fossilizeddino", Item::Fossilized_Dino},
+			{"fossilizeddrake", Item::Fossilized_Drake},
+			{"fossilizedfish", Item::Fossilized_Fish},
 			{"freshcream", Item::Fresh_Cream},
 			{"freshwater", Item::Fresh_Water},
 			{"friedfood", Item::Fried_Food},
@@ -1487,6 +1595,106 @@ auto from_string(std::string_view const str) -> Item {
 			{"tougaberry", Item::Touga_Berry},
 			{"toxicorb", Item::Toxic_Orb},
 			{"toxicplate", Item::Toxic_Plate},
+			{"tr00", Item::TR00},
+			{"tr01", Item::TR01},
+			{"tr02", Item::TR02},
+			{"tr03", Item::TR03},
+			{"tr04", Item::TR04},
+			{"tr05", Item::TR05},
+			{"tr06", Item::TR06},
+			{"tr07", Item::TR07},
+			{"tr08", Item::TR08},
+			{"tr09", Item::TR09},
+			{"tr10", Item::TR10},
+			{"tr11", Item::TR11},
+			{"tr12", Item::TR12},
+			{"tr13", Item::TR13},
+			{"tr14", Item::TR14},
+			{"tr15", Item::TR15},
+			{"tr16", Item::TR16},
+			{"tr17", Item::TR17},
+			{"tr18", Item::TR18},
+			{"tr19", Item::TR19},
+			{"tr20", Item::TR20},
+			{"tr21", Item::TR21},
+			{"tr22", Item::TR22},
+			{"tr23", Item::TR23},
+			{"tr24", Item::TR24},
+			{"tr25", Item::TR25},
+			{"tr26", Item::TR26},
+			{"tr27", Item::TR27},
+			{"tr28", Item::TR28},
+			{"tr29", Item::TR29},
+			{"tr30", Item::TR30},
+			{"tr31", Item::TR31},
+			{"tr32", Item::TR32},
+			{"tr33", Item::TR33},
+			{"tr34", Item::TR34},
+			{"tr35", Item::TR35},
+			{"tr36", Item::TR36},
+			{"tr37", Item::TR37},
+			{"tr38", Item::TR38},
+			{"tr39", Item::TR39},
+			{"tr40", Item::TR40},
+			{"tr41", Item::TR41},
+			{"tr42", Item::TR42},
+			{"tr43", Item::TR43},
+			{"tr44", Item::TR44},
+			{"tr45", Item::TR45},
+			{"tr46", Item::TR46},
+			{"tr47", Item::TR47},
+			{"tr48", Item::TR48},
+			{"tr49", Item::TR49},
+			{"tr50", Item::TR50},
+			{"tr51", Item::TR51},
+			{"tr52", Item::TR52},
+			{"tr53", Item::TR53},
+			{"tr54", Item::TR54},
+			{"tr55", Item::TR55},
+			{"tr56", Item::TR56},
+			{"tr57", Item::TR57},
+			{"tr58", Item::TR58},
+			{"tr59", Item::TR59},
+			{"tr60", Item::TR60},
+			{"tr61", Item::TR61},
+			{"tr62", Item::TR62},
+			{"tr63", Item::TR63},
+			{"tr64", Item::TR64},
+			{"tr65", Item::TR65},
+			{"tr66", Item::TR66},
+			{"tr67", Item::TR67},
+			{"tr68", Item::TR68},
+			{"tr69", Item::TR69},
+			{"tr70", Item::TR70},
+			{"tr71", Item::TR71},
+			{"tr72", Item::TR72},
+			{"tr73", Item::TR73},
+			{"tr74", Item::TR74},
+			{"tr75", Item::TR75},
+			{"tr76", Item::TR76},
+			{"tr77", Item::TR77},
+			{"tr78", Item::TR78},
+			{"tr79", Item::TR79},
+			{"tr80", Item::TR80},
+			{"tr81", Item::TR81},
+			{"tr82", Item::TR82},
+			{"tr83", Item::TR83},
+			{"tr84", Item::TR84},
+			{"tr85", Item::TR85},
+			{"tr86", Item::TR86},
+			{"tr87", Item::TR87},
+			{"tr88", Item::TR88},
+			{"tr89", Item::TR89},
+			{"tr90", Item::TR90},
+			{"tr91", Item::TR91},
+			{"tr92", Item::TR92},
+			{"tr93", Item::TR93},
+			{"tr94", Item::TR94},
+			{"tr95", Item::TR95},
+			{"tr96", Item::TR96},
+			{"tr97", Item::TR97},
+			{"tr98", Item::TR98},
+			{"tr99", Item::TR99},
 			{"tropicmail", Item::Tropic_Mail},
 			{"tunnelmail", Item::Tunnel_Mail},
 			{"twistedspoon", Item::Twisted_Spoon},
