@@ -725,7 +725,8 @@ PokemonTypes::PokemonTypes(Generation const generation, Species const species):
 		case Species::Pangoro: return PokemonTypes(Type::Fighting, Type::Dark);
 		case Species::Furfrou: return PokemonTypes(Type::Normal);
 		case Species::Espurr: return PokemonTypes(Type::Psychic);
-		case Species::Meowstic: return PokemonTypes(Type::Psychic);
+		case Species::Meowstic_F: return PokemonTypes(Type::Psychic);
+		case Species::Meowstic_M: return PokemonTypes(Type::Psychic);
 		case Species::Honedge: return PokemonTypes(Type::Steel, Type::Ghost);
 		case Species::Doublade: return PokemonTypes(Type::Steel, Type::Ghost);
 		case Species::Aegislash: return PokemonTypes(Type::Steel, Type::Ghost);

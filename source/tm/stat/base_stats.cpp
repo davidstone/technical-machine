@@ -1822,7 +1822,8 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 			case Species::Pangoro: return {95_bi, 124_bi, 78_bi, 69_bi, 71_bi, 58_bi};
 			case Species::Furfrou: return {75_bi, 80_bi, 60_bi, 65_bi, 90_bi, 102_bi};
 			case Species::Espurr: return {62_bi, 48_bi, 54_bi, 63_bi, 60_bi, 68_bi};
-			case Species::Meowstic: return {74_bi, 48_bi, 76_bi, 83_bi, 81_bi, 104_bi};
+			case Species::Meowstic_F: return {74_bi, 48_bi, 76_bi, 83_bi, 81_bi, 104_bi};
+			case Species::Meowstic_M: return {74_bi, 48_bi, 76_bi, 83_bi, 81_bi, 104_bi};
 			case Species::Honedge: return {45_bi, 80_bi, 100_bi, 35_bi, 37_bi, 28_bi};
 			case Species::Doublade: return {59_bi, 110_bi, 150_bi, 45_bi, 49_bi, 35_bi};
 			// Changes before using defensive move

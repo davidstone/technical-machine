@@ -717,7 +717,8 @@ constexpr auto is_genderless(Species const species) {
 		case Species::Pangoro: return false;
 		case Species::Furfrou: return false;
 		case Species::Espurr: return false;
-		case Species::Meowstic: return false;
+		case Species::Meowstic_F: return false;
+		case Species::Meowstic_M: return false;
 		case Species::Honedge: return false;
 		case Species::Doublade: return false;
 		case Species::Aegislash: return false;

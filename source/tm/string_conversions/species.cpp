@@ -725,7 +725,8 @@ auto to_string(Species const species) -> std::string_view {
 		case Species::Pangoro: return "Pangoro";
 		case Species::Furfrou: return "Furfrou";
 		case Species::Espurr: return "Espurr";
-		case Species::Meowstic: return "Meowstic";
+		case Species::Meowstic_F: return "Meowstic-F";
+		case Species::Meowstic_M: return "Meowstic-M";
 		case Species::Honedge: return "Honedge";
 		case Species::Doublade: return "Doublade";
 		case Species::Aegislash: return "Aegislash";
@@ -1018,7 +1019,7 @@ auto to_string(Species const species) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Species {
-	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 1135>;
+	using Storage = containers::array<containers::map_value_type<std::string_view, Species>, 1137>;
 	static constexpr auto converter = containers::basic_flat_map<Storage>(
 		containers::assume_sorted_unique,
 		Storage{{
@@ -1615,7 +1616,9 @@ auto from_string(std::string_view const str) -> Species {
 			{ "melmetal", Species::Melmetal },
 			{ "meloetta", Species::Meloetta },
 			{ "meltan", Species::Meltan },
-			{ "meowstic", Species::Meowstic },
+			{ "meowstic", Species::Meowstic_M },
+			{ "meowsticf", Species::Meowstic_F },
+			{ "meowsticm", Species::Meowstic_M },
 			{ "meowth", Species::Meowth },
 			{ "meowthalola", Species::Meowth_Alolan },
 			{ "meowthalolan", Species::Meowth_Alolan },

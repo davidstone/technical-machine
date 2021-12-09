@@ -728,7 +728,8 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Pangoro: return 100_bi;
 		case Species::Furfrou: return 60_bi;
 		case Species::Espurr: return 20_bi;
-		case Species::Meowstic: return 20_bi;
+		case Species::Meowstic_F: return 20_bi;
+		case Species::Meowstic_M: return 20_bi;
 		case Species::Honedge: return 20_bi;
 		case Species::Doublade: return 20_bi;
 		case Species::Aegislash: return 80_bi;
