@@ -146,6 +146,11 @@ add_library(tm_common STATIC
 	source/tm/pokemon/uproar.cpp
 	source/tm/pokemon/yawn.cpp
 
+	source/tm/ps_usage_stats/battle_result.cpp
+	source/tm/ps_usage_stats/battle_result_reader.cpp
+	source/tm/ps_usage_stats/battle_result_writer.cpp
+	source/tm/ps_usage_stats/rating.cpp
+
 	source/tm/stat/base_stats.cpp
 	source/tm/stat/calculate.cpp
 	source/tm/stat/calculate_ivs_and_evs.cpp
@@ -271,7 +276,6 @@ target_link_libraries(file_converter
 add_executable(ps_usage_stats
 	source/tm/ps_usage_stats/main.cpp
 	source/tm/ps_usage_stats/parse_log.cpp
-	source/tm/ps_usage_stats/rating.cpp
 	source/tm/ps_usage_stats/serialize.cpp
 	source/tm/ps_usage_stats/usage_stats.cpp
 )
@@ -307,6 +311,8 @@ add_executable(tm_test
 
 	source/tm/test/pokemon_online/conversion.cpp
 	source/tm/test/pokemon_online/team_file.cpp
+
+	source/tm/test/ps_usage_stats/read_write_battle_result.cpp
 
 	source/tm/test/block.cpp
 	source/tm/test/calculate_damage.cpp

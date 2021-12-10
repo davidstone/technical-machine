@@ -10,6 +10,7 @@ namespace technicalmachine::ps_usage_stats {
 struct Rating {
 	double value;
 	double deviation;
+	friend auto operator==(Rating, Rating) -> bool = default;
 };
 
 auto chance_to_win(Rating) -> double;
