@@ -13,6 +13,12 @@ struct Rating {
 	friend auto operator==(Rating, Rating) -> bool = default;
 };
 
+inline constexpr auto pi = 3.14159265358979323846;
+
+inline constexpr auto square(double const value) {
+	return value * value;
+}
+
 auto chance_to_win(Rating) -> double;
 
 } // namespace technicalmachine::ps_usage_stats

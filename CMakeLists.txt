@@ -155,6 +155,7 @@ add_library(tm_common STATIC
 	source/tm/ps_usage_stats/battle_result.cpp
 	source/tm/ps_usage_stats/battle_result_reader.cpp
 	source/tm/ps_usage_stats/battle_result_writer.cpp
+	source/tm/ps_usage_stats/glicko1.cpp
 	source/tm/ps_usage_stats/rating.cpp
 
 	source/tm/stat/base_stats.cpp
@@ -319,6 +320,7 @@ add_executable(tm_test
 	source/tm/test/pokemon_online/team_file.cpp
 
 	source/tm/test/ps_usage_stats/read_write_battle_result.cpp
+	source/tm/test/ps_usage_stats/glicko1.cpp
 
 	source/tm/test/block.cpp
 	source/tm/test/calculate_damage.cpp
