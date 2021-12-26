@@ -19,6 +19,8 @@
 
 #include <tm/constant_generation.hpp>
 
+#include <bounded/to_integer.hpp>
+
 #include <containers/algorithms/transform.hpp>
 
 #include <nlohmann/json.hpp>
@@ -146,11 +148,13 @@ auto parse_log(std::filesystem::path const & path) -> BattleResult {
 	};
 	auto const side1 = BattleResult::Side{
 		get_team("p1team"),
+		bounded::to_integer<BattleResult::Side::ID>(p1),
 		// Arr
 		parse_rating(json, "p1rating")
 	};
 	auto const side2 = BattleResult::Side{
 		get_team("p2team"),
+		bounded::to_integer<BattleResult::Side::ID>(p2),
 		parse_rating(json, "p2rating")
 	};
 	return BattleResult{

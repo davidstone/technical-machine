@@ -16,7 +16,9 @@ namespace technicalmachine::ps_usage_stats {
 
 struct BattleResult {
 	struct Side {
+		using ID = bounded::integer<0, bounded::builtin_max_value<std::uint64_t>>;
 		GenerationGeneric<Team> team;
+		ID id;
 		bounded::optional<Rating> rating;
 		friend auto operator==(Side const &, Side const &) -> bool = default;
 	};
