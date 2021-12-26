@@ -62,9 +62,6 @@ private:
 struct AllUsageStats {
 	AllUsageStats();
 	auto operator[](Generation const generation) const -> UsageStats const & {
-		if (generation == Generation::eight) {
-			throw std::runtime_error("Generation 8 usage stats not supported yet.");
-		}
 		return m_all_stats[bounded::integer(generation) - 1_bi];
 	}
 private:
