@@ -54,8 +54,11 @@ struct UsageStats {
 	constexpr auto const & speed_distribution(Species const species) const {
 		return containers::at(m_all, species).speed;
 	}
-	constexpr auto number_of_teams() const {
-		return m_number_of_teams;
+	constexpr auto total_teams() const {
+		return m_total_teams;
+	}
+	constexpr auto total_teams_unweighted() const {
+		return m_total_teams_unweighted;
 	}
 private:
 	// Regieleki with a Choice Scarf
@@ -69,7 +72,8 @@ private:
 		containers::array<double, max_initial_speed.value()> speed{};
 	};
 	containers::array<PerSpecies, number_of<Species>.value()> m_all;
-	bounded::integer<0, bounded::builtin_max_value<std::uint64_t>> m_number_of_teams = 0_bi;
+	double m_total_teams = 0.0;
+	bounded::integer<0, bounded::builtin_max_value<std::uint64_t>> m_total_teams_unweighted = 0_bi;
 };
 
 struct Correlations {

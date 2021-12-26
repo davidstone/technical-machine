@@ -31,7 +31,8 @@ auto UsageStats::add(GenerationGeneric<Team> const & t, double const weight) & -
 			per_species.speed[bounded::check_in_range(calculated_speed, 1_bi, max_initial_speed)] += weight;
 		}
 	});
-	++m_number_of_teams;
+	m_total_teams += weight;
+	++m_total_teams_unweighted;
 }
 
 struct LocalTopMoves {
