@@ -203,13 +203,8 @@ struct Connection {
 		http::read(m_socket, buffer, request);
 		auto const & body = request.body();
 		auto const query_string = body.empty() ? default_query_string : std::string_view(body);
-		try {
-			auto response = create_response(request.version(), query_string, random_engine);
-			http::write(m_socket, response);
-		} catch (std::exception const & ex) {
-			std::cerr << "Failure: " << ex.what() << '\n';
-			std::cerr << "While processing: " << query_string << '\n';
-		}
+		auto response = create_response(request.version(), query_string, random_engine);
+		http::write(m_socket, response);
 	}
 
 private:
@@ -249,9 +244,13 @@ int main() {
 	auto acceptor = tcp::acceptor(ioc, tcp::endpoint(tcp::v4(), port));
 	auto random_engine = std::mt19937(std::random_device()());
 	while (true) {
-		auto socket = tcp::socket(ioc);
-		acceptor.accept(socket);
-		auto connection = technicalmachine::Connection(*all_usage_stats, std::move(socket));
-		connection.process(random_engine);
+		try {
+			auto socket = tcp::socket(ioc);
+			acceptor.accept(socket);
+			auto connection = technicalmachine::Connection(*all_usage_stats, std::move(socket));
+			connection.process(random_engine);
+		} catch (std::exception const & ex) {
+			std::cerr << ex.what() << '\n';
+		}
 	}
 }
