@@ -14,28 +14,34 @@ if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
 endif()
 
-
 project(technical_machine LANGUAGES CXX)
 
 find_package(Boost REQUIRED)
 add_library(boost INTERFACE IMPORTED)
-target_compile_definitions(boost INTERFACE
-	BOOST_ASIO_HAS_STD_INVOKE_RESULT
-)
 target_include_directories(boost SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
 
 enable_testing()
 
 add_library(nlohmann_json INTERFACE IMPORTED)
-target_include_directories(nlohmann_json SYSTEM INTERFACE "json/single_include")
+target_include_directories(nlohmann_json SYSTEM INTERFACE "dependencies/json/single_include")
 
 get_directory_property(has_parent PARENT_DIRECTORY)
 if (NOT has_parent)
-	add_subdirectory(Catch2)
-	add_subdirectory(cmake_strict_defaults)
-	add_subdirectory(numeric-traits)
-	add_subdirectory(operators)
-	add_subdirectory(bounded-integer)
+	add_subdirectory(dependencies/cmake_strict_defaults)
+	add_subdirectory(dependencies/numeric-traits)
+	add_subdirectory(dependencies/operators)
+	add_subdirectory(dependencies/bounded-integer)
+
+	add_subdirectory(dependencies/Catch2 EXCLUDE_FROM_ALL)
+
+	set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Disable testing benchmark.")
+	add_subdirectory(dependencies/benchmark EXCLUDE_FROM_ALL)
+	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+		target_compile_options(benchmark PUBLIC
+			"-Wno-global-constructors"
+			"-Wno-shift-sign-overflow"
+		)
+	endif()
 endif()
 
 # TODO: This should be an object library, but they do not really work yet.
