@@ -19,6 +19,7 @@
 #include <tm/string_conversions/team.hpp>
 
 #include <tm/buffer_view.hpp>
+#include <tm/constant_generation.hpp>
 #include <tm/generation.hpp>
 #include <tm/generation_generic.hpp>
 #include <tm/team.hpp>
@@ -162,7 +163,9 @@ struct Data {
 
 	auto team_string(std::string_view const input_data) -> containers::string {
 		try {
-			auto impl = [&]<Generation generation>(SeenTeam<generation> team) -> containers::string {
+			auto buffer = DelimitedBufferView(input_data, '&');
+			auto impl = [&]<Generation generation>(constant_gen_t<generation>) -> containers::string {
+				auto team = parse_html_team<generation>(buffer);
 				constexpr auto using_lead = false;
 				auto const & usage_stats = m_all_usage_stats[generation];
 				random_team(usage_stats, team, m_random_engine);
@@ -176,18 +179,8 @@ struct Data {
 					false
 				);
 			};
-			auto buffer = DelimitedBufferView(input_data, '&');
 			auto const generation = Generation(bounded::to_integer<1, 8>(get_expected_base(buffer.pop(), "generation")));
-			switch (generation) {
-				case Generation::one: return impl(parse_html_team<Generation::one>(buffer));
-				case Generation::two: return impl(parse_html_team<Generation::two>(buffer));
-				case Generation::three: return impl(parse_html_team<Generation::three>(buffer));
-				case Generation::four: return impl(parse_html_team<Generation::four>(buffer));
-				case Generation::five: return impl(parse_html_team<Generation::five>(buffer));
-				case Generation::six: return impl(parse_html_team<Generation::six>(buffer));
-				case Generation::seven: return impl(parse_html_team<Generation::seven>(buffer));
-				case Generation::eight: return impl(parse_html_team<Generation::eight>(buffer));
-			}
+			return constant_generation(generation, impl);
 		} catch (std::exception const & ex) {
 			return containers::string(ex.what());
 		}

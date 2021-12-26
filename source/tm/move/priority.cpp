@@ -7,7 +7,7 @@
 
 #include <tm/move/moves.hpp>
 
-#include <tm/generation.hpp>
+#include <tm/constant_generation.hpp>
 
 namespace technicalmachine {
 
@@ -16,7 +16,7 @@ namespace {
 
 using PriorityInteger = bounded::integer<-6, 6>;
 
-constexpr auto gen_one_priority(Moves const move) -> PriorityInteger {
+constexpr auto priority_impl(constant_gen_t<Generation::one>, Moves const move) -> PriorityInteger {
 	switch (move) {
 		case Moves::Switch0:
 		case Moves::Switch1:
@@ -34,7 +34,7 @@ constexpr auto gen_one_priority(Moves const move) -> PriorityInteger {
 	}
 }
 
-constexpr auto gen_two_priority(Moves const move) -> PriorityInteger {
+constexpr auto priority_impl(constant_gen_t<Generation::two>, Moves const move) -> PriorityInteger {
 	switch (move) {
 		case Moves::Switch0:
 		case Moves::Switch1:
@@ -62,7 +62,7 @@ constexpr auto gen_two_priority(Moves const move) -> PriorityInteger {
 	}
 }
 
-constexpr auto gen_three_priority(Moves const move) -> PriorityInteger {
+constexpr auto priority_impl(constant_gen_t<Generation::three>, Moves const move) -> PriorityInteger {
 	switch (move) {
 		case Moves::Switch0:
 		case Moves::Switch1:
@@ -103,7 +103,7 @@ constexpr auto gen_three_priority(Moves const move) -> PriorityInteger {
 	}
 }
 
-constexpr auto gen_four_priority(Moves const move) -> PriorityInteger {
+constexpr auto priority_impl(constant_gen_t<Generation::four>, Moves const move) -> PriorityInteger {
 	switch (move) {
 		case Moves::Switch0:
 		case Moves::Switch1:
@@ -156,7 +156,7 @@ constexpr auto gen_four_priority(Moves const move) -> PriorityInteger {
 	}
 }
 
-constexpr auto gen_five_priority(Moves const move) -> PriorityInteger {
+constexpr auto priority_impl(constant_gen_t<Generation::five>, Moves const move) -> PriorityInteger {
 	switch (move) {
 		case Moves::Switch0:
 		case Moves::Switch1:
@@ -217,7 +217,7 @@ constexpr auto gen_five_priority(Moves const move) -> PriorityInteger {
 	}
 }
 
-constexpr auto gen_six_priority(Moves const move) -> PriorityInteger {
+constexpr auto priority_impl(constant_gen_t<Generation::six>, Moves const move) -> PriorityInteger {
 	switch (move) {
 		case Moves::Switch0:
 		case Moves::Switch1:
@@ -283,7 +283,7 @@ constexpr auto gen_six_priority(Moves const move) -> PriorityInteger {
 	}
 }
 
-constexpr auto gen_seven_priority(Moves const move) -> PriorityInteger {
+constexpr auto priority_impl(constant_gen_t<Generation::seven>, Moves const move) -> PriorityInteger {
 	switch (move) {
 		case Moves::Switch0:
 		case Moves::Switch1:
@@ -355,17 +355,12 @@ constexpr auto gen_seven_priority(Moves const move) -> PriorityInteger {
 	}
 }
 
+constexpr auto priority_impl(constant_gen_t<Generation::eight>, Moves const move) -> PriorityInteger {
+	return priority_impl(constant_gen<Generation::seven>, move);
+}
+
 constexpr auto get_priority(Generation const generation, Moves const move) {
-	switch (generation) {
-		case Generation::one: return gen_one_priority(move);
-		case Generation::two: return gen_two_priority(move);
-		case Generation::three: return gen_three_priority(move);
-		case Generation::four: return gen_four_priority(move);
-		case Generation::five: return gen_five_priority(move);
-		case Generation::six: return gen_six_priority(move);
-		case Generation::seven: return gen_seven_priority(move);
-		case Generation::eight: return gen_seven_priority(move);
-	}
+	return constant_generation(generation, [=](auto const g) { return priority_impl(g, move); });
 }
 
 }	// namespace

@@ -8,7 +8,7 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/target.hpp>
 
-#include <tm/generation.hpp>
+#include <tm/constant_generation.hpp>
 
 namespace technicalmachine {
 namespace {
@@ -39,7 +39,7 @@ auto target_based(Generation const generation, Moves const move) {
 	}
 }
 
-constexpr auto gen1_substitute_interaction(Moves const move) {
+constexpr auto substitute_interaction_impl(constant_gen_t<Generation::one>, Moves const move) {
 	switch (move) {
 		case Moves::Disable:
 		case Moves::Leech_Seed:
@@ -55,7 +55,7 @@ constexpr auto gen1_substitute_interaction(Moves const move) {
 	}
 }
 
-constexpr auto gen2_substitute_interaction(Moves const move) {
+constexpr auto substitute_interaction_impl(constant_gen_t<Generation::two>, Moves const move) {
 	// Fails if user has Substitute
 	#if 0
 		case Moves::Counter:
@@ -99,7 +99,7 @@ constexpr auto gen2_substitute_interaction(Moves const move) {
 	}
 }
 
-constexpr auto gen3_substitute_interaction(Moves const move) {
+constexpr auto substitute_interaction_impl(constant_gen_t<Generation::three>, Moves const move) {
 	// Fails
 	#if 0
 	switch (move) {
@@ -132,7 +132,7 @@ constexpr auto gen3_substitute_interaction(Moves const move) {
 	}
 }
 
-constexpr auto gen4_substitute_interaction(Moves const move) {
+constexpr auto substitute_interaction_impl(constant_gen_t<Generation::four>, Moves const move) {
 	// Fails
 	#if 0
 	switch (move) {
@@ -172,7 +172,7 @@ constexpr auto gen4_substitute_interaction(Moves const move) {
 	}
 }
 
-constexpr auto gen5_substitute_interaction(Moves const move) {
+constexpr auto substitute_interaction_impl(constant_gen_t<Generation::five>, Moves const move) {
 	// Block Intimidate
 	// Block Imposter
 	// Absorb Uproar
@@ -264,17 +264,20 @@ constexpr auto latest_substitute_interaction(Generation const generation, Moves 
 	}
 }
 
+constexpr auto substitute_interaction_impl(constant_gen_t<Generation::six>, Moves const move) {
+	return latest_substitute_interaction(Generation::six, move);
+}
+constexpr auto substitute_interaction_impl(constant_gen_t<Generation::seven>, Moves const move) {
+	return latest_substitute_interaction(Generation::seven, move);
+}
+constexpr auto substitute_interaction_impl(constant_gen_t<Generation::eight>, Moves const move) {
+	return latest_substitute_interaction(Generation::eight, move);
+}
+
 } // namespace
 
 auto substitute_interaction(Generation const generation, Moves const move) -> Substitute::Interaction {
-	switch (generation) {
-		case Generation::one: return gen1_substitute_interaction(move);
-		case Generation::two: return gen2_substitute_interaction(move);
-		case Generation::three: return gen3_substitute_interaction(move);
-		case Generation::four: return gen4_substitute_interaction(move);
-		case Generation::five: return gen5_substitute_interaction(move);
-		default: return latest_substitute_interaction(generation, move);
-	}
+	return constant_generation(generation, [=](auto const g) { return substitute_interaction_impl(g, move); });
 }
 
 } // namespace technicalmachine
