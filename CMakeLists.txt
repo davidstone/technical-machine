@@ -280,13 +280,27 @@ target_link_libraries(file_converter
 	tm_common
 )
 
+add_executable(ps_usage_stats_create_teams_file
+	source/tm/ps_usage_stats/create_teams_file.cpp
+	source/tm/ps_usage_stats/parse_log.cpp
+)
+target_link_libraries(ps_usage_stats_create_teams_file
+	tm_common
+)
+
 add_executable(ps_usage_stats
 	source/tm/ps_usage_stats/main.cpp
-	source/tm/ps_usage_stats/parse_log.cpp
 	source/tm/ps_usage_stats/serialize.cpp
 	source/tm/ps_usage_stats/usage_stats.cpp
 )
 target_link_libraries(ps_usage_stats
+	tm_common
+)
+
+add_executable(ps_usage_stats_create_derivative_stats
+	source/tm/ps_usage_stats/create_derivative_stats.cpp
+)
+target_link_libraries(ps_usage_stats_create_derivative_stats
 	tm_common
 )
 
