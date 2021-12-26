@@ -161,20 +161,20 @@ struct Data {
 	{
 	}
 
-	auto team_string(std::string_view const input_data) -> containers::string {
+	auto team_string(std::string_view const input_data, std::mt19937 & random_engine) -> containers::string {
 		try {
 			auto buffer = DelimitedBufferView(input_data, '&');
 			auto impl = [&]<Generation generation>(constant_gen_t<generation>) -> containers::string {
 				auto team = parse_html_team<generation>(buffer);
 				constexpr auto using_lead = false;
 				auto const & usage_stats = m_all_usage_stats[generation];
-				random_team(usage_stats, team, m_random_engine);
+				random_team(usage_stats, team, random_engine);
 				return to_string(
 					predict_team(
 						usage_stats,
 						LeadStats(using_lead),
 						team,
-						m_random_engine
+						random_engine
 					),
 					false
 				);
@@ -188,7 +188,6 @@ struct Data {
 
 private:
 	AllUsageStats const & m_all_usage_stats;
-	std::mt19937 m_random_engine{std::random_device()()};
 };
 
 struct Connection {
@@ -198,14 +197,14 @@ struct Connection {
 	{
 	}
 
-	void process() {
+	void process(std::mt19937 & random_engine) {
 		auto request = Request();
 		auto buffer = beast::flat_static_buffer<8192>();
 		http::read(m_socket, buffer, request);
 		auto const & body = request.body();
 		auto const query_string = body.empty() ? default_query_string : std::string_view(body);
 		try {
-			auto response = create_response(request.version(), query_string);
+			auto response = create_response(request.version(), query_string, random_engine);
 			http::write(m_socket, response);
 		} catch (std::exception const & ex) {
 			std::cerr << "Failure: " << ex.what() << '\n';
@@ -219,7 +218,7 @@ private:
 
 	static constexpr auto default_query_string = std::string_view("generation=4&species0=Select+species&level0=100&gender0=Select+gender&item0=Select+item&ability0=Select+ability&nature0=Select+nature&hp0=0&atk0=0&def0=0&spa0=0&spd0=0&spe0=0&move0_0=Select+move&move0_1=Select+move&move0_2=Select+move&move0_3=Select+move&species1=Select+species&level1=100&gender1=Select+gender&item1=Select+item&ability1=Select+ability&nature1=Select+nature&hp1=0&atk1=0&def1=0&spa1=0&spd1=0&spe1=0&move1_0=Select+move&move1_1=Select+move&move1_2=Select+move&move1_3=Select+move&species2=Select+species&level2=100&gender2=Select+gender&item2=Select+item&ability2=Select+ability&nature2=Select+nature&hp2=0&atk2=0&def2=0&spa2=0&spd2=0&spe2=0&move2_0=Select+move&move2_1=Select+move&move2_2=Select+move&move2_3=Select+move&species3=Select+species&level3=100&gender3=Select+gender&item3=Select+item&ability3=Select+ability&nature3=Select+nature&hp3=0&atk3=0&def3=0&spa3=0&spd3=0&spe3=0&move3_0=Select+move&move3_1=Select+move&move3_2=Select+move&move3_3=Select+move&species4=Select+species&level4=100&gender4=Select+gender&item4=Select+item&ability4=Select+ability&nature4=Select+nature&hp4=0&atk4=0&def4=0&spa4=0&spd4=0&spe4=0&move4_0=Select+move&move4_1=Select+move&move4_2=Select+move&move4_3=Select+move&species5=Select+species&level5=100&gender5=Select+gender&item5=Select+item&ability5=Select+ability&nature5=Select+nature&hp5=0&atk5=0&def5=0&spa5=0&spd5=0&spe5=0&move5_0=Select+move&move5_1=Select+move&move5_2=Select+move&move5_3=Select+move");
 
-	auto create_response(unsigned const version, std::string_view const query_string) -> Response {
+	auto create_response(unsigned const version, std::string_view const query_string, std::mt19937 & random_engine) -> Response {
 		auto response = Response();
 		response.version(version);
 		response.keep_alive(false);
@@ -228,7 +227,7 @@ private:
 		response.set(http::field::server, "Beast");
 		response.set(http::field::content_type, "text/html");
 		auto output = beast::ostream(response.body());
-		generate_team_builder_ui(output, query_string, m_data.team_string(query_string));
+		generate_team_builder_ui(output, query_string, m_data.team_string(query_string, random_engine));
 
 		return response;
 	}
@@ -248,10 +247,11 @@ int main() {
 	auto ioc = boost::asio::io_context();
 
 	auto acceptor = tcp::acceptor(ioc, tcp::endpoint(tcp::v4(), port));
+	auto random_engine = std::mt19937(std::random_device()());
 	while (true) {
 		auto socket = tcp::socket(ioc);
 		acceptor.accept(socket);
 		auto connection = technicalmachine::Connection(*all_usage_stats, std::move(socket));
-		connection.process();
+		connection.process(random_engine);
 	}
 }
