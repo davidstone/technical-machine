@@ -6,6 +6,8 @@
 
 #include <tm/clients/invalid_team_file_format.hpp>
 
+#include <string>
+
 namespace technicalmachine {
 
 InvalidTeamFileFormat::InvalidTeamFileFormat(std::filesystem::path const & file):
