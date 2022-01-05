@@ -57,9 +57,6 @@ struct UsageStats {
 	constexpr auto total_teams() const {
 		return m_total_teams;
 	}
-	constexpr auto total_teams_unweighted() const {
-		return m_total_teams_unweighted;
-	}
 private:
 	// Regieleki with a Choice Scarf
 	static constexpr auto max_initial_speed = 822_bi;
@@ -73,7 +70,6 @@ private:
 	};
 	containers::array<PerSpecies, number_of<Species>.value()> m_all;
 	double m_total_teams = 0.0;
-	bounded::integer<0, bounded::builtin_max_value<std::uint64_t>> m_total_teams_unweighted = 0_bi;
 };
 
 struct Correlations {

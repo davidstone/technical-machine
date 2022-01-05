@@ -32,7 +32,6 @@ auto UsageStats::add(GenerationGeneric<Team> const & t, double const weight) & -
 		}
 	});
 	m_total_teams += weight;
-	++m_total_teams_unweighted;
 }
 
 struct LocalTopMoves {

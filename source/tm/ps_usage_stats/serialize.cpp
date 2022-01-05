@@ -108,7 +108,6 @@ auto serialize(Generation const generation, UsageStats const & usage_stats, Corr
 		}
 	}
 	output["Total teams"] = usage_stats.total_teams();
-	output["Total teams unweighted"] = usage_stats.total_teams_unweighted().value();
 
 	return output;
 }
