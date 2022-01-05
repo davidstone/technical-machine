@@ -130,7 +130,7 @@ auto make_result() {
 	}));
 	return ps_usage_stats::BattleResult{
 		{team, 0_bi, bounded::none},
-		{team, 1_bi, ps_usage_stats::Rating{1.0, 1.0}},
+		{team, 1_bi, ps_usage_stats::Rating(1.0, 1.0)},
 		ps_usage_stats::BattleResult::Winner::tie
 	};
 }

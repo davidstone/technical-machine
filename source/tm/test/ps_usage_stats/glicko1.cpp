@@ -21,8 +21,8 @@ TEST_CASE("Glicko-1", "[Glicko-1]") {
 		CHECK(std::round(rating.value) == expected.value);
 		CHECK(std::round(rating.deviation) == expected.deviation);
 	};
-	print(1_bi, ps_usage_stats::Rating{1662.0, 290.0});
-	print(2_bi, ps_usage_stats::Rating{1338.0, 290.0});
+	print(1_bi, ps_usage_stats::Rating(1662.0, 290.0));
+	print(2_bi, ps_usage_stats::Rating(1338.0, 290.0));
 }
 
 } // namespace

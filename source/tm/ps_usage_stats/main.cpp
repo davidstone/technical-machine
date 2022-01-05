@@ -79,16 +79,16 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	};
 }
 
-constexpr auto weight(Mode const mode, bounded::optional<Rating> const rating) -> double {
+constexpr auto weight(Mode const mode, Rating const rating) -> double {
 	switch (mode) {
 		case Mode::unweighted:
 			return 1.0;
 		case Mode::simple_weighted:
 		case Mode::simple_weighted_winner:
-			return rating ? chance_to_win(*rating) : 0.0;
+			return chance_to_win(rating);
 		case Mode::inverse_weighted:
 		case Mode::inverse_weighted_winner:
-			return rating ? 1.0 / (1.0 - chance_to_win(*rating)) : 0.0;
+			return 1.0 / (1.0 - chance_to_win(rating));
 	}
 }
 

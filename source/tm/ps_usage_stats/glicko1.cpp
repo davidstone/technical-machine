@@ -12,7 +12,7 @@
 namespace technicalmachine::ps_usage_stats {
 namespace {
 
-constexpr auto initial_rating = Rating{1500.0, 350.0};
+constexpr auto initial_rating = Rating(Rating::initial_value, Rating::initial_deviation);
 
 // ln(10.0) / 400.0
 constexpr auto q = 0.00575646273248511421004;
@@ -56,10 +56,10 @@ auto Glicko1::add_result(BattleResult::Side::ID const id1, BattleResult::Side::I
 auto Glicko1::finalize() & -> void {
 	for (auto & element : m_map) {
 		auto const common = 1.0 / (1.0 / square(initial_rating.deviation) + element.mapped.first_pass.reciprocal_of_d_squared);
-		element.mapped = Mapped(Rating{
+		element.mapped = Mapped(Rating(
 			initial_rating.value + q * common * element.mapped.first_pass.rating_sum,
 			std::sqrt(common)
-		});
+		));
 	}
 }
 

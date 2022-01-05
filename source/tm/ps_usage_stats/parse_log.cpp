@@ -121,7 +121,7 @@ auto parse_rating(nlohmann::json const & json, char const * const player_key) ->
 	auto get = [&](char const * const key) {
 		return rating_json.at(key).get<double>();
 	};
-	return Rating{get("rpr"), get("rprd")};
+	return Rating(get("rpr"), get("rprd"));
 }
 
 } // namespace

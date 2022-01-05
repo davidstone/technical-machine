@@ -5,9 +5,30 @@
 
 #pragma once
 
+#include <limits>
+#include <stdexcept>
+#include <string>
+
 namespace technicalmachine::ps_usage_stats {
 
 struct Rating {
+	static constexpr auto initial_value = 1500.0;
+	static constexpr auto initial_deviation = 350.0;
+
+	constexpr Rating(double const value_, double const deviation_):
+		value(value_),
+		deviation(deviation_)
+	{
+		auto const value_in_range = std::numeric_limits<double>::min() < value_ and value <= std::numeric_limits<double>::max();
+		if (!value_in_range) {
+			throw std::runtime_error("Invalid rating value of " + std::to_string(value_));
+		}
+		auto const deviation_in_range = std::numeric_limits<double>::min() < deviation_ and deviation_ <= initial_deviation;
+		if (!deviation_in_range) {
+			throw std::runtime_error("Invalid rating deviation of " + std::to_string(deviation_));
+		}
+	}
+
 	double value;
 	double deviation;
 	friend auto operator==(Rating, Rating) -> bool = default;
