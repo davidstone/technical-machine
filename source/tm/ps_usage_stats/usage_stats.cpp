@@ -93,26 +93,27 @@ Correlations::Correlations(UsageStats const & usage_stats) {
 
 namespace {
 
-auto populate_move_and_species_correlations(auto & correlations, auto const & team, auto const & pokemon1, Moves const move1, double const weight) -> void {
-	for (auto const & pokemon2 : team.all_pokemon()) {
+auto populate_correlation(auto & correlations, auto const key, double const weight) {
+	auto & mapped = containers::keyed_insert(correlations, key, 0.0).iterator->mapped;
+	mapped += weight;
+}
+
+auto populate_teammate_correlations(auto & correlations, auto const & team, auto const & pokemon1, double const weight) -> void {
+	auto is_different = [&](auto const & pokemon2) { return std::addressof(pokemon1) != std::addressof(pokemon2); };
+	for (auto const & pokemon2 : containers::filter(team.all_pokemon(), is_different)) {
+		auto & mapped = containers::at(correlations, pokemon2.species());
+		mapped.usage += weight;
 		for (auto const move2 : pokemon2.regular_moves()) {
-			if (std::addressof(pokemon2) == std::addressof(pokemon1) and move1 == move2.name()) {
-				continue;
-			}
-			auto result = containers::keyed_insert(correlations, {pokemon2.species(), move2.name()}, 0.0);
-			result.iterator->mapped += weight;
+			populate_correlation(mapped.other_moves, move2.name(), weight);
 		}
 	}
 }
 
-auto populate_item_correlations(auto & correlations, auto const & pokemon, double const weight) -> void {
-	auto result = containers::keyed_insert(correlations, pokemon.item(false, false), 0.0);
-	result.iterator->mapped += weight;
-}
-
-auto populate_ability_correlations(auto & correlations, auto const & pokemon, double const weight) -> void {
-	auto result = containers::keyed_insert(correlations, pokemon.initial_ability(), 0.0);
-	result.iterator->mapped += weight;
+auto populate_move_correlations(auto & correlations, RegularMoves const moves, Moves const move1, double const weight) -> void {
+	auto is_different = [=](Move const move2) { return move2.name() != move1; };
+	for (auto const move2 : containers::filter(moves, is_different)) {
+		populate_correlation(correlations, move2.name(), weight);
+	}
 }
 
 } // namespace
@@ -127,9 +128,10 @@ auto Correlations::add(GenerationGeneric<Team> const & t, double const weight) &
 				if (!correlations) {
 					continue;
 				}
-				populate_move_and_species_correlations(correlations->moves_and_species, team, pokemon, move_name, weight);
-				populate_item_correlations(correlations->items, pokemon, weight);
-				populate_ability_correlations(correlations->abilities, pokemon, weight);
+				populate_teammate_correlations(*correlations->teammates, team, pokemon, weight);
+				populate_move_correlations(correlations->moves, pokemon.regular_moves(), move_name, weight);
+				populate_correlation(correlations->items, pokemon.item(false, false), weight);
+				populate_correlation(correlations->abilities, pokemon.initial_ability(), weight);
 			}
 		}
 	});

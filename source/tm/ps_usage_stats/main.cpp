@@ -13,8 +13,10 @@
 
 #include <containers/algorithms/concatenate.hpp>
 
+#include <chrono>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -52,23 +54,22 @@ constexpr auto parse_mode(std::string_view const str) -> Mode {
 }
 
 auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
-	constexpr auto leading_arguments = 4;
-	if (argc < leading_arguments) {
+	if (argc != 5) {
 		throw std::runtime_error(
-			"Usage is ps_usage_stats mode generation teams_file_path output_path\n"
+			"Usage is ps_usage_stats output_path mode generation teams_file_path\n"
 			"mode must be one of: unweighted, simple_weighted, inverse_weighted, simple_weighted_winner, inverse_weighted_winner\n"
 		);
 	}
-	auto const mode = parse_mode(argv[1]);
-	auto const generation = from_string<Generation>(argv[2]);
-	auto teams_file_path = std::filesystem::path(argv[3]);
-	if (!std::filesystem::exists(teams_file_path)) {
-		throw std::runtime_error(containers::concatenate<std::string>(teams_file_path.string(), " does not exist"sv));
-	}
-	auto const output_path = std::filesystem::path(argv[4]);
+	auto const output_path = std::filesystem::path(argv[1]);
 	auto output_stats_path = output_path / "stats.json";
 	if (std::filesystem::exists(output_stats_path)) {
 		throw std::runtime_error(containers::concatenate<std::string>(output_stats_path.string(), " already exists"sv));
+	}
+	auto const mode = parse_mode(argv[2]);
+	auto const generation = from_string<Generation>(argv[3]);
+	auto teams_file_path = std::filesystem::path(argv[4]);
+	if (!std::filesystem::exists(teams_file_path)) {
+		throw std::runtime_error(containers::concatenate<std::string>(teams_file_path.string(), " does not exist"sv));
 	}
 	std::filesystem::create_directories(output_path);
 	return ParsedArgs{
@@ -142,7 +143,15 @@ auto main(int argc, char ** argv) -> int {
 
 	auto const args = parse_args(argc, argv);
 
+	using namespace std::chrono;
+	auto print_time = [previous = system_clock::now()](std::string_view const str) mutable {
+		auto const current = system_clock::now();
+		std::cout << str << ": " << duration_cast<seconds>(current - previous).count() << "s\n";
+		previous = current;
+	};
+
 	auto const ratings_estimate = populate_ratings_estimate(args.teams_file_path);
+	print_time("Populated Glicko1");
 
 	auto usage_stats = std::make_unique<UsageStats>();
 	for (auto const & result : battle_result_reader(args.teams_file_path)) {
@@ -150,9 +159,10 @@ auto main(int argc, char ** argv) -> int {
 			args.mode,
 			ratings_estimate,
 			result,
-			[&](auto const & team, double const weight) { usage_stats->add(team, weight); }
+			[&](auto const & team, double const weight) { if (weight != 0.0) { usage_stats->add(team, weight); } }
 		);
 	}
+	print_time("Completed first pass");
 
 	auto correlations = Correlations(*usage_stats);
 
@@ -161,13 +171,16 @@ auto main(int argc, char ** argv) -> int {
 			args.mode,
 			ratings_estimate,
 			result,
-			[&](auto const & team, double const weight) { correlations.add(team, weight); }
+			[&](auto const & team, double const weight) { if (weight != 0.0) { correlations.add(team, weight); } }
 		);
 	}
+	print_time("Completed second pass");
 
 	auto out_file = std::ofstream(args.output_stats_path);
 	out_file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
 	out_file << serialize(args.generation, *usage_stats, correlations) << '\n';
+
+	print_time("Wrote output");
 
 	return 0;
 }

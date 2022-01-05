@@ -157,6 +157,8 @@ add_library(tm_common STATIC
 	source/tm/ps_usage_stats/battle_result_writer.cpp
 	source/tm/ps_usage_stats/glicko1.cpp
 	source/tm/ps_usage_stats/rating.cpp
+	source/tm/ps_usage_stats/serialize.cpp
+	source/tm/ps_usage_stats/usage_stats.cpp
 
 	source/tm/stat/base_stats.cpp
 	source/tm/stat/calculate.cpp
@@ -290,8 +292,6 @@ target_link_libraries(ps_usage_stats_create_teams_file
 
 add_executable(ps_usage_stats
 	source/tm/ps_usage_stats/main.cpp
-	source/tm/ps_usage_stats/serialize.cpp
-	source/tm/ps_usage_stats/usage_stats.cpp
 )
 target_link_libraries(ps_usage_stats
 	tm_common
@@ -333,8 +333,9 @@ add_executable(tm_test
 	source/tm/test/pokemon_online/conversion.cpp
 	source/tm/test/pokemon_online/team_file.cpp
 
-	source/tm/test/ps_usage_stats/read_write_battle_result.cpp
 	source/tm/test/ps_usage_stats/glicko1.cpp
+	source/tm/test/ps_usage_stats/read_write_battle_result.cpp
+	source/tm/test/ps_usage_stats/serialize.cpp
 
 	source/tm/test/block.cpp
 	source/tm/test/calculate_damage.cpp

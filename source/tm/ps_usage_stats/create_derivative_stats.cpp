@@ -49,6 +49,11 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	if (!std::filesystem::exists(full_stats_path)) {
 		throw std::runtime_error(containers::concatenate<std::string>(full_stats_path.string(), " does not exist"sv));
 	}
+	auto const general_usage_stats_path = output_directory / "pokemon_usage_stats.json";
+	if (std::filesystem::exists(general_usage_stats_path)) {
+		throw std::runtime_error(containers::concatenate<std::string>(general_usage_stats_path.string(), " already exists"sv));
+	}
+	std::filesystem::create_directories(output_directory);
 	return ParsedArgs{
 		std::move(output_directory),
 		std::move(full_stats_path)
@@ -69,10 +74,10 @@ auto write_per_pokemon_detailed_stats(auto const & element, std::filesystem::pat
 }
 
 struct PokemonUsageStats {
-	auto add(double const total_usage, auto const & element) & -> void {
+	auto add(auto const & element) & -> void {
 		containers::emplace_back(
 			m_data,
-			element.value().at("Count").template get<double>() / total_usage,
+			element.value().at("Usage").template get<double>(),
 			from_string<Species>(element.key())
 		);
 	}
@@ -107,11 +112,10 @@ auto main(int argc, char ** argv) -> int {
 	auto const args = parse_args(argc, argv);
 	auto const original_json = load_json_from_file(args.full_stats_path);
 	std::filesystem::create_directories(args.output_directory);
-	auto const total_usage = original_json.at("Total teams").get<double>();
 	auto pokemon_usage_stats = PokemonUsageStats();
 	for (auto const & element : original_json.at("Pokemon").items()) {
 		write_per_pokemon_detailed_stats(element, args.output_directory);
-		pokemon_usage_stats.add(total_usage, element);
+		pokemon_usage_stats.add(element);
 	}
 	pokemon_usage_stats.write(args.output_directory);
 	return 0;

@@ -15,7 +15,6 @@
 #include <containers/array.hpp>
 #include <containers/at.hpp>
 #include <containers/flat_map.hpp>
-#include <containers/static_vector.hpp>
 
 #include <cstdint>
 
@@ -75,16 +74,14 @@ private:
 struct Correlations {
 private:
 	static constexpr auto top_n_cutoff = 20_bi;
-	struct PairingKey {
-		Species other_species;
-		Moves other_move;
-		friend constexpr auto operator<=>(PairingKey, PairingKey) = default;
-		friend constexpr auto to_radix_sort_key(PairingKey const x) -> bounded::tuple<Species, Moves> {
-			return bounded::tuple(x.other_species, x.other_move);
-		}
+	struct PerSpecies {
+		double usage = 0.0;
+		containers::flat_map<Moves, double> other_moves;
 	};
 	struct Data {
-		containers::flat_map<PairingKey, double> moves_and_species;
+		using Teammates = containers::array<PerSpecies, number_of<Species>.value()>;
+		std::unique_ptr<Teammates> teammates = std::make_unique<Teammates>();
+		containers::flat_map<Moves, double> moves;
 		containers::flat_map<Item, double> items;
 		containers::flat_map<Ability, double> abilities;
 	};
