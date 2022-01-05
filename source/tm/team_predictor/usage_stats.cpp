@@ -187,7 +187,7 @@ void turn_teammates_into_multiplier(containers::array<UsageStats::PerPokemon, nu
 				multiplier = 0.0F;
 				continue;
 			}
-			auto const base_value = all_per_pokemon[bounded::integer(species_inner)].weighted_usage;
+			auto const base_value = all_per_pokemon[bounded::integer(species_inner)].usage;
 			if (base_value == 0.0F) {
 				multiplier = 1.0F;
 			} else {
@@ -216,10 +216,10 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 		auto const species = from_string<Species>(pokemon.key());
 		auto & per_pokemon = m_all_per_pokemon[bounded::integer(species)];
 
-		per_pokemon.weighted_usage = pokemon.value().at("usage").get<float>();
-		check_finite(per_pokemon.weighted_usage);
-		check_non_negative(per_pokemon.weighted_usage);
-		m_total_weighted_usage += per_pokemon.weighted_usage;
+		per_pokemon.usage = pokemon.value().at("usage").get<float>();
+		check_finite(per_pokemon.usage);
+		check_non_negative(per_pokemon.usage);
+		m_total_usage += per_pokemon.usage;
 
 		auto const & teammates = pokemon.value().at("Teammates");
 		for (auto teammate = teammates.begin(); teammate != teammates.end(); ++teammate) {
@@ -238,8 +238,8 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 		per_pokemon.evs = stats.evs;
 	}
 
-	check_finite(m_total_weighted_usage);
-	check_non_negative(m_total_weighted_usage);
+	check_finite(m_total_usage);
+	check_non_negative(m_total_usage);
 	turn_teammates_into_multiplier(m_all_per_pokemon);
 }
 

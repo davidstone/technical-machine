@@ -29,7 +29,7 @@ namespace technicalmachine {
 
 struct UsageStats {
 	struct PerPokemon {
-		float weighted_usage = 0.0F;
+		float usage = 0.0F;
 		containers::array<float, number_of_species> teammates = {};
 		containers::static_vector<Moves, max_moves_per_pokemon.value()> moves;
 		Ability ability = Ability::Honey_Gather;
@@ -47,15 +47,15 @@ struct UsageStats {
 
 	explicit UsageStats(std::filesystem::path const & usage_stats_directory);
 
-	auto total_weighted_usage() const {
-		return m_total_weighted_usage;
+	auto total_usage() const {
+		return m_total_usage;
 	}
 
 	auto const & get(Species const species) const {
 		return m_all_per_pokemon[bounded::integer(species)];
 	}
 private:
-	float m_total_weighted_usage = 0.0F;
+	float m_total_usage = 0.0F;
 	containers::array<PerPokemon, number_of_species> m_all_per_pokemon;
 };
 
