@@ -14,62 +14,36 @@
 namespace technicalmachine {
 namespace {
 
-struct WeightedTeam {
-	GenerationGeneric<Team> team;
-	double weight;
-};
-
-struct SerializeInputs {
-	explicit SerializeInputs(auto const & ... weighted_teams):
-		usage_stats(make_usage_stats(weighted_teams...)),
-		correlations(usage_stats)
-	{
-		populate(correlations, weighted_teams...);
-	}
-
-	ps_usage_stats::UsageStats usage_stats;
-	ps_usage_stats::Correlations correlations;
-
-private:
-	static auto populate(auto & target, auto const & ... weighted_teams) -> void {
-		(..., target.add(weighted_teams.team, weighted_teams.weight));
-	}
-	static auto make_usage_stats(auto const & ... weighted_teams) {
-		auto result = ps_usage_stats::UsageStats();
-		populate(result, weighted_teams...);
-		return result;
-	}
-};
-
-
-auto make_smallest_team(double const weight) -> WeightedTeam {
+auto make_smallest_team() -> GenerationGeneric<Team> {
 	constexpr auto generation = Generation::one;
-	return WeightedTeam{
-		GenerationGeneric<Team>(Team<generation>({
-			{
-				Species::Mew,
-				Level(1_bi),
-				Gender::genderless,
-				Item::None,
-				Ability::Honey_Gather,
-				CombinedStats<generation>{
-					Nature::Hardy,
-					DVs(DV(0_bi), DV(0_bi), DV(0_bi), DV(0_bi)),
-					OldGenEVs(EV(0_bi), EV(0_bi), EV(0_bi), EV(0_bi), EV(0_bi))
-				},
-				RegularMoves({
-					Move(generation, Moves::Cut)
-				})
-			}
-		})),
-		weight
-	};
+	return GenerationGeneric<Team>(Team<generation>({
+		{
+			Species::Mew,
+			Level(1_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			CombinedStats<generation>{
+				Nature::Hardy,
+				DVs(DV(0_bi), DV(0_bi), DV(0_bi), DV(0_bi)),
+				OldGenEVs(EV(0_bi), EV(0_bi), EV(0_bi), EV(0_bi), EV(0_bi))
+			},
+			RegularMoves({
+				Move(generation, Moves::Cut)
+			})
+		}
+	}));
 }
 
 TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
 	auto const path = get_test_directory() / "ps_usage_stats" / "stats.json";
-	auto const serialize_inputs = std::make_unique<SerializeInputs>(make_smallest_team(1.0));
-	auto serialized = ps_usage_stats::serialize(Generation::one, serialize_inputs->usage_stats, serialize_inputs->correlations);
+	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
+	constexpr auto weight = 1.0;
+	auto const team = make_smallest_team();
+	usage_stats->add(team, weight);
+	auto correlations = std::make_unique<ps_usage_stats::Correlations>(*usage_stats);
+	correlations->add(team, weight);
+	auto serialized = ps_usage_stats::serialize(Generation::one, *usage_stats, *correlations);
 	auto const expected = R"(
 		{
 			"Pokemon": {
