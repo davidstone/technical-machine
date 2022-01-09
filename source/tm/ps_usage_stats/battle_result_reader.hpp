@@ -33,7 +33,7 @@ inline auto battle_result_reader(std::filesystem::path const & path) {
 	};
 	return containers::generate_n(
 		compute_number_of_battles(path),
-		[&, file = open_file()]() mutable {
+		[file = open_file()]() mutable {
 			if (!file) {
 				throw std::runtime_error("Inconsistent file size");
 			}
