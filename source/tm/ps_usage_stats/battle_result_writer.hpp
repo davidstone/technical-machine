@@ -23,6 +23,8 @@ struct BattleResultWriter {
 	}
 
 	auto operator()(BattleResult const & battle) -> void {
+		static_assert(std::is_standard_layout_v<BattleResult>);
+		static_assert(std::is_trivially_copyable_v<BattleResult>);
 		m_file.write(reinterpret_cast<char const *>(std::addressof(battle)), sizeof(battle));
 	}
 
