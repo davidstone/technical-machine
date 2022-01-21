@@ -830,7 +830,7 @@ auto to_string(Moves const move) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Moves {
-	constexpr auto converter = containers::basic_flat_map(
+	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<std::string_view, Moves>>({
 			{ "10000000voltthunderbolt", Moves::m10000000_Volt_Thunderbolt },

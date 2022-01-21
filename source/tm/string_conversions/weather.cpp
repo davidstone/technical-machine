@@ -28,7 +28,7 @@ auto to_string(NormalWeather const weather) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> NormalWeather {
-	constexpr auto converter = containers::basic_flat_map(
+	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<std::string_view, NormalWeather>>({
 			{ "clear", NormalWeather::clear },

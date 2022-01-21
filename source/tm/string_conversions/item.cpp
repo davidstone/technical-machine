@@ -890,7 +890,7 @@ auto to_string(Item const item) -> std::string_view {
 
 template<>
 auto from_string(std::string_view const str) -> Item {
-	constexpr auto converter = containers::basic_flat_map(
+	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<std::string_view, Item>>({
 			{"", Item::None},
