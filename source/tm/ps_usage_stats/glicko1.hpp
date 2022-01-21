@@ -8,7 +8,9 @@
 #include <tm/ps_usage_stats/battle_result.hpp>
 #include <tm/ps_usage_stats/rating.hpp>
 
-#include <containers/flat_map.hpp>
+#include <bounded/hash.hpp>
+
+#include <containers/lookup.hpp>
 
 #include <nlohmann/json.hpp>
 
@@ -40,8 +42,7 @@ private:
 		FirstPass first_pass;
 		Rating rating;
 	};
-	containers::flat_map<BattleResult::Side::ID, Mapped> m_map;
-
+	std::unordered_map<BattleResult::Side::ID, Mapped> m_map;
 };
 
 } // namespace technicalmachine::ps_usage_stats

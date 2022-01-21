@@ -44,8 +44,7 @@ auto Glicko1::add_result(BattleResult::Side::ID const id1, BattleResult::Side::I
 	};
 
 	auto update = [&](BattleResult::Side::ID const id) {
-		auto constructor = [=] { return Mapped(FirstPass{0.0, 0.0}); };
-		auto & mapped = m_map.lazy_insert(id, constructor).iterator->mapped;
+		auto & mapped = m_map.try_emplace(id, Mapped(FirstPass{0.0, 0.0})).first->second;
 		mapped.first_pass.rating_sum += g(initial_rating.deviation) * (to_score(id) - E(initial_rating));
 		mapped.first_pass.reciprocal_of_d_squared += reciprocal_of_d_squared_delta(initial_rating);
 	};
@@ -55,9 +54,10 @@ auto Glicko1::add_result(BattleResult::Side::ID const id1, BattleResult::Side::I
 
 auto Glicko1::finalize() & -> void {
 	for (auto & element : m_map) {
-		auto const common = 1.0 / (1.0 / square(initial_rating.deviation) + element.mapped.first_pass.reciprocal_of_d_squared);
-		element.mapped = Mapped(Rating(
-			initial_rating.value + q * common * element.mapped.first_pass.rating_sum,
+		auto & mapped = element.second;
+		auto const common = 1.0 / (1.0 / square(initial_rating.deviation) + mapped.first_pass.reciprocal_of_d_squared);
+		mapped = Mapped(Rating(
+			initial_rating.value + q * common * mapped.first_pass.rating_sum,
 			std::sqrt(common)
 		));
 	}
