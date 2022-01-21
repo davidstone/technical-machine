@@ -37,7 +37,10 @@ void Estimate::update(UsageStats const & usage_stats, Species const seen) {
 }
 
 Species Estimate::most_likely() const {
-	auto const it = std::max_element(containers::begin(m_estimate), containers::end(m_estimate));
+	auto const it = std::max_element(
+		containers::legacy_iterator(containers::begin(m_estimate)),
+		containers::legacy_iterator(containers::end(m_estimate))
+	).base();
 	// Estimate is indexed by Species ID. The Species ID is therefore the
 	// distance between the found element and the beginning.
 	return static_cast<Species>(it - containers::begin(m_estimate));
