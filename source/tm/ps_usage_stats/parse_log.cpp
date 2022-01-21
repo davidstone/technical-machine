@@ -18,6 +18,7 @@
 #include <tm/string_conversions/species.hpp>
 
 #include <tm/constant_generation.hpp>
+#include <tm/load_json_from_file.hpp>
 
 #include <bounded/to_integer.hpp>
 
@@ -127,9 +128,7 @@ auto parse_rating(nlohmann::json const & json, char const * const player_key) ->
 } // namespace
 
 auto parse_log(std::filesystem::path const & path) -> BattleResult {
-	auto file = std::ifstream(path);
-	auto json = nlohmann::json();
-	file >> json;
+	auto const json = load_json_from_file(path);
 	auto const format = json.at("format").get<std::string_view>();
 	auto const generation = ps::parse_generation_from_format(format);
 	auto const p1 = json.at("p1").get<std::string_view>();

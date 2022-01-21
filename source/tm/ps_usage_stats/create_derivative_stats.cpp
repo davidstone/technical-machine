@@ -11,6 +11,8 @@
 
 #include <tm/string_conversions/generation.hpp>
 
+#include <tm/load_json_from_file.hpp>
+
 #include <bounded/to_integer.hpp>
 
 #include <containers/append.hpp>
@@ -58,14 +60,6 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 		std::move(output_directory),
 		std::move(full_stats_path)
 	};
-}
-
-auto load_json_from_file(std::filesystem::path const & path) {
-	auto json = nlohmann::json();
-	auto file = std::ifstream(path);
-	file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
-	file >> json;
-	return json;
 }
 
 auto write_per_pokemon_detailed_stats(auto const & element, std::filesystem::path const & directory) -> void {

@@ -12,6 +12,7 @@
 
 #include <tm/exists_if.hpp>
 #include <tm/get_directory.hpp>
+#include <tm/load_json_from_file.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
@@ -36,11 +37,8 @@ using namespace bounded::literal;
 template<Generation generation>
 struct Evaluate {
 	Evaluate() {
-		auto file = std::ifstream(get_settings_directory() / "evaluate.json");
-		auto json = nlohmann::json();
-		file >> json;
-
-		auto const config = json.at("score");
+		auto const json = load_json_from_file(get_settings_directory() / "evaluate.json");
+		auto const & config = json.at("score");
 
 		auto get = [&](char const * field) {
 			return bounded::check_in_range<value_type>(bounded::integer(config.value(field, 0)));

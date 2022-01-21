@@ -5,6 +5,8 @@
 
 #include <tm/settings_file.hpp>
 
+#include <tm/load_json_from_file.hpp>
+
 #include <containers/algorithms/concatenate.hpp>
 
 #include <nlohmann/json.hpp>
@@ -57,9 +59,7 @@ auto parse_style(nlohmann::json const & json) {
 } // namespace
 
 auto load_settings_file(std::filesystem::path const & path) -> SettingsFile {
-	auto file = std::ifstream(path);
-	auto json = nlohmann::json();
-	file >> json;
+	auto const json = load_json_from_file(path);
 	auto const & settings = json.at("settings");
 	auto get = [&](char const * const str) {
 		return get_string(settings, str);

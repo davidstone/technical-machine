@@ -6,9 +6,6 @@
 
 #include <tm/team_predictor/usage_stats.hpp>
 
-#include <tm/invalid_settings_file.hpp>
-#include <tm/buffer_view.hpp>
-
 #include <tm/pokemon/species.hpp>
 
 #include <tm/stat/ev.hpp>
@@ -18,6 +15,10 @@
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
+
+#include <tm/buffer_view.hpp>
+#include <tm/load_json_from_file.hpp>
+#include <tm/invalid_settings_file.hpp>
 
 #include <bounded/to_integer.hpp>
 
@@ -207,9 +208,7 @@ void turn_teammates_into_multiplier(containers::array<UsageStats::PerPokemon, nu
 
 UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 	auto const path = usage_stats_directory / "usage.json";
-	auto file = std::ifstream(path);
-	auto json = nlohmann::json();
-	file >> json;
+	auto const json = load_json_from_file(path);
 
 	auto const & data = json.at("data");
 	for (auto pokemon = data.begin(); pokemon != data.end(); ++pokemon) {
