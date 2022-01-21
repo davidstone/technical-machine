@@ -84,6 +84,7 @@ constexpr auto get_top_n(containers::array<double, number_of<Moves>.value()> con
 Correlations::Correlations(UsageStats const & usage_stats) {
 	for (auto const species : containers::enum_range<Species>()) {
 		containers::at(m_top_moves, species) = TopMoves(
+			containers::assume_unique,
 			containers::transform(get_top_n(usage_stats.moves(species), top_n_cutoff), [](LocalTopMoves const moves) {
 				return containers::range_value_t<TopMoves>{moves.move, {}};
 			})
@@ -128,10 +129,11 @@ auto Correlations::add(GenerationGeneric<Team> const & t, double const weight) &
 				if (!correlations) {
 					continue;
 				}
-				populate_teammate_correlations(*correlations->teammates, team, pokemon, weight);
-				populate_move_correlations(correlations->moves, pokemon.regular_moves(), move_name, weight);
-				populate_correlation(correlations->items, pokemon.item(false, false), weight);
-				populate_correlation(correlations->abilities, pokemon.initial_ability(), weight);
+				auto lock = correlations->lock();
+				populate_teammate_correlations(correlations->teammates(), team, pokemon, weight);
+				populate_move_correlations(correlations->moves(), pokemon.regular_moves(), move_name, weight);
+				populate_correlation(correlations->items(), pokemon.item(false, false), weight);
+				populate_correlation(correlations->abilities(), pokemon.initial_ability(), weight);
 			}
 		}
 	});

@@ -19,3 +19,6 @@
 [submodule "operators"]
 	path = dependencies/operators
 	url = https://github.com/davidstone/operators
+[submodule "dependencies/concurrent-queue"]
+	path = dependencies/concurrent-queue
+	url = https://github.com/davidstone/concurrent-queue.git

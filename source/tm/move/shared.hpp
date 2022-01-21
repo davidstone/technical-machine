@@ -34,18 +34,14 @@ private:
 		static_cast<int>(numeric_traits::max_value<SharedMoveSize>)
 	>;
 public:
-	using value_type = Move;
 	using difference_type = std::common_type_t<decltype(-std::declval<SharedMoveSize>()), SharedMoveSize>;
-	using pointer = value_type *;
-	using reference = value_type;
-	using iterator_category = std::random_access_iterator_tag;
 
 	constexpr explicit SharedMovesIterator(underlying_index_type const other):
 		m_index(other)
 	{
 	}
 
-	auto operator*() const -> value_type {
+	auto operator*() const -> Move {
 		using switch_index_type = bounded::integer<
 			static_cast<int>(number_of_weird_moves),
 			static_cast<int>(numeric_traits::max_value<SharedMoveSize>) - 1

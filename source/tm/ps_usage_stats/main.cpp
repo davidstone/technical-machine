@@ -8,10 +8,16 @@
 #include <tm/ps_usage_stats/rating.hpp>
 #include <tm/ps_usage_stats/serialize.hpp>
 #include <tm/ps_usage_stats/usage_stats.hpp>
+#include <tm/ps_usage_stats/worker.hpp>
 
 #include <tm/string_conversions/generation.hpp>
 
+#include <boost/thread/scoped_thread.hpp>
+
+#include <bounded/to_integer.hpp>
+
 #include <containers/algorithms/concatenate.hpp>
+#include <containers/dynamic_array.hpp>
 
 #include <chrono>
 #include <filesystem>
@@ -36,9 +42,12 @@ enum class Mode {
 	inverse_weighted_winner
 };
 
+using ThreadCount = bounded::integer<1, 10'000>;
+
 struct ParsedArgs {
 	Mode mode;
 	Generation generation;
+	ThreadCount thread_count;
 	std::filesystem::path teams_file_path;
 	std::filesystem::path output_stats_path;
 };
@@ -54,9 +63,9 @@ constexpr auto parse_mode(std::string_view const str) -> Mode {
 }
 
 auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
-	if (argc != 5) {
+	if (argc != 6) {
 		throw std::runtime_error(
-			"Usage is ps_usage_stats output_path mode generation teams_file_path\n"
+			"Usage is ps_usage_stats output_path mode generation thread_count teams_file_path\n"
 			"mode must be one of: unweighted, simple_weighted, inverse_weighted, simple_weighted_winner, inverse_weighted_winner\n"
 		);
 	}
@@ -67,7 +76,8 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	}
 	auto const mode = parse_mode(argv[2]);
 	auto const generation = from_string<Generation>(argv[3]);
-	auto teams_file_path = std::filesystem::path(argv[4]);
+	auto const thread_count = bounded::to_integer<ThreadCount>(argv[4]);
+	auto teams_file_path = std::filesystem::path(argv[5]);
 	if (!std::filesystem::exists(teams_file_path)) {
 		throw std::runtime_error(containers::concatenate<std::string>(teams_file_path.string(), " does not exist"sv));
 	}
@@ -75,6 +85,7 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	return ParsedArgs{
 		mode,
 		generation,
+		thread_count,
 		std::move(teams_file_path),
 		std::move(output_stats_path)
 	};
@@ -134,6 +145,38 @@ auto populate_ratings_estimate(std::filesystem::path const & team_path) -> Glick
 	return ratings_estimate;
 }
 
+auto make_correlations(Mode const mode, ThreadCount const thread_count, std::filesystem::path const & teams_file_path, Glicko1 const & ratings_estimate, UsageStats const & usage_stats) {
+	auto correlations = Correlations(usage_stats);
+	{
+		auto workers = containers::dynamic_array(containers::generate_n(thread_count, [&] {
+			return make_worker<BattleResult>([&](BattleResult const & result) {
+				do_pass(
+					mode,
+					ratings_estimate,
+					result,
+					[&](auto const & team, double const weight) { if (weight != 0.0) { correlations.add(team, weight); } }
+				);
+			});
+		}));
+		auto reader = battle_result_reader(teams_file_path);
+		auto it = containers::begin(reader);
+		auto const last = containers::end(reader);
+		while (true) {
+			for (auto & worker : workers) {
+				if (it == last) {
+					break;
+				}
+				worker.add_work(*it);
+				++it;
+			}
+			if (it == last) {
+				break;
+			}
+		}
+	}
+	return correlations;
+}
+
 } // namespace
 } // namespace technicalmachine::ps_usage_stats
 
@@ -164,16 +207,7 @@ auto main(int argc, char ** argv) -> int {
 	}
 	print_time("Completed first pass");
 
-	auto correlations = Correlations(*usage_stats);
-
-	for (auto const & result : battle_result_reader(args.teams_file_path)) {
-		do_pass(
-			args.mode,
-			ratings_estimate,
-			result,
-			[&](auto const & team, double const weight) { if (weight != 0.0) { correlations.add(team, weight); } }
-		);
-	}
+	auto const correlations = make_correlations(args.mode, args.thread_count, args.teams_file_path, ratings_estimate, *usage_stats);
 	print_time("Completed second pass");
 
 	auto out_file = std::ofstream(args.output_stats_path);

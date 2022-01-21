@@ -17,6 +17,7 @@
 #include <containers/flat_map.hpp>
 
 #include <cstdint>
+#include <mutex>
 
 namespace technicalmachine::ps_usage_stats {
 
@@ -79,11 +80,50 @@ private:
 		containers::flat_map<Moves, double> other_moves;
 	};
 	struct Data {
-		using Teammates = containers::array<PerSpecies, number_of<Species>.value()>;
-		std::unique_ptr<Teammates> teammates = std::make_unique<Teammates>();
-		containers::flat_map<Moves, double> moves;
-		containers::flat_map<Item, double> items;
-		containers::flat_map<Ability, double> abilities;
+		Data():
+			m_impl(std::make_unique<Impl>())
+		{
+		}
+
+		auto lock() & {
+			return std::scoped_lock(m_impl->mutex);
+		}
+
+		auto teammates() const -> auto const & {
+			return m_impl->teammates;
+		}
+		auto teammates() -> auto & {
+			return m_impl->teammates;
+		}
+		auto moves() const -> auto const & {
+			return m_impl->moves;
+		}
+		auto moves() -> auto & {
+			return m_impl->moves;
+		}
+		auto items() const -> auto const & {
+			return m_impl->items;
+		}
+		auto items() -> auto & {
+			return m_impl->items;
+		}
+		auto abilities() const -> auto const & {
+			return m_impl->abilities;
+		}
+		auto abilities() -> auto & {
+			return m_impl->abilities;
+		}
+
+	private:
+		struct Impl {
+			using Teammates = containers::array<PerSpecies, number_of<Species>.value()>;
+			mutable std::mutex mutex;
+			Teammates teammates;
+			containers::flat_map<Moves, double> moves;
+			containers::flat_map<Item, double> items;
+			containers::flat_map<Ability, double> abilities;
+		};
+		std::unique_ptr<Impl> m_impl;
 	};
 public:
 	using TopMoves = containers::static_flat_map<Moves, Data, top_n_cutoff.value()>;

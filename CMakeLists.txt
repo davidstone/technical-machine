@@ -28,6 +28,7 @@ target_include_directories(nlohmann_json SYSTEM INTERFACE "dependencies/json/sin
 get_directory_property(has_parent PARENT_DIRECTORY)
 if (NOT has_parent)
 	add_subdirectory(dependencies/cmake_strict_defaults)
+	add_subdirectory(dependencies/concurrent-queue)
 	add_subdirectory(dependencies/numeric-traits)
 	add_subdirectory(dependencies/operators)
 	add_subdirectory(dependencies/bounded-integer)
@@ -288,14 +289,14 @@ add_executable(ps_usage_stats_create_teams_file
 	source/tm/ps_usage_stats/parse_log.cpp
 )
 target_link_libraries(ps_usage_stats_create_teams_file
-	tm_common
+	tm_common concurrent_queue
 )
 
 add_executable(ps_usage_stats
 	source/tm/ps_usage_stats/main.cpp
 )
 target_link_libraries(ps_usage_stats
-	tm_common
+	tm_common concurrent_queue
 )
 
 add_executable(ps_usage_stats_create_derivative_stats
