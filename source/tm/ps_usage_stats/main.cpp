@@ -212,7 +212,7 @@ auto main(int argc, char ** argv) -> int {
 
 	auto out_file = std::ofstream(args.output_stats_path);
 	out_file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
-	out_file << serialize(args.generation, *usage_stats, correlations) << '\n';
+	serialize(out_file, args.generation, *usage_stats, correlations);
 
 	print_time("Wrote output");
 

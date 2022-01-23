@@ -9,7 +9,11 @@
 
 #include <tm/get_directory.hpp>
 
+#include <nlohmann/json.hpp>
+
 #include <catch2/catch_test_macros.hpp>
+
+#include <sstream>
 
 namespace technicalmachine {
 namespace {
@@ -35,16 +39,38 @@ auto make_smallest_team() -> GenerationGeneric<Team> {
 	}));
 }
 
+auto make_second_team() -> GenerationGeneric<Team> {
+	constexpr auto generation = Generation::one;
+	return GenerationGeneric<Team>(Team<generation>({
+		{
+			Species::Tauros,
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			CombinedStats<generation>{
+				Nature::Hardy,
+				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
+				OldGenEVs(EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi))
+			},
+			RegularMoves({
+				Move(generation, Moves::Body_Slam),
+				Move(generation, Moves::Earthquake)
+			})
+		}
+	}));
+}
+
 TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
-	auto const path = get_test_directory() / "ps_usage_stats" / "stats.json";
 	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
 	constexpr auto weight = 1.0;
 	auto const team = make_smallest_team();
 	usage_stats->add(team, weight);
 	auto correlations = std::make_unique<ps_usage_stats::Correlations>(*usage_stats);
 	correlations->add(team, weight);
-	auto serialized = ps_usage_stats::serialize(Generation::one, *usage_stats, *correlations);
-	auto const expected = R"(
+	auto stream = std::stringstream();
+	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, *correlations);
+	auto const expected = nlohmann::json::parse(R"(
 		{
 			"Pokemon": {
 				"Mew": {
@@ -63,9 +89,68 @@ TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
 			},
 			"Total teams": 1.0
 		}
-	)"_json;
-	CHECK(serialized == expected);
-	std::filesystem::remove(path);
+	)");
+	INFO(stream.str());
+	CHECK(nlohmann::json::parse(stream.str()) == expected);
+}
+
+TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
+	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
+	constexpr auto weight = 1.0;
+	auto teams = containers::array{make_smallest_team(), make_second_team()};
+	for (auto const team : teams) {
+		usage_stats->add(team, weight);
+	}
+	auto correlations = std::make_unique<ps_usage_stats::Correlations>(*usage_stats);
+	for (auto const team : teams) {
+		correlations->add(team, weight);
+	}
+	auto stream = std::stringstream();
+	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, *correlations);
+	auto const expected = nlohmann::json::parse(R"(
+		{
+			"Pokemon": {
+				"Mew": {
+					"Moves": {
+						"Cut": {
+							"Moves": {},
+							"Teammates": {},
+							"Usage": 1.0
+						}
+					},
+					"Speed": {
+						"7": 1.0
+					},
+					"Usage": 1.0
+				},
+				"Tauros": {
+					"Moves": {
+						"Body Slam": {
+							"Moves": {
+								"Earthquake": 1.0
+							},
+							"Teammates": {},
+							"Usage": 1.0
+						},
+						"Earthquake": {
+							"Moves": {
+								"Body Slam": 1.0
+							},
+							"Teammates": {},
+							"Usage": 1.0
+						}
+					},
+					"Speed": {
+						"318": 1.0
+					},
+					"Usage": 1.0
+				}
+			},
+			"Total teams": 2.0
+		}
+	)");
+	INFO(stream.str());
+	CHECK(nlohmann::json::parse(stream.str()) == expected);
 }
 
 } // namespace

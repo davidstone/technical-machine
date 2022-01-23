@@ -18,6 +18,8 @@
 #include <containers/size.hpp>
 #include <containers/static_vector.hpp>
 
+#include <nlohmann/json.hpp>
+
 #include <cstdint>
 #include <string>
 
@@ -105,26 +107,31 @@ auto serialize_moves(Generation const generation, Correlations::TopMoves const &
 
 } // namespace
 
-auto serialize(Generation const generation, UsageStats const & usage_stats, Correlations const & correlations) -> nlohmann::json {
-	auto output = nlohmann::json();
-	auto & all_pokemon = output["Pokemon"];
+// This implementation significantly reduces memory consumption compared to
+// constructing a single giant json object and writing that.
+auto serialize(std::ostream & stream, Generation const generation, UsageStats const & usage_stats, Correlations const & correlations) -> void {
+	stream << R"({"Pokemon":{)";
+	bool is_first = true;
 	for (auto const species : get_used<Species>([&](Species const species) { return usage_stats.get_total(species); })) {
-		auto & species_data = all_pokemon[std::string(to_string(species.key))];
-		species_data = {
+		if (!is_first) {
+			stream << ',';
+		} else {
+			is_first = false;
+		}
+		auto pokemon = nlohmann::json({
 			{"Usage", species.mapped},
 			{"Moves", serialize_moves(generation, correlations.top_moves(species.key))},
 			{"Speed", serialize_speed(usage_stats, species)}
-		};
+		});
 		if (generation >= Generation::two) {
-			species_data["Items"] = serialize<Item>(usage_stats, species);
+			pokemon["Items"] = serialize<Item>(usage_stats, species);
 		}
 		if (generation >= Generation::three) {
-			species_data["Abilities"] = serialize<Ability>(usage_stats, species);
+			pokemon["Abilities"] = serialize<Ability>(usage_stats, species);
 		}
+		stream << '"' << to_string(species.key) << "\":" << pokemon;
 	}
-	output["Total teams"] = usage_stats.total_teams();
-
-	return output;
+	stream << R"(},"Total teams":)" << usage_stats.total_teams() << "}";
 }
 
 } // namespace technicalmachine::ps_usage_stats

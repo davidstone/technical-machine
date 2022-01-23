@@ -7,13 +7,13 @@
 
 #include <tm/generation.hpp>
 
-#include <nlohmann/json.hpp>
+#include <ostream>
 
 namespace technicalmachine::ps_usage_stats {
 
 struct UsageStats;
 struct Correlations;
 
-auto serialize(Generation, UsageStats const & usage_stats, Correlations const & correlations) -> nlohmann::json;
+auto serialize(std::ostream &, Generation, UsageStats const & usage_stats, Correlations const & correlations) -> void;
 
 } // namespace technicalmachine::ps_usage_stats
