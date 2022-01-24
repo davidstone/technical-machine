@@ -46,6 +46,18 @@ constexpr auto get_used(auto const get) {
 	return get_used<Key>(get, [](auto const x) { return x.mapped != 0.0; });
 }
 
+template<typename Enum>
+auto serialize_simple_correlations(auto const & source, double const total) -> nlohmann::json {
+	auto result = nlohmann::json(nlohmann::json::object());
+	for (auto const index : containers::enum_range<Enum>()) {
+		auto const value = containers::at(source, index);
+		if (value != 0.0) {
+			result[std::string(to_string(index))] = value / total;
+		}
+	}
+	return result;
+}
+
 auto serialize_simple_correlations(auto const & source, double const total) -> nlohmann::json {
 	auto result = nlohmann::json(nlohmann::json::object());
 	for (auto const related : source) {
@@ -90,16 +102,16 @@ auto serialize_moves(Generation const generation, Correlations::TopMoves const &
 	for (auto const & top_move : top_moves) {
 		auto & per_move = result[std::string(to_string(top_move.key))];
 
-		auto const total = containers::sum(containers::transform(top_move.mapped.abilities(), [](auto const value) { return value.mapped; }));
+		auto const total = containers::sum(top_move.mapped.abilities());
 		per_move["Usage"] = total;
 
-		per_move["Moves"] = serialize_simple_correlations(top_move.mapped.moves(), total);
+		per_move["Moves"] = serialize_simple_correlations<Moves>(top_move.mapped.moves(), total);
 		per_move["Teammates"] = serialize_teammates(top_move.mapped.teammates(), total);
 		if (generation >= Generation::two) {
-			per_move["Items"] = serialize_simple_correlations(top_move.mapped.items(), total);
+			per_move["Items"] = serialize_simple_correlations<Item>(top_move.mapped.items(), total);
 		}
 		if (generation >= Generation::three) {
-			per_move["Abilities"] = serialize_simple_correlations(top_move.mapped.abilities(), total);
+			per_move["Abilities"] = serialize_simple_correlations<Ability>(top_move.mapped.abilities(), total);
 		}
 	}
 	return result;

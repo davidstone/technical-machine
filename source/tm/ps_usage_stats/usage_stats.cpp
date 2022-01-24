@@ -113,7 +113,7 @@ auto populate_teammate_correlations(auto & correlations, auto const & team, auto
 auto populate_move_correlations(auto & correlations, RegularMoves const moves, Moves const move1, double const weight) -> void {
 	auto is_different = [=](Move const move2) { return move2.name() != move1; };
 	for (auto const move2 : containers::filter(moves, is_different)) {
-		populate_correlation(correlations, move2.name(), weight);
+		containers::at(correlations, move2.name()) += weight;
 	}
 }
 
@@ -132,8 +132,8 @@ auto Correlations::add(GenerationGeneric<Team> const & t, double const weight) &
 				auto lock = correlations->lock();
 				populate_teammate_correlations(correlations->teammates(), team, pokemon, weight);
 				populate_move_correlations(correlations->moves(), pokemon.regular_moves(), move_name, weight);
-				populate_correlation(correlations->items(), pokemon.item(false, false), weight);
-				populate_correlation(correlations->abilities(), pokemon.initial_ability(), weight);
+				containers::at(correlations->items(), pokemon.item(false, false)) += weight;
+				containers::at(correlations->abilities(), pokemon.initial_ability()) += weight;
 			}
 		}
 	});

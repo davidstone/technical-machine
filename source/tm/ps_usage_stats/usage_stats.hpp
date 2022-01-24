@@ -119,9 +119,9 @@ private:
 			using Teammates = containers::array<PerSpecies, number_of<Species>.value()>;
 			mutable std::mutex mutex;
 			Teammates teammates;
-			containers::flat_map<Moves, double> moves;
-			containers::flat_map<Item, double> items;
-			containers::flat_map<Ability, double> abilities;
+			containers::array<double, number_of<Moves>.value()> moves = {};
+			containers::array<double, number_of<Item>.value()> items = {};
+			containers::array<double, number_of<Ability>.value()> abilities = {};
 		};
 		std::unique_ptr<Impl> m_impl;
 	};
