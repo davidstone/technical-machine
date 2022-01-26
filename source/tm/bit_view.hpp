@@ -27,7 +27,7 @@ struct BitView {
 	}
 	
 	constexpr auto remaining_bits() const {
-		return bounded::increase_min<0>(::bounded::assume_in_range<containers::detail::array_size_type<std::byte>>(m_view.size()) * bounded::char_bit - m_consumed_bits_in_initial_byte);
+		return bounded::increase_min<0>(::bounded::assume_in_range<containers::array_size_type<std::byte>>(m_view.size()) * bounded::char_bit - m_consumed_bits_in_initial_byte);
 	}
 
 	constexpr auto skip(auto const bits) {

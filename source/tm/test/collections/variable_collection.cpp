@@ -45,7 +45,7 @@ auto make_team(auto const... species) {
 using EffectIndex = bounded::integer<0, 4>;
 template<Generation generation>
 void validate(Team<generation> const & team, EffectIndex const effect_index, TeamIndex const current_index) {
-	static constexpr auto expected_index = containers::array<bounded::integer<0, 5>, 6, 5>{{
+	static constexpr auto expected_index = containers::array<bounded::integer<0, 5>, 6_bi, 5_bi>{{
 		{1_bi, 2_bi, 3_bi, 4_bi, 5_bi},
 		{0_bi, 2_bi, 3_bi, 4_bi, 5_bi},
 		{0_bi, 1_bi, 3_bi, 4_bi, 5_bi},

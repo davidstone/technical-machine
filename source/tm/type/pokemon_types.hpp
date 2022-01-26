@@ -40,7 +40,7 @@ private:
 	{
 	}
 
-	containers::array<Type, 2> m_types;
+	containers::array<Type, 2_bi> m_types;
 };
 
 }	// namespace technicalmachine

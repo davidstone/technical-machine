@@ -37,7 +37,7 @@ inline auto battle_result_reader(std::filesystem::path const & path) {
 			if (!file) {
 				throw std::runtime_error("Inconsistent file size");
 			}
-			containers::array<std::byte, sizeof(BattleResult)> buffer;
+			containers::array<std::byte, bounded::size_of<BattleResult>> buffer;
 			file.read(reinterpret_cast<char *>(std::addressof(buffer)), static_cast<std::streamsize>(sizeof(buffer)));
 			return std::bit_cast<BattleResult>(buffer);
 		}
