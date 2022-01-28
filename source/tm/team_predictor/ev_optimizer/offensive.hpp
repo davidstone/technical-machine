@@ -128,7 +128,7 @@ struct OffensiveEVs {
 
 private:
 	static constexpr auto maximum_natures = containers::size(containers::enum_range<Nature>());
-	containers::static_vector<OffensiveStats, static_cast<std::size_t>(maximum_natures * bounded::pow(max_possible_optimized_ivs, 2_bi))> m_container;
+	containers::static_vector<OffensiveStats, maximum_natures * bounded::pow(max_possible_optimized_ivs, 2_bi)> m_container;
 };
 
 }	// namespace technicalmachine

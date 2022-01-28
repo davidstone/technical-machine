@@ -33,7 +33,7 @@ using namespace std::string_view_literals;
 constexpr auto generation = Generation::four;
 
 auto create_shared_moves(TeamSize const team_size) {
-	auto shared = containers::static_vector<Moves, static_cast<int>(number_of_weird_moves + numeric_traits::max_value<TeamSize>)>({
+	auto shared = containers::static_vector<Moves, number_of_weird_moves + numeric_traits::max_value<TeamSize>>({
 		Moves::Pass,
 		Moves::Struggle,
 	});

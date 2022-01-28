@@ -93,7 +93,7 @@ private:
 
 		friend auto operator<=>(PokemonUsageStat, PokemonUsageStat) = default;
 	};
-	containers::static_vector<PokemonUsageStat, number_of<Species>.value()> m_data;
+	containers::static_vector<PokemonUsageStat, number_of<Species>> m_data;
 };
 
 } // namespace

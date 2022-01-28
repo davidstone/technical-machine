@@ -22,7 +22,7 @@ private:
 		Moves move_name;
 		double score;
 	};
-	containers::static_vector<value_type, bounded::builtin_max_value<MoveSize>> m_scores;
+	containers::static_vector<value_type, numeric_traits::max_value<MoveSize>> m_scores;
 };
 
 }	// namespace technicalmachine

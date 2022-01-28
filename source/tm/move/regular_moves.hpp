@@ -48,7 +48,7 @@ struct RegularMoves {
 		return compress(value.m_moves);
 	}
 private:
-	containers::static_vector<Move, max_moves_per_pokemon.value()> m_moves;
+	containers::static_vector<Move, max_moves_per_pokemon> m_moves;
 };
 
 } // namespace technicalmachine

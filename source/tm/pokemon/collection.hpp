@@ -33,7 +33,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<Generation generation>
-using PokemonContainer = containers::static_vector<Pokemon<generation>, max_pokemon_per_team.value()>;
+using PokemonContainer = containers::static_vector<Pokemon<generation>, max_pokemon_per_team>;
 
 template<Generation generation>
 struct PokemonCollection {

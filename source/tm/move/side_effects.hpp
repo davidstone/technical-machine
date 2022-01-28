@@ -58,7 +58,7 @@ auto apply_status(Statuses const status, UserPokemon const user, OtherMutableAct
 }
 
 template<any_team UserTeam>
-using SideEffects = containers::static_vector<SideEffect<UserTeam>, 15>;
+using SideEffects = containers::static_vector<SideEffect<UserTeam>, 15_bi>;
 
 template<any_active_pokemon UserPokemon>
 auto possible_side_effects(Moves, UserPokemon, OtherTeam<UserPokemon> const &, Weather) -> SideEffects<AssociatedTeam<UserPokemon>>;

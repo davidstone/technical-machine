@@ -17,10 +17,10 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 inline constexpr auto max_possible_optimized_ivs = 2_bi;
-using PossibleOptimizedIVs = containers::static_vector<IV, max_possible_optimized_ivs.value()>;
+using PossibleOptimizedIVs = containers::static_vector<IV, max_possible_optimized_ivs>;
 
 constexpr auto possible_optimized_ivs(containers::range auto const ivs) {
-	return containers::static_vector<IV, max_possible_optimized_ivs.value()>(containers::take(containers::reversed(ivs), max_possible_optimized_ivs));
+	return containers::static_vector<IV, max_possible_optimized_ivs>(containers::take(containers::reversed(ivs), max_possible_optimized_ivs));
 };
 
 } // namespace technicalmachine

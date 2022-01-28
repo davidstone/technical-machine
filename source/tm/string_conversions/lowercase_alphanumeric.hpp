@@ -47,10 +47,10 @@ inline constexpr auto lowercase_alphanumeric = [](std::string_view input) {
 	return containers::filter(containers::transform(std::move(input), to_lower), is_valid);
 };
 
-template<int max_size>
+template<auto max_size>
 struct fixed_capacity_lowercase_and_digit_string {
 	constexpr explicit fixed_capacity_lowercase_and_digit_string(std::string_view const str):
-		m_data(containers::take(lowercase_alphanumeric(str), bounded::constant<max_size>))
+		m_data(containers::take(lowercase_alphanumeric(str), max_size))
 	{
 	}
 	constexpr operator std::string_view() const {

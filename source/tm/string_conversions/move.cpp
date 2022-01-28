@@ -18,6 +18,8 @@
 
 namespace technicalmachine {
 
+using namespace bounded::literal;
+
 auto to_string(Moves const move) -> std::string_view {
 	switch (move) {
 		// Weird moves
@@ -1659,7 +1661,7 @@ auto from_string(std::string_view const str) -> Moves {
 			{ "zingzap", Moves::Zing_Zap },
 		})
 	);
-	auto const converted = fixed_capacity_lowercase_and_digit_string<25>(str);
+	auto const converted = fixed_capacity_lowercase_and_digit_string<25_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
 		throw InvalidFromStringConversion("Move", str);

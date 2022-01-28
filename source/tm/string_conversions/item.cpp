@@ -18,6 +18,8 @@
 
 namespace technicalmachine {
 
+using namespace bounded::literal;
+
 auto to_string(Item const item) -> std::string_view {
 	switch (item) {
 		// Generation 1
@@ -1746,7 +1748,7 @@ auto from_string(std::string_view const str) -> Item {
 			{"zoomlens", Item::Zoom_Lens},
 		})
 	);
-	auto const converted = fixed_capacity_lowercase_and_digit_string<15>(str);
+	auto const converted = fixed_capacity_lowercase_and_digit_string<15_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
 		throw InvalidFromStringConversion("Item", str);

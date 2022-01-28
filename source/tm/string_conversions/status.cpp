@@ -45,7 +45,7 @@ auto from_string(std::string_view const str) -> Statuses {
 			{ "toxic", Statuses::toxic },
 		})
 	);
-	auto const converted = fixed_capacity_lowercase_and_digit_string<9>(str);
+	auto const converted = fixed_capacity_lowercase_and_digit_string<9_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
 		throw InvalidFromStringConversion("Status", str);

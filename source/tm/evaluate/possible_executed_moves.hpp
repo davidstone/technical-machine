@@ -13,7 +13,7 @@
 
 namespace technicalmachine {
 
-using PossibleExecutedMoves = containers::static_vector<KnownMove, 3>;
+using PossibleExecutedMoves = containers::static_vector<KnownMove, 3_bi>;
 
 auto possible_executed_moves(Moves const selected_move, any_team auto const & user_team) -> PossibleExecutedMoves;
 

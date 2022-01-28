@@ -80,7 +80,7 @@ auto from_string<Nature>(std::string_view const str) -> Nature {
 			{ "timid", Nature::Timid }
 		})
 	);
-	auto const converted = fixed_capacity_lowercase_and_digit_string<7>(str);
+	auto const converted = fixed_capacity_lowercase_and_digit_string<7_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
 		throw InvalidFromStringConversion("Nature", str);

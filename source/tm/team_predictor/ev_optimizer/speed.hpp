@@ -58,7 +58,7 @@ private:
 		EV ev;
 	};
 	static constexpr auto maximum_natures = bounded::integer(numeric_traits::max_value<Nature>) + 1_bi;
-	containers::static_vector<Mapped, static_cast<std::size_t>(maximum_natures * max_possible_optimized_ivs)> m_container;
+	containers::static_vector<Mapped, maximum_natures * max_possible_optimized_ivs> m_container;
 };
 
 } // namespace technicalmachine

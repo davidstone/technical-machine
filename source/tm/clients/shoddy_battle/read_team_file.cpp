@@ -122,7 +122,7 @@ struct ClassDescription {
 
 struct ParsedData;
 
-using IntegerVector = containers::static_vector<ByteInteger<4_bi>, bounded::max(number_of_stats, max_moves_per_pokemon).value()>;
+using IntegerVector = containers::static_vector<ByteInteger<4_bi>, bounded::max(number_of_stats, max_moves_per_pokemon)>;
 using AnyVector = containers::vector<ParsedData, bounded::max(max_pokemon_per_team, max_moves_per_pokemon).value()>;
 
 struct ParsedData {
@@ -304,9 +304,9 @@ private:
 		auto nickname = bounded::optional<std::string_view>();
 		auto ivs = bounded::optional<IVs>();
 		auto evs = bounded::optional<EVs>();
-		auto moves = bounded::optional<containers::static_vector<Moves, max_moves_per_pokemon.value()>>();
+		auto moves = bounded::optional<containers::static_vector<Moves, max_moves_per_pokemon>>();
 		// TODO: Use an array?
-		auto pp_ups = bounded::optional<containers::static_vector<PP::pp_ups_type, max_moves_per_pokemon.value()>>();
+		auto pp_ups = bounded::optional<containers::static_vector<PP::pp_ups_type, max_moves_per_pokemon>>();
 		for (auto const field : description.fields) {
 			switch (field.type) {
 				case Field::Type::object: {

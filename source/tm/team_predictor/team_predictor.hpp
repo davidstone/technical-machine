@@ -37,7 +37,7 @@ void predict_pokemon(any_seen_team auto & team, Estimate estimate, UsageStats co
 }
 
 template<any_seen_pokemon PokemonType>
-void predict_moves(PokemonType & pokemon, containers::static_vector<Moves, max_moves_per_pokemon.value()> const detailed) {
+void predict_moves(PokemonType & pokemon, containers::static_vector<Moves, max_moves_per_pokemon> const detailed) {
 	for (Moves const move_name : detailed) {
 		if (containers::size(pokemon.regular_moves()) == max_moves_per_pokemon) {
 			break;

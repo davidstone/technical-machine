@@ -29,7 +29,7 @@ using namespace bounded::literal;
 
 template<Generation generation>
 struct KnownPokemonCollection {
-	using Container = containers::static_vector<KnownPokemon<generation>, max_pokemon_per_team.value()>;
+	using Container = containers::static_vector<KnownPokemon<generation>, max_pokemon_per_team>;
 
 	constexpr explicit KnownPokemonCollection(containers::initializer_range<KnownPokemonCollection> auto && source):
 		m_container(OPERATORS_FORWARD(source))

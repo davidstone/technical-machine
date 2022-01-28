@@ -29,7 +29,7 @@ namespace technicalmachine {
 namespace detail {
 
 template<typename T>
-using Possible = containers::static_vector<T, (numeric_traits::max_value<typename T::value_type> + 1_bi).value()>;
+using Possible = containers::static_vector<T, numeric_traits::max_value<typename T::value_type> + 1_bi>;
 
 template<typename T>
 inline constexpr auto all_possible = Possible<T>(
@@ -306,7 +306,7 @@ constexpr auto possible_spd_ivs_type(Type const hidden_power_type) {
 	}
 }
 
-using PossiblePowerSums = containers::static_vector<bounded::integer<0, 63>, 2>;
+using PossiblePowerSums = containers::static_vector<bounded::integer<0, 63>, 2_bi>;
 constexpr auto possible_power_sums(HiddenPowerIVPower const power) -> PossiblePowerSums {
 	constexpr auto divisor = 63_bi;
 	auto const min_intermediate = (power - 30_bi) * divisor;

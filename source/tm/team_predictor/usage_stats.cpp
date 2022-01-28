@@ -84,7 +84,7 @@ auto per_pokemon_data(nlohmann::json const & json, auto const max) {
 		containers::push_back(full, it);
 	}
 	containers::ska_sort(full, [](nlohmann::json::const_iterator const & it) { return -it.value().get<double>(); });
-	return containers::static_vector<T, max.value()>(containers::transform(
+	return containers::static_vector<T, max>(containers::transform(
 		containers::take(full, max),
 		[](nlohmann::json::const_iterator const & it) { return from_statistics_string<T>(it.key()); }
 	));

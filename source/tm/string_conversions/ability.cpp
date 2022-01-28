@@ -18,6 +18,8 @@
 
 namespace technicalmachine {
 
+using namespace bounded::literal;
+
 auto to_string(Ability const ability) -> std::string_view {
 	switch (ability) {
 		case Ability::Stench: return "Stench";
@@ -558,7 +560,7 @@ auto from_string<Ability>(std::string_view const str) -> Ability {
 			{"zenmode", Ability::Zen_Mode},
 		})
 	);
-	auto const converted = fixed_capacity_lowercase_and_digit_string<15>(str);
+	auto const converted = fixed_capacity_lowercase_and_digit_string<15_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
 		throw InvalidFromStringConversion("Ability", str);

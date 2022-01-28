@@ -15,6 +15,8 @@
 
 namespace technicalmachine {
 
+using namespace bounded::literal;
+
 auto to_string(Type const type) -> std::string_view {
 	switch (type) {
 		case Type::Bug: return "Bug";
@@ -65,7 +67,7 @@ auto from_string(std::string_view const str) -> Type {
 			{"water", Type::Water},
 		})
 	);
-	auto const converted = fixed_capacity_lowercase_and_digit_string<8>(str);
+	auto const converted = fixed_capacity_lowercase_and_digit_string<8_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
 		throw InvalidFromStringConversion("Type", str);

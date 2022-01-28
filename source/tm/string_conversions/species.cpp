@@ -17,6 +17,8 @@
 
 namespace technicalmachine {
 
+using namespace bounded::literal;
+
 auto to_string(Species const species) -> std::string_view {
 	switch (species) {
 		// Generation 1
@@ -2181,7 +2183,7 @@ auto from_string(std::string_view const str) -> Species {
 			{ "zygardecomplete", Species::Zygarde_Complete },
 		})
 	);
-	auto const converted = fixed_capacity_lowercase_and_digit_string<22>(str);
+	auto const converted = fixed_capacity_lowercase_and_digit_string<22_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
 		throw InvalidFromStringConversion("Species", str);
