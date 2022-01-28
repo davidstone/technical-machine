@@ -124,7 +124,7 @@ private:
 		std::unique_ptr<Impl> m_impl;
 	};
 public:
-	using TopMoves = containers::static_flat_map<Moves, Data, top_n_cutoff.value()>;
+	using TopMoves = containers::static_flat_map<Moves, Data, top_n_cutoff>;
 
 	Correlations(UsageStats const & general_usage_stats);
 	auto add(GenerationGeneric<Team> const & team, double weight) & -> void;

@@ -379,9 +379,9 @@ constexpr auto active_pokemon_can_be_phazed(any_team auto const & team) {
 	return !team.pokemon().ingrained() and !blocks_phazing(team.pokemon().ability()) and team.size() > 1_bi;
 }
 
-template<int index>
+template<auto index>
 constexpr auto phaze = [](any_team auto & user, any_team auto & target, Weather & weather, auto) {
-	target.switch_pokemon(user.pokemon(), weather, bounded::constant<index>);
+	target.switch_pokemon(user.pokemon(), weather, index);
 };
 
 template<any_team TargetTeam>
@@ -400,20 +400,20 @@ constexpr auto phaze_effect(TargetTeam const & target) {
 	auto result = SideEffects<UserTeam>();
 	auto add_one = [&](auto const index) {
 		if (is_not_active(index) and index < target.size()) {
-			containers::push_back(result, SideEffect<UserTeam>{probability, phaze<index.value()>});
+			containers::push_back(result, SideEffect<UserTeam>{probability, phaze<index>});
 		}
 	};
 	auto add_all = [&]<std::size_t... indexes>(std::index_sequence<indexes...>) {
 		(..., add_one(bounded::constant<indexes>));
 	};
-	add_all(std::make_index_sequence<numeric_traits::max_value<TeamSize>.value()>());
+	add_all(bounded::make_index_sequence(numeric_traits::max_value<TeamSize>));
 	return result;
 }
 
-template<int reduction>
+template<auto reduction>
 constexpr auto reduce_pp = [](any_team auto & user, any_team auto &, Weather & weather, auto) {
 	auto const pokemon = user.pokemon();
-	pokemon.reduce_pp(pokemon.last_used_move().name(), weather, bounded::constant<reduction>);
+	pokemon.reduce_pp(pokemon.last_used_move().name(), weather, reduction);
 };
 
 template<int, typename>
@@ -434,7 +434,7 @@ constexpr auto random_spite = []{
 	constexpr auto probability = 1.0 / double(max_reduction - min_reduction + 1);
 	auto result = SideEffects<UserTeam>();
 	auto add_one = [&](auto const index) {
-		containers::push_back(result, SideEffect<UserTeam>{probability, reduce_pp<index.value()>});
+		containers::push_back(result, SideEffect<UserTeam>{probability, reduce_pp<index>});
 	};
 	auto add_all = [&]<int... indexes>(std::integer_sequence<int, indexes...>) {
 		(..., add_one(bounded::constant<indexes>));
@@ -1688,11 +1688,11 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 					}
 					return random_spite<UserTeam>;
 				default:
-					return guaranteed_effect<UserTeam>(reduce_pp<4>);
+					return guaranteed_effect<UserTeam>(reduce_pp<4_bi>);
 			}
 		}
 		case Moves::Eerie_Spell:
-			return guaranteed_effect<UserTeam>(reduce_pp<3>);
+			return guaranteed_effect<UserTeam>(reduce_pp<3_bi>);
 		case Moves::Struggle:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto const damage) {
 				switch (generation) {
