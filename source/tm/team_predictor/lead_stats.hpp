@@ -21,7 +21,7 @@ struct LeadStats {
 	{
 	}
 	
-	auto get(UsageStats const & usage_stats) const -> containers::array<float, number_of<Species>.value()> const &;
+	auto get(UsageStats const & usage_stats) const -> containers::array<float, number_of<Species>> const &;
 
 private:
 	bool m_use_lead_stats;

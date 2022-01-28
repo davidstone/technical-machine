@@ -61,12 +61,12 @@ private:
 
 	struct PerSpecies {
 		double total = 0.0;
-		containers::array<double, number_of<Ability>.value()> abilities{};
-		containers::array<double, number_of<Item>.value()> items{};
-		containers::array<double, number_of<Moves>.value()> moves{};
-		containers::array<double, max_initial_speed.value()> speed{};
+		containers::array<double, number_of<Ability>> abilities{};
+		containers::array<double, number_of<Item>> items{};
+		containers::array<double, number_of<Moves>> moves{};
+		containers::array<double, max_initial_speed> speed{};
 	};
-	containers::array<PerSpecies, number_of<Species>.value()> m_all;
+	containers::array<PerSpecies, number_of<Species>> m_all;
 	double m_total_teams = 0.0;
 };
 
@@ -114,12 +114,12 @@ private:
 
 	private:
 		struct Impl {
-			using Teammates = containers::array<PerSpecies, number_of<Species>.value()>;
+			using Teammates = containers::array<PerSpecies, number_of<Species>>;
 			mutable std::mutex mutex;
 			Teammates teammates;
-			containers::array<double, number_of<Moves>.value()> moves = {};
-			containers::array<double, number_of<Item>.value()> items = {};
-			containers::array<double, number_of<Ability>.value()> abilities = {};
+			containers::array<double, number_of<Moves>> moves = {};
+			containers::array<double, number_of<Item>> items = {};
+			containers::array<double, number_of<Ability>> abilities = {};
 		};
 		std::unique_ptr<Impl> m_impl;
 	};
@@ -133,7 +133,7 @@ public:
 		return containers::at(m_top_moves, species);
 	}
 private:
-	containers::array<TopMoves, number_of<Species>.value()> m_top_moves;
+	containers::array<TopMoves, number_of<Species>> m_top_moves;
 };
 
 } // namespace technicalmachine::ps_usage_stats

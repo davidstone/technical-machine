@@ -178,7 +178,7 @@ void check_non_negative(float const value) {
 	}
 }
 
-void turn_teammates_into_multiplier(containers::array<UsageStats::PerPokemon, number_of<Species>.value()> & all_per_pokemon) {
+void turn_teammates_into_multiplier(containers::array<UsageStats::PerPokemon, number_of<Species>> & all_per_pokemon) {
 	constexpr auto all_species = containers::enum_range<Species>();
 	for (auto const species_outer : all_species) {
 		auto & per_pokemon = all_per_pokemon[bounded::integer(species_outer)];

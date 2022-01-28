@@ -50,7 +50,7 @@ private:
 		double score = 0.0;
 	};
 	static constexpr auto size = bounded::constant<1 << 13>;
-	using Data = containers::array<Value, size.value()>;
+	using Data = containers::array<Value, size>;
 	using Index = containers::index_type<Data>;
 
 	template<bounded::bounded_integer Output>

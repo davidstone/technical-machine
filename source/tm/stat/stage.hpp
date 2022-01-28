@@ -83,7 +83,7 @@ struct Stages {
 	friend auto operator==(Stages, Stages) -> bool = default;
 private:
 	static constexpr auto number_of_stats = bounded::constant<numeric_traits::max_value<BoostableStat>> - bounded::constant<numeric_traits::min_value<BoostableStat>> + 1_bi;
-	containers::array<Stage, number_of_stats.value()> m_stages;
+	containers::array<Stage, number_of_stats> m_stages;
 };
 
 namespace detail {

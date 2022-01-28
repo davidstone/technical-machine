@@ -31,7 +31,7 @@ namespace technicalmachine {
 struct UsageStats {
 	struct PerPokemon {
 		float usage = 0.0F;
-		containers::array<float, number_of<Species>.value()> teammates = {};
+		containers::array<float, number_of<Species>> teammates = {};
 		containers::static_vector<Moves, max_moves_per_pokemon> moves;
 		Ability ability = Ability::Honey_Gather;
 		Item item = Item::None;
@@ -57,7 +57,7 @@ struct UsageStats {
 	}
 private:
 	float m_total_usage = 0.0F;
-	containers::array<PerPokemon, number_of<Species>.value()> m_all_per_pokemon;
+	containers::array<PerPokemon, number_of<Species>> m_all_per_pokemon;
 };
 
 struct AllUsageStats {
@@ -66,7 +66,7 @@ struct AllUsageStats {
 		return m_all_stats[bounded::integer(generation) - 1_bi];
 	}
 private:
-	containers::array<UsageStats, static_cast<unsigned>(numeric_traits::max_value<Generation>)> m_all_stats;
+	containers::array<UsageStats, number_of<Generation>> m_all_stats;
 };
 
 }	// namespace technicalmachine

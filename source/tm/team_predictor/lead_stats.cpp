@@ -11,7 +11,7 @@ namespace technicalmachine {
 
 struct UsageStats;
 
-auto LeadStats::get(UsageStats const & usage_stats) const -> containers::array<float, number_of<Species>.value()> const & {
+auto LeadStats::get(UsageStats const & usage_stats) const -> containers::array<float, number_of<Species>> const & {
 	static constexpr auto unused_lead = containers::make_array_n(number_of<Species>, 1.0F);
 	static_cast<void>(usage_stats);
 	static_cast<void>(m_use_lead_stats);

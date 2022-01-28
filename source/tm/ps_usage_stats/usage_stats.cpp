@@ -54,7 +54,7 @@ constexpr decltype(auto) legacy_algorithm(containers::range auto && range, auto 
 	);
 }
 
-constexpr auto get_top_n(containers::array<double, number_of<Moves>.value()> const & moves, auto const n) {
+constexpr auto get_top_n(containers::array<double, number_of<Moves>> const & moves, auto const n) {
 	auto top_moves = containers::static_vector<LocalTopMoves, n>();
 	for (auto const move : containers::enum_range<Moves>()) {
 		auto const value = containers::at(moves, move);
