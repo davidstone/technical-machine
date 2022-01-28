@@ -15,6 +15,7 @@
 #include <tm/ability.hpp>
 #include <tm/generation.hpp>
 #include <tm/item.hpp>
+#include <tm/number_of.hpp>
 
 #include <containers/array.hpp>
 #include <containers/legacy_iterator.hpp>
@@ -30,8 +31,8 @@ namespace technicalmachine {
 struct UsageStats {
 	struct PerPokemon {
 		float usage = 0.0F;
-		containers::array<float, number_of_species> teammates = {};
-		containers::static_vector<Moves, max_moves_per_pokemon.value()> moves;
+		containers::array<float, number_of<Species>.value()> teammates = {};
+		containers::static_vector<Moves, max_moves_per_pokemon> moves;
 		Ability ability = Ability::Honey_Gather;
 		Item item = Item::None;
 		Nature nature = Nature::Hardy;
@@ -56,7 +57,7 @@ struct UsageStats {
 	}
 private:
 	float m_total_usage = 0.0F;
-	containers::array<PerPokemon, number_of_species> m_all_per_pokemon;
+	containers::array<PerPokemon, number_of<Species>.value()> m_all_per_pokemon;
 };
 
 struct AllUsageStats {

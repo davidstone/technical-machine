@@ -1013,9 +1013,7 @@ enum class Species : uint16_t {
 	Slowking_Galarian
 };
 
-constexpr auto number_of_species = static_cast<unsigned>(Species::Slowking_Galarian) + 1;
-
-}	// namespace technicalmachine
+} // namespace technicalmachine
 
 template<>
 inline constexpr auto numeric_traits::min_value<technicalmachine::Species> = technicalmachine::Species();

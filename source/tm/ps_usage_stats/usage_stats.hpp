@@ -8,6 +8,7 @@
 #include <tm/pokemon/species.hpp>
 
 #include <tm/generation_generic.hpp>
+#include <tm/number_of.hpp>
 #include <tm/team.hpp>
 
 #include <bounded/integer.hpp>
@@ -20,9 +21,6 @@
 #include <mutex>
 
 namespace technicalmachine::ps_usage_stats {
-
-template<typename T>
-inline constexpr auto number_of = bounded::constant<numeric_traits::max_value<T>> + 1_bi;
 
 // Getting the full data set of correlations would require free memory measured
 // in TiB. Instead we restrict ourselves to correlations among the top N most

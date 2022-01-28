@@ -7,6 +7,8 @@
 
 #include <tm/pokemon/species.hpp>
 
+#include <tm/number_of.hpp>
+
 #include <containers/array.hpp>
 
 namespace technicalmachine {
@@ -19,7 +21,7 @@ struct LeadStats {
 	{
 	}
 	
-	auto get(UsageStats const & usage_stats) const -> containers::array<float, number_of_species> const &;
+	auto get(UsageStats const & usage_stats) const -> containers::array<float, number_of<Species>.value()> const &;
 
 private:
 	bool m_use_lead_stats;
