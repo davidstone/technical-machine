@@ -77,6 +77,9 @@ TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
 					"Moves": {
 						"Cut": {
 							"Moves": {},
+							"Speed": {
+								"7": 1.0
+							},
 							"Teammates": {},
 							"Usage": 1.0
 						}
@@ -114,6 +117,9 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 					"Moves": {
 						"Cut": {
 							"Moves": {},
+							"Speed": {
+								"7": 1.0
+							},
 							"Teammates": {},
 							"Usage": 1.0
 						}
@@ -129,12 +135,18 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 							"Moves": {
 								"Earthquake": 1.0
 							},
+							"Speed": {
+								"318": 1.0
+							},
 							"Teammates": {},
 							"Usage": 1.0
 						},
 						"Earthquake": {
 							"Moves": {
 								"Body Slam": 1.0
+							},
+							"Speed": {
+								"318": 1.0
 							},
 							"Teammates": {},
 							"Usage": 1.0

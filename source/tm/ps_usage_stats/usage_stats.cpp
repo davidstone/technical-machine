@@ -134,6 +134,8 @@ auto Correlations::add(GenerationGeneric<Team> const & t, double const weight) &
 				populate_move_correlations(correlations->moves(), pokemon.regular_moves(), move_name, weight);
 				containers::at(correlations->items(), pokemon.item(false, false)) += weight;
 				containers::at(correlations->abilities(), pokemon.initial_ability()) += weight;
+				auto const calculated_speed = calculate_speed(Team({pokemon}), Ability::Honey_Gather, Weather());
+				correlations->speed()[bounded::check_in_range(calculated_speed, 1_bi, max_initial_speed)] += weight;
 			}
 		}
 	});

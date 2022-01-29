@@ -22,6 +22,9 @@
 
 namespace technicalmachine::ps_usage_stats {
 
+// Regieleki with a Choice Scarf
+inline constexpr auto max_initial_speed = 822_bi;
+
 // Getting the full data set of correlations would require free memory measured
 // in TiB. Instead we restrict ourselves to correlations among the top N most
 // used moves per Pokemon. However, it's impossible to know in advance what this
@@ -56,8 +59,6 @@ struct UsageStats {
 		return m_total_teams;
 	}
 private:
-	// Regieleki with a Choice Scarf
-	static constexpr auto max_initial_speed = 822_bi;
 
 	struct PerSpecies {
 		double total = 0.0;
@@ -111,6 +112,12 @@ private:
 		auto abilities() -> auto & {
 			return m_impl->abilities;
 		}
+		auto speed() const -> auto const & {
+			return m_impl->speed;
+		}
+		auto speed() -> auto & {
+			return m_impl->speed;
+		}
 
 	private:
 		struct Impl {
@@ -120,6 +127,7 @@ private:
 			containers::array<double, number_of<Moves>> moves = {};
 			containers::array<double, number_of<Item>> items = {};
 			containers::array<double, number_of<Ability>> abilities = {};
+			containers::array<double, max_initial_speed> speed = {};
 		};
 		std::unique_ptr<Impl> m_impl;
 	};

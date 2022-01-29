@@ -112,6 +112,7 @@ auto serialize_moves(Generation const generation, Correlations::TopMoves const &
 		if (generation >= Generation::three) {
 			per_move["Abilities"] = serialize_simple_correlations<Ability>(top_move.mapped.abilities(), total);
 		}
+		per_move["Speed"] = serialize_speed(top_move.mapped.speed(), total);
 	}
 	return result;
 }
