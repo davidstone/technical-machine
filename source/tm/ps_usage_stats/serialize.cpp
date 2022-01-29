@@ -72,15 +72,14 @@ auto serialize(UsageStats const & usage_stats, NameValue<Species> const species)
 	return serialize_simple_correlations(used, species.mapped);
 }
 
-auto serialize_speed(UsageStats const & usage_stats, NameValue<Species> const species) -> nlohmann::json {
+auto serialize_speed(auto const & speed_distribution, double const total) -> nlohmann::json {
 	auto result = nlohmann::json();
-	auto const & speed_distribution = usage_stats.speed_distribution(species.key);
 	for (auto const index : containers::integer_range(containers::size(speed_distribution))) {
 		auto const speed = speed_distribution[index];
 		if (speed == 0.0) {
 			continue;
 		}
-		result[std::string(to_string(index))] = speed / species.mapped;
+		result[std::string(to_string(index))] = speed / total;
 	}
 	return result;
 };
@@ -97,13 +96,13 @@ auto serialize_teammates(auto const & source, double const total) -> nlohmann::j
 	return result;
 }
 
-auto serialize_moves(Generation const generation, Correlations::TopMoves const & top_moves) -> nlohmann::json {
+auto serialize_moves(Generation const generation, Correlations::TopMoves const & top_moves, double const species_total) -> nlohmann::json {
 	auto result = nlohmann::json();
 	for (auto const & top_move : top_moves) {
 		auto & per_move = result[std::string(to_string(top_move.key))];
 
 		auto const total = containers::sum(top_move.mapped.abilities());
-		per_move["Usage"] = total;
+		per_move["Usage"] = total / species_total;
 
 		per_move["Moves"] = serialize_simple_correlations<Moves>(top_move.mapped.moves(), total);
 		per_move["Teammates"] = serialize_teammates(top_move.mapped.teammates(), total);
@@ -124,24 +123,26 @@ auto serialize_moves(Generation const generation, Correlations::TopMoves const &
 auto serialize(std::ostream & stream, Generation const generation, UsageStats const & usage_stats, Correlations const & correlations) -> void {
 	stream << R"({"Pokemon":{)";
 	bool is_first = true;
-	for (auto const species : get_used<Species>([&](Species const species) { return usage_stats.get_total(species); })) {
+	for (auto const usage : get_used<Species>([&](Species const species) { return usage_stats.get_total(species); })) {
 		if (!is_first) {
 			stream << ',';
 		} else {
 			is_first = false;
 		}
+		auto const species = usage.key;
+		auto const total = usage.mapped;
 		auto pokemon = nlohmann::json({
-			{"Usage", species.mapped},
-			{"Moves", serialize_moves(generation, correlations.top_moves(species.key))},
-			{"Speed", serialize_speed(usage_stats, species)}
+			{"Usage", total / usage_stats.total_teams()},
+			{"Moves", serialize_moves(generation, correlations.top_moves(species), total)},
+			{"Speed", serialize_speed(usage_stats.speed_distribution(species), total)}
 		});
 		if (generation >= Generation::two) {
-			pokemon["Items"] = serialize<Item>(usage_stats, species);
+			pokemon["Items"] = serialize<Item>(usage_stats, usage);
 		}
 		if (generation >= Generation::three) {
-			pokemon["Abilities"] = serialize<Ability>(usage_stats, species);
+			pokemon["Abilities"] = serialize<Ability>(usage_stats, usage);
 		}
-		stream << '"' << to_string(species.key) << "\":" << pokemon;
+		stream << '"' << to_string(species) << "\":" << pokemon;
 	}
 	stream << R"(},"Total teams":)" << usage_stats.total_teams() << "}";
 }

@@ -121,7 +121,7 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 					"Speed": {
 						"7": 1.0
 					},
-					"Usage": 1.0
+					"Usage": 0.5
 				},
 				"Tauros": {
 					"Moves": {
@@ -143,7 +143,7 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 					"Speed": {
 						"318": 1.0
 					},
-					"Usage": 1.0
+					"Usage": 0.5
 				}
 			},
 			"Total teams": 2.0
