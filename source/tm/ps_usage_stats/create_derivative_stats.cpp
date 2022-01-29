@@ -15,6 +15,7 @@
 
 #include <bounded/to_integer.hpp>
 
+#include <containers/algorithms/accumulate.hpp>
 #include <containers/append.hpp>
 #include <containers/range_view.hpp>
 #include <containers/vector.hpp>
@@ -96,6 +97,31 @@ private:
 	containers::static_vector<PokemonUsageStat, number_of<Species>> m_data;
 };
 
+struct SpeedStats {
+	auto add(nlohmann::json const & speeds) & -> void {
+		for (auto const speed : speeds.items()) {
+			m_data[bounded::to_integer<containers::index_type<Data>>(speed.key())] += speed.value().template get<double>();
+		}
+	}
+
+	auto write(std::filesystem::path const & directory) -> void {
+		auto file = std::ofstream(directory / "speed.json");
+		auto const total = containers::sum(m_data);
+		auto json = nlohmann::json::array_t();
+		for (auto const index : containers::integer_range(containers::size(m_data))) {
+			auto const value = m_data[index];
+			if (value != 0.0) {
+				json.push_back({{to_string(index), value / total}});
+			}
+		}
+		file << nlohmann::json(json);
+	}
+
+private:
+	using Data = containers::array<double, max_initial_speed>;
+	Data m_data{};
+};
+
 } // namespace
 } // namespace technicalmachine::ps_usage_stats
 
@@ -107,10 +133,13 @@ auto main(int argc, char ** argv) -> int {
 	auto const original_json = load_json_from_file(args.full_stats_path);
 	std::filesystem::create_directories(args.output_directory);
 	auto pokemon_usage_stats = PokemonUsageStats();
+	auto speed_stats = SpeedStats();
 	for (auto const & element : original_json.at("Pokemon").items()) {
 		write_per_pokemon_detailed_stats(element, args.output_directory);
 		pokemon_usage_stats.add(element);
+		speed_stats.add(element.value().at("Speed"));
 	}
 	pokemon_usage_stats.write(args.output_directory);
+	speed_stats.write(args.output_directory);
 	return 0;
 }
