@@ -320,7 +320,6 @@ target_link_libraries(predict
 add_executable(tm_test
 	source/tm/test/clients/netbattle/read_team_file.cpp
 
-	source/tm/test/clients/pokemon_showdown/battles.cpp
 	source/tm/test/clients/pokemon_showdown/packed_team.cpp
 	source/tm/test/clients/pokemon_showdown/parse_team.cpp
 	source/tm/test/clients/pokemon_showdown/slot_memory.cpp
@@ -354,6 +353,14 @@ add_executable(tm_test
 	source/tm/test/string_conversion.cpp
 )
 target_link_libraries(tm_test
+	tm_common
+	Catch2::Catch2WithMain
+)
+
+add_executable(ps_regression_test
+	source/tm/test/clients/pokemon_showdown/battles.cpp
+)
+target_link_libraries(ps_regression_test
 	tm_common
 	Catch2::Catch2WithMain
 )
@@ -420,3 +427,4 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 endif()
 
 add_test(tm_test tm_test)
+add_test(ps_regression_test ps_regression_test)
