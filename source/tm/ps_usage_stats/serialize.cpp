@@ -26,14 +26,11 @@
 namespace technicalmachine::ps_usage_stats {
 namespace {
 
-template<typename Key, typename Mapped = double>
-using NameValue = containers::map_value_type<Key, Mapped>;
-
 template<typename Key>
 constexpr auto get_used(auto const get, auto predicate) {
 	using Mapped = decltype(get(std::declval<Key>()));
-	auto transformer = [&](Key const name) { return NameValue<Key, Mapped>{name, get(name)}; };
-	return containers::static_vector<NameValue<Key, Mapped>, number_of<Key>>(
+	auto transformer = [&](Key const name) { return containers::map_value_type<Key, Mapped>{name, get(name)}; };
+	return containers::static_vector<containers::map_value_type<Key, Mapped>, number_of<Key>>(
 		containers::filter(
 			containers::transform(containers::enum_range<Key>(), transformer),
 			predicate
@@ -67,7 +64,7 @@ auto serialize_simple_correlations(auto const & source, double const total) -> n
 }
 
 template<typename T>
-auto serialize(UsageStats const & usage_stats, NameValue<Species> const species) -> nlohmann::json {
+auto serialize(UsageStats const & usage_stats, containers::map_value_type<Species, double> const species) -> nlohmann::json {
 	auto const used = get_used<T>([&](T const value) { return usage_stats.get(species.key, value); });
 	return serialize_simple_correlations(used, species.mapped);
 }
