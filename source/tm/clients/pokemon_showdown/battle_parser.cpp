@@ -1014,7 +1014,7 @@ private:
 			predicted,
 			m_battle.weather(),
 			m_evaluate,
-			Depth(m_depth, 1U),
+			Depth(m_depth, 1_bi),
 			m_analysis_logger
 		).name;
 	}

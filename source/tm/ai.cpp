@@ -17,7 +17,7 @@
 #include <tm/generation.hpp>
 #include <tm/get_directory.hpp>
 
-#include <boost/lexical_cast.hpp>
+#include <bounded/to_integer.hpp>
 
 #include <iostream>
 #include <thread>
@@ -52,18 +52,20 @@ void print_debug_statements() {
 }	// namespace
 
 int main(int argc, char * * argv) {
+	using namespace technicalmachine;
+	using namespace bounded::literal;
 	print_debug_statements();
 
-	auto const general_depth = (argc <= 1) ? 2U : boost::lexical_cast<unsigned>(argv[1]);
-	auto const single_depth = (argc <= 2) ? 0U : boost::lexical_cast<unsigned>(argv[2]);
-	auto const depth = technicalmachine::DepthValues{general_depth, single_depth};
+	auto const general_depth = (argc <= 1) ? 2_bi : bounded::to_integer<DepthInt>(argv[1]);
+	auto const single_depth = (argc <= 2) ? 0_bi : bounded::to_integer<DepthInt>(argv[2]);
+	auto const depth = DepthValues{general_depth, single_depth};
 
-	auto const settings = technicalmachine::load_settings_file(technicalmachine::get_settings_directory() / "settings.json");
+	auto const settings = load_settings_file(get_settings_directory() / "settings.json");
 
 	while (true) {
 		try {
 			// Too large to fit on stack
-			auto client = std::make_unique<technicalmachine::ps::Client>(settings, depth);
+			auto client = std::make_unique<ps::Client>(settings, depth);
 			std::cout << "Connected\n" << std::flush;
 			client->run();
 		} catch (std::exception const & ex) {

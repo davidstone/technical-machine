@@ -15,16 +15,20 @@
 
 namespace technicalmachine {
 
+using namespace bounded::literal;
+
+using DepthInt = bounded::integer<0, 10'000>;
+
 struct DepthValues {
-	unsigned general;
-	unsigned single;
+	DepthInt general;
+	DepthInt single;
 	friend constexpr auto operator<=>(DepthValues, DepthValues) = default;
 };
 
 struct Depth {
-	constexpr Depth(DepthValues const to_search, unsigned const max_print_depth):
+	constexpr Depth(DepthValues const to_search, DepthInt const max_print_depth):
 		m_to_search(to_search),
-		m_searched_so_far(m_to_search.general == 0U ? SearchedSoFar(SingleDepth{0U}) : SearchedSoFar(GeneralDepth{0U})),
+		m_searched_so_far(m_to_search.general == 0_bi ? SearchedSoFar(SingleDepth{0_bi}) : SearchedSoFar(GeneralDepth{0_bi})),
 		m_max_print_depth(max_print_depth)
 	{
 	}
@@ -38,15 +42,25 @@ struct Depth {
 
 	constexpr auto remaining() const {
 		return bounded::visit(m_searched_so_far, bounded::overload(
-			[&](GeneralDepth const depth) { return DepthValues{m_to_search.general - depth.value, m_to_search.single}; },
-			[&](SingleDepth const depth) { return DepthValues{0U, m_to_search.single - depth.value}; }
+			[&](GeneralDepth const depth) {
+				return DepthValues{
+					bounded::assume_in_range<DepthInt>(m_to_search.general - depth.value),
+					m_to_search.single
+				};
+			},
+			[&](SingleDepth const depth) {
+				return DepthValues{
+					0_bi,
+					bounded::assume_in_range<DepthInt>(m_to_search.single - depth.value)
+				};
+			}
 		));
 	}
 	
-	constexpr auto indentation() const -> bounded::optional<unsigned> {
+	constexpr auto indentation() const -> bounded::optional<DepthInt> {
 		return bounded::visit(m_searched_so_far, bounded::overload(
 			[&](GeneralDepth const depth) { return BOUNDED_CONDITIONAL(depth.value >= m_max_print_depth, bounded::none, m_indentation); },
-			[](SingleDepth) { return bounded::optional<unsigned>(bounded::none); }
+			[](SingleDepth) { return bounded::optional<DepthInt>(bounded::none); }
 		));
 	}
 	
@@ -60,17 +74,17 @@ struct Depth {
 	constexpr auto one_level_deeper() const;
 private:
 	struct GeneralDepth {
-		unsigned value;
+		DepthInt value;
 	};
 	struct SingleDepth {
-		unsigned value;
+		DepthInt value;
 	};
 	using SearchedSoFar = bounded::variant<GeneralDepth, SingleDepth>;
 
 	DepthValues m_to_search;
 	SearchedSoFar m_searched_so_far;
-	unsigned m_max_print_depth;
-	unsigned m_indentation = 1U;
+	DepthInt m_max_print_depth;
+	DepthInt m_indentation = 1_bi;
 };
 
 struct SingleOnlyDepth {
@@ -86,12 +100,12 @@ constexpr auto Depth::one_level_deeper() const {
 		[&](GeneralDepth & depth) {
 			++depth.value;
 			auto const is_single = depth.value == m_to_search.general;
-			auto const is_none = is_single and copy.m_to_search.single == 0U;
+			auto const is_none = is_single and copy.m_to_search.single == 0_bi;
 			if (is_none) {
 				return Result(FinishedSearching());
 			}
 			if (is_single) {
-				insert(copy.m_searched_so_far, SingleDepth{0U});
+				insert(copy.m_searched_so_far, SingleDepth{0_bi});
 				return Result(SingleOnlyDepth{copy});
 			}
 			return Result(copy);
@@ -106,8 +120,8 @@ constexpr auto Depth::one_level_deeper() const {
 constexpr auto iterative_deepening_value(Depth const original_depth) {
 	auto const remaining = original_depth.remaining();
 	return BOUNDED_CONDITIONAL(
-		remaining.general > 1U,
-		Depth(DepthValues{remaining.general - 1U, remaining.single}, 0U),
+		remaining.general > 1_bi,
+		Depth(DepthValues{bounded::assume_in_range<DepthInt>(remaining.general - 1_bi), remaining.single}, 0_bi),
 		bounded::none
 	);
 }

@@ -35,7 +35,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 	auto const evaluate = AllEvaluate{};
 	// Too large to fit on the stack
 	auto const all_usage_stats = std::make_unique<AllUsageStats>();
-	constexpr auto depth = DepthValues{1U, 0U};
+	constexpr auto depth = DepthValues{1_bi, 0_bi};
 
 	auto const battle_output_directory = get_test_directory() / "temp-battles";
 	auto const remove_temporary_files = [&]{ std::filesystem::remove_all(battle_output_directory); };

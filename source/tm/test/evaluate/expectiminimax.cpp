@@ -55,8 +55,8 @@ auto test_expectiminimax(Team<generation> const & ai, Team<generation> const & f
 	return expectiminimax(ai, foe, weather, evaluate, depth, log);
 }
 
-constexpr auto make_depth(unsigned const depth) {
-	return Depth(DepthValues{depth, 0U}, 0U);
+constexpr auto make_depth(DepthInt const depth) {
+	return Depth(DepthValues{depth, 0_bi}, 0_bi);
 }
 
 auto shuffled_regular_moves(Generation const generation, auto & random_engine, auto... ts) {
@@ -75,7 +75,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
-	constexpr auto depth = make_depth(1U);
+	constexpr auto depth = make_depth(1_bi);
 
 	auto team1 = Team<generation>({
 		Pokemon<generation>(
@@ -140,7 +140,7 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
-	constexpr auto depth = make_depth(1U);
+	constexpr auto depth = make_depth(1_bi);
 	
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -193,7 +193,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
-	constexpr auto depth = make_depth(2U);
+	constexpr auto depth = make_depth(2_bi);
 
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -258,7 +258,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
-	constexpr auto depth = make_depth(11U);
+	constexpr auto depth = make_depth(11_bi);
 
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -327,7 +327,7 @@ TEST_CASE("expectiminimax Baton Pass", "[expectiminimax]") {
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
-	constexpr auto depth = Depth(DepthValues{4U, 0U}, 0U);
+	constexpr auto depth = Depth(DepthValues{4_bi, 0_bi}, 0_bi);
 
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -423,7 +423,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
-	constexpr auto depth = make_depth(2U);
+	constexpr auto depth = make_depth(2_bi);
 
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -509,7 +509,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
-	constexpr auto depth = make_depth(3U);
+	constexpr auto depth = make_depth(3_bi);
 
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -575,7 +575,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
-	constexpr auto depth = make_depth(1U);
+	constexpr auto depth = make_depth(1_bi);
 
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -696,8 +696,8 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	attacker.reset_start_of_turn();
 	defender.reset_start_of_turn();
 
-	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, make_depth(1U)).name == Moves::Psychic);
-	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, make_depth(2U)).name == Moves::Psychic);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, make_depth(1_bi)).name == Moves::Psychic);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, make_depth(2_bi)).name == Moves::Psychic);
 }
 
 } // namespace

@@ -210,7 +210,7 @@ struct BestMovePrinter {
 	{
 	}
 
-	void update_best_move(Moves & best_move, double & alpha, double const beta, Moves const new_move, bounded::optional<unsigned> const indentation) const {
+	void update_best_move(Moves & best_move, double & alpha, double const beta, Moves const new_move, bounded::optional<DepthInt> const indentation) const {
 		// If their best response isn't as good as their previous best
 		// response, then this new move must be better than the
 		// previous AI's best move
@@ -221,7 +221,7 @@ struct BestMovePrinter {
 		}
 	}
 
-	void update_foe_best_move(Moves const move, MoveScores & foe_scores, double & beta, double const max_score, bounded::optional<unsigned> const indentation) const {
+	void update_foe_best_move(Moves const move, MoveScores & foe_scores, double & beta, double const max_score, bounded::optional<DepthInt> const indentation) const {
 		if (beta > max_score) {
 			beta = max_score;
 			foe_scores.set(move, beta);
@@ -229,7 +229,7 @@ struct BestMovePrinter {
 		print_estimated_score(max_score, move, indentation);
 	}
 
-	void print_action(any_team auto const & team, Moves const move, bounded::optional<unsigned> const indentation) const {
+	void print_action(any_team auto const & team, Moves const move, bounded::optional<DepthInt> const indentation) const {
 		if (!indentation) {
 			return;
 		}
@@ -246,7 +246,7 @@ struct BestMovePrinter {
 	}
 
 private:
-	void print_estimated_score(double const estimate, Moves const move, bounded::optional<unsigned> const indentation) const {
+	void print_estimated_score(double const estimate, Moves const move, bounded::optional<DepthInt> const indentation) const {
 		if (indentation and move != Moves::Pass) {
 			m_log << containers::string(containers::repeat_n(*indentation, '\t')) << "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
 		}
