@@ -73,45 +73,24 @@ private:
 
 struct Correlations {
 private:
-	struct Data {
-		Data():
+	struct MoveData {
+		MoveData():
 			m_impl(std::make_unique<Impl>())
 		{
 		}
 
-		auto lock() & {
-			return std::scoped_lock(m_impl->mutex);
+		auto locked() & {
+			struct Result {
+				std::scoped_lock<std::mutex> lock;
+				Data & data;
+			};
+			return Result{
+				std::scoped_lock(m_impl->mutex),
+				m_impl->data
+			};
 		}
-
-		auto teammates() const -> auto const & {
-			return m_impl->teammates;
-		}
-		auto teammates() -> auto & {
-			return m_impl->teammates;
-		}
-		auto moves() const -> auto const & {
-			return m_impl->moves;
-		}
-		auto moves() -> auto & {
-			return m_impl->moves;
-		}
-		auto items() const -> auto const & {
-			return m_impl->items;
-		}
-		auto items() -> auto & {
-			return m_impl->items;
-		}
-		auto abilities() const -> auto const & {
-			return m_impl->abilities;
-		}
-		auto abilities() -> auto & {
-			return m_impl->abilities;
-		}
-		auto speed() const -> auto const & {
-			return m_impl->speed;
-		}
-		auto speed() -> auto & {
-			return m_impl->speed;
+		auto unlocked() const {
+			return m_impl->data;
 		}
 
 	private:
@@ -119,19 +98,22 @@ private:
 			double usage = 0.0;
 			containers::flat_map<Moves, double> other_moves;
 		};
-		struct Impl {
-			mutable std::mutex mutex;
-			containers::array<PerSpecies, number_of<Species>> teammates;
+		struct Data {
+			containers::array<PerSpecies, number_of<Species>> teammates = {};
 			containers::array<double, number_of<Moves>> moves = {};
 			containers::array<double, number_of<Item>> items = {};
 			containers::array<double, number_of<Ability>> abilities = {};
 			containers::array<double, max_initial_speed> speed = {};
 		};
+		struct Impl {
+			mutable std::mutex mutex;
+			Data data;
+		};
 		std::unique_ptr<Impl> m_impl;
 	};
 	static constexpr auto top_n_cutoff = 20_bi;
 public:
-	using TopMoves = containers::static_flat_map<Moves, Data, top_n_cutoff>;
+	using TopMoves = containers::static_flat_map<Moves, MoveData, top_n_cutoff>;
 
 	Correlations(UsageStats const & general_usage_stats);
 	auto add(GenerationGeneric<Team> const & team, double weight) & -> void;

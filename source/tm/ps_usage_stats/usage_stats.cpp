@@ -129,13 +129,13 @@ auto Correlations::add(GenerationGeneric<Team> const & t, double const weight) &
 				if (!correlations) {
 					continue;
 				}
-				auto lock = correlations->lock();
-				populate_teammate_correlations(correlations->teammates(), team, pokemon, weight);
-				populate_move_correlations(correlations->moves(), pokemon.regular_moves(), move_name, weight);
-				containers::at(correlations->items(), pokemon.item(false, false)) += weight;
-				containers::at(correlations->abilities(), pokemon.initial_ability()) += weight;
+				auto [lock, data] = correlations->locked();
+				populate_teammate_correlations(data.teammates, team, pokemon, weight);
+				populate_move_correlations(data.moves, pokemon.regular_moves(), move_name, weight);
+				containers::at(data.items, pokemon.item(false, false)) += weight;
+				containers::at(data.abilities, pokemon.initial_ability()) += weight;
 				auto const calculated_speed = calculate_speed(Team({pokemon}), Ability::Honey_Gather, Weather());
-				correlations->speed()[bounded::check_in_range(calculated_speed, 1_bi, max_initial_speed)] += weight;
+				data.speed[bounded::check_in_range(calculated_speed, 1_bi, max_initial_speed)] += weight;
 			}
 		}
 	});

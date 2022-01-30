@@ -98,18 +98,19 @@ auto serialize_moves(Generation const generation, Correlations::TopMoves const &
 	for (auto const & top_move : top_moves) {
 		auto & per_move = result[std::string(to_string(top_move.key))];
 
-		auto const total = containers::sum(top_move.mapped.abilities());
+		auto const & data = top_move.mapped.unlocked();
+		auto const total = containers::sum(data.abilities);
 		per_move["Usage"] = total / species_total;
 
-		per_move["Moves"] = serialize_simple_correlations<Moves>(top_move.mapped.moves(), total);
-		per_move["Teammates"] = serialize_teammates(top_move.mapped.teammates(), total);
+		per_move["Moves"] = serialize_simple_correlations<Moves>(data.moves, total);
+		per_move["Teammates"] = serialize_teammates(data.teammates, total);
 		if (generation >= Generation::two) {
-			per_move["Items"] = serialize_simple_correlations<Item>(top_move.mapped.items(), total);
+			per_move["Items"] = serialize_simple_correlations<Item>(data.items, total);
 		}
 		if (generation >= Generation::three) {
-			per_move["Abilities"] = serialize_simple_correlations<Ability>(top_move.mapped.abilities(), total);
+			per_move["Abilities"] = serialize_simple_correlations<Ability>(data.abilities, total);
 		}
-		per_move["Speed"] = serialize_speed(top_move.mapped.speed(), total);
+		per_move["Speed"] = serialize_speed(data.speed, total);
 	}
 	return result;
 }
