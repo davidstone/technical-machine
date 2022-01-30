@@ -20,10 +20,7 @@ Sockets::Sockets(std::string_view const host, std::string_view const port, std::
 	m_socket(make_connected_socket(host, port)),
 	m_websocket(m_socket)
 {
-	m_websocket.handshake(
-		boost::string_view(host.data(), host.size()),
-		boost::string_view(resource.data(), resource.size())
-	);
+	m_websocket.handshake(host, resource);
 }
 
 auto Sockets::make_connected_socket(std::string_view const host, std::string_view const port) -> tcp::socket {

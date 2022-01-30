@@ -18,6 +18,7 @@ project(technical_machine LANGUAGES CXX)
 
 find_package(Boost REQUIRED)
 add_library(boost INTERFACE IMPORTED)
+target_compile_definitions(boost INTERFACE BOOST_BEAST_USE_STD_STRING_VIEW)
 target_include_directories(boost SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
 
 enable_testing()
