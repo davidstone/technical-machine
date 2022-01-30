@@ -73,11 +73,6 @@ private:
 
 struct Correlations {
 private:
-	static constexpr auto top_n_cutoff = 20_bi;
-	struct PerSpecies {
-		double usage = 0.0;
-		containers::flat_map<Moves, double> other_moves;
-	};
 	struct Data {
 		Data():
 			m_impl(std::make_unique<Impl>())
@@ -120,10 +115,13 @@ private:
 		}
 
 	private:
+		struct PerSpecies {
+			double usage = 0.0;
+			containers::flat_map<Moves, double> other_moves;
+		};
 		struct Impl {
-			using Teammates = containers::array<PerSpecies, number_of<Species>>;
 			mutable std::mutex mutex;
-			Teammates teammates;
+			containers::array<PerSpecies, number_of<Species>> teammates;
 			containers::array<double, number_of<Moves>> moves = {};
 			containers::array<double, number_of<Item>> items = {};
 			containers::array<double, number_of<Ability>> abilities = {};
@@ -131,6 +129,7 @@ private:
 		};
 		std::unique_ptr<Impl> m_impl;
 	};
+	static constexpr auto top_n_cutoff = 20_bi;
 public:
 	using TopMoves = containers::static_flat_map<Moves, Data, top_n_cutoff>;
 
