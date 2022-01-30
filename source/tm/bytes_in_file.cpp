@@ -8,11 +8,13 @@
 #include <containers/algorithms/transform.hpp>
 #include <containers/range_view.hpp>
 
+#include <fstream>
 #include <iterator>
 
 namespace technicalmachine {
 
-auto bytes_in_file(std::ifstream file) -> containers::vector<std::byte> {
+auto bytes_in_file(std::filesystem::path const & path) -> containers::vector<std::byte> {
+	auto file = std::ifstream(path, std::ios_base::binary);
 	file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
 	return containers::vector(containers::transform(
 		containers::range_view(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()),

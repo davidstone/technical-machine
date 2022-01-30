@@ -8,10 +8,10 @@
 #include <containers/vector.hpp>
 
 #include <cstddef>
-#include <fstream>
+#include <filesystem>
 
 namespace technicalmachine {
 
-auto bytes_in_file(std::ifstream file) -> containers::vector<std::byte>;
+auto bytes_in_file(std::filesystem::path const & path) -> containers::vector<std::byte>;
 
 } // namespace technicalmachine

@@ -547,7 +547,7 @@ private:
 
 auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
 	try {
-		auto const bytes = bytes_in_file(std::ifstream(team_file, std::ios_base::binary));
+		auto const bytes = bytes_in_file(team_file);
 		auto parser = Parser(bytes);
 		parser.parse_and_validate_header();
 
