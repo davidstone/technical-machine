@@ -56,8 +56,8 @@ private:
 	static constexpr auto standard = 5_bi;
 	static constexpr auto extended = 8_bi;
 	static constexpr auto permanent = -1_bi;
-	using Short = bounded::integer<0, static_cast<int>(standard)>;
-	using Long = bounded::integer<-1, static_cast<int>(extended)>;
+	using Short = bounded::integer<0, bounded::normalize<standard>>;
+	using Long = bounded::integer<-1, bounded::normalize<extended>>;
 
 	constexpr auto activate_weather(NormalWeather const type, Long const duration) {
 		if (type == m_active and duration != permanent) {

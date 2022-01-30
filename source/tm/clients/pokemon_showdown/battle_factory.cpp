@@ -13,6 +13,8 @@
 
 #include <tm/stat/combined_stats.hpp>
 
+#include <tm/string_conversions/generation.hpp>
+
 #include <tm/team_predictor/usage_stats.hpp>
 
 #include <tm/constant_generation.hpp>
@@ -43,7 +45,12 @@ using namespace std::string_view_literals;
 void validate_generation(std::string_view const received, Generation const expected) {
 	auto const parsed = static_cast<Generation>(bounded::to_integer<1, 8>(received));
 	if (parsed != expected) {
-		throw std::runtime_error(containers::concatenate<std::string>("Received wrong generation. Expected "sv, std::to_string(static_cast<int>(expected)), "but got "sv, received));
+		throw std::runtime_error(containers::concatenate<std::string>(
+			"Received wrong generation. Expected "sv,
+			to_string(expected),
+			"but got "sv,
+			received
+		));
 	}
 }
 

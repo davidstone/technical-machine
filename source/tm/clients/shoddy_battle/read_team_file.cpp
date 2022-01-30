@@ -253,7 +253,10 @@ struct Parser {
 				m_byte_parser.ignore(m_byte_parser.pop_integer(1_bi));
 				return ParsedData(std::monostate());
 			default:
-				throw std::runtime_error(containers::concatenate<std::string>("Unknown data type "sv, std::to_string(static_cast<int>(type))));
+				throw std::runtime_error(containers::concatenate<std::string>(
+					"Unknown data type "sv,
+					to_string(bounded::integer(type))
+				));
 		}
 	}
 

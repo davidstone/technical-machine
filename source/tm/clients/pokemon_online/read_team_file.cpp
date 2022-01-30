@@ -74,7 +74,7 @@ auto parse_moves(Generation const generation, CheckedIterator it) {
 	for (auto const n [[maybe_unused]] : containers::integer_range(4_bi)) {
 		auto const & value = it.advance("Move");
 		// TODO: return optional
-		using ReadMoveID = bounded::integer<0, static_cast<int>(numeric_traits::max_value<MoveID>)>;
+		using ReadMoveID = bounded::integer<0, bounded::normalize<numeric_traits::max_value<MoveID>>>;
 		auto const move_id = value.get_value<ReadMoveID>();
 		if (move_id != 0_bi) {
 			moves.push_back(Move(generation, id_to_move(bounded::assume_in_range<MoveID>(move_id))));

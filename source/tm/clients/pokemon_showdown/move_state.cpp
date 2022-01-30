@@ -98,7 +98,7 @@ auto get_side_effect(auto const move, UserPokemon const user, OtherTeam<UserPoke
 			throw std::runtime_error("Tried to phaze and do other side effects.");
 		}
 		auto const target_index = other.all_pokemon().index();
-		using PhazeIndex = bounded::integer<0, static_cast<int>(max_pokemon_per_team - 2_bi)>;
+		using PhazeIndex = bounded::integer<0, bounded::normalize<max_pokemon_per_team - 2_bi>>;
 		BOUNDED_ASSERT(move.phaze_index != target_index);
 		auto const effect_index = (*move.phaze_index < target_index) ?
 			bounded::assume_in_range<PhazeIndex>(*move.phaze_index) :

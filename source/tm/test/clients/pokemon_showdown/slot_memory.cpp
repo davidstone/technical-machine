@@ -19,7 +19,7 @@ namespace technicalmachine {
 namespace {
 
 void validate_indexes(ps::SlotMemory const & slot_memory, std::initializer_list<ps::SlotMemory::Index> test) {
-	auto integer = bounded::integer<0, static_cast<int>(numeric_traits::max_value<TeamIndex> + 1_bi)>(0_bi);
+	auto integer = bounded::integer<0, bounded::normalize<numeric_traits::max_value<TeamIndex> + 1_bi>>(0_bi);
 	for (auto const & expected : test) {
 		REQUIRE(slot_memory[::bounded::assume_in_range<TeamIndex>(integer)] == expected);
 		++integer;

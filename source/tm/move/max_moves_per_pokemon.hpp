@@ -17,7 +17,7 @@ enum class Moves : std::uint16_t;
 using namespace bounded::literal;
 
 constexpr auto max_moves_per_pokemon = 4_bi;
-using RegularMoveSize = bounded::integer<1, static_cast<int>(max_moves_per_pokemon)>;
+using RegularMoveSize = bounded::integer<1, bounded::normalize<max_moves_per_pokemon>>;
 
 constexpr auto number_of_weird_moves = 2_bi; // Pass, Struggle
 using SharedMoveSize = decltype(std::declval<TeamSize>() + number_of_weird_moves);

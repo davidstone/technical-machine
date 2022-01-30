@@ -27,12 +27,12 @@ auto is_switch(Moves const move) -> bool {
 }
 
 auto to_switch(TeamIndex const replacement) -> Moves {
-	return static_cast<Moves>(replacement + bounded::constant<static_cast<int>(Moves::Switch0)>);
+	return static_cast<Moves>(replacement + bounded::constant<Moves::Switch0>);
 }
 
 auto to_replacement(Moves const move) -> TeamIndex {
 	BOUNDED_ASSERT(is_switch(move));
-	return bounded::assume_in_range<TeamIndex>(bounded::integer(move) - bounded::constant<static_cast<int>(Moves::Switch0)>);
+	return bounded::assume_in_range<TeamIndex>(bounded::integer(move) - bounded::constant<Moves::Switch0>);
 }
 
 }	// namespace technicalmachine

@@ -61,7 +61,7 @@ struct PP {
 	using max_type = bounded::integer<1, 64>;
 
 private:
-	using current_type = bounded::integer<0, static_cast<int>(numeric_traits::max_value<max_type>)>;
+	using current_type = bounded::integer<0, bounded::normalize<numeric_traits::max_value<max_type>>>;
 	// TODO: Use optional<pair> instead of pair<optional>
 	bounded::optional<max_type> m_max;
 	bounded::optional<current_type> m_current;

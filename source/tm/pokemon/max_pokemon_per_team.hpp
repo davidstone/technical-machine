@@ -13,11 +13,11 @@ using namespace bounded::literal;
 constexpr auto max_pokemon_per_team = 6_bi;
 using TeamSize = bounded::integer<
 	0,
-	static_cast<int>(max_pokemon_per_team)
+	bounded::normalize<max_pokemon_per_team>
 >;
 using TeamIndex = bounded::integer<
 	0,
-	static_cast<int>(max_pokemon_per_team - 1_bi)
+	bounded::normalize<max_pokemon_per_team - 1_bi>
 >;
 
 }	// namespace technicalmachine

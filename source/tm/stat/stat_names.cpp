@@ -9,7 +9,7 @@ namespace technicalmachine {
 namespace {
 
 constexpr auto same_int(BoostableStat const boostable, SplitSpecialPermanentStat const permanent, SplitSpecialRegularStat const regular) {
-	return static_cast<int>(boostable) == static_cast<int>(permanent) and static_cast<int>(boostable) == static_cast<int>(regular);
+	return std::to_underlying(boostable) == std::to_underlying(permanent) and std::to_underlying(boostable) == std::to_underlying(regular);
 }
 
 static_assert(same_int(BoostableStat::atk, SplitSpecialPermanentStat::atk, SplitSpecialRegularStat::atk));

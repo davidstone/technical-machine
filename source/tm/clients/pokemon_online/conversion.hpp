@@ -48,7 +48,7 @@ using ItemID = bounded::integer<0, 226>;
 Item id_to_item(ItemID id);
 ItemID item_to_id(Item item);
 
-using MoveID = bounded::integer<1, static_cast<int>(bounded::constant<numeric_traits::max_value<Moves>> - bounded::integer(Moves::Regular_Begin) + 1_bi)>;
+using MoveID = bounded::integer<1, bounded::normalize<bounded::constant<numeric_traits::max_value<Moves>> - bounded::integer(Moves::Regular_Begin) + 1_bi>>;
 Moves id_to_move(MoveID id);
 MoveID move_to_id(Moves move);
 
