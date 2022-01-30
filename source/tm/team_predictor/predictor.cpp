@@ -237,7 +237,7 @@ private:
 int main() {
 	auto const all_usage_stats = std::make_unique<technicalmachine::AllUsageStats>();
 
-	auto const port = static_cast<unsigned short>(46923);
+	constexpr auto port = static_cast<unsigned short>(46923);
 
 	auto ioc = boost::asio::io_context();
 
