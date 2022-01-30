@@ -211,7 +211,7 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 	auto const json = load_json_from_file(path);
 
 	auto const & data = json.at("data");
-	for (auto pokemon = data.begin(); pokemon != data.end(); ++pokemon) {
+	for (auto const & pokemon : data.items()) {
 		auto const species = from_string<Species>(pokemon.key());
 		auto & per_pokemon = m_all_per_pokemon[bounded::integer(species)];
 
