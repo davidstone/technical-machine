@@ -39,7 +39,6 @@ SpeciesIDs species_to_id(Species species);
 using AbilityID = bounded::integer<1, 123>;
 Ability id_to_ability(AbilityID id);
 AbilityID ability_to_id(Ability ability);
-Ability battle_id_to_ability(uint16_t id, uint8_t part);
 
 using GenderID = bounded::integer<0, 2>;
 Gender id_to_gender(GenderID id);
@@ -48,7 +47,6 @@ GenderID gender_to_id(Gender gender);
 using ItemID = bounded::integer<0, 226>;
 Item id_to_item(ItemID id);
 ItemID item_to_id(Item item);
-Item battle_id_to_item(uint16_t id, uint8_t part);
 
 using MoveID = bounded::integer<1, static_cast<int>(bounded::constant<numeric_traits::max_value<Moves>> - bounded::integer(Moves::Regular_Begin) + 1_bi)>;
 Moves id_to_move(MoveID id);

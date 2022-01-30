@@ -1400,68 +1400,6 @@ AbilityID ability_to_id(Ability const ability) {
 	}
 }
 
-struct InvalidPart : std::runtime_error {
-	InvalidPart(std::string_view const type, std::uint16_t id, std::uint8_t part):
-		std::runtime_error(containers::concatenate<std::string>("Invalid conversion to "sv, type, " ID: "sv, std::to_string(static_cast<unsigned>(id)), " with part ID: "sv, std::to_string(static_cast <unsigned>(part)), ".\n"sv)) {
-	}
-};
-
-Ability battle_id_to_ability (uint16_t id, uint8_t part) {
-	// 6: BAD_DREAMS
-	// 18: %s's %a activates!
-	// 21: %s changed its type to %t!
-	// 30: %s's %a prevents its stat from being lowered!
-	// 31: %s's %a prevented its stats from being lowered!
-	// 32: %s's %a heals it!
-	// 33: %s's %a cures it!|%s didn't get paralyzed because of its %a!|%s stayed awake because of its %a!|%s didn't get frozen because of its %a!|%s didn't get burnt because of its %a!|%s didn't get poisoned because of its %a!
-	// 38: %s's %a took the attack!|%s's %a raised its special attack!|%s's %a made the attack useless!
-	// 40: %s has %a!
-	// 50: %s's %a hurts %f
-	// 68: %s's %a raised its attack!|%s's %a made the attack useless!
-	// 70: %s's %a absorbs the attack!|%s's %a made the attack useless!
-	switch (id) {
-		case 2: return Ability::Aftermath;
-		case 3: return Ability::Anger_Point;
-		case 4: return Ability::Anticipation;
-		case 6: return Ability::Bad_Dreams;
-		case 9: return Ability::Color_Change;
-		case 11: return Ability::Cute_Charm;
-		case 12: return Ability::Inner_Focus;
-		case 13: return Ability::Download;
-		case 14: switch (part) {
-			case 0: return Ability::Snow_Warning;
-			case 1: return Ability::Drizzle;
-			case 2: return Ability::Sand_Stream;
-			case 3: return Ability::Drought;
-			default: throw InvalidPart("ability", id, part);
-		}
-		case 15: return Ability::Dry_Skin;
-		case 16: return Ability::Effect_Spore;
-		case 19: return Ability::Flash_Fire;
-		case 22: return Ability::Forewarn;
-		case 23: return Ability::Frisk;
-		case 24: return Ability::Shield_Dust;
-		case 29: return Ability::Hydration;
-		case 34: return Ability::Intimidate;
-		case 37: return Ability::Leaf_Guard;
-		case 41: return Ability::Motor_Drive;
-		case 44: return Ability::Own_Tempo;
-		case 45: return Ability::Poison_Heal;
-		case 46: return Ability::Pressure;
-		case 54: return Ability::Shed_Skin;
-		case 55: return Ability::Slow_Start;
-		case 56: return Ability::Solar_Power;
-		case 57: return Ability::Soundproof;
-		case 58: return Ability::Speed_Boost;
-		case 60: return Ability::Steadfast;
-		case 61: return Ability::Synchronize;
-		case 66: return Ability::Trace;
-		case 67: return Ability::Truant;
-		case 71: return Ability::Wonder_Guard;
-		default: throw std::runtime_error("Invalid ability ID: " + std::to_string(static_cast<int>(id)));
-	}
-}
-
 Gender id_to_gender(GenderID const id) {
 	switch (id.value()) {
 		case 0: return Gender::genderless;
@@ -1948,25 +1886,6 @@ ItemID item_to_id(Item const item) {
 		case Item::Steel_Mail: return 225_bi;
 		case Item::Tunnel_Mail: return 226_bi;
 		default: return 0_bi;
-	}
-}
-
-Item battle_id_to_item(uint16_t id, uint8_t part) {
-	switch (id) {
-		case 3: return Item::White_Herb;
-		case 4: return Item::Focus_Band;
-		case 5: return Item::Focus_Sash;
-		case 7: return Item::Mental_Herb;
-		case 11: return Item::Power_Herb;
-		case 12: return Item::Leftovers;
-		case 16: return Item::Black_Sludge;
-		case 17: return Item::Quick_Claw;
-		case 18: return Item::Berry_Juice;
-		case 19: return (part == 0) ? Item::Flame_Orb : Item::Toxic_Orb;
-		case 21: return Item::Life_Orb;
-		case 24: return Item::Shell_Bell;
-		case 29: return Item::Sticky_Barb;
-		default: throw InvalidPart("item", id, part);
 	}
 }
 
