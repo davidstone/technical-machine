@@ -166,13 +166,11 @@ struct Data {
 			auto buffer = DelimitedBufferView(input_data, '&');
 			auto impl = [&]<Generation generation>(constant_gen_t<generation>) -> containers::string {
 				auto team = parse_html_team<generation>(buffer);
-				constexpr auto using_lead = false;
 				auto const & usage_stats = m_all_usage_stats[generation];
 				random_team(usage_stats, team, random_engine);
 				return to_string(
 					predict_team(
 						usage_stats,
-						LeadStats(using_lead),
 						team,
 						random_engine
 					),

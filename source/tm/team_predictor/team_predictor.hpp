@@ -7,7 +7,6 @@
 
 #include <tm/team_predictor/estimate.hpp>
 #include <tm/team_predictor/ev_optimizer/ev_optimizer.hpp>
-#include <tm/team_predictor/lead_stats.hpp>
 #include <tm/team_predictor/random_team.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
 
@@ -67,8 +66,8 @@ void optimize_pokemon_evs(any_seen_pokemon auto & pokemon, std::mt19937 & random
 }
 
 template<Generation generation>
-auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stats, SeenTeam<generation> team, std::mt19937 & random_engine, bool const use_most_likely) -> Team<generation> {
-	auto estimate = Estimate(usage_stats, lead_stats);
+auto predict_team_impl(UsageStats const & usage_stats, SeenTeam<generation> team, std::mt19937 & random_engine, bool const use_most_likely) -> Team<generation> {
+	auto estimate = Estimate(usage_stats);
 	update_estimate(estimate, usage_stats, team);
 
 	predict_pokemon(team, estimate, usage_stats, random_engine, use_most_likely);
@@ -90,13 +89,13 @@ auto predict_team_impl(UsageStats const & usage_stats, LeadStats const lead_stat
 }
 
 template<Generation generation>
-auto predict_team(UsageStats const & usage_stats, LeadStats const lead_stats, SeenTeam<generation> team, std::mt19937 & random_engine) -> Team<generation> {
-	return predict_team_impl(usage_stats, lead_stats, team, random_engine, true);
+auto predict_team(UsageStats const & usage_stats, SeenTeam<generation> team, std::mt19937 & random_engine) -> Team<generation> {
+	return predict_team_impl(usage_stats, team, random_engine, true);
 }
 
 template<Generation generation>
-auto generate_team(UsageStats const & usage_stats, LeadStats lead_stats, std::mt19937 & random_engine) -> KnownTeam<generation> {
-	return KnownTeam<generation>(predict_team_impl(usage_stats, lead_stats, SeenTeam<generation>(max_pokemon_per_team), random_engine, false));
+auto generate_team(UsageStats const & usage_stats, std::mt19937 & random_engine) -> KnownTeam<generation> {
+	return KnownTeam<generation>(predict_team_impl(usage_stats, SeenTeam<generation>(max_pokemon_per_team), random_engine, false));
 }
 
 } // namespace technicalmachine

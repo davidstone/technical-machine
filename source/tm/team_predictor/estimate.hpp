@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include <tm/team_predictor/lead_stats.hpp>
+#include <tm/pokemon/species.hpp>
 
-#include <tm/pokemon/species_forward.hpp>
+#include <tm/number_of.hpp>
 
 #include <containers/array.hpp>
 
@@ -18,7 +18,7 @@ namespace technicalmachine {
 struct UsageStats;
 
 struct Estimate {
-	Estimate(UsageStats const & usage_stats, LeadStats lead_stats);
+	explicit Estimate(UsageStats const & usage_stats);
 	void update(UsageStats const & usage_stats, Species seen);
 	Species most_likely() const;
 	Species random(std::mt19937 & random_engine) const;

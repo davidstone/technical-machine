@@ -30,7 +30,7 @@ void update_estimate(Estimate & estimate, UsageStats const & usage_stats, any_se
 
 // Fill an existing team with random Pokemon, weighted by usage
 void random_team(UsageStats const & usage_stats, any_seen_team auto & team, std::mt19937 & random_engine) {
-	auto estimate = Estimate(usage_stats, do_not_use_lead_stats);
+	auto estimate = Estimate(usage_stats);
 	update_estimate(estimate, usage_stats, team);
 	for (auto const n [[maybe_unused]] : containers::integer_range(max_pokemon_per_team - containers::size(team.all_pokemon()))) {
 		auto const species = estimate.random(random_engine);

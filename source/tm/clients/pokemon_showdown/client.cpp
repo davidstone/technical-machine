@@ -13,7 +13,6 @@
 #include <tm/clients/pokemon_showdown/parse_generation_from_format.hpp>
 #include <tm/clients/pokemon_showdown/to_packed_format.hpp>
 
-#include <tm/team_predictor/lead_stats.hpp>
 #include <tm/team_predictor/team_predictor.hpp>
 
 #include <tm/constant_generation.hpp>
@@ -74,7 +73,6 @@ void ClientImpl::send_team(Generation const runtime_generation) {
 			send_real_team([&]<Generation generation>(constant_gen_t<generation>) {
 				return to_packed_format(generate_team<generation>(
 					m_all_usage_stats[generation],
-					use_lead_stats,
 					m_random_engine
 				));
 			});

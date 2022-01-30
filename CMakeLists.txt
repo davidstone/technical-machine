@@ -205,7 +205,6 @@ add_library(tm_common STATIC
 	source/tm/team_predictor/ev_optimizer/speed.cpp
 
 	source/tm/team_predictor/estimate.cpp
-	source/tm/team_predictor/lead_stats.cpp
 	source/tm/team_predictor/team_predictor.cpp
 	source/tm/team_predictor/usage_stats.cpp
 

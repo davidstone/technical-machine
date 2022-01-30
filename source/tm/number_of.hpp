@@ -6,7 +6,10 @@
 #pragma once
 
 #include <bounded/integer.hpp>
+
 #include <numeric_traits/min_max_value.hpp>
+
+#include <type_traits>
 
 namespace technicalmachine {
 

@@ -1006,7 +1006,7 @@ private:
 
 		m_analysis_logger << to_string(m_battle.ai()) << '\n';
 		m_analysis_logger << "Seen " << to_string(m_battle.foe()) << '\n';
-		auto predicted = predict_team(m_usage_stats, use_lead_stats, m_battle.foe(), m_random_engine);
+		auto predicted = predict_team(m_usage_stats, m_battle.foe(), m_random_engine);
 		m_analysis_logger << "Predicted " << to_string(predicted) << '\n' << std::flush;
 
 		return expectiminimax(
