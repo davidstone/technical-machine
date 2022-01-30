@@ -69,7 +69,7 @@ auto max_damage_physical_attacker(Item const item, Ability const ability) {
 	pokemon.switch_in(Weather());
 	
 	pokemon.defense_curl();
-	for (unsigned n = 0; n != 10; ++n) {
+	for (auto const n [[maybe_unused]] : containers::integer_range(10_bi)) {
 		pokemon.successfully_use_move(max_damage_physical_move().name());
 	}
 

@@ -76,7 +76,7 @@ inline auto write_blank_pokemon(Generation const generation, boost::property_tre
 	member.put("<xmlattr>.Lvl", 100);
 	member.put("<xmlattr>.Gender", 0);
 
-	for (unsigned n = 0; n != 4; ++n) {
+	for (auto const n [[maybe_unused]] : containers::integer_range(max_moves_per_pokemon)) {
 		write_blank_move(member);
 	}
 
