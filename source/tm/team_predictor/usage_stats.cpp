@@ -232,9 +232,6 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 		per_pokemon.moves = per_pokemon_data<Moves>(pokemon.value().at("Moves"), max_moves_per_pokemon);
 		per_pokemon.ability = per_pokemon_datum<Ability>(pokemon.value().at("Abilities"));
 		per_pokemon.item = per_pokemon_datum<Item>(pokemon.value().at("Items"));
-		auto const stats = per_pokemon_datum<NatureAndEVs>(pokemon.value().at("Spreads"));
-		per_pokemon.nature = stats.nature;
-		per_pokemon.evs = stats.evs;
 	}
 
 	check_finite(m_total_usage);
