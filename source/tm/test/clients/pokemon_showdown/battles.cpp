@@ -8,6 +8,7 @@
 #include <tm/team_predictor/usage_stats.hpp>
 
 #include <tm/get_directory.hpp>
+#include <tm/open_file.hpp>
 
 #include <bounded/integer.hpp>
 
@@ -19,7 +20,7 @@ namespace technicalmachine {
 namespace {
 
 auto load_lines_from_file(std::filesystem::path const & file_name) {
-	auto file = std::ifstream(file_name);
+	auto file = open_file(file_name);
 	return containers::string(containers::range_view(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()));
 }
 

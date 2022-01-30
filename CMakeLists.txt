@@ -240,6 +240,7 @@ add_library(tm_common STATIC
 	source/tm/load_team_from_file.cpp
 	source/tm/number_of.cpp
 	source/tm/operators.cpp
+	source/tm/open_file.cpp
 	source/tm/other_team.cpp
 	source/tm/phazing_in_same_pokemon.cpp
 	source/tm/random_damage.cpp

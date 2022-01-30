@@ -6,6 +6,7 @@
 #pragma once
 
 #include <tm/ps_usage_stats/battle_result.hpp>
+#include <tm/open_file.hpp>
 
 #include <containers/algorithms/generate.hpp>
 #include <containers/array.hpp>
@@ -26,14 +27,9 @@ inline auto compute_number_of_battles(std::filesystem::path const & path) {
 }
 
 inline auto battle_result_reader(std::filesystem::path const & path) {
-	auto open_file = [&] {
-		auto file = std::ifstream(path);
-		file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
-		return file;
-	};
 	return containers::generate_n(
 		compute_number_of_battles(path),
-		[file = open_file()]() mutable {
+		[file = open_file(path)]() mutable {
 			if (!file) {
 				throw std::runtime_error("Inconsistent file size");
 			}

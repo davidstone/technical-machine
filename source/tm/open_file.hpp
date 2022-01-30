@@ -5,20 +5,15 @@
 
 #pragma once
 
-#include <tm/open_file.hpp>
-
-#include <nlohmann/json.hpp>
-
 #include <filesystem>
 #include <fstream>
 
 namespace technicalmachine {
 
-inline auto load_json_from_file(std::filesystem::path const & path) -> nlohmann::json {
-	auto json = nlohmann::json();
-	auto file = open_file(path);
-	file >> json;
-	return json;
+inline auto open_file(std::filesystem::path const & path, std::ios_base::openmode const mode = std::ios_base::in) -> std::ifstream {
+	auto file = std::ifstream(path, mode);
+	file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
+	return file;
 }
 
 } // namespace technicalmachine
