@@ -31,7 +31,7 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 	// trying to save an 8 character file name with an identical extension at
 	// the same time. The result of this is that a team file would not be saved
 	// when it should have been, which is not a major issue.
-	constexpr unsigned file_name_length = 8;
+	constexpr auto file_name_length = 8_bi;
 	std::filesystem::path foe_team_file;
 	do {
 		foe_team_file = team_file_directory();
