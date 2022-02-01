@@ -7,17 +7,12 @@
 
 #include <tm/team_predictor/usage_stats.hpp>
 
-#include <tm/team.hpp>
-
-#include <bounded/assert.hpp>
-
 #include <containers/algorithms/accumulate.hpp>
-#include <containers/algorithms/find.hpp>
+#include <containers/at.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/integer_range.hpp>
 
 #include <algorithm>
-#include <cstddef>
 #include <random>
 
 namespace technicalmachine {
@@ -49,12 +44,14 @@ auto Estimate::random(std::mt19937 & random_engine) const -> Species {
 	auto const total = containers::sum(m_estimate);
 	auto distribution = std::uniform_real_distribution<float>(0.0F, total);
 	auto usage_threshold = distribution(random_engine);
-	auto const it = containers::find_if(m_estimate, [=](auto const value) mutable {
-		usage_threshold -= value;
-		return usage_threshold <= 0.0F;
-	});
-	BOUNDED_ASSERT(it != containers::end(m_estimate));
-	return static_cast<Species>(it - containers::begin(m_estimate));
+	for (auto const species : containers::enum_range<Species>()) {
+		usage_threshold -= containers::at(m_estimate, species);
+		if (usage_threshold <= 0.0F) {
+			return species;
+		}
+	}
+	// In case rounding leads to a minor error
+	return numeric_traits::max_value<Species>;
 }
 
 }	// namespace technicalmachine
