@@ -99,73 +99,6 @@ auto per_pokemon_datum(nlohmann::json const & json) {
 	return containers::front(all);
 }
 
-bool is_deoxys(Species const species) {
-	switch (species) {
-		case Species::Deoxys_Attack:
-		case Species::Deoxys_Defense:
-		case Species::Deoxys_Normal:
-		case Species::Deoxys_Speed:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool is_giratina(Species const species) {
-	switch (species) {
-		case Species::Giratina_Altered:
-		case Species::Giratina_Origin:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool is_rotom(Species const species) {
-	switch (species) {
-		case Species::Rotom:
-		case Species::Rotom_Mow:
-		case Species::Rotom_Frost:
-		case Species::Rotom_Heat:
-		case Species::Rotom_Fan:
-		case Species::Rotom_Wash:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool is_shaymin(Species const species) {
-	switch (species) {
-		case Species::Shaymin_Land:
-		case Species::Shaymin_Sky:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool is_wormadam(Species const species) {
-	switch (species) {
-		case Species::Wormadam_Plant:
-		case Species::Wormadam_Sandy:
-		case Species::Wormadam_Trash:
-			return true;
-		default:
-			return false;
-	}
-}
-
-bool is_alternate_form(Species const first, Species const second) {
-	return
-		first == second or
-		(is_deoxys(first) and is_deoxys(second)) or
-		(is_giratina(first) and is_giratina(second)) or
-		(is_rotom(first) and is_rotom(second)) or
-		(is_shaymin(first) and is_shaymin(second)) or
-		(is_wormadam(first) and is_wormadam(second));
-}
-
 void check_finite(float const value) {
 	if (!std::isfinite(value)) {
 		throw std::runtime_error("Non-finite value found in configuration");
@@ -175,32 +108,6 @@ void check_finite(float const value) {
 void check_non_negative(float const value) {
 	if (value < 0.0F) {
 		throw std::runtime_error("Negative value found where a positive was expected");
-	}
-}
-
-void turn_teammates_into_multiplier(containers::array<UsageStats::PerPokemon, number_of<Species>> & all_per_pokemon) {
-	constexpr auto all_species = containers::enum_range<Species>();
-	for (auto const species_outer : all_species) {
-		auto & per_pokemon = all_per_pokemon[bounded::integer(species_outer)];
-		for (auto const species_inner : all_species) {
-			auto & multiplier = per_pokemon.teammates[bounded::integer(species_inner)];
-			if (is_alternate_form(species_outer, species_inner)) {
-				multiplier = 0.0F;
-				continue;
-			}
-			auto const base_value = all_per_pokemon[bounded::integer(species_inner)].usage;
-			if (base_value == 0.0F) {
-				multiplier = 1.0F;
-			} else {
-#if 0
-				multiplier = (base_value + multiplier) / base_value;
-				check_finite(multiplier);
-				check_non_negative(multiplier);
-#else
-				multiplier = 1.0F;
-#endif
-			}
-		}
 	}
 }
 
@@ -215,10 +122,9 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 		auto const species = from_string<Species>(pokemon.key());
 		auto & per_pokemon = m_all_per_pokemon[bounded::integer(species)];
 
-		per_pokemon.usage = pokemon.value().at("usage").get<float>();
-		check_finite(per_pokemon.usage);
-		check_non_negative(per_pokemon.usage);
-		m_total_usage += per_pokemon.usage;
+		per_pokemon.weight = pokemon.value().at("usage").get<float>();
+		check_finite(per_pokemon.weight);
+		check_non_negative(per_pokemon.weight);
 
 		auto const & teammates = pokemon.value().at("Teammates");
 		for (auto teammate = teammates.begin(); teammate != teammates.end(); ++teammate) {
@@ -233,10 +139,6 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 		per_pokemon.ability = per_pokemon_datum<Ability>(pokemon.value().at("Abilities"));
 		per_pokemon.item = per_pokemon_datum<Item>(pokemon.value().at("Items"));
 	}
-
-	check_finite(m_total_usage);
-	check_non_negative(m_total_usage);
-	turn_teammates_into_multiplier(m_all_per_pokemon);
 }
 
 namespace {

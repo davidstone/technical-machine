@@ -18,15 +18,16 @@
 namespace technicalmachine {
 
 Estimate::Estimate(UsageStats const & usage_stats) {
-	auto const total = usage_stats.total_usage();
 	for (auto const species : containers::enum_range<Species>()) {
-		m_estimate[bounded::integer(species)] = usage_stats.get(species).usage / static_cast<float>(total);
+		m_estimate[bounded::integer(species)] = usage_stats.get(species).weight;
 	}
 }
 
 auto Estimate::update(UsageStats const & usage_stats, Species const species) -> void {
+	auto const & per_species = usage_stats.get(species);
 	for (auto const predicted : containers::enum_range<Species>()) {
-		m_estimate[bounded::integer(predicted)] *= usage_stats.get(seen).teammates[bounded::integer(predicted)];
+		auto const index = bounded::integer(predicted);
+		m_estimate[index] *= per_species.teammates[index];
 	}
 }
 
