@@ -19,9 +19,9 @@ struct UsageStats;
 
 struct Estimate {
 	explicit Estimate(UsageStats const & usage_stats);
-	void update(UsageStats const & usage_stats, Species seen);
-	Species most_likely() const;
-	Species random(std::mt19937 & random_engine) const;
+	auto update(UsageStats const & usage_stats, Species species) -> void;
+	auto most_likely() const -> Species;
+	auto random(std::mt19937 & random_engine) const -> Species;
 private:
 	containers::array<float, number_of<Species>> m_estimate;
 };

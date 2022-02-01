@@ -29,13 +29,13 @@ Estimate::Estimate(UsageStats const & usage_stats) {
 	}
 }
 
-void Estimate::update(UsageStats const & usage_stats, Species const seen) {
+auto Estimate::update(UsageStats const & usage_stats, Species const species) -> void {
 	for (auto const predicted : containers::enum_range<Species>()) {
 		m_estimate[bounded::integer(predicted)] *= usage_stats.get(seen).teammates[bounded::integer(predicted)];
 	}
 }
 
-Species Estimate::most_likely() const {
+auto Estimate::most_likely() const -> Species {
 	auto const it = std::max_element(
 		containers::legacy_iterator(containers::begin(m_estimate)),
 		containers::legacy_iterator(containers::end(m_estimate))
@@ -45,7 +45,7 @@ Species Estimate::most_likely() const {
 	return static_cast<Species>(it - containers::begin(m_estimate));
 }
 
-Species Estimate::random(std::mt19937 & random_engine) const {
+auto Estimate::random(std::mt19937 & random_engine) const -> Species {
 	auto const total = containers::sum(m_estimate);
 	auto distribution = std::uniform_real_distribution<float>(0.0F, total);
 	auto usage_threshold = distribution(random_engine);
