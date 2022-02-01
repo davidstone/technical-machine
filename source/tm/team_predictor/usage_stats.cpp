@@ -11,6 +11,7 @@
 #include <tm/stat/ev.hpp>
 
 #include <tm/string_conversions/ability.hpp>
+#include <tm/string_conversions/generation.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/nature.hpp>
@@ -144,7 +145,7 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 namespace {
 
 auto stats_for_generation(Generation const generation) {
-	return UsageStats(std::filesystem::path("settings") / bounded::to_string(bounded::integer(generation)) / "OU");
+	return UsageStats(std::filesystem::path("settings") / to_string(generation) / "OU");
 }
 
 } // namespace
