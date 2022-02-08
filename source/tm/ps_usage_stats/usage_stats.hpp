@@ -35,25 +35,25 @@ struct UsageStats {
 	auto add(GenerationGeneric<Team> const & team, double weight) & -> void;
 
 	constexpr auto get_total(Species const species) const {
-		return containers::at(m_all, species).total;
+		return m_all[bounded::integer(species)].total;
 	}
 	constexpr auto get(Species const species, Ability const ability) const {
-		auto const & per_species = containers::at(m_all, species);
-		return containers::at(per_species.abilities, ability);
+		auto const & per_species = m_all[bounded::integer(species)];
+		return per_species.abilities[bounded::integer(ability)];
 	}
 	constexpr auto get(Species const species, Item const item) const {
-		auto const & per_species = containers::at(m_all, species);
-		return containers::at(per_species.items, item);
+		auto const & per_species = m_all[bounded::integer(species)];
+		return per_species.items[bounded::integer(item)];
 	}
 	constexpr auto const & moves(Species const species) const {
-		return containers::at(m_all, species).moves;
+		return m_all[bounded::integer(species)].moves;
 	}
 	constexpr auto get(Species const species, Moves const move_name) const {
-		auto const & per_species = containers::at(m_all, species);
-		return containers::at(per_species.moves, move_name);
+		auto const & per_species = m_all[bounded::integer(species)];
+		return per_species.moves[bounded::integer(move_name)];
 	}
 	constexpr auto const & speed_distribution(Species const species) const {
-		return containers::at(m_all, species).speed;
+		return m_all[bounded::integer(species)].speed;
 	}
 	constexpr auto total_teams() const {
 		return m_total_teams;
@@ -112,7 +112,7 @@ public:
 	auto add(GenerationGeneric<Team> const & team, double weight) & -> void;
 
 	constexpr auto top_moves(Species const species) const -> TopMoves const & {
-		return containers::at(m_data, species);
+		return m_data[bounded::integer(species)];
 	}
 private:
 	containers::array<TopMoves, number_of<Species>> m_data;

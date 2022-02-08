@@ -46,7 +46,7 @@ auto Estimate::random(std::mt19937 & random_engine) const -> Species {
 	auto distribution = std::uniform_real_distribution<float>(0.0F, total);
 	auto usage_threshold = distribution(random_engine);
 	for (auto const species : containers::enum_range<Species>()) {
-		usage_threshold -= containers::at(m_estimate, species);
+		usage_threshold -= m_estimate[bounded::integer(species)];
 		if (usage_threshold <= 0.0F) {
 			return species;
 		}

@@ -47,7 +47,7 @@ template<typename Enum>
 auto serialize_simple_correlations(auto const & source, double const total) -> nlohmann::json {
 	auto result = nlohmann::json(nlohmann::json::object());
 	for (auto const index : containers::enum_range<Enum>()) {
-		auto const value = containers::at(source, index);
+		auto const value = source[bounded::integer(index)];
 		if (value != 0.0) {
 			result[std::string(to_string(index))] = value / total;
 		}
@@ -83,7 +83,7 @@ auto serialize_speed(auto const & speed_distribution, double const total) -> nlo
 
 auto serialize_teammates(auto const & source, double const total) -> nlohmann::json {
 	auto result = nlohmann::json(nlohmann::json::object());
-	auto transform = [&](Species const species) { return containers::at(source, species); };
+	auto transform = [&](Species const species) { return source[bounded::integer(species)]; };
 	auto filter = [&](auto const & x) { return x.mapped.usage != 0.0; };
 	for (auto const & related : get_used<Species>(transform, filter)) {
 		auto & teammate = result[std::string(to_string(related.key))];
