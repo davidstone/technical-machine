@@ -112,10 +112,10 @@ public:
 	auto add(GenerationGeneric<Team> const & team, double weight) & -> void;
 
 	constexpr auto top_moves(Species const species) const -> TopMoves const & {
-		return containers::at(m_top_moves, species);
+		return containers::at(m_data, species);
 	}
 private:
-	containers::array<TopMoves, number_of<Species>> m_top_moves;
+	containers::array<TopMoves, number_of<Species>> m_data;
 };
 
 } // namespace technicalmachine::ps_usage_stats

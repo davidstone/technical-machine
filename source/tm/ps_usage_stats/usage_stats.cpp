@@ -83,7 +83,7 @@ constexpr auto get_top_n(containers::array<double, number_of<Moves>> const & mov
 
 Correlations::Correlations(UsageStats const & usage_stats) {
 	for (auto const species : containers::enum_range<Species>()) {
-		containers::at(m_top_moves, species) = TopMoves(
+		containers::at(m_data, species) = TopMoves(
 			containers::assume_unique,
 			containers::transform(get_top_n(usage_stats.moves(species), top_n_cutoff), [](LocalTopMoves const moves) {
 				return containers::range_value_t<TopMoves>{moves.move, std::make_unique<LockedAccess<MoveData>>()};
@@ -122,7 +122,7 @@ auto populate_move_correlations(auto & correlations, RegularMoves const moves, M
 auto Correlations::add(GenerationGeneric<Team> const & t, double const weight) & -> void {
 	bounded::visit(t, [&](auto const & team) {
 		for (auto const & pokemon : team.all_pokemon()) {
-			auto & per_species = containers::at(m_top_moves, pokemon.species());
+			auto & per_species = containers::at(m_data, pokemon.species());
 			for (auto const move : pokemon.regular_moves()) {
 				auto const move_name = move.name();
 				auto const maybe_correlations = containers::lookup(per_species, move_name);
