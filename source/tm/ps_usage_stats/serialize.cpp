@@ -98,7 +98,7 @@ auto serialize_moves(Generation const generation, Correlations::TopMoves const &
 	for (auto const & top_move : top_moves) {
 		auto & per_move = result[std::string(to_string(top_move.key))];
 
-		auto const & data = top_move.mapped.unlocked();
+		auto const & data = top_move.mapped->unlocked();
 		auto const total = containers::sum(data.abilities);
 		per_move["Usage"] = total / species_total;
 

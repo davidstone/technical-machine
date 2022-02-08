@@ -71,49 +71,42 @@ private:
 	double m_total_teams = 0.0;
 };
 
+template<typename T>
+struct LockedAccess {
+	auto locked() & {
+		struct Result {
+			std::scoped_lock<std::mutex> lock;
+			T & data;
+		};
+		return Result{
+			std::scoped_lock(m_mutex),
+			m_data
+		};
+	}
+	constexpr auto unlocked() const -> T const & {
+		return m_data;
+	}
+private:
+	mutable std::mutex m_mutex;
+	T m_data;
+};
+
 struct Correlations {
 private:
+	struct PerSpecies {
+		double usage = 0.0;
+		containers::flat_map<Moves, double> other_moves;
+	};
 	struct MoveData {
-		MoveData():
-			m_impl(std::make_unique<Impl>())
-		{
-		}
-
-		auto locked() & {
-			struct Result {
-				std::scoped_lock<std::mutex> lock;
-				Data & data;
-			};
-			return Result{
-				std::scoped_lock(m_impl->mutex),
-				m_impl->data
-			};
-		}
-		auto unlocked() const {
-			return m_impl->data;
-		}
-
-	private:
-		struct PerSpecies {
-			double usage = 0.0;
-			containers::flat_map<Moves, double> other_moves;
-		};
-		struct Data {
-			containers::array<PerSpecies, number_of<Species>> teammates = {};
-			containers::array<double, number_of<Moves>> moves = {};
-			containers::array<double, number_of<Item>> items = {};
-			containers::array<double, number_of<Ability>> abilities = {};
-			containers::array<double, max_initial_speed> speed = {};
-		};
-		struct Impl {
-			mutable std::mutex mutex;
-			Data data;
-		};
-		std::unique_ptr<Impl> m_impl;
+		containers::array<PerSpecies, number_of<Species>> teammates = {};
+		containers::array<double, number_of<Moves>> moves = {};
+		containers::array<double, number_of<Item>> items = {};
+		containers::array<double, number_of<Ability>> abilities = {};
+		containers::array<double, max_initial_speed> speed = {};
 	};
 	static constexpr auto top_n_cutoff = 20_bi;
 public:
-	using TopMoves = containers::static_flat_map<Moves, MoveData, top_n_cutoff>;
+	using TopMoves = containers::static_flat_map<Moves, std::unique_ptr<LockedAccess<MoveData>>, top_n_cutoff>;
 
 	Correlations(UsageStats const & general_usage_stats);
 	auto add(GenerationGeneric<Team> const & team, double weight) & -> void;

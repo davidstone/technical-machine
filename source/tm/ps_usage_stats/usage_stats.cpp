@@ -86,7 +86,7 @@ Correlations::Correlations(UsageStats const & usage_stats) {
 		containers::at(m_top_moves, species) = TopMoves(
 			containers::assume_unique,
 			containers::transform(get_top_n(usage_stats.moves(species), top_n_cutoff), [](LocalTopMoves const moves) {
-				return containers::range_value_t<TopMoves>{moves.move, {}};
+				return containers::range_value_t<TopMoves>{moves.move, std::make_unique<LockedAccess<MoveData>>()};
 			})
 		);
 	}
@@ -125,11 +125,12 @@ auto Correlations::add(GenerationGeneric<Team> const & t, double const weight) &
 			auto & per_species = containers::at(m_top_moves, pokemon.species());
 			for (auto const move : pokemon.regular_moves()) {
 				auto const move_name = move.name();
-				auto const correlations = containers::lookup(per_species, move_name);
-				if (!correlations) {
+				auto const maybe_correlations = containers::lookup(per_species, move_name);
+				if (!maybe_correlations) {
 					continue;
 				}
-				auto [lock, data] = correlations->locked();
+				auto & correlations = *maybe_correlations;
+				auto const [lock, data] = correlations->locked();
 				populate_teammate_correlations(data.teammates, team, pokemon, weight);
 				populate_move_correlations(data.moves, pokemon.regular_moves(), move_name, weight);
 				containers::at(data.items, pokemon.item(false, false)) += weight;
