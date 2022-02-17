@@ -21,12 +21,12 @@ struct SettingsFile {
 	containers::string username;
 	containers::string password;
 
-	struct NoTeam{};
-	struct GenerateTeam{};
+	struct NoTeam {};
+	struct GenerateTeam {};
 	using Team = bounded::variant<NoTeam, GenerateTeam, std::filesystem::path>;
 	Team team;
 
-	struct Ladder{
+	struct Ladder {
 		containers::string format;
 	};
 	struct Challenge {

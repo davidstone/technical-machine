@@ -64,7 +64,7 @@ struct GenericStats {
 	constexpr auto && operator[](auto const index) {
 		return index_stat(*this, index);
 	}
-	
+
 	friend auto operator==(GenericStats, GenericStats) -> bool = default;
 
 private:
@@ -123,7 +123,7 @@ struct GenericDVStats {
 	constexpr auto && operator[](auto const index) {
 		return index_stat(*this, index);
 	}
-	
+
 	friend auto operator==(GenericDVStats, GenericDVStats) -> bool = default;
 
 private:

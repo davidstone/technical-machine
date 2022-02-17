@@ -15,4 +15,4 @@ struct KnownMove {
 	Type type;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

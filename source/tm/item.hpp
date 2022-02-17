@@ -121,7 +121,7 @@ enum class Item : std::uint16_t {
 	X_Defend,
 	X_Special,
 	X_Speed,
-	
+
 	// Generation 2
 	Amulet_Coin,
 	Berry_Juice,
@@ -926,7 +926,7 @@ constexpr bool extends_reflect(Item const item) {
 	return item == Item::Light_Clay;
 }
 
-bounded::integer<0, 80> berry_power(Item item);		// Returns 0 for non-berries
+bounded::integer<0, 80> berry_power(Item item); // Returns 0 for non-berries
 
 constexpr auto clears_confusion(Item const item) -> bool {
 	switch (item) {
@@ -940,4 +940,4 @@ constexpr auto clears_confusion(Item const item) -> bool {
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

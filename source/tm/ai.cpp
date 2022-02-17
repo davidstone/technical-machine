@@ -49,7 +49,7 @@ void print_debug_statements() {
 	std::cout << "sizeof(Weather): " << sizeof(technicalmachine::Weather) << '\n';
 }
 
-}	// namespace
+} // namespace
 
 int main(int argc, char * * argv) {
 	using namespace technicalmachine;
@@ -76,4 +76,3 @@ int main(int argc, char * * argv) {
 		}
 	}
 }
-

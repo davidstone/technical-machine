@@ -54,4 +54,4 @@ inline auto move_targets_foe(Generation const generation, Moves const move) {
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

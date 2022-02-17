@@ -16,4 +16,4 @@ struct PhazingInSamePokemon : std::logic_error {
 	explicit PhazingInSamePokemon(TeamIndex index);
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -48,4 +48,4 @@ struct UsedMove {
 	bool miss;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

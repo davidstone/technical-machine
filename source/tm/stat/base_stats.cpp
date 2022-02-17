@@ -2117,4 +2117,4 @@ BaseStats::BaseStats(Generation const generation, Species const species):
 {
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

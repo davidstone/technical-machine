@@ -92,7 +92,7 @@ auto parse_pokemon(nlohmann::json const & pokemon_data) {
 
 	auto const nickname = parse_identity(get("ident")).nickname;
 	auto const details = parse_details(get("details"));
-	
+
 	auto const condition = get("condition");
 	// current_hp/max_hp
 	// Presumably also gives me status information? Should be useful for
@@ -110,7 +110,7 @@ auto parse_pokemon(nlohmann::json const & pokemon_data) {
 	);
 
 	auto const ability = from_string<Ability>(get("baseAbility"));
-	
+
 	auto const item = from_string<Item>(get("item"));
 
 	return KnownPokemon<generation>(
@@ -136,5 +136,5 @@ auto parse_team(std::string_view const str) -> KnownTeam<generation> {
 	);
 }
 
-}	// namespace ps
-}	// namespace technicalmachine
+} // namespace ps
+} // namespace technicalmachine

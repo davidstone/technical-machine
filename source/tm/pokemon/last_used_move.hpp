@@ -35,7 +35,7 @@ struct LastUsedMove {
 	constexpr auto name() const {
 		return m_move;
 	}
-	
+
 	auto reset_start_of_turn() & -> void;
 
 	constexpr auto unsuccessful_move(Moves const move) & {
@@ -151,6 +151,7 @@ struct LastUsedMove {
 			value.m_effects
 		);
 	}
+
 private:
 	constexpr auto successful_last_move(Moves const move) const -> bool {
 		return m_move == move and m_consecutive_successes >= 1_bi;
@@ -206,4 +207,4 @@ private:
 	> m_effects{Empty()};
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

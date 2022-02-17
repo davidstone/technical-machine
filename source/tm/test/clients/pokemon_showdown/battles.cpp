@@ -38,7 +38,9 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 	constexpr auto depth = DepthValues{1_bi, 0_bi};
 
 	auto const battle_output_directory = get_test_directory() / "temp-battles";
-	auto const remove_temporary_files = [&]{ std::filesystem::remove_all(battle_output_directory); };
+	auto const remove_temporary_files = [&] {
+		std::filesystem::remove_all(battle_output_directory);
+	};
 	remove_temporary_files();
 	constexpr auto log_foe_teams = false;
 	{

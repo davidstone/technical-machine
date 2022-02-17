@@ -30,7 +30,7 @@ TEST_CASE("Calculate low Attack EVs", "[calculate_ivs_and_evs]") {
 	constexpr auto nature = Nature::Calm;
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(nature, nature));
-	
+
 	constexpr auto expected = CombinedStats<generation>{
 		nature,
 		IVs(
@@ -69,7 +69,7 @@ TEST_CASE("calculate_ivs_and_evs in generation 2 with Hidden Power", "[calculate
 	constexpr auto hidden_power = bounded::optional(HiddenPower<generation>(70_bi, Type::Ice));
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power);
-	
+
 	constexpr auto expected = CombinedStats<generation>{
 		Nature::Hardy,
 		DVs(
@@ -105,7 +105,7 @@ TEST_CASE("calculate_ivs_and_evs in generation 3 with Hidden Power", "[calculate
 	constexpr auto hidden_power = bounded::optional(HiddenPower<generation>(70_bi, Type::Ghost));
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(nature, nature));
-	
+
 	constexpr auto expected = CombinedStats<generation>{
 		nature,
 		IVs(
@@ -144,7 +144,7 @@ TEST_CASE("calculate_ivs_and_evs at level 1", "[calculate_ivs_and_evs]") {
 	constexpr auto nature = Nature::Hardy;
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(nature, nature));
-	
+
 	constexpr auto expected = CombinedStats<generation>{
 		nature,
 		IVs(
@@ -182,7 +182,7 @@ TEST_CASE("calculate_ivs_and_evs in generation 4 with Hidden Power", "[calculate
 	constexpr auto hidden_power = bounded::optional(HiddenPower<generation>(70_bi, Type::Dark));
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(Nature::Modest, Nature::Modest));
-	
+
 	constexpr auto expected = CombinedStats<generation>{
 		Nature::Modest,
 		IVs(

@@ -31,7 +31,7 @@ constexpr auto move_critical_hit(Generation const generation, Moves const move_n
 		case Moves::Switch4: return MoveCriticalHit::never;
 		case Moves::Switch5: return MoveCriticalHit::never;
 		case Moves::Hit_Self: return MoveCriticalHit::never;
-	
+
 		// Generation 1
 		case Moves::Pound: return MoveCriticalHit::normal;
 		case Moves::Karate_Chop: return MoveCriticalHit::high;
@@ -296,7 +296,7 @@ constexpr auto move_critical_hit(Generation const generation, Moves const move_n
 		case Moves::Rock_Smash: return MoveCriticalHit::normal;
 		case Moves::Whirlpool: return MoveCriticalHit::normal;
 		case Moves::Beat_Up: return MoveCriticalHit::never;
-	
+
 		// Generation 3
 		case Moves::Fake_Out: return MoveCriticalHit::normal;
 		case Moves::Uproar: return MoveCriticalHit::normal;
@@ -401,7 +401,7 @@ constexpr auto move_critical_hit(Generation const generation, Moves const move_n
 		case Moves::Water_Pulse: return MoveCriticalHit::normal;
 		case Moves::Doom_Desire: return MoveCriticalHit::never;
 		case Moves::Psycho_Boost: return MoveCriticalHit::normal;
-	
+
 		// Generation 4
 		case Moves::Roost: return MoveCriticalHit::never;
 		case Moves::Gravity: return MoveCriticalHit::never;
@@ -516,7 +516,7 @@ constexpr auto move_critical_hit(Generation const generation, Moves const move_n
 		case Moves::Seed_Flare: return MoveCriticalHit::normal;
 		case Moves::Ominous_Wind: return MoveCriticalHit::normal;
 		case Moves::Shadow_Force: return MoveCriticalHit::normal;
-	
+
 		// Generation 5
 		case Moves::Hone_Claws: return MoveCriticalHit::never;
 		case Moves::Wide_Guard: return MoveCriticalHit::never;
@@ -610,7 +610,7 @@ constexpr auto move_critical_hit(Generation const generation, Moves const move_n
 		case Moves::V_create: return MoveCriticalHit::normal;
 		case Moves::Fusion_Flare: return MoveCriticalHit::normal;
 		case Moves::Fusion_Bolt: return MoveCriticalHit::normal;
-	
+
 		// Generation 6
 		case Moves::Flying_Press: return MoveCriticalHit::normal;
 		case Moves::Mat_Block: return MoveCriticalHit::never;
@@ -674,7 +674,7 @@ constexpr auto move_critical_hit(Generation const generation, Moves const move_n
 		case Moves::Precipice_Blades: return MoveCriticalHit::normal;
 		case Moves::Dragon_Ascent: return MoveCriticalHit::normal;
 		case Moves::Hyperspace_Fury: return MoveCriticalHit::normal;
-	
+
 		// Generation 7
 		case Moves::Breakneck_Blitz: return MoveCriticalHit::never;
 		case Moves::All_Out_Pummeling: return MoveCriticalHit::never;
@@ -766,7 +766,7 @@ constexpr auto move_critical_hit(Generation const generation, Moves const move_n
 		case Moves::Splintered_Stormshards: return MoveCriticalHit::normal;
 		case Moves::Clangorous_Soulblaze: return MoveCriticalHit::normal;
 		case Moves::Double_Iron_Bash: return MoveCriticalHit::normal;
-		
+
 		// Generation 8
 		case Moves::Max_Guard: return MoveCriticalHit::normal;
 		case Moves::Dynamax_Cannon: return MoveCriticalHit::normal;

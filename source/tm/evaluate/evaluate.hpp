@@ -135,6 +135,7 @@ struct AllEvaluate {
 	auto get() const {
 		return m_data[bounded::detail::types<Evaluate<generation>>()];
 	}
+
 private:
 	bounded::tuple<
 		Evaluate<Generation::one>,
@@ -159,7 +160,7 @@ constexpr auto win(TeamType const & team1, TeamType const & team2) -> bounded::o
 	constexpr auto generation = generation_from<TeamType>;
 	auto single_team_win = [](TeamType const & team) {
 		BOUNDED_ASSERT(team.size() != 0_bi);
-		return	team.size() == 1_bi and team.pokemon().hp().current() == 0_bi ?
+		return team.size() == 1_bi and team.pokemon().hp().current() == 0_bi ?
 			team.is_me() ? -victory<generation> : victory<generation> :
 			0.0;
 	};

@@ -18,4 +18,4 @@ using YawnCounter = EndOfTurnCounter<
 	CounterOperations::activate
 >;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

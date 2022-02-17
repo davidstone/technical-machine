@@ -37,7 +37,7 @@ constexpr auto can_be_selected_by_sleep_talk(KnownMove const move) {
 	}
 }
 
-}	// namespace
+} // namespace
 
 template<any_team UserTeam>
 auto possible_executed_moves(Moves const selected_move, UserTeam const & user_team) -> PossibleExecutedMoves {
@@ -72,4 +72,4 @@ TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

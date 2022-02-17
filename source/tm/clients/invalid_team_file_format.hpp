@@ -14,4 +14,4 @@ namespace technicalmachine {
 struct InvalidTeamFileFormat : std::logic_error {
 	explicit InvalidTeamFileFormat(std::filesystem::path const & file);
 };
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -112,7 +112,7 @@ void check_non_negative(float const value) {
 	}
 }
 
-}	// namespace
+} // namespace
 
 UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 	auto const path = usage_stats_directory / "usage.json";

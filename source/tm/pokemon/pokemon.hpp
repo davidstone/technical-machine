@@ -216,6 +216,7 @@ struct Pokemon {
 			value.m_has_been_seen
 		);
 	}
+
 private:
 	auto activate_pp_restore_berry(Move & move, bool const embargo, bool const magic_room) & -> void {
 		if (no_pp(move.pp())) {
@@ -235,7 +236,7 @@ private:
 	}
 
 	RegularMoves m_regular_moves;
-	
+
 	Stats<generation> m_stats;
 
 	Species m_species;

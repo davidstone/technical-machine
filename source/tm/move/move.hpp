@@ -46,6 +46,7 @@ struct Move {
 	friend auto compress(Move const value) {
 		return compress(value.m_pp);
 	}
+
 private:
 	Moves m_name;
 	PP m_pp;

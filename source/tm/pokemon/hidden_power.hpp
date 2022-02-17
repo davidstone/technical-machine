@@ -35,7 +35,7 @@ struct HiddenPower {
 	>>>;
 
 	static constexpr auto is_valid_type(Type const type) {
-		switch(type) {
+		switch (type) {
 			case Type::Bug:
 			case Type::Dark:
 			case Type::Dragon:
@@ -90,8 +90,9 @@ struct HiddenPower {
 	constexpr auto type() const {
 		return m_type;
 	}
-	
+
 	friend auto operator==(HiddenPower, HiddenPower) -> bool = default;
+
 private:
 	friend bounded::tombstone_traits<HiddenPower>;
 
@@ -100,7 +101,7 @@ private:
 		m_type(Type::Typeless)
 	{
 	}
-	
+
 	static constexpr auto sum_stats(IVs const ivs, auto const transform) {
 		return
 			transform(0_bi, ivs.hp()) +
@@ -122,7 +123,7 @@ private:
 		auto const y = bounded::min(dvs.spc().value(), 3_bi);
 		return (5_bi * x + y) / 2_bi + 31_bi;
 	}
-	
+
 	static constexpr auto calculate_power(IVs const ivs) -> Power {
 		if constexpr (generation <= Generation::five) {
 			auto transform = [](auto const index, IV const iv) { return ((iv.value() / 2_bi) % 2_bi) << index; };
@@ -131,7 +132,7 @@ private:
 			return 60_bi;
 		}
 	}
-	
+
 	static constexpr auto calculate_type(DVs const dvs) -> Type {
 		constexpr auto get_base_four_digit = [](DV const dv) { return dv.value() % 4_bi; };
 		return calculate_type_impl(
@@ -181,7 +182,7 @@ constexpr auto calculate_hidden_power(DVsOrIVs<generation> dvs_or_ivs, RegularMo
 		return bounded::none;
 	}
 }
-		
+
 } // namespace technicalmachine
 namespace bounded {
 

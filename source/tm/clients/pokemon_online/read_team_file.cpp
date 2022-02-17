@@ -50,6 +50,7 @@ struct CheckedIterator : operators::arrow<CheckedIterator> {
 		}
 		return value.second;
 	}
+
 private:
 	boost::property_tree::ptree::const_iterator m_it;
 	boost::property_tree::ptree::const_iterator m_last;
@@ -89,7 +90,7 @@ auto parse_stats(std::string_view const name, CheckedIterator it) {
 		GenericStats<Type> stats;
 		CheckedIterator it;
 	};
-	auto get_next = [&]{
+	auto get_next = [&] {
 		auto const & value = it.advance(name);
 		return Type(value.get_value<typename Type::value_type>());
 	};
@@ -114,7 +115,7 @@ auto parse_dvs_or_ivs(CheckedIterator it) {
 			DVs stats;
 			CheckedIterator it;
 		};
-		auto get_next = [&]{
+		auto get_next = [&] {
 			auto const & value = it.advance(name);
 			return DV(value.get_value<DV::value_type>());
 		};
@@ -142,7 +143,7 @@ auto parse_evs(CheckedIterator it) {
 			OldGenEVs stats;
 			CheckedIterator it;
 		};
-		auto get_next = [&]{
+		auto get_next = [&] {
 			auto const & value = it.advance(name);
 			return EV(value.get_value<EV::value_type>());
 		};
@@ -161,7 +162,7 @@ auto parse_evs(CheckedIterator it) {
 
 template<Generation generation>
 auto parse_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID species_id) {
-	auto const species = id_to_species({ species_id, pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")} );
+	auto const species = id_to_species({species_id, pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")});
 	auto const nickname = pt.get<std::string>("<xmlattr>.Nickname");
 	auto const gender = id_to_gender(pt.get<GenderID>("<xmlattr>.Gender"));
 	auto const level = Level(pt.get<Level::value_type>("<xmlattr>.Lvl"));
@@ -214,7 +215,7 @@ auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneri
 	try {
 		auto pt = boost::property_tree::ptree();
 		read_xml(team_file.string(), pt);
-		
+
 		auto const all_pokemon = pt.get_child("Team");
 		using GenerationInteger = bounded::integer<1, 7>;
 		auto const parsed_generation = static_cast<Generation>(all_pokemon.get<GenerationInteger>("<xmlattr>.gen"));

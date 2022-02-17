@@ -267,7 +267,7 @@ auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 	}
 }
 
-}	// namespace
+} // namespace
 
 template<any_team UserTeam, any_team OtherTeamType>
 auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, OtherTeamType const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
@@ -295,4 +295,4 @@ TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

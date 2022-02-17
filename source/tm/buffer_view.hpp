@@ -68,7 +68,7 @@ struct BufferView {
 	constexpr auto remainder() const {
 		return m_buffer;
 	}
-	
+
 private:
 	View m_buffer;
 };
@@ -97,7 +97,7 @@ struct DelimitedBufferView {
 		m_delimiter(delimiter)
 	{
 	}
-	
+
 	constexpr auto pop(auto const delimiter) {
 		return pop_to_delimiter(m_buffer, delimiter);
 	}
@@ -107,7 +107,7 @@ struct DelimitedBufferView {
 	constexpr auto remainder() const {
 		return m_buffer.remainder();
 	}
-	
+
 private:
 	BufferView<View> m_buffer;
 	Delimiter m_delimiter;

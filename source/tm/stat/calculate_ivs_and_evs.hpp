@@ -233,7 +233,7 @@ constexpr auto calculate_ivs_and_evs(
 	Stats<generation> const stats,
 	bounded::optional<HiddenPower<generation>> const hidden_power
 ) {
-	constexpr auto nature_range = generation <= Generation::two ? 
+	constexpr auto nature_range = generation <= Generation::two ?
 		containers::enum_range(Nature::Hardy, Nature::Hardy) :
 		containers::enum_range<Nature>();
 

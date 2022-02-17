@@ -4,4 +4,3 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <tm/ps_usage_stats/battle_result_writer.hpp>
-

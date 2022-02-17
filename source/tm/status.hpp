@@ -35,7 +35,7 @@ enum class Statuses : uint8_t {
 	rest
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine
 
 template<>
 inline constexpr auto numeric_traits::min_value<technicalmachine::Statuses> = technicalmachine::Statuses();
@@ -105,7 +105,7 @@ public:
 	constexpr auto name() const {
 		return static_cast<Statuses>(m_state.index());
 	}
-	
+
 	Status & operator=(Statuses const status) & {
 		*this = Status(status);
 		return *this;
@@ -124,6 +124,7 @@ public:
 	friend constexpr auto compress(Status const value) {
 		return compress(value.m_state);
 	}
+
 private:
 	using State = bounded::variant<
 		Clear,
@@ -214,4 +215,4 @@ constexpr bool boosts_defense(Ability const ability, Status const status) {
 	return ability == Ability::Marvel_Scale and !is_clear(status);
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

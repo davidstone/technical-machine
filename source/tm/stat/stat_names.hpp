@@ -95,7 +95,7 @@ constexpr decltype(auto) index_stat(auto && stats, SplitSpecialRegularStat const
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine
 
 template<>
 inline constexpr auto numeric_traits::min_value<technicalmachine::BoostableStat> = technicalmachine::BoostableStat::atk;

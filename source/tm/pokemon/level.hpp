@@ -26,8 +26,9 @@ struct Level {
 	friend constexpr auto compress(Level const value) {
 		return compress(value.m_value);
 	}
+
 private:
 	value_type m_value;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -26,7 +26,7 @@ namespace {
 using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
-constexpr auto damage = ActualDamage::Unknown{};	
+constexpr auto damage = ActualDamage::Unknown{};
 
 constexpr auto regular_moves(auto... moves) {
 	return RegularMoves{Move(generation, moves)...};

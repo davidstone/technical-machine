@@ -31,7 +31,7 @@ struct HP {
 		m_current(max_)
 	{
 	}
-	
+
 	constexpr HP(BaseStats::HP const base, Level const level, IV const iv, EV const ev):
 		m_max(initial_hp(base, level, iv, ev)),
 		m_current(m_max)
@@ -51,6 +51,7 @@ struct HP {
 	}
 
 	friend auto operator==(HP, HP) -> bool = default;
+
 private:
 	static constexpr auto initial_hp(BaseStats::HP const base, Level const level, IV const iv, EV const ev) -> max_type {
 		// Work around https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99016

@@ -41,11 +41,12 @@ struct Screen {
 			saturating_decrement(m_turns_remaining);
 		}
 	}
-	
+
 	friend auto operator==(Screen, Screen) -> bool = default;
 	friend constexpr auto compress(Screen const value) {
 		return compress(value.m_turns_remaining);
 	}
+
 private:
 	using duration_type = bounded::integer<0, max_duration>;
 	constexpr auto set(duration_type const duration) & -> void {
@@ -73,4 +74,4 @@ using LightScreen = Screen<true, 5, 8>;
 template<Generation generation>
 using Tailwind = Screen<generation >= Generation::four, 3>;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

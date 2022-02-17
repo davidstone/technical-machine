@@ -14,4 +14,4 @@ InvalidTeamFileFormat::InvalidTeamFileFormat(std::filesystem::path const & file)
 	std::logic_error("Attempted to load " + file.string() + ".") {
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -254,6 +254,7 @@ struct SeenPokemon {
 	}
 
 	friend auto operator==(SeenPokemon, SeenPokemon) -> bool = default;
+
 private:
 	constexpr auto activate_pp_restore_berry(Move & move, bool const embargo, bool const magic_room) & -> void {
 		if (no_pp(move.pp())) {
@@ -274,7 +275,7 @@ private:
 
 	containers::string m_nickname;
 	RegularMoves m_regular_moves;
-	
+
 	Species m_species;
 	[[no_unique_address]] ExistsIf<bounded::optional<HeldItem>, generation >= Generation::two> m_item;
 	[[no_unique_address]] ExistsIf<bounded::optional<Ability>, generation >= Generation::three> m_ability;

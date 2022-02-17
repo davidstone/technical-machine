@@ -898,4 +898,4 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

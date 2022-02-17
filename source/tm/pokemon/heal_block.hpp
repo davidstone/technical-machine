@@ -19,4 +19,4 @@ using HealBlock = EndOfTurnCounter<
 	CounterOperations::activate
 >;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

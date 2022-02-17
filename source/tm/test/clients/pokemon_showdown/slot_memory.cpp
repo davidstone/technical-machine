@@ -46,7 +46,6 @@ TEST_CASE("Pokemon Showdown Slot Memory Switch", "[Pokemon Showdown]") {
 	switch_to_all.switch_to(3_bi);
 	// {2, 3, 4, 1}
 	validate_indexes(switch_to_all, {2_bi, 3_bi, 4_bi, 1_bi});
-	
 }
 
 TEST_CASE("Pokemon Showdown Slot Memory Switch to Self", "[Pokemon Showdown]") {
@@ -77,22 +76,22 @@ TEST_CASE("Pokemon Showdown Slot Memory Fuzz", "[Pokemon Showdown]") {
 	};
 
 	auto slot_memory = ps::SlotMemory(6_bi);
-	
+
 	for (auto const n [[maybe_unused]] : containers::integer_range(iterations)) {
 		try {
-			switch(action_distribution(random_engine)) {
-			case 0:
-				slot_memory = ps::SlotMemory(random_size());
-				break;
-			case 1:
-				slot_memory[random_index()];
-				break;
-			case 2:
-				slot_memory.switch_to(random_index());
-				break;
-			case 3:
-				slot_memory.replace_fainted(random_index());
-				break;
+			switch (action_distribution(random_engine)) {
+				case 0:
+					slot_memory = ps::SlotMemory(random_size());
+					break;
+				case 1:
+					slot_memory[random_index()];
+					break;
+				case 2:
+					slot_memory.switch_to(random_index());
+					break;
+				case 3:
+					slot_memory.replace_fainted(random_index());
+					break;
 			}
 		} catch (std::exception const &) {
 		}

@@ -61,4 +61,4 @@ private:
 	containers::static_vector<char, max_size> m_data;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

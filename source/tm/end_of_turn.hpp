@@ -57,4 +57,4 @@ TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
 #undef TECHNICALMACHINE_EXTERN_INSTANTIATION
 #undef TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

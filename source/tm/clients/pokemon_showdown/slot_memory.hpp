@@ -26,7 +26,7 @@ namespace ps {
 
 struct SlotMemory {
 	using Index = decltype(std::declval<TeamIndex>() + 1_bi);
-	
+
 	constexpr explicit SlotMemory(TeamSize const size) {
 		if (size == 0_bi) {
 			throw std::runtime_error("Pokemon Showdown told us to construct an empty team.");
@@ -35,7 +35,7 @@ struct SlotMemory {
 			containers::push_back(m_container, index + 1_bi);
 		}
 	}
-	
+
 	constexpr auto operator[](TeamIndex const index) const -> Index {
 		return containers::at(m_container, index);
 	}
@@ -49,6 +49,7 @@ struct SlotMemory {
 		auto const it = swap_to_front(index);
 		containers::erase(m_container, it);
 	}
+
 private:
 	using Container = containers::static_vector<Index, max_pokemon_per_team>;
 	auto swap_to_front(TeamIndex const index) -> containers::iterator_t<Container &> {
@@ -60,5 +61,5 @@ private:
 	Container m_container;
 };
 
-}	// namespace ps
-}	// namespace technicalmachine
+} // namespace ps
+} // namespace technicalmachine

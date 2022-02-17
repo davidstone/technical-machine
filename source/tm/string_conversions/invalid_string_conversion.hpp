@@ -14,5 +14,4 @@ struct InvalidFromStringConversion : std::runtime_error {
 	InvalidFromStringConversion(std::string_view target, std::string_view requested);
 };
 
-}	// namespace technicalmachine
-
+} // namespace technicalmachine

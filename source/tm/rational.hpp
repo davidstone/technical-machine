@@ -36,6 +36,7 @@ private:
 	Denominator m_denominator;
 	using numerator_type = Numerator;
 	using denominator_type = Denominator;
+
 public:
 	constexpr rational(Numerator const numerator, Denominator const denominator):
 		m_numerator(numerator),
@@ -65,7 +66,7 @@ public:
 		using bounded::to_string;
 		return containers::concatenate<containers::string>(to_string(r.numerator()), std::string_view(" / "), to_string(r.denominator()));
 	}
-	
+
 	// Convert allows narrowing conversions, constructor does not
 	template<typename T>
 	constexpr T convert() const {
@@ -74,11 +75,11 @@ public:
 			static_cast<typename T::denominator_type>(m_denominator)
 		);
 	}
-	
+
 	explicit constexpr operator double() const {
 		return static_cast<double>(m_numerator) / static_cast<double>(m_denominator);
 	}
-	
+
 	constexpr auto invert() const {
 		return make_rational(m_denominator, m_numerator);
 	}
@@ -153,13 +154,14 @@ constexpr auto operator%(bounded::bounded_integer auto const lhs, rational<N, D>
 }
 
 
-}	// namespace technicalmachine
+} // namespace technicalmachine
 
 template<typename N1, typename D1, typename N2, typename D2>
 struct std::common_type<technicalmachine::rational<N1, D1>, technicalmachine::rational<N2, D2>> {
 private:
 	using numerator = typename common_type<N1, N2>::type;
 	using denominator = typename common_type<D1, D2>::type;
+
 public:
 	using type = technicalmachine::rational<numerator, denominator>;
 };
@@ -169,6 +171,7 @@ struct std::common_type<technicalmachine::rational<N1, D1> const, technicalmachi
 private:
 	using numerator = typename common_type<N1, N2>::type;
 	using denominator = typename common_type<D1, D2>::type;
+
 public:
 	using type = technicalmachine::rational<numerator, denominator> const;
 };
@@ -178,6 +181,7 @@ struct std::common_type<technicalmachine::rational<N1, D1>, technicalmachine::ra
 private:
 	using numerator = typename common_type<N1, N2>::type;
 	using denominator = typename common_type<D1, D2>::type;
+
 public:
 	using type = technicalmachine::rational<numerator, denominator> const;
 };
@@ -187,6 +191,7 @@ struct std::common_type<technicalmachine::rational<N1, D1> const, technicalmachi
 private:
 	using numerator = typename common_type<N1, N2>::type;
 	using denominator = typename common_type<D1, D2>::type;
+
 public:
 	using type = technicalmachine::rational<numerator, denominator> const;
 };

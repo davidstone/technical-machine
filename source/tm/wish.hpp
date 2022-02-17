@@ -59,4 +59,4 @@ private:
 	[[no_unique_address]] ExistsIf<bounded::optional<counter_type>, exists> m_turns_until_activation;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

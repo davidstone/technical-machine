@@ -431,4 +431,4 @@ constexpr auto possible_dvs_or_ivs(bounded::optional<HiddenPower<generation>> co
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

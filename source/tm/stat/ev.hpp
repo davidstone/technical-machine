@@ -107,7 +107,7 @@ struct OldGenEVs {
 	constexpr auto && operator[](auto const index) {
 		return index_stat(*this, index);
 	}
-	
+
 	friend auto operator==(OldGenEVs, OldGenEVs) -> bool = default;
 
 private:
@@ -126,8 +126,9 @@ constexpr auto to_old_gen_evs(EVs const evs) -> OldGenEVs {
 }
 
 constexpr auto max_total_evs(Generation const generation) {
-	return
-		BOUNDED_CONDITIONAL(generation <= Generation::two, EV::max * 5_bi,
+	return BOUNDED_CONDITIONAL(
+		generation <= Generation::two,
+		EV::max * 5_bi,
 		510_bi
 	);
 }

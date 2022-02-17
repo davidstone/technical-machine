@@ -42,6 +42,7 @@ struct UsageStats {
 	auto const & get(Species const species) const {
 		return m_all_per_pokemon[bounded::integer(species)];
 	}
+
 private:
 	containers::array<PerPokemon, number_of<Species>> m_all_per_pokemon;
 };
@@ -51,8 +52,9 @@ struct AllUsageStats {
 	auto operator[](Generation const generation) const -> UsageStats const & {
 		return m_all_stats[bounded::integer(generation) - 1_bi];
 	}
+
 private:
 	containers::array<UsageStats, number_of<Generation>> m_all_stats;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

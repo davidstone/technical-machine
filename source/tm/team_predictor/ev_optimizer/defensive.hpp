@@ -127,9 +127,10 @@ struct DefensiveEVs {
 	constexpr auto find(Nature const nature) const {
 		return containers::find_if(m_container, [=](auto const value) { return value.nature == nature; });
 	}
+
 private:
 	static constexpr auto maximum_natures = containers::size(containers::enum_range<Nature>());
 	containers::static_vector<DataPoint, maximum_natures * bounded::pow(max_possible_optimized_ivs, 3_bi)> m_container;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

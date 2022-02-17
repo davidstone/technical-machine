@@ -91,8 +91,9 @@ struct SharedMoves {
 	OPERATORS_BRACKET_SEQUENCE_RANGE_DEFINITIONS
 
 	friend auto operator==(SharedMoves, SharedMoves) -> bool = default;
+
 private:
 	TeamSize m_number_of_switches;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

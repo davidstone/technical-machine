@@ -51,7 +51,7 @@ struct UnsupportedSpecies : std::runtime_error {
 	}
 };
 
-}	// namespace
+} // namespace
 
 Species id_to_species(SpeciesIDs const species) {
 	switch (species.id.value()) {
@@ -588,11 +588,9 @@ Species id_to_species(SpeciesIDs const species) {
 				default: throw InvalidFormeID("Shaymin", species.forme);
 			}
 		case 493: return Species::Arceus;
-		
-		default: {
+		default:
 			static_assert(numeric_traits::max_value<decltype(species.id)> == 493);
 			bounded::unreachable();
-		}
 	}
 }
 
@@ -1133,10 +1131,10 @@ constexpr SpeciesIDs::Forme to_forme(Species const species) {
 	}
 }
 
-}	// namespace
+} // namespace
 
 SpeciesIDs species_to_id(Species const species) {
-	return { to_id_only(species), to_forme(species) };
+	return {to_id_only(species), to_forme(species)};
 }
 
 Ability id_to_ability(AbilityID const id) {
@@ -1264,10 +1262,9 @@ Ability id_to_ability(AbilityID const id) {
 		case 121: return Ability::Multitype;
 		case 122: return Ability::Flower_Gift;
 		case 123: return Ability::Bad_Dreams;
-		default: {
+		default:
 			static_assert(numeric_traits::max_value<decltype(id)> == 123);
 			bounded::unreachable();
-		}
 	}
 }
 
@@ -1405,10 +1402,9 @@ Gender id_to_gender(GenderID const id) {
 		case 0: return Gender::genderless;
 		case 1: return Gender::male;
 		case 2: return Gender::female;
-		default: {
+		default:
 			static_assert(numeric_traits::max_value<decltype(id)> == 2);
 			bounded::unreachable();
-		}
 	}
 }
 
@@ -1649,10 +1645,9 @@ Item id_to_item(ItemID const id) {
 		case 224: return Item::Space_Mail;
 		case 225: return Item::Steel_Mail;
 		case 226: return Item::Tunnel_Mail;
-		default: {
+		default:
 			static_assert(numeric_traits::max_value<decltype(id)> == 226);
 			bounded::unreachable();
-		}
 	}
 }
 

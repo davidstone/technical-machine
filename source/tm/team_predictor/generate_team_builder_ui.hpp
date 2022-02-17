@@ -12,4 +12,4 @@ namespace technicalmachine {
 
 void generate_team_builder_ui(std::ostream & output, std::string_view query_string, std::string_view generated);
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

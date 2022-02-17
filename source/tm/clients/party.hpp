@@ -35,4 +35,4 @@ constexpr auto other(Party const party) -> Party {
 	return Party(1_bi - party.value());
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

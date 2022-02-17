@@ -25,7 +25,7 @@ struct BitView {
 		m_view(view)
 	{
 	}
-	
+
 	constexpr auto remaining_bits() const {
 		return bounded::increase_min<0>(::bounded::assume_in_range<containers::array_size_type<std::byte>>(m_view.size()) * bounded::char_bit - m_consumed_bits_in_initial_byte);
 	}
@@ -46,9 +46,12 @@ struct BitView {
 
 private:
 	struct not_an_integer {
-		constexpr explicit not_an_integer(auto) {}
-		constexpr void operator<<=(auto) const {}
-		constexpr void operator+=(auto) const {}
+		constexpr explicit not_an_integer(auto) {
+		}
+		constexpr void operator<<=(auto) const {
+		}
+		constexpr void operator+=(auto) const {
+		}
 	};
 
 	constexpr auto pop(std::size_t const bytes) -> std::span<std::byte const> {

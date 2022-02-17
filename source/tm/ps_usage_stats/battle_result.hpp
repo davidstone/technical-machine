@@ -23,7 +23,9 @@ struct BattleResult {
 		friend auto operator==(Side const &, Side const &) -> bool = default;
 	};
 	enum class Winner {
-		side1, side2, tie
+		side1,
+		side2,
+		tie
 	};
 	Side side1;
 	Side side2;

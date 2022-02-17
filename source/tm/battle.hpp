@@ -53,7 +53,7 @@ struct Battle {
 		do_switch(ai_pokemon, foe_pokemon);
 		do_switch(foe_pokemon, ai_pokemon);
 	}
-	
+
 	auto const & ai() const {
 		return m_ai;
 	}
@@ -186,9 +186,9 @@ private:
 	decltype(auto) apply_to_teams(bool const is_ai, auto function) {
 		if (is_ai) {
 			return function(m_ai, m_foe);
-		 } else {
-			 return function(m_foe, m_ai);
-		 }
+		} else {
+			return function(m_foe, m_ai);
+		}
 	}
 
 	KnownTeam<generation> m_ai;
@@ -196,4 +196,4 @@ private:
 	Weather m_weather;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

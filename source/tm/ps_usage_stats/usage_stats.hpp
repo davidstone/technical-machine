@@ -58,8 +58,8 @@ struct UsageStats {
 	constexpr auto total_teams() const {
 		return m_total_teams;
 	}
-private:
 
+private:
 	struct PerSpecies {
 		double total = 0.0;
 		containers::array<double, number_of<Ability>> abilities{};
@@ -86,6 +86,7 @@ struct LockedAccess {
 	constexpr auto unlocked() const -> T const & {
 		return m_data;
 	}
+
 private:
 	mutable std::mutex m_mutex;
 	T m_data;
@@ -105,6 +106,7 @@ private:
 		containers::array<double, max_initial_speed> speed = {};
 	};
 	static constexpr auto top_n_cutoff = 20_bi;
+
 public:
 	using TopMoves = containers::static_flat_map<Moves, std::unique_ptr<LockedAccess<MoveData>>, top_n_cutoff>;
 
@@ -114,6 +116,7 @@ public:
 	constexpr auto top_moves(Species const species) const -> TopMoves const & {
 		return m_data[bounded::integer(species)];
 	}
+
 private:
 	containers::array<TopMoves, number_of<Species>> m_data;
 };

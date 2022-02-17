@@ -58,6 +58,7 @@ struct ActiveStatus {
 		auto const byte = reinterpret_cast<std::byte const &>(value);
 		return compress(bounded::assume_in_range(static_cast<std::uint8_t>(byte), 0_bi, 15_bi));
 	}
+
 private:
 	template<any_mutable_active_pokemon PokemonType>
 	static constexpr auto handle_leech_seed(PokemonType const pokemon, OtherMutableActivePokemon<PokemonType> other, Weather const weather) -> void {

@@ -12,4 +12,4 @@ namespace technicalmachine {
 
 enum class Species : uint16_t;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

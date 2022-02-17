@@ -18,5 +18,5 @@ struct HPAndStatus {
 	Statuses status;
 };
 
-}	// namespace ps
-}	// namespace technicalmachine
+} // namespace ps
+} // namespace technicalmachine

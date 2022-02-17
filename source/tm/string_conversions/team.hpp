@@ -47,5 +47,4 @@ auto to_string(TeamType const & team, bool const include_owner = true) -> contai
 	return output;
 }
 
-
-}	// namespace technicalmachine
+} // namespace technicalmachine

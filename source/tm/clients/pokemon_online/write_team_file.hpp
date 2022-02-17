@@ -86,7 +86,7 @@ inline auto write_blank_pokemon(Generation const generation, boost::property_tre
 void write_pokemon(any_pokemon auto const & pokemon, boost::property_tree::ptree & pt) {
 	auto & member = pt.add("Pokemon", "");
 	member.put("<xmlattr>.Item", item_to_id(pokemon.item(false, false)));
-	member.put("<xmlattr>.Ability", ability_to_id (pokemon.initial_ability()));
+	member.put("<xmlattr>.Ability", ability_to_id(pokemon.initial_ability()));
 	auto const species = pokemon.species();
 	auto const po_species = species_to_id(species);
 	member.put("<xmlattr>.Num", po_species.id);
@@ -97,7 +97,7 @@ void write_pokemon(any_pokemon auto const & pokemon, boost::property_tree::ptree
 	member.put("<xmlattr>.Forme", po_species.forme);
 	member.put("<xmlattr>.Happiness", pokemon.happiness());
 	member.put("<xmlattr>.Lvl", pokemon.level()());
-	member.put("<xmlattr>.Gender", gender_to_id (pokemon.gender()));
+	member.put("<xmlattr>.Gender", gender_to_id(pokemon.gender()));
 
 	auto const & moves = pokemon.regular_moves();
 	for (auto const & move : moves) {

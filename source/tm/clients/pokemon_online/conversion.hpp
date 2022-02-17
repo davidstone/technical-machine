@@ -31,7 +31,7 @@ struct SpeciesIDs {
 	using ID = bounded::integer<1, 493>;
 	using Forme = bounded::integer<0, 5>;
 	ID id;
-	Forme forme;	
+	Forme forme;
 };
 Species id_to_species(SpeciesIDs species);
 SpeciesIDs species_to_id(Species species);

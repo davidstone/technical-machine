@@ -63,4 +63,4 @@ private:
 	Spe m_spe;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

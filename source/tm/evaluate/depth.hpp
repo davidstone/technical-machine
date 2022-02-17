@@ -32,7 +32,7 @@ struct Depth {
 		m_max_print_depth(max_print_depth)
 	{
 	}
-	
+
 	constexpr auto general_initial() const {
 		return m_to_search.general;
 	}

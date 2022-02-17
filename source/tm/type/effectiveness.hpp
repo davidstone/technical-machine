@@ -86,4 +86,4 @@ auto affects_target(KnownMove const move, TargetPokemon const target, Weather co
 	return !effectiveness.has_no_effect() and (move.type != Type::Ground or grounded(target, weather));
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

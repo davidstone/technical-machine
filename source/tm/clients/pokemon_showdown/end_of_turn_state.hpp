@@ -52,9 +52,9 @@ struct EndOfTurnState {
 	constexpr auto complete() & -> Result {
 		return std::exchange(m_result, {});
 	}
-	
+
 private:
-	constexpr auto individual(Party const party) & -> Result::Individual &{
+	constexpr auto individual(Party const party) & -> Result::Individual & {
 		// TODO: This needs something smarter -- there are end of turn tiers
 		if (!m_result.first_party) {
 			bounded::insert(m_result.first_party, party);

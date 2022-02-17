@@ -95,7 +95,7 @@ struct Team {
 	TeamSize size() const {
 		return containers::size(all_pokemon());
 	}
-	
+
 	bool is_me() const {
 		return me;
 	}

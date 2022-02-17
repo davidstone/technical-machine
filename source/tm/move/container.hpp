@@ -30,6 +30,7 @@ struct MoveContainer {
 private:
 	template<typename Range>
 	using Transformed = decltype(move_container_transform(std::declval<Range>()));
+
 public:
 	MoveContainer(RegularMoves regular, TeamSize const my_team_size):
 		m_regular(regular),
@@ -40,7 +41,7 @@ public:
 	auto const & regular() const {
 		return m_regular;
 	}
-	
+
 	auto begin() const {
 		using iterator = containers::concatenate_view_iterator<
 			Transformed<RegularMoves>,
@@ -64,4 +65,4 @@ private:
 	SharedMoves<generation> m_shared;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

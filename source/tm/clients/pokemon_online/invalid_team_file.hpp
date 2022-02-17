@@ -17,5 +17,5 @@ struct InvalidTeamFile : std::runtime_error {
 	InvalidTeamFile(std::string_view expected, std::string_view received);
 };
 
-}	// namespace po
-}	// namespace technicalmachine
+} // namespace po
+} // namespace technicalmachine

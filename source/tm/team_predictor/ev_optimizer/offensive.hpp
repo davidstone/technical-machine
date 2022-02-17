@@ -131,4 +131,4 @@ private:
 	containers::static_vector<OffensiveStats, maximum_natures * bounded::pow(max_possible_optimized_ivs, 2_bi)> m_container;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

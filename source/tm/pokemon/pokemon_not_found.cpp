@@ -21,4 +21,4 @@ PokemonNotFound::PokemonNotFound(Species const species):
 {
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

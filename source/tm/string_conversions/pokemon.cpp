@@ -49,7 +49,7 @@ constexpr auto atk_iv_def_iv = " Atk / "sv;
 constexpr auto def_iv_spa_iv = " Def / "sv;
 constexpr auto spa_iv_spd_iv = " SpA / "sv;
 constexpr auto spd_iv_spe_iv = " SpD / "sv;
-constexpr auto spe_iv_hp_ev= " Spe\n\tEVs: "sv;
+constexpr auto spe_iv_hp_ev = " Spe\n\tEVs: "sv;
 constexpr auto hp_ev_atk_ev = " HP / "sv;
 constexpr auto atk_ev_def_ev = " Atk / "sv;
 constexpr auto def_ev_spa_ev = " Def / "sv;
@@ -97,11 +97,11 @@ auto to_string(PokemonType const & pokemon) -> containers::string {
 	};
 
 	auto stats = calculate_ivs_and_evs(pokemon);
-	
+
 	auto stat_to_iv_string = [&](auto const stat_name) {
 		return bounded::to_string(stats.dvs_or_ivs[stat_name].value());
 	};
-	
+
 	auto stat_to_ev_string = [&](auto const stat_name) {
 		return bounded::to_string(stats.evs[stat_name].value());
 	};
@@ -159,8 +159,8 @@ auto to_string(PokemonType const & pokemon) -> containers::string {
 			);
 		}
 	};
-	
-	auto moves_to_string = [&]{
+
+	auto moves_to_string = [&] {
 		containers::string output;
 		for (auto const & move : pokemon.regular_moves()) {
 			output = containers::concatenate<containers::string>(std::move(output), moves_separator, to_string(move.name()));
@@ -314,4 +314,4 @@ TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

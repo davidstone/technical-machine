@@ -18,4 +18,4 @@ using SlowStart = EndOfTurnCounter<
 	CounterOperations::advance_one_turn_fixed
 >;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -51,7 +51,7 @@ auto doubling(AttackerPokemon const attacker, Moves const move, any_active_pokem
 	switch (move) {
 		case Moves::Assurance:
 			return defender.damaged();
-		case Moves::Avalanche: 
+		case Moves::Avalanche:
 		case Moves::Revenge:
 			return attacker.damaged();
 		case Moves::Behemoth_Bash:
@@ -334,7 +334,7 @@ auto defender_ability_modifier(Type const move_type, Ability const ability) -> r
 	}
 }
 
-}	// namespace
+} // namespace
 
 template<any_team UserTeam, any_team DefenderTeam>
 auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Weather const weather) -> MovePower {

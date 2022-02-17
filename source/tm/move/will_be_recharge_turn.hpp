@@ -21,4 +21,4 @@ auto will_be_recharge_turn(any_active_pokemon auto const user, Moves const move,
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

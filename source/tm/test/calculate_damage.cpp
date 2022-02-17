@@ -67,7 +67,7 @@ auto max_damage_physical_attacker(Item const item, Ability const ability) {
 
 	auto pokemon = attacker.pokemon();
 	pokemon.switch_in(Weather());
-	
+
 	pokemon.defense_curl();
 	for (auto const n [[maybe_unused]] : containers::integer_range(10_bi)) {
 		pokemon.successfully_use_move(max_damage_physical_move().name());
@@ -179,7 +179,7 @@ TEST_CASE("Max physical damage", "[Damage]") {
 	attacker_pokemon.stages()[BoostableStat::atk] += 6_bi;
 
 	auto const defender = max_damage_physical_defender();
-	
+
 	auto const calculated_damage = calculate_damage(
 		attacker,
 		max_damage_executed_physical_move(),
@@ -224,11 +224,11 @@ TEST_CASE("Max special damage", "[Damage]") {
 	auto attacker_pokemon = attacker.pokemon();
 	attacker_pokemon.switch_in(weather);
 	attacker_pokemon.set_hp(weather, 1_bi);
-	
+
 	attacker_pokemon.set_type(Type::Fire);
 
 	attacker_pokemon.stages()[BoostableStat::spa] += 6_bi;
-	
+
 	for (auto const n [[maybe_unused]] : containers::integer_range(10_bi)) {
 		attacker_pokemon.successfully_use_move(move.name());
 	}

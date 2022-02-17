@@ -20,4 +20,4 @@ using Rampage = EndOfTurnCounter<
 	CounterOperations::activate
 >;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

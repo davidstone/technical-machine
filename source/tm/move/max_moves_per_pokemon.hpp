@@ -29,4 +29,4 @@ using StaticVectorMove = containers::static_vector<
 	numeric_traits::max_value<MoveSize>
 >;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

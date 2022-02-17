@@ -51,7 +51,7 @@ TEST_CASE("Optimize already optimized EVs", "[EV Optimizer]") {
 	auto const base_stats = BaseStats(generation, species);
 	auto const stats = Stats<generation>(base_stats, level, ivs_and_evs);
 	auto random_engine = std::mt19937(std::random_device()());
-	
+
 	CHECK(compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack) == ivs_and_evs);
 	CHECK(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
 	auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack, random_engine);

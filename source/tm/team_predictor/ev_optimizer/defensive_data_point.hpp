@@ -17,4 +17,4 @@ struct DataPoint {
 	IVAndEV special_defense;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

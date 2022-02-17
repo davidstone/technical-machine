@@ -36,14 +36,14 @@ auto from_string(std::string_view const str) -> Generation {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<std::string_view, Generation>>({
-			{ "1", Generation::one },
-			{ "2", Generation::two },
-			{ "3", Generation::three },
-			{ "4", Generation::four },
-			{ "5", Generation::five },
-			{ "6", Generation::six },
-			{ "7", Generation::seven },
-			{ "8", Generation::eight },
+			{"1", Generation::one},
+			{"2", Generation::two},
+			{"3", Generation::three},
+			{"4", Generation::four},
+			{"5", Generation::five},
+			{"6", Generation::six},
+			{"7", Generation::seven},
+			{"8", Generation::eight},
 		})
 	);
 	auto const result = containers::lookup(converter, str);
@@ -53,4 +53,4 @@ auto from_string(std::string_view const str) -> Generation {
 	return *result;
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

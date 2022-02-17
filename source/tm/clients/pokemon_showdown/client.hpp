@@ -44,9 +44,9 @@ private:
 	void send_channel_message(std::string_view channel, std::string_view message);
 
 	void join_channel(std::string_view channel);
-	
+
 	void authenticate(std::string_view challstr);
-	
+
 	DelimitedBufferView<std::string_view> read_message();
 
 	std::random_device m_rd;
@@ -56,11 +56,11 @@ private:
 	AllEvaluate m_evaluate;
 
 	SettingsFile m_settings;
-	
+
 	DepthValues m_depth;
-	
+
 	Battles m_battles;
-	
+
 	SendMessageFunction m_send_message;
 	AuthenticationFunction m_authenticate;
 };
@@ -68,10 +68,11 @@ private:
 struct Client {
 	Client(SettingsFile settings, DepthValues);
 	[[noreturn]] void run();
+
 private:
 	Sockets m_sockets;
 	ClientImpl m_impl;
 };
 
-}	// namespace ps
-}	// namespace technicalmachine
+} // namespace ps
+} // namespace technicalmachine

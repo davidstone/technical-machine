@@ -363,10 +363,10 @@ constexpr auto get_priority(Generation const generation, Moves const move) {
 	return constant_generation(generation, [=](auto const g) { return priority_impl(g, move); });
 }
 
-}	// namespace
+} // namespace
 
-Priority::Priority(Generation const generation, Moves const move) :
+Priority::Priority(Generation const generation, Moves const move):
 	priority(get_priority(generation, move)) {
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

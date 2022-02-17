@@ -83,4 +83,4 @@ bounded::integer<0, 80> berry_power(Item const item) {
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

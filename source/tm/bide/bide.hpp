@@ -29,9 +29,10 @@ struct Bide {
 	friend constexpr auto compress(Bide const value) {
 		return compress_combine(value.m_damage, value.m_duration);
 	}
+
 private:
 	BideDamage m_damage;
 	BideDuration m_duration;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

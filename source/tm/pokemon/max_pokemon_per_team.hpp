@@ -20,4 +20,4 @@ using TeamIndex = bounded::integer<
 	bounded::normalize<max_pokemon_per_team - 1_bi>
 >;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

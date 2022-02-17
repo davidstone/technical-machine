@@ -22,10 +22,10 @@ constexpr auto to_string(InvalidSettingsFile::Problem const problem) -> std::str
 		case InvalidSettingsFile::Problem::invalid_data: return " contains invalid data.";
 	}
 }
-}	// namespace
+} // namespace
 
 InvalidSettingsFile::InvalidSettingsFile(std::filesystem::path const & file_name, Problem const problem):
 	std::runtime_error(containers::concatenate<std::string>(file_name.string(), to_string(problem))) {
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

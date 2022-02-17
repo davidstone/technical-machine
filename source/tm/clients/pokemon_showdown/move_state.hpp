@@ -60,7 +60,7 @@ struct MoveState {
 	using FoeResult = Result<SeenTeam<generation>>;
 	template<Generation generation>
 	using CompleteResult = bounded::variant<NoResult, AIResult<generation>, FoeResult<generation>>;
-	
+
 	auto party() const -> bounded::optional<Party> {
 		return m_party;
 	}
@@ -69,7 +69,7 @@ struct MoveState {
 	}
 
 	void use_move(Party const party, Moves const move);
-	
+
 	bool move_damages_self(Party const party) const;
 
 	void damage(Party const party, HPAndStatus const hp_and_status) {
@@ -193,13 +193,14 @@ struct MoveState {
 
 	template<Generation generation>
 	auto complete(Party ai_party, KnownTeam<generation> const & ai, SeenTeam<generation> const & foe, Weather const weather) -> CompleteResult<generation>;
+
 private:
 	void validate(Party const party) const {
 		if (m_party != party or !m_move) {
 			throw_error();
 		}
 	}
-	
+
 	[[noreturn]] void throw_error() const {
 		throw std::runtime_error("Received battle messages out of order");
 	}
@@ -217,7 +218,9 @@ private:
 	};
 
 	enum class StatusChange {
-		nothing_relevant, still_asleep, thaw_or_awaken
+		nothing_relevant,
+		still_asleep,
+		thaw_or_awaken
 	};
 
 	bounded::optional<Party> m_party;
@@ -249,5 +252,5 @@ TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
 
 #undef TECHNICALMACHINE_EXTERN_INSTANTIATION
 
-}	// namespace ps
-}	// namespace technicalmachine
+} // namespace ps
+} // namespace technicalmachine

@@ -22,6 +22,7 @@ using namespace bounded::literal;
 struct Substitute {
 private:
 	using hp_type = decltype(std::declval<HP::current_type>() / 4_bi);
+
 public:
 	enum class Interaction { absorbs, bypassed, causes_failure };
 	// TODO: using enum
@@ -56,10 +57,11 @@ public:
 	friend constexpr auto compress(Substitute const value) {
 		return value.m_hp;
 	}
+
 private:
 	hp_type m_hp = 0_bi;
 };
 
 auto substitute_interaction(Generation, Moves) -> Substitute::Interaction;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

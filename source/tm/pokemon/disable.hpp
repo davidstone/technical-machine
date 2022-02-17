@@ -46,6 +46,7 @@ struct Disable {
 	friend constexpr auto compress(Disable const value) {
 		return compress_combine(value.m_disabled_move, value.m_turns_disabled);
 	}
+
 private:
 	// TODO: Use an optional struct?
 	bounded::optional<Moves> m_disabled_move = bounded::none;
@@ -53,4 +54,4 @@ private:
 	TurnCount m_turns_disabled = 0_bi;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

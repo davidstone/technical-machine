@@ -47,6 +47,7 @@ struct RegularMoves {
 	friend constexpr auto compress(RegularMoves const value) {
 		return compress(value.m_moves);
 	}
+
 private:
 	containers::static_vector<Move, max_moves_per_pokemon> m_moves;
 };

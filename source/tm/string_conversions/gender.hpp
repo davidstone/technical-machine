@@ -17,4 +17,4 @@ auto to_string(Gender const gender) -> std::string_view;
 template<>
 auto from_string<Gender>(std::string_view const str) -> Gender;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

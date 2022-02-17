@@ -81,7 +81,7 @@ struct Screens {
 			value.tailwind()
 		);
 	}
-	
+
 private:
 	LightScreen m_light_screen;
 	Reflect m_reflect;

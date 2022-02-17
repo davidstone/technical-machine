@@ -86,7 +86,7 @@ struct KnownTeam {
 	constexpr auto size() const -> TeamSize {
 		return containers::size(all_pokemon());
 	}
-	
+
 	constexpr auto reset_start_of_turn() -> void {
 		m_flags.reset_start_of_turn();
 	}

@@ -891,4 +891,4 @@ auto fling_power(Item const item) -> bounded::integer<0, 130> {
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

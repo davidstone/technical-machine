@@ -19,4 +19,4 @@ using PerishSong = EndOfTurnCounter<
 	CounterOperations::activate
 >;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

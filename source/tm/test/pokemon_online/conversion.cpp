@@ -57,7 +57,7 @@ TEST_CASE("item conversion", "[pokemon online]") {
 }
 
 TEST_CASE("move conversion", "[pokemon online]") {
-	for(auto const original : containers::enum_range<Moves>()) {
+	for (auto const original : containers::enum_range<Moves>()) {
 		if (is_regular(original)) {
 			auto const id = po::move_to_id(original);
 			auto const result = po::id_to_move(id);

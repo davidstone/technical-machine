@@ -39,7 +39,7 @@ struct InMessage {
 private:
 	constexpr InMessage(std::string_view const room, DelimitedBufferView<std::string_view> view):
 		m_room(room),
-		m_type([&]{
+		m_type([&] {
 			// Because messages start with a '|', discard first empty string
 			auto const discarded = view.pop();
 			if (!discarded.empty()) {
@@ -56,5 +56,5 @@ private:
 	DelimitedBufferView<std::string_view> m_view;
 };
 
-}	// namespace ps
-}	// namespace technicalmachine
+} // namespace ps
+} // namespace technicalmachine

@@ -32,11 +32,11 @@ auto from_string(std::string_view const str) -> Gender {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<std::string_view, Gender>>({
-			{ "female", Gender::female },
-			{ "genderless", Gender::genderless },
-			{ "male", Gender::male },
-			{ "nogender", Gender::genderless },
-			{ "none", Gender::genderless },
+			{"female", Gender::female},
+			{"genderless", Gender::genderless},
+			{"male", Gender::male},
+			{"nogender", Gender::genderless},
+			{"none", Gender::genderless},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<10_bi>(str);
@@ -47,4 +47,4 @@ auto from_string(std::string_view const str) -> Gender {
 	return *result;
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

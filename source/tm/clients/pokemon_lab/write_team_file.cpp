@@ -16,7 +16,7 @@ namespace pl {
 auto write_move(Move const move, boost::property_tree::ptree & pt) -> void {
 	boost::property_tree::ptree & m = pt.add("moveset.move", to_string(move.name()));
 	// TODO: replace with real PP ups logic
-	m.put ("<xmlattr>.pp-up", 3);
+	m.put("<xmlattr>.pp-up", 3);
 }
 
 auto to_simulator_string(SplitSpecialPermanentStat const stat) -> std::string_view {

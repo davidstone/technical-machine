@@ -396,14 +396,14 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		unsuccessfully_use_move();
 		return;
 	}
-	
+
 	auto const other_ability = other_pokemon.ability();
 
 	if (move.executed != Moves::Hit_Self and !user_pokemon.last_used_move().is_locked_in_by_move()) {
 		auto const uses_extra_pp = other_ability == Ability::Pressure;
 		user_pokemon.reduce_pp(move.selected, weather, BOUNDED_CONDITIONAL(uses_extra_pp, 2_bi, 1_bi));
 	}
-	
+
 	// TODO: What happens if we Sleep Talk Trump Card?
 	// TODO: Make sure this does not happen because we missed due to a vanishing
 	// state

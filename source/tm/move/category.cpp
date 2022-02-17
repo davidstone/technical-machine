@@ -869,4 +869,4 @@ auto is_damaging(Moves const move) -> bool {
 	return move_category(Generation::eight, {move, Type::Typeless}) != MoveCategory::other;
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

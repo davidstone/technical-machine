@@ -22,6 +22,7 @@ struct CurrentVisibleHP {
 	}
 
 	friend constexpr auto operator<=>(CurrentVisibleHP, CurrentVisibleHP) = default;
+
 private:
 	HP::current_type m_value;
 };
@@ -37,6 +38,7 @@ struct MaxVisibleHP {
 	}
 
 	friend constexpr auto operator<=>(MaxVisibleHP, MaxVisibleHP) = default;
+
 private:
 	HP::max_type m_value;
 };

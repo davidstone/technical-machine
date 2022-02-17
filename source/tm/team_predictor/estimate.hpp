@@ -22,8 +22,9 @@ struct Estimate {
 	auto update(UsageStats const & usage_stats, Species species) -> void;
 	auto most_likely() const -> Species;
 	auto random(std::mt19937 & random_engine) const -> Species;
+
 private:
 	containers::array<float, number_of<Species>> m_estimate;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

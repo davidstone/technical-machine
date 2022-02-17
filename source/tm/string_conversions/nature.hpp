@@ -16,4 +16,4 @@ auto to_string(Nature nature) -> std::string_view;
 template<>
 auto from_string<Nature>(std::string_view const str) -> Nature;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

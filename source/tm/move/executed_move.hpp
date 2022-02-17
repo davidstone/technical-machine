@@ -20,4 +20,4 @@ struct ExecutedMove {
 	bool critical_hit;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

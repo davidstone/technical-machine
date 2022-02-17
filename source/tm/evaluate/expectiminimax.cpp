@@ -67,12 +67,12 @@ double generic_flag_branch(auto const & basic_probability, auto const & next_bra
 	};
 
 	double average_score = 0.0;
-	for (auto const first_flag : { true, false }) {
+	for (auto const first_flag : {true, false}) {
 		auto const p1 = probability(true, first_flag);
 		if (p1 == 0.0) {
 			continue;
 		}
-		for (auto const last_flag : { true, false }) {
+		for (auto const last_flag : {true, false}) {
 			auto const p2 = probability(false, last_flag);
 			if (p2 == 0.0) {
 				continue;
@@ -110,7 +110,7 @@ struct SelectMoveResult {
 double generic_flag_branch(double const basic_probability, auto const & next_branch) {
 	BOUNDED_ASSERT_OR_ASSUME(0.0 <= basic_probability and basic_probability <= 1.0);
 	double average_score = 0.0;
-	for (auto const flag : { false, true }) {
+	for (auto const flag : {false, true}) {
 		auto const probability = flag ? basic_probability : (1.0 - basic_probability);
 		if (probability == 0.0) {
 			continue;
@@ -194,7 +194,7 @@ private:
 	KnownMove m_other_move;
 };
 
-constexpr auto all_are_pass_or_switch [[maybe_unused]](StaticVectorMove const legal_selections) {
+constexpr auto all_are_pass_or_switch [[maybe_unused]] (StaticVectorMove const legal_selections) {
 	return
 		(containers::size(legal_selections) == 1_bi and containers::front(legal_selections) == Moves::Pass) or
 		containers::all(legal_selections, is_switch);
@@ -270,7 +270,7 @@ struct Evaluator {
 		if (auto const score = m_transposition_table.get_score(ai, foe, weather, depth.remaining())) {
 			return *score;
 		}
-		
+
 		auto const ai_selections = legal_selections(ai, foe, weather);
 		auto const foe_selections = legal_selections(foe, ai, weather);
 		auto const best_move = select_move_branch(ai, ai_selections, foe, foe_selections, weather, depth, [&](auto && ... args) {
@@ -314,7 +314,7 @@ private:
 		// for which the foe's best response is more positive than the first
 		// move found. In other words, it finds the move for the AI for which the
 		// foe's best response is the weakest.
-		
+
 		// Something to consider as a potential speed up at the cost of some
 		// accuracy (but would allow a deeper, thus more accurate, search) would be
 		// to pick from all random numbers randomly, rather than seeing the outcome
@@ -324,14 +324,14 @@ private:
 		// massive reductions to the branching factor, and with a large enough
 		// number of trials could be close enough to the average to potentially
 		// speed up the program enough to justify the loss in accuracy.
-		
+
 		// I subtract 1 from -victory to make sure that even a guaranteed
 		// loss is seen as better than not returning a result. This way, I can do
 		// some things when my intermediate scores are strictly greater than alpha,
 		// rather than greater than or equal to, which can save a few calculations.
-		
+
 		// For a similar reason, I later set beta to victory + 1.
-		
+
 		// This change also has the advantage of making sure a move is always put
 		// into best_move without any additional logic, such as pre-filling it with
 		// some result.
@@ -545,7 +545,7 @@ private:
 	TranspositionTable<generation> m_transposition_table;
 };
 
-}	// namespace
+} // namespace
 
 template<Generation generation>
 auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::ostream & log) -> BestMove {
@@ -581,4 +581,4 @@ TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

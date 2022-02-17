@@ -58,6 +58,7 @@ struct HeldItem {
 	friend constexpr auto compress(HeldItem const value) {
 		return compress_combine(value.m_item, value.m_active);
 	}
+
 private:
 	constexpr auto affected_by_embargo(Generation const generation) const -> bool {
 		// Iron_Ball is disabled in Generation 4 for the Speed check but not for
@@ -81,4 +82,4 @@ private:
 };
 
 auto fling_power(Item item) -> bounded::integer<0, 130>;
-}	// namespace technicalmachine
+} // namespace technicalmachine

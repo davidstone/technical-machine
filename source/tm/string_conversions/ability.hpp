@@ -19,4 +19,4 @@ auto to_string(Ability const name) -> std::string_view;
 template<>
 auto from_string<Ability>(std::string_view const str) -> Ability;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

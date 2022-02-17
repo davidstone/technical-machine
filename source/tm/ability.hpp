@@ -93,7 +93,7 @@ enum class Ability : std::uint16_t {
 	Pure_Power,
 	Shell_Armor,
 	Air_Lock,
-	
+
 	// Generation 4
 	Tangled_Feet,
 	Motor_Drive,
@@ -142,7 +142,7 @@ enum class Ability : std::uint16_t {
 	Multitype,
 	Flower_Gift,
 	Bad_Dreams,
-	
+
 	// Generation 5
 	Pickpocket,
 	Sheer_Force,
@@ -185,7 +185,7 @@ enum class Ability : std::uint16_t {
 	Victory_Star,
 	Turboblaze,
 	Teravolt,
-	
+
 	// Generation 6
 	Aroma_Veil,
 	Flower_Veil,
@@ -214,7 +214,7 @@ enum class Ability : std::uint16_t {
 	Primordial_Sea,
 	Desolate_Land,
 	Delta_Stream,
-	
+
 	// Generation 7
 	Stamina,
 	Wimp_Out,
@@ -258,7 +258,7 @@ enum class Ability : std::uint16_t {
 	Shadow_Shield,
 	Prism_Armor,
 	Neuroforce,
-	
+
 	// Generation 8
 	Intrepid_Sword,
 	Dauntless_Shield,
@@ -396,4 +396,4 @@ constexpr bool boosts_stab(Ability const ability) {
 auto blocks_intimidate(Generation, Ability) -> bool;
 auto traceable(Generation, Ability) -> bool;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

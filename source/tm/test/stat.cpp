@@ -232,7 +232,7 @@ TEST_CASE("Calculate max Speed", "[calculate stat]") {
 	pokemon.stages()[BoostableStat::spe] += 6_bi;
 
 	team.activate_tailwind();
-	
+
 	CHECK(calculate_speed(team, Ability::Honey_Gather, weather) == max_speed);
 }
 

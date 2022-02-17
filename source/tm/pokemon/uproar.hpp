@@ -19,4 +19,4 @@ using UproarCounter = EndOfTurnCounter<
 	CounterOperations::activate
 >;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

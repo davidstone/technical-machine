@@ -48,7 +48,7 @@ auto Sockets::authenticate(std::string_view const host, std::string_view const p
 	auto socket = make_connected_socket(host, port);
 
 	http::write(socket, request);
-	
+
 	auto buffer = boost::beast::flat_buffer{};
 	auto response = http::response<http::string_body>{};
 	http::read(socket, buffer, response);

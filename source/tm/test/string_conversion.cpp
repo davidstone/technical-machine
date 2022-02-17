@@ -76,7 +76,7 @@ TEST_CASE("weather", "[string_conversion]") {
 
 TEST_CASE("pokemon", "[string_conversion]") {
 	constexpr auto generation = Generation::three;
-	
+
 	auto make_pokemon = [](RegularMoves const moves, Statuses const status = Statuses::clear) {
 		auto pokemon = Pokemon<generation>(
 			Species::Mewtwo,

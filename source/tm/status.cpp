@@ -20,7 +20,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 Status::Status(Statuses const status):
-	m_state([=]{
+	m_state([=] {
 		switch (status) {
 			case Statuses::clear: return State(Clear{});
 			case Statuses::burn: return State(Burn{});
@@ -40,16 +40,16 @@ auto lowers_speed(Status const status, Ability const ability) -> bool {
 }
 auto boosts_facade(Status const status) -> bool {
 	switch (status.name()) {
-	case Statuses::burn:
-	case Statuses::paralysis:
-	case Statuses::poison:
-	case Statuses::toxic:
-		return true;
-	case Statuses::clear:
-	case Statuses::freeze:
-	case Statuses::sleep:
-	case Statuses::rest:
-		return false;
+		case Statuses::burn:
+		case Statuses::paralysis:
+		case Statuses::poison:
+		case Statuses::toxic:
+			return true;
+		case Statuses::clear:
+		case Statuses::freeze:
+		case Statuses::sleep:
+		case Statuses::rest:
+			return false;
 	}
 }
 
@@ -75,14 +75,14 @@ using SleepCounter = bounded::integer<0, 4>;
 // It's possible to acquire Early Bird in the middle of a sleep
 constexpr auto early_bird_probability(SleepCounter const turns_slept) {
 	switch (turns_slept.value()) {
-	case 0:
-		return 1.0 / 4.0;
-	case 1:
-		return 1.0 / 2.0;
-	case 2:
-		return 2.0 / 3.0;
-	default:	// case 3, 4
-		return 1.0;
+		case 0:
+			return 1.0 / 4.0;
+		case 1:
+			return 1.0 / 2.0;
+		case 2:
+			return 2.0 / 3.0;
+		default: // case 3, 4
+			return 1.0;
 	}
 }
 
@@ -106,7 +106,7 @@ constexpr auto rest_awaken_probability(Generation const generation, bounded::int
 	return turns_slept == max_duration ? 1.0 : 0.0;
 }
 
-}	// namespace
+} // namespace
 
 auto Status::probability_of_clearing(Generation const generation, Ability const ability) const -> double {
 	return bounded::visit(m_state, bounded::overload(
@@ -123,62 +123,62 @@ bool blocks_status(Ability const ability, Ability const other_ability, Statuses 
 	};
 	auto const ability_blocked = other_ability == Ability::Mold_Breaker;
 	switch (status) {
-	case Statuses::burn:
-		if (ability_blocked) {
-			return false;
-		}
-		switch (ability) {
-		case Ability::Leaf_Guard:
-			return is_sunny();
-		case Ability::Water_Veil:
-			return true;
-		default:
-			return false;
-		}
-	case Statuses::freeze:
-		return is_sunny() or (!ability_blocked and ability == Ability::Magma_Armor);
-	case Statuses::paralysis:
-		if (ability_blocked) {
-			return false;
-		}
-		switch (ability) {
-		case Ability::Leaf_Guard:
-			return is_sunny();
-		case Ability::Limber:
-			return true;
-		default:
-			return false;
-		}
-	case Statuses::poison:
-	case Statuses::toxic:
-		if (ability_blocked) {
-			return false;
-		}
-		switch (ability) {
-		case Ability::Immunity:
-			return true;
-		case Ability::Leaf_Guard:
-			return is_sunny();
-		default:
-			return false;
-		}
-	case Statuses::sleep:
-	case Statuses::rest:
-		if (ability_blocked) {
-			return false;
-		}
-		switch (ability) {
-			case Ability::Insomnia:
-			case Ability::Vital_Spirit:
-				return true;
-			case Ability::Leaf_Guard:
-				return is_sunny();
-			default:
+		case Statuses::burn:
+			if (ability_blocked) {
 				return false;
-		}
-	case Statuses::clear:
-		return false;
+			}
+			switch (ability) {
+				case Ability::Leaf_Guard:
+					return is_sunny();
+				case Ability::Water_Veil:
+					return true;
+				default:
+					return false;
+			}
+		case Statuses::freeze:
+			return is_sunny() or (!ability_blocked and ability == Ability::Magma_Armor);
+		case Statuses::paralysis:
+			if (ability_blocked) {
+				return false;
+			}
+			switch (ability) {
+				case Ability::Leaf_Guard:
+					return is_sunny();
+				case Ability::Limber:
+					return true;
+				default:
+					return false;
+			}
+		case Statuses::poison:
+		case Statuses::toxic:
+			if (ability_blocked) {
+				return false;
+			}
+			switch (ability) {
+				case Ability::Immunity:
+					return true;
+				case Ability::Leaf_Guard:
+					return is_sunny();
+				default:
+					return false;
+			}
+		case Statuses::sleep:
+		case Statuses::rest:
+			if (ability_blocked) {
+				return false;
+			}
+			switch (ability) {
+				case Ability::Insomnia:
+				case Ability::Vital_Spirit:
+					return true;
+				case Ability::Leaf_Guard:
+					return is_sunny();
+				default:
+					return false;
+			}
+		case Statuses::clear:
+			return false;
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

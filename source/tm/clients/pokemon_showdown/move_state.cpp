@@ -41,7 +41,7 @@ bool MoveState::move_damages_self(Party const party) const {
 	if (!m_party or !m_move) {
 		throw_error();
 	}
-	auto const result = [&]{
+	auto const result = [&] {
 		switch (m_move->executed) {
 			case Moves::Belly_Drum:
 			case Moves::Clangorous_Soul:

@@ -59,9 +59,10 @@ struct EndOfTurnCounter {
 	friend constexpr auto compress(EndOfTurnCounter const value) {
 		return compress(value.m_turns_active);
 	}
+
 private:
 	using Counter = bounded::optional<bounded::integer<0, max_turns>>;
 	[[no_unique_address]] ExistsIf<Counter, is_supported_this_generation> m_turns_active{bounded::none};
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

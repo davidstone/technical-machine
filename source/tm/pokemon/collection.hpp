@@ -64,7 +64,7 @@ struct PokemonCollection {
 	constexpr auto size() const {
 		return containers::size(m_container);
 	}
-	
+
 	constexpr void set_index(TeamIndex const new_index) {
 		check_range(new_index);
 		m_index = new_index;
@@ -121,6 +121,7 @@ struct PokemonCollection {
 			);
 		}
 	}
+
 private:
 	constexpr void check_range(TeamIndex const new_index [[maybe_unused]]) const {
 		BOUNDED_ASSERT(new_index < size());

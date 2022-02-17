@@ -17,4 +17,4 @@ auto to_string(Statuses status) -> std::string_view;
 template<>
 auto from_string(std::string_view str) -> Statuses;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

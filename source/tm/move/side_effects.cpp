@@ -428,7 +428,7 @@ template<int minimum, int maximum>
 using make_integer_sequence = typename increase_by<minimum, std::make_integer_sequence<int, maximum - minimum + 1>>::type;
 
 template<any_team UserTeam>
-constexpr auto random_spite = []{
+constexpr auto random_spite = [] {
 	constexpr auto min_reduction = 2;
 	constexpr auto max_reduction = 5;
 	constexpr auto probability = 1.0 / double(max_reduction - min_reduction + 1);
@@ -1208,7 +1208,7 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 			return guaranteed_effect<UserTeam>([](auto &, auto &, auto & weather, auto) {
 				weather.activate_trick_room();
 			});
-	
+
 		case Moves::Light_Screen:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto & weather, auto) {
 				user.activate_light_screen(weather);
@@ -1251,7 +1251,7 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 					using Numerator = bounded::integer<1, 2>;
 					using Denominator = bounded::integer<2, 4>;
 					using Result = rational<Numerator, Denominator>;
-					
+
 					auto const blocks_weather = weather_is_blocked_by_ability(user.pokemon().ability(), other.pokemon().ability());
 					if (weather.sun(blocks_weather)) {
 						return Result(2_bi, 3_bi);

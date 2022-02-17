@@ -41,7 +41,7 @@ struct EntryHazards {
 	}
 
 	friend auto operator==(EntryHazards, EntryHazards) -> bool = default;
-	
+
 private:
 	static constexpr bool spikes_exist = generation >= Generation::two;
 	static constexpr auto max_spikes = generation == Generation::two ? 1 : 3;

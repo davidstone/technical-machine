@@ -31,4 +31,4 @@ void log_foe_team(UsageStats const & usage_stats, any_seen_team auto const & foe
 	pl::write_team(team, path);
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

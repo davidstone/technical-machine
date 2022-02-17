@@ -23,8 +23,9 @@ struct Happiness {
 	}
 
 	friend auto operator==(Happiness, Happiness) -> bool = default;
+
 private:
-	value_type m_value;	
+	value_type m_value;
 };
 
 constexpr auto return_power(Happiness const happiness) -> bounded::integer<0, 102> {
@@ -39,4 +40,4 @@ std::basic_ostream<CharT, Traits> & operator<<(std::basic_ostream<CharT, Traits>
 	return out << happiness();
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

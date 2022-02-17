@@ -132,6 +132,7 @@ struct KnownPokemon {
 	}
 
 	friend auto operator==(KnownPokemon const &, KnownPokemon const &) -> bool = default;
+
 private:
 	constexpr auto check_no_generation_one_hidden_power() const {
 		// TODO: More general check that they don't have later generation moves

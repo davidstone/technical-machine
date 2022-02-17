@@ -38,4 +38,4 @@ constexpr bounded::integer<-1, 1> multiplier(Gender const my, Gender const foe) 
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

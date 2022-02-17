@@ -35,14 +35,14 @@ auto from_string(std::string_view const str) -> Statuses {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<std::string_view, Statuses>>({
-			{ "burn", Statuses::burn },
-			{ "freeze", Statuses::freeze },
-			{ "nostatus", Statuses::clear },
-			{ "paralysis", Statuses::paralysis },
-			{ "poison", Statuses::poison },
-			{ "rest", Statuses::rest },
-			{ "sleep", Statuses::sleep },
-			{ "toxic", Statuses::toxic },
+			{"burn", Statuses::burn},
+			{"freeze", Statuses::freeze},
+			{"nostatus", Statuses::clear},
+			{"paralysis", Statuses::paralysis},
+			{"poison", Statuses::poison},
+			{"rest", Statuses::rest},
+			{"sleep", Statuses::sleep},
+			{"toxic", Statuses::toxic},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<9_bi>(str);
@@ -53,4 +53,4 @@ auto from_string(std::string_view const str) -> Statuses {
 	return *result;
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

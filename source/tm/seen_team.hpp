@@ -74,7 +74,7 @@ struct SeenTeam {
 	auto size() const -> TeamSize {
 		return all_pokemon().real_size();
 	}
-	
+
 	auto reset_start_of_turn() -> void {
 		m_flags.reset_start_of_turn();
 	}

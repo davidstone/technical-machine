@@ -238,21 +238,21 @@ auto item_modifier(PokemonType const pokemon, Weather const weather) {
 	constexpr auto denominator = 2_bi;
 	auto const species [[maybe_unused]] = pokemon.species();
 	auto const item = pokemon.item(weather);
-	auto const numerator = [&]{
+	auto const numerator = [&] {
 		if constexpr (stat == SplitSpecialRegularStat::atk) {
 			return [&]() -> bounded::integer<2, 4> {
 				switch (item) {
-				case Item::Choice_Band:
-					return 3_bi;
-				case Item::Light_Ball:
-					if (generation <= Generation::three) {
+					case Item::Choice_Band:
+						return 3_bi;
+					case Item::Light_Ball:
+						if (generation <= Generation::three) {
+							return denominator;
+						}
+						return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(species), 2_bi * denominator, denominator);
+					case Item::Thick_Club:
+						return BOUNDED_CONDITIONAL(is_boosted_by_thick_club(species), 2_bi * denominator, denominator);
+					default:
 						return denominator;
-					}
-					return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(species), 2_bi * denominator, denominator);
-				case Item::Thick_Club:
-					return BOUNDED_CONDITIONAL(is_boosted_by_thick_club(species), 2_bi * denominator, denominator);
-				default:
-					return denominator;
 				}
 			}();
 		} else if constexpr (stat == SplitSpecialRegularStat::def) {
@@ -267,49 +267,49 @@ auto item_modifier(PokemonType const pokemon, Weather const weather) {
 		} else if constexpr (stat == SplitSpecialRegularStat::spa) {
 			return [&]() -> bounded::integer<2, 4> {
 				switch (item) {
-				case Item::Soul_Dew:
-					return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(species), 3_bi, denominator);
-				case Item::Choice_Specs:
-					return 3_bi;
-				case Item::Deep_Sea_Tooth:
-					return BOUNDED_CONDITIONAL(is_boosted_by_deep_sea_tooth(species), 2_bi * denominator, denominator);
-				case Item::Light_Ball:
-					return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(species), 2_bi * denominator, denominator);
-				default:
-					return denominator;
+					case Item::Soul_Dew:
+						return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(species), 3_bi, denominator);
+					case Item::Choice_Specs:
+						return 3_bi;
+					case Item::Deep_Sea_Tooth:
+						return BOUNDED_CONDITIONAL(is_boosted_by_deep_sea_tooth(species), 2_bi * denominator, denominator);
+					case Item::Light_Ball:
+						return BOUNDED_CONDITIONAL(is_boosted_by_light_ball(species), 2_bi * denominator, denominator);
+					default:
+						return denominator;
 				}
 			}();
 		} else if constexpr (stat == SplitSpecialRegularStat::spd) {
 			return [&]() -> bounded::integer<2, 4> {
 				switch (item) {
-				case Item::Deep_Sea_Scale:
-					return BOUNDED_CONDITIONAL(is_boosted_by_deep_sea_scale(species), 2_bi * denominator, denominator);
-				case Item::Metal_Powder:
-					return BOUNDED_CONDITIONAL(generation <= Generation::two and is_boosted_by_metal_powder(species), 3_bi, denominator);
-				case Item::Soul_Dew:
-					return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(species), 3_bi, denominator);
-				default:
-					return denominator;
+					case Item::Deep_Sea_Scale:
+						return BOUNDED_CONDITIONAL(is_boosted_by_deep_sea_scale(species), 2_bi * denominator, denominator);
+					case Item::Metal_Powder:
+						return BOUNDED_CONDITIONAL(generation <= Generation::two and is_boosted_by_metal_powder(species), 3_bi, denominator);
+					case Item::Soul_Dew:
+						return BOUNDED_CONDITIONAL(is_boosted_by_soul_dew(species), 3_bi, denominator);
+					default:
+						return denominator;
 				}
 			}();
 		} else if constexpr (stat == SplitSpecialRegularStat::spe) {
 			return [&]() -> bounded::integer<1, 4> {
 				switch (item) {
-				case Item::Quick_Powder:
-					return BOUNDED_CONDITIONAL(is_boosted_by_quick_powder(species), 2_bi * denominator, denominator);
-				case Item::Choice_Scarf:
-					return 3_bi;
-				case Item::Iron_Ball:
-				case Item::Macho_Brace:
-				case Item::Power_Anklet:
-				case Item::Power_Band:
-				case Item::Power_Belt:
-				case Item::Power_Bracer:
-				case Item::Power_Lens:
-				case Item::Power_Weight:
-					return 1_bi;
-				default:
-					return denominator;
+					case Item::Quick_Powder:
+						return BOUNDED_CONDITIONAL(is_boosted_by_quick_powder(species), 2_bi * denominator, denominator);
+					case Item::Choice_Scarf:
+						return 3_bi;
+					case Item::Iron_Ball:
+					case Item::Macho_Brace:
+					case Item::Power_Anklet:
+					case Item::Power_Band:
+					case Item::Power_Belt:
+					case Item::Power_Bracer:
+					case Item::Power_Lens:
+					case Item::Power_Weight:
+						return 1_bi;
+					default:
+						return denominator;
 				}
 			}();
 		}
@@ -319,11 +319,11 @@ auto item_modifier(PokemonType const pokemon, Weather const weather) {
 
 constexpr auto applies_to_physical(SplitSpecialRegularStat const stat) {
 	switch (stat) {
-	case SplitSpecialRegularStat::atk:
-	case SplitSpecialRegularStat::def:
-		return true;
-	default:
-		return false;
+		case SplitSpecialRegularStat::atk:
+		case SplitSpecialRegularStat::def:
+			return true;
+		default:
+			return false;
 	}
 }
 
@@ -348,7 +348,7 @@ auto calculate_common_offensive_stat(any_active_pokemon auto const pokemon, Type
 		modifier<BoostableStat(stat)>(pokemon.stages(), critical_hit) *
 		offensive_ability_modifier<stat>(pokemon, move_type, other_ability, weather) *
 		item_modifier<stat>(pokemon, weather);
-	
+
 	return bounded::max(attack, 1_bi);
 }
 
@@ -392,7 +392,7 @@ auto calculate_defense(any_active_pokemon auto const defender, Moves const move,
 		modifier<BoostableStat(stat)>(defender.stages(), critical_hit) *
 		defense_ability_modifier(defender) *
 		item_modifier<stat>(defender, weather);
-	
+
 	// Cast here because it looks as though the strongest defender would hold
 	// Metal Powder, but because of the restriction on the attacker being Ditto,
 	// it is better to use a Shuckle with no boosting item available.
@@ -413,12 +413,12 @@ auto special_defense_sandstorm_boost(PokemonType const defender, Ability const a
 auto calculate_special_defense(any_active_pokemon auto const defender, Ability const attacker_ability, Weather const weather, bool const critical_hit = false) {
 	constexpr auto stat = SplitSpecialRegularStat::spd;
 	auto const defense =
-		defender.stat(stat) *	
+		defender.stat(stat) *
 		modifier<BoostableStat(stat)>(defender.stages(), critical_hit) *
 		special_defense_ability_modifier(defender, attacker_ability, weather) *
 		item_modifier<stat>(defender, weather) *
 		special_defense_sandstorm_boost(defender, attacker_ability, weather);
-	
+
 	// Cast here because it looks as though the strongest defender would hold
 	// Deep Sea Scale, but because of the restriction on the defender being
 	// Clamperl, it is better to use a Shuckle with no boosting item available.
@@ -473,6 +473,7 @@ struct Faster : operators::arrow<Faster<generation>> {
 	constexpr auto const & operator*() const {
 		return *m_teams;
 	}
+
 private:
 	using pair = std::pair<Team<generation> const &, Team<generation> const &>;
 
@@ -498,13 +499,13 @@ private:
 template<Generation generation>
 struct Order : operators::arrow<Order<generation>> {
 	Order(Team<generation> const & team1, Moves const move1, Team<generation> const & team2, Moves const move2, Weather const weather):
-		Order([&]{
+		Order([&] {
 			auto const priority1 = Priority(generation, move1);
 			auto const priority2 = Priority(generation, move2);
-			
+
 			auto const lhs = Element{team1, move1};
 			auto const rhs = Element{team2, move2};
-			
+
 			auto const lhs_first = Order(lhs, rhs);
 			auto const rhs_first = Order(rhs, lhs);
 
@@ -528,6 +529,7 @@ struct Order : operators::arrow<Order<generation>> {
 	constexpr auto const & operator*() const {
 		return *m_elements;
 	}
+
 private:
 	struct Element {
 		Team<generation> const & team;
@@ -544,4 +546,4 @@ private:
 	bounded::optional<pair> m_elements;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

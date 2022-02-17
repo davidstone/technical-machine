@@ -733,7 +733,7 @@ auto get_type(Generation const generation, Moves const move, bounded::optional<T
 		case Moves::Splintered_Stormshards: return Type::Rock;
 		case Moves::Clangorous_Soulblaze: return Type::Dragon;
 		case Moves::Double_Iron_Bash: return Type::Steel;
-		
+
 		// Generation 8
 		case Moves::Max_Guard: return Type::Normal;
 		case Moves::Dynamax_Cannon: return Type::Dragon;
@@ -822,4 +822,4 @@ auto get_type(Generation const generation, Moves const move, bounded::optional<T
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

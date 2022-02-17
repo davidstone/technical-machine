@@ -54,7 +54,7 @@ void ClientImpl::run(DelimitedBufferView<std::string_view> messages) {
 	auto const room = has_room ? messages.pop().substr(1) : std::string_view{};
 	while (!messages.remainder().empty()) {
 		auto const next = messages.pop();
-		auto print_on_exception = bounded::scope_guard([=]{ std::cerr << next << '\n'; });
+		auto print_on_exception = bounded::scope_guard([=] { std::cerr << next << '\n'; });
 		handle_message(InMessage(room, next));
 		print_on_exception.dismiss();
 	}
@@ -101,7 +101,7 @@ struct no_spaces_string_view {
 	friend constexpr auto operator==(no_spaces_string_view const lhs, std::string_view const rhs) -> bool {
 		return containers::equal(containers::filter(lhs.m_str, [](char const c) { return c != ' '; }), rhs);
 	}
-	
+
 private:
 	std::string_view m_str;
 };
@@ -207,7 +207,7 @@ void ClientImpl::authenticate(std::string_view const challstr) {
 	// with data act=login&name=USERNAME&pass=PASSWORD&challstr=CHALLSTR
 	namespace http = boost::beast::http;
 	constexpr auto host = "play.pokemonshowdown.com";
-	
+
 	constexpr auto version = 11U;
 	auto request = http::request<http::string_body>{
 		http::verb::post,
@@ -221,7 +221,7 @@ void ClientImpl::authenticate(std::string_view const challstr) {
 	request.prepare_payload();
 
 	auto const response = m_authenticate(host, "80", request);
-	
+
 	// Response begins with ']' followed by JSON object.
 	auto const body = std::string_view(response.body()).substr(1);
 	auto const json = nlohmann::json::parse(body);

@@ -21,5 +21,5 @@ InvalidTeamFile::InvalidTeamFile(std::string_view const expected, std::string_vi
 {
 }
 
-}	// namespace po
-}	// namespace technicalmachine
+} // namespace po
+} // namespace technicalmachine

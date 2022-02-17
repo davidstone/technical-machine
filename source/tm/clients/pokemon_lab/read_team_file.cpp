@@ -174,7 +174,7 @@ auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneri
 	try {
 		boost::property_tree::ptree pt;
 		read_xml(team_file.string(), pt);
-		
+
 		auto const all_pokemon = pt.get_child("shoddybattle");
 		using GenerationInteger = bounded::integer<1, 7>;
 		// The original format did not include a generation. Require users to add

@@ -144,7 +144,7 @@ constexpr auto boost(Nature const nature, SplitSpecialRegularStat const stat) {
 	return rational(numerator, 10_bi);
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine
 
 template<>
 inline constexpr auto numeric_traits::min_value<technicalmachine::Nature> = technicalmachine::Nature();

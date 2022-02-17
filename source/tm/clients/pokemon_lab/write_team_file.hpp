@@ -85,5 +85,5 @@ void write_team(TeamType const & team, std::filesystem::path const & file_name) 
 	write_xml(file_name.string(), pt, std::locale(), settings);
 }
 
-}	// namespace pl
-}	// namespace technicalmachine
+} // namespace pl
+} // namespace technicalmachine

@@ -49,4 +49,4 @@ private:
 	bounded::optional<bounded::integer<0, max_duration>> m_turns_spent_confused = bounded::none;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

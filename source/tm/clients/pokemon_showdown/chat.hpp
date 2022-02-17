@@ -42,5 +42,5 @@ inline bool handle_chat_message(InMessage message) {
 	}
 }
 
-}	// namespace ps
-}	// namespace technicalmachine
+} // namespace ps
+} // namespace technicalmachine

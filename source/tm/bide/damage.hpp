@@ -30,9 +30,10 @@ struct BideDamage {
 	friend constexpr auto compress(BideDamage const value) {
 		return compress(value.m_damage);
 	}
+
 private:
 	// This is the greatest range that matters since anything more is overkill
 	bounded::integer<0, (HP::max_value + 1) / 2> m_damage = 0_bi;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

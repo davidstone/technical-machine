@@ -423,7 +423,7 @@ constexpr auto lookup_effectiveness(Generation const generation, Type const atta
 	}
 }
 
-}	// namespace
+} // namespace
 
 Effectiveness::Effectiveness(Generation const generation, Type const attacking, PokemonTypes const defending):
 	m_first(lookup_effectiveness(generation, attacking, containers::front(defending))),
@@ -446,4 +446,4 @@ auto Effectiveness::has_no_effect() const -> bool {
 	return product() == no_effect;
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

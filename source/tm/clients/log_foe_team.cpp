@@ -20,7 +20,7 @@ constexpr auto get_extension() -> std::string_view {
 	return ".sbt";
 }
 
-}	// namespace
+} // namespace
 
 std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 	// Randomly generates a file name in 8.3 format. It then checks to see if

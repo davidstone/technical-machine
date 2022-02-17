@@ -61,4 +61,4 @@ constexpr auto swallow_healing(bounded::bounded_integer auto const stockpiles) {
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

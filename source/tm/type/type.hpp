@@ -56,4 +56,4 @@ constexpr auto is_boosted_by_flash_fire(Type const type) {
 	return type == Type::Fire;
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

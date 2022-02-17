@@ -116,12 +116,13 @@ struct ActivePokemonFlags {
 			return result;
 		}
 	}
+
 private:
 	template<typename>
 	friend struct ActivePokemonImpl;
 	template<typename>
 	friend struct AnyMutableActivePokemon;
-	
+
 	[[no_unique_address]] ExistsIf<Ability, generation >= Generation::three> ability{};
 	Confusion confusion;
 	Disable disable;
@@ -172,6 +173,7 @@ struct ActivePokemonImpl {
 private:
 	static constexpr auto generation = generation_from<PokemonType>;
 	using FlagsRef = std::conditional_t<std::is_const_v<PokemonType>, ActivePokemonFlags<generation> const &, ActivePokemonFlags<generation> &>;
+
 public:
 	ActivePokemonImpl(PokemonType & pokemon, FlagsRef flags):
 		m_pokemon(pokemon),
@@ -316,7 +318,7 @@ public:
 	auto power_trick_is_active() const -> bool {
 		return m_flags.power_trick_is_active;
 	}
-	
+
 	auto slow_start_is_active() const -> bool {
 		return m_flags.slow_start.is_active();
 	}
@@ -734,7 +736,7 @@ public:
 		this->m_pokemon.advance_status_from_move(this->ability(), clear_status);
 	}
 
-	
+
 	auto increment_stockpile() const -> void {
 		bool const increased = this->m_flags.stockpile.increment();
 		if (increased) {
@@ -1071,7 +1073,7 @@ auto apply_own_white_herb(any_mutable_active_pokemon auto const pokemon, Weather
 template<any_active_pokemon ActivePokemonType>
 bool blocks_switching(Ability const ability, ActivePokemonType const switcher, Weather const weather) {
 	constexpr auto generation = generation_from<ActivePokemonType>;
-	auto ghost_immunity = [&]{
+	auto ghost_immunity = [&] {
 		return generation >= Generation::six and is_type(switcher, Type::Ghost);
 	};
 	switch (ability) {

@@ -36,8 +36,7 @@ using namespace std::string_view_literals;
 
 template<typename Range>
 auto add_dropdown_with_id(std::ostream & output, std::string_view const type, std::string_view const id, Range range, std::string_view const default_value) {
-	output <<
-		"<select name=\"" << id << "\" id=\"" << id << "\">";
+	output << "<select name=\"" << id << "\" id=\"" << id << "\">";
 	auto add_option = [&](std::string_view const value) {
 		output << "<option" << (value == default_value ? " selected" : "") << ">" << value << "</option>";
 	};
@@ -80,7 +79,7 @@ void generate_team_builder_ui(std::ostream & output, std::string_view const quer
 		"<body>"
 		"<form method=\"post\">";
 	auto query_buffer = BufferView(query_string);
-	auto next_default = [&]{
+	auto next_default = [&] {
 		pop_to_delimiter(query_buffer, '=');
 		return pop_to_delimiter(query_buffer, '&');
 	};

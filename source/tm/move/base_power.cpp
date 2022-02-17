@@ -900,7 +900,7 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 		case Species::Muk_Alolan: return 80_bi;
 		case Species::Exeggutor_Alolan: return 120_bi;
 		case Species::Marowak_Alolan: return 60_bi;
-		
+
 		// Generation 8
 		case Species::Grookey: return 20_bi;
 		case Species::Thwackey: return 40_bi;

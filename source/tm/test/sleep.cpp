@@ -24,7 +24,7 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-constexpr auto damage = ActualDamage::Unknown{};	
+constexpr auto damage = ActualDamage::Unknown{};
 
 constexpr auto regular_moves(Generation const generation, auto... moves) {
 	return RegularMoves{Move(generation, moves)...};

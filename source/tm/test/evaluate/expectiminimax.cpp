@@ -495,7 +495,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 			ActualDamage::Unknown{}
 		);
 	}
-	
+
 	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
 	CHECK(best_move.name == Moves::Switch2);
 }
@@ -605,7 +605,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	defender.pokemon().switch_in(weather);
 
 	defender.reset_start_of_turn();
-	
+
 	constexpr auto keep_status = false;
 	constexpr auto unknown_damage = ActualDamage::Unknown{};
 	constexpr auto sleep_talk = UsedMove<Team<generation>>(
@@ -617,8 +617,8 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 		no_effect_function
 	);
 	constexpr auto other_move = FutureMove{false};
-	
-	auto next_turn = [&]{
+
+	auto next_turn = [&] {
 		constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false);
 		end_of_turn(attacker, end_of_turn_flags, defender, end_of_turn_flags, weather);
 		attacker.reset_start_of_turn();
@@ -626,7 +626,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	};
 
 	auto jolteon = attacker.pokemon();
-	
+
 	// TODO: Validate score, too
 
 	CHECK(jolteon.status().name() == Statuses::clear);
@@ -692,7 +692,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	defender.pokemon().set_status(Statuses::freeze, weather);
 	defender.pokemon().set_hp(weather, 12_bi);
 	defender.pokemon().switch_in(weather);
-	
+
 	attacker.reset_start_of_turn();
 	defender.reset_start_of_turn();
 

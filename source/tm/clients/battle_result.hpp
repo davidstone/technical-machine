@@ -24,4 +24,4 @@ constexpr auto to_string(Result const result) -> std::string_view {
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

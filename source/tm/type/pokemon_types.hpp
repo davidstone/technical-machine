@@ -43,4 +43,4 @@ private:
 	containers::array<Type, 2_bi> m_types;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -68,4 +68,4 @@ auto traceable(Generation const generation, Ability const ability) -> bool {
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

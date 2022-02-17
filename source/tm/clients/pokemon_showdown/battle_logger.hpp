@@ -19,13 +19,14 @@ struct BattleLogger {
 		m_file.open(path / "server_messages.txt");
 		m_file << '>' << battle_id << '\n';
 	}
-	
+
 	void log(InMessage const message) {
 		m_file << '|' << message.type() << '|' << message.remainder() << '\n' << std::flush;
 	}
+
 private:
 	std::ofstream m_file;
 };
 
-}	// namespace ps
-}	// namespace technicalmachine
+} // namespace ps
+} // namespace technicalmachine

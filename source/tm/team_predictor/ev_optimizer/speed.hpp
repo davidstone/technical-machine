@@ -51,6 +51,7 @@ struct SpeedEVs {
 	constexpr auto end() const {
 		return containers::end(m_container);
 	}
+
 private:
 	struct Mapped {
 		Nature nature;

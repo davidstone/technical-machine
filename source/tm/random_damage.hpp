@@ -17,8 +17,9 @@ struct RandomDamage {
 	constexpr auto operator()() const {
 		return rational(m_r, 100_bi);
 	}
+
 private:
 	bounded::integer<85, 100> m_r = 100_bi;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

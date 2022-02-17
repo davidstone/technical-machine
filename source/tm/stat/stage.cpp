@@ -53,7 +53,7 @@ auto swap_offensive(Stages & lhs, Stages & rhs) -> void {
 
 namespace {
 
-static_assert([]{
+static_assert([] {
 	auto stage = Stage();
 	BOUNDED_ASSERT(stage == 0_bi);
 

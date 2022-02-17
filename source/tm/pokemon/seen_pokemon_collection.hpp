@@ -48,7 +48,7 @@ struct SeenPokemonCollection {
 	auto size() const {
 		return containers::size(m_container);
 	}
-	
+
 	void set_index(TeamIndex const new_index) {
 		check_range(new_index);
 		m_index = new_index;
@@ -93,6 +93,7 @@ struct SeenPokemonCollection {
 	}
 
 	friend auto operator==(SeenPokemonCollection const &, SeenPokemonCollection const &) -> bool = default;
+
 private:
 	void check_not_full() {
 		if (size() == m_real_size) {

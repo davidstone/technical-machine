@@ -35,4 +35,4 @@ auto to_replacement(Moves const move) -> TeamIndex {
 	return bounded::assume_in_range<TeamIndex>(bounded::integer(move) - bounded::constant<Moves::Switch0>);
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -55,4 +55,4 @@ auto Estimate::random(std::mt19937 & random_engine) const -> Species {
 	return numeric_traits::max_value<Species>;
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

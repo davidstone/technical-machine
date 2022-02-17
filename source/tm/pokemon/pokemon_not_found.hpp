@@ -15,4 +15,4 @@ namespace technicalmachine {
 struct PokemonNotFound : std::logic_error {
 	explicit PokemonNotFound(Species const species);
 };
-}	// namespace technicalmachine
+} // namespace technicalmachine

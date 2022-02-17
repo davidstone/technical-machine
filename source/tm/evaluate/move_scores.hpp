@@ -17,6 +17,7 @@ struct MoveScores {
 	MoveScores(Generation, StaticVectorMove legal_selections, bool ai);
 	void set(Moves move_name, double score);
 	auto ordered_moves(bool ai) const -> StaticVectorMove;
+
 private:
 	struct value_type {
 		Moves move_name;
@@ -25,4 +26,4 @@ private:
 	containers::static_vector<value_type, numeric_traits::max_value<MoveSize>> m_scores;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

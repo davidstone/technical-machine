@@ -107,12 +107,12 @@ constexpr auto parse_hp_and_status(std::string_view const hp_and_status) {
 	return HPAndStatus{parse_hp(hp_fraction), parse_status(status)};
 }
 
-struct FromMove{};
-struct MainEffect{};
-struct FromConfusion{};
-struct FromMiscellaneous{};
-struct FromRecoil{};
-struct FromSubstitute{};
+struct FromMove {};
+struct MainEffect {};
+struct FromConfusion {};
+struct FromMiscellaneous {};
+struct FromRecoil {};
+struct FromSubstitute {};
 
 using EffectSource = bounded::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromMiscellaneous, FromRecoil, FromSubstitute>;
 
@@ -186,7 +186,7 @@ auto parse_set_hp_message(InMessage message) {
 	auto const party = party_from_player_id(message.pop());
 	auto const hp_and_status = parse_hp_and_status(message.pop());
 	auto const source = parse_from_source(message);
-	
+
 	return Message{
 		party,
 		hp_and_status.hp,
@@ -285,10 +285,10 @@ struct BattleParserImpl : BattleParser {
 	{
 		m_send_message(containers::concatenate<containers::string>(m_id, "|/timer on"sv));
 	}
-	
+
 	void handle_message(InMessage message) final {
 		m_battle_logger.log(message);
-		
+
 		if (handle_chat_message(message)) {
 			return;
 		}
@@ -647,7 +647,7 @@ struct BattleParserImpl : BattleParser {
 		} else if (type == "-start") {
 			auto const party = party_from_player_id(message.pop());
 			auto const first_part_of_source = message.pop();
-			auto parse_remainder_of_source = [&]{
+			auto parse_remainder_of_source = [&] {
 				if (first_part_of_source == "typechange") {
 					auto const changed_type = message.pop();
 					static_cast<void>(changed_type);
@@ -755,7 +755,7 @@ struct BattleParserImpl : BattleParser {
 
 	std::string_view id() const final {
 		return m_id;
-	}	
+	}
 	bool completed() const final {
 		return m_completed;
 	}
@@ -777,9 +777,9 @@ private:
 	decltype(auto) apply_to_team(bool const is_ai_, auto function) const {
 		if (is_ai_) {
 			return function(m_battle.ai());
-		 } else {
-			 return function(m_battle.foe());
-		 }
+		} else {
+			return function(m_battle.foe());
+		}
 	}
 
 	void handle_damage(InMessage message) {
@@ -1058,7 +1058,7 @@ private:
 	}
 
 	UsageStats const & m_usage_stats;
-		
+
 	SendMessageFunction m_send_message;
 	BattleLogger m_battle_logger;
 	std::ofstream m_analysis_logger;
@@ -1116,7 +1116,7 @@ auto make_battle_parser(
 			usage_stats[generation],
 			evaluate.get<generation>(),
 			party,
- 			depth,
+			depth,
 			random_engine,
 			teams.ai,
 			teams.foe,

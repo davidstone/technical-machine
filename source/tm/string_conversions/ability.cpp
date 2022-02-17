@@ -98,7 +98,7 @@ auto to_string(Ability const ability) -> std::string_view {
 		case Ability::Pure_Power: return "Pure Power";
 		case Ability::Shell_Armor: return "Shell Armor";
 		case Ability::Air_Lock: return "Air Lock";
-	
+
 		// Generation 4
 		case Ability::Tangled_Feet: return "Tangled Feet";
 		case Ability::Motor_Drive: return "Motor Drive";
@@ -147,7 +147,7 @@ auto to_string(Ability const ability) -> std::string_view {
 		case Ability::Multitype: return "Multitype";
 		case Ability::Flower_Gift: return "Flower Gift";
 		case Ability::Bad_Dreams: return "Bad Dreams";
-	
+
 		// Generation 5
 		case Ability::Pickpocket: return "Pickpocket";
 		case Ability::Sheer_Force: return "Sheer Force";
@@ -190,7 +190,7 @@ auto to_string(Ability const ability) -> std::string_view {
 		case Ability::Victory_Star: return "Victory Star";
 		case Ability::Turboblaze: return "Turboblaze";
 		case Ability::Teravolt: return "Teravolt";
-	
+
 		// Generation 6
 		case Ability::Aroma_Veil: return "Aroma Veil";
 		case Ability::Flower_Veil: return "Flower Veil";
@@ -219,7 +219,7 @@ auto to_string(Ability const ability) -> std::string_view {
 		case Ability::Primordial_Sea: return "Primordial Sea";
 		case Ability::Desolate_Land: return "Desolate Land";
 		case Ability::Delta_Stream: return "Delta Stream";
-	
+
 		// Generation 7
 		case Ability::Stamina: return "Stamina";
 		case Ability::Wimp_Out: return "Wimp Out";
@@ -263,7 +263,7 @@ auto to_string(Ability const ability) -> std::string_view {
 		case Ability::Shadow_Shield: return "Shadow Shield";
 		case Ability::Prism_Armor: return "Prism Armor";
 		case Ability::Neuroforce: return "Neuroforce";
-	
+
 		// Generation 8
 		case Ability::Intrepid_Sword: return "Intrepid Sword";
 		case Ability::Dauntless_Shield: return "Dauntless Shield";
@@ -568,4 +568,4 @@ auto from_string<Ability>(std::string_view const str) -> Ability {
 	return *result;
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

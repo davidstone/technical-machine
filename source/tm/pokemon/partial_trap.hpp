@@ -38,8 +38,9 @@ struct PartialTrap {
 	friend constexpr auto compress(PartialTrap const value) {
 		return compress(value.m_base);
 	}
+
 private:
 	EndOfTurnCounter<true, 7, CounterOperations::is_active, CounterOperations::activate, CounterOperations::advance_one_turn_variable> m_base;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

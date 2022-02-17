@@ -109,5 +109,5 @@ struct ParsedSwitch {
 };
 auto parse_switch(InMessage message) -> ParsedSwitch;
 
-}	// namespace ps
-}	// namespace technicalmachine
+} // namespace ps
+} // namespace technicalmachine

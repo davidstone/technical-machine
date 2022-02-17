@@ -36,6 +36,7 @@ struct IV {
 	}
 
 	friend auto operator<=>(IV, IV) = default;
+
 private:
 	value_type m_value;
 };
@@ -69,6 +70,7 @@ struct DV {
 	}
 
 	friend auto operator<=>(DV, DV) = default;
+
 private:
 	value_type m_value;
 };

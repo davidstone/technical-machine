@@ -757,7 +757,7 @@ constexpr auto base_pp(Generation const generation, Moves const move) -> bounded
 		case Moves::Splintered_Stormshards: return 1_bi;
 		case Moves::Clangorous_Soulblaze: return 1_bi;
 		case Moves::Double_Iron_Bash: return 5_bi;
-		
+
 		// Generation 8
 		case Moves::Max_Guard: return 10_bi;
 		case Moves::Dynamax_Cannon: return 5_bi;

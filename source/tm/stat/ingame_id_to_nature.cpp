@@ -10,7 +10,7 @@
 namespace technicalmachine {
 namespace {
 
-static_assert([]{
+static_assert([] {
 	for (auto const original : containers::enum_range<Nature>()) {
 		auto const id = ingame_nature_to_id(original);
 		auto const result = ingame_id_to_nature(id);

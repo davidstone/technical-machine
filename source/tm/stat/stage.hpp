@@ -81,6 +81,7 @@ struct Stages {
 	}
 
 	friend auto operator==(Stages, Stages) -> bool = default;
+
 private:
 	static constexpr auto number_of_stats = bounded::constant<numeric_traits::max_value<BoostableStat>> - bounded::constant<numeric_traits::min_value<BoostableStat>> + 1_bi;
 	containers::array<Stage, number_of_stats> m_stages;
@@ -97,7 +98,7 @@ constexpr auto base_stat_boost() {
 	}
 }
 
-}	// namespace detail
+} // namespace detail
 
 template<BoostableStat stat> requires(stat == BoostableStat::atk or stat == BoostableStat::spa)
 constexpr auto modifier(Stages const & stages, bool const ch) {
@@ -136,4 +137,4 @@ auto boost_offensive(Stages & stages, Stage::boost_type number_of_stages) -> voi
 auto swap_defensive(Stages & lhs, Stages & rhs) -> void;
 auto swap_offensive(Stages & lhs, Stages & rhs) -> void;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

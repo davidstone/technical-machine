@@ -24,7 +24,7 @@ struct InvalidSettingsFile : std::runtime_error {
 	InvalidSettingsFile(std::filesystem::path const & file_name, Problem const problem);
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine
 
 template<>
 inline constexpr auto numeric_traits::min_value<technicalmachine::InvalidSettingsFile::Problem> = technicalmachine::InvalidSettingsFile::Problem();

@@ -56,8 +56,9 @@ struct OtherMove {
 			[](FutureMove const move) { return move.is_damaging; }
 		));
 	}
+
 private:
 	bounded::variant<KnownMove, FutureMove> m_move;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

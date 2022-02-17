@@ -13,7 +13,7 @@
 namespace technicalmachine {
 
 PokemonTypes::PokemonTypes(Generation const generation, Species const species):
-	PokemonTypes([=]{ switch (species) {
+	PokemonTypes([=] { switch (species) {
 		// Generation 1
 		case Species::Bulbasaur: return PokemonTypes(Type::Grass, Type::Poison);
 		case Species::Ivysaur: return PokemonTypes(Type::Grass, Type::Poison);
@@ -1019,4 +1019,4 @@ PokemonTypes::PokemonTypes(Generation const generation, Species const species):
 {
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

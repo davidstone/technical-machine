@@ -15,4 +15,4 @@ auto is_switch(Moves name) -> bool;
 auto to_switch(TeamIndex replacement) -> Moves;
 auto to_replacement(Moves move) -> TeamIndex;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -25,6 +25,7 @@ template<Generation generation>
 struct Stats {
 private:
 	using Stat = InitialStat<generation>;
+
 public:
 	constexpr Stats(HP const hp_, Stat const atk_, Stat const def_, Stat const spa_, Stat const spd_, Stat const spe_):
 		m_hp(hp_),
@@ -85,6 +86,7 @@ public:
 	}
 
 	friend auto operator==(Stats, Stats) -> bool = default;
+
 private:
 	constexpr Stats(BaseStats::HP const base_hp, Level const level, IV const hp_iv, EV const hp_ev, auto make) :
 		m_hp(base_hp, level, hp_iv, hp_ev),

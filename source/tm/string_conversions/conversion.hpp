@@ -13,4 +13,4 @@ namespace technicalmachine {
 template<typename T>
 auto from_string(std::string_view str) -> T;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

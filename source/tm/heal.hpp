@@ -37,4 +37,4 @@ constexpr auto healing_multiplier(Item const item) {
 	);
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -24,7 +24,7 @@ enum class Moves : uint16_t {
 	Switch4,
 	Switch5,
 	Hit_Self,
-	
+
 	// Generation 1
 	Regular_Begin,
 	Pound = Regular_Begin,
@@ -280,7 +280,7 @@ enum class Moves : uint16_t {
 	Rock_Smash,
 	Whirlpool,
 	Beat_Up,
-	
+
 	// Generation 3
 	Fake_Out,
 	Uproar,
@@ -385,7 +385,7 @@ enum class Moves : uint16_t {
 	Water_Pulse,
 	Doom_Desire,
 	Psycho_Boost,
-	
+
 	// Generation 4
 	Roost,
 	Gravity,
@@ -500,7 +500,7 @@ enum class Moves : uint16_t {
 	Seed_Flare,
 	Ominous_Wind,
 	Shadow_Force,
-	
+
 	// Generation 5
 	Hone_Claws,
 	Wide_Guard,
@@ -594,7 +594,7 @@ enum class Moves : uint16_t {
 	V_create,
 	Fusion_Flare,
 	Fusion_Bolt,
-	
+
 	// Generation 6
 	Flying_Press,
 	Mat_Block,
@@ -658,7 +658,7 @@ enum class Moves : uint16_t {
 	Precipice_Blades,
 	Dragon_Ascent,
 	Hyperspace_Fury,
-	
+
 	// Generation 7
 	Breakneck_Blitz,
 	All_Out_Pummeling,
@@ -838,7 +838,7 @@ enum class Moves : uint16_t {
 	Eerie_Spell,
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine
 
 template<>
 inline constexpr auto numeric_traits::min_value<technicalmachine::Moves> = technicalmachine::Moves();

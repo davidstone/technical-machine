@@ -54,7 +54,10 @@ TEST_CASE("MoveContainer", "[MoveContainer]") {
 	};
 	CHECK(containers::size(make_move_container()) == shared_moves_size);
 	constexpr auto moves = containers::array{
-		Moves::Absorb, Moves::Tackle, Moves::Quick_Attack, Moves::Body_Slam
+		Moves::Absorb,
+		Moves::Tackle,
+		Moves::Quick_Attack,
+		Moves::Body_Slam
 	};
 	for (auto const n : containers::integer_range(containers::size(moves))) {
 		regular.push_back(Move(generation, moves[n]));

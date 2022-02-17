@@ -89,14 +89,14 @@ struct BattleFactoryImpl : BattleFactory {
 		m_log_foe_teams(log_foe_teams)
 	{
 	}
-	
+
 	std::string_view id() const final {
 		return m_id;
 	}
-	
+
 	void handle_message(InMessage message) final {
 		m_battle_logger.log(message);
-		
+
 		if (handle_chat_message(message)) {
 			return;
 		}
@@ -180,7 +180,7 @@ struct BattleFactoryImpl : BattleFactory {
 			std::cerr << "Received battle setup message of unknown type: " << type << ": " << message.remainder() << '\n';
 		}
 	}
-	
+
 	bool completed() const final {
 		// TODO: Handle NvN battles
 		return m_ai_switched_in and m_foe_starter;
@@ -208,7 +208,7 @@ struct BattleFactoryImpl : BattleFactory {
 		if (*m_type != "singles") {
 			throw std::runtime_error(containers::concatenate<std::string>("Unsupported format "sv, *m_type));
 		}
-		auto make_foe_team = [&]{
+		auto make_foe_team = [&] {
 			auto team = SeenTeam<generation>(*m_foe_team_size);
 			auto & pokemon = *m_foe_starter;
 			team.add_pokemon({
@@ -248,7 +248,7 @@ private:
 	std::mt19937 m_random_engine;
 	bounded::optional<KnownTeam<generation>> m_team;
 	bounded::optional<Party> m_party;
-	bounded::optional<containers::string> m_type;	// singles, doubles, triples
+	bounded::optional<containers::string> m_type; // singles, doubles, triples
 	bounded::optional<containers::string> m_tier;
 	bounded::optional<TeamSize> m_foe_team_size;
 	bounded::optional<ParsedSwitch> m_foe_starter;

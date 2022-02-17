@@ -129,7 +129,7 @@ auto to_string(Item const item) -> std::string_view {
 		case Item::X_Defend: return "X Defend";
 		case Item::X_Special: return "X Special";
 		case Item::X_Speed: return "X Speed";
-		
+
 		// Generation 2
 		case Item::Amulet_Coin: return "Amulet Coin";
 		case Item::Berry_Juice: return "Berry Juice";
@@ -1756,4 +1756,4 @@ auto from_string(std::string_view const str) -> Item {
 	return *result;
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

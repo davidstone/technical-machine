@@ -42,7 +42,7 @@ struct Battles {
 			make_battle_factory(m_log_directory, m_log_foe_teams, OPERATORS_FORWARD(args)...)
 		);
 	}
-	
+
 	bool handle_message(AllUsageStats const & usage_stats, InMessage message, auto send_message, auto challenge) {
 		auto complete_active_battle = [&](containers::iterator_t<Active const &> const it) {
 			containers::erase(m_active, it);
@@ -76,7 +76,7 @@ private:
 		}
 		return true;
 	}
-	
+
 	void move_to_active(AllUsageStats const & usage_stats, containers::iterator_t<Pending &> it, auto send_message) {
 		containers::push_back(m_active, std::move(**it).make(usage_stats, std::move(send_message)));
 		containers::erase(m_pending, it);
@@ -88,5 +88,5 @@ private:
 	bool m_log_foe_teams;
 };
 
-}	// namespace ps
-}	// namespace technicalmachine
+} // namespace ps
+} // namespace technicalmachine

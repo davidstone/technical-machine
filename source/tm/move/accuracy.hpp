@@ -18,4 +18,4 @@ struct Weather;
 using BaseAccuracy = bounded::optional<bounded::integer<30, 100>>;
 auto accuracy(Generation generation, Moves move, Weather const weather, bool weather_blocked, bool user_is_poison) -> BaseAccuracy;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

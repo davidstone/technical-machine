@@ -20,7 +20,7 @@ namespace {
 TEST_CASE("files_in_path", "[files_in_path]") {
 	auto const path = std::filesystem::temp_directory_path() / "tm_test_files_in_path";
 
-	auto remove_temp_directory = [&]{ std::filesystem::remove_all(path); };
+	auto remove_temp_directory = [&] { std::filesystem::remove_all(path); };
 	remove_temp_directory();
 	std::filesystem::create_directory(path);
 	auto const guard = bounded::scope_guard(remove_temp_directory);

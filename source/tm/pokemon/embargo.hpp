@@ -19,4 +19,4 @@ using EmbargoCounter = EndOfTurnCounter<
 	CounterOperations::activate
 >;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -35,6 +35,7 @@ struct Worker {
 	auto add_work(auto && value) -> void {
 		m_queue.push(OPERATORS_FORWARD(value));
 	}
+
 private:
 	Function m_function;
 	concurrent::blocking_queue<T> m_queue;

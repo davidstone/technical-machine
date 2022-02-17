@@ -50,7 +50,7 @@ struct KnownPokemonCollection {
 	constexpr auto size() const {
 		return containers::size(m_container);
 	}
-	
+
 	constexpr auto set_index(TeamIndex const new_index) -> void {
 		check_range(new_index);
 		m_index = new_index;
@@ -85,6 +85,7 @@ struct KnownPokemonCollection {
 	}
 
 	friend auto operator==(KnownPokemonCollection const &, KnownPokemonCollection const &) -> bool = default;
+
 private:
 	constexpr auto check_range(TeamIndex const new_index [[maybe_unused]]) const -> void {
 		BOUNDED_ASSERT(new_index < size());

@@ -87,7 +87,7 @@ private:
 	constexpr auto is_active(NormalWeather const type, bool const blocked_by_ability) const {
 		return m_active == type and !blocked_by_ability;
 	}
-	
+
 public:
 	constexpr auto trick_room() const {
 		return m_trick_room_turns_remaining != 0_bi;
@@ -136,11 +136,11 @@ public:
 			m_gravity_turns_remaining = standard;
 		}
 	}
-	
+
 	constexpr auto activate_magic_room() {
 		m_magic_room_turns_remaining = BOUNDED_CONDITIONAL(magic_room(), 0_bi, standard);
 	}
-	
+
 	constexpr auto deactivate_fog() {
 	}
 
@@ -185,4 +185,4 @@ public:
 	}
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

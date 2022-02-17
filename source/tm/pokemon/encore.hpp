@@ -19,4 +19,4 @@ using EncoreCounter = EndOfTurnCounter<
 	CounterOperations::activate
 >;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

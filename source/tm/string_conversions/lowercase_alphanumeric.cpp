@@ -28,4 +28,4 @@ static_assert(!compare(d, c));
 static_assert(!compare(c, d));
 
 } // namespace
-} // namespace technical machine
+} // namespace technicalmachine

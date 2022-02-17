@@ -16,4 +16,4 @@ auto to_string(Moves name) -> std::string_view;
 template<>
 auto from_string<Moves>(std::string_view const str) -> Moves;
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

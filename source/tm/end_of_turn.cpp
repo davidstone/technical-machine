@@ -168,9 +168,9 @@ auto other_effects(TeamType & team, OtherMutableActivePokemon<TeamType> const fo
 	}
 	handle_curse(pokemon, weather);
 	pokemon.partial_trap_damage(weather);
-	
+
 	pokemon.advance_lock_in(flags.lock_in_ends, weather);
-	
+
 	pokemon.advance_disable();
 	pokemon.advance_encore();
 	pokemon.advance_taunt();

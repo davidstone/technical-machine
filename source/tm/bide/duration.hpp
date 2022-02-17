@@ -28,8 +28,9 @@ struct BideDuration {
 	friend constexpr auto compress(BideDuration const value) {
 		return compress(value.m_charged_up);
 	}
+
 private:
 	bool m_charged_up = false;
 };
 
-}	// namespace technicalmachine
+} // namespace technicalmachine

@@ -39,4 +39,4 @@ void random_team(UsageStats const & usage_stats, any_seen_team auto & team, std:
 	}
 }
 
-}	// namespace technicalmachine
+} // namespace technicalmachine
