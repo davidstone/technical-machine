@@ -32,6 +32,8 @@ auto UsageStats::add(GenerationGeneric<Team> const & t, double const weight) & -
 	m_total_teams += weight;
 }
 
+namespace {
+
 struct LocalTopMoves {
 	Moves move;
 	double value;
@@ -78,6 +80,8 @@ constexpr auto get_top_n(containers::array<double, number_of<Moves>> const & mov
 	}
 	return top_moves;
 }
+
+} // namespace
 
 Correlations::Correlations(UsageStats const & usage_stats) {
 	for (auto const species : containers::enum_range<Species>()) {
