@@ -9,9 +9,7 @@
 
 #include <bounded/detail/variant/visit.hpp>
 
-#include <containers/algorithms/binary_search.hpp>
 #include <containers/algorithms/keyed_insert.hpp>
-#include <containers/algorithms/is_sorted.hpp>
 #include <containers/at.hpp>
 #include <containers/lookup.hpp>
 
