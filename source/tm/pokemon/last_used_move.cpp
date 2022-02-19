@@ -125,7 +125,7 @@ auto LastUsedMove::use_uproar() & -> void {
 			m_effects = counter;
 		},
 		[](UproarCounter & uproar) { uproar.advance_one_turn(); },
-		[](auto) { bounded::assert_or_assume_unreachable(); }
+		[](auto) { bounded::unreachable(); }
 	));
 }
 
