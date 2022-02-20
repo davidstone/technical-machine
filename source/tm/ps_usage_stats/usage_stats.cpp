@@ -9,6 +9,7 @@
 
 #include <bounded/detail/variant/visit.hpp>
 
+#include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/keyed_insert.hpp>
 #include <containers/at.hpp>
 #include <containers/lookup.hpp>
@@ -39,55 +40,39 @@ struct LocalTopMoves {
 	double value;
 };
 
-constexpr auto compare_count = [](LocalTopMoves const lhs, LocalTopMoves const rhs) {
-	if (auto const cmp = lhs.value <=> rhs.value; cmp != 0) {
-		return cmp > 0;
+auto get_most_used(containers::array<double, number_of<Moves>> const & moves, double const percent_threshold) -> containers::vector<LocalTopMoves> {
+	auto const total_sum = containers::sum(moves);
+	if (total_sum == 0.0) {
+		return {};
 	}
-	return lhs.move > rhs.move;
-};
-
-constexpr decltype(auto) legacy_algorithm(containers::range auto && range, auto compare, auto algorithm) {
-	algorithm(
-		containers::legacy_iterator(containers::begin(range)),
-		containers::legacy_iterator(containers::end(range)),
-		compare
-	);
-}
-
-constexpr auto get_top_n(containers::array<double, number_of<Moves>> const & moves, auto const n) {
-	auto top_moves = containers::static_vector<LocalTopMoves, n>();
-	for (auto const move : containers::enum_range<Moves>()) {
-		auto const value = moves[bounded::integer(move)];
-		if (value == 0) {
-			continue;
-		}
-		if (containers::size(top_moves) < n) {
-			containers::push_back(top_moves, LocalTopMoves{move, value});
-			if (containers::size(top_moves) == n) {
-				legacy_algorithm(top_moves, compare_count, [](auto && ... args) {
-					std::make_heap(OPERATORS_FORWARD(args)...);
-				});
-			}
-		} else if (value > containers::back(top_moves).value) {
-			legacy_algorithm(top_moves, compare_count, [](auto && ... args) {
-				std::pop_heap(OPERATORS_FORWARD(args)...);
-			});
-			containers::back(top_moves) = LocalTopMoves{move, value};
-			legacy_algorithm(top_moves, compare_count, [](auto && ... args) {
-				std::push_heap(OPERATORS_FORWARD(args)...);
-			});
+	auto const usage_threshold = percent_threshold * total_sum;
+	auto top_moves = containers::vector<LocalTopMoves>(containers::transform(
+		containers::enum_range<Moves>(),
+		[&](Moves const move) { return LocalTopMoves{move, moves[bounded::integer(move)]}; }
+	));
+	auto current_sum = 0.0;
+	containers::ska_sort(top_moves, [](LocalTopMoves const x) { return -x.value; });
+	auto it = containers::begin(top_moves);
+	while (true) {
+		BOUNDED_ASSERT(it != containers::end(top_moves));
+		current_sum += it->value;
+		++it;
+		if (current_sum >= usage_threshold) {
+			break;
 		}
 	}
+	containers::erase_after(top_moves, it);
 	return top_moves;
 }
 
 } // namespace
 
 Correlations::Correlations(UsageStats const & usage_stats) {
+	constexpr auto threshold = 0.95;
 	for (auto const species : containers::enum_range<Species>()) {
 		m_data[bounded::integer(species)] = TopMoves(
 			containers::assume_unique,
-			containers::transform(get_top_n(usage_stats.moves(species), top_n_cutoff), [](LocalTopMoves const moves) {
+			containers::transform(get_most_used(usage_stats.moves(species), threshold), [](LocalTopMoves const moves) {
 				return containers::range_value_t<TopMoves>{moves.move, std::make_unique<LockedAccess<MoveData>>()};
 			})
 		);

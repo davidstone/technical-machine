@@ -105,10 +105,9 @@ private:
 		containers::array<double, number_of<Ability>> abilities = {};
 		containers::array<double, max_initial_speed> speed = {};
 	};
-	static constexpr auto top_n_cutoff = 20_bi;
 
 public:
-	using TopMoves = containers::static_flat_map<Moves, std::unique_ptr<LockedAccess<MoveData>>, top_n_cutoff>;
+	using TopMoves = containers::flat_map<Moves, std::unique_ptr<LockedAccess<MoveData>>>;
 
 	Correlations(UsageStats const & general_usage_stats);
 	auto add(GenerationGeneric<Team> const & team, double weight) & -> void;
