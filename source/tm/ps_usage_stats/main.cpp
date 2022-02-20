@@ -19,7 +19,6 @@
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/dynamic_array.hpp>
 
-#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -186,15 +185,7 @@ auto main(int argc, char ** argv) -> int {
 
 	auto const args = parse_args(argc, argv);
 
-	using namespace std::chrono;
-	auto print_time = [previous = system_clock::now()](std::string_view const str) mutable {
-		auto const current = system_clock::now();
-		std::cout << str << ": " << duration_cast<seconds>(current - previous).count() << "s\n";
-		previous = current;
-	};
-
 	auto const ratings_estimate = populate_ratings_estimate(args.teams_file_path);
-	print_time("Populated Glicko1");
 
 	auto usage_stats = std::make_unique<UsageStats>();
 	for (auto const & result : battle_result_reader(args.teams_file_path)) {
@@ -205,16 +196,12 @@ auto main(int argc, char ** argv) -> int {
 			[&](auto const & team, double const weight) { if (weight != 0.0) { usage_stats->add(team, weight); } }
 		);
 	}
-	print_time("Completed first pass");
 
 	auto const correlations = make_correlations(args.mode, args.thread_count, args.teams_file_path, ratings_estimate, *usage_stats);
-	print_time("Completed second pass");
 
 	auto out_file = std::ofstream(args.output_stats_path);
 	out_file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
 	serialize(out_file, args.generation, *usage_stats, correlations);
-
-	print_time("Wrote output");
 
 	return 0;
 }
