@@ -27,7 +27,7 @@ auto UsageStats::add(GenerationGeneric<Team> const & t, double const weight) & -
 				per_species.moves[bounded::integer(move.name())] += weight;
 			}
 			auto const calculated_speed = calculate_speed(Team({pokemon}), Ability::Honey_Gather, Weather());
-			per_species.speed[bounded::check_in_range(calculated_speed, 1_bi, max_initial_speed)] += weight;
+			containers::at(per_species.speed, calculated_speed) += weight;
 		}
 	});
 	m_total_teams += weight;
