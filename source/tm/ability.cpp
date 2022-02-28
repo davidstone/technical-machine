@@ -58,7 +58,6 @@ auto traceable(Generation const generation, Ability const ability) -> bool {
 		case Ability::Hunger_Switch:
 			return false;
 		case Ability::Trace:
-			return generation <= Generation::three;
 		case Ability::Forecast:
 			return generation <= Generation::three;
 		case Ability::Flower_Gift:
