@@ -66,7 +66,10 @@ constexpr auto party_from_player_id(std::string_view const player_id) {
 	return parse_identity(player_id).party;
 }
 
-auto get_move_index(RegularMoves const moves, Moves const move_name) {
+constexpr auto get_move_index(RegularMoves const moves, Moves const move_name) -> containers::index_type<RegularMoves> {
+	if (move_name == Moves::Struggle) {
+		return 0_bi;
+	}
 	auto const it = containers::find_if(moves, [=](Move const move) { return move.name() == move_name; });
 	if (it == containers::end(moves)) {
 		throw std::runtime_error(containers::concatenate<std::string>("Pokemon does not know "sv, to_string(move_name)));
