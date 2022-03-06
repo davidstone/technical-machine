@@ -443,10 +443,6 @@ struct BattleParserImpl : BattleParser {
 					set_value_on_pokemon(party, ability);
 					switch (ability) {
 						case Ability::Natural_Cure:
-							if (m_next_switch_cures_status) {
-								throw std::runtime_error("Tried to apply Natural Cure twice");
-							}
-							bounded::insert(m_next_switch_cures_status, party);
 							break;
 						case Ability::Shed_Skin:
 							m_end_of_turn_state.set_expected(party, Statuses::clear);
@@ -1081,7 +1077,6 @@ private:
 	MoveState m_move_state;
 	EndOfTurnState m_end_of_turn_state;
 
-	bounded::optional<Party> m_next_switch_cures_status;
 	struct Switch {
 		Moves move;
 		VisibleHP hp;
