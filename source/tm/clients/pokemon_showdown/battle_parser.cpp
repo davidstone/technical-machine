@@ -116,7 +116,7 @@ struct FromSubstitute {};
 
 using EffectSource = bounded::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromMiscellaneous, FromRecoil, FromSubstitute>;
 
-constexpr auto parse_effect_source(std::string_view const type, std::string_view const source) {
+constexpr auto parse_effect_source(std::string_view const type, std::string_view const source) -> EffectSource {
 	return
 		(type == "") ? EffectSource(MainEffect{}) :
 		(type == "item") ? EffectSource(from_string<Item>(source)) :
@@ -148,14 +148,14 @@ constexpr auto parse_effect_source(std::string_view const type, std::string_view
 		throw std::runtime_error(containers::concatenate<std::string>(std::string_view("Unhandled effect source type: "), type));
 }
 
-auto parse_from_source(InMessage message) {
-	// [from], [msg], [silent]
-	[[maybe_unused]] auto const bracketed_text_or_nothing = message.pop(' ');
-	auto const [type, source] = split_view(message.pop(), ':');
+constexpr auto parse_from_source(std::string_view const message) -> EffectSource {
+	// [from]
+	auto const [bracketed_text_or_nothing, remainder] = split_view(message, ' ');
+	auto const [type, source] = split_view(remainder, ':');
 	return parse_effect_source(type, source);
 }
 
-auto parse_hp_message(InMessage message) {
+constexpr auto parse_hp_message(InMessage message) {
 	struct Message {
 		Party party;
 		VisibleHP hp;
@@ -164,7 +164,7 @@ auto parse_hp_message(InMessage message) {
 	};
 	auto const party = party_from_player_id(message.pop());
 	auto const hp_and_status = parse_hp_and_status(message.pop());
-	auto const source = parse_from_source(message);
+	auto const source = parse_from_source(message.pop());
 	return Message{
 		party,
 		hp_and_status.hp,
@@ -173,7 +173,7 @@ auto parse_hp_message(InMessage message) {
 	};
 }
 
-auto parse_set_hp_message(InMessage message) {
+constexpr auto parse_set_hp_message(InMessage message) {
 	// TODO: This should just verify that the received HP matches the actual
 	// HP. The problem is that we tend to get this message too soon, so I need
 	// to defer checking until some time later.
@@ -185,7 +185,7 @@ auto parse_set_hp_message(InMessage message) {
 	};
 	auto const party = party_from_player_id(message.pop());
 	auto const hp_and_status = parse_hp_and_status(message.pop());
-	auto const source = parse_from_source(message);
+	auto const source = parse_from_source(message.pop());
 
 	return Message{
 		party,
@@ -402,7 +402,7 @@ struct BattleParserImpl : BattleParser {
 			}
 			auto const party = party_from_player_id(message.pop());
 			auto const status = parse_status(message.pop());
-			auto const source = parse_from_source(message);
+			auto const source = parse_from_source(message.pop());
 			bounded::visit(source, bounded::overload(
 				[&](MainEffect) {
 					auto const move_name = m_move_state.executed_move();
@@ -541,7 +541,7 @@ struct BattleParserImpl : BattleParser {
 			// TODO: Implement multi-hit moves
 		} else if (type == "-immune") {
 			auto const party = party_from_player_id(message.pop());
-			auto const source = parse_from_source(message);
+			auto const source = parse_from_source(message.pop());
 			bounded::visit(source, bounded::overload(
 				// TODO: Validate that the type should be immune
 				[](MainEffect) {},
@@ -651,7 +651,7 @@ struct BattleParserImpl : BattleParser {
 				if (first_part_of_source == "typechange") {
 					auto const changed_type = message.pop();
 					static_cast<void>(changed_type);
-					return parse_from_source(message);
+					return parse_from_source(message.pop());
 				} else {
 					auto const [source_type, string_source] = split_view(first_part_of_source, ':');
 					return parse_effect_source(source_type, string_source);
@@ -677,7 +677,7 @@ struct BattleParserImpl : BattleParser {
 		} else if (type == "-status") {
 			auto const party = party_from_player_id(message.pop());
 			auto const status = parse_status(message.pop());
-			auto const source = parse_from_source(message);
+			auto const source = parse_from_source(message.pop());
 			maybe_commit_switch(party);
 			bounded::visit(source, bounded::overload(
 				[&](MainEffect) { m_move_state.status_from_move(party, status); },
