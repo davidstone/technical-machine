@@ -517,6 +517,8 @@ struct BattleParserImpl : BattleParser {
 				m_replacing_fainted = true;
 				send_move(determine_action());
 			}
+		} else if (type == "-fieldactivate") {
+			// move: Perish Song
 		} else if (type == "-fieldend") {
 #if 0
 			// Grassy Terrain, Gravity, Trick Room
