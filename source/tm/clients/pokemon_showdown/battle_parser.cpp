@@ -911,7 +911,7 @@ private:
 			ActualDamage value;
 			bool did_any_damage;
 		};
-		auto const maybe_data = m_move_state.complete<generation>(m_ai_party, m_battle.ai(), m_battle.foe(), m_battle.weather());
+		auto const maybe_data = m_move_state.complete(m_ai_party, m_battle.ai(), m_battle.foe(), m_battle.weather());
 
 		bounded::visit(maybe_data, [&]<typename Data>(Data const data) {
 			if constexpr (std::is_same_v<Data, MoveState::NoResult>) {
