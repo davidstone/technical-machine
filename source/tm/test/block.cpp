@@ -64,7 +64,7 @@ TEST_CASE("block with all legal moves", "[block]") {
 	user.reset_start_of_turn();
 
 	auto const selections = legal_selections(user, other, weather);
-	CHECK(selections == StaticVectorMove({Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball}));
+	CHECK(selections == LegalSelections({Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball}));
 }
 
 auto empty_pp(Move & move) {
@@ -108,7 +108,7 @@ TEST_CASE("Two moves with one out of pp", "[block]") {
 	user.reset_start_of_turn();
 
 	auto const selections = legal_selections(user, other, weather);
-	CHECK(selections == StaticVectorMove({Moves::Thunderbolt}));
+	CHECK(selections == LegalSelections({Moves::Thunderbolt}));
 }
 
 TEST_CASE("Two moves with both out of pp", "[block]") {
@@ -147,7 +147,7 @@ TEST_CASE("Two moves with both out of pp", "[block]") {
 	user.reset_start_of_turn();
 
 	auto const selections = legal_selections(user, other, weather);
-	CHECK(selections == StaticVectorMove({Moves::Struggle}));
+	CHECK(selections == LegalSelections({Moves::Struggle}));
 }
 
 TEST_CASE("Replace fainted", "[block]") {
@@ -193,7 +193,7 @@ TEST_CASE("Replace fainted", "[block]") {
 
 	faint(team.pokemon());
 
-	auto const expected = StaticVectorMove({Moves::Switch1});
+	auto const expected = LegalSelections({Moves::Switch1});
 	auto const selections = legal_selections(team, other, weather);
 	CHECK(selections == expected);
 }

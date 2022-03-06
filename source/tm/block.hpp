@@ -159,8 +159,8 @@ auto is_legal_selection(TeamType const & user, Move const move, TeamType const &
 }
 
 template<any_team TeamType>
-constexpr auto legal_selections(TeamType const & user, TeamType const & other, Weather const weather) -> StaticVectorMove {
-	auto result = StaticVectorMove{};
+constexpr auto legal_selections(TeamType const & user, TeamType const & other, Weather const weather) -> LegalSelections {
+	auto result = LegalSelections();
 	for (auto const move : all_moves(user.pokemon(), user.size())) {
 		bool const found_selectable_move = !containers::is_empty(result);
 		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {

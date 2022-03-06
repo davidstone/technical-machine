@@ -19,7 +19,7 @@
 
 namespace technicalmachine {
 
-MoveScores::MoveScores(Generation const generation, StaticVectorMove const legal_selections, bool const ai):
+MoveScores::MoveScores(Generation const generation, LegalSelections const legal_selections, bool const ai):
 	m_scores(
 		containers::transform(legal_selections, [=](Moves const move) {
 			auto cg = []<Generation g>(constant_gen_t<g>) {
@@ -43,13 +43,13 @@ void MoveScores::set(Moves const move_name, double const score) {
 	ptr->score = score;
 }
 
-auto MoveScores::ordered_moves(bool const ai) const -> StaticVectorMove {
+auto MoveScores::ordered_moves(bool const ai) const -> LegalSelections {
 	auto intermediate = containers::static_vector<value_type, numeric_traits::max_value<MoveSize>>(m_scores);
 	auto compare = [=](value_type const lhs, value_type const rhs) {
 		return ai ? lhs.score > rhs.score : lhs.score < rhs.score;
 	};
 	containers::sort(intermediate, compare);
-	return StaticVectorMove(containers::transform(intermediate, [](value_type const value) { return value.move_name; }));
+	return LegalSelections(containers::transform(intermediate, [](value_type const value) { return value.move_name; }));
 }
 
 } // namespace technicalmachine

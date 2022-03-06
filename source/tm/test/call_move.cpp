@@ -116,7 +116,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 
 	CHECK(
 		legal_selections(attacker, defender, weather) ==
-		StaticVectorMove({Moves::Baton_Pass, Moves::Belly_Drum, Moves::Switch1})
+		LegalSelections({Moves::Baton_Pass, Moves::Belly_Drum, Moves::Switch1})
 	);
 
 	{
@@ -139,14 +139,14 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	CHECK(!switch_decision_required(attacker));
 	CHECK(
 		legal_selections(attacker, defender, weather) ==
-		StaticVectorMove({Moves::Pass})
+		LegalSelections({Moves::Pass})
 	);
 
 	attacker.reset_start_of_turn();
 
 	CHECK(
 		legal_selections(attacker, defender, weather) ==
-		StaticVectorMove({Moves::Baton_Pass, Moves::Belly_Drum, Moves::Switch1})
+		LegalSelections({Moves::Baton_Pass, Moves::Belly_Drum, Moves::Switch1})
 	);
 
 	call_move(
@@ -162,7 +162,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	CHECK(switch_decision_required(attacker));
 	CHECK(
 		legal_selections(attacker, defender, weather) ==
-		StaticVectorMove({Moves::Switch1})
+		LegalSelections({Moves::Switch1})
 	);
 
 	{
@@ -185,7 +185,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	CHECK(!switch_decision_required(attacker));
 	CHECK(
 		legal_selections(attacker, defender, weather) ==
-		StaticVectorMove({Moves::Pass})
+		LegalSelections({Moves::Pass})
 	);
 }
 

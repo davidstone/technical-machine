@@ -14,9 +14,9 @@
 namespace technicalmachine {
 
 struct MoveScores {
-	MoveScores(Generation, StaticVectorMove legal_selections, bool ai);
+	MoveScores(Generation, LegalSelections legal_selections, bool ai);
 	void set(Moves move_name, double score);
-	auto ordered_moves(bool ai) const -> StaticVectorMove;
+	auto ordered_moves(bool ai) const -> LegalSelections;
 
 private:
 	struct value_type {

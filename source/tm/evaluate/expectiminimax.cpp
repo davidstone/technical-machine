@@ -194,7 +194,7 @@ private:
 	KnownMove m_other_move;
 };
 
-constexpr auto all_are_pass_or_switch [[maybe_unused]] (StaticVectorMove const legal_selections) {
+constexpr auto all_are_pass_or_switch [[maybe_unused]] (LegalSelections const legal_selections) {
 	return
 		(containers::size(legal_selections) == 1_bi and containers::front(legal_selections) == Moves::Pass) or
 		containers::all(legal_selections, is_switch);
@@ -281,7 +281,7 @@ struct Evaluator {
 	}
 
 private:
-	auto select_move_branch(Team<generation> const & ai, StaticVectorMove const ai_selections, Team<generation> const & foe, StaticVectorMove const foe_selections, Weather const weather, Depth const depth, auto const function) -> SelectMoveResult {
+	auto select_move_branch(Team<generation> const & ai, LegalSelections const ai_selections, Team<generation> const & foe, LegalSelections const foe_selections, Weather const weather, Depth const depth, auto const function) -> SelectMoveResult {
 		// This calls itself at one lower depth in order to get an initial estimate
 		// for move_scores because the algorithm works faster if you start with the
 		// correct result. The results from one less depth are used to estimate the
@@ -411,7 +411,7 @@ private:
 				auto const actual_last_move = is_same_pokemon ? last_move : Moves::Pass;
 				auto const first_used_move = original_last_pokemon.other_move();
 				return score_executed_moves(pre_updated_last, actual_last_move, pre_updated_first, first_used_move, pre_updated_weather, [&](Team<generation> const & updated_last, Team<generation> const & updated_first, Weather const updated_weather) {
-					auto const first_selections = StaticVectorMove({Moves::Pass});
+					auto const first_selections = LegalSelections({Moves::Pass});
 					auto const last_selections = legal_selections(updated_last, updated_first, weather);
 					return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, depth, use_move_branch_inner(first_used_move)).move.score;
 				});
@@ -443,7 +443,7 @@ private:
 		return score_executed_moves(first, first_move, last, FutureMove{is_damaging(last_move)}, weather, [&](Team<generation> const & updated_first, Team<generation> const & updated_last, Weather const updated_weather) {
 			auto const first_selections = legal_selections(updated_first, updated_last, weather);
 			BOUNDED_ASSERT(all_are_pass_or_switch(first_selections));
-			auto const last_selections = StaticVectorMove({Moves::Pass});
+			auto const last_selections = LegalSelections({Moves::Pass});
 			// TODO: Figure out first / last vs ai / foe
 			return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, depth, use_move_branch_outer(original_last_pokemon, last_move)).move.score;
 		});

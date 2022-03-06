@@ -24,7 +24,7 @@ using SharedMoveSize = decltype(std::declval<TeamSize>() + number_of_weird_moves
 
 using MoveSize = decltype(std::declval<RegularMoveSize>() + std::declval<SharedMoveSize>());
 
-using StaticVectorMove = containers::static_vector<
+using LegalSelections = containers::static_vector<
 	Moves,
 	numeric_traits::max_value<MoveSize>
 >;
