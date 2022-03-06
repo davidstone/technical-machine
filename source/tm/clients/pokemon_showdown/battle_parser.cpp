@@ -420,7 +420,7 @@ struct BattleParserImpl : BattleParser {
 			bounded::visit(source, bounded::overload(
 				[&](MainEffect) {
 					auto const move_name = m_move_state.executed_move();
-					auto move_cured_status = [&] {
+					auto const move_cured_status = [&] {
 						if (!move_name) {
 							return false;
 						}
@@ -436,8 +436,8 @@ struct BattleParserImpl : BattleParser {
 								pokemon.status().name()
 							);
 						});
-					};
-					if (move_cured_status()) {
+					}();
+					if (move_cured_status) {
 						m_move_state.status_from_move(party, Statuses::clear);
 					} else if (moved(m_battle.ai()) and moved(m_battle.foe())) {
 						m_end_of_turn_state.set_expected(party, Statuses::clear);

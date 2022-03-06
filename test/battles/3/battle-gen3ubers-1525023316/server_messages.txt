@@ -1,0 +1,64 @@
+>battle-gen3ubers-1525023316
+|title|Technical Machine vs. david stone
+|j|☆Technical Machine
+|request|
+|j|☆david stone
+|t:|1646605481
+|gametype|singles
+|player|p1|Technical Machine|1|
+|request|{"active":[{"moves":[{"move":"Spore","id":"spore","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Smeargle","details":"Smeargle, M","condition":"314/314","active":true,"stats":{"atk":68,"def":122,"spa":76,"spd":143,"spe":230},"moves":["spore"],"baseAbility":"owntempo","item":"leftovers","pokeball":"pokeball"}]},"rqid":2}
+|player|p2|david stone|colress|
+|teamsize|p1|1
+|teamsize|p2|2
+|gen|3
+|tier|[Gen 3] Ubers
+|rule|Sleep Clause Mod: Limit one foe put to sleep
+|rule|Switch Priority Clause Mod: Faster Pokémon switch first
+|rule|Species Clause: Limit one of each Pokémon
+|rule|OHKO Clause: OHKO moves are banned
+|rule|Evasion Moves Clause: Evasion moves are banned
+|rule|Endless Battle Clause: Forcing endless battles is banned
+|rule|HP Percentage Mod: HP is shown in percentages
+|rule|Deoxys Camouflage Clause: Reveals the Deoxys forme when it is sent in battle.
+|rule|One Baton Pass Clause: Limit one Baton Passer
+||
+|t:|1646605481
+|start|
+|switch|p1a: Smeargle|Smeargle, M|314/314
+|switch|p2a: Snorlax|Snorlax, F|100/100
+|turn|1
+|inactive|Battle timer is ON: inactive players will automatically lose when time's up. (requested by Technical Machine)
+|inactive|Time left: 300 sec this turn | 300 sec total | 60 sec grace
+|inactive|david stone also wants the timer to be on.
+|request|{"active":[{"moves":[{"move":"Spore","id":"spore","pp":23,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Smeargle","details":"Smeargle, M","condition":"314/314","active":true,"stats":{"atk":68,"def":122,"spa":76,"spd":143,"spe":230},"moves":["spore"],"baseAbility":"owntempo","item":"leftovers","pokeball":"pokeball"}]},"rqid":4}
+||
+|t:|1646605485
+|move|p1a: Smeargle|Spore|p2a: Snorlax
+|-status|p2a: Snorlax|slp|[from] move: Spore
+|cant|p2a: Snorlax|slp
+||
+|upkeep|
+|turn|2
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Spore","id":"spore","pp":22,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Smeargle","details":"Smeargle, M","condition":"314/314","active":true,"stats":{"atk":68,"def":122,"spa":76,"spd":143,"spe":230},"moves":["spore"],"baseAbility":"owntempo","item":"leftovers","pokeball":"pokeball"}]},"rqid":6}
+||
+|t:|1646605488
+|switch|p2a: Dragonite|Dragonite, M|100/100
+|move|p1a: Smeargle|Spore|p2a: Dragonite
+|-message|Sleep Clause Mod activated.
+||
+|upkeep|
+|turn|3
+|inactive|Time left: 300 sec this turn | 300 sec total
+|request|{"active":[{"moves":[{"move":"Spore","id":"spore","pp":21,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Smeargle","details":"Smeargle, M","condition":"314/314","active":true,"stats":{"atk":68,"def":122,"spa":76,"spd":143,"spe":230},"moves":["spore"],"baseAbility":"owntempo","item":"leftovers","pokeball":"pokeball"}]},"rqid":8}
+||
+|t:|1646605491
+|move|p1a: Smeargle|Spore|p2a: Dragonite
+|-message|Sleep Clause Mod activated.
+|move|p2a: Dragonite|Heal Bell|p2a: Dragonite
+|-activate|p2a: Dragonite|move: Heal Bell
+|-curestatus|p2: Snorlax|slp|[silent]
+||
+|upkeep|
+|turn|4
+|inactive|Time left: 300 sec this turn | 300 sec total

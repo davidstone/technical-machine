@@ -296,12 +296,44 @@ constexpr auto tri_attack_effect(UserPokemon const original_user, OtherTeam<User
 	}
 }
 
-auto cure_all_status(any_team auto & user, auto const & predicate) -> void {
+constexpr auto cure_all_status(any_team auto & user, auto const & predicate) -> void {
 	for (auto & pokemon : user.all_pokemon()) {
 		if (predicate(pokemon)) {
 			pokemon.set_status(Statuses::clear);
 		}
 	}
+}
+
+constexpr auto do_aromatherapy(any_team auto & user) -> void {
+	cure_all_status(user, [=](any_pokemon auto const &) { return true; });
+}
+
+template<any_team UserTeam>
+constexpr auto do_heal_bell(UserTeam & user) -> void {
+	cure_all_status(user, [=](any_pokemon auto const & pokemon) {
+		switch (generation_from<UserTeam>) {
+			case Generation::one:
+			case Generation::two:
+				return true;
+			case Generation::three:
+			case Generation::four: {
+				auto const is_active = std::addressof(pokemon) == std::addressof(user.all_pokemon()());
+				auto const ability = is_active ? user.pokemon().ability() : pokemon.initial_ability();
+				return !blocks_sound_moves(ability);
+			}
+			case Generation::five:
+				return true;
+			case Generation::six:
+			case Generation::seven: {
+				if (std::addressof(pokemon) != std::addressof(user.all_pokemon()())) {
+					return true;
+				}
+				return !blocks_sound_moves(user.pokemon().ability());
+			}
+			case Generation::eight:
+				return true;
+		}
+	});
 }
 
 constexpr auto fling_effects = [](auto & user_team, auto & target_team, auto & weather, auto const damage) {
@@ -875,19 +907,11 @@ auto possible_side_effects(Moves const move, UserPokemon const original_user, Ot
 
 		case Moves::Aromatherapy:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
-				cure_all_status(user, [](any_pokemon auto const &) { return true; });
+				do_aromatherapy(user);
 			});
 		case Moves::Heal_Bell:
 			return guaranteed_effect<UserTeam>([](auto & user, auto &, auto &, auto) {
-				cure_all_status(user, [=](any_pokemon auto const & pokemon) {
-					if constexpr (generation == Generation::five) {
-						return true;
-					} else {
-						auto const is_active = std::addressof(pokemon) == std::addressof(user.all_pokemon()());
-						auto const ability = is_active ? user.pokemon().ability() : pokemon.initial_ability();
-						return !blocks_sound_moves(ability);
-					}
-				});
+				do_heal_bell(user);
 			});
 		case Moves::Psycho_Shift:
 			return guaranteed_effect<UserTeam>([](auto & user, auto & other, auto & weather, auto const damage) {

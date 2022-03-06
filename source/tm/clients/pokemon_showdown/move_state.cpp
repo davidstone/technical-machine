@@ -61,6 +61,20 @@ bool MoveState::move_damages_self(Party const party) const {
 	return result;
 }
 
+namespace {
+
+constexpr auto clears_team_status(Moves const move) -> bool {
+	switch (move) {
+		case Moves::Aromatherapy:
+		case Moves::Heal_Bell:
+			return true;
+		default:
+			return false;
+	}
+}
+
+} // namespace
+
 void MoveState::status_from_move(Party const party, Statuses const status) {
 	if (!m_move) {
 		throw std::runtime_error("Tried to status without an active move");
@@ -78,6 +92,14 @@ void MoveState::status_from_move(Party const party, Statuses const status) {
 			throw_error();
 		}
 		bounded::insert(m_other.status, status);
+	} else if (clears_team_status(m_move->executed)) {
+		if (party != *m_party) {
+			throw_error();
+		}
+		if (status != Statuses::clear) {
+			throw std::runtime_error("Tried to clear status to a status other than clear");
+		}
+		bounded::insert(m_user.status, status);
 	} else {
 		if (party == *m_party) {
 			throw_error();
