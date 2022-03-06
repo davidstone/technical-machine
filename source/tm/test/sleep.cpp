@@ -89,6 +89,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 			Moves::Thunderbolt,
 			false,
 			false,
+			ContactAbilityEffect::nothing,
 			no_effect_function
 		),
 		defender,
@@ -121,6 +122,7 @@ struct Sleeper {
 				executed,
 				false,
 				false,
+				ContactAbilityEffect::nothing,
 				side_effect.function
 			),
 			m_other,

@@ -15,18 +15,17 @@
 #include <tm/move/moves.hpp>
 #include <tm/move/used_move.hpp>
 
+#include <tm/pokemon/active_pokemon.hpp>
 #include <tm/pokemon/pokemon_not_found.hpp>
 
 #include <tm/any_team.hpp>
+#include <tm/contact_ability_effect.hpp>
 #include <tm/phazing_in_same_pokemon.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/detail/variant/variant.hpp>
 #include <bounded/optional.hpp>
 #include <bounded/detail/variant/variant.hpp>
-
-#include <containers/front_back.hpp>
-#include <containers/size.hpp>
 
 #include <stdexcept>
 
@@ -164,6 +163,17 @@ struct MoveState {
 		m_recoil = true;
 	}
 	void status_from_move(Party const party, Statuses const status);
+	void contact_ability_statuses(Party const party, any_active_pokemon auto const user, Weather const weather, Ability const ability, Statuses const status) {
+		validate(party);
+		if (m_move->status) {
+			throw std::runtime_error("Tried to status a Pokemon twice");
+		}
+		if (!indirect_status_can_apply(status, user, weather)) {
+			throw std::runtime_error("Tried to set status on a Pokemon where status cannot apply");
+		}
+		apply_contact_ability_status(party, ability, status);
+	}
+
 	void set_expected(Party const party, Statuses const status) {
 		if (!m_party) {
 			return;
@@ -204,12 +214,14 @@ private:
 	[[noreturn]] void throw_error() const {
 		throw std::runtime_error("Received battle messages out of order");
 	}
+	auto apply_contact_ability_status(Party, Ability, Statuses) -> void;
 
 	struct UsedMoveBuilder {
 		Moves selected;
 		Moves executed = selected;
 		bool critical_hit = false;
 		bool miss = false;
+		ContactAbilityEffect contact_ability_effect = ContactAbilityEffect::nothing;
 		bool confuse = false;
 		bool flinch = false;
 		bool fully_paralyze = false;

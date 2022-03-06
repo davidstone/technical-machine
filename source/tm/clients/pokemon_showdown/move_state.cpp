@@ -5,12 +5,16 @@
 
 #include <tm/clients/pokemon_showdown/move_state.hpp>
 
+#include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/status.hpp>
 
 #include <tm/block.hpp>
 #include <tm/team.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
+#include <containers/front_back.hpp>
+#include <containers/size.hpp>
 
 #include <string>
 #include <string_view>
@@ -116,6 +120,49 @@ auto get_side_effect(auto const move, UserPokemon const user, OtherTeam<UserPoke
 
 } // namespace
 
+auto MoveState::apply_contact_ability_status(Party const party, Ability const ability, Statuses const status) -> void {
+	using namespace std::string_view_literals;
+	auto status_effect = [&](auto const... valid_statuses) {
+		if ((... and (status != valid_statuses))) {
+			throw std::runtime_error(containers::concatenate<std::string>(
+				"Tried to apply "sv,
+				to_string(status),
+				" from "sv,
+				to_string(ability)
+			));
+		}
+		m_move->contact_ability_effect = [=] {
+			switch (status) {
+				case Statuses::burn: return ContactAbilityEffect::burn;
+				case Statuses::paralysis: return ContactAbilityEffect::paralysis;
+				case Statuses::poison: return ContactAbilityEffect::poison;
+				case Statuses::sleep: return ContactAbilityEffect::sleep;
+				default: bounded::unreachable();
+			}
+		}();
+	};
+	switch (ability) {
+		case Ability::Effect_Spore:
+			status_effect(Statuses::paralysis, Statuses::poison, Statuses::sleep);
+			break;
+		case Ability::Flame_Body:
+			status_effect(Statuses::burn);
+			break;
+		case Ability::Poison_Point:
+			status_effect(Statuses::poison);
+			break;
+		case Ability::Static:
+			status_effect(Statuses::paralysis);
+			break;
+		default:
+			throw std::runtime_error(containers::concatenate<std::string>(
+				"Tried to apply status from a contact move with ability: "sv,
+				to_string(ability)
+			));
+	}
+	set_expected(party, status);
+}
+
 template<Generation generation>
 auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai, SeenTeam<generation> const & foe, Weather const weather) -> CompleteResult<generation> {
 	auto generation_one_awaken = [&] {
@@ -138,6 +185,7 @@ auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai,
 				move.executed,
 				move.critical_hit,
 				move.miss,
+				move.contact_ability_effect,
 				get_side_effect(move, user, other, weather)
 			),
 			m_damage,

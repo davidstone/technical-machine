@@ -348,7 +348,14 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 	CHECK(containers::size(side_effects) == 1_bi);
 	call_move(
 		user,
-		UsedMove<Team<generation>>(Moves::Sleep_Talk, Moves::Substitute, false, false, containers::front(side_effects).function),
+		UsedMove<Team<generation>>(
+			Moves::Sleep_Talk,
+			Moves::Substitute,
+			false,
+			false,
+			ContactAbilityEffect::nothing,
+			containers::front(side_effects).function
+		),
 		other,
 		FutureMove{false},
 		weather,
@@ -357,6 +364,55 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 	);
 
 	CHECK(user.pokemon().substitute().hp() == user.pokemon().hp().max() / 4_bi);
+}
+
+TEST_CASE("Static paralyzes", "[call_move]") {
+	auto weather = Weather();
+
+	auto user = Team<generation>({
+		Pokemon<generation>(
+			Species::Sentret,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Run_Away,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, Moves::Scratch)})
+		)
+	});
+	user.pokemon().switch_in(weather);
+
+	auto other = Team<generation>({
+		Pokemon<generation>(
+			Species::Electabuzz,
+			Level(100_bi),
+			Gender::male,
+			Item::Choice_Band,
+			Ability::Static,
+			default_combined_stats<generation>,
+			regular_moves(Moves::Barrier)
+		)
+	});
+	other.pokemon().switch_in(weather);
+
+	call_move(
+		user,
+		UsedMove<Team<generation>>(
+			Moves::Scratch,
+			Moves::Scratch,
+			false,
+			false,
+			ContactAbilityEffect::paralysis,
+			no_effect_function
+		),
+		other,
+		FutureMove{false},
+		weather,
+		false,
+		damage
+	);
+
+	CHECK(user.pokemon().status().name() == Statuses::paralysis);
 }
 
 } // namespace

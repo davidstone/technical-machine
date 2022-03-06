@@ -5,15 +5,13 @@
 
 #pragma once
 
+#include <tm/move/moves.hpp>
 #include <tm/move/side_effects.hpp>
 
 #include <tm/any_team.hpp>
-
-#include <cstdint>
+#include <tm/contact_ability_effect.hpp>
 
 namespace technicalmachine {
-
-enum class Moves : std::uint16_t;
 
 template<any_team UserTeam>
 struct UsedMove {
@@ -22,13 +20,15 @@ struct UsedMove {
 		Moves const executed_,
 		bool const critical_hit_,
 		bool const miss_,
+		ContactAbilityEffect const contact_ability_effect_,
 		typename SideEffect<UserTeam>::Function const side_effect_
 	):
 		side_effect(side_effect_),
 		selected(selected_),
 		executed(executed_),
 		critical_hit(critical_hit_),
-		miss(miss_)
+		miss(miss_),
+		contact_ability_effect(contact_ability_effect_)
 	{
 	}
 
@@ -37,7 +37,8 @@ struct UsedMove {
 		selected(selected_),
 		executed(selected),
 		critical_hit(false),
-		miss(false)
+		miss(false),
+		contact_ability_effect(ContactAbilityEffect::nothing)
 	{
 	}
 
@@ -46,6 +47,7 @@ struct UsedMove {
 	Moves executed;
 	bool critical_hit;
 	bool miss;
+	ContactAbilityEffect contact_ability_effect;
 };
 
 } // namespace technicalmachine

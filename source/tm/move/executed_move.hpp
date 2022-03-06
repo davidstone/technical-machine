@@ -9,6 +9,7 @@
 #include <tm/move/side_effects.hpp>
 
 #include <tm/any_team.hpp>
+#include <tm/contact_ability_effect.hpp>
 
 namespace technicalmachine {
 
@@ -18,6 +19,7 @@ struct ExecutedMove {
 	PP pp;
 	typename SideEffect<UserTeam>::Function side_effect;
 	bool critical_hit;
+	ContactAbilityEffect contact_ability_effect;
 };
 
 } // namespace technicalmachine

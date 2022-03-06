@@ -23,6 +23,7 @@
 #include <tm/ability_blocks_move.hpp>
 #include <tm/any_team.hpp>
 #include <tm/block.hpp>
+#include <tm/contact_ability_effect.hpp>
 #include <tm/end_of_turn.hpp>
 #include <tm/generation.hpp>
 #include <tm/heal.hpp>
@@ -234,6 +235,28 @@ constexpr auto targets_foe_specifically(Target const target) {
 	}
 }
 
+constexpr auto activate_target_ability(any_mutable_active_pokemon auto const user, any_mutable_active_pokemon auto const other, Weather const weather, ContactAbilityEffect const effect) {
+	switch (effect) {
+		case ContactAbilityEffect::nothing:
+			break;
+		case ContactAbilityEffect::burn:
+			user.set_status(Statuses::burn, weather);
+			break;
+		case ContactAbilityEffect::infatuation:
+			user.attract(other, weather);
+			break;
+		case ContactAbilityEffect::paralysis:
+			user.set_status(Statuses::paralysis, weather);
+			break;
+		case ContactAbilityEffect::poison:
+			user.set_status(Statuses::poison, weather);
+			break;
+		case ContactAbilityEffect::sleep:
+			user.set_status(Statuses::sleep, weather);
+			break;
+	}
+}
+
 template<any_team UserTeam, any_team OtherTeamType>
 auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target const target, OtherTeamType & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
 	constexpr auto generation = generation_from<UserTeam>;
@@ -267,7 +290,8 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 	if (effects == Substitute::absorbs) {
 		return;
 	}
-	if constexpr (std::same_as<UserTeam, OtherTeamType> and !std::same_as<UserTeam, Team<generation_from<UserTeam>>>) {
+	constexpr auto hit_self_combination = std::same_as<UserTeam, OtherTeamType> and !std::same_as<UserTeam, Team<generation_from<UserTeam>>>;
+	if constexpr (hit_self_combination) {
 		BOUNDED_ASSERT(executed.move.name == Moves::Hit_Self);
 	} else {
 		executed.side_effect(user, other, weather, damage_done);
@@ -280,6 +304,13 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 			heal(user_pokemon, weather, rational(-1_bi, 10_bi));
 		} else if (item == Item::Shell_Bell) {
 			change_hp(user_pokemon, weather, bounded::max(damage_done / 8_bi, 1_bi));
+		}
+
+		// TODO: When do target abilities activate?
+		if constexpr (hit_self_combination) {
+			BOUNDED_ASSERT(executed.contact_ability_effect == ContactAbilityEffect::nothing);
+		} else {
+			activate_target_ability(user_pokemon, other_pokemon, weather, executed.contact_ability_effect);
 		}
 	}
 }
@@ -438,7 +469,8 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 			known_move,
 			found_move.pp(),
 			move.side_effect,
-			move.critical_hit
+			move.critical_hit,
+			move.contact_ability_effect
 		};
 		if (executed_move.move.name == Moves::Hit_Self) {
 			use_move(user, executed_move, target, user, other_move, weather, actual_damage);

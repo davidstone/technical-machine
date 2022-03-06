@@ -37,7 +37,8 @@ auto max_damage_executed_physical_move() {
 		{max_damage_physical_move().name(), max_damage_physical_move_type},
 		max_damage_physical_move().pp(),
 		no_effect_function,
-		critical_hit
+		critical_hit,
+		ContactAbilityEffect::nothing
 	};
 }
 
@@ -158,7 +159,8 @@ TEST_CASE("Max special power", "[Power]") {
 			{move.name(), Type::Water},
 			move.pp(),
 			no_effect_function,
-			critical_hit
+			critical_hit,
+			ContactAbilityEffect::nothing
 		},
 		defender,
 		weather
@@ -254,7 +256,13 @@ TEST_CASE("Max special damage", "[Damage]") {
 
 	auto const calculated_damage = calculate_damage(
 		attacker,
-		ExecutedMove<Team<generation>>{{move.name(), Type::Fire}, move.pp(), no_effect_function, critical_hit},
+		ExecutedMove<Team<generation>>{
+			{move.name(), Type::Fire},
+			move.pp(),
+			no_effect_function,
+			critical_hit,
+			ContactAbilityEffect::nothing
+		},
 		resistance_berry_activated,
 		defender,
 		FutureMove{false},

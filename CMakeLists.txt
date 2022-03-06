@@ -227,6 +227,7 @@ add_library(tm_common STATIC
 	source/tm/bytes_in_file.cpp
 	source/tm/compress.cpp
 	source/tm/constant_generation.cpp
+	source/tm/contact_ability_effect.cpp
 	source/tm/critical_hit.cpp
 	source/tm/end_of_turn.cpp
 	source/tm/entry_hazards.cpp

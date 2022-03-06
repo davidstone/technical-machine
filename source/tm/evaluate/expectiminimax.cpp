@@ -144,6 +144,8 @@ auto execute_move(TeamType const & user, SelectedAndExecuted const move, TeamTyp
 						auto user_copy = user;
 						auto other_copy = other;
 						auto weather_copy = weather;
+						// TODO: https://github.com/davidstone/technical-machine/issues/24
+						constexpr auto contact_ability_effect = ContactAbilityEffect::nothing;
 						call_move(
 							user_copy,
 							UsedMove<TeamType>(
@@ -151,6 +153,7 @@ auto execute_move(TeamType const & user, SelectedAndExecuted const move, TeamTyp
 								move.executed.name,
 								critical_hit,
 								!hits,
+								contact_ability_effect,
 								side_effect.function
 							),
 							other_copy,
