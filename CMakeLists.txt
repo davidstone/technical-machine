@@ -336,6 +336,8 @@ add_executable(tm_test
 	source/tm/test/evaluate/evaluate.cpp
 	source/tm/test/evaluate/expectiminimax.cpp
 
+	source/tm/test/pokemon/active_pokemon.cpp
+
 	source/tm/test/pokemon_lab/team_file.cpp
 
 	source/tm/test/pokemon_online/conversion.cpp

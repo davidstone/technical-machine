@@ -1037,11 +1037,15 @@ private:
 	}
 
 	auto set_status_impl(Statuses const status_name, Weather const weather) const -> void {
+		auto unconditional_set_status = [&](Statuses const unconditional_status) {
+			this->m_pokemon.set_status(unconditional_status);
+			this->m_flags.status.set(unconditional_status);
+		};
 		if (clears_status(this->item(weather), status_name)) {
+			unconditional_set_status(Statuses::clear);
 			remove_item();
 		} else {
-			this->m_pokemon.set_status(status_name);
-			this->m_flags.status.set(status_name);
+			unconditional_set_status(status_name);
 		}
 	}
 };
