@@ -306,8 +306,22 @@ struct BattleParserImpl : BattleParser {
 		} else if (type == "-ability") {
 			auto const party = party_from_player_id(message.pop());
 			auto const ability = from_string<Ability>(message.pop());
+			auto const source = parse_from_source(message.pop());
 			maybe_commit_switch(party);
-			set_value_on_pokemon(party, ability);
+			bounded::visit(source, bounded::overload(
+				[&](MainEffect) { set_value_on_pokemon(party, ability); },
+				[&](Ability const source_ability) {
+					switch (source_ability) {
+						case Ability::Trace:
+							set_value_on_pokemon(party, source_ability);
+							set_value_on_pokemon(other(party), ability);
+							break;
+						default:
+							throw std::runtime_error("Invalid ability to get another ability");
+					}
+				},
+				[](auto) { throw std::runtime_error("Invalid ability source"); }
+			));
 		} else if (type == "-activate") {
 			auto const party = party_from_player_id(message.pop());
 			auto const [category, source] = split_view(message.pop(), ": "sv);
