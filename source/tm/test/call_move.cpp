@@ -415,5 +415,80 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 	CHECK(user.pokemon().status().name() == Statuses::paralysis);
 }
 
+TEST_CASE("Pokemon faints after Explosion against a Substitute in later generations", "[call_move]") {
+	auto weather = Weather();
+
+	auto user = Team<generation>({
+		Pokemon<generation>(
+			Species::Registeel,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Leftovers,
+			Ability::Clear_Body,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, Moves::Explosion)})
+		),
+		Pokemon<generation>(
+			Species::Regice,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Leftovers,
+			Ability::Clear_Body,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, Moves::Explosion)})
+		)
+	});
+	user.pokemon().switch_in(weather);
+
+	auto other = Team<generation>({
+		Pokemon<generation>(
+			Species::Ninjask,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Speed_Boost,
+			default_combined_stats<generation>,
+			regular_moves(Moves::Substitute)
+		)
+	});
+	other.pokemon().switch_in(weather);
+
+	{
+		auto const side_effects = possible_side_effects(Moves::Substitute, other.pokemon().as_const(), other, weather);
+		CHECK(containers::size(side_effects) == 1_bi);
+		call_move(
+			other,
+			UsedMove<Team<generation>>(
+				Moves::Substitute,
+				containers::front(side_effects).function
+			),
+			user,
+			FutureMove{false},
+			weather,
+			false,
+			damage
+		);
+
+		CHECK(other.pokemon().substitute().hp() == other.pokemon().hp().max() / 4_bi);
+	}
+
+	auto const side_effects = possible_side_effects(Moves::Explosion, user.pokemon().as_const(), other, weather);
+	CHECK(containers::size(side_effects) == 1_bi);
+	call_move(
+		user,
+		UsedMove<Team<generation>>(
+			Moves::Explosion,
+			containers::front(side_effects).function
+		),
+		other,
+		FutureMove{false},
+		weather,
+		false,
+		damage
+	);
+
+	CHECK(user.pokemon().hp().current() == 0_bi);
+}
+
 } // namespace
 } // namespace technicalmachine
