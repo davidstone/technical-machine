@@ -23,7 +23,7 @@ private:
 		Moves move_name;
 		double score;
 	};
-	containers::static_vector<value_type, numeric_traits::max_value<MoveSize>> m_scores;
+	containers::static_vector<value_type, maximum_possible_selections> m_scores;
 };
 
 } // namespace technicalmachine

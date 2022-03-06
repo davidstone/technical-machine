@@ -26,6 +26,9 @@ using namespace bounded::literal;
 
 BOUNDED_COMMON_ARITHMETIC
 
+constexpr auto number_of_weird_moves = 2_bi; // Pass, Struggle
+using SharedMoveSize = decltype(std::declval<TeamSize>() + number_of_weird_moves);
+
 template<Generation generation>
 struct SharedMovesIterator {
 private:

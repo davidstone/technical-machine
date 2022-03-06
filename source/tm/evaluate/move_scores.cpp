@@ -44,12 +44,12 @@ void MoveScores::set(Moves const move_name, double const score) {
 }
 
 auto MoveScores::ordered_moves(bool const ai) const -> LegalSelections {
-	auto intermediate = containers::static_vector<value_type, numeric_traits::max_value<MoveSize>>(m_scores);
+	auto copy = m_scores;
 	auto compare = [=](value_type const lhs, value_type const rhs) {
 		return ai ? lhs.score > rhs.score : lhs.score < rhs.score;
 	};
-	containers::sort(intermediate, compare);
-	return LegalSelections(containers::transform(intermediate, [](value_type const value) { return value.move_name; }));
+	containers::sort(copy, compare);
+	return LegalSelections(containers::transform(copy, [](value_type const value) { return value.move_name; }));
 }
 
 } // namespace technicalmachine

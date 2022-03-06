@@ -17,16 +17,16 @@ enum class Moves : std::uint16_t;
 using namespace bounded::literal;
 
 constexpr auto max_moves_per_pokemon = 4_bi;
-using RegularMoveSize = bounded::integer<1, bounded::normalize<max_moves_per_pokemon>>;
 
-constexpr auto number_of_weird_moves = 2_bi; // Pass, Struggle
-using SharedMoveSize = decltype(std::declval<TeamSize>() + number_of_weird_moves);
-
-using MoveSize = decltype(std::declval<RegularMoveSize>() + std::declval<SharedMoveSize>());
+// The possible selection sets are:
+// Pass
+// Struggle, team size (6) - 1 switches
+// Normal moves (4), team size (6) - 1 switches
+inline constexpr auto maximum_possible_selections = max_moves_per_pokemon + max_pokemon_per_team - 1_bi;
 
 using LegalSelections = containers::static_vector<
 	Moves,
-	numeric_traits::max_value<MoveSize>
+	maximum_possible_selections
 >;
 
 } // namespace technicalmachine
