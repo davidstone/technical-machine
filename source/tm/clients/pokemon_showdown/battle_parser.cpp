@@ -513,7 +513,7 @@ struct BattleParserImpl : BattleParser {
 #endif
 		} else if (type == "faint") {
 			auto const party = party_from_player_id(message.pop());
-			if (generation <= Generation::three and is_ai(party) and m_battle.ai().size() != 1_bi) {
+			if (generation <= Generation::three and is_ai(party) and m_battle.ai().size() != 1_bi and !moved(m_battle.foe())) {
 				m_replacing_fainted = true;
 				send_move(determine_action());
 			}
