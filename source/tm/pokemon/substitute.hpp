@@ -24,11 +24,12 @@ private:
 	using hp_type = decltype(std::declval<HP::current_type>() / 4_bi);
 
 public:
-	enum class Interaction { absorbs, bypassed, causes_failure };
-	// TODO: using enum
-	static constexpr auto absorbs = Interaction::absorbs;
-	static constexpr auto bypassed = Interaction::bypassed;
-	static constexpr auto causes_failure = Interaction::causes_failure;
+	enum class Interaction {
+		absorbs,
+		bypassed,
+		causes_failure
+	};
+	using enum Interaction;
 
 	constexpr auto create(HP::current_type const total_hp) -> hp_type {
 		if (static_cast<bool>(*this)) {
