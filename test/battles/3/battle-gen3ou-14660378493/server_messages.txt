@@ -1,5 +1,4 @@
 >battle-gen3ou-1466037849
-|init|battle
 |title|Technical Machine vs. david stone
 |j|☆Technical Machine
 |request|
