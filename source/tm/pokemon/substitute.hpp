@@ -63,6 +63,7 @@ private:
 	hp_type m_hp = 0_bi;
 };
 
+// This is for side-effects only
 auto substitute_interaction(Generation, Moves) -> Substitute::Interaction;
 
 } // namespace technicalmachine

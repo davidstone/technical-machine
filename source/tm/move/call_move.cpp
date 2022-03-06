@@ -286,16 +286,16 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 		other_pokemon.direct_damage(executed.move.name, user_pokemon, weather, damage) :
 		0_bi;
 
+	if (effects == Substitute::absorbs) {
+		return;
+	}
 	constexpr auto hit_self_combination = std::same_as<UserTeam, OtherTeamType> and !std::same_as<UserTeam, Team<generation_from<UserTeam>>>;
 	if constexpr (hit_self_combination) {
 		BOUNDED_ASSERT(executed.move.name == Moves::Hit_Self);
 	} else {
 		executed.side_effect(user, other, weather, damage_done);
 	}
-	// https://github.com/davidstone/technical-machine/issues/92
-	if (effects == Substitute::absorbs) {
-		return;
-	}
+
 	// Should this check if we did any damage or if the move is damaging?
 	if (damage_done != 0_bi) {
 		auto const item = user_pokemon.item(weather);
