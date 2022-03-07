@@ -39,6 +39,44 @@ auto make_smallest_team() -> GenerationGeneric<Team> {
 	}));
 }
 
+auto make_team_with_two_pokemon() -> GenerationGeneric<Team> {
+	constexpr auto generation = Generation::one;
+	return GenerationGeneric<Team>(Team<generation>({
+		{
+			Species::Tauros,
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			CombinedStats<generation>{
+				Nature::Hardy,
+				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
+				OldGenEVs(EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi))
+			},
+			RegularMoves({
+				Move(generation, Moves::Body_Slam),
+				Move(generation, Moves::Earthquake)
+			})
+		},
+		{
+			Species::Pikachu,
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			CombinedStats<generation>{
+				Nature::Hardy,
+				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
+				OldGenEVs(EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi))
+			},
+			RegularMoves({
+				Move(generation, Moves::Thunderbolt),
+				Move(generation, Moves::Thunder)
+			})
+		}
+	}));
+}
+
 auto make_second_team() -> GenerationGeneric<Team> {
 	constexpr auto generation = Generation::one;
 	return GenerationGeneric<Team>(Team<generation>({
@@ -86,6 +124,114 @@ TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
 					},
 					"Speed": {
 						"7": 1.0
+					},
+					"Usage": 1.0
+				}
+			},
+			"Total teams": 1.0
+		}
+	)");
+	INFO(stream.str());
+	CHECK(nlohmann::json::parse(stream.str()) == expected);
+}
+
+TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
+	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
+	constexpr auto weight = 1.0;
+	auto const team = make_team_with_two_pokemon();
+	usage_stats->add(team, weight);
+	auto correlations = std::make_unique<ps_usage_stats::Correlations>(*usage_stats);
+	correlations->add(team, weight);
+	auto stream = std::stringstream();
+	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, *correlations);
+	auto const expected = nlohmann::json::parse(R"(
+		{
+			"Pokemon": {
+				"Pikachu": {
+					"Moves": {
+						"Thunderbolt": {
+							"Moves": {
+								"Thunder": 1.0
+							},
+							"Speed": {
+								"278": 1.0
+							},
+							"Teammates": {
+								"Tauros": {
+									"Moves": {
+										"Body Slam": 1.0,
+										"Earthquake": 1.0
+									},
+									"Usage": 1.0
+								}
+							},
+							"Usage": 1.0
+						},
+						"Thunder": {
+							"Moves": {
+								"Thunderbolt": 1.0
+							},
+							"Speed": {
+								"278": 1.0
+							},
+							"Teammates": {
+								"Tauros": {
+									"Moves": {
+										"Body Slam": 1.0,
+										"Earthquake": 1.0
+									},
+									"Usage": 1.0
+								}
+							},
+							"Usage": 1.0
+						}
+					},
+					"Speed": {
+						"278": 1.0
+					},
+					"Usage": 1.0
+				},
+				"Tauros": {
+					"Moves": {
+						"Body Slam": {
+							"Moves": {
+								"Earthquake": 1.0
+							},
+							"Speed": {
+								"318": 1.0
+							},
+							"Teammates": {
+								"Pikachu": {
+									"Moves": {
+										"Thunderbolt": 1.0,
+										"Thunder": 1.0
+									},
+									"Usage": 1.0
+								}
+							},
+							"Usage": 1.0
+						},
+						"Earthquake": {
+							"Moves": {
+								"Body Slam": 1.0
+							},
+							"Speed": {
+								"318": 1.0
+							},
+							"Teammates": {
+								"Pikachu": {
+									"Moves": {
+										"Thunderbolt": 1.0,
+										"Thunder": 1.0
+									},
+									"Usage": 1.0
+								}
+							},
+							"Usage": 1.0
+						}
+					},
+					"Speed": {
+						"318": 1.0
 					},
 					"Usage": 1.0
 				}
