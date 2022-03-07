@@ -33,4 +33,8 @@ inline auto get_test_directory() -> std::filesystem::path {
 	return std::filesystem::path(get_environment_variable("TM_TEST_DIRECTORY"));
 }
 
+inline auto get_usage_stats_directory() -> std::filesystem::path {
+	return std::filesystem::path(get_environment_variable("TM_USAGE_STATS_DIRECTORY"));
+}
+
 } // namespace technicalmachine

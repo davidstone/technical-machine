@@ -20,6 +20,7 @@
 #include <tm/buffer_view.hpp>
 #include <tm/load_json_from_file.hpp>
 #include <tm/invalid_settings_file.hpp>
+#include <tm/get_directory.hpp>
 
 #include <bounded/to_integer.hpp>
 
@@ -145,7 +146,7 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 namespace {
 
 auto stats_for_generation(Generation const generation) {
-	return UsageStats(std::filesystem::path("settings") / to_string(generation) / "OU");
+	return UsageStats(get_usage_stats_directory() / to_string(generation) / "OU");
 }
 
 } // namespace
