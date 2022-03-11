@@ -29,12 +29,10 @@ namespace {
 template<typename Key>
 constexpr auto get_used(auto const get, auto predicate) {
 	using Mapped = decltype(get(std::declval<Key>()));
-	auto transformer = [&](Key const name) { return containers::map_value_type<Key, Mapped>{name, get(name)}; };
-	return containers::static_vector<containers::map_value_type<Key, Mapped>, number_of<Key>>(
-		containers::filter(
-			containers::transform(containers::enum_range<Key>(), transformer),
-			predicate
-		)
+	auto transformer = [=](Key const name) { return containers::map_value_type<Key, Mapped>{name, get(name)}; };
+	return containers::filter(
+		containers::transform(containers::enum_range<Key>(), transformer),
+		predicate
 	);
 }
 
