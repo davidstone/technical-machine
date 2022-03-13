@@ -115,10 +115,7 @@ void check_non_negative(float const value) {
 
 } // namespace
 
-UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
-	auto const path = usage_stats_directory / "usage.json";
-	auto const json = load_json_from_file(path);
-
+UsageStats::UsageStats(nlohmann::json const & json) {
 	auto const & data = json.at("data");
 	for (auto const & pokemon : data.items()) {
 		auto const species = from_string<Species>(pokemon.key());
@@ -146,7 +143,7 @@ UsageStats::UsageStats(std::filesystem::path const & usage_stats_directory) {
 namespace {
 
 auto stats_for_generation(Generation const generation) {
-	return UsageStats(get_usage_stats_directory() / to_string(generation) / "OU");
+	return UsageStats(load_json_from_file(get_usage_stats_directory() / to_string(generation) / "OU/usage.json"));
 }
 
 } // namespace

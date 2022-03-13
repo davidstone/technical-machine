@@ -21,10 +21,10 @@
 #include <containers/legacy_iterator.hpp>
 #include <containers/static_vector.hpp>
 
+#include <nlohmann/json.hpp>
+
 #include <numeric_traits/min_max_value.hpp>
 
-#include <filesystem>
-#include <stdexcept>
 
 namespace technicalmachine {
 
@@ -37,7 +37,7 @@ struct UsageStats {
 		Item item = Item::None;
 	};
 
-	explicit UsageStats(std::filesystem::path const & usage_stats_directory);
+	explicit UsageStats(nlohmann::json const & json);
 
 	auto const & get(Species const species) const {
 		return m_all_per_pokemon[bounded::integer(species)];
