@@ -49,8 +49,7 @@ struct UsageStats {
 		return m_all[bounded::integer(species)].moves;
 	}
 	constexpr auto get(Species const species, Moves const move_name) const {
-		auto const & per_species = m_all[bounded::integer(species)];
-		return per_species.moves[bounded::integer(move_name)];
+		return moves(species)[bounded::integer(move_name)];
 	}
 	constexpr auto const & speed_distribution(Species const species) const {
 		return m_all[bounded::integer(species)].speed;
