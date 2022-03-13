@@ -483,7 +483,7 @@ private:
 			}
 		});
 		if ((flags & write_method) != std::byte(0x00)) {
-			containers::emplace_back(fields, Field{Field::Type::byte, ""});
+			containers::push_back(fields, Field{Field::Type::byte, ""});
 		}
 		result = ParsedData(ClassDescription{
 			name,
