@@ -32,7 +32,7 @@ template<Generation generation>
 struct KnownPokemonCollection {
 	using Container = containers::static_vector<KnownPokemon<generation>, max_pokemon_per_team>;
 
-	constexpr explicit KnownPokemonCollection(containers::initializer_range<KnownPokemonCollection> auto && source):
+	constexpr explicit KnownPokemonCollection(containers::constructor_initializer_range<KnownPokemonCollection> auto && source):
 		m_container(OPERATORS_FORWARD(source))
 	{
 	}
