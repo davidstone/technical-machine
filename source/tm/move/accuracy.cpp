@@ -14,8 +14,6 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-// TODO: Simplify some of these after fix for
-// https://bugs.llvm.org/show_bug.cgi?id=44666
 auto accuracy(Generation const generation, Moves const move, Weather const weather, bool const weather_blocked, bool const user_is_poison) -> BaseAccuracy {
 	using bounded::none;
 	switch (move) {
@@ -83,7 +81,7 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 		case Moves::Leer: return 100_bi;
 		case Moves::Bite: return 100_bi;
 		case Moves::Growl: return 100_bi;
-		case Moves::Roar: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::five, 100_bi, none));
+		case Moves::Roar: return generation <= Generation::five ? BaseAccuracy(100_bi) : none;
 		case Moves::Sing: return 55_bi;
 		case Moves::Supersonic: return 55_bi;
 		case Moves::Sonic_Boom: return 90_bi;
@@ -140,7 +138,7 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 		case Moves::Thunder_Wave: return BOUNDED_CONDITIONAL(generation <= Generation::six, 100_bi, 90_bi);
 		case Moves::Thunder:
 			return
-				weather.rain(weather_blocked) ? BaseAccuracy(none) :
+				weather.rain(weather_blocked) ? none :
 				weather.sun(weather_blocked) ? BaseAccuracy(50_bi) :
 				BaseAccuracy(70_bi);
 		case Moves::Rock_Throw: return BOUNDED_CONDITIONAL(generation == Generation::one, 65_bi, 90_bi);
@@ -168,7 +166,7 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 		case Moves::Rage: return 100_bi;
 		case Moves::Teleport: return none;
 		case Moves::Night_Shade: return 100_bi;
-		case Moves::Mimic: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::two, 100_bi, none));
+		case Moves::Mimic: return generation <= Generation::two ? BaseAccuracy(100_bi) : none;
 		case Moves::Screech: return 85_bi;
 		case Moves::Double_Team: return none;
 		case Moves::Recover: return none;
@@ -262,13 +260,13 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 		case Moves::Super_Fang: return 90_bi;
 		case Moves::Slash: return 100_bi;
 		case Moves::Substitute: return none;
-		case Moves::Struggle: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::three, 100_bi, none));
+		case Moves::Struggle: return generation <= Generation::three ? BaseAccuracy(100_bi) : none;
 		case Moves::Sketch: return none;
 		case Moves::Triple_Kick: return 90_bi;
 		case Moves::Thief: return 100_bi;
 		case Moves::Spider_Web: return none;
-		case Moves::Mind_Reader: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::three, 100_bi, none));
-		case Moves::Nightmare: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::three, none, 100_bi));
+		case Moves::Mind_Reader: return generation <= Generation::three ? BaseAccuracy(100_bi) : none;
+		case Moves::Nightmare: return generation <= Generation::three ? none : BaseAccuracy(100_bi);
 		case Moves::Flame_Wheel: return 100_bi;
 		case Moves::Snore: return 100_bi;
 		case Moves::Curse: return none;
@@ -290,13 +288,13 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 		case Moves::Octazooka: return 85_bi;
 		case Moves::Spikes: return none;
 		case Moves::Zap_Cannon: return 50_bi;
-		case Moves::Foresight: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::three, 100_bi, none));
+		case Moves::Foresight: return generation <= Generation::three ? BaseAccuracy(100_bi) : none;
 		case Moves::Destiny_Bond: return none;
 		case Moves::Perish_Song: return none;
 		case Moves::Icy_Wind: return 95_bi;
 		case Moves::Detect: return none;
 		case Moves::Bone_Rush: return BOUNDED_CONDITIONAL(generation <= Generation::four, 80_bi, 90_bi);
-		case Moves::Lock_On: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::three, 100_bi, none));
+		case Moves::Lock_On: return generation <= Generation::three ? BaseAccuracy(100_bi) : none;
 		case Moves::Outrage: return 100_bi;
 		case Moves::Sandstorm: return none;
 		case Moves::Giga_Drain: return 100_bi;
@@ -317,7 +315,7 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 		case Moves::Present: return 90_bi;
 		case Moves::Frustration: return 100_bi;
 		case Moves::Safeguard: return none;
-		case Moves::Pain_Split: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::two, 100_bi, none));
+		case Moves::Pain_Split: return generation <= Generation::two ? BaseAccuracy(100_bi) : none;
 		case Moves::Sacred_Fire: return 95_bi;
 		case Moves::Magnitude: return 100_bi;
 		case Moves::Dynamic_Punch: return 50_bi;
@@ -359,7 +357,7 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 		case Moves::Torment: return 100_bi;
 		case Moves::Flatter: return 100_bi;
 		case Moves::Will_O_Wisp: return BOUNDED_CONDITIONAL(generation <= Generation::five, 75_bi, 85_bi);
-		case Moves::Memento: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::three, none, 100_bi));
+		case Moves::Memento: return generation <= Generation::three ? none : BaseAccuracy(100_bi);
 		case Moves::Facade: return 100_bi;
 		case Moves::Focus_Punch: return 100_bi;
 		case Moves::Smelling_Salts: return 100_bi;
@@ -413,7 +411,7 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 		case Moves::Fake_Tears: return 100_bi;
 		case Moves::Air_Cutter: return 95_bi;
 		case Moves::Overheat: return 90_bi;
-		case Moves::Odor_Sleuth: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::three, 100_bi, none));
+		case Moves::Odor_Sleuth: return generation <= Generation::three ? BaseAccuracy(100_bi) : none;
 		case Moves::Rock_Tomb: return BOUNDED_CONDITIONAL(generation <= Generation::five, 80_bi, 95_bi);
 		case Moves::Silver_Wind: return 100_bi;
 		case Moves::Metal_Sound: return 85_bi;
@@ -673,7 +671,7 @@ auto accuracy(Generation const generation, Moves const move, Weather const weath
 		case Moves::Freeze_Dry: return 100_bi;
 		case Moves::Disarming_Voice: return none;
 		case Moves::Parting_Shot: return 100_bi;
-		case Moves::Topsy_Turvy: return bounded::optional<bounded::integer<30, 100>>(BOUNDED_CONDITIONAL(generation <= Generation::six, 100_bi, none));
+		case Moves::Topsy_Turvy: return generation <= Generation::six ? BaseAccuracy(100_bi) : none;
 		case Moves::Draining_Kiss: return 100_bi;
 		case Moves::Crafty_Shield: return none;
 		case Moves::Flower_Shield: return none;
