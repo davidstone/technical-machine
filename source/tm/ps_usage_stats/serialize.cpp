@@ -91,24 +91,25 @@ auto serialize_teammates(auto const & source, double const total) -> nlohmann::j
 	return result;
 }
 
-auto serialize_moves(Generation const generation, Correlations::TopMoves const & top_moves, double const species_total) -> nlohmann::json {
+auto serialize_moves(Generation const generation, UsageStats const & usage_stats, Species const species, Correlations::TopMoves const & top_moves, double const species_total) -> nlohmann::json {
 	auto result = nlohmann::json();
-	for (auto const & top_move : top_moves) {
-		auto & per_move = result[std::string(to_string(top_move.key))];
+	for (auto const move : get_used<Moves>([&](Moves const name) { return usage_stats.get(species, name); })) {
+		auto & per_move = result[std::string(to_string(move.key))];
+		per_move["Usage"] = move.mapped / species_total;
 
-		auto const & data = top_move.mapped->unlocked();
-		auto const total = containers::sum(data.abilities);
-		per_move["Usage"] = total / species_total;
-
-		per_move["Moves"] = serialize_simple_correlations<Moves>(data.moves, total);
-		per_move["Teammates"] = serialize_teammates(data.teammates, total);
-		if (generation >= Generation::two) {
-			per_move["Items"] = serialize_simple_correlations<Item>(data.items, total);
+		auto const top_move = containers::lookup(top_moves, move.key);
+		if (top_move) {
+			auto const & data = (*top_move)->unlocked();
+			per_move["Moves"] = serialize_simple_correlations<Moves>(data.moves, move.mapped);
+			per_move["Teammates"] = serialize_teammates(data.teammates, move.mapped);
+			if (generation >= Generation::two) {
+				per_move["Items"] = serialize_simple_correlations<Item>(data.items, move.mapped);
+			}
+			if (generation >= Generation::three) {
+				per_move["Abilities"] = serialize_simple_correlations<Ability>(data.abilities, move.mapped);
+			}
+			per_move["Speed"] = serialize_speed(data.speed, move.mapped);
 		}
-		if (generation >= Generation::three) {
-			per_move["Abilities"] = serialize_simple_correlations<Ability>(data.abilities, total);
-		}
-		per_move["Speed"] = serialize_speed(data.speed, total);
 	}
 	return result;
 }
@@ -130,7 +131,7 @@ auto serialize(std::ostream & stream, Generation const generation, UsageStats co
 		auto const total = usage.mapped;
 		auto pokemon = nlohmann::json({
 			{"Usage", total / usage_stats.total_teams()},
-			{"Moves", serialize_moves(generation, correlations.top_moves(species), total)},
+			{"Moves", serialize_moves(generation, usage_stats, species, correlations.top_moves(species), total)},
 			{"Speed", serialize_speed(usage_stats.speed_distribution(species), total)}
 		});
 		if (generation >= Generation::two) {
