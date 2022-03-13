@@ -22,6 +22,7 @@
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/transform.hpp>
+#include <containers/initializer_range.hpp>
 #include <containers/is_empty.hpp>
 #include <containers/size.hpp>
 

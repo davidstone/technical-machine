@@ -17,6 +17,7 @@
 #include <tm/generation.hpp>
 #include <tm/team.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>
 
 #include <numeric_traits/min_max_value.hpp>

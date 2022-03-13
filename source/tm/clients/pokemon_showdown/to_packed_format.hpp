@@ -16,6 +16,7 @@
 
 #include <tm/any_team.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/begin_end.hpp>
 #include <containers/integer_range.hpp>
 #include <containers/is_empty.hpp>

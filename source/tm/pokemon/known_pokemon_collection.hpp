@@ -17,6 +17,7 @@
 #include <containers/algorithms/erase.hpp>
 #include <containers/algorithms/find.hpp>
 #include <containers/begin_end.hpp>
+#include <containers/initializer_range.hpp>
 #include <containers/push_back.hpp>
 #include <containers/range_value_t.hpp>
 #include <containers/size.hpp>

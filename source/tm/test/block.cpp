@@ -17,7 +17,6 @@
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
-#include <containers/algorithms/concatenate.hpp>
 #include <containers/front_back.hpp>
 #include <containers/size.hpp>
 

@@ -10,6 +10,7 @@
 #include <bounded/detail/variant/visit.hpp>
 
 #include <containers/algorithms/accumulate.hpp>
+#include <containers/algorithms/erase.hpp>
 #include <containers/algorithms/keyed_insert.hpp>
 #include <containers/at.hpp>
 #include <containers/lookup.hpp>

@@ -6,7 +6,6 @@
 #include <tm/clients/pokemon_showdown/packed_format_to_team.hpp>
 #include <tm/clients/pokemon_showdown/to_packed_format.hpp>
 
-#include <containers/algorithms/concatenate.hpp>
 #include <containers/begin_end.hpp>
 
 #include <string_view>

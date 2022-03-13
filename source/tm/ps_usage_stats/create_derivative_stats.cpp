@@ -16,7 +16,9 @@
 #include <bounded/to_integer.hpp>
 
 #include <containers/algorithms/accumulate.hpp>
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/append.hpp>
+#include <containers/emplace_back.hpp>
 #include <containers/range_view.hpp>
 #include <containers/vector.hpp>
 

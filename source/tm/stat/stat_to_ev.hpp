@@ -18,7 +18,6 @@
 
 #include <bounded/optional.hpp>
 
-#include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>
 
 namespace technicalmachine {

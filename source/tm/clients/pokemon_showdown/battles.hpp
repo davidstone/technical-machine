@@ -12,7 +12,6 @@
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/algorithms/erase.hpp>
 #include <containers/begin_end.hpp>
-#include <containers/emplace_back.hpp>
 #include <containers/push_back.hpp>
 #include <containers/string.hpp>
 #include <containers/vector.hpp>

@@ -27,7 +27,6 @@
 #include <tm/move/moves.hpp>
 #include <tm/status.hpp>
 
-#include <containers/algorithms/concatenate.hpp>
 #include <containers/integer_range.hpp>
 
 #include <catch2/catch_test_macros.hpp>

@@ -13,6 +13,7 @@
 
 #include <bounded/detail/variant/variant.hpp>
 
+#include <containers/algorithms/concatenate.hpp>
 #include <containers/string.hpp>
 #include <containers/vector.hpp>
 
