@@ -4,7 +4,6 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <tm/team_predictor/generate_team_builder_ui.hpp>
-#include <tm/team_predictor/random_team.hpp>
 #include <tm/team_predictor/team_predictor.hpp>
 #include <tm/team_predictor/usage_stats.hpp>
 
@@ -167,12 +166,11 @@ struct Data {
 			auto impl = [&]<Generation generation>(constant_gen_t<generation>) -> containers::string {
 				auto team = parse_html_team<generation>(buffer);
 				auto const & usage_stats = m_all_usage_stats[generation];
-				random_team(usage_stats, team, random_engine);
 				return to_string(
-					predict_team(
+					random_team(
 						usage_stats,
-						team,
-						random_engine
+						random_engine,
+						team
 					),
 					false
 				);

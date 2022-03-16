@@ -71,10 +71,10 @@ void ClientImpl::send_team(Generation const runtime_generation) {
 		[&](SettingsFile::NoTeam) { send_team("null"); },
 		[&](SettingsFile::GenerateTeam) {
 			send_real_team([&]<Generation generation>(constant_gen_t<generation>) {
-				return to_packed_format(generate_team<generation>(
+				return to_packed_format(KnownTeam(random_team<generation>(
 					m_all_usage_stats[generation],
 					m_random_engine
-				));
+				)));
 			});
 		},
 		[&](std::filesystem::path const & path) {

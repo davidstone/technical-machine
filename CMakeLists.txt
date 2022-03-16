@@ -209,6 +209,7 @@ add_library(tm_common STATIC
 	source/tm/team_predictor/ev_optimizer/speed.cpp
 
 	source/tm/team_predictor/estimate.cpp
+	source/tm/team_predictor/stats_user.cpp
 	source/tm/team_predictor/team_predictor.cpp
 	source/tm/team_predictor/usage_stats.cpp
 
@@ -317,7 +318,6 @@ target_link_libraries(ps_usage_stats_create_derivative_stats
 add_executable(predict
 	source/tm/team_predictor/generate_team_builder_ui.cpp
 	source/tm/team_predictor/predictor.cpp
-	source/tm/team_predictor/random_team.cpp
 )
 target_link_libraries(predict
 	tm_common

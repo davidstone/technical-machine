@@ -18,6 +18,7 @@
 #include <tm/pokemon/any_pokemon.hpp>
 
 #include <tm/team_predictor/team_predictor.hpp>
+#include <tm/team_predictor/usage_stats.hpp>
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
@@ -1027,7 +1028,7 @@ private:
 
 		m_analysis_logger << to_string(m_battle.ai()) << '\n';
 		m_analysis_logger << "Seen " << to_string(m_battle.foe()) << '\n';
-		auto predicted = predict_team(m_usage_stats, m_battle.foe(), m_random_engine);
+		auto predicted = most_likely_team(m_usage_stats, m_random_engine, m_battle.foe());
 		m_analysis_logger << "Predicted " << to_string(predicted) << '\n' << std::flush;
 
 		return expectiminimax(
