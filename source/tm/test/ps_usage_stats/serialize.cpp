@@ -125,6 +125,7 @@ TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
 					"Speed": {
 						"7": 1.0
 					},
+					"Teammates": {},
 					"Usage": 1.0
 				}
 			},
@@ -189,6 +190,15 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 					"Speed": {
 						"278": 1.0
 					},
+					"Teammates": {
+						"Tauros": {
+							"Moves": {
+								"Body Slam": 1.0,
+								"Earthquake": 1.0
+							},
+							"Usage": 1.0
+						}
+					},
 					"Usage": 1.0
 				},
 				"Tauros": {
@@ -232,6 +242,15 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 					},
 					"Speed": {
 						"318": 1.0
+					},
+					"Teammates": {
+						"Pikachu": {
+							"Moves": {
+								"Thunderbolt": 1.0,
+								"Thunder": 1.0
+							},
+							"Usage": 1.0
+						}
 					},
 					"Usage": 1.0
 				}
@@ -273,6 +292,7 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 					"Speed": {
 						"7": 1.0
 					},
+					"Teammates": {},
 					"Usage": 0.5
 				},
 				"Tauros": {
@@ -301,6 +321,7 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 					"Speed": {
 						"318": 1.0
 					},
+					"Teammates": {},
 					"Usage": 0.5
 				}
 			},

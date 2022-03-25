@@ -79,7 +79,7 @@ auto serialize_speed(auto const & speed_distribution, double const total) -> nlo
 	return result;
 };
 
-auto serialize_teammates(auto const & source, double const total) -> nlohmann::json {
+auto serialize_teammates(Correlations::Teammates const & source, double const total) -> nlohmann::json {
 	auto result = nlohmann::json(nlohmann::json::object());
 	auto transform = [&](Species const species) { return source[bounded::integer(species)]; };
 	auto filter = [&](auto const & x) { return x.mapped.usage != 0.0; };
@@ -132,7 +132,8 @@ auto serialize(std::ostream & stream, Generation const generation, UsageStats co
 		auto pokemon = nlohmann::json({
 			{"Usage", total / usage_stats.total_teams()},
 			{"Moves", serialize_moves(generation, usage_stats, species, correlations.top_moves(species), total)},
-			{"Speed", serialize_speed(usage_stats.speed_distribution(species), total)}
+			{"Speed", serialize_speed(usage_stats.speed_distribution(species), total)},
+			{"Teammates", serialize_teammates(correlations.teammates(species), total)}
 		});
 		if (generation >= Generation::two) {
 			pokemon["Items"] = serialize<Item>(usage_stats, usage);

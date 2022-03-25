@@ -92,31 +92,36 @@ private:
 };
 
 struct Correlations {
-private:
-	struct PerSpecies {
+	struct PerTeammate {
 		double usage = 0.0;
 		containers::flat_map<Moves, double> other_moves;
 	};
+	using Teammates = containers::array<PerTeammate, number_of<Species>>;
 	struct MoveData {
-		containers::array<PerSpecies, number_of<Species>> teammates = {};
+		Teammates teammates;
 		containers::array<double, number_of<Moves>> moves = {};
 		containers::array<double, number_of<Item>> items = {};
 		containers::array<double, number_of<Ability>> abilities = {};
 		containers::array<double, max_initial_speed> speed = {};
 	};
-
-public:
 	using TopMoves = containers::flat_map<Moves, std::unique_ptr<LockedAccess<MoveData>>>;
+	struct PerSpecies {
+		TopMoves top_moves;
+		std::unique_ptr<LockedAccess<Teammates>> teammates = std::make_unique<LockedAccess<Teammates>>();
+	};
 
 	Correlations(UsageStats const & general_usage_stats);
 	auto add(GenerationGeneric<Team> const & team, double weight) & -> void;
 
 	constexpr auto top_moves(Species const species) const -> TopMoves const & {
-		return m_data[bounded::integer(species)];
+		return m_data[bounded::integer(species)].top_moves;
+	}
+	constexpr auto teammates(Species const species) const -> Teammates const & {
+		return m_data[bounded::integer(species)].teammates->unlocked();
 	}
 
 private:
-	containers::array<TopMoves, number_of<Species>> m_data;
+	containers::array<PerSpecies, number_of<Species>> m_data;
 };
 
 } // namespace technicalmachine::ps_usage_stats
