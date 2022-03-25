@@ -881,24 +881,24 @@ auto to_string(Species const species) -> std::string_view {
 		case Species::Zeraora: return "Zeraora";
 		case Species::Meltan: return "Meltan";
 		case Species::Melmetal: return "Melmetal";
-		case Species::Rattata_Alolan: return "Rattata Alolan";
-		case Species::Raticate_Alolan: return "Raticate Alolan";
-		case Species::Raichu_Alolan: return "Raichu Alolan";
-		case Species::Sandshrew_Alolan: return "Sandshrew Alolan";
-		case Species::Sandslash_Alolan: return "Sandslash Alolan";
-		case Species::Vulpix_Alolan: return "Vulpix Alolan";
-		case Species::Ninetales_Alolan: return "Ninetales Alolan";
-		case Species::Diglett_Alolan: return "Diglett Alolan";
-		case Species::Dugtrio_Alolan: return "Dugtrio Alolan";
-		case Species::Meowth_Alolan: return "Meowth Alolan";
-		case Species::Persian_Alolan: return "Persian Alolan";
-		case Species::Geodude_Alolan: return "Geodude Alolan";
-		case Species::Graveler_Alolan: return "Graveler Alolan";
-		case Species::Golem_Alolan: return "Golem Alolan";
-		case Species::Grimer_Alolan: return "Grimer Alolan";
-		case Species::Muk_Alolan: return "Muk Alolan";
-		case Species::Exeggutor_Alolan: return "Exeggutor Alolan";
-		case Species::Marowak_Alolan: return "Marowak Alolan";
+		case Species::Rattata_Alola: return "Rattata-Alola";
+		case Species::Raticate_Alola: return "Raticate-Alola";
+		case Species::Raichu_Alola: return "Raichu-Alola";
+		case Species::Sandshrew_Alola: return "Sandshrew-Alola";
+		case Species::Sandslash_Alola: return "Sandslash-Alola";
+		case Species::Vulpix_Alola: return "Vulpix-Alola";
+		case Species::Ninetales_Alola: return "Ninetales-Alola";
+		case Species::Diglett_Alola: return "Diglett-Alola";
+		case Species::Dugtrio_Alola: return "Dugtrio-Alola";
+		case Species::Meowth_Alola: return "Meowth-Alola";
+		case Species::Persian_Alola: return "Persian-Alola";
+		case Species::Geodude_Alola: return "Geodude-Alola";
+		case Species::Graveler_Alola: return "Graveler-Alola";
+		case Species::Golem_Alola: return "Golem-Alola";
+		case Species::Grimer_Alola: return "Grimer-Alola";
+		case Species::Muk_Alola: return "Muk-Alola";
+		case Species::Exeggutor_Alola: return "Exeggutor-Alola";
+		case Species::Marowak_Alola: return "Marowak-Alola";
 
 		// Generation 8
 		case Species::Grookey: return "Grookey";
@@ -997,25 +997,25 @@ auto to_string(Species const species) -> std::string_view {
 		case Species::Calyrex: return "Calyrex";
 		case Species::Calyrex_Ice_Rider: return "Calyrex Ice Rider";
 		case Species::Calyrex_Shadow_Rider: return "Calyrex Shadow Rider";
-		case Species::Meowth_Galarian: return "Meowth Galarian";
-		case Species::Ponyta_Galarian: return "Ponyta Galarian";
-		case Species::Rapidash_Galarian: return "Rapidash Galarian";
-		case Species::Farfetchd_Galarian: return "Farfetch'd Galarian";
-		case Species::Weezing_Galarian: return "Weezing Galarian";
-		case Species::Mr_Mime_Galarian: return "Mr. Mime Galarian";
-		case Species::Corsola_Galarian: return "Corsola Galarian";
-		case Species::Zigzagoon_Galarian: return "Zigzagoon Galarian";
-		case Species::Linoone_Galarian: return "Linoone Galarian";
-		case Species::Darumaka_Galarian: return "Darumaka Galarian";
-		case Species::Darmanitan_Galarian: return "Darmanitan Galarian";
-		case Species::Yamask_Galarian: return "Yamask Galarian";
-		case Species::Stunfisk_Galarian: return "Stunfisk Galarian";
-		case Species::Slowpoke_Galarian: return "Slowpoke Galarian";
-		case Species::Slowbro_Galarian: return "Slowbro Galarian";
-		case Species::Articuno_Galarian: return "Articuno Galarian";
-		case Species::Zapdos_Galarian: return "Zapdos Galarian";
-		case Species::Moltres_Galarian: return "Moltres Galarian";
-		case Species::Slowking_Galarian: return "Slowking Galarian";
+		case Species::Meowth_Galar: return "Meowth-Galar";
+		case Species::Ponyta_Galar: return "Ponyta-Galar";
+		case Species::Rapidash_Galar: return "Rapidash-Galar";
+		case Species::Farfetchd_Galar: return "Farfetch'd-Galar";
+		case Species::Weezing_Galar: return "Weezing-Galar";
+		case Species::Mr_Mime_Galar: return "Mr. Mime-Galar";
+		case Species::Corsola_Galar: return "Corsola-Galar";
+		case Species::Zigzagoon_Galar: return "Zigzagoon-Galar";
+		case Species::Linoone_Galar: return "Linoone-Galar";
+		case Species::Darumaka_Galar: return "Darumaka-Galar";
+		case Species::Darmanitan_Galar: return "Darmanitan-Galar";
+		case Species::Yamask_Galar: return "Yamask-Galar";
+		case Species::Stunfisk_Galar: return "Stunfisk-Galar";
+		case Species::Slowpoke_Galar: return "Slowpoke-Galar";
+		case Species::Slowbro_Galar: return "Slowbro-Galar";
+		case Species::Articuno_Galar: return "Articuno-Galar";
+		case Species::Zapdos_Galar: return "Zapdos-Galar";
+		case Species::Moltres_Galar: return "Moltres-Galar";
+		case Species::Slowking_Galar: return "Slowking-Galar";
 	}
 }
 
@@ -1091,8 +1091,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"aron", Species::Aron},
 			{"arrokuda", Species::Arrokuda},
 			{"articuno", Species::Articuno},
-			{"articunogalar", Species::Articuno_Galarian},
-			{"articunogalarian", Species::Articuno_Galarian},
+			{"articunogalar", Species::Articuno_Galar},
 			{"audino", Species::Audino},
 			{"audinomega", Species::Audino},
 			{"aurorus", Species::Aurorus},
@@ -1211,8 +1210,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"copperajah", Species::Copperajah},
 			{"corphish", Species::Corphish},
 			{"corsola", Species::Corsola},
-			{"corsolagalar", Species::Corsola_Galarian},
-			{"corsolagalarian", Species::Corsola_Galarian},
+			{"corsolagalar", Species::Corsola_Galar},
 			{"corviknight", Species::Corviknight},
 			{"corvisquire", Species::Corvisquire},
 			{"cosmoem", Species::Cosmoem},
@@ -1238,12 +1236,10 @@ auto from_string(std::string_view const str) -> Species {
 			{"cyndaquil", Species::Cyndaquil},
 			{"darkrai", Species::Darkrai},
 			{"darmanitan", Species::Darmanitan},
-			{"darmanitangalar", Species::Darmanitan_Galarian},
-			{"darmanitangalarian", Species::Darmanitan_Galarian},
+			{"darmanitangalar", Species::Darmanitan_Galar},
 			{"dartrix", Species::Dartrix},
 			{"darumaka", Species::Darumaka},
-			{"darumakagalar", Species::Darumaka_Galarian},
-			{"darumakagalarian", Species::Darumaka_Galarian},
+			{"darumakagalar", Species::Darumaka_Galar},
 			{"decidueye", Species::Decidueye},
 			{"dedenne", Species::Dedenne},
 			{"deerling", Species::Deerling},
@@ -1268,8 +1264,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"dianciemega", Species::Diancie},
 			{"diggersby", Species::Diggersby},
 			{"diglett", Species::Diglett},
-			{"diglettalola", Species::Diglett_Alolan},
-			{"diglettalolan", Species::Diglett_Alolan},
+			{"diglettalola", Species::Diglett_Alola},
 			{"ditto", Species::Ditto},
 			{"dodrio", Species::Dodrio},
 			{"doduo", Species::Doduo},
@@ -1297,8 +1292,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"dubwool", Species::Dubwool},
 			{"ducklett", Species::Ducklett},
 			{"dugtrio", Species::Dugtrio},
-			{"dugtrioalola", Species::Dugtrio_Alolan},
-			{"dugtrioalolan", Species::Dugtrio_Alolan},
+			{"dugtrioalola", Species::Dugtrio_Alola},
 			{"dunsparce", Species::Dunsparce},
 			{"duosion", Species::Duosion},
 			{"duraludon", Species::Duraludon},
@@ -1331,13 +1325,11 @@ auto from_string(std::string_view const str) -> Species {
 			{"excadrill", Species::Excadrill},
 			{"exeggcute", Species::Exeggcute},
 			{"exeggutor", Species::Exeggutor},
-			{"exeggutoralola", Species::Exeggutor_Alolan},
-			{"exeggutoralolan", Species::Exeggutor_Alolan},
+			{"exeggutoralola", Species::Exeggutor_Alola},
 			{"exploud", Species::Exploud},
 			{"falinks", Species::Falinks},
 			{"farfetchd", Species::Farfetchd},
-			{"farfetchdgalar", Species::Farfetchd_Galarian},
-			{"farfetchdgalarian", Species::Farfetchd_Galarian},
+			{"farfetchdgalar", Species::Farfetchd_Galar},
 			{"fearow", Species::Fearow},
 			{"feebas", Species::Feebas},
 			{"fennekin", Species::Fennekin},
@@ -1386,8 +1378,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"genesectshock", Species::Genesect},
 			{"gengar", Species::Gengar},
 			{"geodude", Species::Geodude},
-			{"geodudealola", Species::Geodude_Alolan},
-			{"geodudealolan", Species::Geodude_Alolan},
+			{"geodudealola", Species::Geodude_Alola},
 			{"gible", Species::Gible},
 			{"gigalith", Species::Gigalith},
 			{"girafarig", Species::Girafarig},
@@ -1407,8 +1398,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"goldeen", Species::Goldeen},
 			{"golduck", Species::Golduck},
 			{"golem", Species::Golem},
-			{"golemalola", Species::Golem_Alolan},
-			{"golemalolan", Species::Golem_Alolan},
+			{"golemalola", Species::Golem_Alola},
 			{"golett", Species::Golett},
 			{"golisopod", Species::Golisopod},
 			{"golurk", Species::Golurk},
@@ -1427,14 +1417,12 @@ auto from_string(std::string_view const str) -> Species {
 			{"granbull", Species::Granbull},
 			{"grapploct", Species::Grapploct},
 			{"graveler", Species::Graveler},
-			{"graveleralola", Species::Graveler_Alolan},
-			{"graveleralolan", Species::Graveler_Alolan},
+			{"graveleralola", Species::Graveler_Alola},
 			{"greedent", Species::Greedent},
 			{"greninja", Species::Greninja},
 			{"greninjaash", Species::Greninja},
 			{"grimer", Species::Grimer},
-			{"grimeralola", Species::Grimer_Alolan},
-			{"grimeralolan", Species::Grimer_Alolan},
+			{"grimeralola", Species::Grimer_Alola},
 			{"grimmsnarl", Species::Grimmsnarl},
 			{"grookey", Species::Grookey},
 			{"grotle", Species::Grotle},
@@ -1560,8 +1548,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"lilligant", Species::Lilligant},
 			{"lillipup", Species::Lillipup},
 			{"linoone", Species::Linoone},
-			{"linoonegalar", Species::Linoone_Galarian},
-			{"linoonegalarian", Species::Linoone_Galarian},
+			{"linoonegalar", Species::Linoone_Galar},
 			{"litleo", Species::Litleo},
 			{"litten", Species::Litten},
 			{"litwick", Species::Litwick},
@@ -1612,9 +1599,8 @@ auto from_string(std::string_view const str) -> Species {
 			{"mareep", Species::Mareep},
 			{"marill", Species::Marill},
 			{"marowak", Species::Marowak},
-			{"marowakalola", Species::Marowak_Alolan},
-			{"marowakalolan", Species::Marowak_Alolan},
-			{"marowakalolatotem", Species::Marowak_Alolan},
+			{"marowakalola", Species::Marowak_Alola},
+			{"marowakalolatotem", Species::Marowak_Alola},
 			{"marshadow", Species::Marshadow},
 			{"marshtomp", Species::Marshtomp},
 			{"masquerain", Species::Masquerain},
@@ -1631,10 +1617,8 @@ auto from_string(std::string_view const str) -> Species {
 			{"meowsticf", Species::Meowstic_F},
 			{"meowsticm", Species::Meowstic_M},
 			{"meowth", Species::Meowth},
-			{"meowthalola", Species::Meowth_Alolan},
-			{"meowthalolan", Species::Meowth_Alolan},
-			{"meowthgalar", Species::Meowth_Galarian},
-			{"meowthgalarian", Species::Meowth_Galarian},
+			{"meowthalola", Species::Meowth_Alola},
+			{"meowthgalar", Species::Meowth_Galar},
 			{"mesprit", Species::Mesprit},
 			{"metagross", Species::Metagross},
 			{"metagrossmega", Species::Metagross},
@@ -1659,23 +1643,20 @@ auto from_string(std::string_view const str) -> Species {
 			{"misdreavus", Species::Misdreavus},
 			{"mismagius", Species::Mismagius},
 			{"moltres", Species::Moltres},
-			{"moltresgalar", Species::Moltres_Galarian},
-			{"moltresgalarian", Species::Moltres_Galarian},
+			{"moltresgalar", Species::Moltres_Galar},
 			{"monferno", Species::Monferno},
 			{"morelull", Species::Morelull},
 			{"morgrem", Species::Morgrem},
 			{"morpeko", Species::Morpeko},
 			{"mothim", Species::Mothim},
 			{"mrmime", Species::Mr_Mime},
-			{"mrmimegalar", Species::Mr_Mime_Galarian},
-			{"mrmimegalarian", Species::Mr_Mime_Galarian},
+			{"mrmimegalar", Species::Mr_Mime_Galar},
 			{"mrrime", Species::Mr_Rime},
 			{"mudbray", Species::Mudbray},
 			{"mudkip", Species::Mudkip},
 			{"mudsdale", Species::Mudsdale},
 			{"muk", Species::Muk},
-			{"mukalola", Species::Muk_Alolan},
-			{"mukalolan", Species::Muk_Alolan},
+			{"mukalola", Species::Muk_Alola},
 			{"munchlax", Species::Munchlax},
 			{"munna", Species::Munna},
 			{"murkrow", Species::Murkrow},
@@ -1696,8 +1677,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"nihilego", Species::Nihilego},
 			{"nincada", Species::Nincada},
 			{"ninetales", Species::Ninetales},
-			{"ninetalesalola", Species::Ninetales_Alolan},
-			{"ninetalesalolan", Species::Ninetales_Alolan},
+			{"ninetalesalola", Species::Ninetales_Alola},
 			{"ninjask", Species::Ninjask},
 			{"noctowl", Species::Noctowl},
 			{"noibat", Species::Noibat},
@@ -1736,8 +1716,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"pelipper", Species::Pelipper},
 			{"perrserker", Species::Perrserker},
 			{"persian", Species::Persian},
-			{"persianalola", Species::Persian_Alolan},
-			{"persianalolan", Species::Persian_Alolan},
+			{"persianalola", Species::Persian_Alola},
 			{"petilil", Species::Petilil},
 			{"phanpy", Species::Phanpy},
 			{"phantump", Species::Phantump},
@@ -1774,8 +1753,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"poliwrath", Species::Poliwrath},
 			{"polteageist", Species::Polteageist},
 			{"ponyta", Species::Ponyta},
-			{"ponytagalar", Species::Ponyta_Galarian},
-			{"ponytagalarian", Species::Ponyta_Galarian},
+			{"ponytagalar", Species::Ponyta_Galar},
 			{"poochyena", Species::Poochyena},
 			{"popplio", Species::Popplio},
 			{"porygon", Species::Porygon},
@@ -1802,21 +1780,17 @@ auto from_string(std::string_view const str) -> Species {
 			{"qwilfish", Species::Qwilfish},
 			{"raboot", Species::Raboot},
 			{"raichu", Species::Raichu},
-			{"raichualola", Species::Raichu_Alolan},
-			{"raichualolan", Species::Raichu_Alolan},
+			{"raichualola", Species::Raichu_Alola},
 			{"raikou", Species::Raikou},
 			{"ralts", Species::Ralts},
 			{"rampardos", Species::Rampardos},
 			{"rapidash", Species::Rapidash},
-			{"rapidashgalar", Species::Rapidash_Galarian},
-			{"rapidashgalarian", Species::Rapidash_Galarian},
+			{"rapidashgalar", Species::Rapidash_Galar},
 			{"raticate", Species::Raticate},
-			{"raticatealola", Species::Raticate_Alolan},
-			{"raticatealolan", Species::Raticate_Alolan},
-			{"raticatealolatotem", Species::Raticate_Alolan},
+			{"raticatealola", Species::Raticate_Alola},
+			{"raticatealolatotem", Species::Raticate_Alola},
 			{"rattata", Species::Rattata},
-			{"rattataalola", Species::Rattata_Alolan},
-			{"rattataalolan", Species::Rattata_Alolan},
+			{"rattataalola", Species::Rattata_Alola},
 			{"rayquaza", Species::Rayquaza},
 			{"regice", Species::Regice},
 			{"regidrago", Species::Regidrago},
@@ -1865,11 +1839,9 @@ auto from_string(std::string_view const str) -> Species {
 			{"sandaconda", Species::Sandaconda},
 			{"sandile", Species::Sandile},
 			{"sandshrew", Species::Sandshrew},
-			{"sandshrewalola", Species::Sandshrew_Alolan},
-			{"sandshrewalolan", Species::Sandshrew_Alolan},
+			{"sandshrewalola", Species::Sandshrew_Alola},
 			{"sandslash", Species::Sandslash},
-			{"sandslashalola", Species::Sandslash_Alolan},
-			{"sandslashalolan", Species::Sandslash_Alolan},
+			{"sandslashalola", Species::Sandslash_Alola},
 			{"sandygast", Species::Sandygast},
 			{"sawk", Species::Sawk},
 			{"sawsbuck", Species::Sawsbuck},
@@ -1952,15 +1924,12 @@ auto from_string(std::string_view const str) -> Species {
 			{"slakoth", Species::Slakoth},
 			{"sliggoo", Species::Sliggoo},
 			{"slowbro", Species::Slowbro},
-			{"slowbrogalar", Species::Slowbro_Galarian},
-			{"slowbrogalarian", Species::Slowbro_Galarian},
+			{"slowbrogalar", Species::Slowbro_Galar},
 			{"slowbromega", Species::Slowbro},
 			{"slowking", Species::Slowking},
-			{"slowkinggalar", Species::Slowking_Galarian},
-			{"slowkinggalarian", Species::Slowking_Galarian},
+			{"slowkinggalar", Species::Slowking_Galar},
 			{"slowpoke", Species::Slowpoke},
-			{"slowpokegalar", Species::Slowpoke_Galarian},
-			{"slowpokegalarian", Species::Slowpoke_Galarian},
+			{"slowpokegalar", Species::Slowpoke_Galar},
 			{"slugma", Species::Slugma},
 			{"slurpuff", Species::Slurpuff},
 			{"smeargle", Species::Smeargle},
@@ -2000,8 +1969,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"stoutland", Species::Stoutland},
 			{"stufful", Species::Stufful},
 			{"stunfisk", Species::Stunfisk},
-			{"stunfiskgalar", Species::Stunfisk_Galarian},
-			{"stunfiskgalarian", Species::Stunfisk_Galarian},
+			{"stunfiskgalar", Species::Stunfisk_Galar},
 			{"stunky", Species::Stunky},
 			{"sudowoodo", Species::Sudowoodo},
 			{"suicune", Species::Suicune},
@@ -2112,8 +2080,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"voltorb", Species::Voltorb},
 			{"vullaby", Species::Vullaby},
 			{"vulpix", Species::Vulpix},
-			{"vulpixalola", Species::Vulpix_Alolan},
-			{"vulpixalolan", Species::Vulpix_Alolan},
+			{"vulpixalola", Species::Vulpix_Alola},
 			{"wailmer", Species::Wailmer},
 			{"wailord", Species::Wailord},
 			{"walrein", Species::Walrein},
@@ -2123,8 +2090,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"weedle", Species::Weedle},
 			{"weepinbell", Species::Weepinbell},
 			{"weezing", Species::Weezing},
-			{"weezinggalar", Species::Weezing_Galarian},
-			{"weezinggalarian", Species::Weezing_Galarian},
+			{"weezinggalar", Species::Weezing_Galar},
 			{"whimsicott", Species::Whimsicott},
 			{"whirlipede", Species::Whirlipede},
 			{"whiscash", Species::Whiscash},
@@ -2151,8 +2117,7 @@ auto from_string(std::string_view const str) -> Species {
 			{"xerneas", Species::Xerneas},
 			{"xurkitree", Species::Xurkitree},
 			{"yamask", Species::Yamask},
-			{"yamaskgalar", Species::Yamask_Galarian},
-			{"yamaskgalarian", Species::Yamask_Galarian},
+			{"yamaskgalar", Species::Yamask_Galar},
 			{"yamper", Species::Yamper},
 			{"yanma", Species::Yanma},
 			{"yanmega", Species::Yanmega},
@@ -2164,15 +2129,13 @@ auto from_string(std::string_view const str) -> Species {
 			{"zamazentacrownedshield", Species::Zamazenta_Crowned_Shield},
 			{"zangoose", Species::Zangoose},
 			{"zapdos", Species::Zapdos},
-			{"zapdosgalar", Species::Zapdos_Galarian},
-			{"zapdosgalarian", Species::Zapdos_Galarian},
+			{"zapdosgalar", Species::Zapdos_Galar},
 			{"zarude", Species::Zarude},
 			{"zebstrika", Species::Zebstrika},
 			{"zekrom", Species::Zekrom},
 			{"zeraora", Species::Zeraora},
 			{"zigzagoon", Species::Zigzagoon},
-			{"zigzagoongalar", Species::Zigzagoon_Galarian},
-			{"zigzagoongalarian", Species::Zigzagoon_Galarian},
+			{"zigzagoongalar", Species::Zigzagoon_Galar},
 			{"zoroark", Species::Zoroark},
 			{"zorua", Species::Zorua},
 			{"zubat", Species::Zubat},
