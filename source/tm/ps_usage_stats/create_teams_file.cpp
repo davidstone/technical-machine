@@ -35,7 +35,7 @@ struct ParsedArgs {
 
 auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	if (argc != 4) {
-		throw std::runtime_error("Usage is create_teams_file thread_count output_file input_directory");
+		throw std::runtime_error("Usage is create_teams_file output_file thread_count input_directory");
 	}
 	auto output_file = std::filesystem::path(argv[1]);
 	if (std::filesystem::exists(output_file)) {
