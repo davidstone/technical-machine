@@ -96,10 +96,10 @@ constexpr auto weight(Mode const mode, Rating const rating) -> double {
 			return 1.0;
 		case Mode::simple_weighted:
 		case Mode::simple_weighted_winner:
-			return chance_to_win(rating);
+			return chance_to_win(rating, initial_rating);
 		case Mode::inverse_weighted:
 		case Mode::inverse_weighted_winner:
-			return 1.0 / (1.0 - chance_to_win(rating));
+			return 1.0 / (1.0 - chance_to_win(rating, initial_rating));
 	}
 }
 

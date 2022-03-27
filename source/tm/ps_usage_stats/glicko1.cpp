@@ -12,8 +12,6 @@
 namespace technicalmachine::ps_usage_stats {
 namespace {
 
-constexpr auto initial_rating = Rating(Rating::initial_value, Rating::initial_deviation);
-
 // ln(10.0) / 400.0
 constexpr auto q = 0.00575646273248511421004;
 
