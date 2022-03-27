@@ -127,8 +127,11 @@ auto parse_rating(nlohmann::json const & json, char const * const player_key) ->
 
 } // namespace
 
-auto parse_log(std::filesystem::path const & path) -> BattleResult {
+auto parse_log(std::filesystem::path const & path) -> bounded::optional<BattleResult> {
 	auto const json = load_json_from_file(path);
+	if (json.at("turns").get<nlohmann::json::number_integer_t>() < 3) {
+		return bounded::none;
+	}
 	auto const format = json.at("format").get<std::string_view>();
 	auto const generation = ps::parse_generation_from_format(format);
 	auto const p1 = json.at("p1").get<std::string_view>();

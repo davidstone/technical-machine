@@ -7,10 +7,12 @@
 
 #include <tm/ps_usage_stats/battle_result.hpp>
 
+#include <bounded/optional.hpp>
+
 #include <filesystem>
 
 namespace technicalmachine::ps_usage_stats {
 
-auto parse_log(std::filesystem::path const & path) -> BattleResult;
+auto parse_log(std::filesystem::path const & path) -> bounded::optional<BattleResult>;
 
 } // namespace technicalmachine::ps_usage_stats

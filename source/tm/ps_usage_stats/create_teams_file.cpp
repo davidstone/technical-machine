@@ -72,8 +72,11 @@ auto turn_logs_into_team_file(std::filesystem::path const & output_file, ThreadC
 		return make_worker<std::filesystem::path>([&](std::filesystem::path const & input_file) {
 			try {
 				auto const battle_result = parse_log(input_file);
+				if (!battle_result) {
+					return;
+				}
 				auto lock = std::scoped_lock(writer_mutex);
-				battle_result_writer(battle_result);
+				battle_result_writer(*battle_result);
 			} catch (std::exception const & ex) {
 				throw std::runtime_error(containers::concatenate<std::string>("Error parsing "sv, input_file.string(), ": "sv, std::string_view(ex.what())));
 			}
