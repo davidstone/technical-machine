@@ -13,7 +13,7 @@ namespace technicalmachine::ps_usage_stats {
 
 struct Rating {
 	static constexpr auto initial_value = 1500.0;
-	static constexpr auto initial_deviation = 350.0;
+	static constexpr auto initial_deviation = 130.0;
 
 	constexpr Rating(double const value_, double const deviation_):
 		value(value_),
