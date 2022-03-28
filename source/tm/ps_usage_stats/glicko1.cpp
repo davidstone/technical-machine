@@ -41,13 +41,11 @@ auto Glicko1::add_result(BattleResult::Side::ID const id1, BattleResult::Side::I
 		}
 	};
 
-	auto update = [&](BattleResult::Side::ID const id) {
+	for (auto const id : {id1, id2}) {
 		auto & mapped = m_map.try_emplace(id, Mapped(FirstPass{0.0, 0.0})).first->second;
 		mapped.first_pass.rating_sum += g(initial_rating.deviation) * (to_score(id) - E(initial_rating));
 		mapped.first_pass.reciprocal_of_d_squared += reciprocal_of_d_squared_delta(initial_rating);
-	};
-	update(id1);
-	update(id2);
+	}
 }
 
 auto Glicko1::finalize() & -> void {
