@@ -103,7 +103,7 @@ private:
 struct SpeedStats {
 	auto add(nlohmann::json const & speeds) & -> void {
 		for (auto const speed : speeds.items()) {
-			m_data[bounded::to_integer<containers::index_type<Data>>(speed.key())] += speed.value().template get<double>();
+			m_data[bounded::to_integer<containers::index_type<SpeedDistribution>>(speed.key())] += speed.value().template get<double>();
 		}
 	}
 
@@ -121,8 +121,7 @@ struct SpeedStats {
 	}
 
 private:
-	using Data = containers::array<double, max_initial_speed>;
-	Data m_data{};
+	SpeedDistribution m_data{};
 };
 
 } // namespace

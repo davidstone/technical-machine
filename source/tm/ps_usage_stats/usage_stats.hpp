@@ -23,7 +23,8 @@
 namespace technicalmachine::ps_usage_stats {
 
 // Regieleki with a Choice Scarf
-inline constexpr auto max_initial_speed = 822_bi;
+using InitialSpeed = bounded::integer<0, bounded::normalize<822>>;
+using SpeedDistribution = containers::array<double, bounded::number_of<InitialSpeed>>;
 
 // Getting the full data set of correlations would require free memory measured
 // in TiB. Instead we restrict ourselves to correlations among the top N most
@@ -64,7 +65,7 @@ private:
 		containers::array<double, bounded::number_of<Ability>> abilities{};
 		containers::array<double, bounded::number_of<Item>> items{};
 		containers::array<double, bounded::number_of<Moves>> moves{};
-		containers::array<double, max_initial_speed> speed{};
+		SpeedDistribution speed{};
 	};
 	containers::array<PerSpecies, bounded::number_of<Species>> m_all;
 	double m_total_teams = 0.0;
@@ -102,7 +103,7 @@ struct Correlations {
 		containers::array<double, bounded::number_of<Moves>> moves = {};
 		containers::array<double, bounded::number_of<Item>> items = {};
 		containers::array<double, bounded::number_of<Ability>> abilities = {};
-		containers::array<double, max_initial_speed> speed = {};
+		SpeedDistribution speed = {};
 	};
 	using TopMoves = containers::flat_map<Moves, std::unique_ptr<LockedAccess<MoveData>>>;
 	struct PerSpecies {
