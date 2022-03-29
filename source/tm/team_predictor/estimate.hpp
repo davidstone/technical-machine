@@ -7,7 +7,7 @@
 
 #include <tm/pokemon/species.hpp>
 
-#include <tm/number_of.hpp>
+#include <bounded/number_of.hpp>
 
 #include <containers/array.hpp>
 
@@ -24,7 +24,7 @@ struct Estimate {
 	auto random(std::mt19937 & random_engine) const -> Species;
 
 private:
-	containers::array<float, number_of<Species>> m_estimate;
+	containers::array<float, bounded::number_of<Species>> m_estimate;
 };
 
 } // namespace technicalmachine

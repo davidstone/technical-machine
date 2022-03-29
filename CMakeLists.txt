@@ -244,7 +244,6 @@ add_library(tm_common STATIC
 	source/tm/known_team.cpp
 	source/tm/load_json_from_file.cpp
 	source/tm/load_team_from_file.cpp
-	source/tm/number_of.cpp
 	source/tm/operators.cpp
 	source/tm/open_file.cpp
 	source/tm/other_team.cpp

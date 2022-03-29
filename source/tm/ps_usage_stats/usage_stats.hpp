@@ -8,10 +8,10 @@
 #include <tm/pokemon/species.hpp>
 
 #include <tm/generation_generic.hpp>
-#include <tm/number_of.hpp>
 #include <tm/team.hpp>
 
 #include <bounded/integer.hpp>
+#include <bounded/number_of.hpp>
 
 #include <containers/array.hpp>
 #include <containers/at.hpp>
@@ -61,12 +61,12 @@ struct UsageStats {
 private:
 	struct PerSpecies {
 		double total = 0.0;
-		containers::array<double, number_of<Ability>> abilities{};
-		containers::array<double, number_of<Item>> items{};
-		containers::array<double, number_of<Moves>> moves{};
+		containers::array<double, bounded::number_of<Ability>> abilities{};
+		containers::array<double, bounded::number_of<Item>> items{};
+		containers::array<double, bounded::number_of<Moves>> moves{};
 		containers::array<double, max_initial_speed> speed{};
 	};
-	containers::array<PerSpecies, number_of<Species>> m_all;
+	containers::array<PerSpecies, bounded::number_of<Species>> m_all;
 	double m_total_teams = 0.0;
 };
 
@@ -96,12 +96,12 @@ struct Correlations {
 		double usage = 0.0;
 		containers::flat_map<Moves, double> other_moves;
 	};
-	using Teammates = containers::array<PerTeammate, number_of<Species>>;
+	using Teammates = containers::array<PerTeammate, bounded::number_of<Species>>;
 	struct MoveData {
 		Teammates teammates;
-		containers::array<double, number_of<Moves>> moves = {};
-		containers::array<double, number_of<Item>> items = {};
-		containers::array<double, number_of<Ability>> abilities = {};
+		containers::array<double, bounded::number_of<Moves>> moves = {};
+		containers::array<double, bounded::number_of<Item>> items = {};
+		containers::array<double, bounded::number_of<Ability>> abilities = {};
 		containers::array<double, max_initial_speed> speed = {};
 	};
 	using TopMoves = containers::flat_map<Moves, std::unique_ptr<LockedAccess<MoveData>>>;
@@ -121,7 +121,7 @@ struct Correlations {
 	}
 
 private:
-	containers::array<PerSpecies, number_of<Species>> m_data;
+	containers::array<PerSpecies, bounded::number_of<Species>> m_data;
 };
 
 } // namespace technicalmachine::ps_usage_stats

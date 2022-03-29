@@ -13,6 +13,7 @@
 
 #include <tm/load_json_from_file.hpp>
 
+#include <bounded/number_of.hpp>
 #include <bounded/to_integer.hpp>
 
 #include <containers/algorithms/accumulate.hpp>
@@ -96,7 +97,7 @@ private:
 
 		friend auto operator<=>(PokemonUsageStat, PokemonUsageStat) = default;
 	};
-	containers::static_vector<PokemonUsageStat, number_of<Species>> m_data;
+	containers::static_vector<PokemonUsageStat, bounded::number_of<Species>> m_data;
 };
 
 struct SpeedStats {

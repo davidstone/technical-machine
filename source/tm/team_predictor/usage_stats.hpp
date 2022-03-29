@@ -15,7 +15,8 @@
 #include <tm/ability.hpp>
 #include <tm/generation.hpp>
 #include <tm/item.hpp>
-#include <tm/number_of.hpp>
+
+#include <bounded/number_of.hpp>
 
 #include <containers/array.hpp>
 #include <containers/legacy_iterator.hpp>
@@ -31,7 +32,7 @@ namespace technicalmachine {
 struct UsageStats {
 	struct PerPokemon {
 		float weight = 0.0F;
-		containers::array<float, number_of<Species>> teammates = {};
+		containers::array<float, bounded::number_of<Species>> teammates = {};
 		containers::static_vector<Moves, max_moves_per_pokemon> moves;
 		Ability ability = Ability::Honey_Gather;
 		Item item = Item::None;
@@ -44,7 +45,7 @@ struct UsageStats {
 	}
 
 private:
-	containers::array<PerPokemon, number_of<Species>> m_all_per_pokemon;
+	containers::array<PerPokemon, bounded::number_of<Species>> m_all_per_pokemon;
 };
 
 struct AllUsageStats {
@@ -54,7 +55,7 @@ struct AllUsageStats {
 	}
 
 private:
-	containers::array<UsageStats, number_of<Generation>> m_all_stats;
+	containers::array<UsageStats, bounded::number_of<Generation>> m_all_stats;
 };
 
 } // namespace technicalmachine

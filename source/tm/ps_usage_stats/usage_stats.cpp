@@ -8,6 +8,7 @@
 #include <tm/stat/calculate.hpp>
 
 #include <bounded/detail/variant/visit.hpp>
+#include <bounded/number_of.hpp>
 
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/erase.hpp>
@@ -41,7 +42,7 @@ struct LocalTopMoves {
 	double value;
 };
 
-auto get_most_used(containers::array<double, number_of<Moves>> const & moves, double const percent_threshold) -> containers::vector<LocalTopMoves> {
+auto get_most_used(containers::array<double, bounded::number_of<Moves>> const & moves, double const percent_threshold) -> containers::vector<LocalTopMoves> {
 	auto const total_sum = containers::sum(moves);
 	if (total_sum == 0.0) {
 		return {};
