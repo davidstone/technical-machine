@@ -12,8 +12,6 @@
 
 #include <containers/lookup.hpp>
 
-#include <nlohmann/json.hpp>
-
 namespace technicalmachine::ps_usage_stats {
 
 // http://www.glicko.net/glicko/glicko.pdf
