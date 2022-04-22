@@ -1611,8 +1611,8 @@ constexpr auto id_to_move(MoveID const id) -> bounded::optional<Moves> {
 }
 
 struct Parser {
-	constexpr explicit Parser(containers::vector<std::byte> const & buffer):
-		m_view(buffer),
+	constexpr explicit Parser(std::span<std::byte const> const bytes):
+		m_view(bytes),
 		m_file_version(pop_header())
 	{
 	}
