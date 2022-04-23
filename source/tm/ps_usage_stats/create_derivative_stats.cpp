@@ -6,7 +6,6 @@
 #include <tm/ps_usage_stats/battle_result_reader.hpp>
 #include <tm/ps_usage_stats/glicko1.hpp>
 #include <tm/ps_usage_stats/rating.hpp>
-#include <tm/ps_usage_stats/serialize.hpp>
 #include <tm/ps_usage_stats/usage_stats.hpp>
 
 #include <tm/string_conversions/generation.hpp>
@@ -18,7 +17,6 @@
 
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/concatenate.hpp>
-#include <containers/append.hpp>
 #include <containers/emplace_back.hpp>
 #include <containers/range_view.hpp>
 #include <containers/vector.hpp>
