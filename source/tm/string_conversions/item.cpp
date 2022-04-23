@@ -1231,6 +1231,7 @@ auto from_string(std::string_view const str) -> Item {
 			{"magnet", Item::Magnet},
 			{"magoberry", Item::Mago_Berry},
 			{"magostberry", Item::Magost_Berry},
+			{"mail", Item::Eon_Mail},
 			{"manectite", Item::Manectite},
 			{"marangaberry", Item::Maranga_Berry},
 			{"marshadiumz", Item::Marshadium_Z},
