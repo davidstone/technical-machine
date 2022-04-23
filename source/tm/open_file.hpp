@@ -10,8 +10,8 @@
 
 namespace technicalmachine {
 
-inline auto open_file(std::filesystem::path const & path, std::ios_base::openmode const mode = std::ios_base::in) -> std::ifstream {
-	auto file = std::ifstream(path, mode);
+inline auto open_file(std::filesystem::path const & path, std::ios_base::openmode const mode = std::ios_base::in | std::ios_base::binary) -> std::fstream {
+	auto file = std::fstream(path, mode);
 	file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
 	return file;
 }

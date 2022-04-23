@@ -16,7 +16,7 @@
 namespace technicalmachine {
 
 auto bytes_in_file(std::filesystem::path const & path) -> containers::vector<std::byte> {
-	auto file = open_file(path, std::ios_base::binary);
+	auto file = open_file(path);
 	return containers::vector(containers::transform(
 		containers::range_view(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()),
 		[](char const c) { return static_cast<std::byte>(c); }

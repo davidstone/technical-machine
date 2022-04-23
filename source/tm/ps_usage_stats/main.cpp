@@ -199,8 +199,7 @@ auto main(int argc, char ** argv) -> int {
 
 	auto const correlations = make_correlations(args.mode, args.thread_count, args.teams_file_path, ratings_estimate, *usage_stats);
 
-	auto out_file = std::ofstream(args.output_stats_path);
-	out_file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
+	auto out_file = open_file(args.output_stats_path, std::ios_base::out | std::ios_base::binary);
 	serialize(out_file, args.generation, *usage_stats, correlations);
 
 	return 0;
