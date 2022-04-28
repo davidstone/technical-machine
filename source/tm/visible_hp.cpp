@@ -27,7 +27,7 @@ auto to_real_hp(HP::max_type const max_hp, VisibleHP const visible_hp) -> Allowe
 	return AllowedHP(
 		compute_value(visible_hp.current.value() - 1_bi),
 		compute_value(visible_hp.current.value()),
-		compute_value(visible_hp.current.value() + 1_bi)
+		compute_value(bounded::min(visible_hp.current.value() + 1_bi, visible_hp.max.value()))
 	);
 }
 
