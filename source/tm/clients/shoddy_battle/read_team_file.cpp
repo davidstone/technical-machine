@@ -188,11 +188,12 @@ constexpr auto to_nature(ByteInteger<4_bi> const id) -> Nature {
 	}
 }
 
-constexpr auto emplace_once(auto & optional, auto && initializer) {
+template<typename Optional>
+constexpr auto emplace_once(Optional & optional, auto && initializer) {
 	if (optional) {
 		throw std::runtime_error("Found data for the same data point twice");
 	}
-	optional.emplace([&] { return OPERATORS_FORWARD(initializer); });
+	optional.emplace([&] { return typename Optional::value_type(OPERATORS_FORWARD(initializer)); });
 }
 
 template<typename T>
