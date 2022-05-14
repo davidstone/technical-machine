@@ -20,8 +20,7 @@
 #include <containers/dynamic_array.hpp>
 
 #include <filesystem>
-#include <fstream>
-#include <iostream>
+#include <ios>
 #include <memory>
 #include <stdexcept>
 #include <string>

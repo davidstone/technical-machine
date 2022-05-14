@@ -25,10 +25,8 @@
 #include <filesystem>
 #include <fstream>
 #include <stdexcept>
+#include <string>
 #include <string_view>
-
-#include <iostream>
-#include <memory>
 #include <utility>
 
 namespace technicalmachine::ps_usage_stats {
