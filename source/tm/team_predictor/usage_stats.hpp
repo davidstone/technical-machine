@@ -5,7 +5,9 @@
 
 #pragma once
 
-#include <tm/move/max_moves_per_pokemon.hpp>
+#include <tm/team_predictor/usage_stats_probabilities.hpp>
+
+#include <tm/move/moves.hpp>
 
 #include <tm/pokemon/species.hpp>
 
@@ -19,33 +21,46 @@
 #include <bounded/number_of.hpp>
 
 #include <containers/array.hpp>
-#include <containers/legacy_iterator.hpp>
-#include <containers/static_vector.hpp>
+#include <containers/flat_map.hpp>
 
-#include <nlohmann/json.hpp>
-
-#include <numeric_traits/min_max_value.hpp>
-
+#include <istream>
+#include <utility>
 
 namespace technicalmachine {
 
 struct UsageStats {
-	struct PerPokemon {
-		float weight = 0.0F;
-		containers::array<float, bounded::number_of<Species>> teammates = {};
-		containers::static_vector<Moves, max_moves_per_pokemon> moves;
-		Ability ability = Ability::Honey_Gather;
-		Item item = Item::None;
-	};
+	static auto make(std::istream && stream) -> UsageStats;
 
-	explicit UsageStats(nlohmann::json const & json);
-
-	auto const & get(Species const species) const {
-		return m_all_per_pokemon[bounded::integer(species)];
+	auto assuming() const -> UsageStatsProbabilities const & {
+		return m_probabilities;
+	}
+	auto assuming(Species const species) const -> UsageStatsProbabilities const * {
+		auto const per_species = containers::lookup(m_data, species);
+		return per_species ? std::addressof(per_species->probabilities) : nullptr;
+	}
+	auto assuming(Species const species, Moves const moves) const -> UsageStatsProbabilities const * {
+		auto const per_species = containers::lookup(m_data, species);
+		return per_species ?
+			containers::lookup(per_species->used_moves, moves) :
+			nullptr;
 	}
 
 private:
-	containers::array<PerPokemon, bounded::number_of<Species>> m_all_per_pokemon;
+	using UsedMoves = containers::flat_map<Moves, UsageStatsProbabilities>;
+	struct PerSpecies {
+		UsedMoves used_moves;
+		UsageStatsProbabilities probabilities;
+	};
+	using Data = containers::flat_map<Species, PerSpecies>;
+
+	explicit UsageStats(Data data, UsageStatsProbabilities probabilities):
+		m_data(std::move(data)),
+		m_probabilities(std::move(probabilities))
+	{
+	}
+
+	Data m_data;
+	UsageStatsProbabilities m_probabilities;
 };
 
 struct AllUsageStats {

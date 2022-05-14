@@ -212,6 +212,7 @@ add_library(tm_common STATIC
 	source/tm/team_predictor/stats_user.cpp
 	source/tm/team_predictor/team_predictor.cpp
 	source/tm/team_predictor/usage_stats.cpp
+	source/tm/team_predictor/usage_stats_probabilities.cpp
 
 	source/tm/type/effectiveness.cpp
 	source/tm/type/pokemon_types.cpp
@@ -345,6 +346,8 @@ add_executable(tm_test
 	source/tm/test/ps_usage_stats/glicko1.cpp
 	source/tm/test/ps_usage_stats/read_write_battle_result.cpp
 	source/tm/test/ps_usage_stats/serialize.cpp
+
+	source/tm/test/team_predictor/estimate.cpp
 
 	source/tm/test/block.cpp
 	source/tm/test/calculate_damage.cpp

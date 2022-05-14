@@ -5,11 +5,15 @@
 
 #pragma once
 
+#include <tm/move/moves.hpp>
+
 #include <tm/pokemon/species.hpp>
 
-#include <bounded/number_of.hpp>
+#include <tm/item.hpp>
 
-#include <containers/array.hpp>
+#include <bounded/optional.hpp>
+
+#include <containers/flat_map.hpp>
 
 #include <random>
 
@@ -18,13 +22,42 @@ namespace technicalmachine {
 struct UsageStats;
 
 struct Estimate {
+	struct PerSpecies {
+		double usage;
+		containers::flat_map<Moves, double> moves;
+		containers::flat_map<Item, double> items;
+	};
+	using Map = containers::flat_map<Species, PerSpecies>;
+
 	explicit Estimate(UsageStats const & usage_stats);
 	auto update(UsageStats const & usage_stats, Species species) -> void;
-	auto most_likely() const -> Species;
-	auto random(std::mt19937 & random_engine) const -> Species;
+	auto update(UsageStats const & usage_stats, Species species, Moves move) -> void;
+	auto update(UsageStats const & usage_stats, Species species, Item item) -> void;
+
+	auto most_likely_species() const -> bounded::optional<Species>;
+	auto random_species(std::mt19937 & random_engine) const -> bounded::optional<Species>;
+
+	auto most_likely_move(Species) const -> bounded::optional<Moves>;
+	auto random_move(std::mt19937 & random_engine, Species) const -> bounded::optional<Moves>;
+
+	auto most_likely_item(Species) const -> bounded::optional<Item>;
+	auto random_item(std::mt19937 & random_engine, Species) const -> bounded::optional<Item>;
+
+	auto probability(Species const species) const -> double {
+		auto const per_species = containers::lookup(m_estimate, species);
+		return per_species ? per_species->usage : 0.0;
+	}
+	auto probability(Species const species, Moves const move) const -> double {
+		auto const per_species = containers::lookup(m_estimate, species);
+		if (!per_species) {
+			return 0.0;
+		}
+		auto per_move = containers::lookup(per_species->moves, move);
+		return per_move ? *per_move : 0.0;
+	}
 
 private:
-	containers::array<float, bounded::number_of<Species>> m_estimate;
+	Map m_estimate;
 };
 
 } // namespace technicalmachine

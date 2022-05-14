@@ -5,6 +5,7 @@
 
 #include <tm/ps_usage_stats/serialize.hpp>
 
+#include <tm/ps_usage_stats/header.hpp>
 #include <tm/ps_usage_stats/usage_stats.hpp>
 
 #include <tm/string_conversions/move.hpp>
@@ -18,132 +19,142 @@
 #include <containers/size.hpp>
 #include <containers/static_vector.hpp>
 
-#include <nlohmann/json.hpp>
-
 #include <cstdint>
 #include <string>
 
 namespace technicalmachine::ps_usage_stats {
 namespace {
 
+template<typename T>
+constexpr auto write_bytes(std::ostream & stream, T const & value, auto const expected_size) {
+	static_assert(!std::is_empty_v<T>);
+	static_assert(sizeof(value) == expected_size);
+	stream.write(reinterpret_cast<char const *>(std::addressof(value)), sizeof(value));
+}
+
+constexpr auto write_string(std::ostream & stream, std::string_view const value) {
+	stream.write(value.data(), static_cast<std::streamsize>(value.size()));
+}
+
 template<typename Key>
-constexpr auto get_used(auto const get, auto predicate) {
-	using Mapped = decltype(get(std::declval<Key>()));
-	auto transformer = [=](Key const name) { return containers::map_value_type<Key, Mapped>{name, get(name)}; };
+struct HasUsage {
+	constexpr auto operator()(containers::map_value_type<Key, double> const & x) const {
+		return x.mapped != 0.0;
+	}
+	constexpr auto operator()(containers::map_value_type<Key, Correlations::PerTeammate> const & x) const {
+		return x.mapped.usage != 0.0;
+	}
+};
+
+template<typename Key>
+constexpr auto get_used_impl(auto && range, auto const get) {
+	auto transformer = [=](Key const name) { return containers::map_value_type{name, get(name)}; };
 	return containers::filter(
-		containers::transform(containers::enum_range<Key>(), transformer),
-		predicate
+		containers::transform(OPERATORS_FORWARD(range), transformer),
+		HasUsage<Key>()
 	);
 }
 
 template<typename Key>
 constexpr auto get_used(auto const get) {
-	return get_used<Key>(get, [](auto const x) { return x.mapped != 0.0; });
+	return get_used_impl<Key>(containers::enum_range<Key>(), get);
 }
 
-template<typename Enum>
-auto serialize_simple_correlations(auto const & source, double const total) -> nlohmann::json {
-	auto result = nlohmann::json(nlohmann::json::object());
-	for (auto const index : containers::enum_range<Enum>()) {
-		auto const value = source[bounded::integer(index)];
-		if (value != 0.0) {
-			result[std::string(to_string(index))] = value / total;
-		}
-	}
-	return result;
+template<typename Source>
+constexpr auto used_to_map(Source const & source) {
+	using Key = containers::index_type<Source>;
+	return get_used_impl<Key>(
+		containers::integer_range(containers::size(source)),
+		[&](Key const key) { return source[key]; }
+	);
 }
 
-auto serialize_simple_correlations(auto const & source, double const total) -> nlohmann::json {
-	auto result = nlohmann::json(nlohmann::json::object());
+auto serialize_simple_correlations(std::ostream & stream, auto const & source, double const total) -> void {
+	write_bytes(stream, containers::linear_size(source), 2_bi);
 	for (auto const related : source) {
-		result[std::string(to_string(related.key))] = related.mapped / total;
+		write_bytes(stream, related.key, 2_bi);
+		write_bytes(stream, related.mapped / total, 8_bi);
 	}
-	return result;
 }
 
 template<typename T>
-auto serialize(UsageStats const & usage_stats, containers::map_value_type<Species, double> const species) -> nlohmann::json {
+auto serialize(std::ostream & stream, UsageStats const & usage_stats, containers::map_value_type<Species, double> const species) -> void {
 	auto const used = get_used<T>([&](T const value) { return usage_stats.get(species.key, value); });
-	return serialize_simple_correlations(used, species.mapped);
+	return serialize_simple_correlations(stream, used, species.mapped);
 }
 
-auto serialize_speed(auto const & speed_distribution, double const total) -> nlohmann::json {
-	auto result = nlohmann::json();
-	for (auto const index : containers::integer_range(containers::size(speed_distribution))) {
-		auto const speed = speed_distribution[index];
-		if (speed == 0.0) {
-			continue;
-		}
-		result[std::string(to_string(index))] = speed / total;
+auto serialize_speed(std::ostream & stream, SpeedDistribution const & distribution, double const total) -> void {
+	auto const used_speeds = used_to_map(distribution);
+	write_bytes(stream, containers::linear_size(used_speeds), 2_bi);
+	for (auto const speed : used_speeds) {
+		write_bytes(stream, speed.key, 2_bi);
+		write_bytes(stream, speed.mapped / total, 8_bi);
 	}
-	return result;
 };
 
-auto serialize_teammates(Correlations::Teammates const & source, double const total) -> nlohmann::json {
-	auto result = nlohmann::json(nlohmann::json::object());
-	auto transform = [&](Species const species) { return source[bounded::integer(species)]; };
-	auto filter = [&](auto const & x) { return x.mapped.usage != 0.0; };
-	for (auto const & related : get_used<Species>(transform, filter)) {
-		auto & teammate = result[std::string(to_string(related.key))];
-		teammate["Usage"] = related.mapped.usage / total;
-		teammate["Moves"] = serialize_simple_correlations(related.mapped.other_moves, related.mapped.usage);
+auto serialize_teammates(std::ostream & stream, Correlations::Teammates const & source, double const total) -> void {
+	auto const used = used_to_map(source);
+	write_bytes(stream, containers::linear_size(used), 2_bi);
+	for (auto const & related : used) {
+		write_bytes(stream, related.key, 2_bi);
+		write_bytes(stream, related.mapped.usage / total, 8_bi);
+		serialize_simple_correlations(stream, related.mapped.other_moves, related.mapped.usage);
 	}
-	return result;
 }
 
-auto serialize_moves(Generation const generation, UsageStats const & usage_stats, Species const species, Correlations::TopMoves const & top_moves, double const species_total) -> nlohmann::json {
-	auto result = nlohmann::json();
-	for (auto const move : get_used<Moves>([&](Moves const name) { return usage_stats.get(species, name); })) {
-		auto & per_move = result[std::string(to_string(move.key))];
-		per_move["Usage"] = move.mapped / species_total;
+[[clang::no_destroy]] constexpr auto empty_move_data = Correlations::MoveData();
 
-		auto const top_move = containers::lookup(top_moves, move.key);
-		if (top_move) {
-			auto const & data = (*top_move)->unlocked();
-			per_move["Moves"] = serialize_simple_correlations<Moves>(data.moves, move.mapped);
-			per_move["Teammates"] = serialize_teammates(data.teammates, move.mapped);
+auto serialize_moves(std::ostream & stream, Generation const generation, UsageStats const & usage_stats, Species const species, Correlations::TopMoves const & top_moves, double const species_total) -> void {
+	auto const used_moves = get_used<Moves>([&](Moves const name) { return usage_stats.get(species, name); });
+	write_bytes(stream, containers::linear_size(used_moves), 2_bi);
+	for (auto const move : used_moves) {
+		write_bytes(stream, move.key, 2_bi);
+		write_bytes(stream, move.mapped / species_total, 8_bi);
+
+		auto serialize_all = [&](Correlations::MoveData const & data) {
+			serialize_speed(stream, data.speed, move.mapped);
+			serialize_teammates(stream, data.teammates, move.mapped);
+			serialize_simple_correlations(stream, used_to_map(data.moves), move.mapped);
 			if (generation >= Generation::two) {
-				per_move["Items"] = serialize_simple_correlations<Item>(data.items, move.mapped);
+				serialize_simple_correlations(stream, used_to_map(data.items), move.mapped);
 			}
 			if (generation >= Generation::three) {
-				per_move["Abilities"] = serialize_simple_correlations<Ability>(data.abilities, move.mapped);
+				serialize_simple_correlations(stream, used_to_map(data.abilities), move.mapped);
 			}
-			per_move["Speed"] = serialize_speed(data.speed, move.mapped);
+		};
+		if (auto const top_move = containers::lookup(top_moves, move.key)) {
+			serialize_all((*top_move)->unlocked());
+		} else {
+			serialize_all(empty_move_data);
 		}
 	}
-	return result;
 }
 
 } // namespace
 
-// This implementation significantly reduces memory consumption compared to
-// constructing a single giant json object and writing that.
 auto serialize(std::ostream & stream, Generation const generation, UsageStats const & usage_stats, Correlations const & correlations) -> void {
-	stream << R"({"Pokemon":{)";
-	bool is_first = true;
-	for (auto const usage : get_used<Species>([&](Species const species) { return usage_stats.get_total(species); })) {
-		if (!is_first) {
-			stream << ',';
-		} else {
-			is_first = false;
-		}
+	using Version = bounded::integer<0, 65535>;
+	write_string(stream, usage_stats_magic_string);
+	constexpr auto version = Version(0_bi);
+	write_bytes(stream, version, 2_bi);
+	write_bytes(stream, generation, 1_bi);
+	auto const all_species = get_used<Species>([&](Species const species) { return usage_stats.get_total(species); });
+	write_bytes(stream, containers::linear_size(all_species), 2_bi);
+	for (auto const usage : all_species) {
 		auto const species = usage.key;
 		auto const total = usage.mapped;
-		auto pokemon = nlohmann::json({
-			{"Usage", total / usage_stats.total_teams()},
-			{"Moves", serialize_moves(generation, usage_stats, species, correlations.top_moves(species), total)},
-			{"Speed", serialize_speed(usage_stats.speed_distribution(species), total)},
-			{"Teammates", serialize_teammates(correlations.teammates(species), total)}
-		});
+		write_bytes(stream, species, 2_bi);
+		write_bytes(stream, total / usage_stats.total_teams(), 8_bi);
+		serialize_speed(stream, usage_stats.speed_distribution(species), total);
+		serialize_teammates(stream, correlations.teammates(species), total);
+		serialize_moves(stream, generation, usage_stats, species, correlations.top_moves(species), total);
 		if (generation >= Generation::two) {
-			pokemon["Items"] = serialize<Item>(usage_stats, usage);
+			serialize<Item>(stream, usage_stats, usage);
 		}
 		if (generation >= Generation::three) {
-			pokemon["Abilities"] = serialize<Ability>(usage_stats, usage);
+			serialize<Ability>(stream, usage_stats, usage);
 		}
-		stream << '"' << to_string(species) << "\":" << pokemon;
 	}
-	stream << R"(},"Total teams":)" << usage_stats.total_teams() << "}";
 }
 
 } // namespace technicalmachine::ps_usage_stats

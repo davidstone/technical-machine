@@ -7,6 +7,8 @@
 
 #include <tm/pokemon/species.hpp>
 
+#include <tm/ps_usage_stats/header.hpp>
+
 #include <tm/generation_generic.hpp>
 #include <tm/team.hpp>
 
@@ -22,8 +24,6 @@
 
 namespace technicalmachine::ps_usage_stats {
 
-// Regieleki with a Choice Scarf
-using InitialSpeed = bounded::integer<0, bounded::normalize<822>>;
 using SpeedDistribution = containers::array<double, bounded::number_of<InitialSpeed>>;
 
 // Getting the full data set of correlations would require free memory measured

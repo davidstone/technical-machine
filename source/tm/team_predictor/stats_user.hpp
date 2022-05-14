@@ -6,7 +6,6 @@
 #pragma once
 
 #include <tm/team_predictor/estimate.hpp>
-#include <tm/team_predictor/usage_stats.hpp>
 
 #include <tm/any_team.hpp>
 
@@ -14,6 +13,8 @@
 #include <random>
 
 namespace technicalmachine {
+
+struct UsageStats;
 
 struct StatsUser {
 	StatsUser(UsageStats const & usage_stats, bool const use_most_likely):
@@ -26,20 +27,27 @@ struct StatsUser {
 	auto update(Species const species) -> void {
 		m_estimate->update(m_usage_stats, species);
 	}
+	auto update(Species const species, Moves const move) -> void {
+		m_estimate->update(m_usage_stats, species, move);
+	}
+	auto update(Species const species, Item const item) -> void {
+		m_estimate->update(m_usage_stats, species, item);
+	}
 
 	auto species(std::mt19937 & random_engine) const {
 		return m_use_most_likely ?
-			m_estimate->most_likely() :
-			m_estimate->random(random_engine);
+			m_estimate->most_likely_species() :
+			m_estimate->random_species(random_engine);
 	}
-	auto moves(Species const species) const {
-		return m_usage_stats.get(species).moves;
+	auto move(std::mt19937 & random_engine, Species const species) const {
+		return m_use_most_likely ?
+			m_estimate->most_likely_move(species) :
+			m_estimate->random_move(random_engine, species);
 	}
-	auto ability(Species const species) const {
-		return m_usage_stats.get(species).ability;
-	}
-	auto item(Species const species) const {
-		return m_usage_stats.get(species).item;
+	auto item(std::mt19937 & random_engine, Species const species) const {
+		return m_use_most_likely ?
+			m_estimate->most_likely_item(species) :
+			m_estimate->random_item(random_engine, species);
 	}
 
 private:
@@ -51,6 +59,13 @@ private:
 auto update_estimate(StatsUser & stats_user, any_seen_team auto const & team) -> void {
 	for (auto const & pokemon : team.all_pokemon()) {
 		stats_user.update(pokemon.species());
+		constexpr auto embargo = false;
+		constexpr auto magic_room = false;
+		// TODO: We want to keep track of this even if the item is removed
+		stats_user.update(pokemon.species(), pokemon.item(embargo, magic_room));
+		for (auto const move : pokemon.regular_moves()) {
+			stats_user.update(pokemon.species(), move.name());
+		}
 	}
 }
 

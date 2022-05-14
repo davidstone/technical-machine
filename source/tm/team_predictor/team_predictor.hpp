@@ -15,6 +15,7 @@
 #include <containers/size.hpp>
 
 #include <random>
+#include <stdexcept>
 
 namespace technicalmachine {
 
@@ -24,27 +25,43 @@ void predict_pokemon(StatsUser & stats_user, any_seen_team auto & team, std::mt1
 	auto const index = team.all_pokemon().index();
 	while (team.number_of_seen_pokemon() < team.size()) {
 		auto const species = stats_user.species(random_engine);
+		if (!species) {
+			throw std::runtime_error("Usage stats say there are not enough Pokemon to make a team");
+		}
+		stats_user.update(*species);
 		auto const level = Level(100_bi);
-		team.add_pokemon({species, level, Gender::genderless});
+		team.add_pokemon({*species, level, Gender::genderless});
 		if (team.number_of_seen_pokemon() == team.size()) {
 			break;
 		}
-		stats_user.update(species);
 	}
 	team.all_pokemon().set_index(index);
 }
 
 template<any_seen_pokemon PokemonType>
-void predict_moves(PokemonType & pokemon, containers::static_vector<Moves, max_moves_per_pokemon> const detailed) {
-	for (Moves const move_name : detailed) {
-		if (containers::size(pokemon.regular_moves()) == max_moves_per_pokemon) {
+void predict_moves(StatsUser & stats_user, PokemonType & pokemon, std::mt19937 & random_engine) {
+	auto const species = pokemon.species();
+	while (containers::size(pokemon.regular_moves()) != max_moves_per_pokemon) {
+		auto const move_name = stats_user.move(random_engine, species);
+		if (!move_name) {
 			break;
 		}
-		if (containers::any_equal(pokemon.regular_moves(), move_name)) {
-			continue;
-		}
-		pokemon.add_move(Move(generation_from<PokemonType>, move_name));
+		pokemon.add_move(Move(generation_from<PokemonType>, *move_name));
+		stats_user.update(species, *move_name);
 	}
+}
+
+void predict_item(StatsUser & stats_user, any_seen_pokemon auto & pokemon, std::mt19937 & random_engine) {
+	if (pokemon.item_is_known()) {
+		return;
+	}
+	auto const species = pokemon.species();
+	auto const item = stats_user.item(random_engine, species);
+	if (!item) {
+		return;
+	}
+	pokemon.set_item(*item);
+	stats_user.update(species, *item);
 }
 
 void optimize_pokemon_evs(any_seen_pokemon auto & pokemon, std::mt19937 & random_engine) {
@@ -70,14 +87,8 @@ auto predict_team_impl(StatsUser stats_user, std::mt19937 & random_engine, SeenT
 
 	predict_pokemon(stats_user, team, random_engine);
 	for (auto & pokemon : team.all_pokemon()) {
-		auto const species = pokemon.species();
-		if (!pokemon.ability_is_known()) {
-			pokemon.set_initial_ability(stats_user.ability(species));
-		}
-		if (!pokemon.item_is_known()) {
-			pokemon.set_item(stats_user.item(species));
-		}
-		predict_moves(pokemon, stats_user.moves(species));
+		predict_moves(stats_user, pokemon, random_engine);
+		predict_item(stats_user, pokemon, random_engine);
 		optimize_pokemon_evs(pokemon, random_engine);
 	}
 	// TODO: This isn't right

@@ -68,7 +68,7 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 		);
 	}
 	auto const output_path = std::filesystem::path(argv[1]);
-	auto output_stats_path = output_path / "stats.json";
+	auto output_stats_path = output_path / "stats.tmus";
 	if (std::filesystem::exists(output_stats_path)) {
 		throw std::runtime_error(containers::concatenate<std::string>(output_stats_path.string(), " already exists"sv));
 	}

@@ -5,11 +5,12 @@
 
 #include <tm/ps_usage_stats/serialize.hpp>
 
+#include <tm/ps_usage_stats/header.hpp>
 #include <tm/ps_usage_stats/usage_stats.hpp>
 
-#include <tm/get_directory.hpp>
+#include <tm/test/ps_usage_stats/usage_bytes.hpp>
 
-#include <nlohmann/json.hpp>
+#include <tm/get_directory.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -18,8 +19,8 @@
 namespace technicalmachine {
 namespace {
 
+template<Generation generation>
 auto make_smallest_team() -> GenerationGeneric<Team> {
-	constexpr auto generation = Generation::one;
 	return GenerationGeneric<Team>(Team<generation>({
 		{
 			Species::Mew,
@@ -102,38 +103,15 @@ auto make_second_team() -> GenerationGeneric<Team> {
 TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
 	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
 	constexpr auto weight = 1.0;
-	auto const team = make_smallest_team();
+	constexpr auto generation = Generation::one;
+	auto const team = make_smallest_team<generation>();
 	usage_stats->add(team, weight);
 	auto correlations = std::make_unique<ps_usage_stats::Correlations>(*usage_stats);
 	correlations->add(team, weight);
 	auto stream = std::stringstream();
-	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, *correlations);
-	auto const expected = nlohmann::json::parse(R"(
-		{
-			"Pokemon": {
-				"Mew": {
-					"Moves": {
-						"Cut": {
-							"Moves": {},
-							"Speed": {
-								"7": 1.0
-							},
-							"Teammates": {},
-							"Usage": 1.0
-						}
-					},
-					"Speed": {
-						"7": 1.0
-					},
-					"Teammates": {},
-					"Usage": 1.0
-				}
-			},
-			"Total teams": 1.0
-		}
-	)");
-	INFO(stream.str());
-	CHECK(nlohmann::json::parse(stream.str()) == expected);
+	ps_usage_stats::serialize(stream, generation, *usage_stats, *correlations);
+	auto const expected = smallest_team_bytes(generation);
+	CHECK(string_to_bytes(stream.str()) == expected);
 }
 
 TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
@@ -145,127 +123,166 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 	correlations->add(team, weight);
 	auto stream = std::stringstream();
 	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, *correlations);
-	auto const expected = nlohmann::json::parse(R"(
-		{
-			"Pokemon": {
-				"Pikachu": {
-					"Moves": {
-						"Thunderbolt": {
-							"Moves": {
-								"Thunder": 1.0
-							},
-							"Speed": {
-								"278": 1.0
-							},
-							"Teammates": {
-								"Tauros": {
-									"Moves": {
-										"Body Slam": 1.0,
-										"Earthquake": 1.0
-									},
-									"Usage": 1.0
-								}
-							},
-							"Usage": 1.0
-						},
-						"Thunder": {
-							"Moves": {
-								"Thunderbolt": 1.0
-							},
-							"Speed": {
-								"278": 1.0
-							},
-							"Teammates": {
-								"Tauros": {
-									"Moves": {
-										"Body Slam": 1.0,
-										"Earthquake": 1.0
-									},
-									"Usage": 1.0
-								}
-							},
-							"Usage": 1.0
-						}
-					},
-					"Speed": {
-						"278": 1.0
-					},
-					"Teammates": {
-						"Tauros": {
-							"Moves": {
-								"Body Slam": 1.0,
-								"Earthquake": 1.0
-							},
-							"Usage": 1.0
-						}
-					},
-					"Usage": 1.0
-				},
-				"Tauros": {
-					"Moves": {
-						"Body Slam": {
-							"Moves": {
-								"Earthquake": 1.0
-							},
-							"Speed": {
-								"318": 1.0
-							},
-							"Teammates": {
-								"Pikachu": {
-									"Moves": {
-										"Thunderbolt": 1.0,
-										"Thunder": 1.0
-									},
-									"Usage": 1.0
-								}
-							},
-							"Usage": 1.0
-						},
-						"Earthquake": {
-							"Moves": {
-								"Body Slam": 1.0
-							},
-							"Speed": {
-								"318": 1.0
-							},
-							"Teammates": {
-								"Pikachu": {
-									"Moves": {
-										"Thunderbolt": 1.0,
-										"Thunder": 1.0
-									},
-									"Usage": 1.0
-								}
-							},
-							"Usage": 1.0
-						}
-					},
-					"Speed": {
-						"318": 1.0
-					},
-					"Teammates": {
-						"Pikachu": {
-							"Moves": {
-								"Thunderbolt": 1.0,
-								"Thunder": 1.0
-							},
-							"Usage": 1.0
-						}
-					},
-					"Usage": 1.0
-				}
-			},
-			"Total teams": 1.0
-		}
-	)");
-	INFO(stream.str());
-	CHECK(nlohmann::json::parse(stream.str()) == expected);
+	auto const expected = containers::concatenate<containers::vector<std::byte>>(
+		string_to_bytes(usage_stats_magic_string),
+		// Version
+		cast_to_bytes(std::uint16_t(0), 2_bi),
+		cast_to_bytes(Generation::one, 1_bi),
+		// Number of species
+		cast_to_bytes(std::uint16_t(2), 2_bi),
+
+		cast_to_bytes(Species::Pikachu, 2_bi),
+		// Weight
+		cast_to_bytes(1.0, 8_bi),
+		// Speed count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		// Speed value
+		cast_to_bytes(std::uint16_t(278), 2_bi),
+		// Speed weight
+		cast_to_bytes(1.0, 8_bi),
+		// Teammate count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		cast_to_bytes(Species::Tauros, 2_bi),
+		// Teammate weight
+		cast_to_bytes(1.0, 8_bi),
+		// Teammate moves count
+		cast_to_bytes(std::uint16_t(2), 2_bi),
+		cast_to_bytes(Moves::Body_Slam, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		cast_to_bytes(Moves::Earthquake, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		// Moves count
+		cast_to_bytes(std::uint16_t(2), 2_bi),
+
+		cast_to_bytes(Moves::Thunderbolt, 2_bi),
+		// Move weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, speed count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		// Detailed stats, speed value
+		cast_to_bytes(std::uint16_t(278), 2_bi),
+		// Detailed stats, speed weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, teammates count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		cast_to_bytes(Species::Tauros, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		// Teammate moves count
+		cast_to_bytes(std::uint16_t(2), 2_bi),
+		cast_to_bytes(Moves::Body_Slam, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		cast_to_bytes(Moves::Earthquake, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, other moves count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		cast_to_bytes(Moves::Thunder, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+
+		cast_to_bytes(Moves::Thunder, 2_bi),
+		// Move weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, speed count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		// Detailed stats, speed value
+		cast_to_bytes(std::uint16_t(278), 2_bi),
+		// Detailed stats, speed weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, teammates count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		cast_to_bytes(Species::Tauros, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		// Teammate moves count
+		cast_to_bytes(std::uint16_t(2), 2_bi),
+		cast_to_bytes(Moves::Body_Slam, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		cast_to_bytes(Moves::Earthquake, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, other moves count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		cast_to_bytes(Moves::Thunderbolt, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+
+		cast_to_bytes(Species::Tauros, 2_bi),
+		// Weight
+		cast_to_bytes(1.0, 8_bi),
+		// Speed count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		// Speed value
+		cast_to_bytes(std::uint16_t(318), 2_bi),
+		// Speed weight
+		cast_to_bytes(1.0, 8_bi),
+		// Teammate count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		cast_to_bytes(Species::Pikachu, 2_bi),
+		// Teammate weight
+		cast_to_bytes(1.0, 8_bi),
+		// Teammate moves count
+		cast_to_bytes(std::uint16_t(2), 2_bi),
+		cast_to_bytes(Moves::Thunderbolt, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		cast_to_bytes(Moves::Thunder, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		// Moves count
+		cast_to_bytes(std::uint16_t(2), 2_bi),
+
+		cast_to_bytes(Moves::Body_Slam, 2_bi),
+		// Move weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, speed count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		// Detailed stats, speed value
+		cast_to_bytes(std::uint16_t(318), 2_bi),
+		// Detailed stats, speed weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, teammates count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		cast_to_bytes(Species::Pikachu, 2_bi),
+		// Teammate weight
+		cast_to_bytes(1.0, 8_bi),
+		// Teammate moves count
+		cast_to_bytes(std::uint16_t(2), 2_bi),
+		cast_to_bytes(Moves::Thunderbolt, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		cast_to_bytes(Moves::Thunder, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, other moves count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		cast_to_bytes(Moves::Earthquake, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+
+		cast_to_bytes(Moves::Earthquake, 2_bi),
+		// Move weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, speed count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		// Detailed stats, speed value
+		cast_to_bytes(std::uint16_t(318), 2_bi),
+		// Detailed stats, speed weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, teammates count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		cast_to_bytes(Species::Pikachu, 2_bi),
+		// Teammate weight
+		cast_to_bytes(1.0, 8_bi),
+		// Teammate moves count
+		cast_to_bytes(std::uint16_t(2), 2_bi),
+		cast_to_bytes(Moves::Thunderbolt, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		cast_to_bytes(Moves::Thunder, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, other moves count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		cast_to_bytes(Moves::Body_Slam, 2_bi),
+		cast_to_bytes(1.0, 8_bi)
+	);
+	CHECK(string_to_bytes(stream.str()) == expected);
 }
 
 TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
 	constexpr auto weight = 1.0;
-	auto teams = containers::array{make_smallest_team(), make_second_team()};
+	constexpr auto generation = Generation::one;
+	auto teams = containers::array{make_smallest_team<generation>(), make_second_team()};
 	for (auto const team : teams) {
 		usage_stats->add(team, weight);
 	}
@@ -275,61 +292,103 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 	}
 	auto stream = std::stringstream();
 	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, *correlations);
-	auto const expected = nlohmann::json::parse(R"(
-		{
-			"Pokemon": {
-				"Mew": {
-					"Moves": {
-						"Cut": {
-							"Moves": {},
-							"Speed": {
-								"7": 1.0
-							},
-							"Teammates": {},
-							"Usage": 1.0
-						}
-					},
-					"Speed": {
-						"7": 1.0
-					},
-					"Teammates": {},
-					"Usage": 0.5
-				},
-				"Tauros": {
-					"Moves": {
-						"Body Slam": {
-							"Moves": {
-								"Earthquake": 1.0
-							},
-							"Speed": {
-								"318": 1.0
-							},
-							"Teammates": {},
-							"Usage": 1.0
-						},
-						"Earthquake": {
-							"Moves": {
-								"Body Slam": 1.0
-							},
-							"Speed": {
-								"318": 1.0
-							},
-							"Teammates": {},
-							"Usage": 1.0
-						}
-					},
-					"Speed": {
-						"318": 1.0
-					},
-					"Teammates": {},
-					"Usage": 0.5
-				}
-			},
-			"Total teams": 2.0
-		}
-	)");
-	INFO(stream.str());
-	CHECK(nlohmann::json::parse(stream.str()) == expected);
+	auto const expected = containers::concatenate<containers::vector<std::byte>>(
+		string_to_bytes(usage_stats_magic_string),
+		// Version
+		cast_to_bytes(std::uint16_t(0), 2_bi),
+		cast_to_bytes(Generation::one, 1_bi),
+		// Number of species
+		cast_to_bytes(std::uint16_t(2), 2_bi),
+
+		cast_to_bytes(Species::Tauros, 2_bi),
+		// Weight
+		cast_to_bytes(0.5, 8_bi),
+		// Speed count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		// Speed value
+		cast_to_bytes(std::uint16_t(318), 2_bi),
+		// Speed weight
+		cast_to_bytes(1.0, 8_bi),
+		// Teammate count
+		cast_to_bytes(std::uint16_t(0), 2_bi),
+		// Moves count
+		cast_to_bytes(std::uint16_t(2), 2_bi),
+
+		cast_to_bytes(Moves::Body_Slam, 2_bi),
+		// Move weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, speed count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		// Detailed stats, speed value
+		cast_to_bytes(std::uint16_t(318), 2_bi),
+		// Detailed stats, speed weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, teammates count
+		cast_to_bytes(std::uint16_t(0), 2_bi),
+		// Detailed stats, other moves count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		cast_to_bytes(Moves::Earthquake, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+
+		cast_to_bytes(Moves::Earthquake, 2_bi),
+		// Move weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, speed count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		// Detailed stats, speed value
+		cast_to_bytes(std::uint16_t(318), 2_bi),
+		// Detailed stats, speed weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, teammates count
+		cast_to_bytes(std::uint16_t(0), 2_bi),
+		// Detailed stats, other moves count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		cast_to_bytes(Moves::Body_Slam, 2_bi),
+		cast_to_bytes(1.0, 8_bi),
+
+		cast_to_bytes(Species::Mew, 2_bi),
+		// Weight
+		cast_to_bytes(0.5, 8_bi),
+		// Speed count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		// Speed value
+		cast_to_bytes(std::uint16_t(7), 2_bi),
+		// Speed weight
+		cast_to_bytes(1.0, 8_bi),
+		// Teammate count
+		cast_to_bytes(std::uint16_t(0), 2_bi),
+		// Moves count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+
+		cast_to_bytes(Moves::Cut, 2_bi),
+		// Move weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, speed count
+		cast_to_bytes(std::uint16_t(1), 2_bi),
+		// Detailed stats, speed value
+		cast_to_bytes(std::uint16_t(7), 2_bi),
+		// Detailed stats, speed weight
+		cast_to_bytes(1.0, 8_bi),
+		// Detailed stats, teammates count
+		cast_to_bytes(std::uint16_t(0), 2_bi),
+		// Detailed stats, other moves count
+		cast_to_bytes(std::uint16_t(0), 2_bi)
+	);
+	CHECK(string_to_bytes(stream.str()) == expected);
+}
+
+TEST_CASE("Serialize smallest non-empty Generation 2 file", "[ps_usage_stats]") {
+	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
+	constexpr auto weight = 1.0;
+	constexpr auto generation = Generation::two;
+	auto const team = make_smallest_team<generation>();
+	usage_stats->add(team, weight);
+	auto correlations = std::make_unique<ps_usage_stats::Correlations>(*usage_stats);
+	correlations->add(team, weight);
+	auto stream = std::stringstream();
+	ps_usage_stats::serialize(stream, generation, *usage_stats, *correlations);
+	auto const expected = smallest_team_bytes(generation);
+	CHECK(string_to_bytes(stream.str()) == expected);
 }
 
 } // namespace
