@@ -39,7 +39,7 @@ constexpr auto maybe_ev(bounded::bounded_integer auto const computed) -> bounded
 	if (computed > EV::max) {
 		return bounded::none;
 	}
-	return EV(EV::value_type(bounded::max(0_bi, computed), bounded::non_check));
+	return EV(EV::value_type(bounded::max(0_bi, computed), bounded::unchecked));
 }
 
 } // namespace detail

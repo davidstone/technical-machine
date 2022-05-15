@@ -81,7 +81,7 @@ struct KnownPokemonCollection {
 		containers::erase(m_container, begin() + original_index);
 		set_index((index_of_replacement < original_index) ?
 			index_of_replacement :
-			TeamIndex(index_of_replacement - 1_bi, bounded::non_check)
+			TeamIndex(index_of_replacement - 1_bi, bounded::unchecked)
 		);
 	}
 
