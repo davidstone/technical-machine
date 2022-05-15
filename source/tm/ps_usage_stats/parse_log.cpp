@@ -114,15 +114,10 @@ auto parse_team(nlohmann::json const & team_array) -> Team<generation> {
 	})));
 }
 
-auto parse_rating(nlohmann::json const & json, char const * const player_key) -> bounded::optional<Rating> {
-	auto const & rating_json = json.at(player_key);
-	if (rating_json.is_null()) {
-		return bounded::none;
-	}
-	auto get = [&](char const * const key) {
-		return rating_json.at(key).get<double>();
-	};
-	return Rating(get("rpr"), get("rprd"));
+// Rating is given in Elo, not Glicko. There is no way to recover the Glicko
+// rating from the logs.
+auto parse_rating([[maybe_unused]] nlohmann::json const & json, [[maybe_unused]] char const * const player_key) -> bounded::optional<Rating> {
+	return bounded::none;
 }
 
 } // namespace
