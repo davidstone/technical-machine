@@ -18,6 +18,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <utility>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -36,11 +38,11 @@ constexpr auto apply_toxic_spikes(EntryHazards<generation_from<PokemonType>> con
 template<Generation generation>
 constexpr auto spikes_damage(EntryHazards<generation> const hazards) -> rational<bounded::constant_t<-1>, bounded::integer<4, 8>> {
 	switch (hazards.spikes().value()) {
-		case 0: bounded::unreachable();
+		case 0: std::unreachable();
 		case 1: return rational(-1_bi, 8_bi);
 		case 2: return rational(-1_bi, 6_bi);
 		case 3: return rational(-1_bi, 4_bi);
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 

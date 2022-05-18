@@ -20,6 +20,8 @@
 #include <containers/static_vector.hpp>
 #include <containers/trivial_inplace_function.hpp>
 
+#include <utility>
+
 namespace technicalmachine {
 
 template<any_team UserTeam>
@@ -44,7 +46,7 @@ constexpr auto reflected_status(Generation const generation, Statuses const stat
 			return bounded::none;
 		case Statuses::clear:
 		case Statuses::rest:
-			bounded::unreachable();
+			std::unreachable();
 	}
 }
 

@@ -11,10 +11,10 @@
 #include <tm/seen_team.hpp>
 #include <tm/team.hpp>
 
-#include <bounded/unreachable.hpp>
-
 #include <containers/algorithms/accumulate.hpp>
 #include <containers/algorithms/filter_iterator.hpp>
+
+#include <utility>
 
 namespace technicalmachine {
 namespace {
@@ -1095,7 +1095,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Thunder_Punch: return 75_bi;
 		case Moves::Scratch: return 40_bi;
 		case Moves::Vise_Grip: return 55_bi;
-		case Moves::Guillotine: bounded::unreachable();
+		case Moves::Guillotine: std::unreachable();
 		case Moves::Razor_Wind: return 80_bi;
 		case Moves::Swords_Dance: return 0_bi;
 		case Moves::Cut: return 50_bi;
@@ -1125,7 +1125,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Headbutt: return 70_bi;
 		case Moves::Horn_Attack: return 65_bi;
 		case Moves::Fury_Attack: return 15_bi;
-		case Moves::Horn_Drill: bounded::unreachable();
+		case Moves::Horn_Drill: std::unreachable();
 		case Moves::Tackle:
 			switch (generation) {
 				case Generation::one:
@@ -1154,7 +1154,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Roar: return 0_bi;
 		case Moves::Sing: return 0_bi;
 		case Moves::Supersonic: return 0_bi;
-		case Moves::Sonic_Boom: bounded::unreachable();
+		case Moves::Sonic_Boom: std::unreachable();
 		case Moves::Disable: return 0_bi;
 		case Moves::Acid: return 40_bi;
 		case Moves::Ember: return 40_bi;
@@ -1175,8 +1175,8 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Low_Kick:
 		case Moves::Grass_Knot:
 			return BOUNDED_CONDITIONAL(generation <= Generation::two, 50_bi, power_of_mass_based_moves(defender.species()));
-		case Moves::Counter: bounded::unreachable();
-		case Moves::Seismic_Toss: bounded::unreachable();
+		case Moves::Counter: std::unreachable();
+		case Moves::Seismic_Toss: std::unreachable();
 		case Moves::Strength: return 80_bi;
 		case Moves::Absorb: return 20_bi;
 		case Moves::Mega_Drain: return 40_bi;
@@ -1200,7 +1200,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 					return 120_bi;
 			}
 		case Moves::String_Shot: return 0_bi;
-		case Moves::Dragon_Rage: bounded::unreachable();
+		case Moves::Dragon_Rage: std::unreachable();
 		case Moves::Fire_Spin: return BOUNDED_CONDITIONAL(generation <= Generation::four, 15_bi, 35_bi);
 		case Moves::Thunder_Shock: return 40_bi;
 		case Moves::Thunderbolt: return BOUNDED_CONDITIONAL(generation <= Generation::five, 95_bi, 90_bi);
@@ -1208,7 +1208,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Thunder: return BOUNDED_CONDITIONAL(generation <= Generation::five, 120_bi, 110_bi);
 		case Moves::Rock_Throw: return 50_bi;
 		case Moves::Earthquake: return 100_bi;
-		case Moves::Fissure: bounded::unreachable();
+		case Moves::Fissure: std::unreachable();
 		case Moves::Dig:
 			switch (generation) {
 				case Generation::one:
@@ -1228,7 +1228,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Quick_Attack: return 40_bi;
 		case Moves::Rage: return 20_bi;
 		case Moves::Teleport: return 0_bi;
-		case Moves::Night_Shade: bounded::unreachable();
+		case Moves::Night_Shade: std::unreachable();
 		case Moves::Mimic: return 0_bi;
 		case Moves::Screech: return 0_bi;
 		case Moves::Double_Team: return 0_bi;
@@ -1244,7 +1244,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Haze: return 0_bi;
 		case Moves::Reflect: return 0_bi;
 		case Moves::Focus_Energy: return 0_bi;
-		case Moves::Bide: bounded::unreachable();
+		case Moves::Bide: std::unreachable();
 		case Moves::Metronome: return 0_bi;
 		case Moves::Mirror_Move: return 0_bi;
 		case Moves::Self_Destruct: return BOUNDED_CONDITIONAL(generation == Generation::one, 130_bi, 200_bi);
@@ -1286,7 +1286,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Dizzy_Punch: return 70_bi;
 		case Moves::Spore: return 0_bi;
 		case Moves::Flash: return 0_bi;
-		case Moves::Psywave: bounded::unreachable();
+		case Moves::Psywave: std::unreachable();
 		case Moves::Splash: return 0_bi;
 		case Moves::Acid_Armor: return 0_bi;
 		case Moves::Crabhammer: return BOUNDED_CONDITIONAL(generation <= Generation::five, 90_bi, 100_bi);
@@ -1299,7 +1299,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Sharpen: return 0_bi;
 		case Moves::Conversion: return 0_bi;
 		case Moves::Tri_Attack: return 80_bi;
-		case Moves::Super_Fang: bounded::unreachable();
+		case Moves::Super_Fang: std::unreachable();
 		case Moves::Slash: return 70_bi;
 		case Moves::Substitute: return 0_bi;
 		case Moves::Struggle: return 50_bi;
@@ -1392,7 +1392,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Rain_Dance: return 0_bi;
 		case Moves::Sunny_Day: return 0_bi;
 		case Moves::Crunch: return 80_bi;
-		case Moves::Mirror_Coat: bounded::unreachable();
+		case Moves::Mirror_Coat: std::unreachable();
 		case Moves::Psych_Up: return 0_bi;
 		case Moves::Extreme_Speed: return 80_bi;
 		case Moves::Ancient_Power: return 60_bi;
@@ -1444,7 +1444,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Brick_Break: return 75_bi;
 		case Moves::Yawn: return 0_bi;
 		case Moves::Knock_Off: return BOUNDED_CONDITIONAL(generation <= Generation::five, 20_bi, 65_bi);
-		case Moves::Endeavor: bounded::unreachable();
+		case Moves::Endeavor: std::unreachable();
 		case Moves::Dragon_Energy:
 		case Moves::Eruption:
 		case Moves::Water_Spout:
@@ -1491,7 +1491,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Extrasensory: return 80_bi;
 		case Moves::Sky_Uppercut: return 85_bi;
 		case Moves::Sand_Tomb: return BOUNDED_CONDITIONAL(generation <= Generation::four, 15_bi, 35_bi);
-		case Moves::Sheer_Cold: bounded::unreachable();
+		case Moves::Sheer_Cold: std::unreachable();
 		case Moves::Muddy_Water: return BOUNDED_CONDITIONAL(generation <= Generation::five, 95_bi, 90_bi);
 		case Moves::Bullet_Seed: return BOUNDED_CONDITIONAL(generation <= Generation::four, 10_bi, 25_bi);
 		case Moves::Aerial_Ace: return 60_bi;
@@ -1535,7 +1535,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Pluck: return 60_bi;
 		case Moves::Tailwind: return 0_bi;
 		case Moves::Acupressure: return 0_bi;
-		case Moves::Metal_Burst: bounded::unreachable();
+		case Moves::Metal_Burst: std::unreachable();
 		case Moves::U_turn: return 70_bi;
 		case Moves::Close_Combat: return 120_bi;
 		case Moves::Payback: return 50_bi;
@@ -1708,7 +1708,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case Moves::Acrobatics: return 55_bi;
 		case Moves::Reflect_Type: return 0_bi;
 		case Moves::Retaliate: return 70_bi;
-		case Moves::Final_Gambit: bounded::unreachable();
+		case Moves::Final_Gambit: std::unreachable();
 		case Moves::Bestow: return 0_bi;
 		case Moves::Inferno: return 100_bi;
 		case Moves::Water_Pledge: return BOUNDED_CONDITIONAL(generation <= Generation::five, 50_bi, 80_bi);

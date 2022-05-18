@@ -18,6 +18,7 @@
 
 #include <string>
 #include <string_view>
+#include <utility>
 
 namespace technicalmachine::ps {
 
@@ -159,7 +160,7 @@ auto MoveState::apply_contact_ability_status(Party const party, Ability const ab
 				case Statuses::paralysis: return ContactAbilityEffect::paralysis;
 				case Statuses::poison: return ContactAbilityEffect::poison;
 				case Statuses::sleep: return ContactAbilityEffect::sleep;
-				default: bounded::unreachable();
+				default: std::unreachable();
 			}
 		}();
 	};

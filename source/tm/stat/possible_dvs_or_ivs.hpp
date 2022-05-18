@@ -23,6 +23,7 @@
 #include <numeric_traits/min_max_value.hpp>
 
 #include <stdexcept>
+#include <utility>
 
 namespace technicalmachine {
 namespace detail {
@@ -61,7 +62,7 @@ constexpr auto possible_atk_dvs_type(Type const hidden_power_type) {
 		case Type::Ice: return result(3_bi);
 		case Type::Dragon: return result(3_bi);
 		case Type::Dark: return result(3_bi);
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 constexpr auto possible_def_dvs_type(Type const hidden_power_type) {
@@ -87,7 +88,7 @@ constexpr auto possible_def_dvs_type(Type const hidden_power_type) {
 		case Type::Ice: return result(1_bi);
 		case Type::Dragon: return result(2_bi);
 		case Type::Dark: return result(3_bi);
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 constexpr auto possible_spe_dvs_type(Type) {
@@ -117,10 +118,10 @@ constexpr auto possible_spc_dvs_power(HiddenPowerDVPower const power) {
 		switch (remainder.value()) {
 			case 0: return dv.value() < 2_bi;
 			case 1: return 2_bi <= dv.value() and dv.value() < 8_bi;
-			case 2: bounded::unreachable();
-			case 3: bounded::unreachable();
+			case 2: std::unreachable();
+			case 3: std::unreachable();
 			case 4: return 8_bi <= dv.value();
-			default: bounded::unreachable();
+			default: std::unreachable();
 		}
 	}));
 }
@@ -191,7 +192,7 @@ constexpr auto possible_hp_ivs_type(Type const hidden_power_type) {
 		case Type::Ice: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Dragon: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Dark: return possible_ivs_type_impl(AllowedIVs::odd);
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 
@@ -213,7 +214,7 @@ constexpr auto possible_atk_ivs_type(Type const hidden_power_type) {
 		case Type::Ice: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Dragon: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Dark: return possible_ivs_type_impl(AllowedIVs::odd);
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 
@@ -235,7 +236,7 @@ constexpr auto possible_def_ivs_type(Type const hidden_power_type) {
 		case Type::Ice: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Dragon: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Dark: return possible_ivs_type_impl(AllowedIVs::odd);
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 
@@ -257,7 +258,7 @@ constexpr auto possible_spe_ivs_type(Type const hidden_power_type) {
 		case Type::Ice: return possible_ivs_type_impl(AllowedIVs::any);
 		case Type::Dragon: return possible_ivs_type_impl(AllowedIVs::odd);
 		case Type::Dark: return possible_ivs_type_impl(AllowedIVs::odd);
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 
@@ -279,7 +280,7 @@ constexpr auto possible_spa_ivs_type(Type const hidden_power_type) {
 		case Type::Ice: return possible_ivs_type_impl(AllowedIVs::odd);
 		case Type::Dragon: return possible_ivs_type_impl(AllowedIVs::odd);
 		case Type::Dark: return possible_ivs_type_impl(AllowedIVs::odd);
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 
@@ -301,7 +302,7 @@ constexpr auto possible_spd_ivs_type(Type const hidden_power_type) {
 		case Type::Ice: return possible_ivs_type_impl(AllowedIVs::odd);
 		case Type::Dragon: return possible_ivs_type_impl(AllowedIVs::odd);
 		case Type::Dark: return possible_ivs_type_impl(AllowedIVs::odd);
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 

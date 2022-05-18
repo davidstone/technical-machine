@@ -13,6 +13,8 @@
 
 #include <bounded/integer.hpp>
 
+#include <utility>
+
 namespace technicalmachine {
 using namespace bounded::literal;
 
@@ -57,7 +59,7 @@ constexpr auto swallow_healing(bounded::bounded_integer auto const stockpiles) {
 		case 1: return result{1_bi, 4_bi};
 		case 2: return result{1_bi, 2_bi};
 		case 3: return result{1_bi, 1_bi};
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 

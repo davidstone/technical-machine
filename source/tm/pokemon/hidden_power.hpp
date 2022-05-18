@@ -16,9 +16,10 @@
 
 #include <bounded/integer.hpp>
 #include <bounded/optional.hpp>
-#include <bounded/unreachable.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
+
+#include <utility>
 
 namespace technicalmachine {
 
@@ -164,7 +165,7 @@ private:
 			case 13: return Type::Ice;
 			case 14: return Type::Dragon;
 			case 15: return Type::Dark;
-			default: bounded::unreachable();
+			default: std::unreachable();
 		}
 	}
 

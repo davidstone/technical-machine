@@ -8,7 +8,8 @@
 #include <tm/stat/nature.hpp>
 
 #include <bounded/integer.hpp>
-#include <bounded/unreachable.hpp>
+
+#include <utility>
 
 namespace technicalmachine {
 
@@ -43,7 +44,7 @@ constexpr auto ingame_id_to_nature(IngameNatureID const id) -> Nature {
 		case 22: return Nature::Sassy;
 		case 23: return Nature::Careful;
 		case 24: return Nature::Quirky;
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 

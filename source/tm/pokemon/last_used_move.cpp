@@ -7,6 +7,8 @@
 
 #include <bounded/detail/overload.hpp>
 
+#include <utility>
+
 namespace technicalmachine {
 
 auto LastUsedMove::reset_start_of_turn() & -> void {
@@ -125,7 +127,7 @@ auto LastUsedMove::use_uproar() & -> void {
 			m_effects = counter;
 		},
 		[](UproarCounter & uproar) { uproar.advance_one_turn(); },
-		[](auto) { bounded::unreachable(); }
+		[](auto) { std::unreachable(); }
 	));
 }
 

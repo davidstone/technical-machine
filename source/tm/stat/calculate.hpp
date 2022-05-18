@@ -331,7 +331,7 @@ constexpr auto other_physical_stat(SplitSpecialRegularStat const stat) {
 	switch (stat) {
 		case SplitSpecialRegularStat::atk: return SplitSpecialRegularStat::def;
 		case SplitSpecialRegularStat::def: return SplitSpecialRegularStat::atk;
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 

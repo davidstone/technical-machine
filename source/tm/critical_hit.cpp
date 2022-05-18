@@ -8,6 +8,8 @@
 #include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
+#include <utility>
+
 namespace technicalmachine {
 
 namespace {
@@ -881,11 +883,11 @@ auto gen_one_critical_hit(any_active_pokemon auto const attacker, MoveCriticalHi
 
 auto move_stage(Generation const generation, MoveCriticalHit const move_adjustment) -> bounded::integer<0, 2> {
 	switch (move_adjustment) {
-		case MoveCriticalHit::never: bounded::unreachable();
+		case MoveCriticalHit::never: std::unreachable();
 		case MoveCriticalHit::normal: return 0_bi;
 		case MoveCriticalHit::high: return BOUNDED_CONDITIONAL(generation == Generation::two, 2_bi, 1_bi);
 		case MoveCriticalHit::very_high: return 2_bi;
-		case MoveCriticalHit::always: bounded::unreachable();
+		case MoveCriticalHit::always: std::unreachable();
 	}
 }
 
@@ -917,7 +919,7 @@ auto boosted_stage(ActivePokemonType const attacker) {
 constexpr auto critical_hit_rate_from_stage(Generation const generation, bounded::integer<0, 7> const stage) {
 	switch (generation) {
 		case Generation::one:
-			bounded::unreachable();
+			std::unreachable();
 		case Generation::two:
 		case Generation::three:
 		case Generation::four:

@@ -32,6 +32,7 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <utility>
 
 namespace technicalmachine::nb {
 namespace {
@@ -569,7 +570,7 @@ constexpr auto id_to_species(SpeciesID const id, FileVersion const version) {
 
 		default:
 			static_assert(numeric_traits::max_value<decltype(id)> == 509);
-			bounded::unreachable();
+			std::unreachable();
 	}
 }
 
@@ -713,7 +714,7 @@ constexpr auto id_to_item(ItemID const id, bool const prefer_gen_4_item) {
 
 		default:
 			static_assert(numeric_traits::max_value<decltype(id)> == 127_bi);
-			bounded::unreachable();
+			std::unreachable();
 	}
 }
 
@@ -1125,7 +1126,7 @@ constexpr auto id_to_gender(Species const species, bounded::integer<0, 1> const 
 	switch (id.value()) {
 		case 0: return Gender::male;
 		case 1: return Gender::female;
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 
@@ -1606,7 +1607,7 @@ constexpr auto id_to_move(MoveID const id) -> bounded::optional<Moves> {
 		case 465: return Moves::Wring_Out;
 		case 466: return Moves::X_Scissor;
 		case 467: return Moves::Zen_Headbutt;
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 
@@ -1786,7 +1787,7 @@ constexpr auto game_version_to_generation(GameVersion const game_version) {
 		case 6: return Generation::two; // "True GSC"
 		case 7: return Generation::four; // "True Diamond + Pearl"
 		case 8: return Generation::four; // "Full Generation 4"
-		default: bounded::unreachable();
+		default: std::unreachable();
 	}
 }
 
