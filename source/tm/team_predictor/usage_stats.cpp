@@ -25,6 +25,7 @@
 
 #include <numeric_traits/min_max_value.hpp>
 
+#include <bit>
 #include <iostream>
 #include <stdexcept>
 #include <utility>
