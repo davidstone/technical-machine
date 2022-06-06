@@ -16,16 +16,14 @@ endif()
 
 project(technical_machine LANGUAGES CXX)
 
+enable_testing()
+
 find_package(Boost REQUIRED)
-add_library(boost INTERFACE IMPORTED)
-target_compile_definitions(boost INTERFACE
+target_compile_definitions(Boost::headers INTERFACE
 	BOOST_BEAST_USE_STD_STRING_VIEW
 	BOOST_CHRONO_DONT_PROVIDE_HYBRID_ERROR_HANDLING
 	BOOST_CHRONO_HEADER_ONLY
 )
-target_include_directories(boost SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
-
-enable_testing()
 
 add_library(nlohmann_json INTERFACE IMPORTED)
 target_include_directories(nlohmann_json SYSTEM INTERFACE "dependencies/json/single_include")
@@ -262,7 +260,7 @@ add_library(tm_common STATIC
 	source/tm/wish.cpp
 )
 target_link_libraries(tm_common
-	boost
+	Boost::headers
 	bounded
 	containers
 	nlohmann_json
