@@ -5,10 +5,9 @@
 
 #pragma once
 
-#include <boost/thread/scoped_thread.hpp>
-
 #include <concurrent/queue.hpp>
 
+#include <thread>
 #include <utility>
 
 namespace technicalmachine::ps_usage_stats {
@@ -18,19 +17,17 @@ struct Worker {
 	Worker(Function function):
 		m_function(std::move(function)),
 		m_queue(1000),
-		m_thread([&] {
-			while (true) {
-				for (auto const & result : m_queue.pop_all()) {
+		m_thread([&](std::stop_token token) {
+			while (!token.stop_requested()) {
+				for (auto const & result : m_queue.pop_all(token)) {
 					m_function(result);
 				}
 			}
+			for (auto const & result : m_queue.try_pop_all()) {
+				m_function(result);
+			}
 		})
 	{
-	}
-	~Worker() {
-		for (auto const & result : m_queue.try_pop_all()) {
-			m_function(result);
-		}
 	}
 	auto add_work(auto && value) -> void {
 		m_queue.push(OPERATORS_FORWARD(value));
@@ -39,7 +36,7 @@ struct Worker {
 private:
 	Function m_function;
 	concurrent::blocking_queue<T> m_queue;
-	boost::scoped_thread<boost::interrupt_and_join_if_joinable> m_thread;
+	std::jthread m_thread;
 };
 
 template<typename T, typename Function>
