@@ -33,10 +33,6 @@ constexpr auto write_bytes(std::ostream & stream, T const & value, auto const ex
 	stream.write(reinterpret_cast<char const *>(std::addressof(value)), sizeof(value));
 }
 
-constexpr auto write_string(std::ostream & stream, std::string_view const value) {
-	stream.write(value.data(), static_cast<std::streamsize>(value.size()));
-}
-
 template<typename Key>
 struct HasUsage {
 	constexpr auto operator()(containers::map_value_type<Key, double> const & x) const {
@@ -135,7 +131,7 @@ auto serialize_moves(std::ostream & stream, Generation const generation, UsageSt
 
 auto serialize(std::ostream & stream, Generation const generation, UsageStats const & usage_stats, Correlations const & correlations) -> void {
 	using Version = bounded::integer<0, 65535>;
-	write_string(stream, usage_stats_magic_string);
+	write_bytes(stream, usage_stats_magic_string, 14_bi);
 	constexpr auto version = Version(0_bi);
 	write_bytes(stream, version, 2_bi);
 	write_bytes(stream, generation, 1_bi);

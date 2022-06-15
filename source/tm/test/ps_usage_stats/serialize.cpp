@@ -100,6 +100,13 @@ auto make_second_team() -> GenerationGeneric<Team> {
 	}));
 }
 
+auto string_to_bytes(std::string_view const str) {
+	return containers::vector(std::span(
+		reinterpret_cast<std::byte const *>(containers::data(str)),
+		containers::size(str)
+	));
+}
+
 TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
 	auto usage_stats = std::make_unique<ps_usage_stats::UsageStats>();
 	constexpr auto weight = 1.0;
@@ -124,7 +131,7 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 	auto stream = std::stringstream();
 	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, *correlations);
 	auto const expected = containers::concatenate<containers::vector<std::byte>>(
-		string_to_bytes(usage_stats_magic_string),
+		usage_stats_magic_string,
 		// Version
 		cast_to_bytes(std::uint16_t(0), 2_bi),
 		cast_to_bytes(Generation::one, 1_bi),
@@ -293,7 +300,7 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 	auto stream = std::stringstream();
 	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, *correlations);
 	auto const expected = containers::concatenate<containers::vector<std::byte>>(
-		string_to_bytes(usage_stats_magic_string),
+		usage_stats_magic_string,
 		// Version
 		cast_to_bytes(std::uint16_t(0), 2_bi),
 		cast_to_bytes(Generation::one, 1_bi),

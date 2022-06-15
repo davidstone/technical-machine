@@ -7,11 +7,26 @@
 
 #include <bounded/integer.hpp>
 
-#include <string_view>
+#include <containers/array.hpp>
 
 namespace technicalmachine {
 
-inline constexpr auto usage_stats_magic_string = std::string_view("tm usage stats");
+inline constexpr auto usage_stats_magic_string = containers::array{
+	std::byte('t'),
+	std::byte('m'),
+	std::byte(' '),
+	std::byte('u'),
+	std::byte('s'),
+	std::byte('a'),
+	std::byte('g'),
+	std::byte('e'),
+	std::byte(' '),
+	std::byte('s'),
+	std::byte('t'),
+	std::byte('a'),
+	std::byte('t'),
+	std::byte('s')
+};
 
 using UsageStatsVersion = bounded::integer<0, 65535>;
 

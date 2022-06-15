@@ -40,8 +40,8 @@ struct FileReader {
 	{
 	}
 	auto read(auto const size) {
-		auto buffer = containers::array<char, size>();
-		auto const ptr = containers::data(buffer);
+		auto buffer = containers::array<std::byte, size>();
+		auto const ptr = reinterpret_cast<char *>(std::addressof(buffer));
 		m_stream.read(ptr, static_cast<std::streamsize>(size));
 		return buffer;
 	}
@@ -90,8 +90,8 @@ auto read_map(FileReader & reader) {
 }
 
 auto checked_header_read(FileReader & reader) -> void {
-	auto str = reader.read(bounded::constant<containers::size(usage_stats_magic_string)>);
-	if (!containers::equal(str, usage_stats_magic_string)) {
+	auto str = reader.read(containers::size(usage_stats_magic_string));
+	if (str != usage_stats_magic_string) {
 		throw std::runtime_error("Invalid magic string");
 	}
 	if (checked_read<UsageStatsVersion>(reader) != 0_bi) {

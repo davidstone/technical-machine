@@ -19,13 +19,6 @@
 
 namespace technicalmachine {
 
-inline auto string_to_bytes(std::string_view const str) {
-	return containers::vector(std::span(
-		reinterpret_cast<std::byte const *>(containers::data(str)),
-		containers::size(str)
-	));
-}
-
 constexpr auto cast_to_bytes(auto const value, auto const bytes) {
 	return std::bit_cast<containers::array<std::byte, bytes>>(value);
 }
@@ -76,7 +69,7 @@ inline auto no_abilities(Generation const generation) {
 // smaller legal file.
 inline auto smallest_team_bytes(Generation const generation) {
 	return containers::concatenate<containers::vector<std::byte>>(
-		string_to_bytes(usage_stats_magic_string),
+		usage_stats_magic_string,
 		// Version
 		cast_to_bytes(std::uint16_t(0), 2_bi),
 		// Generation
