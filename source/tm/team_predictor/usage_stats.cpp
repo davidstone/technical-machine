@@ -234,7 +234,6 @@ namespace {
 
 auto stats_for_generation(Generation const generation) {
 	std::cout << "Loading stats for generation " << to_string(generation) << '\n' << std::flush;
-	auto guard = bounded::scope_guard([] { std::cout << "Done\n" << std::flush; });
 	return UsageStats::make(open_file(get_usage_stats_directory() / to_string(generation) / "OU.tmus"));
 }
 
@@ -253,6 +252,7 @@ AllUsageStats::AllUsageStats():
 	}
 {
 	static_assert(numeric_traits::max_value<Generation> == Generation::eight);
+	std::cout << "Done loading stats\n" << std::flush;
 }
 
 } // namespace technicalmachine
