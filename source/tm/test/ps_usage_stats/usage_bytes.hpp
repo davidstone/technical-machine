@@ -14,8 +14,7 @@
 
 #include <bit>
 #include <cstddef>
-#include <span>
-#include <string_view>
+#include <cstdint>
 
 namespace technicalmachine {
 
