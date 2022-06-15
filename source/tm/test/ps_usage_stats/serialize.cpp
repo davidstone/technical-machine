@@ -132,155 +132,101 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, *correlations);
 	auto const expected = containers::concatenate<containers::vector<std::byte>>(
 		usage_stats_magic_string,
-		// Version
-		cast_to_bytes(std::uint16_t(0), 2_bi),
-		cast_to_bytes(Generation::one, 1_bi),
-		// Number of species
-		cast_to_bytes(std::uint16_t(2), 2_bi),
-
-		cast_to_bytes(Species::Pikachu, 2_bi),
-		// Weight
-		cast_to_bytes(1.0, 8_bi),
-		// Speed count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		// Speed value
-		cast_to_bytes(std::uint16_t(278), 2_bi),
-		// Speed weight
-		cast_to_bytes(1.0, 8_bi),
-		// Teammate count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		cast_to_bytes(Species::Tauros, 2_bi),
-		// Teammate weight
-		cast_to_bytes(1.0, 8_bi),
-		// Teammate moves count
-		cast_to_bytes(std::uint16_t(2), 2_bi),
-		cast_to_bytes(Moves::Body_Slam, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		cast_to_bytes(Moves::Earthquake, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		// Moves count
-		cast_to_bytes(std::uint16_t(2), 2_bi),
-
-		cast_to_bytes(Moves::Thunderbolt, 2_bi),
-		// Move weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, speed count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		// Detailed stats, speed value
-		cast_to_bytes(std::uint16_t(278), 2_bi),
-		// Detailed stats, speed weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, teammates count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		cast_to_bytes(Species::Tauros, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		// Teammate moves count
-		cast_to_bytes(std::uint16_t(2), 2_bi),
-		cast_to_bytes(Moves::Body_Slam, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		cast_to_bytes(Moves::Earthquake, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, other moves count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		cast_to_bytes(Moves::Thunder, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-
-		cast_to_bytes(Moves::Thunder, 2_bi),
-		// Move weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, speed count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		// Detailed stats, speed value
-		cast_to_bytes(std::uint16_t(278), 2_bi),
-		// Detailed stats, speed weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, teammates count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		cast_to_bytes(Species::Tauros, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		// Teammate moves count
-		cast_to_bytes(std::uint16_t(2), 2_bi),
-		cast_to_bytes(Moves::Body_Slam, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		cast_to_bytes(Moves::Earthquake, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, other moves count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		cast_to_bytes(Moves::Thunderbolt, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-
-		cast_to_bytes(Species::Tauros, 2_bi),
-		// Weight
-		cast_to_bytes(1.0, 8_bi),
-		// Speed count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		// Speed value
-		cast_to_bytes(std::uint16_t(318), 2_bi),
-		// Speed weight
-		cast_to_bytes(1.0, 8_bi),
-		// Teammate count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		cast_to_bytes(Species::Pikachu, 2_bi),
-		// Teammate weight
-		cast_to_bytes(1.0, 8_bi),
-		// Teammate moves count
-		cast_to_bytes(std::uint16_t(2), 2_bi),
-		cast_to_bytes(Moves::Thunderbolt, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		cast_to_bytes(Moves::Thunder, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		// Moves count
-		cast_to_bytes(std::uint16_t(2), 2_bi),
-
-		cast_to_bytes(Moves::Body_Slam, 2_bi),
-		// Move weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, speed count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		// Detailed stats, speed value
-		cast_to_bytes(std::uint16_t(318), 2_bi),
-		// Detailed stats, speed weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, teammates count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		cast_to_bytes(Species::Pikachu, 2_bi),
-		// Teammate weight
-		cast_to_bytes(1.0, 8_bi),
-		// Teammate moves count
-		cast_to_bytes(std::uint16_t(2), 2_bi),
-		cast_to_bytes(Moves::Thunderbolt, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		cast_to_bytes(Moves::Thunder, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, other moves count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		cast_to_bytes(Moves::Earthquake, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-
-		cast_to_bytes(Moves::Earthquake, 2_bi),
-		// Move weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, speed count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		// Detailed stats, speed value
-		cast_to_bytes(std::uint16_t(318), 2_bi),
-		// Detailed stats, speed weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, teammates count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		cast_to_bytes(Species::Pikachu, 2_bi),
-		// Teammate weight
-		cast_to_bytes(1.0, 8_bi),
-		// Teammate moves count
-		cast_to_bytes(std::uint16_t(2), 2_bi),
-		cast_to_bytes(Moves::Thunderbolt, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		cast_to_bytes(Moves::Thunder, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, other moves count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		cast_to_bytes(Moves::Body_Slam, 2_bi),
-		cast_to_bytes(1.0, 8_bi)
+		version_bytes(0),
+		generation_bytes(Generation::one),
+		count_bytes(2),
+			species_bytes(Species::Pikachu),
+				weight_bytes(1.0),
+				count_bytes(1),
+					speed_bytes(278),
+						weight_bytes(1.0),
+				count_bytes(1), // Teammates
+					species_bytes(Species::Tauros),
+						weight_bytes(1.0),
+						count_bytes(2),
+							move_bytes(Moves::Body_Slam),
+								weight_bytes(1.0),
+							move_bytes(Moves::Earthquake),
+								weight_bytes(1.0),
+				count_bytes(2), // Moves
+					move_bytes(Moves::Thunderbolt),
+						weight_bytes(1.0),
+						count_bytes(1),
+							speed_bytes(278),
+								weight_bytes(1.0),
+						count_bytes(1), // Teammates
+							species_bytes(Species::Tauros),
+								weight_bytes(1.0),
+								count_bytes(2),
+									move_bytes(Moves::Body_Slam),
+										weight_bytes(1.0),
+									move_bytes(Moves::Earthquake),
+										weight_bytes(1.0),
+						count_bytes(1), // Other moves
+							move_bytes(Moves::Thunder),
+								weight_bytes(1.0),
+					move_bytes(Moves::Thunder),
+						weight_bytes(1.0),
+						count_bytes(1),
+							speed_bytes(278),
+								weight_bytes(1.0),
+						count_bytes(1), // Teammates
+							species_bytes(Species::Tauros),
+								weight_bytes(1.0),
+								count_bytes(2), // Moves
+									move_bytes(Moves::Body_Slam),
+										weight_bytes(1.0),
+									move_bytes(Moves::Earthquake),
+										weight_bytes(1.0),
+							count_bytes(1), // Other moves
+								move_bytes(Moves::Thunderbolt),
+									weight_bytes(1.0),
+			species_bytes(Species::Tauros),
+				weight_bytes(1.0),
+				count_bytes(1),
+					speed_bytes(318),
+						weight_bytes(1.0),
+				count_bytes(1), // Teammates
+					species_bytes(Species::Pikachu),
+						weight_bytes(1.0),
+						count_bytes(2), // Moves
+							move_bytes(Moves::Thunderbolt),
+								weight_bytes(1.0),
+							move_bytes(Moves::Thunder),
+								weight_bytes(1.0),
+				count_bytes(2), // Moves
+					move_bytes(Moves::Body_Slam),
+						weight_bytes(1.0),
+						count_bytes(1),
+							speed_bytes(318),
+								weight_bytes(1.0),
+						count_bytes(1), // Teammates
+							species_bytes(Species::Pikachu),
+								weight_bytes(1.0),
+								count_bytes(2), // Moves
+									move_bytes(Moves::Thunderbolt),
+										weight_bytes(1.0),
+									move_bytes(Moves::Thunder),
+										weight_bytes(1.0),
+						count_bytes(1),
+							move_bytes(Moves::Earthquake),
+								weight_bytes(1.0),
+					move_bytes(Moves::Earthquake),
+						weight_bytes(1.0),
+						count_bytes(1),
+							speed_bytes(318),
+								weight_bytes(1.0),
+						count_bytes(1),
+							species_bytes(Species::Pikachu),
+								weight_bytes(1.0),
+								count_bytes(2),
+									move_bytes(Moves::Thunderbolt),
+										weight_bytes(1.0),
+									move_bytes(Moves::Thunder),
+										weight_bytes(1.0),
+								count_bytes(1),
+									move_bytes(Moves::Body_Slam),
+									weight_bytes(1.0)
 	);
 	CHECK(string_to_bytes(stream.str()) == expected);
 }
@@ -301,85 +247,48 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, *correlations);
 	auto const expected = containers::concatenate<containers::vector<std::byte>>(
 		usage_stats_magic_string,
-		// Version
-		cast_to_bytes(std::uint16_t(0), 2_bi),
-		cast_to_bytes(Generation::one, 1_bi),
-		// Number of species
-		cast_to_bytes(std::uint16_t(2), 2_bi),
-
-		cast_to_bytes(Species::Tauros, 2_bi),
-		// Weight
-		cast_to_bytes(0.5, 8_bi),
-		// Speed count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		// Speed value
-		cast_to_bytes(std::uint16_t(318), 2_bi),
-		// Speed weight
-		cast_to_bytes(1.0, 8_bi),
-		// Teammate count
-		cast_to_bytes(std::uint16_t(0), 2_bi),
-		// Moves count
-		cast_to_bytes(std::uint16_t(2), 2_bi),
-
-		cast_to_bytes(Moves::Body_Slam, 2_bi),
-		// Move weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, speed count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		// Detailed stats, speed value
-		cast_to_bytes(std::uint16_t(318), 2_bi),
-		// Detailed stats, speed weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, teammates count
-		cast_to_bytes(std::uint16_t(0), 2_bi),
-		// Detailed stats, other moves count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		cast_to_bytes(Moves::Earthquake, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-
-		cast_to_bytes(Moves::Earthquake, 2_bi),
-		// Move weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, speed count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		// Detailed stats, speed value
-		cast_to_bytes(std::uint16_t(318), 2_bi),
-		// Detailed stats, speed weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, teammates count
-		cast_to_bytes(std::uint16_t(0), 2_bi),
-		// Detailed stats, other moves count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		cast_to_bytes(Moves::Body_Slam, 2_bi),
-		cast_to_bytes(1.0, 8_bi),
-
-		cast_to_bytes(Species::Mew, 2_bi),
-		// Weight
-		cast_to_bytes(0.5, 8_bi),
-		// Speed count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		// Speed value
-		cast_to_bytes(std::uint16_t(7), 2_bi),
-		// Speed weight
-		cast_to_bytes(1.0, 8_bi),
-		// Teammate count
-		cast_to_bytes(std::uint16_t(0), 2_bi),
-		// Moves count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-
-		cast_to_bytes(Moves::Cut, 2_bi),
-		// Move weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, speed count
-		cast_to_bytes(std::uint16_t(1), 2_bi),
-		// Detailed stats, speed value
-		cast_to_bytes(std::uint16_t(7), 2_bi),
-		// Detailed stats, speed weight
-		cast_to_bytes(1.0, 8_bi),
-		// Detailed stats, teammates count
-		cast_to_bytes(std::uint16_t(0), 2_bi),
-		// Detailed stats, other moves count
-		cast_to_bytes(std::uint16_t(0), 2_bi)
+		version_bytes(0),
+		generation_bytes(Generation::one),
+		count_bytes(2),
+			species_bytes(Species::Tauros),
+				weight_bytes(0.5),
+				count_bytes(1),
+					speed_bytes(318),
+						weight_bytes(1.0),
+				count_bytes(0), // Teammates
+				count_bytes(2),
+					move_bytes(Moves::Body_Slam),
+						weight_bytes(1.0),
+						count_bytes(1),
+							speed_bytes(318),
+								weight_bytes(1.0),
+						count_bytes(0), // Teammates
+						count_bytes(1),
+							move_bytes(Moves::Earthquake),
+								weight_bytes(1.0),
+					move_bytes(Moves::Earthquake),
+						weight_bytes(1.0),
+						count_bytes(1),
+							speed_bytes(318),
+								weight_bytes(1.0),
+						count_bytes(0), // Teammates
+						count_bytes(1),
+							move_bytes(Moves::Body_Slam),
+								weight_bytes(1.0),
+			species_bytes(Species::Mew),
+				weight_bytes(0.5),
+				count_bytes(1),
+					speed_bytes(7),
+						weight_bytes(1.0),
+				count_bytes(0), // Teammates
+				count_bytes(1),
+					move_bytes(Moves::Cut),
+						weight_bytes(1.0),
+						count_bytes(1),
+							speed_bytes(7),
+								weight_bytes(1.0),
+						count_bytes(0), // Teammates
+						count_bytes(0) // Moves
 	);
 	CHECK(string_to_bytes(stream.str()) == expected);
 }

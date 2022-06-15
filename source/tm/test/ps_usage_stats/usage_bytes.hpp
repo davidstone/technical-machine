@@ -87,23 +87,23 @@ constexpr auto smallest_team_bytes(Generation const generation) {
 		generation_bytes(generation),
 		count_bytes(1),
 			species_bytes(Species::Mew),
-			weight_bytes(1.0),
-			count_bytes(1),
-				speed_bytes(7),
-				weight_bytes(1.0),
-			count_bytes(0), // Teammates
-			count_bytes(1),
-				move_bytes(Moves::Cut),
 				weight_bytes(1.0),
 				count_bytes(1),
 					speed_bytes(7),
-					weight_bytes(1.0),
+						weight_bytes(1.0),
 				count_bytes(0), // Teammates
-				count_bytes(0), // Other moves
+				count_bytes(1),
+					move_bytes(Moves::Cut),
+						weight_bytes(1.0),
+						count_bytes(1),
+							speed_bytes(7),
+								weight_bytes(1.0),
+						count_bytes(0), // Teammates
+						count_bytes(0), // Other moves
+						no_items(generation),
+						no_abilities(generation),
 				no_items(generation),
-				no_abilities(generation),
-			no_items(generation),
-			no_abilities(generation)
+				no_abilities(generation)
 	);
 }
 
