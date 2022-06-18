@@ -219,6 +219,7 @@ auto UsageStats::make(std::istream && stream) -> UsageStats {
 			);
 		}
 		for_this_species.items = read_items();
+		probabilities_assuming_species.items = for_this_species.items;
 		skip_abilities();
 		checked_insert(data, species, [&] {
 			return PerSpecies{
