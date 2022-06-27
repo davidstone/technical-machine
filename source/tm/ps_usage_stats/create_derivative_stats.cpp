@@ -81,7 +81,7 @@ struct PokemonUsageStats {
 		auto file = std::ofstream(directory / "pokemon_usage_stats.json");
 		auto json = nlohmann::json::array_t();
 		for (auto const & value : m_data) {
-			json.push_back({{std::string(to_string(value.species)), value.proportion}});
+			json.push_back({{to_string(value.species), value.proportion}});
 		}
 		file << nlohmann::json(json);
 	}
