@@ -114,10 +114,23 @@ auto parse_team(nlohmann::json const & team_array) -> Team<generation> {
 	})));
 }
 
-// Rating is given in Elo, not Glicko. There is no way to recover the Glicko
-// rating from the logs.
-auto parse_rating([[maybe_unused]] nlohmann::json const & json, [[maybe_unused]] char const * const player_key) -> bounded::optional<Rating> {
-	return bounded::none;
+auto parse_rating(nlohmann::json const & json) -> bounded::optional<Rating> {
+	if (json.is_null()) {
+		return bounded::none;
+	}
+	// Sometimes this is a number in which case it is Elo
+	if (!json.is_object()) {
+		return bounded::none;
+	}
+	auto const & rating = json.at("rpr");
+	auto const & deviation = json.at("rprd");
+	if (rating.is_null() or deviation.is_null()) {
+		return bounded::none;
+	}
+	return Rating(
+		rating.get<nlohmann::json::number_float_t>(),
+		deviation.get<nlohmann::json::number_float_t>()
+	);
 }
 
 } // namespace
@@ -147,12 +160,12 @@ auto parse_log(std::filesystem::path const & path) -> bounded::optional<BattleRe
 		get_team("p1team"),
 		bounded::to_integer<BattleResult::Side::ID>(p1),
 		// Arr
-		parse_rating(json, "p1rating")
+		parse_rating(json.at("p1rating"))
 	};
 	auto const side2 = BattleResult::Side{
 		get_team("p2team"),
 		bounded::to_integer<BattleResult::Side::ID>(p2),
-		parse_rating(json, "p2rating")
+		parse_rating(json.at("p2rating"))
 	};
 	return BattleResult{
 		side1,

@@ -104,9 +104,6 @@ constexpr auto weight(Mode const mode, Rating const rating) -> double {
 
 constexpr auto do_pass(Mode const mode, Glicko1 const & ratings_estimate, BattleResult const & result, auto function) -> void {
 	auto get_rating = [&](BattleResult::Side const & side) {
-		if (side.rating) {
-			throw std::runtime_error("Shouldn't have rating");
-		}
 		return side.rating ? *side.rating : ratings_estimate.get(side.id);
 	};
 	switch (mode) {
