@@ -346,6 +346,7 @@ add_executable(tm_test
 	source/tm/test/ps_usage_stats/serialize.cpp
 
 	source/tm/test/team_predictor/estimate.cpp
+	source/tm/test/team_predictor/usage_stats.cpp
 
 	source/tm/test/block.cpp
 	source/tm/test/calculate_damage.cpp
