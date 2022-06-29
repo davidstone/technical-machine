@@ -67,21 +67,8 @@ public:
 		return containers::concatenate<containers::string>(to_string(r.numerator()), std::string_view(" / "), to_string(r.denominator()));
 	}
 
-	// Convert allows narrowing conversions, constructor does not
-	template<typename T>
-	constexpr T convert() const {
-		return T(
-			static_cast<typename T::numerator_type>(m_numerator),
-			static_cast<typename T::denominator_type>(m_denominator)
-		);
-	}
-
 	explicit constexpr operator double() const {
 		return static_cast<double>(m_numerator) / static_cast<double>(m_denominator);
-	}
-
-	constexpr auto invert() const {
-		return make_rational(m_denominator, m_numerator);
 	}
 
 	template<typename N, typename D>
@@ -112,7 +99,7 @@ public:
 	}
 
 	friend constexpr auto operator/(bounded::bounded_integer auto const lhs, rational const rhs) {
-		return lhs * rhs.invert();
+		return lhs * rhs.denominator() / rhs.numerator();
 	}
 
 	friend constexpr auto operator%(bounded::bounded_integer auto const lhs, rational const rhs) {
@@ -138,11 +125,6 @@ public:
 		return lhs.numerator() == rhs * lhs.denominator();
 	}
 };
-
-template<typename Numerator, typename Denominator>
-constexpr auto complement(rational<Numerator, Denominator> const r) {
-	return rational(1_bi, 1_bi) - r;
-}
 
 } // namespace technicalmachine
 
