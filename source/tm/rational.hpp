@@ -84,14 +84,6 @@ public:
 		return make_rational(m_denominator, m_numerator);
 	}
 
-	friend constexpr auto operator*(rational const lhs, bounded::bounded_integer auto const rhs) {
-		return rhs * lhs.numerator() / lhs.denominator();
-	}
-	template<typename N, typename D>
-	friend constexpr auto operator*(rational const lhs, rational<N, D> const rhs) {
-		return make_rational(lhs.numerator() * rhs.numerator(), lhs.denominator() * rhs.denominator());
-	}
-
 	template<typename N, typename D>
 	friend constexpr auto operator+(rational const lhs, rational<N, D> const rhs) {
 		return make_rational(
@@ -99,12 +91,33 @@ public:
 			lhs.denominator() * rhs.denominator()
 		);
 	}
+
 	template<typename N, typename D>
 	friend constexpr auto operator-(rational const lhs, rational<N, D> const rhs) {
 		return make_rational(
 			lhs.numerator() * rhs.denominator() - rhs.numerator() * lhs.denominator(),
 			lhs.denominator() * rhs.denominator()
 		);
+	}
+
+	template<typename N, typename D>
+	friend constexpr auto operator*(rational const lhs, rational<N, D> const rhs) {
+		return make_rational(lhs.numerator() * rhs.numerator(), lhs.denominator() * rhs.denominator());
+	}
+	friend constexpr auto operator*(rational const lhs, bounded::bounded_integer auto const rhs) {
+		return rhs * lhs.numerator() / lhs.denominator();
+	}
+	friend constexpr auto operator*(bounded::bounded_integer auto const lhs, rational const rhs) {
+		return rhs * lhs;
+	}
+
+	friend constexpr auto operator/(bounded::bounded_integer auto const lhs, rational const rhs) {
+		return lhs * rhs.invert();
+	}
+
+	friend constexpr auto operator%(bounded::bounded_integer auto const lhs, rational const rhs) {
+		auto const quotient = lhs / rhs;
+		return lhs - quotient * rhs;
 	}
 
 	template<typename N, typename D>
@@ -123,19 +136,6 @@ public:
 
 	friend constexpr auto operator==(rational const lhs, bounded::bounded_integer auto const rhs) -> bool {
 		return lhs.numerator() == rhs * lhs.denominator();
-	}
-
-	friend constexpr auto operator*(bounded::bounded_integer auto const lhs, rational const rhs) {
-		return rhs * lhs;
-	}
-
-	friend constexpr auto operator/(bounded::bounded_integer auto const lhs, rational const rhs) {
-		return lhs * rhs.invert();
-	}
-
-	friend constexpr auto operator%(bounded::bounded_integer auto const lhs, rational const rhs) {
-		auto const quotient = lhs / rhs;
-		return lhs - quotient * rhs;
 	}
 };
 
