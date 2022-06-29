@@ -13,8 +13,6 @@
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/string.hpp>
 
-#include <numeric_traits/min_max_value.hpp>
-
 #include <string_view>
 
 namespace technicalmachine {
