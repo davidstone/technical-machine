@@ -140,8 +140,9 @@ auto checked_read(FileReader & reader) {
 		return containers::range_value_t<UsageStatsProbabilities::Map>{
 			species,
 			{
+				read_inner_probabilities<Moves>(reader, weight),
 				UsageStatsProbabilities::Data<Item>(),
-				read_inner_probabilities<Moves>(reader, weight)
+				UsageStatsProbabilities::Data<Ability>()
 			}
 		};
 	}));
@@ -167,12 +168,10 @@ auto UsageStats::make(std::istream && stream) -> UsageStats {
 				read_inner_probabilities<Item>(reader, species_weight) :
 				UsageStatsProbabilities::Data<Item>();
 		};
-		auto skip_abilities = [&] {
-			if (generation >= Generation::three) {
-				for ([[maybe_unused]] auto const & value : read_map<Ability>(reader)) {
-					checked_read<double>(reader);
-				}
-			}
+		auto read_abilities = [&] {
+			return generation >= Generation::three ?
+				read_inner_probabilities<Ability>(reader, species_weight) :
+				UsageStatsProbabilities::Data<Ability>();
 		};
 		auto & for_this_species = checked_insert(
 			per_species_probabilities,
@@ -201,14 +200,15 @@ auto UsageStats::make(std::istream && stream) -> UsageStats {
 			);
 			auto moves = read_inner_probabilities<Moves>(reader, species_weight);
 			auto items = read_items();
-			skip_abilities();
+			auto abilities = read_abilities();
 			checked_insert(
 				teammates,
 				species,
 				[&] {
 					return UsageStatsProbabilities::Inner{
+						std::move(moves),
 						std::move(items),
-						std::move(moves)
+						std::move(abilities)
 					};
 				}
 			);
@@ -220,7 +220,8 @@ auto UsageStats::make(std::istream && stream) -> UsageStats {
 		}
 		for_this_species.items = read_items();
 		probabilities_assuming_species.items = for_this_species.items;
-		skip_abilities();
+		for_this_species.abilities = read_abilities();
+		probabilities_assuming_species.abilities = for_this_species.abilities;
 		checked_insert(data, species, [&] {
 			return PerSpecies{
 				std::move(used_moves),

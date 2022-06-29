@@ -9,6 +9,7 @@
 
 #include <tm/pokemon/species.hpp>
 
+#include <tm/ability.hpp>
 #include <tm/item.hpp>
 
 #include <containers/flat_map.hpp>
@@ -53,8 +54,9 @@ struct UsageStatsProbabilities {
 	};
 
 	struct Inner {
-		Data<Item> items;
 		Data<Moves> moves;
+		Data<Item> items;
+		Data<Ability> abilities;
 	};
 
 	using Map = containers::flat_map<Species, Inner>;

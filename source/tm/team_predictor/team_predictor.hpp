@@ -64,6 +64,19 @@ void predict_item(StatsUser & stats_user, any_seen_pokemon auto & pokemon, std::
 	stats_user.update(species, *item);
 }
 
+void predict_ability(StatsUser & stats_user, any_seen_pokemon auto & pokemon, std::mt19937 & random_engine) {
+	if (pokemon.ability_is_known()) {
+		return;
+	}
+	auto const species = pokemon.species();
+	auto const ability = stats_user.ability(random_engine, species);
+	if (!ability) {
+		return;
+	}
+	pokemon.set_initial_ability(*ability);
+	stats_user.update(species, *ability);
+}
+
 void optimize_pokemon_evs(any_seen_pokemon auto & pokemon, std::mt19937 & random_engine) {
 	auto const species = pokemon.species();
 	auto const level = pokemon.level();
@@ -89,6 +102,7 @@ auto predict_team_impl(StatsUser stats_user, std::mt19937 & random_engine, SeenT
 	for (auto & pokemon : team.all_pokemon()) {
 		predict_moves(stats_user, pokemon, random_engine);
 		predict_item(stats_user, pokemon, random_engine);
+		predict_ability(stats_user, pokemon, random_engine);
 		optimize_pokemon_evs(pokemon, random_engine);
 	}
 	// TODO: This isn't right

@@ -68,11 +68,11 @@ constexpr auto no_items(Generation const generation) {
 		containers::vector<std::byte>();
 }
 
-constexpr auto no_abilities(Generation const generation) {
+constexpr auto maybe_ability(Generation const generation, Ability const ability) {
 	return generation >= Generation::three ?
 		containers::concatenate<containers::vector<std::byte>>(
 			count_bytes(1),
-			ability_bytes(Ability::Honey_Gather),
+			ability_bytes(ability),
 			weight_bytes(1.0)
 		) :
 		containers::vector<std::byte>();
@@ -101,9 +101,9 @@ constexpr auto smallest_team_bytes(Generation const generation) {
 						count_bytes(0), // Teammates
 						count_bytes(0), // Other moves
 						no_items(generation),
-						no_abilities(generation),
+						maybe_ability(generation, Ability::Synchronize),
 				no_items(generation),
-				no_abilities(generation)
+				maybe_ability(generation, Ability::Synchronize)
 	);
 }
 

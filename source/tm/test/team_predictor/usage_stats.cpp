@@ -34,8 +34,9 @@ TEST_CASE("Smallest generation 1 team", "[UsageStats]") {
 	CHECK(containers::size(map) == 1_bi);
 	auto const ptr = base(Species::Mew);
 	REQUIRE(ptr);
-	CHECK(ptr->items.map() == containers::flat_map<Item, float>());
 	CHECK(ptr->moves.map() == containers::flat_map<Moves, float>({{Moves::Cut, 1.0}}));
+	CHECK(ptr->items.map() == containers::flat_map<Item, float>());
+	CHECK(ptr->abilities.map() == containers::flat_map<Ability, float>());
 }
 
 TEST_CASE("Smallest generation 2 team", "[UsageStats]") {
@@ -45,8 +46,21 @@ TEST_CASE("Smallest generation 2 team", "[UsageStats]") {
 	CHECK(containers::size(map) == 1_bi);
 	auto const ptr = base(Species::Mew);
 	REQUIRE(ptr);
-	CHECK(ptr->items.map() == containers::flat_map<Item, float>({{Item::None, 1.0}}));
 	CHECK(ptr->moves.map() == containers::flat_map<Moves, float>({{Moves::Cut, 1.0}}));
+	CHECK(ptr->items.map() == containers::flat_map<Item, float>({{Item::None, 1.0}}));
+	CHECK(ptr->abilities.map() == containers::flat_map<Ability, float>());
+}
+
+TEST_CASE("Smallest generation 3 team", "[UsageStats]") {
+	auto const usage_stats = make_usage_stats(smallest_team_bytes(Generation::three));
+	auto const & base = usage_stats.assuming();
+	auto const & map = base.map();
+	CHECK(containers::size(map) == 1_bi);
+	auto const ptr = base(Species::Mew);
+	REQUIRE(ptr);
+	CHECK(ptr->moves.map() == containers::flat_map<Moves, float>({{Moves::Cut, 1.0}}));
+	CHECK(ptr->items.map() == containers::flat_map<Item, float>({{Item::None, 1.0}}));
+	CHECK(ptr->abilities.map() == containers::flat_map<Ability, float>({{Ability::Synchronize, 1.0}}));
 }
 
 } // namespace

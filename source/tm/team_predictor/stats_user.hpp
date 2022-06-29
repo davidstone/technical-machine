@@ -24,14 +24,8 @@ struct StatsUser {
 	{
 	}
 
-	auto update(Species const species) -> void {
-		m_estimate->update(m_usage_stats, species);
-	}
-	auto update(Species const species, Moves const move) -> void {
-		m_estimate->update(m_usage_stats, species, move);
-	}
-	auto update(Species const species, Item const item) -> void {
-		m_estimate->update(m_usage_stats, species, item);
+	auto update(Species const species, auto... args) -> void {
+		m_estimate->update(m_usage_stats, species, args...);
 	}
 
 	auto species(std::mt19937 & random_engine) const {
@@ -48,6 +42,11 @@ struct StatsUser {
 		return m_use_most_likely ?
 			m_estimate->most_likely_item(species) :
 			m_estimate->random_item(random_engine, species);
+	}
+	auto ability(std::mt19937 & random_engine, Species const species) const {
+		return m_use_most_likely ?
+			m_estimate->most_likely_ability(species) :
+			m_estimate->random_ability(random_engine, species);
 	}
 
 private:

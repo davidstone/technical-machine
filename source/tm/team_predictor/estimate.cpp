@@ -52,6 +52,11 @@ constexpr auto do_update(Estimate::Map & estimate, UsageStatsProbabilities const
 			species_estimate->items,
 			[=](Item const item) { return base_per_species ? base_per_species->items(item) : 0.0F; }
 		);
+		update_per_species(
+			per_species.mapped.abilities,
+			species_estimate->abilities,
+			[=](Ability const ability) { return base_per_species ? base_per_species->abilities(ability) : 0.0F; }
+		);
 		per_species.mapped.usage =
 			per_species.mapped.usage == 0.0 ?
 			0.0 :
@@ -66,7 +71,8 @@ constexpr auto make_per_species(UsageStatsProbabilities::Inner const & probabili
 	return Estimate::PerSpecies{
 		containers::sum(containers::transform(probabilities.moves.map(), [](auto const & element) { return static_cast<double>(element.mapped); })),
 		containers::flat_map<Moves, double>(containers::transform(probabilities.moves.map(), transformer)),
-		containers::flat_map<Item, double>(containers::transform(probabilities.items.map(), transformer))
+		containers::flat_map<Item, double>(containers::transform(probabilities.items.map(), transformer)),
+		containers::flat_map<Ability, double>(containers::transform(probabilities.abilities.map(), transformer))
 	};
 }
 
@@ -87,6 +93,7 @@ Estimate::Estimate(UsageStats const & usage_stats):
 		BOUNDED_ASSERT(!containers::is_empty(per_species.mapped.moves));
 		check(per_species.mapped.moves);
 		check(per_species.mapped.items);
+		check(per_species.mapped.abilities);
 	}
 }
 
@@ -111,6 +118,9 @@ auto Estimate::update(UsageStats const & usage_stats, Species const species, Mov
 }
 
 auto Estimate::update(UsageStats const &, Species, Item) -> void {
+}
+
+auto Estimate::update(UsageStats const &, Species, Ability) -> void {
 }
 
 namespace {
@@ -164,6 +174,14 @@ auto Estimate::most_likely_item(Species const species) const -> bounded::optiona
 	return get_most_likely(containers::transform(ptr->items, containers::get_mapped));
 }
 
+auto Estimate::most_likely_ability(Species const species) const -> bounded::optional<Ability> {
+	auto const ptr = containers::lookup(m_estimate, species);
+	if (!ptr) {
+		return bounded::none;
+	}
+	return get_most_likely(containers::transform(ptr->abilities, containers::get_mapped));
+}
+
 auto Estimate::random_species(std::mt19937 & random_engine) const -> bounded::optional<Species> {
 	return select_random_by_weight<Species>(m_estimate, random_engine, per_species_to_usage);
 }
@@ -182,6 +200,14 @@ auto Estimate::random_item(std::mt19937 & random_engine, Species const species) 
 		return bounded::none;
 	}
 	return select_random_by_weight<Item>(element->items, random_engine, containers::get_mapped);
+}
+
+auto Estimate::random_ability(std::mt19937 & random_engine, Species const species) const -> bounded::optional<Ability> {
+	auto const element = containers::lookup(m_estimate, species);
+	if (!element) {
+		return bounded::none;
+	}
+	return select_random_by_weight<Ability>(element->abilities, random_engine, containers::get_mapped);
 }
 
 } // namespace technicalmachine
