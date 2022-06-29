@@ -130,40 +130,32 @@ public:
 
 template<typename N1, typename D1, typename N2, typename D2>
 struct std::common_type<technicalmachine::rational<N1, D1>, technicalmachine::rational<N2, D2>> {
-private:
-	using numerator = typename common_type<N1, N2>::type;
-	using denominator = typename common_type<D1, D2>::type;
-
-public:
-	using type = technicalmachine::rational<numerator, denominator>;
+	using type = technicalmachine::rational<
+		common_type_t<N1, N2>,
+		common_type_t<D1, D2>
+	>;
 };
 
 template<typename N1, typename D1, typename N2, typename D2>
 struct std::common_type<technicalmachine::rational<N1, D1> const, technicalmachine::rational<N2, D2>> {
-private:
-	using numerator = typename common_type<N1, N2>::type;
-	using denominator = typename common_type<D1, D2>::type;
-
-public:
-	using type = technicalmachine::rational<numerator, denominator> const;
+	using type = technicalmachine::rational<
+		common_type_t<N1, N2>,
+		common_type_t<D1, D2>
+	>;
 };
 
 template<typename N1, typename D1, typename N2, typename D2>
 struct std::common_type<technicalmachine::rational<N1, D1>, technicalmachine::rational<N2, D2> const> {
-private:
-	using numerator = typename common_type<N1, N2>::type;
-	using denominator = typename common_type<D1, D2>::type;
-
-public:
-	using type = technicalmachine::rational<numerator, denominator> const;
+	using type = technicalmachine::rational<
+		common_type_t<N1, N2>,
+		common_type_t<D1, D2>
+	>;
 };
 
 template<typename N1, typename D1, typename N2, typename D2>
 struct std::common_type<technicalmachine::rational<N1, D1> const, technicalmachine::rational<N2, D2> const> {
-private:
-	using numerator = typename common_type<N1, N2>::type;
-	using denominator = typename common_type<D1, D2>::type;
-
-public:
-	using type = technicalmachine::rational<numerator, denominator> const;
+	using type = technicalmachine::rational<
+		common_type_t<N1, N2>,
+		common_type_t<D1, D2>
+	>;
 };
