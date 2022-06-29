@@ -8,11 +8,6 @@
 namespace technicalmachine {
 namespace {
 
-static_assert(round_up_divide(1_bi, 2_bi) == 1_bi);
-static_assert(round_up_divide(1_bi, 1_bi) == 1_bi);
-static_assert(round_up_divide(5_bi, 1_bi) == 5_bi);
-static_assert(round_up_divide(6_bi, 5_bi) == 2_bi);
-
 constexpr auto generation = Generation::four;
 
 static_assert(hp_to_ev(364_bi, 80_bi, Level(100_bi), IV(31_bi)) == EV(252_bi));

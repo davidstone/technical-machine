@@ -248,6 +248,7 @@ add_library(tm_common STATIC
 	source/tm/other_team.cpp
 	source/tm/phazing_in_same_pokemon.cpp
 	source/tm/random_damage.cpp
+	source/tm/round_up_divide.cpp
 	source/tm/saturating_add.cpp
 	source/tm/screen.cpp
 	source/tm/screens.cpp

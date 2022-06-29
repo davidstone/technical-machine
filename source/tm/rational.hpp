@@ -7,6 +7,7 @@
 #pragma once
 
 #include <tm/operators.hpp>
+#include <tm/round_up_divide.hpp>
 
 #include <bounded/integer.hpp>
 
@@ -65,6 +66,10 @@ public:
 	friend constexpr auto to_string(rational const r) {
 		using bounded::to_string;
 		return containers::concatenate<containers::string>(to_string(r.numerator()), std::string_view(" / "), to_string(r.denominator()));
+	}
+
+	friend constexpr auto round_up_divide(bounded::bounded_integer auto const lhs, rational const rhs) {
+		return round_up_divide(lhs * rhs.m_denominator, rhs.m_numerator);
 	}
 
 	explicit constexpr operator double() const {

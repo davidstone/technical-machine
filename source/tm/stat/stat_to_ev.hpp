@@ -15,6 +15,7 @@
 
 #include <tm/pokemon/level.hpp>
 
+#include <tm/round_up_divide.hpp>
 
 #include <bounded/optional.hpp>
 
@@ -23,15 +24,6 @@
 namespace technicalmachine {
 
 using namespace bounded::literal;
-
-template<typename RHS>
-constexpr auto round_up_divide(bounded::bounded_integer auto const lhs, RHS const rhs) {
-	if constexpr (bounded::bounded_integer<RHS>) {
-		return (lhs + rhs - 1_bi) / rhs;
-	} else {
-		return round_up_divide(lhs * rhs.denominator(), rhs.numerator());
-	}
-}
 
 namespace detail {
 
