@@ -177,12 +177,12 @@ auto UsageStats::make(std::istream && stream) -> UsageStats {
 		auto & for_this_species = checked_insert(
 			per_species_probabilities,
 			species,
-			bounded::construct_return<UsageStatsProbabilities::Inner>
+			bounded::construct<UsageStatsProbabilities::Inner>
 		);
 		auto & probabilities_assuming_species = checked_insert(
 			probabilities,
 			species,
-			bounded::construct_return<UsageStatsProbabilities::Inner>
+			bounded::construct<UsageStatsProbabilities::Inner>
 		);
 		for (auto const & move_name : read_map<Moves>(reader)) {
 			auto const move_weight = checked_read<double>(reader);

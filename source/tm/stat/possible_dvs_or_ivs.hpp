@@ -35,7 +35,7 @@ template<typename T>
 inline constexpr auto all_possible = Possible<T>(
 	containers::transform(
 		containers::inclusive_integer_range(numeric_traits::max_value<typename T::value_type>),
-		bounded::construct_return<T>
+		bounded::construct<T>
 	)
 );
 
