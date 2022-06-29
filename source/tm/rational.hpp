@@ -1,4 +1,3 @@
-// Class to properly do integer multiplication / division
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -32,13 +31,6 @@ constexpr auto make_rational(Numerator const numerator, Denominator const denomi
 
 template<typename Numerator, typename Denominator>
 struct rational {
-private:
-	Numerator m_numerator;
-	Denominator m_denominator;
-	using numerator_type = Numerator;
-	using denominator_type = Denominator;
-
-public:
 	constexpr rational(Numerator const numerator, Denominator const denominator):
 		m_numerator(numerator),
 		m_denominator(denominator) {
@@ -46,21 +38,14 @@ public:
 	
 	template<bounded::convertible_to<Numerator> N, bounded::convertible_to<Denominator> D>
 	constexpr rational(rational<N, D> const other):
-		m_numerator(other.numerator()),
-		m_denominator(other.denominator())
+		m_numerator(other.m_numerator),
+		m_denominator(other.m_denominator)
 	{
-	}
-
-	constexpr auto numerator() const {
-		return m_numerator;
-	}
-	constexpr auto denominator() const {
-		return m_denominator;
 	}
 
 	friend constexpr auto to_string(rational const r) {
 		using bounded::to_string;
-		return containers::concatenate<containers::string>(to_string(r.numerator()), std::string_view(" / "), to_string(r.denominator()));
+		return containers::concatenate<containers::string>(to_string(r.m_numerator), std::string_view(" / "), to_string(r.m_denominator));
 	}
 
 	friend constexpr auto round_up_divide(bounded::bounded_integer auto const lhs, rational const rhs) {
@@ -74,32 +59,32 @@ public:
 	template<typename N, typename D>
 	friend constexpr auto operator+(rational const lhs, rational<N, D> const rhs) {
 		return make_rational(
-			lhs.numerator() * rhs.denominator() + rhs.numerator() * lhs.denominator(),
-			lhs.denominator() * rhs.denominator()
+			lhs.m_numerator * rhs.m_denominator + rhs.m_numerator * lhs.m_denominator,
+			lhs.m_denominator * rhs.m_denominator
 		);
 	}
 
 	template<typename N, typename D>
 	friend constexpr auto operator-(rational const lhs, rational<N, D> const rhs) {
 		return make_rational(
-			lhs.numerator() * rhs.denominator() - rhs.numerator() * lhs.denominator(),
-			lhs.denominator() * rhs.denominator()
+			lhs.m_numerator * rhs.m_denominator - rhs.m_numerator * lhs.m_denominator,
+			lhs.m_denominator * rhs.m_denominator
 		);
 	}
 
 	template<typename N, typename D>
 	friend constexpr auto operator*(rational const lhs, rational<N, D> const rhs) {
-		return make_rational(lhs.numerator() * rhs.numerator(), lhs.denominator() * rhs.denominator());
+		return make_rational(lhs.m_numerator * rhs.m_numerator, lhs.m_denominator * rhs.m_denominator);
 	}
 	friend constexpr auto operator*(rational const lhs, bounded::bounded_integer auto const rhs) {
-		return rhs * lhs.numerator() / lhs.denominator();
+		return rhs * lhs.m_numerator / lhs.m_denominator;
 	}
 	friend constexpr auto operator*(bounded::bounded_integer auto const lhs, rational const rhs) {
 		return rhs * lhs;
 	}
 
 	friend constexpr auto operator/(bounded::bounded_integer auto const lhs, rational const rhs) {
-		return lhs * rhs.denominator() / rhs.numerator();
+		return lhs * rhs.m_denominator / rhs.m_numerator;
 	}
 
 	friend constexpr auto operator%(bounded::bounded_integer auto const lhs, rational const rhs) {
@@ -109,21 +94,28 @@ public:
 
 	template<typename N, typename D>
 	friend constexpr auto operator<=>(rational const lhs, rational<N, D> const rhs) {
-		return lhs.numerator() * rhs.denominator() <=> rhs.numerator() * lhs.denominator();
+		return lhs.m_numerator * rhs.m_denominator <=> rhs.m_numerator * lhs.m_denominator;
 	}
 
 	friend constexpr auto operator<=>(rational const lhs, bounded::bounded_integer auto const rhs) {
-		return lhs.numerator() <=> rhs * lhs.denominator();
+		return lhs.m_numerator <=> rhs * lhs.m_denominator;
 	}
 
 	template<typename N, typename D>
 	friend constexpr auto operator==(rational const lhs, rational<N, D> const rhs) -> bool {
-		return lhs.numerator() * rhs.denominator() == rhs.numerator() * lhs.denominator();
+		return lhs.m_numerator * rhs.m_denominator == rhs.m_numerator * lhs.m_denominator;
 	}
 
 	friend constexpr auto operator==(rational const lhs, bounded::bounded_integer auto const rhs) -> bool {
-		return lhs.numerator() == rhs * lhs.denominator();
+		return lhs.m_numerator == rhs * lhs.m_denominator;
 	}
+
+private:
+	template<typename N, typename D>
+	friend struct rational;
+
+	Numerator m_numerator;
+	Denominator m_denominator;
 };
 
 } // namespace technicalmachine
