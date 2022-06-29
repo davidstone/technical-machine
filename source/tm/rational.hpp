@@ -44,12 +44,7 @@ public:
 		m_denominator(denominator) {
 	}
 	
-	template<typename N, typename D> requires(
-		numeric_traits::min_value<N> >= numeric_traits::min_value<Numerator> and
-		numeric_traits::max_value<N> <= numeric_traits::max_value<Numerator> and
-		numeric_traits::min_value<D> >= numeric_traits::min_value<Denominator> and
-		numeric_traits::max_value<D> <= numeric_traits::max_value<Denominator>
-	)
+	template<bounded::convertible_to<Numerator> N, bounded::convertible_to<Denominator> D>
 	constexpr rational(rational<N, D> const other):
 		m_numerator(other.numerator()),
 		m_denominator(other.denominator())
