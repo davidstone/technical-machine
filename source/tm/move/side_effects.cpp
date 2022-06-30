@@ -15,6 +15,7 @@
 #include <tm/any_team.hpp>
 #include <tm/generation.hpp>
 #include <tm/known_team.hpp>
+#include <tm/rational.hpp>
 #include <tm/seen_team.hpp>
 #include <tm/team.hpp>
 

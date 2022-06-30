@@ -11,6 +11,7 @@
 #include <tm/generation.hpp>
 #include <tm/heal.hpp>
 #include <tm/other_team.hpp>
+#include <tm/rational.hpp>
 #include <tm/weather.hpp>
 
 #include <cstdint>

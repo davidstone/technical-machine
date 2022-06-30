@@ -14,6 +14,7 @@
 #include <tm/generation.hpp>
 #include <tm/heal.hpp>
 #include <tm/operators.hpp>
+#include <tm/rational.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>

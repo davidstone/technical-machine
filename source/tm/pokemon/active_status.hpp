@@ -12,6 +12,7 @@
 #include <tm/generation.hpp>
 #include <tm/heal.hpp>
 #include <tm/other_team.hpp>
+#include <tm/rational.hpp>
 #include <tm/status.hpp>
 #include <tm/saturating_add.hpp>
 #include <tm/weather.hpp>

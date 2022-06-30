@@ -11,7 +11,6 @@
 #include <tm/generation.hpp>
 #include <tm/item.hpp>
 #include <tm/operators.hpp>
-#include <tm/rational.hpp>
 
 #include <bounded/integer.hpp>
 #include <bounded/detail/variant/variant.hpp>

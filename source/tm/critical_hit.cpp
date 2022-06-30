@@ -8,6 +8,8 @@
 #include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
+#include <tm/rational.hpp>
+
 #include <utility>
 
 namespace technicalmachine {

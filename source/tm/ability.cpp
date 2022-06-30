@@ -14,7 +14,6 @@
 #include <tm/type/type.hpp>
 
 #include <tm/heal.hpp>
-#include <tm/rational.hpp>
 #include <tm/weather.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>

@@ -5,7 +5,6 @@
 
 #include <tm/stat/stage.hpp>
 
-#include <tm/rational.hpp>
 #include <tm/saturating_add.hpp>
 
 #include <containers/integer_range.hpp>

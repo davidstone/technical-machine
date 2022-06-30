@@ -27,6 +27,7 @@
 #include <tm/gender.hpp>
 #include <tm/generation.hpp>
 #include <tm/held_item.hpp>
+#include <tm/rational.hpp>
 #include <tm/status.hpp>
 #include <tm/weather.hpp>
 

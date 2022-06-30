@@ -7,6 +7,7 @@
 #include <tm/type/effectiveness.hpp>
 
 #include <tm/generation.hpp>
+#include <tm/rational.hpp>
 
 #include <containers/front_back.hpp>
 #include <containers/size.hpp>
