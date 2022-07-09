@@ -203,7 +203,7 @@ struct Pokemon {
 	auto status() const -> Status {
 		return m_status;
 	}
-	void set_status(Statuses const status) & {
+	void set_status(StatusName const status) & {
 		m_status = status;
 	}
 

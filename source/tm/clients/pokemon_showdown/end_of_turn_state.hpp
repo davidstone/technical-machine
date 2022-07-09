@@ -8,7 +8,7 @@
 #include <tm/clients/party.hpp>
 
 #include <tm/end_of_turn.hpp>
-#include <tm/status.hpp>
+#include <tm/status_name.hpp>
 #include <tm/visible_hp.hpp>
 
 #include <bounded/optional.hpp>
@@ -21,7 +21,7 @@ struct EndOfTurnState {
 	struct Result {
 		struct Individual {
 			bounded::optional<VisibleHP> hp;
-			bounded::optional<Statuses> status;
+			bounded::optional<StatusName> status;
 			EndOfTurnFlags flags = EndOfTurnFlags(false, false);
 		};
 		bounded::optional<Party> first_party;
@@ -33,7 +33,7 @@ struct EndOfTurnState {
 	constexpr auto set_expected(Party const party, VisibleHP const hp) & -> void {
 		bounded::insert(individual(party).hp, hp);
 	}
-	constexpr auto set_expected(Party const party, Statuses const status) & -> void {
+	constexpr auto set_expected(Party const party, StatusName const status) & -> void {
 		bounded::insert(individual(party).status, status);
 	}
 
@@ -42,7 +42,7 @@ struct EndOfTurnState {
 	}
 	constexpr auto shed_skin(Party const party) & -> void {
 		individual(party).flags.shed_skin = true;
-		set_expected(party, Statuses::clear);
+		set_expected(party, StatusName::clear);
 	}
 
 	constexpr auto active_weather(NormalWeather const weather) & -> void {

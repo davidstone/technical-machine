@@ -130,7 +130,7 @@ TEST_CASE("Calculate max Defense", "[calculate stat]") {
 
 	defender.pokemon().stages()[BoostableStat::def] += 6_bi;
 
-	defender.pokemon().set_status(Statuses::burn, weather);
+	defender.pokemon().set_status(StatusName::burn, weather);
 
 	CHECK(calculate_defense(defender.pokemon().as_const(), physical_move, weather, false) == max_defense);
 }

@@ -1,4 +1,3 @@
-// Status string functions
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -12,9 +11,9 @@
 
 namespace technicalmachine {
 
-auto to_string(Statuses status) -> std::string_view;
+auto to_string(StatusName status) -> std::string_view;
 
 template<>
-auto from_string(std::string_view str) -> Statuses;
+auto from_string(std::string_view str) -> StatusName;
 
 } // namespace technicalmachine

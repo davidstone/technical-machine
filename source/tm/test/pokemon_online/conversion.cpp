@@ -11,7 +11,6 @@
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
-#include <tm/string_conversions/status.hpp>
 
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/pokemon/species.hpp>

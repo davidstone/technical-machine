@@ -9,10 +9,10 @@
 #include <tm/type/pokemon_types.hpp>
 #include <tm/ability.hpp>
 #include <tm/generation.hpp>
-#include <tm/status.hpp>
+#include <tm/status_name.hpp>
 
 namespace technicalmachine {
 
-auto ability_blocks_move(Generation const generation, Ability const ability, KnownMove const move, Statuses const target_status, PokemonTypes const target_types) -> bool;
+auto ability_blocks_move(Generation const generation, Ability const ability, KnownMove const move, StatusName const target_status, PokemonTypes const target_types) -> bool;
 
 } // namespace technicalmachine

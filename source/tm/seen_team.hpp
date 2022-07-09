@@ -9,6 +9,7 @@
 #include <tm/entry_hazards.hpp>
 #include <tm/operators.hpp>
 #include <tm/screens.hpp>
+#include <tm/status_name.hpp>
 #include <tm/wish.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
@@ -182,7 +183,7 @@ private:
 };
 
 template<Generation generation>
-constexpr auto team_has_status(SeenTeam<generation> const & target, Statuses const status) {
+constexpr auto team_has_status(SeenTeam<generation> const & target, StatusName const status) {
 	return containers::any(target.all_pokemon(), [=](SeenPokemon<generation> const & pokemon) {
 		return pokemon.status().name() == status;
 	});

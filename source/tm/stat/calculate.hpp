@@ -23,7 +23,7 @@
 #include <tm/any_team.hpp>
 #include <tm/item.hpp>
 #include <tm/rational.hpp>
-#include <tm/status.hpp>
+#include <tm/status_name.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/assert.hpp>
@@ -77,18 +77,18 @@ constexpr auto is_boosted_by_thick_club(Species const species) {
 	}
 }
 
-constexpr bool is_boosted_by_guts(Generation const generation, Statuses const status) {
+constexpr bool is_boosted_by_guts(Generation const generation, StatusName const status) {
 	switch (status) {
-		case Statuses::clear:
+		case StatusName::clear:
 			return false;
-		case Statuses::freeze:
+		case StatusName::freeze:
 			return generation <= Generation::four;
-		case Statuses::burn:
-		case Statuses::paralysis:
-		case Statuses::poison:
-		case Statuses::toxic:
-		case Statuses::sleep:
-		case Statuses::rest:
+		case StatusName::burn:
+		case StatusName::paralysis:
+		case StatusName::poison:
+		case StatusName::toxic:
+		case StatusName::sleep:
+		case StatusName::rest:
 			return true;
 	}
 }

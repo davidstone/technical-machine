@@ -21,6 +21,7 @@
 #include <tm/any_team.hpp>
 #include <tm/contact_ability_effect.hpp>
 #include <tm/phazing_in_same_pokemon.hpp>
+#include <tm/status_name.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/detail/variant/variant.hpp>
@@ -40,7 +41,7 @@ struct SubstituteBroke {};
 struct MoveState {
 	struct OptionalHPAndStatus {
 		bounded::optional<VisibleHP> hp;
-		bounded::optional<Statuses> status;
+		bounded::optional<StatusName> status;
 	};
 	using Damage = bounded::variant<NoDamage, HPAndStatus, SubstituteDamaged, SubstituteBroke>;
 	template<any_team UserTeam>
@@ -93,7 +94,7 @@ struct MoveState {
 		if (m_status_change != StatusChange::nothing_relevant) {
 			throw std::runtime_error("Tried to thaw or awaken at a weird time");
 		}
-		set_expected(party, Statuses::clear);
+		set_expected(party, StatusName::clear);
 		m_status_change = StatusChange::thaw_or_awaken;
 	}
 	void confuse() {
@@ -162,8 +163,8 @@ struct MoveState {
 		}
 		m_recoil = true;
 	}
-	void status_from_move(Party const party, Statuses const status);
-	void contact_ability_statuses(Party const party, any_active_pokemon auto const user, Weather const weather, Ability const ability, Statuses const status) {
+	void status_from_move(Party const party, StatusName const status);
+	void contact_ability_statuses(Party const party, any_active_pokemon auto const user, Weather const weather, Ability const ability, StatusName const status) {
 		validate(party);
 		if (m_move->status) {
 			throw std::runtime_error("Tried to status a Pokemon twice");
@@ -174,7 +175,7 @@ struct MoveState {
 		apply_contact_ability_status(party, ability, status);
 	}
 
-	void set_expected(Party const party, Statuses const status) {
+	void set_expected(Party const party, StatusName const status) {
 		if (!m_party) {
 			return;
 		}
@@ -214,7 +215,7 @@ private:
 	[[noreturn]] void throw_error() const {
 		throw std::runtime_error("Received battle messages out of order");
 	}
-	auto apply_contact_ability_status(Party, Ability, Statuses) -> void;
+	auto apply_contact_ability_status(Party, Ability, StatusName) -> void;
 
 	struct UsedMoveBuilder {
 		Moves selected;
@@ -226,7 +227,7 @@ private:
 		bool flinch = false;
 		bool fully_paralyze = false;
 		bounded::optional<TeamIndex> phaze_index = bounded::none;
-		bounded::optional<Statuses> status = bounded::none;
+		bounded::optional<StatusName> status = bounded::none;
 	};
 
 	enum class StatusChange {

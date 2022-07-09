@@ -19,6 +19,7 @@
 
 #include <tm/any_team.hpp>
 #include <tm/compress.hpp>
+#include <tm/status_name.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/transform.hpp>
@@ -195,7 +196,7 @@ private:
 };
 
 template<Generation generation>
-constexpr auto team_has_status(KnownTeam<generation> const & target, Statuses const status) {
+constexpr auto team_has_status(KnownTeam<generation> const & target, StatusName const status) {
 	return containers::any(target.all_pokemon(), [=](KnownPokemon<generation> const & pokemon) {
 		return pokemon.status().name() == status;
 	});

@@ -7,9 +7,10 @@
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/move.hpp>
-#include <tm/string_conversions/status.hpp>
+#include <tm/string_conversions/status_name.hpp>
 
 #include <tm/block.hpp>
+#include <tm/status_name.hpp>
 #include <tm/team.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
@@ -76,7 +77,7 @@ constexpr auto clears_team_status(Moves const move) -> bool {
 
 } // namespace
 
-void MoveState::status_from_move(Party const party, Statuses const status) {
+void MoveState::status_from_move(Party const party, StatusName const status) {
 	if (!m_move) {
 		throw std::runtime_error("Tried to status without an active move");
 	}
@@ -97,7 +98,7 @@ void MoveState::status_from_move(Party const party, Statuses const status) {
 		if (party != *m_party) {
 			throw_error();
 		}
-		if (status != Statuses::clear) {
+		if (status != StatusName::clear) {
 			throw std::runtime_error("Tried to clear status to a status other than clear");
 		}
 		bounded::insert(m_user.status, status);
@@ -143,7 +144,7 @@ auto get_side_effect(auto const move, UserPokemon const user, OtherTeam<UserPoke
 
 } // namespace
 
-auto MoveState::apply_contact_ability_status(Party const party, Ability const ability, Statuses const status) -> void {
+auto MoveState::apply_contact_ability_status(Party const party, Ability const ability, StatusName const status) -> void {
 	using namespace std::string_view_literals;
 	auto status_effect = [&](auto const... valid_statuses) {
 		if ((... and (status != valid_statuses))) {
@@ -156,26 +157,26 @@ auto MoveState::apply_contact_ability_status(Party const party, Ability const ab
 		}
 		m_move->contact_ability_effect = [=] {
 			switch (status) {
-				case Statuses::burn: return ContactAbilityEffect::burn;
-				case Statuses::paralysis: return ContactAbilityEffect::paralysis;
-				case Statuses::poison: return ContactAbilityEffect::poison;
-				case Statuses::sleep: return ContactAbilityEffect::sleep;
+				case StatusName::burn: return ContactAbilityEffect::burn;
+				case StatusName::paralysis: return ContactAbilityEffect::paralysis;
+				case StatusName::poison: return ContactAbilityEffect::poison;
+				case StatusName::sleep: return ContactAbilityEffect::sleep;
 				default: std::unreachable();
 			}
 		}();
 	};
 	switch (ability) {
 		case Ability::Effect_Spore:
-			status_effect(Statuses::paralysis, Statuses::poison, Statuses::sleep);
+			status_effect(StatusName::paralysis, StatusName::poison, StatusName::sleep);
 			break;
 		case Ability::Flame_Body:
-			status_effect(Statuses::burn);
+			status_effect(StatusName::burn);
 			break;
 		case Ability::Poison_Point:
-			status_effect(Statuses::poison);
+			status_effect(StatusName::poison);
 			break;
 		case Ability::Static:
-			status_effect(Statuses::paralysis);
+			status_effect(StatusName::paralysis);
 			break;
 		default:
 			throw std::runtime_error(containers::concatenate<std::string>(

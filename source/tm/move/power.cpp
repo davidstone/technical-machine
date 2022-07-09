@@ -27,7 +27,6 @@
 #include <tm/known_team.hpp>
 #include <tm/rational.hpp>
 #include <tm/seen_team.hpp>
-#include <tm/status.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 

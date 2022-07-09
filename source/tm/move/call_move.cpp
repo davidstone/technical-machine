@@ -30,7 +30,7 @@
 #include <tm/known_team.hpp>
 #include <tm/rational.hpp>
 #include <tm/seen_team.hpp>
-#include <tm/status.hpp>
+#include <tm/status_name.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
@@ -240,19 +240,19 @@ constexpr auto activate_target_ability(any_mutable_active_pokemon auto const use
 		case ContactAbilityEffect::nothing:
 			break;
 		case ContactAbilityEffect::burn:
-			user.set_status(Statuses::burn, weather);
+			user.set_status(StatusName::burn, weather);
 			break;
 		case ContactAbilityEffect::infatuation:
 			user.attract(other, weather);
 			break;
 		case ContactAbilityEffect::paralysis:
-			user.set_status(Statuses::paralysis, weather);
+			user.set_status(StatusName::paralysis, weather);
 			break;
 		case ContactAbilityEffect::poison:
-			user.set_status(Statuses::poison, weather);
+			user.set_status(StatusName::poison, weather);
 			break;
 		case ContactAbilityEffect::sleep:
-			user.set_status(Statuses::sleep, weather);
+			user.set_status(StatusName::sleep, weather);
 			break;
 	}
 }

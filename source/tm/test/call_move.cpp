@@ -273,9 +273,9 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 	});
 	auto vaporeon = defender.pokemon();
 	vaporeon.switch_in(weather);
-	vaporeon.set_status(Statuses::freeze, weather);
+	vaporeon.set_status(StatusName::freeze, weather);
 
-	CHECK(vaporeon.status().name() == Statuses::freeze);
+	CHECK(vaporeon.status().name() == StatusName::freeze);
 
 	constexpr auto move_name = Moves::Ember;
 	auto const side_effects = possible_side_effects(move_name, attacker.pokemon().as_const(), defender, weather);
@@ -295,7 +295,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 			damage
 		);
 
-		CHECK(defender_copy.pokemon().status().name() == Statuses::clear);
+		CHECK(defender_copy.pokemon().status().name() == StatusName::clear);
 	}
 
 	call_move(
@@ -308,7 +308,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 		damage
 	);
 
-	CHECK(vaporeon.status().name() == Statuses::burn);
+	CHECK(vaporeon.status().name() == StatusName::burn);
 }
 
 TEST_CASE("Sleep Talk Substitute", "[call_move]") {
@@ -412,7 +412,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 		damage
 	);
 
-	CHECK(user.pokemon().status().name() == Statuses::paralysis);
+	CHECK(user.pokemon().status().name() == StatusName::paralysis);
 }
 
 TEST_CASE("Pokemon faints after Explosion against a Substitute in later generations", "[call_move]") {

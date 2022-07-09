@@ -14,7 +14,7 @@
 #include <tm/any_team.hpp>
 #include <tm/generation.hpp>
 #include <tm/other_team.hpp>
-#include <tm/status.hpp>
+#include <tm/status_name.hpp>
 #include <tm/weather.hpp>
 
 #include <containers/static_vector.hpp>
@@ -33,25 +33,25 @@ struct SideEffect {
 
 inline constexpr auto no_effect_function = [](auto &, auto &, auto &, auto) {};
 
-constexpr auto reflected_status(Generation const generation, Statuses const status) -> bounded::optional<Statuses> {
+constexpr auto reflected_status(Generation const generation, StatusName const status) -> bounded::optional<StatusName> {
 	switch (status) {
-		case Statuses::burn:
-		case Statuses::paralysis:
-		case Statuses::poison:
+		case StatusName::burn:
+		case StatusName::paralysis:
+		case StatusName::poison:
 			return status;
-		case Statuses::toxic:
-			return generation <= Generation::four ? Statuses::poison : Statuses::toxic;
-		case Statuses::freeze:
-		case Statuses::sleep:
+		case StatusName::toxic:
+			return generation <= Generation::four ? StatusName::poison : StatusName::toxic;
+		case StatusName::freeze:
+		case StatusName::sleep:
 			return bounded::none;
-		case Statuses::clear:
-		case Statuses::rest:
+		case StatusName::clear:
+		case StatusName::rest:
 			std::unreachable();
 	}
 }
 
 template<any_mutable_active_pokemon UserPokemon>
-auto apply_status(Statuses const status, UserPokemon const user, OtherMutableActivePokemon<UserPokemon> const target, Weather const weather) {
+auto apply_status(StatusName const status, UserPokemon const user, OtherMutableActivePokemon<UserPokemon> const target, Weather const weather) {
 	target.set_status(status, weather);
 	auto const reflected = reflected_status(generation_from<UserPokemon>, status);
 	if (reflected and reflects_status(target.ability())) {

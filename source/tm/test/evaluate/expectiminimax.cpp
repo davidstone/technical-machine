@@ -629,30 +629,30 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 
 	// TODO: Validate score, too
 
-	CHECK(jolteon.status().name() == Statuses::clear);
+	CHECK(jolteon.status().name() == StatusName::clear);
 	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == Moves::Thunderbolt);
 
 	call_move(attacker, sleep_talk, defender, other_move, weather, keep_status, unknown_damage);
-	jolteon.set_status(Statuses::sleep, weather);
+	jolteon.set_status(StatusName::sleep, weather);
 	next_turn();
-	CHECK(jolteon.status().name() == Statuses::sleep);
+	CHECK(jolteon.status().name() == StatusName::sleep);
 	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == Moves::Sleep_Talk);
 
 	call_move(attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 	next_turn();
-	CHECK(jolteon.status().name() == Statuses::sleep);
+	CHECK(jolteon.status().name() == StatusName::sleep);
 	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == Moves::Sleep_Talk);
 
 	call_move(attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 	next_turn();
-	CHECK(jolteon.status().name() == Statuses::sleep);
+	CHECK(jolteon.status().name() == StatusName::sleep);
 	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == Moves::Sleep_Talk);
 
 	#if 0
 		// Same probability of either move
 		call_move(attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 		next_turn();
-		CHECK(jolteon.status().name() == Statuses::sleep);
+		CHECK(jolteon.status().name() == StatusName::sleep);
 		CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == ?);
 	#endif
 }
@@ -689,7 +689,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 			regular_moves(Moves::Explosion, Moves::Hypnosis, Moves::Thunderbolt, Moves::Night_Shade)
 		)
 	});
-	defender.pokemon().set_status(Statuses::freeze, weather);
+	defender.pokemon().set_status(StatusName::freeze, weather);
 	defender.pokemon().set_hp(weather, 12_bi);
 	defender.pokemon().switch_in(weather);
 

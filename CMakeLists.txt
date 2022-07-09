@@ -194,7 +194,7 @@ add_library(tm_common STATIC
 	source/tm/string_conversions/nature.cpp
 	source/tm/string_conversions/pokemon.cpp
 	source/tm/string_conversions/species.cpp
-	source/tm/string_conversions/status.cpp
+	source/tm/string_conversions/status_name.cpp
 	source/tm/string_conversions/team.cpp
 	source/tm/string_conversions/type.cpp
 	source/tm/string_conversions/weather.cpp
@@ -255,6 +255,7 @@ add_library(tm_common STATIC
 	source/tm/seen_team.cpp
 	source/tm/settings_file.cpp
 	source/tm/status.cpp
+	source/tm/status_name.cpp
 	source/tm/team.cpp
 	source/tm/visible_hp.cpp
 	source/tm/weather.cpp

@@ -56,7 +56,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 		)
 	});
 	attacker.pokemon().switch_in(weather);
-	attacker.pokemon().set_status(Statuses::sleep, weather);
+	attacker.pokemon().set_status(StatusName::sleep, weather);
 
 	auto defender = Team<generation>({
 		Pokemon<generation>(
@@ -161,7 +161,7 @@ struct Sleeper {
 		return hp.current() == hp.max();
 	}
 	auto asleep() const {
-		return m_sleeper.pokemon().status().name() == Statuses::rest;
+		return m_sleeper.pokemon().status().name() == StatusName::rest;
 	}
 
 private:

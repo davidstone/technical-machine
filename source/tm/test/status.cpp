@@ -13,7 +13,7 @@ namespace {
 
 TEST_CASE("Awakening probability", "[Awakening probability]") {
 	auto const ability = Ability::Pressure;
-	auto status = Status(Statuses::sleep);
+	auto status = Status(StatusName::sleep);
 	for (auto const expected : {0.0, 1.0 / 4.0, 1.0 / 3.0, 1.0 / 2.0, 1.0 / 1.0}) {
 		auto const calculated = status.probability_of_clearing(Generation::four, ability);
 		CHECK(expected == calculated);

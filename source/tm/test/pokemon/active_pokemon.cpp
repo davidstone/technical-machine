@@ -34,7 +34,7 @@ TEST_CASE("Chesto Berry awakens from Rest", "[active_pokemon]") {
 	auto weather = Weather();
 
 	active_pokemon.rest(weather, false);
-	CHECK(active_pokemon.status().name() == Statuses::clear);
+	CHECK(active_pokemon.status().name() == StatusName::clear);
 }
 
 TEST_CASE("Chesto Berry awakens after Rest cures status", "[active_pokemon]") {
@@ -53,13 +53,13 @@ TEST_CASE("Chesto Berry awakens after Rest cures status", "[active_pokemon]") {
 
 	auto weather = Weather();
 
-	active_pokemon.set_status(Statuses::paralysis, weather);
-	CHECK(active_pokemon.status().name() == Statuses::paralysis);
+	active_pokemon.set_status(StatusName::paralysis, weather);
+	CHECK(active_pokemon.status().name() == StatusName::paralysis);
 
-	CHECK(clears_status(active_pokemon.item(weather), Statuses::rest));
+	CHECK(clears_status(active_pokemon.item(weather), StatusName::rest));
 	active_pokemon.rest(weather, false);
 
-	CHECK(active_pokemon.status().name() == Statuses::clear);
+	CHECK(active_pokemon.status().name() == StatusName::clear);
 }
 
 } // namespace

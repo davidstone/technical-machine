@@ -13,8 +13,8 @@
 #include <tm/heal.hpp>
 #include <tm/other_team.hpp>
 #include <tm/rational.hpp>
-#include <tm/status.hpp>
 #include <tm/saturating_add.hpp>
+#include <tm/status_name.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>
@@ -22,13 +22,13 @@
 namespace technicalmachine {
 
 struct ActiveStatus {
-	constexpr auto set(Statuses const status) & -> void {
+	constexpr auto set(StatusName const status) & -> void {
 		switch (status) {
-			case Statuses::rest:
-			case Statuses::sleep:
+			case StatusName::rest:
+			case StatusName::sleep:
 				m_nightmare = false;
 				break;
-			case Statuses::toxic:
+			case StatusName::toxic:
 				m_toxic_counter = 1_bi;
 				break;
 			default:
@@ -117,36 +117,36 @@ private:
 	constexpr auto end_of_attack(PokemonType const pokemon, OtherMutableActivePokemon<PokemonType> const other, Weather const weather) & -> void {
 		auto const status = pokemon.status().name();
 		switch (status) {
-			case Statuses::clear:
-			case Statuses::freeze:
-			case Statuses::paralysis:
+			case StatusName::clear:
+			case StatusName::freeze:
+			case StatusName::paralysis:
 				break;
-			case Statuses::burn:
+			case StatusName::burn:
 				handle_burn(pokemon, weather);
 				break;
-			case Statuses::poison:
+			case StatusName::poison:
 				handle_poison(pokemon, weather);
 				break;
-			case Statuses::toxic:
+			case StatusName::toxic:
 				handle_toxic(pokemon, weather, m_toxic_counter);
 				break;
-			case Statuses::sleep:
-			case Statuses::rest:
+			case StatusName::sleep:
+			case StatusName::rest:
 				break;
 		}
 
 		handle_leech_seed(pokemon, other, weather);
 
 		switch (status) {
-			case Statuses::clear:
-			case Statuses::freeze:
-			case Statuses::paralysis:
-			case Statuses::burn:
-			case Statuses::poison:
-			case Statuses::toxic:
+			case StatusName::clear:
+			case StatusName::freeze:
+			case StatusName::paralysis:
+			case StatusName::burn:
+			case StatusName::poison:
+			case StatusName::toxic:
 				break;
-			case Statuses::sleep:
-			case Statuses::rest:
+			case StatusName::sleep:
+			case StatusName::rest:
 				handle_sleep_and_rest(pokemon, other.as_const(), weather, m_nightmare);
 				break;
 		}
@@ -158,21 +158,21 @@ private:
 		handle_leech_seed(pokemon, other, weather);
 
 		switch (pokemon.status().name()) {
-			case Statuses::clear:
-			case Statuses::freeze:
-			case Statuses::paralysis:
+			case StatusName::clear:
+			case StatusName::freeze:
+			case StatusName::paralysis:
 				break;
-			case Statuses::burn:
+			case StatusName::burn:
 				handle_burn(pokemon, weather);
 				break;
-			case Statuses::poison:
+			case StatusName::poison:
 				handle_poison(pokemon, weather);
 				break;
-			case Statuses::toxic:
+			case StatusName::toxic:
 				handle_toxic(pokemon, weather, m_toxic_counter);
 				break;
-			case Statuses::sleep:
-			case Statuses::rest:
+			case StatusName::sleep:
+			case StatusName::rest:
 				handle_sleep_and_rest(pokemon, other.as_const(), weather, m_nightmare, uproar);
 				break;
 		}

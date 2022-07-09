@@ -12,14 +12,14 @@
 
 namespace technicalmachine {
 
-auto ability_blocks_move(Generation const generation, Ability const ability, KnownMove const move, Statuses const target_status, PokemonTypes const target_types) -> bool {
+auto ability_blocks_move(Generation const generation, Ability const ability, KnownMove const move, StatusName const target_status, PokemonTypes const target_types) -> bool {
 	auto absorb_ability_activates = [=](Type const absorbed_type) {
 		return move_targets_foe(generation, move.name) and move.type == absorbed_type;
 	};
 
 	switch (ability) {
 		case Ability::Flash_Fire:
-			if (generation <= Generation::four and target_status == Statuses::freeze) {
+			if (generation <= Generation::four and target_status == StatusName::freeze) {
 				return false;
 			}
 			return

@@ -15,6 +15,7 @@
 #include <tm/heal.hpp>
 #include <tm/operators.hpp>
 #include <tm/rational.hpp>
+#include <tm/status_name.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/integer.hpp>
@@ -30,7 +31,7 @@ constexpr auto removes_toxic_spikes(any_active_pokemon auto const switcher) {
 
 template<any_mutable_active_pokemon PokemonType>
 constexpr auto apply_toxic_spikes(EntryHazards<generation_from<PokemonType>> const & hazards, PokemonType const switcher, Weather const weather) {
-	auto const status = hazards.toxic_spikes() == 1_bi ? Statuses::poison : Statuses::toxic;
+	auto const status = hazards.toxic_spikes() == 1_bi ? StatusName::poison : StatusName::toxic;
 	if (indirect_status_can_apply(status, switcher.as_const(), weather)) {
 		switcher.set_status(status, weather);
 	}

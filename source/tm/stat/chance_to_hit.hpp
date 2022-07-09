@@ -18,6 +18,7 @@
 
 #include <tm/ability.hpp>
 #include <tm/generation.hpp>
+#include <tm/item.hpp>
 #include <tm/rational.hpp>
 #include <tm/weather.hpp>
 

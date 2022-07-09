@@ -9,7 +9,6 @@
 #include <tm/compress.hpp>
 #include <tm/generation.hpp>
 #include <tm/operators.hpp>
-#include <tm/status.hpp>
 
 #include <bounded/integer.hpp>
 

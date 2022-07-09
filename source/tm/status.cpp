@@ -19,36 +19,36 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-Status::Status(Statuses const status):
+Status::Status(StatusName const status):
 	m_state([=] {
 		switch (status) {
-			case Statuses::clear: return State(Clear{});
-			case Statuses::burn: return State(Burn{});
-			case Statuses::freeze: return State(Freeze{});
-			case Statuses::paralysis: return State(Paralysis{});
-			case Statuses::poison: return State(Poison{});
-			case Statuses::toxic: return State(Toxic{});
-			case Statuses::sleep: return State(Sleep{});
-			case Statuses::rest: return State(Rest{});
+			case StatusName::clear: return State(Clear{});
+			case StatusName::burn: return State(Burn{});
+			case StatusName::freeze: return State(Freeze{});
+			case StatusName::paralysis: return State(Paralysis{});
+			case StatusName::poison: return State(Poison{});
+			case StatusName::toxic: return State(Toxic{});
+			case StatusName::sleep: return State(Sleep{});
+			case StatusName::rest: return State(Rest{});
 		}
 	}())
 {
 }
 
 auto lowers_speed(Status const status, Ability const ability) -> bool {
-	return status.name() == Statuses::paralysis and !blocks_paralysis_speed_penalty(ability);
+	return status.name() == StatusName::paralysis and !blocks_paralysis_speed_penalty(ability);
 }
 auto boosts_facade(Status const status) -> bool {
 	switch (status.name()) {
-		case Statuses::burn:
-		case Statuses::paralysis:
-		case Statuses::poison:
-		case Statuses::toxic:
+		case StatusName::burn:
+		case StatusName::paralysis:
+		case StatusName::poison:
+		case StatusName::toxic:
 			return true;
-		case Statuses::clear:
-		case Statuses::freeze:
-		case Statuses::sleep:
-		case Statuses::rest:
+		case StatusName::clear:
+		case StatusName::freeze:
+		case StatusName::sleep:
+		case StatusName::rest:
 			return false;
 	}
 }
@@ -117,13 +117,13 @@ auto Status::probability_of_clearing(Generation const generation, Ability const 
 	));
 }
 
-bool blocks_status(Ability const ability, Ability const other_ability, Statuses const status, Weather const weather) {
+bool blocks_status(Ability const ability, Ability const other_ability, StatusName const status, Weather const weather) {
 	auto is_sunny = [&] {
 		return weather.sun(weather_is_blocked_by_ability(ability, other_ability));
 	};
 	auto const ability_blocked = other_ability == Ability::Mold_Breaker;
 	switch (status) {
-		case Statuses::burn:
+		case StatusName::burn:
 			if (ability_blocked) {
 				return false;
 			}
@@ -135,9 +135,9 @@ bool blocks_status(Ability const ability, Ability const other_ability, Statuses 
 				default:
 					return false;
 			}
-		case Statuses::freeze:
+		case StatusName::freeze:
 			return is_sunny() or (!ability_blocked and ability == Ability::Magma_Armor);
-		case Statuses::paralysis:
+		case StatusName::paralysis:
 			if (ability_blocked) {
 				return false;
 			}
@@ -149,8 +149,8 @@ bool blocks_status(Ability const ability, Ability const other_ability, Statuses 
 				default:
 					return false;
 			}
-		case Statuses::poison:
-		case Statuses::toxic:
+		case StatusName::poison:
+		case StatusName::toxic:
 			if (ability_blocked) {
 				return false;
 			}
@@ -162,8 +162,8 @@ bool blocks_status(Ability const ability, Ability const other_ability, Statuses 
 				default:
 					return false;
 			}
-		case Statuses::sleep:
-		case Statuses::rest:
+		case StatusName::sleep:
+		case StatusName::rest:
 			if (ability_blocked) {
 				return false;
 			}
@@ -176,7 +176,7 @@ bool blocks_status(Ability const ability, Ability const other_ability, Statuses 
 				default:
 					return false;
 			}
-		case Statuses::clear:
+		case StatusName::clear:
 			return false;
 	}
 }

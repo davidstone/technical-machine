@@ -127,7 +127,7 @@ struct KnownPokemon {
 	constexpr auto status() const -> Status {
 		return m_pokemon.status();
 	}
-	constexpr auto set_status(Statuses const status) & -> void {
+	constexpr auto set_status(StatusName const status) & -> void {
 		m_pokemon.set_status(status);
 	}
 

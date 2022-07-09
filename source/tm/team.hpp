@@ -251,7 +251,7 @@ private:
 	bool me;
 };
 
-constexpr auto team_has_status(any_team auto const & target, Statuses const status) {
+constexpr auto team_has_status(any_team auto const & target, StatusName const status) {
 	return containers::any(target.all_pokemon(), [=](auto const & pokemon) {
 		return pokemon.status().name() == status;
 	});

@@ -24,13 +24,14 @@
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/species.hpp>
-#include <tm/string_conversions/status.hpp>
+#include <tm/string_conversions/status_name.hpp>
 #include <tm/string_conversions/team.hpp>
 #include <tm/string_conversions/weather.hpp>
 
 #include <tm/ability_blocks_move.hpp>
 #include <tm/battle.hpp>
 #include <tm/generation_generic.hpp>
+#include <tm/status_name.hpp>
 #include <tm/visible_hp.hpp>
 
 #include <bounded/integer.hpp>
@@ -94,15 +95,15 @@ constexpr auto to_normal_weather(Weather const weather) {
 
 constexpr auto parse_status(std::string_view const str) {
 	return
-		(str == "") ? Statuses::clear :
-		(str == "fnt") ? Statuses::clear :
-		(str == "brn") ? Statuses::burn :
-		(str == "frz") ? Statuses::freeze :
-		(str == "par") ? Statuses::paralysis :
-		(str == "psn") ? Statuses::poison :
-		(str == "tox") ? Statuses::toxic :
-		(str == "slp") ? Statuses::sleep :
-//		(str == "") ? Statuses::rest :
+		(str == "") ? StatusName::clear :
+		(str == "fnt") ? StatusName::clear :
+		(str == "brn") ? StatusName::burn :
+		(str == "frz") ? StatusName::freeze :
+		(str == "par") ? StatusName::paralysis :
+		(str == "psn") ? StatusName::poison :
+		(str == "tox") ? StatusName::toxic :
+		(str == "slp") ? StatusName::sleep :
+//		(str == "") ? StatusName::rest :
 		throw std::runtime_error("Received an invalid status");
 }
 
@@ -163,7 +164,7 @@ constexpr auto parse_hp_message(InMessage message) {
 	struct Message {
 		Party party;
 		VisibleHP hp;
-		Statuses status;
+		StatusName status;
 		EffectSource source;
 	};
 	auto const party = party_from_player_id(message.pop());
@@ -184,7 +185,7 @@ constexpr auto parse_set_hp_message(InMessage message) {
 	struct Message {
 		Party party;
 		VisibleHP hp;
-		Statuses status;
+		StatusName status;
 		EffectSource source;
 	};
 	auto const party = party_from_player_id(message.pop());
@@ -229,21 +230,21 @@ constexpr auto causes_recoil(Moves const move) {
 	}
 }
 
-constexpr auto cures_target_status(Generation const generation, Moves const move_name, bounded::optional<Type> const hidden_power_type, Statuses const status) {
+constexpr auto cures_target_status(Generation const generation, Moves const move_name, bounded::optional<Type> const hidden_power_type, StatusName const status) {
 	switch (status) {
-		case Statuses::freeze:
+		case StatusName::freeze:
 			return
 				get_type(generation, move_name, hidden_power_type) == Type::Fire or
 				(generation == Generation::two and move_name == Moves::Tri_Attack);
-		case Statuses::paralysis:
+		case StatusName::paralysis:
 			return move_name == Moves::Smelling_Salts;
-		case Statuses::rest:
-		case Statuses::sleep:
+		case StatusName::rest:
+		case StatusName::sleep:
 			return move_name == Moves::Wake_Up_Slap;
-		case Statuses::clear:
-		case Statuses::burn:
-		case Statuses::poison:
-		case Statuses::toxic:
+		case StatusName::clear:
+		case StatusName::burn:
+		case StatusName::poison:
+		case StatusName::toxic:
 			return false;
 	}
 }
@@ -442,11 +443,11 @@ struct BattleParserImpl : BattleParser {
 						});
 					}();
 					if (move_cured_status) {
-						m_move_state.status_from_move(party, Statuses::clear);
+						m_move_state.status_from_move(party, StatusName::clear);
 					} else if (moved(m_battle.ai()) and moved(m_battle.foe())) {
-						m_end_of_turn_state.set_expected(party, Statuses::clear);
+						m_end_of_turn_state.set_expected(party, StatusName::clear);
 					} else {
-						if (status != Statuses::freeze and status != Statuses::sleep) {
+						if (status != StatusName::freeze and status != StatusName::sleep) {
 							throw std::runtime_error("Spontaneously recovered from status");
 						}
 						maybe_use_previous_move();
@@ -463,7 +464,7 @@ struct BattleParserImpl : BattleParser {
 						case Ability::Natural_Cure:
 							break;
 						case Ability::Shed_Skin:
-							m_end_of_turn_state.set_expected(party, Statuses::clear);
+							m_end_of_turn_state.set_expected(party, StatusName::clear);
 							break;
 						default:
 							throw std::runtime_error("Unexpected ability cured status");
@@ -499,10 +500,10 @@ struct BattleParserImpl : BattleParser {
 			auto const party = party_from_player_id(message.pop());
 			auto const item = from_string<Item>(message.pop());
 			set_value_on_pokemon(party, item);
-			for (auto const status : containers::enum_range<Statuses>()) {
+			for (auto const status : containers::enum_range<StatusName>()) {
 				if (clears_status(item, status)) {
 					m_ignore_next_cure_status = true;
-					queue_hp_or_status_checks(party, Statuses::clear);
+					queue_hp_or_status_checks(party, StatusName::clear);
 					break;
 				}
 			}
@@ -865,7 +866,7 @@ private:
 			Species species;
 			Moves move;
 			VisibleHP hp;
-			Statuses status;
+			StatusName status;
 		};
 		return Result{parsed.party, parsed.species, move, parsed.hp, parsed.status};
 	}
@@ -1003,7 +1004,7 @@ private:
 		});
 	}
 
-	void try_correct_hp_and_status(bool const is_ai, bounded::optional<VisibleHP> const hp, bounded::optional<Statuses> const status, auto... maybe_index) {
+	void try_correct_hp_and_status(bool const is_ai, bounded::optional<VisibleHP> const hp, bounded::optional<StatusName> const status, auto... maybe_index) {
 		if (hp) {
 			m_battle.correct_hp(is_ai, *hp, maybe_index...);
 			if (hp->current == CurrentVisibleHP(0_bi)) {
@@ -1100,7 +1101,7 @@ private:
 	struct Switch {
 		Moves move;
 		VisibleHP hp;
-		Statuses status;
+		StatusName status;
 	};
 	bounded::optional<Switch> m_ai_switch;
 	bounded::optional<Switch> m_foe_switch;

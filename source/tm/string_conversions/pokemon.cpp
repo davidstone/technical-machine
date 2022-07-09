@@ -14,13 +14,14 @@
 #include <tm/string_conversions/move.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
-#include <tm/string_conversions/status.hpp>
+#include <tm/string_conversions/status_name.hpp>
 
 #include <tm/stat/calculate_ivs_and_evs.hpp>
 #include <tm/stat/ev.hpp>
 #include <tm/stat/iv.hpp>
 
 #include <tm/buffer_view.hpp>
+#include <tm/status_name.hpp>
 
 #include <bounded/to_integer.hpp>
 
@@ -200,7 +201,7 @@ constexpr auto typed_pop(BufferView<std::string_view> & buffer, std::string_view
 
 struct AbilityAndStatus {
 	Ability ability;
-	Statuses status;
+	StatusName status;
 };
 
 auto pop_ability_and_status(BufferView<std::string_view> & buffer, Generation const generation) {
@@ -208,7 +209,7 @@ auto pop_ability_and_status(BufferView<std::string_view> & buffer, Generation co
 	auto const [ability_str, status_str] = split_view(ability_and_status_str, ability_status);
 	return AbilityAndStatus{
 		from_string<Ability>(ability_str),
-		status_str.empty() ? Statuses::clear : from_string<Statuses>(status_str)
+		status_str.empty() ? StatusName::clear : from_string<StatusName>(status_str)
 	};
 }
 

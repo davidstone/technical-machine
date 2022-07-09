@@ -212,7 +212,7 @@ struct SeenPokemon {
 	constexpr auto status() const -> Status {
 		return m_status;
 	}
-	constexpr auto set_status(Statuses const status) & -> void {
+	constexpr auto set_status(StatusName const status) & -> void {
 		m_status = status;
 	}
 

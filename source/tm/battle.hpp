@@ -16,12 +16,13 @@
 
 #include <tm/pokemon/species_forward.hpp>
 
-#include <tm/string_conversions/status.hpp>
+#include <tm/string_conversions/status_name.hpp>
 
 #include <tm/any_team.hpp>
 #include <tm/end_of_turn.hpp>
 #include <tm/known_team.hpp>
 #include <tm/seen_team.hpp>
+#include <tm/status_name.hpp>
 #include <tm/visible_hp.hpp>
 #include <tm/weather.hpp>
 
@@ -167,10 +168,10 @@ struct Battle {
 		});
 	}
 
-	void correct_status(bool const is_ai, Statuses const visible_status, auto... maybe_index) {
+	void correct_status(bool const is_ai, StatusName const visible_status, auto... maybe_index) {
 		apply_to_teams(is_ai, [=](auto const & team, auto &) {
 			auto const original_status = team.all_pokemon()(maybe_index...).status().name();
-			auto const normalized_original_status = (original_status == Statuses::rest) ? Statuses::sleep : original_status;
+			auto const normalized_original_status = (original_status == StatusName::rest) ? StatusName::sleep : original_status;
 			if (normalized_original_status != visible_status) {
 				throw std::runtime_error(containers::concatenate<std::string>(
 					"Status out of sync with server messages: expected "sv,

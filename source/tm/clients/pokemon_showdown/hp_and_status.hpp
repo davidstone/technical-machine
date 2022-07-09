@@ -5,17 +5,15 @@
 
 #pragma once
 
-#include <tm/clients/pokemon_showdown/parsed_hp.hpp>
-
+#include <tm/status_name.hpp>
 #include <tm/visible_hp.hpp>
-#include <tm/status.hpp>
 
 namespace technicalmachine {
 namespace ps {
 
 struct HPAndStatus {
 	VisibleHP hp;
-	Statuses status;
+	StatusName status;
 };
 
 } // namespace ps

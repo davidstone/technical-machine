@@ -11,7 +11,7 @@
 #include <tm/known_team.hpp>
 #include <tm/rational.hpp>
 #include <tm/seen_team.hpp>
-#include <tm/status.hpp>
+#include <tm/status_name.hpp>
 #include <tm/team.hpp>
 #include <tm/weather.hpp>
 
@@ -151,17 +151,17 @@ auto other_effects(TeamType & team, OtherMutableActivePokemon<TeamType> const fo
 	// TODO: Not sure if this check for Uproar is in the correct place
 	auto const uproar = pokemon.last_used_move().is_uproaring() or foe.last_used_move().is_uproaring();
 	pokemon.status_and_leech_seed_effects(foe, weather, uproar);
-	auto set_status = [&](Statuses const status) {
+	auto set_status = [&](StatusName const status) {
 		if (indirect_status_can_apply(status, pokemon.as_const(), weather)) {
 			pokemon.set_status(status, weather);
 		}
 	};
 	switch (pokemon.item(weather)) {
 		case Item::Flame_Orb:
-			set_status(Statuses::burn);
+			set_status(StatusName::burn);
 			break;
 		case Item::Toxic_Orb:
-			set_status(Statuses::toxic);
+			set_status(StatusName::toxic);
 			break;
 		default:
 			break;
@@ -177,7 +177,7 @@ auto other_effects(TeamType & team, OtherMutableActivePokemon<TeamType> const fo
 	pokemon.advance_magnet_rise();
 	pokemon.advance_heal_block();
 	pokemon.advance_embargo();
-	pokemon.try_to_activate_yawn(weather, uproar, team_has_status(team, Statuses::sleep));
+	pokemon.try_to_activate_yawn(weather, uproar, team_has_status(team, StatusName::sleep));
 	if (pokemon.item(weather) == Item::Sticky_Barb) {
 		heal(pokemon, weather, rational(-1_bi, 8_bi));
 	}

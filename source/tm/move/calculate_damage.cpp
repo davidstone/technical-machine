@@ -24,7 +24,6 @@
 #include <tm/generation.hpp>
 #include <tm/item.hpp>
 #include <tm/known_team.hpp>
-#include <tm/status.hpp>
 #include <tm/random_damage.hpp>
 #include <tm/rational.hpp>
 #include <tm/seen_team.hpp>

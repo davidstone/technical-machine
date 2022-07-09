@@ -11,9 +11,11 @@
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 #include <tm/string_conversions/species.hpp>
-#include <tm/string_conversions/status.hpp>
+#include <tm/string_conversions/status_name.hpp>
 #include <tm/string_conversions/type.hpp>
 #include <tm/string_conversions/weather.hpp>
+
+#include <tm/move/moves.hpp>
 
 #include <tm/pokemon/species.hpp>
 
@@ -24,8 +26,7 @@
 #include <tm/ability.hpp>
 #include <tm/gender.hpp>
 #include <tm/item.hpp>
-#include <tm/move/moves.hpp>
-#include <tm/status.hpp>
+#include <tm/status_name.hpp>
 
 #include <containers/integer_range.hpp>
 
@@ -64,7 +65,7 @@ TEST_CASE("species", "[string_conversion]") {
 	test_generic<Species>();
 }
 TEST_CASE("status", "[string_conversion]") {
-	test_generic<Statuses>();
+	test_generic<StatusName>();
 }
 TEST_CASE("type", "[string_conversion]") {
 	test_generic<Type>();
@@ -76,7 +77,7 @@ TEST_CASE("weather", "[string_conversion]") {
 TEST_CASE("pokemon", "[string_conversion]") {
 	constexpr auto generation = Generation::three;
 
-	auto make_pokemon = [](RegularMoves const moves, Statuses const status = Statuses::clear) {
+	auto make_pokemon = [](RegularMoves const moves, StatusName const status = StatusName::clear) {
 		auto pokemon = Pokemon<generation>(
 			Species::Mewtwo,
 			Level(100_bi),
@@ -114,7 +115,7 @@ TEST_CASE("pokemon", "[string_conversion]") {
 		moves.push_back(Move(generation, move));
 		check(make_pokemon(moves));
 	}
-	check(make_pokemon(moves, Statuses::burn));
+	check(make_pokemon(moves, StatusName::burn));
 }
 
 } // namespace

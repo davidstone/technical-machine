@@ -432,7 +432,7 @@ constexpr bool cannot_ko(Moves const move) {
 	return move == Moves::False_Swipe;
 }
 
-auto indirect_status_can_apply(Statuses const status, any_active_pokemon auto const target, Weather const weather) {
+auto indirect_status_can_apply(StatusName const status, any_active_pokemon auto const target, Weather const weather) {
 	return
 		is_clear(target.status()) and
 		!blocks_status(target.ability(), Ability::Honey_Gather, status, weather) and
@@ -443,7 +443,7 @@ auto yawn_can_apply(any_active_pokemon auto const target, Weather const weather,
 	return
 		!sleep_clause_activates and
 		!either_is_uproaring and
-		indirect_status_can_apply(Statuses::sleep, target, weather);
+		indirect_status_can_apply(StatusName::sleep, target, weather);
 }
 
 // A mutable reference to the currently active Pokemon
@@ -701,9 +701,9 @@ public:
 		this->m_flags.last_used_move.use_recharge_move();
 	}
 
-	auto set_status(Statuses const status_name, Weather const weather) const -> void {
-		BOUNDED_ASSERT_OR_ASSUME(status_name != Statuses::clear);
-		BOUNDED_ASSERT_OR_ASSUME(status_name != Statuses::rest);
+	auto set_status(StatusName const status_name, Weather const weather) const -> void {
+		BOUNDED_ASSERT_OR_ASSUME(status_name != StatusName::clear);
+		BOUNDED_ASSERT_OR_ASSUME(status_name != StatusName::rest);
 		set_status_impl(status_name, weather);
 	}
 
@@ -714,7 +714,7 @@ public:
 		if (generation >= Generation::three and is_sleeping(this->m_pokemon.status())) {
 			return;
 		}
-		if (blocks_status(this->ability(), this->ability(), Statuses::rest, weather)) {
+		if (blocks_status(this->ability(), this->ability(), StatusName::rest, weather)) {
 			return;
 		}
 		auto const active_hp = this->hp();
@@ -722,15 +722,15 @@ public:
 			return;
 		}
 		this->m_pokemon.set_hp(active_hp.max());
-		set_status_impl(Statuses::rest, weather);
+		set_status_impl(StatusName::rest, weather);
 	}
 
 	auto status_and_leech_seed_effects(OtherMutableActivePokemon<PokemonType> const other, Weather const weather, bool const uproar = false) const {
 		this->m_flags.status.status_and_leech_seed_effects(*this, other, weather, uproar);
 	}
 	auto clear_status() const -> void {
-		this->m_pokemon.set_status(Statuses::clear);
-		this->m_flags.status.set(Statuses::clear);
+		this->m_pokemon.set_status(StatusName::clear);
+		this->m_flags.status.set(StatusName::clear);
 	}
 	auto advance_status_from_move(bool const clear_status) & {
 		this->m_pokemon.advance_status_from_move(this->ability(), clear_status);
@@ -764,8 +764,8 @@ public:
 		// The exact switch is irrelevant
 		this->m_flags.last_used_move.successful_move(Moves::Switch0);
 		this->m_flags.types = PokemonTypes(generation, this->m_pokemon.species());
-		if (generation <= Generation::two and this->m_pokemon.status().name() == Statuses::toxic) {
-			this->m_pokemon.set_status(Statuses::poison);
+		if (generation <= Generation::two and this->m_pokemon.status().name() == StatusName::toxic) {
+			this->m_pokemon.set_status(StatusName::poison);
 		}
 		this->m_flags.status.set(this->m_pokemon.status().name());
 		if (this->item(weather) == Item::Berserk_Gene) {
@@ -855,7 +855,7 @@ public:
 			return;
 		}
 		if (yawn_can_apply(as_const(), weather, either_is_uproaring, sleep_clause_activates)) {
-			set_status(Statuses::sleep, weather);
+			set_status(StatusName::sleep, weather);
 		}
 	}
 
@@ -1036,13 +1036,13 @@ private:
 		}
 	}
 
-	auto set_status_impl(Statuses const status_name, Weather const weather) const -> void {
-		auto unconditional_set_status = [&](Statuses const unconditional_status) {
+	auto set_status_impl(StatusName const status_name, Weather const weather) const -> void {
+		auto unconditional_set_status = [&](StatusName const unconditional_status) {
 			this->m_pokemon.set_status(unconditional_status);
 			this->m_flags.status.set(unconditional_status);
 		};
 		if (clears_status(this->item(weather), status_name)) {
-			unconditional_set_status(Statuses::clear);
+			unconditional_set_status(StatusName::clear);
 			remove_item();
 		} else {
 			unconditional_set_status(status_name);

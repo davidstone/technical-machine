@@ -11,38 +11,14 @@
 #include <tm/generation.hpp>
 #include <tm/item.hpp>
 #include <tm/operators.hpp>
+#include <tm/status_name.hpp>
 
 #include <bounded/integer.hpp>
 #include <bounded/detail/variant/variant.hpp>
 
-#include <numeric_traits/min_max_value.hpp>
-
-#include <cstdint>
-
 namespace technicalmachine {
 
 struct Weather;
-
-enum class Statuses : uint8_t {
-	clear,
-	burn,
-	freeze,
-	paralysis,
-	poison,
-	toxic,
-	sleep,
-	rest
-};
-
-} // namespace technicalmachine
-
-template<>
-inline constexpr auto numeric_traits::min_value<technicalmachine::Statuses> = technicalmachine::Statuses();
-
-template<>
-inline constexpr auto numeric_traits::max_value<technicalmachine::Statuses> = technicalmachine::Statuses::rest;
-
-namespace technicalmachine {
 
 struct Status {
 private:
@@ -99,13 +75,13 @@ private:
 
 public:
 	constexpr Status() = default;
-	explicit Status(Statuses const status);
+	explicit Status(StatusName const status);
 
 	constexpr auto name() const {
-		return static_cast<Statuses>(m_state.index());
+		return static_cast<StatusName>(m_state.index());
 	}
 
-	Status & operator=(Statuses const status) & {
+	Status & operator=(StatusName const status) & {
 		*this = Status(status);
 		return *this;
 	}
@@ -140,64 +116,64 @@ private:
 
 
 constexpr auto is_clear(Status const status) {
-	return status.name() == Statuses::clear;
+	return status.name() == StatusName::clear;
 }
 constexpr auto is_frozen(Status const status) {
-	return status.name() == Statuses::freeze;
+	return status.name() == StatusName::freeze;
 }
 constexpr auto is_sleeping(Status const status) {
 	switch (status.name()) {
-		case Statuses::rest:
-		case Statuses::sleep:
+		case StatusName::rest:
+		case StatusName::sleep:
 			return true;
 		default:
 			return false;
 	}
 }
 constexpr auto weakens_physical_attacks(Status const status) {
-	return status.name() == Statuses::burn;
+	return status.name() == StatusName::burn;
 }
 constexpr auto boosts_smellingsalt(Status const status) {
-	return status.name() == Statuses::paralysis;
+	return status.name() == StatusName::paralysis;
 }
 
 auto lowers_speed(Status status, Ability ability) -> bool;
 auto boosts_facade(Status status) -> bool;
 
 
-bool blocks_status(Ability ability, Ability other_ability, Statuses status, Weather weather);
+bool blocks_status(Ability ability, Ability other_ability, StatusName status, Weather weather);
 
-constexpr auto blocks_status(Type const type, Statuses const status) {
+constexpr auto blocks_status(Type const type, StatusName const status) {
 	switch (status) {
-		case Statuses::burn:
+		case StatusName::burn:
 			return type == Type::Fire;
-		case Statuses::freeze:
+		case StatusName::freeze:
 			return type == Type::Ice;
-		case Statuses::poison:
-		case Statuses::toxic:
+		case StatusName::poison:
+		case StatusName::toxic:
 			return type == Type::Poison or type == Type::Steel;
 		default:
 			return false;
 	}
 }
 
-constexpr auto clears_status(Item const item, Statuses const status) -> bool {
+constexpr auto clears_status(Item const item, StatusName const status) -> bool {
 	switch (item) {
 		case Item::Ice_Berry:
 		case Item::Rawst_Berry:
-			return status == Statuses::burn;
+			return status == StatusName::burn;
 		case Item::Aspear_Berry:
 		case Item::Burnt_Berry:
-			return status == Statuses::freeze;
+			return status == StatusName::freeze;
 		case Item::Cheri_Berry:
 		case Item::PRZCureBerry:
-			return status == Statuses::paralysis;
+			return status == StatusName::paralysis;
 		case Item::Chesto_Berry:
 		case Item::Mint_Berry:
-			return status == Statuses::rest or status == Statuses::sleep;
+			return status == StatusName::rest or status == StatusName::sleep;
 		case Item::Pecha_Berry:
 		case Item::PSNCureBerry:
-			return status == Statuses::poison or status == Statuses::toxic;
+			return status == StatusName::poison or status == StatusName::toxic;
 		case Item::Lum_Berry:
 		case Item::MiracleBerry:
 			return true;

@@ -16,6 +16,7 @@
 #include <tm/generation_generic.hpp>
 #include <tm/known_team.hpp>
 #include <tm/seen_team.hpp>
+#include <tm/status_name.hpp>
 #include <tm/visible_hp.hpp>
 
 #include <bounded/integer.hpp>
@@ -105,7 +106,7 @@ struct ParsedSwitch {
 	Level level;
 	Gender gender;
 	VisibleHP hp;
-	Statuses status;
+	StatusName status;
 };
 auto parse_switch(InMessage message) -> ParsedSwitch;
 
