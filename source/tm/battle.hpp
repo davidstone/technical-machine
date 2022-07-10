@@ -36,7 +36,7 @@
 
 namespace technicalmachine {
 
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 
 template<Generation generation>
 struct Battle {
@@ -75,7 +75,7 @@ struct Battle {
 		});
 	}
 
-	void add_move(bool const is_ai, Moves const move_name) {
+	void add_move(bool const is_ai, MoveName const move_name) {
 		apply_to_teams(is_ai, [=](auto & team, auto const &) {
 			team.pokemon().add_move(Move(generation, move_name));
 		});
@@ -107,7 +107,7 @@ struct Battle {
 	}
 	// This assumes Species Clause is in effect. This does not perform any
 	// switching, it just adds them to the team.
-	auto find_or_add_pokemon(bool const is_ai, Species const species, containers::string nickname, Level const level, Gender const gender) -> Moves {
+	auto find_or_add_pokemon(bool const is_ai, Species const species, containers::string nickname, Level const level, Gender const gender) -> MoveName {
 		if (is_ai) {
 			return to_switch(find_required_index(m_ai.all_pokemon(), species));
 		} else {

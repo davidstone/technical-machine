@@ -14,7 +14,7 @@
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/generation.hpp>
 #include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 
@@ -140,7 +140,7 @@ auto checked_read(FileReader & reader) {
 		return containers::range_value_t<UsageStatsProbabilities::Map>{
 			species,
 			{
-				read_inner_probabilities<Moves>(reader, weight),
+				read_inner_probabilities<MoveName>(reader, weight),
 				UsageStatsProbabilities::Data<Item>(),
 				UsageStatsProbabilities::Data<Ability>()
 			}
@@ -183,7 +183,7 @@ auto UsageStats::make(std::istream && stream) -> UsageStats {
 			species,
 			bounded::construct<UsageStatsProbabilities::Inner>
 		);
-		for (auto const & move_name : read_map<Moves>(reader)) {
+		for (auto const & move_name : read_map<MoveName>(reader)) {
 			auto const move_weight = checked_read<double>(reader);
 			checked_insert(
 				for_this_species.moves,
@@ -198,7 +198,7 @@ auto UsageStats::make(std::istream && stream) -> UsageStats {
 				move_name,
 				bounded::value_to_function(static_cast<float>(weight))
 			);
-			auto moves = read_inner_probabilities<Moves>(reader, species_weight);
+			auto moves = read_inner_probabilities<MoveName>(reader, species_weight);
 			auto items = read_items();
 			auto abilities = read_abilities();
 			checked_insert(

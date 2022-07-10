@@ -44,7 +44,7 @@ namespace technicalmachine {
 
 auto has_hidden_power(any_pokemon auto const & pokemon) -> bool {
 	return containers::maybe_find_if(pokemon.regular_moves(), [](Move const move) {
-		return move.name() == Moves::Hidden_Power;
+		return move.name() == MoveName::Hidden_Power;
 	});
 }
 
@@ -111,7 +111,7 @@ struct SeenPokemon {
 		m_regular_moves.push_back(move);
 	}
 
-	constexpr auto reduce_pp(Moves const move_name, bool const embargo, bool const magic_room, bounded::bounded_integer auto const amount) & -> void {
+	constexpr auto reduce_pp(MoveName const move_name, bool const embargo, bool const magic_room, bounded::bounded_integer auto const amount) & -> void {
 		auto const maybe_move = containers::maybe_find(m_regular_moves, move_name);
 		if (!maybe_move) {
 			return;

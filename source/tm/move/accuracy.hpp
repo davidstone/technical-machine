@@ -11,11 +11,11 @@
 
 namespace technicalmachine {
 enum class Generation : std::uint8_t;
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 struct Weather;
 
 // A value that is not present indicates that the move cannot miss.
 using BaseAccuracy = bounded::optional<bounded::integer<30, 100>>;
-auto accuracy(Generation generation, Moves move, Weather const weather, bool weather_blocked, bool user_is_poison) -> BaseAccuracy;
+auto accuracy(Generation generation, MoveName move, Weather const weather, bool weather_blocked, bool user_is_poison) -> BaseAccuracy;
 
 } // namespace technicalmachine

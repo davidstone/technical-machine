@@ -10,7 +10,7 @@
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
 #include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 

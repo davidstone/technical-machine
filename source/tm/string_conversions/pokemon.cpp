@@ -11,7 +11,7 @@
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 #include <tm/string_conversions/status_name.hpp>
@@ -278,7 +278,7 @@ auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 
 	auto moves = RegularMoves();
 	while (!buffer.remainder().empty()) {
-		auto const move_name = typed_pop<Moves>(buffer, moves_separator);
+		auto const move_name = typed_pop<MoveName>(buffer, moves_separator);
 		containers::push_back(moves, Move(generation, move_name));
 	}
 

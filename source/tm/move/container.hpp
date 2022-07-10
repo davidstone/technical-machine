@@ -1,4 +1,4 @@
-// Moves specific to one Pokemon and shared moves (Struggle and switches)
+// MoveName specific to one Pokemon and shared moves (Struggle and switches)
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at

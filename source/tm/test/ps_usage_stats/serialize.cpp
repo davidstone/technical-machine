@@ -34,7 +34,7 @@ auto make_smallest_team() -> GenerationGeneric<Team> {
 				OldGenEVs(EV(0_bi), EV(0_bi), EV(0_bi), EV(0_bi), EV(0_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Cut)
+				Move(generation, MoveName::Cut)
 			})
 		}
 	}));
@@ -55,8 +55,8 @@ auto make_team_with_two_pokemon() -> GenerationGeneric<Team> {
 				OldGenEVs(EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Body_Slam),
-				Move(generation, Moves::Earthquake)
+				Move(generation, MoveName::Body_Slam),
+				Move(generation, MoveName::Earthquake)
 			})
 		},
 		{
@@ -71,8 +71,8 @@ auto make_team_with_two_pokemon() -> GenerationGeneric<Team> {
 				OldGenEVs(EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Thunderbolt),
-				Move(generation, Moves::Thunder)
+				Move(generation, MoveName::Thunderbolt),
+				Move(generation, MoveName::Thunder)
 			})
 		}
 	}));
@@ -93,8 +93,8 @@ auto make_second_team() -> GenerationGeneric<Team> {
 				OldGenEVs(EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Body_Slam),
-				Move(generation, Moves::Earthquake)
+				Move(generation, MoveName::Body_Slam),
+				Move(generation, MoveName::Earthquake)
 			})
 		}
 	}));
@@ -144,12 +144,12 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 					species_bytes(Species::Tauros),
 						weight_bytes(1.0),
 						count_bytes(2),
-							move_bytes(Moves::Body_Slam),
+							move_bytes(MoveName::Body_Slam),
 								weight_bytes(1.0),
-							move_bytes(Moves::Earthquake),
+							move_bytes(MoveName::Earthquake),
 								weight_bytes(1.0),
-				count_bytes(2), // Moves
-					move_bytes(Moves::Thunderbolt),
+				count_bytes(2), // MoveName
+					move_bytes(MoveName::Thunderbolt),
 						weight_bytes(1.0),
 						count_bytes(1),
 							speed_bytes(278),
@@ -158,14 +158,14 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 							species_bytes(Species::Tauros),
 								weight_bytes(1.0),
 								count_bytes(2),
-									move_bytes(Moves::Body_Slam),
+									move_bytes(MoveName::Body_Slam),
 										weight_bytes(1.0),
-									move_bytes(Moves::Earthquake),
+									move_bytes(MoveName::Earthquake),
 										weight_bytes(1.0),
 						count_bytes(1), // Other moves
-							move_bytes(Moves::Thunder),
+							move_bytes(MoveName::Thunder),
 								weight_bytes(1.0),
-					move_bytes(Moves::Thunder),
+					move_bytes(MoveName::Thunder),
 						weight_bytes(1.0),
 						count_bytes(1),
 							speed_bytes(278),
@@ -173,13 +173,13 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 						count_bytes(1), // Teammates
 							species_bytes(Species::Tauros),
 								weight_bytes(1.0),
-								count_bytes(2), // Moves
-									move_bytes(Moves::Body_Slam),
+								count_bytes(2), // MoveName
+									move_bytes(MoveName::Body_Slam),
 										weight_bytes(1.0),
-									move_bytes(Moves::Earthquake),
+									move_bytes(MoveName::Earthquake),
 										weight_bytes(1.0),
 							count_bytes(1), // Other moves
-								move_bytes(Moves::Thunderbolt),
+								move_bytes(MoveName::Thunderbolt),
 									weight_bytes(1.0),
 			species_bytes(Species::Tauros),
 				weight_bytes(1.0),
@@ -189,13 +189,13 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 				count_bytes(1), // Teammates
 					species_bytes(Species::Pikachu),
 						weight_bytes(1.0),
-						count_bytes(2), // Moves
-							move_bytes(Moves::Thunderbolt),
+						count_bytes(2), // MoveName
+							move_bytes(MoveName::Thunderbolt),
 								weight_bytes(1.0),
-							move_bytes(Moves::Thunder),
+							move_bytes(MoveName::Thunder),
 								weight_bytes(1.0),
-				count_bytes(2), // Moves
-					move_bytes(Moves::Body_Slam),
+				count_bytes(2), // MoveName
+					move_bytes(MoveName::Body_Slam),
 						weight_bytes(1.0),
 						count_bytes(1),
 							speed_bytes(318),
@@ -203,15 +203,15 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 						count_bytes(1), // Teammates
 							species_bytes(Species::Pikachu),
 								weight_bytes(1.0),
-								count_bytes(2), // Moves
-									move_bytes(Moves::Thunderbolt),
+								count_bytes(2), // MoveName
+									move_bytes(MoveName::Thunderbolt),
 										weight_bytes(1.0),
-									move_bytes(Moves::Thunder),
+									move_bytes(MoveName::Thunder),
 										weight_bytes(1.0),
 						count_bytes(1),
-							move_bytes(Moves::Earthquake),
+							move_bytes(MoveName::Earthquake),
 								weight_bytes(1.0),
-					move_bytes(Moves::Earthquake),
+					move_bytes(MoveName::Earthquake),
 						weight_bytes(1.0),
 						count_bytes(1),
 							speed_bytes(318),
@@ -220,12 +220,12 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 							species_bytes(Species::Pikachu),
 								weight_bytes(1.0),
 								count_bytes(2),
-									move_bytes(Moves::Thunderbolt),
+									move_bytes(MoveName::Thunderbolt),
 										weight_bytes(1.0),
-									move_bytes(Moves::Thunder),
+									move_bytes(MoveName::Thunder),
 										weight_bytes(1.0),
 								count_bytes(1),
-									move_bytes(Moves::Body_Slam),
+									move_bytes(MoveName::Body_Slam),
 									weight_bytes(1.0)
 	);
 	CHECK(string_to_bytes(stream.str()) == expected);
@@ -257,23 +257,23 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 						weight_bytes(1.0),
 				count_bytes(0), // Teammates
 				count_bytes(2),
-					move_bytes(Moves::Body_Slam),
+					move_bytes(MoveName::Body_Slam),
 						weight_bytes(1.0),
 						count_bytes(1),
 							speed_bytes(318),
 								weight_bytes(1.0),
 						count_bytes(0), // Teammates
 						count_bytes(1),
-							move_bytes(Moves::Earthquake),
+							move_bytes(MoveName::Earthquake),
 								weight_bytes(1.0),
-					move_bytes(Moves::Earthquake),
+					move_bytes(MoveName::Earthquake),
 						weight_bytes(1.0),
 						count_bytes(1),
 							speed_bytes(318),
 								weight_bytes(1.0),
 						count_bytes(0), // Teammates
 						count_bytes(1),
-							move_bytes(Moves::Body_Slam),
+							move_bytes(MoveName::Body_Slam),
 								weight_bytes(1.0),
 			species_bytes(Species::Mew),
 				weight_bytes(0.5),
@@ -282,13 +282,13 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 						weight_bytes(1.0),
 				count_bytes(0), // Teammates
 				count_bytes(1),
-					move_bytes(Moves::Cut),
+					move_bytes(MoveName::Cut),
 						weight_bytes(1.0),
 						count_bytes(1),
 							speed_bytes(7),
 								weight_bytes(1.0),
 						count_bytes(0), // Teammates
-						count_bytes(0) // Moves
+						count_bytes(0) // MoveName
 	);
 	CHECK(string_to_bytes(stream.str()) == expected);
 }

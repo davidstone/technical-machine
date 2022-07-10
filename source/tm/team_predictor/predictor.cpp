@@ -13,7 +13,7 @@
 #include <tm/string_conversions/gender.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/nature.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/species.hpp>
 #include <tm/string_conversions/team.hpp>
 
@@ -110,9 +110,9 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) -> SeenTeam<g
 			}
 		}();
 
-		auto moves = containers::static_vector<Moves, max_moves_per_pokemon>();
+		auto moves = containers::static_vector<MoveName, max_moves_per_pokemon>();
 		for (auto const move_index : containers::integer_range(max_moves_per_pokemon)) {
-			auto const move = get_expected<Moves>(buffer.pop(), "move", bounded::to_string(index) + "_" + bounded::to_string(move_index));
+			auto const move = get_expected<MoveName>(buffer.pop(), "move", bounded::to_string(index) + "_" + bounded::to_string(move_index));
 			if (move) {
 				containers::push_back(moves, *move);
 			}

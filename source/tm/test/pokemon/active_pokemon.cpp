@@ -25,7 +25,7 @@ TEST_CASE("Chesto Berry awakens from Rest", "[active_pokemon]") {
 		Item::Chesto_Berry,
 		Ability::Blaze,
 		default_combined_stats<generation>,
-		regular_moves(Moves::Rest)
+		regular_moves(MoveName::Rest)
 	);
 	pokemon.set_hp(1_bi);
 	auto flags = ActivePokemonFlags<generation>();
@@ -45,7 +45,7 @@ TEST_CASE("Chesto Berry awakens after Rest cures status", "[active_pokemon]") {
 		Item::Chesto_Berry,
 		Ability::Blaze,
 		default_combined_stats<generation>,
-		regular_moves(Moves::Rest)
+		regular_moves(MoveName::Rest)
 	);
 	pokemon.set_hp(1_bi);
 	auto flags = ActivePokemonFlags<generation>();

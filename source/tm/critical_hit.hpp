@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
 #include <tm/pokemon/any_pokemon.hpp>
@@ -16,10 +16,10 @@
 
 namespace technicalmachine {
 
-auto critical_hit_probability(any_active_pokemon auto attacker, Moves, Ability defender_ability, Weather) -> double;
+auto critical_hit_probability(any_active_pokemon auto attacker, MoveName, Ability defender_ability, Weather) -> double;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto critical_hit_probability<ActivePokemon<generation>>(ActivePokemon<generation> attacker, Moves, Ability defender_ability, Weather) -> double
+	extern template auto critical_hit_probability<ActivePokemon<generation>>(ActivePokemon<generation> attacker, MoveName, Ability defender_ability, Weather) -> double
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

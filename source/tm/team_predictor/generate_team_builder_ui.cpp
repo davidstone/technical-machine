@@ -7,7 +7,7 @@
 
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/species.hpp>
 #include <tm/stat/nature.hpp>
@@ -16,7 +16,7 @@
 #include <tm/string_conversions/generation.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/nature.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/species.hpp>
 #include <tm/ability.hpp>
 #include <tm/buffer_view.hpp>
@@ -111,7 +111,7 @@ void generate_team_builder_ui(std::ostream & output, std::string_view const quer
 				output,
 				"move",
 				index_str + "_" + bounded::to_string(move_index),
-				containers::filter(containers::enum_range<Moves>(), is_regular),
+				containers::filter(containers::enum_range<MoveName>(), is_regular),
 				next_default()
 			);
 		}

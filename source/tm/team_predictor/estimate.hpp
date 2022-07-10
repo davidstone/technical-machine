@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/species.hpp>
 
@@ -25,7 +25,7 @@ struct UsageStats;
 struct Estimate {
 	struct PerSpecies {
 		double usage;
-		containers::flat_map<Moves, double> moves;
+		containers::flat_map<MoveName, double> moves;
 		containers::flat_map<Item, double> items;
 		containers::flat_map<Ability, double> abilities;
 	};
@@ -33,15 +33,15 @@ struct Estimate {
 
 	explicit Estimate(UsageStats const & usage_stats);
 	auto update(UsageStats const &, Species) -> void;
-	auto update(UsageStats const &, Species, Moves) -> void;
+	auto update(UsageStats const &, Species, MoveName) -> void;
 	auto update(UsageStats const &, Species, Item) -> void;
 	auto update(UsageStats const &, Species, Ability) -> void;
 
 	auto most_likely_species() const -> bounded::optional<Species>;
 	auto random_species(std::mt19937 & random_engine) const -> bounded::optional<Species>;
 
-	auto most_likely_move(Species) const -> bounded::optional<Moves>;
-	auto random_move(std::mt19937 & random_engine, Species) const -> bounded::optional<Moves>;
+	auto most_likely_move(Species) const -> bounded::optional<MoveName>;
+	auto random_move(std::mt19937 & random_engine, Species) const -> bounded::optional<MoveName>;
 
 	auto most_likely_item(Species) const -> bounded::optional<Item>;
 	auto random_item(std::mt19937 & random_engine, Species) const -> bounded::optional<Item>;
@@ -53,7 +53,7 @@ struct Estimate {
 		auto const per_species = containers::lookup(m_estimate, species);
 		return per_species ? per_species->usage : 0.0;
 	}
-	auto probability(Species const species, Moves const move) const -> double {
+	auto probability(Species const species, MoveName const move) const -> double {
 		auto const per_species = containers::lookup(m_estimate, species);
 		if (!per_species) {
 			return 0.0;

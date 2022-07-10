@@ -11,10 +11,10 @@
 
 namespace technicalmachine {
 enum class Generation : std::uint8_t;
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 
 struct Priority {
-	explicit Priority(Generation generation, Moves move);
+	explicit Priority(Generation generation, MoveName move);
 	friend auto operator<=>(Priority, Priority) = default;
 private:
 	bounded::integer<-6, 6> priority;

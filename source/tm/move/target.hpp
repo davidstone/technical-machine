@@ -10,7 +10,7 @@
 #include <cstdint>
 
 namespace technicalmachine {
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 
 enum class Target {
 	user,
@@ -30,9 +30,9 @@ enum class Target {
 	field,
 };
 
-auto move_target(Generation generation, Moves move) -> Target;
+auto move_target(Generation generation, MoveName move) -> Target;
 
-inline auto move_targets_foe(Generation const generation, Moves const move) {
+inline auto move_targets_foe(Generation const generation, MoveName const move) {
 	switch (move_target(generation, move)) {
 		case Target::user:
 		case Target::adjacent_ally:

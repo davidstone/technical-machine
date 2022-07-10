@@ -6,33 +6,33 @@
 
 #include <tm/move/is_switch.hpp>
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <bounded/assert.hpp>
 
 namespace technicalmachine {
 
-auto is_switch(Moves const move) -> bool {
+auto is_switch(MoveName const move) -> bool {
 	switch (move) {
-		case Moves::Switch0:
-		case Moves::Switch1:
-		case Moves::Switch2:
-		case Moves::Switch3:
-		case Moves::Switch4:
-		case Moves::Switch5:
+		case MoveName::Switch0:
+		case MoveName::Switch1:
+		case MoveName::Switch2:
+		case MoveName::Switch3:
+		case MoveName::Switch4:
+		case MoveName::Switch5:
 			return true;
 		default:
 			return false;
 	}
 }
 
-auto to_switch(TeamIndex const replacement) -> Moves {
-	return static_cast<Moves>(replacement + bounded::constant<Moves::Switch0>);
+auto to_switch(TeamIndex const replacement) -> MoveName {
+	return static_cast<MoveName>(replacement + bounded::constant<MoveName::Switch0>);
 }
 
-auto to_replacement(Moves const move) -> TeamIndex {
+auto to_replacement(MoveName const move) -> TeamIndex {
 	BOUNDED_ASSERT(is_switch(move));
-	return bounded::assume_in_range<TeamIndex>(bounded::integer(move) - bounded::constant<Moves::Switch0>);
+	return bounded::assume_in_range<TeamIndex>(bounded::integer(move) - bounded::constant<MoveName::Switch0>);
 }
 
 } // namespace technicalmachine

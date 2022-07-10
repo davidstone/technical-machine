@@ -45,7 +45,7 @@ constexpr auto do_update(Estimate::Map & estimate, UsageStatsProbabilities const
 		update_per_species(
 			per_species.mapped.moves,
 			species_estimate->moves,
-			[=](Moves const move) { return base_per_species ? base_per_species->moves(move) : 0.0F; }
+			[=](MoveName const move) { return base_per_species ? base_per_species->moves(move) : 0.0F; }
 		);
 		update_per_species(
 			per_species.mapped.items,
@@ -70,7 +70,7 @@ constexpr auto make_per_species(UsageStatsProbabilities::Inner const & probabili
 	};
 	return Estimate::PerSpecies{
 		containers::sum(containers::transform(probabilities.moves.map(), [](auto const & element) { return static_cast<double>(element.mapped); })),
-		containers::flat_map<Moves, double>(containers::transform(probabilities.moves.map(), transformer)),
+		containers::flat_map<MoveName, double>(containers::transform(probabilities.moves.map(), transformer)),
 		containers::flat_map<Item, double>(containers::transform(probabilities.items.map(), transformer)),
 		containers::flat_map<Ability, double>(containers::transform(probabilities.abilities.map(), transformer))
 	};
@@ -106,7 +106,7 @@ auto Estimate::update(UsageStats const & usage_stats, Species const species) -> 
 	}
 }
 
-auto Estimate::update(UsageStats const & usage_stats, Species const species, Moves const move) -> void {
+auto Estimate::update(UsageStats const & usage_stats, Species const species, MoveName const move) -> void {
 	if (auto const probabilities = usage_stats.assuming(species, move)) {
 		auto const base_probabilities = usage_stats.assuming(species);
 		BOUNDED_ASSERT(base_probabilities);
@@ -158,7 +158,7 @@ auto Estimate::most_likely_species() const -> bounded::optional<Species> {
 	return get_most_likely(containers::transform(m_estimate, per_species_to_usage));
 }
 
-auto Estimate::most_likely_move(Species const species) const -> bounded::optional<Moves> {
+auto Estimate::most_likely_move(Species const species) const -> bounded::optional<MoveName> {
 	auto const ptr = containers::lookup(m_estimate, species);
 	if (!ptr) {
 		return bounded::none;
@@ -186,12 +186,12 @@ auto Estimate::random_species(std::mt19937 & random_engine) const -> bounded::op
 	return select_random_by_weight<Species>(m_estimate, random_engine, per_species_to_usage);
 }
 
-auto Estimate::random_move(std::mt19937 & random_engine, Species const species) const -> bounded::optional<Moves> {
+auto Estimate::random_move(std::mt19937 & random_engine, Species const species) const -> bounded::optional<MoveName> {
 	auto const element = containers::lookup(m_estimate, species);
 	if (!element) {
 		return bounded::none;
 	}
-	return select_random_by_weight<Moves>(element->moves, random_engine, containers::get_mapped);
+	return select_random_by_weight<MoveName>(element->moves, random_engine, containers::get_mapped);
 }
 
 auto Estimate::random_item(std::mt19937 & random_engine, Species const species) const -> bounded::optional<Item> {

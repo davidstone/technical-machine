@@ -12,7 +12,7 @@
 
 #include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/used_move.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
@@ -68,7 +68,7 @@ struct MoveState {
 		return BOUNDED_CONDITIONAL(m_move, m_move->executed, bounded::none);
 	}
 
-	void use_move(Party const party, Moves const move);
+	void use_move(Party const party, MoveName const move);
 
 	bool move_damages_self(Party const party) const;
 
@@ -218,8 +218,8 @@ private:
 	auto apply_contact_ability_status(Party, Ability, StatusName) -> void;
 
 	struct UsedMoveBuilder {
-		Moves selected;
-		Moves executed = selected;
+		MoveName selected;
+		MoveName executed = selected;
 		bool critical_hit = false;
 		bool miss = false;
 		ContactAbilityEffect contact_ability_effect = ContactAbilityEffect::nothing;

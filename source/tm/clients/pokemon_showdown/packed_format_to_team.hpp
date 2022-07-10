@@ -11,7 +11,7 @@
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
 #include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 
@@ -55,7 +55,7 @@ constexpr auto parse_moves(std::string_view const str, Generation const generati
 	auto buffer = DelimitedBufferView(str, ',');
 	auto moves = RegularMoves();
 	while (!buffer.remainder().empty()) {
-		moves.push_back(Move(generation, from_string<Moves>(buffer.pop())));
+		moves.push_back(Move(generation, from_string<MoveName>(buffer.pop())));
 	}
 	return moves;
 }

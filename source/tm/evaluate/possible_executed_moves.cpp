@@ -13,24 +13,24 @@ namespace {
 
 constexpr auto can_be_selected_by_sleep_talk(KnownMove const move) {
 	switch (move.name) {
-		case Moves::Assist:
-		case Moves::Bide:
-		case Moves::Chatter:
-		case Moves::Copycat:
-		case Moves::Focus_Punch:
-		case Moves::Me_First:
-		case Moves::Metronome:
-		case Moves::Mirror_Move:
-		case Moves::Sleep_Talk:
-		case Moves::Uproar:
-		case Moves::Blast_Burn:
-		case Moves::Frenzy_Plant:
-		case Moves::Giga_Impact:
-		case Moves::Hydro_Cannon:
-		case Moves::Hyper_Beam:
-		case Moves::Roar_of_Time:
-		case Moves::Rock_Wrecker:
-		case Moves::Solar_Beam:
+		case MoveName::Assist:
+		case MoveName::Bide:
+		case MoveName::Chatter:
+		case MoveName::Copycat:
+		case MoveName::Focus_Punch:
+		case MoveName::Me_First:
+		case MoveName::Metronome:
+		case MoveName::Mirror_Move:
+		case MoveName::Sleep_Talk:
+		case MoveName::Uproar:
+		case MoveName::Blast_Burn:
+		case MoveName::Frenzy_Plant:
+		case MoveName::Giga_Impact:
+		case MoveName::Hydro_Cannon:
+		case MoveName::Hyper_Beam:
+		case MoveName::Roar_of_Time:
+		case MoveName::Rock_Wrecker:
+		case MoveName::Solar_Beam:
 			return false;
 		default:
 			return true;
@@ -40,9 +40,9 @@ constexpr auto can_be_selected_by_sleep_talk(KnownMove const move) {
 } // namespace
 
 template<any_team UserTeam>
-auto possible_executed_moves(Moves const selected_move, UserTeam const & user_team) -> PossibleExecutedMoves {
+auto possible_executed_moves(MoveName const selected_move, UserTeam const & user_team) -> PossibleExecutedMoves {
 	auto const user_pokemon = user_team.pokemon();
-	auto type = [=](Moves const move) {
+	auto type = [=](MoveName const move) {
 		return get_type(generation_from<UserTeam>, move, get_hidden_power_type(user_pokemon));
 	};
 	auto known = [=](Move const move) {
@@ -51,7 +51,7 @@ auto possible_executed_moves(Moves const selected_move, UserTeam const & user_te
 	using containers::filter;
 	using containers::transform;
 	switch (selected_move) {
-		case Moves::Sleep_Talk:
+		case MoveName::Sleep_Talk:
 			return is_sleeping(user_pokemon.status()) ?
 				PossibleExecutedMoves(filter(transform(user_pokemon.regular_moves(), known), can_be_selected_by_sleep_talk)) :
 				PossibleExecutedMoves({KnownMove{selected_move, type(selected_move)}});
@@ -61,7 +61,7 @@ auto possible_executed_moves(Moves const selected_move, UserTeam const & user_te
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto possible_executed_moves(Moves const selected_move, Team<generation> const & user_team) -> PossibleExecutedMoves
+	template auto possible_executed_moves(MoveName const selected_move, Team<generation> const & user_team) -> PossibleExecutedMoves
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

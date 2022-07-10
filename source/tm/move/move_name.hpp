@@ -1,4 +1,4 @@
-// Moves enum
+// MoveName enum
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -14,7 +14,7 @@
 
 namespace technicalmachine {
 
-enum class Moves : uint16_t {
+enum class MoveName : uint16_t {
 	// Weird moves
 	Pass,
 	Switch0,
@@ -841,7 +841,7 @@ enum class Moves : uint16_t {
 } // namespace technicalmachine
 
 template<>
-inline constexpr auto numeric_traits::min_value<technicalmachine::Moves> = technicalmachine::Moves();
+inline constexpr auto numeric_traits::min_value<technicalmachine::MoveName> = technicalmachine::MoveName();
 
 template<>
-inline constexpr auto numeric_traits::max_value<technicalmachine::Moves> = technicalmachine::Moves::Eerie_Spell;
+inline constexpr auto numeric_traits::max_value<technicalmachine::MoveName> = technicalmachine::MoveName::Eerie_Spell;

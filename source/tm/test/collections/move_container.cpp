@@ -6,10 +6,10 @@
 
 #include <tm/move/container.hpp>
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/is_switch.hpp>
 
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 
 #include <tm/generation.hpp>
 
@@ -33,9 +33,9 @@ using namespace std::string_view_literals;
 constexpr auto generation = Generation::four;
 
 auto create_shared_moves(TeamSize const team_size) {
-	auto shared = containers::static_vector<Moves, number_of_weird_moves + numeric_traits::max_value<TeamSize>>({
-		Moves::Pass,
-		Moves::Struggle,
+	auto shared = containers::static_vector<MoveName, number_of_weird_moves + numeric_traits::max_value<TeamSize>>({
+		MoveName::Pass,
+		MoveName::Struggle,
 	});
 	if (team_size != 1_bi) {
 		for (auto const n : containers::integer_range(team_size)) {
@@ -54,10 +54,10 @@ TEST_CASE("MoveContainer", "[MoveContainer]") {
 	};
 	CHECK(containers::size(make_move_container()) == shared_moves_size);
 	constexpr auto moves = containers::array{
-		Moves::Absorb,
-		Moves::Tackle,
-		Moves::Quick_Attack,
-		Moves::Body_Slam
+		MoveName::Absorb,
+		MoveName::Tackle,
+		MoveName::Quick_Attack,
+		MoveName::Body_Slam
 	};
 	for (auto const n : containers::integer_range(containers::size(moves))) {
 		regular.push_back(Move(generation, moves[n]));

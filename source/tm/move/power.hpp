@@ -14,7 +14,7 @@
 #include <bounded/integer.hpp>
 
 namespace technicalmachine {
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 
 // If a damaging move does not have power (for instance, OHKO moves and
 // fixed-damage moves), the behavior of this function is undefined. If

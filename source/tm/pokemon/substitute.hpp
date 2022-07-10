@@ -16,7 +16,7 @@
 
 namespace technicalmachine {
 enum class Generation : std::uint8_t;
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 using namespace bounded::literal;
 
 struct Substitute {
@@ -64,6 +64,6 @@ private:
 };
 
 // This is for side-effects only
-auto substitute_interaction(Generation, Moves) -> Substitute::Interaction;
+auto substitute_interaction(Generation, MoveName) -> Substitute::Interaction;
 
 } // namespace technicalmachine

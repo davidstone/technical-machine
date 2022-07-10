@@ -7,7 +7,7 @@
 #include <tm/evaluate/expectiminimax.hpp>
 
 #include <tm/move/call_move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/side_effects.hpp>
 
 #include <tm/pokemon/species.hpp>
@@ -85,7 +85,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 			Item::Leftovers,
 			Ability::Volt_Absorb,
 			default_combined_stats<generation>,
-			regular_moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
+			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
 		)
 	}, true);
 	team1.pokemon().switch_in(weather);
@@ -99,7 +99,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 			Item::Leftovers,
 			Ability::Intimidate,
 			default_combined_stats<generation>,
-			regular_moves(Moves::Dragon_Dance, Moves::Waterfall, Moves::Stone_Edge, Moves::Taunt)
+			regular_moves(MoveName::Dragon_Dance, MoveName::Waterfall, MoveName::Stone_Edge, MoveName::Taunt)
 		)
 	});
 	team2.pokemon().switch_in(weather);
@@ -107,7 +107,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 
 	{
 		auto const best_move = test_expectiminimax(team1, team2, weather, evaluate, depth);
-		CHECK(best_move.name == Moves::Thunderbolt);
+		CHECK(best_move.name == MoveName::Thunderbolt);
 		CHECK(best_move.score == victory<generation>);
 	}
 	
@@ -119,7 +119,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 			Item::Lum_Berry,
 			Ability::Wonder_Guard,
 			default_combined_stats<generation>,
-			regular_moves(Moves::Swords_Dance, Moves::X_Scissor, Moves::Shadow_Sneak, Moves::Will_O_Wisp)
+			regular_moves(MoveName::Swords_Dance, MoveName::X_Scissor, MoveName::Shadow_Sneak, MoveName::Will_O_Wisp)
 		)
 	});
 	team3.pokemon().switch_in(weather);
@@ -127,7 +127,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	
 	{
 		auto const best_move = test_expectiminimax(team1, team3, weather, evaluate, depth);
-		CHECK(best_move.name == Moves::Shadow_Ball);
+		CHECK(best_move.name == MoveName::Shadow_Ball);
 		CHECK(best_move.score == victory<generation>);
 	}
 }
@@ -161,7 +161,7 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 					EV(0_bi)
 				)
 			},
-			regular_moves(Moves::Thunderbolt, Moves::Charm, Moves::Thunder, Moves::Shadow_Ball)
+			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
 		)
 	}, true);
 	attacker.pokemon().switch_in(weather);
@@ -175,14 +175,14 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 			Item::Leftovers,
 			Ability::Torrent,
 			default_combined_stats<generation>,
-			regular_moves(Moves::Surf, Moves::Ice_Beam)
+			regular_moves(MoveName::Surf, MoveName::Ice_Beam)
 		)
 	});
 	defender.pokemon().switch_in(weather);
 	defender.reset_start_of_turn();
 
 	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
-	CHECK(best_move.name == Moves::Shadow_Ball);
+	CHECK(best_move.name == MoveName::Shadow_Ball);
 }
 
 TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
@@ -214,7 +214,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 					EV(0_bi)
 				)
 			},
-			regular_moves(Moves::Fire_Punch, Moves::Belly_Drum, Moves::Earthquake, Moves::Double_Edge)
+			regular_moves(MoveName::Fire_Punch, MoveName::Belly_Drum, MoveName::Earthquake, MoveName::Double_Edge)
 		)
 	}, true);
 	attacker.pokemon().switch_in(weather);
@@ -239,14 +239,14 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 					EV(0_bi)
 				)
 			},
-			regular_moves(Moves::Soft_Boiled)
+			regular_moves(MoveName::Soft_Boiled)
 		)
 	});
 	defender.pokemon().switch_in(weather);
 	defender.reset_start_of_turn();
 
 	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
-	CHECK(best_move.name == Moves::Belly_Drum);
+	CHECK(best_move.name == MoveName::Belly_Drum);
 	CHECK(best_move.score == victory<generation>);
 }
 
@@ -279,7 +279,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 					EV(0_bi)
 				)
 			},
-			regular_moves(Moves::Curse, Moves::Crunch)
+			regular_moves(MoveName::Curse, MoveName::Crunch)
 		)
 	}, true);
 	attacker.pokemon().switch_in(weather);
@@ -307,14 +307,14 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 					EV(0_bi)
 				)
 			},
-			regular_moves(Moves::Counter)
+			regular_moves(MoveName::Counter)
 		)
 	});
 	defender.pokemon().switch_in(weather);
 	defender.reset_start_of_turn();
 
 	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
-	CHECK(best_move.name == Moves::Curse);
+	CHECK(best_move.name == MoveName::Curse);
 	CHECK(best_move.score == victory<generation>);
 }
 
@@ -337,7 +337,7 @@ TEST_CASE("expectiminimax Baton Pass", "[expectiminimax]") {
 			Item::Leftovers,
 			Ability::Own_Tempo,
 			default_combined_stats<generation>,
-			regular_moves(Moves::Baton_Pass, Moves::Belly_Drum)
+			regular_moves(MoveName::Baton_Pass, MoveName::Belly_Drum)
 		),
 		Pokemon<generation>(
 			Species::Alakazam,
@@ -357,7 +357,7 @@ TEST_CASE("expectiminimax Baton Pass", "[expectiminimax]") {
 					EV(0_bi)
 				)
 			},
-			regular_moves(Moves::Psycho_Cut, Moves::Recover)
+			regular_moves(MoveName::Psycho_Cut, MoveName::Recover)
 		)
 	}, true);
 	attacker.pokemon().switch_in(weather);
@@ -382,7 +382,7 @@ TEST_CASE("expectiminimax Baton Pass", "[expectiminimax]") {
 					EV(0_bi)
 				)
 			},
-			regular_moves(Moves::Shadow_Ball)
+			regular_moves(MoveName::Shadow_Ball)
 		),
 		Pokemon<generation>(
 			Species::Misdreavus,
@@ -402,7 +402,7 @@ TEST_CASE("expectiminimax Baton Pass", "[expectiminimax]") {
 					EV(0_bi)
 				)
 			},
-			regular_moves(Moves::Shadow_Ball)
+			regular_moves(MoveName::Shadow_Ball)
 		)
 	});
 	defender.pokemon().switch_in(weather);
@@ -410,7 +410,7 @@ TEST_CASE("expectiminimax Baton Pass", "[expectiminimax]") {
 	defender.reset_start_of_turn();
 
 	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
-	CHECK(best_move.name == Moves::Belly_Drum);
+	CHECK(best_move.name == MoveName::Belly_Drum);
 	CHECK(best_move.score == victory<generation>);
 }
 
@@ -433,7 +433,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 			Item::Leftovers,
 			Ability::Swift_Swim,
 			default_combined_stats<generation>,
-			regular_moves(Moves::Tackle)
+			regular_moves(MoveName::Tackle)
 		),
 		Pokemon<generation>(
 			Species::Slugma,
@@ -442,7 +442,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 			Item::Choice_Specs,
 			Ability::Magma_Armor,
 			default_combined_stats<generation>,
-			regular_moves(Moves::Flamethrower, Moves::Earth_Power)
+			regular_moves(MoveName::Flamethrower, MoveName::Earth_Power)
 		),
 		Pokemon<generation>(
 			Species::Zapdos,
@@ -455,7 +455,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 				max_dvs_or_ivs<generation>,
 				default_evs<generation>
 			},
-			regular_moves(Moves::Thunderbolt)
+			regular_moves(MoveName::Thunderbolt)
 		)
 	}, true);
 	attacker.pokemon().switch_in(weather);
@@ -470,7 +470,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 			Item::Leftovers,
 			Ability::Pressure,
 			default_combined_stats<generation>,
-			regular_moves(Moves::Calm_Mind, Moves::Surf, Moves::Ice_Beam)
+			regular_moves(MoveName::Calm_Mind, MoveName::Surf, MoveName::Ice_Beam)
 		)
 	});
 	defender.pokemon().switch_in(weather);
@@ -478,7 +478,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 	defender.reset_start_of_turn();
 
 	{
-		constexpr auto move_name = Moves::Surf;
+		constexpr auto move_name = MoveName::Surf;
 		auto const side_effects = possible_side_effects(move_name, defender.pokemon().as_const(), attacker, weather);
 		REQUIRE(containers::size(side_effects) == 1_bi);
 		auto const & side_effect = containers::front(side_effects);
@@ -497,7 +497,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 	}
 
 	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
-	CHECK(best_move.name == Moves::Switch2);
+	CHECK(best_move.name == MoveName::Switch2);
 }
 
 
@@ -530,7 +530,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 					EV(0_bi)
 				)
 			},
-			regular_moves(Moves::Calm_Mind, Moves::Dragon_Pulse, Moves::Recover)
+			regular_moves(MoveName::Calm_Mind, MoveName::Dragon_Pulse, MoveName::Recover)
 		)
 	}, true);
 	attacker.pokemon().switch_in(weather);
@@ -556,7 +556,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 					EV(0_bi)
 				)
 			},
-			regular_moves(Moves::Ice_Beam, Moves::Rest)
+			regular_moves(MoveName::Ice_Beam, MoveName::Rest)
 		)
 	});
 	defender.pokemon().switch_in(weather);
@@ -564,7 +564,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 	defender.reset_start_of_turn();
 
 	auto const best_move = test_expectiminimax(attacker, defender, weather, evaluate, depth);
-	CHECK(best_move.name == Moves::Calm_Mind);
+	CHECK(best_move.name == MoveName::Calm_Mind);
 }
 
 TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
@@ -585,7 +585,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 			Item::Leftovers,
 			Ability::Volt_Absorb,
 			default_combined_stats<generation>,
-			regular_moves(Moves::Sleep_Talk, Moves::Thunderbolt)
+			regular_moves(MoveName::Sleep_Talk, MoveName::Thunderbolt)
 		)
 	}, true);
 	attacker.pokemon().switch_in(weather);
@@ -599,7 +599,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 			Item::Life_Orb,
 			Ability::Intimidate,
 			default_combined_stats<generation>,
-			regular_moves(Moves::Earthquake)
+			regular_moves(MoveName::Earthquake)
 		)
 	});
 	defender.pokemon().switch_in(weather);
@@ -609,11 +609,11 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	constexpr auto keep_status = false;
 	constexpr auto unknown_damage = ActualDamage::Unknown{};
 	constexpr auto sleep_talk = UsedMove<Team<generation>>(
-		Moves::Sleep_Talk,
+		MoveName::Sleep_Talk,
 		no_effect_function
 	);
 	constexpr auto thunderbolt = UsedMove<Team<generation>>(
-		Moves::Thunderbolt,
+		MoveName::Thunderbolt,
 		no_effect_function
 	);
 	constexpr auto other_move = FutureMove{false};
@@ -630,23 +630,23 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	// TODO: Validate score, too
 
 	CHECK(jolteon.status().name() == StatusName::clear);
-	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == Moves::Thunderbolt);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == MoveName::Thunderbolt);
 
 	call_move(attacker, sleep_talk, defender, other_move, weather, keep_status, unknown_damage);
 	jolteon.set_status(StatusName::sleep, weather);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == Moves::Sleep_Talk);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	call_move(attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == Moves::Sleep_Talk);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	call_move(attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == Moves::Sleep_Talk);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	#if 0
 		// Same probability of either move
@@ -673,7 +673,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			regular_moves(Moves::Psychic, Moves::Recover, Moves::Thunder_Wave, Moves::Seismic_Toss)
+			regular_moves(MoveName::Psychic, MoveName::Recover, MoveName::Thunder_Wave, MoveName::Seismic_Toss)
 		)
 	}, true);
 	attacker.pokemon().switch_in(weather);
@@ -686,7 +686,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			regular_moves(Moves::Explosion, Moves::Hypnosis, Moves::Thunderbolt, Moves::Night_Shade)
+			regular_moves(MoveName::Explosion, MoveName::Hypnosis, MoveName::Thunderbolt, MoveName::Night_Shade)
 		)
 	});
 	defender.pokemon().set_status(StatusName::freeze, weather);
@@ -696,8 +696,8 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	attacker.reset_start_of_turn();
 	defender.reset_start_of_turn();
 
-	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, make_depth(1_bi)).name == Moves::Psychic);
-	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, make_depth(2_bi)).name == Moves::Psychic);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
+	CHECK(test_expectiminimax(attacker, defender, weather, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
 }
 
 } // namespace

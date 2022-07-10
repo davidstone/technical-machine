@@ -9,10 +9,10 @@
 #include <tm/pokemon/max_pokemon_per_team.hpp>
 
 namespace technicalmachine {
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 
-auto is_switch(Moves name) -> bool;
-auto to_switch(TeamIndex replacement) -> Moves;
-auto to_replacement(Moves move) -> TeamIndex;
+auto is_switch(MoveName name) -> bool;
+auto to_switch(TeamIndex replacement) -> MoveName;
+auto to_replacement(MoveName move) -> TeamIndex;
 
 } // namespace technicalmachine

@@ -33,10 +33,10 @@ auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 				EVs(EV(88_bi), EV(84_bi), EV(84_bi), EV(0_bi), EV(0_bi), EV(252_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Earthquake),
-				Move(generation, Moves::Explosion),
-				Move(generation, Moves::Rapid_Spin),
-				Move(generation, Moves::Spikes)
+				Move(generation, MoveName::Earthquake),
+				Move(generation, MoveName::Explosion),
+				Move(generation, MoveName::Rapid_Spin),
+				Move(generation, MoveName::Spikes)
 			})
 		),
 		KnownPokemon<generation>(
@@ -52,10 +52,10 @@ auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 				EVs(EV(0_bi), EV(252_bi), EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Crunch),
-				Move(generation, Moves::Endure),
-				Move(generation, Moves::Fire_Blast),
-				Move(generation, Moves::Reversal)
+				Move(generation, MoveName::Crunch),
+				Move(generation, MoveName::Endure),
+				Move(generation, MoveName::Fire_Blast),
+				Move(generation, MoveName::Reversal)
 			})
 		),
 		KnownPokemon<generation>(
@@ -71,10 +71,10 @@ auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 				EVs(EV(0_bi), EV(0_bi), EV(84_bi), EV(0_bi), EV(172_bi), EV(252_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Dream_Eater),
-				Move(generation, Moves::Hypnosis),
-				Move(generation, Moves::Mean_Look),
-				Move(generation, Moves::Nightmare)
+				Move(generation, MoveName::Dream_Eater),
+				Move(generation, MoveName::Hypnosis),
+				Move(generation, MoveName::Mean_Look),
+				Move(generation, MoveName::Nightmare)
 			})
 		),
 		KnownPokemon<generation>(
@@ -90,10 +90,10 @@ auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 				EVs(EV(56_bi), EV(128_bi), EV(0_bi), EV(0_bi), EV(72_bi), EV(252_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Endure),
-				Move(generation, Moves::Flail),
-				Move(generation, Moves::Megahorn),
-				Move(generation, Moves::Reversal)
+				Move(generation, MoveName::Endure),
+				Move(generation, MoveName::Flail),
+				Move(generation, MoveName::Megahorn),
+				Move(generation, MoveName::Reversal)
 			})
 		),
 		KnownPokemon<generation>(
@@ -109,10 +109,10 @@ auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 				EVs(EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi), EV(0_bi), EV(252_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Ancient_Power),
-				Move(generation, Moves::Ice_Beam),
-				Move(generation, Moves::Psychic),
-				Move(generation, Moves::Soft_Boiled)
+				Move(generation, MoveName::Ancient_Power),
+				Move(generation, MoveName::Ice_Beam),
+				Move(generation, MoveName::Psychic),
+				Move(generation, MoveName::Soft_Boiled)
 			})
 		),
 		KnownPokemon<generation>(
@@ -128,10 +128,10 @@ auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 				EVs(EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi), EV(0_bi), EV(252_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Drill_Peck),
-				Move(generation, Moves::Hidden_Power),
-				Move(generation, Moves::Rain_Dance),
-				Move(generation, Moves::Thunder)
+				Move(generation, MoveName::Drill_Peck),
+				Move(generation, MoveName::Hidden_Power),
+				Move(generation, MoveName::Rain_Dance),
+				Move(generation, MoveName::Thunder)
 			})
 		)
 	});
@@ -153,10 +153,10 @@ auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 				default_evs<generation>
 			},
 			RegularMoves({
-				Move(generation, Moves::Crunch),
-				Move(generation, Moves::Rest),
-				Move(generation, Moves::Sleep_Talk),
-				Move(generation, Moves::Thunderbolt)
+				Move(generation, MoveName::Crunch),
+				Move(generation, MoveName::Rest),
+				Move(generation, MoveName::Sleep_Talk),
+				Move(generation, MoveName::Thunderbolt)
 			})
 		),
 		KnownPokemon<generation>(
@@ -172,10 +172,10 @@ auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 				default_evs<generation>
 			},
 			RegularMoves({
-				Move(generation, Moves::Encore),
-				Move(generation, Moves::Psychic),
-				Move(generation, Moves::Recover),
-				Move(generation, Moves::Thunder_Punch)
+				Move(generation, MoveName::Encore),
+				Move(generation, MoveName::Psychic),
+				Move(generation, MoveName::Recover),
+				Move(generation, MoveName::Thunder_Punch)
 			})
 		),
 		KnownPokemon<generation>(
@@ -191,10 +191,10 @@ auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 				default_evs<generation>
 			},
 			RegularMoves({
-				Move(generation, Moves::Explosion),
-				Move(generation, Moves::Giga_Drain),
-				Move(generation, Moves::Psychic),
-				Move(generation, Moves::Thief)
+				Move(generation, MoveName::Explosion),
+				Move(generation, MoveName::Giga_Drain),
+				Move(generation, MoveName::Psychic),
+				Move(generation, MoveName::Thief)
 			})
 		),
 		KnownPokemon<generation>(
@@ -210,10 +210,10 @@ auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 				default_evs<generation>
 			},
 			RegularMoves({
-				Move(generation, Moves::Double_Edge),
-				Move(generation, Moves::Earthquake),
-				Move(generation, Moves::Fire_Blast),
-				Move(generation, Moves::Self_Destruct)
+				Move(generation, MoveName::Double_Edge),
+				Move(generation, MoveName::Earthquake),
+				Move(generation, MoveName::Fire_Blast),
+				Move(generation, MoveName::Self_Destruct)
 			})
 		),
 		KnownPokemon<generation>(
@@ -229,10 +229,10 @@ auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 				default_evs<generation>
 			},
 			RegularMoves({
-				Move(generation, Moves::Counter),
-				Move(generation, Moves::Cross_Chop),
-				Move(generation, Moves::Earthquake),
-				Move(generation, Moves::Hidden_Power)
+				Move(generation, MoveName::Counter),
+				Move(generation, MoveName::Cross_Chop),
+				Move(generation, MoveName::Earthquake),
+				Move(generation, MoveName::Hidden_Power)
 			})
 		),
 		KnownPokemon<generation>(
@@ -248,10 +248,10 @@ auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 				default_evs<generation>
 			},
 			RegularMoves({
-				Move(generation, Moves::Explosion),
-				Move(generation, Moves::Ice_Punch),
-				Move(generation, Moves::Psychic),
-				Move(generation, Moves::Thunderbolt)
+				Move(generation, MoveName::Explosion),
+				Move(generation, MoveName::Ice_Punch),
+				Move(generation, MoveName::Psychic),
+				Move(generation, MoveName::Thunderbolt)
 			})
 		)
 	});

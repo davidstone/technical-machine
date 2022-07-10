@@ -11,7 +11,7 @@
 #include <tm/bide/bide.hpp>
 
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/is_switch.hpp>
 
 #include <tm/compress.hpp>
@@ -39,13 +39,13 @@ struct LastUsedMove {
 
 	auto reset_start_of_turn() & -> void;
 
-	constexpr auto unsuccessful_move(Moves const move) & {
+	constexpr auto unsuccessful_move(MoveName const move) & {
 		m_move = move;
 		m_consecutive_successes = 0_bi;
 		m_moved_this_turn = true;
 	}
 
-	constexpr auto successful_move(Moves const move) & {
+	constexpr auto successful_move(MoveName const move) & {
 		if (m_move == move) {
 			saturating_increment(m_consecutive_successes);
 		} else {
@@ -60,7 +60,7 @@ struct LastUsedMove {
 	}
 
 	constexpr auto is_baton_passing() const -> bool {
-		return moved_this_turn() and successful_last_move(Moves::Baton_Pass);
+		return moved_this_turn() and successful_last_move(MoveName::Baton_Pass);
 	}
 
 	auto use_bide() & -> bounded::optional<HP::current_type>;
@@ -70,11 +70,11 @@ struct LastUsedMove {
 	auto use_charge_up_move() & -> void;
 
 	constexpr auto is_destiny_bonded() const {
-		return successful_last_move(Moves::Destiny_Bond);
+		return successful_last_move(MoveName::Destiny_Bond);
 	}
 
 	constexpr auto is_enduring() const -> bool {
-		return moved_this_turn() and successful_last_move(Moves::Endure);
+		return moved_this_turn() and successful_last_move(MoveName::Endure);
 	}
 
 	constexpr auto fury_cutter_power(Generation const generation) const {
@@ -92,7 +92,7 @@ struct LastUsedMove {
 	auto advance_lock_in(bool const ending) & -> bool;
 
 	constexpr auto locked_on() const {
-		return successful_last_move(Moves::Lock_On) or successful_last_move(Moves::Mind_Reader);
+		return successful_last_move(MoveName::Lock_On) or successful_last_move(MoveName::Mind_Reader);
 	}
 
 	// TODO: Does Metronome boost Struggle?
@@ -120,7 +120,7 @@ struct LastUsedMove {
 	auto use_recharge_move() & -> void;
 
 	constexpr auto is_roosting() const {
-		return moved_this_turn() and successful_last_move(Moves::Roost);
+		return moved_this_turn() and successful_last_move(MoveName::Roost);
 	}
 
 	constexpr auto switched_in_this_turn() const {
@@ -139,7 +139,7 @@ struct LastUsedMove {
 
 	auto is_uproaring() const -> bool;
 	auto use_uproar() & -> void;
-	auto vanish_doubles_power(Generation const generation, Moves const move_name) const -> bool;
+	auto vanish_doubles_power(Generation const generation, MoveName const move_name) const -> bool;
 
 	auto use_vanish_move(Item) & -> VanishOutcome;
 
@@ -154,14 +154,14 @@ struct LastUsedMove {
 	}
 
 private:
-	constexpr auto successful_last_move(Moves const move) const -> bool {
+	constexpr auto successful_last_move(MoveName const move) const -> bool {
 		return m_move == move and m_consecutive_successes >= 1_bi;
 	}
 	constexpr auto is_delayed_switching() const -> bool {
 		return moved_this_turn() and is_delayed_switch(m_move) and m_consecutive_successes >= 1_bi;
 	}
 
-	Moves m_move = Moves::Switch0;
+	MoveName m_move = MoveName::Switch0;
 	bounded::integer<0, 10> m_consecutive_successes = 0_bi;
 	bool m_moved_this_turn = false;
 

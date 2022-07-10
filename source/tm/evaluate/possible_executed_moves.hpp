@@ -15,10 +15,10 @@ namespace technicalmachine {
 
 using PossibleExecutedMoves = containers::static_vector<KnownMove, 3_bi>;
 
-auto possible_executed_moves(Moves const selected_move, any_team auto const & user_team) -> PossibleExecutedMoves;
+auto possible_executed_moves(MoveName const selected_move, any_team auto const & user_team) -> PossibleExecutedMoves;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto possible_executed_moves(Moves const selected_move, Team<generation> const & user_team) -> PossibleExecutedMoves
+	extern template auto possible_executed_moves(MoveName const selected_move, Team<generation> const & user_team) -> PossibleExecutedMoves
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

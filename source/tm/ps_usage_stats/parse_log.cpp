@@ -13,7 +13,7 @@
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 
@@ -88,7 +88,7 @@ auto parse_team(nlohmann::json const & team_array) -> Team<generation> {
 		}();
 		auto const moves = RegularMoves(containers::transform(
 			pokemon.at("moves"),
-			[](nlohmann::json const & move) { return Move(generation, from_string<Moves>(move.get<std::string_view>())); }
+			[](nlohmann::json const & move) { return Move(generation, from_string<MoveName>(move.get<std::string_view>())); }
 		));
 		auto const level = Level(bounded::check_in_range<Level::value_type>(pokemon.at("level").get<nlohmann::json::number_integer_t>()));
 		auto const nature_str = pokemon.at("nature").get<std::string_view>();

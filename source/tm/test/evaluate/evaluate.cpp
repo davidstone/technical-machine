@@ -31,7 +31,7 @@ TEST_CASE("Evaluate", "[Evaluate]") {
 		Item::Leftovers,
 		Ability::Natural_Cure,
 		default_combined_stats<generation>,
-		RegularMoves({Move(generation, Moves::Tackle)})
+		RegularMoves({Move(generation, MoveName::Tackle)})
 	);
 
 	auto weather = Weather();

@@ -67,7 +67,7 @@ struct KnownPokemon {
 		}
 	}
 
-	constexpr auto reduce_pp(Moves const move_name, bool const embargo, bool const magic_room, bounded::bounded_integer auto const amount) & -> void {
+	constexpr auto reduce_pp(MoveName const move_name, bool const embargo, bool const magic_room, bounded::bounded_integer auto const amount) & -> void {
 		m_pokemon.reduce_pp(move_name, embargo, magic_room, amount);
 	}
 

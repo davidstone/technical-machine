@@ -6,7 +6,7 @@
 #include <tm/clients/pokemon_showdown/move_state.hpp>
 
 #include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/status_name.hpp>
 
 #include <tm/block.hpp>
@@ -25,7 +25,7 @@ namespace technicalmachine::ps {
 
 using namespace std::string_view_literals;
 
-void MoveState::use_move(Party const party, Moves const move) {
+void MoveState::use_move(Party const party, MoveName const move) {
 	if (m_party) {
 		if (*m_party != party) {
 			throw std::runtime_error("Early move state messages do not match party of user");
@@ -49,9 +49,9 @@ bool MoveState::move_damages_self(Party const party) const {
 	}
 	auto const result = [&] {
 		switch (m_move->executed) {
-			case Moves::Belly_Drum:
-			case Moves::Clangorous_Soul:
-			case Moves::Substitute:
+			case MoveName::Belly_Drum:
+			case MoveName::Clangorous_Soul:
+			case MoveName::Substitute:
 				return true;
 			default:
 				return false;
@@ -65,10 +65,10 @@ bool MoveState::move_damages_self(Party const party) const {
 
 namespace {
 
-constexpr auto clears_team_status(Moves const move) -> bool {
+constexpr auto clears_team_status(MoveName const move) -> bool {
 	switch (move) {
-		case Moves::Aromatherapy:
-		case Moves::Heal_Bell:
+		case MoveName::Aromatherapy:
+		case MoveName::Heal_Bell:
 			return true;
 		default:
 			return false;
@@ -84,7 +84,7 @@ void MoveState::status_from_move(Party const party, StatusName const status) {
 	if (m_move->status) {
 		throw std::runtime_error("Tried to status a Pokemon twice");
 	}
-	if (is_switch(m_move->executed) or m_move->executed == Moves::Rest) {
+	if (is_switch(m_move->executed) or m_move->executed == MoveName::Rest) {
 		if (party != *m_party) {
 			throw_error();
 		}
@@ -198,7 +198,7 @@ auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai,
 	}
 	if (!m_move) {
 		// Technically incorrect with things like Sucker Punch and priority
-		insert(m_move, UsedMoveBuilder{Moves::Struggle});
+		insert(m_move, UsedMoveBuilder{MoveName::Struggle});
 	}
 	auto const move = *m_move;
 	auto execute = [&]<any_active_pokemon UserPokemon>(UserPokemon const user, OtherTeam<UserPokemon> const & other) {

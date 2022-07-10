@@ -9,7 +9,7 @@
 #include <tm/operators.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <bounded/optional.hpp>
 
@@ -19,14 +19,14 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 struct Disable {
-	auto activate(Moves const move) {
+	auto activate(MoveName const move) {
 		if (!is_regular(move)) {
 			return false;
 		}
 		insert(m_disabled_move, move);
 		return true;
 	}
-	constexpr auto move_is_disabled(Moves const move) const {
+	constexpr auto move_is_disabled(MoveName const move) const {
 		return m_disabled_move == move;
 	}
 
@@ -49,7 +49,7 @@ struct Disable {
 
 private:
 	// TODO: Use an optional struct?
-	bounded::optional<Moves> m_disabled_move = bounded::none;
+	bounded::optional<MoveName> m_disabled_move = bounded::none;
 	using TurnCount = bounded::integer<0, 7>;
 	TurnCount m_turns_disabled = 0_bi;
 };

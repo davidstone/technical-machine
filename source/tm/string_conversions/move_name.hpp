@@ -9,11 +9,11 @@
 #include <tm/string_conversions/conversion.hpp>
 
 namespace technicalmachine {
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 
-auto to_string(Moves name) -> std::string_view;
+auto to_string(MoveName name) -> std::string_view;
 
 template<>
-auto from_string<Moves>(std::string_view const str) -> Moves;
+auto from_string<MoveName>(std::string_view const str) -> MoveName;
 
 } // namespace technicalmachine

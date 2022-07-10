@@ -131,7 +131,7 @@ auto LastUsedMove::use_uproar() & -> void {
 	));
 }
 
-auto LastUsedMove::vanish_doubles_power(Generation const generation, Moves const move_name) const -> bool {
+auto LastUsedMove::vanish_doubles_power(Generation const generation, MoveName const move_name) const -> bool {
 	if (generation <= Generation::one) {
 		return false;
 	}
@@ -139,14 +139,14 @@ auto LastUsedMove::vanish_doubles_power(Generation const generation, Moves const
 		return false;
 	}
 	switch (move_name) {
-		case Moves::Earthquake:
-		case Moves::Magnitude:
-			return m_move == Moves::Dig;
-		case Moves::Gust:
-		case Moves::Twister:
-			return m_move == Moves::Bounce or m_move == Moves::Fly;
-		case Moves::Surf:
-			return m_move == Moves::Dive;
+		case MoveName::Earthquake:
+		case MoveName::Magnitude:
+			return m_move == MoveName::Dig;
+		case MoveName::Gust:
+		case MoveName::Twister:
+			return m_move == MoveName::Bounce or m_move == MoveName::Fly;
+		case MoveName::Surf:
+			return m_move == MoveName::Dive;
 		default:
 			return false;
 	}

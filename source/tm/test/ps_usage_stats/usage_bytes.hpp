@@ -42,7 +42,7 @@ constexpr auto species_bytes(Species const species) {
 	return cast_to_bytes(species, 2_bi);
 }
 
-constexpr auto move_bytes(Moves const move_name) {
+constexpr auto move_bytes(MoveName const move_name) {
 	return cast_to_bytes(move_name, 2_bi);
 }
 
@@ -93,7 +93,7 @@ constexpr auto smallest_team_bytes(Generation const generation) {
 						weight_bytes(1.0),
 				count_bytes(0), // Teammates
 				count_bytes(1),
-					move_bytes(Moves::Cut),
+					move_bytes(MoveName::Cut),
 						weight_bytes(1.0),
 						count_bytes(1),
 							speed_bytes(7),

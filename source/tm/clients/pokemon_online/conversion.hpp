@@ -10,7 +10,7 @@
 #include <tm/gender.hpp>
 #include <tm/item.hpp>
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/species_forward.hpp>
 
@@ -48,9 +48,9 @@ using ItemID = bounded::integer<0, 226>;
 Item id_to_item(ItemID id);
 ItemID item_to_id(Item item);
 
-using MoveID = bounded::integer<1, bounded::normalize<bounded::constant<numeric_traits::max_value<Moves>> - bounded::integer(Moves::Regular_Begin) + 1_bi>>;
-Moves id_to_move(MoveID id);
-MoveID move_to_id(Moves move);
+using MoveID = bounded::integer<1, bounded::normalize<bounded::constant<numeric_traits::max_value<MoveName>> - bounded::integer(MoveName::Regular_Begin) + 1_bi>>;
+MoveName id_to_move(MoveID id);
+MoveID move_to_id(MoveName move);
 
 } // namespace po
 } // namespace technicalmachine

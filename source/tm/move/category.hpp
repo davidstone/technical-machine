@@ -14,6 +14,6 @@ namespace technicalmachine {
 
 auto is_physical(Generation, KnownMove) -> bool;
 auto is_special(Generation, KnownMove) -> bool;
-auto is_damaging(Moves) -> bool;
+auto is_damaging(MoveName) -> bool;
 
 } // namespace technicalmachine

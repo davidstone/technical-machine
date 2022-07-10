@@ -4,7 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <tm/move/calculate_damage.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/other_move.hpp>
 #include <tm/move/power.hpp>
 #include <tm/move/side_effects.hpp>
@@ -29,7 +29,7 @@ using namespace bounded::literal;
 constexpr auto generation = Generation::four;
 constexpr auto critical_hit = true;
 auto max_damage_physical_move() {
-	return Move(generation, Moves::Rollout);
+	return Move(generation, MoveName::Rollout);
 }
 constexpr auto max_damage_physical_move_type = Type::Rock;
 auto max_damage_executed_physical_move() {
@@ -86,7 +86,7 @@ auto max_damage_physical_defender() {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			RegularMoves({Move(generation, Moves::Tackle)})
+			RegularMoves({Move(generation, MoveName::Tackle)})
 		)
 	});
 	auto pokemon = defender.pokemon();
@@ -116,7 +116,7 @@ TEST_CASE("Max special power", "[Power]") {
 
 	auto weather = Weather();
 
-	auto const move = Move(generation, Moves::Surf);
+	auto const move = Move(generation, MoveName::Surf);
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
 			Species::Deoxys_Attack,
@@ -141,7 +141,7 @@ TEST_CASE("Max special power", "[Power]") {
 			Item::None,
 			Ability::Dry_Skin,
 			default_combined_stats<generation>,
-			RegularMoves({Move(generation, Moves::Dive)})
+			RegularMoves({Move(generation, MoveName::Dive)})
 		)
 	});
 
@@ -150,7 +150,7 @@ TEST_CASE("Max special power", "[Power]") {
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		defender_pokemon.stages()[BoostableStat::spd] -= 2_bi;
 	}
-	defender_pokemon.successfully_use_move(Moves::Dive);
+	defender_pokemon.successfully_use_move(MoveName::Dive);
 	defender_pokemon.use_vanish_move(weather);
 
 	auto const power = move_power(
@@ -198,7 +198,7 @@ TEST_CASE("Max special damage", "[Damage]") {
 	auto weather = Weather();
 	weather.activate_sun_from_move(false);
 
-	auto const move = Move(generation, Moves::Blast_Burn);
+	auto const move = Move(generation, MoveName::Blast_Burn);
 
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -245,7 +245,7 @@ TEST_CASE("Max special damage", "[Damage]") {
 			Item::None,
 			Ability::Dry_Skin,
 			default_combined_stats<generation>,
-			RegularMoves({Move(generation, Moves::Tackle)})
+			RegularMoves({Move(generation, MoveName::Tackle)})
 		)
 	});
 	auto defender_pokemon = defender.pokemon();

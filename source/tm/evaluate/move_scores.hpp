@@ -15,12 +15,12 @@ namespace technicalmachine {
 
 struct MoveScores {
 	MoveScores(Generation, LegalSelections legal_selections, bool ai);
-	void set(Moves move_name, double score);
+	void set(MoveName move_name, double score);
 	auto ordered_moves(bool ai) const -> LegalSelections;
 
 private:
 	struct value_type {
-		Moves move_name;
+		MoveName move_name;
 		double score;
 	};
 	containers::static_vector<value_type, maximum_possible_selections> m_scores;

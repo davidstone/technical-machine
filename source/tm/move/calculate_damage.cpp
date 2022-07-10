@@ -8,7 +8,7 @@
 #include <tm/move/category.hpp>
 #include <tm/move/executed_move.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/other_move.hpp>
 #include <tm/move/power.hpp>
 
@@ -226,34 +226,34 @@ auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 	auto const attacker = attacker_team.pokemon();
 	auto const defender = defender_team.pokemon();
 	switch (executed.move.name) {
-		case Moves::Bide:
+		case MoveName::Bide:
 			// TODO: Determine the damage here
 			return 0_bi;
-		case Moves::Counter:
+		case MoveName::Counter:
 			return defender_move.is_counterable(generation) ? attacker.direct_damage_received() * 2_bi : 0_bi;
-		case Moves::Dragon_Rage:
+		case MoveName::Dragon_Rage:
 			return 40_bi;
-		case Moves::Endeavor:
+		case MoveName::Endeavor:
 			return bounded::max(defender.hp().current() - attacker.hp().current(), 0_bi);
-		case Moves::Final_Gambit:
+		case MoveName::Final_Gambit:
 			return attacker.hp().current();
-		case Moves::Fissure:
-		case Moves::Guillotine:
-		case Moves::Horn_Drill:
-		case Moves::Sheer_Cold:
+		case MoveName::Fissure:
+		case MoveName::Guillotine:
+		case MoveName::Horn_Drill:
+		case MoveName::Sheer_Cold:
 			return BOUNDED_CONDITIONAL(defender.ability() == Ability::Sturdy, 0_bi, defender.hp().max());
-		case Moves::Metal_Burst:
+		case MoveName::Metal_Burst:
 			return attacker.direct_damage_received() * 3_bi / 2_bi;
-		case Moves::Mirror_Coat:
+		case MoveName::Mirror_Coat:
 			return defender_move.is_mirror_coatable(generation) ? attacker.direct_damage_received() * 2_bi : 0_bi;
-		case Moves::Night_Shade:
-		case Moves::Seismic_Toss:
+		case MoveName::Night_Shade:
+		case MoveName::Seismic_Toss:
 			return attacker.level()();
-		case Moves::Psywave:
+		case MoveName::Psywave:
 			return attacker.level()();
-		case Moves::Sonic_Boom:
+		case MoveName::Sonic_Boom:
 			return 20_bi;
-		case Moves::Super_Fang:
+		case MoveName::Super_Fang:
 			return defender.hp().current() / 2_bi;
 		default:
 			return bounded::assume_in_range<damage_type>(regular_damage(

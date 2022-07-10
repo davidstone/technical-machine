@@ -15,7 +15,7 @@
 
 namespace technicalmachine {
 enum class Generation : std::uint8_t;
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 
 enum class Type : std::uint8_t {
 	Bug,
@@ -50,7 +50,7 @@ inline constexpr auto numeric_traits::max_value<technicalmachine::Type> = techni
 namespace technicalmachine {
 
 // If `move` is Hidden Power, type must not be `none`
-auto get_type(Generation generation, Moves move, bounded::optional<Type> hidden_power) -> Type;
+auto get_type(Generation generation, MoveName move, bounded::optional<Type> hidden_power) -> Type;
 
 constexpr auto is_boosted_by_flash_fire(Type const type) {
 	return type == Type::Fire;

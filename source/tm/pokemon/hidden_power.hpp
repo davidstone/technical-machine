@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/regular_moves.hpp>
 
 #include <tm/stat/iv.hpp>
@@ -177,7 +177,7 @@ template<Generation generation>
 constexpr auto calculate_hidden_power(DVsOrIVs<generation> dvs_or_ivs, RegularMoves const moves) -> bounded::optional<HiddenPower<generation>> {
 	if constexpr (generation == Generation::one) {
 		return bounded::none;
-	} else if (containers::any(moves, [](Move const move) { return move.name() == Moves::Hidden_Power; })) {
+	} else if (containers::any(moves, [](Move const move) { return move.name() == MoveName::Hidden_Power; })) {
 		return HiddenPower<generation>(dvs_or_ivs);
 	} else {
 		return bounded::none;

@@ -8,7 +8,7 @@
 #include <tm/type/pokemon_types.hpp>
 
 #include <tm/move/known_move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/any_pokemon.hpp>
 
@@ -45,14 +45,14 @@ auto operator*(auto const lhs, Effectiveness const rhs) {
 	return rhs * lhs;
 }
 
-constexpr auto always_affects_target(Generation const generation, Moves const move) {
+constexpr auto always_affects_target(Generation const generation, MoveName const move) {
 	switch (generation) {
 		case Generation::one:
 			switch (move) {
-				case Moves::Night_Shade:
-				case Moves::Seismic_Toss:
-				case Moves::Sonic_Boom:
-				case Moves::Super_Fang:
+				case MoveName::Night_Shade:
+				case MoveName::Seismic_Toss:
+				case MoveName::Sonic_Boom:
+				case MoveName::Super_Fang:
 					return true;
 				default:
 					return false;
@@ -62,9 +62,9 @@ constexpr auto always_affects_target(Generation const generation, Moves const mo
 		case Generation::four:
 		case Generation::five:
 			switch (move) {
-				case Moves::Block:
-				case Moves::Mean_Look:
-				case Moves::Spider_Web:
+				case MoveName::Block:
+				case MoveName::Mean_Look:
+				case MoveName::Spider_Web:
 					return true;
 				default:
 					return false;

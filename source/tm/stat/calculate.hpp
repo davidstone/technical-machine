@@ -9,7 +9,7 @@
 #include <tm/stat/stat_names.hpp>
 
 #include <tm/move/category.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/priority.hpp>
 
 #include <tm/pokemon/any_pokemon.hpp>
@@ -375,17 +375,17 @@ auto calculate_special_attack(any_active_pokemon auto const attacker, Type const
 }
 
 
-constexpr auto is_self_KO(Moves const move) {
+constexpr auto is_self_KO(MoveName const move) {
 	switch (move) {
-		case Moves::Explosion:
-		case Moves::Self_Destruct:
+		case MoveName::Explosion:
+		case MoveName::Self_Destruct:
 			return true;
 		default:
 			return false;
 	}
 }
 
-auto calculate_defense(any_active_pokemon auto const defender, Moves const move, Weather const weather, bool const critical_hit = false) {
+auto calculate_defense(any_active_pokemon auto const defender, MoveName const move, Weather const weather, bool const critical_hit = false) {
 	constexpr auto stat = SplitSpecialRegularStat::def;
 	auto const defense =
 		determine_initial_stat(stat, defender) *
@@ -498,7 +498,7 @@ private:
 
 template<Generation generation>
 struct Order : operators::arrow<Order<generation>> {
-	Order(Team<generation> const & team1, Moves const move1, Team<generation> const & team2, Moves const move2, Weather const weather):
+	Order(Team<generation> const & team1, MoveName const move1, Team<generation> const & team2, MoveName const move2, Weather const weather):
 		Order([&] {
 			auto const priority1 = Priority(generation, move1);
 			auto const priority2 = Priority(generation, move2);
@@ -533,7 +533,7 @@ struct Order : operators::arrow<Order<generation>> {
 private:
 	struct Element {
 		Team<generation> const & team;
-		Moves move;
+		MoveName move;
 	};
 	using pair = std::pair<Element, Element>;
 

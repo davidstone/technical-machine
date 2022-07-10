@@ -21,7 +21,7 @@ namespace technicalmachine {
 
 MoveScores::MoveScores(Generation const generation, LegalSelections const legal_selections, bool const ai):
 	m_scores(
-		containers::transform(legal_selections, [=](Moves const move) {
+		containers::transform(legal_selections, [=](MoveName const move) {
 			auto cg = []<Generation g>(constant_gen_t<g>) {
 				return victory<g>;
 			};
@@ -35,7 +35,7 @@ MoveScores::MoveScores(Generation const generation, LegalSelections const legal_
 {
 }
 
-void MoveScores::set(Moves const move_name, double const score) {
+void MoveScores::set(MoveName const move_name, double const score) {
 	auto const ptr = containers::maybe_find_if(m_scores, [=](value_type const value) {
 		return value.move_name == move_name;
 	});

@@ -7,7 +7,7 @@
 #include <tm/string_conversions/gender.hpp>
 #include <tm/string_conversions/invalid_string_conversion.hpp>
 #include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/pokemon.hpp>
 #include <tm/string_conversions/species.hpp>
@@ -15,7 +15,7 @@
 #include <tm/string_conversions/type.hpp>
 #include <tm/string_conversions/weather.hpp>
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/species.hpp>
 
@@ -56,7 +56,7 @@ TEST_CASE("item", "[string_conversion]") {
 	test_generic<Item>();
 }
 TEST_CASE("move", "[string_conversion]") {
-	test_generic<Moves>();
+	test_generic<MoveName>();
 }
 TEST_CASE("nature", "[string_conversion]") {
 	test_generic<Nature>();
@@ -109,9 +109,9 @@ TEST_CASE("pokemon", "[string_conversion]") {
 		CHECK(pokemon == result);
 	};
 
-	auto moves = RegularMoves({Move(generation, Moves::Psychic)});
+	auto moves = RegularMoves({Move(generation, MoveName::Psychic)});
 	check(make_pokemon(moves));
-	for (auto const move : {Moves::Recover, Moves::Calm_Mind, Moves::Taunt}) {
+	for (auto const move : {MoveName::Recover, MoveName::Calm_Mind, MoveName::Taunt}) {
 		moves.push_back(Move(generation, move));
 		check(make_pokemon(moves));
 	}

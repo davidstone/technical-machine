@@ -8,7 +8,7 @@
 
 #include <tm/pokemon/species.hpp>
 
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 
 namespace technicalmachine {
 namespace pl {

@@ -11,7 +11,7 @@
 namespace technicalmachine {
 
 struct KnownMove {
-	Moves name;
+	MoveName name;
 	Type type;
 };
 

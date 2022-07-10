@@ -8,7 +8,7 @@
 #include <tm/move/category.hpp>
 #include <tm/move/known_move.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/type/type.hpp>
 
 #include <bounded/detail/variant/variant.hpp>
@@ -36,7 +36,7 @@ struct OtherMove {
 	constexpr auto is_counterable(Generation const generation) const {
 		return bounded::visit(m_move, bounded::overload(
 			[=](KnownMove const move) {
-				return generation <= Generation::three and move.name == Moves::Hidden_Power ? true : is_physical(generation, move);
+				return generation <= Generation::three and move.name == MoveName::Hidden_Power ? true : is_physical(generation, move);
 			},
 			[](FutureMove) { return false; }
 		));
@@ -44,7 +44,7 @@ struct OtherMove {
 	constexpr auto is_mirror_coatable(Generation const generation) const {
 		return bounded::visit(m_move, bounded::overload(
 			[=](KnownMove const move) {
-				return generation <= Generation::three and move.name == Moves::Hidden_Power ? false : is_special(generation, move);
+				return generation <= Generation::three and move.name == MoveName::Hidden_Power ? false : is_special(generation, move);
 			},
 			[](FutureMove) { return false; }
 		));

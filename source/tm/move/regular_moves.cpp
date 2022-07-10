@@ -4,9 +4,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <tm/move/regular_moves.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/algorithms/concatenate.hpp>

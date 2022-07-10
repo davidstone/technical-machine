@@ -15,7 +15,7 @@
 #include <tm/move/category.hpp>
 #include <tm/move/is_switch.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/side_effects.hpp>
 
 #include <tm/pokemon/any_pokemon.hpp>
@@ -23,7 +23,7 @@
 #include <tm/stat/calculate.hpp>
 #include <tm/stat/chance_to_hit.hpp>
 
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/species.hpp>
 
 #include <tm/ability.hpp>
@@ -121,7 +121,7 @@ double generic_flag_branch(double const basic_probability, auto const & next_bra
 }
 
 struct SelectedAndExecuted {
-	Moves selected;
+	MoveName selected;
 	KnownMove executed;
 };
 
@@ -176,7 +176,7 @@ auto execute_move(TeamType const & user, SelectedAndExecuted const move, TeamTyp
 
 struct OriginalPokemon {
 	template<any_active_pokemon ActivePokemonType>
-	OriginalPokemon(ActivePokemonType const pokemon, ActivePokemonType const other_pokemon, Moves const other_move):
+	OriginalPokemon(ActivePokemonType const pokemon, ActivePokemonType const other_pokemon, MoveName const other_move):
 		m_species(pokemon.species()),
 		m_other_move{
 			other_move,
@@ -199,7 +199,7 @@ private:
 
 constexpr auto all_are_pass_or_switch [[maybe_unused]] (LegalSelections const legal_selections) {
 	return
-		(containers::size(legal_selections) == 1_bi and containers::front(legal_selections) == Moves::Pass) or
+		(containers::size(legal_selections) == 1_bi and containers::front(legal_selections) == MoveName::Pass) or
 		containers::all(legal_selections, is_switch);
 }
 
@@ -213,7 +213,7 @@ struct BestMovePrinter {
 	{
 	}
 
-	void update_best_move(Moves & best_move, double & alpha, double const beta, Moves const new_move, bounded::optional<DepthInt> const indentation) const {
+	void update_best_move(MoveName & best_move, double & alpha, double const beta, MoveName const new_move, bounded::optional<DepthInt> const indentation) const {
 		// If their best response isn't as good as their previous best
 		// response, then this new move must be better than the
 		// previous AI's best move
@@ -224,7 +224,7 @@ struct BestMovePrinter {
 		}
 	}
 
-	void update_foe_best_move(Moves const move, MoveScores & foe_scores, double & beta, double const max_score, bounded::optional<DepthInt> const indentation) const {
+	void update_foe_best_move(MoveName const move, MoveScores & foe_scores, double & beta, double const max_score, bounded::optional<DepthInt> const indentation) const {
 		if (beta > max_score) {
 			beta = max_score;
 			foe_scores.set(move, beta);
@@ -232,11 +232,11 @@ struct BestMovePrinter {
 		print_estimated_score(max_score, move, indentation);
 	}
 
-	void print_action(any_team auto const & team, Moves const move, bounded::optional<DepthInt> const indentation) const {
+	void print_action(any_team auto const & team, MoveName const move, bounded::optional<DepthInt> const indentation) const {
 		if (!indentation) {
 			return;
 		}
-		if (move == Moves::Pass) {
+		if (move == MoveName::Pass) {
 			return;
 		}
 		m_log << containers::string(containers::repeat_n(*indentation, '\t')) << "Evaluating " << team.who();
@@ -249,8 +249,8 @@ struct BestMovePrinter {
 	}
 
 private:
-	void print_estimated_score(double const estimate, Moves const move, bounded::optional<DepthInt> const indentation) const {
-		if (indentation and move != Moves::Pass) {
+	void print_estimated_score(double const estimate, MoveName const move, bounded::optional<DepthInt> const indentation) const {
+		if (indentation and move != MoveName::Pass) {
 			m_log << containers::string(containers::repeat_n(*indentation, '\t')) << "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
 		}
 	}
@@ -340,7 +340,7 @@ private:
 		// some result.
 
 		auto alpha = -victory<generation> - 1.0;
-		auto best_move = Moves{};
+		auto best_move = MoveName{};
 		auto const ai_indentation = depth.indentation();
 		for (auto const & ai_move : ai_moves) {
 			m_best_move_printer.print_action(ai, ai_move, ai_indentation);
@@ -370,7 +370,7 @@ private:
 		};
 	}
 
-	auto order_branch(Team<generation> const & ai, Moves const ai_move, Team<generation> const & foe, Moves const foe_move, Weather const weather, Depth const depth) -> double {
+	auto order_branch(Team<generation> const & ai, MoveName const ai_move, Team<generation> const & foe, MoveName const foe_move, Weather const weather, Depth const depth) -> double {
 		auto ordered = Order(ai, ai_move, foe, foe_move, weather);
 		return !ordered ?
 			(use_move_branch(ai, ai_move, foe, foe_move, weather, depth) + use_move_branch(foe, foe_move, ai, ai_move, weather, depth)) / 2.0 :
@@ -378,8 +378,8 @@ private:
 	}
 
 	auto use_move_branch_inner(KnownMove const first_used_move) {
-		return [=, this](Team<generation> const & first, Moves const first_move [[maybe_unused]], Team<generation> const & last, Moves const last_move, Weather const weather, Depth const depth) {
-			BOUNDED_ASSERT_OR_ASSUME(first_move == Moves::Pass);
+		return [=, this](Team<generation> const & first, MoveName const first_move [[maybe_unused]], Team<generation> const & last, MoveName const last_move, Weather const weather, Depth const depth) {
+			BOUNDED_ASSERT_OR_ASSUME(first_move == MoveName::Pass);
 			return score_executed_moves(last, last_move, first, first_used_move, weather, [&](Team<generation> const & updated_last, Team<generation> const & updated_first, Weather const updated_weather) {
 				auto shed_skin_probability = [&](bool const is_first) {
 					auto const pokemon = (is_first ? updated_first : updated_last).pokemon();
@@ -407,14 +407,14 @@ private:
 		};
 	}
 
-	auto use_move_branch_outer(OriginalPokemon const original_last_pokemon, Moves const last_move) {
-		return [=, this](Team<generation> const & first, Moves const first_move, Team<generation> const & last, Moves, Weather const weather, Depth const depth) {
+	auto use_move_branch_outer(OriginalPokemon const original_last_pokemon, MoveName const last_move) {
+		return [=, this](Team<generation> const & first, MoveName const first_move, Team<generation> const & last, MoveName, Weather const weather, Depth const depth) {
 			return score_executed_moves(first, first_move, last, FutureMove{is_damaging(last_move)}, weather, [&](Team<generation> const & pre_updated_first, Team<generation> const & pre_updated_last, Weather const pre_updated_weather) {
 				auto const is_same_pokemon = original_last_pokemon.is_same_pokemon(last.pokemon().species());
-				auto const actual_last_move = is_same_pokemon ? last_move : Moves::Pass;
+				auto const actual_last_move = is_same_pokemon ? last_move : MoveName::Pass;
 				auto const first_used_move = original_last_pokemon.other_move();
 				return score_executed_moves(pre_updated_last, actual_last_move, pre_updated_first, first_used_move, pre_updated_weather, [&](Team<generation> const & updated_last, Team<generation> const & updated_first, Weather const updated_weather) {
-					auto const first_selections = LegalSelections({Moves::Pass});
+					auto const first_selections = LegalSelections({MoveName::Pass});
 					auto const last_selections = legal_selections(updated_last, updated_first, weather);
 					return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, depth, use_move_branch_inner(first_used_move)).move.score;
 				});
@@ -422,7 +422,7 @@ private:
 		};
 	}
 
-	auto use_move_branch(Team<generation> const & first, Moves const first_move, Team<generation> const & last, Moves const last_move, Weather const weather, Depth const depth) -> double {
+	auto use_move_branch(Team<generation> const & first, MoveName const first_move, Team<generation> const & last, MoveName const last_move, Weather const weather, Depth const depth) -> double {
 		// This complicated section of code is designed to handle U-turn and Baton
 		// Pass: The user of the move needs to go again before the other Pokemon
 		// moves and make a new selection. During that selection, the opponent
@@ -446,7 +446,7 @@ private:
 		return score_executed_moves(first, first_move, last, FutureMove{is_damaging(last_move)}, weather, [&](Team<generation> const & updated_first, Team<generation> const & updated_last, Weather const updated_weather) {
 			auto const first_selections = legal_selections(updated_first, updated_last, weather);
 			BOUNDED_ASSERT(all_are_pass_or_switch(first_selections));
-			auto const last_selections = LegalSelections({Moves::Pass});
+			auto const last_selections = LegalSelections({MoveName::Pass});
 			// TODO: Figure out first / last vs ai / foe
 			return select_move_branch(updated_first, first_selections, updated_last, last_selections, updated_weather, depth, use_move_branch_outer(original_last_pokemon, last_move)).move.score;
 		});
@@ -478,11 +478,11 @@ private:
 		return finish_end_of_turn(first, last, weather, depth);
 	}
 
-	auto handle_end_of_turn_replacing(Team<generation> first, Moves const first_move, Team<generation> last, Moves const last_move, Weather weather, Depth const depth) -> double {
-		if (first_move != Moves::Pass) {
+	auto handle_end_of_turn_replacing(Team<generation> first, MoveName const first_move, Team<generation> last, MoveName const last_move, Weather weather, Depth const depth) -> double {
+		if (first_move != MoveName::Pass) {
 			first.switch_pokemon(last.pokemon(), weather, to_replacement(first_move));
 		}
-		if (last_move != Moves::Pass) {
+		if (last_move != MoveName::Pass) {
 			last.switch_pokemon(first.pokemon(), weather, to_replacement(last_move));
 		}
 		if (auto const won = win(first, last)) {
@@ -534,7 +534,7 @@ private:
 	}
 
 
-	auto score_executed_moves(Team<generation> const & user, Moves const selected_move, Team<generation> const & other, OtherMove const other_move, Weather const weather, auto const continuation) const -> double {
+	auto score_executed_moves(Team<generation> const & user, MoveName const selected_move, Team<generation> const & other, OtherMove const other_move, Weather const weather, auto const continuation) const -> double {
 		double score = 0.0;
 		auto const executed_moves = possible_executed_moves(selected_move, user);
 		for (auto const executed_move : executed_moves) {
@@ -562,7 +562,7 @@ auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, W
 	log << "Evaluating to a depth of " << depth.general_initial() << ", " << depth.single_initial() << "...\n";
 	auto const start = std::chrono::steady_clock::now();
 	auto const best_move = evaluator->select_type_of_move(ai, foe, weather, depth);
-	if (best_move.name == Moves::Pass) {
+	if (best_move.name == MoveName::Pass) {
 		throw std::runtime_error("Should never evaluate a position in which it is legal to use Pass.");
 	}
 	auto const finish = std::chrono::steady_clock::now();

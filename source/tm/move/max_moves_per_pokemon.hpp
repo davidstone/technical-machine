@@ -13,7 +13,7 @@
 #include <containers/static_vector.hpp>
 
 namespace technicalmachine {
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 using namespace bounded::literal;
 
 constexpr auto max_moves_per_pokemon = 4_bi;
@@ -25,7 +25,7 @@ constexpr auto max_moves_per_pokemon = 4_bi;
 inline constexpr auto maximum_possible_selections = max_moves_per_pokemon + max_pokemon_per_team - 1_bi;
 
 using LegalSelections = containers::static_vector<
-	Moves,
+	MoveName,
 	maximum_possible_selections
 >;
 

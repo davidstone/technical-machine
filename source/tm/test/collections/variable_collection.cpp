@@ -5,7 +5,7 @@
 
 #include <tm/pokemon/collection.hpp>
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/side_effects.hpp>
 
 #include <tm/pokemon/max_pokemon_per_team.hpp>
@@ -37,7 +37,7 @@ auto make_team(auto const... species) {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			RegularMoves({Move(generation, Moves::Tackle)})
+			RegularMoves({Move(generation, MoveName::Tackle)})
 		)...
 	});
 }
@@ -63,7 +63,7 @@ auto test_phaze(Team<generation> user, Team<generation> team) {
 	auto weather = Weather();
 	for (auto const current_index : containers::integer_range(team.size())) {
 		team.all_pokemon().set_index(current_index);
-		auto const side_effects = possible_side_effects(Moves::Whirlwind, user.pokemon().as_const(), team, weather);
+		auto const side_effects = possible_side_effects(MoveName::Whirlwind, user.pokemon().as_const(), team, weather);
 		auto const expected_size = bounded::increase_min<0>(team.size() - 1_bi);
 		CHECK(containers::size(side_effects) == expected_size);
 		for (auto const effect_index : containers::integer_range(expected_size)) {

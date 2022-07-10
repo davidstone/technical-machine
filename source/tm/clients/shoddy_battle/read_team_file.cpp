@@ -11,7 +11,7 @@
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/species.hpp>
 
 #include <bounded/optional.hpp>
@@ -308,7 +308,7 @@ private:
 		auto nickname = bounded::optional<std::string_view>();
 		auto ivs = bounded::optional<IVs>();
 		auto evs = bounded::optional<EVs>();
-		auto moves = bounded::optional<containers::static_vector<Moves, max_moves_per_pokemon>>();
+		auto moves = bounded::optional<containers::static_vector<MoveName, max_moves_per_pokemon>>();
 		// TODO: Use an array?
 		auto pp_ups = bounded::optional<containers::static_vector<PP::pp_ups_type, max_moves_per_pokemon>>();
 		for (auto const field : description.fields) {
@@ -345,7 +345,7 @@ private:
 							}
 						} else if constexpr (std::is_same_v<State, AnyVector>) {
 							auto parse_moves = [](ParsedData const & inner_parsed) {
-								return from_string<Moves>(inner_parsed.state[bounded::detail::types<std::string_view>()]);
+								return from_string<MoveName>(inner_parsed.state[bounded::detail::types<std::string_view>()]);
 							};
 							auto filter_moves = [](ParsedData const & inner_parsed) {
 								if (bounded::holds_alternative(inner_parsed.state, bounded::detail::types<std::string_view>())) {

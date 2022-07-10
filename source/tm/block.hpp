@@ -12,7 +12,7 @@
 #include <tm/move/category.hpp>
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/is_switch.hpp>
 
 #include <tm/pokemon/any_pokemon.hpp>
@@ -28,7 +28,7 @@
 namespace technicalmachine {
 
 template<Generation generation>
-constexpr auto would_switch_to_same_pokemon(PokemonCollection<generation> const & collection, Moves const move) {
+constexpr auto would_switch_to_same_pokemon(PokemonCollection<generation> const & collection, MoveName const move) {
 	return to_replacement(move) == collection.index();
 }
 
@@ -40,34 +40,34 @@ constexpr auto is_blocked_from_switching(ActivePokemonType const user, ActivePok
 }
 
 template<Generation generation>
-constexpr auto is_illegal_switch(Team<generation> const & user, Moves const move, ActivePokemon<generation> const other, Weather const weather) {
+constexpr auto is_illegal_switch(Team<generation> const & user, MoveName const move, ActivePokemon<generation> const other, Weather const weather) {
 	return is_switch(move) and (
 		would_switch_to_same_pokemon(user.all_pokemon(), move) or
 		is_blocked_from_switching(user.pokemon(), other, weather)
 	);
 }
 
-constexpr auto is_healing(Moves const name) {
+constexpr auto is_healing(MoveName const name) {
 	switch (name) {
-		case Moves::Heal_Order:
-		case Moves::Milk_Drink:
-		case Moves::Moonlight:
-		case Moves::Morning_Sun:
-		case Moves::Recover:
-		case Moves::Rest:
-		case Moves::Roost:
-		case Moves::Slack_Off:
-		case Moves::Soft_Boiled:
-		case Moves::Swallow:
-		case Moves::Synthesis:
-		case Moves::Wish:
+		case MoveName::Heal_Order:
+		case MoveName::Milk_Drink:
+		case MoveName::Moonlight:
+		case MoveName::Morning_Sun:
+		case MoveName::Recover:
+		case MoveName::Rest:
+		case MoveName::Roost:
+		case MoveName::Slack_Off:
+		case MoveName::Soft_Boiled:
+		case MoveName::Swallow:
+		case MoveName::Synthesis:
+		case MoveName::Wish:
 			return true;
 		default:
 			return false;
 	}
 }
 
-constexpr auto imprison(Moves const move, any_active_pokemon auto const other) {
+constexpr auto imprison(MoveName const move, any_active_pokemon auto const other) {
 	return other.used_imprison() and containers::any_equal(other.regular_moves(), move);
 }
 
@@ -83,18 +83,18 @@ auto block1(any_active_pokemon auto const user, Move const move, any_active_poke
 		(imprison(move.name(), other));
 }
 
-inline auto is_blocked_by_taunt(Moves const move) {
+inline auto is_blocked_by_taunt(MoveName const move) {
 	return !is_damaging(move);
 }
 
-constexpr auto is_blocked_by_gravity(Moves const move) {
+constexpr auto is_blocked_by_gravity(MoveName const move) {
 	switch (move) {
-		case Moves::Bounce:
-		case Moves::Fly:
-		case Moves::High_Jump_Kick:
-		case Moves::Jump_Kick:
-		case Moves::Magnet_Rise:
-		case Moves::Splash:
+		case MoveName::Bounce:
+		case MoveName::Fly:
+		case MoveName::High_Jump_Kick:
+		case MoveName::Jump_Kick:
+		case MoveName::Magnet_Rise:
+		case MoveName::Splash:
 			return true;
 		default:
 			return false;
@@ -102,22 +102,22 @@ constexpr auto is_blocked_by_gravity(Moves const move) {
 }
 
 // Things that both block selection and block execution after flinching
-constexpr auto block2(any_active_pokemon auto const user, Moves const move, Weather const weather) {
+constexpr auto block2(any_active_pokemon auto const user, MoveName const move, Weather const weather) {
 	return !is_switch(move) and (
 		(user.is_taunted() and is_blocked_by_taunt(move)) or
 		(weather.gravity() and is_blocked_by_gravity(move))
 	);
 }
 
-constexpr auto blocked_by_torment(any_active_pokemon auto const user, Moves const move) {
-	return user.is_tormented() and user.last_used_move().name() == move and not is_switch(move) and move != Moves::Struggle;
+constexpr auto blocked_by_torment(any_active_pokemon auto const user, MoveName const move) {
+	return user.is_tormented() and user.last_used_move().name() == move and not is_switch(move) and move != MoveName::Struggle;
 }
 
 constexpr auto is_locked_in(any_active_pokemon auto const user, Weather const weather) {
 	return user.is_encored() or user.last_used_move().is_locked_in_by_move() or is_choice_item(user.item(weather));
 }
 
-constexpr auto is_locked_in_to_different_move(any_active_pokemon auto const user, Moves const move, Weather const weather) {
+constexpr auto is_locked_in_to_different_move(any_active_pokemon auto const user, MoveName const move, Weather const weather) {
 	if (not is_locked_in(user, weather)) {
 		return false;
 	}
@@ -125,7 +125,7 @@ constexpr auto is_locked_in_to_different_move(any_active_pokemon auto const user
 	return not is_switch(last_move) and last_move != move;
 }
 
-constexpr auto is_blocked_due_to_lock_in(any_active_pokemon auto const user, Moves const move, Weather const weather) {
+constexpr auto is_blocked_due_to_lock_in(any_active_pokemon auto const user, MoveName const move, Weather const weather) {
 	return !is_regular(move) ?
 		user.last_used_move().is_locked_in_by_move() :
 		is_locked_in_to_different_move(user, move, weather);
@@ -133,11 +133,11 @@ constexpr auto is_blocked_due_to_lock_in(any_active_pokemon auto const user, Mov
 
 template<any_team TeamType>
 auto is_legal_selection(TeamType const & user, Move const move, TeamType const & other, Weather const weather, bool const found_selectable_move) {
-	BOUNDED_ASSERT(move != Moves::Hit_Self);
+	BOUNDED_ASSERT(move != MoveName::Hit_Self);
 	if (switch_decision_required(user)) {
 		return is_switch(move.name()) and !would_switch_to_same_pokemon(user.all_pokemon(), move.name());
 	}
-	auto const is_pass = move == Moves::Pass;
+	auto const is_pass = move == MoveName::Pass;
 	if (switch_decision_required(other)) {
 		return is_pass;
 	}
@@ -145,7 +145,7 @@ auto is_legal_selection(TeamType const & user, Move const move, TeamType const &
 	if (user_pokemon.last_used_move().moved_this_turn()) {
 		return is_pass;
 	}
-	if (move == Moves::Struggle) {
+	if (move == MoveName::Struggle) {
 		return !found_selectable_move;
 	}
 	auto const other_pokemon = other.pokemon();
@@ -172,14 +172,14 @@ constexpr auto legal_selections(TeamType const & user, TeamType const & other, W
 }
 
 
-constexpr bool is_blocked_by_freeze(any_active_pokemon auto const user, Moves const move) {
+constexpr bool is_blocked_by_freeze(any_active_pokemon auto const user, MoveName const move) {
 	return is_frozen(user.status()) and !thaws_user(move);
 }
 
-constexpr bool usable_while_sleeping(Moves const move) {
+constexpr bool usable_while_sleeping(MoveName const move) {
 	switch (move) {
-		case Moves::Sleep_Talk:
-		case Moves::Snore:
+		case MoveName::Sleep_Talk:
+		case MoveName::Snore:
 			return true;
 		default:
 			return false;
@@ -187,11 +187,11 @@ constexpr bool usable_while_sleeping(Moves const move) {
 }
 
 template<any_active_pokemon UserPokemon>
-constexpr bool is_blocked_by_sleep(UserPokemon const user, Moves const move, bool const user_was_asleep) {
+constexpr bool is_blocked_by_sleep(UserPokemon const user, MoveName const move, bool const user_was_asleep) {
 	return generation_from<UserPokemon> == Generation::one ? user_was_asleep : usable_while_sleeping(move) != is_sleeping(user.status());
 }
 
-constexpr auto is_blocked_due_to_status(any_active_pokemon auto const user, Moves const move, bool const user_was_asleep) {
+constexpr auto is_blocked_due_to_status(any_active_pokemon auto const user, MoveName const move, bool const user_was_asleep) {
 	return is_blocked_by_freeze(user, move) or is_blocked_by_sleep(user, move, user_was_asleep);
 }
 
@@ -214,7 +214,7 @@ auto can_execute_move(any_active_pokemon auto const user, Move const move, Weath
 	// TODO: handle is_fully_paralyzed
 	constexpr auto is_fully_paralyzed = false;
 	auto const switching = is_switch(move.name());
-	if (switching or move.name() == Moves::Hit_Self) {
+	if (switching or move.name() == MoveName::Hit_Self) {
 		BOUNDED_ASSERT(!is_recharging or (switching and user.hp().current() == 0_bi));
 		return true;
 	}

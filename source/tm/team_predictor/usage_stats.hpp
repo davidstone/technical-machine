@@ -7,7 +7,7 @@
 
 #include <tm/team_predictor/usage_stats_probabilities.hpp>
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/species.hpp>
 
@@ -38,7 +38,7 @@ struct UsageStats {
 		auto const per_species = containers::lookup(m_data, species);
 		return per_species ? std::addressof(per_species->probabilities) : nullptr;
 	}
-	auto assuming(Species const species, Moves const moves) const -> UsageStatsProbabilities const * {
+	auto assuming(Species const species, MoveName const moves) const -> UsageStatsProbabilities const * {
 		auto const per_species = containers::lookup(m_data, species);
 		return per_species ?
 			containers::lookup(per_species->used_moves, moves) :
@@ -46,7 +46,7 @@ struct UsageStats {
 	}
 
 private:
-	using UsedMoves = containers::flat_map<Moves, UsageStatsProbabilities>;
+	using UsedMoves = containers::flat_map<MoveName, UsageStatsProbabilities>;
 	struct PerSpecies {
 		UsedMoves used_moves;
 		UsageStatsProbabilities probabilities;

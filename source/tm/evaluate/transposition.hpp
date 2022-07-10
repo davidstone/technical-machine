@@ -9,7 +9,7 @@
 #include <tm/evaluate/compressed_battle.hpp>
 #include <tm/evaluate/depth.hpp>
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/any_team.hpp>
 #include <tm/compress.hpp>
@@ -46,7 +46,7 @@ private:
 	struct Value {
 		CompressedBattle<generation> compressed_battle = {};
 		DepthValues depth = {};
-		Moves move = {};
+		MoveName move = {};
 		double score = 0.0;
 	};
 	static constexpr auto size = bounded::constant<1 << 13>;

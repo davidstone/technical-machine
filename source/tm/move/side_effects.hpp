@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/any_pokemon.hpp>
 
@@ -63,10 +63,10 @@ template<any_team UserTeam>
 using SideEffects = containers::static_vector<SideEffect<UserTeam>, 15_bi>;
 
 template<any_active_pokemon UserPokemon>
-auto possible_side_effects(Moves, UserPokemon, OtherTeam<UserPokemon> const &, Weather) -> SideEffects<AssociatedTeam<UserPokemon>>;
+auto possible_side_effects(MoveName, UserPokemon, OtherTeam<UserPokemon> const &, Weather) -> SideEffects<AssociatedTeam<UserPokemon>>;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(UserPokemon) \
-	extern template auto possible_side_effects(Moves, UserPokemon, OtherTeam<UserPokemon> const &, Weather) -> SideEffects<AssociatedTeam<UserPokemon>>
+	extern template auto possible_side_effects(MoveName, UserPokemon, OtherTeam<UserPokemon> const &, Weather) -> SideEffects<AssociatedTeam<UserPokemon>>
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
 	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(AnyActivePokemon<Pokemon<generation>>); \

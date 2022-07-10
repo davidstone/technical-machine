@@ -31,10 +31,10 @@ auto make_result() {
 				EVs(EV(252_bi), EV(24_bi), EV(192_bi), EV(0_bi), EV(40_bi), EV(0_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Earthquake),
-				Move(generation, Moves::Slack_Off),
-				Move(generation, Moves::Stealth_Rock),
-				Move(generation, Moves::Roar)
+				Move(generation, MoveName::Earthquake),
+				Move(generation, MoveName::Slack_Off),
+				Move(generation, MoveName::Stealth_Rock),
+				Move(generation, MoveName::Roar)
 			})
 		},
 		{
@@ -49,10 +49,10 @@ auto make_result() {
 				EVs(EV(252_bi), EV(0_bi), EV(216_bi), EV(0_bi), EV(8_bi), EV(32_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Perish_Song),
-				Move(generation, Moves::Recover),
-				Move(generation, Moves::Grass_Knot),
-				Move(generation, Moves::U_turn)
+				Move(generation, MoveName::Perish_Song),
+				Move(generation, MoveName::Recover),
+				Move(generation, MoveName::Grass_Knot),
+				Move(generation, MoveName::U_turn)
 			})
 		},
 		{
@@ -67,10 +67,10 @@ auto make_result() {
 				EVs(EV(0_bi), EV(0_bi), EV(252_bi), EV(80_bi), EV(176_bi), EV(0_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Wish),
-				Move(generation, Moves::Soft_Boiled),
-				Move(generation, Moves::Toxic),
-				Move(generation, Moves::Flamethrower)
+				Move(generation, MoveName::Wish),
+				Move(generation, MoveName::Soft_Boiled),
+				Move(generation, MoveName::Toxic),
+				Move(generation, MoveName::Flamethrower)
 			})
 		},
 		{
@@ -85,10 +85,10 @@ auto make_result() {
 				EVs(EV(252_bi), EV(0_bi), EV(200_bi), EV(0_bi), EV(36_bi), EV(20_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Spikes),
-				Move(generation, Moves::Roost),
-				Move(generation, Moves::Brave_Bird),
-				Move(generation, Moves::Whirlwind)
+				Move(generation, MoveName::Spikes),
+				Move(generation, MoveName::Roost),
+				Move(generation, MoveName::Brave_Bird),
+				Move(generation, MoveName::Whirlwind)
 			})
 		},
 		{
@@ -103,10 +103,10 @@ auto make_result() {
 				EVs(EV(252_bi), EV(0_bi), EV(120_bi), EV(0_bi), EV(136_bi), EV(0_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Toxic_Spikes),
-				Move(generation, Moves::Rapid_Spin),
-				Move(generation, Moves::Surf),
-				Move(generation, Moves::Sludge_Bomb)
+				Move(generation, MoveName::Toxic_Spikes),
+				Move(generation, MoveName::Rapid_Spin),
+				Move(generation, MoveName::Surf),
+				Move(generation, MoveName::Sludge_Bomb)
 			})
 		},
 		{
@@ -121,10 +121,10 @@ auto make_result() {
 				EVs(EV(252_bi), EV(0_bi), EV(136_bi), EV(0_bi), EV(120_bi), EV(0_bi))
 			},
 			RegularMoves({
-				Move(generation, Moves::Thunderbolt),
-				Move(generation, Moves::Shadow_Ball),
-				Move(generation, Moves::Reflect),
-				Move(generation, Moves::Hydro_Pump)
+				Move(generation, MoveName::Thunderbolt),
+				Move(generation, MoveName::Shadow_Ball),
+				Move(generation, MoveName::Reflect),
+				Move(generation, MoveName::Hydro_Pump)
 			})
 		}
 	}));

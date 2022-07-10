@@ -6,7 +6,7 @@
 #include <tm/ability_blocks_move.hpp>
 
 #include <tm/move/category.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/target.hpp>
 #include <tm/type/effectiveness.hpp>
 
@@ -24,11 +24,11 @@ auto ability_blocks_move(Generation const generation, Ability const ability, Kno
 			}
 			return
 				absorb_ability_activates(Type::Fire) and
-				(generation >= Generation::four or move.name != Moves::Will_O_Wisp);
+				(generation >= Generation::four or move.name != MoveName::Will_O_Wisp);
 		case Ability::Volt_Absorb:
 			return
 				absorb_ability_activates(Type::Electric) and
-				(generation >= Generation::four or move.name != Moves::Thunder_Wave);
+				(generation >= Generation::four or move.name != MoveName::Thunder_Wave);
 		case Ability::Water_Absorb:
 		case Ability::Dry_Skin:
 			return absorb_ability_activates(Type::Water);
@@ -40,12 +40,12 @@ auto ability_blocks_move(Generation const generation, Ability const ability, Kno
 				return false;
 			}
 			switch (move.name) {
-				case Moves::Beat_Up:
+				case MoveName::Beat_Up:
 					return generation >= Generation::five;
-				case Moves::Fire_Fang:
+				case MoveName::Fire_Fang:
 					return generation != Generation::four;
-				case Moves::Hit_Self:
-				case Moves::Struggle:
+				case MoveName::Hit_Self:
+				case MoveName::Struggle:
 					return false;
 				default:
 					return true;

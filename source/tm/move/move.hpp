@@ -14,11 +14,11 @@
 
 namespace technicalmachine {
 enum class Generation : std::uint8_t;
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 using namespace bounded::literal;
 
 struct Move {
-	explicit Move(Generation const generation, Moves const move, PP::pp_ups_type const pp_ups = 3_bi) :
+	explicit Move(Generation const generation, MoveName const move, PP::pp_ups_type const pp_ups = 3_bi) :
 		m_name(move),
 		m_pp(generation, move, pp_ups)
 	{
@@ -48,17 +48,17 @@ struct Move {
 	}
 
 private:
-	Moves m_name;
+	MoveName m_name;
 	PP m_pp;
 };
 
-inline auto operator==(Move const lhs, Moves const rhs) -> bool {
+inline auto operator==(Move const lhs, MoveName const rhs) -> bool {
 	return lhs.name() == rhs;
 }
 
-auto is_delayed_switch(Moves name) -> bool;
-auto is_regular(Moves move) -> bool;
-auto is_phaze(Moves name) -> bool;
-auto thaws_user(Moves move) -> bool;
+auto is_delayed_switch(MoveName name) -> bool;
+auto is_regular(MoveName move) -> bool;
+auto is_phaze(MoveName name) -> bool;
+auto thaws_user(MoveName move) -> bool;
 
 } // namespace technicalmachine

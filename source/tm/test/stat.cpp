@@ -25,7 +25,7 @@ using namespace bounded::literal;
 constexpr auto generation = Generation::four;
 
 constexpr auto critical_hit = false;
-constexpr auto physical_move = Moves::Tackle;
+constexpr auto physical_move = MoveName::Tackle;
 
 TEST_CASE("Calculate max Attack", "[calculate stat]") {
 	constexpr auto max_attack = 7368_bi;
@@ -51,7 +51,7 @@ TEST_CASE("Calculate max Attack", "[calculate stat]") {
 					EV(0_bi)
 				)
 			},
-			RegularMoves({Move(generation, Moves::Tackle)})
+			RegularMoves({Move(generation, MoveName::Tackle)})
 		)
 	});
 	auto pokemon = attacker.pokemon();
@@ -87,7 +87,7 @@ TEST_CASE("Calculate max Special Attack", "[calculate stat]") {
 					EV(0_bi)
 				)
 			},
-			RegularMoves({Move(generation, Moves::Psychic)})
+			RegularMoves({Move(generation, MoveName::Psychic)})
 		)
 	});
 	auto pokemon = attacker.pokemon();
@@ -123,7 +123,7 @@ TEST_CASE("Calculate max Defense", "[calculate stat]") {
 					EV(0_bi)
 				)
 			},
-			RegularMoves({Move(generation, Moves::Tackle)})
+			RegularMoves({Move(generation, MoveName::Tackle)})
 		)
 	});
 	defender.pokemon().switch_in(weather);
@@ -148,7 +148,7 @@ TEST_CASE("Calculate min Defense", "[calculate stat]") {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			RegularMoves({Move(generation, Moves::Tackle)})
+			RegularMoves({Move(generation, MoveName::Tackle)})
 		)
 	});
 	auto pokemon = defender.pokemon();
@@ -187,7 +187,7 @@ TEST_CASE("Calculate max Special Defense", "[calculate stat]") {
 					EV(0_bi)
 				)
 			},
-			RegularMoves({Move(generation, Moves::Tackle)})
+			RegularMoves({Move(generation, MoveName::Tackle)})
 		)
 	});
 	auto pokemon = defender.pokemon();
@@ -222,7 +222,7 @@ TEST_CASE("Calculate max Speed", "[calculate stat]") {
 					EV(252_bi)
 				)
 			},
-			RegularMoves({Move(generation, Moves::Tackle)})
+			RegularMoves({Move(generation, MoveName::Tackle)})
 		)
 	});
 	auto pokemon = team.pokemon();

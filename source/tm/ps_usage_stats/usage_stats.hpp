@@ -49,7 +49,7 @@ struct UsageStats {
 	constexpr auto const & moves(Species const species) const {
 		return m_all[bounded::integer(species)].moves;
 	}
-	constexpr auto get(Species const species, Moves const move_name) const {
+	constexpr auto get(Species const species, MoveName const move_name) const {
 		return moves(species)[bounded::integer(move_name)];
 	}
 	constexpr auto const & speed_distribution(Species const species) const {
@@ -64,7 +64,7 @@ private:
 		double total = 0.0;
 		containers::array<double, bounded::number_of<Ability>> abilities{};
 		containers::array<double, bounded::number_of<Item>> items{};
-		containers::array<double, bounded::number_of<Moves>> moves{};
+		containers::array<double, bounded::number_of<MoveName>> moves{};
 		SpeedDistribution speed{};
 	};
 	containers::array<PerSpecies, bounded::number_of<Species>> m_all;
@@ -95,17 +95,17 @@ private:
 struct Correlations {
 	struct PerTeammate {
 		double usage = 0.0;
-		containers::flat_map<Moves, double> other_moves;
+		containers::flat_map<MoveName, double> other_moves;
 	};
 	using Teammates = containers::array<PerTeammate, bounded::number_of<Species>>;
 	struct MoveData {
 		Teammates teammates;
-		containers::array<double, bounded::number_of<Moves>> moves = {};
+		containers::array<double, bounded::number_of<MoveName>> moves = {};
 		containers::array<double, bounded::number_of<Item>> items = {};
 		containers::array<double, bounded::number_of<Ability>> abilities = {};
 		SpeedDistribution speed = {};
 	};
-	using TopMoves = containers::flat_map<Moves, std::unique_ptr<LockedAccess<MoveData>>>;
+	using TopMoves = containers::flat_map<MoveName, std::unique_ptr<LockedAccess<MoveData>>>;
 	struct PerSpecies {
 		TopMoves top_moves;
 		std::unique_ptr<LockedAccess<Teammates>> teammates = std::make_unique<LockedAccess<Teammates>>();

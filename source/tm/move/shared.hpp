@@ -8,7 +8,7 @@
 
 #include <tm/move/max_moves_per_pokemon.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/is_switch.hpp>
 
 #include <tm/operators.hpp>
@@ -51,8 +51,8 @@ public:
 		>;
 		static_assert(number_of_weird_moves == 2_bi, "Add the extra 'weird' move here.");
 		auto const move_name = 
-			(m_index == 0_bi) ? Moves::Pass :
-			(m_index == 1_bi) ? Moves::Struggle :
+			(m_index == 0_bi) ? MoveName::Pass :
+			(m_index == 1_bi) ? MoveName::Struggle :
 			to_switch(::bounded::assume_in_range<switch_index_type>(m_index) - number_of_weird_moves);
 		return Move(generation, move_name);
 	}

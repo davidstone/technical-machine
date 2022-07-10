@@ -13,7 +13,7 @@
 
 #include <tm/evaluate/expectiminimax.hpp>
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/any_pokemon.hpp>
 
@@ -22,7 +22,7 @@
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/species.hpp>
 #include <tm/string_conversions/status_name.hpp>
 #include <tm/string_conversions/team.hpp>
@@ -68,8 +68,8 @@ constexpr auto party_from_player_id(std::string_view const player_id) {
 	return parse_identity(player_id).party;
 }
 
-constexpr auto get_move_index(RegularMoves const moves, Moves const move_name) -> containers::index_type<RegularMoves> {
-	if (move_name == Moves::Struggle) {
+constexpr auto get_move_index(RegularMoves const moves, MoveName const move_name) -> containers::index_type<RegularMoves> {
+	if (move_name == MoveName::Struggle) {
 		return 0_bi;
 	}
 	auto const it = containers::find_if(moves, [=](Move const move) { return move.name() == move_name; });
@@ -210,37 +210,37 @@ auto hp_to_damage(any_pokemon auto const & pokemon, HP::current_type const new_h
 	return bounded::assume_in_range<HP::current_type>(old_hp - new_hp);
 }
 
-auto const & select_pokemon(any_team auto const & team, Moves const move) {
+auto const & select_pokemon(any_team auto const & team, MoveName const move) {
 	return is_switch(move) ? team.pokemon(to_replacement(move)) : team.all_pokemon()();
 }
 
-constexpr auto causes_recoil(Moves const move) {
+constexpr auto causes_recoil(MoveName const move) {
 	switch (move) {
-		case Moves::Brave_Bird:
-		case Moves::Double_Edge:
-		case Moves::Flare_Blitz:
-		case Moves::Head_Smash:
-		case Moves::Submission:
-		case Moves::Take_Down:
-		case Moves::Volt_Tackle:
-		case Moves::Wood_Hammer:
+		case MoveName::Brave_Bird:
+		case MoveName::Double_Edge:
+		case MoveName::Flare_Blitz:
+		case MoveName::Head_Smash:
+		case MoveName::Submission:
+		case MoveName::Take_Down:
+		case MoveName::Volt_Tackle:
+		case MoveName::Wood_Hammer:
 			return true;
 		default:
 			return false;
 	}
 }
 
-constexpr auto cures_target_status(Generation const generation, Moves const move_name, bounded::optional<Type> const hidden_power_type, StatusName const status) {
+constexpr auto cures_target_status(Generation const generation, MoveName const move_name, bounded::optional<Type> const hidden_power_type, StatusName const status) {
 	switch (status) {
 		case StatusName::freeze:
 			return
 				get_type(generation, move_name, hidden_power_type) == Type::Fire or
-				(generation == Generation::two and move_name == Moves::Tri_Attack);
+				(generation == Generation::two and move_name == MoveName::Tri_Attack);
 		case StatusName::paralysis:
-			return move_name == Moves::Smelling_Salts;
+			return move_name == MoveName::Smelling_Salts;
 		case StatusName::rest:
 		case StatusName::sleep:
-			return move_name == Moves::Wake_Up_Slap;
+			return move_name == MoveName::Wake_Up_Slap;
 		case StatusName::clear:
 		case StatusName::burn:
 		case StatusName::poison:
@@ -349,7 +349,7 @@ struct BattleParserImpl : BattleParser {
 					set_value_on_pokemon(party, ability);
 					switch (ability) {
 						case Ability::Forewarn:
-							m_battle.add_move(!is_ai(party), from_string<Moves>(details));
+							m_battle.add_move(!is_ai(party), from_string<MoveName>(details));
 							break;
 						case Ability::Shed_Skin:
 							m_end_of_turn_state.shed_skin(party);
@@ -377,23 +377,23 @@ struct BattleParserImpl : BattleParser {
 			// TODO: Figure out how to solve this in general...
 			auto const party = party_from_player_id(message.pop());
 			auto const reason = message.pop();
-			auto use_move = [&](Moves const move_name) {
+			auto use_move = [&](MoveName const move_name) {
 				m_move_state.use_move(party, move_name);
 			};
 			if (reason == "flinch") {
 				// Technically incorrect with things like Sucker Punch and
 				// priority
-				use_move(Moves::Struggle);
+				use_move(MoveName::Struggle);
 				m_move_state.flinch(party);
 			} else if (reason == "frz") {
 				// Using a move like Flame Wheel does not send "cant"
 				// Technically incorrect with things like Sucker Punch and
 				// priority
-				use_move(Moves::Struggle);
+				use_move(MoveName::Struggle);
 			} else if (reason == "par") {
 				// Technically incorrect with things like Sucker Punch and
 				// priority
-				use_move(Moves::Struggle);
+				use_move(MoveName::Struggle);
 				m_move_state.fully_paralyze(party);
 			} else if (reason == "slp") {
 				m_move_state.still_asleep(party);
@@ -454,7 +454,7 @@ struct BattleParserImpl : BattleParser {
 						m_move_state.thaw_or_awaken(party);
 						if constexpr (generation == Generation::one) {
 							// TODO: Try to do something smarter here
-							m_move_state.use_move(party, Moves::Struggle);
+							m_move_state.use_move(party, MoveName::Struggle);
 						}
 					}
 				},
@@ -564,7 +564,7 @@ struct BattleParserImpl : BattleParser {
 				[](MainEffect) {},
 				[](FromConfusion) { throw std::runtime_error("Confusion cannot cause immunity"); },
 				[](FromMiscellaneous) { throw std::runtime_error("Miscellaneous effects cannot cause immunity"); },
-				[](FromMove) { throw std::runtime_error("Moves cannot cause immunity"); },
+				[](FromMove) { throw std::runtime_error("MoveName cannot cause immunity"); },
 				[](FromRecoil) { throw std::runtime_error("Recoil cannot cause immunity"); },
 				[](FromSubstitute) { throw std::runtime_error("Substitute cannot cause immunity"); },
 				[&](auto const value) { set_value_on_pokemon(party, value); }
@@ -590,7 +590,7 @@ struct BattleParserImpl : BattleParser {
 			m_move_state.miss(user_party);
 		} else if (type == "move") {
 			auto const party = party_from_player_id(message.pop());
-			auto const move = from_string<Moves>(message.pop());
+			auto const move = from_string<MoveName>(message.pop());
 #if 0
 			// target is sent only for moves that target one Pokemon
 			auto const target = message.pop();
@@ -599,7 +599,7 @@ struct BattleParserImpl : BattleParser {
 				maybe_use_previous_move();
 			}
 			m_move_state.use_move(party, move);
-			if (is_ai(party) and move == Moves::Baton_Pass and m_battle.ai().size() != 1_bi) {
+			if (is_ai(party) and move == MoveName::Baton_Pass and m_battle.ai().size() != 1_bi) {
 				maybe_use_previous_move();
 				send_move(determine_action());
 			}
@@ -784,8 +784,8 @@ struct BattleParserImpl : BattleParser {
 	}
 
 private:
-	auto compute_damage(bool const user_is_ai, Moves const move, HPAndStatus const hp_and_status) -> const HP::current_type {
-		auto const ai_damaged = !user_is_ai xor (move == Moves::Hit_Self);
+	auto compute_damage(bool const user_is_ai, MoveName const move, HPAndStatus const hp_and_status) -> const HP::current_type {
+		auto const ai_damaged = !user_is_ai xor (move == MoveName::Hit_Self);
 		return apply_to_team(ai_damaged, [&](auto const & team) {
 			auto const & pokemon = select_pokemon(team, move);
 			auto const new_hp = ai_damaged ?
@@ -827,8 +827,8 @@ private:
 				// selected Struggle.
 				// When hitting self in confusion, we get -activate then -damage
 				maybe_use_previous_move();
-				m_move_state.use_move(party, Moves::Struggle);
-				m_move_state.use_move(party, Moves::Hit_Self);
+				m_move_state.use_move(party, MoveName::Struggle);
+				m_move_state.use_move(party, MoveName::Hit_Self);
 				move_damage(party);
 			},
 			[](FromMiscellaneous) {},
@@ -864,7 +864,7 @@ private:
 		struct Result {
 			Party party;
 			Species species;
-			Moves move;
+			MoveName move;
 			VisibleHP hp;
 			StatusName status;
 		};
@@ -924,7 +924,7 @@ private:
 			} else {
 				constexpr auto data_is_for_ai = std::is_same_v<Data, MoveState::AIResult<generation>>;
 				m_battle.add_move(data_is_for_ai, data.move.selected);
-				if (data.move.selected == Moves::Sleep_Talk) {
+				if (data.move.selected == MoveName::Sleep_Talk) {
 					m_battle.add_move(data_is_for_ai, data.move.executed);
 				}
 				auto const user_pokemon = [&] {
@@ -993,7 +993,7 @@ private:
 						return KnownMove{move, type};
 					}()) :
 					OtherMove(FutureMove{
-						data.move.executed == Moves::Sucker_Punch and damage.did_any_damage
+						data.move.executed == MoveName::Sucker_Punch and damage.did_any_damage
 					});
 
 				m_battle.handle_use_move(data.move, data.clear_status, damage.value, other_move);
@@ -1022,7 +1022,7 @@ private:
 		}
 	}
 
-	Moves determine_action() {
+	MoveName determine_action() {
 		if (m_battle.ai().size() == 0_bi or m_battle.foe().size() == 0_bi) {
 			throw std::runtime_error("Tried to determine an action with an empty team.");
 		}
@@ -1046,7 +1046,7 @@ private:
 		m_send_message(containers::concatenate<containers::string>(m_id, (is_switch ? containers::concatenate_view("|/switch "sv, to_string(switch_move())) : containers::concatenate_view("|/move "sv, to_string(move_index() + 1_bi)))));
 	}
 
-	void send_move(Moves const move) {
+	void send_move(MoveName const move) {
 		// In doubles / triples we need to specify " TARGET" at the end for regular
 		// moves
 		auto switch_move = [&]{ return m_slot_memory[to_replacement(move)]; };
@@ -1099,7 +1099,7 @@ private:
 	EndOfTurnState m_end_of_turn_state;
 
 	struct Switch {
-		Moves move;
+		MoveName move;
 		VisibleHP hp;
 		StatusName status;
 	};

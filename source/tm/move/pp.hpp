@@ -19,14 +19,14 @@
 
 namespace technicalmachine {
 
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 
 using namespace bounded::literal;
 
 struct PP {
 	using pp_ups_type = bounded::integer<0, 3>;
 
-	PP(Generation, Moves, pp_ups_type);
+	PP(Generation, MoveName, pp_ups_type);
 
 	auto remaining() const {
 		return m_current;

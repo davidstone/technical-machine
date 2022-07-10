@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/side_effects.hpp>
 
 #include <tm/any_team.hpp>
@@ -16,8 +16,8 @@ namespace technicalmachine {
 template<any_team UserTeam>
 struct UsedMove {
 	constexpr UsedMove(
-		Moves const selected_,
-		Moves const executed_,
+		MoveName const selected_,
+		MoveName const executed_,
 		bool const critical_hit_,
 		bool const miss_,
 		ContactAbilityEffect const contact_ability_effect_,
@@ -32,7 +32,7 @@ struct UsedMove {
 	{
 	}
 
-	constexpr UsedMove(Moves const selected_, typename SideEffect<UserTeam>::Function const side_effect_):
+	constexpr UsedMove(MoveName const selected_, typename SideEffect<UserTeam>::Function const side_effect_):
 		side_effect(side_effect_),
 		selected(selected_),
 		executed(selected),
@@ -43,8 +43,8 @@ struct UsedMove {
 	}
 
 	typename SideEffect<UserTeam>::Function side_effect;
-	Moves selected;
-	Moves executed;
+	MoveName selected;
+	MoveName executed;
 	bool critical_hit;
 	bool miss;
 	ContactAbilityEffect contact_ability_effect;

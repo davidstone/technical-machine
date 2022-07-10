@@ -107,7 +107,7 @@ struct Pokemon {
 		return m_regular_moves;
 	}
 
-	void reduce_pp(Moves const move_name, bool const embargo, bool const magic_room, bounded::bounded_integer auto const amount) & {
+	void reduce_pp(MoveName const move_name, bool const embargo, bool const magic_room, bounded::bounded_integer auto const amount) & {
 		auto const maybe_move = containers::maybe_find(m_regular_moves, move_name);
 		if (!maybe_move) {
 			return;

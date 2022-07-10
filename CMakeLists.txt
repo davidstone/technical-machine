@@ -110,6 +110,7 @@ add_library(tm_common STATIC
 	source/tm/move/known_move.cpp
 	source/tm/move/max_moves_per_pokemon.cpp
 	source/tm/move/move.cpp
+	source/tm/move/move_name.cpp
 	source/tm/move/other_move.cpp
 	source/tm/move/power.cpp
 	source/tm/move/pp.cpp
@@ -190,7 +191,7 @@ add_library(tm_common STATIC
 	source/tm/string_conversions/invalid_string_conversion.cpp
 	source/tm/string_conversions/item.cpp
 	source/tm/string_conversions/lowercase_alphanumeric.cpp
-	source/tm/string_conversions/move.cpp
+	source/tm/string_conversions/move_name.cpp
 	source/tm/string_conversions/nature.cpp
 	source/tm/string_conversions/pokemon.cpp
 	source/tm/string_conversions/species.cpp

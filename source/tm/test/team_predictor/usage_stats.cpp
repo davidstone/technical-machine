@@ -34,7 +34,7 @@ TEST_CASE("Smallest generation 1 team", "[UsageStats]") {
 	CHECK(containers::size(map) == 1_bi);
 	auto const ptr = base(Species::Mew);
 	REQUIRE(ptr);
-	CHECK(ptr->moves.map() == containers::flat_map<Moves, float>({{Moves::Cut, 1.0}}));
+	CHECK(ptr->moves.map() == containers::flat_map<MoveName, float>({{MoveName::Cut, 1.0}}));
 	CHECK(ptr->items.map() == containers::flat_map<Item, float>());
 	CHECK(ptr->abilities.map() == containers::flat_map<Ability, float>());
 }
@@ -46,7 +46,7 @@ TEST_CASE("Smallest generation 2 team", "[UsageStats]") {
 	CHECK(containers::size(map) == 1_bi);
 	auto const ptr = base(Species::Mew);
 	REQUIRE(ptr);
-	CHECK(ptr->moves.map() == containers::flat_map<Moves, float>({{Moves::Cut, 1.0}}));
+	CHECK(ptr->moves.map() == containers::flat_map<MoveName, float>({{MoveName::Cut, 1.0}}));
 	CHECK(ptr->items.map() == containers::flat_map<Item, float>({{Item::None, 1.0}}));
 	CHECK(ptr->abilities.map() == containers::flat_map<Ability, float>());
 }
@@ -58,7 +58,7 @@ TEST_CASE("Smallest generation 3 team", "[UsageStats]") {
 	CHECK(containers::size(map) == 1_bi);
 	auto const ptr = base(Species::Mew);
 	REQUIRE(ptr);
-	CHECK(ptr->moves.map() == containers::flat_map<Moves, float>({{Moves::Cut, 1.0}}));
+	CHECK(ptr->moves.map() == containers::flat_map<MoveName, float>({{MoveName::Cut, 1.0}}));
 	CHECK(ptr->items.map() == containers::flat_map<Item, float>({{Item::None, 1.0}}));
 	CHECK(ptr->abilities.map() == containers::flat_map<Ability, float>({{Ability::Synchronize, 1.0}}));
 }

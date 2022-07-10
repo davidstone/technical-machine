@@ -10,7 +10,7 @@
 #include <tm/gender.hpp>
 #include <tm/item.hpp>
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/species.hpp>
 
@@ -1883,12 +1883,12 @@ ItemID item_to_id(Item const item) {
 	}
 }
 
-Moves id_to_move(MoveID const id) {
-	return static_cast<Moves>(id + bounded::integer(Moves::Regular_Begin) - 1_bi);
+MoveName id_to_move(MoveID const id) {
+	return static_cast<MoveName>(id + bounded::integer(MoveName::Regular_Begin) - 1_bi);
 }
 
-MoveID move_to_id(Moves const move) {
-	auto const move_id = bounded::integer(move) - bounded::integer(Moves::Regular_Begin) + 1_bi;
+MoveID move_to_id(MoveName const move) {
+	auto const move_id = bounded::integer(move) - bounded::integer(MoveName::Regular_Begin) + 1_bi;
 	BOUNDED_ASSERT(move_id > 0_bi);
 	return ::bounded::assume_in_range<MoveID>(move_id);
 }

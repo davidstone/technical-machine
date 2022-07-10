@@ -38,19 +38,19 @@ auto UsageStats::add(GenerationGeneric<Team> const & t, double const weight) & -
 namespace {
 
 struct LocalTopMoves {
-	Moves move;
+	MoveName move;
 	double value;
 };
 
-auto get_most_used(containers::array<double, bounded::number_of<Moves>> const & moves, double const percent_threshold) -> containers::vector<LocalTopMoves> {
+auto get_most_used(containers::array<double, bounded::number_of<MoveName>> const & moves, double const percent_threshold) -> containers::vector<LocalTopMoves> {
 	auto const total_sum = containers::sum(moves);
 	if (total_sum == 0.0) {
 		return {};
 	}
 	auto const usage_threshold = percent_threshold * total_sum;
 	auto top_moves = containers::vector<LocalTopMoves>(containers::transform(
-		containers::enum_range<Moves>(),
-		[&](Moves const move) { return LocalTopMoves{move, moves[bounded::integer(move)]}; }
+		containers::enum_range<MoveName>(),
+		[&](MoveName const move) { return LocalTopMoves{move, moves[bounded::integer(move)]}; }
 	));
 	auto current_sum = 0.0;
 	containers::ska_sort(top_moves, [](LocalTopMoves const x) { return -x.value; });
@@ -99,14 +99,14 @@ auto populate_teammate_correlations(Correlations::Teammates & teammates, auto co
 	}
 }
 
-auto populate_move_correlations(auto & correlations, RegularMoves const moves, Moves const move1, double const weight) -> void {
+auto populate_move_correlations(auto & correlations, RegularMoves const moves, MoveName const move1, double const weight) -> void {
 	auto is_different = [=](Move const move2) { return move2.name() != move1; };
 	for (auto const move2 : containers::filter(moves, is_different)) {
 		correlations[bounded::integer(move2.name())] += weight;
 	}
 }
 
-auto populate_correlations(Correlations::MoveData & data, auto const & team, auto const & pokemon, Moves const move_name, double const weight) -> void {
+auto populate_correlations(Correlations::MoveData & data, auto const & team, auto const & pokemon, MoveName const move_name, double const weight) -> void {
 	populate_teammate_correlations(data.teammates, team, pokemon, weight);
 	populate_move_correlations(data.moves, pokemon.regular_moves(), move_name, weight);
 	data.items[bounded::integer(pokemon.item(false, false))] += weight;

@@ -9,7 +9,7 @@
 #include <tm/move/base_power.hpp>
 #include <tm/move/category.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/stat/calculate.hpp>
 
@@ -35,7 +35,7 @@ namespace {
 using namespace bounded::literal;
 
 template<any_active_pokemon AttackerPokemon>
-auto doubling(AttackerPokemon const attacker, Moves const move, any_active_pokemon auto const defender, Weather const weather) -> bool {
+auto doubling(AttackerPokemon const attacker, MoveName const move, any_active_pokemon auto const defender, Weather const weather) -> bool {
 	// I account for the doubling of the base power for Pursuit in the
 	// switching function by simply multiplying the final base power by 2.
 	// Regardless of the combination of modifiers, this does not change the
@@ -48,34 +48,34 @@ auto doubling(AttackerPokemon const attacker, Moves const move, any_active_pokem
 	if (defender.last_used_move().vanish_doubles_power(generation, move))
 		return true;
 	switch (move) {
-		case Moves::Assurance:
+		case MoveName::Assurance:
 			return defender.damaged();
-		case Moves::Avalanche:
-		case Moves::Revenge:
+		case MoveName::Avalanche:
+		case MoveName::Revenge:
 			return attacker.damaged();
-		case Moves::Behemoth_Bash:
-		case Moves::Behemoth_Blade:
-		case Moves::Dynamax_Cannon:
+		case MoveName::Behemoth_Bash:
+		case MoveName::Behemoth_Blade:
+		case MoveName::Dynamax_Cannon:
 			return false;
-		case Moves::Body_Slam:
+		case MoveName::Body_Slam:
 			return generation >= Generation::six and defender.minimized();
-		case Moves::Bolt_Beak:
-		case Moves::Fishious_Rend: {
+		case MoveName::Bolt_Beak:
+		case MoveName::Fishious_Rend: {
 			auto const moved = defender.last_used_move();
 			return !moved.moved_this_turn() or moved.switched_in_this_turn();
 		}
-		case Moves::Brine:
+		case MoveName::Brine:
 			return defender.hp().current() <= defender.hp().max() / 2_bi;
-		case Moves::Facade:
+		case MoveName::Facade:
 			return boosts_facade(attacker.status());
-		case Moves::Ice_Ball:
-		case Moves::Rollout:
+		case MoveName::Ice_Ball:
+		case MoveName::Rollout:
 			return attacker.defense_curled();
-		case Moves::Payback:
+		case MoveName::Payback:
 			return defender.last_used_move().moved_this_turn();
-		case Moves::Smelling_Salts:
+		case MoveName::Smelling_Salts:
 			return boosts_smellingsalt(defender.status());
-		case Moves::Solar_Beam: {
+		case MoveName::Solar_Beam: {
 			auto const blocks_weather = weather_is_blocked_by_ability(attacker.ability(), defender.ability());
 			switch (generation) {
 				case Generation::one:
@@ -91,12 +91,12 @@ auto doubling(AttackerPokemon const attacker, Moves const move, any_active_pokem
 					return !weather.hail(blocks_weather) and !weather.rain(blocks_weather) and !weather.sand(blocks_weather);
 			}
 		}
-		case Moves::Steamroller:
-		case Moves::Stomp:
+		case MoveName::Steamroller:
+		case MoveName::Stomp:
 			return defender.minimized();
-		case Moves::Wake_Up_Slap:
+		case MoveName::Wake_Up_Slap:
 			return is_sleeping(defender.status());
-		case Moves::Weather_Ball: {
+		case MoveName::Weather_Ball: {
 			auto const blocks_weather = weather_is_blocked_by_ability(attacker.ability(), defender.ability());
 			return weather.hail(blocks_weather) or weather.rain(blocks_weather) or weather.sand(blocks_weather) or weather.sun(blocks_weather);
 		}
@@ -250,47 +250,47 @@ auto item_modifier(any_active_pokemon auto const attacker, KnownMove const move,
 	);
 }
 
-bool is_boosted_by_iron_fist(Moves const move) {
+bool is_boosted_by_iron_fist(MoveName const move) {
 	switch (move) {
-		case Moves::Bullet_Punch:
-		case Moves::Comet_Punch:
-		case Moves::Dizzy_Punch:
-		case Moves::Drain_Punch:
-		case Moves::Dynamic_Punch:
-		case Moves::Fire_Punch:
-		case Moves::Focus_Punch:
-		case Moves::Hammer_Arm:
-		case Moves::Ice_Hammer:
-		case Moves::Ice_Punch:
-		case Moves::Mach_Punch:
-		case Moves::Mega_Punch:
-		case Moves::Meteor_Mash:
-		case Moves::Plasma_Fists:
-		case Moves::Power_Up_Punch:
-		case Moves::Shadow_Punch:
-		case Moves::Sky_Uppercut:
-		case Moves::Thunder_Punch:
+		case MoveName::Bullet_Punch:
+		case MoveName::Comet_Punch:
+		case MoveName::Dizzy_Punch:
+		case MoveName::Drain_Punch:
+		case MoveName::Dynamic_Punch:
+		case MoveName::Fire_Punch:
+		case MoveName::Focus_Punch:
+		case MoveName::Hammer_Arm:
+		case MoveName::Ice_Hammer:
+		case MoveName::Ice_Punch:
+		case MoveName::Mach_Punch:
+		case MoveName::Mega_Punch:
+		case MoveName::Meteor_Mash:
+		case MoveName::Plasma_Fists:
+		case MoveName::Power_Up_Punch:
+		case MoveName::Shadow_Punch:
+		case MoveName::Sky_Uppercut:
+		case MoveName::Thunder_Punch:
 			return true;
 		default:
 			return false;
 	}
 }
 
-bool is_boosted_by_reckless(Moves const move) {
+bool is_boosted_by_reckless(MoveName const move) {
 	switch (move) {
-		case Moves::Brave_Bird:
-		case Moves::Double_Edge:
-		case Moves::Flare_Blitz:
-		case Moves::Head_Charge:
-		case Moves::Head_Smash:
-		case Moves::High_Jump_Kick:
-		case Moves::Jump_Kick:
-		case Moves::Light_of_Ruin:
-		case Moves::Submission:
-		case Moves::Take_Down:
-		case Moves::Volt_Tackle:
-		case Moves::Wood_Hammer:
-		case Moves::Wild_Charge:
+		case MoveName::Brave_Bird:
+		case MoveName::Double_Edge:
+		case MoveName::Flare_Blitz:
+		case MoveName::Head_Charge:
+		case MoveName::Head_Smash:
+		case MoveName::High_Jump_Kick:
+		case MoveName::Jump_Kick:
+		case MoveName::Light_of_Ruin:
+		case MoveName::Submission:
+		case MoveName::Take_Down:
+		case MoveName::Volt_Tackle:
+		case MoveName::Wood_Hammer:
+		case MoveName::Wild_Charge:
 			return true;
 		default:
 			return false;
@@ -304,7 +304,7 @@ auto attacker_ability_power_modifier(AttackerPokemon const attacker, KnownMove c
 	};
 	switch (attacker.ability()) {
 		case Ability::Technician:
-			return rational(BOUNDED_CONDITIONAL(base <= 60_bi and move.name != Moves::Hit_Self, 3_bi, 2_bi), 2_bi);
+			return rational(BOUNDED_CONDITIONAL(base <= 60_bi and move.name != MoveName::Hit_Self, 3_bi, 2_bi), 2_bi);
 		case Ability::Blaze:
 			return rational(BOUNDED_CONDITIONAL(pinch_ability_activates(Type::Fire), 3_bi, 2_bi), 2_bi);
 		case Ability::Overgrow:

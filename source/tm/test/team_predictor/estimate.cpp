@@ -33,12 +33,12 @@ TEST_CASE("Estimate", "[team_predictor]") {
 		CHECK(containers::sum(containers::transform(ptr->moves.map(), containers::get_mapped)) > 0.0F);
 		auto estimate = Estimate(usage_stats);
 		CHECK(estimate.probability(Species::Mew) > 0.0);
-		CHECK(estimate.probability(Species::Mew, Moves::Cut) > 0.0);
+		CHECK(estimate.probability(Species::Mew, MoveName::Cut) > 0.0);
 		estimate.update(usage_stats, Species::Mew);
 		CHECK(estimate.probability(Species::Mew) == 0.0);
-		CHECK(estimate.probability(Species::Mew, Moves::Cut) > 0.0);
-		estimate.update(usage_stats, Species::Mew, Moves::Cut);
-		CHECK(estimate.probability(Species::Mew, Moves::Cut) == 0.0);
+		CHECK(estimate.probability(Species::Mew, MoveName::Cut) > 0.0);
+		estimate.update(usage_stats, Species::Mew, MoveName::Cut);
+		CHECK(estimate.probability(Species::Mew, MoveName::Cut) == 0.0);
 	}
 }
 
@@ -54,16 +54,16 @@ TEST_CASE("Estimate seeing unused Pokemon", "[team_predictor]") {
 		REQUIRE(ptr);
 		auto estimate = Estimate(usage_stats);
 		CHECK(estimate.probability(Species::Mew) > 0.0);
-		CHECK(estimate.probability(Species::Mew, Moves::Cut) > 0.0);
+		CHECK(estimate.probability(Species::Mew, MoveName::Cut) > 0.0);
 		estimate.update(usage_stats, Species::Pikachu);
 		CHECK(estimate.probability(Species::Mew) > 0.0);
-		CHECK(estimate.probability(Species::Mew, Moves::Cut) > 0.0);
+		CHECK(estimate.probability(Species::Mew, MoveName::Cut) > 0.0);
 		estimate.update(usage_stats, Species::Mew);
 		CHECK(estimate.probability(Species::Mew) == 0.0);
-		CHECK(estimate.probability(Species::Mew, Moves::Cut) > 0.0);
-		estimate.update(usage_stats, Species::Mew, Moves::Tackle);
+		CHECK(estimate.probability(Species::Mew, MoveName::Cut) > 0.0);
+		estimate.update(usage_stats, Species::Mew, MoveName::Tackle);
 		CHECK(estimate.probability(Species::Mew) == 0.0);
-		CHECK(estimate.probability(Species::Mew, Moves::Cut) > 0.0);
+		CHECK(estimate.probability(Species::Mew, MoveName::Cut) > 0.0);
 	}
 }
 

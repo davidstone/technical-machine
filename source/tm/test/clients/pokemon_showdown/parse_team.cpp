@@ -36,7 +36,7 @@ auto expected_generation_one_team() {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			moves(Moves::Fire_Blast, Moves::Sludge, Moves::Explosion, Moves::Thunderbolt)
+			moves(MoveName::Fire_Blast, MoveName::Sludge, MoveName::Explosion, MoveName::Thunderbolt)
 		),
 		Pokemon<generation>(
 			Species::Sandslash,
@@ -45,7 +45,7 @@ auto expected_generation_one_team() {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			moves(Moves::Earthquake, Moves::Body_Slam, Moves::Rock_Slide, Moves::Swords_Dance)
+			moves(MoveName::Earthquake, MoveName::Body_Slam, MoveName::Rock_Slide, MoveName::Swords_Dance)
 		),
 		Pokemon<generation>(
 			Species::Ditto,
@@ -54,7 +54,7 @@ auto expected_generation_one_team() {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			moves(Moves::Transform)
+			moves(MoveName::Transform)
 		),
 		Pokemon<generation>(
 			Species::Pikachu,
@@ -63,7 +63,7 @@ auto expected_generation_one_team() {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			moves(Moves::Agility, Moves::Thunderbolt, Moves::Surf, Moves::Thunder_Wave)
+			moves(MoveName::Agility, MoveName::Thunderbolt, MoveName::Surf, MoveName::Thunder_Wave)
 		),
 		Pokemon<generation>(
 			Species::Jynx,
@@ -72,7 +72,7 @@ auto expected_generation_one_team() {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			moves(Moves::Seismic_Toss, Moves::Lovely_Kiss, Moves::Psychic, Moves::Blizzard)
+			moves(MoveName::Seismic_Toss, MoveName::Lovely_Kiss, MoveName::Psychic, MoveName::Blizzard)
 		),
 		Pokemon<generation>(
 			Species::Slowbro,
@@ -81,7 +81,7 @@ auto expected_generation_one_team() {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			moves(Moves::Psychic, Moves::Surf, Moves::Thunder_Wave, Moves::Amnesia)
+			moves(MoveName::Psychic, MoveName::Surf, MoveName::Thunder_Wave, MoveName::Amnesia)
 		)
 	}, true);
 }
@@ -113,7 +113,7 @@ auto expected_generation_two_team() {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			moves(Moves::Thief, Moves::Hypnosis, Moves::Night_Shade, Moves::Return)
+			moves(MoveName::Thief, MoveName::Hypnosis, MoveName::Night_Shade, MoveName::Return)
 		),
 		Pokemon<generation>(
 			Species::Qwilfish,
@@ -122,7 +122,7 @@ auto expected_generation_two_team() {
 			Item::Leftovers,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			moves(Moves::Spikes, Moves::Sludge_Bomb, Moves::Surf, Moves::Curse)
+			moves(MoveName::Spikes, MoveName::Sludge_Bomb, MoveName::Surf, MoveName::Curse)
 		),
 		Pokemon<generation>(
 			Species::Hypno,
@@ -131,7 +131,7 @@ auto expected_generation_two_team() {
 			Item::Leftovers,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			moves(Moves::Curse, Moves::Body_Slam, Moves::Psychic, Moves::Rest)
+			moves(MoveName::Curse, MoveName::Body_Slam, MoveName::Psychic, MoveName::Rest)
 		),
 		Pokemon<generation>(
 			Species::Misdreavus,
@@ -140,7 +140,7 @@ auto expected_generation_two_team() {
 			Item::Leftovers,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			moves(Moves::Thunderbolt, Moves::Shadow_Ball, Moves::Hypnosis, Moves::Pain_Split)
+			moves(MoveName::Thunderbolt, MoveName::Shadow_Ball, MoveName::Hypnosis, MoveName::Pain_Split)
 		),
 		Pokemon<generation>(
 			Species::Machamp,
@@ -149,7 +149,7 @@ auto expected_generation_two_team() {
 			Item::Leftovers,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			moves(Moves::Rest, Moves::Sleep_Talk, Moves::Cross_Chop, Moves::Curse)
+			moves(MoveName::Rest, MoveName::Sleep_Talk, MoveName::Cross_Chop, MoveName::Curse)
 		),
 		Pokemon<generation>(
 			Species::Sunflora,
@@ -162,7 +162,7 @@ auto expected_generation_two_team() {
 				DVs(DV(15_bi), DV(13_bi), DV(15_bi), DV(15_bi)),
 				default_evs<generation>
 			},
-			moves(Moves::Growth, Moves::Giga_Drain, Moves::Synthesis, Moves::Hidden_Power)
+			moves(MoveName::Growth, MoveName::Giga_Drain, MoveName::Synthesis, MoveName::Hidden_Power)
 		)
 	}, true);
 }

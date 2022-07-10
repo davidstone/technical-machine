@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/species.hpp>
 
@@ -54,7 +54,7 @@ struct UsageStatsProbabilities {
 	};
 
 	struct Inner {
-		Data<Moves> moves;
+		Data<MoveName> moves;
 		Data<Item> items;
 		Data<Ability> abilities;
 	};

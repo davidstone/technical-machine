@@ -9,7 +9,7 @@
 #include <tm/move/accuracy.hpp>
 #include <tm/move/category.hpp>
 #include <tm/move/known_move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/any_pokemon.hpp>
 
@@ -30,12 +30,12 @@ namespace technicalmachine {
 using ChanceToHit = double;
 
 template<any_active_pokemon ActivePokemonType>
-auto move_can_miss(ActivePokemonType const user, Moves const move, BaseAccuracy const base_accuracy, ActivePokemonType const target) -> bool {
+auto move_can_miss(ActivePokemonType const user, MoveName const move, BaseAccuracy const base_accuracy, ActivePokemonType const target) -> bool {
 	return
 		static_cast<bool>(base_accuracy) and
 		!cannot_miss(user.ability()) and
 		!cannot_miss(target.ability()) and
-		!(move == Moves::Body_Slam and target.minimized()) and
+		!(move == MoveName::Body_Slam and target.minimized()) and
 		!user.last_used_move().locked_on();
 }
 

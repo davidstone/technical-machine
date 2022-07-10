@@ -12,7 +12,7 @@
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/type.hpp>
 
 #include <tm/team.hpp>
@@ -73,9 +73,9 @@ auto parse_moves(nlohmann::json const & moves) {
 	auto result = Result();
 	for (auto const & move : moves) {
 		auto const move_str = move.get<std::string_view>();
-		auto const move_name = from_string<Moves>(move_str);
+		auto const move_name = from_string<MoveName>(move_str);
 		result.moves.push_back(Move(generation, move_name));
-		if (move_name == Moves::Hidden_Power) {
+		if (move_name == MoveName::Hidden_Power) {
 			if constexpr (generation == Generation::one) {
 				throw std::runtime_error("Generation 1 does not have Hidden Power");
 			} else {

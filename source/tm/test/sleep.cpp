@@ -4,7 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <tm/move/call_move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/species.hpp>
 
@@ -52,7 +52,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 					EV(0_bi)
 				)
 			},
-			regular_moves(generation, Moves::Sleep_Talk, Moves::Thunderbolt)
+			regular_moves(generation, MoveName::Sleep_Talk, MoveName::Thunderbolt)
 		)
 	});
 	attacker.pokemon().switch_in(weather);
@@ -77,7 +77,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 					EV(0_bi)
 				)
 			},
-			RegularMoves({Move(generation, Moves::Earthquake)})
+			RegularMoves({Move(generation, MoveName::Earthquake)})
 		)
 	});
 	defender.pokemon().switch_in(weather);
@@ -85,8 +85,8 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 	call_move(
 		attacker,
 		UsedMove<Team<generation>>(
-			Moves::Sleep_Talk,
-			Moves::Thunderbolt,
+			MoveName::Sleep_Talk,
+			MoveName::Thunderbolt,
 			false,
 			false,
 			ContactAbilityEffect::nothing,
@@ -109,7 +109,7 @@ struct Sleeper {
 	{
 	}
 
-	void use_move(Moves const selected, Moves const executed) {
+	void use_move(MoveName const selected, MoveName const executed) {
 		auto pokemon = m_sleeper.pokemon();
 		auto const probability_of_awakening = pokemon.status().probability_of_clearing(generation, pokemon.ability());
 		CHECK((probability_of_awakening == 0.0 or probability_of_awakening == 1.0));
@@ -132,7 +132,7 @@ struct Sleeper {
 			ActualDamage::Unknown()
 		);
 	}
-	void use_move(Moves const selected) {
+	void use_move(MoveName const selected) {
 		use_move(selected, selected);
 	}
 
@@ -140,7 +140,7 @@ struct Sleeper {
 		call_move(
 			m_other,
 			UsedMove<Team<generation>>(
-				Moves::Seismic_Toss,
+				MoveName::Seismic_Toss,
 				no_effect_function
 			),
 			m_sleeper,
@@ -181,10 +181,10 @@ private:
 		return sleeper;
 	}
 	static auto make_sleeper_team(Weather & weather) -> Team<generation> {
-		return make_team(regular_moves(generation, Moves::Rest, Moves::Sleep_Talk, Moves::Wish), weather);
+		return make_team(regular_moves(generation, MoveName::Rest, MoveName::Sleep_Talk, MoveName::Wish), weather);
 	}
 	static auto make_other_team(Weather & weather) -> Team<generation> {
-		return make_team(regular_moves(generation, Moves::Seismic_Toss), weather);
+		return make_team(regular_moves(generation, MoveName::Seismic_Toss), weather);
 	}
 
 	Weather m_weather;
@@ -202,7 +202,7 @@ TEST_CASE("Rest", "[Sleep]") {
 	CHECK(!sleeper.asleep());
 	CHECK(!sleeper.at_max_hp());
 
-	sleeper.use_move(Moves::Rest);
+	sleeper.use_move(MoveName::Rest);
 	CHECK(sleeper.asleep());
 	CHECK(sleeper.at_max_hp());
 
@@ -211,7 +211,7 @@ TEST_CASE("Rest", "[Sleep]") {
 	CHECK(sleeper.at_max_hp());
 
 
-	sleeper.use_move(Moves::Wish);
+	sleeper.use_move(MoveName::Wish);
 	CHECK(sleeper.asleep());
 	CHECK(sleeper.at_max_hp());
 
@@ -224,7 +224,7 @@ TEST_CASE("Rest", "[Sleep]") {
 	CHECK(!sleeper.at_max_hp());
 
 
-	sleeper.use_move(Moves::Wish);
+	sleeper.use_move(MoveName::Wish);
 	CHECK(sleeper.asleep());
 	CHECK(!sleeper.at_max_hp());
 
@@ -237,7 +237,7 @@ TEST_CASE("Rest", "[Sleep]") {
 	CHECK(!sleeper.at_max_hp());
 
 
-	sleeper.use_move(Moves::Wish);
+	sleeper.use_move(MoveName::Wish);
 	CHECK(!sleeper.asleep());
 	CHECK(!sleeper.at_max_hp());
 }
@@ -252,7 +252,7 @@ TEST_CASE("Sleep Talk Rest generation 3", "[Sleep]") {
 	CHECK(!sleeper.asleep());
 	CHECK(!sleeper.at_max_hp());
 
-	sleeper.use_move(Moves::Rest);
+	sleeper.use_move(MoveName::Rest);
 	CHECK(sleeper.asleep());
 	CHECK(sleeper.at_max_hp());
 
@@ -261,7 +261,7 @@ TEST_CASE("Sleep Talk Rest generation 3", "[Sleep]") {
 	CHECK(sleeper.at_max_hp());
 
 
-	sleeper.use_move(Moves::Sleep_Talk, Moves::Rest);
+	sleeper.use_move(MoveName::Sleep_Talk, MoveName::Rest);
 	CHECK(sleeper.asleep());
 	CHECK(sleeper.at_max_hp());
 
@@ -274,7 +274,7 @@ TEST_CASE("Sleep Talk Rest generation 3", "[Sleep]") {
 	CHECK(!sleeper.at_max_hp());
 
 
-	sleeper.use_move(Moves::Sleep_Talk, Moves::Rest);
+	sleeper.use_move(MoveName::Sleep_Talk, MoveName::Rest);
 	CHECK(sleeper.asleep());
 	CHECK(!sleeper.at_max_hp());
 
@@ -287,7 +287,7 @@ TEST_CASE("Sleep Talk Rest generation 3", "[Sleep]") {
 	CHECK(!sleeper.at_max_hp());
 
 
-	sleeper.use_move(Moves::Wish);
+	sleeper.use_move(MoveName::Wish);
 	CHECK(!sleeper.asleep());
 	CHECK(!sleeper.at_max_hp());
 }

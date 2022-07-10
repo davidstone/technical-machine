@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <bounded/assert.hpp>
 #include <bounded/optional.hpp>
@@ -64,9 +64,9 @@ struct Depth {
 		));
 	}
 	
-	constexpr auto increased_indentation(Moves const move) const {
+	constexpr auto increased_indentation(MoveName const move) const {
 		auto copy = *this;
-		if (move != Moves::Pass) {
+		if (move != MoveName::Pass) {
 			++copy.m_indentation;
 		}
 		return copy;

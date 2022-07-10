@@ -8,7 +8,7 @@
 #include <tm/ps_usage_stats/header.hpp>
 #include <tm/ps_usage_stats/usage_stats.hpp>
 
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/species.hpp>
 
@@ -102,7 +102,7 @@ auto serialize_teammates(std::ostream & stream, Correlations::Teammates const & 
 [[clang::no_destroy]] constexpr auto empty_move_data = Correlations::MoveData();
 
 auto serialize_moves(std::ostream & stream, Generation const generation, UsageStats const & usage_stats, Species const species, Correlations::TopMoves const & top_moves, double const species_total) -> void {
-	auto const used_moves = get_used<Moves>([&](Moves const name) { return usage_stats.get(species, name); });
+	auto const used_moves = get_used<MoveName>([&](MoveName const name) { return usage_stats.get(species, name); });
 	write_bytes(stream, containers::linear_size(used_moves), 2_bi);
 	for (auto const move : used_moves) {
 		write_bytes(stream, move.key, 2_bi);

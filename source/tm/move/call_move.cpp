@@ -8,7 +8,7 @@
 #include <tm/move/is_switch.hpp>
 #include <tm/move/category.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/target.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
@@ -46,11 +46,11 @@
 namespace technicalmachine {
 namespace {
 
-constexpr auto breaks_screens(Moves const move) {
-	return move == Moves::Brick_Break;
+constexpr auto breaks_screens(MoveName const move) {
+	return move == MoveName::Brick_Break;
 }
 
-auto do_effects_before_moving(Moves const move, any_mutable_active_pokemon auto user, any_team auto & other) {
+auto do_effects_before_moving(MoveName const move, any_mutable_active_pokemon auto user, any_team auto & other) {
 	if (breaks_screens(move)) {
 		other.shatter_screens();
 	} else if (thaws_user(move)) {
@@ -61,40 +61,40 @@ auto do_effects_before_moving(Moves const move, any_mutable_active_pokemon auto 
 }
 
 
-constexpr auto move_fails(Moves const move, bool const user_damaged, Ability const other_ability, OtherMove const other_move) {
+constexpr auto move_fails(MoveName const move, bool const user_damaged, Ability const other_ability, OtherMove const other_move) {
 	switch (move) {
-		case Moves::Boomburst:
-		case Moves::Bug_Buzz:
-		case Moves::Chatter:
-		case Moves::Clanging_Scales:
-		case Moves::Clangorous_Soulblaze:
-		case Moves::Confide:
-		case Moves::Disarming_Voice:
-		case Moves::Echoed_Voice:
-		case Moves::Grass_Whistle:
-		case Moves::Growl:
-		case Moves::Hyper_Voice:
-		case Moves::Metal_Sound:
-		case Moves::Noble_Roar:
-		case Moves::Parting_Shot:
-		case Moves::Relic_Song:
-		case Moves::Roar:
-		case Moves::Round:
-		case Moves::Screech:
-		case Moves::Sing:
-		case Moves::Snarl:
-		case Moves::Snore:
-		case Moves::Sparkling_Aria:
-		case Moves::Supersonic:
-		case Moves::Uproar:
+		case MoveName::Boomburst:
+		case MoveName::Bug_Buzz:
+		case MoveName::Chatter:
+		case MoveName::Clanging_Scales:
+		case MoveName::Clangorous_Soulblaze:
+		case MoveName::Confide:
+		case MoveName::Disarming_Voice:
+		case MoveName::Echoed_Voice:
+		case MoveName::Grass_Whistle:
+		case MoveName::Growl:
+		case MoveName::Hyper_Voice:
+		case MoveName::Metal_Sound:
+		case MoveName::Noble_Roar:
+		case MoveName::Parting_Shot:
+		case MoveName::Relic_Song:
+		case MoveName::Roar:
+		case MoveName::Round:
+		case MoveName::Screech:
+		case MoveName::Sing:
+		case MoveName::Snarl:
+		case MoveName::Snore:
+		case MoveName::Sparkling_Aria:
+		case MoveName::Supersonic:
+		case MoveName::Uproar:
 			return blocks_sound_moves(other_ability);
-		case Moves::Explosion:
-		case Moves::Mind_Blown:
-		case Moves::Self_Destruct:
+		case MoveName::Explosion:
+		case MoveName::Mind_Blown:
+		case MoveName::Self_Destruct:
 			return other_ability == Ability::Damp;
-		case Moves::Focus_Punch:
+		case MoveName::Focus_Punch:
 			return user_damaged;
-		case Moves::Sucker_Punch:
+		case MoveName::Sucker_Punch:
 			return !other_move.future_move_is_damaging();
 		default:
 			return false;
@@ -291,7 +291,7 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 	}
 	constexpr auto hit_self_combination = std::same_as<UserTeam, OtherTeamType> and !std::same_as<UserTeam, Team<generation_from<UserTeam>>>;
 	if constexpr (hit_self_combination) {
-		BOUNDED_ASSERT(executed.move.name == Moves::Hit_Self);
+		BOUNDED_ASSERT(executed.move.name == MoveName::Hit_Self);
 	} else {
 		executed.side_effect(user, other, weather, damage_done);
 	}
@@ -316,13 +316,13 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 }
 
 template<Generation generation>
-auto find_move(MoveContainer<generation> const container, Moves const move_name) -> Move {
+auto find_move(MoveContainer<generation> const container, MoveName const move_name) -> Move {
 	auto const maybe_move = containers::maybe_find(container, move_name);
 	BOUNDED_ASSERT(maybe_move);
 	return *maybe_move;
 }
 
-constexpr auto blocked_by_protect(Target const target, Moves const move) {
+constexpr auto blocked_by_protect(Target const target, MoveName const move) {
 	switch (target) {
 		case Target::user:
 		case Target::all_allies:
@@ -342,11 +342,11 @@ constexpr auto blocked_by_protect(Target const target, Moves const move) {
 			return true;
 		case Target::adjacent:
 			switch (move) {
-				case Moves::Feint:
-				case Moves::Hyperspace_Fury:
-				case Moves::Hyperspace_Hole:
-				case Moves::Phantom_Force:
-				case Moves::Shadow_Force:
+				case MoveName::Feint:
+				case MoveName::Hyperspace_Fury:
+				case MoveName::Hyperspace_Hole:
+				case MoveName::Phantom_Force:
+				case MoveName::Shadow_Force:
 					return false;
 				default:
 					return true;
@@ -418,7 +418,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		return;
 	}
 	user_pokemon.handle_confusion();
-	if (move.executed != Moves::Hit_Self and user_pokemon.flinched()) {
+	if (move.executed != MoveName::Hit_Self and user_pokemon.flinched()) {
 		if (boosts_speed_when_flinched(user_pokemon.ability())) {
 			user_pokemon.stages()[BoostableStat::spe] += 1_bi;
 		}
@@ -430,7 +430,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 
 	auto const other_ability = other_pokemon.ability();
 
-	if (move.executed != Moves::Hit_Self and !user_pokemon.last_used_move().is_locked_in_by_move()) {
+	if (move.executed != MoveName::Hit_Self and !user_pokemon.last_used_move().is_locked_in_by_move()) {
 		auto const uses_extra_pp = other_ability == Ability::Pressure;
 		user_pokemon.reduce_pp(move.selected, weather, BOUNDED_CONDITIONAL(uses_extra_pp, 2_bi, 1_bi));
 	}
@@ -472,7 +472,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 			move.critical_hit,
 			move.contact_ability_effect
 		};
-		if (executed_move.move.name == Moves::Hit_Self) {
+		if (executed_move.move.name == MoveName::Hit_Self) {
 			use_move(user, executed_move, target, user, other_move, weather, actual_damage);
 		} else {
 			use_move(user, executed_move, target, other, other_move, weather, actual_damage);
@@ -493,7 +493,7 @@ void end_of_attack(UserPokemon const user_pokemon, OtherMutableActivePokemon<Use
 
 template<any_team UserTeam>
 auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
-	if (move.selected == Moves::Pass) {
+	if (move.selected == MoveName::Pass) {
 		return;
 	}
 	try_use_move(user, move, other, other_move, weather, clear_status, actual_damage);

@@ -17,7 +17,7 @@
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
 #include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 
@@ -70,7 +70,7 @@ constexpr auto parse_species(std::string_view const str) {
 
 auto parse_moves(Generation const generation, boost::property_tree::ptree const & pt) {
 	return RegularMoves(containers::transform(pt, [=](boost::property_tree::ptree::value_type const & value) {
-		auto const name = from_string<Moves>(value.second.get_value<std::string>());
+		auto const name = from_string<MoveName>(value.second.get_value<std::string>());
 		auto const pp_ups = value.second.get<PP::pp_ups_type>("<xmlattr>.pp-up");
 		return Move(generation, name, pp_ups);
 	}));

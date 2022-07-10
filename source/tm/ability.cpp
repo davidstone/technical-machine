@@ -7,7 +7,7 @@
 
 #include <tm/move/category.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
 

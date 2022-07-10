@@ -25,7 +25,7 @@
 
 #include <tm/move/damage_type.hpp>
 #include <tm/move/move.hpp>
-#include <tm/move/moves.hpp>
+#include <tm/move/move_name.hpp>
 #include <tm/move/is_switch.hpp>
 
 #include <tm/stat/calculate.hpp>
@@ -240,7 +240,7 @@ public:
 	}
 
 	// Requires that move is actually one of this Pokemon's moves
-	auto is_disabled(Moves const move_name) const -> bool {
+	auto is_disabled(MoveName const move_name) const -> bool {
 		return m_flags.disable.move_is_disabled(move_name);
 	}
 
@@ -428,8 +428,8 @@ auto activate_berserk_gene(any_mutable_active_pokemon auto pokemon, Weather cons
 	pokemon.remove_item();
 }
 
-constexpr bool cannot_ko(Moves const move) {
-	return move == Moves::False_Swipe;
+constexpr bool cannot_ko(MoveName const move) {
+	return move == MoveName::False_Swipe;
 }
 
 auto indirect_status_can_apply(StatusName const status, any_active_pokemon auto const target, Weather const weather) {
@@ -464,7 +464,7 @@ public:
 	auto add_move(Move const move) const -> void {
 		return this->m_pokemon.add_move(move);
 	}
-	auto reduce_pp(Moves const move_name, Weather const weather, bounded::bounded_integer auto const amount) const -> void {
+	auto reduce_pp(MoveName const move_name, Weather const weather, bounded::bounded_integer auto const amount) const -> void {
 		this->m_pokemon.reduce_pp(move_name, this->m_flags.embargo.is_active(), weather.magic_room(), amount);
 	}
 
@@ -545,7 +545,7 @@ public:
 	auto defense_curl() const {
 		this->m_flags.defense_curled = true;
 	}
-	auto disable(Moves const move, Weather const weather) const {
+	auto disable(MoveName const move, Weather const weather) const {
 		if (this->m_flags.disable.activate(move)) {
 			apply_own_mental_herb(*this, weather);
 		}
@@ -762,7 +762,7 @@ public:
 		this->m_flags.ability = this->m_pokemon.initial_ability();
 
 		// The exact switch is irrelevant
-		this->m_flags.last_used_move.successful_move(Moves::Switch0);
+		this->m_flags.last_used_move.successful_move(MoveName::Switch0);
 		this->m_flags.types = PokemonTypes(generation, this->m_pokemon.species());
 		if (generation <= Generation::two and this->m_pokemon.status().name() == StatusName::toxic) {
 			this->m_pokemon.set_status(StatusName::poison);
@@ -886,7 +886,7 @@ public:
 		this->m_flags.damaged = true;
 	}
 
-	auto direct_damage(Moves const move, any_mutable_active_pokemon auto user, Weather const weather, damage_type const damage) const -> HP::current_type {
+	auto direct_damage(MoveName const move, any_mutable_active_pokemon auto user, Weather const weather, damage_type const damage) const -> HP::current_type {
 		auto const interaction = substitute_interaction(generation, move);
 		BOUNDED_ASSERT(!this->m_flags.substitute or interaction != Substitute::causes_failure);
 		if (this->m_flags.substitute and interaction == Substitute::absorbs) {
@@ -909,15 +909,15 @@ public:
 		return applied_damage;
 	}
 
-	auto successfully_use_move(Moves const move) const {
+	auto successfully_use_move(MoveName const move) const {
 		this->m_flags.last_used_move.successful_move(move);
 	}
-	auto unsuccessfully_use_move(Moves const move) const {
+	auto unsuccessfully_use_move(MoveName const move) const {
 		this->m_flags.last_used_move.unsuccessful_move(move);
 	}
 
 private:
-	auto handle_ko(Moves const move, Weather const weather) const {
+	auto handle_ko(MoveName const move, Weather const weather) const {
 		if (cannot_ko(move) or this->last_used_move().is_enduring()) {
 			return true;
 		}
@@ -1099,7 +1099,7 @@ void activate_ability_on_switch(PokemonType const switcher, OtherMutableActivePo
 	switch (switcher_ability) {
 		case Ability::Download: {
 			// Move is irrelevant here
-			constexpr auto move = Moves::Switch0;
+			constexpr auto move = MoveName::Switch0;
 			// TODO: Should not take into account items, abilities, or Wonder Room
 			auto const defense = calculate_defense(other.as_const(), move, weather);
 			auto const special_defense = calculate_special_defense(other.as_const(), switcher_ability, weather);

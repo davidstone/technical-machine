@@ -8,7 +8,7 @@
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/gender.hpp>
 #include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move.hpp>
+#include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/nature.hpp>
 #include <tm/string_conversions/species.hpp>
 
@@ -24,7 +24,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
-enum class Moves : std::uint16_t;
+enum class MoveName : std::uint16_t;
 namespace {
 
 void test_enum(auto && to_id, auto && from_id, auto max) {
@@ -56,7 +56,7 @@ TEST_CASE("item conversion", "[pokemon online]") {
 }
 
 TEST_CASE("move conversion", "[pokemon online]") {
-	for (auto const original : containers::enum_range<Moves>()) {
+	for (auto const original : containers::enum_range<MoveName>()) {
 		if (is_regular(original)) {
 			auto const id = po::move_to_id(original);
 			auto const result = po::id_to_move(id);
