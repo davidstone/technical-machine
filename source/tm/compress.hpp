@@ -40,7 +40,7 @@ constexpr auto compress(bounded::optional<T> const & value) {
 template<typename... Ts>
 constexpr auto compress(bounded::variant<Ts...> const & variant) {
 	using common = std::common_type_t<decltype(compress(std::declval<Ts>()))...>;
-	auto const index = variant.index();
+	auto const index = variant.index().integer();
 	return bounded::visit(variant, [=](auto const & value) {
 		return index + (numeric_traits::max_value<decltype(index)> + 1_bi) * common(compress(value));
 	});

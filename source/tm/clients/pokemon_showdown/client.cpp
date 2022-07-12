@@ -81,7 +81,7 @@ void ClientImpl::send_team(Generation const runtime_generation) {
 			send_real_team([&]<Generation generation>(constant_gen_t<generation>) {
 				auto const team = load_random_team_from_directory(m_random_engine, path);
 				constexpr auto expected_type = bounded::detail::types<KnownTeam<generation>>();
-				if (!holds_alternative(team, expected_type)) {
+				if (team.index() != expected_type) {
 					throw std::runtime_error("Generation mismatch in team file vs. battle.");
 				}
 				return to_packed_format(team[expected_type]);

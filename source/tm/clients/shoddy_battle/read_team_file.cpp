@@ -348,12 +348,12 @@ private:
 								return from_string<MoveName>(inner_parsed.state[bounded::detail::types<std::string_view>()]);
 							};
 							auto filter_moves = [](ParsedData const & inner_parsed) {
-								if (bounded::holds_alternative(inner_parsed.state, bounded::detail::types<std::string_view>())) {
+								if (inner_parsed.state.index() == bounded::detail::types<std::string_view>()) {
 									return true;
-								} else if (bounded::holds_alternative(inner_parsed.state, bounded::detail::types<std::monostate>())) {
+								} else if (inner_parsed.state.index() == bounded::detail::types<std::monostate>()) {
 									return false;
 								} else {
-									throw std::runtime_error(containers::concatenate<std::string>("Bad array type "sv, to_string(inner_parsed.state.index())));
+									throw std::runtime_error(containers::concatenate<std::string>("Bad array type "sv, to_string(inner_parsed.state.index().integer())));
 								}
 							};
 							emplace_once(moves, containers::transform(containers::filter(state, filter_moves), parse_moves));
@@ -559,13 +559,13 @@ auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneri
 		[[maybe_unused]] auto const uuid = parser.parse_any();
 		auto const parsed_all_pokemon = parser.parse_any();
 		constexpr auto array_index = bounded::detail::types<AnyVector>();
-		if (!bounded::holds_alternative(parsed_all_pokemon.state, array_index)) {
+		if (parsed_all_pokemon.state.index() != array_index) {
 			throw std::runtime_error("Expected team to be an array");
 		}
 		auto const & all_pokemon = parsed_all_pokemon.state[array_index];
 		auto transformed = containers::transform(all_pokemon, [](ParsedData const & pokemon) {
 			constexpr auto pokemon_index = bounded::detail::types<KnownPokemon<generation>>();
-			if (!bounded::holds_alternative(pokemon.state, pokemon_index)) {
+			if (pokemon.state.index() != pokemon_index) {
 				throw std::runtime_error("Expected team to be an array of Pokemon");
 			}
 			return pokemon.state[pokemon_index];

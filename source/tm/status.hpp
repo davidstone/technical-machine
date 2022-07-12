@@ -78,7 +78,7 @@ public:
 	explicit Status(StatusName const status);
 
 	constexpr auto name() const {
-		return static_cast<StatusName>(m_state.index());
+		return static_cast<StatusName>(m_state.index().integer());
 	}
 
 	Status & operator=(StatusName const status) & {
