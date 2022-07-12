@@ -1017,8 +1017,9 @@ private:
 	}
 
 	void validate_weather(NormalWeather const weather) const {
-		if (weather != m_battle.weather()) {
-			std::cerr << "Inconsistent weather. Received "sv << to_string(weather) << " but expected "sv << to_string(to_normal_weather(m_battle.weather())) << '\n';
+		auto const normal_weather = to_normal_weather(m_battle.weather());
+		if (weather != normal_weather) {
+			std::cerr << "Inconsistent weather. Received "sv << to_string(weather) << " but expected "sv << to_string(normal_weather) << '\n';
 		}
 	}
 

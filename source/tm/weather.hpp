@@ -169,9 +169,6 @@ public:
 	}
 
 	friend auto operator==(Weather, Weather) -> bool = default;
-	friend constexpr auto operator==(Weather const lhs, NormalWeather const rhs) -> bool {
-		return lhs.m_active == rhs;
-	}
 
 	friend constexpr auto compress(Weather const weather) {
 		return compress_combine(
