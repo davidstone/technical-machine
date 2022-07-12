@@ -142,11 +142,9 @@ auto get_side_effect(auto const move, UserPokemon const user, OtherTeam<UserPoke
 	return containers::front(side_effects).function;
 }
 
-} // namespace
-
-auto MoveState::apply_contact_ability_status(Party const party, Ability const ability, StatusName const status) -> void {
+constexpr auto validate_contact_ability_status(Ability const ability, StatusName const status) -> void {
 	using namespace std::string_view_literals;
-	auto status_effect = [&](auto const... valid_statuses) {
+	auto check_status_is_one_of = [&](auto const... valid_statuses) {
 		if ((... and (status != valid_statuses))) {
 			throw std::runtime_error(containers::concatenate<std::string>(
 				"Tried to apply "sv,
@@ -155,28 +153,19 @@ auto MoveState::apply_contact_ability_status(Party const party, Ability const ab
 				to_string(ability)
 			));
 		}
-		m_move->contact_ability_effect = [=] {
-			switch (status) {
-				case StatusName::burn: return ContactAbilityEffect::burn;
-				case StatusName::paralysis: return ContactAbilityEffect::paralysis;
-				case StatusName::poison: return ContactAbilityEffect::poison;
-				case StatusName::sleep: return ContactAbilityEffect::sleep;
-				default: std::unreachable();
-			}
-		}();
 	};
 	switch (ability) {
 		case Ability::Effect_Spore:
-			status_effect(StatusName::paralysis, StatusName::poison, StatusName::sleep);
+			check_status_is_one_of(StatusName::paralysis, StatusName::poison, StatusName::sleep);
 			break;
 		case Ability::Flame_Body:
-			status_effect(StatusName::burn);
+			check_status_is_one_of(StatusName::burn);
 			break;
 		case Ability::Poison_Point:
-			status_effect(StatusName::poison);
+			check_status_is_one_of(StatusName::poison);
 			break;
 		case Ability::Static:
-			status_effect(StatusName::paralysis);
+			check_status_is_one_of(StatusName::paralysis);
 			break;
 		default:
 			throw std::runtime_error(containers::concatenate<std::string>(
@@ -184,6 +173,13 @@ auto MoveState::apply_contact_ability_status(Party const party, Ability const ab
 				to_string(ability)
 			));
 	}
+}
+
+} // namespace
+
+auto MoveState::apply_contact_ability_status(Party const party, Ability const ability, StatusName const status) -> void {
+	validate_contact_ability_status(ability, status);
+	m_move->contact_ability_effect = status_to_contact_ability_effect(status);
 	set_expected(party, status);
 }
 

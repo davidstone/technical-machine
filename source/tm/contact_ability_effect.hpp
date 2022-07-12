@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <tm/status.hpp>
+
 #include <cstdint>
 
 namespace technicalmachine {
@@ -17,5 +19,15 @@ enum class ContactAbilityEffect : std::uint8_t {
 	poison,
 	sleep
 };
+
+constexpr auto status_to_contact_ability_effect(StatusName const status) {
+	switch (status) {
+		case StatusName::burn: return ContactAbilityEffect::burn;
+		case StatusName::paralysis: return ContactAbilityEffect::paralysis;
+		case StatusName::poison: return ContactAbilityEffect::poison;
+		case StatusName::sleep: return ContactAbilityEffect::sleep;
+		default: std::unreachable();
+	}
+}
 
 } // namespace technicalmachine
