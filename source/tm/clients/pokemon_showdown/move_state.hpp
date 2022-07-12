@@ -99,7 +99,7 @@ struct MoveState {
 	}
 	void confuse() {
 		if (!m_party or !m_move) {
-			throw_error();
+			throw error();
 		}
 		if (m_move->confuse) {
 			throw std::runtime_error("Tried to confuse a Pokemon twice");
@@ -184,7 +184,7 @@ struct MoveState {
 	}
 	void still_asleep(Party const party) {
 		if (m_party) {
-			throw_error();
+			throw error();
 		}
 		if (m_status_change != StatusChange::nothing_relevant) {
 			throw std::runtime_error("Cannot be still asleep at this point");
@@ -208,12 +208,12 @@ struct MoveState {
 private:
 	void validate(Party const party) const {
 		if (m_party != party or !m_move) {
-			throw_error();
+			throw error();
 		}
 	}
 
-	[[noreturn]] void throw_error() const {
-		throw std::runtime_error("Received battle messages out of order");
+	auto error() const -> std::runtime_error {
+		return std::runtime_error("Received battle messages out of order");
 	}
 	auto apply_contact_ability_status(Party, Ability, StatusName) -> void;
 

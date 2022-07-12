@@ -45,7 +45,7 @@ void MoveState::use_move(Party const party, MoveName const move) {
 
 bool MoveState::move_damages_self(Party const party) const {
 	if (!m_party or !m_move) {
-		throw_error();
+		throw error();
 	}
 	auto const result = [&] {
 		switch (m_move->executed) {
@@ -58,7 +58,7 @@ bool MoveState::move_damages_self(Party const party) const {
 		}
 	}();
 	if (result and *m_party != party) {
-		throw_error();
+		throw error();
 	}
 	return result;
 }
@@ -86,17 +86,17 @@ void MoveState::status_from_move(Party const party, StatusName const status) {
 	}
 	if (is_switch(m_move->executed) or m_move->executed == MoveName::Rest) {
 		if (party != *m_party) {
-			throw_error();
+			throw error();
 		}
 		bounded::insert(m_user.status, status);
 	} else if (is_phaze(m_move->executed)) {
 		if (party != other(*m_party)) {
-			throw_error();
+			throw error();
 		}
 		bounded::insert(m_other.status, status);
 	} else if (clears_team_status(m_move->executed)) {
 		if (party != *m_party) {
-			throw_error();
+			throw error();
 		}
 		if (status != StatusName::clear) {
 			throw std::runtime_error("Tried to clear status to a status other than clear");
@@ -104,7 +104,7 @@ void MoveState::status_from_move(Party const party, StatusName const status) {
 		bounded::insert(m_user.status, status);
 	} else {
 		if (party == *m_party) {
-			throw_error();
+			throw error();
 		}
 		bounded::insert(m_other.status, status);
 		m_move->status = status;
