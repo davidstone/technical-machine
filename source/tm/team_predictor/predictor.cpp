@@ -79,22 +79,22 @@ auto parse_html_team(DelimitedBufferView<std::string_view> buffer) -> SeenTeam<g
 	auto all_pokemon = containers::static_vector<SeenPokemon<generation>, max_pokemon_per_team>();
 	for (auto const index : containers::integer_range(max_pokemon_per_team)) {
 		auto const index_str = bounded::to_string(index);
-		auto get_integer_wrapper = [&]<typename T>(bounded::detail::types<T>, std::string_view const key) {
+		auto get_integer_wrapper = [&]<typename T>(bounded::types<T>, std::string_view const key) {
 			return get_expected_integer_wrapper<T>(buffer.pop(), containers::concatenate<containers::string>(key, index_str));
 		};
-		auto get = [&]<typename T>(bounded::detail::types<T>, std::string_view const key) {
+		auto get = [&]<typename T>(bounded::types<T>, std::string_view const key) {
 			return get_expected<T>(buffer.pop(), key, index_str);
 		};
 		auto get_ev = [&](std::string_view const key) {
-			return get_integer_wrapper(bounded::detail::types<EV>(), key);
+			return get_integer_wrapper(bounded::types<EV>(), key);
 		};
 
-		auto species = get(bounded::detail::types<Species>(), "species");
-		auto level = get_integer_wrapper(bounded::detail::types<Level>(), "level");
-		auto gender = get(bounded::detail::types<Gender>(), "gender");
-		auto item = get(bounded::detail::types<Item>(), "item");
-		auto ability = get(bounded::detail::types<Ability>(), "ability");
-		auto nature = get(bounded::detail::types<Nature>(), "nature");
+		auto species = get(bounded::types<Species>(), "species");
+		auto level = get_integer_wrapper(bounded::types<Level>(), "level");
+		auto gender = get(bounded::types<Gender>(), "gender");
+		auto item = get(bounded::types<Item>(), "item");
+		auto ability = get(bounded::types<Ability>(), "ability");
+		auto nature = get(bounded::types<Nature>(), "nature");
 		// TODO: Change the UI and protocol based on generation
 		auto const hp_ev = get_ev("hp");
 		auto const atk_ev = get_ev("atk");
