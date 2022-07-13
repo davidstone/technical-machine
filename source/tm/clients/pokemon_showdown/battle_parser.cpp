@@ -36,7 +36,7 @@
 
 #include <bounded/integer.hpp>
 #include <bounded/to_integer.hpp>
-#include <bounded/detail/overload.hpp>
+#include <bounded/overload.hpp>
 #include <bounded/detail/variant/variant.hpp>
 
 #include <containers/algorithms/concatenate.hpp>

@@ -12,7 +12,7 @@
 #include <tm/type/type.hpp>
 
 #include <bounded/detail/variant/variant.hpp>
-#include <bounded/detail/overload.hpp>
+#include <bounded/overload.hpp>
 #include <bounded/optional.hpp>
 
 namespace technicalmachine {

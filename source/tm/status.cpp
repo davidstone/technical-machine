@@ -12,7 +12,7 @@
 #include <tm/pokemon/pokemon.hpp>
 
 #include <bounded/assert.hpp>
-#include <bounded/detail/overload.hpp>
+#include <bounded/overload.hpp>
 
 #include <numeric_traits/min_max_value.hpp>
 

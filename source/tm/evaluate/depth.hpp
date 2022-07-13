@@ -11,7 +11,7 @@
 #include <bounded/optional.hpp>
 #include <bounded/detail/variant/variant.hpp>
 #include <bounded/detail/variant/visit.hpp>
-#include <bounded/detail/overload.hpp>
+#include <bounded/overload.hpp>
 
 namespace technicalmachine {
 

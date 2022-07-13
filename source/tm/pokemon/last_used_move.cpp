@@ -5,7 +5,7 @@
 
 #include <tm/pokemon/last_used_move.hpp>
 
-#include <bounded/detail/overload.hpp>
+#include <bounded/overload.hpp>
 
 #include <utility>
 

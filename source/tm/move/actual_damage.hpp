@@ -19,7 +19,7 @@
 #include <tm/generation.hpp>
 #include <tm/weather.hpp>
 
-#include <bounded/detail/overload.hpp>
+#include <bounded/overload.hpp>
 #include <bounded/detail/variant/variant.hpp>
 
 namespace technicalmachine {
