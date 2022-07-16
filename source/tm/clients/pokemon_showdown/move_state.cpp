@@ -123,7 +123,7 @@ auto get_side_effect(auto const move, UserPokemon const user, OtherTeam<UserPoke
 	}
 
 	if (move.phaze_index) {
-		if (move.confuse or move.flinch or move.status) {
+		if (move.confuse or move.status) {
 			throw std::runtime_error("Tried to phaze and do other side effects.");
 		}
 		auto const target_index = other.all_pokemon().index();
@@ -136,7 +136,7 @@ auto get_side_effect(auto const move, UserPokemon const user, OtherTeam<UserPoke
 	}
 
 	// TODO: Handle multi-effect situations
-	if (move.confuse or move.flinch or move.status) {
+	if (move.confuse or move.status) {
 		return side_effects[1_bi].function;
 	}
 
