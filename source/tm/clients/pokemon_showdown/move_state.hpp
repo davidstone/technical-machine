@@ -146,7 +146,7 @@ struct MoveState {
 		m_recoil = true;
 	}
 	void status_from_move(Party const party, StatusName const status);
-	void contact_ability_statuses(Party const party, any_active_pokemon auto const user, Weather const weather, Ability const ability, StatusName const status) {
+	auto status_from_contact_ability(Party const party, any_active_pokemon auto const user, Weather const weather, Ability const ability, StatusName const status) & -> void {
 		validate(party);
 		if (m_move->status) {
 			throw std::runtime_error("Tried to status a Pokemon twice");

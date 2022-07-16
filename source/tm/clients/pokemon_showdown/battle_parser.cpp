@@ -706,7 +706,7 @@ struct BattleParserImpl : BattleParser {
 				[&](Ability const ability) {
 					set_value_on_pokemon(other(party), ability);
 					apply_to_team(is_ai(party), [&](auto const & team) {
-						m_move_state.contact_ability_statuses(party, team.pokemon(), m_battle.weather(), ability, status);
+						m_move_state.status_from_contact_ability(party, team.pokemon(), m_battle.weather(), ability, status);
 					});
 				},
 				[&](Item const item) {
