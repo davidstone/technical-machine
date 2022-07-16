@@ -30,7 +30,7 @@ void MoveState::use_move(Party const party, MoveName const move) {
 	if (m_move) {
 		m_move->executed = move;
 	} else {
-		if (m_still_asleep and !usable_while_sleeping(move)) {
+		if (m_status_change == StatusChange::still_asleep and !usable_while_sleeping(move)) {
 			throw std::runtime_error(containers::concatenate<std::string>("Tried to use "sv, to_string(move), " while asleep"sv));
 		}
 		insert(m_move, UsedMoveBuilder{move});

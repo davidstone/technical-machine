@@ -248,7 +248,6 @@ private:
 	OptionalHPAndStatus m_user;
 	OptionalHPAndStatus m_other;
 	StatusChange m_status_change = StatusChange::nothing_relevant;
-	bool m_still_asleep = false;
 };
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
