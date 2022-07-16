@@ -206,7 +206,7 @@ auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai,
 			m_user,
 			m_other,
 			m_status_change == StatusChange::thaw_or_awaken,
-			m_recoil
+			move.recoil
 		};
 		*this = {};
 		return CompleteResult<generation>(result);

@@ -140,10 +140,10 @@ struct MoveState {
 	}
 	void recoil(Party const party) {
 		validate(party);
-		if (m_recoil) {
+		if (m_move->recoil) {
 			throw std::runtime_error("Tried to recoil a Pokemon twice");
 		}
-		m_recoil = true;
+		m_move->recoil = true;
 	}
 	void status_from_move(Party const party, StatusName const status);
 	auto status_from_contact_ability(Party const party, any_active_pokemon auto const user, Weather const weather, Ability const ability, StatusName const status) & -> void {
@@ -197,6 +197,7 @@ private:
 		bool confuse = false;
 		bool flinch = false;
 		bool fully_paralyze = false;
+		bool recoil = false;
 		bounded::optional<TeamIndex> phaze_index = bounded::none;
 		bounded::optional<StatusName> status = bounded::none;
 	};
@@ -247,7 +248,6 @@ private:
 	OptionalHPAndStatus m_user;
 	OptionalHPAndStatus m_other;
 	StatusChange m_status_change = StatusChange::nothing_relevant;
-	bool m_recoil = false;
 	bool m_still_asleep = false;
 };
 
