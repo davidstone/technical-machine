@@ -70,7 +70,7 @@ struct MoveState {
 
 	void use_move(Party const party, MoveName const move);
 
-	bool move_damages_self(Party const party) const;
+	auto move_damaged_self(Party const damaged_party) const -> bool;
 
 	void damage(Party const party, HPAndStatus const hp_and_status) {
 		validate(party);

@@ -814,7 +814,7 @@ private:
 		maybe_commit_switch(party);
 		bounded::visit(parsed.source, bounded::overload(
 			[&](MainEffect) {
-				if (m_move_state.move_damages_self(party)) {
+				if (m_move_state.move_damaged_self(party)) {
 					return;
 				}
 				move_damage(other(party));

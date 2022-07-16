@@ -43,7 +43,7 @@ void MoveState::use_move(Party const party, MoveName const move) {
 	}
 }
 
-bool MoveState::move_damages_self(Party const party) const {
+auto MoveState::move_damaged_self(Party const damaged_party) const -> bool {
 	if (!m_party or !m_move) {
 		throw error();
 	}
