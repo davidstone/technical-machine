@@ -72,17 +72,14 @@ struct MoveState {
 
 	auto move_damaged_self(Party const damaged_party) const -> bool;
 
-	void damage(Party const party, HPAndStatus const hp_and_status) {
-		validate(party);
-		m_move->damage = hp_and_status;
+	auto damage(Party const party, HPAndStatus const hp_and_status) & -> void {
+		validated(party).damage = hp_and_status;
 	}
-	void damage_substitute(Party const party) {
-		validate(party);
-		m_move->damage = SubstituteDamaged{};
+	auto damage_substitute(Party const party) & -> void {
+		validated(party).damage = SubstituteDamaged();
 	}
-	void break_substitute(Party const party) {
-		validate(party);
-		m_move->damage = SubstituteBroke{};
+	auto break_substitute(Party const party) & -> void {
+		validated(party).damage = SubstituteBroke();
 	}
 
 	void thaw_or_awaken(Party const party) {
@@ -100,18 +97,10 @@ struct MoveState {
 		set_used_flag(party, "Tried to critical hit a Pokemon twice", &UsedMoveBuilder::critical_hit);
 	}
 	void flinch(Party const party) {
-		validate(party);
-		if (m_move->flinch) {
-			throw std::runtime_error("Tried to flinch a Pokemon twice");
-		}
-		m_move->flinch = true;
+		set_used_flag(party, "Tried to flinch a Pokemon twice", &UsedMoveBuilder::flinch);
 	}
 	void fully_paralyze(Party const party) {
-		validate(party);
-		if (m_move->fully_paralyze) {
-			throw std::runtime_error("Tried to fully paralyze a Pokemon twice");
-		}
-		m_move->fully_paralyze = true;
+		set_used_flag(party, "Tried to fully paralyze a Pokemon twice", &UsedMoveBuilder::fully_paralyze);
 	}
 	void set_expected(Party const party, VisibleHP const hp) {
 		if (!m_party) {
@@ -124,11 +113,11 @@ struct MoveState {
 		set_used_flag(party, "Tried to miss a Pokemon twice", &UsedMoveBuilder::miss);
 	}
 	void phaze_index(Party const party, auto const & phazed_pokemon_collection, Species const species) {
-		validate(party);
-		if (!is_phaze(m_move->executed)) {
+		auto & move = validated(party);
+		if (!is_phaze(move.executed)) {
 			throw std::runtime_error("We used a non-phazing move, but we were given phazing data");
 		}
-		if (m_move->phaze_index) {
+		if (move.phaze_index) {
 			throw std::runtime_error("Tried to phaze twice");
 		}
 		auto const pokemon_index = phazed_pokemon_collection.index();
@@ -136,14 +125,10 @@ struct MoveState {
 		if (new_index == pokemon_index) {
 			throw PhazingInSamePokemon(new_index);
 		}
-		m_move->phaze_index = new_index;
+		move.phaze_index = new_index;
 	}
 	void recoil(Party const party) {
-		validate(party);
-		if (m_move->recoil) {
-			throw std::runtime_error("Tried to recoil a Pokemon twice");
-		}
-		m_move->recoil = true;
+		set_used_flag(party, "Tried to recoil a Pokemon twice", &UsedMoveBuilder::recoil);
 	}
 	void status_from_move(Party const party, StatusName const status);
 	auto status_from_contact_ability(Party const party, Ability const ability, StatusName const status) & -> void;
@@ -209,11 +194,22 @@ private:
 			throw std::runtime_error("Inconsistent party");
 		}
 	}
-
-	void validate(Party const party) const {
-		if (m_party != party or !m_move) {
+	auto check_is_used() const -> void {
+		if (!m_move) {
 			throw error();
 		}
+	}
+	auto validated() const & -> UsedMoveBuilder const & {
+		check_is_used();
+		return *m_move;
+	}
+	auto validated() & -> UsedMoveBuilder & {
+		check_is_used();
+		return m_move;
+	}
+	auto validated(Party const party) & -> UsedMoveBuilder & {
+		check_party(party);
+		return validated();
 	}
 	auto set_party(Party const party) & -> void {
 		if (m_party) {
@@ -224,8 +220,7 @@ private:
 	}
 
 	auto set_used_flag(Party const party, char const * const message, auto const member) & -> void {
-		validate(party);
-		auto & flag = std::invoke(member, *m_move);
+		auto & flag = std::invoke(member, validated(party));
 		if (flag) {
 			throw std::runtime_error(message);
 		}

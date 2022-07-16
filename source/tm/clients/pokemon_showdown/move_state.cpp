@@ -53,10 +53,10 @@ constexpr auto move_damages_self(MoveName const move_name) -> bool {
 } // namespace
 
 auto MoveState::move_damaged_self(Party const damaged_party) const -> bool {
-	if (!m_party or !m_move) {
+	if (!m_party) {
 		throw error();
 	}
-	auto const move_should_damage_self = move_damages_self(m_move->executed);
+	auto const move_should_damage_self = move_damages_self(validated().executed);
 	auto const party_says_damaged_self = *m_party == damaged_party;
 	if (move_should_damage_self != party_says_damaged_self) {
 		throw error();
@@ -79,23 +79,21 @@ constexpr auto clears_team_status(MoveName const move) -> bool {
 } // namespace
 
 void MoveState::status_from_move(Party const party, StatusName const status) {
-	if (!m_move) {
-		throw std::runtime_error("Tried to status without an active move");
-	}
-	if (m_move->status) {
+	auto & move = validated();
+	if (move.status) {
 		throw std::runtime_error("Tried to status a Pokemon twice");
 	}
-	if (is_switch(m_move->executed) or m_move->executed == MoveName::Rest) {
+	if (is_switch(move.executed) or move.executed == MoveName::Rest) {
 		if (party != *m_party) {
 			throw error();
 		}
 		bounded::insert(m_user.status, status);
-	} else if (is_phaze(m_move->executed)) {
+	} else if (is_phaze(move.executed)) {
 		if (party != other(*m_party)) {
 			throw error();
 		}
 		bounded::insert(m_other.status, status);
-	} else if (clears_team_status(m_move->executed)) {
+	} else if (clears_team_status(move.executed)) {
 		if (party != *m_party) {
 			throw error();
 		}
@@ -108,7 +106,7 @@ void MoveState::status_from_move(Party const party, StatusName const status) {
 			throw error();
 		}
 		bounded::insert(m_other.status, status);
-		m_move->status = status;
+		move.status = status;
 	}
 }
 
@@ -164,11 +162,11 @@ auto MoveState::status_from_contact_ability(Party const party, Ability const abi
 			to_string(ability)
 		));
 	}
-	validate(party);
-	if (m_move->status) {
+	auto & move = validated(party);
+	if (move.status) {
 		throw std::runtime_error("Tried to status a Pokemon twice");
 	}
-	m_move->contact_ability_effect = status_to_contact_ability_effect(status);
+	move.contact_ability_effect = status_to_contact_ability_effect(status);
 	set_expected(party, status);
 }
 
