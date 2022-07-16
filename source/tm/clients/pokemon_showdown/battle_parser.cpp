@@ -682,7 +682,7 @@ struct BattleParserImpl : BattleParser {
 					if (how == "[fatigue]") {
 						m_end_of_turn_state.lock_in_ends(party);
 					} else {
-						m_move_state.confuse();
+						m_move_state.confuse(party);
 					}
 				},
 				[](FromMiscellaneous) {},

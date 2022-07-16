@@ -93,7 +93,7 @@ struct MoveState {
 		set_expected(party, StatusName::clear);
 		m_status_change = StatusChange::thaw_or_awaken;
 	}
-	void confuse() {
+	void confuse(Party const party) {
 		if (!m_party or !m_move) {
 			throw error();
 		}
