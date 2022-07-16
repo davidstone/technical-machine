@@ -188,17 +188,6 @@ struct MoveState {
 	auto complete(Party ai_party, KnownTeam<generation> const & ai, SeenTeam<generation> const & foe, Weather const weather) -> CompleteResult<generation>;
 
 private:
-	void validate(Party const party) const {
-		if (m_party != party or !m_move) {
-			throw error();
-		}
-	}
-
-	auto error() const -> std::runtime_error {
-		return std::runtime_error("Received battle messages out of order");
-	}
-	auto apply_contact_ability_status(Party, Ability, StatusName) -> void;
-
 	struct UsedMoveBuilder {
 		MoveName selected;
 		MoveName executed = selected;
@@ -218,11 +207,23 @@ private:
 		thaw_or_awaken
 	};
 
+	auto error() const -> std::runtime_error {
+		return std::runtime_error("Received battle messages out of order");
+	}
+
 	auto check_party(Party const party) const -> void {
 		if (m_party != party) {
 			throw std::runtime_error("Inconsistent party");
 		}
 	}
+
+	void validate(Party const party) const {
+		if (m_party != party or !m_move) {
+			throw error();
+		}
+	}
+
+	auto apply_contact_ability_status(Party, Ability, StatusName) -> void;
 	auto set_party(Party const party) & -> void {
 		if (m_party) {
 			check_party(party);
