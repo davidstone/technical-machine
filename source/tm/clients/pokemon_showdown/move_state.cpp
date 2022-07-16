@@ -37,24 +37,31 @@ void MoveState::use_move(Party const party, MoveName const move) {
 	}
 }
 
+namespace {
+
+constexpr auto move_damages_self(MoveName const move_name) -> bool {
+	switch (move_name) {
+		case MoveName::Belly_Drum:
+		case MoveName::Clangorous_Soul:
+		case MoveName::Substitute:
+			return true;
+		default:
+			return false;
+	}
+}
+
+} // namespace
+
 auto MoveState::move_damaged_self(Party const damaged_party) const -> bool {
 	if (!m_party or !m_move) {
 		throw error();
 	}
-	auto const result = [&] {
-		switch (m_move->executed) {
-			case MoveName::Belly_Drum:
-			case MoveName::Clangorous_Soul:
-			case MoveName::Substitute:
-				return true;
-			default:
-				return false;
-		}
-	}();
-	if (result and *m_party != party) {
+	auto const move_should_damage_self = move_damages_self(m_move->executed);
+	auto const party_says_damaged_self = *m_party == damaged_party;
+	if (move_should_damage_self != party_says_damaged_self) {
 		throw error();
 	}
-	return result;
+	return move_should_damage_self;
 }
 
 namespace {
