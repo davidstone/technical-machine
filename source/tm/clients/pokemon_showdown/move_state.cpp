@@ -202,7 +202,7 @@ auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai,
 				move.contact_ability_effect,
 				get_side_effect(move, user, other, weather)
 			),
-			m_damage,
+			move.damage,
 			m_user,
 			m_other,
 			m_status_change == StatusChange::thaw_or_awaken,

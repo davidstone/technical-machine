@@ -74,15 +74,15 @@ struct MoveState {
 
 	void damage(Party const party, HPAndStatus const hp_and_status) {
 		validate(party);
-		m_damage = hp_and_status;
+		m_move->damage = hp_and_status;
 	}
 	void damage_substitute(Party const party) {
 		validate(party);
-		m_damage = SubstituteDamaged{};
+		m_move->damage = SubstituteDamaged{};
 	}
 	void break_substitute(Party const party) {
 		validate(party);
-		m_damage = SubstituteBroke{};
+		m_move->damage = SubstituteBroke{};
 	}
 
 	void thaw_or_awaken(Party const party) {
@@ -191,6 +191,7 @@ private:
 	struct UsedMoveBuilder {
 		MoveName selected;
 		MoveName executed = selected;
+		Damage damage = Damage(NoDamage());
 		bool critical_hit = false;
 		bool miss = false;
 		ContactAbilityEffect contact_ability_effect = ContactAbilityEffect::nothing;
@@ -244,7 +245,6 @@ private:
 
 	bounded::optional<Party> m_party;
 	bounded::optional<UsedMoveBuilder> m_move;
-	Damage m_damage{NoDamage()};
 	OptionalHPAndStatus m_user;
 	OptionalHPAndStatus m_other;
 	StatusChange m_status_change = StatusChange::nothing_relevant;
