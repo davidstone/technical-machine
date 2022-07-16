@@ -26,13 +26,7 @@ namespace technicalmachine::ps {
 using namespace std::string_view_literals;
 
 void MoveState::use_move(Party const party, MoveName const move) {
-	if (m_party) {
-		if (*m_party != party) {
-			throw std::runtime_error("Early move state messages do not match party of user");
-		}
-	} else {
-		insert(m_party, party);
-	}
+	set_party(party);
 	if (m_move) {
 		m_move->executed = move;
 	} else {

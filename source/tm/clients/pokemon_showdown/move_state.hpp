@@ -86,11 +86,7 @@ struct MoveState {
 	}
 
 	void thaw_or_awaken(Party const party) {
-		if (m_party) {
-			validate(party);
-		} else {
-			insert(m_party, party);
-		}
+		set_party(party);
 		if (m_status_change != StatusChange::nothing_relevant) {
 			throw std::runtime_error("Tried to thaw or awaken at a weird time");
 		}
@@ -236,6 +232,18 @@ private:
 		thaw_or_awaken
 	};
 
+	auto check_party(Party const party) const -> void {
+		if (m_party != party) {
+			throw std::runtime_error("Inconsistent party");
+		}
+	}
+	auto set_party(Party const party) & -> void {
+		if (m_party) {
+			check_party(party);
+		} else {
+			insert(m_party, party);
+		}
+	}
 	bounded::optional<Party> m_party;
 	bounded::optional<UsedMoveBuilder> m_move;
 	Damage m_damage{NoDamage()};
