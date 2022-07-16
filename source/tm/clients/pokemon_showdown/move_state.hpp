@@ -94,20 +94,10 @@ struct MoveState {
 		m_status_change = StatusChange::thaw_or_awaken;
 	}
 	void confuse(Party const party) {
-		if (!m_party or !m_move) {
-			throw error();
-		}
-		if (m_move->confuse) {
-			throw std::runtime_error("Tried to confuse a Pokemon twice");
-		}
-		m_move->confuse = true;
+		set_used_flag(party, "Tried to confuse a Pokemon twice", &UsedMoveBuilder::confuse);
 	}
 	void critical_hit(Party const party) {
-		validate(party);
-		if (m_move->critical_hit) {
-			throw std::runtime_error("Tried to critical hit a Pokemon twice");
-		}
-		m_move->critical_hit = true;
+		set_used_flag(party, "Tried to critical hit a Pokemon twice", &UsedMoveBuilder::critical_hit);
 	}
 	void flinch(Party const party) {
 		validate(party);
@@ -131,11 +121,7 @@ struct MoveState {
 		insert(target.hp, hp);
 	}
 	void miss(Party const party) {
-		validate(party);
-		if (m_move->miss) {
-			throw std::runtime_error("Tried to miss a Pokemon twice");
-		}
-		m_move->miss = true;
+		set_used_flag(party, "Tried to miss a Pokemon twice", &UsedMoveBuilder::miss);
 	}
 	void phaze_index(Party const party, auto const & phazed_pokemon_collection, Species const species) {
 		validate(party);
@@ -244,6 +230,16 @@ private:
 			insert(m_party, party);
 		}
 	}
+
+	auto set_used_flag(Party const party, char const * const message, auto const member) & -> void {
+		validate(party);
+		auto & flag = std::invoke(member, *m_move);
+		if (flag) {
+			throw std::runtime_error(message);
+		}
+		flag = true;
+	}
+
 	bounded::optional<Party> m_party;
 	bounded::optional<UsedMoveBuilder> m_move;
 	Damage m_damage{NoDamage()};
