@@ -126,7 +126,7 @@ struct MoveState {
 	void phaze_index(Party const party, auto const & phazed_pokemon_collection, Species const species) {
 		validate(party);
 		if (!is_phaze(m_move->executed)) {
-			throw std::runtime_error("We did not use a phazing move, but we were given phazing data");
+			throw std::runtime_error("We used a non-phazing move, but we were given phazing data");
 		}
 		if (m_move->phaze_index) {
 			throw std::runtime_error("Tried to phaze a Pokemon twice");
