@@ -143,43 +143,31 @@ auto get_side_effect(auto const move, UserPokemon const user, OtherTeam<UserPoke
 	return containers::front(side_effects).function;
 }
 
-constexpr auto validate_contact_ability_status(Ability const ability, StatusName const status) -> void {
-	using namespace std::string_view_literals;
-	auto check_status_is_one_of = [&](auto const... valid_statuses) {
-		if ((... and (status != valid_statuses))) {
-			throw std::runtime_error(containers::concatenate<std::string>(
-				"Tried to apply "sv,
-				to_string(status),
-				" from "sv,
-				to_string(ability)
-			));
-		}
-	};
+constexpr auto contact_ability_statuses(Ability const ability) -> containers::static_vector<StatusName, 3_bi> {
 	switch (ability) {
-		case Ability::Effect_Spore:
-			check_status_is_one_of(StatusName::paralysis, StatusName::poison, StatusName::sleep);
-			break;
-		case Ability::Flame_Body:
-			check_status_is_one_of(StatusName::burn);
-			break;
-		case Ability::Poison_Point:
-			check_status_is_one_of(StatusName::poison);
-			break;
-		case Ability::Static:
-			check_status_is_one_of(StatusName::paralysis);
-			break;
-		default:
-			throw std::runtime_error(containers::concatenate<std::string>(
-				"Tried to apply status from a contact move with ability: "sv,
-				to_string(ability)
-			));
+		case Ability::Effect_Spore: return {{StatusName::paralysis, StatusName::poison, StatusName::sleep}};
+		case Ability::Flame_Body: return {{StatusName::burn}};
+		case Ability::Poison_Point: return {{StatusName::poison}};
+		case Ability::Static: return {{StatusName::paralysis}};
+		default: return {};
 	}
 }
 
 } // namespace
 
-auto MoveState::apply_contact_ability_status(Party const party, Ability const ability, StatusName const status) -> void {
-	validate_contact_ability_status(ability, status);
+auto MoveState::status_from_contact_ability(Party const party, Ability const ability, StatusName const status) & -> void {
+	if (!containers::any_equal(contact_ability_statuses(ability), status)) {
+		throw std::runtime_error(containers::concatenate<std::string>(
+			"Tried to apply "sv,
+			to_string(status),
+			" as a result of a contact move against "sv,
+			to_string(ability)
+		));
+	}
+	validate(party);
+	if (m_move->status) {
+		throw std::runtime_error("Tried to status a Pokemon twice");
+	}
 	m_move->contact_ability_effect = status_to_contact_ability_effect(status);
 	set_expected(party, status);
 }

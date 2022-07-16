@@ -146,16 +146,7 @@ struct MoveState {
 		m_move->recoil = true;
 	}
 	void status_from_move(Party const party, StatusName const status);
-	auto status_from_contact_ability(Party const party, any_active_pokemon auto const user, Weather const weather, Ability const ability, StatusName const status) & -> void {
-		validate(party);
-		if (m_move->status) {
-			throw std::runtime_error("Tried to status a Pokemon twice");
-		}
-		if (!indirect_status_can_apply(status, user, weather)) {
-			throw std::runtime_error("Tried to set status on a Pokemon where status cannot apply");
-		}
-		apply_contact_ability_status(party, ability, status);
-	}
+	auto status_from_contact_ability(Party const party, Ability const ability, StatusName const status) & -> void;
 
 	void set_expected(Party const party, StatusName const status) {
 		if (!m_party) {
@@ -224,8 +215,6 @@ private:
 			throw error();
 		}
 	}
-
-	auto apply_contact_ability_status(Party, Ability, StatusName) -> void;
 	auto set_party(Party const party) & -> void {
 		if (m_party) {
 			check_party(party);

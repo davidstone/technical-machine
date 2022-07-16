@@ -704,10 +704,13 @@ struct BattleParserImpl : BattleParser {
 				[](FromRecoil) { throw std::runtime_error("Recoil cannot cause another status"); },
 				[](FromSubstitute) { throw std::runtime_error("Substitute cannot cause another status"); },
 				[&](Ability const ability) {
-					set_value_on_pokemon(other(party), ability);
 					apply_to_team(is_ai(party), [&](auto const & team) {
-						m_move_state.status_from_contact_ability(party, team.pokemon(), m_battle.weather(), ability, status);
+						if (!indirect_status_can_apply(status, team.pokemon(), m_battle.weather())) {
+							throw std::runtime_error("Tried to set status on a Pokemon where status cannot apply");
+						}
 					});
+					set_value_on_pokemon(other(party), ability);
+					m_move_state.status_from_contact_ability(party, ability, status);
 				},
 				[&](Item const item) {
 					set_value_on_pokemon(party, item);
