@@ -192,15 +192,15 @@ private:
 		MoveName selected;
 		MoveName executed = selected;
 		Damage damage = Damage(NoDamage());
+		bounded::optional<StatusName> status = bounded::none;
+		bounded::optional<TeamIndex> phaze_index = bounded::none;
+		ContactAbilityEffect contact_ability_effect = ContactAbilityEffect::nothing;
 		bool critical_hit = false;
 		bool miss = false;
-		ContactAbilityEffect contact_ability_effect = ContactAbilityEffect::nothing;
 		bool confuse = false;
 		bool flinch = false;
 		bool fully_paralyze = false;
 		bool recoil = false;
-		bounded::optional<TeamIndex> phaze_index = bounded::none;
-		bounded::optional<StatusName> status = bounded::none;
 	};
 
 	enum class StatusChange {
