@@ -88,7 +88,7 @@ struct MoveState {
 			throw std::runtime_error("Tried to awaken after a status change");
 		}
 		if (generation == Generation::one) {
-			set_move_state(party, Awaken());
+			set_move_state(party, Awakening());
 		} else {
 			set_party(party);
 		}
@@ -110,10 +110,10 @@ struct MoveState {
 		set_used_flag(party, "Tried to critical hit a Pokemon twice", &UsedMoveBuilder::critical_hit);
 	}
 	void flinch(Party const party) {
-		set_move_state(party, Flinch());
+		set_move_state(party, Flinched());
 	}
 	void fully_paralyze(Party const party) {
-		set_move_state(party, FullyParalyze());
+		set_move_state(party, FullyParalyzed());
 	}
 	void set_expected(Party const party, VisibleHP const hp) {
 		if (!m_party) {
@@ -180,9 +180,9 @@ struct MoveState {
 
 private:
 	struct Initial {};
-	struct Awaken {};
-	struct Flinch {};
-	struct FullyParalyze {};
+	struct Awakening {};
+	struct Flinched {};
+	struct FullyParalyzed {};
 	struct UsedMoveBuilder {
 		MoveName selected;
 		MoveName executed = selected;
@@ -197,9 +197,9 @@ private:
 	};
 	using Builder = bounded::variant<
 		Initial,
-		Awaken,
-		Flinch,
-		FullyParalyze,
+		Awakening,
+		Flinched,
+		FullyParalyzed,
 		UsedMoveBuilder
 	>;
 

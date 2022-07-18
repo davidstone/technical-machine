@@ -29,9 +29,9 @@ using namespace std::string_view_literals;
 
 void MoveState::use_move(Party const party, MoveName const move) {
 	bounded::visit(m_move, bounded::overload(
-		[](Awaken) { throw std::runtime_error("Tried to use a move while awakening"); },
-		[](Flinch) { throw std::runtime_error("Tried to use a move while flinching"); },
-		[](FullyParalyze) { throw std::runtime_error("Tried to use a move while fully paralyzed"); },
+		[](Awakening) { throw std::runtime_error("Tried to use a move while awakening"); },
+		[](Flinched) { throw std::runtime_error("Tried to use a move while flinching"); },
+		[](FullyParalyzed) { throw std::runtime_error("Tried to use a move while fully paralyzed"); },
 		[&](UsedMoveBuilder & used) {
 			check_party(party);
 			if (used.executed != used.selected) {
@@ -214,7 +214,7 @@ auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai,
 					false
 				};
 			},
-			[&](Awaken) {
+			[&](Awakening) {
 				// Technically incorrect with things like Sucker Punch and priority
 				constexpr auto move = MoveName::Struggle;
 				return Result<UserTeam>{
@@ -233,7 +233,7 @@ auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai,
 					false
 				};
 			},
-			[&](Flinch) {
+			[&](Flinched) {
 				// Technically incorrect with things like Sucker Punch and priority
 				// TODO: Actually flinch
 				constexpr auto move = MoveName::Struggle;
@@ -253,7 +253,7 @@ auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai,
 					false
 				};
 			},
-			[&](FullyParalyze) {
+			[&](FullyParalyzed) {
 				// Technically incorrect with things like Sucker Punch and priority
 				// TODO: actually fully paralyze
 				constexpr auto move = MoveName::Struggle;
