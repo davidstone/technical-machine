@@ -28,18 +28,19 @@ namespace technicalmachine::ps {
 using namespace std::string_view_literals;
 
 void MoveState::use_move(Party const party, MoveName const move) {
-	set_party(party);
 	bounded::visit(m_move, bounded::overload(
 		[](Awaken) { throw std::runtime_error("Tried to use a move while awakening"); },
 		[](Flinch) { throw std::runtime_error("Tried to use a move while flinching"); },
 		[](FullyParalyze) { throw std::runtime_error("Tried to use a move while fully paralyzed"); },
 		[&](UsedMoveBuilder & used) {
+			check_party(party);
 			if (used.executed != used.selected) {
 				throw std::runtime_error("Tried to execute multiple moves");
 			}
 			used.executed = move;
 		},
 		[&](Initial) {
+			set_party(party);
 			if (m_status_change == StatusChange::still_asleep and !usable_while_sleeping(move)) {
 				throw std::runtime_error(containers::concatenate<std::string>("Tried to use "sv, to_string(move), " while asleep"sv));
 			}
