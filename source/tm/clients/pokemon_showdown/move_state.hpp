@@ -83,11 +83,23 @@ struct MoveState {
 		validated(party).damage = SubstituteBroke();
 	}
 
-	void thaw_or_awaken(Party const party) {
-		set_party(party);
+	auto awaken(Party const party, Generation const generation) & -> void {
 		if (m_status_change != StatusChange::nothing_relevant) {
-			throw std::runtime_error("Tried to thaw or awaken at a weird time");
+			throw std::runtime_error("Tried to awaken after a status change");
 		}
+		if (generation == Generation::one) {
+			set_move_state(party, Awaken());
+		} else {
+			set_party(party);
+		}
+		set_expected(party, StatusName::clear);
+		m_status_change = StatusChange::thaw_or_awaken;
+	}
+	auto thaw(Party const party) & -> void {
+		if (m_status_change != StatusChange::nothing_relevant) {
+			throw std::runtime_error("Tried to thaw after a status change");
+		}
+		set_party(party);
 		set_expected(party, StatusName::clear);
 		m_status_change = StatusChange::thaw_or_awaken;
 	}
@@ -168,6 +180,7 @@ struct MoveState {
 
 private:
 	struct Initial {};
+	struct Awaken {};
 	struct Flinch {};
 	struct FullyParalyze {};
 	struct UsedMoveBuilder {
@@ -184,6 +197,7 @@ private:
 	};
 	using Builder = bounded::variant<
 		Initial,
+		Awaken,
 		Flinch,
 		FullyParalyze,
 		UsedMoveBuilder

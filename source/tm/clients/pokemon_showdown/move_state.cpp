@@ -30,6 +30,7 @@ using namespace std::string_view_literals;
 void MoveState::use_move(Party const party, MoveName const move) {
 	set_party(party);
 	bounded::visit(m_move, bounded::overload(
+		[](Awaken) { throw std::runtime_error("Tried to use a move while awakening"); },
 		[](Flinch) { throw std::runtime_error("Tried to use a move while flinching"); },
 		[](FullyParalyze) { throw std::runtime_error("Tried to use a move while fully paralyzed"); },
 		[&](UsedMoveBuilder & used) {
@@ -194,6 +195,25 @@ auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai,
 		using UserTeam = AssociatedTeam<UserPokemon>;
 		auto const result = bounded::visit(m_move, bounded::overload(
 			[&](Initial) {
+				// Technically incorrect with things like Sucker Punch and priority
+				constexpr auto move = MoveName::Struggle;
+				return Result<UserTeam>{
+					UsedMove<UserTeam>(
+						move,
+						move,
+						false,
+						false,
+						ContactAbilityEffect::nothing,
+						containers::front(possible_side_effects(move, user, other, weather)).function
+					),
+					Damage(NoDamage()),
+					m_user,
+					m_other,
+					m_status_change == StatusChange::thaw_or_awaken,
+					false
+				};
+			},
+			[&](Awaken) {
 				// Technically incorrect with things like Sucker Punch and priority
 				constexpr auto move = MoveName::Struggle;
 				return Result<UserTeam>{

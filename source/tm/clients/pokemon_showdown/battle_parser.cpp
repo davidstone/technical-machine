@@ -441,15 +441,18 @@ struct BattleParserImpl : BattleParser {
 					} else if (moved(m_battle.ai()) and moved(m_battle.foe())) {
 						m_end_of_turn_state.set_expected(party, StatusName::clear);
 					} else {
-						if (status != StatusName::freeze and status != StatusName::sleep) {
-							throw std::runtime_error("Spontaneously recovered from status");
-						}
 						maybe_use_previous_move();
-						m_move_state.thaw_or_awaken(party);
-						if constexpr (generation == Generation::one) {
-							// TODO: Try to do something smarter here
-							m_move_state.use_move(party, MoveName::Struggle);
+						switch (status) {
+							case StatusName::freeze:
+								m_move_state.thaw(party);
+								break;
+							case StatusName::sleep:
+								m_move_state.awaken(party, generation);
+								break;
+							default:
+								throw std::runtime_error("Spontaneously recovered from status");
 						}
+
 					}
 				},
 				[&](Ability const ability) {
