@@ -98,18 +98,10 @@ struct MoveState {
 		set_used_flag(party, "Tried to critical hit a Pokemon twice", &UsedMoveBuilder::critical_hit);
 	}
 	void flinch(Party const party) {
-		if (m_party or m_move.index() != bounded::types<Initial>()) {
-			throw error();
-		}
-		insert(m_party, party);
-		m_move = Flinch();
+		set_move_state(party, Flinch());
 	}
 	void fully_paralyze(Party const party) {
-		if (m_party or m_move.index() != bounded::types<Initial>()) {
-			throw error();
-		}
-		insert(m_party, party);
-		m_move = FullyParalyze();
+		set_move_state(party, FullyParalyze());
 	}
 	void set_expected(Party const party, VisibleHP const hp) {
 		if (!m_party) {
@@ -244,6 +236,15 @@ private:
 		}
 		flag = true;
 	}
+
+	auto set_move_state(Party const party, auto state) & -> void {
+		if (m_party or m_move.index() != bounded::types<Initial>()) {
+			throw error();
+		}
+		insert(m_party, party);
+		m_move = state;
+	}
+
 
 	bounded::optional<Party> m_party;
 	Builder m_move = Builder(Initial());
