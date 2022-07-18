@@ -381,9 +381,6 @@ struct BattleParserImpl : BattleParser {
 				m_move_state.use_move(party, move_name);
 			};
 			if (reason == "flinch") {
-				// Technically incorrect with things like Sucker Punch and
-				// priority
-				use_move(MoveName::Struggle);
 				m_move_state.flinch(party);
 			} else if (reason == "frz") {
 				// Using a move like Flame Wheel does not send "cant"
@@ -391,9 +388,6 @@ struct BattleParserImpl : BattleParser {
 				// priority
 				use_move(MoveName::Struggle);
 			} else if (reason == "par") {
-				// Technically incorrect with things like Sucker Punch and
-				// priority
-				use_move(MoveName::Struggle);
 				m_move_state.fully_paralyze(party);
 			} else if (reason == "slp") {
 				m_move_state.still_asleep(party);
@@ -682,7 +676,7 @@ struct BattleParserImpl : BattleParser {
 					if (how == "[fatigue]") {
 						m_end_of_turn_state.lock_in_ends(party);
 					} else {
-						m_move_state.confuse(party);
+						m_move_state.confuse(other(party));
 					}
 				},
 				[](FromMiscellaneous) {},

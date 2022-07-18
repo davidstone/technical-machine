@@ -64,8 +64,9 @@ struct MoveState {
 	auto party() const -> bounded::optional<Party> {
 		return m_party;
 	}
-	auto executed_move() const {
-		return BOUNDED_CONDITIONAL(m_move, m_move->executed, bounded::none);
+	auto executed_move() const -> bounded::optional<MoveName> {
+		constexpr auto type = bounded::types<UsedMoveBuilder>();
+		return BOUNDED_CONDITIONAL(m_move.index() == type, m_move[type].executed, bounded::none);
 	}
 
 	void use_move(Party const party, MoveName const move);
@@ -97,10 +98,18 @@ struct MoveState {
 		set_used_flag(party, "Tried to critical hit a Pokemon twice", &UsedMoveBuilder::critical_hit);
 	}
 	void flinch(Party const party) {
-		set_used_flag(party, "Tried to flinch a Pokemon twice", &UsedMoveBuilder::flinch);
+		if (m_party or m_move.index() != bounded::types<Initial>()) {
+			throw error();
+		}
+		insert(m_party, party);
+		m_move = Flinch();
 	}
 	void fully_paralyze(Party const party) {
-		set_used_flag(party, "Tried to fully paralyze a Pokemon twice", &UsedMoveBuilder::fully_paralyze);
+		if (m_party or m_move.index() != bounded::types<Initial>()) {
+			throw error();
+		}
+		insert(m_party, party);
+		m_move = FullyParalyze();
 	}
 	void set_expected(Party const party, VisibleHP const hp) {
 		if (!m_party) {
@@ -151,12 +160,14 @@ struct MoveState {
 		m_status_change = StatusChange::still_asleep;
 	}
 	auto switch_index() const -> bounded::optional<TeamIndex> {
-		if (!m_move) {
+		constexpr auto type = bounded::types<UsedMoveBuilder>();
+		if (m_move.index() != type) {
 			return bounded::none;
 		}
+		auto & move = m_move[type];
 		return
-			is_switch(m_move->executed) ? to_replacement(m_move->executed) :
-			m_move->phaze_index ? m_move->phaze_index :
+			is_switch(move.executed) ? to_replacement(move.executed) :
+			move.phaze_index ? move.phaze_index :
 			bounded::none;
 	}
 
@@ -164,6 +175,9 @@ struct MoveState {
 	auto complete(Party ai_party, KnownTeam<generation> const & ai, SeenTeam<generation> const & foe, Weather const weather) -> CompleteResult<generation>;
 
 private:
+	struct Initial {};
+	struct Flinch {};
+	struct FullyParalyze {};
 	struct UsedMoveBuilder {
 		MoveName selected;
 		MoveName executed = selected;
@@ -174,10 +188,14 @@ private:
 		bool critical_hit = false;
 		bool miss = false;
 		bool confuse = false;
-		bool flinch = false;
-		bool fully_paralyze = false;
 		bool recoil = false;
 	};
+	using Builder = bounded::variant<
+		Initial,
+		Flinch,
+		FullyParalyze,
+		UsedMoveBuilder
+	>;
 
 	enum class StatusChange {
 		nothing_relevant,
@@ -195,17 +213,17 @@ private:
 		}
 	}
 	auto check_is_used() const -> void {
-		if (!m_move) {
+		if (m_move.index() != bounded::types<UsedMoveBuilder>()) {
 			throw error();
 		}
 	}
 	auto validated() const & -> UsedMoveBuilder const & {
 		check_is_used();
-		return *m_move;
+		return m_move[bounded::types<UsedMoveBuilder>()];
 	}
 	auto validated() & -> UsedMoveBuilder & {
 		check_is_used();
-		return m_move;
+		return m_move[bounded::types<UsedMoveBuilder>()];
 	}
 	auto validated(Party const party) & -> UsedMoveBuilder & {
 		check_party(party);
@@ -228,7 +246,7 @@ private:
 	}
 
 	bounded::optional<Party> m_party;
-	bounded::optional<UsedMoveBuilder> m_move;
+	Builder m_move = Builder(Initial());
 	OptionalHPAndStatus m_user;
 	OptionalHPAndStatus m_other;
 	StatusChange m_status_change = StatusChange::nothing_relevant;

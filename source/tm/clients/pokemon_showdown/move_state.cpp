@@ -13,6 +13,8 @@
 #include <tm/status_name.hpp>
 #include <tm/team.hpp>
 
+#include <bounded/overload.hpp>
+
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/front_back.hpp>
 #include <containers/size.hpp>
@@ -27,14 +29,22 @@ using namespace std::string_view_literals;
 
 void MoveState::use_move(Party const party, MoveName const move) {
 	set_party(party);
-	if (m_move) {
-		m_move->executed = move;
-	} else {
-		if (m_status_change == StatusChange::still_asleep and !usable_while_sleeping(move)) {
-			throw std::runtime_error(containers::concatenate<std::string>("Tried to use "sv, to_string(move), " while asleep"sv));
+	bounded::visit(m_move, bounded::overload(
+		[](Flinch) { throw std::runtime_error("Tried to use a move while flinching"); },
+		[](FullyParalyze) { throw std::runtime_error("Tried to use a move while fully paralyzed"); },
+		[&](UsedMoveBuilder & used) {
+			if (used.executed != used.selected) {
+				throw std::runtime_error("Tried to execute multiple moves");
+			}
+			used.executed = move;
+		},
+		[&](Initial) {
+			if (m_status_change == StatusChange::still_asleep and !usable_while_sleeping(move)) {
+				throw std::runtime_error(containers::concatenate<std::string>("Tried to use "sv, to_string(move), " while asleep"sv));
+			}
+			m_move.emplace([&] { return UsedMoveBuilder{move}; });
 		}
-		insert(m_move, UsedMoveBuilder{move});
-	}
+	));
 }
 
 namespace {
@@ -175,32 +185,91 @@ auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai,
 	auto generation_one_awaken = [&] {
 		return generation == Generation::one and m_status_change == StatusChange::thaw_or_awaken;
 	};
-	if (!m_move and m_status_change != StatusChange::still_asleep and !generation_one_awaken()) {
+	auto const is_initial = m_move.index() == bounded::types<Initial>();
+	if (is_initial and m_status_change != StatusChange::still_asleep and !generation_one_awaken()) {
 		*this = {};
 		return CompleteResult<generation>(NoResult());
 	}
-	if (!m_move) {
-		// Technically incorrect with things like Sucker Punch and priority
-		insert(m_move, UsedMoveBuilder{MoveName::Struggle});
-	}
-	auto const move = *m_move;
 	auto execute = [&]<any_active_pokemon UserPokemon>(UserPokemon const user, OtherTeam<UserPokemon> const & other) {
 		using UserTeam = AssociatedTeam<UserPokemon>;
-		auto const result = Result<UserTeam>{
-			UsedMove<UserTeam>(
-				move.selected,
-				move.executed,
-				move.critical_hit,
-				move.miss,
-				move.contact_ability_effect,
-				get_side_effect(move, user, other, weather)
-			),
-			move.damage,
-			m_user,
-			m_other,
-			m_status_change == StatusChange::thaw_or_awaken,
-			move.recoil
-		};
+		auto const result = bounded::visit(m_move, bounded::overload(
+			[&](Initial) {
+				// Technically incorrect with things like Sucker Punch and priority
+				constexpr auto move = MoveName::Struggle;
+				return Result<UserTeam>{
+					UsedMove<UserTeam>(
+						move,
+						move,
+						false,
+						false,
+						ContactAbilityEffect::nothing,
+						containers::front(possible_side_effects(move, user, other, weather)).function
+					),
+					Damage(NoDamage()),
+					m_user,
+					m_other,
+					m_status_change == StatusChange::thaw_or_awaken,
+					false
+				};
+			},
+			[&](Flinch) {
+				// Technically incorrect with things like Sucker Punch and priority
+				// TODO: Actually flinch
+				constexpr auto move = MoveName::Struggle;
+				return Result<UserTeam>{
+					UsedMove<UserTeam>(
+						move,
+						move,
+						false,
+						false,
+						ContactAbilityEffect::nothing,
+						containers::front(possible_side_effects(move, user, other, weather)).function
+					),
+					Damage(NoDamage()),
+					m_user,
+					m_other,
+					m_status_change == StatusChange::thaw_or_awaken,
+					false
+				};
+			},
+			[&](FullyParalyze) {
+				// Technically incorrect with things like Sucker Punch and priority
+				// TODO: actually fully paralyze
+				constexpr auto move = MoveName::Struggle;
+				return Result<UserTeam>{
+					UsedMove<UserTeam>(
+						move,
+						move,
+						false,
+						false,
+						ContactAbilityEffect::nothing,
+						containers::front(possible_side_effects(move, user, other, weather)).function
+					),
+					Damage(NoDamage()),
+					m_user,
+					m_other,
+					m_status_change == StatusChange::thaw_or_awaken,
+					false
+				};
+			},
+			[&](UsedMoveBuilder const move) {
+				return Result<UserTeam>{
+					UsedMove<UserTeam>(
+						move.selected,
+						move.executed,
+						move.critical_hit,
+						move.miss,
+						move.contact_ability_effect,
+						get_side_effect(move, user, other, weather)
+					),
+					move.damage,
+					m_user,
+					m_other,
+					m_status_change == StatusChange::thaw_or_awaken,
+					move.recoil
+				};
+			}
+		));
 		*this = {};
 		return CompleteResult<generation>(result);
 	};
