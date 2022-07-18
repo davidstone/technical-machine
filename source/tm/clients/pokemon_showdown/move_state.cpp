@@ -31,6 +31,7 @@ void MoveState::use_move(Party const party, MoveName const move) {
 	bounded::visit(m_move, bounded::overload(
 		[](Awakening) { throw std::runtime_error("Tried to use a move while awakening"); },
 		[](Flinched) { throw std::runtime_error("Tried to use a move while flinching"); },
+		[](FrozenSolid) { throw std::runtime_error("Tried to use a move while frozen solid"); },
 		[](FullyParalyzed) { throw std::runtime_error("Tried to use a move while fully paralyzed"); },
 		[&](UsedMoveBuilder & used) {
 			check_party(party);
@@ -236,6 +237,25 @@ auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai,
 			[&](Flinched) {
 				// Technically incorrect with things like Sucker Punch and priority
 				// TODO: Actually flinch
+				constexpr auto move = MoveName::Struggle;
+				return Result<UserTeam>{
+					UsedMove<UserTeam>(
+						move,
+						move,
+						false,
+						false,
+						ContactAbilityEffect::nothing,
+						containers::front(possible_side_effects(move, user, other, weather)).function
+					),
+					Damage(NoDamage()),
+					m_user,
+					m_other,
+					m_status_change == StatusChange::thaw_or_awaken,
+					false
+				};
+			},
+			[&](FrozenSolid) {
+				// Technically incorrect with things like Sucker Punch and priority
 				constexpr auto move = MoveName::Struggle;
 				return Result<UserTeam>{
 					UsedMove<UserTeam>(

@@ -112,6 +112,9 @@ struct MoveState {
 	void flinch(Party const party) {
 		set_move_state(party, Flinched());
 	}
+	void frozen_solid(Party const party) {
+		set_move_state(party, FrozenSolid());
+	}
 	void fully_paralyze(Party const party) {
 		set_move_state(party, FullyParalyzed());
 	}
@@ -182,6 +185,7 @@ private:
 	struct Initial {};
 	struct Awakening {};
 	struct Flinched {};
+	struct FrozenSolid {};
 	struct FullyParalyzed {};
 	struct UsedMoveBuilder {
 		MoveName selected;
@@ -199,6 +203,7 @@ private:
 		Initial,
 		Awakening,
 		Flinched,
+		FrozenSolid,
 		FullyParalyzed,
 		UsedMoveBuilder
 	>;

@@ -383,10 +383,7 @@ struct BattleParserImpl : BattleParser {
 			if (reason == "flinch") {
 				m_move_state.flinch(party);
 			} else if (reason == "frz") {
-				// Using a move like Flame Wheel does not send "cant"
-				// Technically incorrect with things like Sucker Punch and
-				// priority
-				use_move(MoveName::Struggle);
+				m_move_state.frozen_solid(party);
 			} else if (reason == "par") {
 				m_move_state.fully_paralyze(party);
 			} else if (reason == "slp") {
