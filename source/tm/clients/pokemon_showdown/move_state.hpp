@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include <tm/clients/pokemon_showdown/hp_and_status.hpp>
 #include <tm/clients/pokemon_showdown/parsed_hp.hpp>
 
 #include <tm/clients/party.hpp>
@@ -22,6 +21,7 @@
 #include <tm/contact_ability_effect.hpp>
 #include <tm/phazing_in_same_pokemon.hpp>
 #include <tm/status_name.hpp>
+#include <tm/visible_hp.hpp>
 #include <tm/weather.hpp>
 
 #include <bounded/detail/variant/variant.hpp>
@@ -43,7 +43,7 @@ struct MoveState {
 		bounded::optional<VisibleHP> hp;
 		bounded::optional<StatusName> status;
 	};
-	using Damage = bounded::variant<NoDamage, HPAndStatus, SubstituteDamaged, SubstituteBroke>;
+	using Damage = bounded::variant<NoDamage, VisibleHP, SubstituteDamaged, SubstituteBroke>;
 	template<any_team UserTeam>
 	struct Result {
 		UsedMove<UserTeam> move;
@@ -73,8 +73,8 @@ struct MoveState {
 
 	auto move_damaged_self(Party const damaged_party) const -> bool;
 
-	auto damage(Party const party, HPAndStatus const hp_and_status) & -> void {
-		validated(party).damage = hp_and_status;
+	auto damage(Party const party, VisibleHP const hp) & -> void {
+		validated(party).damage = hp;
 	}
 	auto damage_substitute(Party const party) & -> void {
 		validated(party).damage = SubstituteDamaged();

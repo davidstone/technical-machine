@@ -107,6 +107,11 @@ constexpr auto parse_status(std::string_view const str) {
 		throw std::runtime_error("Received an invalid status");
 }
 
+struct HPAndStatus {
+	VisibleHP hp;
+	StatusName status;
+};
+
 constexpr auto parse_hp_and_status(std::string_view const hp_and_status) {
 	auto const [hp_fraction, status] = split_view(hp_and_status, ' ');
 	return HPAndStatus{parse_hp(hp_fraction), parse_status(status)};
@@ -781,13 +786,13 @@ struct BattleParserImpl : BattleParser {
 	}
 
 private:
-	auto compute_damage(bool const user_is_ai, MoveName const move, HPAndStatus const hp_and_status) -> const HP::current_type {
+	auto compute_damage(bool const user_is_ai, MoveName const move, VisibleHP const hp) -> const HP::current_type {
 		auto const ai_damaged = !user_is_ai xor (move == MoveName::Hit_Self);
 		return apply_to_team(ai_damaged, [&](auto const & team) {
 			auto const & pokemon = select_pokemon(team, move);
 			auto const new_hp = ai_damaged ?
-				hp_and_status.hp.current.value() :
-				to_real_hp(pokemon.hp().max(), hp_and_status.hp).value;
+				hp.current.value() :
+				to_real_hp(pokemon.hp().max(), hp).value;
 			return hp_to_damage(pokemon, new_hp);
 		});
 	}
@@ -805,7 +810,7 @@ private:
 	void handle_damage(InMessage message) {
 		auto const parsed = parse_hp_message(message);
 		auto move_damage = [&](Party const party) {
-			m_move_state.damage(party, {parsed.hp, parsed.status});
+			m_move_state.damage(party, parsed.hp);
 		};
 		auto const party = parsed.party;
 		maybe_commit_switch(party);
@@ -965,8 +970,8 @@ private:
 					[](NoDamage) {
 						return LocalDamage{ActualDamage::Known{0_bi}, false};
 					},
-					[&](HPAndStatus const hp_and_status) -> LocalDamage {
-						auto const value = compute_damage(data_is_for_ai, data.move.executed, hp_and_status);
+					[&](VisibleHP const hp) -> LocalDamage {
+						auto const value = compute_damage(data_is_for_ai, data.move.executed, hp);
 						return LocalDamage{
 							ActualDamage::Known{value},
 							value != 0_bi
