@@ -7,6 +7,8 @@
 
 #include <tm/pokemon/pokemon.hpp>
 #include <tm/string_conversions/ability.hpp>
+#include <tm/string_conversions/move_name.hpp>
+#include <tm/string_conversions/species.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/string.hpp>
@@ -63,7 +65,14 @@ struct KnownPokemon {
 	}
 	auto add_move(Move const move) const -> void {
 		if (!containers::any_equal(regular_moves(), move.name()) and is_regular(move.name())) {
-			throw std::runtime_error("Tried to add non-existent move to a KnownPokemon");
+			using namespace std::string_view_literals;
+			throw std::runtime_error(containers::concatenate<std::string>(
+				"Tried to add "sv,
+				to_string(move.name()),
+				" to a KnownPokemon of "sv,
+				to_string(species()),
+				" even though it does not know this move."
+			));
 		}
 	}
 
