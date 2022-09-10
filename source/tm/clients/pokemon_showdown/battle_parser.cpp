@@ -49,7 +49,6 @@
 #include <numeric_traits/min_max_value.hpp>
 
 #include <iostream>
-#include <limits>
 #include <random>
 #include <stdexcept>
 #include <string>
