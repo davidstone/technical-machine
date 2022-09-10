@@ -53,6 +53,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 			);
 		};
 
+		auto random_device = std::random_device();
 		for (auto const & generation : paths_in_directory(get_test_directory() / "battles")) {
 			for (auto const & path : paths_in_directory(generation)) {
 				auto const data = load_lines_from_file(path.path() / "server_messages.txt");
@@ -63,7 +64,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 					"Technical Machine",
 					evaluate,
 					depth,
-					std::mt19937(std::random_device{}())
+					std::mt19937(random_device())
 				);
 
 				INFO(path.path());
