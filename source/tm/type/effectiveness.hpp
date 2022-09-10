@@ -7,6 +7,7 @@
 
 #include <tm/type/pokemon_types.hpp>
 
+#include <tm/move/category.hpp>
 #include <tm/move/known_move.hpp>
 #include <tm/move/move_name.hpp>
 
@@ -61,14 +62,6 @@ constexpr auto always_affects_target(Generation const generation, MoveName const
 		case Generation::three:
 		case Generation::four:
 		case Generation::five:
-			switch (move) {
-				case MoveName::Block:
-				case MoveName::Mean_Look:
-				case MoveName::Spider_Web:
-					return true;
-				default:
-					return false;
-			}
 		case Generation::six:
 		case Generation::seven:
 		case Generation::eight:
@@ -80,7 +73,7 @@ template<any_active_pokemon TargetPokemon>
 auto affects_target(KnownMove const move, TargetPokemon const target, Weather const weather) -> bool {
 	constexpr auto generation = generation_from<TargetPokemon>;
 	auto const effectiveness = Effectiveness(generation, move.type, target.types());
-	if (always_affects_target(generation, move.name)) {
+	if (!is_damaging(move.name) or always_affects_target(generation, move.name)) {
 		return true;
 	}
 	return !effectiveness.has_no_effect() and (move.type != Type::Ground or grounded(target, weather));
