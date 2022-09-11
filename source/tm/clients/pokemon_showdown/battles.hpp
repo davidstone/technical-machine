@@ -77,7 +77,13 @@ private:
 	}
 
 	void move_to_active(AllUsageStats const & usage_stats, containers::iterator_t<Pending &> it, auto send_message) {
-		containers::push_back(m_active, std::move(**it).make(usage_stats, std::move(send_message)));
+		auto make_parser = []<typename Function>(Function function) {
+			return std::make_unique<BattleParser>(bounded::detail::superconstructing_super_elider<BattleParser, Function>(std::move(function)));
+		};
+		containers::push_back(
+			m_active,
+			make_parser([&] { return std::move(**it).make(usage_stats, std::move(send_message)); })
+		);
 		containers::erase(m_pending, it);
 	}
 

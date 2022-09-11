@@ -185,7 +185,7 @@ struct BattleFactoryImpl : BattleFactory {
 		// TODO: Handle NvN battles
 		return m_ai_switched_in and m_foe_starter;
 	}
-	auto make(AllUsageStats const & usage_stats, SendMessageFunction send_message) && -> std::unique_ptr<BattleParser> final {
+	auto make(AllUsageStats const & usage_stats, SendMessageFunction send_message) && -> BattleParser final {
 		BOUNDED_ASSERT(completed());
 		if (!m_team) {
 			throw std::runtime_error("Did not receive team");
@@ -222,7 +222,7 @@ struct BattleFactoryImpl : BattleFactory {
 
 		pl::write_team(*m_team, m_log_directory / "team.sbt");
 
-		return make_battle_parser(
+		return BattleParser(
 			std::move(send_message),
 			std::move(m_battle_logger),
 			std::ofstream(m_log_directory / "analysis.txt"),
