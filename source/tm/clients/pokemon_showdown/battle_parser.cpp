@@ -644,9 +644,7 @@ struct BattleParserImpl : BattleParser {
 			bounded::insert(switch_, Switch{parsed.move, parsed.hp, parsed.status});
 		} else if (type == "drag") {
 			auto const parsed = handle_switch_or_drag(message);
-			apply_to_team(is_ai(parsed.party), [&](auto & team) {
-				m_move_state.phaze_index(other(parsed.party), team.all_pokemon(), parsed.species);
-			});
+			m_move_state.phazed_in(other(parsed.party), to_replacement(parsed.move));
 			m_move_state.set_expected(parsed.party, parsed.hp);
 			m_move_state.set_expected(parsed.party, parsed.status);
 		} else if (type == "replace") {
