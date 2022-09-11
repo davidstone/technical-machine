@@ -14,6 +14,7 @@
 #include <containers/begin_end.hpp>
 #include <containers/push_back.hpp>
 #include <containers/string.hpp>
+#include <containers/trivial_inplace_function.hpp>
 #include <containers/vector.hpp>
 
 #include <filesystem>
@@ -26,6 +27,8 @@ namespace technicalmachine {
 struct AllUsageStats;
 
 namespace ps {
+
+using SendMessageFunction = containers::trivial_inplace_function<void(std::string_view) const, sizeof(void *)>;
 
 struct Battles {
 	explicit Battles(std::filesystem::path log_directory, bool const log_foe_teams):
@@ -42,17 +45,11 @@ struct Battles {
 		);
 	}
 
-	bool handle_message(AllUsageStats const & usage_stats, InMessage message, auto send_message, auto challenge) {
-		auto complete_active_battle = [&](containers::iterator_t<Active const &> const it) {
-			containers::erase(m_active, it);
-			send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), message.room()));
-			challenge();
-		};
-		if (handle_message_impl(m_active, message, complete_active_battle)) {
+	bool handle_message(AllUsageStats const & usage_stats, InMessage message, SendMessageFunction const send_message, auto challenge) {
+		if (handle_message_for_active(message, send_message, std::move(challenge))) {
 			return true;
 		}
-		auto begin_pending_battle = [&](auto const it) { move_to_active(usage_stats, it, std::move(send_message)); };
-		if (handle_message_impl(m_pending, message, begin_pending_battle)) {
+		if (handle_message_for_pending(message, usage_stats, send_message)) {
 			return true;
 		}
 
@@ -63,28 +60,51 @@ private:
 	using Pending = containers::vector<std::unique_ptr<BattleFactory>>;
 	using Active = containers::vector<std::unique_ptr<BattleParser>>;
 
-	static bool handle_message_impl(auto & container, InMessage message, auto if_completed) {
-		auto const function = [=](auto const & battle) { return battle->id() == message.room(); };
-		auto const it = containers::find_if(container, function);
-		if (it == containers::end(container)) {
-			return false;
-		}
-		(*it)->handle_message(message);
-		if ((*it)->completed()) {
-			if_completed(it);
-		}
-		return true;
+	static constexpr auto find_battle(auto & container, std::string_view const room) {
+		return containers::find_if(container, [=](auto const & battle) { return battle->id() == room; });
 	}
 
-	void move_to_active(AllUsageStats const & usage_stats, containers::iterator_t<Pending &> it, auto send_message) {
+	auto move_to_active(AllUsageStats const & usage_stats, containers::iterator_t<Pending &> it) -> void {
 		auto make_parser = []<typename Function>(Function function) {
 			return std::make_unique<BattleParser>(bounded::detail::superconstructing_super_elider<BattleParser, Function>(std::move(function)));
 		};
 		containers::push_back(
 			m_active,
-			make_parser([&] { return std::move(**it).make(usage_stats, std::move(send_message)); })
+			make_parser([&] { return std::move(**it).make(usage_stats); })
 		);
 		containers::erase(m_pending, it);
+	}
+
+	auto handle_message_for_pending(InMessage message, AllUsageStats const & usage_stats, SendMessageFunction const send_message) -> bool {
+		auto const it = find_battle(m_pending, message.room());
+		if (it == containers::end(m_pending)) {
+			return false;
+		}
+		auto & battle = **it;
+		battle.handle_message(message);
+		if (battle.completed()) {
+			move_to_active(usage_stats, it);
+			send_message(containers::concatenate<containers::string>(message.room(), "|/timer on"sv));
+		}
+		return true;
+	}
+
+	auto handle_message_for_active(InMessage message, SendMessageFunction const send_message, auto const challenge) -> bool {
+		auto const it = find_battle(m_active, message.room());
+		if (it == containers::end(m_active)) {
+			return false;
+		}
+		auto & battle = **it;
+		auto const response = battle.handle_message(message);
+		if (response) {
+			send_message(*response);
+		}
+		if (battle.completed()) {
+			containers::erase(m_active, it);
+			send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), message.room()));
+			challenge();
+		}
+		return true;
 	}
 
 	std::filesystem::path m_log_directory;

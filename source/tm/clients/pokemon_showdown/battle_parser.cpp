@@ -155,11 +155,11 @@ constexpr auto parse_set_hp_message(InMessage message) {
 
 } // namespace
 
-auto BattleParser::handle_message(InMessage message) -> void {
+auto BattleParser::handle_message(InMessage message) -> bounded::optional<containers::string> {
 	m_battle_logger.log(message);
 
 	if (handle_chat_message(message)) {
-		return;
+		return bounded::none;
 	}
 
 	auto const type = message.type();
@@ -196,20 +196,25 @@ auto BattleParser::handle_message(InMessage message) -> void {
 		auto const [category, source] = split_view(message.pop(), ": "sv);
 		auto const details = message.pop();
 		maybe_commit_switch(party);
-		bounded::visit(parse_effect_source(category, source), bounded::overload(
-			[](MainEffect) { throw std::runtime_error("Unexpected -activate source MainEffect"); },
-			[](FromConfusion) {},
-			[](FromMiscellaneous) {},
-			[](FromMove) {},
-			[](FromRecoil) { throw std::runtime_error("Unexpected -activate source FromRecoil"); },
-			[&](FromSubstitute) {
+		return bounded::visit(parse_effect_source(category, source), bounded::overload(
+			[](MainEffect) -> bounded::optional<containers::string> {
+				throw std::runtime_error("Unexpected -activate source MainEffect");
+			},
+			[](FromConfusion) -> bounded::optional<containers::string> { return bounded::none; },
+			[](FromMiscellaneous) -> bounded::optional<containers::string> { return bounded::none; },
+			[](FromMove) -> bounded::optional<containers::string> { return bounded::none; },
+			[](FromRecoil) -> bounded::optional<containers::string> {
+				throw std::runtime_error("Unexpected -activate source FromRecoil");
+			},
+			[&](FromSubstitute) -> bounded::optional<containers::string> {
 				if (details == "[damage]") {
 					m_move_state.damage_substitute(other(party));
 					// TODO: Why
-					handle_delayed_switch(other(party));
+					return handle_delayed_switch(other(party));
 				}
+				return bounded::none;
 			},
-			[&](Ability const ability) {
+			[&](Ability const ability) -> bounded::optional<containers::string> {
 				set_value_on_pokemon(party, ability);
 				switch (ability) {
 					case Ability::Forewarn:
@@ -224,8 +229,12 @@ auto BattleParser::handle_message(InMessage message) -> void {
 					default:
 						break;
 				}
+				return bounded::none;
 			},
-			[&](Item const item) { set_value_on_pokemon(party, item); }
+			[&](Item const item) -> bounded::optional<containers::string> {
+				set_value_on_pokemon(party, item);
+				return bounded::none;
+			}
 		));
 	} else if (type == "-anim") {
 #if 0
@@ -270,7 +279,7 @@ auto BattleParser::handle_message(InMessage message) -> void {
 	} else if (type == "-curestatus") {
 		if (m_ignore_next_cure_status) {
 			m_ignore_next_cure_status = false;
-			return;
+			return bounded::none;
 		}
 		auto const party = party_from_player_id(message.pop());
 		auto const status = parse_status(message.pop());
@@ -322,7 +331,7 @@ auto BattleParser::handle_message(InMessage message) -> void {
 		auto const pokemon = message.pop();
 #endif
 	} else if (type == "-damage") {
-		handle_damage(message);
+		return handle_damage(message);
 	} else if (type == "detailschange" or type == "-formechange") {
 #if 0
 		auto const pokemon = message.pop();
@@ -334,7 +343,7 @@ auto BattleParser::handle_message(InMessage message) -> void {
 		auto const source = message.pop();
 		if (source == "Substitute") {
 			m_move_state.break_substitute(other(party));
-			handle_delayed_switch(other(party));
+			return handle_delayed_switch(other(party));
 		}
 	} else if (type == "-endability") {
 #if 0
@@ -354,7 +363,7 @@ auto BattleParser::handle_message(InMessage message) -> void {
 		}
 	} else if (type == "error") {
 		if (message.remainder() != "[Invalid choice] There's nothing to choose") {
-			send_random_move();
+			return random_move_response();
 		}
 	} else if (type == "-fail") {
 #if 0
@@ -365,7 +374,7 @@ auto BattleParser::handle_message(InMessage message) -> void {
 		auto const party = party_from_player_id(message.pop());
 		if (m_battle_manager->generation() <= Generation::three and is_ai(party) and !m_battle_manager->ai_is_on_last_pokemon() and !m_battle_manager->is_end_of_turn()) {
 			m_replacing_fainted = true;
-			send_move(m_battle_manager->determine_action());
+			return move_response(m_battle_manager->determine_action());
 		}
 	} else if (type == "-fieldactivate") {
 		// move: Perish Song
@@ -446,7 +455,7 @@ auto BattleParser::handle_message(InMessage message) -> void {
 		m_move_state.use_move(party, move);
 		if (is_ai(party) and move == MoveName::Baton_Pass and !m_battle_manager->ai_is_on_last_pokemon()) {
 			maybe_use_previous_move();
-			send_move(m_battle_manager->determine_action());
+			return move_response(m_battle_manager->determine_action());
 		}
 	} else if (type == "-mustrecharge") {
 		// After moves like Hyper Beam
@@ -570,7 +579,7 @@ auto BattleParser::handle_message(InMessage message) -> void {
 	} else if (type == "turn") {
 		auto const turn_count = bounded::to_integer<TurnCount>(message.pop());
 		m_battle_manager->begin_turn(turn_count);
-		send_move(m_battle_manager->determine_action());
+		return move_response(m_battle_manager->determine_action());
 	} else if (type == "-unboost") {
 #if 0
 		auto const pokemon = message.pop();
@@ -586,7 +595,7 @@ auto BattleParser::handle_message(InMessage message) -> void {
 		try_correct_hp_and_status(!ai_went_first, end_of_turn_state.last.hp, end_of_turn_state.last.status);
 		if (m_battle_manager->ai_is_fainted()) {
 			m_replacing_fainted = true;
-			send_move(m_battle_manager->determine_action());
+			return move_response(m_battle_manager->determine_action());
 		}
 	} else if (type == "-weather") {
 		auto const weather = from_string<NormalWeather>(message.pop());
@@ -609,24 +618,25 @@ auto BattleParser::handle_message(InMessage message) -> void {
 	} else {
 		std::cerr << "Received battle progress message of unknown type: " << type << ": " << message.remainder() << '\n';
 	}
+	return bounded::none;
 }
 
-auto BattleParser::handle_damage(InMessage message) -> void {
+auto BattleParser::handle_damage(InMessage message) -> bounded::optional<containers::string> {
 	auto const parsed = parse_hp_message(message);
 	auto move_damage = [&](Party const party) {
 		m_move_state.damage(party, parsed.hp);
 	};
 	auto const party = parsed.party;
 	maybe_commit_switch(party);
-	bounded::visit(parsed.source, bounded::overload(
-		[&](MainEffect) {
+	auto response = bounded::visit(parsed.source, bounded::overload(
+		[&](MainEffect) -> bounded::optional<containers::string> {
 			if (m_move_state.move_damaged_self(party)) {
-				return;
+				return bounded::none;
 			}
 			move_damage(other(party));
-			handle_delayed_switch(other(party));
+			return handle_delayed_switch(other(party));
 		},
-		[&](FromConfusion) {
+		[&](FromConfusion) -> bounded::optional<containers::string> {
 			// TODO: Technically you cannot select Hit Self, you just execute
 			// it. This matters for things like priority or determining whether
 			// Sucker Punch succeeds. As a workaround for now, say the user
@@ -636,15 +646,25 @@ auto BattleParser::handle_damage(InMessage message) -> void {
 			m_move_state.use_move(party, MoveName::Struggle);
 			m_move_state.use_move(party, MoveName::Hit_Self);
 			move_damage(party);
+			return bounded::none;
 		},
-		[](FromMiscellaneous) {},
-		[](FromMove) {},
-		[&](FromRecoil) { m_move_state.recoil(party); },
-		[](FromSubstitute) {},
-		[&](auto const value) { set_value_on_pokemon(party, value); }
+		[](FromMiscellaneous) -> bounded::optional<containers::string> { return bounded::none; },
+		[](FromMove) -> bounded::optional<containers::string> { return bounded::none; },
+		[&](FromRecoil) -> bounded::optional<containers::string> {
+			m_move_state.recoil(party);
+			return bounded::none;
+		},
+		[](FromSubstitute) -> bounded::optional<containers::string> {
+			return bounded::none;
+		},
+		[&](auto const value) -> bounded::optional<containers::string> {
+			set_value_on_pokemon(party, value);
+			return bounded::none;
+		}
 	));
 	queue_hp_or_status_checks(party, parsed.hp);
 	queue_hp_or_status_checks(party, parsed.status);
+	return response;
 }
 
 auto BattleParser::handle_switch_or_drag(InMessage message) -> SwitchOrDragResult {
@@ -740,19 +760,28 @@ auto BattleParser::try_correct_hp_and_status(bool const is_ai, bounded::optional
 	}
 }
 
-auto BattleParser::send_move_impl(bool const is_switch, auto const switch_move, auto const move_index) -> void {
-	m_send_message(containers::concatenate<containers::string>(m_id, (is_switch ? containers::concatenate_view("|/switch "sv, to_string(switch_move())) : containers::concatenate_view("|/move "sv, to_string(move_index() + 1_bi)))));
+namespace {
+
+auto move_response_impl(std::string_view const id, bool const is_switch, auto const switch_move, auto const move_index) -> containers::string {
+	return containers::concatenate<containers::string>(
+		id,
+		is_switch ?
+			containers::concatenate_view("|/switch "sv, to_string(switch_move())) :
+			containers::concatenate_view("|/move "sv, to_string(move_index() + 1_bi))
+	);
 }
 
-auto BattleParser::send_move(MoveName const move) -> void {
+} // namespace
+
+auto BattleParser::move_response(MoveName const move) const -> containers::string {
 	// In doubles / triples we need to specify " TARGET" at the end for regular
 	// moves
 	auto switch_move = [&]{ return m_slot_memory[to_replacement(move)]; };
 	auto move_index = [&]{ return m_battle_manager->move_index(move); };
-	send_move_impl(is_switch(move), switch_move, move_index);
+	return move_response_impl(id(), is_switch(move), switch_move, move_index);
 }
 
-auto BattleParser::send_random_move() -> void {
+auto BattleParser::random_move_response() -> containers::string {
 	// In doubles / triples we need to specify " TARGET" at the end for regular
 	// moves
 	auto distribution = std::uniform_int_distribution(0, static_cast<int>(max_moves_per_pokemon + max_pokemon_per_team - 1_bi));
@@ -761,22 +790,23 @@ auto BattleParser::send_random_move() -> void {
 	auto switch_move = [=]{ return bounded::assume_in_range<TeamIndex>(result - max_moves_per_pokemon); };
 	auto move_index = [=]{ return bounded::assume_in_range<containers::index_type<RegularMoves>>(result); };
 	auto const is_switch = result >= max_moves_per_pokemon;
-	send_move_impl(is_switch, switch_move, move_index);
+	return move_response_impl(id(), is_switch, switch_move, move_index);
 }
 
-auto BattleParser::handle_delayed_switch(Party const party) -> void {
+auto BattleParser::handle_delayed_switch(Party const party) -> bounded::optional<containers::string> {
 	if (!is_ai(party)) {
-		return;
+		return bounded::none;
 	}
 	auto const executed_move = m_move_state.executed_move();
 	if (!executed_move) {
-		return;
+		return bounded::none;
 	}
 	// TODO: What is the correct check here
-	if (is_delayed_switch(*executed_move) and !m_battle_manager->foe_is_fainted() and !m_battle_manager->ai_is_on_last_pokemon()) {
-		maybe_use_previous_move();
-		send_move(m_battle_manager->determine_action());
+	if (!is_delayed_switch(*executed_move) or m_battle_manager->foe_is_fainted() or m_battle_manager->ai_is_on_last_pokemon()) {
+		return bounded::none;
 	}
+	maybe_use_previous_move();
+	return move_response(m_battle_manager->determine_action());
 }
 
 auto parse_details(std::string_view const details) -> ParsedDetails {

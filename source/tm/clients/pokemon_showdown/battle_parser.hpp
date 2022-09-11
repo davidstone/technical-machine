@@ -24,7 +24,6 @@
 
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/string.hpp>
-#include <containers/trivial_inplace_function.hpp>
 
 #include <fstream>
 #include <memory>
@@ -42,11 +41,8 @@ struct AllUsageStats;
 
 namespace ps {
 
-using SendMessageFunction = containers::trivial_inplace_function<void(std::string_view) const, sizeof(void *)>;
-
 struct BattleParser {
 	BattleParser(
-		SendMessageFunction send_message,
 		BattleLogger battle_logger,
 		std::ofstream analysis_logger,
 		containers::string id_,
@@ -69,16 +65,14 @@ struct BattleParser {
 			std::move(generic_teams),
 			log_foe_teams
 		)),
-		m_send_message(std::move(send_message)),
 		m_battle_logger(std::move(battle_logger)),
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_ai_party(party)
 	{
-		m_send_message(containers::concatenate<containers::string>(m_id, "|/timer on"sv));
 	}
 
-	auto handle_message(InMessage message) -> void;
+	auto handle_message(InMessage message) -> bounded::optional<containers::string>;
 
 	auto id() const -> std::string_view {
 		return m_id;
@@ -92,7 +86,7 @@ private:
 		return party == m_ai_party;
 	}
 
-	auto handle_damage(InMessage message) -> void;
+	auto handle_damage(InMessage message) -> bounded::optional<containers::string> ;
 
 	struct SwitchOrDragResult {
 		Party party;
@@ -118,15 +112,13 @@ private:
 	auto maybe_use_previous_move() -> void;
 	auto maybe_use_previous_move_impl() -> void;
 	auto try_correct_hp_and_status(bool const is_ai, bounded::optional<VisibleHP> const hp, bounded::optional<StatusName> const status, auto... maybe_index) -> void;
-	auto send_move_impl(bool const is_switch, auto const switch_move, auto const move_index) -> void;
-	auto send_move(MoveName const move) -> void;
-	auto send_random_move() -> void;
-	auto handle_delayed_switch(Party const party) -> void;
+	auto move_response(MoveName const move) const -> containers::string;
+	auto random_move_response() -> containers::string;
+	auto handle_delayed_switch(Party const party) -> bounded::optional<containers::string>;
 
 	SlotMemory m_slot_memory;
 	std::unique_ptr<BattleManager> m_battle_manager;
 
-	SendMessageFunction m_send_message;
 	BattleLogger m_battle_logger;
 	containers::string m_id;
 	containers::string m_username;
