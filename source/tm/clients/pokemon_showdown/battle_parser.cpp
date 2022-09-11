@@ -353,7 +353,10 @@ struct BattleParserImpl : BattleParser {
 					set_value_on_pokemon(party, ability);
 					switch (ability) {
 						case Ability::Forewarn:
-							m_battle.add_move(!is_ai(party), from_string<MoveName>(details));
+							m_battle.add_move(
+								!is_ai(party),
+								from_string<MoveName>(details)
+							);
 							break;
 						case Ability::Shed_Skin:
 							m_end_of_turn_state.shed_skin(party);
