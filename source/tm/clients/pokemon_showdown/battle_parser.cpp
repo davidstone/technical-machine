@@ -516,7 +516,7 @@ struct BattleParserImpl : BattleParser {
 #endif
 		} else if (type == "faint") {
 			auto const party = party_from_player_id(message.pop());
-			if (generation <= Generation::three and is_ai(party) and m_battle.ai().size() != 1_bi and !moved(m_battle.foe())) {
+			if (generation <= Generation::three and is_ai(party) and m_battle.ai().size() != 1_bi and !moved(m_battle.ai()) and !moved(m_battle.foe())) {
 				m_replacing_fainted = true;
 				send_move(determine_action());
 			}
@@ -745,7 +745,7 @@ struct BattleParserImpl : BattleParser {
 			validate_weather(end_of_turn_state.weather);
 			try_correct_hp_and_status(ai_went_first, end_of_turn_state.first.hp, end_of_turn_state.first.status);
 			try_correct_hp_and_status(!ai_went_first, end_of_turn_state.last.hp, end_of_turn_state.last.status);
-			if (generation >= Generation::four and m_battle.ai().pokemon().hp().current() == 0_bi) {
+			if (m_battle.ai().pokemon().hp().current() == 0_bi) {
 				m_replacing_fainted = true;
 				send_move(determine_action());
 			}
