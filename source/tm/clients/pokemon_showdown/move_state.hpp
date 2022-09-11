@@ -118,6 +118,9 @@ struct MoveState {
 	void fully_paralyze(Party const party) {
 		set_move_state(party, FullyParalyzed());
 	}
+	void recharge(Party const party) {
+		set_move_state(party, Recharging());
+	}
 	void set_expected(Party const party, VisibleHP const hp) {
 		if (!m_party) {
 			return;
@@ -187,6 +190,7 @@ private:
 	struct Flinched {};
 	struct FrozenSolid {};
 	struct FullyParalyzed {};
+	struct Recharging {};
 	struct UsedMoveBuilder {
 		MoveName selected;
 		MoveName executed = selected;
@@ -205,6 +209,7 @@ private:
 		Flinched,
 		FrozenSolid,
 		FullyParalyzed,
+		Recharging,
 		UsedMoveBuilder
 	>;
 

@@ -384,9 +384,6 @@ struct BattleParserImpl : BattleParser {
 			// TODO: Figure out how to solve this in general...
 			auto const party = party_from_player_id(message.pop());
 			auto const reason = message.pop();
-			auto use_move = [&](MoveName const move_name) {
-				m_move_state.use_move(party, move_name);
-			};
 			if (reason == "flinch") {
 				m_move_state.flinch(party);
 			} else if (reason == "frz") {
@@ -396,9 +393,7 @@ struct BattleParserImpl : BattleParser {
 			} else if (reason == "slp") {
 				m_move_state.still_asleep(party);
 			} else if (reason == "recharge") {
-				apply_to_team(is_ai(party), [&](auto const & team) {
-					use_move(team.pokemon().last_used_move().name());
-				});
+				m_move_state.recharge(party);
 			} else {
 				std::cerr << "Received unknown \"cant\" reason: " << reason;
 				if (!message.remainder().empty()) {
