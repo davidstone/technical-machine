@@ -4,27 +4,17 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <tm/clients/pokemon_showdown/battle_parser.hpp>
+
 #include <tm/clients/pokemon_showdown/chat.hpp>
 
-#include <tm/clients/battle_manager.hpp>
-#include <tm/clients/log_foe_team.hpp>
-
 #include <tm/move/move_name.hpp>
-
-#include <tm/pokemon/any_pokemon.hpp>
-
-#include <tm/team_predictor/usage_stats.hpp>
 
 #include <tm/string_conversions/ability.hpp>
 #include <tm/string_conversions/item.hpp>
 #include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/species.hpp>
-#include <tm/string_conversions/status_name.hpp>
-#include <tm/string_conversions/team.hpp>
 #include <tm/string_conversions/weather.hpp>
 
-#include <tm/battle.hpp>
-#include <tm/generation_generic.hpp>
 #include <tm/status_name.hpp>
 #include <tm/visible_hp.hpp>
 
@@ -35,18 +25,10 @@
 
 #include <containers/algorithms/concatenate.hpp>
 #include <containers/algorithms/concatenate_view.hpp>
-#include <containers/algorithms/find.hpp>
-#include <containers/algorithms/maybe_find.hpp>
-#include <containers/begin_end.hpp>
 #include <containers/index_type.hpp>
-
-#include <numeric_traits/min_max_value.hpp>
+#include <containers/integer_range.hpp>
 
 #include <iostream>
-#include <random>
-#include <stdexcept>
-#include <string>
-#include <string_view>
 
 namespace technicalmachine {
 namespace ps {

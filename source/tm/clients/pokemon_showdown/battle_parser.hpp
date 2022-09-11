@@ -15,17 +15,15 @@
 #include <tm/clients/party.hpp>
 
 #include <tm/evaluate/depth.hpp>
-#include <tm/evaluate/evaluate.hpp>
 
 #include <tm/generation_generic.hpp>
-#include <tm/known_team.hpp>
-#include <tm/seen_team.hpp>
 #include <tm/status_name.hpp>
 #include <tm/visible_hp.hpp>
 
 #include <bounded/integer.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
+#include <containers/string.hpp>
 #include <containers/trivial_inplace_function.hpp>
 
 #include <fstream>
