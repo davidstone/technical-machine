@@ -81,7 +81,7 @@ struct Battle {
 		});
 	}
 	template<any_team UserTeam>
-	void handle_use_move(UsedMove<UserTeam> const move, bool const clear_status, ActualDamage const damage, OtherMove const other_move) {
+	void handle_use_move(UsedMove<UserTeam> const move, bool const clear_status, FlaggedActualDamage const damage) {
 		constexpr auto is_ai = std::is_same_v<UserTeam, KnownTeam<generation_from<UserTeam>>>;
 
 		auto const teams = [&] {
@@ -95,6 +95,18 @@ struct Battle {
 				return Teams{m_foe, m_ai};
 			}
 		}();
+		auto const other_pokemon = teams.other.pokemon();
+		auto const last_used_move = other_pokemon.last_used_move();
+		auto const other_move = last_used_move.moved_this_turn() ?
+			OtherMove([&]{
+				auto const move_name = last_used_move.name();
+				auto const type = get_type(generation, move_name, get_hidden_power_type(other_pokemon));
+				return KnownMove{move_name, type};
+			}()) :
+			OtherMove(FutureMove{
+				move.executed == MoveName::Sucker_Punch and damage.did_any_damage
+			});
+
 		call_move(
 			teams.user,
 			move,
@@ -102,21 +114,24 @@ struct Battle {
 			other_move,
 			m_weather,
 			clear_status,
-			damage
+			damage.value
 		);
 	}
-	// This assumes Species Clause is in effect. This does not perform any
-	// switching, it just adds them to the team.
-	auto find_or_add_pokemon(bool const is_ai, Species const species, containers::string nickname, Level const level, Gender const gender) -> MoveName {
-		if (is_ai) {
-			return to_switch(find_required_index(m_ai.all_pokemon(), species));
-		} else {
-			auto const index = find_index(m_foe.all_pokemon(), species);
-			if (index == m_foe.number_of_seen_pokemon()) {
-				m_foe.all_pokemon().add({species, std::move(nickname), level, gender});
-			}
-			return to_switch(index);
+	// This assumes Species Clause is in effect. Throws if the Species is not in
+	// the team. Returns the switch needed to bring this Pokemon out.
+	auto find_ai_pokemon(Species const species, [[maybe_unused]] containers::string nickname, Level, Gender) const -> MoveName {
+		// TODO: Validate nickname, level, and gender?
+		return to_switch(find_required_index(m_ai.all_pokemon(), species));
+	}
+	// This assumes Species Clause is in effect. Adds a Pokemon to the team if
+	// Species has not been seen yet. Returns the switch needed to bring this
+	// Pokemon out.
+	auto find_or_add_foe_pokemon(Species const species, containers::string nickname, Level const level, Gender const gender) & -> MoveName {
+		auto const index = find_index(m_foe.all_pokemon(), species);
+		if (index == m_foe.number_of_seen_pokemon()) {
+			m_foe.all_pokemon().add({species, std::move(nickname), level, gender});
 		}
+		return to_switch(index);
 	}
 	void handle_fainted(bool const is_ai) {
 		apply_to_teams(is_ai, [](auto & team, auto const &) {
@@ -124,23 +139,23 @@ struct Battle {
 		});
 	}
 
-	void set_value_on_active(bool const is_ai, Ability const ability) {
+	void active_has(bool const is_ai, Ability const ability) {
 		apply_to_teams(is_ai, [=](auto & team, auto const &) {
 			team.pokemon().set_base_ability(ability);
 		});
 	}
-	void set_value_on_index(bool const is_ai, TeamIndex const index, Ability const ability) {
+	void replacement_has(bool const is_ai, TeamIndex const index, Ability const ability) {
 		apply_to_teams(is_ai, [=](auto & team, auto const &) {
 			team.pokemon(index).set_initial_ability(ability);
 		});
 	}
 
-	void set_value_on_active(bool const is_ai, Item const item) {
+	void active_has(bool const is_ai, Item const item) {
 		apply_to_teams(is_ai, [=](auto & team, auto const &) {
 			team.all_pokemon()().set_item(item);
 		});
 	}
-	void set_value_on_index(bool const is_ai, TeamIndex const index, Item const item) {
+	void replacement_has(bool const is_ai, TeamIndex const index, Item const item) {
 		apply_to_teams(is_ai, [=](auto & team, auto const &) {
 			team.pokemon(index).set_item(item);
 		});

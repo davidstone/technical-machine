@@ -72,4 +72,9 @@ private:
 	> m_value;
 };
 
+struct FlaggedActualDamage {
+	ActualDamage value;
+	bool did_any_damage;
+};
+
 } // namespace technicalmachine

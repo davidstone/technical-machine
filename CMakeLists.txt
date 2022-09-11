@@ -83,9 +83,11 @@ add_library(tm_common STATIC
 
 	source/tm/clients/shoddy_battle/read_team_file.cpp
 
+	source/tm/clients/battle_manager.cpp
 	source/tm/clients/battle_result.cpp
 	source/tm/clients/invalid_team_file_format.cpp
 	source/tm/clients/log_foe_team.cpp
+	source/tm/clients/move_result.cpp
 	source/tm/clients/party.cpp
 
 	source/tm/evaluate/best_move.cpp
@@ -351,6 +353,7 @@ add_executable(tm_test
 	source/tm/test/team_predictor/estimate.cpp
 	source/tm/test/team_predictor/usage_stats.cpp
 
+	source/tm/test/battle.cpp
 	source/tm/test/block.cpp
 	source/tm/test/calculate_damage.cpp
 	source/tm/test/calculate_ivs_and_evs.cpp

@@ -34,19 +34,19 @@ void MoveState::use_move(Party const party, MoveName const move) {
 		[](FrozenSolid) { throw std::runtime_error("Tried to use a move while frozen solid"); },
 		[](FullyParalyzed) { throw std::runtime_error("Tried to use a move while fully paralyzed"); },
 		[](Recharging) { throw std::runtime_error("Tried to use a move while recharging"); },
-		[&](UsedMoveBuilder & used) {
+		[&](Used & used) {
 			check_party(party);
 			if (used.executed != used.selected) {
 				throw std::runtime_error("Tried to execute multiple moves");
 			}
 			used.executed = move;
 		},
-		[&](Initial) {
+		[&](InitialMoveResult) {
 			set_party(party);
 			if (m_status_change == StatusChange::still_asleep and !usable_while_sleeping(move)) {
 				throw std::runtime_error(containers::concatenate<std::string>("Tried to use "sv, to_string(move), " while asleep"sv));
 			}
-			m_move.emplace([&] { return UsedMoveBuilder{move}; });
+			m_move.emplace([&] { return Used{move}; });
 		}
 	));
 }
@@ -126,35 +126,6 @@ void MoveState::status_from_move(Party const party, StatusName const status) {
 
 namespace {
 
-template<any_active_pokemon UserPokemon>
-auto get_side_effect(auto const move, UserPokemon const user, OtherTeam<UserPokemon> const & other, Weather const weather) {
-	auto const side_effects = possible_side_effects(move.executed, user, other, weather);
-
-	if (containers::size(side_effects) == 1_bi) {
-		return containers::front(side_effects).function;
-	}
-
-	if (move.phaze_index) {
-		if (move.confuse or move.status) {
-			throw std::runtime_error("Tried to phaze and do other side effects.");
-		}
-		auto const target_index = other.all_pokemon().index();
-		using PhazeIndex = bounded::integer<0, bounded::normalize<max_pokemon_per_team - 2_bi>>;
-		BOUNDED_ASSERT(move.phaze_index != target_index);
-		auto const effect_index = (*move.phaze_index < target_index) ?
-			bounded::assume_in_range<PhazeIndex>(*move.phaze_index) :
-			bounded::assume_in_range<PhazeIndex>(*move.phaze_index - 1_bi);
-		return side_effects[effect_index].function;
-	}
-
-	// TODO: Handle multi-effect situations
-	if (move.confuse or move.status) {
-		return side_effects[1_bi].function;
-	}
-
-	return containers::front(side_effects).function;
-}
-
 constexpr auto contact_ability_statuses(Ability const ability) -> containers::static_vector<StatusName, 3_bi> {
 	switch (ability) {
 		case Ability::Effect_Spore: return {{StatusName::paralysis, StatusName::poison, StatusName::sleep}};
@@ -184,179 +155,21 @@ auto MoveState::status_from_contact_ability(Party const party, Ability const abi
 	set_expected(party, status);
 }
 
-template<Generation generation>
-auto MoveState::complete(Party const ai_party, KnownTeam<generation> const & ai, SeenTeam<generation> const & foe, Weather const weather) -> CompleteResult<generation> {
-	auto generation_one_awaken = [&] {
-		return generation == Generation::one and m_status_change == StatusChange::thaw_or_awaken;
-	};
-	auto const is_initial = m_move.index() == bounded::types<Initial>();
-	if (is_initial and m_status_change != StatusChange::still_asleep and !generation_one_awaken()) {
+auto MoveState::complete() -> bounded::optional<CompleteResult> {
+	auto const is_initial = m_move.index() == bounded::types<InitialMoveResult>();
+	if (is_initial and m_status_change != StatusChange::still_asleep) {
 		*this = {};
-		return CompleteResult<generation>(NoResult());
+		return bounded::none;
 	}
-	auto execute = [&]<any_active_pokemon UserPokemon>(UserPokemon const user, OtherTeam<UserPokemon> const & other) {
-		using UserTeam = AssociatedTeam<UserPokemon>;
-		auto const result = bounded::visit(m_move, bounded::overload(
-			[&](Initial) {
-				// Technically incorrect with things like Sucker Punch and priority
-				constexpr auto move = MoveName::Struggle;
-				return Result<UserTeam>{
-					UsedMove<UserTeam>(
-						move,
-						move,
-						false,
-						false,
-						ContactAbilityEffect::nothing,
-						containers::front(possible_side_effects(move, user, other, weather)).function
-					),
-					Damage(NoDamage()),
-					m_user,
-					m_other,
-					m_status_change == StatusChange::thaw_or_awaken,
-					false
-				};
-			},
-			[&](Awakening) {
-				// Technically incorrect with things like Sucker Punch and priority
-				constexpr auto move = MoveName::Struggle;
-				return Result<UserTeam>{
-					UsedMove<UserTeam>(
-						move,
-						move,
-						false,
-						false,
-						ContactAbilityEffect::nothing,
-						containers::front(possible_side_effects(move, user, other, weather)).function
-					),
-					Damage(NoDamage()),
-					m_user,
-					m_other,
-					m_status_change == StatusChange::thaw_or_awaken,
-					false
-				};
-			},
-			[&](Flinched) {
-				// Technically incorrect with things like Sucker Punch and priority
-				// TODO: Actually flinch
-				constexpr auto move = MoveName::Struggle;
-				return Result<UserTeam>{
-					UsedMove<UserTeam>(
-						move,
-						move,
-						false,
-						false,
-						ContactAbilityEffect::nothing,
-						containers::front(possible_side_effects(move, user, other, weather)).function
-					),
-					Damage(NoDamage()),
-					m_user,
-					m_other,
-					m_status_change == StatusChange::thaw_or_awaken,
-					false
-				};
-			},
-			[&](FrozenSolid) {
-				// Technically incorrect with things like Sucker Punch and priority
-				constexpr auto move = MoveName::Struggle;
-				return Result<UserTeam>{
-					UsedMove<UserTeam>(
-						move,
-						move,
-						false,
-						false,
-						ContactAbilityEffect::nothing,
-						containers::front(possible_side_effects(move, user, other, weather)).function
-					),
-					Damage(NoDamage()),
-					m_user,
-					m_other,
-					m_status_change == StatusChange::thaw_or_awaken,
-					false
-				};
-			},
-			[&](FullyParalyzed) {
-				// Technically incorrect with things like Sucker Punch and priority
-				// TODO: actually fully paralyze
-				constexpr auto move = MoveName::Struggle;
-				return Result<UserTeam>{
-					UsedMove<UserTeam>(
-						move,
-						move,
-						false,
-						false,
-						ContactAbilityEffect::nothing,
-						containers::front(possible_side_effects(move, user, other, weather)).function
-					),
-					Damage(NoDamage()),
-					m_user,
-					m_other,
-					m_status_change == StatusChange::thaw_or_awaken,
-					false
-				};
-			},
-			[&](Recharging) {
-				// Technically incorrect with things like Sucker Punch and priority
-				// TODO: actually recharge
-				constexpr auto move = MoveName::Struggle;
-				return Result<UserTeam>{
-					UsedMove<UserTeam>(
-						move,
-						move,
-						false,
-						false,
-						ContactAbilityEffect::nothing,
-						containers::front(possible_side_effects(move, user, other, weather)).function
-					),
-					Damage(NoDamage()),
-					m_user,
-					m_other,
-					m_status_change == StatusChange::thaw_or_awaken,
-					false
-				};
-			},
-			[&](UsedMoveBuilder const move) {
-				return Result<UserTeam>{
-					UsedMove<UserTeam>(
-						move.selected,
-						move.executed,
-						move.critical_hit,
-						move.miss,
-						move.contact_ability_effect,
-						get_side_effect(move, user, other, weather)
-					),
-					move.damage,
-					m_user,
-					m_other,
-					m_status_change == StatusChange::thaw_or_awaken,
-					move.recoil
-				};
-			}
-		));
-		*this = {};
-		return CompleteResult<generation>(result);
+	auto const result = CompleteResult{
+		m_move,
+		m_user,
+		m_other,
+		*m_party,
+		m_status_change == StatusChange::thaw_or_awaken
 	};
-	if (*m_party == ai_party) {
-		return execute(ai.pokemon(), foe);
-	} else {
-		return execute(foe.pokemon(), ai);
-	}
+	*this = {};
+	return CompleteResult(result);
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto MoveState::complete( \
-		Party, \
-		KnownTeam<generation> const &, \
-		SeenTeam<generation> const &, \
-		Weather \
-	) -> CompleteResult<generation>
-
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::three);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::four);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::five);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
 
 } // namespace technicalmachine::ps

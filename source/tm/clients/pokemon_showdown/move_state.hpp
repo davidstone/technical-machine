@@ -7,6 +7,7 @@
 
 #include <tm/clients/pokemon_showdown/parsed_hp.hpp>
 
+#include <tm/clients/move_result.hpp>
 #include <tm/clients/party.hpp>
 
 #include <tm/move/is_switch.hpp>
@@ -15,6 +16,7 @@
 #include <tm/move/used_move.hpp>
 
 #include <tm/pokemon/active_pokemon.hpp>
+#include <tm/pokemon/max_pokemon_per_team.hpp>
 #include <tm/pokemon/pokemon_not_found.hpp>
 
 #include <tm/any_team.hpp>
@@ -31,41 +33,26 @@
 #include <stdexcept>
 
 namespace technicalmachine {
-
 namespace ps {
-
-struct NoDamage {};
-struct SubstituteDamaged {};
-struct SubstituteBroke {};
 
 struct MoveState {
 	struct OptionalHPAndStatus {
 		bounded::optional<VisibleHP> hp;
 		bounded::optional<StatusName> status;
 	};
-	using Damage = bounded::variant<NoDamage, VisibleHP, SubstituteDamaged, SubstituteBroke>;
-	template<any_team UserTeam>
-	struct Result {
-		UsedMove<UserTeam> move;
-		Damage damage;
+	struct CompleteResult {
+		MoveResult move;
 		OptionalHPAndStatus user;
 		OptionalHPAndStatus other;
-		bool clear_status;
-		bool recoil;
+		Party party;
+		bool user_status_was_cleared;
 	};
-	struct NoResult {};
-	template<Generation generation>
-	using AIResult = Result<KnownTeam<generation>>;
-	template<Generation generation>
-	using FoeResult = Result<SeenTeam<generation>>;
-	template<Generation generation>
-	using CompleteResult = bounded::variant<NoResult, AIResult<generation>, FoeResult<generation>>;
 
 	auto party() const -> bounded::optional<Party> {
 		return m_party;
 	}
 	auto executed_move() const -> bounded::optional<MoveName> {
-		constexpr auto type = bounded::types<UsedMoveBuilder>();
+		constexpr auto type = bounded::types<Used>();
 		return BOUNDED_CONDITIONAL(m_move.index() == type, m_move[type].executed, bounded::none);
 	}
 
@@ -104,10 +91,10 @@ struct MoveState {
 		m_status_change = StatusChange::thaw_or_awaken;
 	}
 	void confuse(Party const party) {
-		set_used_flag(party, "Tried to confuse a Pokemon twice", &UsedMoveBuilder::confuse);
+		set_used_flag(party, "Tried to confuse a Pokemon twice", &Used::confuse);
 	}
 	void critical_hit(Party const party) {
-		set_used_flag(party, "Tried to critical hit a Pokemon twice", &UsedMoveBuilder::critical_hit);
+		set_used_flag(party, "Tried to critical hit a Pokemon twice", &Used::critical_hit);
 	}
 	void flinch(Party const party) {
 		set_move_state(party, Flinched());
@@ -129,7 +116,7 @@ struct MoveState {
 		insert(target.hp, hp);
 	}
 	void miss(Party const party) {
-		set_used_flag(party, "Tried to miss a Pokemon twice", &UsedMoveBuilder::miss);
+		set_used_flag(party, "Tried to miss a Pokemon twice", &Used::miss);
 	}
 	void phazed_in(Party const party, TeamIndex const index) {
 		auto & move = validated(party);
@@ -142,7 +129,7 @@ struct MoveState {
 		move.phaze_index = index;
 	}
 	void recoil(Party const party) {
-		set_used_flag(party, "Tried to recoil a Pokemon twice", &UsedMoveBuilder::recoil);
+		set_used_flag(party, "Tried to recoil a Pokemon twice", &Used::recoil);
 	}
 	void status_from_move(Party const party, StatusName const status);
 	auto status_from_contact_ability(Party const party, Ability const ability, StatusName const status) & -> void;
@@ -165,49 +152,19 @@ struct MoveState {
 		m_status_change = StatusChange::still_asleep;
 	}
 	auto switch_index() const -> bounded::optional<TeamIndex> {
-		constexpr auto type = bounded::types<UsedMoveBuilder>();
+		constexpr auto type = bounded::types<Used>();
 		if (m_move.index() != type) {
 			return bounded::none;
 		}
 		auto & move = m_move[type];
 		return
 			is_switch(move.executed) ? to_replacement(move.executed) :
-			move.phaze_index ? move.phaze_index :
-			bounded::none;
+			move.phaze_index;
 	}
 
-	template<Generation generation>
-	auto complete(Party ai_party, KnownTeam<generation> const & ai, SeenTeam<generation> const & foe, Weather const weather) -> CompleteResult<generation>;
+	auto complete() -> bounded::optional<CompleteResult>;
 
 private:
-	struct Initial {};
-	struct Awakening {};
-	struct Flinched {};
-	struct FrozenSolid {};
-	struct FullyParalyzed {};
-	struct Recharging {};
-	struct UsedMoveBuilder {
-		MoveName selected;
-		MoveName executed = selected;
-		Damage damage = Damage(NoDamage());
-		bounded::optional<StatusName> status = bounded::none;
-		bounded::optional<TeamIndex> phaze_index = bounded::none;
-		ContactAbilityEffect contact_ability_effect = ContactAbilityEffect::nothing;
-		bool critical_hit = false;
-		bool miss = false;
-		bool confuse = false;
-		bool recoil = false;
-	};
-	using Builder = bounded::variant<
-		Initial,
-		Awakening,
-		Flinched,
-		FrozenSolid,
-		FullyParalyzed,
-		Recharging,
-		UsedMoveBuilder
-	>;
-
 	enum class StatusChange {
 		nothing_relevant,
 		still_asleep,
@@ -224,19 +181,19 @@ private:
 		}
 	}
 	auto check_is_used() const -> void {
-		if (m_move.index() != bounded::types<UsedMoveBuilder>()) {
+		if (m_move.index() != bounded::types<Used>()) {
 			throw error();
 		}
 	}
-	auto validated() const & -> UsedMoveBuilder const & {
+	auto validated() const & -> Used const & {
 		check_is_used();
-		return m_move[bounded::types<UsedMoveBuilder>()];
+		return m_move[bounded::types<Used>()];
 	}
-	auto validated() & -> UsedMoveBuilder & {
+	auto validated() & -> Used & {
 		check_is_used();
-		return m_move[bounded::types<UsedMoveBuilder>()];
+		return m_move[bounded::types<Used>()];
 	}
-	auto validated(Party const party) & -> UsedMoveBuilder & {
+	auto validated(Party const party) & -> Used & {
 		check_party(party);
 		return validated();
 	}
@@ -257,39 +214,19 @@ private:
 	}
 
 	auto set_move_state(Party const party, auto state) & -> void {
-		if (m_party or m_move.index() != bounded::types<Initial>()) {
+		if (m_party or m_move.index() != bounded::types<InitialMoveResult>()) {
 			throw error();
 		}
 		insert(m_party, party);
 		m_move = state;
 	}
 
-
 	bounded::optional<Party> m_party;
-	Builder m_move = Builder(Initial());
+	MoveResult m_move = MoveResult(InitialMoveResult());
 	OptionalHPAndStatus m_user;
 	OptionalHPAndStatus m_other;
 	StatusChange m_status_change = StatusChange::nothing_relevant;
 };
-
-#define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto MoveState::complete( \
-		Party, \
-		KnownTeam<generation> const &, \
-		SeenTeam<generation> const &, \
-		Weather \
-	) -> CompleteResult<generation>
-
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::three);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::four);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::five);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::six);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::seven);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
-
-#undef TECHNICALMACHINE_EXTERN_INSTANTIATION
 
 } // namespace ps
 } // namespace technicalmachine

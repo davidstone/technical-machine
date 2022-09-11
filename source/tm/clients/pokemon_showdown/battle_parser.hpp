@@ -8,6 +8,7 @@
 #include <tm/clients/pokemon_showdown/battle_logger.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 
+#include <tm/clients/battle_manager.hpp>
 #include <tm/clients/party.hpp>
 
 #include <tm/evaluate/depth.hpp>
@@ -42,12 +43,6 @@ namespace ps {
 
 using SendMessageFunction = containers::trivial_inplace_function<void(std::string_view) const, sizeof(void *)>;
 
-template<Generation generation>
-struct Teams {
-	KnownTeam<generation> ai;
-	SeenTeam<generation> foe;
-};
-
 struct BattleParser {
 	virtual auto handle_message(InMessage message) -> void = 0;
 	virtual auto id() const -> std::string_view = 0;
@@ -66,7 +61,7 @@ auto make_battle_parser(
 	Party party,
 	DepthValues const depth,
 	std::mt19937 random_engine,
-	GenerationGeneric<Teams> const & teams,
+	GenerationGeneric<Teams> teams,
 	bool log_foe_teams
 ) -> std::unique_ptr<BattleParser>;
 
