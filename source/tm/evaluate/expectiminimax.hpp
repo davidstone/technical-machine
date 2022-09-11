@@ -13,14 +13,15 @@
 #include <tm/generation.hpp>
 
 #include <ostream>
+#include <random>
 
 namespace technicalmachine {
 
 template<Generation generation>
-auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather, Evaluate<generation>, Depth, std::ostream & log) -> BestMove;
+auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather, Evaluate<generation>, Depth, std::ostream & log, std::mt19937 & random_engine) -> BestMove;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
-	extern template auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather, Evaluate<generation>, Depth, std::ostream & log) -> BestMove
+	extern template auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather, Evaluate<generation>, Depth, std::ostream & log, std::mt19937 & random_engine) -> BestMove
 
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);

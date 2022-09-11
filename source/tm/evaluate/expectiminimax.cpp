@@ -37,6 +37,7 @@
 #include <containers/algorithms/all_any_none.hpp>
 #include <containers/front_back.hpp>
 #include <containers/integer_range.hpp>
+#include <containers/is_empty.hpp>
 #include <containers/repeat_n.hpp>
 #include <containers/size.hpp>
 #include <containers/string.hpp>
@@ -548,10 +549,22 @@ private:
 	TranspositionTable<generation> m_transposition_table;
 };
 
+template<Generation generation>
+constexpr auto random_selection(Team<generation> const & user, Team<generation> const & other, Weather const weather, std::mt19937 & random_engine) -> BestMove {
+	auto const possible = legal_selections(user, other, weather);
+	BOUNDED_ASSERT(!containers::is_empty(possible));
+	auto distribution = std::uniform_int_distribution(0, static_cast<int>(containers::size(possible) - 1_bi));
+	auto const index = bounded::assume_in_range<containers::index_type<LegalSelections>>(distribution(random_engine));
+	return BestMove{
+		possible[index],
+		0.0
+	};
+}
+
 } // namespace
 
 template<Generation generation>
-auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::ostream & log) -> BestMove {
+auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::ostream & log, std::mt19937 & random_engine) -> BestMove {
 	if (team_is_empty(ai) or team_is_empty(foe)) {
 		throw std::runtime_error("Tried to evaluate a position with an empty team");
 	}
@@ -561,7 +574,9 @@ auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, W
 	auto evaluator = std::make_unique<Evaluator<generation>>(evaluate, log);
 	log << "Evaluating to a depth of " << depth.general_initial() << ", " << depth.single_initial() << "...\n";
 	auto const start = std::chrono::steady_clock::now();
-	auto const best_move = evaluator->select_type_of_move(ai, foe, weather, depth);
+	auto const best_move = depth.general_initial() > 0_bi ?
+		evaluator->select_type_of_move(ai, foe, weather, depth) :
+		random_selection(ai, foe, weather, random_engine);
 	if (best_move.name == MoveName::Pass) {
 		throw std::runtime_error("Should never evaluate a position in which it is legal to use Pass.");
 	}
@@ -573,7 +588,7 @@ auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, W
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::ostream & log) -> BestMove
+	template auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::ostream & log, std::mt19937 & random_engine) -> BestMove
 
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
 TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);

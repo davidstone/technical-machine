@@ -1036,7 +1036,8 @@ private:
 			m_battle.weather(),
 			m_evaluate,
 			Depth(m_depth, 1_bi),
-			m_analysis_logger
+			m_analysis_logger,
+			m_random_engine
 		).name;
 	}
 

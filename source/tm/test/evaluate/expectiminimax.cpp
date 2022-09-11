@@ -52,7 +52,8 @@ template<Generation generation>
 auto test_expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth) -> BestMove {
 	auto log_buffer = log_out();
 	auto log = boost::iostreams::stream<log_out>(log_buffer);
-	return expectiminimax(ai, foe, weather, evaluate, depth, log);
+	auto random_engine = std::mt19937();
+	return expectiminimax(ai, foe, weather, evaluate, depth, log, random_engine);
 }
 
 constexpr auto make_depth(DepthInt const depth) {
