@@ -13,10 +13,7 @@ namespace technicalmachine {
 template<Generation generation>
 using TauntCounter = EndOfTurnCounter<
 	generation >= Generation::three,
-	2,
-	CounterOperations::is_active,
-	CounterOperations::advance_one_turn_variable,
-	CounterOperations::activate
+	2
 >;
 
 } // namespace technicalmachine

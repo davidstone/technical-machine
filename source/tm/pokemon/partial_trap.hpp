@@ -40,7 +40,7 @@ struct PartialTrap {
 	}
 
 private:
-	EndOfTurnCounter<true, 7, CounterOperations::is_active, CounterOperations::activate, CounterOperations::advance_one_turn_variable> m_base;
+	EndOfTurnCounter<true, 7> m_base;
 };
 
 } // namespace technicalmachine

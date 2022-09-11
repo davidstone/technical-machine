@@ -13,10 +13,7 @@ namespace technicalmachine {
 // TODO: Change behavior in different generations
 using UproarCounter = EndOfTurnCounter<
 	true,
-	4,
-	CounterOperations::is_active,
-	CounterOperations::advance_one_turn_variable,
-	CounterOperations::activate
+	4
 >;
 
 } // namespace technicalmachine

@@ -13,9 +13,7 @@ namespace technicalmachine {
 template<Generation generation>
 using YawnCounter = EndOfTurnCounter<
 	generation >= Generation::three,
-	1,
-	CounterOperations::advance_one_turn_fixed,
-	CounterOperations::activate
+	1
 >;
 
 } // namespace technicalmachine

@@ -13,10 +13,7 @@ namespace technicalmachine {
 template<Generation generation>
 using EmbargoCounter = EndOfTurnCounter<
 	generation >= Generation::four,
-	5,
-	CounterOperations::is_active,
-	CounterOperations::advance_one_turn_fixed,
-	CounterOperations::activate
+	5
 >;
 
 } // namespace technicalmachine

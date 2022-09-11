@@ -490,5 +490,95 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 	CHECK(user.pokemon().hp().current() == 0_bi);
 }
 
+TEST_CASE("Perish Song", "[call_move]") {
+	auto weather = Weather();
+
+	auto user = Team<generation>({
+		Pokemon<generation>(
+			Species::Misdreavus,
+			Level(100_bi),
+			Gender::female,
+			Item::None,
+			Ability::Levitate,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, MoveName::Perish_Song)})
+		),
+		Pokemon<generation>(
+			Species::Regice,
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Clear_Body,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, MoveName::Explosion)})
+		)
+	});
+	user.pokemon().switch_in(weather);
+
+	auto other = Team<generation>({
+		Pokemon<generation>(
+			Species::Starmie,
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Illuminate,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Recover)
+		),
+		Pokemon<generation>(
+			Species::Regice,
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Clear_Body,
+			default_combined_stats<generation>,
+			RegularMoves({Move(generation, MoveName::Explosion)})
+		)
+	});
+	other.pokemon().switch_in(weather);
+
+	auto call_perish_song = [&] {
+		auto const side_effects = possible_side_effects(MoveName::Perish_Song, user.pokemon().as_const(), other, weather);
+		CHECK(containers::size(side_effects) == 1_bi);
+		call_move(
+			user,
+			UsedMove<Team<generation>>(
+				MoveName::Perish_Song,
+				containers::front(side_effects).function
+			),
+			other,
+			FutureMove{false},
+			weather,
+			false,
+			damage
+		);
+	};
+	auto call_recover = [&] {
+		auto const side_effects = possible_side_effects(MoveName::Recover, other.pokemon().as_const(), user, weather);
+		CHECK(containers::size(side_effects) == 1_bi);
+		call_move(
+			other,
+			UsedMove<Team<generation>>(
+				MoveName::Recover,
+				containers::front(side_effects).function
+			),
+			user,
+			FutureMove{false},
+			weather,
+			false,
+			damage
+		);
+	};
+
+	call_perish_song();
+	call_recover();
+
+	auto check_max_hp = [](auto const & team) {
+		CHECK(team.pokemon().hp().current() == team.pokemon().hp().max());
+	};
+	check_max_hp(user);
+	check_max_hp(other);
+}
+
 } // namespace
 } // namespace technicalmachine

@@ -13,11 +13,7 @@ namespace technicalmachine {
 template<Generation generation>
 using MagnetRise = EndOfTurnCounter<
 	generation >= Generation::four,
-	4,
-	CounterOperations::is_active,
-	CounterOperations::turns_active,
-	CounterOperations::advance_one_turn_fixed,
-	CounterOperations::activate
+	4
 >;
 
 } // namespace technicalmachine

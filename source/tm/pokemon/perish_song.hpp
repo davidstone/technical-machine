@@ -13,10 +13,8 @@ namespace technicalmachine {
 template<Generation generation>
 using PerishSong = EndOfTurnCounter<
 	generation >= Generation::two,
-	2,
-	CounterOperations::is_active,
-	CounterOperations::advance_one_turn_fixed,
-	CounterOperations::activate
+	3,
+	Resettable::no
 >;
 
 } // namespace technicalmachine

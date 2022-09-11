@@ -1,4 +1,3 @@
-// Common functionality for flags that are advanced at the end of the turn
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -14,45 +13,32 @@
 namespace technicalmachine {
 using namespace bounded::literal;
 
-enum class CounterOperations { is_active, turns_active, advance_one_turn_fixed, advance_one_turn_variable, activate };
+enum class Resettable { no, yes };
 
-template<bool is_supported_this_generation, int max_turns, CounterOperations... operations>
+template<bool is_supported_this_generation, int max_turns, Resettable resettable = Resettable::yes>
 struct EndOfTurnCounter {
 	constexpr auto is_active() const -> bool {
-		static_assert((... or (operations == CounterOperations::is_active)));
 		if constexpr (is_supported_this_generation) {
 			return static_cast<bool>(m_turns_active);
 		} else {
 			return false;
 		}
 	}
-	constexpr auto turns_active() const {
-		static_assert((... or (operations == CounterOperations::turns_active)));
+	constexpr auto activate() & -> void {
 		if constexpr (is_supported_this_generation) {
-			return m_turns_active;
-		} else {
-			return bounded::none;
-		}
-	}
-	constexpr auto activate() {
-		static_assert((... or (operations == CounterOperations::activate)));
-		if constexpr (is_supported_this_generation) {
+			if (resettable == Resettable::no and m_turns_active) {
+				return;
+			}
 			m_turns_active = 0_bi;
 		}
 	}
-	constexpr auto advance_one_turn() {
-		constexpr auto is_fixed = (... or (operations == CounterOperations::advance_one_turn_fixed));
-		constexpr auto is_variable = (... or (operations == CounterOperations::advance_one_turn_variable));
-		static_assert(is_fixed xor is_variable);
+	constexpr auto advance_one_turn() & -> void {
 		if constexpr (is_supported_this_generation) {
 			if (m_turns_active and *m_turns_active != bounded::constant<max_turns>) {
 				++*m_turns_active;
 			} else {
 				m_turns_active = bounded::none;
 			}
-		}
-		if constexpr (is_supported_this_generation and is_fixed) {
-			return static_cast<bool>(m_turns_active);
 		}
 	}
 	friend auto operator==(EndOfTurnCounter, EndOfTurnCounter) -> bool = default;

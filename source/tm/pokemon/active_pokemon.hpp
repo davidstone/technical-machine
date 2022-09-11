@@ -677,8 +677,13 @@ public:
 		this->m_flags.perish_song.activate();
 	}
 	auto perish_song_turn() const -> void {
-		bool const faints_this_turn = this->m_flags.perish_song.advance_one_turn();
-		if (faints_this_turn) {
+		auto is_active = [&] {
+			return this->m_flags.perish_song.is_active();
+		};
+
+		auto const was_active = is_active();
+		this->m_flags.perish_song.advance_one_turn();
+		if (was_active and !is_active()) {
 			faint(this->m_pokemon);
 		}
 	}
@@ -849,9 +854,16 @@ public:
 		this->m_flags.yawn.activate();
 	}
 	auto try_to_activate_yawn(Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) const -> void {
-		bool const attempt_sleep = this->m_flags.yawn.advance_one_turn();
+		auto is_active = [&] {
+			return this->m_flags.yawn.is_active();
+		};
+		auto const was_active = is_active();
+		if (!was_active) {
+			return;
+		}
+		this->m_flags.yawn.advance_one_turn();
 		// TODO: There are a lot of edge cases in different generations
-		if (!attempt_sleep) {
+		if (is_active()) {
 			return;
 		}
 		if (yawn_can_apply(as_const(), weather, either_is_uproaring, sleep_clause_activates)) {

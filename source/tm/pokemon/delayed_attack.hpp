@@ -15,8 +15,7 @@ template<Generation generation>
 using DelayedAttack = EndOfTurnCounter<
 	generation >= Generation::two,
 	2,
-	CounterOperations::activate,
-	CounterOperations::advance_one_turn_fixed
+	Resettable::no
 >;
 
 } // namespace technicalmachine

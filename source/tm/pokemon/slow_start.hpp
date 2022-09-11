@@ -13,9 +13,7 @@ namespace technicalmachine {
 template<Generation generation>
 using SlowStart = EndOfTurnCounter<
 	generation >= Generation::four,
-	4,
-	CounterOperations::is_active,
-	CounterOperations::advance_one_turn_fixed
+	4
 >;
 
 } // namespace technicalmachine

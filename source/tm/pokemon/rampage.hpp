@@ -14,10 +14,7 @@ namespace technicalmachine {
 // TODO: Change the duration in different generations
 using Rampage = EndOfTurnCounter<
 	true,
-	3,
-	CounterOperations::is_active,
-	CounterOperations::advance_one_turn_variable,
-	CounterOperations::activate
+	3
 >;
 
 } // namespace technicalmachine

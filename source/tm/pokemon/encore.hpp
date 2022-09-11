@@ -13,10 +13,7 @@ namespace technicalmachine {
 template<Generation generation>
 using EncoreCounter = EndOfTurnCounter<
 	generation >= Generation::two,
-	7,
-	CounterOperations::is_active,
-	CounterOperations::advance_one_turn_variable,
-	CounterOperations::activate
+	7
 >;
 
 } // namespace technicalmachine
