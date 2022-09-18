@@ -461,8 +461,6 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 		// After moves like Hyper Beam
 	} else if (type == "-notarget") {
 		// When you use a move, but there is no one to target
-	} else if (type == "player") {
-		// At the end of a battle, I received this with a body of "p1|"
 	} else if (type == "-prepare") {
 		// From moves like SolarBeam on the charge turn
 	} else if (type == "request") {
