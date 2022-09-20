@@ -162,16 +162,12 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 		return bounded::none;
 	}
 
-	auto const type = message.type();
-	if (type.empty() or (type.front() != '-' and type != "drag" and type != "move" and type != "switch")) {
-		maybe_use_previous_move();
-	}
-
 	// Documented at
 	// https://github.com/Zarel/Pokemon-Showdown/blob/master/PROTOCOL.md
 	// under the section "Battle progress"
+	auto const type = message.type();
 	if (type == "") {
-		// Do nothing. This message is used to indicate the end of a series.
+		maybe_use_previous_move();
 	} else if (type == "-ability") {
 		auto const party = party_from_player_id(message.pop());
 		auto const ability = from_string<Ability>(message.pop());
@@ -250,6 +246,7 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 		auto const amount = message.pop();
 #endif
 	} else if (type == "cant") {
+		maybe_use_previous_move();
 		// TODO: Figure out how to solve this in general...
 		auto const party = party_from_player_id(message.pop());
 		auto const reason = message.pop();
@@ -371,6 +368,7 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 		// There can be more to this message, but nothing we care about
 #endif
 	} else if (type == "faint") {
+		maybe_use_previous_move();
 		auto const party = party_from_player_id(message.pop());
 		if (m_battle_manager->generation() <= Generation::three and is_ai(party) and !m_battle_manager->ai_is_on_last_pokemon() and !m_battle_manager->is_end_of_turn()) {
 			m_replacing_fainted = true;
@@ -424,8 +422,14 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 			[&](auto const value) { set_value_on_pokemon(party, value); }
 		));
 	} else if (type == "inactive") {
+		// Pokemon Showdown consistently sends
+		// |inactive|Time left: X sec this turn | Y sec total
+		// when it is the user's turn to make a decision. However, this message
+		// arrives only if the timer is on. Technical Machine turns on the timer
+		// by default, but I think I want to support playing without a timer, so
+		// I do not use this easy trigger (the only consistent trigger to know
+		// when the server is expecting a response).
 		// message.remainder() == MESSAGE
-		// Timer is on
 	} else if (type == "inactiveoff") {
 		// message.remainder() == MESSAGE
 		// Timer is off
@@ -575,6 +579,7 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 	} else if (type == "-transform") {
 		// message.remainder() == POKEMON|SPECIES
 	} else if (type == "turn") {
+		maybe_use_previous_move();
 		auto const turn_count = bounded::to_integer<TurnCount>(message.pop());
 		m_battle_manager->begin_turn(turn_count);
 		return move_response(m_battle_manager->determine_action());
