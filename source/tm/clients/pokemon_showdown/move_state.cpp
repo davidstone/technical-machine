@@ -126,20 +126,33 @@ void MoveState::status_from_move(Party const party, StatusName const status) {
 
 namespace {
 
-constexpr auto contact_ability_statuses(Ability const ability) -> containers::static_vector<StatusName, 3_bi> {
+constexpr auto ability_statuses(Ability const ability) -> containers::static_vector<StatusName, 4_bi> {
 	switch (ability) {
 		case Ability::Effect_Spore: return {{StatusName::paralysis, StatusName::poison, StatusName::sleep}};
 		case Ability::Flame_Body: return {{StatusName::burn}};
 		case Ability::Poison_Point: return {{StatusName::poison}};
 		case Ability::Static: return {{StatusName::paralysis}};
+		case Ability::Synchronize: return {{StatusName::burn, StatusName::freeze, StatusName::paralysis, StatusName::poison}};
 		default: return {};
+	}
+}
+
+constexpr auto is_contact_ability(Ability const ability) -> bool {
+	switch (ability) {
+		case Ability::Effect_Spore:
+		case Ability::Flame_Body:
+		case Ability::Poison_Point:
+		case Ability::Static:
+			return true;
+		default:
+			return false;
 	}
 }
 
 } // namespace
 
-auto MoveState::status_from_contact_ability(Party const party, Ability const ability, StatusName const status) & -> void {
-	if (!containers::any_equal(contact_ability_statuses(ability), status)) {
+auto MoveState::status_from_ability(Party const party, Ability const ability, StatusName const status) & -> void {
+	if (!containers::any_equal(ability_statuses(ability), status)) {
 		throw std::runtime_error(containers::concatenate<std::string>(
 			"Tried to apply "sv,
 			to_string(status),
@@ -151,7 +164,9 @@ auto MoveState::status_from_contact_ability(Party const party, Ability const abi
 	if (move.status) {
 		throw std::runtime_error("Tried to status a Pokemon twice");
 	}
-	move.contact_ability_effect = status_to_contact_ability_effect(status);
+	if (is_contact_ability(ability)) {
+		move.contact_ability_effect = status_to_contact_ability_effect(status);
+	}
 	set_expected(party, status);
 }
 

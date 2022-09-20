@@ -555,7 +555,7 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 			[](FromSubstitute) { throw std::runtime_error("Substitute cannot cause another status"); },
 			[&](Ability const ability) {
 				set_value_on_pokemon(other(party), ability);
-				m_move_state.status_from_contact_ability(party, ability, status);
+				m_move_state.status_from_ability(party, ability, status);
 			},
 			[&](Item const item) {
 				set_value_on_pokemon(party, item);

@@ -132,7 +132,7 @@ struct MoveState {
 		set_used_flag(party, "Tried to recoil a Pokemon twice", &Used::recoil);
 	}
 	void status_from_move(Party const party, StatusName const status);
-	auto status_from_contact_ability(Party const party, Ability const ability, StatusName const status) & -> void;
+	auto status_from_ability(Party const party, Ability const ability, StatusName const status) & -> void;
 
 	void set_expected(Party const party, StatusName const status) {
 		if (!m_party) {
