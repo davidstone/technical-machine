@@ -36,7 +36,7 @@ namespace technicalmachine {
 
 using namespace std::string_view_literals;
 
-struct AllUsageStats;
+struct UsageStats;
 
 namespace ps {
 
@@ -57,22 +57,20 @@ struct BattleParser final : BattleInterface {
 		AnalysisLogger analysis_logger,
 		containers::string id_,
 		containers::string username,
-		AllUsageStats const & usage_stats,
-		AllEvaluate evaluate,
+		UsageStats const & usage_stats,
+		GenerationGeneric<BattleManagerInputs> inputs,
 		Party party,
 		DepthValues const depth,
 		std::mt19937 random_engine,
-		GenerationGeneric<Teams> generic_teams,
 		bool log_foe_teams
 	):
-		m_slot_memory(bounded::visit(generic_teams, [](auto const & teams) { return teams.ai.size(); })),
+		m_slot_memory(bounded::visit(inputs, [](auto const & i) { return i.teams.ai.size(); })),
 		m_battle_manager(make_battle_manager(
 			std::move(analysis_logger),
 			usage_stats,
-			std::move(evaluate),
+			std::move(inputs),
 			depth,
 			std::move(random_engine),
-			std::move(generic_teams),
 			log_foe_teams
 		)),
 		m_id(std::move(id_)),

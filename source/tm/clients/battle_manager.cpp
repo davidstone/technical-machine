@@ -412,21 +412,20 @@ private:
 
 auto make_battle_manager(
 	AnalysisLogger analysis_logger,
-	AllUsageStats const & usage_stats,
-	AllEvaluate evaluate,
+	UsageStats const & usage_stats,
+	GenerationGeneric<BattleManagerInputs> generic_inputs,
 	DepthValues const depth,
 	std::mt19937 random_engine,
-	GenerationGeneric<Teams> generic_teams,
 	bool const log_foe_teams
 ) -> std::unique_ptr<BattleManager> {
-	return bounded::visit(std::move(generic_teams), [&]<Generation generation>(Teams<generation> && teams) -> std::unique_ptr<BattleManager> {
+	return bounded::visit(std::move(generic_inputs), [&]<Generation generation>(BattleManagerInputs<generation> && inputs) -> std::unique_ptr<BattleManager> {
 		return std::make_unique<BattleManagerImpl<generation>>(
 			std::move(analysis_logger),
-			usage_stats[generation],
-			evaluate.get<generation>(),
+			usage_stats,
+			inputs.evaluate,
 			depth,
 			std::move(random_engine),
-			std::move(teams),
+			std::move(inputs.teams),
 			log_foe_teams
 		);
 	});

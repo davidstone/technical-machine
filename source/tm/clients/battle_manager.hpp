@@ -22,7 +22,7 @@
 
 namespace technicalmachine {
 
-struct AllUsageStats;
+struct UsageStats;
 
 template<Generation generation>
 struct Teams {
@@ -82,13 +82,17 @@ struct BattleManager {
 	virtual auto weather_is(NormalWeather) const -> void = 0;
 };
 
+template<Generation generation>
+struct BattleManagerInputs {
+	Teams<generation> teams;
+	Evaluate<generation> evaluate;
+};
 auto make_battle_manager(
 	AnalysisLogger analysis_logger,
-	AllUsageStats const & usage_stats,
-	AllEvaluate evaluate,
+	UsageStats const & usage_stats,
+	GenerationGeneric<BattleManagerInputs> inputs,
 	DepthValues const depth,
 	std::mt19937 random_engine,
-	GenerationGeneric<Teams> teams,
 	bool log_foe_teams
 ) -> std::unique_ptr<BattleManager>;
 

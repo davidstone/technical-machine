@@ -220,12 +220,14 @@ struct BattleFactoryImpl : BattleFactory {
 			AnalysisLogger(m_log_directory),
 			std::move(m_id),
 			std::move(m_username),
-			usage_stats,
-			m_evaluate,
+			usage_stats[generation],
+			GenerationGeneric<BattleManagerInputs>(BattleManagerInputs<generation>{
+				Teams<generation>{*m_team, make_foe_team()},
+				m_evaluate.get<generation>()
+			}),
 			*m_party,
 			m_depth,
 			m_random_engine,
-			GenerationGeneric<Teams>(Teams<generation>{*m_team, make_foe_team()}),
 			m_log_foe_teams
 		);
 	}
