@@ -368,7 +368,6 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 		// There can be more to this message, but nothing we care about
 #endif
 	} else if (type == "faint") {
-		maybe_use_previous_move();
 		auto const party = party_from_player_id(message.pop());
 		auto const maybe_replace = [&] {
 			if (!m_battle_manager->is_end_of_turn()) {
@@ -376,7 +375,13 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 			}
 			return std::exchange(m_already_replaced_fainted_end_of_turn, true);
 		};
-		if (m_battle_manager->generation() <= Generation::three and is_ai(party) and !m_battle_manager->ai_is_on_last_pokemon() and maybe_replace()) {
+		auto const requires_response =
+			m_battle_manager->generation() <= Generation::three and
+			is_ai(party) and
+			!m_battle_manager->ai_is_on_last_pokemon() and
+			maybe_replace();
+		maybe_use_previous_move();
+		if (requires_response) {
 			m_replacing_fainted = true;
 			return move_response(m_battle_manager->determine_action());
 		}
