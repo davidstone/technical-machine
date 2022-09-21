@@ -217,7 +217,7 @@ struct BattleFactoryImpl : BattleFactory {
 		pl::write_team(*m_team, m_log_directory / "team.sbt");
 
 		return BattleParser(
-			std::ofstream(m_log_directory / "analysis.txt"),
+			AnalysisLogger(m_log_directory),
 			std::move(m_id),
 			std::move(m_username),
 			usage_stats,

@@ -8,6 +8,7 @@
 #include <tm/clients/battle_result.hpp>
 #include <tm/clients/move_result.hpp>
 
+#include <tm/evaluate/analysis_logger.hpp>
 #include <tm/evaluate/depth.hpp>
 #include <tm/evaluate/evaluate.hpp>
 
@@ -82,7 +83,7 @@ struct BattleManager {
 };
 
 auto make_battle_manager(
-	std::ofstream analysis_logger,
+	AnalysisLogger analysis_logger,
 	AllUsageStats const & usage_stats,
 	AllEvaluate evaluate,
 	DepthValues const depth,

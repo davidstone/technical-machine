@@ -54,7 +54,7 @@ struct BattleInterface {
 
 struct BattleParser final : BattleInterface {
 	BattleParser(
-		std::ofstream analysis_logger,
+		AnalysisLogger analysis_logger,
 		containers::string id_,
 		containers::string username,
 		AllUsageStats const & usage_stats,

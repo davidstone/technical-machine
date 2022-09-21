@@ -90,6 +90,7 @@ add_library(tm_common STATIC
 	source/tm/clients/move_result.cpp
 	source/tm/clients/party.cpp
 
+	source/tm/evaluate/analysis_logger.cpp
 	source/tm/evaluate/best_move.cpp
 	source/tm/evaluate/compressed_battle.cpp
 	source/tm/evaluate/depth.cpp

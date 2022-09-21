@@ -157,7 +157,7 @@ auto hp_to_damage(any_pokemon auto const & pokemon, HP::current_type const new_h
 template<Generation generation_>
 struct BattleManagerImpl final : BattleManager {
 	BattleManagerImpl(
-		std::ofstream analysis_logger,
+		AnalysisLogger analysis_logger,
 		UsageStats const & usage_stats,
 		Evaluate<generation_> evaluate,
 		DepthValues const depth,
@@ -229,7 +229,7 @@ struct BattleManagerImpl final : BattleManager {
 	}
 
 	auto begin_turn(TurnCount const turn_count) & -> void final {
-		m_analysis_logger << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
+		m_analysis_logger.get() << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
 		m_battle.handle_begin_turn();
 	}
 	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void final {
@@ -323,10 +323,10 @@ struct BattleManagerImpl final : BattleManager {
 			throw std::runtime_error("Tried to determine an action with an empty team.");
 		}
 
-		m_analysis_logger << to_string(m_battle.ai()) << '\n';
-		m_analysis_logger << "Seen " << to_string(m_battle.foe()) << '\n';
+		m_analysis_logger.get() << to_string(m_battle.ai()) << '\n';
+		m_analysis_logger.get() << "Seen " << to_string(m_battle.foe()) << '\n';
 		auto predicted = most_likely_team(m_usage_stats, m_random_engine, m_battle.foe());
-		m_analysis_logger << "Predicted " << to_string(predicted) << '\n' << std::flush;
+		m_analysis_logger.get() << "Predicted " << to_string(predicted) << '\n' << std::flush;
 
 		return expectiminimax(
 			Team<generation_>(m_battle.ai()),
@@ -334,7 +334,7 @@ struct BattleManagerImpl final : BattleManager {
 			m_battle.weather(),
 			m_evaluate,
 			Depth(m_depth, 1_bi),
-			m_analysis_logger,
+			m_analysis_logger.get(),
 			m_random_engine
 		).name;
 	}
@@ -396,7 +396,7 @@ private:
 
 	UsageStats const & m_usage_stats;
 
-	std::ofstream m_analysis_logger;
+	AnalysisLogger m_analysis_logger;
 	std::mt19937 m_random_engine;
 
 	Evaluate<generation_> m_evaluate;
@@ -411,7 +411,7 @@ private:
 } // namespace
 
 auto make_battle_manager(
-	std::ofstream analysis_logger,
+	AnalysisLogger analysis_logger,
 	AllUsageStats const & usage_stats,
 	AllEvaluate evaluate,
 	DepthValues const depth,
