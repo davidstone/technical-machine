@@ -233,14 +233,10 @@ auto UsageStats::make(std::istream && stream) -> UsageStats {
 	return UsageStats(std::move(data), UsageStatsProbabilities(std::move(probabilities)));
 }
 
-namespace {
-
-auto stats_for_generation(Generation const generation) {
+auto stats_for_generation(Generation const generation) -> UsageStats {
 	std::cout << "Loading stats for generation " << to_string(generation) << '\n' << std::flush;
 	return UsageStats::make(open_binary_file_for_reading(get_usage_stats_directory() / to_string(generation) / "OU.tmus"));
 }
-
-} // namespace
 
 AllUsageStats::AllUsageStats():
 	m_all_stats{

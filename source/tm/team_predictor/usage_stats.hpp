@@ -63,6 +63,8 @@ private:
 	UsageStatsProbabilities m_probabilities;
 };
 
+auto stats_for_generation(Generation const generation) -> UsageStats;
+
 struct AllUsageStats {
 	AllUsageStats();
 	auto operator[](Generation const generation) const -> UsageStats const & {
