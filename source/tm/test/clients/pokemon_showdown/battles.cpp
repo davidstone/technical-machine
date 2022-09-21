@@ -20,7 +20,7 @@ namespace technicalmachine {
 namespace {
 
 auto load_lines_from_file(std::filesystem::path const & file_name) {
-	auto file = open_file(file_name, std::ios_base::in);
+	auto file = open_text_file_for_reading(file_name);
 	return containers::string(containers::range_view(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()));
 }
 

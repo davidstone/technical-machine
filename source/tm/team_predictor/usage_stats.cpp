@@ -20,6 +20,7 @@
 
 #include <tm/load_json_from_file.hpp>
 #include <tm/get_directory.hpp>
+#include <tm/open_file.hpp>
 
 #include <bounded/to_integer.hpp>
 
@@ -236,7 +237,7 @@ namespace {
 
 auto stats_for_generation(Generation const generation) {
 	std::cout << "Loading stats for generation " << to_string(generation) << '\n' << std::flush;
-	return UsageStats::make(open_file(get_usage_stats_directory() / to_string(generation) / "OU.tmus"));
+	return UsageStats::make(open_binary_file_for_reading(get_usage_stats_directory() / to_string(generation) / "OU.tmus"));
 }
 
 } // namespace

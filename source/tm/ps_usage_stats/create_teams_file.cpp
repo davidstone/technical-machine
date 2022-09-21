@@ -65,7 +65,6 @@ auto files_in_directory(std::filesystem::path const & path) {
 }
 
 auto turn_logs_into_team_file(std::filesystem::path const & output_file, ThreadCount const thread_count, std::filesystem::path const & input_directory) -> void {
-	std::filesystem::create_directories(output_file.parent_path());
 	auto battle_result_writer = BattleResultWriter(output_file);
 	auto writer_mutex = std::mutex();
 	auto workers = containers::dynamic_array(containers::generate_n(thread_count, [&] {

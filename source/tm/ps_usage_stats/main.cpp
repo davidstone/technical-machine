@@ -12,6 +12,8 @@
 
 #include <tm/string_conversions/generation.hpp>
 
+#include <tm/open_file.hpp>
+
 #include <boost/thread/scoped_thread.hpp>
 
 #include <bounded/to_integer.hpp>
@@ -195,7 +197,7 @@ auto main(int argc, char ** argv) -> int {
 
 	auto const correlations = make_correlations(args.mode, args.thread_count, args.teams_file_path, ratings_estimate, *usage_stats);
 
-	auto out_file = open_file(args.output_stats_path, std::ios_base::out | std::ios_base::binary);
+	auto out_file = open_binary_file_for_writing(args.output_stats_path);
 	serialize(out_file, args.generation, *usage_stats, correlations);
 
 	return 0;

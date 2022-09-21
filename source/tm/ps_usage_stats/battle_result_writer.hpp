@@ -7,6 +7,8 @@
 
 #include <tm/ps_usage_stats/battle_result.hpp>
 
+#include <tm/open_file.hpp>
+
 #include <filesystem>
 #include <fstream>
 #include <memory>
@@ -17,9 +19,8 @@ struct BattleResult;
 
 struct BattleResultWriter {
 	BattleResultWriter(std::filesystem::path const & path):
-		m_file(path)
+		m_file(open_binary_file_for_writing(path))
 	{
-		m_file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
 	}
 
 	auto operator()(BattleResult const & battle) -> void {

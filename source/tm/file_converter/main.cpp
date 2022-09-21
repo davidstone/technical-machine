@@ -10,6 +10,7 @@
 
 #include <tm/files_in_path.hpp>
 #include <tm/load_team_from_file.hpp>
+#include <tm/open_file.hpp>
 
 #include <bounded/detail/variant/variant.hpp>
 
@@ -61,10 +62,8 @@ struct AsStringFile {
 	}
 	auto operator()(any_known_team auto const & team, std::filesystem::path const & trailing_path) const -> void {
 		auto path = m_base_path / trailing_path;
-		std::filesystem::create_directories(path.parent_path());
 		path.replace_extension("txt");
-		auto stream = std::ofstream(path);
-		stream.exceptions(std::ios_base::badbit | std::ios_base::failbit);
+		auto stream = open_text_file_for_writing(path);
 		stream << to_string(team) << '\n';
 	}
 

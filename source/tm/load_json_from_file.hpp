@@ -16,7 +16,7 @@ namespace technicalmachine {
 
 inline auto load_json_from_file(std::filesystem::path const & path) -> nlohmann::json {
 	auto json = nlohmann::json();
-	auto file = open_file(path, std::ios_base::in);
+	auto file = open_text_file_for_reading(path);
 	file >> json;
 	return json;
 }
