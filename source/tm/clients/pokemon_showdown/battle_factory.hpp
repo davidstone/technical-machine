@@ -24,12 +24,8 @@ struct AllUsageStats;
 
 namespace ps {
 
-struct BattleFactory {
-	virtual auto id() const -> std::string_view = 0;
-	virtual auto handle_message(InMessage message) -> void = 0;
-	virtual auto completed() const -> bool = 0;
+struct BattleFactory : BattleInterface {
 	virtual auto make(AllUsageStats const & usage_stats) && -> BattleParser = 0;
-	virtual ~BattleFactory();
 };
 
 auto make_battle_factory(

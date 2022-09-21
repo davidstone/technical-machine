@@ -35,6 +35,8 @@ namespace ps {
 
 using namespace std::string_view_literals;
 
+BattleInterface::~BattleInterface() = default;
+
 namespace {
 
 constexpr auto party_from_player_id(std::string_view const player_id) {

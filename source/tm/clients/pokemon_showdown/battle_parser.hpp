@@ -41,7 +41,19 @@ struct AllUsageStats;
 
 namespace ps {
 
-struct BattleParser {
+struct BattleInterface {
+	virtual auto id() const -> std::string_view = 0;
+	virtual auto handle_message(InMessage message) -> bounded::optional<containers::string> = 0;
+	enum class Complete {
+		none,
+		start,
+		finish
+	};
+	virtual auto completed() const -> Complete = 0;
+	virtual ~BattleInterface();
+};
+
+struct BattleParser final : BattleInterface {
 	BattleParser(
 		BattleLogger battle_logger,
 		std::ofstream analysis_logger,
@@ -72,13 +84,13 @@ struct BattleParser {
 	{
 	}
 
-	auto handle_message(InMessage message) -> bounded::optional<containers::string>;
+	auto handle_message(InMessage message) -> bounded::optional<containers::string> final;
 
-	auto id() const -> std::string_view {
+	auto id() const -> std::string_view final {
 		return m_id;
 	}
-	auto completed() const -> bool {
-		return m_battle_manager->completed();
+	auto completed() const -> BattleInterface::Complete final {
+		return m_battle_manager->completed() ? BattleInterface::Complete::finish : BattleInterface::Complete::none;
 	}
 
 private:

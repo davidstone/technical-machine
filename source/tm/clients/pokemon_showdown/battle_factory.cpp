@@ -35,14 +35,11 @@
 
 namespace technicalmachine {
 namespace ps {
-
-BattleFactory::~BattleFactory() = default;
-
 namespace {
 
 using namespace std::string_view_literals;
 
-void validate_generation(std::string_view const received, Generation const expected) {
+auto validate_generation(std::string_view const received, Generation const expected) -> void {
 	auto const parsed = static_cast<Generation>(bounded::to_integer<1, 8>(received));
 	if (parsed != expected) {
 		throw std::runtime_error(containers::concatenate<std::string>(
@@ -90,15 +87,15 @@ struct BattleFactoryImpl : BattleFactory {
 	{
 	}
 
-	std::string_view id() const final {
+	auto id() const -> std::string_view final {
 		return m_id;
 	}
 
-	void handle_message(InMessage message) final {
+	auto handle_message(InMessage message) -> bounded::optional<containers::string> final {
 		m_battle_logger.log(message);
 
 		if (handle_chat_message(message)) {
-			return;
+			return bounded::none;
 		}
 
 		// Documented at
@@ -179,14 +176,15 @@ struct BattleFactoryImpl : BattleFactory {
 		} else {
 			std::cerr << "Received battle setup message of unknown type: " << type << ": " << message.remainder() << '\n';
 		}
+		return bounded::none;
 	}
 
-	bool completed() const final {
+	auto completed() const -> BattleInterface::Complete final {
 		// TODO: Handle NvN battles
-		return m_ai_switched_in and m_foe_starter;
+		return m_ai_switched_in and m_foe_starter ? BattleInterface::Complete::start : BattleInterface::Complete::none;
 	}
 	auto make(AllUsageStats const & usage_stats) && -> BattleParser final {
-		BOUNDED_ASSERT(completed());
+		BOUNDED_ASSERT(completed() == BattleInterface::Complete::start);
 		if (!m_team) {
 			throw std::runtime_error("Did not receive team");
 		}
