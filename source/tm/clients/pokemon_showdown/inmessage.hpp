@@ -1,4 +1,3 @@
-// Pokemon Showdown incoming messages
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -8,11 +7,16 @@
 
 #include <tm/buffer_view.hpp>
 
-#include <iostream>
+#include <containers/algorithms/concatenate.hpp>
+
+#include <stdexcept>
+#include <string>
 #include <string_view>
 
 namespace technicalmachine {
 namespace ps {
+
+using namespace std::string_view_literals;
 
 struct InMessage {
 	constexpr InMessage(std::string_view const room, std::string_view const data):
@@ -43,7 +47,10 @@ private:
 			// Because messages start with a '|', discard first empty string
 			auto const discarded = view.pop();
 			if (!discarded.empty()) {
-				std::cerr << "Expected empty string, got " << discarded << '\n';
+				throw std::runtime_error(containers::concatenate<std::string>(
+					"Expected empty string, got "sv,
+					discarded
+				));
 			}
 			return view.pop();
 		}()),
