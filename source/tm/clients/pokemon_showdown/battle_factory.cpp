@@ -5,7 +5,6 @@
 
 #include <tm/clients/pokemon_showdown/battle_factory.hpp>
 
-#include <tm/clients/pokemon_showdown/battle_logger.hpp>
 #include <tm/clients/pokemon_showdown/chat.hpp>
 #include <tm/clients/pokemon_showdown/parse_team.hpp>
 
@@ -78,7 +77,6 @@ struct BattleFactoryImpl : BattleFactory {
 	):
 		m_id(std::move(id_)),
 		m_log_directory(base_log_directory / std::string_view(m_id)),
-		m_battle_logger(m_log_directory, m_id),
 		m_username(std::move(username)),
 		m_evaluate(evaluate),
 		m_depth(depth),
@@ -92,8 +90,6 @@ struct BattleFactoryImpl : BattleFactory {
 	}
 
 	auto handle_message(InMessage message) -> bounded::optional<containers::string> final {
-		m_battle_logger.log(message);
-
 		if (handle_chat_message(message)) {
 			return bounded::none;
 		}
@@ -221,7 +217,6 @@ struct BattleFactoryImpl : BattleFactory {
 		pl::write_team(*m_team, m_log_directory / "team.sbt");
 
 		return BattleParser(
-			std::move(m_battle_logger),
 			std::ofstream(m_log_directory / "analysis.txt"),
 			std::move(m_id),
 			std::move(m_username),
@@ -238,7 +233,6 @@ struct BattleFactoryImpl : BattleFactory {
 private:
 	containers::string m_id;
 	std::filesystem::path m_log_directory;
-	BattleLogger m_battle_logger;
 	containers::string m_username;
 	AllEvaluate m_evaluate;
 	DepthValues m_depth;

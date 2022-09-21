@@ -158,8 +158,6 @@ constexpr auto parse_set_hp_message(InMessage message) {
 } // namespace
 
 auto BattleParser::handle_message(InMessage message) -> bounded::optional<containers::string> {
-	m_battle_logger.log(message);
-
 	if (handle_chat_message(message)) {
 		return bounded::none;
 	}

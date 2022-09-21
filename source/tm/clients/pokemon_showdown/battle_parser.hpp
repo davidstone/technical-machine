@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include <tm/clients/pokemon_showdown/battle_logger.hpp>
 #include <tm/clients/pokemon_showdown/end_of_turn_state.hpp>
 #include <tm/clients/pokemon_showdown/inmessage.hpp>
 #include <tm/clients/pokemon_showdown/move_state.hpp>
@@ -55,7 +54,6 @@ struct BattleInterface {
 
 struct BattleParser final : BattleInterface {
 	BattleParser(
-		BattleLogger battle_logger,
 		std::ofstream analysis_logger,
 		containers::string id_,
 		containers::string username,
@@ -77,7 +75,6 @@ struct BattleParser final : BattleInterface {
 			std::move(generic_teams),
 			log_foe_teams
 		)),
-		m_battle_logger(std::move(battle_logger)),
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_ai_party(party)
@@ -131,7 +128,6 @@ private:
 	SlotMemory m_slot_memory;
 	std::unique_ptr<BattleManager> m_battle_manager;
 
-	BattleLogger m_battle_logger;
 	containers::string m_id;
 	containers::string m_username;
 
