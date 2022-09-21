@@ -63,7 +63,7 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 }
 
 auto write_per_pokemon_detailed_stats(auto const & element, std::filesystem::path const & directory) -> void {
-	auto file = std::ofstream(directory / ("stats_" + element.key() + ".json"));
+	auto file = open_text_file_for_writing(directory / ("stats_" + element.key() + ".json"));
 	file << element.value();
 }
 
@@ -78,7 +78,7 @@ struct PokemonUsageStats {
 
 	auto write(std::filesystem::path const & directory) -> void {
 		containers::sort(m_data, std::greater());
-		auto file = std::ofstream(directory / "pokemon_usage_stats.json");
+		auto file = open_text_file_for_writing(directory / "pokemon_usage_stats.json");
 		auto json = nlohmann::json::array_t();
 		for (auto const & value : m_data) {
 			json.push_back({{to_string(value.species), value.proportion}});
@@ -104,7 +104,7 @@ struct SpeedStats {
 	}
 
 	auto write(std::filesystem::path const & directory) -> void {
-		auto file = std::ofstream(directory / "speed.json");
+		auto file = open_text_file_for_writing(directory / "speed.json");
 		auto const total = containers::sum(m_data);
 		auto json = nlohmann::json::array_t();
 		for (auto const index : containers::integer_range(containers::size(m_data))) {
