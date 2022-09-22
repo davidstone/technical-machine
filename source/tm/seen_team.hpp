@@ -31,8 +31,8 @@ struct Weather;
 
 template<Generation generation>
 struct SeenTeam {
-	explicit SeenTeam(TeamSize const initial_size) :
-		m_all_pokemon(initial_size)
+	explicit SeenTeam(TeamSize const team_size) :
+		m_all_pokemon(team_size)
 	{
 	}
 

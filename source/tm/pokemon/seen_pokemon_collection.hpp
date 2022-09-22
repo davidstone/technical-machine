@@ -34,8 +34,8 @@ template<Generation generation>
 struct SeenPokemonCollection {
 	using Container = containers::static_vector<SeenPokemon<generation>, max_pokemon_per_team>;
 
-	explicit SeenPokemonCollection(TeamSize const initial_size):
-		m_real_size(initial_size)
+	explicit SeenPokemonCollection(TeamSize const real_size):
+		m_real_size(real_size)
 	{
 	}
 
