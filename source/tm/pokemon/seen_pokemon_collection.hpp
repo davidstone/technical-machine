@@ -100,7 +100,7 @@ private:
 			throw std::runtime_error("Tried to add too many Pokemon");
 		}
 	}
-	constexpr void check_range(TeamIndex const new_index [[maybe_unused]]) const {
+	constexpr void check_range(TeamIndex const new_index) const {
 		BOUNDED_ASSERT(new_index < size());
 	}
 
