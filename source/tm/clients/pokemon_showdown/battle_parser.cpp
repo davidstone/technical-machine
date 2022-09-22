@@ -70,11 +70,12 @@ constexpr auto parse_hp_and_status(std::string_view const hp_and_status) {
 struct FromMove {};
 struct MainEffect {};
 struct FromConfusion {};
+struct FromEntryHazards {};
 struct FromMiscellaneous {};
 struct FromRecoil {};
 struct FromSubstitute {};
 
-using EffectSource = bounded::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromMiscellaneous, FromRecoil, FromSubstitute>;
+using EffectSource = bounded::variant<MainEffect, Item, Ability, FromMove, FromConfusion, FromEntryHazards, FromMiscellaneous, FromRecoil, FromSubstitute>;
 
 constexpr auto parse_effect_source(std::string_view const type, std::string_view const source) -> EffectSource {
 	return
@@ -84,6 +85,8 @@ constexpr auto parse_effect_source(std::string_view const type, std::string_view
 		(type == "move") ? EffectSource(FromMove{}) :
 		(type == "confusion") ? EffectSource(FromConfusion{}) :
 		(type == "Recoil") ? EffectSource(FromRecoil{}) :
+		(type == "Spikes") ? EffectSource(FromEntryHazards()) :
+		(type == "Stealth Rock") ? EffectSource(FromEntryHazards()) :
 		(type == "Substitute") ? EffectSource(FromSubstitute{}) :
 		(
 			type == "brn" or
@@ -100,8 +103,6 @@ constexpr auto parse_effect_source(std::string_view const type, std::string_view
 			type == "Leech Seed" or
 			type == "Light Screen" or
 			type == "Protect" or // Includes Detect
-			type == "Spikes" or
-			type == "Stealth Rock" or
 			type == "Reflect" or
 			type == "Sandstorm"
 		) ? EffectSource(FromMiscellaneous{}) :
@@ -197,6 +198,7 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 				throw std::runtime_error("Unexpected -activate source MainEffect");
 			},
 			[](FromConfusion) -> bounded::optional<containers::string> { return bounded::none; },
+			[](FromEntryHazards) -> bounded::optional<containers::string> { throw std::runtime_error("Unexpected -activate source FromEntryHazards"); },
 			[](FromMiscellaneous) -> bounded::optional<containers::string> { return bounded::none; },
 			[](FromMove) -> bounded::optional<containers::string> { return bounded::none; },
 			[](FromRecoil) -> bounded::optional<containers::string> {
@@ -369,17 +371,12 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 #endif
 	} else if (type == "faint") {
 		auto const party = party_from_player_id(message.pop());
-		auto const maybe_replace = [&] {
-			if (!m_battle_manager->is_end_of_turn()) {
-				return true;
-			}
-			return std::exchange(m_already_replaced_fainted_end_of_turn, true);
-		};
+		auto const from_entry_hazards = std::exchange(m_replacement_fainted_from_entry_hazards, false);
 		auto const requires_response =
 			m_battle_manager->generation() <= Generation::three and
 			is_ai(party) and
 			!m_battle_manager->ai_is_on_last_pokemon() and
-			maybe_replace();
+			(!m_battle_manager->is_end_of_turn() or from_entry_hazards);
 		maybe_use_previous_move();
 		if (requires_response) {
 			m_replacing_fainted = true;
@@ -403,6 +400,7 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 		bounded::visit(parsed.source, bounded::overload(
 			[](MainEffect) {},
 			[](FromConfusion) { throw std::runtime_error("Confusion cannot heal"); },
+			[](FromEntryHazards) { throw std::runtime_error("Entry hazards cannot heal"); },
 			[](FromMiscellaneous) {},
 			[](FromMove) {},
 			[](FromRecoil) { throw std::runtime_error("Recoil cannot heal"); },
@@ -426,6 +424,7 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 			// TODO: Validate that the type should be immune
 			[](MainEffect) {},
 			[](FromConfusion) { throw std::runtime_error("Confusion cannot cause immunity"); },
+			[](FromEntryHazards) { throw std::runtime_error("Entry hazards cannot cause immunity"); },
 			[](FromMiscellaneous) { throw std::runtime_error("Miscellaneous effects cannot cause immunity"); },
 			[](FromMove) { throw std::runtime_error("MoveName cannot cause immunity"); },
 			[](FromRecoil) { throw std::runtime_error("Recoil cannot cause immunity"); },
@@ -550,6 +549,7 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 					m_move_state.confuse(other(party));
 				}
 			},
+			[](FromEntryHazards) {},
 			[](FromMiscellaneous) {},
 			[](FromMove) {},
 			[](FromRecoil) { throw std::runtime_error("Unexpected -start source FromRecoil"); },
@@ -564,6 +564,7 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 		bounded::visit(source, bounded::overload(
 			[&](MainEffect) { m_move_state.status_from_move(party, status); },
 			[](FromConfusion) { throw std::runtime_error("Confusion cannot cause another status"); },
+			[](FromEntryHazards) { },
 			[&](FromMiscellaneous) { m_move_state.status_from_move(other(party), status); },
 			[&](FromMove) { m_move_state.status_from_move(party, status); },
 			[](FromRecoil) { throw std::runtime_error("Recoil cannot cause another status"); },
@@ -591,7 +592,7 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 		// message.remainder() == POKEMON|SPECIES
 	} else if (type == "turn") {
 		maybe_use_previous_move();
-		m_already_replaced_fainted_end_of_turn = false;
+		m_replacement_fainted_from_entry_hazards = false;
 		auto const turn_count = bounded::to_integer<TurnCount>(message.pop());
 		m_battle_manager->begin_turn(turn_count);
 		return move_response(m_battle_manager->determine_action());
@@ -661,6 +662,12 @@ auto BattleParser::handle_damage(InMessage message) -> bounded::optional<contain
 			m_move_state.use_move(party, MoveName::Struggle);
 			m_move_state.use_move(party, MoveName::Hit_Self);
 			move_damage(party);
+			return bounded::none;
+		},
+		[&](FromEntryHazards) -> bounded::optional<containers::string> {
+			if (parsed.hp.current.value() == 0_bi) {
+				m_replacement_fainted_from_entry_hazards = true;
+			}
 			return bounded::none;
 		},
 		[](FromMiscellaneous) -> bounded::optional<containers::string> { return bounded::none; },

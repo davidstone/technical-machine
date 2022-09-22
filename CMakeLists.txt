@@ -330,6 +330,7 @@ target_link_libraries(predict
 add_executable(tm_test
 	source/tm/test/clients/netbattle/read_team_file.cpp
 
+	source/tm/test/clients/pokemon_showdown/battle_parser.cpp
 	source/tm/test/clients/pokemon_showdown/packed_team.cpp
 	source/tm/test/clients/pokemon_showdown/parse_team.cpp
 	source/tm/test/clients/pokemon_showdown/slot_memory.cpp

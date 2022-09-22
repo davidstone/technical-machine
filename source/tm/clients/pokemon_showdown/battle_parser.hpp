@@ -138,7 +138,7 @@ private:
 
 	bool m_ignore_next_cure_status = false;
 	bool m_replacing_fainted = false;
-	bool m_already_replaced_fainted_end_of_turn = false;
+	bool m_replacement_fainted_from_entry_hazards = false;
 };
 
 constexpr auto make_party(std::string_view const party_str) {
