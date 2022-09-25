@@ -806,7 +806,7 @@ auto BattleParser::move_response(MoveName const move) const -> containers::strin
 auto BattleParser::random_move_response() -> containers::string {
 	// In doubles / triples we need to specify " TARGET" at the end for regular
 	// moves
-	auto distribution = std::uniform_int_distribution(0, static_cast<int>(max_moves_per_pokemon + max_pokemon_per_team - 1_bi));
+	auto distribution = std::uniform_int_distribution(0, static_cast<int>(maximum_possible_selections));
 	auto const result = distribution(m_battle_manager->random_engine());
 
 	auto switch_move = [=]{ return bounded::assume_in_range<TeamIndex>(result - max_moves_per_pokemon); };
