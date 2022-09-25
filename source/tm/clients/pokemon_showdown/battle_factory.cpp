@@ -24,7 +24,6 @@
 #include <bounded/to_integer.hpp>
 
 #include <containers/algorithms/concatenate.hpp>
-#include <containers/single_element_range.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -39,7 +38,7 @@ namespace {
 using namespace std::string_view_literals;
 
 auto validate_generation(std::string_view const received, Generation const expected) -> void {
-	auto const parsed = static_cast<Generation>(bounded::to_integer<1, 8>(received));
+	auto const parsed = from_string<Generation>(received);
 	if (parsed != expected) {
 		throw std::runtime_error(containers::concatenate<std::string>(
 			"Received wrong generation. Expected "sv,
@@ -56,12 +55,7 @@ auto parse_generation(std::string_view const id) -> Generation {
 	if (id.size() < generation_index) {
 		throw std::runtime_error(containers::concatenate<std::string>("Invalid battle id. Expected something in the format of: \"battle-gen[generation_number]\", but got "sv, id));
 	}
-	auto const generation_char = id[generation_index];
-	auto const generation = generation_char - '0';
-	if (generation < 1 or 8 < generation) {
-		throw std::runtime_error(containers::concatenate<std::string>("Invalid generation. Expected a value between 1 and 8, but got "sv, containers::single_element_range(generation_char)));
-	}
-	return static_cast<Generation>(generation);
+	return from_string<Generation>(id.substr(generation_index, 1));
 }
 
 template<Generation generation>
