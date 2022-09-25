@@ -65,7 +65,7 @@ struct BattleFactoryImpl : BattleFactory {
 		bool const log_foe_teams,
 		containers::string id_,
 		containers::string username,
-		AllEvaluate evaluate,
+		Evaluate<generation> evaluate,
 		DepthValues depth,
 		std::mt19937 random_engine
 	):
@@ -217,7 +217,7 @@ struct BattleFactoryImpl : BattleFactory {
 			usage_stats[generation],
 			GenerationGeneric<BattleManagerInputs>(BattleManagerInputs<generation>{
 				Teams<generation>{*m_team, make_foe_team()},
-				m_evaluate.get<generation>()
+				m_evaluate
 			}),
 			*m_party,
 			m_depth,
@@ -230,7 +230,7 @@ private:
 	containers::string m_id;
 	std::filesystem::path m_log_directory;
 	containers::string m_username;
-	AllEvaluate m_evaluate;
+	Evaluate<generation> m_evaluate;
 	DepthValues m_depth;
 	std::mt19937 m_random_engine;
 	bounded::optional<KnownTeam<generation>> m_team;
@@ -261,7 +261,7 @@ auto make_battle_factory(
 			log_foe_teams,
 			std::move(id),
 			std::move(username),
-			evaluate,
+			evaluate.get<generation>(),
 			depth,
 			random_engine
 		);
