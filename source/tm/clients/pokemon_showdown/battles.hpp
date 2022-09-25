@@ -49,8 +49,9 @@ struct Battles {
 		containers::lazy_push_back(
 			m_container,
 			[&] {
+				auto battle_logger = std::make_unique<BattleLogger>(m_log_directory / std::string_view(id), id);
 				return Element{
-					std::make_unique<BattleLogger>(m_log_directory / std::string_view(id), id),
+					std::move(battle_logger),
 					make_battle_factory(
 						m_log_directory,
 						m_log_foe_teams,
