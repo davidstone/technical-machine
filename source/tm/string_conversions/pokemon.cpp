@@ -306,13 +306,6 @@ auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenPokemon<generation>); \
 	template auto pokemon_from_string<generation>(std::string_view const str) -> Pokemon<generation>
 
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::three);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::four);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::five);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
+TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

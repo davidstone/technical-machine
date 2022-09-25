@@ -590,13 +590,6 @@ auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, W
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
 	template auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::ostream & log, std::mt19937 & random_engine) -> BestMove
 
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::three);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::four);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::five);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
+TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

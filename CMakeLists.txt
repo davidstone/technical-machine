@@ -237,6 +237,7 @@ add_library(tm_common STATIC
 	source/tm/entry_hazards.cpp
 	source/tm/exists_if.cpp
 	source/tm/files_in_path.cpp
+	source/tm/for_each_generation.cpp
 	source/tm/gender.cpp
 	source/tm/generation.cpp
 	source/tm/generation_generic.cpp

@@ -63,13 +63,6 @@ auto possible_executed_moves(MoveName const selected_move, UserTeam const & user
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
 	template auto possible_executed_moves(MoveName const selected_move, Team<generation> const & user_team) -> PossibleExecutedMoves
 
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::three);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::four);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::five);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
+TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

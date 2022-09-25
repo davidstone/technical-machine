@@ -8,6 +8,7 @@
 #include <tm/pokemon/any_pokemon.hpp>
 #include <tm/pokemon/species.hpp>
 
+#include <tm/for_each_generation.hpp>
 #include <tm/rational.hpp>
 
 #include <utility>
@@ -1007,13 +1008,6 @@ auto critical_hit_probability(any_active_pokemon auto const attacker, MoveName c
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
 	template auto critical_hit_probability<ActivePokemon<generation>>(ActivePokemon<generation> const attacker, MoveName const move, Ability const defender_ability, Weather const weather) -> double
 
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::three);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::four);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::five);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
+TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

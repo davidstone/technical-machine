@@ -7,6 +7,7 @@
 #include <tm/end_of_turn.hpp>
 
 #include <tm/ability.hpp>
+#include <tm/for_each_generation.hpp>
 #include <tm/heal.hpp>
 #include <tm/known_team.hpp>
 #include <tm/rational.hpp>
@@ -266,13 +267,6 @@ void end_of_turn(TeamType & first, EndOfTurnFlags const first_flags, OtherTeam<T
 	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>); \
 	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>)
 
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::one);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::two);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::three);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::four);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::five);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::six);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::seven);
-TECHNICALMACHINE_EXPLICIT_INSTANTIATION(Generation::eight);
+TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

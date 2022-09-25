@@ -8,6 +8,7 @@
 #include <tm/move/executed_move.hpp>
 
 #include <tm/any_team.hpp>
+#include <tm/for_each_generation.hpp>
 #include <tm/generation.hpp>
 #include <tm/weather.hpp>
 
@@ -33,14 +34,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam>, Defender
 	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(SeenTeam<generation>, KnownTeam<generation>); \
 	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(SeenTeam<generation>, SeenTeam<generation>)
 
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::three);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::four);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::five);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::six);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::seven);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
+TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXTERN_INSTANTIATION);
 
 #undef TECHNICALMACHINE_EXTERN_INSTANTIATION
 #undef TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL

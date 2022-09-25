@@ -8,9 +8,10 @@
 #include <tm/evaluate/best_move.hpp>
 #include <tm/evaluate/depth.hpp>
 #include <tm/evaluate/evaluate.hpp>
-#include <tm/weather.hpp>
 
+#include <tm/for_each_generation.hpp>
 #include <tm/generation.hpp>
+#include <tm/weather.hpp>
 
 #include <ostream>
 #include <random>
@@ -23,14 +24,7 @@ auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, W
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
 	extern template auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather, Evaluate<generation>, Depth, std::ostream & log, std::mt19937 & random_engine) -> BestMove
 
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::one);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::two);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::three);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::four);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::five);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::six);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::seven);
-TECHNICALMACHINE_EXTERN_INSTANTIATION(Generation::eight);
+TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXTERN_INSTANTIATION);
 
 #undef TECHNICALMACHINE_EXTERN_INSTANTIATION
 
