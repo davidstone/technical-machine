@@ -20,6 +20,7 @@
 #include <tm/load_team_from_file.hpp>
 #include <tm/team.hpp>
 
+#include <bounded/overload.hpp>
 #include <bounded/scope_guard.hpp>
 
 #include <containers/algorithms/all_any_none.hpp>
@@ -39,7 +40,7 @@
 namespace technicalmachine {
 namespace ps {
 
-ClientImpl::ClientImpl(SettingsFile settings, DepthValues const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
+ClientImpl::ClientImpl(SettingsFile settings, Depth const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
 	m_random_engine(m_rd()),
 	m_settings(std::move(settings)),
 	m_depth(depth),
@@ -236,7 +237,7 @@ void ClientImpl::send_channel_message(std::string_view const channel, std::strin
 	m_send_message(containers::concatenate<containers::string>(channel, "|/msg "sv, message));
 }
 
-Client::Client(SettingsFile settings, DepthValues const depth):
+Client::Client(SettingsFile settings, Depth const depth):
 	m_sockets(settings.host, settings.port, settings.resource),
 	m_impl(
 		std::move(settings),

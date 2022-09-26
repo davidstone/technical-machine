@@ -50,15 +50,6 @@
 namespace technicalmachine {
 namespace {
 
-void print_best_move(any_team auto const & team, BestMove const best_move, std::ostream & log) {
-	if (is_switch(best_move.name)) {
-		log << "Switch to " << to_string(team.pokemon(to_replacement(best_move.name)).species());
-	} else {
-		log << "Use " << to_string(best_move.name);
-	}
-	log << " for a minimum expected score of " << static_cast<std::int64_t>(best_move.score) << '\n';
-}
-
 double generic_flag_branch(auto const & basic_probability, auto const & next_branch) {
 	auto const probability = [=](bool const is_first, bool const flag) {
 		auto const base = basic_probability(is_first);
@@ -208,62 +199,27 @@ auto team_is_empty(any_team auto const & team) {
 	return team.size() == 0_bi or (team.size() == 1_bi and team.pokemon().hp().current() == 0_bi);
 };
 
-struct BestMovePrinter {
-	explicit BestMovePrinter(std::ostream & log):
-		m_log(log)
-	{
+void update_best_move(MoveName & best_move, double & alpha, double const beta, MoveName const new_move) {
+	// If their best response isn't as good as their previous best
+	// response, then this new move must be better than the
+	// previous AI's best move
+	if (beta > alpha) {
+		alpha = beta;
+		best_move = new_move;
 	}
+}
 
-	void update_best_move(MoveName & best_move, double & alpha, double const beta, MoveName const new_move, bounded::optional<DepthInt> const indentation) const {
-		// If their best response isn't as good as their previous best
-		// response, then this new move must be better than the
-		// previous AI's best move
-		if (beta > alpha) {
-			alpha = beta;
-			best_move = new_move;
-			print_estimated_score(alpha, new_move, indentation);
-		}
+void update_foe_best_move(MoveName const move, MoveScores & foe_scores, double & beta, double const max_score) {
+	if (beta > max_score) {
+		beta = max_score;
+		foe_scores.set(move, beta);
 	}
-
-	void update_foe_best_move(MoveName const move, MoveScores & foe_scores, double & beta, double const max_score, bounded::optional<DepthInt> const indentation) const {
-		if (beta > max_score) {
-			beta = max_score;
-			foe_scores.set(move, beta);
-		}
-		print_estimated_score(max_score, move, indentation);
-	}
-
-	void print_action(any_team auto const & team, MoveName const move, bounded::optional<DepthInt> const indentation) const {
-		if (!indentation) {
-			return;
-		}
-		if (move == MoveName::Pass) {
-			return;
-		}
-		m_log << containers::string(containers::repeat_n(*indentation, '\t')) << "Evaluating " << team.who();
-		if (is_switch(move)) {
-			auto const replacement_index = to_replacement(move);
-			m_log << " switching to " << to_string(team.pokemon(replacement_index).species()) << '\n';
-		} else {
-			m_log << " using " << to_string(move) << '\n';
-		}
-	}
-
-private:
-	void print_estimated_score(double const estimate, MoveName const move, bounded::optional<DepthInt> const indentation) const {
-		if (indentation and move != MoveName::Pass) {
-			m_log << containers::string(containers::repeat_n(*indentation, '\t')) << "Estimated score is " << static_cast<std::int64_t>(estimate) << '\n';
-		}
-	}
-
-	std::ostream & m_log;
-};
+}
 
 template<Generation generation>
 struct Evaluator {
-	Evaluator(Evaluate<generation> const evaluate, std::ostream & log):
-		m_evaluate(evaluate),
-		m_best_move_printer(log)
+	explicit Evaluator(Evaluate<generation> const evaluate):
+		m_evaluate(evaluate)
 	{
 	}
 
@@ -271,7 +227,7 @@ struct Evaluator {
 		BOUNDED_ASSERT(!team_is_empty(ai));
 		BOUNDED_ASSERT(!team_is_empty(foe));
 
-		if (auto const score = m_transposition_table.get_score(ai, foe, weather, depth.remaining())) {
+		if (auto const score = m_transposition_table.get_score(ai, foe, weather, depth)) {
 			return *score;
 		}
 
@@ -280,7 +236,7 @@ struct Evaluator {
 		auto const best_move = select_move_branch(ai, ai_selections, foe, foe_selections, weather, depth, [&](auto && ... args) {
 			return order_branch(OPERATORS_FORWARD(args)...);
 		}).move;
-		m_transposition_table.add_score(ai, foe, weather, depth.remaining(), best_move);
+		m_transposition_table.add_score(ai, foe, weather, depth, best_move);
 		return best_move;
 	}
 
@@ -342,24 +298,18 @@ private:
 
 		auto alpha = -victory<generation> - 1.0;
 		auto best_move = MoveName{};
-		auto const ai_indentation = depth.indentation();
 		for (auto const & ai_move : ai_moves) {
-			m_best_move_printer.print_action(ai, ai_move, ai_indentation);
 			auto beta = victory<generation> + 1.0;
-			auto const foe_depth = depth.increased_indentation(ai_move);
-			auto const foe_indentation = foe_depth.indentation();
 			for (auto const & foe_move : foe_moves) {
-				m_best_move_printer.print_action(foe, foe_move, foe_indentation);
-				auto const next_depth = foe_depth.increased_indentation(foe_move);
-				auto const max_score = function(ai, ai_move, foe, foe_move, weather, next_depth);
-				m_best_move_printer.update_foe_best_move(foe_move, move_scores.foe, beta, max_score, foe_indentation);
+				auto const max_score = function(ai, ai_move, foe, foe_move, weather, depth);
+				update_foe_best_move(foe_move, move_scores.foe, beta, max_score);
 				// Alpha-Beta pruning
 				if (beta <= alpha) {
 					break;
 				}
 			}
 			move_scores.ai.set(ai_move, beta);
-			m_best_move_printer.update_best_move(best_move, alpha, beta, ai_move, ai_indentation);
+			update_best_move(best_move, alpha, beta, ai_move);
 			// The AI cannot have a better move than a guaranteed win
 			if (alpha == victory<generation>) {
 				break;
@@ -498,11 +448,14 @@ private:
 		auto const deordered = deorder(first, last);
 		auto const & ai = deordered.ai;
 		auto const & foe = deordered.foe;
-		return bounded::visit(depth.one_level_deeper(), bounded::overload(
-			[&](Depth const new_depth) { return select_type_of_move(ai, foe, weather, new_depth).score; },
-			[&](SingleOnlyDepth const new_depth) { return generate_single_matchups(ai, foe, weather, new_depth.value); },
-			[&](FinishedSearching) { return static_cast<double>(m_evaluate(ai, foe)); }
-		));
+		auto const new_depth = one_level_deeper(depth);
+		if (depth.general > 0_bi) {
+			return select_type_of_move(ai, foe, weather, new_depth).score;
+		} else if (depth.single > 0_bi) {
+			return generate_single_matchups(ai, foe, weather, new_depth);
+		} else {
+			return static_cast<double>(m_evaluate(ai, foe));
+		}
 	}
 
 	auto generate_single_matchups(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Depth const depth) -> double {
@@ -545,7 +498,6 @@ private:
 	}
 
 	Evaluate<generation> const m_evaluate;
-	BestMovePrinter m_best_move_printer;
 	TranspositionTable<generation> m_transposition_table;
 };
 
@@ -564,31 +516,22 @@ constexpr auto random_selection(Team<generation> const & user, Team<generation> 
 } // namespace
 
 template<Generation generation>
-auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::ostream & log, std::mt19937 & random_engine) -> BestMove {
+auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::mt19937 & random_engine) -> BestMove {
 	if (team_is_empty(ai) or team_is_empty(foe)) {
 		throw std::runtime_error("Tried to evaluate a position with an empty team");
 	}
-	// The two best hash table sizes are 8 bit and 13 bit. Not using a dynamic
-	// allocation here speeds up every hash table size except for those two,
-	// which are faster with a dynamic allocation.
-	auto evaluator = std::make_unique<Evaluator<generation>>(evaluate, log);
-	log << "Evaluating to a depth of " << depth.general_initial() << ", " << depth.single_initial() << "...\n";
-	auto const start = std::chrono::steady_clock::now();
-	auto const best_move = depth.general_initial() > 0_bi ?
+	auto evaluator = Evaluator<generation>(evaluate);
+	auto const best_move = depth.general > 0_bi ?
 		evaluator->select_type_of_move(ai, foe, weather, depth) :
 		random_selection(ai, foe, weather, random_engine);
 	if (best_move.name == MoveName::Pass) {
 		throw std::runtime_error("Should never evaluate a position in which it is legal to use Pass.");
 	}
-	auto const finish = std::chrono::steady_clock::now();
-	log << "Determined best move in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
-	print_best_move(ai, best_move, log);
-	log << std::flush;
 	return best_move;
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::ostream & log, std::mt19937 & random_engine) -> BestMove
+	template auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::mt19937 & random_engine) -> BestMove
 
 TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 

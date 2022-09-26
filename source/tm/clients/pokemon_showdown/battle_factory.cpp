@@ -66,7 +66,7 @@ struct BattleFactoryImpl : BattleFactory {
 		containers::string id_,
 		containers::string username,
 		Evaluate<generation> evaluate,
-		DepthValues depth,
+		Depth depth,
 		std::mt19937 random_engine
 	):
 		m_id(std::move(id_)),
@@ -231,7 +231,7 @@ private:
 	std::filesystem::path m_log_directory;
 	containers::string m_username;
 	Evaluate<generation> m_evaluate;
-	DepthValues m_depth;
+	Depth m_depth;
 	std::mt19937 m_random_engine;
 	bounded::optional<KnownTeam<generation>> m_team;
 	bounded::optional<Party> m_party;
@@ -251,7 +251,7 @@ auto make_battle_factory(
 	containers::string id,
 	containers::string username,
 	AllEvaluate evaluate,
-	DepthValues depth,
+	Depth depth,
 	std::mt19937 random_engine
 ) -> std::unique_ptr<BattleFactory> {
 	auto const parsed_generation = parse_generation(id);

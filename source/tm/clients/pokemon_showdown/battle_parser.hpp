@@ -60,7 +60,7 @@ struct BattleParser final : BattleInterface {
 		UsageStats const & usage_stats,
 		GenerationGeneric<BattleManagerInputs> inputs,
 		Party party,
-		DepthValues const depth,
+		Depth const depth,
 		std::mt19937 random_engine,
 		bool log_foe_teams
 	):

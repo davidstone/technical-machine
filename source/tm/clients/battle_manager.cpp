@@ -160,7 +160,7 @@ struct BattleManagerImpl final : BattleManager {
 		AnalysisLogger analysis_logger,
 		UsageStats const & usage_stats,
 		Evaluate<generation_> evaluate,
-		DepthValues const depth,
+		Depth const depth,
 		std::mt19937 random_engine,
 		Teams<generation_> teams,
 		bool log_foe_teams
@@ -328,15 +328,21 @@ struct BattleManagerImpl final : BattleManager {
 		auto predicted = most_likely_team(m_usage_stats, m_random_engine, m_battle.foe());
 		m_analysis_logger.get() << "Predicted " << to_string(predicted) << '\n' << std::flush;
 
-		return expectiminimax(
+		m_analysis_logger.get() << "Evaluating to a depth of " << m_depth.general << ", " << m_depth.single << "...\n";
+		auto const start = std::chrono::steady_clock::now();
+		auto best_move = expectiminimax(
 			Team<generation_>(m_battle.ai()),
 			predicted,
 			m_battle.weather(),
 			m_evaluate,
-			Depth(m_depth, 1_bi),
-			m_analysis_logger.get(),
+			m_depth,
 			m_random_engine
-		).name;
+		);
+		auto const finish = std::chrono::steady_clock::now();
+		m_analysis_logger.get() << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
+		log_move_score(best_move);
+		m_analysis_logger.get() << std::flush;
+		return best_move.name;
 	}
 
 	auto complete(Result const result) & -> void final {
@@ -394,6 +400,15 @@ private:
 		});
 	}
 
+	auto log_move_scores(BestMove const move) & -> void {
+		if (is_switch(move.name)) {
+			m_analysis_logger.get() << "Switch to " << to_string(m_battle.ai().pokemon(to_replacement(move.name)).species());
+		} else {
+			m_analysis_logger.get() << "Use " << to_string(move.name);
+		}
+		m_analysis_logger.get() << " for an expected score of " << static_cast<std::int64_t>(move.score) << '\n';
+	}
+
 	UsageStats const & m_usage_stats;
 
 	AnalysisLogger m_analysis_logger;
@@ -401,7 +416,7 @@ private:
 
 	Evaluate<generation_> m_evaluate;
 	Battle<generation_> m_battle;
-	DepthValues m_depth;
+	Depth m_depth;
 
 	bool m_log_foe_teams;
 	bool m_completed = false;
@@ -414,7 +429,7 @@ auto make_battle_manager(
 	AnalysisLogger analysis_logger,
 	UsageStats const & usage_stats,
 	GenerationGeneric<BattleManagerInputs> generic_inputs,
-	DepthValues const depth,
+	Depth const depth,
 	std::mt19937 random_engine,
 	bool const log_foe_teams
 ) -> std::unique_ptr<BattleManager> {

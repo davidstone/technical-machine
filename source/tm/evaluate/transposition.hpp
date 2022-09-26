@@ -24,7 +24,7 @@ namespace technicalmachine {
 
 template<Generation generation>
 struct TranspositionTable {
-	auto add_score(Team<generation> const & ai, Team<generation> const & foe, Weather weather, DepthValues const depth, BestMove best_move) -> void {
+	auto add_score(Team<generation> const & ai, Team<generation> const & foe, Weather weather, Depth const depth, BestMove best_move) -> void {
 		auto const compressed_battle = compress_battle(ai, foe, weather);
 		auto & value = m_data[index(compressed_battle)];
 		value.compressed_battle = compressed_battle;
@@ -33,7 +33,7 @@ struct TranspositionTable {
 		value.score = best_move.score;
 	}
 
-	auto get_score(Team<generation> const & ai, Team<generation> const & foe, Weather weather, DepthValues const depth) const -> bounded::optional<BestMove> {
+	auto get_score(Team<generation> const & ai, Team<generation> const & foe, Weather weather, Depth const depth) const -> bounded::optional<BestMove> {
 		auto const compressed_battle = compress_battle(ai, foe, weather);
 		auto const & value = m_data[index(compressed_battle)];
 		if (value.depth >= depth and value.compressed_battle == compressed_battle) {
@@ -45,7 +45,7 @@ struct TranspositionTable {
 private:
 	struct Value {
 		CompressedBattle<generation> compressed_battle = {};
-		DepthValues depth = {};
+		Depth depth = Depth(0_bi, 0_bi);
 		MoveName move = {};
 		double score = 0.0;
 	};

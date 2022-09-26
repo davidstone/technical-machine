@@ -43,7 +43,7 @@ struct Battles {
 		containers::string id,
 		containers::string username,
 		AllEvaluate evaluate,
-		DepthValues depth,
+		Depth depth,
 		std::mt19937 random_engine
 	) -> void {
 		containers::lazy_push_back(

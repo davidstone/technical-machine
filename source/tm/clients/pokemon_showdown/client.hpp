@@ -34,7 +34,7 @@ struct ClientImpl {
 		AuthenticationSignature,
 		sizeof(void *)
 	>;
-	ClientImpl(SettingsFile, DepthValues, SendMessageFunction, AuthenticationFunction);
+	ClientImpl(SettingsFile, Depth, SendMessageFunction, AuthenticationFunction);
 	void run(DelimitedBufferView<std::string_view> messages);
 
 private:
@@ -57,7 +57,7 @@ private:
 
 	SettingsFile m_settings;
 
-	DepthValues m_depth;
+	Depth m_depth;
 
 	Battles m_battles;
 
@@ -66,7 +66,7 @@ private:
 };
 
 struct Client {
-	Client(SettingsFile settings, DepthValues);
+	Client(SettingsFile settings, Depth);
 	[[noreturn]] void run();
 
 private:

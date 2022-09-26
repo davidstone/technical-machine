@@ -34,7 +34,7 @@ auto make_battle_factory(
 	containers::string id,
 	containers::string username,
 	AllEvaluate evaluate,
-	DepthValues depth,
+	Depth depth,
 	std::mt19937 random_engine
 ) -> std::unique_ptr<BattleFactory>;
 

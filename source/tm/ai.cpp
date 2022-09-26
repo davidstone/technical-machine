@@ -58,7 +58,7 @@ int main(int argc, char * * argv) {
 
 	auto const general_depth = (argc <= 1) ? 2_bi : bounded::to_integer<DepthInt>(argv[1]);
 	auto const single_depth = (argc <= 2) ? 0_bi : bounded::to_integer<DepthInt>(argv[2]);
-	auto const depth = DepthValues{general_depth, single_depth};
+	auto const depth = Depth(general_depth, single_depth);
 
 	auto const settings = load_settings_file(get_settings_directory() / "settings.json");
 

@@ -91,7 +91,7 @@ auto make_battle_manager(
 	AnalysisLogger analysis_logger,
 	UsageStats const & usage_stats,
 	GenerationGeneric<BattleManagerInputs> inputs,
-	DepthValues const depth,
+	Depth const depth,
 	std::mt19937 random_engine,
 	bool log_foe_teams
 ) -> std::unique_ptr<BattleManager>;

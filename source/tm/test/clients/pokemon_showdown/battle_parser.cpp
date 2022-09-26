@@ -7,6 +7,8 @@
 
 #include <tm/team_predictor/usage_stats.hpp>
 
+#include <bounded/overload.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
@@ -184,7 +186,7 @@ auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::Batt
 			get_evaluate(),
 		}),
 		Party(0_bi),
-		DepthValues{0_bi, 0_bi},
+		Depth(1_bi, 0_bi),
 		std::mt19937(random_device()),
 		log_foe_teams
 	);
