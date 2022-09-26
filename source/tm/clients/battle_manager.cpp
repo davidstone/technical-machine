@@ -8,6 +8,7 @@
 #include <tm/clients/log_foe_team.hpp>
 
 #include <tm/evaluate/expectiminimax.hpp>
+#include <tm/evaluate/random_selection.hpp>
 
 #include <tm/string_conversions/move_name.hpp>
 #include <tm/string_conversions/team.hpp>
@@ -330,14 +331,21 @@ struct BattleManagerImpl final : BattleManager {
 
 		m_analysis_logger.get() << "Evaluating to a depth of " << m_depth.general << ", " << m_depth.single << "...\n";
 		auto const start = std::chrono::steady_clock::now();
-		auto best_move = expectiminimax(
-			Team<generation_>(m_battle.ai()),
-			predicted,
-			m_battle.weather(),
-			m_evaluate,
-			m_depth,
-			m_random_engine
-		);
+		auto const best_move = m_depth.general > 0_bi ?
+			expectiminimax(
+				Team<generation_>(m_battle.ai()),
+				predicted,
+				m_battle.weather(),
+				m_evaluate,
+				m_depth
+			) :
+			random_selection(
+				Team<generation_>(m_battle.ai()),
+				predicted,
+				m_battle.weather(),
+				m_evaluate,
+				m_random_engine
+			);
 		auto const finish = std::chrono::steady_clock::now();
 		m_analysis_logger.get() << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
 		log_move_score(best_move);

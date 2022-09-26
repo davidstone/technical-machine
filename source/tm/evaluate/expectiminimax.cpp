@@ -45,7 +45,6 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
-#include <random>
 
 namespace technicalmachine {
 namespace {
@@ -501,29 +500,15 @@ private:
 	TranspositionTable<generation> m_transposition_table;
 };
 
-template<Generation generation>
-constexpr auto random_selection(Team<generation> const & user, Team<generation> const & other, Weather const weather, std::mt19937 & random_engine) -> BestMove {
-	auto const possible = legal_selections(user, other, weather);
-	BOUNDED_ASSERT(!containers::is_empty(possible));
-	auto distribution = std::uniform_int_distribution(0, static_cast<int>(containers::size(possible) - 1_bi));
-	auto const index = bounded::assume_in_range<containers::index_type<LegalSelections>>(distribution(random_engine));
-	return BestMove{
-		possible[index],
-		0.0
-	};
-}
-
 } // namespace
 
 template<Generation generation>
-auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::mt19937 & random_engine) -> BestMove {
+auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth) -> BestMove {
 	if (team_is_empty(ai) or team_is_empty(foe)) {
 		throw std::runtime_error("Tried to evaluate a position with an empty team");
 	}
 	auto evaluator = Evaluator<generation>(evaluate);
-	auto const best_move = depth.general > 0_bi ?
-		evaluator->select_type_of_move(ai, foe, weather, depth) :
-		random_selection(ai, foe, weather, random_engine);
+	auto const best_move = evaluator.select_type_of_move(ai, foe, weather, depth);
 	if (best_move.name == MoveName::Pass) {
 		throw std::runtime_error("Should never evaluate a position in which it is legal to use Pass.");
 	}
@@ -531,7 +516,7 @@ auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, W
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, std::mt19937 & random_engine) -> BestMove
+	template auto expectiminimax(Team<generation> const & ai, Team<generation> const & foe, Weather const weather, Evaluate<generation> const evaluate, Depth const depth) -> BestMove
 
 TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
