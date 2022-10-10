@@ -129,7 +129,7 @@ private:
 struct AllEvaluate {
 	template<Generation generation>
 	auto get() const {
-		return m_data[bounded::types<Evaluate<generation>>()];
+		return m_data[bounded::type_t<Evaluate<generation>>()];
 	}
 
 private:

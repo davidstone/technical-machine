@@ -42,7 +42,7 @@ auto LastUsedMove::direct_damage(HP::current_type const damage) & -> void {
 }
 
 auto LastUsedMove::is_charging_up() const -> bool {
-	return m_effects.index() == bounded::types<ChargingUp>();
+	return m_effects.index() == bounded::type<ChargingUp>;
 }
 
 auto LastUsedMove::use_charge_up_move() & -> void {
@@ -51,7 +51,7 @@ auto LastUsedMove::use_charge_up_move() & -> void {
 }
 
 auto LastUsedMove::is_locked_in_by_move() const -> bool {
-	return m_effects.index() != bounded::types<Empty>();
+	return m_effects.index() != bounded::type<Empty>;
 }
 
 auto LastUsedMove::advance_lock_in(bool const ending) & -> bool {
@@ -80,7 +80,7 @@ auto LastUsedMove::advance_lock_in(bool const ending) & -> bool {
 }
 
 auto LastUsedMove::is_protecting() const -> bool {
-	return m_effects.index() == bounded::types<Protecting>();
+	return m_effects.index() == bounded::type<Protecting>;
 }
 
 auto LastUsedMove::protect() & -> void {
@@ -115,7 +115,7 @@ auto LastUsedMove::use_recharge_move() & -> void {
 }
 
 auto LastUsedMove::is_uproaring() const -> bool {
-	return m_effects.index() == bounded::types<UproarCounter>();
+	return m_effects.index() == bounded::type<UproarCounter>;
 }
 
 auto LastUsedMove::use_uproar() & -> void {
@@ -135,7 +135,7 @@ auto LastUsedMove::vanish_doubles_power(Generation const generation, MoveName co
 	if (generation <= Generation::one) {
 		return false;
 	}
-	if (m_effects.index() != bounded::types<Vanishing>()) {
+	if (m_effects.index() != bounded::type<Vanishing>) {
 		return false;
 	}
 	switch (move_name) {

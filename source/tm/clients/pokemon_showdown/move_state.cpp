@@ -171,7 +171,7 @@ auto MoveState::status_from_ability(Party const party, Ability const ability, St
 }
 
 auto MoveState::complete() -> bounded::optional<CompleteResult> {
-	auto const is_initial = m_move.index() == bounded::types<InitialMoveResult>();
+	auto const is_initial = m_move.index() == bounded::type<InitialMoveResult>;
 	if (is_initial and m_status_change != StatusChange::still_asleep) {
 		*this = {};
 		return bounded::none;

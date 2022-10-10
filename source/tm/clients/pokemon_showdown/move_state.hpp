@@ -52,7 +52,7 @@ struct MoveState {
 		return m_party;
 	}
 	auto executed_move() const -> bounded::optional<MoveName> {
-		constexpr auto type = bounded::types<Used>();
+		constexpr auto type = bounded::type<Used>;
 		return BOUNDED_CONDITIONAL(m_move.index() == type, m_move[type].executed, bounded::none);
 	}
 
@@ -152,7 +152,7 @@ struct MoveState {
 		m_status_change = StatusChange::still_asleep;
 	}
 	auto switch_index() const -> bounded::optional<TeamIndex> {
-		constexpr auto type = bounded::types<Used>();
+		constexpr auto type = bounded::type<Used>;
 		if (m_move.index() != type) {
 			return bounded::none;
 		}
@@ -181,17 +181,17 @@ private:
 		}
 	}
 	auto check_is_used() const -> void {
-		if (m_move.index() != bounded::types<Used>()) {
+		if (m_move.index() != bounded::type<Used>) {
 			throw error();
 		}
 	}
 	auto validated() const & -> Used const & {
 		check_is_used();
-		return m_move[bounded::types<Used>()];
+		return m_move[bounded::type<Used>];
 	}
 	auto validated() & -> Used & {
 		check_is_used();
-		return m_move[bounded::types<Used>()];
+		return m_move[bounded::type<Used>];
 	}
 	auto validated(Party const party) & -> Used & {
 		check_party(party);
@@ -214,7 +214,7 @@ private:
 	}
 
 	auto set_move_state(Party const party, auto state) & -> void {
-		if (m_party or m_move.index() != bounded::types<InitialMoveResult>()) {
+		if (m_party or m_move.index() != bounded::type<InitialMoveResult>) {
 			throw error();
 		}
 		insert(m_party, party);

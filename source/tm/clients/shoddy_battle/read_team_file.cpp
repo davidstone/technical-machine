@@ -345,12 +345,12 @@ private:
 							}
 						} else if constexpr (std::is_same_v<State, AnyVector>) {
 							auto parse_moves = [](ParsedData const & inner_parsed) {
-								return from_string<MoveName>(inner_parsed.state[bounded::types<std::string_view>()]);
+								return from_string<MoveName>(inner_parsed.state[bounded::type<std::string_view>]);
 							};
 							auto filter_moves = [](ParsedData const & inner_parsed) {
-								if (inner_parsed.state.index() == bounded::types<std::string_view>()) {
+								if (inner_parsed.state.index() == bounded::type<std::string_view>) {
 									return true;
-								} else if (inner_parsed.state.index() == bounded::types<std::monostate>()) {
+								} else if (inner_parsed.state.index() == bounded::type<std::monostate>) {
 									return false;
 								} else {
 									throw std::runtime_error(containers::concatenate<std::string>("Bad array type "sv, to_string(inner_parsed.state.index().integer())));
@@ -558,13 +558,13 @@ auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneri
 		// String or Null
 		[[maybe_unused]] auto const uuid = parser.parse_any();
 		auto const parsed_all_pokemon = parser.parse_any();
-		constexpr auto array_index = bounded::types<AnyVector>();
+		constexpr auto array_index = bounded::type<AnyVector>;
 		if (parsed_all_pokemon.state.index() != array_index) {
 			throw std::runtime_error("Expected team to be an array");
 		}
 		auto const & all_pokemon = parsed_all_pokemon.state[array_index];
 		auto transformed = containers::transform(all_pokemon, [](ParsedData const & pokemon) {
-			constexpr auto pokemon_index = bounded::types<KnownPokemon<generation>>();
+			constexpr auto pokemon_index = bounded::type_t<KnownPokemon<generation>>();
 			if (pokemon.state.index() != pokemon_index) {
 				throw std::runtime_error("Expected team to be an array of Pokemon");
 			}

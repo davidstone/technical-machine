@@ -57,7 +57,7 @@ constexpr auto calculate_ivs_and_evs(
 	auto compute_ev = [=](SplitSpecialRegularStat const stat_name, Nature const nature, auto const dv_or_iv) {
 		return stat_to_ev<generation>(stats[stat_name], stat_name, base[stat_name], level, nature, IV(dv_or_iv));
 	};
-	auto const dv_or_iv_ev_range = [=]<typename DVOrIV>(auto const possible, bounded::types<DVOrIV>, auto const to_ev) {
+	auto const dv_or_iv_ev_range = [=]<typename DVOrIV>(auto const possible, bounded::type_t<DVOrIV>, auto const to_ev) {
 		struct WithOptionalEV {
 			DVOrIV dv_or_iv;
 			bounded::optional<EV> ev;
@@ -86,7 +86,7 @@ constexpr auto calculate_ivs_and_evs(
 		auto const dv_ev_range = [=](SplitSpecialRegularStat const stat_name) {
 			return dv_or_iv_ev_range(
 				dvs_or_ivs[stat_name],
-				bounded::types<DV>(),
+				bounded::type<DV>,
 				[=](DV const dv) { return compute_ev(stat_name, nature, dv); }
 			);
 		};
@@ -141,7 +141,7 @@ constexpr auto calculate_ivs_and_evs(
 		};
 		auto const hp_range = dv_or_iv_ev_range(
 			dvs_or_ivs.hp(),
-			bounded::types<IV>(),
+			bounded::type<IV>,
 			[=](IV const iv) { return hp_to_ev(stats.hp().max(), base.hp(), level, iv); }
 		);
 		for (auto const hp : hp_range) {
@@ -149,7 +149,7 @@ constexpr auto calculate_ivs_and_evs(
 				auto const iv_ev_range = [=](SplitSpecialRegularStat const stat_name) {
 					return dv_or_iv_ev_range(
 						dvs_or_ivs[stat_name],
-						bounded::types<IV>(),
+						bounded::type<IV>,
 						[=](IV const iv) { return compute_ev(stat_name, nature, iv); }
 					);
 				};
