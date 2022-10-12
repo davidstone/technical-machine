@@ -40,7 +40,7 @@ using namespace bounded::literal;
 namespace {
 
 template<any_team UserTeam>
-constexpr auto guaranteed_effect(auto function) {
+constexpr auto guaranteed_effect(typename SideEffect<UserTeam>::Function function) {
 	return SideEffects<UserTeam>({
 		SideEffect<UserTeam>{
 			1.0,
