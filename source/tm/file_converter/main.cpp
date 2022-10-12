@@ -50,7 +50,7 @@ constexpr auto parse_output_type(std::string_view const str) -> OutputType {
 }
 
 struct AsStringPrinted {
-	auto operator()(any_known_team auto const & team, std::filesystem::path const &) const -> void {
+	static auto operator()(any_known_team auto const & team, std::filesystem::path const &) -> void {
 		std::cout << to_string(team) << '\n';
 	}
 };

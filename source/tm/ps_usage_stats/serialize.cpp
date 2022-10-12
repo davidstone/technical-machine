@@ -35,10 +35,10 @@ constexpr auto write_bytes(std::ostream & stream, T const & value, auto const ex
 
 template<typename Key>
 struct HasUsage {
-	constexpr auto operator()(containers::map_value_type<Key, double> const & x) const {
+	static constexpr auto operator()(containers::map_value_type<Key, double> const & x) {
 		return x.mapped != 0.0;
 	}
-	constexpr auto operator()(containers::map_value_type<Key, Correlations::PerTeammate> const & x) const {
+	static constexpr auto operator()(containers::map_value_type<Key, Correlations::PerTeammate> const & x) {
 		return x.mapped.usage != 0.0;
 	}
 };
