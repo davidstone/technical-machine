@@ -82,7 +82,7 @@ struct Battle {
 	}
 	template<any_team UserTeam>
 	void handle_use_move(UsedMove<UserTeam> const move, bool const clear_status, FlaggedActualDamage const damage) {
-		constexpr auto is_ai = std::is_same_v<UserTeam, KnownTeam<generation_from<UserTeam>>>;
+		constexpr auto is_ai = std::same_as<UserTeam, KnownTeam<generation_from<UserTeam>>>;
 
 		auto const teams = [&] {
 			struct Teams {

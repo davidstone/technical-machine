@@ -19,7 +19,7 @@ constexpr auto calculate_max(bounded::optional<base_type> const base, PP::pp_ups
 		return bounded::none;
 	}
 	auto const result = *base * (pp_ups + 5_bi) / 5_bi;
-	static_assert(std::is_same_v<decltype(result), PP::max_type const>);
+	static_assert(std::same_as<decltype(result), PP::max_type const>);
 	return result;
 }
 

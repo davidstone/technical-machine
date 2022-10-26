@@ -24,7 +24,7 @@ struct split_offsets {
 	{
 	}
 
-	template<typename View, typename Delimiter> requires std::is_same_v<containers::range_value_t<View>, containers::range_value_t<Delimiter>>
+	template<typename View, typename Delimiter> requires std::same_as<containers::range_value_t<View>, containers::range_value_t<Delimiter>>
 	constexpr split_offsets(View const buffer, Delimiter const delimiter):
 		first(static_cast<std::size_t>(std::search(buffer.begin(), buffer.end(), delimiter.begin(), delimiter.end()) - buffer.begin())),
 		discard(delimiter.size())

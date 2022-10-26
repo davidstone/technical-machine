@@ -269,7 +269,7 @@ private:
 		auto const description = parse_class_description();
 		auto const size = m_byte_parser.pop_integer(4_bi);
 		auto const code = bounded::visit(description.state, []<typename T>(T const & value) -> char {
-			if constexpr (std::is_same_v<T, ClassDescription>) {
+			if constexpr (std::same_as<T, ClassDescription>) {
 				return containers::at(value.name, 1_bi);
 			} else {
 				throw std::runtime_error("Expected class description");
@@ -316,7 +316,7 @@ private:
 				case Field::Type::object: {
 					auto const parsed = parse_any();
 					bounded::visit(parsed.state, [&]<typename State>(State const & state) {
-						if constexpr (std::is_same_v<State, std::string_view>) {
+						if constexpr (std::same_as<State, std::string_view>) {
 							if (field.name == "m_name") {
 								emplace_once(species, from_string<Species>(state));
 							} else if (field.name == "m_abilityName") {
@@ -328,7 +328,7 @@ private:
 							} else {
 								throw std::runtime_error(containers::concatenate<std::string>("Found unexpected field name for string data: "sv, field.name));
 							}
-						} else if constexpr (std::is_same_v<State, IntegerVector>) {
+						} else if constexpr (std::same_as<State, IntegerVector>) {
 							if (field.name == "m_iv") {
 								add_stat(ivs, state);
 							} else if (field.name == "m_ev") {
@@ -343,7 +343,7 @@ private:
 							} else {
 								throw std::runtime_error(containers::concatenate<std::string>("Unknown array type"sv, field.name));
 							}
-						} else if constexpr (std::is_same_v<State, AnyVector>) {
+						} else if constexpr (std::same_as<State, AnyVector>) {
 							auto parse_moves = [](ParsedData const & inner_parsed) {
 								return from_string<MoveName>(inner_parsed.state[bounded::type<std::string_view>]);
 							};
@@ -357,13 +357,13 @@ private:
 								}
 							};
 							emplace_once(moves, containers::transform(containers::filter(state, filter_moves), parse_moves));
-						} else if constexpr (std::is_same_v<State, Nature>) {
+						} else if constexpr (std::same_as<State, Nature>) {
 							if (field.name == "m_nature") {
 								emplace_once(nature, state);
 							} else {
 								throw std::runtime_error("Found a Nature in the wrong place");
 							}
-						} else if constexpr (std::is_same_v<State, std::monostate>) {
+						} else if constexpr (std::same_as<State, std::monostate>) {
 
 						} else {
 							throw std::runtime_error("Unhandled type");
@@ -477,7 +477,7 @@ private:
 		}));
 		m_byte_parser.ignore(1_bi);
 		auto base_class_fields = bounded::visit(parse_class_description().state, []<typename T>(T base) {
-			if constexpr (std::is_same_v<T, ClassDescription>) {
+			if constexpr (std::same_as<T, ClassDescription>) {
 				return std::move(base).fields;
 			} else {
 				return containers::vector<Field>();
@@ -518,7 +518,7 @@ private:
 
 	auto parse_object() & -> ParsedData {
 		auto const description = bounded::visit(parse_class_description().state, []<typename T>(T const & value) -> ClassDescription {
-			if constexpr (std::is_same_v<T, ClassDescription>) {
+			if constexpr (std::same_as<T, ClassDescription>) {
 				return value;
 			} else {
 				throw std::runtime_error("Expected class description");

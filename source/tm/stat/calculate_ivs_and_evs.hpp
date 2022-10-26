@@ -62,7 +62,7 @@ constexpr auto calculate_ivs_and_evs(
 			DVOrIV dv_or_iv;
 			bounded::optional<EV> ev;
 		};
-		using WithEV = std::conditional_t<std::is_same_v<DVOrIV, DV>, DVAndEV, IVAndEV>;
+		using WithEV = std::conditional_t<std::same_as<DVOrIV, DV>, DVAndEV, IVAndEV>;
 		return containers::make_static_vector(
 			containers::transform(
 				containers::filter(

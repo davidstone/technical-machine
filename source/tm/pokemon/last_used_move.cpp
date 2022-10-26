@@ -14,7 +14,7 @@ namespace technicalmachine {
 auto LastUsedMove::reset_start_of_turn() & -> void {
 	m_moved_this_turn = false;
 	bounded::visit(m_effects, [&]<typename T>(T) {
-		if constexpr (std::is_same_v<T, Protecting>) {
+		if constexpr (std::same_as<T, Protecting>) {
 			m_effects = Empty();
 		}
 	});

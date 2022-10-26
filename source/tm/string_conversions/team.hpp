@@ -23,9 +23,9 @@ using namespace std::string_view_literals;
 template<any_team TeamType>
 auto to_string(TeamType const & team, bool const include_owner = true) -> containers::string {
 	auto output_owner = [&] {
-		if constexpr (std::is_same_v<TeamType, KnownTeam<generation_from<TeamType>>>) {
+		if constexpr (std::same_as<TeamType, KnownTeam<generation_from<TeamType>>>) {
 			return "AI's "sv;
-		} else if constexpr (std::is_same_v<TeamType, SeenTeam<generation_from<TeamType>>>) {
+		} else if constexpr (std::same_as<TeamType, SeenTeam<generation_from<TeamType>>>) {
 			return "Foe's "sv;
 		} else {
 			return containers::concatenate<containers::string>(team.who(), "'s "sv);

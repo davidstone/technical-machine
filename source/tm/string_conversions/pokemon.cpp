@@ -189,7 +189,7 @@ namespace {
 template<typename T>
 constexpr auto typed_pop(BufferView<std::string_view> & buffer, std::string_view const delimiter) {
 	auto const str = pop_to_delimiter(buffer, delimiter);
-	if constexpr (std::is_same_v<T, double>) {
+	if constexpr (std::same_as<T, double>) {
 		// TODO: Use std::from_chars when that is implemented
 		return std::stod(std::string(str));
 	} else if constexpr (bounded::bounded_integer<T>) {

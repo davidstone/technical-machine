@@ -18,7 +18,7 @@ constexpr auto compress_battle(TeamType const & ai, TeamType const & foe, Weathe
 	auto const compressed_foe = compress(foe);
 	if constexpr (generation_from<TeamType> == Generation::one) {
 		static_assert(bounded::tuple_size<decltype(compressed_ai)> == 3_bi);
-		static_assert(std::is_same_v<decltype(compressed_ai), decltype(compressed_foe)>);
+		static_assert(std::same_as<decltype(compressed_ai), decltype(compressed_foe)>);
 		return bounded::tuple(
 			compressed_ai[0_bi],
 			compressed_ai[1_bi],
@@ -32,7 +32,7 @@ constexpr auto compress_battle(TeamType const & ai, TeamType const & foe, Weathe
 		);
 	} else {
 		static_assert(bounded::tuple_size<decltype(compressed_ai)> == 4_bi);
-		static_assert(std::is_same_v<decltype(compressed_ai), decltype(compressed_foe)>);
+		static_assert(std::same_as<decltype(compressed_ai), decltype(compressed_foe)>);
 		return bounded::tuple(
 			compressed_ai[0_bi],
 			compressed_ai[1_bi],
