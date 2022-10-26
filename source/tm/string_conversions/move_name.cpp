@@ -1093,6 +1093,7 @@ auto from_string(std::string_view const str) -> MoveName {
 			{"frenzyplant", MoveName::Frenzy_Plant},
 			{"frostbreath", MoveName::Frost_Breath},
 			{"frustration", MoveName::Frustration},
+			{"frustrationnull", MoveName::Frustration}, // Pokemon Showdown
 			{"furyattack", MoveName::Fury_Attack},
 			{"furycutter", MoveName::Fury_Cutter},
 			{"furyswipes", MoveName::Fury_Swipes},
