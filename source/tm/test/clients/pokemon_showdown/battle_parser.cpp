@@ -9,6 +9,8 @@
 
 #include <bounded/overload.hpp>
 
+#include <containers/string.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
 namespace technicalmachine {
@@ -16,9 +18,45 @@ namespace {
 
 using namespace std::string_view_literals;
 
-constexpr auto generation = Generation::three;
+auto get_usage_stats(Generation const generation) -> UsageStats const & {
+	[[clang::no_destroy]] static auto const result = stats_for_generation(generation);
+	return result;
+}
+
+constexpr auto log_foe_teams = false;
+
+constexpr auto battle_id = "battle-id"sv;
+
+template<Generation generation>
+auto get_evaluate() -> Evaluate<generation> {
+	static auto const result = Evaluate<generation>();
+	return result;
+}
+
+template<Generation generation>
+auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::BattleParser {
+	auto random_device = std::random_device();
+	return ps::BattleParser(
+		AnalysisLogger(AnalysisLogger::none()),
+		battle_id,
+		"Technical Machine",
+		get_usage_stats(generation),
+		GenerationGeneric<BattleManagerInputs>(BattleManagerInputs<generation>{
+			Teams<generation>{
+				std::move(ai),
+				std::move(foe)
+			},
+			get_evaluate<generation>(),
+		}),
+		Party(0_bi),
+		Depth(1_bi, 0_bi),
+		std::mt19937(random_device()),
+		log_foe_teams
+	);
+}
 
 auto make_seen_trap_team() {
+	constexpr auto generation = Generation::three;
 	auto team = SeenTeam<generation>(1_bi);
 	auto & pokemon = team.add_pokemon(SeenPokemon<generation>(
 		Species::Dugtrio,
@@ -31,6 +69,7 @@ auto make_seen_trap_team() {
 }
 
 auto make_seen_spikes_team() {
+	constexpr auto generation = Generation::three;
 	auto team = SeenTeam<generation>(1_bi);
 	auto & pokemon = team.add_pokemon(SeenPokemon<generation>(
 		Species::Smeargle,
@@ -42,20 +81,8 @@ auto make_seen_spikes_team() {
 	return team;
 }
 
-auto get_usage_stats() -> UsageStats const & {
-	[[clang::no_destroy]] static auto const result = stats_for_generation(generation);
-	return result;
-}
-
-constexpr auto log_foe_teams = false;
-constexpr auto id = "battle-gen3ou-1"sv;
-
-auto get_evaluate() -> Evaluate<generation> {
-	static auto const result = Evaluate<generation>();
-	return result;
-}
-
 auto make_known_one_pokemon_team() {
+	constexpr auto generation = Generation::three;
 	return KnownTeam<generation>({
 		KnownPokemon<generation>(
 			Species::Smeargle,
@@ -73,6 +100,7 @@ auto make_known_one_pokemon_team() {
 }
 
 auto make_known_two_pokemon_team() {
+	constexpr auto generation = Generation::three;
 	return KnownTeam<generation>({
 		KnownPokemon<generation>(
 			Species::Smeargle,
@@ -102,6 +130,7 @@ auto make_known_two_pokemon_team() {
 }
 
 auto make_known_two_pokemon_baton_pass_team() {
+	constexpr auto generation = Generation::three;
 	return KnownTeam<generation>({
 		KnownPokemon<generation>(
 			Species::Smeargle,
@@ -131,6 +160,7 @@ auto make_known_two_pokemon_baton_pass_team() {
 }
 
 auto make_known_three_pokemon_team() {
+	constexpr auto generation = Generation::three;
 	return KnownTeam<generation>({
 		KnownPokemon<generation>(
 			Species::Smeargle,
@@ -171,27 +201,6 @@ auto make_known_three_pokemon_team() {
 	});
 }
 
-auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::BattleParser {
-	auto random_device = std::random_device();
-	return ps::BattleParser(
-		AnalysisLogger(AnalysisLogger::none()),
-		containers::string(id),
-		"Technical Machine",
-		get_usage_stats(),
-		GenerationGeneric<BattleManagerInputs>(BattleManagerInputs<generation>{
-			Teams<generation>{
-				std::move(ai),
-				std::move(foe)
-			},
-			get_evaluate(),
-		}),
-		Party(0_bi),
-		Depth(1_bi, 0_bi),
-		std::mt19937(random_device()),
-		log_foe_teams
-	);
-}
-
 struct NoResponse{};
 struct AnyResponse{};
 using Response = bounded::variant<NoResponse, AnyResponse, containers::string>;
@@ -203,7 +212,7 @@ struct MessageResponse {
 constexpr auto make_message_response(std::string_view const message, std::string_view const response) {
 	return MessageResponse{
 		message,
-		Response(containers::concatenate<containers::string>(id, "|"sv, response))
+		Response(containers::concatenate<containers::string>(battle_id, "|"sv, response))
 	};
 }
 constexpr auto make_message_response(std::string_view const message, AnyResponse) {
@@ -223,7 +232,7 @@ constexpr auto check_values(ps::BattleParser & parser, auto const & values) {
 	for (auto const value : values) {
 		CHECK(parser.completed() == ps::BattleInterface::Complete::none);
 		INFO(value.message);
-		auto const response = parser.handle_message(ps::InMessage(id, value.message));
+		auto const response = parser.handle_message(ps::InMessage(parser.id(), value.message));
 		if (response) {
 			UNSCOPED_INFO("*response: " << *response);
 		}
@@ -244,7 +253,7 @@ TEST_CASE("BattleParser has right ID", "[Pokemon Showdown]") {
 		make_seen_trap_team()
 	);
 
-	CHECK(parser.id() == id);
+	CHECK(parser.id() == battle_id);
 }
 
 TEST_CASE("BattleParser Baton Pass no other Pokemon", "[Pokemon Showdown]") {
