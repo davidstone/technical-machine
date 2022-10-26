@@ -185,7 +185,7 @@ auto other_effects(TeamType & team, OtherMutableActivePokemon<TeamType> const fo
 }
 
 template<any_team TeamType> requires(generation_from<TeamType> == Generation::two)
-void generation_2_end_of_turn(TeamType & first_team, OtherTeam<TeamType> & last_team, Weather & weather) {
+void generation_2_end_of_turn(TeamType & first_team, EndOfTurnFlags const first_flags, OtherTeam<TeamType> & last_team, EndOfTurnFlags const last_flags, Weather & weather) {
 	auto const first = first_team.pokemon();
 	auto const last = last_team.pokemon();
 
@@ -213,7 +213,12 @@ void generation_2_end_of_turn(TeamType & first_team, OtherTeam<TeamType> & last_
 	apply_leftovers(first);
 	apply_leftovers(last);
 
-	// TODO: Defrost
+	if (first_flags.thaws) {
+		first_team.pokemon().clear_status();
+	}
+	if (last_flags.thaws) {
+		last_team.pokemon().clear_status();
+	}
 
 	first_team.decrement_screens();
 	last_team.decrement_screens();
@@ -253,7 +258,7 @@ void end_of_turn(TeamType & first, EndOfTurnFlags const first_flags, OtherTeam<T
 	constexpr auto generation = generation_from<TeamType>;
 	if constexpr (generation == Generation::one) {
 	} else if constexpr (generation == Generation::two) {
-		generation_2_end_of_turn(first, last, weather);
+		generation_2_end_of_turn(first, first_flags, last, last_flags, weather);
 	} else {
 		generation_3_plus_end_of_turn(first, first_flags, last, last_flags, weather);
 	}

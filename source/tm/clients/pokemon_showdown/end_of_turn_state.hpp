@@ -22,7 +22,7 @@ struct EndOfTurnState {
 		struct Individual {
 			bounded::optional<VisibleHP> hp;
 			bounded::optional<StatusName> status;
-			EndOfTurnFlags flags = EndOfTurnFlags(false, false);
+			EndOfTurnFlags flags = EndOfTurnFlags(false, false, false);
 		};
 		bounded::optional<Party> first_party;
 		NormalWeather weather = NormalWeather::clear;
@@ -42,6 +42,10 @@ struct EndOfTurnState {
 	}
 	constexpr auto shed_skin(Party const party) & -> void {
 		individual(party).flags.shed_skin = true;
+		set_expected(party, StatusName::clear);
+	}
+	constexpr auto thaw(Party const party) & -> void {
+		individual(party).flags.thaws = true;
 		set_expected(party, StatusName::clear);
 	}
 

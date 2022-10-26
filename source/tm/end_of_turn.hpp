@@ -20,13 +20,15 @@
 namespace technicalmachine {
 
 struct EndOfTurnFlags {
-	constexpr EndOfTurnFlags(bool const shed_skin_, bool const lock_in_ends_):
+	constexpr EndOfTurnFlags(bool const shed_skin_, bool const lock_in_ends_, bool const thaws_):
 		shed_skin(shed_skin_),
-		lock_in_ends(lock_in_ends_)
+		lock_in_ends(lock_in_ends_),
+		thaws(thaws_)
 	{
 	}
 	bool shed_skin;
 	bool lock_in_ends;
+	bool thaws;
 };
 
 constexpr auto handle_curse(any_mutable_active_pokemon auto const pokemon, Weather const weather) -> void {

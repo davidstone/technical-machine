@@ -14,7 +14,7 @@ using namespace bounded::literal;
 constexpr auto generation = Generation::four;
 constexpr auto damage = FlaggedActualDamage{ActualDamage::Known{0_bi}, false};
 constexpr auto nickname = std::string_view();
-constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false);
+constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false, false);
 
 constexpr auto regular_moves(auto... moves) {
 	return RegularMoves{Move(generation, moves)...};

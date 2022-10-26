@@ -286,7 +286,11 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 		bounded::visit(source, bounded::overload(
 			[&](MainEffect) {
 				if (m_battle_manager->is_end_of_turn()) {
-					m_end_of_turn_state.set_expected(party, StatusName::clear);
+					if (status == StatusName::freeze) {
+						m_end_of_turn_state.thaw(party);
+					} else {
+						m_end_of_turn_state.set_expected(party, StatusName::clear);
+					}
 					return;
 				}
 				auto const move_name = m_move_state.executed_move();

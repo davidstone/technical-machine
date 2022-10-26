@@ -341,14 +341,27 @@ private:
 						// TODO
 						[&](bool) { return true; },
 						[&](bool const team_lock_in_ends, bool const other_lock_in_ends) {
-							return end_of_turn_order_branch(
-								updated_first,
-								updated_last,
-								teams,
-								updated_weather,
-								depth,
-								EndOfTurnFlags{team_shed_skin, team_lock_in_ends},
-								EndOfTurnFlags{other_shed_skin, other_lock_in_ends}
+							auto thaws = [&](bool const is_first) {
+								if constexpr (generation != Generation::two) {
+									return 0.0;
+								} else {
+									auto const pokemon = is_first ? updated_first.pokemon() : updated_last.pokemon();
+									return pokemon.status().name() == StatusName::freeze ? 0.1 : 0.0;
+								}
+							};
+							return generic_flag_branch(
+								thaws,
+								[&](bool const team_thaws, bool const other_thaws) {
+									return end_of_turn_order_branch(
+										updated_first,
+										updated_last,
+										teams,
+										updated_weather,
+										depth,
+										EndOfTurnFlags(team_shed_skin, team_lock_in_ends, team_thaws),
+										EndOfTurnFlags(other_shed_skin, other_lock_in_ends, other_thaws)
+									);
+								}
 							);
 						}
 					);
