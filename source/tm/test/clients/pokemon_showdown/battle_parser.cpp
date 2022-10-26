@@ -231,7 +231,7 @@ constexpr auto check_values(ps::BattleParser & parser, auto const & values) {
 			[&](NoResponse) { CHECK(!response); },
 			[&](AnyResponse) { CHECK(static_cast<bool>(response)); },
 			[&](std::string_view const str) {
-				CHECK(static_cast<bool>(response));
+				REQUIRE(static_cast<bool>(response));
 				CHECK(std::string_view(*response) == str);
 			}
 		));
