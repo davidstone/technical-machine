@@ -381,7 +381,9 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 			is_ai(party) and
 			!m_battle_manager->ai_is_on_last_pokemon() and
 			(!m_battle_manager->is_end_of_turn() or from_entry_hazards);
-		maybe_use_previous_move();
+		if (from_entry_hazards or party != m_move_state.party()) {
+			maybe_use_previous_move();
+		}
 		if (requires_response) {
 			m_replacing_fainted = true;
 			return move_response(m_battle_manager->determine_action());
