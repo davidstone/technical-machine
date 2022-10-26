@@ -453,5 +453,105 @@ TEST_CASE("BattleParser lose", "[Pokemon Showdown]") {
 	CHECK(parser.completed() == ps::BattleInterface::Complete::finish);
 }
 
+TEST_CASE("BattleParser generation 2 thaw", "[Pokemon Showdown]") {
+	constexpr auto generation = Generation::two;
+	auto parser = make_parser(
+		KnownTeam<generation>({
+			KnownPokemon<generation>(
+				Species::Gengar,
+				"Gengar",
+				Level(100_bi),
+				Gender::male,
+				Item::None,
+				Ability::Honey_Gather,
+				default_combined_stats<generation>,
+				RegularMoves({
+					Move(generation, MoveName::Ice_Punch)
+				})
+			)
+		}),
+		[=] {
+			auto team = SeenTeam<generation>(1_bi);
+			team.add_pokemon(SeenPokemon<generation>(
+				Species::Zapdos,
+				"Zapdos",
+				Level(100_bi),
+				Gender::genderless
+			));
+			return team;
+		}()
+	);
+
+	auto const values = containers::array{
+		make_message_response("|turn|1", "/choose move 1"),
+		make_message_response("|"),
+		make_message_response("|t:|1"),
+		make_message_response("|move|p1a: Gengar|Ice Punch|p2a: Zapdos"),
+		make_message_response("|-supereffective|p2a: Zapdos"),
+		make_message_response("|-damage|p2a: Zapdos|57/100"),
+		make_message_response("|-status|p2a: Zapdos|frz"),
+		make_message_response("|cant|p2a: Zapdos|frz"),
+		make_message_response("|"),
+		make_message_response("|-curestatus|p2a: Zapdos|frz|[msg]"),
+		make_message_response("|upkeep|"),
+	};
+	check_values(parser, values);
+	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+}
+
+TEST_CASE("BattleParser generation 2 explosion double faint", "[Pokemon Showdown]") {
+	constexpr auto generation = Generation::two;
+	auto parser = make_parser(
+		KnownTeam<generation>({
+			KnownPokemon<generation>(
+				Species::Jynx,
+				"Jynx",
+				Level(100_bi),
+				Gender::female,
+				Item::None,
+				Ability::Honey_Gather,
+				default_combined_stats<generation>,
+				RegularMoves({
+					Move(generation, MoveName::Ice_Beam)
+				})
+			),
+			KnownPokemon<generation>(
+				Species::Pikachu,
+				"Pikachu",
+				Level(100_bi),
+				Gender::female,
+				Item::None,
+				Ability::Honey_Gather,
+				default_combined_stats<generation>,
+				RegularMoves({
+					Move(generation, MoveName::Thunder)
+				})
+			)
+		}),
+		[=] {
+			auto team = SeenTeam<generation>(2_bi);
+			team.add_pokemon(SeenPokemon<generation>(
+				Species::Gengar,
+				"Gengar",
+				Level(100_bi),
+				Gender::male
+			));
+			return team;
+		}()
+	);
+
+	auto const values = containers::array{
+		make_message_response("|turn|1", AnyResponse()),
+		make_message_response("|"),
+		make_message_response("|t:|1"),
+		make_message_response("|move|p2a: Gengar|Explosion|p1a: Jynx"),
+		make_message_response("|-damage|p1a: Jynx|0 fnt"),
+		make_message_response("|faint|p2a: Gengar"),
+		make_message_response("|faint|p1a: Jynx", "/choose switch 2"),
+	};
+	check_values(parser, values);
+	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+}
+
 } // namespace
 } // namespace technicalmachine
