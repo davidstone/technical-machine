@@ -55,152 +55,6 @@ auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::Batt
 	);
 }
 
-auto make_seen_trap_team() {
-	constexpr auto generation = Generation::three;
-	auto team = SeenTeam<generation>(1_bi);
-	auto & pokemon = team.add_pokemon(SeenPokemon<generation>(
-		Species::Dugtrio,
-		"Dugtrio",
-		Level(100_bi),
-		Gender::male
-	));
-	pokemon.set_initial_ability(Ability::Arena_Trap);
-	return team;
-}
-
-auto make_seen_spikes_team() {
-	constexpr auto generation = Generation::three;
-	auto team = SeenTeam<generation>(1_bi);
-	auto & pokemon = team.add_pokemon(SeenPokemon<generation>(
-		Species::Smeargle,
-		"Smeargle",
-		Level(100_bi),
-		Gender::male
-	));
-	pokemon.set_initial_ability(Ability::Own_Tempo);
-	return team;
-}
-
-auto make_known_one_pokemon_team() {
-	constexpr auto generation = Generation::three;
-	return KnownTeam<generation>({
-		KnownPokemon<generation>(
-			Species::Smeargle,
-			"Smeargle",
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Own_Tempo,
-			default_combined_stats<generation>,
-			RegularMoves({
-				Move(generation, MoveName::Baton_Pass)
-			})
-		)
-	});
-}
-
-auto make_known_two_pokemon_team() {
-	constexpr auto generation = Generation::three;
-	return KnownTeam<generation>({
-		KnownPokemon<generation>(
-			Species::Smeargle,
-			"Smeargle",
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Own_Tempo,
-			default_combined_stats<generation>,
-			RegularMoves({
-				Move(generation, MoveName::Agility)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Shedinja,
-			"Shedinja",
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Wonder_Guard,
-			default_combined_stats<generation>,
-			RegularMoves({
-				Move(generation, MoveName::Giga_Drain)
-			})
-		)
-	});
-}
-
-auto make_known_two_pokemon_baton_pass_team() {
-	constexpr auto generation = Generation::three;
-	return KnownTeam<generation>({
-		KnownPokemon<generation>(
-			Species::Smeargle,
-			"Smeargle",
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Own_Tempo,
-			default_combined_stats<generation>,
-			RegularMoves({
-				Move(generation, MoveName::Baton_Pass)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Shedinja,
-			"Shedinja",
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Wonder_Guard,
-			default_combined_stats<generation>,
-			RegularMoves({
-				Move(generation, MoveName::Giga_Drain)
-			})
-		)
-	});
-}
-
-auto make_known_three_pokemon_team() {
-	constexpr auto generation = Generation::three;
-	return KnownTeam<generation>({
-		KnownPokemon<generation>(
-			Species::Smeargle,
-			"Smeargle",
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Own_Tempo,
-			default_combined_stats<generation>,
-			RegularMoves({
-				Move(generation, MoveName::Agility)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Shedinja,
-			"Shedinja",
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Wonder_Guard,
-			default_combined_stats<generation>,
-			RegularMoves({
-				Move(generation, MoveName::Giga_Drain)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Chansey,
-			"Chansey",
-			Level(100_bi),
-			Gender::female,
-			Item::None,
-			Ability::Natural_Cure,
-			default_combined_stats<generation>,
-			RegularMoves({
-				Move(generation, MoveName::Aromatherapy)
-			})
-		)
-	});
-}
-
 struct NoResponse{};
 struct AnyResponse{};
 using Response = bounded::variant<NoResponse, AnyResponse, containers::string>;
@@ -247,6 +101,37 @@ constexpr auto check_values(ps::BattleParser & parser, auto const & values) {
 	}
 }
 
+auto make_known_one_pokemon_team() {
+	constexpr auto generation = Generation::three;
+	return KnownTeam<generation>({
+		KnownPokemon<generation>(
+			Species::Smeargle,
+			"Smeargle",
+			Level(100_bi),
+			Gender::male,
+			Item::None,
+			Ability::Own_Tempo,
+			default_combined_stats<generation>,
+			RegularMoves({
+				Move(generation, MoveName::Baton_Pass)
+			})
+		)
+	});
+}
+
+auto make_seen_trap_team() {
+	constexpr auto generation = Generation::three;
+	auto team = SeenTeam<generation>(1_bi);
+	auto & pokemon = team.add_pokemon(SeenPokemon<generation>(
+		Species::Dugtrio,
+		"Dugtrio",
+		Level(100_bi),
+		Gender::male
+	));
+	pokemon.set_initial_ability(Ability::Arena_Trap);
+	return team;
+}
+
 TEST_CASE("BattleParser has right ID", "[Pokemon Showdown]") {
 	auto parser = make_parser(
 		make_known_one_pokemon_team(),
@@ -270,6 +155,36 @@ TEST_CASE("BattleParser Baton Pass no other Pokemon", "[Pokemon Showdown]") {
 	};
 	check_values(parser, values);
 	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+}
+
+auto make_known_two_pokemon_baton_pass_team() {
+	constexpr auto generation = Generation::three;
+	return KnownTeam<generation>({
+		KnownPokemon<generation>(
+			Species::Smeargle,
+			"Smeargle",
+			Level(100_bi),
+			Gender::male,
+			Item::None,
+			Ability::Own_Tempo,
+			default_combined_stats<generation>,
+			RegularMoves({
+				Move(generation, MoveName::Baton_Pass)
+			})
+		),
+		KnownPokemon<generation>(
+			Species::Shedinja,
+			"Shedinja",
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Wonder_Guard,
+			default_combined_stats<generation>,
+			RegularMoves({
+				Move(generation, MoveName::Giga_Drain)
+			})
+		)
+	});
 }
 
 TEST_CASE("BattleParser Baton Pass one other Pokemon moves first", "[Pokemon Showdown]") {
@@ -364,9 +279,60 @@ TEST_CASE("BattleParser replace fainted end of turn", "[Pokemon Showdown]") {
 	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
 }
 
+auto make_seen_spikes_team() {
+	constexpr auto generation = Generation::three;
+	auto team = SeenTeam<generation>(1_bi);
+	auto & pokemon = team.add_pokemon(SeenPokemon<generation>(
+		Species::Smeargle,
+		"Smeargle",
+		Level(100_bi),
+		Gender::male
+	));
+	pokemon.set_initial_ability(Ability::Own_Tempo);
+	return team;
+}
+
 TEST_CASE("BattleParser replace multiple fainted", "[Pokemon Showdown]") {
+	constexpr auto generation = Generation::three;
 	auto parser = make_parser(
-		make_known_three_pokemon_team(),
+		KnownTeam<generation>({
+			KnownPokemon<generation>(
+				Species::Smeargle,
+				"Smeargle",
+				Level(100_bi),
+				Gender::male,
+				Item::None,
+				Ability::Own_Tempo,
+				default_combined_stats<generation>,
+				RegularMoves({
+					Move(generation, MoveName::Agility)
+				})
+			),
+			KnownPokemon<generation>(
+				Species::Shedinja,
+				"Shedinja",
+				Level(100_bi),
+				Gender::genderless,
+				Item::None,
+				Ability::Wonder_Guard,
+				default_combined_stats<generation>,
+				RegularMoves({
+					Move(generation, MoveName::Giga_Drain)
+				})
+			),
+			KnownPokemon<generation>(
+				Species::Chansey,
+				"Chansey",
+				Level(100_bi),
+				Gender::female,
+				Item::None,
+				Ability::Natural_Cure,
+				default_combined_stats<generation>,
+				RegularMoves({
+					Move(generation, MoveName::Aromatherapy)
+				})
+			)
+		}),
 		make_seen_spikes_team()
 	);
 
@@ -408,8 +374,34 @@ TEST_CASE("BattleParser replace multiple fainted", "[Pokemon Showdown]") {
 }
 
 TEST_CASE("BattleParser switch faints from entry hazards before other moves", "[Pokemon Showdown]") {
+	constexpr auto generation = Generation::three;
 	auto parser = make_parser(
-		make_known_two_pokemon_team(),
+		KnownTeam<generation>({
+			KnownPokemon<generation>(
+				Species::Smeargle,
+				"Smeargle",
+				Level(100_bi),
+				Gender::male,
+				Item::None,
+				Ability::Own_Tempo,
+				default_combined_stats<generation>,
+				RegularMoves({
+					Move(generation, MoveName::Agility)
+				})
+			),
+			KnownPokemon<generation>(
+				Species::Shedinja,
+				"Shedinja",
+				Level(100_bi),
+				Gender::genderless,
+				Item::None,
+				Ability::Wonder_Guard,
+				default_combined_stats<generation>,
+				RegularMoves({
+					Move(generation, MoveName::Giga_Drain)
+				})
+			)
+		}),
 		make_seen_spikes_team()
 	);
 
