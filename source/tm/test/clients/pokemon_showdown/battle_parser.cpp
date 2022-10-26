@@ -222,8 +222,8 @@ constexpr auto make_message_response(std::string_view const message) {
 constexpr auto check_values(ps::BattleParser & parser, auto const & values) {
 	for (auto const value : values) {
 		CHECK(parser.completed() == ps::BattleInterface::Complete::none);
-		auto const response = parser.handle_message(ps::InMessage(id, value.message));
 		INFO(value.message);
+		auto const response = parser.handle_message(ps::InMessage(id, value.message));
 		if (response) {
 			UNSCOPED_INFO("*response: " << *response);
 		}
