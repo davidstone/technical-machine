@@ -553,5 +553,31 @@ TEST_CASE("BattleParser generation 2 explosion double faint", "[Pokemon Showdown
 	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
 }
 
+TEST_CASE("BattleParser shiny genderless Pokemon", "[Pokemon Showdown]") {
+	constexpr auto generation = Generation::three;
+	auto parser = make_parser(
+		make_known_one_pokemon_team(),
+		[=] {
+			auto team = SeenTeam<generation>(2_bi);
+			team.add_pokemon(SeenPokemon<generation>(
+				Species::Gengar,
+				"Gengar",
+				Level(100_bi),
+				Gender::male
+			));
+			return team;
+		}()
+	);
+
+	auto const values = containers::array{
+		make_message_response("|turn|1", AnyResponse()),
+		make_message_response("|"),
+		make_message_response("|t:|1"),
+		make_message_response("|switch|p2a: Raikou|Raikou, shiny|100/100"),
+	};
+	check_values(parser, values);
+	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+}
+
 } // namespace
 } // namespace technicalmachine
