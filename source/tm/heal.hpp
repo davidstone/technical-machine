@@ -16,18 +16,20 @@
 
 namespace technicalmachine {
 
-template<typename Numerator, typename Denominator>
-void heal(any_mutable_active_pokemon auto const pokemon, Weather const weather, rational<Numerator, Denominator> const scale) {
-	auto const hp = pokemon.hp();
-	if (hp.current() == 0_bi) {
+void heal_exactly(any_mutable_active_pokemon auto const pokemon, Weather const weather, bounded::bounded_integer auto const hp_healed) {
+	if (pokemon.hp().current() == 0_bi) {
 		return;
 	}
-	auto const hp_healed = hp.max() * scale;
-	if (scale > 0_bi) {
+	if (hp_healed > 0_bi) {
 		change_hp(pokemon, weather, bounded::max(hp_healed, 1_bi));
 	} else if (!blocks_secondary_damage(pokemon.ability())) {
 		change_hp(pokemon, weather, bounded::min(hp_healed, -1_bi));
 	}
+}
+
+template<typename Numerator, typename Denominator>
+void heal(any_mutable_active_pokemon auto const pokemon, Weather const weather, rational<Numerator, Denominator> const scale) {
+	heal_exactly(pokemon, weather, pokemon.hp().max() * scale);
 }
 
 constexpr auto healing_multiplier(Item const item) {

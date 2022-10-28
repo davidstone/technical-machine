@@ -93,7 +93,7 @@ private:
 		if (absorbs_poison_damage(pokemon.ability())) {
 			heal(pokemon, weather, rational(1_bi, 8_bi));
 		} else {
-			heal(pokemon, weather, rational(-toxic_counter, 16_bi));
+			heal_exactly(pokemon, weather, -toxic_counter * (pokemon.hp().max() / 16_bi));
 		}
 		saturating_increment(toxic_counter);
 	}
