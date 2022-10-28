@@ -13,8 +13,8 @@ namespace technicalmachine {
 namespace {
 
 using bounded::integer;
-using bounded::detail::int128_t;
-using bounded::detail::uint128_t;
+using numeric_traits::int128_t;
+using numeric_traits::uint128_t;
 
 template<typename T>
 constexpr bool equal(T const lhs, T const rhs) {
