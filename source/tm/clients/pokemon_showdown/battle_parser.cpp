@@ -254,6 +254,7 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 		auto const reason = message.pop();
 		if (reason == "flinch") {
 			m_move_state.flinch(party);
+		} else if (reason == "Focus Punch") {
 		} else if (reason == "frz") {
 			m_move_state.frozen_solid(party);
 		} else if (reason == "par") {
