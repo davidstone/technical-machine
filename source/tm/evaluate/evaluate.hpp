@@ -36,7 +36,7 @@ struct Evaluate {
 		auto const json = load_json_from_file(get_settings_directory() / "evaluate.json");
 		auto const & config = json.at("score");
 
-		auto get = [&](char const * field) {
+		auto get = [&](std::string_view const field) {
 			return bounded::check_in_range<value_type>(bounded::integer(config.value(field, 0)));
 		};
 		m_hp = get("hp");

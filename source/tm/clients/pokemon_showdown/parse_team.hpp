@@ -35,7 +35,7 @@ namespace ps {
 
 template<Generation generation>
 auto parse_stats(HP::max_type const hp, nlohmann::json const & stats) {
-	auto get = [&](char const * const str) {
+	auto get = [&](std::string_view const str) {
 		return bounded::check_in_range<InitialStat<generation>>(bounded::integer(stats.at(str).get<nlohmann::json::number_integer_t>()));
 	};
 	auto const attack = get("atk");
@@ -88,7 +88,7 @@ auto parse_moves(nlohmann::json const & moves) {
 
 template<Generation generation>
 auto parse_pokemon(nlohmann::json const & pokemon_data) {
-	auto get = [&](char const * key) { return pokemon_data.at(key).get<std::string_view>(); };
+	auto get = [&](std::string_view const key) { return pokemon_data.at(key).get<std::string_view>(); };
 
 	auto const nickname = parse_identity(get("ident")).nickname;
 	auto const details = parse_details(get("details"));

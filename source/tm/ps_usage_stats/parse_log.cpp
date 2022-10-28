@@ -33,7 +33,7 @@ namespace {
 
 template<Generation generation>
 auto parse_stats_impl(nlohmann::json const & stats, auto const convert) {
-	auto read = [&](char const * const key) {
+	auto read = [&](std::string_view const key) {
 		return convert(stats.at(key).get<nlohmann::json::number_integer_t>());
 	};
 	return GenericStats(
@@ -151,7 +151,7 @@ auto parse_log(std::filesystem::path const & path) -> bounded::optional<BattleRe
 		winner_str == p2 ? BattleResult::Winner::side2 :
 		BattleResult::Winner::tie;
 
-	auto get_team = [&](char const * const key) {
+	auto get_team = [&](std::string_view const key) {
 		return constant_generation(generation, [&]<Generation g>(constant_gen_t<g>) {
 			return GenerationGeneric<Team>(parse_team<g>(json.at(key)));
 		});

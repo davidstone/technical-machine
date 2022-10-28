@@ -18,8 +18,8 @@ namespace {
 
 using namespace std::string_view_literals;
 
-auto get_string(nlohmann::json const & json, char const * const key) {
-	return containers::string(json.at(key).get<std::string_view>());
+auto get_string(nlohmann::json const & json, std::string_view const key) {
+	return json.at(key).get<std::string_view>();
 };
 
 auto parse_team(nlohmann::json const & json) {
@@ -34,7 +34,7 @@ auto parse_team(nlohmann::json const & json) {
 }
 
 auto parse_style(nlohmann::json const & json) {
-	auto get = [&](char const * const str) {
+	auto get = [&](std::string_view const str) {
 		return get_string(json, str);
 	};
 	auto const mode = get("mode");
@@ -61,7 +61,7 @@ auto parse_style(nlohmann::json const & json) {
 auto load_settings_file(std::filesystem::path const & path) -> SettingsFile {
 	auto const json = load_json_from_file(path);
 	auto const & settings = json.at("settings");
-	auto get = [&](char const * const str) {
+	auto get = [&](std::string_view const str) {
 		return get_string(settings, str);
 	};
 	auto username = get("username");
