@@ -482,6 +482,8 @@ auto BattleParser::handle_message(InMessage message) -> bounded::optional<contai
 		// After moves like Hyper Beam
 	} else if (type == "-notarget") {
 		// When you use a move, but there is no one to target
+	} else if (type == "-nothing") {
+		// Splash
 	} else if (type == "-prepare") {
 		// From moves like SolarBeam on the charge turn
 	} else if (type == "request") {

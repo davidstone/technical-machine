@@ -579,5 +579,60 @@ TEST_CASE("BattleParser shiny genderless Pokemon", "[Pokemon Showdown]") {
 	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
 }
 
+TEST_CASE("BattleParser Struggle", "[Pokemon Showdown]") {
+	constexpr auto generation = Generation::three;
+	auto parser = make_parser(
+		KnownTeam<generation>({
+			KnownPokemon<generation>(
+				Species::Smeargle,
+				"Smeargle",
+				Level(100_bi),
+				Gender::female,
+				Item::None,
+				Ability::Own_Tempo,
+				default_combined_stats<generation>,
+				RegularMoves({
+					Move(generation, MoveName::Sketch)
+				})
+			)
+		}),
+		[=] {
+			auto team = SeenTeam<generation>(1_bi);
+			team.add_pokemon(SeenPokemon<generation>(
+				Species::Smeargle,
+				"Smeargle",
+				Level(100_bi),
+				Gender::male
+			));
+			return team;
+		}()
+	);
+
+	auto const values = containers::array{
+		make_message_response("|turn|1", "/choose move 1"),
+		make_message_response("|"),
+		make_message_response("|t:|1"),
+		make_message_response("|move|p1a: Smeargle|Sketch||[still]"),
+		make_message_response("|-fail|p1a: Smeargle"),
+		make_message_response("|move|p2a: Smeargle|Splash|p2a: Smeargle"),
+		make_message_response("|-nothing"),
+		make_message_response("||"),
+		make_message_response("|upkeep|"),
+		make_message_response("|turn|2", "/choose move 1"),
+		make_message_response("|-activate|p1a: Smeargle|move: Struggle"),
+		make_message_response("||"),
+		make_message_response("|t:|1"),
+		make_message_response("|move|p1a: Smeargle|Struggle|p2a: Smeargle"),
+		make_message_response("|-damage|p2a: Smeargle|92/100"),
+		make_message_response("|-damage|p1a: Smeargle|246/251|[from] Recoil|[of] p2a: Smeargle"),
+		make_message_response("|move|p2a: Smeargle|Splash|p2a: Smeargle"),
+		make_message_response("|-nothing"),
+		make_message_response("||"),
+		make_message_response("|upkeep|"),
+	};
+	check_values(parser, values);
+	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+}
+
 } // namespace
 } // namespace technicalmachine
