@@ -46,6 +46,7 @@ TEST_CASE("Perish Song", "[battle]") {
 		}),
 		SeenTeam<generation>(2_bi)
 	);
+	battle.first_turn(true);
 	battle.find_or_add_foe_pokemon(Species::Starmie, nickname, Level(100_bi), Gender::genderless);
 	battle.add_move(false, MoveName::Recover);
 

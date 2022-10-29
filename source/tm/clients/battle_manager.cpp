@@ -230,6 +230,10 @@ struct BattleManagerImpl final : BattleManager {
 	}
 
 	auto begin_turn(TurnCount const turn_count) & -> void final {
+		if (turn_count == 1_bi) {
+			// TODO: properly order this
+			m_battle.first_turn(true);
+		}
 		m_analysis_logger.get() << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
 		m_battle.handle_begin_turn();
 	}

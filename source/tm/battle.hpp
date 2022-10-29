@@ -44,15 +44,6 @@ struct Battle {
 		m_ai(std::move(ai_)),
 		m_foe(std::move(foe_))
 	{
-		// TODO: Properly order this
-		auto const ai_pokemon = m_ai.pokemon();
-		auto const foe_pokemon = m_foe.pokemon();
-		auto do_switch = [&](auto const switcher, auto const other) {
-			switcher.switch_in(m_weather);
-			activate_ability_on_switch(switcher, other, m_weather);
-		};
-		do_switch(ai_pokemon, foe_pokemon);
-		do_switch(foe_pokemon, ai_pokemon);
 	}
 
 	auto const & ai() const {
@@ -63,6 +54,22 @@ struct Battle {
 	}
 	auto weather() const {
 		return m_weather;
+	}
+
+	void first_turn(bool const ai_first) & {
+		auto const ai_pokemon = m_ai.pokemon();
+		auto const foe_pokemon = m_foe.pokemon();
+		auto do_switch = [&](auto const switcher, auto const other) {
+			switcher.switch_in(m_weather);
+			activate_ability_on_switch(switcher, other, m_weather);
+		};
+		if (ai_first) {
+			do_switch(ai_pokemon, foe_pokemon);
+			do_switch(foe_pokemon, ai_pokemon);
+		} else {
+			do_switch(ai_pokemon, foe_pokemon);
+			do_switch(foe_pokemon, ai_pokemon);
+		}
 	}
 
 	void handle_begin_turn() & {
@@ -179,6 +186,7 @@ struct Battle {
 				if (pokemon.hp().current() != visible_hp.current.value()) {
 					std::cerr << "Known HP out of sync with server messages. Expected " << pokemon.hp().current() << " but received " << visible_hp.current.value() << " (max of " << pokemon.hp().max() << ")\n";
 					pokemon.set_hp(visible_hp.current.value());
+					//throw std::runtime_error("ahh");
 				}
 			}
 		});
