@@ -132,7 +132,8 @@ TEST_CASE("Baton Pass", "[call_move]") {
 			FutureMove{false},
 			weather,
 			false,
-			damage
+			damage,
+			false
 		);
 	}
 	CHECK(attacker.pokemon().stages()[BoostableStat::atk] == 6_bi);
@@ -156,7 +157,8 @@ TEST_CASE("Baton Pass", "[call_move]") {
 		FutureMove{false},
 		weather,
 		false,
-		damage
+		damage,
+		false
 	);
 	CHECK(attacker.pokemon().stages()[BoostableStat::atk] == 6_bi);
 	CHECK(switch_decision_required(attacker));
@@ -177,7 +179,8 @@ TEST_CASE("Baton Pass", "[call_move]") {
 			FutureMove{false},
 			weather,
 			false,
-			damage
+			damage,
+			false
 		);
 	}
 	CHECK(attacker.pokemon().stages()[BoostableStat::atk] == 6_bi);
@@ -228,7 +231,8 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 		FutureMove{false},
 		weather,
 		false,
-		damage
+		damage,
+		false
 	);
 	CHECK(shedinja.hp().current() == 1_bi);
 
@@ -239,7 +243,8 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 		FutureMove{false},
 		weather,
 		false,
-		damage
+		damage,
+		false
 	);
 	CHECK(shedinja.hp().current() == 0_bi);
 }
@@ -292,7 +297,8 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 			FutureMove{false},
 			weather,
 			false,
-			damage
+			damage,
+			false
 		);
 
 		CHECK(defender_copy.pokemon().status().name() == StatusName::clear);
@@ -305,7 +311,8 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 		FutureMove{false},
 		weather,
 		false,
-		damage
+		damage,
+		false
 	);
 
 	CHECK(vaporeon.status().name() == StatusName::burn);
@@ -360,7 +367,8 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 		FutureMove{false},
 		weather,
 		false,
-		damage
+		damage,
+		false
 	);
 
 	CHECK(user.pokemon().substitute().hp() == user.pokemon().hp().max() / 4_bi);
@@ -409,7 +417,8 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 		FutureMove{false},
 		weather,
 		false,
-		damage
+		damage,
+		false
 	);
 
 	CHECK(user.pokemon().status().name() == StatusName::paralysis);
@@ -466,7 +475,8 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 			FutureMove{false},
 			weather,
 			false,
-			damage
+			damage,
+			false
 		);
 
 		CHECK(other.pokemon().substitute().hp() == other.pokemon().hp().max() / 4_bi);
@@ -484,7 +494,8 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 		FutureMove{false},
 		weather,
 		false,
-		damage
+		damage,
+		false
 	);
 
 	CHECK(user.pokemon().hp().current() == 0_bi);
@@ -550,7 +561,8 @@ TEST_CASE("Perish Song", "[call_move]") {
 			FutureMove{false},
 			weather,
 			false,
-			damage
+			damage,
+			false
 		);
 	};
 	auto call_recover = [&] {
@@ -566,7 +578,8 @@ TEST_CASE("Perish Song", "[call_move]") {
 			FutureMove{false},
 			weather,
 			false,
-			damage
+			damage,
+			false
 		);
 	};
 

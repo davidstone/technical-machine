@@ -210,9 +210,7 @@ auto can_attempt_move_execution(any_active_pokemon auto const user, Move const m
 	return true;
 }
 
-auto can_execute_move(any_active_pokemon auto const user, Move const move, Weather const weather, bool const is_recharging) -> bool {
-	// TODO: handle is_fully_paralyzed
-	constexpr auto is_fully_paralyzed = false;
+auto can_execute_move(any_active_pokemon auto const user, Move const move, Weather const weather, bool const is_recharging, bool const is_fully_paralyzed) -> bool {
 	auto const switching = is_switch(move.name());
 	if (switching or move.name() == MoveName::Hit_Self) {
 		BOUNDED_ASSERT(!is_recharging or (switching and user.hp().current() == 0_bi));

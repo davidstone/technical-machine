@@ -475,7 +475,8 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 			FutureMove{false},
 			weather,
 			false,
-			ActualDamage::Unknown{}
+			ActualDamage::Unknown{},
+			false
 		);
 	}
 
@@ -602,7 +603,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	constexpr auto other_move = FutureMove{false};
 
 	auto next_turn = [&] {
-		constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false);
+		constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false, false);
 		end_of_turn(attacker, end_of_turn_flags, defender, end_of_turn_flags, weather);
 		attacker.reset_start_of_turn();
 		defender.reset_start_of_turn();
@@ -615,25 +616,61 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	CHECK(jolteon.status().name() == StatusName::clear);
 	CHECK(expectiminimax(attacker, defender, weather, evaluate, depth).name == MoveName::Thunderbolt);
 
-	call_move(attacker, sleep_talk, defender, other_move, weather, keep_status, unknown_damage);
+	call_move(
+		attacker,
+		sleep_talk,
+		defender,
+		other_move,
+		weather,
+		keep_status,
+		unknown_damage,
+		false
+	);
 	jolteon.set_status(StatusName::sleep, weather);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
 	CHECK(expectiminimax(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
 
-	call_move(attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
+	call_move(
+		attacker,
+		thunderbolt,
+		defender,
+		other_move,
+		weather,
+		keep_status,
+		unknown_damage,
+		false
+	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
 	CHECK(expectiminimax(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
 
-	call_move(attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
+	call_move(
+		attacker,
+		thunderbolt,
+		defender,
+		other_move,
+		weather,
+		keep_status,
+		unknown_damage,
+		false
+	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
 	CHECK(expectiminimax(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	#if 0
 		// Same probability of either move
-		call_move(attacker, thunderbolt, defender, other_move, weather, keep_status, unknown_damage);
+		call_move(
+			attacker,
+			thunderbolt,
+			defender,
+			other_move,
+			weather,
+			keep_status,
+			unknown_damage,
+			false
+		);
 		next_turn();
 		CHECK(jolteon.status().name() == StatusName::sleep);
 		CHECK(expectiminimax(attacker, defender, weather, evaluate, depth).name == ?);

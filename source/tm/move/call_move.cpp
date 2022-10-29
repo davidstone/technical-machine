@@ -397,7 +397,7 @@ auto handle_ability_blocks_move(any_mutable_active_pokemon auto const target, We
 }
 
 template<any_team UserTeam>
-auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
+auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto user_pokemon = user.pokemon();
 
@@ -423,7 +423,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 			user_pokemon.stages()[BoostableStat::spe] += 1_bi;
 		}
 	}
-	if (!can_execute_move(user_pokemon.as_const(), found_move, weather, is_recharging)) {
+	if (!can_execute_move(user_pokemon.as_const(), found_move, weather, is_recharging, is_fully_paralyzed)) {
 		unsuccessfully_use_move();
 		return;
 	}
@@ -492,16 +492,16 @@ void end_of_attack(UserPokemon const user_pokemon, OtherMutableActivePokemon<Use
 } // namespace
 
 template<any_team UserTeam>
-auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage) -> void {
+auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
 	if (move.selected == MoveName::Pass) {
 		return;
 	}
-	try_use_move(user, move, other, other_move, weather, clear_status, actual_damage);
+	try_use_move(user, move, other, other_move, weather, clear_status, actual_damage, is_fully_paralyzed);
 	end_of_attack(user.pokemon(), other.pokemon(), weather);
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam) \
-	template auto call_move(UserTeam & user, UsedMove<UserTeam> move, OtherTeam<UserTeam> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void
+	template auto call_move(UserTeam & user, UsedMove<UserTeam> move, OtherTeam<UserTeam> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage, bool is_fully_paralyzed) -> void
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
 	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>); \

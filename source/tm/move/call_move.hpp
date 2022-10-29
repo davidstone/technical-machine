@@ -20,10 +20,10 @@ namespace technicalmachine {
 struct Weather;
 
 template<any_team UserTeam>
-auto call_move(UserTeam & user, UsedMove<UserTeam> move, OtherTeam<UserTeam> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void;
+auto call_move(UserTeam & user, UsedMove<UserTeam> move, OtherTeam<UserTeam> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage, bool is_fully_paralyzed) -> void;
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(UserTeam) \
-	extern template auto call_move(UserTeam & user, UsedMove<UserTeam> move, OtherTeam<UserTeam> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage) -> void
+	extern template auto call_move(UserTeam & user, UsedMove<UserTeam> move, OtherTeam<UserTeam> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage, bool is_fully_paralyzed) -> void
 
 #define TECHNICALMACHINE_EXTERN_INSTANTIATION(generation) \
 	TECHNICALMACHINE_EXTERN_INSTANTIATION_IMPL(Team<generation>); \

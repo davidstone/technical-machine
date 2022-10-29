@@ -64,6 +64,7 @@ TEST_CASE("Perish Song", "[battle]") {
 				containers::front(recover_side_effects).function
 			),
 			false,
+			false,
 			damage
 		);
 	};
@@ -82,6 +83,7 @@ TEST_CASE("Perish Song", "[battle]") {
 				MoveName::Perish_Song,
 				containers::front(perish_song_side_effects).function
 			),
+			false,
 			false,
 			damage
 		);

@@ -184,7 +184,7 @@ auto MoveState::complete() -> bounded::optional<CompleteResult> {
 		m_status_change == StatusChange::thaw_or_awaken
 	};
 	*this = {};
-	return CompleteResult(result);
+	return result;
 }
 
 } // namespace technicalmachine::ps

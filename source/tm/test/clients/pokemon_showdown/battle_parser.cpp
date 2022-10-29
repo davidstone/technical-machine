@@ -634,5 +634,50 @@ TEST_CASE("BattleParser Struggle", "[Pokemon Showdown]") {
 	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
 }
 
+TEST_CASE("BattleParser full paralysis", "[Pokemon Showdown]") {
+	constexpr auto generation = Generation::two;
+	auto parser = make_parser(
+		KnownTeam<generation>({
+			KnownPokemon<generation>(
+				Species::Hypno,
+				"Hypno",
+				Level(74_bi),
+				Gender::male,
+				Item::Leftovers,
+				Ability::Honey_Gather,
+				default_combined_stats<generation>,
+				RegularMoves({Move(generation, MoveName::Curse)})
+			)
+		}),
+		[=] {
+			auto team = SeenTeam<generation>(1_bi);
+			team.add_pokemon(SeenPokemon<generation>(
+				Species::Blissey,
+				"Blissey",
+				Level(68_bi),
+				Gender::female
+			));
+			return team;
+		}()
+	);
+
+	auto const values = containers::array{
+		make_message_response("|turn|1", "/choose move 1"),
+		make_message_response("|move|p1a: Hypno|Curse|p1a: Hypno"),
+		make_message_response("|move|p2a: Blissey|Thunder Wave|p1a: Hypno"),
+		make_message_response("|-status|p1a: Hypno|par"),
+		make_message_response("|upkeep|"),
+		make_message_response("|turn|2", "/choose move 1"),
+		make_message_response("|move|p2a: Blissey|Ice Beam|p1a: Hypno"),
+		make_message_response("|-damage|p1a: Hypno|124/278 par"),
+		make_message_response("|cant|p1a: Hypno|par"),
+		make_message_response("||"),
+		make_message_response("|-heal|p1a: Hypno|141/278 par|[from] item: Leftovers"),
+		make_message_response("|upkeep|"),
+	};
+	check_values(parser, values);
+	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+}
+
 } // namespace
 } // namespace technicalmachine

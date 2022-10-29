@@ -302,6 +302,7 @@ struct BattleManagerImpl final : BattleManager {
 			m_battle.handle_use_move(
 				to_used_move(move, user_team, other_team, m_battle.weather()),
 				status_clears,
+				move_result.index() == bounded::type<FullyParalyzed>,
 				damage
 			);
 		});

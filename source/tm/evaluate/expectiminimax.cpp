@@ -116,6 +116,10 @@ struct SelectedAndExecuted {
 	KnownMove executed;
 };
 
+constexpr auto paralysis_probability(any_active_pokemon auto const pokemon) -> double {
+	return pokemon.status().name() == StatusName::paralysis ? 0.25 : 0.0;
+}
+
 template<any_team TeamType>
 auto execute_move(TeamType const & user, SelectedAndExecuted const move, TeamType const & other, OtherMove const other_move, Weather const weather, auto const continuation) -> double {
 	auto const user_pokemon = user.pokemon();
@@ -125,42 +129,46 @@ auto execute_move(TeamType const & user, SelectedAndExecuted const move, TeamTyp
 	auto const probability_of_clearing_status = status.probability_of_clearing(generation_from<TeamType>, user_pokemon.ability());
 	auto const specific_chance_to_hit = chance_to_hit(user_pokemon, move.executed, other_pokemon, weather, other_pokemon.last_used_move().moved_this_turn());
 	auto const ch_probability = critical_hit_probability(user_pokemon, move.executed.name, other.pokemon().ability(), weather);
+	auto const chance_to_be_paralyzed = paralysis_probability(user_pokemon);
 	return generic_flag_branch(probability_of_clearing_status, [&](bool const clear_status) {
 		return generic_flag_branch(specific_chance_to_hit, [&](bool const hits) {
-			auto score = 0.0;
-			for (auto const & side_effect : side_effects) {
-				score += side_effect.probability * generic_flag_branch(
-					hits ? ch_probability : 0.0,
-					[&](bool const critical_hit) {
-						auto user_copy = user;
-						auto other_copy = other;
-						auto weather_copy = weather;
-						// TODO: https://github.com/davidstone/technical-machine/issues/24
-						constexpr auto contact_ability_effect = ContactAbilityEffect::nothing;
-						call_move(
-							user_copy,
-							UsedMove<TeamType>(
-								move.selected,
-								move.executed.name,
-								critical_hit,
-								!hits,
-								contact_ability_effect,
-								side_effect.function
-							),
-							other_copy,
-							other_move,
-							weather_copy,
-							clear_status,
-							ActualDamage::Unknown{}
-						);
-						if (auto const won = win(user_copy, other_copy)) {
-							return *won;
+			return generic_flag_branch(chance_to_be_paralyzed, [&](bool const is_fully_paralyzed) {
+				auto score = 0.0;
+				for (auto const & side_effect : side_effects) {
+					score += side_effect.probability * generic_flag_branch(
+						hits ? ch_probability : 0.0,
+						[&](bool const critical_hit) {
+							auto user_copy = user;
+							auto other_copy = other;
+							auto weather_copy = weather;
+							// TODO: https://github.com/davidstone/technical-machine/issues/24
+							constexpr auto contact_ability_effect = ContactAbilityEffect::nothing;
+							call_move(
+								user_copy,
+								UsedMove<TeamType>(
+									move.selected,
+									move.executed.name,
+									critical_hit,
+									!hits,
+									contact_ability_effect,
+									side_effect.function
+								),
+								other_copy,
+								other_move,
+								weather_copy,
+								clear_status,
+								ActualDamage::Unknown{},
+								is_fully_paralyzed
+							);
+							if (auto const won = win(user_copy, other_copy)) {
+								return *won;
+							}
+							return continuation(user_copy, other_copy, weather_copy);
 						}
-						return continuation(user_copy, other_copy, weather_copy);
-					}
-				);
-			}
-			return score;
+					);
+				}
+				return score;
+			});
 		});
 	});
 }

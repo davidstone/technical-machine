@@ -96,7 +96,8 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 		FutureMove{false},
 		weather,
 		false,
-		damage
+		damage,
+		false
 	);
 	CHECK(defender.pokemon().hp().current() == 0_bi);
 }
@@ -129,7 +130,8 @@ struct Sleeper {
 			FutureMove{false},
 			m_weather,
 			probability_of_awakening == 1.0,
-			ActualDamage::Unknown()
+			ActualDamage::Unknown(),
+			false
 		);
 	}
 	void use_move(MoveName const selected) {
@@ -147,7 +149,8 @@ struct Sleeper {
 			FutureMove{false},
 			m_weather,
 			false,
-			ActualDamage::Unknown()
+			ActualDamage::Unknown(),
+			false
 		);
 	}
 

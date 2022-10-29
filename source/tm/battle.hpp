@@ -81,7 +81,7 @@ struct Battle {
 		});
 	}
 	template<any_team UserTeam>
-	void handle_use_move(UsedMove<UserTeam> const move, bool const clear_status, FlaggedActualDamage const damage) {
+	void handle_use_move(UsedMove<UserTeam> const move, bool const clear_status, bool const is_fully_paralyzed, FlaggedActualDamage const damage) {
 		constexpr auto is_ai = std::same_as<UserTeam, KnownTeam<generation_from<UserTeam>>>;
 
 		auto const teams = [&] {
@@ -114,7 +114,8 @@ struct Battle {
 			other_move,
 			m_weather,
 			clear_status,
-			damage.value
+			damage.value,
+			is_fully_paralyzed
 		);
 	}
 	// This assumes Species Clause is in effect. Throws if the Species is not in
@@ -176,9 +177,9 @@ struct Battle {
 			} else {
 				static_assert(any_known_team<TeamType>);
 				if (pokemon.hp().current() != visible_hp.current.value()) {
-					std::cerr << "Known HP out of sync with server messages. Expected " << pokemon.hp().current().value() << " but received " << visible_hp.current.value() << " (max of " << pokemon.hp().max().value() << ")\n";
+					std::cerr << "Known HP out of sync with server messages. Expected " << pokemon.hp().current() << " but received " << visible_hp.current.value() << " (max of " << pokemon.hp().max() << ")\n";
+					pokemon.set_hp(visible_hp.current.value());
 				}
-				pokemon.set_hp(visible_hp.current.value());
 			}
 		});
 	}
