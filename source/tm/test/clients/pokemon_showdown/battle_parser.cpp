@@ -18,7 +18,8 @@ namespace {
 
 using namespace std::string_view_literals;
 
-auto get_usage_stats(Generation const generation) -> UsageStats const & {
+template<Generation generation>
+auto get_usage_stats() -> UsageStats const & {
 	[[clang::no_destroy]] static auto const result = stats_for_generation(generation);
 	return result;
 }
@@ -40,7 +41,7 @@ auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::Batt
 		AnalysisLogger(AnalysisLogger::none()),
 		battle_id,
 		"Technical Machine",
-		get_usage_stats(generation),
+		get_usage_stats<generation>(),
 		GenerationGeneric<BattleManagerInputs>(BattleManagerInputs<generation>{
 			Teams<generation>{
 				std::move(ai),
