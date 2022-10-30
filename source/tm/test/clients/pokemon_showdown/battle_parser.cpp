@@ -680,5 +680,43 @@ TEST_CASE("BattleParser full paralysis", "[Pokemon Showdown]") {
 	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
 }
 
+TEST_CASE("BattleParser Pain Split", "[Pokemon Showdown]") {
+	constexpr auto generation = Generation::two;
+	auto parser = make_parser(
+		KnownTeam<generation>({
+			KnownPokemon<generation>(
+				Species::Misdreavus,
+				"Misdreavus",
+				Level(68_bi),
+				Gender::male,
+				Item::None,
+				Ability::Honey_Gather,
+				default_combined_stats<generation>,
+				RegularMoves({Move(generation, MoveName::Pain_Split)})
+			)
+		}),
+		[=] {
+			auto team = SeenTeam<generation>(1_bi);
+			team.add_pokemon(SeenPokemon<generation>(
+				Species::Blissey,
+				"Blissey",
+				Level(68_bi),
+				Gender::female
+			));
+			return team;
+		}()
+	);
+
+	auto const values = containers::array{
+		make_message_response("|turn|1", "/choose move 1"),
+		make_message_response("|move|p2a: Blissey|Ice Beam|p1a: Misdreavus"),
+		make_message_response("|-damage|p1a: Misdreavus|85/222"),
+		make_message_response("|move|p1a: Misdreavus|Pain Split|p2a: Blissey"),
+		make_message_response("|-sethp|p2a: Blissey|46/100|[from] move: Pain Split|[silent]"),
+	};
+	check_values(parser, values);
+	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+}
+
 } // namespace
 } // namespace technicalmachine
