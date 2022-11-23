@@ -348,12 +348,11 @@ struct BattleManagerImpl final : BattleManager {
 				Team<generation_>(m_battle.ai()),
 				predicted,
 				m_battle.weather(),
-				m_evaluate,
 				m_random_engine
 			);
 		auto const finish = std::chrono::steady_clock::now();
 		m_analysis_logger.get() << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
-		log_move_score(best_move);
+		log_move_scores(best_move);
 		m_analysis_logger.get() << std::flush;
 		return best_move.name;
 	}
