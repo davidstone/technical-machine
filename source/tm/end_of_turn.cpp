@@ -1,29 +1,45 @@
-// End of turn effects
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/end_of_turn.hpp>
+module;
 
-#include <tm/ability.hpp>
+#include <bounded/conditional.hpp>
 #include <tm/for_each_generation.hpp>
-#include <tm/heal.hpp>
-#include <tm/known_team.hpp>
-#include <tm/rational.hpp>
-#include <tm/seen_team.hpp>
-#include <tm/status_name.hpp>
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
 
-#include <tm/pokemon/active_pokemon.hpp>
-#include <tm/pokemon/any_pokemon.hpp>
-#include <tm/pokemon/pokemon.hpp>
+export module tm.end_of_turn;
 
-#include <containers/algorithms/all_any_none.hpp>
+import tm.pokemon.active_pokemon;
+import tm.pokemon.any_pokemon;
+import tm.pokemon.indirect_status_can_apply;
+import tm.pokemon.is_type;
+import tm.pokemon.pokemon;
+
+import tm.stat.stat_names;
+
+import tm.status.status_name;
+
+import tm.type.pokemon_types;
+import tm.type.type;
+
+import tm.ability;
+import tm.any_team;
+import tm.end_of_turn_flags;
+import tm.generation;
+import tm.handle_curse;
+import tm.heal;
+import tm.item;
+import tm.rational;
+import tm.other_team;
+import tm.team;
+import tm.weather;
+
+import bounded;
+import containers;
 
 namespace technicalmachine {
-namespace {
+using namespace bounded::literal;
 
 // https://web.archive.org/web/20130530163614/http://www.upokecenter.com/games/gs/guides/timing.php
 
@@ -122,8 +138,11 @@ constexpr auto leftovers_healing() {
 	return rational(1_bi, 16_bi);
 }
 
+template<typename TeamType>
+using ActivePokemonFromTeam = decltype(bounded::declval<TeamType>().pokemon());
+
 template<any_team TeamType>
-auto other_effects(TeamType & team, OtherMutableActivePokemon<TeamType> const foe, Weather & weather, EndOfTurnFlags const flags) -> void {
+auto other_effects(TeamType & team, ActivePokemonFromTeam<OtherTeam<TeamType>> const foe, Weather & weather, EndOfTurnFlags const flags) -> void {
 	auto pokemon = team.pokemon();
 	if (pokemon.hp().current() == 0_bi) {
 		return;
@@ -251,9 +270,7 @@ void generation_3_plus_end_of_turn(TeamType & first_team, EndOfTurnFlags const f
 	last.perish_song_turn();
 }
 
-} // namespace
-
-template<any_team TeamType>
+export template<any_team TeamType>
 void end_of_turn(TeamType & first, EndOfTurnFlags const first_flags, OtherTeam<TeamType> & last, EndOfTurnFlags const last_flags, Weather & weather) {
 	constexpr auto generation = generation_from<TeamType>;
 	if constexpr (generation == Generation::one) {

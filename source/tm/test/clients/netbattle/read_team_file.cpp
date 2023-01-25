@@ -3,26 +3,51 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/netbattle/read_team_file.hpp>
-
-#include <tm/string_conversions/pokemon.hpp>
-#include <tm/string_conversions/team.hpp>
-
-#include <tm/get_directory.hpp>
-
-#include <filesystem>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.clients.nb.read_team_file;
+
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
+
+import tm.pokemon.known_pokemon;
+import tm.pokemon.level;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+import tm.stat.ev;
+import tm.stat.iv;
+import tm.stat.nature;
+
+import tm.string_conversions.pokemon;
+import tm.string_conversions.team;
+
+import tm.ability;
+import tm.any_team;
+import tm.gender;
+import tm.generation;
+import tm.get_directory;
+import tm.item;
+import tm.team;
+
+import bounded;
+import containers;
+import tv;
+import std_module;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
+using namespace std::string_view_literals;
 
-auto expected_netbattle_team() -> KnownTeam<Generation::three> {
+constexpr auto expected_netbattle_team = []() -> KnownTeam<Generation::three> {
 	constexpr auto generation = Generation::three;
 	return KnownTeam<generation>({
 		KnownPokemon<generation>(
 			Species::Forretress,
-			"Alcatraz",
+			"Alcatraz"sv,
 			Level(100_bi),
 			Gender::male,
 			Item::Leftovers,
@@ -41,7 +66,7 @@ auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 		),
 		KnownPokemon<generation>(
 			Species::Houndoom,
-			"Crunch Time",
+			"Crunch Time"sv,
 			Level(100_bi),
 			Gender::male,
 			Item::Salac_Berry,
@@ -60,7 +85,7 @@ auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 		),
 		KnownPokemon<generation>(
 			Species::Gengar,
-			"Clyde",
+			"Clyde"sv,
 			Level(100_bi),
 			Gender::male,
 			Item::Leftovers,
@@ -79,7 +104,7 @@ auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 		),
 		KnownPokemon<generation>(
 			Species::Heracross,
-			"Blinky",
+			"Blinky"sv,
 			Level(100_bi),
 			Gender::male,
 			Item::Salac_Berry,
@@ -98,7 +123,7 @@ auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 		),
 		KnownPokemon<generation>(
 			Species::Mew,
-			"Houdini",
+			"Houdini"sv,
 			Level(100_bi),
 			Gender::genderless,
 			Item::Leftovers,
@@ -117,7 +142,7 @@ auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 		),
 		KnownPokemon<generation>(
 			Species::Zapdos,
-			"Sparky",
+			"Sparky"sv,
 			Level(100_bi),
 			Gender::genderless,
 			Item::Leftovers,
@@ -135,14 +160,14 @@ auto expected_netbattle_team() -> KnownTeam<Generation::three> {
 			})
 		)
 	});
-}
+}();
 
-auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
+constexpr auto expected_netbattle_supremacy_team = []() -> KnownTeam<Generation::two> {
 	constexpr auto generation = Generation::two;
 	return KnownTeam<generation>({
 		KnownPokemon<generation>(
 			Species::Raikou,
-			"Aaron Carter",
+			"Aaron Carter"sv,
 			Level(100_bi),
 			Gender::genderless,
 			Item::Leftovers,
@@ -161,7 +186,7 @@ auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 		),
 		KnownPokemon<generation>(
 			Species::Alakazam,
-			"Jackie Chan",
+			"Jackie Chan"sv,
 			Level(100_bi),
 			Gender::male,
 			Item::Leftovers,
@@ -180,7 +205,7 @@ auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 		),
 		KnownPokemon<generation>(
 			Species::Exeggutor,
-			"Old Godzilla",
+			"Old Godzilla"sv,
 			Level(100_bi),
 			Gender::male,
 			Item::None,
@@ -199,7 +224,7 @@ auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 		),
 		KnownPokemon<generation>(
 			Species::Snorlax,
-			"Shaq Fu",
+			"Shaq Fu"sv,
 			Level(100_bi),
 			Gender::male,
 			Item::Leftovers,
@@ -218,7 +243,7 @@ auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 		),
 		KnownPokemon<generation>(
 			Species::Machamp,
-			"Chuck Norris",
+			"Chuck Norris"sv,
 			Level(100_bi),
 			Gender::male,
 			Item::Leftovers,
@@ -237,7 +262,7 @@ auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 		),
 		KnownPokemon<generation>(
 			Species::Gengar,
-			"Abe Lincoln",
+			"Abe Lincoln"sv,
 			Level(100_bi),
 			Gender::male,
 			Item::Leftovers,
@@ -255,28 +280,121 @@ auto expected_netbattle_supremacy_team() -> KnownTeam<Generation::two> {
 			})
 		)
 	});
+}();
+
+constexpr auto netbattle_bytes = containers::array{
+	std::byte(0x20), std::byte(0x50), std::byte(0x4E), std::byte(0x42),
+	std::byte(0x34), std::byte(0x2E), std::byte(0x31), std::byte(0x0A),
+	std::byte(0x4F), std::byte(0x62), std::byte(0x69), std::byte(0x32),
+	std::byte(0x4B), std::byte(0x65), std::byte(0x6E), std::byte(0x6F),
+	std::byte(0x62), std::byte(0x69), std::byte(0x5F), std::byte(0x49),
+	std::byte(0x27), std::byte(0x6C), std::byte(0x6C), std::byte(0x20),
+	std::byte(0x70), std::byte(0x72), std::byte(0x6F), std::byte(0x62),
+	std::byte(0x61), std::byte(0x62), std::byte(0x6C), std::byte(0x79),
+	std::byte(0x20), std::byte(0x6C), std::byte(0x6F), std::byte(0x73),
+	std::byte(0x65), std::byte(0x2C), std::byte(0x20), std::byte(0x75),
+	std::byte(0x6E), std::byte(0x6C), std::byte(0x65), std::byte(0x73),
+	std::byte(0x73), std::byte(0x20), std::byte(0x49), std::byte(0x20),
+	std::byte(0x77), std::byte(0x69), std::byte(0x6E), std::byte(0x2E),
+	std::byte(0x0D), std::byte(0x0A), std::byte(0x28), std::byte(0x46),
+	std::byte(0x69), std::byte(0x72), std::byte(0x73), std::byte(0x74),
+	std::byte(0x20), std::byte(0x74), std::byte(0x65), std::byte(0x61),
+	std::byte(0x6D), std::byte(0x2C), std::byte(0x20), std::byte(0x49),
+	std::byte(0x20), std::byte(0x68), std::byte(0x61), std::byte(0x76),
+	std::byte(0x65), std::byte(0x20), std::byte(0x61), std::byte(0x20),
+	std::byte(0x4D), std::byte(0x65), std::byte(0x77), std::byte(0x2C),
+	std::byte(0x20), std::byte(0x62), std::byte(0x75), std::byte(0x74),
+	std::byte(0x20), std::byte(0x49), std::byte(0x20), std::byte(0x61),
+	std::byte(0x6C), std::byte(0x73), std::byte(0x6F), std::byte(0x20),
+	std::byte(0x68), std::byte(0x61), std::byte(0x76), std::byte(0x65),
+	std::byte(0x20), std::byte(0x4A), std::byte(0x6F), std::byte(0x6C),
+	std::byte(0x6C), std::byte(0x79), std::byte(0x20), std::byte(0x46),
+	std::byte(0x6F), std::byte(0x72), std::byte(0x72), std::byte(0x65),
+	std::byte(0x74), std::byte(0x72), std::byte(0x65), std::byte(0x73),
+	std::byte(0x73), std::byte(0x29), std::byte(0x17), std::byte(0x49),
+	std::byte(0x20), std::byte(0x6D), std::byte(0x75), std::byte(0x73),
+	std::byte(0x74), std::byte(0x20), std::byte(0x62), std::byte(0x65),
+	std::byte(0x20), std::byte(0x72), std::byte(0x65), std::byte(0x61),
+	std::byte(0x6C), std::byte(0x6C), std::byte(0x79), std::byte(0x20),
+	std::byte(0x6C), std::byte(0x75), std::byte(0x63), std::byte(0x6B),
+	std::byte(0x79), std::byte(0x2E), std::byte(0x09), std::byte(0x59),
+	std::byte(0x6F), std::byte(0x75), std::byte(0x20), std::byte(0x72),
+	std::byte(0x75), std::byte(0x6C), std::byte(0x65), std::byte(0x21),
+	std::byte(0x03), std::byte(0x04), std::byte(0x03), std::byte(0x41),
+	std::byte(0x6C), std::byte(0x63), std::byte(0x61), std::byte(0x74),
+	std::byte(0x72), std::byte(0x61), std::byte(0x7A), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x66), std::byte(0xBC),
+	std::byte(0x85), std::byte(0x5A), std::byte(0x04), std::byte(0x03),
+	std::byte(0x71), std::byte(0xE2), std::byte(0x79), std::byte(0x95),
+	std::byte(0xFF), std::byte(0xFF), std::byte(0xFF), std::byte(0xFA),
+	std::byte(0xC2), std::byte(0xA2), std::byte(0xA7), std::byte(0xE0),
+	std::byte(0x00), std::byte(0x00), std::byte(0x43), std::byte(0x72),
+	std::byte(0x75), std::byte(0x6E), std::byte(0x63), std::byte(0x68),
+	std::byte(0x20), std::byte(0x54), std::byte(0x69), std::byte(0x6D),
+	std::byte(0x65), std::byte(0x20), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x72), std::byte(0xBC), std::byte(0x8E),
+	std::byte(0xDD), std::byte(0x04), std::byte(0x02), std::byte(0x51),
+	std::byte(0xD9), std::byte(0x01), std::byte(0x4B), std::byte(0xFF),
+	std::byte(0xFF), std::byte(0xFF), std::byte(0xF8), std::byte(0x07),
+	std::byte(0xE0), std::byte(0x07), std::byte(0xE0), std::byte(0x20),
+	std::byte(0x00), std::byte(0x43), std::byte(0x6C), std::byte(0x79),
+	std::byte(0x64), std::byte(0x65), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x20), std::byte(0x20),
+	std::byte(0x2F), std::byte(0x3C), std::byte(0x85), std::byte(0x54),
+	std::byte(0x04), std::byte(0x03), std::byte(0x43), std::byte(0x09),
+	std::byte(0xCD), std::byte(0x0D), std::byte(0xF0), std::byte(0x7F),
+	std::byte(0xFF), std::byte(0xF8), std::byte(0x00), std::byte(0x02),
+	std::byte(0xA7), std::byte(0xE0), std::byte(0x05), std::byte(0x60),
+	std::byte(0x42), std::byte(0x6C), std::byte(0x69), std::byte(0x6E),
+	std::byte(0x6B), std::byte(0x79), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x20), std::byte(0x6B),
+	std::byte(0x3C), std::byte(0x8E), std::byte(0xDA), std::byte(0x04),
+	std::byte(0x03), std::byte(0xB2), std::byte(0x21), std::byte(0xE1),
+	std::byte(0x4B), std::byte(0xFF), std::byte(0xFF), std::byte(0xFF),
+	std::byte(0xF9), std::byte(0xC4), std::byte(0x00), std::byte(0x07),
+	std::byte(0xE0), std::byte(0x02), std::byte(0x40), std::byte(0x48),
+	std::byte(0x6F), std::byte(0x75), std::byte(0x64), std::byte(0x69),
+	std::byte(0x6E), std::byte(0x69), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x4B), std::byte(0xBC),
+	std::byte(0x85), std::byte(0x60), std::byte(0x04), std::byte(0x00),
+	std::byte(0x73), std::byte(0x12), std::byte(0x61), std::byte(0x89),
+	std::byte(0xFF), std::byte(0xFF), std::byte(0xFF), std::byte(0xF8),
+	std::byte(0x00), std::byte(0x20), std::byte(0x07), std::byte(0xE7),
+	std::byte(0xE0), std::byte(0x00), std::byte(0x53), std::byte(0x70),
+	std::byte(0x61), std::byte(0x72), std::byte(0x6B), std::byte(0x79),
+	std::byte(0x20), std::byte(0x20), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x48), std::byte(0xBC), std::byte(0x85),
+	std::byte(0x5E), std::byte(0x04), std::byte(0x03), std::byte(0x52),
+	std::byte(0xDA), std::byte(0x75), std::byte(0xCD), std::byte(0xFF),
+	std::byte(0xFF), std::byte(0xDE), std::byte(0xF8), std::byte(0x00),
+	std::byte(0x20), std::byte(0x07), std::byte(0xE7), std::byte(0xE0),
+	std::byte(0x00)
+};
+
+template<any_known_team ExpectedTeam>
+constexpr auto matches(auto const & source, ExpectedTeam const expected) -> bool {
+	return tv::visit(nb::read_team_file(source), tv::overload(
+		[&](ExpectedTeam const & parsed) { return parsed == expected; },
+		[](auto const &) { return false; }
+	));
 }
+
+static_assert(matches(netbattle_bytes, expected_netbattle_team));
 
 TEST_CASE("Netbattle team", "[Netbattle]") {
 	auto const file_name = get_test_directory() / "teams/netbattle.pnb";
-	bounded::visit(nb::read_team_file(file_name), []<any_known_team TeamType>(TeamType const & team) {
-		if constexpr (generation_from<TeamType> == Generation::three) {
-			CHECK(team == expected_netbattle_team());
-		} else {
-			CHECK(false);
-		}
-	});
+	CHECK(matches(netbattle_bytes, expected_netbattle_team));
+	CHECK(matches(file_name, expected_netbattle_team));
 }
 
 TEST_CASE("Netbattle Supremacy team", "[Netbattle]") {
 	auto const file_name = get_test_directory() / "teams/netbattle-supremacy.dpnb";
-	bounded::visit(nb::read_team_file(file_name), []<any_known_team TeamType>(TeamType const & team) {
-		if constexpr (generation_from<TeamType> == Generation::two) {
-			CHECK(team == expected_netbattle_supremacy_team());
-		} else {
-			CHECK(false);
-		}
-	});
+	CHECK(matches(file_name, expected_netbattle_supremacy_team));
 }
 
 } // namespace

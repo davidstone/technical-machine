@@ -3,16 +3,15 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/files_in_path.hpp>
-
-#include <bounded/assert.hpp>
-
-#include <containers/algorithms/sort.hpp>
-#include <bounded/scope_guard.hpp>
-
+#include <compare>
+#include <filesystem>
 #include <catch2/catch_test_macros.hpp>
 
-#include <fstream>
+import tm.files_in_path;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
 namespace {

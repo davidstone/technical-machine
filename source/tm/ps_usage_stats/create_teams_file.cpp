@@ -3,22 +3,16 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/ps_usage_stats/battle_result_writer.hpp>
-#include <tm/ps_usage_stats/parse_log.hpp>
-#include <tm/ps_usage_stats/worker.hpp>
-
-#include <bounded/to_integer.hpp>
-
-#include <containers/algorithms/concatenate.hpp>
-#include <containers/dynamic_array.hpp>
-#include <containers/range_view.hpp>
-
+#include <compare>
 #include <filesystem>
-#include <mutex>
-#include <string>
-#include <string_view>
-#include <stdexcept>
-#include <utility>
+
+import tm.ps_usage_stats.battle_result_writer;
+import tm.ps_usage_stats.parse_log;
+import tm.ps_usage_stats.worker;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine::ps_usage_stats {
 namespace {

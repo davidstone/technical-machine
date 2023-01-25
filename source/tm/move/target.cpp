@@ -3,15 +3,33 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/target.hpp>
+export module tm.move.target;
 
-#include <tm/move/move_name.hpp>
+import tm.move.move_name;
 
-#include <tm/generation.hpp>
+import tm.generation;
 
 namespace technicalmachine {
 
-auto move_target(Generation const generation, MoveName const move) -> Target {
+export enum class Target {
+	user,
+	adjacent_ally,
+	user_or_adjacent_ally,
+	all_allies,
+	user_and_all_allies,
+	user_team,
+	user_field,
+	adjacent_foe,
+	all_adjacent_foes,
+	foe_field,
+	adjacent,
+	any,
+	all_adjacent,
+	all,
+	field,
+};
+
+export constexpr auto move_target(Generation const generation, MoveName const move) -> Target {
 	switch (move) {
 		case MoveName::Mist:
 			return generation <= Generation::two ? Target::user : Target::user_field;
@@ -839,6 +857,28 @@ auto move_target(Generation const generation, MoveName const move) -> Target {
 		case MoveName::Zen_Headbutt:
 		case MoveName::Zing_Zap:
 			return Target::adjacent;
+	}
+}
+
+export constexpr auto move_targets_foe(Generation const generation, MoveName const move) {
+	switch (move_target(generation, move)) {
+		case Target::user:
+		case Target::adjacent_ally:
+		case Target::user_or_adjacent_ally:
+		case Target::all_allies:
+		case Target::user_and_all_allies:
+		case Target::user_team:
+		case Target::user_field:
+		case Target::foe_field:
+		case Target::field:
+			return false;
+		case Target::adjacent_foe:
+		case Target::all_adjacent_foes:
+		case Target::adjacent:
+		case Target::any:
+		case Target::all_adjacent:
+		case Target::all:
+			return true;
 	}
 }
 

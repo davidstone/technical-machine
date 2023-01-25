@@ -3,28 +3,60 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/pokemon_showdown/battle_parser.hpp>
-
-#include <tm/team_predictor/usage_stats.hpp>
-
-#include <bounded/overload.hpp>
-
-#include <containers/string.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.clients.ps.battle_interface;
+import tm.clients.ps.battle_parser;
+import tm.clients.ps.inmessage;
+
+import tm.clients.make_battle_manager_inputs;
+import tm.clients.party;
+import tm.clients.teams;
+
+import tm.evaluate.analysis_logger;
+import tm.evaluate.depth;
+import tm.evaluate.evaluate;
+
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
+
+import tm.pokemon.known_pokemon;
+import tm.pokemon.level;
+import tm.pokemon.seen_pokemon;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+
+import tm.team_predictor.usage_stats;
+
+import tm.test.usage_bytes;
+
+import tm.ability;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.team;
+
+import bounded;
+import containers;
+import tv;
+import std_module;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
 
 using namespace std::string_view_literals;
 
 template<Generation generation>
 auto get_usage_stats() -> UsageStats const & {
-	[[clang::no_destroy]] static auto const result = stats_for_generation(generation);
+	[[clang::no_destroy]] static auto const result = bytes_to_usage_stats(smallest_team_bytes(generation));
 	return result;
 }
 
-constexpr auto log_foe_teams = false;
+constexpr auto write_team = tv::none;
 
 constexpr auto battle_id = "battle-id"sv;
 
@@ -39,6 +71,7 @@ auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::Batt
 	auto random_device = std::random_device();
 	return ps::BattleParser(
 		AnalysisLogger(AnalysisLogger::none()),
+		write_team,
 		battle_id,
 		"Technical Machine",
 		get_usage_stats<generation>(),
@@ -51,14 +84,13 @@ auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::Batt
 		}),
 		Party(0_bi),
 		Depth(1_bi, 0_bi),
-		std::mt19937(random_device()),
-		log_foe_teams
+		std::mt19937(random_device())
 	);
 }
 
 struct NoResponse{};
 struct AnyResponse{};
-using Response = bounded::variant<NoResponse, AnyResponse, containers::string>;
+using Response = tv::variant<NoResponse, AnyResponse, containers::string>;
 struct MessageResponse {
 	std::string_view message;
 	Response response;
@@ -91,7 +123,7 @@ constexpr auto check_values(ps::BattleParser & parser, auto const & values) {
 		if (response) {
 			UNSCOPED_INFO("*response: " << *response);
 		}
-		bounded::visit(value.response, bounded::overload(
+		tv::visit(value.response, tv::overload(
 			[&](NoResponse) { CHECK(!response); },
 			[&](AnyResponse) { CHECK(static_cast<bool>(response)); },
 			[&](std::string_view const str) {
@@ -107,7 +139,7 @@ auto make_known_one_pokemon_team() {
 	return KnownTeam<generation>({
 		KnownPokemon<generation>(
 			Species::Smeargle,
-			"Smeargle",
+			"Smeargle"sv,
 			Level(100_bi),
 			Gender::male,
 			Item::None,
@@ -125,7 +157,7 @@ auto make_seen_trap_team() {
 	auto team = SeenTeam<generation>(1_bi);
 	auto & pokemon = team.add_pokemon(SeenPokemon<generation>(
 		Species::Dugtrio,
-		"Dugtrio",
+		"Dugtrio"sv,
 		Level(100_bi),
 		Gender::male
 	));
@@ -163,7 +195,7 @@ auto make_known_two_pokemon_baton_pass_team() {
 	return KnownTeam<generation>({
 		KnownPokemon<generation>(
 			Species::Smeargle,
-			"Smeargle",
+			"Smeargle"sv,
 			Level(100_bi),
 			Gender::male,
 			Item::None,
@@ -175,7 +207,7 @@ auto make_known_two_pokemon_baton_pass_team() {
 		),
 		KnownPokemon<generation>(
 			Species::Shedinja,
-			"Shedinja",
+			"Shedinja"sv,
 			Level(100_bi),
 			Gender::genderless,
 			Item::None,
@@ -285,7 +317,7 @@ auto make_seen_spikes_team() {
 	auto team = SeenTeam<generation>(1_bi);
 	auto & pokemon = team.add_pokemon(SeenPokemon<generation>(
 		Species::Smeargle,
-		"Smeargle",
+		"Smeargle"sv,
 		Level(100_bi),
 		Gender::male
 	));
@@ -299,7 +331,7 @@ TEST_CASE("BattleParser replace multiple fainted", "[Pokemon Showdown]") {
 		KnownTeam<generation>({
 			KnownPokemon<generation>(
 				Species::Smeargle,
-				"Smeargle",
+				"Smeargle"sv,
 				Level(100_bi),
 				Gender::male,
 				Item::None,
@@ -311,7 +343,7 @@ TEST_CASE("BattleParser replace multiple fainted", "[Pokemon Showdown]") {
 			),
 			KnownPokemon<generation>(
 				Species::Shedinja,
-				"Shedinja",
+				"Shedinja"sv,
 				Level(100_bi),
 				Gender::genderless,
 				Item::None,
@@ -323,7 +355,7 @@ TEST_CASE("BattleParser replace multiple fainted", "[Pokemon Showdown]") {
 			),
 			KnownPokemon<generation>(
 				Species::Chansey,
-				"Chansey",
+				"Chansey"sv,
 				Level(100_bi),
 				Gender::female,
 				Item::None,
@@ -380,7 +412,7 @@ TEST_CASE("BattleParser switch faints from entry hazards before other moves", "[
 		KnownTeam<generation>({
 			KnownPokemon<generation>(
 				Species::Smeargle,
-				"Smeargle",
+				"Smeargle"sv,
 				Level(100_bi),
 				Gender::male,
 				Item::None,
@@ -392,7 +424,7 @@ TEST_CASE("BattleParser switch faints from entry hazards before other moves", "[
 			),
 			KnownPokemon<generation>(
 				Species::Shedinja,
-				"Shedinja",
+				"Shedinja"sv,
 				Level(100_bi),
 				Gender::genderless,
 				Item::None,
@@ -460,7 +492,7 @@ TEST_CASE("BattleParser generation 2 thaw", "[Pokemon Showdown]") {
 		KnownTeam<generation>({
 			KnownPokemon<generation>(
 				Species::Gengar,
-				"Gengar",
+				"Gengar"sv,
 				Level(100_bi),
 				Gender::male,
 				Item::None,
@@ -475,7 +507,7 @@ TEST_CASE("BattleParser generation 2 thaw", "[Pokemon Showdown]") {
 			auto team = SeenTeam<generation>(1_bi);
 			team.add_pokemon(SeenPokemon<generation>(
 				Species::Zapdos,
-				"Zapdos",
+				"Zapdos"sv,
 				Level(100_bi),
 				Gender::genderless
 			));
@@ -506,7 +538,7 @@ TEST_CASE("BattleParser generation 2 explosion double faint", "[Pokemon Showdown
 		KnownTeam<generation>({
 			KnownPokemon<generation>(
 				Species::Jynx,
-				"Jynx",
+				"Jynx"sv,
 				Level(100_bi),
 				Gender::female,
 				Item::None,
@@ -518,7 +550,7 @@ TEST_CASE("BattleParser generation 2 explosion double faint", "[Pokemon Showdown
 			),
 			KnownPokemon<generation>(
 				Species::Pikachu,
-				"Pikachu",
+				"Pikachu"sv,
 				Level(100_bi),
 				Gender::female,
 				Item::None,
@@ -533,7 +565,7 @@ TEST_CASE("BattleParser generation 2 explosion double faint", "[Pokemon Showdown
 			auto team = SeenTeam<generation>(2_bi);
 			team.add_pokemon(SeenPokemon<generation>(
 				Species::Gengar,
-				"Gengar",
+				"Gengar"sv,
 				Level(100_bi),
 				Gender::male
 			));
@@ -562,7 +594,7 @@ TEST_CASE("BattleParser shiny genderless Pokemon", "[Pokemon Showdown]") {
 			auto team = SeenTeam<generation>(2_bi);
 			team.add_pokemon(SeenPokemon<generation>(
 				Species::Gengar,
-				"Gengar",
+				"Gengar"sv,
 				Level(100_bi),
 				Gender::male
 			));
@@ -586,7 +618,7 @@ TEST_CASE("BattleParser Struggle", "[Pokemon Showdown]") {
 		KnownTeam<generation>({
 			KnownPokemon<generation>(
 				Species::Smeargle,
-				"Smeargle",
+				"Smeargle"sv,
 				Level(100_bi),
 				Gender::female,
 				Item::None,
@@ -601,7 +633,7 @@ TEST_CASE("BattleParser Struggle", "[Pokemon Showdown]") {
 			auto team = SeenTeam<generation>(1_bi);
 			team.add_pokemon(SeenPokemon<generation>(
 				Species::Smeargle,
-				"Smeargle",
+				"Smeargle"sv,
 				Level(100_bi),
 				Gender::male
 			));
@@ -641,7 +673,7 @@ TEST_CASE("BattleParser full paralysis", "[Pokemon Showdown]") {
 		KnownTeam<generation>({
 			KnownPokemon<generation>(
 				Species::Hypno,
-				"Hypno",
+				"Hypno"sv,
 				Level(74_bi),
 				Gender::male,
 				Item::Leftovers,
@@ -654,7 +686,7 @@ TEST_CASE("BattleParser full paralysis", "[Pokemon Showdown]") {
 			auto team = SeenTeam<generation>(1_bi);
 			team.add_pokemon(SeenPokemon<generation>(
 				Species::Blissey,
-				"Blissey",
+				"Blissey"sv,
 				Level(68_bi),
 				Gender::female
 			));
@@ -686,7 +718,7 @@ TEST_CASE("BattleParser Pain Split", "[Pokemon Showdown]") {
 		KnownTeam<generation>({
 			KnownPokemon<generation>(
 				Species::Misdreavus,
-				"Misdreavus",
+				"Misdreavus"sv,
 				Level(68_bi),
 				Gender::male,
 				Item::None,
@@ -699,7 +731,7 @@ TEST_CASE("BattleParser Pain Split", "[Pokemon Showdown]") {
 			auto team = SeenTeam<generation>(1_bi);
 			team.add_pokemon(SeenPokemon<generation>(
 				Species::Blissey,
-				"Blissey",
+				"Blissey"sv,
 				Level(68_bi),
 				Gender::female
 			));

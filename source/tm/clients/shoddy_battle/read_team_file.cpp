@@ -3,41 +3,53 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/shoddy_battle/read_team_file.hpp>
+module;
 
-#include <tm/buffer_view.hpp>
-#include <tm/bytes_in_file.hpp>
-#include <tm/generation.hpp>
-
-#include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move_name.hpp>
-#include <tm/string_conversions/species.hpp>
-
-#include <bounded/optional.hpp>
-#include <bounded/detail/variant/variant.hpp>
-
-#include <containers/algorithms/concatenate.hpp>
-#include <containers/algorithms/generate.hpp>
-#include <containers/algorithms/transform.hpp>
-#include <containers/at.hpp>
-#include <containers/integer_range.hpp>
-#include <containers/single_element_range.hpp>
-#include <containers/size.hpp>
-#include <containers/stable_vector.hpp>
-#include <containers/static_vector.hpp>
-#include <containers/vector.hpp>
-
-#include <cstddef>
-#include <filesystem>
-#include <fstream>
-#include <span>
-#include <stdexcept>
-#include <string>
+#include <compare>
 #include <string_view>
-#include <type_traits>
-#include <utility>
-#include <variant>
+#include <span>
+
+#include <operators/forward.hpp>
+
+export module tm.clients.sb.read_team_file;
+
+import tm.move.max_moves_per_pokemon;
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.pp;
+import tm.move.regular_moves;
+
+import tm.pokemon.known_pokemon;
+import tm.pokemon.level;
+import tm.pokemon.max_pokemon_per_team;
+import tm.pokemon.nickname;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+import tm.stat.ev;
+import tm.stat.generic_stats;
+import tm.stat.iv;
+import tm.stat.nature;
+import tm.stat.stat_names;
+
+import tm.string_conversions.ability;
+import tm.string_conversions.item;
+import tm.string_conversions.move_name;
+import tm.string_conversions.species;
+
+import tm.ability;
+import tm.buffer_view;
+import tm.bytes_in_file;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.team;
+
+import bounded;
+import containers;
+import numeric_traits;
+import tv;
+import std_module;
 
 // The Shoddy Battle team file was written using Java's Serializable
 // https://docs.oracle.com/javase/8/docs/platform/serialization/spec/protocol.html
@@ -45,13 +57,13 @@
 // parse team files
 
 namespace technicalmachine::sb {
-namespace {
+using namespace bounded::literal;
+using namespace std::string_view_literals;
 
 constexpr auto generation = Generation::four;
 
 constexpr auto number_of_stats = containers::size(containers::enum_range<SplitSpecialPermanentStat>());
 
-using namespace std::string_view_literals;
 
 // This does not use `CHAR_BIT` because the data format is independent of the
 // number of bits in a byte on my machine
@@ -126,7 +138,7 @@ using IntegerVector = containers::static_vector<ByteInteger<4_bi>, bounded::max(
 using AnyVector = containers::vector<ParsedData, bounded::max(max_pokemon_per_team, max_moves_per_pokemon).value()>;
 
 struct ParsedData {
-	using State = bounded::variant<
+	using State = tv::variant<
 		IntegerVector,
 		AnyVector,
 		ClassDescription,
@@ -197,7 +209,7 @@ constexpr auto emplace_once(Optional & optional, auto && initializer) {
 }
 
 template<typename T>
-constexpr auto add_stat(bounded::optional<GenericStats<T>> & optional, auto const & raw) {
+constexpr auto add_stat(tv::optional<GenericStats<T>> & optional, auto const & raw) {
 	if (containers::size(raw) != number_of_stats) {
 		throw std::runtime_error("Incorrect number of stats");
 	}
@@ -268,7 +280,7 @@ private:
 	auto parse_array() & -> ParsedData {
 		auto const description = parse_class_description();
 		auto const size = m_byte_parser.pop_integer(4_bi);
-		auto const code = bounded::visit(description.state, []<typename T>(T const & value) -> char {
+		auto const code = tv::visit(description.state, []<typename T>(T const & value) -> char {
 			if constexpr (std::same_as<T, ClassDescription>) {
 				return containers::at(value.name, 1_bi);
 			} else {
@@ -292,30 +304,30 @@ private:
 				})));
 				break;
 			default:
-				throw std::runtime_error(containers::concatenate<std::string>("Unknown array code "sv, containers::single_element_range(code)));
+				throw std::runtime_error(containers::concatenate<std::string>("Unknown array code "sv, containers::array{code}));
 		}
 		return parsed;
 	}
 
 	auto parse_pokemon(ClassDescription const & description) & -> ParsedData {
-		auto gender = bounded::optional<Gender>();
-		auto level = bounded::optional<Level>();
-		auto shiny = bounded::optional<bool>();
-		auto nature = bounded::optional<Nature>();
-		auto species = bounded::optional<Species>();
-		auto ability = bounded::optional<Ability>();
-		auto item = bounded::optional<Item>();
-		auto nickname = bounded::optional<std::string_view>();
-		auto ivs = bounded::optional<IVs>();
-		auto evs = bounded::optional<EVs>();
-		auto moves = bounded::optional<containers::static_vector<MoveName, max_moves_per_pokemon>>();
+		auto gender = tv::optional<Gender>();
+		auto level = tv::optional<Level>();
+		auto shiny = tv::optional<bool>();
+		auto nature = tv::optional<Nature>();
+		auto species = tv::optional<Species>();
+		auto ability = tv::optional<Ability>();
+		auto item = tv::optional<Item>();
+		auto nickname = tv::optional<std::string_view>();
+		auto ivs = tv::optional<IVs>();
+		auto evs = tv::optional<EVs>();
+		auto moves = tv::optional<containers::static_vector<MoveName, max_moves_per_pokemon>>();
 		// TODO: Use an array?
-		auto pp_ups = bounded::optional<containers::static_vector<PP::pp_ups_type, max_moves_per_pokemon>>();
+		auto pp_ups = tv::optional<containers::static_vector<PP::pp_ups_type, max_moves_per_pokemon>>();
 		for (auto const field : description.fields) {
 			switch (field.type) {
 				case Field::Type::object: {
 					auto const parsed = parse_any();
-					bounded::visit(parsed.state, [&]<typename State>(State const & state) {
+					tv::visit(parsed.state, [&]<typename State>(State const & state) {
 						if constexpr (std::same_as<State, std::string_view>) {
 							if (field.name == "m_name") {
 								emplace_once(species, from_string<Species>(state));
@@ -427,7 +439,7 @@ private:
 		}
 		return ParsedData(KnownPokemon<generation>(
 			*species,
-			containers::string(*nickname),
+			Nickname(*nickname),
 			*level,
 			*gender,
 			*item,
@@ -476,7 +488,7 @@ private:
 			return Field(parse_field());
 		}));
 		m_byte_parser.ignore(1_bi);
-		auto base_class_fields = bounded::visit(parse_class_description().state, []<typename T>(T base) {
+		auto base_class_fields = tv::visit(parse_class_description().state, []<typename T>(T base) {
 			if constexpr (std::same_as<T, ClassDescription>) {
 				return std::move(base).fields;
 			} else {
@@ -517,7 +529,7 @@ private:
 	}
 
 	auto parse_object() & -> ParsedData {
-		auto const description = bounded::visit(parse_class_description().state, []<typename T>(T const & value) -> ClassDescription {
+		auto const description = tv::visit(parse_class_description().state, []<typename T>(T const & value) -> ClassDescription {
 			if constexpr (std::same_as<T, ClassDescription>) {
 				return value;
 			} else {
@@ -547,9 +559,7 @@ private:
 	containers::stable_vector<ParsedData, 1000> m_objects;
 };
 
-} // namespace
-
-auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
+export auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
 	try {
 		auto const bytes = bytes_in_file(team_file);
 		auto parser = Parser(bytes);
@@ -570,7 +580,7 @@ auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneri
 			}
 			return pokemon.state[pokemon_index];
 		});
-		return GenerationGeneric<KnownTeam>(KnownTeam<generation>(typename KnownPokemonCollection<generation>::Container(transformed)));
+		return GenerationGeneric<KnownTeam>(KnownTeam<generation>(transformed));
 	} catch (std::exception const & ex) {
 		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse Shoddy Battle team file \""sv, team_file.string(), "\" -- "sv, std::string_view(ex.what())));
 	}

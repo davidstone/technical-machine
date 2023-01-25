@@ -3,57 +3,68 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/move.hpp>
+export module tm.move.move;
 
-#include <tm/move/is_switch.hpp>
-#include <tm/move/move_name.hpp>
+import tm.move.move_name;
+import tm.move.pp;
+
+import tm.compress;
+import tm.generation;
+
+import bounded;
 
 namespace technicalmachine {
+using namespace bounded::literal;
 
-auto is_delayed_switch(MoveName const move) -> bool {
-	switch (move) {
-		case MoveName::Flip_Turn:
-		case MoveName::U_turn:
-			return true;
-		default:
-			return false;
+export struct Move {
+	explicit constexpr Move(Generation const generation, MoveName const move, PP::pp_ups_type const pp_ups = 3_bi) :
+		m_name(move),
+		m_pp(generation, move, pp_ups)
+	{
 	}
-}
 
-auto is_regular(MoveName const move) -> bool {
-	switch (move) {
-		case MoveName::Pass:
-		case MoveName::Hit_Self:
-		case MoveName::Struggle:
-			return false;
-		default:
-			return !is_switch(move);
+	constexpr auto name() const {
+		return m_name;
 	}
-}
 
-auto is_phaze(MoveName const move) -> bool {
-	switch (move) {
-		case MoveName::Circle_Throw:
-		case MoveName::Dragon_Tail:
-		case MoveName::Roar:
-		case MoveName::Whirlwind:
-			return true;
-		default:
-			return false;
+	constexpr auto pp() const {
+		return m_pp;
 	}
-}
 
-auto thaws_user(MoveName const move) -> bool {
-	switch (move) {
-		case MoveName::Flame_Wheel:
-		case MoveName::Pyro_Ball:
-		case MoveName::Sacred_Fire:
-		case MoveName::Scald:
-		case MoveName::Scorching_Sands:
-			return true;
-		default:
-			return false;
+	constexpr auto reduce_pp(auto const value) & {
+		m_pp.reduce(value);
 	}
-}
+
+	constexpr auto restore_pp(auto const value) & {
+		m_pp.restore(value);
+	}
+
+	friend auto operator==(Move, Move) -> bool = default;
+	friend constexpr auto operator==(Move const lhs, MoveName const rhs) -> bool {
+		return lhs.name() == rhs;
+	}
+	// Pokemon don't change their moves throughout a battle, so we don't need
+	// to include move name
+	friend constexpr auto compress(Move const value) {
+		return compress(value.m_pp);
+	}
+
+private:
+	constexpr explicit Move(bounded::tombstone_tag, auto const make) noexcept:
+		m_name(),
+		m_pp(make())
+	{
+	}
+
+	MoveName m_name;
+	PP m_pp;
+
+	friend bounded::tombstone_traits<Move>;
+	friend bounded::tombstone_traits_composer<&Move::m_pp>;
+};
 
 } // namespace technicalmachine
+
+template<>
+struct bounded::tombstone_traits<technicalmachine::Move> : bounded::tombstone_traits_composer<&technicalmachine::Move::m_pp> {
+};

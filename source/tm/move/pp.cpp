@@ -3,28 +3,42 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/pp.hpp>
+module;
 
-#include <tm/move/move_name.hpp>
+#include <bounded/assert.hpp>
+#include <bounded/conditional.hpp>
 
-#include <type_traits>
+export module tm.move.pp;
+
+import tm.move.move_name;
+
+import tm.compress;
+import tm.generation;
+import tm.saturating_add;
+
+import bounded;
+import numeric_traits;
+import tv;
+import std_module;
 
 namespace technicalmachine {
-namespace {
+using namespace bounded::literal;
 
 using base_type = bounded::integer<1, 40>;
+using pp_ups_type = bounded::integer<0, 3>;
+using max_type = bounded::integer<1, 64>;
 
-constexpr auto calculate_max(bounded::optional<base_type> const base, PP::pp_ups_type const pp_ups) -> bounded::optional<PP::max_type> {
+constexpr auto calculate_max(tv::optional<base_type> const base, pp_ups_type const pp_ups) -> tv::optional<max_type> {
 	if (!base) {
-		return bounded::none;
+		return tv::none;
 	}
 	auto const result = *base * (pp_ups + 5_bi) / 5_bi;
-	static_assert(std::same_as<decltype(result), PP::max_type const>);
+	static_assert(std::same_as<decltype(result), max_type const>);
 	return result;
 }
 
-constexpr auto base_pp(Generation const generation, MoveName const move) -> bounded::optional<base_type> {
-	using bounded::none;
+constexpr auto base_pp(Generation const generation, MoveName const move) -> tv::optional<base_type> {
+	using tv::none;
 	switch (move) {
 		case MoveName::Pass: return none;
 		case MoveName::Switch0: return none;
@@ -846,13 +860,70 @@ constexpr auto base_pp(Generation const generation, MoveName const move) -> boun
 	}
 }
 
-} // namespace
+export struct PP {
+	using pp_ups_type = pp_ups_type;
+	using max_type = max_type;
 
-PP::PP(Generation const generation, MoveName const move, pp_ups_type const pp_ups):
-	m_max(calculate_max(base_pp(generation, move), pp_ups)),
-	m_current(m_max ? bounded::optional<current_type>(*m_max) : bounded::none)
-{
+	constexpr PP(Generation const generation, MoveName const move, pp_ups_type const pp_ups):
+		m_max(calculate_max(base_pp(generation, move), pp_ups)),
+		m_current(m_max ? tv::optional<current_type>(*m_max) : tv::none)
+	{
+	}
+
+
+	constexpr auto remaining() const {
+		return m_current;
+	}
+
+	constexpr auto restore(auto const value) & {
+		static_assert(value >= 0_bi);
+		BOUNDED_ASSERT(*m_current == 0_bi);
+		*m_current = bounded::min(value, *m_max);
+	}
+
+	constexpr auto reduce(auto const value) & {
+		static_assert(numeric_traits::min_value<decltype(value)> >= 0_bi);
+		if (!m_current) {
+			return;
+		}
+		saturating_add(*m_current, -value);
+	}
+
+	// Assumes max PP is the same because it assumes the same Move on the same
+	// Pokemon
+	friend constexpr auto operator==(PP const lhs, PP const rhs) -> bool {
+		return lhs.m_current == rhs.m_current;
+	}
+
+	// Assumes max PP is the same because it assumes the same Move on the same
+	// Pokemon
+	friend constexpr auto compress(PP const value) {
+		return compress(value.m_current);
+	}
+
+private:
+	constexpr explicit PP(bounded::tombstone_tag, auto const make) noexcept:
+		m_max(make()),
+		m_current()
+	{
+	}
+
+	using current_type = bounded::integer<0, bounded::normalize<numeric_traits::max_value<max_type>>>;
+	// TODO: Use optional<pair> instead of pair<optional>
+	tv::optional<max_type> m_max;
+	tv::optional<current_type> m_current;
+
+	friend bounded::tombstone_traits<PP>;
+	friend bounded::tombstone_traits_composer<&PP::m_max>;
+};
+
+export constexpr auto no_pp(PP const pp) {
+	auto const remaining = pp.remaining();
+	return remaining and *remaining == 0_bi;
 }
 
-
 } // namespace technicalmachine
+
+template<>
+struct bounded::tombstone_traits<technicalmachine::PP> : bounded::tombstone_traits_composer<&technicalmachine::PP::m_max> {
+};

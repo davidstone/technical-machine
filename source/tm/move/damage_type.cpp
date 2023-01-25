@@ -3,4 +3,12 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/damage_type.hpp>
+export module tm.move.damage_type;
+
+import bounded;
+
+namespace technicalmachine {
+
+export using damage_type = bounded::integer<0, 1'000'000'000>;
+
+} // namespace technicalmachine

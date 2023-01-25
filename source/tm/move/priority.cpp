@@ -3,16 +3,17 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/priority.hpp>
+export module tm.move.priority;
 
-#include <tm/move/move_name.hpp>
+import tm.move.move_name;
 
-#include <tm/constant_generation.hpp>
+import tm.constant_generation;
+import tm.generation;
+
+import bounded;
 
 namespace technicalmachine {
-
 using namespace bounded::literal;
-namespace {
 
 using PriorityInteger = bounded::integer<-6, 6>;
 
@@ -363,10 +364,14 @@ constexpr auto get_priority(Generation const generation, MoveName const move) {
 	return constant_generation(generation, [=](auto const g) { return priority_impl(g, move); });
 }
 
-} // namespace
+export struct Priority {
+	explicit constexpr Priority(Generation const generation, MoveName const move):
+		priority(get_priority(generation, move)) {
+	}
 
-Priority::Priority(Generation const generation, MoveName const move):
-	priority(get_priority(generation, move)) {
-}
+	friend auto operator<=>(Priority, Priority) = default;
+private:
+	bounded::integer<-6, 6> priority;
+};
 
 } // namespace technicalmachine

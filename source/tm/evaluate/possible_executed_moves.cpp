@@ -3,13 +3,31 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/evaluate/possible_executed_moves.hpp>
+module;
 
-#include <containers/algorithms/filter_iterator.hpp>
-#include <containers/algorithms/transform.hpp>
+#include <tm/for_each_generation.hpp>
+
+export module tm.evaluate.possible_executed_moves;
+
+import tm.move.known_move;
+import tm.move.move;
+import tm.move.move_name;
+
+import tm.pokemon.get_hidden_power_type;
+import tm.pokemon.pokemon;
+
+import tm.status.status;
+
+import tm.any_team;
+import tm.generation;
+import tm.team;
+import tm.type.type;
+
+import bounded;
+import containers;
 
 namespace technicalmachine {
-namespace {
+using namespace bounded::literal;
 
 constexpr auto can_be_selected_by_sleep_talk(KnownMove const move) {
 	switch (move.name) {
@@ -37,9 +55,9 @@ constexpr auto can_be_selected_by_sleep_talk(KnownMove const move) {
 	}
 }
 
-} // namespace
+export using PossibleExecutedMoves = containers::static_vector<KnownMove, 3_bi>;
 
-template<any_team UserTeam>
+export template<any_team UserTeam>
 auto possible_executed_moves(MoveName const selected_move, UserTeam const & user_team) -> PossibleExecutedMoves {
 	auto const user_pokemon = user_team.pokemon();
 	auto type = [=](MoveName const move) {

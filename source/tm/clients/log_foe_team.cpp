@@ -3,26 +3,30 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/log_foe_team.hpp>
+export module tm.clients.log_foe_team;
 
-#include <tm/clients/random_string.hpp>
+import tm.clients.random_string;
+import tm.clients.write_team;
 
-#include <containers/algorithms/concatenate.hpp>
-#include <containers/string.hpp>
+import tm.team_predictor.team_predictor;
+import tm.team_predictor.usage_stats;
 
-#include <string_view>
+import tm.any_team;
+import tm.generation;
+import tm.team;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
-namespace {
+using namespace bounded::literal;
 
-constexpr auto get_extension() -> std::string_view {
-	// TODO: add support for other formats
-	return ".sbt";
+auto team_file_directory() {
+	return std::filesystem::path("teams/foe");
 }
 
-} // namespace
-
-std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
+auto generate_team_file_name(std::mt19937 & random_engine, std::string_view const extension) -> std::filesystem::path {
 	// Randomly generates a file name in 8.3 format. It then checks to see if
 	// that file name already exists. If it does, it randomly generates a new
 	// file name, and continues until it generates a name that does not exist.
@@ -35,9 +39,16 @@ std::filesystem::path generate_team_file_name(std::mt19937 & random_engine) {
 	std::filesystem::path foe_team_file;
 	do {
 		foe_team_file = team_file_directory();
-		foe_team_file /= std::string_view(containers::concatenate<containers::string>(random_string(random_engine, file_name_length), get_extension()));
+		foe_team_file /= std::string_view(containers::concatenate<containers::string>(random_string(random_engine, file_name_length), extension));
 	} while (std::filesystem::exists(foe_team_file));
 	return foe_team_file;
+}
+
+export auto log_foe_team(UsageStats const & usage_stats, any_seen_team auto const & foe_team, std::mt19937 & random_engine, WriteTeam const & write_team) -> void {
+	auto const path = generate_team_file_name(random_engine, write_team.extension);
+	std::filesystem::create_directory(team_file_directory());
+	auto const team = most_likely_team(usage_stats, random_engine, foe_team);
+	write_team.function(GenerationGeneric<Team>(team), path);
 }
 
 } // namespace technicalmachine

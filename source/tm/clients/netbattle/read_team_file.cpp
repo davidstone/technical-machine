@@ -3,46 +3,58 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/netbattle/read_team_file.hpp>
+module;
 
-#include <tm/move/max_moves_per_pokemon.hpp>
-
-#include <tm/pokemon/is_genderless.hpp>
-#include <tm/pokemon/max_pokemon_per_team.hpp>
-#include <tm/pokemon/pokemon.hpp>
-
-#include <tm/stat/generic_stats.hpp>
-#include <tm/stat/ingame_id_to_nature.hpp>
-
-#include <tm/string_conversions/species.hpp>
-
-#include <tm/bit_view.hpp>
-#include <tm/bytes_in_file.hpp>
-#include <tm/constant_generation.hpp>
-#include <tm/generation.hpp>
-
-#include <containers/algorithms/concatenate.hpp>
-#include <containers/algorithms/filter_iterator.hpp>
-#include <containers/algorithms/generate.hpp>
-#include <containers/algorithms/transform.hpp>
-#include <containers/range_view.hpp>
-#include <containers/vector.hpp>
-
-#include <fstream>
-#include <stdexcept>
-#include <string>
+#include <compare>
 #include <string_view>
-#include <utility>
+
+export module tm.clients.nb.read_team_file;
+
+import tm.move.max_moves_per_pokemon;
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
+
+import tm.pokemon.is_genderless;
+import tm.pokemon.known_pokemon;
+import tm.pokemon.level;
+import tm.pokemon.max_pokemon_per_team;
+import tm.pokemon.nickname;
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+import tm.stat.ev;
+import tm.stat.generic_stats;
+import tm.stat.ingame_id_to_nature;
+import tm.stat.iv;
+
+import tm.string_conversions.species;
+
+import tm.ability;
+import tm.bit_view;
+import tm.bytes_in_file;
+import tm.constant_generation;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.team;
+
+import bounded;
+import containers;
+import numeric_traits;
+import tv;
+import std_module;
 
 namespace technicalmachine::nb {
-namespace {
+using namespace bounded::literal;
 
 using namespace std::string_view_literals;
 
 enum class FileVersion { four_zero, four_one, five_zero };
 
 using SpeciesID = bounded::integer<0, 509>;
-constexpr auto id_to_species(SpeciesID const id, FileVersion const version) {
+constexpr auto id_to_species(SpeciesID const id, FileVersion const version) -> Species {
 	switch (id.value()) {
 		// Generation 1
 		case 1: return Species::Bulbasaur;
@@ -575,7 +587,7 @@ constexpr auto id_to_species(SpeciesID const id, FileVersion const version) {
 }
 
 using ItemID = bounded::integer<0, 127>;
-constexpr auto id_to_item(ItemID const id, bool const prefer_gen_4_item) {
+constexpr auto id_to_item(ItemID const id, bool const prefer_gen_4_item) -> Item {
 	switch (id.value()) {
 		case 0: return !prefer_gen_4_item ? Item::None : Item::Micle_Berry;
 
@@ -1131,9 +1143,9 @@ constexpr auto id_to_gender(Species const species, bounded::integer<0, 1> const 
 }
 
 using MoveID = bounded::integer<0, 467>;
-constexpr auto id_to_move(MoveID const id) -> bounded::optional<MoveName> {
+constexpr auto id_to_move(MoveID const id) -> tv::optional<MoveName> {
 	switch (id.value()) {
-		case 0: return bounded::none;
+		case 0: return tv::none;
 
 		// Generation 1 and 2
 		case 1: return MoveName::Absorb;
@@ -1628,20 +1640,20 @@ struct Parser {
 	constexpr auto pop_integer(auto const bits) {
 		return pop_integer<bounded::integer<0, bounded::normalize<(1_bi << bits) - 1_bi>>>(bits);
 	}
-	constexpr auto pop_string(auto const size) -> std::string_view {
+	constexpr auto pop_string(auto const size) {
 		if (size * bounded::char_bit > m_view.remaining_bits()) {
 			throw std::runtime_error("Attempted to pop too many bytes.");
 		}
 		return m_view.pop_string(size);
 	}
-	constexpr auto pop_sized_string() -> std::string_view {
-		return pop_string(pop_integer(8_bi));
+	constexpr auto ignore_sized_string() {
+		return m_view.skip_bytes(pop_integer(8_bi));
 	}
-	constexpr auto skip(auto const bits) {
-		m_view.skip(bits);
+	constexpr auto skip_bits(auto const bits) -> void {
+		m_view.skip_bits(bits);
 	}
 
-	constexpr auto file_version() const {
+	constexpr auto file_version() const -> FileVersion {
 		return m_file_version;
 	}
 
@@ -1655,14 +1667,14 @@ private:
 		} else if (file_version_string == " PNB5.0") {
 			return FileVersion::five_zero;
 		} else {
-			throw std::runtime_error(containers::concatenate<std::string>("Version "sv, file_version_string, " not supported"sv));
+			throw std::runtime_error(containers::concatenate<std::string>("Version \""sv, file_version_string, "\" not supported"sv));
 		}
 	}
 	BitView m_view;
 	FileVersion m_file_version;
 };
 
-auto parse_moves(Generation const generation, Parser & parser) -> RegularMoves {
+constexpr auto parse_moves(Generation const generation, Parser & parser) -> RegularMoves {
 	auto pop_move = [&] {
 		return id_to_move(parser.pop_integer<MoveID>(9_bi));
 	};
@@ -1716,19 +1728,20 @@ constexpr auto parse_evs(Parser & parser) {
 }
 
 template<Generation generation>
-auto parse_pokemon(Parser & parser) -> bounded::optional<KnownPokemon<generation>> {
+constexpr auto parse_pokemon(Parser & parser) -> tv::optional<KnownPokemon<generation>> {
 	constexpr auto nickname_bytes = 15_bi;
 	auto const padded_nickname = parser.pop_string(nickname_bytes);
-	auto const nickname = std::string_view(
-		padded_nickname.begin(),
-		containers::find_if_not(containers::reversed(padded_nickname), bounded::equal_to(' ')).base()
-	);
+	auto const padded_nickname_view = std::string_view(padded_nickname);
+	auto const nickname = Nickname(std::string_view(
+		padded_nickname_view.begin(),
+		containers::find_if_not(containers::reversed(padded_nickname_view), bounded::equal_to(' ')).base()
+	));
 	constexpr auto species_bits = 9_bi;
 	auto const species_id = parser.pop_integer<SpeciesID>(species_bits);
 	if (species_id == 0_bi) {
 		constexpr auto total_pokemon_bit_length = 35_bi * bounded::char_bit;
-		parser.skip(total_pokemon_bit_length - nickname_bytes * bounded::char_bit - species_bits);
-		return bounded::none;
+		parser.skip_bits(total_pokemon_bit_length - nickname_bytes * bounded::char_bit - species_bits);
+		return tv::none;
 	}
 	auto const species = id_to_species(bounded::increase_min<1>(species_id), parser.file_version());
 	[[maybe_unused]] auto const game_version = parser.pop_integer(3_bi);
@@ -1753,7 +1766,7 @@ auto parse_pokemon(Parser & parser) -> bounded::optional<KnownPokemon<generation
 
 	return KnownPokemon<generation>(
 		species,
-		containers::string(nickname),
+		nickname,
 		level,
 		gender,
 		item,
@@ -1764,19 +1777,14 @@ auto parse_pokemon(Parser & parser) -> bounded::optional<KnownPokemon<generation
 }
 
 template<Generation generation>
-auto parse_team(Parser & parser) -> KnownTeam<generation> {
-	auto all_pokemon = typename KnownPokemonCollection<generation>::Container();
-	for ([[maybe_unused]] auto const pokemon_index : containers::integer_range(max_pokemon_per_team)) {
-		auto const pokemon = parse_pokemon<generation>(parser);
-		if (pokemon) {
-			containers::push_back(all_pokemon, *pokemon);
-		}
-	}
-	return KnownTeam<generation>(std::move(all_pokemon));
+constexpr auto parse_team(Parser & parser) -> KnownTeam<generation> {
+	return KnownTeam<generation>(containers::remove_none(
+		containers::generate_n(max_pokemon_per_team, [&] { return parse_pokemon<generation>(parser); })
+	));
 }
 
 using GameVersion = bounded::integer<0, 8>;
-constexpr auto game_version_to_generation(GameVersion const game_version) {
+constexpr auto game_version_to_generation(GameVersion const game_version) -> Generation {
 	switch (game_version.value()) {
 		case 0: return Generation::one; // "RBY with Trades"
 		case 1: return Generation::two; // "GSC with Trades"
@@ -1791,25 +1799,31 @@ constexpr auto game_version_to_generation(GameVersion const game_version) {
 	}
 }
 
-} // namespace
+export constexpr auto read_team_file(std::span<std::byte const> const bytes) -> GenerationGeneric<KnownTeam> {
+	auto parser = Parser(bytes);
+	// username
+	parser.ignore_sized_string();
+	// extra info
+	parser.ignore_sized_string();
+	// win message
+	parser.ignore_sized_string();
+	if (parser.file_version() == FileVersion::five_zero) {
+		// tie message
+		parser.ignore_sized_string();
+	}
+	// lose message
+	parser.ignore_sized_string();
+	auto const generation = game_version_to_generation(parser.pop_integer<GameVersion>(8_bi));
+	[[maybe_unused]] auto const avatar = parser.pop_integer(8_bi);
+	[[maybe_unused]] auto const sprite_type = parser.pop_integer(8_bi);
+	return constant_generation(generation, [&]<Generation g>(constant_gen_t<g>) {
+		return GenerationGeneric<KnownTeam>(parse_team<g>(parser));
+	});
+}
 
-auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
+export auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
 	try {
-		auto const bytes = bytes_in_file(team_file);
-		auto parser = Parser(bytes);
-		[[maybe_unused]] auto const username = parser.pop_sized_string();
-		[[maybe_unused]] auto const extra_info = parser.pop_sized_string();
-		[[maybe_unused]] auto const win_message = parser.pop_sized_string();
-		if (parser.file_version() == FileVersion::five_zero) {
-			[[maybe_unused]] auto const tie_message = parser.pop_sized_string();
-		}
-		[[maybe_unused]] auto const lose_message = parser.pop_sized_string();
-		auto const generation = game_version_to_generation(parser.pop_integer<GameVersion>(8_bi));
-		[[maybe_unused]] auto const avatar = parser.pop_integer(8_bi);
-		[[maybe_unused]] auto const sprite_type = parser.pop_integer(8_bi);
-		return constant_generation(generation, [&]<Generation g>(constant_gen_t<g>) {
-			return GenerationGeneric<KnownTeam>(parse_team<g>(parser));
-		});
+		return read_team_file(bytes_in_file(team_file));
 	} catch (std::exception const & ex) {
 		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse NetBattle team file \""sv, team_file.string(), "\" -- "sv, std::string_view(ex.what())));
 	}

@@ -1,19 +1,34 @@
-// Effectiveness of a type
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/type/effectiveness.hpp>
+module;
 
-#include <tm/generation.hpp>
-#include <tm/rational.hpp>
+#include <bounded/conditional.hpp>
 
-#include <containers/front_back.hpp>
-#include <containers/size.hpp>
+export module tm.type.effectiveness;
+
+import tm.type.pokemon_types;
+
+import tm.move.category;
+import tm.move.known_move;
+import tm.move.move_name;
+
+import tm.pokemon.any_pokemon;
+import tm.pokemon.grounded;
+
+import tm.type.type;
+
+import tm.generation;
+import tm.rational;
+import tm.weather;
+
+import bounded;
+import containers;
 
 namespace technicalmachine {
-namespace {
+using namespace bounded::literal;
 
 constexpr auto no_effect = rational(0_bi, 1_bi);
 constexpr auto not_very_effective = rational(1_bi, 2_bi);
@@ -424,27 +439,77 @@ constexpr auto lookup_effectiveness(Generation const generation, Type const atta
 	}
 }
 
-} // namespace
+export struct Effectiveness {
+private:
+	constexpr auto product() const {
+		return m_first * m_second;
+	}
+public:
+	constexpr Effectiveness(Generation const generation, Type const attacking, PokemonTypes const defending):
+		m_first(lookup_effectiveness(generation, attacking, containers::front(defending))),
+		m_second(containers::size(defending) == 1_bi ?
+			SingleType(1_bi, 1_bi) :
+			lookup_effectiveness(generation, attacking, containers::back(defending))
+		)
+	{
+	}
 
-Effectiveness::Effectiveness(Generation const generation, Type const attacking, PokemonTypes const defending):
-	m_first(lookup_effectiveness(generation, attacking, containers::front(defending))),
-	m_second(containers::size(defending) == 1_bi ?
-		SingleType(1_bi, 1_bi) :
-		lookup_effectiveness(generation, attacking, containers::back(defending))
-	)
-{
+	constexpr auto is_super_effective() const -> bool {
+		return product() == super_effective or product() == super_effective * super_effective;
+	}
+
+	constexpr auto is_not_very_effective() const -> bool {
+		return product() == not_very_effective or product() == not_very_effective * not_very_effective;
+	}
+
+	constexpr auto has_no_effect() const -> bool {
+		return product() == no_effect;
+	}
+
+private:
+	friend constexpr auto operator*(Effectiveness const lhs, auto const rhs) {
+		return rhs * lhs.product();
+	}
+	friend constexpr auto operator*(auto const lhs, Effectiveness const rhs) {
+		return rhs * lhs;
+	}
+
+	using SingleType = rational<bounded::integer<0, 2>, bounded::integer<1, 2>>;
+	SingleType m_first;
+	SingleType m_second;
+};
+
+constexpr auto always_affects_target(Generation const generation, MoveName const move) {
+	switch (generation) {
+		case Generation::one:
+			switch (move) {
+				case MoveName::Night_Shade:
+				case MoveName::Seismic_Toss:
+				case MoveName::Sonic_Boom:
+				case MoveName::Super_Fang:
+					return true;
+				default:
+					return false;
+			}
+		case Generation::two:
+		case Generation::three:
+		case Generation::four:
+		case Generation::five:
+		case Generation::six:
+		case Generation::seven:
+		case Generation::eight:
+			return false;
+	}
 }
 
-auto Effectiveness::is_super_effective() const -> bool {
-	return product() == super_effective or product() == super_effective * super_effective;
-}
-
-auto Effectiveness::is_not_very_effective() const -> bool {
-	return product() == not_very_effective or product() == not_very_effective * not_very_effective;
-}
-
-auto Effectiveness::has_no_effect() const -> bool {
-	return product() == no_effect;
+export template<any_active_pokemon TargetPokemon>
+auto affects_target(KnownMove const move, TargetPokemon const target, Weather const weather) -> bool {
+	constexpr auto generation = generation_from<TargetPokemon>;
+	auto const effectiveness = Effectiveness(generation, move.type, target.types());
+	if (!is_damaging(move.name) or always_affects_target(generation, move.name)) {
+		return true;
+	}
+	return !effectiveness.has_no_effect() and (move.type != Type::Ground or grounded(target, weather));
 }
 
 } // namespace technicalmachine

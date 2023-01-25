@@ -3,36 +3,51 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/evaluate/evaluate.hpp>
-#include <tm/evaluate/expectiminimax.hpp>
-
-#include <tm/move/call_move.hpp>
-#include <tm/move/move_name.hpp>
-#include <tm/move/side_effects.hpp>
-
-#include <tm/pokemon/species.hpp>
-
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
-
-#include <tm/end_of_turn.hpp>
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
-
-#include <bounded/assert.hpp>
-#include <bounded/integer.hpp>
-
-#include <containers/array.hpp>
-#include <containers/begin_end.hpp>
-#include <containers/front_back.hpp>
-#include <containers/legacy_iterator.hpp>
-#include <containers/size.hpp>
-
-#include <boost/iostreams/stream.hpp>
-
-#include <random>
-
+#include <compare>
+#include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.evaluate.depth;
+import tm.evaluate.evaluate;
+import tm.evaluate.expectiminimax;
+import tm.evaluate.predict_action;
+import tm.evaluate.scored_move;
+import tm.evaluate.score_moves;
+
+import tm.move.actual_damage;
+import tm.move.call_move;
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.no_effect_function;
+import tm.move.other_move;
+import tm.move.regular_moves;
+import tm.move.side_effects;
+import tm.move.used_move;
+
+import tm.pokemon.level;
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+import tm.stat.ev;
+import tm.stat.iv;
+import tm.stat.nature;
+
+import tm.status.status_name;
+
+import tm.ability;
+import tm.block;
+import tm.end_of_turn;
+import tm.end_of_turn_flags;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.team;
+import tm.weather;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
 namespace {
@@ -40,6 +55,21 @@ using namespace bounded::literal;
 
 constexpr auto make_depth(DepthInt const depth) {
 	return Depth(depth, 0_bi);
+}
+
+auto determine_best_move(auto const & ai, auto const & foe, Weather const weather, auto const evaluate, Depth const depth) {
+	auto const moves = expectiminimax(
+		ai,
+		legal_selections(ai, foe, weather),
+		foe,
+		legal_selections(foe, ai, weather),
+		weather,
+		evaluate,
+		depth
+	);
+	return *containers::max_element(moves, [](ScoredMove const lhs, ScoredMove const rhs) {
+		return lhs.score > rhs.score;
+	});
 }
 
 auto shuffled_regular_moves(Generation const generation, auto & random_engine, auto... ts) {
@@ -89,7 +119,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	team2.reset_start_of_turn();
 
 	{
-		auto const best_move = expectiminimax(team1, team2, weather, evaluate, depth);
+		auto const best_move = determine_best_move(team1, team2, weather, evaluate, depth);
 		CHECK(best_move.name == MoveName::Thunderbolt);
 		CHECK(best_move.score == victory<generation>);
 	}
@@ -109,7 +139,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	team3.reset_start_of_turn();
 	
 	{
-		auto const best_move = expectiminimax(team1, team3, weather, evaluate, depth);
+		auto const best_move = determine_best_move(team1, team3, weather, evaluate, depth);
 		CHECK(best_move.name == MoveName::Shadow_Ball);
 		CHECK(best_move.score == victory<generation>);
 	}
@@ -164,7 +194,7 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 	defender.pokemon().switch_in(weather);
 	defender.reset_start_of_turn();
 
-	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
 	CHECK(best_move.name == MoveName::Shadow_Ball);
 }
 
@@ -228,7 +258,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 	defender.pokemon().switch_in(weather);
 	defender.reset_start_of_turn();
 
-	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
 	CHECK(best_move.name == MoveName::Belly_Drum);
 	CHECK(best_move.score == victory<generation>);
 }
@@ -296,21 +326,21 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 	defender.pokemon().switch_in(weather);
 	defender.reset_start_of_turn();
 
-	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
 	CHECK(best_move.name == MoveName::Curse);
 	CHECK(best_move.score == victory<generation>);
 }
 
 
-TEST_CASE("expectiminimax Baton Pass", "[expectiminimax]") {
+TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	auto const evaluate = Evaluate<generation>();
-	auto const weather = Weather();
+	auto weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
 	};
-	constexpr auto depth = Depth(4_bi, 0_bi);
+	constexpr auto depth = Depth(1_bi, 0_bi);
 
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -340,7 +370,7 @@ TEST_CASE("expectiminimax Baton Pass", "[expectiminimax]") {
 					EV(0_bi)
 				)
 			},
-			regular_moves(MoveName::Psycho_Cut, MoveName::Recover)
+			regular_moves(MoveName::Psycho_Cut)
 		)
 	}, true);
 	attacker.pokemon().switch_in(weather);
@@ -348,9 +378,9 @@ TEST_CASE("expectiminimax Baton Pass", "[expectiminimax]") {
 
 	auto defender = Team<generation>({
 		Pokemon<generation>(
-			Species::Gengar,
+			Species::Misdreavus,
 			Level(100_bi),
-			Gender::male,
+			Gender::female,
 			Item::Choice_Specs,
 			Ability::Levitate,
 			CombinedStats<generation>{
@@ -366,7 +396,98 @@ TEST_CASE("expectiminimax Baton Pass", "[expectiminimax]") {
 				)
 			},
 			regular_moves(MoveName::Shadow_Ball)
+		)
+	});
+	defender.pokemon().switch_in(weather);
+	defender.reset_start_of_turn();
+
+	{
+		constexpr auto move_name = MoveName::Shadow_Ball;
+		auto const side_effects = possible_side_effects(move_name, defender.pokemon().as_const(), attacker, weather);
+		REQUIRE(!containers::is_empty(side_effects));
+		call_move(
+			defender,
+			UsedMove<Team<generation>>(
+				move_name,
+				containers::front(side_effects).function
+			),
+			attacker,
+			FutureMove{false},
+			weather,
+			false,
+			ActualDamage::Unknown{},
+			false
+		);
+	}
+	{
+		constexpr auto move_name = MoveName::Baton_Pass;
+		auto const side_effects = possible_side_effects(move_name, attacker.pokemon().as_const(), defender, weather);
+		REQUIRE(containers::size(side_effects) == 1_bi);
+		call_move(
+			attacker,
+			UsedMove<Team<generation>>(
+				move_name,
+				containers::front(side_effects).function
+			),
+			defender,
+			FutureMove{false},
+			weather,
+			false,
+			ActualDamage::Unknown{},
+			false
+		);
+	}
+
+	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == MoveName::Switch1);
+}
+
+
+TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
+	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
+	auto const regular_moves = [&](auto... args) {
+		return shuffled_regular_moves(generation, random_engine, args...);
+	};
+	constexpr auto depth = Depth(3_bi, 0_bi);
+
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Smeargle,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Own_Tempo,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Baton_Pass, MoveName::Belly_Drum)
 		),
+		Pokemon<generation>(
+			Species::Alakazam,
+			Level(100_bi),
+			Gender::male,
+			Item::Lum_Berry,
+			Ability::Synchronize,
+			CombinedStats<generation>{
+				Nature::Adamant,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(MoveName::Psycho_Cut)
+		)
+	}, true);
+	attacker.pokemon().switch_in(weather);
+	attacker.reset_start_of_turn();
+
+	auto defender = Team<generation>({
 		Pokemon<generation>(
 			Species::Misdreavus,
 			Level(100_bi),
@@ -392,7 +513,7 @@ TEST_CASE("expectiminimax Baton Pass", "[expectiminimax]") {
 
 	defender.reset_start_of_turn();
 
-	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
 	CHECK(best_move.name == MoveName::Belly_Drum);
 	CHECK(best_move.score == victory<generation>);
 }
@@ -480,7 +601,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 		);
 	}
 
-	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
 	CHECK(best_move.name == MoveName::Switch2);
 }
 
@@ -547,7 +668,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 
 	defender.reset_start_of_turn();
 
-	auto const best_move = expectiminimax(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
 	CHECK(best_move.name == MoveName::Calm_Mind);
 }
 
@@ -614,7 +735,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	// TODO: Validate score, too
 
 	CHECK(jolteon.status().name() == StatusName::clear);
-	CHECK(expectiminimax(attacker, defender, weather, evaluate, depth).name == MoveName::Thunderbolt);
+	CHECK(determine_best_move(attacker, defender, weather, evaluate, depth).name == MoveName::Thunderbolt);
 
 	call_move(
 		attacker,
@@ -629,7 +750,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	jolteon.set_status(StatusName::sleep, weather);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(expectiminimax(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_move(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	call_move(
 		attacker,
@@ -643,7 +764,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(expectiminimax(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_move(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	call_move(
 		attacker,
@@ -657,7 +778,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(expectiminimax(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_move(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	#if 0
 		// Same probability of either move
@@ -673,7 +794,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 		);
 		next_turn();
 		CHECK(jolteon.status().name() == StatusName::sleep);
-		CHECK(expectiminimax(attacker, defender, weather, evaluate, depth).name == ?);
+		CHECK(determine_best_move(attacker, defender, weather, evaluate, depth).name == ?);
 	#endif
 }
 
@@ -693,7 +814,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			regular_moves(MoveName::Psychic, MoveName::Recover, MoveName::Thunder_Wave, MoveName::Seismic_Toss)
+			regular_moves(MoveName::Toxic, MoveName::Psychic, MoveName::Recover)
 		)
 	}, true);
 	attacker.pokemon().switch_in(weather);
@@ -706,7 +827,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 			Item::None,
 			Ability::Honey_Gather,
 			default_combined_stats<generation>,
-			regular_moves(MoveName::Explosion, MoveName::Hypnosis, MoveName::Thunderbolt, MoveName::Night_Shade)
+			regular_moves(MoveName::Thunderbolt)
 		)
 	});
 	defender.pokemon().set_status(StatusName::freeze, weather);
@@ -716,8 +837,683 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	attacker.reset_start_of_turn();
 	defender.reset_start_of_turn();
 
-	CHECK(expectiminimax(attacker, defender, weather, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
-	CHECK(expectiminimax(attacker, defender, weather, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
+	CHECK(determine_best_move(attacker, defender, weather, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
+	CHECK(determine_best_move(attacker, defender, weather, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
+}
+
+auto determine_best_move2(auto const & ai, auto const & foe, Weather const weather, auto const evaluate, Depth const depth) {
+	auto const ai_selections = legal_selections(ai, foe, weather);
+	auto const foe_selections = legal_selections(foe, ai, weather);
+	auto const moves = score_moves(
+		ai,
+		ai_selections,
+		foe,
+		foe_selections,
+		weather,
+		evaluate,
+		depth,
+		predict_action(
+			foe,
+			foe_selections,
+			ai,
+			ai_selections,
+			weather,
+			evaluate
+		)
+	);
+	return *containers::max_element(moves, [](ScoredMove const lhs, ScoredMove const rhs) {
+		return lhs.score > rhs.score;
+	});
+}
+
+TEST_CASE("expectiminimax OHKO", "[score_moves]") {
+	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
+	auto const regular_moves = [&](auto... args) {
+		return shuffled_regular_moves(generation, random_engine, args...);
+	};
+	constexpr auto depth = make_depth(1_bi);
+
+	auto team1 = Team<generation>({
+		Pokemon<generation>(
+			Species::Jolteon,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Volt_Absorb,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
+		)
+	}, true);
+	team1.pokemon().switch_in(weather);
+	team1.reset_start_of_turn();
+
+	auto team2 = Team<generation>({
+		Pokemon<generation>(
+			Species::Gyarados,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Intimidate,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Dragon_Dance, MoveName::Waterfall, MoveName::Stone_Edge, MoveName::Taunt)
+		)
+	});
+	team2.pokemon().switch_in(weather);
+	team2.reset_start_of_turn();
+
+	{
+		auto const best_move = determine_best_move2(team1, team2, weather, evaluate, depth);
+		CHECK(best_move.name == MoveName::Thunderbolt);
+		CHECK(best_move.score == Catch::Approx(victory<generation>));
+	}
+	
+	auto team3 = Team<generation>({
+		Pokemon<generation>(
+			Species::Shedinja,
+			Level(100_bi),
+			Gender::male,
+			Item::Lum_Berry,
+			Ability::Wonder_Guard,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Swords_Dance, MoveName::X_Scissor, MoveName::Shadow_Sneak, MoveName::Will_O_Wisp)
+		)
+	});
+	team3.pokemon().switch_in(weather);
+	team3.reset_start_of_turn();
+	
+	{
+		auto const best_move = determine_best_move2(team1, team3, weather, evaluate, depth);
+		CHECK(best_move.name == MoveName::Shadow_Ball);
+		CHECK(best_move.score == victory<generation>);
+	}
+}
+
+TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
+	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
+	auto const regular_moves = [&](auto... args) {
+		return shuffled_regular_moves(generation, random_engine, args...);
+	};
+	constexpr auto depth = make_depth(1_bi);
+	
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Jolteon,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Volt_Absorb,
+			CombinedStats<generation>{
+				Nature::Hardy,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
+		)
+	}, true);
+	attacker.pokemon().switch_in(weather);
+	attacker.reset_start_of_turn();
+
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Swampert,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Torrent,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Surf, MoveName::Ice_Beam)
+		)
+	});
+	defender.pokemon().switch_in(weather);
+	defender.reset_start_of_turn();
+
+	auto const best_move = determine_best_move2(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == MoveName::Shadow_Ball);
+}
+
+TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
+	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
+	auto const regular_moves = [&](auto... args) {
+		return shuffled_regular_moves(generation, random_engine, args...);
+	};
+	constexpr auto depth = make_depth(2_bi);
+
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Charizard,
+			Level(100_bi),
+			Gender::male,
+			Item::Salac_Berry,
+			Ability::Blaze,
+			CombinedStats<generation>{
+				Nature::Hardy,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(MoveName::Fire_Punch, MoveName::Belly_Drum, MoveName::Earthquake, MoveName::Double_Edge)
+		)
+	}, true);
+	attacker.pokemon().switch_in(weather);
+	attacker.reset_start_of_turn();
+
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Mew,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Synchronize,
+			CombinedStats<generation>{
+				Nature::Hardy,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(MoveName::Soft_Boiled)
+		)
+	});
+	defender.pokemon().switch_in(weather);
+	defender.reset_start_of_turn();
+
+	auto const best_move = determine_best_move2(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == MoveName::Belly_Drum);
+	CHECK(best_move.score == victory<generation>);
+}
+
+TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
+	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
+	auto const regular_moves = [&](auto... args) {
+		return shuffled_regular_moves(generation, random_engine, args...);
+	};
+	constexpr auto depth = make_depth(11_bi);
+
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Hippopotas,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Sand_Stream,
+			CombinedStats<generation>{
+				Nature::Adamant,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(MoveName::Curse, MoveName::Crunch)
+		)
+	}, true);
+	attacker.pokemon().switch_in(weather);
+	attacker.reset_start_of_turn();
+
+	// TODO: Implement Encore's effect ending when PP runs out, then Wobbuffet
+	// can have Encore
+
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Wobbuffet,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Leftovers,
+			Ability::Shadow_Tag,
+			CombinedStats<generation>{
+				Nature::Hardy,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(MoveName::Counter)
+		)
+	});
+	defender.pokemon().switch_in(weather);
+	defender.reset_start_of_turn();
+
+	auto const best_move = determine_best_move2(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == MoveName::Curse);
+	CHECK(best_move.score == victory<generation> + 5.0);
+}
+
+
+TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
+	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
+	auto const regular_moves = [&](auto... args) {
+		return shuffled_regular_moves(generation, random_engine, args...);
+	};
+	constexpr auto depth = Depth(3_bi, 0_bi);
+
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Smeargle,
+			Level(100_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Own_Tempo,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Baton_Pass, MoveName::Belly_Drum)
+		),
+		Pokemon<generation>(
+			Species::Alakazam,
+			Level(100_bi),
+			Gender::male,
+			Item::Lum_Berry,
+			Ability::Synchronize,
+			CombinedStats<generation>{
+				Nature::Adamant,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(MoveName::Psycho_Cut)
+		)
+	}, true);
+	attacker.pokemon().switch_in(weather);
+	attacker.reset_start_of_turn();
+
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Misdreavus,
+			Level(100_bi),
+			Gender::female,
+			Item::Choice_Specs,
+			Ability::Levitate,
+			CombinedStats<generation>{
+				Nature::Modest,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(252_bi),
+					EV(0_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(MoveName::Shadow_Ball)
+		)
+	});
+	defender.pokemon().switch_in(weather);
+
+	defender.reset_start_of_turn();
+
+	auto const best_move = determine_best_move2(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == MoveName::Belly_Drum);
+	CHECK(best_move.score == victory<generation>);
+}
+
+
+TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
+	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
+	auto const regular_moves = [&](auto... args) {
+		return shuffled_regular_moves(generation, random_engine, args...);
+	};
+	constexpr auto depth = make_depth(2_bi);
+
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Magikarp,
+			Level(5_bi),
+			Gender::male,
+			Item::Leftovers,
+			Ability::Swift_Swim,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Tackle)
+		),
+		Pokemon<generation>(
+			Species::Slugma,
+			Level(100_bi),
+			Gender::male,
+			Item::Choice_Specs,
+			Ability::Magma_Armor,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Flamethrower, MoveName::Earth_Power)
+		),
+		Pokemon<generation>(
+			Species::Zapdos,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Choice_Specs,
+			Ability::Pressure,
+			CombinedStats<generation>{
+				Nature::Modest,
+				max_dvs_or_ivs<generation>,
+				default_evs<generation>
+			},
+			regular_moves(MoveName::Thunderbolt)
+		)
+	}, true);
+	attacker.pokemon().switch_in(weather);
+
+	attacker.reset_start_of_turn();
+
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Suicune,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Leftovers,
+			Ability::Pressure,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Calm_Mind, MoveName::Surf, MoveName::Ice_Beam)
+		)
+	});
+	defender.pokemon().switch_in(weather);
+
+	defender.reset_start_of_turn();
+
+	{
+		constexpr auto move_name = MoveName::Surf;
+		auto const side_effects = possible_side_effects(move_name, defender.pokemon().as_const(), attacker, weather);
+		REQUIRE(containers::size(side_effects) == 1_bi);
+		auto const & side_effect = containers::front(side_effects);
+		call_move(
+			defender,
+			UsedMove<Team<generation>>(
+				move_name,
+				side_effect.function
+			),
+			attacker,
+			FutureMove{false},
+			weather,
+			false,
+			ActualDamage::Unknown{},
+			false
+		);
+	}
+
+	auto const best_move = determine_best_move2(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == MoveName::Switch2);
+}
+
+
+TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
+	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto const weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
+	auto const regular_moves = [&](auto... args) {
+		return shuffled_regular_moves(generation, random_engine, args...);
+	};
+	constexpr auto depth = make_depth(3_bi);
+
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Latias,
+			Level(100_bi),
+			Gender::female,
+			Item::Leftovers,
+			Ability::Levitate,
+			CombinedStats<generation>{
+				Nature::Calm,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(120_bi),
+					EV(136_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(MoveName::Calm_Mind, MoveName::Dragon_Pulse, MoveName::Recover)
+		)
+	}, true);
+	attacker.pokemon().switch_in(weather);
+
+	attacker.reset_start_of_turn();
+
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Suicune,
+			Level(100_bi),
+			Gender::genderless,
+			Item::Leftovers,
+			Ability::Pressure,
+			CombinedStats<generation>{
+				Nature::Calm,
+				max_dvs_or_ivs<generation>,
+				EVs(
+					EV(0_bi),
+					EV(0_bi),
+					EV(0_bi),
+					EV(120_bi),
+					EV(136_bi),
+					EV(0_bi)
+				)
+			},
+			regular_moves(MoveName::Ice_Beam, MoveName::Rest)
+		)
+	});
+	defender.pokemon().switch_in(weather);
+
+	defender.reset_start_of_turn();
+
+	auto const best_move = determine_best_move2(attacker, defender, weather, evaluate, depth);
+	CHECK(best_move.name == MoveName::Calm_Mind);
+}
+
+TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
+	constexpr auto generation = Generation::four;
+	auto const evaluate = Evaluate<generation>();
+	auto weather = Weather();
+	auto random_engine = std::mt19937(std::random_device()());
+	auto const regular_moves = [&](auto... args) {
+		return shuffled_regular_moves(generation, random_engine, args...);
+	};
+	constexpr auto depth = make_depth(1_bi);
+
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Jolteon,
+			Level(100_bi),
+			Gender::female,
+			Item::Leftovers,
+			Ability::Volt_Absorb,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Sleep_Talk, MoveName::Thunderbolt)
+		)
+	}, true);
+	attacker.pokemon().switch_in(weather);
+	attacker.reset_start_of_turn();
+
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Gyarados,
+			Level(100_bi),
+			Gender::male,
+			Item::Life_Orb,
+			Ability::Intimidate,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Earthquake)
+		)
+	});
+	defender.pokemon().switch_in(weather);
+
+	defender.reset_start_of_turn();
+
+	constexpr auto keep_status = false;
+	constexpr auto unknown_damage = ActualDamage::Unknown{};
+	constexpr auto sleep_talk = UsedMove<Team<generation>>(
+		MoveName::Sleep_Talk,
+		no_effect_function
+	);
+	constexpr auto thunderbolt = UsedMove<Team<generation>>(
+		MoveName::Thunderbolt,
+		no_effect_function
+	);
+	constexpr auto other_move = FutureMove{false};
+
+	auto next_turn = [&] {
+		constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false, false);
+		end_of_turn(attacker, end_of_turn_flags, defender, end_of_turn_flags, weather);
+		attacker.reset_start_of_turn();
+		defender.reset_start_of_turn();
+	};
+
+	auto jolteon = attacker.pokemon();
+
+	// TODO: Validate score, too
+
+	CHECK(jolteon.status().name() == StatusName::clear);
+	CHECK(determine_best_move2(attacker, defender, weather, evaluate, depth).name == MoveName::Thunderbolt);
+
+	call_move(
+		attacker,
+		sleep_talk,
+		defender,
+		other_move,
+		weather,
+		keep_status,
+		unknown_damage,
+		false
+	);
+	jolteon.set_status(StatusName::sleep, weather);
+	next_turn();
+	CHECK(jolteon.status().name() == StatusName::sleep);
+	CHECK(determine_best_move2(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
+
+	call_move(
+		attacker,
+		thunderbolt,
+		defender,
+		other_move,
+		weather,
+		keep_status,
+		unknown_damage,
+		false
+	);
+	next_turn();
+	CHECK(jolteon.status().name() == StatusName::sleep);
+	CHECK(determine_best_move2(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
+
+	call_move(
+		attacker,
+		thunderbolt,
+		defender,
+		other_move,
+		weather,
+		keep_status,
+		unknown_damage,
+		false
+	);
+	next_turn();
+	CHECK(jolteon.status().name() == StatusName::sleep);
+	CHECK(determine_best_move2(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
+
+	#if 0
+		// Same probability of either move
+		call_move(
+			attacker,
+			thunderbolt,
+			defender,
+			other_move,
+			weather,
+			keep_status,
+			unknown_damage,
+			false
+		);
+		next_turn();
+		CHECK(jolteon.status().name() == StatusName::sleep);
+		CHECK(determine_best_move2(attacker, defender, weather, evaluate, depth).name == ?);
+	#endif
+}
+
+TEST_CASE("Generation 1 frozen last Pokemon", "[score_moves]") {
+	constexpr auto generation = Generation::one;
+	auto const evaluate = Evaluate<generation>();
+	auto weather = Weather();
+	auto regular_moves = [](auto const ... name) {
+		return RegularMoves{Move(generation, name)...};
+	};
+
+	auto attacker = Team<generation>({
+		Pokemon<generation>(
+			Species::Alakazam,
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Toxic, MoveName::Psychic, MoveName::Recover)
+		)
+	}, true);
+	attacker.pokemon().switch_in(weather);
+
+	auto defender = Team<generation>({
+		Pokemon<generation>(
+			Species::Gengar,
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Honey_Gather,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Thunderbolt)
+		)
+	});
+	defender.pokemon().set_status(StatusName::freeze, weather);
+	defender.pokemon().set_hp(weather, 12_bi);
+	defender.pokemon().switch_in(weather);
+
+	attacker.reset_start_of_turn();
+	defender.reset_start_of_turn();
+
+	CHECK(determine_best_move2(attacker, defender, weather, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
+	CHECK(determine_best_move2(attacker, defender, weather, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
 }
 
 } // namespace

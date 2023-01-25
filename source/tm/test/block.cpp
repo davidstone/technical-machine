@@ -3,27 +3,39 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/block.hpp>
-
-#include <tm/move/move_name.hpp>
-
-#include <tm/pokemon/species.hpp>
-
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
-
-#include <tm/string_conversions/move_name.hpp>
-
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
-
-#include <containers/front_back.hpp>
-#include <containers/size.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.block;
+
+import tm.move.max_moves_per_pokemon;
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
+
+import tm.pokemon.faint;
+import tm.pokemon.level;
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+
+import tm.string_conversions.move_name;
+
+import tm.ability;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.team;
+import tm.weather;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
 
 using namespace std::string_view_literals;
 

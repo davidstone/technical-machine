@@ -3,17 +3,69 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/pokemon/substitute.hpp>
+module;
 
-#include <tm/move/move_name.hpp>
-#include <tm/move/target.hpp>
+#include <bounded/assert.hpp>
 
-#include <tm/constant_generation.hpp>
+export module tm.pokemon.substitute;
+
+import tm.move.move_name;
+import tm.move.target;
+
+import tm.stat.current_hp;
+
+import tm.compress;
+import tm.constant_generation;
+import tm.generation;
+
+import bounded;
 
 namespace technicalmachine {
-namespace {
+using namespace bounded::literal;
 
-auto target_based(Generation const generation, MoveName const move) {
+using hp_type = decltype(bounded::declval<CurrentHP>() / 4_bi);
+
+export struct Substitute {
+	enum class Interaction {
+		absorbs,
+		bypassed,
+		causes_failure
+	};
+	using enum Interaction;
+
+	constexpr auto create(CurrentHP const total_hp) -> hp_type {
+		if (static_cast<bool>(*this)) {
+			return 0_bi;
+		}
+		m_hp = total_hp / 4_bi;
+		return m_hp;
+	}
+
+	constexpr auto damage(auto const damage_done) {
+		BOUNDED_ASSERT(damage_done >= 0_bi);
+		auto const original_hp = m_hp;
+		m_hp = bounded::max(m_hp - damage_done, 0_bi);
+		return bounded::assume_in_range<CurrentHP>(original_hp - m_hp);
+	}
+
+	constexpr auto hp() const -> hp_type {
+		return m_hp;
+	}
+
+	explicit constexpr operator bool() const {
+		return hp() != 0_bi;
+	}
+
+	friend auto operator==(Substitute, Substitute) -> bool = default;
+	friend constexpr auto compress(Substitute const value) {
+		return value.m_hp;
+	}
+
+private:
+	hp_type m_hp = 0_bi;
+};
+
+constexpr auto target_based(Generation const generation, MoveName const move) {
 	switch (move_target(generation, move)) {
 		case Target::user:
 		case Target::all_allies:
@@ -284,9 +336,7 @@ constexpr auto substitute_interaction_impl(constant_gen_t<Generation::eight>, Mo
 	return latest_substitute_interaction(Generation::eight, move);
 }
 
-} // namespace
-
-auto substitute_interaction(Generation const generation, MoveName const move) -> Substitute::Interaction {
+export constexpr auto substitute_interaction(Generation const generation, MoveName const move) -> Substitute::Interaction {
 	return constant_generation(generation, [=](auto const g) { return substitute_interaction_impl(g, move); });
 }
 

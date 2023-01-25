@@ -3,24 +3,40 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/calculate_damage.hpp>
-#include <tm/move/move_name.hpp>
-#include <tm/move/other_move.hpp>
-#include <tm/move/power.hpp>
-#include <tm/move/side_effects.hpp>
-
-#include <tm/pokemon/species.hpp>
-
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
-
-#include <tm/generation.hpp>
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
-
-#include <containers/integer_range.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.move.calculate_damage;
+import tm.move.executed_move;
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.no_effect_function;
+import tm.move.other_move;
+import tm.move.power;
+import tm.move.regular_moves;
+
+import tm.pokemon.level;
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+import tm.stat.ev;
+import tm.stat.iv;
+import tm.stat.nature;
+import tm.stat.stat_names;
+
+import tm.type.type;
+
+import tm.ability;
+import tm.contact_ability_effect;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.team;
+import tm.weather;
+
+import bounded;
+import containers;
 
 namespace technicalmachine {
 namespace {

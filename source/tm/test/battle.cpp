@@ -3,9 +3,34 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/battle.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.move.actual_damage;
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
+import tm.move.side_effects;
+import tm.move.used_move;
+
+import tm.pokemon.known_pokemon;
+import tm.pokemon.level;
+import tm.pokemon.nickname;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+
+import tm.ability;
+import tm.battle;
+import tm.end_of_turn_flags;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.team;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
 namespace {
@@ -13,7 +38,7 @@ using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
 constexpr auto damage = FlaggedActualDamage{ActualDamage::Known{0_bi}, false};
-constexpr auto nickname = std::string_view();
+constexpr auto nickname = Nickname();
 constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false, false);
 
 constexpr auto regular_moves(auto... moves) {

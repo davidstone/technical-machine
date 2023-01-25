@@ -3,24 +3,40 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/base_power.hpp>
+module;
 
-#include <tm/move/move_name.hpp>
+#include <tm/for_each_generation.hpp>
 
-#include <tm/known_team.hpp>
-#include <tm/seen_team.hpp>
-#include <tm/team.hpp>
+#include <bounded/conditional.hpp>
 
-#include <containers/algorithms/accumulate.hpp>
-#include <containers/algorithms/filter_iterator.hpp>
+export module tm.move.base_power;
 
-#include <utility>
+import tm.move.executed_move;
+import tm.move.move_name;
+
+import tm.pokemon.happiness;
+import tm.pokemon.hp_ratio;
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
+
+import tm.stat.calculate;
+import tm.stat.stage;
+
+import tm.any_team;
+import tm.generation;
+import tm.held_item;
+import tm.item;
+import tm.team;
+import tm.weather;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
-namespace {
 using namespace bounded::literal;
 
-auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 120> {
+constexpr auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 120> {
 	switch (species) {
 		// Generation 1
 		case Species::Bulbasaur: return 20_bi;
@@ -1068,9 +1084,12 @@ auto power_of_mass_based_moves(Species const species) -> bounded::integer<20, 12
 	}
 }
 
-} // namespace
+// Fling gives 0, Rollout gives 480
+export using BasePower = bounded::integer<0, 480>;
 
-template<any_team UserTeam, any_team DefenderTeam>
+// It is undefined behavior to get the base power of a move without a base power
+// (Dragon Rage, Guillotine, etc.).
+export template<any_team UserTeam, any_team DefenderTeam>
 auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Weather const weather) -> BasePower {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto const & attacker = attacker_team.pokemon();

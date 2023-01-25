@@ -3,18 +3,41 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/ps_usage_stats/battle_result.hpp>
-#include <tm/ps_usage_stats/battle_result_reader.hpp>
-#include <tm/ps_usage_stats/battle_result_writer.hpp>
-
-#include <tm/get_directory.hpp>
-
-#include <filesystem>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.ps_usage_stats.battle_result;
+import tm.ps_usage_stats.battle_result_reader;
+import tm.ps_usage_stats.battle_result_writer;
+import tm.ps_usage_stats.rating;
+
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
+
+import tm.pokemon.level;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+import tm.stat.ev;
+import tm.stat.iv;
+import tm.stat.nature;
+
+import tm.ability;
+import tm.gender;
+import tm.generation;
+import tm.get_directory;
+import tm.item;
+import tm.team;
+
+import bounded;
+import containers;
+import tv;
+import std_module;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
 
 auto make_result() {
 	constexpr auto generation = Generation::four;
@@ -129,7 +152,7 @@ auto make_result() {
 		}
 	}));
 	return ps_usage_stats::BattleResult{
-		{team, 0_bi, bounded::none},
+		{team, 0_bi, tv::none},
 		{team, 1_bi, ps_usage_stats::Rating(1.0, 1.0)},
 		ps_usage_stats::BattleResult::Winner::tie
 	};

@@ -3,38 +3,49 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/pokemon_online/read_team_file.hpp>
+module;
 
-#include <tm/clients/pokemon_online/conversion.hpp>
-#include <tm/clients/pokemon_online/invalid_team_file.hpp>
+#include <compare>
+#include <string>
 
-#include <tm/stat/generic_stats.hpp>
-#include <tm/stat/ingame_id_to_nature.hpp>
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
+export module tm.clients.po.read_team_file;
 
-#include <tm/constant_generation.hpp>
-#include <tm/generation.hpp>
-#include <tm/team.hpp>
+import tm.clients.po.conversion;
+import tm.clients.po.invalid_team_file;
 
-#include <containers/algorithms/concatenate.hpp>
-#include <containers/integer_range.hpp>
+import tm.move.move;
+import tm.move.regular_moves;
 
-#include <numeric_traits/min_max_value.hpp>
+import tm.pokemon.happiness;
+import tm.pokemon.known_pokemon;
+import tm.pokemon.level;
+import tm.pokemon.max_pokemon_per_team;
+import tm.pokemon.nickname;
 
-#include <operators/arrow.hpp>
+import tm.stat.combined_stats;
+import tm.stat.generic_stats;
+import tm.stat.ingame_id_to_nature;
+import tm.stat.ev;
+import tm.stat.iv;
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
+import tm.constant_generation;
+import tm.generation;
+import tm.property_tree;
+export import tm.team;
 
-#include <filesystem>
+import bounded;
+import containers;
+import numeric_traits;
+import operators;
+import tv;
+import std_module;
 
 namespace technicalmachine::po {
-namespace {
+using namespace bounded::literal;
 using namespace std::string_view_literals;
 
 struct CheckedIterator : operators::arrow<CheckedIterator> {
-	explicit CheckedIterator(boost::property_tree::ptree const & pt):
+	explicit CheckedIterator(property_tree::ptree_reader pt):
 		m_it(pt.begin()),
 		m_last(pt.end())
 	{
@@ -53,17 +64,17 @@ struct CheckedIterator : operators::arrow<CheckedIterator> {
 	}
 
 private:
-	boost::property_tree::ptree::const_iterator m_it;
-	boost::property_tree::ptree::const_iterator m_last;
+	property_tree::ptree_reader::const_iterator m_it;
+	property_tree::ptree_reader::const_iterator m_last;
 };
 
-auto parse_species(boost::property_tree::ptree const & pt) -> bounded::optional<SpeciesIDs::ID> {
+auto parse_species(property_tree::ptree_reader pt) -> tv::optional<SpeciesIDs::ID> {
 	// Pokemon Online gives Missingno. the ID 0, and uses that to represent the
 	// empty slots in teams smaller than 6 Pokemon.
 	try {
 		return pt.get<SpeciesIDs::ID>("<xmlattr>.Num");
 	} catch (std::range_error const &) {
-		return bounded::none;
+		return tv::none;
 	}
 }
 
@@ -85,15 +96,15 @@ auto parse_moves(Generation const generation, CheckedIterator it) {
 	return Parsed{moves, it};
 }
 
-template<typename Type>
+template<typename T>
 auto parse_stats(std::string_view const name, CheckedIterator it) {
 	struct Parsed {
-		GenericStats<Type> stats;
+		GenericStats<T> stats;
 		CheckedIterator it;
 	};
 	auto get_next = [&] {
 		auto const & value = it.advance(name);
-		return Type(value.get_value<typename Type::value_type>());
+		return T(value.get_value<typename T::value_type>());
 	};
 	return Parsed{
 		{
@@ -162,9 +173,9 @@ auto parse_evs(CheckedIterator it) {
 }
 
 template<Generation generation>
-auto parse_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID species_id) {
+auto parse_pokemon(property_tree::ptree_reader pt, SpeciesIDs::ID species_id) {
 	auto const species = id_to_species({species_id, pt.get<SpeciesIDs::Forme>("<xmlattr>.Forme")});
-	auto const nickname = pt.get<std::string>("<xmlattr>.Nickname");
+	auto const nickname = Nickname(pt.get<std::string>("<xmlattr>.Nickname"));
 	auto const gender = id_to_gender(pt.get<GenderID>("<xmlattr>.Gender"));
 	auto const level = Level(pt.get<Level::value_type>("<xmlattr>.Lvl"));
 	auto const happiness = Happiness(pt.get<Happiness::value_type>("<xmlattr>.Happiness"));
@@ -180,7 +191,7 @@ auto parse_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID specie
 
 	return KnownPokemon<generation>(
 		species,
-		containers::string(nickname),
+		nickname,
 		level,
 		gender,
 		item,
@@ -192,8 +203,8 @@ auto parse_pokemon(boost::property_tree::ptree const & pt, SpeciesIDs::ID specie
 }
 
 template<Generation generation>
-auto parse_team(boost::property_tree::ptree const & pt) {
-	auto all_pokemon = typename KnownPokemonCollection<generation>::Container();
+auto parse_team(property_tree::ptree_reader pt) {
+	auto all_pokemon = containers::static_vector<KnownPokemon<generation>, max_pokemon_per_team>();
 	for (auto const & value : pt) {
 		if (value.first != "Pokemon") {
 			continue;
@@ -210,12 +221,10 @@ auto parse_team(boost::property_tree::ptree const & pt) {
 	return KnownTeam<generation>(std::move(all_pokemon));
 }
 
-} // namespace
-
-auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
+export auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
 	try {
-		auto pt = boost::property_tree::ptree();
-		read_xml(team_file.string(), pt);
+		auto owner = property_tree::ptree();
+		auto pt = owner.read_xml(team_file);
 
 		auto const all_pokemon = pt.get_child("Team");
 		using GenerationInteger = bounded::integer<1, 7>;

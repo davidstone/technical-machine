@@ -3,38 +3,48 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/calculate_damage.hpp>
+module;
 
-#include <tm/move/category.hpp>
-#include <tm/move/executed_move.hpp>
-#include <tm/move/move.hpp>
-#include <tm/move/move_name.hpp>
-#include <tm/move/other_move.hpp>
-#include <tm/move/power.hpp>
+#include <tm/for_each_generation.hpp>
 
-#include <tm/pokemon/any_pokemon.hpp>
-#include <tm/pokemon/pokemon.hpp>
+#include <bounded/conditional.hpp>
 
-#include <tm/stat/calculate.hpp>
+export module tm.move.calculate_damage;
 
-#include <tm/type/effectiveness.hpp>
+import tm.move.category;
+import tm.move.damage_type;
+import tm.move.executed_move;
+import tm.move.known_move;
+import tm.move.move_name;
+import tm.move.other_move;
+import tm.move.power;
 
-#include <tm/ability.hpp>
-#include <tm/any_team.hpp>
-#include <tm/generation.hpp>
-#include <tm/item.hpp>
-#include <tm/known_team.hpp>
-#include <tm/random_damage.hpp>
-#include <tm/rational.hpp>
-#include <tm/seen_team.hpp>
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
+import tm.pokemon.any_pokemon;
+import tm.pokemon.is_type;
+import tm.pokemon.pokemon;
+
+import tm.stat.calculate;
+
+import tm.status.status_name;
+
+import tm.type.effectiveness;
+import tm.type.type;
+
+import tm.ability;
+import tm.any_team;
+import tm.associated_team;
+import tm.generation;
+import tm.item;
+import tm.random_damage;
+import tm.rational;
+import tm.team;
+import tm.weather;
+
+import bounded;
 
 namespace technicalmachine {
 
 using namespace bounded::literal;
-
-namespace {
 
 template<any_team DefenderTeam>
 auto reflect_is_active(KnownMove const move, DefenderTeam const & defender) {
@@ -135,7 +145,7 @@ auto level_multiplier(any_active_pokemon auto const attacker) {
 
 auto weakening_from_status(any_active_pokemon auto const attacker) {
 	return BOUNDED_CONDITIONAL(
-		weakens_physical_attacks(attacker.status()) and blocks_burn_damage_penalty(attacker.ability()),
+		attacker.status().name() == StatusName::burn and blocks_burn_damage_penalty(attacker.ability()),
 		2_bi,
 		1_bi
 	);
@@ -266,9 +276,7 @@ auto raw_damage(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 	}
 }
 
-} // namespace
-
-template<any_team UserTeam, any_team OtherTeamType>
+export template<any_team UserTeam, any_team OtherTeamType>
 auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, OtherTeamType const & defender, OtherMove const defender_move, Weather const weather) -> damage_type {
 	return affects_target(executed.move, defender.pokemon(), weather) ?
 		raw_damage(attacker, executed, move_weakened_from_item, defender, defender_move, weather) :

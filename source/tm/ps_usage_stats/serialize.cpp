@@ -3,27 +3,34 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/ps_usage_stats/serialize.hpp>
+module;
 
-#include <tm/ps_usage_stats/header.hpp>
-#include <tm/ps_usage_stats/usage_stats.hpp>
+#include <operators/forward.hpp>
 
-#include <tm/string_conversions/move_name.hpp>
-#include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/species.hpp>
+export module tm.ps_usage_stats.serialize;
 
-#include <containers/algorithms/accumulate.hpp>
-#include <containers/algorithms/filter_iterator.hpp>
-#include <containers/algorithms/transform.hpp>
-#include <containers/integer_range.hpp>
-#include <containers/size.hpp>
-#include <containers/static_vector.hpp>
+import tm.move.move_name;
 
-#include <cstdint>
-#include <string>
+import tm.ps_usage_stats.header;
+import tm.ps_usage_stats.usage_stats;
+
+import tm.pokemon.species;
+
+import tm.string_conversions.move_name;
+import tm.string_conversions.item;
+import tm.string_conversions.species;
+
+import tm.ability;
+import tm.generation;
+import tm.item;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine::ps_usage_stats {
 namespace {
+using namespace bounded::literal;
 
 template<typename T>
 constexpr auto write_bytes(std::ostream & stream, T const & value, auto const expected_size) {
@@ -129,7 +136,7 @@ auto serialize_moves(std::ostream & stream, Generation const generation, UsageSt
 
 } // namespace
 
-auto serialize(std::ostream & stream, Generation const generation, UsageStats const & usage_stats, Correlations const & correlations) -> void {
+export auto serialize(std::ostream & stream, Generation const generation, UsageStats const & usage_stats, Correlations const & correlations) -> void {
 	using Version = bounded::integer<0, 65535>;
 	write_bytes(stream, usage_stats_magic_string, 14_bi);
 	constexpr auto version = Version(0_bi);

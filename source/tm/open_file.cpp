@@ -3,4 +3,39 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/open_file.hpp>
+export module tm.open_file;
+
+import std_module;
+
+namespace technicalmachine {
+
+template<typename Stream = std::fstream>
+constexpr auto open_file(std::filesystem::path const & path, std::ios_base::openmode const mode) -> Stream {
+	auto file = Stream(path, mode);
+	file.exceptions(std::ios_base::badbit | std::ios_base::failbit);
+	return file;
+}
+
+auto open_file_for_writing(std::filesystem::path const & path, std::ios_base::openmode const mode) -> std::ofstream {
+	std::filesystem::create_directories(path.parent_path());
+	return open_file<std::ofstream>(path, mode);
+}
+
+
+export auto open_binary_file_for_reading(std::filesystem::path const & path) -> std::ifstream {
+	return open_file<std::ifstream>(path, std::ios_base::binary);
+}
+
+export auto open_text_file_for_reading(std::filesystem::path const & path) -> std::ifstream {
+	return open_file<std::ifstream>(path, {});
+}
+
+export auto open_binary_file_for_writing(std::filesystem::path const & path) -> std::ofstream {
+	return open_file_for_writing(path, std::ios_base::binary);
+}
+
+export auto open_text_file_for_writing(std::filesystem::path const & path) -> std::ofstream {
+	return open_file_for_writing(path, {});
+}
+
+} // namespace technicalmachine

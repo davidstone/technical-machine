@@ -3,21 +3,42 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/ps_usage_stats/serialize.hpp>
-
-#include <tm/ps_usage_stats/header.hpp>
-#include <tm/ps_usage_stats/usage_stats.hpp>
-
-#include <tm/test/ps_usage_stats/usage_bytes.hpp>
-
-#include <tm/get_directory.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
 
-#include <sstream>
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
+
+import tm.pokemon.level;
+import tm.pokemon.species;
+
+import tm.ps_usage_stats.serialize;
+
+import tm.ps_usage_stats.header;
+import tm.ps_usage_stats.usage_stats;
+
+import tm.stat.combined_stats;
+import tm.stat.ev;
+import tm.stat.iv;
+import tm.stat.nature;
+
+import tm.test.usage_bytes;
+
+import tm.ability;
+import tm.gender;
+import tm.generation;
+import tm.get_directory;
+import tm.item;
+import tm.team;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
 
 template<Generation generation>
 auto make_smallest_team() -> GenerationGeneric<Team> {

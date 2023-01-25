@@ -3,14 +3,16 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/pokemon_showdown/packed_format_to_team.hpp>
-#include <tm/clients/pokemon_showdown/to_packed_format.hpp>
-
-#include <containers/begin_end.hpp>
-
-#include <string_view>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.clients.ps.packed_format_to_team;
+import tm.clients.ps.to_packed_format;
+
+import tm.generation;
+
+import containers;
+import std_module;
 
 namespace technicalmachine {
 namespace {

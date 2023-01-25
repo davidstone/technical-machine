@@ -3,10 +3,14 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/status.hpp>
-#include <tm/ability.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.status.status;
+import tm.status.status_name;
+
+import tm.ability;
+import tm.generation;
 
 namespace technicalmachine {
 namespace {

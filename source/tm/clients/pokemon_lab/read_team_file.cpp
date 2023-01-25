@@ -3,43 +3,55 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/pokemon_lab/read_team_file.hpp>
+module;
 
-#include <tm/move/move.hpp>
-
-#include <tm/pokemon/pokemon.hpp>
-#include <tm/pokemon/species.hpp>
-
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
-#include <tm/stat/iv_and_ev.hpp>
-
-#include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/gender.hpp>
-#include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move_name.hpp>
-#include <tm/string_conversions/nature.hpp>
-#include <tm/string_conversions/species.hpp>
-
-#include <tm/constant_generation.hpp>
-#include <tm/generation.hpp>
-#include <tm/team.hpp>
-
-#include <containers/algorithms/concatenate.hpp>
-#include <containers/array.hpp>
-#include <containers/flat_map.hpp>
-#include <containers/lookup.hpp>
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
-#include <filesystem>
+#include <compare>
 #include <string>
 #include <string_view>
-#include <stdexcept>
+
+export module tm.clients.pl.read_team_file;
+
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.pp;
+import tm.move.regular_moves;
+
+import tm.pokemon.happiness;
+import tm.pokemon.known_pokemon;
+import tm.pokemon.level;
+import tm.pokemon.max_pokemon_per_team;
+import tm.pokemon.nickname;
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+import tm.stat.ev;
+import tm.stat.iv;
+import tm.stat.iv_and_ev;
+import tm.stat.nature;
+
+import tm.string_conversions.ability;
+import tm.string_conversions.gender;
+import tm.string_conversions.item;
+import tm.string_conversions.move_name;
+import tm.string_conversions.nature;
+import tm.string_conversions.species;
+
+import tm.ability;
+import tm.constant_generation;
+import tm.gender;
+import tm.generation;
+import tm.property_tree;
+import tm.item;
+export import tm.team;
+
+import bounded;
+import containers;
+import numeric_traits;
+import tv;
+import std_module;
 
 namespace technicalmachine::pl {
-namespace {
 using namespace std::string_view_literals;
 
 constexpr auto parse_species(std::string_view const str) {
@@ -68,8 +80,8 @@ constexpr auto parse_species(std::string_view const str) {
 	return result ? *result : from_string<Species>(str);
 }
 
-auto parse_moves(Generation const generation, boost::property_tree::ptree const & pt) {
-	return RegularMoves(containers::transform(pt, [=](boost::property_tree::ptree::value_type const & value) {
+auto parse_moves(Generation const generation, property_tree::ptree_reader pt) {
+	return RegularMoves(containers::transform(pt, [=](property_tree::ptree_reader::value_type const & value) {
 		auto const name = from_string<MoveName>(value.second.get_value<std::string>());
 		auto const pp_ups = value.second.get<PP::pp_ups_type>("<xmlattr>.pp-up");
 		return Move(generation, name, pp_ups);
@@ -77,14 +89,14 @@ auto parse_moves(Generation const generation, boost::property_tree::ptree const 
 }
 
 template<Generation generation>
-auto parse_stats(boost::property_tree::ptree const & pt) {
+auto parse_stats(property_tree::ptree_reader pt) {
 	using StatType = std::conditional_t<generation <= Generation::two, DVAndEV, IVAndEV>;
-	auto hp = bounded::optional<StatType>();
-	auto atk = bounded::optional<StatType>();
-	auto def = bounded::optional<StatType>();
-	auto spa = bounded::optional<StatType>();
-	auto spd = bounded::optional<StatType>();
-	auto spe = bounded::optional<StatType>();
+	auto hp = tv::optional<StatType>();
+	auto atk = tv::optional<StatType>();
+	auto def = tv::optional<StatType>();
+	auto spa = tv::optional<StatType>();
+	auto spd = tv::optional<StatType>();
+	auto spe = tv::optional<StatType>();
 
 	for (auto const & value : pt.get_child("stats")) {
 		auto const & stats = value.second;
@@ -139,12 +151,12 @@ auto parse_stats(boost::property_tree::ptree const & pt) {
 }
 
 template<Generation generation>
-auto parse_pokemon(boost::property_tree::ptree const & pt) {
+auto parse_pokemon(property_tree::ptree_reader pt) {
 	auto const species_str = pt.get<std::string>("<xmlattr>.species");
 	auto const given_nickname = pt.get<std::string>("nickname");
 	return KnownPokemon<generation>(
 		parse_species(species_str),
-		containers::string(containers::is_empty(given_nickname) ? species_str : given_nickname),
+		Nickname(containers::is_empty(given_nickname) ? species_str : given_nickname),
 		Level(pt.get<Level::value_type>("level")),
 		Gender(from_string<Gender>(pt.get<std::string>("gender"))),
 		from_string<Item>(pt.get<std::string>("item")),
@@ -156,7 +168,7 @@ auto parse_pokemon(boost::property_tree::ptree const & pt) {
 }
 
 template<Generation generation>
-auto parse_team(boost::property_tree::ptree const & ptree) {
+auto parse_team(property_tree::ptree_reader ptree) {
 	return KnownTeam<generation>(
 		containers::transform(
 			containers::check_size_not_greater_than(
@@ -168,12 +180,10 @@ auto parse_team(boost::property_tree::ptree const & ptree) {
 	);
 }
 
-} // namespace
-
-auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
+export auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
 	try {
-		boost::property_tree::ptree pt;
-		read_xml(team_file.string(), pt);
+		auto owner = property_tree::ptree();
+		auto pt = owner.read_xml(team_file);
 
 		auto const all_pokemon = pt.get_child("shoddybattle");
 		using GenerationInteger = bounded::integer<1, 7>;

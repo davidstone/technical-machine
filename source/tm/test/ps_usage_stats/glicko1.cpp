@@ -3,14 +3,19 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/ps_usage_stats/glicko1.hpp>
-
-#include <cmath>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.ps_usage_stats.battle_result;
+import tm.ps_usage_stats.glicko1;
+import tm.ps_usage_stats.rating;
+
+import bounded;
+import std_module;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
 
 TEST_CASE("Glicko-1", "[Glicko-1]") {
 	auto glicko1 = ps_usage_stats::Glicko1();

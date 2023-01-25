@@ -3,4 +3,42 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/pokemon/level.hpp>
+export module tm.pokemon.level;
+
+import tm.compress;
+
+import bounded;
+
+namespace technicalmachine {
+
+export struct Level {
+	using value_type = bounded::integer<1, 100>;
+	constexpr explicit Level(value_type const level) :
+		m_value(level)
+	{
+	}
+	constexpr auto operator()() const -> value_type {
+		return m_value;
+	}
+
+	friend auto operator==(Level, Level) -> bool = default;
+	friend constexpr auto compress(Level const value) {
+		return compress(value.m_value);
+	}
+
+private:
+	value_type m_value;
+
+	constexpr explicit Level(bounded::tombstone_tag, auto const make):
+		m_value(make())
+	{
+	}
+	friend bounded::tombstone_traits<Level>;
+	friend bounded::tombstone_traits_composer<&Level::m_value>;
+};
+
+} // namespace technicalmachine
+
+template<>
+struct bounded::tombstone_traits<technicalmachine::Level> : bounded::tombstone_traits_composer<&technicalmachine::Level::m_value> {
+};

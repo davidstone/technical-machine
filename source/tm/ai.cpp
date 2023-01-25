@@ -4,23 +4,29 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/pokemon_showdown/client.hpp>
-
-#include <tm/evaluate/depth.hpp>
-
-#include <tm/move/max_moves_per_pokemon.hpp>
-
-#include <tm/pokemon/max_pokemon_per_team.hpp>
-
-#include <tm/string_conversions/generation.hpp>
-
-#include <tm/generation.hpp>
-#include <tm/get_directory.hpp>
-
-#include <bounded/to_integer.hpp>
-
+#include <compare>
+#include <chrono>
 #include <iostream>
-#include <thread>
+#include <string_view>
+
+import tm.clients.ps.client;
+
+import tm.evaluate.depth;
+
+import tm.move.move;
+
+import tm.pokemon.pokemon;
+
+import tm.string_conversions.generation;
+
+import tm.generation;
+import tm.get_directory;
+import tm.load_settings_file;
+import tm.team;
+import tm.weather;
+
+import bounded;
+import std_module;
 
 namespace {
 

@@ -3,10 +3,71 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/stat/stat_to_ev.hpp>
+export module tm.stat.stat_to_ev;
+
+import tm.pokemon.level;
+
+import tm.stat.base_stats;
+import tm.stat.ev;
+import tm.stat.hp;
+import tm.stat.initial_stat;
+import tm.stat.iv;
+import tm.stat.max_hp;
+import tm.stat.nature;
+import tm.stat.stat_names;
+
+import tm.generation;
+import tm.round_up_divide;
+
+import bounded;
+import containers;
+import tv;
 
 namespace technicalmachine {
-namespace {
+
+using namespace bounded::literal;
+
+constexpr auto maybe_ev(bounded::bounded_integer auto const computed) -> tv::optional<EV> {
+	if (computed > EV::max) {
+		return tv::none;
+	}
+	return EV(EV::value_type(bounded::max(0_bi, computed), bounded::unchecked));
+}
+
+export constexpr auto hp_to_ev(MaxHP const target, BaseStats::HP const base, Level const level, IV const iv) -> tv::optional<EV> {
+	if (base == 1_bi) {
+		if (target != 1_bi) {
+			return tv::none;
+		}
+		return EV(0_bi);
+	}
+	auto const ev = maybe_ev((round_up_divide((target - level() - 10_bi) * 100_bi, level()) - 2_bi * base - iv.value()) * 4_bi);
+	if (!ev) {
+		return tv::none;
+	}
+	if (HP(base, level, iv, *ev).max() != target) {
+		return tv::none;
+	}
+	return ev;
+}
+
+export constexpr auto stat_to_ev_at_least(bounded::bounded_integer auto const target, SplitSpecialRegularStat const stat_name, bounded::bounded_integer auto const base, Level const level, Nature const nature, IV const iv) -> tv::optional<EV> {
+	auto const computed = (round_up_divide((round_up_divide(target, boost(nature, stat_name)) - 5_bi) * 100_bi, level()) - 2_bi * base - iv.value()) * 4_bi;
+	return maybe_ev(computed);
+}
+
+export template<Generation generation>
+constexpr auto stat_to_ev(bounded::bounded_integer auto const target, SplitSpecialRegularStat const stat_name, bounded::bounded_integer auto const base, Level const level, Nature const nature, IV const iv) -> tv::optional<EV> {
+	auto const ev = stat_to_ev_at_least(target, stat_name, base, level, nature, iv);
+	if (!ev) {
+		return tv::none;
+	}
+	if (initial_stat<generation>(stat_name, base, level, nature, iv, *ev) != target) {
+		return tv::none;
+	}
+	return ev;
+}
+
 
 constexpr auto generation = Generation::four;
 
@@ -39,5 +100,4 @@ static_assert(stat_to_ev<generation>(8_bi, SplitSpecialRegularStat::spa, 130_bi,
 static_assert(stat_to_ev<generation>(7_bi, SplitSpecialRegularStat::spd, 75_bi, Level(1_bi), Nature::Hardy, IV(31_bi)) == EV(76_bi));
 static_assert(stat_to_ev<generation>(8_bi, SplitSpecialRegularStat::spe, 110_bi, Level(1_bi), Nature::Hardy, IV(31_bi)) == EV(196_bi));
 
-} // namespace
 } // namespace technicalmachine

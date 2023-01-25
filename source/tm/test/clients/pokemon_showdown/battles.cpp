@@ -3,21 +3,34 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/pokemon_showdown/battles.hpp>
+module;
 
-#include <tm/team_predictor/usage_stats.hpp>
-
-#include <tm/get_directory.hpp>
-#include <tm/open_file.hpp>
-
-#include <bounded/integer.hpp>
-
-#include <containers/string.hpp>
-
+#include <compare>
+#include <filesystem>
 #include <catch2/catch_test_macros.hpp>
+
+export module tm.test.clients.ps.battles;
+
+import tm.clients.ps.battles;
+import tm.clients.ps.inmessage;
+
+import tm.evaluate.depth;
+import tm.evaluate.evaluate;
+
+import tm.team_predictor.all_usage_stats;
+
+import tm.buffer_view;
+import tm.get_directory;
+import tm.open_file;
+
+import bounded;
+import containers;
+import tv;
+import std_module;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
 
 auto load_lines_from_file(std::filesystem::path const & file_name) {
 	auto file = open_text_file_for_reading(file_name);
@@ -34,7 +47,7 @@ auto parse_room(std::string_view const line, std::filesystem::path const & path)
 TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 	auto const evaluate = AllEvaluate{};
 	// Too large to fit on the stack
-	auto const all_usage_stats = std::make_unique<AllUsageStats>();
+	auto const all_usage_stats = std::make_unique<AllUsageStats>(StatsForGeneration(stats_for_generation));
 	constexpr auto depth = Depth(1_bi, 0_bi);
 
 	auto const battle_output_directory = get_test_directory() / "temp-battles";
@@ -42,9 +55,9 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 		std::filesystem::remove_all(battle_output_directory);
 	};
 	remove_temporary_files();
-	constexpr auto log_foe_teams = false;
+	constexpr auto write_team = tv::none;
 	{
-		auto battles = ps::Battles(battle_output_directory, log_foe_teams);
+		auto battles = ps::Battles(battle_output_directory, write_team);
 
 		auto paths_in_directory = [](std::filesystem::path const & path) {
 			return containers::range_view(

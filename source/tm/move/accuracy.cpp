@@ -1,21 +1,29 @@
-// Accuracy functions
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/accuracy.hpp>
+module;
 
-#include <tm/move/move_name.hpp>
+#include <bounded/conditional.hpp>
 
-#include <tm/generation.hpp>
-#include <tm/weather.hpp>
+export module tm.move.accuracy;
+
+import tm.move.move_name;
+
+import tm.generation;
+import tm.weather;
+
+import bounded;
+import tv;
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
-auto accuracy(Generation const generation, MoveName const move, Weather const weather, bool const weather_blocked, bool const user_is_poison) -> BaseAccuracy {
-	using bounded::none;
+// A value that is not present indicates that the move cannot miss.
+export using BaseAccuracy = tv::optional<bounded::integer<30, 100>>;
+export constexpr auto accuracy(Generation const generation, MoveName const move, Weather const weather, bool const weather_blocked, bool const user_is_poison) -> BaseAccuracy {
+	using tv::none;
 	switch (move) {
 		case MoveName::Pass: return none;
 		case MoveName::Switch0: return none;

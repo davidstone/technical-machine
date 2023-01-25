@@ -4,26 +4,26 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/container.hpp>
-
-#include <tm/move/move_name.hpp>
-#include <tm/move/is_switch.hpp>
-
-#include <tm/string_conversions/move_name.hpp>
-
-#include <tm/generation.hpp>
-
-#include <containers/algorithms/compare.hpp>
-#include <containers/algorithms/transform.hpp>
-#include <containers/array.hpp>
-#include <containers/integer_range.hpp>
-#include <containers/push_back.hpp>
-#include <containers/size.hpp>
-#include <containers/static_vector.hpp>
-
-#include <numeric_traits/min_max_value.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.move.container;
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.is_switch;
+import tm.move.regular_moves;
+import tm.move.shared;
+
+import tm.pokemon.max_pokemon_per_team;
+
+import tm.string_conversions.move_name;
+
+import tm.generation;
+
+import bounded;
+import containers;
+import numeric_traits;
+import std_module;
 
 namespace technicalmachine {
 namespace {
@@ -33,7 +33,7 @@ using namespace std::string_view_literals;
 constexpr auto generation = Generation::four;
 
 auto create_shared_moves(TeamSize const team_size) {
-	auto shared = containers::static_vector<MoveName, number_of_weird_moves + numeric_traits::max_value<TeamSize>>({
+	auto shared = containers::static_vector<MoveName, numeric_traits::max_value<containers::range_size_t<SharedMoves<generation>>>>({
 		MoveName::Pass,
 		MoveName::Struggle,
 	});

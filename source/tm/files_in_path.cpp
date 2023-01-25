@@ -3,18 +3,17 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/files_in_path.hpp>
+export module tm.files_in_path;
 
-#include <containers/algorithms/filter_iterator.hpp>
-#include <containers/range_view.hpp>
-#include <containers/single_element_range.hpp>
+import containers;
+import std_module;
 
 namespace technicalmachine {
 
-auto files_in_path(std::filesystem::path const & path) -> containers::vector<std::filesystem::path> {
+export auto files_in_path(std::filesystem::path const & path) -> containers::vector<std::filesystem::path> {
 	auto not_directory = [](std::filesystem::path const & p) { return !std::filesystem::is_directory(p); };
 	if (not_directory(path)) {
-		return containers::vector<std::filesystem::path>(containers::single_element_range(path));
+		return containers::vector<std::filesystem::path>({path});
 	}
 	auto view = containers::range_view(
 		std::filesystem::recursive_directory_iterator(path),

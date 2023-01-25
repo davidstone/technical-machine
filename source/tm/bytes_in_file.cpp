@@ -3,19 +3,21 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/bytes_in_file.hpp>
+module;
 
-#include <tm/open_file.hpp>
-
-#include <containers/algorithms/transform.hpp>
-#include <containers/range_view.hpp>
-
-#include <fstream>
+#include <compare>
 #include <iterator>
+
+export module tm.bytes_in_file;
+
+import tm.open_file;
+
+import containers;
+import std_module;
 
 namespace technicalmachine {
 
-auto bytes_in_file(std::filesystem::path const & path) -> containers::vector<std::byte> {
+export auto bytes_in_file(std::filesystem::path const & path) -> containers::vector<std::byte> {
 	auto file = open_binary_file_for_reading(path);
 	return containers::vector(containers::transform(
 		containers::range_view(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()),

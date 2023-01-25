@@ -4,11 +4,28 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/pokemon/species.hpp>
-
-#include <tm/stat/calculate_ivs_and_evs.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.pokemon.hidden_power;
+import tm.pokemon.level;
+import tm.pokemon.species;
+
+import tm.stat.calculate_ivs_and_evs;
+import tm.stat.combined_stats;
+import tm.stat.ev;
+import tm.stat.iv;
+import tm.stat.hp;
+import tm.stat.nature;
+import tm.stat.stats;
+
+import tm.type.type;
+
+import tm.generation;
+
+import bounded;
+import containers;
+import tv;
 
 namespace technicalmachine {
 namespace {
@@ -26,7 +43,7 @@ TEST_CASE("Calculate low Attack EVs", "[calculate_ivs_and_evs]") {
 		352_bi,
 		245_bi
 	);
-	constexpr auto hidden_power = bounded::optional<HiddenPower<generation>>();
+	constexpr auto hidden_power = tv::optional<HiddenPower<generation>>();
 	constexpr auto nature = Nature::Calm;
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(nature, nature));
@@ -66,7 +83,7 @@ TEST_CASE("calculate_ivs_and_evs in generation 2 with Hidden Power", "[calculate
 		215_bi,
 		127_bi
 	);
-	constexpr auto hidden_power = bounded::optional(HiddenPower<generation>(70_bi, Type::Ice));
+	constexpr auto hidden_power = tv::optional(HiddenPower<generation>(70_bi, Type::Ice));
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power);
 
@@ -102,7 +119,7 @@ TEST_CASE("calculate_ivs_and_evs in generation 3 with Hidden Power", "[calculate
 		136_bi,
 		273_bi
 	);
-	constexpr auto hidden_power = bounded::optional(HiddenPower<generation>(70_bi, Type::Ghost));
+	constexpr auto hidden_power = tv::optional(HiddenPower<generation>(70_bi, Type::Ghost));
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(nature, nature));
 
@@ -140,7 +157,7 @@ TEST_CASE("calculate_ivs_and_evs at level 1", "[calculate_ivs_and_evs]") {
 		7_bi,
 		8_bi
 	);
-	constexpr auto hidden_power = bounded::optional<HiddenPower<generation>>(bounded::none);
+	constexpr auto hidden_power = tv::optional<HiddenPower<generation>>(tv::none);
 	constexpr auto nature = Nature::Hardy;
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(nature, nature));
@@ -179,7 +196,7 @@ TEST_CASE("calculate_ivs_and_evs in generation 4 with Hidden Power", "[calculate
 		191_bi,
 		185_bi
 	);
-	constexpr auto hidden_power = bounded::optional(HiddenPower<generation>(70_bi, Type::Dark));
+	constexpr auto hidden_power = tv::optional(HiddenPower<generation>(70_bi, Type::Dark));
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(Nature::Modest, Nature::Modest));
 

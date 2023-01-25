@@ -3,9 +3,229 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/pokemon/hidden_power.hpp>
+module;
 
-#include <containers/integer_range.hpp>
+#include <bounded/assert.hpp>
+#include <bounded/conditional.hpp>
+
+export module tm.pokemon.hidden_power;
+
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
+
+import tm.stat.iv;
+
+import tm.type.type;
+
+import tm.generation;
+
+import bounded;
+import containers;
+import tv;
+import std_module;
+
+namespace technicalmachine {
+using namespace bounded::literal;
+
+export using HiddenPowerDVPower = bounded::integer<31, 70>;
+export using HiddenPowerIVPower = bounded::integer<30, 70>;
+
+constexpr auto sum_stats(IVs const ivs, auto const transform) {
+	return
+		transform(0_bi, ivs.hp()) +
+		transform(1_bi, ivs.atk()) +
+		transform(2_bi, ivs.def()) +
+		transform(3_bi, ivs.spe()) +
+		transform(4_bi, ivs.spa()) +
+		transform(5_bi, ivs.spd());
+}
+
+constexpr auto calculate_type_impl(bounded::integer<0, 15> const index) -> Type {
+	switch (index.value()) {
+		case 0: return Type::Fighting;
+		case 1: return Type::Flying;
+		case 2: return Type::Poison;
+		case 3: return Type::Ground;
+		case 4: return Type::Rock;
+		case 5: return Type::Bug;
+		case 6: return Type::Ghost;
+		case 7: return Type::Steel;
+		case 8: return Type::Fire;
+		case 9: return Type::Water;
+		case 10: return Type::Grass;
+		case 11: return Type::Electric;
+		case 12: return Type::Psychic;
+		case 13: return Type::Ice;
+		case 14: return Type::Dragon;
+		case 15: return Type::Dark;
+		default: std::unreachable();
+	}
+}
+
+constexpr auto calculate_type(DVs const dvs) -> Type {
+	constexpr auto get_base_four_digit = [](DV const dv) { return dv.value() % 4_bi; };
+	return calculate_type_impl(
+		(get_base_four_digit(dvs.atk()) * 4_bi) +
+		(get_base_four_digit(dvs.def()) * 1_bi)
+	);
+}
+
+constexpr auto calculate_type(IVs const ivs) -> Type {
+	auto transform = [](auto const index, IV const iv) { return (iv.value() % 2_bi) << index; };
+	return calculate_type_impl(sum_stats(ivs, transform) * 15_bi / 63_bi);
+}
+
+constexpr auto is_valid_type(Type const type) -> bool {
+	switch (type) {
+		case Type::Bug:
+		case Type::Dark:
+		case Type::Dragon:
+		case Type::Electric:
+		case Type::Fighting:
+		case Type::Fire:
+		case Type::Flying:
+		case Type::Ghost:
+		case Type::Grass:
+		case Type::Ground:
+		case Type::Ice:
+		case Type::Poison:
+		case Type::Psychic:
+		case Type::Rock:
+		case Type::Steel:
+		case Type::Water:
+			return true;
+		case Type::Normal:
+		case Type::Fairy:
+		case Type::Typeless:
+			return false;
+	}
+}
+
+// http://www.psypokes.com/gsc/dvguide.php
+constexpr auto calculate_power(DVs const dvs) {
+	auto const bit = [](DV const dv) { return BOUNDED_CONDITIONAL(dv.value() < 8_bi, 0_bi, 1_bi); };
+	auto const x =
+		(bit(dvs.atk()) << 3_bi) +
+		(bit(dvs.def()) << 2_bi) +
+		(bit(dvs.spe()) << 1_bi) +
+		(bit(dvs.spc()) << 0_bi);
+	auto const y = bounded::min(dvs.spc().value(), 3_bi);
+	return (5_bi * x + y) / 2_bi + 31_bi;
+}
+
+constexpr auto calculate_power(IVs const ivs) {
+	auto transform = [](auto const index, IV const iv) { return ((iv.value() / 2_bi) % 2_bi) << index; };
+	return sum_stats(ivs, transform) * 40_bi / 63_bi + 30_bi;
+}
+
+constexpr auto dv_power_generation(Generation const generation) -> bool {
+	return generation == Generation::two;
+}
+constexpr auto iv_power_generation(Generation const generation) -> bool {
+	switch (generation) {
+		case Generation::three:
+		case Generation::four:
+		case Generation::five:
+			return true;
+		default:
+			return false;
+	}
+}
+constexpr auto fixed_power_generation(Generation const generation) -> bool {
+	switch (generation) {
+		case Generation::six:
+		case Generation::seven:
+		case Generation::eight:
+			return true;
+		default:
+			return false;
+	}
+}
+
+template<Generation generation>
+using HiddenPowerPower =
+	std::conditional_t<dv_power_generation(generation), HiddenPowerDVPower,
+	std::conditional_t<iv_power_generation(generation), HiddenPowerIVPower,
+	std::conditional_t<fixed_power_generation(generation), bounded::constant_t<60>,
+	bounded::constant_t<0>
+>>>;
+
+template<Generation generation>
+constexpr auto is_valid_power(HiddenPowerPower<generation> const power) {
+	if constexpr (generation <= Generation::two) {
+		auto const remainder = power % 5_bi;
+		return remainder != 3_bi and remainder != 4_bi;
+	} else {
+		return true;
+	}
+}
+
+export template<Generation generation>
+struct HiddenPower {
+	using Power = HiddenPowerPower<generation>;
+
+	constexpr HiddenPower(Power const power, Type const type):
+		m_power(power),
+		m_type(type)
+	{
+		BOUNDED_ASSERT(is_valid_type(type));
+		BOUNDED_ASSERT(is_valid_power<generation>(power));
+	}
+	constexpr explicit HiddenPower(DVs const dvs) requires(dv_power_generation(generation)):
+		m_power(calculate_power(dvs)),
+		m_type(calculate_type(dvs))
+	{
+	}
+	constexpr explicit HiddenPower(IVs const ivs) requires(iv_power_generation(generation)):
+		m_power(calculate_power(ivs)),
+		m_type(calculate_type(ivs))
+	{
+	}
+	constexpr explicit HiddenPower(IVs const ivs) requires(fixed_power_generation(generation)):
+		m_type(calculate_type(ivs))
+	{
+	}
+	
+	constexpr auto power() const {
+		return m_power;
+	}
+	constexpr auto type() const {
+		return m_type;
+	}
+
+	friend auto operator==(HiddenPower, HiddenPower) -> bool = default;
+
+private:
+	constexpr HiddenPower(bounded::tombstone_tag, auto const make):
+		m_power(make()),
+		m_type(Type::Typeless)
+	{
+	}
+
+	[[no_unique_address]] Power m_power;
+	Type m_type;
+
+	friend bounded::tombstone_traits<HiddenPower<generation>>;
+	friend bounded::tombstone_traits_composer<&HiddenPower<generation>::m_power>;
+};
+
+export template<Generation generation>
+constexpr auto calculate_hidden_power(DVsOrIVs<generation> dvs_or_ivs, RegularMoves const moves) -> tv::optional<HiddenPower<generation>> {
+	if constexpr (generation == Generation::one) {
+		return tv::none;
+	} else if (containers::any(moves, [](Move const move) { return move.name() == MoveName::Hidden_Power; })) {
+		return HiddenPower<generation>(dvs_or_ivs);
+	} else {
+		return tv::none;
+	}
+}
+
+} // namespace technicalmachine
+
+template<technicalmachine::Generation generation>
+struct bounded::tombstone_traits<technicalmachine::HiddenPower<generation>> : bounded::tombstone_traits_composer<&technicalmachine::HiddenPower<generation>::m_power> {
+};
 
 namespace technicalmachine {
 namespace {

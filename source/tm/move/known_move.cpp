@@ -3,4 +3,16 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/known_move.hpp>
+export module tm.move.known_move;
+
+import tm.move.move_name;
+import tm.type.type;
+
+namespace technicalmachine {
+
+export struct KnownMove {
+	MoveName name;
+	Type type;
+};
+
+} // namespace technicalmachine

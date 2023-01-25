@@ -3,26 +3,28 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/pokemon_lab/write_team_file.hpp>
-#include <tm/clients/pokemon_online/write_team_file.hpp>
-
-#include <tm/string_conversions/team.hpp>
-
-#include <tm/files_in_path.hpp>
-#include <tm/load_team_from_file.hpp>
-#include <tm/open_file.hpp>
-
-#include <bounded/detail/variant/variant.hpp>
-
-#include <containers/algorithms/concatenate.hpp>
-#include <containers/string.hpp>
-#include <containers/vector.hpp>
-
-#include <filesystem>
-#include <fstream>
+#include <compare>
 #include <iostream>
+#include <string_view>
+
+import tm.clients.pl.write_team_file;
+import tm.clients.po.write_team_file;
+
+import tm.clients.load_team_from_file;
+
+import tm.string_conversions.team;
+
+import tm.any_team;
+import tm.files_in_path;
+import tm.open_file;
+
+import bounded;
+import containers;
+import tv;
+import std_module;
 
 namespace {
+using namespace bounded::literal;
 
 using namespace technicalmachine;
 using namespace std::string_view_literals;
@@ -105,7 +107,7 @@ private:
 	std::filesystem::path m_base_path;
 };
 
-using Outputter = bounded::variant<AsStringPrinted, AsStringFile, AsPL, AsPO>;
+using Outputter = tv::variant<AsStringPrinted, AsStringFile, AsPL, AsPO>;
 struct ParsedArgs {
 	Outputter outputter;
 	containers::vector<std::filesystem::path> paths;
@@ -161,7 +163,7 @@ auto main(int argc, char ** argv) -> int {
 				auto const visitor = [&](auto const & team, auto const & function) {
 					function(team, unique_path_component(source, path));
 				};
-				bounded::visit(load_team_from_file(path), args.outputter, visitor);
+				tv::visit(load_team_from_file(path), args.outputter, visitor);
 			} catch (std::exception const & ex) {
 				std::cerr << ex.what() << '\n';
 				++error_count;

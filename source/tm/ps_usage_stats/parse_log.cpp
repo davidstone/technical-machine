@@ -3,30 +3,53 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/ps_usage_stats/parse_log.hpp>
+module;
 
-#include <tm/clients/pokemon_showdown/parse_generation_from_format.hpp>
+#include <compare>
+#include <string>
+#include <string_view>
 
-#include <tm/move/max_moves_per_pokemon.hpp>
+export module tm.ps_usage_stats.parse_log;
 
-#include <tm/stat/generic_stats.hpp>
+import tm.clients.ps.parse_generation_from_format;
 
-#include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move_name.hpp>
-#include <tm/string_conversions/nature.hpp>
-#include <tm/string_conversions/species.hpp>
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
 
-#include <tm/constant_generation.hpp>
-#include <tm/load_json_from_file.hpp>
+import tm.pokemon.happiness;
+import tm.pokemon.level;
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
 
-#include <bounded/to_integer.hpp>
+import tm.ps_usage_stats.battle_result;
+import tm.ps_usage_stats.rating;
 
-#include <containers/algorithms/transform.hpp>
+import tm.stat.combined_stats;
+import tm.stat.ev;
+import tm.stat.generic_stats;
+import tm.stat.iv;
+import tm.stat.nature;
 
-#include <nlohmann/json.hpp>
+import tm.string_conversions.ability;
+import tm.string_conversions.item;
+import tm.string_conversions.move_name;
+import tm.string_conversions.nature;
+import tm.string_conversions.species;
 
-#include <fstream>
+import tm.ability;
+import tm.constant_generation;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.load_json_from_file;
+import tm.nlohmann_json;
+import tm.team;
+
+import bounded;
+import containers;
+import tv;
+import std_module;
 
 namespace technicalmachine::ps_usage_stats {
 namespace {
@@ -74,7 +97,7 @@ auto parse_dvs_or_ivs(nlohmann::json const & stats) {
 
 template<Generation generation>
 auto parse_team(nlohmann::json const & team_array) -> Team<generation> {
-	return Team<generation>(PokemonContainer<generation>(containers::transform(team_array, [&](nlohmann::json const & pokemon) {
+	return Team<generation>(containers::transform(team_array, [&](nlohmann::json const & pokemon) {
 		auto const species = from_string<Species>(pokemon.at("species").get<std::string_view>());
 		auto const item = from_string<Item>(pokemon.at("item").get<std::string_view>());
 		auto const ability = from_string<Ability>(pokemon.at("ability").get<std::string_view>());
@@ -111,21 +134,21 @@ auto parse_team(nlohmann::json const & team_array) -> Team<generation> {
 			moves,
 			happiness
 		);
-	})));
+	}));
 }
 
-auto parse_rating(nlohmann::json const & json) -> bounded::optional<Rating> {
+auto parse_rating(nlohmann::json const & json) -> tv::optional<Rating> {
 	if (json.is_null()) {
-		return bounded::none;
+		return tv::none;
 	}
 	// Sometimes this is a number in which case it is Elo
 	if (!json.is_object()) {
-		return bounded::none;
+		return tv::none;
 	}
 	auto const & rating = json.at("rpr");
 	auto const & deviation = json.at("rprd");
 	if (rating.is_null() or deviation.is_null()) {
-		return bounded::none;
+		return tv::none;
 	}
 	return Rating(
 		rating.get<nlohmann::json::number_float_t>(),
@@ -135,13 +158,13 @@ auto parse_rating(nlohmann::json const & json) -> bounded::optional<Rating> {
 
 } // namespace
 
-auto parse_log(std::filesystem::path const & path) -> bounded::optional<BattleResult> {
+export auto parse_log(std::filesystem::path const & path) -> tv::optional<BattleResult> {
 	auto const json = load_json_from_file(path);
 	if (json.at("turns").get<nlohmann::json::number_integer_t>() < 3) {
-		return bounded::none;
+		return tv::none;
 	}
 	auto const format = json.at("format").get<std::string_view>();
-	auto const generation = ps::parse_generation_from_format(format);
+	auto const generation = ps::parse_generation_from_format(format, "gen");
 	auto const p1 = json.at("p1").get<std::string_view>();
 	auto const p2 = json.at("p2").get<std::string_view>();
 	auto const winner_str = json.at("winner").get<std::string_view>();

@@ -3,4 +3,17 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/pokemon/encore.hpp>
+export module tm.pokemon.encore;
+
+import tm.pokemon.end_of_turn_counter;
+import tm.generation;
+
+namespace technicalmachine {
+
+export template<Generation generation>
+using EncoreCounter = EndOfTurnCounter<
+	generation >= Generation::two,
+	7
+>;
+
+} // namespace technicalmachine

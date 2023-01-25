@@ -3,19 +3,30 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/evaluate/evaluate.hpp>
-
-#include <tm/pokemon/species.hpp>
-
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
-
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
-
-#include <bounded/integer.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.evaluate.evaluate;
+
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
+
+import tm.pokemon.change_hp;
+import tm.pokemon.level;
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+
+import tm.ability;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.team;
+import tm.weather;
+
+import bounded;
 
 namespace technicalmachine {
 namespace {

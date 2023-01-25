@@ -3,37 +3,51 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/gender.hpp>
-#include <tm/string_conversions/invalid_string_conversion.hpp>
-#include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move_name.hpp>
-#include <tm/string_conversions/nature.hpp>
-#include <tm/string_conversions/pokemon.hpp>
-#include <tm/string_conversions/species.hpp>
-#include <tm/string_conversions/status_name.hpp>
-#include <tm/string_conversions/type.hpp>
-#include <tm/string_conversions/weather.hpp>
-
-#include <tm/move/move_name.hpp>
-
-#include <tm/pokemon/species.hpp>
-
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
-#include <tm/stat/nature.hpp>
-
-#include <tm/ability.hpp>
-#include <tm/gender.hpp>
-#include <tm/item.hpp>
-#include <tm/status_name.hpp>
-
-#include <containers/integer_range.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
+
+import tm.pokemon.level;
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+import tm.stat.ev;
+import tm.stat.iv;
+import tm.stat.nature;
+
+import tm.status.status_name;
+
+import tm.string_conversions.ability;
+import tm.string_conversions.gender;
+import tm.string_conversions.invalid_string_conversion;
+import tm.string_conversions.item;
+import tm.string_conversions.move_name;
+import tm.string_conversions.nature;
+import tm.string_conversions.pokemon;
+import tm.string_conversions.species;
+import tm.string_conversions.status_name;
+import tm.string_conversions.type;
+import tm.string_conversions.weather;
+
+import tm.type.type;
+
+import tm.ability;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.weather;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
 
 using namespace std::string_view_literals;
 

@@ -3,20 +3,21 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/pokemon_showdown/slot_memory.hpp>
-
-#include <containers/front_back.hpp>
-#include <containers/integer_range.hpp>
-
-#include <numeric_traits/min_max_value.hpp>
-
-#include <initializer_list>
-#include <random>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.clients.ps.slot_memory;
+
+import tm.pokemon.max_pokemon_per_team;
+
+import bounded;
+import containers;
+import numeric_traits;
+import std_module;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
 
 void validate_indexes(ps::SlotMemory const & slot_memory, std::initializer_list<ps::SlotMemory::Index> test) {
 	auto integer = bounded::integer<0, bounded::normalize<numeric_traits::max_value<TeamIndex> + 1_bi>>(0_bi);

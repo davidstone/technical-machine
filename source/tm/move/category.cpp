@@ -3,11 +3,16 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/category.hpp>
-#include <tm/move/move_name.hpp>
+export module tm.move.category;
+
+import tm.move.known_move;
+import tm.move.move_name;
+
+import tm.type.type;
+
+import tm.generation;
 
 namespace technicalmachine {
-namespace {
 
 enum class MoveCategory { physical, special, other };
 
@@ -853,18 +858,15 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 	}
 }
 
-} // namespace
-
-
-auto is_physical(Generation const generation, KnownMove const move) -> bool {
+export constexpr auto is_physical(Generation const generation, KnownMove const move) -> bool {
 	return move_category(generation, move) == MoveCategory::physical;
 }
 
-auto is_special(Generation const generation, KnownMove const move) -> bool {
+export constexpr auto is_special(Generation const generation, KnownMove const move) -> bool {
 	return move_category(generation, move) == MoveCategory::special;
 }
 
-auto is_damaging(MoveName const move) -> bool {
+export constexpr auto is_damaging(MoveName const move) -> bool {
 	// Generation and Type do not change whether a move is damaging
 	return move_category(Generation::eight, {move, Type::Typeless}) != MoveCategory::other;
 }

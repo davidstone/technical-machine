@@ -4,15 +4,21 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/is_switch.hpp>
-
-#include <tm/move/move_name.hpp>
+module;
 
 #include <bounded/assert.hpp>
 
+export module tm.move.is_switch;
+
+import tm.move.move_name;
+
+import tm.pokemon.max_pokemon_per_team;
+
+import bounded;
+
 namespace technicalmachine {
 
-auto is_switch(MoveName const move) -> bool {
+export constexpr auto is_switch(MoveName const move) -> bool {
 	switch (move) {
 		case MoveName::Switch0:
 		case MoveName::Switch1:
@@ -26,11 +32,21 @@ auto is_switch(MoveName const move) -> bool {
 	}
 }
 
-auto to_switch(TeamIndex const replacement) -> MoveName {
+export constexpr auto is_delayed_switch(MoveName const move) -> bool {
+	switch (move) {
+		case MoveName::Flip_Turn:
+		case MoveName::U_turn:
+			return true;
+		default:
+			return false;
+	}
+}
+
+export constexpr auto to_switch(TeamIndex const replacement) -> MoveName {
 	return static_cast<MoveName>(replacement + bounded::constant<MoveName::Switch0>);
 }
 
-auto to_replacement(MoveName const move) -> TeamIndex {
+export constexpr auto to_replacement(MoveName const move) -> TeamIndex {
 	BOUNDED_ASSERT(is_switch(move));
 	return bounded::assume_in_range<TeamIndex>(bounded::integer(move) - bounded::constant<MoveName::Switch0>);
 }

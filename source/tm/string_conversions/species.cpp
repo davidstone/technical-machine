@@ -3,23 +3,28 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/string_conversions/species.hpp>
+module;
 
-#include <tm/string_conversions/invalid_string_conversion.hpp>
-#include <tm/string_conversions/lowercase_alphanumeric.hpp>
+#include <compare>
+#include <string_view>
 
-#include <tm/pokemon/species.hpp>
+export module tm.string_conversions.species;
 
-#include <containers/array.hpp>
-#include <containers/begin_end.hpp>
-#include <containers/flat_map.hpp>
-#include <containers/lookup.hpp>
+export import tm.string_conversions.from_string;
+import tm.string_conversions.invalid_string_conversion;
+import tm.string_conversions.lowercase_alphanumeric;
+
+import tm.pokemon.species;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
 
 using namespace bounded::literal;
 
-auto to_string(Species const species) -> std::string_view {
+export constexpr auto to_string(Species const species) -> std::string_view {
 	switch (species) {
 		// Generation 1
 		case Species::Bulbasaur: return "Bulbasaur";
@@ -1019,8 +1024,8 @@ auto to_string(Species const species) -> std::string_view {
 	}
 }
 
-template<>
-auto from_string(std::string_view const str) -> Species {
+export template<>
+constexpr auto from_string(std::string_view const str) -> Species {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<std::string_view, Species>>({

@@ -1,40 +1,40 @@
-// Convert to / from PO's format
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/pokemon_online/conversion.hpp>
-
-#include <tm/ability.hpp>
-#include <tm/gender.hpp>
-#include <tm/item.hpp>
-
-#include <tm/move/move_name.hpp>
-
-#include <tm/pokemon/species.hpp>
-
-#include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/species.hpp>
+module;
 
 #include <bounded/assert.hpp>
 
-#include <containers/algorithms/concatenate.hpp>
-#include <containers/string.hpp>
+export module tm.clients.po.conversion;
 
-#include <numeric_traits/min_max_value.hpp>
+import tm.ability;
+import tm.gender;
+import tm.item;
 
-#include <cstdint>
-#include <stdexcept>
-#include <string>
-#include <utility>
+import tm.move.move_name;
 
-namespace technicalmachine {
-namespace po {
+import tm.pokemon.species;
 
-namespace {
+import tm.string_conversions.ability;
+import tm.string_conversions.species;
 
+import bounded;
+import containers;
+import numeric_traits;
+import std_module;
+
+namespace technicalmachine::po {
+using namespace bounded::literal;
 using namespace std::string_view_literals;
+
+export struct SpeciesIDs {
+	using ID = bounded::integer<1, 493>;
+	using Forme = bounded::integer<0, 5>;
+	ID id;
+	Forme forme;
+};
 
 struct InvalidFormeID : std::runtime_error {
 	InvalidFormeID(std::string_view const species, SpeciesIDs::Forme const forme):
@@ -50,9 +50,7 @@ struct UnsupportedSpecies : std::runtime_error {
 	}
 };
 
-} // namespace
-
-Species id_to_species(SpeciesIDs const species) {
+export constexpr auto id_to_species(SpeciesIDs const species) -> Species {
 	switch (species.id.value()) {
 		// Generation 1
 		case 1: return Species::Bulbasaur;
@@ -593,9 +591,7 @@ Species id_to_species(SpeciesIDs const species) {
 	}
 }
 
-namespace {
-
-constexpr SpeciesIDs::ID to_id_only(Species const species) {
+constexpr auto to_id_only(Species const species) -> SpeciesIDs::ID {
 	switch (species) {
 		case Species::Bulbasaur: return 1_bi;
 		case Species::Ivysaur: return 2_bi;
@@ -1106,7 +1102,7 @@ constexpr SpeciesIDs::ID to_id_only(Species const species) {
 	}
 }
 
-constexpr SpeciesIDs::Forme to_forme(Species const species) {
+constexpr auto to_forme(Species const species) -> SpeciesIDs::Forme {
 	switch (species) {
 		case Species::Deoxys_Attack:
 		case Species::Giratina_Origin:
@@ -1130,13 +1126,13 @@ constexpr SpeciesIDs::Forme to_forme(Species const species) {
 	}
 }
 
-} // namespace
-
-SpeciesIDs species_to_id(Species const species) {
+export constexpr auto species_to_id(Species const species) -> SpeciesIDs {
 	return {to_id_only(species), to_forme(species)};
 }
 
-Ability id_to_ability(AbilityID const id) {
+export using AbilityID = bounded::integer<1, 123>;
+
+export constexpr auto id_to_ability(AbilityID const id) -> Ability {
 	switch (id.value()) {
 		case 1: return Ability::Stench;
 		case 2: return Ability::Drizzle;
@@ -1267,7 +1263,7 @@ Ability id_to_ability(AbilityID const id) {
 	}
 }
 
-AbilityID ability_to_id(Ability const ability) {
+export constexpr auto ability_to_id(Ability const ability) -> AbilityID {
 	switch (ability) {
 		case Ability::Adaptability: return 91_bi;
 		case Ability::Aftermath: return 106_bi;
@@ -1396,7 +1392,9 @@ AbilityID ability_to_id(Ability const ability) {
 	}
 }
 
-Gender id_to_gender(GenderID const id) {
+export using GenderID = bounded::integer<0, 2>;
+
+export constexpr auto id_to_gender(GenderID const id) -> Gender {
 	switch (id.value()) {
 		case 0: return Gender::genderless;
 		case 1: return Gender::male;
@@ -1407,7 +1405,7 @@ Gender id_to_gender(GenderID const id) {
 	}
 }
 
-GenderID gender_to_id(Gender const gender) {
+export constexpr auto gender_to_id(Gender const gender) -> GenderID {
 	switch (gender) {
 		case Gender::genderless: return 0_bi;
 		case Gender::male: return 1_bi;
@@ -1415,7 +1413,9 @@ GenderID gender_to_id(Gender const gender) {
 	}
 }
 
-Item id_to_item(ItemID const id) {
+export using ItemID = bounded::integer<0, 226>;
+
+export constexpr auto id_to_item(ItemID const id) -> Item {
 	switch (id.value()) {
 		case 0: return Item::None;
 		case 1: return Item::Big_Root;
@@ -1650,7 +1650,7 @@ Item id_to_item(ItemID const id) {
 	}
 }
 
-ItemID item_to_id(Item const item) {
+export constexpr auto item_to_id(Item const item) -> ItemID {
 	switch (item) {
 		case Item::None: return 0_bi;
 		case Item::Big_Root: return 1_bi;
@@ -1883,15 +1883,16 @@ ItemID item_to_id(Item const item) {
 	}
 }
 
-MoveName id_to_move(MoveID const id) {
+export using MoveID = bounded::integer<1, bounded::normalize<bounded::constant<numeric_traits::max_value<MoveName>> - bounded::integer(MoveName::Regular_Begin) + 1_bi>>;
+
+export constexpr auto id_to_move(MoveID const id) -> MoveName {
 	return static_cast<MoveName>(id + bounded::integer(MoveName::Regular_Begin) - 1_bi);
 }
 
-MoveID move_to_id(MoveName const move) {
+export constexpr auto move_to_id(MoveName const move) -> MoveID {
 	auto const move_id = bounded::integer(move) - bounded::integer(MoveName::Regular_Begin) + 1_bi;
 	BOUNDED_ASSERT(move_id > 0_bi);
 	return ::bounded::assume_in_range<MoveID>(move_id);
 }
 
-} // namespace po
-} // namespace technicalmachine
+} // namespace technicalmachine::po

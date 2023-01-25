@@ -3,12 +3,24 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/pokemon/perish_song.hpp>
+export module tm.pokemon.perish_song;
 
-#include <containers/integer_range.hpp>
+import tm.pokemon.end_of_turn_counter;
+
+import tm.generation;
+
+import bounded;
+import containers;
 
 namespace technicalmachine {
-namespace {
+using namespace bounded::literal;
+
+export template<Generation generation>
+using PerishSong = EndOfTurnCounter<
+	generation >= Generation::two,
+	3,
+	Resettable::no
+>;
 
 static_assert(!PerishSong<Generation::three>().is_active());
 
@@ -38,5 +50,4 @@ static_assert([]{
 	return !perish_song.is_active();
 }());
 
-} // namespace
 } // namespace technicalmachine

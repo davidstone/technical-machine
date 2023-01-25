@@ -1,18 +1,58 @@
-// Type function definitions
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/type/type.hpp>
+export module tm.type.type;
 
-#include <tm/move/move_name.hpp>
+import tm.move.move_name;
 
-#include <tm/generation.hpp>
+import tm.generation;
+
+import numeric_traits;
+import tv;
+import std_module;
 
 namespace technicalmachine {
 
-auto get_type(Generation const generation, MoveName const move, bounded::optional<Type> const hidden_power) -> Type {
+export enum class Type : std::uint8_t {
+	Bug,
+	Dark,
+	Dragon,
+	Electric,
+	Fairy,
+	Fighting,
+	Fire,
+	Flying,
+	Ghost,
+	Grass,
+	Ground,
+	Ice,
+	Normal,
+	Poison,
+	Psychic,
+	Rock,
+	Steel,
+	Water,
+	Typeless
+};
+
+} // namespace technicalmachine
+
+template<>
+constexpr auto numeric_traits::min_value<technicalmachine::Type> = technicalmachine::Type();
+
+template<>
+constexpr auto numeric_traits::max_value<technicalmachine::Type> = technicalmachine::Type::Typeless;
+
+namespace technicalmachine {
+
+export constexpr auto is_boosted_by_flash_fire(Type const type) {
+	return type == Type::Fire;
+}
+
+// If `move` is Hidden Power, type must not be `none`
+export constexpr auto get_type(Generation const generation, MoveName const move, tv::optional<Type> const hidden_power) -> Type {
 	switch (move) {
 		case MoveName::Pass: return Type::Typeless;
 		case MoveName::Switch0: return Type::Typeless;

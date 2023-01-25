@@ -3,9 +3,10 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/get_directory.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.get_directory;
 
 namespace technicalmachine {
 namespace {

@@ -3,48 +3,65 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/call_move.hpp>
+module;
 
-#include <tm/move/is_switch.hpp>
-#include <tm/move/category.hpp>
-#include <tm/move/move.hpp>
-#include <tm/move/move_name.hpp>
-#include <tm/move/target.hpp>
-
-#include <tm/pokemon/active_pokemon.hpp>
-#include <tm/pokemon/any_pokemon.hpp>
-#include <tm/pokemon/pokemon.hpp>
-#include <tm/pokemon/species.hpp>
-
-#include <tm/type/effectiveness.hpp>
-#include <tm/type/type.hpp>
-
-#include <tm/ability.hpp>
-#include <tm/ability_blocks_move.hpp>
-#include <tm/any_team.hpp>
-#include <tm/block.hpp>
-#include <tm/contact_ability_effect.hpp>
-#include <tm/end_of_turn.hpp>
-#include <tm/generation.hpp>
-#include <tm/heal.hpp>
-#include <tm/known_team.hpp>
-#include <tm/rational.hpp>
-#include <tm/seen_team.hpp>
-#include <tm/status_name.hpp>
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
+#include <tm/for_each_generation.hpp>
 
 #include <bounded/assert.hpp>
+#include <bounded/conditional.hpp>
 
-#include <containers/algorithms/maybe_find.hpp>
-#include <containers/range_value_t.hpp>
+export module tm.move.call_move;
 
-#include <numeric_traits/min_max_value.hpp>
+import tm.move.activate_when_hit_item;
+import tm.move.actual_damage;
+import tm.move.category;
+import tm.move.container;
+import tm.move.executed_move;
+import tm.move.is_switch;
+import tm.move.known_move;
+import tm.move.move;
+import tm.move.move_is_unsuccessful;
+import tm.move.move_name;
+import tm.move.other_move;
+import tm.move.target;
+import tm.move.used_move;
 
-#include <utility>
+import tm.pokemon.active_pokemon;
+import tm.pokemon.all_moves;
+import tm.pokemon.any_pokemon;
+import tm.pokemon.change_hp;
+import tm.pokemon.get_hidden_power_type;
+import tm.pokemon.substitute;
+
+import tm.stat.stage;
+import tm.stat.stat_names;
+
+import tm.status.status;
+import tm.status.status_name;
+
+import tm.type.effectiveness;
+import tm.type.type;
+
+import tm.ability;
+import tm.ability_blocks_move;
+import tm.any_team;
+import tm.block;
+import tm.contact_ability_effect;
+import tm.generation;
+import tm.handle_curse;
+import tm.heal;
+import tm.item;
+import tm.other_team;
+import tm.rational;
+import tm.team;
+import tm.weather;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
-namespace {
+using namespace bounded::literal;
 
 constexpr auto breaks_screens(MoveName const move) {
 	return move == MoveName::Brick_Break;
@@ -60,158 +77,6 @@ auto do_effects_before_moving(MoveName const move, any_mutable_active_pokemon au
 	}
 }
 
-
-constexpr auto move_fails(MoveName const move, bool const user_damaged, Ability const other_ability, OtherMove const other_move) {
-	switch (move) {
-		case MoveName::Boomburst:
-		case MoveName::Bug_Buzz:
-		case MoveName::Chatter:
-		case MoveName::Clanging_Scales:
-		case MoveName::Clangorous_Soulblaze:
-		case MoveName::Confide:
-		case MoveName::Disarming_Voice:
-		case MoveName::Echoed_Voice:
-		case MoveName::Grass_Whistle:
-		case MoveName::Growl:
-		case MoveName::Hyper_Voice:
-		case MoveName::Metal_Sound:
-		case MoveName::Noble_Roar:
-		case MoveName::Parting_Shot:
-		case MoveName::Relic_Song:
-		case MoveName::Roar:
-		case MoveName::Round:
-		case MoveName::Screech:
-		case MoveName::Sing:
-		case MoveName::Snarl:
-		case MoveName::Snore:
-		case MoveName::Sparkling_Aria:
-		case MoveName::Supersonic:
-		case MoveName::Uproar:
-			return blocks_sound_moves(other_ability);
-		case MoveName::Explosion:
-		case MoveName::Mind_Blown:
-		case MoveName::Self_Destruct:
-			return other_ability == Ability::Damp;
-		case MoveName::Focus_Punch:
-			return user_damaged;
-		case MoveName::Sucker_Punch:
-			return !other_move.future_move_is_damaging();
-		default:
-			return false;
-	}
-}
-
-// Returns whether the attack is weakened by the item
-template<any_mutable_active_pokemon DefenderPokemon>
-auto activate_when_hit_item(KnownMove const move, DefenderPokemon const defender, Weather const weather, Effectiveness const effectiveness) -> bool {
-	constexpr auto generation = generation_from<DefenderPokemon>;
-	auto substitute = [&] {
-		return defender.substitute() and substitute_interaction(generation, move.name) != Substitute::bypassed;
-	};
-	auto resistance_berry = [&](Type const resisted) {
-		if (move.type != resisted or substitute()) {
-			return false;
-		}
-		defender.remove_item();
-		return true;
-	};
-	auto se_resistance_berry = [&](Type const resisted) {
-		if (!effectiveness.is_super_effective()) {
-			return false;
-		}
-		return resistance_berry(resisted);
-	};
-	constexpr auto max_stage = numeric_traits::max_value<Stage::value_type>;
-	auto stat_boost = [&](BoostableStat const stat) {
-		auto & stage = defender.stages()[stat];
-		if (stage != max_stage and !substitute()) {
-			stage += 1_bi;
-			defender.remove_item();
-		}
-	};
-	auto stat_boost_move_type = [&](Type const type, BoostableStat const stat) {
-		if (move.type == type) {
-			stat_boost(stat);
-		}
-		return false;
-	};
-	switch (defender.item(weather)) {
-		case Item::Absorb_Bulb:
-			return stat_boost_move_type(Type::Water, BoostableStat::spa);
-		case Item::Air_Balloon:
-			defender.remove_item();
-			return false;
-		case Item::Babiri_Berry:
-			return se_resistance_berry(Type::Steel);
-		case Item::Cell_Battery:
-			return stat_boost_move_type(Type::Electric, BoostableStat::atk);
-		case Item::Charti_Berry:
-			return se_resistance_berry(Type::Rock);
-		case Item::Chople_Berry:
-			return se_resistance_berry(Type::Fighting);
-		case Item::Chilan_Berry:
-			return resistance_berry(Type::Normal);
-		case Item::Coba_Berry:
-			return se_resistance_berry(Type::Flying);
-		case Item::Colbur_Berry:
-			return se_resistance_berry(Type::Dark);
-		case Item::Enigma_Berry:
-			if (effectiveness.is_super_effective() and generation >= Generation::four and !substitute()) {
-				defender.remove_item();
-				heal(defender, weather, rational(1_bi, 4_bi));
-			}
-			return false;
-		case Item::Haban_Berry:
-			return se_resistance_berry(Type::Dragon);
-		case Item::Kasib_Berry:
-			return se_resistance_berry(Type::Ghost);
-		case Item::Kebia_Berry:
-			return se_resistance_berry(Type::Poison);
-		case Item::Kee_Berry:
-			if (is_physical(generation, move)) {
-				stat_boost(BoostableStat::def);
-			}
-			return false;
-		case Item::Luminous_Moss:
-			return stat_boost_move_type(Type::Water, BoostableStat::spd);
-		case Item::Maranga_Berry:
-			if (is_special(generation, move)) {
-				stat_boost(BoostableStat::spd);
-			}
-			return false;
-		case Item::Occa_Berry:
-			return se_resistance_berry(Type::Fire);
-		case Item::Passho_Berry:
-			return se_resistance_berry(Type::Water);
-		case Item::Payapa_Berry:
-			return se_resistance_berry(Type::Psychic);
-		case Item::Rindo_Berry:
-			return se_resistance_berry(Type::Grass);
-		case Item::Roseli_Berry:
-			return se_resistance_berry(Type::Fairy);
-		case Item::Shuca_Berry:
-			return se_resistance_berry(Type::Ground);
-		case Item::Snowball:
-			return stat_boost_move_type(Type::Ice, BoostableStat::atk);
-		case Item::Tanga_Berry:
-			return se_resistance_berry(Type::Bug);
-		case Item::Wacan_Berry:
-			return se_resistance_berry(Type::Electric);
-		case Item::Weakness_Policy:
-			if (effectiveness.is_super_effective() and !substitute()) {
-				auto & stages = defender.stages();
-				if (stages[BoostableStat::atk] != max_stage and stages[BoostableStat::spa] != max_stage) {
-					boost_offensive(stages, 2_bi);
-					defender.remove_item();
-				}
-			}
-			return false;
-		case Item::Yache_Berry:
-			return se_resistance_berry(Type::Ice);
-		default:
-			return false;
-	}
-}
 
 constexpr auto targets_foe_specifically(Target const target) {
 	switch (target) {
@@ -322,60 +187,6 @@ auto find_move(MoveContainer<generation> const container, MoveName const move_na
 	return *maybe_move;
 }
 
-constexpr auto blocked_by_protect(Target const target, MoveName const move) {
-	switch (target) {
-		case Target::user:
-		case Target::all_allies:
-		case Target::user_and_all_allies:
-		case Target::all:
-		case Target::field:
-		case Target::user_team:
-		case Target::user_field:
-		case Target::foe_field:
-			return false;
-		case Target::adjacent_ally:
-		case Target::user_or_adjacent_ally:
-		case Target::adjacent_foe:
-		case Target::all_adjacent_foes:
-		case Target::any:
-		case Target::all_adjacent:
-			return true;
-		case Target::adjacent:
-			switch (move) {
-				case MoveName::Feint:
-				case MoveName::Hyperspace_Fury:
-				case MoveName::Hyperspace_Hole:
-				case MoveName::Phantom_Force:
-				case MoveName::Shadow_Force:
-					return false;
-				default:
-					return true;
-			}
-	}
-}
-
-constexpr auto fails_against_fainted(Target const target) {
-	switch (target) {
-		case Target::user:
-		case Target::all_allies:
-		case Target::user_and_all_allies:
-		case Target::all:
-		case Target::field:
-		case Target::user_team:
-		case Target::user_field:
-		case Target::all_adjacent_foes:
-		case Target::foe_field:
-		case Target::all_adjacent:
-			return false;
-		case Target::adjacent_ally:
-		case Target::user_or_adjacent_ally:
-		case Target::adjacent_foe:
-		case Target::adjacent:
-		case Target::any:
-			return true;
-	}
-}
-
 auto handle_ability_blocks_move(any_mutable_active_pokemon auto const target, Weather const weather) {
 	switch (target.ability()) {
 		case Ability::Flash_Fire:
@@ -449,11 +260,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 
 	auto const target = move_target(generation, move.executed);
 
-	auto const unsuccessful =
-		move_fails(move.executed, user_pokemon.damaged(), other_ability, other_move) or
-		(other_pokemon.hp().current() == 0_bi and fails_against_fainted(target)) or
-		(other_pokemon.last_used_move().is_protecting() and blocked_by_protect(target, move.executed));
-	if (unsuccessful) {
+	if (move_is_unsuccessful(target, move.executed, user_pokemon.damaged(), other_pokemon.hp().current(), other_ability, other_move, other_pokemon.last_used_move().is_protecting())) {
 		unsuccessfully_use_move();
 		return;
 	}
@@ -462,7 +269,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		move.executed,
 		get_type(generation, move.executed, get_hidden_power_type(user_pokemon))
 	};
-	if (ability_blocks_move(generation, other_pokemon.ability(), known_move, other_pokemon.status().name(), other_pokemon.types())) {
+	if (ability_blocks_move(generation, other_ability, known_move, other_pokemon.status().name(), other_pokemon.types())) {
 		handle_ability_blocks_move(other_pokemon, weather);
 	} else {
 		auto const executed_move = ExecutedMove<UserTeam>{
@@ -489,9 +296,7 @@ void end_of_attack(UserPokemon const user_pokemon, OtherMutableActivePokemon<Use
 	}
 }
 
-} // namespace
-
-template<any_team UserTeam>
+export template<any_team UserTeam>
 auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
 	if (move.selected == MoveName::Pass) {
 		return;

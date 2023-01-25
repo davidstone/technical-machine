@@ -3,31 +3,26 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/ps_usage_stats/battle_result_reader.hpp>
-#include <tm/ps_usage_stats/glicko1.hpp>
-#include <tm/ps_usage_stats/rating.hpp>
-#include <tm/ps_usage_stats/usage_stats.hpp>
-
-#include <tm/string_conversions/generation.hpp>
-
-#include <tm/load_json_from_file.hpp>
-
-#include <bounded/number_of.hpp>
-#include <bounded/to_integer.hpp>
-
-#include <containers/algorithms/accumulate.hpp>
-#include <containers/algorithms/concatenate.hpp>
-#include <containers/emplace_back.hpp>
-#include <containers/range_view.hpp>
-#include <containers/vector.hpp>
-
 #include <compare>
-#include <filesystem>
-#include <fstream>
-#include <stdexcept>
-#include <string>
-#include <string_view>
-#include <utility>
+#include <memory>
+
+import tm.ps_usage_stats.battle_result_reader;
+import tm.ps_usage_stats.glicko1;
+import tm.ps_usage_stats.rating;
+import tm.ps_usage_stats.usage_stats;
+
+import tm.pokemon.species;
+
+import tm.string_conversions.generation;
+import tm.string_conversions.species;
+
+import tm.load_json_from_file;
+import tm.nlohmann_json;
+import tm.open_file;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine::ps_usage_stats {
 namespace {

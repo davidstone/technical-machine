@@ -3,38 +3,54 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/string_conversions/pokemon.hpp>
+module;
 
-#include <tm/pokemon/known_pokemon.hpp>
-#include <tm/pokemon/pokemon.hpp>
-#include <tm/pokemon/seen_pokemon.hpp>
+#include <tm/for_each_generation.hpp>
 
-#include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move_name.hpp>
-#include <tm/string_conversions/nature.hpp>
-#include <tm/string_conversions/species.hpp>
-#include <tm/string_conversions/status_name.hpp>
+export module tm.string_conversions.pokemon;
 
-#include <tm/stat/calculate_ivs_and_evs.hpp>
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
 
-#include <tm/buffer_view.hpp>
-#include <tm/status_name.hpp>
+import tm.pokemon.any_pokemon;
+import tm.pokemon.hp_ratio;
+import tm.pokemon.known_pokemon;
+import tm.pokemon.level;
+import tm.pokemon.pokemon;
+import tm.pokemon.seen_pokemon;
+import tm.pokemon.species;
 
-#include <bounded/to_integer.hpp>
+import tm.stat.calculate_ivs_and_evs;
+import tm.stat.combined_stats;
+import tm.stat.current_hp;
+import tm.stat.ev;
+import tm.stat.iv;
+import tm.stat.nature;
+import tm.stat.stat_names;
 
-#include <containers/algorithms/all_any_none.hpp>
-#include <containers/algorithms/concatenate.hpp>
-#include <containers/algorithms/find.hpp>
-#include <containers/array.hpp>
-#include <containers/begin_end.hpp>
-#include <containers/push_back.hpp>
-#include <containers/range_view.hpp>
+import tm.string_conversions.ability;
+import tm.string_conversions.item;
+import tm.string_conversions.move_name;
+import tm.string_conversions.nature;
+import tm.string_conversions.species;
+import tm.string_conversions.status_name;
+
+import tm.status.status;
+import tm.status.status_name;
+
+import tm.ability;
+import tm.buffer_view;
+import tm.gender;
+import tm.generation;
+import tm.item;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
-namespace {
+using namespace bounded::literal;
 
 using namespace std::string_view_literals;
 
@@ -71,14 +87,12 @@ constexpr auto old_spc_ev_moves = " Spc"sv;
 
 constexpr auto moves_separator = "\n\t- "sv;
 
-} // namespace
-
 // TODO: Print nickname
 // TODO: Print level
 // TODO: Print gender
 // TODO: Make this compatible with Pokemon Showdown
 
-template<any_pokemon PokemonType>
+export template<any_pokemon PokemonType>
 auto to_string(PokemonType const & pokemon) -> containers::string {
 	constexpr auto generation = generation_from<PokemonType>;
 	// Boost.Format fails to compile with C++20, so we have to do this instead
@@ -184,8 +198,6 @@ auto to_string(PokemonType const & pokemon) -> containers::string {
 	);
 }
 
-namespace {
-
 template<typename T>
 constexpr auto typed_pop(BufferView<std::string_view> & buffer, std::string_view const delimiter) {
 	auto const str = pop_to_delimiter(buffer, delimiter);
@@ -257,9 +269,7 @@ constexpr auto pop_evs(BufferView<std::string_view> & buffer) {
 	}
 }
 
-} // namespace
-
-template<Generation generation>
+export template<Generation generation>
 auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 	auto buffer = BufferView(str);
 	auto const species = typed_pop<Species>(buffer, species_hp);
@@ -291,7 +301,7 @@ auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 		CombinedStats<generation>{nature, dvs_or_ivs, evs},
 		moves
 	);
-	pokemon.set_hp(bounded::assume_in_range<HP::current_type>(static_cast<int>(static_cast<double>(pokemon.hp().max()) * hp_percent / 100.0)));
+	pokemon.set_hp(bounded::assume_in_range<CurrentHP>(static_cast<int>(static_cast<double>(pokemon.hp().max()) * hp_percent / 100.0)));
 	pokemon.set_status(status);
 
 	return pokemon;

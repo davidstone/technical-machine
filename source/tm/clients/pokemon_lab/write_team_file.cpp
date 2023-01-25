@@ -4,22 +4,36 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/pokemon_lab/write_team_file.hpp>
+export module tm.clients.pl.write_team_file;
 
-#include <tm/pokemon/species.hpp>
+import tm.move.move;
 
-#include <tm/string_conversions/move_name.hpp>
+import tm.pokemon.any_pokemon;
+import tm.pokemon.species;
 
-namespace technicalmachine {
-namespace pl {
+import tm.stat.calculate_ivs_and_evs;
+import tm.stat.ev;
+import tm.stat.stat_names;
 
-auto write_move(Move const move, boost::property_tree::ptree & pt) -> void {
-	boost::property_tree::ptree & m = pt.add("moveset.move", to_string(move.name()));
-	// TODO: replace with real PP ups logic
-	m.put("<xmlattr>.pp-up", 3);
-}
+import tm.string_conversions.ability;
+import tm.string_conversions.gender;
+import tm.string_conversions.item;
+import tm.string_conversions.move_name;
+import tm.string_conversions.nature;
+import tm.string_conversions.species;
 
-auto to_simulator_string(SplitSpecialPermanentStat const stat) -> std::string_view {
+import tm.any_team;
+import tm.gender;
+import tm.generation;
+import tm.property_tree;
+
+import bounded;
+import std_module;
+
+namespace technicalmachine::pl {
+using namespace std::string_view_literals;
+
+constexpr auto to_simulator_string(SplitSpecialPermanentStat const stat) -> std::string_view {
 	switch (stat) {
 		case SplitSpecialPermanentStat::hp: return "HP";
 		case SplitSpecialPermanentStat::atk: return "Atk";
@@ -30,7 +44,7 @@ auto to_simulator_string(SplitSpecialPermanentStat const stat) -> std::string_vi
 	}
 }
 
-auto to_simulator_string(Species const species) -> std::string_view {
+constexpr auto to_simulator_string(Species const species) -> std::string_view {
 	switch (species) {
 		case Species::Deoxys_Normal: return "Deoxys";
 		case Species::Deoxys_Attack: return "Deoxys-f";
@@ -52,7 +66,7 @@ auto to_simulator_string(Species const species) -> std::string_view {
 	}
 }
 
-auto to_simulator_string(Gender const gender) -> std::string_view {
+constexpr auto to_simulator_string(Gender const gender) -> std::string_view {
 	switch (gender) {
 		case Gender::female: return "Female";
 		case Gender::genderless: return "No Gender";
@@ -60,5 +74,60 @@ auto to_simulator_string(Gender const gender) -> std::string_view {
 	}
 }
 
-} // namespace pl
-} // namespace technicalmachine
+auto write_move(Move const move, property_tree::ptree_writer pt) -> void {
+	property_tree::ptree_writer m = pt.add("moveset.move", to_string(move.name()));
+	// TODO: replace with real PP ups logic
+	m.put("<xmlattr>.pp-up", 3);
+}
+
+auto write_stat(std::string_view const name, auto const dv_or_iv, EV const ev, property_tree::ptree_writer pt) -> void {
+	property_tree::ptree_writer s = pt.add("stats.stat", "");
+	s.put("<xmlattr>.name", name);
+	s.put("<xmlattr>.iv", dv_or_iv.value());
+	s.put("<xmlattr>.ev", ev.value());
+}
+
+auto write_stats(any_pokemon auto const & pokemon, property_tree::ptree_writer pt) -> void {
+	auto const stats = calculate_ivs_and_evs(pokemon);
+	for (auto const stat_name : {SplitSpecialPermanentStat::hp, SplitSpecialPermanentStat::atk, SplitSpecialPermanentStat::def, SplitSpecialPermanentStat::spe, SplitSpecialPermanentStat::spa, SplitSpecialPermanentStat::spd}) {
+		write_stat(to_simulator_string(stat_name), stats.dvs_or_ivs[stat_name], stats.evs[stat_name], pt);
+	}
+}
+
+auto write_pokemon(any_pokemon auto const & pokemon, property_tree::ptree_writer pt) -> void {
+	property_tree::ptree_writer member = pt.add("pokemon", "");
+	member.put("<xmlattr>.species", to_simulator_string(pokemon.species()));
+	auto get_nickname = [&]() -> std::string_view {
+		if constexpr (requires { pokemon.nickname(); }) {
+			return pokemon.nickname();
+		} else {
+			return ""sv;
+		}
+	};
+	member.put("nickname", get_nickname());
+	member.put("level", pokemon.level()());
+	member.put("happiness", pokemon.happiness());
+	member.put("gender", to_simulator_string(pokemon.gender()));
+	member.put("nature", to_string(pokemon.nature()));
+	member.put("item", to_string(pokemon.item(false, false)));
+	member.put("ability", to_string(pokemon.initial_ability()));
+	for (auto const & move : pokemon.regular_moves()) {
+		write_move(move, member);
+	}
+	write_stats(pokemon, member);
+}
+
+export template<any_team TeamType>
+auto write_team(TeamType const & team, std::filesystem::path const & file_name) -> void {
+	auto owner = property_tree::ptree();
+	auto pt = property_tree::ptree_writer(owner);
+	property_tree::ptree_writer t = pt.add("shoddybattle", "");
+	// The original format did not include a generation.
+	t.put("<xmlattr>.generation", static_cast<int>(generation_from<TeamType>));
+	for (auto const & pokemon : team.all_pokemon()) {
+		write_pokemon(pokemon, t);
+	}
+	pt.write_xml(file_name);
+}
+
+} // namespace technicalmachine::pl

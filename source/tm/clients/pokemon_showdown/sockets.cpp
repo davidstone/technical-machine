@@ -6,54 +6,70 @@
 // See https://github.com/Zarel/Pokemon-Showdown/blob/master/protocol-doc.md
 // for the full protocol.
 
-#include <tm/clients/pokemon_showdown/sockets.hpp>
+module;
 
 #include <boost/asio/connect.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
+#include <boost/beast/websocket.hpp>
 
-#include <cstddef>
+export module tm.clients.ps.sockets;
 
-namespace technicalmachine {
-namespace ps {
+import std_module;
 
-Sockets::Sockets(std::string_view const host, std::string_view const port, std::string_view const resource):
-	m_socket(make_connected_socket(host, port)),
-	m_websocket(m_socket)
-{
-	m_websocket.handshake(host, resource);
-}
+namespace technicalmachine::ps {
+namespace http = boost::beast::http;
+using tcp = boost::asio::ip::tcp;
 
-auto Sockets::make_connected_socket(std::string_view const host, std::string_view const port) -> tcp::socket {
-	auto socket = tcp::socket(m_io);
-	auto resolver = tcp::resolver(m_io);
-	boost::asio::connect(socket, resolver.resolve(host, port));
-	return socket;
-}
+export struct Sockets {
+	Sockets(std::string_view const host, std::string_view const port, std::string_view const resource):
+		m_socket(make_connected_socket(host, port)),
+		m_websocket(m_socket)
+	{
+		m_websocket.handshake(host, resource);
+	}
 
-auto Sockets::read_message() -> std::string_view {
-	m_buffer.consume(static_cast<std::size_t>(-1));
-	m_websocket.read(m_buffer);
+	Sockets(Sockets &&) = delete;
 
-	auto const asio_buffer = m_buffer.data();
-	auto const sv = std::string_view(static_cast<char const *>(asio_buffer.data()), asio_buffer.size());
+	auto read_message() -> std::string_view {
+		m_buffer.consume(static_cast<std::size_t>(-1));
+		m_websocket.read(m_buffer);
 
-	return sv;
-}
+		auto const asio_buffer = m_buffer.data();
+		auto const sv = std::string_view(static_cast<char const *>(asio_buffer.data()), asio_buffer.size());
 
-void Sockets::write_message(std::string_view const message) {
-	m_websocket.write(boost::asio::buffer(message));
-}
+		return sv;
+	}
 
-auto Sockets::authenticate(std::string_view const host, std::string_view const port, http::request<http::string_body> const & request) -> http::response<http::string_body> {
-	auto socket = make_connected_socket(host, port);
+	auto write_message(std::string_view const message) -> void {
+		m_websocket.write(boost::asio::buffer(message));
+	}
 
-	http::write(socket, request);
+	auto authenticate(std::string_view const host, std::string_view const port, http::request<http::string_body> const & request) -> http::response<http::string_body> {
+		auto socket = make_connected_socket(host, port);
 
-	auto buffer = boost::beast::flat_buffer{};
-	auto response = http::response<http::string_body>{};
-	http::read(socket, buffer, response);
-	return response;
-}
+		http::write(socket, request);
 
-} // namespace ps
-} // namespace technicalmachine
+		auto buffer = boost::beast::flat_buffer{};
+		auto response = http::response<http::string_body>{};
+		http::read(socket, buffer, response);
+		return response;
+	}
+
+private:
+	auto make_connected_socket(std::string_view const host, std::string_view const port) -> tcp::socket {
+		auto socket = tcp::socket(m_io);
+		auto resolver = tcp::resolver(m_io);
+		boost::asio::connect(socket, resolver.resolve(host, port));
+		return socket;
+	}
+
+	boost::beast::flat_buffer m_buffer;
+	boost::asio::io_context m_io;
+	tcp::socket m_socket;
+	boost::beast::websocket::stream<tcp::socket &> m_websocket;
+};
+
+} // namespace technicalmachine::ps

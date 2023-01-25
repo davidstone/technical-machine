@@ -3,37 +3,50 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/move_name.hpp>
-
-#include <tm/pokemon/species.hpp>
-
-#include <tm/stat/calculate_ivs_and_evs.hpp>
-#include <tm/stat/ev.hpp>
-#include <tm/stat/initial_stat.hpp>
-#include <tm/stat/iv.hpp>
-
-#include <tm/string_conversions/nature.hpp>
-
-#include <tm/team_predictor/ev_optimizer/defensive.hpp>
-#include <tm/team_predictor/ev_optimizer/ev_optimizer.hpp>
-#include <tm/team_predictor/ev_optimizer/offensive.hpp>
-#include <tm/team_predictor/ev_optimizer/speed.hpp>
-
-#include <containers/begin_end.hpp>
-#include <containers/integer_range.hpp>
-
-#include <random>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+#include <bounded/assert.hpp>
+
+import tm.pokemon.hidden_power;
+import tm.pokemon.level;
+import tm.pokemon.species;
+
+import tm.stat.base_stats;
+import tm.stat.combined_stats;
+import tm.stat.ev;
+import tm.stat.hp;
+import tm.stat.initial_stat;
+import tm.stat.iv;
+import tm.stat.nature;
+import tm.stat.possible_dvs_or_ivs;
+import tm.stat.stat_names;
+import tm.stat.stats;
+
+import tm.string_conversions.nature;
+
+import tm.team_predictor.ev_optimizer.defensive;
+import tm.team_predictor.ev_optimizer.ev_optimizer;
+import tm.team_predictor.ev_optimizer.offensive;
+import tm.team_predictor.ev_optimizer.possible_optimized_ivs;
+import tm.team_predictor.ev_optimizer.speed;
+
+import tm.generation;
+
+import bounded;
+import containers;
+import tv;
+import std_module;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
 
 TEST_CASE("Optimize already optimized EVs", "[EV Optimizer]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Metagross;
 	constexpr auto level = Level(100_bi);
-	constexpr auto hidden_power = bounded::optional<HiddenPower<generation>>();
+	constexpr auto hidden_power = tv::optional<HiddenPower<generation>>();
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
 	constexpr auto ivs_and_evs = CombinedStats<generation>{
@@ -65,7 +78,7 @@ TEST_CASE("Optimize defensive EVs", "[EV Optimizer]") {
 	constexpr auto base_spd = 100_bi;
 	constexpr auto level = Level(100_bi);
 	constexpr auto nature = Nature::Bold;
-	constexpr auto possible_ivs = possible_dvs_or_ivs(bounded::optional<HiddenPower<generation>>());
+	constexpr auto possible_ivs = possible_dvs_or_ivs(tv::optional<HiddenPower<generation>>());
 	constexpr auto hp_ev = EV(252_bi);
 	constexpr auto defense_ev = EV(252_bi);
 	constexpr auto special_defense_ev = EV(4_bi);
@@ -97,7 +110,7 @@ static_assert([] {
 	constexpr auto original_nature = Nature::Hardy;
 	constexpr auto base_spe = 30_bi;
 	constexpr auto original_value = initial_stat<generation>(SplitSpecialRegularStat::spe, base_spe, level, original_nature, IV(31_bi), EV(76_bi));
-	constexpr auto possible_ivs = possible_optimized_ivs(possible_dvs_or_ivs(bounded::optional<HiddenPower<generation>>()).spe());
+	constexpr auto possible_ivs = possible_optimized_ivs(possible_dvs_or_ivs(tv::optional<HiddenPower<generation>>()).spe());
 	constexpr auto speed_evs = SpeedEVs(base_spe, level, possible_ivs, SpeedEVs::Input<generation>{original_value});
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const found = find(speed_evs, nature);
@@ -115,7 +128,7 @@ TEST_CASE("Optimize EVs below level 100", "[EV Optimizer]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Masquerain;
 	constexpr auto level = Level(83_bi);
-	constexpr auto hidden_power = bounded::optional<HiddenPower<generation>>();
+	constexpr auto hidden_power = tv::optional<HiddenPower<generation>>();
 	constexpr auto include_attack = false;
 	constexpr auto include_special_attack = true;
 	constexpr auto ivs_and_evs = CombinedStats<generation>{
@@ -138,7 +151,7 @@ TEST_CASE("Optimize generation 2 EVs", "[EV Optimizer]") {
 	constexpr auto generation = Generation::two;
 	constexpr auto species = Species::Mew;
 	constexpr auto level = Level(100_bi);
-	constexpr auto hidden_power = bounded::optional<HiddenPower<generation>>();
+	constexpr auto hidden_power = tv::optional<HiddenPower<generation>>();
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = true;
 	constexpr auto ivs_and_evs = default_combined_stats<generation>;

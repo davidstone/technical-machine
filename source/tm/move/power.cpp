@@ -1,38 +1,62 @@
-// Move power calculator
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/move/power.hpp>
+module;
 
-#include <tm/move/base_power.hpp>
-#include <tm/move/category.hpp>
-#include <tm/move/move.hpp>
-#include <tm/move/move_name.hpp>
+#include <tm/for_each_generation.hpp>
 
-#include <tm/stat/calculate.hpp>
+#include <bounded/conditional.hpp>
 
-#include <tm/pokemon/active_pokemon.hpp>
-#include <tm/pokemon/any_pokemon.hpp>
-#include <tm/pokemon/happiness.hpp>
-#include <tm/pokemon/pokemon.hpp>
-#include <tm/pokemon/species.hpp>
+export module tm.move.power;
 
-#include <tm/ability.hpp>
-#include <tm/any_team.hpp>
-#include <tm/gender.hpp>
-#include <tm/generation.hpp>
-#include <tm/item.hpp>
-#include <tm/known_team.hpp>
-#include <tm/rational.hpp>
-#include <tm/seen_team.hpp>
-#include <tm/team.hpp>
-#include <tm/weather.hpp>
+import tm.move.base_power;
+import tm.move.category;
+import tm.move.executed_move;
+import tm.move.known_move;
+import tm.move.move_name;
+
+import tm.pokemon.any_pokemon;
+import tm.pokemon.hp_ratio;
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
+
+import tm.stat.calculate;
+
+import tm.status.status;
+import tm.status.status_name;
+
+import tm.type.type;
+
+import tm.ability;
+import tm.any_team;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.rational;
+import tm.team;
+import tm.weather;
+
+import bounded;
 
 namespace technicalmachine {
-namespace {
 using namespace bounded::literal;
+
+constexpr auto boosts_facade(StatusName const status) -> bool {
+	switch (status) {
+		case StatusName::burn:
+		case StatusName::paralysis:
+		case StatusName::poison:
+		case StatusName::toxic:
+			return true;
+		case StatusName::clear:
+		case StatusName::freeze:
+		case StatusName::sleep:
+		case StatusName::rest:
+			return false;
+	}
+}
 
 template<any_active_pokemon AttackerPokemon>
 auto doubling(AttackerPokemon const attacker, MoveName const move, any_active_pokemon auto const defender, Weather const weather) -> bool {
@@ -67,7 +91,7 @@ auto doubling(AttackerPokemon const attacker, MoveName const move, any_active_po
 		case MoveName::Brine:
 			return defender.hp().current() <= defender.hp().max() / 2_bi;
 		case MoveName::Facade:
-			return boosts_facade(attacker.status());
+			return boosts_facade(attacker.status().name());
 		case MoveName::Ice_Ball:
 		case MoveName::Rollout:
 			return attacker.defense_curled();
@@ -333,9 +357,13 @@ auto defender_ability_modifier(Type const move_type, Ability const ability) -> r
 	}
 }
 
-} // namespace
+export using MovePower = bounded::integer<1, 1440>;
 
-template<any_team UserTeam, any_team DefenderTeam>
+// If a damaging move does not have power (for instance, OHKO moves and
+// fixed-damage moves), the behavior of this function is undefined. If
+// `executed.move.name` is Hidden Power, `attacker.pokemon().hidden_power()`
+// must not be `none`.
+export template<any_team UserTeam, any_team DefenderTeam>
 auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Weather const weather) -> MovePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();

@@ -4,23 +4,28 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/string_conversions/item.hpp>
+module;
 
-#include <tm/string_conversions/invalid_string_conversion.hpp>
-#include <tm/string_conversions/lowercase_alphanumeric.hpp>
+#include <compare>
+#include <string_view>
 
-#include <tm/item.hpp>
+export module tm.string_conversions.item;
 
-#include <containers/array.hpp>
-#include <containers/begin_end.hpp>
-#include <containers/flat_map.hpp>
-#include <containers/lookup.hpp>
+export import tm.string_conversions.from_string;
+import tm.string_conversions.invalid_string_conversion;
+import tm.string_conversions.lowercase_alphanumeric;
+
+import tm.item;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
 
 using namespace bounded::literal;
 
-auto to_string(Item const item) -> std::string_view {
+export constexpr auto to_string(Item const item) -> std::string_view {
 	switch (item) {
 		// Generation 1
 		case Item::None: return "None";
@@ -890,8 +895,8 @@ auto to_string(Item const item) -> std::string_view {
 	}
 }
 
-template<>
-auto from_string(std::string_view const str) -> Item {
+export template<>
+constexpr auto from_string(std::string_view const str) -> Item {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
 		containers::to_array<containers::map_value_type<std::string_view, Item>>({

@@ -12,7 +12,7 @@
 	url = https://github.com/davidstone/cmake_strict_defaults
 [submodule "json"]
 	path = dependencies/json
-	url = https://github.com/nlohmann/json.git
+	url = https://github.com/davidstone/json.git
 [submodule "numeric-traits"]
 	path = dependencies/numeric-traits
 	url = https://github.com/davidstone/numeric-traits
@@ -22,3 +22,6 @@
 [submodule "dependencies/concurrent-queue"]
 	path = dependencies/concurrent-queue
 	url = https://github.com/davidstone/concurrent-queue.git
+[submodule "dependencies/std_module"]
+	path = dependencies/std_module
+	url = https://github.com/davidstone/std_module.git

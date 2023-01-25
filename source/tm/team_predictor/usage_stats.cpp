@@ -3,37 +3,31 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/team_predictor/usage_stats.hpp>
+module;
 
-#include <tm/pokemon/species.hpp>
+#include <operators/forward.hpp>
 
-#include <tm/ps_usage_stats/header.hpp>
+export module tm.team_predictor.usage_stats;
 
-#include <tm/stat/ev.hpp>
+import tm.move.move_name;
 
-#include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/generation.hpp>
-#include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move_name.hpp>
-#include <tm/string_conversions/nature.hpp>
-#include <tm/string_conversions/species.hpp>
+import tm.pokemon.species;
 
-#include <tm/load_json_from_file.hpp>
-#include <tm/get_directory.hpp>
-#include <tm/open_file.hpp>
+import tm.ps_usage_stats.header;
 
-#include <bounded/to_integer.hpp>
+import tm.team_predictor.usage_stats_probabilities;
 
-#include <numeric_traits/min_max_value.hpp>
+import tm.ability;
+import tm.generation;
+import tm.item;
 
-#include <bit>
-#include <iostream>
-#include <stdexcept>
-#include <utility>
-
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
 
 struct FileReader {
 	explicit FileReader(std::istream & stream):
@@ -151,107 +145,119 @@ auto checked_read(FileReader & reader) {
 
 } // namespace
 
-auto UsageStats::make(std::istream && stream) -> UsageStats {
-	auto reader = FileReader(stream);
-	checked_header_read(reader);
-	// TODO: Confirm this is the expected generation?
-	auto const generation = checked_read<Generation>(reader);
-	auto data = Data();
-	auto probabilities = UsageStatsProbabilities::Map();
+export struct UsageStats {
+	static auto make(std::istream && stream) -> UsageStats {
+		auto reader = FileReader(stream);
+		checked_header_read(reader);
+		// TODO: Confirm this is the expected generation?
+		auto const generation = checked_read<Generation>(reader);
+		auto data = Data();
+		auto probabilities = UsageStatsProbabilities::Map();
 
-	for (auto const species : read_map<Species>(reader)) {
-		auto const species_weight = checked_read<double>(reader);
-		checked_read<SpeedDistribution>(reader);
-		auto per_species_probabilities = checked_read<UsageStatsProbabilities::Map>(reader);
-		auto used_moves = UsedMoves();
-		auto read_items = [&] {
-			return generation >= Generation::two ?
-				read_inner_probabilities<Item>(reader, species_weight) :
-				UsageStatsProbabilities::Data<Item>();
-		};
-		auto read_abilities = [&] {
-			return generation >= Generation::three ?
-				read_inner_probabilities<Ability>(reader, species_weight) :
-				UsageStatsProbabilities::Data<Ability>();
-		};
-		auto & for_this_species = checked_insert(
-			per_species_probabilities,
-			species,
-			bounded::construct<UsageStatsProbabilities::Inner>
-		);
-		auto & probabilities_assuming_species = checked_insert(
-			probabilities,
-			species,
-			bounded::construct<UsageStatsProbabilities::Inner>
-		);
-		for (auto const & move_name : read_map<MoveName>(reader)) {
-			auto const move_weight = checked_read<double>(reader);
-			checked_insert(
-				for_this_species.moves,
-				move_name,
-				bounded::value_to_function(static_cast<float>(move_weight))
-			);
-			[[maybe_unused]] auto const speed_distribution = checked_read<SpeedDistribution>(reader);
-			auto teammates = checked_read<UsageStatsProbabilities::Map>(reader);
-			auto const weight = species_weight * move_weight;
-			checked_insert(
-				probabilities_assuming_species.moves,
-				move_name,
-				bounded::value_to_function(static_cast<float>(weight))
-			);
-			auto moves = read_inner_probabilities<MoveName>(reader, species_weight);
-			auto items = read_items();
-			auto abilities = read_abilities();
-			checked_insert(
-				teammates,
-				species,
-				[&] {
-					return UsageStatsProbabilities::Inner{
-						std::move(moves),
-						std::move(items),
-						std::move(abilities)
-					};
-				}
-			);
-			checked_insert(
-				used_moves,
-				move_name,
-				[&] { return UsageStatsProbabilities(std::move(teammates)); }
-			);
-		}
-		for_this_species.items = read_items();
-		probabilities_assuming_species.items = for_this_species.items;
-		for_this_species.abilities = read_abilities();
-		probabilities_assuming_species.abilities = for_this_species.abilities;
-		checked_insert(data, species, [&] {
-			return PerSpecies{
-				std::move(used_moves),
-				UsageStatsProbabilities(std::move(per_species_probabilities))
+		for (auto const species : read_map<Species>(reader)) {
+			auto const species_weight = checked_read<double>(reader);
+			checked_read<SpeedDistribution>(reader);
+			auto per_species_probabilities = checked_read<UsageStatsProbabilities::Map>(reader);
+			auto used_moves = UsedMoves();
+			auto read_items = [&] {
+				return generation >= Generation::two ?
+					read_inner_probabilities<Item>(reader, species_weight) :
+					UsageStatsProbabilities::Data<Item>();
 			};
-		});
+			auto read_abilities = [&] {
+				return generation >= Generation::three ?
+					read_inner_probabilities<Ability>(reader, species_weight) :
+					UsageStatsProbabilities::Data<Ability>();
+			};
+			auto & for_this_species = checked_insert(
+				per_species_probabilities,
+				species,
+				bounded::construct<UsageStatsProbabilities::Inner>
+			);
+			auto & probabilities_assuming_species = checked_insert(
+				probabilities,
+				species,
+				bounded::construct<UsageStatsProbabilities::Inner>
+			);
+			for (auto const & move_name : read_map<MoveName>(reader)) {
+				auto const move_weight = checked_read<double>(reader);
+				checked_insert(
+					for_this_species.moves,
+					move_name,
+					bounded::value_to_function(static_cast<float>(move_weight))
+				);
+				[[maybe_unused]] auto const speed_distribution = checked_read<SpeedDistribution>(reader);
+				auto teammates = checked_read<UsageStatsProbabilities::Map>(reader);
+				auto const weight = species_weight * move_weight;
+				checked_insert(
+					probabilities_assuming_species.moves,
+					move_name,
+					bounded::value_to_function(static_cast<float>(weight))
+				);
+				auto moves = read_inner_probabilities<MoveName>(reader, species_weight);
+				auto items = read_items();
+				auto abilities = read_abilities();
+				checked_insert(
+					teammates,
+					species,
+					[&] {
+						return UsageStatsProbabilities::Inner{
+							std::move(moves),
+							std::move(items),
+							std::move(abilities)
+						};
+					}
+				);
+				checked_insert(
+					used_moves,
+					move_name,
+					[&] { return UsageStatsProbabilities(std::move(teammates)); }
+				);
+			}
+			for_this_species.items = read_items();
+			probabilities_assuming_species.items = for_this_species.items;
+			for_this_species.abilities = read_abilities();
+			probabilities_assuming_species.abilities = for_this_species.abilities;
+			checked_insert(data, species, [&] {
+				return PerSpecies{
+					std::move(used_moves),
+					UsageStatsProbabilities(std::move(per_species_probabilities))
+				};
+			});
+		}
+		return UsageStats(std::move(data), UsageStatsProbabilities(std::move(probabilities)));
 	}
-	return UsageStats(std::move(data), UsageStatsProbabilities(std::move(probabilities)));
-}
 
-auto stats_for_generation(Generation const generation) -> UsageStats {
-	std::cout << "Loading stats for generation " << to_string(generation) << '\n' << std::flush;
-	return UsageStats::make(open_binary_file_for_reading(get_usage_stats_directory() / to_string(generation) / "OU.tmus"));
-}
-
-AllUsageStats::AllUsageStats():
-	m_all_stats{
-		stats_for_generation(Generation::one),
-		stats_for_generation(Generation::two),
-		stats_for_generation(Generation::three),
-		stats_for_generation(Generation::four),
-		stats_for_generation(Generation::five),
-		stats_for_generation(Generation::six),
-		stats_for_generation(Generation::seven),
-		stats_for_generation(Generation::eight)
+	auto assuming() const -> UsageStatsProbabilities const & {
+		return m_probabilities;
 	}
-{
-	static_assert(numeric_traits::max_value<Generation> == Generation::eight);
-	std::cout << "Done loading stats\n" << std::flush;
-}
+	auto assuming(Species const species) const -> UsageStatsProbabilities const * {
+		auto const per_species = containers::lookup(m_data, species);
+		return per_species ? std::addressof(per_species->probabilities) : nullptr;
+	}
+	auto assuming(Species const species, MoveName const moves) const -> UsageStatsProbabilities const * {
+		auto const per_species = containers::lookup(m_data, species);
+		return per_species ?
+			containers::lookup(per_species->used_moves, moves) :
+			nullptr;
+	}
+
+private:
+	using UsedMoves = containers::flat_map<MoveName, UsageStatsProbabilities>;
+	struct PerSpecies {
+		UsedMoves used_moves;
+		UsageStatsProbabilities probabilities;
+	};
+	using Data = containers::flat_map<Species, PerSpecies>;
+
+	explicit UsageStats(Data data, UsageStatsProbabilities probabilities):
+		m_data(std::move(data)),
+		m_probabilities(std::move(probabilities))
+	{
+	}
+
+	Data m_data;
+	UsageStatsProbabilities m_probabilities;
+};
 
 } // namespace technicalmachine

@@ -3,23 +3,38 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/pokemon_showdown/parse_team.hpp>
-
-#include <tm/pokemon/species.hpp>
-
-#include <tm/stat/ev.hpp>
-#include <tm/stat/iv.hpp>
-
-#include <tm/string_conversions/team.hpp>
-
-#include <containers/string.hpp>
-
-#include <string_view>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.clients.ps.parse_team;
+
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
+
+import tm.pokemon.level;
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+import tm.stat.iv;
+import tm.stat.nature;
+
+import tm.string_conversions.team;
+
+import tm.ability;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.team;
+
+import bounded;
+import containers;
+import std_module;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
 
 auto expected_generation_one_team() {
 	constexpr auto generation = Generation::one;

@@ -3,4 +3,19 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/other_team.hpp>
+export module tm.other_team;
+
+import tm.any_team;
+import tm.generation;
+
+import std_module;
+
+namespace technicalmachine {
+
+export template<typename T>
+struct OtherTeamImpl;
+
+export template<any_team T>
+using OtherTeam = typename OtherTeamImpl<T>::type;
+
+} // namespace technicalmachine

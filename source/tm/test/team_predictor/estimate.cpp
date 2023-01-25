@@ -3,19 +3,24 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/string_conversions/generation.hpp>
-
-#include <tm/team_predictor/estimate.hpp>
-#include <tm/team_predictor/usage_stats.hpp>
-
-#include <tm/test/ps_usage_stats/usage_bytes.hpp>
-
-#include <containers/algorithms/accumulate.hpp>
-#include <containers/algorithms/transform.hpp>
-
-#include <sstream>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.move.move_name;
+
+import tm.pokemon.species;
+
+import tm.string_conversions.generation;
+
+import tm.team_predictor.estimate;
+import tm.team_predictor.usage_stats;
+
+import tm.test.usage_bytes;
+
+import tm.generation;
+
+import containers;
+import std_module;
 
 namespace technicalmachine {
 namespace {
@@ -23,11 +28,7 @@ namespace {
 TEST_CASE("Estimate", "[team_predictor]") {
 	for (auto const generation : {Generation::one, Generation::two, Generation::three}) {
 		INFO("Generation " << to_string(generation));
-		auto const input_bytes = smallest_team_bytes(generation);
-		auto const usage_stats = UsageStats::make(std::stringstream(std::string(
-			reinterpret_cast<char const *>(containers::data(input_bytes)),
-			static_cast<std::size_t>(containers::size(input_bytes))
-		)));
+		auto const usage_stats = bytes_to_usage_stats(smallest_team_bytes(generation));
 		auto const ptr = usage_stats.assuming()(Species::Mew);
 		REQUIRE(ptr);
 		CHECK(containers::sum(containers::transform(ptr->moves.map(), containers::get_mapped)) > 0.0F);
@@ -45,11 +46,7 @@ TEST_CASE("Estimate", "[team_predictor]") {
 TEST_CASE("Estimate seeing unused Pokemon", "[team_predictor]") {
 	for (auto const generation : {Generation::one, Generation::two, Generation::three}) {
 		INFO("Generation " << to_string(generation));
-		auto const input_bytes = smallest_team_bytes(generation);
-		auto const usage_stats = UsageStats::make(std::stringstream(std::string(
-			reinterpret_cast<char const *>(containers::data(input_bytes)),
-			static_cast<std::size_t>(containers::size(input_bytes))
-		)));
+		auto const usage_stats = bytes_to_usage_stats(smallest_team_bytes(generation));
 		auto const ptr = usage_stats.assuming()(Species::Mew);
 		REQUIRE(ptr);
 		auto estimate = Estimate(usage_stats);

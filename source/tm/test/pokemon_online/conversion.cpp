@@ -3,28 +3,32 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/clients/pokemon_online/conversion.hpp>
-
-#include <tm/string_conversions/ability.hpp>
-#include <tm/string_conversions/gender.hpp>
-#include <tm/string_conversions/item.hpp>
-#include <tm/string_conversions/move_name.hpp>
-#include <tm/string_conversions/nature.hpp>
-#include <tm/string_conversions/species.hpp>
-
-#include <tm/pokemon/pokemon.hpp>
-#include <tm/pokemon/species.hpp>
-
-#include <tm/ability.hpp>
-
-#include <containers/integer_range.hpp>
-
-#include <numeric_traits/min_max_value.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
 
+import tm.clients.po.conversion;
+
+import tm.move.move_name;
+
+import tm.string_conversions.ability;
+import tm.string_conversions.gender;
+import tm.string_conversions.item;
+import tm.string_conversions.move_name;
+import tm.string_conversions.nature;
+import tm.string_conversions.species;
+
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
+
+import tm.ability;
+import tm.gender;
+import tm.item;
+
+import bounded;
+import containers;
+import numeric_traits;
+
 namespace technicalmachine {
-enum class MoveName : std::uint16_t;
 namespace {
 
 void test_enum(auto && to_id, auto && from_id, auto max) {

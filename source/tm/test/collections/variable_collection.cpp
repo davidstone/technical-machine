@@ -3,26 +3,36 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/pokemon/collection.hpp>
-
-#include <tm/move/move_name.hpp>
-#include <tm/move/side_effects.hpp>
-
-#include <tm/pokemon/max_pokemon_per_team.hpp>
-
-#include <tm/phazing_in_same_pokemon.hpp>
-#include <tm/team.hpp>
-
-#include <bounded/assert.hpp>
-
-#include <containers/array.hpp>
-#include <containers/integer_range.hpp>
-#include <containers/size.hpp>
-
+#include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+import tm.pokemon.pokemon_collection;
+
+import tm.move.move;
+import tm.move.move_name;
+import tm.move.regular_moves;
+import tm.move.side_effects;
+
+import tm.pokemon.level;
+import tm.pokemon.max_pokemon_per_team;
+import tm.pokemon.pokemon;
+import tm.pokemon.species;
+
+import tm.stat.combined_stats;
+
+import tm.ability;
+import tm.gender;
+import tm.generation;
+import tm.item;
+import tm.team;
+import tm.weather;
+
+import bounded;
+import containers;
 
 namespace technicalmachine {
 namespace {
+using namespace bounded::literal;
 
 using bounded::to_string;
 

@@ -3,16 +3,25 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <tm/ability_blocks_move.hpp>
+export module tm.ability_blocks_move;
 
-#include <tm/move/category.hpp>
-#include <tm/move/move_name.hpp>
-#include <tm/move/target.hpp>
-#include <tm/type/effectiveness.hpp>
+import tm.move.category;
+import tm.move.known_move;
+import tm.move.move_name;
+import tm.move.target;
+
+import tm.status.status_name;
+
+import tm.type.effectiveness;
+import tm.type.pokemon_types;
+import tm.type.type;
+
+import tm.ability;
+import tm.generation;
 
 namespace technicalmachine {
 
-auto ability_blocks_move(Generation const generation, Ability const ability, KnownMove const move, StatusName const target_status, PokemonTypes const target_types) -> bool {
+export constexpr auto ability_blocks_move(Generation const generation, Ability const ability, KnownMove const move, StatusName const target_status, PokemonTypes const target_types) -> bool {
 	auto absorb_ability_activates = [=](Type const absorbed_type) {
 		return move_targets_foe(generation, move.name) and move.type == absorbed_type;
 	};
