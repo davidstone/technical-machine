@@ -216,8 +216,7 @@ export struct Parser {
 						usage_stats,
 						m_random_engine,
 						parsed_team_to_seen_team<generation>(parsed_team)
-					),
-					false
+					)
 				);
 			};
 			return constant_generation(generation, impl);

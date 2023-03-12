@@ -287,10 +287,10 @@ struct BattleManagerImpl final : BattleManager {
 			throw std::runtime_error("Tried to determine an action with an empty team.");
 		}
 
-		m_analysis_logger.get() << to_string(m_battle.ai()) << '\n';
-		m_analysis_logger.get() << "Seen " << to_string(m_battle.foe()) << '\n';
-		auto predicted = most_likely_team(m_usage_stats, m_random_engine, m_battle.foe());
-		m_analysis_logger.get() << "Predicted " << to_string(predicted) << '\n' << std::flush;
+		m_analysis_logger.get() << "AI's " << to_string(m_battle.ai()) << '\n';
+		m_analysis_logger.get() << "Seen Foe's " << to_string(m_battle.foe()) << '\n';
+		auto const predicted = most_likely_team(m_usage_stats, m_random_engine, m_battle.foe());
+		m_analysis_logger.get() << "Predicted Foe's " << to_string(predicted) << '\n' << std::flush;
 
 		m_analysis_logger.get() << "Evaluating to a depth of " << m_depth.general << ", " << m_depth.single << "...\n";
 		auto const start = std::chrono::steady_clock::now();
