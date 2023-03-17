@@ -18,7 +18,7 @@ import std_module;
 int main() {
 	using namespace technicalmachine;
 	using tcp = boost::asio::ip::tcp;
-	auto const all_usage_stats = std::make_unique<AllUsageStats>(StatsForGeneration(stats_for_generation));
+	auto const all_usage_stats = AllUsageStats(StatsForGeneration(stats_for_generation));
 
 	constexpr auto port = static_cast<unsigned short>(46923);
 
@@ -26,7 +26,7 @@ int main() {
 
 	auto acceptor = tcp::acceptor(ioc, tcp::endpoint(tcp::v4(), port));
 	auto random_engine = std::mt19937(std::random_device()());
-	auto parser = Parser(*all_usage_stats, random_engine);
+	auto parser = Parser(all_usage_stats, random_engine);
 	while (true) {
 		try {
 			auto socket = tcp::socket(ioc);

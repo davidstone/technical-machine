@@ -19,39 +19,39 @@ namespace technicalmachine {
 export struct StatsUser {
 	StatsUser(UsageStats const & usage_stats, bool const use_most_likely):
 		m_usage_stats(usage_stats),
-		m_estimate(std::make_unique<Estimate>(m_usage_stats)),
+		m_estimate(m_usage_stats),
 		m_use_most_likely(use_most_likely)
 	{
 	}
 
 	auto update(Species const species, auto... args) -> void {
-		m_estimate->update(m_usage_stats, species, args...);
+		m_estimate.update(m_usage_stats, species, args...);
 	}
 
 	auto species(std::mt19937 & random_engine) const {
 		return m_use_most_likely ?
-			m_estimate->most_likely_species() :
-			m_estimate->random_species(random_engine);
+			m_estimate.most_likely_species() :
+			m_estimate.random_species(random_engine);
 	}
 	auto move(std::mt19937 & random_engine, Species const species) const {
 		return m_use_most_likely ?
-			m_estimate->most_likely_move(species) :
-			m_estimate->random_move(random_engine, species);
+			m_estimate.most_likely_move(species) :
+			m_estimate.random_move(random_engine, species);
 	}
 	auto item(std::mt19937 & random_engine, Species const species) const {
 		return m_use_most_likely ?
-			m_estimate->most_likely_item(species) :
-			m_estimate->random_item(random_engine, species);
+			m_estimate.most_likely_item(species) :
+			m_estimate.random_item(random_engine, species);
 	}
 	auto ability(std::mt19937 & random_engine, Species const species) const {
 		return m_use_most_likely ?
-			m_estimate->most_likely_ability(species) :
-			m_estimate->random_ability(random_engine, species);
+			m_estimate.most_likely_ability(species) :
+			m_estimate.random_ability(random_engine, species);
 	}
 
 private:
 	UsageStats const & m_usage_stats;
-	std::unique_ptr<Estimate> m_estimate;
+	Estimate m_estimate;
 	bool m_use_most_likely;
 };
 

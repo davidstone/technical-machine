@@ -46,8 +46,7 @@ auto parse_room(std::string_view const line, std::filesystem::path const & path)
 
 TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 	auto const evaluate = AllEvaluate{};
-	// Too large to fit on the stack
-	auto const all_usage_stats = std::make_unique<AllUsageStats>(StatsForGeneration(stats_for_generation));
+	auto const all_usage_stats = AllUsageStats(StatsForGeneration(stats_for_generation));
 	constexpr auto depth = Depth(1_bi, 0_bi);
 
 	auto const battle_output_directory = get_test_directory() / "temp-battles";
@@ -85,7 +84,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 					auto const next = messages.pop();
 					INFO(next);
 					battles.handle_message(
-						*all_usage_stats,
+						all_usage_stats,
 						ps::InMessage(room, next),
 						[](std::string_view) {},
 						[] {}

@@ -134,10 +134,10 @@ TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {
 	constexpr auto generation = Generation::one;
 	auto const team = make_smallest_team<generation>();
 	usage_stats->add(team, weight);
-	auto correlations = std::make_unique<ps_usage_stats::Correlations>(*usage_stats);
-	correlations->add(team, weight);
+	auto correlations = ps_usage_stats::Correlations(*usage_stats);
+	correlations.add(team, weight);
 	auto stream = std::stringstream();
-	ps_usage_stats::serialize(stream, generation, *usage_stats, *correlations);
+	ps_usage_stats::serialize(stream, generation, *usage_stats, correlations);
 	auto const expected = smallest_team_bytes(generation);
 	CHECK(string_to_bytes(stream.str()) == expected);
 }
@@ -147,10 +147,10 @@ TEST_CASE("Serialize team with two Pokemon", "[ps_usage_stats]") {
 	constexpr auto weight = 1.0;
 	auto const team = make_team_with_two_pokemon();
 	usage_stats->add(team, weight);
-	auto correlations = std::make_unique<ps_usage_stats::Correlations>(*usage_stats);
-	correlations->add(team, weight);
+	auto correlations = ps_usage_stats::Correlations(*usage_stats);
+	correlations.add(team, weight);
 	auto stream = std::stringstream();
-	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, *correlations);
+	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, correlations);
 	auto const expected = containers::concatenate<containers::vector<std::byte>>(
 		usage_stats_magic_string,
 		version_bytes(0),
@@ -260,12 +260,12 @@ TEST_CASE("Serialize two teams", "[ps_usage_stats]") {
 	for (auto const team : teams) {
 		usage_stats->add(team, weight);
 	}
-	auto correlations = std::make_unique<ps_usage_stats::Correlations>(*usage_stats);
+	auto correlations = ps_usage_stats::Correlations(*usage_stats);
 	for (auto const team : teams) {
-		correlations->add(team, weight);
+		correlations.add(team, weight);
 	}
 	auto stream = std::stringstream();
-	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, *correlations);
+	ps_usage_stats::serialize(stream, Generation::one, *usage_stats, correlations);
 	auto const expected = containers::concatenate<containers::vector<std::byte>>(
 		usage_stats_magic_string,
 		version_bytes(0),
@@ -320,10 +320,10 @@ TEST_CASE("Serialize smallest non-empty Generation 2 file", "[ps_usage_stats]") 
 	constexpr auto generation = Generation::two;
 	auto const team = make_smallest_team<generation>();
 	usage_stats->add(team, weight);
-	auto correlations = std::make_unique<ps_usage_stats::Correlations>(*usage_stats);
-	correlations->add(team, weight);
+	auto correlations = ps_usage_stats::Correlations(*usage_stats);
+	correlations.add(team, weight);
 	auto stream = std::stringstream();
-	ps_usage_stats::serialize(stream, generation, *usage_stats, *correlations);
+	ps_usage_stats::serialize(stream, generation, *usage_stats, correlations);
 	auto const expected = smallest_team_bytes(generation);
 	CHECK(string_to_bytes(stream.str()) == expected);
 }
