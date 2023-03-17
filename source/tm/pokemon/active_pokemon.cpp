@@ -144,7 +144,7 @@ using OtherMutableActivePokemon = typename OtherMutableActivePokemonImpl<T>::typ
 
 export template<Generation generation>
 struct ActivePokemonFlags {
-	auto reset_start_of_turn() & {
+	constexpr auto reset_start_of_turn() & {
 		last_used_move.reset_start_of_turn();
 		damaged = false;
 		direct_damage_received = 0_bi;
@@ -154,7 +154,7 @@ struct ActivePokemonFlags {
 	}
 
 	friend auto operator==(ActivePokemonFlags, ActivePokemonFlags) -> bool = default;
-	friend auto compress(ActivePokemonFlags const value) {
+	friend constexpr auto compress(ActivePokemonFlags const value) {
 		auto const result = tv::tuple(
 			compress_combine(
 				value.ability,
@@ -268,7 +268,7 @@ private:
 	using FlagsRef = std::conditional_t<std::is_const_v<PokemonType>, ActivePokemonFlags<generation> const &, ActivePokemonFlags<generation> &>;
 
 public:
-	ActivePokemonImpl(PokemonType & pokemon, FlagsRef flags):
+	constexpr ActivePokemonImpl(PokemonType & pokemon, FlagsRef flags):
 		m_pokemon(pokemon),
 		m_flags(flags)
 	{
@@ -278,25 +278,25 @@ public:
 	ActivePokemonImpl & operator=(ActivePokemonImpl const & other) = delete;
 	ActivePokemonImpl & operator=(ActivePokemonImpl && other) = delete;
 
-	auto regular_moves() const -> RegularMoves {
+	constexpr auto regular_moves() const -> RegularMoves {
 		return m_pokemon.regular_moves();
 	}
 
-	auto hp() const {
+	constexpr auto hp() const {
 		return m_pokemon.hp();
 	}
-	auto stat(SplitSpecialRegularStat const stat_name) const {
+	constexpr auto stat(SplitSpecialRegularStat const stat_name) const {
 		return m_pokemon.stat(stat_name);
 	}
 
-	auto last_used_move() const -> LastUsedMove {
+	constexpr auto last_used_move() const -> LastUsedMove {
 		return m_flags.last_used_move;
 	}
-	auto substitute() const -> Substitute const & {
+	constexpr auto substitute() const -> Substitute const & {
 		return m_flags.substitute;
 	}
 
-	auto ability() const -> Ability {
+	constexpr auto ability() const -> Ability {
 		if constexpr (exists<decltype(m_flags.ability)>) {
 			return m_flags.ability;
 		} else {
@@ -304,123 +304,123 @@ public:
 		}
 	}
 
-	auto aqua_ring_is_active() const -> bool {
+	constexpr auto aqua_ring_is_active() const -> bool {
 		return m_flags.aqua_ring;
 	}
 
-	auto charge_boosted(Type const move_type) const -> bool {
+	constexpr auto charge_boosted(Type const move_type) const -> bool {
 		return m_flags.charged and move_type == Type::Electric;
 	}
 
-	auto is_confused() const -> bool {
+	constexpr auto is_confused() const -> bool {
 		return m_flags.confusion.is_active();
 	}
 
-	auto is_cursed() const -> bool {
+	constexpr auto is_cursed() const -> bool {
 		return m_flags.is_cursed;
 	}
 
-	auto defense_curled() const -> bool {
+	constexpr auto defense_curled() const -> bool {
 		return m_flags.defense_curled;
 	}
 
-	auto damaged() const -> bool {
+	constexpr auto damaged() const -> bool {
 		return m_flags.damaged;
 	}
 
-	auto direct_damage_received() const -> CurrentHP {
+	constexpr auto direct_damage_received() const -> CurrentHP {
 		return m_flags.direct_damage_received;
 	}
 
 	// Requires that move is actually one of this Pokemon's moves
-	auto is_disabled(MoveName const move_name) const -> bool {
+	constexpr auto is_disabled(MoveName const move_name) const -> bool {
 		return m_flags.disable.move_is_disabled(move_name);
 	}
 
-	auto is_encored() const -> bool {
+	constexpr auto is_encored() const -> bool {
 		return m_flags.encore.is_active();
 	}
 
-	auto flash_fire_is_active() const -> bool {
+	constexpr auto flash_fire_is_active() const -> bool {
 		return m_flags.flash_fire;
 	}
 
-	auto flinched() const -> bool {
+	constexpr auto flinched() const -> bool {
 		return m_flags.flinched;
 	}
 
-	auto has_focused_energy() const -> bool {
+	constexpr auto has_focused_energy() const -> bool {
 		return m_flags.has_focused_energy;
 	}
 
-	auto gender() const -> Gender {
+	constexpr auto gender() const -> Gender {
 		return m_pokemon.gender();
 	}
 
-	auto happiness() const -> Happiness {
+	constexpr auto happiness() const -> Happiness {
 		return m_pokemon.happiness();
 	}
 
-	auto heal_block_is_active() const -> bool {
+	constexpr auto heal_block_is_active() const -> bool {
 		return m_flags.heal_block.is_active();
 	}
 
-	auto hidden_power() const -> tv::optional<HiddenPower<generation>> {
+	constexpr auto hidden_power() const -> tv::optional<HiddenPower<generation>> {
 		return m_pokemon.hidden_power();
 	}
 
-	auto used_imprison() const -> bool {
+	constexpr auto used_imprison() const -> bool {
 		return m_flags.used_imprison;
 	}
 
-	auto ingrained() const -> bool {
+	constexpr auto ingrained() const -> bool {
 		return m_flags.ingrained;
 	}
 
-	auto item(Weather const weather) const -> Item {
+	constexpr auto item(Weather const weather) const -> Item {
 		return m_pokemon.item(m_flags.embargo.is_active(), weather.magic_room());
 	}
-	auto unrestricted_item() const -> Item {
+	constexpr auto unrestricted_item() const -> Item {
 		return m_pokemon.item(false, false);
 	}
 
-	auto leech_seeded() const -> bool {
+	constexpr auto leech_seeded() const -> bool {
 		return m_flags.leech_seeded;
 	}
 
-	auto level() const -> Level {
+	constexpr auto level() const -> Level {
 		return m_pokemon.level();
 	}
 
-	auto is_loafing() const -> bool {
+	constexpr auto is_loafing() const -> bool {
 		return ability() == Ability::Truant and m_flags.is_loafing_turn;
 	}
 
-	auto magnet_rise() const {
+	constexpr auto magnet_rise() const {
 		return m_flags.magnet_rise;
 	}
 
-	auto me_first_is_active() const -> bool {
+	constexpr auto me_first_is_active() const -> bool {
 		return m_flags.me_first_is_active;
 	}
 
-	auto minimized() const -> bool {
+	constexpr auto minimized() const -> bool {
 		return m_flags.minimized;
 	}
 
-	auto power_trick_is_active() const -> bool {
+	constexpr auto power_trick_is_active() const -> bool {
 		return m_flags.power_trick_is_active;
 	}
 
-	auto slow_start_is_active() const -> bool {
+	constexpr auto slow_start_is_active() const -> bool {
 		return m_flags.slow_start.is_active();
 	}
 
-	auto species() const -> Species {
+	constexpr auto species() const -> Species {
 		return m_pokemon.species();
 	}
 
-	auto sport_is_active(Type const move_type) const -> bool {
+	constexpr auto sport_is_active(Type const move_type) const -> bool {
 		switch (move_type) {
 			case Type::Electric: return m_flags.mud_sport;
 			case Type::Fire: return m_flags.water_sport;
@@ -428,39 +428,39 @@ public:
 		}
 	}
 
-	auto stages() const -> Stages const & {
+	constexpr auto stages() const -> Stages const & {
 		return m_flags.stages;
 	}
 
-	auto spit_up_power() const {
+	constexpr auto spit_up_power() const {
 		return m_flags.stockpile.spit_up_power();
 	}
 
-	auto status() const -> Status {
+	constexpr auto status() const -> Status {
 		return m_pokemon.status();
 	}
 
-	auto fully_trapped() const -> bool {
+	constexpr auto fully_trapped() const -> bool {
 		return m_flags.fully_trapped;
 	}
 
-	auto trapped() const -> bool {
+	constexpr auto trapped() const -> bool {
 		return m_flags.fully_trapped or ingrained() or m_flags.partial_trap.is_active();
 	}
 
-	auto is_tormented() const -> bool {
+	constexpr auto is_tormented() const -> bool {
 		return m_flags.is_tormented;
 	}
 
-	auto is_taunted() const -> bool {
+	constexpr auto is_taunted() const -> bool {
 		return m_flags.taunt.is_active();
 	}
 
-	auto types() const {
+	constexpr auto types() const {
 		return m_flags.types;
 	}
 
-	auto is_unburdened() const -> bool {
+	constexpr auto is_unburdened() const -> bool {
 		return m_flags.unburdened;
 	}
 
@@ -469,7 +469,7 @@ protected:
 	FlagsRef m_flags;
 };
 
-auto apply_own_mental_herb(any_mutable_active_pokemon auto const pokemon, Weather const weather) -> void {
+constexpr auto apply_own_mental_herb(any_mutable_active_pokemon auto const pokemon, Weather const weather) -> void {
 	if (pokemon.item(weather) == Item::Mental_Herb) {
 		pokemon.apply_mental_herb();
 		pokemon.remove_item();
@@ -479,14 +479,14 @@ auto apply_own_mental_herb(any_mutable_active_pokemon auto const pokemon, Weathe
 // A reference to the currently active Pokemon
 export template<typename PokemonType>
 struct AnyActivePokemon : ActivePokemonImpl<PokemonType const> {
-	AnyActivePokemon(PokemonType const & pokemon, ActivePokemonFlags<generation_from<PokemonType>> const & flags):
+	constexpr AnyActivePokemon(PokemonType const & pokemon, ActivePokemonFlags<generation_from<PokemonType>> const & flags):
 		ActivePokemonImpl<PokemonType const>(pokemon, flags)
 	{
 	}
 };
 
 
-auto activate_berserk_gene(any_mutable_active_pokemon auto pokemon, Weather const weather) -> void {
+constexpr auto activate_berserk_gene(any_mutable_active_pokemon auto pokemon, Weather const weather) -> void {
 	pokemon.stages()[BoostableStat::atk] += 2_bi;
 	// TODO: Berserk Gene causes 256-turn confusion, unless the Pokemon
 	// switching out was confused.
@@ -498,7 +498,7 @@ constexpr bool cannot_ko(MoveName const move) {
 	return move == MoveName::False_Swipe;
 }
 
-auto yawn_can_apply(any_active_pokemon auto const target, Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) {
+constexpr auto yawn_can_apply(any_active_pokemon auto const target, Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) {
 	return
 		!sleep_clause_activates and
 		!either_is_uproaring and
@@ -511,46 +511,46 @@ struct AnyMutableActivePokemon : ActivePokemonImpl<PokemonType> {
 private:
 	static constexpr auto generation = generation_from<PokemonType>;
 public:
-	AnyMutableActivePokemon(PokemonType & pokemon, ActivePokemonFlags<generation_from<PokemonType>> & flags):
+	constexpr AnyMutableActivePokemon(PokemonType & pokemon, ActivePokemonFlags<generation_from<PokemonType>> & flags):
 		ActivePokemonImpl<PokemonType>(pokemon, flags)
 	{
 	}
 	
-	auto as_const() const {
+	constexpr auto as_const() const {
 		return AnyActivePokemon<PokemonType>(this->m_pokemon, this->m_flags);
 	}
 
-	auto add_move(Move const move) const -> void requires any_seen_pokemon<PokemonType> or any_known_pokemon<PokemonType> {
+	constexpr auto add_move(Move const move) const -> void requires any_seen_pokemon<PokemonType> or any_known_pokemon<PokemonType> {
 		return this->m_pokemon.add_move(move);
 	}
-	auto reduce_pp(MoveName const move_name, Weather const weather, bounded::bounded_integer auto const amount) const -> void {
+	constexpr auto reduce_pp(MoveName const move_name, Weather const weather, bounded::bounded_integer auto const amount) const -> void {
 		this->m_pokemon.reduce_pp(move_name, this->m_flags.embargo.is_active(), weather.magic_room(), amount);
 	}
 
-	auto stages() const -> Stages & {
+	constexpr auto stages() const -> Stages & {
 		return this->m_flags.stages;
 	}
 
-	auto clear_field() const {
+	constexpr auto clear_field() const {
 		this->m_flags.leech_seeded = false;
 		this->m_flags.partial_trap = {};
 	}
 
-	auto set_ability(Ability const ability) const -> void {
+	constexpr auto set_ability(Ability const ability) const -> void {
 		this->m_flags.ability = ability;
 	}
-	auto set_base_ability(Ability const ability) const -> void requires requires(PokemonType & pokemon) { pokemon.set_initial_ability(ability); } {
+	constexpr auto set_base_ability(Ability const ability) const -> void requires requires(PokemonType & pokemon) { pokemon.set_initial_ability(ability); } {
 		this->m_pokemon.set_initial_ability(ability);
 		set_ability(ability);
 	}
-	auto set_ability_to_base_ability() const -> void {
+	constexpr auto set_ability_to_base_ability() const -> void {
 		set_ability(this->m_pokemon.initial_ability());
 	}
 
-	auto activate_aqua_ring() const {
+	constexpr auto activate_aqua_ring() const {
 		this->m_flags.aqua_ring = true;
 	}
-	auto attract(AnyMutableActivePokemon<OtherPokemon<PokemonType>> other, Weather const weather) const -> void {
+	constexpr auto attract(AnyMutableActivePokemon<OtherPokemon<PokemonType>> other, Weather const weather) const -> void {
 		auto handle_item = [&] {
 			switch (this->item(weather)) {
 				case Item::Mental_Herb:
@@ -579,13 +579,13 @@ public:
 		}
 	}
 
-	auto charge() const {
+	constexpr auto charge() const {
 		this->m_flags.charged = true;
 	}
-	auto use_charge_up_move() const -> void {
+	constexpr auto use_charge_up_move() const -> void {
 		this->m_flags.last_used_move.use_charge_up_move();
 	}
-	auto confuse(Weather const weather) const -> void {
+	constexpr auto confuse(Weather const weather) const -> void {
 		if (blocks_confusion(this->ability())) {
 			return;
 		}
@@ -595,82 +595,82 @@ public:
 			this->m_flags.confusion.activate();
 		}
 	}
-	auto handle_confusion() const {
+	constexpr auto handle_confusion() const {
 		this->m_flags.confusion.do_turn();
 	}
-	auto curse() const {
+	constexpr auto curse() const {
 		this->m_flags.is_cursed = true;
 	}
-	auto defense_curl() const {
+	constexpr auto defense_curl() const {
 		this->m_flags.defense_curled = true;
 	}
-	auto disable(MoveName const move, Weather const weather) const {
+	constexpr auto disable(MoveName const move, Weather const weather) const {
 		if (this->m_flags.disable.activate(move)) {
 			apply_own_mental_herb(*this, weather);
 		}
 	}
-	auto advance_disable() const {
+	constexpr auto advance_disable() const {
 		this->m_flags.disable.advance_one_turn();
 	}
-	auto activate_embargo() const {
+	constexpr auto activate_embargo() const {
 		this->m_flags.embargo.activate();
 	}
-	auto advance_embargo() const {
+	constexpr auto advance_embargo() const {
 		this->m_flags.embargo.advance_one_turn();
 	}
-	auto activate_encore(Weather const weather) const {
+	constexpr auto activate_encore(Weather const weather) const {
 		this->m_flags.encore.activate();
 		apply_own_mental_herb(*this, weather);
 	}
-	auto advance_encore() const {
+	constexpr auto advance_encore() const {
 		this->m_flags.encore.advance_one_turn();
 	}
-	auto activate_flash_fire() const {
+	constexpr auto activate_flash_fire() const {
 		this->m_flags.flash_fire = true;
 	}
-	auto flinch() const {
+	constexpr auto flinch() const {
 		this->m_flags.flinched = true;
 	}
-	auto focus_energy() const {
+	constexpr auto focus_energy() const {
 		this->m_flags.has_focused_energy = true;
 	}
-	auto fully_trap() const {
+	constexpr auto fully_trap() const {
 		this->m_flags.fully_trapped = true;
 	}
-	auto activate_heal_block() const {
+	constexpr auto activate_heal_block() const {
 		this->m_flags.heal_block.activate();
 	}
-	auto advance_heal_block() const {
+	constexpr auto advance_heal_block() const {
 		this->m_flags.heal_block.advance_one_turn();
 	}
-	auto identify() const {
+	constexpr auto identify() const {
 		this->m_flags.identified = true;
 	}
-	auto use_imprison() const {
+	constexpr auto use_imprison() const {
 		this->m_flags.used_imprison = true;
 	}
-	auto ingrain() const {
+	constexpr auto ingrain() const {
 		this->m_flags.ingrained = true;
 	}
 
-	auto remove_item() const -> tv::optional<Item> {
+	constexpr auto remove_item() const -> tv::optional<Item> {
 		auto result = this->m_pokemon.remove_item();
 		if (result) {
 			this->m_flags.unburdened = true;
 		}
 		return result;
 	}
-	auto destroy_item() const -> bool {
+	constexpr auto destroy_item() const -> bool {
 		auto result = this->m_pokemon.destroy_item();
 		if (result) {
 			this->m_flags.unburdened = true;
 		}
 		return result;
 	}
-	auto recycle_item() const -> void {
+	constexpr auto recycle_item() const -> void {
 		this->m_pokemon.recycle_item();
 	}
-	auto steal_item(AnyMutableActivePokemon<OtherPokemon<PokemonType>> other) const -> void {
+	constexpr auto steal_item(AnyMutableActivePokemon<OtherPokemon<PokemonType>> other) const -> void {
 		if (this->unrestricted_item() != Item::None) {
 			return;
 		}
@@ -678,8 +678,8 @@ public:
 			this->m_pokemon.set_item(*other_item);
 		}
 	}
-	friend auto swap_items(AnyMutableActivePokemon<OtherPokemon<PokemonType>> user, AnyMutableActivePokemon<PokemonType> other) -> void;
-	friend auto swap_items(AnyMutableActivePokemon<PokemonType> user, AnyMutableActivePokemon<OtherPokemon<PokemonType>> other) -> void {
+	friend constexpr auto swap_items(AnyMutableActivePokemon<OtherPokemon<PokemonType>> user, AnyMutableActivePokemon<PokemonType> other) -> void;
+	friend constexpr auto swap_items(AnyMutableActivePokemon<PokemonType> user, AnyMutableActivePokemon<OtherPokemon<PokemonType>> other) -> void {
 		auto const user_item = user.unrestricted_item();
 		auto const other_item = other.unrestricted_item();
 		if (!cannot_be_lost(user_item) and !cannot_be_lost(other_item)) {
@@ -690,22 +690,22 @@ public:
 
 
 
-	auto hit_with_leech_seed() const {
+	constexpr auto hit_with_leech_seed() const {
 		this->m_flags.leech_seeded = true;
 	}
-	auto advance_lock_in(bool const ending, Weather const weather) const {
+	constexpr auto advance_lock_in(bool const ending, Weather const weather) const {
 		auto const confused = this->m_flags.last_used_move.advance_lock_in(ending);
 		if (confused) {
 			confuse(weather);
 		}
 	}
-	auto activate_magnet_rise() const {
+	constexpr auto activate_magnet_rise() const {
 		this->m_flags.magnet_rise.activate();
 	}
-	auto advance_magnet_rise() const {
+	constexpr auto advance_magnet_rise() const {
 		this->m_flags.magnet_rise.advance_one_turn();
 	}
-	auto apply_mental_herb() const {
+	constexpr auto apply_mental_herb() const {
 		this->m_flags.attracted = false;
 		if (generation >= Generation::five) {
 			this->m_flags.disable = {};
@@ -714,28 +714,28 @@ public:
 			this->m_flags.is_tormented = false;
 		}
 	}
-	auto minimize() const {
+	constexpr auto minimize() const {
 		this->m_flags.minimized = true;
 		stages()[BoostableStat::eva] += BOUNDED_CONDITIONAL(generation <= Generation::four, 1_bi, 2_bi);
 	}
-	auto activate_mud_sport() const {
+	constexpr auto activate_mud_sport() const {
 		this->m_flags.mud_sport = true;
 	}
-	auto try_to_give_nightmares() const {
+	constexpr auto try_to_give_nightmares() const {
 		if (is_sleeping(this->status())) {
 			this->m_flags.status.give_nightmares();
 		}
 	}
-	auto partially_trap() const {
+	constexpr auto partially_trap() const {
 		this->m_flags.partial_trap.activate();
 	}
-	auto partial_trap_damage(Weather const weather) const {
+	constexpr auto partial_trap_damage(Weather const weather) const {
 		this->m_flags.partial_trap.damage(*this, weather);
 	}
-	auto activate_perish_song() const {
+	constexpr auto activate_perish_song() const {
 		this->m_flags.perish_song.activate();
 	}
-	auto perish_song_turn() const -> void {
+	constexpr auto perish_song_turn() const -> void {
 		auto is_active = [&] {
 			return this->m_flags.perish_song.is_active();
 		};
@@ -746,32 +746,32 @@ public:
 			faint(this->m_pokemon);
 		}
 	}
-	auto activate_power_trick() const {
+	constexpr auto activate_power_trick() const {
 		this->m_flags.power_trick_is_active = !this->m_flags.power_trick_is_active;
 	}
-	auto protect() const {
+	constexpr auto protect() const {
 		this->m_flags.last_used_move.protect();
 	}
-	auto break_protect() const {
+	constexpr auto break_protect() const {
 		this->m_flags.last_used_move.break_protect();
 	}
-	auto activate_rampage() const {
+	constexpr auto activate_rampage() const {
 		this->m_flags.last_used_move.activate_rampage();
 	}
-	auto recharge() const -> bool {
+	constexpr auto recharge() const -> bool {
 		return this->m_flags.last_used_move.recharge();
 	}
-	auto use_recharge_move() const {
+	constexpr auto use_recharge_move() const {
 		this->m_flags.last_used_move.use_recharge_move();
 	}
 
-	auto set_status(StatusName const status_name, Weather const weather) const -> void {
+	constexpr auto set_status(StatusName const status_name, Weather const weather) const -> void {
 		BOUNDED_ASSERT_OR_ASSUME(status_name != StatusName::clear);
 		BOUNDED_ASSERT_OR_ASSUME(status_name != StatusName::rest);
 		set_status_impl(status_name, weather);
 	}
 
-	auto rest(Weather const weather, bool const other_is_uproaring) const -> void {
+	constexpr auto rest(Weather const weather, bool const other_is_uproaring) const -> void {
 		if (other_is_uproaring) {
 			return;
 		}
@@ -789,31 +789,31 @@ public:
 		set_status_impl(StatusName::rest, weather);
 	}
 
-	auto status_and_leech_seed_effects(AnyMutableActivePokemon<OtherPokemon<PokemonType>> const other, Weather const weather, bool const uproar = false) const {
+	constexpr auto status_and_leech_seed_effects(AnyMutableActivePokemon<OtherPokemon<PokemonType>> const other, Weather const weather, bool const uproar = false) const {
 		this->m_flags.status.status_and_leech_seed_effects(*this, other, weather, uproar);
 	}
-	auto clear_status() const -> void {
+	constexpr auto clear_status() const -> void {
 		this->m_pokemon.set_status(StatusName::clear);
 		this->m_flags.status.set(StatusName::clear);
 	}
-	auto advance_status_from_move(bool const clear_status) & {
+	constexpr auto advance_status_from_move(bool const clear_status) & {
 		this->m_pokemon.advance_status_from_move(this->ability(), clear_status);
 	}
 
 
-	auto increment_stockpile() const -> void {
+	constexpr auto increment_stockpile() const -> void {
 		bool const increased = this->m_flags.stockpile.increment();
 		if (increased) {
 			boost_defensive(stages(), 1_bi);
 		}
 	}
-	auto release_stockpile() const {
+	constexpr auto release_stockpile() const {
 		auto const stockpiled_stages = this->m_flags.stockpile.release();
 		boost_defensive(stages(), -stockpiled_stages);
 		return stockpiled_stages;
 	}
 
-	auto use_substitute(Weather const weather) const -> void {
+	constexpr auto use_substitute(Weather const weather) const -> void {
 		auto const can_use_substitute = this->hp().current() > this->hp().max() / 4_bi;
 		if (!can_use_substitute) {
 			return;
@@ -821,7 +821,7 @@ public:
 		indirect_damage(weather, this->m_flags.substitute.create(this->hp().max()));
 	}
 
-	auto switch_in(Weather const weather) const {
+	constexpr auto switch_in(Weather const weather) const {
 		this->m_pokemon.mark_as_seen();
 		this->m_flags.ability = this->m_pokemon.initial_ability();
 
@@ -837,7 +837,7 @@ public:
 		}
 	}
 
-	auto switch_out() const -> void {
+	constexpr auto switch_out() const -> void {
 		if (clears_status_on_switch(this->ability())) {
 			clear_status();
 		}
@@ -889,30 +889,30 @@ public:
 	}
 
 
-	auto taunt(Weather const weather) const {
+	constexpr auto taunt(Weather const weather) const {
 		this->m_flags.taunt.activate();
 		apply_own_mental_herb(*this, weather);
 	}
-	auto advance_taunt() const {
+	constexpr auto advance_taunt() const {
 		this->m_flags.taunt.advance_one_turn();
 	}
-	auto torment(Weather const weather) const {
+	constexpr auto torment(Weather const weather) const {
 		this->m_flags.is_tormented = true;
 		apply_own_mental_herb(*this, weather);
 	}
-	auto set_type(Type const type) const {
+	constexpr auto set_type(Type const type) const {
 		this->m_flags.types = PokemonTypes(type);
 	}
-	auto use_uproar() const -> void {
+	constexpr auto use_uproar() const -> void {
 		this->m_flags.last_used_move.use_uproar();
 	}
-	auto activate_water_sport() const {
+	constexpr auto activate_water_sport() const {
 		this->m_flags.water_sport = true;
 	}
-	auto hit_with_yawn() const {
+	constexpr auto hit_with_yawn() const {
 		this->m_flags.yawn.activate();
 	}
-	auto try_to_activate_yawn(Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) const -> void {
+	constexpr auto try_to_activate_yawn(Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) const -> void {
 		auto is_active = [&] {
 			return this->m_flags.yawn.is_active();
 		};
@@ -931,7 +931,7 @@ public:
 	}
 
 	// Returns whether the move hits
-	auto use_vanish_move(Weather const weather) const -> bool {
+	constexpr auto use_vanish_move(Weather const weather) const -> bool {
 		auto result = this->m_flags.last_used_move.use_vanish_move(this->item(weather));
 		switch (result) {
 			case VanishOutcome::vanishes: return false;
@@ -940,24 +940,24 @@ public:
 		}
 	}
 
-	auto use_bide(AnyMutableActivePokemon<OtherPokemon<PokemonType>> target, Weather const weather) const -> void {
+	constexpr auto use_bide(AnyMutableActivePokemon<OtherPokemon<PokemonType>> target, Weather const weather) const -> void {
 		if (auto const damage = this->m_flags.last_used_move.use_bide()) {
 			change_hp(target, weather, -*damage * 2_bi);
 		}
 	}
 
-	auto set_hp(Weather const weather, auto const new_hp) const -> void {
+	constexpr auto set_hp(Weather const weather, auto const new_hp) const -> void {
 		this->m_pokemon.set_hp(new_hp);
 		if (new_hp != 0_bi) {
 			activate_pinch_item(weather);
 		}
 	}
-	auto indirect_damage(Weather const weather, auto const damage) const -> void {
+	constexpr auto indirect_damage(Weather const weather, auto const damage) const -> void {
 		change_hp(*this, weather, -damage);
 		this->m_flags.damaged = true;
 	}
 
-	auto direct_damage(MoveName const move, any_mutable_active_pokemon auto user, Weather const weather, damage_type const damage) const -> CurrentHP {
+	constexpr auto direct_damage(MoveName const move, any_mutable_active_pokemon auto user, Weather const weather, damage_type const damage) const -> CurrentHP {
 		auto const interaction = substitute_interaction(generation, move);
 		BOUNDED_ASSERT(!this->m_flags.substitute or interaction != Substitute::causes_failure);
 		if (this->m_flags.substitute and interaction == Substitute::absorbs) {
@@ -980,15 +980,15 @@ public:
 		return applied_damage;
 	}
 
-	auto successfully_use_move(MoveName const move) const {
+	constexpr auto successfully_use_move(MoveName const move) const {
 		this->m_flags.last_used_move.successful_move(move);
 	}
-	auto unsuccessfully_use_move(MoveName const move) const {
+	constexpr auto unsuccessfully_use_move(MoveName const move) const {
 		this->m_flags.last_used_move.unsuccessful_move(move);
 	}
 
 private:
-	auto handle_ko(MoveName const move, Weather const weather) const {
+	constexpr auto handle_ko(MoveName const move, Weather const weather) const {
 		if (cannot_ko(move) or this->last_used_move().is_enduring()) {
 			return true;
 		}
@@ -1006,7 +1006,7 @@ private:
 		return false;
 	}
 
-	auto activate_pinch_item(Weather const weather) const -> void {
+	constexpr auto activate_pinch_item(Weather const weather) const -> void {
 		// TODO: Confusion damage does not activate healing berries in Generation 5+
 		auto consume = [&] { remove_item(); };
 
@@ -1107,7 +1107,7 @@ private:
 		}
 	}
 
-	auto set_status_impl(StatusName const status_name, Weather const weather) const -> void {
+	constexpr auto set_status_impl(StatusName const status_name, Weather const weather) const -> void {
 		auto unconditional_set_status = [&](StatusName const unconditional_status) {
 			this->m_pokemon.set_status(unconditional_status);
 			this->m_flags.status.set(unconditional_status);
@@ -1133,7 +1133,7 @@ private:
 TECHNICALMACHINE_FOR_EACH_GENERATION(TM_EXPLICIT_INSTANTIATION);
 
 
-export auto apply_white_herb(any_mutable_active_pokemon auto const pokemon) {
+export constexpr auto apply_white_herb(any_mutable_active_pokemon auto const pokemon) {
 	for (auto & stage : pokemon.stages()) {
 		if (stage < 0_bi) {
 			stage = Stage(0_bi);
@@ -1141,7 +1141,7 @@ export auto apply_white_herb(any_mutable_active_pokemon auto const pokemon) {
 	}
 }
 
-auto apply_own_white_herb(any_mutable_active_pokemon auto const pokemon, Weather const weather) {
+constexpr auto apply_own_white_herb(any_mutable_active_pokemon auto const pokemon, Weather const weather) {
 	if (pokemon.item(weather) == Item::White_Herb) {
 		apply_white_herb(pokemon);
 		pokemon.remove_item();

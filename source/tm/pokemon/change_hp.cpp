@@ -12,7 +12,7 @@ import bounded;
 
 namespace technicalmachine {
 
-export auto change_hp(any_mutable_active_pokemon auto const pokemon, Weather const weather, bounded::bounded_integer auto const change) {
+export constexpr auto change_hp(any_mutable_active_pokemon auto const pokemon, Weather const weather, bounded::bounded_integer auto const change) {
 	pokemon.set_hp(weather, pokemon.hp().current() + change);
 }
 
