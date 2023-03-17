@@ -59,7 +59,7 @@ import std_module;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-export template<any_team UserTeam>
+template<any_team UserTeam>
 struct SideEffect {
 	double probability;
 	SideEffectFunction<UserTeam> function;
@@ -95,7 +95,7 @@ constexpr auto reflected_status(Generation const generation, StatusName const st
 	}
 }
 
-export template<any_mutable_active_pokemon UserPokemon>
+template<any_mutable_active_pokemon UserPokemon>
 auto apply_status(StatusName const status, UserPokemon const user, OtherMutableActivePokemon<UserPokemon> const target, Weather const weather) {
 	target.set_status(status, weather);
 	auto const reflected = reflected_status(generation_from<UserPokemon>, status);
