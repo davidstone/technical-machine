@@ -25,9 +25,11 @@ import tm.stat.stats;
 
 import tm.string_conversions.nature;
 
+import tm.team_predictor.ev_optimizer.compute_minimal_spread;
 import tm.team_predictor.ev_optimizer.defensive;
 import tm.team_predictor.ev_optimizer.ev_optimizer;
 import tm.team_predictor.ev_optimizer.offensive;
+import tm.team_predictor.ev_optimizer.pad_random_evs;
 import tm.team_predictor.ev_optimizer.possible_optimized_ivs;
 import tm.team_predictor.ev_optimizer.speed;
 

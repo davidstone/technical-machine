@@ -203,10 +203,12 @@ target_sources(tm_common PUBLIC
 		source/tm/string_conversions/type.cpp
 		source/tm/string_conversions/weather.cpp
 	
+		source/tm/team_predictor/ev_optimizer/compute_minimal_spread.cpp
 		source/tm/team_predictor/ev_optimizer/data_point.cpp
 		source/tm/team_predictor/ev_optimizer/defensive.cpp
 		source/tm/team_predictor/ev_optimizer/ev_optimizer.cpp
 		source/tm/team_predictor/ev_optimizer/offensive.cpp
+		source/tm/team_predictor/ev_optimizer/pad_random_evs.cpp
 		source/tm/team_predictor/ev_optimizer/possible_optimized_ivs.cpp
 		source/tm/team_predictor/ev_optimizer/speed.cpp
 	
