@@ -14,8 +14,8 @@ export module tm.test.clients.ps.battles;
 import tm.clients.ps.battles;
 import tm.clients.ps.inmessage;
 
+import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
-import tm.evaluate.evaluate;
 
 import tm.team_predictor.all_usage_stats;
 
@@ -45,7 +45,7 @@ auto parse_room(std::string_view const line, std::filesystem::path const & path)
 }
 
 TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
-	auto const evaluate = AllEvaluate{};
+	auto const evaluate = AllEvaluate();
 	auto const all_usage_stats = AllUsageStats(StatsForGeneration(stats_for_generation));
 	constexpr auto depth = Depth(1_bi, 0_bi);
 

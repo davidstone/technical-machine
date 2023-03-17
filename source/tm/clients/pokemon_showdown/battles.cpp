@@ -14,8 +14,8 @@ import tm.clients.ps.send_message_function;
 
 import tm.clients.write_team;
 
+import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
-import tm.evaluate.evaluate;
 
 import tm.team_predictor.all_usage_stats;
 

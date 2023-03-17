@@ -24,8 +24,8 @@ import tm.clients.get_team;
 import tm.clients.should_accept_challenge;
 import tm.clients.write_team;
 
+import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
-import tm.evaluate.evaluate;
 
 import tm.team_predictor.team_predictor;
 import tm.team_predictor.all_usage_stats;

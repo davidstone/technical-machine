@@ -62,13 +62,16 @@ target_sources(tm_common PUBLIC
 		source/tm/bide/damage.cpp
 		source/tm/bide/duration.cpp
 
+		source/tm/evaluate/all_evaluate.cpp
 		source/tm/evaluate/analysis_logger.cpp
 		source/tm/evaluate/compressed_battle.cpp
 		source/tm/evaluate/depth.cpp
 		source/tm/evaluate/evaluate.cpp
+		source/tm/evaluate/evaluate_settings.cpp
 		source/tm/evaluate/evaluator.cpp
 		source/tm/evaluate/expectiminimax.cpp
 		source/tm/evaluate/extreme_element_value.cpp
+		source/tm/evaluate/load_evaluate.cpp
 		source/tm/evaluate/possible_executed_moves.cpp
 		source/tm/evaluate/predict_action.cpp
 		source/tm/evaluate/random_selection.cpp
@@ -76,6 +79,8 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/scored_move.cpp
 		source/tm/evaluate/team_is_empty.cpp
 		source/tm/evaluate/transposition.cpp
+		source/tm/evaluate/victory.cpp
+		source/tm/evaluate/win.cpp
 	
 		source/tm/move/accuracy.cpp
 		source/tm/move/activate_when_hit_item.cpp

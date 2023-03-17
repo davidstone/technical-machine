@@ -7,6 +7,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 import tm.evaluate.evaluate;
+import tm.evaluate.evaluate_settings;
 import tm.evaluate.predict_action;
 
 import tm.move.move;
@@ -35,6 +36,14 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
+constexpr auto evaluate_settings = EvaluateSettings{
+	.hp = 1024_bi,
+	.hidden = 80_bi,
+	.spikes = -150_bi,
+	.stealth_rock = -200_bi,
+	.toxic_spikes = -100_bi
+};
+
 auto predict_action(auto const & ai, auto const & foe, Weather const weather, auto const evaluate) {
 	return predict_action(
 		ai,
@@ -56,7 +65,7 @@ auto shuffled_regular_moves(Generation const generation, auto & random_engine, a
 
 TEST_CASE("predict_action one move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -97,7 +106,7 @@ TEST_CASE("predict_action one move", "[predict_action]") {
 
 TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -138,7 +147,7 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 
 TEST_CASE("predict_action good and bad move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -183,7 +192,7 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 
 TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {

@@ -19,6 +19,8 @@ import tm.evaluate.possible_executed_moves;
 import tm.evaluate.scored_move;
 import tm.evaluate.team_is_empty;
 import tm.evaluate.transposition;
+import tm.evaluate.victory;
+import tm.evaluate.win;
 
 import tm.move.actual_damage;
 import tm.move.call_move;

@@ -30,6 +30,7 @@ import tm.clients.party;
 import tm.clients.teams;
 import tm.clients.write_team;
 
+import tm.evaluate.all_evaluate;
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;

@@ -17,6 +17,7 @@ import tm.clients.teams;
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
+import tm.evaluate.evaluate_settings;
 
 import tm.move.move;
 import tm.move.move_name;
@@ -60,11 +61,13 @@ constexpr auto write_team = tv::none;
 
 constexpr auto battle_id = "battle-id"sv;
 
-template<Generation generation>
-auto get_evaluate() -> Evaluate<generation> {
-	static auto const result = Evaluate<generation>();
-	return result;
-}
+constexpr auto evaluate_settings = EvaluateSettings{
+	.hp = 1024_bi,
+	.hidden = 80_bi,
+	.spikes = -150_bi,
+	.stealth_rock = -200_bi,
+	.toxic_spikes = -100_bi
+};
 
 template<Generation generation>
 auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::BattleParser {
@@ -80,7 +83,7 @@ auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::Batt
 				std::move(ai),
 				std::move(foe)
 			},
-			get_evaluate<generation>(),
+			Evaluate<generation>(evaluate_settings),
 		}),
 		Party(0_bi),
 		Depth(1_bi, 0_bi),

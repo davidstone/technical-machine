@@ -9,10 +9,12 @@
 
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
+import tm.evaluate.evaluate_settings;
 import tm.evaluate.expectiminimax;
 import tm.evaluate.predict_action;
 import tm.evaluate.scored_move;
 import tm.evaluate.score_moves;
+import tm.evaluate.victory;
 
 import tm.move.actual_damage;
 import tm.move.call_move;
@@ -53,6 +55,14 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
+constexpr auto evaluate_settings = EvaluateSettings{
+	.hp = 1024_bi,
+	.hidden = 80_bi,
+	.spikes = -150_bi,
+	.stealth_rock = -200_bi,
+	.toxic_spikes = -100_bi
+};
+
 constexpr auto make_depth(DepthInt const depth) {
 	return Depth(depth, 0_bi);
 }
@@ -82,7 +92,7 @@ auto shuffled_regular_moves(Generation const generation, auto & random_engine, a
 
 TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -147,7 +157,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 
 TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -200,7 +210,7 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 
 TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -265,7 +275,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 
 TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -334,7 +344,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 
 TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -445,7 +455,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 
 TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -521,7 +531,7 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 
 TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -608,7 +618,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 
 TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -674,7 +684,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 
 TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -800,7 +810,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 
 TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	constexpr auto generation = Generation::one;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto weather = Weather();
 	auto regular_moves = [](auto const ... name) {
 		return RegularMoves{Move(generation, name)...};
@@ -868,7 +878,7 @@ auto determine_best_move2(auto const & ai, auto const & foe, Weather const weath
 
 TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -933,7 +943,7 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 
 TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -986,7 +996,7 @@ TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 
 TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -1051,7 +1061,7 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 
 TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -1120,7 +1130,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 
 TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -1196,7 +1206,7 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 
 TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -1283,7 +1293,7 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 
 TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -1349,7 +1359,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 
 TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 	constexpr auto generation = Generation::four;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto weather = Weather();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
@@ -1475,7 +1485,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 
 TEST_CASE("Generation 1 frozen last Pokemon", "[score_moves]") {
 	constexpr auto generation = Generation::one;
-	auto const evaluate = Evaluate<generation>();
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto weather = Weather();
 	auto regular_moves = [](auto const ... name) {
 		return RegularMoves{Move(generation, name)...};
