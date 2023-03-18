@@ -30,13 +30,14 @@ import tm.status.status_name;
 import tm.type.type;
 
 import tm.ability;
+import tm.ability_blocks_weather;
 import tm.any_team;
+import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.rational;
 import tm.team;
-import tm.weather;
 
 import bounded;
 
@@ -59,7 +60,7 @@ constexpr auto boosts_facade(StatusName const status) -> bool {
 }
 
 template<any_active_pokemon AttackerPokemon>
-auto doubling(AttackerPokemon const attacker, MoveName const move, any_active_pokemon auto const defender, Weather const weather) -> bool {
+auto doubling(AttackerPokemon const attacker, MoveName const move, any_active_pokemon auto const defender, Environment const environment) -> bool {
 	// I account for the doubling of the base power for Pursuit in the
 	// switching function by simply multiplying the final base power by 2.
 	// Regardless of the combination of modifiers, this does not change the
@@ -99,31 +100,33 @@ auto doubling(AttackerPokemon const attacker, MoveName const move, any_active_po
 			return defender.last_used_move().moved_this_turn();
 		case MoveName::Smelling_Salts:
 			return boosts_smellingsalt(defender.status());
-		case MoveName::Solar_Beam: {
-			auto const blocks_weather = weather_is_blocked_by_ability(attacker.ability(), defender.ability());
+		case MoveName::Solar_Beam:
+			if (ability_blocks_weather(attacker.ability(), defender.ability())) {
+				return true;
+			}
 			switch (generation) {
 				case Generation::one:
 					return true;
 				case Generation::two:
-					return !weather.rain(blocks_weather);
+					return !environment.rain();
 				case Generation::three:
 				case Generation::four:
 				case Generation::five:
 				case Generation::six:
 				case Generation::seven:
 				case Generation::eight:
-					return !weather.hail(blocks_weather) and !weather.rain(blocks_weather) and !weather.sand(blocks_weather);
+					return !environment.hail() and !environment.rain() and !environment.sand();
 			}
-		}
 		case MoveName::Steamroller:
 		case MoveName::Stomp:
 			return defender.minimized();
 		case MoveName::Wake_Up_Slap:
 			return is_sleeping(defender.status());
-		case MoveName::Weather_Ball: {
-			auto const blocks_weather = weather_is_blocked_by_ability(attacker.ability(), defender.ability());
-			return weather.hail(blocks_weather) or weather.rain(blocks_weather) or weather.sand(blocks_weather) or weather.sun(blocks_weather);
-		}
+		case MoveName::Weather_Ball:
+			if (ability_blocks_weather(attacker.ability(), defender.ability())) {
+				return false;
+			}
+			return environment.hail() or environment.rain() or environment.sand() or environment.sun();
 		default:
 			return false;
 	}
@@ -159,7 +162,7 @@ constexpr auto is_boosted_by_soul_dew(Generation const generation, Species const
 constexpr auto item_modifier_denominator = 20_bi;
 using ItemModifierNumerator = bounded::integer<20, 24>;
 template<any_active_pokemon AttackerPokemon>
-auto item_modifier_numerator(AttackerPokemon const attacker, KnownMove const move, Weather const weather) -> ItemModifierNumerator {
+auto item_modifier_numerator(AttackerPokemon const attacker, KnownMove const move, Environment const environment) -> ItemModifierNumerator {
 	constexpr auto generation = generation_from<AttackerPokemon>;
 	constexpr auto none = item_modifier_denominator;
 	auto type_boost = [=](Type const type) -> ItemModifierNumerator {
@@ -168,7 +171,7 @@ auto item_modifier_numerator(AttackerPokemon const attacker, KnownMove const mov
 		}
 		return BOUNDED_CONDITIONAL(generation <= Generation::three, none * 11_bi / 10_bi, none * 12_bi / 10_bi);
 	};
-	switch (attacker.item(weather)) {
+	switch (attacker.item(environment)) {
 		case Item::Muscle_Band:
 			return BOUNDED_CONDITIONAL(is_physical(generation, move), none * 11_bi / 10_bi, none);
 		case Item::Wise_Glasses:
@@ -267,9 +270,9 @@ auto item_modifier_numerator(AttackerPokemon const attacker, KnownMove const mov
 	}
 }
 
-auto item_modifier(any_active_pokemon auto const attacker, KnownMove const move, Weather const weather) {
+auto item_modifier(any_active_pokemon auto const attacker, KnownMove const move, Environment const environment) {
 	return rational(
-		item_modifier_numerator(attacker, move, weather),
+		item_modifier_numerator(attacker, move, environment),
 		item_modifier_denominator
 	);
 }
@@ -364,14 +367,14 @@ export using MovePower = bounded::integer<1, 1440>;
 // `executed.move.name` is Hidden Power, `attacker.pokemon().hidden_power()`
 // must not be `none`.
 export template<any_team UserTeam, any_team DefenderTeam>
-auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Weather const weather) -> MovePower {
+auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Environment const environment) -> MovePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
-	auto const base = base_power(attacker_team, executed, defender_team, weather);
+	auto const base = base_power(attacker_team, executed, defender_team, environment);
 	return bounded::assume_in_range<MovePower>(bounded::max(1_bi,
 		base *
-		BOUNDED_CONDITIONAL(doubling(attacker, executed.move.name, defender, weather), 2_bi, 1_bi) *
-		item_modifier(attacker, executed.move, weather) *
+		BOUNDED_CONDITIONAL(doubling(attacker, executed.move.name, defender, environment), 2_bi, 1_bi) *
+		item_modifier(attacker, executed.move, environment) *
 		BOUNDED_CONDITIONAL(attacker.charge_boosted(executed.move.type), 2_bi, 1_bi) /
 		BOUNDED_CONDITIONAL(defender.sport_is_active(executed.move.type), 2_bi, 1_bi) *
 		attacker_ability_power_modifier(attacker, executed.move, defender, base) *
@@ -380,7 +383,7 @@ auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam, DefenderTeam) \
-	template auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Weather const weather) -> MovePower
+	template auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Environment const environment) -> MovePower
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
 	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>, Team<generation>); \

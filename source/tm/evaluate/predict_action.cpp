@@ -18,9 +18,9 @@ import tm.move.max_moves_per_pokemon;
 import tm.move.move_name;
 
 import tm.block;
+import tm.environment;
 import tm.generation;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -37,7 +37,7 @@ export struct MoveProbability {
 export using MoveProbabilities = containers::static_vector<MoveProbability, maximum_possible_selections>;
 
 export template<Generation generation>
-auto predict_action(Team<generation> const & team, LegalSelections const team_selections, Team<generation> const & other, LegalSelections const other_selections, Weather const weather, Evaluate<generation> const evaluate) -> MoveProbabilities {
+auto predict_action(Team<generation> const & team, LegalSelections const team_selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate) -> MoveProbabilities {
 	auto all_equally_likely = [&] {
 		auto const possible_moves = double(containers::size(team_selections));
 		return MoveProbabilities(containers::transform(
@@ -48,7 +48,7 @@ auto predict_action(Team<generation> const & team, LegalSelections const team_se
 	if (containers::size(team_selections) == 1_bi) {
 		return all_equally_likely();
 	}
-	auto const scores = expectiminimax(team, team_selections, other, other_selections, weather, evaluate, Depth(1_bi, 0_bi));
+	auto const scores = expectiminimax(team, team_selections, other, other_selections, environment, evaluate, Depth(1_bi, 0_bi));
 	// TODO: this is not the right way to weight move scores
 	auto const score_only = containers::transform(scores, &ScoredMove::score);
 	auto const min_value = *containers::min_element(score_only);
@@ -71,7 +71,7 @@ auto predict_action(Team<generation> const & team, LegalSelections const team_se
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto predict_action(Team<generation> const &, LegalSelections, Team<generation> const &, LegalSelections, Weather, Evaluate<generation>) -> MoveProbabilities
+	template auto predict_action(Team<generation> const &, LegalSelections, Team<generation> const &, LegalSelections, Environment, Evaluate<generation>) -> MoveProbabilities
 
 TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 

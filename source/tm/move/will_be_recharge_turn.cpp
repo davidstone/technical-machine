@@ -10,15 +10,17 @@ import tm.move.move_name;
 import tm.pokemon.any_pokemon;
 
 import tm.ability;
-import tm.weather;
+import tm.ability_blocks_weather;
+import tm.environment;
 
 namespace technicalmachine {
 
-export auto will_be_recharge_turn(any_active_pokemon auto const user, MoveName const move, Ability const other_ability, Weather const weather) {
-	auto const blocks_weather = weather_is_blocked_by_ability(user.ability(), other_ability);
+export auto will_be_recharge_turn(any_active_pokemon auto const user, MoveName const move, Ability const other_ability, Environment const environment) {
 	switch (move) {
-		case MoveName::Solar_Beam: return !weather.sun(blocks_weather) and !user.last_used_move().is_charging_up();
-		default: return false;
+		case MoveName::Solar_Beam:
+			return (!environment.sun() or ability_blocks_weather(user.ability(), other_ability)) and !user.last_used_move().is_charging_up();
+		default:
+			return false;
 	}
 }
 

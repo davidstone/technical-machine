@@ -14,9 +14,9 @@ import tm.evaluate.scored_move;
 import tm.move.max_moves_per_pokemon;
 
 import tm.block;
+import tm.environment;
 import tm.generation;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -26,8 +26,8 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 export template<Generation generation>
-constexpr auto random_selection(Team<generation> const & user, Team<generation> const & other, Weather const weather, std::mt19937 & random_engine) -> ScoredMove {
-	auto const possible = legal_selections(user, other, weather);
+constexpr auto random_selection(Team<generation> const & user, Team<generation> const & other, Environment const environment, std::mt19937 & random_engine) -> ScoredMove {
+	auto const possible = legal_selections(user, other, environment);
 	BOUNDED_ASSERT(!containers::is_empty(possible));
 	auto distribution = std::uniform_int_distribution<int>(0, static_cast<int>(containers::size(possible) - 1_bi));
 	auto const index = bounded::assume_in_range<containers::index_type<LegalSelections>>(distribution(random_engine));

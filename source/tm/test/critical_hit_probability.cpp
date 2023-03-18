@@ -18,11 +18,11 @@ import tm.stat.combined_stats;
 
 import tm.ability;
 import tm.critical_hit_probability;
+import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.team;
-import tm.weather;
 
 import bounded;
 
@@ -32,7 +32,7 @@ using namespace bounded::literal;
 
 template<Generation generation>
 auto individual_test(Species const species, MoveName const move_name, Item const item, bool const focus_energy, double const rate) {
-	auto weather = Weather();
+	auto environment = Environment();
 	constexpr auto ability = Ability::Honey_Gather;
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -45,13 +45,13 @@ auto individual_test(Species const species, MoveName const move_name, Item const
 			RegularMoves({Move(generation, MoveName::Tackle)})
 		)
 	});
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 	if (focus_energy) {
 		attacker.pokemon().focus_energy();
 	}
 	attacker.reset_start_of_turn();
 
-	auto const ch_rate = critical_hit_probability(attacker.pokemon().as_const(), move_name, ability, weather);
+	auto const ch_rate = critical_hit_probability(attacker.pokemon().as_const(), move_name, ability, environment);
 	CHECK(ch_rate == rate);
 }
 

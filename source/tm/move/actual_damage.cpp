@@ -17,8 +17,8 @@ import tm.pokemon.substitute;
 import tm.stat.current_hp;
 
 import tm.any_team;
+import tm.environment;
 import tm.generation;
-import tm.weather;
 
 import bounded;
 import tv;
@@ -49,14 +49,14 @@ export struct ActualDamage {
 	}
 
 	template<any_team UserTeam>	
-	auto value(UserTeam const & user, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, any_team auto const & other, OtherMove const other_move, Weather const weather) const -> damage_type {
+	auto value(UserTeam const & user, ExecutedMove<UserTeam> const executed, bool const move_weakened_from_item, any_team auto const & other, OtherMove const other_move, Environment const environment) const -> damage_type {
 		auto calculate = [&] {
 			auto const substitute = substitute_interaction(generation_from<UserTeam>, executed.move.name);
 			auto const no_damage =
 				!is_damaging(executed.move.name) or
 				(other.pokemon().substitute() and substitute != Substitute::bypassed) or
-				will_be_recharge_turn(user.pokemon(), executed.move.name, other.pokemon().ability(), weather);
-			return no_damage ? 0_bi : calculate_damage(user, executed, move_weakened_from_item, other, other_move, weather);
+				will_be_recharge_turn(user.pokemon(), executed.move.name, other.pokemon().ability(), environment);
+			return no_damage ? 0_bi : calculate_damage(user, executed, move_weakened_from_item, other, other_move, environment);
 		};
 
 		return tv::visit(m_value, tv::overload(

@@ -232,6 +232,7 @@ target_sources(tm_common PUBLIC
 		source/tm/ability.cpp
 		source/tm/ability_blocks_move.cpp
 		source/tm/ability_blocks_switching.cpp
+		source/tm/ability_blocks_weather.cpp
 		source/tm/activate_ability_on_switch.cpp
 		source/tm/any_team.cpp
 		source/tm/apply_entry_hazards.cpp
@@ -249,6 +250,7 @@ target_sources(tm_common PUBLIC
 		source/tm/end_of_turn.cpp
 		source/tm/end_of_turn_flags.cpp
 		source/tm/entry_hazards.cpp
+		source/tm/environment.cpp
 		source/tm/exists_if.cpp
 		source/tm/files_in_path.cpp
 		source/tm/find_required_index.cpp

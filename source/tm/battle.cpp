@@ -40,13 +40,13 @@ import tm.activate_ability_on_switch;
 import tm.any_team;
 import tm.end_of_turn;
 import tm.end_of_turn_flags;
+import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.other_team;
 import tm.team;
 import tm.visible_hp;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -70,16 +70,16 @@ struct Battle {
 	auto const & foe() const {
 		return m_foe;
 	}
-	auto weather() const {
-		return m_weather;
+	auto environment() const {
+		return m_environment;
 	}
 
 	void first_turn(bool const ai_first) & {
 		auto const ai_pokemon = m_ai.pokemon();
 		auto const foe_pokemon = m_foe.pokemon();
 		auto do_switch = [&](auto const switcher, auto const other) {
-			switcher.switch_in(m_weather);
-			activate_ability_on_switch(switcher, other, m_weather);
+			switcher.switch_in(m_environment);
+			activate_ability_on_switch(switcher, other, m_environment);
 		};
 		if (ai_first) {
 			do_switch(ai_pokemon, foe_pokemon);
@@ -96,7 +96,7 @@ struct Battle {
 	}
 	void handle_end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & {
 		apply_to_teams(ai_went_first, [&](auto & first, auto & last) {
-			end_of_turn(first, first_flags, last, last_flags, m_weather);
+			end_of_turn(first, first_flags, last, last_flags, m_environment);
 		});
 	}
 
@@ -137,7 +137,7 @@ struct Battle {
 			move,
 			teams.other,
 			other_move,
-			m_weather,
+			m_environment,
 			clear_status,
 			damage.value,
 			is_fully_paralyzed
@@ -238,7 +238,7 @@ private:
 
 	KnownTeam<generation> m_ai;
 	SeenTeam<generation> m_foe;
-	Weather m_weather;
+	Environment m_environment;
 };
 
 TM_INSTANTIATE_STRUCT_FOR_EACH_GENERATION(Battle);

@@ -22,9 +22,9 @@ import tm.stat.base_stats;
 
 import tm.rational;
 import tm.ability;
+import tm.environment;
 import tm.generation;
 import tm.item;
-import tm.weather;
 
 import bounded;
 import std_module;
@@ -968,7 +968,7 @@ constexpr auto critical_hit_rate_from_stage(Generation const generation, bounded
 }
 
 template<any_active_pokemon ActivePokemonType>
-constexpr auto new_gen_critical_hit(ActivePokemonType const attacker, MoveCriticalHit const move_adjustment, Weather const weather) {
+constexpr auto new_gen_critical_hit(ActivePokemonType const attacker, MoveCriticalHit const move_adjustment, Environment const environment) {
 	constexpr auto generation = generation_from<ActivePokemonType>;
 	switch (move_adjustment) {
 		case MoveCriticalHit::never:
@@ -980,7 +980,7 @@ constexpr auto new_gen_critical_hit(ActivePokemonType const attacker, MoveCritic
 				generation,
 				(
 					move_stage(generation, move_adjustment) +
-					item_stage(attacker.item(weather), attacker.species()) +
+					item_stage(attacker.item(environment), attacker.species()) +
 					ability_stage(attacker.ability()) +
 					boosted_stage(attacker)
 				)
@@ -991,7 +991,7 @@ constexpr auto new_gen_critical_hit(ActivePokemonType const attacker, MoveCritic
 }
 
 template<any_active_pokemon ActivePokemonType>
-constexpr auto base_critical_hit_probability(ActivePokemonType const attacker, MoveName const move_name, Weather const weather) {
+constexpr auto base_critical_hit_probability(ActivePokemonType const attacker, MoveName const move_name, Environment const environment) {
 	constexpr auto generation = generation_from<ActivePokemonType>;
 	auto const move_adjustment = move_critical_hit(generation, move_name);
 	switch (generation) {
@@ -1004,24 +1004,24 @@ constexpr auto base_critical_hit_probability(ActivePokemonType const attacker, M
 		case Generation::six:
 		case Generation::seven:
 		case Generation::eight:
-			return new_gen_critical_hit(attacker, move_adjustment, weather);
+			return new_gen_critical_hit(attacker, move_adjustment, environment);
 	}
 }
 
-export constexpr auto critical_hit_probability(any_active_pokemon auto const attacker, MoveName const move, Ability const defender_ability, Weather const weather) -> double {
+export constexpr auto critical_hit_probability(any_active_pokemon auto const attacker, MoveName const move, Ability const defender_ability, Environment const environment) -> double {
 	switch (defender_ability) {
 		case Ability::Battle_Armor:
 		case Ability::Shell_Armor:
 			return 0.0;
 		default:
-			return base_critical_hit_probability(attacker, move, weather);
+			return base_critical_hit_probability(attacker, move, environment);
 	}
 }
 
 #if 0
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto critical_hit_probability<ActivePokemon<generation>>(ActivePokemon<generation> const attacker, MoveName const move, Ability const defender_ability, Weather const weather) -> double
+	template auto critical_hit_probability<ActivePokemon<generation>>(ActivePokemon<generation> const attacker, MoveName const move, Ability const defender_ability, Environment const environment) -> double
 
 TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 

@@ -10,13 +10,14 @@ import tm.status.status_name;
 import tm.type.type;
 
 import tm.ability;
-import tm.weather;
+import tm.ability_blocks_weather;
+import tm.environment;
 
 namespace technicalmachine {
 
-export bool blocks_status(Ability const ability, Ability const other_ability, StatusName const status, Weather const weather) {
+export bool blocks_status(Ability const ability, Ability const other_ability, StatusName const status, Environment const environment) {
 	auto is_sunny = [&] {
-		return weather.sun(weather_is_blocked_by_ability(ability, other_ability));
+		return environment.sun() and !ability_blocks_weather(ability, other_ability);
 	};
 	auto const ability_blocked = other_ability == Ability::Mold_Breaker;
 	switch (status) {

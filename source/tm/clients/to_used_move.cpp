@@ -19,9 +19,9 @@ import tm.pokemon.max_pokemon_per_team;
 
 import tm.any_team;
 import tm.associated_team;
+import tm.environment;
 import tm.other_team;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -31,8 +31,8 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<any_active_pokemon UserPokemon>
-constexpr auto get_side_effect(Used const move, UserPokemon const user, OtherTeam<AssociatedTeam<UserPokemon>> const & other, Weather const weather) {
-	auto const side_effects = possible_side_effects(move.executed, user, other, weather);
+constexpr auto get_side_effect(Used const move, UserPokemon const user, OtherTeam<AssociatedTeam<UserPokemon>> const & other, Environment const environment) {
+	auto const side_effects = possible_side_effects(move.executed, user, other, environment);
 
 	if (containers::size(side_effects) == 1_bi) {
 		return containers::front(side_effects).function;
@@ -62,19 +62,19 @@ constexpr auto get_side_effect(Used const move, UserPokemon const user, OtherTea
 }
 
 export template<any_team UserTeam>
-constexpr auto to_used_move(Used const move, UserTeam const & user, OtherTeam<UserTeam> const & other, Weather const weather) -> UsedMove<UserTeam> {
+constexpr auto to_used_move(Used const move, UserTeam const & user, OtherTeam<UserTeam> const & other, Environment const environment) -> UsedMove<UserTeam> {
 	return UsedMove<UserTeam>(
 		move.selected,
 		move.executed,
 		move.critical_hit,
 		move.miss,
 		move.contact_ability_effect,
-		get_side_effect(move, user.pokemon(), other, weather)
+		get_side_effect(move, user.pokemon(), other, environment)
 	);
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam) \
-	template auto to_used_move(Used const move, UserTeam const & user, OtherTeam<UserTeam> const & other, Weather const weather) -> UsedMove<UserTeam>
+	template auto to_used_move(Used const move, UserTeam const & user, OtherTeam<UserTeam> const & other, Environment const environment) -> UsedMove<UserTeam>
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
 	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>); \

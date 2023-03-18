@@ -19,11 +19,11 @@ import tm.pokemon.pokemon;
 
 import tm.string_conversions.generation;
 
+import tm.environment;
 import tm.generation;
 import tm.get_directory;
 import tm.load_settings_file;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import std_module;
@@ -52,7 +52,7 @@ void print_debug_statements() {
 	print_pokemon_size<technicalmachine::Generation::four>();
 	std::cout << '\n';
 	std::cout << "sizeof(Move): " << sizeof(technicalmachine::Move) << '\n';
-	std::cout << "sizeof(Weather): " << sizeof(technicalmachine::Weather) << '\n';
+	std::cout << "sizeof(Environment): " << sizeof(technicalmachine::Environment) << '\n';
 }
 
 } // namespace

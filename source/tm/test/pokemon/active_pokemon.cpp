@@ -21,10 +21,10 @@ import tm.status.clears_status;
 import tm.status.status_name;
 
 import tm.ability;
+import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
-import tm.weather;
 
 import bounded;
 
@@ -52,9 +52,9 @@ TEST_CASE("Chesto Berry awakens from Rest", "[active_pokemon]") {
 	auto flags = ActivePokemonFlags<generation>();
 	auto active_pokemon = AnyMutableActivePokemon(pokemon, flags);
 
-	auto weather = Weather();
+	auto environment = Environment();
 
-	active_pokemon.rest(weather, false);
+	active_pokemon.rest(environment, false);
 	CHECK(active_pokemon.status().name() == StatusName::clear);
 }
 
@@ -72,13 +72,13 @@ TEST_CASE("Chesto Berry awakens after Rest cures status", "[active_pokemon]") {
 	auto flags = ActivePokemonFlags<generation>();
 	auto active_pokemon = AnyMutableActivePokemon(pokemon, flags);
 
-	auto weather = Weather();
+	auto environment = Environment();
 
-	active_pokemon.set_status(StatusName::paralysis, weather);
+	active_pokemon.set_status(StatusName::paralysis, environment);
 	CHECK(active_pokemon.status().name() == StatusName::paralysis);
 
-	CHECK(clears_status(active_pokemon.item(weather), StatusName::rest));
-	active_pokemon.rest(weather, false);
+	CHECK(clears_status(active_pokemon.item(environment), StatusName::rest));
+	active_pokemon.rest(environment, false);
 
 	CHECK(active_pokemon.status().name() == StatusName::clear);
 }

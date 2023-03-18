@@ -13,29 +13,29 @@ import tm.pokemon.any_pokemon;
 import tm.pokemon.change_hp;
 
 import tm.ability;
+import tm.environment;
 import tm.item;
 import tm.rational;
-import tm.weather;
 
 import bounded;
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
-export void heal_exactly(any_mutable_active_pokemon auto const pokemon, Weather const weather, bounded::bounded_integer auto const hp_healed) {
+export void heal_exactly(any_mutable_active_pokemon auto const pokemon, Environment const environment, bounded::bounded_integer auto const hp_healed) {
 	if (pokemon.hp().current() == 0_bi) {
 		return;
 	}
 	if (hp_healed > 0_bi) {
-		change_hp(pokemon, weather, bounded::max(hp_healed, 1_bi));
+		change_hp(pokemon, environment, bounded::max(hp_healed, 1_bi));
 	} else if (!blocks_secondary_damage(pokemon.ability())) {
-		change_hp(pokemon, weather, bounded::min(hp_healed, -1_bi));
+		change_hp(pokemon, environment, bounded::min(hp_healed, -1_bi));
 	}
 }
 
 export template<typename Numerator, typename Denominator>
-void heal(any_mutable_active_pokemon auto const pokemon, Weather const weather, rational<Numerator, Denominator> const scale) {
-	heal_exactly(pokemon, weather, pokemon.hp().max() * scale);
+void heal(any_mutable_active_pokemon auto const pokemon, Environment const environment, rational<Numerator, Denominator> const scale) {
+	heal_exactly(pokemon, environment, pokemon.hp().max() * scale);
 }
 
 export constexpr auto healing_multiplier(Item const item) {

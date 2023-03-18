@@ -7,6 +7,7 @@ export module tm.clients.check_weathers_match;
 
 import tm.string_conversions.weather;
 
+import tm.environment;
 import tm.weather;
 
 import containers;
@@ -15,8 +16,8 @@ import std_module;
 namespace technicalmachine {
 using namespace std::string_view_literals;
 
-export constexpr auto check_weathers_match(NormalWeather const received, Weather const expected_full) -> void {
-	auto const expected = to_normal_weather(expected_full);
+export constexpr auto check_weathers_match(Weather const received, Environment const expected_environment) -> void {
+	auto const expected = to_weather(expected_environment);
 	if (received != expected) {
 		throw std::runtime_error(containers::concatenate<std::string>(
 			"Inconsistent weather. Received "sv,

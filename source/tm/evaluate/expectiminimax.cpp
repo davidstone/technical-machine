@@ -19,9 +19,9 @@ import tm.evaluate.victory;
 import tm.move.max_moves_per_pokemon;
 import tm.move.move_name;
 
+import tm.environment;
 import tm.generation;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -31,14 +31,14 @@ using namespace bounded::literal;
 
 template<Generation generation>
 struct ExpectiminimaxEvaluator {
-	static constexpr auto operator()(Team<generation> const & ai, LegalSelections const ai_selections, Team<generation> const & foe, LegalSelections const foe_selections, Weather const weather, Evaluate<generation> const evaluate, Depth const depth, auto const function) -> ScoredMoves {
+	static constexpr auto operator()(Team<generation> const & ai, LegalSelections const ai_selections, Team<generation> const & foe, LegalSelections const foe_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth, auto const function) -> ScoredMoves {
 		auto scored_moves_shallower = depth.general > 1_bi ?
 			ExpectiminimaxEvaluator()(
 				ai,
 				ai_selections,
 				foe,
 				foe_selections,
-				weather,
+				environment,
 				evaluate,
 				one_level_deeper(depth),
 				function
@@ -57,7 +57,7 @@ struct ExpectiminimaxEvaluator {
 					ai_move,
 					min_element_value(
 						containers::transform(foe_selections, [&](MoveName const foe_move) {
-							return function(ai, ai_move, foe, foe_move, weather, depth);
+							return function(ai, ai_move, foe, foe_move, environment, depth);
 						})
 					)
 				};
@@ -68,13 +68,13 @@ struct ExpectiminimaxEvaluator {
 
 
 export template<Generation generation>
-auto expectiminimax(Team<generation> const & ai, LegalSelections const ai_selections, Team<generation> const & foe, LegalSelections const foe_selections, Weather const weather, Evaluate<generation> const evaluate, Depth const depth) -> ScoredMoves {
+auto expectiminimax(Team<generation> const & ai, LegalSelections const ai_selections, Team<generation> const & foe, LegalSelections const foe_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> ScoredMoves {
 	auto evaluator = Evaluator(evaluate, ExpectiminimaxEvaluator<generation>());
-	return evaluator.select_type_of_move(ai, ai_selections, foe, foe_selections, weather, depth);
+	return evaluator.select_type_of_move(ai, ai_selections, foe, foe_selections, environment, depth);
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto expectiminimax(Team<generation> const & ai, LegalSelections, Team<generation> const & foe, LegalSelections, Weather const weather, Evaluate<generation> const evaluate, Depth const depth) -> ScoredMoves
+	template auto expectiminimax(Team<generation> const & ai, LegalSelections, Team<generation> const & foe, LegalSelections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> ScoredMoves
 
 TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 

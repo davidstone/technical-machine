@@ -8,11 +8,11 @@ export module tm.wish;
 import tm.pokemon.any_pokemon;
 
 import tm.compress;
+import tm.environment;
 import tm.exists_if;
 import tm.generation;
 import tm.heal;
 import tm.rational;
-import tm.weather;
 
 import bounded;
 import tv;
@@ -31,14 +31,14 @@ struct Wish {
 		}
 	}
 
-	auto decrement(any_mutable_active_pokemon auto const pokemon, Weather const weather) & -> void {
+	auto decrement(any_mutable_active_pokemon auto const pokemon, Environment const environment) & -> void {
 		if constexpr (exists) {
 			if (!m_turns_until_activation) {
 				return;
 			}
 			if (*m_turns_until_activation == 0_bi) {
 				m_turns_until_activation = tv::none;
-				heal(pokemon, weather, rational(1_bi, 2_bi));
+				heal(pokemon, environment, rational(1_bi, 2_bi));
 			} else {
 				--*m_turns_until_activation;
 			}

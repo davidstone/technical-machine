@@ -14,16 +14,16 @@ import tm.status.status_name;
 import tm.type.type;
 
 import tm.ability;
-import tm.weather;
+import tm.environment;
 
 import containers;
 
 namespace technicalmachine {
 
-export constexpr auto indirect_status_can_apply(StatusName const status, any_active_pokemon auto const target, Weather const weather) {
+export constexpr auto indirect_status_can_apply(StatusName const status, any_active_pokemon auto const target, Environment const environment) {
 	return
 		is_clear(target.status()) and
-		!blocks_status(target.ability(), Ability::Honey_Gather, status, weather) and
+		!blocks_status(target.ability(), Ability::Honey_Gather, status, environment) and
 		!containers::any(target.types(), [=](Type const type) { return blocks_status(type, status); });
 }
 

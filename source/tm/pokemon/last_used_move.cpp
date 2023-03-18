@@ -25,7 +25,6 @@ import tm.generation;
 import tm.item;
 import tm.rational;
 import tm.saturating_add;
-import tm.weather;
 
 import bounded;
 import numeric_traits;

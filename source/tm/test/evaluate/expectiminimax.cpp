@@ -41,11 +41,11 @@ import tm.ability;
 import tm.block;
 import tm.end_of_turn;
 import tm.end_of_turn_flags;
+import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -67,13 +67,13 @@ constexpr auto make_depth(DepthInt const depth) {
 	return Depth(depth, 0_bi);
 }
 
-auto determine_best_move(auto const & ai, auto const & foe, Weather const weather, auto const evaluate, Depth const depth) {
+auto determine_best_move(auto const & ai, auto const & foe, Environment const environment, auto const evaluate, Depth const depth) {
 	auto const moves = expectiminimax(
 		ai,
-		legal_selections(ai, foe, weather),
+		legal_selections(ai, foe, environment),
 		foe,
-		legal_selections(foe, ai, weather),
-		weather,
+		legal_selections(foe, ai, environment),
+		environment,
 		evaluate,
 		depth
 	);
@@ -93,7 +93,7 @@ auto shuffled_regular_moves(Generation const generation, auto & random_engine, a
 TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -111,7 +111,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
 		)
 	}, true);
-	team1.pokemon().switch_in(weather);
+	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
 	auto team2 = Team<generation>({
@@ -125,11 +125,11 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 			regular_moves(MoveName::Dragon_Dance, MoveName::Waterfall, MoveName::Stone_Edge, MoveName::Taunt)
 		)
 	});
-	team2.pokemon().switch_in(weather);
+	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();
 
 	{
-		auto const best_move = determine_best_move(team1, team2, weather, evaluate, depth);
+		auto const best_move = determine_best_move(team1, team2, environment, evaluate, depth);
 		CHECK(best_move.name == MoveName::Thunderbolt);
 		CHECK(best_move.score == victory<generation>);
 	}
@@ -145,11 +145,11 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 			regular_moves(MoveName::Swords_Dance, MoveName::X_Scissor, MoveName::Shadow_Sneak, MoveName::Will_O_Wisp)
 		)
 	});
-	team3.pokemon().switch_in(weather);
+	team3.pokemon().switch_in(environment);
 	team3.reset_start_of_turn();
 	
 	{
-		auto const best_move = determine_best_move(team1, team3, weather, evaluate, depth);
+		auto const best_move = determine_best_move(team1, team3, environment, evaluate, depth);
 		CHECK(best_move.name == MoveName::Shadow_Ball);
 		CHECK(best_move.score == victory<generation>);
 	}
@@ -158,7 +158,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -187,7 +187,7 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
 	auto defender = Team<generation>({
@@ -201,17 +201,17 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 			regular_moves(MoveName::Surf, MoveName::Ice_Beam)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
 
-	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Shadow_Ball);
 }
 
 TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -240,7 +240,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 			regular_moves(MoveName::Fire_Punch, MoveName::Belly_Drum, MoveName::Earthquake, MoveName::Double_Edge)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
 	auto defender = Team<generation>({
@@ -265,10 +265,10 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 			regular_moves(MoveName::Soft_Boiled)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
 
-	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Belly_Drum);
 	CHECK(best_move.score == victory<generation>);
 }
@@ -276,7 +276,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -305,7 +305,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 			regular_moves(MoveName::Curse, MoveName::Crunch)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
 	// TODO: Implement Encore's effect ending when PP runs out, then Wobbuffet
@@ -333,10 +333,10 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 			regular_moves(MoveName::Counter)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
 
-	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Curse);
 	CHECK(best_move.score == victory<generation>);
 }
@@ -345,7 +345,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto weather = Weather();
+	auto environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -383,7 +383,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 			regular_moves(MoveName::Psycho_Cut)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
 	auto defender = Team<generation>({
@@ -408,12 +408,12 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 			regular_moves(MoveName::Shadow_Ball)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
 
 	{
 		constexpr auto move_name = MoveName::Shadow_Ball;
-		auto const side_effects = possible_side_effects(move_name, defender.pokemon().as_const(), attacker, weather);
+		auto const side_effects = possible_side_effects(move_name, defender.pokemon().as_const(), attacker, environment);
 		REQUIRE(!containers::is_empty(side_effects));
 		call_move(
 			defender,
@@ -423,7 +423,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 			),
 			attacker,
 			FutureMove{false},
-			weather,
+			environment,
 			false,
 			ActualDamage::Unknown{},
 			false
@@ -431,7 +431,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 	}
 	{
 		constexpr auto move_name = MoveName::Baton_Pass;
-		auto const side_effects = possible_side_effects(move_name, attacker.pokemon().as_const(), defender, weather);
+		auto const side_effects = possible_side_effects(move_name, attacker.pokemon().as_const(), defender, environment);
 		REQUIRE(containers::size(side_effects) == 1_bi);
 		call_move(
 			attacker,
@@ -441,14 +441,14 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 			),
 			defender,
 			FutureMove{false},
-			weather,
+			environment,
 			false,
 			ActualDamage::Unknown{},
 			false
 		);
 	}
 
-	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Switch1);
 }
 
@@ -456,7 +456,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -494,7 +494,7 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 			regular_moves(MoveName::Psycho_Cut)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
 	auto defender = Team<generation>({
@@ -519,11 +519,11 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 			regular_moves(MoveName::Shadow_Ball)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 
 	defender.reset_start_of_turn();
 
-	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Belly_Drum);
 	CHECK(best_move.score == victory<generation>);
 }
@@ -532,7 +532,7 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto weather = Weather();
+	auto environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -572,7 +572,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 			regular_moves(MoveName::Thunderbolt)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
 
@@ -587,13 +587,13 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 			regular_moves(MoveName::Calm_Mind, MoveName::Surf, MoveName::Ice_Beam)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 
 	defender.reset_start_of_turn();
 
 	{
 		constexpr auto move_name = MoveName::Surf;
-		auto const side_effects = possible_side_effects(move_name, defender.pokemon().as_const(), attacker, weather);
+		auto const side_effects = possible_side_effects(move_name, defender.pokemon().as_const(), attacker, environment);
 		REQUIRE(containers::size(side_effects) == 1_bi);
 		auto const & side_effect = containers::front(side_effects);
 		call_move(
@@ -604,14 +604,14 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 			),
 			attacker,
 			FutureMove{false},
-			weather,
+			environment,
 			false,
 			ActualDamage::Unknown{},
 			false
 		);
 	}
 
-	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Switch2);
 }
 
@@ -619,7 +619,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -648,7 +648,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 			regular_moves(MoveName::Calm_Mind, MoveName::Dragon_Pulse, MoveName::Recover)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
 
@@ -674,18 +674,18 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 			regular_moves(MoveName::Ice_Beam, MoveName::Rest)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 
 	defender.reset_start_of_turn();
 
-	auto const best_move = determine_best_move(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Calm_Mind);
 }
 
 TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto weather = Weather();
+	auto environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -703,7 +703,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 			regular_moves(MoveName::Sleep_Talk, MoveName::Thunderbolt)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
 	auto defender = Team<generation>({
@@ -717,7 +717,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 			regular_moves(MoveName::Earthquake)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 
 	defender.reset_start_of_turn();
 
@@ -735,7 +735,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 
 	auto next_turn = [&] {
 		constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false, false);
-		end_of_turn(attacker, end_of_turn_flags, defender, end_of_turn_flags, weather);
+		end_of_turn(attacker, end_of_turn_flags, defender, end_of_turn_flags, environment);
 		attacker.reset_start_of_turn();
 		defender.reset_start_of_turn();
 	};
@@ -745,50 +745,50 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	// TODO: Validate score, too
 
 	CHECK(jolteon.status().name() == StatusName::clear);
-	CHECK(determine_best_move(attacker, defender, weather, evaluate, depth).name == MoveName::Thunderbolt);
+	CHECK(determine_best_move(attacker, defender, environment, evaluate, depth).name == MoveName::Thunderbolt);
 
 	call_move(
 		attacker,
 		sleep_talk,
 		defender,
 		other_move,
-		weather,
+		environment,
 		keep_status,
 		unknown_damage,
 		false
 	);
-	jolteon.set_status(StatusName::sleep, weather);
+	jolteon.set_status(StatusName::sleep, environment);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_move(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_move(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	call_move(
 		attacker,
 		thunderbolt,
 		defender,
 		other_move,
-		weather,
+		environment,
 		keep_status,
 		unknown_damage,
 		false
 	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_move(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_move(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	call_move(
 		attacker,
 		thunderbolt,
 		defender,
 		other_move,
-		weather,
+		environment,
 		keep_status,
 		unknown_damage,
 		false
 	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_move(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_move(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	#if 0
 		// Same probability of either move
@@ -797,21 +797,21 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 			thunderbolt,
 			defender,
 			other_move,
-			weather,
+			environment,
 			keep_status,
 			unknown_damage,
 			false
 		);
 		next_turn();
 		CHECK(jolteon.status().name() == StatusName::sleep);
-		CHECK(determine_best_move(attacker, defender, weather, evaluate, depth).name == ?);
+		CHECK(determine_best_move(attacker, defender, environment, evaluate, depth).name == ?);
 	#endif
 }
 
 TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	constexpr auto generation = Generation::one;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto weather = Weather();
+	auto environment = Environment();
 	auto regular_moves = [](auto const ... name) {
 		return RegularMoves{Move(generation, name)...};
 	};
@@ -827,7 +827,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 			regular_moves(MoveName::Toxic, MoveName::Psychic, MoveName::Recover)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 
 	auto defender = Team<generation>({
 		Pokemon<generation>(
@@ -840,26 +840,26 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 			regular_moves(MoveName::Thunderbolt)
 		)
 	});
-	defender.pokemon().set_status(StatusName::freeze, weather);
-	defender.pokemon().set_hp(weather, 12_bi);
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().set_status(StatusName::freeze, environment);
+	defender.pokemon().set_hp(environment, 12_bi);
+	defender.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
 	defender.reset_start_of_turn();
 
-	CHECK(determine_best_move(attacker, defender, weather, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
-	CHECK(determine_best_move(attacker, defender, weather, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
+	CHECK(determine_best_move(attacker, defender, environment, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
+	CHECK(determine_best_move(attacker, defender, environment, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
 }
 
-auto determine_best_move2(auto const & ai, auto const & foe, Weather const weather, auto const evaluate, Depth const depth) {
-	auto const ai_selections = legal_selections(ai, foe, weather);
-	auto const foe_selections = legal_selections(foe, ai, weather);
+auto determine_best_move2(auto const & ai, auto const & foe, Environment const environment, auto const evaluate, Depth const depth) {
+	auto const ai_selections = legal_selections(ai, foe, environment);
+	auto const foe_selections = legal_selections(foe, ai, environment);
 	auto const moves = score_moves(
 		ai,
 		ai_selections,
 		foe,
 		foe_selections,
-		weather,
+		environment,
 		evaluate,
 		depth,
 		predict_action(
@@ -867,7 +867,7 @@ auto determine_best_move2(auto const & ai, auto const & foe, Weather const weath
 			foe_selections,
 			ai,
 			ai_selections,
-			weather,
+			environment,
 			evaluate
 		)
 	);
@@ -879,7 +879,7 @@ auto determine_best_move2(auto const & ai, auto const & foe, Weather const weath
 TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -897,7 +897,7 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
 		)
 	}, true);
-	team1.pokemon().switch_in(weather);
+	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
 	auto team2 = Team<generation>({
@@ -911,11 +911,11 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 			regular_moves(MoveName::Dragon_Dance, MoveName::Waterfall, MoveName::Stone_Edge, MoveName::Taunt)
 		)
 	});
-	team2.pokemon().switch_in(weather);
+	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();
 
 	{
-		auto const best_move = determine_best_move2(team1, team2, weather, evaluate, depth);
+		auto const best_move = determine_best_move2(team1, team2, environment, evaluate, depth);
 		CHECK(best_move.name == MoveName::Thunderbolt);
 		CHECK(best_move.score == Catch::Approx(victory<generation>));
 	}
@@ -931,11 +931,11 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 			regular_moves(MoveName::Swords_Dance, MoveName::X_Scissor, MoveName::Shadow_Sneak, MoveName::Will_O_Wisp)
 		)
 	});
-	team3.pokemon().switch_in(weather);
+	team3.pokemon().switch_in(environment);
 	team3.reset_start_of_turn();
 	
 	{
-		auto const best_move = determine_best_move2(team1, team3, weather, evaluate, depth);
+		auto const best_move = determine_best_move2(team1, team3, environment, evaluate, depth);
 		CHECK(best_move.name == MoveName::Shadow_Ball);
 		CHECK(best_move.score == victory<generation>);
 	}
@@ -944,7 +944,7 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -973,7 +973,7 @@ TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
 	auto defender = Team<generation>({
@@ -987,17 +987,17 @@ TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 			regular_moves(MoveName::Surf, MoveName::Ice_Beam)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
 
-	auto const best_move = determine_best_move2(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Shadow_Ball);
 }
 
 TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -1026,7 +1026,7 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 			regular_moves(MoveName::Fire_Punch, MoveName::Belly_Drum, MoveName::Earthquake, MoveName::Double_Edge)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
 	auto defender = Team<generation>({
@@ -1051,10 +1051,10 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 			regular_moves(MoveName::Soft_Boiled)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
 
-	auto const best_move = determine_best_move2(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Belly_Drum);
 	CHECK(best_move.score == victory<generation>);
 }
@@ -1062,7 +1062,7 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -1091,7 +1091,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 			regular_moves(MoveName::Curse, MoveName::Crunch)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
 	// TODO: Implement Encore's effect ending when PP runs out, then Wobbuffet
@@ -1119,10 +1119,10 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 			regular_moves(MoveName::Counter)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
 
-	auto const best_move = determine_best_move2(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Curse);
 	CHECK(best_move.score == victory<generation> + 5.0);
 }
@@ -1131,7 +1131,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -1169,7 +1169,7 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 			regular_moves(MoveName::Psycho_Cut)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
 	auto defender = Team<generation>({
@@ -1194,11 +1194,11 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 			regular_moves(MoveName::Shadow_Ball)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 
 	defender.reset_start_of_turn();
 
-	auto const best_move = determine_best_move2(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Belly_Drum);
 	CHECK(best_move.score == victory<generation>);
 }
@@ -1207,7 +1207,7 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto weather = Weather();
+	auto environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -1247,7 +1247,7 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 			regular_moves(MoveName::Thunderbolt)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
 
@@ -1262,13 +1262,13 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 			regular_moves(MoveName::Calm_Mind, MoveName::Surf, MoveName::Ice_Beam)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 
 	defender.reset_start_of_turn();
 
 	{
 		constexpr auto move_name = MoveName::Surf;
-		auto const side_effects = possible_side_effects(move_name, defender.pokemon().as_const(), attacker, weather);
+		auto const side_effects = possible_side_effects(move_name, defender.pokemon().as_const(), attacker, environment);
 		REQUIRE(containers::size(side_effects) == 1_bi);
 		auto const & side_effect = containers::front(side_effects);
 		call_move(
@@ -1279,14 +1279,14 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 			),
 			attacker,
 			FutureMove{false},
-			weather,
+			environment,
 			false,
 			ActualDamage::Unknown{},
 			false
 		);
 	}
 
-	auto const best_move = determine_best_move2(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Switch2);
 }
 
@@ -1294,7 +1294,7 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -1323,7 +1323,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 			regular_moves(MoveName::Calm_Mind, MoveName::Dragon_Pulse, MoveName::Recover)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
 
@@ -1349,18 +1349,18 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 			regular_moves(MoveName::Ice_Beam, MoveName::Rest)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 
 	defender.reset_start_of_turn();
 
-	auto const best_move = determine_best_move2(attacker, defender, weather, evaluate, depth);
+	auto const best_move = determine_best_move2(attacker, defender, environment, evaluate, depth);
 	CHECK(best_move.name == MoveName::Calm_Mind);
 }
 
 TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto weather = Weather();
+	auto environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -1378,7 +1378,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 			regular_moves(MoveName::Sleep_Talk, MoveName::Thunderbolt)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
 	auto defender = Team<generation>({
@@ -1392,7 +1392,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 			regular_moves(MoveName::Earthquake)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 
 	defender.reset_start_of_turn();
 
@@ -1410,7 +1410,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 
 	auto next_turn = [&] {
 		constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false, false);
-		end_of_turn(attacker, end_of_turn_flags, defender, end_of_turn_flags, weather);
+		end_of_turn(attacker, end_of_turn_flags, defender, end_of_turn_flags, environment);
 		attacker.reset_start_of_turn();
 		defender.reset_start_of_turn();
 	};
@@ -1420,50 +1420,50 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 	// TODO: Validate score, too
 
 	CHECK(jolteon.status().name() == StatusName::clear);
-	CHECK(determine_best_move2(attacker, defender, weather, evaluate, depth).name == MoveName::Thunderbolt);
+	CHECK(determine_best_move2(attacker, defender, environment, evaluate, depth).name == MoveName::Thunderbolt);
 
 	call_move(
 		attacker,
 		sleep_talk,
 		defender,
 		other_move,
-		weather,
+		environment,
 		keep_status,
 		unknown_damage,
 		false
 	);
-	jolteon.set_status(StatusName::sleep, weather);
+	jolteon.set_status(StatusName::sleep, environment);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_move2(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_move2(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	call_move(
 		attacker,
 		thunderbolt,
 		defender,
 		other_move,
-		weather,
+		environment,
 		keep_status,
 		unknown_damage,
 		false
 	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_move2(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_move2(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	call_move(
 		attacker,
 		thunderbolt,
 		defender,
 		other_move,
-		weather,
+		environment,
 		keep_status,
 		unknown_damage,
 		false
 	);
 	next_turn();
 	CHECK(jolteon.status().name() == StatusName::sleep);
-	CHECK(determine_best_move2(attacker, defender, weather, evaluate, depth).name == MoveName::Sleep_Talk);
+	CHECK(determine_best_move2(attacker, defender, environment, evaluate, depth).name == MoveName::Sleep_Talk);
 
 	#if 0
 		// Same probability of either move
@@ -1472,21 +1472,21 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 			thunderbolt,
 			defender,
 			other_move,
-			weather,
+			environment,
 			keep_status,
 			unknown_damage,
 			false
 		);
 		next_turn();
 		CHECK(jolteon.status().name() == StatusName::sleep);
-		CHECK(determine_best_move2(attacker, defender, weather, evaluate, depth).name == ?);
+		CHECK(determine_best_move2(attacker, defender, environment, evaluate, depth).name == ?);
 	#endif
 }
 
 TEST_CASE("Generation 1 frozen last Pokemon", "[score_moves]") {
 	constexpr auto generation = Generation::one;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto weather = Weather();
+	auto environment = Environment();
 	auto regular_moves = [](auto const ... name) {
 		return RegularMoves{Move(generation, name)...};
 	};
@@ -1502,7 +1502,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[score_moves]") {
 			regular_moves(MoveName::Toxic, MoveName::Psychic, MoveName::Recover)
 		)
 	}, true);
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 
 	auto defender = Team<generation>({
 		Pokemon<generation>(
@@ -1515,15 +1515,15 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[score_moves]") {
 			regular_moves(MoveName::Thunderbolt)
 		)
 	});
-	defender.pokemon().set_status(StatusName::freeze, weather);
-	defender.pokemon().set_hp(weather, 12_bi);
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().set_status(StatusName::freeze, environment);
+	defender.pokemon().set_hp(environment, 12_bi);
+	defender.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
 	defender.reset_start_of_turn();
 
-	CHECK(determine_best_move2(attacker, defender, weather, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
-	CHECK(determine_best_move2(attacker, defender, weather, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
+	CHECK(determine_best_move2(attacker, defender, environment, evaluate, make_depth(1_bi)).name == MoveName::Psychic);
+	CHECK(determine_best_move2(attacker, defender, environment, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
 }
 
 } // namespace

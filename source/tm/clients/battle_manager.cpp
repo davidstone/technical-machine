@@ -78,7 +78,7 @@ export struct BattleManager {
 	virtual auto correct_status(bool is_ai, StatusName, TeamIndex) & -> void = 0;
 	virtual auto correct_status(bool is_ai, StatusName) & -> void = 0;
 
-	virtual auto weather_is(NormalWeather) const -> void = 0;
+	virtual auto weather_is(Weather) const -> void = 0;
 };
 
 } // namespace technicalmachine

@@ -11,8 +11,8 @@ export module tm.move.accuracy;
 
 import tm.move.move_name;
 
+import tm.environment;
 import tm.generation;
-import tm.weather;
 
 import bounded;
 import tv;
@@ -22,7 +22,7 @@ using namespace bounded::literal;
 
 // A value that is not present indicates that the move cannot miss.
 export using BaseAccuracy = tv::optional<bounded::integer<30, 100>>;
-export constexpr auto accuracy(Generation const generation, MoveName const move, Weather const weather, bool const weather_blocked, bool const user_is_poison) -> BaseAccuracy {
+export constexpr auto accuracy(Generation const generation, MoveName const move, Environment const environment, bool const weather_blocked, bool const user_is_poison) -> BaseAccuracy {
 	using tv::none;
 	switch (move) {
 		case MoveName::Pass: return none;
@@ -113,7 +113,7 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Surf: return 100_bi;
 		case MoveName::Ice_Beam: return 100_bi;
 		case MoveName::Blizzard:
-			if (weather.hail(weather_blocked)) {
+			if (environment.hail() and !weather_blocked) {
 				return none;
 			}
 			return BOUNDED_CONDITIONAL(generation == Generation::one, 90_bi, 70_bi);
@@ -144,11 +144,16 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Thunder_Shock: return 100_bi;
 		case MoveName::Thunderbolt: return 100_bi;
 		case MoveName::Thunder_Wave: return BOUNDED_CONDITIONAL(generation <= Generation::six, 100_bi, 90_bi);
-		case MoveName::Thunder:
+		case MoveName::Thunder: {
+			constexpr auto default_value = BaseAccuracy(70_bi);
+			if (weather_blocked) {
+				return default_value;
+			}
 			return
-				weather.rain(weather_blocked) ? none :
-				weather.sun(weather_blocked) ? BaseAccuracy(50_bi) :
-				BaseAccuracy(70_bi);
+				environment.rain() ? none :
+				environment.sun() ? BaseAccuracy(50_bi) :
+				default_value;
+		}
 		case MoveName::Rock_Throw: return BOUNDED_CONDITIONAL(generation == Generation::one, 65_bi, 90_bi);
 		case MoveName::Earthquake: return 100_bi;
 		case MoveName::Fissure: return 30_bi;

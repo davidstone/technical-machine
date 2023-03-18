@@ -23,36 +23,36 @@ import std_module;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-export constexpr auto to_string(NormalWeather const weather) -> std::string_view {
+export constexpr auto to_string(Weather const weather) -> std::string_view {
 	switch (weather) {
-		case NormalWeather::clear: return "Clear";
-		case NormalWeather::hail: return "Hail";
-		case NormalWeather::sand: return "Sand";
-		case NormalWeather::sun: return "Sun";
-		case NormalWeather::rain: return "Rain";
+		case Weather::clear: return "Clear";
+		case Weather::hail: return "Hail";
+		case Weather::sand: return "Sand";
+		case Weather::sun: return "Sun";
+		case Weather::rain: return "Rain";
 	}
 }
 
 export template<>
-constexpr auto from_string(std::string_view const str) -> NormalWeather {
+constexpr auto from_string(std::string_view const str) -> Weather {
 	static constexpr auto converter = containers::basic_flat_map(
 		containers::assume_sorted_unique,
-		containers::to_array<containers::map_value_type<std::string_view, NormalWeather>>({
-			{"clear", NormalWeather::clear},
-			{"hail", NormalWeather::hail},
-			{"none", NormalWeather::clear},
-			{"rain", NormalWeather::rain},
-			{"raindance", NormalWeather::rain},
-			{"sand", NormalWeather::sand},
-			{"sandstorm", NormalWeather::sand},
-			{"sun", NormalWeather::sun},
-			{"sunnyday", NormalWeather::sun},
+		containers::to_array<containers::map_value_type<std::string_view, Weather>>({
+			{"clear", Weather::clear},
+			{"hail", Weather::hail},
+			{"none", Weather::clear},
+			{"rain", Weather::rain},
+			{"raindance", Weather::rain},
+			{"sand", Weather::sand},
+			{"sandstorm", Weather::sand},
+			{"sun", Weather::sun},
+			{"sunnyday", Weather::sun},
 		})
 	);
 	auto const converted = fixed_capacity_lowercase_and_digit_string<9_bi>(str);
 	auto const result = containers::lookup(converter, converted);
 	if (!result) {
-		throw InvalidFromStringConversion("NormalWeather", str);
+		throw InvalidFromStringConversion("Weather", str);
 	}
 	return *result;
 }

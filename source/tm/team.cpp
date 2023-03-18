@@ -29,12 +29,12 @@ import tm.apply_entry_hazards;
 import tm.any_team;
 import tm.compress;
 import tm.entry_hazards;
+import tm.environment;
 import tm.generation;
 import tm.item;
 import tm.other_team;
 import tm.screens;
 import tm.wish;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -144,7 +144,7 @@ struct TeamImpl {
 		m_entry_hazards = {};
 	}
 
-	constexpr auto switch_pokemon(AnyMutableActivePokemon<OtherPokemon<PokemonType>> other, Weather & weather, TeamIndex const replacement) -> void {
+	constexpr auto switch_pokemon(AnyMutableActivePokemon<OtherPokemon<PokemonType>> other, Environment & environment, TeamIndex const replacement) -> void {
 		auto original_pokemon = pokemon();
 		original_pokemon.switch_out();
 		if constexpr (generation == Generation::one) {
@@ -162,10 +162,10 @@ struct TeamImpl {
 		}
 
 		auto const replacement_pokemon = pokemon();
-		replacement_pokemon.switch_in(weather);
-		apply(m_entry_hazards, replacement_pokemon, weather);
+		replacement_pokemon.switch_in(environment);
+		apply(m_entry_hazards, replacement_pokemon, environment);
 		if (replacement_pokemon.hp().current() != 0_bi) {
-			activate_ability_on_switch(replacement_pokemon, other, weather);
+			activate_ability_on_switch(replacement_pokemon, other, environment);
 		}
 	}
 
@@ -190,11 +190,11 @@ struct TeamImpl {
 	constexpr auto tailwind() const {
 		return m_screens.tailwind();
 	}
-	constexpr auto activate_light_screen(Weather const weather) & -> void {
-		m_screens.activate_light_screen(extends_light_screen(pokemon().item(weather)));
+	constexpr auto activate_light_screen(Environment const environment) & -> void {
+		m_screens.activate_light_screen(extends_light_screen(pokemon().item(environment)));
 	}
-	constexpr auto activate_reflect(Weather const weather) & -> void {
-		m_screens.activate_reflect(extends_reflect(pokemon().item(weather)));
+	constexpr auto activate_reflect(Environment const environment) & -> void {
+		m_screens.activate_reflect(extends_reflect(pokemon().item(environment)));
 	}
 	constexpr auto activate_lucky_chant() & -> void {
 		m_screens.activate_lucky_chant();
@@ -215,8 +215,8 @@ struct TeamImpl {
 	constexpr auto activate_wish() & -> void {
 		m_wish.activate();
 	}
-	constexpr auto decrement_wish(Weather const weather) & -> void {
-		m_wish.decrement(pokemon(), weather);
+	constexpr auto decrement_wish(Environment const environment) & -> void {
+		m_wish.decrement(pokemon(), environment);
 	}
 
 	constexpr auto entry_hazards() const {

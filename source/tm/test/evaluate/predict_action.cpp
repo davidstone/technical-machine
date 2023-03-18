@@ -22,11 +22,11 @@ import tm.stat.combined_stats;
 
 import tm.ability;
 import tm.block;
+import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -44,13 +44,13 @@ constexpr auto evaluate_settings = EvaluateSettings{
 	.toxic_spikes = -100_bi
 };
 
-auto predict_action(auto const & ai, auto const & foe, Weather const weather, auto const evaluate) {
+auto predict_action(auto const & ai, auto const & foe, Environment const environment, auto const evaluate) {
 	return predict_action(
 		ai,
-		legal_selections(ai, foe, weather),
+		legal_selections(ai, foe, environment),
 		foe,
-		legal_selections(foe, ai, weather),
-		weather,
+		legal_selections(foe, ai, environment),
+		environment,
 		evaluate
 	);
 }
@@ -66,7 +66,7 @@ auto shuffled_regular_moves(Generation const generation, auto & random_engine, a
 TEST_CASE("predict_action one move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -83,7 +83,7 @@ TEST_CASE("predict_action one move", "[predict_action]") {
 			regular_moves(MoveName::Thunderbolt)
 		)
 	}, true);
-	team1.pokemon().switch_in(weather);
+	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
 	auto team2 = Team<generation>({
@@ -97,17 +97,17 @@ TEST_CASE("predict_action one move", "[predict_action]") {
 			regular_moves(MoveName::Snore)
 		)
 	});
-	team2.pokemon().switch_in(weather);
+	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();
 
-	auto const moves = predict_action(team1, team2, weather, evaluate);
+	auto const moves = predict_action(team1, team2, environment, evaluate);
 	CHECK(moves == MoveProbabilities({MoveProbability{MoveName::Thunderbolt, 1.0}}));
 }
 
 TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -124,7 +124,7 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 			regular_moves(MoveName::Thunderbolt, MoveName::Hidden_Power)
 		)
 	}, true);
-	team1.pokemon().switch_in(weather);
+	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
 	auto team2 = Team<generation>({
@@ -138,17 +138,17 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 			regular_moves(MoveName::Earthquake)
 		)
 	});
-	team2.pokemon().switch_in(weather);
+	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();
 
-	auto const moves = predict_action(team1, team2, weather, evaluate);
+	auto const moves = predict_action(team1, team2, environment, evaluate);
 	CHECK(moves == MoveProbabilities({MoveProbability{MoveName::Thunderbolt, 1.0}}));
 }
 
 TEST_CASE("predict_action good and bad move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -165,7 +165,7 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 			regular_moves(MoveName::Surf, MoveName::Ice_Beam)
 		)
 	}, true);
-	team1.pokemon().switch_in(weather);
+	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
 	auto team2 = Team<generation>({
@@ -179,10 +179,10 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 			regular_moves(MoveName::Calm_Mind, MoveName::Dragon_Pulse)
 		)
 	});
-	team2.pokemon().switch_in(weather);
+	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();
 
-	auto const moves = predict_action(team1, team2, weather, evaluate);
+	auto const moves = predict_action(team1, team2, environment, evaluate);
 	auto const ptr = containers::maybe_find_if(moves, [](MoveProbability const move) {
 		return move.name == MoveName::Ice_Beam;
 	});
@@ -193,7 +193,7 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
-	auto const weather = Weather();
+	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
 	auto const regular_moves = [&](auto... args) {
 		return shuffled_regular_moves(generation, random_engine, args...);
@@ -210,7 +210,7 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 			regular_moves(MoveName::Surf, MoveName::Ice_Beam, MoveName::Roar)
 		)
 	}, true);
-	team1.pokemon().switch_in(weather);
+	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
 	auto team2 = Team<generation>({
@@ -224,10 +224,10 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 			regular_moves(MoveName::Calm_Mind, MoveName::Dragon_Pulse)
 		)
 	});
-	team2.pokemon().switch_in(weather);
+	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();
 
-	auto const moves = predict_action(team1, team2, weather, evaluate);
+	auto const moves = predict_action(team1, team2, environment, evaluate);
 	auto const ptr = containers::maybe_find_if(moves, [](MoveProbability const move) {
 		return move.name == MoveName::Ice_Beam;
 	});

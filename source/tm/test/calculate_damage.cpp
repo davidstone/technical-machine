@@ -29,11 +29,11 @@ import tm.type.type;
 
 import tm.ability;
 import tm.contact_ability_effect;
+import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -83,7 +83,7 @@ auto max_damage_physical_attacker(Item const item, Ability const ability) {
 	});
 
 	auto pokemon = attacker.pokemon();
-	pokemon.switch_in(Weather());
+	pokemon.switch_in(Environment());
 
 	pokemon.defense_curl();
 	for (auto const n [[maybe_unused]] : containers::integer_range(10_bi)) {
@@ -106,7 +106,7 @@ auto max_damage_physical_defender() {
 		)
 	});
 	auto pokemon = defender.pokemon();
-	pokemon.switch_in(Weather());
+	pokemon.switch_in(Environment());
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		pokemon.stages()[BoostableStat::def] -= 2_bi;
 	}
@@ -122,7 +122,7 @@ TEST_CASE("Max physical power", "[Power]") {
 		attacker,
 		max_damage_executed_physical_move(),
 		max_damage_physical_defender(),
-		Weather()
+		Environment()
 	);
 	CHECK(power == max_power);
 }
@@ -130,7 +130,7 @@ TEST_CASE("Max physical power", "[Power]") {
 TEST_CASE("Max special power", "[Power]") {
 	constexpr auto max_power = 342_bi;
 
-	auto weather = Weather();
+	auto environment = Environment();
 
 	auto const move = Move(generation, MoveName::Surf);
 	auto attacker = Team<generation>({
@@ -145,8 +145,8 @@ TEST_CASE("Max special power", "[Power]") {
 		)
 	});
 	auto pokemon = attacker.pokemon();
-	pokemon.switch_in(weather);
-	pokemon.set_hp(weather, 1_bi);
+	pokemon.switch_in(environment);
+	pokemon.set_hp(environment, 1_bi);
 	
 
 	auto defender = Team<generation>({
@@ -162,12 +162,12 @@ TEST_CASE("Max special power", "[Power]") {
 	});
 
 	auto defender_pokemon = defender.pokemon();
-	defender_pokemon.switch_in(weather);
+	defender_pokemon.switch_in(environment);
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		defender_pokemon.stages()[BoostableStat::spd] -= 2_bi;
 	}
 	defender_pokemon.successfully_use_move(MoveName::Dive);
-	defender_pokemon.use_vanish_move(weather);
+	defender_pokemon.use_vanish_move(environment);
 
 	auto const power = move_power(
 		attacker,
@@ -179,7 +179,7 @@ TEST_CASE("Max special power", "[Power]") {
 			ContactAbilityEffect::nothing
 		},
 		defender,
-		weather
+		environment
 	);
 	CHECK(power == max_power);
 }
@@ -204,15 +204,15 @@ TEST_CASE("Max physical damage", "[Damage]") {
 		resistance_berry_activated,
 		defender,
 		FutureMove{false},
-		Weather()
+		Environment()
 	);
 	CHECK(calculated_damage == max_damage);
 }
 
 TEST_CASE("Max special damage", "[Damage]") {
 	constexpr auto max_damage = 25696272_bi;
-	auto weather = Weather();
-	weather.activate_sun_from_move(false);
+	auto environment = Environment();
+	environment.activate_sun_from_move(false);
 
 	auto const move = Move(generation, MoveName::Blast_Burn);
 
@@ -240,8 +240,8 @@ TEST_CASE("Max special damage", "[Damage]") {
 	});
 
 	auto attacker_pokemon = attacker.pokemon();
-	attacker_pokemon.switch_in(weather);
-	attacker_pokemon.set_hp(weather, 1_bi);
+	attacker_pokemon.switch_in(environment);
+	attacker_pokemon.set_hp(environment, 1_bi);
 
 	attacker_pokemon.set_type(Type::Fire);
 
@@ -265,7 +265,7 @@ TEST_CASE("Max special damage", "[Damage]") {
 		)
 	});
 	auto defender_pokemon = defender.pokemon();
-	defender_pokemon.switch_in(weather);
+	defender_pokemon.switch_in(environment);
 	for (auto const n [[maybe_unused]] : containers::integer_range(3_bi)) {
 		defender_pokemon.stages()[BoostableStat::spd] -= 2_bi;
 	}
@@ -282,7 +282,7 @@ TEST_CASE("Max special damage", "[Damage]") {
 		resistance_berry_activated,
 		defender,
 		FutureMove{false},
-		weather
+		environment
 	);
 	CHECK(calculated_damage == max_damage);
 }

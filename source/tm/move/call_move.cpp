@@ -47,6 +47,7 @@ import tm.ability_blocks_move;
 import tm.any_team;
 import tm.block;
 import tm.contact_ability_effect;
+import tm.environment;
 import tm.generation;
 import tm.handle_curse;
 import tm.heal;
@@ -54,7 +55,6 @@ import tm.item;
 import tm.other_team;
 import tm.rational;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -100,43 +100,43 @@ constexpr auto targets_foe_specifically(Target const target) {
 	}
 }
 
-constexpr auto activate_target_ability(any_mutable_active_pokemon auto const user, any_mutable_active_pokemon auto const other, Weather const weather, ContactAbilityEffect const effect) {
+constexpr auto activate_target_ability(any_mutable_active_pokemon auto const user, any_mutable_active_pokemon auto const other, Environment const environment, ContactAbilityEffect const effect) {
 	switch (effect) {
 		case ContactAbilityEffect::nothing:
 			break;
 		case ContactAbilityEffect::burn:
-			user.set_status(StatusName::burn, weather);
+			user.set_status(StatusName::burn, environment);
 			break;
 		case ContactAbilityEffect::infatuation:
-			user.attract(other, weather);
+			user.attract(other, environment);
 			break;
 		case ContactAbilityEffect::paralysis:
-			user.set_status(StatusName::paralysis, weather);
+			user.set_status(StatusName::paralysis, environment);
 			break;
 		case ContactAbilityEffect::poison:
-			user.set_status(StatusName::poison, weather);
+			user.set_status(StatusName::poison, environment);
 			break;
 		case ContactAbilityEffect::sleep:
-			user.set_status(StatusName::sleep, weather);
+			user.set_status(StatusName::sleep, environment);
 			break;
 	}
 }
 
 template<any_team UserTeam, any_team OtherTeamType>
-auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target const target, OtherTeamType & other, OtherMove const other_move, Weather & weather, ActualDamage const actual_damage) -> void {
+auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target const target, OtherTeamType & other, OtherMove const other_move, Environment & environment, ActualDamage const actual_damage) -> void {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto const user_pokemon = user.pokemon();
 	auto const other_pokemon = other.pokemon();
 	do_effects_before_moving(executed.move.name, user_pokemon, other);
 
-	if (targets_foe_specifically(target) and !affects_target(executed.move, other_pokemon.as_const(), weather)) {
+	if (targets_foe_specifically(target) and !affects_target(executed.move, other_pokemon.as_const(), environment)) {
 		return;
 	}
 
 	auto const damaging = is_damaging(executed.move.name);
 	auto const effectiveness = Effectiveness(generation, executed.move.type, other_pokemon.types());
-	auto const weakened = damaging and activate_when_hit_item(executed.move, other_pokemon, weather, effectiveness);
-	auto const damage = actual_damage.value(user, executed, weakened, other, other_move, weather);
+	auto const weakened = damaging and activate_when_hit_item(executed.move, other_pokemon, environment, effectiveness);
+	auto const damage = actual_damage.value(user, executed, weakened, other, other_move, environment);
 	BOUNDED_ASSERT(damaging or damage == 0_bi);
 
 	auto const effects = static_cast<bool>(other_pokemon.substitute()) ?
@@ -148,7 +148,7 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 
 	// Should this check if we did any damage or if the move is damaging?
 	auto const damage_done = damage != 0_bi ?
-		other_pokemon.direct_damage(executed.move.name, user_pokemon, weather, damage) :
+		other_pokemon.direct_damage(executed.move.name, user_pokemon, environment, damage) :
 		0_bi;
 
 	if (effects == Substitute::absorbs) {
@@ -158,24 +158,24 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 	if constexpr (hit_self_combination) {
 		BOUNDED_ASSERT(executed.move.name == MoveName::Hit_Self);
 	} else {
-		executed.side_effect(user, other, weather, damage_done);
+		executed.side_effect(user, other, environment, damage_done);
 	}
 
 	// Should this check if we did any damage or if the move is damaging?
 	if (damage_done != 0_bi) {
-		auto const item = user_pokemon.item(weather);
+		auto const item = user_pokemon.item(environment);
 		// TODO: Doom Desire / Future Sight are not handled correctly
 		if (item == Item::Life_Orb) {
-			heal(user_pokemon, weather, rational(-1_bi, 10_bi));
+			heal(user_pokemon, environment, rational(-1_bi, 10_bi));
 		} else if (item == Item::Shell_Bell) {
-			change_hp(user_pokemon, weather, bounded::max(damage_done / 8_bi, 1_bi));
+			change_hp(user_pokemon, environment, bounded::max(damage_done / 8_bi, 1_bi));
 		}
 
 		// TODO: When do target abilities activate?
 		if constexpr (hit_self_combination) {
 			BOUNDED_ASSERT(executed.contact_ability_effect == ContactAbilityEffect::nothing);
 		} else {
-			activate_target_ability(user_pokemon, other_pokemon, weather, executed.contact_ability_effect);
+			activate_target_ability(user_pokemon, other_pokemon, environment, executed.contact_ability_effect);
 		}
 	}
 }
@@ -187,17 +187,17 @@ auto find_move(MoveContainer<generation> const container, MoveName const move_na
 	return *maybe_move;
 }
 
-auto handle_ability_blocks_move(any_mutable_active_pokemon auto const target, Weather const weather) {
+auto handle_ability_blocks_move(any_mutable_active_pokemon auto const target, Environment const environment) {
 	switch (target.ability()) {
 		case Ability::Flash_Fire:
 			target.activate_flash_fire();
 			break;
 		case Ability::Volt_Absorb:
-			heal(target, weather, rational(1_bi, 4_bi));
+			heal(target, environment, rational(1_bi, 4_bi));
 			break;
 		case Ability::Water_Absorb:
 		case Ability::Dry_Skin:
-			heal(target, weather, rational(1_bi, 4_bi));
+			heal(target, environment, rational(1_bi, 4_bi));
 			break;
 		case Ability::Motor_Drive:
 			target.stages()[BoostableStat::spe] += 1_bi;
@@ -208,7 +208,7 @@ auto handle_ability_blocks_move(any_mutable_active_pokemon auto const target, We
 }
 
 template<any_team UserTeam>
-auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
+auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto user_pokemon = user.pokemon();
 
@@ -234,7 +234,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 			user_pokemon.stages()[BoostableStat::spe] += 1_bi;
 		}
 	}
-	if (!can_execute_move(user_pokemon.as_const(), found_move, weather, is_recharging, is_fully_paralyzed)) {
+	if (!can_execute_move(user_pokemon.as_const(), found_move, environment, is_recharging, is_fully_paralyzed)) {
 		unsuccessfully_use_move();
 		return;
 	}
@@ -243,7 +243,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 
 	if (move.executed != MoveName::Hit_Self and !user_pokemon.last_used_move().is_locked_in_by_move()) {
 		auto const uses_extra_pp = other_ability == Ability::Pressure;
-		user_pokemon.reduce_pp(move.selected, weather, BOUNDED_CONDITIONAL(uses_extra_pp, 2_bi, 1_bi));
+		user_pokemon.reduce_pp(move.selected, environment, BOUNDED_CONDITIONAL(uses_extra_pp, 2_bi, 1_bi));
 	}
 
 	// TODO: What happens if we Sleep Talk Trump Card?
@@ -251,7 +251,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 	// state
 	if (move.miss) {
 		unsuccessfully_use_move();
-		if (user_pokemon.item(weather) == Item::Blunder_Policy) {
+		if (user_pokemon.item(environment) == Item::Blunder_Policy) {
 			user_pokemon.stages()[BoostableStat::spe] += 2_bi;
 			user_pokemon.remove_item();
 		}
@@ -270,7 +270,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		move_type(generation, move.executed, get_hidden_power_type(user_pokemon))
 	};
 	if (ability_blocks_move(generation, other_ability, known_move, other_pokemon.status().name(), other_pokemon.types())) {
-		handle_ability_blocks_move(other_pokemon, weather);
+		handle_ability_blocks_move(other_pokemon, environment);
 	} else {
 		auto const executed_move = ExecutedMove<UserTeam>{
 			known_move,
@@ -280,33 +280,33 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 			move.contact_ability_effect
 		};
 		if (executed_move.move.name == MoveName::Hit_Self) {
-			use_move(user, executed_move, target, user, other_move, weather, actual_damage);
+			use_move(user, executed_move, target, user, other_move, environment, actual_damage);
 		} else {
-			use_move(user, executed_move, target, other, other_move, weather, actual_damage);
+			use_move(user, executed_move, target, other, other_move, environment, actual_damage);
 		}
 	}
 	user_pokemon.successfully_use_move(move.executed);
 }
 
 template<any_mutable_active_pokemon UserPokemon>
-void end_of_attack(UserPokemon const user_pokemon, OtherMutableActivePokemon<UserPokemon> const other_pokemon, Weather const weather) {
+void end_of_attack(UserPokemon const user_pokemon, OtherMutableActivePokemon<UserPokemon> const other_pokemon, Environment const environment) {
 	if constexpr (generation_from<UserPokemon> == Generation::two) {
-		user_pokemon.status_and_leech_seed_effects(other_pokemon, weather);
-		handle_curse(user_pokemon, weather);
+		user_pokemon.status_and_leech_seed_effects(other_pokemon, environment);
+		handle_curse(user_pokemon, environment);
 	}
 }
 
 export template<any_team UserTeam>
-auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Weather & weather, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
+auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
 	if (move.selected == MoveName::Pass) {
 		return;
 	}
-	try_use_move(user, move, other, other_move, weather, clear_status, actual_damage, is_fully_paralyzed);
-	end_of_attack(user.pokemon(), other.pokemon(), weather);
+	try_use_move(user, move, other, other_move, environment, clear_status, actual_damage, is_fully_paralyzed);
+	end_of_attack(user.pokemon(), other.pokemon(), environment);
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam) \
-	template auto call_move(UserTeam & user, UsedMove<UserTeam> move, OtherTeam<UserTeam> & other, OtherMove other_move, Weather & weather, bool clear_status, ActualDamage actual_damage, bool is_fully_paralyzed) -> void
+	template auto call_move(UserTeam & user, UsedMove<UserTeam> move, OtherTeam<UserTeam> & other, OtherMove other_move, Environment & environment, bool clear_status, ActualDamage actual_damage, bool is_fully_paralyzed) -> void
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
 	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>); \

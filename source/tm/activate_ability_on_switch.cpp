@@ -15,9 +15,9 @@ import tm.stat.stage;
 import tm.stat.stat_names;
 
 import tm.ability;
+import tm.environment;
 import tm.generation;
 import tm.item;
-import tm.weather;
 
 import bounded;
 import numeric_traits;
@@ -26,7 +26,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 export template<any_mutable_active_pokemon PokemonType>
-constexpr void activate_ability_on_switch(PokemonType const switcher, OtherMutableActivePokemon<PokemonType> const other, Weather & weather) {
+constexpr void activate_ability_on_switch(PokemonType const switcher, OtherMutableActivePokemon<PokemonType> const other, Environment & environment) {
 	constexpr auto generation = generation_from<PokemonType>;
 	auto const switcher_ability = switcher.ability();
 	switch (switcher_ability) {
@@ -34,17 +34,17 @@ constexpr void activate_ability_on_switch(PokemonType const switcher, OtherMutab
 			// Move is irrelevant here
 			constexpr auto move = MoveName::Switch0;
 			// TODO: Should not take into account items, abilities, or Wonder Room
-			auto const defense = calculate_defense(other.as_const(), move, weather);
-			auto const special_defense = calculate_special_defense(other.as_const(), switcher_ability, weather);
+			auto const defense = calculate_defense(other.as_const(), move, environment);
+			auto const special_defense = calculate_special_defense(other.as_const(), switcher_ability, environment);
 			auto const boosted_stat = defense >= special_defense ? BoostableStat::spa : BoostableStat::atk;
 			switcher.stages()[boosted_stat] += 1_bi;
 			break;
 		}
 		case Ability::Drizzle:
-			weather.activate_rain_from_ability(generation, extends_rain(switcher.item(weather)));
+			environment.activate_rain_from_ability(generation, extends_rain(switcher.item(environment)));
 			break;
 		case Ability::Drought:
-			weather.activate_sun_from_ability(generation, extends_sun(switcher.item(weather)));
+			environment.activate_sun_from_ability(generation, extends_sun(switcher.item(environment)));
 			break;
 		case Ability::Forecast:
 			break;
@@ -58,17 +58,17 @@ constexpr void activate_ability_on_switch(PokemonType const switcher, OtherMutab
 			}
 			attack -= 1_bi;
 			auto & speed = other.stages()[BoostableStat::spe];
-			if (other.item(weather) == Item::Adrenaline_Orb and speed != numeric_traits::max_value<Stage::value_type>) {
+			if (other.item(environment) == Item::Adrenaline_Orb and speed != numeric_traits::max_value<Stage::value_type>) {
 				speed += 1_bi;
 				other.remove_item();
 			}
 			break;
 		}
 		case Ability::Sand_Stream:
-			weather.activate_sand_from_ability(generation, extends_sand(switcher.item(weather)));
+			environment.activate_sand_from_ability(generation, extends_sand(switcher.item(environment)));
 			break;
 		case Ability::Snow_Warning:
-			weather.activate_hail_from_ability(generation, extends_hail(switcher.item(weather)));
+			environment.activate_hail_from_ability(generation, extends_hail(switcher.item(environment)));
 			break;
 		case Ability::Trace: {
 			auto const other_ability = other.ability();

@@ -32,12 +32,12 @@ import tm.status.status_name;
 import tm.ability;
 import tm.block;
 import tm.contact_ability_effect;
+import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.switch_decision_required;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -54,7 +54,7 @@ constexpr auto regular_moves(auto... moves) {
 }
 
 TEST_CASE("Baton Pass", "[call_move]") {
-	auto weather = Weather();
+	auto environment = Environment();
 
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -87,7 +87,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 			regular_moves(MoveName::Psycho_Cut, MoveName::Recover)
 		)
 	});
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 
 	auto defender = Team<generation>({
 		Pokemon<generation>(
@@ -131,17 +131,17 @@ TEST_CASE("Baton Pass", "[call_move]") {
 			regular_moves(MoveName::Shadow_Ball)
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
 
 	CHECK(
-		legal_selections(attacker, defender, weather) ==
+		legal_selections(attacker, defender, environment) ==
 		LegalSelections({MoveName::Baton_Pass, MoveName::Belly_Drum, MoveName::Switch1})
 	);
 
 	{
-		auto const side_effects = possible_side_effects(MoveName::Belly_Drum, attacker.pokemon().as_const(), defender, weather);
+		auto const side_effects = possible_side_effects(MoveName::Belly_Drum, attacker.pokemon().as_const(), defender, environment);
 		CHECK(containers::size(side_effects) == 1_bi);
 		auto const & side_effect = containers::front(side_effects);
 		CHECK(side_effect.probability == 1.0);
@@ -151,7 +151,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 			UsedMove<Team<generation>>(MoveName::Belly_Drum, side_effect.function),
 			defender,
 			FutureMove{false},
-			weather,
+			environment,
 			false,
 			damage,
 			false
@@ -160,14 +160,14 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	CHECK(attacker.pokemon().stages()[BoostableStat::atk] == 6_bi);
 	CHECK(!switch_decision_required(attacker));
 	CHECK(
-		legal_selections(attacker, defender, weather) ==
+		legal_selections(attacker, defender, environment) ==
 		LegalSelections({MoveName::Pass})
 	);
 
 	attacker.reset_start_of_turn();
 
 	CHECK(
-		legal_selections(attacker, defender, weather) ==
+		legal_selections(attacker, defender, environment) ==
 		LegalSelections({MoveName::Baton_Pass, MoveName::Belly_Drum, MoveName::Switch1})
 	);
 
@@ -176,7 +176,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 		UsedMove<Team<generation>>(MoveName::Baton_Pass, no_effect_function),
 		defender,
 		FutureMove{false},
-		weather,
+		environment,
 		false,
 		damage,
 		false
@@ -184,12 +184,12 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	CHECK(attacker.pokemon().stages()[BoostableStat::atk] == 6_bi);
 	CHECK(switch_decision_required(attacker));
 	CHECK(
-		legal_selections(attacker, defender, weather) ==
+		legal_selections(attacker, defender, environment) ==
 		LegalSelections({MoveName::Switch1})
 	);
 
 	{
-		auto const side_effects = possible_side_effects(MoveName::Switch1, attacker.pokemon().as_const(), defender, weather);
+		auto const side_effects = possible_side_effects(MoveName::Switch1, attacker.pokemon().as_const(), defender, environment);
 		CHECK(containers::size(side_effects) == 1_bi);
 		auto const & side_effect = containers::front(side_effects);
 		CHECK(side_effect.probability == 1.0);
@@ -198,7 +198,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 			UsedMove<Team<generation>>(MoveName::Switch1, side_effect.function),
 			defender,
 			FutureMove{false},
-			weather,
+			environment,
 			false,
 			damage,
 			false
@@ -208,13 +208,13 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	CHECK(attacker.pokemon().species() == Species::Alakazam);
 	CHECK(!switch_decision_required(attacker));
 	CHECK(
-		legal_selections(attacker, defender, weather) ==
+		legal_selections(attacker, defender, environment) ==
 		LegalSelections({MoveName::Pass})
 	);
 }
 
 TEST_CASE("Wonder Guard", "[call_move]") {
-	auto weather = Weather();
+	auto environment = Environment();
 
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -227,7 +227,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 			regular_moves(MoveName::Shadow_Ball, MoveName::Thunderbolt)
 		)
 	});
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 
 	auto defender = Team<generation>({
 		Pokemon<generation>(
@@ -241,7 +241,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 		)
 	});
 	auto shedinja = defender.pokemon();
-	shedinja.switch_in(weather);
+	shedinja.switch_in(environment);
 
 	CHECK(shedinja.hp().current() == 1_bi);
 
@@ -250,7 +250,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 		UsedMove<Team<generation>>(MoveName::Thunderbolt, no_effect_function),
 		defender,
 		FutureMove{false},
-		weather,
+		environment,
 		false,
 		damage,
 		false
@@ -262,7 +262,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 		UsedMove<Team<generation>>(MoveName::Shadow_Ball, no_effect_function),
 		defender,
 		FutureMove{false},
-		weather,
+		environment,
 		false,
 		damage,
 		false
@@ -271,7 +271,7 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 }
 
 TEST_CASE("Fire move thaws target", "[call_move]") {
-	auto weather = Weather();
+	auto environment = Environment();
 
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
@@ -284,7 +284,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 			regular_moves(MoveName::Ember)
 		)
 	});
-	attacker.pokemon().switch_in(weather);
+	attacker.pokemon().switch_in(environment);
 
 	auto defender = Team<generation>({
 		Pokemon<generation>(
@@ -298,13 +298,13 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 		)
 	});
 	auto vaporeon = defender.pokemon();
-	vaporeon.switch_in(weather);
-	vaporeon.set_status(StatusName::freeze, weather);
+	vaporeon.switch_in(environment);
+	vaporeon.set_status(StatusName::freeze, environment);
 
 	CHECK(vaporeon.status().name() == StatusName::freeze);
 
 	constexpr auto move_name = MoveName::Ember;
-	auto const side_effects = possible_side_effects(move_name, attacker.pokemon().as_const(), defender, weather);
+	auto const side_effects = possible_side_effects(move_name, attacker.pokemon().as_const(), defender, environment);
 	CHECK(containers::size(side_effects) == 2_bi);
 
 	{
@@ -316,7 +316,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 			UsedMove<Team<generation>>(move_name, side_effects[0_bi].function),
 			defender_copy,
 			FutureMove{false},
-			weather,
+			environment,
 			false,
 			damage,
 			false
@@ -330,7 +330,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 		UsedMove<Team<generation>>(move_name, side_effects[1_bi].function),
 		defender,
 		FutureMove{false},
-		weather,
+		environment,
 		false,
 		damage,
 		false
@@ -340,7 +340,7 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 }
 
 TEST_CASE("Sleep Talk Substitute", "[call_move]") {
-	auto weather = Weather();
+	auto environment = Environment();
 
 	auto user = Team<generation>({
 		Pokemon<generation>(
@@ -353,9 +353,9 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 			RegularMoves({Move(generation, MoveName::Sleep_Talk), Move(generation, MoveName::Substitute)})
 		)
 	});
-	user.pokemon().switch_in(weather);
-	user.pokemon().set_hp(weather, 5_bi);
-	user.pokemon().rest(weather, false);
+	user.pokemon().switch_in(environment);
+	user.pokemon().set_hp(environment, 5_bi);
+	user.pokemon().rest(environment, false);
 
 	auto other = Team<generation>({
 		Pokemon<generation>(
@@ -368,11 +368,11 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 			regular_moves(MoveName::Rock_Slide)
 		)
 	});
-	other.pokemon().switch_in(weather);
+	other.pokemon().switch_in(environment);
 
 	CHECK(user.pokemon().substitute().hp() == 0_bi);
 
-	auto const side_effects = possible_side_effects(MoveName::Substitute, user.pokemon().as_const(), other, weather);
+	auto const side_effects = possible_side_effects(MoveName::Substitute, user.pokemon().as_const(), other, environment);
 	CHECK(containers::size(side_effects) == 1_bi);
 	call_move(
 		user,
@@ -386,7 +386,7 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 		),
 		other,
 		FutureMove{false},
-		weather,
+		environment,
 		false,
 		damage,
 		false
@@ -396,7 +396,7 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 }
 
 TEST_CASE("Static paralyzes", "[call_move]") {
-	auto weather = Weather();
+	auto environment = Environment();
 
 	auto user = Team<generation>({
 		Pokemon<generation>(
@@ -409,7 +409,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 			RegularMoves({Move(generation, MoveName::Scratch)})
 		)
 	});
-	user.pokemon().switch_in(weather);
+	user.pokemon().switch_in(environment);
 
 	auto other = Team<generation>({
 		Pokemon<generation>(
@@ -422,7 +422,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 			regular_moves(MoveName::Barrier)
 		)
 	});
-	other.pokemon().switch_in(weather);
+	other.pokemon().switch_in(environment);
 
 	call_move(
 		user,
@@ -436,7 +436,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 		),
 		other,
 		FutureMove{false},
-		weather,
+		environment,
 		false,
 		damage,
 		false
@@ -446,7 +446,7 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 }
 
 TEST_CASE("Pokemon faints after Explosion against a Substitute in later generations", "[call_move]") {
-	auto weather = Weather();
+	auto environment = Environment();
 
 	auto user = Team<generation>({
 		Pokemon<generation>(
@@ -468,7 +468,7 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 			RegularMoves({Move(generation, MoveName::Explosion)})
 		)
 	});
-	user.pokemon().switch_in(weather);
+	user.pokemon().switch_in(environment);
 
 	auto other = Team<generation>({
 		Pokemon<generation>(
@@ -481,10 +481,10 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 			regular_moves(MoveName::Substitute)
 		)
 	});
-	other.pokemon().switch_in(weather);
+	other.pokemon().switch_in(environment);
 
 	{
-		auto const side_effects = possible_side_effects(MoveName::Substitute, other.pokemon().as_const(), other, weather);
+		auto const side_effects = possible_side_effects(MoveName::Substitute, other.pokemon().as_const(), other, environment);
 		CHECK(containers::size(side_effects) == 1_bi);
 		call_move(
 			other,
@@ -494,7 +494,7 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 			),
 			user,
 			FutureMove{false},
-			weather,
+			environment,
 			false,
 			damage,
 			false
@@ -503,7 +503,7 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 		CHECK(other.pokemon().substitute().hp() == other.pokemon().hp().max() / 4_bi);
 	}
 
-	auto const side_effects = possible_side_effects(MoveName::Explosion, user.pokemon().as_const(), other, weather);
+	auto const side_effects = possible_side_effects(MoveName::Explosion, user.pokemon().as_const(), other, environment);
 	CHECK(containers::size(side_effects) == 1_bi);
 	call_move(
 		user,
@@ -513,7 +513,7 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 		),
 		other,
 		FutureMove{false},
-		weather,
+		environment,
 		false,
 		damage,
 		false
@@ -523,7 +523,7 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 }
 
 TEST_CASE("Perish Song", "[call_move]") {
-	auto weather = Weather();
+	auto environment = Environment();
 
 	auto user = Team<generation>({
 		Pokemon<generation>(
@@ -545,7 +545,7 @@ TEST_CASE("Perish Song", "[call_move]") {
 			RegularMoves({Move(generation, MoveName::Explosion)})
 		)
 	});
-	user.pokemon().switch_in(weather);
+	user.pokemon().switch_in(environment);
 
 	auto other = Team<generation>({
 		Pokemon<generation>(
@@ -567,10 +567,10 @@ TEST_CASE("Perish Song", "[call_move]") {
 			RegularMoves({Move(generation, MoveName::Explosion)})
 		)
 	});
-	other.pokemon().switch_in(weather);
+	other.pokemon().switch_in(environment);
 
 	auto call_perish_song = [&] {
-		auto const side_effects = possible_side_effects(MoveName::Perish_Song, user.pokemon().as_const(), other, weather);
+		auto const side_effects = possible_side_effects(MoveName::Perish_Song, user.pokemon().as_const(), other, environment);
 		CHECK(containers::size(side_effects) == 1_bi);
 		call_move(
 			user,
@@ -580,14 +580,14 @@ TEST_CASE("Perish Song", "[call_move]") {
 			),
 			other,
 			FutureMove{false},
-			weather,
+			environment,
 			false,
 			damage,
 			false
 		);
 	};
 	auto call_recover = [&] {
-		auto const side_effects = possible_side_effects(MoveName::Recover, other.pokemon().as_const(), user, weather);
+		auto const side_effects = possible_side_effects(MoveName::Recover, other.pokemon().as_const(), user, environment);
 		CHECK(containers::size(side_effects) == 1_bi);
 		call_move(
 			other,
@@ -597,7 +597,7 @@ TEST_CASE("Perish Song", "[call_move]") {
 			),
 			user,
 			FutureMove{false},
-			weather,
+			environment,
 			false,
 			damage,
 			false

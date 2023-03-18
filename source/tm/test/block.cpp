@@ -23,11 +23,11 @@ import tm.stat.combined_stats;
 import tm.string_conversions.move_name;
 
 import tm.ability;
+import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -56,8 +56,8 @@ TEST_CASE("block with all legal moves", "[block]") {
 			moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
 		)
 	});
-	auto weather = Weather();
-	user.pokemon().switch_in(weather);
+	auto environment = Environment();
+	user.pokemon().switch_in(environment);
 
 	auto other = Team<generation>({
 		Pokemon<generation>(
@@ -70,11 +70,11 @@ TEST_CASE("block with all legal moves", "[block]") {
 			moves(MoveName::Dragon_Dance, MoveName::Waterfall, MoveName::Stone_Edge, MoveName::Taunt)
 		)
 	});
-	other.pokemon().switch_in(weather);
+	other.pokemon().switch_in(environment);
 
 	user.reset_start_of_turn();
 
-	auto const selections = legal_selections(user, other, weather);
+	auto const selections = legal_selections(user, other, environment);
 	CHECK(selections == LegalSelections({MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball}));
 }
 
@@ -86,7 +86,7 @@ auto empty_pp(Move & move) {
 };
 
 TEST_CASE("Two moves with one out of pp", "[block]") {
-	auto weather = Weather();
+	auto environment = Environment();
 
 	auto user_moves = moves(MoveName::Thunder, MoveName::Thunderbolt);
 	empty_pp(containers::front(user_moves));
@@ -101,7 +101,7 @@ TEST_CASE("Two moves with one out of pp", "[block]") {
 			user_moves
 		)
 	});
-	user.pokemon().switch_in(weather);
+	user.pokemon().switch_in(environment);
 
 	auto other = Team<generation>({
 		Pokemon<generation>(
@@ -114,16 +114,16 @@ TEST_CASE("Two moves with one out of pp", "[block]") {
 			moves(MoveName::Thunder, MoveName::Thunderbolt)
 		)
 	});
-	other.pokemon().switch_in(weather);
+	other.pokemon().switch_in(environment);
 	
 	user.reset_start_of_turn();
 
-	auto const selections = legal_selections(user, other, weather);
+	auto const selections = legal_selections(user, other, environment);
 	CHECK(selections == LegalSelections({MoveName::Thunderbolt}));
 }
 
 TEST_CASE("Two moves with both out of pp", "[block]") {
-	auto weather = Weather();
+	auto environment = Environment();
 
 	auto user_moves = moves(MoveName::Thunder, MoveName::Thunderbolt);
 	for (auto & move : user_moves) {
@@ -140,7 +140,7 @@ TEST_CASE("Two moves with both out of pp", "[block]") {
 			user_moves
 		)
 	});
-	user.pokemon().switch_in(weather);
+	user.pokemon().switch_in(environment);
 
 	auto other = Team<generation>({
 		Pokemon<generation>(
@@ -153,16 +153,16 @@ TEST_CASE("Two moves with both out of pp", "[block]") {
 			moves(MoveName::Thunder, MoveName::Thunderbolt)
 		)
 	});
-	other.pokemon().switch_in(weather);
+	other.pokemon().switch_in(environment);
 	
 	user.reset_start_of_turn();
 
-	auto const selections = legal_selections(user, other, weather);
+	auto const selections = legal_selections(user, other, environment);
 	CHECK(selections == LegalSelections({MoveName::Struggle}));
 }
 
 TEST_CASE("Replace fainted", "[block]") {
-	auto weather = Weather{};
+	auto environment = Environment();
 
 	auto team = Team<generation>({
 		Pokemon<generation>(
@@ -184,7 +184,7 @@ TEST_CASE("Replace fainted", "[block]") {
 			moves(MoveName::Thunderbolt)
 		)
 	});
-	team.pokemon().switch_in(weather);
+	team.pokemon().switch_in(environment);
 	team.reset_start_of_turn();
 
 	auto other = Team<generation>({
@@ -198,14 +198,14 @@ TEST_CASE("Replace fainted", "[block]") {
 			moves(MoveName::Surf)
 		)
 	});
-	other.pokemon().switch_in(weather);
+	other.pokemon().switch_in(environment);
 
 	other.reset_start_of_turn();
 
 	faint(team.pokemon());
 
 	auto const expected = LegalSelections({MoveName::Switch1});
-	auto const selections = legal_selections(team, other, weather);
+	auto const selections = legal_selections(team, other, environment);
 	CHECK(selections == expected);
 }
 

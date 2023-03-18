@@ -31,7 +31,6 @@ import tm.block;
 import tm.contact_ability_effect;
 import tm.generation;
 import tm.visible_hp;
-import tm.weather;
 
 import bounded;
 import containers;

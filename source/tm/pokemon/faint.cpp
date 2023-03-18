@@ -7,7 +7,7 @@ export module tm.pokemon.faint;
 
 import tm.pokemon.any_pokemon;
 
-import tm.weather;
+import tm.environment;
 
 import bounded;
 
@@ -19,7 +19,7 @@ export constexpr auto faint(any_pokemon auto & pokemon) -> void {
 }
 
 export constexpr auto faint(any_mutable_active_pokemon auto const pokemon) -> void {
-	pokemon.set_hp(Weather(), 0_bi);
+	pokemon.set_hp(Environment(), 0_bi);
 }
 
 } // namespace technicalmachine

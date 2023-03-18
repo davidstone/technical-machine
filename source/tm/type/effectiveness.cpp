@@ -20,9 +20,9 @@ import tm.pokemon.grounded;
 
 import tm.type.type;
 
+import tm.environment;
 import tm.generation;
 import tm.rational;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -503,13 +503,13 @@ constexpr auto always_affects_target(Generation const generation, MoveName const
 }
 
 export template<any_active_pokemon TargetPokemon>
-auto affects_target(KnownMove const move, TargetPokemon const target, Weather const weather) -> bool {
+auto affects_target(KnownMove const move, TargetPokemon const target, Environment const environment) -> bool {
 	constexpr auto generation = generation_from<TargetPokemon>;
 	auto const effectiveness = Effectiveness(generation, move.type, target.types());
 	if (!is_damaging(move.name) or always_affects_target(generation, move.name)) {
 		return true;
 	}
-	return !effectiveness.has_no_effect() and (move.type != Type::Ground or grounded(target, weather));
+	return !effectiveness.has_no_effect() and (move.type != Type::Ground or grounded(target, environment));
 }
 
 } // namespace technicalmachine

@@ -29,11 +29,11 @@ import tm.status.status_name;
 
 import tm.ability;
 import tm.contact_ability_effect;
+import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -50,7 +50,7 @@ constexpr auto regular_moves(Generation const generation, auto... moves) {
 
 TEST_CASE("Sleep Talk", "[Sleep]") {
 	constexpr auto generation = Generation::four;
-	auto weather = Weather{};
+	auto environment = Environment();
 	auto attacker = Team<generation>({
 		Pokemon<generation>(
 			Species::Jolteon,
@@ -73,8 +73,8 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 			regular_moves(generation, MoveName::Sleep_Talk, MoveName::Thunderbolt)
 		)
 	});
-	attacker.pokemon().switch_in(weather);
-	attacker.pokemon().set_status(StatusName::sleep, weather);
+	attacker.pokemon().switch_in(environment);
+	attacker.pokemon().set_status(StatusName::sleep, environment);
 
 	auto defender = Team<generation>({
 		Pokemon<generation>(
@@ -98,7 +98,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 			RegularMoves({Move(generation, MoveName::Earthquake)})
 		)
 	});
-	defender.pokemon().switch_in(weather);
+	defender.pokemon().switch_in(environment);
 
 	call_move(
 		attacker,
@@ -112,7 +112,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 		),
 		defender,
 		FutureMove{false},
-		weather,
+		environment,
 		false,
 		damage,
 		false
@@ -123,8 +123,8 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 template<Generation generation>
 struct Sleeper {
 	Sleeper():
-		m_sleeper(make_sleeper_team(m_weather)),
-		m_other(make_other_team(m_weather))
+		m_sleeper(make_sleeper_team(m_environment)),
+		m_other(make_other_team(m_environment))
 	{
 	}
 
@@ -132,7 +132,7 @@ struct Sleeper {
 		auto pokemon = m_sleeper.pokemon();
 		auto const probability_of_awakening = pokemon.status().probability_of_clearing(generation, pokemon.ability());
 		CHECK((probability_of_awakening == 0.0 or probability_of_awakening == 1.0));
-		auto const side_effects = possible_side_effects(executed, pokemon.as_const(), m_other, m_weather);
+		auto const side_effects = possible_side_effects(executed, pokemon.as_const(), m_other, m_environment);
 		auto const & side_effect = containers::front(side_effects);
 		call_move(
 			m_sleeper,
@@ -146,7 +146,7 @@ struct Sleeper {
 			),
 			m_other,
 			FutureMove{false},
-			m_weather,
+			m_environment,
 			probability_of_awakening == 1.0,
 			ActualDamage::Unknown(),
 			false
@@ -165,7 +165,7 @@ struct Sleeper {
 			),
 			m_sleeper,
 			FutureMove{false},
-			m_weather,
+			m_environment,
 			false,
 			ActualDamage::Unknown(),
 			false
@@ -186,7 +186,7 @@ struct Sleeper {
 	}
 
 private:
-	static auto make_team(RegularMoves const moves, Weather & weather) {
+	static auto make_team(RegularMoves const moves, Environment & environment) {
 		auto sleeper = Team<generation>({
 			Pokemon<generation>(
 				Species::Blissey,
@@ -198,17 +198,17 @@ private:
 				moves
 			)
 		});
-		sleeper.pokemon().switch_in(weather);
+		sleeper.pokemon().switch_in(environment);
 		return sleeper;
 	}
-	static auto make_sleeper_team(Weather & weather) -> Team<generation> {
-		return make_team(regular_moves(generation, MoveName::Rest, MoveName::Sleep_Talk, MoveName::Wish), weather);
+	static auto make_sleeper_team(Environment & environment) -> Team<generation> {
+		return make_team(regular_moves(generation, MoveName::Rest, MoveName::Sleep_Talk, MoveName::Wish), environment);
 	}
-	static auto make_other_team(Weather & weather) -> Team<generation> {
-		return make_team(regular_moves(generation, MoveName::Seismic_Toss), weather);
+	static auto make_other_team(Environment & environment) -> Team<generation> {
+		return make_team(regular_moves(generation, MoveName::Seismic_Toss), environment);
 	}
 
-	Weather m_weather;
+	Environment m_environment;
 	Team<generation> m_sleeper;
 	Team<generation> m_other;
 };

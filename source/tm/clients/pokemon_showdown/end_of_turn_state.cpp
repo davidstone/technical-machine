@@ -26,7 +26,7 @@ export struct EndOfTurnState {
 			EndOfTurnFlags flags = EndOfTurnFlags(false, false, false);
 		};
 		tv::optional<Party> first_party;
-		NormalWeather weather = NormalWeather::clear;
+		Weather weather = Weather::clear;
 		Individual first;
 		Individual last;
 	};
@@ -50,7 +50,7 @@ export struct EndOfTurnState {
 		set_expected(party, StatusName::clear);
 	}
 
-	constexpr auto active_weather(NormalWeather const weather) & -> void {
+	constexpr auto active_weather(Weather const weather) & -> void {
 		m_result.weather = weather;
 	}
 

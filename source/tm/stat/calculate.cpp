@@ -28,11 +28,12 @@ import tm.status.status_name;
 import tm.type.type;
 
 import tm.ability;
+import tm.ability_blocks_weather;
 import tm.any_team;
+import tm.environment;
 import tm.generation;
 import tm.item;
 import tm.rational;
-import tm.weather;
 
 import bounded;
 import std_module;
@@ -102,13 +103,13 @@ auto pinch_ability_activates(Type const ability_type, PokemonType const pokemon,
 	return generation_from<PokemonType> >= Generation::five and move_type == ability_type and hp_ratio(pokemon) <= rational(1_bi, 3_bi);
 }
 
-bool boosts_special_attack(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Weather const weather) {
+bool boosts_special_attack(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
 	auto const ability = pokemon.ability();
 	auto pinch_ability = [&](Type const type) {
 		return pinch_ability_activates(type, pokemon, move_type);
 	};
 	switch (ability) {
-		case Ability::Solar_Power: return weather.sun(weather_is_blocked_by_ability(ability, other_ability));
+		case Ability::Solar_Power: return environment.sun() and !ability_blocks_weather(ability, other_ability);
 		case Ability::Blaze: return pinch_ability(Type::Fire);
 		case Ability::Overgrow: return pinch_ability(Type::Grass);
 		case Ability::Swarm: return pinch_ability(Type::Bug);
@@ -117,12 +118,12 @@ bool boosts_special_attack(any_active_pokemon auto const pokemon, Type const mov
 	}
 }
 
-constexpr bool boosts_special_defense(Ability const ability, Ability const other_ability, Weather const weather) {
-	return ability == Ability::Flower_Gift and weather.sun(weather_is_blocked_by_ability(ability, other_ability));
+constexpr bool boosts_special_defense(Ability const ability, Ability const other_ability, Environment const environment) {
+	return ability == Ability::Flower_Gift and environment.sun() and !ability_blocks_weather(ability, other_ability);
 }
 
 template<any_active_pokemon PokemonType>
-auto attack_ability_modifier(PokemonType const pokemon, Type const move_type, Ability const other_ability, Weather const weather) {
+auto attack_ability_modifier(PokemonType const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = [&]() -> bounded::integer<1, 4> {
 		auto const ability = pokemon.ability();
@@ -135,7 +136,7 @@ auto attack_ability_modifier(PokemonType const pokemon, Type const move_type, Ab
 			case Ability::Swarm: return pinch_ability(Type::Bug);
 			case Ability::Torrent: return pinch_ability(Type::Water);
 			case Ability::Flower_Gift: return BOUNDED_CONDITIONAL(
-				weather.sun(weather_is_blocked_by_ability(ability, other_ability)),
+				environment.sun() and !ability_blocks_weather(ability, other_ability),
 				3_bi,
 				denominator
 			);
@@ -169,38 +170,38 @@ auto defense_ability_modifier(any_active_pokemon auto const pokemon) {
 	return rational(numerator, denominator);
 }
 
-auto special_attack_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Weather const weather) {
+auto special_attack_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = BOUNDED_CONDITIONAL(
-		boosts_special_attack(pokemon, move_type, other_ability, weather),
+		boosts_special_attack(pokemon, move_type, other_ability, environment),
 		denominator * 3_bi / 2_bi,
 		denominator
 	);
 	return rational(numerator, denominator);
 }
 
-auto special_defense_ability_modifier(any_active_pokemon auto const pokemon, Ability const other_ability, Weather const weather) {
+auto special_defense_ability_modifier(any_active_pokemon auto const pokemon, Ability const other_ability, Environment const environment) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = BOUNDED_CONDITIONAL(
-		boosts_special_defense(pokemon.ability(), other_ability, weather),
+		boosts_special_defense(pokemon.ability(), other_ability, environment),
 		denominator * 3_bi / 2_bi,
 		denominator
 	);
 	return rational(numerator, denominator);
 }
 
-auto speed_ability_modifier(any_active_pokemon auto const pokemon, Ability const other_ability, Weather const weather) {
+auto speed_ability_modifier(any_active_pokemon auto const pokemon, Ability const other_ability, Environment const environment) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = [&]() -> bounded::integer<1, 4> {
 		auto const ability = pokemon.ability();
 		switch (ability) {
 			case Ability::Chlorophyll: return BOUNDED_CONDITIONAL(
-				weather.sun(weather_is_blocked_by_ability(ability, other_ability)),
+				environment.sun() and !ability_blocks_weather(ability, other_ability),
 				denominator * 2_bi,
 				denominator
 			);
 			case Ability::Swift_Swim: return BOUNDED_CONDITIONAL(
-				weather.rain(weather_is_blocked_by_ability(ability, other_ability)),
+				environment.rain() and !ability_blocks_weather(ability, other_ability),
 				denominator * 2_bi,
 				denominator
 			);
@@ -226,21 +227,21 @@ auto speed_ability_modifier(any_active_pokemon auto const pokemon, Ability const
 }
 
 template<SplitSpecialRegularStat stat>
-auto offensive_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Weather const weather) {
+auto offensive_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
 	if constexpr (stat == SplitSpecialRegularStat::atk) {
-		return attack_ability_modifier(pokemon, move_type, other_ability, weather);
+		return attack_ability_modifier(pokemon, move_type, other_ability, environment);
 	} else {
 		static_assert(stat == SplitSpecialRegularStat::spa);
-		return special_attack_ability_modifier(pokemon, move_type, other_ability, weather);
+		return special_attack_ability_modifier(pokemon, move_type, other_ability, environment);
 	}
 }
 
 template<SplitSpecialRegularStat stat, any_active_pokemon PokemonType>
-auto item_modifier(PokemonType const pokemon, Weather const weather) {
+auto item_modifier(PokemonType const pokemon, Environment const environment) {
 	constexpr auto generation = generation_from<PokemonType>;
 	constexpr auto denominator = 2_bi;
 	auto const species [[maybe_unused]] = pokemon.species();
-	auto const item = pokemon.item(weather);
+	auto const item = pokemon.item(environment);
 	auto const numerator = [&] {
 		if constexpr (stat == SplitSpecialRegularStat::atk) {
 			return [&]() -> bounded::integer<2, 4> {
@@ -345,33 +346,33 @@ auto determine_initial_stat(SplitSpecialRegularStat const name, any_active_pokem
 }
 
 template<SplitSpecialRegularStat stat>
-auto calculate_common_offensive_stat(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Weather const weather, bool const critical_hit) {
+auto calculate_common_offensive_stat(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment, bool const critical_hit) {
 	auto const attack =
 		determine_initial_stat(stat, pokemon) *
 		modifier<BoostableStat(stat)>(pokemon.stages(), critical_hit) *
-		offensive_ability_modifier<stat>(pokemon, move_type, other_ability, weather) *
-		item_modifier<stat>(pokemon, weather);
+		offensive_ability_modifier<stat>(pokemon, move_type, other_ability, environment) *
+		item_modifier<stat>(pokemon, environment);
 
 	return bounded::max(attack, 1_bi);
 }
 
-export auto calculate_attack(any_active_pokemon auto const attacker, Type const move_type, Ability const other_ability, Weather const weather, bool const critical_hit = false) {
+export auto calculate_attack(any_active_pokemon auto const attacker, Type const move_type, Ability const other_ability, Environment const environment, bool const critical_hit = false) {
 	// Cast here because it looks as though the strongest attacker would hold a
 	// Light Ball, but because of the restriction on the attacker being Pikachu,
 	// it is better to use a Power Trick Shuckle with a Choice Band.
 	return bounded::assume_in_range(
-		calculate_common_offensive_stat<SplitSpecialRegularStat::atk>(attacker, move_type, other_ability, weather, critical_hit),
+		calculate_common_offensive_stat<SplitSpecialRegularStat::atk>(attacker, move_type, other_ability, environment, critical_hit),
 		1_bi,
 		7368_bi
 	);
 }
 
 
-export auto calculate_special_attack(any_active_pokemon auto const attacker, Type const move_type, Ability const other_ability, Weather const weather, bool const critical_hit = false) {
+export auto calculate_special_attack(any_active_pokemon auto const attacker, Type const move_type, Ability const other_ability, Environment const environment, bool const critical_hit = false) {
 	// see above comment about Light Ball, except the strongest Special Attack
 	// Pokemon is actually a Choice Specs Deoxys-Attack.
 	return bounded::assume_in_range(
-		calculate_common_offensive_stat<SplitSpecialRegularStat::spa>(attacker, move_type, other_ability, weather, critical_hit),
+		calculate_common_offensive_stat<SplitSpecialRegularStat::spa>(attacker, move_type, other_ability, environment, critical_hit),
 		1_bi,
 		4536_bi
 	);
@@ -388,13 +389,13 @@ constexpr auto is_self_KO(MoveName const move) {
 	}
 }
 
-export auto calculate_defense(any_active_pokemon auto const defender, MoveName const move, Weather const weather, bool const critical_hit = false) {
+export auto calculate_defense(any_active_pokemon auto const defender, MoveName const move, Environment const environment, bool const critical_hit = false) {
 	constexpr auto stat = SplitSpecialRegularStat::def;
 	auto const defense =
 		determine_initial_stat(stat, defender) *
 		modifier<BoostableStat(stat)>(defender.stages(), critical_hit) *
 		defense_ability_modifier(defender) *
-		item_modifier<stat>(defender, weather);
+		item_modifier<stat>(defender, environment);
 
 	// Cast here because it looks as though the strongest defender would hold
 	// Metal Powder, but because of the restriction on the attacker being Ditto,
@@ -408,19 +409,25 @@ export auto calculate_defense(any_active_pokemon auto const defender, MoveName c
 
 
 template<any_active_pokemon PokemonType>
-auto special_defense_sandstorm_boost(PokemonType const defender, Ability const attacker_ability, Weather const weather) {
-	auto const blocks_weather = weather_is_blocked_by_ability(defender.ability(), attacker_ability);
-	return rational(BOUNDED_CONDITIONAL(is_type(defender, Type::Rock) and weather.sand(blocks_weather) and generation_from<PokemonType> >= Generation::four, 3_bi, 2_bi), 2_bi);
+auto special_defense_sandstorm_boost(PokemonType const defender, Ability const attacker_ability, Environment const environment) {
+	auto const is_boosted =
+		generation_from<PokemonType> >= Generation::four and
+		is_type(defender, Type::Rock) and
+		(environment.sand() and !ability_blocks_weather(defender.ability(), attacker_ability));
+	return rational(
+		BOUNDED_CONDITIONAL(is_boosted, 3_bi, 2_bi),
+		2_bi
+	);
 }
 
-export auto calculate_special_defense(any_active_pokemon auto const defender, Ability const attacker_ability, Weather const weather, bool const critical_hit = false) {
+export auto calculate_special_defense(any_active_pokemon auto const defender, Ability const attacker_ability, Environment const environment, bool const critical_hit = false) {
 	constexpr auto stat = SplitSpecialRegularStat::spd;
 	auto const defense =
 		defender.stat(stat) *
 		modifier<BoostableStat(stat)>(defender.stages(), critical_hit) *
-		special_defense_ability_modifier(defender, attacker_ability, weather) *
-		item_modifier<stat>(defender, weather) *
-		special_defense_sandstorm_boost(defender, attacker_ability, weather);
+		special_defense_ability_modifier(defender, attacker_ability, environment) *
+		item_modifier<stat>(defender, environment) *
+		special_defense_sandstorm_boost(defender, attacker_ability, environment);
 
 	// Cast here because it looks as though the strongest defender would hold
 	// Deep Sea Scale, but because of the restriction on the defender being
@@ -436,7 +443,7 @@ export auto calculate_special_defense(any_active_pokemon auto const defender, Ab
 }
 
 export constexpr auto max_speed = 12096_bi;
-export auto calculate_speed(any_team auto const & team, Ability const other_ability, Weather const weather) {
+export auto calculate_speed(any_team auto const & team, Ability const other_ability, Environment const environment) {
 	constexpr auto stat = SplitSpecialRegularStat::spe;
 	auto const & pokemon = team.pokemon();
 	auto const paralysis_divisor = BOUNDED_CONDITIONAL(lowers_speed(pokemon.status(), pokemon.ability()), 4_bi, 1_bi);
@@ -444,8 +451,8 @@ export auto calculate_speed(any_team auto const & team, Ability const other_abil
 	auto const speed =
 		pokemon.stat(stat) *
 		modifier<BoostableStat(stat)>(pokemon.stages()) *
-		speed_ability_modifier(pokemon, other_ability, weather) *
-		item_modifier<stat>(pokemon, weather) /
+		speed_ability_modifier(pokemon, other_ability, environment) *
+		item_modifier<stat>(pokemon, environment) /
 		paralysis_divisor *
 		tailwind_multiplier;
 

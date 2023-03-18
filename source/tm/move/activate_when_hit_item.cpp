@@ -25,11 +25,11 @@ import tm.stat.stat_names;
 import tm.type.effectiveness;
 import tm.type.type;
 
+import tm.environment;
 import tm.generation;
 import tm.heal;
 import tm.item;
 import tm.rational;
-import tm.weather;
 
 import bounded;
 import numeric_traits;
@@ -39,7 +39,7 @@ using namespace bounded::literal;
 
 // Returns whether the attack is weakened by the item
 export template<any_mutable_active_pokemon DefenderPokemon>
-constexpr auto activate_when_hit_item(KnownMove const move, DefenderPokemon const defender, Weather const weather, Effectiveness const effectiveness) -> bool {
+constexpr auto activate_when_hit_item(KnownMove const move, DefenderPokemon const defender, Environment const environment, Effectiveness const effectiveness) -> bool {
 	constexpr auto generation = generation_from<DefenderPokemon>;
 	auto substitute = [&] {
 		return defender.substitute() and substitute_interaction(generation, move.name) != Substitute::bypassed;
@@ -71,7 +71,7 @@ constexpr auto activate_when_hit_item(KnownMove const move, DefenderPokemon cons
 		}
 		return false;
 	};
-	switch (defender.item(weather)) {
+	switch (defender.item(environment)) {
 		case Item::Absorb_Bulb:
 			return stat_boost_move_type(Type::Water, BoostableStat::spa);
 		case Item::Air_Balloon:
@@ -94,7 +94,7 @@ constexpr auto activate_when_hit_item(KnownMove const move, DefenderPokemon cons
 		case Item::Enigma_Berry:
 			if (effectiveness.is_super_effective() and generation >= Generation::four and !substitute()) {
 				defender.remove_item();
-				heal(defender, weather, rational(1_bi, 4_bi));
+				heal(defender, environment, rational(1_bi, 4_bi));
 			}
 			return false;
 		case Item::Haban_Berry:
@@ -150,7 +150,7 @@ constexpr auto activate_when_hit_item(KnownMove const move, DefenderPokemon cons
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(DefenderPokemon) \
-	template auto activate_when_hit_item(KnownMove const move, DefenderPokemon const defender, Weather const weather, Effectiveness const effectiveness) -> bool
+	template auto activate_when_hit_item(KnownMove const move, DefenderPokemon const defender, Environment const environment, Effectiveness const effectiveness) -> bool
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
 	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(AnyMutableActivePokemon<Pokemon<generation>>); \

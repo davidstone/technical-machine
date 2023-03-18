@@ -262,7 +262,7 @@ struct BattleManagerImpl final : BattleManager {
 			));
 			
 			m_battle.handle_use_move(
-				to_used_move(move, user_team, other_team, m_battle.weather()),
+				to_used_move(move, user_team, other_team, m_battle.environment()),
 				status_clears,
 				move_result.index() == bounded::type<FullyParalyzed>,
 				damage
@@ -296,15 +296,15 @@ struct BattleManagerImpl final : BattleManager {
 		auto const start = std::chrono::steady_clock::now();
 
 		auto const ai = Team<generation_>(m_battle.ai());
-		auto const predicted_selections = legal_selections(predicted, ai, m_battle.weather());
-		auto const ai_selections = legal_selections(ai, predicted, m_battle.weather());
+		auto const predicted_selections = legal_selections(predicted, ai, m_battle.environment());
+		auto const ai_selections = legal_selections(ai, predicted, m_battle.environment());
 
 		auto foe_moves = predict_action(
 			predicted,
 			predicted_selections,
 			ai,
 			ai_selections,
-			m_battle.weather(),
+			m_battle.environment(),
 			m_evaluate
 		);
 		containers::sort(foe_moves, [](MoveProbability const lhs, MoveProbability const rhs) {
@@ -317,7 +317,7 @@ struct BattleManagerImpl final : BattleManager {
 			ai_selections,
 			predicted,
 			predicted_selections,
-			m_battle.weather(),
+			m_battle.environment(),
 			m_evaluate,
 			m_depth,
 			foe_moves
@@ -357,8 +357,8 @@ struct BattleManagerImpl final : BattleManager {
 		m_battle.correct_status(is_ai, status);
 	}
 
-	auto weather_is(NormalWeather const weather) const -> void final {
-		check_weathers_match(weather, m_battle.weather());
+	auto weather_is(Weather const weather) const -> void final {
+		check_weathers_match(weather, m_battle.environment());
 	}
 
 private:

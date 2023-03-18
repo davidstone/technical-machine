@@ -27,11 +27,11 @@ import tm.status.status;
 import tm.ability;
 import tm.ability_blocks_switching;
 import tm.any_team;
+import tm.environment;
 import tm.generation;
 import tm.item;
 import tm.switch_decision_required;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -45,17 +45,17 @@ constexpr auto would_switch_to_same_pokemon(PokemonCollection<PokemonType> const
 }
 
 template<any_active_pokemon ActivePokemonType>
-constexpr auto is_blocked_from_switching(ActivePokemonType const user, ActivePokemonType const other, Weather const weather) {
-	auto const block_attempted = ability_blocks_switching(other.ability(), user, weather) or user.trapped();
-	auto const result = block_attempted and !allows_switching(user.item(weather));
+constexpr auto is_blocked_from_switching(ActivePokemonType const user, ActivePokemonType const other, Environment const environment) {
+	auto const block_attempted = ability_blocks_switching(other.ability(), user, environment) or user.trapped();
+	auto const result = block_attempted and !allows_switching(user.item(environment));
 	return result;
 }
 
 template<Generation generation>
-constexpr auto is_illegal_switch(Team<generation> const & user, MoveName const move, ActivePokemon<generation> const other, Weather const weather) {
+constexpr auto is_illegal_switch(Team<generation> const & user, MoveName const move, ActivePokemon<generation> const other, Environment const environment) {
 	return is_switch(move) and (
 		would_switch_to_same_pokemon(user.all_pokemon(), move) or
-		is_blocked_from_switching(user.pokemon(), other, weather)
+		is_blocked_from_switching(user.pokemon(), other, environment)
 	);
 }
 
@@ -114,10 +114,10 @@ constexpr auto is_blocked_by_gravity(MoveName const move) {
 }
 
 // Things that both block selection and block execution after flinching
-constexpr auto block2(any_active_pokemon auto const user, MoveName const move, Weather const weather) {
+constexpr auto block2(any_active_pokemon auto const user, MoveName const move, Environment const environment) {
 	return !is_switch(move) and (
 		(user.is_taunted() and is_blocked_by_taunt(move)) or
-		(weather.gravity() and is_blocked_by_gravity(move))
+		(environment.gravity() and is_blocked_by_gravity(move))
 	);
 }
 
@@ -125,26 +125,26 @@ constexpr auto blocked_by_torment(any_active_pokemon auto const user, MoveName c
 	return user.is_tormented() and user.last_used_move().name() == move and not is_switch(move) and move != MoveName::Struggle;
 }
 
-constexpr auto is_locked_in(any_active_pokemon auto const user, Weather const weather) {
-	return user.is_encored() or user.last_used_move().is_locked_in_by_move() or is_choice_item(user.item(weather));
+constexpr auto is_locked_in(any_active_pokemon auto const user, Environment const environment) {
+	return user.is_encored() or user.last_used_move().is_locked_in_by_move() or is_choice_item(user.item(environment));
 }
 
-constexpr auto is_locked_in_to_different_move(any_active_pokemon auto const user, MoveName const move, Weather const weather) {
-	if (not is_locked_in(user, weather)) {
+constexpr auto is_locked_in_to_different_move(any_active_pokemon auto const user, MoveName const move, Environment const environment) {
+	if (not is_locked_in(user, environment)) {
 		return false;
 	}
 	auto const last_move = user.last_used_move().name();
 	return not is_switch(last_move) and last_move != move;
 }
 
-constexpr auto is_blocked_due_to_lock_in(any_active_pokemon auto const user, MoveName const move, Weather const weather) {
+constexpr auto is_blocked_due_to_lock_in(any_active_pokemon auto const user, MoveName const move, Environment const environment) {
 	return !is_regular(move) ?
 		user.last_used_move().is_locked_in_by_move() :
-		is_locked_in_to_different_move(user, move, weather);
+		is_locked_in_to_different_move(user, move, environment);
 }
 
 template<any_team TeamType>
-constexpr auto is_legal_selection(TeamType const & user, Move const move, TeamType const & other, Weather const weather, bool const found_selectable_move) {
+constexpr auto is_legal_selection(TeamType const & user, Move const move, TeamType const & other, Environment const environment, bool const found_selectable_move) {
 	BOUNDED_ASSERT(move != MoveName::Hit_Self);
 	if (switch_decision_required(user)) {
 		return is_switch(move.name()) and !would_switch_to_same_pokemon(user.all_pokemon(), move.name());
@@ -163,19 +163,19 @@ constexpr auto is_legal_selection(TeamType const & user, Move const move, TeamTy
 	auto const other_pokemon = other.pokemon();
 	return
 		!is_pass and
-		!is_blocked_due_to_lock_in(user_pokemon, move.name(), weather) and
-		!is_illegal_switch(user, move.name(), other_pokemon, weather) and
+		!is_blocked_due_to_lock_in(user_pokemon, move.name(), environment) and
+		!is_illegal_switch(user, move.name(), other_pokemon, environment) and
 		!block1(user_pokemon, move, other_pokemon) and
-		!block2(user_pokemon, move.name(), weather) and
+		!block2(user_pokemon, move.name(), environment) and
 		!blocked_by_torment(user_pokemon, move.name());
 }
 
 export template<any_team TeamType>
-constexpr auto legal_selections(TeamType const & user, TeamType const & other, Weather const weather) -> LegalSelections {
+constexpr auto legal_selections(TeamType const & user, TeamType const & other, Environment const environment) -> LegalSelections {
 	auto result = LegalSelections();
 	for (auto const move : all_moves(user.pokemon(), user.size())) {
 		bool const found_selectable_move = !containers::is_empty(result);
-		if (is_legal_selection(user, move, other, weather, found_selectable_move)) {
+		if (is_legal_selection(user, move, other, environment, found_selectable_move)) {
 			containers::push_back(result, move.name());
 		}
 	}
@@ -222,13 +222,13 @@ export constexpr auto can_attempt_move_execution(any_active_pokemon auto const u
 	return true;
 }
 
-export constexpr auto can_execute_move(any_active_pokemon auto const user, Move const move, Weather const weather, bool const is_recharging, bool const is_fully_paralyzed) -> bool {
+export constexpr auto can_execute_move(any_active_pokemon auto const user, Move const move, Environment const environment, bool const is_recharging, bool const is_fully_paralyzed) -> bool {
 	auto const switching = is_switch(move.name());
 	if (switching or move.name() == MoveName::Hit_Self) {
 		BOUNDED_ASSERT(!is_recharging or (switching and user.hp().current() == 0_bi));
 		return true;
 	}
-	return !user.flinched() and !block2(user, move.name(), weather) and !is_fully_paralyzed and !is_recharging;
+	return !user.flinched() and !block2(user, move.name(), environment) and !is_fully_paralyzed and !is_recharging;
 }
 
 } // namespace technicalmachine

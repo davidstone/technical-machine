@@ -21,11 +21,11 @@ import tm.pokemon.species;
 import tm.stat.combined_stats;
 
 import tm.ability;
+import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -70,17 +70,17 @@ void validate(Team<generation> const & team, EffectIndex const effect_index, Tea
 }
 
 auto test_phaze(Team<generation> user, Team<generation> team) {
-	auto weather = Weather();
+	auto environment = Environment();
 	for (auto const current_index : containers::integer_range(team.size())) {
 		team.all_pokemon().set_index(current_index);
-		auto const side_effects = possible_side_effects(MoveName::Whirlwind, user.pokemon().as_const(), team, weather);
+		auto const side_effects = possible_side_effects(MoveName::Whirlwind, user.pokemon().as_const(), team, environment);
 		auto const expected_size = bounded::increase_min<0>(team.size() - 1_bi);
 		CHECK(containers::size(side_effects) == expected_size);
 		for (auto const effect_index : containers::integer_range(expected_size)) {
 			auto const & side_effect = side_effects[effect_index];
 			CHECK(side_effect.probability == 1.0 / double(team.size() - 1_bi));
 			team.all_pokemon().set_index(current_index);
-			side_effect.function(user, team, weather, 0_bi);
+			side_effect.function(user, team, environment, 0_bi);
 			validate(team, EffectIndex(effect_index), current_index);
 		}
 	}

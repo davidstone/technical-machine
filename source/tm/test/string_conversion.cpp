@@ -85,7 +85,7 @@ TEST_CASE("type", "[string_conversion]") {
 	test_generic<Type>();
 }
 TEST_CASE("weather", "[string_conversion]") {
-	test_generic<NormalWeather>();
+	test_generic<Weather>();
 }
 
 TEST_CASE("pokemon", "[string_conversion]") {

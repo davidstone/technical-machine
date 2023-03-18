@@ -7,9 +7,9 @@ export module tm.evaluate.compressed_battle;
 
 import tm.any_team;
 import tm.compress;
+import tm.environment;
 import tm.generation;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import tv;
@@ -19,7 +19,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 export template<any_team TeamType>
-constexpr auto compress_battle(TeamType const & ai, TeamType const & foe, Weather const weather) {
+constexpr auto compress_battle(TeamType const & ai, TeamType const & foe, Environment const environment) {
 	auto const compressed_ai = compress(ai);
 	auto const compressed_foe = compress(foe);
 	if constexpr (generation_from<TeamType> == Generation::one) {
@@ -30,7 +30,7 @@ constexpr auto compress_battle(TeamType const & ai, TeamType const & foe, Weathe
 			compressed_ai[1_bi],
 			compress_combine(
 				compressed_ai[2_bi],
-				weather
+				environment
 			),
 			compressed_foe[0_bi],
 			compressed_foe[1_bi],
@@ -44,7 +44,7 @@ constexpr auto compress_battle(TeamType const & ai, TeamType const & foe, Weathe
 			compressed_ai[1_bi],
 			compress_combine(
 				compressed_ai[2_bi],
-				weather
+				environment
 			),
 			compressed_ai[3_bi],
 			compressed_foe[0_bi],
@@ -56,6 +56,6 @@ constexpr auto compress_battle(TeamType const & ai, TeamType const & foe, Weathe
 }
 
 export template<Generation generation>
-using CompressedBattle = decltype(compress_battle(bounded::declval<Team<generation>>(), bounded::declval<Team<generation>>(), bounded::declval<Weather>()));
+using CompressedBattle = decltype(compress_battle(bounded::declval<Team<generation>>(), bounded::declval<Team<generation>>(), bounded::declval<Environment>()));
 
 } // namespace technicalmachine

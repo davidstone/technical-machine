@@ -20,10 +20,10 @@ import tm.ps_usage_stats.header;
 import tm.stat.calculate;
 
 import tm.ability;
+import tm.environment;
 import tm.generation;
 import tm.item;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -51,7 +51,7 @@ export struct UsageStats {
 				for (auto const move : pokemon.regular_moves()) {
 					per_species.moves[bounded::integer(move.name())] += weight;
 				}
-				auto const calculated_speed = calculate_speed(TeamType({pokemon}), Ability::Honey_Gather, Weather());
+				auto const calculated_speed = calculate_speed(TeamType({pokemon}), Ability::Honey_Gather, Environment());
 				containers::at(per_species.speed, calculated_speed) += weight;
 			}
 		});
@@ -189,7 +189,7 @@ auto populate_correlations(MoveData & data, TeamType const & team, auto const & 
 	populate_move_correlations(data.moves, pokemon.regular_moves(), move_name, weight);
 	data.items[bounded::integer(pokemon.item(false, false))] += weight;
 	data.abilities[bounded::integer(pokemon.initial_ability())] += weight;
-	auto const calculated_speed = calculate_speed(TeamType({pokemon}), Ability::Honey_Gather, Weather());
+	auto const calculated_speed = calculate_speed(TeamType({pokemon}), Ability::Honey_Gather, Environment());
 	containers::at(data.speed, calculated_speed) += weight;
 }
 

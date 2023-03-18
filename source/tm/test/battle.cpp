@@ -79,7 +79,7 @@ TEST_CASE("Perish Song", "[battle]") {
 		MoveName::Recover,
 		battle.foe().pokemon(),
 		battle.ai(),
-		battle.weather()
+		battle.environment()
 	);
 	CHECK(containers::size(recover_side_effects) == 1_bi);
 
@@ -99,7 +99,7 @@ TEST_CASE("Perish Song", "[battle]") {
 		MoveName::Perish_Song,
 		battle.ai().pokemon(),
 		battle.foe(),
-		battle.weather()
+		battle.environment()
 	);
 	CHECK(containers::size(perish_song_side_effects) == 1_bi);
 

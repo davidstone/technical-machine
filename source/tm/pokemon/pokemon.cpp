@@ -40,7 +40,6 @@ import tm.generation;
 import tm.held_item;
 import tm.item;
 import tm.rational;
-import tm.weather;
 
 import bounded;
 import containers;

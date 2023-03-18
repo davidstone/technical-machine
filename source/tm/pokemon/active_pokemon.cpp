@@ -66,6 +66,7 @@ import tm.type.type;
 
 import tm.ability;
 import tm.compress;
+import tm.environment;
 import tm.exists_if;
 import tm.gender;
 import tm.generation;
@@ -73,7 +74,6 @@ import tm.heal;
 import tm.held_item;
 import tm.item;
 import tm.rational;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -377,8 +377,8 @@ public:
 		return m_flags.ingrained;
 	}
 
-	constexpr auto item(Weather const weather) const -> Item {
-		return m_pokemon.item(m_flags.embargo.is_active(), weather.magic_room());
+	constexpr auto item(Environment const environment) const -> Item {
+		return m_pokemon.item(m_flags.embargo.is_active(), environment.magic_room());
 	}
 	constexpr auto unrestricted_item() const -> Item {
 		return m_pokemon.item(false, false);
@@ -469,8 +469,8 @@ protected:
 	FlagsRef m_flags;
 };
 
-constexpr auto apply_own_mental_herb(any_mutable_active_pokemon auto const pokemon, Weather const weather) -> void {
-	if (pokemon.item(weather) == Item::Mental_Herb) {
+constexpr auto apply_own_mental_herb(any_mutable_active_pokemon auto const pokemon, Environment const environment) -> void {
+	if (pokemon.item(environment) == Item::Mental_Herb) {
 		pokemon.apply_mental_herb();
 		pokemon.remove_item();
 	}
@@ -486,11 +486,11 @@ struct AnyActivePokemon : ActivePokemonImpl<PokemonType const> {
 };
 
 
-constexpr auto activate_berserk_gene(any_mutable_active_pokemon auto pokemon, Weather const weather) -> void {
+constexpr auto activate_berserk_gene(any_mutable_active_pokemon auto pokemon, Environment const environment) -> void {
 	pokemon.stages()[BoostableStat::atk] += 2_bi;
 	// TODO: Berserk Gene causes 256-turn confusion, unless the Pokemon
 	// switching out was confused.
-	pokemon.confuse(weather);
+	pokemon.confuse(environment);
 	pokemon.remove_item();
 }
 
@@ -498,11 +498,11 @@ constexpr bool cannot_ko(MoveName const move) {
 	return move == MoveName::False_Swipe;
 }
 
-constexpr auto yawn_can_apply(any_active_pokemon auto const target, Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) {
+constexpr auto yawn_can_apply(any_active_pokemon auto const target, Environment const environment, bool const either_is_uproaring, bool const sleep_clause_activates) {
 	return
 		!sleep_clause_activates and
 		!either_is_uproaring and
-		indirect_status_can_apply(StatusName::sleep, target, weather);
+		indirect_status_can_apply(StatusName::sleep, target, environment);
 }
 
 // A mutable reference to the currently active Pokemon
@@ -523,8 +523,8 @@ public:
 	constexpr auto add_move(Move const move) const -> void requires any_seen_pokemon<PokemonType> or any_known_pokemon<PokemonType> {
 		return this->m_pokemon.add_move(move);
 	}
-	constexpr auto reduce_pp(MoveName const move_name, Weather const weather, bounded::bounded_integer auto const amount) const -> void {
-		this->m_pokemon.reduce_pp(move_name, this->m_flags.embargo.is_active(), weather.magic_room(), amount);
+	constexpr auto reduce_pp(MoveName const move_name, Environment const environment, bounded::bounded_integer auto const amount) const -> void {
+		this->m_pokemon.reduce_pp(move_name, this->m_flags.embargo.is_active(), environment.magic_room(), amount);
 	}
 
 	constexpr auto stages() const -> Stages & {
@@ -550,15 +550,15 @@ public:
 	constexpr auto activate_aqua_ring() const {
 		this->m_flags.aqua_ring = true;
 	}
-	constexpr auto attract(AnyMutableActivePokemon<OtherPokemon<PokemonType>> other, Weather const weather) const -> void {
+	constexpr auto attract(AnyMutableActivePokemon<OtherPokemon<PokemonType>> other, Environment const environment) const -> void {
 		auto handle_item = [&] {
-			switch (this->item(weather)) {
+			switch (this->item(environment)) {
 				case Item::Mental_Herb:
-					apply_own_mental_herb(*this, weather);
+					apply_own_mental_herb(*this, environment);
 					break;
 				case Item::Destiny_Knot:
 					remove_item();
-					other.attract(*this, weather);
+					other.attract(*this, environment);
 					break;
 				default:
 					break;
@@ -585,11 +585,11 @@ public:
 	constexpr auto use_charge_up_move() const -> void {
 		this->m_flags.last_used_move.use_charge_up_move();
 	}
-	constexpr auto confuse(Weather const weather) const -> void {
+	constexpr auto confuse(Environment const environment) const -> void {
 		if (blocks_confusion(this->ability())) {
 			return;
 		}
-		if (clears_confusion(this->item(weather))) {
+		if (clears_confusion(this->item(environment))) {
 			remove_item();
 		} else {
 			this->m_flags.confusion.activate();
@@ -604,9 +604,9 @@ public:
 	constexpr auto defense_curl() const {
 		this->m_flags.defense_curled = true;
 	}
-	constexpr auto disable(MoveName const move, Weather const weather) const {
+	constexpr auto disable(MoveName const move, Environment const environment) const {
 		if (this->m_flags.disable.activate(move)) {
-			apply_own_mental_herb(*this, weather);
+			apply_own_mental_herb(*this, environment);
 		}
 	}
 	constexpr auto advance_disable() const {
@@ -618,9 +618,9 @@ public:
 	constexpr auto advance_embargo() const {
 		this->m_flags.embargo.advance_one_turn();
 	}
-	constexpr auto activate_encore(Weather const weather) const {
+	constexpr auto activate_encore(Environment const environment) const {
 		this->m_flags.encore.activate();
-		apply_own_mental_herb(*this, weather);
+		apply_own_mental_herb(*this, environment);
 	}
 	constexpr auto advance_encore() const {
 		this->m_flags.encore.advance_one_turn();
@@ -693,10 +693,10 @@ public:
 	constexpr auto hit_with_leech_seed() const {
 		this->m_flags.leech_seeded = true;
 	}
-	constexpr auto advance_lock_in(bool const ending, Weather const weather) const {
+	constexpr auto advance_lock_in(bool const ending, Environment const environment) const {
 		auto const confused = this->m_flags.last_used_move.advance_lock_in(ending);
 		if (confused) {
-			confuse(weather);
+			confuse(environment);
 		}
 	}
 	constexpr auto activate_magnet_rise() const {
@@ -729,8 +729,8 @@ public:
 	constexpr auto partially_trap() const {
 		this->m_flags.partial_trap.activate();
 	}
-	constexpr auto partial_trap_damage(Weather const weather) const {
-		this->m_flags.partial_trap.damage(*this, weather);
+	constexpr auto partial_trap_damage(Environment const environment) const {
+		this->m_flags.partial_trap.damage(*this, environment);
 	}
 	constexpr auto activate_perish_song() const {
 		this->m_flags.perish_song.activate();
@@ -765,20 +765,20 @@ public:
 		this->m_flags.last_used_move.use_recharge_move();
 	}
 
-	constexpr auto set_status(StatusName const status_name, Weather const weather) const -> void {
+	constexpr auto set_status(StatusName const status_name, Environment const environment) const -> void {
 		BOUNDED_ASSERT_OR_ASSUME(status_name != StatusName::clear);
 		BOUNDED_ASSERT_OR_ASSUME(status_name != StatusName::rest);
-		set_status_impl(status_name, weather);
+		set_status_impl(status_name, environment);
 	}
 
-	constexpr auto rest(Weather const weather, bool const other_is_uproaring) const -> void {
+	constexpr auto rest(Environment const environment, bool const other_is_uproaring) const -> void {
 		if (other_is_uproaring) {
 			return;
 		}
 		if (generation >= Generation::three and is_sleeping(this->m_pokemon.status())) {
 			return;
 		}
-		if (blocks_status(this->ability(), this->ability(), StatusName::rest, weather)) {
+		if (blocks_status(this->ability(), this->ability(), StatusName::rest, environment)) {
 			return;
 		}
 		auto const active_hp = this->hp();
@@ -786,11 +786,11 @@ public:
 			return;
 		}
 		this->m_pokemon.set_hp(active_hp.max());
-		set_status_impl(StatusName::rest, weather);
+		set_status_impl(StatusName::rest, environment);
 	}
 
-	constexpr auto status_and_leech_seed_effects(AnyMutableActivePokemon<OtherPokemon<PokemonType>> const other, Weather const weather, bool const uproar = false) const {
-		this->m_flags.status.status_and_leech_seed_effects(*this, other, weather, uproar);
+	constexpr auto status_and_leech_seed_effects(AnyMutableActivePokemon<OtherPokemon<PokemonType>> const other, Environment const environment, bool const uproar = false) const {
+		this->m_flags.status.status_and_leech_seed_effects(*this, other, environment, uproar);
 	}
 	constexpr auto clear_status() const -> void {
 		this->m_pokemon.set_status(StatusName::clear);
@@ -813,15 +813,15 @@ public:
 		return stockpiled_stages;
 	}
 
-	constexpr auto use_substitute(Weather const weather) const -> void {
+	constexpr auto use_substitute(Environment const environment) const -> void {
 		auto const can_use_substitute = this->hp().current() > this->hp().max() / 4_bi;
 		if (!can_use_substitute) {
 			return;
 		}
-		indirect_damage(weather, this->m_flags.substitute.create(this->hp().max()));
+		indirect_damage(environment, this->m_flags.substitute.create(this->hp().max()));
 	}
 
-	constexpr auto switch_in(Weather const weather) const {
+	constexpr auto switch_in(Environment const environment) const {
 		this->m_pokemon.mark_as_seen();
 		this->m_flags.ability = this->m_pokemon.initial_ability();
 
@@ -832,8 +832,8 @@ public:
 			this->m_pokemon.set_status(StatusName::poison);
 		}
 		this->m_flags.status.set(this->m_pokemon.status().name());
-		if (this->item(weather) == Item::Berserk_Gene) {
-			activate_berserk_gene(*this, weather);
+		if (this->item(environment) == Item::Berserk_Gene) {
+			activate_berserk_gene(*this, environment);
 		}
 	}
 
@@ -889,16 +889,16 @@ public:
 	}
 
 
-	constexpr auto taunt(Weather const weather) const {
+	constexpr auto taunt(Environment const environment) const {
 		this->m_flags.taunt.activate();
-		apply_own_mental_herb(*this, weather);
+		apply_own_mental_herb(*this, environment);
 	}
 	constexpr auto advance_taunt() const {
 		this->m_flags.taunt.advance_one_turn();
 	}
-	constexpr auto torment(Weather const weather) const {
+	constexpr auto torment(Environment const environment) const {
 		this->m_flags.is_tormented = true;
-		apply_own_mental_herb(*this, weather);
+		apply_own_mental_herb(*this, environment);
 	}
 	constexpr auto set_type(Type const type) const {
 		this->m_flags.types = PokemonTypes(type);
@@ -912,7 +912,7 @@ public:
 	constexpr auto hit_with_yawn() const {
 		this->m_flags.yawn.activate();
 	}
-	constexpr auto try_to_activate_yawn(Weather const weather, bool const either_is_uproaring, bool const sleep_clause_activates) const -> void {
+	constexpr auto try_to_activate_yawn(Environment const environment, bool const either_is_uproaring, bool const sleep_clause_activates) const -> void {
 		auto is_active = [&] {
 			return this->m_flags.yawn.is_active();
 		};
@@ -925,14 +925,14 @@ public:
 		if (is_active()) {
 			return;
 		}
-		if (yawn_can_apply(as_const(), weather, either_is_uproaring, sleep_clause_activates)) {
-			set_status(StatusName::sleep, weather);
+		if (yawn_can_apply(as_const(), environment, either_is_uproaring, sleep_clause_activates)) {
+			set_status(StatusName::sleep, environment);
 		}
 	}
 
 	// Returns whether the move hits
-	constexpr auto use_vanish_move(Weather const weather) const -> bool {
-		auto result = this->m_flags.last_used_move.use_vanish_move(this->item(weather));
+	constexpr auto use_vanish_move(Environment const environment) const -> bool {
+		auto result = this->m_flags.last_used_move.use_vanish_move(this->item(environment));
 		switch (result) {
 			case VanishOutcome::vanishes: return false;
 			case VanishOutcome::attacks: return true;
@@ -940,36 +940,36 @@ public:
 		}
 	}
 
-	constexpr auto use_bide(AnyMutableActivePokemon<OtherPokemon<PokemonType>> target, Weather const weather) const -> void {
+	constexpr auto use_bide(AnyMutableActivePokemon<OtherPokemon<PokemonType>> target, Environment const environment) const -> void {
 		if (auto const damage = this->m_flags.last_used_move.use_bide()) {
-			change_hp(target, weather, -*damage * 2_bi);
+			change_hp(target, environment, -*damage * 2_bi);
 		}
 	}
 
-	constexpr auto set_hp(Weather const weather, auto const new_hp) const -> void {
+	constexpr auto set_hp(Environment const environment, auto const new_hp) const -> void {
 		this->m_pokemon.set_hp(new_hp);
 		if (new_hp != 0_bi) {
-			activate_pinch_item(weather);
+			activate_pinch_item(environment);
 		}
 	}
-	constexpr auto indirect_damage(Weather const weather, auto const damage) const -> void {
-		change_hp(*this, weather, -damage);
+	constexpr auto indirect_damage(Environment const environment, auto const damage) const -> void {
+		change_hp(*this, environment, -damage);
 		this->m_flags.damaged = true;
 	}
 
-	constexpr auto direct_damage(MoveName const move, any_mutable_active_pokemon auto user, Weather const weather, damage_type const damage) const -> CurrentHP {
+	constexpr auto direct_damage(MoveName const move, any_mutable_active_pokemon auto user, Environment const environment, damage_type const damage) const -> CurrentHP {
 		auto const interaction = substitute_interaction(generation, move);
 		BOUNDED_ASSERT(!this->m_flags.substitute or interaction != Substitute::causes_failure);
 		if (this->m_flags.substitute and interaction == Substitute::absorbs) {
 			return this->m_flags.substitute.damage(damage);
 		}
 		auto const original_hp = this->hp().current();
-		auto const block_ko = original_hp <= damage and handle_ko(move, weather);
+		auto const block_ko = original_hp <= damage and handle_ko(move, environment);
 		auto const applied_damage = block_ko ?
 			bounded::assume_in_range<CurrentHP>(original_hp - 1_bi) :
 			bounded::min(damage, original_hp);
 
-		indirect_damage(weather, applied_damage);
+		indirect_damage(environment, applied_damage);
 		this->m_flags.direct_damage_received = applied_damage;
 		this->m_flags.last_used_move.direct_damage(applied_damage);
 
@@ -988,7 +988,7 @@ public:
 	}
 
 private:
-	constexpr auto handle_ko(MoveName const move, Weather const weather) const {
+	constexpr auto handle_ko(MoveName const move, Environment const environment) const {
 		if (cannot_ko(move) or this->last_used_move().is_enduring()) {
 			return true;
 		}
@@ -999,14 +999,14 @@ private:
 		if (generation >= Generation::five and this->ability() == Ability::Sturdy) {
 			return true;
 		}
-		if (this->item(weather) == Item::Focus_Sash) {
+		if (this->item(environment) == Item::Focus_Sash) {
 			remove_item();
 			return true;
 		}
 		return false;
 	}
 
-	constexpr auto activate_pinch_item(Weather const weather) const -> void {
+	constexpr auto activate_pinch_item(Environment const environment) const -> void {
 		// TODO: Confusion damage does not activate healing berries in Generation 5+
 		auto consume = [&] { remove_item(); };
 
@@ -1030,7 +1030,7 @@ private:
 			auto const threshold = generation <= Generation::six ? rational(1_bi, 2_bi) : quarter_threshold();
 			auto const activated = healing_berry(threshold, amount);
 			if (activated and lowers_stat(this->m_pokemon.nature(), stat)) {
-				confuse(weather);
+				confuse(environment);
 			}
 		};
 
@@ -1042,7 +1042,7 @@ private:
 			stages()[stat] += 1_bi;
 		};
 
-		switch (this->item(weather)) {
+		switch (this->item(environment)) {
 			case Item::Aguav_Berry:
 				confusion_berry(SplitSpecialRegularStat::spd);
 				break;
@@ -1107,12 +1107,12 @@ private:
 		}
 	}
 
-	constexpr auto set_status_impl(StatusName const status_name, Weather const weather) const -> void {
+	constexpr auto set_status_impl(StatusName const status_name, Environment const environment) const -> void {
 		auto unconditional_set_status = [&](StatusName const unconditional_status) {
 			this->m_pokemon.set_status(unconditional_status);
 			this->m_flags.status.set(unconditional_status);
 		};
-		if (clears_status(this->item(weather), status_name)) {
+		if (clears_status(this->item(environment), status_name)) {
 			unconditional_set_status(StatusName::clear);
 			remove_item();
 		} else {
@@ -1141,8 +1141,8 @@ export constexpr auto apply_white_herb(any_mutable_active_pokemon auto const pok
 	}
 }
 
-constexpr auto apply_own_white_herb(any_mutable_active_pokemon auto const pokemon, Weather const weather) {
-	if (pokemon.item(weather) == Item::White_Herb) {
+constexpr auto apply_own_white_herb(any_mutable_active_pokemon auto const pokemon, Environment const environment) {
+	if (pokemon.item(environment) == Item::White_Herb) {
 		apply_white_herb(pokemon);
 		pokemon.remove_item();
 	}

@@ -580,7 +580,7 @@ export struct BattleParser final : BattleInterface {
 				return move_response(m_battle_manager->determine_action());
 			}
 		} else if (type == "-weather") {
-			auto const weather = from_string<NormalWeather>(message.pop());
+			auto const weather = from_string<Weather>(message.pop());
 			m_end_of_turn_state.active_weather(weather);
 			[[maybe_unused]] auto const from_or_upkeep_or_nothing = message.pop(' ');
 			auto const category = message.pop(": "sv);

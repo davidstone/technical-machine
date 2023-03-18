@@ -17,11 +17,11 @@ import tm.pokemon.species;
 import tm.stat.combined_stats;
 
 import tm.ability;
+import tm.environment;
 import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.team;
-import tm.weather;
 
 import bounded;
 
@@ -42,14 +42,14 @@ static_assert([] {
 		RegularMoves({Move(generation, MoveName::Tackle)})
 	);
 
-	auto weather = Weather();
+	auto environment = Environment();
 
 	auto team1 = Team<generation>({pokemon});
-	team1.pokemon().switch_in(weather);
+	team1.pokemon().switch_in(environment);
 
 	auto team2 = Team<generation>({pokemon});
-	team2.pokemon().switch_in(weather);
-	change_hp(team1.pokemon(), weather, -50_bi);
+	team2.pokemon().switch_in(environment);
+	change_hp(team1.pokemon(), environment, -50_bi);
 
 	constexpr auto evaluate = Evaluate<generation>({.hp = 1000_bi});
 	return evaluate(team1, team2) < 0_bi;

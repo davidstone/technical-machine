@@ -9,9 +9,9 @@ import tm.pokemon.any_pokemon;
 import tm.pokemon.end_of_turn_counter;
 
 import tm.compress;
+import tm.environment;
 import tm.heal;
 import tm.rational;
-import tm.weather;
 
 import bounded;
 
@@ -27,9 +27,9 @@ export struct PartialTrap {
 	constexpr auto activate() {
 		m_base.activate();
 	}
-	constexpr auto damage(any_mutable_active_pokemon auto const pokemon, Weather const weather) -> void {
+	constexpr auto damage(any_mutable_active_pokemon auto const pokemon, Environment const environment) -> void {
 		if (is_active()) {
-			heal(pokemon, weather, rational(-1_bi, 16_bi));
+			heal(pokemon, environment, rational(-1_bi, 16_bi));
 			m_base.advance_one_turn();
 		}
 	}

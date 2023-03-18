@@ -23,11 +23,11 @@ import tm.stat.calculate;
 import tm.stat.stage;
 
 import tm.any_team;
+import tm.environment;
 import tm.generation;
 import tm.held_item;
 import tm.item;
 import tm.team;
-import tm.weather;
 
 import bounded;
 import containers;
@@ -1090,7 +1090,7 @@ export using BasePower = bounded::integer<0, 480>;
 // It is undefined behavior to get the base power of a move without a base power
 // (Dragon Rage, Guillotine, etc.).
 export template<any_team UserTeam, any_team DefenderTeam>
-auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Weather const weather) -> BasePower {
+auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Environment const environment) -> BasePower {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
@@ -1542,14 +1542,14 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case MoveName::Wake_Up_Slap: return BOUNDED_CONDITIONAL(generation <= Generation::five, 60_bi, 70_bi);
 		case MoveName::Hammer_Arm: return 100_bi;
 		case MoveName::Gyro_Ball: {
-			auto const defender_speed = calculate_speed(defender_team, attacker.ability(), weather);
-			auto const attacker_speed = calculate_speed(attacker_team, defender.ability(), weather);
+			auto const defender_speed = calculate_speed(defender_team, attacker.ability(), environment);
+			auto const attacker_speed = calculate_speed(attacker_team, defender.ability(), environment);
 			auto const uncapped_power = 25_bi * defender_speed / attacker_speed + 1_bi;
 			return bounded::min(uncapped_power, 150_bi);
 		}
 		case MoveName::Healing_Wish: return 0_bi;
 		case MoveName::Brine: return 65_bi;
-		case MoveName::Natural_Gift: return berry_power(attacker.item(weather));
+		case MoveName::Natural_Gift: return berry_power(attacker.item(environment));
 		case MoveName::Feint: return BOUNDED_CONDITIONAL(generation <= Generation::four, 50_bi, 30_bi);
 		case MoveName::Pluck: return 60_bi;
 		case MoveName::Tailwind: return 0_bi;
@@ -1560,7 +1560,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 		case MoveName::Payback: return 50_bi;
 		case MoveName::Assurance: return BOUNDED_CONDITIONAL(generation <= Generation::five, 50_bi, 60_bi);
 		case MoveName::Embargo: return 0_bi;
-		case MoveName::Fling: return fling_power(attacker.item(weather));
+		case MoveName::Fling: return fling_power(attacker.item(environment));
 		case MoveName::Psycho_Shift: return 0_bi;
 		case MoveName::Trump_Card:
 			// Safe to dereference because we know Trump Card is not unlimited
@@ -1688,8 +1688,8 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 			return 1_bi;
 		case MoveName::Synchronoise: return BOUNDED_CONDITIONAL(generation <= Generation::five, 70_bi, 120_bi);
 		case MoveName::Electro_Ball: {
-			auto const defender_speed = calculate_speed(defender_team, attacker.ability(), weather);
-			auto const attacker_speed = calculate_speed(attacker_team, defender.ability(), weather);
+			auto const defender_speed = calculate_speed(defender_team, attacker.ability(), environment);
+			auto const attacker_speed = calculate_speed(attacker_team, defender.ability(), environment);
 			auto const quotient = attacker_speed / defender_speed;
 			switch (quotient.value()) {
 				case 0: return 40_bi;
@@ -2012,7 +2012,7 @@ auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const exe
 }
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam, DefenderTeam) \
-	template auto base_power(UserTeam const &, ExecutedMove<UserTeam>, DefenderTeam const &, Weather) -> BasePower
+	template auto base_power(UserTeam const &, ExecutedMove<UserTeam>, DefenderTeam const &, Environment) -> BasePower
 
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
 	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>, Team<generation>); \

@@ -18,11 +18,11 @@ import tm.type.type;
 import tm.ability;
 import tm.compress;
 import tm.entry_hazards;
+import tm.environment;
 import tm.generation;
 import tm.heal;
 import tm.item;
 import tm.rational;
-import tm.weather;
 
 import bounded;
 import std_module;
@@ -35,10 +35,10 @@ constexpr auto removes_toxic_spikes(any_active_pokemon auto const switcher) {
 }
 
 template<any_mutable_active_pokemon PokemonType>
-constexpr auto apply_toxic_spikes(EntryHazards<generation_from<PokemonType>> const & hazards, PokemonType const switcher, Weather const weather) {
+constexpr auto apply_toxic_spikes(EntryHazards<generation_from<PokemonType>> const & hazards, PokemonType const switcher, Environment const environment) {
 	auto const status = hazards.toxic_spikes() == 1_bi ? StatusName::poison : StatusName::toxic;
-	if (indirect_status_can_apply(status, switcher.as_const(), weather)) {
-		switcher.set_status(status, weather);
+	if (indirect_status_can_apply(status, switcher.as_const(), environment)) {
+		switcher.set_status(status, environment);
 	}
 }
 
@@ -54,26 +54,26 @@ constexpr auto spikes_damage(EntryHazards<generation> const hazards) -> rational
 }
 
 export template<any_mutable_active_pokemon PokemonType>
-constexpr auto apply(EntryHazards<generation_from<PokemonType>> & hazards, PokemonType const switcher, Weather const weather) -> void {
+constexpr auto apply(EntryHazards<generation_from<PokemonType>> & hazards, PokemonType const switcher, Environment const environment) -> void {
 	constexpr auto generation = generation_from<PokemonType>;
-	if (switcher.item(weather) == Item::Heavy_Duty_Boots) {
+	if (switcher.item(environment) == Item::Heavy_Duty_Boots) {
 		return;
 	}
 
-	if (grounded(switcher.as_const(), weather)) {
+	if (grounded(switcher.as_const(), environment)) {
 		if (hazards.toxic_spikes() != 0_bi) {
 			if (removes_toxic_spikes(switcher.as_const())) {
 				hazards.clear_toxic_spikes();
 			} else if (generation >= Generation::five or !blocks_secondary_damage(switcher.ability())) {
-				apply_toxic_spikes(hazards, switcher, weather);
+				apply_toxic_spikes(hazards, switcher, environment);
 			}
 		}
 		if (hazards.spikes() != 0_bi) {
-			heal(switcher, weather, spikes_damage(hazards));
+			heal(switcher, environment, spikes_damage(hazards));
 		}
 	}
 	if (hazards.stealth_rock()) {
-		heal(switcher, weather, rational(-1_bi, 8_bi) * Effectiveness(generation, Type::Rock, switcher.types()));
+		heal(switcher, environment, rational(-1_bi, 8_bi) * Effectiveness(generation, Type::Rock, switcher.types()));
 	}
 }
 
