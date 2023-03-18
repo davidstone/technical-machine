@@ -40,7 +40,7 @@ import tm.status.status;
 import tm.status.status_name;
 
 import tm.type.effectiveness;
-import tm.type.type;
+import tm.type.move_type;
 
 import tm.ability;
 import tm.ability_blocks_move;
@@ -267,7 +267,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 
 	auto const known_move = KnownMove{
 		move.executed,
-		get_type(generation, move.executed, get_hidden_power_type(user_pokemon))
+		move_type(generation, move.executed, get_hidden_power_type(user_pokemon))
 	};
 	if (ability_blocks_move(generation, other_ability, known_move, other_pokemon.status().name(), other_pokemon.types())) {
 		handle_ability_blocks_move(other_pokemon, weather);

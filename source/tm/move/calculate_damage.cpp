@@ -82,6 +82,10 @@ auto calculate_weather_modifier(Type const type, Weather const weather, bool con
 	));
 }
 
+constexpr auto is_boosted_by_flash_fire(Type const type) {
+	return type == Type::Fire;
+}
+
 auto calculate_flash_fire_modifier(any_active_pokemon auto const attacker, Type const move_type) {
 	return BOUNDED_CONDITIONAL(attacker.flash_fire_is_active() and is_boosted_by_flash_fire(move_type),
 		rational(3_bi, 2_bi),

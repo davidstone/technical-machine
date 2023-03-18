@@ -58,7 +58,7 @@ import tm.team_predictor.team_predictor;
 import tm.team_predictor.usage_stats;
 
 import tm.type.effectiveness;
-import tm.type.type;
+import tm.type.move_type;
 
 import tm.ability;
 import tm.ability_blocks_move;
@@ -228,18 +228,18 @@ struct BattleManagerImpl final : BattleManager {
 				active_has(ai_is_user, move.executed);
 			}
 			auto const user_hidden_power_type = get_hidden_power_type(user_team.pokemon());
-			auto const move_type = get_type(generation_, move.executed, user_hidden_power_type);
+			auto const type = move_type(generation_, move.executed, user_hidden_power_type);
 			auto const other_pokemon = other_team.pokemon();
 			auto const ability_blocks_recoil =
 				causes_recoil(move.executed) and
 				!move.recoil and
-				!Effectiveness(generation_, move_type, other_pokemon.types()).has_no_effect() and
+				!Effectiveness(generation_, type, other_pokemon.types()).has_no_effect() and
 				!ability_blocks_move(
 					generation_,
 					other_pokemon.ability(),
 					KnownMove{
 						move.executed,
-						move_type
+						type
 					},
 					other_pokemon.status().name(),
 					other_pokemon.types()

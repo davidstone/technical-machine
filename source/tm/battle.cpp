@@ -33,7 +33,7 @@ import tm.status.status_name;
 
 import tm.string_conversions.status_name;
 
-import tm.type.type;
+import tm.type.move_type;
 
 import tm.ability;
 import tm.activate_ability_on_switch;
@@ -125,7 +125,7 @@ struct Battle {
 		auto const other_move = last_used_move.moved_this_turn() ?
 			OtherMove([&]{
 				auto const move_name = last_used_move.name();
-				auto const type = get_type(generation, move_name, get_hidden_power_type(other_pokemon));
+				auto const type = move_type(generation, move_name, get_hidden_power_type(other_pokemon));
 				return KnownMove{move_name, type};
 			}()) :
 			OtherMove(FutureMove{

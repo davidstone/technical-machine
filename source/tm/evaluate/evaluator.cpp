@@ -51,7 +51,7 @@ import tm.status.status_name;
 import tm.string_conversions.move_name;
 import tm.string_conversions.species;
 
-import tm.type.type;
+import tm.type.move_type;
 
 import tm.ability;
 import tm.any_team;
@@ -190,7 +190,7 @@ struct OriginalPokemon {
 		m_species(pokemon.species()),
 		m_other_move{
 			other_move,
-			get_type(generation_from<ActivePokemonType>, other_move, get_hidden_power_type(other_pokemon))
+			move_type(generation_from<ActivePokemonType>, other_move, get_hidden_power_type(other_pokemon))
 		}
 	{
 	}

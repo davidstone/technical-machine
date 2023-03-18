@@ -225,6 +225,7 @@ target_sources(tm_common PUBLIC
 		source/tm/team_predictor/usage_stats_probabilities.cpp
 
 		source/tm/type/effectiveness.cpp
+		source/tm/type/move_type.cpp
 		source/tm/type/pokemon_types.cpp
 		source/tm/type/type.cpp
 	

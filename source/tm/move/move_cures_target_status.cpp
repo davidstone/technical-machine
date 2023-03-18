@@ -9,6 +9,7 @@ import tm.move.move_name;
 
 import tm.status.status_name;
 
+import tm.type.move_type;
 import tm.type.type;
 
 import tm.generation;
@@ -21,7 +22,7 @@ export constexpr auto move_cures_target_status(Generation const generation, Move
 	switch (status) {
 		case StatusName::freeze:
 			return
-				get_type(generation, move_name, hidden_power_type) == Type::Fire or
+				move_type(generation, move_name, hidden_power_type) == Type::Fire or
 				(generation == Generation::two and move_name == MoveName::Tri_Attack);
 		case StatusName::paralysis:
 			return move_name == MoveName::Smelling_Salts;

@@ -14,7 +14,7 @@ import tm.move.move;
 import tm.pokemon.get_hidden_power_type;
 import tm.pokemon.pokemon;
 
-import tm.type.type;
+import tm.type.move_type;
 
 import tm.generation;
 
@@ -28,7 +28,7 @@ constexpr auto any_move_matches(PokemonType const pokemon, auto const condition)
 		constexpr auto generation = generation_from<PokemonType>;
 		return condition(
 			generation,
-			KnownMove{move.name(), get_type(generation, move.name(), get_hidden_power_type(pokemon))}
+			KnownMove{move.name(), move_type(generation, move.name(), get_hidden_power_type(pokemon))}
 		);
 	});
 }

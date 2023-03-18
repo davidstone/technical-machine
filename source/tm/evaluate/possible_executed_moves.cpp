@@ -18,10 +18,11 @@ import tm.pokemon.pokemon;
 
 import tm.status.status;
 
+import tm.type.move_type;
+
 import tm.any_team;
 import tm.generation;
 import tm.team;
-import tm.type.type;
 
 import bounded;
 import containers;
@@ -61,7 +62,7 @@ export template<any_team UserTeam>
 auto possible_executed_moves(MoveName const selected_move, UserTeam const & user_team) -> PossibleExecutedMoves {
 	auto const user_pokemon = user_team.pokemon();
 	auto type = [=](MoveName const move) {
-		return get_type(generation_from<UserTeam>, move, get_hidden_power_type(user_pokemon));
+		return move_type(generation_from<UserTeam>, move, get_hidden_power_type(user_pokemon));
 	};
 	auto known = [=](Move const move) {
 		return KnownMove{move.name(), type(move.name())};
