@@ -32,10 +32,10 @@ import std_module;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-void predict_pokemon(StatsUser & stats_user, any_seen_team auto & team, std::mt19937 & random_engine) {
+void predict_pokemon(StatsUser & stats_user, any_seen_team auto & team) {
 	auto const index = team.all_pokemon().index();
 	while (team.number_of_seen_pokemon() < team.size()) {
-		auto const species = stats_user.species(random_engine);
+		auto const species = stats_user.species();
 		if (!species) {
 			throw std::runtime_error("Usage stats say there are not enough Pokemon to make a team");
 		}
@@ -50,10 +50,10 @@ void predict_pokemon(StatsUser & stats_user, any_seen_team auto & team, std::mt1
 }
 
 template<any_seen_pokemon PokemonType>
-void predict_moves(StatsUser & stats_user, PokemonType & pokemon, std::mt19937 & random_engine) {
+void predict_moves(StatsUser & stats_user, PokemonType & pokemon) {
 	auto const species = pokemon.species();
 	while (containers::size(pokemon.regular_moves()) != max_moves_per_pokemon) {
-		auto const move_name = stats_user.move(random_engine, species);
+		auto const move_name = stats_user.move(species);
 		if (!move_name) {
 			break;
 		}
@@ -62,12 +62,12 @@ void predict_moves(StatsUser & stats_user, PokemonType & pokemon, std::mt19937 &
 	}
 }
 
-void predict_item(StatsUser & stats_user, any_seen_pokemon auto & pokemon, std::mt19937 & random_engine) {
+void predict_item(StatsUser & stats_user, any_seen_pokemon auto & pokemon) {
 	if (pokemon.item_is_known()) {
 		return;
 	}
 	auto const species = pokemon.species();
-	auto const item = stats_user.item(random_engine, species);
+	auto const item = stats_user.item(species);
 	if (!item) {
 		return;
 	}
@@ -75,12 +75,12 @@ void predict_item(StatsUser & stats_user, any_seen_pokemon auto & pokemon, std::
 	stats_user.update(species, *item);
 }
 
-void predict_ability(StatsUser & stats_user, any_seen_pokemon auto & pokemon, std::mt19937 & random_engine) {
+void predict_ability(StatsUser & stats_user, any_seen_pokemon auto & pokemon) {
 	if (pokemon.ability_is_known()) {
 		return;
 	}
 	auto const species = pokemon.species();
-	auto const ability = stats_user.ability(random_engine, species);
+	auto const ability = stats_user.ability(species);
 	if (!ability) {
 		return;
 	}
@@ -109,11 +109,11 @@ template<Generation generation>
 auto predict_team_impl(StatsUser stats_user, std::mt19937 & random_engine, SeenTeam<generation> team) -> Team<generation> {
 	update_estimate(stats_user, team);
 
-	predict_pokemon(stats_user, team, random_engine);
+	predict_pokemon(stats_user, team);
 	for (auto & pokemon : team.all_pokemon()) {
-		predict_moves(stats_user, pokemon, random_engine);
-		predict_item(stats_user, pokemon, random_engine);
-		predict_ability(stats_user, pokemon, random_engine);
+		predict_moves(stats_user, pokemon);
+		predict_item(stats_user, pokemon);
+		predict_ability(stats_user, pokemon);
 		optimize_pokemon_evs(pokemon, random_engine);
 	}
 	// TODO: This isn't right
@@ -123,12 +123,12 @@ auto predict_team_impl(StatsUser stats_user, std::mt19937 & random_engine, SeenT
 
 export template<Generation generation>
 auto most_likely_team(UsageStats const & usage_stats, std::mt19937 & random_engine, SeenTeam<generation> team) -> Team<generation> {
-	return predict_team_impl(StatsUser(usage_stats, true), random_engine, team);
+	return predict_team_impl(StatsUser(usage_stats), random_engine, team);
 }
 
 export template<Generation generation>
 auto random_team(UsageStats const & usage_stats, std::mt19937 & random_engine, SeenTeam<generation> team = SeenTeam<generation>(max_pokemon_per_team)) -> Team<generation> {
-	return predict_team_impl(StatsUser(usage_stats, false), random_engine, team);
+	return predict_team_impl(StatsUser(usage_stats, random_engine), random_engine, team);
 }
 
 } // namespace technicalmachine

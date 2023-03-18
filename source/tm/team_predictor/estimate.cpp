@@ -89,7 +89,7 @@ constexpr auto per_species_to_usage = [](auto const & value) {
 export struct Estimate {
 	using Map = containers::flat_map<Species, PerSpecies>;
 
-	explicit Estimate(UsageStats const & usage_stats):
+	explicit constexpr Estimate(UsageStats const & usage_stats):
 		m_estimate(containers::transform(usage_stats.assuming().map(), [](auto const & value) {
 			return containers::map_value_type{value.key, make_per_species(value.mapped)};
 		}))
@@ -107,7 +107,7 @@ export struct Estimate {
 			check(per_species.mapped.abilities);
 		}
 	}
-	auto update(UsageStats const & usage_stats, Species const species) -> void {
+	constexpr auto update(UsageStats const & usage_stats, Species const species) -> void {
 		if (auto const probabilities = usage_stats.assuming(species)) {
 			do_update(*probabilities, usage_stats.assuming());
 		}
@@ -115,7 +115,7 @@ export struct Estimate {
 			species_data->usage = 0.0;
 		}
 	}
-	auto update(UsageStats const & usage_stats, Species const species, MoveName const move) -> void {
+	constexpr auto update(UsageStats const & usage_stats, Species const species, MoveName const move) -> void {
 		if (auto const probabilities = usage_stats.assuming(species, move)) {
 			auto const base_probabilities = usage_stats.assuming(species);
 			BOUNDED_ASSERT(base_probabilities);
@@ -125,26 +125,26 @@ export struct Estimate {
 			containers::keyed_erase(species_data->moves, move);
 		}
 	}
-	auto update(UsageStats const &, Species, Item) -> void {
+	constexpr auto update(UsageStats const &, Species, Item) -> void {
 	}
-	auto update(UsageStats const &, Species, Ability) -> void {
+	constexpr auto update(UsageStats const &, Species, Ability) -> void {
 	}
 
-	auto most_likely_species() const -> tv::optional<Species> {
+	constexpr auto most_likely_species() const -> tv::optional<Species> {
 		return get_most_likely(containers::transform(m_estimate, per_species_to_usage));
 	}
-	auto random_species(std::mt19937 & random_engine) const -> tv::optional<Species> {
+	constexpr auto random_species(std::mt19937 & random_engine) const -> tv::optional<Species> {
 		return select_random_by_weight<Species>(m_estimate, random_engine, per_species_to_usage);
 	}
 
-	auto most_likely_move(Species const species) const -> tv::optional<MoveName> {
+	constexpr auto most_likely_move(Species const species) const -> tv::optional<MoveName> {
 		auto const ptr = containers::lookup(m_estimate, species);
 		if (!ptr) {
 			return tv::none;
 		}
 		return get_most_likely(containers::transform(ptr->moves, containers::get_mapped));
 	}
-	auto random_move(std::mt19937 & random_engine, Species const species) const -> tv::optional<MoveName> {
+	constexpr auto random_move(std::mt19937 & random_engine, Species const species) const -> tv::optional<MoveName> {
 		auto const element = containers::lookup(m_estimate, species);
 		if (!element) {
 			return tv::none;
@@ -152,14 +152,14 @@ export struct Estimate {
 		return select_random_by_weight<MoveName>(element->moves, random_engine, containers::get_mapped);
 	}
 
-	auto most_likely_item(Species const species) const -> tv::optional<Item> {
+	constexpr auto most_likely_item(Species const species) const -> tv::optional<Item> {
 		auto const ptr = containers::lookup(m_estimate, species);
 		if (!ptr) {
 			return tv::none;
 		}
 		return get_most_likely(containers::transform(ptr->items, containers::get_mapped));
 	}
-	auto random_item(std::mt19937 & random_engine, Species const species) const -> tv::optional<Item> {
+	constexpr auto random_item(std::mt19937 & random_engine, Species const species) const -> tv::optional<Item> {
 		auto const element = containers::lookup(m_estimate, species);
 		if (!element) {
 			return tv::none;
@@ -167,14 +167,14 @@ export struct Estimate {
 		return select_random_by_weight<Item>(element->items, random_engine, containers::get_mapped);
 	}
 
-	auto most_likely_ability(Species const species) const -> tv::optional<Ability> {
+	constexpr auto most_likely_ability(Species const species) const -> tv::optional<Ability> {
 		auto const ptr = containers::lookup(m_estimate, species);
 		if (!ptr) {
 			return tv::none;
 		}
 		return get_most_likely(containers::transform(ptr->abilities, containers::get_mapped));
 	}
-	auto random_ability(std::mt19937 & random_engine, Species const species) const -> tv::optional<Ability> {
+	constexpr auto random_ability(std::mt19937 & random_engine, Species const species) const -> tv::optional<Ability> {
 		auto const element = containers::lookup(m_estimate, species);
 		if (!element) {
 			return tv::none;
@@ -182,11 +182,11 @@ export struct Estimate {
 		return select_random_by_weight<Ability>(element->abilities, random_engine, containers::get_mapped);
 	}
 
-	auto probability(Species const species) const -> double {
+	constexpr auto probability(Species const species) const -> double {
 		auto const per_species = containers::lookup(m_estimate, species);
 		return per_species ? per_species->usage : 0.0;
 	}
-	auto probability(Species const species, MoveName const move) const -> double {
+	constexpr auto probability(Species const species, MoveName const move) const -> double {
 		auto const per_species = containers::lookup(m_estimate, species);
 		if (!per_species) {
 			return 0.0;

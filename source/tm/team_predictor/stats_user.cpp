@@ -13,49 +13,50 @@ import tm.pokemon.species;
 import tm.any_team;
 
 import std_module;
+import tv;
 
 namespace technicalmachine {
 
 export struct StatsUser {
-	StatsUser(UsageStats const & usage_stats, bool const use_most_likely):
+	explicit constexpr StatsUser(UsageStats const & usage_stats, tv::optional<std::mt19937 &> random = tv::none):
 		m_usage_stats(usage_stats),
-		m_estimate(m_usage_stats),
-		m_use_most_likely(use_most_likely)
+		m_random(random),
+		m_estimate(m_usage_stats)
 	{
 	}
 
-	auto update(Species const species, auto... args) -> void {
+	constexpr auto update(Species const species, auto... args) -> void {
 		m_estimate.update(m_usage_stats, species, args...);
 	}
 
-	auto species(std::mt19937 & random_engine) const {
-		return m_use_most_likely ?
-			m_estimate.most_likely_species() :
-			m_estimate.random_species(random_engine);
+	constexpr auto species() const {
+		return m_random ?
+			m_estimate.random_species(*m_random) :
+			m_estimate.most_likely_species();
 	}
-	auto move(std::mt19937 & random_engine, Species const species) const {
-		return m_use_most_likely ?
-			m_estimate.most_likely_move(species) :
-			m_estimate.random_move(random_engine, species);
+	constexpr auto move(Species const species) const {
+		return m_random ?
+			m_estimate.random_move(*m_random, species) :
+			m_estimate.most_likely_move(species);
 	}
-	auto item(std::mt19937 & random_engine, Species const species) const {
-		return m_use_most_likely ?
-			m_estimate.most_likely_item(species) :
-			m_estimate.random_item(random_engine, species);
+	constexpr auto item(Species const species) const {
+		return m_random ?
+			m_estimate.random_item(*m_random, species) :
+			m_estimate.most_likely_item(species);
 	}
-	auto ability(std::mt19937 & random_engine, Species const species) const {
-		return m_use_most_likely ?
-			m_estimate.most_likely_ability(species) :
-			m_estimate.random_ability(random_engine, species);
+	constexpr auto ability(Species const species) const {
+		return m_random ?
+			m_estimate.random_ability(*m_random, species) :
+			m_estimate.most_likely_ability(species);
 	}
 
 private:
 	UsageStats const & m_usage_stats;
+	tv::optional<std::mt19937 &> m_random;
 	Estimate m_estimate;
-	bool m_use_most_likely;
 };
 
-export auto update_estimate(StatsUser & stats_user, any_seen_team auto const & team) -> void {
+export constexpr auto update_estimate(StatsUser & stats_user, any_seen_team auto const & team) -> void {
 	for (auto const & pokemon : team.all_pokemon()) {
 		stats_user.update(pokemon.species());
 		constexpr auto embargo = false;
