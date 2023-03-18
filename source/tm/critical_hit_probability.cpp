@@ -1018,13 +1018,9 @@ export constexpr auto critical_hit_probability(any_active_pokemon auto const att
 	}
 }
 
-#if 0
-
 #define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
 	template auto critical_hit_probability<ActivePokemon<generation>>(ActivePokemon<generation> const attacker, MoveName const move, Ability const defender_ability, Environment const environment) -> double
 
 TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
-
-#endif
 
 } // namespace technicalmachine
