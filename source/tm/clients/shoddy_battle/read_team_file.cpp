@@ -165,7 +165,7 @@ constexpr auto to_gender(ByteInteger<4_bi> const id) -> Gender {
 		case 0: return Gender::genderless;
 		case 1: return Gender::male;
 		case 2: return Gender::female;
-		default: throw std::runtime_error(containers::concatenate<std::string>("Invalid Gender ID: "sv, to_string(id)));
+		default: throw std::runtime_error(containers::concatenate<std::string>("Invalid Gender ID: "sv, containers::to_string(id)));
 	}
 }
 
@@ -196,7 +196,7 @@ constexpr auto to_nature(ByteInteger<4_bi> const id) -> Nature {
 		case 22: return Nature::Serious;
 		case 23: return Nature::Bashful;
 		case 24: return Nature::Docile;
-		default: throw std::runtime_error(containers::concatenate<std::string>("Invalid Nature ID: "sv, to_string(id)));
+		default: throw std::runtime_error(containers::concatenate<std::string>("Invalid Nature ID: "sv, containers::to_string(id)));
 	}
 }
 
@@ -268,7 +268,7 @@ struct Parser {
 			default:
 				throw std::runtime_error(containers::concatenate<std::string>(
 					"Unknown data type "sv,
-					to_string(bounded::integer(type))
+					containers::to_string(bounded::integer(type))
 				));
 		}
 	}
@@ -365,7 +365,7 @@ private:
 								} else if (inner_parsed.state.index() == bounded::type<std::monostate>) {
 									return false;
 								} else {
-									throw std::runtime_error(containers::concatenate<std::string>("Bad array type "sv, to_string(inner_parsed.state.index().integer())));
+									throw std::runtime_error(containers::concatenate<std::string>("Bad array type "sv, containers::to_string(inner_parsed.state.index().integer())));
 								}
 							};
 							emplace_once(moves, containers::transform(containers::filter(state, filter_moves), parse_moves));

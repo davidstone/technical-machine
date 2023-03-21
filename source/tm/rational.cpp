@@ -39,7 +39,7 @@ struct rational {
 	}
 
 	friend constexpr auto to_string(rational const r) {
-		using bounded::to_string;
+		using containers::to_string;
 		return containers::concatenate<containers::string>(to_string(r.m_numerator), std::string_view(" / "), to_string(r.m_denominator));
 	}
 

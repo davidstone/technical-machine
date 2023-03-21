@@ -3,6 +3,11 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+module;
+
+#include <compare>
+#include <string>
+
 export module tm.clients.invalid_team_file_format;
 
 import containers;

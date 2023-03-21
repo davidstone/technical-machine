@@ -38,7 +38,7 @@ export struct SpeciesIDs {
 
 struct InvalidFormeID : std::runtime_error {
 	InvalidFormeID(std::string_view const species, SpeciesIDs::Forme const forme):
-		std::runtime_error(containers::concatenate<std::string>("Invalid forme ID "sv, to_string(forme), " for "sv, species))
+		std::runtime_error(containers::concatenate<std::string>("Invalid forme ID "sv, containers::to_string(forme), " for "sv, species))
 	{
 	}
 };

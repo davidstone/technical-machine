@@ -209,21 +209,21 @@ constexpr auto calculate_ivs_and_evs(
 	auto const hidden_power_string = hidden_power ?
 		containers::concatenate<containers::string>(
 			"Type: "sv, to_string(hidden_power->type()),
-			", Power: "sv, bounded::to_string(hidden_power->power())
+			", Power: "sv, containers::to_string(hidden_power->power())
 		) :
 		containers::string("none");
 	throw std::runtime_error(containers::concatenate<std::string>(
 		"No Nature, IV, and EV combination gives the received stats in generation "sv,
 		to_string(generation),
 		": Species: "sv, to_string(species),
-		", Level: "sv, bounded::to_string(level()),
+		", Level: "sv, containers::to_string(level()),
 		", Possible Natures: "sv, nature_string,
-		", HP: "sv, bounded::to_string(stats.hp().max()),
-		", Attack: "sv, bounded::to_string(stats.atk()),
-		", Defense: "sv, bounded::to_string(stats.def()),
-		", Special Attack: "sv, bounded::to_string(stats.spa()),
-		", Special Defense: "sv, bounded::to_string(stats.spd()),
-		", Speed: "sv, bounded::to_string(stats.spe()),
+		", HP: "sv, containers::to_string(stats.hp().max()),
+		", Attack: "sv, containers::to_string(stats.atk()),
+		", Defense: "sv, containers::to_string(stats.def()),
+		", Special Attack: "sv, containers::to_string(stats.spa()),
+		", Special Defense: "sv, containers::to_string(stats.spd()),
+		", Speed: "sv, containers::to_string(stats.spe()),
 		", Hidden Power: "sv, hidden_power_string
 	));
 }

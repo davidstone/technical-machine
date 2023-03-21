@@ -34,8 +34,6 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-using bounded::to_string;
-
 constexpr auto generation = Generation::four;
 
 auto make_team(auto const... species) {

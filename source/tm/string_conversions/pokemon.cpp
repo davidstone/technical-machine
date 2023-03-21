@@ -114,11 +114,11 @@ auto to_string(PokemonType const & pokemon) -> containers::string {
 	auto stats = calculate_ivs_and_evs(pokemon);
 
 	auto stat_to_iv_string = [&](auto const stat_name) {
-		return bounded::to_string(stats.dvs_or_ivs[stat_name].value());
+		return containers::to_string(stats.dvs_or_ivs[stat_name].value());
 	};
 
 	auto stat_to_ev_string = [&](auto const stat_name) {
-		return bounded::to_string(stats.evs[stat_name].value());
+		return containers::to_string(stats.evs[stat_name].value());
 	};
 
 	auto stats_to_string = [&] {

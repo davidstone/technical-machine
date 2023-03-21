@@ -89,7 +89,7 @@ using ParsedTeam = containers::static_vector<ParsedPokemon, max_pokemon_per_team
 
 constexpr auto parse_html_team(DelimitedBufferView<std::string_view> buffer, Generation const generation) -> ParsedTeam {
 	auto get_pokemon = [&](TeamIndex const index) -> tv::optional<ParsedPokemon> {
-		auto const index_str = bounded::to_string(index);
+		auto const index_str = containers::to_string(index);
 		auto get_integer_wrapper = [&]<typename T>(bounded::type_t<T>, std::string_view const key) -> T {
 			return get_expected_integer_wrapper<T>(buffer.pop(), containers::concatenate<containers::string>(key, index_str));
 		};
@@ -100,7 +100,11 @@ constexpr auto parse_html_team(DelimitedBufferView<std::string_view> buffer, Gen
 			return get_integer_wrapper(bounded::type<EV>, key);
 		};
 		auto get_move = [&](containers::index_type<RegularMoves> const move_index) -> tv::optional<MoveName> {
-			return get_expected<MoveName>(buffer.pop(), "move", bounded::to_string(index) + "_" + bounded::to_string(move_index));
+			return get_expected<MoveName>(
+				buffer.pop(),
+				"move",
+				containers::concatenate<containers::string>(containers::to_string(index), "_"sv, containers::to_string(move_index))
+			);
 		};
 
 		auto const species = get(bounded::type<Species>, "species");

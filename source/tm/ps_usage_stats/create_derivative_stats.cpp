@@ -105,7 +105,7 @@ struct SpeedStats {
 		for (auto const index : containers::integer_range(containers::size(m_data))) {
 			auto const value = m_data[index];
 			if (value != 0.0) {
-				json.push_back({{to_string(index), value / total}});
+				json.push_back({{containers::to_string(index), value / total}});
 			}
 		}
 		file << nlohmann::json(json);

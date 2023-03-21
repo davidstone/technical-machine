@@ -74,7 +74,7 @@ export auto to_packed_format(any_known_team auto const & team) -> containers::st
 			if (stat_name != SplitSpecialPermanentStat::hp) {
 				containers::push_back(result, ',');
 			}
-			containers::append(result, to_string(stats.evs[stat_name].value()));
+			containers::append(result, containers::to_string(stats.evs[stat_name].value()));
 		}
 
 		result = containers::concatenate<containers::string>(
@@ -89,7 +89,7 @@ export auto to_packed_format(any_known_team auto const & team) -> containers::st
 			if (stat_name != SplitSpecialPermanentStat::hp) {
 				containers::push_back(result, ',');
 			}
-			containers::append(result, to_string(IV(stats.dvs_or_ivs[stat_name]).value()));
+			containers::append(result, containers::to_string(IV(stats.dvs_or_ivs[stat_name]).value()));
 		}
 
 		result = containers::concatenate<containers::string>(
@@ -97,7 +97,7 @@ export auto to_packed_format(any_known_team auto const & team) -> containers::st
 			separator,
 			// Assume non-shiny
 			separator,
-			to_string(pokemon.level()()),
+			containers::to_string(pokemon.level()()),
 			separator
 			// Assume max happiness
 			// Assume regular Poke Ball

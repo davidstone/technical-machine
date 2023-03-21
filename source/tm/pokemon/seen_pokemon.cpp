@@ -90,7 +90,12 @@ struct SeenPokemon {
 	constexpr auto set_hp(CurrentVisibleHP const visible_hp) & -> void {
 		// TODO: Do something smart with actual
 		if (visible_hp > m_hp.max) {
-			throw std::runtime_error(containers::concatenate<std::string>("Tried to set a visible HP of "sv, to_string(visible_hp.value()), ", is greater than visible max HP of "sv, to_string(m_hp.max.value())));
+			throw std::runtime_error(containers::concatenate<std::string>(
+				"Tried to set a visible HP of "sv,
+				containers::to_string(visible_hp.value()),
+				", is greater than visible max HP of "sv,
+				containers::to_string(m_hp.max.value())
+			));
 		}
 		m_hp.current = visible_hp;
 	}

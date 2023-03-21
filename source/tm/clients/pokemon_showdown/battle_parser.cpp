@@ -77,8 +77,8 @@ auto move_response_impl(std::string_view const id, bool const is_switch, auto co
 	return containers::concatenate<containers::string>(
 		id,
 		is_switch ?
-			containers::concatenate_view("|/choose switch "sv, to_string(switch_move())) :
-			containers::concatenate_view("|/choose move "sv, to_string(move_index() + 1_bi))
+			containers::concatenate_view("|/choose switch "sv, containers::to_string(switch_move())) :
+			containers::concatenate_view("|/choose move "sv, containers::to_string(move_index() + 1_bi))
 	);
 }
 

@@ -121,31 +121,31 @@ export auto generate_team_builder_ui(std::string_view const query_string, std::s
 	add_dropdown_with_id(buffer, "generation", "generation", containers::enum_range<Generation>(), next_default());
 	write_data(buffer, "<br>\n"sv);
 	for (auto const pokemon_index : containers::integer_range(max_pokemon_per_team)) {
-		auto const index_str = bounded::to_string(pokemon_index);
+		auto const index_str = containers::to_string(pokemon_index);
 		add_dropdown<Species>(buffer, "species", index_str, next_default());
-		add_level(buffer, "level" + index_str, next_default());
+		add_level(buffer, containers::concatenate<containers::string>("level"sv, index_str), next_default());
 		add_dropdown<Gender>(buffer, "gender", index_str, next_default());
 		add_dropdown<Item>(buffer, "item", index_str, next_default());
 		add_dropdown<Ability>(buffer, "ability", index_str, next_default());
 		add_dropdown<Nature>(buffer, "nature", index_str, next_default());
 		write_data(buffer, "<br>"sv);
-		add_ev(buffer, "hp" + index_str, "HP", next_default());
+		add_ev(buffer, containers::concatenate<containers::string>("hp"sv, index_str), "HP", next_default());
 		write_data(buffer, "    "sv);
-		add_ev(buffer, "atk" + index_str, "Atk", next_default());
+		add_ev(buffer, containers::concatenate<containers::string>("atk"sv, index_str), "Atk", next_default());
 		write_data(buffer, "    "sv);
-		add_ev(buffer, "def" + index_str, "Def", next_default());
+		add_ev(buffer, containers::concatenate<containers::string>("def"sv, index_str), "Def", next_default());
 		write_data(buffer, "    "sv);
-		add_ev(buffer, "spa" + index_str, "SpA", next_default());
+		add_ev(buffer, containers::concatenate<containers::string>("spa"sv, index_str), "SpA", next_default());
 		write_data(buffer, "    "sv);
-		add_ev(buffer, "spd" + index_str, "SpD", next_default());
+		add_ev(buffer, containers::concatenate<containers::string>("spd"sv, index_str), "SpD", next_default());
 		write_data(buffer, "    "sv);
-		add_ev(buffer, "spe" + index_str, "Spe", next_default());
+		add_ev(buffer, containers::concatenate<containers::string>("spe"sv, index_str), "Spe", next_default());
 		write_data(buffer, "<br>"sv);
 		for (auto const move_index : containers::integer_range(max_moves_per_pokemon)) {
 			add_dropdown(
 				buffer,
 				"move",
-				index_str + "_" + bounded::to_string(move_index),
+				containers::concatenate<containers::string>(index_str, "_"sv, containers::to_string(move_index)),
 				containers::filter(containers::enum_range<MoveName>(), is_regular),
 				next_default()
 			);
