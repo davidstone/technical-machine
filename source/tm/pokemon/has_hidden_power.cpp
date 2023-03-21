@@ -7,15 +7,14 @@ export module tm.pokemon.has_hidden_power;
 
 import tm.move.move;
 import tm.move.move_name;
-
-import tm.pokemon.any_pokemon;
+import tm.move.regular_moves;
 
 import containers;
 
 namespace technicalmachine {
 
-export auto has_hidden_power(any_pokemon auto const & pokemon) -> bool {
-	return containers::maybe_find_if(pokemon.regular_moves(), [](Move const move) {
+export constexpr auto has_hidden_power(RegularMoves const & moves) -> bool {
+	return containers::maybe_find_if(moves, [](Move const move) {
 		return move.name() == MoveName::Hidden_Power;
 	});
 }

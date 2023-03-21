@@ -259,7 +259,7 @@ struct SeenPokemon {
 
 	auto hidden_power() const -> tv::optional<HiddenPower<generation>> {
 		// TODO: ???
-		return has_hidden_power(*this) ?
+		return has_hidden_power(regular_moves()) ?
 			HiddenPower<generation>(numeric_traits::max_value<typename HiddenPower<generation>::Power>, Type::Dark) :
 			tv::optional<HiddenPower<generation>>();
 	}

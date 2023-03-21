@@ -175,7 +175,7 @@ struct KnownPokemon {
 private:
 	constexpr auto check_no_generation_one_hidden_power() const {
 		// TODO: More general check that they don't have later generation moves
-		if (generation == Generation::one and has_hidden_power(*this)) {
+		if (generation == Generation::one and has_hidden_power(regular_moves())) {
 			throw std::runtime_error("Generation 1 Pokemon cannot have Hidden Power");
 		}
 	}
