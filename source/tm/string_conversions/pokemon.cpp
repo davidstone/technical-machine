@@ -5,6 +5,8 @@
 
 module;
 
+#include <bounded/assert.hpp>
+
 #include <tm/for_each_generation.hpp>
 
 export module tm.string_conversions.pokemon;
@@ -92,17 +94,26 @@ constexpr auto moves_separator = "\n\t- "sv;
 // TODO: Print gender
 // TODO: Make this compatible with Pokemon Showdown
 
+constexpr auto percent_to_string(double const value) -> containers::string {
+	BOUNDED_ASSERT(0.0 <= value <= 100.0);
+	auto const integer_part = bounded::check_in_range(
+		static_cast<std::uint64_t>(value),
+		0_bi,
+		100_bi
+	);
+	auto const decimal_part = bounded::check_in_range(
+		static_cast<std::uint64_t>((value - static_cast<double>(integer_part)) * 10.0),
+		0_bi,
+		9_bi
+	);
+	return containers::concatenate<containers::string>(containers::to_string(integer_part), "."sv, containers::to_string(decimal_part));
+}
+
 export template<any_pokemon PokemonType>
-auto to_string(PokemonType const & pokemon) -> containers::string {
+constexpr auto to_string(PokemonType const & pokemon) -> containers::string {
 	constexpr auto generation = generation_from<PokemonType>;
 	// Boost.Format fails to compile with C++20, so we have to do this instead
-	auto const hp_str_full = std::to_string(100.0 * static_cast<double>(hp_ratio(pokemon)));
-	auto hp_to_string = [&] {
-		auto const pos = hp_str_full.find('.');
-		constexpr auto after_decimal = 2;
-		auto const size = (pos != std::string::npos and hp_str_full.size() - pos > after_decimal) ? pos + after_decimal : hp_str_full.size();
-		return std::string_view(hp_str_full.data(), size);
-	};
+	auto const hp_str = percent_to_string(100.0 * static_cast<double>(hp_ratio(pokemon)));
 
 	auto status_to_string = [&] {
 		auto const output_status = !is_clear(pokemon.status());
@@ -186,7 +197,7 @@ auto to_string(PokemonType const & pokemon) -> containers::string {
 	return containers::concatenate<containers::string>(
 		to_string(pokemon.species()),
 		species_hp,
-		hp_to_string(),
+		hp_str,
 		hp_item,
 		to_string(pokemon.item(false, false)),
 		item_ability,
@@ -216,7 +227,7 @@ struct AbilityAndStatus {
 	StatusName status;
 };
 
-auto pop_ability_and_status(BufferView<std::string_view> & buffer, Generation const generation) {
+constexpr auto pop_ability_and_status(BufferView<std::string_view> & buffer, Generation const generation) {
 	auto const ability_and_status_str = pop_to_delimiter(buffer, generation <= Generation::two ? status_atk_dv : status_nature);
 	auto const [ability_str, status_str] = split_view(ability_and_status_str, ability_status);
 	return AbilityAndStatus{
@@ -270,7 +281,7 @@ constexpr auto pop_evs(BufferView<std::string_view> & buffer) {
 }
 
 export template<Generation generation>
-auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
+constexpr auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 	auto buffer = BufferView(str);
 	auto const species = typed_pop<Species>(buffer, species_hp);
 	auto const hp_percent = typed_pop<double>(buffer, hp_item);

@@ -133,7 +133,7 @@ export struct Status {
 		return static_cast<StatusName>(m_state.index().integer());
 	}
 
-	Status & operator=(StatusName const status) & {
+	constexpr auto operator=(StatusName const status) & -> Status & {
 		*this = Status(status);
 		return *this;
 	}

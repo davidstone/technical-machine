@@ -15,7 +15,7 @@ import tm.environment;
 
 namespace technicalmachine {
 
-export bool blocks_status(Ability const ability, Ability const other_ability, StatusName const status, Environment const environment) {
+export constexpr bool blocks_status(Ability const ability, Ability const other_ability, StatusName const status, Environment const environment) {
 	auto is_sunny = [&] {
 		return environment.sun() and !ability_blocks_weather(ability, other_ability);
 	};
