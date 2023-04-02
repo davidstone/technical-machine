@@ -446,7 +446,14 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/teams DESTINATION ${CMAKE_BINARY_DIR}/)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/teams/foe)
 
 add_executable(ai
-	source/tm/ai.cpp
+	source/tm/ai/main.cpp
+)
+target_sources(ai PUBLIC
+	FILE_SET CXX_MODULES
+	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
+	FILES
+		source/tm/ai/parse_args.cpp
+		source/tm/ai/print_sizes.cpp
 )
 target_link_libraries(ai
 	tm_common
