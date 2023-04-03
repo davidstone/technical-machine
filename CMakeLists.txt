@@ -270,7 +270,6 @@ target_sources(tm_common PUBLIC
 		source/tm/property_tree.cpp
 		source/tm/random_damage.cpp
 		source/tm/rational.cpp
-		source/tm/round_up_divide.cpp
 		source/tm/saturating_add.cpp
 		source/tm/screen.cpp
 		source/tm/screens.cpp

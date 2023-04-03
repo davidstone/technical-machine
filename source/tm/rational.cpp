@@ -6,7 +6,6 @@
 export module tm.rational;
 
 export import tm.operators;
-import tm.round_up_divide;
 
 import bounded;
 import containers;
@@ -44,7 +43,7 @@ struct rational {
 	}
 
 	friend constexpr auto round_up_divide(bounded::bounded_integer auto const lhs, rational const rhs) {
-		return round_up_divide(lhs * rhs.m_denominator, rhs.m_numerator);
+		return bounded::round_up_divide(lhs * rhs.m_denominator, rhs.m_numerator);
 	}
 
 	explicit constexpr operator double() const {
