@@ -81,7 +81,7 @@ constexpr auto is_boosted_by_thick_club(Species const species) {
 	}
 }
 
-constexpr bool is_boosted_by_guts(Generation const generation, StatusName const status) {
+constexpr auto is_boosted_by_guts(Generation const generation, StatusName const status) -> bool {
 	switch (status) {
 		case StatusName::clear:
 			return false;
@@ -99,11 +99,11 @@ constexpr bool is_boosted_by_guts(Generation const generation, StatusName const 
 
 // TODO: Reduce duplication here vs. in power
 template<any_active_pokemon PokemonType>
-auto pinch_ability_activates(Type const ability_type, PokemonType const pokemon, Type const move_type) {
+constexpr auto pinch_ability_activates(Type const ability_type, PokemonType const pokemon, Type const move_type) {
 	return generation_from<PokemonType> >= Generation::five and move_type == ability_type and hp_ratio(pokemon) <= rational(1_bi, 3_bi);
 }
 
-bool boosts_special_attack(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
+constexpr auto boosts_special_attack(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment) -> bool {
 	auto const ability = pokemon.ability();
 	auto pinch_ability = [&](Type const type) {
 		return pinch_ability_activates(type, pokemon, move_type);
@@ -118,12 +118,12 @@ bool boosts_special_attack(any_active_pokemon auto const pokemon, Type const mov
 	}
 }
 
-constexpr bool boosts_special_defense(Ability const ability, Ability const other_ability, Environment const environment) {
+constexpr auto boosts_special_defense(Ability const ability, Ability const other_ability, Environment const environment) -> bool {
 	return ability == Ability::Flower_Gift and environment.sun() and !ability_blocks_weather(ability, other_ability);
 }
 
 template<any_active_pokemon PokemonType>
-auto attack_ability_modifier(PokemonType const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
+constexpr auto attack_ability_modifier(PokemonType const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = [&]() -> bounded::integer<1, 4> {
 		auto const ability = pokemon.ability();
@@ -160,7 +160,7 @@ auto attack_ability_modifier(PokemonType const pokemon, Type const move_type, Ab
 	return rational(numerator, denominator);
 }
 
-auto defense_ability_modifier(any_active_pokemon auto const pokemon) {
+constexpr auto defense_ability_modifier(any_active_pokemon auto const pokemon) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = BOUNDED_CONDITIONAL(
 		boosts_defense(pokemon.ability(), pokemon.status()),
@@ -170,7 +170,7 @@ auto defense_ability_modifier(any_active_pokemon auto const pokemon) {
 	return rational(numerator, denominator);
 }
 
-auto special_attack_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
+constexpr auto special_attack_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = BOUNDED_CONDITIONAL(
 		boosts_special_attack(pokemon, move_type, other_ability, environment),
@@ -180,7 +180,7 @@ auto special_attack_ability_modifier(any_active_pokemon auto const pokemon, Type
 	return rational(numerator, denominator);
 }
 
-auto special_defense_ability_modifier(any_active_pokemon auto const pokemon, Ability const other_ability, Environment const environment) {
+constexpr auto special_defense_ability_modifier(any_active_pokemon auto const pokemon, Ability const other_ability, Environment const environment) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = BOUNDED_CONDITIONAL(
 		boosts_special_defense(pokemon.ability(), other_ability, environment),
@@ -190,7 +190,7 @@ auto special_defense_ability_modifier(any_active_pokemon auto const pokemon, Abi
 	return rational(numerator, denominator);
 }
 
-auto speed_ability_modifier(any_active_pokemon auto const pokemon, Ability const other_ability, Environment const environment) {
+constexpr auto speed_ability_modifier(any_active_pokemon auto const pokemon, Ability const other_ability, Environment const environment) {
 	constexpr auto denominator = 2_bi;
 	auto const numerator = [&]() -> bounded::integer<1, 4> {
 		auto const ability = pokemon.ability();
@@ -227,7 +227,7 @@ auto speed_ability_modifier(any_active_pokemon auto const pokemon, Ability const
 }
 
 template<SplitSpecialRegularStat stat>
-auto offensive_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
+constexpr auto offensive_ability_modifier(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment) {
 	if constexpr (stat == SplitSpecialRegularStat::atk) {
 		return attack_ability_modifier(pokemon, move_type, other_ability, environment);
 	} else {
@@ -237,7 +237,7 @@ auto offensive_ability_modifier(any_active_pokemon auto const pokemon, Type cons
 }
 
 template<SplitSpecialRegularStat stat, any_active_pokemon PokemonType>
-auto item_modifier(PokemonType const pokemon, Environment const environment) {
+constexpr auto item_modifier(PokemonType const pokemon, Environment const environment) {
 	constexpr auto generation = generation_from<PokemonType>;
 	constexpr auto denominator = 2_bi;
 	auto const species [[maybe_unused]] = pokemon.species();
@@ -339,14 +339,14 @@ constexpr auto other_physical_stat(SplitSpecialRegularStat const stat) {
 	}
 }
 
-auto determine_initial_stat(SplitSpecialRegularStat const name, any_active_pokemon auto const pokemon) {
+constexpr auto determine_initial_stat(SplitSpecialRegularStat const name, any_active_pokemon auto const pokemon) {
 	return !applies_to_physical(name) or !pokemon.power_trick_is_active() ?
 		pokemon.stat(name) :
 		pokemon.stat(other_physical_stat(name));
 }
 
 template<SplitSpecialRegularStat stat>
-auto calculate_common_offensive_stat(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment, bool const critical_hit) {
+constexpr auto calculate_common_offensive_stat(any_active_pokemon auto const pokemon, Type const move_type, Ability const other_ability, Environment const environment, bool const critical_hit) {
 	auto const attack =
 		determine_initial_stat(stat, pokemon) *
 		modifier<BoostableStat(stat)>(pokemon.stages(), critical_hit) *
@@ -356,7 +356,7 @@ auto calculate_common_offensive_stat(any_active_pokemon auto const pokemon, Type
 	return bounded::max(attack, 1_bi);
 }
 
-export auto calculate_attack(any_active_pokemon auto const attacker, Type const move_type, Ability const other_ability, Environment const environment, bool const critical_hit = false) {
+export constexpr auto calculate_attack(any_active_pokemon auto const attacker, Type const move_type, Ability const other_ability, Environment const environment, bool const critical_hit = false) {
 	// Cast here because it looks as though the strongest attacker would hold a
 	// Light Ball, but because of the restriction on the attacker being Pikachu,
 	// it is better to use a Power Trick Shuckle with a Choice Band.
@@ -368,7 +368,7 @@ export auto calculate_attack(any_active_pokemon auto const attacker, Type const 
 }
 
 
-export auto calculate_special_attack(any_active_pokemon auto const attacker, Type const move_type, Ability const other_ability, Environment const environment, bool const critical_hit = false) {
+export constexpr auto calculate_special_attack(any_active_pokemon auto const attacker, Type const move_type, Ability const other_ability, Environment const environment, bool const critical_hit = false) {
 	// see above comment about Light Ball, except the strongest Special Attack
 	// Pokemon is actually a Choice Specs Deoxys-Attack.
 	return bounded::assume_in_range(
@@ -389,7 +389,7 @@ constexpr auto is_self_KO(MoveName const move) {
 	}
 }
 
-export auto calculate_defense(any_active_pokemon auto const defender, MoveName const move, Environment const environment, bool const critical_hit = false) {
+export constexpr auto calculate_defense(any_active_pokemon auto const defender, MoveName const move, Environment const environment, bool const critical_hit = false) {
 	constexpr auto stat = SplitSpecialRegularStat::def;
 	auto const defense =
 		determine_initial_stat(stat, defender) *
@@ -409,7 +409,7 @@ export auto calculate_defense(any_active_pokemon auto const defender, MoveName c
 
 
 template<any_active_pokemon PokemonType>
-auto special_defense_sandstorm_boost(PokemonType const defender, Ability const attacker_ability, Environment const environment) {
+constexpr auto special_defense_sandstorm_boost(PokemonType const defender, Ability const attacker_ability, Environment const environment) {
 	auto const is_boosted =
 		generation_from<PokemonType> >= Generation::four and
 		is_type(defender, Type::Rock) and
@@ -420,7 +420,7 @@ auto special_defense_sandstorm_boost(PokemonType const defender, Ability const a
 	);
 }
 
-export auto calculate_special_defense(any_active_pokemon auto const defender, Ability const attacker_ability, Environment const environment, bool const critical_hit = false) {
+export constexpr auto calculate_special_defense(any_active_pokemon auto const defender, Ability const attacker_ability, Environment const environment, bool const critical_hit = false) {
 	constexpr auto stat = SplitSpecialRegularStat::spd;
 	auto const defense =
 		defender.stat(stat) *
@@ -443,7 +443,7 @@ export auto calculate_special_defense(any_active_pokemon auto const defender, Ab
 }
 
 export constexpr auto max_speed = 12096_bi;
-export auto calculate_speed(any_team auto const & team, Ability const other_ability, Environment const environment) {
+export constexpr auto calculate_speed(any_team auto const & team, Ability const other_ability, Environment const environment) {
 	constexpr auto stat = SplitSpecialRegularStat::spe;
 	auto const & pokemon = team.pokemon();
 	auto const paralysis_divisor = BOUNDED_CONDITIONAL(lowers_speed(pokemon.status(), pokemon.ability()), 4_bi, 1_bi);

@@ -60,7 +60,7 @@ constexpr auto boosts_facade(StatusName const status) -> bool {
 }
 
 template<any_active_pokemon AttackerPokemon>
-auto doubling(AttackerPokemon const attacker, MoveName const move, any_active_pokemon auto const defender, Environment const environment) -> bool {
+constexpr auto doubling(AttackerPokemon const attacker, MoveName const move, any_active_pokemon auto const defender, Environment const environment) -> bool {
 	// I account for the doubling of the base power for Pursuit in the
 	// switching function by simply multiplying the final base power by 2.
 	// Regardless of the combination of modifiers, this does not change the
@@ -162,7 +162,7 @@ constexpr auto is_boosted_by_soul_dew(Generation const generation, Species const
 constexpr auto item_modifier_denominator = 20_bi;
 using ItemModifierNumerator = bounded::integer<20, 24>;
 template<any_active_pokemon AttackerPokemon>
-auto item_modifier_numerator(AttackerPokemon const attacker, KnownMove const move, Environment const environment) -> ItemModifierNumerator {
+constexpr auto item_modifier_numerator(AttackerPokemon const attacker, KnownMove const move, Environment const environment) -> ItemModifierNumerator {
 	constexpr auto generation = generation_from<AttackerPokemon>;
 	constexpr auto none = item_modifier_denominator;
 	auto type_boost = [=](Type const type) -> ItemModifierNumerator {
@@ -270,14 +270,14 @@ auto item_modifier_numerator(AttackerPokemon const attacker, KnownMove const mov
 	}
 }
 
-auto item_modifier(any_active_pokemon auto const attacker, KnownMove const move, Environment const environment) {
+constexpr auto item_modifier(any_active_pokemon auto const attacker, KnownMove const move, Environment const environment) {
 	return rational(
 		item_modifier_numerator(attacker, move, environment),
 		item_modifier_denominator
 	);
 }
 
-bool is_boosted_by_iron_fist(MoveName const move) {
+constexpr auto is_boosted_by_iron_fist(MoveName const move) -> bool {
 	switch (move) {
 		case MoveName::Bullet_Punch:
 		case MoveName::Comet_Punch:
@@ -303,7 +303,7 @@ bool is_boosted_by_iron_fist(MoveName const move) {
 	}
 }
 
-bool is_boosted_by_reckless(MoveName const move) {
+constexpr auto is_boosted_by_reckless(MoveName const move) -> bool {
 	switch (move) {
 		case MoveName::Brave_Bird:
 		case MoveName::Double_Edge:
@@ -325,7 +325,7 @@ bool is_boosted_by_reckless(MoveName const move) {
 }
 
 template<any_active_pokemon AttackerPokemon>
-auto attacker_ability_power_modifier(AttackerPokemon const attacker, KnownMove const move, any_active_pokemon auto const defender, BasePower const base) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
+constexpr auto attacker_ability_power_modifier(AttackerPokemon const attacker, KnownMove const move, any_active_pokemon auto const defender, BasePower const base) -> rational<bounded::integer<1, 6>, bounded::integer<1, 5>> {
 	auto pinch_ability_activates = [&](Type const type) {
 		return generation_from<AttackerPokemon> <= Generation::four and move.type == type and hp_ratio(attacker) <= rational(1_bi, 3_bi);
 	};
@@ -351,7 +351,7 @@ auto attacker_ability_power_modifier(AttackerPokemon const attacker, KnownMove c
 	}
 }
 
-auto defender_ability_modifier(Type const move_type, Ability const ability) -> rational<bounded::integer<1, 5>, bounded::integer<1, 4>> {
+constexpr auto defender_ability_modifier(Type const move_type, Ability const ability) -> rational<bounded::integer<1, 5>, bounded::integer<1, 4>> {
 	switch (ability) {
 		case Ability::Dry_Skin: return rational(BOUNDED_CONDITIONAL(move_type == Type::Fire, 5_bi, 4_bi), 4_bi);
 		case Ability::Heatproof: return rational(1_bi, BOUNDED_CONDITIONAL(move_type == Type::Fire, 2_bi, 1_bi));
@@ -367,7 +367,7 @@ export using MovePower = bounded::integer<1, 1440>;
 // `executed.move.name` is Hidden Power, `attacker.pokemon().hidden_power()`
 // must not be `none`.
 export template<any_team UserTeam, any_team DefenderTeam>
-auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Environment const environment) -> MovePower {
+constexpr auto move_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Environment const environment) -> MovePower {
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();
 	auto const base = base_power(attacker_team, executed, defender_team, environment);

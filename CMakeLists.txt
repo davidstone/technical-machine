@@ -521,6 +521,9 @@ target_sources(tm_test PUBLIC
 	FILES
 		source/tm/test/collections/variable_collection.cpp
 
+		source/tm/test/move/calculate_damage.cpp
+		source/tm/test/move/move_power.cpp
+
 		source/tm/test/pokemon/active_pokemon.cpp
 
 		source/tm/test/block.cpp
@@ -551,7 +554,6 @@ target_sources(tm_test PUBLIC
 	source/tm/test/team_predictor/usage_stats.cpp
 
 	source/tm/test/battle.cpp
-	source/tm/test/calculate_damage.cpp
 	source/tm/test/calculate_ivs_and_evs.cpp
 	source/tm/test/call_move.cpp
 	source/tm/test/critical_hit_probability.cpp

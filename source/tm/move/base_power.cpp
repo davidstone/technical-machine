@@ -1090,7 +1090,7 @@ export using BasePower = bounded::integer<0, 480>;
 // It is undefined behavior to get the base power of a move without a base power
 // (Dragon Rage, Guillotine, etc.).
 export template<any_team UserTeam, any_team DefenderTeam>
-auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Environment const environment) -> BasePower {
+constexpr auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam> const executed, DefenderTeam const & defender_team, Environment const environment) -> BasePower {
 	constexpr auto generation = generation_from<UserTeam>;
 	auto const & attacker = attacker_team.pokemon();
 	auto const & defender = defender_team.pokemon();

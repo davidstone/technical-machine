@@ -503,7 +503,7 @@ constexpr auto always_affects_target(Generation const generation, MoveName const
 }
 
 export template<any_active_pokemon TargetPokemon>
-auto affects_target(KnownMove const move, TargetPokemon const target, Environment const environment) -> bool {
+constexpr auto affects_target(KnownMove const move, TargetPokemon const target, Environment const environment) -> bool {
 	constexpr auto generation = generation_from<TargetPokemon>;
 	auto const effectiveness = Effectiveness(generation, move.type, target.types());
 	if (!is_damaging(move.name) or always_affects_target(generation, move.name)) {
