@@ -519,6 +519,8 @@ target_sources(tm_test PUBLIC
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
+		source/tm/test/pokemon/active_pokemon.cpp
+
 		source/tm/test/usage_bytes.cpp
 )
 target_sources(tm_test PUBLIC
@@ -533,8 +535,6 @@ target_sources(tm_test PUBLIC
 	source/tm/test/evaluate/evaluate.cpp
 	source/tm/test/evaluate/expectiminimax.cpp
 	source/tm/test/evaluate/predict_action.cpp
-
-	source/tm/test/pokemon/active_pokemon.cpp
 
 	source/tm/test/pokemon_lab/team_file.cpp
 

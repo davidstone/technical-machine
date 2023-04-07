@@ -3,8 +3,11 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <compare>
-#include <catch2/catch_test_macros.hpp>
+module;
+
+#include <bounded/assert.hpp>
+
+export module tm.test.pokemon.active_pokemon;
 
 import tm.move.move;
 import tm.move.move_name;
@@ -29,7 +32,6 @@ import tm.item;
 import bounded;
 
 namespace technicalmachine {
-namespace {
 using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
@@ -38,7 +40,8 @@ constexpr auto regular_moves(auto... moves) {
 	return RegularMoves{Move(generation, moves)...};
 }
 
-TEST_CASE("Chesto Berry awakens from Rest", "[active_pokemon]") {
+// Chesto Berry awakens from Rest
+static_assert([]{
 	auto pokemon = Pokemon<generation>(
 		Species::Charmander,
 		Level(100_bi),
@@ -52,13 +55,14 @@ TEST_CASE("Chesto Berry awakens from Rest", "[active_pokemon]") {
 	auto flags = ActivePokemonFlags<generation>();
 	auto active_pokemon = AnyMutableActivePokemon(pokemon, flags);
 
-	auto environment = Environment();
+	constexpr auto environment = Environment();
 
 	active_pokemon.rest(environment, false);
-	CHECK(active_pokemon.status().name() == StatusName::clear);
-}
+	return active_pokemon.status().name() == StatusName::clear;
+}());
 
-TEST_CASE("Chesto Berry awakens after Rest cures status", "[active_pokemon]") {
+// Chesto Berry awakens after Rest cures status
+static_assert([]{
 	auto pokemon = Pokemon<generation>(
 		Species::Charmander,
 		Level(100_bi),
@@ -72,16 +76,15 @@ TEST_CASE("Chesto Berry awakens after Rest cures status", "[active_pokemon]") {
 	auto flags = ActivePokemonFlags<generation>();
 	auto active_pokemon = AnyMutableActivePokemon(pokemon, flags);
 
-	auto environment = Environment();
+	constexpr auto environment = Environment();
 
 	active_pokemon.set_status(StatusName::paralysis, environment);
-	CHECK(active_pokemon.status().name() == StatusName::paralysis);
+	BOUNDED_ASSERT(active_pokemon.status().name() == StatusName::paralysis);
 
-	CHECK(clears_status(active_pokemon.item(environment), StatusName::rest));
+	BOUNDED_ASSERT(clears_status(active_pokemon.item(environment), StatusName::rest));
 	active_pokemon.rest(environment, false);
 
-	CHECK(active_pokemon.status().name() == StatusName::clear);
-}
+	return active_pokemon.status().name() == StatusName::clear;
+}());
 
-} // namespace
 } // namespace technicalmachine

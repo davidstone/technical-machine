@@ -18,7 +18,7 @@ import tm.item;
 namespace technicalmachine {
 
 export template<any_active_pokemon PokemonType>
-auto grounded(PokemonType const pokemon, Environment const environment) -> bool {
+constexpr auto grounded(PokemonType const pokemon, Environment const environment) -> bool {
 	auto item_grounds = [=] {
 		auto const item = generation_from<PokemonType> <= Generation::four ?
 			pokemon.unrestricted_item() :

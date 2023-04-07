@@ -97,7 +97,7 @@ constexpr auto reflected_status(Generation const generation, StatusName const st
 }
 
 template<any_mutable_active_pokemon UserPokemon>
-auto apply_status(StatusName const status, UserPokemon const user, OtherMutableActivePokemon<UserPokemon> const target, Environment const environment) {
+constexpr auto apply_status(StatusName const status, UserPokemon const user, OtherMutableActivePokemon<UserPokemon> const target, Environment const environment) {
 	target.set_status(status, environment);
 	auto const reflected = reflected_status(generation_from<UserPokemon>, status);
 	if (reflected and reflects_status(target.ability())) {
@@ -280,7 +280,7 @@ constexpr auto fang_effects(UserPokemon const original_user, OtherTeam<Associate
 }
 
 template<StatusName status, any_active_pokemon UserPokemon>
-auto recoil_status(UserPokemon const original_user, OtherTeam<AssociatedTeam<UserPokemon>> const & original_target, Environment const original_environment, Type const immune_type) {
+constexpr auto recoil_status(UserPokemon const original_user, OtherTeam<AssociatedTeam<UserPokemon>> const & original_target, Environment const original_environment, Type const immune_type) {
 	using UserTeam = AssociatedTeam<UserPokemon>;
 	constexpr auto recoil_and_status = [](auto & user, auto & target, auto & environment, auto const damage) {
 		set_status_function<status>(user, target, environment, damage);
@@ -295,7 +295,7 @@ auto recoil_status(UserPokemon const original_user, OtherTeam<AssociatedTeam<Use
 }
 
 template<StatusName const status>
-auto try_apply_status(auto & user, auto & target, auto & environment, auto const damage, auto const... immune_types) {
+constexpr auto try_apply_status(auto & user, auto & target, auto & environment, auto const damage, auto const... immune_types) {
 	if (status_can_apply(status, user.pokemon().as_const(), target, environment, immune_types...)) {
 		set_status_function<status>(user, target, environment, damage);
 	}
@@ -567,13 +567,13 @@ constexpr auto charge_up_move(
 }
 
 template<any_active_pokemon PokemonType>
-auto item_can_be_lost(PokemonType const pokemon) {
+constexpr auto item_can_be_lost(PokemonType const pokemon) {
 	return
 		pokemon.ability() != Ability::Sticky_Hold or
 		(generation_from<PokemonType> >= Generation::five and pokemon.hp().current() == 0_bi);
 }
 
-auto item_can_be_incinerated(any_active_pokemon auto const target, Environment const environment) -> bool {
+constexpr auto item_can_be_incinerated(any_active_pokemon auto const target, Environment const environment) -> bool {
 	// TODO: Destroy gems
 	return item_can_be_lost(target) and berry_power(target.item(environment)) != 0_bi;
 }
@@ -594,7 +594,7 @@ constexpr auto can_confuse_with_chatter(Species const pokemon) {
 }
 
 export template<any_active_pokemon UserPokemon>
-auto possible_side_effects(MoveName const move, UserPokemon const original_user, OtherTeam<AssociatedTeam<UserPokemon>> const & original_other, Environment const original_environment) -> SideEffects<AssociatedTeam<UserPokemon>> {
+constexpr auto possible_side_effects(MoveName const move, UserPokemon const original_user, OtherTeam<AssociatedTeam<UserPokemon>> const & original_other, Environment const original_environment) -> SideEffects<AssociatedTeam<UserPokemon>> {
 	using UserTeam = AssociatedTeam<UserPokemon>;
 	constexpr auto generation = generation_from<UserPokemon>;
 	switch (move) {
