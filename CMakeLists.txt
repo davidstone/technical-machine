@@ -90,7 +90,6 @@ target_sources(tm_common PUBLIC
 		source/tm/move/call_move.cpp
 		source/tm/move/category.cpp
 		source/tm/move/causes_recoil.cpp
-		source/tm/move/container.cpp
 		source/tm/move/damage_type.cpp
 		source/tm/move/executed_move.cpp
 		source/tm/move/find_required_move_index.cpp
@@ -108,7 +107,6 @@ target_sources(tm_common PUBLIC
 		source/tm/move/pp.cpp
 		source/tm/move/priority.cpp
 		source/tm/move/regular_moves.cpp
-		source/tm/move/shared.cpp
 		source/tm/move/side_effect_function.cpp
 		source/tm/move/side_effects.cpp
 		source/tm/move/target.cpp
@@ -117,7 +115,6 @@ target_sources(tm_common PUBLIC
 
 		source/tm/pokemon/active_pokemon.cpp
 		source/tm/pokemon/active_status.cpp
-		source/tm/pokemon/all_moves.cpp
 		source/tm/pokemon/any_pokemon.cpp
 		source/tm/pokemon/change_hp.cpp
 		source/tm/pokemon/confusion.cpp
@@ -150,6 +147,7 @@ target_sources(tm_common PUBLIC
 		source/tm/pokemon/pokemon.cpp
 		source/tm/pokemon/pokemon_collection.cpp
 		source/tm/pokemon/pokemon_not_found.cpp
+		source/tm/pokemon/potentially_selectable_moves.cpp
 		source/tm/pokemon/rampage.cpp
 		source/tm/pokemon/seen_pokemon.cpp
 		source/tm/pokemon/slow_start.cpp
@@ -531,9 +529,7 @@ target_sources(tm_test PUBLIC
 	source/tm/test/clients/pokemon_showdown/parse_team.cpp
 	source/tm/test/clients/pokemon_showdown/slot_memory.cpp
 
-	source/tm/test/collections/move_container.cpp
 	source/tm/test/collections/variable_collection.cpp
-
 	source/tm/test/evaluate/evaluate.cpp
 	source/tm/test/evaluate/expectiminimax.cpp
 	source/tm/test/evaluate/predict_action.cpp

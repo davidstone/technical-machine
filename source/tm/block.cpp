@@ -17,10 +17,10 @@ import tm.move.pp;
 import tm.move.is_switch;
 
 import tm.pokemon.active_pokemon;
-import tm.pokemon.all_moves;
 import tm.pokemon.any_pokemon;
 import tm.pokemon.pokemon_collection;
 import tm.pokemon.pokemon;
+import tm.pokemon.potentially_selectable_moves;
 
 import tm.status.status;
 
@@ -173,7 +173,7 @@ constexpr auto is_legal_selection(TeamType const & user, Move const move, TeamTy
 export template<any_team TeamType>
 constexpr auto legal_selections(TeamType const & user, TeamType const & other, Environment const environment) -> LegalSelections {
 	auto result = LegalSelections();
-	for (auto const move : all_moves(user.pokemon(), user.size())) {
+	for (auto const move : potentially_selectable_moves(user)) {
 		bool const found_selectable_move = !containers::is_empty(result);
 		if (is_legal_selection(user, move, other, environment, found_selectable_move)) {
 			containers::push_back(result, move.name());

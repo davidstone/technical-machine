@@ -33,12 +33,12 @@ import tm.move.other_move;
 import tm.move.side_effects;
 import tm.move.used_move;
 
-import tm.pokemon.all_moves;
 import tm.pokemon.any_pokemon;
 import tm.pokemon.get_hidden_power_type;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.pokemon;
 import tm.pokemon.pokemon_collection;
+import tm.pokemon.potentially_selectable_moves;
 import tm.pokemon.species;
 
 import tm.stat.calculate;
@@ -340,8 +340,8 @@ private:
 
 		auto const first_pokemon = first.pokemon();
 		auto const last_pokemon = last.pokemon();
-		BOUNDED_ASSERT(containers::maybe_find(all_moves(first_pokemon, first.size()), first_move));
-		BOUNDED_ASSERT(containers::maybe_find(all_moves(last_pokemon, last.size()), last_move));
+		BOUNDED_ASSERT(containers::maybe_find(potentially_selectable_moves(first), first_move));
+		BOUNDED_ASSERT(containers::maybe_find(potentially_selectable_moves(last), last_move));
 		auto const original_last_pokemon = OriginalPokemon(last_pokemon, first_pokemon, first_move);
 
 		return score_executed_moves(first, first_move, last, FutureMove{is_damaging(last_move)}, environment, depth, [&](Team<generation> const & updated_first, Team<generation> const & updated_last, Environment const updated_environment) {

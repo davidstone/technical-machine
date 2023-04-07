@@ -12,7 +12,6 @@ module;
 
 export module tm.pokemon.active_pokemon;
 
-import tm.move.container;
 import tm.move.damage_type;
 import tm.move.healing_move_fails_in_generation_1;
 import tm.move.move;

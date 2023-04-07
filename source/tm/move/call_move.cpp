@@ -15,7 +15,6 @@ export module tm.move.call_move;
 import tm.move.activate_when_hit_item;
 import tm.move.actual_damage;
 import tm.move.category;
-import tm.move.container;
 import tm.move.executed_move;
 import tm.move.is_switch;
 import tm.move.known_move;
@@ -27,10 +26,10 @@ import tm.move.target;
 import tm.move.used_move;
 
 import tm.pokemon.active_pokemon;
-import tm.pokemon.all_moves;
 import tm.pokemon.any_pokemon;
 import tm.pokemon.change_hp;
 import tm.pokemon.get_hidden_power_type;
+import tm.pokemon.potentially_selectable_moves;
 import tm.pokemon.substitute;
 
 import tm.stat.stage;
@@ -180,9 +179,8 @@ auto use_move(UserTeam & user, ExecutedMove<UserTeam> const executed, Target con
 	}
 }
 
-template<Generation generation>
-auto find_move(MoveContainer<generation> const container, MoveName const move_name) -> Move {
-	auto const maybe_move = containers::maybe_find(container, move_name);
+constexpr auto find_move(auto const moves, MoveName const move_name) -> Move {
+	auto const maybe_move = containers::maybe_find(moves, move_name);
 	BOUNDED_ASSERT(maybe_move);
 	return *maybe_move;
 }
@@ -216,7 +214,7 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		user_pokemon.unsuccessfully_use_move(move.executed);
 	};
 
-	auto const found_move = find_move(all_moves(user_pokemon.as_const(), user.size()), move.selected);
+	auto const found_move = find_move(potentially_selectable_moves(user), move.selected);
 	auto other_pokemon = other.pokemon();
 	auto const was_asleep = is_sleeping(user_pokemon.status());
 	if (!is_switch(move.selected)) {
