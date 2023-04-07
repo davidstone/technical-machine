@@ -52,6 +52,7 @@ import tv;
 import std_module;
 
 namespace technicalmachine::pl {
+using namespace bounded::literal;
 using namespace std::string_view_literals;
 
 constexpr auto parse_species(std::string_view const str) {
@@ -187,9 +188,9 @@ export auto read_team_file(std::filesystem::path const & team_file) -> Generatio
 
 		auto const all_pokemon = pt.get_child("shoddybattle");
 		using GenerationInteger = bounded::integer<1, 7>;
-		// The original format did not include a generation. Require users to add
+		// The original format did not include a generation. Allow users to add
 		// this field.
-		auto const parsed_generation = static_cast<Generation>(all_pokemon.get<GenerationInteger>("<xmlattr>.generation"));
+		auto const parsed_generation = static_cast<Generation>(all_pokemon.get("<xmlattr>.generation", GenerationInteger(4_bi)));
 		return constant_generation(parsed_generation, [&]<Generation generation>(constant_gen_t<generation>) {
 			return GenerationGeneric<KnownTeam>(parse_team<generation>(all_pokemon));
 		});

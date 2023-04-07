@@ -48,6 +48,10 @@ export struct ptree_reader {
 	auto get(char const * const key) const {
 		return m_ptree.get<T>(key);
 	}
+	template<typename T>
+	auto get(char const * const key, T const & default_value) const {
+		return m_ptree.get(key, default_value);
+	}
 
 	auto begin() const -> const_iterator {
 		return const_iterator(m_ptree.begin());
