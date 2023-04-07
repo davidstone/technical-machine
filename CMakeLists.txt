@@ -523,6 +523,7 @@ target_sources(tm_test PUBLIC
 
 		source/tm/test/pokemon/active_pokemon.cpp
 
+		source/tm/test/block.cpp
 		source/tm/test/usage_bytes.cpp
 )
 target_sources(tm_test PUBLIC
@@ -550,7 +551,6 @@ target_sources(tm_test PUBLIC
 	source/tm/test/team_predictor/usage_stats.cpp
 
 	source/tm/test/battle.cpp
-	source/tm/test/block.cpp
 	source/tm/test/calculate_damage.cpp
 	source/tm/test/calculate_ivs_and_evs.cpp
 	source/tm/test/call_move.cpp

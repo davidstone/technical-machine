@@ -3,8 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <compare>
-#include <catch2/catch_test_macros.hpp>
+export module tm.test.block;
 
 import tm.block;
 
@@ -44,7 +43,8 @@ constexpr auto moves(auto... move_names) {
 	return RegularMoves({Move(generation, move_names, 0_bi)...});
 }
 
-TEST_CASE("block with all legal moves", "[block]") {
+// All moves are legal moves
+static_assert([]{
 	auto user = Team<generation>({
 		Pokemon<generation>(
 			Species::Jolteon,
@@ -75,21 +75,22 @@ TEST_CASE("block with all legal moves", "[block]") {
 	user.reset_start_of_turn();
 
 	auto const selections = legal_selections(user, other, environment);
-	CHECK(selections == LegalSelections({MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball}));
-}
+	return selections == LegalSelections({MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball});
+}());
 
-auto empty_pp(Move & move) {
+constexpr auto remove_all_pp(Move & move) {
 	auto remaining_pp = move.pp().remaining();
 	if (remaining_pp) {
 		move.reduce_pp(*remaining_pp);
 	}
 };
 
-TEST_CASE("Two moves with one out of pp", "[block]") {
+// Two moves with one out of pp
+static_assert([]{
 	auto environment = Environment();
 
 	auto user_moves = moves(MoveName::Thunder, MoveName::Thunderbolt);
-	empty_pp(containers::front(user_moves));
+	remove_all_pp(containers::front(user_moves));
 	auto user = Team<generation>({
 		Pokemon<generation>(
 			Species::Pikachu,
@@ -119,15 +120,16 @@ TEST_CASE("Two moves with one out of pp", "[block]") {
 	user.reset_start_of_turn();
 
 	auto const selections = legal_selections(user, other, environment);
-	CHECK(selections == LegalSelections({MoveName::Thunderbolt}));
-}
+	return selections == LegalSelections({MoveName::Thunderbolt});
+}());
 
-TEST_CASE("Two moves with both out of pp", "[block]") {
+// Two moves with both out of pp
+static_assert([]{
 	auto environment = Environment();
 
 	auto user_moves = moves(MoveName::Thunder, MoveName::Thunderbolt);
 	for (auto & move : user_moves) {
-		empty_pp(move);
+		remove_all_pp(move);
 	}
 	auto user = Team<generation>({
 		Pokemon<generation>(
@@ -158,10 +160,11 @@ TEST_CASE("Two moves with both out of pp", "[block]") {
 	user.reset_start_of_turn();
 
 	auto const selections = legal_selections(user, other, environment);
-	CHECK(selections == LegalSelections({MoveName::Struggle}));
-}
+	return selections == LegalSelections({MoveName::Struggle});
+}());
 
-TEST_CASE("Replace fainted", "[block]") {
+// Replace fainted
+static_assert([]{
 	auto environment = Environment();
 
 	auto team = Team<generation>({
@@ -204,10 +207,9 @@ TEST_CASE("Replace fainted", "[block]") {
 
 	faint(team.pokemon());
 
-	auto const expected = LegalSelections({MoveName::Switch1});
 	auto const selections = legal_selections(team, other, environment);
-	CHECK(selections == expected);
-}
+	return selections == LegalSelections({MoveName::Switch1});
+}());
 
 } // namespace
 } // namespace technicalmachine
