@@ -40,21 +40,18 @@ For a full overview of the program, see http://doublewise.net/pokemon/
 
 ## Prerequisites
 
-* clang 13 with libc++ (clang's standard library)
+* clang 16+ with a new version of libstdc++ (gcc's standard library)
 * Boost 1.67.0+
-* CMake 3.14+
+* CMake 3.26+
 * A build tool for CMake to generate (Ninja is recommended)
 
 ## Building (Linux)
 
 * `cd path/to/technical-machine`
-* `mkdir build`
-* `cd build`
-* `cmake .. -G"Ninja" -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release` (you can use `-G"Unix Makefiles"` instead if you do not install ninja)
-* `ninja`
-* `cd ..`
+* `cmake -G"Ninja" -B build -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_BUILD_TYPE=Release` (you can use `-G"Unix Makefiles"` instead if you do not install ninja)
+* `cmake --build build`
 * Fill in server information for the server you want to connect to, as found in "build/settings/settings.json".
-* Run the program with `./build/ai [depth]`, where depth is an optional value that tells Technical Machine how many turns ahead to look (defaults to 2).
+* Run the program with `./build/ai [general-depth] [single-depth]`, where general-depth and single-depth are optional values that tell Technical Machine how many turns ahead to look (defaults to 2, 0).
 
 ## settings.json
 
@@ -63,10 +60,25 @@ If the "team" setting is left blank, Technical Machine will generate a team of i
 ### Build targets
 
 ai
-:	The AI with maximum optimizations. Accepts a single, optional command-line argument, the depth to search. Higher depth means stronger play, but it also takes longer to search. If no value is entered, 2 is assumed. Recommended at 1 through 3, depending on how fast your computer is and whether you built in release mode (the default). If you have a lot of time on your hands, you can try depth=4.
+:	The AI with maximum optimizations. Accepts two arguments. The first is an integer for how far ahead to search before evaluating each position. The second is an integer for how far ahead to consider each possible 1v1 matchup after doing the previous general search. Higher depth means stronger play, but it also takes much longer to search. If no value is entered, 2, 0 is assumed. Recommended that the two numbers add up to no more than 4, depending on how fast your computer is and whether you built in release mode.
+
+file_converter
+:   Converts team files in one format to another format. Supported input file types are NetBattle, NetBattle Supremacy, Shoddy Battle, Pokemon Lab, and Pokemon Online. Supported output types are print a string representation, save a string representation to files, Pokemon Lab, and Pokemon Online.
 
 predict
 :	Team predictor. Go to localhost:46923 in your web browser after running this to use the team builder / predictor. Enter in Pokemon already seen and it shows its prediction of the remaining team. If a Pokemon is put into the first slot, it is assumed to be the lead Pokemon. If no Pokemon is put in that slot, no lead stats are used.
+
+ps_regression_test
+:   Runs through old logs to make sure nothing is obviously broken.
+
+ps_usage_stats_create_teams_file
+:   Parses Pokemon Showdown log files to generate a single file containing all teams found in all battles parsed. Output is a binary file in the "tmmt" (Technical Machine Multi-Team) binary format.
+
+ps_usage_stats
+:   Reads a tmmt file and writes out usage stats in the "tmus" (Technical Machine Usage Stats) binary format. Note that the format of a tmmt file can change with any new version of TM, and thus `ps_usage_stats_create_teams_file` should be rerun after pulling in new changes to the code, or arbitrarily bad behavior could occur.
+
+ps_usage_stats_create_derivative_stats
+:   Reads a tmus file. Generates many human-readable representations of subsets of the data.
 
 tm_test
 :	Runs some tests to verify there are no regressions. Should be run before committing anything.
