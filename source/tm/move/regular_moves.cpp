@@ -62,7 +62,7 @@ export struct RegularMoves {
 			message += to_string(move.name());
 			throw std::runtime_error(message);
 		}
-		return containers::push_back(m_moves, move);
+		return containers::unsafe_push_back(m_moves, move);
 	}
 
 	friend auto operator==(RegularMoves, RegularMoves) -> bool = default;

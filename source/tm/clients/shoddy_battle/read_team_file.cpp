@@ -217,14 +217,6 @@ constexpr auto add_stat(tv::optional<GenericStats<T>> & optional, auto const & r
 	emplace_once(optional, GenericStats(values[0_bi], values[1_bi], values[2_bi], values[4_bi], values[5_bi], values[3_bi]));
 }
 
-// TODO: Decide where this functionality should exist
-constexpr auto & checked_push_back(auto & container, auto && value) {
-	if (containers::size(container) == container.capacity()) {
-		throw std::runtime_error("Tried to add too many elements to the vector");
-	}
-	return containers::push_back(container, OPERATORS_FORWARD(value));
-}
-
 struct Parser {
 	constexpr explicit Parser(std::span<std::byte const> const bytes):
 		m_byte_parser(bytes)
@@ -275,7 +267,7 @@ struct Parser {
 
 private:
 	auto parse_string() & -> ParsedData {
-		return checked_push_back(m_objects, ParsedData(m_byte_parser.pop_string()));
+		return containers::push_back(m_objects, ParsedData(m_byte_parser.pop_string()));
 	}
 	auto parse_array() & -> ParsedData {
 		auto const description = parse_class_description();
@@ -287,7 +279,7 @@ private:
 				throw std::runtime_error("Expected class description");
 			}
 		});
-		auto & parsed = checked_push_back(m_objects, ParsedData(std::monostate()));
+		auto & parsed = containers::push_back(m_objects, ParsedData(std::monostate()));
 		switch (code) {
 			case 'L':
 				if (size > numeric_traits::max_value<AnyVector::size_type>) {
@@ -479,7 +471,7 @@ private:
 	}
 
 	auto parse_new_class_description() & -> ParsedData {
-		auto & result = checked_push_back(m_objects, ParsedData(std::monostate()));
+		auto & result = containers::push_back(m_objects, ParsedData(std::monostate()));
 		auto const name = m_byte_parser.pop_string();
 		[[maybe_unused]] auto const uid = m_byte_parser.pop_integer(8_bi);
 		auto const flags = m_byte_parser.pop_byte();
@@ -537,7 +529,7 @@ private:
 			}
 		});
 
-		auto & result = checked_push_back(m_objects, ParsedData(std::monostate()));
+		auto & result = containers::push_back(m_objects, ParsedData(std::monostate()));
 		if (description.name == "shoddybattle.Pokemon") {
 			result = parse_pokemon(description);
 		} else if (description.name == "mechanics.AdvanceMechanics" or description.name == "mechanics.JewelMechanics") {

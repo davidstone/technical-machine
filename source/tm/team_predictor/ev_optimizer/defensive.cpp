@@ -112,7 +112,7 @@ export struct DefensiveEVs {
 							}
 						}
 						if (best_per_nature_and_iv) {
-							containers::push_back(m_container, *best_per_nature_and_iv);
+							containers::unsafe_push_back(m_container, *best_per_nature_and_iv);
 						}
 					}
 				}

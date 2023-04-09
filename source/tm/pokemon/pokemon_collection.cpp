@@ -95,7 +95,6 @@ struct PokemonCollection {
 	}
 
 	constexpr auto add(PokemonType pokemon) -> PokemonType & requires any_seen_pokemon<PokemonType> {
-		check_not_full();
 		return containers::push_back(m_container, std::move(pokemon));
 	}
 
@@ -138,11 +137,6 @@ struct PokemonCollection {
 	}
 
 private:
-	constexpr auto check_not_full() const -> void {
-		if (size() == m_real_size) {
-			throw std::runtime_error("Tried to add too many Pokemon");
-		}
-	}
 	constexpr auto check_range(TeamIndex const new_index) const -> void {
 		BOUNDED_ASSERT(new_index < size());
 	}

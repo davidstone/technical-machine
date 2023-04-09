@@ -186,9 +186,6 @@ auto packed_format_to_team(std::string_view const str) -> KnownTeam<generation> 
 	auto buffer = DelimitedBufferView(str, pokemon_delimiter);
 	auto all_pokemon = containers::static_vector<KnownPokemon<generation>, max_pokemon_per_team>();
 	while (!buffer.remainder().empty()) {
-		if (containers::size(all_pokemon) == max_pokemon_per_team) {
-			throw std::runtime_error("Tried to add too many Pokemon from PS packed format");
-		}
 		containers::push_back(all_pokemon, parse_pokemon<generation>(buffer.pop()));
 	}
 	return KnownTeam<generation>(std::move(all_pokemon));

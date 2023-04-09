@@ -176,7 +176,7 @@ constexpr auto legal_selections(TeamType const & user, TeamType const & other, E
 	for (auto const move : potentially_selectable_moves(user)) {
 		bool const found_selectable_move = !containers::is_empty(result);
 		if (is_legal_selection(user, move, other, environment, found_selectable_move)) {
-			containers::push_back(result, move.name());
+			containers::unsafe_push_back(result, move.name());
 		}
 	}
 	BOUNDED_ASSERT(!containers::is_empty(result));
