@@ -3,8 +3,14 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+module;
+
 #include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+#include <bounded/assert.hpp>
+
+export module tm.test.string_conversion;
 
 import tm.move.move;
 import tm.move.move_name;
@@ -46,52 +52,41 @@ import containers;
 import std_module;
 
 namespace technicalmachine {
-namespace {
 using namespace bounded::literal;
-
 using namespace std::string_view_literals;
 
 template<typename Enum>
-void test_generic() {
+constexpr auto test_generic() -> bool {
 	for (auto const original : containers::enum_range<Enum>()) {
 		auto const str = to_string(original);
 		auto const result = from_string<Enum>(str);
-		CHECK(original == result);
+		BOUNDED_ASSERT(original == result);
 	}
+	return true;
 }
 
 TEST_CASE("ability", "[string_conversion]") {
 	test_generic<Ability>();
 }
-TEST_CASE("gender", "[string_conversion]") {
-	test_generic<Gender>();
-}
+static_assert(test_generic<Gender>());
 TEST_CASE("item", "[string_conversion]") {
 	test_generic<Item>();
 }
 TEST_CASE("move", "[string_conversion]") {
 	test_generic<MoveName>();
 }
-TEST_CASE("nature", "[string_conversion]") {
-	test_generic<Nature>();
-}
+static_assert(test_generic<Nature>());
 TEST_CASE("species", "[string_conversion]") {
 	test_generic<Species>();
 }
-TEST_CASE("status", "[string_conversion]") {
-	test_generic<StatusName>();
-}
-TEST_CASE("type", "[string_conversion]") {
-	test_generic<Type>();
-}
-TEST_CASE("weather", "[string_conversion]") {
-	test_generic<Weather>();
-}
+static_assert(test_generic<StatusName>());
+static_assert(test_generic<Type>());
+static_assert(test_generic<Weather>());
 
 TEST_CASE("pokemon", "[string_conversion]") {
 	constexpr auto generation = Generation::three;
 
-	auto make_pokemon = [](RegularMoves const moves, StatusName const status = StatusName::clear) {
+	constexpr auto make_pokemon = [](RegularMoves const moves, StatusName const status = StatusName::clear) {
 		auto pokemon = Pokemon<generation>(
 			Species::Mewtwo,
 			Level(100_bi),
@@ -116,10 +111,9 @@ TEST_CASE("pokemon", "[string_conversion]") {
 		return pokemon;
 	};
 
-	auto check = [](Pokemon<generation> const pokemon) {
+	constexpr auto check = [](Pokemon<generation> const pokemon) {
 		auto const str = to_string(pokemon);
 		auto const result = pokemon_from_string<generation>(str);
-
 		CHECK(pokemon == result);
 	};
 
@@ -132,5 +126,4 @@ TEST_CASE("pokemon", "[string_conversion]") {
 	check(make_pokemon(moves, StatusName::burn));
 }
 
-} // namespace
 } // namespace technicalmachine

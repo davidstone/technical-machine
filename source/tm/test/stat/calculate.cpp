@@ -1,15 +1,15 @@
-// Copyright David Stone 2020.
+// Copyright David Stone 2023.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <compare>
-#include <catch2/catch_test_macros.hpp>
+export module tm.test.stat.calculate;
 
 import tm.move.move;
 import tm.move.move_name;
 import tm.move.regular_moves;
 
+import tm.pokemon.active_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.pokemon;
 import tm.pokemon.species;
@@ -44,81 +44,78 @@ constexpr auto generation = Generation::four;
 constexpr auto critical_hit = false;
 constexpr auto physical_move = MoveName::Tackle;
 
-TEST_CASE("Calculate max Attack", "[calculate stat]") {
-	constexpr auto max_attack = 7368_bi;
+// Calculate max Attack
+static_assert([]{
+	constexpr auto environment = Environment();
 
-	auto environment = Environment();
+	auto flags = ActivePokemonFlags<generation>();
+	auto pokemon = Pokemon<generation>(
+		Species::Shuckle,
+		Level(100_bi),
+		Gender::male,
+		Item::Choice_Band,
+		Ability::Pure_Power,
+		CombinedStats<generation>{
+			Nature::Impish,
+			max_dvs_or_ivs<generation>,
+			EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi)
+			)
+		},
+		RegularMoves({Move(generation, MoveName::Tackle)})
+	);
+	auto active_pokemon = MutableActivePokemon<generation>(pokemon, flags);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Shuckle,
-			Level(100_bi),
-			Gender::male,
-			Item::Choice_Band,
-			Ability::Pure_Power,
-			CombinedStats<generation>{
-				Nature::Impish,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			RegularMoves({Move(generation, MoveName::Tackle)})
-		)
-	});
-	auto pokemon = attacker.pokemon();
+	active_pokemon.switch_in(environment);
 
-	pokemon.switch_in(environment);
+	active_pokemon.activate_power_trick();
+	active_pokemon.stages()[BoostableStat::atk] += 6_bi;
 
-	pokemon.activate_power_trick();
-	pokemon.stages()[BoostableStat::atk] += 6_bi;
+	return calculate_attack(active_pokemon.as_const(), Type::Normal, Ability::Honey_Gather, environment, critical_hit) == 7368_bi;
+}());
 
-	CHECK(calculate_attack(attacker.pokemon().as_const(), Type::Normal, Ability::Honey_Gather, environment, critical_hit) == max_attack);
-}
-
-TEST_CASE("Calculate max Special Attack", "[calculate stat]") {
-	constexpr auto max_special_attack = 4536_bi;
+// Calculate max Special Attack
+static_assert([]{
 	auto environment = Environment();
 	environment.activate_sun_from_move(false);
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Deoxys_Attack,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Choice_Specs,
-			Ability::Solar_Power,
-			CombinedStats<generation>{
-				Nature::Modest,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			RegularMoves({Move(generation, MoveName::Psychic)})
-		)
-	});
-	auto pokemon = attacker.pokemon();
 
-	pokemon.switch_in(environment);
+	auto flags = ActivePokemonFlags<generation>();
+	auto pokemon = Pokemon<generation>(
+		Species::Deoxys_Attack,
+		Level(100_bi),
+		Gender::genderless,
+		Item::Choice_Specs,
+		Ability::Solar_Power,
+		CombinedStats<generation>{
+			Nature::Modest,
+			max_dvs_or_ivs<generation>,
+			EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi)
+			)
+		},
+		RegularMoves({Move(generation, MoveName::Psychic)})
+	);
+	auto active_pokemon = MutableActivePokemon<generation>(pokemon, flags);
 
-	pokemon.stages()[BoostableStat::spa] += 6_bi;
+	active_pokemon.switch_in(environment);
 
-	CHECK(calculate_special_attack(attacker.pokemon().as_const(), Type::Water, Ability::Honey_Gather, environment, critical_hit) == max_special_attack);
-}
+	active_pokemon.stages()[BoostableStat::spa] += 6_bi;
 
-TEST_CASE("Calculate max Defense", "[calculate stat]") {
-	constexpr auto max_defense = 3684_bi;
+	return calculate_special_attack(active_pokemon.as_const(), Type::Water, Ability::Honey_Gather, environment, critical_hit) == 4536_bi;
+}());
 
+// Calculate max Defense
+static_assert([]{
 	constexpr auto environment = Environment();
 
 	auto defender = Team<generation>({
@@ -149,13 +146,12 @@ TEST_CASE("Calculate max Defense", "[calculate stat]") {
 
 	defender.pokemon().set_status(StatusName::burn, environment);
 
-	CHECK(calculate_defense(defender.pokemon().as_const(), physical_move, environment, false) == max_defense);
-}
+	return calculate_defense(defender.pokemon().as_const(), physical_move, environment, false) == 3684_bi;
+}());
 
-TEST_CASE("Calculate min Defense", "[calculate stat]") {
-	constexpr auto min_defense = 1_bi;
-
-	auto environment = Environment();
+// Calculate min Defense
+static_assert([]{
+	constexpr auto environment = Environment();
 
 	auto defender = Team<generation>({
 		Pokemon<generation>(
@@ -176,12 +172,11 @@ TEST_CASE("Calculate min Defense", "[calculate stat]") {
 		pokemon.stages()[BoostableStat::def] -= 2_bi;
 	}
 
-	CHECK(calculate_defense(defender.pokemon().as_const(), physical_move, environment, false) == min_defense);
-}
+	return calculate_defense(defender.pokemon().as_const(), physical_move, environment, false) == 1_bi;
+}());
 
-TEST_CASE("Calculate max Special Defense", "[calculate stat]") {
-	constexpr auto max_special_defense = 3684_bi;
-
+// Calculate max Special Defense
+static_assert([]{
 	auto environment = Environment();
 	environment.activate_sand_from_move(false);
 
@@ -213,10 +208,11 @@ TEST_CASE("Calculate max Special Defense", "[calculate stat]") {
 
 	pokemon.stages()[BoostableStat::spd] += 6_bi;
 
-	CHECK(calculate_special_defense(defender.pokemon().as_const(), Ability::Honey_Gather, environment, false) == max_special_defense);
-}
+	return calculate_special_defense(defender.pokemon().as_const(), Ability::Honey_Gather, environment, false) == 3684_bi;
+}());
 
-TEST_CASE("Calculate max Speed", "[calculate stat]") {
+// Calculate max Speed
+static_assert([]{
 	auto environment = Environment();
 	environment.activate_rain_from_move(false);
 
@@ -250,8 +246,8 @@ TEST_CASE("Calculate max Speed", "[calculate stat]") {
 
 	team.activate_tailwind();
 
-	CHECK(calculate_speed(team, Ability::Honey_Gather, environment) == max_speed);
-}
+	return calculate_speed(team, Ability::Honey_Gather, environment) == max_speed;
+}());
 
 } // namespace
 } // namespace technicalmachine

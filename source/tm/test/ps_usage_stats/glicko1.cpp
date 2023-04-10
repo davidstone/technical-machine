@@ -3,8 +3,12 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+module;
+
 #include <compare>
 #include <catch2/catch_test_macros.hpp>
+
+export module tm.test.ps_usage_stats.glicko1;
 
 import tm.ps_usage_stats.battle_result;
 import tm.ps_usage_stats.glicko1;
@@ -14,7 +18,6 @@ import bounded;
 import std_module;
 
 namespace technicalmachine {
-namespace {
 using namespace bounded::literal;
 
 TEST_CASE("Glicko-1", "[Glicko-1]") {
@@ -30,5 +33,4 @@ TEST_CASE("Glicko-1", "[Glicko-1]") {
 	check(2_bi, ps_usage_stats::Rating(1460.0, 123.0));
 }
 
-} // namespace
 } // namespace technicalmachine

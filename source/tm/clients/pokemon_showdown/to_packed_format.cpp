@@ -33,7 +33,7 @@ import std_module;
 namespace technicalmachine::ps {
 using namespace std::string_view_literals;
 
-export auto to_packed_format(any_known_team auto const & team) -> containers::string {
+export constexpr auto to_packed_format(any_known_team auto const & team) -> containers::string {
 	constexpr auto separator = containers::array{'|'};
 	auto result = containers::string();
 	for (auto const & pokemon : team.all_pokemon()) {

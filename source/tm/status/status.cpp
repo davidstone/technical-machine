@@ -138,7 +138,7 @@ export struct Status {
 		return *this;
 	}
 
-	auto advance_from_move(Ability const ability, bool const clear) & -> void {
+	constexpr auto advance_from_move(Ability const ability, bool const clear) & -> void {
 		if (clear) {
 			m_state = Clear{};
 		} else {
@@ -158,7 +158,7 @@ export struct Status {
 	// status is freeze, returns the probability of thawing. Returns 0.0 if the
 	// Pokemon is not asleep or frozen or if, due to the sleep counter, they
 	// will definitely not awaken.
-	auto probability_of_clearing(Generation const generation, Ability const ability) const -> double {
+	constexpr auto probability_of_clearing(Generation const generation, Ability const ability) const -> double {
 		return tv::visit(m_state, tv::overload(
 			[=](Sleep const sleep) { return awaken_probability(generation, sleep.turns_slept, ability); },
 			[=](Rest const sleep) { return rest_awaken_probability(generation, sleep.turns_slept); },

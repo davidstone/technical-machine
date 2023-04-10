@@ -57,7 +57,7 @@ using namespace std::string_view_literals;
 
 export template<Generation generation>
 struct SeenPokemon {
-	SeenPokemon(Species const species, Nickname nickname, Level const level, Gender const gender, MaxVisibleHP const hp_resolution = MaxVisibleHP(100_bi)):
+	constexpr SeenPokemon(Species const species, Nickname nickname, Level const level, Gender const gender, MaxVisibleHP const hp_resolution = MaxVisibleHP(100_bi)):
 		m_nickname(std::move(nickname)),
 		m_species(species),
 		m_gender(gender),
@@ -66,7 +66,7 @@ struct SeenPokemon {
 		m_stats(BaseStats(generation, m_species), m_level, default_combined_stats<generation>)
 	{
 	}
-	SeenPokemon(Species const species, Level const level, Gender const gender, MaxVisibleHP const hp_resolution = MaxVisibleHP(100_bi)):
+	constexpr SeenPokemon(Species const species, Level const level, Gender const gender, MaxVisibleHP const hp_resolution = MaxVisibleHP(100_bi)):
 		SeenPokemon(species, Nickname(to_string(species)), level, gender, hp_resolution)
 	{
 	}
@@ -75,7 +75,7 @@ struct SeenPokemon {
 		return m_nickname;
 	}
 
-	auto stat(SplitSpecialRegularStat const stat_name) const {
+	constexpr auto stat(SplitSpecialRegularStat const stat_name) const {
 		return m_stats[stat_name];
 	}
 	constexpr auto visible_hp() const {
@@ -115,7 +115,7 @@ struct SeenPokemon {
 	constexpr auto regular_moves() const -> RegularMoves {
 		return m_regular_moves;
 	}
-	auto add_move(Move const move) & -> void {
+	constexpr auto add_move(Move const move) & -> void {
 		if (containers::any_equal(regular_moves(), move.name()) or !is_regular(move.name())) {
 			return;
 		}
@@ -155,7 +155,7 @@ struct SeenPokemon {
 	}
 
 	// TODO: ???
-	auto happiness() const -> Happiness {
+	constexpr auto happiness() const -> Happiness {
 		return Happiness();
 	}
 
@@ -250,14 +250,14 @@ struct SeenPokemon {
 		}
 	}
 
-	auto set_ivs_and_evs(CombinedStats<generation> const stat_inputs) -> void {
+	constexpr auto set_ivs_and_evs(CombinedStats<generation> const stat_inputs) -> void {
 		if constexpr (exists<decltype(m_nature)>) {
 			m_nature = stat_inputs.nature;
 		}
 		m_stats = Stats<generation>(BaseStats(generation, species()), level(), stat_inputs);
 	}
 
-	auto hidden_power() const -> tv::optional<HiddenPower<generation>> {
+	constexpr auto hidden_power() const -> tv::optional<HiddenPower<generation>> {
 		// TODO: ???
 		return has_hidden_power(regular_moves()) ?
 			HiddenPower<generation>(numeric_traits::max_value<typename HiddenPower<generation>::Power>, Type::Dark) :

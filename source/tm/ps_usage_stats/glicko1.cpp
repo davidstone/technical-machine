@@ -16,21 +16,21 @@ namespace technicalmachine::ps_usage_stats {
 // ln(10.0) / 400.0
 constexpr auto q = 0.00575646273248511421004;
 
-auto g(double const deviation) -> double {
+constexpr auto g(double const deviation) -> double {
 	return 1.0 / std::sqrt(1.0 + 3.0 * square(q) * square(deviation) / square(pi));
 }
 
-auto E(Rating const rating) -> double {
+constexpr auto E(Rating const rating) -> double {
 	return 1.0 / (1.0 + std::pow(10.0, -g(rating.deviation) * (initial_rating.value - rating.value) / 400.0));
 }
 
-auto reciprocal_of_d_squared_delta(Rating const rating) -> double {
+constexpr auto reciprocal_of_d_squared_delta(Rating const rating) -> double {
 	return square(q) * square(g(rating.deviation)) * E(rating) * (1.0 - E(rating));
 };
 
 // http://www.glicko.net/glicko/glicko.pdf
 export struct Glicko1 {
-	auto add_result(BattleResult::Side::ID const id1, BattleResult::Side::ID const id2, BattleResult::Winner const winner) & -> void {
+	constexpr auto add_result(BattleResult::Side::ID const id1, BattleResult::Side::ID const id2, BattleResult::Winner const winner) & -> void {
 		auto to_score = [=](BattleResult::Side::ID const id) {
 			constexpr auto lose = 0.0;
 			constexpr auto tie = 0.5;
@@ -59,7 +59,7 @@ export struct Glicko1 {
 		}
 	}
 
-	constexpr auto get(BattleResult::Side::ID const id) const -> Rating {
+	auto get(BattleResult::Side::ID const id) const -> Rating {
 		return containers::lookup(m_map, id)->rating;
 	}
 

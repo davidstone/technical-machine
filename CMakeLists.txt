@@ -519,6 +519,10 @@ target_sources(tm_test PUBLIC
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
+		source/tm/test/pokemon_online/conversion.cpp
+	
+		source/tm/test/clients/pokemon_showdown/packed_team.cpp
+
 		source/tm/test/collections/variable_collection.cpp
 
 		source/tm/test/move/calculate_damage.cpp
@@ -526,14 +530,21 @@ target_sources(tm_test PUBLIC
 
 		source/tm/test/pokemon/active_pokemon.cpp
 
+		source/tm/test/ps_usage_stats/glicko1.cpp
+
+		source/tm/test/stat/calculate.cpp
+		source/tm/test/stat/calculate_ivs_and_evs.cpp
+
 		source/tm/test/block.cpp
+		source/tm/test/critical_hit_probability.cpp
+		source/tm/test/status.cpp
+		source/tm/test/string_conversion.cpp
 		source/tm/test/usage_bytes.cpp
 )
 target_sources(tm_test PUBLIC
 	source/tm/test/clients/netbattle/read_team_file.cpp
 
 	source/tm/test/clients/pokemon_showdown/battle_parser.cpp
-	source/tm/test/clients/pokemon_showdown/packed_team.cpp
 	source/tm/test/clients/pokemon_showdown/parse_team.cpp
 	source/tm/test/clients/pokemon_showdown/slot_memory.cpp
 
@@ -543,10 +554,8 @@ target_sources(tm_test PUBLIC
 
 	source/tm/test/pokemon_lab/team_file.cpp
 
-	source/tm/test/pokemon_online/conversion.cpp
 	source/tm/test/pokemon_online/team_file.cpp
 
-	source/tm/test/ps_usage_stats/glicko1.cpp
 	source/tm/test/ps_usage_stats/read_write_battle_result.cpp
 	source/tm/test/ps_usage_stats/serialize.cpp
 
@@ -554,17 +563,12 @@ target_sources(tm_test PUBLIC
 	source/tm/test/team_predictor/usage_stats.cpp
 
 	source/tm/test/battle.cpp
-	source/tm/test/calculate_ivs_and_evs.cpp
 	source/tm/test/call_move.cpp
-	source/tm/test/critical_hit_probability.cpp
 	source/tm/test/ev_optimizer.cpp
 	source/tm/test/files_in_path.cpp
 	source/tm/test/for_each_generation.cpp
 	source/tm/test/get_directory.cpp
 	source/tm/test/sleep.cpp
-	source/tm/test/stat.cpp
-	source/tm/test/status.cpp
-	source/tm/test/string_conversion.cpp
 )
 target_link_libraries(tm_test
 	tm_common

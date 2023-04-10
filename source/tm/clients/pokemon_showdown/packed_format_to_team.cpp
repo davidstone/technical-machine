@@ -53,7 +53,7 @@ using namespace bounded::literal;
 
 constexpr auto pokemon_delimiter = ']';
 
-auto parse_species(std::string_view const species_str, std::string_view const nickname) {
+constexpr auto parse_species(std::string_view const species_str, std::string_view const nickname) {
 	return from_string<Species>(species_str.empty() ? nickname : species_str);
 }
 
@@ -94,7 +94,7 @@ constexpr auto parse_stat_components(std::string_view const str, auto parse_valu
 	return GenericStats(hp, atk, def, spa, spd, spe);
 }
 
-auto parse_gender(std::string_view const str) {
+constexpr auto parse_gender(std::string_view const str) {
 	return str.empty() ? Gender::genderless : from_string<Gender>(str);
 }
 
@@ -149,7 +149,7 @@ constexpr auto parse_dvs_or_ivs(std::string_view const str) {
 }
 
 template<Generation generation>
-auto parse_pokemon(std::string_view const str) {
+constexpr auto parse_pokemon(std::string_view const str) {
 	auto buffer = DelimitedBufferView(str, '|');
 	auto const nickname = Nickname(buffer.pop());
 	auto const species = parse_species(buffer.pop(), nickname);
@@ -181,7 +181,7 @@ auto parse_pokemon(std::string_view const str) {
 }
 
 export template<Generation generation>
-auto packed_format_to_team(std::string_view const str) -> KnownTeam<generation> {
+constexpr auto packed_format_to_team(std::string_view const str) -> KnownTeam<generation> {
 	// TODO: Update this when DelimitedBufferView is a range
 	auto buffer = DelimitedBufferView(str, pokemon_delimiter);
 	auto all_pokemon = containers::static_vector<KnownPokemon<generation>, max_pokemon_per_team>();

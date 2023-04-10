@@ -131,7 +131,7 @@ struct KnownPokemon {
 		return m_pokemon.happiness();
 	}
 
-	auto hidden_power() const -> tv::optional<HiddenPower<generation>> {
+	constexpr auto hidden_power() const -> tv::optional<HiddenPower<generation>> {
 		return m_pokemon.hidden_power();
 	}
 

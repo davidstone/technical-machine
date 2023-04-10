@@ -1,11 +1,9 @@
-// Test stat calculations
 // Copyright David Stone 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <compare>
-#include <catch2/catch_test_macros.hpp>
+export module tm.test.stat.calculate_ivs_and_evs;
 
 import tm.pokemon.hidden_power;
 import tm.pokemon.level;
@@ -28,10 +26,10 @@ import containers;
 import tv;
 
 namespace technicalmachine {
-namespace {
 using namespace bounded::literal;
 
-TEST_CASE("Calculate low Attack EVs", "[calculate_ivs_and_evs]") {
+// Calculate low Attack EVs
+static_assert([]{
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Tentacruel;
 	constexpr auto level = Level(100_bi);
@@ -67,11 +65,12 @@ TEST_CASE("Calculate low Attack EVs", "[calculate_ivs_and_evs]") {
 			EV(36_bi)
 		)
 	};
-	CHECK(calculated == expected);
-}
+	return calculated == expected;
+}());
 
 
-TEST_CASE("calculate_ivs_and_evs in generation 2 with Hidden Power", "[calculate_ivs_and_evs]") {
+// calculate_ivs_and_evs in generation 2 with Hidden Power
+static_assert([]{
 	constexpr auto generation = Generation::two;
 	constexpr auto species = Species::Sunflora;
 	constexpr auto level = Level(80_bi);
@@ -103,10 +102,11 @@ TEST_CASE("calculate_ivs_and_evs in generation 2 with Hidden Power", "[calculate
 			EV(252_bi)
 		)
 	};
-	CHECK(calculated == expected);
-}
+	return calculated == expected;
+}());
 
-TEST_CASE("calculate_ivs_and_evs in generation 3 with Hidden Power", "[calculate_ivs_and_evs]") {
+// calculate_ivs_and_evs in generation 3 with Hidden Power
+static_assert([]{
 	constexpr auto generation = Generation::three;
 	constexpr auto species = Species::Kingler;
 	constexpr auto level = Level(100_bi);
@@ -142,10 +142,11 @@ TEST_CASE("calculate_ivs_and_evs in generation 3 with Hidden Power", "[calculate
 			EV(252_bi)
 		)
 	};
-	CHECK(calculated == expected);
-}
+	return calculated == expected;
+}());
 
-TEST_CASE("calculate_ivs_and_evs at level 1", "[calculate_ivs_and_evs]") {
+// calculate_ivs_and_evs at level 1
+static_assert([]{
 	constexpr auto generation = Generation::three;
 	constexpr auto species = Species::Gengar;
 	constexpr auto level = Level(1_bi);
@@ -181,10 +182,11 @@ TEST_CASE("calculate_ivs_and_evs at level 1", "[calculate_ivs_and_evs]") {
 			EV(196_bi)
 		)
 	};
-	CHECK(calculated == expected);
-}
+	return calculated == expected;
+}());
 
-TEST_CASE("calculate_ivs_and_evs in generation 4 with Hidden Power", "[calculate_ivs_and_evs]") {
+// calculate_ivs_and_evs in generation 4 with Hidden Power
+static_assert([]{
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Roserade;
 	constexpr auto level = Level(75_bi);
@@ -219,8 +221,7 @@ TEST_CASE("calculate_ivs_and_evs in generation 4 with Hidden Power", "[calculate
 			EV(116_bi)
 		)
 	};
-	CHECK(calculated == expected);
-}
+	return calculated == expected;
+}());
 
-} // namespace
 } // namespace technicalmachine

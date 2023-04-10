@@ -458,7 +458,7 @@ export constexpr auto calculate_speed(any_team auto const & team, Ability const 
 
 	// Cast here because it looks as though the fastest Pokemon would hold Quick
 	// Powder, but because of the restriction on the Pokemon being Ditto, it is
-	// better to use a Deoxys-Speed with Choice Scarf.
+	// better to use a Regieleki with a Choice Scarf.
 	return bounded::assume_in_range(
 		bounded::max(speed, 1_bi),
 		1_bi,
