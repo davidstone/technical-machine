@@ -26,7 +26,7 @@ export struct Nickname {
 	friend auto operator==(Nickname, Nickname) -> bool = default;
 
 private:
-	static constexpr auto max_size = 18_bi;
+	static constexpr auto max_size = 28_bi;
 	containers::static_vector<char, max_size> m_str;
 };
 
