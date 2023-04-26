@@ -38,7 +38,6 @@ using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
 constexpr auto damage = FlaggedActualDamage{ActualDamage::Known{0_bi}, false};
-constexpr auto nickname = Nickname();
 constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false, false);
 
 constexpr auto regular_moves(auto... moves) {
@@ -50,7 +49,7 @@ TEST_CASE("Perish Song", "[battle]") {
 		KnownTeam<generation>({
 			KnownPokemon<generation>(
 				Species::Misdreavus,
-				nickname,
+				Nickname(),
 				Level(100_bi),
 				Gender::female,
 				Item::None,
@@ -60,7 +59,7 @@ TEST_CASE("Perish Song", "[battle]") {
 			),
 			KnownPokemon<generation>(
 				Species::Regice,
-				nickname,
+				Nickname(),
 				Level(100_bi),
 				Gender::genderless,
 				Item::None,
@@ -72,7 +71,7 @@ TEST_CASE("Perish Song", "[battle]") {
 		SeenTeam<generation>(2_bi)
 	);
 	battle.first_turn(true);
-	battle.find_or_add_foe_pokemon(Species::Starmie, nickname, Level(100_bi), Gender::genderless);
+	battle.find_or_add_foe_pokemon(Species::Starmie, Nickname(), Level(100_bi), Gender::genderless);
 	battle.add_move(false, MoveName::Recover);
 
 	auto const recover_side_effects = possible_side_effects(
