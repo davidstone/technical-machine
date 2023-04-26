@@ -521,7 +521,7 @@ private:
 	}
 
 	auto parse_object() & -> ParsedData {
-		auto const description = tv::visit(parse_class_description().state, []<typename T>(T const & value) -> ClassDescription {
+		auto const description = tv::visit(parse_class_description().state, []<typename T>(T && value) -> ClassDescription {
 			if constexpr (std::same_as<T, ClassDescription>) {
 				return value;
 			} else {
