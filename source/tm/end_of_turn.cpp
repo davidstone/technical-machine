@@ -45,7 +45,7 @@ using namespace bounded::literal;
 // https://web.archive.org/web/20130530163614/http://www.upokecenter.com/games/gs/guides/timing.php
 
 auto is_immune_to_hail(PokemonTypes const types) -> bool {
-	return containers::any(types, [](Type const type) { return type == Type::Ice; });
+	return containers::any_equal(types, Type::Ice);
 }
 
 auto is_immune_to_sandstorm(PokemonTypes const types) -> bool {
