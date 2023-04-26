@@ -113,7 +113,7 @@ export struct OffensiveEVs {
 						OffensiveEVSpAIV<generation>{spa.base, spa_iv, spa.stat, spa.include_evs}
 					);
 					if (result) {
-						containers::unsafe_push_back(m_container, *result);
+						containers::push_back_into_capacity(m_container, *result);
 					}
 				}
 			}

@@ -460,7 +460,7 @@ constexpr auto acupressure_effect(TargetPokemon const target) {
 
 	auto add_stat = [&]<BoostableStat stat>(std::integral_constant<BoostableStat, stat>) {
 		if (stat_can_boost(stages[stat])) {
-			containers::unsafe_push_back(result, SideEffect<UserTeam>{probability, boost_user_stat<stat, 2>});
+			containers::push_back_into_capacity(result, SideEffect<UserTeam>{probability, boost_user_stat<stat, 2>});
 		}
 	};
 	auto add_stats = [&]<BoostableStat... stats>(sequence<stats...>) {
@@ -503,7 +503,7 @@ constexpr auto phaze_effect(TargetTeam const & target) {
 	auto result = SideEffects<UserTeam>();
 	auto add_one = [&](auto const index) {
 		if (is_not_active(index) and index < target.size()) {
-			containers::unsafe_push_back(result, SideEffect<UserTeam>{probability, phaze<index>});
+			containers::push_back_into_capacity(result, SideEffect<UserTeam>{probability, phaze<index>});
 		}
 	};
 	auto add_all = [&]<std::size_t... indexes>(std::index_sequence<indexes...>) {
@@ -537,7 +537,7 @@ constexpr auto random_spite = [] {
 	constexpr auto probability = 1.0 / double(max_reduction - min_reduction + 1);
 	auto result = SideEffects<UserTeam>();
 	auto add_one = [&](auto const index) {
-		containers::unsafe_push_back(result, SideEffect<UserTeam>{probability, reduce_pp<index>});
+		containers::push_back_into_capacity(result, SideEffect<UserTeam>{probability, reduce_pp<index>});
 	};
 	auto add_all = [&]<int... indexes>(std::integer_sequence<int, indexes...>) {
 		(..., add_one(bounded::constant<indexes>));
