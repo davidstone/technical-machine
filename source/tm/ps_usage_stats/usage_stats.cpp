@@ -141,7 +141,7 @@ auto get_most_used(containers::array<double, bounded::number_of<MoveName>> const
 			break;
 		}
 	}
-	containers::erase_after(top_moves, it);
+	containers::erase_to_end(top_moves, it);
 	return top_moves;
 }
 
