@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#include <compare>
+#include <std_module/prelude.hpp>
 #include <filesystem>
 
 import tm.ps_usage_stats.battle_result_writer;

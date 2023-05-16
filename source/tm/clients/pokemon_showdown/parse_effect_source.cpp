@@ -5,7 +5,7 @@
 
 module;
 
-#include <compare>
+#include <std_module/prelude.hpp>
 #include <string_view>
 
 export module tm.clients.ps.parse_effect_source;

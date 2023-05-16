@@ -5,6 +5,9 @@
 
 module;
 
+#include <std_module/prelude.hpp>
+#include <variant>
+
 #include <nlohmann/json.hpp>
 
 export module tm.nlohmann_json;

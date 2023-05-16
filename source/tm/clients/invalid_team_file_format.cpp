@@ -5,7 +5,7 @@
 
 module;
 
-#include <compare>
+#include <std_module/prelude.hpp>
 #include <string>
 
 export module tm.clients.invalid_team_file_format;

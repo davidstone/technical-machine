@@ -5,7 +5,7 @@
 
 module;
 
-#include <compare>
+#include <std_module/prelude.hpp>
 #include <string>
 
 export module tm.ps_usage_stats.rating;

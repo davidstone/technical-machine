@@ -5,6 +5,8 @@
 
 module;
 
+#include <std_module/prelude.hpp>
+
 #include <compare>
 
 #include <boost/iostreams/stream.hpp>

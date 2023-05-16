@@ -5,6 +5,7 @@
 
 module;
 
+#include <std_module/prelude.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 

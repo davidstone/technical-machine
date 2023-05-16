@@ -5,7 +5,7 @@
 
 module;
 
-#include <compare>
+#include <std_module/prelude.hpp>
 #include <filesystem>
 #include <catch2/catch_test_macros.hpp>
 

@@ -5,7 +5,7 @@
 
 module;
 
-#include <compare>
+#include <std_module/prelude.hpp>
 #include <vector>
 
 export module tm.team_predictor.ev_optimizer.pad_random_evs;

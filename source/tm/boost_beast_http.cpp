@@ -5,6 +5,7 @@
 
 module;
 
+#include <std_module/prelude.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core/flat_buffer.hpp>
 #include <boost/beast/http.hpp>
