@@ -20,7 +20,7 @@ Once built, fill in server information for the server you want to connect to, as
 
 If the "team" setting is left blank, Technical Machine will generate a team of its own for every battle. If a team file is specified, Technical Machine will use that file. If a directory is specified, Technical Machine will randomly use a file inside that directory, recursively. For instance, if you have team files in folders based on tiers, then to use any OU team you would put "teams/ou/", but to use your stall team you would put "teams/ou/stall.sbt". For directories, the terminating '/' is optional. Relative paths are relative to your executable, not the `settings.json` file.
 
-### Build targets
+## Build targets
 
 ai
 :	The AI with maximum optimizations. Accepts two arguments. The first is an integer for how far ahead to search before evaluating each position. The second is an integer for how far ahead to consider each possible 1v1 matchup after doing the previous general search. Higher depth means stronger play, but it also takes much longer to search. If no value is entered, 2, 0 is assumed. Recommended that the two numbers add up to no more than 4, depending on how fast your computer is and whether you built in release mode.
