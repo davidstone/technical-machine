@@ -1,9 +1,9 @@
-build*
+build/
 .cache/
 .vscode/
 teams/foe
 test/temp-battles/
-battles/*
+battles/
 compile_commands.json
 CMakeUserPresets.json
 settings/[1-9]/
