@@ -37,11 +37,9 @@ int main(int argc, char * * argv) {
 	print_sizes();
 
 	auto const depth = parse_args(argc, argv);
-	auto const settings = load_settings_file(get_settings_directory() / "settings.json");
-
 	while (true) {
 		try {
-			auto client = ps::Client(settings, depth);
+			auto client = ps::Client(load_settings_file(get_settings_directory() / "settings.json"), depth);
 			std::cout << "Connected\n" << std::flush;
 			client.run();
 		} catch (std::exception const & ex) {
