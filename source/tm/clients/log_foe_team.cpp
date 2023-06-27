@@ -18,15 +18,20 @@ import tm.team;
 import bounded;
 import containers;
 import std_module;
+import tv;
 
 namespace technicalmachine {
 using namespace bounded::literal;
 
-auto team_file_directory() {
-	return std::filesystem::path("teams/foe");
+auto team_file_directory() -> tv::optional<std::filesystem::path> {
+	auto const dir = std::getenv("TM_FOE_TEAM_DIRECTORY");
+	if (!dir) {
+		return tv::none;
+	}
+	return std::filesystem::path(dir);
 }
 
-auto generate_team_file_name(std::mt19937 & random_engine, std::string_view const extension) -> std::filesystem::path {
+auto generate_team_file_name(std::mt19937 & random_engine, std::filesystem::path const & directory, std::string_view const extension) -> std::filesystem::path {
 	// Randomly generates a file name in 8.3 format. It then checks to see if
 	// that file name already exists. If it does, it randomly generates a new
 	// file name, and continues until it generates a name that does not exist.
@@ -38,15 +43,18 @@ auto generate_team_file_name(std::mt19937 & random_engine, std::string_view cons
 	constexpr auto file_name_length = 8_bi;
 	std::filesystem::path foe_team_file;
 	do {
-		foe_team_file = team_file_directory();
+		foe_team_file = directory;
 		foe_team_file /= std::string_view(containers::concatenate<containers::string>(random_string(random_engine, file_name_length), extension));
 	} while (std::filesystem::exists(foe_team_file));
 	return foe_team_file;
 }
 
 export auto log_foe_team(UsageStats const & usage_stats, any_seen_team auto const & foe_team, std::mt19937 & random_engine, WriteTeam const & write_team) -> void {
-	auto const path = generate_team_file_name(random_engine, write_team.extension);
-	std::filesystem::create_directory(team_file_directory());
+	auto const maybe_directory = team_file_directory();
+	if (!maybe_directory) {
+		return;
+	}
+	auto const path = generate_team_file_name(random_engine, *maybe_directory, write_team.extension);
 	auto const team = most_likely_team(usage_stats, random_engine, foe_team);
 	write_team.function(GenerationGeneric<Team>(team), path);
 }
