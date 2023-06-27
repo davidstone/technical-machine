@@ -26,7 +26,7 @@ export constexpr auto status_to_contact_ability_effect(StatusName const status) 
 		case StatusName::paralysis: return ContactAbilityEffect::paralysis;
 		case StatusName::poison: return ContactAbilityEffect::poison;
 		case StatusName::sleep: return ContactAbilityEffect::sleep;
-		default: std::unreachable();
+		default: throw std::runtime_error("Status cannot be caused by contact ability");
 	}
 }
 
