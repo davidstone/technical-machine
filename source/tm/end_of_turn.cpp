@@ -19,6 +19,7 @@ import tm.pokemon.pokemon;
 import tm.stat.stat_names;
 
 import tm.status.status_name;
+import tm.status.team_has_status;
 
 import tm.type.pokemon_types;
 import tm.type.type;

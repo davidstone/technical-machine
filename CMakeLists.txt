@@ -191,6 +191,7 @@ target_sources(tm_common PUBLIC
 		source/tm/status/clears_status.cpp
 		source/tm/status/status.cpp
 		source/tm/status/status_name.cpp
+		source/tm/status/team_has_status.cpp
 	
 		source/tm/string_conversions/ability.cpp
 		source/tm/string_conversions/from_string.cpp

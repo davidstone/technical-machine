@@ -35,6 +35,7 @@ import tm.stat.stat_names;
 import tm.status.blocks_status;
 import tm.status.status;
 import tm.status.status_name;
+import tm.status.team_has_status;
 
 import tm.type.type;
 

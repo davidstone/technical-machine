@@ -22,8 +22,6 @@ import tm.pokemon.pokemon;
 export import tm.pokemon.pokemon_collection;
 import tm.pokemon.seen_pokemon;
 
-import tm.status.status_name;
-
 import tm.activate_ability_on_switch;
 import tm.apply_entry_hazards;
 import tm.any_team;
@@ -330,11 +328,5 @@ constexpr auto is_seen_team<SeenTeam<generation>> = true;
 
 template<typename PokemonType>
 constexpr auto generation_from<TeamImpl<PokemonType>> = generation_from<PokemonType>;
-
-export constexpr auto team_has_status(any_team auto const & target, StatusName const status) {
-	return containers::any(target.all_pokemon(), [=](auto const & pokemon) {
-		return pokemon.status().name() == status;
-	});
-}
 
 } // namespace technicalmachine
