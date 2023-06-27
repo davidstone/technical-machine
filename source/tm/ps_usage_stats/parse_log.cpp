@@ -27,6 +27,7 @@ import tm.ps_usage_stats.rating;
 
 import tm.stat.combined_stats;
 import tm.stat.ev;
+import tm.stat.evs;
 import tm.stat.generic_stats;
 import tm.stat.iv;
 import tm.stat.nature;

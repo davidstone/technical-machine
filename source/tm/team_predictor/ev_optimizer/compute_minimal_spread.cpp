@@ -20,6 +20,7 @@ import tm.pokemon.level;
 import tm.stat.base_stats;
 import tm.stat.combined_stats;
 import tm.stat.ev;
+import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
 import tm.stat.possible_dvs_or_ivs;

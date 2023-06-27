@@ -27,6 +27,7 @@ import tm.stat.calculate_ivs_and_evs;
 import tm.stat.combined_stats;
 import tm.stat.current_hp;
 import tm.stat.ev;
+import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
 import tm.stat.stat_names;

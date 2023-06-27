@@ -15,6 +15,7 @@ import tm.pokemon.species;
 import tm.stat.base_stats;
 import tm.stat.combined_stats;
 import tm.stat.ev;
+import tm.stat.evs;
 import tm.stat.hp;
 import tm.stat.initial_stat;
 import tm.stat.iv;

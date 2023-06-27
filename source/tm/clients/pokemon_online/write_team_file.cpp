@@ -14,7 +14,6 @@ import tm.pokemon.any_pokemon;
 import tm.pokemon.max_pokemon_per_team;
 
 import tm.stat.calculate_ivs_and_evs;
-import tm.stat.ev;
 import tm.stat.ingame_id_to_nature;
 import tm.stat.stat_names;
 

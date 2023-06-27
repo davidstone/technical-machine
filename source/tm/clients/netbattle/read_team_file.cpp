@@ -25,6 +25,7 @@ import tm.pokemon.species;
 
 import tm.stat.combined_stats;
 import tm.stat.ev;
+import tm.stat.evs;
 import tm.stat.generic_stats;
 import tm.stat.ingame_id_to_nature;
 import tm.stat.iv;

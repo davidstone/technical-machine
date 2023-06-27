@@ -26,6 +26,7 @@ import tm.stat.combined_stats;
 import tm.stat.generic_stats;
 import tm.stat.ingame_id_to_nature;
 import tm.stat.ev;
+import tm.stat.evs;
 import tm.stat.iv;
 
 import tm.constant_generation;

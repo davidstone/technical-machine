@@ -12,6 +12,7 @@ export module tm.team_predictor.ev_optimizer.pad_random_evs;
 
 import tm.stat.combined_stats;
 import tm.stat.ev;
+import tm.stat.evs;
 import tm.stat.stat_names;
 
 import tm.generation;

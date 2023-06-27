@@ -7,6 +7,7 @@ export module tm.stat.combined_stats;
 
 import tm.stat.iv;
 import tm.stat.ev;
+import tm.stat.evs;
 import tm.stat.nature;
 
 import tm.generation;

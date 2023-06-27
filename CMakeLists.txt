@@ -171,6 +171,7 @@ target_sources(tm_common PUBLIC
 		source/tm/stat/combined_stats.cpp
 		source/tm/stat/current_hp.cpp
 		source/tm/stat/ev.cpp
+		source/tm/stat/evs.cpp
 		source/tm/stat/faster.cpp
 		source/tm/stat/generic_stats.cpp
 		source/tm/stat/hp.cpp
