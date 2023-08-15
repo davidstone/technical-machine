@@ -534,9 +534,10 @@ target_sources(tm_test PUBLIC
 		source/tm/test/stat/calculate.cpp
 		source/tm/test/stat/calculate_ivs_and_evs.cpp
 
+		source/tm/test/status/status.cpp
+
 		source/tm/test/block.cpp
 		source/tm/test/critical_hit_probability.cpp
-		source/tm/test/status.cpp
 		source/tm/test/string_conversion.cpp
 		source/tm/test/usage_bytes.cpp
 )
