@@ -190,6 +190,7 @@ target_sources(tm_common PUBLIC
 		source/tm/status/blocks_status.cpp
 		source/tm/status/clears_status.cpp
 		source/tm/status/status.cpp
+		source/tm/status/status_can_apply.cpp
 		source/tm/status/status_name.cpp
 		source/tm/status/team_has_status.cpp
 	
