@@ -1,7 +1,6 @@
 build/
 .cache/
 .vscode/
-teams/foe
 test/temp-battles/
 battles/
 compile_commands.json
