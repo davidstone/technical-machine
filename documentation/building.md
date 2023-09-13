@@ -6,7 +6,7 @@
 * mold linker (recommended) or lld linker (if using mold, you will need to build clang with the gold plugin)
 * libstdc++ (gcc's standard library, currently tested against 13.1.1)
 * Boost 1.67.0+
-* CMake 3.26+
+* CMake 3.27+
 * ninja 1.10+
 
 ## Building (Linux)
