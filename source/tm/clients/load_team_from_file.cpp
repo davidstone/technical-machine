@@ -11,6 +11,7 @@ import tm.clients.pl.read_team_file;
 import tm.clients.po.read_team_file;
 import tm.clients.sb.read_team_file;
 
+import tm.bytes_in_file;
 import tm.files_in_path;
 import tm.generation;
 export import tm.team;
@@ -21,19 +22,45 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
+using namespace std::string_view_literals;
 
-export auto load_team_from_file(std::filesystem::path const & file_name) -> GenerationGeneric<KnownTeam> {
+enum class Extension {
+	po,
+	pl,
+	sb,
+	nb
+};
+auto parse_extension(std::filesystem::path const & file_name) -> Extension {
 	auto const extension = file_name.extension();
 	if (extension == ".tp") {
-		return po::read_team_file(file_name);
+		return Extension::po;
 	} else if (extension == ".sbt") {
-		return pl::read_team_file(file_name);
+		return Extension::pl;
 	} else if (extension == "") {
-		return sb::read_team_file(file_name);
+		return Extension::sb;
 	} else if (extension == ".pnb" or extension == ".dpnb") {
-		return nb::read_team_file(file_name);
+		return Extension::nb;
 	} else {
 		throw InvalidTeamFileFormat(file_name);
+	}
+}
+
+export auto load_team_from_file(std::filesystem::path const & file_name) -> GenerationGeneric<KnownTeam> {
+	auto const extension = parse_extension(file_name);
+	auto const bytes = bytes_in_file(file_name);
+	try {
+		switch (extension) {
+			case Extension::po:
+				return po::read_team_file(bytes);
+			case Extension::pl:
+				return pl::read_team_file(bytes);
+			case Extension::sb:
+				return sb::read_team_file(bytes);
+			case Extension::nb:
+				return nb::read_team_file(bytes);
+		}
+	} catch (std::exception const & ex) {
+		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse team file \""sv, file_name.string(), "\" -- "sv, std::string_view(ex.what())));
 	}
 }
 

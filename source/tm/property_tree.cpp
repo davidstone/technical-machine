@@ -6,6 +6,8 @@
 module;
 
 #include <std_module/prelude.hpp>
+#include <boost/iostreams/device/array.hpp>
+#include <boost/iostreams/stream.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -90,8 +92,13 @@ export struct ptree {
 	operator ptree_writer() {
 		return ptree_writer(m_ptree);
 	}
-	auto read_xml(std::filesystem::path const & path) -> ptree_reader {
-		boost::property_tree::read_xml(path.string(), m_ptree);
+	auto read_xml(std::span<std::byte const> const bytes) -> ptree_reader {
+		auto const source = boost::iostreams::array_source(
+			reinterpret_cast<char const *>(bytes.data()),
+			bytes.size()
+		);
+		auto stream = boost::iostreams::stream<boost::iostreams::array_source>(source);
+		boost::property_tree::read_xml(stream, m_ptree);
 		return ptree_reader(m_ptree);
 	}
 

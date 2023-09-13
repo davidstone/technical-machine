@@ -39,7 +39,6 @@ import tm.string_conversions.species;
 
 import tm.ability;
 import tm.buffer_view;
-import tm.bytes_in_file;
 import tm.gender;
 import tm.generation;
 import tm.item;
@@ -551,31 +550,26 @@ private:
 	containers::stable_vector<ParsedData, 1000> m_objects;
 };
 
-export auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
-	try {
-		auto const bytes = bytes_in_file(team_file);
-		auto parser = Parser(bytes);
-		parser.parse_and_validate_header();
+export auto read_team_file(std::span<std::byte const> const bytes) -> GenerationGeneric<KnownTeam> {
+	auto parser = Parser(bytes);
+	parser.parse_and_validate_header();
 
-		// String or Null
-		[[maybe_unused]] auto const uuid = parser.parse_any();
-		auto const parsed_all_pokemon = parser.parse_any();
-		constexpr auto array_index = bounded::type<AnyVector>;
-		if (parsed_all_pokemon.state.index() != array_index) {
-			throw std::runtime_error("Expected team to be an array");
-		}
-		auto const & all_pokemon = parsed_all_pokemon.state[array_index];
-		auto transformed = containers::transform(all_pokemon, [](ParsedData const & pokemon) {
-			constexpr auto pokemon_index = bounded::type_t<KnownPokemon<generation>>();
-			if (pokemon.state.index() != pokemon_index) {
-				throw std::runtime_error("Expected team to be an array of Pokemon");
-			}
-			return pokemon.state[pokemon_index];
-		});
-		return GenerationGeneric<KnownTeam>(KnownTeam<generation>(transformed));
-	} catch (std::exception const & ex) {
-		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse Shoddy Battle team file \""sv, team_file.string(), "\" -- "sv, std::string_view(ex.what())));
+	// String or Null
+	[[maybe_unused]] auto const uuid = parser.parse_any();
+	auto const parsed_all_pokemon = parser.parse_any();
+	constexpr auto array_index = bounded::type<AnyVector>;
+	if (parsed_all_pokemon.state.index() != array_index) {
+		throw std::runtime_error("Expected team to be an array");
 	}
+	auto const & all_pokemon = parsed_all_pokemon.state[array_index];
+	auto transformed = containers::transform(all_pokemon, [](ParsedData const & pokemon) {
+		constexpr auto pokemon_index = bounded::type_t<KnownPokemon<generation>>();
+		if (pokemon.state.index() != pokemon_index) {
+			throw std::runtime_error("Expected team to be an array of Pokemon");
+		}
+		return pokemon.state[pokemon_index];
+	});
+	return GenerationGeneric<KnownTeam>(KnownTeam<generation>(transformed));
 }
 
 } // namespace technicalmachine::sb

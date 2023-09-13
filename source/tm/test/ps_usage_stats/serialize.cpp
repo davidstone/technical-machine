@@ -123,10 +123,7 @@ auto make_second_team() -> GenerationGeneric<Team> {
 }
 
 auto string_to_bytes(std::string_view const str) {
-	return containers::vector(std::span(
-		reinterpret_cast<std::byte const *>(containers::data(str)),
-		containers::size(str)
-	));
+	return containers::vector(std::as_bytes(std::span(str)));
 }
 
 TEST_CASE("Serialize smallest non-empty file", "[ps_usage_stats]") {

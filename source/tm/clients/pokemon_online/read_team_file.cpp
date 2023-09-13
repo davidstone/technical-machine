@@ -219,20 +219,16 @@ auto parse_team(property_tree::ptree_reader pt) {
 	return KnownTeam<generation>(std::move(all_pokemon));
 }
 
-export auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
-	try {
-		auto owner = property_tree::ptree();
-		auto pt = owner.read_xml(team_file);
+export auto read_team_file(std::span<std::byte const> const bytes) -> GenerationGeneric<KnownTeam> {
+	auto owner = property_tree::ptree();
+	auto pt = owner.read_xml(bytes);
 
-		auto const all_pokemon = pt.get_child("Team");
-		using GenerationInteger = bounded::integer<1, 7>;
-		auto const parsed_generation = static_cast<Generation>(all_pokemon.get<GenerationInteger>("<xmlattr>.gen"));
-		return constant_generation(parsed_generation, [&]<Generation generation>(constant_gen_t<generation>) {
-			return GenerationGeneric<KnownTeam>(parse_team<generation>(all_pokemon));
-		});
-	} catch (std::exception const & ex) {
-		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse Pokemon Online team file \""sv, team_file.string(), "\" -- "sv, std::string_view(ex.what())));
-	}
+	auto const all_pokemon = pt.get_child("Team");
+	using GenerationInteger = bounded::integer<1, 7>;
+	auto const parsed_generation = static_cast<Generation>(all_pokemon.get<GenerationInteger>("<xmlattr>.gen"));
+	return constant_generation(parsed_generation, [&]<Generation generation>(constant_gen_t<generation>) {
+		return GenerationGeneric<KnownTeam>(parse_team<generation>(all_pokemon));
+	});
 }
 
 } // namespace technicalmachine::po

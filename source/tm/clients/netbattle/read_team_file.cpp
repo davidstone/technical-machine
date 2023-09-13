@@ -34,7 +34,6 @@ import tm.string_conversions.species;
 
 import tm.ability;
 import tm.bit_view;
-import tm.bytes_in_file;
 import tm.constant_generation;
 import tm.gender;
 import tm.generation;
@@ -1820,14 +1819,6 @@ export constexpr auto read_team_file(std::span<std::byte const> const bytes) -> 
 	return constant_generation(generation, [&]<Generation g>(constant_gen_t<g>) {
 		return GenerationGeneric<KnownTeam>(parse_team<g>(parser));
 	});
-}
-
-export auto read_team_file(std::filesystem::path const & team_file) -> GenerationGeneric<KnownTeam> {
-	try {
-		return read_team_file(bytes_in_file(team_file));
-	} catch (std::exception const & ex) {
-		throw std::runtime_error(containers::concatenate<std::string>("Failed to parse NetBattle team file \""sv, team_file.string(), "\" -- "sv, std::string_view(ex.what())));
-	}
 }
 
 } // namespace technicalmachine::nb

@@ -51,7 +51,13 @@ static_assert([] {
 	team2.pokemon().switch_in(environment);
 	change_hp(team1.pokemon(), environment, -50_bi);
 
-	constexpr auto evaluate = Evaluate<generation>({.hp = 1000_bi});
+	constexpr auto evaluate = Evaluate<generation>({
+		.hp = 1000_bi,
+		.hidden = 0_bi,
+		.spikes = 0_bi,
+		.stealth_rock = 0_bi,
+		.toxic_spikes = 0_bi
+	});
 	return evaluate(team1, team2) < 0_bi;
 }());
 

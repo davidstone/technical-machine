@@ -378,8 +378,98 @@ constexpr auto netbattle_bytes = containers::array{
 	std::byte(0x00)
 };
 
+constexpr auto netbattle_supremacy_bytes = containers::array{
+	std::byte(0x20), std::byte(0x50), std::byte(0x4E), std::byte(0x42),
+	std::byte(0x35), std::byte(0x2E), std::byte(0x30), std::byte(0x09),
+	std::byte(0x4F), std::byte(0x62), std::byte(0x69), std::byte(0x20),
+	std::byte(0x28), std::byte(0x47), std::byte(0x53), std::byte(0x43),
+	std::byte(0x29), std::byte(0x26), std::byte(0x54), std::byte(0x68),
+	std::byte(0x65), std::byte(0x20), std::byte(0x55), std::byte(0x6C),
+	std::byte(0x74), std::byte(0x69), std::byte(0x6D), std::byte(0x61),
+	std::byte(0x74), std::byte(0x65), std::byte(0x20), std::byte(0x54),
+	std::byte(0x65), std::byte(0x61), std::byte(0x6D), std::byte(0x20),
+	std::byte(0x6F), std::byte(0x66), std::byte(0x20), std::byte(0x55),
+	std::byte(0x6C), std::byte(0x74), std::byte(0x69), std::byte(0x6D),
+	std::byte(0x61), std::byte(0x74), std::byte(0x65), std::byte(0x20),
+	std::byte(0x44), std::byte(0x65), std::byte(0x73), std::byte(0x74),
+	std::byte(0x69), std::byte(0x6E), std::byte(0x79), std::byte(0x2E),
+	std::byte(0x36), std::byte(0x59), std::byte(0x6F), std::byte(0x75),
+	std::byte(0x27), std::byte(0x72), std::byte(0x65), std::byte(0x20),
+	std::byte(0x73), std::byte(0x74), std::byte(0x72), std::byte(0x6F),
+	std::byte(0x6E), std::byte(0x67), std::byte(0x2E), std::byte(0x20),
+	std::byte(0x42), std::byte(0x75), std::byte(0x74), std::byte(0x20),
+	std::byte(0x74), std::byte(0x68), std::byte(0x65), std::byte(0x6E),
+	std::byte(0x20), std::byte(0x61), std::byte(0x67), std::byte(0x61),
+	std::byte(0x69), std::byte(0x6E), std::byte(0x2C), std::byte(0x20),
+	std::byte(0x73), std::byte(0x6D), std::byte(0x65), std::byte(0x6C),
+	std::byte(0x6C), std::byte(0x20), std::byte(0x69), std::byte(0x73),
+	std::byte(0x6E), std::byte(0x27), std::byte(0x74), std::byte(0x20),
+	std::byte(0x65), std::byte(0x76), std::byte(0x65), std::byte(0x72),
+	std::byte(0x79), std::byte(0x74), std::byte(0x68), std::byte(0x69),
+	std::byte(0x6E), std::byte(0x67), std::byte(0x2E), std::byte(0x00),
+	std::byte(0x13), std::byte(0x49), std::byte(0x20), std::byte(0x62),
+	std::byte(0x6C), std::byte(0x61), std::byte(0x6D), std::byte(0x65),
+	std::byte(0x20), std::byte(0x41), std::byte(0x6C), std::byte(0x2D),
+	std::byte(0x4A), std::byte(0x61), std::byte(0x7A), std::byte(0x65),
+	std::byte(0x65), std::byte(0x72), std::byte(0x61), std::byte(0x2E),
+	std::byte(0x01), std::byte(0x01), std::byte(0x03), std::byte(0x41),
+	std::byte(0x61), std::byte(0x72), std::byte(0x6F), std::byte(0x6E),
+	std::byte(0x20), std::byte(0x43), std::byte(0x61), std::byte(0x72),
+	std::byte(0x74), std::byte(0x65), std::byte(0x72), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x79), std::byte(0x9C),
+	std::byte(0x85), std::byte(0x5E), std::byte(0x00), std::byte(0x02),
+	std::byte(0x55), std::byte(0x1A), std::byte(0xF9), std::byte(0xD0),
+	std::byte(0x50), std::byte(0x04), std::byte(0x43), std::byte(0x00),
+	std::byte(0x20), std::byte(0x00), std::byte(0x07), std::byte(0xE7),
+	std::byte(0xE0), std::byte(0x00), std::byte(0x4A), std::byte(0x61),
+	std::byte(0x63), std::byte(0x6B), std::byte(0x69), std::byte(0x65),
+	std::byte(0x20), std::byte(0x43), std::byte(0x68), std::byte(0x61),
+	std::byte(0x6E), std::byte(0x20), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x9C), std::byte(0x85),
+	std::byte(0x40), std::byte(0x00), std::byte(0x03), std::byte(0xA4),
+	std::byte(0xC2), std::byte(0x85), std::byte(0xD2), std::byte(0xF7),
+	std::byte(0xBD), std::byte(0xEF), std::byte(0x00), std::byte(0x00),
+	std::byte(0x00), std::byte(0x00), std::byte(0x00), std::byte(0x00),
+	std::byte(0x00), std::byte(0x4F), std::byte(0x6C), std::byte(0x64),
+	std::byte(0x20), std::byte(0x47), std::byte(0x6F), std::byte(0x64),
+	std::byte(0x7A), std::byte(0x69), std::byte(0x6C), std::byte(0x6C),
+	std::byte(0x61), std::byte(0x20), std::byte(0x20), std::byte(0x20),
+	std::byte(0x33), std::byte(0x9C), std::byte(0x80), std::byte(0x00),
+	std::byte(0x00), std::byte(0x03), std::byte(0xC2), std::byte(0x82),
+	std::byte(0x61), std::byte(0xC8), std::byte(0xF7), std::byte(0xBD),
+	std::byte(0xEF), std::byte(0x00), std::byte(0x00), std::byte(0x00),
+	std::byte(0x00), std::byte(0x00), std::byte(0x00), std::byte(0x00),
+	std::byte(0x53), std::byte(0x68), std::byte(0x61), std::byte(0x71),
+	std::byte(0x20), std::byte(0x46), std::byte(0x75), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x20), std::byte(0x47),
+	std::byte(0x9C), std::byte(0x85), std::byte(0x40), std::byte(0x00),
+	std::byte(0x03), std::byte(0x01), std::byte(0xB9), std::byte(0x01),
+	std::byte(0x68), std::byte(0xF7), std::byte(0xBD), std::byte(0xEF),
+	std::byte(0x00), std::byte(0x00), std::byte(0x00), std::byte(0x00),
+	std::byte(0x00), std::byte(0x00), std::byte(0x00), std::byte(0x43),
+	std::byte(0x68), std::byte(0x75), std::byte(0x63), std::byte(0x6B),
+	std::byte(0x20), std::byte(0x4E), std::byte(0x6F), std::byte(0x72),
+	std::byte(0x72), std::byte(0x69), std::byte(0x73), std::byte(0x20),
+	std::byte(0x20), std::byte(0x20), std::byte(0x22), std::byte(0x1C),
+	std::byte(0x85), std::byte(0x40), std::byte(0x00), std::byte(0x02),
+	std::byte(0x21), std::byte(0x20), std::byte(0xDC), std::byte(0xB6),
+	std::byte(0xF6), std::byte(0xB5), std::byte(0xEF), std::byte(0x00),
+	std::byte(0x00), std::byte(0x00), std::byte(0x00), std::byte(0x00),
+	std::byte(0x00), std::byte(0x00), std::byte(0x41), std::byte(0x62),
+	std::byte(0x65), std::byte(0x20), std::byte(0x4C), std::byte(0x69),
+	std::byte(0x6E), std::byte(0x63), std::byte(0x6F), std::byte(0x6C),
+	std::byte(0x6E), std::byte(0x20), std::byte(0x20), std::byte(0x20),
+	std::byte(0x20), std::byte(0x2F), std::byte(0x1C), std::byte(0x85),
+	std::byte(0x5E), std::byte(0x00), std::byte(0x03), std::byte(0xC3),
+	std::byte(0x1A), std::byte(0x61), std::byte(0xD0), std::byte(0xF7),
+	std::byte(0xBD), std::byte(0xEF), std::byte(0x00), std::byte(0x00),
+	std::byte(0x00), std::byte(0x07), std::byte(0xE7), std::byte(0xE0),
+	std::byte(0x20)
+};
+
 template<any_known_team ExpectedTeam>
-constexpr auto matches(auto const & source, ExpectedTeam const expected) -> bool {
+constexpr auto matches(std::span<std::byte const> const source, ExpectedTeam const expected) -> bool {
 	return tv::visit(nb::read_team_file(source), tv::overload(
 		[&](ExpectedTeam const & parsed) { return parsed == expected; },
 		[](auto const &) { return false; }
@@ -387,17 +477,7 @@ constexpr auto matches(auto const & source, ExpectedTeam const expected) -> bool
 }
 
 static_assert(matches(netbattle_bytes, expected_netbattle_team));
-
-TEST_CASE("Netbattle team", "[Netbattle]") {
-	auto const file_name = get_test_directory() / "teams/netbattle.pnb";
-	CHECK(matches(netbattle_bytes, expected_netbattle_team));
-	CHECK(matches(file_name, expected_netbattle_team));
-}
-
-TEST_CASE("Netbattle Supremacy team", "[Netbattle]") {
-	auto const file_name = get_test_directory() / "teams/netbattle-supremacy.dpnb";
-	CHECK(matches(file_name, expected_netbattle_supremacy_team));
-}
+static_assert(matches(netbattle_supremacy_bytes, expected_netbattle_supremacy_team));
 
 } // namespace
 } // namespace technicalmachine
