@@ -547,7 +547,7 @@ private:
 	}
 
 	ByteParser m_byte_parser;
-	containers::stable_vector<ParsedData, 1000> m_objects;
+	containers::stable_vector<ParsedData, 1000_bi> m_objects;
 };
 
 export auto read_team_file(std::span<std::byte const> const bytes) -> GenerationGeneric<KnownTeam> {
