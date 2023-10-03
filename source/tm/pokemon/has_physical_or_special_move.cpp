@@ -12,7 +12,6 @@ import tm.move.known_move;
 import tm.move.move;
 
 import tm.pokemon.get_hidden_power_type;
-import tm.pokemon.pokemon;
 
 import tm.type.move_type;
 

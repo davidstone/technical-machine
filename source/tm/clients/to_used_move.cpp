@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <tm/for_each_generation.hpp>
-
 export module tm.clients.to_used_move;
 
 import tm.clients.move_result;
@@ -21,7 +17,6 @@ import tm.any_team;
 import tm.associated_team;
 import tm.environment;
 import tm.other_team;
-import tm.team;
 
 import bounded;
 import containers;
@@ -72,14 +67,5 @@ constexpr auto to_used_move(Used const move, UserTeam const & user, OtherTeam<Us
 		get_side_effect(move, user.pokemon(), other, environment)
 	);
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam) \
-	template auto to_used_move(Used const move, UserTeam const & user, OtherTeam<UserTeam> const & other, Environment const environment) -> UsedMove<UserTeam>
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>)
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

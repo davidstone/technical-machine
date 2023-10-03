@@ -5,8 +5,6 @@
 
 module;
 
-#include <tm/for_each_generation.hpp>
-
 #include <bounded/conditional.hpp>
 
 export module tm.move.base_power;
@@ -16,7 +14,6 @@ import tm.move.move_name;
 
 import tm.pokemon.happiness;
 import tm.pokemon.hp_ratio;
-import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.stat.calculate;
@@ -27,7 +24,6 @@ import tm.environment;
 import tm.generation;
 import tm.held_item;
 import tm.item;
-import tm.team;
 
 import bounded;
 import containers;
@@ -2010,17 +2006,5 @@ constexpr auto base_power(UserTeam const & attacker_team, ExecutedMove<UserTeam>
 		case MoveName::Eerie_Spell: return 80_bi;
 	}
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam, DefenderTeam) \
-	template auto base_power(UserTeam const &, ExecutedMove<UserTeam>, DefenderTeam const &, Environment) -> BasePower
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>, Team<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>, KnownTeam<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>, SeenTeam<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>, KnownTeam<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>, SeenTeam<generation>)
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

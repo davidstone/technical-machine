@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <tm/for_each_generation.hpp>
-
 export module tm.evaluate.expectiminimax;
 
 import tm.evaluate.depth;
@@ -72,10 +68,5 @@ auto expectiminimax(Team<generation> const & ai, LegalSelections const ai_select
 	auto evaluator = Evaluator(evaluate, ExpectiminimaxEvaluator<generation>());
 	return evaluator.select_type_of_move(ai, ai_selections, foe, foe_selections, environment, depth);
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto expectiminimax(Team<generation> const & ai, LegalSelections, Team<generation> const & foe, LegalSelections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> ScoredMoves
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

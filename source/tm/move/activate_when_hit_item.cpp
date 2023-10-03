@@ -3,20 +3,12 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <tm/for_each_generation.hpp>
-
 export module tm.move.activate_when_hit_item;
 
 import tm.move.category;
 import tm.move.known_move;
 
-import tm.pokemon.active_pokemon;
 import tm.pokemon.any_pokemon;
-import tm.pokemon.known_pokemon;
-import tm.pokemon.pokemon;
-import tm.pokemon.seen_pokemon;
 import tm.pokemon.substitute;
 
 import tm.stat.stage;
@@ -148,15 +140,5 @@ constexpr auto activate_when_hit_item(KnownMove const move, DefenderPokemon cons
 			return false;
 	}
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(DefenderPokemon) \
-	template auto activate_when_hit_item(KnownMove const move, DefenderPokemon const defender, Environment const environment, Effectiveness const effectiveness) -> bool
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(AnyMutableActivePokemon<Pokemon<generation>>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(AnyMutableActivePokemon<SeenPokemon<generation>>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(AnyMutableActivePokemon<KnownPokemon<generation>>)
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

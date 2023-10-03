@@ -6,7 +6,6 @@
 module;
 
 #include <bounded/conditional.hpp>
-#include <tm/for_each_generation.hpp>
 
 export module tm.end_of_turn;
 
@@ -14,7 +13,6 @@ import tm.pokemon.active_pokemon;
 import tm.pokemon.any_pokemon;
 import tm.pokemon.indirect_status_can_apply;
 import tm.pokemon.is_type;
-import tm.pokemon.pokemon;
 
 import tm.stat.stat_names;
 
@@ -35,7 +33,6 @@ import tm.heal;
 import tm.item;
 import tm.rational;
 import tm.other_team;
-import tm.team;
 
 import bounded;
 import containers;
@@ -284,15 +281,5 @@ void end_of_turn(TeamType & first, EndOfTurnFlags const first_flags, OtherTeam<T
 		generation_3_plus_end_of_turn(first, first_flags, last, last_flags, environment);
 	}
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(TeamType) \
-	template void end_of_turn(TeamType & first, EndOfTurnFlags first_flags, OtherTeam<TeamType> & last, EndOfTurnFlags last_flags, Environment &)
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>)
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

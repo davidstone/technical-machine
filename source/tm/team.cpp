@@ -5,8 +5,6 @@
 
 module;
 
-#include <tm/for_each_generation.hpp>
-
 #include <bounded/assert.hpp>
 
 #include <operators/forward.hpp>
@@ -284,16 +282,6 @@ private:
 	[[no_unique_address]] EntryHazards<generation> m_entry_hazards;
 	[[no_unique_address]] bool_type<PokemonType> m_me;
 };
-
-#define TM_EXPLICIT_INSTANTIATION_IMPL(PokemonType) \
-	template struct TeamImpl<PokemonType>
-
-#define TM_EXPLICIT_INSTANTIATION(generation) \
-	TM_EXPLICIT_INSTANTIATION_IMPL(Pokemon<generation>); \
-	TM_EXPLICIT_INSTANTIATION_IMPL(KnownPokemon<generation>); \
-	TM_EXPLICIT_INSTANTIATION_IMPL(SeenPokemon<generation>)
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TM_EXPLICIT_INSTANTIATION);
 
 export template<Generation generation>
 using Team = TeamImpl<Pokemon<generation>>;

@@ -5,8 +5,6 @@
 
 module;
 
-#include <tm/for_each_generation.hpp>
-
 #include <bounded/conditional.hpp>
 
 export module tm.move.side_effects;
@@ -22,10 +20,7 @@ import tm.pokemon.any_pokemon;
 import tm.pokemon.change_hp;
 import tm.pokemon.faint;
 import tm.pokemon.is_type;
-import tm.pokemon.known_pokemon;
 import tm.pokemon.max_pokemon_per_team;
-import tm.pokemon.pokemon;
-import tm.pokemon.seen_pokemon;
 import tm.pokemon.species;
 import tm.pokemon.stockpile;
 
@@ -50,7 +45,6 @@ import tm.heal;
 import tm.item;
 import tm.other_team;
 import tm.rational;
-import tm.team;
 
 import bounded;
 import containers;
@@ -2241,15 +2235,5 @@ constexpr auto possible_side_effects(MoveName const move, UserPokemon const orig
 			return no_effect<UserTeam>;
 	}
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserPokemon) \
-	template auto possible_side_effects(MoveName, UserPokemon, OtherTeam<AssociatedTeam<UserPokemon>> const &, Environment) -> SideEffects<AssociatedTeam<UserPokemon>>
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(AnyActivePokemon<Pokemon<generation>>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(AnyActivePokemon<SeenPokemon<generation>>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(AnyActivePokemon<KnownPokemon<generation>>)
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

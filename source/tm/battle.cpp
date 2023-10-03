@@ -8,8 +8,6 @@ module;
 #include <std_module/prelude.hpp>
 #include <iostream>
 
-#include <tm/for_each_generation.hpp>
-
 export module tm.battle;
 
 import tm.move.actual_damage;
@@ -26,7 +24,6 @@ import tm.pokemon.find_required_pokemon_index;
 import tm.pokemon.get_hidden_power_type;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
-import tm.pokemon.pokemon;
 import tm.pokemon.seen_pokemon;
 import tm.pokemon.species;
 
@@ -241,7 +238,5 @@ private:
 	SeenTeam<generation> m_foe;
 	Environment m_environment;
 };
-
-TM_INSTANTIATE_STRUCT_FOR_EACH_GENERATION(Battle);
 
 } // namespace technicalmachine

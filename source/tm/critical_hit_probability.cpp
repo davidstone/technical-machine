@@ -5,15 +5,12 @@
 
 module;
 
-#include <tm/for_each_generation.hpp>
-
 #include <bounded/conditional.hpp>
 
 export module tm.critical_hit_probability;
 
 import tm.move.move_name;
 
-import tm.pokemon.active_pokemon;
 import tm.pokemon.any_pokemon;
 import tm.pokemon.species;
 import tm.pokemon.substitute;
@@ -1017,10 +1014,5 @@ export constexpr auto critical_hit_probability(any_active_pokemon auto const att
 			return base_critical_hit_probability(attacker, move, environment);
 	}
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto critical_hit_probability<ActivePokemon<generation>>(ActivePokemon<generation> const attacker, MoveName const move, Ability const defender_ability, Environment const environment) -> double
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

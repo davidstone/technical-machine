@@ -19,7 +19,6 @@ import tm.move.is_switch;
 import tm.pokemon.active_pokemon;
 import tm.pokemon.any_pokemon;
 import tm.pokemon.pokemon_collection;
-import tm.pokemon.pokemon;
 import tm.pokemon.potentially_selectable_moves;
 
 import tm.status.status;

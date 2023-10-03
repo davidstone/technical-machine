@@ -5,8 +5,6 @@
 
 module;
 
-#include <tm/for_each_generation.hpp>
-
 #include <bounded/assert.hpp>
 #include <bounded/conditional.hpp>
 
@@ -302,15 +300,5 @@ auto call_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTea
 	try_use_move(user, move, other, other_move, environment, clear_status, actual_damage, is_fully_paralyzed);
 	end_of_attack(user.pokemon(), other.pokemon(), environment);
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam) \
-	template auto call_move(UserTeam & user, UsedMove<UserTeam> move, OtherTeam<UserTeam> & other, OtherMove other_move, Environment & environment, bool clear_status, ActualDamage actual_damage, bool is_fully_paralyzed) -> void
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>)
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

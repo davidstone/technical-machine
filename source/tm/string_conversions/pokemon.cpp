@@ -7,8 +7,6 @@ module;
 
 #include <bounded/assert.hpp>
 
-#include <tm/for_each_generation.hpp>
-
 export module tm.string_conversions.pokemon;
 
 import tm.move.move;
@@ -17,10 +15,8 @@ import tm.move.regular_moves;
 
 import tm.pokemon.any_pokemon;
 import tm.pokemon.hp_ratio;
-import tm.pokemon.known_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.pokemon;
-import tm.pokemon.seen_pokemon;
 import tm.pokemon.species;
 
 import tm.stat.calculate_ivs_and_evs;
@@ -318,16 +314,5 @@ constexpr auto pokemon_from_string(std::string_view const str) -> Pokemon<genera
 
 	return pokemon;
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(PokemonType) \
-	template auto to_string(PokemonType const & pokemon) -> containers::string
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Pokemon<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownPokemon<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenPokemon<generation>); \
-	template auto pokemon_from_string<generation>(std::string_view const str) -> Pokemon<generation>
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

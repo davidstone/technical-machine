@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <tm/for_each_generation.hpp>
-
 export module tm.evaluate.possible_executed_moves;
 
 import tm.move.known_move;
@@ -14,7 +10,6 @@ import tm.move.move;
 import tm.move.move_name;
 
 import tm.pokemon.get_hidden_power_type;
-import tm.pokemon.pokemon;
 
 import tm.status.status;
 
@@ -22,7 +17,6 @@ import tm.type.move_type;
 
 import tm.any_team;
 import tm.generation;
-import tm.team;
 
 import bounded;
 import containers;
@@ -78,10 +72,5 @@ auto possible_executed_moves(MoveName const selected_move, UserTeam const & user
 			return PossibleExecutedMoves({KnownMove{selected_move, type(selected_move)}});
 	}
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto possible_executed_moves(MoveName const selected_move, Team<generation> const & user_team) -> PossibleExecutedMoves
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

@@ -5,8 +5,6 @@
 
 module;
 
-#include <tm/for_each_generation.hpp>
-
 #include <bounded/assert.hpp>
 #include <bounded/conditional.hpp>
 
@@ -32,7 +30,6 @@ import tm.pokemon.hidden_power;
 import tm.pokemon.hp_ratio;
 import tm.pokemon.indirect_status_can_apply;
 import tm.pokemon.is_type;
-import tm.pokemon.known_pokemon;
 import tm.pokemon.last_used_move;
 import tm.pokemon.level;
 import tm.pokemon.magnet_rise;
@@ -41,7 +38,6 @@ import tm.pokemon.other_pokemon;
 import tm.pokemon.partial_trap;
 import tm.pokemon.perish_song;
 import tm.pokemon.pokemon;
-import tm.pokemon.seen_pokemon;
 import tm.pokemon.slow_start;
 import tm.pokemon.species;
 import tm.pokemon.stockpile;
@@ -257,8 +253,6 @@ private:
 	[[no_unique_address]] BoolIf<generation >= Generation::four, struct unburdened> unburdened{};
 	[[no_unique_address]] BoolIf<generation >= Generation::three, struct water_sport> water_sport{};
 };
-
-TM_INSTANTIATE_STRUCT_FOR_EACH_GENERATION(ActivePokemonFlags);
 
 template<typename PokemonType>
 struct ActivePokemonImpl {
@@ -1119,18 +1113,6 @@ private:
 		}
 	}
 };
-
-#define TM_EXPLICIT_INSTANTIATION_IMPL(PokemonType) \
-	template struct AnyActivePokemon<PokemonType>; \
-	template struct AnyMutableActivePokemon<PokemonType>
-
-#define TM_EXPLICIT_INSTANTIATION(generation) \
-	TM_EXPLICIT_INSTANTIATION_IMPL(Pokemon<generation>); \
-	TM_EXPLICIT_INSTANTIATION_IMPL(KnownPokemon<generation>); \
-	TM_EXPLICIT_INSTANTIATION_IMPL(SeenPokemon<generation>)
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TM_EXPLICIT_INSTANTIATION);
-
 
 export constexpr auto apply_white_herb(any_mutable_active_pokemon auto const pokemon) {
 	for (auto & stage : pokemon.stages()) {

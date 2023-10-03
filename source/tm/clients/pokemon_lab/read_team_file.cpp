@@ -21,7 +21,6 @@ import tm.pokemon.known_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.nickname;
-import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.stat.combined_stats;

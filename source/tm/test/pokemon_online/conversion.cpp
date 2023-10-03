@@ -20,7 +20,6 @@ import tm.string_conversions.move_name;
 import tm.string_conversions.nature;
 import tm.string_conversions.species;
 
-import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.ability;

@@ -17,7 +17,6 @@ import tm.move.move_name;
 import tm.pokemon.any_pokemon;
 import tm.pokemon.hp_ratio;
 import tm.pokemon.is_type;
-import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.stat.stage;

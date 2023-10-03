@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <tm/for_each_generation.hpp>
-
 export module tm.evaluate.score_moves;
 
 import tm.evaluate.depth;
@@ -73,10 +69,5 @@ auto score_moves(Team<generation> const & ai, LegalSelections const ai_selection
 	}
 	return moves;
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto score_moves(Team<generation> const & ai, LegalSelections const ai_selections, Team<generation> const & foe, LegalSelections const foe_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth, MoveProbabilities const foe_moves) -> ScoredMoves
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

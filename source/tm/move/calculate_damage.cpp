@@ -5,8 +5,6 @@
 
 module;
 
-#include <tm/for_each_generation.hpp>
-
 #include <bounded/conditional.hpp>
 
 export module tm.move.calculate_damage;
@@ -21,7 +19,6 @@ import tm.move.power;
 
 import tm.pokemon.any_pokemon;
 import tm.pokemon.is_type;
-import tm.pokemon.pokemon;
 
 import tm.stat.calculate;
 
@@ -39,7 +36,6 @@ import tm.generation;
 import tm.item;
 import tm.random_damage;
 import tm.rational;
-import tm.team;
 
 import bounded;
 
@@ -293,17 +289,5 @@ constexpr auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam
 		raw_damage(attacker, executed, move_weakened_from_item, defender, defender_move, environment) :
 		0_bi;
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(UserTeam, OtherTeamType) \
-	template auto calculate_damage(UserTeam const & attacker, ExecutedMove<UserTeam>, bool move_weakened_from_item, OtherTeamType const & defender, OtherMove defender_move, Environment) -> damage_type
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(Team<generation>, Team<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>, KnownTeam<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(KnownTeam<generation>, SeenTeam<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>, KnownTeam<generation>); \
-	TECHNICALMACHINE_EXPLICIT_INSTANTIATION_IMPL(SeenTeam<generation>, SeenTeam<generation>)
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

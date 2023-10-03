@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <tm/for_each_generation.hpp>
-
 export module tm.pokemon.known_pokemon;
 
 import tm.move.move;
@@ -195,8 +191,6 @@ private:
 
 template<Generation generation>
 constexpr auto is_known_pokemon<KnownPokemon<generation>> = true;
-
-TM_INSTANTIATE_STRUCT_FOR_EACH_GENERATION(KnownPokemon);
 
 } // namespace technicalmachine
 

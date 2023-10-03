@@ -5,8 +5,6 @@
 
 module;
 
-#include <tm/for_each_generation.hpp>
-
 #include <bounded/conditional.hpp>
 
 export module tm.pokemon.pokemon;
@@ -284,8 +282,6 @@ private:
 
 template<Generation generation>
 constexpr auto is_real_pokemon<Pokemon<generation>> = true;
-
-TM_INSTANTIATE_STRUCT_FOR_EACH_GENERATION(Pokemon);
 
 } // namespace technicalmachine
 

@@ -7,7 +7,6 @@ export module tm.pokemon.other_pokemon;
 
 import tm.pokemon.any_pokemon;
 import tm.pokemon.known_pokemon;
-import tm.pokemon.pokemon;
 import tm.pokemon.seen_pokemon;
 
 import tm.generation;

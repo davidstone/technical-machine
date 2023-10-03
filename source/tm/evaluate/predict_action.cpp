@@ -3,10 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-module;
-
-#include <tm/for_each_generation.hpp>
-
 export module tm.evaluate.predict_action;
 
 import tm.evaluate.depth;
@@ -69,10 +65,5 @@ auto predict_action(Team<generation> const & team, LegalSelections const team_se
 		[](MoveProbability const move) { return move.probability > 0.0; }
 	));
 }
-
-#define TECHNICALMACHINE_EXPLICIT_INSTANTIATION(generation) \
-	template auto predict_action(Team<generation> const &, LegalSelections, Team<generation> const &, LegalSelections, Environment, Evaluate<generation>) -> MoveProbabilities
-
-TECHNICALMACHINE_FOR_EACH_GENERATION(TECHNICALMACHINE_EXPLICIT_INSTANTIATION);
 
 } // namespace technicalmachine

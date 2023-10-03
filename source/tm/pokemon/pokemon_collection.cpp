@@ -14,7 +14,6 @@ export module tm.pokemon.pokemon_collection;
 import tm.pokemon.any_pokemon;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.pokemon_not_found;
-import tm.pokemon.seen_pokemon;
 import tm.pokemon.species;
 
 import tm.compress;

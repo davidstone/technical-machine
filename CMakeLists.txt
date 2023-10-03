@@ -579,7 +579,6 @@ target_sources(tm_test PUBLIC
 	source/tm/test/call_move.cpp
 	source/tm/test/ev_optimizer.cpp
 	source/tm/test/files_in_path.cpp
-	source/tm/test/for_each_generation.cpp
 	source/tm/test/get_directory.cpp
 	source/tm/test/sleep.cpp
 )
