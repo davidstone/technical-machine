@@ -58,7 +58,8 @@ private:
 			}
 		}
 	}
-	[[no_unique_address]] IntegerIf<duration_type, exists> m_turns_remaining = 0_bi;
+	// Disabled for https://github.com/llvm/llvm-project/issues/60711
+	/*[[no_unique_address]]*/ IntegerIf<duration_type, exists> m_turns_remaining = 0_bi;
 };
 
 template struct Screen<false, 3>;
