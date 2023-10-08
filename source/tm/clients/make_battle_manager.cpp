@@ -46,6 +46,7 @@ import tm.pokemon.species;
 import tm.pokemon.substitute;
 
 import tm.stat.current_hp;
+import tm.stat.hp;
 
 import tm.status.status_name;
 
@@ -249,17 +250,7 @@ struct BattleManagerImpl final : BattleManager {
 				active_has(ai_is_user, Ability::Rock_Head);
 			}
 			
-			auto const damage = tv::visit(move.damage, tv::overload(
-				no_damage_function,
-				[&](VisibleHP const hp) -> FlaggedActualDamage {
-					auto const value = compute_damage(ai_is_user, move.executed, hp);
-					return FlaggedActualDamage{
-						ActualDamage::Known{value},
-						value != 0_bi
-					};
-				},
-				MoveHitSubstitute(other_pokemon.substitute())
-			));
+			auto const damage = visible_damage_to_actual_damage(ai_is_user, move, other_pokemon);
 			
 			m_battle.handle_use_move(
 				to_used_move(move, user_team, other_team, m_battle.environment()),
@@ -373,15 +364,29 @@ private:
 		return apply_to_teams(is_ai_, [&](auto const & team, auto const &) -> decltype(auto) { return function(team); });
 	}
 
-	auto compute_damage(bool const user_is_ai, MoveName const move, VisibleHP const hp) const -> CurrentHP {
-		auto const ai_damaged = !user_is_ai xor (move == MoveName::Hit_Self);
-		auto const old_hp = apply_to_team(ai_damaged, [&](auto const & team) {
+	auto target_hp(bool const damaged_is_ai, MoveName const move) const -> HP {
+		return apply_to_team(damaged_is_ai, [&](auto const & team) {
 			return select_pokemon(team, move).hp();
 		});
-		auto const new_hp = ai_damaged ?
-			hp.current.value() :
-			to_real_hp(old_hp.max(), hp).value;
-		return hp_to_damage(old_hp.current(), new_hp);
+	}
+
+	auto visible_damage_to_actual_damage(bool const user_is_ai, Used const move, auto const other_pokemon) const -> FlaggedActualDamage {
+		return tv::visit(move.damage, tv::overload(
+			no_damage_function,
+			[&](VisibleHP const hp) -> FlaggedActualDamage {
+				auto const damaged_is_ai = !user_is_ai xor (move.executed == MoveName::Hit_Self);
+				auto const old_hp = target_hp(damaged_is_ai, move.executed);
+				auto const new_hp = damaged_is_ai ?
+					hp.current.value() :
+					to_real_hp(old_hp.max(), hp).value;
+				auto const value = hp_to_damage(old_hp.current(), new_hp);
+				return FlaggedActualDamage{
+					ActualDamage::Known{value},
+					value != 0_bi
+				};
+			},
+			MoveHitSubstitute(other_pokemon.substitute())
+		));
 	}
 
 	auto log_move_scores(ScoredMoves const moves) & -> void {
