@@ -4,6 +4,7 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 cmake_minimum_required(VERSION 3.27 FATAL_ERROR)
+cmake_policy(VERSION 3.27...3.28)
 
 project(technical_machine LANGUAGES CXX)
 
@@ -453,7 +454,7 @@ target_link_libraries(tm_pokemon_showdown
 add_executable(ai
 	source/tm/ai/main.cpp
 )
-target_sources(ai PUBLIC
+target_sources(ai PRIVATE
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
@@ -478,7 +479,7 @@ target_link_libraries(file_converter
 add_executable(ps_usage_stats_create_teams_file
 	source/tm/ps_usage_stats/create_teams_file.cpp
 )
-target_sources(ps_usage_stats_create_teams_file PUBLIC
+target_sources(ps_usage_stats_create_teams_file PRIVATE
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
@@ -509,7 +510,7 @@ target_link_libraries(ps_usage_stats_create_derivative_stats
 add_executable(predict
 	source/tm/team_predictor/predictor.cpp
 )
-target_sources(predict PUBLIC
+target_sources(predict PRIVATE
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
@@ -523,7 +524,7 @@ target_link_libraries(predict
 )
 
 add_executable(tm_test)
-target_sources(tm_test PUBLIC
+target_sources(tm_test PRIVATE
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
@@ -550,7 +551,7 @@ target_sources(tm_test PUBLIC
 		source/tm/test/string_conversion.cpp
 		source/tm/test/usage_bytes.cpp
 )
-target_sources(tm_test PUBLIC
+target_sources(tm_test PRIVATE
 	source/tm/test/clients/netbattle/read_team_file.cpp
 
 	source/tm/test/clients/pokemon_showdown/battle_parser.cpp
@@ -590,7 +591,7 @@ target_link_libraries(tm_test
 )
 
 add_executable(ps_regression_test)
-target_sources(ps_regression_test PUBLIC
+target_sources(ps_regression_test PRIVATE
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
