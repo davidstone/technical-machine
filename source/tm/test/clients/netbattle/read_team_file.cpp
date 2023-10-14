@@ -22,9 +22,6 @@ import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
 
-import tm.string_conversions.pokemon;
-import tm.string_conversions.team;
-
 import tm.ability;
 import tm.any_team;
 import tm.gender;

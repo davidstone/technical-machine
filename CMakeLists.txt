@@ -325,6 +325,9 @@ target_sources(tm_pokemon_lab PUBLIC
 		source/tm/clients/pokemon_lab/read_team_file.cpp
 		source/tm/clients/pokemon_lab/write_team_file.cpp
 )
+target_sources(tm_pokemon_lab PRIVATE
+	source/tm/clients/pokemon_lab/read_team_file_impl.cpp
+)
 target_link_libraries(tm_pokemon_lab
 	bounded
 	containers
@@ -356,6 +359,9 @@ target_sources(tm_shoddy_battle PUBLIC
 	FILES
 		source/tm/clients/shoddy_battle/read_team_file.cpp
 )
+target_sources(tm_shoddy_battle PRIVATE
+	source/tm/clients/shoddy_battle/read_team_file_impl.cpp
+)
 target_link_libraries(tm_shoddy_battle
 	bounded
 	containers
@@ -385,6 +391,10 @@ target_sources(tm_clients PUBLIC
 		source/tm/clients/to_used_move.cpp
 		source/tm/clients/turn_count.cpp
 		source/tm/clients/write_team.cpp
+)
+target_sources(tm_clients PRIVATE
+	source/tm/clients/get_team_impl.cpp
+	source/tm/clients/make_battle_manager_impl.cpp
 )
 target_link_libraries(tm_clients
 	bounded
@@ -440,6 +450,10 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/ps_usage_stats/serialize.cpp
 		source/tm/ps_usage_stats/usage_stats.cpp
 		source/tm/ps_usage_stats/worker.cpp
+)
+target_sources(tm_pokemon_showdown PRIVATE
+	source/tm/clients/pokemon_showdown/battle_factory_impl.cpp
+	source/tm/clients/pokemon_showdown/to_packed_format_impl.cpp
 )
 target_link_libraries(tm_pokemon_showdown
 	Boost::headers

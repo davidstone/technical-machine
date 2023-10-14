@@ -99,11 +99,9 @@ export struct ClientImpl {
 	}
 
 private:
-	auto send_team(Generation const runtime_generation) -> void {
-		auto const team_str = constant_generation(runtime_generation, [&]<Generation generation>(constant_gen_t<generation>) {
-			auto const team = get_team<generation>(m_settings.team, m_all_usage_stats, m_random_engine);
-			return team ? to_packed_format(*team) : "null";
-		});
+	auto send_team(Generation const generation) -> void {
+		auto const team = get_team(generation, m_settings.team, m_all_usage_stats, m_random_engine);
+		auto const team_str = team ? to_packed_format(*team) : "null";
 		m_send_message(containers::concatenate<containers::string>("|/utm "sv, team_str));
 	}
 
