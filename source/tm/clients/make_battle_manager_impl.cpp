@@ -209,7 +209,7 @@ struct BattleManagerImpl final : BattleManager {
 			// TODO: properly order this
 			m_battle.first_turn(true);
 		}
-		m_analysis_logger.get() << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
+		m_analysis_logger << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
 		m_battle.handle_begin_turn();
 	}
 	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void final {
@@ -278,12 +278,13 @@ struct BattleManagerImpl final : BattleManager {
 			throw std::runtime_error("Tried to determine an action with an empty team.");
 		}
 
-		m_analysis_logger.get() << "AI's " << to_string(m_battle.ai()) << '\n';
-		m_analysis_logger.get() << "Seen Foe's " << to_string(m_battle.foe()) << '\n';
+		log_team("AI", m_battle.ai());
+		log_team("Seen Foe", m_battle.foe());
 		auto const predicted = most_likely_team(m_usage_stats, m_random_engine, m_battle.foe());
-		m_analysis_logger.get() << "Predicted Foe's " << to_string(predicted) << '\n' << std::flush;
+		log_team("Predicted Foe", predicted);
+		m_analysis_logger << std::flush;
 
-		m_analysis_logger.get() << "Evaluating to a depth of " << m_depth.general << ", " << m_depth.single << "...\n";
+		m_analysis_logger << "Evaluating to a depth of " << m_depth.general << ", " << m_depth.single << "...\n";
 		auto const start = std::chrono::steady_clock::now();
 
 		auto const ai = Team<generation_>(m_battle.ai());
@@ -314,12 +315,12 @@ struct BattleManagerImpl final : BattleManager {
 			foe_moves
 		);
 		auto const finish = std::chrono::steady_clock::now();
-		m_analysis_logger.get() << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
+		m_analysis_logger << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
 		containers::sort(scored_moves, [](ScoredMove const lhs, ScoredMove const rhs) {
 			return lhs.score > rhs.score;
 		});
 		log_move_scores(scored_moves);
-		m_analysis_logger.get() << std::flush;
+		m_analysis_logger << std::flush;
 		return containers::front(scored_moves).name;
 	}
 
@@ -389,25 +390,29 @@ private:
 		));
 	}
 
+	auto log_team(std::string_view const label, auto const & team) & -> void {
+		m_analysis_logger << label << "'s " << to_string(team) << '\n';
+	}
+
 	auto log_move_scores(ScoredMoves const moves) & -> void {
 		for (auto const move : moves) {
 			if (is_switch(move.name)) {
-				m_analysis_logger.get() << "Switch to " << to_string(m_battle.ai().pokemon(to_replacement(move.name)).species());
+				m_analysis_logger << "Switch to " << to_string(m_battle.ai().pokemon(to_replacement(move.name)).species());
 			} else {
-				m_analysis_logger.get() << "Use " << to_string(move.name);
+				m_analysis_logger << "Use " << to_string(move.name);
 			}
-			m_analysis_logger.get() << " for an expected score of " << static_cast<std::int64_t>(move.score) << '\n';
+			m_analysis_logger << " for an expected score of " << static_cast<std::int64_t>(move.score) << '\n';
 		}
 	}
 	auto log_foe_move_probabilities(MoveProbabilities const moves, Team<generation_> const & foe) & -> void {
 		for (auto const move : moves) {
-			m_analysis_logger.get() << "Predicted " << move.probability * 100.0 << "% chance of ";
+			m_analysis_logger << "Predicted " << move.probability * 100.0 << "% chance of ";
 			if (is_switch(move.name)) {
-				m_analysis_logger.get() << "switching to " << to_string(foe.pokemon(to_replacement(move.name)).species());
+				m_analysis_logger << "switching to " << to_string(foe.pokemon(to_replacement(move.name)).species());
 			} else {
-				m_analysis_logger.get() << "using " << to_string(move.name);
+				m_analysis_logger << "using " << to_string(move.name);
 			}
-			m_analysis_logger.get() << '\n';
+			m_analysis_logger << '\n';
 		}
 	}
 

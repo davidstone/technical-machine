@@ -7,8 +7,6 @@ module;
 
 #include <std_module/prelude.hpp>
 
-#include <compare>
-
 #include <boost/iostreams/stream.hpp>
 
 export module tm.evaluate.analysis_logger;
@@ -18,6 +16,8 @@ import tm.open_file;
 import std_module;
 
 namespace technicalmachine {
+
+using Manipulator = auto (*)(std::ostream &) -> std::ostream &;
 
 export struct AnalysisLogger {
 	struct none{};
@@ -30,8 +30,13 @@ export struct AnalysisLogger {
 	{
 	}
 
-	auto get() -> std::ostream & {
-		return *m_stream;
+	friend auto operator<<(AnalysisLogger & logger, auto const & value) -> AnalysisLogger & {
+		*logger.m_stream << value;
+		return logger;
+	}
+	friend auto operator<<(AnalysisLogger & logger, Manipulator function) -> AnalysisLogger & {
+		*logger.m_stream << function;
+		return logger;
 	}
 
 private:
