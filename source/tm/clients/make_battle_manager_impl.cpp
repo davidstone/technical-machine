@@ -25,6 +25,7 @@ import tm.clients.write_team;
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
+import tm.evaluate.move_probability;
 import tm.evaluate.predict_action;
 import tm.evaluate.score_moves;
 import tm.evaluate.scored_move;

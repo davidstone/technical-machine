@@ -8,6 +8,7 @@ export module tm.evaluate.predict_action;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.expectiminimax;
+import tm.evaluate.move_probability;
 import tm.evaluate.scored_move;
 
 import tm.move.max_moves_per_pokemon;
@@ -24,13 +25,6 @@ import std_module;
 
 namespace technicalmachine {
 using namespace bounded::literal;
-
-export struct MoveProbability {
-	MoveName name;
-	double probability;
-	friend auto operator==(MoveProbability, MoveProbability) -> bool = default;
-};
-export using MoveProbabilities = containers::static_vector<MoveProbability, maximum_possible_selections>;
 
 export template<Generation generation>
 auto predict_action(Team<generation> const & team, LegalSelections const team_selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate) -> MoveProbabilities {

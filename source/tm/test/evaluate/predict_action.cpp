@@ -8,6 +8,7 @@
 
 import tm.evaluate.evaluate;
 import tm.evaluate.evaluate_settings;
+import tm.evaluate.move_probability;
 import tm.evaluate.predict_action;
 
 import tm.move.move;

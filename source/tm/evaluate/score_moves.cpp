@@ -8,6 +8,7 @@ export module tm.evaluate.score_moves;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.evaluator;
+import tm.evaluate.move_probability;
 import tm.evaluate.predict_action;
 import tm.evaluate.scored_move;
 import tm.evaluate.team_is_empty;
