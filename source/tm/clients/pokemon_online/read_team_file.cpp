@@ -197,7 +197,7 @@ auto parse_pokemon(property_tree::ptree_reader pt, SpeciesIDs::ID species_id) {
 		gender,
 		item,
 		ability,
-		CombinedStats<generation>{nature, dvs_or_ivs.stats, evs.stats},
+		CombinedStatsFor<generation>{nature, dvs_or_ivs.stats, evs.stats},
 		parsed_moves.moves,
 		happiness
 	);

@@ -127,7 +127,7 @@ auto parse_team(nlohmann::json const & team_array) -> Team<generation> {
 			gender,
 			item,
 			ability,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				nature,
 				dvs_or_ivs,
 				evs

@@ -14,6 +14,7 @@ import tm.pokemon.species;
 
 import tm.stat.base_stats;
 import tm.stat.combined_stats;
+import tm.stat.default_evs;
 import tm.stat.ev;
 import tm.stat.evs;
 import tm.stat.hp;
@@ -22,6 +23,7 @@ import tm.stat.iv;
 import tm.stat.nature;
 import tm.stat.possible_dvs_or_ivs;
 import tm.stat.stat_names;
+import tm.stat.stat_style;
 import tm.stat.stats;
 
 import tm.string_conversions.nature;
@@ -52,7 +54,7 @@ TEST_CASE("Optimize already optimized EVs", "[EV Optimizer]") {
 	constexpr auto hidden_power = tv::optional<HiddenPower<generation>>();
 	constexpr auto include_attack = true;
 	constexpr auto include_special_attack = false;
-	constexpr auto ivs_and_evs = CombinedStats<generation>{
+	constexpr auto ivs_and_evs = CombinedStatsFor<generation>{
 		Nature::Adamant,
 		max_dvs_or_ivs<generation>,
 		EVs(
@@ -65,7 +67,7 @@ TEST_CASE("Optimize already optimized EVs", "[EV Optimizer]") {
 		)
 	};
 	auto const base_stats = BaseStats(generation, species);
-	auto const stats = Stats<generation>(base_stats, level, ivs_and_evs);
+	auto const stats = Stats<stat_style_for(generation)>(base_stats, level, ivs_and_evs);
 	auto random_engine = std::mt19937(std::random_device()());
 
 	CHECK(compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack) == ivs_and_evs);
@@ -86,11 +88,11 @@ TEST_CASE("Optimize defensive EVs", "[EV Optimizer]") {
 	constexpr auto defense_ev = EV(252_bi);
 	constexpr auto special_defense_ev = EV(4_bi);
 	constexpr auto hp = HP(base_hp, level, IV(31_bi), hp_ev).max();
-	constexpr auto defense = initial_stat<generation>(SplitSpecialRegularStat::def, base_def, level, nature, IV(31_bi), defense_ev);
-	constexpr auto special_defense = initial_stat<generation>(SplitSpecialRegularStat::spd, base_spd, level, nature, IV(31_bi), special_defense_ev);
+	constexpr auto defense = initial_stat<special_style_for(generation)>(SplitSpecialRegularStat::def, base_def, level, nature, IV(31_bi), defense_ev);
+	constexpr auto special_defense = initial_stat<special_style_for(generation)>(SplitSpecialRegularStat::spd, base_spd, level, nature, IV(31_bi), special_defense_ev);
 	constexpr auto input_hp = DefensiveEVHP{base_hp, possible_optimized_ivs(possible_ivs.hp()), hp};
-	constexpr auto input_def = DefensiveEVDef<generation>{base_def, possible_optimized_ivs(possible_ivs.def()), defense};
-	constexpr auto input_spd = DefensiveEVSpD<generation>{base_spd, possible_optimized_ivs(possible_ivs.spd()), special_defense};
+	constexpr auto input_def = DefensiveEVDef{base_def, possible_optimized_ivs(possible_ivs.def()), defense};
+	constexpr auto input_spd = DefensiveEVSpD{base_spd, possible_optimized_ivs(possible_ivs.spd()), special_defense};
 	// Too many steps to constant evaluate
 	auto const defensive_evs = DefensiveEVs(level, input_hp, input_def, input_spd);
 	for (auto const & candidate : defensive_evs) {
@@ -112,12 +114,12 @@ static_assert([] {
 	constexpr auto level = Level(100_bi);
 	constexpr auto original_nature = Nature::Hardy;
 	constexpr auto base_spe = 30_bi;
-	constexpr auto original_value = initial_stat<generation>(SplitSpecialRegularStat::spe, base_spe, level, original_nature, IV(31_bi), EV(76_bi));
+	constexpr auto original_value = initial_stat<special_style_for(generation)>(SplitSpecialRegularStat::spe, base_spe, level, original_nature, IV(31_bi), EV(76_bi));
 	constexpr auto possible_ivs = possible_optimized_ivs(possible_dvs_or_ivs(tv::optional<HiddenPower<generation>>()).spe());
-	constexpr auto speed_evs = SpeedEVs(base_spe, level, possible_ivs, SpeedEVs::Input<generation>{original_value});
+	constexpr auto speed_evs = SpeedEVs(base_spe, level, possible_ivs, SpeedEVs::Input{original_value});
 	for (auto const nature : containers::enum_range<Nature>()) {
 		auto const found = find(speed_evs, nature);
-		auto const new_value = initial_stat<generation>(SplitSpecialRegularStat::spe, base_spe, level, nature, found.iv, found.ev);
+		auto const new_value = initial_stat<special_style_for(generation)>(SplitSpecialRegularStat::spe, base_spe, level, nature, found.iv, found.ev);
 		if (boosts_stat(nature, SplitSpecialRegularStat::spe) and !boosts_stat(original_nature, SplitSpecialRegularStat::spe)) {
 			BOUNDED_ASSERT(new_value == original_value or new_value == original_value + 1_bi);
 		} else {
@@ -134,7 +136,7 @@ TEST_CASE("Optimize EVs below level 100", "[EV Optimizer]") {
 	constexpr auto hidden_power = tv::optional<HiddenPower<generation>>();
 	constexpr auto include_attack = false;
 	constexpr auto include_special_attack = true;
-	constexpr auto ivs_and_evs = CombinedStats<generation>{
+	constexpr auto ivs_and_evs = CombinedStatsFor<generation>{
 		Nature::Modest,
 		max_dvs_or_ivs<generation>,
 		EVs(
@@ -159,7 +161,7 @@ TEST_CASE("Optimize generation 2 EVs", "[EV Optimizer]") {
 	constexpr auto include_special_attack = true;
 	constexpr auto ivs_and_evs = default_combined_stats<generation>;
 	auto const base_stats = BaseStats(generation, species);
-	auto const stats = Stats<generation>(base_stats, level, ivs_and_evs);
+	auto const stats = Stats<stat_style_for(generation)>(base_stats, level, ivs_and_evs);
 	auto random_engine = std::mt19937(std::random_device()());
 	CHECK(compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack) == ivs_and_evs);
 	CHECK(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);

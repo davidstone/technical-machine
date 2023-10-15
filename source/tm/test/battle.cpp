@@ -18,7 +18,7 @@ import tm.pokemon.level;
 import tm.pokemon.nickname;
 import tm.pokemon.species;
 
-import tm.stat.combined_stats;
+import tm.stat.default_evs;
 
 import tm.ability;
 import tm.battle;

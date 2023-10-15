@@ -21,6 +21,7 @@ import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.stat.combined_stats;
+import tm.stat.default_evs;
 import tm.stat.ev;
 import tm.stat.evs;
 import tm.stat.iv;
@@ -59,7 +60,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 			Gender::female,
 			Item::Leftovers,
 			Ability::Volt_Absorb,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -84,7 +85,7 @@ TEST_CASE("Sleep Talk", "[Sleep]") {
 			Gender::male,
 			Item::Life_Orb,
 			Ability::Intimidate,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Adamant,
 				max_dvs_or_ivs<generation>,
 				EVs(

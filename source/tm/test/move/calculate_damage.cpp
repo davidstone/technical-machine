@@ -19,6 +19,7 @@ import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.stat.combined_stats;
+import tm.stat.default_evs;
 import tm.stat.ev;
 import tm.stat.evs;
 import tm.stat.iv;
@@ -67,7 +68,7 @@ constexpr auto attacker() {
 			Gender::male,
 			Item::Metronome,
 			Ability::Pure_Power,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Impish,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -147,7 +148,7 @@ constexpr auto attacker() {
 			Gender::genderless,
 			Item::Metronome,
 			Ability::Blaze,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Modest,
 				max_dvs_or_ivs<generation>,
 				EVs(

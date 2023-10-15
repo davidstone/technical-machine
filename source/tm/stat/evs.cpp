@@ -12,6 +12,7 @@ export module tm.stat.evs;
 import tm.stat.generic_stats;
 import tm.stat.ev;
 import tm.stat.stat_names;
+import tm.stat.stat_style;
 
 import tm.generation;
 
@@ -100,9 +101,9 @@ export constexpr auto to_old_gen_evs(EVs const evs) -> OldGenEVs {
 	return OldGenEVs(evs.hp(), evs.atk(), evs.def(), evs.spe(), evs.spa());
 }
 
-export constexpr auto max_total_evs(Generation const generation) {
+export constexpr auto max_total_evs(SpecialStyle const stat_style) {
 	return BOUNDED_CONDITIONAL(
-		generation <= Generation::two,
+		stat_style == SpecialStyle::combined,
 		EV::max * 5_bi,
 		510_bi
 	);

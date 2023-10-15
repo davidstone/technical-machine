@@ -25,6 +25,7 @@ import tm.stat.base_stats;
 import tm.stat.combined_stats;
 import tm.stat.nature;
 import tm.stat.stat_names;
+import tm.stat.stat_style;
 import tm.stat.stats;
 
 import tm.status.status;
@@ -49,7 +50,7 @@ using namespace bounded::literal;
 
 export template<Generation generation>
 struct Pokemon {
-	constexpr Pokemon(Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStats<generation> const stat_inputs, RegularMoves regular_moves_, Happiness const happiness = Happiness()):
+	constexpr Pokemon(Species const species, Level const level, Gender const gender, Item const item, Ability const ability, CombinedStatsFor<generation> const stat_inputs, RegularMoves regular_moves_, Happiness const happiness = Happiness()):
 		m_regular_moves(regular_moves_),
 		m_stats(BaseStats(generation, species), level, stat_inputs),
 
@@ -245,7 +246,7 @@ private:
 
 	constexpr explicit Pokemon(bounded::tombstone_tag, auto const make):
 		m_regular_moves(make()),
-		m_stats(bounded::tombstone_traits<Stats<generation>>::make(0_bi)),
+		m_stats(bounded::tombstone_traits<Stats<stat_style_for(generation)>>::make(0_bi)),
 		m_species(),
 		m_item(bounded::tombstone_traits<HeldItem>::make(0_bi)),
 		m_ability(),
@@ -261,7 +262,7 @@ private:
 
 	RegularMoves m_regular_moves;
 
-	Stats<generation> m_stats;
+	Stats<stat_style_for(generation)> m_stats;
 
 	Species m_species;
 	[[no_unique_address]] ExistsIf<HeldItem, generation >= Generation::two, struct item> m_item;

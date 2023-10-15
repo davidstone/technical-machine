@@ -28,7 +28,7 @@ import tm.pokemon.level;
 import tm.pokemon.seen_pokemon;
 import tm.pokemon.species;
 
-import tm.stat.combined_stats;
+import tm.stat.default_evs;
 
 import tm.team_predictor.usage_stats;
 

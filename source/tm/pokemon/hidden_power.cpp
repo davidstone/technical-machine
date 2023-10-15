@@ -15,6 +15,7 @@ import tm.move.move_name;
 import tm.move.regular_moves;
 
 import tm.stat.iv;
+import tm.stat.stat_style;
 
 import tm.type.type;
 
@@ -211,7 +212,7 @@ private:
 };
 
 export template<Generation generation>
-constexpr auto calculate_hidden_power(DVsOrIVs<generation> dvs_or_ivs, RegularMoves const moves) -> tv::optional<HiddenPower<generation>> {
+constexpr auto calculate_hidden_power(DVsOrIVs<special_style_for(generation)> dvs_or_ivs, RegularMoves const moves) -> tv::optional<HiddenPower<generation>> {
 	if constexpr (generation == Generation::one) {
 		return tv::none;
 	} else if (containers::any(moves, [](Move const move) { return move.name() == MoveName::Hidden_Power; })) {

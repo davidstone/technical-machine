@@ -174,7 +174,7 @@ constexpr auto parse_pokemon(std::string_view const str) {
 		gender,
 		item,
 		ability,
-		CombinedStats<generation>{nature, dvs_or_ivs, evs},
+		CombinedStatsFor<generation>{nature, dvs_or_ivs, evs},
 		moves,
 		happiness
 	);

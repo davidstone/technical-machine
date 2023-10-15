@@ -5,45 +5,26 @@
 
 export module tm.stat.combined_stats;
 
-import tm.stat.iv;
-import tm.stat.ev;
 import tm.stat.evs;
+import tm.stat.iv;
 import tm.stat.nature;
+import tm.stat.stat_style;
 
 import tm.generation;
 
-import bounded;
 import std_module;
 
 namespace technicalmachine {
-using namespace bounded::literal;
 
-export template<Generation generation>
+export template<SpecialStyle stat_style>
 struct CombinedStats {
 	Nature nature;
-	DVsOrIVs<generation> dvs_or_ivs;
-	std::conditional_t<generation <= Generation::two, OldGenEVs, EVs> evs;
+	DVsOrIVs<stat_style> dvs_or_ivs;
+	std::conditional_t<stat_style == SpecialStyle::combined, OldGenEVs, EVs> evs;
 	friend auto operator==(CombinedStats, CombinedStats) -> bool = default;
 };
 
-// Simplifies unit tests
 export template<Generation generation>
-constexpr auto default_evs = [] {
-	if constexpr (generation <= Generation::two) {
-		constexpr auto ev = EV(252_bi);
-		return OldGenEVs(ev, ev, ev, ev, ev);
-	} else {
-		constexpr auto ev = EV(0_bi);
-		return EVs(ev, ev, ev, ev, ev, ev);
-	}
-}();
-
-// Simplifies unit tests
-export template<Generation generation>
-constexpr auto default_combined_stats = CombinedStats<generation>{
-	Nature::Hardy,
-	max_dvs_or_ivs<generation>,
-	default_evs<generation>
-};
+using CombinedStatsFor = CombinedStats<special_style_for(generation)>;
 
 } // namespace technicalmachine

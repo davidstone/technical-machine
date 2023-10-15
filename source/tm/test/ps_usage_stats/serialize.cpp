@@ -50,7 +50,7 @@ auto make_smallest_team() -> GenerationGeneric<Team> {
 			Gender::genderless,
 			Item::None,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				DVs(DV(0_bi), DV(0_bi), DV(0_bi), DV(0_bi)),
 				OldGenEVs(EV(0_bi), EV(0_bi), EV(0_bi), EV(0_bi), EV(0_bi))
@@ -71,7 +71,7 @@ auto make_team_with_two_pokemon() -> GenerationGeneric<Team> {
 			Gender::genderless,
 			Item::None,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
 				OldGenEVs(EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi))
@@ -87,7 +87,7 @@ auto make_team_with_two_pokemon() -> GenerationGeneric<Team> {
 			Gender::genderless,
 			Item::None,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
 				OldGenEVs(EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi))
@@ -109,7 +109,7 @@ auto make_second_team() -> GenerationGeneric<Team> {
 			Gender::genderless,
 			Item::None,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
 				OldGenEVs(EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi), EV(252_bi))

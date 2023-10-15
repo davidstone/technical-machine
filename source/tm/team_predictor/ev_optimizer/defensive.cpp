@@ -24,8 +24,7 @@ import tm.stat.iv_and_ev;
 import tm.stat.max_hp;
 import tm.stat.stat_names;
 import tm.stat.stat_to_ev;
-
-import tm.generation;
+import tm.stat.stat_style;
 
 import bounded;
 import containers;
@@ -39,18 +38,16 @@ export struct DefensiveEVHP {
 	PossibleOptimizedIVs ivs;
 	MaxHP stat;
 };
-template<Generation generation, typename Base> requires (generation >= Generation::three)
+template<typename Base>
 struct DefensiveEVStat {
 	Base base;
 	PossibleOptimizedIVs ivs;
-	InitialStat<generation> stat;
+	InitialStat<SpecialStyle::split> stat;
 };
 
-export template<Generation generation>
-using DefensiveEVDef = DefensiveEVStat<generation, BaseStats::Def>;
+export using DefensiveEVDef = DefensiveEVStat<BaseStats::Def>;
 
-export template<Generation generation>
-using DefensiveEVSpD = DefensiveEVStat<generation, BaseStats::SpD>;
+export using DefensiveEVSpD = DefensiveEVStat<BaseStats::SpD>;
 
 constexpr auto ev_sum(DataPoint const data) {
 	return data.hp.ev.value() + data.defense.ev.value() + data.special_defense.ev.value();
@@ -61,15 +58,14 @@ constexpr auto ev_range() {
 }
 
 export struct DefensiveEVs {
-	template<Generation generation> requires (generation >= Generation::three)
-	constexpr DefensiveEVs(Level const level, DefensiveEVHP const original_hp, DefensiveEVDef<generation> const def, DefensiveEVSpD<generation> const spd) {
+	constexpr DefensiveEVs(Level const level, DefensiveEVHP const original_hp, DefensiveEVDef const def, DefensiveEVSpD const spd) {
 		bounded::bounded_integer auto const def_product = original_hp.stat * def.stat;
 		bounded::bounded_integer auto const spd_product = original_hp.stat * spd.stat;
 
 		auto defensive_product = [=](DataPoint const value) {
 			auto const hp = HP(original_hp.base, level, value.hp.iv, value.hp.ev).max();
 			auto single_product = [=](SplitSpecialRegularStat const name, auto const base_stat, IVAndEV const generated) {
-				return hp * initial_stat<generation>(name, base_stat, level, value.nature, generated.iv, generated.ev);
+				return hp * initial_stat<SpecialStyle::split>(name, base_stat, level, value.nature, generated.iv, generated.ev);
 			};
 
 			return single_product(SplitSpecialRegularStat::def, def.base, value.defense) * single_product(SplitSpecialRegularStat::spd, spd.base, value.special_defense);

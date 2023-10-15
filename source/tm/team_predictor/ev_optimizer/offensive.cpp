@@ -21,9 +21,8 @@ import tm.stat.iv;
 import tm.stat.iv_and_ev;
 import tm.stat.nature;
 import tm.stat.stat_names;
+import tm.stat.stat_style;
 import tm.stat.stat_to_ev;
-
-import tm.generation;
 
 import bounded;
 import containers;
@@ -32,19 +31,17 @@ import tv;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-template<Generation generation, typename Base> requires (generation >= Generation::three)
+template<typename Base>
 struct OffensiveEVInputs {
 	Base base;
 	PossibleOptimizedIVs ivs;
-	InitialStat<generation> stat;
+	InitialStat<SpecialStyle::split> stat;
 	bool include_evs;
 };
 
-export template<Generation generation>
-using OffensiveEVAtk = OffensiveEVInputs<generation, BaseStats::Atk>;
+export using OffensiveEVAtk = OffensiveEVInputs<BaseStats::Atk>;
 
-export template<Generation generation>
-using OffensiveEVSpA = OffensiveEVInputs<generation, BaseStats::SpA>;
+export using OffensiveEVSpA = OffensiveEVInputs<BaseStats::SpA>;
 
 struct OffensiveStats {
 	Nature nature;
@@ -72,27 +69,24 @@ constexpr auto useful_natures(bool const is_physical, bool const is_special) {
 	);
 }
 
-template<Generation generation, typename Base>
+template<typename Base>
 struct OffensiveEVInputsIV {
 	Base base;
 	IV iv;
-	InitialStat<generation> stat;
+	InitialStat<SpecialStyle::split> stat;
 	bool include_evs;
 };
 
-template<Generation generation>
-using OffensiveEVAtkIV = OffensiveEVInputsIV<generation, BaseStats::Atk>;
+using OffensiveEVAtkIV = OffensiveEVInputsIV<BaseStats::Atk>;
 
-template<Generation generation>
-using OffensiveEVSpAIV = OffensiveEVInputsIV<generation, BaseStats::SpA>;
+using OffensiveEVSpAIV = OffensiveEVInputsIV<BaseStats::SpA>;
 
-template<Generation generation, typename Base>
-constexpr auto target_stat(SplitSpecialRegularStat const stat_name, Level const level, OffensiveEVInputsIV<generation, Base> const input, Nature const harmful_nature) {
-	return input.include_evs ? input.stat : initial_stat<generation>(stat_name, input.base, level, harmful_nature, input.iv, EV(0_bi));
+template<typename Base>
+constexpr auto target_stat(SplitSpecialRegularStat const stat_name, Level const level, OffensiveEVInputsIV<Base> const input, Nature const harmful_nature) {
+	return input.include_evs ? input.stat : initial_stat<SpecialStyle::split>(stat_name, input.base, level, harmful_nature, input.iv, EV(0_bi));
 }
 
-template<Generation generation>
-auto evs_for_nature(Level const level, Nature const nature, OffensiveEVAtkIV<generation> const atk, OffensiveEVSpAIV<generation> const spa) {
+auto evs_for_nature(Level const level, Nature const nature, OffensiveEVAtkIV const atk, OffensiveEVSpAIV const spa) {
 	auto const target_atk = target_stat(SplitSpecialRegularStat::atk, level, atk, Nature::Modest);
 	auto const target_spa = target_stat(SplitSpecialRegularStat::spa, level, spa, Nature::Adamant);
 	auto const atk_ev = stat_to_ev_at_least(target_atk, SplitSpecialRegularStat::atk, atk.base, level, nature, atk.iv);
@@ -101,16 +95,15 @@ auto evs_for_nature(Level const level, Nature const nature, OffensiveEVAtkIV<gen
 }
 
 export struct OffensiveEVs {
-	template<Generation generation> requires (generation >= Generation::three)
-	constexpr OffensiveEVs(Level const level, OffensiveEVAtk<generation> const atk, OffensiveEVSpA<generation> const spa) {
+	constexpr OffensiveEVs(Level const level, OffensiveEVAtk const atk, OffensiveEVSpA const spa) {
 		for (auto const nature : useful_natures(atk.include_evs, spa.include_evs)) {
 			for (auto const atk_iv : atk.ivs) {
 				for (auto const spa_iv : spa.ivs) {
 					auto const result = evs_for_nature(
 						level,
 						nature,
-						OffensiveEVAtkIV<generation>{atk.base, atk_iv, atk.stat, atk.include_evs},
-						OffensiveEVSpAIV<generation>{spa.base, spa_iv, spa.stat, spa.include_evs}
+						OffensiveEVAtkIV{atk.base, atk_iv, atk.stat, atk.include_evs},
+						OffensiveEVSpAIV{spa.base, spa_iv, spa.stat, spa.include_evs}
 					);
 					if (result) {
 						containers::push_back_into_capacity(m_container, *result);

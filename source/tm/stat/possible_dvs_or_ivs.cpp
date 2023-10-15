@@ -121,10 +121,10 @@ constexpr auto possible_spc_dvs_power(HiddenPowerDVPower const power) {
 	}));
 }
 
-using PossibleDVs = GenericDVStats<Possible<DV>>;
+export using PossibleDVs = GenericDVStats<Possible<DV>>;
 
 template<Generation generation> requires(generation <= Generation::two)
-constexpr auto possible_dvs(tv::optional<HiddenPower<generation>> const hidden_power) {
+constexpr auto possible_dvs(tv::optional<HiddenPower<generation>> const hidden_power) -> PossibleDVs {
 	constexpr auto no_hidden_power = PossibleDVs{
 		all_possible<DV>,
 		all_possible<DV>,
@@ -152,7 +152,7 @@ constexpr auto possible_dvs(tv::optional<HiddenPower<generation>> const hidden_p
 	}
 }
 
-using PossibleIVs = GenericStats<Possible<IV>>;
+export using PossibleIVs = GenericStats<Possible<IV>>;
 
 enum class AllowedIVs { any, even, odd };
 
@@ -361,7 +361,7 @@ constexpr auto possible_spd_ivs_power(PossiblePowerSums const power_sums) {
 }
 
 template<Generation generation> requires(Generation::three <= generation and generation <= Generation::five)
-constexpr auto possible_ivs_with_powered_hidden_power(tv::optional<HiddenPower<generation>> const hidden_power) {
+constexpr auto possible_ivs_with_powered_hidden_power(tv::optional<HiddenPower<generation>> const hidden_power) -> PossibleIVs {
 	if (!hidden_power) {
 		return PossibleIVs(
 			all_possible<IV>,
@@ -391,7 +391,7 @@ constexpr auto possible_ivs_with_powered_hidden_power(tv::optional<HiddenPower<g
 }
 
 template<Generation generation> requires(Generation::six <= generation)
-constexpr auto possible_ivs_with_type_only_hidden_power(tv::optional<HiddenPower<generation>> const hidden_power) {
+constexpr auto possible_ivs_with_type_only_hidden_power(tv::optional<HiddenPower<generation>> const hidden_power) -> PossibleIVs {
 	if (!hidden_power) {
 		return PossibleIVs(
 			all_possible<IV>,

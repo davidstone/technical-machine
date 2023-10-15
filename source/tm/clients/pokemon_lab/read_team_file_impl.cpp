@@ -29,6 +29,7 @@ import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.iv_and_ev;
 import tm.stat.nature;
+import tm.stat.stat_style;
 
 import tm.string_conversions.ability;
 import tm.string_conversions.gender;
@@ -89,9 +90,10 @@ auto parse_moves(Generation const generation, property_tree::ptree_reader pt) {
 	}));
 }
 
-template<Generation generation>
+template<SpecialStyle stat_style>
 auto parse_stats(property_tree::ptree_reader pt) {
-	using StatType = std::conditional_t<generation <= Generation::two, DVAndEV, IVAndEV>;
+	constexpr auto is_combined = stat_style == SpecialStyle::combined;
+	using StatType = std::conditional_t<is_combined, DVAndEV, IVAndEV>;
 	auto hp = tv::optional<StatType>();
 	auto atk = tv::optional<StatType>();
 	auto def = tv::optional<StatType>();
@@ -102,7 +104,7 @@ auto parse_stats(property_tree::ptree_reader pt) {
 	for (auto const & value : pt.get_child("stats")) {
 		auto const & stats = value.second;
 		auto const & stat_name = stats.get<std::string>("<xmlattr>.name");
-		using IVType = std::conditional_t<generation <= Generation::two, DV, IV>;
+		using IVType = std::conditional_t<is_combined, DV, IV>;
 		auto const iv_and_ev = StatType{
 			IVType(stats.get<typename IVType::value_type>("<xmlattr>.iv")),
 			EV(stats.get<EV::value_type>("<xmlattr>.ev"))
@@ -127,7 +129,7 @@ auto parse_stats(property_tree::ptree_reader pt) {
 		throw std::runtime_error("IV or EV is missing");
 	}
 
-	if constexpr (generation <= Generation::two) {
+	if constexpr (is_combined) {
 		// I'm not sure if Pokemon Lab ever supported older generations, but if
 		// it did this is probably what the file would look like?
 		if (*spa != *spd) {
@@ -137,13 +139,13 @@ auto parse_stats(property_tree::ptree_reader pt) {
 		if (dvs.hp() != hp->dv) {
 			throw std::runtime_error("Invalid HP DV");
 		}
-		return CombinedStats<generation>{
+		return CombinedStats<stat_style>{
 			Nature::Hardy,
 			dvs,
 			OldGenEVs(hp->ev, atk->ev, def->ev, spe->ev, spa->ev)
 		};
 	} else {
-		return CombinedStats<generation>{
+		return CombinedStats<stat_style>{
 			from_string<Nature>(pt.get<std::string>("nature")),
 			IVs(hp->iv, atk->iv, def->iv, spa->iv, spd->iv, spe->iv),
 			EVs(hp->ev, atk->ev, def->ev, spa->ev, spd->ev, spe->ev)
@@ -162,7 +164,7 @@ auto parse_pokemon(property_tree::ptree_reader pt) {
 		Gender(from_string<Gender>(pt.get<std::string>("gender"))),
 		from_string<Item>(pt.get<std::string>("item")),
 		Ability(from_string<Ability>(pt.get<std::string>("ability"))),
-		parse_stats<generation>(pt),
+		parse_stats<special_style_for(generation)>(pt),
 		parse_moves(generation, pt.get_child("moveset")),
 		Happiness(pt.get<Happiness::value_type>("happiness"))
 	);

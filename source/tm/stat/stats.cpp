@@ -14,19 +14,19 @@ import tm.stat.hp;
 import tm.stat.initial_stat;
 import tm.stat.iv;
 import tm.stat.stat_names;
+import tm.stat.stat_style;
 
 import tm.exists_if;
-import tm.generation;
 
 import bounded;
 import containers;
 
 namespace technicalmachine {
 
-export template<Generation generation>
+export template<StatStyle stat_style>
 struct Stats {
 private:
-	using Stat = InitialStat<generation>;
+	using Stat = InitialStat<stat_style>;
 
 public:
 	constexpr Stats(HP const hp_, Stat const atk_, Stat const def_, Stat const spa_, Stat const spd_, Stat const spe_):
@@ -38,14 +38,14 @@ public:
 		m_spe(spe_)
 	{
 	}
-	constexpr Stats(BaseStats const base, Level const level, CombinedStats<generation> const inputs):
+	constexpr Stats(BaseStats const base, Level const level, CombinedStats<stat_style> const inputs):
 		Stats(
 			base.hp(),
 			level,
 			IV(inputs.dvs_or_ivs.hp()),
 			inputs.evs.hp(),
 			[=](SplitSpecialRegularStat const stat_name) {
-				return initial_stat<generation>(
+				return initial_stat<stat_style>(
 					stat_name,
 					base[stat_name],
 					level,
@@ -74,7 +74,7 @@ public:
 		return m_spa;
 	}
 	constexpr auto spd() const {
-		if constexpr (generation == Generation::one) {
+		if constexpr (stat_style == StatStyle::gen1) {
 			return m_spa;
 		} else {
 			return m_spd;
@@ -104,7 +104,7 @@ private:
 	Stat m_atk;
 	Stat m_def;
 	Stat m_spa;
-	[[no_unique_address]] ExistsIf<Stat, generation >= Generation::two, struct spd> m_spd;
+	[[no_unique_address]] ExistsIf<Stat, stat_style != StatStyle::gen1, struct spd> m_spd;
 	Stat m_spe;
 
 	constexpr explicit Stats(bounded::tombstone_tag, auto const make):
@@ -117,12 +117,12 @@ private:
 	{
 	}
 
-	friend bounded::tombstone_traits<Stats<generation>>;
-	friend bounded::tombstone_traits_composer<&Stats<generation>::m_hp>;
+	friend bounded::tombstone_traits<Stats<stat_style>>;
+	friend bounded::tombstone_traits_composer<&Stats<stat_style>::m_hp>;
 };
 
 } // namespace technicalmachine
 
-template<technicalmachine::Generation generation>
-struct bounded::tombstone_traits<technicalmachine::Stats<generation>> : bounded::tombstone_traits_composer<&technicalmachine::Stats<generation>::m_hp> {
+template<technicalmachine::StatStyle stat_style>
+struct bounded::tombstone_traits<technicalmachine::Stats<stat_style>> : bounded::tombstone_traits_composer<&technicalmachine::Stats<stat_style>::m_hp> {
 };

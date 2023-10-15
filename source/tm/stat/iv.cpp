@@ -12,6 +12,7 @@ export module tm.stat.iv;
 
 import tm.stat.generic_stats;
 import tm.stat.stat_names;
+import tm.stat.stat_style;
 
 import tm.generation;
 
@@ -180,8 +181,8 @@ constexpr auto max_dvs_or_ivs = [] {
 	}
 }();
 
-export template<Generation generation>
-using DVsOrIVs = std::conditional_t<generation <= Generation::two, DVs, IVs>;
+export template<SpecialStyle style>
+using DVsOrIVs = std::conditional_t<style == SpecialStyle::combined, DVs, IVs>;
 
 static_assert(DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)).hp() == DV(15_bi));
 static_assert(DVs(DV(15_bi), DV(14_bi), DV(15_bi), DV(15_bi)).hp() == DV(11_bi));

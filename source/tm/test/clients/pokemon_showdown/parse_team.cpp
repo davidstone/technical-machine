@@ -20,6 +20,8 @@ import tm.stat.combined_stats;
 import tm.stat.iv;
 import tm.stat.nature;
 
+import tm.stat.default_evs;
+
 import tm.ability;
 import tm.gender;
 import tm.generation;
@@ -176,7 +178,7 @@ TEST_CASE("Parse Pokemon Showdown generation 2 team", "[pokemon showdown]") {
 			Gender::male,
 			Item::Leftovers,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				DVs(DV(15_bi), DV(13_bi), DV(15_bi), DV(15_bi)),
 				default_evs<generation>

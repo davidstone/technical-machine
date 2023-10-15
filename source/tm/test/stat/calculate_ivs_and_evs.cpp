@@ -16,6 +16,7 @@ import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.hp;
 import tm.stat.nature;
+import tm.stat.stat_style;
 import tm.stat.stats;
 
 import tm.type.type;
@@ -34,7 +35,7 @@ static_assert([]{
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Tentacruel;
 	constexpr auto level = Level(100_bi);
-	constexpr auto stats = Stats<generation>(
+	constexpr auto stats = Stats<stat_style_for(generation)>(
 		HP(364_bi),
 		133_bi,
 		177_bi,
@@ -47,7 +48,7 @@ static_assert([]{
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(nature, nature));
 
-	constexpr auto expected = CombinedStats<generation>{
+	constexpr auto expected = CombinedStatsFor<generation>{
 		nature,
 		IVs(
 			IV(31_bi),
@@ -75,7 +76,7 @@ static_assert([]{
 	constexpr auto generation = Generation::two;
 	constexpr auto species = Species::Sunflora;
 	constexpr auto level = Level(80_bi);
-	constexpr auto stats = Stats<generation>(
+	constexpr auto stats = Stats<stat_style_for(generation)>(
 		HP(284_bi),
 		199_bi,
 		164_bi,
@@ -87,7 +88,7 @@ static_assert([]{
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power);
 
-	constexpr auto expected = CombinedStats<generation>{
+	constexpr auto expected = CombinedStatsFor<generation>{
 		Nature::Hardy,
 		DVs(
 			DV(15_bi),
@@ -112,7 +113,7 @@ static_assert([]{
 	constexpr auto species = Species::Kingler;
 	constexpr auto level = Level(100_bi);
 	constexpr auto nature = Nature::Jolly;
-	constexpr auto stats = Stats<generation>(
+	constexpr auto stats = Stats<stat_style_for(generation)>(
 		HP(251_bi),
 		359_bi,
 		265_bi,
@@ -124,7 +125,7 @@ static_assert([]{
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(nature, nature));
 
-	constexpr auto expected = CombinedStats<generation>{
+	constexpr auto expected = CombinedStatsFor<generation>{
 		nature,
 		IVs(
 			IV(31_bi),
@@ -151,7 +152,7 @@ static_assert([]{
 	constexpr auto generation = Generation::three;
 	constexpr auto species = Species::Gengar;
 	constexpr auto level = Level(1_bi);
-	constexpr auto stats = Stats<generation>(
+	constexpr auto stats = Stats<stat_style_for(generation)>(
 		HP(12_bi),
 		6_bi,
 		7_bi,
@@ -164,7 +165,7 @@ static_assert([]{
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(nature, nature));
 
-	constexpr auto expected = CombinedStats<generation>{
+	constexpr auto expected = CombinedStatsFor<generation>{
 		nature,
 		IVs(
 			IV(31_bi),
@@ -191,7 +192,7 @@ static_assert([]{
 	constexpr auto generation = Generation::four;
 	constexpr auto species = Species::Roserade;
 	constexpr auto level = Level(75_bi);
-	constexpr auto stats = Stats<generation>(
+	constexpr auto stats = Stats<stat_style_for(generation)>(
 		HP(245_bi),
 		100_bi,
 		131_bi,
@@ -203,7 +204,7 @@ static_assert([]{
 
 	auto const calculated = calculate_ivs_and_evs(species, level, stats, hidden_power, containers::enum_range(Nature::Modest, Nature::Modest));
 
-	constexpr auto expected = CombinedStats<generation>{
+	constexpr auto expected = CombinedStatsFor<generation>{
 		Nature::Modest,
 		IVs(
 			IV(31_bi),

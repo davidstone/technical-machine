@@ -38,6 +38,8 @@ import tm.stat.nature;
 
 import tm.status.status_name;
 
+import tm.stat.default_evs;
+
 import tm.ability;
 import tm.block;
 import tm.end_of_turn;
@@ -173,7 +175,7 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 			Gender::male,
 			Item::Leftovers,
 			Ability::Volt_Absorb,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -226,7 +228,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 			Gender::male,
 			Item::Salac_Berry,
 			Ability::Blaze,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -251,7 +253,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 			Gender::male,
 			Item::Leftovers,
 			Ability::Synchronize,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -291,7 +293,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 			Gender::male,
 			Item::Leftovers,
 			Ability::Sand_Stream,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Adamant,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -319,7 +321,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 			Gender::genderless,
 			Item::Leftovers,
 			Ability::Shadow_Tag,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -369,7 +371,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 			Gender::male,
 			Item::Lum_Berry,
 			Ability::Synchronize,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Adamant,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -394,7 +396,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 			Gender::female,
 			Item::Choice_Specs,
 			Ability::Levitate,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Modest,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -480,7 +482,7 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 			Gender::male,
 			Item::Lum_Berry,
 			Ability::Synchronize,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Adamant,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -505,7 +507,7 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 			Gender::female,
 			Item::Choice_Specs,
 			Ability::Levitate,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Modest,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -565,7 +567,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 			Gender::genderless,
 			Item::Choice_Specs,
 			Ability::Pressure,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Modest,
 				max_dvs_or_ivs<generation>,
 				default_evs<generation>
@@ -634,7 +636,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 			Gender::female,
 			Item::Leftovers,
 			Ability::Levitate,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Calm,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -660,7 +662,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 			Gender::genderless,
 			Item::Leftovers,
 			Ability::Pressure,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Calm,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -959,7 +961,7 @@ TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 			Gender::male,
 			Item::Leftovers,
 			Ability::Volt_Absorb,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -1012,7 +1014,7 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 			Gender::male,
 			Item::Salac_Berry,
 			Ability::Blaze,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -1037,7 +1039,7 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 			Gender::male,
 			Item::Leftovers,
 			Ability::Synchronize,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -1077,7 +1079,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 			Gender::male,
 			Item::Leftovers,
 			Ability::Sand_Stream,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Adamant,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -1105,7 +1107,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 			Gender::genderless,
 			Item::Leftovers,
 			Ability::Shadow_Tag,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -1155,7 +1157,7 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 			Gender::male,
 			Item::Lum_Berry,
 			Ability::Synchronize,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Adamant,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -1180,7 +1182,7 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 			Gender::female,
 			Item::Choice_Specs,
 			Ability::Levitate,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Modest,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -1240,7 +1242,7 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 			Gender::genderless,
 			Item::Choice_Specs,
 			Ability::Pressure,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Modest,
 				max_dvs_or_ivs<generation>,
 				default_evs<generation>
@@ -1309,7 +1311,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 			Gender::female,
 			Item::Leftovers,
 			Ability::Levitate,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Calm,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -1335,7 +1337,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 			Gender::genderless,
 			Item::Leftovers,
 			Ability::Pressure,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Calm,
 				max_dvs_or_ivs<generation>,
 				EVs(

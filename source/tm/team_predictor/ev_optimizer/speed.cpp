@@ -18,10 +18,9 @@ import tm.stat.iv;
 import tm.stat.stat_to_ev;
 import tm.stat.nature;
 import tm.stat.stat_names;
+import tm.stat.stat_style;
 
 import tm.team_predictor.ev_optimizer.possible_optimized_ivs;
-
-import tm.generation;
 
 import bounded;
 import containers;
@@ -31,12 +30,10 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 export struct SpeedEVs {
-	template<Generation generation> requires (generation >= Generation::three)
 	struct Input {
-		InitialStat<generation> stat;
+		InitialStat<SpecialStyle::split> stat;
 	};
-	template<Generation generation> requires (generation >= Generation::three)
-	constexpr SpeedEVs(BaseStats::Spe const base, Level const level, PossibleOptimizedIVs const ivs, Input<generation> const target) {
+	constexpr SpeedEVs(BaseStats::Spe const base, Level const level, PossibleOptimizedIVs const ivs, Input const target) {
 		for (auto const nature : containers::enum_range<Nature>()) {
 			for (auto const iv : ivs) {
 				auto const ev = stat_to_ev_at_least(target.stat, SplitSpecialRegularStat::spe, base, level, nature, iv);

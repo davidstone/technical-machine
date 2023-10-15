@@ -49,7 +49,7 @@ auto make_result() {
 			Gender::male,
 			Item::Leftovers,
 			Ability::Sand_Stream,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Impish,
 				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
 				EVs(EV(252_bi), EV(24_bi), EV(192_bi), EV(0_bi), EV(40_bi), EV(0_bi))
@@ -67,7 +67,7 @@ auto make_result() {
 			Gender::genderless,
 			Item::Leftovers,
 			Ability::Natural_Cure,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Bold,
 				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
 				EVs(EV(252_bi), EV(0_bi), EV(216_bi), EV(0_bi), EV(8_bi), EV(32_bi))
@@ -85,7 +85,7 @@ auto make_result() {
 			Gender::female,
 			Item::Leftovers,
 			Ability::Natural_Cure,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Calm,
 				IVs(IV(31_bi), IV(3_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
 				EVs(EV(0_bi), EV(0_bi), EV(252_bi), EV(80_bi), EV(176_bi), EV(0_bi))
@@ -103,7 +103,7 @@ auto make_result() {
 			Gender::male,
 			Item::Shed_Shell,
 			Ability::Keen_Eye,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Impish,
 				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
 				EVs(EV(252_bi), EV(0_bi), EV(200_bi), EV(0_bi), EV(36_bi), EV(20_bi))
@@ -121,7 +121,7 @@ auto make_result() {
 			Gender::male,
 			Item::Leftovers,
 			Ability::Liquid_Ooze,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Calm,
 				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
 				EVs(EV(252_bi), EV(0_bi), EV(120_bi), EV(0_bi), EV(136_bi), EV(0_bi))
@@ -139,7 +139,7 @@ auto make_result() {
 			Gender::genderless,
 			Item::Leftovers,
 			Ability::Levitate,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Calm,
 				IVs(IV(31_bi), IV(3_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
 				EVs(EV(252_bi), EV(0_bi), EV(136_bi), EV(0_bi), EV(120_bi), EV(0_bi))

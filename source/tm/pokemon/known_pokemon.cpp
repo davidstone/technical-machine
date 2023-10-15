@@ -46,7 +46,7 @@ using namespace std::string_view_literals;
 
 export template<Generation generation>
 struct KnownPokemon {
-	constexpr KnownPokemon(Species const species_, Nickname nickname_, Level const level_, Gender const gender_, Item const item_, Ability const ability_, CombinedStats<generation> const stat_inputs, RegularMoves regular_moves_, Happiness const happiness_ = Happiness()):
+	constexpr KnownPokemon(Species const species_, Nickname nickname_, Level const level_, Gender const gender_, Item const item_, Ability const ability_, CombinedStatsFor<generation> const stat_inputs, RegularMoves regular_moves_, Happiness const happiness_ = Happiness()):
 		m_pokemon(species_, level_, gender_, item_, ability_, stat_inputs, regular_moves_, happiness_),
 		m_nickname(std::move(nickname_))
 	{

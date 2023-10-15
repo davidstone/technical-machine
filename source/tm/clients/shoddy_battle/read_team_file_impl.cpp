@@ -435,7 +435,7 @@ private:
 			*gender,
 			*item,
 			*ability,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				*nature,
 				*ivs,
 				*evs

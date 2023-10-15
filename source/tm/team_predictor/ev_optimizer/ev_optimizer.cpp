@@ -14,6 +14,7 @@ import tm.pokemon.species;
 
 import tm.stat.base_stats;
 import tm.stat.combined_stats;
+import tm.stat.stat_style;
 import tm.stat.stats;
 
 import tm.generation;
@@ -25,19 +26,19 @@ namespace technicalmachine {
 
 export template<Generation generation>
 auto optimize_evs(
-	CombinedStats<generation> combined,
+	CombinedStatsFor<generation> combined,
 	Species const species,
 	Level const level,
 	tv::optional<HiddenPower<generation>> const hidden_power,
 	bool const include_attack,
 	bool const include_special_attack,
 	std::mt19937 & random_engine
-) -> CombinedStats<generation> {
+) -> CombinedStatsFor<generation> {
 	auto const base_stats = BaseStats(generation, species);
 	while (true) {
 		auto const previous = combined;
 		combined = pad_random_evs(combined, include_attack, include_special_attack, random_engine);
-		auto const stats = Stats<generation>(base_stats, level, combined);
+		auto const stats = Stats<stat_style_for(generation)>(base_stats, level, combined);
 		combined = compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack);
 		// Technically this isn't correct based on how I pad: I could have some
 		// leftover EVs that could have done some good somewhere else, but were

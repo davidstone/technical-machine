@@ -21,7 +21,7 @@ import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
-import tm.stat.combined_stats;
+import tm.stat.default_evs;
 
 import tm.ability;
 import tm.environment;

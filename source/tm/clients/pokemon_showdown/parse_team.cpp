@@ -25,6 +25,7 @@ import tm.stat.calculate_ivs_and_evs;
 import tm.stat.hp;
 import tm.stat.initial_stat;
 import tm.stat.max_hp;
+import tm.stat.stat_style;
 import tm.stat.stats;
 
 import tm.string_conversions.ability;
@@ -50,17 +51,17 @@ import std_module;
 namespace technicalmachine::ps {
 using namespace bounded::literal;
 
-template<Generation generation>
+template<StatStyle stat_style>
 auto parse_stats(MaxHP const hp, nlohmann::json const & stats) {
 	auto get = [&](std::string_view const str) {
-		return bounded::check_in_range<InitialStat<generation>>(bounded::integer(stats.at(str).get<nlohmann::json::number_integer_t>()));
+		return bounded::check_in_range<InitialStat<stat_style>>(bounded::integer(stats.at(str).get<nlohmann::json::number_integer_t>()));
 	};
 	auto const attack = get("atk");
 	auto const defense = get("def");
 	auto const special_attack = get("spa");
 	auto const special_defense = get("spd");
 	auto const speed = get("spe");
-	return Stats<generation>(HP(hp), attack, defense, special_attack, special_defense, speed);
+	return Stats<stat_style>(HP(hp), attack, defense, special_attack, special_defense, speed);
 }
 
 template<Generation generation>
@@ -122,7 +123,7 @@ auto parse_pokemon(nlohmann::json const & pokemon_data) {
 	auto const stats = calculate_ivs_and_evs(
 		details.species,
 		details.level,
-		parse_stats<generation>(hp, pokemon_data.at("stats")),
+		parse_stats<stat_style_for(generation)>(hp, pokemon_data.at("stats")),
 		move_data.hidden_power
 	);
 

@@ -94,7 +94,7 @@ TEST_CASE("pokemon", "[string_conversion]") {
 			Gender::genderless,
 			Item::Leftovers,
 			Ability::Pressure,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Modest,
 				max_dvs_or_ivs<generation>,
 				EVs(

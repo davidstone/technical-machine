@@ -21,12 +21,12 @@ import tm.stat.base_stats;
 import tm.stat.combined_stats;
 import tm.stat.ev;
 import tm.stat.evs;
-import tm.stat.initial_stat;
 import tm.stat.iv;
 import tm.stat.iv_and_ev;
 import tm.stat.nature;
 import tm.stat.possible_dvs_or_ivs;
 import tm.stat.stat_names;
+import tm.stat.stat_style;
 import tm.stat.stat_to_ev;
 import tm.stat.stats;
 
@@ -50,15 +50,15 @@ export template<Generation generation>
 constexpr auto calculate_ivs_and_evs(
 	Species const species,
 	Level const level,
-	Stats<generation> const stats,
+	Stats<stat_style_for(generation)> const stats,
 	tv::optional<HiddenPower<generation>> const hidden_power,
 	decltype(containers::enum_range<Nature>()) const nature_range
-) -> CombinedStats<generation> {
+) -> CombinedStatsFor<generation> {
 	BOUNDED_ASSERT(!containers::is_empty(nature_range));
 	auto const base = BaseStats(generation, species);
 	auto const dvs_or_ivs = possible_dvs_or_ivs(hidden_power);
 	auto compute_ev = [=](SplitSpecialRegularStat const stat_name, Nature const nature, auto const dv_or_iv) {
-		return stat_to_ev<generation>(stats[stat_name], stat_name, base[stat_name], level, nature, IV(dv_or_iv));
+		return stat_to_ev<special_style_for(generation)>(stats[stat_name], stat_name, base[stat_name], level, nature, IV(dv_or_iv));
 	};
 	auto const dv_or_iv_ev_range = [=]<typename DVOrIV>(auto const possible, bounded::type_t<DVOrIV>, auto const to_ev) {
 		struct WithOptionalEV {
@@ -133,14 +133,14 @@ constexpr auto calculate_ivs_and_evs(
 							spe.ev,
 							spc_ev
 						);
-						return CombinedStats<generation>{nature, dvs, evs};
+						return CombinedStatsFor<generation>{nature, dvs, evs};
 					}
 				}
 			}
 		}
 	} else {
 		auto partial_ev_sum_is_valid = [](auto... evs) {
-			return (... + evs.value()) <= max_total_evs(generation);
+			return (... + evs.value()) <= max_total_evs(special_style_for(generation));
 		};
 		auto const hp_range = dv_or_iv_ev_range(
 			dvs_or_ivs.hp(),
@@ -191,7 +191,7 @@ constexpr auto calculate_ivs_and_evs(
 										spd.ev,
 										spe.ev
 									);
-									return CombinedStats<generation>{nature, ivs, evs};
+									return CombinedStatsFor<generation>{nature, ivs, evs};
 								}
 							}
 						}
@@ -233,7 +233,7 @@ export template<Generation generation>
 constexpr auto calculate_ivs_and_evs(
 	Species const species,
 	Level const level,
-	Stats<generation> const stats,
+	Stats<stat_style_for(generation)> const stats,
 	tv::optional<HiddenPower<generation>> const hidden_power
 ) {
 	constexpr auto nature_range = generation <= Generation::two ?
@@ -252,7 +252,7 @@ constexpr auto calculate_ivs_and_evs(
 export template<any_pokemon PokemonType>
 constexpr auto calculate_ivs_and_evs(PokemonType const & pokemon) {
 	auto const nature = pokemon.nature();
-	auto const stats = Stats<generation_from<PokemonType>>{
+	auto const stats = Stats<stat_style_for(generation_from<PokemonType>)>{
 		pokemon.hp(),
 		pokemon.stat(SplitSpecialRegularStat::atk),
 		pokemon.stat(SplitSpecialRegularStat::def),

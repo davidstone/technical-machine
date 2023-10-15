@@ -30,6 +30,7 @@ import tm.stat.ev;
 import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
+import tm.stat.stat_style;
 
 import tm.string_conversions.ability;
 import tm.string_conversions.gender;
@@ -88,7 +89,7 @@ struct ParsedPokemon {
 };
 using ParsedTeam = containers::static_vector<ParsedPokemon, max_pokemon_per_team>;
 
-constexpr auto parse_html_team(DelimitedBufferView<std::string_view> buffer, Generation const generation) -> ParsedTeam {
+constexpr auto parse_html_team(DelimitedBufferView<std::string_view> buffer, SpecialStyle const stat_style) -> ParsedTeam {
 	auto get_pokemon = [&](TeamIndex const index) -> tv::optional<ParsedPokemon> {
 		auto const index_str = containers::to_string(index);
 		auto get_integer_wrapper = [&]<typename T>(bounded::type_t<T>, std::string_view const key) -> T {
@@ -122,7 +123,7 @@ constexpr auto parse_html_team(DelimitedBufferView<std::string_view> buffer, Gen
 			get_ev("spd"),
 			get_ev("spe")
 		};
-		if (ev_sum(evs) > max_total_evs(generation)) {
+		if (ev_sum(evs) > max_total_evs(stat_style)) {
 			throw std::runtime_error("Too many EVs");
 		}
 		auto const moves = ParsedMoves(
@@ -183,7 +184,7 @@ auto parsed_pokemon_to_seen_pokemon(ParsedPokemon const parsed) -> SeenPokemon<g
 			return parsed.evs;
 		}
 	}();
-	pokemon.set_ivs_and_evs(CombinedStats<generation>{
+	pokemon.set_ivs_and_evs(CombinedStatsFor<generation>{
 		parsed.nature,
 		max_dvs_or_ivs<generation>,
 		evs
@@ -213,7 +214,7 @@ export struct Parser {
 		try {
 			auto buffer = DelimitedBufferView(input_data, '&');
 			auto const generation = from_string<Generation>(get_expected_base(buffer.pop(), "generation"));
-			auto const parsed_team = parse_html_team(buffer, generation);
+			auto const parsed_team = parse_html_team(buffer, special_style_for(generation));
 			auto & usage_stats = m_all_usage_stats[generation];
 			auto impl = [&]<Generation generation>(constant_gen_t<generation>) -> containers::string {
 				return to_string(

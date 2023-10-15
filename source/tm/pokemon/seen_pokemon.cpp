@@ -20,9 +20,11 @@ import tm.pokemon.species;
 
 import tm.stat.base_stats;
 import tm.stat.combined_stats;
+import tm.stat.default_evs;
 import tm.stat.hp;
 import tm.stat.nature;
 import tm.stat.stat_names;
+import tm.stat.stat_style;
 import tm.stat.stats;
 
 import tm.status.status;
@@ -246,11 +248,11 @@ struct SeenPokemon {
 		}
 	}
 
-	constexpr auto set_ivs_and_evs(CombinedStats<generation> const stat_inputs) -> void {
+	constexpr auto set_ivs_and_evs(CombinedStatsFor<generation> const stat_inputs) -> void {
 		if constexpr (exists<decltype(m_nature)>) {
 			m_nature = stat_inputs.nature;
 		}
-		m_stats = Stats<generation>(BaseStats(generation, species()), level(), stat_inputs);
+		m_stats = Stats<stat_style_for(generation)>(BaseStats(generation, species()), level(), stat_inputs);
 	}
 
 	constexpr auto hidden_power() const -> tv::optional<HiddenPower<generation>> {
@@ -297,7 +299,7 @@ private:
 	// TODO: Make this a set of possible ranges. The current HP is never used
 	// from this. When the representation is changed to store possible ranges
 	// instead of an exact value, that useless state will go away.
-	Stats<generation> m_stats;
+	Stats<stat_style_for(generation)> m_stats;
 
 	// TODO: Possible Hidden Power types
 };

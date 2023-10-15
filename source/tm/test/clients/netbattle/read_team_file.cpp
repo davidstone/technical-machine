@@ -22,6 +22,8 @@ import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
 
+import tm.stat.default_evs;
+
 import tm.ability;
 import tm.any_team;
 import tm.gender;
@@ -50,7 +52,7 @@ constexpr auto expected_netbattle_team = []() -> KnownTeam<Generation::three> {
 			Gender::male,
 			Item::Leftovers,
 			Ability::Sturdy,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Jolly,
 				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
 				EVs(EV(88_bi), EV(84_bi), EV(84_bi), EV(0_bi), EV(0_bi), EV(252_bi))
@@ -69,7 +71,7 @@ constexpr auto expected_netbattle_team = []() -> KnownTeam<Generation::three> {
 			Gender::male,
 			Item::Salac_Berry,
 			Ability::Flash_Fire,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Naive,
 				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
 				EVs(EV(0_bi), EV(252_bi), EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi))
@@ -88,7 +90,7 @@ constexpr auto expected_netbattle_team = []() -> KnownTeam<Generation::three> {
 			Gender::male,
 			Item::Leftovers,
 			Ability::Levitate,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Timid,
 				IVs(IV(31_bi), IV(0_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
 				EVs(EV(0_bi), EV(0_bi), EV(84_bi), EV(0_bi), EV(172_bi), EV(252_bi))
@@ -107,7 +109,7 @@ constexpr auto expected_netbattle_team = []() -> KnownTeam<Generation::three> {
 			Gender::male,
 			Item::Salac_Berry,
 			Ability::Swarm,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Jolly,
 				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
 				EVs(EV(56_bi), EV(128_bi), EV(0_bi), EV(0_bi), EV(72_bi), EV(252_bi))
@@ -126,7 +128,7 @@ constexpr auto expected_netbattle_team = []() -> KnownTeam<Generation::three> {
 			Gender::genderless,
 			Item::Leftovers,
 			Ability::Synchronize,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Mild,
 				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
 				EVs(EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi), EV(0_bi), EV(252_bi))
@@ -145,7 +147,7 @@ constexpr auto expected_netbattle_team = []() -> KnownTeam<Generation::three> {
 			Gender::genderless,
 			Item::Leftovers,
 			Ability::Pressure,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Modest,
 				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(30_bi), IV(31_bi), IV(30_bi)),
 				EVs(EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi), EV(0_bi), EV(252_bi))
@@ -170,7 +172,7 @@ constexpr auto expected_netbattle_supremacy_team = []() -> KnownTeam<Generation:
 			Gender::genderless,
 			Item::Leftovers,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				DVs(DV(0_bi), DV(1_bi), DV(2_bi), DV(3_bi)),
 				default_evs<generation>
@@ -189,7 +191,7 @@ constexpr auto expected_netbattle_supremacy_team = []() -> KnownTeam<Generation:
 			Gender::male,
 			Item::Leftovers,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
 				default_evs<generation>
@@ -208,7 +210,7 @@ constexpr auto expected_netbattle_supremacy_team = []() -> KnownTeam<Generation:
 			Gender::male,
 			Item::None,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
 				default_evs<generation>
@@ -227,7 +229,7 @@ constexpr auto expected_netbattle_supremacy_team = []() -> KnownTeam<Generation:
 			Gender::male,
 			Item::Leftovers,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
 				default_evs<generation>
@@ -246,7 +248,7 @@ constexpr auto expected_netbattle_supremacy_team = []() -> KnownTeam<Generation:
 			Gender::male,
 			Item::Leftovers,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				DVs(DV(13_bi), DV(13_bi), DV(15_bi), DV(15_bi)),
 				default_evs<generation>
@@ -265,7 +267,7 @@ constexpr auto expected_netbattle_supremacy_team = []() -> KnownTeam<Generation:
 			Gender::male,
 			Item::Leftovers,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Hardy,
 				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
 				default_evs<generation>

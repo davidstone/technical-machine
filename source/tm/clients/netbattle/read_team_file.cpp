@@ -1770,7 +1770,7 @@ constexpr auto parse_pokemon(Parser & parser) -> tv::optional<KnownPokemon<gener
 		gender,
 		item,
 		ability,
-		CombinedStats<generation>{nature, ivs, evs},
+		CombinedStatsFor<generation>{nature, ivs, evs},
 		moves
 	);
 }

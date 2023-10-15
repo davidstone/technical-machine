@@ -16,6 +16,7 @@ import tm.pokemon.species;
 
 import tm.stat.calculate;
 import tm.stat.combined_stats;
+import tm.stat.default_evs;
 import tm.stat.ev;
 import tm.stat.evs;
 import tm.stat.iv;
@@ -56,7 +57,7 @@ static_assert([]{
 		Gender::male,
 		Item::Choice_Band,
 		Ability::Pure_Power,
-		CombinedStats<generation>{
+		CombinedStatsFor<generation>{
 			Nature::Impish,
 			max_dvs_or_ivs<generation>,
 			EVs(
@@ -92,7 +93,7 @@ static_assert([]{
 		Gender::genderless,
 		Item::Choice_Specs,
 		Ability::Solar_Power,
-		CombinedStats<generation>{
+		CombinedStatsFor<generation>{
 			Nature::Modest,
 			max_dvs_or_ivs<generation>,
 			EVs(
@@ -126,7 +127,7 @@ static_assert([]{
 			Gender::male,
 			Item::None,
 			Ability::Marvel_Scale,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Bold,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -188,7 +189,7 @@ static_assert([]{
 			Gender::male,
 			Item::None,
 			Ability::Honey_Gather,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Calm,
 				max_dvs_or_ivs<generation>,
 				EVs(
@@ -224,7 +225,7 @@ static_assert([]{
 			Gender::genderless,
 			Item::Choice_Scarf,
 			Ability::Swift_Swim,
-			CombinedStats<generation>{
+			CombinedStatsFor<generation>{
 				Nature::Timid,
 				max_dvs_or_ivs<generation>,
 				EVs(

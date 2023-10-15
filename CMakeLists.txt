@@ -179,6 +179,7 @@ target_sources(tm_common PUBLIC
 		source/tm/stat/chance_to_hit.cpp
 		source/tm/stat/combined_stats.cpp
 		source/tm/stat/current_hp.cpp
+		source/tm/stat/default_evs.cpp
 		source/tm/stat/ev.cpp
 		source/tm/stat/evs.cpp
 		source/tm/stat/faster.cpp
@@ -193,6 +194,7 @@ target_sources(tm_common PUBLIC
 		source/tm/stat/possible_dvs_or_ivs.cpp
 		source/tm/stat/stage.cpp
 		source/tm/stat/stat_names.cpp
+		source/tm/stat/stat_style.cpp
 		source/tm/stat/stat_to_ev.cpp
 		source/tm/stat/stats.cpp
 
