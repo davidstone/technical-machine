@@ -295,6 +295,7 @@ target_sources(tm_common PUBLIC
 		source/tm/wish.cpp
 )
 target_sources(tm_common PRIVATE
+	source/tm/evaluate/predict_action_impl.cpp
 	source/tm/team_predictor/team_predictor_impl.cpp
 )
 target_link_libraries(tm_common
