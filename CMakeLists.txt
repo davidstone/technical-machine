@@ -294,6 +294,9 @@ target_sources(tm_common PUBLIC
 		source/tm/weather.cpp
 		source/tm/wish.cpp
 )
+target_sources(tm_common PRIVATE
+	source/tm/team_predictor/team_predictor_impl.cpp
+)
 target_link_libraries(tm_common
 	Boost::headers
 	bounded
