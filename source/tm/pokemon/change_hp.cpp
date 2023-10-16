@@ -13,7 +13,7 @@ import bounded;
 
 namespace technicalmachine {
 
-export constexpr auto change_hp(any_mutable_active_pokemon auto const pokemon, Environment const environment, bounded::bounded_integer auto const change) {
+export constexpr auto change_hp(any_mutable_active_pokemon auto const pokemon, Environment const environment, bounded::bounded_integer auto const change) -> void {
 	pokemon.set_hp(environment, pokemon.hp().current() + change);
 }
 
