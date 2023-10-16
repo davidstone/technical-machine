@@ -5,6 +5,9 @@
 
 module;
 
+#include <std_module/prelude.hpp>
+#include <catch2/catch_test_macros.hpp>
+
 #include <bounded/assert.hpp>
 
 export module tm.test.collections.variable_collection;
@@ -87,25 +90,35 @@ constexpr auto test_phaze(Team<generation> user, Team<generation> team) -> bool 
 	return true;
 }
 
-static_assert(test_phaze(
-	make_team(Species::Lugia),
-	make_team(Species::Bulbasaur, Species::Ivysaur)
-));
-static_assert(test_phaze(
-	make_team(Species::Lugia),
-	make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur)
-));
-static_assert(test_phaze(
-	make_team(Species::Lugia),
-	make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur, Species::Charmander)
-));
-static_assert(test_phaze(
-	make_team(Species::Lugia),
-	make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur, Species::Charmander, Species::Charmeleon)
-));
-static_assert(test_phaze(
-	make_team(Species::Lugia),
-	make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur, Species::Charmander, Species::Charmeleon, Species::Charizard)
-));
+TEST_CASE("Phaze against 2 Pokemon", "[Side Effect]") {
+	CHECK(test_phaze(
+		make_team(Species::Lugia),
+		make_team(Species::Bulbasaur, Species::Ivysaur)
+	));
+}
+TEST_CASE("Phaze against 3 Pokemon", "[Side Effect]") {
+	CHECK(test_phaze(
+		make_team(Species::Lugia),
+		make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur)
+	));
+}
+TEST_CASE("Phaze against 4 Pokemon", "[Side Effect]") {
+	CHECK(test_phaze(
+		make_team(Species::Lugia),
+		make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur, Species::Charmander)
+	));
+}
+TEST_CASE("Phaze against 5 Pokemon", "[Side Effect]") {
+	CHECK(test_phaze(
+		make_team(Species::Lugia),
+		make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur, Species::Charmander, Species::Charmeleon)
+	));
+}
+TEST_CASE("Phaze against 6 Pokemon", "[Side Effect]") {
+	CHECK(test_phaze(
+		make_team(Species::Lugia),
+		make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur, Species::Charmander, Species::Charmeleon, Species::Charizard)
+	));
+}
 
 } // namespace technicalmachine
