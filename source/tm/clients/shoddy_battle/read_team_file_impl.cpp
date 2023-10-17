@@ -134,7 +134,7 @@ struct ClassDescription {
 struct ParsedData;
 
 using IntegerVector = containers::static_vector<ByteInteger<4_bi>, bounded::max(number_of_stats, max_moves_per_pokemon)>;
-using AnyVector = containers::vector<ParsedData, bounded::max(max_pokemon_per_team, max_moves_per_pokemon).value()>;
+using AnyVector = containers::vector<ParsedData, bounded::max(max_pokemon_per_team, max_moves_per_pokemon)>;
 
 struct ParsedData {
 	using State = tv::variant<
