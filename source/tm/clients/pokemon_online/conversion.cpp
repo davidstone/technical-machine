@@ -5,7 +5,11 @@
 
 module;
 
+#include <std_module/prelude.hpp>
+
 #include <bounded/assert.hpp>
+
+#include <string>
 
 export module tm.clients.po.conversion;
 
