@@ -869,6 +869,67 @@ constexpr auto move_critical_hit(Generation const generation, MoveName const mov
 		case MoveName::Glacial_Lance: return MoveCriticalHit::normal;
 		case MoveName::Astral_Barrage: return MoveCriticalHit::normal;
 		case MoveName::Eerie_Spell: return MoveCriticalHit::normal;
+
+		// Generation 9
+		case MoveName::Tera_Blast: return MoveCriticalHit::normal;
+		case MoveName::Silk_Trap: return MoveCriticalHit::normal;
+		case MoveName::Axe_Kick: return MoveCriticalHit::normal;
+		case MoveName::Last_Respects: return MoveCriticalHit::normal;
+		case MoveName::Lumina_Crash: return MoveCriticalHit::normal;
+		case MoveName::Order_Up: return MoveCriticalHit::normal;
+		case MoveName::Jet_Punch: return MoveCriticalHit::normal;
+		case MoveName::Spicy_Extract: return MoveCriticalHit::normal;
+		case MoveName::Spin_Out: return MoveCriticalHit::normal;
+		case MoveName::Population_Bomb: return MoveCriticalHit::normal;
+		case MoveName::Ice_Spinner: return MoveCriticalHit::normal;
+		case MoveName::Glaive_Rush: return MoveCriticalHit::normal;
+		case MoveName::Revival_Blessing: return MoveCriticalHit::normal;
+		case MoveName::Salt_Cure: return MoveCriticalHit::normal;
+		case MoveName::Triple_Dive: return MoveCriticalHit::normal;
+		case MoveName::Mortal_Spin: return MoveCriticalHit::normal;
+		case MoveName::Doodle: return MoveCriticalHit::normal;
+		case MoveName::Fillet_Away: return MoveCriticalHit::normal;
+		case MoveName::Kowtow_Cleave: return MoveCriticalHit::normal;
+		case MoveName::Flower_Trick: return MoveCriticalHit::normal;
+		case MoveName::Torch_Song: return MoveCriticalHit::normal;
+		case MoveName::Aqua_Step: return MoveCriticalHit::normal;
+		case MoveName::Raging_Bull: return MoveCriticalHit::normal;
+		case MoveName::Make_It_Rain: return MoveCriticalHit::normal;
+		case MoveName::Psyblade: return MoveCriticalHit::normal;
+		case MoveName::Hydro_Steam: return MoveCriticalHit::normal;
+		case MoveName::Ruination: return MoveCriticalHit::normal;
+		case MoveName::Collision_Course: return MoveCriticalHit::normal;
+		case MoveName::Electro_Drift: return MoveCriticalHit::normal;
+		case MoveName::Shed_Tail: return MoveCriticalHit::normal;
+		case MoveName::Chilly_Reception: return MoveCriticalHit::normal;
+		case MoveName::Tidy_Up: return MoveCriticalHit::normal;
+		case MoveName::Snowscape: return MoveCriticalHit::normal;
+		case MoveName::Pounce: return MoveCriticalHit::normal;
+		case MoveName::Trailblaze: return MoveCriticalHit::normal;
+		case MoveName::Chilling_Water: return MoveCriticalHit::normal;
+		case MoveName::Hyper_Drill: return MoveCriticalHit::normal;
+		case MoveName::Twin_Beam: return MoveCriticalHit::normal;
+		case MoveName::Rage_Fist: return MoveCriticalHit::normal;
+		case MoveName::Armor_Cannon: return MoveCriticalHit::normal;
+		case MoveName::Bitter_Blade: return MoveCriticalHit::normal;
+		case MoveName::Double_Shock: return MoveCriticalHit::normal;
+		case MoveName::Gigaton_Hammer: return MoveCriticalHit::normal;
+		case MoveName::Comeuppance: return MoveCriticalHit::normal;
+		case MoveName::Aqua_Cutter: return MoveCriticalHit::high;
+		case MoveName::Blazing_Torque: return MoveCriticalHit::normal;
+		case MoveName::Wicked_Torque: return MoveCriticalHit::normal;
+		case MoveName::Noxious_Torque: return MoveCriticalHit::normal;
+		case MoveName::Combat_Torque: return MoveCriticalHit::normal;
+		case MoveName::Magical_Torque: return MoveCriticalHit::normal;
+		case MoveName::Blood_Moon: return MoveCriticalHit::normal;
+		case MoveName::Matcha_Gotcha: return MoveCriticalHit::normal;
+		case MoveName::Syrup_Bomb: return MoveCriticalHit::normal;
+		case MoveName::Ivy_Cudgel: return MoveCriticalHit::high;
+		case MoveName::Electro_Shot: return MoveCriticalHit::normal;
+		case MoveName::Thunderclap: return MoveCriticalHit::normal;
+		case MoveName::Tachyon_Cutter: return MoveCriticalHit::normal;
+		case MoveName::Upper_Hand: return MoveCriticalHit::normal;
+		case MoveName::Psychic_Noise: return MoveCriticalHit::normal;
 	}
 }
 

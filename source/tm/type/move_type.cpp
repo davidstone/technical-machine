@@ -823,6 +823,67 @@ export constexpr auto move_type(Generation const generation, MoveName const move
 		case MoveName::Glacial_Lance: return Type::Ice;
 		case MoveName::Astral_Barrage: return Type::Ghost;
 		case MoveName::Eerie_Spell: return Type::Psychic;
+
+		// Generation 9
+		case MoveName::Tera_Blast: return Type::Normal;
+		case MoveName::Silk_Trap: return Type::Bug;
+		case MoveName::Axe_Kick: return Type::Fighting;
+		case MoveName::Last_Respects: return Type::Ghost;
+		case MoveName::Lumina_Crash: return Type::Psychic;
+		case MoveName::Order_Up: return Type::Dragon;
+		case MoveName::Jet_Punch: return Type::Water;
+		case MoveName::Spicy_Extract: return Type::Grass;
+		case MoveName::Spin_Out: return Type::Steel;
+		case MoveName::Population_Bomb: return Type::Normal;
+		case MoveName::Ice_Spinner: return Type::Ice;
+		case MoveName::Glaive_Rush: return Type::Dragon;
+		case MoveName::Revival_Blessing: return Type::Normal;
+		case MoveName::Salt_Cure: return Type::Rock;
+		case MoveName::Triple_Dive: return Type::Water;
+		case MoveName::Mortal_Spin: return Type::Poison;
+		case MoveName::Doodle: return Type::Normal;
+		case MoveName::Fillet_Away: return Type::Normal;
+		case MoveName::Kowtow_Cleave: return Type::Dark;
+		case MoveName::Flower_Trick: return Type::Grass;
+		case MoveName::Torch_Song: return Type::Fire;
+		case MoveName::Aqua_Step: return Type::Water;
+		case MoveName::Raging_Bull: return Type::Normal;
+		case MoveName::Make_It_Rain: return Type::Steel;
+		case MoveName::Psyblade: return Type::Psychic;
+		case MoveName::Hydro_Steam: return Type::Water;
+		case MoveName::Ruination: return Type::Dark;
+		case MoveName::Collision_Course: return Type::Fighting;
+		case MoveName::Electro_Drift: return Type::Electric;
+		case MoveName::Shed_Tail: return Type::Normal;
+		case MoveName::Chilly_Reception: return Type::Ice;
+		case MoveName::Tidy_Up: return Type::Normal;
+		case MoveName::Snowscape: return Type::Ice;
+		case MoveName::Pounce: return Type::Bug;
+		case MoveName::Trailblaze: return Type::Grass;
+		case MoveName::Chilling_Water: return Type::Water;
+		case MoveName::Hyper_Drill: return Type::Normal;
+		case MoveName::Twin_Beam: return Type::Psychic;
+		case MoveName::Rage_Fist: return Type::Ghost;
+		case MoveName::Armor_Cannon: return Type::Fire;
+		case MoveName::Bitter_Blade: return Type::Fire;
+		case MoveName::Double_Shock: return Type::Electric;
+		case MoveName::Gigaton_Hammer: return Type::Steel;
+		case MoveName::Comeuppance: return Type::Dark;
+		case MoveName::Aqua_Cutter: return Type::Water;
+		case MoveName::Blazing_Torque: return Type::Fire;
+		case MoveName::Wicked_Torque: return Type::Dark;
+		case MoveName::Noxious_Torque: return Type::Poison;
+		case MoveName::Combat_Torque: return Type::Fighting;
+		case MoveName::Magical_Torque: return Type::Fairy;
+		case MoveName::Blood_Moon: return Type::Normal;
+		case MoveName::Matcha_Gotcha: return Type::Grass;
+		case MoveName::Syrup_Bomb: return Type::Grass;
+		case MoveName::Ivy_Cudgel: return Type::Grass;
+		case MoveName::Electro_Shot: return Type::Electric;
+		case MoveName::Thunderclap: return Type::Electric;
+		case MoveName::Tachyon_Cutter: return Type::Steel;
+		case MoveName::Upper_Hand: return Type::Fighting;
+		case MoveName::Psychic_Noise: return Type::Psychic;
 	}
 }
 

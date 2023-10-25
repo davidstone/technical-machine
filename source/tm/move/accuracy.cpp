@@ -906,6 +906,67 @@ export constexpr auto accuracy(Generation const generation, MoveName const move,
 		case MoveName::Glacial_Lance: return 100_bi;
 		case MoveName::Astral_Barrage: return 100_bi;
 		case MoveName::Eerie_Spell: return 100_bi;
+
+		// Generation 9
+		case MoveName::Tera_Blast: return 100_bi;
+		case MoveName::Silk_Trap: return none;
+		case MoveName::Axe_Kick: return 90_bi;
+		case MoveName::Last_Respects: return 100_bi;
+		case MoveName::Lumina_Crash: return 100_bi;
+		case MoveName::Order_Up: return 100_bi;
+		case MoveName::Jet_Punch: return 100_bi;
+		case MoveName::Spicy_Extract: return none;
+		case MoveName::Spin_Out: return 100_bi;
+		case MoveName::Population_Bomb: return 90_bi;
+		case MoveName::Ice_Spinner: return 100_bi;
+		case MoveName::Glaive_Rush: return 100_bi;
+		case MoveName::Revival_Blessing: return none;
+		case MoveName::Salt_Cure: return 100_bi;
+		case MoveName::Triple_Dive: return 95_bi;
+		case MoveName::Mortal_Spin: return 100_bi;
+		case MoveName::Doodle: return 100_bi;
+		case MoveName::Fillet_Away: return none;
+		case MoveName::Kowtow_Cleave: return none;
+		case MoveName::Flower_Trick: return none;
+		case MoveName::Torch_Song: return 100_bi;
+		case MoveName::Aqua_Step: return 100_bi;
+		case MoveName::Raging_Bull: return 100_bi;
+		case MoveName::Make_It_Rain: return 100_bi;
+		case MoveName::Psyblade: return 100_bi;
+		case MoveName::Hydro_Steam: return 100_bi;
+		case MoveName::Ruination: return 90_bi;
+		case MoveName::Collision_Course: return 100_bi;
+		case MoveName::Electro_Drift: return 100_bi;
+		case MoveName::Shed_Tail: return none;
+		case MoveName::Chilly_Reception: return none;
+		case MoveName::Tidy_Up: return none;
+		case MoveName::Snowscape: return none;
+		case MoveName::Pounce: return 100_bi;
+		case MoveName::Trailblaze: return 100_bi;
+		case MoveName::Chilling_Water: return 100_bi;
+		case MoveName::Hyper_Drill: return 100_bi;
+		case MoveName::Twin_Beam: return 100_bi;
+		case MoveName::Rage_Fist: return 100_bi;
+		case MoveName::Armor_Cannon: return 100_bi;
+		case MoveName::Bitter_Blade: return 100_bi;
+		case MoveName::Double_Shock: return 100_bi;
+		case MoveName::Gigaton_Hammer: return 100_bi;
+		case MoveName::Comeuppance: return 100_bi;
+		case MoveName::Aqua_Cutter: return 100_bi;
+		case MoveName::Blazing_Torque: return 100_bi;
+		case MoveName::Wicked_Torque: return 100_bi;
+		case MoveName::Noxious_Torque: return 100_bi;
+		case MoveName::Combat_Torque: return 100_bi;
+		case MoveName::Magical_Torque: return 100_bi;
+		case MoveName::Blood_Moon: return 100_bi;
+		case MoveName::Matcha_Gotcha: return 90_bi;
+		case MoveName::Syrup_Bomb: return 85_bi;
+		case MoveName::Ivy_Cudgel: return 100_bi;
+		case MoveName::Electro_Shot: return 100_bi;
+		case MoveName::Thunderclap: return 100_bi;
+		case MoveName::Tachyon_Cutter: return 100_bi;
+		case MoveName::Upper_Hand: return 100_bi;
+		case MoveName::Psychic_Noise: return 100_bi;
 	}
 }
 

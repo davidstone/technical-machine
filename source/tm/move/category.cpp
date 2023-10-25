@@ -344,6 +344,39 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 		case MoveName::Surging_Strikes:
 		case MoveName::Thunderous_Kick:
 		case MoveName::Glacial_Lance:
+		case MoveName::Axe_Kick:
+		case MoveName::Last_Respects:
+		case MoveName::Order_Up:
+		case MoveName::Jet_Punch:
+		case MoveName::Spin_Out:
+		case MoveName::Population_Bomb:
+		case MoveName::Ice_Spinner:
+		case MoveName::Glaive_Rush:
+		case MoveName::Salt_Cure:
+		case MoveName::Triple_Dive:
+		case MoveName::Mortal_Spin:
+		case MoveName::Kowtow_Cleave:
+		case MoveName::Flower_Trick:
+		case MoveName::Aqua_Step:
+		case MoveName::Raging_Bull:
+		case MoveName::Psyblade:
+		case MoveName::Collision_Course:
+		case MoveName::Pounce:
+		case MoveName::Trailblaze:
+		case MoveName::Hyper_Drill:
+		case MoveName::Rage_Fist:
+		case MoveName::Bitter_Blade:
+		case MoveName::Double_Shock:
+		case MoveName::Gigaton_Hammer:
+		case MoveName::Comeuppance:
+		case MoveName::Aqua_Cutter:
+		case MoveName::Blazing_Torque:
+		case MoveName::Wicked_Torque:
+		case MoveName::Noxious_Torque:
+		case MoveName::Combat_Torque:
+		case MoveName::Magical_Torque:
+		case MoveName::Ivy_Cudgel:
+		case MoveName::Upper_Hand:
 			return generation <= Generation::three ?
 				type_based_category(move.type) :
 				MoveCategory::physical;
@@ -549,6 +582,23 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 		case MoveName::Fiery_Wrath:
 		case MoveName::Astral_Barrage:
 		case MoveName::Eerie_Spell:
+		case MoveName::Tera_Blast:
+		case MoveName::Lumina_Crash:
+		case MoveName::Torch_Song:
+		case MoveName::Make_It_Rain:
+		case MoveName::Hydro_Steam:
+		case MoveName::Ruination:
+		case MoveName::Electro_Drift:
+		case MoveName::Chilling_Water:
+		case MoveName::Twin_Beam:
+		case MoveName::Armor_Cannon:
+		case MoveName::Blood_Moon:
+		case MoveName::Matcha_Gotcha:
+		case MoveName::Syrup_Bomb:
+		case MoveName::Electro_Shot:
+		case MoveName::Thunderclap:
+		case MoveName::Tachyon_Cutter:
+		case MoveName::Psychic_Noise:
 			return generation <= Generation::three ?
 				type_based_category(move.type) :
 				MoveCategory::special;
@@ -814,6 +864,15 @@ constexpr auto move_category(Generation const generation, KnownMove const move) 
 		case MoveName::Corrosive_Gas:
 		case MoveName::Coaching:
 		case MoveName::Jungle_Healing:
+		case MoveName::Silk_Trap:
+		case MoveName::Spicy_Extract:
+		case MoveName::Revival_Blessing:
+		case MoveName::Doodle:
+		case MoveName::Fillet_Away:
+		case MoveName::Shed_Tail:
+		case MoveName::Chilly_Reception:
+		case MoveName::Tidy_Up:
+		case MoveName::Snowscape:
 			return MoveCategory::other;
 		// TODO, can be either
 		case MoveName::Water_Shuriken:

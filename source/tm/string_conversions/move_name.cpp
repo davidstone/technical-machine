@@ -831,6 +831,65 @@ export constexpr auto to_string(MoveName const move) -> std::string_view {
 		case MoveName::Glacial_Lance: return "Glacial Lance";
 		case MoveName::Astral_Barrage: return "Astral Barrage";
 		case MoveName::Eerie_Spell: return "Eerie Spell";
+		case MoveName::Tera_Blast: return "Tera Blast";
+		case MoveName::Silk_Trap: return "Silk Trap";
+		case MoveName::Axe_Kick: return "Axe Kick";
+		case MoveName::Last_Respects: return "Last Respects";
+		case MoveName::Lumina_Crash: return "Lumina Crash";
+		case MoveName::Order_Up: return "Order Up";
+		case MoveName::Jet_Punch: return "Jet Punch";
+		case MoveName::Spicy_Extract: return "Spicy Extract";
+		case MoveName::Spin_Out: return "Spin Out";
+		case MoveName::Population_Bomb: return "Population Bomb";
+		case MoveName::Ice_Spinner: return "Ice Spinner";
+		case MoveName::Glaive_Rush: return "Glaive Rush";
+		case MoveName::Revival_Blessing: return "Revival Blessing";
+		case MoveName::Salt_Cure: return "Salt Cure";
+		case MoveName::Triple_Dive: return "Triple Dive";
+		case MoveName::Mortal_Spin: return "Mortal Spin";
+		case MoveName::Doodle: return "Doodle";
+		case MoveName::Fillet_Away: return "Fillet Away";
+		case MoveName::Kowtow_Cleave: return "Kowtow Cleave";
+		case MoveName::Flower_Trick: return "Flower Trick";
+		case MoveName::Torch_Song: return "Torch Song";
+		case MoveName::Aqua_Step: return "Aqua Step";
+		case MoveName::Raging_Bull: return "Raging Bull";
+		case MoveName::Make_It_Rain: return "Make It Rain";
+		case MoveName::Psyblade: return "Psyblade";
+		case MoveName::Hydro_Steam: return "Hydro Steam";
+		case MoveName::Ruination: return "Ruination";
+		case MoveName::Collision_Course: return "Collision Course";
+		case MoveName::Electro_Drift: return "Electro Drift";
+		case MoveName::Shed_Tail: return "Shed Tail";
+		case MoveName::Chilly_Reception: return "Chilly Reception";
+		case MoveName::Tidy_Up: return "Tidy Up";
+		case MoveName::Snowscape: return "Snowscape";
+		case MoveName::Pounce: return "Pounce";
+		case MoveName::Trailblaze: return "Trailblaze";
+		case MoveName::Chilling_Water: return "Chilling Water";
+		case MoveName::Hyper_Drill: return "Hyper Drill";
+		case MoveName::Twin_Beam: return "Twin Beam";
+		case MoveName::Rage_Fist: return "Rage Fist";
+		case MoveName::Armor_Cannon: return "Armor Cannon";
+		case MoveName::Bitter_Blade: return "Bitter Blade";
+		case MoveName::Double_Shock: return "Double Shock";
+		case MoveName::Gigaton_Hammer: return "Gigaton Hammer";
+		case MoveName::Comeuppance: return "Comeuppance";
+		case MoveName::Aqua_Cutter: return "Aqua Cutter";
+		case MoveName::Blazing_Torque: return "Blazing Torque";
+		case MoveName::Wicked_Torque: return "Wicked Torque";
+		case MoveName::Noxious_Torque: return "Noxious Torque";
+		case MoveName::Combat_Torque: return "Combat Torque";
+		case MoveName::Magical_Torque: return "Magical Torque";
+		case MoveName::Blood_Moon: return "Blood Moon";
+		case MoveName::Matcha_Gotcha: return "Matcha Gotcha";
+		case MoveName::Syrup_Bomb: return "Syrup Bomb";
+		case MoveName::Ivy_Cudgel: return "Ivy Cudgel";
+		case MoveName::Electro_Shot: return "Electro Shot";
+		case MoveName::Thunderclap: return "Thunderclap";
+		case MoveName::Tachyon_Cutter: return "Tachyon Cutter";
+		case MoveName::Upper_Hand: return "Upper Hand";
+		case MoveName::Psychic_Noise: return "Psychic Noise";
 	}
 }
 
@@ -860,9 +919,12 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"anchorshot", MoveName::Anchor_Shot},
 			{"ancientpower", MoveName::Ancient_Power},
 			{"appleacid", MoveName::Apple_Acid},
+			{"aquacutter", MoveName::Aqua_Cutter},
 			{"aquajet", MoveName::Aqua_Jet},
 			{"aquaring", MoveName::Aqua_Ring},
+			{"aquastep", MoveName::Aqua_Step},
 			{"aquatail", MoveName::Aqua_Tail},
+			{"armorcannon", MoveName::Armor_Cannon},
 			{"armthrust", MoveName::Arm_Thrust},
 			{"aromatherapy", MoveName::Aromatherapy},
 			{"aromaticmist", MoveName::Aromatic_Mist},
@@ -878,6 +940,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"auroraveil", MoveName::Aurora_Veil},
 			{"autotomize", MoveName::Autotomize},
 			{"avalanche", MoveName::Avalanche},
+			{"axekick", MoveName::Axe_Kick},
 			{"babydolleyes", MoveName::Baby_Doll_Eyes},
 			{"banefulbunker", MoveName::Baneful_Bunker},
 			{"barrage", MoveName::Barrage},
@@ -893,11 +956,14 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"bide", MoveName::Bide},
 			{"bind", MoveName::Bind},
 			{"bite", MoveName::Bite},
+			{"bitterblade", MoveName::Bitter_Blade},
 			{"blackholeeclipse", MoveName::Black_Hole_Eclipse},
 			{"blastburn", MoveName::Blast_Burn},
 			{"blazekick", MoveName::Blaze_Kick},
+			{"blazingtorque", MoveName::Blazing_Torque},
 			{"blizzard", MoveName::Blizzard},
 			{"block", MoveName::Block},
+			{"bloodmoon", MoveName::Blood_Moon},
 			{"bloomdoom", MoveName::Bloom_Doom},
 			{"blueflare", MoveName::Blue_Flare},
 			{"bodypress", MoveName::Body_Press},
@@ -935,6 +1001,8 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"chargebeam", MoveName::Charge_Beam},
 			{"charm", MoveName::Charm},
 			{"chatter", MoveName::Chatter},
+			{"chillingwater", MoveName::Chilling_Water},
+			{"chillyreception", MoveName::Chilly_Reception},
 			{"chipaway", MoveName::Chip_Away},
 			{"circlethrow", MoveName::Circle_Throw},
 			{"clamp", MoveName::Clamp},
@@ -945,7 +1013,10 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"closecombat", MoveName::Close_Combat},
 			{"coaching", MoveName::Coaching},
 			{"coil", MoveName::Coil},
+			{"collisioncourse", MoveName::Collision_Course},
+			{"combattorque", MoveName::Combat_Torque},
 			{"cometpunch", MoveName::Comet_Punch},
+			{"comeuppance", MoveName::Comeuppance},
 			{"confide", MoveName::Confide},
 			{"confuseray", MoveName::Confuse_Ray},
 			{"confusion", MoveName::Confusion},
@@ -990,11 +1061,13 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"discharge", MoveName::Discharge},
 			{"dive", MoveName::Dive},
 			{"dizzypunch", MoveName::Dizzy_Punch},
+			{"doodle", MoveName::Doodle},
 			{"doomdesire", MoveName::Doom_Desire},
 			{"doubleedge", MoveName::Double_Edge},
 			{"doublehit", MoveName::Double_Hit},
 			{"doubleironbash", MoveName::Double_Iron_Bash},
 			{"doublekick", MoveName::Double_Kick},
+			{"doubleshock", MoveName::Double_Shock},
 			{"doubleslap", MoveName::Double_Slap},
 			{"doubleteam", MoveName::Double_Team},
 			{"dracometeor", MoveName::Draco_Meteor},
@@ -1028,6 +1101,8 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"electricterrain", MoveName::Electric_Terrain},
 			{"electrify", MoveName::Electrify},
 			{"electroball", MoveName::Electro_Ball},
+			{"electrodrift", MoveName::Electro_Drift},
+			{"electroshot", MoveName::Electro_Shot},
 			{"electroweb", MoveName::Electroweb},
 			{"embargo", MoveName::Embargo},
 			{"ember", MoveName::Ember},
@@ -1057,6 +1132,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"fellstinger", MoveName::Fell_Stinger},
 			{"fierydance", MoveName::Fiery_Dance},
 			{"fierywrath", MoveName::Fiery_Wrath},
+			{"filletaway", MoveName::Fillet_Away},
 			{"finalgambit", MoveName::Final_Gambit},
 			{"fireblast", MoveName::Fire_Blast},
 			{"firefang", MoveName::Fire_Fang},
@@ -1081,6 +1157,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"flipturn", MoveName::Flip_Turn},
 			{"floralhealing", MoveName::Floral_Healing},
 			{"flowershield", MoveName::Flower_Shield},
+			{"flowertrick", MoveName::Flower_Trick},
 			{"fly", MoveName::Fly},
 			{"flyingpress", MoveName::Flying_Press},
 			{"focusblast", MoveName::Focus_Blast},
@@ -1111,9 +1188,11 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"geomancy", MoveName::Geomancy},
 			{"gigadrain", MoveName::Giga_Drain},
 			{"gigaimpact", MoveName::Giga_Impact},
+			{"gigatonhammer", MoveName::Gigaton_Hammer},
 			{"gigavolthavoc", MoveName::Gigavolt_Havoc},
 			{"glaciallance", MoveName::Glacial_Lance},
 			{"glaciate", MoveName::Glaciate},
+			{"glaiverush", MoveName::Glaive_Rush},
 			{"glare", MoveName::Glare},
 			{"grassknot", MoveName::Grass_Knot},
 			{"grasspledge", MoveName::Grass_Pledge},
@@ -1199,8 +1278,10 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"hurricane", MoveName::Hurricane},
 			{"hydrocannon", MoveName::Hydro_Cannon},
 			{"hydropump", MoveName::Hydro_Pump},
+			{"hydrosteam", MoveName::Hydro_Steam},
 			{"hydrovortex", MoveName::Hydro_Vortex},
 			{"hyperbeam", MoveName::Hyper_Beam},
+			{"hyperdrill", MoveName::Hyper_Drill},
 			{"hyperfang", MoveName::Hyper_Fang},
 			{"hyperspacefury", MoveName::Hyperspace_Fury},
 			{"hyperspacehole", MoveName::Hyperspace_Hole},
@@ -1213,6 +1294,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"icehammer", MoveName::Ice_Hammer},
 			{"icepunch", MoveName::Ice_Punch},
 			{"iceshard", MoveName::Ice_Shard},
+			{"icespinner", MoveName::Ice_Spinner},
 			{"iciclecrash", MoveName::Icicle_Crash},
 			{"iciclespear", MoveName::Icicle_Spear},
 			{"icywind", MoveName::Icy_Wind},
@@ -1227,7 +1309,9 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"irondefense", MoveName::Iron_Defense},
 			{"ironhead", MoveName::Iron_Head},
 			{"irontail", MoveName::Iron_Tail},
+			{"ivycudgel", MoveName::Ivy_Cudgel},
 			{"jawlock", MoveName::Jaw_Lock},
+			{"jetpunch", MoveName::Jet_Punch},
 			{"judgment", MoveName::Judgment},
 			{"jumpkick", MoveName::Jump_Kick},
 			{"junglehealing", MoveName::Jungle_Healing},
@@ -1235,10 +1319,12 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"kinesis", MoveName::Kinesis},
 			{"kingsshield", MoveName::Kings_Shield},
 			{"knockoff", MoveName::Knock_Off},
+			{"kowtowcleave", MoveName::Kowtow_Cleave},
 			{"landswrath", MoveName::Lands_Wrath},
 			{"laserfocus", MoveName::Laser_Focus},
 			{"lashout", MoveName::Lash_Out},
 			{"lastresort", MoveName::Last_Resort},
+			{"lastrespects", MoveName::Last_Respects},
 			{"lavaplume", MoveName::Lava_Plume},
 			{"leafage", MoveName::Leafage},
 			{"leafblade", MoveName::Leaf_Blade},
@@ -1259,11 +1345,13 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"lowkick", MoveName::Low_Kick},
 			{"lowsweep", MoveName::Low_Sweep},
 			{"luckychant", MoveName::Lucky_Chant},
+			{"luminacrash", MoveName::Lumina_Crash},
 			{"lunardance", MoveName::Lunar_Dance},
 			{"lunge", MoveName::Lunge},
 			{"lusterpurge", MoveName::Luster_Purge},
 			{"machpunch", MoveName::Mach_Punch},
 			{"magicalleaf", MoveName::Magical_Leaf},
+			{"magicaltorque", MoveName::Magical_Torque},
 			{"magiccoat", MoveName::Magic_Coat},
 			{"magicpowder", MoveName::Magic_Powder},
 			{"magicroom", MoveName::Magic_Room},
@@ -1272,8 +1360,10 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"magneticflux", MoveName::Magnetic_Flux},
 			{"magnetrise", MoveName::Magnet_Rise},
 			{"magnitude", MoveName::Magnitude},
+			{"makeitrain", MoveName::Make_It_Rain},
 			{"maliciousmoonsault", MoveName::Malicious_Moonsault},
 			{"matblock", MoveName::Mat_Block},
+			{"matchagotcha", MoveName::Matcha_Gotcha},
 			{"maxairstream", MoveName::Max_Airstream},
 			{"maxdarkness", MoveName::Max_Darkness},
 			{"maxflare", MoveName::Max_Flare},
@@ -1326,6 +1416,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"moongeistbeam", MoveName::Moongeist_Beam},
 			{"moonlight", MoveName::Moonlight},
 			{"morningsun", MoveName::Morning_Sun},
+			{"mortalspin", MoveName::Mortal_Spin},
 			{"mudbomb", MoveName::Mud_Bomb},
 			{"muddywater", MoveName::Muddy_Water},
 			{"mudshot", MoveName::Mud_Shot},
@@ -1345,6 +1436,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"nightslash", MoveName::Night_Slash},
 			{"nobleroar", MoveName::Noble_Roar},
 			{"noretreat", MoveName::No_Retreat},
+			{"noxioustorque", MoveName::Noxious_Torque},
 			{"nuzzle", MoveName::Nuzzle},
 			{"oblivionwing", MoveName::Oblivion_Wing},
 			{"obstruct", MoveName::Obstruct},
@@ -1353,6 +1445,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"octolock", MoveName::Octolock},
 			{"odorsleuth", MoveName::Odor_Sleuth},
 			{"ominouswind", MoveName::Ominous_Wind},
+			{"orderup", MoveName::Order_Up},
 			{"originpulse", MoveName::Origin_Pulse},
 			{"outrage", MoveName::Outrage},
 			{"overdrive", MoveName::Overdrive},
@@ -1382,6 +1475,8 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"poisontail", MoveName::Poison_Tail},
 			{"pollenpuff", MoveName::Pollen_Puff},
 			{"poltergeist", MoveName::Poltergeist},
+			{"populationbomb", MoveName::Population_Bomb},
+			{"pounce", MoveName::Pounce},
 			{"pound", MoveName::Pound},
 			{"powder", MoveName::Powder},
 			{"powdersnow", MoveName::Powder_Snow},
@@ -1397,8 +1492,10 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"prismaticlaser", MoveName::Prismatic_Laser},
 			{"protect", MoveName::Protect},
 			{"psybeam", MoveName::Psybeam},
+			{"psyblade", MoveName::Psyblade},
 			{"psychic", MoveName::Psychic},
 			{"psychicfangs", MoveName::Psychic_Fangs},
+			{"psychicnoise", MoveName::Psychic_Noise},
 			{"psychicterrain", MoveName::Psychic_Terrain},
 			{"psychoboost", MoveName::Psycho_Boost},
 			{"psychocut", MoveName::Psycho_Cut},
@@ -1417,7 +1514,9 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"quickguard", MoveName::Quick_Guard},
 			{"quiverdance", MoveName::Quiver_Dance},
 			{"rage", MoveName::Rage},
+			{"ragefist", MoveName::Rage_Fist},
 			{"ragepowder", MoveName::Rage_Powder},
+			{"ragingbull", MoveName::Raging_Bull},
 			{"raindance", MoveName::Rain_Dance},
 			{"rapidspin", MoveName::Rapid_Spin},
 			{"razorleaf", MoveName::Razor_Leaf},
@@ -1436,6 +1535,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"revelationdance", MoveName::Revelation_Dance},
 			{"revenge", MoveName::Revenge},
 			{"reversal", MoveName::Reversal},
+			{"revivalblessing", MoveName::Revival_Blessing},
 			{"risingvoltage", MoveName::Rising_Voltage},
 			{"roar", MoveName::Roar},
 			{"roaroftime", MoveName::Roar_of_Time},
@@ -1453,9 +1553,11 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"roost", MoveName::Roost},
 			{"rototiller", MoveName::Rototiller},
 			{"round", MoveName::Round},
+			{"ruination", MoveName::Ruination},
 			{"sacredfire", MoveName::Sacred_Fire},
 			{"sacredsword", MoveName::Sacred_Sword},
 			{"safeguard", MoveName::Safeguard},
+			{"saltcure", MoveName::Salt_Cure},
 			{"sandattack", MoveName::Sand_Attack},
 			{"sandstorm", MoveName::Sandstorm},
 			{"sandtomb", MoveName::Sand_Tomb},
@@ -1482,6 +1584,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"shadowsneak", MoveName::Shadow_Sneak},
 			{"sharpen", MoveName::Sharpen},
 			{"shatteredpsyche", MoveName::Shattered_Psyche},
+			{"shedtail", MoveName::Shed_Tail},
 			{"sheercold", MoveName::Sheer_Cold},
 			{"shellsidearm", MoveName::Shell_Side_Arm},
 			{"shellsmash", MoveName::Shell_Smash},
@@ -1490,6 +1593,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"shockwave", MoveName::Shock_Wave},
 			{"shoreup", MoveName::Shore_Up},
 			{"signalbeam", MoveName::Signal_Beam},
+			{"silktrap", MoveName::Silk_Trap},
 			{"silverwind", MoveName::Silver_Wind},
 			{"simplebeam", MoveName::Simple_Beam},
 			{"sing", MoveName::Sing},
@@ -1520,6 +1624,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"snatch", MoveName::Snatch},
 			{"snipeshot", MoveName::Snipe_Shot},
 			{"snore", MoveName::Snore},
+			{"snowscape", MoveName::Snowscape},
 			{"soak", MoveName::Soak},
 			{"softboiled", MoveName::Soft_Boiled},
 			{"solarbeam", MoveName::Solar_Beam},
@@ -1531,10 +1636,12 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"sparklingaria", MoveName::Sparkling_Aria},
 			{"spectralthief", MoveName::Spectral_Thief},
 			{"speedswap", MoveName::Speed_Swap},
+			{"spicyextract", MoveName::Spicy_Extract},
 			{"spiderweb", MoveName::Spider_Web},
 			{"spikecannon", MoveName::Spike_Cannon},
 			{"spikes", MoveName::Spikes},
 			{"spikyshield", MoveName::Spiky_Shield},
+			{"spinout", MoveName::Spin_Out},
 			{"spiritbreak", MoveName::Spirit_Break},
 			{"spiritshackle", MoveName::Spirit_Shackle},
 			{"spite", MoveName::Spite},
@@ -1592,6 +1699,8 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"swordsdance", MoveName::Swords_Dance},
 			{"synchronoise", MoveName::Synchronoise},
 			{"synthesis", MoveName::Synthesis},
+			{"syrupbomb", MoveName::Syrup_Bomb},
+			{"tachyoncutter", MoveName::Tachyon_Cutter},
 			{"tackle", MoveName::Tackle},
 			{"tailglow", MoveName::Tail_Glow},
 			{"tailslap", MoveName::Tail_Slap},
@@ -1607,6 +1716,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"teeterdance", MoveName::Teeter_Dance},
 			{"telekinesis", MoveName::Telekinesis},
 			{"teleport", MoveName::Teleport},
+			{"terablast", MoveName::Tera_Blast},
 			{"terrainpulse", MoveName::Terrain_Pulse},
 			{"thief", MoveName::Thief},
 			{"thousandarrows", MoveName::Thousand_Arrows},
@@ -1616,29 +1726,36 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"thunder", MoveName::Thunder},
 			{"thunderbolt", MoveName::Thunderbolt},
 			{"thundercage", MoveName::Thunder_Cage},
+			{"thunderclap", MoveName::Thunderclap},
 			{"thunderfang", MoveName::Thunder_Fang},
 			{"thunderouskick", MoveName::Thunderous_Kick},
 			{"thunderpunch", MoveName::Thunder_Punch},
 			{"thundershock", MoveName::Thunder_Shock},
 			{"thunderwave", MoveName::Thunder_Wave},
 			{"tickle", MoveName::Tickle},
+			{"tidyup", MoveName::Tidy_Up},
 			{"topsyturvy", MoveName::Topsy_Turvy},
+			{"torchsong", MoveName::Torch_Song},
 			{"torment", MoveName::Torment},
 			{"toxic", MoveName::Toxic},
 			{"toxicspikes", MoveName::Toxic_Spikes},
 			{"toxicthread", MoveName::Toxic_Thread},
+			{"trailblaze", MoveName::Trailblaze},
 			{"transform", MoveName::Transform},
 			{"triattack", MoveName::Tri_Attack},
 			{"trick", MoveName::Trick},
 			{"trickortreat", MoveName::Trick_or_Treat},
 			{"trickroom", MoveName::Trick_Room},
 			{"tripleaxel", MoveName::Triple_Axel},
+			{"tripledive", MoveName::Triple_Dive},
 			{"triplekick", MoveName::Triple_Kick},
 			{"tropkick", MoveName::Trop_Kick},
 			{"trumpcard", MoveName::Trump_Card},
+			{"twinbeam", MoveName::Twin_Beam},
 			{"twineedle", MoveName::Twineedle},
 			{"twinkletackle", MoveName::Twinkle_Tackle},
 			{"twister", MoveName::Twister},
+			{"upperhand", MoveName::Upper_Hand},
 			{"uproar", MoveName::Uproar},
 			{"uturn", MoveName::U_turn},
 			{"vacuumwave", MoveName::Vacuum_Wave},
@@ -1663,6 +1780,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"whirlpool", MoveName::Whirlpool},
 			{"whirlwind", MoveName::Whirlwind},
 			{"wickedblow", MoveName::Wicked_Blow},
+			{"wickedtorque", MoveName::Wicked_Torque},
 			{"wideguard", MoveName::Wide_Guard},
 			{"wildcharge", MoveName::Wild_Charge},
 			{"willowisp", MoveName::Will_O_Wisp},

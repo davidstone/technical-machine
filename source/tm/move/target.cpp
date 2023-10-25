@@ -69,6 +69,7 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Tailwind:
 		case MoveName::Wide_Guard:
 			return Target::user_field;
+		case MoveName::Chilly_Reception:
 		case MoveName::Court_Change:
 		case MoveName::Electric_Terrain:
 		case MoveName::Fairy_Lock:
@@ -81,6 +82,7 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Psychic_Terrain:
 		case MoveName::Rain_Dance:
 		case MoveName::Sandstorm:
+		case MoveName::Snowscape:
 		case MoveName::Sunny_Day:
 		case MoveName::Trick_Room:
 		case MoveName::Wonder_Room:
@@ -176,6 +178,9 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Incinerate:
 		case MoveName::Lands_Wrath:
 		case MoveName::Leer:
+		case MoveName::Make_It_Rain:
+		case MoveName::Matcha_Gotcha:
+		case MoveName::Mortal_Spin:
 		case MoveName::Muddy_Water:
 		case MoveName::Origin_Pulse:
 		case MoveName::Overdrive:
@@ -198,6 +203,7 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Venom_Drench:
 		case MoveName::Water_Spout:
 			return Target::all_adjacent_foes;
+		case MoveName::Doodle:
 		case MoveName::Max_Airstream:
 		case MoveName::Max_Darkness:
 		case MoveName::Max_Flare:
@@ -238,6 +244,7 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Charge:
 		case MoveName::Clangorous_Soul:
 		case MoveName::Coil:
+		case MoveName::Comeuppance:
 		case MoveName::Conversion:
 		case MoveName::Copycat:
 		case MoveName::Cosmic_Power:
@@ -252,6 +259,7 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Dragon_Dance:
 		case MoveName::Endure:
 		case MoveName::Extreme_Evoboost:
+		case MoveName::Fillet_Away:
 		case MoveName::Focus_Energy:
 		case MoveName::Follow_Me:
 		case MoveName::Geomancy:
@@ -293,12 +301,15 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Recycle:
 		case MoveName::Refresh:
 		case MoveName::Rest:
+		case MoveName::Revival_Blessing:
 		case MoveName::Rock_Polish:
 		case MoveName::Roost:
 		case MoveName::Sharpen:
+		case MoveName::Shed_Tail:
 		case MoveName::Shell_Smash:
 		case MoveName::Shift_Gear:
 		case MoveName::Shore_Up:
+		case MoveName::Silk_Trap:
 		case MoveName::Slack_Off:
 		case MoveName::Sleep_Talk:
 		case MoveName::Snatch:
@@ -320,6 +331,7 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Tail_Glow:
 		case MoveName::Teleport:
 		case MoveName::Thrash:
+		case MoveName::Tidy_Up:
 		case MoveName::Uproar:
 		case MoveName::Wish:
 		case MoveName::Withdraw:
@@ -335,9 +347,12 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Anchor_Shot:
 		case MoveName::Ancient_Power:
 		case MoveName::Apple_Acid:
+		case MoveName::Aqua_Cutter:
 		case MoveName::Aqua_Jet:
+		case MoveName::Aqua_Step:
 		case MoveName::Aqua_Tail:
 		case MoveName::Arm_Thrust:
+		case MoveName::Armor_Cannon:
 		case MoveName::Assurance:
 		case MoveName::Astonish:
 		case MoveName::Attack_Order:
@@ -345,6 +360,7 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Aura_Wheel:
 		case MoveName::Aurora_Beam:
 		case MoveName::Avalanche:
+		case MoveName::Axe_Kick:
 		case MoveName::Baby_Doll_Eyes:
 		case MoveName::Barrage:
 		case MoveName::Beak_Blast:
@@ -355,10 +371,13 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Bestow:
 		case MoveName::Bind:
 		case MoveName::Bite:
+		case MoveName::Bitter_Blade:
 		case MoveName::Black_Hole_Eclipse:
 		case MoveName::Blast_Burn:
 		case MoveName::Blaze_Kick:
+		case MoveName::Blazing_Torque:
 		case MoveName::Block:
+		case MoveName::Blood_Moon:
 		case MoveName::Bloom_Doom:
 		case MoveName::Blue_Flare:
 		case MoveName::Body_Press:
@@ -381,11 +400,14 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Catastropika:
 		case MoveName::Charge_Beam:
 		case MoveName::Charm:
+		case MoveName::Chilling_Water:
 		case MoveName::Chip_Away:
 		case MoveName::Circle_Throw:
 		case MoveName::Clamp:
 		case MoveName::Clear_Smog:
 		case MoveName::Close_Combat:
+		case MoveName::Collision_Course:
+		case MoveName::Combat_Torque:
 		case MoveName::Comet_Punch:
 		case MoveName::Confide:
 		case MoveName::Confuse_Ray:
@@ -410,11 +432,12 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Dive:
 		case MoveName::Dizzy_Punch:
 		case MoveName::Doom_Desire:
+		case MoveName::Double_Edge:
 		case MoveName::Double_Hit:
 		case MoveName::Double_Iron_Bash:
 		case MoveName::Double_Kick:
+		case MoveName::Double_Shock:
 		case MoveName::Double_Slap:
-		case MoveName::Double_Edge:
 		case MoveName::Draco_Meteor:
 		case MoveName::Dragon_Ascent:
 		case MoveName::Dragon_Breath:
@@ -440,6 +463,8 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Egg_Bomb:
 		case MoveName::Electrify:
 		case MoveName::Electro_Ball:
+		case MoveName::Electro_Drift:
+		case MoveName::Electro_Shot:
 		case MoveName::Embargo:
 		case MoveName::Ember:
 		case MoveName::Encore:
@@ -484,14 +509,15 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Fling:
 		case MoveName::Flip_Turn:
 		case MoveName::Floral_Healing:
+		case MoveName::Flower_Trick:
 		case MoveName::Focus_Blast:
 		case MoveName::Focus_Punch:
 		case MoveName::Force_Palm:
 		case MoveName::Foresight:
 		case MoveName::Forests_Curse:
 		case MoveName::Foul_Play:
-		case MoveName::Freeze_Shock:
 		case MoveName::Freeze_Dry:
+		case MoveName::Freeze_Shock:
 		case MoveName::Freezing_Glare:
 		case MoveName::Frenzy_Plant:
 		case MoveName::Frost_Breath:
@@ -507,13 +533,15 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Genesis_Supernova:
 		case MoveName::Giga_Drain:
 		case MoveName::Giga_Impact:
+		case MoveName::Gigaton_Hammer:
 		case MoveName::Gigavolt_Havoc:
+		case MoveName::Glaive_Rush:
 		case MoveName::Glare:
 		case MoveName::Grass_Knot:
 		case MoveName::Grass_Pledge:
 		case MoveName::Grass_Whistle:
-		case MoveName::Grav_Apple:
 		case MoveName::Grassy_Glide:
+		case MoveName::Grav_Apple:
 		case MoveName::Guard_Split:
 		case MoveName::Guard_Swap:
 		case MoveName::Guardian_of_Alola:
@@ -538,8 +566,10 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Horn_Leech:
 		case MoveName::Hydro_Cannon:
 		case MoveName::Hydro_Pump:
+		case MoveName::Hydro_Steam:
 		case MoveName::Hydro_Vortex:
 		case MoveName::Hyper_Beam:
+		case MoveName::Hyper_Drill:
 		case MoveName::Hyper_Fang:
 		case MoveName::Hyperspace_Fury:
 		case MoveName::Hyperspace_Hole:
@@ -551,6 +581,7 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Ice_Hammer:
 		case MoveName::Ice_Punch:
 		case MoveName::Ice_Shard:
+		case MoveName::Ice_Spinner:
 		case MoveName::Icicle_Crash:
 		case MoveName::Icicle_Spear:
 		case MoveName::Inferno:
@@ -559,14 +590,18 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Instruct:
 		case MoveName::Iron_Head:
 		case MoveName::Iron_Tail:
+		case MoveName::Ivy_Cudgel:
 		case MoveName::Jaw_Lock:
+		case MoveName::Jet_Punch:
 		case MoveName::Judgment:
 		case MoveName::Jump_Kick:
 		case MoveName::Karate_Chop:
 		case MoveName::Kinesis:
 		case MoveName::Knock_Off:
+		case MoveName::Kowtow_Cleave:
 		case MoveName::Lash_Out:
 		case MoveName::Last_Resort:
+		case MoveName::Last_Respects:
 		case MoveName::Leaf_Blade:
 		case MoveName::Leaf_Storm:
 		case MoveName::Leaf_Tornado:
@@ -582,11 +617,13 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Lovely_Kiss:
 		case MoveName::Low_Kick:
 		case MoveName::Low_Sweep:
+		case MoveName::Lumina_Crash:
 		case MoveName::Lunge:
 		case MoveName::Luster_Purge:
 		case MoveName::Mach_Punch:
 		case MoveName::Magic_Powder:
 		case MoveName::Magical_Leaf:
+		case MoveName::Magical_Torque:
 		case MoveName::Magma_Storm:
 		case MoveName::Magnet_Bomb:
 		case MoveName::Malicious_Moonsault:
@@ -624,12 +661,14 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Night_Slash:
 		case MoveName::Nightmare:
 		case MoveName::Noble_Roar:
+		case MoveName::Noxious_Torque:
 		case MoveName::Nuzzle:
 		case MoveName::Oceanic_Operetta:
 		case MoveName::Octazooka:
 		case MoveName::Octolock:
 		case MoveName::Odor_Sleuth:
 		case MoveName::Ominous_Wind:
+		case MoveName::Order_Up:
 		case MoveName::Overheat:
 		case MoveName::Pain_Split:
 		case MoveName::Parting_Shot:
@@ -648,20 +687,24 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Poison_Tail:
 		case MoveName::Pollen_Puff:
 		case MoveName::Poltergeist:
+		case MoveName::Population_Bomb:
+		case MoveName::Pounce:
 		case MoveName::Pound:
 		case MoveName::Powder:
 		case MoveName::Power_Gem:
 		case MoveName::Power_Split:
 		case MoveName::Power_Swap:
 		case MoveName::Power_Trip:
-		case MoveName::Power_Whip:
 		case MoveName::Power_Up_Punch:
+		case MoveName::Power_Whip:
 		case MoveName::Present:
 		case MoveName::Prismatic_Laser:
 		case MoveName::Psybeam:
+		case MoveName::Psyblade:
 		case MoveName::Psych_Up:
 		case MoveName::Psychic:
 		case MoveName::Psychic_Fangs:
+		case MoveName::Psychic_Noise:
 		case MoveName::Psycho_Boost:
 		case MoveName::Psycho_Cut:
 		case MoveName::Psycho_Shift:
@@ -675,7 +718,9 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Pyro_Ball:
 		case MoveName::Quash:
 		case MoveName::Quick_Attack:
+		case MoveName::Rage_Fist:
 		case MoveName::Rage:
+		case MoveName::Raging_Bull:
 		case MoveName::Rapid_Spin:
 		case MoveName::Razor_Shell:
 		case MoveName::Reflect_Type:
@@ -697,8 +742,10 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Rolling_Kick:
 		case MoveName::Rollout:
 		case MoveName::Round:
+		case MoveName::Ruination:
 		case MoveName::Sacred_Fire:
 		case MoveName::Sacred_Sword:
+		case MoveName::Salt_Cure:
 		case MoveName::Sand_Attack:
 		case MoveName::Sand_Tomb:
 		case MoveName::Savage_Spin_Out:
@@ -756,8 +803,10 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Spark:
 		case MoveName::Spectral_Thief:
 		case MoveName::Speed_Swap:
+		case MoveName::Spicy_Extract:
 		case MoveName::Spider_Web:
 		case MoveName::Spike_Cannon:
+		case MoveName::Spin_Out:
 		case MoveName::Spirit_Break:
 		case MoveName::Spirit_Shackle:
 		case MoveName::Spit_Up:
@@ -792,6 +841,8 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Swagger:
 		case MoveName::Sweet_Kiss:
 		case MoveName::Switcheroo:
+		case MoveName::Syrup_Bomb:
+		case MoveName::Tachyon_Cutter:
 		case MoveName::Tackle:
 		case MoveName::Tail_Slap:
 		case MoveName::Take_Down:
@@ -801,6 +852,7 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Techno_Blast:
 		case MoveName::Tectonic_Rage:
 		case MoveName::Telekinesis:
+		case MoveName::Tera_Blast:
 		case MoveName::Terrain_Pulse:
 		case MoveName::Thief:
 		case MoveName::Throat_Chop:
@@ -811,28 +863,34 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Thunder_Shock:
 		case MoveName::Thunder_Wave:
 		case MoveName::Thunderbolt:
+		case MoveName::Thunderclap:
 		case MoveName::Thunderous_Kick:
 		case MoveName::Tickle:
 		case MoveName::Topsy_Turvy:
+		case MoveName::Torch_Song:
 		case MoveName::Torment:
 		case MoveName::Toxic:
 		case MoveName::Toxic_Thread:
+		case MoveName::Trailblaze:
 		case MoveName::Transform:
 		case MoveName::Tri_Attack:
 		case MoveName::Trick:
 		case MoveName::Trick_or_Treat:
 		case MoveName::Triple_Axel:
+		case MoveName::Triple_Dive:
 		case MoveName::Triple_Kick:
 		case MoveName::Trop_Kick:
 		case MoveName::Trump_Card:
+		case MoveName::Twin_Beam:
 		case MoveName::Twineedle:
 		case MoveName::Twinkle_Tackle:
 		case MoveName::U_turn:
+		case MoveName::Upper_Hand:
 		case MoveName::V_create:
 		case MoveName::Vacuum_Wave:
 		case MoveName::Venoshock:
-		case MoveName::Vise_Grip:
 		case MoveName::Vine_Whip:
+		case MoveName::Vise_Grip:
 		case MoveName::Vital_Throw:
 		case MoveName::Volt_Switch:
 		case MoveName::Volt_Tackle:
@@ -845,6 +903,7 @@ export constexpr auto move_target(Generation const generation, MoveName const mo
 		case MoveName::Whirlpool:
 		case MoveName::Whirlwind:
 		case MoveName::Wicked_Blow:
+		case MoveName::Wicked_Torque:
 		case MoveName::Wild_Charge:
 		case MoveName::Will_O_Wisp:
 		case MoveName::Wood_Hammer:

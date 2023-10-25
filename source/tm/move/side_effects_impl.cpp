@@ -2225,6 +2225,65 @@ auto possible_side_effects(MoveName const move, UserPokemon const original_user,
 		case MoveName::Splintered_Stormshards:
 		case MoveName::Clangorous_Soulblaze:
 		case MoveName::Double_Iron_Bash:
+		case MoveName::Tera_Blast:
+		case MoveName::Silk_Trap:
+		case MoveName::Axe_Kick:
+		case MoveName::Last_Respects:
+		case MoveName::Lumina_Crash:
+		case MoveName::Order_Up:
+		case MoveName::Jet_Punch:
+		case MoveName::Spicy_Extract:
+		case MoveName::Spin_Out:
+		case MoveName::Population_Bomb:
+		case MoveName::Ice_Spinner:
+		case MoveName::Glaive_Rush:
+		case MoveName::Revival_Blessing:
+		case MoveName::Salt_Cure:
+		case MoveName::Triple_Dive:
+		case MoveName::Mortal_Spin:
+		case MoveName::Doodle:
+		case MoveName::Fillet_Away:
+		case MoveName::Kowtow_Cleave:
+		case MoveName::Flower_Trick:
+		case MoveName::Torch_Song:
+		case MoveName::Aqua_Step:
+		case MoveName::Raging_Bull:
+		case MoveName::Make_It_Rain:
+		case MoveName::Psyblade:
+		case MoveName::Hydro_Steam:
+		case MoveName::Ruination:
+		case MoveName::Collision_Course:
+		case MoveName::Electro_Drift:
+		case MoveName::Shed_Tail:
+		case MoveName::Chilly_Reception:
+		case MoveName::Tidy_Up:
+		case MoveName::Snowscape:
+		case MoveName::Pounce:
+		case MoveName::Trailblaze:
+		case MoveName::Chilling_Water:
+		case MoveName::Hyper_Drill:
+		case MoveName::Twin_Beam:
+		case MoveName::Rage_Fist:
+		case MoveName::Armor_Cannon:
+		case MoveName::Bitter_Blade:
+		case MoveName::Double_Shock:
+		case MoveName::Gigaton_Hammer:
+		case MoveName::Comeuppance:
+		case MoveName::Aqua_Cutter:
+		case MoveName::Blazing_Torque:
+		case MoveName::Wicked_Torque:
+		case MoveName::Noxious_Torque:
+		case MoveName::Combat_Torque:
+		case MoveName::Magical_Torque:
+		case MoveName::Blood_Moon:
+		case MoveName::Matcha_Gotcha:
+		case MoveName::Syrup_Bomb:
+		case MoveName::Ivy_Cudgel:
+		case MoveName::Electro_Shot:
+		case MoveName::Thunderclap:
+		case MoveName::Tachyon_Cutter:
+		case MoveName::Upper_Hand:
+		case MoveName::Psychic_Noise:
 			return no_effect<UserTeam>;
 	}
 }
