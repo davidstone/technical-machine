@@ -24,30 +24,56 @@ import containers;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-constexpr auto can_be_selected_by_sleep_talk(KnownMove const move) {
-	switch (move.name) {
-		case MoveName::Assist:
-		case MoveName::Bide:
-		case MoveName::Chatter:
-		case MoveName::Copycat:
-		case MoveName::Focus_Punch:
-		case MoveName::Me_First:
-		case MoveName::Metronome:
-		case MoveName::Mirror_Move:
-		case MoveName::Sleep_Talk:
-		case MoveName::Uproar:
-		case MoveName::Blast_Burn:
-		case MoveName::Frenzy_Plant:
-		case MoveName::Giga_Impact:
-		case MoveName::Hydro_Cannon:
-		case MoveName::Hyper_Beam:
-		case MoveName::Roar_of_Time:
-		case MoveName::Rock_Wrecker:
-		case MoveName::Solar_Beam:
-			return false;
-		default:
-			return true;
-	}
+constexpr auto can_be_selected_by_sleep_talk(Generation const generation) {
+	return [=](KnownMove const move) {
+		switch (move.name) {
+			case MoveName::Assist:
+			case MoveName::Beak_Blast:
+			case MoveName::Belch:
+			case MoveName::Bide:
+			case MoveName::Blazing_Torque:
+			case MoveName::Bounce:
+			case MoveName::Celebrate:
+			case MoveName::Chatter:
+			case MoveName::Combat_Torque:
+			case MoveName::Copycat:
+			case MoveName::Dig:
+			case MoveName::Dive:
+			case MoveName::Dynamax_Cannon:
+			case MoveName::Fly:
+			case MoveName::Freeze_Shock:
+			case MoveName::Focus_Punch:
+			case MoveName::Geomancy:
+			case MoveName::Hold_Hands:
+			case MoveName::Ice_Burn:
+			case MoveName::Magical_Torque:
+			case MoveName::Me_First:
+			case MoveName::Mimic:
+			case MoveName::Nature_Power:
+			case MoveName::Noxious_Torque:
+			case MoveName::Phantom_Force:
+			case MoveName::Razor_Wind:
+			case MoveName::Shadow_Force:
+			case MoveName::Shell_Trap:
+			case MoveName::Skull_Bash:
+			case MoveName::Sky_Attack:
+			case MoveName::Sky_Drop:
+			case MoveName::Sleep_Talk:
+			case MoveName::Solar_Beam:
+			case MoveName::Solar_Blade:
+			case MoveName::Struggle:
+			case MoveName::Uproar:
+			case MoveName::Wicked_Torque:
+				return false;
+			case MoveName::Metronome:
+			case MoveName::Mirror_Move:
+				return generation <= Generation::two;
+			case MoveName::Sketch:
+				return generation <= Generation::four;
+			default:
+				return true;
+		}
+	};
 }
 
 export using PossibleExecutedMoves = containers::static_vector<KnownMove, 3_bi>;
@@ -66,7 +92,12 @@ auto possible_executed_moves(MoveName const selected_move, UserTeam const & user
 	switch (selected_move) {
 		case MoveName::Sleep_Talk:
 			return is_sleeping(user_pokemon.status()) ?
-				PossibleExecutedMoves(filter(transform(user_pokemon.regular_moves(), known), can_be_selected_by_sleep_talk)) :
+				PossibleExecutedMoves(
+					filter(
+						transform(user_pokemon.regular_moves(), known),
+						can_be_selected_by_sleep_talk(generation_from<UserTeam>)
+					)
+				) :
 				PossibleExecutedMoves({KnownMove{selected_move, type(selected_move)}});
 		default:
 			return PossibleExecutedMoves({KnownMove{selected_move, type(selected_move)}});
