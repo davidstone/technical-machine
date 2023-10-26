@@ -107,6 +107,7 @@ target_sources(tm_common PUBLIC
 		source/tm/move/healing_move_fails_in_generation_1.cpp
 		source/tm/move/is_switch.cpp
 		source/tm/move/known_move.cpp
+		source/tm/move/legal_selections.cpp
 		source/tm/move/max_moves_per_pokemon.cpp
 		source/tm/move/move.cpp
 		source/tm/move/move_cures_target_status.cpp

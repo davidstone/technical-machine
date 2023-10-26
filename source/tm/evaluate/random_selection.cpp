@@ -11,7 +11,7 @@ export module tm.evaluate.random_selection;
 
 import tm.evaluate.scored_move;
 
-import tm.move.max_moves_per_pokemon;
+import tm.move.legal_selections;
 
 import tm.block;
 import tm.environment;

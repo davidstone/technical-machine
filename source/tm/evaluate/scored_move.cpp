@@ -7,7 +7,7 @@ export module tm.evaluate.scored_move;
 
 import tm.evaluate.extreme_element_value;
 
-import tm.move.max_moves_per_pokemon;
+import tm.move.legal_selections;
 import tm.move.move_name;
 
 import containers;

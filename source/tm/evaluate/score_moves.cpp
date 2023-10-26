@@ -14,7 +14,7 @@ import tm.evaluate.evaluate;
 import tm.evaluate.move_probability;
 import tm.evaluate.scored_move;
 
-import tm.move.max_moves_per_pokemon;
+import tm.move.legal_selections;
 
 import tm.environment;
 import tm.generation;

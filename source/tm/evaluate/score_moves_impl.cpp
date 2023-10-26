@@ -17,7 +17,7 @@ import tm.evaluate.predict_action;
 import tm.evaluate.scored_move;
 import tm.evaluate.team_is_empty;
 
-import tm.move.max_moves_per_pokemon;
+import tm.move.legal_selections;
 import tm.move.move_name;
 
 import tm.block;

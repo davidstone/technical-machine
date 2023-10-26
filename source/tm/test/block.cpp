@@ -7,7 +7,7 @@ export module tm.test.block;
 
 import tm.block;
 
-import tm.move.max_moves_per_pokemon;
+import tm.move.legal_selections;
 import tm.move.move;
 import tm.move.move_name;
 import tm.move.regular_moves;
