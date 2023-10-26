@@ -10,6 +10,7 @@ module;
 export module tm.block;
 
 import tm.move.category;
+import tm.move.is_blocked_by_gravity;
 import tm.move.is_healing;
 import tm.move.is_switch;
 import tm.move.legal_selections;
@@ -78,20 +79,6 @@ constexpr auto block1(any_active_pokemon auto const user, Move const move, any_a
 
 constexpr  auto is_blocked_by_taunt(MoveName const move) {
 	return !is_damaging(move);
-}
-
-constexpr auto is_blocked_by_gravity(MoveName const move) {
-	switch (move) {
-		case MoveName::Bounce:
-		case MoveName::Fly:
-		case MoveName::High_Jump_Kick:
-		case MoveName::Jump_Kick:
-		case MoveName::Magnet_Rise:
-		case MoveName::Splash:
-			return true;
-		default:
-			return false;
-	}
 }
 
 // Things that both block selection and block execution after flinching
