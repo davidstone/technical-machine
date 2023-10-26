@@ -15,6 +15,7 @@ import tm.move.move;
 import tm.move.move_name;
 import tm.move.pp;
 import tm.move.is_switch;
+import tm.move.usable_while_sleeping;
 
 import tm.pokemon.active_pokemon;
 import tm.pokemon.any_pokemon;
@@ -185,16 +186,6 @@ constexpr auto legal_selections(TeamType const & user, TeamType const & other, E
 
 constexpr bool is_blocked_by_freeze(any_active_pokemon auto const user, MoveName const move) {
 	return is_frozen(user.status()) and !thaws_user(move);
-}
-
-export constexpr bool usable_while_sleeping(MoveName const move) {
-	switch (move) {
-		case MoveName::Sleep_Talk:
-		case MoveName::Snore:
-			return true;
-		default:
-			return false;
-	}
 }
 
 template<any_active_pokemon UserPokemon>

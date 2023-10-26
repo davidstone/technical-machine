@@ -16,6 +16,7 @@ import tm.clients.party;
 
 import tm.move.is_switch;
 import tm.move.move_name;
+import tm.move.usable_while_sleeping;
 
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.pokemon_not_found;
