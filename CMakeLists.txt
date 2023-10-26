@@ -105,6 +105,7 @@ target_sources(tm_common PUBLIC
 		source/tm/move/executed_move.cpp
 		source/tm/move/find_required_move_index.cpp
 		source/tm/move/healing_move_fails_in_generation_1.cpp
+		source/tm/move/is_healing.cpp
 		source/tm/move/is_switch.cpp
 		source/tm/move/known_move.cpp
 		source/tm/move/legal_selections.cpp

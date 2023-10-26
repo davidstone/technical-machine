@@ -10,11 +10,12 @@ module;
 export module tm.block;
 
 import tm.move.category;
+import tm.move.is_healing;
+import tm.move.is_switch;
 import tm.move.legal_selections;
 import tm.move.move;
 import tm.move.move_name;
 import tm.move.pp;
-import tm.move.is_switch;
 import tm.move.usable_while_sleeping;
 
 import tm.pokemon.active_pokemon;
@@ -57,26 +58,6 @@ constexpr auto is_illegal_switch(Team<generation> const & user, MoveName const m
 		would_switch_to_same_pokemon(user.all_pokemon(), move) or
 		is_blocked_from_switching(user.pokemon(), other, environment)
 	);
-}
-
-constexpr auto is_healing(MoveName const name) {
-	switch (name) {
-		case MoveName::Heal_Order:
-		case MoveName::Milk_Drink:
-		case MoveName::Moonlight:
-		case MoveName::Morning_Sun:
-		case MoveName::Recover:
-		case MoveName::Rest:
-		case MoveName::Roost:
-		case MoveName::Slack_Off:
-		case MoveName::Soft_Boiled:
-		case MoveName::Swallow:
-		case MoveName::Synthesis:
-		case MoveName::Wish:
-			return true;
-		default:
-			return false;
-	}
 }
 
 constexpr auto imprison(MoveName const move, any_active_pokemon auto const other) {
