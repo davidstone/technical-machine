@@ -69,7 +69,7 @@ import std_module;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-constexpr double generic_flag_branch(auto const & basic_probability, auto const & next_branch) {
+constexpr double multi_generic_flag_branch(auto const & basic_probability, auto const & next_branch) {
 	auto const probability = [=](bool const is_first, bool const flag) {
 		auto const base = basic_probability(is_first);
 		BOUNDED_ASSERT_OR_ASSUME(base >= 0.0);
@@ -272,8 +272,8 @@ private:
 					return can_clear_status(pokemon.ability(), pokemon.status().name()) ? 0.3 : 0.0;
 				};
 				auto const teams = Faster<generation>(updated_first, updated_last, updated_environment);
-				return generic_flag_branch(shed_skin_probability, [&](bool const team_shed_skin, bool const other_shed_skin) {
-					return generic_flag_branch(
+				return multi_generic_flag_branch(shed_skin_probability, [&](bool const team_shed_skin, bool const other_shed_skin) {
+					return multi_generic_flag_branch(
 						// TODO
 						[&](bool) { return true; },
 						[&](bool const team_lock_in_ends, bool const other_lock_in_ends) {
@@ -285,7 +285,7 @@ private:
 									return pokemon.status().name() == StatusName::freeze ? 0.1 : 0.0;
 								}
 							};
-							return generic_flag_branch(
+							return multi_generic_flag_branch(
 								thaws,
 								[&](bool const team_thaws, bool const other_thaws) {
 									return end_of_turn_order_branch(
