@@ -10,6 +10,7 @@ import tm.evaluate.evaluate;
 import tm.evaluate.evaluator;
 import tm.evaluate.extreme_element_value;
 import tm.evaluate.scored_move;
+import tm.evaluate.state;
 import tm.evaluate.victory;
 
 import tm.move.legal_selections;
@@ -27,16 +28,13 @@ using namespace bounded::literal;
 
 template<Generation generation>
 struct ExpectiminimaxEvaluator {
-	static constexpr auto operator()(Team<generation> const & ai, LegalSelections const ai_selections, Team<generation> const & foe, LegalSelections const foe_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth, auto const function) -> ScoredMoves {
-		auto scored_moves_shallower = depth.general > 1_bi ?
+	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, auto const function) -> ScoredMoves {
+		auto scored_moves_shallower = state.depth.general > 1_bi ?
 			ExpectiminimaxEvaluator()(
-				ai,
+				State<generation>(state.ai, state.foe, state.environment, one_level_deeper(state.depth)),
 				ai_selections,
-				foe,
 				foe_selections,
-				environment,
 				evaluate,
-				one_level_deeper(depth),
 				function
 			) :
 			ScoredMoves(containers::transform(ai_selections, [](MoveName const move) {
@@ -53,7 +51,7 @@ struct ExpectiminimaxEvaluator {
 					ai_move,
 					min_element_value(
 						containers::transform(foe_selections, [&](MoveName const foe_move) {
-							return function(ai, ai_move, foe, foe_move, environment, depth);
+							return function(state, ai_move, foe_move);
 						})
 					)
 				};
@@ -64,9 +62,9 @@ struct ExpectiminimaxEvaluator {
 
 
 export template<Generation generation>
-auto expectiminimax(Team<generation> const & ai, LegalSelections const ai_selections, Team<generation> const & foe, LegalSelections const foe_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> ScoredMoves {
+auto expectiminimax(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate) -> ScoredMoves {
 	auto evaluator = Evaluator(evaluate, ExpectiminimaxEvaluator<generation>());
-	return evaluator.select_type_of_move(ai, ai_selections, foe, foe_selections, environment, depth);
+	return evaluator.select_type_of_move(state, ai_selections, foe_selections);
 }
 
 } // namespace technicalmachine

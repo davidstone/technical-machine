@@ -88,6 +88,8 @@ target_sources(tm_common PUBLIC
 		source/tm/evaluate/random_selection.cpp
 		source/tm/evaluate/score_moves.cpp
 		source/tm/evaluate/scored_move.cpp
+		source/tm/evaluate/selector.cpp
+		source/tm/evaluate/state.cpp
 		source/tm/evaluate/team_is_empty.cpp
 		source/tm/evaluate/transposition.cpp
 		source/tm/evaluate/victory.cpp

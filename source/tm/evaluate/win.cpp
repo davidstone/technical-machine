@@ -25,14 +25,14 @@ using namespace bounded::literal;
 export template<any_team TeamType>
 constexpr auto win(TeamType const & team1, TeamType const & team2) -> tv::optional<double> {
 	constexpr auto generation = generation_from<TeamType>;
-	auto single_team_win = [](TeamType const & team) {
+	auto single_team_win = [](TeamType const & team, bool const loss_is_negative) {
 		BOUNDED_ASSERT(team.size() != 0_bi);
 		return team.size() == 1_bi and team.pokemon().hp().current() == 0_bi ?
-			team.is_me() ? -victory<generation> : victory<generation> :
+			loss_is_negative ? -victory<generation> : victory<generation> :
 			0.0;
 	};
-	auto const win1 = single_team_win(team1);
-	auto const win2 = single_team_win(team2);
+	auto const win1 = single_team_win(team1, true);
+	auto const win2 = single_team_win(team2, false);
 	if (win1 != 0.0 or win2 != 0.0) {
 		return win1 + win2;
 	}

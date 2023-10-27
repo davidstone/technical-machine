@@ -29,6 +29,7 @@ import tm.evaluate.move_probability;
 import tm.evaluate.predict_action;
 import tm.evaluate.score_moves;
 import tm.evaluate.scored_move;
+import tm.evaluate.state;
 
 import tm.move.actual_damage;
 import tm.move.causes_recoil;
@@ -315,13 +316,10 @@ struct BattleManagerImpl final : BattleManager {
 		log_foe_move_probabilities(foe_moves, predicted);
 
 		auto scored_moves = score_moves(
-			ai,
+			State<generation_>(ai, predicted, m_battle.environment(), m_depth),
 			ai_selections,
-			predicted,
 			predicted_selections,
-			m_battle.environment(),
 			m_evaluate,
-			m_depth,
 			foe_moves
 		);
 		auto const finish = std::chrono::steady_clock::now();

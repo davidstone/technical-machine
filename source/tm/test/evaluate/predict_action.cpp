@@ -11,6 +11,7 @@ import tm.evaluate.evaluate;
 import tm.evaluate.evaluate_settings;
 import tm.evaluate.move_probability;
 import tm.evaluate.predict_action;
+import tm.evaluate.state;
 
 import tm.move.move;
 import tm.move.move_name;
@@ -46,7 +47,8 @@ constexpr auto evaluate_settings = EvaluateSettings{
 	.toxic_spikes = -100_bi
 };
 
-auto predict_action(auto const & ai, auto const & foe, Environment const environment, auto const evaluate) {
+template<Generation generation>
+auto predict_action(Team<generation> const & ai, Team<generation> const & foe, Environment const environment, Evaluate<generation> const evaluate) {
 	return predict_action(
 		ai,
 		get_legal_selections(ai, foe, environment),
@@ -90,7 +92,7 @@ TEST_CASE("predict_action one move", "[predict_action]") {
 			default_combined_stats<generation>,
 			regular_moves(MoveName::Thunderbolt)
 		)
-	}, true);
+	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
@@ -129,7 +131,7 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 			default_combined_stats<generation>,
 			regular_moves(MoveName::Thunderbolt, MoveName::Hidden_Power)
 		)
-	}, true);
+	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
@@ -168,7 +170,7 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 			default_combined_stats<generation>,
 			regular_moves(MoveName::Surf, MoveName::Ice_Beam)
 		)
-	}, true);
+	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
@@ -211,7 +213,7 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 			default_combined_stats<generation>,
 			regular_moves(MoveName::Surf, MoveName::Ice_Beam, MoveName::Roar)
 		)
-	}, true);
+	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
@@ -236,6 +238,86 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 	REQUIRE(ptr);
 	CHECK(ptr->probability > 0.9);
 }
+
+TEST_CASE("Magneton vs Skarmory big team", "[predict_action]") {
+	constexpr auto generation = Generation::three;
+	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
+	auto const environment = Environment();
+	auto random_engine = std::mt19937(std::random_device()());
+	auto const regular_moves = shuffler(generation, random_engine);
+
+	auto team1 = Team<generation>({
+		Pokemon<generation>(
+			Species::Magneton,
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Magnet_Pull,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Thunderbolt, MoveName::Substitute)
+		),
+		Pokemon<generation>(
+			Species::Zapdos,
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Pressure,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Thunderbolt, MoveName::Substitute)
+		),
+		Pokemon<generation>(
+			Species::Snorlax,
+			Level(100_bi),
+			Gender::male,
+			Item::None,
+			Ability::Thick_Fat,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Curse, MoveName::Body_Slam)
+		),
+	});
+	team1.pokemon().switch_in(environment);
+	team1.reset_start_of_turn();
+
+	auto team2 = Team<generation>({
+		Pokemon<generation>(
+			Species::Skarmory,
+			Level(100_bi),
+			Gender::female,
+			Item::None,
+			Ability::Sturdy,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Spikes, MoveName::Drill_Peck, MoveName::Roar)
+		),
+		Pokemon<generation>(
+			Species::Blissey,
+			Level(100_bi),
+			Gender::female,
+			Item::None,
+			Ability::Natural_Cure,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Soft_Boiled, MoveName::Seismic_Toss)
+		),
+		Pokemon<generation>(
+			Species::Suicune,
+			Level(100_bi),
+			Gender::genderless,
+			Item::None,
+			Ability::Pressure,
+			default_combined_stats<generation>,
+			regular_moves(MoveName::Surf, MoveName::Ice_Beam, MoveName::Calm_Mind, MoveName::Roar)
+		)
+	});
+	team2.pokemon().switch_in(environment);
+	team2.reset_start_of_turn();
+
+	auto const moves = predict_action(team1, team2, environment, evaluate);
+	auto const ptr = containers::maybe_find_if(moves, [](MoveProbability const move) {
+		return move.name == MoveName::Thunderbolt;
+	});
+	REQUIRE(ptr);
+	CHECK(ptr->probability > 0.9);
+}
+
 
 } // namespace
 } // namespace technicalmachine

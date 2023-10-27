@@ -8,6 +8,7 @@ export module tm.evaluate.transposition;
 import tm.evaluate.compressed_battle;
 import tm.evaluate.depth;
 import tm.evaluate.scored_move;
+import tm.evaluate.state;
 
 import tm.move.move_name;
 
@@ -38,18 +39,18 @@ constexpr auto update_hash(Output & output, bounded::bounded_integer auto input)
 
 export template<Generation generation>
 struct TranspositionTable {
-	auto add_score(Team<generation> const & ai, Team<generation> const & foe, Environment environment, Depth const depth, ScoredMoves moves) -> void {
-		auto const compressed_battle = compress_battle(ai, foe, environment);
+	auto add_score(State<generation> const & state, ScoredMoves moves) -> void {
+		auto const compressed_battle = compress_battle(state);
 		auto & value = m_data[index(compressed_battle)];
 		value.compressed_battle = compressed_battle;
-		value.depth = depth;
+		value.depth = state.depth;
 		value.moves = moves;
 	}
 
-	auto get_score(Team<generation> const & ai, Team<generation> const & foe, Environment environment, Depth const depth) const -> tv::optional<ScoredMoves> {
-		auto const compressed_battle = compress_battle(ai, foe, environment);
+	auto get_score(State<generation> const & state) const -> tv::optional<ScoredMoves> {
+		auto const compressed_battle = compress_battle(state);
 		auto const & value = m_data[index(compressed_battle)];
-		if (value.depth >= depth and value.compressed_battle == compressed_battle) {
+		if (value.depth >= state.depth and value.compressed_battle == compressed_battle) {
 			return value.moves;
 		}
 		return tv::none;

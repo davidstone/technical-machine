@@ -14,6 +14,7 @@ import tm.evaluate.expectiminimax;
 import tm.evaluate.predict_action;
 import tm.evaluate.scored_move;
 import tm.evaluate.score_moves;
+import tm.evaluate.state;
 import tm.evaluate.victory;
 
 import tm.move.actual_damage;
@@ -70,15 +71,13 @@ constexpr auto make_depth(DepthInt const depth) {
 	return Depth(depth, 0_bi);
 }
 
-auto determine_best_move(auto const & ai, auto const & foe, Environment const environment, auto const evaluate, Depth const depth) {
+template<Generation generation>
+auto determine_best_move(Team<generation> const & ai, Team<generation> const & foe, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) {
 	auto const moves = expectiminimax(
-		ai,
+		State<generation>(ai, foe, environment, depth),
 		get_legal_selections(ai, foe, environment),
-		foe,
 		get_legal_selections(foe, ai, environment),
-		environment,
-		evaluate,
-		depth
+		evaluate
 	);
 	return *containers::max_element(moves, [](ScoredMove const lhs, ScoredMove const rhs) {
 		return lhs.score > rhs.score;
@@ -113,7 +112,7 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 			default_combined_stats<generation>,
 			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
 		)
-	}, true);
+	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
@@ -189,7 +188,7 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 			},
 			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
@@ -242,7 +241,7 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 			},
 			regular_moves(MoveName::Fire_Punch, MoveName::Belly_Drum, MoveName::Earthquake, MoveName::Double_Edge)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
@@ -307,7 +306,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 			},
 			regular_moves(MoveName::Curse, MoveName::Crunch)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
@@ -385,7 +384,7 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 			},
 			regular_moves(MoveName::Psycho_Cut)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
@@ -496,7 +495,7 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 			},
 			regular_moves(MoveName::Psycho_Cut)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
@@ -574,7 +573,7 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 			},
 			regular_moves(MoveName::Thunderbolt)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
@@ -650,7 +649,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 			},
 			regular_moves(MoveName::Calm_Mind, MoveName::Dragon_Pulse, MoveName::Recover)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
@@ -705,7 +704,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 			default_combined_stats<generation>,
 			regular_moves(MoveName::Sleep_Talk, MoveName::Thunderbolt)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
@@ -829,7 +828,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 			default_combined_stats<generation>,
 			regular_moves(MoveName::Toxic, MoveName::Psychic, MoveName::Recover)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 
 	auto defender = Team<generation>({
@@ -854,17 +853,15 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	CHECK(determine_best_move(attacker, defender, environment, evaluate, make_depth(2_bi)).name == MoveName::Psychic);
 }
 
-auto determine_best_move2(auto const & ai, auto const & foe, Environment const environment, auto const evaluate, Depth const depth) {
+template<Generation generation>
+auto determine_best_move2(Team<generation> const & ai, Team<generation> const & foe, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) {
 	auto const ai_selections = get_legal_selections(ai, foe, environment);
 	auto const foe_selections = get_legal_selections(foe, ai, environment);
 	auto const moves = score_moves(
-		ai,
+		State<generation>(ai, foe, environment, depth),
 		ai_selections,
-		foe,
 		foe_selections,
-		environment,
 		evaluate,
-		depth,
 		predict_action(
 			foe,
 			foe_selections,
@@ -900,7 +897,7 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 			default_combined_stats<generation>,
 			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
 		)
-	}, true);
+	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
@@ -976,7 +973,7 @@ TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 			},
 			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
@@ -1029,7 +1026,7 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 			},
 			regular_moves(MoveName::Fire_Punch, MoveName::Belly_Drum, MoveName::Earthquake, MoveName::Double_Edge)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
@@ -1094,7 +1091,7 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 			},
 			regular_moves(MoveName::Curse, MoveName::Crunch)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
@@ -1172,7 +1169,7 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 			},
 			regular_moves(MoveName::Psycho_Cut)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
@@ -1250,7 +1247,7 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 			},
 			regular_moves(MoveName::Thunderbolt)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
@@ -1326,7 +1323,7 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 			},
 			regular_moves(MoveName::Calm_Mind, MoveName::Dragon_Pulse, MoveName::Recover)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
@@ -1381,7 +1378,7 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 			default_combined_stats<generation>,
 			regular_moves(MoveName::Sleep_Talk, MoveName::Thunderbolt)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
@@ -1505,7 +1502,7 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[score_moves]") {
 			default_combined_stats<generation>,
 			regular_moves(MoveName::Toxic, MoveName::Psychic, MoveName::Recover)
 		)
-	}, true);
+	});
 	attacker.pokemon().switch_in(environment);
 
 	auto defender = Team<generation>({

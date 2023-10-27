@@ -15,6 +15,7 @@ import tm.evaluate.evaluator;
 import tm.evaluate.move_probability;
 import tm.evaluate.predict_action;
 import tm.evaluate.scored_move;
+import tm.evaluate.state;
 import tm.evaluate.team_is_empty;
 
 import tm.move.legal_selections;
@@ -33,34 +34,31 @@ using namespace bounded::literal;
 
 template<Generation generation>
 struct ScoreMovesEvaluator {
-	static constexpr auto operator()(Team<generation> const & ai, LegalSelections const ai_selections, Team<generation> const & foe, LegalSelections, Environment const environment, Evaluate<generation>, Depth const depth, MoveProbabilities const foe_moves, auto const function) -> ScoredMoves {
+	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, LegalSelections, Evaluate<generation>, MoveProbabilities const foe_moves, auto const function) -> ScoredMoves {
 		return ScoredMoves(containers::transform(ai_selections, [&](MoveName const ai_move) {
 			return ScoredMove{
 				ai_move,
 				containers::sum(containers::transform(
 					foe_moves,
 					[&](MoveProbability const foe_move) {
-						return foe_move.probability * function(ai, ai_move, foe, foe_move.name, environment, depth);
+						return foe_move.probability * function(state, ai_move, foe_move.name);
 					}
 				))
 			};
 		}));
 	}
-	static constexpr auto operator()(Team<generation> const & ai, LegalSelections const ai_selections, Team<generation> const & foe, LegalSelections const foe_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth, auto const function) -> ScoredMoves {
+	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, auto const function) -> ScoredMoves {
 		return ScoreMovesEvaluator()(
-			ai,
+			state,
 			ai_selections,
-			foe,
 			foe_selections,
-			environment,
 			evaluate,
-			depth,
 			predict_action(
-				foe,
+				state.foe,
 				foe_selections,
-				ai,
+				state.ai,
 				ai_selections,
-				environment,
+				state.environment,
 				evaluate,
 				Depth(1_bi, 1_bi)
 			),
@@ -70,12 +68,17 @@ struct ScoreMovesEvaluator {
 };
 
 template<Generation generation>
-auto score_moves(Team<generation> const & ai, LegalSelections const ai_selections, Team<generation> const & foe, LegalSelections const foe_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth, MoveProbabilities const foe_moves) -> ScoredMoves {
-	if (team_is_empty(ai) or team_is_empty(foe)) {
+auto score_moves(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, MoveProbabilities const foe_moves) -> ScoredMoves {
+	if (team_is_empty(state.ai) or team_is_empty(state.foe)) {
 		throw std::runtime_error("Tried to evaluate a position with an empty team");
 	}
 	auto evaluator = Evaluator(evaluate, ScoreMovesEvaluator<generation>());
-	auto const moves = evaluator.select_type_of_move(ai, ai_selections, foe, foe_selections, environment, depth, foe_moves);
+	auto const moves = evaluator.select_type_of_move(
+		state,
+		ai_selections,
+		foe_selections,
+		foe_moves
+	);
 	if (containers::maybe_find_if(moves, [](ScoredMove const move) { return move.name == MoveName::Pass; })) {
 		throw std::runtime_error("Should never evaluate a position in which it is legal to use Pass.");
 	}
@@ -83,7 +86,7 @@ auto score_moves(Team<generation> const & ai, LegalSelections const ai_selection
 }
 
 #define INSTANTIATE(generation) \
-	template auto score_moves(Team<generation> const & ai, LegalSelections const ai_selections, Team<generation> const & foe, LegalSelections const foe_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth, MoveProbabilities const foe_moves) -> ScoredMoves
+	template auto score_moves(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, MoveProbabilities const foe_moves) -> ScoredMoves
 
 TM_FOR_EACH_GENERATION(INSTANTIATE);
 

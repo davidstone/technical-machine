@@ -41,34 +41,15 @@ namespace technicalmachine {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-template<typename PokemonType>
-using bool_type = std::conditional_t<
-	any_real_pokemon<PokemonType>,
-	bool,
-	std::bool_constant<any_known_pokemon<PokemonType>>
->;
-
-template<typename Target, typename From>
-constexpr auto convert_bool_type(From const value) -> Target {
-	static_assert(!std::same_as<From, Target>);
-	if constexpr (std::same_as<From, bool>) {
-		return Target();
-	} else {
-		return Target(value);
-	}
-}
-
 template<any_pokemon PokemonType>
 struct TeamImpl {
-	constexpr explicit TeamImpl(containers::initializer_range<PokemonCollection<PokemonType>> auto && source, bool_type<PokemonType> me = {}) requires(!any_seen_pokemon<PokemonType>):
-		m_all_pokemon(OPERATORS_FORWARD(source)),
-		m_me(me)
+	constexpr explicit TeamImpl(containers::initializer_range<PokemonCollection<PokemonType>> auto && source) requires(!any_seen_pokemon<PokemonType>):
+		m_all_pokemon(OPERATORS_FORWARD(source))
 	{
 	}
 	template<std::size_t source_size> requires(!any_seen_pokemon<PokemonType>)
-	constexpr explicit TeamImpl(containers::c_array<PokemonType, source_size> && source, bool_type<PokemonType> me = {}):
-		m_all_pokemon(std::move(source)),
-		m_me(me)
+	constexpr explicit TeamImpl(containers::c_array<PokemonType, source_size> && source):
+		m_all_pokemon(std::move(source))
 	{
 	}
 	template<bounded::explicitly_convertible_to<PokemonType> OtherPokemonType>
@@ -77,8 +58,7 @@ struct TeamImpl {
 		m_flags(other.flags()),
 		m_screens(other.screens()),
 		m_wish(other.wish()),
-		m_entry_hazards(other.entry_hazards()),
-		m_me(convert_bool_type<bool_type<PokemonType>>(other.is_me()))
+		m_entry_hazards(other.entry_hazards())
 	{
 	}
 
@@ -228,10 +208,6 @@ struct TeamImpl {
 		m_entry_hazards.add_toxic_spikes();
 	}
 
-	constexpr auto is_me() const {
-		return m_me;
-	}
-
 	friend auto operator==(TeamImpl const &, TeamImpl const &) -> bool = default;
 
 	friend constexpr auto compress(TeamImpl const & team) requires any_real_pokemon<PokemonType> {
@@ -280,7 +256,6 @@ private:
 	Screens<generation> m_screens;
 	[[no_unique_address]] Wish<generation> m_wish;
 	[[no_unique_address]] EntryHazards<generation> m_entry_hazards;
-	[[no_unique_address]] bool_type<PokemonType> m_me;
 };
 
 export template<Generation generation>
