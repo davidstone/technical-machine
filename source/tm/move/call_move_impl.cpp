@@ -44,7 +44,7 @@ import tm.type.move_type;
 import tm.ability;
 import tm.ability_blocks_move;
 import tm.any_team;
-import tm.block;
+import tm.can_execute_move;
 import tm.contact_ability_effect;
 import tm.environment;
 import tm.generation;

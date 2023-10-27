@@ -66,10 +66,10 @@ import tm.ability;
 import tm.ability_blocks_move;
 import tm.any_team;
 import tm.battle;
-import tm.block;
 import tm.end_of_turn_flags;
 import tm.gender;
 import tm.generation;
+import tm.get_legal_selections;
 import tm.item;
 import tm.team;
 import tm.visible_hp;
@@ -289,9 +289,17 @@ struct BattleManagerImpl final : BattleManager {
 		auto const start = std::chrono::steady_clock::now();
 
 		auto const ai = Team<generation_>(m_battle.ai());
-		auto const predicted_selections = legal_selections(predicted, ai, m_battle.environment());
-		auto const ai_selections = legal_selections(ai, predicted, m_battle.environment());
+		auto const predicted_selections = get_legal_selections(
+			predicted,
+			ai,
+			m_battle.environment()
+		);
 
+		auto const ai_selections = get_legal_selections(
+			ai,
+			predicted,
+			m_battle.environment()
+		);
 		auto foe_moves = predict_action(
 			predicted,
 			predicted_selections,

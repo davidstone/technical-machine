@@ -32,11 +32,11 @@ import tm.stat.stat_names;
 import tm.status.status_name;
 
 import tm.ability;
-import tm.block;
 import tm.contact_ability_effect;
 import tm.environment;
 import tm.gender;
 import tm.generation;
+import tm.get_legal_selections;
 import tm.item;
 import tm.switch_decision_required;
 import tm.team;
@@ -138,7 +138,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	attacker.reset_start_of_turn();
 
 	CHECK(
-		legal_selections(attacker, defender, environment) ==
+		get_legal_selections(attacker, defender, environment) ==
 		LegalSelections({MoveName::Baton_Pass, MoveName::Belly_Drum, MoveName::Switch1})
 	);
 
@@ -162,14 +162,14 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	CHECK(attacker.pokemon().stages()[BoostableStat::atk] == 6_bi);
 	CHECK(!switch_decision_required(attacker));
 	CHECK(
-		legal_selections(attacker, defender, environment) ==
+		get_legal_selections(attacker, defender, environment) ==
 		LegalSelections({MoveName::Pass})
 	);
 
 	attacker.reset_start_of_turn();
 
 	CHECK(
-		legal_selections(attacker, defender, environment) ==
+		get_legal_selections(attacker, defender, environment) ==
 		LegalSelections({MoveName::Baton_Pass, MoveName::Belly_Drum, MoveName::Switch1})
 	);
 
@@ -186,7 +186,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	CHECK(attacker.pokemon().stages()[BoostableStat::atk] == 6_bi);
 	CHECK(switch_decision_required(attacker));
 	CHECK(
-		legal_selections(attacker, defender, environment) ==
+		get_legal_selections(attacker, defender, environment) ==
 		LegalSelections({MoveName::Switch1})
 	);
 
@@ -210,7 +210,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	CHECK(attacker.pokemon().species() == Species::Alakazam);
 	CHECK(!switch_decision_required(attacker));
 	CHECK(
-		legal_selections(attacker, defender, environment) ==
+		get_legal_selections(attacker, defender, environment) ==
 		LegalSelections({MoveName::Pass})
 	);
 }

@@ -22,10 +22,10 @@ import tm.pokemon.species;
 import tm.stat.default_evs;
 
 import tm.ability;
-import tm.block;
 import tm.environment;
 import tm.gender;
 import tm.generation;
+import tm.get_legal_selections;
 import tm.item;
 import tm.team;
 
@@ -48,9 +48,9 @@ constexpr auto evaluate_settings = EvaluateSettings{
 auto predict_action(auto const & ai, auto const & foe, Environment const environment, auto const evaluate) {
 	return predict_action(
 		ai,
-		legal_selections(ai, foe, environment),
+		get_legal_selections(ai, foe, environment),
 		foe,
-		legal_selections(foe, ai, environment),
+		get_legal_selections(foe, ai, environment),
 		environment,
 		evaluate
 	);

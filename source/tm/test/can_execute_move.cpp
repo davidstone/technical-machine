@@ -5,7 +5,7 @@
 
 export module tm.test.block;
 
-import tm.block;
+import tm.can_execute_move;
 
 import tm.move.legal_selections;
 import tm.move.move;
@@ -25,6 +25,7 @@ import tm.ability;
 import tm.environment;
 import tm.gender;
 import tm.generation;
+import tm.get_legal_selections;
 import tm.item;
 import tm.team;
 
@@ -74,7 +75,7 @@ static_assert([]{
 
 	user.reset_start_of_turn();
 
-	auto const selections = legal_selections(user, other, environment);
+	auto const selections = get_legal_selections(user, other, environment);
 	return selections == LegalSelections({MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball});
 }());
 
@@ -119,7 +120,7 @@ static_assert([]{
 	
 	user.reset_start_of_turn();
 
-	auto const selections = legal_selections(user, other, environment);
+	auto const selections = get_legal_selections(user, other, environment);
 	return selections == LegalSelections({MoveName::Thunderbolt});
 }());
 
@@ -159,7 +160,7 @@ static_assert([]{
 	
 	user.reset_start_of_turn();
 
-	auto const selections = legal_selections(user, other, environment);
+	auto const selections = get_legal_selections(user, other, environment);
 	return selections == LegalSelections({MoveName::Struggle});
 }());
 
@@ -207,7 +208,7 @@ static_assert([]{
 
 	faint(team.pokemon());
 
-	auto const selections = legal_selections(team, other, environment);
+	auto const selections = get_legal_selections(team, other, environment);
 	return selections == LegalSelections({MoveName::Switch1});
 }());
 

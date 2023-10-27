@@ -13,9 +13,9 @@ import tm.evaluate.scored_move;
 
 import tm.move.legal_selections;
 
-import tm.block;
 import tm.environment;
 import tm.generation;
+import tm.get_legal_selections;
 import tm.team;
 
 import bounded;
@@ -27,7 +27,7 @@ using namespace bounded::literal;
 
 export template<Generation generation>
 constexpr auto random_selection(Team<generation> const & user, Team<generation> const & other, Environment const environment, std::mt19937 & random_engine) -> ScoredMove {
-	auto const possible = legal_selections(user, other, environment);
+	auto const possible = get_legal_selections(user, other, environment);
 	BOUNDED_ASSERT(!containers::is_empty(possible));
 	auto distribution = std::uniform_int_distribution<int>(0, static_cast<int>(containers::size(possible) - 1_bi));
 	auto const index = bounded::assume_in_range<containers::index_type<LegalSelections>>(distribution(random_engine));

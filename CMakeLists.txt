@@ -259,10 +259,11 @@ target_sources(tm_common PUBLIC
 		source/tm/associated_team.cpp
 		source/tm/battle.cpp
 		source/tm/bit_view.cpp
-		source/tm/block.cpp
+		source/tm/blocks_selection_and_execution.cpp
 		source/tm/boost_beast_http.cpp
 		source/tm/buffer_view.cpp
 		source/tm/bytes_in_file.cpp
+		source/tm/can_execute_move.cpp
 		source/tm/compress.cpp
 		source/tm/constant_generation.cpp
 		source/tm/contact_ability_effect.cpp
@@ -281,6 +282,7 @@ target_sources(tm_common PUBLIC
 		source/tm/heal.cpp
 		source/tm/held_item.cpp
 		source/tm/item.cpp
+		source/tm/get_legal_selections.cpp
 		source/tm/nlohmann_json.cpp
 		source/tm/load_json_from_file.cpp
 		source/tm/load_settings_file.cpp
@@ -577,7 +579,7 @@ target_sources(tm_test PRIVATE
 
 		source/tm/test/status/status.cpp
 
-		source/tm/test/block.cpp
+		source/tm/test/can_execute_move.cpp
 		source/tm/test/critical_hit_probability.cpp
 		source/tm/test/string_conversion.cpp
 		source/tm/test/usage_bytes.cpp

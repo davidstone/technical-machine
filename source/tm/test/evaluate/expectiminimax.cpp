@@ -41,12 +41,12 @@ import tm.status.status_name;
 import tm.stat.default_evs;
 
 import tm.ability;
-import tm.block;
 import tm.end_of_turn;
 import tm.end_of_turn_flags;
 import tm.environment;
 import tm.gender;
 import tm.generation;
+import tm.get_legal_selections;
 import tm.item;
 import tm.team;
 
@@ -73,9 +73,9 @@ constexpr auto make_depth(DepthInt const depth) {
 auto determine_best_move(auto const & ai, auto const & foe, Environment const environment, auto const evaluate, Depth const depth) {
 	auto const moves = expectiminimax(
 		ai,
-		legal_selections(ai, foe, environment),
+		get_legal_selections(ai, foe, environment),
 		foe,
-		legal_selections(foe, ai, environment),
+		get_legal_selections(foe, ai, environment),
 		environment,
 		evaluate,
 		depth
@@ -855,8 +855,8 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 }
 
 auto determine_best_move2(auto const & ai, auto const & foe, Environment const environment, auto const evaluate, Depth const depth) {
-	auto const ai_selections = legal_selections(ai, foe, environment);
-	auto const foe_selections = legal_selections(foe, ai, environment);
+	auto const ai_selections = get_legal_selections(ai, foe, environment);
+	auto const foe_selections = get_legal_selections(foe, ai, environment);
 	auto const moves = score_moves(
 		ai,
 		ai_selections,

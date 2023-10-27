@@ -18,7 +18,6 @@ import tm.evaluate.scored_move;
 import tm.move.legal_selections;
 import tm.move.move_name;
 
-import tm.block;
 import tm.environment;
 import tm.generation;
 import tm.team;

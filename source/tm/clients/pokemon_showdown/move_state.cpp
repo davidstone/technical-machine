@@ -28,7 +28,6 @@ import tm.string_conversions.move_name;
 import tm.string_conversions.status_name;
 
 import tm.ability;
-import tm.block;
 import tm.contact_ability_effect;
 import tm.generation;
 import tm.visible_hp;

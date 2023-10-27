@@ -53,13 +53,13 @@ import tm.type.move_type;
 
 import tm.ability;
 import tm.any_team;
-import tm.block;
 import tm.contact_ability_effect;
 import tm.critical_hit_probability;
 import tm.end_of_turn;
 import tm.end_of_turn_flags;
 import tm.environment;
 import tm.generation;
+import tm.get_legal_selections;
 import tm.team;
 
 import bounded;
@@ -248,9 +248,9 @@ private:
 	auto select_type_of_move(Team<generation> const & ai, Team<generation> const & foe, Environment const environment, Depth const depth) -> ScoredMoves {
 		return select_type_of_move(
 			ai,
-			legal_selections(ai, foe, environment),
+			get_legal_selections(ai, foe, environment),
 			foe,
-			legal_selections(foe, ai, environment),
+			get_legal_selections(foe, ai, environment),
 			environment,
 			depth
 		);
@@ -314,7 +314,7 @@ private:
 				auto const first_used_move = original_last_pokemon.other_move();
 				return score_executed_moves(pre_updated_last, actual_last_move, pre_updated_first, first_used_move, pre_updated_environment, depth, [&](Team<generation> const & updated_last, Team<generation> const & updated_first, Environment const updated_environment) {
 					auto const first_selections = LegalSelections({MoveName::Pass});
-					auto const last_selections = legal_selections(updated_last, updated_first, environment);
+					auto const last_selections = get_legal_selections(updated_last, updated_first, environment);
 					return max_score(m_respond_to_foe_moves(updated_first, first_selections, updated_last, last_selections, updated_environment, m_evaluate, depth, use_move_branch_inner(first_used_move)));
 				});
 			});
@@ -343,7 +343,7 @@ private:
 		auto const original_last_pokemon = OriginalPokemon(last_pokemon, first_pokemon, first_move);
 
 		return score_executed_moves(first, first_move, last, FutureMove{is_damaging(last_move)}, environment, depth, [&](Team<generation> const & updated_first, Team<generation> const & updated_last, Environment const updated_environment) {
-			auto const first_selections = legal_selections(updated_first, updated_last, environment);
+			auto const first_selections = get_legal_selections(updated_first, updated_last, environment);
 			BOUNDED_ASSERT(all_are_pass_or_switch(first_selections));
 			auto const last_selections = LegalSelections({MoveName::Pass});
 			// TODO: Figure out first / last vs ai / foe
@@ -366,8 +366,8 @@ private:
 			return *won + double(depth.general - 1_bi);
 		}
 		if (first.pokemon().hp().current() == 0_bi or last.pokemon().hp().current() == 0_bi) {
-			auto const first_selections = legal_selections(first, last, environment);
-			auto const last_selections = legal_selections(last, first, environment);
+			auto const first_selections = get_legal_selections(first, last, environment);
+			auto const last_selections = get_legal_selections(last, first, environment);
 			return max_score(m_respond_to_foe_moves(first, first_selections, last, last_selections, environment, m_evaluate, depth, [&](auto && ... args) {
 				return handle_end_of_turn_replacing(OPERATORS_FORWARD(args)...);
 			}));
