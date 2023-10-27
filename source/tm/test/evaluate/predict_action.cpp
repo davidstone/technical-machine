@@ -66,14 +66,19 @@ auto shuffled_regular_moves(Generation const generation, auto & random_engine, a
 	return moves;
 }
 
+auto shuffler(Generation const generation, std::mt19937 & random_engine) {
+	return [&, generation](auto... args) {
+		return shuffled_regular_moves(generation, random_engine, args...);
+	};
+}
+
+
 TEST_CASE("predict_action one move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
+	auto const regular_moves = shuffler(generation, random_engine);
 
 	auto team1 = Team<generation>({
 		Pokemon<generation>(
@@ -112,9 +117,7 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
+	auto const regular_moves = shuffler(generation, random_engine);
 
 	auto team1 = Team<generation>({
 		Pokemon<generation>(
@@ -153,9 +156,7 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
+	auto const regular_moves = shuffler(generation, random_engine);
 
 	auto team1 = Team<generation>({
 		Pokemon<generation>(
@@ -198,9 +199,7 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
 	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
+	auto const regular_moves = shuffler(generation, random_engine);
 
 	auto team1 = Team<generation>({
 		Pokemon<generation>(
