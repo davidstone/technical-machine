@@ -306,7 +306,8 @@ struct BattleManagerImpl final : BattleManager {
 			ai,
 			ai_selections,
 			m_battle.environment(),
-			m_evaluate
+			m_evaluate,
+			Depth(1_bi, 1_bi)
 		);
 		containers::sort(foe_moves, [](MoveProbability const lhs, MoveProbability const rhs) {
 			return lhs.probability > rhs.probability;

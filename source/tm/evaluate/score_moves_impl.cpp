@@ -55,7 +55,15 @@ struct ScoreMovesEvaluator {
 			environment,
 			evaluate,
 			depth,
-			predict_action(foe, foe_selections, ai, ai_selections, environment, evaluate),
+			predict_action(
+				foe,
+				foe_selections,
+				ai,
+				ai_selections,
+				environment,
+				evaluate,
+				Depth(1_bi, 1_bi)
+			),
 			std::move(function)
 		);
 	}

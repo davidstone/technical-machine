@@ -6,6 +6,7 @@
 #include <std_module/prelude.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.evaluate_settings;
 import tm.evaluate.move_probability;
@@ -52,7 +53,8 @@ auto predict_action(auto const & ai, auto const & foe, Environment const environ
 		foe,
 		get_legal_selections(foe, ai, environment),
 		environment,
-		evaluate
+		evaluate,
+		Depth(1_bi, 1_bi)
 	);
 }
 

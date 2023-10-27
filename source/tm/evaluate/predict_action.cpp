@@ -29,10 +29,10 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 export template<Generation generation>
-auto predict_action(Team<generation> const & team, LegalSelections const team_selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate) -> MoveProbabilities;
+auto predict_action(Team<generation> const & team, LegalSelections const team_selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> MoveProbabilities;
 
 #define EXTERN_INSTANTIATION(generation) \
-	extern template auto predict_action(Team<generation> const & team, LegalSelections const team_selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate) -> MoveProbabilities
+	extern template auto predict_action(Team<generation> const & team, LegalSelections const team_selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> MoveProbabilities
 
 TM_FOR_EACH_GENERATION(EXTERN_INSTANTIATION);
 

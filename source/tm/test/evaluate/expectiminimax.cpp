@@ -871,7 +871,8 @@ auto determine_best_move2(auto const & ai, auto const & foe, Environment const e
 			ai,
 			ai_selections,
 			environment,
-			evaluate
+			evaluate,
+			Depth(1_bi, 1_bi)
 		)
 	);
 	return *containers::max_element(moves, [](ScoredMove const lhs, ScoredMove const rhs) {

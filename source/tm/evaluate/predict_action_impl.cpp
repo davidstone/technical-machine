@@ -30,7 +30,7 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 template<Generation generation>
-auto predict_action(Team<generation> const & team, LegalSelections const team_selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate) -> MoveProbabilities {
+auto predict_action(Team<generation> const & team, LegalSelections const team_selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate, Depth const depth) -> MoveProbabilities {
 	auto all_equally_likely = [&] {
 		auto const possible_moves = double(containers::size(team_selections));
 		return MoveProbabilities(containers::transform(
@@ -41,7 +41,15 @@ auto predict_action(Team<generation> const & team, LegalSelections const team_se
 	if (containers::size(team_selections) == 1_bi) {
 		return all_equally_likely();
 	}
-	auto const scores = expectiminimax(team, team_selections, other, other_selections, environment, evaluate, Depth(1_bi, 0_bi));
+	auto const scores = expectiminimax(
+		team,
+		team_selections,
+		other,
+		other_selections,
+		environment,
+		evaluate,
+		depth
+	);
 	// TODO: this is not the right way to weight move scores
 	auto const score_only = containers::transform(scores, &ScoredMove::score);
 	auto const min_value = *containers::min_element(score_only);
@@ -64,7 +72,7 @@ auto predict_action(Team<generation> const & team, LegalSelections const team_se
 }
 
 #define INSTANTIATION(generation) \
-	template auto predict_action(Team<generation> const & team, LegalSelections const team_selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> const evaluate) -> MoveProbabilities
+	template auto predict_action(Team<generation> const & team, LegalSelections const team_selections, Team<generation> const & other, LegalSelections const other_selections, Environment const environment, Evaluate<generation> evaluate, Depth const depth) -> MoveProbabilities
 
 TM_FOR_EACH_GENERATION(INSTANTIATION);
 
