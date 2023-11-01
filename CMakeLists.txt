@@ -242,6 +242,7 @@ target_sources(tm_common PUBLIC
 		source/tm/team_predictor/all_usage_stats.cpp
 		source/tm/team_predictor/estimate.cpp
 		source/tm/team_predictor/stats_user.cpp
+		source/tm/team_predictor/style.cpp
 		source/tm/team_predictor/team_predictor.cpp
 		source/tm/team_predictor/usage_stats.cpp
 		source/tm/team_predictor/usage_stats_probabilities.cpp

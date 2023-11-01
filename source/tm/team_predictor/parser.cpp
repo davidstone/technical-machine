@@ -13,6 +13,7 @@ module;
 export module tm.team_predictor.parser;
 
 import tm.team_predictor.all_usage_stats;
+import tm.team_predictor.style;
 import tm.team_predictor.team_predictor;
 
 import tm.move.max_moves_per_pokemon;
@@ -214,15 +215,15 @@ export struct Parser {
 		try {
 			auto buffer = DelimitedBufferView(input_data, '&');
 			auto const generation = from_string<Generation>(get_expected_base(buffer.pop(), "generation"));
+			auto const style = from_string<Style>(get_expected_base(buffer.pop(), "style"));
 			auto const parsed_team = parse_html_team(buffer, special_style_for(generation));
 			auto & usage_stats = m_all_usage_stats[generation];
 			auto impl = [&]<Generation generation>(constant_gen_t<generation>) -> containers::string {
+				auto seen_team = parsed_team_to_seen_team<generation>(parsed_team);
 				return to_string(
-					random_team(
-						usage_stats,
-						m_random_engine,
-						parsed_team_to_seen_team<generation>(parsed_team)
-					)
+					style == Style::random ?
+						random_team(usage_stats, m_random_engine, std::move(seen_team)) :
+						most_likely_team(usage_stats, m_random_engine, std::move(seen_team))
 				);
 			};
 			return constant_generation(generation, impl);

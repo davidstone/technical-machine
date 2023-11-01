@@ -19,6 +19,7 @@ import tm.pokemon.species;
 import tm.stat.nature;
 
 import tm.team_predictor.mutable_buffer;
+import tm.team_predictor.style;
 
 import tm.string_conversions.ability;
 import tm.string_conversions.gender;
@@ -36,6 +37,7 @@ import tm.item;
 
 import bounded;
 import containers;
+import numeric_traits;
 import std_module;
 
 namespace technicalmachine {
@@ -119,6 +121,7 @@ export auto generate_team_builder_ui(std::string_view const query_string, std::s
 		return pop_to_delimiter(query_buffer, '&');
 	};
 	add_dropdown_with_id(buffer, "generation", "generation", containers::enum_range<Generation>(), next_default());
+	add_dropdown_with_id(buffer, "style", "style", containers::enum_range<Style>(), next_default());
 	write_data(buffer, "<br>\n"sv);
 	for (auto const pokemon_index : containers::integer_range(max_pokemon_per_team)) {
 		auto const index_str = containers::to_string(pokemon_index);
