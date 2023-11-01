@@ -6,6 +6,7 @@
 #include <std_module/prelude.hpp>
 #include <string_view>
 
+import tm.ps_usage_stats.add_to_workers;
 import tm.ps_usage_stats.battle_result;
 import tm.ps_usage_stats.battle_result_reader;
 import tm.ps_usage_stats.glicko1;
@@ -148,21 +149,10 @@ auto make_correlations(Mode const mode, ThreadCount const thread_count, std::fil
 				);
 			});
 		}));
-		auto reader = battle_result_reader(teams_file_path);
-		auto it = containers::begin(reader);
-		auto const last = containers::end(reader);
-		while (true) {
-			for (auto & worker : workers) {
-				if (it == last) {
-					break;
-				}
-				worker.add_work(*it);
-				++it;
-			}
-			if (it == last) {
-				break;
-			}
-		}
+		add_to_workers(
+			battle_result_reader(teams_file_path),
+			workers
+		);
 	}
 	return correlations;
 }

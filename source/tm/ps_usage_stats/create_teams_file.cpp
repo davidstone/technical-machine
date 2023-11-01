@@ -6,6 +6,7 @@
 #include <std_module/prelude.hpp>
 #include <filesystem>
 
+import tm.ps_usage_stats.add_to_workers;
 import tm.ps_usage_stats.battle_result_writer;
 import tm.ps_usage_stats.parse_log;
 import tm.ps_usage_stats.thread_count;
@@ -74,21 +75,10 @@ auto turn_logs_into_team_file(std::filesystem::path const & output_file, ThreadC
 			}
 		});
 	}));
-	auto inputs = files_in_directory(input_directory);
-	auto it = containers::begin(inputs);
-	auto const last = containers::end(inputs);
-	while (true) {
-		for (auto & worker : workers) {
-			if (it == last) {
-				break;
-			}
-			worker.add_work(*it);
-			++it;
-		}
-		if (it == last) {
-			break;
-		}
-	}
+	add_to_workers(
+		files_in_directory(input_directory),
+		workers
+	);
 }
 
 } // namespace

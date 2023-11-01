@@ -463,6 +463,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/to_packed_format.cpp
 		source/tm/clients/pokemon_showdown/validate_generation.cpp
 
+		source/tm/ps_usage_stats/add_to_workers.cpp
 		source/tm/ps_usage_stats/battle_result.cpp
 		source/tm/ps_usage_stats/battle_result_reader.cpp
 		source/tm/ps_usage_stats/battle_result_writer.cpp
