@@ -10,6 +10,7 @@ import tm.ps_usage_stats.add_to_workers;
 import tm.ps_usage_stats.battle_result;
 import tm.ps_usage_stats.battle_result_reader;
 import tm.ps_usage_stats.glicko1;
+import tm.ps_usage_stats.mode;
 import tm.ps_usage_stats.rating;
 import tm.ps_usage_stats.serialize;
 import tm.ps_usage_stats.thread_count;
@@ -30,14 +31,6 @@ namespace {
 
 using namespace std::string_view_literals;
 
-enum class Mode {
-	unweighted,
-	simple_weighted,
-	inverse_weighted,
-	simple_weighted_winner,
-	inverse_weighted_winner
-};
-
 struct ParsedArgs {
 	Mode mode;
 	Generation generation;
@@ -46,21 +39,11 @@ struct ParsedArgs {
 	std::filesystem::path output_stats_path;
 };
 
-constexpr auto parse_mode(std::string_view const str) -> Mode {
-	return
-		str == "unweighted" ? Mode::unweighted :
-		str == "simple_weighted" ? Mode::simple_weighted :
-		str == "inverse_weighted" ? Mode::inverse_weighted :
-		str == "simple_weighted_winner" ? Mode::simple_weighted_winner :
-		str == "inverse_weighted_winner" ? Mode::inverse_weighted_winner :
-		throw std::runtime_error("Invalid mode");
-}
-
 auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	if (argc != 6) {
 		throw std::runtime_error(
 			"Usage is ps_usage_stats output_path mode generation thread_count teams_file_path\n"
-			"mode must be one of: unweighted, simple_weighted, inverse_weighted, simple_weighted_winner, inverse_weighted_winner\n"
+			"mode must be one of: unweighted, weighted, weighted_winner, top_players\n"
 		);
 	}
 	auto const output_path = std::filesystem::path(argv[1]);
@@ -85,45 +68,52 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 	};
 }
 
-constexpr auto weight(Mode const mode, Rating const rating) -> double {
-	switch (mode) {
-		case Mode::unweighted:
-			return 1.0;
-		case Mode::simple_weighted:
-		case Mode::simple_weighted_winner:
-			return chance_to_win(rating, initial_rating);
-		case Mode::inverse_weighted:
-		case Mode::inverse_weighted_winner:
-			return 1.0 / (1.0 - chance_to_win(rating, initial_rating));
-	}
-}
-
 constexpr auto do_pass(Mode const mode, Glicko1 const & ratings_estimate, BattleResult const & result, auto function) -> void {
-	auto get_rating = [&](BattleResult::Side const & side) {
-		return side.rating ? *side.rating : ratings_estimate.get(side.id);
+	auto get_p = [&](BattleResult::Side const & side) {
+		auto const rating = side.rating ? *side.rating : ratings_estimate.get(side.id);
+		return chance_to_win(rating, initial_rating);
 	};
 	switch (mode) {
 		case Mode::unweighted:
-		case Mode::simple_weighted:
-		case Mode::inverse_weighted:
-			function(result.side1.team, weight(mode, get_rating(result.side1)));
-			function(result.side2.team, weight(mode, get_rating(result.side2)));
+		case Mode::weighted:
+			function(result.side1.team, weight(mode, get_p(result.side1)));
+			function(result.side2.team, weight(mode, get_p(result.side2)));
 			break;
-		case Mode::simple_weighted_winner:
-		case Mode::inverse_weighted_winner:
+		case Mode::weighted_winner:
 			switch (result.winner) {
 				case BattleResult::Winner::side1:
-					function(result.side1.team, weight(mode, get_rating(result.side2)));
+					function(result.side1.team, weight(mode, get_p(result.side2)));
 					break;
 				case BattleResult::Winner::side2:
-					function(result.side2.team, weight(mode, get_rating(result.side1)));
+					function(result.side2.team, weight(mode, get_p(result.side1)));
 					break;
 				case BattleResult::Winner::tie:
-					function(result.side1.team, weight(mode, get_rating(result.side2)) / 2.0);
-					function(result.side2.team, weight(mode, get_rating(result.side1)) / 2.0);
+					function(result.side1.team, weight(mode, get_p(result.side2)) / 2.0);
+					function(result.side2.team, weight(mode, get_p(result.side1)) / 2.0);
 					break;
 			}
 			break;
+		case Mode::top_players: {
+			auto function_if = [&](BattleResult::Side const & winner, BattleResult::Side const & loser, double const scalar) {
+				auto const p = get_p(loser);
+				if (p > 0.75) {
+					function(winner.team, weight(mode, p) * scalar);
+				}
+			};
+			switch (result.winner) {
+				case BattleResult::Winner::side1:
+					function_if(result.side1, result.side2, 1.0);
+					break;
+				case BattleResult::Winner::side2:
+					function_if(result.side2, result.side1, 1.0);
+					break;
+				case BattleResult::Winner::tie:
+					function_if(result.side1, result.side2, 0.5);
+					function_if(result.side2, result.side1, 0.5);
+					break;
+			}
+			break;
+		}
 	}
 }
 
