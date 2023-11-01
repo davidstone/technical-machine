@@ -6,6 +6,7 @@
 module;
 
 #include <std_module/prelude.hpp>
+#include <fstream>
 #include <vector>
 
 export module tm.load_json_from_file;

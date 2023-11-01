@@ -4,6 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <std_module/prelude.hpp>
+#include <iostream>
 #include <catch2/catch_test_macros.hpp>
 
 import tm.evaluate.depth;

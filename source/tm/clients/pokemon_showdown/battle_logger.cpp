@@ -6,6 +6,7 @@
 module;
 
 #include <std_module/prelude.hpp>
+#include <fstream>
 #include <string_view>
 
 export module tm.clients.ps.battle_logger;
