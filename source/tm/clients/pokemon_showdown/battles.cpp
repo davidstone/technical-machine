@@ -15,9 +15,13 @@ import tm.clients.ps.send_message_function;
 import tm.clients.write_team;
 
 import tm.evaluate.all_evaluate;
+import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
 
 import tm.team_predictor.all_usage_stats;
+
+import tm.generation;
+import tm.team;
 
 import containers;
 import tv;
@@ -98,13 +102,28 @@ private:
 	auto make_active(AllUsageStats const & usage_stats, std::unique_ptr<BattleInterface> & battle) -> void {
 		auto & battle_factory = static_cast<BattleFactory &>(*battle);
 		auto const battle_log_directory = m_log_directory / battle_factory.id();
+		log_ai_team(battle_factory.team(), battle_log_directory);
 		battle = std::unique_ptr<BattleInterface>(new BattleParser(
 			std::move(battle_factory).make(
 				usage_stats,
-				battle_log_directory,
+				AnalysisLogger(battle_log_directory),
 				m_write_team
 			)
 		));
+	}
+
+	auto log_ai_team(GenerationGeneric<Team> const & team, std::filesystem::path const & battle_log_directory) -> void {
+		if (!m_write_team) {
+			return;
+		}
+		auto const file_name = containers::concatenate<containers::string>(
+			"team"sv,
+			m_write_team->extension
+		);
+		m_write_team->function(
+			team,
+			battle_log_directory / std::string_view(file_name)
+		);
 	}
 
 	std::filesystem::path m_log_directory;

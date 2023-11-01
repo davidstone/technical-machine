@@ -13,8 +13,6 @@ module;
 
 module tm.clients.ps.battle_factory;
 
-import tm.clients.pl.write_team_file;
-
 import tm.clients.ps.battle_interface;
 import tm.clients.ps.battle_parser;
 import tm.clients.ps.chat;
@@ -164,7 +162,7 @@ struct BattleFactoryImpl : BattleFactory {
 	}
 	auto make(
 		AllUsageStats const & usage_stats,
-		std::filesystem::path const & log_directory,
+		AnalysisLogger analysis_logger,
 		tv::optional<WriteTeam> write_team
 	) && -> BattleParser final {
 		BOUNDED_ASSERT(completed() == BattleInterface::Complete::start);
@@ -201,10 +199,8 @@ struct BattleFactoryImpl : BattleFactory {
 			return team;
 		};
 
-		pl::write_team(*m_team, log_directory / "team.sbt");
-
 		return BattleParser(
-			AnalysisLogger(log_directory),
+			std::move(analysis_logger),
 			std::move(write_team),
 			std::move(m_id),
 			std::move(m_username),
@@ -217,6 +213,12 @@ struct BattleFactoryImpl : BattleFactory {
 			m_depth,
 			m_random_engine
 		);
+	}
+	auto team() const -> GenerationGeneric<Team> final {
+		if (!m_team) {
+			throw std::runtime_error("Did not receive team");
+		}
+		return GenerationGeneric<Team>(Team<generation>(*m_team));
 	}
 
 private:

@@ -11,9 +11,13 @@ import tm.clients.ps.battle_parser;
 import tm.clients.write_team;
 
 import tm.evaluate.all_evaluate;
+import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
 
 import tm.team_predictor.all_usage_stats;
+
+import tm.generation;
+import tm.team;
 
 import containers;
 import tv;
@@ -24,9 +28,10 @@ namespace technicalmachine::ps {
 export struct BattleFactory : BattleInterface {
 	virtual auto make(
 		AllUsageStats const & usage_stats,
-		std::fileystem::path const & log_directory,
+		AnalysisLogger analysis_logger,
 		tv::optional<WriteTeam> write_team
 	) && -> BattleParser = 0;
+	virtual auto team() const -> GenerationGeneric<Team> = 0;
 };
 
 export auto make_battle_factory(
