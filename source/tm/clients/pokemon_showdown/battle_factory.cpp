@@ -22,12 +22,14 @@ import std_module;
 namespace technicalmachine::ps {
 
 export struct BattleFactory : BattleInterface {
-	virtual auto make(AllUsageStats const & usage_stats) && -> BattleParser = 0;
+	virtual auto make(
+		AllUsageStats const & usage_stats,
+		std::fileystem::path const & log_directory,
+		tv::optional<WriteTeam> write_team
+	) && -> BattleParser = 0;
 };
 
 export auto make_battle_factory(
-	std::filesystem::path const & base_log_directory,
-	tv::optional<WriteTeam> write_team,
 	containers::string id,
 	containers::string username,
 	AllEvaluate evaluate,

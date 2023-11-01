@@ -54,8 +54,6 @@ using namespace std::string_view_literals;
 template<Generation generation>
 struct BattleFactoryImpl : BattleFactory {
 	BattleFactoryImpl(
-		std::filesystem::path const & base_log_directory,
-		tv::optional<WriteTeam> write_team,
 		containers::string id_,
 		containers::string username,
 		Evaluate<generation> evaluate,
@@ -63,8 +61,6 @@ struct BattleFactoryImpl : BattleFactory {
 		std::mt19937 random_engine
 	):
 		m_id(std::move(id_)),
-		m_log_directory(base_log_directory / std::string_view(m_id)),
-		m_write_team(std::move(write_team)),
 		m_username(std::move(username)),
 		m_evaluate(evaluate),
 		m_depth(depth),
@@ -166,7 +162,11 @@ struct BattleFactoryImpl : BattleFactory {
 		// TODO: Handle NvN battles
 		return m_ai_switched_in and m_foe_starter ? BattleInterface::Complete::start : BattleInterface::Complete::none;
 	}
-	auto make(AllUsageStats const & usage_stats) && -> BattleParser final {
+	auto make(
+		AllUsageStats const & usage_stats,
+		std::filesystem::path const & log_directory,
+		tv::optional<WriteTeam> write_team
+	) && -> BattleParser final {
 		BOUNDED_ASSERT(completed() == BattleInterface::Complete::start);
 		if (!m_team) {
 			throw std::runtime_error("Did not receive team");
@@ -201,11 +201,11 @@ struct BattleFactoryImpl : BattleFactory {
 			return team;
 		};
 
-		pl::write_team(*m_team, m_log_directory / "team.sbt");
+		pl::write_team(*m_team, log_directory / "team.sbt");
 
 		return BattleParser(
-			AnalysisLogger(m_log_directory),
-			m_write_team,
+			AnalysisLogger(log_directory),
+			std::move(write_team),
 			std::move(m_id),
 			std::move(m_username),
 			usage_stats[generation],
@@ -221,8 +221,6 @@ struct BattleFactoryImpl : BattleFactory {
 
 private:
 	containers::string m_id;
-	std::filesystem::path m_log_directory;
-	tv::optional<WriteTeam> m_write_team;
 	containers::string m_username;
 	Evaluate<generation> m_evaluate;
 	Depth m_depth;
@@ -237,8 +235,6 @@ private:
 };
 
 auto make_battle_factory(
-	std::filesystem::path const & base_log_directory,
-	tv::optional<WriteTeam> write_team,
 	containers::string id,
 	containers::string username,
 	AllEvaluate evaluate,
@@ -248,8 +244,6 @@ auto make_battle_factory(
 	auto const parsed_generation = parse_generation_from_format(id, "battle-gen");
 	auto make = [&]<Generation generation>(constant_gen_t<generation>) -> std::unique_ptr<BattleFactory> {
 		return std::make_unique<BattleFactoryImpl<generation>>(
-			base_log_directory,
-			std::move(write_team),
 			std::move(id),
 			std::move(username),
 			evaluate.get<generation>(),

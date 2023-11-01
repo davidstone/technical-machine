@@ -48,8 +48,6 @@ export struct Battles {
 				return Element{
 					std::move(battle_logger),
 					make_battle_factory(
-						m_log_directory,
-						m_write_team,
 						std::move(id),
 						std::move(username),
 						evaluate,
@@ -99,7 +97,14 @@ private:
 
 	auto make_active(AllUsageStats const & usage_stats, std::unique_ptr<BattleInterface> & battle) -> void {
 		auto & battle_factory = static_cast<BattleFactory &>(*battle);
-		battle = std::unique_ptr<BattleInterface>(new BattleParser(std::move(battle_factory).make(usage_stats)));
+		auto const battle_log_directory = m_log_directory / battle_factory.id();
+		battle = std::unique_ptr<BattleInterface>(new BattleParser(
+			std::move(battle_factory).make(
+				usage_stats,
+				battle_log_directory,
+				m_write_team
+			)
+		));
 	}
 
 	std::filesystem::path m_log_directory;
