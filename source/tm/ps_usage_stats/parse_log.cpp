@@ -43,7 +43,6 @@ import tm.constant_generation;
 import tm.gender;
 import tm.generation;
 import tm.item;
-import tm.load_json_from_file;
 import tm.nlohmann_json;
 import tm.team;
 
@@ -159,8 +158,7 @@ auto parse_rating(nlohmann::json const & json) -> tv::optional<Rating> {
 
 } // namespace
 
-export auto parse_log(std::filesystem::path const & path) -> tv::optional<BattleResult> {
-	auto const json = load_json_from_file(path);
+export auto parse_log(nlohmann::json const & json) -> tv::optional<BattleResult> {
 	if (json.at("turns").get<nlohmann::json::number_integer_t>() < 3) {
 		return tv::none;
 	}

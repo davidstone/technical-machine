@@ -12,6 +12,8 @@ import tm.ps_usage_stats.parse_log;
 import tm.ps_usage_stats.thread_count;
 import tm.ps_usage_stats.worker;
 
+import tm.load_json_from_file;
+
 import bounded;
 import containers;
 import std_module;
@@ -64,7 +66,7 @@ auto turn_logs_into_team_file(std::filesystem::path const & output_file, ThreadC
 	auto workers = containers::dynamic_array(containers::generate_n(thread_count, [&] {
 		return make_worker<std::filesystem::path>([&](std::filesystem::path const & input_file) {
 			try {
-				auto const battle_result = parse_log(input_file);
+				auto const battle_result = parse_log(load_json_from_file(input_file));
 				if (!battle_result) {
 					return;
 				}
