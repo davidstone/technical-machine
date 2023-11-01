@@ -20,7 +20,7 @@ Moves factor into this in the same way. If we have seen a Pikachu with Surf, tha
 
 Abilities and Items are currently used only as outputs of the predictor, not inputs. That is to say, after predicting the Pokemon and its moves, it selects the most likely item / ability for that moveset. Nothing else is predicted based on the item or ability chosen.
 
-There are certain situations where Techincal Machine can use evidence in the battle to update its predictions. Technical Machine is currently limited to things that give an obvious message, such as Leftovers or Black Sludge. Technical Machine is not yet smart enough to see that the foe has changed moves without switching and thus cannot be using a choice item, nor is it smart enough to calculate damage and see that they must be using a Choice Band. I actually have written a "reverse damage calculator" that could do calculations like that, including finding exact EVs, but it takes far too long to calculate to be useful in a battle situation.
+There are certain situations where Technical Machine can use evidence in the battle to update its predictions. Technical Machine is currently limited to things that give an obvious message, such as Leftovers or Black Sludge. Technical Machine is not yet smart enough to see that the foe has changed moves without switching and thus cannot be using a choice item, nor is it smart enough to calculate damage and see that they must be using a Choice Band. I actually have written a "reverse damage calculator" that could do calculations like that, including finding exact EVs, but it takes far too long to calculate to be useful in a battle situation.
 
 ### Predicting the Foe's EVs / Nature
 
