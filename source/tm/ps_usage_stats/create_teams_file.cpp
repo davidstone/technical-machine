@@ -8,6 +8,7 @@
 
 import tm.ps_usage_stats.add_to_workers;
 import tm.ps_usage_stats.battle_result_writer;
+import tm.ps_usage_stats.files_in_directory;
 import tm.ps_usage_stats.parse_log;
 import tm.ps_usage_stats.thread_count;
 import tm.ps_usage_stats.worker;
@@ -47,17 +48,6 @@ auto parse_args(int argc, char const * const * argv) -> ParsedArgs {
 		thread_count,
 		std::move(input_directory)
 	};
-}
-
-auto files_in_directory(std::filesystem::path const & path) {
-	auto not_directory = [](std::filesystem::path const & p) { return !std::filesystem::is_directory(p); };
-	return containers::filter(
-		containers::range_view(
-			std::filesystem::recursive_directory_iterator(path),
-			std::filesystem::recursive_directory_iterator()
-		),
-		not_directory
-	);
 }
 
 auto turn_logs_into_team_file(std::filesystem::path const & output_file, ThreadCount const thread_count, std::filesystem::path const & input_directory) -> void {
