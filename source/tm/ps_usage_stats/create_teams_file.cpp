@@ -8,6 +8,7 @@
 
 import tm.ps_usage_stats.battle_result_writer;
 import tm.ps_usage_stats.parse_log;
+import tm.ps_usage_stats.thread_count;
 import tm.ps_usage_stats.worker;
 
 import bounded;
@@ -18,8 +19,6 @@ namespace technicalmachine::ps_usage_stats {
 namespace {
 
 using namespace std::string_view_literals;
-
-using ThreadCount = bounded::integer<1, 10'000>;
 
 struct ParsedArgs {
 	std::filesystem::path output_file;

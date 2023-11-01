@@ -11,6 +11,7 @@ import tm.ps_usage_stats.battle_result_reader;
 import tm.ps_usage_stats.glicko1;
 import tm.ps_usage_stats.rating;
 import tm.ps_usage_stats.serialize;
+import tm.ps_usage_stats.thread_count;
 import tm.ps_usage_stats.usage_stats;
 import tm.ps_usage_stats.worker;
 
@@ -35,8 +36,6 @@ enum class Mode {
 	simple_weighted_winner,
 	inverse_weighted_winner
 };
-
-using ThreadCount = bounded::integer<1, 10'000>;
 
 struct ParsedArgs {
 	Mode mode;
