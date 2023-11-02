@@ -13,14 +13,11 @@ module tm.clients.make_battle_manager;
 
 import tm.clients.battle_manager;
 import tm.clients.check_weathers_match;
-import tm.clients.log_foe_team;
 import tm.clients.make_battle_manager_inputs;
 import tm.clients.move_result;
-import tm.clients.result;
 import tm.clients.teams;
 import tm.clients.to_used_move;
 import tm.clients.turn_count;
-import tm.clients.write_team;
 
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
@@ -136,17 +133,13 @@ template<Generation generation_>
 struct BattleManagerImpl final : BattleManager {
 	BattleManagerImpl(
 		AnalysisLogger analysis_logger,
-		tv::optional<WriteTeam> write_team,
 		UsageStats const & usage_stats,
 		Evaluate<generation_> evaluate,
 		Depth const depth,
-		std::mt19937 random_engine,
 		Teams<generation_> teams
 	):
 		m_usage_stats(usage_stats),
 		m_analysis_logger(std::move(analysis_logger)),
-		m_write_team(std::move(write_team)),
-		m_random_engine(std::move(random_engine)),
 		m_evaluate(evaluate),
 		m_battle(
 			std::move(teams).ai,
@@ -161,9 +154,6 @@ struct BattleManagerImpl final : BattleManager {
 	}
 	auto team() const -> GenerationGeneric<Team> final {
 		return GenerationGeneric<Team>(Team<generation_>(m_battle.ai()));
-	}
-	auto random_engine() & -> std::mt19937 & final {
-		return m_random_engine;
 	}
 	auto move_index(MoveName const move_name) const -> containers::index_type<RegularMoves> final {
 		return find_required_move_index(m_battle.ai().pokemon().regular_moves(), move_name);
@@ -334,10 +324,7 @@ struct BattleManagerImpl final : BattleManager {
 		return containers::front(scored_moves).name;
 	}
 
-	auto complete(Result const result) & -> void final {
-		if (m_write_team and result == Result::lost) {
-			log_foe_team(m_usage_stats, m_battle.foe(), m_random_engine, *m_write_team);
-		}
+	auto complete() & -> void final {
 		m_completed = true;
 	}
 
@@ -438,9 +425,6 @@ private:
 	UsageStats const & m_usage_stats;
 
 	AnalysisLogger m_analysis_logger;
-	tv::optional<WriteTeam> m_write_team;
-
-	std::mt19937 m_random_engine;
 
 	Evaluate<generation_> m_evaluate;
 	Battle<generation_> m_battle;
@@ -452,20 +436,16 @@ private:
 // `usage_stats` must remain valid for the lifetime of the return value
 auto make_battle_manager(
 	AnalysisLogger analysis_logger,
-	tv::optional<WriteTeam> write_team,
 	UsageStats const & usage_stats,
 	GenerationGeneric<BattleManagerInputs> generic_inputs,
-	Depth const depth,
-	std::mt19937 random_engine
+	Depth const depth
 ) -> std::unique_ptr<BattleManager> {
 	return tv::visit(std::move(generic_inputs), [&]<Generation generation>(BattleManagerInputs<generation> && inputs) -> std::unique_ptr<BattleManager> {
 		return std::make_unique<BattleManagerImpl<generation>>(
 			std::move(analysis_logger),
-			std::move(write_team),
 			usage_stats,
 			inputs.evaluate,
 			depth,
-			std::move(random_engine),
 			std::move(inputs.teams)
 		);
 	});

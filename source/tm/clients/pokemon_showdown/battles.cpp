@@ -82,7 +82,7 @@ export struct Battles {
 				break;
 			case BattleInterface::Complete::start: {
 				auto const battle_log_directory = m_log_directory / it->battle->id();
-				make_active(usage_stats, AnalysisLogger(battle_log_directory), m_write_team, it->battle);
+				make_active(usage_stats, AnalysisLogger(battle_log_directory), it->battle);
 				auto const & battle = static_cast<BattleParser const &>(*it->battle);
 				log_ai_team(battle.team(), battle_log_directory);
 				send_message(containers::concatenate<containers::string>(message.room(), "|/timer on"sv));

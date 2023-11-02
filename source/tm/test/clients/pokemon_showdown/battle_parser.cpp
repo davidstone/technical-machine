@@ -57,8 +57,6 @@ auto get_usage_stats() -> UsageStats const & {
 	return result;
 }
 
-constexpr auto write_team = tv::none;
-
 constexpr auto battle_id = "battle-id"sv;
 
 constexpr auto evaluate_settings = EvaluateSettings{
@@ -74,7 +72,6 @@ auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::Batt
 	auto random_device = std::random_device();
 	return ps::BattleParser(
 		AnalysisLogger(AnalysisLogger::none()),
-		write_team,
 		battle_id,
 		"Technical Machine",
 		get_usage_stats<generation>(),

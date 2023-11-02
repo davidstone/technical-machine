@@ -7,7 +7,6 @@ export module tm.clients.make_battle_manager;
 
 import tm.clients.battle_manager;
 import tm.clients.make_battle_manager_inputs;
-import tm.clients.write_team;
 
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
@@ -24,11 +23,9 @@ namespace technicalmachine {
 // `usage_stats` must remain valid for the lifetime of the return value
 export auto make_battle_manager(
 	AnalysisLogger analysis_logger,
-	tv::optional<WriteTeam> write_team,
 	UsageStats const & usage_stats,
 	GenerationGeneric<BattleManagerInputs> generic_inputs,
-	Depth const depth,
-	std::mt19937 random_engine
+	Depth const depth
 ) -> std::unique_ptr<BattleManager>;
 
 } // namespace technicalmachine

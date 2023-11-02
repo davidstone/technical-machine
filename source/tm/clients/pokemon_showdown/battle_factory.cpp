@@ -8,8 +8,6 @@ export module tm.clients.ps.battle_factory;
 import tm.clients.ps.battle_interface;
 import tm.clients.ps.battle_parser;
 
-import tm.clients.write_team;
-
 import tm.evaluate.all_evaluate;
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
@@ -28,8 +26,7 @@ namespace technicalmachine::ps {
 export struct BattleFactory : BattleInterface {
 	virtual auto make(
 		AllUsageStats const & usage_stats,
-		AnalysisLogger analysis_logger,
-		tv::optional<WriteTeam> write_team
+		AnalysisLogger analysis_logger
 	) && -> BattleParser = 0;
 	virtual auto team() const -> GenerationGeneric<Team> = 0;
 };

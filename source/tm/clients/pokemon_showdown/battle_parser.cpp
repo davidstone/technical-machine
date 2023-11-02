@@ -29,9 +29,7 @@ import tm.clients.battle_manager;
 import tm.clients.make_battle_manager;
 import tm.clients.make_battle_manager_inputs;
 import tm.clients.party;
-import tm.clients.result;
 import tm.clients.turn_count;
-import tm.clients.write_team;
 
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
@@ -87,7 +85,6 @@ auto move_response_impl(std::string_view const id, bool const is_switch, auto co
 export struct BattleParser final : BattleInterface {
 	BattleParser(
 		AnalysisLogger analysis_logger,
-		tv::optional<WriteTeam> write_team,
 		containers::string id_,
 		containers::string username,
 		UsageStats const & usage_stats,
@@ -99,12 +96,11 @@ export struct BattleParser final : BattleInterface {
 		m_slot_memory(tv::visit(inputs, [](auto const & i) { return i.teams.ai.size(); })),
 		m_battle_manager(make_battle_manager(
 			std::move(analysis_logger),
-			std::move(write_team),
 			usage_stats,
 			std::move(inputs),
-			depth,
-			std::move(random_engine)
+			depth
 		)),
+		m_random_engine(std::move(random_engine)),
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_party(party)
@@ -552,7 +548,7 @@ export struct BattleParser final : BattleInterface {
 		} else if (type == "t:") {
 			// message.remainder() == Seconds since 1970
 		} else if (type == "tie") {
-			m_battle_manager->complete(Result::tied);
+			m_battle_manager->complete();
 		} else if (type == "-transform") {
 			// message.remainder() == POKEMON|SPECIES
 		} else if (type == "turn") {
@@ -597,8 +593,8 @@ export struct BattleParser final : BattleInterface {
 				[](auto) { }
 			));
 		} else if (type == "win") {
-			auto const winning_username = message.pop();
-			m_battle_manager->complete(winning_username == m_username ? Result::won : Result::lost);
+			[[maybe_unused]] auto const winning_username = message.pop();
+			m_battle_manager->complete();
 		} else {
 			std::cerr << "Received battle progress message of unknown type: " << type << ": " << message.remainder() << '\n';
 		}
@@ -789,7 +785,7 @@ private:
 		// In doubles / triples we need to specify " TARGET" at the end for regular
 		// moves
 		auto distribution = std::uniform_int_distribution<int>(0, static_cast<int>(maximum_possible_selections));
-		auto const result = distribution(m_battle_manager->random_engine());
+		auto const result = distribution(m_random_engine);
 
 		auto switch_move = [=]{ return bounded::assume_in_range<TeamIndex>(result - max_moves_per_pokemon); };
 		auto move_index = [=]{ return bounded::assume_in_range<containers::index_type<RegularMoves>>(result); };
@@ -815,6 +811,7 @@ private:
 
 	SlotMemory m_slot_memory;
 	std::unique_ptr<BattleManager> m_battle_manager;
+	std::mt19937 m_random_engine;
 
 	containers::string m_id;
 	containers::string m_username;

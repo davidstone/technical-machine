@@ -26,7 +26,6 @@ import tm.clients.ps.validate_generation;
 import tm.clients.make_battle_manager_inputs;
 import tm.clients.party;
 import tm.clients.teams;
-import tm.clients.write_team;
 
 import tm.evaluate.all_evaluate;
 import tm.evaluate.analysis_logger;
@@ -162,8 +161,7 @@ struct BattleFactoryImpl : BattleFactory {
 	}
 	auto make(
 		AllUsageStats const & usage_stats,
-		AnalysisLogger analysis_logger,
-		tv::optional<WriteTeam> write_team
+		AnalysisLogger analysis_logger
 	) && -> BattleParser final {
 		BOUNDED_ASSERT(completed() == BattleInterface::Complete::start);
 		if (!m_team) {
@@ -201,7 +199,6 @@ struct BattleFactoryImpl : BattleFactory {
 
 		return BattleParser(
 			std::move(analysis_logger),
-			std::move(write_team),
 			std::move(m_id),
 			std::move(m_username),
 			usage_stats[generation],

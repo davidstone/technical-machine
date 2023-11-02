@@ -6,7 +6,6 @@
 export module tm.clients.battle_manager;
 
 import tm.clients.move_result;
-import tm.clients.result;
 import tm.clients.turn_count;
 
 import tm.move.move_name;
@@ -41,7 +40,6 @@ export struct BattleManager {
 
 	virtual auto generation() const -> Generation = 0;
 	virtual auto team() const -> GenerationGeneric<Team> = 0;
-	virtual auto random_engine() & -> std::mt19937 & = 0;
 	virtual auto move_index(MoveName) const -> containers::index_type<RegularMoves> = 0;
 
 	// Returns the switch required to bring in this Pokemon
@@ -68,7 +66,7 @@ export struct BattleManager {
 
 	virtual auto determine_action() & -> MoveName = 0;
 
-	virtual auto complete(Result) & -> void = 0;
+	virtual auto complete() & -> void = 0;
 	virtual auto completed() const -> bool = 0;
 
 	// For a correct implementation of a correct protocol, these functions have

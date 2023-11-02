@@ -9,8 +9,6 @@ import tm.clients.ps.battle_factory;
 import tm.clients.ps.battle_interface;
 import tm.clients.ps.battle_parser;
 
-import tm.clients.write_team;
-
 import tm.evaluate.analysis_logger;
 
 import tm.team_predictor.all_usage_stats;
@@ -20,13 +18,16 @@ import std_module;
 
 namespace technicalmachine::ps {
 
-export auto make_active(AllUsageStats const & usage_stats, AnalysisLogger analysis_logger, tv::optional<WriteTeam> write_team, std::unique_ptr<BattleInterface> & battle) -> void {
+export auto make_active(
+	AllUsageStats const & usage_stats,
+	AnalysisLogger analysis_logger,
+	std::unique_ptr<BattleInterface> & battle
+) -> void {
 	auto & battle_factory = static_cast<BattleFactory &>(*battle);
 	battle = std::unique_ptr<BattleInterface>(new BattleParser(
 		std::move(battle_factory).make(
 			usage_stats,
-			std::move(analysis_logger),
-			std::move(write_team)
+			std::move(analysis_logger)
 		)
 	));
 }

@@ -401,13 +401,10 @@ target_sources(tm_clients PUBLIC
 		source/tm/clients/get_team.cpp
 		source/tm/clients/invalid_team_file_format.cpp
 		source/tm/clients/load_team_from_file.cpp
-		source/tm/clients/log_foe_team.cpp
 		source/tm/clients/make_battle_manager.cpp
 		source/tm/clients/make_battle_manager_inputs.cpp
 		source/tm/clients/move_result.cpp
 		source/tm/clients/party.cpp
-		source/tm/clients/random_string.cpp
-		source/tm/clients/result.cpp
 		source/tm/clients/should_accept_challenge.cpp
 		source/tm/clients/teams.cpp
 		source/tm/clients/to_used_move.cpp
