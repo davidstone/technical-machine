@@ -285,41 +285,40 @@ struct BattleManagerImpl final : BattleManager {
 
 		log_team("AI", m_battle.ai());
 		log_team("Seen Foe", m_battle.foe());
-		auto const predicted = most_likely_team(m_usage_stats, m_battle.foe());
-		log_team("Predicted Foe", predicted);
+		auto const state = predicted_state();
+		log_team("Predicted Foe", state.foe);
 		m_analysis_logger << std::flush;
 
-		m_analysis_logger << "Evaluating to a depth of " << m_depth.general << ", " << m_depth.single << "...\n";
+		m_analysis_logger << "Evaluating to a depth of " << state.depth.general << ", " << state.depth.single << "...\n";
 		auto const start = std::chrono::steady_clock::now();
 
-		auto const ai = Team<generation_>(m_battle.ai());
 		auto const predicted_selections = get_legal_selections(
-			predicted,
-			ai,
-			m_battle.environment()
+			state.foe,
+			state.ai,
+			state.environment
 		);
 
 		auto const ai_selections = get_legal_selections(
-			ai,
-			predicted,
-			m_battle.environment()
+			state.ai,
+			state.foe,
+			state.environment
 		);
 		auto foe_moves = predict_action(
-			predicted,
+			state.foe,
 			predicted_selections,
-			ai,
+			state.ai,
 			ai_selections,
-			m_battle.environment(),
+			state.environment,
 			m_evaluate,
 			Depth(1_bi, 1_bi)
 		);
 		containers::sort(foe_moves, [](MoveProbability const lhs, MoveProbability const rhs) {
 			return lhs.probability > rhs.probability;
 		});
-		log_foe_move_probabilities(foe_moves, predicted);
+		log_foe_move_probabilities(foe_moves, state.foe);
 
 		auto scored_moves = score_moves(
-			State<generation_>(ai, predicted, m_battle.environment(), m_depth),
+			state,
 			ai_selections,
 			predicted_selections,
 			m_evaluate,
@@ -380,6 +379,15 @@ private:
 		return apply_to_team(damaged_is_ai, [&](auto const & team) {
 			return select_pokemon(team, move).hp();
 		});
+	}
+
+	auto predicted_state() const -> State<generation_> {
+		return State<generation_>(
+			Team<generation_>(m_battle.ai()),
+			most_likely_team(m_usage_stats, m_battle.foe()),
+			m_battle.environment(),
+			m_depth
+		);
 	}
 
 	auto visible_damage_to_actual_damage(bool const user_is_ai, Used const move, auto const other_pokemon) const -> FlaggedActualDamage {
