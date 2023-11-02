@@ -62,6 +62,7 @@ import tm.buffer_view;
 import tm.gender;
 import tm.generation;
 import tm.item;
+import tm.team;
 import tm.visible_hp;
 import tm.weather;
 
@@ -609,6 +610,10 @@ export struct BattleParser final : BattleInterface {
 	}
 	auto completed() const -> BattleInterface::Complete final {
 		return m_battle_manager->completed() ? BattleInterface::Complete::finish : BattleInterface::Complete::none;
+	}
+
+	auto team() const -> GenerationGeneric<Team> {
+		return m_battle_manager->team();
 	}
 
 private:

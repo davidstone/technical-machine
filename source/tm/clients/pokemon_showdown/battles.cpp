@@ -10,6 +10,7 @@ import tm.clients.ps.battle_factory;
 import tm.clients.ps.battle_logger;
 import tm.clients.ps.battle_parser;
 import tm.clients.ps.inmessage;
+import tm.clients.ps.make_active;
 import tm.clients.ps.send_message_function;
 
 import tm.clients.write_team;
@@ -79,10 +80,14 @@ export struct Battles {
 		switch (it->battle->completed()) {
 			case BattleInterface::Complete::none:
 				break;
-			case BattleInterface::Complete::start:
-				make_active(usage_stats, it->battle);
+			case BattleInterface::Complete::start: {
+				auto const battle_log_directory = m_log_directory / it->battle->id();
+				make_active(usage_stats, AnalysisLogger(battle_log_directory), m_write_team, it->battle);
+				auto const & battle = static_cast<BattleParser const &>(*it->battle);
+				log_ai_team(battle.team(), battle_log_directory);
 				send_message(containers::concatenate<containers::string>(message.room(), "|/timer on"sv));
 				break;
+			}
 			case BattleInterface::Complete::finish:
 				containers::erase(m_container, it);
 				send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), message.room()));
@@ -98,19 +103,6 @@ private:
 		std::unique_ptr<BattleLogger> logger;
 		std::unique_ptr<BattleInterface> battle;
 	};
-
-	auto make_active(AllUsageStats const & usage_stats, std::unique_ptr<BattleInterface> & battle) -> void {
-		auto & battle_factory = static_cast<BattleFactory &>(*battle);
-		auto const battle_log_directory = m_log_directory / battle_factory.id();
-		log_ai_team(battle_factory.team(), battle_log_directory);
-		battle = std::unique_ptr<BattleInterface>(new BattleParser(
-			std::move(battle_factory).make(
-				usage_stats,
-				AnalysisLogger(battle_log_directory),
-				m_write_team
-			)
-		));
-	}
 
 	auto log_ai_team(GenerationGeneric<Team> const & team, std::filesystem::path const & battle_log_directory) -> void {
 		if (!m_write_team) {

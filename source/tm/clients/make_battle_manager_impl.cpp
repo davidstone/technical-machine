@@ -159,6 +159,9 @@ struct BattleManagerImpl final : BattleManager {
 	auto generation() const -> Generation final {
 		return generation_;
 	}
+	auto team() const -> GenerationGeneric<Team> final {
+		return GenerationGeneric<Team>(Team<generation_>(m_battle.ai()));
+	}
 	auto random_engine() & -> std::mt19937 & final {
 		return m_random_engine;
 	}

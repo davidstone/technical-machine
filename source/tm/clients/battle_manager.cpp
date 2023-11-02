@@ -23,6 +23,7 @@ import tm.end_of_turn_flags;
 import tm.gender;
 import tm.generation;
 import tm.item;
+import tm.team;
 import tm.visible_hp;
 import tm.weather;
 
@@ -39,6 +40,7 @@ export struct BattleManager {
 	virtual ~BattleManager() = default;
 
 	virtual auto generation() const -> Generation = 0;
+	virtual auto team() const -> GenerationGeneric<Team> = 0;
 	virtual auto random_engine() & -> std::mt19937 & = 0;
 	virtual auto move_index(MoveName) const -> containers::index_type<RegularMoves> = 0;
 

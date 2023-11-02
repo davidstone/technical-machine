@@ -444,6 +444,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/client_impl.cpp
 		source/tm/clients/pokemon_showdown/end_of_turn_state.cpp
 		source/tm/clients/pokemon_showdown/inmessage.cpp
+		source/tm/clients/pokemon_showdown/make_active.cpp
 		source/tm/clients/pokemon_showdown/make_party.cpp
 		source/tm/clients/pokemon_showdown/move_state.cpp
 		source/tm/clients/pokemon_showdown/packed_format_to_team.cpp
