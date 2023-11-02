@@ -82,7 +82,7 @@ constexpr auto proportionate_value(EV const ev, auto const remaining_evs, auto c
 
 constexpr auto fill_evs_that_should_fill(EVs evs) -> EVs {
 	constexpr auto max_full_evs = max / EV::useful_max;
-	for (auto const _ : containers::integer_range(max_full_evs)) {
+	for ([[maybe_unused]] auto const _ : containers::integer_range(max_full_evs)) {
 		auto const used_non_full = used_non_full_evs(evs);
 		auto const all_are_full_or_empty = used_non_full == 0_bi;
 		if (all_are_full_or_empty) {
