@@ -92,7 +92,7 @@ void predict_ability(StatsUser & stats_user, any_seen_pokemon auto & pokemon) {
 	stats_user.update(species, *ability);
 }
 
-void optimize_pokemon_evs(any_seen_pokemon auto & pokemon, std::mt19937 & random_engine) {
+void optimize_pokemon_evs(any_seen_pokemon auto & pokemon) {
 	auto const species = pokemon.species();
 	auto const level = pokemon.level();
 	auto const include_attack = has_physical_move(pokemon);
@@ -103,14 +103,13 @@ void optimize_pokemon_evs(any_seen_pokemon auto & pokemon, std::mt19937 & random
 		level,
 		pokemon.hidden_power(),
 		include_attack,
-		include_special_attack,
-		random_engine
+		include_special_attack
 	);
 	pokemon.set_ivs_and_evs(optimized);
 }
 
 template<Generation generation>
-auto predict_team_impl(StatsUser stats_user, std::mt19937 & random_engine, SeenTeam<generation> team) -> Team<generation> {
+auto predict_team_impl(StatsUser stats_user, SeenTeam<generation> team) -> Team<generation> {
 	update_estimate(stats_user, team);
 
 	predict_pokemon(stats_user, team);
@@ -118,7 +117,7 @@ auto predict_team_impl(StatsUser stats_user, std::mt19937 & random_engine, SeenT
 		predict_moves(stats_user, pokemon);
 		predict_item(stats_user, pokemon);
 		predict_ability(stats_user, pokemon);
-		optimize_pokemon_evs(pokemon, random_engine);
+		optimize_pokemon_evs(pokemon);
 	}
 	// TODO: This isn't right
 	team.pokemon().set_ability_to_base_ability();
@@ -126,7 +125,7 @@ auto predict_team_impl(StatsUser stats_user, std::mt19937 & random_engine, SeenT
 }
 
 #define INSTANTIATE(generation) \
-	template auto predict_team_impl(StatsUser stats_user, std::mt19937 & random_engine, SeenTeam<generation> team) -> Team<generation>
+	template auto predict_team_impl(StatsUser stats_user, SeenTeam<generation> team) -> Team<generation>
 
 TM_FOR_EACH_GENERATION(INSTANTIATE);
 

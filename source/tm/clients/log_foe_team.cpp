@@ -55,7 +55,7 @@ export auto log_foe_team(UsageStats const & usage_stats, any_seen_team auto cons
 		return;
 	}
 	auto const path = generate_team_file_name(random_engine, *maybe_directory, write_team.extension);
-	auto const team = most_likely_team(usage_stats, random_engine, foe_team);
+	auto const team = most_likely_team(usage_stats, foe_team);
 	write_team.function(GenerationGeneric<Team>(team), path);
 }
 

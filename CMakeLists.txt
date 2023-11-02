@@ -235,7 +235,7 @@ target_sources(tm_common PUBLIC
 		source/tm/team_predictor/ev_optimizer/defensive.cpp
 		source/tm/team_predictor/ev_optimizer/ev_optimizer.cpp
 		source/tm/team_predictor/ev_optimizer/offensive.cpp
-		source/tm/team_predictor/ev_optimizer/pad_random_evs.cpp
+		source/tm/team_predictor/ev_optimizer/pad_evs.cpp
 		source/tm/team_predictor/ev_optimizer/possible_optimized_ivs.cpp
 		source/tm/team_predictor/ev_optimizer/speed.cpp
 	
@@ -585,6 +585,8 @@ target_sources(tm_test PRIVATE
 		source/tm/test/stat/calculate_ivs_and_evs.cpp
 
 		source/tm/test/status/status.cpp
+		
+		source/tm/test/team_predictor/ev_optimizer/pad_evs.cpp
 
 		source/tm/test/can_execute_move.cpp
 		source/tm/test/critical_hit_probability.cpp

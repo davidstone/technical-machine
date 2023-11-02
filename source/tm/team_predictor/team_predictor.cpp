@@ -22,21 +22,21 @@ import std_module;
 namespace technicalmachine {
 
 template<Generation generation>
-auto predict_team_impl(StatsUser stats_user, std::mt19937 & random_engine, SeenTeam<generation> team) -> Team<generation>;
+auto predict_team_impl(StatsUser stats_user, SeenTeam<generation> team) -> Team<generation>;
 
 #define EXTERN_INSTANTIATION(generation) \
-	extern template auto predict_team_impl(StatsUser stats_user, std::mt19937 & random_engine, SeenTeam<generation> team) -> Team<generation>
+	extern template auto predict_team_impl(StatsUser stats_user, SeenTeam<generation> team) -> Team<generation>
 
 TM_FOR_EACH_GENERATION(EXTERN_INSTANTIATION);
 
 export template<Generation generation>
-auto most_likely_team(UsageStats const & usage_stats, std::mt19937 & random_engine, SeenTeam<generation> team) -> Team<generation> {
-	return predict_team_impl(StatsUser(usage_stats), random_engine, team);
+auto most_likely_team(UsageStats const & usage_stats, SeenTeam<generation> team) -> Team<generation> {
+	return predict_team_impl(StatsUser(usage_stats), team);
 }
 
 export template<Generation generation>
 auto random_team(UsageStats const & usage_stats, std::mt19937 & random_engine, SeenTeam<generation> team = SeenTeam<generation>(max_pokemon_per_team)) -> Team<generation> {
-	return predict_team_impl(StatsUser(usage_stats, random_engine), random_engine, team);
+	return predict_team_impl(StatsUser(usage_stats, random_engine), team);
 }
 
 } // namespace technicalmachine

@@ -32,7 +32,6 @@ import tm.team_predictor.ev_optimizer.compute_minimal_spread;
 import tm.team_predictor.ev_optimizer.defensive;
 import tm.team_predictor.ev_optimizer.ev_optimizer;
 import tm.team_predictor.ev_optimizer.offensive;
-import tm.team_predictor.ev_optimizer.pad_random_evs;
 import tm.team_predictor.ev_optimizer.possible_optimized_ivs;
 import tm.team_predictor.ev_optimizer.speed;
 
@@ -68,11 +67,9 @@ TEST_CASE("Optimize already optimized EVs", "[EV Optimizer]") {
 	};
 	auto const base_stats = BaseStats(generation, species);
 	auto const stats = Stats<stat_style_for(generation)>(base_stats, level, ivs_and_evs);
-	auto random_engine = std::mt19937(std::random_device()());
 
 	CHECK(compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack) == ivs_and_evs);
-	CHECK(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
-	auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack, random_engine);
+	auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack);
 	CHECK(optimized == ivs_and_evs);
 }
 
@@ -148,8 +145,7 @@ TEST_CASE("Optimize EVs below level 100", "[EV Optimizer]") {
 			EV(128_bi)
 		)
 	};
-	auto random_engine = std::mt19937(std::random_device()());
-	[[maybe_unused]] auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack, random_engine);
+	[[maybe_unused]] auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack);
 }
 
 TEST_CASE("Optimize generation 2 EVs", "[EV Optimizer]") {
@@ -162,10 +158,8 @@ TEST_CASE("Optimize generation 2 EVs", "[EV Optimizer]") {
 	constexpr auto ivs_and_evs = default_combined_stats<generation>;
 	auto const base_stats = BaseStats(generation, species);
 	auto const stats = Stats<stat_style_for(generation)>(base_stats, level, ivs_and_evs);
-	auto random_engine = std::mt19937(std::random_device()());
 	CHECK(compute_minimal_spread(base_stats, stats, level, hidden_power, include_attack, include_special_attack) == ivs_and_evs);
-	CHECK(pad_random_evs(ivs_and_evs, include_attack, include_special_attack, random_engine) == ivs_and_evs);
-	auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack, random_engine);
+	auto const optimized = optimize_evs(ivs_and_evs, species, level, hidden_power, include_attack, include_special_attack);
 	CHECK(optimized == ivs_and_evs);
 }
 

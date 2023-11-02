@@ -223,7 +223,7 @@ export struct Parser {
 				return to_string(
 					style == Style::random ?
 						random_team(usage_stats, m_random_engine, std::move(seen_team)) :
-						most_likely_team(usage_stats, m_random_engine, std::move(seen_team))
+						most_likely_team(usage_stats, std::move(seen_team))
 				);
 			};
 			return constant_generation(generation, impl);

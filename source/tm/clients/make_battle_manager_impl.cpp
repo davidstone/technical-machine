@@ -282,7 +282,7 @@ struct BattleManagerImpl final : BattleManager {
 
 		log_team("AI", m_battle.ai());
 		log_team("Seen Foe", m_battle.foe());
-		auto const predicted = most_likely_team(m_usage_stats, m_random_engine, m_battle.foe());
+		auto const predicted = most_likely_team(m_usage_stats, m_battle.foe());
 		log_team("Predicted Foe", predicted);
 		m_analysis_logger << std::flush;
 
