@@ -21,7 +21,7 @@ using Manipulator = auto (*)(std::ostream &) -> std::ostream &;
 
 export struct AnalysisLogger {
 	struct none{};
-	explicit AnalysisLogger(none):
+	AnalysisLogger(none):
 		m_stream(std::make_unique<boost::iostreams::stream<boost::iostreams::null_sink>>(boost::iostreams::null_sink()))
 	{
 	}
