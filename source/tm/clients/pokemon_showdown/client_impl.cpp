@@ -110,18 +110,19 @@ private:
 		m_send_message(containers::concatenate<containers::string>(strings...));
 	}
 
+	auto send_challenge() -> void {
+		tv::visit(m_settings.style, tv::overload(
+			[&](SettingsFile::Ladder const & ladder) {
+				send_request_battle_start(ladder.format, "|/search "sv, ladder.format);
+			},
+			[&](SettingsFile::Challenge const & challenge) {
+				send_request_battle_start(challenge.format, "|/challenge "sv, challenge.user, ","sv, challenge.format);
+			},
+			[](SettingsFile::Accept const &) {}
+		));
+	}
+
 	auto handle_message(InMessage message) -> void {
-		auto send_challenge = [&]{
-			tv::visit(m_settings.style, tv::overload(
-				[&](SettingsFile::Ladder const & ladder) {
-					send_request_battle_start(ladder.format, "|/search "sv, ladder.format);
-				},
-				[&](SettingsFile::Challenge const & challenge) {
-					send_request_battle_start(challenge.format, "|/challenge "sv, challenge.user, ","sv, challenge.format);
-				},
-				[](SettingsFile::Accept const &) {}
-			));
-		};
 		if (m_battles.handle_message(m_all_usage_stats, message, m_send_message, send_challenge)) {
 			return;
 		}
