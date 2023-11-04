@@ -548,7 +548,7 @@ export struct BattleParser final : BattleInterface {
 		} else if (type == "t:") {
 			// message.remainder() == Seconds since 1970
 		} else if (type == "tie") {
-			m_battle_manager->complete();
+			m_completed = true;
 		} else if (type == "-transform") {
 			// message.remainder() == POKEMON|SPECIES
 		} else if (type == "turn") {
@@ -594,7 +594,7 @@ export struct BattleParser final : BattleInterface {
 			));
 		} else if (type == "win") {
 			[[maybe_unused]] auto const winning_username = message.pop();
-			m_battle_manager->complete();
+			m_completed = true;
 		} else {
 			std::cerr << "Received battle progress message of unknown type: " << type << ": " << message.remainder() << '\n';
 		}
@@ -605,7 +605,7 @@ export struct BattleParser final : BattleInterface {
 		return m_id;
 	}
 	auto completed() const -> BattleInterface::Complete final {
-		return m_battle_manager->completed() ? BattleInterface::Complete::finish : BattleInterface::Complete::none;
+		return m_completed ? BattleInterface::Complete::finish : BattleInterface::Complete::none;
 	}
 
 	auto team() const -> GenerationGeneric<Team> {
@@ -826,6 +826,7 @@ private:
 	bool m_ignore_next_cure_status = false;
 	bool m_replacing_fainted = false;
 	bool m_replacement_fainted_from_entry_hazards = false;
+	bool m_completed = false;
 };
 
 } // namespace technicalmachine::ps

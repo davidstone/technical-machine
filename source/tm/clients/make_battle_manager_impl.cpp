@@ -324,14 +324,6 @@ struct BattleManagerImpl final : BattleManager {
 		return containers::front(scored_moves).name;
 	}
 
-	auto complete() & -> void final {
-		m_completed = true;
-	}
-
-	auto completed() const -> bool final {
-		return m_completed;
-	}
-
 	auto correct_hp(bool const is_ai, VisibleHP const visible_hp, TeamIndex const team_index) & -> void final {
 		m_battle.correct_hp(is_ai, visible_hp, team_index);
 	}
@@ -429,8 +421,6 @@ private:
 	Evaluate<generation_> m_evaluate;
 	Battle<generation_> m_battle;
 	Depth m_depth;
-
-	bool m_completed = false;
 };
 
 // `usage_stats` must remain valid for the lifetime of the return value

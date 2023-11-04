@@ -66,9 +66,6 @@ export struct BattleManager {
 
 	virtual auto determine_action() & -> MoveName = 0;
 
-	virtual auto complete() & -> void = 0;
-	virtual auto completed() const -> bool = 0;
-
 	// For a correct implementation of a correct protocol, these functions have
 	// no effect.
 
