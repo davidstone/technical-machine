@@ -8,7 +8,7 @@ module;
 #include <std_module/prelude.hpp>
 #include <string_view>
 
-export module tm.clients.ps.chat;
+export module tm.clients.ps.handle_chat_message;
 
 import tm.clients.ps.inmessage;
 

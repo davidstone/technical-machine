@@ -14,7 +14,7 @@ export module tm.clients.ps.client_impl;
 import tm.clients.pl.write_team_file;
 
 import tm.clients.ps.battles;
-import tm.clients.ps.chat;
+import tm.clients.ps.handle_chat_message;
 import tm.clients.ps.inmessage;
 import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.send_message_function;

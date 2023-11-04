@@ -15,7 +15,7 @@ module tm.clients.ps.battle_factory;
 
 import tm.clients.ps.battle_interface;
 import tm.clients.ps.battle_parser;
-import tm.clients.ps.chat;
+import tm.clients.ps.handle_chat_message;
 import tm.clients.ps.inmessage;
 import tm.clients.ps.make_party;
 import tm.clients.ps.parse_generation_from_format;
