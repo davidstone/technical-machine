@@ -87,7 +87,7 @@ export struct ClientImpl {
 	{
 	}
 
-	void handle_messages(DelimitedBufferView<std::string_view> messages) {
+	auto handle_messages(DelimitedBufferView<std::string_view> messages) -> void {
 		auto const has_room = !messages.remainder().empty() and messages.remainder().front() == '>';
 		auto const room = has_room ? messages.pop().substr(1) : std::string_view{};
 		while (!messages.remainder().empty()) {
@@ -110,7 +110,7 @@ private:
 		m_send_message(containers::concatenate<containers::string>(strings...));
 	}
 
-	void handle_message(InMessage message) {
+	auto handle_message(InMessage message) -> void {
 		auto send_challenge = [&]{
 			tv::visit(m_settings.style, tv::overload(
 				[&](SettingsFile::Ladder const & ladder) {
@@ -192,15 +192,15 @@ private:
 		}
 	}
 
-	void send_channel_message(std::string_view const channel, std::string_view const message) {
+	auto send_channel_message(std::string_view const channel, std::string_view const message) -> void {
 		m_send_message(containers::concatenate<containers::string>(channel, "|/msg "sv, message));
 	}
 
-	void join_channel(std::string_view const channel) {
+	auto join_channel(std::string_view const channel) -> void {
 		m_send_message(containers::concatenate<containers::string>("|/join "sv, channel));
 	}
 
-	void authenticate(std::string_view const challstr) {
+	auto authenticate(std::string_view const challstr) -> void {
 		// In theory, if we ever support session cookies, make HTTP GET:
 		// http://play.pokemonshowdown.com/action.php?act=upkeep&challstr=CHALLSTR
 		// Otherwise, make HTTP POST: http://play.pokemonshowdown.com/action.php
