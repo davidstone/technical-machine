@@ -85,9 +85,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 					INFO(next);
 					battles.handle_message(
 						all_usage_stats,
-						ps::InMessage(room, next),
-						[](std::string_view) {},
-						[] {}
+						ps::InMessage(room, next)
 					);
 				}
 			}

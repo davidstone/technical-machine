@@ -13,6 +13,7 @@ export module tm.clients.ps.client_impl;
 
 import tm.clients.pl.write_team_file;
 
+import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battles;
 import tm.clients.ps.handle_chat_message;
 import tm.clients.ps.inmessage;
@@ -122,8 +123,30 @@ private:
 		));
 	}
 
+	auto handle_battle_message(InMessage const message) -> bool {
+		auto const result = m_battles.handle_message(m_all_usage_stats, message);
+		if (!result) {
+			return false;
+		}
+		tv::visit(*result, tv::overload(
+			[](BattleContinues) {
+			},
+			[&](BattleResponseNeeded const & response_needed) {
+				m_send_message(response_needed.response);
+			},
+			[&](BattleStarted) {
+				m_send_message(containers::concatenate<containers::string>(message.room(), "|/timer on"sv));
+			},
+			[&](BattleFinished) {
+				m_send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), message.room()));
+				send_challenge();
+			}
+		));
+		return true;
+	}
+
 	auto handle_message(InMessage message) -> void {
-		if (m_battles.handle_message(m_all_usage_stats, message, m_send_message, send_challenge)) {
+		if (handle_battle_message(message)) {
 			return;
 		}
 		if (handle_chat_message(message)) {

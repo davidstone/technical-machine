@@ -3,6 +3,11 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+module;
+
+#include <std_module/prelude.hpp>
+#include <string_view>
+
 export module tm.clients.ps.battles;
 
 import tm.clients.ps.battle_interface;
@@ -12,7 +17,6 @@ import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battle_parser;
 import tm.clients.ps.inmessage;
 import tm.clients.ps.make_active;
-import tm.clients.ps.send_message_function;
 
 import tm.clients.write_team;
 
@@ -65,36 +69,32 @@ export struct Battles {
 		);
 	}
 
-	auto handle_message(AllUsageStats const & usage_stats, InMessage message, SendMessageFunction const send_message, auto challenge) -> bool {
+	auto handle_message(AllUsageStats const & usage_stats, InMessage const message) -> tv::optional<BattleMessageResult> {
 		auto matches_room = [&](auto const & element) {
 			return element.battle->id() == message.room();
 		};
 		auto const it = containers::find_if(m_container, matches_room);
 		if (it == containers::end(m_container)) {
-			return false;
+			return tv::none;
 		}
 		it->logger->log(message);
-		auto const result = it->battle->handle_message(message);
+		auto result = it->battle->handle_message(message);
 		tv::visit(result, tv::overload(
 			[](BattleContinues) {
 			},
-			[&](BattleResponseNeeded const & response_needed) {
-				send_message(response_needed.response);
+			[&](BattleResponseNeeded const &) {
 			},
 			[&](BattleStarted) {
 				auto const battle_log_directory = m_log_directory / it->battle->id();
 				make_active(usage_stats, AnalysisLogger(battle_log_directory), it->battle);
 				auto const & battle = static_cast<BattleParser const &>(*it->battle);
 				log_ai_team(battle.team(), battle_log_directory);
-				send_message(containers::concatenate<containers::string>(message.room(), "|/timer on"sv));
 			},
 			[&](BattleFinished) {
 				containers::erase(m_container, it);
-				send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), message.room()));
-				challenge();
 			}
 		));
-		return true;
+		return result;
 	}
 
 private:
