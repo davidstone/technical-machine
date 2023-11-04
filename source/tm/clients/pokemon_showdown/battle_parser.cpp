@@ -12,6 +12,7 @@ module;
 export module tm.clients.ps.battle_parser;
 
 import tm.clients.ps.battle_interface;
+import tm.clients.ps.battle_message_result;
 import tm.clients.ps.handle_chat_message;
 import tm.clients.ps.end_of_turn_state;
 import tm.clients.ps.inmessage;
@@ -73,13 +74,13 @@ namespace technicalmachine::ps {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-auto move_response_impl(std::string_view const id, bool const is_switch, auto const switch_move, auto const move_index) -> containers::string {
-	return containers::concatenate<containers::string>(
+auto move_response_impl(std::string_view const id, bool const is_switch, auto const switch_move, auto const move_index) -> BattleResponseNeeded {
+	return BattleResponseNeeded(containers::concatenate<containers::string>(
 		id,
 		is_switch ?
 			containers::concatenate_view("|/choose switch "sv, containers::to_string(switch_move())) :
 			containers::concatenate_view("|/choose move "sv, containers::to_string(move_index() + 1_bi))
-	);
+	));
 }
 
 export struct BattleParser final : BattleInterface {
@@ -107,9 +108,9 @@ export struct BattleParser final : BattleInterface {
 	{
 	}
 
-	auto handle_message(InMessage message) -> tv::optional<containers::string> final {
+	auto handle_message(InMessage message) -> BattleMessageResult final {
 		if (handle_chat_message(message)) {
-			return tv::none;
+			return BattleContinues();
 		}
 
 		// Documented at
@@ -143,25 +144,25 @@ export struct BattleParser final : BattleInterface {
 			auto const details = message.pop();
 			maybe_commit_switch(party);
 			return tv::visit(parse_effect_source(category, source), tv::overload(
-				[](MainEffect) -> tv::optional<containers::string> {
+				[](MainEffect) -> BattleMessageResult {
 					throw std::runtime_error("Unexpected -activate source MainEffect");
 				},
-				[](FromConfusion) -> tv::optional<containers::string> { return tv::none; },
-				[](FromEntryHazards) -> tv::optional<containers::string> { throw std::runtime_error("Unexpected -activate source FromEntryHazards"); },
-				[](FromMiscellaneous) -> tv::optional<containers::string> { return tv::none; },
-				[](FromMove) -> tv::optional<containers::string> { return tv::none; },
-				[](FromRecoil) -> tv::optional<containers::string> {
+				[](FromConfusion) -> BattleMessageResult { return BattleContinues(); },
+				[](FromEntryHazards) -> BattleMessageResult { throw std::runtime_error("Unexpected -activate source FromEntryHazards"); },
+				[](FromMiscellaneous) -> BattleMessageResult { return BattleContinues(); },
+				[](FromMove) -> BattleMessageResult { return BattleContinues(); },
+				[](FromRecoil) -> BattleMessageResult {
 					throw std::runtime_error("Unexpected -activate source FromRecoil");
 				},
-				[&](FromSubstitute) -> tv::optional<containers::string> {
+				[&](FromSubstitute) -> BattleMessageResult {
 					if (details == "[damage]") {
 						m_move_state.damage_substitute(other(party));
 						// TODO: Why
 						return handle_delayed_switch(other(party));
 					}
-					return tv::none;
+					return BattleContinues();
 				},
-				[&](Ability const ability) -> tv::optional<containers::string> {
+				[&](Ability const ability) -> BattleMessageResult {
 					set_value_on_pokemon(party, ability);
 					switch (ability) {
 						case Ability::Forewarn:
@@ -176,11 +177,11 @@ export struct BattleParser final : BattleInterface {
 						default:
 							break;
 					}
-					return tv::none;
+					return BattleContinues();
 				},
-				[&](Item const item) -> tv::optional<containers::string> {
+				[&](Item const item) -> BattleMessageResult {
 					set_value_on_pokemon(party, item);
-					return tv::none;
+					return BattleContinues();
 				}
 			));
 		} else if (type == "-anim") {
@@ -228,7 +229,7 @@ export struct BattleParser final : BattleInterface {
 		} else if (type == "-curestatus") {
 			if (m_ignore_next_cure_status) {
 				m_ignore_next_cure_status = false;
-				return tv::none;
+				return BattleContinues();
 			}
 			auto const party = party_from_player_id(message.pop());
 			auto const status = parse_status(message.pop());
@@ -548,7 +549,7 @@ export struct BattleParser final : BattleInterface {
 		} else if (type == "t:") {
 			// message.remainder() == Seconds since 1970
 		} else if (type == "tie") {
-			m_completed = true;
+			return BattleFinished();
 		} else if (type == "-transform") {
 			// message.remainder() == POKEMON|SPECIES
 		} else if (type == "turn") {
@@ -594,18 +595,15 @@ export struct BattleParser final : BattleInterface {
 			));
 		} else if (type == "win") {
 			[[maybe_unused]] auto const winning_username = message.pop();
-			m_completed = true;
+			return BattleFinished();
 		} else {
 			std::cerr << "Received battle progress message of unknown type: " << type << ": " << message.remainder() << '\n';
 		}
-		return tv::none;
+		return BattleContinues();
 	}
 
 	auto id() const -> std::string_view final {
 		return m_id;
-	}
-	auto completed() const -> BattleInterface::Complete final {
-		return m_completed ? BattleInterface::Complete::finish : BattleInterface::Complete::none;
 	}
 
 	auto team() const -> GenerationGeneric<Team> {
@@ -613,7 +611,7 @@ export struct BattleParser final : BattleInterface {
 	}
 
 private:
-	auto handle_damage(InMessage message) -> tv::optional<containers::string> {
+	auto handle_damage(InMessage message) -> BattleMessageResult {
 		auto const parsed = parse_set_hp_message(message);
 		auto move_damage = [&](Party const party) {
 			m_move_state.damage(party, parsed.hp);
@@ -621,14 +619,14 @@ private:
 		auto const party = parsed.party;
 		maybe_commit_switch(party);
 		auto response = tv::visit(parsed.source, tv::overload(
-			[&](MainEffect) -> tv::optional<containers::string> {
+			[&](MainEffect) -> BattleMessageResult {
 				if (m_move_state.move_damaged_self(party)) {
-					return tv::none;
+					return BattleContinues();
 				}
 				move_damage(other(party));
 				return handle_delayed_switch(other(party));
 			},
-			[&](FromConfusion) -> tv::optional<containers::string> {
+			[&](FromConfusion) -> BattleMessageResult {
 				// TODO: Technically you cannot select Hit Self, you just execute
 				// it. This matters for things like priority or determining whether
 				// Sucker Punch succeeds. As a workaround for now, say the user
@@ -638,26 +636,26 @@ private:
 				m_move_state.use_move(party, MoveName::Struggle);
 				m_move_state.use_move(party, MoveName::Hit_Self);
 				move_damage(party);
-				return tv::none;
+				return BattleContinues();
 			},
-			[&](FromEntryHazards) -> tv::optional<containers::string> {
+			[&](FromEntryHazards) -> BattleMessageResult {
 				if (parsed.hp.current.value() == 0_bi) {
 					m_replacement_fainted_from_entry_hazards = true;
 				}
-				return tv::none;
+				return BattleContinues();
 			},
-			[](FromMiscellaneous) -> tv::optional<containers::string> { return tv::none; },
-			[](FromMove) -> tv::optional<containers::string> { return tv::none; },
-			[&](FromRecoil) -> tv::optional<containers::string> {
+			[](FromMiscellaneous) -> BattleMessageResult { return BattleContinues(); },
+			[](FromMove) -> BattleMessageResult { return BattleContinues(); },
+			[&](FromRecoil) -> BattleMessageResult {
 				m_move_state.recoil(party);
-				return tv::none;
+				return BattleContinues();
 			},
-			[](FromSubstitute) -> tv::optional<containers::string> {
-				return tv::none;
+			[](FromSubstitute) -> BattleMessageResult {
+				return BattleContinues();
 			},
-			[&](auto const value) -> tv::optional<containers::string> {
+			[&](auto const value) -> BattleMessageResult {
 				set_value_on_pokemon(party, value);
-				return tv::none;
+				return BattleContinues();
 			}
 		));
 		queue_hp_or_status_checks(party, parsed.hp);
@@ -774,14 +772,14 @@ private:
 		}
 	}
 
-	auto move_response(MoveName const move) const -> containers::string {
+	auto move_response(MoveName const move) const -> BattleResponseNeeded {
 		// In doubles / triples we need to specify " TARGET" at the end for regular
 		// moves
 		auto switch_move = [&]{ return m_slot_memory[to_replacement(move)]; };
 		auto move_index = [&]{ return m_battle_manager->move_index(move); };
 		return move_response_impl(id(), is_switch(move), switch_move, move_index);
 	}
-	auto random_move_response() -> containers::string {
+	auto random_move_response() -> BattleResponseNeeded {
 		// In doubles / triples we need to specify " TARGET" at the end for regular
 		// moves
 		auto distribution = std::uniform_int_distribution<int>(0, static_cast<int>(maximum_possible_selections));
@@ -793,17 +791,17 @@ private:
 		return move_response_impl(id(), is_switch, switch_move, move_index);
 	}
 
-	auto handle_delayed_switch(Party const party) -> tv::optional<containers::string> {
+	auto handle_delayed_switch(Party const party) -> BattleMessageResult {
 		if (party != m_party) {
-			return tv::none;
+			return BattleContinues();
 		}
 		auto const executed_move = m_move_state.executed_move();
 		if (!executed_move) {
-			return tv::none;
+			return BattleContinues();
 		}
 		// TODO: What is the correct check here
 		if (!is_delayed_switch(*executed_move) or m_battle_manager->foe_is_fainted() or m_battle_manager->ai_is_on_last_pokemon()) {
-			return tv::none;
+			return BattleContinues();
 		}
 		maybe_use_previous_move();
 		return move_response(m_battle_manager->determine_action());
@@ -826,7 +824,6 @@ private:
 	bool m_ignore_next_cure_status = false;
 	bool m_replacing_fainted = false;
 	bool m_replacement_fainted_from_entry_hazards = false;
-	bool m_completed = false;
 };
 
 } // namespace technicalmachine::ps

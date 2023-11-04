@@ -5,23 +5,16 @@
 
 export module tm.clients.ps.battle_interface;
 
+import tm.clients.ps.battle_message_result;
 import tm.clients.ps.inmessage;
 
-import containers;
-import tv;
 import std_module;
 
 namespace technicalmachine::ps {
 
 export struct BattleInterface {
 	virtual auto id() const -> std::string_view = 0;
-	virtual auto handle_message(InMessage message) -> tv::optional<containers::string> = 0;
-	enum class Complete {
-		none,
-		start,
-		finish
-	};
-	virtual auto completed() const -> Complete = 0;
+	virtual auto handle_message(InMessage message) -> BattleMessageResult = 0;
 	virtual ~BattleInterface() = default;
 };
 

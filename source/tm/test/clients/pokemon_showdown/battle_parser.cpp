@@ -7,6 +7,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 import tm.clients.ps.battle_interface;
+import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battle_parser;
 import tm.clients.ps.inmessage;
 
@@ -115,23 +116,35 @@ constexpr auto make_message_response(std::string_view const message) {
 	};
 }
 
-constexpr auto check_values(ps::BattleParser & parser, auto const & values) {
+constexpr auto check_values(ps::BattleParser & parser, auto const & values, bool const completes) {
+	bool completed = false;
 	for (auto const value : values) {
-		CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+		REQUIRE(!completed);
 		INFO(value.message);
-		auto const response = parser.handle_message(ps::InMessage(parser.id(), value.message));
-		if (response) {
-			UNSCOPED_INFO("*response: " << *response);
-		}
-		tv::visit(value.response, tv::overload(
-			[&](NoResponse) { CHECK(!response); },
-			[&](AnyResponse) { CHECK(static_cast<bool>(response)); },
-			[&](std::string_view const str) {
-				REQUIRE(static_cast<bool>(response));
-				CHECK(std::string_view(*response) == str);
+		auto const result = parser.handle_message(ps::InMessage(parser.id(), value.message));
+		tv::visit(result, value.response, tv::overload(
+			[](ps::BattleResponseNeeded const & r, NoResponse) {
+				FAIL_CHECK("Expected no response, got " << r.response);
+			},
+			[](ps::BattleResponseNeeded const &, AnyResponse) {
+			},
+			[](ps::BattleResponseNeeded const & r, std::string_view const str) {
+				CHECK(std::string_view(r.response) == str);
+			},
+			[&]<typename T>(T, NoResponse) {
+				completed = std::same_as<T, ps::BattleFinished>;
+			},
+			[&]<typename T>(T, AnyResponse) {
+				FAIL_CHECK("Expected response");
+				completed = std::same_as<T, ps::BattleFinished>;
+			},
+			[&]<typename T>(T, std::string_view const str) {
+				FAIL_CHECK("Expected response of " << str);
+				completed = std::same_as<T, ps::BattleFinished>;
 			}
 		));
 	}
+	CHECK(completed == completes);
 }
 
 auto make_known_one_pokemon_team() {
@@ -186,8 +199,7 @@ TEST_CASE("BattleParser Baton Pass no other Pokemon", "[Pokemon Showdown]") {
 		make_message_response("|t:|1"),
 		make_message_response("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 auto make_known_two_pokemon_baton_pass_team() {
@@ -232,8 +244,7 @@ TEST_CASE("BattleParser Baton Pass one other Pokemon moves first", "[Pokemon Sho
 		make_message_response("|t:|1"),
 		make_message_response("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle", "/choose switch 2"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 TEST_CASE("BattleParser Baton Pass one other Pokemon moves second", "[Pokemon Showdown]") {
@@ -255,8 +266,7 @@ TEST_CASE("BattleParser Baton Pass one other Pokemon moves second", "[Pokemon Sh
 		make_message_response("|upkeep"),
 		make_message_response("|turn|2", "/choose move 1"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 TEST_CASE("BattleParser replace fainted in turn", "[Pokemon Showdown]") {
@@ -279,8 +289,7 @@ TEST_CASE("BattleParser replace fainted in turn", "[Pokemon Showdown]") {
 		make_message_response("|upkeep"),
 		make_message_response("|turn|2", "/choose move 1"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 TEST_CASE("BattleParser replace fainted end of turn", "[Pokemon Showdown]") {
@@ -308,8 +317,7 @@ TEST_CASE("BattleParser replace fainted end of turn", "[Pokemon Showdown]") {
 		make_message_response("|switch|p1a: Smeargle|Smeargle|251/251"),
 		make_message_response("|turn|2", "/choose move 1"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 auto make_seen_spikes_team() {
@@ -402,8 +410,7 @@ TEST_CASE("BattleParser replace multiple fainted", "[Pokemon Showdown]") {
 		make_message_response("|upkeep"),
 		make_message_response("|turn|3", "/choose move 1"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 TEST_CASE("BattleParser switch faints from entry hazards before other moves", "[Pokemon Showdown]") {
@@ -462,8 +469,7 @@ TEST_CASE("BattleParser switch faints from entry hazards before other moves", "[
 		make_message_response("|upkeep"),
 		make_message_response("|turn|3", "/choose move 1"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 TEST_CASE("BattleParser lose", "[Pokemon Showdown]") {
@@ -482,8 +488,7 @@ TEST_CASE("BattleParser lose", "[Pokemon Showdown]") {
 		make_message_response("|"),
 		make_message_response("|win|obi"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::finish);
+	check_values(parser, values, true);
 }
 
 TEST_CASE("BattleParser generation 2 thaw", "[Pokemon Showdown]") {
@@ -528,8 +533,7 @@ TEST_CASE("BattleParser generation 2 thaw", "[Pokemon Showdown]") {
 		make_message_response("|-curestatus|p2a: Zapdos|frz|[msg]"),
 		make_message_response("|upkeep|"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 TEST_CASE("BattleParser generation 2 explosion double faint", "[Pokemon Showdown]") {
@@ -582,8 +586,7 @@ TEST_CASE("BattleParser generation 2 explosion double faint", "[Pokemon Showdown
 		make_message_response("|faint|p2a: Gengar"),
 		make_message_response("|faint|p1a: Jynx", "/choose switch 2"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 TEST_CASE("BattleParser shiny genderless Pokemon", "[Pokemon Showdown]") {
@@ -608,8 +611,7 @@ TEST_CASE("BattleParser shiny genderless Pokemon", "[Pokemon Showdown]") {
 		make_message_response("|t:|1"),
 		make_message_response("|switch|p2a: Raikou|Raikou, shiny|100/100"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 TEST_CASE("BattleParser Struggle", "[Pokemon Showdown]") {
@@ -663,8 +665,7 @@ TEST_CASE("BattleParser Struggle", "[Pokemon Showdown]") {
 		make_message_response("||"),
 		make_message_response("|upkeep|"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 TEST_CASE("BattleParser full paralysis", "[Pokemon Showdown]") {
@@ -708,8 +709,7 @@ TEST_CASE("BattleParser full paralysis", "[Pokemon Showdown]") {
 		make_message_response("|-heal|p1a: Hypno|141/278 par|[from] item: Leftovers"),
 		make_message_response("|upkeep|"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 TEST_CASE("BattleParser Pain Split", "[Pokemon Showdown]") {
@@ -746,8 +746,7 @@ TEST_CASE("BattleParser Pain Split", "[Pokemon Showdown]") {
 		make_message_response("|move|p1a: Misdreavus|Pain Split|p2a: Blissey"),
 		make_message_response("|-sethp|p2a: Blissey|46/100|[from] move: Pain Split|[silent]"),
 	};
-	check_values(parser, values);
-	CHECK(parser.completed() == ps::BattleInterface::Complete::none);
+	check_values(parser, values, false);
 }
 
 } // namespace

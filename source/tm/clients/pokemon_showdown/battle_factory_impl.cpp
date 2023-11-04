@@ -14,6 +14,7 @@ module;
 module tm.clients.ps.battle_factory;
 
 import tm.clients.ps.battle_interface;
+import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battle_parser;
 import tm.clients.ps.handle_chat_message;
 import tm.clients.ps.inmessage;
@@ -69,9 +70,9 @@ struct BattleFactoryImpl : BattleFactory {
 		return m_id;
 	}
 
-	auto handle_message(InMessage message) -> tv::optional<containers::string> final {
+	auto handle_message(InMessage message) -> BattleMessageResult final {
 		if (handle_chat_message(message)) {
-			return tv::none;
+			return BattleContinues();
 		}
 
 		// Documented at
@@ -131,6 +132,9 @@ struct BattleFactoryImpl : BattleFactory {
 				}
 				insert(m_foe_starter, std::move(parsed));
 			}
+			if (completed()) {
+				return BattleStarted();
+			}
 		} else if (type == "t:") {
 			// message.remainder() == time_t
 		} else if (type == "teampreview") {
@@ -152,18 +156,14 @@ struct BattleFactoryImpl : BattleFactory {
 		} else {
 			std::cerr << "Received battle setup message of unknown type: " << type << ": " << message.remainder() << '\n';
 		}
-		return tv::none;
+		return BattleContinues();
 	}
 
-	auto completed() const -> BattleInterface::Complete final {
-		// TODO: Handle NvN battles
-		return m_ai_switched_in and m_foe_starter ? BattleInterface::Complete::start : BattleInterface::Complete::none;
-	}
 	auto make(
 		AllUsageStats const & usage_stats,
 		AnalysisLogger analysis_logger
 	) && -> BattleParser final {
-		BOUNDED_ASSERT(completed() == BattleInterface::Complete::start);
+		BOUNDED_ASSERT(completed());
 		if (!m_team) {
 			throw std::runtime_error("Did not receive team");
 		}
@@ -219,6 +219,11 @@ struct BattleFactoryImpl : BattleFactory {
 	}
 
 private:
+	auto completed() const -> bool {
+		// TODO: Handle NvN battles
+		return m_ai_switched_in and m_foe_starter;
+	}
+
 	containers::string m_id;
 	containers::string m_username;
 	Evaluate<generation> m_evaluate;

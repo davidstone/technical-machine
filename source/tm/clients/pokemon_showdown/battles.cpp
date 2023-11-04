@@ -8,6 +8,7 @@ export module tm.clients.ps.battles;
 import tm.clients.ps.battle_interface;
 import tm.clients.ps.battle_factory;
 import tm.clients.ps.battle_logger;
+import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battle_parser;
 import tm.clients.ps.inmessage;
 import tm.clients.ps.make_active;
@@ -73,27 +74,26 @@ export struct Battles {
 			return false;
 		}
 		it->logger->log(message);
-		auto const response = it->battle->handle_message(message);
-		if (response) {
-			send_message(*response);
-		}
-		switch (it->battle->completed()) {
-			case BattleInterface::Complete::none:
-				break;
-			case BattleInterface::Complete::start: {
+		auto const result = it->battle->handle_message(message);
+		tv::visit(result, tv::overload(
+			[](BattleContinues) {
+			},
+			[&](BattleResponseNeeded const & response_needed) {
+				send_message(response_needed.response);
+			},
+			[&](BattleStarted) {
 				auto const battle_log_directory = m_log_directory / it->battle->id();
 				make_active(usage_stats, AnalysisLogger(battle_log_directory), it->battle);
 				auto const & battle = static_cast<BattleParser const &>(*it->battle);
 				log_ai_team(battle.team(), battle_log_directory);
 				send_message(containers::concatenate<containers::string>(message.room(), "|/timer on"sv));
-				break;
-			}
-			case BattleInterface::Complete::finish:
+			},
+			[&](BattleFinished) {
 				containers::erase(m_container, it);
 				send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), message.room()));
 				challenge();
-				break;
-		}
+			}
+		));
 		return true;
 	}
 

@@ -434,6 +434,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/battle_factory.cpp
 		source/tm/clients/pokemon_showdown/battle_interface.cpp
 		source/tm/clients/pokemon_showdown/battle_logger.cpp
+		source/tm/clients/pokemon_showdown/battle_message_result.cpp
 		source/tm/clients/pokemon_showdown/battle_parser.cpp
 		source/tm/clients/pokemon_showdown/battles.cpp
 		source/tm/clients/pokemon_showdown/client.cpp
