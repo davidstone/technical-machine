@@ -220,8 +220,6 @@ private:
 		m_send_message(containers::concatenate<containers::string>("|/trn "sv, m_settings.username, ",0,"sv, json.at("assertion").get<std::string_view>()));
 	}
 
-	DelimitedBufferView<std::string_view> read_message();
-
 	// https://github.com/llvm/llvm-project/issues/61065
 	//std::random_device m_rd;
 	std::mt19937 m_random_engine;
