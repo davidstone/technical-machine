@@ -55,14 +55,12 @@ struct BattleFactoryImpl : BattleFactory {
 		containers::string id_,
 		containers::string username,
 		Evaluate<generation> evaluate,
-		Depth depth,
-		std::mt19937 random_engine
+		Depth depth
 	):
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_evaluate(evaluate),
-		m_depth(depth),
-		m_random_engine(random_engine)
+		m_depth(depth)
 	{
 	}
 
@@ -207,8 +205,7 @@ struct BattleFactoryImpl : BattleFactory {
 				m_evaluate
 			}),
 			*m_party,
-			m_depth,
-			m_random_engine
+			m_depth
 		);
 	}
 	auto team() const -> GenerationGeneric<Team> final {
@@ -228,7 +225,6 @@ private:
 	containers::string m_username;
 	Evaluate<generation> m_evaluate;
 	Depth m_depth;
-	std::mt19937 m_random_engine;
 	tv::optional<KnownTeam<generation>> m_team;
 	tv::optional<Party> m_party;
 	tv::optional<containers::string> m_type; // singles, doubles, triples
@@ -242,8 +238,7 @@ auto make_battle_factory(
 	containers::string id,
 	containers::string username,
 	AllEvaluate evaluate,
-	Depth depth,
-	std::mt19937 random_engine
+	Depth depth
 ) -> std::unique_ptr<BattleFactory> {
 	auto const parsed_generation = parse_generation_from_format(id, "battle-gen");
 	auto make = [&]<Generation generation>(constant_gen_t<generation>) -> std::unique_ptr<BattleFactory> {
@@ -251,8 +246,7 @@ auto make_battle_factory(
 			std::move(id),
 			std::move(username),
 			evaluate.get<generation>(),
-			depth,
-			random_engine
+			depth
 		);
 	};
 	return constant_generation(parsed_generation, make);

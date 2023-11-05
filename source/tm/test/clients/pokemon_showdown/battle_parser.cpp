@@ -70,7 +70,6 @@ constexpr auto evaluate_settings = EvaluateSettings{
 
 template<Generation generation>
 auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::BattleParser {
-	auto random_device = std::random_device();
 	return ps::BattleParser(
 		AnalysisLogger(AnalysisLogger::none()),
 		battle_id,
@@ -84,8 +83,7 @@ auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::Batt
 			Evaluate<generation>(evaluate_settings),
 		}),
 		Party(0_bi),
-		Depth(1_bi, 0_bi),
-		std::mt19937(random_device())
+		Depth(1_bi, 0_bi)
 	);
 }
 

@@ -169,8 +169,7 @@ private:
 					containers::string(message.room()),
 					m_settings.username,
 					m_evaluate,
-					m_depth,
-					std::mt19937(std::random_device()())
+					m_depth
 				);
 			}
 		} else if (type == "nametaken") {
@@ -244,8 +243,6 @@ private:
 		m_send_message(containers::concatenate<containers::string>("|/trn "sv, m_settings.username, ",0,"sv, json.at("assertion").get<std::string_view>()));
 	}
 
-	// https://github.com/llvm/llvm-project/issues/61065
-	//std::random_device m_rd;
 	std::mt19937 m_random_engine;
 
 	AllUsageStats m_all_usage_stats;

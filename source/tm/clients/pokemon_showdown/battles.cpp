@@ -48,8 +48,7 @@ export struct Battles {
 		containers::string id,
 		containers::string username,
 		AllEvaluate evaluate,
-		Depth depth,
-		std::mt19937 random_engine
+		Depth depth
 	) -> void {
 		containers::lazy_push_back(
 			m_container,
@@ -61,8 +60,7 @@ export struct Battles {
 						std::move(id),
 						std::move(username),
 						evaluate,
-						depth,
-						std::move(random_engine)
+						depth
 					)
 				};
 			}

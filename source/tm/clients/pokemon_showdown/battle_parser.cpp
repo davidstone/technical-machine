@@ -67,6 +67,7 @@ import tm.weather;
 
 import bounded;
 import containers;
+import numeric_traits;
 import tv;
 import std_module;
 
@@ -74,14 +75,50 @@ namespace technicalmachine::ps {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-auto move_response_impl(std::string_view const id, bool const is_switch, auto const switch_move, auto const move_index) -> BattleResponseNeeded {
+using MoveIndex = decltype(containers::index_type<RegularMoves>() + 1_bi);
+using SwitchIndex = SlotMemory::Index;
+
+// In doubles / triples we need to specify " TARGET" at the end
+constexpr auto regular_move_response(std::string_view const id, MoveIndex const move_index) -> BattleResponseNeeded {
 	return BattleResponseNeeded(containers::concatenate<containers::string>(
 		id,
-		is_switch ?
-			containers::concatenate_view("|/choose switch "sv, containers::to_string(switch_move())) :
-			containers::concatenate_view("|/choose move "sv, containers::to_string(move_index() + 1_bi))
+		containers::concatenate_view("|/choose move "sv, containers::to_string(move_index))
 	));
 }
+
+constexpr auto switch_response(std::string_view const id, SwitchIndex const switch_index) -> BattleResponseNeeded {
+	return BattleResponseNeeded(containers::concatenate<containers::string>(
+		id,
+		containers::concatenate_view("|/choose switch "sv, containers::to_string(switch_index))
+	));
+}
+
+struct RandomMove {
+	constexpr auto next_response(std::string_view const id) -> BattleResponseNeeded {
+		return tv::visit(m_value, tv::overload(
+			[&](MoveIndex & index) {
+				auto const copy = index;
+				advance<SwitchIndex>(index);
+				return regular_move_response(id, copy);
+			},
+			[&](SwitchIndex & index) {
+				auto const copy = index;
+				advance<MoveIndex>(index);
+				return switch_response(id, copy);
+			}
+		));
+	}
+private:
+	template<typename OtherIndex, typename Index>
+	constexpr auto advance(Index & index) & -> void {
+		if (index == numeric_traits::max_value<Index>) {
+			m_value = OtherIndex(numeric_traits::min_value<OtherIndex>);
+		} else {
+			++index;
+		}
+	}
+	tv::variant<MoveIndex, SwitchIndex> m_value = MoveIndex(numeric_traits::min_value<MoveIndex>);
+};
 
 export struct BattleParser final : BattleInterface {
 	BattleParser(
@@ -91,8 +128,7 @@ export struct BattleParser final : BattleInterface {
 		UsageStats const & usage_stats,
 		GenerationGeneric<BattleManagerInputs> inputs,
 		Party party,
-		Depth const depth,
-		std::mt19937 random_engine
+		Depth const depth
 	):
 		m_slot_memory(tv::visit(inputs, [](auto const & i) { return i.teams.ai.size(); })),
 		m_battle_manager(make_battle_manager(
@@ -101,7 +137,6 @@ export struct BattleParser final : BattleInterface {
 			std::move(inputs),
 			depth
 		)),
-		m_random_engine(std::move(random_engine)),
 		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_party(party)
@@ -317,7 +352,7 @@ export struct BattleParser final : BattleInterface {
 			}
 		} else if (type == "error") {
 			if (message.remainder() != "[Invalid choice] There's nothing to choose") {
-				return random_move_response();
+				return m_random_move.next_response(id());
 			}
 		} else if (type == "-fail") {
 	#if 0
@@ -773,22 +808,9 @@ private:
 	}
 
 	auto move_response(MoveName const move) const -> BattleResponseNeeded {
-		// In doubles / triples we need to specify " TARGET" at the end for regular
-		// moves
-		auto switch_move = [&]{ return m_slot_memory[to_replacement(move)]; };
-		auto move_index = [&]{ return m_battle_manager->move_index(move); };
-		return move_response_impl(id(), is_switch(move), switch_move, move_index);
-	}
-	auto random_move_response() -> BattleResponseNeeded {
-		// In doubles / triples we need to specify " TARGET" at the end for regular
-		// moves
-		auto distribution = std::uniform_int_distribution<int>(0, static_cast<int>(maximum_possible_selections));
-		auto const result = distribution(m_random_engine);
-
-		auto switch_move = [=]{ return bounded::assume_in_range<TeamIndex>(result - max_moves_per_pokemon); };
-		auto move_index = [=]{ return bounded::assume_in_range<containers::index_type<RegularMoves>>(result); };
-		auto const is_switch = result >= max_moves_per_pokemon;
-		return move_response_impl(id(), is_switch, switch_move, move_index);
+		return is_switch(move) ?
+			switch_response(id(), m_slot_memory[to_replacement(move)]) :
+			regular_move_response(id(), m_battle_manager->move_index(move) + 1_bi);
 	}
 
 	auto handle_delayed_switch(Party const party) -> BattleMessageResult {
@@ -809,7 +831,7 @@ private:
 
 	SlotMemory m_slot_memory;
 	std::unique_ptr<BattleManager> m_battle_manager;
-	std::mt19937 m_random_engine;
+	RandomMove m_random_move;
 
 	containers::string m_id;
 	containers::string m_username;

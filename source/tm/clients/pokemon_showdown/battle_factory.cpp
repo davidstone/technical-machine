@@ -35,8 +35,7 @@ export auto make_battle_factory(
 	containers::string id,
 	containers::string username,
 	AllEvaluate evaluate,
-	Depth depth,
-	std::mt19937 random_engine
+	Depth depth
 ) -> std::unique_ptr<BattleFactory>;
 
 } // namespace technicalmachine::ps
