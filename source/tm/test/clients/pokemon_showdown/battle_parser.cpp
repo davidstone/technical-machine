@@ -114,7 +114,7 @@ constexpr auto make_message_response(std::string_view const message) {
 	};
 }
 
-constexpr auto check_values(ps::BattleParser & parser, auto const & values, bool const completes) {
+constexpr auto check_values(ps::BattleParser & parser, std::span<MessageResponse const> const values, bool const completes) {
 	bool completed = false;
 	for (auto const value : values) {
 		REQUIRE(!completed);
