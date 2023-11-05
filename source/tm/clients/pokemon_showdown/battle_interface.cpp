@@ -13,7 +13,6 @@ import std_module;
 namespace technicalmachine::ps {
 
 export struct BattleInterface {
-	virtual auto id() const -> std::string_view = 0;
 	virtual auto handle_message(InMessage message) -> BattleMessageResult = 0;
 	virtual ~BattleInterface() = default;
 };

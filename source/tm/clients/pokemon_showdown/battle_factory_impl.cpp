@@ -19,7 +19,6 @@ import tm.clients.ps.battle_parser;
 import tm.clients.ps.handle_chat_message;
 import tm.clients.ps.inmessage;
 import tm.clients.ps.make_party;
-import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.parse_switch;
 import tm.clients.ps.parse_team;
 import tm.clients.ps.validate_generation;
@@ -52,20 +51,14 @@ using namespace std::string_view_literals;
 template<Generation generation>
 struct BattleFactoryImpl : BattleFactory {
 	BattleFactoryImpl(
-		containers::string id_,
 		containers::string username,
 		Evaluate<generation> evaluate,
 		Depth depth
 	):
-		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_evaluate(evaluate),
 		m_depth(depth)
 	{
-	}
-
-	auto id() const -> std::string_view final {
-		return m_id;
 	}
 
 	auto handle_message(InMessage message) -> BattleMessageResult final {
@@ -197,7 +190,6 @@ struct BattleFactoryImpl : BattleFactory {
 
 		return BattleParser(
 			std::move(analysis_logger),
-			std::move(m_id),
 			std::move(m_username),
 			usage_stats[generation],
 			GenerationGeneric<BattleManagerInputs>(BattleManagerInputs<generation>{
@@ -221,7 +213,6 @@ private:
 		return m_ai_switched_in and m_foe_starter;
 	}
 
-	containers::string m_id;
 	containers::string m_username;
 	Evaluate<generation> m_evaluate;
 	Depth m_depth;
@@ -235,21 +226,19 @@ private:
 };
 
 auto make_battle_factory(
-	containers::string id,
+	Generation const runtime_generation,
 	containers::string username,
 	AllEvaluate evaluate,
 	Depth depth
 ) -> std::unique_ptr<BattleFactory> {
-	auto const parsed_generation = parse_generation_from_format(id, "battle-gen");
 	auto make = [&]<Generation generation>(constant_gen_t<generation>) -> std::unique_ptr<BattleFactory> {
 		return std::make_unique<BattleFactoryImpl<generation>>(
-			std::move(id),
 			std::move(username),
 			evaluate.get<generation>(),
 			depth
 		);
 	};
-	return constant_generation(parsed_generation, make);
+	return constant_generation(runtime_generation, make);
 }
 
 } // namespace technicalmachine::ps

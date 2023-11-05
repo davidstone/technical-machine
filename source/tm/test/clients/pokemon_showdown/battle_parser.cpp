@@ -58,8 +58,6 @@ auto get_usage_stats() -> UsageStats const & {
 	return result;
 }
 
-constexpr auto battle_id = "battle-id"sv;
-
 constexpr auto evaluate_settings = EvaluateSettings{
 	.hp = 1024_bi,
 	.hidden = 80_bi,
@@ -72,7 +70,6 @@ template<Generation generation>
 auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::BattleParser {
 	return ps::BattleParser(
 		AnalysisLogger(AnalysisLogger::none()),
-		battle_id,
 		"Technical Machine",
 		get_usage_stats<generation>(),
 		GenerationGeneric<BattleManagerInputs>(BattleManagerInputs<generation>{
@@ -109,7 +106,7 @@ constexpr auto check_values(ps::BattleParser & parser, std::span<MessageResponse
 	for (auto const value : values) {
 		REQUIRE(!completed);
 		INFO(value.message);
-		auto const result = parser.handle_message(ps::InMessage(parser.id(), value.message));
+		auto const result = parser.handle_message(ps::InMessage("battle-id"sv, value.message));
 		tv::visit(result, value.response, tv::overload(
 			[](bounded::bounded_integer auto const received_index, NoResponse) {
 				FAIL_CHECK("Expected no response, got " << as_string(received_index));
@@ -164,15 +161,6 @@ auto make_seen_trap_team() {
 	));
 	pokemon.set_initial_ability(Ability::Arena_Trap);
 	return team;
-}
-
-TEST_CASE("BattleParser has right ID", "[Pokemon Showdown]") {
-	auto parser = make_parser(
-		make_known_one_pokemon_team(),
-		make_seen_trap_team()
-	);
-
-	CHECK(parser.id() == battle_id);
 }
 
 TEST_CASE("BattleParser Baton Pass no other Pokemon", "[Pokemon Showdown]") {

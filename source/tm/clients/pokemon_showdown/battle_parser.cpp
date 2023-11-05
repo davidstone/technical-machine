@@ -103,7 +103,6 @@ private:
 export struct BattleParser final : BattleInterface {
 	BattleParser(
 		AnalysisLogger analysis_logger,
-		containers::string id_,
 		containers::string username,
 		UsageStats const & usage_stats,
 		GenerationGeneric<BattleManagerInputs> inputs,
@@ -117,7 +116,6 @@ export struct BattleParser final : BattleInterface {
 			std::move(inputs),
 			depth
 		)),
-		m_id(std::move(id_)),
 		m_username(std::move(username)),
 		m_party(party)
 	{
@@ -617,10 +615,6 @@ export struct BattleParser final : BattleInterface {
 		return BattleContinues();
 	}
 
-	auto id() const -> std::string_view final {
-		return m_id;
-	}
-
 	auto team() const -> GenerationGeneric<Team> {
 		return m_battle_manager->team();
 	}
@@ -813,7 +807,6 @@ private:
 	std::unique_ptr<BattleManager> m_battle_manager;
 	RandomMove m_random_move;
 
-	containers::string m_id;
 	containers::string m_username;
 
 	Party m_party;

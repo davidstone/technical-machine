@@ -17,6 +17,7 @@ import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battle_parser;
 import tm.clients.ps.inmessage;
 import tm.clients.ps.make_active;
+import tm.clients.ps.parse_generation_from_format;
 
 import tm.clients.write_team;
 
@@ -50,26 +51,24 @@ export struct Battles {
 		AllEvaluate evaluate,
 		Depth depth
 	) -> void {
-		containers::lazy_push_back(
+		auto battle_logger = std::make_unique<BattleLogger>(m_log_directory / std::string_view(id), id);
+		auto battle_factory = make_battle_factory(
+			parse_generation_from_format(id, "battle-gen"),
+			std::move(username),
+			evaluate,
+			depth
+		);
+		containers::emplace_back(
 			m_container,
-			[&] {
-				auto battle_logger = std::make_unique<BattleLogger>(m_log_directory / std::string_view(id), id);
-				return Element{
-					std::move(battle_logger),
-					make_battle_factory(
-						std::move(id),
-						std::move(username),
-						evaluate,
-						depth
-					)
-				};
-			}
+			std::move(id),
+			std::move(battle_logger),
+			std::move(battle_factory)
 		);
 	}
 
 	auto handle_message(AllUsageStats const & usage_stats, InMessage const message) -> tv::optional<BattleMessageResult> {
 		auto matches_room = [&](auto const & element) {
-			return element.battle->id() == message.room();
+			return element.id == message.room();
 		};
 		auto const it = containers::find_if(m_container, matches_room);
 		if (it == containers::end(m_container)) {
@@ -81,7 +80,7 @@ export struct Battles {
 			[](auto) {
 			},
 			[&](BattleStarted) {
-				auto const battle_log_directory = m_log_directory / it->battle->id();
+				auto const battle_log_directory = m_log_directory / std::string_view(it->id);
 				make_active(usage_stats, AnalysisLogger(battle_log_directory), it->battle);
 				auto const & battle = static_cast<BattleParser const &>(*it->battle);
 				log_ai_team(battle.team(), battle_log_directory);
@@ -95,6 +94,7 @@ export struct Battles {
 
 private:
 	struct Element {
+		containers::string id;
 		// Must be `unique_ptr` because `ofstream` is not nothrow movable
 		std::unique_ptr<BattleLogger> logger;
 		std::unique_ptr<BattleInterface> battle;

@@ -18,7 +18,6 @@ import tm.generation;
 import tm.team;
 
 import containers;
-import tv;
 import std_module;
 
 namespace technicalmachine::ps {
@@ -32,7 +31,7 @@ export struct BattleFactory : BattleInterface {
 };
 
 export auto make_battle_factory(
-	containers::string id,
+	Generation generation,
 	containers::string username,
 	AllEvaluate evaluate,
 	Depth depth
