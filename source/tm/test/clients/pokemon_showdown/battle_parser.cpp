@@ -89,29 +89,19 @@ auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::Batt
 
 struct NoResponse{};
 struct AnyResponse{};
-using Response = tv::variant<NoResponse, AnyResponse, containers::string>;
+using ps::BattleResponseMove;
+using ps::BattleResponseSwitch;
+using Response = tv::variant<NoResponse, AnyResponse, BattleResponseMove, BattleResponseSwitch>;
 struct MessageResponse {
 	std::string_view message;
-	Response response;
+	Response response = NoResponse();
 };
 
-constexpr auto make_message_response(std::string_view const message, std::string_view const response) {
-	return MessageResponse{
-		message,
-		Response(containers::concatenate<containers::string>(battle_id, "|"sv, response))
-	};
+constexpr auto as_string(BattleResponseMove const index) -> containers::string {
+	return containers::concatenate<containers::string>("Use "sv, containers::to_string(index));
 }
-constexpr auto make_message_response(std::string_view const message, AnyResponse) {
-	return MessageResponse{
-		message,
-		Response(AnyResponse())
-	};
-}
-constexpr auto make_message_response(std::string_view const message) {
-	return MessageResponse{
-		message,
-		Response(NoResponse())
-	};
+constexpr auto as_string(BattleResponseSwitch const index) -> containers::string {
+	return containers::concatenate<containers::string>("Switch to "sv, containers::to_string(index));
 }
 
 constexpr auto check_values(ps::BattleParser & parser, std::span<MessageResponse const> const values, bool const completes) {
@@ -121,23 +111,23 @@ constexpr auto check_values(ps::BattleParser & parser, std::span<MessageResponse
 		INFO(value.message);
 		auto const result = parser.handle_message(ps::InMessage(parser.id(), value.message));
 		tv::visit(result, value.response, tv::overload(
-			[](ps::BattleResponseNeeded const & r, NoResponse) {
-				FAIL_CHECK("Expected no response, got " << r.response);
+			[](bounded::bounded_integer auto const received_index, NoResponse) {
+				FAIL_CHECK("Expected no response, got " << as_string(received_index));
 			},
-			[](ps::BattleResponseNeeded const &, AnyResponse) {
+			[](bounded::bounded_integer auto const, AnyResponse) {
 			},
-			[](ps::BattleResponseNeeded const & r, std::string_view const str) {
-				CHECK(std::string_view(r.response) == str);
+			[](bounded::bounded_integer auto const received_index, bounded::bounded_integer auto const index) {
+				CHECK(std::string_view(as_string(received_index)) == std::string_view(as_string(index)));
 			},
-			[&]<typename T>(T, NoResponse) {
+			[&]<typename T>(T const, NoResponse) {
 				completed = std::same_as<T, ps::BattleFinished>;
 			},
-			[&]<typename T>(T, AnyResponse) {
+			[&]<typename T>(T const, AnyResponse) {
 				FAIL_CHECK("Expected response");
 				completed = std::same_as<T, ps::BattleFinished>;
 			},
-			[&]<typename T>(T, std::string_view const str) {
-				FAIL_CHECK("Expected response of " << str);
+			[&]<typename T>(T const, bounded::bounded_integer auto const index) {
+				FAIL_CHECK("Expected response of " << as_string(index));
 				completed = std::same_as<T, ps::BattleFinished>;
 			}
 		));
@@ -192,10 +182,10 @@ TEST_CASE("BattleParser Baton Pass no other Pokemon", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", "/choose move 1"),
-		make_message_response("|"),
-		make_message_response("|t:|1"),
-		make_message_response("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle"),
+		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle"),
 	};
 	check_values(parser, values, false);
 }
@@ -237,10 +227,10 @@ TEST_CASE("BattleParser Baton Pass one other Pokemon moves first", "[Pokemon Sho
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", "/choose move 1"),
-		make_message_response("|"),
-		make_message_response("|t:|1"),
-		make_message_response("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle", "/choose switch 2"),
+		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle", BattleResponseSwitch(2_bi)),
 	};
 	check_values(parser, values, false);
 }
@@ -252,17 +242,17 @@ TEST_CASE("BattleParser Baton Pass one other Pokemon moves second", "[Pokemon Sh
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", "/choose move 1"),
-		make_message_response("|"),
-		make_message_response("|t:|1"),
-		make_message_response("|move|p2a: Dugtrio|Snore|p1a: Smeargle"),
-		make_message_response("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle", "/choose switch 2"),
-		make_message_response("|"),
-		make_message_response("|t:|2"),
-		make_message_response("|switch|p1a: Shedinja|Shedinja|1/1"),
-		make_message_response("|"),
-		make_message_response("|upkeep"),
-		make_message_response("|turn|2", "/choose move 1"),
+		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|move|p2a: Dugtrio|Snore|p1a: Smeargle"),
+		MessageResponse("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle", BattleResponseSwitch(2_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|2"),
+		MessageResponse("|switch|p1a: Shedinja|Shedinja|1/1"),
+		MessageResponse("|"),
+		MessageResponse("|upkeep"),
+		MessageResponse("|turn|2", BattleResponseMove(1_bi)),
 	};
 	check_values(parser, values, false);
 }
@@ -274,18 +264,18 @@ TEST_CASE("BattleParser replace fainted in turn", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", "/choose move 1"),
-		make_message_response("|"),
-		make_message_response("|t:|1"),
-		make_message_response("|move|p2a: Dugtrio|Earthquake|p1a: Smeargle"),
-		make_message_response("|-damage|p1a: Smeargle|0 fnt"),
-		make_message_response("|faint|p1a: Smeargle", "/choose switch 2"),
-		make_message_response("|"),
-		make_message_response("|t:|2"),
-		make_message_response("|switch|p1a: Shedinja|Shedinja|1/1"),
-		make_message_response("|"),
-		make_message_response("|upkeep"),
-		make_message_response("|turn|2", "/choose move 1"),
+		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|move|p2a: Dugtrio|Earthquake|p1a: Smeargle"),
+		MessageResponse("|-damage|p1a: Smeargle|0 fnt"),
+		MessageResponse("|faint|p1a: Smeargle", BattleResponseSwitch(2_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|2"),
+		MessageResponse("|switch|p1a: Shedinja|Shedinja|1/1"),
+		MessageResponse("|"),
+		MessageResponse("|upkeep"),
+		MessageResponse("|turn|2", BattleResponseMove(1_bi)),
 	};
 	check_values(parser, values, false);
 }
@@ -297,23 +287,23 @@ TEST_CASE("BattleParser replace fainted end of turn", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", "/choose move 1"),
-		make_message_response("|"),
-		make_message_response("|t:|1"),
-		make_message_response("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle", "/choose switch 2"),
-		make_message_response("|"),
-		make_message_response("|t:|2"),
-		make_message_response("|switch|p1a: Shedinja|Shedinja|1/1"),
-		make_message_response("|move|p2a: Dugtrio|Toxic|p1a: Shedinja"),
-		make_message_response("|-status|p1a: Shedinja|tox"),
-		make_message_response("|"),
-		make_message_response("|-damage|p1a: Shedinja|0 fnt|[from] psn"),
-		make_message_response("|faint|p1a: Shedinja"),
-		make_message_response("|upkeep", "/choose switch 2"),
-		make_message_response("|"),
-		make_message_response("|t:|3"),
-		make_message_response("|switch|p1a: Smeargle|Smeargle|251/251"),
-		make_message_response("|turn|2", "/choose move 1"),
+		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle", BattleResponseSwitch(2_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|2"),
+		MessageResponse("|switch|p1a: Shedinja|Shedinja|1/1"),
+		MessageResponse("|move|p2a: Dugtrio|Toxic|p1a: Shedinja"),
+		MessageResponse("|-status|p1a: Shedinja|tox"),
+		MessageResponse("|"),
+		MessageResponse("|-damage|p1a: Shedinja|0 fnt|[from] psn"),
+		MessageResponse("|faint|p1a: Shedinja"),
+		MessageResponse("|upkeep", BattleResponseSwitch(2_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|3"),
+		MessageResponse("|switch|p1a: Smeargle|Smeargle|251/251"),
+		MessageResponse("|turn|2", BattleResponseMove(1_bi)),
 	};
 	check_values(parser, values, false);
 }
@@ -376,37 +366,37 @@ TEST_CASE("BattleParser replace multiple fainted", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", AnyResponse()),
-		make_message_response("|"),
-		make_message_response("|t:|1"),
-		make_message_response("|move|p1a: Smeargle|Agility|p1a: Smeargle"),
-		make_message_response("|-boost|p1a: Smeargle|spe|2"),
-		make_message_response("|move|p2a: Smeargle|Spikes|p1a: Smeargle"),
-		make_message_response("|-sidestart|p1: Technical Machine|Spikes"),
-		make_message_response("|"),
-		make_message_response("|upkeep"),
-		make_message_response("|turn|2", AnyResponse()),
-		make_message_response("|"),
-		make_message_response("|t:|2"),
-		make_message_response("|-singleturn|p2a: Smeargle|move: Focus Punch"),
-		make_message_response("|move|p1a: Smeargle|Agility|p1a: Smeargle"),
-		make_message_response("|-boost|p1a: Smeargle|spe|2"),
-		make_message_response("|move|p2a: Smeargle|Focus Punch|p1a: Smeargle"),
-		make_message_response("|-supereffective|p1a: Smeargle"),
-		make_message_response("|-damage|p1a: Smeargle|0 fnt"),
-		make_message_response("|faint|p1a: Smeargle", AnyResponse()),
-		make_message_response("|"),
-		make_message_response("|t:|3"),
-		make_message_response("|switch|p1a: Shedinja|Shedinja|1/1"),
-		make_message_response("|-damage|p1a: Shedinja|0 fnt|[from] Spikes"),
-		make_message_response("|faint|p1a: Shedinja", "/choose switch 3"),
-		make_message_response("|"),
-		make_message_response("|t:|4"),
-		make_message_response("|switch|p1a: Chansey|Chansey|641/641"),
-		make_message_response("|-damage|p1a: Chansey|561/641|[from] Spikes"),
-		make_message_response("|"),
-		make_message_response("|upkeep"),
-		make_message_response("|turn|3", "/choose move 1"),
+		MessageResponse("|turn|1", AnyResponse()),
+		MessageResponse("|"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|move|p1a: Smeargle|Agility|p1a: Smeargle"),
+		MessageResponse("|-boost|p1a: Smeargle|spe|2"),
+		MessageResponse("|move|p2a: Smeargle|Spikes|p1a: Smeargle"),
+		MessageResponse("|-sidestart|p1: Technical Machine|Spikes"),
+		MessageResponse("|"),
+		MessageResponse("|upkeep"),
+		MessageResponse("|turn|2", AnyResponse()),
+		MessageResponse("|"),
+		MessageResponse("|t:|2"),
+		MessageResponse("|-singleturn|p2a: Smeargle|move: Focus Punch"),
+		MessageResponse("|move|p1a: Smeargle|Agility|p1a: Smeargle"),
+		MessageResponse("|-boost|p1a: Smeargle|spe|2"),
+		MessageResponse("|move|p2a: Smeargle|Focus Punch|p1a: Smeargle"),
+		MessageResponse("|-supereffective|p1a: Smeargle"),
+		MessageResponse("|-damage|p1a: Smeargle|0 fnt"),
+		MessageResponse("|faint|p1a: Smeargle", AnyResponse()),
+		MessageResponse("|"),
+		MessageResponse("|t:|3"),
+		MessageResponse("|switch|p1a: Shedinja|Shedinja|1/1"),
+		MessageResponse("|-damage|p1a: Shedinja|0 fnt|[from] Spikes"),
+		MessageResponse("|faint|p1a: Shedinja", BattleResponseSwitch(3_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|4"),
+		MessageResponse("|switch|p1a: Chansey|Chansey|641/641"),
+		MessageResponse("|-damage|p1a: Chansey|561/641|[from] Spikes"),
+		MessageResponse("|"),
+		MessageResponse("|upkeep"),
+		MessageResponse("|turn|3", BattleResponseMove(1_bi)),
 	};
 	check_values(parser, values, false);
 }
@@ -444,28 +434,28 @@ TEST_CASE("BattleParser switch faints from entry hazards before other moves", "[
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", AnyResponse()),
-		make_message_response("|"),
-		make_message_response("|t:|1"),
-		make_message_response("|move|p1a: Smeargle|Agility|p1a: Smeargle"),
-		make_message_response("|-boost|p1a: Smeargle|spe|2"),
-		make_message_response("|move|p2a: Smeargle|Spikes|p1a: Smeargle"),
-		make_message_response("|-sidestart|p1: Technical Machine|Spikes"),
-		make_message_response("|"),
-		make_message_response("|upkeep"),
-		make_message_response("|turn|2", AnyResponse()),
-		make_message_response("|"),
-		make_message_response("|t:|2"),
-		make_message_response("|switch|p1a: Shedinja|Shedinja|1/1"),
-		make_message_response("|-damage|p1a: Shedinja|0 fnt|[from] Spikes"),
-		make_message_response("|faint|p1a: Shedinja", "/choose switch 2"),
-		make_message_response("|"),
-		make_message_response("|t:|3"),
-		make_message_response("|switch|p1a: Smeargle|Smeargle|251/251"),
-		make_message_response("|-damage|p1a: Smeargle|220/251|[from] Spikes"),
-		make_message_response("|"),
-		make_message_response("|upkeep"),
-		make_message_response("|turn|3", "/choose move 1"),
+		MessageResponse("|turn|1", AnyResponse()),
+		MessageResponse("|"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|move|p1a: Smeargle|Agility|p1a: Smeargle"),
+		MessageResponse("|-boost|p1a: Smeargle|spe|2"),
+		MessageResponse("|move|p2a: Smeargle|Spikes|p1a: Smeargle"),
+		MessageResponse("|-sidestart|p1: Technical Machine|Spikes"),
+		MessageResponse("|"),
+		MessageResponse("|upkeep"),
+		MessageResponse("|turn|2", AnyResponse()),
+		MessageResponse("|"),
+		MessageResponse("|t:|2"),
+		MessageResponse("|switch|p1a: Shedinja|Shedinja|1/1"),
+		MessageResponse("|-damage|p1a: Shedinja|0 fnt|[from] Spikes"),
+		MessageResponse("|faint|p1a: Shedinja", BattleResponseSwitch(2_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|3"),
+		MessageResponse("|switch|p1a: Smeargle|Smeargle|251/251"),
+		MessageResponse("|-damage|p1a: Smeargle|220/251|[from] Spikes"),
+		MessageResponse("|"),
+		MessageResponse("|upkeep"),
+		MessageResponse("|turn|3", BattleResponseMove(1_bi)),
 	};
 	check_values(parser, values, false);
 }
@@ -477,14 +467,14 @@ TEST_CASE("BattleParser lose", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", "/choose move 1"),
-		make_message_response("|"),
-		make_message_response("|t:|1"),
-		make_message_response("|move|p2a: Dugtrio|Earthquake|p1a: Smeargle"),
-		make_message_response("|-damage|p1a: Smeargle|0 fnt"),
-		make_message_response("|faint|p1a: Smeargle"),
-		make_message_response("|"),
-		make_message_response("|win|obi"),
+		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|move|p2a: Dugtrio|Earthquake|p1a: Smeargle"),
+		MessageResponse("|-damage|p1a: Smeargle|0 fnt"),
+		MessageResponse("|faint|p1a: Smeargle"),
+		MessageResponse("|"),
+		MessageResponse("|win|obi"),
 	};
 	check_values(parser, values, true);
 }
@@ -519,17 +509,17 @@ TEST_CASE("BattleParser generation 2 thaw", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", "/choose move 1"),
-		make_message_response("|"),
-		make_message_response("|t:|1"),
-		make_message_response("|move|p1a: Gengar|Ice Punch|p2a: Zapdos"),
-		make_message_response("|-supereffective|p2a: Zapdos"),
-		make_message_response("|-damage|p2a: Zapdos|57/100"),
-		make_message_response("|-status|p2a: Zapdos|frz"),
-		make_message_response("|cant|p2a: Zapdos|frz"),
-		make_message_response("|"),
-		make_message_response("|-curestatus|p2a: Zapdos|frz|[msg]"),
-		make_message_response("|upkeep|"),
+		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|move|p1a: Gengar|Ice Punch|p2a: Zapdos"),
+		MessageResponse("|-supereffective|p2a: Zapdos"),
+		MessageResponse("|-damage|p2a: Zapdos|57/100"),
+		MessageResponse("|-status|p2a: Zapdos|frz"),
+		MessageResponse("|cant|p2a: Zapdos|frz"),
+		MessageResponse("|"),
+		MessageResponse("|-curestatus|p2a: Zapdos|frz|[msg]"),
+		MessageResponse("|upkeep|"),
 	};
 	check_values(parser, values, false);
 }
@@ -576,13 +566,13 @@ TEST_CASE("BattleParser generation 2 explosion double faint", "[Pokemon Showdown
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", AnyResponse()),
-		make_message_response("|"),
-		make_message_response("|t:|1"),
-		make_message_response("|move|p2a: Gengar|Explosion|p1a: Jynx"),
-		make_message_response("|-damage|p1a: Jynx|0 fnt"),
-		make_message_response("|faint|p2a: Gengar"),
-		make_message_response("|faint|p1a: Jynx", "/choose switch 2"),
+		MessageResponse("|turn|1", AnyResponse()),
+		MessageResponse("|"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|move|p2a: Gengar|Explosion|p1a: Jynx"),
+		MessageResponse("|-damage|p1a: Jynx|0 fnt"),
+		MessageResponse("|faint|p2a: Gengar"),
+		MessageResponse("|faint|p1a: Jynx", BattleResponseSwitch(2_bi)),
 	};
 	check_values(parser, values, false);
 }
@@ -604,10 +594,10 @@ TEST_CASE("BattleParser shiny genderless Pokemon", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", AnyResponse()),
-		make_message_response("|"),
-		make_message_response("|t:|1"),
-		make_message_response("|switch|p2a: Raikou|Raikou, shiny|100/100"),
+		MessageResponse("|turn|1", AnyResponse()),
+		MessageResponse("|"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|switch|p2a: Raikou|Raikou, shiny|100/100"),
 	};
 	check_values(parser, values, false);
 }
@@ -642,26 +632,26 @@ TEST_CASE("BattleParser Struggle", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", "/choose move 1"),
-		make_message_response("|"),
-		make_message_response("|t:|1"),
-		make_message_response("|move|p1a: Smeargle|Sketch||[still]"),
-		make_message_response("|-fail|p1a: Smeargle"),
-		make_message_response("|move|p2a: Smeargle|Splash|p2a: Smeargle"),
-		make_message_response("|-nothing"),
-		make_message_response("||"),
-		make_message_response("|upkeep|"),
-		make_message_response("|turn|2", "/choose move 1"),
-		make_message_response("|-activate|p1a: Smeargle|move: Struggle"),
-		make_message_response("||"),
-		make_message_response("|t:|1"),
-		make_message_response("|move|p1a: Smeargle|Struggle|p2a: Smeargle"),
-		make_message_response("|-damage|p2a: Smeargle|92/100"),
-		make_message_response("|-damage|p1a: Smeargle|246/251|[from] Recoil|[of] p2a: Smeargle"),
-		make_message_response("|move|p2a: Smeargle|Splash|p2a: Smeargle"),
-		make_message_response("|-nothing"),
-		make_message_response("||"),
-		make_message_response("|upkeep|"),
+		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|move|p1a: Smeargle|Sketch||[still]"),
+		MessageResponse("|-fail|p1a: Smeargle"),
+		MessageResponse("|move|p2a: Smeargle|Splash|p2a: Smeargle"),
+		MessageResponse("|-nothing"),
+		MessageResponse("||"),
+		MessageResponse("|upkeep|"),
+		MessageResponse("|turn|2", BattleResponseMove(1_bi)),
+		MessageResponse("|-activate|p1a: Smeargle|move: Struggle"),
+		MessageResponse("||"),
+		MessageResponse("|t:|1"),
+		MessageResponse("|move|p1a: Smeargle|Struggle|p2a: Smeargle"),
+		MessageResponse("|-damage|p2a: Smeargle|92/100"),
+		MessageResponse("|-damage|p1a: Smeargle|246/251|[from] Recoil|[of] p2a: Smeargle"),
+		MessageResponse("|move|p2a: Smeargle|Splash|p2a: Smeargle"),
+		MessageResponse("|-nothing"),
+		MessageResponse("||"),
+		MessageResponse("|upkeep|"),
 	};
 	check_values(parser, values, false);
 }
@@ -694,18 +684,18 @@ TEST_CASE("BattleParser full paralysis", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", "/choose move 1"),
-		make_message_response("|move|p1a: Hypno|Curse|p1a: Hypno"),
-		make_message_response("|move|p2a: Blissey|Thunder Wave|p1a: Hypno"),
-		make_message_response("|-status|p1a: Hypno|par"),
-		make_message_response("|upkeep|"),
-		make_message_response("|turn|2", "/choose move 1"),
-		make_message_response("|move|p2a: Blissey|Ice Beam|p1a: Hypno"),
-		make_message_response("|-damage|p1a: Hypno|124/278 par"),
-		make_message_response("|cant|p1a: Hypno|par"),
-		make_message_response("||"),
-		make_message_response("|-heal|p1a: Hypno|141/278 par|[from] item: Leftovers"),
-		make_message_response("|upkeep|"),
+		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|move|p1a: Hypno|Curse|p1a: Hypno"),
+		MessageResponse("|move|p2a: Blissey|Thunder Wave|p1a: Hypno"),
+		MessageResponse("|-status|p1a: Hypno|par"),
+		MessageResponse("|upkeep|"),
+		MessageResponse("|turn|2", BattleResponseMove(1_bi)),
+		MessageResponse("|move|p2a: Blissey|Ice Beam|p1a: Hypno"),
+		MessageResponse("|-damage|p1a: Hypno|124/278 par"),
+		MessageResponse("|cant|p1a: Hypno|par"),
+		MessageResponse("||"),
+		MessageResponse("|-heal|p1a: Hypno|141/278 par|[from] item: Leftovers"),
+		MessageResponse("|upkeep|"),
 	};
 	check_values(parser, values, false);
 }
@@ -738,11 +728,11 @@ TEST_CASE("BattleParser Pain Split", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		make_message_response("|turn|1", "/choose move 1"),
-		make_message_response("|move|p2a: Blissey|Ice Beam|p1a: Misdreavus"),
-		make_message_response("|-damage|p1a: Misdreavus|85/222"),
-		make_message_response("|move|p1a: Misdreavus|Pain Split|p2a: Blissey"),
-		make_message_response("|-sethp|p2a: Blissey|46/100|[from] move: Pain Split|[silent]"),
+		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|move|p2a: Blissey|Ice Beam|p1a: Misdreavus"),
+		MessageResponse("|-damage|p1a: Misdreavus|85/222"),
+		MessageResponse("|move|p1a: Misdreavus|Pain Split|p2a: Blissey"),
+		MessageResponse("|-sethp|p2a: Blissey|46/100|[from] move: Pain Split|[silent]"),
 	};
 	check_values(parser, values, false);
 }

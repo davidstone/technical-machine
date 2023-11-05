@@ -131,8 +131,19 @@ private:
 		tv::visit(*result, tv::overload(
 			[](BattleContinues) {
 			},
-			[&](BattleResponseNeeded const & response_needed) {
-				m_send_message(response_needed.response);
+			[&](BattleResponseMove const move_index) {
+				m_send_message(containers::concatenate<containers::string>(
+					message.room(),
+					"|/choose move "sv,
+					containers::to_string(move_index)
+				));
+			},
+			[&](BattleResponseSwitch const switch_index) {
+				m_send_message(containers::concatenate<containers::string>(
+					message.room(),
+					"|/choose switch "sv,
+					containers::to_string(switch_index)
+				));
 			},
 			[&](BattleStarted) {
 				m_send_message(containers::concatenate<containers::string>(message.room(), "|/timer on"sv));

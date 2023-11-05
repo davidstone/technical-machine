@@ -5,27 +5,25 @@
 
 export module tm.clients.ps.battle_message_result;
 
-import containers;
+import tm.move.max_moves_per_pokemon;
+
+import tm.pokemon.max_pokemon_per_team;
+
+import bounded;
 import tv;
 
 namespace technicalmachine::ps {
 
-export struct BattleContinues {
-};
-
-export struct BattleResponseNeeded {
-	containers::string response;
-};
-
-export struct BattleStarted {
-};
-
-export struct BattleFinished {
-};
+export struct BattleContinues {};
+export using BattleResponseMove = bounded::integer<1, bounded::normalize<max_moves_per_pokemon>>;
+export using BattleResponseSwitch = bounded::integer<1, bounded::normalize<max_pokemon_per_team>>;
+export struct BattleStarted {};
+export struct BattleFinished {};
 
 export using BattleMessageResult = tv::variant<
 	BattleContinues,
-	BattleResponseNeeded,
+	BattleResponseMove,
+	BattleResponseSwitch,
 	BattleStarted,
 	BattleFinished
 >;

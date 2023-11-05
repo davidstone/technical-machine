@@ -78,9 +78,7 @@ export struct Battles {
 		it->logger->log(message);
 		auto result = it->battle->handle_message(message);
 		tv::visit(result, tv::overload(
-			[](BattleContinues) {
-			},
-			[&](BattleResponseNeeded const &) {
+			[](auto) {
 			},
 			[&](BattleStarted) {
 				auto const battle_log_directory = m_log_directory / it->battle->id();

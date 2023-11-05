@@ -75,49 +75,29 @@ namespace technicalmachine::ps {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-using MoveIndex = decltype(containers::index_type<RegularMoves>() + 1_bi);
-using SwitchIndex = SlotMemory::Index;
-
-// In doubles / triples we need to specify " TARGET" at the end
-constexpr auto regular_move_response(std::string_view const id, MoveIndex const move_index) -> BattleResponseNeeded {
-	return BattleResponseNeeded(containers::concatenate<containers::string>(
-		id,
-		containers::concatenate_view("|/choose move "sv, containers::to_string(move_index))
-	));
-}
-
-constexpr auto switch_response(std::string_view const id, SwitchIndex const switch_index) -> BattleResponseNeeded {
-	return BattleResponseNeeded(containers::concatenate<containers::string>(
-		id,
-		containers::concatenate_view("|/choose switch "sv, containers::to_string(switch_index))
-	));
-}
+template<typename T>
+using OtherIndex = std::conditional_t<
+	std::same_as<T, BattleResponseMove>,
+	BattleResponseSwitch,
+	BattleResponseMove
+>;
 
 struct RandomMove {
-	constexpr auto next_response(std::string_view const id) -> BattleResponseNeeded {
+	constexpr auto next_response() -> BattleMessageResult {
 		return tv::visit(m_value, tv::overload(
-			[&](MoveIndex & index) {
+			[&]<typename Index>(Index & index) -> BattleMessageResult {
 				auto const copy = index;
-				advance<SwitchIndex>(index);
-				return regular_move_response(id, copy);
-			},
-			[&](SwitchIndex & index) {
-				auto const copy = index;
-				advance<MoveIndex>(index);
-				return switch_response(id, copy);
+				if (index == numeric_traits::max_value<Index>) {
+					m_value = OtherIndex<Index>(numeric_traits::min_value<OtherIndex<Index>>);
+				} else {
+					++index;
+				}
+				return copy;
 			}
 		));
 	}
 private:
-	template<typename OtherIndex, typename Index>
-	constexpr auto advance(Index & index) & -> void {
-		if (index == numeric_traits::max_value<Index>) {
-			m_value = OtherIndex(numeric_traits::min_value<OtherIndex>);
-		} else {
-			++index;
-		}
-	}
-	tv::variant<MoveIndex, SwitchIndex> m_value = MoveIndex(numeric_traits::min_value<MoveIndex>);
+	tv::variant<BattleResponseMove, BattleResponseSwitch> m_value = BattleResponseMove(numeric_traits::min_value<BattleResponseMove>);
 };
 
 export struct BattleParser final : BattleInterface {
@@ -352,7 +332,7 @@ export struct BattleParser final : BattleInterface {
 			}
 		} else if (type == "error") {
 			if (message.remainder() != "[Invalid choice] There's nothing to choose") {
-				return m_random_move.next_response(id());
+				return m_random_move.next_response();
 			}
 		} else if (type == "-fail") {
 	#if 0
@@ -807,10 +787,10 @@ private:
 		}
 	}
 
-	auto move_response(MoveName const move) const -> BattleResponseNeeded {
+	auto move_response(MoveName const move) const -> BattleMessageResult {
 		return is_switch(move) ?
-			switch_response(id(), m_slot_memory[to_replacement(move)]) :
-			regular_move_response(id(), m_battle_manager->move_index(move) + 1_bi);
+			BattleMessageResult(m_slot_memory[to_replacement(move)]) :
+			BattleMessageResult(m_battle_manager->move_index(move) + 1_bi);
 	}
 
 	auto handle_delayed_switch(Party const party) -> BattleMessageResult {
