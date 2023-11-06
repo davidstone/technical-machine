@@ -236,15 +236,13 @@ private:
 
 	auto authenticate(std::string_view const challstr) -> void {
 		// In theory, if we ever support session cookies, make HTTP GET:
-		// http://play.pokemonshowdown.com/action.php?act=upkeep&challstr=CHALLSTR
-		// Otherwise, make HTTP POST: http://play.pokemonshowdown.com/action.php
-		// with data act=login&name=USERNAME&pass=PASSWORD&challstr=CHALLSTR
+		// http://play.pokemonshowdown.com/api/upkeep?challstr=CHALLSTR
 		constexpr auto host = "play.pokemonshowdown.com";
 
 		auto const request = create_http_post(
 			host,
-			"/action.php",
-			containers::concatenate<containers::string>("act=login&name="sv, m_settings.username, "&pass="sv, m_settings.password, "&challstr="sv, challstr)
+			"/api/login",
+			containers::concatenate<containers::string>("name="sv, m_settings.username, "&pass="sv, m_settings.password, "&challstr="sv, challstr)
 		);
 		auto const response = m_authenticate(host, "80", request);
 
