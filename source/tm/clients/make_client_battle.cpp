@@ -3,10 +3,10 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.clients.make_battle_manager;
+export module tm.clients.make_client_battle;
 
-import tm.clients.battle_manager;
-import tm.clients.make_battle_manager_inputs;
+import tm.clients.client_battle;
+import tm.clients.client_battle_inputs;
 
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
@@ -21,11 +21,11 @@ import std_module;
 namespace technicalmachine {
 
 // `usage_stats` must remain valid for the lifetime of the return value
-export auto make_battle_manager(
+export auto make_client_battle(
 	AnalysisLogger analysis_logger,
 	UsageStats const & usage_stats,
-	GenerationGeneric<BattleManagerInputs> generic_inputs,
+	GenerationGeneric<ClientBattleInputs> generic_inputs,
 	Depth const depth
-) -> std::unique_ptr<BattleManager>;
+) -> std::unique_ptr<ClientBattle>;
 
 } // namespace technicalmachine

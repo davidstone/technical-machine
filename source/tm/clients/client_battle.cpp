@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.clients.battle_manager;
+export module tm.clients.client_battle;
 
 import tm.clients.move_result;
 import tm.clients.turn_count;
@@ -31,12 +31,12 @@ import std_module;
 
 namespace technicalmachine {
 
-// BattleManager is intended to be used in implementing clients. The goal is for
+// ClientBattle is intended to be used in implementing clients. The goal is for
 // there to be no undefined behavior when calling any of these functions to
 // ensure we have a secure interface with the outside world. All of these
 // functions will throw an exception if given data that is inconsistent overall.
-export struct BattleManager {
-	virtual ~BattleManager() = default;
+export struct ClientBattle {
+	virtual ~ClientBattle() = default;
 
 	virtual auto generation() const -> Generation = 0;
 	virtual auto team() const -> GenerationGeneric<Team> = 0;

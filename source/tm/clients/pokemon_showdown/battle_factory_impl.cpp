@@ -23,7 +23,7 @@ import tm.clients.ps.parse_switch;
 import tm.clients.ps.parse_team;
 import tm.clients.ps.validate_generation;
 
-import tm.clients.make_battle_manager_inputs;
+import tm.clients.client_battle_inputs;
 import tm.clients.party;
 import tm.clients.teams;
 
@@ -190,7 +190,7 @@ struct BattleFactoryImpl : BattleFactory {
 			std::move(analysis_logger),
 			std::move(m_username),
 			usage_stats[generation],
-			GenerationGeneric<BattleManagerInputs>(BattleManagerInputs<generation>{
+			GenerationGeneric<ClientBattleInputs>(ClientBattleInputs<generation>{
 				Teams<generation>{*m_team, make_foe_team()},
 				m_evaluate
 			}),

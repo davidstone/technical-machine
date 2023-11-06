@@ -396,13 +396,13 @@ target_sources(tm_clients PUBLIC
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
-		source/tm/clients/battle_manager.cpp
 		source/tm/clients/check_weathers_match.cpp
+		source/tm/clients/client_battle.cpp
+		source/tm/clients/client_battle_inputs.cpp
 		source/tm/clients/get_team.cpp
 		source/tm/clients/invalid_team_file_format.cpp
 		source/tm/clients/load_team_from_file.cpp
-		source/tm/clients/make_battle_manager.cpp
-		source/tm/clients/make_battle_manager_inputs.cpp
+		source/tm/clients/make_client_battle.cpp
 		source/tm/clients/move_result.cpp
 		source/tm/clients/party.cpp
 		source/tm/clients/should_accept_challenge.cpp
@@ -413,7 +413,7 @@ target_sources(tm_clients PUBLIC
 )
 target_sources(tm_clients PRIVATE
 	source/tm/clients/get_team_impl.cpp
-	source/tm/clients/make_battle_manager_impl.cpp
+	source/tm/clients/make_client_battle_impl.cpp
 )
 target_link_libraries(tm_clients
 	bounded

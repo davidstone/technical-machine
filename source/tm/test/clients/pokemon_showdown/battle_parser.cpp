@@ -11,7 +11,7 @@ import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battle_parser;
 import tm.clients.ps.inmessage;
 
-import tm.clients.make_battle_manager_inputs;
+import tm.clients.client_battle_inputs;
 import tm.clients.party;
 import tm.clients.teams;
 
@@ -72,7 +72,7 @@ auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::Batt
 		AnalysisLogger(AnalysisLogger::none()),
 		"Technical Machine",
 		get_usage_stats<generation>(),
-		GenerationGeneric<BattleManagerInputs>(BattleManagerInputs<generation>{
+		GenerationGeneric<ClientBattleInputs>(ClientBattleInputs<generation>{
 			Teams<generation>{
 				std::move(ai),
 				std::move(foe)

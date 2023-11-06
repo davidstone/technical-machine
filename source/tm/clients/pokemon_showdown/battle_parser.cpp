@@ -26,9 +26,9 @@ import tm.clients.ps.parse_switch;
 import tm.clients.ps.party_from_player_id;
 import tm.clients.ps.slot_memory;
 
-import tm.clients.battle_manager;
-import tm.clients.make_battle_manager;
-import tm.clients.make_battle_manager_inputs;
+import tm.clients.client_battle;
+import tm.clients.make_client_battle;
+import tm.clients.client_battle_inputs;
 import tm.clients.party;
 import tm.clients.turn_count;
 
@@ -105,12 +105,12 @@ export struct BattleParser final : BattleInterface {
 		AnalysisLogger analysis_logger,
 		containers::string username,
 		UsageStats const & usage_stats,
-		GenerationGeneric<BattleManagerInputs> inputs,
+		GenerationGeneric<ClientBattleInputs> inputs,
 		Party party,
 		Depth const depth
 	):
 		m_slot_memory(tv::visit(inputs, [](auto const & i) { return i.teams.ai.size(); })),
-		m_battle_manager(make_battle_manager(
+		m_client_battle(make_client_battle(
 			std::move(analysis_logger),
 			usage_stats,
 			std::move(inputs),
@@ -177,7 +177,7 @@ export struct BattleParser final : BattleInterface {
 					set_value_on_pokemon(party, ability);
 					switch (ability) {
 						case Ability::Forewarn:
-							m_battle_manager->active_has(
+							m_client_battle->active_has(
 								party != m_party,
 								from_string<MoveName>(details)
 							);
@@ -247,7 +247,7 @@ export struct BattleParser final : BattleInterface {
 			auto const source = parse_from_source(message.pop());
 			tv::visit(source, tv::overload(
 				[&](MainEffect) {
-					if (m_battle_manager->is_end_of_turn()) {
+					if (m_client_battle->is_end_of_turn()) {
 						if (status == StatusName::freeze) {
 							m_end_of_turn_state.thaw(party);
 						} else {
@@ -258,7 +258,7 @@ export struct BattleParser final : BattleInterface {
 					auto const move_name = m_move_state.executed_move();
 					auto const move_cured_status = move_name and (
 						m_move_state.party() == party or
-						m_battle_manager->cures_target_status(party == m_party, *move_name)
+						m_client_battle->cures_target_status(party == m_party, *move_name)
 					);
 					if (move_cured_status) {
 						m_move_state.status_from_move(party, StatusName::clear);
@@ -269,7 +269,7 @@ export struct BattleParser final : BattleInterface {
 								m_move_state.thaw(party);
 								break;
 							case StatusName::sleep:
-								m_move_state.awaken(party, m_battle_manager->generation());
+								m_move_state.awaken(party, m_client_battle->generation());
 								break;
 							default:
 								throw std::runtime_error("Spontaneously recovered from status");
@@ -339,16 +339,16 @@ export struct BattleParser final : BattleInterface {
 			auto const party = party_from_player_id(message.pop());
 			auto const from_entry_hazards = std::exchange(m_replacement_fainted_from_entry_hazards, false);
 			auto const requires_response =
-				m_battle_manager->generation() <= Generation::three and
+				m_client_battle->generation() <= Generation::three and
 				party == m_party and
-				!m_battle_manager->ai_is_on_last_pokemon() and
-				(!m_battle_manager->is_end_of_turn() or from_entry_hazards);
+				!m_client_battle->ai_is_on_last_pokemon() and
+				(!m_client_battle->is_end_of_turn() or from_entry_hazards);
 			if (from_entry_hazards or party != m_move_state.party()) {
 				maybe_use_previous_move();
 			}
 			if (requires_response) {
 				m_replacing_fainted = true;
-				return move_response(m_battle_manager->determine_action());
+				return move_response(m_client_battle->determine_action());
 			}
 		} else if (type == "-fieldactivate") {
 			// move: Perish Song
@@ -435,9 +435,9 @@ export struct BattleParser final : BattleInterface {
 				maybe_use_previous_move();
 			}
 			m_move_state.use_move(party, move);
-			if (party == m_party and move == MoveName::Baton_Pass and !m_battle_manager->ai_is_on_last_pokemon()) {
+			if (party == m_party and move == MoveName::Baton_Pass and !m_client_battle->ai_is_on_last_pokemon()) {
 				maybe_use_previous_move();
-				return move_response(m_battle_manager->determine_action());
+				return move_response(m_client_battle->determine_action());
 			}
 		} else if (type == "-mustrecharge") {
 			// After moves like Hyper Beam
@@ -567,8 +567,8 @@ export struct BattleParser final : BattleInterface {
 			maybe_use_previous_move();
 			m_replacement_fainted_from_entry_hazards = false;
 			auto const turn_count = bounded::to_integer<TurnCount>(message.pop());
-			m_battle_manager->begin_turn(turn_count);
-			return move_response(m_battle_manager->determine_action());
+			m_client_battle->begin_turn(turn_count);
+			return move_response(m_client_battle->determine_action());
 		} else if (type == "-unboost") {
 	#if 0
 			auto const pokemon = message.pop();
@@ -581,13 +581,13 @@ export struct BattleParser final : BattleInterface {
 			// ordering, so saying the user did or did not go first could mess
 			// up future code that attempts to determine relative speed.
 			bool const ai_went_first = end_of_turn_state.first_party == m_party;
-			m_battle_manager->end_turn(ai_went_first, end_of_turn_state.first.flags, end_of_turn_state.last.flags);
-			m_battle_manager->weather_is(end_of_turn_state.weather);
+			m_client_battle->end_turn(ai_went_first, end_of_turn_state.first.flags, end_of_turn_state.last.flags);
+			m_client_battle->weather_is(end_of_turn_state.weather);
 			try_correct_hp_and_status(ai_went_first, end_of_turn_state.first.hp, end_of_turn_state.first.status);
 			try_correct_hp_and_status(!ai_went_first, end_of_turn_state.last.hp, end_of_turn_state.last.status);
-			if (m_battle_manager->ai_is_fainted()) {
+			if (m_client_battle->ai_is_fainted()) {
 				m_replacing_fainted = true;
-				return move_response(m_battle_manager->determine_action());
+				return move_response(m_client_battle->determine_action());
 			}
 		} else if (type == "-weather") {
 			auto const weather = from_string<Weather>(message.pop());
@@ -614,7 +614,7 @@ export struct BattleParser final : BattleInterface {
 	}
 
 	auto team() const -> GenerationGeneric<Team> {
-		return m_battle_manager->team();
+		return m_client_battle->team();
 	}
 
 private:
@@ -682,7 +682,7 @@ private:
 		auto const data_is_for_ai = parsed.party == m_party;
 		auto const move = [&] {
 			if (data_is_for_ai) {
-				auto const result = m_battle_manager->ai_has(
+				auto const result = m_client_battle->ai_has(
 					parsed.species,
 					parsed.nickname,
 					parsed.level,
@@ -697,7 +697,7 @@ private:
 				}
 				return result;
 			} else {
-				return m_battle_manager->foe_has(
+				return m_client_battle->foe_has(
 					parsed.species,
 					parsed.nickname,
 					parsed.level,
@@ -712,9 +712,9 @@ private:
 	auto set_value_on_pokemon(Party const party, auto const value) -> void {
 		auto const for_ai = party == m_party;
 		if (auto const replacing = m_move_state.switch_index()) {
-			m_battle_manager->replacement_has(for_ai, *replacing, value);
+			m_client_battle->replacement_has(for_ai, *replacing, value);
 		} else {
-			m_battle_manager->active_has(for_ai, value);
+			m_client_battle->active_has(for_ai, value);
 		}
 	}
 
@@ -762,27 +762,27 @@ private:
 		}
 		auto & data = *maybe_data;
 		auto const data_is_for_ai = data.party == m_party;
-		m_battle_manager->use_move(data_is_for_ai, data.move, data.user_status_was_cleared); 
+		m_client_battle->use_move(data_is_for_ai, data.move, data.user_status_was_cleared); 
 		try_correct_hp_and_status(data_is_for_ai, data.user.hp, data.user.status);
 		try_correct_hp_and_status(!data_is_for_ai, data.other.hp, data.other.status);
 	}
 
 	auto try_correct_hp_and_status(bool const is_ai, tv::optional<VisibleHP> const hp, tv::optional<StatusName> const status, auto... maybe_index) -> void {
 		if (hp) {
-			m_battle_manager->correct_hp(is_ai, *hp, maybe_index...);
+			m_client_battle->correct_hp(is_ai, *hp, maybe_index...);
 			if (hp->current == CurrentVisibleHP(0_bi)) {
 				return;
 			}
 		}
 		if (status) {
-			m_battle_manager->correct_status(is_ai, *status, maybe_index...);
+			m_client_battle->correct_status(is_ai, *status, maybe_index...);
 		}
 	}
 
 	auto move_response(MoveName const move) const -> BattleMessageResult {
 		return is_switch(move) ?
 			BattleMessageResult(m_slot_memory[to_replacement(move)]) :
-			BattleMessageResult(m_battle_manager->move_index(move) + 1_bi);
+			BattleMessageResult(m_client_battle->move_index(move) + 1_bi);
 	}
 
 	auto handle_delayed_switch(Party const party) -> BattleMessageResult {
@@ -794,15 +794,15 @@ private:
 			return BattleContinues();
 		}
 		// TODO: What is the correct check here
-		if (!is_delayed_switch(*executed_move) or m_battle_manager->foe_is_fainted() or m_battle_manager->ai_is_on_last_pokemon()) {
+		if (!is_delayed_switch(*executed_move) or m_client_battle->foe_is_fainted() or m_client_battle->ai_is_on_last_pokemon()) {
 			return BattleContinues();
 		}
 		maybe_use_previous_move();
-		return move_response(m_battle_manager->determine_action());
+		return move_response(m_client_battle->determine_action());
 	}
 
 	SlotMemory m_slot_memory;
-	std::unique_ptr<BattleManager> m_battle_manager;
+	std::unique_ptr<ClientBattle> m_client_battle;
 	RandomMove m_random_move;
 
 	containers::string m_username;

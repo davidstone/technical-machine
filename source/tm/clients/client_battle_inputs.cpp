@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.clients.make_battle_manager_inputs;
+export module tm.clients.client_battle_inputs;
 
 import tm.clients.teams;
 
@@ -14,7 +14,7 @@ import tm.generation;
 namespace technicalmachine {
 
 export template<Generation generation>
-struct BattleManagerInputs {
+struct ClientBattleInputs {
 	Teams<generation> teams;
 	Evaluate<generation> evaluate;
 };

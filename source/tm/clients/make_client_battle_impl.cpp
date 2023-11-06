@@ -9,11 +9,11 @@ module;
 #include <iostream>
 #include <string_view>
 
-module tm.clients.make_battle_manager;
+module tm.clients.make_client_battle;
 
-import tm.clients.battle_manager;
+import tm.clients.client_battle;
 import tm.clients.check_weathers_match;
-import tm.clients.make_battle_manager_inputs;
+import tm.clients.client_battle_inputs;
 import tm.clients.move_result;
 import tm.clients.teams;
 import tm.clients.to_used_move;
@@ -130,8 +130,8 @@ private:
 };
 
 template<Generation generation_>
-struct BattleManagerImpl final : BattleManager {
-	BattleManagerImpl(
+struct ClientBattleImpl final : ClientBattle {
+	ClientBattleImpl(
 		AnalysisLogger analysis_logger,
 		UsageStats const & usage_stats,
 		Evaluate<generation_> evaluate,
@@ -424,14 +424,14 @@ private:
 };
 
 // `usage_stats` must remain valid for the lifetime of the return value
-auto make_battle_manager(
+auto make_client_battle(
 	AnalysisLogger analysis_logger,
 	UsageStats const & usage_stats,
-	GenerationGeneric<BattleManagerInputs> generic_inputs,
+	GenerationGeneric<ClientBattleInputs> generic_inputs,
 	Depth const depth
-) -> std::unique_ptr<BattleManager> {
-	return tv::visit(std::move(generic_inputs), [&]<Generation generation>(BattleManagerInputs<generation> && inputs) -> std::unique_ptr<BattleManager> {
-		return std::make_unique<BattleManagerImpl<generation>>(
+) -> std::unique_ptr<ClientBattle> {
+	return tv::visit(std::move(generic_inputs), [&]<Generation generation>(ClientBattleInputs<generation> && inputs) -> std::unique_ptr<ClientBattle> {
+		return std::make_unique<ClientBattleImpl<generation>>(
 			std::move(analysis_logger),
 			usage_stats,
 			inputs.evaluate,
