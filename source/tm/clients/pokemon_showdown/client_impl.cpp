@@ -45,8 +45,7 @@ import containers;
 import tv;
 import std_module;
 
-// See https://github.com/Zarel/Pokemon-Showdown/blob/master/protocol-doc.md
-// for the full protocol.
+// https://github.com/smogon/pokemon-showdown/blob/master/PROTOCOL.md
 
 namespace technicalmachine::ps {
 using namespace std::string_view_literals;

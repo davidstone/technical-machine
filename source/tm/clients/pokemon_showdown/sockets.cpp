@@ -3,9 +3,6 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-// See https://github.com/Zarel/Pokemon-Showdown/blob/master/protocol-doc.md
-// for the full protocol.
-
 module;
 
 #include <std_module/prelude.hpp>

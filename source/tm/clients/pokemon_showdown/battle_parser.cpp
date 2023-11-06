@@ -126,9 +126,7 @@ export struct BattleParser final : BattleInterface {
 			return BattleContinues();
 		}
 
-		// Documented at
-		// https://github.com/Zarel/Pokemon-Showdown/blob/master/PROTOCOL.md
-		// under the section "Battle progress"
+		// https://github.com/smogon/pokemon-showdown/blob/master/sim/SIM-PROTOCOL.md
 		auto const type = message.type();
 		if (type == "") {
 			maybe_use_previous_move();

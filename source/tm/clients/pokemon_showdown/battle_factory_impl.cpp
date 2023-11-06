@@ -66,9 +66,7 @@ struct BattleFactoryImpl : BattleFactory {
 			return BattleContinues();
 		}
 
-		// Documented at
-		// https://github.com/Zarel/Pokemon-Showdown/blob/master/PROTOCOL.md
-		// under the section "Battle Initialization"
+		// https://github.com/smogon/pokemon-showdown/blob/master/sim/SIM-PROTOCOL.md
 		auto const type = message.type();
 		if (type == "") {
 			// Unnecessary
