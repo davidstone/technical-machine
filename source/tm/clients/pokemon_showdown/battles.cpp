@@ -16,7 +16,6 @@ import tm.clients.ps.battle_logger;
 import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battle_parser;
 import tm.clients.ps.inmessage;
-import tm.clients.ps.make_active;
 import tm.clients.ps.parse_generation_from_format;
 
 import tm.clients.write_team;
@@ -49,14 +48,19 @@ export struct Battles {
 		containers::string id,
 		containers::string username,
 		AllEvaluate evaluate,
+		AllUsageStats const & all_usage_stats,
 		Depth depth
 	) -> void {
-		auto battle_logger = std::make_unique<BattleLogger>(m_log_directory / std::string_view(id), id);
+		auto const generation = parse_generation_from_format(id, "battle-gen");
+		auto const battle_log_directory = m_log_directory / std::string_view(id);
+		auto battle_logger = std::make_unique<BattleLogger>(battle_log_directory, id);
 		auto battle_factory = make_battle_factory(
-			parse_generation_from_format(id, "battle-gen"),
+			generation,
 			std::move(username),
 			evaluate,
-			depth
+			all_usage_stats[generation],
+			depth,
+			AnalysisLogger(battle_log_directory)
 		);
 		containers::emplace_back(
 			m_container,
@@ -66,7 +70,7 @@ export struct Battles {
 		);
 	}
 
-	auto handle_message(AllUsageStats const & usage_stats, InMessage const message) -> tv::optional<BattleMessageResult> {
+	auto handle_message(InMessage const message) -> tv::optional<BattleMessageResult> {
 		auto matches_room = [&](auto const & element) {
 			return element.id == message.room();
 		};
@@ -81,9 +85,11 @@ export struct Battles {
 			},
 			[&](BattleStarted) {
 				auto const battle_log_directory = m_log_directory / std::string_view(it->id);
-				make_active(usage_stats, AnalysisLogger(battle_log_directory), it->battle);
-				auto const & battle = static_cast<BattleParser const &>(*it->battle);
-				log_ai_team(battle.team(), battle_log_directory);
+				auto & battle_factory = static_cast<BattleFactory &>(*it->battle);
+				it->battle = std::unique_ptr<BattleInterface>(new BattleParser(
+					std::move(battle_factory).make()
+				));
+				log_ai_team(static_cast<BattleParser const &>(*it->battle).team(), battle_log_directory);
 			},
 			[&](BattleFinished) {
 				containers::erase(m_container, it);

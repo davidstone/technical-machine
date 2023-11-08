@@ -74,6 +74,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 					containers::string(room),
 					"Technical Machine",
 					evaluate,
+					all_usage_stats,
 					depth
 				);
 
@@ -81,10 +82,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 				while (!messages.remainder().empty()) {
 					auto const next = messages.pop();
 					INFO(next);
-					battles.handle_message(
-						all_usage_stats,
-						ps::InMessage(room, next)
-					);
+					battles.handle_message(ps::InMessage(room, next));
 				}
 			}
 		}

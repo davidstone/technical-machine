@@ -12,7 +12,7 @@ import tm.evaluate.all_evaluate;
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
 
-import tm.team_predictor.all_usage_stats;
+import tm.team_predictor.usage_stats;
 
 import tm.generation;
 import tm.team;
@@ -23,18 +23,16 @@ import std_module;
 namespace technicalmachine::ps {
 
 export struct BattleFactory : BattleInterface {
-	virtual auto make(
-		AllUsageStats const & usage_stats,
-		AnalysisLogger analysis_logger
-	) && -> BattleParser = 0;
-	virtual auto team() const -> GenerationGeneric<Team> = 0;
+	virtual auto make() && -> BattleParser = 0;
 };
 
 export auto make_battle_factory(
 	Generation generation,
 	containers::string username,
 	AllEvaluate evaluate,
-	Depth depth
+	UsageStats const & usage_stats,
+	Depth depth,
+	AnalysisLogger analysis_logger
 ) -> std::unique_ptr<BattleFactory>;
 
 } // namespace technicalmachine::ps

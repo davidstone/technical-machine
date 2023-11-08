@@ -123,7 +123,7 @@ private:
 	}
 
 	auto handle_battle_message(InMessage const message) -> bool {
-		auto const result = m_battles.handle_message(m_all_usage_stats, message);
+		auto const result = m_battles.handle_message(message);
 		if (!result) {
 			return false;
 		}
@@ -179,6 +179,7 @@ private:
 					containers::string(message.room()),
 					m_settings.username,
 					m_evaluate,
+					m_all_usage_stats,
 					m_depth
 				);
 			}

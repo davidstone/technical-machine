@@ -34,7 +34,7 @@ import tm.evaluate.evaluate;
 
 import tm.pokemon.max_pokemon_per_team;
 
-import tm.team_predictor.all_usage_stats;
+import tm.team_predictor.usage_stats;
 
 import tm.constant_generation;
 import tm.generation;
@@ -53,11 +53,15 @@ struct BattleFactoryImpl : BattleFactory {
 	BattleFactoryImpl(
 		containers::string username,
 		Evaluate<generation> evaluate,
-		Depth depth
+		UsageStats const & usage_stats,
+		Depth depth,
+		AnalysisLogger analysis_logger
 	):
 		m_username(std::move(username)),
 		m_evaluate(evaluate),
-		m_depth(depth)
+		m_usage_stats(usage_stats),
+		m_depth(depth),
+		m_analysis_logger(std::move(analysis_logger))
 	{
 	}
 
@@ -148,10 +152,7 @@ struct BattleFactoryImpl : BattleFactory {
 		return BattleContinues();
 	}
 
-	auto make(
-		AllUsageStats const & usage_stats,
-		AnalysisLogger analysis_logger
-	) && -> BattleParser final {
+	auto make() && -> BattleParser final {
 		BOUNDED_ASSERT(completed());
 		if (!m_team) {
 			throw std::runtime_error("Did not receive team");
@@ -187,9 +188,9 @@ struct BattleFactoryImpl : BattleFactory {
 		};
 
 		return BattleParser(
-			std::move(analysis_logger),
+			std::move(m_analysis_logger),
 			std::move(m_username),
-			usage_stats[generation],
+			m_usage_stats,
 			GenerationGeneric<ClientBattleInputs>(ClientBattleInputs<generation>{
 				Teams<generation>{*m_team, make_foe_team()},
 				m_evaluate
@@ -197,12 +198,6 @@ struct BattleFactoryImpl : BattleFactory {
 			*m_party,
 			m_depth
 		);
-	}
-	auto team() const -> GenerationGeneric<Team> final {
-		if (!m_team) {
-			throw std::runtime_error("Did not receive team");
-		}
-		return GenerationGeneric<Team>(Team<generation>(*m_team));
 	}
 
 private:
@@ -213,7 +208,9 @@ private:
 
 	containers::string m_username;
 	Evaluate<generation> m_evaluate;
+	UsageStats const & m_usage_stats;
 	Depth m_depth;
+	AnalysisLogger m_analysis_logger;
 	tv::optional<KnownTeam<generation>> m_team;
 	tv::optional<Party> m_party;
 	tv::optional<containers::string> m_type; // singles, doubles, triples
@@ -227,13 +224,17 @@ auto make_battle_factory(
 	Generation const runtime_generation,
 	containers::string username,
 	AllEvaluate evaluate,
-	Depth depth
+	UsageStats const & usage_stats,
+	Depth depth,
+	AnalysisLogger analysis_logger
 ) -> std::unique_ptr<BattleFactory> {
 	auto make = [&]<Generation generation>(constant_gen_t<generation>) -> std::unique_ptr<BattleFactory> {
 		return std::make_unique<BattleFactoryImpl<generation>>(
 			std::move(username),
 			evaluate.get<generation>(),
-			depth
+			usage_stats,
+			depth,
+			std::move(analysis_logger)
 		);
 	};
 	return constant_generation(runtime_generation, make);
