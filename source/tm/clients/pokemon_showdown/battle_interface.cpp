@@ -8,8 +8,6 @@ export module tm.clients.ps.battle_interface;
 import tm.clients.ps.battle_message_result;
 import tm.clients.ps.inmessage;
 
-import std_module;
-
 namespace technicalmachine::ps {
 
 export struct BattleInterface {
