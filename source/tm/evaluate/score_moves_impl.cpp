@@ -34,7 +34,7 @@ using namespace bounded::literal;
 
 template<Generation generation>
 struct ScoreMovesEvaluator {
-	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, LegalSelections, Evaluate<generation>, MoveProbabilities const foe_moves, auto const function) -> ScoredMoves {
+	static constexpr auto operator()(State<generation> const & state, LegalSelections const ai_selections, MoveProbabilities const foe_moves, Evaluate<generation>, auto const function) -> ScoredMoves {
 		return ScoredMoves(containers::transform(ai_selections, [&](MoveName const ai_move) {
 			return ScoredMove{
 				ai_move,
@@ -51,8 +51,6 @@ struct ScoreMovesEvaluator {
 		return ScoreMovesEvaluator()(
 			state,
 			ai_selections,
-			foe_selections,
-			evaluate,
 			predict_action(
 				state.foe,
 				foe_selections,
@@ -62,13 +60,14 @@ struct ScoreMovesEvaluator {
 				evaluate,
 				Depth(1_bi, 1_bi)
 			),
+			evaluate,
 			std::move(function)
 		);
 	}
 };
 
 template<Generation generation>
-auto score_moves(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, MoveProbabilities const foe_moves) -> ScoredMoves {
+auto score_moves(State<generation> const & state, LegalSelections const ai_selections, MoveProbabilities const foe_moves, Evaluate<generation> const evaluate) -> ScoredMoves {
 	if (team_is_empty(state.ai) or team_is_empty(state.foe)) {
 		throw std::runtime_error("Tried to evaluate a position with an empty team");
 	}
@@ -76,7 +75,6 @@ auto score_moves(State<generation> const & state, LegalSelections const ai_selec
 	auto const moves = evaluator.select_type_of_move(
 		state,
 		ai_selections,
-		foe_selections,
 		foe_moves
 	);
 	if (containers::maybe_find_if(moves, [](ScoredMove const move) { return move.name == MoveName::Pass; })) {
@@ -86,7 +84,7 @@ auto score_moves(State<generation> const & state, LegalSelections const ai_selec
 }
 
 #define INSTANTIATE(generation) \
-	template auto score_moves(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, MoveProbabilities const foe_moves) -> ScoredMoves
+	template auto score_moves(State<generation> const &, LegalSelections ai_selections, MoveProbabilities foe_moves, Evaluate<generation>) -> ScoredMoves
 
 TM_FOR_EACH_GENERATION(INSTANTIATE);
 

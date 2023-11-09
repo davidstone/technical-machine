@@ -228,7 +228,7 @@ struct Evaluator {
 	{
 	}
 
-	auto select_type_of_move(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, auto && ... respond_to_foe_moves_args) -> ScoredMoves {
+	auto select_type_of_move(State<generation> const & state, LegalSelections const ai_selections, auto const foe_selections) -> ScoredMoves {
 		BOUNDED_ASSERT(!team_is_empty(state.ai));
 		BOUNDED_ASSERT(!team_is_empty(state.foe));
 
@@ -241,7 +241,6 @@ struct Evaluator {
 			ai_selections,
 			foe_selections,
 			m_evaluate,
-			OPERATORS_FORWARD(respond_to_foe_moves_args)...,
 			[&](auto && ... args) {
 				return order_branch(OPERATORS_FORWARD(args)...);
 			}

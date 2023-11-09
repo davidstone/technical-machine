@@ -21,10 +21,10 @@ import tm.generation;
 namespace technicalmachine {
 
 export template<Generation generation>
-auto score_moves(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, MoveProbabilities const foe_moves) -> ScoredMoves;
+auto score_moves(State<generation> const &, LegalSelections ai_selections, MoveProbabilities foe_selections, Evaluate<generation>) -> ScoredMoves;
 
 #define EXTERN_INSTANTIATION(generation) \
-	extern template auto score_moves(State<generation> const & state, LegalSelections const ai_selections, LegalSelections const foe_selections, Evaluate<generation> const evaluate, MoveProbabilities const foe_moves) -> ScoredMoves
+	extern template auto score_moves(State<generation> const &, LegalSelections ai_selections, MoveProbabilities foe_moves, Evaluate<generation>) -> ScoredMoves
 
 TM_FOR_EACH_GENERATION(EXTERN_INSTANTIATION);
 

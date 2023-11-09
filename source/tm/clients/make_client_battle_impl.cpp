@@ -282,17 +282,17 @@ struct ClientBattleImpl final : ClientBattle {
 		m_analysis_logger << "Evaluating to a depth of " << state.depth.general << ", " << state.depth.single << "...\n";
 		auto const start = std::chrono::steady_clock::now();
 
+		auto const ai_selections = get_legal_selections(
+			state.ai,
+			state.foe,
+			state.environment
+		);
 		auto const predicted_selections = get_legal_selections(
 			state.foe,
 			state.ai,
 			state.environment
 		);
 
-		auto const ai_selections = get_legal_selections(
-			state.ai,
-			state.foe,
-			state.environment
-		);
 		auto foe_moves = predict_action(
 			state.foe,
 			predicted_selections,
@@ -310,9 +310,8 @@ struct ClientBattleImpl final : ClientBattle {
 		auto scored_moves = score_moves(
 			state,
 			ai_selections,
-			predicted_selections,
-			m_evaluate,
-			foe_moves
+			foe_moves,
+			m_evaluate
 		);
 		auto const finish = std::chrono::steady_clock::now();
 		m_analysis_logger << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";

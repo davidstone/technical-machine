@@ -860,8 +860,6 @@ auto determine_best_move2(Team<generation> const & ai, Team<generation> const & 
 	auto const moves = score_moves(
 		State<generation>(ai, foe, environment, depth),
 		ai_selections,
-		foe_selections,
-		evaluate,
 		predict_action(
 			foe,
 			foe_selections,
@@ -870,7 +868,8 @@ auto determine_best_move2(Team<generation> const & ai, Team<generation> const & 
 			environment,
 			evaluate,
 			Depth(1_bi, 1_bi)
-		)
+		),
+		evaluate
 	);
 	return *containers::max_element(moves, [](ScoredMove const lhs, ScoredMove const rhs) {
 		return lhs.score > rhs.score;
