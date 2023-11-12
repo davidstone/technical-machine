@@ -116,9 +116,10 @@ auto checked_read(FileReader & reader) {
 
 template<typename T>
 auto read_inner_probabilities(FileReader & reader, double const species_weight) {
-	using Map = typename UsageStatsProbabilities::Data<T>::Map;
+	using Data = UsageStatsProbabilities::Data<T>;
+	using Map = Data::Map;
 	auto const elements = read_map<T>(reader);
-	return UsageStatsProbabilities::Data<T>(containers::transform(elements, [&](T const key) {
+	return Data(containers::transform(elements, [&](T const key) {
 		auto const relative_weight = checked_read<double>(reader);
 		return containers::range_value_t<Map>{
 			key,
