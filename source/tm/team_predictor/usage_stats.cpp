@@ -78,10 +78,20 @@ auto read_count_for(FileReader & reader) {
 }
 
 template<typename Key>
+struct CheckedRead {
+	explicit constexpr CheckedRead(FileReader & reader):
+		m_reader(reader)
+	{
+	}
+	constexpr auto operator()() const {
+		return checked_read<Key>(m_reader);
+	}
+private:
+	std::reference_wrapper<FileReader> m_reader;
+};
+template<typename Key>
 auto read_map(FileReader & reader) {
-	return containers::generate_n(read_count_for<Key>(reader), [&] {
-		return checked_read<Key>(reader);
-	});
+	return containers::generate_n(read_count_for<Key>(reader), CheckedRead<Key>(reader));
 }
 
 auto checked_header_read(FileReader & reader) -> void {
