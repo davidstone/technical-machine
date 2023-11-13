@@ -37,9 +37,9 @@ auto load_lines_from_file(std::filesystem::path const & file_name) {
 	return containers::string(containers::range_view(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()));
 }
 
-auto parse_room(std::string_view const line, std::filesystem::path const & path) {
+constexpr auto parse_room(std::string_view const line) {
 	if (line.empty() or line.front() != '>') {
-		FAIL("File does not start with >: " + path.string());
+		throw std::runtime_error("Room line does not start with >");
 	}
 	return line.substr(1);
 }
@@ -67,9 +67,10 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 
 		for (auto const & generation : paths_in_directory(get_test_directory() / "battles")) {
 			for (auto const & path : paths_in_directory(generation)) {
+				INFO(path.path());
 				auto const data = load_lines_from_file(path.path() / "server_messages.txt");
 				auto messages = DelimitedBufferView(std::string_view(data), '\n');
-				auto const room = parse_room(messages.pop(), path);
+				auto const room = parse_room(messages.pop());
 				battles.add_pending(
 					containers::string(room),
 					"Technical Machine",
@@ -77,8 +78,6 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 					all_usage_stats,
 					depth
 				);
-
-				INFO(path.path());
 				while (!messages.remainder().empty()) {
 					auto const next = messages.pop();
 					INFO(next);
