@@ -9,7 +9,7 @@ import tm.clients.ps.battle_interface;
 import tm.clients.ps.battle_factory;
 import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battle_parser;
-import tm.clients.ps.inmessage;
+import tm.clients.ps.in_message;
 
 import tm.evaluate.all_evaluate;
 import tm.evaluate.analysis_logger;

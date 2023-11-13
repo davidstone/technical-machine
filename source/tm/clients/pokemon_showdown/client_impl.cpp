@@ -16,7 +16,7 @@ import tm.clients.pl.write_team_file;
 import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battles;
 import tm.clients.ps.handle_chat_message;
-import tm.clients.ps.inmessage;
+import tm.clients.ps.in_message;
 import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.send_message_function;
 import tm.clients.ps.to_packed_format;

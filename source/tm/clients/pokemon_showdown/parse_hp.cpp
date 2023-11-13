@@ -5,8 +5,6 @@
 
 export module tm.clients.ps.parse_hp;
 
-import tm.clients.ps.inmessage;
-
 import tm.stat.current_hp;
 import tm.stat.max_hp;
 

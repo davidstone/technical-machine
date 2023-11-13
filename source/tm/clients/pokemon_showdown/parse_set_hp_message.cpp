@@ -5,7 +5,7 @@
 
 export module tm.clients.ps.parse_set_hp_message;
 
-import tm.clients.ps.inmessage;
+import tm.clients.ps.in_message;
 import tm.clients.ps.parse_effect_source;
 import tm.clients.ps.parse_hp_and_status;
 import tm.clients.ps.party_from_player_id;

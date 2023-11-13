@@ -10,7 +10,7 @@ module;
 
 export module tm.clients.ps.handle_chat_message;
 
-import tm.clients.ps.inmessage;
+import tm.clients.ps.in_message;
 
 import std_module;
 

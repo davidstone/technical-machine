@@ -13,7 +13,7 @@ export module tm.clients.ps.battles;
 import tm.clients.ps.battle_logger;
 import tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message_result;
-import tm.clients.ps.inmessage;
+import tm.clients.ps.in_message;
 import tm.clients.ps.parse_generation_from_format;
 
 import tm.clients.write_team;

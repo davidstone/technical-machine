@@ -11,7 +11,7 @@ module;
 
 export module tm.clients.ps.battle_logger;
 
-import tm.clients.ps.inmessage;
+import tm.clients.ps.in_message;
 
 import tm.open_file;
 

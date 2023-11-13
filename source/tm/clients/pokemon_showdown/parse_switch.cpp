@@ -5,7 +5,7 @@
 
 export module tm.clients.ps.parse_switch;
 
-import tm.clients.ps.inmessage;
+import tm.clients.ps.in_message;
 import tm.clients.ps.parse_details;
 import tm.clients.ps.parse_hp_and_status;
 import tm.clients.ps.parse_pokemon_identity;

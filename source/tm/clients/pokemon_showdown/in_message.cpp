@@ -8,7 +8,7 @@ module;
 #include <std_module/prelude.hpp>
 #include <string_view>
 
-export module tm.clients.ps.inmessage;
+export module tm.clients.ps.in_message;
 
 import tm.buffer_view;
 

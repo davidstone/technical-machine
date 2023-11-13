@@ -17,7 +17,7 @@ import tm.clients.ps.battle_interface;
 import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battle_parser;
 import tm.clients.ps.handle_chat_message;
-import tm.clients.ps.inmessage;
+import tm.clients.ps.in_message;
 import tm.clients.ps.make_party;
 import tm.clients.ps.parse_switch;
 import tm.clients.ps.parse_team;
