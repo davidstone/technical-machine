@@ -51,13 +51,13 @@ using namespace std::string_view_literals;
 template<Generation generation>
 struct BattleFactoryImpl : BattleFactory {
 	BattleFactoryImpl(
-		containers::string username,
+		tv::variant<containers::string, Party> user,
 		Evaluate<generation> evaluate,
 		UsageStats const & usage_stats,
 		Depth depth,
 		AnalysisLogger analysis_logger
 	):
-		m_username(std::move(username)),
+		m_user(std::move(user)),
 		m_evaluate(evaluate),
 		m_usage_stats(usage_stats),
 		m_depth(depth),
@@ -81,11 +81,16 @@ struct BattleFactoryImpl : BattleFactory {
 		} else if (type == "gen") {
 			validate_generation(message.pop(), generation);
 		} else if (type == "player") {
-			auto const player_id = message.pop();
-			auto const username = message.pop();
-			if (username == m_username) {
-				insert(m_party, make_party(player_id));
-			}
+			tv::visit(m_user, tv::overload(
+				[&](std::string_view const username) {
+					auto const player_id = message.pop();
+					auto const parsed_username = message.pop();
+					if (parsed_username == username) {
+						m_user = make_party(player_id);
+					}
+				},
+				[](Party) {}
+			));
 			// message.remainder() == AVATAR
 		} else if (type == "poke") {
 			// message.remainder() == PLAYER_ID|DETAILS|ITEM
@@ -110,21 +115,25 @@ struct BattleFactoryImpl : BattleFactory {
 		} else if (type == "start") {
 			// We can't actually start the battle until we see the initial switch-in
 		} else if (type == "switch") {
-			if (!m_party) {
-				throw std::runtime_error("Received a switch message before receiving a party");
-			}
-			auto parsed = parse_switch(message);
-			if (*m_party == parsed.party) {
-				if (m_ai_switched_in) {
-					throw std::runtime_error("AI switched in twice");
+			tv::visit(m_user, tv::overload(
+				[](std::string_view) {
+					throw std::runtime_error("Received a switch message before receiving a party");
+				},
+				[&](Party const user_party) {
+					auto parsed = parse_switch(message);
+					if (user_party == parsed.party) {
+						if (m_ai_switched_in) {
+							throw std::runtime_error("AI switched in twice");
+						}
+						m_ai_switched_in = true;
+					} else {
+						if (m_foe_starter) {
+							throw std::runtime_error("Foe switched in twice");
+						}
+						insert(m_foe_starter, std::move(parsed));
+					}
 				}
-				m_ai_switched_in = true;
-			} else {
-				if (m_foe_starter) {
-					throw std::runtime_error("Foe switched in twice");
-				}
-				insert(m_foe_starter, std::move(parsed));
-			}
+			));
 			if (completed()) {
 				return BattleStarted();
 			}
@@ -133,15 +142,19 @@ struct BattleFactoryImpl : BattleFactory {
 		} else if (type == "teampreview") {
 			// This appears to mean nothing
 		} else if (type == "teamsize") {
-			if (!m_party) {
-				throw std::runtime_error("Received a teamsize message before receiving a player id");
-			}
-			auto const party = make_party(message.pop());
-			auto const team_size = bounded::to_integer<TeamSize>(message.pop());
-			// TODO: validate that the received teamsize matches my team size
-			if (*m_party != party) {
-				insert(m_foe_team_size, team_size);
-			}
+			tv::visit(m_user, tv::overload(
+				[](std::string_view) {
+					throw std::runtime_error("Received a teamsize message before receiving a player id");
+				},
+				[&](Party const user_party) {
+					auto const party = make_party(message.pop());
+					auto const team_size = bounded::to_integer<TeamSize>(message.pop());
+					// TODO: validate that the received teamsize matches my team size
+					if (user_party != party) {
+						insert(m_foe_team_size, team_size);
+					}
+				}
+			));
 		} else if (type == "tier") {
 			insert(m_tier, message.pop());
 		} else if (type == "title") {
@@ -157,9 +170,14 @@ struct BattleFactoryImpl : BattleFactory {
 		if (!m_team) {
 			throw std::runtime_error("Did not receive team");
 		}
-		if (!m_party) {
-			throw std::runtime_error("Did not receive party");
-		}
+		auto const party = tv::visit(m_user, tv::overload(
+			[](std::string_view) -> Party {
+				throw std::runtime_error("Did not receive party");
+			},
+			[](Party const p) -> Party {
+				return p;
+			}
+		));
 		if (!m_type) {
 			throw std::runtime_error("Did not receive battle format");
 		}
@@ -194,7 +212,7 @@ struct BattleFactoryImpl : BattleFactory {
 				Teams<generation>{*m_team, make_foe_team()},
 				m_evaluate
 			}),
-			*m_party,
+			party,
 			m_depth
 		);
 	}
@@ -205,13 +223,12 @@ private:
 		return m_ai_switched_in and m_foe_starter;
 	}
 
-	containers::string m_username;
+	tv::variant<containers::string, Party> m_user;
 	Evaluate<generation> m_evaluate;
 	UsageStats const & m_usage_stats;
 	Depth m_depth;
 	AnalysisLogger m_analysis_logger;
 	tv::optional<KnownTeam<generation>> m_team;
-	tv::optional<Party> m_party;
 	tv::optional<containers::string> m_type; // singles, doubles, triples
 	tv::optional<containers::string> m_tier;
 	tv::optional<TeamSize> m_foe_team_size;
@@ -221,7 +238,7 @@ private:
 
 auto make_battle_factory(
 	Generation const runtime_generation,
-	containers::string username,
+	tv::variant<containers::string, Party> user,
 	AllEvaluate evaluate,
 	UsageStats const & usage_stats,
 	Depth depth,
@@ -229,7 +246,7 @@ auto make_battle_factory(
 ) -> std::unique_ptr<BattleFactory> {
 	auto make = [&]<Generation generation>(constant_gen_t<generation>) -> std::unique_ptr<BattleFactory> {
 		return std::make_unique<BattleFactoryImpl<generation>>(
-			std::move(username),
+			std::move(user),
 			evaluate.get<generation>(),
 			usage_stats,
 			depth,

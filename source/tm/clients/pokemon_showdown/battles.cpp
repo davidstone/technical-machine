@@ -16,6 +16,7 @@ import tm.clients.ps.battle_message_result;
 import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.room_message;
 
+import tm.clients.party;
 import tm.clients.write_team;
 
 import tm.evaluate.all_evaluate;
@@ -44,7 +45,7 @@ export struct Battles {
 
 	auto add_pending(
 		containers::string id,
-		containers::string username,
+		tv::variant<containers::string, Party> user,
 		AllEvaluate evaluate,
 		AllUsageStats const & all_usage_stats,
 		Depth depth
@@ -54,7 +55,7 @@ export struct Battles {
 		auto battle_logger = std::make_unique<BattleLogger>(battle_log_directory, id);
 		auto battle_manager = BattleManager(
 			generation,
-			std::move(username),
+			std::move(user),
 			evaluate,
 			all_usage_stats[generation],
 			depth,

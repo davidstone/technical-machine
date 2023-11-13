@@ -11,6 +11,8 @@ import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battle_parser;
 import tm.clients.ps.in_message;
 
+import tm.clients.party;
+
 import tm.evaluate.all_evaluate;
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
@@ -29,7 +31,7 @@ namespace technicalmachine::ps {
 export struct BattleManager {
 	explicit BattleManager(
 		Generation const generation,
-		containers::string username,
+		tv::variant<containers::string, Party> user,
 		AllEvaluate evaluate,
 		UsageStats const & usage_stats,
 		Depth depth,
@@ -37,7 +39,7 @@ export struct BattleManager {
 	):
 		m_battle(make_battle_factory(
 			generation,
-			std::move(username),
+			std::move(user),
 			evaluate,
 			usage_stats,
 			depth,

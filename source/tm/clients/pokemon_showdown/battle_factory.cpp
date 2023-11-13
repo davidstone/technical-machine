@@ -8,6 +8,8 @@ export module tm.clients.ps.battle_factory;
 import tm.clients.ps.battle_interface;
 import tm.clients.ps.battle_parser;
 
+import tm.clients.party;
+
 import tm.evaluate.all_evaluate;
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
@@ -19,6 +21,7 @@ import tm.team;
 
 import containers;
 import std_module;
+import tv;
 
 namespace technicalmachine::ps {
 
@@ -28,7 +31,7 @@ export struct BattleFactory : BattleInterface {
 
 export auto make_battle_factory(
 	Generation generation,
-	containers::string username,
+	tv::variant<containers::string, Party> username,
 	AllEvaluate evaluate,
 	UsageStats const & usage_stats,
 	Depth depth,

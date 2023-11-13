@@ -73,7 +73,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 				auto const room = parse_room(messages.pop());
 				battles.add_pending(
 					containers::string(room),
-					"Technical Machine",
+					containers::string("Technical Machine"),
 					evaluate,
 					all_usage_stats,
 					depth
