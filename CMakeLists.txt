@@ -457,6 +457,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/parse_switch.cpp
 		source/tm/clients/pokemon_showdown/parse_team.cpp
 		source/tm/clients/pokemon_showdown/party_from_player_id.cpp
+		source/tm/clients/pokemon_showdown/room_message.cpp
 		source/tm/clients/pokemon_showdown/send_message_function.cpp
 		source/tm/clients/pokemon_showdown/slot_memory.cpp
 		source/tm/clients/pokemon_showdown/sockets.cpp

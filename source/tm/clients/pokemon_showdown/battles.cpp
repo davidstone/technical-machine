@@ -13,8 +13,8 @@ export module tm.clients.ps.battles;
 import tm.clients.ps.battle_logger;
 import tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message_result;
-import tm.clients.ps.in_message;
 import tm.clients.ps.parse_generation_from_format;
+import tm.clients.ps.room_message;
 
 import tm.clients.write_team;
 
@@ -68,16 +68,16 @@ export struct Battles {
 		);
 	}
 
-	auto handle_message(InMessage const message) -> tv::optional<BattleMessageResult> {
+	auto handle_message(RoomMessage const room_message) -> tv::optional<BattleMessageResult> {
 		auto matches_room = [&](auto const & element) {
-			return element.id == message.room();
+			return element.id == room_message.room;
 		};
 		auto const it = containers::find_if(m_container, matches_room);
 		if (it == containers::end(m_container)) {
 			return tv::none;
 		}
-		it->logger->log(message);
-		auto result = it->battle.handle_message(message);
+		it->logger->log(room_message.message);
+		auto result = it->battle.handle_message(room_message.message);
 		tv::visit(result, tv::overload(
 			[](auto) {
 			},

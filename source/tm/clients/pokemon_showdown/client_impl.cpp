@@ -16,8 +16,8 @@ import tm.clients.pl.write_team_file;
 import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battles;
 import tm.clients.ps.handle_chat_message;
-import tm.clients.ps.in_message;
 import tm.clients.ps.parse_generation_from_format;
+import tm.clients.ps.room_message;
 import tm.clients.ps.send_message_function;
 import tm.clients.ps.to_packed_format;
 
@@ -93,7 +93,7 @@ export struct ClientImpl {
 		while (!messages.remainder().empty()) {
 			auto const next = messages.pop();
 			auto print_on_exception = bounded::scope_guard([=] { std::cerr << next << '\n'; });
-			handle_message(InMessage(room, next));
+			handle_message(RoomMessage(room, next));
 			print_on_exception.dismiss();
 		}
 	}
@@ -122,8 +122,8 @@ private:
 		));
 	}
 
-	auto handle_battle_message(InMessage const message) -> bool {
-		auto const result = m_battles.handle_message(message);
+	auto handle_battle_message(RoomMessage const room_message) -> bool {
+		auto const result = m_battles.handle_message(room_message);
 		if (!result) {
 			return false;
 		}
@@ -132,31 +132,32 @@ private:
 			},
 			[&](BattleResponseMove const move_index) {
 				m_send_message(containers::concatenate<containers::string>(
-					message.room(),
+					room_message.room,
 					"|/choose move "sv,
 					containers::to_string(move_index)
 				));
 			},
 			[&](BattleResponseSwitch const switch_index) {
 				m_send_message(containers::concatenate<containers::string>(
-					message.room(),
+					room_message.room,
 					"|/choose switch "sv,
 					containers::to_string(switch_index)
 				));
 			},
 			[&](BattleStarted) {
-				m_send_message(containers::concatenate<containers::string>(message.room(), "|/timer on"sv));
+				m_send_message(containers::concatenate<containers::string>(room_message.room, "|/timer on"sv));
 			},
 			[&](BattleFinished) {
-				m_send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), message.room()));
+				m_send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), room_message.room));
 				send_challenge();
 			}
 		));
 		return true;
 	}
 
-	auto handle_message(InMessage message) -> void {
-		if (handle_battle_message(message)) {
+	auto handle_message(RoomMessage const room_message) -> void {
+		auto message = room_message.message;
+		if (handle_battle_message(room_message)) {
 			return;
 		}
 		if (handle_chat_message(message)) {
@@ -176,7 +177,7 @@ private:
 		} else if (type == "init") {
 			if (message.pop() == "battle") {
 				m_battles.add_pending(
-					containers::string(message.room()),
+					containers::string(room_message.room),
 					m_settings.username,
 					m_evaluate,
 					m_all_usage_stats,
@@ -222,7 +223,7 @@ private:
 		} else if (type == "users") {
 			// message.remainder() == comma separated list of users
 		} else {
-			std::cerr << "Received unknown message in room: " << message.room() << " type: " << type << "\n\t" << message.remainder() << '\n';
+			std::cerr << "Received unknown message in room: " << room_message.room << " type: " << type << "\n\t" << message.remainder() << '\n';
 		}
 	}
 

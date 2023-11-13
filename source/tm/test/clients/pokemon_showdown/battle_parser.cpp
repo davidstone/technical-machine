@@ -106,7 +106,7 @@ constexpr auto check_values(ps::BattleParser & parser, std::span<MessageResponse
 	for (auto const value : values) {
 		REQUIRE(!completed);
 		INFO(value.message);
-		auto const result = parser.handle_message(ps::InMessage("battle-id"sv, value.message));
+		auto const result = parser.handle_message(ps::InMessage(value.message));
 		tv::visit(result, value.response, tv::overload(
 			[](bounded::bounded_integer auto const received_index, NoResponse) {
 				FAIL_CHECK("Expected no response, got " << as_string(received_index));

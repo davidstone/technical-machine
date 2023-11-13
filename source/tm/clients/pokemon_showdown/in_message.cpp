@@ -20,14 +20,11 @@ namespace technicalmachine::ps {
 using namespace std::string_view_literals;
 
 export struct InMessage {
-	constexpr InMessage(std::string_view const room, std::string_view const data):
-		InMessage(room, DelimitedBufferView(data, '|'))
+	constexpr InMessage(std::string_view const data):
+		InMessage(DelimitedBufferView(data, '|'))
 	{
 	}
 
-	constexpr auto room() const {
-		return m_room;
-	}
 	constexpr auto type() const {
 		return m_type;
 	}
@@ -42,8 +39,7 @@ export struct InMessage {
 	}
 
 private:
-	constexpr InMessage(std::string_view const room, DelimitedBufferView<std::string_view> view):
-		m_room(room),
+	constexpr InMessage(DelimitedBufferView<std::string_view> view):
 		m_type([&] {
 			// Because messages start with a '|', discard first empty string
 			auto const discarded = view.pop();
@@ -59,7 +55,6 @@ private:
 	{
 	}
 
-	std::string_view m_room;
 	std::string_view m_type;
 	DelimitedBufferView<std::string_view> m_view;
 };

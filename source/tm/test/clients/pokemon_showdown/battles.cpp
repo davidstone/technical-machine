@@ -12,7 +12,7 @@ module;
 export module tm.test.clients.ps.battles;
 
 import tm.clients.ps.battles;
-import tm.clients.ps.inmessage;
+import tm.clients.ps.room_message;
 
 import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
@@ -81,7 +81,7 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 				while (!messages.remainder().empty()) {
 					auto const next = messages.pop();
 					INFO(next);
-					battles.handle_message(ps::InMessage(room, next));
+					battles.handle_message(ps::RoomMessage(room, next));
 				}
 			}
 		}
