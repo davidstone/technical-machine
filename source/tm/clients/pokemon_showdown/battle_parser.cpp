@@ -103,7 +103,6 @@ private:
 export struct BattleParser final : BattleInterface {
 	BattleParser(
 		AnalysisLogger analysis_logger,
-		containers::string username,
 		UsageStats const & usage_stats,
 		GenerationGeneric<ClientBattleInputs> inputs,
 		Party party,
@@ -116,7 +115,6 @@ export struct BattleParser final : BattleInterface {
 			std::move(inputs),
 			depth
 		)),
-		m_username(std::move(username)),
 		m_party(party)
 	{
 	}
@@ -804,8 +802,6 @@ private:
 	SlotMemory m_slot_memory;
 	std::unique_ptr<ClientBattle> m_client_battle;
 	RandomMove m_random_move;
-
-	containers::string m_username;
 
 	Party m_party;
 	MoveState m_move_state;

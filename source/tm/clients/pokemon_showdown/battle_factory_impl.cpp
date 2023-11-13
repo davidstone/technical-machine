@@ -189,7 +189,6 @@ struct BattleFactoryImpl : BattleFactory {
 
 		return BattleParser(
 			std::move(m_analysis_logger),
-			std::move(m_username),
 			m_usage_stats,
 			GenerationGeneric<ClientBattleInputs>(ClientBattleInputs<generation>{
 				Teams<generation>{*m_team, make_foe_team()},

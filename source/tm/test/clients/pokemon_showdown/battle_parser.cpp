@@ -70,7 +70,6 @@ template<Generation generation>
 auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::BattleParser {
 	return ps::BattleParser(
 		AnalysisLogger(AnalysisLogger::none()),
-		"Technical Machine",
 		get_usage_stats<generation>(),
 		GenerationGeneric<ClientBattleInputs>(ClientBattleInputs<generation>{
 			Teams<generation>{
