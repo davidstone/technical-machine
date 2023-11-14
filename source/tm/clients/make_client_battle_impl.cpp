@@ -23,7 +23,6 @@ import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.move_probability;
-import tm.evaluate.predict_action;
 import tm.evaluate.score_moves;
 import tm.evaluate.scored_move;
 import tm.evaluate.state;
@@ -67,7 +66,7 @@ import tm.battle;
 import tm.end_of_turn_flags;
 import tm.gender;
 import tm.generation;
-import tm.get_legal_selections;
+import tm.get_both_actions;
 import tm.item;
 import tm.team;
 import tm.visible_hp;
@@ -282,25 +281,11 @@ struct ClientBattleImpl final : ClientBattle {
 		m_analysis_logger << "Evaluating to a depth of " << state.depth.general << ", " << state.depth.single << "...\n";
 		auto const start = std::chrono::steady_clock::now();
 
-		auto const ai_selections = get_legal_selections(
-			state.ai,
-			state.foe,
-			state.environment
-		);
-		auto const predicted_selections = get_legal_selections(
+		auto [foe_moves, ai_selections] = get_both_actions(
 			state.foe,
 			state.ai,
-			state.environment
-		);
-
-		auto foe_moves = predict_action(
-			state.foe,
-			predicted_selections,
-			state.ai,
-			ai_selections,
 			state.environment,
-			m_evaluate,
-			Depth(1_bi, 1_bi)
+			m_evaluate
 		);
 		containers::sort(foe_moves, [](MoveProbability const lhs, MoveProbability const rhs) {
 			return lhs.probability > rhs.probability;

@@ -285,6 +285,7 @@ target_sources(tm_common PUBLIC
 		source/tm/heal.cpp
 		source/tm/held_item.cpp
 		source/tm/item.cpp
+		source/tm/get_both_actions.cpp
 		source/tm/get_legal_selections.cpp
 		source/tm/nlohmann_json.cpp
 		source/tm/load_json_from_file.cpp
