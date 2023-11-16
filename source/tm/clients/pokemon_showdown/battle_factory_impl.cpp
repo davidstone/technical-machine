@@ -55,13 +55,15 @@ struct BattleFactoryImpl : BattleFactory {
 		Evaluate<generation> evaluate,
 		UsageStats const & usage_stats,
 		Depth depth,
-		AnalysisLogger analysis_logger
+		AnalysisLogger analysis_logger,
+		tv::optional<KnownTeam<generation>> team
 	):
 		m_user(std::move(user)),
 		m_evaluate(evaluate),
 		m_usage_stats(usage_stats),
 		m_depth(depth),
-		m_analysis_logger(std::move(analysis_logger))
+		m_analysis_logger(std::move(analysis_logger)),
+		m_team(std::move(team))
 	{
 	}
 
@@ -105,7 +107,14 @@ struct BattleFactoryImpl : BattleFactory {
 			// team is otherwise?
 			auto const json_data = message.remainder();
 			if (!json_data.empty()) {
-				tv::insert(m_team, parse_team<generation>(json_data));
+				auto get = [&] { return parse_team<generation>(json_data); };
+				if (m_team) {
+					if (*m_team != get()) {
+						throw std::runtime_error("Received team does not match expected team");
+					}
+				} else {
+					m_team.emplace(get);
+				}
 			}
 		} else if (type == "rule") {
 			// message.remainder() == RULE: DESCRIPTION
@@ -250,10 +259,32 @@ auto make_battle_factory(
 			evaluate.get<generation>(),
 			usage_stats,
 			depth,
-			std::move(analysis_logger)
+			std::move(analysis_logger),
+			tv::none
 		);
 	};
 	return constant_generation(runtime_generation, make);
+}
+
+auto make_battle_factory(
+	GenerationGeneric<KnownTeam> generic_team,
+	tv::variant<containers::string, Party> user,
+	AllEvaluate evaluate,
+	UsageStats const & usage_stats,
+	Depth depth,
+	AnalysisLogger analysis_logger
+) -> std::unique_ptr<BattleFactory> {
+	auto make = [&]<Generation generation>(KnownTeam<generation> team) -> std::unique_ptr<BattleFactory> {
+		return std::make_unique<BattleFactoryImpl<generation>>(
+			std::move(user),
+			evaluate.get<generation>(),
+			usage_stats,
+			depth,
+			std::move(analysis_logger),
+			std::move(team)
+		);
+	};
+	return tv::visit(generic_team, make);
 }
 
 } // namespace technicalmachine::ps

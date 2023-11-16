@@ -47,6 +47,24 @@ export struct BattleManager {
 		))
 	{
 	}
+	explicit BattleManager(
+		GenerationGeneric<KnownTeam> team,
+		tv::variant<containers::string, Party> user,
+		AllEvaluate evaluate,
+		UsageStats const & usage_stats,
+		Depth depth,
+		AnalysisLogger logger
+	):
+		m_battle(make_battle_factory(
+			std::move(team),
+			std::move(user),
+			evaluate,
+			usage_stats,
+			depth,
+			std::move(logger)
+		))
+	{
+	}
 
 	auto handle_message(InMessage const message) -> BattleMessageResult {
 		auto result = m_battle->handle_message(message);

@@ -38,4 +38,13 @@ export auto make_battle_factory(
 	AnalysisLogger analysis_logger
 ) -> std::unique_ptr<BattleFactory>;
 
+export auto make_battle_factory(
+	GenerationGeneric<KnownTeam>,
+	tv::variant<containers::string, Party> username,
+	AllEvaluate evaluate,
+	UsageStats const & usage_stats,
+	Depth depth,
+	AnalysisLogger analysis_logger
+) -> std::unique_ptr<BattleFactory>;
+
 } // namespace technicalmachine::ps
