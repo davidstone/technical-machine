@@ -11,7 +11,7 @@ import tm.clients.party;
 
 import tm.pokemon.nickname;
 
-import tm.buffer_view;
+import tm.split_view;
 
 import bounded;
 import containers;

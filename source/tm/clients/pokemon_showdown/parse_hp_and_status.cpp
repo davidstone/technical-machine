@@ -10,7 +10,7 @@ import tm.clients.ps.parse_status;
 
 import tm.status.status_name;
 
-import tm.buffer_view;
+import tm.split_view;
 import tm.visible_hp;
 
 import std_module;

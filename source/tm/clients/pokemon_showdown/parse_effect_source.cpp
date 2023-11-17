@@ -14,8 +14,8 @@ import tm.string_conversions.ability;
 import tm.string_conversions.item;
 
 import tm.ability;
-import tm.buffer_view;
 import tm.item;
+import tm.split_view;
 
 import containers;
 import tv;

@@ -301,6 +301,7 @@ target_sources(tm_common PUBLIC
 		source/tm/screens.cpp
 		source/tm/settings_file.cpp
 		source/tm/split_offsets.cpp
+		source/tm/split_view.cpp
 		source/tm/switch_decision_required.cpp
 		source/tm/team.cpp
 		source/tm/visible_hp.cpp

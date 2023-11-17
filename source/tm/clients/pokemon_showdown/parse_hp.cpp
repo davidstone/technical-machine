@@ -8,7 +8,7 @@ export module tm.clients.ps.parse_hp;
 import tm.stat.current_hp;
 import tm.stat.max_hp;
 
-import tm.buffer_view;
+import tm.split_view;
 import tm.visible_hp;
 
 import bounded;

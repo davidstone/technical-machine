@@ -19,16 +19,6 @@ import std_module;
 
 namespace technicalmachine {
 
-constexpr auto split_impl(std::string_view const buffer, split_offsets const offsets) {
-	if (offsets.first == buffer.size()) {
-		return std::pair(buffer, std::string_view());
-	}
-	return std::pair(
-		std::string_view(buffer.data(), offsets.first),
-		std::string_view(buffer.data() + offsets.first + offsets.discard, buffer.size() - offsets.discard - offsets.first)
-	);
-}
-
 // TODO: Maybe something with iterators?
 export template<typename View>
 struct BufferView {
@@ -54,10 +44,6 @@ struct BufferView {
 private:
 	View m_buffer;
 };
-
-export constexpr auto split_view(std::string_view const buffer, auto const delimiter) {
-	return split_impl(buffer, split_offsets(buffer, delimiter));
-}
 
 export template<typename View>
 constexpr auto pop_to_delimiter(BufferView<View> & buffer_view, auto const delimiter) {

@@ -57,10 +57,10 @@ import tm.string_conversions.weather;
 import tm.team_predictor.usage_stats;
 
 import tm.ability;
-import tm.buffer_view;
 import tm.gender;
 import tm.generation;
 import tm.item;
+import tm.split_view;
 import tm.team;
 import tm.visible_hp;
 import tm.weather;

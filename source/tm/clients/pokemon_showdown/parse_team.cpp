@@ -36,10 +36,10 @@ import tm.string_conversions.type;
 import tm.type.type;
 
 import tm.ability;
-import tm.buffer_view;
 import tm.generation;
 import tm.item;
 import tm.nlohmann_json;
+import tm.split_view;
 import tm.team;
 
 import bounded;

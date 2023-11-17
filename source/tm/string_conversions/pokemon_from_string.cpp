@@ -31,10 +31,11 @@ import tm.string_conversions.species;
 import tm.string_conversions.status_name;
 
 import tm.ability;
+import tm.buffer_view;
 import tm.gender;
 import tm.generation;
 import tm.item;
-import tm.buffer_view;
+import tm.split_view;
 
 import bounded;
 import containers;
