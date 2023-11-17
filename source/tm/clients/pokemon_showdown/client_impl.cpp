@@ -18,6 +18,7 @@ import tm.clients.ps.battles;
 import tm.clients.ps.handle_chat_message;
 import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.room_message;
+import tm.clients.ps.room_messages;
 import tm.clients.ps.send_message_function;
 import tm.clients.ps.to_packed_format;
 
@@ -32,7 +33,6 @@ import tm.team_predictor.team_predictor;
 import tm.team_predictor.all_usage_stats;
 
 import tm.boost_beast_http;
-import tm.buffer_view;
 import tm.constant_generation;
 import tm.generation;
 import tm.get_directory;
@@ -87,13 +87,12 @@ export struct ClientImpl {
 	{
 	}
 
-	auto handle_messages(DelimitedBufferView<std::string_view> messages) -> void {
-		auto const has_room = !messages.remainder().empty() and messages.remainder().front() == '>';
-		auto const room = has_room ? messages.pop().substr(1) : std::string_view{};
-		while (!messages.remainder().empty()) {
-			auto const next = messages.pop();
-			auto print_on_exception = bounded::scope_guard([=] { std::cerr << next << '\n'; });
-			handle_message(RoomMessage(room, next));
+	auto handle_messages(RoomMessages const room_messages) -> void {
+		for (auto const room_message : room_messages.messages()) {
+			auto print_on_exception = bounded::scope_guard([=] {
+				std::cerr << room_message.message.remainder() << '\n';
+			});
+			handle_message(room_message);
 			print_on_exception.dismiss();
 		}
 	}

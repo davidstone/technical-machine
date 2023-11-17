@@ -6,11 +6,11 @@
 export module tm.clients.ps.client;
 
 import tm.clients.ps.client_impl;
+import tm.clients.ps.room_messages;
 import tm.clients.ps.sockets;
 
 import tm.evaluate.depth;
 
-import tm.buffer_view;
 import tm.settings_file;
 
 import std_module;
@@ -31,7 +31,7 @@ export struct Client {
 
 	[[noreturn]] void run() {
 		while (true) {
-			m_impl.handle_messages(DelimitedBufferView<std::string_view>(m_sockets.read_message(), '\n'));
+			m_impl.handle_messages(RoomMessages(m_sockets.read_message()));
 		}
 	}
 
