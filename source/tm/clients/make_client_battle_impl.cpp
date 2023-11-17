@@ -273,7 +273,6 @@ struct ClientBattleImpl final : ClientBattle {
 		}
 
 		log_team("AI", m_battle.ai());
-		log_team("Seen Foe", m_battle.foe());
 		auto const state = predicted_state();
 		log_team("Predicted Foe", state.foe);
 		m_analysis_logger << std::flush;
