@@ -67,38 +67,12 @@ import tm.weather;
 
 import bounded;
 import containers;
-import numeric_traits;
 import tv;
 import std_module;
 
 namespace technicalmachine::ps {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
-
-template<typename T>
-using OtherIndex = std::conditional_t<
-	std::same_as<T, BattleResponseMove>,
-	BattleResponseSwitch,
-	BattleResponseMove
->;
-
-struct RandomMove {
-	constexpr auto next_response() -> BattleMessageResult {
-		return tv::visit(m_value, tv::overload(
-			[&]<typename Index>(Index & index) -> BattleMessageResult {
-				auto const copy = index;
-				if (index == numeric_traits::max_value<Index>) {
-					m_value = OtherIndex<Index>(numeric_traits::min_value<OtherIndex<Index>>);
-				} else {
-					++index;
-				}
-				return copy;
-			}
-		));
-	}
-private:
-	tv::variant<BattleResponseMove, BattleResponseSwitch> m_value = BattleResponseMove(numeric_traits::min_value<BattleResponseMove>);
-};
 
 export struct BattleParser final : BattleInterface {
 	BattleParser(
@@ -326,7 +300,7 @@ export struct BattleParser final : BattleInterface {
 			}
 		} else if (type == "error") {
 			if (message.remainder() != "[Invalid choice] There's nothing to choose") {
-				return m_random_move.next_response();
+				return BattleResponseError();
 			}
 		} else if (type == "-fail") {
 	#if 0
@@ -801,7 +775,6 @@ private:
 
 	SlotMemory m_slot_memory;
 	std::unique_ptr<ClientBattle> m_client_battle;
-	RandomMove m_random_move;
 
 	Party m_party;
 	MoveState m_move_state;

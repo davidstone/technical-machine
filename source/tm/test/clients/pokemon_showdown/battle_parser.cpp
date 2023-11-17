@@ -87,6 +87,7 @@ struct AnyResponse{};
 using ps::BattleContinues;
 using ps::BattleResponseMove;
 using ps::BattleResponseSwitch;
+using ps::BattleResponseError;
 using ps::BattleStarted;
 using ps::BattleFinished;
 using Response = tv::variant<
@@ -94,6 +95,7 @@ using Response = tv::variant<
 	AnyResponse,
 	BattleResponseMove,
 	BattleResponseSwitch,
+	BattleResponseError,
 	BattleFinished
 >;
 struct MessageResponse {
@@ -124,6 +126,9 @@ constexpr auto check_values(ps::BattleParser & parser, std::span<MessageResponse
 			[](bounded::bounded_integer auto const received_index, bounded::bounded_integer auto const index) {
 				CHECK(std::string_view(as_string(received_index)) == std::string_view(as_string(index)));
 			},
+			[](bounded::bounded_integer auto const received, BattleResponseError) {
+				FAIL_CHECK("Expected error response, got " << as_string(received));
+			},
 			[](bounded::bounded_integer auto const received, BattleFinished) {
 				FAIL_CHECK("Expected BattleFinished, got " << as_string(received));
 			},
@@ -131,6 +136,11 @@ constexpr auto check_values(ps::BattleParser & parser, std::span<MessageResponse
 			},
 			[](BattleFinished, auto) {
 				FAIL_CHECK("Unexpected BattleFinished");
+			},
+			[](BattleResponseError, BattleResponseError) {
+			},
+			[](BattleResponseError, auto) {
+				FAIL_CHECK("Received an error response");
 			},
 			[](BattleContinues, BattleContinues) {
 			},

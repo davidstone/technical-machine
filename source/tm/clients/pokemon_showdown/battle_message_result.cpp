@@ -17,6 +17,7 @@ namespace technicalmachine::ps {
 export struct BattleContinues {};
 export using BattleResponseMove = bounded::integer<1, bounded::normalize<max_moves_per_pokemon>>;
 export using BattleResponseSwitch = bounded::integer<1, bounded::normalize<max_pokemon_per_team>>;
+export struct BattleResponseError {};
 export struct BattleStarted {};
 export struct BattleFinished {};
 
@@ -24,6 +25,7 @@ export using BattleMessageResult = tv::variant<
 	BattleContinues,
 	BattleResponseMove,
 	BattleResponseSwitch,
+	BattleResponseError,
 	BattleStarted,
 	BattleFinished
 >;

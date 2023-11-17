@@ -143,6 +143,12 @@ private:
 					containers::to_string(switch_index)
 				));
 			},
+			[&](BattleResponseError) {
+				m_send_message(containers::concatenate<containers::string>(
+					room_message.room,
+					"|/choose default"sv
+				));
+			},
 			[&](BattleStarted) {
 				m_send_message(containers::concatenate<containers::string>(room_message.room, "|/timer on"sv));
 			},
