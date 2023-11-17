@@ -475,6 +475,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/ps_usage_stats/files_in_directory.cpp
 		source/tm/ps_usage_stats/glicko1.cpp
 		source/tm/ps_usage_stats/mode.cpp
+		source/tm/ps_usage_stats/parse_log.cpp
 		source/tm/ps_usage_stats/rating.cpp
 		source/tm/ps_usage_stats/serialize.cpp
 		source/tm/ps_usage_stats/thread_count.cpp
@@ -522,12 +523,6 @@ target_link_libraries(file_converter
 
 add_executable(ps_usage_stats_create_teams_file
 	source/tm/ps_usage_stats/create_teams_file.cpp
-)
-target_sources(ps_usage_stats_create_teams_file PRIVATE
-	FILE_SET CXX_MODULES
-	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
-	FILES
-		source/tm/ps_usage_stats/parse_log.cpp
 )
 target_link_libraries(ps_usage_stats_create_teams_file
 	tm_common
