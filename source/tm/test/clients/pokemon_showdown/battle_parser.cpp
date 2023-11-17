@@ -83,7 +83,6 @@ auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::Batt
 	);
 }
 
-struct NoResponse{};
 struct AnyResponse{};
 using ps::BattleContinues;
 using ps::BattleResponseMove;
@@ -91,7 +90,7 @@ using ps::BattleResponseSwitch;
 using ps::BattleStarted;
 using ps::BattleFinished;
 using Response = tv::variant<
-	NoResponse,
+	BattleContinues,
 	AnyResponse,
 	BattleResponseMove,
 	BattleResponseSwitch,
@@ -99,7 +98,7 @@ using Response = tv::variant<
 >;
 struct MessageResponse {
 	std::string_view message;
-	Response response = NoResponse();
+	Response response = BattleContinues();
 };
 
 constexpr auto as_string(BattleResponseMove const index) -> containers::string {
@@ -117,7 +116,7 @@ constexpr auto check_values(ps::BattleParser & parser, std::span<MessageResponse
 			[](BattleStarted, auto) {
 				FAIL_CHECK("BattleParser should never return BattleStarted");
 			},
-			[](bounded::bounded_integer auto const received_index, NoResponse) {
+			[](bounded::bounded_integer auto const received_index, BattleContinues) {
 				FAIL_CHECK("Expected no response, got " << as_string(received_index));
 			},
 			[](bounded::bounded_integer auto const, AnyResponse) {
@@ -133,7 +132,7 @@ constexpr auto check_values(ps::BattleParser & parser, std::span<MessageResponse
 			[](BattleFinished, auto) {
 				FAIL_CHECK("Unexpected BattleFinished");
 			},
-			[](BattleContinues, NoResponse) {
+			[](BattleContinues, BattleContinues) {
 			},
 			[](BattleContinues, auto) {
 				FAIL_CHECK("Received no response when one was expected");
