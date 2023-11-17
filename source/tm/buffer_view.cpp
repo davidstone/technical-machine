@@ -12,29 +12,12 @@ module;
 
 export module tm.buffer_view;
 
+import tm.split_offsets;
+
 import containers;
 import std_module;
 
 namespace technicalmachine {
-
-struct split_offsets {
-	template<typename View>
-	constexpr split_offsets(View const buffer, containers::range_value_t<View> const delimiter):
-		first(static_cast<std::size_t>(containers::find(buffer, delimiter) - buffer.begin())),
-		discard(1U)
-	{
-	}
-
-	template<typename View, typename Delimiter> requires std::same_as<containers::range_value_t<View>, containers::range_value_t<Delimiter>>
-	constexpr split_offsets(View const buffer, Delimiter const delimiter):
-		first(static_cast<std::size_t>(std::search(buffer.begin(), buffer.end(), delimiter.begin(), delimiter.end()) - buffer.begin())),
-		discard(delimiter.size())
-	{
-	}
-
-	std::size_t first;
-	std::size_t discard;
-};
 
 constexpr auto split_impl(std::string_view const buffer, split_offsets const offsets) {
 	if (offsets.first == buffer.size()) {
