@@ -8,5 +8,11 @@ on:
   workflow_dispatch:
 
 jobs:
+  install-boost:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install boost
+        run: sudo apt-get install libboost-all-dev
   build:
+    needs: install-boost
     uses: davidstone/cmake_strict_defaults/.github/workflows/build-and-test.yml@main
