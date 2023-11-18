@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install boost
-        run: sudo apt-get install libboost-all-dev
+        run: |
+          sudo apt-get install libboost-all-dev
+          ls /usr/include/boost
   build:
     needs: install-boost
     uses: davidstone/cmake_strict_defaults/.github/workflows/build-and-test.yml@main
