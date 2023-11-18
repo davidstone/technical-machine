@@ -31,6 +31,8 @@ import tm.pokemon.species;
 
 import tm.stat.default_evs;
 
+import tm.string_conversions.move_name;
+
 import tm.team_predictor.usage_stats;
 
 import tm.test.usage_bytes;
@@ -85,7 +87,6 @@ auto make_parser(KnownTeam<generation> ai, SeenTeam<generation> foe) -> ps::Batt
 
 struct AnyResponse{};
 using ps::BattleContinues;
-using ps::BattleResponseMove;
 using ps::BattleResponseSwitch;
 using ps::BattleResponseError;
 using ps::BattleStarted;
@@ -93,7 +94,7 @@ using ps::BattleFinished;
 using Response = tv::variant<
 	BattleContinues,
 	AnyResponse,
-	BattleResponseMove,
+	MoveName,
 	BattleResponseSwitch,
 	BattleResponseError,
 	BattleFinished
@@ -103,12 +104,15 @@ struct MessageResponse {
 	Response response = BattleContinues();
 };
 
-constexpr auto as_string(BattleResponseMove const index) -> containers::string {
-	return containers::concatenate<containers::string>("Use "sv, containers::to_string(index));
+constexpr auto as_string(MoveName const move_name) -> containers::string {
+	return containers::concatenate<containers::string>("Use "sv, to_string(move_name));
 }
 constexpr auto as_string(BattleResponseSwitch const index) -> containers::string {
 	return containers::concatenate<containers::string>("Switch to "sv, containers::to_string(index));
 }
+
+template<typename T>
+concept action = std::same_as<T, MoveName> or std::same_as<T, BattleResponseSwitch>;
 
 constexpr auto check_values(ps::BattleParser & parser, std::span<MessageResponse const> const values) {
 	for (auto const value : values) {
@@ -118,18 +122,18 @@ constexpr auto check_values(ps::BattleParser & parser, std::span<MessageResponse
 			[](BattleStarted, auto) {
 				FAIL_CHECK("BattleParser should never return BattleStarted");
 			},
-			[](bounded::bounded_integer auto const received_index, BattleContinues) {
-				FAIL_CHECK("Expected no response, got " << as_string(received_index));
+			[](action auto const received, BattleContinues) {
+				FAIL_CHECK("Expected no response, got " << as_string(received));
 			},
-			[](bounded::bounded_integer auto const, AnyResponse) {
+			[](action auto const, AnyResponse) {
 			},
-			[](bounded::bounded_integer auto const received_index, bounded::bounded_integer auto const index) {
-				CHECK(std::string_view(as_string(received_index)) == std::string_view(as_string(index)));
+			[](action auto const received, action auto const expected) {
+				CHECK(std::string_view(as_string(received)) == std::string_view(as_string(expected)));
 			},
-			[](bounded::bounded_integer auto const received, BattleResponseError) {
+			[](action auto const received, BattleResponseError) {
 				FAIL_CHECK("Expected error response, got " << as_string(received));
 			},
-			[](bounded::bounded_integer auto const received, BattleFinished) {
+			[](action auto const received, BattleFinished) {
 				FAIL_CHECK("Expected BattleFinished, got " << as_string(received));
 			},
 			[](BattleFinished, BattleFinished) {
@@ -189,7 +193,7 @@ TEST_CASE("BattleParser Baton Pass no other Pokemon", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|1", MoveName::Baton_Pass),
 		MessageResponse("|"),
 		MessageResponse("|t:|1"),
 		MessageResponse("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle"),
@@ -234,7 +238,7 @@ TEST_CASE("BattleParser Baton Pass one other Pokemon moves first", "[Pokemon Sho
 	);
 
 	auto const values = containers::array{
-		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|1", MoveName::Baton_Pass),
 		MessageResponse("|"),
 		MessageResponse("|t:|1"),
 		MessageResponse("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle", BattleResponseSwitch(2_bi)),
@@ -249,7 +253,7 @@ TEST_CASE("BattleParser Baton Pass one other Pokemon moves second", "[Pokemon Sh
 	);
 
 	auto const values = containers::array{
-		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|1", MoveName::Baton_Pass),
 		MessageResponse("|"),
 		MessageResponse("|t:|1"),
 		MessageResponse("|move|p2a: Dugtrio|Snore|p1a: Smeargle"),
@@ -259,7 +263,7 @@ TEST_CASE("BattleParser Baton Pass one other Pokemon moves second", "[Pokemon Sh
 		MessageResponse("|switch|p1a: Shedinja|Shedinja|1/1"),
 		MessageResponse("|"),
 		MessageResponse("|upkeep"),
-		MessageResponse("|turn|2", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|2", MoveName::Giga_Drain),
 	};
 	check_values(parser, values);
 }
@@ -271,7 +275,7 @@ TEST_CASE("BattleParser replace fainted in turn", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|1", MoveName::Baton_Pass),
 		MessageResponse("|"),
 		MessageResponse("|t:|1"),
 		MessageResponse("|move|p2a: Dugtrio|Earthquake|p1a: Smeargle"),
@@ -282,7 +286,7 @@ TEST_CASE("BattleParser replace fainted in turn", "[Pokemon Showdown]") {
 		MessageResponse("|switch|p1a: Shedinja|Shedinja|1/1"),
 		MessageResponse("|"),
 		MessageResponse("|upkeep"),
-		MessageResponse("|turn|2", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|2", MoveName::Giga_Drain),
 	};
 	check_values(parser, values);
 }
@@ -294,7 +298,7 @@ TEST_CASE("BattleParser replace fainted end of turn", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|1", MoveName::Baton_Pass),
 		MessageResponse("|"),
 		MessageResponse("|t:|1"),
 		MessageResponse("|move|p1a: Smeargle|Baton Pass|p1a: Smeargle", BattleResponseSwitch(2_bi)),
@@ -310,7 +314,7 @@ TEST_CASE("BattleParser replace fainted end of turn", "[Pokemon Showdown]") {
 		MessageResponse("|"),
 		MessageResponse("|t:|3"),
 		MessageResponse("|switch|p1a: Smeargle|Smeargle|251/251"),
-		MessageResponse("|turn|2", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|2", MoveName::Baton_Pass),
 	};
 	check_values(parser, values);
 }
@@ -403,7 +407,7 @@ TEST_CASE("BattleParser replace multiple fainted", "[Pokemon Showdown]") {
 		MessageResponse("|-damage|p1a: Chansey|561/641|[from] Spikes"),
 		MessageResponse("|"),
 		MessageResponse("|upkeep"),
-		MessageResponse("|turn|3", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|3", MoveName::Aromatherapy),
 	};
 	check_values(parser, values);
 }
@@ -462,7 +466,7 @@ TEST_CASE("BattleParser switch faints from entry hazards before other moves", "[
 		MessageResponse("|-damage|p1a: Smeargle|220/251|[from] Spikes"),
 		MessageResponse("|"),
 		MessageResponse("|upkeep"),
-		MessageResponse("|turn|3", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|3", MoveName::Agility),
 	};
 	check_values(parser, values);
 }
@@ -474,7 +478,7 @@ TEST_CASE("BattleParser lose", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|1", MoveName::Baton_Pass),
 		MessageResponse("|"),
 		MessageResponse("|t:|1"),
 		MessageResponse("|move|p2a: Dugtrio|Earthquake|p1a: Smeargle"),
@@ -516,7 +520,7 @@ TEST_CASE("BattleParser generation 2 thaw", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|1", MoveName::Ice_Punch),
 		MessageResponse("|"),
 		MessageResponse("|t:|1"),
 		MessageResponse("|move|p1a: Gengar|Ice Punch|p2a: Zapdos"),
@@ -639,7 +643,7 @@ TEST_CASE("BattleParser Struggle", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|1", MoveName::Sketch),
 		MessageResponse("|"),
 		MessageResponse("|t:|1"),
 		MessageResponse("|move|p1a: Smeargle|Sketch||[still]"),
@@ -648,7 +652,7 @@ TEST_CASE("BattleParser Struggle", "[Pokemon Showdown]") {
 		MessageResponse("|-nothing"),
 		MessageResponse("||"),
 		MessageResponse("|upkeep|"),
-		MessageResponse("|turn|2", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|2", MoveName::Struggle),
 		MessageResponse("|-activate|p1a: Smeargle|move: Struggle"),
 		MessageResponse("||"),
 		MessageResponse("|t:|1"),
@@ -691,12 +695,12 @@ TEST_CASE("BattleParser full paralysis", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|1", MoveName::Curse),
 		MessageResponse("|move|p1a: Hypno|Curse|p1a: Hypno"),
 		MessageResponse("|move|p2a: Blissey|Thunder Wave|p1a: Hypno"),
 		MessageResponse("|-status|p1a: Hypno|par"),
 		MessageResponse("|upkeep|"),
-		MessageResponse("|turn|2", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|2", MoveName::Curse),
 		MessageResponse("|move|p2a: Blissey|Ice Beam|p1a: Hypno"),
 		MessageResponse("|-damage|p1a: Hypno|124/278 par"),
 		MessageResponse("|cant|p1a: Hypno|par"),
@@ -735,7 +739,7 @@ TEST_CASE("BattleParser Pain Split", "[Pokemon Showdown]") {
 	);
 
 	auto const values = containers::array{
-		MessageResponse("|turn|1", BattleResponseMove(1_bi)),
+		MessageResponse("|turn|1", MoveName::Pain_Split),
 		MessageResponse("|move|p2a: Blissey|Ice Beam|p1a: Misdreavus"),
 		MessageResponse("|-damage|p1a: Misdreavus|85/222"),
 		MessageResponse("|move|p1a: Misdreavus|Pain Split|p2a: Blissey"),

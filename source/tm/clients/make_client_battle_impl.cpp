@@ -29,7 +29,6 @@ import tm.evaluate.state;
 
 import tm.move.actual_damage;
 import tm.move.causes_recoil;
-import tm.move.find_required_move_index;
 import tm.move.is_switch;
 import tm.move.known_move;
 import tm.move.move;
@@ -153,9 +152,6 @@ struct ClientBattleImpl final : ClientBattle {
 	}
 	auto team() const -> GenerationGeneric<Team> final {
 		return GenerationGeneric<Team>(Team<generation_>(m_battle.ai()));
-	}
-	auto move_index(MoveName const move_name) const -> containers::index_type<RegularMoves> final {
-		return find_required_move_index(m_battle.ai().pokemon().regular_moves(), move_name);
 	}
 
 	auto ai_has(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> MoveName final {

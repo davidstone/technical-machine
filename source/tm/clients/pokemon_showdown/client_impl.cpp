@@ -29,6 +29,10 @@ import tm.clients.write_team;
 import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 
+import tm.move.move_name;
+
+import tm.string_conversions.move_name;
+
 import tm.team_predictor.team_predictor;
 import tm.team_predictor.all_usage_stats;
 
@@ -129,11 +133,11 @@ private:
 		tv::visit(*result, tv::overload(
 			[](BattleContinues) {
 			},
-			[&](BattleResponseMove const move_index) {
+			[&](MoveName const move_name) {
 				m_send_message(containers::concatenate<containers::string>(
 					room_message.room,
 					"|/choose move "sv,
-					containers::to_string(move_index)
+					to_string(move_name)
 				));
 			},
 			[&](BattleResponseSwitch const switch_index) {

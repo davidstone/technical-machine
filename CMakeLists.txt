@@ -105,7 +105,6 @@ target_sources(tm_common PUBLIC
 		source/tm/move/causes_recoil.cpp
 		source/tm/move/damage_type.cpp
 		source/tm/move/executed_move.cpp
-		source/tm/move/find_required_move_index.cpp
 		source/tm/move/healing_move_fails_in_generation_1.cpp
 		source/tm/move/is_blocked_by_gravity.cpp
 		source/tm/move/is_healing.cpp

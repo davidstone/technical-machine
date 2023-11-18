@@ -17,6 +17,8 @@ import tm.evaluate.all_evaluate;
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
 
+import tm.move.move_name;
+
 import tm.team_predictor.usage_stats;
 
 import tm.generation;

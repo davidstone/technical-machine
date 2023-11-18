@@ -754,7 +754,7 @@ private:
 	auto move_response(MoveName const move) const -> BattleMessageResult {
 		return is_switch(move) ?
 			BattleMessageResult(m_slot_memory[to_replacement(move)]) :
-			BattleMessageResult(m_client_battle->move_index(move) + 1_bi);
+			BattleMessageResult(move);
 	}
 
 	auto handle_delayed_switch(Party const party) -> BattleMessageResult {

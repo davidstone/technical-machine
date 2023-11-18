@@ -26,7 +26,6 @@ import tm.team;
 import tm.visible_hp;
 import tm.weather;
 
-import containers;
 import std_module;
 
 namespace technicalmachine {
@@ -40,7 +39,6 @@ export struct ClientBattle {
 
 	virtual auto generation() const -> Generation = 0;
 	virtual auto team() const -> GenerationGeneric<Team> = 0;
-	virtual auto move_index(MoveName) const -> containers::index_type<RegularMoves> = 0;
 
 	// Returns the switch required to bring in this Pokemon
 	virtual auto ai_has(Species, std::string_view nickname, Level, Gender) & -> MoveName = 0;
