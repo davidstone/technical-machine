@@ -36,6 +36,7 @@ import tm.bit_view;
 import tm.constant_generation;
 import tm.gender;
 import tm.generation;
+import tm.generation_generic;
 import tm.item;
 import tm.team;
 

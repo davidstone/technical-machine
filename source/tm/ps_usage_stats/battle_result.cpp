@@ -7,7 +7,7 @@ export module tm.ps_usage_stats.battle_result;
 
 import tm.ps_usage_stats.rating;
 
-import tm.generation;
+import tm.generation_generic;
 import tm.team;
 
 import bounded;

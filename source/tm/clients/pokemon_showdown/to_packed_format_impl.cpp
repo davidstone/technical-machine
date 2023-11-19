@@ -22,6 +22,8 @@ import tm.string_conversions.nature;
 import tm.string_conversions.species;
 
 import tm.any_team;
+import tm.generation;
+import tm.generation_generic;
 import tm.item;
 
 import bounded;

@@ -14,6 +14,7 @@ import tm.clients.ps.packed_format_to_team;
 import tm.clients.ps.to_packed_format;
 
 import tm.generation;
+import tm.generation_generic;
 
 import containers;
 import std_module;

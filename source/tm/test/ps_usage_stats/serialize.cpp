@@ -29,6 +29,7 @@ import tm.test.usage_bytes;
 import tm.ability;
 import tm.gender;
 import tm.generation;
+import tm.generation_generic;
 import tm.get_directory;
 import tm.item;
 import tm.team;

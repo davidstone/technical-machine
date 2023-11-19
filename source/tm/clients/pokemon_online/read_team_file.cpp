@@ -31,6 +31,7 @@ import tm.stat.iv;
 
 import tm.constant_generation;
 import tm.generation;
+import tm.generation_generic;
 import tm.property_tree;
 export import tm.team;
 

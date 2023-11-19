@@ -5,7 +5,7 @@
 
 export module tm.clients.sb.read_team_file;
 
-import tm.generation;
+import tm.generation_generic;
 import tm.team;
 
 import std_module;

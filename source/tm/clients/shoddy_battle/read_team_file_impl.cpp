@@ -41,6 +41,7 @@ import tm.ability;
 import tm.buffer_view;
 import tm.gender;
 import tm.generation;
+import tm.generation_generic;
 import tm.item;
 import tm.team;
 

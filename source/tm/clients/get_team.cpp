@@ -8,6 +8,7 @@ export module tm.clients.get_team;
 import tm.team_predictor.all_usage_stats;
 
 import tm.generation;
+import tm.generation_generic;
 import tm.settings_file;
 import tm.team;
 

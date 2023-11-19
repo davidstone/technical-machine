@@ -22,6 +22,7 @@ import tm.move.move_name;
 import tm.team_predictor.usage_stats;
 
 import tm.generation;
+import tm.generation_generic;
 import tm.team;
 
 import containers;

@@ -17,6 +17,7 @@ import tm.evaluate.depth;
 import tm.team_predictor.usage_stats;
 
 import tm.generation;
+import tm.generation_generic;
 import tm.team;
 
 import containers;

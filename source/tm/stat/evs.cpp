@@ -14,8 +14,6 @@ import tm.stat.ev;
 import tm.stat.stat_names;
 import tm.stat.stat_style;
 
-import tm.generation;
-
 import bounded;
 import std_module;
 

@@ -5,7 +5,7 @@
 
 export module tm.clients.ps.to_packed_format;
 
-import tm.generation;
+import tm.generation_generic;
 import tm.team;
 
 import containers;

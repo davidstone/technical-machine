@@ -59,6 +59,7 @@ import tm.team_predictor.usage_stats;
 import tm.ability;
 import tm.gender;
 import tm.generation;
+import tm.generation_generic;
 import tm.item;
 import tm.split_view;
 import tm.team;

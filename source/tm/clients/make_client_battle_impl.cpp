@@ -65,6 +65,7 @@ import tm.battle;
 import tm.end_of_turn_flags;
 import tm.gender;
 import tm.generation;
+import tm.generation_generic;
 import tm.get_both_actions;
 import tm.item;
 import tm.team;

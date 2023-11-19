@@ -13,7 +13,7 @@ import tm.clients.sb.read_team_file;
 
 import tm.bytes_in_file;
 import tm.files_in_path;
-import tm.generation;
+import tm.generation_generic;
 export import tm.team;
 
 import bounded;

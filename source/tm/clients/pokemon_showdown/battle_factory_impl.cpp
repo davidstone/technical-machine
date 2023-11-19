@@ -38,6 +38,7 @@ import tm.team_predictor.usage_stats;
 
 import tm.constant_generation;
 import tm.generation;
+import tm.generation_generic;
 import tm.team;
 
 import bounded;

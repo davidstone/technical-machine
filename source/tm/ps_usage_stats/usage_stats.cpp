@@ -21,7 +21,7 @@ import tm.stat.calculate;
 
 import tm.ability;
 import tm.environment;
-import tm.generation;
+import tm.generation_generic;
 import tm.item;
 import tm.team;
 

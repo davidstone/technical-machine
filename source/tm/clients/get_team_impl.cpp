@@ -12,6 +12,7 @@ import tm.team_predictor.team_predictor;
 
 import tm.constant_generation;
 import tm.generation;
+import tm.generation_generic;
 import tm.settings_file;
 import tm.team;
 

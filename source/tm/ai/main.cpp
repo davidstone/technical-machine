@@ -16,10 +16,7 @@ import tm.evaluate.depth;
 
 import tm.move.move;
 
-import tm.string_conversions.generation;
-
 import tm.environment;
-import tm.generation;
 import tm.get_directory;
 import tm.load_settings_file;
 

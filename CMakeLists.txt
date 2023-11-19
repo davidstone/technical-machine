@@ -279,6 +279,7 @@ target_sources(tm_common PUBLIC
 		source/tm/find_required_index.cpp
 		source/tm/gender.cpp
 		source/tm/generation.cpp
+		source/tm/generation_generic.cpp
 		source/tm/get_directory.cpp
 		source/tm/handle_curse.cpp
 		source/tm/heal.cpp

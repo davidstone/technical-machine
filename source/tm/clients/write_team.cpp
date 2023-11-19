@@ -5,7 +5,7 @@
 
 export module tm.clients.write_team;
 
-import tm.generation;
+import tm.generation_generic;
 import tm.team;
 
 import containers;

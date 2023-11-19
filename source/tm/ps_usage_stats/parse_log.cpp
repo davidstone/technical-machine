@@ -42,6 +42,7 @@ import tm.ability;
 import tm.constant_generation;
 import tm.gender;
 import tm.generation;
+import tm.generation_generic;
 import tm.item;
 import tm.nlohmann_json;
 import tm.team;

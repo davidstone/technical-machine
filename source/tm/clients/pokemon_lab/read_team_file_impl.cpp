@@ -42,6 +42,7 @@ import tm.ability;
 import tm.constant_generation;
 import tm.gender;
 import tm.generation;
+import tm.generation_generic;
 import tm.property_tree;
 import tm.item;
 import tm.team;

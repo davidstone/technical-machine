@@ -6,9 +6,6 @@
 export module tm.other_team;
 
 import tm.any_team;
-import tm.generation;
-
-import std_module;
 
 namespace technicalmachine {
 
