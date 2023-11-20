@@ -25,6 +25,10 @@ export auto get_environment_variable(char const * const environment_variable) ->
 	return dir;
 }
 
+export auto get_battles_directory() -> std::filesystem::path {
+	return std::filesystem::path(get_environment_variable("TM_BATTLES_DIRECTORY"));
+}
+
 export auto get_settings_directory() -> std::filesystem::path {
 	return std::filesystem::path(get_environment_variable("TM_SETTINGS_DIRECTORY"));
 }

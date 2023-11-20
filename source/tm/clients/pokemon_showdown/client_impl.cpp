@@ -86,7 +86,7 @@ export struct ClientImpl {
 		m_all_usage_stats(stats_for_generation),
 		m_settings(std::move(settings)),
 		m_depth(depth),
-		m_battles("battles", WriteTeam{".sbt", write_team_function}),
+		m_battles(get_battles_directory(), WriteTeam{".sbt", write_team_function}),
 		m_send_message(std::move(send_message)),
 		m_authenticate(std::move(authenticate))
 	{
