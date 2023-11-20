@@ -212,8 +212,8 @@ struct ClientBattleImpl final : ClientBattle {
 		apply_to_teams(ai_is_user, [&](auto const & user_team, auto const & other_team) {
 			auto const move = tv::visit(move_result, tv::overload(
 				[](Used const used) { return used; },
-				[&](Recharging) { return Used{user_team.pokemon().last_used_move().name()}; },
-				[](auto) { return Used{MoveName::Struggle}; }
+				[&](Recharging) { return Used(user_team.pokemon().last_used_move().name()); },
+				[](auto) { return Used(MoveName::Struggle); }
 			));
 			active_has(ai_is_user, move.selected);
 			if (move.selected == MoveName::Sleep_Talk) {

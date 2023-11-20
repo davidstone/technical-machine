@@ -126,7 +126,7 @@ export struct MoveState {
 				if (m_status_change == StatusChange::still_asleep and !usable_while_sleeping(move)) {
 					throw std::runtime_error(containers::concatenate<std::string>("Tried to use "sv, to_string(move), " while asleep"sv));
 				}
-				m_move.emplace([&] { return Used{move}; });
+				m_move.emplace([&] { return Used(move); });
 			}
 		));
 	}

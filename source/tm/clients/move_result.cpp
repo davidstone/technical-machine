@@ -30,9 +30,14 @@ export struct FrozenSolid {};
 export struct FullyParalyzed {};
 export struct Recharging {};
 export struct Used {
+	constexpr explicit Used(MoveName const selected_, bool miss_ = false):
+		selected(selected_),
+		miss(miss_)
+	{
+	}
 	MoveName selected;
 	MoveName executed = selected;
-	Damage damage = Damage(NoDamage());
+	Damage damage = NoDamage();
 	tv::optional<StatusName> status = tv::none;
 	tv::optional<TeamIndex> phaze_index = tv::none;
 	ContactAbilityEffect contact_ability_effect = ContactAbilityEffect::nothing;
