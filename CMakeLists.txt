@@ -179,6 +179,7 @@ target_sources(tm_common PUBLIC
 		# usage stats.
 		source/tm/ps_usage_stats/header.cpp
 	
+		source/tm/stat/allowed_hp.cpp
 		source/tm/stat/base_stats.cpp
 		source/tm/stat/calculate.cpp
 		source/tm/stat/calculate_ivs_and_evs.cpp

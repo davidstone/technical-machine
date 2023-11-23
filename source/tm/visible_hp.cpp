@@ -10,6 +10,7 @@ module;
 
 export module tm.visible_hp;
 
+import tm.stat.allowed_hp;
 import tm.stat.current_hp;
 import tm.stat.max_hp;
 
@@ -65,22 +66,6 @@ export constexpr auto operator==(CurrentVisibleHP const lhs, MaxVisibleHP const 
 export struct VisibleHP {
 	CurrentVisibleHP current;
 	MaxVisibleHP max;
-};
-
-export struct AllowedHP {
-	constexpr AllowedHP(CurrentHP const min_, CurrentHP const value_, CurrentHP const max_):
-		min(min_),
-		value(value_),
-		max(max_)
-	{
-	}
-	constexpr explicit AllowedHP(CurrentHP const value_):
-		AllowedHP(value_, value_, value_)
-	{
-	}
-	CurrentHP min;
-	CurrentHP value;
-	CurrentHP max;
 };
 
 export auto to_real_hp(MaxHP const max_hp, VisibleHP const visible_hp) -> AllowedHP {
