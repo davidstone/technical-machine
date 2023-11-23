@@ -44,6 +44,7 @@ import tm.pokemon.substitute;
 
 import tm.stat.current_hp;
 import tm.stat.hp;
+import tm.stat.to_real_hp;
 
 import tm.status.status_name;
 

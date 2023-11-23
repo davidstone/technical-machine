@@ -26,6 +26,7 @@ import tm.stat.nature;
 import tm.stat.stat_names;
 import tm.stat.stat_style;
 import tm.stat.stats;
+import tm.stat.to_real_hp;
 
 import tm.status.status;
 import tm.status.status_name;

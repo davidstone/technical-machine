@@ -204,6 +204,7 @@ target_sources(tm_common PUBLIC
 		source/tm/stat/stat_style.cpp
 		source/tm/stat/stat_to_ev.cpp
 		source/tm/stat/stats.cpp
+		source/tm/stat/to_real_hp.cpp
 
 		source/tm/status/blocks_status.cpp
 		source/tm/status/clears_status.cpp
