@@ -239,9 +239,11 @@ struct ClientBattleImpl final : ClientBattle {
 			}
 			
 			auto const damaged_is_ai = !ai_is_user xor (move.executed == MoveName::Hit_Self);
+			auto const old_hp = target_hp(damaged_is_ai);
 			auto const damage = visible_damage_to_actual_damage(
-				move,
+				move.damage,
 				damaged_is_ai,
+				old_hp,
 				other_pokemon.substitute()
 			);
 			
@@ -355,16 +357,16 @@ private:
 		);
 	}
 
-	auto visible_damage_to_actual_damage(
-		Used const move,
-		bool const damaged_is_ai,
+	static auto visible_damage_to_actual_damage(
+		Damage const damage,
+		bool const damaged_has_exact_hp,
+		HP const old_hp,
 		Substitute const other_substitute
-	) const -> FlaggedActualDamage {
-		return tv::visit(move.damage, tv::overload(
+	) -> FlaggedActualDamage {
+		return tv::visit(damage, tv::overload(
 			no_damage_function,
 			[&](VisibleHP const hp) -> FlaggedActualDamage {
-				auto const old_hp = target_hp(damaged_is_ai);
-				auto const new_hp = damaged_is_ai ?
+				auto const new_hp = damaged_has_exact_hp ?
 					hp.current.value() :
 					to_real_hp(old_hp.max(), hp).value;
 				auto const value = hp_to_damage(old_hp.current(), new_hp);
