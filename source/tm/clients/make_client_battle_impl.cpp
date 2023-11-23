@@ -238,9 +238,10 @@ struct ClientBattleImpl final : ClientBattle {
 				active_has(ai_is_user, Ability::Rock_Head);
 			}
 			
+			auto const damaged_is_ai = !ai_is_user xor (move.executed == MoveName::Hit_Self);
 			auto const damage = visible_damage_to_actual_damage(
-				ai_is_user,
 				move,
+				damaged_is_ai,
 				other_pokemon.substitute()
 			);
 			
@@ -354,11 +355,14 @@ private:
 		);
 	}
 
-	auto visible_damage_to_actual_damage(bool const user_is_ai, Used const move, Substitute const other_substitute) const -> FlaggedActualDamage {
+	auto visible_damage_to_actual_damage(
+		Used const move,
+		bool const damaged_is_ai,
+		Substitute const other_substitute
+	) const -> FlaggedActualDamage {
 		return tv::visit(move.damage, tv::overload(
 			no_damage_function,
 			[&](VisibleHP const hp) -> FlaggedActualDamage {
-				auto const damaged_is_ai = !user_is_ai xor (move.executed == MoveName::Hit_Self);
 				auto const old_hp = target_hp(damaged_is_ai);
 				auto const new_hp = damaged_is_ai ?
 					hp.current.value() :
