@@ -27,12 +27,16 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 export struct ActualDamage {
-	struct Unknown {};
+	struct Unknown {
+		friend constexpr auto operator==(Unknown, Unknown) -> bool = default;
+	};
 	struct Capped {
 		bounded::integer<0, bounded::builtin_max_value<CurrentHP> / 4> value;
+		friend constexpr auto operator==(Capped, Capped) -> bool = default;
 	};
 	struct Known {
 		CurrentHP value;
+		friend constexpr auto operator==(Known, Known) -> bool = default;
 	};
 
 	constexpr ActualDamage(Unknown const value_):
@@ -66,6 +70,7 @@ export struct ActualDamage {
 		));
 	}
 
+	friend constexpr auto operator==(ActualDamage, ActualDamage) -> bool = default;
 private:
 	tv::variant<
 		Unknown,
@@ -77,6 +82,7 @@ private:
 export struct FlaggedActualDamage {
 	ActualDamage value;
 	bool did_any_damage;
+	friend constexpr auto operator==(FlaggedActualDamage, FlaggedActualDamage) -> bool = default;
 };
 
 } // namespace technicalmachine
