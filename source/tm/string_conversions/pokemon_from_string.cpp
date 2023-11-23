@@ -117,11 +117,22 @@ constexpr auto pop_evs(BufferView<std::string_view> & buffer) {
 	}
 }
 
+constexpr auto is_valid_percent(double const value) -> bool {
+	return 0.0 <= value and value <= 1.0;
+}
+
 export template<Generation generation>
 constexpr auto pokemon_from_string(std::string_view const str) -> Pokemon<generation> {
 	auto buffer = BufferView(str);
 	auto const species = typed_pop<Species>(buffer, species_hp);
-	auto const hp_percent = typed_pop<double>(buffer, hp_item);
+	auto const hp_percent_str = pop_to_delimiter(buffer, hp_item);
+	auto const hp_percent = std::stod(std::string(hp_percent_str));
+	if (!is_valid_percent(hp_percent)) {
+		throw std::runtime_error(containers::concatenate<std::string>(
+			"Invalid HP%: "sv,
+			hp_percent_str
+		));
+	}
 	auto const item = typed_pop<Item>(buffer, item_ability);
 	auto const [ability, status] = pop_ability_and_status(buffer, generation);
 	auto const nature = generation <= Generation::two ? Nature::Hardy : typed_pop<Nature>(buffer, nature_hp_iv);
