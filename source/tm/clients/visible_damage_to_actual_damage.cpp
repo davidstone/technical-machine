@@ -24,8 +24,8 @@ import tv;
 namespace technicalmachine {
 using namespace bounded::literal;
 
-constexpr auto no_damage_function = [](NoDamage) -> FlaggedActualDamage {
-	return FlaggedActualDamage{ActualDamage::Known{0_bi}, false};
+constexpr auto no_damage_function = [](NoDamage) -> ActualDamage {
+	return ActualDamage::Known(0_bi);
 };
 
 struct MoveHitSubstitute {
@@ -33,20 +33,14 @@ struct MoveHitSubstitute {
 		m_other_substitute(other_substitute)
 	{
 	}
-	constexpr auto operator()(SubstituteDamaged) const -> FlaggedActualDamage {
+	constexpr auto operator()(SubstituteDamaged) const -> ActualDamage {
 		if (!m_other_substitute) {
 			throw std::runtime_error("Tried to damage a Substitute when the target does not have a Substitute");
 		}
-		return FlaggedActualDamage{
-			ActualDamage::Capped{bounded::increase_min<0>(m_other_substitute.hp() - 1_bi)},
-			true
-		};
+		return ActualDamage::Capped(bounded::increase_min<0>(m_other_substitute.hp() - 1_bi));
 	}
-	constexpr auto operator()(SubstituteBroke) const -> FlaggedActualDamage {
-		return FlaggedActualDamage{
-			ActualDamage::Known{m_other_substitute.hp()},
-			true
-		};
+	constexpr auto operator()(SubstituteBroke) const -> ActualDamage {
+		return ActualDamage::Known(m_other_substitute.hp());
 	}
 
 private:
@@ -58,18 +52,15 @@ export constexpr auto visible_damage_to_actual_damage(
 	bool const damaged_has_exact_hp,
 	HP const old_hp,
 	Substitute const other_substitute
-) -> FlaggedActualDamage {
+) -> ActualDamage {
 	return tv::visit(damage, tv::overload(
 		no_damage_function,
-		[&](VisibleHP const hp) -> FlaggedActualDamage {
+		[&](VisibleHP const hp) -> ActualDamage {
 			auto const new_hp = damaged_has_exact_hp ?
 				hp.current.value() :
 				to_real_hp(old_hp.max(), hp).value;
 			auto const value = bounded::check_in_range<CurrentHP>(old_hp.current() - new_hp);
-			return FlaggedActualDamage{
-				ActualDamage::Known{value},
-				value != 0_bi
-			};
+			return ActualDamage::Known(value);
 		},
 		MoveHitSubstitute(other_substitute)
 	));

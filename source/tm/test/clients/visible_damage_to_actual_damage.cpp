@@ -28,7 +28,7 @@ static_assert(
 		true,
 		HP(100_bi),
 		Substitute()
-	) == FlaggedActualDamage(ActualDamage::Known(5_bi), true)
+	) == ActualDamage::Known(5_bi)
 );
 
 } // namespace

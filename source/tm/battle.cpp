@@ -104,7 +104,7 @@ struct Battle {
 		});
 	}
 	template<any_team UserTeam>
-	void handle_use_move(UsedMove<UserTeam> const move, bool const clear_status, bool const is_fully_paralyzed, FlaggedActualDamage const damage) {
+	void handle_use_move(UsedMove<UserTeam> const move, bool const clear_status, bool const is_fully_paralyzed, ActualDamage const damage) {
 		constexpr auto is_ai = std::same_as<UserTeam, KnownTeam<generation_from<UserTeam>>>;
 
 		auto const teams = [&] {
@@ -127,7 +127,7 @@ struct Battle {
 				return KnownMove{move_name, type};
 			}()) :
 			OtherMove(FutureMove{
-				move.executed == MoveName::Sucker_Punch and damage.did_any_damage
+				move.executed == MoveName::Sucker_Punch and damage.did_any_damage()
 			});
 
 		call_move(
@@ -137,7 +137,7 @@ struct Battle {
 			other_move,
 			m_environment,
 			clear_status,
-			damage.value,
+			damage,
 			is_fully_paralyzed
 		);
 	}

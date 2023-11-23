@@ -70,6 +70,20 @@ export struct ActualDamage {
 		));
 	}
 
+	constexpr auto did_any_damage() const -> bool {
+		return tv::visit(m_value, tv::overload(
+			[](Unknown) {
+				return true;
+			},
+			[](Capped) {
+				return true;
+			},
+			[](Known const known) {
+				return known.value != 0_bi;
+			}
+		));
+	}
+
 	friend constexpr auto operator==(ActualDamage, ActualDamage) -> bool = default;
 private:
 	tv::variant<
@@ -77,12 +91,6 @@ private:
 		Capped,
 		Known
 	> m_value;
-};
-
-export struct FlaggedActualDamage {
-	ActualDamage value;
-	bool did_any_damage;
-	friend constexpr auto operator==(FlaggedActualDamage, FlaggedActualDamage) -> bool = default;
 };
 
 } // namespace technicalmachine
