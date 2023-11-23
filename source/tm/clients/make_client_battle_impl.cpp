@@ -328,7 +328,11 @@ private:
 		}
 	}
 	auto apply_to_team(bool const is_ai_, auto function) const -> decltype(auto) {
-		return apply_to_teams(is_ai_, [&](auto const & team, auto const &) -> decltype(auto) { return function(team); });
+		if (is_ai_) {
+			return function(m_battle.ai());
+		} else {
+			return function(m_battle.foe());
+		}
 	}
 
 	auto target_hp(bool const damaged_is_ai) const -> HP {
