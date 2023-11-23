@@ -87,15 +87,6 @@ constexpr auto moved(any_team auto const & team) -> bool {
 	return pokemon.last_used_move().moved_this_turn() or pokemon.hp().current() == 0_bi;
 };
 
-constexpr auto hp_to_damage(CurrentHP const old_hp, CurrentHP const new_hp) -> CurrentHP {
-	if (new_hp > old_hp) {
-		std::cerr << "Took negative damage\n";
-		return CurrentHP(0_bi);
-		// throw std::runtime_error("Took negative damage");
-	}
-	return bounded::assume_in_range<CurrentHP>(old_hp - new_hp);
-}
-
 constexpr auto no_damage_function = [](NoDamage) -> FlaggedActualDamage {
 	return FlaggedActualDamage{ActualDamage::Known{0_bi}, false};
 };
@@ -369,7 +360,7 @@ private:
 				auto const new_hp = damaged_has_exact_hp ?
 					hp.current.value() :
 					to_real_hp(old_hp.max(), hp).value;
-				auto const value = hp_to_damage(old_hp.current(), new_hp);
+				auto const value = bounded::check_in_range<CurrentHP>(old_hp.current() - new_hp);
 				return FlaggedActualDamage{
 					ActualDamage::Known{value},
 					value != 0_bi
