@@ -22,13 +22,25 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
+constexpr auto exact_hp = true;
+constexpr auto inexact_hp = false;
+
 static_assert(
 	visible_damage_to_actual_damage(
 		Damage(VisibleHP(CurrentVisibleHP(95_bi), MaxVisibleHP(100_bi))),
-		true,
+		exact_hp,
 		HP(100_bi),
 		Substitute()
 	) == ActualDamage::Known(5_bi)
+);
+
+static_assert(
+	visible_damage_to_actual_damage(
+		Damage(VisibleHP(CurrentVisibleHP(90_bi), MaxVisibleHP(100_bi))),
+		inexact_hp,
+		HP(293_bi),
+		Substitute()
+	) == ActualDamage::Known(30_bi)
 );
 
 } // namespace
