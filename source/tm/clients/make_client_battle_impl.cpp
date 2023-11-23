@@ -18,6 +18,7 @@ import tm.clients.move_result;
 import tm.clients.teams;
 import tm.clients.to_used_move;
 import tm.clients.turn_count;
+import tm.clients.visible_damage_to_actual_damage;
 
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
@@ -27,7 +28,6 @@ import tm.evaluate.score_moves;
 import tm.evaluate.scored_move;
 import tm.evaluate.state;
 
-import tm.move.actual_damage;
 import tm.move.causes_recoil;
 import tm.move.is_switch;
 import tm.move.known_move;
@@ -40,11 +40,8 @@ import tm.pokemon.get_hidden_power_type;
 import tm.pokemon.level;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.species;
-import tm.pokemon.substitute;
 
-import tm.stat.current_hp;
 import tm.stat.hp;
-import tm.stat.to_real_hp;
 
 import tm.status.status_name;
 
@@ -85,35 +82,6 @@ using namespace std::string_view_literals;
 constexpr auto moved(any_team auto const & team) -> bool {
 	auto const pokemon = team.pokemon();
 	return pokemon.last_used_move().moved_this_turn() or pokemon.hp().current() == 0_bi;
-};
-
-constexpr auto no_damage_function = [](NoDamage) -> FlaggedActualDamage {
-	return FlaggedActualDamage{ActualDamage::Known{0_bi}, false};
-};
-
-struct MoveHitSubstitute {
-	explicit constexpr MoveHitSubstitute(Substitute const other_substitute):
-		m_other_substitute(other_substitute)
-	{
-	}
-	constexpr auto operator()(SubstituteDamaged) const -> FlaggedActualDamage {
-		if (!m_other_substitute) {
-			throw std::runtime_error("Tried to damage a Substitute when the target does not have a Substitute");
-		}
-		return FlaggedActualDamage{
-			ActualDamage::Capped{bounded::increase_min<0>(m_other_substitute.hp() - 1_bi)},
-			true
-		};
-	}
-	constexpr auto operator()(SubstituteBroke) const -> FlaggedActualDamage {
-		return FlaggedActualDamage{
-			ActualDamage::Known{m_other_substitute.hp()},
-			true
-		};
-	}
-
-private:
-	Substitute m_other_substitute;
 };
 
 template<Generation generation_>
@@ -346,28 +314,6 @@ private:
 			m_battle.environment(),
 			m_depth
 		);
-	}
-
-	static auto visible_damage_to_actual_damage(
-		Damage const damage,
-		bool const damaged_has_exact_hp,
-		HP const old_hp,
-		Substitute const other_substitute
-	) -> FlaggedActualDamage {
-		return tv::visit(damage, tv::overload(
-			no_damage_function,
-			[&](VisibleHP const hp) -> FlaggedActualDamage {
-				auto const new_hp = damaged_has_exact_hp ?
-					hp.current.value() :
-					to_real_hp(old_hp.max(), hp).value;
-				auto const value = bounded::check_in_range<CurrentHP>(old_hp.current() - new_hp);
-				return FlaggedActualDamage{
-					ActualDamage::Known{value},
-					value != 0_bi
-				};
-			},
-			MoveHitSubstitute(other_substitute)
-		));
 	}
 
 	auto log_team(std::string_view const label, auto const & team) & -> void {
