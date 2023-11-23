@@ -87,10 +87,6 @@ constexpr auto moved(any_team auto const & team) -> bool {
 	return pokemon.last_used_move().moved_this_turn() or pokemon.hp().current() == 0_bi;
 };
 
-auto const & select_pokemon(any_team auto const & team, MoveName const move) {
-	return is_switch(move) ? team.pokemon(to_replacement(move)) : team.all_pokemon()();
-}
-
 constexpr auto hp_to_damage(CurrentHP const old_hp, CurrentHP const new_hp) -> CurrentHP {
 	if (new_hp > old_hp) {
 		std::cerr << "Took negative damage\n";
@@ -335,10 +331,10 @@ private:
 		return apply_to_teams(is_ai_, [&](auto const & team, auto const &) -> decltype(auto) { return function(team); });
 	}
 
-	auto target_hp(bool const damaged_is_ai, MoveName const move) const -> HP {
-		return apply_to_team(damaged_is_ai, [&](auto const & team) {
-			return select_pokemon(team, move).hp();
-		});
+	auto target_hp(bool const damaged_is_ai) const -> HP {
+		return damaged_is_ai ?
+			m_battle.ai().pokemon().hp() :
+			m_battle.foe().pokemon().hp();
 	}
 
 	auto predicted_state() const -> State<generation_> {
@@ -355,7 +351,7 @@ private:
 			no_damage_function,
 			[&](VisibleHP const hp) -> FlaggedActualDamage {
 				auto const damaged_is_ai = !user_is_ai xor (move.executed == MoveName::Hit_Self);
-				auto const old_hp = target_hp(damaged_is_ai, move.executed);
+				auto const old_hp = target_hp(damaged_is_ai);
 				auto const new_hp = damaged_is_ai ?
 					hp.current.value() :
 					to_real_hp(old_hp.max(), hp).value;
