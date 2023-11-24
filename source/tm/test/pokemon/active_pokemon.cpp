@@ -11,7 +11,6 @@ export module tm.test.pokemon.active_pokemon;
 
 import tm.move.move;
 import tm.move.move_name;
-import tm.move.regular_moves;
 
 import tm.pokemon.active_pokemon;
 import tm.pokemon.level;
@@ -22,6 +21,8 @@ import tm.stat.default_evs;
 
 import tm.status.clears_status;
 import tm.status.status_name;
+
+import tm.test.pokemon_init;
 
 import tm.ability;
 import tm.environment;
@@ -36,21 +37,16 @@ using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
 
-constexpr auto regular_moves(auto... moves) {
-	return RegularMoves{Move(generation, moves)...};
-}
-
 // Chesto Berry awakens from Rest
 static_assert([]{
-	auto pokemon = Pokemon<generation>(
-		Species::Charmander,
-		Level(100_bi),
-		Gender::female,
-		Item::Chesto_Berry,
-		Ability::Blaze,
-		default_combined_stats<generation>,
-		regular_moves(MoveName::Rest)
-	);
+	auto pokemon = make_pokemon<generation>({
+		.species = Species::Charmander,
+		.item = Item::Chesto_Berry,
+		.ability = Ability::Blaze,
+		.moves = {{
+			MoveName::Rest,
+		}}
+	});
 	pokemon.set_hp(1_bi);
 	auto flags = ActivePokemonFlags<generation>();
 	auto active_pokemon = AnyMutableActivePokemon(pokemon, flags);
@@ -63,15 +59,14 @@ static_assert([]{
 
 // Chesto Berry awakens after Rest cures status
 static_assert([]{
-	auto pokemon = Pokemon<generation>(
-		Species::Charmander,
-		Level(100_bi),
-		Gender::female,
-		Item::Chesto_Berry,
-		Ability::Blaze,
-		default_combined_stats<generation>,
-		regular_moves(MoveName::Rest)
-	);
+	auto pokemon = make_pokemon<generation>({
+		.species = Species::Charmander,
+		.item = Item::Chesto_Berry,
+		.ability = Ability::Blaze,
+		.moves = {{
+			MoveName::Rest,
+		}}
+	});
 	pokemon.set_hp(1_bi);
 	auto flags = ActivePokemonFlags<generation>();
 	auto active_pokemon = AnyMutableActivePokemon(pokemon, flags);

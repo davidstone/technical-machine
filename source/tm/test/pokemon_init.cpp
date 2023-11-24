@@ -13,6 +13,7 @@ import tm.move.regular_moves;
 import tm.pokemon.known_pokemon;
 import tm.pokemon.level;
 import tm.pokemon.nickname;
+import tm.pokemon.pokemon;
 import tm.pokemon.seen_pokemon;
 import tm.pokemon.species;
 
@@ -36,8 +37,10 @@ import std_module;
 namespace technicalmachine {
 using namespace bounded::literal;
 
+export using MovesInit = containers::static_vector<MoveName, max_moves_per_pokemon>;
+
 export template<Generation generation>
-struct KnownPokemonInit {
+struct PokemonInit {
 	Species species;
 	Nickname nickname = to_string(species);
 	Level level = Level(100_bi);
@@ -47,7 +50,7 @@ struct KnownPokemonInit {
 	Nature nature = Nature::Hardy;
 	decltype(max_dvs_or_ivs<generation>) ivs = max_dvs_or_ivs<generation>;
 	decltype(default_evs<generation>) evs = default_evs<generation>;
-	containers::static_vector<MoveName, max_moves_per_pokemon> moves = {{MoveName::Tackle}};
+	MovesInit moves = {{MoveName::Tackle}};
 };
 
 export struct SeenPokemonInit {
@@ -58,7 +61,29 @@ export struct SeenPokemonInit {
 };
 
 export template<Generation generation>
-constexpr auto make_known_pokemon = [](KnownPokemonInit<generation> const pokemon) {
+constexpr auto make_pokemon = [](PokemonInit<generation> const pokemon) {
+	return Pokemon<generation>(
+		pokemon.species,
+		pokemon.level,
+		pokemon.gender,
+		pokemon.item,
+		pokemon.ability,
+		CombinedStatsFor<generation>(
+			pokemon.nature,
+			pokemon.ivs,
+			pokemon.evs
+		),
+		RegularMoves(containers::transform(
+			pokemon.moves,
+			[](MoveName const move) {
+				return Move(generation, move);
+			}
+		))
+	);
+};
+
+export template<Generation generation>
+constexpr auto make_known_pokemon = [](PokemonInit<generation> const pokemon) {
 	return KnownPokemon<generation>(
 		pokemon.species,
 		pokemon.nickname,
@@ -91,7 +116,15 @@ constexpr auto make_seen_pokemon(SeenPokemonInit const pokemon) {
 }
 
 export template<Generation generation, std::size_t size>
-constexpr auto make_known_team(containers::c_array<KnownPokemonInit<generation>, size> const & init) {
+constexpr auto make_team(containers::c_array<PokemonInit<generation>, size> const & init) {
+	return Team<generation>(containers::transform(
+		std::span(init),
+		make_pokemon<generation>
+	));
+}
+
+export template<Generation generation, std::size_t size>
+constexpr auto make_known_team(containers::c_array<PokemonInit<generation>, size> const & init) {
 	return KnownTeam<generation>(containers::transform(
 		std::span(init),
 		make_known_pokemon<generation>

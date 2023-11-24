@@ -23,7 +23,6 @@ import tm.move.move;
 import tm.move.move_name;
 import tm.move.no_effect_function;
 import tm.move.other_move;
-import tm.move.regular_moves;
 import tm.move.side_effects;
 import tm.move.used_move;
 
@@ -40,6 +39,8 @@ import tm.stat.nature;
 import tm.status.status_name;
 
 import tm.stat.default_evs;
+
+import tm.test.pokemon_init;
 
 import tm.ability;
 import tm.end_of_turn;
@@ -84,48 +85,40 @@ auto determine_best_move(Team<generation> const & ai, Team<generation> const & f
 	});
 }
 
-auto shuffled_regular_moves(Generation const generation, auto & random_engine, auto... ts) {
-	// Random order to prevent ordering effects from accidentally arriving at
-	// the correct move each time
-	auto moves = RegularMoves{Move(generation, ts)...};
-	std::shuffle(containers::legacy_iterator(containers::begin(moves)), containers::legacy_iterator(containers::end(moves)), random_engine);
-	return moves;
-}
-
 TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(1_bi);
 
-	auto team1 = Team<generation>({
-		Pokemon<generation>(
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Volt_Absorb,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
-		)
+	auto team1 = make_team<generation>({
+		{
+			.species = Species::Jolteon,
+			.item = Item::Leftovers,
+			.ability = Ability::Volt_Absorb,
+			.moves = {{
+				MoveName::Thunderbolt,
+				MoveName::Charm,
+				MoveName::Thunder,
+				MoveName::Shadow_Ball,
+			}}
+		},
 	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
-	auto team2 = Team<generation>({
-		Pokemon<generation>(
-			Species::Gyarados,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Intimidate,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Dragon_Dance, MoveName::Waterfall, MoveName::Stone_Edge, MoveName::Taunt)
-		)
+	auto team2 = make_team<generation>({
+		{
+			.species = Species::Gyarados,
+			.item = Item::Leftovers,
+			.ability = Ability::Intimidate,
+			.moves = {{
+				MoveName::Dragon_Dance,
+				MoveName::Waterfall,
+				MoveName::Stone_Edge,
+				MoveName::Taunt,
+			}}
+		},
 	});
 	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();
@@ -136,16 +129,18 @@ TEST_CASE("expectiminimax OHKO", "[expectiminimax]") {
 		CHECK(best_move.score == victory<generation>);
 	}
 	
-	auto team3 = Team<generation>({
-		Pokemon<generation>(
-			Species::Shedinja,
-			Level(100_bi),
-			Gender::male,
-			Item::Lum_Berry,
-			Ability::Wonder_Guard,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Swords_Dance, MoveName::X_Scissor, MoveName::Shadow_Sneak, MoveName::Will_O_Wisp)
-		)
+	auto team3 = make_team<generation>({
+		{
+			.species = Species::Shedinja,
+			.item = Item::Lum_Berry,
+			.ability = Ability::Wonder_Guard,
+			.moves = {{
+				MoveName::Swords_Dance,
+				MoveName::X_Scissor,
+				MoveName::Shadow_Sneak,
+				MoveName::Will_O_Wisp,
+			}}
+		},
 	});
 	team3.pokemon().switch_in(environment);
 	team3.reset_start_of_turn();
@@ -161,47 +156,34 @@ TEST_CASE("expectiminimax one-turn damage", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(1_bi);
 	
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Volt_Absorb,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Jolteon,
+			.item = Item::Leftovers,
+			.ability = Ability::Volt_Absorb,
+			.moves = {{
+				MoveName::Thunderbolt,
+				MoveName::Charm,
+				MoveName::Thunder,
+				MoveName::Shadow_Ball,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Swampert,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Torrent,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Surf, MoveName::Ice_Beam)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Swampert,
+			.item = Item::Leftovers,
+			.ability = Ability::Torrent,
+			.moves = {{
+				MoveName::Surf,
+				MoveName::Ice_Beam,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
@@ -214,58 +196,33 @@ TEST_CASE("expectiminimax BellyZard", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(2_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Charizard,
-			Level(100_bi),
-			Gender::male,
-			Item::Salac_Berry,
-			Ability::Blaze,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Fire_Punch, MoveName::Belly_Drum, MoveName::Earthquake, MoveName::Double_Edge)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Charizard,
+			.item = Item::Salac_Berry,
+			.ability = Ability::Blaze,
+			.moves = {{
+				MoveName::Fire_Punch,
+				MoveName::Belly_Drum,
+				MoveName::Earthquake,
+				MoveName::Double_Edge,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Mew,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Synchronize,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Soft_Boiled)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Mew,
+			.item = Item::Leftovers,
+			.ability = Ability::Synchronize,
+			.moves = {{
+				MoveName::Soft_Boiled,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
@@ -279,33 +236,27 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(11_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Hippopotas,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Sand_Stream,
-			CombinedStatsFor<generation>{
-				Nature::Adamant,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Curse, MoveName::Crunch)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Hippopotas,
+			.item = Item::Leftovers,
+			.ability = Ability::Sand_Stream,
+			.nature = Nature::Adamant,
+			.evs = EVs(
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi)
+			),
+			.moves = {{
+				MoveName::Curse,
+				MoveName::Crunch,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
@@ -313,27 +264,24 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[expectiminimax]") {
 	// TODO: Implement Encore's effect ending when PP runs out, then Wobbuffet
 	// can have Encore
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Wobbuffet,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Shadow_Tag,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Counter)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Wobbuffet,
+			.item = Item::Leftovers,
+			.ability = Ability::Shadow_Tag,
+			.nature = Nature::Hardy,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi)
+			),
+			.moves = {{
+				MoveName::Counter,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
@@ -348,67 +296,39 @@ TEST_CASE("expectiminimax Baton Pass middle of turn", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = Depth(1_bi, 0_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Smeargle,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Own_Tempo,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Baton_Pass, MoveName::Belly_Drum)
-		),
-		Pokemon<generation>(
-			Species::Alakazam,
-			Level(100_bi),
-			Gender::male,
-			Item::Lum_Berry,
-			Ability::Synchronize,
-			CombinedStatsFor<generation>{
-				Nature::Adamant,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Psycho_Cut)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Smeargle,
+			.item = Item::Leftovers,
+			.ability = Ability::Own_Tempo,
+			.moves = {{
+				MoveName::Baton_Pass,
+				MoveName::Belly_Drum,
+			}}
+		},
+		{
+			.species = Species::Alakazam,
+			.item = Item::Lum_Berry,
+			.ability = Ability::Synchronize,
+			.moves = {{
+				MoveName::Psycho_Cut,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Misdreavus,
-			Level(100_bi),
-			Gender::female,
-			Item::Choice_Specs,
-			Ability::Levitate,
-			CombinedStatsFor<generation>{
-				Nature::Modest,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Shadow_Ball)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Misdreavus,
+			.item = Item::Choice_Specs,
+			.ability = Ability::Levitate,
+			.moves = {{
+				MoveName::Shadow_Ball,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
@@ -459,67 +379,39 @@ TEST_CASE("expectiminimax Baton Pass start of turn", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = Depth(3_bi, 0_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Smeargle,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Own_Tempo,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Baton_Pass, MoveName::Belly_Drum)
-		),
-		Pokemon<generation>(
-			Species::Alakazam,
-			Level(100_bi),
-			Gender::male,
-			Item::Lum_Berry,
-			Ability::Synchronize,
-			CombinedStatsFor<generation>{
-				Nature::Adamant,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Psycho_Cut)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Smeargle,
+			.item = Item::Leftovers,
+			.ability = Ability::Own_Tempo,
+			.moves = {{
+				MoveName::Baton_Pass,
+				MoveName::Belly_Drum,
+			}}
+		},
+		{
+			.species = Species::Alakazam,
+			.item = Item::Lum_Berry,
+			.ability = Ability::Synchronize,
+			.moves = {{
+				MoveName::Psycho_Cut,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Misdreavus,
-			Level(100_bi),
-			Gender::female,
-			Item::Choice_Specs,
-			Ability::Levitate,
-			CombinedStatsFor<generation>{
-				Nature::Modest,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Shadow_Ball)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Misdreavus,
+			.item = Item::Choice_Specs,
+			.ability = Ability::Levitate,
+			.moves = {{
+				MoveName::Shadow_Ball,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 
@@ -535,59 +427,43 @@ TEST_CASE("expectiminimax replace fainted", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(2_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Magikarp,
-			Level(5_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Swift_Swim,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Tackle)
-		),
-		Pokemon<generation>(
-			Species::Slugma,
-			Level(100_bi),
-			Gender::male,
-			Item::Choice_Specs,
-			Ability::Magma_Armor,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Flamethrower, MoveName::Earth_Power)
-		),
-		Pokemon<generation>(
-			Species::Zapdos,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Choice_Specs,
-			Ability::Pressure,
-			CombinedStatsFor<generation>{
-				Nature::Modest,
-				max_dvs_or_ivs<generation>,
-				default_evs<generation>
-			},
-			regular_moves(MoveName::Thunderbolt)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Magikarp,
+			.level = Level(5_bi),
+		},
+		{
+			.species = Species::Slugma,
+			.moves = {{
+				MoveName::Flamethrower,
+				MoveName::Earth_Power,
+			}}
+		},
+		{
+			.species = Species::Zapdos,
+			.item = Item::Choice_Specs,
+			.moves = {{
+				MoveName::Thunderbolt,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Suicune,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Pressure,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Calm_Mind, MoveName::Surf, MoveName::Ice_Beam)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Suicune,
+			.item = Item::Leftovers,
+			.ability = Ability::Pressure,
+			.moves = {{
+				MoveName::Calm_Mind,
+				MoveName::Surf,
+				MoveName::Ice_Beam,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 
@@ -622,59 +498,52 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(3_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Latias,
-			Level(100_bi),
-			Gender::female,
-			Item::Leftovers,
-			Ability::Levitate,
-			CombinedStatsFor<generation>{
-				Nature::Calm,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(120_bi),
-					EV(136_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Calm_Mind, MoveName::Dragon_Pulse, MoveName::Recover)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Latias,
+			.item = Item::Leftovers,
+			.ability = Ability::Levitate,
+			.nature = Nature::Calm,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(120_bi),
+				EV(136_bi),
+				EV(0_bi)
+			),
+			.moves = {{
+				MoveName::Calm_Mind,
+				MoveName::Dragon_Pulse,
+				MoveName::Recover,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Suicune,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Pressure,
-			CombinedStatsFor<generation>{
-				Nature::Calm,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(120_bi),
-					EV(136_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Ice_Beam, MoveName::Rest)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Suicune,
+			.item = Item::Leftovers,
+			.ability = Ability::Pressure,
+			.nature = Nature::Calm,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(120_bi),
+				EV(136_bi),
+				EV(0_bi)
+			),
+			.moves = {{
+				MoveName::Ice_Beam,
+				MoveName::Rest,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 
@@ -688,36 +557,31 @@ TEST_CASE("expectiminimax Sleep Talk", "[expectiminimax]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(1_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::female,
-			Item::Leftovers,
-			Ability::Volt_Absorb,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Sleep_Talk, MoveName::Thunderbolt)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Jolteon,
+			.item = Item::Leftovers,
+			.ability = Ability::Volt_Absorb,
+			.moves = {{
+				MoveName::Sleep_Talk,
+				MoveName::Thunderbolt,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Gyarados,
-			Level(100_bi),
-			Gender::male,
-			Item::Life_Orb,
-			Ability::Intimidate,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Earthquake)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Gyarados,
+			.item = Item::Life_Orb,
+			.ability = Ability::Intimidate,
+			.moves = {{
+				MoveName::Earthquake,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 
@@ -814,33 +678,26 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[expectiminimax]") {
 	constexpr auto generation = Generation::one;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();
-	auto regular_moves = [](auto const ... name) {
-		return RegularMoves{Move(generation, name)...};
-	};
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Alakazam,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Toxic, MoveName::Psychic, MoveName::Recover)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Alakazam,
+			.moves = {{
+				MoveName::Toxic,
+				MoveName::Psychic,
+				MoveName::Recover,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Gengar,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Thunderbolt)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Gengar,
+			.moves = {{
+				MoveName::Thunderbolt,
+			}}
+		},
 	});
 	defender.pokemon().set_status(StatusName::freeze, environment);
 	defender.pokemon().set_hp(environment, 12_bi);
@@ -880,36 +737,36 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(1_bi);
 
-	auto team1 = Team<generation>({
-		Pokemon<generation>(
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Volt_Absorb,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
-		)
+	auto team1 = make_team<generation>({
+		{
+			.species = Species::Jolteon,
+			.item = Item::Leftovers,
+			.ability = Ability::Volt_Absorb,
+			.moves = {{
+				MoveName::Thunderbolt,
+				MoveName::Charm,
+				MoveName::Thunder,
+				MoveName::Shadow_Ball,
+			}}
+		},
 	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
-	auto team2 = Team<generation>({
-		Pokemon<generation>(
-			Species::Gyarados,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Intimidate,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Dragon_Dance, MoveName::Waterfall, MoveName::Stone_Edge, MoveName::Taunt)
-		)
+	auto team2 = make_team<generation>({
+		{
+			.species = Species::Gyarados,
+			.item = Item::Leftovers,
+			.ability = Ability::Intimidate,
+			.moves = {{
+				MoveName::Dragon_Dance,
+				MoveName::Waterfall,
+				MoveName::Stone_Edge,
+				MoveName::Taunt,
+			}}
+		},
 	});
 	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();
@@ -920,16 +777,18 @@ TEST_CASE("expectiminimax OHKO", "[score_moves]") {
 		CHECK(best_move.score == Catch::Approx(victory<generation>));
 	}
 	
-	auto team3 = Team<generation>({
-		Pokemon<generation>(
-			Species::Shedinja,
-			Level(100_bi),
-			Gender::male,
-			Item::Lum_Berry,
-			Ability::Wonder_Guard,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Swords_Dance, MoveName::X_Scissor, MoveName::Shadow_Sneak, MoveName::Will_O_Wisp)
-		)
+	auto team3 = make_team<generation>({
+		{
+			.species = Species::Shedinja,
+			.item = Item::Lum_Berry,
+			.ability = Ability::Wonder_Guard,
+			.moves = {{
+				MoveName::Swords_Dance,
+				MoveName::X_Scissor,
+				MoveName::Shadow_Sneak,
+				MoveName::Will_O_Wisp,
+			}}
+		},
 	});
 	team3.pokemon().switch_in(environment);
 	team3.reset_start_of_turn();
@@ -945,47 +804,34 @@ TEST_CASE("expectiminimax one-turn damage", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(1_bi);
 	
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Volt_Absorb,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Jolteon,
+			.item = Item::Leftovers,
+			.ability = Ability::Volt_Absorb,
+			.moves = {{
+				MoveName::Thunderbolt,
+				MoveName::Charm,
+				MoveName::Thunder,
+				MoveName::Shadow_Ball,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Swampert,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Torrent,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Surf, MoveName::Ice_Beam)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Swampert,
+			.item = Item::Leftovers,
+			.ability = Ability::Torrent,
+			.moves = {{
+				MoveName::Surf,
+				MoveName::Ice_Beam,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
@@ -998,58 +844,33 @@ TEST_CASE("expectiminimax BellyZard", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(2_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Charizard,
-			Level(100_bi),
-			Gender::male,
-			Item::Salac_Berry,
-			Ability::Blaze,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Fire_Punch, MoveName::Belly_Drum, MoveName::Earthquake, MoveName::Double_Edge)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Charizard,
+			.item = Item::Salac_Berry,
+			.ability = Ability::Blaze,
+			.moves = {{
+				MoveName::Fire_Punch,
+				MoveName::Belly_Drum,
+				MoveName::Earthquake,
+				MoveName::Double_Edge,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Mew,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Synchronize,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Soft_Boiled)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Mew,
+			.item = Item::Leftovers,
+			.ability = Ability::Synchronize,
+			.moves = {{
+				MoveName::Soft_Boiled,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
@@ -1063,33 +884,27 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(11_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Hippopotas,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Sand_Stream,
-			CombinedStatsFor<generation>{
-				Nature::Adamant,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Curse, MoveName::Crunch)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Hippopotas,
+			.item = Item::Leftovers,
+			.ability = Ability::Sand_Stream,
+			.nature = Nature::Adamant,
+			.evs = EVs(
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi)
+			),
+			.moves = {{
+				MoveName::Curse,
+				MoveName::Crunch,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
@@ -1097,27 +912,24 @@ TEST_CASE("expectiminimax Hippopotas vs Wobbuffet", "[score_moves]") {
 	// TODO: Implement Encore's effect ending when PP runs out, then Wobbuffet
 	// can have Encore
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Wobbuffet,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Shadow_Tag,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Counter)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Wobbuffet,
+			.item = Item::Leftovers,
+			.ability = Ability::Shadow_Tag,
+			.nature = Nature::Hardy,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi)
+			),
+			.moves = {{
+				MoveName::Counter,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 	defender.reset_start_of_turn();
@@ -1132,67 +944,39 @@ TEST_CASE("expectiminimax Baton Pass", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = Depth(3_bi, 0_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Smeargle,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Own_Tempo,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Baton_Pass, MoveName::Belly_Drum)
-		),
-		Pokemon<generation>(
-			Species::Alakazam,
-			Level(100_bi),
-			Gender::male,
-			Item::Lum_Berry,
-			Ability::Synchronize,
-			CombinedStatsFor<generation>{
-				Nature::Adamant,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Psycho_Cut)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Smeargle,
+			.item = Item::Leftovers,
+			.ability = Ability::Own_Tempo,
+			.moves = {{
+				MoveName::Baton_Pass,
+				MoveName::Belly_Drum,
+			}}
+		},
+		{
+			.species = Species::Alakazam,
+			.item = Item::Lum_Berry,
+			.ability = Ability::Synchronize,
+			.moves = {{
+				MoveName::Psycho_Cut,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Misdreavus,
-			Level(100_bi),
-			Gender::female,
-			Item::Choice_Specs,
-			Ability::Levitate,
-			CombinedStatsFor<generation>{
-				Nature::Modest,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Shadow_Ball)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Misdreavus,
+			.item = Item::Choice_Specs,
+			.ability = Ability::Levitate,
+			.moves = {{
+				MoveName::Shadow_Ball,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 
@@ -1208,59 +992,46 @@ TEST_CASE("expectiminimax replace fainted", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(2_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Magikarp,
-			Level(5_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Swift_Swim,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Tackle)
-		),
-		Pokemon<generation>(
-			Species::Slugma,
-			Level(100_bi),
-			Gender::male,
-			Item::Choice_Specs,
-			Ability::Magma_Armor,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Flamethrower, MoveName::Earth_Power)
-		),
-		Pokemon<generation>(
-			Species::Zapdos,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Choice_Specs,
-			Ability::Pressure,
-			CombinedStatsFor<generation>{
-				Nature::Modest,
-				max_dvs_or_ivs<generation>,
-				default_evs<generation>
-			},
-			regular_moves(MoveName::Thunderbolt)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Magikarp,
+			.level = Level(5_bi),
+		},
+		{
+			.species = Species::Slugma,
+			.item = Item::Choice_Specs,
+			.ability = Ability::Magma_Armor,
+			.moves = {{
+				MoveName::Flamethrower,
+				MoveName::Earth_Power,
+			}}
+		},
+		{
+			.species = Species::Zapdos,
+			.item = Item::Choice_Specs,
+			.ability = Ability::Pressure,
+			.moves = {{
+				MoveName::Thunderbolt,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Suicune,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Pressure,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Calm_Mind, MoveName::Surf, MoveName::Ice_Beam)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Suicune,
+			.item = Item::Leftovers,
+			.ability = Ability::Pressure,
+			.moves = {{
+				MoveName::Calm_Mind,
+				MoveName::Surf,
+				MoveName::Ice_Beam,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 
@@ -1295,59 +1066,52 @@ TEST_CASE("expectiminimax Latias vs Suicune", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(3_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Latias,
-			Level(100_bi),
-			Gender::female,
-			Item::Leftovers,
-			Ability::Levitate,
-			CombinedStatsFor<generation>{
-				Nature::Calm,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(120_bi),
-					EV(136_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Calm_Mind, MoveName::Dragon_Pulse, MoveName::Recover)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Latias,
+			.item = Item::Leftovers,
+			.ability = Ability::Levitate,
+			.nature = Nature::Calm,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(120_bi),
+				EV(136_bi),
+				EV(0_bi)
+			),
+			.moves = {{
+				MoveName::Calm_Mind,
+				MoveName::Dragon_Pulse,
+				MoveName::Recover,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Suicune,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Pressure,
-			CombinedStatsFor<generation>{
-				Nature::Calm,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(120_bi),
-					EV(136_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Ice_Beam, MoveName::Rest)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Suicune,
+			.item = Item::Leftovers,
+			.ability = Ability::Pressure,
+			.nature = Nature::Calm,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(120_bi),
+				EV(136_bi),
+				EV(0_bi)
+			),
+			.moves = {{
+				MoveName::Ice_Beam,
+				MoveName::Rest,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 
@@ -1361,36 +1125,31 @@ TEST_CASE("expectiminimax Sleep Talk", "[score_moves]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = [&](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
 	constexpr auto depth = make_depth(1_bi);
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::female,
-			Item::Leftovers,
-			Ability::Volt_Absorb,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Sleep_Talk, MoveName::Thunderbolt)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Jolteon,
+			.item = Item::Leftovers,
+			.ability = Ability::Volt_Absorb,
+			.moves = {{
+				MoveName::Sleep_Talk,
+				MoveName::Thunderbolt,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	attacker.reset_start_of_turn();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Gyarados,
-			Level(100_bi),
-			Gender::male,
-			Item::Life_Orb,
-			Ability::Intimidate,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Earthquake)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Gyarados,
+			.item = Item::Life_Orb,
+			.ability = Ability::Intimidate,
+			.moves = {{
+				MoveName::Earthquake,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 
@@ -1487,33 +1246,26 @@ TEST_CASE("Generation 1 frozen last Pokemon", "[score_moves]") {
 	constexpr auto generation = Generation::one;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto environment = Environment();
-	auto regular_moves = [](auto const ... name) {
-		return RegularMoves{Move(generation, name)...};
-	};
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Alakazam,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Toxic, MoveName::Psychic, MoveName::Recover)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Alakazam,
+			.moves = {{
+				MoveName::Toxic,
+				MoveName::Psychic,
+				MoveName::Recover,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Gengar,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Thunderbolt)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Gengar,
+			.moves = {{
+				MoveName::Thunderbolt,
+			}}
+		},
 	});
 	defender.pokemon().set_status(StatusName::freeze, environment);
 	defender.pokemon().set_hp(environment, 12_bi);

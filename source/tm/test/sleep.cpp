@@ -12,7 +12,6 @@ import tm.move.move;
 import tm.move.move_name;
 import tm.move.no_effect_function;
 import tm.move.other_move;
-import tm.move.regular_moves;
 import tm.move.side_effects;
 import tm.move.used_move;
 
@@ -28,6 +27,8 @@ import tm.stat.iv;
 import tm.stat.nature;
 
 import tm.status.status_name;
+
+import tm.test.pokemon_init;
 
 import tm.ability;
 import tm.contact_ability_effect;
@@ -46,59 +47,25 @@ using namespace bounded::literal;
 
 constexpr auto damage = ActualDamage::Unknown{};
 
-constexpr auto regular_moves(Generation const generation, auto... moves) {
-	return RegularMoves{Move(generation, moves)...};
-}
-
 TEST_CASE("Sleep Talk", "[Sleep]") {
 	constexpr auto generation = Generation::four;
 	auto environment = Environment();
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::female,
-			Item::Leftovers,
-			Ability::Volt_Absorb,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(generation, MoveName::Sleep_Talk, MoveName::Thunderbolt)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Zapdos,
+			.moves = {{
+				MoveName::Sleep_Talk,
+				MoveName::Thunderbolt,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	attacker.pokemon().set_status(StatusName::sleep, environment);
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Gyarados,
-			Level(100_bi),
-			Gender::male,
-			Item::Life_Orb,
-			Ability::Intimidate,
-			CombinedStatsFor<generation>{
-				Nature::Adamant,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			RegularMoves({Move(generation, MoveName::Earthquake)})
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Gyarados,
+		},
 	});
 	defender.pokemon().switch_in(environment);
 
@@ -188,26 +155,31 @@ struct Sleeper {
 	}
 
 private:
-	static auto make_team(RegularMoves const moves, Environment & environment) {
-		auto sleeper = Team<generation>({
-			Pokemon<generation>(
-				Species::Blissey,
-				Level(100_bi),
-				Gender::female,
-				Item::None,
-				Ability::Natural_Cure,
-				default_combined_stats<generation>,
-				moves
-			)
-		});
-		sleeper.pokemon().switch_in(environment);
-		return sleeper;
-	}
 	static auto make_sleeper_team(Environment & environment) -> Team<generation> {
-		return make_team(regular_moves(generation, MoveName::Rest, MoveName::Sleep_Talk, MoveName::Wish), environment);
+		auto team = make_team<generation>({
+			{
+				.species = Species::Blissey,
+				.moves = {{
+					MoveName::Rest,
+					MoveName::Sleep_Talk,
+					MoveName::Wish,
+				}}
+			},
+		});
+		team.pokemon().switch_in(environment);
+		return team;
 	}
 	static auto make_other_team(Environment & environment) -> Team<generation> {
-		return make_team(regular_moves(generation, MoveName::Seismic_Toss), environment);
+		auto team = make_team<generation>({
+			{
+				.species = Species::Blissey,
+				.moves = {{
+					MoveName::Seismic_Toss,
+				}}
+			},
+		});
+		team.pokemon().switch_in(environment);
+		return team;
 	}
 
 	Environment m_environment;

@@ -15,6 +15,8 @@ import tm.pokemon.species;
 
 import tm.stat.default_evs;
 
+import tm.test.pokemon_init;
+
 import tm.ability;
 import tm.critical_hit_probability;
 import tm.environment;
@@ -31,17 +33,14 @@ using namespace bounded::literal;
 template<Generation generation>
 constexpr auto individual_test(Species const species, MoveName const move_name, Item const item, bool const focus_energy, double const rate) -> bool {
 	auto environment = Environment();
-	constexpr auto ability = Ability::Honey_Gather;
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			species,
-			Level(100_bi),
-			Gender::genderless,
-			item,
-			ability,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Tackle)})
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = species,
+			.item = item,
+			.moves = {{
+				move_name,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 	if (focus_energy) {
@@ -49,7 +48,12 @@ constexpr auto individual_test(Species const species, MoveName const move_name, 
 	}
 	attacker.reset_start_of_turn();
 
-	auto const ch_rate = critical_hit_probability(attacker.pokemon().as_const(), move_name, ability, environment);
+	auto const ch_rate = critical_hit_probability(
+		attacker.pokemon().as_const(),
+		move_name,
+		Ability::Honey_Gather,
+		environment
+	);
 	return ch_rate == rate;
 }
 

@@ -25,6 +25,8 @@ import tm.stat.stat_names;
 
 import tm.status.status_name;
 
+import tm.test.pokemon_init;
+
 import tm.type.type;
 
 import tm.ability;
@@ -51,26 +53,20 @@ static_assert([]{
 	constexpr auto environment = Environment();
 
 	auto flags = ActivePokemonFlags<generation>();
-	auto pokemon = Pokemon<generation>(
-		Species::Shuckle,
-		Level(100_bi),
-		Gender::male,
-		Item::Choice_Band,
-		Ability::Pure_Power,
-		CombinedStatsFor<generation>{
-			Nature::Impish,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
-		},
-		RegularMoves({Move(generation, MoveName::Tackle)})
-	);
+	auto pokemon = make_pokemon<generation>({
+		.species = Species::Shuckle,
+		.item = Item::Choice_Band,
+		.ability = Ability::Pure_Power,
+		.nature = Nature::Impish,
+		.evs = EVs(
+			EV(0_bi),
+			EV(0_bi),
+			EV(252_bi),
+			EV(0_bi),
+			EV(0_bi),
+			EV(0_bi)
+		),
+	});
 	auto active_pokemon = MutableActivePokemon<generation>(pokemon, flags);
 
 	active_pokemon.switch_in(environment);
@@ -87,26 +83,23 @@ static_assert([]{
 	environment.activate_sun_from_move(false);
 
 	auto flags = ActivePokemonFlags<generation>();
-	auto pokemon = Pokemon<generation>(
-		Species::Deoxys_Attack,
-		Level(100_bi),
-		Gender::genderless,
-		Item::Choice_Specs,
-		Ability::Solar_Power,
-		CombinedStatsFor<generation>{
-			Nature::Modest,
-			max_dvs_or_ivs<generation>,
-			EVs(
-				EV(0_bi),
-				EV(0_bi),
-				EV(0_bi),
-				EV(252_bi),
-				EV(0_bi),
-				EV(0_bi)
-			)
-		},
-		RegularMoves({Move(generation, MoveName::Psychic)})
-	);
+	auto pokemon = make_pokemon<generation>({
+		.species = Species::Deoxys_Attack,
+		.item = Item::Choice_Specs,
+		.ability = Ability::Solar_Power,
+		.nature = Nature::Modest,
+		.evs = EVs(
+			EV(0_bi),
+			EV(0_bi),
+			EV(0_bi),
+			EV(252_bi),
+			EV(0_bi),
+			EV(0_bi)
+		),
+		.moves = {{
+			MoveName::Psychic,
+		}}
+	});
 	auto active_pokemon = MutableActivePokemon<generation>(pokemon, flags);
 
 	active_pokemon.switch_in(environment);
@@ -120,27 +113,20 @@ static_assert([]{
 static_assert([]{
 	constexpr auto environment = Environment();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Shuckle,
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Marvel_Scale,
-			CombinedStatsFor<generation>{
-				Nature::Bold,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			RegularMoves({Move(generation, MoveName::Tackle)})
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Shuckle,
+			.ability = Ability::Marvel_Scale,
+			.nature = Nature::Bold,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi)
+			),
+		},
 	});
 	defender.pokemon().switch_in(environment);
 
@@ -155,16 +141,11 @@ static_assert([]{
 static_assert([]{
 	constexpr auto environment = Environment();
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Combee,
-			Level(1_bi),
-			Gender::male,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Tackle)})
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Combee,
+			.level = Level(1_bi),
+		},
 	});
 	auto pokemon = defender.pokemon();
 
@@ -182,27 +163,19 @@ static_assert([]{
 	auto environment = Environment();
 	environment.activate_sand_from_move(false);
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Shuckle,
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Honey_Gather,
-			CombinedStatsFor<generation>{
-				Nature::Calm,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi)
-				)
-			},
-			RegularMoves({Move(generation, MoveName::Tackle)})
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Shuckle,
+			.nature = Nature::Calm,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi)
+			),
+		},
 	});
 	auto pokemon = defender.pokemon();
 
@@ -218,27 +191,21 @@ static_assert([]{
 	auto environment = Environment();
 	environment.activate_rain_from_move(false);
 
-	auto team = Team<generation>({
-		Pokemon<generation>(
-			Species::Deoxys_Speed,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Choice_Scarf,
-			Ability::Swift_Swim,
-			CombinedStatsFor<generation>{
-				Nature::Timid,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi)
-				)
-			},
-			RegularMoves({Move(generation, MoveName::Tackle)})
-		)
+	auto team = make_team<generation>({
+		{
+			.species = Species::Deoxys_Speed,
+			.item = Item::Choice_Scarf,
+			.ability = Ability::Swift_Swim,
+			.nature = Nature::Timid,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi)
+			),
+		},
 	});
 	auto pokemon = team.pokemon();
 

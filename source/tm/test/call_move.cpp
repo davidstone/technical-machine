@@ -31,6 +31,8 @@ import tm.stat.stat_names;
 
 import tm.status.status_name;
 
+import tm.test.pokemon_init;
+
 import tm.ability;
 import tm.contact_ability_effect;
 import tm.environment;
@@ -51,87 +53,42 @@ using namespace bounded::literal;
 constexpr auto generation = Generation::four;
 constexpr auto damage = ActualDamage::Unknown{};
 
-constexpr auto regular_moves(auto... moves) {
-	return RegularMoves{Move(generation, moves)...};
-}
-
 TEST_CASE("Baton Pass", "[call_move]") {
 	auto environment = Environment();
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Smeargle,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Own_Tempo,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Baton_Pass, MoveName::Belly_Drum)
-		),
-		Pokemon<generation>(
-			Species::Alakazam,
-			Level(100_bi),
-			Gender::male,
-			Item::Lum_Berry,
-			Ability::Synchronize,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Psycho_Cut, MoveName::Recover)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Smeargle,
+			.moves = {{
+				MoveName::Baton_Pass,
+				MoveName::Belly_Drum,
+			}}
+		},
+		{
+			.species = Species::Alakazam,
+			.moves = {{
+				MoveName::Psycho_Cut,
+				MoveName::Recover,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Gengar,
-			Level(100_bi),
-			Gender::male,
-			Item::Choice_Specs,
-			Ability::Levitate,
-			CombinedStatsFor<generation>{
-				Nature::Modest,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Shadow_Ball)
-		),
-		Pokemon<generation>(
-			Species::Misdreavus,
-			Level(100_bi),
-			Gender::female,
-			Item::Choice_Specs,
-			Ability::Levitate,
-			CombinedStatsFor<generation>{
-				Nature::Modest,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			regular_moves(MoveName::Shadow_Ball)
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Gengar,
+			.item = Item::Choice_Specs,
+			.moves = {{
+				MoveName::Shadow_Ball,
+			}}
+		},
+		{
+			.species = Species::Misdreavus,
+			.item = Item::Choice_Specs,
+			.moves = {{
+				MoveName::Shadow_Ball,
+			}}
+		},
 	});
 	defender.pokemon().switch_in(environment);
 
@@ -218,29 +175,29 @@ TEST_CASE("Baton Pass", "[call_move]") {
 TEST_CASE("Wonder Guard", "[call_move]") {
 	auto environment = Environment();
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::female,
-			Item::None,
-			Ability::Volt_Absorb,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Shadow_Ball, MoveName::Thunderbolt)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Jolteon,
+			.moves = {{
+				MoveName::Shadow_Ball,
+				MoveName::Thunderbolt,
+			}}
+		},
+		{
+			.species = Species::Alakazam,
+			.moves = {{
+				MoveName::Psycho_Cut,
+				MoveName::Recover,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Shedinja,
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Wonder_Guard,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Tackle)})
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Shedinja,
+			.ability = Ability::Wonder_Guard,
+		},
 	});
 	auto shedinja = defender.pokemon();
 	shedinja.switch_in(environment);
@@ -275,29 +232,20 @@ TEST_CASE("Wonder Guard", "[call_move]") {
 TEST_CASE("Fire move thaws target", "[call_move]") {
 	auto environment = Environment();
 
-	auto attacker = Team<generation>({
-		Pokemon<generation>(
-			Species::Charmander,
-			Level(100_bi),
-			Gender::female,
-			Item::None,
-			Ability::Blaze,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Ember)
-		)
+	auto attacker = make_team<generation>({
+		{
+			.species = Species::Charmander,
+			.moves = {{
+				MoveName::Ember,
+			}}
+		},
 	});
 	attacker.pokemon().switch_in(environment);
 
-	auto defender = Team<generation>({
-		Pokemon<generation>(
-			Species::Vaporeon,
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Water_Absorb,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Tackle)})
-		)
+	auto defender = make_team<generation>({
+		{
+			.species = Species::Vaporeon,
+		},
 	});
 	auto vaporeon = defender.pokemon();
 	vaporeon.switch_in(environment);
@@ -344,31 +292,23 @@ TEST_CASE("Fire move thaws target", "[call_move]") {
 TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 	auto environment = Environment();
 
-	auto user = Team<generation>({
-		Pokemon<generation>(
-			Species::Registeel,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Clear_Body,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Sleep_Talk), Move(generation, MoveName::Substitute)})
-		)
+	auto user = make_team<generation>({
+		{
+			.species = Species::Registeel,
+			.moves = {{
+				MoveName::Sleep_Talk,
+				MoveName::Substitute,
+			}}
+		},
 	});
 	user.pokemon().switch_in(environment);
 	user.pokemon().set_hp(environment, 5_bi);
 	user.pokemon().rest(environment, false);
 
-	auto other = Team<generation>({
-		Pokemon<generation>(
-			Species::Tyranitar,
-			Level(100_bi),
-			Gender::male,
-			Item::Choice_Band,
-			Ability::Sand_Stream,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Rock_Slide)
-		)
+	auto other = make_team<generation>({
+		{
+			.species = Species::Bulbasaur,
+		},
 	});
 	other.pokemon().switch_in(environment);
 
@@ -400,29 +340,24 @@ TEST_CASE("Sleep Talk Substitute", "[call_move]") {
 TEST_CASE("Static paralyzes", "[call_move]") {
 	auto environment = Environment();
 
-	auto user = Team<generation>({
-		Pokemon<generation>(
-			Species::Sentret,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Run_Away,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Scratch)})
-		)
+	auto user = make_team<generation>({
+		{
+			.species = Species::Sentret,
+			.moves = {{
+				MoveName::Scratch,
+			}}
+		},
 	});
 	user.pokemon().switch_in(environment);
 
-	auto other = Team<generation>({
-		Pokemon<generation>(
-			Species::Electabuzz,
-			Level(100_bi),
-			Gender::male,
-			Item::Choice_Band,
-			Ability::Static,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Barrier)
-		)
+	auto other = make_team<generation>({
+		{
+			.species = Species::Electabuzz,
+			.ability = Ability::Static,
+			.moves = {{
+				MoveName::Scratch,
+			}}
+		},
 	});
 	other.pokemon().switch_in(environment);
 
@@ -450,38 +385,26 @@ TEST_CASE("Static paralyzes", "[call_move]") {
 TEST_CASE("Pokemon faints after Explosion against a Substitute in later generations", "[call_move]") {
 	auto environment = Environment();
 
-	auto user = Team<generation>({
-		Pokemon<generation>(
-			Species::Registeel,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Clear_Body,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Explosion)})
-		),
-		Pokemon<generation>(
-			Species::Regice,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Clear_Body,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Explosion)})
-		)
+	auto user = make_team<generation>({
+		{
+			.species = Species::Registeel,
+			.moves = {{
+				MoveName::Explosion,
+			}}
+		},
+		{
+			.species = Species::Regice,
+		},
 	});
 	user.pokemon().switch_in(environment);
 
-	auto other = Team<generation>({
-		Pokemon<generation>(
-			Species::Ninjask,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Speed_Boost,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Substitute)
-		)
+	auto other = make_team<generation>({
+		{
+			.species = Species::Ninjask,
+			.moves = {{
+				MoveName::Substitute,
+			}}
+		},
 	});
 	other.pokemon().switch_in(environment);
 
@@ -527,47 +450,29 @@ TEST_CASE("Pokemon faints after Explosion against a Substitute in later generati
 TEST_CASE("Perish Song", "[call_move]") {
 	auto environment = Environment();
 
-	auto user = Team<generation>({
-		Pokemon<generation>(
-			Species::Misdreavus,
-			Level(100_bi),
-			Gender::female,
-			Item::None,
-			Ability::Levitate,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Perish_Song)})
-		),
-		Pokemon<generation>(
-			Species::Regice,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Clear_Body,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Explosion)})
-		)
+	auto user = make_team<generation>({
+		{
+			.species = Species::Misdreavus,
+			.moves = {{
+				MoveName::Perish_Song,
+			}}
+		},
+		{
+			.species = Species::Regice,
+		},
 	});
 	user.pokemon().switch_in(environment);
 
-	auto other = Team<generation>({
-		Pokemon<generation>(
-			Species::Starmie,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Illuminate,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Recover)
-		),
-		Pokemon<generation>(
-			Species::Regice,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Clear_Body,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Explosion)})
-		)
+	auto other = make_team<generation>({
+		{
+			.species = Species::Starmie,
+			.moves = {{
+				MoveName::Recover,
+			}}
+		},
+		{
+			.species = Species::Regice,
+		},
 	});
 	other.pokemon().switch_in(environment);
 

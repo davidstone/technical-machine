@@ -26,6 +26,8 @@ import tm.pokemon.species;
 
 import tm.stat.default_evs;
 
+import tm.test.pokemon_init;
+
 import tm.ability;
 import tm.environment;
 import tm.gender;
@@ -40,20 +42,6 @@ namespace technicalmachine {
 using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
-
-constexpr auto make_team(auto const... species) {
-	return Team<generation>({
-		Pokemon<generation>(
-			species,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Tackle)})
-		)...
-	});
-}
 
 using EffectIndex = bounded::integer<0, 4>;
 template<Generation generation>
@@ -92,32 +80,67 @@ constexpr auto test_phaze(Team<generation> user, Team<generation> team) -> bool 
 
 TEST_CASE("Phaze against 2 Pokemon", "[Side Effect]") {
 	CHECK(test_phaze(
-		make_team(Species::Lugia),
-		make_team(Species::Bulbasaur, Species::Ivysaur)
+		make_team<generation>({
+			{.species = Species::Lugia},
+		}),
+		make_team<generation>({
+			{.species = Species::Bulbasaur},
+			{.species = Species::Ivysaur},
+		})
 	));
 }
 TEST_CASE("Phaze against 3 Pokemon", "[Side Effect]") {
 	CHECK(test_phaze(
-		make_team(Species::Lugia),
-		make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur)
+		make_team<generation>({
+			{.species = Species::Lugia},
+		}),
+		make_team<generation>({
+			{.species = Species::Bulbasaur},
+			{.species = Species::Ivysaur},
+			{.species = Species::Venusaur},
+		})
 	));
 }
 TEST_CASE("Phaze against 4 Pokemon", "[Side Effect]") {
 	CHECK(test_phaze(
-		make_team(Species::Lugia),
-		make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur, Species::Charmander)
+		make_team<generation>({
+			{.species = Species::Lugia},
+		}),
+		make_team<generation>({
+			{.species = Species::Bulbasaur},
+			{.species = Species::Ivysaur},
+			{.species = Species::Venusaur},
+			{.species = Species::Charmander},
+		})
 	));
 }
 TEST_CASE("Phaze against 5 Pokemon", "[Side Effect]") {
 	CHECK(test_phaze(
-		make_team(Species::Lugia),
-		make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur, Species::Charmander, Species::Charmeleon)
+		make_team<generation>({
+			{.species = Species::Lugia},
+		}),
+		make_team<generation>({
+			{.species = Species::Bulbasaur},
+			{.species = Species::Ivysaur},
+			{.species = Species::Venusaur},
+			{.species = Species::Charmander},
+			{.species = Species::Charmeleon},
+		})
 	));
 }
 TEST_CASE("Phaze against 6 Pokemon", "[Side Effect]") {
 	CHECK(test_phaze(
-		make_team(Species::Lugia),
-		make_team(Species::Bulbasaur, Species::Ivysaur, Species::Venusaur, Species::Charmander, Species::Charmeleon, Species::Charizard)
+		make_team<generation>({
+			{.species = Species::Lugia},
+		}),
+		make_team<generation>({
+			{.species = Species::Bulbasaur},
+			{.species = Species::Ivysaur},
+			{.species = Species::Venusaur},
+			{.species = Species::Charmander},
+			{.species = Species::Charmeleon},
+			{.species = Species::Charizard},
+		})
 	));
 }
 

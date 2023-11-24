@@ -23,6 +23,8 @@ import tm.stat.evs;
 import tm.stat.iv;
 import tm.stat.nature;
 
+import tm.test.pokemon_init;
+
 import tm.type.type;
 
 import tm.ability;
@@ -41,8 +43,9 @@ using namespace bounded::literal;
 
 constexpr auto generation = Generation::four;
 
-constexpr auto make_executed_move(Move const move, Type const type) {
+constexpr auto make_executed_move(MoveName const move_name, Type const type) {
 	constexpr auto critical_hit = true;
+	auto const move = Move(generation, move_name);
 	return ExecutedMove<Team<generation>>{
 		{move.name(), type},
 		move.pp(),
@@ -54,30 +57,28 @@ constexpr auto make_executed_move(Move const move, Type const type) {
 
 namespace max_physical_power {
 
-constexpr auto move = Move(generation, MoveName::Rollout);
+constexpr auto move = MoveName::Rollout;
 
 constexpr auto attacker() {
-	auto team = Team<generation>({
-		Pokemon<generation>(
-			Species::Shuckle,
-			Level(100_bi),
-			Gender::male,
-			Item::Rock_Incense,
-			Ability::Rivalry,
-			CombinedStatsFor<generation>{
-				Nature::Impish,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			RegularMoves({move})
-		)
+	auto team = make_team<generation>({
+		{
+			.species = Species::Shuckle,
+			.gender = Gender::male,
+			.item = Item::Rock_Incense,
+			.ability = Ability::Rivalry,
+			.nature = Nature::Impish,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi)
+			),
+			.moves = {{
+				move,
+			}}
+		},
 	});
 
 	auto pokemon = team.pokemon();
@@ -85,23 +86,19 @@ constexpr auto attacker() {
 
 	pokemon.defense_curl();
 	for (auto const _ [[maybe_unused]] : containers::integer_range(4_bi)) {
-		pokemon.successfully_use_move(move.name());
+		pokemon.successfully_use_move(move);
 	}
 
 	return team;
 }
 
 constexpr auto defender() {
-	auto team = Team<generation>({
-		Pokemon<generation>(
-			Species::Combee,
-			Level(1_bi),
-			Gender::male,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Tackle)})
-		)
+	auto team = make_team<generation>({
+		{
+			.species = Species::Combee,
+			.level = Level(1_bi),
+			.gender = Gender::male,
+		},
 	});
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(Environment());
@@ -120,19 +117,18 @@ static_assert(power == 1440_bi);
 
 namespace max_special_power {
 
-constexpr auto move = Move(generation, MoveName::Surf);
+constexpr auto move = MoveName::Surf;
 
 constexpr auto attacker() {
-	auto team = Team<generation>({
-		Pokemon<generation>(
-			Species::Deoxys_Attack,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Wave_Incense,
-			Ability::Torrent,
-			default_combined_stats<generation>,
-			RegularMoves({move})
-		)
+	auto team = make_team<generation>({
+		{
+			.species = Species::Deoxys_Attack,
+			.item = Item::Wave_Incense,
+			.ability = Ability::Torrent,
+			.moves = {{
+				move,
+			}}
+		},
 	});
 	auto pokemon = team.pokemon();
 	auto environment = Environment();
@@ -142,16 +138,15 @@ constexpr auto attacker() {
 }
 
 constexpr auto defender() {
-	auto team = Team<generation>({
-		Pokemon<generation>(
-			Species::Blastoise,
-			Level(1_bi),
-			Gender::male,
-			Item::None,
-			Ability::Torrent,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Dive)})
-		)
+	auto team = make_team<generation>({
+		{
+			.species = Species::Blastoise,
+			.level = Level(1_bi),
+			.ability = Ability::Torrent,
+			.moves = {{
+				MoveName::Dive,
+			}}
+		},
 	});
 	auto pokemon = team.pokemon();
 	auto environment = Environment();

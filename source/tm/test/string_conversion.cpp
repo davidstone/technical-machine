@@ -14,7 +14,6 @@ export module tm.test.string_conversion;
 
 import tm.move.move;
 import tm.move.move_name;
-import tm.move.regular_moves;
 
 import tm.pokemon.level;
 import tm.pokemon.pokemon;
@@ -40,6 +39,8 @@ import tm.string_conversions.species;
 import tm.string_conversions.status_name;
 import tm.string_conversions.type;
 import tm.string_conversions.weather;
+
+import tm.test.pokemon_init;
 
 import tm.type.type;
 
@@ -88,44 +89,39 @@ static_assert(test_generic<Weather>());
 TEST_CASE("pokemon", "[string_conversion]") {
 	constexpr auto generation = Generation::three;
 
-	constexpr auto make_pokemon = [](RegularMoves const moves, StatusName const status = StatusName::clear) {
-		auto pokemon = Pokemon<generation>(
-			Species::Mewtwo,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Pressure,
-			CombinedStatsFor<generation>{
-				Nature::Modest,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(4_bi),
-					EV(12_bi),
-					EV(24_bi),
-					EV(0_bi),
-					EV(32_bi),
-					EV(100_bi)
-				)
-			},
-			moves
-		);
+	constexpr auto check = [](MovesInit const moves, StatusName const status) {
+		auto pokemon = make_pokemon<generation>({
+			.species = Species::Mewtwo,
+			.item = Item::Leftovers,
+			.ability = Ability::Pressure,
+			.nature = Nature::Modest,
+			.evs = EVs(
+				EV(4_bi),
+				EV(12_bi),
+				EV(24_bi),
+				EV(0_bi),
+				EV(32_bi),
+				EV(100_bi)
+			),
+			.moves = moves
+		});
 		pokemon.set_status(status);
-		return pokemon;
-	};
 
-	constexpr auto check = [](Pokemon<generation> const pokemon) {
 		auto const str = to_string(pokemon);
 		auto const result = pokemon_from_string<generation>(str);
 		CHECK(pokemon == result);
 	};
 
-	auto moves = RegularMoves({Move(generation, MoveName::Psychic)});
-	check(make_pokemon(moves));
-	for (auto const move : {MoveName::Recover, MoveName::Calm_Mind, MoveName::Taunt}) {
-		moves.push_back(Move(generation, move));
-		check(make_pokemon(moves));
+	constexpr auto moves = MovesInit({
+		MoveName::Psychic,
+		MoveName::Recover,
+		MoveName::Calm_Mind,
+		MoveName::Taunt,
+	});
+	for (auto const n : containers::integer_range(1_bi, 4_bi)) {
+		check(MovesInit(containers::take(moves, n)), StatusName::clear);
 	}
-	check(make_pokemon(moves, StatusName::burn));
+	check(moves, StatusName::burn);
 }
 
 } // namespace technicalmachine

@@ -16,13 +16,14 @@ import tm.evaluate.state;
 
 import tm.move.move;
 import tm.move.move_name;
-import tm.move.regular_moves;
 
 import tm.pokemon.level;
 import tm.pokemon.pokemon;
 import tm.pokemon.species;
 
 import tm.stat.default_evs;
+
+import tm.test.pokemon_init;
 
 import tm.ability;
 import tm.environment;
@@ -61,52 +62,32 @@ auto predict_action(Team<generation> const & ai, Team<generation> const & foe, E
 	);
 }
 
-auto shuffled_regular_moves(Generation const generation, auto & random_engine, auto... ts) {
-	// Random order to prevent ordering effects from accidentally arriving at
-	// the correct move each time
-	auto moves = RegularMoves{Move(generation, ts)...};
-	std::shuffle(containers::legacy_iterator(containers::begin(moves)), containers::legacy_iterator(containers::end(moves)), random_engine);
-	return moves;
-}
-
-auto shuffler(Generation const generation, std::mt19937 & random_engine) {
-	return [&, generation](auto... args) {
-		return shuffled_regular_moves(generation, random_engine, args...);
-	};
-}
-
 
 TEST_CASE("predict_action one move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = shuffler(generation, random_engine);
 
-	auto team1 = Team<generation>({
-		Pokemon<generation>(
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Volt_Absorb,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Thunderbolt)
-		)
+	auto team1 = make_team<generation>({
+		{
+			.species = Species::Jolteon,
+			.ability = Ability::Volt_Absorb,
+			.moves = {{
+				MoveName::Thunderbolt,
+			}}
+		},
 	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
-	auto team2 = Team<generation>({
-		Pokemon<generation>(
-			Species::Snorlax,
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Thick_Fat,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Snore)
-		)
+	auto team2 = make_team<generation>({
+		{
+			.species = Species::Snorlax,
+			.ability = Ability::Thick_Fat,
+			.moves = {{
+				MoveName::Snore,
+			}}
+		},
 	});
 	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();
@@ -119,33 +100,28 @@ TEST_CASE("predict_action winning and losing move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = shuffler(generation, random_engine);
 
-	auto team1 = Team<generation>({
-		Pokemon<generation>(
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Volt_Absorb,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Thunderbolt, MoveName::Hidden_Power)
-		)
+	auto team1 = make_team<generation>({
+		{
+			.species = Species::Jolteon,
+			.ability = Ability::Volt_Absorb,
+			.moves = {{
+				MoveName::Thunderbolt,
+				MoveName::Hidden_Power,
+			}}
+		},
 	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
-	auto team2 = Team<generation>({
-		Pokemon<generation>(
-			Species::Gyarados,
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Intimidate,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Earthquake)
-		)
+	auto team2 = make_team<generation>({
+		{
+			.species = Species::Gyarados,
+			.ability = Ability::Intimidate,
+			.moves = {{
+				MoveName::Earthquake,
+			}}
+		},
 	});
 	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();
@@ -158,33 +134,29 @@ TEST_CASE("predict_action good and bad move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = shuffler(generation, random_engine);
 
-	auto team1 = Team<generation>({
-		Pokemon<generation>(
-			Species::Suicune,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Pressure,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Surf, MoveName::Ice_Beam)
-		)
+	auto team1 = make_team<generation>({
+		{
+			.species = Species::Suicune,
+			.ability = Ability::Pressure,
+			.moves = {{
+				MoveName::Surf,
+				MoveName::Ice_Beam,
+			}}
+		},
 	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
-	auto team2 = Team<generation>({
-		Pokemon<generation>(
-			Species::Latias,
-			Level(100_bi),
-			Gender::female,
-			Item::None,
-			Ability::Levitate,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Calm_Mind, MoveName::Dragon_Pulse)
-		)
+	auto team2 = make_team<generation>({
+		{
+			.species = Species::Latias,
+			.ability = Ability::Levitate,
+			.moves = {{
+				MoveName::Calm_Mind,
+				MoveName::Dragon_Pulse,
+			}}
+		},
 	});
 	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();
@@ -201,33 +173,30 @@ TEST_CASE("predict_action good bad and useless move", "[predict_action]") {
 	constexpr auto generation = Generation::four;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = shuffler(generation, random_engine);
 
-	auto team1 = Team<generation>({
-		Pokemon<generation>(
-			Species::Suicune,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Pressure,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Surf, MoveName::Ice_Beam, MoveName::Roar)
-		)
+	auto team1 = make_team<generation>({
+		{
+			.species = Species::Suicune,
+			.ability = Ability::Pressure,
+			.moves = {{
+				MoveName::Surf,
+				MoveName::Ice_Beam,
+				MoveName::Roar,
+			}}
+		},
 	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
-	auto team2 = Team<generation>({
-		Pokemon<generation>(
-			Species::Latias,
-			Level(100_bi),
-			Gender::female,
-			Item::None,
-			Ability::Levitate,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Calm_Mind, MoveName::Dragon_Pulse)
-		)
+	auto team2 = make_team<generation>({
+		{
+			.species = Species::Latias,
+			.ability = Ability::Levitate,
+			.moves = {{
+				MoveName::Calm_Mind,
+				MoveName::Dragon_Pulse,
+			}}
+		},
 	});
 	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();
@@ -244,69 +213,64 @@ TEST_CASE("Magneton vs Skarmory big team", "[predict_action]") {
 	constexpr auto generation = Generation::three;
 	constexpr auto evaluate = Evaluate<generation>(evaluate_settings);
 	auto const environment = Environment();
-	auto random_engine = std::mt19937(std::random_device()());
-	auto const regular_moves = shuffler(generation, random_engine);
 
-	auto team1 = Team<generation>({
-		Pokemon<generation>(
-			Species::Magneton,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Magnet_Pull,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Thunderbolt, MoveName::Substitute)
-		),
-		Pokemon<generation>(
-			Species::Zapdos,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Pressure,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Thunderbolt, MoveName::Substitute)
-		),
-		Pokemon<generation>(
-			Species::Snorlax,
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Thick_Fat,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Curse, MoveName::Body_Slam)
-		),
+	auto team1 = make_team<generation>({
+		{
+			.species = Species::Magneton,
+			.ability = Ability::Magnet_Pull,
+			.moves = {{
+				MoveName::Thunderbolt,
+				MoveName::Substitute,
+			}}
+		},
+		{
+			.species = Species::Zapdos,
+			.ability = Ability::Pressure,
+			.moves = {{
+				MoveName::Thunderbolt,
+				MoveName::Substitute,
+			}}
+		},
+		{
+			.species = Species::Snorlax,
+			.ability = Ability::Thick_Fat,
+			.moves = {{
+				MoveName::Curse,
+				MoveName::Body_Slam,
+			}}
+		},
 	});
 	team1.pokemon().switch_in(environment);
 	team1.reset_start_of_turn();
 
-	auto team2 = Team<generation>({
-		Pokemon<generation>(
-			Species::Skarmory,
-			Level(100_bi),
-			Gender::female,
-			Item::None,
-			Ability::Sturdy,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Spikes, MoveName::Drill_Peck, MoveName::Roar)
-		),
-		Pokemon<generation>(
-			Species::Blissey,
-			Level(100_bi),
-			Gender::female,
-			Item::None,
-			Ability::Natural_Cure,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Soft_Boiled, MoveName::Seismic_Toss)
-		),
-		Pokemon<generation>(
-			Species::Suicune,
-			Level(100_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Pressure,
-			default_combined_stats<generation>,
-			regular_moves(MoveName::Surf, MoveName::Ice_Beam, MoveName::Calm_Mind, MoveName::Roar)
-		)
+	auto team2 = make_team<generation>({
+		{
+			.species = Species::Skarmory,
+			.ability = Ability::Sturdy,
+			.moves = {{
+				MoveName::Spikes,
+				MoveName::Drill_Peck,
+				MoveName::Roar,
+			}}
+		},
+		{
+			.species = Species::Blissey,
+			.ability = Ability::Natural_Cure,
+			.moves = {{
+				MoveName::Soft_Boiled,
+				MoveName::Seismic_Toss,
+			}}
+		},
+		{
+			.species = Species::Suicune,
+			.ability = Ability::Pressure,
+			.moves = {{
+				MoveName::Surf,
+				MoveName::Ice_Beam,
+				MoveName::Calm_Mind,
+				MoveName::Roar,
+			}}
+		},
 	});
 	team2.pokemon().switch_in(environment);
 	team2.reset_start_of_turn();

@@ -16,6 +16,8 @@ import tm.pokemon.species;
 
 import tm.stat.default_evs;
 
+import tm.test.pokemon_init;
+
 import tm.ability;
 import tm.environment;
 import tm.gender;
@@ -32,24 +34,22 @@ using namespace bounded::literal;
 constexpr auto generation = Generation::four;
 
 static_assert([] {
-	constexpr auto pokemon = Pokemon<generation>(
-		Species::Blissey,
-		Level(100_bi),
-		Gender::female,
-		Item::Leftovers,
-		Ability::Natural_Cure,
-		default_combined_stats<generation>,
-		RegularMoves({Move(generation, MoveName::Tackle)})
-	);
-
 	auto environment = Environment();
 
-	auto team1 = Team<generation>({pokemon});
+	auto team1 = make_team<generation>({
+		{
+			.species = Species::Blissey,
+		},
+	});
 	team1.pokemon().switch_in(environment);
-
-	auto team2 = Team<generation>({pokemon});
-	team2.pokemon().switch_in(environment);
 	change_hp(team1.pokemon(), environment, -50_bi);
+
+	auto team2 = make_team<generation>({
+		{
+			.species = Species::Blissey,
+		},
+	});
+	team2.pokemon().switch_in(environment);
 
 	constexpr auto evaluate = Evaluate<generation>({
 		.hp = 1000_bi,

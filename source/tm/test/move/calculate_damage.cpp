@@ -28,6 +28,8 @@ import tm.stat.stat_names;
 
 import tm.type.type;
 
+import tm.test.pokemon_init;
+
 import tm.ability;
 import tm.contact_ability_effect;
 import tm.environment;
@@ -45,8 +47,9 @@ using namespace bounded::literal;
 constexpr auto generation = Generation::four;
 constexpr auto resistance_berry_activated = false;
 
-constexpr auto make_executed_move(Move const move, Type const type) {
+constexpr auto make_executed_move(MoveName const move_name, Type const type) {
 	constexpr auto critical_hit = true;
+	auto const move = Move(generation, move_name);
 	return ExecutedMove<Team<generation>>{
 		{move.name(), type},
 		move.pp(),
@@ -58,30 +61,27 @@ constexpr auto make_executed_move(Move const move, Type const type) {
 
 namespace max_physical_damage {
 
-constexpr auto move = Move(generation, MoveName::Rollout);
+constexpr auto move = MoveName::Rollout;
 
 constexpr auto attacker() {
-	auto team = Team<generation>({
-		Pokemon<generation>(
-			Species::Shuckle,
-			Level(100_bi),
-			Gender::male,
-			Item::Metronome,
-			Ability::Pure_Power,
-			CombinedStatsFor<generation>{
-				Nature::Impish,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(252_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			RegularMoves({move})
-		)
+	auto team = make_team<generation>({
+		{
+			.species = Species::Shuckle,
+			.item = Item::Metronome,
+			.ability = Ability::Pure_Power,
+			.nature = Nature::Impish,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(252_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi)
+			),
+			.moves = {{
+				move,
+			}}
+		},
 	});
 
 	auto pokemon = team.pokemon();
@@ -89,7 +89,7 @@ constexpr auto attacker() {
 
 	pokemon.defense_curl();
 	for (auto const _ [[maybe_unused]] : containers::integer_range(10_bi)) {
-		pokemon.successfully_use_move(move.name());
+		pokemon.successfully_use_move(move);
 	}
 
 	pokemon.activate_power_trick();
@@ -99,16 +99,11 @@ constexpr auto attacker() {
 }
 
 constexpr auto defender() {
-	auto team = Team<generation>({
-		Pokemon<generation>(
-			Species::Combee,
-			Level(1_bi),
-			Gender::male,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Tackle)})
-		)
+	auto team = make_team<generation>({
+		{
+			.species = Species::Combee,
+			.level = Level(1_bi),
+		},
 	});
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(Environment());
@@ -138,30 +133,27 @@ constexpr auto environment() {
 	return env;
 }
 
-constexpr auto move = Move(generation, MoveName::Blast_Burn);
+constexpr auto move = MoveName::Blast_Burn;
 
 constexpr auto attacker() {
-	auto team = Team<generation>({
-		Pokemon<generation>(
-			Species::Deoxys_Attack,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Metronome,
-			Ability::Blaze,
-			CombinedStatsFor<generation>{
-				Nature::Modest,
-				max_dvs_or_ivs<generation>,
-				EVs(
-					EV(0_bi),
-					EV(0_bi),
-					EV(0_bi),
-					EV(EV::max),
-					EV(0_bi),
-					EV(0_bi)
-				)
-			},
-			RegularMoves({move})
-		)
+	auto team = make_team<generation>({
+		{
+			.species = Species::Deoxys_Attack,
+			.item = Item::Metronome,
+			.ability = Ability::Blaze,
+			.nature = Nature::Modest,
+			.evs = EVs(
+				EV(0_bi),
+				EV(0_bi),
+				EV(0_bi),
+				EV(EV::max),
+				EV(0_bi),
+				EV(0_bi)
+			),
+			.moves = {{
+				move,
+			}}
+		},
 	});
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(environment());
@@ -172,7 +164,7 @@ constexpr auto attacker() {
 	pokemon.stages()[BoostableStat::spa] += 6_bi;
 
 	for (auto const _ [[maybe_unused]] : containers::integer_range(10_bi)) {
-		pokemon.successfully_use_move(move.name());
+		pokemon.successfully_use_move(move);
 	}
 
 	pokemon.activate_flash_fire();
@@ -180,16 +172,12 @@ constexpr auto attacker() {
 }
 
 constexpr auto defender() {
-	auto team = Team<generation>({
-		Pokemon<generation>(
-			Species::Paras,
-			Level(1_bi),
-			Gender::male,
-			Item::None,
-			Ability::Dry_Skin,
-			default_combined_stats<generation>,
-			RegularMoves({Move(generation, MoveName::Tackle)})
-		)
+	auto team = make_team<generation>({
+		{
+			.species = Species::Paras,
+			.level = Level(1_bi),
+			.ability = Ability::Dry_Skin,
+		},
 	});
 	auto pokemon = team.pokemon();
 	pokemon.switch_in(environment());

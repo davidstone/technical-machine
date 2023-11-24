@@ -21,6 +21,8 @@ import tm.stat.default_evs;
 
 import tm.string_conversions.move_name;
 
+import tm.test.pokemon_init;
+
 import tm.ability;
 import tm.environment;
 import tm.gender;
@@ -40,81 +42,76 @@ using namespace bounded::literal;
 using namespace std::string_view_literals;
 
 constexpr auto generation = Generation::four;
-constexpr auto moves(auto... move_names) {
-	return RegularMoves({Move(generation, move_names, 0_bi)...});
-}
 
 // All moves are legal moves
 static_assert([]{
-	auto user = Team<generation>({
-		Pokemon<generation>(
-			Species::Jolteon,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Volt_Absorb,
-			default_combined_stats<generation>,
-			moves(MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball)
-		)
-	});
 	auto environment = Environment();
+
+	auto user = make_team<generation>({
+		{
+			.species = Species::Jolteon,
+			.moves = {{
+				MoveName::Thunderbolt,
+				MoveName::Charm,
+				MoveName::Thunder,
+				MoveName::Shadow_Ball,
+			}}
+		},
+	});
 	user.pokemon().switch_in(environment);
 
-	auto other = Team<generation>({
-		Pokemon<generation>(
-			Species::Gyarados,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Intimidate,
-			default_combined_stats<generation>,
-			moves(MoveName::Dragon_Dance, MoveName::Waterfall, MoveName::Stone_Edge, MoveName::Taunt)
-		)
+	auto other = make_team<generation>({
+		{
+			.species = Species::Gyarados,
+			.moves = {{
+				MoveName::Dragon_Dance,
+				MoveName::Waterfall,
+				MoveName::Stone_Edge,
+				MoveName::Taunt,
+			}}
+		},
 	});
 	other.pokemon().switch_in(environment);
 
 	user.reset_start_of_turn();
 
 	auto const selections = get_legal_selections(user, other, environment);
-	return selections == LegalSelections({MoveName::Thunderbolt, MoveName::Charm, MoveName::Thunder, MoveName::Shadow_Ball});
+	return selections == LegalSelections({
+		MoveName::Thunderbolt,
+		MoveName::Charm,
+		MoveName::Thunder,
+		MoveName::Shadow_Ball,
+	});
 }());
 
-constexpr auto remove_all_pp(Move & move) {
-	auto remaining_pp = move.pp().remaining();
-	if (remaining_pp) {
-		move.reduce_pp(*remaining_pp);
-	}
+constexpr auto remove_all_pp(auto const pokemon, MoveName const move, Environment const environment) {
+	pokemon.reduce_pp(
+		move,
+		environment,
+		*containers::find(pokemon.regular_moves(), move)->pp().remaining()
+	);
 };
 
 // Two moves with one out of pp
 static_assert([]{
 	auto environment = Environment();
 
-	auto user_moves = moves(MoveName::Thunder, MoveName::Thunderbolt);
-	remove_all_pp(containers::front(user_moves));
-	auto user = Team<generation>({
-		Pokemon<generation>(
-			Species::Pikachu,
-			Level(100_bi),
-			Gender::female,
-			Item::Leftovers,
-			Ability::Intimidate,
-			default_combined_stats<generation>,
-			user_moves
-		)
+	auto user = make_team<generation>({
+		{
+			.species = Species::Pikachu,
+			.moves = {{
+				MoveName::Thunder,
+				MoveName::Thunderbolt,
+			}}
+		},
 	});
 	user.pokemon().switch_in(environment);
+	remove_all_pp(user.pokemon(), MoveName::Thunder, environment);
 
-	auto other = Team<generation>({
-		Pokemon<generation>(
-			Species::Pikachu,
-			Level(100_bi),
-			Gender::female,
-			Item::Leftovers,
-			Ability::Intimidate,
-			default_combined_stats<generation>,
-			moves(MoveName::Thunder, MoveName::Thunderbolt)
-		)
+	auto other = make_team<generation>({
+		{
+			.species = Species::Pikachu,
+		},
 	});
 	other.pokemon().switch_in(environment);
 	
@@ -128,36 +125,25 @@ static_assert([]{
 static_assert([]{
 	auto environment = Environment();
 
-	auto user_moves = moves(MoveName::Thunder, MoveName::Thunderbolt);
-	for (auto & move : user_moves) {
-		remove_all_pp(move);
-	}
-	auto user = Team<generation>({
-		Pokemon<generation>(
-			Species::Pikachu,
-			Level(100_bi),
-			Gender::female,
-			Item::Leftovers,
-			Ability::Intimidate,
-			default_combined_stats<generation>,
-			user_moves
-		)
+	constexpr auto moves = MovesInit({MoveName::Thunder, MoveName::Thunderbolt});
+	auto user = make_team<generation>({
+		{
+			.species = Species::Pikachu,
+			.moves = moves
+		},
 	});
 	user.pokemon().switch_in(environment);
+	for (auto const move : moves) {
+		remove_all_pp(user.pokemon(), move, environment);
+	}
 
-	auto other = Team<generation>({
-		Pokemon<generation>(
-			Species::Pikachu,
-			Level(100_bi),
-			Gender::female,
-			Item::Leftovers,
-			Ability::Intimidate,
-			default_combined_stats<generation>,
-			moves(MoveName::Thunder, MoveName::Thunderbolt)
-		)
+	auto other = make_team<generation>({
+		{
+			.species = Species::Pikachu,
+		},
 	});
 	other.pokemon().switch_in(environment);
-	
+
 	user.reset_start_of_turn();
 
 	auto const selections = get_legal_selections(user, other, environment);
@@ -168,42 +154,23 @@ static_assert([]{
 static_assert([]{
 	auto environment = Environment();
 
-	auto team = Team<generation>({
-		Pokemon<generation>(
-			Species::Slugma,
-			Level(100_bi),
-			Gender::male,
-			Item::Choice_Specs,
-			Ability::Magma_Armor,
-			default_combined_stats<generation>,
-			moves(MoveName::Flamethrower)
-		),
-		Pokemon<generation>(
-			Species::Zapdos,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Choice_Specs,
-			Ability::Pressure,
-			default_combined_stats<generation>,
-			moves(MoveName::Thunderbolt)
-		)
+	auto team = make_team<generation>({
+		{
+			.species = Species::Slugma,
+		},
+		{
+			.species = Species::Zapdos,
+		},
 	});
 	team.pokemon().switch_in(environment);
 	team.reset_start_of_turn();
 
-	auto other = Team<generation>({
-		Pokemon<generation>(
-			Species::Suicune,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Pressure,
-			default_combined_stats<generation>,
-			moves(MoveName::Surf)
-		)
+	auto other = make_team<generation>({
+		{
+			.species = Species::Suicune,
+		},
 	});
 	other.pokemon().switch_in(environment);
-
 	other.reset_start_of_turn();
 
 	faint(team.pokemon());
