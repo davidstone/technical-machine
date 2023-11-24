@@ -24,6 +24,8 @@ import tm.stat.nature;
 
 import tm.stat.default_evs;
 
+import tm.test.pokemon_init;
+
 import tm.ability;
 import tm.any_team;
 import tm.gender;
@@ -42,245 +44,173 @@ namespace {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-constexpr auto expected_netbattle_team = []() -> KnownTeam<Generation::three> {
-	constexpr auto generation = Generation::three;
-	return KnownTeam<generation>({
-		KnownPokemon<generation>(
-			Species::Forretress,
-			"Alcatraz"sv,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Sturdy,
-			CombinedStatsFor<generation>{
-				Nature::Jolly,
-				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
-				EVs(EV(88_bi), EV(84_bi), EV(84_bi), EV(0_bi), EV(0_bi), EV(252_bi))
-			},
-			RegularMoves({
-				Move(generation, MoveName::Earthquake),
-				Move(generation, MoveName::Explosion),
-				Move(generation, MoveName::Rapid_Spin),
-				Move(generation, MoveName::Spikes)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Houndoom,
-			"Crunch Time"sv,
-			Level(100_bi),
-			Gender::male,
-			Item::Salac_Berry,
-			Ability::Flash_Fire,
-			CombinedStatsFor<generation>{
-				Nature::Naive,
-				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
-				EVs(EV(0_bi), EV(252_bi), EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi))
-			},
-			RegularMoves({
-				Move(generation, MoveName::Crunch),
-				Move(generation, MoveName::Endure),
-				Move(generation, MoveName::Fire_Blast),
-				Move(generation, MoveName::Reversal)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Gengar,
-			"Clyde"sv,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Levitate,
-			CombinedStatsFor<generation>{
-				Nature::Timid,
-				IVs(IV(31_bi), IV(0_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
-				EVs(EV(0_bi), EV(0_bi), EV(84_bi), EV(0_bi), EV(172_bi), EV(252_bi))
-			},
-			RegularMoves({
-				Move(generation, MoveName::Dream_Eater),
-				Move(generation, MoveName::Hypnosis),
-				Move(generation, MoveName::Mean_Look),
-				Move(generation, MoveName::Nightmare)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Heracross,
-			"Blinky"sv,
-			Level(100_bi),
-			Gender::male,
-			Item::Salac_Berry,
-			Ability::Swarm,
-			CombinedStatsFor<generation>{
-				Nature::Jolly,
-				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
-				EVs(EV(56_bi), EV(128_bi), EV(0_bi), EV(0_bi), EV(72_bi), EV(252_bi))
-			},
-			RegularMoves({
-				Move(generation, MoveName::Endure),
-				Move(generation, MoveName::Flail),
-				Move(generation, MoveName::Megahorn),
-				Move(generation, MoveName::Reversal)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Mew,
-			"Houdini"sv,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Synchronize,
-			CombinedStatsFor<generation>{
-				Nature::Mild,
-				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
-				EVs(EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi), EV(0_bi), EV(252_bi))
-			},
-			RegularMoves({
-				Move(generation, MoveName::Ancient_Power),
-				Move(generation, MoveName::Ice_Beam),
-				Move(generation, MoveName::Psychic),
-				Move(generation, MoveName::Soft_Boiled)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Zapdos,
-			"Sparky"sv,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Pressure,
-			CombinedStatsFor<generation>{
-				Nature::Modest,
-				IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(30_bi), IV(31_bi), IV(30_bi)),
-				EVs(EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi), EV(0_bi), EV(252_bi))
-			},
-			RegularMoves({
-				Move(generation, MoveName::Drill_Peck),
-				Move(generation, MoveName::Hidden_Power),
-				Move(generation, MoveName::Rain_Dance),
-				Move(generation, MoveName::Thunder)
-			})
-		)
-	});
-}();
+constexpr auto expected_netbattle_team = make_known_team<Generation::three>({
+	{
+		.species = Species::Forretress,
+		.nickname = "Alcatraz"sv,
+		.gender = Gender::male,
+		.item = Item::Leftovers,
+		.ability = Ability::Sturdy,
+		.nature = Nature::Jolly,
+		.evs = EVs(EV(88_bi), EV(84_bi), EV(84_bi), EV(0_bi), EV(0_bi), EV(252_bi)),
+		.moves = {{
+			MoveName::Earthquake,
+			MoveName::Explosion,
+			MoveName::Rapid_Spin,
+			MoveName::Spikes,
+		}}
+	},
+	{
+		.species = Species::Houndoom,
+		.nickname = "Crunch Time"sv,
+		.gender = Gender::male,
+		.item = Item::Salac_Berry,
+		.ability = Ability::Flash_Fire,
+		.nature = Nature::Naive,
+		.evs = EVs(EV(0_bi), EV(252_bi), EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi)),
+		.moves = {{
+			MoveName::Crunch,
+			MoveName::Endure,
+			MoveName::Fire_Blast,
+			MoveName::Reversal,
+		}}
+	},
+	{
+		.species = Species::Gengar,
+		.nickname = "Clyde"sv,
+		.gender = Gender::male,
+		.item = Item::Leftovers,
+		.ability = Ability::Levitate,
+		.nature = Nature::Timid,
+		.ivs = IVs(IV(31_bi), IV(0_bi), IV(31_bi), IV(31_bi), IV(31_bi), IV(31_bi)),
+		.evs = EVs(EV(0_bi), EV(0_bi), EV(84_bi), EV(0_bi), EV(172_bi), EV(252_bi)),
+		.moves = {{
+			MoveName::Dream_Eater,
+			MoveName::Hypnosis,
+			MoveName::Mean_Look,
+			MoveName::Nightmare,
+		}}
+	},
+	{
+		.species = Species::Heracross,
+		.nickname = "Blinky"sv,
+		.gender = Gender::male,
+		.item = Item::Salac_Berry,
+		.ability = Ability::Swarm,
+		.nature = Nature::Jolly,
+		.evs = EVs(EV(56_bi), EV(128_bi), EV(0_bi), EV(0_bi), EV(72_bi), EV(252_bi)),
+		.moves = {{
+			MoveName::Endure,
+			MoveName::Flail,
+			MoveName::Megahorn,
+			MoveName::Reversal,
+		}}
+	},
+	{
+		.species = Species::Mew,
+		.nickname = "Houdini"sv,
+		.item = Item::Leftovers,
+		.ability = Ability::Synchronize,
+		.nature = Nature::Mild,
+		.evs = EVs(EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi), EV(0_bi), EV(252_bi)),
+		.moves = {{
+			MoveName::Ancient_Power,
+			MoveName::Ice_Beam,
+			MoveName::Psychic,
+			MoveName::Soft_Boiled,
+		}}
+	},
+	{
+		.species = Species::Zapdos,
+		.nickname = "Sparky"sv,
+		.item = Item::Leftovers,
+		.ability = Ability::Pressure,
+		.nature = Nature::Modest,
+		.ivs = IVs(IV(31_bi), IV(31_bi), IV(31_bi), IV(30_bi), IV(31_bi), IV(30_bi)),
+		.evs = EVs(EV(0_bi), EV(4_bi), EV(0_bi), EV(252_bi), EV(0_bi), EV(252_bi)),
+		.moves = {{
+			MoveName::Drill_Peck,
+			MoveName::Hidden_Power,
+			MoveName::Rain_Dance,
+			MoveName::Thunder,
+		}}
+	},
+});
 
-constexpr auto expected_netbattle_supremacy_team = []() -> KnownTeam<Generation::two> {
-	constexpr auto generation = Generation::two;
-	return KnownTeam<generation>({
-		KnownPokemon<generation>(
-			Species::Raikou,
-			"Aaron Carter"sv,
-			Level(100_bi),
-			Gender::genderless,
-			Item::Leftovers,
-			Ability::Honey_Gather,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				DVs(DV(0_bi), DV(1_bi), DV(2_bi), DV(3_bi)),
-				default_evs<generation>
-			},
-			RegularMoves({
-				Move(generation, MoveName::Crunch),
-				Move(generation, MoveName::Rest),
-				Move(generation, MoveName::Sleep_Talk),
-				Move(generation, MoveName::Thunderbolt)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Alakazam,
-			"Jackie Chan"sv,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Honey_Gather,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
-				default_evs<generation>
-			},
-			RegularMoves({
-				Move(generation, MoveName::Encore),
-				Move(generation, MoveName::Psychic),
-				Move(generation, MoveName::Recover),
-				Move(generation, MoveName::Thunder_Punch)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Exeggutor,
-			"Old Godzilla"sv,
-			Level(100_bi),
-			Gender::male,
-			Item::None,
-			Ability::Honey_Gather,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
-				default_evs<generation>
-			},
-			RegularMoves({
-				Move(generation, MoveName::Explosion),
-				Move(generation, MoveName::Giga_Drain),
-				Move(generation, MoveName::Psychic),
-				Move(generation, MoveName::Thief)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Snorlax,
-			"Shaq Fu"sv,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Honey_Gather,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
-				default_evs<generation>
-			},
-			RegularMoves({
-				Move(generation, MoveName::Double_Edge),
-				Move(generation, MoveName::Earthquake),
-				Move(generation, MoveName::Fire_Blast),
-				Move(generation, MoveName::Self_Destruct)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Machamp,
-			"Chuck Norris"sv,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Honey_Gather,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				DVs(DV(13_bi), DV(13_bi), DV(15_bi), DV(15_bi)),
-				default_evs<generation>
-			},
-			RegularMoves({
-				Move(generation, MoveName::Counter),
-				Move(generation, MoveName::Cross_Chop),
-				Move(generation, MoveName::Earthquake),
-				Move(generation, MoveName::Hidden_Power)
-			})
-		),
-		KnownPokemon<generation>(
-			Species::Gengar,
-			"Abe Lincoln"sv,
-			Level(100_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Honey_Gather,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				DVs(DV(15_bi), DV(15_bi), DV(15_bi), DV(15_bi)),
-				default_evs<generation>
-			},
-			RegularMoves({
-				Move(generation, MoveName::Explosion),
-				Move(generation, MoveName::Ice_Punch),
-				Move(generation, MoveName::Psychic),
-				Move(generation, MoveName::Thunderbolt)
-			})
-		)
-	});
-}();
+constexpr auto expected_netbattle_supremacy_team = make_known_team<Generation::two>({
+	{
+		.species = Species::Raikou,
+		.nickname = "Aaron Carter"sv,
+		.item = Item::Leftovers,
+		.ivs = DVs(DV(0_bi), DV(1_bi), DV(2_bi), DV(3_bi)),
+		.moves = {{
+			MoveName::Crunch,
+			MoveName::Rest,
+			MoveName::Sleep_Talk,
+			MoveName::Thunderbolt,
+		}}
+	},
+	{
+		.species = Species::Alakazam,
+		.nickname = "Jackie Chan"sv,
+		.gender = Gender::male,
+		.item = Item::Leftovers,
+		.moves = {{
+			MoveName::Encore,
+			MoveName::Psychic,
+			MoveName::Recover,
+			MoveName::Thunder_Punch,
+		}}
+	},
+	{
+		.species = Species::Exeggutor,
+		.nickname = "Old Godzilla"sv,
+		.gender = Gender::male,
+		.moves = {{
+			MoveName::Explosion,
+			MoveName::Giga_Drain,
+			MoveName::Psychic,
+			MoveName::Thief,
+		}}
+	},
+	{
+		.species = Species::Snorlax,
+		.nickname = "Shaq Fu"sv,
+		.gender = Gender::male,
+		.item = Item::Leftovers,
+		.moves = {{
+			MoveName::Double_Edge,
+			MoveName::Earthquake,
+			MoveName::Fire_Blast,
+			MoveName::Self_Destruct,
+		}}
+	},
+	{
+		.species = Species::Machamp,
+		.nickname = "Chuck Norris"sv,
+		.gender = Gender::male,
+		.item = Item::Leftovers,
+		.ivs = DVs(DV(13_bi), DV(13_bi), DV(15_bi), DV(15_bi)),
+		.moves = {{
+			MoveName::Counter,
+			MoveName::Cross_Chop,
+			MoveName::Earthquake,
+			MoveName::Hidden_Power,
+		}}
+	},
+	{
+		.species = Species::Gengar,
+		.nickname = "Abe Lincoln"sv,
+		.gender = Gender::male,
+		.item = Item::Leftovers,
+		.moves = {{
+			MoveName::Explosion,
+			MoveName::Ice_Punch,
+			MoveName::Psychic,
+			MoveName::Thunderbolt,
+		}}
+	},
+});
 
 // std::embed(get_test_directory() / "teams/netbattle.pnb")
 constexpr auto netbattle_bytes = containers::array{

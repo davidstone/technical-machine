@@ -20,6 +20,8 @@ import tm.pokemon.species;
 
 import tm.stat.default_evs;
 
+import tm.test.pokemon_init;
+
 import tm.ability;
 import tm.battle;
 import tm.end_of_turn_flags;
@@ -46,27 +48,22 @@ constexpr auto regular_moves(auto... moves) {
 
 TEST_CASE("Perish Song", "[battle]") {
 	auto battle = Battle<generation>(
-		KnownTeam<generation>({
-			KnownPokemon<generation>(
-				Species::Misdreavus,
-				Nickname(),
-				Level(100_bi),
-				Gender::female,
-				Item::None,
-				Ability::Levitate,
-				default_combined_stats<generation>,
-				regular_moves(MoveName::Perish_Song)
-			),
-			KnownPokemon<generation>(
-				Species::Regice,
-				Nickname(),
-				Level(100_bi),
-				Gender::genderless,
-				Item::None,
-				Ability::Clear_Body,
-				default_combined_stats<generation>,
-				regular_moves(MoveName::Explosion)
-			)
+		make_known_team<generation>({
+			{
+				.species = Species::Misdreavus,
+				.gender = Gender::female,
+				.ability = Ability::Levitate,
+				.moves = {{
+					MoveName::Perish_Song,
+				}}
+			},
+			{
+				.species = Species::Regice,
+				.ability = Ability::Clear_Body,
+				.moves = {{
+					MoveName::Explosion,
+				}}
+			},
 		}),
 		SeenTeam<generation>(2_bi)
 	);

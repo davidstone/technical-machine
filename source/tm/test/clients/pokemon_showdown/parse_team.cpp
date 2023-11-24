@@ -22,6 +22,8 @@ import tm.stat.nature;
 
 import tm.stat.default_evs;
 
+import tm.test.pokemon_init;
+
 import tm.ability;
 import tm.gender;
 import tm.generation;
@@ -40,71 +42,64 @@ using namespace std::string_view_literals;
 TEST_CASE("Parse Pokemon Showdown generation 1 team", "[pokemon showdown]") {
 	constexpr auto generation = Generation::one;
 
-	constexpr auto moves = [](auto... move_names) {
-		return RegularMoves({Move(generation, move_names)...});
-	};
-
-	constexpr auto expected = KnownTeam<generation>({
-		KnownPokemon<generation>(
-			Species::Koffing,
-			"Koffing"sv,
-			Level(88_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			moves(MoveName::Fire_Blast, MoveName::Sludge, MoveName::Explosion, MoveName::Thunderbolt)
-		),
-		KnownPokemon<generation>(
-			Species::Sandslash,
-			"Sandslash"sv,
-			Level(74_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			moves(MoveName::Earthquake, MoveName::Body_Slam, MoveName::Rock_Slide, MoveName::Swords_Dance)
-		),
-		KnownPokemon<generation>(
-			Species::Ditto,
-			"Ditto"sv,
-			Level(88_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			moves(MoveName::Transform)
-		),
-		KnownPokemon<generation>(
-			Species::Pikachu,
-			"Pikachu"sv,
-			Level(88_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			moves(MoveName::Agility, MoveName::Thunderbolt, MoveName::Surf, MoveName::Thunder_Wave)
-		),
-		KnownPokemon<generation>(
-			Species::Jynx,
-			"Jynx"sv,
-			Level(68_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			moves(MoveName::Seismic_Toss, MoveName::Lovely_Kiss, MoveName::Psychic, MoveName::Blizzard)
-		),
-		KnownPokemon<generation>(
-			Species::Slowbro,
-			"Slowbro"sv,
-			Level(68_bi),
-			Gender::genderless,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			moves(MoveName::Psychic, MoveName::Surf, MoveName::Thunder_Wave, MoveName::Amnesia)
-		)
+	constexpr auto expected = make_known_team<generation>({
+		{
+			.species = Species::Koffing,
+			.level = Level(88_bi),
+			.moves = {{
+				MoveName::Fire_Blast,
+				MoveName::Sludge,
+				MoveName::Explosion,
+				MoveName::Thunderbolt,
+			}}
+		},
+		{
+			.species = Species::Sandslash,
+			.level = Level(74_bi),
+			.moves = {{
+				MoveName::Earthquake,
+				MoveName::Body_Slam,
+				MoveName::Rock_Slide,
+				MoveName::Swords_Dance,
+			}}
+		},
+		{
+			.species = Species::Ditto,
+			.level = Level(88_bi),
+			.moves = {{
+				MoveName::Transform,
+			}}
+		},
+		{
+			.species = Species::Pikachu,
+			.level = Level(88_bi),
+			.moves = {{
+				MoveName::Agility,
+				MoveName::Thunderbolt,
+				MoveName::Surf,
+				MoveName::Thunder_Wave,
+			}}
+		},
+		{
+			.species = Species::Jynx,
+			.level = Level(68_bi),
+			.moves = {{
+				MoveName::Seismic_Toss,
+				MoveName::Lovely_Kiss,
+				MoveName::Psychic,
+				MoveName::Blizzard,
+			}}
+		},
+		{
+			.species = Species::Slowbro,
+			.level = Level(68_bi),
+			.moves = {{
+				MoveName::Psychic,
+				MoveName::Surf,
+				MoveName::Thunder_Wave,
+				MoveName::Amnesia,
+			}}
+		},
 	});
 
 	constexpr auto initial =
@@ -116,75 +111,79 @@ TEST_CASE("Parse Pokemon Showdown generation 1 team", "[pokemon showdown]") {
 TEST_CASE("Parse Pokemon Showdown generation 2 team", "[pokemon showdown]") {
 	constexpr auto generation = Generation::two;
 
-	constexpr auto moves = [](auto... move_names) {
-		return RegularMoves({Move(generation, move_names)...});
-	};
-
-	constexpr auto expected = KnownTeam<generation>({
-		KnownPokemon<generation>(
-			Species::Noctowl,
-			"Noctowl"sv,
-			Level(80_bi),
-			Gender::male,
-			Item::None,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			moves(MoveName::Thief, MoveName::Hypnosis, MoveName::Night_Shade, MoveName::Return)
-		),
-		KnownPokemon<generation>(
-			Species::Qwilfish,
-			"Qwilfish"sv,
-			Level(74_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			moves(MoveName::Spikes, MoveName::Sludge_Bomb, MoveName::Surf, MoveName::Curse)
-		),
-		KnownPokemon<generation>(
-			Species::Hypno,
-			"Hypno"sv,
-			Level(74_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			moves(MoveName::Curse, MoveName::Body_Slam, MoveName::Psychic, MoveName::Rest)
-		),
-		KnownPokemon<generation>(
-			Species::Misdreavus,
-			"Misdreavus"sv,
-			Level(68_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			moves(MoveName::Thunderbolt, MoveName::Shadow_Ball, MoveName::Hypnosis, MoveName::Pain_Split)
-		),
-		KnownPokemon<generation>(
-			Species::Machamp,
-			"Machamp"sv,
-			Level(68_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Honey_Gather,
-			default_combined_stats<generation>,
-			moves(MoveName::Rest, MoveName::Sleep_Talk, MoveName::Cross_Chop, MoveName::Curse)
-		),
-		KnownPokemon<generation>(
-			Species::Sunflora,
-			"Sunflora"sv,
-			Level(80_bi),
-			Gender::male,
-			Item::Leftovers,
-			Ability::Honey_Gather,
-			CombinedStatsFor<generation>{
-				Nature::Hardy,
-				DVs(DV(15_bi), DV(13_bi), DV(15_bi), DV(15_bi)),
-				default_evs<generation>
-			},
-			moves(MoveName::Growth, MoveName::Giga_Drain, MoveName::Synthesis, MoveName::Hidden_Power)
-		)
+	constexpr auto expected = make_known_team<generation>({
+		{
+			.species = Species::Noctowl,
+			.level = Level(80_bi),
+			.gender = Gender::male,
+			.moves = {{
+				MoveName::Thief,
+				MoveName::Hypnosis,
+				MoveName::Night_Shade,
+				MoveName::Return,
+			}}
+		},
+		{
+			.species = Species::Qwilfish,
+			.level = Level(74_bi),
+			.gender = Gender::male,
+			.item = Item::Leftovers,
+			.moves = {{
+				MoveName::Spikes,
+				MoveName::Sludge_Bomb,
+				MoveName::Surf,
+				MoveName::Curse,
+			}}
+		},
+		{
+			.species = Species::Hypno,
+			.level = Level(74_bi),
+			.gender = Gender::male,
+			.item = Item::Leftovers,
+			.moves = {{
+				MoveName::Curse,
+				MoveName::Body_Slam,
+				MoveName::Psychic,
+				MoveName::Rest,
+			}}
+		},
+		{
+			.species = Species::Misdreavus,
+			.level = Level(68_bi),
+			.gender = Gender::male,
+			.item = Item::Leftovers,
+			.moves = {{
+				MoveName::Thunderbolt,
+				MoveName::Shadow_Ball,
+				MoveName::Hypnosis,
+				MoveName::Pain_Split,
+			}}
+		},
+		{
+			.species = Species::Machamp,
+			.level = Level(68_bi),
+			.gender = Gender::male,
+			.item = Item::Leftovers,
+			.moves = {{
+				MoveName::Rest,
+				MoveName::Sleep_Talk,
+				MoveName::Cross_Chop,
+				MoveName::Curse,
+			}}
+		},
+		{
+			.species = Species::Sunflora,
+			.level = Level(80_bi),
+			.gender = Gender::male,
+			.item = Item::Leftovers,
+			.ivs = DVs(DV(15_bi), DV(13_bi), DV(15_bi), DV(15_bi)),
+			.moves = {{
+				MoveName::Growth,
+				MoveName::Giga_Drain,
+				MoveName::Synthesis,
+				MoveName::Hidden_Power,
+			}}
+		},
 	});
 
 	constexpr auto initial =
