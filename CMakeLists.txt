@@ -318,6 +318,10 @@ target_sources(tm_common PRIVATE
 	source/tm/string_conversions/team_impl.cpp
 	source/tm/team_predictor/team_predictor_impl.cpp
 )
+# Not sure why this is warning about a header
+set_source_files_properties(source/tm/boost_beast_http.cpp
+	PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations"
+)
 target_link_libraries(tm_common
 	Boost::headers
 	bounded
@@ -489,6 +493,10 @@ target_sources(tm_pokemon_showdown PUBLIC
 target_sources(tm_pokemon_showdown PRIVATE
 	source/tm/clients/pokemon_showdown/battle_factory_impl.cpp
 	source/tm/clients/pokemon_showdown/to_packed_format_impl.cpp
+)
+# Not sure why this is warning about a header
+set_source_files_properties(source/tm/clients/pokemon_showdown/sockets.cpp
+	PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations"
 )
 target_link_libraries(tm_pokemon_showdown
 	Boost::headers
