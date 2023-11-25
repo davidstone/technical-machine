@@ -118,7 +118,7 @@ constexpr auto pop_evs(BufferView<std::string_view> & buffer) {
 }
 
 constexpr auto is_valid_percent(double const value) -> bool {
-	return 0.0 <= value and value <= 1.0;
+	return 0.0 <= value and value <= 100.0;
 }
 
 export template<Generation generation>
