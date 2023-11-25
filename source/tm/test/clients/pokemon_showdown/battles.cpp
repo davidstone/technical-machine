@@ -54,9 +54,8 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 		std::filesystem::remove_all(battle_output_directory);
 	};
 	remove_temporary_files();
-	constexpr auto write_team = tv::none;
 	{
-		auto battles = ps::Battles(battle_output_directory, write_team);
+		auto battles = ps::Battles(battle_output_directory);
 
 		auto paths_in_directory = [](std::filesystem::path const & path) {
 			return containers::range_view(

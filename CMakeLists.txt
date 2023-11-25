@@ -419,7 +419,6 @@ target_sources(tm_clients PUBLIC
 		source/tm/clients/to_used_move.cpp
 		source/tm/clients/turn_count.cpp
 		source/tm/clients/visible_damage_to_actual_damage.cpp
-		source/tm/clients/write_team.cpp
 )
 target_sources(tm_clients PRIVATE
 	source/tm/clients/get_team_impl.cpp

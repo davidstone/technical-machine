@@ -17,7 +17,6 @@ import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.room_message;
 
 import tm.clients.party;
-import tm.clients.write_team;
 
 import tm.evaluate.all_evaluate;
 import tm.evaluate.analysis_logger;
@@ -37,9 +36,8 @@ namespace technicalmachine::ps {
 using namespace std::string_view_literals;
 
 export struct Battles {
-	explicit Battles(std::filesystem::path log_directory, tv::optional<WriteTeam> write_team):
-		m_log_directory(std::move(log_directory)),
-		m_write_team(std::move(write_team))
+	explicit Battles(std::filesystem::path log_directory):
+		m_log_directory(std::move(log_directory))
 	{
 		std::filesystem::create_directories(m_log_directory);
 	}
@@ -83,10 +81,6 @@ export struct Battles {
 		tv::visit(result, tv::overload(
 			[](auto) {
 			},
-			[&](BattleStarted) {
-				auto const battle_log_directory = m_log_directory / std::string_view(it->id);
-				log_ai_team(it->battle.team(), battle_log_directory);
-			},
 			[&](BattleFinished) {
 				containers::erase(m_container, it);
 			}
@@ -102,23 +96,8 @@ private:
 		BattleManager battle;
 	};
 
-	auto log_ai_team(GenerationGeneric<Team> const & team, std::filesystem::path const & battle_log_directory) -> void {
-		if (!m_write_team) {
-			return;
-		}
-		auto const file_name = containers::concatenate<containers::string>(
-			"team"sv,
-			m_write_team->extension
-		);
-		m_write_team->function(
-			team,
-			battle_log_directory / std::string_view(file_name)
-		);
-	}
-
 	std::filesystem::path m_log_directory;
 	containers::vector<Element> m_container;
-	tv::optional<WriteTeam> m_write_team;
 };
 
 } // namespace technicalmachine::ps

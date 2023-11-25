@@ -11,8 +11,6 @@ module;
 
 export module tm.clients.ps.client_impl;
 
-import tm.clients.pl.write_team_file;
-
 import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battles;
 import tm.clients.ps.handle_chat_message;
@@ -24,7 +22,6 @@ import tm.clients.ps.to_packed_format;
 
 import tm.clients.get_team;
 import tm.clients.should_accept_challenge;
-import tm.clients.write_team;
 
 import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
@@ -69,12 +66,6 @@ private:
 	std::string_view m_str;
 };
 
-constexpr auto write_team_function = [](GenerationGeneric<Team> const & team, std::filesystem::path const & path) {
-	tv::visit(team, [&]<Generation generation>(Team<generation> const & t) {
-		pl::write_team(t, path);
-	});
-};
-
 using AuthenticationFunction = containers::trivial_inplace_function<
 	AuthenticationSignature,
 	sizeof(void *)
@@ -86,7 +77,7 @@ export struct ClientImpl {
 		m_all_usage_stats(stats_for_generation),
 		m_settings(std::move(settings)),
 		m_depth(depth),
-		m_battles(get_battles_directory(), WriteTeam{".sbt", write_team_function}),
+		m_battles(get_battles_directory()),
 		m_send_message(std::move(send_message)),
 		m_authenticate(std::move(authenticate))
 	{
