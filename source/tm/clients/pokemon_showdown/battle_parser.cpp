@@ -653,7 +653,7 @@ private:
 	auto handle_switch_or_drag(InMessage message) -> SwitchOrDragResult {
 		auto parsed = parse_switch(message);
 		auto const data_is_for_ai = parsed.party == m_party;
-		auto const move = [&] {
+		auto const index = [&] {
 			if (data_is_for_ai) {
 				auto const result = m_client_battle->ai_has(
 					parsed.species,
@@ -661,12 +661,11 @@ private:
 					parsed.level,
 					parsed.gender
 				);
-				auto const switch_index = to_replacement(result);
 				if (m_replacing_fainted) {
-					m_slot_memory.replace_fainted(switch_index);
+					m_slot_memory.replace_fainted(result);
 					m_replacing_fainted = false;
 				} else {
-					m_slot_memory.switch_to(switch_index);
+					m_slot_memory.switch_to(result);
 				}
 				return result;
 			} else {
@@ -678,6 +677,7 @@ private:
 				);
 			}
 		}();
+		auto const move = to_switch(index);
 
 		return SwitchOrDragResult{parsed.party, parsed.species, move, parsed.hp, parsed.status};
 	}

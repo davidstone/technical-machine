@@ -142,22 +142,21 @@ struct Battle {
 		);
 	}
 	// This assumes Species Clause is in effect. Throws if the Species is not in
-	// the team. Returns the switch needed to bring this Pokemon out.
-	auto find_ai_pokemon(Species const species, std::string_view, Level, Gender) const -> MoveName {
+	// the team.
+	auto find_ai_pokemon(Species const species, std::string_view, Level, Gender) const -> TeamIndex {
 		// TODO: Validate nickname, level, and gender?
-		return to_switch(find_required_pokemon_index(m_ai.all_pokemon(), species));
+		return find_required_pokemon_index(m_ai.all_pokemon(), species);
 	}
 	// This assumes Species Clause is in effect. Adds a Pokemon to the team if
-	// Species has not been seen yet. Returns the switch needed to bring this
-	// Pokemon out.
-	auto find_or_add_foe_pokemon(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> MoveName {
+	// Species has not been seen yet.
+	auto find_or_add_foe_pokemon(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex {
 		auto const it = containers::find_if(m_foe.all_pokemon(), [=](SeenPokemon<generation> const & pokemon) {
 			return pokemon.species() == species;
 		});
 		if (it == containers::end(m_foe.all_pokemon())) {
 			m_foe.all_pokemon().add({species, std::move(nickname), level, gender});
 		}
-		return to_switch(bounded::assume_in_range<TeamIndex>(it - containers::begin(m_foe.all_pokemon())));
+		return bounded::assume_in_range<TeamIndex>(it - containers::begin(m_foe.all_pokemon()));
 	}
 	void handle_fainted(bool const is_ai) {
 		apply_to_teams(is_ai, [](auto & team, auto const &) {

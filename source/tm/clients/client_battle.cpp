@@ -41,9 +41,8 @@ export struct ClientBattle {
 	virtual auto generation() const -> Generation = 0;
 	virtual auto team() const -> GenerationGeneric<Team> = 0;
 
-	// Returns the switch required to bring in this Pokemon
-	virtual auto ai_has(Species, std::string_view nickname, Level, Gender) & -> MoveName = 0;
-	virtual auto foe_has(Species, std::string_view nickname, Level, Gender) & -> MoveName = 0;
+	virtual auto ai_has(Species, std::string_view nickname, Level, Gender) & -> TeamIndex = 0;
+	virtual auto foe_has(Species, std::string_view nickname, Level, Gender) & -> TeamIndex = 0;
 
 	virtual auto active_has(bool is_ai, MoveName) & -> void = 0;
 	virtual auto active_has(bool is_ai, Ability) & -> void = 0;

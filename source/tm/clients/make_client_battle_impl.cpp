@@ -111,10 +111,10 @@ struct ClientBattleImpl final : ClientBattle {
 		return GenerationGeneric<Team>(Team<generation_>(m_battle.ai()));
 	}
 
-	auto ai_has(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> MoveName final {
+	auto ai_has(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex final {
 		return m_battle.find_ai_pokemon(species, nickname, level, gender);
 	}
-	auto foe_has(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> MoveName final {
+	auto foe_has(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex final {
 		return m_battle.find_or_add_foe_pokemon(species, nickname, level, gender);
 	}
 
