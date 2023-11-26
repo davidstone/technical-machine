@@ -590,6 +590,7 @@ target_sources(tm_test PRIVATE
 
 		source/tm/test/collections/variable_collection.cpp
 
+		source/tm/test/move/actual_damage.cpp
 		source/tm/test/move/calculate_damage.cpp
 		source/tm/test/move/move_power.cpp
 
