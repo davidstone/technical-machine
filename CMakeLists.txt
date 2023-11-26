@@ -474,6 +474,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/room_messages.cpp
 		source/tm/clients/pokemon_showdown/send_message_function.cpp
 		source/tm/clients/pokemon_showdown/slot_memory.cpp
+		source/tm/clients/pokemon_showdown/switch_message.cpp
 		source/tm/clients/pokemon_showdown/sockets.cpp
 		source/tm/clients/pokemon_showdown/to_packed_format.cpp
 		source/tm/clients/pokemon_showdown/validate_generation.cpp

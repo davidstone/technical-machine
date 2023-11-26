@@ -242,7 +242,7 @@ private:
 	tv::optional<containers::string> m_type; // singles, doubles, triples
 	tv::optional<containers::string> m_tier;
 	tv::optional<TeamSize> m_foe_team_size;
-	tv::optional<ParsedSwitch> m_foe_starter;
+	tv::optional<SwitchMessage> m_foe_starter;
 	bool m_ai_switched_in = false;
 };
 
