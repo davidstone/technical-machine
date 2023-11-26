@@ -5,6 +5,8 @@
 
 module;
 
+#include <std_module/prelude.hpp>
+#include <string_view>
 #include <bounded/assert.hpp>
 
 export module tm.clients.ps.slot_memory;
@@ -18,6 +20,7 @@ import std_module;
 
 namespace technicalmachine::ps {
 using namespace bounded::literal;
+using namespace std::string_view_literals;
 
 // TODO: Should TeamSize be at least 1? Should this accept a different type?
 constexpr auto validate_size(TeamSize const size) {
@@ -34,6 +37,24 @@ export struct SlotMemory {
 
 	constexpr auto operator[](TeamIndex const index) const -> Index {
 		return containers::at(m_container, index);
+	}
+	constexpr auto reverse_lookup(Index const index) const -> TeamIndex {
+		auto const it = containers::find(m_container, index);
+		if (it == containers::end(m_container)) {
+			throw std::runtime_error(containers::concatenate<std::string>(
+				"Unable to find switch index "sv,
+				containers::to_string(index),
+				", possible values are "sv,
+				[&] {
+					auto result = containers::string();
+					for (auto const & value : m_container) {
+						result = containers::concatenate<containers::string>(std::move(result), containers::to_string(value), ", "sv);
+					}
+					return result;
+				}()
+			));
+		}
+		return bounded::assume_in_range<TeamIndex>(it - containers::begin(m_container));
 	}
 	constexpr auto switch_to(TeamIndex const index) -> void {
 		swap_to_front(index);

@@ -22,10 +22,10 @@ using namespace bounded::literal;
 void validate_indexes(ps::SlotMemory const & slot_memory, std::initializer_list<ps::SlotMemory::Index> test) {
 	auto integer = bounded::integer<0, bounded::normalize<numeric_traits::max_value<TeamIndex> + 1_bi>>(0_bi);
 	for (auto const & expected : test) {
-		REQUIRE(slot_memory[::bounded::assume_in_range<TeamIndex>(integer)] == expected);
+		REQUIRE(slot_memory[::bounded::check_in_range<TeamIndex>(integer)] == expected);
 		++integer;
 	}
-	REQUIRE_THROWS(slot_memory[::bounded::assume_in_range<TeamIndex>(integer)]);
+	REQUIRE_THROWS(slot_memory[::bounded::check_in_range<TeamIndex>(integer)]);
 }
 
 template<typename T>
@@ -38,31 +38,44 @@ TEST_CASE("Pokemon Showdown Slot Memory Construct", "[Pokemon Showdown]") {
 }
 
 TEST_CASE("Pokemon Showdown Slot Memory Switch", "[Pokemon Showdown]") {
-	auto switch_to_all = ps::SlotMemory(4_bi);
-	// {1, 2, 3, 4}
-	switch_to_all.switch_to(1_bi);
-	// {2, 1, 3, 4}
-	switch_to_all.switch_to(2_bi);
-	// {2, 3, 1, 4}
-	switch_to_all.switch_to(3_bi);
-	// {2, 3, 4, 1}
-	validate_indexes(switch_to_all, {2_bi, 3_bi, 4_bi, 1_bi});
+	auto memory = ps::SlotMemory(4_bi);
+	validate_indexes(memory, {1_bi, 2_bi, 3_bi, 4_bi});
+	memory.switch_to(1_bi);
+	validate_indexes(memory, {2_bi, 1_bi, 3_bi, 4_bi});
+	memory.switch_to(2_bi);
+	validate_indexes(memory, {2_bi, 3_bi, 1_bi, 4_bi});
+	memory.switch_to(3_bi);
+	validate_indexes(memory, {2_bi, 3_bi, 4_bi, 1_bi});
 }
 
 TEST_CASE("Pokemon Showdown Slot Memory Switch to Self", "[Pokemon Showdown]") {
-	auto switch_to_self = ps::SlotMemory(3_bi);
-	switch_to_self.switch_to(0_bi);
-	validate_indexes(switch_to_self, {1_bi, 2_bi, 3_bi});
+	auto memory = ps::SlotMemory(3_bi);
+	memory.switch_to(0_bi);
+	validate_indexes(memory, {1_bi, 2_bi, 3_bi});
 }
 
 TEST_CASE("Pokemon Showdown Slot Memory Faint", "[Pokemon Showdown]") {
-	auto faint_two = ps::SlotMemory(6_bi);
-	// {1, 2, 3, 4, 5, 6}
-	faint_two.replace_fainted(3_bi);
-	// {2, 3, 1, 5, 6}
-	faint_two.replace_fainted(1_bi);
-	// {2, 1, 5, 6}
-	validate_indexes(faint_two, {2_bi, 1_bi, 5_bi, 6_bi});
+	auto memory = ps::SlotMemory(6_bi);
+	validate_indexes(memory, {1_bi, 2_bi, 3_bi, 4_bi, 5_bi, 6_bi});
+	memory.replace_fainted(3_bi);
+	validate_indexes(memory, {2_bi, 3_bi, 1_bi, 5_bi, 6_bi});
+	memory.replace_fainted(1_bi);
+	validate_indexes(memory, {2_bi, 1_bi, 5_bi, 6_bi});
+}
+
+TEST_CASE("Pokemon Showdown Slot Memory mixed operations", "[Pokemon Showdown]") {
+	auto memory = ps::SlotMemory(6_bi);
+	validate_indexes(memory, {1_bi, 2_bi, 3_bi, 4_bi, 5_bi, 6_bi});
+	memory.switch_to(memory.reverse_lookup(2_bi));
+	validate_indexes(memory, {2_bi, 1_bi, 3_bi, 4_bi, 5_bi, 6_bi});
+	memory.switch_to(memory.reverse_lookup(5_bi));
+	validate_indexes(memory, {2_bi, 5_bi, 3_bi, 4_bi, 1_bi, 6_bi});
+	memory.replace_fainted(memory.reverse_lookup(4_bi));
+	validate_indexes(memory, {2_bi, 5_bi, 3_bi, 1_bi, 6_bi});
+	memory.replace_fainted(memory.reverse_lookup(6_bi));
+	validate_indexes(memory, {2_bi, 5_bi, 3_bi, 1_bi});
+	memory.replace_fainted(memory.reverse_lookup(3_bi));
+	validate_indexes(memory, {2_bi, 5_bi, 1_bi});
 }
 
 TEST_CASE("Pokemon Showdown Slot Memory Fuzz", "[Pokemon Showdown]") {
@@ -84,9 +97,16 @@ TEST_CASE("Pokemon Showdown Slot Memory Fuzz", "[Pokemon Showdown]") {
 				case 0:
 					slot_memory = ps::SlotMemory(random_size());
 					break;
-				case 1:
-					slot_memory[random_index()];
+				case 1: {
+					auto const team_index = random_index();
+					auto const index = slot_memory[team_index];
+					try {
+						CHECK(slot_memory.reverse_lookup(index) == team_index);
+					} catch (std::exception const &) {
+						FAIL_CHECK("Could not reverse slot memory, TeamIndex: " << team_index << ", index: " << index);
+					}
 					break;
+				}
 				case 2:
 					slot_memory.switch_to(random_index());
 					break;
