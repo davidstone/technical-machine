@@ -17,7 +17,7 @@ import tm.clients.ps.end_of_turn_state_builder;
 import tm.clients.ps.in_message;
 import tm.clients.ps.is_chat_message;
 import tm.clients.ps.make_party;
-import tm.clients.ps.move_state;
+import tm.clients.ps.move_state_builder;
 import tm.clients.ps.parse_details;
 import tm.clients.ps.parse_effect_source;
 import tm.clients.ps.parse_set_hp_message;
@@ -778,7 +778,7 @@ private:
 	std::unique_ptr<ClientBattle> m_client_battle;
 
 	Party m_party;
-	MoveState m_move_state;
+	MoveStateBuilder m_move_state;
 	EndOfTurnStateBuilder m_end_of_turn_state;
 
 	tv::optional<Switch> m_ai_switch;
