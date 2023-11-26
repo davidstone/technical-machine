@@ -9,6 +9,7 @@ module;
 
 export module tm.clients.ps.move_state;
 
+import tm.clients.ps.optional_hp_and_status;
 import tm.clients.ps.parse_hp;
 
 import tm.clients.move_result;
@@ -87,10 +88,6 @@ constexpr auto is_contact_ability(Ability const ability) -> bool {
 
 
 export struct MoveState {
-	struct OptionalHPAndStatus {
-		tv::optional<VisibleHP> hp;
-		tv::optional<StatusName> status;
-	};
 	struct CompleteResult {
 		MoveResult move;
 		OptionalHPAndStatus user;

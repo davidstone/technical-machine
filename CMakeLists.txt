@@ -455,6 +455,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/is_chat_message.cpp
 		source/tm/clients/pokemon_showdown/make_party.cpp
 		source/tm/clients/pokemon_showdown/move_state.cpp
+		source/tm/clients/pokemon_showdown/optional_hp_and_status.cpp
 		source/tm/clients/pokemon_showdown/packed_format_to_team.cpp
 		source/tm/clients/pokemon_showdown/parse_details.cpp
 		source/tm/clients/pokemon_showdown/parse_effect_source.cpp
