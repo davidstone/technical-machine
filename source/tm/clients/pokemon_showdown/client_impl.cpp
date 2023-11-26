@@ -82,6 +82,8 @@ export struct ClientImpl {
 		m_authenticate(std::move(authenticate))
 	{
 	}
+	ClientImpl(ClientImpl &&) = default;
+	ClientImpl(ClientImpl const &) = delete;
 
 	auto handle_messages(RoomMessages const room_messages) -> void {
 		for (auto const room_message : room_messages.messages()) {
