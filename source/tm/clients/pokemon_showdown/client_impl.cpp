@@ -13,7 +13,7 @@ export module tm.clients.ps.client_impl;
 
 import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battles;
-import tm.clients.ps.handle_chat_message;
+import tm.clients.ps.is_chat_message;
 import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.room_message;
 import tm.clients.ps.room_messages;
@@ -163,7 +163,7 @@ private:
 		if (handle_battle_message(room_message)) {
 			return;
 		}
-		if (handle_chat_message(message)) {
+		if (is_chat_message(message)) {
 			return;
 		}
 		auto const type = message.type();

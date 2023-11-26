@@ -13,9 +13,9 @@ export module tm.clients.ps.battle_parser;
 
 import tm.clients.ps.battle_interface;
 import tm.clients.ps.battle_message_result;
-import tm.clients.ps.handle_chat_message;
 import tm.clients.ps.end_of_turn_state_builder;
 import tm.clients.ps.in_message;
+import tm.clients.ps.is_chat_message;
 import tm.clients.ps.make_party;
 import tm.clients.ps.move_state;
 import tm.clients.ps.parse_details;
@@ -95,7 +95,7 @@ export struct BattleParser final : BattleInterface {
 	}
 
 	auto handle_message(InMessage message) -> BattleMessageResult final {
-		if (handle_chat_message(message)) {
+		if (is_chat_message(message)) {
 			return BattleContinues();
 		}
 
