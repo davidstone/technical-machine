@@ -450,6 +450,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/client.cpp
 		source/tm/clients/pokemon_showdown/client_impl.cpp
 		source/tm/clients/pokemon_showdown/end_of_turn_state.cpp
+		source/tm/clients/pokemon_showdown/end_of_turn_state_builder.cpp
 		source/tm/clients/pokemon_showdown/handle_chat_message.cpp
 		source/tm/clients/pokemon_showdown/in_message.cpp
 		source/tm/clients/pokemon_showdown/make_party.cpp

@@ -14,7 +14,7 @@ export module tm.clients.ps.battle_parser;
 import tm.clients.ps.battle_interface;
 import tm.clients.ps.battle_message_result;
 import tm.clients.ps.handle_chat_message;
-import tm.clients.ps.end_of_turn_state;
+import tm.clients.ps.end_of_turn_state_builder;
 import tm.clients.ps.in_message;
 import tm.clients.ps.make_party;
 import tm.clients.ps.move_state;
@@ -779,7 +779,7 @@ private:
 
 	Party m_party;
 	MoveState m_move_state;
-	EndOfTurnState m_end_of_turn_state;
+	EndOfTurnStateBuilder m_end_of_turn_state;
 
 	tv::optional<Switch> m_ai_switch;
 	tv::optional<Switch> m_foe_switch;
