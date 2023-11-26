@@ -9,7 +9,7 @@
 import tm.move.actual_damage;
 import tm.move.move;
 import tm.move.move_name;
-import tm.move.regular_moves;
+import tm.move.no_effect_function;
 import tm.move.side_effects;
 import tm.move.used_move;
 
@@ -29,6 +29,7 @@ import tm.gender;
 import tm.generation;
 import tm.item;
 import tm.team;
+import tm.visible_hp;
 
 import bounded;
 import containers;
@@ -38,15 +39,11 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-constexpr auto generation = Generation::four;
-constexpr auto damage = ActualDamage::Known(0_bi);
 constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false, false);
 
-constexpr auto regular_moves(auto... moves) {
-	return RegularMoves{Move(generation, moves)...};
-}
-
-TEST_CASE("Perish Song", "[battle]") {
+TEST_CASE("Perish Song", "[Battle]") {
+	constexpr auto generation = Generation::four;
+	constexpr auto damage = ActualDamage::Known(0_bi);
 	auto battle = Battle<generation>(
 		make_known_team<generation>({
 			{
@@ -129,6 +126,50 @@ TEST_CASE("Perish Song", "[battle]") {
 
 	CHECK(battle.ai().pokemon().hp().current() == 0_bi);
 	CHECK(battle.foe().pokemon().hp().current() == 0_bi);
+}
+
+TEST_CASE("Accurate HP after move", "[Battle]") {
+	constexpr auto generation = Generation::one;
+	auto battle = Battle<generation>(
+		make_known_team<generation>({
+			{
+				.species = Species::Bulbasaur,
+				.moves = {{
+					MoveName::Tackle,
+				}}
+			},
+		}),
+		make_seen_team<generation>({
+			{
+				.species = Species::Bulbasaur,
+			},
+		})
+	);
+	battle.first_turn(true);
+	battle.handle_begin_turn();
+
+	battle.handle_use_move(
+		UsedMove<KnownTeam<generation>>(MoveName::Tackle, no_effect_function),
+		false,
+		false,
+		ActualDamage::Known(3_bi)
+	);
+
+	battle.correct_hp(
+		false,
+		VisibleHP(
+			CurrentVisibleHP(99_bi),
+			MaxVisibleHP(100_bi)
+		)
+	);
+
+	auto const visible_hp = battle.foe().all_pokemon()().visible_hp();
+	CHECK(visible_hp.max.value() == 100_bi);
+	CHECK(visible_hp.current.value() == 99_bi);
+
+	auto const hp = battle.foe().pokemon().hp();
+	CHECK(hp.max() == 293_bi);
+	CHECK(hp.current() == 290_bi);
 }
 
 } // namespace
