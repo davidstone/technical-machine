@@ -35,11 +35,11 @@ export struct RegularMoves {
 		}
 	}
 
-	constexpr auto begin() const {
-		return containers::begin(m_moves);
+	constexpr auto data() const {
+		return containers::data(m_moves);
 	}
-	constexpr auto begin() {
-		return containers::begin(m_moves);
+	constexpr auto data() {
+		return containers::data(m_moves);
 	}
 	constexpr auto size() const {
 		return containers::size(m_moves);
