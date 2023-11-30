@@ -69,12 +69,12 @@ constexpr auto parse_ability(std::string_view const ability_str, Species const s
 }
 
 constexpr auto parse_moves(std::string_view const str, Generation const generation) {
-	auto buffer = DelimitedBufferView(str, ',');
-	auto moves = RegularMoves();
-	while (!buffer.remainder().empty()) {
-		moves.push_back(Move(generation, from_string<MoveName>(buffer.pop())));
-	}
-	return moves;
+	return RegularMoves(containers::transform(
+		containers::split(str, ','),
+		[=](std::string_view move_str) {
+			return Move(generation, from_string<MoveName>(move_str));
+		}
+	));
 }
 
 constexpr auto parse_nature(std::string_view const str) {
@@ -183,13 +183,10 @@ constexpr auto parse_pokemon(std::string_view const str) {
 
 export template<Generation generation>
 constexpr auto packed_format_to_team(std::string_view const str) -> KnownTeam<generation> {
-	// TODO: Update this when DelimitedBufferView is a range
-	auto buffer = DelimitedBufferView(str, pokemon_delimiter);
-	auto all_pokemon = containers::static_vector<KnownPokemon<generation>, max_pokemon_per_team>();
-	while (!buffer.remainder().empty()) {
-		containers::push_back(all_pokemon, parse_pokemon<generation>(buffer.pop()));
-	}
-	return KnownTeam<generation>(std::move(all_pokemon));
+	return KnownTeam<generation>(containers::transform(
+		containers::split(str, pokemon_delimiter),
+		parse_pokemon<generation>
+	));
 }
 
 } // namespace technicalmachine::ps
