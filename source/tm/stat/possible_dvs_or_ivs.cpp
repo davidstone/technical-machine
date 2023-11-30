@@ -34,11 +34,24 @@ constexpr auto all_possible = Possible<T>(
 	)
 );
 
+template<typename Integer>
+struct matches_mod_4 {
+	explicit constexpr matches_mod_4(Integer value):
+		m_value(value)
+	{
+	}
+	constexpr auto operator()(DV const dv) const {
+		return dv.value() % 4_bi == m_value;
+	}
+private:
+	[[no_unique_address]] Integer m_value;
+};
 constexpr auto possible_atk_dvs_type(Type const hidden_power_type) {
 	constexpr auto result = [](auto const value) {
-		return Possible<DV>(containers::filter(all_possible<DV>, [=](DV const dv) {
-			return dv.value() % 4_bi == value;
-		}));
+		return Possible<DV>(containers::filter(
+			all_possible<DV>,
+			matches_mod_4(value)
+		));
 	};
 	switch (hidden_power_type) {
 		case Type::Fighting: return result(0_bi);
@@ -62,9 +75,10 @@ constexpr auto possible_atk_dvs_type(Type const hidden_power_type) {
 }
 constexpr auto possible_def_dvs_type(Type const hidden_power_type) {
 	constexpr auto result = [](auto const value) {
-		return Possible<DV>(containers::filter(all_possible<DV>, [=](DV const dv) {
-			return dv.value() % 4_bi == value;
-		}));
+		return Possible<DV>(containers::filter(
+			all_possible<DV>,
+			matches_mod_4(value)
+		));
 	};
 	switch (hidden_power_type) {
 		case Type::Fighting: return result(0_bi);
