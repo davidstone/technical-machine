@@ -38,4 +38,9 @@ export auto open_text_file_for_writing(std::filesystem::path const & path) -> st
 	return open_file_for_writing(path, {});
 }
 
+export auto open_text_file(std::filesystem::path const & path) -> std::fstream {
+	std::filesystem::create_directories(path.parent_path());
+	return open_file<std::fstream>(path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
+}
+
 } // namespace technicalmachine
