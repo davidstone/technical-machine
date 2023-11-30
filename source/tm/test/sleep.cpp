@@ -142,8 +142,8 @@ struct Sleeper {
 	}
 
 	void end_turn() {
-		m_sleeper.reset_start_of_turn();
-		m_other.reset_start_of_turn();
+		m_sleeper.reset_end_of_turn();
+		m_other.reset_end_of_turn();
 	}
 
 	auto at_max_hp() const {

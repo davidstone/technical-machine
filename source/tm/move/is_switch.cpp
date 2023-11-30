@@ -34,6 +34,7 @@ export constexpr auto is_switch(MoveName const move) -> bool {
 
 export constexpr auto is_delayed_switch(MoveName const move) -> bool {
 	switch (move) {
+		case MoveName::Baton_Pass:
 		case MoveName::Flip_Turn:
 		case MoveName::U_turn:
 			return true;

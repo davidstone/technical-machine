@@ -139,8 +139,8 @@ using OtherMutableActivePokemon = typename OtherMutableActivePokemonImpl<T>::typ
 
 export template<Generation generation>
 struct ActivePokemonFlags {
-	constexpr auto reset_start_of_turn() & {
-		last_used_move.reset_start_of_turn();
+	constexpr auto reset_end_of_turn() & {
+		last_used_move.reset_end_of_turn();
 		damaged = false;
 		direct_damage_received = 0_bi;
 		flinched = false;
@@ -819,8 +819,6 @@ public:
 		this->m_pokemon.mark_as_seen();
 		this->m_flags.ability = this->m_pokemon.initial_ability();
 
-		// The exact switch is irrelevant
-		this->m_flags.last_used_move.successful_move(MoveName::Switch0);
 		this->m_flags.types = PokemonTypes(generation, this->m_pokemon.species());
 		if (generation <= Generation::two and this->m_pokemon.status().name() == StatusName::toxic) {
 			this->m_pokemon.set_status(StatusName::poison);
@@ -974,8 +972,8 @@ public:
 		return applied_damage;
 	}
 
-	constexpr auto successfully_use_move(MoveName const move) const {
-		this->m_flags.last_used_move.successful_move(move);
+	constexpr auto successfully_use_move(MoveName const move, bool const replacing_fainted = false) const {
+		this->m_flags.last_used_move.successful_move(move, replacing_fainted);
 	}
 	constexpr auto unsuccessfully_use_move(MoveName const move) const {
 		this->m_flags.last_used_move.unsuccessful_move(move);

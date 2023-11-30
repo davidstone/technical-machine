@@ -110,7 +110,6 @@ TEST_CASE("Perish Song", "[Battle]") {
 
 	for (auto const turn : containers::integer_range(4_bi)) {
 		INFO(turn);
-		battle.handle_begin_turn();
 
 		CHECK(battle.ai().pokemon().hp().current() == battle.ai().pokemon().hp().max());
 		CHECK(battle.foe().pokemon().hp().current() == battle.foe().pokemon().hp().max());
@@ -146,7 +145,6 @@ TEST_CASE("Accurate HP after move", "[Battle]") {
 		})
 	);
 	battle.first_turn(true);
-	battle.handle_begin_turn();
 
 	battle.handle_use_move(
 		UsedMove<KnownTeam<generation>>(MoveName::Tackle, no_effect_function),

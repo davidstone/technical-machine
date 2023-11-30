@@ -17,7 +17,7 @@ export constexpr auto switch_decision_required(any_team auto const & team) {
 		return false;
 	}
 	auto const pokemon = team.pokemon();
-	return pokemon.hp().current() == 0_bi or pokemon.last_used_move().switch_decision_required();
+	return pokemon.hp().current() == 0_bi or pokemon.last_used_move().is_delayed_switching();
 }
 
 } // namespace technicalmachine

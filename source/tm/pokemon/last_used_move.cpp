@@ -42,7 +42,7 @@ export struct LastUsedMove {
 		return m_move;
 	}
 
-	constexpr auto reset_start_of_turn() & -> void {
+	constexpr auto reset_end_of_turn() & -> void {
 		m_moved_this_turn = false;
 		tv::visit(m_effects, [&]<typename T>(T) {
 			if constexpr (std::same_as<T, Protecting>) {
@@ -57,14 +57,16 @@ export struct LastUsedMove {
 		m_moved_this_turn = true;
 	}
 
-	constexpr auto successful_move(MoveName const move) & {
+	constexpr auto successful_move(MoveName const move, bool const replacing_fainted) & {
 		if (m_move == move) {
 			saturating_increment(m_consecutive_successes);
 		} else {
 			m_move = move;
 			m_consecutive_successes = 1_bi;
 		}
-		m_moved_this_turn = true;
+		if (!replacing_fainted) {
+			m_moved_this_turn = true;
+		}
 	}
 
 	constexpr auto moved_this_turn() const {
@@ -102,6 +104,13 @@ export struct LastUsedMove {
 	constexpr auto use_charge_up_move() & -> void {
 		BOUNDED_ASSERT(!is_locked_in_by_move());
 		m_effects = ChargingUp{};
+	}
+
+	constexpr auto is_delayed_switching() const -> bool {
+		return
+			moved_this_turn() and
+			is_delayed_switch(m_move) and
+			m_consecutive_successes >= 1_bi;
 	}
 
 	constexpr auto is_destiny_bonded() const {
@@ -212,9 +221,6 @@ export struct LastUsedMove {
 	constexpr auto switched_in_this_turn() const {
 		return moved_this_turn() and m_consecutive_successes != 0_bi and is_switch(m_move);
 	}
-	constexpr auto switch_decision_required() const -> bool {
-		return is_baton_passing() or is_delayed_switching();
-	}
 
 	constexpr auto triple_kick_power() const {
 		auto const result = 10_bi * bounded::min(m_consecutive_successes + 1_bi, 3_bi);
@@ -319,9 +325,6 @@ private:
 
 	constexpr auto successful_last_move(MoveName const move) const -> bool {
 		return m_move == move and m_consecutive_successes >= 1_bi;
-	}
-	constexpr auto is_delayed_switching() const -> bool {
-		return moved_this_turn() and is_delayed_switch(m_move) and m_consecutive_successes >= 1_bi;
 	}
 
 	MoveName m_move = MoveName::Switch0;

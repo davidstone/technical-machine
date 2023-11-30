@@ -38,7 +38,6 @@ import tm.pokemon.get_hidden_power_type;
 import tm.pokemon.max_pokemon_per_team;
 import tm.pokemon.pokemon;
 import tm.pokemon.pokemon_collection;
-import tm.pokemon.potentially_selectable_moves;
 import tm.pokemon.species;
 
 import tm.stat.calculate;
@@ -366,8 +365,6 @@ private:
 		auto const ordering = select(state);
 		auto const first_pokemon = ordering.team.pokemon();
 		auto const last_pokemon = ordering.other.pokemon();
-		BOUNDED_ASSERT(containers::maybe_find(potentially_selectable_moves(ordering.team), first_move));
-		BOUNDED_ASSERT(containers::maybe_find(potentially_selectable_moves(ordering.other), last_move));
 		auto const original_last_pokemon = OriginalPokemon(last_pokemon, first_pokemon, first_move);
 
 		auto function = [&](State<generation> const & updated) {
@@ -429,8 +426,6 @@ private:
 				}
 			));
 		}
-		state.ai.reset_start_of_turn();
-		state.foe.reset_start_of_turn();
 		return finish_end_of_turn(state);
 	}
 
@@ -450,8 +445,6 @@ private:
 		if (auto const won = win(state.ai, state.foe)) {
 			return *won + double(state.depth.general);
 		}
-		selected.team.reset_start_of_turn();
-		selected.other.reset_start_of_turn();
 		return finish_end_of_turn(state);
 	}
 

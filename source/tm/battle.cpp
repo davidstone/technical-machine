@@ -88,10 +88,6 @@ struct Battle {
 		}
 	}
 
-	void handle_begin_turn() & {
-		m_ai.reset_start_of_turn();
-		m_foe.reset_start_of_turn();
-	}
 	void handle_end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & {
 		apply_to_teams(ai_went_first, [&](auto & first, auto & last) {
 			end_of_turn(first, first_flags, last, last_flags, m_environment);

@@ -73,8 +73,6 @@ static_assert([]{
 	});
 	other.pokemon().switch_in(environment);
 
-	user.reset_start_of_turn();
-
 	auto const selections = get_legal_selections(user, other, environment);
 	return selections == LegalSelections({
 		MoveName::Thunderbolt,
@@ -114,8 +112,6 @@ static_assert([]{
 		},
 	});
 	other.pokemon().switch_in(environment);
-	
-	user.reset_start_of_turn();
 
 	auto const selections = get_legal_selections(user, other, environment);
 	return selections == LegalSelections({MoveName::Thunderbolt});
@@ -144,8 +140,6 @@ static_assert([]{
 	});
 	other.pokemon().switch_in(environment);
 
-	user.reset_start_of_turn();
-
 	auto const selections = get_legal_selections(user, other, environment);
 	return selections == LegalSelections({MoveName::Struggle});
 }());
@@ -163,7 +157,6 @@ static_assert([]{
 		},
 	});
 	team.pokemon().switch_in(environment);
-	team.reset_start_of_turn();
 
 	auto other = make_team<generation>({
 		{
@@ -171,7 +164,6 @@ static_assert([]{
 		},
 	});
 	other.pokemon().switch_in(environment);
-	other.reset_start_of_turn();
 
 	faint(team.pokemon());
 

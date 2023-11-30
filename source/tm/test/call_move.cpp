@@ -92,7 +92,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 	});
 	defender.pokemon().switch_in(environment);
 
-	attacker.reset_start_of_turn();
+	attacker.reset_end_of_turn();
 
 	CHECK(
 		get_legal_selections(attacker, defender, environment) ==
@@ -123,7 +123,7 @@ TEST_CASE("Baton Pass", "[call_move]") {
 		LegalSelections({MoveName::Pass})
 	);
 
-	attacker.reset_start_of_turn();
+	attacker.reset_end_of_turn();
 
 	CHECK(
 		get_legal_selections(attacker, defender, environment) ==

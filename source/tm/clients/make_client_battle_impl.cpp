@@ -79,10 +79,18 @@ namespace technicalmachine {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
 
-constexpr auto moved(any_team auto const & team) -> bool {
+constexpr auto is_done_moving(any_team auto const & team) -> bool {
 	auto const pokemon = team.pokemon();
-	return pokemon.last_used_move().moved_this_turn() or pokemon.hp().current() == 0_bi;
-};
+	auto const is_fainted = pokemon.hp().current() == 0_bi;
+	if (is_fainted) {
+		return true;
+	}
+	auto const last_move = pokemon.last_used_move();
+	auto const started_moving = last_move.moved_this_turn();
+	return
+		started_moving and
+		(!last_move.is_delayed_switching() or team.size() == 1_bi);
+}
 
 template<Generation generation_>
 struct ClientBattleImpl final : ClientBattle {
@@ -137,7 +145,9 @@ struct ClientBattleImpl final : ClientBattle {
 	}
 
 	auto is_end_of_turn() const -> bool final {
-		return moved(m_battle.ai()) and moved(m_battle.foe());
+		return
+			is_done_moving(m_battle.ai()) and
+			is_done_moving(m_battle.foe());
 	}
 
 	auto ai_is_fainted() const -> bool final {
@@ -157,7 +167,6 @@ struct ClientBattleImpl final : ClientBattle {
 			m_battle.first_turn(true);
 		}
 		m_analysis_logger << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
-		m_battle.handle_begin_turn();
 	}
 	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void final {
 		m_battle.handle_end_turn(ai_went_first, first_flags, last_flags);

@@ -46,7 +46,6 @@ constexpr auto individual_test(Species const species, MoveName const move_name, 
 	if (focus_energy) {
 		attacker.pokemon().focus_energy();
 	}
-	attacker.reset_start_of_turn();
 
 	auto const ch_rate = critical_hit_probability(
 		attacker.pokemon().as_const(),

@@ -280,6 +280,8 @@ void end_of_turn(TeamType & first, EndOfTurnFlags const first_flags, OtherTeam<T
 	} else {
 		generation_3_plus_end_of_turn(first, first_flags, last, last_flags, environment);
 	}
+	first.reset_end_of_turn();
+	last.reset_end_of_turn();
 }
 
 } // namespace technicalmachine

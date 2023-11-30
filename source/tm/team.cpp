@@ -11,6 +11,8 @@ module;
 
 export module tm.team;
 
+import tm.move.is_switch;
+
 import tm.pokemon.active_pokemon;
 import tm.pokemon.any_pokemon;
 import tm.pokemon.known_pokemon;
@@ -112,8 +114,8 @@ struct TeamImpl {
 	}
 
 
-	constexpr auto reset_start_of_turn() -> void {
-		m_flags.reset_start_of_turn();
+	constexpr auto reset_end_of_turn() -> void {
+		m_flags.reset_end_of_turn();
 	}
 	constexpr auto clear_field() -> void {
 		pokemon().clear_field();
@@ -127,18 +129,20 @@ struct TeamImpl {
 			shatter_screens();
 		}
 
-		if (original_pokemon.hp().current() != 0_bi) {
-			all_pokemon().set_index(replacement);
-		} else {
+		auto const replacing_fainted = original_pokemon.hp().current() == 0_bi;
+		if (replacing_fainted) {
 			all_pokemon().remove_active(replacement);
 			// If the last Pokemon is fainted; there is nothing left to do.
 			if (containers::is_empty(all_pokemon())) {
 				return;
 			}
+		} else {
+			all_pokemon().set_index(replacement);
 		}
 
 		auto const replacement_pokemon = pokemon();
 		replacement_pokemon.switch_in(environment);
+		replacement_pokemon.successfully_use_move(to_switch(replacement), replacing_fainted);
 		apply(m_entry_hazards, replacement_pokemon, environment);
 		if (replacement_pokemon.hp().current() != 0_bi) {
 			activate_ability_on_switch(replacement_pokemon, other, environment);
