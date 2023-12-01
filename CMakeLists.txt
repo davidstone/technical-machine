@@ -207,6 +207,7 @@ target_sources(tm_common PUBLIC
 		source/tm/stat/to_real_hp.cpp
 
 		source/tm/status/blocks_status.cpp
+		source/tm/status/check_ability_can_status.cpp
 		source/tm/status/clears_status.cpp
 		source/tm/status/status.cpp
 		source/tm/status/status_can_apply.cpp
