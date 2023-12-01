@@ -82,8 +82,14 @@ export struct MoveStateBuilder {
 		return m_party;
 	}
 	auto executed_move() const -> tv::optional<MoveName> {
-		constexpr auto type = bounded::type<Used>;
-		return BOUNDED_CONDITIONAL(m_move.index() == type, m_move[type].executed, tv::none);
+		return tv::visit(m_move, tv::overload(
+			[](Used const move) -> tv::optional<MoveName> {
+				return move.executed;
+			},
+			[](auto) -> tv::optional<MoveName> {
+				return tv::none;
+			}
+		));
 	}
 
 	auto use_move(Party const party, MoveName const move) -> void {
