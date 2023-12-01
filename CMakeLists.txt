@@ -623,6 +623,8 @@ target_sources(tm_test PRIVATE
 	source/tm/test/evaluate/expectiminimax.cpp
 	source/tm/test/evaluate/predict_action.cpp
 
+	source/tm/test/move/call_move.cpp
+
 	source/tm/test/pokemon_lab/team_file.cpp
 
 	source/tm/test/pokemon_online/team_file.cpp
@@ -634,7 +636,6 @@ target_sources(tm_test PRIVATE
 	source/tm/test/team_predictor/usage_stats.cpp
 
 	source/tm/test/battle.cpp
-	source/tm/test/call_move.cpp
 	source/tm/test/ev_optimizer.cpp
 	source/tm/test/files_in_path.cpp
 	source/tm/test/get_directory.cpp
