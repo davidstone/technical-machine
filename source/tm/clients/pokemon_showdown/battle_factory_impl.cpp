@@ -21,6 +21,7 @@ import tm.clients.ps.is_chat_message;
 import tm.clients.ps.make_party;
 import tm.clients.ps.parse_switch;
 import tm.clients.ps.parse_team;
+import tm.clients.ps.switch_message;
 import tm.clients.ps.validate_generation;
 
 import tm.clients.client_battle_inputs;
