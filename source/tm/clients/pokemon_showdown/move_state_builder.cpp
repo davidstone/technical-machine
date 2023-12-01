@@ -25,9 +25,7 @@ import tm.pokemon.pokemon_not_found;
 import tm.status.check_ability_can_status;
 import tm.status.status_name;
 
-import tm.string_conversions.ability;
 import tm.string_conversions.move_name;
-import tm.string_conversions.status_name;
 
 import tm.ability;
 import tm.contact_ability_effect;
