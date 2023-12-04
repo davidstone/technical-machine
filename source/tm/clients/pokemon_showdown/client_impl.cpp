@@ -52,14 +52,30 @@ import std_module;
 namespace technicalmachine::ps {
 using namespace std::string_view_literals;
 
+constexpr auto remove_spaces(std::string_view str) {
+	return containers::filter(
+		std::move(str),
+		[](char const c) { return c != ' '; }
+	);
+}
+
 struct no_spaces_string_view {
 	constexpr explicit no_spaces_string_view(std::string_view const str):
 		m_str(str)
 	{
 	}
 
+	friend constexpr auto operator==(no_spaces_string_view const lhs, no_spaces_string_view const rhs) -> bool {
+		return containers::equal(
+			remove_spaces(lhs.m_str),
+			remove_spaces(rhs.m_str)
+		);
+	}
 	friend constexpr auto operator==(no_spaces_string_view const lhs, std::string_view const rhs) -> bool {
-		return containers::equal(containers::filter(lhs.m_str, [](char const c) { return c != ' '; }), rhs);
+		return containers::equal(
+			remove_spaces(lhs.m_str),
+			rhs
+		);
 	}
 
 private:
@@ -194,6 +210,9 @@ private:
 			std::cout << "popup message: " << message.remainder() << '\n';
 		} else if (type == "pm") {
 			auto const from = message.pop();
+			if (no_spaces_string_view(from) == no_spaces_string_view(m_settings.username)) {
+				return;
+			}
 			auto const to = message.pop();
 			auto const initial_message = message.pop();
 			if (initial_message.starts_with("/challenge")) {
