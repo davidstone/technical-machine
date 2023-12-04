@@ -608,6 +608,7 @@ target_sources(tm_test PRIVATE
 
 		source/tm/test/can_execute_move.cpp
 		source/tm/test/critical_hit_probability.cpp
+		source/tm/test/get_legal_selections.cpp
 		source/tm/test/pokemon_init.cpp
 		source/tm/test/string_conversion.cpp
 		source/tm/test/usage_bytes.cpp
