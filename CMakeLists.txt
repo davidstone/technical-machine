@@ -586,6 +586,7 @@ target_sources(tm_test PRIVATE
 		source/tm/test/pokemon_online/conversion.cpp
 	
 		source/tm/test/clients/pokemon_showdown/packed_team.cpp
+		source/tm/test/clients/pokemon_showdown/parse_switch.cpp
 		
 		source/tm/test/clients/visible_damage_to_actual_damage.cpp
 
