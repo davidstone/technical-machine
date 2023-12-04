@@ -61,6 +61,7 @@ import tm.end_of_turn_flags;
 import tm.environment;
 import tm.generation;
 import tm.get_legal_selections;
+import tm.switch_decision_required;
 import tm.team;
 
 import bounded;
@@ -192,12 +193,6 @@ private:
 	Species m_species;
 	KnownMove m_other_move;
 };
-
-constexpr auto all_are_pass_or_switch(LegalSelections const legal_selections) {
-	return
-		(containers::size(legal_selections) == 1_bi and containers::front(legal_selections) == MoveName::Pass) or
-		containers::all(legal_selections, is_switch);
-}
 
 template<Generation generation>
 constexpr auto team_matcher(Team<generation> const & team) {
@@ -369,12 +364,14 @@ private:
 
 		auto function = [&](State<generation> const & updated) {
 			auto const updated_ordering = select(updated);
-			auto const first_selections = get_legal_selections(
-				updated_ordering.team,
-				updated_ordering.other,
-				updated.environment
-			);
-			BOUNDED_ASSERT(all_are_pass_or_switch(first_selections));
+			auto const first_selections =
+				switch_decision_required(updated_ordering.team) ?
+					get_legal_selections(
+						updated_ordering.team,
+						updated_ordering.other,
+						updated.environment
+					) :
+					LegalSelections({MoveName::Pass});
 			auto const last_selections = LegalSelections({last_move});
 			auto is_ai = team_matcher(updated.ai);
 			auto const [ai_selections, foe_selections] = sort_two(is_ai(updated_ordering.team), first_selections, last_selections);
