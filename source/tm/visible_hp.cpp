@@ -54,6 +54,8 @@ export constexpr auto operator==(CurrentVisibleHP const lhs, MaxVisibleHP const 
 export struct VisibleHP {
 	CurrentVisibleHP current;
 	MaxVisibleHP max;
+
+	friend auto operator==(VisibleHP, VisibleHP) -> bool = default;
 };
 
 } // namespace technicalmachine
