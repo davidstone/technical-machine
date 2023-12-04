@@ -26,6 +26,8 @@ export struct SwitchMessage {
 	Gender gender;
 	VisibleHP hp;
 	StatusName status;
+
+	friend constexpr auto operator==(SwitchMessage, SwitchMessage) -> bool = default;
 };
 
 } // namespace technicalmachine::ps
