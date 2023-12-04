@@ -33,7 +33,7 @@ struct ParsedDetails {
 	Level level;
 	Gender gender;
 };
-export auto parse_details(std::string_view const details) -> ParsedDetails {
+export constexpr auto parse_details(std::string_view const details) -> ParsedDetails {
 	auto parser = DelimitedBufferView(details, std::string_view(", "));
 	auto const species = from_string<Species>(parser.pop());
 
