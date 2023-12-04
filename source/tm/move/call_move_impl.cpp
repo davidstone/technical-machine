@@ -207,6 +207,13 @@ auto handle_ability_blocks_move(any_mutable_active_pokemon auto const target, En
 
 template<any_team UserTeam>
 auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<UserTeam> & other, OtherMove const other_move, Environment & environment, bool const clear_status, ActualDamage const actual_damage, bool const is_fully_paralyzed) -> void {
+	if (is_switch(move.selected)) {
+		BOUNDED_ASSERT(move.executed == move.selected);
+		// TODO: !recharging?
+		user.switch_pokemon(other.pokemon(), environment, to_replacement(move.selected));
+		return;
+	}
+	BOUNDED_ASSERT(!is_switch(move.executed));
 	constexpr auto generation = generation_from<UserTeam>;
 	auto user_pokemon = user.pokemon();
 
@@ -214,12 +221,13 @@ auto try_use_move(UserTeam & user, UsedMove<UserTeam> const move, OtherTeam<User
 		user_pokemon.unsuccessfully_use_move(move.executed);
 	};
 
-	auto const found_move = find_move(potentially_selectable_moves(user), move.selected);
+	auto const found_move = find_move(
+		potentially_selectable_moves(generation, user.pokemon().regular_moves()),
+		move.selected
+	);
 	auto other_pokemon = other.pokemon();
 	auto const was_asleep = is_sleeping(user_pokemon.status());
-	if (!is_switch(move.selected)) {
-		user_pokemon.advance_status_from_move(clear_status);
-	}
+	user_pokemon.advance_status_from_move(clear_status);
 	// Need the side-effect from recharge
 	auto const is_recharging = user_pokemon.recharge();
 	if (!can_attempt_move_execution(user_pokemon.as_const(), found_move, other_pokemon.as_const(), was_asleep)) {

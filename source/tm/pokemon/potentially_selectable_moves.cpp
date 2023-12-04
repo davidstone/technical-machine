@@ -9,16 +9,10 @@ module;
 
 export module tm.pokemon.potentially_selectable_moves;
 
-import tm.pokemon.max_pokemon_per_team;
-
 import tm.move.move;
 import tm.move.move_name;
-import tm.move.is_switch;
 import tm.move.regular_moves;
 
-import tm.pokemon.max_pokemon_per_team;
-
-import tm.any_team;
 import tm.generation;
 
 import bounded;
@@ -35,36 +29,25 @@ constexpr auto weird_moves(Generation const generation) {
 	});
 }
 
-constexpr auto switches(Generation const generation, TeamSize const team_size) {
-	auto const switches_to_add = BOUNDED_CONDITIONAL(team_size != 1_bi, team_size, 0_bi);
-	return containers::indexed_generate_n(switches_to_add, [=](auto const n) { return Move(generation, to_switch(n)); });
-}
-
-constexpr auto potentially_selectable_moves(Generation const generation, TeamSize const team_size, RegularMoves regular_moves) {
+export constexpr auto potentially_selectable_moves(Generation const generation, RegularMoves regular_moves) {
 	return containers::concatenate_view(
 		std::move(regular_moves),
-		weird_moves(generation),
-		switches(generation, team_size)
+		weird_moves(generation)
 	);
 }
 
-export template<any_team TeamType>
-constexpr auto potentially_selectable_moves(TeamType const & team) {
-	return potentially_selectable_moves(generation_from<TeamType>, team.size(), team.pokemon().regular_moves());
-}
-
-
-constexpr auto make_all(TeamSize const team_size, auto... move_names) {
+constexpr auto make_all(auto... move_names) {
 	constexpr auto generation = Generation::one;
 	return potentially_selectable_moves(
 		generation,
-		team_size,
 		RegularMoves({Move(generation, move_names)...})
 	);
 }
 
 static_assert(containers::equal(
-	make_all(1_bi, MoveName::Tackle),
+	make_all(
+		MoveName::Tackle
+	),
 	containers::array({
 		MoveName::Tackle,
 		MoveName::Pass,
@@ -73,18 +56,23 @@ static_assert(containers::equal(
 ));
 
 static_assert(containers::equal(
-	make_all(2_bi, MoveName::Tackle),
+	make_all(
+		MoveName::Tackle
+	),
 	containers::array({
 		MoveName::Tackle,
 		MoveName::Pass,
 		MoveName::Struggle,
-		MoveName::Switch0,
-		MoveName::Switch1
 	})
 ));
 
 static_assert(containers::equal(
-	make_all(6_bi, MoveName::Tackle, MoveName::Thunder, MoveName::Psychic, MoveName::Body_Slam),
+	make_all(
+		MoveName::Tackle,
+		MoveName::Thunder,
+		MoveName::Psychic,
+		MoveName::Body_Slam
+	),
 	containers::array({
 		MoveName::Tackle,
 		MoveName::Thunder,
@@ -92,12 +80,6 @@ static_assert(containers::equal(
 		MoveName::Body_Slam,
 		MoveName::Pass,
 		MoveName::Struggle,
-		MoveName::Switch0,
-		MoveName::Switch1,
-		MoveName::Switch2,
-		MoveName::Switch3,
-		MoveName::Switch4,
-		MoveName::Switch5
 	})
 ));
 
