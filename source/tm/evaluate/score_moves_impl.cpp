@@ -77,9 +77,6 @@ auto score_moves(State<generation> const & state, LegalSelections const ai_selec
 		ai_selections,
 		foe_moves
 	);
-	if (containers::maybe_find_if(moves, [](ScoredMove const move) { return move.name == MoveName::Pass; })) {
-		throw std::runtime_error("Should never evaluate a position in which it is legal to use Pass.");
-	}
 	return moves;
 }
 
