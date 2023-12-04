@@ -6,6 +6,7 @@
 module;
 
 #include <std_module/prelude.hpp>
+#include <ostream>
 
 #include <boost/iostreams/stream.hpp>
 
