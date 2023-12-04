@@ -9,6 +9,9 @@ import tm.move.category;
 import tm.move.known_move;
 import tm.move.move_name;
 
+import tm.type.move_type;
+import tm.type.type;
+
 import tm.generation;
 
 import tv;
@@ -32,6 +35,22 @@ export struct OtherMove {
 	constexpr auto is_counterable(Generation const generation) const {
 		return tv::visit(m_move, tv::overload(
 			[=](KnownMove const move) {
+				switch (generation) {
+					case Generation::one:
+						// TODO: This isn't quite right
+						return move_type(generation, move.name, tv::none) == Type::Normal;
+					case Generation::two:
+					case Generation::three:
+						return
+							move.name == MoveName::Hidden_Power or
+							is_physical(generation, move);
+					case Generation::four:
+					case Generation::five:
+					case Generation::six:
+					case Generation::seven:
+					case Generation::eight:
+						return is_physical(generation, move);
+				}
 				return generation <= Generation::three and move.name == MoveName::Hidden_Power ? true : is_physical(generation, move);
 			},
 			[](FutureMove) { return false; }
