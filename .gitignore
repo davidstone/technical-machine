@@ -2,7 +2,6 @@ build/
 .cache/
 .vscode/
 test/temp-battles/
-battles/
 compile_commands.json
 CMakeUserPresets.json
 settings/[1-9]/
