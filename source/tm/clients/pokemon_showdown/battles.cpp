@@ -51,10 +51,7 @@ export struct Battles {
 		AllUsageStats const & all_usage_stats,
 		Depth depth
 	) -> BattleMessageResult {
-		auto matches_room = [&](auto const & element) {
-			return element.id == room;
-		};
-		auto const it = containers::find_if(m_container, matches_room);
+		auto const it = m_container.find(room);
 		auto const result = tv::visit(generic_message, tv::overload(
 			[&](CreateBattle) -> BattleMessageResult {
 				if (it != containers::end(m_container)) {
@@ -67,7 +64,7 @@ export struct Battles {
 				if (it == containers::end(m_container)) {
 					return BattleAlreadyFinished();
 				}
-				return it->battle.handle_message(
+				return it->mapped.handle_message(
 					message,
 					user,
 					room,
@@ -82,32 +79,24 @@ export struct Battles {
 			[](auto) {
 			},
 			[&](BattleFinished) {
-				containers::erase(m_container, it);
+				m_container.erase(it);
 			}
 		));
 		return result;
 	}
 
 private:
-	struct Element {
-		containers::string id;
-		BattleManager battle;
-	};
-
 	auto create_battle(Room const room) -> void {
-		containers::lazy_push_back(
-			m_container,
+		m_container.lazy_insert(
+			containers::string(room),
 			[&] {
-				return Element(
-					containers::string(room),
-					BattleManager(parse_generation_from_format(room, "battle-gen"sv))
-				);
+				return BattleManager(parse_generation_from_format(room, "battle-gen"sv));
 			}
 		);
 	}
 
 	std::filesystem::path m_log_directory;
-	containers::vector<Element> m_container;
+	containers::linear_map<containers::string, BattleManager> m_container;
 };
 
 } // namespace technicalmachine::ps
