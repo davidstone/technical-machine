@@ -4,4 +4,3 @@ build/
 test/temp-battles/
 compile_commands.json
 CMakeUserPresets.json
-settings/[1-9]/
