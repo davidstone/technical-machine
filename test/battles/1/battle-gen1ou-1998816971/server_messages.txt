@@ -1,0 +1,52 @@
+>battle-gen1ou-1998816971
+|init|battle
+|title|Technical Machine vs. obi
+|j|☆Technical Machine
+
+>battle-gen1ou-1998816971
+|request|
+>battle-gen1ou-1998816971
+|t:|1700996857
+|gametype|singles
+>battle-gen1ou-1998816971
+|player|p1|Technical Machine|101|
+>battle-gen1ou-1998816971
+|request|{"active":[{"moves":[{"move":"Thunderbolt","id":"thunderbolt","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Pikachu","details":"Pikachu","condition":"273/273","active":true,"stats":{"atk":208,"def":158,"spa":198,"spd":198,"spe":278},"moves":["thunderbolt"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Tauros","details":"Tauros","condition":"353/353","active":false,"stats":{"atk":298,"def":288,"spa":238,"spd":238,"spe":318},"moves":["hyperbeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":2}
+>battle-gen1ou-1998816971
+|player|p2|obi|colress|
+|teamsize|p1|6
+|teamsize|p2|6
+|gen|1
+|tier|[Gen 1] OU
+|rule|Desync Clause Mod: Desyncs changed to move failure.
+|rule|Sleep Clause Mod: Limit one foe put to sleep
+|rule|Freeze Clause Mod: Limit one foe frozen
+|rule|Species Clause: Limit one of each Pokémon
+|rule|OHKO Clause: OHKO moves are banned
+|rule|Evasion Moves Clause: Evasion moves are banned
+|rule|Endless Battle Clause: Forcing endless battles is banned
+|rule|HP Percentage Mod: HP is shown in percentages
+|
+|t:|1700996857
+|start
+|switch|p1a: Pikachu|Pikachu|273/273
+|switch|p2a: Golem|Golem|100/100
+|turn|1
+>battle-gen1ou-1998816971
+|request|{"active":[{"moves":[{"move":"Thunderbolt","id":"thunderbolt","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Pikachu","details":"Pikachu","condition":"273/273","active":true,"stats":{"atk":208,"def":158,"spa":198,"spd":198,"spe":278},"moves":["thunderbolt"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Tauros","details":"Tauros","condition":"353/353","active":false,"stats":{"atk":298,"def":288,"spa":238,"spd":238,"spe":318},"moves":["hyperbeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":4}
+>battle-gen1ou-1998816971
+|
+|t:|1700996893
+|move|p1a: Pikachu|Thunderbolt|p2a: Golem
+|-immune|p2a: Golem
+|move|p2a: Golem|Earthquake|p1a: Pikachu
+|-supereffective|p1a: Pikachu
+|-damage|p1a: Pikachu|0 fnt
+|faint|p1a: Pikachu
+>battle-gen1ou-1998816971
+|request|{"active":[{"moves":[{"move":"Hyper Beam","id":"hyperbeam","pp":8,"maxpp":8,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Tauros","details":"Tauros","condition":"353/353","active":true,"stats":{"atk":298,"def":288,"spa":238,"spd":238,"spe":318},"moves":["hyperbeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Pikachu","details":"Pikachu","condition":"0 fnt","active":false,"stats":{"atk":208,"def":158,"spa":198,"spd":198,"spe":278},"moves":["thunderbolt"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":10}
+>battle-gen1ou-1998816971
+|
+|t:|1700996893
+|switch|p1a: Tauros|Tauros|353/353
+|turn|2

@@ -441,20 +441,23 @@ target_sources(tm_pokemon_showdown PUBLIC
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
-		source/tm/clients/pokemon_showdown/battle_factory.cpp
-		source/tm/clients/pokemon_showdown/battle_interface.cpp
-		source/tm/clients/pokemon_showdown/battle_logger.cpp
 		source/tm/clients/pokemon_showdown/battle_manager.cpp
+		source/tm/clients/pokemon_showdown/battle_message.cpp
+		source/tm/clients/pokemon_showdown/battle_message_handler.cpp
 		source/tm/clients/pokemon_showdown/battle_message_result.cpp
-		source/tm/clients/pokemon_showdown/battle_parser.cpp
 		source/tm/clients/pokemon_showdown/battles.cpp
 		source/tm/clients/pokemon_showdown/client.cpp
 		source/tm/clients/pokemon_showdown/client_impl.cpp
 		source/tm/clients/pokemon_showdown/end_of_turn_state.cpp
 		source/tm/clients/pokemon_showdown/end_of_turn_state_builder.cpp
+		source/tm/clients/pokemon_showdown/event_block.cpp
 		source/tm/clients/pokemon_showdown/in_message.cpp
-		source/tm/clients/pokemon_showdown/is_chat_message.cpp
+		source/tm/clients/pokemon_showdown/is_chat_message_block.cpp
+		source/tm/clients/pokemon_showdown/log_battle_messages.cpp
+		source/tm/clients/pokemon_showdown/make_battle_message.cpp
+		source/tm/clients/pokemon_showdown/make_battle_message_handler.cpp
 		source/tm/clients/pokemon_showdown/make_party.cpp
+		source/tm/clients/pokemon_showdown/message_block.cpp
 		source/tm/clients/pokemon_showdown/move_state.cpp
 		source/tm/clients/pokemon_showdown/move_state_builder.cpp
 		source/tm/clients/pokemon_showdown/optional_hp_and_status.cpp
@@ -471,8 +474,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/parse_team.cpp
 		source/tm/clients/pokemon_showdown/party_from_player_id.cpp
 		source/tm/clients/pokemon_showdown/room.cpp
-		source/tm/clients/pokemon_showdown/room_message.cpp
-		source/tm/clients/pokemon_showdown/room_messages.cpp
+		source/tm/clients/pokemon_showdown/room_message_block.cpp
 		source/tm/clients/pokemon_showdown/send_message_function.cpp
 		source/tm/clients/pokemon_showdown/slot_memory.cpp
 		source/tm/clients/pokemon_showdown/switch_message.cpp
@@ -495,7 +497,8 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/ps_usage_stats/worker.cpp
 )
 target_sources(tm_pokemon_showdown PRIVATE
-	source/tm/clients/pokemon_showdown/battle_factory_impl.cpp
+	source/tm/clients/pokemon_showdown/battle_message_handler_impl.cpp
+	source/tm/clients/pokemon_showdown/make_battle_message_handler_impl.cpp
 	source/tm/clients/pokemon_showdown/to_packed_format_impl.cpp
 )
 # Not sure why this is warning about a header
@@ -585,9 +588,12 @@ target_sources(tm_test PRIVATE
 	FILES
 		source/tm/test/pokemon_online/conversion.cpp
 	
+		source/tm/test/clients/pokemon_showdown/battle_message_handler.cpp
+		source/tm/test/clients/pokemon_showdown/message_block.cpp
 		source/tm/test/clients/pokemon_showdown/packed_team.cpp
 		source/tm/test/clients/pokemon_showdown/parse_switch.cpp
 		
+		source/tm/test/clients/client_battle.cpp
 		source/tm/test/clients/visible_damage_to_actual_damage.cpp
 
 		source/tm/test/collections/variable_collection.cpp
@@ -617,7 +623,6 @@ target_sources(tm_test PRIVATE
 target_sources(tm_test PRIVATE
 	source/tm/test/clients/netbattle/read_team_file.cpp
 
-	source/tm/test/clients/pokemon_showdown/battle_parser.cpp
 	source/tm/test/clients/pokemon_showdown/parse_team.cpp
 	source/tm/test/clients/pokemon_showdown/slot_memory.cpp
 

@@ -19,6 +19,7 @@ export using BattleResponseSwitch = bounded::integer<1, bounded::normalize<max_p
 export struct BattleResponseError {};
 export struct BattleStarted {};
 export struct BattleFinished {};
+export struct BattleAlreadyFinished {};
 
 export using BattleMessageResult = tv::variant<
 	BattleContinues,
@@ -26,7 +27,8 @@ export using BattleMessageResult = tv::variant<
 	BattleResponseSwitch,
 	BattleResponseError,
 	BattleStarted,
-	BattleFinished
+	BattleFinished,
+	BattleAlreadyFinished
 >;
 
 } // namespace technicalmachine::ps

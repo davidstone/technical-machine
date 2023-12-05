@@ -6,7 +6,7 @@
 export module tm.clients.ps.client;
 
 import tm.clients.ps.client_impl;
-import tm.clients.ps.room_messages;
+import tm.clients.ps.room_message_block;
 import tm.clients.ps.sockets;
 
 import tm.evaluate.depth;
@@ -31,7 +31,7 @@ export struct Client {
 
 	[[noreturn]] void run() {
 		while (true) {
-			m_impl.handle_messages(RoomMessages(m_sockets.read_message()));
+			m_impl.handle_messages(RoomMessageBlock(m_sockets.read_message()));
 		}
 	}
 

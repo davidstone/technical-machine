@@ -10,11 +10,12 @@ module;
 
 export module tm.clients.ps.battles;
 
-import tm.clients.ps.battle_logger;
 import tm.clients.ps.battle_manager;
+import tm.clients.ps.battle_message;
+import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_message_result;
 import tm.clients.ps.parse_generation_from_format;
-import tm.clients.ps.room_message;
+import tm.clients.ps.room;
 
 import tm.clients.party;
 
@@ -23,6 +24,7 @@ import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
 
 import tm.team_predictor.all_usage_stats;
+import tm.team_predictor.usage_stats;
 
 import tm.generation;
 import tm.generation_generic;
@@ -39,45 +41,43 @@ export struct Battles {
 	explicit Battles(std::filesystem::path log_directory):
 		m_log_directory(std::move(log_directory))
 	{
-		std::filesystem::create_directories(m_log_directory);
 	}
 
-	auto add_pending(
-		containers::string id,
-		tv::variant<containers::string, Party> user,
+	auto handle_message(
+		Room const room,
+		BattleMessage const & generic_message,
+		std::string_view const user,
 		AllEvaluate evaluate,
 		AllUsageStats const & all_usage_stats,
 		Depth depth
-	) -> void {
-		auto const generation = parse_generation_from_format(id, "battle-gen");
-		auto const battle_log_directory = m_log_directory / std::string_view(id);
-		auto battle_logger = std::make_unique<BattleLogger>(battle_log_directory, id);
-		auto battle_manager = BattleManager(
-			generation,
-			std::move(user),
-			evaluate,
-			all_usage_stats[generation],
-			depth,
-			AnalysisLogger(battle_log_directory)
-		);
-		containers::emplace_back(
-			m_container,
-			std::move(id),
-			std::move(battle_logger),
-			std::move(battle_manager)
-		);
-	}
-
-	auto handle_message(RoomMessage const room_message) -> tv::optional<BattleMessageResult> {
+	) -> BattleMessageResult {
 		auto matches_room = [&](auto const & element) {
-			return element.id == room_message.room;
+			return element.id == room;
 		};
 		auto const it = containers::find_if(m_container, matches_room);
-		if (it == containers::end(m_container)) {
-			return tv::none;
-		}
-		it->logger->log(room_message.message);
-		auto result = it->battle.handle_message(room_message.message);
+		auto const result = tv::visit(generic_message, tv::overload(
+			[&](CreateBattle) -> BattleMessageResult {
+				if (it != containers::end(m_container)) {
+					throw std::runtime_error("Tried to create an existing battle");
+				}
+				create_battle(room);
+				return BattleContinues();
+			},
+			[&](auto const & message) -> BattleMessageResult {
+				if (it == containers::end(m_container)) {
+					return BattleAlreadyFinished();
+				}
+				return it->battle.handle_message(
+					message,
+					user,
+					room,
+					m_log_directory,
+					evaluate,
+					all_usage_stats,
+					depth
+				);
+			}
+		));
 		tv::visit(result, tv::overload(
 			[](auto) {
 			},
@@ -91,10 +91,20 @@ export struct Battles {
 private:
 	struct Element {
 		containers::string id;
-		// Must be `unique_ptr` because `ofstream` is not nothrow movable
-		std::unique_ptr<BattleLogger> logger;
 		BattleManager battle;
 	};
+
+	auto create_battle(Room const room) -> void {
+		containers::lazy_push_back(
+			m_container,
+			[&] {
+				return Element(
+					containers::string(room),
+					BattleManager(parse_generation_from_format(room, "battle-gen"sv))
+				);
+			}
+		);
+	}
 
 	std::filesystem::path m_log_directory;
 	containers::vector<Element> m_container;

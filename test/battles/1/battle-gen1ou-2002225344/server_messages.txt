@@ -1,0 +1,96 @@
+>battle-gen1ou-2002225344
+|init|battle
+|title|Technical Machine vs. obi
+|j|☆Technical Machine
+
+>battle-gen1ou-2002225344
+|request|
+>battle-gen1ou-2002225344
+|t:|1701399836
+|gametype|singles
+>battle-gen1ou-2002225344
+|player|p1|Technical Machine|266|
+>battle-gen1ou-2002225344
+|request|{"active":[{"moves":[{"move":"Explosion","id":"explosion","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Hyper Beam","id":"hyperbeam","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Blizzard","id":"blizzard","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Clamp","id":"clamp","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Cloyster","details":"Cloyster","condition":"303/303","active":true,"stats":{"atk":288,"def":458,"spa":268,"spd":268,"spe":238},"moves":["explosion","hyperbeam","blizzard","clamp"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Tauros","details":"Tauros","condition":"353/353","active":false,"stats":{"atk":298,"def":288,"spa":238,"spd":238,"spe":318},"moves":["blizzard","earthquake","hyperbeam","bodyslam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Golem","details":"Golem","condition":"363/363","active":false,"stats":{"atk":318,"def":358,"spa":208,"spd":208,"spe":188},"moves":["explosion","earthquake","rockslide","bodyslam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Lapras","details":"Lapras","condition":"447/447","active":false,"stats":{"atk":175,"def":258,"spa":288,"spd":288,"spe":218},"moves":["confuseray","thunderbolt","blizzard","sing"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Jolteon","details":"Jolteon","condition":"333/333","active":false,"stats":{"atk":228,"def":218,"spa":318,"spd":318,"spe":358},"moves":["thunderbolt","thunderwave","doublekick","pinmissile"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":228,"spe":158},"moves":["bodyslam","reflect","rest","icebeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":2}
+>battle-gen1ou-2002225344
+|player|p2|obi|colress|
+|teamsize|p1|6
+|teamsize|p2|6
+|gen|1
+|tier|[Gen 1] OU
+|rule|Desync Clause Mod: Desyncs changed to move failure.
+|rule|Sleep Clause Mod: Limit one foe put to sleep
+|rule|Freeze Clause Mod: Limit one foe frozen
+|rule|Species Clause: Limit one of each Pokémon
+|rule|OHKO Clause: OHKO moves are banned
+|rule|Evasion Moves Clause: Evasion moves are banned
+|rule|Endless Battle Clause: Forcing endless battles is banned
+|rule|HP Percentage Mod: HP is shown in percentages
+|
+|t:|1701399836
+|start
+|switch|p1a: Cloyster|Cloyster|303/303
+|switch|p2a: Starmie|Starmie|100/100
+|turn|1
+>battle-gen1ou-2002225344
+|inactive|Battle timer is ON: inactive players will automatically lose when time's up. (requested by obi)
+>battle-gen1ou-2002225344
+|inactive|Time left: 300 sec this turn | 300 sec total | 60 sec grace
+>battle-gen1ou-2002225344
+|request|{"forceSwitch":[true],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Cloyster","details":"Cloyster","condition":"0 fnt","active":true,"stats":{"atk":288,"def":458,"spa":268,"spd":268,"spe":238},"moves":["explosion","hyperbeam","blizzard","clamp"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Tauros","details":"Tauros","condition":"353/353","active":false,"stats":{"atk":298,"def":288,"spa":238,"spd":238,"spe":318},"moves":["blizzard","earthquake","hyperbeam","bodyslam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Golem","details":"Golem","condition":"363/363","active":false,"stats":{"atk":318,"def":358,"spa":208,"spd":208,"spe":188},"moves":["explosion","earthquake","rockslide","bodyslam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Lapras","details":"Lapras","condition":"447/447","active":false,"stats":{"atk":175,"def":258,"spa":288,"spd":288,"spe":218},"moves":["confuseray","thunderbolt","blizzard","sing"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Jolteon","details":"Jolteon","condition":"333/333","active":false,"stats":{"atk":228,"def":218,"spa":318,"spd":318,"spe":358},"moves":["thunderbolt","thunderwave","doublekick","pinmissile"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":228,"spe":158},"moves":["bodyslam","reflect","rest","icebeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"noCancel":true,"rqid":4}
+>battle-gen1ou-2002225344
+|
+|t:|1701399843
+|move|p2a: Starmie|Thunderbolt|p1a: Cloyster
+|-crit|p1a: Cloyster
+|-supereffective|p1a: Cloyster
+|-damage|p1a: Cloyster|0 fnt
+|faint|p1a: Cloyster
+>battle-gen1ou-2002225344
+|inactive|Time left: 300 sec this turn | 300 sec total
+>battle-gen1ou-2002225344
+|request|{"active":[{"moves":[{"move":"Body Slam","id":"bodyslam","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Ice Beam","id":"icebeam","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Snorlax","details":"Snorlax","condition":"523/523","active":true,"stats":{"atk":318,"def":228,"spa":228,"spd":228,"spe":158},"moves":["bodyslam","reflect","rest","icebeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Tauros","details":"Tauros","condition":"353/353","active":false,"stats":{"atk":298,"def":288,"spa":238,"spd":238,"spe":318},"moves":["blizzard","earthquake","hyperbeam","bodyslam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Golem","details":"Golem","condition":"363/363","active":false,"stats":{"atk":318,"def":358,"spa":208,"spd":208,"spe":188},"moves":["explosion","earthquake","rockslide","bodyslam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Lapras","details":"Lapras","condition":"447/447","active":false,"stats":{"atk":175,"def":258,"spa":288,"spd":288,"spe":218},"moves":["confuseray","thunderbolt","blizzard","sing"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Jolteon","details":"Jolteon","condition":"333/333","active":false,"stats":{"atk":228,"def":218,"spa":318,"spd":318,"spe":358},"moves":["thunderbolt","thunderwave","doublekick","pinmissile"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Cloyster","details":"Cloyster","condition":"0 fnt","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":268,"spe":238},"moves":["explosion","hyperbeam","blizzard","clamp"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":6}
+>battle-gen1ou-2002225344
+|
+|t:|1701399843
+|switch|p1a: Snorlax|Snorlax|523/523
+|turn|2
+>battle-gen1ou-2002225344
+|inactive|Time left: 300 sec this turn | 300 sec total
+>battle-gen1ou-2002225344
+|request|{"active":[{"moves":[{"move":"Body Slam","id":"bodyslam","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Ice Beam","id":"icebeam","pp":16,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Snorlax","details":"Snorlax","condition":"523/523","active":true,"stats":{"atk":318,"def":228,"spa":228,"spd":228,"spe":158},"moves":["bodyslam","reflect","rest","icebeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Tauros","details":"Tauros","condition":"353/353","active":false,"stats":{"atk":298,"def":288,"spa":238,"spd":238,"spe":318},"moves":["blizzard","earthquake","hyperbeam","bodyslam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Golem","details":"Golem","condition":"363/363","active":false,"stats":{"atk":318,"def":358,"spa":208,"spd":208,"spe":188},"moves":["explosion","earthquake","rockslide","bodyslam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Lapras","details":"Lapras","condition":"447/447","active":false,"stats":{"atk":175,"def":258,"spa":288,"spd":288,"spe":218},"moves":["confuseray","thunderbolt","blizzard","sing"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Jolteon","details":"Jolteon","condition":"333/333","active":false,"stats":{"atk":228,"def":218,"spa":318,"spd":318,"spe":358},"moves":["thunderbolt","thunderwave","doublekick","pinmissile"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Cloyster","details":"Cloyster","condition":"0 fnt","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":268,"spe":238},"moves":["explosion","hyperbeam","blizzard","clamp"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":8}
+>battle-gen1ou-2002225344
+|
+|t:|1701399852
+|switch|p2a: Golem|Golem|100/100
+|move|p1a: Snorlax|Body Slam|p2a: Golem
+|-resisted|p2a: Golem
+|-damage|p2a: Golem|89/100
+|
+|upkeep
+|turn|3
+>battle-gen1ou-2002225344
+|inactive|Time left: 300 sec this turn | 300 sec total
+>battle-gen1ou-2002225344
+|request|{"active":[{"moves":[{"move":"Body Slam","id":"bodyslam","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Reflect","id":"reflect","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Rest","id":"rest","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Ice Beam","id":"icebeam","pp":15,"maxpp":16,"target":"normal","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Snorlax","details":"Snorlax","condition":"353/523","active":true,"stats":{"atk":318,"def":228,"spa":228,"spd":228,"spe":158},"moves":["bodyslam","reflect","rest","icebeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Tauros","details":"Tauros","condition":"353/353","active":false,"stats":{"atk":298,"def":288,"spa":238,"spd":238,"spe":318},"moves":["blizzard","earthquake","hyperbeam","bodyslam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Golem","details":"Golem","condition":"363/363","active":false,"stats":{"atk":318,"def":358,"spa":208,"spd":208,"spe":188},"moves":["explosion","earthquake","rockslide","bodyslam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Lapras","details":"Lapras","condition":"447/447","active":false,"stats":{"atk":175,"def":258,"spa":288,"spd":288,"spe":218},"moves":["confuseray","thunderbolt","blizzard","sing"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Jolteon","details":"Jolteon","condition":"333/333","active":false,"stats":{"atk":228,"def":218,"spa":318,"spd":318,"spe":358},"moves":["thunderbolt","thunderwave","doublekick","pinmissile"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Cloyster","details":"Cloyster","condition":"0 fnt","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":268,"spe":238},"moves":["explosion","hyperbeam","blizzard","clamp"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":10}
+>battle-gen1ou-2002225344
+|
+|t:|1701399854
+|move|p2a: Golem|Earthquake|p1a: Snorlax
+|-damage|p1a: Snorlax|353/523
+|move|p1a: Snorlax|Ice Beam|p2a: Golem
+|-supereffective|p2a: Golem
+|-damage|p2a: Golem|45/100
+|
+|upkeep
+|turn|4
+>battle-gen1ou-2002225344
+|inactive|Time left: 300 sec this turn | 300 sec total
+>battle-gen1ou-2002225344
+|request|{"wait":true,"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Snorlax","details":"Snorlax","condition":"10/523","active":true,"stats":{"atk":318,"def":228,"spa":228,"spd":228,"spe":158},"moves":["bodyslam","reflect","rest","icebeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Tauros","details":"Tauros","condition":"353/353","active":false,"stats":{"atk":298,"def":288,"spa":238,"spd":238,"spe":318},"moves":["blizzard","earthquake","hyperbeam","bodyslam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Golem","details":"Golem","condition":"363/363","active":false,"stats":{"atk":318,"def":358,"spa":208,"spd":208,"spe":188},"moves":["explosion","earthquake","rockslide","bodyslam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Lapras","details":"Lapras","condition":"447/447","active":false,"stats":{"atk":175,"def":258,"spa":288,"spd":288,"spe":218},"moves":["confuseray","thunderbolt","blizzard","sing"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Jolteon","details":"Jolteon","condition":"333/333","active":false,"stats":{"atk":228,"def":218,"spa":318,"spd":318,"spe":358},"moves":["thunderbolt","thunderwave","doublekick","pinmissile"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Cloyster","details":"Cloyster","condition":"0 fnt","active":false,"stats":{"atk":288,"def":458,"spa":268,"spd":268,"spe":238},"moves":["explosion","hyperbeam","blizzard","clamp"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":12}
+>battle-gen1ou-2002225344
+|
+|t:|1701399861
+|move|p2a: Golem|Explosion|p1a: Snorlax
+|-damage|p1a: Snorlax|10/523
+|faint|p2a: Golem

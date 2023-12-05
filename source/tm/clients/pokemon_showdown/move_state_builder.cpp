@@ -90,7 +90,7 @@ export struct MoveStateBuilder {
 		));
 	}
 
-	auto use_move(Party const party, MoveName const move) -> void {
+	auto use_move(Party const party, MoveName const move, bool const miss = false) -> void {
 		tv::visit(m_move, tv::overload(
 			[](Awakening) { throw std::runtime_error("Tried to use a move while awakening"); },
 			[](Flinched) { throw std::runtime_error("Tried to use a move while flinching"); },
@@ -103,13 +103,14 @@ export struct MoveStateBuilder {
 					throw std::runtime_error("Tried to execute multiple moves");
 				}
 				used.executed = move;
+				used.miss = miss;
 			},
 			[&](InitialMoveResult) {
 				set_party(party);
 				if (m_status_change == StatusChange::still_asleep and !usable_while_sleeping(move)) {
 					throw std::runtime_error(containers::concatenate<std::string>("Tried to use "sv, to_string(move), " while asleep"sv));
 				}
-				m_move.emplace([&] { return Used(move); });
+				m_move.emplace([&] { return Used(move, miss); });
 			}
 		));
 	}
@@ -181,9 +182,6 @@ export struct MoveStateBuilder {
 		auto & target = (*m_party == party) ? m_user : m_other;
 		insert(target.hp, hp);
 	}
-	auto miss(Party const party) -> void {
-		set_used_flag(party, "Tried to miss a Pokemon twice", &Used::miss);
-	}
 	auto phazed_in(Party const party, TeamIndex const index) -> void {
 		auto & move = validated(party);
 		if (!is_phaze(move.executed)) {
@@ -230,7 +228,6 @@ export struct MoveStateBuilder {
 		}
 	}
 	auto status_from_ability(Party const party, Ability const ability, StatusName const status) & -> void {
-		check_ability_can_status(ability, status);
 		auto & move = validated(party);
 		if (move.status) {
 			throw std::runtime_error("Tried to status a Pokemon twice");

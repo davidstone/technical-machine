@@ -13,10 +13,14 @@ export module tm.clients.ps.client_impl;
 
 import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battles;
-import tm.clients.ps.is_chat_message;
+import tm.clients.ps.log_battle_messages;
+import tm.clients.ps.is_chat_message_block;
+import tm.clients.ps.in_message;
+import tm.clients.ps.make_battle_message;
+import tm.clients.ps.message_block;
 import tm.clients.ps.parse_generation_from_format;
-import tm.clients.ps.room_message;
-import tm.clients.ps.room_messages;
+import tm.clients.ps.room;
+import tm.clients.ps.room_message_block;
 import tm.clients.ps.send_message_function;
 import tm.clients.ps.to_packed_format;
 
@@ -87,13 +91,19 @@ using AuthenticationFunction = containers::trivial_inplace_function<
 	sizeof(void *)
 >;
 
+constexpr auto is_battle_message(Room const room) -> bool {
+	// TODO: is this correct?
+	return room.starts_with("battle-");
+}
+
 export struct ClientImpl {
 	ClientImpl(SettingsFile settings, Depth const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
 		m_random_engine(std::random_device()()),
 		m_all_usage_stats(stats_for_generation),
 		m_settings(std::move(settings)),
 		m_depth(depth),
-		m_battles(get_battles_directory()),
+		m_battles_directory(get_battles_directory()),
+		m_battles(m_battles_directory),
 		m_send_message(std::move(send_message)),
 		m_authenticate(std::move(authenticate))
 	{
@@ -101,13 +111,18 @@ export struct ClientImpl {
 	ClientImpl(ClientImpl &&) = default;
 	ClientImpl(ClientImpl const &) = delete;
 
-	auto handle_messages(RoomMessages const room_messages) -> void {
-		for (auto const room_message : room_messages.messages()) {
-			auto print_on_exception = bounded::scope_guard([=] {
-				std::cerr << room_message.message.remainder() << '\n';
-			});
-			handle_message(room_message);
-			print_on_exception.dismiss();
+	auto handle_messages(RoomMessageBlock const block) -> void {
+		auto const _ = bounded::scope_fail([=] {
+			std::cerr << block.str() << '\n';
+		});
+		auto const messages = message_block(block.str());
+		if (is_chat_message_block(messages)) {
+		} else if (is_battle_message(block.room())) {
+			handle_battle_messages(block);
+		} else {
+			for (auto const message : messages) {
+				handle_message(block.room(), message);
+			}
 		}
 	}
 
@@ -135,53 +150,56 @@ private:
 		));
 	}
 
-	auto handle_battle_message(RoomMessage const room_message) -> bool {
-		auto const result = m_battles.handle_message(room_message);
-		if (!result) {
-			return false;
+	auto handle_battle_messages(RoomMessageBlock const block) -> void {
+		auto const battle_message = make_battle_message(message_block(block.str()));
+		if (!battle_message) {
+			return;
 		}
-		tv::visit(*result, tv::overload(
+		log_battle_messages(m_battles_directory, block);
+		auto const result = m_battles.handle_message(
+			block.room(),
+			*battle_message,
+			m_settings.username,
+			m_evaluate,
+			m_all_usage_stats,
+			m_depth
+		);
+		tv::visit(result, tv::overload(
 			[](BattleContinues) {
 			},
 			[&](MoveName const move_name) {
 				m_send_message(containers::concatenate<containers::string>(
-					room_message.room,
+					block.room(),
 					"|/choose move "sv,
 					to_string(move_name)
 				));
 			},
 			[&](BattleResponseSwitch const switch_index) {
 				m_send_message(containers::concatenate<containers::string>(
-					room_message.room,
+					block.room(),
 					"|/choose switch "sv,
 					containers::to_string(switch_index)
 				));
 			},
 			[&](BattleResponseError) {
 				m_send_message(containers::concatenate<containers::string>(
-					room_message.room,
+					block.room(),
 					"|/choose default"sv
 				));
 			},
 			[&](BattleStarted) {
-				m_send_message(containers::concatenate<containers::string>(room_message.room, "|/timer on"sv));
+				m_send_message(containers::concatenate<containers::string>(block.room(), "|/timer on"sv));
 			},
 			[&](BattleFinished) {
-				m_send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), room_message.room));
+				m_send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), block.room()));
 				send_challenge();
+			},
+			[](BattleAlreadyFinished) {
 			}
 		));
-		return true;
 	}
 
-	auto handle_message(RoomMessage const room_message) -> void {
-		auto message = room_message.message;
-		if (handle_battle_message(room_message)) {
-			return;
-		}
-		if (is_chat_message(message)) {
-			return;
-		}
+	auto handle_message(Room const room, InMessage message) -> void {
 		auto const type = message.type();
 		if (type == "b" or type == "B" or type == "battle") {
 			// message.remainder() == ROOMID|username|username
@@ -194,15 +212,6 @@ private:
 		} else if (type == "html") {
 			// message.remainder() == HTML
 		} else if (type == "init") {
-			if (message.pop() == "battle") {
-				m_battles.add_pending(
-					containers::string(room_message.room),
-					m_settings.username,
-					m_evaluate,
-					m_all_usage_stats,
-					m_depth
-				);
-			}
 		} else if (type == "nametaken") {
 			auto const username = message.pop();
 			std::cerr << "Could not change username to " << username << " because: " << message.remainder() << '\n';
@@ -245,7 +254,7 @@ private:
 		} else if (type == "users") {
 			// message.remainder() == comma separated list of users
 		} else {
-			std::cerr << "Received unknown message in room: " << room_message.room << " type: " << type << "\n\t" << message.remainder() << '\n';
+			std::cerr << "Received unknown message in room: " << room << " |" << type << '|' << message.remainder() << '\n';
 		}
 	}
 
@@ -284,6 +293,7 @@ private:
 
 	Depth m_depth;
 
+	std::filesystem::path m_battles_directory;
 	Battles m_battles;
 
 	SendMessageFunction m_send_message;

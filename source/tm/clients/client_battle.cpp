@@ -8,6 +8,8 @@ export module tm.clients.client_battle;
 import tm.clients.move_result;
 import tm.clients.turn_count;
 
+import tm.evaluate.state;
+
 import tm.move.move_name;
 import tm.move.regular_moves;
 
@@ -23,7 +25,6 @@ import tm.gender;
 import tm.generation;
 import tm.generation_generic;
 import tm.item;
-import tm.team;
 import tm.visible_hp;
 import tm.weather;
 
@@ -39,7 +40,7 @@ export struct ClientBattle {
 	virtual ~ClientBattle() = default;
 
 	virtual auto generation() const -> Generation = 0;
-	virtual auto team() const -> GenerationGeneric<Team> = 0;
+	virtual auto state() const -> GenerationGeneric<State> = 0;
 
 	virtual auto ai_has(Species, std::string_view nickname, Level, Gender) & -> TeamIndex = 0;
 	virtual auto foe_has(Species, std::string_view nickname, Level, Gender) & -> TeamIndex = 0;

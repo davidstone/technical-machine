@@ -6,7 +6,6 @@
 module;
 
 #include <std_module/prelude.hpp>
-#include <iostream>
 #include <string_view>
 
 module tm.clients.make_client_battle;
@@ -115,8 +114,13 @@ struct ClientBattleImpl final : ClientBattle {
 	auto generation() const -> Generation final {
 		return generation_;
 	}
-	auto team() const -> GenerationGeneric<Team> final {
-		return GenerationGeneric<Team>(Team<generation_>(m_battle.ai()));
+	auto state() const -> GenerationGeneric<State> final {
+		return State<generation_>(
+			Team<generation_>(m_battle.ai()),
+			Team<generation_>(m_battle.foe()),
+			m_battle.environment(),
+			m_depth
+		);
 	}
 
 	auto ai_has(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex final {
@@ -162,6 +166,9 @@ struct ClientBattleImpl final : ClientBattle {
 	}
 
 	auto begin_turn(TurnCount const turn_count) & -> void final {
+		if (is_end_of_turn()) {
+			throw std::runtime_error("Tried to begin a turn during the end of turn");
+		}
 		if (turn_count == 1_bi) {
 			// TODO: properly order this
 			m_battle.first_turn(true);

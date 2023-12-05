@@ -1,0 +1,86 @@
+>battle-gen1ou-2002234067
+|init|battle
+|title|Technical Machine vs. obi
+|j|☆Technical Machine
+
+>battle-gen1ou-2002234067
+|request|
+>battle-gen1ou-2002234067
+|t:|1701400977
+|gametype|singles
+>battle-gen1ou-2002234067
+|player|p1|Technical Machine|266|
+>battle-gen1ou-2002234067
+|request|{"active":[{"moves":[{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Thunderbolt","id":"thunderbolt","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Surf","id":"surf","pp":24,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Recover","id":"recover","pp":32,"maxpp":32,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Starmie","details":"Starmie","condition":"307/307","active":true,"stats":{"atk":155,"def":268,"spa":298,"spd":298,"spe":328},"moves":["thunderwave","thunderbolt","surf","recover"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":228,"spe":158},"moves":["reflect","bodyslam","earthquake","hyperbeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Exeggutor","details":"Exeggutor","condition":"393/393","active":false,"stats":{"atk":288,"def":268,"spa":348,"spd":348,"spe":208},"moves":["stunspore","explosion","psychic","sleeppowder"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Chansey","details":"Chansey","condition":"687/687","active":false,"stats":{"atk":15,"def":108,"spa":308,"spd":308,"spe":198},"moves":["reflect","thunderwave","icebeam","softboiled"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam","condition":"313/313","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":368,"spe":338},"moves":["thunderwave","psychic","recover","seismictoss"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Rhydon","details":"Rhydon","condition":"413/413","active":false,"stats":{"atk":358,"def":338,"spa":188,"spd":188,"spe":178},"moves":["substitute","bodyslam","earthquake","rockslide"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":2}
+>battle-gen1ou-2002234067
+|player|p2|obi|colress|
+|teamsize|p1|6
+|teamsize|p2|6
+|gen|1
+|tier|[Gen 1] OU
+|rule|Desync Clause Mod: Desyncs changed to move failure.
+|rule|Sleep Clause Mod: Limit one foe put to sleep
+|rule|Freeze Clause Mod: Limit one foe frozen
+|rule|Species Clause: Limit one of each Pokémon
+|rule|OHKO Clause: OHKO moves are banned
+|rule|Evasion Moves Clause: Evasion moves are banned
+|rule|Endless Battle Clause: Forcing endless battles is banned
+|rule|HP Percentage Mod: HP is shown in percentages
+|
+|t:|1701400977
+|start
+|switch|p1a: Starmie|Starmie|307/307
+|switch|p2a: Starmie|Starmie|100/100
+|turn|1
+>battle-gen1ou-2002234067
+|inactive|Battle timer is ON: inactive players will automatically lose when time's up. (requested by obi)
+>battle-gen1ou-2002234067
+|inactive|Time left: 300 sec this turn | 300 sec total | 60 sec grace
+>battle-gen1ou-2002234067
+|request|{"active":[{"moves":[{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Thunderbolt","id":"thunderbolt","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Surf","id":"surf","pp":24,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Recover","id":"recover","pp":32,"maxpp":32,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Starmie","details":"Starmie","condition":"6/307","active":true,"stats":{"atk":155,"def":268,"spa":298,"spd":298,"spe":328},"moves":["thunderwave","thunderbolt","surf","recover"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":228,"spe":158},"moves":["reflect","bodyslam","earthquake","hyperbeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Exeggutor","details":"Exeggutor","condition":"393/393","active":false,"stats":{"atk":288,"def":268,"spa":348,"spd":348,"spe":208},"moves":["stunspore","explosion","psychic","sleeppowder"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Chansey","details":"Chansey","condition":"687/687","active":false,"stats":{"atk":15,"def":108,"spa":308,"spd":308,"spe":198},"moves":["reflect","thunderwave","icebeam","softboiled"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam","condition":"313/313","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":368,"spe":338},"moves":["thunderwave","psychic","recover","seismictoss"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Rhydon","details":"Rhydon","condition":"413/413","active":false,"stats":{"atk":358,"def":338,"spa":188,"spd":188,"spe":178},"moves":["substitute","bodyslam","earthquake","rockslide"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":4}
+>battle-gen1ou-2002234067
+|
+|t:|1701400980
+|move|p2a: Starmie|Thunderbolt|p1a: Starmie
+|-crit|p1a: Starmie
+|-supereffective|p1a: Starmie
+|-damage|p1a: Starmie|6/307
+|move|p1a: Starmie|Thunderbolt|p2a: Starmie
+|-supereffective|p2a: Starmie
+|-damage|p2a: Starmie|57/100
+|
+|upkeep
+|turn|2
+>battle-gen1ou-2002234067
+|inactive|Time left: 300 sec this turn | 300 sec total
+>battle-gen1ou-2002234067
+|request|{"active":[{"moves":[{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Thunderbolt","id":"thunderbolt","pp":22,"maxpp":24,"target":"normal","disabled":false},{"move":"Surf","id":"surf","pp":24,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Recover","id":"recover","pp":32,"maxpp":32,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Starmie","details":"Starmie","condition":"6/307","active":true,"stats":{"atk":155,"def":268,"spa":298,"spd":298,"spe":328},"moves":["thunderwave","thunderbolt","surf","recover"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":228,"spe":158},"moves":["reflect","bodyslam","earthquake","hyperbeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Exeggutor","details":"Exeggutor","condition":"393/393","active":false,"stats":{"atk":288,"def":268,"spa":348,"spd":348,"spe":208},"moves":["stunspore","explosion","psychic","sleeppowder"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Chansey","details":"Chansey","condition":"687/687","active":false,"stats":{"atk":15,"def":108,"spa":308,"spd":308,"spe":198},"moves":["reflect","thunderwave","icebeam","softboiled"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam","condition":"313/313","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":368,"spe":338},"moves":["thunderwave","psychic","recover","seismictoss"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Rhydon","details":"Rhydon","condition":"413/413","active":false,"stats":{"atk":358,"def":338,"spa":188,"spd":188,"spe":178},"moves":["substitute","bodyslam","earthquake","rockslide"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":6}
+>battle-gen1ou-2002234067
+|
+|t:|1701400984
+|move|p1a: Starmie|Thunderbolt|p2a: Starmie
+|-supereffective|p2a: Starmie
+|-damage|p2a: Starmie|11/100
+|move|p2a: Starmie|Thunderbolt|p1a: Starmie|[miss]
+|-miss|p2a: Starmie
+|-hint|In Gen 1, moves with 100% accuracy can still miss 1/256 of the time.
+|
+|upkeep
+|turn|3
+>battle-gen1ou-2002234067
+|inactive|Time left: 300 sec this turn | 300 sec total
+>battle-gen1ou-2002234067
+|request|{"active":[{"moves":[{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Thunderbolt","id":"thunderbolt","pp":22,"maxpp":24,"target":"normal","disabled":false},{"move":"Surf","id":"surf","pp":24,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Recover","id":"recover","pp":31,"maxpp":32,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Starmie","details":"Starmie","condition":"159/307","active":true,"stats":{"atk":155,"def":268,"spa":298,"spd":298,"spe":328},"moves":["thunderwave","thunderbolt","surf","recover"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":228,"spe":158},"moves":["reflect","bodyslam","earthquake","hyperbeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Exeggutor","details":"Exeggutor","condition":"393/393","active":false,"stats":{"atk":288,"def":268,"spa":348,"spd":348,"spe":208},"moves":["stunspore","explosion","psychic","sleeppowder"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Chansey","details":"Chansey","condition":"687/687","active":false,"stats":{"atk":15,"def":108,"spa":308,"spd":308,"spe":198},"moves":["reflect","thunderwave","icebeam","softboiled"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam","condition":"313/313","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":368,"spe":338},"moves":["thunderwave","psychic","recover","seismictoss"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Rhydon","details":"Rhydon","condition":"413/413","active":false,"stats":{"atk":358,"def":338,"spa":188,"spd":188,"spe":178},"moves":["substitute","bodyslam","earthquake","rockslide"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":8}
+>battle-gen1ou-2002234067
+|
+|t:|1701400999
+|switch|p2a: Snorlax|Snorlax|100/100
+|move|p1a: Starmie|Recover|p1a: Starmie
+|-heal|p1a: Starmie|159/307
+|
+|upkeep
+|turn|4
+>battle-gen1ou-2002234067
+|inactive|Time left: 300 sec this turn | 300 sec total
+>battle-gen1ou-2002234067
+|request|{"active":[{"moves":[{"move":"Thunder Wave","id":"thunderwave","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Thunderbolt","id":"thunderbolt","pp":22,"maxpp":24,"target":"normal","disabled":false},{"move":"Surf","id":"surf","pp":24,"maxpp":24,"target":"allAdjacentFoes","disabled":false},{"move":"Recover","id":"recover","pp":30,"maxpp":32,"target":"self","disabled":false}]}],"side":{"name":"Technical Machine","id":"p1","pokemon":[{"ident":"p1: Starmie","details":"Starmie","condition":"186/307 par","active":true,"stats":{"atk":155,"def":268,"spa":298,"spd":298,"spe":328},"moves":["thunderwave","thunderbolt","surf","recover"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Snorlax","details":"Snorlax","condition":"523/523","active":false,"stats":{"atk":318,"def":228,"spa":228,"spd":228,"spe":158},"moves":["reflect","bodyslam","earthquake","hyperbeam"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Exeggutor","details":"Exeggutor","condition":"393/393","active":false,"stats":{"atk":288,"def":268,"spa":348,"spd":348,"spe":208},"moves":["stunspore","explosion","psychic","sleeppowder"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Chansey","details":"Chansey","condition":"687/687","active":false,"stats":{"atk":15,"def":108,"spa":308,"spd":308,"spe":198},"moves":["reflect","thunderwave","icebeam","softboiled"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Alakazam","details":"Alakazam","condition":"313/313","active":false,"stats":{"atk":198,"def":188,"spa":368,"spd":368,"spe":338},"moves":["thunderwave","psychic","recover","seismictoss"],"baseAbility":"noability","item":"","pokeball":"pokeball"},{"ident":"p1: Rhydon","details":"Rhydon","condition":"413/413","active":false,"stats":{"atk":358,"def":338,"spa":188,"spd":188,"spe":178},"moves":["substitute","bodyslam","earthquake","rockslide"],"baseAbility":"noability","item":"","pokeball":"pokeball"}]},"rqid":10}
