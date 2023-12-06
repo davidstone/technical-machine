@@ -103,25 +103,25 @@ auto make_init(
 	containers::c_array<PokemonInit<generation>, known_size> const & known,
 	containers::c_array<SeenPokemonInit, seen_size> const & seen
 ) {
-	auto teams = Teams<generation>{
-		make_known_team<generation>(known),
-		make_seen_team<generation>(seen)
+	auto teams = [&] {
+		return Teams<generation>{
+			make_known_team<generation>(known),
+			make_seen_team<generation>(seen)
+		};
 	};
-	auto inputs = ClientBattleInputs<generation>{
-		teams,
-		Evaluate<generation>(evaluate_settings)
-	};
-	auto const & usage_stats = get_usage_stats<generation>();
-	auto expected = make_client_battle(std::move(teams));
-	auto handler = ps::BattleMessageHandler(
-		Party(0_bi),
-		std::move(inputs),
-		AnalysisLogger(AnalysisLogger::none()),
-		usage_stats,
-		depth
+	return std::pair(
+		make_client_battle(teams()),
+		ps::BattleMessageHandler(
+			Party(0_bi),
+			ClientBattleInputs<generation>{
+				teams(),
+				Evaluate<generation>(evaluate_settings)
+			},
+			AnalysisLogger(AnalysisLogger::none()),
+			get_usage_stats<generation>(),
+			depth
+		)
 	);
-	expected->first_turn(true);
-	return std::pair(std::move(expected), std::move(handler));
 }
 
 constexpr auto visible_hp(auto const min, auto const max) -> VisibleHP {

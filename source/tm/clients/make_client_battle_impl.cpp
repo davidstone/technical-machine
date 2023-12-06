@@ -134,9 +134,6 @@ struct ClientBattleImpl final : ClientBattle {
 		return m_battle.ai().size() == 1_bi;
 	}
 
-	auto first_turn(bool const ai_went_first) & -> void final {
-		m_battle.first_turn(ai_went_first);
-	}
 	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void final {
 		m_battle.handle_end_turn(ai_went_first, first_flags, last_flags);
 	}

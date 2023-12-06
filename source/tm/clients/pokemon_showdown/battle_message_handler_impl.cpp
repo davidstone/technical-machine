@@ -74,8 +74,6 @@ BattleMessageHandler::BattleMessageHandler(
 	)),
 	m_depth(depth)
 {
-	// TODO: properly order this
-	m_client_battle->first_turn(true);
 }
 
 struct Nothing {

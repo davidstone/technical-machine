@@ -42,7 +42,6 @@ auto make_battle(
 			make_seen_team<generation>(seen)
 		}
 	);
-	battle->first_turn(true);
 	return battle;
 }
 
@@ -101,8 +100,6 @@ TEST_CASE("Report end of turn after both Pokemon move", "[ClientBattle]") {
 		}
 	);
 
-	battle->first_turn(true);
-
 	CHECK(!battle->is_end_of_turn());
 
 	battle->use_move(
@@ -143,8 +140,6 @@ TEST_CASE("Handle replacing two fainted Pokemon", "[ClientBattle]") {
 			{.species = Species::Pikachu},
 		}
 	);
-
-	battle->first_turn(true);
 
 	CHECK(!battle->is_end_of_turn());
 

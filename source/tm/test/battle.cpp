@@ -64,7 +64,6 @@ TEST_CASE("Perish Song", "[Battle]") {
 		}),
 		SeenTeam<generation>(2_bi)
 	);
-	battle.first_turn(true);
 	battle.find_or_add_foe_pokemon(Species::Starmie, Nickname(), Level(100_bi), Gender::genderless);
 	battle.add_move(false, MoveName::Recover);
 
@@ -144,7 +143,6 @@ TEST_CASE("Accurate HP after move", "[Battle]") {
 			},
 		})
 	);
-	battle.first_turn(true);
 
 	battle.handle_use_move(
 		UsedMove<KnownTeam<generation>>(MoveName::Tackle, no_effect_function),

@@ -56,23 +56,15 @@ using namespace std::string_view_literals;
 
 export template<Generation generation>
 struct Battle {
-	Battle(KnownTeam<generation> ai_, SeenTeam<generation> foe_):
+	// TODO: Properly order instead of having a default
+	Battle(
+		KnownTeam<generation> ai_,
+		SeenTeam<generation> foe_,
+		bool const ai_first = true
+	):
 		m_ai(std::move(ai_)),
 		m_foe(std::move(foe_))
 	{
-	}
-
-	auto const & ai() const {
-		return m_ai;
-	}
-	auto const & foe() const {
-		return m_foe;
-	}
-	auto environment() const {
-		return m_environment;
-	}
-
-	void first_turn(bool const ai_first) & {
 		auto const ai_pokemon = m_ai.pokemon();
 		auto const foe_pokemon = m_foe.pokemon();
 		auto do_switch = [&](auto const switcher, auto const other) {
@@ -86,6 +78,16 @@ struct Battle {
 			do_switch(ai_pokemon, foe_pokemon);
 			do_switch(foe_pokemon, ai_pokemon);
 		}
+	}
+
+	auto const & ai() const {
+		return m_ai;
+	}
+	auto const & foe() const {
+		return m_foe;
+	}
+	auto environment() const {
+		return m_environment;
 	}
 
 	void handle_end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & {
