@@ -603,6 +603,7 @@ target_sources(tm_test PRIVATE
 		source/tm/test/move/actual_damage.cpp
 		source/tm/test/move/calculate_damage.cpp
 		source/tm/test/move/move_power.cpp
+		source/tm/test/move/possible_side_effects.cpp
 
 		source/tm/test/pokemon/active_pokemon.cpp
 
