@@ -92,7 +92,7 @@ struct ClientBattleImpl final : ClientBattle {
 		);
 	}
 
-	auto ai_has(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex final {
+	auto ai_has(Species const species, std::string_view nickname, Level const level, Gender const gender) const -> TeamIndex final {
 		return m_battle.find_ai_pokemon(species, nickname, level, gender);
 	}
 	auto foe_has(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex final {
@@ -190,7 +190,7 @@ struct ClientBattleImpl final : ClientBattle {
 		});
 	}
 
-	auto cures_target_status(bool const is_ai, MoveName const move_name) -> bool final {
+	auto cures_target_status(bool const is_ai, MoveName const move_name) const -> bool final {
 		return apply_to_team(is_ai, [&](auto const & target) {
 			auto const pokemon = target.pokemon();
 			return move_cures_target_status(

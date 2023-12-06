@@ -41,7 +41,7 @@ export struct ClientBattle {
 	virtual auto generation() const -> Generation = 0;
 	virtual auto state() const -> GenerationGeneric<VisibleState> = 0;
 
-	virtual auto ai_has(Species, std::string_view nickname, Level, Gender) & -> TeamIndex = 0;
+	virtual auto ai_has(Species, std::string_view nickname, Level, Gender) const -> TeamIndex = 0;
 	virtual auto foe_has(Species, std::string_view nickname, Level, Gender) & -> TeamIndex = 0;
 
 	virtual auto active_has(bool is_ai, MoveName) & -> void = 0;
@@ -59,7 +59,7 @@ export struct ClientBattle {
 	virtual auto use_move(bool ai_is_user, MoveResult, bool user_status_was_cleared) & -> void = 0;
 
 	// TODO: Delete this function
-	virtual auto cures_target_status(bool is_ai, MoveName) -> bool = 0;
+	virtual auto cures_target_status(bool is_ai, MoveName) const -> bool = 0;
 
 	// For a correct implementation of a correct protocol, these functions have
 	// no effect.
