@@ -14,7 +14,6 @@ import tm.clients.client_battle;
 import tm.clients.check_weathers_match;
 import tm.clients.teams;
 
-import tm.move.causes_recoil;
 import tm.move.known_move;
 import tm.move.move;
 import tm.move.move_cures_target_status;
@@ -30,11 +29,9 @@ import tm.stat.hp;
 
 import tm.status.status_name;
 
-import tm.type.effectiveness;
 import tm.type.move_type;
 
 import tm.ability;
-import tm.ability_blocks_move;
 import tm.any_team;
 import tm.battle;
 import tm.end_of_turn_flags;
@@ -43,10 +40,8 @@ import tm.generation;
 import tm.generation_generic;
 import tm.item;
 import tm.team;
-import tm.to_used_move;
 import tm.visible_hp;
 import tm.weather;
-import tm.visible_damage_to_actual_damage;
 import tm.visible_state;
 
 import bounded;
@@ -93,14 +88,14 @@ struct ClientBattleImpl final : ClientBattle {
 	}
 
 	auto ai_has(Species const species, std::string_view nickname, Level const level, Gender const gender) const -> TeamIndex final {
-		return m_battle.find_ai_pokemon(species, nickname, level, gender);
+		return m_battle.ai_has(species, nickname, level, gender);
 	}
 	auto foe_has(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex final {
-		return m_battle.find_or_add_foe_pokemon(species, nickname, level, gender);
+		return m_battle.foe_has(species, nickname, level, gender);
 	}
 
 	auto active_has(bool const is_ai, MoveName const move_name) & -> void final {
-		m_battle.add_move(is_ai, move_name);
+		m_battle.active_has(is_ai, move_name);
 	}
 
 	auto active_has(bool const is_ai, Ability const ability) & -> void final {
@@ -134,64 +129,16 @@ struct ClientBattleImpl final : ClientBattle {
 		return m_battle.ai().size() == 1_bi;
 	}
 
-	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void final {
-		m_battle.handle_end_turn(ai_went_first, first_flags, last_flags);
+	auto use_move(bool const ai_is_user, MoveResult const move_result, bool const status_clears) & -> void final {
+		m_battle.use_move(ai_is_user, move_result, status_clears);
 	}
 
-	auto use_move(bool const ai_is_user, MoveResult const move_result, bool const status_clears) & -> void final {
-		// TODO: Handle the other states better
-		apply_to_teams(ai_is_user, [&](auto const & user_team, auto const & other_team) {
-			auto const move = tv::visit(move_result, tv::overload(
-				[](Used const used) { return used; },
-				[&](Recharging) { return Used(user_team.pokemon().last_used_move().name()); },
-				[](auto) { return Used(MoveName::Struggle); }
-			));
-			active_has(ai_is_user, move.selected);
-			if (move.selected == MoveName::Sleep_Talk) {
-				active_has(ai_is_user, move.executed);
-			}
-			auto const user_hidden_power_type = get_hidden_power_type(user_team.pokemon());
-			auto const type = move_type(generation_, move.executed, user_hidden_power_type);
-			auto const other_pokemon = other_team.pokemon();
-			auto const ability_blocks_recoil =
-				causes_recoil(move.executed) and
-				!move.recoil and
-				!Effectiveness(generation_, type, other_pokemon.types()).has_no_effect() and
-				!ability_blocks_move(
-					generation_,
-					other_pokemon.ability(),
-					KnownMove{
-						move.executed,
-						type
-					},
-					other_pokemon.status().name(),
-					other_pokemon.types()
-				);
-			if (ability_blocks_recoil) {
-				// TODO: This could also be Magic Guard
-				active_has(ai_is_user, Ability::Rock_Head);
-			}
-			
-			auto const damaged_is_ai = !ai_is_user xor (move.executed == MoveName::Hit_Self);
-			auto const old_hp = target_hp(damaged_is_ai);
-			auto const damage = visible_damage_to_actual_damage(
-				move.damage,
-				damaged_is_ai,
-				old_hp,
-				other_pokemon.substitute()
-			);
-			
-			m_battle.handle_use_move(
-				to_used_move(move, user_team, other_team, m_battle.environment()),
-				status_clears,
-				move_result.index() == bounded::type<FullyParalyzed>,
-				damage
-			);
-		});
+	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void final {
+		m_battle.end_turn(ai_went_first, first_flags, last_flags);
 	}
 
 	auto cures_target_status(bool const is_ai, MoveName const move_name) const -> bool final {
-		return apply_to_team(is_ai, [&](auto const & target) {
+		auto function = [&](auto const & target) {
 			auto const pokemon = target.pokemon();
 			return move_cures_target_status(
 				generation_,
@@ -199,7 +146,12 @@ struct ClientBattleImpl final : ClientBattle {
 				get_hidden_power_type(pokemon),
 				pokemon.status().name()
 			);
-		});
+		};
+		if (is_ai) {
+			return function(m_battle.ai());
+		} else {
+			return function(m_battle.foe());
+		}
 	}
 
 	auto correct_hp(bool const is_ai, VisibleHP const visible_hp, TeamIndex const team_index) & -> void final {
@@ -221,27 +173,6 @@ struct ClientBattleImpl final : ClientBattle {
 	}
 
 private:
-	auto apply_to_teams(bool const is_ai_, auto function) const -> decltype(auto) {
-		if (is_ai_) {
-			return function(m_battle.ai(), m_battle.foe());
-		} else {
-			return function(m_battle.foe(), m_battle.ai());
-		}
-	}
-	auto apply_to_team(bool const is_ai_, auto function) const -> decltype(auto) {
-		if (is_ai_) {
-			return function(m_battle.ai());
-		} else {
-			return function(m_battle.foe());
-		}
-	}
-
-	auto target_hp(bool const damaged_is_ai) const -> HP {
-		return damaged_is_ai ?
-			m_battle.ai().pokemon().hp() :
-			m_battle.foe().pokemon().hp();
-	}
-
 	Battle<generation_> m_battle;
 };
 

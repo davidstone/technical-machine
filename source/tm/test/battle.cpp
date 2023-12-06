@@ -9,8 +9,7 @@
 import tm.move.actual_damage;
 import tm.move.move;
 import tm.move.move_name;
-import tm.move.no_effect_function;
-import tm.move.side_effects;
+import tm.move.move_result;
 import tm.move.used_move;
 
 import tm.pokemon.known_pokemon;
@@ -41,89 +40,62 @@ using namespace bounded::literal;
 
 constexpr auto end_of_turn_flags = EndOfTurnFlags(false, false, false);
 
+constexpr auto visible_hp(auto const min, auto const max) -> VisibleHP {
+	return VisibleHP(CurrentVisibleHP(min), MaxVisibleHP(max));
+}
+
+constexpr auto damaging_move(MoveName const move, VisibleHP const remaining) -> Used {
+	auto result = Used(move);
+	result.damage = remaining;
+	return result;
+}
+
 TEST_CASE("Perish Song", "[Battle]") {
 	constexpr auto generation = Generation::four;
-	constexpr auto damage = ActualDamage::Known(0_bi);
 	auto battle = Battle<generation>(
 		make_known_team<generation>({
 			{
 				.species = Species::Misdreavus,
-				.gender = Gender::female,
-				.ability = Ability::Levitate,
 				.moves = {{
 					MoveName::Perish_Song,
 				}}
 			},
 			{
 				.species = Species::Regice,
-				.ability = Ability::Clear_Body,
-				.moves = {{
-					MoveName::Explosion,
-				}}
 			},
 		}),
-		SeenTeam<generation>(2_bi)
+		make_seen_team<generation>({
+			{.species = Species::Starmie},
+		})
 	);
-	battle.find_or_add_foe_pokemon(Species::Starmie, Nickname(), Level(100_bi), Gender::genderless);
-	battle.add_move(false, MoveName::Recover);
 
-	auto const recover_side_effects = possible_side_effects(
-		MoveName::Recover,
-		battle.foe().pokemon(),
-		battle.ai(),
-		battle.environment()
-	);
-	CHECK(containers::size(recover_side_effects) == 1_bi);
-
-	auto call_recover = [&] {
-		battle.handle_use_move(
-			UsedMove<SeenTeam<generation>>(
-				MoveName::Recover,
-				containers::front(recover_side_effects).function
-			),
-			false,
-			false,
-			damage
-		);
-	};
-
-	auto const perish_song_side_effects = possible_side_effects(
-		MoveName::Perish_Song,
-		battle.ai().pokemon(),
-		battle.foe(),
-		battle.environment()
-	);
-	CHECK(containers::size(perish_song_side_effects) == 1_bi);
-
-	auto call_perish_song = [&] {
-		battle.handle_use_move(
-			UsedMove<KnownTeam<generation>>(
-				MoveName::Perish_Song,
-				containers::front(perish_song_side_effects).function
-			),
-			false,
-			false,
-			damage
-		);
-	};
-
+	auto const ai_pokemon = battle.ai().pokemon();
+	auto const foe_pokemon = battle.foe().pokemon();
 	for (auto const turn : containers::integer_range(4_bi)) {
 		INFO(turn);
 
-		CHECK(battle.ai().pokemon().hp().current() == battle.ai().pokemon().hp().max());
-		CHECK(battle.foe().pokemon().hp().current() == battle.foe().pokemon().hp().max());
+		CHECK(ai_pokemon.hp().current() == ai_pokemon.hp().max());
+		CHECK(foe_pokemon.hp().current() == foe_pokemon.hp().max());
 
-		call_recover();
-		call_perish_song();
+		battle.use_move(
+			false,
+			Used(MoveName::Recover),
+			false
+		);
+		battle.use_move(
+			true,
+			Used(MoveName::Perish_Song),
+			false
+		);
 
-		CHECK(battle.ai().pokemon().hp().current() == battle.ai().pokemon().hp().max());
-		CHECK(battle.foe().pokemon().hp().current() == battle.foe().pokemon().hp().max());
+		CHECK(ai_pokemon.hp().current() == ai_pokemon.hp().max());
+		CHECK(foe_pokemon.hp().current() == foe_pokemon.hp().max());
 
-		battle.handle_end_turn(false, end_of_turn_flags, end_of_turn_flags);
+		battle.end_turn(false, end_of_turn_flags, end_of_turn_flags);
 	}
 
-	CHECK(battle.ai().pokemon().hp().current() == 0_bi);
-	CHECK(battle.foe().pokemon().hp().current() == 0_bi);
+	CHECK(ai_pokemon.hp().current() == 0_bi);
+	CHECK(foe_pokemon.hp().current() == 0_bi);
 }
 
 TEST_CASE("Accurate HP after move", "[Battle]") {
@@ -144,19 +116,15 @@ TEST_CASE("Accurate HP after move", "[Battle]") {
 		})
 	);
 
-	battle.handle_use_move(
-		UsedMove<KnownTeam<generation>>(MoveName::Tackle, no_effect_function),
-		false,
-		false,
-		ActualDamage::Known(3_bi)
+	battle.use_move(
+		true,
+		damaging_move(MoveName::Tackle, visible_hp(99_bi, 100_bi)),
+		false
 	);
 
 	battle.correct_hp(
 		false,
-		VisibleHP(
-			CurrentVisibleHP(99_bi),
-			MaxVisibleHP(100_bi)
-		)
+		visible_hp(99_bi, 100_bi)
 	);
 
 	auto const visible_hp = battle.foe().all_pokemon()().visible_hp();

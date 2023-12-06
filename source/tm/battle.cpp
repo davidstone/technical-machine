@@ -12,13 +12,16 @@ export module tm.battle;
 
 import tm.move.actual_damage;
 import tm.move.call_move;
+import tm.move.causes_recoil;
 import tm.move.is_switch;
 import tm.move.known_move;
 import tm.move.move;
 import tm.move.move_name;
+import tm.move.move_result;
 import tm.move.other_move;
 import tm.move.used_move;
 
+import tm.pokemon.any_pokemon;
 import tm.pokemon.faint;
 import tm.pokemon.find_required_pokemon_index;
 import tm.pokemon.get_hidden_power_type;
@@ -31,9 +34,11 @@ import tm.status.status_name;
 
 import tm.string_conversions.status_name;
 
+import tm.type.effectiveness;
 import tm.type.move_type;
 
 import tm.ability;
+import tm.ability_blocks_move;
 import tm.activate_ability_on_switch;
 import tm.any_team;
 import tm.end_of_turn;
@@ -44,15 +49,86 @@ import tm.generation;
 import tm.item;
 import tm.other_team;
 import tm.team;
+import tm.to_used_move;
+import tm.visible_damage_to_actual_damage;
 import tm.visible_hp;
+import tm.visible_state;
 
 import bounded;
 import containers;
 import std_module;
+import tv;
 
 namespace technicalmachine {
 using namespace bounded::literal;
 using namespace std::string_view_literals;
+
+constexpr auto get_actual_damage(
+	bool const ai_is_user,
+	MoveName const executed,
+	Damage const damage,
+	auto const user_pokemon,
+	auto const other_pokemon
+) -> ActualDamage {
+	auto const damaged_is_user = executed == MoveName::Hit_Self;
+	auto const damaged_is_ai = !ai_is_user xor damaged_is_user;
+	auto const old_hp = damaged_is_user ? user_pokemon.hp() : other_pokemon.hp();
+	return visible_damage_to_actual_damage(
+		damage,
+		damaged_is_ai,
+		old_hp,
+		other_pokemon.substitute()
+	);
+}
+
+constexpr auto ability_from_recoil(
+	Generation const generation,
+	MoveName const executed,
+	bool const recoil,
+	auto const user_pokemon,
+	auto const other_pokemon
+) -> tv::optional<Ability> {
+	auto const user_hidden_power_type = get_hidden_power_type(user_pokemon);
+	auto const type = move_type(generation, executed, user_hidden_power_type);
+	auto const ability_blocks_recoil =
+		causes_recoil(executed) and
+		!recoil and
+		!Effectiveness(generation, type, other_pokemon.types()).has_no_effect() and
+		!ability_blocks_move(
+			generation,
+			other_pokemon.ability(),
+			KnownMove{
+				executed,
+				type
+			},
+			other_pokemon.status().name(),
+			other_pokemon.types()
+		);
+	if (ability_blocks_recoil) {
+		// TODO: Could be Magic Guard
+		return Ability::Rock_Head;
+	} else {
+		return tv::none;
+	}
+}
+
+template<typename PokemonType>
+constexpr auto other_move(PokemonType const other_pokemon, MoveName const user_move, ActualDamage const damage) -> OtherMove {
+	auto const last_used_move = other_pokemon.last_used_move();
+	return last_used_move.moved_this_turn() ?
+		OtherMove([&]{
+			auto const move_name = last_used_move.name();
+			auto const type = move_type(
+				generation_from<PokemonType>,
+				move_name,
+				get_hidden_power_type(other_pokemon)
+			);
+			return KnownMove{move_name, type};
+		}()) :
+		OtherMove(FutureMove{
+			user_move == MoveName::Sucker_Punch and damage.did_any_damage()
+		});
+}
 
 export template<Generation generation>
 struct Battle {
@@ -80,25 +156,32 @@ struct Battle {
 		}
 	}
 
-	auto const & ai() const {
+	auto ai() const -> KnownTeam<generation> const & {
 		return m_ai;
 	}
-	auto const & foe() const {
+	auto foe() const -> SeenTeam<generation> const & {
 		return m_foe;
 	}
-	auto environment() const {
+	auto environment() const -> Environment {
 		return m_environment;
+	}
+	auto state() const -> VisibleState<generation> {
+		return VisibleState<generation>(
+			m_ai,
+			m_foe,
+			m_environment
+		);
 	}
 
 	// This assumes Species Clause is in effect. Throws if the Species is not in
 	// the team.
-	auto find_ai_pokemon(Species const species, std::string_view, Level, Gender) const -> TeamIndex {
+	auto ai_has(Species const species, std::string_view, Level, Gender) const -> TeamIndex {
 		// TODO: Validate nickname, level, and gender?
 		return find_required_pokemon_index(m_ai.all_pokemon(), species);
 	}
 	// This assumes Species Clause is in effect. Adds a Pokemon to the team if
 	// Species has not been seen yet.
-	auto find_or_add_foe_pokemon(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex {
+	auto foe_has(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex {
 		auto const it = containers::find_if(m_foe.all_pokemon(), [=](SeenPokemon<generation> const & pokemon) {
 			return pokemon.species() == species;
 		});
@@ -108,80 +191,95 @@ struct Battle {
 		return bounded::assume_in_range<TeamIndex>(it - containers::begin(m_foe.all_pokemon()));
 	}
 
-	void active_has(bool const is_ai, Ability const ability) {
+	auto active_has(bool const is_ai, Ability const ability) -> void {
 		apply_to_teams(is_ai, [=](auto & team, auto const &) {
 			team.pokemon().set_base_ability(ability);
 		});
 	}
-	void replacement_has(bool const is_ai, TeamIndex const index, Ability const ability) {
+	auto replacement_has(bool const is_ai, TeamIndex const index, Ability const ability) -> void {
 		apply_to_teams(is_ai, [=](auto & team, auto const &) {
 			team.pokemon(index).set_initial_ability(ability);
 		});
 	}
 
-	void active_has(bool const is_ai, Item const item) {
+	auto active_has(bool const is_ai, Item const item) -> void {
 		apply_to_teams(is_ai, [=](auto & team, auto const &) {
 			team.all_pokemon()().set_item(item);
 		});
 	}
-	void replacement_has(bool const is_ai, TeamIndex const index, Item const item) {
+	auto replacement_has(bool const is_ai, TeamIndex const index, Item const item) -> void {
 		apply_to_teams(is_ai, [=](auto & team, auto const &) {
 			team.pokemon(index).set_item(item);
 		});
 	}
 
-	void add_move(bool const is_ai, MoveName const move_name) {
+	auto active_has(bool const is_ai, MoveName const move_name) & -> void {
 		apply_to_teams(is_ai, [=](auto & team, auto const &) {
 			team.pokemon().add_move(Move(generation, move_name));
 		});
 	}
-	template<any_team UserTeam>
-	void handle_use_move(UsedMove<UserTeam> const move, bool const clear_status, bool const is_fully_paralyzed, ActualDamage const damage) {
-		constexpr auto is_ai = std::same_as<UserTeam, KnownTeam<generation_from<UserTeam>>>;
+	auto use_move(bool const ai_is_user, MoveResult const move_result, bool const status_clears) & -> void {
+		apply_to_teams(ai_is_user, [&](auto & user_team, auto & other_team) {
+			auto const user_pokemon = user_team.pokemon();
+			auto const other_pokemon = other_team.pokemon();
 
-		auto const teams = [&] {
-			struct Teams {
-				UserTeam & user;
-				OtherTeam<UserTeam> & other;
-			};
-			if constexpr (is_ai) {
-				return Teams{m_ai, m_foe};
-			} else {
-				return Teams{m_foe, m_ai};
+			// TODO: Handle the other states better
+			auto const move = tv::visit(move_result, tv::overload(
+				[](Used const used) {
+					return used;
+				},
+				[&](Recharging) {
+					return Used(user_pokemon.last_used_move().name());
+				},
+				[](auto) {
+					return Used(MoveName::Struggle);
+				}
+			));
+
+			user_pokemon.add_move(Move(generation, move.selected));
+			if (move.selected == MoveName::Sleep_Talk) {
+				user_pokemon.add_move(Move(generation, move.executed));
 			}
-		}();
-		auto const other_pokemon = teams.other.pokemon();
-		auto const last_used_move = other_pokemon.last_used_move();
-		auto const other_move = last_used_move.moved_this_turn() ?
-			OtherMove([&]{
-				auto const move_name = last_used_move.name();
-				auto const type = move_type(generation, move_name, get_hidden_power_type(other_pokemon));
-				return KnownMove{move_name, type};
-			}()) :
-			OtherMove(FutureMove{
-				move.executed == MoveName::Sucker_Punch and damage.did_any_damage()
-			});
 
-		call_move(
-			teams.user,
-			move,
-			teams.other,
-			other_move,
-			m_environment,
-			clear_status,
-			damage,
-			is_fully_paralyzed
-		);
+			auto const recoil_ability = ability_from_recoil(
+				generation,
+				move.executed,
+				move.recoil,
+				user_pokemon,
+				other_pokemon
+			);
+			if (recoil_ability) {
+				user_pokemon.set_base_ability(*recoil_ability);
+			}
+
+			auto const damage = get_actual_damage(
+				ai_is_user,
+				move.executed,
+				move.damage,
+				user_pokemon,
+				other_pokemon
+			);
+			call_move(
+				user_team,
+				to_used_move(move, user_team, other_team, m_environment),
+				other_team,
+				other_move(other_pokemon, move.executed, damage),
+				m_environment,
+				status_clears,
+				damage,
+				move_result.index() == bounded::type<FullyParalyzed>
+			);
+		});
 	}
 
-	void handle_end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & {
+	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void {
 		apply_to_teams(ai_went_first, [&](auto & first, auto & last) {
 			end_of_turn(first, first_flags, last, last_flags, m_environment);
 		});
 	}
 
 	// TODO: What happens here if a Pokemon has a pinch item?
-	void correct_hp(bool const is_ai, VisibleHP const visible_hp, auto... maybe_index) {
+	auto correct_hp(bool const is_ai, VisibleHP const visible_hp, auto... maybe_index) & -> void {
 		apply_to_teams(is_ai, [=]<any_team TeamType>(TeamType & team, auto const &) {
 			auto & pokemon = team.all_pokemon()(maybe_index...);
 			if constexpr (any_seen_team<TeamType>) {
@@ -203,7 +301,7 @@ struct Battle {
 		});
 	}
 
-	void correct_status(bool const is_ai, StatusName const visible_status, auto... maybe_index) {
+	auto correct_status(bool const is_ai, StatusName const visible_status, auto... maybe_index) & -> void {
 		apply_to_teams(is_ai, [=](auto const & team, auto &) {
 			auto const original_status = team.all_pokemon()(maybe_index...).status().name();
 			auto const normalized_original_status = (original_status == StatusName::rest) ? StatusName::sleep : original_status;
@@ -219,7 +317,7 @@ struct Battle {
 	}
 
 private:
-	decltype(auto) apply_to_teams(bool const is_ai, auto function) {
+	auto apply_to_teams(bool const is_ai, auto function) -> decltype(auto) {
 		if (is_ai) {
 			return function(m_ai, m_foe);
 		} else {
