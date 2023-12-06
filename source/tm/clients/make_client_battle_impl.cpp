@@ -13,27 +13,24 @@ module tm.clients.make_client_battle;
 import tm.clients.client_battle;
 import tm.clients.check_weathers_match;
 import tm.clients.client_battle_inputs;
+import tm.clients.determine_action;
 import tm.clients.move_result;
 import tm.clients.teams;
 import tm.clients.to_used_move;
 import tm.clients.turn_count;
 import tm.clients.visible_damage_to_actual_damage;
+import tm.clients.visible_state;
 
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
-import tm.evaluate.move_probability;
-import tm.evaluate.score_moves;
-import tm.evaluate.scored_move;
 import tm.evaluate.state;
 
 import tm.move.causes_recoil;
-import tm.move.is_switch;
 import tm.move.known_move;
 import tm.move.move;
 import tm.move.move_cures_target_status;
 import tm.move.move_name;
-import tm.move.regular_moves;
 
 import tm.pokemon.get_hidden_power_type;
 import tm.pokemon.level;
@@ -44,12 +41,6 @@ import tm.stat.hp;
 
 import tm.status.status_name;
 
-import tm.string_conversions.move_name;
-import tm.string_conversions.species;
-import tm.string_conversions.team;
-import tm.string_conversions.weather;
-
-import tm.team_predictor.team_predictor;
 import tm.team_predictor.usage_stats;
 
 import tm.type.effectiveness;
@@ -63,7 +54,6 @@ import tm.end_of_turn_flags;
 import tm.gender;
 import tm.generation;
 import tm.generation_generic;
-import tm.get_both_actions;
 import tm.item;
 import tm.team;
 import tm.visible_hp;
@@ -244,43 +234,17 @@ struct ClientBattleImpl final : ClientBattle {
 	}
 
 	auto determine_action() & -> MoveName final {
-		if (m_battle.ai().size() == 0_bi or m_battle.foe().size() == 0_bi) {
-			throw std::runtime_error("Tried to determine an action with an empty team.");
-		}
-
-		log_team("AI", m_battle.ai());
-		auto const state = predicted_state();
-		log_team("Predicted Foe", state.foe);
-		m_analysis_logger << std::flush;
-
-		m_analysis_logger << "Evaluating to a depth of " << state.depth.general << ", " << state.depth.single << "...\n";
-		auto const start = std::chrono::steady_clock::now();
-
-		auto [foe_moves, ai_selections] = get_both_actions(
-			state.foe,
-			state.ai,
-			state.environment,
-			m_evaluate
+		return technicalmachine::determine_action(
+			VisibleState<generation_>(
+				m_battle.ai(),
+				m_battle.foe(),
+				m_battle.environment()
+			),
+			m_analysis_logger,
+			m_usage_stats,
+			m_evaluate,
+			m_depth
 		);
-		containers::sort(foe_moves, [](MoveProbability const lhs, MoveProbability const rhs) {
-			return lhs.probability > rhs.probability;
-		});
-		log_foe_move_probabilities(foe_moves, state.foe);
-
-		auto scored_moves = score_moves(
-			state,
-			ai_selections,
-			foe_moves,
-			m_evaluate
-		);
-		auto const finish = std::chrono::steady_clock::now();
-		m_analysis_logger << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
-		containers::sort(scored_moves, [](ScoredMove const lhs, ScoredMove const rhs) {
-			return lhs.score > rhs.score;
-		});
-		log_move_scores(scored_moves);
-		m_analysis_logger << std::flush;
-		return containers::front(scored_moves).name;
 	}
 
 	auto correct_hp(bool const is_ai, VisibleHP const visible_hp, TeamIndex const team_index) & -> void final {
@@ -321,41 +285,6 @@ private:
 		return damaged_is_ai ?
 			m_battle.ai().pokemon().hp() :
 			m_battle.foe().pokemon().hp();
-	}
-
-	auto predicted_state() const -> State<generation_> {
-		return State<generation_>(
-			Team<generation_>(m_battle.ai()),
-			most_likely_team(m_usage_stats, m_battle.foe()),
-			m_battle.environment(),
-			m_depth
-		);
-	}
-
-	auto log_team(std::string_view const label, auto const & team) & -> void {
-		m_analysis_logger << label << "'s " << to_string(team) << '\n';
-	}
-
-	auto log_move_scores(ScoredMoves const moves) & -> void {
-		for (auto const move : moves) {
-			if (is_switch(move.name)) {
-				m_analysis_logger << "Switch to " << to_string(m_battle.ai().pokemon(to_replacement(move.name)).species());
-			} else {
-				m_analysis_logger << "Use " << to_string(move.name);
-			}
-			m_analysis_logger << " for an expected score of " << static_cast<std::int64_t>(move.score) << '\n';
-		}
-	}
-	auto log_foe_move_probabilities(MoveProbabilities const moves, Team<generation_> const & foe) & -> void {
-		for (auto const move : moves) {
-			m_analysis_logger << "Predicted " << move.probability * 100.0 << "% chance of ";
-			if (is_switch(move.name)) {
-				m_analysis_logger << "switching to " << to_string(foe.pokemon(to_replacement(move.name)).species());
-			} else {
-				m_analysis_logger << "using " << to_string(move.name);
-			}
-			m_analysis_logger << '\n';
-		}
 	}
 
 	UsageStats const & m_usage_stats;

@@ -409,6 +409,7 @@ target_sources(tm_clients PUBLIC
 		source/tm/clients/check_weathers_match.cpp
 		source/tm/clients/client_battle.cpp
 		source/tm/clients/client_battle_inputs.cpp
+		source/tm/clients/determine_action.cpp
 		source/tm/clients/get_team.cpp
 		source/tm/clients/invalid_team_file_format.cpp
 		source/tm/clients/load_team_from_file.cpp
@@ -420,6 +421,7 @@ target_sources(tm_clients PUBLIC
 		source/tm/clients/to_used_move.cpp
 		source/tm/clients/turn_count.cpp
 		source/tm/clients/visible_damage_to_actual_damage.cpp
+		source/tm/clients/visible_state.cpp
 )
 target_sources(tm_clients PRIVATE
 	source/tm/clients/get_team_impl.cpp
