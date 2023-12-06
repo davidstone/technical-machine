@@ -308,6 +308,7 @@ target_sources(tm_common PUBLIC
 		source/tm/switch_decision_required.cpp
 		source/tm/team.cpp
 		source/tm/visible_hp.cpp
+		source/tm/visible_state.cpp
 		source/tm/weather.cpp
 		source/tm/wish.cpp
 )
@@ -421,7 +422,6 @@ target_sources(tm_clients PUBLIC
 		source/tm/clients/to_used_move.cpp
 		source/tm/clients/turn_count.cpp
 		source/tm/clients/visible_damage_to_actual_damage.cpp
-		source/tm/clients/visible_state.cpp
 )
 target_sources(tm_clients PRIVATE
 	source/tm/clients/get_team_impl.cpp

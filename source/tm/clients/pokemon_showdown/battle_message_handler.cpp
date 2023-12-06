@@ -15,7 +15,6 @@ import tm.clients.ps.switch_message;
 import tm.clients.client_battle;
 import tm.clients.client_battle_inputs;
 import tm.clients.party;
-import tm.clients.visible_state;
 
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
@@ -33,6 +32,7 @@ import tm.team_predictor.usage_stats;
 
 import tm.generation_generic;
 import tm.visible_hp;
+import tm.visible_state;
 
 import tv;
 import std_module;

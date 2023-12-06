@@ -21,7 +21,6 @@ import tm.clients.make_client_battle;
 import tm.clients.move_result;
 import tm.clients.party;
 import tm.clients.teams;
-import tm.clients.visible_state;
 
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
@@ -64,6 +63,7 @@ import tm.generation_generic;
 import tm.item;
 import tm.team;
 import tm.visible_hp;
+import tm.visible_state;
 
 import bounded;
 import containers;

@@ -5,8 +5,6 @@
 
 export module tm.clients.determine_action;
 
-import tm.clients.visible_state;
-
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
@@ -29,6 +27,7 @@ import tm.generation;
 import tm.generation_generic;
 import tm.get_both_actions;
 import tm.team;
+import tm.visible_state;
 
 import bounded;
 import containers;

@@ -7,7 +7,6 @@ export module tm.clients.client_battle;
 
 import tm.clients.move_result;
 import tm.clients.turn_count;
-import tm.clients.visible_state;
 
 import tm.move.move_name;
 import tm.move.regular_moves;
@@ -25,6 +24,7 @@ import tm.generation;
 import tm.generation_generic;
 import tm.item;
 import tm.visible_hp;
+import tm.visible_state;
 import tm.weather;
 
 import std_module;

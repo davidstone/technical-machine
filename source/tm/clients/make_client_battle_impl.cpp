@@ -16,7 +16,6 @@ import tm.clients.move_result;
 import tm.clients.teams;
 import tm.clients.to_used_move;
 import tm.clients.visible_damage_to_actual_damage;
-import tm.clients.visible_state;
 
 import tm.move.causes_recoil;
 import tm.move.known_move;
@@ -48,6 +47,7 @@ import tm.item;
 import tm.team;
 import tm.visible_hp;
 import tm.weather;
+import tm.visible_state;
 
 import bounded;
 import containers;
