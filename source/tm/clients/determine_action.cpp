@@ -26,11 +26,13 @@ import tm.team_predictor.team_predictor;
 import tm.team_predictor.usage_stats;
 
 import tm.generation;
+import tm.generation_generic;
 import tm.get_both_actions;
 import tm.team;
 
 import bounded;
 import containers;
+import tv;
 import std_module;
 
 namespace technicalmachine {
@@ -83,7 +85,7 @@ auto predicted_state(
 	);
 }
 
-export template<Generation generation>
+template<Generation generation>
 auto determine_action(
 	VisibleState<generation> const & visible,
 	AnalysisLogger & logger,
@@ -131,6 +133,29 @@ auto determine_action(
 	log_move_scores(logger, scored_moves, state.ai);
 	logger << std::flush;
 	return containers::front(scored_moves).name;
+}
+
+export auto determine_action(
+	GenerationGeneric<VisibleState> const & generic_state,
+	AnalysisLogger & logger,
+	UsageStats const & usage_stats,
+	GenerationGeneric<Evaluate> const generic_evaluate,
+	Depth const depth
+) -> MoveName {
+	return tv::visit(generic_state, generic_evaluate, tv::overload(
+		[&]<Generation generation>(VisibleState<generation> const & state, Evaluate<generation> const evaluate) -> MoveName {
+			return determine_action(
+				state,
+				logger,
+				usage_stats,
+				evaluate,
+				depth
+			);
+		},
+		[](auto const &, auto) -> MoveName {
+			std::unreachable();
+		}
+	));
 }
 
 } // namespace technicalmachine

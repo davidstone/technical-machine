@@ -12,19 +12,11 @@ module tm.clients.make_client_battle;
 
 import tm.clients.client_battle;
 import tm.clients.check_weathers_match;
-import tm.clients.client_battle_inputs;
-import tm.clients.determine_action;
 import tm.clients.move_result;
 import tm.clients.teams;
 import tm.clients.to_used_move;
-import tm.clients.turn_count;
 import tm.clients.visible_damage_to_actual_damage;
 import tm.clients.visible_state;
-
-import tm.evaluate.analysis_logger;
-import tm.evaluate.depth;
-import tm.evaluate.evaluate;
-import tm.evaluate.state;
 
 import tm.move.causes_recoil;
 import tm.move.known_move;
@@ -40,8 +32,6 @@ import tm.pokemon.species;
 import tm.stat.hp;
 
 import tm.status.status_name;
-
-import tm.team_predictor.usage_stats;
 
 import tm.type.effectiveness;
 import tm.type.move_type;
@@ -83,33 +73,22 @@ constexpr auto is_done_moving(any_team auto const & team) -> bool {
 
 template<Generation generation_>
 struct ClientBattleImpl final : ClientBattle {
-	ClientBattleImpl(
-		AnalysisLogger analysis_logger,
-		UsageStats const & usage_stats,
-		Evaluate<generation_> evaluate,
-		Depth const depth,
-		Teams<generation_> teams
-	):
-		m_usage_stats(usage_stats),
-		m_analysis_logger(std::move(analysis_logger)),
-		m_evaluate(evaluate),
+	ClientBattleImpl(KnownTeam<generation_> ai, SeenTeam<generation_> foe):
 		m_battle(
-			std::move(teams).ai,
-			std::move(teams).foe
-		),
-		m_depth(depth)
+			std::move(ai),
+			std::move(foe)
+		)
 	{
 	}
 
 	auto generation() const -> Generation final {
 		return generation_;
 	}
-	auto state() const -> GenerationGeneric<State> final {
-		return State<generation_>(
-			Team<generation_>(m_battle.ai()),
-			Team<generation_>(m_battle.foe()),
-			m_battle.environment(),
-			m_depth
+	auto state() const -> GenerationGeneric<VisibleState> final {
+		return VisibleState<generation_>(
+			m_battle.ai(),
+			m_battle.foe(),
+			m_battle.environment()
 		);
 	}
 
@@ -155,15 +134,8 @@ struct ClientBattleImpl final : ClientBattle {
 		return m_battle.ai().size() == 1_bi;
 	}
 
-	auto begin_turn(TurnCount const turn_count) & -> void final {
-		if (is_end_of_turn()) {
-			throw std::runtime_error("Tried to begin a turn during the end of turn");
-		}
-		if (turn_count == 1_bi) {
-			// TODO: properly order this
-			m_battle.first_turn(true);
-		}
-		m_analysis_logger << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
+	auto first_turn(bool const ai_went_first) & -> void final {
+		m_battle.first_turn(ai_went_first);
 	}
 	auto end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & -> void final {
 		m_battle.handle_end_turn(ai_went_first, first_flags, last_flags);
@@ -233,20 +205,6 @@ struct ClientBattleImpl final : ClientBattle {
 		});
 	}
 
-	auto determine_action() & -> MoveName final {
-		return technicalmachine::determine_action(
-			VisibleState<generation_>(
-				m_battle.ai(),
-				m_battle.foe(),
-				m_battle.environment()
-			),
-			m_analysis_logger,
-			m_usage_stats,
-			m_evaluate,
-			m_depth
-		);
-	}
-
 	auto correct_hp(bool const is_ai, VisibleHP const visible_hp, TeamIndex const team_index) & -> void final {
 		m_battle.correct_hp(is_ai, visible_hp, team_index);
 	}
@@ -287,29 +245,16 @@ private:
 			m_battle.foe().pokemon().hp();
 	}
 
-	UsageStats const & m_usage_stats;
-
-	AnalysisLogger m_analysis_logger;
-
-	Evaluate<generation_> m_evaluate;
 	Battle<generation_> m_battle;
-	Depth m_depth;
 };
 
-// `usage_stats` must remain valid for the lifetime of the return value
-auto make_client_battle(
-	AnalysisLogger analysis_logger,
-	UsageStats const & usage_stats,
-	GenerationGeneric<ClientBattleInputs> generic_inputs,
-	Depth const depth
-) -> std::unique_ptr<ClientBattle> {
-	return tv::visit(std::move(generic_inputs), [&]<Generation generation>(ClientBattleInputs<generation> && inputs) -> std::unique_ptr<ClientBattle> {
+auto make_client_battle(GenerationGeneric<Teams> generic_teams) -> std::unique_ptr<ClientBattle> {
+	return tv::visit(
+		std::move(generic_teams),
+		[]<Generation generation>(Teams<generation> && teams) -> std::unique_ptr<ClientBattle> {
 		return std::make_unique<ClientBattleImpl<generation>>(
-			std::move(analysis_logger),
-			usage_stats,
-			inputs.evaluate,
-			depth,
-			std::move(inputs.teams)
+			std::move(teams).ai,
+			std::move(teams).foe
 		);
 	});
 }

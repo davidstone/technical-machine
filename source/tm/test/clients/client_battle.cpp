@@ -11,17 +11,9 @@ import tm.clients.make_client_battle;
 import tm.clients.move_result;
 import tm.clients.teams;
 
-import tm.evaluate.analysis_logger;
-import tm.evaluate.depth;
-import tm.evaluate.evaluate;
-import tm.evaluate.evaluate_settings;
-import tm.evaluate.state;
-
 import tm.move.move_name;
 
 import tm.pokemon.species;
-
-import tm.team_predictor.usage_stats;
 
 import tm.test.pokemon_init;
 import tm.test.usage_bytes;
@@ -39,40 +31,18 @@ namespace technicalmachine {
 namespace {
 using namespace bounded::literal;
 
-template<Generation generation>
-auto get_usage_stats() -> UsageStats const & {
-	[[clang::no_destroy]] static auto const result = bytes_to_usage_stats(smallest_team_bytes(generation));
-	return result;
-}
-
-constexpr auto evaluate_settings = EvaluateSettings{
-	.hp = 1024_bi,
-	.hidden = 80_bi,
-	.spikes = -150_bi,
-	.stealth_rock = -200_bi,
-	.toxic_spikes = -100_bi
-};
-
-constexpr auto depth = Depth(1_bi, 0_bi);
-
 template<Generation generation, std::size_t known_size, std::size_t seen_size>
 auto make_battle(
 	containers::c_array<PokemonInit<generation>, known_size> const & known,
 	containers::c_array<SeenPokemonInit, seen_size> const & seen
 ) {
 	auto battle = make_client_battle(
-		AnalysisLogger(AnalysisLogger::none()),
-		get_usage_stats<generation>(),
-		ClientBattleInputs<generation>{
-			Teams<generation>{
-				make_known_team<generation>(known),
-				make_seen_team<generation>(seen)
-			},
-			Evaluate<generation>(evaluate_settings)
-		},
-		depth
+		Teams<generation>{
+			make_known_team<generation>(known),
+			make_seen_team<generation>(seen)
+		}
 	);
-	battle->begin_turn(1_bi);
+	battle->first_turn(true);
 	return battle;
 }
 
@@ -131,7 +101,7 @@ TEST_CASE("Report end of turn after both Pokemon move", "[ClientBattle]") {
 		}
 	);
 
-	battle->begin_turn(1_bi);
+	battle->first_turn(true);
 
 	CHECK(!battle->is_end_of_turn());
 
@@ -174,7 +144,7 @@ TEST_CASE("Handle replacing two fainted Pokemon", "[ClientBattle]") {
 		}
 	);
 
-	battle->begin_turn(1_bi);
+	battle->first_turn(true);
 
 	CHECK(!battle->is_end_of_turn());
 

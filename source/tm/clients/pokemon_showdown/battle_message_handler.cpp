@@ -15,9 +15,11 @@ import tm.clients.ps.switch_message;
 import tm.clients.client_battle;
 import tm.clients.client_battle_inputs;
 import tm.clients.party;
+import tm.clients.visible_state;
 
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
+import tm.evaluate.evaluate;
 import tm.evaluate.state;
 
 import tm.move.is_switch;
@@ -38,6 +40,8 @@ import std_module;
 namespace technicalmachine::ps {
 
 export struct BattleMessageHandler {
+	// The lifetime of the object referred to by `usage_stats` must exceed the
+	// lifetime of this object.
 	BattleMessageHandler(
 		Party party,
 		GenerationGeneric<ClientBattleInputs> inputs,
@@ -48,7 +52,7 @@ export struct BattleMessageHandler {
 
 	auto handle_message(EventBlock const & block) -> bool;
 
-	auto state() const -> GenerationGeneric<State> {
+	auto state() const -> GenerationGeneric<VisibleState> {
 		return m_client_battle->state();
 	}
 
@@ -56,14 +60,7 @@ export struct BattleMessageHandler {
 		return to_switch(m_slot_memory.reverse_lookup(index));
 	}
 
-	auto move_response() -> BattleMessageResult {
-		auto const move = m_client_battle->determine_action();
-		return
-			move == MoveName::Pass ? BattleMessageResult(BattleContinues()) :
-			is_switch(move) ? BattleMessageResult(m_slot_memory[to_replacement(move)]) :
-			BattleMessageResult(move);
-	}
-
+	auto move_response() -> BattleMessageResult;
 private:
 	auto use_move(MoveState) -> void;
 	auto handle_switch_message(SwitchMessage) -> TeamIndex;
@@ -81,6 +78,11 @@ private:
 	SlotMemory m_slot_memory;
 	std::unique_ptr<ClientBattle> m_client_battle;
 	Party m_party;
+
+	UsageStats const & m_usage_stats;
+	AnalysisLogger m_analysis_logger;
+	GenerationGeneric<Evaluate> m_evaluate;
+	Depth m_depth;
 };
 
 } // namespace technicalmachine::ps

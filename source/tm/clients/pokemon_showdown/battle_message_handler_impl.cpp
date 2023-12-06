@@ -21,8 +21,11 @@ import tm.clients.ps.switch_message;
 
 import tm.clients.client_battle;
 import tm.clients.client_battle_inputs;
+import tm.clients.determine_action;
 import tm.clients.make_client_battle;
 import tm.clients.party;
+import tm.clients.teams;
+import tm.clients.turn_count;
 
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
@@ -58,15 +61,21 @@ BattleMessageHandler::BattleMessageHandler(
 	Depth const depth
 ):
 	m_slot_memory(tv::visit(inputs, [](auto const & i) { return i.teams.ai.size(); })),
-	m_client_battle(make_client_battle(
-		std::move(analysis_logger),
-		usage_stats,
-		std::move(inputs),
-		depth
+	m_client_battle(make_client_battle(tv::visit(
+		inputs,
+		[](auto & i) -> GenerationGeneric<Teams> { return std::move(i).teams; }
+	))),
+	m_party(party),
+	m_usage_stats(usage_stats),
+	m_analysis_logger(std::move(analysis_logger)),
+	m_evaluate(tv::visit(
+		inputs,
+		[](auto const & i) -> GenerationGeneric<Evaluate> { return i.evaluate; }
 	)),
-	m_party(party)
+	m_depth(depth)
 {
-	m_client_battle->begin_turn(1_bi);
+	// TODO: properly order this
+	m_client_battle->first_turn(true);
 }
 
 struct Nothing {
@@ -87,6 +96,10 @@ constexpr auto find_switch(auto & switches, Party const party) {
 	return containers::maybe_find_if(switches, [=](Switch const s) {
 		return s.party == party;
 	});
+}
+
+auto print_begin_turn(AnalysisLogger & logger, TurnCount const turn_count) -> void {
+	logger << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
 }
 
 // https://github.com/smogon/pokemon-showdown/blob/master/sim/SIM-PROTOCOL.md
@@ -447,7 +460,7 @@ auto BattleMessageHandler::handle_message(EventBlock const & block) -> bool {
 					}
 				));
 				action_builder = Nothing();
-				m_client_battle->begin_turn(message.count);
+				print_begin_turn(m_analysis_logger, message.count);
 			},
 			[&](EndOfTurnMessage) {
 				// Pokemon Showdown does not always send an end of turn message
@@ -476,6 +489,20 @@ auto BattleMessageHandler::handle_message(EventBlock const & block) -> bool {
 		handle_end_of_turn(end_of_turn_state.complete());
 	}
 	return false;
+}
+
+auto BattleMessageHandler::move_response() -> BattleMessageResult {
+	auto const move = determine_action(
+		state(),
+		m_analysis_logger,
+		m_usage_stats,
+		m_evaluate,
+		m_depth
+	);
+	return
+		move == MoveName::Pass ? BattleMessageResult(BattleContinues()) :
+		is_switch(move) ? BattleMessageResult(m_slot_memory[to_replacement(move)]) :
+		BattleMessageResult(move);
 }
 
 auto BattleMessageHandler::use_move(MoveState const data) -> void {

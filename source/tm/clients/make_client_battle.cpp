@@ -6,26 +6,14 @@
 export module tm.clients.make_client_battle;
 
 import tm.clients.client_battle;
-import tm.clients.client_battle_inputs;
-
-import tm.evaluate.analysis_logger;
-import tm.evaluate.depth;
-
-import tm.team_predictor.usage_stats;
+import tm.clients.teams;
 
 import tm.generation_generic;
 
-import tv;
 import std_module;
 
 namespace technicalmachine {
 
-// `usage_stats` must remain valid for the lifetime of the return value
-export auto make_client_battle(
-	AnalysisLogger analysis_logger,
-	UsageStats const & usage_stats,
-	GenerationGeneric<ClientBattleInputs> generic_inputs,
-	Depth const depth
-) -> std::unique_ptr<ClientBattle>;
+export auto make_client_battle(GenerationGeneric<Teams> teams) -> std::unique_ptr<ClientBattle>;
 
 } // namespace technicalmachine

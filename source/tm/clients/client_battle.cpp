@@ -7,8 +7,7 @@ export module tm.clients.client_battle;
 
 import tm.clients.move_result;
 import tm.clients.turn_count;
-
-import tm.evaluate.state;
+import tm.clients.visible_state;
 
 import tm.move.move_name;
 import tm.move.regular_moves;
@@ -40,7 +39,7 @@ export struct ClientBattle {
 	virtual ~ClientBattle() = default;
 
 	virtual auto generation() const -> Generation = 0;
-	virtual auto state() const -> GenerationGeneric<State> = 0;
+	virtual auto state() const -> GenerationGeneric<VisibleState> = 0;
 
 	virtual auto ai_has(Species, std::string_view nickname, Level, Gender) & -> TeamIndex = 0;
 	virtual auto foe_has(Species, std::string_view nickname, Level, Gender) & -> TeamIndex = 0;
@@ -56,14 +55,12 @@ export struct ClientBattle {
 	virtual auto foe_is_fainted() const -> bool = 0;
 	virtual auto ai_is_on_last_pokemon() const -> bool = 0;
 
-	virtual auto begin_turn(TurnCount) & -> void = 0;
+	virtual auto first_turn(bool ai_went_first) & -> void = 0;
 	virtual auto end_turn(bool ai_went_first, EndOfTurnFlags first_flags, EndOfTurnFlags last_flags) & -> void = 0;
 	virtual auto use_move(bool ai_is_user, MoveResult, bool user_status_was_cleared) & -> void = 0;
 
 	// TODO: Delete this function
 	virtual auto cures_target_status(bool is_ai, MoveName) -> bool = 0;
-
-	virtual auto determine_action() & -> MoveName = 0;
 
 	// For a correct implementation of a correct protocol, these functions have
 	// no effect.

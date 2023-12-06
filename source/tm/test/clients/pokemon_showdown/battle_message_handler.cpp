@@ -21,6 +21,7 @@ import tm.clients.make_client_battle;
 import tm.clients.move_result;
 import tm.clients.party;
 import tm.clients.teams;
+import tm.clients.visible_state;
 
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
@@ -102,20 +103,16 @@ auto make_init(
 	containers::c_array<PokemonInit<generation>, known_size> const & known,
 	containers::c_array<SeenPokemonInit, seen_size> const & seen
 ) {
+	auto teams = Teams<generation>{
+		make_known_team<generation>(known),
+		make_seen_team<generation>(seen)
+	};
 	auto inputs = ClientBattleInputs<generation>{
-		Teams<generation>{
-			make_known_team<generation>(known),
-			make_seen_team<generation>(seen)
-		},
+		teams,
 		Evaluate<generation>(evaluate_settings)
 	};
 	auto const & usage_stats = get_usage_stats<generation>();
-	auto expected = make_client_battle(
-		AnalysisLogger(AnalysisLogger::none()),
-		usage_stats,
-		inputs,
-		depth
-	);
+	auto expected = make_client_battle(std::move(teams));
 	auto handler = ps::BattleMessageHandler(
 		Party(0_bi),
 		std::move(inputs),
@@ -123,7 +120,7 @@ auto make_init(
 		usage_stats,
 		depth
 	);
-	expected->begin_turn(1_bi);
+	expected->first_turn(true);
 	return std::pair(std::move(expected), std::move(handler));
 }
 
@@ -150,8 +147,8 @@ auto check_switch_options(ps::BattleMessageHandler const & handler, containers::
 }
 
 constexpr auto compare_state = []<Generation generation>(
-	State<generation> const & actual,
-	State<generation> const & expected
+	VisibleState<generation> const & actual,
+	VisibleState<generation> const & expected
 ) -> void {
 	CHECK(actual.ai == expected.ai);
 	CHECK(actual.foe == expected.foe);
@@ -159,8 +156,8 @@ constexpr auto compare_state = []<Generation generation>(
 };
 
 auto check_state(
-	GenerationGeneric<State> const & actual,
-	GenerationGeneric<State> const & expected
+	GenerationGeneric<VisibleState> const & actual,
+	GenerationGeneric<VisibleState> const & expected
 ) -> void {
 	tv::visit(actual, expected, tv::overload(
 		compare_state,
@@ -277,7 +274,6 @@ TEST_CASE("BattleMessageHandler full turn", "[Pokemon Showdown]") {
 	);
 
 	handle_end_turn(*expected);
-	expected->begin_turn(2_bi);
 
 	check_state(handler.state(), expected->state());
 }
@@ -325,8 +321,6 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 
 	handle_end_turn(*expected);
 
-	expected->begin_turn(2_bi);
-
 	check_state(handler.state(), expected->state());
 
 	{
@@ -363,7 +357,6 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 	);
 
 	handle_end_turn(*expected);
-	expected->begin_turn(3_bi);
 
 	check_state(handler.state(), expected->state());
 }
@@ -434,7 +427,6 @@ TEST_CASE("BattleMessageHandler can Baton Pass with no other Pokemon", "[Pokemon
 	);
 
 	handle_end_turn(*expected);
-	expected->begin_turn(2_bi);
 
 	check_state(handler.state(), expected->state());
 }
@@ -510,7 +502,6 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 		Used(MoveName::Switch1),
 		false
 	);
-	expected->begin_turn(2_bi);
 
 	check_state(handler.state(), expected->state());
 }
@@ -583,7 +574,6 @@ TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon
 		Used(MoveName::Switch1),
 		false
 	);
-	expected->begin_turn(2_bi);
 
 	check_state(handler.state(), expected->state());
 }
@@ -634,8 +624,6 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 	);
 
 	handle_end_turn(*expected);
-
-	expected->begin_turn(2_bi);
 
 	check_state(handler.state(), expected->state());
 
@@ -720,8 +708,6 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 		Used(MoveName::Switch1),
 		false
 	);
-
-	expected->begin_turn(3_bi);
 
 	check_state(handler.state(), expected->state());
 }
@@ -830,8 +816,6 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 		Used(MoveName::Switch1),
 		false
 	);
-
-	expected->begin_turn(2_bi);
 
 	check_state(handler.state(), expected->state());
 }
@@ -945,7 +929,6 @@ TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
 	);
 
 	handle_end_turn(*expected);
-	expected->begin_turn(2_bi);
 
 	expected->use_move(
 		false,
@@ -959,7 +942,6 @@ TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
 	);
 
 	handle_end_turn(*expected);
-	expected->begin_turn(3_bi);
 
 	check_state(handler.state(), expected->state());
 }
@@ -1015,7 +997,6 @@ TEST_CASE("BattleMessageHandler generation 2 thaw", "[Pokemon Showdown]") {
 		{false, false, true},
 		{false, false, false}
 	);
-	expected->begin_turn(2_bi);
 
 	check_state(handler.state(), expected->state());
 }
@@ -1071,7 +1052,6 @@ TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
 		false
 	);
 	handle_end_turn(*expected);
-	expected->begin_turn(2_bi);
 
 	expected->use_move(
 		true,
@@ -1089,7 +1069,6 @@ TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
 	);
 
 	handle_end_turn(*expected);
-	expected->begin_turn(3_bi);
 
 	check_state(handler.state(), expected->state());
 }
@@ -1153,7 +1132,6 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 	);
 
 	handle_end_turn(*expected);
-	expected->begin_turn(2_bi);
 
 	expected->use_move(
 		true,
@@ -1190,7 +1168,6 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 	);
 
 	handle_end_turn(*expected);
-	expected->begin_turn(3_bi);
 
 	check_state(handler.state(), expected->state());
 }
