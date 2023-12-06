@@ -3,9 +3,10 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.clients.to_used_move;
+export module tm.to_used_move;
 
 import tm.move.move_result;
+
 import tm.move.side_effects;
 import tm.move.used_move;
 

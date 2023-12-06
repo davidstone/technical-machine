@@ -13,7 +13,6 @@ module tm.clients.make_client_battle;
 import tm.clients.client_battle;
 import tm.clients.check_weathers_match;
 import tm.clients.teams;
-import tm.clients.to_used_move;
 
 import tm.move.causes_recoil;
 import tm.move.known_move;
@@ -44,6 +43,7 @@ import tm.generation;
 import tm.generation_generic;
 import tm.item;
 import tm.team;
+import tm.to_used_move;
 import tm.visible_hp;
 import tm.weather;
 import tm.visible_damage_to_actual_damage;

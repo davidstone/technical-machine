@@ -308,6 +308,7 @@ target_sources(tm_common PUBLIC
 		source/tm/split_view.cpp
 		source/tm/switch_decision_required.cpp
 		source/tm/team.cpp
+		source/tm/to_used_move.cpp
 		source/tm/visible_damage_to_actual_damage.cpp
 		source/tm/visible_hp.cpp
 		source/tm/visible_state.cpp
@@ -420,7 +421,6 @@ target_sources(tm_clients PUBLIC
 		source/tm/clients/party.cpp
 		source/tm/clients/should_accept_challenge.cpp
 		source/tm/clients/teams.cpp
-		source/tm/clients/to_used_move.cpp
 		source/tm/clients/turn_count.cpp
 )
 target_sources(tm_clients PRIVATE
