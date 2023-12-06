@@ -12,7 +12,6 @@ module tm.clients.make_client_battle;
 
 import tm.clients.client_battle;
 import tm.clients.check_weathers_match;
-import tm.clients.move_result;
 import tm.clients.teams;
 import tm.clients.to_used_move;
 import tm.clients.visible_damage_to_actual_damage;
@@ -22,6 +21,7 @@ import tm.move.known_move;
 import tm.move.move;
 import tm.move.move_cures_target_status;
 import tm.move.move_name;
+import tm.move.move_result;
 
 import tm.pokemon.get_hidden_power_type;
 import tm.pokemon.level;

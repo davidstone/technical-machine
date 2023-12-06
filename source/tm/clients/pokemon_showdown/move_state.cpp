@@ -7,8 +7,9 @@ export module tm.clients.ps.move_state;
 
 import tm.clients.ps.optional_hp_and_status;
 
-import tm.clients.move_result;
 import tm.clients.party;
+
+import tm.move.move_result;
 
 namespace technicalmachine::ps {
 

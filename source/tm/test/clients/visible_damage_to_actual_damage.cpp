@@ -5,10 +5,10 @@
 
 export module tm.test.clients.visible_damage_to_actual_damage;
 
-import tm.clients.move_result;
 import tm.clients.visible_damage_to_actual_damage;
 
 import tm.move.actual_damage;
+import tm.move.move_result;
 
 import tm.pokemon.substitute;
 

@@ -12,11 +12,11 @@ export module tm.clients.ps.move_state_builder;
 import tm.clients.ps.move_state;
 import tm.clients.ps.optional_hp_and_status;
 
-import tm.clients.move_result;
 import tm.clients.party;
 
 import tm.move.is_switch;
 import tm.move.move_name;
+import tm.move.move_result;
 import tm.move.usable_while_sleeping;
 
 import tm.pokemon.max_pokemon_per_team;

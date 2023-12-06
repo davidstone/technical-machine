@@ -18,7 +18,6 @@ import tm.clients.ps.switch_message;
 import tm.clients.client_battle;
 import tm.clients.client_battle_inputs;
 import tm.clients.make_client_battle;
-import tm.clients.move_result;
 import tm.clients.party;
 import tm.clients.teams;
 
@@ -33,6 +32,7 @@ import tm.move.is_switch;
 import tm.move.max_moves_per_pokemon;
 import tm.move.move;
 import tm.move.move_name;
+import tm.move.move_result;
 import tm.move.no_effect_function;
 import tm.move.regular_moves;
 import tm.move.side_effect_function;

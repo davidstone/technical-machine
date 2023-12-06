@@ -5,8 +5,7 @@
 
 export module tm.clients.to_used_move;
 
-import tm.clients.move_result;
-
+import tm.move.move_result;
 import tm.move.side_effects;
 import tm.move.used_move;
 

@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.clients.move_result;
+export module tm.move.move_result;
 
 import tm.move.move_name;
 

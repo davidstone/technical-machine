@@ -8,10 +8,10 @@ export module tm.test.clients.client_battle;
 import tm.clients.client_battle;
 import tm.clients.client_battle_inputs;
 import tm.clients.make_client_battle;
-import tm.clients.move_result;
 import tm.clients.teams;
 
 import tm.move.move_name;
+import tm.move.move_result;
 
 import tm.pokemon.species;
 

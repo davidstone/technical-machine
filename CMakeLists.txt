@@ -116,6 +116,7 @@ target_sources(tm_common PUBLIC
 		source/tm/move/move_cures_target_status.cpp
 		source/tm/move/move_is_unsuccessful.cpp
 		source/tm/move/move_name.cpp
+		source/tm/move/move_result.cpp
 		source/tm/move/no_effect_function.cpp
 		source/tm/move/other_move.cpp
 		source/tm/move/power.cpp
@@ -415,7 +416,6 @@ target_sources(tm_clients PUBLIC
 		source/tm/clients/invalid_team_file_format.cpp
 		source/tm/clients/load_team_from_file.cpp
 		source/tm/clients/make_client_battle.cpp
-		source/tm/clients/move_result.cpp
 		source/tm/clients/party.cpp
 		source/tm/clients/should_accept_challenge.cpp
 		source/tm/clients/teams.cpp
