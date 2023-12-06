@@ -90,9 +90,43 @@ struct Battle {
 		return m_environment;
 	}
 
-	void handle_end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & {
-		apply_to_teams(ai_went_first, [&](auto & first, auto & last) {
-			end_of_turn(first, first_flags, last, last_flags, m_environment);
+	// This assumes Species Clause is in effect. Throws if the Species is not in
+	// the team.
+	auto find_ai_pokemon(Species const species, std::string_view, Level, Gender) const -> TeamIndex {
+		// TODO: Validate nickname, level, and gender?
+		return find_required_pokemon_index(m_ai.all_pokemon(), species);
+	}
+	// This assumes Species Clause is in effect. Adds a Pokemon to the team if
+	// Species has not been seen yet.
+	auto find_or_add_foe_pokemon(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex {
+		auto const it = containers::find_if(m_foe.all_pokemon(), [=](SeenPokemon<generation> const & pokemon) {
+			return pokemon.species() == species;
+		});
+		if (it == containers::end(m_foe.all_pokemon())) {
+			m_foe.all_pokemon().add({species, std::move(nickname), level, gender});
+		}
+		return bounded::assume_in_range<TeamIndex>(it - containers::begin(m_foe.all_pokemon()));
+	}
+
+	void active_has(bool const is_ai, Ability const ability) {
+		apply_to_teams(is_ai, [=](auto & team, auto const &) {
+			team.pokemon().set_base_ability(ability);
+		});
+	}
+	void replacement_has(bool const is_ai, TeamIndex const index, Ability const ability) {
+		apply_to_teams(is_ai, [=](auto & team, auto const &) {
+			team.pokemon(index).set_initial_ability(ability);
+		});
+	}
+
+	void active_has(bool const is_ai, Item const item) {
+		apply_to_teams(is_ai, [=](auto & team, auto const &) {
+			team.all_pokemon()().set_item(item);
+		});
+	}
+	void replacement_has(bool const is_ai, TeamIndex const index, Item const item) {
+		apply_to_teams(is_ai, [=](auto & team, auto const &) {
+			team.pokemon(index).set_item(item);
 		});
 	}
 
@@ -139,48 +173,10 @@ struct Battle {
 			is_fully_paralyzed
 		);
 	}
-	// This assumes Species Clause is in effect. Throws if the Species is not in
-	// the team.
-	auto find_ai_pokemon(Species const species, std::string_view, Level, Gender) const -> TeamIndex {
-		// TODO: Validate nickname, level, and gender?
-		return find_required_pokemon_index(m_ai.all_pokemon(), species);
-	}
-	// This assumes Species Clause is in effect. Adds a Pokemon to the team if
-	// Species has not been seen yet.
-	auto find_or_add_foe_pokemon(Species const species, std::string_view nickname, Level const level, Gender const gender) & -> TeamIndex {
-		auto const it = containers::find_if(m_foe.all_pokemon(), [=](SeenPokemon<generation> const & pokemon) {
-			return pokemon.species() == species;
-		});
-		if (it == containers::end(m_foe.all_pokemon())) {
-			m_foe.all_pokemon().add({species, std::move(nickname), level, gender});
-		}
-		return bounded::assume_in_range<TeamIndex>(it - containers::begin(m_foe.all_pokemon()));
-	}
-	void handle_fainted(bool const is_ai) {
-		apply_to_teams(is_ai, [](auto & team, auto const &) {
-			faint(team.pokemon());
-		});
-	}
 
-	void active_has(bool const is_ai, Ability const ability) {
-		apply_to_teams(is_ai, [=](auto & team, auto const &) {
-			team.pokemon().set_base_ability(ability);
-		});
-	}
-	void replacement_has(bool const is_ai, TeamIndex const index, Ability const ability) {
-		apply_to_teams(is_ai, [=](auto & team, auto const &) {
-			team.pokemon(index).set_initial_ability(ability);
-		});
-	}
-
-	void active_has(bool const is_ai, Item const item) {
-		apply_to_teams(is_ai, [=](auto & team, auto const &) {
-			team.all_pokemon()().set_item(item);
-		});
-	}
-	void replacement_has(bool const is_ai, TeamIndex const index, Item const item) {
-		apply_to_teams(is_ai, [=](auto & team, auto const &) {
-			team.pokemon(index).set_item(item);
+	void handle_end_turn(bool const ai_went_first, EndOfTurnFlags const first_flags, EndOfTurnFlags const last_flags) & {
+		apply_to_teams(ai_went_first, [&](auto & first, auto & last) {
+			end_of_turn(first, first_flags, last, last_flags, m_environment);
 		});
 	}
 
