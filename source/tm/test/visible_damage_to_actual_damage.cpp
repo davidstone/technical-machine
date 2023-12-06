@@ -3,9 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-export module tm.test.clients.visible_damage_to_actual_damage;
-
-import tm.clients.visible_damage_to_actual_damage;
+export module tm.test.visible_damage_to_actual_damage;
 
 import tm.move.actual_damage;
 import tm.move.move_result;
@@ -14,6 +12,7 @@ import tm.pokemon.substitute;
 
 import tm.stat.hp;
 
+import tm.visible_damage_to_actual_damage;
 import tm.visible_hp;
 
 import bounded;

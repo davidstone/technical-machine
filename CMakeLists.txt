@@ -308,6 +308,7 @@ target_sources(tm_common PUBLIC
 		source/tm/split_view.cpp
 		source/tm/switch_decision_required.cpp
 		source/tm/team.cpp
+		source/tm/visible_damage_to_actual_damage.cpp
 		source/tm/visible_hp.cpp
 		source/tm/visible_state.cpp
 		source/tm/weather.cpp
@@ -421,7 +422,6 @@ target_sources(tm_clients PUBLIC
 		source/tm/clients/teams.cpp
 		source/tm/clients/to_used_move.cpp
 		source/tm/clients/turn_count.cpp
-		source/tm/clients/visible_damage_to_actual_damage.cpp
 )
 target_sources(tm_clients PRIVATE
 	source/tm/clients/get_team_impl.cpp
@@ -596,7 +596,6 @@ target_sources(tm_test PRIVATE
 		source/tm/test/clients/pokemon_showdown/parse_switch.cpp
 		
 		source/tm/test/clients/client_battle.cpp
-		source/tm/test/clients/visible_damage_to_actual_damage.cpp
 
 		source/tm/test/collections/variable_collection.cpp
 
@@ -622,6 +621,7 @@ target_sources(tm_test PRIVATE
 		source/tm/test/pokemon_init.cpp
 		source/tm/test/string_conversion.cpp
 		source/tm/test/usage_bytes.cpp
+		source/tm/test/visible_damage_to_actual_damage.cpp
 )
 target_sources(tm_test PRIVATE
 	source/tm/test/clients/netbattle/read_team_file.cpp
