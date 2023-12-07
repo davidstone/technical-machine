@@ -25,6 +25,7 @@ import tm.clients.ps.send_message_function;
 import tm.clients.ps.to_packed_format;
 
 import tm.clients.battle_continues;
+import tm.clients.battle_finished;
 import tm.clients.get_team;
 import tm.clients.should_accept_challenge;
 
