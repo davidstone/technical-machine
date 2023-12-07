@@ -5,6 +5,8 @@
 
 export module tm.clients.ps.battle_message_result;
 
+import tm.clients.battle_continues;
+
 import tm.move.move_name;
 
 import tm.pokemon.max_pokemon_per_team;
@@ -14,7 +16,6 @@ import tv;
 
 namespace technicalmachine::ps {
 
-export struct BattleContinues {};
 export using BattleResponseSwitch = bounded::integer<1, bounded::normalize<max_pokemon_per_team>>;
 export struct BattleResponseError {};
 export struct BattleStarted {};

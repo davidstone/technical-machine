@@ -18,6 +18,7 @@ import tm.clients.ps.event_block;
 import tm.clients.ps.make_battle_message_handler;
 import tm.clients.ps.room;
 
+import tm.clients.battle_continues;
 import tm.clients.party;
 
 import tm.evaluate.all_evaluate;

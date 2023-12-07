@@ -410,6 +410,7 @@ target_sources(tm_clients PUBLIC
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
+		source/tm/clients/battle_continues.cpp
 		source/tm/clients/check_weathers_match.cpp
 		source/tm/clients/client_battle.cpp
 		source/tm/clients/client_battle_inputs.cpp
