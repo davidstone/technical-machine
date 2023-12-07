@@ -98,8 +98,9 @@ export struct BattleManager {
 				}
 			},
 			[&](BattleMessageHandler const &) {
-				// We get this message to early to do anything with it. We could
-				// save it for later, but instead just wait for the resolution of
+				// We get this message too early to do anything with it. We
+				// could save it for later, but instead just wait for the
+				// resolution of
 				// https://github.com/smogon/pokemon-showdown/issues/8546
 			}
 		));
