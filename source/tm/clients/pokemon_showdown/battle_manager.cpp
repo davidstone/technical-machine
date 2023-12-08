@@ -14,32 +14,41 @@ export module tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_message_result;
+import tm.clients.determine_action;
 import tm.clients.ps.event_block;
 import tm.clients.ps.make_battle_message_handler;
-import tm.clients.ps.room;
 
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;
 import tm.clients.party;
+import tm.clients.turn_count;
 
 import tm.evaluate.all_evaluate;
 import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
+import tm.evaluate.evaluate;
+
+import tm.move.is_switch;
+import tm.move.move_name;
 
 import tm.string_conversions.team;
 
 import tm.team_predictor.all_usage_stats;
 import tm.team_predictor.usage_stats;
 
+import tm.constant_generation;
 import tm.generation;
 import tm.generation_generic;
 import tm.team;
+import tm.visible_state;
 
+import bounded;
 import containers;
 import tv;
 import std_module;
 
 namespace technicalmachine::ps {
+using namespace bounded::literal;
 using namespace std::string_view_literals;
 
 struct BattleExists {
@@ -66,21 +75,34 @@ constexpr auto team_to_string = [](auto const & team) {
 	return to_string(team);
 };
 
+auto print_begin_turn(AnalysisLogger & logger, TurnCount const turn_count) -> void {
+	logger << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
+}
+
 export struct BattleManager {
-	constexpr explicit BattleManager(Generation const generation):
-		m_battle(BattleExists(generation))
+	// The lifetime of the object referred to by `usage_stats` must exceed the
+	// lifetime of this object.
+	explicit BattleManager(
+		Generation const generation,
+		UsageStats const & usage_stats,
+		AnalysisLogger analysis_logger,
+		AllEvaluate const evaluate,
+		Depth const depth
+	):
+		m_battle(BattleExists(generation)),
+		m_usage_stats(usage_stats),
+		m_analysis_logger(std::move(analysis_logger)),
+		m_evaluate(constant_generation(
+			generation,
+			[&]<Generation gen>(constant_gen_t<gen>) -> GenerationGeneric<Evaluate> {
+				return evaluate.get<gen>();
+			}
+		)),
+		m_depth(depth)
 	{
 	}
 
-	auto handle_message(
-		TeamMessage const message,
-		std::string_view,
-		Room,
-		std::filesystem::path const &,
-		AllEvaluate,
-		AllUsageStats const &,
-		Depth
-	) -> BattleContinues {
+	auto handle_message(TeamMessage const message, std::string_view) -> BattleContinues {
 		tv::visit(m_battle, tv::overload(
 			[&](BattleExists const exists) {
 				m_battle.emplace([&] -> BattleTeam {
@@ -109,75 +131,55 @@ export struct BattleManager {
 		return BattleContinues();
 	}
 
-	auto handle_message(
-		BattleInitMessage const message,
-		std::string_view const user,
-		Room const room,
-		std::filesystem::path const & log_directory,
-		AllEvaluate const evaluate,
-		AllUsageStats const & usage_stats,
-		Depth const depth
-	) -> BattleMessageResult {
-		// TODO: This should return BattleStarted
-		return tv::visit(m_battle, tv::overload(
-			[](BattleExists) -> BattleMessageResult {
+	auto handle_message(BattleInitMessage const message, std::string_view const user) -> BattleMessageResult {
+		tv::visit(m_battle, tv::overload(
+			[](BattleExists) -> void {
 				throw std::runtime_error("Received a BattleInitMessage before getting a team");
 			},
-			[&](BattleTeam & team) -> BattleMessageResult {
-				auto & handler = m_battle.emplace([&] -> BattleMessageHandler {
+			[&](BattleTeam & team) -> void {
+				m_battle.emplace([&] -> BattleMessageHandler {
 					return make_battle_message_handler(
 						std::move(team),
 						user,
-						evaluate,
-						usage_stats[get_generation<KnownTeam>(team)],
-						depth,
-						AnalysisLogger(log_directory / room),
 						message
 					);
 				});
-				return handler.move_response();
 			},
-			[](BattleMessageHandler const &) -> BattleMessageResult {
+			[](BattleMessageHandler const &) -> void {
 				throw std::runtime_error("Tried to initialize an existing battle");
 			}
 		));
+		// TODO: This should return BattleStarted
+		return move_response();
 	}
 
-	auto handle_message(
-		EventBlock const & message,
-		std::string_view,
-		Room,
-		std::filesystem::path const &,
-		AllEvaluate,
-		AllUsageStats const &,
-		Depth
-	) -> BattleMessageResult {
-		return tv::visit(m_battle, tv::overload(
-			[](BattleExists) -> BattleMessageResult {
+	auto handle_message(EventBlock const & message, std::string_view) -> BattleMessageResult {
+		auto const result = tv::visit(m_battle, tv::overload(
+			[](BattleExists) -> BattleMessageHandler::Result {
 				throw std::runtime_error("Received an event before getting a team");
 			},
-			[](BattleTeam const &) -> BattleMessageResult {
+			[](BattleTeam const &) -> BattleMessageHandler::Result {
 				throw std::runtime_error("Received an event before a BattleInitMessage");
 			},
-			[&](BattleMessageHandler & handler) -> BattleMessageResult {
-				auto const finished = handler.handle_message(message);
-				if (finished) {
-					return BattleFinished();
-				}
-				return handler.move_response();
+			[&](BattleMessageHandler & handler) -> BattleMessageHandler::Result {
+				return handler.handle_message(message);
+			}
+		));
+		return tv::visit(result, tv::overload(
+			[&](BattleContinues) -> BattleMessageResult {
+				return move_response();
+			},
+			[&](TurnCount const count) -> BattleMessageResult {
+				print_begin_turn(m_analysis_logger, count);
+				return move_response();
+			},
+			[](BattleFinished) -> BattleMessageResult {
+				return BattleFinished();
 			}
 		));
 	}
 
-	auto handle_message(
-		ErrorMessage const error,
-		std::string_view,
-		Room,
-		std::filesystem::path const &,
-		AllEvaluate,
-		AllUsageStats const &,
-		Depth
-	) const -> BattleMessageResult {
+	auto handle_message(ErrorMessage const error, std::string_view) const -> BattleMessageResult {
 		// TODO: Log? Throw an exception sometimes?
 		std::cerr << "|error|" << error.message() << '\n';
 		if (error.message() == "[Invalid choice] There's nothing to choose") {
@@ -188,7 +190,33 @@ export struct BattleManager {
 	}
 
 private:
+	auto move_response() -> BattleMessageResult {
+		auto const & handler = m_battle[bounded::type<BattleMessageHandler>];
+		auto const generic_state = handler.state();
+		auto const move = tv::visit(generic_state, m_evaluate, tv::overload(
+			[&]<Generation generation>(VisibleState<generation> const & state, Evaluate<generation> const evaluate) -> MoveName {
+				return determine_action(
+					state,
+					m_analysis_logger,
+					m_usage_stats,
+					evaluate,
+					m_depth
+				);
+			},
+			[](auto const &, auto const &) -> MoveName { std::unreachable(); }
+		));
+		auto const slot_memory = handler.slot_memory();
+		return
+			move == MoveName::Pass ? BattleMessageResult(BattleContinues()) :
+			is_switch(move) ? BattleMessageResult(slot_memory[to_replacement(move)]) :
+			BattleMessageResult(move);
+	}
+
 	BattleState m_battle;
+	UsageStats const & m_usage_stats;
+	AnalysisLogger m_analysis_logger;
+	GenerationGeneric<Evaluate> m_evaluate;
+	Depth m_depth;
 };
 
 } // namespace technicalmachine::ps

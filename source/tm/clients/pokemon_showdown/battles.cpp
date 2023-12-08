@@ -59,22 +59,14 @@ export struct Battles {
 				if (it != containers::end(m_container)) {
 					throw std::runtime_error("Tried to create an existing battle");
 				}
-				create_battle(room);
+				create_battle(room, all_usage_stats, evaluate, depth);
 				return BattleContinues();
 			},
 			[&](auto const & message) -> BattleMessageResult {
 				if (it == containers::end(m_container)) {
 					return BattleAlreadyFinished();
 				}
-				return it->mapped.handle_message(
-					message,
-					user,
-					room,
-					m_log_directory,
-					evaluate,
-					all_usage_stats,
-					depth
-				);
+				return it->mapped.handle_message(message, user);
 			}
 		));
 		tv::visit(result, tv::overload(
@@ -88,11 +80,23 @@ export struct Battles {
 	}
 
 private:
-	auto create_battle(Room const room) -> void {
+	auto create_battle(
+		Room const room,
+		AllUsageStats const & all_usage_stats,
+		AllEvaluate const evaluate,
+		Depth const depth
+	) -> void {
 		m_container.lazy_insert(
 			containers::string(room),
 			[&] {
-				return BattleManager(parse_generation_from_format(room, "battle-gen"sv));
+				auto const generation = parse_generation_from_format(room, "battle-gen"sv);
+				return BattleManager(
+					generation,
+					all_usage_stats[generation],
+					AnalysisLogger(m_log_directory / room),
+					evaluate,
+					depth
+				);
 			}
 		);
 	}

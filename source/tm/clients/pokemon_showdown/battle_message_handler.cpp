@@ -5,30 +5,26 @@
 
 export module tm.clients.ps.battle_message_handler;
 
-import tm.clients.ps.battle_message_result;
 import tm.clients.ps.end_of_turn_state;
 import tm.clients.ps.event_block;
 import tm.clients.ps.move_state;
 import tm.clients.ps.slot_memory;
 import tm.clients.ps.switch_message;
 
+import tm.clients.battle_continues;
+import tm.clients.battle_finished;
 import tm.clients.client_battle;
-import tm.clients.client_battle_inputs;
 import tm.clients.party;
+import tm.clients.teams;
+import tm.clients.turn_count;
 
 import tm.evaluate.analysis_logger;
-import tm.evaluate.depth;
-import tm.evaluate.evaluate;
-import tm.evaluate.state;
 
-import tm.move.is_switch;
 import tm.move.move_name;
 
 import tm.pokemon.max_pokemon_per_team;
 
 import tm.status.status_name;
-
-import tm.team_predictor.usage_stats;
 
 import tm.generation_generic;
 import tm.visible_hp;
@@ -40,27 +36,23 @@ import std_module;
 namespace technicalmachine::ps {
 
 export struct BattleMessageHandler {
-	// The lifetime of the object referred to by `usage_stats` must exceed the
-	// lifetime of this object.
-	BattleMessageHandler(
-		Party party,
-		GenerationGeneric<ClientBattleInputs> inputs,
-		AnalysisLogger analysis_logger,
-		UsageStats const & usage_stats,
-		Depth const depth
-	);
+	BattleMessageHandler(Party party, GenerationGeneric<Teams> teams);
 
-	auto handle_message(EventBlock const & block) -> bool;
+	using Result = tv::variant<
+		BattleContinues,
+		TurnCount,
+		BattleFinished
+	>;
+
+	auto handle_message(EventBlock const & block) -> Result;
 
 	auto state() const -> GenerationGeneric<VisibleState> {
 		return m_client_battle->state();
 	}
 
-	auto switch_index_to_switch(BattleResponseSwitch const index) const -> MoveName {
-		return to_switch(m_slot_memory.reverse_lookup(index));
+	auto slot_memory() const -> SlotMemory {
+		return m_slot_memory;
 	}
-
-	auto move_response() -> BattleMessageResult;
 private:
 	auto use_move(MoveState) -> void;
 	auto handle_switch_message(SwitchMessage) -> TeamIndex;
@@ -78,11 +70,6 @@ private:
 	SlotMemory m_slot_memory;
 	std::unique_ptr<ClientBattle> m_client_battle;
 	Party m_party;
-
-	UsageStats const & m_usage_stats;
-	AnalysisLogger m_analysis_logger;
-	GenerationGeneric<Evaluate> m_evaluate;
-	Depth m_depth;
 };
 
 } // namespace technicalmachine::ps

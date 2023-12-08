@@ -10,7 +10,6 @@ module;
 
 module tm.clients.ps.battle_message_handler;
 
-import tm.clients.ps.battle_message_result;
 import tm.clients.ps.end_of_turn_state;
 import tm.clients.ps.end_of_turn_state_builder;
 import tm.clients.ps.event_block;
@@ -21,15 +20,10 @@ import tm.clients.ps.switch_message;
 
 import tm.clients.client_battle;
 import tm.clients.client_battle_inputs;
-import tm.clients.determine_action;
 import tm.clients.make_client_battle;
 import tm.clients.party;
 import tm.clients.teams;
 import tm.clients.turn_count;
-
-import tm.evaluate.analysis_logger;
-import tm.evaluate.depth;
-import tm.evaluate.state;
 
 import tm.move.is_switch;
 import tm.move.move_name;
@@ -37,8 +31,6 @@ import tm.move.move_name;
 import tm.pokemon.max_pokemon_per_team;
 
 import tm.status.status_name;
-
-import tm.team_predictor.usage_stats;
 
 import tm.ability;
 import tm.generation_generic;
@@ -53,26 +45,10 @@ import std_module;
 namespace technicalmachine::ps {
 using namespace bounded::literal;
 
-BattleMessageHandler::BattleMessageHandler(
-	Party party,
-	GenerationGeneric<ClientBattleInputs> inputs,
-	AnalysisLogger analysis_logger,
-	UsageStats const & usage_stats,
-	Depth const depth
-):
-	m_slot_memory(tv::visit(inputs, [](auto const & i) { return i.teams.ai.size(); })),
-	m_client_battle(make_client_battle(tv::visit(
-		inputs,
-		[](auto & i) -> GenerationGeneric<Teams> { return std::move(i).teams; }
-	))),
-	m_party(party),
-	m_usage_stats(usage_stats),
-	m_analysis_logger(std::move(analysis_logger)),
-	m_evaluate(tv::visit(
-		inputs,
-		[](auto const & i) -> GenerationGeneric<Evaluate> { return i.evaluate; }
-	)),
-	m_depth(depth)
+BattleMessageHandler::BattleMessageHandler(Party party, GenerationGeneric<Teams> teams):
+	m_slot_memory(tv::visit(teams, [](auto const & t) { return t.ai.size(); })),
+	m_client_battle(make_client_battle(std::move(teams))),
+	m_party(party)
 {
 }
 
@@ -96,12 +72,8 @@ constexpr auto find_switch(auto & switches, Party const party) {
 	});
 }
 
-auto print_begin_turn(AnalysisLogger & logger, TurnCount const turn_count) -> void {
-	logger << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
-}
-
 // https://github.com/smogon/pokemon-showdown/blob/master/sim/SIM-PROTOCOL.md
-auto BattleMessageHandler::handle_message(EventBlock const & block) -> bool {
+auto BattleMessageHandler::handle_message(EventBlock const & block) -> Result {
 	using ActionBuilder = tv::variant<
 		Nothing,
 		MoveStateBuilder,
@@ -171,7 +143,7 @@ auto BattleMessageHandler::handle_message(EventBlock const & block) -> bool {
 		return action_builder.emplace(bounded::construct<MoveStateBuilder>);
 	};
 
-	bool finished = false;
+	auto result = Result(BattleContinues());
 
 	for (auto const element : block) {
 		tv::visit(element, tv::overload(
@@ -458,7 +430,7 @@ auto BattleMessageHandler::handle_message(EventBlock const & block) -> bool {
 					}
 				));
 				action_builder = Nothing();
-				print_begin_turn(m_analysis_logger, message.count);
+				result = message.count;
 			},
 			[&](EndOfTurnMessage) {
 				// Pokemon Showdown does not always send an end of turn message
@@ -475,32 +447,17 @@ auto BattleMessageHandler::handle_message(EventBlock const & block) -> bool {
 				end_of_turn_state.active_weather(message.weather);
 			},
 			[&](BattleFinishedMessage) {
-				finished = true;
+				result = BattleFinished();
 			}
 		));
 	}
-	if (finished) {
-		return true;
+	if (result != BattleFinished()) {
+		use_previous_action();
+		if (m_client_battle->is_end_of_turn()) {
+			handle_end_of_turn(end_of_turn_state.complete());
+		}
 	}
-	use_previous_action();
-	if (m_client_battle->is_end_of_turn()) {
-		handle_end_of_turn(end_of_turn_state.complete());
-	}
-	return false;
-}
-
-auto BattleMessageHandler::move_response() -> BattleMessageResult {
-	auto const move = determine_action(
-		state(),
-		m_analysis_logger,
-		m_usage_stats,
-		m_evaluate,
-		m_depth
-	);
-	return
-		move == MoveName::Pass ? BattleMessageResult(BattleContinues()) :
-		is_switch(move) ? BattleMessageResult(m_slot_memory[to_replacement(move)]) :
-		BattleMessageResult(move);
+	return result;
 }
 
 auto BattleMessageHandler::use_move(MoveState const data) -> void {

@@ -23,14 +23,7 @@ import tm.clients.party;
 import tm.clients.teams;
 import tm.clients.turn_count;
 
-import tm.evaluate.all_evaluate;
-import tm.evaluate.analysis_logger;
-import tm.evaluate.depth;
-import tm.evaluate.evaluate;
-
 import tm.pokemon.max_pokemon_per_team;
-
-import tm.team_predictor.usage_stats;
 
 import tm.generation;
 import tm.generation_generic;
@@ -185,10 +178,6 @@ constexpr auto make_foe(Parsed parsed) -> SeenTeam<generation> {
 auto make_battle_message_handler(
 	GenerationGeneric<KnownTeam> generic_team,
 	tv::variant<std::string_view, Party> user,
-	AllEvaluate const all_evaluate,
-	UsageStats const & usage_stats,
-	Depth const depth,
-	AnalysisLogger analysis_logger,
 	BattleInitMessage const & message
 ) -> BattleMessageHandler {
 	auto parsed = read_all_messages(
@@ -196,22 +185,18 @@ auto make_battle_message_handler(
 		user,
 		message.messages()
 	);
-
-	auto make = [&]<Generation generation>(KnownTeam<generation> team) -> GenerationGeneric<ClientBattleInputs> {
-		return ClientBattleInputs<generation>(
-			Teams<generation>{
-				std::move(team),
-				make_foe<generation>(std::move(parsed))
-			},
-			all_evaluate.get<generation>()
-		);
-	};
+	auto const party = parsed.party;
 	return BattleMessageHandler(
-		parsed.party,
-		tv::visit(generic_team, make),
-		std::move(analysis_logger),
-		usage_stats,
-		depth
+		party,
+		tv::visit(
+			std::move(generic_team),
+			[&]<Generation generation>(KnownTeam<generation> team) -> GenerationGeneric<Teams> {
+				return Teams<generation>{
+					std::move(team),
+					make_foe<generation>(std::move(parsed))
+				};
+			}
+		)
 	);
 }
 
