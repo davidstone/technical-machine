@@ -412,6 +412,7 @@ target_sources(tm_clients PUBLIC
 	FILES
 		source/tm/clients/battle_continues.cpp
 		source/tm/clients/battle_finished.cpp
+		source/tm/clients/battle_started.cpp
 		source/tm/clients/check_weathers_match.cpp
 		source/tm/clients/client_battle.cpp
 		source/tm/clients/client_battle_inputs.cpp
