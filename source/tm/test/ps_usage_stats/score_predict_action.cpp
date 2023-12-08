@@ -8,7 +8,7 @@
 #include <string_view>
 
 import tm.clients.ps.battle_manager;
-import tm.clients.ps.battle_message_result;
+import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.in_message;
 
 import tm.clients.party;

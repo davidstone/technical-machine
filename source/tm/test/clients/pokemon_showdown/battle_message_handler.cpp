@@ -10,8 +10,8 @@ module;
 
 export module tm.test.clients.ps.battle_message_handler;
 
-import tm.clients.ps.battle_message_result;
 import tm.clients.ps.battle_message_handler;
+import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.event_block;
 import tm.clients.ps.switch_message;
 

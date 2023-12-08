@@ -11,7 +11,7 @@ module;
 
 export module tm.clients.ps.client_impl;
 
-import tm.clients.ps.battle_message_result;
+import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.battles;
 import tm.clients.ps.log_battle_messages;
 import tm.clients.ps.is_chat_message_block;

@@ -14,6 +14,7 @@ export module tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_message_result;
+import tm.clients.ps.battle_response_switch;
 import tm.clients.determine_action;
 import tm.clients.ps.event_block;
 import tm.clients.ps.make_battle_message_handler;
