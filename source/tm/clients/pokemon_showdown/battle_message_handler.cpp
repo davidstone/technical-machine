@@ -11,7 +11,7 @@ import tm.clients.ps.move_state;
 import tm.clients.ps.slot_memory;
 import tm.clients.ps.switch_message;
 
-import tm.clients.battle_continues;
+import tm.clients.action_required;
 import tm.clients.battle_finished;
 import tm.clients.client_battle;
 import tm.clients.party;
@@ -39,7 +39,7 @@ export struct BattleMessageHandler {
 	BattleMessageHandler(Party party, GenerationGeneric<Teams> teams);
 
 	using Result = tv::variant<
-		BattleContinues,
+		ActionRequired,
 		TurnCount,
 		BattleFinished
 	>;

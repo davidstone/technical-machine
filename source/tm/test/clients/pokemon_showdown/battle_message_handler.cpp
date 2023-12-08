@@ -15,7 +15,7 @@ import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.event_block;
 import tm.clients.ps.switch_message;
 
-import tm.clients.battle_continues;
+import tm.clients.action_required;
 import tm.clients.battle_finished;
 import tm.clients.client_battle;
 import tm.clients.client_battle_inputs;
@@ -173,7 +173,7 @@ TEST_CASE("BattleMessageHandler partial turn", "[Pokemon Showdown]") {
 			visible_hp(90_bi, 100_bi)
 		),
 	}));
-	CHECK(result == BattleContinues());
+	CHECK(result == ActionRequired());
 
 	expected->use_move(
 		true,
@@ -344,7 +344,7 @@ TEST_CASE("BattleMessageHandler can Baton Pass", "[Pokemon Showdown]") {
 		ps::SeparatorMessage(),
 		ps::MoveMessage(Party(0_bi), MoveName::Baton_Pass, did_not_miss),
 	}));
-	CHECK(result == BattleContinues());
+	CHECK(result == ActionRequired());
 
 	expected->use_move(
 		true,
@@ -425,7 +425,7 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 				visible_hp(0_bi, 100_bi)
 			)
 		}));
-		CHECK(result == BattleContinues());
+		CHECK(result == ActionRequired());
 	}
 
 	expected->use_move(
@@ -497,7 +497,7 @@ TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon
 			ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(0_bi, 100_bi)),
 			ps::EndOfTurnMessage(),
 		}));
-		CHECK(result == BattleContinues());
+		CHECK(result == ActionRequired());
 	}
 
 	expected->use_move(
@@ -605,7 +605,7 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			ps::SeparatorMessage(),
 			ps::EndOfTurnMessage(),
 		}));
-		CHECK(result == BattleContinues());
+		CHECK(result == ActionRequired());
 	}
 
 	expected->use_move(
@@ -638,7 +638,7 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			),
 			ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(0_bi, 1_bi)),
 		}));
-		CHECK(result == BattleContinues());
+		CHECK(result == ActionRequired());
 	}
 
 	expected->use_move(
@@ -731,7 +731,7 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 				visible_hp(0_bi, 273_bi)
 			),
 		}));
-		CHECK(result == BattleContinues());
+		CHECK(result == ActionRequired());
 	}
 
 	expected->use_move(
@@ -1082,7 +1082,7 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 			),
 			ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(0_bi, 1_bi)),
 		}));
-		CHECK(result == BattleContinues());
+		CHECK(result == ActionRequired());
 	}
 
 	expected->use_move(

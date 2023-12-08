@@ -18,6 +18,7 @@ import tm.clients.determine_action;
 import tm.clients.ps.event_block;
 import tm.clients.ps.make_battle_message_handler;
 
+import tm.clients.action_required;
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;
 import tm.clients.battle_response_error;
@@ -167,7 +168,7 @@ export struct BattleManager {
 			}
 		));
 		return tv::visit(result, tv::overload(
-			[&](BattleContinues) -> BattleMessageResult {
+			[&](ActionRequired) -> BattleMessageResult {
 				return move_response();
 			},
 			[&](TurnCount const count) -> BattleMessageResult {

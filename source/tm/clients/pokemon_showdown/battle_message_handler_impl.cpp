@@ -143,7 +143,7 @@ auto BattleMessageHandler::handle_message(EventBlock const & block) -> Result {
 		return action_builder.emplace(bounded::construct<MoveStateBuilder>);
 	};
 
-	auto result = Result(BattleContinues());
+	auto result = Result(ActionRequired());
 
 	for (auto const element : block) {
 		tv::visit(element, tv::overload(
