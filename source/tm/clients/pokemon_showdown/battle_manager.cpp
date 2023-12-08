@@ -20,6 +20,7 @@ import tm.clients.ps.make_battle_message_handler;
 
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;
+import tm.clients.battle_response_error;
 import tm.clients.party;
 import tm.clients.turn_count;
 

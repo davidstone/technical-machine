@@ -26,6 +26,7 @@ import tm.clients.ps.to_packed_format;
 
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;
+import tm.clients.battle_response_error;
 import tm.clients.battle_started;
 import tm.clients.get_team;
 import tm.clients.should_accept_challenge;
