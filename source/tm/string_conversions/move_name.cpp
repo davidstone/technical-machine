@@ -1522,6 +1522,7 @@ constexpr auto from_string(std::string_view const str) -> MoveName {
 			{"razorleaf", MoveName::Razor_Leaf},
 			{"razorshell", MoveName::Razor_Shell},
 			{"razorwind", MoveName::Razor_Wind},
+			{"recharge", MoveName::Hyper_Beam}, // TODO: fix
 			{"recover", MoveName::Recover},
 			{"recycle", MoveName::Recycle},
 			{"reflect", MoveName::Reflect},
