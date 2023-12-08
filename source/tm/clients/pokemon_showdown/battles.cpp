@@ -17,6 +17,7 @@ import tm.clients.ps.battle_message_result;
 import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.room;
 
+import tm.clients.battle_already_finished;
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;
 import tm.clients.party;

@@ -411,6 +411,7 @@ target_sources(tm_clients PUBLIC
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
 		source/tm/clients/action_required.cpp
+		source/tm/clients/battle_already_finished.cpp
 		source/tm/clients/battle_continues.cpp
 		source/tm/clients/battle_finished.cpp
 		source/tm/clients/battle_response_error.cpp
