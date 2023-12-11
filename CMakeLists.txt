@@ -405,12 +405,10 @@ target_sources(tm_clients PUBLIC
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
-		source/tm/clients/action_required.cpp
 		source/tm/clients/battle_already_finished.cpp
 		source/tm/clients/battle_continues.cpp
 		source/tm/clients/battle_finished.cpp
 		source/tm/clients/battle_response_error.cpp
-		source/tm/clients/battle_started.cpp
 		source/tm/clients/check_weathers_match.cpp
 		source/tm/clients/client_battle.cpp
 		source/tm/clients/client_battle_inputs.cpp
@@ -444,10 +442,12 @@ target_sources(tm_pokemon_showdown PUBLIC
 	FILE_SET CXX_MODULES
 	BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
 	FILES
+		source/tm/clients/pokemon_showdown/action_required.cpp
 		source/tm/clients/pokemon_showdown/battle_manager.cpp
 		source/tm/clients/pokemon_showdown/battle_message.cpp
 		source/tm/clients/pokemon_showdown/battle_message_handler.cpp
 		source/tm/clients/pokemon_showdown/battle_response_switch.cpp
+		source/tm/clients/pokemon_showdown/battle_started.cpp
 		source/tm/clients/pokemon_showdown/battles.cpp
 		source/tm/clients/pokemon_showdown/client.cpp
 		source/tm/clients/pokemon_showdown/client_message_handler.cpp
@@ -480,6 +480,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/room_message_block.cpp
 		source/tm/clients/pokemon_showdown/send_message_function.cpp
 		source/tm/clients/pokemon_showdown/slot_memory.cpp
+		source/tm/clients/pokemon_showdown/start_of_turn.cpp
 		source/tm/clients/pokemon_showdown/switch_message.cpp
 		source/tm/clients/pokemon_showdown/sockets.cpp
 		source/tm/clients/pokemon_showdown/to_packed_format.cpp

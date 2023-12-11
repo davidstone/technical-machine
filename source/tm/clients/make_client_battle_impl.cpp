@@ -80,11 +80,7 @@ struct ClientBattleImpl final : ClientBattle {
 		return generation_;
 	}
 	auto state() const -> GenerationGeneric<VisibleState> final {
-		return VisibleState<generation_>(
-			m_battle.ai(),
-			m_battle.foe(),
-			m_battle.environment()
-		);
+		return m_battle.state();
 	}
 
 	auto ai_has(Species const species, std::string_view nickname, Level const level, Gender const gender) const -> TeamIndex final {

@@ -12,6 +12,7 @@ module;
 export module tm.clients.ps.client_message_handler;
 
 import tm.clients.ps.battle_response_switch;
+import tm.clients.ps.battle_started;
 import tm.clients.ps.battles;
 import tm.clients.ps.log_battle_messages;
 import tm.clients.ps.is_chat_message_block;
@@ -28,7 +29,6 @@ import tm.clients.battle_already_finished;
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;
 import tm.clients.battle_response_error;
-import tm.clients.battle_started;
 import tm.clients.get_team;
 import tm.clients.should_accept_challenge;
 
@@ -192,7 +192,7 @@ private:
 					"|/choose default"sv
 				));
 			},
-			[&](BattleStarted) {
+			[&](BattleStarted const &) {
 				m_send_message(containers::concatenate<containers::string>(block.room(), "|/timer on"sv));
 			},
 			[&](BattleFinished) {

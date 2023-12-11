@@ -11,17 +11,18 @@ module;
 
 export module tm.clients.ps.battle_manager;
 
+import tm.clients.ps.action_required;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_message_handler;
+import tm.clients.ps.battle_started;
 import tm.clients.ps.event_block;
 import tm.clients.ps.make_battle_message_handler;
 import tm.clients.ps.slot_memory;
+import tm.clients.ps.start_of_turn;
 
-import tm.clients.action_required;
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;
 import tm.clients.battle_response_error;
-import tm.clients.battle_started;
 import tm.clients.party;
 import tm.clients.turn_count;
 
@@ -71,7 +72,7 @@ export struct BattleManager {
 
 	using Result = tv::variant<
 		ActionRequired,
-		TurnCount,
+		StartOfTurn,
 		BattleFinished,
 		BattleContinues,
 		BattleStarted,
@@ -108,24 +109,24 @@ export struct BattleManager {
 	}
 
 	auto handle_message(BattleInitMessage const message, std::string_view const user) -> Result {
-		tv::visit(m_battle, tv::overload(
-			[](BattleExists) -> void {
+		return tv::visit(m_battle, tv::overload(
+			[](BattleExists) -> BattleStarted {
 				throw std::runtime_error("Received a BattleInitMessage before getting a team");
 			},
-			[&](BattleTeam & team) -> void {
-				m_battle.emplace([&] -> BattleMessageHandler {
+			[&](BattleTeam & team) -> BattleStarted {
+				auto & handler = m_battle.emplace([&] -> BattleMessageHandler {
 					return make_battle_message_handler(
 						std::move(team),
 						user,
 						message
 					);
 				});
+				return BattleStarted(ActionRequired(handler.state(), handler.slot_memory()));
 			},
-			[](BattleMessageHandler const &) -> void {
+			[](BattleMessageHandler const &) -> BattleStarted {
 				throw std::runtime_error("Tried to initialize an existing battle");
 			}
 		));
-		return BattleStarted();
 	}
 
 	auto handle_message(EventBlock const & message, std::string_view) -> Result {
@@ -137,8 +138,8 @@ export struct BattleManager {
 				throw std::runtime_error("Received an event before a BattleInitMessage");
 			},
 			[&](BattleMessageHandler & handler) -> Result {
-				auto const result = handler.handle_message(message);
-				return tv::visit(result, [](auto value) -> Result {
+				auto result = handler.handle_message(message);
+				return tv::visit(std::move(result), [](auto value) -> Result {
 					return value;
 				});
 			}
@@ -154,29 +155,6 @@ export struct BattleManager {
 			return BattleResponseError();
 		}
 	}
-
-	auto slot_memory() const -> SlotMemory {
-		return tv::visit(m_battle, tv::overload(
-			[&](BattleMessageHandler const & handler) -> SlotMemory {
-				return handler.slot_memory();
-			},
-			[](auto const &) -> SlotMemory {
-				throw std::runtime_error("Cannot get SlotMemory before battle begins");
-			}
-		));
-	}
-
-	auto state() const -> GenerationGeneric<VisibleState> {
-		return tv::visit(m_battle, tv::overload(
-			[&](BattleMessageHandler const & handler) -> GenerationGeneric<VisibleState> {
-				return handler.state();
-			},
-			[](auto const &) -> GenerationGeneric<VisibleState> {
-				throw std::runtime_error("Cannot get VisibleState before battle begins");
-			}
-		));
-	}
-
 private:
 	BattleState m_battle;
 };

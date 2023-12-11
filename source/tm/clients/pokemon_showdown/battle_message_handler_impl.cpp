@@ -143,7 +143,9 @@ auto BattleMessageHandler::handle_message(EventBlock const & block) -> Result {
 		return action_builder.emplace(bounded::construct<MoveStateBuilder>);
 	};
 
-	auto result = Result(ActionRequired());
+	struct Unknown {
+	};
+	auto result = tv::variant<Unknown, TurnCount, BattleFinished>(Unknown());
 
 	for (auto const element : block) {
 		tv::visit(element, tv::overload(
@@ -451,13 +453,24 @@ auto BattleMessageHandler::handle_message(EventBlock const & block) -> Result {
 			}
 		));
 	}
-	if (result != BattleFinished()) {
+	auto handle_previous_data = [&] {
 		use_previous_action();
 		if (m_client_battle->is_end_of_turn()) {
 			handle_end_of_turn(end_of_turn_state.complete());
 		}
-	}
-	return result;
+		return ActionRequired(m_client_battle->state(), m_slot_memory);
+	};
+	return tv::visit(result, tv::overload(
+		[&](Unknown) -> Result {
+			return handle_previous_data();
+		},
+		[&](TurnCount const turn_count) -> Result {
+			return StartOfTurn(handle_previous_data(), turn_count);
+		},
+		[](BattleFinished) -> Result {
+			return BattleFinished();
+		}
+	));
 }
 
 auto BattleMessageHandler::use_move(MoveState const data) -> void {

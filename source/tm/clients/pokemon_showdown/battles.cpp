@@ -11,20 +11,21 @@ module;
 
 export module tm.clients.ps.battles;
 
+import tm.clients.ps.action_required;
 import tm.clients.ps.battle_manager;
 import tm.clients.ps.battle_message;
 import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_response_switch;
+import tm.clients.ps.battle_started;
 import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.room;
 import tm.clients.ps.slot_memory;
+import tm.clients.ps.start_of_turn;
 
-import tm.clients.action_required;
 import tm.clients.battle_already_finished;
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;
 import tm.clients.battle_response_error;
-import tm.clients.battle_started;
 import tm.clients.determine_action;
 import tm.clients.party;
 import tm.clients.turn_count;
@@ -122,31 +123,29 @@ export struct Battles {
 				}
 				auto & battle = it->mapped;
 				auto analysis_logger = open_text_file(m_log_directory / room / "analysis.txt");
-				auto action = [&] {
+				auto action_required = [&](ActionRequired const & inputs) {
 					return move_response(
-						battle.state(),
-						battle.slot_memory(),
+						inputs.state,
+						inputs.slot_memory,
 						analysis_logger,
 						all_evaluate,
 						all_usage_stats,
 						depth
 					);
 				};
-				auto const result = battle.handle_message(message, user);
-				return tv::visit(result, tv::overload(
-					[&](ActionRequired) -> Result {
-						return action();
-					},
-					[&](TurnCount const count) -> Result {
-						print_begin_turn(analysis_logger, count);
-						return action();
+				auto result = battle.handle_message(message, user);
+				return tv::visit(std::move(result), tv::overload(
+					action_required,
+					[&](StartOfTurn const & value) -> Result {
+						print_begin_turn(analysis_logger, value.turn_count);
+						return action_required(value);
 					},
 					[&](BattleFinished) -> Result {
 						m_container.erase(it);
 						return BattleFinished();
 					},
-					[&](BattleStarted) -> Result {
-						return action();
+					[&](BattleStarted const & value) -> Result {
+						return action_required(value);
 					},
 					[](auto value) -> Result {
 						return value;

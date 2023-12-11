@@ -10,12 +10,13 @@ module;
 
 export module tm.test.clients.ps.battle_message_handler;
 
+import tm.clients.ps.action_required;
 import tm.clients.ps.battle_message_handler;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.event_block;
+import tm.clients.ps.start_of_turn;
 import tm.clients.ps.switch_message;
 
-import tm.clients.action_required;
 import tm.clients.battle_finished;
 import tm.clients.client_battle;
 import tm.clients.client_battle_inputs;
@@ -131,6 +132,46 @@ auto check_state(
 	));
 }
 
+auto check_state(
+	ps::BattleMessageHandler::Result const & actual,
+	GenerationGeneric<VisibleState> const & expected
+) -> void {
+	tv::visit(actual, tv::overload(
+		[&](ps::ActionRequired const & result) {
+			tv::visit(result.state, expected, tv::overload(
+				compare_state,
+				[](auto const &, auto const &) {
+					FAIL_CHECK("Generation mismatch");
+				}
+			));
+		},
+		[](auto const &) {
+			FAIL_CHECK("Incorrect handler result");
+		}
+	));
+}
+
+auto check_state(
+	ps::BattleMessageHandler::Result const & actual,
+	GenerationGeneric<VisibleState> const & expected,
+	TurnCount const expected_turn_count
+) -> void {
+	tv::visit(actual, tv::overload(
+		[&](ps::StartOfTurn const & result) {
+			CHECK(result.turn_count == expected_turn_count);
+			tv::visit(result.state, expected, tv::overload(
+				compare_state,
+				[](auto const &, auto const &) {
+					FAIL_CHECK("Generation mismatch");
+				}
+			));
+		},
+		[](auto const &) {
+			FAIL_CHECK("Incorrect handler result");
+		}
+	));
+}
+
 [[maybe_unused]] constexpr auto missed = true;
 constexpr auto did_not_miss = false;
 
@@ -173,7 +214,6 @@ TEST_CASE("BattleMessageHandler partial turn", "[Pokemon Showdown]") {
 			visible_hp(90_bi, 100_bi)
 		),
 	}));
-	CHECK(result == ActionRequired());
 
 	expected->use_move(
 		true,
@@ -185,7 +225,7 @@ TEST_CASE("BattleMessageHandler partial turn", "[Pokemon Showdown]") {
 		visible_hp(90_bi, 100_bi)
 	);
 
-	check_state(handler.state(), expected->state());
+	check_state(result, expected->state());
 }
 
 TEST_CASE("BattleMessageHandler full turn", "[Pokemon Showdown]") {
@@ -219,7 +259,6 @@ TEST_CASE("BattleMessageHandler full turn", "[Pokemon Showdown]") {
 		ps::SeparatorMessage(),
 		ps::TurnMessage(2_bi)
 	}));
-	CHECK(result == TurnCount(2_bi));
 
 	expected->use_move(
 		true,
@@ -239,7 +278,7 @@ TEST_CASE("BattleMessageHandler full turn", "[Pokemon Showdown]") {
 
 	handle_end_turn(*expected);
 
-	check_state(handler.state(), expected->state());
+	check_state(result, expected->state(), TurnCount(2_bi));
 }
 
 TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdown]") {
@@ -268,24 +307,23 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 			ps::EndOfTurnMessage(),
 			ps::TurnMessage(2_bi),
 		}));
-		CHECK(result == TurnCount(2_bi));
+
+		expected->use_move(
+			true,
+			Used(MoveName::Splash),
+			false
+		);
+
+		expected->use_move(
+			false,
+			Used(MoveName::Spikes),
+			false
+		);
+
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state(), TurnCount(2_bi));
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Splash),
-		false
-	);
-
-	expected->use_move(
-		false,
-		Used(MoveName::Spikes),
-		false
-	);
-
-	handle_end_turn(*expected);
-
-	check_state(handler.state(), expected->state());
 
 	{
 		auto const result = handler.handle_message(ps::EventBlock({
@@ -305,24 +343,24 @@ TEST_CASE("BattleMessageHandler can switch into entry hazards", "[Pokemon Showdo
 			ps::EndOfTurnMessage(),
 			ps::TurnMessage(3_bi),
 		}));
-		CHECK(result == TurnCount(3_bi));
+
+		expected->use_move(
+			true,
+			Used(MoveName::Switch1),
+			false
+		);
+
+		expected->use_move(
+			false,
+			Used(MoveName::Spikes),
+			false
+		);
+
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state(), TurnCount(3_bi));
 	}
 
-	expected->use_move(
-		true,
-		Used(MoveName::Switch1),
-		false
-	);
-
-	expected->use_move(
-		false,
-		Used(MoveName::Spikes),
-		false
-	);
-
-	handle_end_turn(*expected);
-
-	check_state(handler.state(), expected->state());
 }
 
 TEST_CASE("BattleMessageHandler can Baton Pass", "[Pokemon Showdown]") {
@@ -344,7 +382,6 @@ TEST_CASE("BattleMessageHandler can Baton Pass", "[Pokemon Showdown]") {
 		ps::SeparatorMessage(),
 		ps::MoveMessage(Party(0_bi), MoveName::Baton_Pass, did_not_miss),
 	}));
-	CHECK(result == ActionRequired());
 
 	expected->use_move(
 		true,
@@ -352,7 +389,7 @@ TEST_CASE("BattleMessageHandler can Baton Pass", "[Pokemon Showdown]") {
 		false
 	);
 
-	check_state(handler.state(), expected->state());
+	check_state(result, expected->state());
 	check_switch_options(handler, {1_bi, 2_bi});
 }
 
@@ -377,7 +414,6 @@ TEST_CASE("BattleMessageHandler can Baton Pass with no other Pokemon", "[Pokemon
 		ps::SeparatorMessage(),
 		ps::TurnMessage(2_bi)
 	}));
-	CHECK(result == TurnCount(2_bi));
 
 	expected->use_move(
 		true,
@@ -392,7 +428,7 @@ TEST_CASE("BattleMessageHandler can Baton Pass with no other Pokemon", "[Pokemon
 
 	handle_end_turn(*expected);
 
-	check_state(handler.state(), expected->state());
+	check_state(result, expected->state(), TurnCount(2_bi));
 }
 
 TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Pokemon Showdown]") {
@@ -425,24 +461,23 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 				visible_hp(0_bi, 100_bi)
 			)
 		}));
-		CHECK(result == ActionRequired());
+
+		expected->use_move(
+			true,
+			Used(MoveName::Thunderbolt),
+			false
+		);
+
+		expected->use_move(
+			false,
+			damaging_move(MoveName::Earthquake, visible_hp(0_bi, 293_bi)),
+			false
+		);
+
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state());
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Thunderbolt),
-		false
-	);
-
-	expected->use_move(
-		false,
-		damaging_move(MoveName::Earthquake, visible_hp(0_bi, 293_bi)),
-		false
-	);
-
-	handle_end_turn(*expected);
-
-	check_state(handler.state(), expected->state());
 
 	{
 		auto const result = handler.handle_message(ps::EventBlock({
@@ -458,16 +493,15 @@ TEST_CASE("BattleMessageHandler can replace fainted from middle of turn", "[Poke
 			),
 			ps::TurnMessage(2_bi),
 		}));
-		CHECK(result == TurnCount(2_bi));
+
+		expected->use_move(
+			true,
+			Used(MoveName::Switch1),
+			false
+		);
+
+		check_state(result, expected->state(), TurnCount(2_bi));
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Switch1),
-		false
-	);
-
-	check_state(handler.state(), expected->state());
 }
 
 TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon Showdown]") {
@@ -497,24 +531,23 @@ TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon
 			ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(0_bi, 100_bi)),
 			ps::EndOfTurnMessage(),
 		}));
-		CHECK(result == ActionRequired());
+
+		expected->use_move(
+			false,
+			Used(MoveName::Toxic),
+			false
+		);
+
+		expected->use_move(
+			true,
+			Used(MoveName::Mind_Reader),
+			false
+		);
+
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state());
 	}
-
-	expected->use_move(
-		false,
-		Used(MoveName::Toxic),
-		false
-	);
-
-	expected->use_move(
-		true,
-		Used(MoveName::Mind_Reader),
-		false
-	);
-
-	handle_end_turn(*expected);
-
-	check_state(handler.state(), expected->state());
 
 	{
 		auto const result = handler.handle_message(ps::EventBlock({
@@ -530,16 +563,14 @@ TEST_CASE("BattleMessageHandler can replace fainted from end of turn", "[Pokemon
 			),
 			ps::TurnMessage(2_bi),
 		}));
-		CHECK(result == TurnCount(2_bi));
+		expected->use_move(
+			true,
+			Used(MoveName::Switch1),
+			false
+		);
+
+		check_state(result, expected->state(), TurnCount(2_bi));
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Switch1),
-		false
-	);
-
-	check_state(handler.state(), expected->state());
 }
 
 // TODO: Same test for generation 3
@@ -572,24 +603,23 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			ps::EndOfTurnMessage(),
 			ps::TurnMessage(2_bi),
 		}));
-		CHECK(result == TurnCount(2_bi));
+
+		expected->use_move(
+			true,
+			Used(MoveName::Splash),
+			false
+		);
+
+		expected->use_move(
+			false,
+			Used(MoveName::Spikes),
+			false
+		);
+
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state(), TurnCount(2_bi));
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Splash),
-		false
-	);
-
-	expected->use_move(
-		false,
-		Used(MoveName::Spikes),
-		false
-	);
-
-	handle_end_turn(*expected);
-
-	check_state(handler.state(), expected->state());
 
 	{
 		auto const result = handler.handle_message(ps::EventBlock({
@@ -605,24 +635,23 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			ps::SeparatorMessage(),
 			ps::EndOfTurnMessage(),
 		}));
-		CHECK(result == ActionRequired());
+
+		expected->use_move(
+			true,
+			Used(MoveName::Splash),
+			false
+		);
+
+		expected->use_move(
+			false,
+			damaging_move(MoveName::Focus_Punch, visible_hp(0_bi, 251_bi)),
+			false
+		);
+
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state());
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Splash),
-		false
-	);
-
-	expected->use_move(
-		false,
-		damaging_move(MoveName::Focus_Punch, visible_hp(0_bi, 251_bi)),
-		false
-	);
-
-	handle_end_turn(*expected);
-
-	check_state(handler.state(), expected->state());
 
 	{
 		auto const result = handler.handle_message(ps::EventBlock({
@@ -638,16 +667,15 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			),
 			ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(0_bi, 1_bi)),
 		}));
-		CHECK(result == ActionRequired());
+
+		expected->use_move(
+			true,
+			Used(MoveName::Switch1),
+			false
+		);
+
+		check_state(result, expected->state());
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Switch1),
-		false
-	);
-
-	check_state(handler.state(), expected->state());
 
 	{
 		auto const result = handler.handle_message(ps::EventBlock({
@@ -664,16 +692,15 @@ TEST_CASE("BattleMessageHandler can replace multiple Pokemon", "[Pokemon Showdow
 			ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(203_bi, 231_bi)),
 			ps::TurnMessage(3_bi),
 		}));
-		CHECK(result == TurnCount(3_bi));
+
+		expected->use_move(
+			true,
+			Used(MoveName::Switch1),
+			false
+		);
+
+		check_state(result, expected->state(), TurnCount(3_bi));
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Switch1),
-		false
-	);
-
-	check_state(handler.state(), expected->state());
 }
 
 TEST_CASE("BattleMessageHandler lose", "[Pokemon Showdown]") {
@@ -731,18 +758,17 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 				visible_hp(0_bi, 273_bi)
 			),
 		}));
-		CHECK(result == ActionRequired());
+
+		expected->use_move(
+			false,
+			damaging_move(MoveName::Explosion, visible_hp(0_bi, 1_bi)),
+			false
+		);
+
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state());
 	}
-
-	expected->use_move(
-		false,
-		damaging_move(MoveName::Explosion, visible_hp(0_bi, 1_bi)),
-		false
-	);
-
-	handle_end_turn(*expected);
-
-	check_state(handler.state(), expected->state());
 
 	{
 		auto const result = handler.handle_message(ps::EventBlock({
@@ -767,21 +793,20 @@ TEST_CASE("BattleMessageHandler generation 1 explosion double faint", "[Pokemon 
 			),
 			ps::TurnMessage(2_bi),
 		}));
-		CHECK(result == TurnCount(2_bi));
+
+		expected->use_move(
+			true,
+			Used(MoveName::Switch1),
+			false
+		);
+		expected->use_move(
+			false,
+			Used(MoveName::Switch1),
+			false
+		);
+
+		check_state(result, expected->state(), TurnCount(2_bi));
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Switch1),
-		false
-	);
-	expected->use_move(
-		false,
-		Used(MoveName::Switch1),
-		false
-	);
-
-	check_state(handler.state(), expected->state());
 }
 
 TEST_CASE("BattleMessageHandler Pain Split", "[Pokemon Showdown]") {
@@ -818,7 +843,6 @@ TEST_CASE("BattleMessageHandler Pain Split", "[Pokemon Showdown]") {
 		ps::EndOfTurnMessage(),
 		ps::TurnMessage(2_bi),
 	}));
-	CHECK(result == TurnCount(2_bi));
 
 	expected->use_move(
 		false,
@@ -837,7 +861,7 @@ TEST_CASE("BattleMessageHandler Pain Split", "[Pokemon Showdown]") {
 
 	handle_end_turn(*expected);
 
-	check_state(handler.state(), expected->state());
+	check_state(result, expected->state(), TurnCount(2_bi));
 }
 
 TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
@@ -865,7 +889,23 @@ TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
 			ps::EndOfTurnMessage(),
 			ps::TurnMessage(2_bi),
 		}));
-		CHECK(result == TurnCount(2_bi));
+
+		expected->use_move(
+			true,
+			Used(MoveName::Splash),
+			false
+		);
+		auto thunder_wave = Used(MoveName::Thunder_Wave);
+		thunder_wave.status = StatusName::paralysis;
+		expected->use_move(
+			false,
+			thunder_wave,
+			false
+		);
+
+		handle_end_turn(*expected);
+	
+		check_state(result, expected->state(), TurnCount(2_bi));
 	}
 	{
 		auto const result = handler.handle_message(ps::EventBlock({
@@ -876,38 +916,22 @@ TEST_CASE("BattleMessageHandler full paralysis", "[Pokemon Showdown]") {
 			ps::EndOfTurnMessage(),
 			ps::TurnMessage(3_bi),
 		}));
-		CHECK(result == TurnCount(3_bi));
+
+		expected->use_move(
+			false,
+			Used(MoveName::Thunder_Wave),
+			false
+		);
+		expected->use_move(
+			true,
+			FullyParalyzed(),
+			false
+		);
+
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state(), TurnCount(3_bi));
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Splash),
-		false
-	);
-	auto thunder_wave = Used(MoveName::Thunder_Wave);
-	thunder_wave.status = StatusName::paralysis;
-	expected->use_move(
-		false,
-		thunder_wave,
-		false
-	);
-
-	handle_end_turn(*expected);
-
-	expected->use_move(
-		false,
-		Used(MoveName::Thunder_Wave),
-		false
-	);
-	expected->use_move(
-		true,
-		FullyParalyzed(),
-		false
-	);
-
-	handle_end_turn(*expected);
-
-	check_state(handler.state(), expected->state());
 }
 
 TEST_CASE("BattleMessageHandler generation 2 thaw", "[Pokemon Showdown]") {
@@ -940,7 +964,6 @@ TEST_CASE("BattleMessageHandler generation 2 thaw", "[Pokemon Showdown]") {
 		ps::EndOfTurnMessage(),
 		ps::TurnMessage(2_bi),
 	}));
-	CHECK(result == TurnCount(2_bi));
 
 	auto move = Used(MoveName::Ice_Beam);
 	move.damage = visible_hp(662_bi, 713_bi);
@@ -962,7 +985,7 @@ TEST_CASE("BattleMessageHandler generation 2 thaw", "[Pokemon Showdown]") {
 		{false, false, false}
 	);
 
-	check_state(handler.state(), expected->state());
+	check_state(result, expected->state(), TurnCount(2_bi));
 }
 
 TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
@@ -988,7 +1011,20 @@ TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
 			ps::EndOfTurnMessage(),
 			ps::TurnMessage(2_bi),
 		}));
-		CHECK(result == TurnCount(2_bi));
+
+		expected->use_move(
+			true,
+			Used(MoveName::Sketch),
+			false
+		);
+		expected->use_move(
+			false,
+			Used(MoveName::Splash),
+			false
+		);
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state(), TurnCount(2_bi));
 	}
 
 	{
@@ -1002,39 +1038,26 @@ TEST_CASE("BattleMessageHandler Struggle", "[Pokemon Showdown]") {
 			ps::EndOfTurnMessage(),
 			ps::TurnMessage(3_bi),
 		}));
-		CHECK(result == TurnCount(3_bi));
+
+		expected->use_move(
+			true,
+			damaging_move(MoveName::Struggle, visible_hp(92_bi, 100_bi)),
+			false
+		);
+		expected->correct_hp(
+			false,
+			visible_hp(92_bi, 100_bi)
+		);
+		expected->use_move(
+			false,
+			Used(MoveName::Splash),
+			false
+		);
+
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state(), TurnCount(3_bi));
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Sketch),
-		false
-	);
-	expected->use_move(
-		false,
-		Used(MoveName::Splash),
-		false
-	);
-	handle_end_turn(*expected);
-
-	expected->use_move(
-		true,
-		damaging_move(MoveName::Struggle, visible_hp(92_bi, 100_bi)),
-		false
-	);
-	expected->correct_hp(
-		false,
-		visible_hp(92_bi, 100_bi)
-	);
-	expected->use_move(
-		false,
-		Used(MoveName::Splash),
-		false
-	);
-
-	handle_end_turn(*expected);
-
-	check_state(handler.state(), expected->state());
 }
 
 #if 0
@@ -1066,7 +1089,21 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 			ps::EndOfTurnMessage(),
 			ps::TurnMessage(2_bi),
 		}));
-		CHECK(result == TurnCount(2_bi));
+
+		expected->use_move(
+			true,
+			Used(MoveName::Splash),
+			false
+		);
+		expected->use_move(
+			false,
+			Used(MoveName::Spikes),
+			false
+		);
+
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state(), TurnCount(2_bi));
 	}
 	{
 		auto const result = handler.handle_message(ps::EventBlock({
@@ -1082,29 +1119,15 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 			),
 			ps::HPMessage(Party(0_bi), StatusName::clear, visible_hp(0_bi, 1_bi)),
 		}));
-		CHECK(result == ActionRequired());
+
+		expected->use_move(
+			true,
+			Used(MoveName::Switch1),
+			false
+		);
+
+		check_state(result, expected->state());
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Splash),
-		false
-	);
-	expected->use_move(
-		false,
-		Used(MoveName::Spikes),
-		false
-	);
-
-	handle_end_turn(*expected);
-
-	expected->use_move(
-		true,
-		Used(MoveName::Switch1),
-		false
-	);
-
-	check_state(handler.state(), expected->state());
 
 	{
 		auto const result = handler.handle_message(ps::EventBlock({
@@ -1123,18 +1146,17 @@ TEST_CASE("BattleMessageHandler switch faints from entry hazards before other mo
 			ps::EndOfTurnMessage(),
 			ps::TurnMessage(3_bi),
 		}));
-		CHECK(result == TurnCount(3_bi));
+
+		expected->use_move(
+			true,
+			Used(MoveName::Switch0),
+			false
+		);
+
+		handle_end_turn(*expected);
+
+		check_state(result, expected->state(), TurnCount(3_bi));
 	}
-
-	expected->use_move(
-		true,
-		Used(MoveName::Switch0),
-		false
-	);
-
-	handle_end_turn(*expected);
-
-	check_state(handler.state(), expected->state());
 }
 
 #endif
