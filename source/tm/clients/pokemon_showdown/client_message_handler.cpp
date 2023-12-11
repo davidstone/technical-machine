@@ -11,6 +11,7 @@ module;
 
 export module tm.clients.ps.client_message_handler;
 
+import tm.clients.ps.action_required;
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.battle_started;
 import tm.clients.ps.battles;
@@ -23,18 +24,23 @@ import tm.clients.ps.parse_generation_from_format;
 import tm.clients.ps.room;
 import tm.clients.ps.room_message_block;
 import tm.clients.ps.send_message_function;
+import tm.clients.ps.slot_memory;
+import tm.clients.ps.start_of_turn;
 import tm.clients.ps.to_packed_format;
 
 import tm.clients.battle_already_finished;
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;
 import tm.clients.battle_response_error;
+import tm.clients.determine_action;
 import tm.clients.get_team;
 import tm.clients.should_accept_challenge;
+import tm.clients.turn_count;
 
 import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 
+import tm.move.is_switch;
 import tm.move.move_name;
 
 import tm.string_conversions.move_name;
@@ -48,8 +54,10 @@ import tm.generation;
 import tm.generation_generic;
 import tm.get_directory;
 import tm.nlohmann_json;
+import tm.open_file;
 import tm.settings_file;
 import tm.team;
+import tm.visible_state;
 
 import bounded;
 import containers;
@@ -60,6 +68,7 @@ import std_module;
 
 namespace technicalmachine::ps {
 using namespace std::string_view_literals;
+using namespace bounded::literal;
 
 constexpr auto remove_spaces(std::string_view str) {
 	return containers::filter(
@@ -101,6 +110,35 @@ constexpr auto is_battle_message(Room const room) -> bool {
 	return room.starts_with("battle-");
 }
 
+auto print_begin_turn(std::ostream & stream, TurnCount const turn_count) -> void {
+	stream << containers::string(containers::repeat_n(20_bi, '=')) << "\nBegin turn " << turn_count << '\n';
+}
+
+using MoveResponse = tv::variant<
+	MoveName,
+	BattleResponseSwitch
+>;
+auto determine_action(
+	GenerationGeneric<VisibleState> const & generic_state,
+	std::ostream & stream,
+	AllEvaluate const all_evaluate,
+	AllUsageStats const & all_usage_stats,
+	Depth const depth
+) -> MoveName {
+	return tv::visit(
+		generic_state,
+		[&]<Generation generation>(VisibleState<generation> const & state) -> MoveName {
+			return determine_action(
+				state,
+				stream,
+				all_usage_stats[generation],
+				all_evaluate.get<generation>(),
+				depth
+			);
+		}
+	);
+}
+
 export struct ClientMessageHandler {
 	ClientMessageHandler(SettingsFile settings, Depth const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
 		m_random_engine(std::random_device()()),
@@ -108,7 +146,6 @@ export struct ClientMessageHandler {
 		m_settings(std::move(settings)),
 		m_depth(depth),
 		m_battles_directory(get_battles_directory()),
-		m_battles(m_battles_directory),
 		m_send_message(std::move(send_message)),
 		m_authenticate(std::move(authenticate))
 	{
@@ -164,27 +201,21 @@ private:
 		auto const result = m_battles.handle_message(
 			block.room(),
 			*battle_message,
-			m_settings.username,
-			m_evaluate,
-			m_all_usage_stats,
-			m_depth
+			m_settings.username
 		);
+		auto analysis_logger = open_text_file(m_battles_directory / block.room() / "analysis.txt");
+		auto call_determine_and_send_action = [&](ActionRequired const & value) {
+			determine_and_send_action(block.room(), value.state, value.slot_memory, analysis_logger);
+		};
 		tv::visit(result, tv::overload(
+			[&](ActionRequired const & value) {
+				call_determine_and_send_action(value);
+			},
+			[&](StartOfTurn const & value) {
+				print_begin_turn(analysis_logger, value.turn_count);
+				call_determine_and_send_action(value);
+			},
 			[](BattleContinues) {
-			},
-			[&](MoveName const move_name) {
-				m_send_message(containers::concatenate<containers::string>(
-					block.room(),
-					"|/choose move "sv,
-					to_string(move_name)
-				));
-			},
-			[&](BattleResponseSwitch const switch_index) {
-				m_send_message(containers::concatenate<containers::string>(
-					block.room(),
-					"|/choose switch "sv,
-					containers::to_string(switch_index)
-				));
 			},
 			[&](BattleResponseError) {
 				m_send_message(containers::concatenate<containers::string>(
@@ -192,7 +223,8 @@ private:
 					"|/choose default"sv
 				));
 			},
-			[&](BattleStarted const &) {
+			[&](BattleStarted const & value) {
+				call_determine_and_send_action(value);
 				m_send_message(containers::concatenate<containers::string>(block.room(), "|/timer on"sv));
 			},
 			[&](BattleFinished) {
@@ -202,6 +234,35 @@ private:
 			[](BattleAlreadyFinished) {
 			}
 		));
+	}
+
+	auto determine_and_send_action(
+		Room const room,
+		GenerationGeneric<VisibleState> const & state,
+		SlotMemory const slot_memory,
+		std::ostream & analysis_logger
+	) -> void {
+		auto const action = determine_action(
+			state,
+			analysis_logger,
+			m_evaluate,
+			m_all_usage_stats,
+			m_depth
+		);
+		if (action == MoveName::Pass) {
+		} else if (is_switch(action)) {
+			m_send_message(containers::concatenate<containers::string>(
+				room,
+				"|/choose switch "sv,
+				containers::to_string(slot_memory[to_replacement(action)])
+			));
+		} else {
+			m_send_message(containers::concatenate<containers::string>(
+				room,
+				"|/choose move "sv,
+				to_string(action)
+			));
+		}
 	}
 
 	auto handle_message(Room const room, InMessage message) -> void {

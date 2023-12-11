@@ -11,19 +11,24 @@ module;
 
 export module tm.test.clients.ps.battles;
 
+import tm.clients.ps.action_required;
 import tm.clients.ps.battles;
 import tm.clients.ps.make_battle_message;
 import tm.clients.ps.message_block;
 import tm.clients.ps.room_message_block;
+
+import tm.clients.determine_action;
 
 import tm.evaluate.all_evaluate;
 import tm.evaluate.depth;
 
 import tm.team_predictor.all_usage_stats;
 
+import tm.generation;
 import tm.get_directory;
 import tm.open_file;
 import tm.split_view;
+import tm.visible_state;
 
 import bounded;
 import containers;
@@ -40,23 +45,47 @@ auto load_lines_from_file(std::filesystem::path const & file_name) {
 	return containers::string(containers::range_view(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()));
 }
 
-TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
-	auto const evaluate = AllEvaluate();
-	auto const all_usage_stats = AllUsageStats(StatsForGeneration(stats_for_generation));
-	constexpr auto depth = Depth(1_bi, 0_bi);
+constexpr auto depth = Depth(1_bi, 0_bi);
 
+struct Evaluator {
+	template<typename T>
+	auto operator()(T const & value, std::ostream & logger) const {
+		if constexpr (bounded::convertible_to<T, ps::ActionRequired>) {
+			tv::visit(value.state, [&]<Generation generation>(VisibleState<generation> const & state) {
+				determine_action(
+					state,
+					logger,
+					m_all_usage_stats[generation],
+					m_all_evaluate.get<generation>(),
+					depth
+				);
+			});
+		}
+	}
+private:
+	AllEvaluate m_all_evaluate;
+	AllUsageStats m_all_usage_stats = AllUsageStats(StatsForGeneration(stats_for_generation));
+};
+
+TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
+	auto evaluator = Evaluator();
 	auto const battle_output_directory = get_test_directory() / "temp-battles";
 	auto const remove_temporary_files = [&] {
 		std::filesystem::remove_all(battle_output_directory);
 	};
 	remove_temporary_files();
 	{
-		auto battles = ps::Battles(battle_output_directory);
+		auto battles = ps::Battles();
 
 		auto paths_in_directory = [](std::filesystem::path const & path) {
-			return containers::range_view(
-				std::filesystem::directory_iterator(path),
-				std::filesystem::directory_iterator()
+			return containers::transform(
+				containers::range_view(
+					std::filesystem::directory_iterator(path),
+					std::filesystem::directory_iterator()
+				),
+				[](std::filesystem::directory_entry const & entry) -> std::filesystem::path const & {
+					return entry.path();
+				}
 			);
 		};
 
@@ -64,8 +93,9 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 
 		for (auto const & generation : paths_in_directory(get_test_directory() / "battles")) {
 			for (auto const & path : paths_in_directory(generation)) {
-				INFO(path.path());
-				auto const data = load_lines_from_file(path.path() / "server_messages.txt");
+				INFO(path);
+				auto analysis_logger = open_text_file(battle_output_directory / path.filename() / "analysis.txt");
+				auto const data = load_lines_from_file(path / "server_messages.txt");
 				auto const messages = containers::split_range(std::string_view(data).substr(1), "\n>");
 				for (std::string_view const message : messages) {
 					INFO(message);
@@ -77,14 +107,14 @@ TEST_CASE("Pokemon Showdown regression", "[Pokemon Showdown]") {
 					if (!battle_message) {
 						continue;
 					}
-					battles.handle_message(
+					auto const result = battles.handle_message(
 						block.room(),
 						*battle_message,
-						username,
-						evaluate,
-						all_usage_stats,
-						depth
+						username
 					);
+					tv::visit(result, [&](auto const & value) {
+						evaluator(value, analysis_logger);
+					});
 				}
 			}
 		}

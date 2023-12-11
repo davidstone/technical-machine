@@ -79,7 +79,7 @@ export struct BattleManager {
 		BattleResponseError
 	>;
 
-	auto handle_message(TeamMessage const message, std::string_view) -> Result {
+	constexpr auto handle_message(TeamMessage const message, std::string_view) -> Result {
 		tv::visit(m_battle, tv::overload(
 			[&](BattleExists const exists) {
 				m_battle.emplace([&] -> BattleTeam {
