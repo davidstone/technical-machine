@@ -411,7 +411,6 @@ target_sources(tm_clients PUBLIC
 		source/tm/clients/battle_response_error.cpp
 		source/tm/clients/check_weathers_match.cpp
 		source/tm/clients/client_battle.cpp
-		source/tm/clients/client_battle_inputs.cpp
 		source/tm/clients/determine_action.cpp
 		source/tm/clients/get_team.cpp
 		source/tm/clients/invalid_team_file_format.cpp

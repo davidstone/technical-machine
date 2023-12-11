@@ -19,7 +19,6 @@ import tm.clients.ps.slot_memory;
 import tm.clients.ps.switch_message;
 
 import tm.clients.client_battle;
-import tm.clients.client_battle_inputs;
 import tm.clients.make_client_battle;
 import tm.clients.party;
 import tm.clients.teams;

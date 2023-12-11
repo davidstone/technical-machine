@@ -18,7 +18,6 @@ import tm.clients.ps.parse_switch;
 import tm.clients.ps.switch_message;
 import tm.clients.ps.validate_generation;
 
-import tm.clients.client_battle_inputs;
 import tm.clients.party;
 import tm.clients.teams;
 import tm.clients.turn_count;

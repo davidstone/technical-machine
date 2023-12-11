@@ -6,7 +6,6 @@ module;
 export module tm.test.clients.client_battle;
 
 import tm.clients.client_battle;
-import tm.clients.client_battle_inputs;
 import tm.clients.make_client_battle;
 import tm.clients.teams;
 
