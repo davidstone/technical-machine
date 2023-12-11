@@ -9,7 +9,7 @@ module;
 #include <iostream>
 #include <string_view>
 
-export module tm.clients.ps.client_impl;
+export module tm.clients.ps.client_message_handler;
 
 import tm.clients.ps.battle_response_switch;
 import tm.clients.ps.battles;
@@ -101,8 +101,8 @@ constexpr auto is_battle_message(Room const room) -> bool {
 	return room.starts_with("battle-");
 }
 
-export struct ClientImpl {
-	ClientImpl(SettingsFile settings, Depth const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
+export struct ClientMessageHandler {
+	ClientMessageHandler(SettingsFile settings, Depth const depth, SendMessageFunction send_message, AuthenticationFunction authenticate):
 		m_random_engine(std::random_device()()),
 		m_all_usage_stats(stats_for_generation),
 		m_settings(std::move(settings)),
@@ -113,8 +113,8 @@ export struct ClientImpl {
 		m_authenticate(std::move(authenticate))
 	{
 	}
-	ClientImpl(ClientImpl &&) = default;
-	ClientImpl(ClientImpl const &) = delete;
+	ClientMessageHandler(ClientMessageHandler &&) = default;
+	ClientMessageHandler(ClientMessageHandler const &) = delete;
 
 	auto handle_messages(RoomMessageBlock const block) -> void {
 		auto const _ = bounded::scope_fail([=] {

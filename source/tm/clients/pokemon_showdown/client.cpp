@@ -5,7 +5,7 @@
 
 export module tm.clients.ps.client;
 
-import tm.clients.ps.client_impl;
+import tm.clients.ps.client_message_handler;
 import tm.clients.ps.room_message_block;
 import tm.clients.ps.sockets;
 
@@ -37,7 +37,7 @@ export struct Client {
 
 private:
 	Sockets m_sockets;
-	ClientImpl m_impl;
+	ClientMessageHandler m_impl;
 };
 
 } // namespace technicalmachine::ps

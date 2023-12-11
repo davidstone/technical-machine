@@ -454,7 +454,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/battle_response_switch.cpp
 		source/tm/clients/pokemon_showdown/battles.cpp
 		source/tm/clients/pokemon_showdown/client.cpp
-		source/tm/clients/pokemon_showdown/client_impl.cpp
+		source/tm/clients/pokemon_showdown/client_message_handler.cpp
 		source/tm/clients/pokemon_showdown/end_of_turn_state.cpp
 		source/tm/clients/pokemon_showdown/end_of_turn_state_builder.cpp
 		source/tm/clients/pokemon_showdown/event_block.cpp
