@@ -73,7 +73,6 @@ target_sources(tm_common PUBLIC
 		source/tm/bide/duration.cpp
 
 		source/tm/evaluate/all_evaluate.cpp
-		source/tm/evaluate/analysis_logger.cpp
 		source/tm/evaluate/compressed_battle.cpp
 		source/tm/evaluate/depth.cpp
 		source/tm/evaluate/evaluate.cpp
@@ -452,7 +451,6 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/battle_manager.cpp
 		source/tm/clients/pokemon_showdown/battle_message.cpp
 		source/tm/clients/pokemon_showdown/battle_message_handler.cpp
-		source/tm/clients/pokemon_showdown/battle_message_result.cpp
 		source/tm/clients/pokemon_showdown/battle_response_switch.cpp
 		source/tm/clients/pokemon_showdown/battles.cpp
 		source/tm/clients/pokemon_showdown/client.cpp

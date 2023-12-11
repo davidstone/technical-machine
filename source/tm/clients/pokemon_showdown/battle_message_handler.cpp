@@ -18,8 +18,6 @@ import tm.clients.party;
 import tm.clients.teams;
 import tm.clients.turn_count;
 
-import tm.evaluate.analysis_logger;
-
 import tm.move.move_name;
 
 import tm.pokemon.max_pokemon_per_team;

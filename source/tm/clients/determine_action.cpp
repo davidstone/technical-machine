@@ -3,9 +3,13 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+module;
+
+#include <std_module/prelude.hpp>
+#include <ostream>
+
 export module tm.clients.determine_action;
 
-import tm.evaluate.analysis_logger;
 import tm.evaluate.depth;
 import tm.evaluate.evaluate;
 import tm.evaluate.move_probability;
@@ -39,34 +43,34 @@ using namespace bounded::literal;
 
 template<Generation generation>
 auto log_move_scores(
-	AnalysisLogger & logger,
+	std::ostream & stream,
 	ScoredMoves const moves,
 	Team<generation> const & ai
 ) -> void {
 	for (auto const move : moves) {
 		if (is_switch(move.name)) {
-			logger << "Switch to " << to_string(ai.pokemon(to_replacement(move.name)).species());
+			stream << "Switch to " << to_string(ai.pokemon(to_replacement(move.name)).species());
 		} else {
-			logger << "Use " << to_string(move.name);
+			stream << "Use " << to_string(move.name);
 		}
-		logger << " for an expected score of " << static_cast<std::int64_t>(move.score) << '\n';
+		stream << " for an expected score of " << static_cast<std::int64_t>(move.score) << '\n';
 	}
 }
 
 template<Generation generation>
 auto log_foe_move_probabilities(
-	AnalysisLogger & logger,
+	std::ostream & stream,
 	MoveProbabilities const moves,
 	Team<generation> const & foe
 ) -> void {
 	for (auto const move : moves) {
-		logger << "Predicted " << move.probability * 100.0 << "% chance of ";
+		stream << "Predicted " << move.probability * 100.0 << "% chance of ";
 		if (is_switch(move.name)) {
-			logger << "switching to " << to_string(foe.pokemon(to_replacement(move.name)).species());
+			stream << "switching to " << to_string(foe.pokemon(to_replacement(move.name)).species());
 		} else {
-			logger << "using " << to_string(move.name);
+			stream << "using " << to_string(move.name);
 		}
-		logger << '\n';
+		stream << '\n';
 	}
 }
 
@@ -87,7 +91,7 @@ auto predicted_state(
 template<Generation generation>
 auto determine_action(
 	VisibleState<generation> const & visible,
-	AnalysisLogger & logger,
+	std::ostream & stream,
 	UsageStats const & usage_stats,
 	Evaluate<generation> const evaluate,
 	Depth const depth
@@ -98,13 +102,13 @@ auto determine_action(
 	auto const state = predicted_state(visible, usage_stats, depth);
 
 	auto log_team = [&](std::string_view const label, Team<generation> const & team) {
-		logger << label << "'s " << to_string(team) << '\n';
+		stream << label << "'s " << to_string(team) << '\n';
 	};
 	log_team("AI", state.ai);
 	log_team("Predicted Foe", state.foe);
-	logger << std::flush;
+	stream << std::flush;
 
-	logger << "Evaluating to a depth of " << state.depth.general << ", " << state.depth.single << "...\n";
+	stream << "Evaluating to a depth of " << state.depth.general << ", " << state.depth.single << "...\n";
 	auto const start = std::chrono::steady_clock::now();
 
 	auto [foe_moves, ai_selections] = get_both_actions(
@@ -116,7 +120,7 @@ auto determine_action(
 	containers::sort(foe_moves, [](MoveProbability const lhs, MoveProbability const rhs) {
 		return lhs.probability > rhs.probability;
 	});
-	log_foe_move_probabilities(logger, foe_moves, state.foe);
+	log_foe_move_probabilities(stream, foe_moves, state.foe);
 
 	auto scored_moves = score_moves(
 		state,
@@ -125,18 +129,18 @@ auto determine_action(
 		evaluate
 	);
 	auto const finish = std::chrono::steady_clock::now();
-	logger << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
+	stream << "Scored moves in " << std::chrono::duration<double>(finish - start).count() << " seconds: ";
 	containers::sort(scored_moves, [](ScoredMove const lhs, ScoredMove const rhs) {
 		return lhs.score > rhs.score;
 	});
-	log_move_scores(logger, scored_moves, state.ai);
-	logger << std::flush;
+	log_move_scores(stream, scored_moves, state.ai);
+	stream << std::flush;
 	return containers::front(scored_moves).name;
 }
 
 export auto determine_action(
 	GenerationGeneric<VisibleState> const & generic_state,
-	AnalysisLogger & logger,
+	std::ostream & stream,
 	UsageStats const & usage_stats,
 	GenerationGeneric<Evaluate> const generic_evaluate,
 	Depth const depth
@@ -145,7 +149,7 @@ export auto determine_action(
 		[&]<Generation generation>(VisibleState<generation> const & state, Evaluate<generation> const evaluate) -> MoveName {
 			return determine_action(
 				state,
-				logger,
+				stream,
 				usage_stats,
 				evaluate,
 				depth

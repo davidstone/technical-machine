@@ -13,9 +13,6 @@ import tm.clients.ps.in_message;
 
 import tm.clients.party;
 
-import tm.evaluate.all_evaluate;
-import tm.evaluate.analysis_logger;
-import tm.evaluate.depth;
 import tm.evaluate.move_probability;
 import tm.evaluate.predict_action;
 import tm.evaluate.state;
@@ -182,16 +179,11 @@ auto score_one_side_of_battle(
 	std::span<std::string_view const> const battle_log,
 	std::span<PlayerInput const> player_inputs
 ) -> WeightedScore {
-	// This does a bunch of extra work due to searching to a depth of 1
 	auto battle = BattleManager(
 		tv::visit(side.team, []<Generation generation>(Team<generation> team) {
 			return GenerationGeneric<KnownTeam>(KnownTeam<generation>(std::move(team)));
 		}),
-		side.party,
-		evaluate,
-		usage_stats,
-		Depth(1_bi, 0_bi),
-		AnalysisLogger::none()
+		side.party
 	);
 
 	// I don't especially like that this code depends on side effects of
