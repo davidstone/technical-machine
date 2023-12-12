@@ -148,7 +148,7 @@ auto parse_team(std::string_view const str) -> KnownTeam<generation> {
 	auto const json = nlohmann::json::parse(str).at("side").at("pokemon");
 	return KnownTeam<generation>(
 		containers::transform(
-			containers::check_size_not_greater_than(json, numeric_traits::max_value<TeamSize>),
+			json,
 			parse_pokemon<generation>
 		)
 	);

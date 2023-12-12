@@ -15,7 +15,7 @@ using namespace bounded::literal;
 export struct Nickname {
 	Nickname() = default;
 	constexpr Nickname(std::string_view const str):
-		m_str(containers::check_size_not_greater_than(str, max_size))
+		m_str(str)
 	{
 	}
 

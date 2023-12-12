@@ -175,9 +175,9 @@ template<Generation generation>
 auto parse_team(property_tree::ptree_reader ptree) {
 	return KnownTeam<generation>(
 		containers::transform(
-			containers::check_size_not_greater_than(
-				containers::filter(ptree, [](auto const & value) { return value.first == "pokemon"; }),
-				numeric_traits::max_value<TeamSize>
+			containers::filter(
+				ptree,
+				[](auto const & value) { return value.first == "pokemon"; }
 			),
 			[](auto const & value) { return parse_pokemon<generation>(value.second); }
 		)
