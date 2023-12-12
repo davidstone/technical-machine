@@ -160,7 +160,8 @@ export struct ClientMessageHandler {
 		auto const messages = message_block(block.str());
 		if (is_chat_message_block(messages)) {
 		} else if (is_battle_message(block.room())) {
-			handle_battle_messages(block);
+			log_battle_messages(m_battles_directory, block);
+			handle_battle_messages(block.room(), messages);
 		} else {
 			for (auto const message : messages) {
 				handle_message(block.room(), message);
@@ -192,20 +193,19 @@ private:
 		));
 	}
 
-	auto handle_battle_messages(RoomMessageBlock const block) -> void {
-		auto const battle_message = make_battle_message(message_block(block.str()));
+	auto handle_battle_messages(Room const room, MessageBlock const block) -> void {
+		auto const battle_message = make_battle_message(block);
 		if (!battle_message) {
 			return;
 		}
-		log_battle_messages(m_battles_directory, block);
 		auto const result = m_battles.handle_message(
-			block.room(),
+			room,
 			*battle_message,
 			m_settings.username
 		);
-		auto analysis_logger = open_text_file(m_battles_directory / block.room() / "analysis.txt");
+		auto analysis_logger = open_text_file(m_battles_directory / room / "analysis.txt");
 		auto call_determine_and_send_action = [&](ActionRequired const & value) {
-			determine_and_send_action(block.room(), value.state, value.slot_memory, analysis_logger);
+			determine_and_send_action(room, value.state, value.slot_memory, analysis_logger);
 		};
 		tv::visit(result, tv::overload(
 			[&](ActionRequired const & value) {
@@ -219,16 +219,16 @@ private:
 			},
 			[&](BattleResponseError) {
 				m_send_message(containers::concatenate<containers::string>(
-					block.room(),
+					room,
 					"|/choose default"sv
 				));
 			},
 			[&](BattleStarted const & value) {
 				call_determine_and_send_action(value);
-				m_send_message(containers::concatenate<containers::string>(block.room(), "|/timer on"sv));
+				m_send_message(containers::concatenate<containers::string>(room, "|/timer on"sv));
 			},
 			[&](BattleFinished) {
-				m_send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), block.room()));
+				m_send_message(containers::concatenate<containers::string>(std::string_view("|/leave "), room));
 				send_challenge();
 			},
 			[](BattleAlreadyFinished) {
