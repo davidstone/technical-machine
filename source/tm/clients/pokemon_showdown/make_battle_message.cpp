@@ -14,6 +14,7 @@ import tm.clients.ps.battle_message;
 import tm.clients.ps.event_block;
 import tm.clients.ps.in_message;
 import tm.clients.ps.message_block;
+import tm.clients.ps.team_message;
 
 import bounded;
 import containers;

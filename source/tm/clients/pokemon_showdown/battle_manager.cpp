@@ -19,6 +19,7 @@ import tm.clients.ps.event_block;
 import tm.clients.ps.make_battle_message_handler;
 import tm.clients.ps.slot_memory;
 import tm.clients.ps.start_of_turn;
+import tm.clients.ps.team_message;
 
 import tm.clients.battle_continues;
 import tm.clients.battle_finished;

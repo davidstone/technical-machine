@@ -7,35 +7,14 @@ export module tm.clients.ps.battle_message;
 
 import tm.clients.ps.event_block;
 import tm.clients.ps.message_block;
-import tm.clients.ps.parse_team;
+import tm.clients.ps.team_message;
 
-import tm.constant_generation;
-import tm.generation;
-import tm.generation_generic;
-import tm.team;
-
-import containers;
-import tv;
 import std_module;
+import tv;
 
 namespace technicalmachine::ps {
 
 export struct CreateBattle {
-};
-
-export struct TeamMessage {
-	constexpr explicit TeamMessage(std::string_view const json_str):
-		m_json_str(json_str)
-	{
-	}
-	auto team(Generation const runtime_generation) const -> GenerationGeneric<KnownTeam> {
-		auto make = [&]<Generation generation>(constant_gen_t<generation>) -> GenerationGeneric<KnownTeam> {
-			return parse_team<generation>(m_json_str);
-		};
-		return constant_generation(runtime_generation, make);
-	}
-private:
-	std::string_view m_json_str;
 };
 
 export struct BattleInitMessage {

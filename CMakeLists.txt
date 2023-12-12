@@ -488,6 +488,7 @@ target_sources(tm_pokemon_showdown PUBLIC
 		source/tm/clients/pokemon_showdown/start_of_turn.cpp
 		source/tm/clients/pokemon_showdown/switch_message.cpp
 		source/tm/clients/pokemon_showdown/sockets.cpp
+		source/tm/clients/pokemon_showdown/team_message.cpp
 		source/tm/clients/pokemon_showdown/to_packed_format.cpp
 		source/tm/clients/pokemon_showdown/validate_generation.cpp
 
